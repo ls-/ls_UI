@@ -1,0 +1,35 @@
+## Interface: 50001
+## Author: lightspark
+## Title: oUF_LS
+## Notes: WIP, so testing-debugging-brainfucking
+## RequiredDeps: oUF
+## X-Category: UnitFrame
+
+plugins\oUF_Smooth.lua
+plugins\oUF_Experience.lua
+plugins\oUF_Reputation.lua
+plugins\oUF_DebuffHighlight.lua
+plugins\oUF_FloatingCombatFeedback.lua
+plugins\oUF_SoulShards.lua
+plugins\oUF_BurningEmbers.lua
+plugins\oUF_DemonicFury.lua
+
+localization\core.lua
+localization\ruRU.lua
+localization\enGB.lua
+localization\enUS.lua
+
+config.lua
+
+libs\functions.lua
+libs\tags.lua
+
+units\player.lua
+units\pet.lua
+units\other.lua
+
+bars\minimap.lua
+bars\infobars.lua
+bars\buffs.lua
+bars\actionbars.lua
+bars\micromenu.lua
