@@ -195,9 +195,11 @@ local function SetBagPosition()
 end
 
 local function SetExtraButtonPosition()
-	_G["new_ExtraBarFrame"]:SetSize(64,64)
+	_G["new_ExtraBarFrame"]:SetSize(64, 64)
 	_G["new_ExtraBarFrame"]:SetPoint(unpack(barcfg.extrabar.pos))
 	_G["new_ExtraBarFrame"]:SetScale(cfg.globals.scale)
+	_G["new_ExtraBarFrame"]:SetFrameLevel(0)
+
 	ExtraActionBarFrame:SetParent(_G["new_ExtraBarFrame"])
 	ExtraActionBarFrame:ClearAllPoints()
 	ExtraActionBarFrame:SetPoint("CENTER", 0, 0)
@@ -206,7 +208,7 @@ end
 
 local function SetLeaveButtonPosition()
 	if MainMenuBarVehicleLeaveButton then
-		MainMenuBarVehicleLeaveButton:SetSize(btncfg.buttonsize, btncfg.buttonsize)
+		MainMenuBarVehicleLeaveButton:SetSize(26, 26)
 		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
 		MainMenuBarVehicleLeaveButton:SetParent(UIParent)
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
@@ -230,7 +232,7 @@ local function bIconUpdate(button)
 		elseif notEnoughMana then
 			bIcon:SetVertexColor(unpack(glcolors.icon.oom))
 		else
-			bIcon:SetVertexColor(unpack(glcolors.icon.nu)) 
+			bIcon:SetVertexColor(unpack(glcolors.icon.nu))
 		end
 	else
 		bIcon:SetVertexColor(unpack(glcolors.icon.oor))
@@ -265,7 +267,7 @@ local function SetDefaultButtonStyle(btn, id)
 		bNormal:SetTexture("")
 		bNormal:Hide()
 	end
-	if 	btn == "ActionButton" or btn == "MultiBarBottomLeftButton" or btn == "MultiBarBottomRightButton" or btn == "MultiBarRightButton" or btn == "MultiBarLeftButton" then
+	if 	btn == "MultiBarBottomLeftButton" or btn == "MultiBarBottomRightButton" or btn == "MultiBarRightButton" or btn == "MultiBarLeftButton" then
 		hooksecurefunc(bNormal, "SetVertexColor", ns.NormalTextureVertexColor)
 	end
 	if bCount and (btn == "MainMenuBarBackpackButton" or btn == "CharacterBag0Slot" or btn == "CharacterBag1Slot" or btn == " CharacterBag2Slot" or btn == "CharacterBag3Slot") then
@@ -274,20 +276,38 @@ local function SetDefaultButtonStyle(btn, id)
 	end
 	button.NewBorder = button:CreateTexture()
 	bNormal = button.NewBorder
-	bNormal:SetTexture(cfg.globals.textures.button_normal)
-	bNormal:SetVertexColor(unpack(glcolors.btnstate.normal))
-	bNormal:Show()
-	bNormal:SetDrawLayer("BACKGROUND", -6)
+	if btn == "ActionButton" or btn == "PetActionButton" or btn == "StanceButton" or btn == "PossessButton" or btn == "OverrideActionBarButtonthen" then
+		bNormal:SetTexture(cfg.globals.textures.button_normal_bronze)
+	else
+		bNormal:SetTexture(cfg.globals.textures.button_normal)
+		bNormal:SetVertexColor(unpack(glcolors.btnstate.normal))
+	end
 	bNormal:SetDrawLayer("BORDER")
-	bNormal:SetBlendMode("BLEND")
-	bNormal:SetAllPoints(button)
+	bNormal:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+	bNormal:ClearAllPoints()
+	bNormal:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+	bNormal:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 	hooksecurefunc(button, "SetNormalTexture", function(self, texture)
 		button:GetNormalTexture():SetTexture("")
 		button:GetNormalTexture():Hide()
 	end)
 	button:SetHighlightTexture(cfg.globals.textures.button_highlight)
-	button:SetPushedTexture(cfg.globals.textures.button_pushed)
-	button:SetCheckedTexture(cfg.globals.textures.button_checked)
+	button:GetHighlightTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetHighlightTexture():ClearAllPoints()
+	button:GetHighlightTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetHighlightTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+
+	button:SetPushedTexture(cfg.globals.textures.button_pushed_checked)
+	button:GetPushedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetPushedTexture():ClearAllPoints()
+	button:GetPushedTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetPushedTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+
+	button:SetCheckedTexture(cfg.globals.textures.button_pushed_checked)
+	button:GetCheckedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetCheckedTexture():ClearAllPoints()
+	button:GetCheckedTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetCheckedTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
 	if bFlash then
 		bFlash:Hide()
 		hooksecurefunc(bFlash, "Show", function(self) self:Hide() end)
@@ -338,7 +358,6 @@ local function SetDefaultButtonStyle(btn, id)
 			bAutoCast:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 13, -13)
 		end
 	end
-	if not button.bg then ns.CreateButtonBackdrop(button) end
 	button.styled = true
 end
 
@@ -347,12 +366,18 @@ local function SetLeaveButtonStyle(button)
 	if button.styled then return end
 	if not button.border then
 		button.border = button:CreateTexture(nil, "ARTWORK", nil, 2)
-		button.border:SetAllPoints(button)
 		button.border:SetTexture(cfg.globals.textures.button_normal)
+		button.border:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+		button.border:ClearAllPoints()
+		button.border:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+		button.border:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 		button.border:SetVertexColor(unpack(glcolors.btnstate.normal))
 	end
 	button:SetHighlightTexture(cfg.globals.textures.button_highlight)
-	if not button.bg then ns.CreateButtonBackdrop(button) end
+	button:GetHighlightTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetHighlightTexture():ClearAllPoints()
+	button:GetHighlightTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetHighlightTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
 end
 
 ---------------
@@ -375,15 +400,15 @@ local function SetPetBattleButtonStyle(button)
 	bIcon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
 	bIcon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
 	if bSelectedHighlight then
-		bSelectedHighlight:SetPoint("TOPLEFT", button, "TOPLEFT", -10, 10)
-		bSelectedHighlight:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 10, -10)
+		bSelectedHighlight:SetPoint("TOPLEFT", button, "TOPLEFT", -8, 8)
+		bSelectedHighlight:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 8, -8)
 	end
 	if bHotKey then
 		bHotKey:Hide()
 	end
 	if bLock then
-		bLock:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
-		bLock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
+		bLock:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
+		bLock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
 	end
 	if bBetterIcon then
 		bBetterIcon:SetSize(24, 24)
@@ -404,19 +429,30 @@ local function SetPetBattleButtonStyle(button)
 	end
 	button.NewBorder = button:CreateTexture()
 	bNormal = button.NewBorder
-	bNormal:SetTexture(cfg.globals.textures.button_normal)
-	bNormal:SetVertexColor(unpack(glcolors.btnstate.normal))
-	bNormal:Show()
+	bNormal:SetTexture(cfg.globals.textures.button_normal_bronze)
 	bNormal:SetDrawLayer("BORDER")
-	bNormal:SetBlendMode("BLEND")
-	bNormal:SetAllPoints(button)
+	bNormal:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+	bNormal:ClearAllPoints()
+	bNormal:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+	bNormal:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
+	
 	hooksecurefunc(button, "SetNormalTexture", function(self, texture)
 		button.NewBorder:SetTexture(cfg.globals.textures.button_normal)
 		button.NewBorder:SetVertexColor(unpack(glcolors.btnstate.normal))
 	end)
+
 	button:SetHighlightTexture(cfg.globals.textures.button_highlight)
-	button:SetPushedTexture(cfg.globals.textures.button_pushed)
-	if not button.bg then ns.CreateButtonBackdrop(button) end
+	button:GetHighlightTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetHighlightTexture():ClearAllPoints()
+	button:GetHighlightTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetHighlightTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+
+	button:SetPushedTexture(cfg.globals.textures.button_pushed_checked)
+	button:GetPushedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
+	button:GetPushedTexture():ClearAllPoints()
+	button:GetPushedTexture():SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+	button:GetPushedTexture():SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+	
 	button.styled = true
 end
 
@@ -474,25 +510,28 @@ local function HideBlizStuff()
 	PetBattleFrame.BottomFrame.Background:SetTexture("")
 	PetBattleFrame.BottomFrame.LeftEndCap:SetTexture("")
 	PetBattleFrame.BottomFrame.RightEndCap:SetTexture("")
+	PetBattleFrameXPBarLeft:SetTexture("")
+	PetBattleFrameXPBarMiddle:SetTexture("")
+	PetBattleFrameXPBarRight:SetTexture("")
 	--PetBattle XP Bar
 	for i = 7, 12 do
 		select(i, PetBattleFrameXPBar:GetRegions()):SetTexture("")
 	end
-	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(0.25, 0.4, 0.35, 0.3)
+	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(cfg.bottomline.expbar.colors.bg))
 	PetBattleFrameXPBar:SetFrameStrata("LOW")
-	PetBattleFrameXPBar:SetFrameLevel(2)
-	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 78)
-	PetBattleFrameXPBar:SetSize(420, 8)
+	PetBattleFrameXPBar:SetFrameLevel(4)
+	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 56)
+	PetBattleFrameXPBar:SetSize(404, 8)
 	PetBattleFrameXPBar:SetStatusBarTexture(cfg.globals.textures.statusbar)
-	PetBattleFrameXPBar:SetStatusBarColor(0.51, 0.8, 0.7, 1)
-	PetBattleFrameXPBar.TextString:SetFont(cfg.font, 11, "THINOUTLINE")
-	PetBattleFrameXPBarLeft:SetVertexColor(0.37, 0.3, 0.3)
-	PetBattleFrameXPBarMiddle:SetVertexColor(0.37, 0.3, 0.3)
-	PetBattleFrameXPBarRight:SetVertexColor(0.37, 0.3, 0.3)
+	PetBattleFrameXPBar:SetStatusBarColor(unpack(cfg.bottomline.expbar.colors.experience))
+	PetBattleFrameXPBar.TextString:SetFont(cfg.font, 10, "THINOUTLINE")
+	PetBattleFrameXPBar.Border = PetBattleFrameXPBar:CreateTexture(nil, "OVERLAY")
+	PetBattleFrameXPBar.Border:SetPoint("CENTER", 0, 0)
+	PetBattleFrameXPBar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
 	--PetBattle Skip Button
 	PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2:SetTexture("")
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
-	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 86)
+	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 66)
 
 	local TexturesToHide = {
 		"_BG",

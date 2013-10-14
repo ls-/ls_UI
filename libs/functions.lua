@@ -7,7 +7,7 @@ local L = ns.L
 -----------
 -- UTILS --
 -----------
-function ns.numFormat(v, nomod)
+function ns.NumFormat(v, nomod)
 	if nomod == true then 
 		if abs(v) >= 1E6 then
 			return ("%.0fM"):format(v / 1E6)
@@ -28,11 +28,11 @@ function ns.numFormat(v, nomod)
 
 end
 
-function ns.percFormat(v1, v2)
+function ns.PercFormat(v1, v2)
 	return ("%.1f"):format((v1 / v2) * 100)
 end
 
-function ns.timeFormat(s)
+function ns.TimeFormat(s)
 	if s >= 86400 then
 		return ("%dd"):format(floor(s / 86400 + 0.5))
 	elseif s >= 3600 then
@@ -53,6 +53,9 @@ function ns.UnitFrame_OnEnter(self)
 
 	if strsub(self:GetName(), 1, -2) == "oUF_LSPartyUnitButton" then
 		PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
+		PartyMemberBuffTooltip_Update(self)
+	elseif self:GetName() == "oUF_LSPet" then
+		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		PartyMemberBuffTooltip_Update(self)
 	end
 
@@ -76,6 +79,8 @@ function ns.UnitFrame_OnLeave(self)
 	UnitFrame_OnLeave(self)
 
 	if strsub(self:GetName(), 1, -2) == "oUF_LSPartyUnitButton" then
+		PartyMemberBuffTooltip:Hide()
+	elseif self:GetName() == "oUF_LSPet" then
 		PartyMemberBuffTooltip:Hide()
 	end
 
@@ -129,16 +134,6 @@ function ns.InitUnitFrameParameters(self, config)
 	self:HookScript("OnLeave", ns.UnitFrame_OnLeave)
 end
 
-function ns.CreateButtonBackdrop(button)
-	button.bg = CreateFrame("Frame", nil, button)
-	button.bg:SetAllPoints(button)
-	button.bg:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
-	button.bg:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -4)
-	button.bg:SetFrameLevel(button:GetFrameLevel()-1)
-	button.bg:SetBackdrop(cfg.globals.backdrop)
-	button.bg:SetBackdropBorderColor(0, 0, 0, .9)
-end
-
 function ns.NormalTextureVertexColor(nt, r, g, b, a)
 	if nt then
 		local self = nt:GetParent()
@@ -150,6 +145,14 @@ function ns.NormalTextureVertexColor(nt, r, g, b, a)
 			nt:SetVertexColor(unpack(glcolors.btnstate.normal))
 		end	
 	end 
+end
+
+function ns.CreateGlowAnimation(self, change)
+	self.animation = self:CreateAnimationGroup()
+	self.animation:SetLooping("BOUNCE")
+	local glowAnimation = self.animation:CreateAnimation("ALPHA")
+	glowAnimation:SetDuration(1)
+	glowAnimation:SetChange(change)
 end
 
 do
@@ -205,6 +208,7 @@ end
 
 function ns.CreateAuraIcon (self, button)
 	local bw = button:GetWidth()
+	local owner = self.__owner
 
 	button.cd:SetReverse()
 	button.cd:SetPoint("TOPLEFT", 2, -2)
@@ -218,21 +222,24 @@ function ns.CreateAuraIcon (self, button)
 	button.count:SetFont(cfg.font, 12, "THINOUTLINE")
 
 	button.overlay:SetTexture(cfg.globals.textures.button_normal)
-	button.overlay:SetTexCoord(0, 1, 0, 1)
-	button.overlay:SetAllPoints(button)
+	button.overlay:ClearAllPoints()
+	button.overlay:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+	button.overlay:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+	button.overlay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 	button.overlay:SetVertexColor(unpack(glcolors.btnstate.normal))
-	button.overlay:SetDrawLayer("BACKGROUND",-7)
+	button.overlay:SetDrawLayer("BACKGROUND", -7)
 	button.overlay:Show()
 	hooksecurefunc(button.overlay, "Hide", function(self) self:Show() end)
 
 	button.stealable:SetTexture(cfg.globals.textures.button_normal)
-	button.stealable:SetTexCoord(0,1,0,1)
-	button.stealable:SetAllPoints(button)
+	button.stealable:ClearAllPoints()
+	button.stealable:SetSize(owner.cfg.auras.size + 6, owner.cfg.auras.size + 6)
+	button.stealable:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+	button.stealable:SetPoint("CENTER", 0, 0)
 	button.stealable:SetVertexColor(1.0, 0.82, 0.0)
 
 	button.timer = ns.CreateFontString(button, cfg.font, 12, "THINOUTLINE")
 	button.timer:SetPoint("BOTTOM", button, "BOTTOM", 1, 0)
-	if not button.bg then ns.CreateButtonBackdrop(button) end
 end
 
 function ns.UpdateAuraIcon(self, unit, icon, index, offset)
@@ -247,11 +254,13 @@ function ns.UpdateAuraIcon(self, unit, icon, index, offset)
 		texture:SetDesaturated(true)
 		icon:SetAlpha(0.65)
 	end
+
 	if duration and duration > 0 then
 		icon.timer:Show()
 	else
 		icon.timer:Hide()
 	end
+	
 	icon.expires = expirationTime
 	icon:SetScript("OnUpdate", function(self, elapsed)
 		self.elapsed = (self.elapsed or 0) + elapsed
@@ -261,7 +270,7 @@ function ns.UpdateAuraIcon(self, unit, icon, index, offset)
 		if timeLeft <= 0 then
 			self.timer:SetText(nil)
 		else
-			self.timer:SetText(ns.timeFormat(timeLeft))
+			self.timer:SetText(ns.TimeFormat(timeLeft))
 		end
 	end)
 end
@@ -302,12 +311,15 @@ end
 
 function ns.CreateDebuffHighlight(self, frametype)
 	local bar
+
 	if self.unit == "player" then
 		bar = self.back:CreateTexture(nil, "BACKGROUND", nil, -8)
 	else
 		bar = self:CreateTexture(nil, "BACKGROUND", nil, -8)
 	end
+
 	bar:SetPoint("CENTER", 0, 0)
+
 	if frametype == "orb" then
 		bar:SetSize(256, 256)
 	elseif frametype == "long" then
@@ -317,8 +329,10 @@ function ns.CreateDebuffHighlight(self, frametype)
 	elseif frametype == "pet" then
 		bar:SetSize(64, 256)
 	end
+
 	bar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..frametype.."_debuff")
 	bar:SetVertexColor(0, 0, 0, 0)
+
 	return bar
 end
 
@@ -339,11 +353,13 @@ function ns.UpdateHealth(self, unit, cur, max)
 	if not self.value then return end
 
 	local tUnit = unit
+
 	if unit == "focustarget" or unit == "targettarget" then
 		tUnit = select(1, gsub(tUnit, "target", "", 1))
 	elseif unit:match'(party)%d?$' == "party" then
 		tUnit = "party"
 	end
+
 	if not GetCVarBool(((((tUnit == "focus" or gsub(tUnit, "%d", "") == "boss") and "target") or (tUnit == "vehicle" and "player")) or tUnit).."StatusText") then self.value:SetText(nil) return end
 
 	if not UnitIsConnected(unit) then
@@ -365,15 +381,17 @@ function ns.UpdateHealth(self, unit, cur, max)
 	local color = { 1, 1, 1 }
 
 	if cur < max then
-		if self.__owner.isMouseOver or not GetCVarBool("statusTextPercentage") then
-			return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.numFormat(cur))
+		if self.__owner.isMouseOver then
+			return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur))
 		else
-			if GetCVarBool("statusTextPercentage") then
-				return self.value:SetFormattedText("|cff%02x%02x%02x%d%%|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.percFormat(cur, max))
+			if GetCVar("statusTextDisplay") == "PERCENT" then
+				return self.value:SetFormattedText("|cff%02x%02x%02x%d%%|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.PercFormat(cur, max))
+			else 
+				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur))
 			end
 		end
 	elseif self.__owner.isMouseOver then
-		return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.numFormat(max))
+		return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(max))
 	else
 		return self.value:SetText(nil)
 	end
@@ -388,6 +406,7 @@ function ns.UpdatePower(self, unit, cur, max)
 	elseif unit:match'(party)%d?$' == "party" then
 		tUnit = "party"
 	end
+
 	if not GetCVarBool(((((tUnit == "focus" or gsub(tUnit, "%d", "") == "boss") and "target") or (tUnit == "vehicle" and "player")) or tUnit).."StatusText") then self.value:SetText(nil) return end
 
 	if max == 0 then
@@ -408,18 +427,18 @@ function ns.UpdatePower(self, unit, cur, max)
 
 	if cur < max then
 		if self.__owner.isMouseOver then
-			self.value:SetFormattedText("%s / |cff%02x%02x%02x%s|r", ns.numFormat(cur, true), color[1] * 255, color[2] * 255, color[3] * 255, ns.numFormat(max, true))
+			self.value:SetFormattedText("%s / |cff%02x%02x%02x%s|r", ns.NumFormat(cur, true), color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(max, true))
 		elseif cur > 0 then
-			if not GetCVarBool("statusTextPercentage") then
-				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.numFormat(cur, true))
+			if GetCVar("statusTextDisplay") == "PERCENT" then
+				self.value:SetFormattedText("%d|cff%02x%02x%02x%%|r", ns.PercFormat(cur, max), color[1] * 255, color[2] * 255, color[3] * 255)
 			else
-				self.value:SetFormattedText("%d|cff%02x%02x%02x%%|r", ns.percFormat(cur, max), color[1] * 255, color[2] * 255, color[3] * 255)
+				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur, true))
 			end
 		else
 			self.value:SetText(nil)
 		end
 	elseif self.__owner.isMouseOver then
-		self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.numFormat(cur, true))
+		self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur, true))
 	else
 		self.value:SetText(nil)
 	end
@@ -431,6 +450,7 @@ end
 
 function ns.CreateHealPrediction(self)
 	local bar = {}
+
 	bar.myBar = CreateFrame('StatusBar', nil, self.Health)
 	bar.myBar:SetFrameLevel(self.Health:GetFrameLevel())
 	bar.myBar:SetStatusBarTexture(cfg.globals.textures.statusbar)
@@ -444,6 +464,7 @@ function ns.CreateHealPrediction(self)
 	bar.otherBar:SetPoint("TOPLEFT", bar.myBar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 	bar.otherBar:SetPoint("BOTTOMLEFT", bar.myBar:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 	bar.otherBar:SetWidth(self.Health:GetWidth())
+
 	return bar
 end
 
@@ -459,7 +480,6 @@ end
 
 function ns.CreateCastbar(self)
 	local bar = CreateFrame("StatusBar", nil, self)
-
 	bar:SetSize((self.cfg.long or self.unit == "player") and 246 or 118, 24)
 	bar:SetStatusBarTexture(cfg.globals.textures.statusbar)
 	bar:SetPoint(unpack(self.cfg.castbar.pos))
@@ -490,6 +510,7 @@ function ns.CreateCastbar(self)
 		bar.SafeZone:SetTexture(cfg.globals.textures.statusbar)
 		bar.SafeZone:SetVertexColor(0.6, 0, 0, 0.6)
 	end
+
 	return bar
 end
 

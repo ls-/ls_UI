@@ -48,43 +48,25 @@ end
 local function CreateBottomLine()
 	if not cfg.bottomline then return end
 
-	local f = CreateFrame("Frame", nil, UIParent)
+	local f = CreateFrame("Frame", "BottomLine", UIParent)
 	f:SetFrameStrata("LOW")
-	f:SetFrameLevel(5)
+	f:SetFrameLevel(3)
 	f:SetSize(512, 64)
 	f:SetScale(cfg.globals.scale)
 	f:SetPoint(unpack(cfg.bottomline.pos))
 
-	f.left = f:CreateTexture(nil, "ARTWORK", nil, 5)
-	f.left:SetPoint("CENTER", -256, 0)
-	f.left:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottom_left")
-
-	f.right = f:CreateTexture(nil, "ARTWORK", nil, 5)
-	f.right:SetPoint("CENTER", 256, 0)
-	f.right:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottom_right")
-
-	f.center = f:CreateTexture(nil, "BACKGROUND", nil, 4)
-	f.center:SetAllPoints(f)
-	f.center:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottom_center")
-
-	local f2 = CreateFrame("Frame", nil, UIParent)
-	f2:SetFrameStrata("LOW")
-	f2:SetFrameLevel(3)
-	f2:SetScale(cfg.globals.scale)
-	f2:SetAllPoints(f)
-
-	f2.actbar = f2:CreateTexture(nil, "BACKGROUND", nil, -8)
-	f2.actbar:SetPoint("CENTER", 0, 32)
-	f2.actbar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottom_actbar")
+	f.actbar = f:CreateTexture(nil, "BACKGROUND", nil, -8)
+	f.actbar:SetPoint("CENTER", 0, 16)
+	f.actbar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottom_actbar")
 end
 
 local function CreateExpBar(self)
 	local bar = CreateFrame("StatusBar", nil, UIParent)
 	bar:SetFrameStrata("LOW")
 	bar:SetFrameLevel(4)
-	bar:SetSize(316, 8)
+	bar:SetSize(404, 8)
 	bar:SetScale(cfg.globals.scale)
-	bar:SetPoint("BOTTOM", 0, 5)
+	bar:SetPoint("BOTTOM", 0, 56)
 	bar:SetStatusBarTexture(cfg.globals.textures.statusbar)
 	bar:SetStatusBarColor(unpack(cfg.bottomline.expbar.colors.experience))
 
@@ -97,7 +79,11 @@ local function CreateExpBar(self)
 	bar.BG:SetAllPoints(bar)
 	bar.BG:SetTexture(unpack(cfg.bottomline.expbar.colors.bg))
 
-	bar.Text = ns.CreateFontString(bar, cfg.font, 11, "THINOUTLINE")
+	bar.Border = bar:CreateTexture(nil, "OVERLAY")
+	bar.Border:SetPoint("CENTER", 0, 0)
+	bar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
+
+	bar.Text = ns.CreateFontString(bar, cfg.font, 10, "THINOUTLINE")
 	bar.Text:SetAllPoints(bar)
 	bar.Text:Hide()
 
@@ -116,15 +102,21 @@ local function CreateRepBar(self)
 	local bar = CreateFrame("StatusBar", nil, UIParent)
 	bar:SetFrameStrata("LOW")
 	bar:SetFrameLevel(4)
-	bar:SetSize(412, 8)
+	bar:SetSize(404, 8)
 	bar:SetScale(cfg.globals.scale)
-	bar:SetPoint("BOTTOM", 0, 16)
+	bar:SetPoint("BOTTOM", 0, 2)
 	bar:SetStatusBarTexture(cfg.globals.textures.statusbar)
 
 	bar.BG = bar:CreateTexture(nil, 'BACKGROUND')
 	bar.BG:SetAllPoints(bar)
 
-	bar.Text = ns.CreateFontString(bar, cfg.font, 11, "THINOUTLINE")
+	bar.Border = bar:CreateTexture(nil, "OVERLAY")
+	bar.Border:SetPoint("CENTER", 0, 0)
+	bar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
+	bar.Border:SetVertexColor(0.6, 0.6, 0.6)
+
+
+	bar.Text = ns.CreateFontString(bar, cfg.font, 10, "THINOUTLINE")
 	bar.Text:SetAllPoints(bar)
 	bar.Text:Hide()
 
@@ -137,7 +129,7 @@ end
 
 local function UpdateReputation(bar, unit, name, standing, min, max, value)
 	local color = FACTION_BAR_COLORS[standing]
-	bar.BG:SetTexture(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.3)
+	bar.BG:SetTexture(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.5)
 	bar.Text:UpdateTag()
 end
 
@@ -154,7 +146,7 @@ local function CreatePlayerArtwork(self)
 	self.back.bg:SetPoint("CENTER", 0, 0)
 	--stone ring
 	self.back.ring = self.back:CreateTexture(nil, "ARTWORK")
-	self.back.ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_ring")
+	self.back.ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_ring_r_cracked")
 	self.back.ring:SetSize(256, 256)
 	self.back.ring:SetPoint("CENTER", 0, 0)
 	--chains
@@ -282,6 +274,7 @@ local function CreateDemonicFury(self)
 	bar:SetSize(66, 132)
 	bar:SetFrameLevel(1)
 	bar:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1")
+
 	bar.cpower = "FURY"
 
 	bar.cover = CreateFrame("Frame", nil, self)
@@ -299,28 +292,23 @@ local function CreateDemonicFury(self)
 	bar.glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1_glow")
 	bar.glow:SetVertexColor(0, 1, 0.1)
 	bar.glow:SetAlpha(0)
+	ns.CreateGlowAnimation(bar.glow, 1)
+
 	return bar
 end
 
 local function UpdateDemonicFury(self, cur, max)
 	if cur == max then
-		if not self:GetScript("OnUpdate") then
-			self.flashValue = 0
-			self:SetScript("OnUpdate", function (self, elapsed)
-				self.flashValue = self.flashValue + elapsed * 90
-				if self.flashValue >= 180 or self.flashValue <= 0 then
-					self.flashValue = 0
-				end
-				self.glow:SetAlpha(sin(self.flashValue))
-			end)
-		end
+		self.glow.animation:Play()
 	else
-		self.glow:SetAlpha(0)
-		self:SetScript("OnUpdate", nil)
+		self.glow.animation:Stop()
 	end
+
 	if not self:IsShown() then
+		bar.cover:Hide()
 		FrameReskin(self.cpower, false, 0)
 	else
+		bar.cover:Show()
 		FrameReskin(self.cpower, true, 1)
 	end
 end
@@ -330,12 +318,15 @@ local function CreateBurningEmbers(self)
 	bar:SetPoint("CENTER", -36, 0)
 	bar:SetSize(66, 132)
 	bar:SetFrameLevel(1)
+
 	bar.cpower = "EMBER"
+
 	for i = 1, 4 do
 		bar[i] = CreateFrame("StatusBar", nil, bar)
 		bar[i]:SetOrientation("VERTICAL")
 		bar[i].bg = bar[i]:CreateTexture(nil, "BACKGROUND")
 	end
+
 	return bar
 end
 
@@ -349,6 +340,7 @@ local function UpdateBurningEmbers(self, cur, max, changed)
 			self[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
 		end
 	end
+	
 	if not self[1]:IsShown() then
 		self:Hide()
 		FrameReskin(self.cpower, false, 0)
@@ -359,7 +351,7 @@ local function UpdateBurningEmbers(self, cur, max, changed)
 end
 
 local function CreateTotemBar(self)
-	local bar = CreateFrame("Frame", nil, self)
+	local bar = CreateFrame("Frame", "barTOTEM", self)
 	bar:SetPoint("CENTER", -36, 0)
 	bar:SetSize(66, 132)
 	bar:SetFrameLevel(1)
@@ -368,6 +360,7 @@ local function CreateTotemBar(self)
 	bar.cover:SetPoint("CENTER", -36, 0)
 	bar.cover:SetSize(66, 132)
 	bar.cover:SetFrameLevel(self.cover:GetFrameLevel()+1)
+
 	bar.cpower = "TOTEM"
 
 	local max = MAX_TOTEMS
@@ -379,21 +372,28 @@ local function CreateTotemBar(self)
 		bar[i]:SetPoint(unpack(cfg.units.player.cpower["cpower"..i]["pos"..max]))
 		bar[i]:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
 		bar[i]:SetStatusBarColor(r, g, b)
+
 		bar[i].bg = bar:CreateTexture(nil, "BACKGROUND")
 		bar[i].bg:SetAllPoints(bar[i])
 		bar[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
 		bar[i].bg:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
+
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
 		bar[i].glow:SetSize(64, 64)
 		bar[i].glow:SetPoint(unpack(cfg.units.player.cpower["cpower"..i]["pos"..max.."glow"]))
 		bar[i].glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i.."_glow")
 		bar[i].glow:SetVertexColor(r * 1.25, g * 1.25, b * 1.25)
 		bar[i].glow:SetAlpha(0)
+		ns.CreateGlowAnimation(bar[i].glow, 1)
+
 		bar[i].text = ns.CreateFontString(bar.cover, cfg.font, 14, "THINOUTLINE")
 		bar[i].text:SetPoint(unpack(cfg.units.player.cpower["cpower"..i]["pos"..max]))
 		bar[i].text:SetTextColor(r, g, b)
+		ns.CreateGlowAnimation(bar[i].text, -0.5)
 	end
+
 	FrameReskin(bar.cpower, true, max or 4)
+
 	return bar
 end
 
@@ -401,47 +401,48 @@ local function UpdateTotemBar(self, priorities, haveTotem, name, start, duration
 	local totem = self[priorities]
 	totem:SetMinMaxValues(0, duration)
 	if duration > 0 then
-		totem.flashValue = 0
 		totem:SetScript("OnUpdate", function (self, elapsed)
 			local timeLeft = start + duration - GetTime()
 			self:SetValue(timeLeft)
+			self.text:SetText(ns.TimeFormat(timeLeft))
 			if timeLeft <= 0 then
-				self.glow:SetAlpha(0)
-				self.text:SetAlpha(0)
-				self:SetValue(0)
+				self.text:SetText("")
 				return
 			else
 				if timeLeft <= 10 then
-					self.flashValue = self.flashValue + elapsed * 90
-					if self.flashValue <= 0 or self.flashValue >= 180 then
-						self.flashValue = 0
+					if not self.glow.animation:IsPlaying() and not self.text.animation:IsPlaying() then
+						self.glow.animation:Play()
+						self.text.animation:Play()
 					end
-					self.glow:SetAlpha(sin(self.flashValue))
-					self.text:SetText(ns.FormatTime(timeLeft))
-					self.text:SetAlpha(sin(self.flashValue))
 				end
 			end
 		end)
 	else 
-		totem.glow:SetAlpha(0)
-		totem.text:SetAlpha(0)
+		totem.glow.animation:Stop()
+		totem.text.animation:Stop()
 		totem:SetScript("OnUpdate", nil)
 		totem:SetValue(0)
 	end
+
 	if UnitHasVehicleUI("player") == true then
 		self:Hide()
+		self.cover:Hide()
 		FrameReskin("TOTEM", false, 0)
 	elseif UnitHasVehicleUI("player") == false then
 		self:Show()
+		self.cover:Show()
 		FrameReskin("TOTEM", true, 4)
 	end
 end
 
 local function CreateRuneBar(self)
-	local bar = CreateFrame("Frame", nil, self)
+	local bar = CreateFrame("Frame", "barRUNE", self)
 	bar:SetPoint("CENTER", -36, 0)
 	bar:SetSize(66, 132)
 	bar:SetFrameLevel(1)
+	
+	bar.cpower = "RUNE"
+
 	for i = 1, 6 do
 		bar[i] = CreateFrame('StatusBar', "Rune"..i, bar)
 		bar[i]:SetOrientation("VERTICAL")
@@ -459,8 +460,8 @@ end
 
 local function UpdateRuneType (self, rune, rid, alt)
 	local r, g, b = unpack(self:GetParent().colors.runes[GetRuneType(rid)])
-
 	local _, _, runeReady = GetRuneCooldown(rid)
+
 	if runeReady == false then 
 		rune:SetStatusBarColor(r * 0.5, g * 0.5, b * 0.5)
 	end
@@ -473,6 +474,7 @@ local function UpdateRuneBar (self, rune, rid, start, duration, runeReady)
 	else
 		rune:SetStatusBarColor(r, g, b)
 	end
+	
 	if UnitHasVehicleUI("player") == true then
 		self:Hide()
 		FrameReskin("RUNE", false, 0)
@@ -483,10 +485,11 @@ local function UpdateRuneBar (self, rune, rid, start, duration, runeReady)
 end
 
 local function CreateEclipseBar(self)
-	local bar = CreateFrame("Frame", nil, self)
+	local bar = CreateFrame("Frame", "barECLIPSE", self)
 	bar:SetPoint("CENTER", -36, 0)
 	bar:SetSize(66, 132)
 	bar:SetFrameLevel(1)
+
 	bar.cpower = "ECLIPSE"
 
 	bar.cover = CreateFrame("Frame", nil, self)
@@ -494,7 +497,7 @@ local function CreateEclipseBar(self)
 	bar.cover:SetSize(66, 132)
 	bar.cover:SetFrameLevel(self.cover:GetFrameLevel()+1)
 
-	bar.LunarBar = CreateFrame('StatusBar', nil, bar)
+	bar.LunarBar = CreateFrame("StatusBar", nil, bar)
 	bar.LunarBar:SetFrameLevel(1)
 	bar.LunarBar:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1")
 	bar.LunarBar:SetStatusBarColor(unpack(glcolors.eclipse["moon"]))
@@ -512,15 +515,33 @@ local function CreateEclipseBar(self)
 	bar.glow:SetSize(128, 256)
 	bar.glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1_glow")
 	bar.glow:SetAlpha(0)
+	ns.CreateGlowAnimation(bar.glow, 1)
+
+	bar.sun = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
+	bar.sun:SetPoint("TOPLEFT", -10, 12)
+	bar.sun:SetSize(36, 36)
+	bar.sun:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
+	bar.sun:SetTexCoord(0.55859375, 0.72656250, 0.00781250, 0.35937500)
+	bar.sun:SetAlpha(0)
+	ns.CreateGlowAnimation(bar.sun, 1)
+
+	bar.moon = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
+	bar.moon:SetPoint("BOTTOMLEFT", -10, -12)
+	bar.moon:SetSize(36, 36)
+	bar.moon:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
+	bar.moon:SetTexCoord(0.73437500, 0.90234375, 0.00781250, 0.35937500)
+	bar.moon:SetAlpha(0)
+	ns.CreateGlowAnimation(bar.moon, 1)
 
 	bar.direction = bar.cover:CreateTexture(nil, "ARTWORK", nil, 7)
 	bar.direction:SetPoint("CENTER", -7, 0)
 	bar.direction:SetSize(32, 256)
 	bar.direction:SetTexture(nil)
+
 	return bar
 end
 
-local function UpdateExlipseBar(self, unit)
+local function UpdateEclipseBar(self, unit)
 	local direction = GetEclipseDirection()
 	if direction ~= "none" then
 		self.direction:SetTexture("Interface\\AddOns\\oUF_LS\\media\\eclipse_"..direction)
@@ -529,42 +550,39 @@ local function UpdateExlipseBar(self, unit)
 	end
 end
 
-local function UpdateExlipseBarGlow(self, unit)
+local function UpdateEclipseBarGlow(self, unit)
 	if self.hasLunarEclipse == true or self.hasSolarEclipse == true then
 		local r, g, b
 		if self.hasSolarEclipse == true then
 			r, g, b = unpack(glcolors.eclipse["sun"])
+			self.sun.animation:Play()
 		else
 			r, g, b = unpack(glcolors.eclipse["moon"])
+			self.moon.animation:Play()
 		end
 		self.glow:SetVertexColor(r * 1.25, g * 1.25, b * 1.25)
-		if not self:GetScript("OnUpdate") then
-			self.flashValue = 0
-			self:SetScript("OnUpdate", function (self, elapsed)
-				self.flashValue = self.flashValue + elapsed * 90
-				if self.flashValue >= 180 or self.flashValue <= 0 then
-					self.flashValue = 0
-				end
-				self.glow:SetAlpha(sin(self.flashValue))
-			end)
-		end
+		self.glow.animation:Play()
 	else
-		self.glow:SetAlpha(0)
-		self:SetScript("OnUpdate", nil)
+		self.glow.animation:Stop()
+		self.sun.animation:Stop()
+		self.moon.animation:Stop()
 	end
 end
 
-local function UpdateExlipseBarVisibility(self, unit)
+local function UpdateEclipseBarVisibility(self, unit)
 	if self:IsShown() then
 		if UnitHasVehicleUI(unit) == true then
 			self:Hide()
+			self.cover:Hide()
 			FrameReskin("ECLIPSE", false, 0)
 		elseif UnitHasVehicleUI(unit) == false then
 			self:Show()
+			self.cover:Show()
 			FrameReskin("ECLIPSE", true, 1)
 		end
 	else
 		self:Hide()
+		self.cover:Hide()
 		FrameReskin("ECLIPSE", false, 0)
 	end
 end
@@ -638,23 +656,28 @@ local function CreateStyle(self)
 		self.CPoints = CreateClassPowerBar(self, 5, "COMBO", true, true)
 		self.CPoints.PostUpdate = UpdateClassPowerBar
 	end
+
 	if cfg.playerclass == "MONK" and cfg.units.player.cpower.chi == true then
 		self.ClassIcons = CreateClassPowerBar(self, 5, "CHI", true)
 		self.ClassIcons.PostUpdate = UpdateClassPowerBar
 	end
+
 	if cfg.playerclass == "DEATHKNIGHT" and cfg.units.player.cpower.runes == true then
 		self.Runes = CreateRuneBar(self)
 		self.Runes.PostUpdateType = UpdateRuneType
 		self.Runes.PostUpdateRune = UpdateRuneBar
 	end
+
 	if cfg.playerclass == "SHAMAN" and cfg.units.player.cpower.totems == true then
 		self.Totems = CreateTotemBar(self)
 		self.Totems.PostUpdate = UpdateTotemBar
 	end
+
 	if cfg.playerclass == "PALADIN" and cfg.units.player.cpower.holy == true then
 		self.ClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER", true)
 		self.ClassIcons.PostUpdate = UpdateClassPowerBar
 	end
+
 	if cfg.playerclass == "WARLOCK" then
 		if cfg.units.player.cpower.shards == true then
 			self.SoulShards = CreateClassPowerBar(self, 4, "SOULSHARD")
@@ -663,6 +686,9 @@ local function CreateStyle(self)
 		if cfg.units.player.cpower.embers == true then
 			self.BurningEmbers = CreateBurningEmbers(self)
 			self.BurningEmbers.PostUpdate = UpdateBurningEmbers
+			for i = 1, #self.BurningEmbers do
+				self.BurningEmbers[i].Smooth = true
+			end
 		end
 		if cfg.units.player.cpower.fury == true then
 			self.DemonicFury = CreateDemonicFury(self)
@@ -670,21 +696,26 @@ local function CreateStyle(self)
 			self.DemonicFury.Smooth = true
 		end
 	end
+
 	if cfg.playerclass == "PRIEST" and cfg.units.player.cpower.orbs == true then
 		self.ClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB", true)
 		self.ClassIcons.PostUpdate = UpdateClassPowerBar
 	end
+
 	if cfg.playerclass == "DRUID" and cfg.units.player.cpower.eclipse == true then
 		self.EclipseBar = CreateEclipseBar(self)
-		self.EclipseBar.PostUpdatePower = UpdateExlipseBar
-		self.EclipseBar.PostUnitAura = UpdateExlipseBarGlow
-		self.EclipseBar.PostUpdateVisibility = UpdateExlipseBarVisibility
+		self.EclipseBar.PostUpdatePower = UpdateEclipseBar
+		self.EclipseBar.PostUnitAura = UpdateEclipseBarGlow
+		self.EclipseBar.PostUpdateVisibility = UpdateEclipseBarVisibility
 		self.EclipseBar.Smooth = true
 	end
-	self.Resting = ns.CreateIcon(self, unpack(cfg.units.player.icons.resting))
-	self.Leader = ns.CreateIcon(self, unpack(cfg.units.player.icons.leader))
-	self.PvP = ns.CreateIcon(self, unpack(cfg.units.player.icons.pvp))
+
+	self.Resting = ns.CreateIcon(_G["BottomLine"], unpack(cfg.units.player.icons.resting))
+	self.Leader = ns.CreateIcon(_G["BottomLine"], unpack(cfg.units.player.icons.leader))
+	self.PhaseIcon = ns.CreateIcon(_G["BottomLine"], unpack(cfg.units.player.icons.phase))
+	self.PvP = ns.CreateIcon(_G["BottomLine"], unpack(cfg.units.player.icons.pvp))
 	self.PvP.Override = ns.PvPOverride
+
 	if cfg.units.player.castbar then
 		PetCastingBarFrame:UnregisterAllEvents()
 		PetCastingBarFrame:HookScript("OnShow", function(self) self:Hide() end)
@@ -695,6 +726,7 @@ local function CreateStyle(self)
 		self.Castbar.CustomDelayText = ns.CustomDelayText
 	end
 end
+
 if cfg.units.player then
 	oUF:Factory(function(self)
 		self:RegisterStyle("my:player", CreateStyle)

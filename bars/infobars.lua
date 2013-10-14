@@ -28,7 +28,7 @@ local function SetInfoBarPosition(index)
 		ibar["ibar"..index].pos[3], 0)
 	end
 
-	_G["InfoBar"..index]:SetScale(0.9 * cfg.globals.scale)
+	_G["InfoBar"..index]:SetScale(cfg.globals.scale)
 	
 	if index == 2 or index == 3 or index == 4 or index == 5 then
 		RegisterStateDriver(_G["InfoBar"..index], "visibility", "[petbattle] hide; show")
@@ -51,14 +51,57 @@ local function SetInfoBarStyle(index)
 	_G["InfoBar"..index].cover:SetPoint("CENTER", 0, 0)
 	_G["InfoBar"..index].cover:SetTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_cover")
 
-	_G["InfoBar"..index].text = ns.CreateFontString(_G["InfoBar"..index], cfg.font, 16, "THINOUTLINE")
+	_G["InfoBar"..index].text = ns.CreateFontString(_G["InfoBar"..index], cfg.font, 14, "THINOUTLINE")
 	_G["InfoBar"..index].text:SetPoint(unpack(ibar.text.pos1))
 	_G["InfoBar"..index].text:SetPoint(unpack(ibar.text.pos2))
+
+	if _G["InfoBar"..index]:IsObjectType("Button") then
+		_G["InfoBar"..index]:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_highlight")
+		if ftype == "long" then
+			_G["InfoBar"..index]:GetHighlightTexture():SetTexCoord(44 / 256, 212 / 256, 13 / 64, 51 / 64)
+		else
+			_G["InfoBar"..index]:GetHighlightTexture():SetTexCoord(20 / 128, 108 / 128, 13 / 64, 51 / 64)
+		end
+		_G["InfoBar"..index]:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_pushed")
+		if ftype == "long" then
+			_G["InfoBar"..index]:GetPushedTexture():SetTexCoord(44 / 256, 212 / 256, 13 / 64, 51 / 64)
+		else
+			_G["InfoBar"..index]:GetPushedTexture():SetTexCoord(20 / 128, 108 / 128, 13 / 64, 51 / 64)
+		end
+	end
 
 	_G["InfoBar"..index].updateInterval = 0
 end
 
-local function location_enter (self)
+local function InfoBarUpdateState()
+	if WorldMapFrame and WorldMapFrame:IsShown() then
+		InfoBar1:SetButtonState("PUSHED", 1)
+	else
+		InfoBar1:SetButtonState("NORMAL")
+	end	
+
+	if TimeManagerFrame and TimeManagerFrame:IsShown() then
+		InfoBar6:SetButtonState("PUSHED", 1)
+	else
+		InfoBar6:SetButtonState("NORMAL")
+	end
+
+	local isVisible = 0
+	for i=1, NUM_CONTAINER_FRAMES, 1 do
+		local frame = _G["ContainerFrame"..i]
+		if ( (frame:GetID() == 0) and frame:IsShown() ) then
+			isVisible = 1
+			break
+		end
+	end
+	if isVisible > 0 then
+		InfoBar5:SetButtonState("PUSHED", 1)
+	else
+		InfoBar5:SetButtonState("NORMAL")
+	end	
+end
+
+local function LocationOnEnter (self)
 	local pvpType, _, factionName = GetZonePVPInfo()
 	local x, y = GetPlayerMapPosition("player")
 	local coords
@@ -99,7 +142,7 @@ local function location_enter (self)
 	GameTooltip:Show()
 end
 
-local function location_update (self, elapsed)
+local function LocationOnUpdate (self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -120,9 +163,10 @@ local function location_update (self, elapsed)
 			self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
 		end
 		if GameTooltip:IsOwned(self) then
-			location_enter(self)
+			LocationOnEnter(self)
 		end
 	end
+
 end
 
 local function mem_enter (self)
@@ -312,8 +356,8 @@ end
 
 local function InitInfoBarScripts ()
 	InfoBar1:RegisterForClicks("AnyUp")
-	InfoBar1:SetScript("OnUpdate", location_update)
-	InfoBar1:SetScript("OnEnter", location_enter)
+	InfoBar1:SetScript("OnUpdate", LocationOnUpdate)
+	InfoBar1:SetScript("OnEnter", LocationOnEnter)
 	InfoBar1:SetScript("OnLeave", function() GameTooltip:Hide() end)
 	InfoBar1:SetScript("OnClick", function() ToggleFrame(WorldMapFrame) end)
 
@@ -344,6 +388,16 @@ local function InitInfoBarScripts ()
 	InfoBar7:SetScript("OnEvent", mail_event)
 	InfoBar7:SetScript("OnEnter", mail_enter)
 	InfoBar7:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
+	WorldMapFrame:HookScript("OnShow", InfoBarUpdateState)
+	WorldMapFrame:HookScript("OnHide", InfoBarUpdateState)
+
+	TimeManagerFrame:HookScript("OnShow", InfoBarUpdateState)
+	TimeManagerFrame:HookScript("OnHide", InfoBarUpdateState)
+
+	hooksecurefunc("ToggleAllBags", InfoBarUpdateState)
+	hooksecurefunc("BagSlotButton_UpdateChecked", InfoBarUpdateState)
+	hooksecurefunc("BackpackButton_UpdateChecked", InfoBarUpdateState)
 end
 
 local function InitInfoBarParameters ()

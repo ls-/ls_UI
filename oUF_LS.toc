@@ -1,7 +1,7 @@
-## Interface: 50001
+## Interface: 50400
 ## Author: lightspark
 ## Title: oUF_LS
-## Notes: WIP, so testing-debugging-brainfucking
+## Notes: PvE-oriented oUF-based UI
 ## RequiredDeps: oUF
 ## X-Category: UnitFrame
 

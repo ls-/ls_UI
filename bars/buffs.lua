@@ -149,24 +149,26 @@ local function SetAuraButtonStyle(btn, index, atype)
 	end
 	if atype == "HARMFUL" or atype == "TEMPENCHANT" then
 		if bBorder then
-			bBorder:SetTexCoord(0, 1, 0, 1)
+			bBorder:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
 			bBorder:SetTexture(cfg.globals.textures.button_normal)
 			if atype == "TEMPENCHANT" then
 				bBorder:SetVertexColor(0.7, 0, 1)
 			end
 			bBorder:SetDrawLayer("BACKGROUND", -6)
 			bBorder:ClearAllPoints()
-			bBorder:SetAllPoints(button)
+			bBorder:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+			bBorder:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 		end
 	else
 		button.NewBorder = button:CreateTexture(nil, "BACKGROUND", nil, -6)
 		bBorder = button.NewBorder
 		bBorder:SetTexture(cfg.globals.textures.button_normal)
+		bBorder:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
 		bBorder:SetVertexColor(unpack(glcolors.btnstate.normal))
 		bBorder:ClearAllPoints()
-		bBorder:SetAllPoints(button)
+		bBorder:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+		bBorder:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 	end
-	if not button.bg then ns.CreateButtonBackdrop(button) end
 	button.styled = true
 end
 

@@ -9,10 +9,10 @@ local function InitUnitFrameParameters(self)
 	self.menu = ns.menu
 	if self.unit ~= "party" then
 		self:SetAttribute("*type2", "menu")
-		self:SetAttribute("initial-width", self.cfg.long and 306 or 152)
-		self:SetWidth(self.cfg.long and 306 or 152)
-		self:SetAttribute("initial-height", 46)
-		self:SetHeight(46)
+		self:SetAttribute("initial-width", self.cfg.long and 278 or 124)
+		self:SetWidth(self.cfg.long and 278 or 124)
+		self:SetAttribute("initial-height", 42)
+		self:SetHeight(42)
 		self:SetAttribute("initial-scale", cfg.globals.scale)
 		self:SetScale(cfg.globals.scale)
 	end
@@ -34,8 +34,8 @@ end
 local function CreateUnitFrameHealth(self)
 	local bar = CreateFrame("StatusBar", nil, self)
 	bar:SetFrameLevel(self:GetFrameLevel())
-	bar:SetSize(self.cfg.long and 250 or 96, self.cfg.power and 19 or 25)
-	bar:SetPoint("CENTER", 0, self.cfg.power and 3 or 0)
+	bar:SetSize(self.cfg.long and 248 or 94, self.cfg.power and 20 or 26)
+	bar:SetPoint("CENTER", 0, self.cfg.power and 2 or 0)
 	bar:SetStatusBarTexture(cfg.globals.textures.statusbar)
 
 	bar.bg = bar:CreateTexture(nil,"BACKGROUND")
@@ -48,7 +48,7 @@ end
 local function CreateUnitFramePower(self)
 	local bar = CreateFrame("StatusBar", nil, self)
 	bar:SetFrameLevel(self:GetFrameLevel())
-	bar:SetSize(self.cfg.long and 250 or 96, 4)
+	bar:SetSize(self.cfg.long and 248 or 94, 4)
 	bar:SetPoint("CENTER", 0, -10)
 	bar:SetStatusBarTexture(cfg.globals.textures.statusbar)
 
@@ -62,7 +62,7 @@ end
 local function CreateUnitFrameBanner(self)
 	self.banner = self.cover:CreateTexture(nil,"ARTWORK", nil, 3)
 	self.banner:SetSize(120, 60)
-	self.banner:SetPoint("BOTTOM", 0, -34)
+	self.banner:SetPoint("BOTTOM", 0, -38)
 	self.banner:Hide()
 
 	hooksecurefunc(self, "Show", function(self)
@@ -88,25 +88,25 @@ end
 
 local function CreateUnitFrameStrings(self)
 	self.Name = ns.CreateFontString(self, cfg.font, 16, "THINOUTLINE")
-	self.Name:SetPoint("BOTTOM", self, "TOP", 0, self.cfg.class and 16 or 0)
-	self.Name:SetPoint("LEFT", self.Health, 0, 0)
-	self.Name:SetPoint("RIGHT", self.Health, 0, 0)
+	self.Name:SetPoint("BOTTOM", self, "TOP", 0, self.cfg.class and 18 or 2)
+	self.Name:SetPoint("LEFT", self.Health, 2, 0)
+	self.Name:SetPoint("RIGHT", self.Health, -2, 0)
 	self:Tag(self.Name, "[custom:name]")
 
 	self.Health.value = ns.CreateFontString(self.cover, cfg.font, 14, "THINOUTLINE")
-	self.Health.value:SetPoint("RIGHT", -28, self.cfg.power and 4 or 1)
+	self.Health.value:SetPoint("RIGHT", -15, self.cfg.power and 3 or 0)
 	if self.cfg.power then
 		self.Power.value = ns.CreateFontString(self.cover, cfg.font, 12, "THINOUTLINE")
-		self.Power.value:SetPoint("LEFT", 30, -10)
+		self.Power.value:SetPoint("LEFT", 17, -10)
 	end
 	if self.cfg.class then
 		local classtext = ns.CreateFontString(self, cfg.font, 14, "THINOUTLINE")
-		classtext:SetPoint("BOTTOM", self, "TOP", 0, 0)
+		classtext:SetPoint("BOTTOM", self, "TOP", 0, 2)
 		self:Tag(classtext, "[difficulty][level]|r [custom:raceclass]")
 	end
 	if self.cfg.threat then
 		local threat = ns.CreateFontString(self.cover, cfg.font, 14, "THINOUTLINE")
-		threat:SetPoint("LEFT", 30, self.cfg.power and 4 or 0)
+		threat:SetPoint("LEFT", 17, self.cfg.power and 3 or 0)
 		self:Tag(threat, "[custom:threat]")
 	end
 end
@@ -129,6 +129,7 @@ local function CreateUnitFrameStyle(self)
 	self.Health.colorHealth = true
 	tinsert(self.mouseovers, self.Health)
 	self.Health.PostUpdate = ns.UpdateHealth
+
 	if self.cfg.power then
 		self.Power = CreateUnitFramePower(self)
 		self.Power.Smooth = true
@@ -136,14 +137,18 @@ local function CreateUnitFrameStyle(self)
 		tinsert(self.mouseovers, self.Power)
 		self.Power.PostUpdate = ns.UpdatePower
 	end
+
 	if unit ~= "boss" and unit ~= "focustarget" and unit ~= "targettarget" then
 		self.HealPrediction = ns.CreateHealPrediction(self)
 		self.HealPrediction.PostUpdate = ns.UpdateHealPrediction
 	end
+
 	if unit == "target" then
 		CreateUnitFrameBanner(self)
 	end
+
 	CreateUnitFrameStrings(self)
+
 	if unit ~= "focustarget" and unit ~= "targettarget" then
 		self.Threat = ns.CreateThreat(self, self.cfg.long and "long" or "short")
 		self.Threat.Override = ns.ThreatUpdateOverride
@@ -152,6 +157,7 @@ local function CreateUnitFrameStyle(self)
 		self.DebuffHighlightAlpha = 1
 		self.DebuffHighlightFilter = true
 	end
+
 	if self.cfg.auras then
 		if self.cfg.auras.buffs then
 			self.Buffs = ns.CreateBuff(self)
@@ -166,19 +172,26 @@ local function CreateUnitFrameStyle(self)
 			self.Debuffs.PostUpdateIcon = ns.UpdateAuraIcon
 		end
 	end
+
 	if self.cfg.castbar then
 		self.Castbar = ns.CreateCastbar(self)
 		self.Castbar.PostCastStart = ns.CastPostUpdate
 		self.Castbar.PostChannelStart = ns.CastPostUpdate
+		self.Castbar.CustomTimeText = ns.CustomTimeText
 	end
+
 	if unit  == "party" then
 		self.Range = { insideAlpha = 1, outsideAlpha = 0.65 }
 	end
+
 	self.RaidIcon = ns.CreateIcon(self.cover, 24, "TOP", 0, 6)
+
 	if unit == "target" or unit == "party" then
 		self.LFDRole = ns.CreateIcon(self, unpack(cfg.units[unit].icons.role))
 		self.Leader = ns.CreateIcon(self, unpack(cfg.units[unit].icons.leader))
+		self.PhaseIcon = ns.CreateIcon(self, unpack(cfg.units[unit].icons.phase))
 	end
+
 	if unit == "target" then
 		self.QuestIcon = ns.CreateIcon(self, unpack(cfg.units[unit].icons.quest))
 		self.PvP = ns.CreateIcon(self, unpack(cfg.units[unit].icons.pvp))
@@ -204,7 +217,7 @@ oUF:Factory(function(self)
 						self:SetAttribute("initial-height", %d)
 						self:SetHeight(%d)
 						self:SetAttribute("initial-scale", %d)
-						self:SetScale(%d)]]):format(152, 152, 46, 46, cfg.globals.scale, cfg.globals.scale),
+						self:SetScale(%d)]]):format(124, 124, 42, 42, cfg.globals.scale, cfg.globals.scale),
 						unpack(config.attributes))
 				else
 					frames[unit] = oUF:Spawn(unit, name)

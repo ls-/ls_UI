@@ -38,6 +38,13 @@ local function hook(frame)
 	if frame.DemonicFury and frame.DemonicFury.Smooth then
 		frame:SmoothBar(frame.DemonicFury)
 	end
+	if frame.BurningEmbers then
+		for i = 1, #frame.BurningEmbers do
+			if frame.BurningEmbers[i].Smooth then
+				frame:SmoothBar(frame.BurningEmbers[i])
+			end
+		end
+	end
 end
 
 
@@ -45,8 +52,8 @@ for i, frame in ipairs(oUF.objects) do hook(frame) end
 oUF:RegisterInitCallback(hook)
 
 
-local f = CreateFrame('Frame')
-f:SetScript('OnUpdate', function()
+local f = CreateFrame("Frame")
+f:SetScript("OnUpdate", function()
 	local limit = 30/GetFramerate()
 	for bar, value in pairs(smoothing) do
 		local cur = bar:GetValue()

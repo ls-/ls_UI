@@ -138,7 +138,9 @@ local function Update(self, event, unit, eventType, flags, amount, dtype)
 		if NoneIsAvailable then return end
 
 		local font, _, outline = string:GetFont()
-		string:SetFont(font, combattext.__fontHeight * (multiplier or 1), outline)
+		if font then
+			string:SetFont(font, combattext.__fontHeight * (multiplier or 1), outline)
+		end
 		string:SetText(text)
 		string:SetTextColor(r, g, b)
 		string.scrollTime = 0
@@ -164,7 +166,6 @@ end
 
 local function Enable(self, unit)
 	local combattext = self.FloatingCombatFeedback
-
 	if not combattext then return end
 
 	combattext.__owner = self
@@ -173,8 +174,7 @@ local function Enable(self, unit)
 	combattext.__fadeout = combattext.__time / 3
 	combattext.__direction = 1
 	combattext.FeedbackToAnimate = {}
-	combattext.__fontHeight = select(2, combattext[1]:GetFont())
-	
+	combattext.__fontHeight = 18
 	if combattext.Mode == "Fountain" then
 		combattext.scrollFunction = FountainScroll
 		combattext.__offset = combattext.Offset or -6

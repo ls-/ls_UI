@@ -16,5 +16,7 @@ if GetLocale() == "enGB" then
 	L["rareelite"] = "rareelite"
 	L["position"] = "Position"
 	L["lockframe"] = "Lock Frame"
+	L["mDead"] = "Dead"
+	L["fDead"] = "Dead"
 end
 

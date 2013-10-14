@@ -6,18 +6,10 @@ cfg.globals = {
 	textures = {
 		statusbar = "Interface\\AddOns\\oUF_LS\\media\\statusbar",
 		button_normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
+		button_normal_bronze = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",
 		button_highlight = "Interface\\AddOns\\oUF_LS\\media\\button\\highlight",
-		button_pushed = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
-		button_checked = "Interface\\AddOns\\oUF_LS\\media\\button\\checked",
+		button_pushed_checked = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
 	},
-	backdrop = {
-		bgFile		= "", 
-		edgeFile	= "Interface\\AddOns\\oUF_LS\\media\\button\\outer_shadow",
-		tile		= true,
-		tileSize	= 32, 
-		edgeSize	= 4, 
-		insets		= { left = 6, right	= 6, top = 6, bottom = 6 },
-	}, 
 	colors = {
 		reaction = {
 			[1] = { 0.9, 0.15, 0.15 },
@@ -71,8 +63,8 @@ cfg.globals = {
 			["sun"]		= { 1, 0.5, 0.25 },
 		},
 		btnstate = {
-			normal	= { 0.37, 0.3, 0.3 },
-			equiped	= { 0.1, 0.5, 0.1 },
+			normal	= { 0.57, 0.52, 0.39 },
+			equiped	= { 0, 0.8, 0 },
 		},
 		infobar	= {
 			black	= { 0.15, 0.15, 0.15 },
@@ -90,16 +82,17 @@ cfg.globals = {
 }
 cfg.units = {
 	player = {
-		pos = { "BOTTOM", "UIParent", "BOTTOM", -306 , 65 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", -304 , 80 },
 		icons = {
-			resting = { 32, "CENTER", 55, 82 },
-			pvp = { 42, "CENTER", -55, 82 },
-			leader = { 32, "TOP", 0, 40, "Interface\\AddOns\\oUF_LS\\media\\icon_leader" },
+			resting = { 32, "RIGHT", -12, -14 },
+			phase = { 32, "RIGHT", -12, 12 },
+			pvp = { 42, "LEFT", 4, 8 },
+			leader = { 32, "LEFT", 10, -20, "Interface\\AddOns\\oUF_LS\\media\\icon_leader" },
 		},
 		castbar = {
 			fontsize = 12,
 			latency = true,
-			pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 265 },
+			pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 278 },
 		},
 		cpower = {
 			totems	= true,
@@ -210,16 +203,17 @@ cfg.units = {
 		},
 	},
 	target = {
-		pos = {"BOTTOM", "UIParent", "BOTTOM", 0, 330 },
+		pos = {"BOTTOM", "UIParent", "BOTTOM", 0, 340 },
 		power	= true,
 		long	= true,
 		threat	= true,
 		class	= true,
 		icons = {
-			pvp = { 42, "BOTTOM", -110, -34 },
-			leader = { 32, "BOTTOM",84, -22, "Interface\\AddOns\\oUF_LS\\media\\icon_leader" },
-			quest = { 32, "TOPLEFT", 7, 34, "Interface\\AddOns\\oUF_LS\\media\\icon_quest" },
-			role = { 20, "BOTTOM",112, -16, "Interface\\AddOns\\oUF_LS\\media\\icon_lfd_role" },
+			pvp = { 42, "BOTTOM", -110, -38 },
+			leader = { 32, "BOTTOM", 92, -26, "Interface\\AddOns\\oUF_LS\\media\\icon_leader" },
+			quest = { 32, "TOPLEFT", -4, 32, "Interface\\AddOns\\oUF_LS\\media\\icon_quest" },
+			role = { 20, "BOTTOM", 120, -24, "Interface\\AddOns\\oUF_LS\\media\\icon_lfd_role" },
+			phase = { 32, "BOTTOM", -84, -28 },
 		},
 		auras = {
 			size = 26,
@@ -253,10 +247,10 @@ cfg.units = {
 		},
 	},
 	targettarget = {
-		pos = { "LEFT", "oUF_LSTarget", "RIGHT", 12, 0 },
+		pos = { "LEFT", "oUF_LSTarget", "RIGHT", 14, 0 },
 	},
 	focus = {
-		pos = { "RIGHT", "oUF_LSTarget", "LEFT", -12, 0 },
+		pos = { "RIGHT", "oUF_LSTarget", "LEFT", -14, 0 },
 		auras = {
 			show = true,
 			size = 26,
@@ -291,7 +285,7 @@ cfg.units = {
 		},
 	},
 	focustarget = {
-		pos = { "RIGHT", "oUF_LSFocus", "LEFT", -12, 0 },
+		pos = { "RIGHT", "oUF_LSFocus", "LEFT", -14, 0 },
 	},
 	party = {
 		power = true,
@@ -300,6 +294,7 @@ cfg.units = {
 		icons = {
 			leader = { 32, "BOTTOM", -70, -16, "Interface\\AddOns\\oUF_LS\\media\\icon_leader" },
 			role = { 20, "BOTTOM", 70, -12, "Interface\\AddOns\\oUF_LS\\media\\icon_lfd_role" },
+			phase = { 32, "TOP", 70, 16 },
 		},
 		auras = {
 			show = true,
@@ -307,7 +302,7 @@ cfg.units = {
 			spacing = 4,
 			showDebuffType = false,
 			debuffs = {
-				pos = { "TOPLEFT", "BOTTOMLEFT", 30, 3 },
+				pos = { "TOPLEFT", "BOTTOMLEFT", 15, -2 },
 				initialAnchor = "TOPLEFT",
 				growthx = "RIGHT",
 				growthy = "DOWN",
@@ -325,28 +320,28 @@ cfg.units = {
 	boss2 = {
 		power = true,
 		threat = true,
-		pos = {"TOPLEFT", "oUF_LSBoss1", "BOTTOMLEFT", 0, -16 },
+		pos = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -300 },
 	},
 	boss3 = {
 		power = true,
 		threat = true,
-		pos = {"TOPLEFT", "oUF_LSBoss1", "BOTTOMLEFT", 0, -16 },
+		pos = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -360 },
 	},
 	boss4 = {
 		power = true,
 		threat = true,
-		pos = {"TOPLEFT", "oUF_LSBoss1", "BOTTOMLEFT", 0, -16 },
+		pos = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -420 },
 	},
 	boss5 = {
 		power = true,
 		threat = true,
-		pos = {"TOPLEFT", "oUF_LSBoss1", "BOTTOMLEFT", 0, -16 },
+		pos = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -480 },
 	},
 }
 cfg.minimap = {
 	iconsize = 32,
 	elemets = {
-		[1] = { "Minimap",						"BOTTOM",	"UIParent",	"BOTTOM",	306,	65	},
+		[1] = { "Minimap",						"BOTTOM",	"UIParent",	"BOTTOM",	304,	80	},
 		[2] = { "MiniMapTracking",				"CENTER",	"Minimap",	"CENTER",	72,		30	},
 		[3] = { "GameTimeFrame",				"CENTER",	"Minimap",	"CENTER",	55,		55	},
 		[4] = { "MiniMapInstanceDifficulty",	"BOTTOM",	"Minimap",	"BOTTOM",	-1,		-38	},
@@ -355,24 +350,24 @@ cfg.minimap = {
 	}, 
 }
 cfg.bottomline = {
-	pos = { "BOTTOM", 0, 0 },
+	pos = { "BOTTOM", 0, 3 },
 	expbar = {
 		colors = {
-			experience = { 0.51, 0.8, 0.7, 1 },
-			rested = { 0.98, 0.6, 0.03, 1 },
-			bg = { 0.25, 0.4, 0.35, 0.3 },
+			experience = { 0.11, 0.75, 0.95, 1 },
+			rested = { 0.1, 0.4, 1, 0.7 },
+			bg = { 0.25, 0.4, 0.35, 0.5 },
 		},
 	},
 }
 cfg.bars = {
 	["bar1"] = { --MAINMENU
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 31 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
 	},
 	["bar2"] = { --BOTTOMLEFT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 80 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 68 },
 	},
 	["bar3"] = { --BOTTOMRIGHT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 114 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 102 },
 	},
 	["bar4"] = { --SIDERIGHT
 		pos = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -6, 502 },
@@ -385,33 +380,33 @@ cfg.bars = {
 		["PALADIN"] = 2,
 		["HUNTER"] = 1,
 		["ROGUE"] = 1,
-		["PRIEST"] = 1,
+		["PRIEST"] = 2,
 		["DEATHKNIGHT"] = 2,
 		["SHAMAN"] = 1,
 		["MAGE"] = 1,
 		["WARLOCK"] = 1,
 		["MONK"] = 2,
 		["DRUID"] = 2,
-		["pet1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 148 },
-		["pet2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 182 },
-		["stance1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 182 },
-		["stance2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 148 },
+		["pet1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 136 },
+		["pet2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 170 },
+		["stance1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 170 },
+		["stance2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 136 },
 	},
 	["bar9"] = { --OVERRIDE/VEHICLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 31 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
 	},
 	["bar10"] = { --PETBATTLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 31 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
 	},
 	bags = {
 		pos1 = { "LEFT", "InfoBar5", "BOTTOM", -44, -20 },
 		pos2 = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -36, 6 },
 	},
 	vehicle = {
-		pos = { "BOTTOM", "oUF_LSPlayer", "BOTTOM", -46, -45 },
+		pos = { "BOTTOM", "oUF_LSPlayer", "BOTTOM", -46, -42 },
 	},
 	extrabar = {
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0 , 190 },
+		pos = { "BOTTOM", "UIParent", "BOTTOM", 0 , 206},
 	},
 }
 cfg.buttons = {
@@ -427,22 +422,22 @@ cfg.buffs = {
 	buffsperrow = 16,
 }
 cfg.infobars = {
-	["sizelong"] = { 192, 54 },
-	["sizeshort"] = { 104, 54 },
-	["filllong"] = { 172, 36 },
-	["fillshort"] = { 84, 36 },
+	["sizelong"] = { 170, 40 },
+	["sizeshort"] = { 90, 40 },
+	["filllong"] = { 158, 30 },
+	["fillshort"] = { 78, 30 },
 	text = {
-		pos1 = { "LEFT", 16, 0 },
-		pos2 = { "RIGHT", -16, 0 },
+		pos1 = { "LEFT", 11, 0 },
+		pos2 = { "RIGHT", -11, 0 },
 	},
 	["ibar1"] = {
 
 		ftype = "long",
-		pos = { "TOPLEFT", "UIParent", "TOPLEFT", 6, -5 },
+		pos = { "TOPLEFT", "UIParent", "TOPLEFT", 6, -6 },
 	},
 	["ibar2"] = {
 		ftype = "short",
-		pos = { "LEFT", "RIGHT", 74 },
+		pos = { "LEFT", "RIGHT", 24 },
 	},
 	["ibar3"] = {
 		ftype = "short",
@@ -454,11 +449,11 @@ cfg.infobars = {
 	},
 	["ibar5"] = {
 		ftype = "short",
-		pos = { "LEFT", "RIGHT", 74 },
+		pos = { "LEFT", "RIGHT", 24 },
 	},
 	["ibar6"] = {
 		ftype = "short",
-		pos = { "TOPRIGHT", "UIParent", "TOPRIGHT", -6, -5 },
+		pos = { "TOPRIGHT", "UIParent", "TOPRIGHT", -6, -6 },
 	},
 	["ibar7"] = {
 		ftype = "short",
