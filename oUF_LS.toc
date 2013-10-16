@@ -29,7 +29,7 @@ units\pet.lua
 units\other.lua
 
 bars\minimap.lua
-bars\infobars.lua
+bars\infobars.xml
 bars\buffs.lua
 bars\actionbars.lua
 bars\micromenu.lua
