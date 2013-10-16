@@ -198,4 +198,5 @@ do
 		_G[f]:UnregisterAllEvents()
 		_G[f]:SetParent(hidenParentFrame)
 	end
+	hooksecurefunc("UpdateMicroButtons", UpdateMicroButtonState)
 end
