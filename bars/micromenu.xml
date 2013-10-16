@@ -1,0 +1,371 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Script file="micromenu.lua"/>
+
+	<Texture name="oUF_LSMicroMenuButton-Background" file="Interface\AddOns\oUF_LS\media\microbutton" virtual="true">
+		<Size>
+			<AbsDimension x="32" y="32"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+	</Texture>
+	<Texture name="oUF_LSMicroMenuButton-Cover" file="Interface\AddOns\oUF_LS\media\microbutton_cover" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
+		<TexCoords left="0.09375000" right="0.90625000" top="0.09375000" bottom="0.90625000"/>
+	</Texture>
+	<Texture name="oUF_LSMicroMenuButton-Highlight" file="Interface\AddOns\oUF_LS\media\microbutton_highlight" virtual="true">
+		<Size>
+			<AbsDimension x="20" y="20"/>
+		</Size>
+		<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+	</Texture>
+	<Texture name="oUF_LSMicroMenuButton-Pushed" file="Interface\AddOns\oUF_LS\media\microbutton_pushed" virtual="true">
+		<Size>
+			<AbsDimension x="20" y="20"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" x="3" y="-3"/>
+			<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+		</Anchors>
+		<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+	</Texture>
+
+	<Button name="oUF_LSMicroMenuButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" inherits="oUF_LSMicroMenuButton-Background"/>
+			</Layer>
+			<Layer level="BACKGROUND" textureSubLevel="1">
+				<Texture name="$parentIcon" parentkey="icon">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<Size>
+						<AbsDimension x="20" y="20"/>
+					</Size>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="0">
+				<Texture name="$parentCover" inherits="oUF_LSMicroMenuButton-Cover">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT", 0, 0)
+				GameTooltip:AddLine(self.tooltipText, 1, 1, 1)
+				GameTooltip:Show()
+				if self:IsEnabled() or self.minLevel or self.disabledTooltip or self.factionGroup then
+					GameTooltip:AddLine(" ")
+					if not self:IsEnabled() then
+						if self.factionGroup == "Neutral" then
+							GameTooltip:AddLine(FEATURE_NOT_AVAILBLE_PANDAREN, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						elseif self.minLevel then
+							GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, self.minLevel), RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						elseif self.disabledTooltip then
+							GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						end
+					end
+				end
+			</OnEnter>
+			<OnEnable>
+				self:SetAlpha(1)
+			</OnEnable>
+			<OnDisable>
+				self:SetAlpha(0.5)
+			</OnDisable>
+			<OnEvent>
+				oUF_MicroButton_Event(self, event)
+			</OnEvent>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+		<HighlightTexture name="$parentNormalTexture" inherits="oUF_LSMicroMenuButton-Highlight">
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+		</HighlightTexture>
+		<PushedTexture name="$parentPushedTexture" inherits="oUF_LSMicroMenuButton-Pushed"/>
+	</Button>
+	
+	<Button name="oUF_CharacterMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="BOTTOM" x="-422" y="6"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\character")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				ToggleCharacter("PaperDollFrame")
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_SpellBookMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_CharacterMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\spellbook")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				if SpellBookFrame:IsShown() then
+					HideUIPanel(SpellBookFrame)
+				else
+					ShowUIPanel(SpellBookFrame)
+				end
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_TalentMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_SpellBookMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("PLAYER_LEVEL_UP")
+				self:RegisterEvent("PLAYER_TALENT_UPDATE")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\talents")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				self.minLevel = 10
+				if IsBlizzCon() then
+					self:Disable()
+					self:SetAlpha(0.5)
+				end
+			</Onload>
+			<OnClick>
+				ToggleTalentFrame()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_AchievementMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_TalentMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("RECEIVED_ACHIEVEMENT_LIST")
+				self:RegisterEvent("ACHIEVEMENT_EARNED")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\achievement")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				self.minLevel = 10
+			</Onload>
+			<OnClick>
+				ToggleAchievementFrame()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_QuestLogMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_AchievementMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\quest")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				ToggleFrame(QuestLogFrame)
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_GuildMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_QuestLogMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("PLAYER_GUILD_UPDATE")
+				self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\guild")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				if IsTrialAccount() then
+					self:Disable()
+					self:SetAlpha(0.5)
+					self.disabledTooltip = ERR_RESTRICTED_ACCOUNT
+				end
+				if IsBlizzCon() then
+					self:Disable()
+					self:SetAlpha(0.5)
+				end
+			</Onload>
+			<OnClick>
+				ToggleGuildFrame()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_PVPMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="BOTTOM" x="262" y="6"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\pvp")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				self.minLevel = 10
+				if IsBlizzCon() then
+					self:Disable()
+					self:SetAlpha(0.5)
+				end
+			</Onload>
+			<OnClick>
+				TogglePVPUI()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_LFDMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_PVPMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("PLAYER_LEVEL_UP")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\lfg")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				self.minLevel = 15
+				if IsBlizzCon() then
+					self:Disable()
+					self:SetAlpha(0.5)
+				end
+			</Onload>
+			<OnClick>
+				PVEFrame_ToggleFrame()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_CompanionsMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_LFDMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\pet")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				TogglePetJournal()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_EJMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_CompanionsMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\ej")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+				self.minLevel = 15
+				if IsBlizzCon() then
+					self:Disable()
+					self:SetAlpha(0.5)
+				end
+			</Onload>
+			<OnClick>
+				ToggleEncounterJournal()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_StoreMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_EJMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self:RegisterEvent("STORE_STATUS_CHANGED")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\store")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				ToggleStoreUI()
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_MainMenuMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_EJMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\mainmenu")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				if not GameMenuFrame:IsShown() then
+					if VideoOptionsFrame:IsShown() then
+						VideoOptionsFrameCancel:Click()
+					elseif AudioOptionsFrame:IsShown() then
+						AudioOptionsFrameCancel:Click()
+					elseif InterfaceOptionsFrame:IsShown() then
+						InterfaceOptionsFrameCancel:Click()
+					end
+					CloseMenus()
+					CloseAllWindows()
+					PlaySound("igMainMenuOpen")
+					ShowUIPanel(GameMenuFrame)
+				else
+					PlaySound("igMainMenuQuit")
+					HideUIPanel(GameMenuFrame)
+					MainMenuMicroButton_SetNormal()
+				end
+				oUF_MicroButton_Event(self)
+			</OnClick>
+		 </Scripts>
+	</Button>
+	<Button name="oUF_HelpMicroButton" inherits="oUF_LSMicroMenuButtonTemplate" frameStrata="LOW" parent="UIParent" enableMouse="true">
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="oUF_MainMenuMicroButton" relativePoint="RIGHT" x="6" y="0"/>
+		</Anchors>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\help")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnClick>
+				ToggleHelpFrame()
+			</OnClick>
+		 </Scripts>
+	</Button>
+</Ui>

@@ -32,4 +32,4 @@ bars\minimap.lua
 bars\infobars.xml
 bars\buffs.lua
 bars\actionbars.lua
-bars\micromenu.lua
+bars\micromenu.xml

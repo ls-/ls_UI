@@ -338,6 +338,7 @@
 			<OnLoad>
 				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 				self:RegisterEvent("BAG_UPDATE")
+				self:RegisterEvent("PLAYER_LOGIN")
 			</OnLoad>
 			<OnClick>
 				oUF_BagsInfoBar_OnClick(self, button)
