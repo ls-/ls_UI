@@ -1,107 +1,12 @@
 ﻿local _, ns = ...
-local cfg = ns.cfg
-local ibar = cfg.infobars
-local glcolors = cfg.globals.colors
 local L = ns.L
-local infobar_module = CreateFrame("Frame")
-local ttl
-local memory = {}
+local infoBarColors = ns.cfg.globals.colors.infobar
 
-local function CreateInfoBars(index)
-	if index ==1 or index == 2 or index == 5 or index == 6 then
-		_G["infobar_module.ibar"..index] = CreateFrame("Button","InfoBar"..index, UIParent)
-	else
-		_G["infobar_module.ibar"..index] = CreateFrame("Frame","InfoBar"..index, UIParent)
-	end
-end
+local PERFORMANCEBAR_MEDIUM_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
+local PERFORMANCEBAR_LOW_LATENCY = PERFORMANCEBAR_LOW_LATENCY
+local NUM_BAG_SLOTS = NUM_BAG_SLOTS
 
-local function SetInfoBarPosition(index)
-	local ftype = ibar["ibar"..index].ftype
-	_G["InfoBar"..index]:SetSize(unpack(ibar["size"..ftype]))
-	if index == 1 or index == 6 then
-		_G["InfoBar"..index]:SetPoint(unpack(ibar["ibar"..index].pos))
-	else
-		_G["InfoBar"..index]:SetPoint(
-		ibar["ibar"..index].pos[1],
-		_G["InfoBar"..index-1],
-		ibar["ibar"..index].pos[2],
-		ibar["ibar"..index].pos[3], 0)
-	end
-
-	_G["InfoBar"..index]:SetScale(cfg.globals.scale)
-	
-	if index == 2 or index == 3 or index == 4 or index == 5 then
-		RegisterStateDriver(_G["InfoBar"..index], "visibility", "[petbattle] hide; show")
-	end
-end
-
-local function SetInfoBarStyle(index)
-	local ftype = ibar["ibar"..index].ftype
-	_G["InfoBar"..index].bg = _G["InfoBar"..index]:CreateTexture(nil, "ARTWORK", nil, -7)
-	_G["InfoBar"..index].bg:SetPoint("CENTER", 0, 0)
-	_G["InfoBar"..index].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype)
-
-	_G["InfoBar"..index].fill = _G["InfoBar"..index]:CreateTexture(nil, "ARTWORK", nil, -6)
-	_G["InfoBar"..index].fill:SetPoint("CENTER", 0, 0)
-	_G["InfoBar"..index].fill:SetSize(unpack(ibar["fill"..ftype]))
-	_G["InfoBar"..index].fill:SetTexture(cfg.globals.textures.statusbar)
-	_G["InfoBar"..index].fill:SetVertexColor(unpack(glcolors.infobar.black))
-
-	_G["InfoBar"..index].cover = _G["InfoBar"..index]:CreateTexture(nil, "ARTWORK", nil, -5)
-	_G["InfoBar"..index].cover:SetPoint("CENTER", 0, 0)
-	_G["InfoBar"..index].cover:SetTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_cover")
-
-	_G["InfoBar"..index].text = ns.CreateFontString(_G["InfoBar"..index], cfg.font, 14, "THINOUTLINE")
-	_G["InfoBar"..index].text:SetPoint(unpack(ibar.text.pos1))
-	_G["InfoBar"..index].text:SetPoint(unpack(ibar.text.pos2))
-
-	if _G["InfoBar"..index]:IsObjectType("Button") then
-		_G["InfoBar"..index]:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_highlight")
-		if ftype == "long" then
-			_G["InfoBar"..index]:GetHighlightTexture():SetTexCoord(44 / 256, 212 / 256, 13 / 64, 51 / 64)
-		else
-			_G["InfoBar"..index]:GetHighlightTexture():SetTexCoord(20 / 128, 108 / 128, 13 / 64, 51 / 64)
-		end
-		_G["InfoBar"..index]:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\infobar_"..ftype.."_pushed")
-		if ftype == "long" then
-			_G["InfoBar"..index]:GetPushedTexture():SetTexCoord(44 / 256, 212 / 256, 13 / 64, 51 / 64)
-		else
-			_G["InfoBar"..index]:GetPushedTexture():SetTexCoord(20 / 128, 108 / 128, 13 / 64, 51 / 64)
-		end
-	end
-
-	_G["InfoBar"..index].updateInterval = 0
-end
-
-local function InfoBarUpdateState()
-	if WorldMapFrame and WorldMapFrame:IsShown() then
-		InfoBar1:SetButtonState("PUSHED", 1)
-	else
-		InfoBar1:SetButtonState("NORMAL")
-	end	
-
-	if TimeManagerFrame and TimeManagerFrame:IsShown() then
-		InfoBar6:SetButtonState("PUSHED", 1)
-	else
-		InfoBar6:SetButtonState("NORMAL")
-	end
-
-	local isVisible = 0
-	for i=1, NUM_CONTAINER_FRAMES, 1 do
-		local frame = _G["ContainerFrame"..i]
-		if ( (frame:GetID() == 0) and frame:IsShown() ) then
-			isVisible = 1
-			break
-		end
-	end
-	if isVisible > 0 then
-		InfoBar5:SetButtonState("PUSHED", 1)
-	else
-		InfoBar5:SetButtonState("NORMAL")
-	end	
-end
-
-local function LocationOnEnter (self)
+function oUF_LocationInfoBar_OnEnter(self)
 	local pvpType, _, factionName = GetZonePVPInfo()
 	local x, y = GetPlayerMapPosition("player")
 	local coords
@@ -113,28 +18,28 @@ local function LocationOnEnter (self)
 	if x and y and x ~= 0 and y ~= 0 then
 		coords = format("%.1f / %.1f", x * 100, y * 100)
 	end
-  	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+  	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(zoneName, 1, 1, 1)
 	if pvpType == "sanctuary" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.blue))
-		GameTooltip:AddLine(SANCTUARY_TERRITORY, unpack(glcolors.infobar.blue))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.blue))
+		GameTooltip:AddLine(SANCTUARY_TERRITORY, unpack(infoBarColors.blue))
 	elseif pvpType == "arena" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.red))
-		GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, unpack(glcolors.infobar.red))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.red))
+		GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, unpack(infoBarColors.red))
 	elseif pvpType == "friendly" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.green))
-		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(glcolors.infobar.green))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.green))
+		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(infoBarColors.green))
 	elseif pvpType == "hostile" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.red))
-		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(glcolors.infobar.red))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.red))
+		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(infoBarColors.red))
 	elseif pvpType == "contested" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.yellow))
-		GameTooltip:AddLine(CONTESTED_TERRITORY, unpack(glcolors.infobar.yellow))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.yellow))
+		GameTooltip:AddLine(CONTESTED_TERRITORY, unpack(infoBarColors.yellow))
 	elseif pvpType == "combat" then
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.red))
-		GameTooltip:AddLine(COMBAT_ZONE, unpack(glcolors.infobar.red))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.red))
+		GameTooltip:AddLine(COMBAT_ZONE, unpack(infoBarColors.red))
 	else
-		GameTooltip:AddLine(subzoneName, unpack(glcolors.infobar.yellow))
+		GameTooltip:AddLine(subzoneName, unpack(infoBarColors.yellow))
 	end
 	if coords then
 		GameTooltip:AddLine(coords)
@@ -142,7 +47,7 @@ local function LocationOnEnter (self)
 	GameTooltip:Show()
 end
 
-local function LocationOnUpdate (self, elapsed)
+function oUF_LocationInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -150,136 +55,136 @@ local function LocationOnUpdate (self, elapsed)
 		self.text:SetText(GetMinimapZoneText())
 		local pvpType = GetZonePVPInfo()
 		if pvpType == "sanctuary" then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.blue))
+			self.filling:SetVertexColor(unpack(infoBarColors.blue))
 		elseif pvpType == "arena" then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.red))
+			self.filling:SetVertexColor(unpack(infoBarColors.red))
 		elseif pvpType == "friendly" then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.green))
+			self.filling:SetVertexColor(unpack(infoBarColors.green))
 		elseif pvpType == "hostile" then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.red))
+			self.filling:SetVertexColor(unpack(infoBarColors.red))
 		elseif pvpType == "contested" then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
+			self.filling:SetVertexColor(unpack(infoBarColors.yellow))
 		else
-			self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
+			self.filling:SetVertexColor(unpack(infoBarColors.yellow))
 		end
 		if GameTooltip:IsOwned(self) then
-			LocationOnEnter(self)
+			oUF_LocationInfoBar_OnEnter(self)
 		end
 	end
-
 end
 
-local function mem_enter (self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+function oUF_MemoryInfoBar_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(L["Memory"]..":")
-	sort(memory, function(a, b)
+	sort(self.activeAddons, function(a, b)
 		if a and b then
 			return a[2] > b[2]
 		end
 	end)
-	for i = 1, #memory do
-		if memory[i][3] then 
-			local r = memory[i][2] / ttl * 3
+	for i = 1, #self.activeAddons do
+		if self.activeAddons[i][3] then 
+			local r = self.activeAddons[i][2] / self.usedMemory * 3
 			local g = 2 - r
-			GameTooltip:AddDoubleLine(memory[i][1], format("%.3f "..L["MB"], memory[i][2] / 1024), 1, 1, 1, r, g, 0)
+			GameTooltip:AddDoubleLine(self.activeAddons[i][1], format("%.3f "..L["MB"], 
+				self.activeAddons[i][2] / 1024), 1, 1, 1, r, g, 0)
 		end
 	end
 	GameTooltip:Show()
 end
 
-local function mem_update (self, elapsed)
+function oUF_MemoryInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
 		self.updateInterval = 10
-		ttl = 0
+		self.usedMemory = 0
 		UpdateAddOnMemoryUsage()
 		for i = 1, GetNumAddOns() do
-			if not memory[i] then memory[i] = {} end
-			memory[i][1] = select(2, GetAddOnInfo(i))
-			memory[i][2] = GetAddOnMemoryUsage(i)
-			memory[i][3] = IsAddOnLoaded(i)
-			ttl = ttl + memory[i][2]
+			self.activeAddons[i] = self.activeAddons[i] or {}
+			self.activeAddons[i][1] = select(2, GetAddOnInfo(i))
+			self.activeAddons[i][2] = GetAddOnMemoryUsage(i)
+			self.activeAddons[i][3] = IsAddOnLoaded(i)
+			self.usedMemory = self.usedMemory + self.activeAddons[i][2]
 		end
-		self.text:SetText(format("%.1f "..L["MB"], ttl / 1024))
+		self.text:SetText(format("%.1f "..L["MB"], self.usedMemory / 1024))
 		if GameTooltip:IsOwned(self) then
-			mem_enter(self)
+			oUF_MemoryInfoBar_OnEnter(self)
 		end
 	end
 end
 
-local function mem_click (self)
+function oUF_MemoryInfoBar_OnClick(self)
 	UpdateAddOnMemoryUsage()
 	collectgarbage()
 	self.updateInterval = 2
 end
 
-local function fps_update (self, elapsed)
+function oUF_FPSInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
 		self.updateInterval = 0.2
-		fps = GetFramerate()
+		local fps = GetFramerate()
 		if fps > 35 then 
-			self.fill:SetVertexColor(unpack(glcolors.infobar.green))
+			self.filling:SetVertexColor(unpack(infoBarColors.green))
 		elseif fps > 20 then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
+			self.filling:SetVertexColor(unpack(infoBarColors.yellow))
 		else
-			self.fill:SetVertexColor(unpack(glcolors.infobar.red))
+			self.filling:SetVertexColor(unpack(infoBarColors.red))
 		end
 		self.text:SetText(floor(fps).." fps")
 	end
 end
 
-local function ms_enter (self)
-	bandwidthIn, bandwidthOut, latencyHome, latencyWorld = GetNetStats()
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+function oUF_LatencyInfoBar_OnEnter(self)
+	_, _, latencyHome, latencyWorld = GetNetStats()
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(L["Latency"]..":")
 	GameTooltip:AddLine(format(L["Home"]..": %d "..L["ms"], latencyHome), 1, 1, 1)
 	GameTooltip:AddLine(format(L["World"]..": %d "..L["ms"], latencyWorld), 1, 1, 1)
 	GameTooltip:Show()
 end
 
-local function ms_update (self, elapsed)
+function oUF_LatencyInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
 		self.updateInterval = 15
-		latency = select(4, GetNetStats())
-		if latency > 600 then 
-			self.fill:SetVertexColor(unpack(glcolors.infobar.red))
-		elseif latency > 300 then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
+		local latency = select(4, GetNetStats())
+		if latency > PERFORMANCEBAR_MEDIUM_LATENCY then 
+			self.filling:SetVertexColor(unpack(infoBarColors.red))
+		elseif latency > PERFORMANCEBAR_LOW_LATENCY then
+			self.filling:SetVertexColor(unpack(infoBarColors.yellow))
 		else
-			self.fill:SetVertexColor(unpack(glcolors.infobar.green))
+			self.filling:SetVertexColor(unpack(infoBarColors.green))
 		end
 		self.text:SetText(latency.." "..L["ms"])
 		if GameTooltip:IsOwned(self) then
-			ms_enter(self)
+			oUF_LatencyInfoBar_OnEnter(self)
 		end
 	end
 end
 
-local function bag_event (self, ...) 
-	local free, total, used = 0, 0
+function oUF_BagsInfoBar_OnEvent(self) 
+	local free, total, used = 0, 0, 0
 	for i = 0, NUM_BAG_SLOTS do
-		slots, BagType = GetContainerNumFreeSlots(i)
-		if BagType == 0 then
+		slots, bagType = GetContainerNumFreeSlots(i)
+		if bagType == 0 then
 			free, total = free + slots, total + GetContainerNumSlots(i)
 		end
 	end
 	used = total - free
 	self.text:SetText(used.."/"..total)
 	if floor((used / total) * 100) > 85 then
-		self.fill:SetVertexColor(unpack(glcolors.infobar.red))
+		self.filling:SetVertexColor(unpack(infoBarColors.red))
 	elseif floor((used / total) * 100) > 50 then
-		self.fill:SetVertexColor(unpack(glcolors.infobar.yellow))
+		self.filling:SetVertexColor(unpack(infoBarColors.yellow))
 	else
-		self.fill:SetVertexColor(unpack(glcolors.infobar.green))
+		self.filling:SetVertexColor(unpack(infoBarColors.green))
 	end
 end
 
-local function bag_click (self, button, event)
+function oUF_BagsInfoBar_OnClick(self, button)
 	if button == "RightButton" then
 		if new_BagFrame:IsShown() then
 			new_BagFrame:Hide()
@@ -291,42 +196,41 @@ local function bag_click (self, button, event)
 	end
 end
 
-local function time_enter (self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+function oUF_ClockInfoBar_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 		GameTooltip:AddLine(TIMEMANAGER_TOOLTIP_TITLE, 1, 1, 1)
-	-- realm time
-	GameTooltip:AddDoubleLine(
-		TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true),
-		glcolors.infobar.yellow[1], glcolors.infobar.yellow[2], glcolors.infobar.yellow[3], 1, 1, 1)
-	-- local time
-	GameTooltip:AddDoubleLine(
-		TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true),
-		glcolors.infobar.yellow[1], glcolors.infobar.yellow[2], glcolors.infobar.yellow[3], 1, 1, 1)
+	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true),
+		infoBarColors.yellow[1], infoBarColors.yellow[2], infoBarColors.yellow[3], 1, 1, 1)
+	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true),
+		infoBarColors.yellow[1], infoBarColors.yellow[2], infoBarColors.yellow[3], 1, 1, 1)
 	GameTooltip:Show()
 end
 
-local function time_update(self, elapsed)
+function oUF_ClockInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
-		self.updateInterval = 0.2
-		self.text:SetText(GameTime_GetTime(false))
+		self.updateInterval = 1
+		self.text:SetText(GameTime_GetTime(true))
 		if GameTooltip:IsOwned(self) then
-			time_enter(self)
+			oUF_ClockInfoBar_OnEnter(self)
 		end
 		if TimeManagerClockButton.alarmFiring then
-			self.fill:SetVertexColor(unpack(glcolors.infobar.red))
+			self.filling:SetVertexColor(unpack(infoBarColors.red))
 		else
-			self.fill:SetVertexColor(unpack(glcolors.infobar.black))
+			self.filling:SetVertexColor(unpack(infoBarColors.black))
 		end
 	end
 end
 
-local function mail_enter (self)
+function oUF_MailInfoBar_OnLoad(self)
+	self.text:SetText(L["Mail"])
+end
+
+function oUF_MailInfoBar_OnEnter(self)
 	if HasNewMail() then
 		local sender1, sender2, sender3 = GetLatestThreeSenders()
-		local toolText = ""
-		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -5)
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 		if sender1 or sender2 or sender3 then
 			GameTooltip:AddLine(HAVE_MAIL_FROM, 1, 1, 1)
 		else
@@ -345,74 +249,10 @@ local function mail_enter (self)
 	end
 end
 
-local function mail_event (self, ...)
-	self.text:SetText(L["Mail"])
+function oUF_MailInfoBar_OnEvent(self)
 	if HasNewMail() then
-		self.fill:SetVertexColor(unpack(glcolors.infobar.green))
+		self.filling:SetVertexColor(unpack(infoBarColors.green))
 	else
-		self.fill:SetVertexColor(unpack(glcolors.infobar.black))
+		self.filling:SetVertexColor(unpack(infoBarColors.black))
 	end
 end
-
-local function InitInfoBarScripts ()
-	InfoBar1:RegisterForClicks("AnyUp")
-	InfoBar1:SetScript("OnUpdate", LocationOnUpdate)
-	InfoBar1:SetScript("OnEnter", LocationOnEnter)
-	InfoBar1:SetScript("OnLeave", function() GameTooltip:Hide() end)
-	InfoBar1:SetScript("OnClick", function() ToggleFrame(WorldMapFrame) end)
-
-	InfoBar2:RegisterForClicks("AnyUp")
-	InfoBar2:SetScript("OnUpdate", mem_update)
-	InfoBar2:SetScript("OnEnter", mem_enter)
-	InfoBar2:SetScript("OnLeave", function() GameTooltip:Hide() end)
-	InfoBar2:SetScript("OnClick", mem_click)
-
-	InfoBar3:SetScript("OnUpdate", fps_update)
-
-	InfoBar4:SetScript("OnUpdate", ms_update)
-	InfoBar4:SetScript("OnEnter", ms_enter)
-	InfoBar4:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
-	InfoBar5:RegisterForClicks("AnyUp")
-	InfoBar5:RegisterEvent("BAG_UPDATE")
-	InfoBar5:RegisterEvent("PLAYER_ENTERING_WORLD")
-	InfoBar5:SetScript("OnEvent", bag_event)
-	InfoBar5:SetScript("OnClick", bag_click)
-
-	InfoBar6:SetScript("OnUpdate", time_update)
-	InfoBar6:SetScript("OnEnter", time_enter)
-	InfoBar6:SetScript("OnLeave", function() GameTooltip:Hide() end)
-	InfoBar6:SetScript("OnClick", function() TimeManager_Toggle() end)
-
-	InfoBar7:RegisterEvent("UPDATE_PENDING_MAIL")
-	InfoBar7:SetScript("OnEvent", mail_event)
-	InfoBar7:SetScript("OnEnter", mail_enter)
-	InfoBar7:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
-	WorldMapFrame:HookScript("OnShow", InfoBarUpdateState)
-	WorldMapFrame:HookScript("OnHide", InfoBarUpdateState)
-
-	TimeManagerFrame:HookScript("OnShow", InfoBarUpdateState)
-	TimeManagerFrame:HookScript("OnHide", InfoBarUpdateState)
-
-	hooksecurefunc("ToggleAllBags", InfoBarUpdateState)
-	hooksecurefunc("BagSlotButton_UpdateChecked", InfoBarUpdateState)
-	hooksecurefunc("BackpackButton_UpdateChecked", InfoBarUpdateState)
-end
-
-local function InitInfoBarParameters ()
-	for i = 1, 7 do
-		CreateInfoBars(i)
-		SetInfoBarPosition(i)
-		SetInfoBarStyle(i)
-	end
-	InitInfoBarScripts()
-end
-
-infobar_module:SetScript("OnEvent", function(self, event)
-	if event == "PLAYER_LOGIN" then
-		InitInfoBarParameters()
-	end
-end)
-
-infobar_module:RegisterEvent("PLAYER_LOGIN")
