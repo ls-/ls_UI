@@ -30,6 +30,6 @@ units\other.lua
 
 bars\minimap.lua
 bars\infobars.xml
-bars\buffs.lua
+bars\buffs.xml
 bars\actionbars.lua
 bars\micromenu.xml

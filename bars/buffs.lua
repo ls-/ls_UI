@@ -1,50 +1,24 @@
 ﻿local _, ns = ...
+local L = ns.L
 local cfg = ns.cfg
-local buffcfg = cfg.buffs
-local glcolors = cfg.globals.colors
-local buff_module = CreateFrame("Frame")
+local buffConfig = cfg.buffs
+local gColors = cfg.globals.colors
 
 local BuffFrame = _G["BuffFrame"]
-local TemporaryEnchantFrame = _G["TemporaryEnchantFrame"]
 local ConsolidatedBuffs = _G["ConsolidatedBuffs"]
 
---buff/debuff
-local frame1 = CreateFrame("Frame", "new_BuffFrame1", UIParent)
---tempench
-local frame2 = CreateFrame("Frame", "new_BuffFrame2", UIParent)
+local BUFF_MAX_DISPLAY = BUFF_MAX_DISPLAY
+local DEBUFF_MAX_DISPLAY = DEBUFF_MAX_DISPLAY
+local NUM_TEMP_ENCHANT_FRAMES = NUM_TEMP_ENCHANT_FRAMES
 
 local function SetDurationText(duration, arg1, arg2)
 	duration:SetText(format(gsub(arg1, "[ .]", ""), arg2))
 end
 
-local function SetBuffFramePosition()
-	BuffFrame:SetParent(_G["new_BuffFrame1"])
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint("TOPRIGHT", 0, 0)
-end
-
-local function SetTemporaryEnchantFramePosition()
-	TemporaryEnchantFrame:SetParent(_G["new_BuffFrame2"])
-	TemporaryEnchantFrame:ClearAllPoints()
-	TemporaryEnchantFrame:SetPoint("TOPRIGHT", 0, 0)
-end
-
-local function SetAuraFramePosition(f)
-	_G["new_BuffFrame"..f]:SetSize(buffcfg.size, buffcfg.size)
-	_G["new_BuffFrame"..f]:SetPoint(unpack(buffcfg["pos"..f]))
- 	_G["new_BuffFrame"..f]:SetScale(cfg.globals.scale)
-	if f == 1 then 
-		SetBuffFramePosition()
-	elseif f == 2 then
-		SetTemporaryEnchantFramePosition()
-	end
-end
-
 local function UpdateBuffAnchors()
-	local numBuffs = 0
+	local numBuffs, slack = 0, 0
 	local button, previous, above
-	local slack = 0
-	
+	local BUFF_ACTUAL_DISPLAY = BUFF_ACTUAL_DISPLAY
 	if IsInGroup() and GetCVarBool("consolidateBuffs") then
 		slack = 1
 	end
@@ -59,12 +33,12 @@ local function UpdateBuffAnchors()
 				button.parent = BuffFrame
 			end
 			button:ClearAllPoints()
-			button:SetSize(buffcfg.size, buffcfg.size)
-			if index > 1 and (mod(index, buffcfg.buffsperrow) == 1) then
-				if index == buffcfg.buffsperrow + 1 then
-					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -buffcfg.rowspacing);
+			button:SetSize(30, 30)
+			if index > 1 and (mod(index, 16) == 1) then
+				if index == 17 then
+					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -4)
 				else
-					button:SetPoint("TOP", above, "BOTTOM", 0, -buffcfg.rowspacing)
+					button:SetPoint("TOP", above, "BOTTOM", 0, -4)
 				end
 				above = button
 			elseif index == 1 then
@@ -72,9 +46,9 @@ local function UpdateBuffAnchors()
 				above = button
 			else
 				if numBuffs == 1 then
-					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -buffcfg.colspacing, 0);
+					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -4, 0)
 				else
-					button:SetPoint("RIGHT", previous, "LEFT", -buffcfg.colspacing, 0)
+					button:SetPoint("RIGHT", previous, "LEFT", -4, 0)
 				end
 			end
 			previous = button
@@ -83,34 +57,29 @@ local function UpdateBuffAnchors()
 end
 
 local function UpdateDebuffAnchors(buttonName, index)
-	local rows = ceil(BUFF_ACTUAL_DISPLAY / buffcfg.buffsperrow)
+	local BUFF_ACTUAL_DISPLAY = BUFF_ACTUAL_DISPLAY
+	local rows = ceil(BUFF_ACTUAL_DISPLAY / 16)
 	local button = _G[buttonName..index]
 	button:ClearAllPoints()
-	button:SetSize(buffcfg.size, buffcfg.size)
-	if index > 1 and mod(index, buffcfg.buffsperrow) == 1 then
-		button:SetPoint("TOP", _G[buttonName..(index - buffcfg.buffsperrow)], "BOTTOM", 0, -buffcfg.rowspacing)
-	elseif index == 1 then
-		if rows < 3 then
-			button:SetPoint("TOPRIGHT", BuffFrame, "TOPRIGHT", 0, -2 * (buffcfg.rowspacing + buffcfg.size))
-		else
-			button:SetPoint("TOPRIGHT", BuffFrame, "TOPRIGHT", 0, -rows * (buffcfg.rowspacing + buffcfg.size))
-		end
+	button:SetSize(30, 30)
+	if index == 1 then
+		button:SetPoint("TOPRIGHT", oUF_LSDebuffHeader, "TOPRIGHT", 0, 0)
 	else
-		button:SetPoint("RIGHT", _G[buttonName..(index-1)], "LEFT", -buffcfg.colspacing, 0)
+		button:SetPoint("RIGHT", _G[buttonName..(index - 1)], "LEFT", -4, 0)
 	end  
 end
 
-local function UpdateTempEnchantAnchors()
+function UpdateTemporaryEnchantAnchors(self)
 	local previous
 	for i = 1, NUM_TEMP_ENCHANT_FRAMES do
 		local button = _G["TempEnchant"..i]
 		if button then
 			button:ClearAllPoints()
-			button:SetSize(buffcfg.size, buffcfg.size)
+			button:SetSize(30, 30)
 			if i == 1 then
-				button:SetPoint("TOPRIGHT", TemporaryEnchantFrame, "TOPRIGHT", 0, 0)
+				button:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 			else
-				button:SetPoint("RIGHT", previous, "LEFT", -buffcfg.colspacing, 0)
+				button:SetPoint("RIGHT", previous, "LEFT", -4, 0)
 			end
 			previous = button
 		end
@@ -132,7 +101,7 @@ local function SetAuraButtonStyle(btn, index, atype)
 		else
 			bIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 		end
-		bIcon:SetDrawLayer("BACKGROUND", -7)
+		bIcon:SetDrawLayer("BACKGROUND", 0)
 		bIcon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
 		bIcon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
 	end
@@ -154,17 +123,17 @@ local function SetAuraButtonStyle(btn, index, atype)
 			if atype == "TEMPENCHANT" then
 				bBorder:SetVertexColor(0.7, 0, 1)
 			end
-			bBorder:SetDrawLayer("BACKGROUND", -6)
+			bBorder:SetDrawLayer("BACKGROUND", 1)
 			bBorder:ClearAllPoints()
 			bBorder:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
 			bBorder:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
 		end
 	else
-		button.NewBorder = button:CreateTexture(nil, "BACKGROUND", nil, -6)
+		button.NewBorder = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 		bBorder = button.NewBorder
 		bBorder:SetTexture(cfg.globals.textures.button_normal)
 		bBorder:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
-		bBorder:SetVertexColor(unpack(glcolors.btnstate.normal))
+		bBorder:SetVertexColor(unpack(cfg.globals.colors.btnstate.normal))
 		bBorder:ClearAllPoints()
 		bBorder:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
 		bBorder:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
@@ -172,39 +141,13 @@ local function SetAuraButtonStyle(btn, index, atype)
 	button.styled = true
 end
 
-local function InitAuraFrameParameters()
-	for i = 1, 2 do
-		SetAuraFramePosition(i)
-	end
+do
 	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
 	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
 	hooksecurefunc("AuraButton_Update", SetAuraButtonStyle)
 	for i = 1, NUM_TEMP_ENCHANT_FRAMES do
 		SetAuraButtonStyle("TempEnchant", i, "TEMPENCHANT")
 	end
-	SetAuraButtonStyle("ConsolidatedBuffs", "", "CONSOLIDATED") -- well, i just don't want to write a clone-function
+	SetAuraButtonStyle("ConsolidatedBuffs", "", "CONSOLIDATED")
 	ConsolidatedBuffsTooltip:SetScale(1)
-
-	-- _G["new_BuffFrame1"].tex = _G["new_BuffFrame1"]:CreateTexture(nil, "BACKGROUND",nil,-8)
-	-- _G["new_BuffFrame1"].tex:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -60)
-	-- _G["new_BuffFrame1"].tex:SetTexture(0.6, 1, 0, 0.4)
-	-- _G["new_BuffFrame1"].tex:SetWidth(buffcfg.buffsperrow * buffcfg.size + (buffcfg.buffsperrow - 1) * buffcfg.colspacing)
-	-- _G["new_BuffFrame1"].tex:SetHeight(3 * buffcfg.size + 2 * buffcfg.rowspacing)
-	-- _G["new_BuffFrame2"].tex = _G["new_BuffFrame1"]:CreateTexture(nil, "BACKGROUND",nil,-8)
-	-- _G["new_BuffFrame2"].tex:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -180)
-	-- _G["new_BuffFrame2"].tex:SetTexture(1, 0.6, 0, 0.4)
-	-- _G["new_BuffFrame2"].tex:SetWidth(3 * buffcfg.size + 2 * buffcfg.colspacing)
-	-- _G["new_BuffFrame2"].tex:SetHeight(1 * buffcfg.size + 0 * buffcfg.rowspacing)
-
-	hooksecurefunc("ConsolidatedBuffs_OnShow", SetTemporaryEnchantFramePosition)
-	hooksecurefunc("ConsolidatedBuffs_OnHide", SetTemporaryEnchantFramePosition)
-	UpdateTempEnchantAnchors()
 end
-
-buff_module:SetScript("OnEvent", function(self, event)
-	if event == "PLAYER_LOGIN" then
-		InitAuraFrameParameters()
-	end
-end)
-
-buff_module:RegisterEvent("PLAYER_LOGIN")
