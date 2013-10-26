@@ -330,25 +330,18 @@ do
 	for _, j in pairs(texturesToHide) do
 		OverrideActionBar[j]:SetAlpha(0)
 	end
-
-	local flyoutButtonCount = 0
-	for i = 1, GetNumFlyouts() do
-		local _, _, numSlots, isKnown = GetFlyoutInfo(GetFlyoutID(i))
-		if isKnown == true then
-				flyoutButtonCount = numSlots
-			break
-		end
-	end
-	local function FlyoutButtonOnShowHook()
-		for i = 1, flyoutButtonCount do
+	local function FlyoutButtonToggleHook(...)
+		local self, flyoutID, _, direction = ...
+		if not self:IsShown() then return end
+		local _, _, numSlots = GetFlyoutInfo(flyoutID)
+		for i = 1, numSlots do
 			SetDefaultButtonStyle("SpellFlyoutButton", i)
 		end
 	end
-	SpellFlyout:HookScript("OnShow", FlyoutButtonOnShowHook)
+	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
 	SpellFlyoutHorizontalBackground:SetTexture(nil)
 	SpellFlyoutVerticalBackground:SetTexture(nil)
 	SpellFlyoutBackgroundEnd:SetTexture(nil)
-
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 	hooksecurefunc("ActionButton_OnUpdate", bIconUpdate)
 end
