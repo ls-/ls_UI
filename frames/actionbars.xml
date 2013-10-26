@@ -1,0 +1,258 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+	<Script file="actionbars.lua"/>
+
+	<Frame name="oUF_LSActionBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="404" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="18"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, "MainMenuBarArtFrame", "ActionButton", 12)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSMultiBarBottomLeftBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="404" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="66"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, "MultiBarBottomLeft", "MultiBarBottomLeftButton", 12)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSMultiBarBottomRightBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="404" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="100"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, "MultiBarBottomRight", "MultiBarBottomRightButton", 12)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSMultiBarRightBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="30" y="404"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" x="-40" y="300"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>d
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, false, "MultiBarLeft", "MultiBarLeftButton", 12)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSMultiBarLeftBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="30" y="404"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" x="-6" y="300"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, false, "MultiBarRight", "MultiBarRightButton", 12)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+ 	<Frame name="oUF_LSPetActionBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="336" y="30"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetStancePossessPetBarPosition(self)
+				SetButtonPosition(self, true, "PetActionBarFrame", "PetActionButton", 10)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSStancePossessBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="336" y="30"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true" parentKey="test">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetStancePossessPetBarPosition(self)
+				SetButtonPosition(self, true, "StanceBarFrame", "StanceButton", 10)
+				SetButtonPosition(self, true, "PossessBarFrame", "PossessButton", 2)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSOverrideActionBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="404" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="18"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true" parentKey="test">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, "OverrideActionBar", "OverrideActionBarButton", 6)
+				RegisterStateDriver(self, "visibility", "[overridebar][vehicleui] show; hide")
+				RegisterStateDriver(OverrideActionBar, "visibility", "[overridebar][vehicleui] show; hide")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSVehicleLeaveButton" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="30" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" x="0" y="0"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true" parentKey="test">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				MainMenuBarVehicleLeaveButton:SetSize(30, 30)
+		 		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+		 		MainMenuBarVehicleLeaveButton:SetParent(self)
+				MainMenuBarVehicleLeaveButton:ClearAllPoints()
+		 		MainMenuBarVehicleLeaveButton:SetAllPoints(self)
+		 		SetLeaveButtonStyle(MainMenuBarVehicleLeaveButton)
+				RegisterStateDriver(self, "visibility", "[overridebar][vehicleui] show; hide")
+				RegisterStateDriver(MainMenuBarVehicleLeaveButton, "visibility", "[overridebar][vehicleui] show; hide")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSExtraActionBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="52" y="52"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="206"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true" parentKey="test">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, "ExtraActionBarFrame", "ExtraActionButton", 1, 52)
+				RegisterStateDriver(self, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSBagFrame" parent="oUF_BagsInfoBar" frameStrata="LOW" inherits="SecureHandlerStateTemplate" hidden="true">
+		<Size>
+			<AbsDimension x="144" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativepoint="BOTTOM" x="0" y="-6"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true" parentKey="test">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				SetButtonPosition(self, true, nil, {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot", "MainMenuBarBackpackButton"}, 5)
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="oUF_LSPetBattleBar" parent="UIParent" frameStrata="LOW" inherits="SecureHandlerStateTemplate">
+		<Size>
+			<AbsDimension x="404" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" x="0" y="18"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" setAllPoints="true">
+					<!-- <Color r="0" g="1" b="0.5" a="0.5"/> -->
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				RegisterStateDriver(self, "visibility", "[petbattle] show; hide")
+			</OnLoad>
+		</Scripts>
+	</Frame>
+</Ui>
