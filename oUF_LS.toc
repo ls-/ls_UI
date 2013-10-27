@@ -21,15 +21,15 @@ localization\enUS.lua
 
 config.lua
 
-libs\functions.lua
-libs\tags.lua
+utilities\functions.lua
+utilities\tags.lua
 
 units\player.lua
 units\pet.lua
 units\other.lua
 
-bars\minimap.lua
-bars\infobars.lua
-bars\buffs.lua
-bars\actionbars.lua
-bars\micromenu.lua
+frames\minimap.lua
+frames\infobars.xml
+frames\buffs.xml
+frames\actionbars.xml
+frames\micromenu.xml

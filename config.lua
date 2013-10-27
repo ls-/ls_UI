@@ -63,7 +63,7 @@ cfg.globals = {
 			["sun"]		= { 1, 0.5, 0.25 },
 		},
 		btnstate = {
-			normal	= { 0.57, 0.52, 0.39 },
+			normal	= { 0.57, 0.52, 0.55 },
 			equiped	= { 0, 0.8, 0 },
 		},
 		infobar	= {
@@ -339,15 +339,14 @@ cfg.units = {
 	},
 }
 cfg.minimap = {
-	iconsize = 32,
 	elemets = {
-		[1] = { "Minimap",						"BOTTOM",	"UIParent",	"BOTTOM",	304,	80	},
-		[2] = { "MiniMapTracking",				"CENTER",	"Minimap",	"CENTER",	72,		30	},
-		[3] = { "GameTimeFrame",				"CENTER",	"Minimap",	"CENTER",	55,		55	},
-		[4] = { "MiniMapInstanceDifficulty",	"BOTTOM",	"Minimap",	"BOTTOM",	-1,		-38	},
-		[5] = { "GuildInstanceDifficulty",		"BOTTOM",	"Minimap",	"BOTTOM",	-6,		-38	},
-		[6] = {	"QueueStatusMinimapButton",		"CENTER",	"Minimap",	"CENTER",	55,		-55	},
-	}, 
+		[1] = { "Minimap", "BOTTOM", "UIParent", "BOTTOM", 306, 80},
+		[2] = { "MiniMapTracking", "CENTER", "Minimap",	"CENTER", 72, 30},
+		[3] = { "GameTimeFrame", "CENTER",	"Minimap", "CENTER", 55, 55},
+		[4] = { "MiniMapInstanceDifficulty", "BOTTOM", "Minimap", "BOTTOM", -1, -38},
+		[5] = { "GuildInstanceDifficulty", "BOTTOM", "Minimap", "BOTTOM", -6, -38},
+		[6] = { "QueueStatusMinimapButton", "CENTER", "Minimap", "CENTER", 55, -55},
+	},
 }
 cfg.bottomline = {
 	pos = { "BOTTOM", 0, 3 },
@@ -360,22 +359,7 @@ cfg.bottomline = {
 	},
 }
 cfg.bars = {
-	["bar1"] = { --MAINMENU
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	["bar2"] = { --BOTTOMLEFT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 68 },
-	},
-	["bar3"] = { --BOTTOMRIGHT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 102 },
-	},
-	["bar4"] = { --SIDERIGHT
-		pos = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -6, 502 },
-	},
-	["bar5"] = { --SIDELEFT
-		pos = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -40, 502 },
-	},
-	["add"] = { --PET
+	["pos"] = {
 		["WARRIOR"] = 2,
 		["PALADIN"] = 2,
 		["HUNTER"] = 1,
@@ -392,73 +376,10 @@ cfg.bars = {
 		["stance1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 170 },
 		["stance2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 136 },
 	},
-	["bar9"] = { --OVERRIDE/VEHICLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	["bar10"] = { --PETBATTLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	bags = {
-		pos1 = { "LEFT", "InfoBar5", "BOTTOM", -44, -20 },
-		pos2 = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -36, 6 },
-	},
-	vehicle = {
-		pos = { "BOTTOM", "oUF_LSPlayer", "BOTTOM", -46, -42 },
-	},
-	extrabar = {
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0 , 206},
-	},
 }
 cfg.buttons = {
 	buttonsize = 30,
 	buttonspacing = 4,
-}
-cfg.buffs = {
-	size = 30,
-	["pos1"] = { "TOPRIGHT", "UIParent", "TOPRIGHT", -6, -60 }, 
-	["pos2"] = { "TOPRIGHT", "UIParent", "TOPRIGHT", -6, -180 }, 
-	rowspacing = 4,
-	colspacing = 4,
-	buffsperrow = 16,
-}
-cfg.infobars = {
-	["sizelong"] = { 170, 40 },
-	["sizeshort"] = { 90, 40 },
-	["filllong"] = { 158, 30 },
-	["fillshort"] = { 78, 30 },
-	text = {
-		pos1 = { "LEFT", 11, 0 },
-		pos2 = { "RIGHT", -11, 0 },
-	},
-	["ibar1"] = {
-
-		ftype = "long",
-		pos = { "TOPLEFT", "UIParent", "TOPLEFT", 6, -6 },
-	},
-	["ibar2"] = {
-		ftype = "short",
-		pos = { "LEFT", "RIGHT", 24 },
-	},
-	["ibar3"] = {
-		ftype = "short",
-		pos = { "LEFT", "RIGHT", 6 },
-	},
-	["ibar4"] = {
-		ftype = "short",
-		pos = { "LEFT", "RIGHT", 6 },
-	},
-	["ibar5"] = {
-		ftype = "short",
-		pos = { "LEFT", "RIGHT", 24 },
-	},
-	["ibar6"] = {
-		ftype = "short",
-		pos = { "TOPRIGHT", "UIParent", "TOPRIGHT", -6, -6 },
-	},
-	["ibar7"] = {
-		ftype = "short",
-		pos = { "RIGHT", "LEFT", -6 },
-	},
 }
 
 cfg.playerclass = select(2, UnitClass("player"))

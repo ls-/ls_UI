@@ -49,7 +49,7 @@ local function CreateBottomLine()
 	if not cfg.bottomline then return end
 
 	local f = CreateFrame("Frame", "BottomLine", UIParent)
-	f:SetFrameStrata("LOW")
+	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)
 	f:SetSize(512, 64)
 	f:SetScale(cfg.globals.scale)
