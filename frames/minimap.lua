@@ -14,7 +14,9 @@ local elementsToHide = {
 	"MiniMapRecordingButton",
 	"MinimapZoneTextButton",
 	"MinimapBorder",
+	"MinimapBorderTop",
 	"MiniMapMailFrame",
+	"MinimapBackdrop",
 	"TimeManagerClockButton",
 	"MiniMapTrackingIconOverlay",
 }
@@ -52,10 +54,16 @@ local function CreateMapZoom()
 	end)
 end
 
-local function SetElementStyle()
+local function SetElementsStyle()
 	for _, f in pairs(elementsToHide) do
 		if not _G[f]:IsObjectType("Texture") then _G[f]:UnregisterAllEvents() end
 		_G[f]:SetParent(hidenParentFrame)
+	end
+	local children = {Minimap:GetChildren()}
+	for _, child in ipairs(children) do
+		if child:GetName() ~= ("GameTimeFrame" or "MinimapVoiceChatFrame") then
+			child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
+		end
 	end
 	MiniMapTracking:SetSize(32, 32)
 	MiniMapTrackingBackground:SetSize(32, 32)
@@ -107,7 +115,7 @@ local function InitMinimapParameters()
 	end
 	CreateMapOverlay()
 	CreateMapZoom()
-	SetElementStyle()
+	SetElementsStyle()
 end
 
 minimapModule:SetScript("OnEvent", function(self, event)
