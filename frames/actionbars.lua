@@ -23,13 +23,18 @@ local function SetDefaultButtonStyle(bType, id)
 	if not button then return end
 	if button.styled then return end
 	local bIcon = button.Icon or button.icon or button.IconTexture
-	local bHotKey = button.HotKey
+	local bHotKey = button.HotKey or _G[bType..id.."HotKey"]
 	local bNormal = button:GetNormalTexture()
 	bIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 	bIcon:SetDrawLayer("BACKGROUND", 0)
 	bIcon:ClearAllPoints()
 	bIcon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
 	bIcon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
+	if bHotKey then
+		bHotKey:SetFont(cfg.font, 12, "THINOUTLINE")
+		bHotKey:ClearAllPoints()
+		bHotKey:SetPoint("TOPRIGHT", 0, 0)
+	end
 	if bNormal then
 		bNormal:SetTexture(nil)
 		bNormal:Hide()
@@ -62,11 +67,6 @@ local function SetDefaultButtonStyle(bType, id)
 		local bCooldown = _G[name.."Cooldown"]
 		if bCooldown then
 			bCooldown:SetAllPoints(button)
-		end
-		if bHotKey then
-			bHotKey:SetFont(cfg.font, 12, "THINOUTLINE")
-			bHotKey:ClearAllPoints()
-			bHotKey:SetPoint("TOPRIGHT", 0, 0)
 		end
 		if bType == "ActionButton" or bType == "PetActionButton"
 			or bType == "StanceButton" or bType == "PossessButton"
