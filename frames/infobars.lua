@@ -186,10 +186,11 @@ end
 
 function oUF_BagsInfoBar_OnClick(self, button)
 	if button == "RightButton" then
-		if new_BagFrame:IsShown() then
-			new_BagFrame:Hide()
+		if InCombatLockdown() then return end
+		if oUF_LSBagFrame:IsShown() then
+			oUF_LSBagFrame:Hide()
 		else
-			new_BagFrame:Show()
+			oUF_LSBagFrame:Show()
 		end
 	else
 		ToggleAllBags()

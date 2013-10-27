@@ -359,22 +359,7 @@ cfg.bottomline = {
 	},
 }
 cfg.bars = {
-	["bar1"] = { --MAINMENU
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	["bar2"] = { --BOTTOMLEFT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 68 },
-	},
-	["bar3"] = { --BOTTOMRIGHT
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 102 },
-	},
-	["bar4"] = { --SIDERIGHT
-		pos = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -6, 502 },
-	},
-	["bar5"] = { --SIDELEFT
-		pos = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -40, 502 },
-	},
-	["add"] = { --PET
+	["pos"] = {
 		["WARRIOR"] = 2,
 		["PALADIN"] = 2,
 		["HUNTER"] = 1,
@@ -390,22 +375,6 @@ cfg.bars = {
 		["pet2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 170 },
 		["stance1"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 170 },
 		["stance2"] = { "BOTTOM", "UIParent", "BOTTOM", 0, 136 },
-	},
-	["bar9"] = { --OVERRIDE/VEHICLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	["bar10"] = { --PETBATTLE
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0, 18 },
-	},
-	bags = {
-		pos1 = { "LEFT", "InfoBar5", "BOTTOM", -44, -20 },
-		pos2 = { "BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -36, 6 },
-	},
-	vehicle = {
-		pos = { "BOTTOM", "oUF_LSPlayer", "BOTTOM", -46, -42 },
-	},
-	extrabar = {
-		pos = { "BOTTOM", "UIParent", "BOTTOM", 0 , 206},
 	},
 }
 cfg.buttons = {

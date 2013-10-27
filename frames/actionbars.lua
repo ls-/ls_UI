@@ -7,9 +7,9 @@ hidenParentFrame:Hide()
 
 function SetStancePossessPetBarPosition(self)
 	if self:GetName() == "oUF_LSPetActionBar" then
-		self:SetPoint(unpack(cfg.bars["add"]["pet"..cfg.bars["add"][cfg.playerclass]]))
+		self:SetPoint(unpack(cfg.bars["pos"]["pet"..cfg.bars["pos"][cfg.playerclass]]))
 	else
-		self:SetPoint(unpack(cfg.bars["add"]["stance"..cfg.bars["add"][cfg.playerclass]]))
+		self:SetPoint(unpack(cfg.bars["pos"]["stance"..cfg.bars["pos"][cfg.playerclass]]))
 	end
 end
 
@@ -331,7 +331,7 @@ do
 		OverrideActionBar[j]:SetAlpha(0)
 	end
 	local function FlyoutButtonToggleHook(...)
-		local self, flyoutID, _, direction = ...
+		local self, flyoutID = ...
 		if not self:IsShown() then return end
 		local _, _, numSlots = GetFlyoutInfo(flyoutID)
 		for i = 1, numSlots do
