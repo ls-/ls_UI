@@ -9,10 +9,7 @@ local SPELL_POWER_BURNING_EMBERS = SPELL_POWER_BURNING_EMBERS
 local MAX_POWER_PER_EMBER = MAX_POWER_PER_EMBER
 local BURNING_EMBERS = BURNING_EMBERS
 
-oUF.colors.embers = { 
-	normal	= { 0.9, 0.4, 0.1 },
-	full	= { 1, 0.1, 0.15 },
- }
+oUF.colors.embers = {0.9, 0.4, 0.1}
 
 local function Update(self, event, unit, powerType)
 	local embers = self.BurningEmbers
@@ -27,24 +24,9 @@ local function Update(self, event, unit, powerType)
 	local count = floor(max / MAX_POWER_PER_EMBER)
 
 	if event ~= "UpdateVisibilityOnDisable" then
-		local oldCount = embers.__count
-		if count ~= embers.__count  then
-			if count < embers.__count then
-				embers[embers.__count]:Hide()
-			else
-				embers[count]:Show()
-			end
-			embers.__count = count
-		end
-
 		if full ~= embers.__full  then
 			for i = (full == 0 and 1 or full), 4 do
 				embers[i]:SetValue(0)
-				if embers[i].bg then
-					local r, g, b = unpack(embers.colors and embers.colors.normal or oUF.colors.embers.normal)
-					local mp = embers[i].bg.multiplier or 0.25
-					embers[i].bg:SetVertexColor(r * mp, g * mp, b * mp)
-				end
 			end
 			embers.__full = full
 		end
@@ -52,22 +34,29 @@ local function Update(self, event, unit, powerType)
 		if full > 0 then
 			for i = 1, full do
 				embers[i]:SetValue(MAX_POWER_PER_EMBER)
-				embers[i]:SetStatusBarColor(unpack(embers.colors and embers.colors.full or oUF.colors.embers.full))
 			end
 			if full ~= count then
 				local value = cur - full * MAX_POWER_PER_EMBER
 				embers[full + 1]:SetValue(value)
-				embers[full + 1]:SetStatusBarColor(unpack(embers.colors and embers.colors.normal or oUF.colors.embers.normal))
 			end
 		else
 			local value = cur - full * MAX_POWER_PER_EMBER
 			embers[1]:SetValue(value)
-			embers[1]:SetStatusBarColor(unpack(embers.colors and embers.colors.normal or oUF.colors.embers.normal))
+		end
+		
+		for i = 1, count do
+			embers[i]:SetStatusBarColor(unpack(embers.color or oUF.colors.embers))
+			if embers[i].bg then
+				local mp = embers[i].bg.multiplier or 0.25
+				local r, g, b = embers[i]:GetStatusBarColor()
+				embers[i].bg:SetVertexColor(r * mp, g * mp, b * mp)
+			end
+
 		end
 	end
 
 	if embers.PostUpdate then
-		return embers:PostUpdate(full, count, oldCount ~= count)
+		return embers:PostUpdate(full, count)
 	end
 end
 
@@ -124,7 +113,6 @@ local function Enable(self)
 	if not embers then return end
 	embers.__owner = self
 	embers.__full = 0
-	embers.__count = 0
 	embers.__enabled = nil
 	embers.__hasVehicle = false
 	embers.ForceUpdate = ForceUpdate

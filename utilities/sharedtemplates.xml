@@ -1,0 +1,514 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+	<!-- FONTS -->
+
+	<FontString name="oUF_LSUnitFrame18Text" font="Interface\AddOns\oUF_LS\media\fonts\PTSB.ttf" outline="NORMAL" justifyV="MIDDLE" virtual="true">
+		<FontHeight>
+			<AbsValue val="18"/>
+		</FontHeight>
+	</FontString>
+
+	<FontString name="oUF_LSUnitFrame16Text" font="Interface\AddOns\oUF_LS\media\fonts\PTSB.ttf" outline="NORMAL" justifyV="MIDDLE" virtual="true">
+		<FontHeight>
+			<AbsValue val="16"/>
+		</FontHeight>
+	</FontString>
+
+	<FontString name="oUF_LSUnitFrame14Text" font="Interface\AddOns\oUF_LS\media\fonts\PTSB.ttf" outline="NORMAL" justifyV="MIDDLE" virtual="true">
+		<FontHeight>
+			<AbsValue val="14"/>
+		</FontHeight>
+	</FontString>
+
+	<FontString name="oUF_LSUnitFrame12Text" font="Interface\AddOns\oUF_LS\media\fonts\PTSB.ttf" outline="NORMAL" justifyV="MIDDLE" virtual="true">
+		<FontHeight>
+			<AbsValue val="12"/>
+		</FontHeight>
+	</FontString>
+
+	<FontString name="oUF_LSUnitFrame10Text" font="Interface\AddOns\oUF_LS\media\fonts\PTSB.ttf" outline="NORMAL" justifyV="MIDDLE" virtual="true">
+		<FontHeight>
+			<AbsValue val="10"/>
+		</FontHeight>
+	</FontString>
+
+	<Frame name="oUF_LSInfoBarFrameTemplate-Long" virtual="true">
+		<Size>
+			<AbsDimension x="170" y="40"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\infobar_long" parentkey="background" >
+					<Size>
+						<AbsDimension x="174" y="46"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.16015625" right="0.83984375" top="0.14062500" bottom="0.85937500"/>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND" textureSubLevel="1">
+				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
+					<Size>
+						<AbsDimension x="158" y="30"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<Color r="0.15" g="0.15" b="0.15"/>
+				</Texture>
+				<FontString name="$parentText" inherits="oUF_LSUnitFrame14Text" parentkey="text">
+					<Size>
+						<AbsDimension x="148" y="20"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="0">
+				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_long_cover" parentkey="cover">
+					<Size>
+						<AbsDimension x="164" y="36"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.17968750" right="0.82031250" top="0.21875000" bottom="0.78125000"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.updateInterval = 0
+			</OnLoad>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Frame>
+
+	<Button name="oUF_LSInfoBarButtonTemplate-Long" inherits="oUF_LSInfoBarFrameTemplate-Long" virtual="true">
+		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_long_highlight">
+			<Size>
+				<AbsDimension x="158" y="30"/>
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+			<TexCoords left="0.19140625" right="0.80859375" top="0.26562500" bottom="0.73437500"/>
+		</HighlightTexture>
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_long_pushed">
+			<Size>
+				<AbsDimension x="158" y="30"/>
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" x="6" y="-5"/>
+				<Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+			</Anchors>
+			<TexCoords left="0.19140625" right="0.80859375" top="0.26562500" bottom="0.73437500"/>
+		</PushedTexture>
+	</Button>
+
+	<Frame name="oUF_LSInfoBarFrameTemplate-Short" virtual="true">
+		<Size>
+			<AbsDimension x="90" y="40"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\infobar_short" parentkey="background" >
+					<Size>
+						<AbsDimension x="94" y="46"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.13281250" right="0.86718750" top="0.14062500" bottom="0.85937500"/>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND" textureSubLevel="1">
+				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
+					<Size>
+						<AbsDimension x="78" y="30"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<Color r="0.15" g="0.15" b="0.15"/>
+				</Texture>
+				<FontString name="$parentText" inherits="oUF_LSUnitFrame14Text" parentkey="text">
+					<Size>
+						<AbsDimension x="148" y="20"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="0">
+				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_short_cover" parentkey="cover">
+					<Size>
+						<AbsDimension x="84" y="36"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.17187500" right="0.82812500" top="0.21875000" bottom="0.78125000"/>
+
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.updateInterval = 0
+			</OnLoad>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+	</Frame>
+
+	<Button name="oUF_LSInfoBarButtonTemplate-Short" inherits="oUF_LSInfoBarFrameTemplate-Short" virtual="true">
+		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_short_highlight">
+			<Size>
+				<AbsDimension x="78" y="30"/>
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+			<TexCoords left="0.19531250" right="0.80468750" top="0.26562500" bottom="0.73437500"/>
+		</HighlightTexture>
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_short_pushed">
+			<Size>
+				<AbsDimension x="78" y="30"/>
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" x="6" y="-5"/>
+				<Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+			</Anchors>
+			<TexCoords left="0.19531250" right="0.80468750" top="0.26562500" bottom="0.73437500"/>
+		</PushedTexture>
+	</Button>
+
+<Button name="oUF_LSMicroButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\microbutton">
+					<Size>
+						<AbsDimension x="32" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND" textureSubLevel="1">
+				<Texture name="$parentIcon" parentkey="icon">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<Size>
+						<AbsDimension x="20" y="20"/>
+					</Size>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="0">
+				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\microbutton_cover">
+					<Size>
+						<AbsDimension x="26" y="26"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.09375000" right="0.90625000" top="0.09375000" bottom="0.90625000"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<Onload>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				self:RegisterEvent("UPDATE_BINDINGS")
+				self.icon:SetVertexColor(0.52, 0.46, 0.36)
+			</Onload>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT", 0, 0)
+				GameTooltip:AddLine(self.tooltipText, 1, 1, 1)
+				GameTooltip:Show()
+				if self:IsEnabled() or self.minLevel or self.disabledTooltip or self.factionGroup then
+					GameTooltip:AddLine(" ")
+					if not self:IsEnabled() then
+						if self.factionGroup == "Neutral" then
+							GameTooltip:AddLine(FEATURE_NOT_AVAILBLE_PANDAREN, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						elseif self.minLevel then
+							GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, self.minLevel), RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						elseif self.disabledTooltip then
+							GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
+							GameTooltip:Show()
+						end
+					end
+				end
+			</OnEnter>
+			<OnEnable>
+				self:SetAlpha(1)
+			</OnEnable>
+			<OnDisable>
+				self:SetAlpha(0.5)
+			</OnDisable>
+			<OnEvent>
+				oUF_LSMicroButton_OnEvent(self, event)
+			</OnEvent>
+			<OnLeave>
+				GameTooltip:Hide()
+			</OnLeave>
+		</Scripts>
+		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\microbutton_highlight">
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+			<Size>
+				<AbsDimension x="20" y="20"/>
+			</Size>
+			<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+		</HighlightTexture>
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\microbutton_pushed">
+			<Size>
+				<AbsDimension x="20" y="20"/>
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT" x="3" y="-3"/>
+				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+			</Anchors>
+			<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+		</PushedTexture>
+	</Button>
+
+	<StatusBar name="oUF_LSExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
+		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
+		<Size>
+			<AbsDimension x="382" y="8"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture setAllPoints="true" parentKey="bg"/>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="1">
+				<Texture file="Interface\AddOns\oUF_LS\media\exp_rep_border" parentKey="border">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<FontString inherits="oUF_LSUnitFrame10Text" setAllPoints="true" hidden="true" parentKey="text"/>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				self.text:Show()
+			</OnEnter>
+			<OnLeave>
+				self.text:Hide()
+			</OnLeave>
+		</Scripts>
+	</StatusBar>
+
+	<Frame name="oUF_LSClassPowerFrameTemplate" frameStata="LOW" frameLevel="3" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="62" y="130"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER" x="-36" y="0"/>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentCover" frameStata="LOW" frameLevel="5" setAllPoints="true" parentKey="cover"/>
+		</Frames>
+	</Frame>
+	
+	<StatusBar name="oUF_LSBigCastingBarTemplate" frameStata="LOW" frameLevel="2" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="188" y="20"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture setAllPoints="true" parentKey="bg">
+					<Color r="0.96" g="0.7" b="0" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="1">
+				<Texture alphaMode="ADD" parentKey="Spark">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="2">
+				<Texture parentKey="Icon">
+					<TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+					<Size>
+						<AbsDimension x="20" y="20"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT"/>
+					</Anchors>
+				</Texture>
+				<FontString inherits="oUF_LSUnitFrame12Text" justifyH="LEFT" parentKey="Text">
+					<Anchors>
+						<Anchor point="LEFT" x="2" y="-0.5"/>
+						<Anchor point="RIGHT" x="-2" y="-0.5"/>
+					</Anchors>
+				</FontString>
+				<FontString inherits="oUF_LSUnitFrame12Text" justifyH="RIGHT" parentKey="Time">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="0" y="-8.5"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="3">
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0" right="0.046875" top="0" bottom="1"/>
+					<Size>
+						<AbsDimension x="12" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="LEFT" x="-26" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0.046875" right="0.953125" top="0" bottom="1"/>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="LEFT" x="-14" y="0"/>
+						<Anchor point="RIGHT" relativePoint="RIGHT" x="-6" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0.953125" right="1" top="0" bottom="1"/>
+					<Size>
+						<AbsDimension x="12" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="RIGHT" x="6" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
+		<Scripts>
+			<OnLoad>
+				self.PostCastStart = function(self)
+					if self.interrupt then 
+						self:SetStatusBarColor(0.6, 0.6, 0.6, 1)
+						self.bg:SetTexture(0.2, 0.2, 0.2, 1)
+					else
+						self:SetStatusBarColor(0.15, 0.15, 0.15, 1)
+						self.bg:SetTexture(0.96, 0.7, 0, 1)
+					end
+				 end
+				self.PostChannelStart = function(self)
+					if self.interrupt then 
+						self:SetStatusBarColor(0.6, 0.6, 0.6, 1)
+						self.bg:SetTexture(0.2, 0.2, 0.2, 1)
+					else
+						self:SetStatusBarColor(0.15, 0.15, 0.15, 1)
+						self.bg:SetTexture(0.96, 0.7, 0, 1)
+					end
+				 end
+			</OnLoad>
+		</Scripts>
+	</StatusBar>
+
+	<StatusBar name="oUF_LSSmallCastingBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="94" y="20"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND" textureSubLevel="0">
+				<Texture setAllPoints="true" parentKey="bg">
+					<Color r="0.96" g="0.7" b="0" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER" textureSubLevel="1">
+				<Texture alphaMode="ADD" parentKey="Spark">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="2">
+				<Texture parentKey="Icon">
+					<TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+					<Size>
+						<AbsDimension x="20" y="20"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT"/>
+					</Anchors>
+				</Texture>
+				<FontString inherits="oUF_LSUnitFrame10Text" justifyH="LEFT" parentKey="Text">
+					<Anchors>
+						<Anchor point="LEFT" x="2" y="-0.5"/>
+						<Anchor point="RIGHT" x="-2" y="-0.5"/>
+					</Anchors>
+				</FontString>
+				<FontString inherits="oUF_LSUnitFrame10Text" justifyH="RIGHT" parentKey="Time">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="0" y="-7.5"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="3">
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0" right="0.046875" top="0" bottom="1"/>
+					<Size>
+						<AbsDimension x="12" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="LEFT" x="-26" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0.046875" right="0.953125" top="0" bottom="1"/>
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="LEFT" x="-14" y="0"/>
+						<Anchor point="RIGHT" relativePoint="RIGHT" x="-6" y="0"/>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\AddOns\oUF_LS\media\castbar">
+					<TexCoords left="0.953125" right="1" top="0" bottom="1"/>
+					<Size>
+						<AbsDimension x="12" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="RIGHT" x="6" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
+		<Scripts>
+			<OnLoad>
+				self.PostCastStart = function(self)
+					if self.interrupt then 
+						self:SetStatusBarColor(0.6, 0.6, 0.6, 1)
+						self.bg:SetTexture(0.2, 0.2, 0.2, 1)
+					else
+						self:SetStatusBarColor(0.15, 0.15, 0.15, 1)
+						self.bg:SetTexture(0.96, 0.7, 0, 1)
+					end
+				 end
+				self.PostChannelStart = function(self)
+					if self.interrupt then 
+						self:SetStatusBarColor(0.6, 0.6, 0.6, 1)
+						self.bg:SetTexture(0.2, 0.2, 0.2, 1)
+					else
+						self:SetStatusBarColor(0.15, 0.15, 0.15, 1)
+						self.bg:SetTexture(0.96, 0.7, 0, 1)
+					end
+				 end
+			</OnLoad>
+		</Scripts>
+	</StatusBar>
+</Ui>

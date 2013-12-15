@@ -2,19 +2,16 @@ local __, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, "oUF FloatingCombatFeedback was unable to locate oUF install")
 
-local tgetn = table.getn
-local mmax = math.max
-
 local colors = {
-	DEFAULT  = { 1, 1, 1 },
-	IMMUNE	 = { 1, 1, 1 },
-	WOUND	 = { 1, 0.6, 0.1 },
-	HEAL	 = { 0.1, 0.8, 0.1 },
-	BLOCK	 = { 1, 1, 1 },
-	ABSORB	 = { 1, 1, 1 },
-	RESIST	 = { 1, 1, 1 },
-	MISS 	 = { 1, 1, 1 },
-	ENERGIZE = { 0.11, 0.75, 0.95 },
+	DEFAULT  = {1, 1, 1},
+	IMMUNE	 = {1, 1, 1},
+	WOUND	 = {0.7, 0.1, 0.1},
+	HEAL	 = {0.1, 0.8, 0.1},
+	BLOCK	 = {1, 1, 1},
+	ABSORB	 = {1, 1, 1},
+	RESIST	 = {1, 1, 1},
+	MISS 	 = {1, 1, 1},
+	ENERGIZE = {0.11, 0.75, 0.95},
 }
 
 local function RemoveString(self, i, string)
@@ -49,10 +46,6 @@ local function StandardScroll(self)
 	return x, y
 end
 
-local function StopScrolling(self)
-	self:SetScript("OnUpdate", nil)
-end
-
 local function SetScrolling(self, elapsed)
 	local alpha, x, y, shown
 	for index, string in pairs(self.FeedbackToAnimate) do
@@ -65,33 +58,30 @@ local function SetScrolling(self, elapsed)
 			string:SetPoint("TOP", self, "BOTTOM", x, y)
 			if ( string.scrollTime >= self.__fadeout) then
 				alpha = 1 - ((string.scrollTime - self.__fadeout) / (self.__time - self.__fadeout))
-				alpha = mmax(alpha, 0)
+				alpha = math.max(alpha, 0)
 				string:SetAlpha(alpha)
 			end
 		end
 	end
-	if tgetn(self.FeedbackToAnimate) == 0 then
-		StopScrolling(self)
+	if #self.FeedbackToAnimate == 0 then
+		self:SetScript("OnUpdate", nil)
 	end
 end
 
-local function Update(self, event, unit, eventType, flags, amount, dtype)
+local function Update(self, event, unit, eventType, flags, amount)
 	if(self.unit ~= unit) then return end
-
-	local combattext = self.FloatingCombatFeedback
-
-	if not combattext:GetScript("OnUpdate") then
-		combattext:SetScript("OnUpdate", SetScrolling)
+	local combatText = self.FloatingCombatFeedback
+	if not combatText:GetScript("OnUpdate") then
+		combatText:SetScript("OnUpdate", SetScrolling)
 	end
-
 	local r, g, b, text, multiplier
-	if event == "IMMUNE" and not combattext.hideImmune then
+	if event == "IMMUNE" and not combatText.hideImmune then
 		text = IMMUNE
-		r, g, b = unpack(combattext.colors and combattext.colors.IMMUNE or colors.IMMUNE)
-	elseif eventType == "WOUND" and not combattext.hideDamage then
+		r, g, b = unpack(combatText.colors and combatText.colors.IMMUNE or colors.IMMUNE)
+	elseif eventType == "WOUND" and not combatText.hideDamage then
 		if amount ~= 0	then
 			text = "-"..amount
-			r, g, b = unpack(combattext.colors and combattext.colors.WOUND or colors.WOUND)
+			r, g, b = unpack(combatText.colors and combatText.colors.WOUND or colors.WOUND)
 			if flags == "CRITICAL" then
 				r, g, b = r * 0.75, g * 0.75, b * 0.75
 				multiplier = 1.25
@@ -100,59 +90,58 @@ local function Update(self, event, unit, eventType, flags, amount, dtype)
 			end
 		elseif flags == "ABSORB" then
 			text = ABSORB
-			r, g, b = unpack(combattext.colors and combattext.colors.ABSORB or colors.ABSORB)
+			r, g, b = unpack(combatText.colors and combatText.colors.ABSORB or colors.ABSORB)
 		elseif flags == "BLOCK" then
 			text = BLOCK
-			r, g, b = unpack(combattext.colors and combattext.colors.BLOCK or colors.BLOCK)
+			r, g, b = unpack(combatText.colors and combatText.colors.BLOCK or colors.BLOCK)
 		elseif flags == "RESIST" then
 			text = RESIST
-			r, g, b = unpack(combattext.colors and combattext.colors.RESIST or colors.RESIST)
+			r, g, b = unpack(combatText.colors and combatText.colors.RESIST or colors.RESIST)
 		else
 			text = MISS
-			r, g, b = unpack(combattext.colors and combattext.colors.MISS or colors.MISS)
+			r, g, b = unpack(combatText.colors and combatText.colors.MISS or colors.MISS)
 		end
-	elseif eventType == "HEAL" and not combattext.hideHeal then
+	elseif eventType == "HEAL" and not combatText.hideHeal then
 		text = "+"..amount
-		r, g, b = unpack(combattext.colors and combattext.colors.HEAL or colors.HEAL)
+		r, g, b = unpack(combatText.colors and combatText.colors.HEAL or colors.HEAL)
 		if flags == "CRITICAL" then
 			r, g, b = r * 0.75, g * 0.75, b * 0.75
 			multiplier = 1.25
 		end
-	elseif eventType == "BLOCK" and not combattext.hideBlock then
+	elseif eventType == "BLOCK" and not combatText.hideBlock then
 		text = BLOCK
-		r, g, b = unpack(combattext.colors and combattext.colors.BLOCK or colors.BLOCK)
-	elseif eventType == "ENERGIZE" and not combattext.hideEnergize then
+		r, g, b = unpack(combatText.colors and combatText.colors.BLOCK or colors.BLOCK)
+	elseif eventType == "ENERGIZE" and not combatText.hideEnergize then
 		text = "+"..amount
-		r, g, b = unpack(combattext.colors and combattext.colors.ENERGIZE or colors.ENERGIZE)
+		r, g, b = unpack(combatText.colors and combatText.colors.ENERGIZE or colors.ENERGIZE)
 		if flags == "CRITICAL" then
 			multiplier = 1.25
 		end
-	elseif not combattext.hideMisc then
+	elseif not combatText.hideMisc then
 		text = _G[eventType]
-		r, g, b = unpack(combattext.colors and combattext.colors.DEFAULT or colors.DEFAULT)
+		r, g, b = unpack(combatText.colors and combatText.colors.DEFAULT or colors.DEFAULT)
 	end
-
 	if text then
-		local string, NoneIsAvailable = GetAvailableString(combattext)
+		local string, NoneIsAvailable = GetAvailableString(combatText)
 
 		if NoneIsAvailable then return end
 
 		local font, _, outline = string:GetFont()
 		if font then
-			string:SetFont(font, combattext.__fontHeight * (multiplier or 1), outline)
+			string:SetFont(font, combatText.__fontHeight * (multiplier or 1), outline)
 		end
 		string:SetText(text)
 		string:SetTextColor(r, g, b)
 		string.scrollTime = 0
-		string.__direction = combattext.__direction
-		string.__time = combattext.__time
-		string.startX = combattext.__offset * combattext.__direction
-		string.endY = combattext:GetHeight()
-		string:SetPoint("TOP", combattext, "BOTTOM", string.startX, 5)
+		string.__direction = combatText.__direction
+		string.__time = combatText.__time
+		string.startX = combatText.__offset * combatText.__direction
+		string.endY = combatText:GetHeight()
+		string:SetPoint("TOP", combatText, "BOTTOM", string.startX, 5)
 		string:SetAlpha(1)
 		string:Show()
-		tinsert(combattext.FeedbackToAnimate, string)
-		combattext.__direction = combattext.__direction * -1
+		tinsert(combatText.FeedbackToAnimate, string)
+		combatText.__direction = combatText.__direction * -1
 	end
 end
 
@@ -165,34 +154,33 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local combattext = self.FloatingCombatFeedback
-	if not combattext then return end
-
-	combattext.__owner = self
-	combattext.__max = #combattext
-	combattext.__time = (combattext.scrollTime or 1.5)
-	combattext.__fadeout = combattext.__time / 3
-	combattext.__direction = 1
-	combattext.FeedbackToAnimate = {}
-	combattext.__fontHeight = 18
-	if combattext.Mode == "Fountain" then
-		combattext.scrollFunction = FountainScroll
-		combattext.__offset = combattext.Offset or -6
+	local combatText = self.FloatingCombatFeedback
+	if not combatText then return end
+	combatText.__owner = self
+	combatText.__max = #combatText
+	combatText.__time = (combatText.scrollTime or 1.5)
+	combatText.__fadeout = combatText.__time / 3
+	combatText.__direction = 1
+	combatText.FeedbackToAnimate = {}
+	combatText.__fontHeight = 18
+	if combatText.Mode == "Fountain" then
+		combatText.scrollFunction = FountainScroll
+		combatText.__offset = combatText.Offset or -6
 	else
-		combattext.scrollFunction = StandardScroll
-		combattext.__offset = combattext.Offset or -30
+		combatText.scrollFunction = StandardScroll
+		combatText.__offset = combatText.Offset or -30
 	end
-
-	combattext.ForceUpdate = ForceUpdate
-
+	for i = 1, combatText.__max do
+		combatText[i]:Hide()
+	end
+	combatText.ForceUpdate = ForceUpdate
 	self:RegisterEvent("UNIT_COMBAT", Path)
-
 	return true
 end
 
 local function Disable(self)
-	local combattext = self.FloatingCombatFeedback
-	if combattext then
+	local combatText = self.FloatingCombatFeedback
+	if combatText then
 		self:UnregisterEvent("UNIT_COMBAT", Path)
 	end
 end

@@ -1,7 +1,5 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
-local cfg = ns.cfg
-local L = ns.L
 
 local function RGBToHEX(r, g, b)
 	if type(r) == "table" then
@@ -40,28 +38,18 @@ end
 
 oUF.Tags.Events["custom:name"] = "UNIT_NAME_UPDATE UNIT_HEALTH UNIT_CONNECTION"
 
-oUF.Tags.Methods["custom:raceclass"] = function(unit)
-	local torr, class
+oUF.Tags.Methods["custom:racetype"] = function(unit)
+	local raceType
 	if UnitIsPlayer(unit) then
-		torr = UnitRace(unit)
-		class = UnitClass(unit)
-		local color = oUF.colors.class[select(2, UnitClass(unit))]
-		return torr.." |cff"..RGBToHEX(color)..class.."|r"
+		raceType = UnitRace(unit)
+		return raceType
 	else
-		local temp = ""
-		torr = UnitCreatureType(unit)
-		class = UnitClassification(unit)
-		if class == "worldboss" or UnitLevel(unit) == -1 then
-			return torr.." ("..L["boss"]..")"
-		elseif class == "normal" or class == "minus" or class == "trivial" then
-			return torr
-		else
-			return torr.." ("..L[class]..")"
-		end
+		raceType = UnitCreatureType(unit)
+		return raceType
 	end
 end
 
-oUF.Tags.Events["custom:raceclass"] = "UNIT_CLASSIFICATION_CHANGED"
+oUF.Tags.Events["custom:racetype"] = "UNIT_CLASSIFICATION_CHANGED"
 
 oUF.Tags.Methods["custom:threat"] = function(unit)
 	local _, status, scaledPercent = UnitDetailedThreatSituation("player", unit)

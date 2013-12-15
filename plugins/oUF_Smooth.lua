@@ -38,15 +38,12 @@ local function hook(frame)
 	if frame.DemonicFury and frame.DemonicFury.Smooth then
 		frame:SmoothBar(frame.DemonicFury)
 	end
-	if frame.BurningEmbers then
+	if frame.BurningEmbers and frame.BurningEmbers.Smooth then
 		for i = 1, #frame.BurningEmbers do
-			if frame.BurningEmbers[i].Smooth then
-				frame:SmoothBar(frame.BurningEmbers[i])
-			end
+			frame:SmoothBar(frame.BurningEmbers[i])
 		end
 	end
 end
-
 
 for i, frame in ipairs(oUF.objects) do hook(frame) end
 oUF:RegisterInitCallback(hook)

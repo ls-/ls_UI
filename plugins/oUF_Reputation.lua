@@ -1,23 +1,34 @@
-local __, ns = ...
+local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF Reputation was unable to locate oUF install')
 
+local function GetReputation()
+	local name, standing, min, max, value, id = GetWatchedFactionInfo()
+	local _, friendMin, friendMax, _, _, _, friendStanding, friendThreshold = GetFriendshipReputation(id)
+
+	if(not friendMin) then
+		return value - min, max - min, GetText('FACTION_STANDING_LABEL' .. standing, UnitSex('player'))
+	else
+		return friendMin - friendThreshold, math.min(friendMax - friendThreshold, 8400), friendStanding
+	end
+end
+
 for tag, func in pairs({
 	['currep'] = function()
-		local __, __, min, __, value = GetWatchedFactionInfo()
-		return value - min
+		local min = GetReputation()
+		return min
 	end,
 	['maxrep'] = function()
-		local __, __, min, max = GetWatchedFactionInfo()
-		return max - min
+		local _, max = GetReputation()
+		return max
 	end,
 	['perrep'] = function()
-		local __, __, min, max, value = GetWatchedFactionInfo()
-		return math.floor((value - min) / (max - min) * 100 + 0.5)
+		local min, max = GetReputation()
+		return math.floor(min / max * 100 + 1/2)
 	end,
 	['standing'] = function()
-		local __, standing = GetWatchedFactionInfo()
-		return GetText('FACTION_STANDING_LABEL' .. standing, UnitSex('player'))
+		local _, _, standing = GetReputation()
+		return standing
 	end,
 	['reputation'] = function()
 		return GetWatchedFactionInfo()
@@ -31,23 +42,25 @@ oUF.Tags.SharedEvents.UPDATE_FACTION = true
 
 local function Update(self, event, unit)
 	local reputation = self.Reputation
-	local name, standing, min, max, value = GetWatchedFactionInfo()
+
+	local name, standingID, _, _, _, id = GetWatchedFactionInfo()
 	if(not name) then
 		return reputation:Hide()
 	else
 		reputation:Show()
 	end
 
-	reputation:SetMinMaxValues(0, max - min)
-	reputation:SetValue(value - min)
+	local min, max, standingText = GetReputation()
+	reputation:SetMinMaxValues(0, max)
+	reputation:SetValue(min)
 
 	if(reputation.colorStanding) then
-		local color = FACTION_BAR_COLORS[standing]
+		local color = FACTION_BAR_COLORS[standingID]
 		reputation:SetStatusBarColor(color.r, color.g, color.b)
 	end
 
 	if(reputation.PostUpdate) then
-		return reputation:PostUpdate(unit, name, standing, min, max, value)
+		return reputation:PostUpdate(unit, min, max, name, id, standingID, standingText)
 	end
 end
 

@@ -1,6 +1,6 @@
 ## Interface: 50400
 ## Author: lightspark
-## Title: oUF_LS
+## Title: oUF: LS
 ## Notes: PvE-oriented oUF-based UI
 ## RequiredDeps: oUF
 ## X-Category: UnitFrame
@@ -10,26 +10,24 @@ plugins\oUF_Experience.lua
 plugins\oUF_Reputation.lua
 plugins\oUF_DebuffHighlight.lua
 plugins\oUF_FloatingCombatFeedback.lua
-plugins\oUF_SoulShards.lua
 plugins\oUF_BurningEmbers.lua
 plugins\oUF_DemonicFury.lua
 
-localization\core.lua
-localization\ruRU.lua
-localization\enGB.lua
-localization\enUS.lua
+localization\en.lua
+localization\ru.lua
+localization\cn.lua
 
 config.lua
 
+utilities\sharedmedia.lua
+utilities\sharedtemplates.xml
 utilities\functions.lua
 utilities\tags.lua
 
-units\player.lua
-units\pet.lua
-units\other.lua
+units\unitframes.lua
 
 frames\minimap.lua
-frames\infobars.xml
-frames\buffs.xml
-frames\actionbars.xml
-frames\micromenu.xml
+frames\infobars.lua
+frames\buffs.lua
+frames\actionbars.lua
+frames\micromenu.lua

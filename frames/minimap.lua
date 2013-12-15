@@ -1,10 +1,6 @@
 
 local _, ns = ...
-local cfg = ns.cfg
-local minimapModule = CreateFrame("Frame")
-
-local hidenParentFrame = CreateFrame("Frame")
-hidenParentFrame:Hide()
+local C, M = ns.C, ns.M
 
 local elementsToHide = {
 	"MinimapCluster",
@@ -24,6 +20,7 @@ local elementsToHide = {
 local function SetElementPosition(f, a1, af, a2, x, y)
 	_G[f]:ClearAllPoints()
 	_G[f]:SetPoint(a1, _G[af], a2, x, y)
+	if f ~= "Minimap" then _G[f]:SetParent(Minimap) end
 end
 
 local function CreateMapOverlay()
@@ -32,12 +29,15 @@ local function CreateMapOverlay()
 	t1:SetPoint("CENTER", -2, 0)
 	t1:SetSize(Minimap:GetSize())
 	t1:SetAlpha(0.75)
+
 	local t2 = Minimap:CreateTexture(nil, "BORDER", nil, 1)
 	t2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_chain_right")
 	t2:SetPoint("CENTER", -2, -96)
+
 	local t3 = Minimap:CreateTexture(nil, "BORDER", nil, 2)
 	t3:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_ring_l_cracked")
 	t3:SetPoint("CENTER", -2, 0)
+
 	local t4 = Minimap:CreateTexture(nil, "BORDER", nil, 3)
 	t4:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_sol")
 	t4:SetPoint("CENTER", -2, 0)
@@ -57,21 +57,20 @@ end
 local function SetElementsStyle()
 	for _, f in pairs(elementsToHide) do
 		if not _G[f]:IsObjectType("Texture") then _G[f]:UnregisterAllEvents() end
-		_G[f]:SetParent(hidenParentFrame)
+		_G[f]:SetParent(ns.hiddenParentFrame)
 	end
+
 	local children = {Minimap:GetChildren()}
 	for _, child in ipairs(children) do
-		if child:GetName() ~= ("GameTimeFrame" or "MinimapVoiceChatFrame") then
-			child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
-		end
+		child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 	end
+
 	MiniMapTracking:SetSize(32, 32)
 	MiniMapTrackingBackground:SetSize(32, 32)
 	MiniMapTrackingBackground:ClearAllPoints()
 	MiniMapTrackingBackground:SetPoint("CENTER", 0, 0)
 	MiniMapTrackingBackground:SetVertexColor(0, 0, 0, 0.8)
 	MiniMapTrackingButtonBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-	MiniMapTrackingButtonBorder:SetTexture("")
 	MiniMapTrackingButtonBorder:SetSize(32, 32)
 	MiniMapTrackingIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_search")
 	MiniMapTrackingIcon:SetSize(18, 18)
@@ -92,17 +91,20 @@ local function SetElementsStyle()
 	calendarFrame:SetScript("OnLeave", nil)
 	calendarFrame:SetNormalTexture("")
 	calendarFrame:SetPushedTexture("")
+
 	local calendarText = select(5, GameTimeFrame:GetRegions())
 	calendarText:SetTextColor(0.52, 0.46, 0.36)
-	calendarText:SetFont(cfg.font, 13, "THINOUTLINE")
+	calendarText:SetFont(M.font, 13, "THINOUTLINE")
 	calendarText:ClearAllPoints()
 	calendarText:SetPoint("CENTER", 0, 0)
-	local calendarBackground = calendarFrame:CreateTexture(nil,"BACKGROUND")
+
+	local calendarBackground = calendarFrame:CreateTexture(nil, "BACKGROUND")
 	calendarBackground:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
 	calendarBackground:SetVertexColor(0, 0, 0, 0.8)
 	calendarBackground:SetPoint("CENTER", 0, 0)
 	calendarBackground:SetSize(32, 32)
-	local calendarBorder = calendarFrame:CreateTexture(nil,"BORDER")
+	
+	local calendarBorder = calendarFrame:CreateTexture(nil, "BORDER")
 	calendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
 	calendarBorder:SetSize(32, 32)
 	calendarBorder:SetPoint("CENTER", 0, 0)
@@ -110,18 +112,15 @@ end
 
 local function InitMinimapParameters()
 	Minimap:SetParent("UIParent")
-	for i, _ in ipairs(cfg.minimap.elemets) do 
-		SetElementPosition(unpack(cfg.minimap.elemets[i]))
+	for i, _ in ipairs(C.minimap) do 
+		SetElementPosition(unpack(C.minimap[i]))
 	end
 	CreateMapOverlay()
 	CreateMapZoom()
 	SetElementsStyle()
 end
 
-minimapModule:SetScript("OnEvent", function(self, event)
-	if event == "PLAYER_LOGIN" then
-		InitMinimapParameters()
-	end
-end)
-
-minimapModule:RegisterEvent("PLAYER_LOGIN")
+do
+	LoadAddOn("Blizzard_TimeManager")
+	InitMinimapParameters()
+end
