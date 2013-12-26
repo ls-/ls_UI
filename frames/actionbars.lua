@@ -176,6 +176,8 @@ local function oUF_LSActionBar_OnEvent(self, event, ...)
 		]])
 		
 		RegisterStateDriver(self, "page", GetPageLayout())
+	else
+		MainMenuBar_OnEvent(self, event, ...)
 	end	
 end
 
@@ -666,6 +668,7 @@ do
 		if tonumber(strmatch(b, "(%d+)")) == 1 then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+			bar:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 			bar:SetScript("OnEvent", oUF_LSActionBar_OnEvent)
 		elseif tonumber(strmatch(b, "(%d+)")) == 6 then
 			bar:RegisterEvent("PLAYER_CONTROL_LOST")
