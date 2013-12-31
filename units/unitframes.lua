@@ -17,8 +17,9 @@ local curInUse = {
 	["NONE"] = {visible = false, slots = 0},
 }
 
-local classIconSpecSpell = {
-	["PRIEST"] = {RequireSpec = SPEC_PRIEST_SHADOW},
+local classIconSpell = {
+	["PALADIN"] = {RequireSpell = 85673},
+	["PRIEST"] = {RequireSpell = 95740},
 	["WARLOCK"] = {RequireSpell = WARLOCK_SOULBURN},
 }
 
@@ -149,8 +150,7 @@ local function UpdateClassPowerBar(self, cur, max, changed)
 		end
 	end
 	if UnitHasVehicleUI("player")
-		or (classIconSpecSpell[C.playerclass] and (classIconSpecSpell[C.playerclass].RequireSpec and classIconSpecSpell[C.playerclass].RequireSpec ~= GetSpecialization()))
-		or (classIconSpecSpell[C.playerclass] and (classIconSpecSpell[C.playerclass].RequireSpell and not IsPlayerSpell(classIconSpecSpell[C.playerclass].RequireSpell))) then
+		or (classIconSpell[C.playerclass] and (classIconSpell[C.playerclass].RequireSpell and not IsPlayerSpell(classIconSpell[C.playerclass].RequireSpell))) then
 		self:Hide()
 		FrameReskin(self:GetParent(), "NONE", true, 0, self.__cpower)
 	else
