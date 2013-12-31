@@ -10,14 +10,14 @@ ns.C.units = {
 		point = {"RIGHT", "oUF_LSPlayerFrame" , "LEFT"},
 	},
 	target = {
-		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 190, 400},
+		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 		long = true,
 	},
 	targettarget = {
 		point = { "LEFT", "oUF_LSTargetFrame", "RIGHT", 14, 0 },
 	},
 	focus = {
-		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -190, 400},
+		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
 		long = true,
 	},
 	focustarget = {

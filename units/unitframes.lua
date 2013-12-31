@@ -117,8 +117,6 @@ local function CreateClassPowerBar(self, max, cpType)
 	for i = 1, 5 do
 		bar[i] = bar:CreateTexture("icon"..i..cpType, "BACKGROUND", nil, 3)
 
-		bar[i].bg = bar:CreateTexture("icon"..i..cpType, "BACKGROUND", nil, 2)
-
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
 		bar[i].glow:SetAlpha(0)
 		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
@@ -137,10 +135,6 @@ local function UpdateClassPowerBar(self, cur, max, changed)
 			self[i]:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
 			self[i]:SetVertexColor(r, g, b)
 			
-			self[i].bg:SetAllPoints(self[i])
-			self[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
-			self[i].bg:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
-
 			local left, right, top, bottom = unpack(M.textures.cpower["total"..max]["cpower"..i].glowcoord)
 			self[i].glow:SetSize(abs(right - left) * 512, abs(bottom - top) * 256)
 			self[i].glow:SetPoint(unpack(M.textures.cpower["total"..max]["cpower"..i].glowpoint))
@@ -184,10 +178,6 @@ local function CreateDemonicFury(self)
 	bar.glow:SetAlpha(0)
 	ns.CreateGlowAnimation(bar.glow, 1, 0.5)
 
-	bar.bg = bar:CreateTexture(nil, "BACKGROUND")
-	bar.bg:SetAllPoints(bar)
-	bar.bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1")
-
 	return bar
 end
 
@@ -215,11 +205,6 @@ local function CreateBurningEmbers(self)
 		bar[i]:SetSize(unpack(M.textures.cpower.total4["cpower"..i].size))
 		bar[i]:SetPoint(unpack(M.textures.cpower.total4["cpower"..i].point))
 		bar[i]:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_4\\"..i)
-
-		bar[i].bg = bar[i]:CreateTexture(nil, "BACKGROUND")
-		bar[i].bg:SetAllPoints(bar[i])
-		bar[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_4\\"..i)
-		bar[i].bg.multiplier = 0.25
 
 		local left, right, top, bottom = unpack(M.textures.cpower.total4["cpower"..i].glowcoord)
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
@@ -284,11 +269,6 @@ local function CreateTotemBar(self)
 		bar[i]:SetPoint(unpack(M.textures.cpower["total"..MAX_TOTEMS]["cpower"..i].point))
 		bar[i]:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..MAX_TOTEMS.."\\"..i)
 		bar[i]:SetStatusBarColor(r, g, b)
-
-		bar[i].bg = bar:CreateTexture(nil, "BACKGROUND")
-		bar[i].bg:SetAllPoints(bar[i])
-		bar[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..MAX_TOTEMS.."\\"..i)
-		bar[i].bg:SetVertexColor(r * 0.25, g * 0.25, b * 0.25)
 
 		local left, right, top, bottom = unpack(M.textures.cpower["total"..MAX_TOTEMS]["cpower"..i].glowcoord)
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
@@ -355,11 +335,6 @@ local function CreateRuneBar(self)
 		bar[i]:SetPoint(unpack(M.textures.cpower.total6["cpower"..i].point))
 		bar[i]:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_6\\"..i)
 
-		bar[i].bg = bar[i]:CreateTexture(nil, "BACKGROUND")
-		bar[i].bg:SetAllPoints(bar[i])
-		bar[i].bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_6\\"..i)
-		bar[i].bg.multiplier = 0.25
-
 		local left, right, top, bottom = unpack(M.textures.cpower.total6["cpower"..i].glowcoord)
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
 		bar[i].glow:SetSize(abs(right - left) * 512, abs(bottom - top) * 256)
@@ -381,10 +356,11 @@ local function PostUpdateRuneBar(self, rune, rid, start, duration, runeReady)
 			self.elapsed = (self.elapsed or 0) + elapsed
 			if self.elapsed > 0.1 then
 				self.animState = self.glow.animation:GetLoopState()
+				print(self.animState)
 				if self.animState == "REVERSE" then
 					self.initStop = true
 				end
-				if self.animState == "FORWARD" and self.initStop then
+				if self.initStop then
 					self.glow.animation:Finish()
 					self.initStop = false
 					return self:SetScript("OnUpdate", nil)
@@ -505,8 +481,8 @@ local function CreateUnitFrameStyle(self, unit)
 		self.frameType = "orb"
 		width, height = 160, 160
 		sbOrientation = "VERTICAL"
-		hpTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling"
-		ppTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_power"
+		hpTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_hp"
+		ppTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_pp"
 		hpTextTemplate = "oUF_LSUnitFrame18Text"
 		ppTextTemplate = "oUF_LSUnitFrame14Text"
 	elseif unit == "pet" then
@@ -578,6 +554,16 @@ local function CreateUnitFrameStyle(self, unit)
 	self.fg:SetPoint("CENTER")
 	if unit == "pet" then
 		self.fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
+	end
+
+	if unit ~= "player" then
+		self.bg = self:CreateTexture("$parentBackground", "BACKGROUND", nil, 0)
+		self.bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..self.frameType.."_bg")
+		self.bg:SetPoint("CENTER")
+	else
+		self.hpbg = self:CreateTexture("$parentHPBackground", "BACKGROUND", nil, 0)
+		self.hpbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_hp")
+		self.hpbg:SetPoint("CENTER")
 	end
 
 	if unit == "player" then
@@ -662,11 +648,6 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Health.value:SetPoint("BOTTOM", self.Health, "BOTTOM", 0, 0)
 	end
 	tinsert(self.mouseovers, self.Health)
-	
-	self.Health.bg = self.Health:CreateTexture(nil, "BACKGROUND", nil, 0)
-	self.Health.bg:SetTexture(hpTexture)
-	self.Health.bg:SetAllPoints(self.Health)
-	self.Health.bg.multiplier = 0.25
 
 	if unit == "player" then
 		self.Health.lowHP = self.cover:CreateTexture(nil, "ARTWORK", nil, 2)
@@ -676,6 +657,10 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Health.lowHP:SetVertexColor(0.9, 0.1, 0.25)
 		self.Health.lowHP:SetAlpha(0)
 		ns.CreateGlowAnimation(self.Health.lowHP, 1)
+
+		self.ppbg = self.Health:CreateTexture("$parentPPBackground", "OVERLAY", nil, 0)
+		self.ppbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_pp")
+		self.ppbg:SetPoint("CENTER")
 	end
 
 	if unit ~= "focustarget" and unit ~= "targettarget" then
@@ -685,7 +670,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Power:SetOrientation(sbOrientation)
 		self.Power:SetStatusBarTexture(ppTexture)
 		if unit == "player" then
-			self.Power:SetSize(62, 130)
+			self.Power:SetSize(68, 136)
 			self.Power:SetPoint("CENTER", 35, 0)
 		elseif unit == "pet" then
 			self.Power:SetSize(51, 102)
@@ -714,11 +699,6 @@ local function CreateUnitFrameStyle(self, unit)
 			self.Power.value:SetPoint("RIGHT", self.Power, "RIGHT", -1, 0)
 		end
 		tinsert(self.mouseovers, self.Power)
-		
-		self.Power.bg = self.Power:CreateTexture(nil, "BACKGROUND", nil, 0)
-		self.Power.bg:SetTexture(ppTexture)
-		self.Power.bg:SetAllPoints(self.Power)
-		self.Power.bg.multiplier = 0.25
 	else
 		ns.UnitFrameReskin(self, "sol")
 	end

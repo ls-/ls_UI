@@ -209,6 +209,7 @@ function ns.CreateBuff (self, unit)
 	frame["size"] = 20
 	frame["spacing-x"] = 4
 	frame["spacing-y"] = 4
+	frame.showStealableBuffs = true
 
 	frame.PreUpdate = ns.BuffPreUpdate
 	frame.PostCreateIcon = ns.CreateAuraIcon
@@ -241,6 +242,7 @@ function ns.CreateDebuff (self, unit)
 	frame.PreUpdate = ns.DebuffPreUpdate
 	frame.PostCreateIcon = ns.CreateAuraIcon
 	frame.PostUpdateIcon = ns.UpdateAuraIcon
+	frame.CustomFilter = ns.CustomDebuffFilter
 
 	return frame
 end
@@ -253,10 +255,6 @@ function ns.CreateAuraIcon (self, button)
 	button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 	button.icon:SetDrawLayer("BACKGROUND", -8)
 
-	button.count:ClearAllPoints()
-	button.count:SetPoint("TOPRIGHT", button, "TOPRIGHT", 4, 4)
-	button.count:SetFont(M.font, 12, "THINOUTLINE")
-
 	button.overlay:SetTexture(M.textures.button.normalstone)
 	button.overlay:ClearAllPoints()
 	button.overlay:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
@@ -267,6 +265,7 @@ function ns.CreateAuraIcon (self, button)
 	ns.AlwaysShow(button.overlay)
 
 	button.stealable:SetTexture(M.textures.button.normalstone)
+	button.stealable:SetDrawLayer("OVERLAY", 1)
 	button.stealable:ClearAllPoints()
 	button.stealable:SetSize(28, 28)
 	button.stealable:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
@@ -279,6 +278,10 @@ function ns.CreateAuraIcon (self, button)
 
 	button.timer = ns.CreateFontString(button.fg, M.font, 12, "THINOUTLINE")
 	button.timer:SetPoint("BOTTOM", button.fg, "BOTTOM", 1, 0)
+
+	button.count:ClearAllPoints()
+	button.count:SetPoint("TOPRIGHT", button.fg, "TOPRIGHT", 4, 4)
+	button.count:SetFont(M.font, 12, "THINOUTLINE")
 end
 
 function ns.UpdateAuraIcon(self, unit, icon, index, offset)
@@ -324,19 +327,19 @@ function ns.UpdateAuraIcon(self, unit, icon, index, offset)
 	end
 end
 
--- function ns.CustomDebuffFilter(...)
--- 	local icons, unit, icon, name, _, _, _, _, _, _, caster, _, _, spellID = ...
--- 	if GetCVar("showAllEnemyDebuffs") == "1" or not UnitCanAttack("player", unit) or (icons.onlyShowPlayer and icon.isPlayer) then
--- 		return true
--- 	else
--- 		local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
--- 		if hasCustom then
--- 			return showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
--- 		else
--- 			return icon.isPlayer or caster == "player" or caster == "pet" or caster == "vehicle"
--- 		end
--- 	end
--- end
+function ns.CustomDebuffFilter(...)
+	local icons, unit, icon, name, _, _, _, _, _, _, caster, _, _, spellID = ...
+	if GetCVar("showAllEnemyDebuffs") == "1" or not UnitCanAttack("player", unit) or (icons.onlyShowPlayer and icon.isPlayer) then
+		return true
+	else
+		local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
+		if hasCustom then
+			return showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
+		else
+			return icon.isPlayer or caster == "player" or caster == "pet" or caster == "vehicle"
+		end
+	end
+end
 
 function ns.BuffPreUpdate(self, unit)
 	if GetCVar("showCastableBuffs") == "1" and UnitCanAssist("player", unit) then
@@ -376,7 +379,7 @@ function ns.UpdateHealth(self, unit, cur, max)
 	elseif UnitIsDeadOrGhost(unit) then
 		local color = self.__owner.colors.disconnected
 		local deadText
-		if UnitIsPlayer(unit) then
+		if UnitIsPlayer(unit) and unit == "player" then
 			if UnitSex(unit) == 2 or UnitSex(unit) == 1 then 
 				deadText = gsub(SPELL_FAILED_CASTER_DEAD, "[.]", "")
 			elseif UnitSex(unit) == 3 then
