@@ -53,14 +53,14 @@ local function StandardScroll(self)
 end
 
 local function SetScrolling(self, elapsed)
-	local alpha, x, y, shown
+	local alpha, x, y
 	for index, string in pairs(self.FeedbackToAnimate) do
 		if string.__scrollTime >= self.__time then
 			RemoveString(self, index, string)
 		else
 			string.__scrollTime = string.__scrollTime + elapsed
 			x, y = self.scrollFunction(string)
-			string:SetPoint("BOTTOM", self:GetParent(), "CENTER", x, y)
+			string:SetPoint("CENTER", self:GetParent(), "CENTER", x, y)
 			if ( string.__scrollTime >= self.__fadeout) then
 				alpha = 1 - ((string.__scrollTime - self.__fadeout) / (self.__time - self.__fadeout))
 				alpha = math.max(alpha, 0)
@@ -148,7 +148,7 @@ local function Update(self, ...)
 		string.__side = combatText.__side
 		string.__time = combatText.__time
 		string.__x = combatText.__offset * combatText.__side
-		string:SetPoint("BOTTOM", self, "CENTER", string.__x, 8)
+		string:SetPoint("CENTER", self, "CENTER", string.__x, 8)
 		string:SetAlpha(1)
 		string:Show()
 

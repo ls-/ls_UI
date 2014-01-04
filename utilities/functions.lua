@@ -635,7 +635,7 @@ end
 -- WATCHFRAME --
 ----------------
 
-local WATCHFRAME_LOCKED = true
+local WATCHFRAME_LOCKED = false
 
 _G["WatchFrame"]:SetMovable(1)
 -- _G["WatchFrame"]:ClearAllPoints()
