@@ -17,12 +17,6 @@ local curInUse = {
 	["NONE"] = {visible = false, slots = 0},
 }
 
-local classIconSpell = {
-	["PALADIN"] = {RequireSpell = 85673},
-	["PRIEST"] = {RequireSpell = 95740},
-	["WARLOCK"] = {RequireSpell = WARLOCK_SOULBURN},
-}
-
 local function FrameReskin(frame, powerType, visible, slots, sentBy)
 	if curInUse[powerType].visible == visible and curInUse[powerType].slots == slots or (powerType == "NONE" and prevInUse ~= sentBy) then return end
 	curInUse[prevInUse].visible = false
@@ -126,7 +120,7 @@ local function CreateClassPowerBar(self, max, cpType)
 end
 
 local function UpdateClassPowerBar(self, cur, max, changed)
-	if changed then
+	if changed and max ~= 0 then
 		local r, g, b = unpack(M.colors.classpower[self.__cpower])
 		for i = 1, max do 
 			self[i]:SetTexCoord(0, 1, 0, 1)
@@ -143,8 +137,7 @@ local function UpdateClassPowerBar(self, cur, max, changed)
 			self[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		end
 	end
-	if UnitHasVehicleUI("player")
-		or (classIconSpell[C.playerclass] and (classIconSpell[C.playerclass].RequireSpell and not IsPlayerSpell(classIconSpell[C.playerclass].RequireSpell))) then
+	if UnitHasVehicleUI("player") or max == 0 then
 		self:Hide()
 		FrameReskin(self:GetParent(), "NONE", true, 0, self.__cpower)
 	else
@@ -356,7 +349,6 @@ local function PostUpdateRuneBar(self, rune, rid, start, duration, runeReady)
 			self.elapsed = (self.elapsed or 0) + elapsed
 			if self.elapsed > 0.1 then
 				self.animState = self.glow.animation:GetLoopState()
-				print(self.animState)
 				if self.animState == "REVERSE" then
 					self.initStop = true
 				end
@@ -955,8 +947,8 @@ local function CreateUnitFrameStyle(self, unit)
 		FrameReskin(self, "NONE", true, 0, "NONE")
 
 		if C.playerclass == "MONK" then
-			self.ClassIcons = CreateClassPowerBar(self, 5, "CHI")
-			self.ClassIcons.PostUpdate = UpdateClassPowerBar
+			self.CustomClassIcons = CreateClassPowerBar(self, 5, "CHI")
+			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
 		if C.playerclass == "DEATHKNIGHT" then
@@ -970,13 +962,13 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if C.playerclass == "PALADIN" then
-			self.ClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
-			self.ClassIcons.PostUpdate = UpdateClassPowerBar
+			self.CustomClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
+			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
 		if C.playerclass == "WARLOCK" then
-				self.ClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
-				self.ClassIcons.PostUpdate = UpdateClassPowerBar
+				self.CustomClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
+				self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 
 				self.BurningEmbers = CreateBurningEmbers(self)
 				self.BurningEmbers.PostUpdate = UpdateBurningEmbers
@@ -988,8 +980,8 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if C.playerclass == "PRIEST" then
-			self.ClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
-			self.ClassIcons.PostUpdate = UpdateClassPowerBar
+			self.CustomClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
+			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 		
 		if C.playerclass == "DRUID" then
