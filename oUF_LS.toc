@@ -4,6 +4,7 @@
 ## Notes: PvE-oriented oUF-based UI
 ## RequiredDeps: oUF
 ## X-Category: UnitFrame
+## SavedVariables: oUF_LS_DB
 
 plugins\oUF_Smooth.lua
 plugins\oUF_Experience.lua
@@ -31,4 +32,5 @@ frames\minimap.lua
 frames\infobars.lua
 frames\buffs.lua
 frames\actionbars.lua
+frames\auratracker.lua
 frames\micromenu.lua

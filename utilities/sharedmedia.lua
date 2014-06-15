@@ -4,7 +4,7 @@ ns.hiddenParentFrame = CreateFrame("Frame")
 ns.hiddenParentFrame:Hide()
 
 ns.M = {
-	font = "Interface\\AddOns\\oUF_LS\\media\\fonts\\PTSB.ttf",
+	font = STANDARD_TEXT_FONT,
 	textures = {
 		statusbar = "Interface\\AddOns\\oUF_LS\\media\\statusbar",
 		button = {

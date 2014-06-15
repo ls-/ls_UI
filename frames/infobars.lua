@@ -210,27 +210,31 @@ end
 local function oUF_LSBagInfoBar_Initialize()
 	oUF_LSBagInfoBar:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	oUF_LSBagInfoBar:RegisterEvent("BAG_UPDATE")
-	CharacterBag3Slot:SetAlpha(0)
-	CharacterBag2Slot:SetAlpha(0)
-	CharacterBag1Slot:SetAlpha(0)
-	CharacterBag0Slot:SetAlpha(0)
-	MainMenuBarBackpackButton:SetAlpha(0)
+	if not InCombatLockdown() then
+		CharacterBag3Slot:Hide()
+		CharacterBag2Slot:Hide()
+		CharacterBag1Slot:Hide()
+		CharacterBag0Slot:Hide()
+		MainMenuBarBackpackButton:Hide()
+	end
 end
 
 local function oUF_LSBagInfoBar_OnClick(self, button)
 	if button == "RightButton" then
-		if MainMenuBarBackpackButton:GetAlpha() > 0 then
-			CharacterBag3Slot:SetAlpha(0)
-			CharacterBag2Slot:SetAlpha(0)
-			CharacterBag1Slot:SetAlpha(0)
-			CharacterBag0Slot:SetAlpha(0)
-			MainMenuBarBackpackButton:SetAlpha(0)
-		else
-			CharacterBag3Slot:SetAlpha(1)
-			CharacterBag2Slot:SetAlpha(1)
-			CharacterBag1Slot:SetAlpha(1)
-			CharacterBag0Slot:SetAlpha(1)
-			MainMenuBarBackpackButton:SetAlpha(1)
+		if not InCombatLockdown() then
+			if MainMenuBarBackpackButton:IsShown() then
+				CharacterBag3Slot:Hide()
+				CharacterBag2Slot:Hide()
+				CharacterBag1Slot:Hide()
+				CharacterBag0Slot:Hide()
+				MainMenuBarBackpackButton:Hide()
+			else
+				CharacterBag3Slot:Show()
+				CharacterBag2Slot:Show()
+				CharacterBag1Slot:Show()
+				CharacterBag0Slot:Show()
+				MainMenuBarBackpackButton:Show()
+			end
 		end
 	else
 		ToggleAllBags()
