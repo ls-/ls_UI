@@ -4,7 +4,7 @@
 ## Notes: PvE-oriented oUF-based UI
 ## RequiredDeps: oUF
 ## X-Category: UnitFrame
-## SavedVariables: oUF_LS_DB
+## SavedVariablesPerCharacter: oUF_LS_AURA_CONFIG
 
 plugins\oUF_Smooth.lua
 plugins\oUF_Experience.lua
