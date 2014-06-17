@@ -82,7 +82,7 @@ local function CreateComboBar(self)
 		bar[i].glow:SetTexCoord(113 / 128, 127 / 128, 17 / 32, 31 / 32)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
+		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 	return bar
 end
@@ -113,7 +113,7 @@ local function CreateClassPowerBar(self, max, cpType)
 
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
 		bar[i].glow:SetAlpha(0)
-		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
+		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -122,13 +122,13 @@ end
 local function UpdateClassPowerBar(self, cur, max, changed)
 	if changed and max ~= 0 then
 		local r, g, b = unpack(M.colors.classpower[self.__cpower])
-		for i = 1, max do 
+		for i = 1, max do
 			self[i]:SetTexCoord(0, 1, 0, 1)
 			self[i]:SetSize(unpack(M.textures.cpower["total"..max]["cpower"..i].size))
 			self[i]:SetPoint(unpack(M.textures.cpower["total"..max]["cpower"..i].point))
 			self[i]:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_"..max.."\\"..i)
 			self[i]:SetVertexColor(r, g, b)
-			
+
 			local left, right, top, bottom = unpack(M.textures.cpower["total"..max]["cpower"..i].glowcoord)
 			self[i].glow:SetSize(abs(right - left) * 512, abs(bottom - top) * 256)
 			self[i].glow:SetPoint(unpack(M.textures.cpower["total"..max]["cpower"..i].glowpoint))
@@ -169,7 +169,7 @@ local function CreateDemonicFury(self)
 	bar.glow:SetTexCoord(left, right, top, bottom)
 	bar.glow:SetVertexColor(0, 1, 0.1)
 	bar.glow:SetAlpha(0)
-	ns.CreateGlowAnimation(bar.glow, 1, 0.5)
+	ns.CreateAlphaAnimation(bar.glow, 1, 0.5)
 
 	return bar
 end
@@ -207,7 +207,7 @@ local function CreateBurningEmbers(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
+		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -221,7 +221,7 @@ local function UpdateBurningEmbers(self, full, count)
 	end
 
 	if full > 0 then
-		for i = 1, full do 
+		for i = 1, full do
 			if resetAnimation then
 				self[i].glow.animation:Stop()
 			end
@@ -233,7 +233,7 @@ local function UpdateBurningEmbers(self, full, count)
 			end
 		end
 	else
-		for i = 1, count do 
+		for i = 1, count do
 			self[i].glow.animation:Finish()
 		end
 	end
@@ -271,12 +271,12 @@ local function CreateTotemBar(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(r * 1.25, g * 1.25, b * 1.25)
 		bar[i].glow:SetAlpha(0)
-		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
+		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
 
 		bar[i].text = ns.CreateFontString(bar.cover, M.font, 14, "THINOUTLINE")
 		bar[i].text:SetPoint(unpack(M.textures.cpower["total"..MAX_TOTEMS]["cpower"..i].glowpoint))
 		bar[i].text:SetTextColor(r, g, b)
-		ns.CreateGlowAnimation(bar[i].text, -0.5)
+		ns.CreateAlphaAnimation(bar[i].text, -0.5)
 	end
 	return bar
 end
@@ -336,7 +336,7 @@ local function CreateRuneBar(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateGlowAnimation(bar[i].glow, 1, 0.5)
+		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -399,7 +399,7 @@ local function CreateEclipseBar(self)
 	bar.glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\cpower_glow")
 	bar.glow:SetTexCoord(left, right, top, bottom)
 	bar.glow:SetAlpha(0)
-	ns.CreateGlowAnimation(bar.glow, 1)
+	ns.CreateAlphaAnimation(bar.glow, 1)
 
 	bar.sun = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
 	bar.sun:SetPoint("TOPLEFT", -10, 12)
@@ -407,7 +407,7 @@ local function CreateEclipseBar(self)
 	bar.sun:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
 	bar.sun:SetTexCoord(0.55859375, 0.72656250, 0.00781250, 0.35937500)
 	bar.sun:SetAlpha(0)
-	ns.CreateGlowAnimation(bar.sun, 1)
+	ns.CreateAlphaAnimation(bar.sun, 1)
 
 	bar.moon = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
 	bar.moon:SetPoint("BOTTOMLEFT", -10, -12)
@@ -415,7 +415,7 @@ local function CreateEclipseBar(self)
 	bar.moon:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
 	bar.moon:SetTexCoord(0.73437500, 0.90234375, 0.00781250, 0.35937500)
 	bar.moon:SetAlpha(0)
-	ns.CreateGlowAnimation(bar.moon, 1)
+	ns.CreateAlphaAnimation(bar.moon, 1)
 
 	bar.direction = bar.cover:CreateTexture(nil, "ARTWORK", nil, 7)
 	bar.direction:SetPoint("CENTER", -7, 0)
@@ -574,7 +574,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Threat = self:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 1)
 		self.Threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..self.frameType.."_threat")
 		self.Threat.Override = ns.ThreatUpdateOverride
-		
+
 		self.DebuffHighlight = self:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
 		self.DebuffHighlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..self.frameType.."_debuff")
 		self.DebuffHighlight:SetAlpha(0)
@@ -648,7 +648,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Health.lowHP:SetPoint("CENTER")
 		self.Health.lowHP:SetVertexColor(0.9, 0.1, 0.25)
 		self.Health.lowHP:SetAlpha(0)
-		ns.CreateGlowAnimation(self.Health.lowHP, 1)
+		ns.CreateAlphaAnimation(self.Health.lowHP, 1)
 
 		self.ppbg = self.Health:CreateTexture("$parentPPBackground", "OVERLAY", nil, 0)
 		self.ppbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_pp")
@@ -673,7 +673,7 @@ local function CreateUnitFrameStyle(self, unit)
 			self.Power:SetPoint("RIGHT", -15, 0)
 			self.Power:SetPoint("BOTTOM", 0, 8)
 		end
-		
+
 		self.Power.PostUpdate = ns.UpdatePower
 		self.Power.Smooth = true
 		self.Power.colorPower = true --MOVE TO CONFIG
@@ -694,7 +694,7 @@ local function CreateUnitFrameStyle(self, unit)
 	else
 		ns.UnitFrameReskin(self, "sol")
 	end
-	
+
 	self.HealPrediction = {}
 	self.HealPrediction.myBar = CreateFrame("StatusBar", "$parentMyIncomingHeal", self.Health)
 	self.HealPrediction.myBar:SetOrientation(sbOrientation)
@@ -820,7 +820,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.banner:SetPoint("TOP", self, "BOTTOM", 0, 26.5)
 		hooksecurefunc(self, "Show", function(self)
 			local class = UnitClassification(self.unit)
-			if class ~= "normal" and class ~= "minus" and class ~= "trivial" then 
+			if class ~= "normal" and class ~= "minus" and class ~= "trivial" then
 				if class == "worldboss" or class == "elite" then
 					self.banner:SetTexture("Interface\\AddOns\\oUF_LS\\media\\banner_elite")
 				elseif class == "rareelite" then
@@ -857,7 +857,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 -- ICONS
 
-	if unit == "target" or unit == "focus" or unit == "party" or unit == "player" then 
+	if unit == "target" or unit == "focus" or unit == "party" or unit == "player" then
 		self.Leader = self:CreateTexture("$parentLeaderIcon", "BACKGROUND")
 		self.Leader:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
 		self.Leader:SetTexCoord(2 / 128, 20 / 128, 2 / 64, 20 / 64)
@@ -884,14 +884,14 @@ local function CreateUnitFrameStyle(self, unit)
 			self.PhaseIcon:SetTexCoord(62 / 128, 80 / 128, 22 / 64, 40 / 64)
 			self.PhaseIcon:SetSize(18, 18)
 		end
-		
+
 		if unit == "player" then
 			self.Resting = self:CreateTexture("$parentRestingIcon", "BACKGROUND")
 			self.Resting:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
 			self.Resting:SetTexCoord(82 / 128, 100 / 128, 2 / 64, 20 / 64)
 			self.Resting:SetSize(18, 18)
 		end
-		
+
 		if unit == "target" then
 			self.QuestIcon = self:CreateTexture("$parentQuestIcon", "BACKGROUND")
 			self.QuestIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
@@ -983,7 +983,7 @@ local function CreateUnitFrameStyle(self, unit)
 			self.CustomClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
 			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
-		
+
 		if C.playerclass == "DRUID" then
 			self.EclipseBar = CreateEclipseBar(self)
 			self.EclipseBar.PostUpdatePower = UpdateEclipseBar
@@ -1020,7 +1020,7 @@ oUF:Factory(function(self)
 		end
 		frame:UpdateAllElements()
 	end
-	
+
 	for unit, header in pairs(ns.headers) do
 		header:SetPoint(unpack(C.units[unit].point))
 	end

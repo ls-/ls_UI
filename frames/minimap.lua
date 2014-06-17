@@ -103,7 +103,7 @@ local function SetElementsStyle()
 	calendarBackground:SetVertexColor(0, 0, 0, 0.8)
 	calendarBackground:SetPoint("CENTER", 0, 0)
 	calendarBackground:SetSize(32, 32)
-	
+
 	local calendarBorder = calendarFrame:CreateTexture(nil, "BORDER")
 	calendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
 	calendarBorder:SetSize(32, 32)
@@ -112,7 +112,7 @@ end
 
 local function InitMinimapParameters()
 	Minimap:SetParent("UIParent")
-	for i, _ in ipairs(C.minimap) do 
+	for i, _ in ipairs(C.minimap) do
 		SetElementPosition(unpack(C.minimap[i]))
 	end
 	CreateMapOverlay()

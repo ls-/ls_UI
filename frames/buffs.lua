@@ -80,7 +80,7 @@ local function UpdateDebuffAnchors(buttonName, index)
 		button:SetPoint("TOPRIGHT", oUF_LSDebuffHeader, "TOPRIGHT", 0, 0)
 	else
 		button:SetPoint("RIGHT", _G[buttonName..(index - 1)], "LEFT", -4, 0)
-	end  
+	end
 end
 
 local function UpdateTemporaryEnchantAnchors(self)

@@ -43,7 +43,7 @@ local function Update(self, event, unit, powerType)
 			local value = cur - full * MAX_POWER_PER_EMBER
 			embers[1]:SetValue(value)
 		end
-		
+
 		for i = 1, count do
 			embers[i]:SetStatusBarColor(unpack(embers.color or oUF.colors.embers))
 			if embers[i].bg then

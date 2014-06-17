@@ -128,10 +128,10 @@ local function oUF_LSMemoryInfoBar_OnEnter(self)
 		end
 	end)
 	for i = 1, #self.activeAddons do
-		if self.activeAddons[i][3] then 
+		if self.activeAddons[i][3] then
 			local r = self.activeAddons[i][2] / self.usedMemory * 3
 			local g = 2 - r
-			GameTooltip:AddDoubleLine(self.activeAddons[i][1], format("%.3f MB", 
+			GameTooltip:AddDoubleLine(self.activeAddons[i][1], format("%.3f MB",
 				self.activeAddons[i][2] / 1000), 1, 1, 1, r, g, 0)
 		end
 	end
@@ -166,7 +166,7 @@ local function oUF_LSFPSInfoBar_OnUpdate(self, elapsed)
 	else
 		self.updateInterval = 0.2
 		local fps = GetFramerate()
-		if fps > 35 then 
+		if fps > 35 then
 			self.filling:SetVertexColor(unpack(ibcolors.green))
 		elseif fps > 20 then
 			self.filling:SetVertexColor(unpack(ibcolors.yellow))
@@ -192,7 +192,7 @@ local function oUF_LSLatencyInfoBar_OnUpdate(self, elapsed)
 	else
 		self.updateInterval = 10
 		local latency = select(4, GetNetStats())
-		if latency > PERFORMANCEBAR_MEDIUM_LATENCY then 
+		if latency > PERFORMANCEBAR_MEDIUM_LATENCY then
 			self.filling:SetVertexColor(unpack(ibcolors.red))
 		elseif latency > PERFORMANCEBAR_LOW_LATENCY then
 			self.filling:SetVertexColor(unpack(ibcolors.yellow))

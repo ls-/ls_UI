@@ -23,7 +23,7 @@ end
 function ns.AlwaysShow(self)
 	if not self then return end
 	self:Show()
-	self.Hide = self.Show 
+	self.Hide = self.Show
 end
 
 function ns.AlwaysHide(self)
@@ -33,7 +33,7 @@ function ns.AlwaysHide(self)
 end
 
 function ns.NumFormat(v, nomod)
-	if nomod == true then 
+	if nomod == true then
 		if abs(v) >= 1E6 then
 			return format("%.0f"..gsub(SECOND_NUMBER_CAP, "[ ]", ""), v / 1E6)
 		elseif abs(v) >= 1E4 then
@@ -173,7 +173,7 @@ function ns.SetCheckedTexture(self)
 end
 
 
-function ns.CreateGlowAnimation(self, change, duration, loopType)
+function ns.CreateAlphaAnimation(self, change, duration, loopType)
 	self.animation = self:CreateAnimationGroup()
 	self.animation:SetLooping(loopType or "BOUNCE")
 	local glowAnimation = self.animation:CreateAnimation("ALPHA")
@@ -380,7 +380,7 @@ function ns.UpdateHealth(self, unit, cur, max)
 		local color = self.__owner.colors.disconnected
 		local deadText
 		if UnitIsPlayer(unit) and unit == "player" then
-			if UnitSex(unit) == 2 or UnitSex(unit) == 1 then 
+			if UnitSex(unit) == 2 or UnitSex(unit) == 1 then
 				deadText = gsub(SPELL_FAILED_CASTER_DEAD, "[.]", "")
 			elseif UnitSex(unit) == 3 then
 				deadText = gsub(SPELL_FAILED_CASTER_DEAD_FEMALE, "[.]", "")
@@ -397,7 +397,7 @@ function ns.UpdateHealth(self, unit, cur, max)
 		else
 			if GetCVar("statusTextDisplay") == "PERCENT" then
 				return self.value:SetFormattedText("|cff%02x%02x%02x%d%%|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.PercFormat(cur, max))
-			else 
+			else
 				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur))
 			end
 		end
@@ -503,7 +503,7 @@ function ns.PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
 	else
 		healthSize = healthBar:GetHeight()
 	end
-	
+
 	if myHeals and myHealsValue > 0 then
 		appendTexture = UpdateHealPredictionAnchor(myHeals, sbOrientation, appendTexture, -(healthSize * myInitialHealAbsorb / maxHealth))
 	end
@@ -590,10 +590,10 @@ function ns.LFDOverride(self, event)
 	local lfdrole = self.LFDRole
 
 	local role = UnitGroupRolesAssigned(self.unit)
-	if role == "TANK" then 
+	if role == "TANK" then
 		lfdrole:SetTexCoord(62 / 128, 80 / 128, 2 / 64, 20 / 64)
 		lfdrole:Show()
-	elseif role == "HEALER" then 
+	elseif role == "HEALER" then
 		lfdrole:SetTexCoord(42 / 128, 60 / 128, 2 / 64, 20 / 64)
 		lfdrole:Show()
 	elseif role == "DAMAGER" then
@@ -648,13 +648,13 @@ _G["WatchFrameHeader"]:EnableMouse(true)
 _G["WatchFrameHeader"]:RegisterForDrag("LeftButton")
 _G["WatchFrameHeader"]:SetHitRectInsets(-10, -10, -10, -10)
 
-_G["WatchFrameHeader"]:SetScript("OnDragStart", function(self) 
+_G["WatchFrameHeader"]:SetScript("OnDragStart", function(self)
 	if not WATCHFRAME_LOCKED then
 		local frame = self:GetParent()
 		frame:StartMoving()
 	end
 end)
-_G["WatchFrameHeader"]:SetScript("OnDragStop", function(self) 
+_G["WatchFrameHeader"]:SetScript("OnDragStop", function(self)
 	if not WATCHFRAME_LOCKED then
 		local frame = self:GetParent()
 		frame:StopMovingOrSizing()
@@ -665,11 +665,11 @@ local function ToggleDrag()
 	WATCHFRAME_LOCKED = not WATCHFRAME_LOCKED
 end
 
-hooksecurefunc("ToggleDropDownMenu", function(...) 
+hooksecurefunc("ToggleDropDownMenu", function(...)
 	local level, _, dropDownFrame = ...
 	if dropDownFrame == WatchFrameHeaderDropDown and _G["DropDownList"..level]:IsShown() then
 		local info = UIDropDownMenu_CreateInfo()
-		-- lock/unlock 
+		-- lock/unlock
 		info = UIDropDownMenu_CreateInfo()
 		info.notCheckable = 1
 		info.text = WATCHFRAME_LOCKED and UNLOCK_FRAME or LOCK_FRAME

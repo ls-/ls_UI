@@ -55,7 +55,7 @@ local MICRO_BUTTON_LAYOUT = {
 		point = {"LEFT", "oUF_LSMainMenuMicroButton", "RIGHT", 6, 0},
 		icon = "help",
 	},
-} 
+}
 
 local function UpdateMicroButtonState()
 	local playerLevel = UnitLevel("player")
@@ -147,7 +147,7 @@ local function UpdateMicroButtonState()
 			oUF_LSLFDMicroButton:SetButtonState("NORMAL")
 		end
 	end
-	
+
 	if PetJournalParent and PetJournalParent:IsShown() then
 		oUF_LSCompanionsMicroButton:SetButtonState("PUSHED", 1)
 	else
@@ -303,36 +303,36 @@ do
 	end
 
 	oUF_LSCharacterMicroButton:SetScript("OnClick", function(...) ToggleCharacter("PaperDollFrame") end)
-	
+
 	oUF_LSSpellbookMicroButton:SetScript("OnClick", function(...) ToggleFrame(SpellBookFrame) end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSTalentMicroButton, {"PLAYER_LEVEL_UP", "PLAYER_TALENT_UPDATE"}, 10, true)
 	oUF_LSTalentMicroButton:SetScript("OnClick", function(...) ToggleTalentFrame() end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSAchievementMicroButton, {"RECEIVED_ACHIEVEMENT_LIST", "ACHIEVEMENT_EARNED"}, 10)
 	oUF_LSAchievementMicroButton:SetScript("OnClick", function(...) ToggleAchievementFrame() end)
-	
+
 	oUF_LSQuestLogMicroButton:SetScript("OnClick", function(...) ToggleFrame(QuestLogFrame) end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSGuildMicroButton, {"PLAYER_GUILD_UPDATE", "NEUTRAL_FACTION_SELECT_RESULT"}, nil, true, true)
 	oUF_LSGuildMicroButton:SetScript("OnClick", function(...) ToggleGuildFrame() end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSPVPMicroButton, {"NEUTRAL_FACTION_SELECT_RESULT"}, 10, true)
 	oUF_LSPVPMicroButton:SetScript("OnClick", function(...) TogglePVPUI() end)
 
 	oUF_LSMicroButton_Initialize(oUF_LSLFDMicroButton, {"PLAYER_LEVEL_UP"}, 15, true)
 	oUF_LSLFDMicroButton:SetScript("OnClick", function(...) PVEFrame_ToggleFrame() end)
-	
+
 	oUF_LSCompanionsMicroButton:SetScript("OnClick", function(...) TogglePetJournal() end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSEJMicroButton, nil, 15, true)
 	oUF_LSEJMicroButton:SetScript("OnClick", function(...) ToggleEncounterJournal() end)
-	
+
 	oUF_LSMicroButton_Initialize(oUF_LSStoreMicroButton, {"STORE_STATUS_CHANGED"})
 	oUF_LSStoreMicroButton:SetScript("OnClick", function(...) ToggleStoreUI() end)
 
 	oUF_LSMainMenuMicroButton:SetScript("OnClick", oUF_LSMainMenuMicroButton_OnClick)
-	
+
 	oUF_LSHelpMicroButton:SetScript("OnClick", function(...) ToggleHelpFrame() end)
 
 

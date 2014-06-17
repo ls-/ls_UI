@@ -140,11 +140,11 @@ local PAGE_LAYOUT = {
 local function GetPageLayout()
 	local condition = PAGE_LAYOUT["DEFAULT"]
 	local page = PAGE_LAYOUT[ns.C.playerclass]
-	
+
 	if page then
 		condition = condition.." "..page
 	end
-	
+
 	condition = condition.." [form] 1; 1"
 
 	return condition
@@ -156,7 +156,7 @@ local function oUF_LSActionBar_OnEvent(self, event, ...)
 		for i = 1, NUM_ACTIONBAR_BUTTONS do
 			button = _G["ActionButton"..i]
 			self:SetFrameRef("ActionButton"..i, button)
-		end	
+		end
 
 		self:Execute([[
 			buttons = table.new()
@@ -165,20 +165,20 @@ local function oUF_LSActionBar_OnEvent(self, event, ...)
 			end
 		]])
 
-		self:SetAttribute("_onstate-page", [[ 
+		self:SetAttribute("_onstate-page", [[
 			if HasTempShapeshiftActionBar() then
 				newstate = GetTempShapeshiftBarIndex() or newstate
 			end
-			
+
 			for i, button in ipairs(buttons) do
 				button:SetAttribute("actionpage", tonumber(newstate))
 			end
 		]])
-		
+
 		RegisterStateDriver(self, "page", GetPageLayout())
 	else
 		MainMenuBar_OnEvent(self, event, ...)
-	end	
+	end
 end
 
 local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
@@ -191,7 +191,7 @@ local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
 		petAutoCastShine = _G[buttonName.."Shine"]
 
 		local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
-		
+
 		if not isToken then
 			petActionIcon:SetTexture(texture)
 			petActionButton.tooltipName = name
@@ -199,7 +199,7 @@ local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
 			petActionIcon:SetTexture(_G[texture])
 			petActionButton.tooltipName = _G[name]
 		end
-		
+
 		petActionButton.isToken = isToken
 		petActionButton.tooltipSubtext = subtext
 
@@ -212,15 +212,15 @@ local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
 			petActionButton:SetChecked(0)
 			if IsPetAttackAction(i) then
 				PetActionButton_StopFlash(petActionButton)
-			end			
+			end
 		end
-		
+
 		if autoCastAllowed then
 			petAutoCastableTexture:Show()
 		else
 			petAutoCastableTexture:Hide()
 		end
-		
+
 		if autoCastEnabled then
 			AutoCastShine_AutoCastStart(petAutoCastShine)
 		else
@@ -247,7 +247,7 @@ local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
 		else
 			petActionIcon:Hide()
 		end
-		
+
 		if not PetHasActionBar() then
 			petActionButton:SetAlpha(0)
 		else
@@ -263,7 +263,7 @@ local function oUF_LSPetActionBar_ShowGrid(self)
 		self.buttons[i].border:Show()
 	end
 	oUF_LSPetActionBar_OnUpdate(self, "FROM_SHOW_GRID")
-	
+
 end
 
 local function oUF_LSPetActionBar_HideGrid(self)
@@ -336,7 +336,7 @@ local function SetDefaultButtonStyle(bType, id)
 	local HotKey
 	if type(bType) == "string" then
 		bHotKey = _G[bType..id.."HotKey"]
-	else 
+	else
 		bHotKey = button.HotKey
 	end
 	button.border = button:GetNormalTexture()
@@ -373,7 +373,7 @@ local function SetDefaultButtonStyle(bType, id)
 			button.border:SetVertexColor(unpack(M.colors.button.normal))
 		end
 
-		if bCount and (bType == "MainMenuBarBackpackButton" 
+		if bCount and (bType == "MainMenuBarBackpackButton"
 			or bType == "CharacterBag0Slot"	or bType == "CharacterBag1Slot"
 			or bType == " CharacterBag2Slot" or bType == "CharacterBag3Slot") then
 			ns.AlwaysHide(bCount)
@@ -398,7 +398,7 @@ local function SetDefaultButtonStyle(bType, id)
 			local bFlyoutBorderShadow = _G[name.."FlyoutBorderShadow"]
 			local bFloatingBG = _G[name.."FloatingBG"]
 
-			if bCount then 
+			if bCount then
 				bCount:SetFont(M.font, 12, "THINOUTLINE")
 				bCount:ClearAllPoints()
 				bCount:SetPoint("BOTTOMLEFT", 0, 0)
@@ -502,7 +502,7 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 			button = _G[buttonType..i]
 		else
 			if type(buttonType[i]) == "string" then
-				button = _G[buttonType[i]] 
+				button = _G[buttonType[i]]
 			else
 				button = buttonType[i] or PetBattleFrame.BottomFrame.abilityButtons[i]
 			end
@@ -511,9 +511,9 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 		button:SetSize(buttonSize, buttonSize)
 		button:ClearAllPoints()
 
-		if originalBar == "MainMenuBarArtFrame" or originalBar == "PetActionBarFrame" 
+		if originalBar == "MainMenuBarArtFrame" or originalBar == "PetActionBarFrame"
 			--[[or originalBar == "StanceBarFrame"]] or not originalBar then button:SetParent(self) end
-		
+
 		if originalBar == "PetActionBarFrame" then
 			button:SetScript("OnDragStart", oUF_LSPetActionButton_OnDragStart)
 			button:SetScript("OnReceiveDrag", oUF_LSPetActionButton_OnReceiveDrag)
@@ -560,7 +560,7 @@ local function oUF_LSActionButton_OnUpdate(button)
 		end
 	end
 
-	if bIcon then 
+	if bIcon then
 		if button.action and IsActionInRange(button.action) ~= 0 then
 			local isUsable, notEnoughMana = IsUsableAction(button.action)
 			if isUsable then
@@ -761,7 +761,7 @@ do
 	PetBattleFrameXPBar.Border = PetBattleFrameXPBar:CreateTexture(nil, "OVERLAY")
 	PetBattleFrameXPBar.Border:SetPoint("CENTER", 0, 0)
 	PetBattleFrameXPBar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
-	
+
 	PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2:SetTexture(nil)
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 66)

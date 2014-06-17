@@ -1,15 +1,13 @@
 local _, ns = ...
-local C, M = ns.C, ns.M
+local C, M, L = ns.C, ns.M, ns.L
 
-local LOCAL_CONFIG
+local LOCAL_CONFIG, AURATRACKER_LOCKED
 
 local DEFAULT_CONFIG = {
-	buffList = {
-	-- 116257,
-	-- 61316,
-	-- 7302,
-	},
+	buffList = {},
 	trackerPoint = {"CENTER", UIParent, "CENTER", 0, 0},
+	trackerLocked = false,
+	isUsed = true,
 }
 
 local BUTTON_LAYOUT = {
@@ -21,94 +19,114 @@ local BUTTON_LAYOUT = {
 	{"BOTTOMLEFT", 224, 2},
 }
 
-local auraTracker = CreateFrame("Frame", "oUF_LSAuraTackerBar", UIParent, "SecureHandlerStateTemplate")
-auraTracker:SetSize(264, 64)
-auraTracker:SetMovable(1)
-auraTracker:EnableMouse(true)
-auraTracker:RegisterForDrag("LeftButton")
-auraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-auraTracker:RegisterEvent("PLAYER_LOGIN")
-auraTracker:RegisterEvent("ADDON_LOADED")
-auraTracker:RegisterEvent("PLAYER_LOGOUT")
+local AuraTracker = CreateFrame("Frame", "oUF_LSAuraTrackerBar", UIParent, "SecureHandlerStateTemplate")
+AuraTracker:SetSize(264, 44)
+AuraTracker:SetClampedToScreen(true)
+AuraTracker:SetMovable(1)
+AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+AuraTracker:RegisterEvent("PLAYER_LOGIN")
+AuraTracker:RegisterEvent("ADDON_LOADED")
+AuraTracker:RegisterEvent("PLAYER_LOGOUT")
 
-auraTracker.buffs = {}
-auraTracker.buttons = {}
+local AuraTrackerHeader = CreateFrame("Button", "oUF_LSAuraTrackerHeader", oUF_LSAuraTrackerBar)
+AuraTrackerHeader:SetSize(132, 20)
+AuraTrackerHeader:SetPoint("BOTTOMLEFT", "oUF_LSAuraTrackerBar", "TOPLEFT", 0, 0)
+AuraTrackerHeader:SetClampedToScreen(true)
+AuraTrackerHeader:EnableMouse(true)
+AuraTrackerHeader:RegisterForDrag("LeftButton")
+AuraTrackerHeader:RegisterForClicks("RightButtonUp")
 
-local UpdateTooltip = function(self)
+AuraTrackerHeader.text = AuraTrackerHeader:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+AuraTrackerHeader.text:SetPoint("LEFT", 2, 0)
+AuraTrackerHeader.text:SetText(L.AuraTracker)
+
+local AuraTrackerHeaderDropDown = CreateFrame("Frame", "oUF_LSAuraTrackerHeaderDropDown", UIParent, "UIDropDownMenuTemplate")
+
+AuraTracker.buffs = {}
+AuraTracker.buttons = {}
+
+-- taken from oUF aura module
+local function oUF_LSAuraTackerButton_UpdateTooltip(self)
 	GameTooltip:SetUnitAura("player", self:GetID(), "HELP")
 end
 
-local OnEnter = function(self)
-	if(not self:IsVisible()) then return end
+local function oUF_LSAuraTackerButton_OnEnter(self)
+	if not self:IsVisible() then return end
 
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	self:UpdateTooltip()
 end
 
-local OnLeave = function()
+local function oUF_LSAuraTackerButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
 local function oUF_LSAuraTacker_ButtonSpawn(count)
 	count = count > 5 and 5 or count
-	for i =  1, count do
-		if not auraTracker.buttons[i] then
-			local button = CreateFrame("Frame", "AuraTrackerBuff"..i, auraTracker)
+	for i = 1, count do
+		if not AuraTracker.buttons[i] then
+			local button = CreateFrame("Frame", "AuraTrackerBuff"..i, AuraTracker)
 			button:SetSize(40, 40)
 
 			button.icon = button:CreateTexture(nil, "BACKGROUND", -8)
 			button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-			button.icon:SetAllPoints(button)
+			button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
+			button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
 
-			button.border = button:CreateTexture(nil, "BORDER")
-			button.border:SetTexture(M.textures.button.normalmetal)
-			button.border:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
-			button.border:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
-			button.border:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -4)
+			button.border = ns.CreateButtonBorder(button, 1)
 
 			button.fg = CreateFrame("Frame", nil, button)
 			button.fg:SetAllPoints(button)
 			button.fg:SetFrameLevel(5)
 
-			button.timer = ns.CreateFontString(button.fg, M.font, 14, "THINOUTLINE")
+			button.timer = ns.CreateFontString(button.fg, M.font, 16, "THINOUTLINE")
 			button.timer:SetPoint("BOTTOM", button.fg, "BOTTOM", 1, 0)
+
+			ns.CreateAlphaAnimation(button, -0.85, 0.75)
 
 			button:Hide()
 
-			button.UpdateTooltip = UpdateTooltip
+			button.UpdateTooltip = oUF_LSAuraTackerButton_UpdateTooltip
 
-			button:SetScript("OnEnter", OnEnter)
-			button:SetScript("OnLeave", OnLeave)
+			button:SetScript("OnEnter", oUF_LSAuraTackerButton_OnEnter)
+			button:SetScript("OnLeave", oUF_LSAuraTackerButton_OnLeave)
 
-			table.insert(auraTracker.buttons, button)
+			table.insert(AuraTracker.buttons, button)
 		end
 	end
 
-	for id, button in pairs(auraTracker.buttons) do
+	for id, button in pairs(AuraTracker.buttons) do
 		button:SetPoint(unpack(BUTTON_LAYOUT[id]))
 	end
 end
 
 local function oUF_LSAuraButton_OnUpdate(self, elapsed)
-	self.expire = auraTracker.buffs[self.id].expire
+	self.expire = AuraTracker.buffs[self.id].expire
 	self:SetScript("OnUpdate", function(self, elapsed)
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed < 0.1 then return end
 		self.elapsed = 0
 
 		local timeLeft = self.expire - GetTime()
-			if timeLeft > 0 then
-				if timeLeft > 10 then
-					self.timer:SetTextColor(0.9, 0.9, 0.9)
-				elseif timeLeft > 5 and timeLeft <= 10 then
-					self.timer:SetTextColor(1, 0.75, 0.1)
-				elseif timeLeft <= 5 then
-					self.timer:SetTextColor(0.9, 0.1, 0.1)
-				end
-				self.timer:SetText(ns.TimeFormat(timeLeft))
-			else
-				self.timer:SetText(nil)
+		if timeLeft > 0 then
+			if timeLeft < 31 and not self.animation:IsPlaying() then
+				self.animation:Play()
 			end
+			if timeLeft > 30 and self.animation:IsPlaying() then
+				self.animation:Stop()
+				self:SetAlpha(1)
+			end
+			if timeLeft > 10 then
+				self.timer:SetTextColor(0.9, 0.9, 0.9)
+			elseif timeLeft > 5 and timeLeft <= 10 then
+				self.timer:SetTextColor(1, 0.75, 0.1)
+			elseif timeLeft <= 5 then
+				self.timer:SetTextColor(0.9, 0.1, 0.1)
+			end
+			self.timer:SetText(ns.TimeFormat(timeLeft))
+		else
+			self.timer:SetText(nil)
+		end
 	end)
 end
 
@@ -116,10 +134,11 @@ local function oUF_LSAuraButton_OnEvent(...)
 	local _, event, arg3 = ...
 	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" then
 		if event == "PLAYER_LOGIN" then
-			auraTracker:SetPoint(unpack(LOCAL_CONFIG.trackerPoint))
+			AuraTracker:SetPoint(unpack(LOCAL_CONFIG.trackerPoint))
 			oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
+			AURATRACKER_LOCKED = LOCAL_CONFIG.trackerLocked
 		end
-		auraTracker.buffs = {}
+		AuraTracker.buffs = {}
 		for i = 1, 32 do
 			local name, _, iconTexture, count, buffType, duration, expirationTime, casterID, _, _, spellId = UnitBuff("player", i)
 			if name and tContains(LOCAL_CONFIG.buffList, spellId) then
@@ -128,25 +147,25 @@ local function oUF_LSAuraButton_OnEvent(...)
 				aura.index = i
 				aura.icon = iconTexture
 				aura.expire = expirationTime
-				auraTracker.buffs[#auraTracker.buffs + 1] = aura
+				AuraTracker.buffs[#AuraTracker.buffs + 1] = aura
 			end
 		end
-		for i = #auraTracker.buffs + 1, 5 do
-			if auraTracker.buttons[i] then
-				auraTracker.buttons[i]:Hide()
-				auraTracker.buttons[i]:SetScript("OnUpdate", nil)
+		for i = #AuraTracker.buffs + 1, 5 do
+			if AuraTracker.buttons[i] then
+				AuraTracker.buttons[i]:Hide()
+				AuraTracker.buttons[i]:SetScript("OnUpdate", nil)
 			end
 		end
-		for i = 1, #auraTracker.buffs do
-			auraTracker.buttons[i]:Show()
-			auraTracker.buttons[i]:SetID(auraTracker.buffs[i].index)
-			auraTracker.buttons[i].id = i
-			auraTracker.buttons[i].icon:SetTexture(auraTracker.buffs[i].icon)
-			auraTracker.buttons[i]:SetScript("OnUpdate", oUF_LSAuraButton_OnUpdate)
+		for i = 1, #AuraTracker.buffs do
+			AuraTracker.buttons[i]:Show()
+			AuraTracker.buttons[i]:SetID(AuraTracker.buffs[i].index)
+			AuraTracker.buttons[i].id = i
+			AuraTracker.buttons[i].icon:SetTexture(AuraTracker.buffs[i].icon)
+			AuraTracker.buttons[i]:SetScript("OnUpdate", oUF_LSAuraButton_OnUpdate)
 		end
 	elseif event == "ADDON_LOADED" then
 		if arg3 ~= "oUF_LS" then return end
-	
+
 		local function initDB(db, defaults)
 			if type(db) ~= "table" then db = {} end
 			if type(defaults) ~= "table" then return db end
@@ -162,7 +181,6 @@ local function oUF_LSAuraButton_OnEvent(...)
 
 		oUF_LS_AURA_CONFIG = initDB(oUF_LS_AURA_CONFIG, DEFAULT_CONFIG)
 		LOCAL_CONFIG = oUF_LS_AURA_CONFIG
-
 	elseif event == "PLAYER_LOGOUT" then
 		local function cleanDB(db, defaults)
 			if type(db) ~= "table" then return {} end
@@ -183,20 +201,48 @@ local function oUF_LSAuraButton_OnEvent(...)
 	end
 end
 
-auraTracker:SetScript("OnEvent", oUF_LSAuraButton_OnEvent)
+AuraTracker:SetScript("OnEvent", oUF_LSAuraButton_OnEvent)
 
-
-auraTracker:SetScript("OnDragStart", function(self) 
-	self:StartMoving()
+AuraTrackerHeader:SetScript("OnDragStart", function(self)
+	if not AURATRACKER_LOCKED then
+		local frame = self:GetParent()
+		frame:StartMoving()
+	end
 end)
 
-auraTracker:SetScript("OnDragStop", function(self) 
-	self:StopMovingOrSizing()
-	local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
-	LOCAL_CONFIG.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+AuraTrackerHeader:SetScript("OnDragStop", function(self)
+	if not AURATRACKER_LOCKED then
+		local frame = self:GetParent()
+		frame:StopMovingOrSizing()
+
+		local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
+		LOCAL_CONFIG.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+	end
 end)
 
-ns.DebugTexture(auraTracker)
+local function AuraTrackerHeader_OnClick(self, button)
+	if button == "RightButton" then
+		ToggleDropDownMenu(1, nil, oUF_LSAuraTrackerHeaderDropDown, "cursor", 3, -3)
+	end
+end
+
+AuraTrackerHeader:SetScript("OnClick", AuraTrackerHeader_OnClick)
+
+local function ToggleDrag()
+	AURATRACKER_LOCKED = not AURATRACKER_LOCKED
+	LOCAL_CONFIG.trackerLocked = AURATRACKER_LOCKED
+end
+
+local function AuraTrackerHeaderDropDown_Initialize(self)
+	local info = UIDropDownMenu_CreateInfo()
+	info = UIDropDownMenu_CreateInfo()
+	info.notCheckable = 1
+	info.text = AURATRACKER_LOCKED and UNLOCK_FRAME or LOCK_FRAME
+	info.func = ToggleDrag
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+end
+
+UIDropDownMenu_Initialize(AuraTrackerHeaderDropDown, AuraTrackerHeaderDropDown_Initialize, "MENU")
 
 SLASH_ATADD1 = '/atadd'
 local function AuraTracker_Add(msg)

@@ -8,7 +8,7 @@ local WARLOCK_METAMORPHOSIS = WARLOCK_METAMORPHOSIS
 local SPELL_POWER_DEMONIC_FURY = SPELL_POWER_DEMONIC_FURY
 local DEMONIC_FURY = DEMONIC_FURY
 
-oUF.colors.fury = { 
+oUF.colors.fury = {
 	full	= { 0, 1, 0.1 },
 	normal	= { 0.9, 0.1, 0.75 },
  }

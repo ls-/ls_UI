@@ -170,7 +170,7 @@ local function Enable(self, unit)
 
 	if not combatText then return end
 
-	combatText:SetScript("OnShow", function(self) 
+	combatText:SetScript("OnShow", function(self)
 		for index, string in pairs(self.FeedbackToAnimate) do
 			RemoveString(self, index, string)
 		end
