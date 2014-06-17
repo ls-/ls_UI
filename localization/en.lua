@@ -6,5 +6,5 @@ ns.L = {
 	Home = "Home",
 	World = "World",
 	AuraTracker = "Auras",
-	ListofCommands = "List of сommands"
+	ListofCommands = "List of Commands"
 }
