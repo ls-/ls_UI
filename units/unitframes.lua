@@ -567,7 +567,8 @@ local function CreateUnitFrameStyle(self, unit)
 		for i = 1, 4 do
 			self.FloatingCombatFeedback[i] = self.FloatingCombatFeedback:CreateFontString("feeback"..i, "OVERLAY", "oUF_LSUnitFrame18Text")
 		end
-		self.FloatingCombatFeedback.Mode = "Fountain" --MOVE TO CONFIG
+		self.FloatingCombatFeedback.Mode = "Fountain"
+		self.FloatingCombatFeedback.YOffset = 20
 	end
 
 	if unit ~= "focustarget" and unit ~= "targettarget" then

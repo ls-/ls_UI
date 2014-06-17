@@ -42,13 +42,13 @@ end
 
 local function FountainScroll(self)
 	local x = self.__x + self.__side * (65 * (1 - cos(90 * self.__scrollTime / self.__time)))
-	local y = 8 + 65 * sin(90 * self.__scrollTime / self.__time)
+	local y = self.__y + 65 * sin(90 * self.__scrollTime / self.__time) * self.__ydirection
 	return x, y
 end
 
 local function StandardScroll(self)
 	local x = self.__x
-	local y = 8 + 65 * sin(90 * self.__scrollTime / self.__time)
+	local y = self.__y + 65 * sin(90 * self.__scrollTime / self.__time) * self.__ydirection
 	return x, y
 end
 
@@ -147,8 +147,10 @@ local function Update(self, ...)
 		string.__scrollTime = 0
 		string.__side = combatText.__side
 		string.__time = combatText.__time
-		string.__x = combatText.__offset * combatText.__side
-		string:SetPoint("CENTER", self, "CENTER", string.__x, 8)
+		string.__x = combatText.__xoffset * string.__side
+		string.__ydirection = combatText.__ydirection
+		string.__y = combatText.__yoffset * string.__ydirection
+		string:SetPoint("CENTER", self, "CENTER", string.__x, string.__y)
 		string:SetAlpha(1)
 		string:Show()
 
@@ -178,18 +180,21 @@ local function Enable(self, unit)
 
 	combatText.__owner = self
 	combatText.__max = #combatText
-	combatText.__time = (combatText.ScrollTime or 1.5)
+	combatText.__time = combatText.ScrollTime or 1.5
 	combatText.__fadeout = combatText.__time / 3
 	combatText.__side = 1
+	combatText.__ydirection = combatText.YDirection or 1
 	combatText.__fontHeight = select(2, combatText[1]:GetFont())
 	combatText.FeedbackToAnimate = {}
 
 	if combatText.Mode == "Fountain" then
 		combatText.scrollFunction = FountainScroll
-		combatText.__offset = combatText.Offset or 6
+		combatText.__xoffset = combatText.XOffset or 6
+		combatText.__yoffset = combatText.YOffset or 8
 	else
 		combatText.scrollFunction = StandardScroll
-		combatText.__offset = combatText.Offset or 30
+		combatText.__xoffset = combatText.XOffset or 30
+		combatText.__yoffset = combatText.YOffset or 8
 	end
 
 	for i = 1, combatText.__max do

@@ -6,5 +6,6 @@ if GetLocale() == "ruRU" then
 	L.Latency = "Задержка"
 	L.Home = "Локальная"
 	L.World = "Глобальная"
-	L.AuraTracker = "Отслеживание эффектов"
+	L.AuraTracker = "Эффекты"
+	L.ListofCommands = "Список комманд"
 end

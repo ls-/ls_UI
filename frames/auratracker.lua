@@ -62,7 +62,7 @@ local function oUF_LSAuraTackerButton_OnLeave(self)
 end
 
 local function oUF_LSAuraTacker_ButtonSpawn(count)
-	count = count > 5 and 5 or count
+	count = count > 6 and 6 or count
 	for i = 1, count do
 		if not AuraTracker.buttons[i] then
 			local button = CreateFrame("Frame", "AuraTrackerBuff"..i, AuraTracker)
@@ -109,7 +109,7 @@ local function oUF_LSAuraButton_OnUpdate(self, elapsed)
 
 		local timeLeft = self.expire - GetTime()
 		if timeLeft > 0 then
-			if timeLeft < 31 and not self.animation:IsPlaying() then
+			if timeLeft <= 30 and not self.animation:IsPlaying() then
 				self.animation:Play()
 			end
 			if timeLeft > 30 and self.animation:IsPlaying() then
@@ -126,44 +126,17 @@ local function oUF_LSAuraButton_OnUpdate(self, elapsed)
 			self.timer:SetText(ns.TimeFormat(timeLeft))
 		else
 			self.timer:SetText(nil)
+			if self.animation:IsPlaying() then
+				self.animation:Stop()
+				self:SetAlpha(1)
+			end
 		end
 	end)
 end
 
 local function oUF_LSAuraButton_OnEvent(...)
 	local _, event, arg3 = ...
-	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" then
-		if event == "PLAYER_LOGIN" then
-			AuraTracker:SetPoint(unpack(LOCAL_CONFIG.trackerPoint))
-			oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
-			AURATRACKER_LOCKED = LOCAL_CONFIG.trackerLocked
-		end
-		AuraTracker.buffs = {}
-		for i = 1, 32 do
-			local name, _, iconTexture, count, buffType, duration, expirationTime, casterID, _, _, spellId = UnitBuff("player", i)
-			if name and tContains(LOCAL_CONFIG.buffList, spellId) then
-				local aura = {}
-				aura.id = spellId
-				aura.index = i
-				aura.icon = iconTexture
-				aura.expire = expirationTime
-				AuraTracker.buffs[#AuraTracker.buffs + 1] = aura
-			end
-		end
-		for i = #AuraTracker.buffs + 1, 5 do
-			if AuraTracker.buttons[i] then
-				AuraTracker.buttons[i]:Hide()
-				AuraTracker.buttons[i]:SetScript("OnUpdate", nil)
-			end
-		end
-		for i = 1, #AuraTracker.buffs do
-			AuraTracker.buttons[i]:Show()
-			AuraTracker.buttons[i]:SetID(AuraTracker.buffs[i].index)
-			AuraTracker.buttons[i].id = i
-			AuraTracker.buttons[i].icon:SetTexture(AuraTracker.buffs[i].icon)
-			AuraTracker.buttons[i]:SetScript("OnUpdate", oUF_LSAuraButton_OnUpdate)
-		end
-	elseif event == "ADDON_LOADED" then
+	if event == "ADDON_LOADED" then
 		if arg3 ~= "oUF_LS" then return end
 
 		local function initDB(db, defaults)
@@ -198,6 +171,42 @@ local function oUF_LSAuraButton_OnEvent(...)
 		end
 
 		oUF_LS_AURA_CONFIG = cleanDB(oUF_LS_AURA_CONFIG, DEFAULT_CONFIG)
+	elseif event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" then
+		if event == "PLAYER_LOGIN" then
+			AuraTracker:SetPoint(unpack(LOCAL_CONFIG.trackerPoint))
+			oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
+			AURATRACKER_LOCKED = LOCAL_CONFIG.trackerLocked
+			if #LOCAL_CONFIG.buffList > 6 then
+				for i = 7, #LOCAL_CONFIG.buffList do
+					table.remove(LOCAL_CONFIG.buffList, i)
+				end
+			end
+		end
+		AuraTracker.buffs = {}
+		for i = 1, 32 do
+			local name, _, iconTexture, count, buffType, duration, expirationTime, casterID, _, _, spellId = UnitBuff("player", i)
+			if name and tContains(LOCAL_CONFIG.buffList, spellId) then
+				local aura = {}
+				aura.id = spellId
+				aura.index = i
+				aura.icon = iconTexture
+				aura.expire = expirationTime
+				AuraTracker.buffs[#AuraTracker.buffs + 1] = aura
+			end
+		end
+		for i = #AuraTracker.buffs + 1, 6 do
+			if AuraTracker.buttons[i] then
+				AuraTracker.buttons[i]:Hide()
+				AuraTracker.buttons[i]:SetScript("OnUpdate", nil)
+			end
+		end
+		for i = 1, #AuraTracker.buffs do
+			AuraTracker.buttons[i]:Show()
+			AuraTracker.buttons[i]:SetID(AuraTracker.buffs[i].index)
+			AuraTracker.buttons[i].id = i
+			AuraTracker.buttons[i].icon:SetTexture(AuraTracker.buffs[i].icon)
+			AuraTracker.buttons[i]:SetScript("OnUpdate", oUF_LSAuraButton_OnUpdate)
+		end
 	end
 end
 
@@ -233,6 +242,14 @@ local function ToggleDrag()
 	LOCAL_CONFIG.trackerLocked = AURATRACKER_LOCKED
 end
 
+local function PrintSlashCommands()
+	print("|cff1ec77eAuraTracker|r: List of commands:")
+	print("|cff00ccff/atadd spellId|r - adds aura to the list")
+	print("|cff00ccff/atrem spellId|r - removes aura from the list")
+	print("|cff00ccff/atlist|r - prints the list of tracked auras")
+	print("|cff00ccff/atwipe|r - wipes the list of tracked auras")
+end
+
 local function AuraTrackerHeaderDropDown_Initialize(self)
 	local info = UIDropDownMenu_CreateInfo()
 	info = UIDropDownMenu_CreateInfo()
@@ -240,13 +257,21 @@ local function AuraTrackerHeaderDropDown_Initialize(self)
 	info.text = AURATRACKER_LOCKED and UNLOCK_FRAME or LOCK_FRAME
 	info.func = ToggleDrag
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+	info = UIDropDownMenu_CreateInfo()
+	info.notCheckable = 1
+	info.text = L.ListofCommands
+	info.func = PrintSlashCommands
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
 UIDropDownMenu_Initialize(AuraTrackerHeaderDropDown, AuraTrackerHeaderDropDown_Initialize, "MENU")
 
 SLASH_ATADD1 = '/atadd'
 local function AuraTracker_Add(msg)
+	if #LOCAL_CONFIG.buffList == 6 then return end
 	table.insert(LOCAL_CONFIG.buffList, tonumber(msg))
+	local name = GetSpellInfo(tonumber(msg))
+	print("|cff1ec77eAuraTracker|r: "..name.." ("..msg..") was added to the list")
 	oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
 	oUF_LSAuraButton_OnEvent(nil, "CUSTOM_FORCE_UPDATE")
 end
@@ -257,8 +282,27 @@ local function AuraTracker_Remove(msg)
 	for k,v in pairs(LOCAL_CONFIG.buffList) do
 		if v == tonumber(msg) then
 			table.remove(LOCAL_CONFIG.buffList, k)
+			local name = GetSpellInfo(v)
+			print("|cff1ec77eAuraTracker|r: "..name.." ("..v..") was removed from the list")
 		end
 	end
 	oUF_LSAuraButton_OnEvent(nil, "CUSTOM_FORCE_UPDATE")
 end
 SlashCmdList["ATREM"] = AuraTracker_Remove
+
+SLASH_ATLIST1 = '/atlist'
+local function AuraTracker_List(msg)
+	print("|cff1ec77eAuraTracker|r: List of auras:")
+	for k,v in pairs(LOCAL_CONFIG.buffList) do
+		local name = GetSpellInfo(v)
+		print("|cff00ccff-|r "..name.." ("..v..")")
+	end
+end
+SlashCmdList["ATLIST"] = AuraTracker_List
+
+SLASH_ATWIPE1 = '/atwipe'
+local function AuraTracker_Wipe(msg)
+	LOCAL_CONFIG.buffList = {}
+	print("|cff1ec77eAuraTracker|r: List of auras was wiped")
+end
+SlashCmdList["ATWIPE"] = AuraTracker_Wipe

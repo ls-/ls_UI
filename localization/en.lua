@@ -5,5 +5,6 @@ ns.L = {
 	Latency = "Latency",
 	Home = "Home",
 	World = "World",
-	AuraTracker = "Aura Tracker"
+	AuraTracker = "Auras",
+	ListofCommands = "List of сommands"
 }
