@@ -631,49 +631,54 @@ function ns.ThreatUpdateOverride (self, event, unit)
 	end
 end
 
-----------------
--- WATCHFRAME --
-----------------
+-----------------------
+-- OBJECTIVE TRACKER --
+-----------------------
 
-local WATCHFRAME_LOCKED = false
+local OT_LOCKED = false
 
-_G["WatchFrame"]:SetMovable(1)
--- _G["WatchFrame"]:ClearAllPoints()
--- _G["WatchFrame"].ClearAllPoints = function() return end
--- _G["WatchFrame"]:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT",-250, -250)
--- _G["WatchFrame"].SetPoint = function() return end
-_G["WatchFrame"]:SetUserPlaced(true)
-_G["WatchFrame"]:SetHeight(C.height / 2)
-_G["WatchFrameHeader"]:EnableMouse(true)
-_G["WatchFrameHeader"]:RegisterForDrag("LeftButton")
-_G["WatchFrameHeader"]:SetHitRectInsets(-10, -10, -10, -10)
+local OTDragHeader = CreateFrame("BUTTON", "ObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
+OTDragHeader:SetFrameStrata(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameStrata())
+OTDragHeader:SetFrameLevel(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameLevel() + 1)
+OTDragHeader:SetSize(235, 25)
+OTDragHeader:SetPoint("TOP", -10, 0)
+OTDragHeader:RegisterForClicks("RightButtonUp")
+OTDragHeader:RegisterForDrag("LeftButton")
 
-_G["WatchFrameHeader"]:SetScript("OnDragStart", function(self)
-	if not WATCHFRAME_LOCKED then
+OTDragHeader:SetScript("OnDragStart", function(self)
+	if not OT_LOCKED then
 		local frame = self:GetParent()
 		frame:StartMoving()
 	end
 end)
-_G["WatchFrameHeader"]:SetScript("OnDragStop", function(self)
-	if not WATCHFRAME_LOCKED then
+
+OTDragHeader:SetScript("OnDragStop", function(self)
+	if not OT_LOCKED then
 		local frame = self:GetParent()
 		frame:StopMovingOrSizing()
 	end
 end)
 
-local function ToggleDrag()
-	WATCHFRAME_LOCKED = not WATCHFRAME_LOCKED
+local function OTHeaderDragToggle()
+	OT_LOCKED = not OT_LOCKED
 end
 
-hooksecurefunc("ToggleDropDownMenu", function(...)
-	local level, _, dropDownFrame = ...
-	if dropDownFrame == WatchFrameHeaderDropDown and _G["DropDownList"..level]:IsShown() then
-		local info = UIDropDownMenu_CreateInfo()
-		-- lock/unlock
-		info = UIDropDownMenu_CreateInfo()
-		info.notCheckable = 1
-		info.text = WATCHFRAME_LOCKED and UNLOCK_FRAME or LOCK_FRAME
-		info.func = ToggleDrag
-		UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-	end
-end)
+local function OTDropDown_Initialize(self)
+	local info = UIDropDownMenu_CreateInfo()
+	info = UIDropDownMenu_CreateInfo()
+	info.notCheckable = 1
+	info.text = OT_LOCKED and UNLOCK_FRAME or LOCK_FRAME
+	info.func = OTHeaderDragToggle
+	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+end
+
+local OTDropDown = CreateFrame("Frame", "ObjectiveTrackerDragHeaderDropDown", UIParent, "UIDropDownMenuTemplate")
+UIDropDownMenu_Initialize(OTDropDown, OTDropDown_Initialize, "MENU")
+
+OTDragHeader:SetScript("OnClick", function(...) ToggleDropDownMenu(1, nil, OTDropDown, "cursor", 2, -2) end)
+
+ObjectiveTrackerFrame:SetMovable(1)
+ObjectiveTrackerFrame.ClearAllPoints = function() return end
+ObjectiveTrackerFrame.SetPoint = function() return end
+ObjectiveTrackerFrame:SetUserPlaced(true)
+ObjectiveTrackerFrame:SetHeight(C.height * 0.6)
