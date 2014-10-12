@@ -1,6 +1,6 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
-local C, M = ns.C, ns.M
+local M = ns.M
 
 -----------
 -- DEBUG --
@@ -635,50 +635,57 @@ end
 -- OBJECTIVE TRACKER --
 -----------------------
 
-local OT_LOCKED = false
+function CreateOTDragHeader()
+	local OT_LOCKED = ns.C.objectivetracker.trackerLocked
 
-local OTDragHeader = CreateFrame("BUTTON", "ObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
-OTDragHeader:SetFrameStrata(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameStrata())
-OTDragHeader:SetFrameLevel(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameLevel() + 1)
-OTDragHeader:SetSize(235, 25)
-OTDragHeader:SetPoint("TOP", -10, 0)
-OTDragHeader:RegisterForClicks("RightButtonUp")
-OTDragHeader:RegisterForDrag("LeftButton")
+	local OTDragHeader = CreateFrame("BUTTON", "ObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
+	OTDragHeader:SetFrameStrata(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameStrata())
+	OTDragHeader:SetFrameLevel(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameLevel() + 1)
+	OTDragHeader:SetSize(235, 25)
+	OTDragHeader:SetPoint("TOP", -10, 0)
+	OTDragHeader:RegisterForClicks("RightButtonUp")
+	OTDragHeader:RegisterForDrag("LeftButton")
 
-OTDragHeader:SetScript("OnDragStart", function(self)
-	if not OT_LOCKED then
-		local frame = self:GetParent()
-		frame:StartMoving()
+	OTDragHeader:SetScript("OnDragStart", function(self)
+		if not OT_LOCKED then
+			local frame = self:GetParent()
+			frame:StartMoving()
+		end
+	end)
+
+	OTDragHeader:SetScript("OnDragStop", function(self)
+		if not OT_LOCKED then
+			local frame = self:GetParent()
+			frame:StopMovingOrSizing()
+
+			local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
+			ns.C.objectivetracker.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+		end
+	end)
+
+	local function OTHeaderDragToggle()
+		OT_LOCKED = not OT_LOCKED
+		ns.C.objectivetracker.trackerLocked = OT_LOCKED
 	end
-end)
 
-OTDragHeader:SetScript("OnDragStop", function(self)
-	if not OT_LOCKED then
-		local frame = self:GetParent()
-		frame:StopMovingOrSizing()
+	local function OTDropDown_Initialize(self)
+		local info = UIDropDownMenu_CreateInfo()
+		info = UIDropDownMenu_CreateInfo()
+		info.notCheckable = 1
+		info.text = OT_LOCKED and UNLOCK_FRAME or LOCK_FRAME
+		info.func = OTHeaderDragToggle
+		UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 	end
-end)
 
-local function OTHeaderDragToggle()
-	OT_LOCKED = not OT_LOCKED
+	local OTDropDown = CreateFrame("Frame", "ObjectiveTrackerDragHeaderDropDown", UIParent, "UIDropDownMenuTemplate")
+	UIDropDownMenu_Initialize(OTDropDown, OTDropDown_Initialize, "MENU")
+
+	OTDragHeader:SetScript("OnClick", function(...) ToggleDropDownMenu(1, nil, OTDropDown, "cursor", 2, -2) end)
+
+	ObjectiveTrackerFrame:SetMovable(1)
+	ObjectiveTrackerFrame:ClearAllPoints()
+	ObjectiveTrackerFrame.ClearAllPoints = function() return end
+	ObjectiveTrackerFrame:SetPoint(unpack(ns.C.objectivetracker.trackerPoint))
+	ObjectiveTrackerFrame.SetPoint = function() return end
+	ObjectiveTrackerFrame:SetHeight(ns.C.height * 0.6)
 end
-
-local function OTDropDown_Initialize(self)
-	local info = UIDropDownMenu_CreateInfo()
-	info = UIDropDownMenu_CreateInfo()
-	info.notCheckable = 1
-	info.text = OT_LOCKED and UNLOCK_FRAME or LOCK_FRAME
-	info.func = OTHeaderDragToggle
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-end
-
-local OTDropDown = CreateFrame("Frame", "ObjectiveTrackerDragHeaderDropDown", UIParent, "UIDropDownMenuTemplate")
-UIDropDownMenu_Initialize(OTDropDown, OTDropDown_Initialize, "MENU")
-
-OTDragHeader:SetScript("OnClick", function(...) ToggleDropDownMenu(1, nil, OTDropDown, "cursor", 2, -2) end)
-
-ObjectiveTrackerFrame:SetMovable(1)
-ObjectiveTrackerFrame.ClearAllPoints = function() return end
-ObjectiveTrackerFrame.SetPoint = function() return end
-ObjectiveTrackerFrame:SetUserPlaced(true)
-ObjectiveTrackerFrame:SetHeight(C.height * 0.6)

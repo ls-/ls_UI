@@ -1,14 +1,7 @@
 local _, ns = ...
 local C, M, L = ns.C, ns.M, ns.L
 
-local LOCAL_CONFIG, AURATRACKER_LOCKED
-
-local DEFAULT_CONFIG = {
-	buffList = {},
-	trackerPoint = {"CENTER", UIParent, "CENTER", 0, 0},
-	trackerLocked = false,
-	isUsed = true,
-}
+local AURATRACKER_LOCKED
 
 local BUTTON_LAYOUT = {
 	{"BOTTOMLEFT", 2, 2},
@@ -24,8 +17,6 @@ AuraTracker:SetSize(264, 44)
 AuraTracker:SetClampedToScreen(true)
 AuraTracker:SetMovable(1)
 AuraTracker:RegisterEvent("PLAYER_LOGIN")
-AuraTracker:RegisterEvent("ADDON_LOADED")
-AuraTracker:RegisterEvent("PLAYER_LOGOUT")
 
 local AuraTrackerHeader = CreateFrame("Button", nil, AuraTracker)
 AuraTrackerHeader:SetSize(66, 20)
@@ -141,44 +132,9 @@ local function oUF_LSAuraButton_OnUpdate(self, elapsed)
 end
 
 local function oUF_LSAuraButton_OnEvent(...)
-	local _, event, arg3 = ...
-	if event == "ADDON_LOADED" then
-		if arg3 ~= "oUF_LS" then return end
-
-		local function initDB(db, defaults)
-			if type(db) ~= "table" then db = {} end
-			if type(defaults) ~= "table" then return db end
-			for k, v in pairs(defaults) do
-				if type(v) == "table" then
-					db[k] = initDB(db[k], v)
-				elseif type(v) ~= type(db[k]) then
-					db[k] = v
-				end
-			end
-			return db
-		end
-
-		oUF_LS_AURA_CONFIG = initDB(oUF_LS_AURA_CONFIG, DEFAULT_CONFIG)
-		LOCAL_CONFIG = oUF_LS_AURA_CONFIG
-	elseif event == "PLAYER_LOGOUT" then
-		local function cleanDB(db, defaults)
-			if type(db) ~= "table" then return {} end
-			if type(defaults) ~= "table" then return db end
-			for k, v in pairs(db) do
-				if type(v) == "table" then
-					if not next(cleanDB(v, defaults[k])) then
-						db[k] = nil
-					end
-				elseif v == defaults[k] then
-					db[k] = nil
-				end
-			end
-			return db
-		end
-
-		oUF_LS_AURA_CONFIG = cleanDB(oUF_LS_AURA_CONFIG, DEFAULT_CONFIG)
-	elseif event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" or event == "CUSTOM_ENABLE" then
-		if LOCAL_CONFIG.isUsed == false then
+	local _, event = ...
+	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" or event == "CUSTOM_ENABLE" then
+		if ns.C.auratracker.isUsed == false then
 			AuraTracker:Hide()
 			print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
 			return
@@ -187,19 +143,19 @@ local function oUF_LSAuraButton_OnEvent(...)
 		if not AuraTracker:IsEventRegistered("UNIT_AURA") then AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
 
 		if event == "PLAYER_LOGIN" or event == "CUSTOM_ENABLE" then
-			AuraTracker:SetPoint(unpack(LOCAL_CONFIG.trackerPoint))
-			oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
-			AURATRACKER_LOCKED = LOCAL_CONFIG.trackerLocked
-			if #LOCAL_CONFIG.buffList > 6 then
-				for i = 7, #LOCAL_CONFIG.buffList do
-					table.remove(LOCAL_CONFIG.buffList, i)
+			AuraTracker:SetPoint(unpack(ns.C.auratracker.trackerPoint))
+			oUF_LSAuraTacker_ButtonSpawn(#ns.C.auratracker.buffList)
+			AURATRACKER_LOCKED = ns.C.auratracker.trackerLocked
+			if #ns.C.auratracker.buffList > 6 then
+				for i = 7, #ns.C.auratracker.buffList do
+					table.remove(ns.C.auratracker.buffList, i)
 				end
 			end
 		end
 		AuraTracker.buffs = {}
 		for i = 1, 32 do
 			local name, _, iconTexture, count, _, _, expirationTime, _, _, _, spellId = UnitBuff("player", i)
-			if name and tContains(LOCAL_CONFIG.buffList, spellId) then
+			if name and tContains(ns.C.auratracker.buffList, spellId) then
 				local aura = {}
 				aura.id = spellId
 				aura.index = i
@@ -240,7 +196,7 @@ AuraTrackerHeader:SetScript("OnDragStop", function(self)
 		frame:StopMovingOrSizing()
 
 		local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
-		LOCAL_CONFIG.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+		ns.C.auratracker.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
 	end
 end)
 
@@ -262,7 +218,7 @@ AuraTrackerHeader:SetScript("OnClick", AuraTrackerHeader_OnClick)
 
 local function ToggleDrag()
 	AURATRACKER_LOCKED = not AURATRACKER_LOCKED
-	LOCAL_CONFIG.trackerLocked = AURATRACKER_LOCKED
+	ns.C.auratracker.trackerLocked = AURATRACKER_LOCKED
 end
 
 local function PrintSlashCommands()
@@ -292,24 +248,24 @@ UIDropDownMenu_Initialize(AuraTrackerHeaderDropDown, AuraTrackerHeaderDropDown_I
 
 SLASH_ATADD1 = '/atadd'
 local function AuraTracker_Add(msg)
-	if #LOCAL_CONFIG.buffList == 6 then return end
-	if not LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t add the aura. Module is disabled.") return end
+	if #ns.C.auratracker.buffList == 6 then return end
+	if not ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t add the aura. Module is disabled.") return end
 
-	table.insert(LOCAL_CONFIG.buffList, tonumber(msg))
+	table.insert(ns.C.auratracker.buffList, tonumber(msg))
 	local name = GetSpellInfo(tonumber(msg))
 	print("|cff1ec77eAuraTracker|r: "..name.." ("..msg..") was added to the list.")
-	oUF_LSAuraTacker_ButtonSpawn(#LOCAL_CONFIG.buffList)
+	oUF_LSAuraTacker_ButtonSpawn(#ns.C.auratracker.buffList)
 	oUF_LSAuraButton_OnEvent(nil, "CUSTOM_FORCE_UPDATE")
 end
 SlashCmdList["ATADD"] = AuraTracker_Add
 
 SLASH_ATREM1 = '/atrem'
 local function AuraTracker_Remove(msg)
-	if not LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t remove the aura. Module is disabled.") return end
+	if not ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t remove the aura. Module is disabled.") return end
 
-	for k,v in pairs(LOCAL_CONFIG.buffList) do
+	for k,v in pairs(ns.C.auratracker.buffList) do
 		if v == tonumber(msg) then
-			table.remove(LOCAL_CONFIG.buffList, k)
+			table.remove(ns.C.auratracker.buffList, k)
 			local name = GetSpellInfo(v)
 			print("|cff1ec77eAuraTracker|r: "..name.." ("..v..") was removed from the list.")
 		end
@@ -320,10 +276,10 @@ SlashCmdList["ATREM"] = AuraTracker_Remove
 
 SLASH_ATLIST1 = '/atlist'
 local function AuraTracker_List(msg)
-	if not LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t print the list. Module is disabled.") return end
+	if not ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t print the list. Module is disabled.") return end
 
 	print("|cff1ec77eAuraTracker|r: List of auras:")
-	for k,v in pairs(LOCAL_CONFIG.buffList) do
+	for k,v in pairs(ns.C.auratracker.buffList) do
 		local name = GetSpellInfo(v)
 		print("|cff00ccff-|r "..name.." ("..v..")")
 	end
@@ -332,9 +288,9 @@ SlashCmdList["ATLIST"] = AuraTracker_List
 
 SLASH_ATWIPE1 = '/atwipe'
 local function AuraTracker_Wipe(msg)
-	if not LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t wipe the list. Module is disabled.") return end
+	if not ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r: Can\'t wipe the list. Module is disabled.") return end
 
-	LOCAL_CONFIG.buffList = {}
+	ns.C.auratracker.buffList = {}
 	print("|cff1ec77eAuraTracker|r: List of auras was wiped.")
 end
 SlashCmdList["ATWIPE"] = AuraTracker_Wipe
@@ -342,20 +298,20 @@ SlashCmdList["ATWIPE"] = AuraTracker_Wipe
 SLASH_AT1 = '/at'
 local function AuraTracker_Toggle(msg)
 	if msg == "enable" then
-		if LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r is already enabled.") return end
+		if ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r is already enabled.") return end
 		if InCombatLockdown() then print("|cff1ec77eAuraTracker|r can\'t be enabled, while in combat.") return end
 
 		print("|cff1ec77eAuraTracker|r was enabled.")
-		LOCAL_CONFIG.isUsed = true
+		ns.C.auratracker.isUsed = true
 		AuraTracker:Show()
 		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 		oUF_LSAuraButton_OnEvent(nil, "CUSTOM_ENABLE")
 	elseif msg == "disable" then
-		if not LOCAL_CONFIG.isUsed then print("|cff1ec77eAuraTracker|r is already disabled.") return end
+		if not ns.C.auratracker.isUsed then print("|cff1ec77eAuraTracker|r is already disabled.") return end
 		if InCombatLockdown() then print("|cff1ec77eAuraTracker|r can\'t be disabled, while in combat.") return end
 
 		print("|cff1ec77eAuraTracker|r was disabled.")
-		LOCAL_CONFIG.isUsed = false
+		ns.C.auratracker.isUsed = false
 		AuraTracker:Hide()
 		AuraTracker:UnregisterEvent("UNIT_AURA")
 	else

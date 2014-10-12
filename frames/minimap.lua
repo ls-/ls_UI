@@ -1,6 +1,6 @@
 
 local _, ns = ...
-local C, M = ns.C, ns.M
+local M = ns.M
 
 local elementsToHide = {
 	"MinimapCluster",
@@ -110,17 +110,12 @@ local function SetElementsStyle()
 	calendarBorder:SetPoint("CENTER", 0, 0)
 end
 
-local function InitMinimapParameters()
+function oUF_LSMinimap_Initialize()
 	Minimap:SetParent("UIParent")
-	for i, _ in ipairs(C.minimap) do
-		SetElementPosition(unpack(C.minimap[i]))
+	for i, _ in ipairs(ns.C.minimap) do
+		SetElementPosition(unpack(ns.C.minimap[i]))
 	end
 	CreateMapOverlay()
 	CreateMapZoom()
 	SetElementsStyle()
-end
-
-do
-	LoadAddOn("Blizzard_TimeManager")
-	InitMinimapParameters()
 end

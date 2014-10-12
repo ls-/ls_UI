@@ -1,10 +1,10 @@
-## Interface: 50400
+## Interface: 60004
 ## Author: lightspark
 ## Title: oUF: LS
 ## Notes: PvE-oriented oUF-based UI
 ## RequiredDeps: oUF
 ## X-Category: UnitFrame
-## SavedVariablesPerCharacter: oUF_LS_AURA_CONFIG
+## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
 plugins\oUF_Smooth.lua
 plugins\oUF_Experience.lua

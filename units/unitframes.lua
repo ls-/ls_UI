@@ -486,8 +486,8 @@ local function CreateUnitFrameStyle(self, unit)
 		hpTextTemplate = "oUF_LSUnitFrame14Text"
 		ppTextTemplate = "oUF_LSUnitFrame14Text"
 	else
-		self.frameType = C.units[unit].long and "long" or "short"
-		width, height = C.units[unit].long and 218 or 124, 42
+		self.frameType = ns.C.units[unit].long and "long" or "short"
+		width, height = ns.C.units[unit].long and 218 or 124, 42
 		sbOrientation = "HORIZONTAL"
 		hpTexture = M.textures.statusbar
 		ppTexture = M.textures.statusbar
@@ -947,27 +947,27 @@ local function CreateUnitFrameStyle(self, unit)
 	if unit == "player" then
 		FrameReskin(self, "NONE", true, 0, "NONE")
 
-		if C.playerclass == "MONK" then
+		if ns.C.playerclass == "MONK" then
 			self.CustomClassIcons = CreateClassPowerBar(self, 5, "CHI")
 			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if C.playerclass == "DEATHKNIGHT" then
+		if ns.C.playerclass == "DEATHKNIGHT" then
 			self.Runes = CreateRuneBar(self)
 			self.Runes.PostUpdateRune = PostUpdateRuneBar
 		end
 
-		if C.playerclass == "SHAMAN" then
+		if ns.C.playerclass == "SHAMAN" then
 			self.Totems = CreateTotemBar(self)
 			self.Totems.PostUpdate = UpdateTotemBar
 		end
 
-		if C.playerclass == "PALADIN" then
+		if ns.C.playerclass == "PALADIN" then
 			self.CustomClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
 			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if C.playerclass == "WARLOCK" then
+		if ns.C.playerclass == "WARLOCK" then
 				self.CustomClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
 				self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 
@@ -980,12 +980,12 @@ local function CreateUnitFrameStyle(self, unit)
 				self.DemonicFury.Smooth = true
 		end
 
-		if C.playerclass == "PRIEST" then
+		if ns.C.playerclass == "PRIEST" then
 			self.CustomClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
 			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if C.playerclass == "DRUID" then
+		if ns.C.playerclass == "DRUID" then
 			self.EclipseBar = CreateEclipseBar(self)
 			self.EclipseBar.PostUpdatePower = UpdateEclipseBar
 			self.EclipseBar.PostUnitAura = UpdateEclipseBarGlow
@@ -999,7 +999,7 @@ oUF:Factory(function(self)
 	self:RegisterStyle("LS", CreateUnitFrameStyle)
 	self:SetActiveStyle("LS")
 
-	for unit, udata in pairs(C.units) do
+	for unit, udata in pairs(ns.C.units) do
 		local name = "oUF_LS"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 		if udata.attributes then
 			ns.headers[unit] = self:SpawnHeader(name, nil, udata.visibility,
@@ -1012,7 +1012,7 @@ oUF:Factory(function(self)
 	end
 
 	for unit, frame in pairs(ns.frames) do
-		frame:SetPoint(unpack(C.units[unit].point))
+		frame:SetPoint(unpack(ns.C.units[unit].point))
 		if gsub(unit, "%d", "") == "boss" then
 			local id = strmatch(unit, "boss(%d)")
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:ClearAllPoints()
@@ -1023,6 +1023,6 @@ oUF:Factory(function(self)
 	end
 
 	for unit, header in pairs(ns.headers) do
-		header:SetPoint(unpack(C.units[unit].point))
+		header:SetPoint(unpack(ns.C.units[unit].point))
 	end
 end)

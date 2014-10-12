@@ -1,5 +1,5 @@
 local _, ns = ...
-local C, M = ns.C, ns.M
+local M = ns.M
 
 ns.bars = {}
 
@@ -613,7 +613,7 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-do
+function oUF_LSActionBar_Initialize()
 	local f = CreateFrame("Frame", "oUF_LSBottomLine", UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)
