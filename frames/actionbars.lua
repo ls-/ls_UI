@@ -613,7 +613,7 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-function oUF_LSActionBar_Initialize()
+function oUF_LSActionBars_Initialize()
 	local f = CreateFrame("Frame", "oUF_LSBottomLine", UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)

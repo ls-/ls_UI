@@ -995,19 +995,19 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 end
 
-oUF:Factory(function(self)
-	self:RegisterStyle("LS", CreateUnitFrameStyle)
-	self:SetActiveStyle("LS")
+function oUF_LSFactory(oUF)
+	oUF:RegisterStyle("LS", CreateUnitFrameStyle)
+	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
 		local name = "oUF_LS"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 		if udata.attributes then
-			ns.headers[unit] = self:SpawnHeader(name, nil, udata.visibility,
+			ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
 				"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);
 				self:SetAttribute("initial-height", 42); self:SetWidth(124); self:SetHeight(42)]],
 				unpack(udata.attributes))
 		else
-			ns.frames[unit] = self:Spawn(unit, name)
+			ns.frames[unit] = oUF:Spawn(unit, name)
 		end
 	end
 
@@ -1025,4 +1025,4 @@ oUF:Factory(function(self)
 	for unit, header in pairs(ns.headers) do
 		header:SetPoint(unpack(ns.C.units[unit].point))
 	end
-end)
+end

@@ -3,39 +3,32 @@ local ibcolors, L = ns.M.colors.infobar, ns.L
 
 ns.infobars = {}
 
-local INFOBAR_LAYOUT = {
-	["Location"] = {
-		point = {"TOPLEFT", "UIParent", "TOPLEFT", 6, -6},
-		infobar_type = "Button",
+local INFOBAR_INFO = {
+	Location = {
+		infobar_type = "Frame",
 		length = "Long",
 	},
-	["Memory"] = {
-		point = {"LEFT", "oUF_LSLocationInfoBar", "RIGHT", 24, 0},
+	Memory = {
 		infobar_type = "Button",
 		length = "Short",
 	},
-	["FPS"] = {
-		point = {"LEFT", "oUF_LSMemoryInfoBar", "RIGHT", 6, 0},
+	FPS = {
 		infobar_type = "Frame",
 		length = "Short",
 	},
-	["Latency"] = {
-		point = {"LEFT", "oUF_LSFPSInfoBar", "RIGHT", 6, 0},
+	Latency = {
 		infobar_type = "Frame",
 		length = "Short",
 	},
-	["Bag"] = {
-		point = {"LEFT", "oUF_LSLatencyInfoBar", "RIGHT", 24, 0},
+	Bag = {
 		infobar_type = "Button",
 		length = "Short",
 	},
-	["Clock"] = {
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -6, -6},
+	Clock = {
 		infobar_type = "Button",
 		length = "Short",
 	},
-	["Mail"] = {
-		point = {"RIGHT", "oUF_LSClockInfoBar", "LEFT", -6, 0},
+	Mail = {
 		infobar_type = "Frame",
 		length = "Short",
 	},
@@ -251,12 +244,16 @@ local function oUF_LSBagInfoBar_OnEvent(self)
 	end
 	used = total - free
 	self.text:SetText(used.."/"..total)
-	if floor((used / total) * 100) > 85 then
-		self.filling:SetVertexColor(unpack(ibcolors.red))
-	elseif floor((used / total) * 100) > 50 then
-		self.filling:SetVertexColor(unpack(ibcolors.yellow))
+	if total ~= 0 then
+		if floor((used / total) * 100) > 85 then
+			self.filling:SetVertexColor(unpack(ibcolors.red))
+		elseif floor((used / total) * 100) > 50 then
+			self.filling:SetVertexColor(unpack(ibcolors.yellow))
+		else
+			self.filling:SetVertexColor(unpack(ibcolors.green))
+		end
 	else
-		self.filling:SetVertexColor(unpack(ibcolors.green))
+		self.filling:SetVertexColor(unpack(ibcolors.black))
 	end
 end
 
@@ -330,20 +327,19 @@ local function oUF_LSMailInfoBar_OnEvent(self)
 	end
 end
 
-do
-	for ib, ibdata in pairs(INFOBAR_LAYOUT) do
+function oUF_LSInfobars_Initialize()
+	for ib, ibdata in pairs(INFOBAR_INFO) do
 		local ibar = CreateFrame(ibdata.infobar_type, "oUF_LS"..ib.."InfoBar", UIParent, "oUF_LSInfoBarButtonTemplate-"..ibdata.length)
 		ibar:SetFrameStrata("LOW")
 		ibar:SetFrameLevel(1)
 
-		ns.infobars[ib] = ibar
+		ns.infobars[strlower(ib)] = ibar
 	end
 
 	for ib, ibar in pairs(ns.infobars) do
-		ibar:SetPoint(unpack(INFOBAR_LAYOUT[ib].point))
+		ibar:SetPoint(unpack(ns.C.infobars[ib].point))
 	end
 
-	oUF_LSLocationInfoBar:SetScript("OnClick", oUF_LSLocationInfoBar_OnClick)
 	oUF_LSLocationInfoBar:SetScript("OnEnter", oUF_LSLocationInfoBar_OnEnter)
 	oUF_LSLocationInfoBar:SetScript("OnUpdate", oUF_LSLocationInfoBar_OnUpdate)
 

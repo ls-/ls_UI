@@ -3,7 +3,7 @@ local _, ns = ...
 local DEFAULT_CONFIG = {
 	units = {
 		player = {
-			point = { "BOTTOM", "UIParent", "BOTTOM", -306 , 80 },
+			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80 },
 		},
 		pet = {
 			point = {"RIGHT", "oUF_LSPlayerFrame" , "LEFT"},
@@ -45,28 +45,53 @@ local DEFAULT_CONFIG = {
 	},
 	auratracker = {
 		buffList = {},
-		trackerPoint = {"CENTER", UIParent, "CENTER", 0, 0},
-		trackerLocked = false,
+		point = {"CENTER", "UIParent", "CENTER", 0, 0},
+		locked = false,
 		isUsed = true,
 	},
 	minimap = {
-		[1] = {"Minimap", "BOTTOM", "UIParent", "BOTTOM", 306, 80},
-		[2] = {"MiniMapTracking", "CENTER", "Minimap",	"CENTER", 72, 30},
-		[3] = {"GameTimeFrame", "CENTER",	"Minimap", "CENTER", 55, 55},
-		[4] = {"MiniMapInstanceDifficulty", "BOTTOM", "Minimap", "BOTTOM", -1, -38},
-		[5] = {"GuildInstanceDifficulty", "BOTTOM", "Minimap", "BOTTOM", -6, -38},
-		[6] = {"QueueStatusMinimapButton", "CENTER", "Minimap", "CENTER", 55, -55},
+		point = {"BOTTOM", "UIParent", "BOTTOM", 306, 80},
 	},
 	objectivetracker = {
-		trackerPoint = {"CENTER", UIParent, "CENTER", 0, 0},
-		trackerLocked = false,
+		point = {"RIGHT", "UIParent", "RIGHT", -100, 0},
+		locked = false,
+	},
+	infobars = {
+		location = {
+			enabled = true,
+			point = {"TOPLEFT", "UIParent", "TOPLEFT", 6, -6},
+		},
+		memory = {
+			enabled = true,
+			point = {"LEFT", "oUF_LSLocationInfoBar", "RIGHT", 24, 0},
+		},
+		fps = {
+			enabled = true,
+			point = {"LEFT", "oUF_LSMemoryInfoBar", "RIGHT", 6, 0},
+		},
+		latency = {
+			enabled = true,
+			point = {"LEFT", "oUF_LSFPSInfoBar", "RIGHT", 6, 0},
+		},
+		bag = {
+			enabled = true,
+			point = {"LEFT", "oUF_LSLatencyInfoBar", "RIGHT", 24, 0},
+		},
+		clock = {
+			enabled = true,
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -6, -6},
+		},
+		mail = {
+			enabled = true,
+			point = {"RIGHT", "oUF_LSClockInfoBar", "LEFT", -6, 0},
+		},
 	},
 	width = 0, 
 	height = 0,
 	playerclass = "",
 }
 
-local ConfigLoader = CreateFrame("FRAME")
+local ConfigLoader = CreateFrame("Frame")
 ConfigLoader:RegisterEvent("ADDON_LOADED")
 ConfigLoader:RegisterEvent("PLAYER_LOGOUT")
 
@@ -98,11 +123,16 @@ local function oUF_LSConfigLoader_OnEvent(...)
 		LoadAddOn("Blizzard_TimeManager")
 		oUF_LSMinimap_Initialize()
 
+		-- Infobars
+		oUF_LSInfobars_Initialize()
+		
 		-- Actionbars
-		oUF_LSActionBar_Initialize()
+		oUF_LSActionBars_Initialize()
 		
 		-- ObjectiveTracker
-		CreateOTDragHeader()
+		oUF_LSOTDragHeader_Initialize()
+
+		oUF:Factory(oUF_LSFactory)
 	elseif event == "PLAYER_LOGOUT" then
 		local function cleanDB(db, defaults)
 			if type(db) ~= "table" then return {} end

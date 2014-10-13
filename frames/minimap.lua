@@ -1,6 +1,13 @@
 
 local _, ns = ...
-local M = ns.M
+
+local elementsToShow = {
+	MiniMapTracking = {"CENTER", "Minimap", "CENTER", 72, 30},
+	GameTimeFrame = {"CENTER", "Minimap", "CENTER", 55, 55},
+	MiniMapInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -1, -38},
+	GuildInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -6, -38},
+	QueueStatusMinimapButton = {"CENTER", "Minimap", "CENTER", 55, -55},
+}
 
 local elementsToHide = {
 	"MinimapCluster",
@@ -20,7 +27,7 @@ local elementsToHide = {
 local function SetElementPosition(f, a1, af, a2, x, y)
 	_G[f]:ClearAllPoints()
 	_G[f]:SetPoint(a1, _G[af], a2, x, y)
-	if f ~= "Minimap" then _G[f]:SetParent(Minimap) end
+	_G[f]:SetParent(Minimap)
 end
 
 local function CreateMapOverlay()
@@ -61,7 +68,7 @@ local function SetElementsStyle()
 	end
 
 	local children = {Minimap:GetChildren()}
-	for _, child in ipairs(children) do
+	for _, child in pairs(children) do
 		child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 	end
 
@@ -85,36 +92,42 @@ local function SetElementsStyle()
 	QueueStatusMinimapButton:GetHighlightTexture():ClearAllPoints()
 	QueueStatusMinimapButton:GetHighlightTexture():SetPoint("CENTER", 1, -2)
 	--CALENDAR
-	local calendarFrame = _G["GameTimeFrame"]
-	calendarFrame:SetSize(32, 32)
-	calendarFrame:SetScript("OnEnter", nil)
-	calendarFrame:SetScript("OnLeave", nil)
-	calendarFrame:SetNormalTexture("")
-	calendarFrame:SetPushedTexture("")
+	local CalendarFrame = _G["GameTimeFrame"]
+	CalendarFrame:SetSize(32, 32)
+	CalendarFrame:SetScript("OnEnter", nil)
+	CalendarFrame:SetScript("OnLeave", nil)
+	CalendarFrame:SetNormalTexture("")
+	CalendarFrame:SetPushedTexture("")
 
-	local calendarText = select(5, GameTimeFrame:GetRegions())
-	calendarText:SetTextColor(0.52, 0.46, 0.36)
-	calendarText:SetFont(M.font, 13, "THINOUTLINE")
-	calendarText:ClearAllPoints()
-	calendarText:SetPoint("CENTER", 0, 0)
+	local CalendarText = select(5, GameTimeFrame:GetRegions())
+	CalendarText:SetTextColor(0.52, 0.46, 0.36)
+	CalendarText:SetFont(ns.M.font, 13, "THINOUTLINE")
+	CalendarText:ClearAllPoints()
+	CalendarText:SetPoint("CENTER", 0, 0)
 
-	local calendarBackground = calendarFrame:CreateTexture(nil, "BACKGROUND")
-	calendarBackground:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-	calendarBackground:SetVertexColor(0, 0, 0, 0.8)
-	calendarBackground:SetPoint("CENTER", 0, 0)
-	calendarBackground:SetSize(32, 32)
+	local CalendarBackground = CalendarFrame:CreateTexture(nil, "BACKGROUND")
+	CalendarBackground:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+	CalendarBackground:SetVertexColor(0, 0, 0, 0.8)
+	CalendarBackground:SetPoint("CENTER", 0, 0)
+	CalendarBackground:SetSize(32, 32)
 
-	local calendarBorder = calendarFrame:CreateTexture(nil, "BORDER")
-	calendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-	calendarBorder:SetSize(32, 32)
-	calendarBorder:SetPoint("CENTER", 0, 0)
+	local CalendarBorder = CalendarFrame:CreateTexture(nil, "BORDER")
+	CalendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
+	CalendarBorder:SetSize(32, 32)
+	CalendarBorder:SetPoint("CENTER", 0, 0)
 end
 
 function oUF_LSMinimap_Initialize()
 	Minimap:SetParent("UIParent")
-	for i, _ in ipairs(ns.C.minimap) do
-		SetElementPosition(unpack(ns.C.minimap[i]))
+	Minimap:ClearAllPoints()
+	Minimap:SetPoint(unpack(ns.C.minimap.point))
+
+	for i, k in pairs(elementsToShow) do
+		_G[i]:ClearAllPoints()
+		_G[i]:SetParent(Minimap)
+		_G[i]:SetPoint(unpack(k))
 	end
+
 	CreateMapOverlay()
 	CreateMapZoom()
 	SetElementsStyle()

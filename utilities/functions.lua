@@ -251,6 +251,7 @@ function ns.CreateAuraIcon (self, button)
 	button.cd:SetReverse()
 	button.cd:SetPoint("TOPLEFT", 2, -2)
 	button.cd:SetPoint("BOTTOMRIGHT", -2, 2)
+	button.cd:SetHideCountdownNumbers(true)
 
 	button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 	button.icon:SetDrawLayer("BACKGROUND", -8)
@@ -276,8 +277,10 @@ function ns.CreateAuraIcon (self, button)
 	button.fg:SetAllPoints(button)
 	button.fg:SetFrameLevel(5)
 
-	button.timer = ns.CreateFontString(button.fg, M.font, 12, "THINOUTLINE")
-	button.timer:SetPoint("BOTTOM", button.fg, "BOTTOM", 1, 0)
+	if not OmniCC then
+		button.timer = ns.CreateFontString(button.fg, M.font, 12, "THINOUTLINE")
+		button.timer:SetPoint("BOTTOM", button.fg, "BOTTOM", 1, 0)
+	end
 
 	button.count:ClearAllPoints()
 	button.count:SetPoint("TOPRIGHT", button.fg, "TOPRIGHT", 4, 4)
@@ -298,32 +301,33 @@ function ns.UpdateAuraIcon(self, unit, icon, index, offset)
 			icon:SetAlpha(0.75)
 		end
 	end
+	if not OmniCC then
+		if duration and duration > 0 then
+			icon.timer:Show()
+			icon.expires = expirationTime
+			icon:SetScript("OnUpdate", function(self, elapsed)
+				self.elapsed = (self.elapsed or 0) + elapsed
+				if self.elapsed < 0.1 then return end
+				self.elapsed = 0
 
-	if duration and duration > 0 then
-		icon.timer:Show()
-		icon.expires = expirationTime
-		icon:SetScript("OnUpdate", function(self, elapsed)
-			self.elapsed = (self.elapsed or 0) + elapsed
-			if self.elapsed < 0.1 then return end
-			self.elapsed = 0
-
-			local timeLeft = self.expires - GetTime()
-			if timeLeft > 0 and timeLeft <= 30 then
-				if timeLeft > 10 then
-					self.timer:SetTextColor(0.9, 0.9, 0.9)
-				elseif timeLeft > 5 and timeLeft <= 10 then
-					self.timer:SetTextColor(1, 0.75, 0.1)
-				elseif timeLeft <= 5 then
-					self.timer:SetTextColor(0.9, 0.1, 0.1)
+				local timeLeft = self.expires - GetTime()
+				if timeLeft > 0 and timeLeft <= 30 then
+					if timeLeft > 10 then
+						self.timer:SetTextColor(0.9, 0.9, 0.9)
+					elseif timeLeft > 5 and timeLeft <= 10 then
+						self.timer:SetTextColor(1, 0.75, 0.1)
+					elseif timeLeft <= 5 then
+						self.timer:SetTextColor(0.9, 0.1, 0.1)
+					end
+					self.timer:SetText(ns.TimeFormat(timeLeft))
+				else
+					self.timer:SetText(nil)
 				end
-				self.timer:SetText(ns.TimeFormat(timeLeft))
-			else
-				self.timer:SetText(nil)
-			end
-		end)
-	else
-		icon.timer:Hide()
-		icon:SetScript("OnUpdate", nil)
+			end)
+		else
+			icon.timer:Hide()
+			icon:SetScript("OnUpdate", nil)
+		end
 	end
 end
 
@@ -635,8 +639,8 @@ end
 -- OBJECTIVE TRACKER --
 -----------------------
 
-function CreateOTDragHeader()
-	local OT_LOCKED = ns.C.objectivetracker.trackerLocked
+function oUF_LSOTDragHeader_Initialize()
+	local OT_LOCKED = ns.C.objectivetracker.locked
 
 	local OTDragHeader = CreateFrame("BUTTON", "ObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
 	OTDragHeader:SetFrameStrata(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameStrata())
@@ -659,13 +663,13 @@ function CreateOTDragHeader()
 			frame:StopMovingOrSizing()
 
 			local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
-			ns.C.objectivetracker.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+			ns.C.objectivetracker.point = {point, "UIParent", relativePoint, xOfs, yOfs}
 		end
 	end)
 
 	local function OTHeaderDragToggle()
 		OT_LOCKED = not OT_LOCKED
-		ns.C.objectivetracker.trackerLocked = OT_LOCKED
+		ns.C.objectivetracker.locked = OT_LOCKED
 	end
 
 	local function OTDropDown_Initialize(self)
@@ -685,7 +689,7 @@ function CreateOTDragHeader()
 	ObjectiveTrackerFrame:SetMovable(1)
 	ObjectiveTrackerFrame:ClearAllPoints()
 	ObjectiveTrackerFrame.ClearAllPoints = function() return end
-	ObjectiveTrackerFrame:SetPoint(unpack(ns.C.objectivetracker.trackerPoint))
+	ObjectiveTrackerFrame:SetPoint(unpack(ns.C.objectivetracker.point))
 	ObjectiveTrackerFrame.SetPoint = function() return end
 	ObjectiveTrackerFrame:SetHeight(ns.C.height * 0.6)
 end

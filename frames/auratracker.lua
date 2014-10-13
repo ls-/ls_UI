@@ -1,5 +1,5 @@
 local _, ns = ...
-local C, M, L = ns.C, ns.M, ns.L
+local M, L = ns.M, ns.L
 
 local AURATRACKER_LOCKED
 
@@ -143,9 +143,9 @@ local function oUF_LSAuraButton_OnEvent(...)
 		if not AuraTracker:IsEventRegistered("UNIT_AURA") then AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
 
 		if event == "PLAYER_LOGIN" or event == "CUSTOM_ENABLE" then
-			AuraTracker:SetPoint(unpack(ns.C.auratracker.trackerPoint))
+			AuraTracker:SetPoint(unpack(ns.C.auratracker.point))
 			oUF_LSAuraTacker_ButtonSpawn(#ns.C.auratracker.buffList)
-			AURATRACKER_LOCKED = ns.C.auratracker.trackerLocked
+			AURATRACKER_LOCKED = ns.C.auratracker.locked
 			if #ns.C.auratracker.buffList > 6 then
 				for i = 7, #ns.C.auratracker.buffList do
 					table.remove(ns.C.auratracker.buffList, i)
@@ -196,7 +196,7 @@ AuraTrackerHeader:SetScript("OnDragStop", function(self)
 		frame:StopMovingOrSizing()
 
 		local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
-		ns.C.auratracker.trackerPoint = {point, "UIParent", relativePoint, xOfs, yOfs}
+		ns.C.auratracker.point = {point, "UIParent", relativePoint, xOfs, yOfs}
 	end
 end)
 
@@ -218,7 +218,7 @@ AuraTrackerHeader:SetScript("OnClick", AuraTrackerHeader_OnClick)
 
 local function ToggleDrag()
 	AURATRACKER_LOCKED = not AURATRACKER_LOCKED
-	ns.C.auratracker.trackerLocked = AURATRACKER_LOCKED
+	ns.C.auratracker.locked = AURATRACKER_LOCKED
 end
 
 local function PrintSlashCommands()
