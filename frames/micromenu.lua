@@ -27,12 +27,8 @@ local MICRO_BUTTON_LAYOUT = {
 		point = {"LEFT", "oUF_LSQuestLogMicroButton", "RIGHT", 6, 0},
 		icon = "guild",
 	},
-	["PVPMicroButton"] = {
-		point = {"BOTTOM", 232, 6},
-		icon = "pvp",
-	},
 	["LFDMicroButton"] = {
-		point = {"LEFT", "oUF_LSPVPMicroButton", "RIGHT", 6, 0},
+		point = {"BOTTOM", 232, 6},
 		icon = "lfg",
 	},
 	["CompanionsMicroButton"] = {
@@ -62,11 +58,9 @@ local function UpdateMicroButtonState()
 	local factionGroup = UnitFactionGroup("player")
 
 	if factionGroup == "Neutral" then
-		oUF_LSPVPMicroButton.factionGroup = factionGroup
 		oUF_LSGuildMicroButton.factionGroup = factionGroup
 		oUF_LSLFDMicroButton.factionGroup = factionGroup
 	else
-		oUF_LSPVPMicroButton.factionGroup = nil
 		oUF_LSGuildMicroButton.factionGroup = nil
 		oUF_LSLFDMicroButton.factionGroup = nil
 	end
@@ -123,17 +117,6 @@ local function UpdateMicroButtonState()
 			oUF_LSGuildMicroButton.tooltipText = MicroButtonTooltipText(GUILD, "TOGGLEGUILDTAB")
 		else
 			oUF_LSGuildMicroButton.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
-		end
-	end
-
-	if PVPUIFrame and PVPUIFrame:IsShown() then
-		oUF_LSPVPMicroButton:SetButtonState("PUSHED", 1)
-	else
-		if playerLevel < oUF_LSPVPMicroButton.minLevel or factionGroup == "Neutral" then
-			oUF_LSPVPMicroButton:Disable()
-		else
-			oUF_LSPVPMicroButton:Enable()
-			oUF_LSPVPMicroButton:SetButtonState("NORMAL")
 		end
 	end
 
@@ -202,7 +185,7 @@ end
 
 function oUF_LSMicroButton_OnEvent(self, event)
 	local name = self:GetName()
-	if event == "UPDATE_BINDINGS" then
+	if event == "UPDATE_BINDINGS" or event == "CUSTOM_FORCE_UPDATE" then
 		if name == "oUF_LSCharacterMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 		elseif name == "oUF_LSSpellbookMicroButton" then
@@ -219,8 +202,6 @@ function oUF_LSMicroButton_OnEvent(self, event)
 			else
 				self.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
 			end
-		elseif name == "oUF_LSPVPMicroButton" then
-			self.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
 		elseif name == "oUF_LSLFDMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLELFGPARENT")
 		elseif name == "oUF_LSCompanionsMicroButton" then
@@ -287,7 +268,7 @@ local function oUF_LSMainMenuMicroButton_OnClick(self)
 	oUF_LSMicroButton_OnEvent(self)
 end
 
-do
+function lsMicroMenu_Initialize()
 	for mb, mbdata in pairs(MICRO_BUTTON_LAYOUT) do
 		local mbutton = CreateFrame("Button", "oUF_LS"..mb, UIParent, "oUF_LSMicroButtonTemplate")
 		mbutton:SetFrameStrata("LOW")
@@ -298,9 +279,6 @@ do
 		ns.mbuttons[mb] = mbutton
 	end
 
-	for mb, mbutton in pairs(ns.mbuttons) do
-		mbutton:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
-	end
 
 	oUF_LSCharacterMicroButton:SetScript("OnClick", function(...) ToggleCharacter("PaperDollFrame") end)
 
@@ -312,13 +290,10 @@ do
 	oUF_LSMicroButton_Initialize(oUF_LSAchievementMicroButton, {"RECEIVED_ACHIEVEMENT_LIST", "ACHIEVEMENT_EARNED"}, 10)
 	oUF_LSAchievementMicroButton:SetScript("OnClick", function(...) ToggleAchievementFrame() end)
 
-	oUF_LSQuestLogMicroButton:SetScript("OnClick", function(...) ToggleFrame(QuestLogFrame) end)
+	oUF_LSQuestLogMicroButton:SetScript("OnClick", function(...) ToggleQuestLog() end)
 
 	oUF_LSMicroButton_Initialize(oUF_LSGuildMicroButton, {"PLAYER_GUILD_UPDATE", "NEUTRAL_FACTION_SELECT_RESULT"}, nil, true, true)
 	oUF_LSGuildMicroButton:SetScript("OnClick", function(...) ToggleGuildFrame() end)
-
-	oUF_LSMicroButton_Initialize(oUF_LSPVPMicroButton, {"NEUTRAL_FACTION_SELECT_RESULT"}, 10, true)
-	oUF_LSPVPMicroButton:SetScript("OnClick", function(...) TogglePVPUI() end)
 
 	oUF_LSMicroButton_Initialize(oUF_LSLFDMicroButton, {"PLAYER_LEVEL_UP"}, 15, true)
 	oUF_LSLFDMicroButton:SetScript("OnClick", function(...) PVEFrame_ToggleFrame() end)
@@ -335,13 +310,18 @@ do
 
 	oUF_LSHelpMicroButton:SetScript("OnClick", function(...) ToggleHelpFrame() end)
 
-
 	TalentMicroButtonAlert:SetPoint("BOTTOM", oUF_LSTalentMicroButton, "TOP", 0, 12)
 	CompanionsMicroButtonAlert:SetPoint("BOTTOM", oUF_LSCompanionsMicroButton, "TOP", 0, 12)
+
+	for mb, mbutton in pairs(ns.mbuttons) do
+		mbutton:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
+		oUF_LSMicroButton_OnEvent(mbutton, "CUSTOM_FORCE_UPDATE")
+	end
 
 	for _, f in pairs(MICRO_BUTTONS) do
 		_G[f]:UnregisterAllEvents()
 		_G[f]:SetParent(ns.hiddenParentFrame)
 	end
+
 	hooksecurefunc("UpdateMicroButtons", UpdateMicroButtonState)
 end

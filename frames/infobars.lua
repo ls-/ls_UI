@@ -1,5 +1,5 @@
 local _, ns = ...
-local ibcolors, L = ns.M.colors.infobar, ns.L
+local ibcolors = ns.M.colors.infobar
 
 ns.infobars = {}
 
@@ -114,7 +114,7 @@ end
 
 local function oUF_LSMemoryInfoBar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-	GameTooltip:AddLine(L.Memory..":")
+	GameTooltip:AddLine(lsMEMORY..":")
 	sort(self.activeAddons, function(a, b)
 		if a and b then
 			return a[2] > b[2]
@@ -173,9 +173,9 @@ end
 local function oUF_LSLatencyInfoBar_OnEnter(self)
 	_, _, latencyHome, latencyWorld = GetNetStats()
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-	GameTooltip:AddLine(L.Latency..":")
-	GameTooltip:AddLine(format(L.Home..": %d "..MILLISECONDS_ABBR, latencyHome), 1, 1, 1)
-	GameTooltip:AddLine(format(L.World..": %d "..MILLISECONDS_ABBR, latencyWorld), 1, 1, 1)
+	GameTooltip:AddLine(lsLATENCY..":")
+	GameTooltip:AddLine(format(lsHOME..": %d "..MILLISECONDS_ABBR, latencyHome), 1, 1, 1)
+	GameTooltip:AddLine(format(lsWORLD..": %d "..MILLISECONDS_ABBR, latencyWorld), 1, 1, 1)
 	GameTooltip:Show()
 end
 

@@ -1,34 +1,4 @@
-
 local _, ns = ...
-
-local elementsToShow = {
-	MiniMapTracking = {"CENTER", "Minimap", "CENTER", 72, 30},
-	GameTimeFrame = {"CENTER", "Minimap", "CENTER", 55, 55},
-	MiniMapInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -1, -38},
-	GuildInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -6, -38},
-	QueueStatusMinimapButton = {"CENTER", "Minimap", "CENTER", 55, -55},
-}
-
-local elementsToHide = {
-	"MinimapCluster",
-	"MiniMapWorldMapButton",
-	"MinimapZoomIn",
-	"MinimapZoomOut",
-	"MiniMapRecordingButton",
-	"MinimapZoneTextButton",
-	"MinimapBorder",
-	"MinimapBorderTop",
-	"MiniMapMailFrame",
-	"MinimapBackdrop",
-	"TimeManagerClockButton",
-	"MiniMapTrackingIconOverlay",
-}
-
-local function SetElementPosition(f, a1, af, a2, x, y)
-	_G[f]:ClearAllPoints()
-	_G[f]:SetPoint(a1, _G[af], a2, x, y)
-	_G[f]:SetParent(Minimap)
-end
 
 local function CreateMapOverlay()
 	local t1 = Minimap:CreateTexture(nil, "BORDER", nil, 0)
@@ -62,6 +32,35 @@ local function CreateMapZoom()
 end
 
 local function SetElementsStyle()
+	local elementsToShow = {
+		MiniMapTracking = {"CENTER", "Minimap", "CENTER", 72, 30},
+		GameTimeFrame = {"CENTER", "Minimap", "CENTER", 55, 55},
+		MiniMapInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -1, -38},
+		GuildInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -6, -38},
+		QueueStatusMinimapButton = {"CENTER", "Minimap", "CENTER", 55, -55},
+	}
+
+	for i, k in pairs(elementsToShow) do
+		_G[i]:ClearAllPoints()
+		_G[i]:SetParent(Minimap)
+		_G[i]:SetPoint(unpack(k))
+	end
+
+	local elementsToHide = {
+		"MinimapCluster",
+		"MiniMapWorldMapButton",
+		"MinimapZoomIn",
+		"MinimapZoomOut",
+		"MiniMapRecordingButton",
+		"MinimapZoneTextButton",
+		"MinimapBorder",
+		"MinimapBorderTop",
+		"MiniMapMailFrame",
+		"MinimapBackdrop",
+		"TimeManagerClockButton",
+		"MiniMapTrackingIconOverlay",
+	}
+
 	for _, f in pairs(elementsToHide) do
 		if not _G[f]:IsObjectType("Texture") then _G[f]:UnregisterAllEvents() end
 		_G[f]:SetParent(ns.hiddenParentFrame)
@@ -82,6 +81,7 @@ local function SetElementsStyle()
 	MiniMapTrackingIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_search")
 	MiniMapTrackingIcon:SetSize(18, 18)
 	MiniMapTrackingIcon:SetVertexColor(0.6, 0.6, 0.6, 1)
+
 	--QUEUE
 	QueueStatusMinimapButton:SetSize(32, 32)
 	QueueStatusMinimapButtonIcon:SetPoint("CENTER", 0, -1)
@@ -91,6 +91,7 @@ local function SetElementsStyle()
 	QueueStatusMinimapButtonBorder:SetSize(32, 32)
 	QueueStatusMinimapButton:GetHighlightTexture():ClearAllPoints()
 	QueueStatusMinimapButton:GetHighlightTexture():SetPoint("CENTER", 1, -2)
+
 	--CALENDAR
 	local CalendarFrame = _G["GameTimeFrame"]
 	CalendarFrame:SetSize(32, 32)
@@ -117,16 +118,10 @@ local function SetElementsStyle()
 	CalendarBorder:SetPoint("CENTER", 0, 0)
 end
 
-function oUF_LSMinimap_Initialize()
+function lsMinimap_Initialize()
 	Minimap:SetParent("UIParent")
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(ns.C.minimap.point))
-
-	for i, k in pairs(elementsToShow) do
-		_G[i]:ClearAllPoints()
-		_G[i]:SetParent(Minimap)
-		_G[i]:SetPoint(unpack(k))
-	end
 
 	CreateMapOverlay()
 	CreateMapZoom()

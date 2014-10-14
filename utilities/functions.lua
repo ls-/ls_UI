@@ -1,6 +1,5 @@
 local _, ns = ...
 local oUF = ns.oUF or oUF
-local M = ns.M
 
 -----------
 -- DEBUG --
@@ -129,9 +128,9 @@ end
 function ns.CreateButtonBorder(button, borderType, curTexture)
 	local texture = curTexture or button:CreateTexture(nil, "BORDER", nil, 0)
 	if borderType == 0 then
-		texture:SetTexture(M.textures.button.normalstone)
+		texture:SetTexture(ns.M.textures.button.normalstone)
 	elseif borderType == 1 then
-		texture:SetTexture(M.textures.button.normalmetal)
+		texture:SetTexture(ns.M.textures.button.normalmetal)
 	end
 	texture:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
 	texture:ClearAllPoints()
@@ -149,7 +148,7 @@ function ns.SetIconStyle(self, icon)
 end
 
 function ns.SetHighlightTexture(self)
-	self:SetHighlightTexture(M.textures.button.highlight)
+	self:SetHighlightTexture(ns.M.textures.button.highlight)
 	self:GetHighlightTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
 	self:GetHighlightTexture():ClearAllPoints()
 	self:GetHighlightTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
@@ -157,7 +156,7 @@ function ns.SetHighlightTexture(self)
 end
 
 function ns.SetPushedTexture(self)
-	self:SetPushedTexture(M.textures.button.pushedchecked)
+	self:SetPushedTexture(ns.M.textures.button.pushedchecked)
 	self:GetPushedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
 	self:GetPushedTexture():ClearAllPoints()
 	self:GetPushedTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
@@ -165,7 +164,7 @@ function ns.SetPushedTexture(self)
 end
 
 function ns.SetCheckedTexture(self)
-	self:SetCheckedTexture(M.textures.button.pushedchecked)
+	self:SetCheckedTexture(ns.M.textures.button.pushedchecked)
 	self:GetCheckedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
 	self:GetCheckedTexture():ClearAllPoints()
 	self:GetCheckedTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
@@ -173,7 +172,7 @@ function ns.SetCheckedTexture(self)
 end
 
 
-function ns.CreateAlphaAnimation(self, change, duration, loopType)
+function lsCreateAlphaAnimation(self, change, duration, loopType)
 	self.animation = self:CreateAnimationGroup()
 	self.animation:SetLooping(loopType or "BOUNCE")
 	local glowAnimation = self.animation:CreateAnimation("ALPHA")
@@ -182,13 +181,13 @@ function ns.CreateAlphaAnimation(self, change, duration, loopType)
 end
 
 do
-	oUF.colors.health = M.colors.health
+	oUF.colors.health = ns.M.colors.health
 
-	for r, data in pairs(M.colors.reaction) do
+	for r, data in pairs(ns.M.colors.reaction) do
 		oUF.colors.reaction[r] = data
 	end
 
-	for p, data in pairs(M.colors.power) do
+	for p, data in pairs(ns.M.colors.power) do
 		oUF.colors.power[p] = data
 	end
 end
@@ -256,7 +255,7 @@ function ns.CreateAuraIcon (self, button)
 	button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 	button.icon:SetDrawLayer("BACKGROUND", -8)
 
-	button.overlay:SetTexture(M.textures.button.normalstone)
+	button.overlay:SetTexture(ns.M.textures.button.normalstone)
 	button.overlay:ClearAllPoints()
 	button.overlay:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
 	button.overlay:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
@@ -265,7 +264,7 @@ function ns.CreateAuraIcon (self, button)
 	button.overlay:SetDrawLayer("BACKGROUND", -7)
 	ns.AlwaysShow(button.overlay)
 
-	button.stealable:SetTexture(M.textures.button.normalstone)
+	button.stealable:SetTexture(ns.M.textures.button.normalstone)
 	button.stealable:SetDrawLayer("OVERLAY", 1)
 	button.stealable:ClearAllPoints()
 	button.stealable:SetSize(28, 28)
@@ -278,13 +277,13 @@ function ns.CreateAuraIcon (self, button)
 	button.fg:SetFrameLevel(5)
 
 	if not OmniCC then
-		button.timer = ns.CreateFontString(button.fg, M.font, 12, "THINOUTLINE")
+		button.timer = ns.CreateFontString(button.fg, ns.M.font, 12, "THINOUTLINE")
 		button.timer:SetPoint("BOTTOM", button.fg, "BOTTOM", 1, 0)
 	end
 
 	button.count:ClearAllPoints()
 	button.count:SetPoint("TOPRIGHT", button.fg, "TOPRIGHT", 4, 4)
-	button.count:SetFont(M.font, 12, "THINOUTLINE")
+	button.count:SetFont(ns.M.font, 12, "THINOUTLINE")
 end
 
 function ns.UpdateAuraIcon(self, unit, icon, index, offset)

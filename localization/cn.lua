@@ -1,9 +1,6 @@
-local _, ns = ...
-local L = ns.L
-
 if GetLocale() == "znCN" then
-	L.Memory = "内存"
-	L.Latency = "延迟"
-	L.Home = "本地"
-	L.World = "世界"
+	lsMEMORY = "内存"
+	lsLATENCY = "延迟"
+	lsHOME = "本地"
+	lsWORLD = "世界"
 end

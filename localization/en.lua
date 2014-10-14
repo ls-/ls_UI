@@ -1,10 +1,6 @@
-﻿local _, ns = ...
-local L = {}
-ns.L = {
-	Memory = "Memory",
-	Latency = "Latency",
-	Home = "Home",
-	World = "World",
-	AuraTracker = "Auras",
-	ListofCommands = "List of Commands"
-}
+﻿lsMEMORY = "Memory"
+lsLATENCY = "Latency"
+lsHOME = "Home"
+lsWORLD = "World"
+lsAURATRACKER = "Auras"
+lsLISTOFCOMMANDS = "List of Commands"

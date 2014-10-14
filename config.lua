@@ -3,7 +3,7 @@ local _, ns = ...
 local DEFAULT_CONFIG = {
 	units = {
 		player = {
-			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80 },
+			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80},
 		},
 		pet = {
 			point = {"RIGHT", "oUF_LSPlayerFrame" , "LEFT"},
@@ -44,13 +44,15 @@ local DEFAULT_CONFIG = {
 		},
 	},
 	auratracker = {
-		buffList = {},
-		point = {"CENTER", "UIParent", "CENTER", 0, 0},
+		enabled = true,
 		locked = false,
-		isUsed = true,
+		buffList = {},
+		debuffList = {},
+		point = {"CENTER", "UIParent", "CENTER", 0, 0},
 	},
 	minimap = {
-		point = {"BOTTOM", "UIParent", "BOTTOM", 306, 80},
+		enabled = true,
+		point = {"BOTTOM", "UIParent", "BOTTOM", 306, 86},
 	},
 	objectivetracker = {
 		point = {"RIGHT", "UIParent", "RIGHT", -100, 0},
@@ -128,6 +130,12 @@ local function oUF_LSConfigLoader_OnEvent(...)
 		
 		-- Actionbars
 		oUF_LSActionBars_Initialize()
+
+		-- MicroMenu
+		lsMicroMenu_Initialize()
+
+		-- AuraTracker
+		lsAuraTracker_Initialize()
 		
 		-- ObjectiveTracker
 		oUF_LSOTDragHeader_Initialize()

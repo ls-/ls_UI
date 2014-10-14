@@ -82,7 +82,7 @@ local function CreateComboBar(self)
 		bar[i].glow:SetTexCoord(113 / 128, 127 / 128, 17 / 32, 31 / 32)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
+		lsCreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 	return bar
 end
@@ -113,7 +113,7 @@ local function CreateClassPowerBar(self, max, cpType)
 
 		bar[i].glow = bar.cover:CreateTexture(nil, "ARTWORK", nil, 2)
 		bar[i].glow:SetAlpha(0)
-		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
+		lsCreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -169,7 +169,7 @@ local function CreateDemonicFury(self)
 	bar.glow:SetTexCoord(left, right, top, bottom)
 	bar.glow:SetVertexColor(0, 1, 0.1)
 	bar.glow:SetAlpha(0)
-	ns.CreateAlphaAnimation(bar.glow, 1, 0.5)
+	lsCreateAlphaAnimation(bar.glow, 1, 0.5)
 
 	return bar
 end
@@ -207,7 +207,7 @@ local function CreateBurningEmbers(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
+		lsCreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -271,12 +271,12 @@ local function CreateTotemBar(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(r * 1.25, g * 1.25, b * 1.25)
 		bar[i].glow:SetAlpha(0)
-		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
+		lsCreateAlphaAnimation(bar[i].glow, 1, 0.5)
 
 		bar[i].text = ns.CreateFontString(bar.cover, M.font, 14, "THINOUTLINE")
 		bar[i].text:SetPoint(unpack(M.textures.cpower["total"..MAX_TOTEMS]["cpower"..i].glowpoint))
 		bar[i].text:SetTextColor(r, g, b)
-		ns.CreateAlphaAnimation(bar[i].text, -0.5)
+		lsCreateAlphaAnimation(bar[i].text, -0.5)
 	end
 	return bar
 end
@@ -336,7 +336,7 @@ local function CreateRuneBar(self)
 		bar[i].glow:SetTexCoord(left, right, top, bottom)
 		bar[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		bar[i].glow:SetAlpha(0)
-		ns.CreateAlphaAnimation(bar[i].glow, 1, 0.5)
+		lsCreateAlphaAnimation(bar[i].glow, 1, 0.5)
 	end
 
 	return bar
@@ -399,7 +399,7 @@ local function CreateEclipseBar(self)
 	bar.glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\cpower_glow")
 	bar.glow:SetTexCoord(left, right, top, bottom)
 	bar.glow:SetAlpha(0)
-	ns.CreateAlphaAnimation(bar.glow, 1)
+	lsCreateAlphaAnimation(bar.glow, 1)
 
 	bar.sun = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
 	bar.sun:SetPoint("TOPLEFT", -10, 12)
@@ -407,7 +407,7 @@ local function CreateEclipseBar(self)
 	bar.sun:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
 	bar.sun:SetTexCoord(0.55859375, 0.72656250, 0.00781250, 0.35937500)
 	bar.sun:SetAlpha(0)
-	ns.CreateAlphaAnimation(bar.sun, 1)
+	lsCreateAlphaAnimation(bar.sun, 1)
 
 	bar.moon = bar.cover:CreateTexture(nil, "ARTWORK", nil, 6)
 	bar.moon:SetPoint("BOTTOMLEFT", -10, -12)
@@ -415,7 +415,7 @@ local function CreateEclipseBar(self)
 	bar.moon:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
 	bar.moon:SetTexCoord(0.73437500, 0.90234375, 0.00781250, 0.35937500)
 	bar.moon:SetAlpha(0)
-	ns.CreateAlphaAnimation(bar.moon, 1)
+	lsCreateAlphaAnimation(bar.moon, 1)
 
 	bar.direction = bar.cover:CreateTexture(nil, "ARTWORK", nil, 7)
 	bar.direction:SetPoint("CENTER", -7, 0)
@@ -649,7 +649,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Health.lowHP:SetPoint("CENTER")
 		self.Health.lowHP:SetVertexColor(0.9, 0.1, 0.25)
 		self.Health.lowHP:SetAlpha(0)
-		ns.CreateAlphaAnimation(self.Health.lowHP, 1)
+		lsCreateAlphaAnimation(self.Health.lowHP, 1)
 
 		self.ppbg = self.Health:CreateTexture("$parentPPBackground", "OVERLAY", nil, 0)
 		self.ppbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_pp")
