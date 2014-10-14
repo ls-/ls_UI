@@ -2,11 +2,11 @@
 
 	<!-- FONTS -->
 
-	<Font name="oUF_LSUnitFrame18Text" inherits="SystemFont_Shadow_Large2" virtual="true"/>
+	<Font name="lsUnitFrame18Text" inherits="SystemFont_Shadow_Large2" virtual="true"/>
 
-	<Font name="oUF_LSUnitFrame16Text" inherits="SystemFont_Shadow_Large" virtual="true"/>
+	<Font name="lsUnitFrame16Text" inherits="SystemFont_Shadow_Large" virtual="true"/>
 
-	<Font name="oUF_LSUnitFrame14Text" inherits="GameTooltipHeader" virtual="true">
+	<Font name="lsUnitFrame14Text" inherits="GameTooltipHeader" virtual="true">
 		<Shadow>
 			<Offset>
 				<AbsDimension x="1" y="-1"/>
@@ -15,13 +15,13 @@
 		</Shadow>
 	</Font>
 
-	<Font name="oUF_LSUnitFrame12Text" inherits="SystemFont_Shadow_Med1" virtual="true"/>
+	<Font name="lsUnitFrame12Text" inherits="SystemFont_Shadow_Med1" virtual="true"/>
 
-	<Font name="oUF_LSUnitFrame10Text" inherits="SystemFont_Shadow_Small" virtual="true"/>
+	<Font name="lsUnitFrame10Text" inherits="SystemFont_Shadow_Small" virtual="true"/>
 
 	<!-- FONTS -->
 
-	<Frame name="oUF_LSInfoBarFrameTemplate-Long" virtual="true">
+	<Frame name="lsInfoBarFrameTemplate-Long" virtual="true">
 		<Size>
 			<AbsDimension x="170" y="40"/>
 		</Size>
@@ -47,7 +47,7 @@
 					</Anchors>
 					<Color r="0.15" g="0.15" b="0.15"/>
 				</Texture>
-				<FontString name="$parentText" inherits="oUF_LSUnitFrame14Text" parentkey="text">
+				<FontString name="$parentText" inherits="lsUnitFrame14Text" parentkey="text">
 					<Size>
 						<AbsDimension x="148" y="20"/>
 					</Size>
@@ -78,7 +78,7 @@
 		</Scripts>
 	</Frame>
 
-	<Button name="oUF_LSInfoBarButtonTemplate-Long" inherits="oUF_LSInfoBarFrameTemplate-Long" virtual="true">
+	<Button name="lsInfoBarButtonTemplate-Long" inherits="lsInfoBarFrameTemplate-Long" virtual="true">
 		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_long_highlight">
 			<Size>
 				<AbsDimension x="158" y="30"/>
@@ -100,7 +100,7 @@
 		</PushedTexture>
 	</Button>
 
-	<Frame name="oUF_LSInfoBarFrameTemplate-Short" virtual="true">
+	<Frame name="lsInfoBarFrameTemplate-Short" virtual="true">
 		<Size>
 			<AbsDimension x="90" y="40"/>
 		</Size>
@@ -126,7 +126,7 @@
 					</Anchors>
 					<Color r="0.15" g="0.15" b="0.15"/>
 				</Texture>
-				<FontString name="$parentText" inherits="oUF_LSUnitFrame14Text" parentkey="text">
+				<FontString name="$parentText" inherits="lsUnitFrame14Text" parentkey="text">
 					<Size>
 						<AbsDimension x="148" y="20"/>
 					</Size>
@@ -158,7 +158,7 @@
 		</Scripts>
 	</Frame>
 
-	<Button name="oUF_LSInfoBarButtonTemplate-Short" inherits="oUF_LSInfoBarFrameTemplate-Short" virtual="true">
+	<Button name="lsInfoBarButtonTemplate-Short" inherits="lsInfoBarFrameTemplate-Short" virtual="true">
 		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_short_highlight">
 			<Size>
 				<AbsDimension x="78" y="30"/>
@@ -180,7 +180,7 @@
 		</PushedTexture>
 	</Button>
 
-<Button name="oUF_LSMicroButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+<Button name="lsMicroButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
 		<Size>
 			<AbsDimension x="26" y="26"/>
 		</Size>
@@ -250,7 +250,7 @@
 				self:SetAlpha(0.5)
 			</OnDisable>
 			<OnEvent>
-				oUF_LSMicroButton_OnEvent(self, event)
+				lsMicroButton_OnEvent(self, event)
 			</OnEvent>
 			<OnLeave>
 				GameTooltip:Hide()
@@ -277,7 +277,7 @@
 		</PushedTexture>
 	</Button>
 
-	<StatusBar name="oUF_LSExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
+	<StatusBar name="lsExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
 		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
 		<Size>
 			<AbsDimension x="382" y="8"/>
@@ -292,7 +292,7 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 				</Texture>
-				<FontString inherits="oUF_LSUnitFrame10Text" setAllPoints="true" hidden="true" parentKey="text"/>
+				<FontString inherits="lsUnitFrame10Text" setAllPoints="true" hidden="true" parentKey="text"/>
 			</Layer>
 		</Layers>
 		<Scripts>
@@ -305,7 +305,7 @@
 		</Scripts>
 	</StatusBar>
 
-	<Frame name="oUF_LSClassPowerFrameTemplate" frameStata="LOW" frameLevel="3" hidden="true" virtual="true">
+	<Frame name="lsClassPowerFrameTemplate" frameStata="LOW" frameLevel="3" hidden="true" virtual="true">
 		<Size>
 			<AbsDimension x="62" y="130"/>
 		</Size>
@@ -317,7 +317,7 @@
 		</Frames>
 	</Frame>
 
-	<StatusBar name="oUF_LSBigCastingBarTemplate" frameStata="LOW" frameLevel="2" hidden="true" virtual="true">
+	<StatusBar name="lsBigCastingBarTemplate" frameStata="LOW" frameLevel="2" hidden="true" virtual="true">
 		<Size>
 			<AbsDimension x="188" y="20"/>
 		</Size>
@@ -344,13 +344,13 @@
 						<Anchor point="RIGHT" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<FontString inherits="oUF_LSUnitFrame12Text" justifyH="LEFT" parentKey="Text">
+				<FontString inherits="lsUnitFrame12Text" justifyH="LEFT" parentKey="Text">
 					<Anchors>
 						<Anchor point="LEFT" x="2" y="-0.5"/>
 						<Anchor point="RIGHT" x="-2" y="-0.5"/>
 					</Anchors>
 				</FontString>
-				<FontString inherits="oUF_LSUnitFrame12Text" justifyH="RIGHT" parentKey="Time">
+				<FontString inherits="lsUnitFrame12Text" justifyH="RIGHT" parentKey="Time">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT" x="0" y="-8.5"/>
 					</Anchors>
@@ -409,7 +409,7 @@
 		</Scripts>
 	</StatusBar>
 
-	<StatusBar name="oUF_LSSmallCastingBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
+	<StatusBar name="lsSmallCastingBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
 		<Size>
 			<AbsDimension x="94" y="20"/>
 		</Size>
@@ -436,13 +436,13 @@
 						<Anchor point="RIGHT" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<FontString inherits="oUF_LSUnitFrame10Text" justifyH="LEFT" parentKey="Text">
+				<FontString inherits="lsUnitFrame10Text" justifyH="LEFT" parentKey="Text">
 					<Anchors>
 						<Anchor point="LEFT" x="2" y="-0.5"/>
 						<Anchor point="RIGHT" x="-2" y="-0.5"/>
 					</Anchors>
 				</FontString>
-				<FontString inherits="oUF_LSUnitFrame10Text" justifyH="RIGHT" parentKey="Time">
+				<FontString inherits="lsUnitFrame10Text" justifyH="RIGHT" parentKey="Time">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT" x="0" y="-7.5"/>
 					</Anchors>
@@ -534,12 +534,12 @@
 			<Frame name="$parentForeground" setallpoints="true">
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentCount" inherits="oUF_LSUnitFrame14Text" parentKey="count">
+						<FontString name="$parentCount" inherits="lsUnitFrame14Text" parentKey="count">
 							<Anchors>
 								<Anchor point="TOPRIGHT" x="1" y="0"/>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentTimer" inherits="oUF_LSUnitFrame16Text" parentKey="timer">
+						<FontString name="$parentTimer" inherits="lsUnitFrame16Text" parentKey="timer">
 							<Anchors>
 								<Anchor point="BOTTOM" x="1" y="0"/>
 							</Anchors>

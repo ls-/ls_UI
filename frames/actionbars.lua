@@ -74,7 +74,7 @@ local BAR_LAYOUT = {
 	},
 	bar8 = {
 		size = {144, 28},
-		point = {"TOPLEFT", "oUF_LSBagInfoBar", "BOTTOM", 0, -6},
+		point = {"TOPLEFT", "lsBagInfoBar", "BOTTOM", 0, -6},
 		button_type = {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot", "MainMenuBarBackpackButton"},
 		total_button = 5,
 		button_size = 28,
@@ -150,7 +150,7 @@ local function GetPageLayout()
 	return condition
 end
 
-local function oUF_LSActionBar_OnEvent(self, event, ...)
+local function lsActionBar_OnEvent(self, event, ...)
 	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
 		local button
 		for i = 1, NUM_ACTIONBAR_BUTTONS do
@@ -181,7 +181,7 @@ local function oUF_LSActionBar_OnEvent(self, event, ...)
 	end
 end
 
-local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
+local function lsPetActionBar_OnUpdate(self, event, ...)
 	local petActionButton, petActionIcon, petAutoCastableTexture, petAutoCastShine
 	for i = 1, 10 do
 		local buttonName = "PetActionButton" .. i
@@ -256,17 +256,17 @@ local function oUF_LSPetActionBar_OnUpdate(self, event, ...)
 	end
 end
 
-local function oUF_LSPetActionBar_ShowGrid(self)
+local function lsPetActionBar_ShowGrid(self)
 	self.showGrid = self.showGrid + 1
 	for i = 1, #self.buttons do
 		self.buttons[i]:SetAlpha(1)
 		self.buttons[i].border:Show()
 	end
-	oUF_LSPetActionBar_OnUpdate(self, "FROM_SHOW_GRID")
+	lsPetActionBar_OnUpdate(self, "FROM_SHOW_GRID")
 
 end
 
-local function oUF_LSPetActionBar_HideGrid(self)
+local function lsPetActionBar_HideGrid(self)
 	if self.showGrid > 0 then self.showGrid = self.showGrid - 1 end
 	if self.showGrid == 0 then
 		for i = 1, 10 do
@@ -275,11 +275,11 @@ local function oUF_LSPetActionBar_HideGrid(self)
 				self.buttons[i].border:Hide()
 			end
 		end
-		oUF_LSPetActionBar_OnUpdate(self, "FROM_HIDE_GRID")
+		lsPetActionBar_OnUpdate(self, "FROM_HIDE_GRID")
 	end
 end
 
-local function oUF_LSPetActionButton_OnDragStart(self)
+local function lsPetActionButton_OnDragStart(self)
 	if InCombatLockdown() then return end
 	if LOCK_ACTIONBAR ~= "1" or IsModifiedClick("PICKUPACTION") then
 		self:SetChecked(0)
@@ -287,7 +287,7 @@ local function oUF_LSPetActionButton_OnDragStart(self)
 	end
 end
 
-local function oUF_LSPetActionButton_OnReceiveDrag(self)
+local function lsPetActionButton_OnReceiveDrag(self)
 	if InCombatLockdown() then return end
 	local cursorType = GetCursorInfo()
 		if cursorType == "petaction" then
@@ -296,24 +296,24 @@ local function oUF_LSPetActionButton_OnReceiveDrag(self)
 	end
 end
 
-local function oUF_LSPetActionBar_OnEvent(self, event, ...)
+local function lsPetActionBar_OnEvent(self, event, ...)
 	arg1 = ...
 	if event == "PET_BAR_UPDATE" or
 		(event == "UNIT_PET" and arg1 == "player") or
 		((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet") or
 		event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED" or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
-		oUF_LSPetActionBar_OnUpdate(self, event)
+		lsPetActionBar_OnUpdate(self, event)
 	elseif event == "PET_BAR_UPDATE_COOLDOWN" then
 		PetActionBar_UpdateCooldowns()
 	elseif event == "PET_BAR_SHOWGRID" then
-		oUF_LSPetActionBar_ShowGrid(self)
+		lsPetActionBar_ShowGrid(self)
 		elseif event == "PET_BAR_HIDEGRID" then
-		oUF_LSPetActionBar_HideGrid(self)
+		lsPetActionBar_HideGrid(self)
 	end
 end
 
 local function SetStancePetActionBarPosition(self)
-	if self:GetName() == "oUF_LSPetActionBar" then
+	if self:GetName() == "lsPetActionBar" then
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]]))
 	else
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]]))
@@ -515,8 +515,8 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 			--[[or originalBar == "StanceBarFrame"]] or not originalBar then button:SetParent(self) end
 
 		if originalBar == "PetActionBarFrame" then
-			button:SetScript("OnDragStart", oUF_LSPetActionButton_OnDragStart)
-			button:SetScript("OnReceiveDrag", oUF_LSPetActionButton_OnReceiveDrag)
+			button:SetScript("OnDragStart", lsPetActionButton_OnDragStart)
+			button:SetScript("OnReceiveDrag", lsPetActionButton_OnReceiveDrag)
 			button:Show()
 		end
 
@@ -549,7 +549,7 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 	end
 end
 
-local function oUF_LSActionButton_OnUpdate(button)
+local function lsActionButton_OnUpdate(button)
 	local bIcon = _G[button:GetName().."Icon"]
 	local bMacro = _G[button:GetName().."Name"]
 
@@ -577,7 +577,7 @@ local function oUF_LSActionButton_OnUpdate(button)
 end
 
 local function CreateLeaveVehicleButton(bar)
-	local button = CreateFrame("Button", "oUF_LSVehicleExitButton", bar, "SecureHandlerClickTemplate")
+	local button = CreateFrame("Button", "lsVehicleExitButton", bar, "SecureHandlerClickTemplate")
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
 	button:RegisterForClicks("AnyUp")
@@ -599,7 +599,7 @@ end
 
 local function SetPetBattleButtonPosition()
 	local bdata = BAR_LAYOUT.bar11
-	SetButtonPosition(oUF_LSPetBattleBar, bdata.orientation, bdata.original_bar, bdata.button_type, bdata.button_size, bdata.total_button)
+	SetButtonPosition(lsPetBattleBar, bdata.orientation, bdata.original_bar, bdata.button_type, bdata.button_size, bdata.total_button)
 end
 
 local function FlyoutButtonToggleHook(...)
@@ -613,8 +613,8 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-function oUF_LSActionBars_Initialize()
-	local f = CreateFrame("Frame", "oUF_LSBottomLine", UIParent)
+function lsActionBars_Initialize()
+	local f = CreateFrame("Frame", "lsBottomLine", UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)
 	f:SetSize(406, 52)
@@ -645,16 +645,16 @@ function oUF_LSActionBars_Initialize()
 	for b, bdata in pairs(BAR_LAYOUT) do
 		local name
 		if type(bdata.button_type) == "string" then
-			name = "oUF_LS"..bdata.button_type:gsub("Button", ""):gsub("Bar", "").."Bar"
+			name = "ls"..bdata.button_type:gsub("Button", ""):gsub("Bar", "").."Bar"
 		else
 			if tonumber(strmatch(b, "(%d+)")) == 8 then
-				name = "oUF_LSBagBar"
+				name = "lsBagBar"
 			elseif tonumber(strmatch(b, "(%d+)")) == 10 then
-				name = "oUF_LSVehicleExitBar"
+				name = "lsVehicleExitBar"
 			elseif tonumber(strmatch(b, "(%d+)")) == 11 then
-				name = "oUF_LSPetBattleBar"
+				name = "lsPetBattleBar"
 			elseif tonumber(strmatch(b, "(%d+)")) == 11 then
-				name = "oUF_LSPlayerPowerBarAlt"
+				name = "lsPlayerPowerBarAlt"
 			end
 		end
 
@@ -669,7 +669,7 @@ function oUF_LSActionBars_Initialize()
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 			bar:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-			bar:SetScript("OnEvent", oUF_LSActionBar_OnEvent)
+			bar:SetScript("OnEvent", lsActionBar_OnEvent)
 		elseif tonumber(strmatch(b, "(%d+)")) == 6 then
 			bar:RegisterEvent("PLAYER_CONTROL_LOST")
 			bar:RegisterEvent("PLAYER_CONTROL_GAINED")
@@ -681,7 +681,7 @@ function oUF_LSActionBars_Initialize()
 			bar:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
 			bar:RegisterEvent("PET_BAR_SHOWGRID")
 			bar:RegisterEvent("PET_BAR_HIDEGRID")
-			bar:SetScript("OnEvent", oUF_LSPetActionBar_OnEvent)
+			bar:SetScript("OnEvent", lsPetActionBar_OnEvent)
 		end
 
 		if tonumber(strmatch(b, "(%d+)")) ~= 10 and tonumber(strmatch(b, "(%d+)")) ~= 11 and tonumber(strmatch(b, "(%d+)")) ~= 12 then
@@ -704,7 +704,7 @@ function oUF_LSActionBars_Initialize()
 
 	for b, bar in pairs(ns.bars) do
 		if BAR_LAYOUT[b].point then
-			if b == "bar8" and not oUF_LSBagInfoBar then
+			if b == "bar8" and not lsBagInfoBar then
 				bar:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -20, 6)
 			else
 				bar:SetPoint(unpack(BAR_LAYOUT[b].point))
@@ -771,5 +771,5 @@ function oUF_LSActionBars_Initialize()
 	SpellFlyoutVerticalBackground:SetTexture(nil)
 	SpellFlyoutBackgroundEnd:SetTexture(nil)
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
-	hooksecurefunc("ActionButton_OnUpdate", oUF_LSActionButton_OnUpdate)
+	hooksecurefunc("ActionButton_OnUpdate", lsActionButton_OnUpdate)
 end

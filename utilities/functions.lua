@@ -77,11 +77,11 @@ function ns.UnitFrame_OnEnter(self)
 	UnitFrame_OnEnter(self)
 
 	local frameName = gsub(self:GetName(), "%d", "")
-	if frameName == "oUF_LSPartyFrameUnitButton" then
+	if frameName == "lsPartyFrameUnitButton" then
 		PartyMemberBuffTooltip:ClearAllPoints()
 		PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
 		PartyMemberBuffTooltip_Update(self)
-	elseif frameName == "oUF_LSPetFrame" then
+	elseif frameName == "lsPetFrame" then
 		PartyMemberBuffTooltip:ClearAllPoints()
 		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		PartyMemberBuffTooltip_Update(self)
@@ -107,9 +107,9 @@ function ns.UnitFrame_OnLeave(self)
 	UnitFrame_OnLeave(self)
 
 	local frameName = gsub(self:GetName(), "%d", "")
-	if frameName == "oUF_LSPartyFrameUnitButton" then
+	if frameName == "lsPartyFrameUnitButton" then
 		PartyMemberBuffTooltip:Hide()
-	elseif frameName == "oUF_LSPetFrame" then
+	elseif frameName == "lsPetFrame" then
 		PartyMemberBuffTooltip:Hide()
 	end
 
@@ -638,10 +638,10 @@ end
 -- OBJECTIVE TRACKER --
 -----------------------
 
-function oUF_LSOTDragHeader_Initialize()
+function lsOTDragHeader_Initialize()
 	local OT_LOCKED = ns.C.objectivetracker.locked
 
-	local OTDragHeader = CreateFrame("BUTTON", "ObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
+	local OTDragHeader = CreateFrame("BUTTON", "lsObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
 	OTDragHeader:SetFrameStrata(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameStrata())
 	OTDragHeader:SetFrameLevel(ObjectiveTrackerBlocksFrame.QuestHeader:GetFrameLevel() + 1)
 	OTDragHeader:SetSize(235, 25)

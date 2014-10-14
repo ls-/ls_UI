@@ -4,17 +4,17 @@ local M = ns.M
 local BuffFrame = _G["BuffFrame"]
 local ConsolidatedBuffs = _G["ConsolidatedBuffs"]
 
-local oUF_LSBuffHeader = CreateFrame("Frame", "oUF_LSBuffHeader", UIParent)
-oUF_LSBuffHeader:SetSize(28, 28)
-oUF_LSBuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -60)
+local lsBuffHeader = CreateFrame("Frame", "lsBuffHeader", UIParent)
+lsBuffHeader:SetSize(28, 28)
+lsBuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -60)
 
-local oUF_LSDebuffHeader = CreateFrame("Frame", "oUF_LSDebuffHeader", UIParent)
-oUF_LSDebuffHeader:SetSize(28, 28)
-oUF_LSDebuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -140)
+local lsDebuffHeader = CreateFrame("Frame", "lsDebuffHeader", UIParent)
+lsDebuffHeader:SetSize(28, 28)
+lsDebuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -140)
 
-local oUF_LSTemporaryEnchantHeader = CreateFrame("Frame", "oUF_LSTemporaryEnchantHeader", UIParent)
-oUF_LSTemporaryEnchantHeader:SetSize(28, 28)
-oUF_LSTemporaryEnchantHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -180)
+local lsTemporaryEnchantHeader = CreateFrame("Frame", "lsTemporaryEnchantHeader", UIParent)
+lsTemporaryEnchantHeader:SetSize(28, 28)
+lsTemporaryEnchantHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -180)
 
 local function SetDurationText(duration, arg1, arg2)
 	duration:SetText(format(gsub(arg1, "[ .]", ""), arg2))
@@ -77,7 +77,7 @@ local function UpdateDebuffAnchors(buttonName, index)
 	button:SetSize(28, 28)
 
 	if index == 1 then
-		button:SetPoint("TOPRIGHT", oUF_LSDebuffHeader, "TOPRIGHT", 0, 0)
+		button:SetPoint("TOPRIGHT", lsDebuffHeader, "TOPRIGHT", 0, 0)
 	else
 		button:SetPoint("RIGHT", _G[buttonName..(index - 1)], "LEFT", -4, 0)
 	end
@@ -147,15 +147,15 @@ local function SetAuraButtonStyle(btn, index, atype)
 end
 
 do
-	BuffFrame:SetParent(oUF_LSBuffHeader)
+	BuffFrame:SetParent(lsBuffHeader)
 	BuffFrame:ClearAllPoints()
 	BuffFrame:SetPoint("TOPRIGHT", 0, 0)
 
-	TemporaryEnchantFrame:SetParent(oUF_LSTemporaryEnchantHeader)
+	TemporaryEnchantFrame:SetParent(lsTemporaryEnchantHeader)
 	TemporaryEnchantFrame:ClearAllPoints()
 	TemporaryEnchantFrame:SetPoint("TOPRIGHT", 0, 0)
 
-	UpdateTemporaryEnchantAnchors(oUF_LSTemporaryEnchantHeader)
+	UpdateTemporaryEnchantAnchors(lsTemporaryEnchantHeader)
 
 	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
 	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)

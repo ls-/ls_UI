@@ -34,7 +34,7 @@ local INFOBAR_INFO = {
 	},
 }
 
-local function oUF_LSLocationInfoBar_OnEnter(self)
+local function lsLocationInfoBar_OnEnter(self)
 	local pvpType, _, factionName = GetZonePVPInfo()
 	local x, y = GetPlayerMapPosition("player")
 	local coords
@@ -75,7 +75,7 @@ local function oUF_LSLocationInfoBar_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function oUF_LSLocationInfoBar_OnUpdate(self, elapsed)
+local function lsLocationInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -96,23 +96,23 @@ local function oUF_LSLocationInfoBar_OnUpdate(self, elapsed)
 			self.filling:SetVertexColor(unpack(ibcolors.yellow))
 		end
 		if GameTooltip:IsOwned(self) then
-			oUF_LSLocationInfoBar_OnEnter(self)
+			lsLocationInfoBar_OnEnter(self)
 		end
 	end
 end
 
-local function oUF_LSMemoryInfoBar_Initialize()
-	oUF_LSMemoryInfoBar.usedMemory = 0
-	oUF_LSMemoryInfoBar.activeAddons = {}
+local function lsMemoryInfoBar_Initialize()
+	lsMemoryInfoBar.usedMemory = 0
+	lsMemoryInfoBar.activeAddons = {}
 end
 
-local function oUF_LSMemoryInfoBar_OnClick(self)
+local function lsMemoryInfoBar_OnClick(self)
 	UpdateAddOnMemoryUsage()
 	collectgarbage()
 	self.updateInterval = 2
 end
 
-local function oUF_LSMemoryInfoBar_OnEnter(self)
+local function lsMemoryInfoBar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(lsMEMORY..":")
 	sort(self.activeAddons, function(a, b)
@@ -131,7 +131,7 @@ local function oUF_LSMemoryInfoBar_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function oUF_LSMemoryInfoBar_OnUpdate(self, elapsed)
+local function lsMemoryInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -147,13 +147,13 @@ local function oUF_LSMemoryInfoBar_OnUpdate(self, elapsed)
 		end
 		self.text:SetText(format("%.1f MB", self.usedMemory / 1000))
 		if GameTooltip:IsOwned(self) then
-			oUF_LSMemoryInfoBar_OnEnter(self)
+			lsMemoryInfoBar_OnEnter(self)
 		end
 	end
 end
 
 
-local function oUF_LSFPSInfoBar_OnUpdate(self, elapsed)
+local function lsFPSInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -170,7 +170,7 @@ local function oUF_LSFPSInfoBar_OnUpdate(self, elapsed)
 	end
 end
 
-local function oUF_LSLatencyInfoBar_OnEnter(self)
+local function lsLatencyInfoBar_OnEnter(self)
 	_, _, latencyHome, latencyWorld = GetNetStats()
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(lsLATENCY..":")
@@ -179,7 +179,7 @@ local function oUF_LSLatencyInfoBar_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function oUF_LSLatencyInfoBar_OnUpdate(self, elapsed)
+local function lsLatencyInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
@@ -194,15 +194,15 @@ local function oUF_LSLatencyInfoBar_OnUpdate(self, elapsed)
 		end
 		self.text:SetText(latency.." "..MILLISECONDS_ABBR)
 		if GameTooltip:IsOwned(self) then
-			oUF_LSLatencyInfoBar_OnEnter(self)
+			lsLatencyInfoBar_OnEnter(self)
 		end
 	end
 end
 
 
-local function oUF_LSBagInfoBar_Initialize()
-	oUF_LSBagInfoBar:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	oUF_LSBagInfoBar:RegisterEvent("BAG_UPDATE")
+local function lsBagInfoBar_Initialize()
+	lsBagInfoBar:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	lsBagInfoBar:RegisterEvent("BAG_UPDATE")
 	if not InCombatLockdown() then
 		CharacterBag3Slot:Hide()
 		CharacterBag2Slot:Hide()
@@ -212,7 +212,7 @@ local function oUF_LSBagInfoBar_Initialize()
 	end
 end
 
-local function oUF_LSBagInfoBar_OnClick(self, button)
+local function lsBagInfoBar_OnClick(self, button)
 	if button == "RightButton" then
 		if not InCombatLockdown() then
 			if MainMenuBarBackpackButton:IsShown() then
@@ -234,7 +234,7 @@ local function oUF_LSBagInfoBar_OnClick(self, button)
 	end
 end
 
-local function oUF_LSBagInfoBar_OnEvent(self)
+local function lsBagInfoBar_OnEvent(self)
 	local free, total, used = 0, 0, 0
 	for i = 0, NUM_BAG_SLOTS do
 		slots, bagType = GetContainerNumFreeSlots(i)
@@ -257,15 +257,15 @@ local function oUF_LSBagInfoBar_OnEvent(self)
 	end
 end
 
-local function oUF_LSClockInfoBar_Initialize()
-	oUF_LSClockInfoBar:RegisterForClicks("LeftButtonUp")
+local function lsClockInfoBar_Initialize()
+	lsClockInfoBar:RegisterForClicks("LeftButtonUp")
 end
 
-local function oUF_LSClockInfoBar_OnClick(...)
+local function lsClockInfoBar_OnClick(...)
 	TimeManager_Toggle()
 end
 
-local function oUF_LSClockInfoBar_OnEnter(self)
+local function lsClockInfoBar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 		GameTooltip:AddLine(TIMEMANAGER_TOOLTIP_TITLE, 1, 1, 1)
 	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true),
@@ -275,14 +275,14 @@ local function oUF_LSClockInfoBar_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function oUF_LSClockInfoBar_OnUpdate(self, elapsed)
+local function lsClockInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
 		self.updateInterval = self.updateInterval - elapsed
 	else
 		self.updateInterval = 1
 		self.text:SetText(GameTime_GetTime(true))
 		if GameTooltip:IsOwned(self) then
-			oUF_LSClockInfoBar_OnEnter(self)
+			lsClockInfoBar_OnEnter(self)
 		end
 		if TimeManagerClockButton.alarmFiring then
 			self.filling:SetVertexColor(unpack(ibcolors.red))
@@ -292,12 +292,12 @@ local function oUF_LSClockInfoBar_OnUpdate(self, elapsed)
 	end
 end
 
-local function oUF_LSMailInfoBar_Initialize()
-	oUF_LSMailInfoBar.text:SetText(BUTTON_LAG_MAIL)
-	oUF_LSMailInfoBar:RegisterEvent("UPDATE_PENDING_MAIL")
+local function lsMailInfoBar_Initialize()
+	lsMailInfoBar.text:SetText(BUTTON_LAG_MAIL)
+	lsMailInfoBar:RegisterEvent("UPDATE_PENDING_MAIL")
 end
 
-local function oUF_LSMailInfoBar_OnEnter(self)
+local function lsMailInfoBar_OnEnter(self)
 	if HasNewMail() then
 		local sender1, sender2, sender3 = GetLatestThreeSenders()
 		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
@@ -319,7 +319,7 @@ local function oUF_LSMailInfoBar_OnEnter(self)
 	end
 end
 
-local function oUF_LSMailInfoBar_OnEvent(self)
+local function lsMailInfoBar_OnEvent(self)
 	if HasNewMail() then
 		self.filling:SetVertexColor(unpack(ibcolors.green))
 	else
@@ -327,9 +327,9 @@ local function oUF_LSMailInfoBar_OnEvent(self)
 	end
 end
 
-function oUF_LSInfobars_Initialize()
+function lsInfobars_Initialize()
 	for ib, ibdata in pairs(INFOBAR_INFO) do
-		local ibar = CreateFrame(ibdata.infobar_type, "oUF_LS"..ib.."InfoBar", UIParent, "oUF_LSInfoBarButtonTemplate-"..ibdata.length)
+		local ibar = CreateFrame(ibdata.infobar_type, "ls"..ib.."InfoBar", UIParent, "lsInfoBarButtonTemplate-"..ibdata.length)
 		ibar:SetFrameStrata("LOW")
 		ibar:SetFrameLevel(1)
 
@@ -340,30 +340,30 @@ function oUF_LSInfobars_Initialize()
 		ibar:SetPoint(unpack(ns.C.infobars[ib].point))
 	end
 
-	oUF_LSLocationInfoBar:SetScript("OnEnter", oUF_LSLocationInfoBar_OnEnter)
-	oUF_LSLocationInfoBar:SetScript("OnUpdate", oUF_LSLocationInfoBar_OnUpdate)
+	lsLocationInfoBar:SetScript("OnEnter", lsLocationInfoBar_OnEnter)
+	lsLocationInfoBar:SetScript("OnUpdate", lsLocationInfoBar_OnUpdate)
 
-	oUF_LSMemoryInfoBar_Initialize()
-	oUF_LSMemoryInfoBar:SetScript("OnClick", oUF_LSMemoryInfoBar_OnClick)
-	oUF_LSMemoryInfoBar:SetScript("OnEnter", oUF_LSMemoryInfoBar_OnEnter)
-	oUF_LSMemoryInfoBar:SetScript("OnUpdate", oUF_LSMemoryInfoBar_OnUpdate)
+	lsMemoryInfoBar_Initialize()
+	lsMemoryInfoBar:SetScript("OnClick", lsMemoryInfoBar_OnClick)
+	lsMemoryInfoBar:SetScript("OnEnter", lsMemoryInfoBar_OnEnter)
+	lsMemoryInfoBar:SetScript("OnUpdate", lsMemoryInfoBar_OnUpdate)
 
-	oUF_LSFPSInfoBar:SetScript("OnUpdate", oUF_LSFPSInfoBar_OnUpdate)
+	lsFPSInfoBar:SetScript("OnUpdate", lsFPSInfoBar_OnUpdate)
 
-	oUF_LSLatencyInfoBar:SetScript("OnEnter", oUF_LSLatencyInfoBar_OnEnter)
-	oUF_LSLatencyInfoBar:SetScript("OnUpdate", oUF_LSLatencyInfoBar_OnUpdate)
+	lsLatencyInfoBar:SetScript("OnEnter", lsLatencyInfoBar_OnEnter)
+	lsLatencyInfoBar:SetScript("OnUpdate", lsLatencyInfoBar_OnUpdate)
 
-	oUF_LSBagInfoBar_Initialize()
-	oUF_LSBagInfoBar_OnEvent(oUF_LSBagInfoBar)
-	oUF_LSBagInfoBar:SetScript("OnClick", oUF_LSBagInfoBar_OnClick)
-	oUF_LSBagInfoBar:SetScript("OnEvent", oUF_LSBagInfoBar_OnEvent)
+	lsBagInfoBar_Initialize()
+	lsBagInfoBar_OnEvent(lsBagInfoBar)
+	lsBagInfoBar:SetScript("OnClick", lsBagInfoBar_OnClick)
+	lsBagInfoBar:SetScript("OnEvent", lsBagInfoBar_OnEvent)
 
-	oUF_LSClockInfoBar_Initialize()
-	oUF_LSClockInfoBar:SetScript("OnClick", oUF_LSClockInfoBar_OnClick)
-	oUF_LSClockInfoBar:SetScript("OnEnter", oUF_LSClockInfoBar_OnEnter)
-	oUF_LSClockInfoBar:SetScript("OnUpdate", oUF_LSClockInfoBar_OnUpdate)
+	lsClockInfoBar_Initialize()
+	lsClockInfoBar:SetScript("OnClick", lsClockInfoBar_OnClick)
+	lsClockInfoBar:SetScript("OnEnter", lsClockInfoBar_OnEnter)
+	lsClockInfoBar:SetScript("OnUpdate", lsClockInfoBar_OnUpdate)
 
-	oUF_LSMailInfoBar_Initialize()
-	oUF_LSMailInfoBar:SetScript("OnEnter", oUF_LSMailInfoBar_OnEnter)
-	oUF_LSMailInfoBar:SetScript("OnEvent", oUF_LSMailInfoBar_OnEvent)
+	lsMailInfoBar_Initialize()
+	lsMailInfoBar:SetScript("OnEnter", lsMailInfoBar_OnEnter)
+	lsMailInfoBar:SetScript("OnEvent", lsMailInfoBar_OnEvent)
 end

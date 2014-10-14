@@ -105,7 +105,7 @@ local function PostUpdateComboBar(self, cp)
 end
 
 local function CreateClassPowerBar(self, max, cpType)
-	local bar = CreateFrame("Frame", "bar"..cpType, self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("Frame", "bar"..cpType, self, "lsClassPowerFrameTemplate")
 	bar.__cpower = cpType
 
 	for i = 1, 5 do
@@ -156,7 +156,7 @@ local function UpdateClassPowerBar(self, cur, max, changed)
 end
 
 local function CreateDemonicFury(self)
-	local bar = CreateFrame("StatusBar", "barFURY", self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("StatusBar", "barFURY", self, "lsClassPowerFrameTemplate")
 	bar:SetOrientation("VERTICAL")
 	bar:SetStatusBarTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_cpower_1\\1")
 	bar.__cpower = "FURY"
@@ -188,7 +188,7 @@ local function UpdateDemonicFury(self, cur, max)
 end
 
 local function CreateBurningEmbers(self)
-	local bar = CreateFrame("Frame", "barEMBERS", self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("Frame", "barEMBERS", self, "lsClassPowerFrameTemplate")
 	bar.__cpower = "EMBER"
 
 	for i = 1, 4 do
@@ -250,7 +250,7 @@ local function UpdateBurningEmbers(self, full, count)
 end
 
 local function CreateTotemBar(self)
-	local bar = CreateFrame("Frame", "barTOTEM", self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("Frame", "barTOTEM", self, "lsClassPowerFrameTemplate")
 	bar.__cpower = "TOTEM"
 
 	for i = 1, MAX_TOTEMS do
@@ -317,7 +317,7 @@ local function UpdateTotemBar(self, priorities, haveTotem, name, start, duration
 end
 
 local function CreateRuneBar(self)
-	local bar = CreateFrame("Frame", "barRUNE", self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("Frame", "barRUNE", self, "lsClassPowerFrameTemplate")
 	bar.__cpower = "RUNE"
 
 	for i = 1, 6 do
@@ -376,7 +376,7 @@ local function PostUpdateRuneBar(self, rune, rid, start, duration, runeReady)
 end
 
 local function CreateEclipseBar(self)
-	local bar = CreateFrame("Frame", "barECLIPSE", self, "oUF_LSClassPowerFrameTemplate")
+	local bar = CreateFrame("Frame", "barECLIPSE", self, "lsClassPowerFrameTemplate")
 	bar.__cpower = "ECLIPSE"
 
 	bar.LunarBar = CreateFrame("StatusBar", nil, bar)
@@ -475,24 +475,24 @@ local function CreateUnitFrameStyle(self, unit)
 		sbOrientation = "VERTICAL"
 		hpTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_hp"
 		ppTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_pp"
-		hpTextTemplate = "oUF_LSUnitFrame18Text"
-		ppTextTemplate = "oUF_LSUnitFrame14Text"
+		hpTextTemplate = "lsUnitFrame18Text"
+		ppTextTemplate = "lsUnitFrame14Text"
 	elseif unit == "pet" then
 		self.frameType = "pet"
 		width, height = 44, 140
 		sbOrientation = "VERTICAL"
 		hpTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_pet_filling"
 		ppTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_pet_filling"
-		hpTextTemplate = "oUF_LSUnitFrame14Text"
-		ppTextTemplate = "oUF_LSUnitFrame14Text"
+		hpTextTemplate = "lsUnitFrame14Text"
+		ppTextTemplate = "lsUnitFrame14Text"
 	else
 		self.frameType = ns.C.units[unit].long and "long" or "short"
 		width, height = ns.C.units[unit].long and 218 or 124, 42
 		sbOrientation = "HORIZONTAL"
 		hpTexture = M.textures.statusbar
 		ppTexture = M.textures.statusbar
-		hpTextTemplate = "oUF_LSUnitFrame14Text"
-		ppTextTemplate = "oUF_LSUnitFrame12Text"
+		hpTextTemplate = "lsUnitFrame14Text"
+		ppTextTemplate = "lsUnitFrame12Text"
 	end
 
 	self:SetAttribute("initial-width", width)
@@ -565,7 +565,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.FloatingCombatFeedback:SetSize(116, 116)
 		self.FloatingCombatFeedback:SetPoint("CENTER", 0, 78)
 		for i = 1, 4 do
-			self.FloatingCombatFeedback[i] = self.FloatingCombatFeedback:CreateFontString("feeback"..i, "OVERLAY", "oUF_LSUnitFrame18Text")
+			self.FloatingCombatFeedback[i] = self.FloatingCombatFeedback:CreateFontString("feeback"..i, "OVERLAY", "lsUnitFrame18Text")
 		end
 		self.FloatingCombatFeedback.Mode = "Fountain"
 		self.FloatingCombatFeedback.YOffset = 20
@@ -766,7 +766,7 @@ local function CreateUnitFrameStyle(self, unit)
 	self.HealPrediction.PostUpdate = ns.PostUpdateHealPrediction
 
 	if unit ~= "player" and unit ~= "pet" then
-		self.NameText = self.cover:CreateFontString("$parentNameText", "ARTWORK", "oUF_LSUnitFrame14Text")
+		self.NameText = self.cover:CreateFontString("$parentNameText", "ARTWORK", "lsUnitFrame14Text")
 		self.NameText:SetPoint("LEFT", self, "LEFT", 1, self.frameType == "long" and 18.5 or 2.5)
 		self.NameText:SetPoint("RIGHT", self, "RIGHT", -1, self.frameType == "long" and 18.5 or 2.5)
 		self.NameText:SetPoint("BOTTOM", self, "TOP", 0, self.frameType == "long" and 18.5 or 2.5)
@@ -777,7 +777,7 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if self.frameType == "long" then
-			self.ClassText = self.cover:CreateFontString("$parentClassText", "ARTWORK", "oUF_LSUnitFrame14Text")
+			self.ClassText = self.cover:CreateFontString("$parentClassText", "ARTWORK", "lsUnitFrame14Text")
 			self.ClassText:SetPoint("LEFT", self, "LEFT", 1, 2.5)
 			self.ClassText:SetPoint("RIGHT", self, "RIGHT", -1, 2.5)
 			self.ClassText:SetPoint("BOTTOM", self, "TOP", 0, 2.5)
@@ -785,7 +785,7 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if unit ~= "party" then
-			self.ThreatText = self.cover:CreateFontString("$parentThreatText", "ARTWORK", "oUF_LSUnitFrame14Text")
+			self.ThreatText = self.cover:CreateFontString("$parentThreatText", "ARTWORK", "lsUnitFrame14Text")
 			self.ThreatText:SetJustifyH("LEFT")
 			self.ThreatText:SetPoint("TOP", self.Health, "TOP", 0, -1)
 			self.ThreatText:SetPoint("LEFT", self.Health, "LEFT", 1, 0)
@@ -797,9 +797,9 @@ local function CreateUnitFrameStyle(self, unit)
 
 	if unit == "focus" or unit == "target" or unit == "player" or unit == "boss" then
 		if self.frameType == "long" or unit == "player" then
-			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "oUF_LSBigCastingBarTemplate")
+			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "lsBigCastingBarTemplate")
 		else
-			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "oUF_LSSmallCastingBarTemplate")
+			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "lsSmallCastingBarTemplate")
 		end
 		self.Castbar.CustomTimeText = ns.CustomTimeText
 		self.Castbar.CustomDelayText = ns.CustomDelayText
@@ -837,7 +837,7 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 
 	if unit == "player" then
-		self.Experience = CreateFrame("StatusBar", "oUF_LSExperienceBar", UIParent, "oUF_LSExperienceReputationBarTemplate")
+		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", UIParent, "lsExperienceReputationBarTemplate")
 		self.Experience:SetStatusBarColor(unpack(M.colors.exp.normal))
 		self.Experience:SetPoint("BOTTOM", 0, 52)
 		self.Experience.Rested = CreateFrame("StatusBar", nil, self.Experience)
@@ -848,7 +848,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Experience.PostUpdate = UpdateExperience
 		self:Tag(self.Experience.text, COMBAT_XP_GAIN.." [curxp] / [maxxp]")
 
-		self.Reputation = CreateFrame("StatusBar", "oUF_LSReputationBar", UIParent, "oUF_LSExperienceReputationBarTemplate")
+		self.Reputation = CreateFrame("StatusBar", "lsReputationBar", UIParent, "lsExperienceReputationBarTemplate")
 		self.Reputation:SetPoint("BOTTOM", 0, 2)
 		self.Reputation.border:SetVertexColor(0.6, 0.6, 0.6)
 		self.Reputation.PostUpdate = UpdateReputation
@@ -995,12 +995,12 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 end
 
-function oUF_LSFactory(oUF)
+function lsFactory(oUF)
 	oUF:RegisterStyle("LS", CreateUnitFrameStyle)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		local name = "oUF_LS"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
+		local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 		if udata.attributes then
 			ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
 				"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);

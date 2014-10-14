@@ -6,21 +6,21 @@ local DEFAULT_CONFIG = {
 			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80},
 		},
 		pet = {
-			point = {"RIGHT", "oUF_LSPlayerFrame" , "LEFT"},
+			point = {"RIGHT", "lsPlayerFrame" , "LEFT"},
 		},
 		target = {
 			point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 			long = true,
 		},
 		targettarget = {
-			point = { "LEFT", "oUF_LSTargetFrame", "RIGHT", 14, 0 },
+			point = { "LEFT", "lsTargetFrame", "RIGHT", 14, 0 },
 		},
 		focus = {
 			point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
 			long = true,
 		},
 		focustarget = {
-			point = { "RIGHT", "oUF_LSFocusFrame", "LEFT", -14, 0 },
+			point = { "RIGHT", "lsFocusFrame", "LEFT", -14, 0 },
 		},
 		party = {
 			point = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
@@ -31,16 +31,16 @@ local DEFAULT_CONFIG = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -240},
 		},	
 		boss2 = {
-			point = {"TOP", "oUF_LSBoss1Frame", "BOTTOM", 0, -46},
+			point = {"TOP", "lsBoss1Frame", "BOTTOM", 0, -46},
 		},
 		boss3 = {
-			point = {"TOP", "oUF_LSBoss2Frame", "BOTTOM", 0, -46},
+			point = {"TOP", "lsBoss2Frame", "BOTTOM", 0, -46},
 		},
 		boss4 = {
-			point = {"TOP", "oUF_LSBoss3Frame", "BOTTOM", 0, -46},
+			point = {"TOP", "lsBoss3Frame", "BOTTOM", 0, -46},
 		},
 		boss5 = {
-			point = {"TOP", "oUF_LSBoss4Frame", "BOTTOM", 0, -46},
+			point = {"TOP", "lsBoss4Frame", "BOTTOM", 0, -46},
 		},
 	},
 	auratracker = {
@@ -65,19 +65,19 @@ local DEFAULT_CONFIG = {
 		},
 		memory = {
 			enabled = true,
-			point = {"LEFT", "oUF_LSLocationInfoBar", "RIGHT", 24, 0},
+			point = {"LEFT", "lsLocationInfoBar", "RIGHT", 24, 0},
 		},
 		fps = {
 			enabled = true,
-			point = {"LEFT", "oUF_LSMemoryInfoBar", "RIGHT", 6, 0},
+			point = {"LEFT", "lsMemoryInfoBar", "RIGHT", 6, 0},
 		},
 		latency = {
 			enabled = true,
-			point = {"LEFT", "oUF_LSFPSInfoBar", "RIGHT", 6, 0},
+			point = {"LEFT", "lsFPSInfoBar", "RIGHT", 6, 0},
 		},
 		bag = {
 			enabled = true,
-			point = {"LEFT", "oUF_LSLatencyInfoBar", "RIGHT", 24, 0},
+			point = {"LEFT", "lsLatencyInfoBar", "RIGHT", 24, 0},
 		},
 		clock = {
 			enabled = true,
@@ -85,7 +85,7 @@ local DEFAULT_CONFIG = {
 		},
 		mail = {
 			enabled = true,
-			point = {"RIGHT", "oUF_LSClockInfoBar", "LEFT", -6, 0},
+			point = {"RIGHT", "lsClockInfoBar", "LEFT", -6, 0},
 		},
 	},
 	width = 0, 
@@ -97,7 +97,7 @@ local ConfigLoader = CreateFrame("Frame")
 ConfigLoader:RegisterEvent("ADDON_LOADED")
 ConfigLoader:RegisterEvent("PLAYER_LOGOUT")
 
-local function oUF_LSConfigLoader_OnEvent(...)
+local function lsConfigLoader_OnEvent(...)
 	local _, event, arg3 = ...
 	if event == "ADDON_LOADED" then
 		if arg3 ~= "oUF_LS" then return end
@@ -123,13 +123,13 @@ local function oUF_LSConfigLoader_OnEvent(...)
 
 		-- Minimap 
 		LoadAddOn("Blizzard_TimeManager")
-		oUF_LSMinimap_Initialize()
+		lsMinimap_Initialize()
 
 		-- Infobars
-		oUF_LSInfobars_Initialize()
+		lsInfobars_Initialize()
 		
 		-- Actionbars
-		oUF_LSActionBars_Initialize()
+		lsActionBars_Initialize()
 
 		-- MicroMenu
 		lsMicroMenu_Initialize()
@@ -138,9 +138,9 @@ local function oUF_LSConfigLoader_OnEvent(...)
 		lsAuraTracker_Initialize()
 		
 		-- ObjectiveTracker
-		oUF_LSOTDragHeader_Initialize()
+		lsOTDragHeader_Initialize()
 
-		oUF:Factory(oUF_LSFactory)
+		oUF:Factory(lsFactory)
 	elseif event == "PLAYER_LOGOUT" then
 		local function cleanDB(db, defaults)
 			if type(db) ~= "table" then return {} end
@@ -161,4 +161,4 @@ local function oUF_LSConfigLoader_OnEvent(...)
 	end
 end
 
-ConfigLoader:SetScript("OnEvent", oUF_LSConfigLoader_OnEvent)
+ConfigLoader:SetScript("OnEvent", lsConfigLoader_OnEvent)
