@@ -188,6 +188,7 @@ local function lsPetActionBar_OnUpdate(self, event, ...)
 		petActionButton = _G[buttonName]
 		petActionIcon = _G[buttonName.."Icon"]
 		petAutoCastableTexture = _G[buttonName.."AutoCastable"]
+		petActionButtonHotkey = _G[buttonName.."HotKey"]
 		petAutoCastShine = _G[buttonName.."Shine"]
 
 		local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
@@ -204,14 +205,16 @@ local function lsPetActionBar_OnUpdate(self, event, ...)
 		petActionButton.tooltipSubtext = subtext
 
 		if isActive then
-			petActionButton:SetChecked(1)
+			petActionButton:SetChecked(true)
 			if IsPetAttackAction(i) then
 				PetActionButton_StartFlash(petActionButton)
+				petActionButton:GetCheckedTexture():SetAlpha(0.5)
 			end
 		else
-			petActionButton:SetChecked(0)
+			petActionButton:SetChecked(false)
 			if IsPetAttackAction(i) then
 				PetActionButton_StopFlash(petActionButton)
+				petActionButton:GetCheckedTexture():SetAlpha(1.0)
 			end
 		end
 
@@ -229,9 +232,11 @@ local function lsPetActionBar_OnUpdate(self, event, ...)
 
 		if name then
 			petActionButton:SetAlpha(1)
+			petActionButtonHotkey:SetAlpha(1)
 			petActionButton.border:Show()
 		else
 			petActionButton:SetAlpha(0)
+			petActionButtonHotkey:SetAlpha(0)
 			if self.showGrid == 0 then
 				petActionButton.border:Hide()
 			end
