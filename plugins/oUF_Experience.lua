@@ -1,8 +1,8 @@
-local __, ns = ...
+local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF Experience was unable to locate oUF install')
 
-for tag, func in pairs({
+for tag, func in next, {
 	['curxp'] = function(unit)
 		return UnitXP(unit)
 	end,
@@ -21,7 +21,7 @@ for tag, func in pairs({
 			return math.floor(rested / UnitXPMax(unit) * 100 + 0.5)
 		end
 	end,
-}) do
+} do
 	oUF.Tags.Methods[tag] = func
 	oUF.Tags.Events[tag] = 'PLAYER_XP_UPDATE PLAYER_LEVEL_UP UPDATE_EXHAUSTION'
 end
@@ -29,27 +29,29 @@ end
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
-	local experience = self.Experience
-	if(experience.PreUpdate) then experience:PreUpdate(unit) end
+	local element = self.Experience
+	if(element.PreUpdate) then element:PreUpdate(unit) end
 
-	if(UnitLevel(unit) == MAX_PLAYER_LEVEL or UnitHasVehicleUI('player')) then
-		experience:Hide()
+	if(UnitLevel(unit) == element.__max or UnitHasVehicleUI('player')) then
+		element:Hide()
 	else
-		experience:Show()
+		element:Show()
 	end
 
-	local min, max = UnitXP(unit), UnitXPMax(unit)
-	experience:SetMinMaxValues(0, max)
-	experience:SetValue(min)
+	local cur = UnitXP(unit)
+	local max = UnitXPMax(unit)
 
-	if(experience.Rested) then
+	element:SetMinMaxValues(0, max)
+	element:SetValue(cur)
+
+	if(element.Rested) then
 		local exhaustion = GetXPExhaustion() or 0
-		experience.Rested:SetMinMaxValues(0, max)
-		experience.Rested:SetValue(math.min(min + exhaustion, max))
+		element.Rested:SetMinMaxValues(0, max)
+		element.Rested:SetValue(math.min(cur + exhaustion, max))
 	end
 
-	if(experience.PostUpdate) then
-		return experience:PostUpdate(unit, min, max)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit, cur, max)
 	end
 end
 
@@ -62,26 +64,28 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local experience = self.Experience
-	if(experience) then
-		experience.__owner = self
-		experience.ForceUpdate = ForceUpdate
+	local element = self.Experience
+	if(element and unit == 'player') then
+		element.__owner = self
+		element.__max = (IsTrialAccount() and GetRestrictedAccountData or GetMaxPlayerLevel)()
+
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('PLAYER_XP_UPDATE', Path)
 		self:RegisterEvent('PLAYER_LEVEL_UP', Path)
 
-		local rested = experience.Rested
-		if(rested) then
+		local child = element.Rested
+		if(child) then
 			self:RegisterEvent('UPDATE_EXHAUSTION', Path)
-			rested:SetFrameLevel(experience:GetFrameLevel() - 1)
+			child:SetFrameLevel(element:GetFrameLevel() - 1)
 
-			if(not rested:GetStatusBarTexture()) then
-				rested:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+			if(not child:GetStatusBarTexture()) then
+				child:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		if(not experience:GetStatusBarTexture()) then
-			experience:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+		if(not element:GetStatusBarTexture()) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
 		return true
@@ -89,12 +93,12 @@ local function Enable(self, unit)
 end
 
 local function Disable(self)
-	local experience = self.Experience
-	if(experience) then
+	local element = self.Experience
+	if(element) then
 		self:UnregisterEvent('PLAYER_XP_UPDATE', Path)
 		self:UnregisterEvent('PLAYER_LEVEL_UP', Path)
 
-		if(experience.Rested) then
+		if(element.Rested) then
 			self:UnregisterEvent('UPDATE_EXHAUSTION', Path)
 		end
 	end

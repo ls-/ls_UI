@@ -13,7 +13,7 @@ local function GetReputation()
 	end
 end
 
-for tag, func in pairs({
+for tag, func in next, {
 	['currep'] = function()
 		local min = GetReputation()
 		return min
@@ -33,7 +33,7 @@ for tag, func in pairs({
 	['reputation'] = function()
 		return GetWatchedFactionInfo()
 	end,
-}) do
+} do
 	oUF.Tags.Methods[tag] = func
 	oUF.Tags.Events[tag] = 'UPDATE_FACTION'
 end
@@ -41,26 +41,26 @@ end
 oUF.Tags.SharedEvents.UPDATE_FACTION = true
 
 local function Update(self, event, unit)
-	local reputation = self.Reputation
+	local element = self.Reputation
 
 	local name, standingID, _, _, _, id = GetWatchedFactionInfo()
 	if(not name) then
-		return reputation:Hide()
+		return element:Hide()
 	else
-		reputation:Show()
+		element:Show()
 	end
 
 	local min, max, standingText = GetReputation()
-	reputation:SetMinMaxValues(0, max)
-	reputation:SetValue(min)
+	element:SetMinMaxValues(0, max)
+	element:SetValue(min)
 
-	if(reputation.colorStanding) then
+	if(element.colorStanding) then
 		local color = FACTION_BAR_COLORS[standingID]
-		reputation:SetStatusBarColor(color.r, color.g, color.b)
+		element:SetStatusBarColor(color.r, color.g, color.b)
 	end
 
-	if(reputation.PostUpdate) then
-		return reputation:PostUpdate(unit, min, max, name, id, standingID, standingText)
+	if(element.PostUpdate) then
+		return element:PostUpdate(unit, min, max, name, id, standingID, standingText)
 	end
 end
 
@@ -73,15 +73,15 @@ local function ForceUpdate(element)
 end
 
 local function Enable(self, unit)
-	local reputation = self.Reputation
-	if(reputation) then
-		reputation.__owner = self
-		reputation.ForceUpdate = ForceUpdate
+	local element = self.Reputation
+	if(element) then
+		element.__owner = self
+		element.ForceUpdate = ForceUpdate
 
 		self:RegisterEvent('UPDATE_FACTION', Path)
 
-		if(not reputation:GetStatusBarTexture()) then
-			reputation:SetStatusBarTexture([=[Interface\TargetingFrame\UI-StatusBar]=])
+		if(not element:GetStatusBarTexture()) then
+			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
 		return true
