@@ -8,28 +8,30 @@ end
 
 function lsAuraTracker_OnEvent(self, event)
 	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" or event == "CUSTOM_ENABLE" then
-		if ns.C.auratracker.enabled == false then
-			self:Hide()
-			print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
-			return
-		end
-
-		if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
-
 		if event == "PLAYER_LOGIN" or event == "CUSTOM_ENABLE" then
-			self:SetPoint(unpack(ns.C.auratracker.point))
-			AURATRACKER_LOCKED = ns.C.auratracker.locked
-			if #ns.C.auratracker.buffList + #ns.C.auratracker.debuffList > 8 then
-				print("|cff1ec77eAuraTracker|r: Cleaning up lists. Too many entries.")
-				for i = 1, #ns.C.auratracker.buffList - 4 do
-					print("|cff1ec77eAuraTracker|r: Aura", ns.C.auratracker.buffList[5], "was removed from the buff list.")
-					table.remove(ns.C.auratracker.buffList, 5)
-				end
-				for i = 1, #ns.C.auratracker.debuffList - 4 do
-					print("|cff1ec77eAuraTracker|r: Aura", ns.C.auratracker.debuffList[5], "was removed from the debuff list.")
-					table.remove(ns.C.auratracker.debuffList, 5)
+			if not ns.C.auratracker.enabled then
+				self:Hide()
+				print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
+				return
+			else
+				if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
+				
+				self:SetPoint(unpack(ns.C.auratracker.point))
+				AURATRACKER_LOCKED = ns.C.auratracker.locked
+				if #ns.C.auratracker.buffList + #ns.C.auratracker.debuffList > 8 then
+					print("|cff1ec77eAuraTracker|r: Cleaning up lists. Too many entries.")
+					for i = 1, #ns.C.auratracker.buffList - 4 do
+						print("|cff1ec77eAuraTracker|r: Aura", ns.C.auratracker.buffList[5], "was removed from the buff list.")
+						table.remove(ns.C.auratracker.buffList, 5)
+					end
+					for i = 1, #ns.C.auratracker.debuffList - 4 do
+						print("|cff1ec77eAuraTracker|r: Aura", ns.C.auratracker.debuffList[5], "was removed from the debuff list.")
+						table.remove(ns.C.auratracker.debuffList, 5)
+					end
 				end
 			end
+
+			if not ns.C.auratracker.showHeader then self.header:Hide() end
 		end
 
 		self.auras = {}
@@ -263,7 +265,6 @@ function lsAuraTracker_CreateSlashCommands()
 			print("|cff1ec77eAuraTracker|r was enabled.")
 			ns.C.auratracker.enabled = true
 			lsAuraTracker:Show()
-			lsAuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 			lsAuraTracker_OnEvent(lsAuraTracker, "CUSTOM_ENABLE")
 		elseif msg == "disable" then
 			if not ns.C.auratracker.enabled then print("|cff1ec77eAuraTracker|r is already disabled.") return end
@@ -276,5 +277,18 @@ function lsAuraTracker_CreateSlashCommands()
 		else
 			print("|cff1ec77eAuraTracker|r: Unknown command.")
 		end
+	end
+
+	SLASH_ATHEADER1 = '/atheader'
+	SlashCmdList["ATHEADER"] = function(msg)
+		if InCombatLockdown() then print("|cff1ec77eAuraTracker|r\'s header can\'t be toggled, while in combat.") return end
+		
+		if lsAuraTracker.header:IsShown() then
+			lsAuraTracker.header:Hide()
+			ns.C.auratracker.showHeader = false 
+		else
+			lsAuraTracker.header:Show()
+			ns.C.auratracker.showHeader = true 
+		end	
 	end
 end

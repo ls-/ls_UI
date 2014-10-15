@@ -58,6 +58,7 @@ local DEFAULT_CONFIG = {
 	auratracker = {
 		enabled = true,
 		locked = false,
+		showHeader = true,
 		buffList = {},
 		debuffList = {},
 		point = {"CENTER", "UIParent", "CENTER", 0, 0},
