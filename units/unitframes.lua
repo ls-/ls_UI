@@ -1000,14 +1000,16 @@ function lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
-		if udata.attributes then
-			ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
-				"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);
-				self:SetAttribute("initial-height", 42); self:SetWidth(124); self:SetHeight(42)]],
-				unpack(udata.attributes))
-		else
-			ns.frames[unit] = oUF:Spawn(unit, name)
+		if udata.enabled then
+			local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
+			if udata.attributes then
+				ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
+					"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);
+					self:SetAttribute("initial-height", 42); self:SetWidth(124); self:SetHeight(42)]],
+					unpack(udata.attributes))
+			else
+				ns.frames[unit] = oUF:Spawn(unit, name)
+			end
 		end
 	end
 

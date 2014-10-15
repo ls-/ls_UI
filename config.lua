@@ -3,43 +3,55 @@ local _, ns = ...
 local DEFAULT_CONFIG = {
 	units = {
 		player = {
+			enabled = true,
 			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80},
 		},
 		pet = {
+			enabled = true,
 			point = {"RIGHT", "lsPlayerFrame" , "LEFT"},
 		},
 		target = {
+			enabled = true,
 			point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 			long = true,
 		},
 		targettarget = {
+			enabled = true,
 			point = { "LEFT", "lsTargetFrame", "RIGHT", 14, 0 },
 		},
 		focus = {
+			enabled = true,
 			point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
 			long = true,
 		},
 		focustarget = {
+			enabled = true,
 			point = { "RIGHT", "lsFocusFrame", "LEFT", -14, 0 },
 		},
 		party = {
+			enabled = true,
 			point = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
 			attributes = {"showPlayer", true, "showParty", true, "showRaid", false, "point", "BOTTOM", "yOffset", 40},
 			visibility = "party",
 		},
 		boss1 = {
+			enabled = true,
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -240},
 		},	
 		boss2 = {
+			enabled = true,
 			point = {"TOP", "lsBoss1Frame", "BOTTOM", 0, -46},
 		},
 		boss3 = {
+			enabled = true,
 			point = {"TOP", "lsBoss2Frame", "BOTTOM", 0, -46},
 		},
 		boss4 = {
+			enabled = true,
 			point = {"TOP", "lsBoss3Frame", "BOTTOM", 0, -46},
 		},
 		boss5 = {
+			enabled = true,
 			point = {"TOP", "lsBoss4Frame", "BOTTOM", 0, -46},
 		},
 	},
@@ -59,6 +71,7 @@ local DEFAULT_CONFIG = {
 		locked = false,
 	},
 	infobars = {
+		enabled = true,
 		location = {
 			enabled = true,
 			point = {"TOPLEFT", "UIParent", "TOPLEFT", 6, -6},
