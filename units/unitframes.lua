@@ -417,20 +417,19 @@ local function CreateEclipseBar(self)
 	bar.moon:SetAlpha(0)
 	lsCreateAlphaAnimation(bar.moon, 1)
 
-	bar.direction = bar.cover:CreateTexture(nil, "ARTWORK", nil, 7)
-	bar.direction:SetPoint("CENTER", -7, 0)
-	bar.direction:SetSize(32, 256)
-	bar.direction:SetTexture(nil)
+	bar.dir = bar.cover:CreateTexture(nil, "ARTWORK", nil, 7)
+	bar.dir:SetPoint("CENTER", -7, 0)
+	bar.dir:SetSize(32, 256)
+	bar.dir:SetTexture(nil)
 
 	return bar
 end
 
-local function UpdateEclipseBar(self, unit)
-	local direction = GetEclipseDirection()
-	if direction ~= "none" then
-		self.direction:SetTexture("Interface\\AddOns\\oUF_LS\\media\\eclipse_"..direction)
+local function UpdateEclipseBarDirection(self, unit)
+	if self.direction and self.direction ~= "none" then
+		self.dir:SetTexture("Interface\\AddOns\\oUF_LS\\media\\eclipse_"..self.direction)
 	else
-		self.direction:SetTexture(nil)
+		self.dir:SetTexture(nil)
 	end
 end
 
@@ -987,7 +986,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 		if ns.C.playerclass == "DRUID" then
 			self.EclipseBar = CreateEclipseBar(self)
-			self.EclipseBar.PostUpdatePower = UpdateEclipseBar
+			self.EclipseBar.PostDirectionChange = UpdateEclipseBarDirection
 			self.EclipseBar.PostUnitAura = UpdateEclipseBarGlow
 			self.EclipseBar.PostUpdateVisibility = UpdateEclipseBarVisibility
 			self.EclipseBar.Smooth = true
