@@ -19,13 +19,13 @@ end
 -- UTILS --
 -----------
 
-function ns.AlwaysShow(self)
+function lsAlwaysShow(self)
 	if not self then return end
 	self:Show()
 	self.Hide = self.Show
 end
 
-function ns.AlwaysHide(self)
+function lsAlwaysHide(self)
 	if not self then return end
 	self:Hide()
 	self.Show = self.Hide
@@ -60,7 +60,7 @@ function ns.TimeFormat(s)
 	if s >= 86400 then
 		return format(gsub(DAY_ONELETTER_ABBR, "[ .]", ""), floor(s / 86400 + 0.5))
 	elseif s >= 3600 then
-		return format(gsub(ONELETTER_ABBR, "[ .]", ""), floor(s / 3600 + 0.5))
+		return format(gsub(HOUR_ONELETTER_ABBR, "[ .]", ""), floor(s / 3600 + 0.5))
 	elseif s >= 60 then
 		return format(gsub(MINUTE_ONELETTER_ABBR, "[ .]", ""), floor(s / 60 + 0.5))
 	elseif s >= 1 then
@@ -125,50 +125,45 @@ function ns.UnitFrame_OnLeave(self)
 	end
 end
 
-function ns.CreateButtonBorder(button, borderType, curTexture)
-	local texture = curTexture or button:CreateTexture(nil, "BORDER", nil, 0)
-	if borderType == 0 then
-		texture:SetTexture(ns.M.textures.button.normalstone)
-	elseif borderType == 1 then
-		texture:SetTexture(ns.M.textures.button.normalmetal)
-	end
-	texture:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
+function lsCreateButtonBorder(button, curTexture)
+	local texture = curTexture or button:CreateTexture()
+	texture:SetDrawLayer("BORDER", 2)
+	texture:SetTexture(ns.M.textures.button.normal)
+	texture:SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
 	texture:ClearAllPoints()
-	texture:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
-	texture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
+	texture:SetPoint("TOPLEFT", -3, 3)
+	texture:SetPoint("BOTTOMRIGHT", 3, -3)
 	return texture
 end
 
-function ns.SetIconStyle(self, icon)
-	icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+function lsTweakIcon(icon)
+	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 	icon:SetDrawLayer("BACKGROUND", 0)
-	icon:ClearAllPoints()
-	icon:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
-	icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
+	icon:SetAllPoints()
 end
 
-function ns.SetHighlightTexture(self)
-	self:SetHighlightTexture(ns.M.textures.button.highlight)
-	self:GetHighlightTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
-	self:GetHighlightTexture():ClearAllPoints()
-	self:GetHighlightTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-	self:GetHighlightTexture():SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+function lsTweakCooldown(cooldown)
+	cooldown:ClearAllPoints()
+	cooldown:SetPoint("TOPLEFT", 1, -1)
+	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 end
 
-function ns.SetPushedTexture(self)
-	self:SetPushedTexture(ns.M.textures.button.pushedchecked)
-	self:GetPushedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
-	self:GetPushedTexture():ClearAllPoints()
-	self:GetPushedTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-	self:GetPushedTexture():SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+function lsSetHighlightTexture(texture)
+	texture:SetTexture(ns.M.textures.button.highlight)
+	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
+	texture:SetAllPoints()
 end
 
-function ns.SetCheckedTexture(self)
-	self:SetCheckedTexture(ns.M.textures.button.pushedchecked)
-	self:GetCheckedTexture():SetTexCoord(17 / 64, 47 / 64, 17 / 64, 47 / 64)
-	self:GetCheckedTexture():ClearAllPoints()
-	self:GetCheckedTexture():SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-	self:GetCheckedTexture():SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
+function lsSetPushedTexture(texture)
+	texture:SetTexture(ns.M.textures.button.pushed)
+	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
+	texture:SetAllPoints()
+end
+
+function lsSetCheckedTexture(texture)
+	texture:SetTexture(ns.M.textures.button.checked)
+	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
+	texture:SetAllPoints()
 end
 
 
@@ -246,30 +241,17 @@ function ns.CreateDebuff (self, unit)
 	return frame
 end
 
-function ns.CreateAuraIcon (self, button)
+function ns.CreateAuraIcon(self, button)
 	button.cd:SetReverse()
-	button.cd:SetPoint("TOPLEFT", 2, -2)
-	button.cd:SetPoint("BOTTOMRIGHT", -2, 2)
 	button.cd:SetHideCountdownNumbers(true)
+	lsTweakCooldown(button.cd)
 
-	button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-	button.icon:SetDrawLayer("BACKGROUND", -8)
+	lsTweakIcon(button.icon)
 
-	button.overlay:SetTexture(ns.M.textures.button.normalstone)
-	button.overlay:ClearAllPoints()
-	button.overlay:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
-	button.overlay:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
-	button.overlay:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
-	button.overlay:SetVertexColor(0.57, 0.52, 0.55)
-	button.overlay:SetDrawLayer("BACKGROUND", -7)
-	ns.AlwaysShow(button.overlay)
+	lsCreateButtonBorder(nil, button.overlay)
+	lsAlwaysShow(button.overlay)
 
-	button.stealable:SetTexture(ns.M.textures.button.normalstone)
-	button.stealable:SetDrawLayer("OVERLAY", 1)
-	button.stealable:ClearAllPoints()
-	button.stealable:SetSize(28, 28)
-	button.stealable:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
-	button.stealable:SetPoint("CENTER", 0, 0)
+	lsCreateButtonBorder(nil, button.stealable)
 	button.stealable:SetVertexColor(1.0, 0.82, 0.0)
 
 	button.fg = CreateFrame("Frame", nil, button)

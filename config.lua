@@ -2,6 +2,7 @@ local _, ns = ...
 
 local DEFAULT_CONFIG = {
 	units = {
+		enabled =  true,
 		player = {
 			enabled = true,
 			point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80},
@@ -37,7 +38,7 @@ local DEFAULT_CONFIG = {
 		boss1 = {
 			enabled = true,
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -240},
-		},	
+		},
 		boss2 = {
 			enabled = true,
 			point = {"TOP", "lsBoss1Frame", "BOTTOM", 0, -46},
@@ -102,7 +103,81 @@ local DEFAULT_CONFIG = {
 			point = {"RIGHT", "lsClockInfoBar", "LEFT", -6, 0},
 		},
 	},
-	width = 0, 
+	bars = {
+		enabled = true,
+		bar1 = { -- MainMenuBar
+			point = {"BOTTOM", 0, 16},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar2 = { -- MultiBarBottomLeft
+			point = {"BOTTOM", 0, 64},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar3 = { -- MultiBarBottomRight
+			point = {"BOTTOM", 0, 96},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar4 = { -- MultiBarLeft
+			point = {"BOTTOMRIGHT", -32, 300},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "VERTICAL",
+		},
+		bar5 = { -- MultiBarRight
+			point = {"BOTTOMRIGHT", 0, 300},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "VERTICAL",
+		},
+		bar6 = { --PetAction
+			-- point = {}, -- NYI
+			button_size = 24,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar7 = { -- Stance
+			-- point = {}, -- NYI
+			button_size = 24,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar8 = { -- Bags
+			point = {"TOPLEFT", "lsBagInfoBar", "BOTTOM", 0, -6},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar9 = { -- ExtraAction
+			point = {"BOTTOM", -171, 160},
+			button_size = 40,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar10 = { -- VehicleExit
+			point = {"BOTTOM", 171, 160},
+			button_size = 40,
+			button_gap = 4,
+		},
+		bar11 = { -- PetBattle
+			point = {"BOTTOM", 0, 16},
+			button_size = 28,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+		bar12 = { --PlayerPowerBarAlt
+			point = {"BOTTOM", 0, 240},
+			button_size = 128,
+			button_gap = 4,
+			orientation = "HORIZONTAL",
+		},
+	},
+	width = 0,
 	height = 0,
 	playerclass = "",
 }
@@ -135,26 +210,32 @@ local function lsConfigLoader_OnEvent(...)
 		ns.C.width, ns.C.height = string.match((({GetScreenResolutions()})[GetCurrentResolution()] or ""), "(%d+).-(%d+)")
 		ns.C.playerclass = select(2, UnitClass("player"))
 
-		-- Minimap 
-		LoadAddOn("Blizzard_TimeManager")
-		lsMinimap_Initialize()
+		-- Minimap
+		if ns.C.minimap.enabled then
+			LoadAddOn("Blizzard_TimeManager")
+			lsMinimap_Initialize()
+		end
 
 		-- Infobars
-		lsInfobars_Initialize()
-		
-		-- Actionbars
-		lsActionBars_Initialize()
+		if ns.C.infobars.enabled then
+			lsInfobars_Initialize()
+		end
 
-		-- MicroMenu
-		lsMicroMenu_Initialize()
+		-- Actionbars & MicroMenu
+		if ns.C.bars.enabled then
+			lsActionBars_Initialize()
+			lsMicroMenu_Initialize()
+		end
 
 		-- AuraTracker
 		lsAuraTracker_Initialize()
-		
+
 		-- ObjectiveTracker
 		lsOTDragHeader_Initialize()
 
-		oUF:Factory(lsFactory)
+		if ns.C.units.enabled then
+			oUF:Factory(lsFactory)
+		end
 	elseif event == "PLAYER_LOGOUT" then
 		local function cleanDB(db, defaults)
 			if type(db) ~= "table" then return {} end

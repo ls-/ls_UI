@@ -835,7 +835,7 @@ local function CreateUnitFrameStyle(self, unit)
 		end)
 	end
 
-	if unit == "player" then
+	if unit == "player" and ns.C.bars.enabled then
 		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", UIParent, "lsExperienceReputationBarTemplate")
 		self.Experience:SetStatusBarColor(unpack(M.colors.exp.normal))
 		self.Experience:SetPoint("BOTTOM", 0, 52)
@@ -902,7 +902,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 		if unit ~= "player" then
 			self.ReadyCheck:SetPoint("CENTER")
-			ns.AlwaysShow(self.ReadyCheck)
+			lsAlwaysShow(self.ReadyCheck)
 			if unit == "party" then
 				self.Leader:SetPoint("TOPRIGHT", 18, 6)
 				self.PhaseIcon:SetPoint("RIGHT", 24, 0)
@@ -999,7 +999,7 @@ function lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		if udata.enabled then
+		if type(udata) == "table" and udata.enabled then
 			local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 			if udata.attributes then
 				ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,

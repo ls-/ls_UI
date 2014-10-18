@@ -15,7 +15,7 @@ function lsAuraTracker_OnEvent(self, event)
 				return
 			else
 				if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
-				
+
 				self:SetPoint(unpack(ns.C.auratracker.point))
 				AURATRACKER_LOCKED = ns.C.auratracker.locked
 				if #ns.C.auratracker.buffList + #ns.C.auratracker.debuffList > 8 then
@@ -282,13 +282,13 @@ function lsAuraTracker_CreateSlashCommands()
 	SLASH_ATHEADER1 = '/atheader'
 	SlashCmdList["ATHEADER"] = function(msg)
 		if InCombatLockdown() then print("|cff1ec77eAuraTracker|r\'s header can\'t be toggled, while in combat.") return end
-		
+
 		if lsAuraTracker.header:IsShown() then
 			lsAuraTracker.header:Hide()
-			ns.C.auratracker.showHeader = false 
+			ns.C.auratracker.showHeader = false
 		else
 			lsAuraTracker.header:Show()
-			ns.C.auratracker.showHeader = true 
-		end	
+			ns.C.auratracker.showHeader = true
+		end
 	end
 end

@@ -502,10 +502,10 @@
 			<Layer level="BACKGROUND">
 				<Texture name="$parentIcon" parentKey="icon">
 					<Anchors>
-						<Anchor point="TOPLEFT" x="2" y="-2"/>
-						<Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+						<Anchor point="TOPLEFT" x="1" y="-1"/>
+						<Anchor point="BOTTOMRIGHT" x="-1" y="1"/>
 					</Anchors>
-					<TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+					<TexCoords left="0.0625" right="0.9375" top="0.0625" bottom="0.9375"/>
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
@@ -514,14 +514,15 @@
 						<Anchor point="TOPLEFT" x="-3" y="3"/>
 						<Anchor point="BOTTOMRIGHT" x="3" y="-3"/>
 					</Anchors>
-					<TexCoords left="0.21875" right="0.78125" top="0.21875" bottom="0.78125"/>
+					<TexCoords left="0.140625" right="0.859375" top="0.140625" bottom="0.859375"/>
 				</Texture>
 			</Layer>
 		</Layers>
 		<Frames>
 			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate" hideCountdownNumbers="true" drawEdge="true" parentkey="cd">
 				<Anchors>
-					<Anchor point="CENTER" x="0" y="-1"/>
+					<Anchor point="TOPLEFT" x="2" y="-2"/>
+					<Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
 				</Anchors>
 			</Cooldown>
 			<Frame name="$parentForeground" setallpoints="true">

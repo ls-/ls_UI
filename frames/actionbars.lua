@@ -1,113 +1,72 @@
 local _, ns = ...
-local M = ns.M
 
 ns.bars = {}
 
 local BAR_LAYOUT = {
 	bar1 = {
-		size = {380, 28},
-		point = {"BOTTOM", 0, 16.5},
 		button_type = "ActionButton",
-		total_button = 12,
-		button_size = 28,
+		num_buttons = NUM_ACTIONBAR_BUTTONS,
 		original_bar = "MainMenuBarArtFrame",
-		orientation = "HORIZONTAL",
 		condition = "[petbattle] hide; show",
 	},
 	bar2 = {
-		size = {380, 28},
-		point = {"BOTTOM", 0, 64},
 		button_type = "MultiBarBottomLeftButton",
-		total_button = 12,
-		button_size = 28,
+		num_buttons = NUM_ACTIONBAR_BUTTONS,
 		original_bar = "MultiBarBottomLeft",
-		orientation = "HORIZONTAL",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar3 = {
-		size = {380, 28},
-		point = {"BOTTOM", 0, 96},
 		button_type = "MultiBarBottomRightButton",
-		total_button = 12,
-		button_size = 28,
+		num_buttons = NUM_ACTIONBAR_BUTTONS,
 		original_bar = "MultiBarBottomRight",
-		orientation = "HORIZONTAL",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar4 = {
-		size = {28, 380},
-		point = {"BOTTOMRIGHT", -36, 300},
 		button_type = "MultiBarLeftButton",
-		total_button = 12,
-		button_size = 28,
+		num_buttons = NUM_ACTIONBAR_BUTTONS,
 		original_bar = "MultiBarLeft",
-		orientation = "VERTICAL",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar5 = {
-		size = {28, 380},
-		point = {"BOTTOMRIGHT", -4, 300},
 		button_type = "MultiBarRightButton",
-		total_button = 12,
-		button_size = 28,
+		num_buttons = NUM_ACTIONBAR_BUTTONS,
 		original_bar = "MultiBarRight",
-		orientation = "VERTICAL",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar6 = {
-		size = {276, 24},
 		button_type = "PetActionButton",
-		total_button = 10,
-		button_size = 24,
+		num_buttons = NUM_PET_ACTION_SLOTS,
 		original_bar = "PetActionBarFrame",
-		orientation = "HORIZONTAL",
 		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nobonusbar:5] show; hide",
 	},
 	bar7 = {
-		size = {276, 24},
 		button_type = "StanceButton",
-		total_button = 10,
-		button_size = 24,
+		num_buttons = NUM_STANCE_SLOTS,
 		original_bar = "StanceBarFrame",
-		orientation = "HORIZONTAL",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar8 = {
-		size = {144, 28},
-		point = {"TOPLEFT", "lsBagInfoBar", "BOTTOM", 0, -6},
 		button_type = {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot", "MainMenuBarBackpackButton"},
-		total_button = 5,
-		button_size = 28,
-		orientation = "HORIZONTAL",
+		num_buttons = 5,
 	},
 	bar9 = {
-		size = {44, 44},
-		point = {"BOTTOM", -166, 158},
 		button_type = "ExtraActionButton",
-		total_button = 1,
-		button_size = 44,
+		num_buttons = 1,
 		original_bar = "ExtraActionBarFrame",
-		orientation = "HORIZONTAL",
 	},
 	bar10 = {
-		size = {24, 24},
-		point = {"BOTTOM", 176, 130},
-		condition = "[target=vehicle,exists] show; hide",
+		num_buttons = 1,
+		condition = "[petbattle] hide; [overridebar][vehicleui][possessbar,@vehicle,exists] show; hide",
 	},
 	bar11 = {
-		size = {380, 28},
-		point = {"BOTTOM", 0, 16.5},
 		button_type = {PetBattleFrame.BottomFrame.abilityButtons[1], PetBattleFrame.BottomFrame.abilityButtons[2],
 			PetBattleFrame.BottomFrame.abilityButtons[3], PetBattleFrame.BottomFrame.SwitchPetButton,
 			PetBattleFrame.BottomFrame.CatchButton, PetBattleFrame.BottomFrame.ForfeitButton},
-		total_button = 6,
-		button_size = 28,
-		orientation = "HORIZONTAL",
+		num_buttons = 6,
 		condition = "[petbattle] show; hide",
 	},
 	bar12 = {
-		size = {128, 128},
-		point = {"BOTTOM", 0, 240},
+		num_buttons = 1,
 	},
 }
 
@@ -123,10 +82,10 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 130},
-	PET2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 158},
-	STANCE1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 158},
-	STANCE2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 130},
+	PET1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 128},
+	PET2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 156},
+	STANCE1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 156},
+	STANCE2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 128},
 }
 -- page swapping is taken from tukui, thx :D really usefull thingy
 local PAGE_LAYOUT = {
@@ -181,142 +140,6 @@ local function lsActionBar_OnEvent(self, event, ...)
 	end
 end
 
-local function lsPetActionBar_OnUpdate(self, event, ...)
-	local petActionButton, petActionIcon, petAutoCastableTexture, petAutoCastShine
-	for i = 1, 10 do
-		local buttonName = "PetActionButton" .. i
-		petActionButton = _G[buttonName]
-		petActionIcon = _G[buttonName.."Icon"]
-		petAutoCastableTexture = _G[buttonName.."AutoCastable"]
-		petActionButtonHotkey = _G[buttonName.."HotKey"]
-		petAutoCastShine = _G[buttonName.."Shine"]
-
-		local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
-
-		if not isToken then
-			petActionIcon:SetTexture(texture)
-			petActionButton.tooltipName = name
-		else
-			petActionIcon:SetTexture(_G[texture])
-			petActionButton.tooltipName = _G[name]
-		end
-
-		petActionButton.isToken = isToken
-		petActionButton.tooltipSubtext = subtext
-
-		if isActive then
-			petActionButton:SetChecked(true)
-			if IsPetAttackAction(i) then
-				PetActionButton_StartFlash(petActionButton)
-				petActionButton:GetCheckedTexture():SetAlpha(0.5)
-			end
-		else
-			petActionButton:SetChecked(false)
-			if IsPetAttackAction(i) then
-				PetActionButton_StopFlash(petActionButton)
-				petActionButton:GetCheckedTexture():SetAlpha(1.0)
-			end
-		end
-
-		if autoCastAllowed then
-			petAutoCastableTexture:Show()
-		else
-			petAutoCastableTexture:Hide()
-		end
-
-		if autoCastEnabled then
-			AutoCastShine_AutoCastStart(petAutoCastShine)
-		else
-			AutoCastShine_AutoCastStop(petAutoCastShine)
-		end
-
-		if name then
-			petActionButton:SetAlpha(1)
-			petActionButtonHotkey:SetAlpha(1)
-			petActionButton.border:Show()
-		else
-			petActionButton:SetAlpha(0)
-			petActionButtonHotkey:SetAlpha(0)
-			if self.showGrid == 0 then
-				petActionButton.border:Hide()
-			end
-		end
-
-		if texture then
-			if GetPetActionSlotUsable(i) then
-				SetDesaturation(petActionIcon, nil)
-			else
-				SetDesaturation(petActionIcon, 1)
-			end
-			petActionIcon:Show()
-		else
-			petActionIcon:Hide()
-		end
-
-		if not PetHasActionBar() then
-			petActionButton:SetAlpha(0)
-		else
-			petActionButton:SetAlpha(1)
-		end
-	end
-end
-
-local function lsPetActionBar_ShowGrid(self)
-	self.showGrid = self.showGrid + 1
-	for i = 1, #self.buttons do
-		self.buttons[i]:SetAlpha(1)
-		self.buttons[i].border:Show()
-	end
-	lsPetActionBar_OnUpdate(self, "FROM_SHOW_GRID")
-
-end
-
-local function lsPetActionBar_HideGrid(self)
-	if self.showGrid > 0 then self.showGrid = self.showGrid - 1 end
-	if self.showGrid == 0 then
-		for i = 1, 10 do
-			if not GetPetActionInfo(i) then
-				self.buttons[i]:SetAlpha(0)
-				self.buttons[i].border:Hide()
-			end
-		end
-		lsPetActionBar_OnUpdate(self, "FROM_HIDE_GRID")
-	end
-end
-
-local function lsPetActionButton_OnDragStart(self)
-	if InCombatLockdown() then return end
-	if LOCK_ACTIONBAR ~= "1" or IsModifiedClick("PICKUPACTION") then
-		self:SetChecked(0)
-		PickupPetAction(self:GetID())
-	end
-end
-
-local function lsPetActionButton_OnReceiveDrag(self)
-	if InCombatLockdown() then return end
-	local cursorType = GetCursorInfo()
-		if cursorType == "petaction" then
-		self:SetChecked(0)
-		PickupPetAction(self:GetID())
-	end
-end
-
-local function lsPetActionBar_OnEvent(self, event, ...)
-	arg1 = ...
-	if event == "PET_BAR_UPDATE" or
-		(event == "UNIT_PET" and arg1 == "player") or
-		((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet") or
-		event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED" or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
-		lsPetActionBar_OnUpdate(self, event)
-	elseif event == "PET_BAR_UPDATE_COOLDOWN" then
-		PetActionBar_UpdateCooldowns()
-	elseif event == "PET_BAR_SHOWGRID" then
-		lsPetActionBar_ShowGrid(self)
-		elseif event == "PET_BAR_HIDEGRID" then
-		lsPetActionBar_HideGrid(self)
-	end
-end
-
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "lsPetActionBar" then
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]]))
@@ -325,184 +148,204 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
--- TODO: REWRITE!
-local function SetDefaultButtonStyle(bType, id)
-	local button
-	local id = id or ""
-	if type(bType) == "string" then
-		button = _G[bType..id]
-	else
-		button = bType
+local function lsSetFlashTexture(texture)
+	texture:SetTexture(ns.M.textures.button.flash)
+	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
+	texture:SetAllPoints()
+end
+
+local function lsSetNilNormalTexture(self, texture)
+	if texture then
+		self:SetNormalTexture(nil)
 	end
+end
+
+local function lsSetVertexColor(self, r, g, b)
+	local button = self:GetParent()
+
+	if button == ExtraActionButton1 then
+		button.lsBorder:SetVertexColor(0.9, 0.4, 0.1)
+	else
+		button.lsBorder:SetVertexColor(r, g, b)
+	end
+end
+
+local function lsSetButtonStyle(button, petBattle)
 	if not button then return end
 	if button.styled then return end
 
-	local bIcon = button.Icon or button.icon or button.IconTexture
-	local HotKey
-	if type(bType) == "string" then
-		bHotKey = _G[bType..id.."HotKey"]
-	else
-		bHotKey = button.HotKey
-	end
-	button.border = button:GetNormalTexture()
+	local name = button:GetName()
+	local bIcon = button.icon or button.Icon
+	local bFlash = button.Flash
+	local bFOBorder = button.FlyoutBorder
+	local bFOBorderShadow = button.FlyoutBorderShadow
+	local bHotKey = button.HotKey
+	local bCount = button.Count
+	local bName = button.Name
+	local bBorder = button.Border
+	local bNewActionTexture = button.NewActionTexture
+	local bCD = button.cooldown
+	local bNormalTexture = button:GetNormalTexture()
+	local bPushedTexture = button:GetPushedTexture()
+	local bHighlightTexture = button:GetHighlightTexture()
+	local bCheckedTexture = not petBattle and button:GetCheckedTexture()
+	local bFloatingBG = not petBattle and _G[name.."FloatingBG"]
 
-	ns.SetIconStyle(button, bIcon)
+	-- PET
+	local pAutoCast = not petBattle and _G[name.."AutoCastable"]
+	local pShine = not petBattle and _G[name.."Shine"]
+
+	-- PET BATTLE
+	local pbCDShadow = button.CooldownShadow
+	local pbCDFlash = button.CooldownFlash
+	local pbCD = button.Cooldown
+	local pbSelectedHighlight = button.SelectedHighlight
+	local pbLock = button.Lock
+	local pbBetterIcon = button.BetterIcon
+
+	lsTweakIcon(bIcon)
+
+	if bFlash then
+		lsSetFlashTexture(bFlash)
+	end
+
+	if bFOBorder then
+		lsAlwaysHide(bFOBorder)
+	end
+
+	if bFOBorderShadow then
+		lsAlwaysHide(bFOBorderShadow)
+	end
 
 	if bHotKey then
-		bHotKey:SetFont(M.font, 12, "THINOUTLINE")
+		if name and gsub(name, "%d", "") == "PetActionButton" then lsAlwaysHide(bHotKey) end
+
+		bHotKey:SetFont(ns.M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
-		bHotKey:SetPoint("TOPRIGHT", 0, 0)
+		bHotKey:SetPoint("TOPRIGHT", 2, 1)
 	end
 
-	button:SetNormalTexture("")
-	button.SetNormalTexture = function() return end
-
-	ns.SetHighlightTexture(button)
-	ns.SetPushedTexture(button)
-
-	if type(bType) == "string" then
-		local name = bType..id
-		local bCount = _G[name.."Count"]
-		local bFlash = _G[name.."Flash"]
-		local bCD = _G[name.."Cooldown"]
-
-		if bCD then
-			bCD:SetAllPoints(button)
+	if bCount then
+		if name == "MainMenuBarBackpackButton" or name == "CharacterBag0Slot"
+			or name == "CharacterBag1Slot" or name == " CharacterBag2Slot"
+			or name == "CharacterBag3Slot" then
+			lsAlwaysHide(bCount)
 		end
 
-		if bType == "ActionButton" or bType == "PetActionButton"
-			or bType == "StanceButton" or bType == "ExtraActionButton" then
-			button.border = ns.CreateButtonBorder(button, 1)
-		else
-			button.border = ns.CreateButtonBorder(button, 0)
-			button.border:SetVertexColor(unpack(M.colors.button.normal))
-		end
-
-		if bCount and (bType == "MainMenuBarBackpackButton"
-			or bType == "CharacterBag0Slot"	or bType == "CharacterBag1Slot"
-			or bType == " CharacterBag2Slot" or bType == "CharacterBag3Slot") then
-			ns.AlwaysHide(bCount)
-		end
-
-		ns.SetCheckedTexture(button)
-
-		if bFlash then
-			ns.AlwaysHide(bFlash)
-		end
-
-		if bType == "ExtraActionButton" then
-			ns.AlwaysHide(button.style)
-		end
-
-		if bType == "ActionButton" or bType == "MultiBarBottomLeftButton"
-			or bType == "MultiBarBottomRightButton" or bType == "MultiBarRightButton"
-			or bType == "MultiBarLeftButton" then
-			local bBorder	= _G[name.."Border"]
-			local bMacro = _G[name.."Name"]
-			local bFlyoutBorder = _G[name.."FlyoutBorder"]
-			local bFlyoutBorderShadow = _G[name.."FlyoutBorderShadow"]
-			local bFloatingBG = _G[name.."FloatingBG"]
-
-			if bCount then
-				bCount:SetFont(M.font, 12, "THINOUTLINE")
-				bCount:ClearAllPoints()
-				bCount:SetPoint("BOTTOMLEFT", 0, 0)
-			end
-
-			if bBorder then
-				ns.AlwaysHide(bBorder)
-			end
-
-			if bMacro then
-				bMacro:SetFont(M.font, 10, "THINOUTLINE")
-				bMacro:ClearAllPoints()
-				bMacro:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", -2, 0)
-				bMacro:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, 0)
-			end
-
-			if bFlyoutBorder then
-				ns.AlwaysHide(bFlyoutBorder)
-			end
-
-			if bFlyoutBorderShadow then
-				ns.AlwaysHide(bFlyoutBorderShadow)
-			end
-
-			if bFloatingBG then
-				ns.AlwaysHide(bFloatingBG)
-			end
-
-			if button:GetChecked() then
-				ActionButton_UpdateState(button)
-			end
-		end
-
-		if bType == "PetActionButton" then
-			local bShine = _G[name.."Shine"]
-			local bAutoCast = _G[name.."AutoCastable"]
-
-			if bShine then
-				bShine:ClearAllPoints()
-				bShine:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
-				bShine:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
-			end
-
-			if bAutoCast then
-				bAutoCast:ClearAllPoints()
-				bAutoCast:SetPoint("TOPLEFT", button, "TOPLEFT", -13, 13)
-				bAutoCast:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 13, -13)
-			end
-		end
-	else
-		local bCDShadow = button.CooldownShadow
-		local bCDFlash = button.CooldownFlash
-		local bCD = button.Cooldown
-		local bSelectedHighlight = button.SelectedHighlight
-		local bLock = button.Lock
-		local bBetterIcon = button.BetterIcon
-
-		if bSelectedHighlight then
-			bSelectedHighlight:SetPoint("TOPLEFT", button, "TOPLEFT", -8, 8)
-			bSelectedHighlight:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 8, -8)
-		end
-
-		if bLock then
-			bLock:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
-			bLock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
-		end
-
-		if bBetterIcon then
-			bBetterIcon:SetSize(24, 24)
-		end
-
-		if bCDFlash then
-			bCDFlash:SetAllPoints(button)
-		end
-
-		if bCDShadow then
-			bCDShadow:SetAllPoints(button)
-		end
-
-		if bCD then
-			bCD:ClearAllPoints()
-			bCD:SetPoint("CENTER", 0, -2)
-		end
-
-		button.border = ns.CreateButtonBorder(button, 1)
+		bCount:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bCount:ClearAllPoints()
+		bCount:SetPoint("BOTTOMRIGHT", 2, -1)
 	end
+
+	if bName then
+		bName:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bName:ClearAllPoints()
+		bName:SetPoint("BOTTOMLEFT", -2, 0)
+		bName:SetPoint("BOTTOMRIGHT", 2, 0)
+	end
+
+	if bBorder then
+		bBorder:SetTexture(nil)
+	end
+
+	if bNewActionTexture then
+		bNewActionTexture:SetTexture(nil)
+	end
+
+	if bCD then
+		lsTweakCooldown(bCD)
+	end
+
+	if bNormalTexture then
+		if name and gsub(name, "%d", "") == "PetActionButton" then hooksecurefunc(button, 'SetNormalTexture', lsSetNilNormalTexture) end
+
+		bNormalTexture:SetTexture(nil)
+
+		button.lsBorder = lsCreateButtonBorder(button)
+
+		if not petBattle then hooksecurefunc(bNormalTexture, 'SetVertexColor', lsSetVertexColor) end
+	end
+
+	if bPushedTexture then
+		lsSetPushedTexture(bPushedTexture)
+	end
+
+	if bHighlightTexture then
+		lsSetHighlightTexture(bHighlightTexture)
+	end
+
+	if bCheckedTexture then
+		lsSetCheckedTexture(bCheckedTexture)
+	end
+
+	if bFloatingBG then
+		lsAlwaysHide(bFloatingBG)
+	end
+
+	if pShine then
+		pShine:ClearAllPoints()
+		pShine:SetPoint("TOPLEFT", 1, -1)
+		pShine:SetPoint("BOTTOMRIGHT", -1, 1)
+	end
+
+	if pAutoCast then
+		pAutoCast:ClearAllPoints()
+		pAutoCast:SetPoint("TOPLEFT", -14, 14)
+		pAutoCast:SetPoint("BOTTOMRIGHT", 14, -14)
+	end
+
+	if name == "ExtraActionButton1" then
+		lsAlwaysHide(button.style)
+	end
+
+	if pbCDShadow then
+		pbCDShadow:SetAllPoints()
+	end
+
+	if pbCDFlash then
+		pbCDFlash:SetAllPoints()
+	end
+
+	if pbCD then
+		pbCD:SetFont(ns.M.font, 16, "THINOUTLINE")
+		pbCD:ClearAllPoints()
+		pbCD:SetPoint("CENTER", 0, -2)
+	end
+
+	if pbSelectedHighlight then
+		pbSelectedHighlight:ClearAllPoints()
+		pbSelectedHighlight:SetPoint("TOPLEFT", -8, 8)
+		pbSelectedHighlight:SetPoint("BOTTOMRIGHT", 8, -8)
+	end
+
+	if pbLock then
+		pbLock:ClearAllPoints()
+		pbLock:SetPoint("TOPLEFT", 2, -2)
+		pbLock:SetPoint("BOTTOMRIGHT", -2, 2)
+	end
+
+	if pbBetterIcon then
+		pbBetterIcon:SetSize(18, 18)
+		pbBetterIcon:ClearAllPoints()
+		pbBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
+	end
+
 	button.styled = true
 end
 
-local function SetButtonPosition(self, orientation, originalBar, buttonType, buttonSize, total)
-	if originalBar then
+local function lsSetButtonPosition(self, orientation, originalBar, buttonType, buttonSize, buttonGap, total)
+	if originalBar and _G[originalBar]:GetParent() ~= self then
 		_G[originalBar]:SetParent(self)
 		_G[originalBar]:EnableMouse(false)
 		_G[originalBar].ignoreFramePositionManager = true
 	end
+
 	local previous
 	self.buttons = {}
+
 	for i = 1, total do
 		local button
+
 		if type(buttonType) == "string" then
 			button = _G[buttonType..i]
 		else
@@ -516,37 +359,26 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 		button:SetSize(buttonSize, buttonSize)
 		button:ClearAllPoints()
 
-		if originalBar == "MainMenuBarArtFrame" or originalBar == "PetActionBarFrame"
-			--[[or originalBar == "StanceBarFrame"]] or not originalBar then button:SetParent(self) end
-
-		if originalBar == "PetActionBarFrame" then
-			button:SetScript("OnDragStart", lsPetActionButton_OnDragStart)
-			button:SetScript("OnReceiveDrag", lsPetActionButton_OnReceiveDrag)
-			button:Show()
-		end
+		if not originalBar then button:SetParent(self) end
 
 		button:SetFrameStrata("LOW")
 		button:SetFrameLevel(2)
 
 		if i == 1 then
-			button:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-			button:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, -buttonSize)
+			button:SetPoint("TOPLEFT", self, "TOPLEFT", buttonGap / 2, -buttonGap / 2)
+			button:SetPoint("BOTTOMLEFT", self, "TOPLEFT", buttonGap / 2, -buttonSize - buttonGap / 2)
 		else
 			if orientation == "HORIZONTAL" then
-				button:SetPoint("LEFT", previous, "RIGHT", 4, 0)
+				button:SetPoint("LEFT", previous, "RIGHT", buttonGap, 0)
 			else
-				button:SetPoint("TOP", previous, "BOTTOM", 0, -4)
+				button:SetPoint("TOP", previous, "BOTTOM", 0, -buttonGap)
 			end
 		end
 
-		if type(buttonType) == "string" then
-			SetDefaultButtonStyle(buttonType, i)
+		if type(buttonType) == "string" or type(buttonType[i]) == "string" then
+			lsSetButtonStyle(button)
 		else
-			if type(buttonType[i]) == "string" then
-				SetDefaultButtonStyle(buttonType[i])
-			else
-				SetDefaultButtonStyle(button)
-			end
+			lsSetButtonStyle(button, true)
 		end
 
 		self.buttons[i] = button
@@ -555,33 +387,33 @@ local function SetButtonPosition(self, orientation, originalBar, buttonType, but
 end
 
 local function lsActionButton_OnUpdate(button)
-	local bIcon = _G[button:GetName().."Icon"]
-	local bMacro = _G[button:GetName().."Name"]
+	local bIcon = button.icon
+	local bName = button.Name
 
-	if bMacro then
+	if bName then
 		local text = GetActionText(button.action)
 		if text then
-			bMacro:SetText(strsub(text, 1, 6))
+			bName:SetText(strsub(text, 1, 6))
 		end
 	end
 
 	if bIcon then
-		if button.action and IsActionInRange(button.action) ~= 0 then
+		if button.action and IsActionInRange(button.action) ~= false then
 			local isUsable, notEnoughMana = IsUsableAction(button.action)
 			if isUsable then
 				bIcon:SetVertexColor(1, 1, 1, 1)
 			elseif notEnoughMana then
-				bIcon:SetVertexColor(unpack(M.colors.icon.oom))
+				bIcon:SetVertexColor(unpack(ns.M.colors.icon.oom))
 			else
-				bIcon:SetVertexColor(unpack(M.colors.icon.nu))
+				bIcon:SetVertexColor(unpack(ns.M.colors.icon.nu))
 			end
 		else
-			bIcon:SetVertexColor(unpack(M.colors.icon.oor))
+			bIcon:SetVertexColor(unpack(ns.M.colors.icon.oor))
 		end
 	end
 end
 
-local function CreateLeaveVehicleButton(bar)
+local function lsCreateLeaveVehicleButton(bar)
 	local button = CreateFrame("Button", "lsVehicleExitButton", bar, "SecureHandlerClickTemplate")
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
@@ -593,18 +425,22 @@ local function CreateLeaveVehicleButton(bar)
 	button.icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 	button.icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 	button.icon:ClearAllPoints()
-	button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
-	button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
+	button.icon:SetPoint("TOPLEFT", 1, -1)
+	button.icon:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	button.border = ns.CreateButtonBorder(button, 1)
+	button.border = lsCreateButtonBorder(button)
+	button.border:SetVertexColor(1, 0.1, 0.15)
 
-	ns.SetHighlightTexture(button)
-	ns.SetPushedTexture(button)
+	button:SetHighlightTexture(1, 1, 1)
+	lsSetHighlightTexture(button:GetHighlightTexture())
+
+	button:SetPushedTexture(1, 1, 1)
+	lsSetPushedTexture(button:GetPushedTexture())
 end
 
 local function SetPetBattleButtonPosition()
 	local bdata = BAR_LAYOUT.bar11
-	SetButtonPosition(lsPetBattleBar, bdata.orientation, bdata.original_bar, bdata.button_type, bdata.button_size, bdata.total_button)
+	lsSetButtonPosition(lsPetBattleBar, ns.C.bars.bar11.orientation, bdata.original_bar, bdata.button_type, ns.C.bars.bar11.button_size, ns.C.bars.bar11.button_gap, bdata.num_buttons)
 end
 
 local function FlyoutButtonToggleHook(...)
@@ -614,8 +450,12 @@ local function FlyoutButtonToggleHook(...)
 
 	local _, _, numSlots = GetFlyoutInfo(flyoutID)
 	for i = 1, numSlots do
-		SetDefaultButtonStyle("SpellFlyoutButton", i)
+		lsSetButtonStyle(_G["SpellFlyoutButton"..i])
 	end
+end
+
+local function lsActionBarManager(...)
+	-- NYI
 end
 
 function lsActionBars_Initialize()
@@ -629,25 +469,7 @@ function lsActionBars_Initialize()
 	f.actbar:SetPoint("CENTER")
 	f.actbar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
 
-	local FRAMES = {
-		MainMenuBar, MainMenuBarArtFrame, OverrideActionBar,
-		PossessBarFrame, PetActionBarFrame, IconIntroTracker,
-		ShapeshiftBarLeft, ShapeshiftBarMiddle, ShapeshiftBarRight
-	}
-
-	for i, f in pairs(FRAMES) do
-		f:UnregisterAllEvents()
-		f.ignoreFramePositionManager = true
-		f:SetParent(ns.hiddenParentFrame)
-	end
-
-	for i = 1, 6 do
-		local b = _G["OverrideActionBarButton"..i]
-		b:UnregisterAllEvents()
-		b:SetAttribute("statehidden", true)
-	end
-
-	for b, bdata in pairs(BAR_LAYOUT) do
+	for b, bdata in next, (BAR_LAYOUT) do
 		local name
 		if type(bdata.button_type) == "string" then
 			name = "ls"..bdata.button_type:gsub("Button", ""):gsub("Bar", "").."Bar"
@@ -664,35 +486,26 @@ function lsActionBars_Initialize()
 		end
 
 		local bar = CreateFrame("Frame", name, UIParent, "SecureHandlerStateTemplate")
-		bar:SetSize(unpack(bdata.size))
+		if ns.C.bars[b].orientation == "HORIZONTAL" then
+			bar:SetSize(ns.C.bars[b].button_size * bdata.num_buttons + ns.C.bars[b].button_gap * bdata.num_buttons,
+				ns.C.bars[b].button_size + ns.C.bars[b].button_gap)
+		else
+			bar:SetSize(ns.C.bars[b].button_size + ns.C.bars[b].button_gap,
+				ns.C.bars[b].button_size * bdata.num_buttons + ns.C.bars[b].button_gap * bdata.num_buttons)
+		end
 		bar:SetFrameStrata("LOW")
 		bar:SetFrameLevel(1)
-
-		bar.showGrid = 0
 
 		if tonumber(strmatch(b, "(%d+)")) == 1 then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-			bar:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 			bar:SetScript("OnEvent", lsActionBar_OnEvent)
-		elseif tonumber(strmatch(b, "(%d+)")) == 6 then
-			bar:RegisterEvent("PLAYER_CONTROL_LOST")
-			bar:RegisterEvent("PLAYER_CONTROL_GAINED")
-			bar:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
-			bar:RegisterEvent("UNIT_PET")
-			bar:RegisterEvent("UNIT_FLAGS")
-			bar:RegisterEvent("UNIT_AURA")
-			bar:RegisterEvent("PET_BAR_UPDATE")
-			bar:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-			bar:RegisterEvent("PET_BAR_SHOWGRID")
-			bar:RegisterEvent("PET_BAR_HIDEGRID")
-			bar:SetScript("OnEvent", lsPetActionBar_OnEvent)
 		end
 
 		if tonumber(strmatch(b, "(%d+)")) ~= 10 and tonumber(strmatch(b, "(%d+)")) ~= 11 and tonumber(strmatch(b, "(%d+)")) ~= 12 then
-			SetButtonPosition(bar, bdata.orientation, bdata.original_bar, bdata.button_type, bdata.button_size, bdata.total_button)
+			lsSetButtonPosition(bar, ns.C.bars[b].orientation, bdata.original_bar, bdata.button_type, ns.C.bars[b].button_size, ns.C.bars[b].button_gap, bdata.num_buttons)
 		elseif tonumber(strmatch(b, "(%d+)")) == 10 then
-			CreateLeaveVehicleButton(bar)
+			lsCreateLeaveVehicleButton(bar)
 		elseif tonumber(strmatch(b, "(%d+)")) == 12 then
 			PlayerPowerBarAlt:SetParent(bar)
 			PlayerPowerBarAlt:ClearAllPoints()
@@ -708,73 +521,98 @@ function lsActionBars_Initialize()
 	end
 
 	for b, bar in pairs(ns.bars) do
-		if BAR_LAYOUT[b].point then
+		if ns.C.bars[b].point then
 			if b == "bar8" and not lsBagInfoBar then
 				bar:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -20, 6)
 			else
-				bar:SetPoint(unpack(BAR_LAYOUT[b].point))
+				bar:SetPoint(unpack(ns.C.bars[b].point))
 			end
 		else
 			SetStancePetActionBarPosition(bar)
 		end
 	end
 
+	-- Hiding different useless textures
 	FlowContainer_PauseUpdates(PetBattleFrame.BottomFrame.FlowFrame)
 	MainMenuBar.slideOut.IsPlaying = function() return true end
-	-- Hiding different useless textures
-	MainMenuBarPageNumber:SetParent(ns.hiddenParentFrame)
-	ActionBarDownButton:SetParent(ns.hiddenParentFrame)
-	ActionBarUpButton:SetParent(ns.hiddenParentFrame)
-	SlidingActionBarTexture0:SetTexture("")
-	SlidingActionBarTexture1:SetTexture("")
-	PossessBackground1:SetTexture("")
-	PossessBackground2:SetTexture("")
-	StanceBarLeft:SetTexture("")
-	StanceBarMiddle:SetTexture("")
-	StanceBarRight:SetTexture("")
-	MainMenuBarTexture0:SetTexture("")
-	MainMenuBarTexture1:SetTexture("")
-	MainMenuBarTexture2:SetTexture("")
-	MainMenuBarTexture3:SetTexture("")
-	MainMenuBarLeftEndCap:SetTexture("")
-	MainMenuBarRightEndCap:SetTexture("")
-	--PetBattle UI
-	PetBattleFrame.BottomFrame.FlowFrame:SetParent(ns.hiddenParentFrame)
-	PetBattleFrame.BottomFrame.Delimiter:SetParent(ns.hiddenParentFrame)
-	PetBattleFrame.BottomFrame.MicroButtonFrame:SetParent(ns.hiddenParentFrame)
-	PetBattleFrame.BottomFrame.Background:SetTexture("")
-	PetBattleFrame.BottomFrame.LeftEndCap:SetTexture("")
-	PetBattleFrame.BottomFrame.RightEndCap:SetTexture("")
-	PetBattleFrameXPBarLeft:SetTexture("")
-	PetBattleFrameXPBarMiddle:SetTexture("")
-	PetBattleFrameXPBarRight:SetTexture("")
-	for i = 7, 12 do
-		select(i, PetBattleFrameXPBar:GetRegions()):SetTexture("")
+
+	for _, f in next, {
+		MainMenuBar,
+		MainMenuBarPageNumber,
+		ActionBarDownButton,
+		ActionBarUpButton,
+		OverrideActionBarExpBar,
+		OverrideActionBarHealthBar,
+		OverrideActionBarPowerBar,
+		OverrideActionBarPitchFrame,
+		OverrideActionBarLeaveFrame,
+		PetBattleFrame.BottomFrame.FlowFrame,
+		PetBattleFrame.BottomFrame.Delimiter,
+		PetBattleFrame.BottomFrame.MicroButtonFrame,
+	} do
+		f:SetParent(ns.hiddenParentFrame)
+		f.ignoreFramePositionManager = true
 	end
 
-	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(M.colors.exp.bg))
+	for _, t in next, {
+		SlidingActionBarTexture0,
+		SlidingActionBarTexture1,
+		PossessBackground1,
+		PossessBackground2,
+		StanceBarLeft,
+		StanceBarMiddle,
+		StanceBarRight,
+		MainMenuBarTexture0,
+		MainMenuBarTexture1,
+		MainMenuBarTexture2,
+		MainMenuBarTexture3,
+		MainMenuBarLeftEndCap,
+		MainMenuBarRightEndCap,
+		PetBattleFrame.BottomFrame.Background,
+		PetBattleFrame.BottomFrame.LeftEndCap,
+		PetBattleFrame.BottomFrame.RightEndCap,
+		PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2,
+		PetBattleFrameXPBarLeft,
+		PetBattleFrameXPBarMiddle,
+		PetBattleFrameXPBarRight,
+		SpellFlyoutHorizontalBackground,
+		SpellFlyoutVerticalBackground,
+		SpellFlyoutBackgroundEnd,
+	} do
+		t:SetTexture(nil)
+	end
+
+	for i = 7, 12 do
+		select(i, PetBattleFrameXPBar:GetRegions()):SetTexture(nil)
+	end
+
+	for i = 1, 6 do
+		local b = _G["OverrideActionBarButton"..i]
+		b:UnregisterAllEvents()
+		b:SetAttribute("statehidden", true)
+	end
+
+	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(ns.M.colors.exp.bg))
 
 	PetBattleFrameXPBar:SetFrameStrata("LOW")
 	PetBattleFrameXPBar:SetFrameLevel(4)
 	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 52)
 	PetBattleFrameXPBar:SetSize(382, 8)
-	PetBattleFrameXPBar:SetStatusBarTexture(M.textures.statusbar)
-	PetBattleFrameXPBar:SetStatusBarColor(unpack(M.colors.exp.normal))
+	PetBattleFrameXPBar:SetStatusBarTexture(ns.M.textures.statusbar)
+	PetBattleFrameXPBar:SetStatusBarColor(unpack(ns.M.colors.exp.normal))
 
-	PetBattleFrameXPBar.TextString:SetFont(M.font, 10, "THINOUTLINE")
+	PetBattleFrameXPBar.TextString:SetFont(ns.M.font, 10, "THINOUTLINE")
 
 	PetBattleFrameXPBar.Border = PetBattleFrameXPBar:CreateTexture(nil, "OVERLAY")
 	PetBattleFrameXPBar.Border:SetPoint("CENTER", 0, 0)
 	PetBattleFrameXPBar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
 
-	PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2:SetTexture(nil)
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 66)
 
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
-	SpellFlyoutHorizontalBackground:SetTexture(nil)
-	SpellFlyoutVerticalBackground:SetTexture(nil)
-	SpellFlyoutBackgroundEnd:SetTexture(nil)
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 	hooksecurefunc("ActionButton_OnUpdate", lsActionButton_OnUpdate)
+
+	-- hooksecurefunc('SetActionBarToggles', lsActionBarManager)
 end

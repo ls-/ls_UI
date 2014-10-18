@@ -115,7 +115,7 @@ local function SetAuraButtonStyle(btn, index, atype)
 	local bDuration = _G[name.."Duration"]
 
 	if bIcon then
-		ns.SetIconStyle(button, bIcon)
+		lsTweakIcon(bIcon)
 		if atype == "CONSOLIDATED" then
 			bIcon:SetTexCoord(18 / 128, 46 / 128, 18 / 64, 46 / 64)
 		end
@@ -134,7 +134,7 @@ local function SetAuraButtonStyle(btn, index, atype)
 		hooksecurefunc(bDuration, "SetFormattedText", SetDurationText)
 	end
 
-	bBorder = ns.CreateButtonBorder(button, 0, bBorder)
+	bBorder = lsCreateButtonBorder(button, bBorder)
 	bBorder:SetDrawLayer("BACKGROUND", 1)
 
 	if atype == "HELPFUL" then

@@ -8,10 +8,12 @@ ns.M = {
 	textures = {
 		statusbar = "Interface\\AddOns\\oUF_LS\\media\\statusbar",
 		button = {
-			normalstone = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
+			normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
 			normalmetal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",
 			highlight = "Interface\\AddOns\\oUF_LS\\media\\button\\highlight",
-			pushedchecked = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
+			pushed = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
+			checked = "Interface\\AddOns\\oUF_LS\\media\\button\\checked",
+			flash = "Interface\\AddOns\\oUF_LS\\media\\button\\flash",
 		},
 		cpower = {
 			["total1"] = {
@@ -181,9 +183,9 @@ ns.M = {
 			["sun"] = {1, 0.5, 0.25},
 		},
 		icon = {
-			oom	= {0.5, 0.5, 1},
-			nu	= {0.4, 0.4, 0.4},
-			oor	= {0.8, 0.1, 0.1},
+			oom	= {0.5, 0.5, 1, 0.65},
+			nu	= {0.4, 0.4, 0.4, 0.65},
+			oor	= {0.8, 0.1, 0.1, 0.65},
 		},
 		button = {
 			normal = {0.57, 0.52, 0.55},
