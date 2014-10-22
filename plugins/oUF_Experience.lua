@@ -32,7 +32,7 @@ local function Update(self, event, unit)
 	local element = self.Experience
 	if(element.PreUpdate) then element:PreUpdate(unit) end
 
-	if(UnitLevel(unit) == element.__max or UnitHasVehicleUI('player')) then
+	if(UnitLevel(unit) == element.__max or UnitHasVehicleUI('player') or C_PetBattles.IsInBattle()) then
 		element:Hide()
 	else
 		element:Show()
@@ -73,6 +73,8 @@ local function Enable(self, unit)
 
 		self:RegisterEvent('PLAYER_XP_UPDATE', Path)
 		self:RegisterEvent('PLAYER_LEVEL_UP', Path)
+		self:RegisterEvent('PET_BATTLE_OPENING_START', Path)
+		self:RegisterEvent('PET_BATTLE_CLOSE', Path)
 
 		local child = element.Rested
 		if(child) then
@@ -97,7 +99,9 @@ local function Disable(self)
 	if(element) then
 		self:UnregisterEvent('PLAYER_XP_UPDATE', Path)
 		self:UnregisterEvent('PLAYER_LEVEL_UP', Path)
-
+		self:UnregisterEvent('PET_BATTLE_OPENING_START', Path)
+		self:UnregisterEvent('PET_BATTLE_CLOSE', Path)
+		
 		if(element.Rested) then
 			self:UnregisterEvent('UPDATE_EXHAUSTION', Path)
 		end

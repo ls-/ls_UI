@@ -106,19 +106,19 @@ local DEFAULT_CONFIG = {
 	bars = {
 		enabled = true,
 		bar1 = { -- MainMenuBar
-			point = {"BOTTOM", 0, 16},
+			point = {"BOTTOM", 0, 15},
 			button_size = 28,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
 		},
 		bar2 = { -- MultiBarBottomLeft
-			point = {"BOTTOM", 0, 64},
+			point = {"BOTTOM", 0, 62},
 			button_size = 28,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
 		},
 		bar3 = { -- MultiBarBottomRight
-			point = {"BOTTOM", 0, 96},
+			point = {"BOTTOM", 0, 94},
 			button_size = 28,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
@@ -154,18 +154,18 @@ local DEFAULT_CONFIG = {
 			orientation = "HORIZONTAL",
 		},
 		bar9 = { -- ExtraAction
-			point = {"BOTTOM", -171, 160},
+			point = {"BOTTOM", -171, 154},
 			button_size = 40,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
 		},
 		bar10 = { -- VehicleExit
-			point = {"BOTTOM", 171, 160},
+			point = {"BOTTOM", 171, 154},
 			button_size = 40,
 			button_gap = 4,
 		},
 		bar11 = { -- PetBattle
-			point = {"BOTTOM", 0, 16},
+			point = {"BOTTOM", 0, 15},
 			button_size = 28,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
@@ -204,6 +204,14 @@ local function lsConfigLoader_OnEvent(...)
 			return db
 		end
 
+		-- use bar manager with default settings only
+		local enableActionBarManager = true
+		if oUF_LS_CONFIG.bars and (oUF_LS_CONFIG.bars.bar1
+			or oUF_LS_CONFIG.bars.bar2 or oUF_LS_CONFIG.bars.bar3
+			or oUF_LS_CONFIG.bars.bar6	or oUF_LS_CONFIG.bars.bar7) then
+			enableActionBarManager = false
+		end
+
 		oUF_LS_CONFIG = initDB(oUF_LS_CONFIG, DEFAULT_CONFIG)
 		ns.C = oUF_LS_CONFIG
 
@@ -223,7 +231,7 @@ local function lsConfigLoader_OnEvent(...)
 
 		-- Actionbars & MicroMenu
 		if ns.C.bars.enabled then
-			lsActionBars_Initialize()
+			lsActionBars_Initialize(enableActionBarManager)
 			lsMicroMenu_Initialize()
 		end
 

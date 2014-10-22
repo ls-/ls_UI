@@ -82,10 +82,10 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 128},
-	PET2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 156},
-	STANCE1 = {"BOTTOM", "UIParent", "BOTTOM", 0, 156},
-	STANCE2 = {"BOTTOM", "UIParent", "BOTTOM", 0, 128},
+	PET1 = {"BOTTOM", 0, 126},
+	PET2 = {"BOTTOM", 0, 154},
+	STANCE1 = {"BOTTOM", 0, 154},
+	STANCE2 = {"BOTTOM", 0, 126},
 }
 -- page swapping is taken from tukui, thx :D really usefull thingy
 local PAGE_LAYOUT = {
@@ -454,11 +454,68 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-local function lsActionBarManager(...)
-	-- NYI
+local function lsActionBarManager_OnEvent(self, event)
+	local multiplier = 2 - (lsActionBarManager.bar2Shown and 1 or 0) - (lsActionBarManager.bar3Shown and 1 or 0)
+
+	for _, j in next, {
+			{"lsMultiBottomLeftBar", "bar2"},
+			{"lsMultiBottomRightBar", "bar3"},
+			{"lsPetActionBar", "bar6"},
+			{"lsStanceBar", "bar7"},
+		} do
+		if j[1] == "lsMultiBottomLeftBar" then
+			if lsActionBarManager.bar2Shown then
+
+				RegisterStateDriver(_G[j[1]], "visibility", BAR_LAYOUT[j[2]].condition)
+			else
+				RegisterStateDriver(_G[j[1]], "visibility", "hide")
+			end
+		elseif j[1] == "lsMultiBottomRightBar" then
+			if lsActionBarManager.bar3Shown then
+				local point, x, y = unpack(ns.C.bars[j[2]].point)
+				_G[j[1]]:SetPoint(point, x, y - multiplier * math.ceil(_G[j[1]]:GetHeight()))
+
+				RegisterStateDriver(_G[j[1]], "visibility", BAR_LAYOUT[j[2]].condition)
+			else
+				RegisterStateDriver(_G[j[1]], "visibility", "hide")
+			end
+		elseif j[1] == "lsPetActionBar" then
+			local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+			_G[j[1]]:SetPoint(point, x, y - multiplier * 32)
+		elseif j[1] == "lsStanceBar" then
+			local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+			_G[j[1]]:SetPoint(point, x, y - multiplier * 32)
+		end
+	end
+
+	if event == "PLAYER_REGEN_ENABLED" then
+		lsActionBarManager:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		lsActionBarManager:SetScript("OnEvent", nil)
+	end
 end
 
-function lsActionBars_Initialize()
+local function lsActionBarManager_Update(bottomLeftBar, bottomRightBar)
+	if not lsActionBarManager.forceUpdate then
+		lsActionBarManager.forceUpdate = lsActionBarManager.bar2Shown ~= bottomLeftBar
+		if not lsActionBarManager.forceUpdate then
+			lsActionBarManager.forceUpdate = lsActionBarManager.bar3Shown ~= bottomRightBar
+		end
+	end
+
+	if lsActionBarManager.forceUpdate then
+		lsActionBarManager.bar2Shown = bottomLeftBar
+		lsActionBarManager.bar3Shown = bottomRightBar
+
+		if InCombatLockdown() then
+			lsActionBarManager:RegisterEvent("PLAYER_REGEN_ENABLED")
+			lsActionBarManager:SetScript("OnEvent", lsActionBarManager_OnEvent)
+		else
+			lsActionBarManager_OnEvent(lsActionBarManager, "CUSTOM_FORCE_UPDATE")
+		end
+	end
+end
+
+function lsActionBars_Initialize(enableManager)
 	local f = CreateFrame("Frame", "lsBottomLine", UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)
@@ -597,7 +654,7 @@ function lsActionBars_Initialize()
 	PetBattleFrameXPBar:SetFrameStrata("LOW")
 	PetBattleFrameXPBar:SetFrameLevel(4)
 	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 52)
-	PetBattleFrameXPBar:SetSize(382, 8)
+	PetBattleFrameXPBar:SetSize(378, 8)
 	PetBattleFrameXPBar:SetStatusBarTexture(ns.M.textures.statusbar)
 	PetBattleFrameXPBar:SetStatusBarColor(unpack(ns.M.colors.exp.normal))
 
@@ -608,11 +665,16 @@ function lsActionBars_Initialize()
 	PetBattleFrameXPBar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
 
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
-	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 66)
+	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
 
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 	hooksecurefunc("ActionButton_OnUpdate", lsActionButton_OnUpdate)
 
-	-- hooksecurefunc('SetActionBarToggles', lsActionBarManager)
+	if enableManager then
+		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
+		lsActionBarManager.bar2Shown = true
+		lsActionBarManager.bar3Shown = true
+		hooksecurefunc('SetActionBarToggles', lsActionBarManager_Update)
+	end
 end

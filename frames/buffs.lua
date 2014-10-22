@@ -137,9 +137,7 @@ local function SetAuraButtonStyle(btn, index, atype)
 	bBorder = lsCreateButtonBorder(button, bBorder)
 	bBorder:SetDrawLayer("BACKGROUND", 1)
 
-	if atype == "HELPFUL" then
-		bBorder:SetVertexColor(unpack(M.colors.button.normal))
-	elseif atype == "TEMPENCHANT" then
+	if atype == "TEMPENCHANT" then
 		bBorder:SetVertexColor(0.7, 0, 1)
 	end
 

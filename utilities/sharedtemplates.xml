@@ -273,7 +273,7 @@
 	<StatusBar name="lsExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
 		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
 		<Size>
-			<AbsDimension x="382" y="8"/>
+			<AbsDimension x="378" y="8"/>
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND" textureSubLevel="0">
@@ -289,6 +289,11 @@
 			</Layer>
 		</Layers>
 		<Scripts>
+			<OnLoad>
+				if self:GetName() == "lsReputationBar" then
+					self.border:SetTexCoord(0, 1, 1, 0)
+				end
+			</OnLoad>
 			<OnEnter>
 				self.text:Show()
 			</OnEnter>

@@ -839,19 +839,21 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", UIParent, "lsExperienceReputationBarTemplate")
 		self.Experience:SetStatusBarColor(unpack(M.colors.exp.normal))
 		self.Experience:SetPoint("BOTTOM", 0, 52)
+
 		self.Experience.Rested = CreateFrame("StatusBar", nil, self.Experience)
 		self.Experience.Rested:SetAllPoints(self.Experience)
 		self.Experience.Rested:SetStatusBarTexture(M.textures.statusbar)
 		self.Experience.Rested:SetStatusBarColor(unpack(M.colors.exp.rested))
 		self.Experience.bg:SetTexture(unpack(M.colors.exp.bg))
 		self.Experience.PostUpdate = UpdateExperience
-		self:Tag(self.Experience.text, COMBAT_XP_GAIN.." [curxp] / [maxxp]")
 
 		self.Reputation = CreateFrame("StatusBar", "lsReputationBar", UIParent, "lsExperienceReputationBarTemplate")
 		self.Reputation:SetPoint("BOTTOM", 0, 2)
-		self.Reputation.border:SetVertexColor(0.6, 0.6, 0.6)
+		self.Reputation.border:SetVertexColor(0.4, 0.4, 0.4)
 		self.Reputation.PostUpdate = UpdateReputation
 		self.Reputation.colorStanding = true
+
+		self:Tag(self.Experience.text, COMBAT_XP_GAIN.." [curxp] / [maxxp]")
 		self:Tag(self.Reputation.text, "[reputation] [currep] / [maxrep]")
 	end
 
