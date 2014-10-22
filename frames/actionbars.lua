@@ -457,36 +457,26 @@ end
 local function lsActionBarManager_OnEvent(self, event)
 	local multiplier = 2 - (lsActionBarManager.bar2Shown and 1 or 0) - (lsActionBarManager.bar3Shown and 1 or 0)
 
-	for _, j in next, {
-			{"lsMultiBottomLeftBar", "bar2"},
-			{"lsMultiBottomRightBar", "bar3"},
-			{"lsPetActionBar", "bar6"},
-			{"lsStanceBar", "bar7"},
-		} do
-		if j[1] == "lsMultiBottomLeftBar" then
-			if lsActionBarManager.bar2Shown then
-
-				RegisterStateDriver(_G[j[1]], "visibility", BAR_LAYOUT[j[2]].condition)
-			else
-				RegisterStateDriver(_G[j[1]], "visibility", "hide")
-			end
-		elseif j[1] == "lsMultiBottomRightBar" then
-			if lsActionBarManager.bar3Shown then
-				local point, x, y = unpack(ns.C.bars[j[2]].point)
-				_G[j[1]]:SetPoint(point, x, y - multiplier * math.ceil(_G[j[1]]:GetHeight()))
-
-				RegisterStateDriver(_G[j[1]], "visibility", BAR_LAYOUT[j[2]].condition)
-			else
-				RegisterStateDriver(_G[j[1]], "visibility", "hide")
-			end
-		elseif j[1] == "lsPetActionBar" then
-			local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
-			_G[j[1]]:SetPoint(point, x, y - multiplier * 32)
-		elseif j[1] == "lsStanceBar" then
-			local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
-			_G[j[1]]:SetPoint(point, x, y - multiplier * 32)
-		end
+	if lsActionBarManager.bar2Shown then
+		RegisterStateDriver(lsMultiBottomLeftBar, "visibility", BAR_LAYOUT.bar2.condition)
+	else
+		RegisterStateDriver(lsMultiBottomLeftBar, "visibility", "hide")
 	end
+
+	if lsActionBarManager.bar3Shown then
+		local point, x, y = unpack(ns.C.bars.bar3.point)
+		lsMultiBottomRightBar:SetPoint(point, x, y - multiplier * 32)
+
+		RegisterStateDriver(lsMultiBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
+	else
+		RegisterStateDriver(lsMultiBottomRightBar, "visibility", "hide")
+	end
+
+	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+	lsPetActionBar:SetPoint(point, x, y - multiplier * 32)
+
+	local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+	lsStanceBar:SetPoint(point, x, y - multiplier * 32)
 
 	if event == "PLAYER_REGEN_ENABLED" then
 		lsActionBarManager:UnregisterEvent("PLAYER_REGEN_ENABLED")
