@@ -101,7 +101,7 @@ local function Disable(self)
 		self:UnregisterEvent('PLAYER_LEVEL_UP', Path)
 		self:UnregisterEvent('PET_BATTLE_OPENING_START', Path)
 		self:UnregisterEvent('PET_BATTLE_CLOSE', Path)
-		
+
 		if(element.Rested) then
 			self:UnregisterEvent('UPDATE_EXHAUSTION', Path)
 		end

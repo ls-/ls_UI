@@ -208,7 +208,7 @@ local function lsConfigLoader_OnEvent(...)
 		local enableActionBarManager = true
 		if oUF_LS_CONFIG.bars and (oUF_LS_CONFIG.bars.bar1
 			or oUF_LS_CONFIG.bars.bar2 or oUF_LS_CONFIG.bars.bar3
-			or oUF_LS_CONFIG.bars.bar6	or oUF_LS_CONFIG.bars.bar7) then
+			or oUF_LS_CONFIG.bars.bar6 or oUF_LS_CONFIG.bars.bar7) then
 			enableActionBarManager = false
 		end
 
