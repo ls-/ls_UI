@@ -4,7 +4,8 @@ ns.mbuttons = {}
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"BOTTOM", -392, 6},
+		point = {"BOTTOM", -340, 8},
+		-- point = {"CENTER", 8, -52},
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
@@ -28,7 +29,8 @@ local MICRO_BUTTON_LAYOUT = {
 		icon = "guild",
 	},
 	["LFDMicroButton"] = {
-		point = {"BOTTOM", 232, 6},
+		point = {"BOTTOM", 220, 8},
+		-- point = {"LEFT", "lsGuildMicroButton", "RIGHT", 6, 0},
 		icon = "lfg",
 	},
 	["CompanionsMicroButton"] = {
@@ -66,19 +68,19 @@ local function UpdateMicroButtonState()
 	end
 
 	if CharacterFrame and CharacterFrame:IsShown() then
-		lsCharacterMicroButton:SetButtonState("PUSHED", 1)
+		lsCharacterMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsCharacterMicroButton:SetButtonState("NORMAL")
 	end
 
 	if SpellBookFrame and SpellBookFrame:IsShown() then
-		lsSpellbookMicroButton:SetButtonState("PUSHED", 1)
+		lsSpellbookMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsSpellbookMicroButton:SetButtonState("NORMAL")
 	end
 
 	if PlayerTalentFrame and PlayerTalentFrame:IsShown() then
-		lsTalentMicroButton:SetButtonState("PUSHED", 1)
+		lsTalentMicroButton:SetButtonState("PUSHED", true)
 	else
 		if playerLevel < 10 then
 			lsTalentMicroButton:Disable()
@@ -89,7 +91,7 @@ local function UpdateMicroButtonState()
 	end
 
 	if AchievementFrame and AchievementFrame:IsShown() then
-		lsAchievementMicroButton:SetButtonState("PUSHED", 1)
+		lsAchievementMicroButton:SetButtonState("PUSHED", true)
 	else
 		if (HasCompletedAnyAchievement() or IsInGuild()) and CanShowAchievementUI() then
 			lsAchievementMicroButton:Enable()
@@ -99,8 +101,8 @@ local function UpdateMicroButtonState()
 		end
 	end
 
-	if QuestLogFrame and QuestLogFrame:IsShown() then
-		lsQuestLogMicroButton:SetButtonState("PUSHED", 1)
+	if WorldMapFrame and WorldMapFrame:IsShown() then
+		lsQuestLogMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsQuestLogMicroButton:SetButtonState("NORMAL")
 	end
@@ -109,7 +111,7 @@ local function UpdateMicroButtonState()
 		lsGuildMicroButton:Disable()
 	elseif (GuildFrame and GuildFrame:IsShown()) or (LookingForGuildFrame and LookingForGuildFrame:IsShown()) then
 		lsGuildMicroButton:Enable()
-		lsGuildMicroButton:SetButtonState("PUSHED", 1)
+		lsGuildMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsGuildMicroButton:Enable()
 		lsGuildMicroButton:SetButtonState("NORMAL")
@@ -121,7 +123,7 @@ local function UpdateMicroButtonState()
 	end
 
 	if PVEFrame and PVEFrame:IsShown() then
-		lsLFDMicroButton:SetButtonState("PUSHED", 1)
+		lsLFDMicroButton:SetButtonState("PUSHED", true)
 	else
 		if playerLevel < lsLFDMicroButton.minLevel or factionGroup == "Neutral" then
 			lsLFDMicroButton:Disable()
@@ -132,13 +134,13 @@ local function UpdateMicroButtonState()
 	end
 
 	if PetJournalParent and PetJournalParent:IsShown() then
-		lsCompanionsMicroButton:SetButtonState("PUSHED", 1)
+		lsCompanionsMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsCompanionsMicroButton:SetButtonState("NORMAL")
 	end
 
 	if EncounterJournal and EncounterJournal:IsShown() then
-		lsEJMicroButton:SetButtonState("PUSHED", 1)
+		lsEJMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsEJMicroButton:SetButtonState("NORMAL")
 	end
@@ -162,7 +164,7 @@ local function UpdateMicroButtonState()
 	end
 
 	if StoreFrame and StoreFrame_IsShown() then
-		lsStoreMicroButton:SetButtonState("PUSHED", 1)
+		lsStoreMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsStoreMicroButton:SetButtonState("NORMAL")
 	end
@@ -171,13 +173,13 @@ local function UpdateMicroButtonState()
 		or InterfaceOptionsFrame:IsShown()
 		or (KeyBindingFrame and KeyBindingFrame:IsShown())
 		or (MacroFrame and MacroFrame:IsShown()) then
-		lsMainMenuMicroButton:SetButtonState("PUSHED", 1)
+		lsMainMenuMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsMainMenuMicroButton:SetButtonState("NORMAL")
 	end
 
 	if HelpFrame and HelpFrame:IsShown() then
-		lsHelpMicroButton:SetButtonState("PUSHED", 1)
+		lsHelpMicroButton:SetButtonState("PUSHED", true)
 	else
 		lsHelpMicroButton:SetButtonState("NORMAL")
 	end
@@ -244,7 +246,6 @@ local function lsMicroButton_Initialize(mbutton, events, level, isBlizzConDriven
 			mbutton.disabledTooltip = ERR_RESTRICTED_ACCOUNT
 		end
 	end
-
 end
 
 local function lsMainMenuMicroButton_OnClick(self)
@@ -265,6 +266,7 @@ local function lsMainMenuMicroButton_OnClick(self)
 		HideUIPanel(GameMenuFrame)
 		MainMenuMicroButton_SetNormal()
 	end
+
 	lsMicroButton_OnEvent(self)
 end
 

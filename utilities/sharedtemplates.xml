@@ -137,7 +137,6 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 					<TexCoords left="0.17187500" right="0.82812500" top="0.21875000" bottom="0.78125000"/>
-
 				</Texture>
 			</Layer>
 		</Layers>
@@ -175,17 +174,18 @@
 
 <Button name="lsMicroButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
 		<Size>
-			<AbsDimension x="26" y="26"/>
+			<AbsDimension x="18" y="24"/>
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND" textureSubLevel="0">
-				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\microbutton">
+				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\statusbar">
 					<Size>
-						<AbsDimension x="32" y="32"/>
+						<AbsDimension x="18" y="24"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
+					<Color r="0.15" g="0.15" b="0.15"/>
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
@@ -194,19 +194,20 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 					<Size>
-						<AbsDimension x="20" y="20"/>
+						<AbsDimension x="24" y="24"/>
 					</Size>
 				</Texture>
 			</Layer>
 			<Layer level="BORDER" textureSubLevel="0">
-				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\microbutton_cover">
+				<Texture name="$parentBorder" file="Interface\AddOns\oUF_LS\media\microbutton">
 					<Size>
-						<AbsDimension x="26" y="26"/>
+						<AbsDimension x="28" y="34"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<TexCoords left="0.09375000" right="0.90625000" top="0.09375000" bottom="0.90625000"/>
+					<TexCoords left="0.0625" right="0.28125" top="0.234375" bottom="0.765625"/>
+					<!-- <Color r="0.84" g="0.65" b="0.15"/> -->
 				</Texture>
 			</Layer>
 		</Layers>
@@ -249,24 +250,23 @@
 				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
-		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\microbutton_highlight">
+		<HighlightTexture name="$parentNormalTexture" alphaMode="ADD" file="Interface\AddOns\oUF_LS\media\microbutton">
 			<Anchors>
 				<Anchor point="CENTER"/>
 			</Anchors>
 			<Size>
-				<AbsDimension x="20" y="20"/>
+				<AbsDimension x="24" y="30"/>
 			</Size>
-			<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+			<TexCoords left="0.40625" right="0.59375" top="0.265625" bottom="0.734375"/>
 		</HighlightTexture>
-		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\microbutton_pushed">
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\microbutton">
 			<Size>
-				<AbsDimension x="20" y="20"/>
+				<AbsDimension x="16" y="22"/>
 			</Size>
 			<Anchors>
-				<Anchor point="TOPLEFT" x="3" y="-3"/>
-				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.18750000" right="0.81250000" top="0.18750000" bottom="0.81250000"/>
+			<TexCoords left="0.78125" right="0.90625" top="0.328125" bottom="0.671875"/>
 		</PushedTexture>
 	</Button>
 
