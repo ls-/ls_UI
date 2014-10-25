@@ -1,4 +1,5 @@
 local _, ns = ...
+local oUF = ns.oUF
 
 local DEFAULT_CONFIG = {
 	units = {
