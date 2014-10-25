@@ -206,7 +206,7 @@ local function lsConfigLoader_OnEvent(...)
 
 		-- use bar manager with default settings only
 		local enableActionBarManager = true
-		if oUF_LS_CONFIG.bars and (oUF_LS_CONFIG.bars.bar1
+		if oUF_LS_CONFIG and oUF_LS_CONFIG.bars and (oUF_LS_CONFIG.bars.bar1
 			or oUF_LS_CONFIG.bars.bar2 or oUF_LS_CONFIG.bars.bar3
 			or oUF_LS_CONFIG.bars.bar6 or oUF_LS_CONFIG.bars.bar7) then
 			enableActionBarManager = false
@@ -223,6 +223,8 @@ local function lsConfigLoader_OnEvent(...)
 			LoadAddOn("Blizzard_TimeManager")
 			lsMinimap_Initialize()
 		end
+
+		lsBuffFrame_Initialize()
 
 		-- Infobars
 		if ns.C.infobars.enabled then

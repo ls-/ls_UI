@@ -135,7 +135,6 @@ local function SetAuraButtonStyle(btn, index, atype)
 	end
 
 	bBorder = lsCreateButtonBorder(button, bBorder)
-	bBorder:SetDrawLayer("BACKGROUND", 1)
 
 	if atype == "TEMPENCHANT" then
 		bBorder:SetVertexColor(0.7, 0, 1)
@@ -144,7 +143,7 @@ local function SetAuraButtonStyle(btn, index, atype)
 	button.styled = true
 end
 
-do
+function lsBuffFrame_Initialize()
 	BuffFrame:SetParent(lsBuffHeader)
 	BuffFrame:ClearAllPoints()
 	BuffFrame:SetPoint("TOPRIGHT", 0, 0)
@@ -158,6 +157,15 @@ do
 	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
 	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
 	hooksecurefunc("AuraButton_Update", SetAuraButtonStyle)
+	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, id, filter)
+		if unit == "player" or unit == "vehicle" then
+			local spellId = select(11, UnitAura(unit, id, filter))
+			if spellId then
+				self:AddLine("ID: "..spellId, 0.11, 0.75, 0.95)
+				self:Show()
+			end
+		end
+	end)
 
 	for i = 1, NUM_TEMP_ENCHANT_FRAMES do
 		SetAuraButtonStyle("TempEnchant", i, "TEMPENCHANT")

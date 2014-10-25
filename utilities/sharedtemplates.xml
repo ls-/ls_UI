@@ -270,7 +270,7 @@
 		</PushedTexture>
 	</Button>
 
-	<StatusBar name="lsExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" hidden="true" virtual="true">
+	<StatusBar name="lsExperienceReputationBarTemplate" frameStata="LOW" frameLevel="4" virtual="true">
 		<BarTexture file="Interface\AddOns\oUF_LS\media\statusbar"/>
 		<Size>
 			<AbsDimension x="378" y="8"/>
@@ -285,20 +285,21 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 				</Texture>
-				<FontString inherits="lsUnitFrame10Text" setAllPoints="true" hidden="true" parentKey="text"/>
+				<FontString inherits="lsUnitFrame10Text" setAllPoints="true" parentKey="text"/>
 			</Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad>
+				self.text:SetAlpha(0)
 				if self:GetName() == "lsReputationBar" then
 					self.border:SetTexCoord(0, 1, 1, 0)
 				end
 			</OnLoad>
 			<OnEnter>
-				self.text:Show()
+				self.text:SetAlpha(1)
 			</OnEnter>
 			<OnLeave>
-				self.text:Hide()
+				self.text:SetAlpha(0)
 			</OnLeave>
 		</Scripts>
 	</StatusBar>

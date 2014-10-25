@@ -629,7 +629,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 	self.Health.value = self.cover:CreateFontString("$parentHealthText", "ARTWORK", hpTextTemplate)
 	if unit == "player" then
-		self.Health.value:SetPoint("CENTER", 0, 10)
+		self.Health.value:SetPoint("CENTER", 0, 8)
 	elseif unit == "pet" then
 		self.Health.value:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", 2, 20)
 	else
@@ -653,6 +653,14 @@ local function CreateUnitFrameStyle(self, unit)
 		self.ppbg = self.Health:CreateTexture("$parentPPBackground", "OVERLAY", nil, 0)
 		self.ppbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_pp")
 		self.ppbg:SetPoint("CENTER")
+
+		self.Health.damageAbsorb = self.cover:CreateFontString("$parentDamageAbsorbsText", "ARTWORK", "lsUnitFrame12Text")
+		self.Health.damageAbsorb:SetPoint("CENTER", 0, 24)
+		self:Tag(self.Health.damageAbsorb, "[custom:damageabsorb]")
+
+		self.Health.healAbsorb = self.cover:CreateFontString("$parentHealAbsorbsText", "ARTWORK", "lsUnitFrame12Text")
+		self.Health.healAbsorb:SetPoint("CENTER", 0, 38)
+		self:Tag(self.Health.healAbsorb, "[custom:healabsorb]")
 	end
 
 	if unit ~= "focustarget" and unit ~= "targettarget" then
@@ -682,7 +690,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 		self.Power.value = self.cover:CreateFontString("$parentPowerText", "ARTWORK", ppTextTemplate)
 		if unit == "player" then
-			self.Power.value:SetPoint("CENTER", 0, -10)
+			self.Power.value:SetPoint("CENTER", 0, -8)
 		elseif unit == "pet" then
 			self.Power.value:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", 8, 6)
 		else
@@ -836,9 +844,9 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 
 	if unit == "player" and ns.C.bars.enabled then
-		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", UIParent, "lsExperienceReputationBarTemplate")
+		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", self, "lsExperienceReputationBarTemplate")
 		self.Experience:SetStatusBarColor(unpack(M.colors.exp.normal))
-		self.Experience:SetPoint("BOTTOM", 0, 52)
+		self.Experience:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 52)
 
 		self.Experience.Rested = CreateFrame("StatusBar", nil, self.Experience)
 		self.Experience.Rested:SetAllPoints(self.Experience)
@@ -847,8 +855,8 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Experience.bg:SetTexture(unpack(M.colors.exp.bg))
 		self.Experience.PostUpdate = UpdateExperience
 
-		self.Reputation = CreateFrame("StatusBar", "lsReputationBar", UIParent, "lsExperienceReputationBarTemplate")
-		self.Reputation:SetPoint("BOTTOM", 0, 2)
+		self.Reputation = CreateFrame("StatusBar", "lsReputationBar", self, "lsExperienceReputationBarTemplate")
+		self.Reputation:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 2)
 		self.Reputation.border:SetVertexColor(0.4, 0.4, 0.4)
 		self.Reputation.PostUpdate = UpdateReputation
 		self.Reputation.colorStanding = true

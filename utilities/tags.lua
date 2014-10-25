@@ -57,8 +57,32 @@ oUF.Tags.Methods["custom:threat"] = function(unit)
 	if scaledPercent and scaledPercent ~= 0 and ShowNumericThreat() and UnitClassification(unit) ~= "minus" then
 		return "|cff"..color..format("%d", scaledPercent).."%|r"
 	else
-		return ""
+		return " "
 	end
 end
 
 oUF.Tags.Events["custom:threat"] = "UNIT_THREAT_LIST_UPDATE UNIT_THREAT_SITUATION_UPDATE"
+
+oUF.Tags.Methods["custom:healabsorb"] = function(unit)
+	local healAbsorb = UnitGetTotalHealAbsorbs("player") or 0
+	local color = RGBToHEX(0.9, 0.1, 0.3)
+	if healAbsorb > 0 then
+		return "|cff"..color.."-|r"..ns.NumFormat(healAbsorb)
+	else
+		return " "
+	end
+end
+
+oUF.Tags.Events["custom:healabsorb"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
+
+oUF.Tags.Methods["custom:damageabsorb"] = function(unit)
+	local damageAbsorb = UnitGetTotalAbsorbs(unit) or 0
+	local color = RGBToHEX(0, 0.7, 0.95)
+	if damageAbsorb > 0 then
+		return "|cff"..color.."+|r"..ns.NumFormat(damageAbsorb)
+	else
+		return " "
+	end
+end
+
+oUF.Tags.Events["custom:damageabsorb"] = "UNIT_ABSORB_AMOUNT_CHANGED"
