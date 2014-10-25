@@ -119,7 +119,7 @@ local function CreateClassPowerBar(self, max, cpType)
 	return bar
 end
 
-local function UpdateClassPowerBar(self, cur, max, changed)
+local function UpdateClassPowerBar(self, cur, max, changed, event)
 	if changed and max ~= 0 then
 		local r, g, b = unpack(M.colors.classpower[self.__cpower])
 		for i = 1, max do
@@ -137,7 +137,7 @@ local function UpdateClassPowerBar(self, cur, max, changed)
 			self[i].glow:SetVertexColor(unpack(M.colors.classpower.GLOW))
 		end
 	end
-	if UnitHasVehicleUI("player") or max == 0 then
+	if event == "ClassPowerDisable" then
 		self:Hide()
 		FrameReskin(self:GetParent(), "NONE", true, 0, self.__cpower)
 	else
@@ -957,8 +957,8 @@ local function CreateUnitFrameStyle(self, unit)
 		FrameReskin(self, "NONE", true, 0, "NONE")
 
 		if ns.C.playerclass == "MONK" then
-			self.CustomClassIcons = CreateClassPowerBar(self, 5, "CHI")
-			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
+			self.ClassIcons = CreateClassPowerBar(self, 5, "CHI")
+			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
 		if ns.C.playerclass == "DEATHKNIGHT" then
@@ -972,13 +972,13 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if ns.C.playerclass == "PALADIN" then
-			self.CustomClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
-			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
+			self.ClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
+			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
 		if ns.C.playerclass == "WARLOCK" then
-				self.CustomClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
-				self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
+				self.ClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
+				self.ClassIcons.PostUpdate = UpdateClassPowerBar
 
 				self.BurningEmbers = CreateBurningEmbers(self)
 				self.BurningEmbers.PostUpdate = UpdateBurningEmbers
@@ -990,8 +990,8 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 
 		if ns.C.playerclass == "PRIEST" then
-			self.CustomClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
-			self.CustomClassIcons.PostUpdate = UpdateClassPowerBar
+			self.ClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
+			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
 		if ns.C.playerclass == "DRUID" then

@@ -207,7 +207,6 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 					<TexCoords left="0.0625" right="0.28125" top="0.234375" bottom="0.765625"/>
-					<!-- <Color r="0.84" g="0.65" b="0.15"/> -->
 				</Texture>
 			</Layer>
 		</Layers>
@@ -261,12 +260,12 @@
 		</HighlightTexture>
 		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\microbutton">
 			<Size>
-				<AbsDimension x="16" y="22"/>
+				<AbsDimension x="18" y="24"/>
 			</Size>
 			<Anchors>
 				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.78125" right="0.90625" top="0.328125" bottom="0.671875"/>
+			<TexCoords left="0.7734375" right="0.9140625" top="0.3125" bottom="0.6875"/>
 		</PushedTexture>
 	</Button>
 
