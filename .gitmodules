@@ -1,0 +1,12 @@
+[submodule "plugins/oUF"]
+	path = plugins/oUF
+	url = git://github.com/haste/oUF.git
+[submodule "plugins/oUF_Experience"]
+	path = plugins/oUF_Experience
+	url = git://github.com/p3lim-wow/oUF_Experience.git
+[submodule "plugins/oUF_Reputation"]
+	path = plugins/oUF_Reputation
+	url = git://github.com/p3lim-wow/oUF_Reputation.git
+[submodule "plugins/oUF_FloatingCombatFeedback"]
+	path = plugins/oUF_FloatingCombatFeedback
+	url = git://github.com/ls-/oUF_FloatingCombatFeedback.git

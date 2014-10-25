@@ -1,16 +1,17 @@
 ## Interface: 60004
 ## Author: lightspark
+## Version: 1.2.4
 ## Title: oUF: LS
-## Notes: PvE-oriented oUF-based UI
-## RequiredDeps: oUF
+## Notes: PvE-oriented oUF-based layout
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
+plugins\oUF\oUF.xml
+plugins\oUF_Experience\oUF_Experience.lua
+plugins\oUF_Reputation\oUF_Reputation.lua
+plugins\oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua
 plugins\oUF_Smooth.lua
-plugins\oUF_Experience.lua
-plugins\oUF_Reputation.lua
 plugins\oUF_DebuffHighlight.lua
-plugins\oUF_FloatingCombatFeedback.lua
 plugins\oUF_BurningEmbers.lua
 plugins\oUF_DemonicFury.lua
 plugins\oUF_CustomClassIcons.lua
