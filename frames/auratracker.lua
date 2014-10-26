@@ -159,6 +159,18 @@ function AuraTrackerHeader_OnClick(self, button)
 	end
 end
 
+local function lsAuraTracker_PrintCommands()
+	print("|cff1ec77eAuraTracker|r: List of commands:")
+	print("|cff00ccff/atbuff spellId|r - adds aura to the list of buffs;")
+	print("|cff00ccff/atdebuff spellId|r - adds aura to the list of debuffs;")
+	print("|cff00ccff/atrem spellId|r - removes aura from the list;")
+	print("|cff00ccff/atlist|r - prints the list of tracked auras;")
+	print("|cff00ccff/atwipe|r - wipes the list of tracked auras;")
+	print("|cff00ccff/atheader|r - toggles AuraTracker header visibility;")
+	print("|cff00ccff/atcmd|r - prints the list of commands;")
+	print("|cff00ccff/at enable/disable|r - enables or disables the module.")
+end
+
 function lsAuraTrackerHeaderDropDown_Initialize(self)
 	local info = UIDropDownMenu_CreateInfo()
 	info.notCheckable = 1
@@ -172,15 +184,7 @@ function lsAuraTrackerHeaderDropDown_Initialize(self)
 	info = UIDropDownMenu_CreateInfo()
 	info.notCheckable = 1
 	info.text = lsLISTOFCOMMANDS
-	info.func = function()
-		print("|cff1ec77eAuraTracker|r: List of commands:")
-		print("|cff00ccff/atbuff spellId|r - adds aura to the list of buffs;")
-		print("|cff00ccff/atdebuff spellId|r - adds aura to the list of debuffs;")
-		print("|cff00ccff/atrem spellId|r - removes aura from the list;")
-		print("|cff00ccff/atlist|r - prints the list of tracked auras;")
-		print("|cff00ccff/atwipe|r - wipes the list of tracked auras;")
-		print("|cff00ccff/at enable/disable|r - enables or disables the module.")
-	end
+	info.func = lsAuraTracker_PrintCommands
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
@@ -290,5 +294,10 @@ function lsAuraTracker_CreateSlashCommands()
 			lsAuraTracker.header:Show()
 			ns.C.auratracker.showHeader = true
 		end
+	end
+
+	SLASH_ATCMD1 = '/atcmd'
+	SlashCmdList["ATCMD"] = function(msg)
+		lsAuraTracker_PrintCommands()
 	end
 end
