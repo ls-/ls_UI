@@ -32,21 +32,19 @@ local function CreateMapZoom()
 end
 
 local function SetElementsStyle()
-	local elementsToShow = {
+	for i, k in next, {
 		MiniMapTracking = {"CENTER", "Minimap", "CENTER", 72, 30},
 		GameTimeFrame = {"CENTER", "Minimap", "CENTER", 55, 55},
 		MiniMapInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -1, -38},
 		GuildInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -6, -38},
 		QueueStatusMinimapButton = {"CENTER", "Minimap", "CENTER", 55, -55},
-	}
-
-	for i, k in pairs(elementsToShow) do
+	} do
 		_G[i]:ClearAllPoints()
 		_G[i]:SetParent(Minimap)
 		_G[i]:SetPoint(unpack(k))
 	end
 
-	local elementsToHide = {
+	for _, f in next, {
 		"MinimapCluster",
 		"MiniMapWorldMapButton",
 		"MinimapZoomIn",
@@ -59,15 +57,15 @@ local function SetElementsStyle()
 		"MinimapBackdrop",
 		"TimeManagerClockButton",
 		"MiniMapTrackingIconOverlay",
-	}
+	} do
+		if not _G[f]:IsObjectType("Texture") then
+			_G[f]:UnregisterAllEvents()
+		end
 
-	for _, f in pairs(elementsToHide) do
-		if not _G[f]:IsObjectType("Texture") then _G[f]:UnregisterAllEvents() end
 		_G[f]:SetParent(ns.hiddenParentFrame)
 	end
 
-	local children = {Minimap:GetChildren()}
-	for _, child in pairs(children) do
+	for _, child in next, {Minimap:GetChildren()} do
 		child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 	end
 

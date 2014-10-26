@@ -1,6 +1,6 @@
 ## Interface: 60004
 ## Author: lightspark
-## Version: 1.2.4
+## Version: 1.2.5-beta.1
 ## Title: oUF: LS
 ## Notes: PvE-oriented oUF-based layout
 ## X-Category: UnitFrame
