@@ -62,7 +62,7 @@ local BAR_LAYOUT = {
 		button_type = {PetBattleFrame.BottomFrame.abilityButtons[1], PetBattleFrame.BottomFrame.abilityButtons[2],
 			PetBattleFrame.BottomFrame.abilityButtons[3], PetBattleFrame.BottomFrame.SwitchPetButton,
 			PetBattleFrame.BottomFrame.CatchButton, PetBattleFrame.BottomFrame.ForfeitButton},
-		num_buttons = 6,
+		num_buttons = 12, -- actual number is 6, but we use 12, while creating a bar
 		condition = "[petbattle] show; hide",
 	},
 	bar12 = {
@@ -440,7 +440,7 @@ end
 
 local function SetPetBattleButtonPosition()
 	local bdata = BAR_LAYOUT.bar11
-	lsSetButtonPosition(lsPetBattleBar, ns.C.bars.bar11.orientation, bdata.original_bar, bdata.button_type, ns.C.bars.bar11.button_size, ns.C.bars.bar11.button_gap, bdata.num_buttons)
+	lsSetButtonPosition(lsPetBattleBar, ns.C.bars.bar11.orientation, bdata.original_bar, bdata.button_type, ns.C.bars.bar11.button_size, ns.C.bars.bar11.button_gap, 6)
 end
 
 local function FlyoutButtonToggleHook(...)
