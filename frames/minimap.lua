@@ -120,6 +120,7 @@ function lsMinimap_Initialize()
 	Minimap:SetParent("UIParent")
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(ns.C.minimap.point))
+	RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
 	CreateMapOverlay()
 	CreateMapZoom()
