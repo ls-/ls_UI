@@ -203,6 +203,9 @@ local function lsSetButtonStyle(button, petBattle)
 	local pbLock = button.Lock
 	local pbBetterIcon = button.BetterIcon
 
+	-- BAG
+	local bbIconBorder = button.IconBorder
+
 	lsTweakIcon(bIcon)
 
 	if bFlash then
@@ -328,6 +331,12 @@ local function lsSetButtonStyle(button, petBattle)
 		pbBetterIcon:SetSize(18, 18)
 		pbBetterIcon:ClearAllPoints()
 		pbBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
+	end
+
+	if bbIconBorder then
+		lsAlwaysHide(bbIconBorder)
+		
+		hooksecurefunc(bbIconBorder, 'SetVertexColor', lsSetVertexColor)
 	end
 
 	button.styled = true
