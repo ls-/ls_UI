@@ -77,7 +77,7 @@ local DEFAULT_CONFIG = {
 		enabled = true,
 		location = {
 			enabled = true,
-			point = {"TOPLEFT", "UIParent", "TOPLEFT", 6, -6},
+			point = {"TOPLEFT", "UIParent", "TOPLEFT", 4, -4},
 		},
 		memory = {
 			enabled = true,
@@ -85,11 +85,11 @@ local DEFAULT_CONFIG = {
 		},
 		fps = {
 			enabled = true,
-			point = {"LEFT", "lsMemoryInfoBar", "RIGHT", 6, 0},
+			point = {"LEFT", "lsMemoryInfoBar", "RIGHT", 4, 0},
 		},
 		latency = {
 			enabled = true,
-			point = {"LEFT", "lsFPSInfoBar", "RIGHT", 6, 0},
+			point = {"LEFT", "lsFPSInfoBar", "RIGHT", 4, 0},
 		},
 		bag = {
 			enabled = true,
@@ -97,11 +97,11 @@ local DEFAULT_CONFIG = {
 		},
 		clock = {
 			enabled = true,
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -6, -6},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 		},
 		mail = {
 			enabled = true,
-			point = {"RIGHT", "lsClockInfoBar", "LEFT", -6, 0},
+			point = {"RIGHT", "lsClockInfoBar", "LEFT", -4, 0},
 		},
 	},
 	bars = {
@@ -149,7 +149,7 @@ local DEFAULT_CONFIG = {
 			orientation = "HORIZONTAL",
 		},
 		bar8 = { -- Bags
-			point = {"TOPLEFT", "lsBagInfoBar", "BOTTOM", 0, -6},
+			point = {"TOPLEFT", "lsBagInfoBar", "BOTTOM", 0, -4},
 			button_size = 28,
 			button_gap = 4,
 			orientation = "HORIZONTAL",
