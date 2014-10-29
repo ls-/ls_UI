@@ -328,7 +328,7 @@ local function lsMailInfoBar_OnEvent(self)
 end
 
 function lsInfobars_Initialize()
-	for ib, ibdata in pairs(INFOBAR_INFO) do
+	for ib, ibdata in next, INFOBAR_INFO do
 		local ibar = CreateFrame(ibdata.infobar_type, "ls"..ib.."InfoBar", UIParent, "lsInfoBarButtonTemplate-"..ibdata.length)
 		ibar:SetFrameStrata("LOW")
 		ibar:SetFrameLevel(1)
@@ -336,7 +336,7 @@ function lsInfobars_Initialize()
 		ns.infobars[strlower(ib)] = ibar
 	end
 
-	for ib, ibar in pairs(ns.infobars) do
+	for ib, ibar in next, ns.infobars do
 		ibar:SetPoint(unpack(ns.C.infobars[ib].point))
 	end
 

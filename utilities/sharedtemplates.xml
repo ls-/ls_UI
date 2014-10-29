@@ -16,24 +16,24 @@
 
 	<Frame name="lsInfoBarFrameTemplate-Long" virtual="true">
 		<Size>
-			<AbsDimension x="170" y="40"/>
+			<AbsDimension x="166" y="34"/>
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND" textureSubLevel="0">
 				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\infobar_long" parentkey="background" >
 					<Size>
-						<AbsDimension x="174" y="46"/>
+						<AbsDimension x="170" y="38"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<TexCoords left="0.16015625" right="0.83984375" top="0.14062500" bottom="0.85937500"/>
+					<TexCoords left="0.083984375" right="0.416015625" top="0.1015625" bottom="0.3984375"/>
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
 				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
 					<Size>
-						<AbsDimension x="158" y="30"/>
+						<AbsDimension x="154" y="22"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
@@ -42,7 +42,7 @@
 				</Texture>
 				<FontString name="$parentText" inherits="lsUnitFrame14Text" parentkey="text">
 					<Size>
-						<AbsDimension x="148" y="20"/>
+						<AbsDimension x="150" y="20"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
@@ -50,14 +50,14 @@
 				</FontString>
 			</Layer>
 			<Layer level="BORDER" textureSubLevel="0">
-				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_long_cover" parentkey="cover">
+				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_long" parentkey="cover">
 					<Size>
-						<AbsDimension x="164" y="36"/>
+						<AbsDimension x="166" y="34"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<TexCoords left="0.17968750" right="0.82031250" top="0.21875000" bottom="0.78125000"/>
+					<TexCoords left="0.587890625" right="0.912109375" top="0.1171875" bottom="0.3828125"/>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -72,47 +72,46 @@
 	</Frame>
 
 	<Button name="lsInfoBarButtonTemplate-Long" inherits="lsInfoBarFrameTemplate-Long" virtual="true">
-		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_long_highlight">
+		<HighlightTexture name="$parentHighlightTexture" alphaMode="ADD" file="Interface\AddOns\oUF_LS\media\infobar_long">
 			<Size>
-				<AbsDimension x="158" y="30"/>
+				<AbsDimension x="162" y="30"/>
 			</Size>
 			<Anchors>
 				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.19140625" right="0.80859375" top="0.26562500" bottom="0.73437500"/>
+			<TexCoords left="0.091796875" right="0.408203125" top="0.6328125" bottom="0.8671875"/>
 		</HighlightTexture>
-		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_long_pushed">
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_long">
 			<Size>
-				<AbsDimension x="158" y="30"/>
+				<AbsDimension x="154" y="22"/>
 			</Size>
 			<Anchors>
-				<Anchor point="TOPLEFT" x="6" y="-5"/>
-				<Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.19140625" right="0.80859375" top="0.26562500" bottom="0.73437500"/>
+			<TexCoords left="0.599609375" right="0.900390625" top="0.6640625" bottom="0.8359375"/>
 		</PushedTexture>
 	</Button>
 
 	<Frame name="lsInfoBarFrameTemplate-Short" virtual="true">
 		<Size>
-			<AbsDimension x="90" y="40"/>
+			<AbsDimension x="88" y="34"/>
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND" textureSubLevel="0">
 				<Texture name="$parentBackground" file="Interface\AddOns\oUF_LS\media\infobar_short" parentkey="background" >
 					<Size>
-						<AbsDimension x="94" y="46"/>
+						<AbsDimension x="92" y="38"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<TexCoords left="0.13281250" right="0.86718750" top="0.14062500" bottom="0.85937500"/>
+					<TexCoords left="0.0703125" right="0.4296875" top="0.1015625" bottom="0.3984375"/>
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
 				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
 					<Size>
-						<AbsDimension x="78" y="30"/>
+						<AbsDimension x="76" y="22"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
@@ -121,7 +120,7 @@
 				</Texture>
 				<FontString name="$parentText" inherits="lsUnitFrame14Text" parentkey="text">
 					<Size>
-						<AbsDimension x="148" y="20"/>
+						<AbsDimension x="72" y="20"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
@@ -129,14 +128,14 @@
 				</FontString>
 			</Layer>
 			<Layer level="BORDER" textureSubLevel="0">
-				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_short_cover" parentkey="cover">
+				<Texture name="$parentCover" file="Interface\AddOns\oUF_LS\media\infobar_short" parentkey="cover">
 					<Size>
-						<AbsDimension x="84" y="36"/>
+						<AbsDimension x="88" y="34"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
-					<TexCoords left="0.17187500" right="0.82812500" top="0.21875000" bottom="0.78125000"/>
+					<TexCoords left="0.59375" right="0.9375" top="0.1171875" bottom="0.3828125"/>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -151,24 +150,23 @@
 	</Frame>
 
 	<Button name="lsInfoBarButtonTemplate-Short" inherits="lsInfoBarFrameTemplate-Short" virtual="true">
-		<HighlightTexture name="$parentNormalTexture" file="Interface\AddOns\oUF_LS\media\infobar_short_highlight">
+		<HighlightTexture name="$parentHighlightTexture" alphaMode="ADD" file="Interface\AddOns\oUF_LS\media\infobar_short">
 			<Size>
-				<AbsDimension x="78" y="30"/>
+				<AbsDimension x="84" y="30"/>
 			</Size>
 			<Anchors>
 				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.19531250" right="0.80468750" top="0.26562500" bottom="0.73437500"/>
+			<TexCoords left="0.0859375" right="0.4140625" top="0.6328125" bottom="0.8671875"/>
 		</HighlightTexture>
-		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_short_pushed">
+		<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\oUF_LS\media\infobar_short">
 			<Size>
-				<AbsDimension x="78" y="30"/>
+				<AbsDimension x="76" y="22"/>
 			</Size>
 			<Anchors>
-				<Anchor point="TOPLEFT" x="6" y="-5"/>
-				<Anchor point="BOTTOMRIGHT" x="-6" y="5"/>
+				<Anchor point="CENTER"/>
 			</Anchors>
-			<TexCoords left="0.19531250" right="0.80468750" top="0.26562500" bottom="0.73437500"/>
+			<TexCoords left="0.6171875" right="0.9140625" top="0.6640625" bottom="0.8359375"/>
 		</PushedTexture>
 	</Button>
 
