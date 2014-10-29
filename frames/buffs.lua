@@ -1,26 +1,13 @@
 ﻿local _, ns = ...
-local M = ns.M
 
 local BuffFrame = _G["BuffFrame"]
 local ConsolidatedBuffs = _G["ConsolidatedBuffs"]
 
-local lsBuffHeader = CreateFrame("Frame", "lsBuffHeader", UIParent)
-lsBuffHeader:SetSize(28, 28)
-lsBuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -60)
-
-local lsDebuffHeader = CreateFrame("Frame", "lsDebuffHeader", UIParent)
-lsDebuffHeader:SetSize(28, 28)
-lsDebuffHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -140)
-
-local lsTemporaryEnchantHeader = CreateFrame("Frame", "lsTemporaryEnchantHeader", UIParent)
-lsTemporaryEnchantHeader:SetSize(28, 28)
-lsTemporaryEnchantHeader:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -6, -180)
-
-local function SetDurationText(duration, arg1, arg2)
+local function lsSetDurationText(duration, arg1, arg2)
 	duration:SetText(format(gsub(arg1, "[ .]", ""), arg2))
 end
 
-local function UpdateBuffAnchors()
+local function lsUpdateBuffAnchors()
 	local numBuffs, slack = 0, 0
 	local button, previous, above
 
@@ -36,19 +23,19 @@ local function UpdateBuffAnchors()
 			index = numBuffs + slack
 
 			if button.parent ~= BuffFrame then
-				button.count:SetFont(M.font, 12, "THINOUTLINE")
+				button.count:SetFont(ns.M.font, 12, "THINOUTLINE")
 				button:SetParent(BuffFrame)
 				button.parent = BuffFrame
 			end
 
 			button:ClearAllPoints()
-			button:SetSize(28, 28)
+			button:SetSize(ns.C.auras.aura_size, ns.C.auras.aura_size)
 
 			if index > 1 and (mod(index, 16) == 1) then
 				if index == 17 then
-					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -4)
+					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -ns.C.auras.aura_gap)
 				else
-					button:SetPoint("TOP", above, "BOTTOM", 0, -4)
+					button:SetPoint("TOP", above, "BOTTOM", 0, -ns.C.auras.aura_gap)
 				end
 
 				above = button
@@ -58,9 +45,9 @@ local function UpdateBuffAnchors()
 				above = button
 			else
 				if numBuffs == 1 then
-					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -4, 0)
+					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -ns.C.auras.aura_gap, 0)
 				else
-					button:SetPoint("RIGHT", previous, "LEFT", -4, 0)
+					button:SetPoint("RIGHT", previous, "LEFT", -ns.C.auras.aura_gap, 0)
 				end
 			end
 
@@ -69,12 +56,12 @@ local function UpdateBuffAnchors()
 	end
 end
 
-local function UpdateDebuffAnchors(buttonName, index)
+local function lsUpdateDebuffAnchors(buttonName, index)
 	local rows = ceil(BUFF_ACTUAL_DISPLAY / 16)
 	local button = _G[buttonName..index]
 
 	button:ClearAllPoints()
-	button:SetSize(28, 28)
+	button:SetSize(ns.C.auras.aura_size, ns.C.auras.aura_size)
 
 	if index == 1 then
 		button:SetPoint("TOPRIGHT", lsDebuffHeader, "TOPRIGHT", 0, 0)
@@ -83,13 +70,13 @@ local function UpdateDebuffAnchors(buttonName, index)
 	end
 end
 
-local function UpdateTemporaryEnchantAnchors(self)
+local function lsUpdateTemporaryEnchantAnchors(self)
 	local previous
 	for i = 1, NUM_TEMP_ENCHANT_FRAMES do
 		local button = _G["TempEnchant"..i]
 		if button then
 			button:ClearAllPoints()
-			button:SetSize(28, 28)
+			button:SetSize(ns.C.auras.aura_size, ns.C.auras.aura_size)
 
 			if i == 1 then
 				button:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
@@ -102,7 +89,7 @@ local function UpdateTemporaryEnchantAnchors(self)
 	end
 end
 
-local function SetAuraButtonStyle(btn, index, atype)
+local function lsSetAuraButtonStyle(btn, index, atype)
 	local name = btn..(index or "")
 	local button = _G[name]
 
@@ -116,25 +103,27 @@ local function SetAuraButtonStyle(btn, index, atype)
 
 	if bIcon then
 		lsTweakIcon(bIcon)
+
 		if atype == "CONSOLIDATED" then
 			bIcon:SetTexCoord(18 / 128, 46 / 128, 18 / 64, 46 / 64)
 		end
 	end
 
 	if bCount then
-		bCount:SetFont(M.font, 12, "THINOUTLINE")
+		bCount:SetFont(ns.M.font, 12, "THINOUTLINE")
 		bCount:ClearAllPoints()
 		bCount:SetPoint("TOPRIGHT", 0, 0)
 	end
 
 	if bDuration then
-		bDuration:SetFont(M.font, 14, "THINOUTLINE")
+		bDuration:SetFont(ns.M.font, 14, "THINOUTLINE")
 		bDuration:ClearAllPoints()
-		bDuration:SetPoint("BOTTOM", button, "BOTTOM", 2, 0)
-		hooksecurefunc(bDuration, "SetFormattedText", SetDurationText)
+		bDuration:SetPoint("BOTTOM", 1, 0)
+		hooksecurefunc(bDuration, "SetFormattedText", lsSetDurationText)
 	end
 
 	bBorder = lsCreateButtonBorder(button, bBorder)
+	bBorder:SetDrawLayer("BACKGROUND", 1)
 
 	if atype == "TEMPENCHANT" then
 		bBorder:SetVertexColor(0.7, 0, 1)
@@ -144,19 +133,34 @@ local function SetAuraButtonStyle(btn, index, atype)
 end
 
 function lsBuffFrame_Initialize()
+	local lsBuffHeader = CreateFrame("Frame", "lsBuffHeader", UIParent)
+	lsBuffHeader:SetSize(ns.C.auras.aura_size + ns.C.auras.aura_gap,
+		ns.C.auras.aura_size + ns.C.auras.aura_gap)
+	lsBuffHeader:SetPoint(unpack(ns.C.auras.buff.point))
+
+	local lsDebuffHeader = CreateFrame("Frame", "lsDebuffHeader", UIParent)
+	lsDebuffHeader:SetSize(ns.C.auras.aura_size + ns.C.auras.aura_gap,
+		ns.C.auras.aura_size + ns.C.auras.aura_gap)
+	lsDebuffHeader:SetPoint(unpack(ns.C.auras.debuff.point))
+
+	local lsTemporaryEnchantHeader = CreateFrame("Frame", "lsTemporaryEnchantHeader", UIParent)
+	lsTemporaryEnchantHeader:SetSize(ns.C.auras.aura_size + ns.C.auras.aura_gap,
+		ns.C.auras.aura_size + ns.C.auras.aura_gap)
+	lsTemporaryEnchantHeader:SetPoint(unpack(ns.C.auras.tempench.point))
+
 	BuffFrame:SetParent(lsBuffHeader)
 	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint("TOPRIGHT", 0, 0)
+	BuffFrame:SetPoint("TOPRIGHT", -ns.C.auras.aura_gap / 2, -ns.C.auras.aura_gap / 2)
 
 	TemporaryEnchantFrame:SetParent(lsTemporaryEnchantHeader)
 	TemporaryEnchantFrame:ClearAllPoints()
-	TemporaryEnchantFrame:SetPoint("TOPRIGHT", 0, 0)
+	TemporaryEnchantFrame:SetPoint("TOPRIGHT", -ns.C.auras.aura_gap / 2, -ns.C.auras.aura_gap / 2)
 
-	UpdateTemporaryEnchantAnchors(lsTemporaryEnchantHeader)
+	lsUpdateTemporaryEnchantAnchors(lsTemporaryEnchantHeader)
 
-	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
-	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
-	hooksecurefunc("AuraButton_Update", SetAuraButtonStyle)
+	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", lsUpdateBuffAnchors)
+	hooksecurefunc("DebuffButton_UpdateAnchors", lsUpdateDebuffAnchors)
+	hooksecurefunc("AuraButton_Update", lsSetAuraButtonStyle)
 	hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, id, filter)
 		if unit == "player" or unit == "vehicle" then
 			local spellId = select(11, UnitAura(unit, id, filter))
@@ -168,9 +172,9 @@ function lsBuffFrame_Initialize()
 	end)
 
 	for i = 1, NUM_TEMP_ENCHANT_FRAMES do
-		SetAuraButtonStyle("TempEnchant", i, "TEMPENCHANT")
+		lsSetAuraButtonStyle("TempEnchant", i, "TEMPENCHANT")
 	end
 
-	SetAuraButtonStyle("ConsolidatedBuffs", nil, "CONSOLIDATED")
+	lsSetAuraButtonStyle("ConsolidatedBuffs", nil, "CONSOLIDATED")
 	ConsolidatedBuffsTooltip:SetScale(1)
 end

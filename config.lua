@@ -178,6 +178,20 @@ local DEFAULT_CONFIG = {
 			orientation = "HORIZONTAL",
 		},
 	},
+	auras = {
+	enabled = true,
+		buff = {
+			point = {"TOPRIGHT", -4, -42},
+		},
+		debuff = {
+			point = {"TOPRIGHT", -4, -122},
+		},
+		tempench = {
+			point = {"TOPRIGHT", -4, -162},
+		},
+		aura_size = 28,
+		aura_gap = 4,
+	},
 	width = 0,
 	height = 0,
 	playerclass = "",
@@ -225,7 +239,10 @@ local function lsConfigLoader_OnEvent(...)
 			lsMinimap_Initialize()
 		end
 
-		lsBuffFrame_Initialize()
+		-- Player buffs/debuffs/tempenchants
+		if ns.C.auras.enabled then
+			lsBuffFrame_Initialize()
+		end
 
 		-- Infobars
 		if ns.C.infobars.enabled then
