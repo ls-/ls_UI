@@ -179,7 +179,7 @@ local DEFAULT_CONFIG = {
 		},
 	},
 	auras = {
-	enabled = true,
+		enabled = true,
 		buff = {
 			point = {"TOPRIGHT", -4, -42},
 		},
