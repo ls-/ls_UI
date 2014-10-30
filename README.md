@@ -68,12 +68,12 @@ features, as a replacement for **BIG** addons_. I want my interface to
 be as lightweight as possible.
 
 ##Testing
-If you wanna help testing new features, you can download available
-beta version of my UI via _CurseClient_ by switching to beta release
+If you wanna help testing new features, you can download available, if
+any, beta version of my UI via _CurseClient_ by switching to beta release
 channel.
 
 Bear in mind that oUF LS [GitHub](https://github.com/ls-/oUF_LS) and Beta
-versions of may and will be _unstable_.
+versions may and will be _unstable_.
 
 ##Credits
 Credits go to zork, Phanx, haste, p3lim and blizzard’s artist, who
