@@ -9,27 +9,27 @@ buttons, action bars, minimap, etc and provides some extra features.
 - [Curse](http://www.curse.com/addons/wow/ouf-ls)
 
 ##Key Feature
-Player frame is split into **three** parts: 
-- Left - class resources, i.e. holy power, shadow orbs, etc
-- Centre - player health 
-- Right - player power, i.e. mana, rage, etc
+Player frame is split into **three** parts:
+- Left - class resources, i.e. holy power, shadow orbs, etc;
+- Centre - player health;
+- Right - player power, i.e. mana, rage, etc.
 
 ##Supported Frames
-Player, Pet, Target, Target of Target, Focus, Target of Focus, 
-Party (w/o pets and targets) and Bosses.
+Player, Pet, Target, Target of Target, Focus, Target of Focus, Party
+(w/o pets and targets) and Bosses.
 No _current_ support for arena frames.
 No support for raid frames will be _**ever**_ provided.
 
 ##Supported Resources And Core Abilities
-- Death Knight – Runes;
+- Death Knight - Runes;
 - Warlock - Demonic Fury, Burning Embers, Soul Shards;
 - Priest - Shadow Orbs;
-- Monk – Chi;
+- Monk - Chi;
 - Paladin - Holy Power;
 - Shaman - Totems;
 - Druid (Owl) - Lunar/Solar Energy;
-- Rogue/Druid (Cat) – Combo Points.
- 
+- Rogue/Druid (Cat) - Combo Points.
+
 ##Additional Features
 - Default UI elements, such as **ActionBars**, **MicroMenu**,
 **Minimap** and **Buttons**, are all customized;
@@ -45,14 +45,14 @@ No support for raid frames will be _**ever**_ provided.
   slash command.
 
 ##Embedded Addons/Plugins
-- [oUF](https://github.com/haste/oUF);
-- [oUF_Experience](https://github.com/p3lim-wow/oUF_Experience);
-- [oUF_Reputation](https://github.com/p3lim-wow/oUF_Reputation);
-- [oUF_FloatingCombatFeedback](https://github.com/ls-/oUF_FloatingCombatFeedback);
+- [oUF](http://www.wowinterface.com/downloads/info9994-oUF.html);
+- [oUF_Experience](http://www.wowinterface.com/downloads/info10647-oUFExperience.html);
+- [oUF_Reputation](http://www.wowinterface.com/downloads/info12017-oUFReputation.html);
+- [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html);
 - [oUF_DebuffHighlight](http://www.wowinterface.com/downloads/info21715-oUFDebuffHighlightRedux.html);
-- [oUF_Smooth](http://www.wowinterface.com/downloads/info11503-oUFSmoothUpdate.html) - modified;
-- oUF_BurningEmbers - custom, NTBR;
-- oUF_DemonicFury - custom, NTBR.
+- [oUF_Smooth](http://www.wowinterface.com/downloads/info11503-oUFSmoothUpdate.html) - _modified_;
+- oUF_BurningEmbers - _custom, NTBR_;
+- oUF_DemonicFury - _custom, NTBR_.
 
 ##Feedback And Feature Requests
 If you found a bug or want to share an idea on how to improve my UI,
@@ -63,17 +63,17 @@ or [Curse](http://www.curse.com/addons/wow/ouf-ls#comments).
 Feel free to write feedback on how to improve some class-specific
 features, because I only play as PvE mage.
 
-However, keep in mind that _I'm not going to implement any 
-features, as a replacement for **BIG** addons_. I want my interface to
-be as lightweight as possible.
+However, keep in mind that _I'm not going to implement any features,
+as a replacement for **BIG** addons_. I want my interface to be as
+lightweight as possible.
 
 ##Testing
 If you wanna help testing new features, you can download available, if
-any, beta version of my UI via _CurseClient_ by switching to beta release
-channel.
+any, beta version of my UI via _CurseClient_ by switching to beta
+release channel.
 
-Bear in mind that oUF LS [GitHub](https://github.com/ls-/oUF_LS) and Beta
-versions may and will be _unstable_.
+Bear in mind that oUF LS [GitHub](https://github.com/ls-/oUF_LS) and
+Beta versions may and will be _unstable_.
 
 ##Credits
 Credits go to zork, Phanx, haste, p3lim and blizzard’s artist, who
