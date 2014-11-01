@@ -255,6 +255,9 @@ local function lsConfigLoader_OnEvent(...)
 			lsMicroMenu_Initialize()
 		end
 
+		-- NamePlates
+		lsNamePlates_Initialize()
+
 		-- AuraTracker
 		lsAuraTracker_Initialize()
 

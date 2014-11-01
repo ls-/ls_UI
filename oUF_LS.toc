@@ -34,3 +34,4 @@ frames\buffs.lua
 frames\actionbars.lua
 frames\auratracker.lua
 frames\micromenu.lua
+frames\nameplates.lua
