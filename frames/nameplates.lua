@@ -38,7 +38,7 @@ local function lsNamePlate_OnShow(self)
 
 	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", self.overlay:GetWidth()))
 	if sw < ow then
-		self.overlay:SetScale(scale * 0.4)
+		self.overlay:SetScale(scale * 0.7)
 	end
 
 	healthbar:SetSize(120, 12)
