@@ -241,7 +241,7 @@
 				self:SetAlpha(0.5)
 			</OnDisable>
 			<OnEvent>
-				lsMicroButton_OnEvent(self, event)
+				self:lsMicroButton_OnEvent(event)
 			</OnEvent>
 			<OnLeave>
 				GameTooltip:Hide()
@@ -598,7 +598,6 @@
 						self.text:SetText(lsAURATRACKER)
 						self:RegisterForDrag("LeftButton")
 						self:RegisterForClicks("RightButtonUp")
-						UIDropDownMenu_Initialize(self.menu, lsAuraTrackerHeaderDropDown_Initialize, "MENU")
 					</OnLoad>
 					<OnEnter>
 						self.text:SetAlpha(1)
@@ -607,13 +606,13 @@
 						self.text:SetAlpha(0.2)
 					</OnLeave>
 					<OnDragStart>
-						AuraTrackerHeader_OnDragStart(self)
+						self:AuraTrackerHeader_OnDragStart()
 					</OnDragStart>
 					<OnDragStop>
-						AuraTrackerHeader_OnDragStop(self)
+						self:AuraTrackerHeader_OnDragStop()
 					</OnDragStop>
 					<OnClick>
-						AuraTrackerHeader_OnClick(self, button)
+						self:AuraTrackerHeader_OnClick(button)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -670,11 +669,9 @@
 					self.button7,
 					self.button8
 				}
-				lsAuraTracker_CreateSlashCommands(self)
-				self:RegisterEvent("PLAYER_LOGIN")
 			</OnLoad>
 			<OnEvent>
-				lsAuraTracker_OnEvent(self, event)
+				self:lsAuraTracker_OnEvent(event)
 			</OnEvent>
 		</Scripts>
 	</Frame>

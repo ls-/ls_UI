@@ -106,7 +106,7 @@ local DEFAULT_CONFIG = {
 	},
 	nameplates = {
 		enabled = true,
-		showText = true,
+		showText = false,
 	},
 	bars = {
 		enabled = true,
@@ -240,38 +240,38 @@ local function lsConfigLoader_OnEvent(...)
 		-- Minimap
 		if ns.C.minimap.enabled then
 			LoadAddOn("Blizzard_TimeManager")
-			lsMinimap_Initialize()
+			ns.lsMinimap_Initialize()
 		end
 
 		-- Player buffs/debuffs/tempenchants
 		if ns.C.auras.enabled then
-			lsBuffFrame_Initialize()
+			ns.lsBuffFrame_Initialize()
 		end
 
 		-- Infobars
 		if ns.C.infobars.enabled then
-			lsInfobars_Initialize()
+			ns.lsInfobars_Initialize()
 		end
 
 		-- Actionbars & MicroMenu
 		if ns.C.bars.enabled then
-			lsActionBars_Initialize(enableActionBarManager)
-			lsMicroMenu_Initialize()
+			ns.lsActionBars_Initialize(enableActionBarManager)
+			ns.lsMicroMenu_Initialize()
 		end
 
 		-- NamePlates
 		if ns.C.nameplates.enabled then
-			lsNamePlates_Initialize()
+			ns.lsNamePlates_Initialize()
 		end
 
 		-- AuraTracker
-		lsAuraTracker_Initialize()
+		ns.lsAuraTracker_Initialize()
 
 		-- ObjectiveTracker
-		lsOTDragHeader_Initialize()
+		ns.lsOTDragHeader_Initialize()
 
 		if ns.C.units.enabled then
-			oUF:Factory(lsFactory)
+			oUF:Factory(ns.lsFactory)
 		end
 	elseif event == "PLAYER_LOGOUT" then
 		local function cleanDB(db, defaults)

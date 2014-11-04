@@ -9,7 +9,7 @@ end
 
 local function lsUpdateBuffAnchors()
 	local numBuffs, slack = 0, 0
-	local button, previous, above
+	local button, previous, above, index
 
 	if IsInGroup() and GetCVarBool("consolidateBuffs") then
 		slack = 1
@@ -102,7 +102,7 @@ local function lsSetAuraButtonStyle(btn, index, atype)
 	local bDuration = _G[name.."Duration"]
 
 	if bIcon then
-		lsTweakIcon(bIcon)
+		ns.lsTweakIcon(bIcon)
 
 		if atype == "CONSOLIDATED" then
 			bIcon:SetTexCoord(18 / 128, 46 / 128, 18 / 64, 46 / 64)
@@ -122,7 +122,7 @@ local function lsSetAuraButtonStyle(btn, index, atype)
 		hooksecurefunc(bDuration, "SetFormattedText", lsSetDurationText)
 	end
 
-	bBorder = lsCreateButtonBorder(button, bBorder)
+	bBorder = ns.lsCreateButtonBorder(button, bBorder)
 	bBorder:SetDrawLayer("BACKGROUND", 1)
 
 	if atype == "TEMPENCHANT" then
@@ -132,7 +132,7 @@ local function lsSetAuraButtonStyle(btn, index, atype)
 	button.styled = true
 end
 
-function lsBuffFrame_Initialize()
+function ns.lsBuffFrame_Initialize()
 	local lsBuffHeader = CreateFrame("Frame", "lsBuffHeader", UIParent)
 	lsBuffHeader:SetSize(ns.C.auras.aura_size + ns.C.auras.aura_gap,
 		ns.C.auras.aura_size + ns.C.auras.aura_gap)

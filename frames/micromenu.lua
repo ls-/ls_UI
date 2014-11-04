@@ -5,7 +5,6 @@ ns.mbuttons = {}
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
 		point = {"BOTTOM", -340, 8},
-		-- point = {"CENTER", 8, -52},
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
@@ -30,7 +29,6 @@ local MICRO_BUTTON_LAYOUT = {
 	},
 	["LFDMicroButton"] = {
 		point = {"BOTTOM", 220, 8},
-		-- point = {"LEFT", "lsGuildMicroButton", "RIGHT", 6, 0},
 		icon = "lfg",
 	},
 	["CompanionsMicroButton"] = {
@@ -46,7 +44,7 @@ local MICRO_BUTTON_LAYOUT = {
 		icon = "store",
 	},
 	["MainMenuMicroButton"] = {
-		point = {"LEFT", "lsEJMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "lsStoreMicroButton", "RIGHT", 6, 0},
 		icon = "mainmenu",
 	},
 	["HelpMicroButton"] = {
@@ -145,16 +143,6 @@ local function UpdateMicroButtonState()
 		lsEJMicroButton:SetButtonState("NORMAL")
 	end
 
-	if C_StorePublic.IsEnabled() then
-		lsMainMenuMicroButton:SetPoint("LEFT", lsStoreMicroButton, "RIGHT", 6, 0);
-		lsHelpMicroButton:Hide()
-		lsStoreMicroButton:Show()
-	else
-		lsMainMenuMicroButton:SetPoint("LEFT", lsEJMicroButton, "RIGHT", 6, 0);
-		lsHelpMicroButton:Show()
-		lsStoreMicroButton:Hide()
-	end
-
 	if IsTrialAccount() then
 		lsStoreMicroButton.disabledTooltip = ERR_GUILD_TRIAL_ACCOUNT
 		lsStoreMicroButton:Disable()
@@ -185,7 +173,7 @@ local function UpdateMicroButtonState()
 	end
 end
 
-function lsMicroButton_OnEvent(self, event)
+local function lsMicroButton_OnEvent(self, event)
 	local name = self:GetName()
 	if event == "UPDATE_BINDINGS" or event == "CUSTOM_FORCE_UPDATE" then
 		if name == "lsCharacterMicroButton" then
@@ -267,20 +255,21 @@ local function lsMainMenuMicroButton_OnClick(self)
 		MainMenuMicroButton_SetNormal()
 	end
 
-	lsMicroButton_OnEvent(self)
+	UpdateMicroButtonState()
 end
 
-function lsMicroMenu_Initialize()
-	for mb, mbdata in pairs(MICRO_BUTTON_LAYOUT) do
+function ns.lsMicroMenu_Initialize()
+	for mb, mbdata in next, MICRO_BUTTON_LAYOUT do
 		local mbutton = CreateFrame("Button", "ls"..mb, UIParent, "lsMicroButtonTemplate")
 		mbutton:SetFrameStrata("LOW")
 		mbutton:SetFrameLevel(1)
 
 		mbutton.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\"..mbdata.icon)
 
+		mbutton.lsMicroButton_OnEvent = lsMicroButton_OnEvent
+
 		ns.mbuttons[mb] = mbutton
 	end
-
 
 	lsCharacterMicroButton:SetScript("OnClick", function(...) ToggleCharacter("PaperDollFrame") end)
 
@@ -315,12 +304,12 @@ function lsMicroMenu_Initialize()
 	TalentMicroButtonAlert:SetPoint("BOTTOM", lsTalentMicroButton, "TOP", 0, 12)
 	CompanionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
 
-	for mb, mbutton in pairs(ns.mbuttons) do
+	for mb, mbutton in next, ns.mbuttons do
 		mbutton:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
-		lsMicroButton_OnEvent(mbutton, "CUSTOM_FORCE_UPDATE")
+		mbutton:lsMicroButton_OnEvent("CUSTOM_FORCE_UPDATE")
 	end
 
-	for _, f in pairs(MICRO_BUTTONS) do
+	for _, f in next, MICRO_BUTTONS do
 		_G[f]:UnregisterAllEvents()
 		_G[f]:SetParent(ns.hiddenParentFrame)
 	end

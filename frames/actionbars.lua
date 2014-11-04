@@ -206,22 +206,22 @@ local function lsSetButtonStyle(button, petBattle)
 	-- BAG
 	local bbIconBorder = button.IconBorder
 
-	lsTweakIcon(bIcon)
+	ns.lsTweakIcon(bIcon)
 
 	if bFlash then
 		lsSetFlashTexture(bFlash)
 	end
 
 	if bFOBorder then
-		lsAlwaysHide(bFOBorder)
+		ns.lsAlwaysHide(bFOBorder)
 	end
 
 	if bFOBorderShadow then
-		lsAlwaysHide(bFOBorderShadow)
+		ns.lsAlwaysHide(bFOBorderShadow)
 	end
 
 	if bHotKey then
-		if name and gsub(name, "%d", "") == "PetActionButton" then lsAlwaysHide(bHotKey) end
+		if name and gsub(name, "%d", "") == "PetActionButton" then ns.lsAlwaysHide(bHotKey) end
 
 		bHotKey:SetFont(ns.M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
@@ -232,7 +232,7 @@ local function lsSetButtonStyle(button, petBattle)
 		if name == "MainMenuBarBackpackButton" or name == "CharacterBag0Slot"
 			or name == "CharacterBag1Slot" or name == " CharacterBag2Slot"
 			or name == "CharacterBag3Slot" then
-			lsAlwaysHide(bCount)
+			ns.lsAlwaysHide(bCount)
 		end
 
 		bCount:SetFont(ns.M.font, 10, "THINOUTLINE")
@@ -256,7 +256,7 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bCD then
-		lsTweakCooldown(bCD)
+		ns.lsTweakCooldown(bCD)
 	end
 
 	if bNormalTexture then
@@ -264,25 +264,25 @@ local function lsSetButtonStyle(button, petBattle)
 
 		bNormalTexture:SetTexture(nil)
 
-		button.lsBorder = lsCreateButtonBorder(button)
+		button.lsBorder = ns.lsCreateButtonBorder(button)
 
 		if not petBattle then hooksecurefunc(bNormalTexture, 'SetVertexColor', lsSetVertexColor) end
 	end
 
 	if bPushedTexture then
-		lsSetPushedTexture(bPushedTexture)
+		ns.lsSetPushedTexture(bPushedTexture)
 	end
 
 	if bHighlightTexture then
-		lsSetHighlightTexture(bHighlightTexture)
+		ns.lsSetHighlightTexture(bHighlightTexture)
 	end
 
 	if bCheckedTexture then
-		lsSetCheckedTexture(bCheckedTexture)
+		ns.lsSetCheckedTexture(bCheckedTexture)
 	end
 
 	if bFloatingBG then
-		lsAlwaysHide(bFloatingBG)
+		ns.lsAlwaysHide(bFloatingBG)
 	end
 
 	if pShine then
@@ -298,7 +298,7 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if name == "ExtraActionButton1" then
-		lsAlwaysHide(button.style)
+		ns.lsAlwaysHide(button.style)
 	end
 
 	if pbCDShadow then
@@ -334,7 +334,7 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bbIconBorder then
-		lsAlwaysHide(bbIconBorder)
+		ns.lsAlwaysHide(bbIconBorder)
 		
 		hooksecurefunc(bbIconBorder, 'SetVertexColor', lsSetVertexColor)
 	end
@@ -437,14 +437,14 @@ local function lsCreateLeaveVehicleButton(bar)
 	button.icon:SetPoint("TOPLEFT", 1, -1)
 	button.icon:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	button.border = lsCreateButtonBorder(button)
+	button.border = ns.lsCreateButtonBorder(button)
 	button.border:SetVertexColor(1, 0.1, 0.15)
 
 	button:SetHighlightTexture(1, 1, 1)
-	lsSetHighlightTexture(button:GetHighlightTexture())
+	ns.lsSetHighlightTexture(button:GetHighlightTexture())
 
 	button:SetPushedTexture(1, 1, 1)
-	lsSetPushedTexture(button:GetPushedTexture())
+	ns.lsSetPushedTexture(button:GetPushedTexture())
 end
 
 local function SetPetBattleButtonPosition()
@@ -514,7 +514,7 @@ local function lsActionBarManager_Update(bottomLeftBar, bottomRightBar)
 	end
 end
 
-function lsActionBars_Initialize(enableManager)
+function ns.lsActionBars_Initialize(enableManager)
 	local f = CreateFrame("Frame", "lsBottomLine", UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)

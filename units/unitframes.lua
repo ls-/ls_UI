@@ -912,7 +912,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 		if unit ~= "player" then
 			self.ReadyCheck:SetPoint("CENTER")
-			lsAlwaysShow(self.ReadyCheck)
+			
 			if unit == "party" then
 				self.Leader:SetPoint("TOPRIGHT", 18, 6)
 				self.PhaseIcon:SetPoint("RIGHT", 24, 0)
@@ -1004,7 +1004,7 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 end
 
-function lsFactory(oUF)
+function ns.lsFactory(oUF)
 	oUF:RegisterStyle("LS", CreateUnitFrameStyle)
 	oUF:SetActiveStyle("LS")
 

@@ -171,7 +171,7 @@ local function lsFPSInfoBar_OnUpdate(self, elapsed)
 end
 
 local function lsLatencyInfoBar_OnEnter(self)
-	_, _, latencyHome, latencyWorld = GetNetStats()
+	local _, _, latencyHome, latencyWorld = GetNetStats()
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(lsLATENCY..":")
 	GameTooltip:AddLine(format(lsHOME..": %d "..MILLISECONDS_ABBR, latencyHome), 1, 1, 1)
@@ -234,6 +234,7 @@ local function lsBagInfoBar_OnClick(self, button)
 	end
 end
 
+local slots, bagType
 local function lsBagInfoBar_OnEvent(self)
 	local free, total, used = 0, 0, 0
 	for i = 0, NUM_BAG_SLOTS do
@@ -327,7 +328,7 @@ local function lsMailInfoBar_OnEvent(self)
 	end
 end
 
-function lsInfobars_Initialize()
+function ns.lsInfobars_Initialize()
 	for ib, ibdata in next, INFOBAR_INFO do
 		local ibar = CreateFrame(ibdata.infobar_type, "ls"..ib.."InfoBar", UIParent, "lsInfoBarButtonTemplate-"..ibdata.length)
 		ibar:SetFrameStrata("LOW")

@@ -116,7 +116,7 @@ local function SetElementsStyle()
 	CalendarBorder:SetPoint("CENTER", 0, 0)
 end
 
-function lsMinimap_Initialize()
+function ns.lsMinimap_Initialize()
 	Minimap:SetParent("UIParent")
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(ns.C.minimap.point))

@@ -253,7 +253,7 @@ local function lsSetNamePlateStyle(self)
 	lsNamePlate_OnShow(self)
 end
 
-function lsNamePlates_Initialize()
+function ns.lsNamePlates_Initialize()
 	local interval = 0
 	local prevNumChildren, curNumChildren = 0
 

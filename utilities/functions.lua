@@ -19,13 +19,13 @@ end
 -- UTILS --
 -----------
 
-function lsAlwaysShow(self)
+function ns.lsAlwaysShow(self)
 	if not self then return end
 	self:Show()
 	self.Hide = self.Show
 end
 
-function lsAlwaysHide(self)
+function ns.lsAlwaysHide(self)
 	if not self then return end
 	self:Hide()
 	self.Show = self.Hide
@@ -125,7 +125,7 @@ function ns.UnitFrame_OnLeave(self)
 	end
 end
 
-function lsCreateButtonBorder(button, curTexture)
+function ns.lsCreateButtonBorder(button, curTexture)
 	local texture = curTexture or button:CreateTexture()
 	texture:SetDrawLayer("BORDER", 2)
 	texture:SetTexture(ns.M.textures.button.normal)
@@ -136,36 +136,35 @@ function lsCreateButtonBorder(button, curTexture)
 	return texture
 end
 
-function lsTweakIcon(icon)
+function ns.lsTweakIcon(icon)
 	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 	icon:SetDrawLayer("BACKGROUND", 0)
 	icon:SetAllPoints()
 end
 
-function lsTweakCooldown(cooldown)
+function ns.lsTweakCooldown(cooldown)
 	cooldown:ClearAllPoints()
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 end
 
-function lsSetHighlightTexture(texture)
+function ns.lsSetHighlightTexture(texture)
 	texture:SetTexture(ns.M.textures.button.highlight)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
 
-function lsSetPushedTexture(texture)
+function ns.lsSetPushedTexture(texture)
 	texture:SetTexture(ns.M.textures.button.pushed)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
 
-function lsSetCheckedTexture(texture)
+function ns.lsSetCheckedTexture(texture)
 	texture:SetTexture(ns.M.textures.button.checked)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
-
 
 function lsCreateAlphaAnimation(self, change, duration, loopType)
 	self.animation = self:CreateAnimationGroup()
@@ -244,14 +243,14 @@ end
 function ns.CreateAuraIcon(self, button)
 	button.cd:SetReverse()
 	button.cd:SetHideCountdownNumbers(true)
-	lsTweakCooldown(button.cd)
+	ns.lsTweakCooldown(button.cd)
 
-	lsTweakIcon(button.icon)
+	ns.lsTweakIcon(button.icon)
 
-	lsCreateButtonBorder(nil, button.overlay)
-	lsAlwaysShow(button.overlay)
+	ns.lsCreateButtonBorder(nil, button.overlay)
+	ns.lsAlwaysShow(button.overlay)
 
-	lsCreateButtonBorder(nil, button.stealable)
+	ns.lsCreateButtonBorder(nil, button.stealable)
 	button.stealable:SetVertexColor(1.0, 0.82, 0.0)
 
 	button.fg = CreateFrame("Frame", nil, button)
@@ -403,7 +402,7 @@ function ns.UnitFrameReskin(frame, texType)
 end
 
 function ns.UpdatePower(self, unit, cur, max)
-	realUnit = self.__owner:GetAttribute("oUF-guessUnit") or unit
+	local realUnit = self.__owner:GetAttribute("oUF-guessUnit") or unit
 	if realUnit ~= "player" and realUnit ~= "vehicle" and realUnit ~= "pet" then
 		if self.prevMax ~= max then
 			self.prevMax = max
@@ -620,7 +619,7 @@ end
 -- OBJECTIVE TRACKER --
 -----------------------
 
-function lsOTDragHeader_Initialize()
+function ns.lsOTDragHeader_Initialize()
 	local OT_LOCKED = ns.C.objectivetracker.locked
 
 	local OTDragHeader = CreateFrame("BUTTON", "lsObjectiveTrackerDragHeader", ObjectiveTrackerFrame)
