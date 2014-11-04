@@ -4,7 +4,7 @@ ns.mbuttons = {}
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"BOTTOM", -340, 8},
+		point = {"BOTTOM", -318, 8},
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
@@ -24,11 +24,11 @@ local MICRO_BUTTON_LAYOUT = {
 		icon = "quest",
 	},
 	["GuildMicroButton"] = {
-		point = {"LEFT", "lsQuestLogMicroButton", "RIGHT", 6, 0},
+		point = {"BOTTOM", 220, 8},
 		icon = "guild",
 	},
 	["LFDMicroButton"] = {
-		point = {"BOTTOM", 220, 8},
+		point = {"LEFT", "lsGuildMicroButton", "RIGHT", 6, 0},
 		icon = "lfg",
 	},
 	["CompanionsMicroButton"] = {
@@ -42,14 +42,6 @@ local MICRO_BUTTON_LAYOUT = {
 	["StoreMicroButton"] = {
 		point = {"LEFT", "lsEJMicroButton", "RIGHT", 6, 0},
 		icon = "store",
-	},
-	["MainMenuMicroButton"] = {
-		point = {"LEFT", "lsStoreMicroButton", "RIGHT", 6, 0},
-		icon = "mainmenu",
-	},
-	["HelpMicroButton"] = {
-		point = {"LEFT", "lsMainMenuMicroButton", "RIGHT", 6, 0},
-		icon = "help",
 	},
 }
 
@@ -156,21 +148,6 @@ local function UpdateMicroButtonState()
 	else
 		lsStoreMicroButton:SetButtonState("NORMAL")
 	end
-
-	if (GameMenuFrame and GameMenuFrame:IsShown())
-		or InterfaceOptionsFrame:IsShown()
-		or (KeyBindingFrame and KeyBindingFrame:IsShown())
-		or (MacroFrame and MacroFrame:IsShown()) then
-		lsMainMenuMicroButton:SetButtonState("PUSHED", true)
-	else
-		lsMainMenuMicroButton:SetButtonState("NORMAL")
-	end
-
-	if HelpFrame and HelpFrame:IsShown() then
-		lsHelpMicroButton:SetButtonState("PUSHED", true)
-	else
-		lsHelpMicroButton:SetButtonState("NORMAL")
-	end
 end
 
 local function lsMicroButton_OnEvent(self, event)
@@ -202,10 +179,6 @@ local function lsMicroButton_OnEvent(self, event)
 			self.tooltipText = MicroButtonTooltipText(ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
 		elseif name == "lsStoreMicroButton" then
 			self.tooltipText = BLIZZARD_STORE
-		elseif name == "lsMainMenuMicroButton" then
-			self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
-		elseif name == "lsHelpMicroButton" then
-			self.tooltipText = HELP_BUTTON
 		end
 	end
 	UpdateMicroButtonState()
@@ -234,28 +207,6 @@ local function lsMicroButton_Initialize(mbutton, events, level, isBlizzConDriven
 			mbutton.disabledTooltip = ERR_RESTRICTED_ACCOUNT
 		end
 	end
-end
-
-local function lsMainMenuMicroButton_OnClick(self)
-	if not GameMenuFrame:IsShown() then
-		if VideoOptionsFrame:IsShown() then
-			VideoOptionsFrameCancel:Click()
-		elseif AudioOptionsFrame:IsShown() then
-			AudioOptionsFrameCancel:Click()
-		elseif InterfaceOptionsFrame:IsShown() then
-			InterfaceOptionsFrameCancel:Click()
-		end
-		CloseMenus()
-		CloseAllWindows()
-		PlaySound("igMainMenuOpen")
-		ShowUIPanel(GameMenuFrame)
-	else
-		PlaySound("igMainMenuQuit")
-		HideUIPanel(GameMenuFrame)
-		MainMenuMicroButton_SetNormal()
-	end
-
-	UpdateMicroButtonState()
 end
 
 function ns.lsMicroMenu_Initialize()
@@ -296,10 +247,6 @@ function ns.lsMicroMenu_Initialize()
 
 	lsMicroButton_Initialize(lsStoreMicroButton, {"STORE_STATUS_CHANGED"})
 	lsStoreMicroButton:SetScript("OnClick", function(...) ToggleStoreUI() end)
-
-	lsMainMenuMicroButton:SetScript("OnClick", lsMainMenuMicroButton_OnClick)
-
-	lsHelpMicroButton:SetScript("OnClick", function(...) ToggleHelpFrame() end)
 
 	TalentMicroButtonAlert:SetPoint("BOTTOM", lsTalentMicroButton, "TOP", 0, 12)
 	CompanionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
