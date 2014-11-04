@@ -104,8 +104,6 @@ local function lsNamePlateCastBar_OnValueChanged(self, value)
 end
 
 local function lsSetNamePlateStyle(self)
-	if self.styled then return end
-
 	self.barFrame, self.nameFrame = self:GetChildren()
 	self.health, self.cast = self.barFrame:GetChildren()
 
@@ -253,8 +251,6 @@ local function lsSetNamePlateStyle(self)
 	self:HookScript("OnHide", lsNamePlate_OnHide)
 
 	lsNamePlate_OnShow(self)
-
-	self.styled = true
 end
 
 function lsNamePlates_Initialize()
@@ -269,11 +265,13 @@ function lsNamePlates_Initialize()
 
 			if curNumChildren ~= prevNumChildren  then
 				for _, f in next, {self:GetChildren()} do
-					local name = f:GetName()
-					if not f.isNotNamePlate and (name and match(name, "^NamePlate%d")) then
-						lsSetNamePlateStyle(f)
-					else
-						f.isNotNamePlate = true
+					if not ns.nameplates[f] then
+						local name = f:GetName()
+						if not f.isNotNamePlate and (name and match(name, "^NamePlate%d")) then
+							lsSetNamePlateStyle(f)
+						else
+							f.isNotNamePlate = true
+						end
 					end
 				end
 			end
