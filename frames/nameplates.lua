@@ -46,7 +46,7 @@ local function lsNamePlate_OnShow(self)
 	healthbar:SetPoint("TOP", self.overlay, "TOP", 0, 0)
 
 	healthbar.interval = nil
-	
+
 	if healthbar.text then
 		healthbar.text:SetText(ns.NumFormat(healthbar:GetValue()))
 	end
@@ -99,7 +99,7 @@ local function lsNamePlateCastBar_OnValueChanged(self, value)
 	else
 		self.bar.icon:SetDesaturated(false)
 		self.bar:SetStatusBarColor(0.15, 0.15, 0.15)
-		self.bar.bg:SetTexture(self:GetStatusBarColor())
+		self.bar.bg:SetTexture(0.96, 0.7, 0)
 	end
 end
 
@@ -110,7 +110,7 @@ local function lsSetNamePlateStyle(self)
 	self.health, self.cast = self.barFrame:GetChildren()
 
 	self.name = self.nameFrame:GetRegions()
-	self.threat, self.border, _, self.level, self.boss, self.raid, self.elite = self.barFrame:GetRegions()
+	self.threat, self.border, self.highlight, self.level, self.boss, self.raid, self.elite = self.barFrame:GetRegions()
 	_, self.castborder, self.cast.shield, self.cast.icon, self.castname, self.castnameShadow = self.cast:GetRegions()
 
 	self.level:SetParent(ns.hiddenParentFrame)
@@ -135,6 +135,7 @@ local function lsSetNamePlateStyle(self)
 	self.health:SetStatusBarTexture(ns.M.textures.statusbar)
 
 	local healthBar = self.health
+
 	healthBar.bg = healthBar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	healthBar.bg:SetAllPoints(healthBar)
 	healthBar.bg:SetTexture(0.15, 0.15, 0.15)
@@ -144,6 +145,14 @@ local function lsSetNamePlateStyle(self)
 	healthBar.fg:SetTexCoord(319 / 512, 449 / 512, 5 / 64, 27 / 64)
 	healthBar.fg:SetSize(130, 22)
 	healthBar.fg:SetPoint("CENTER", 0, 0)
+
+	healthBar.hl = healthBar:CreateTexture(nil, "OVERLAY", nil, 1)
+	healthBar.hl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
+	healthBar.hl:SetTexCoord(321 / 512, 447 / 512, 39 / 64, 57 / 64)
+	healthBar.hl:SetSize(126, 18)
+	healthBar.hl:SetPoint("CENTER", 0, 0)
+	healthBar.hl:SetBlendMode("ADD")
+	healthBar.hl:Hide()
 
 	if ns.C.nameplates.showText then
 		healthBar.text = healthBar:CreateFontString(nil, "OVERLAY", "lsUnitFrame10Text")
@@ -157,16 +166,6 @@ local function lsSetNamePlateStyle(self)
 			end
 		end)
 	end
-
-	healthBar:SetScript("OnUpdate", function(self, elapsed)
-		self.elapsed = (self.elapsed or 0) + elapsed
-
-		if self.elapsed > (self.interval or 0.1) then
-			self:SetStatusBarColor(lsNamePlate_GetColor(self:GetStatusBarColor()))
-
-			self.interval = 1
-		end 
-	end)
 
 	-- Castbar
 	self.cast:SetStatusBarTexture(nil)
@@ -223,10 +222,11 @@ local function lsSetNamePlateStyle(self)
 
 	-- Name
 	self.name:SetParent(overlay)
-	self.name:SetFont(ns.M.font, 12)
-	self.name:SetPoint("BOTTOM", overlay, "TOP", 0, 5)
-	self.name:SetPoint("LEFT", self.overlay, -4, 0)
-	self.name:SetPoint("RIGHT", self.overlay, 4, 0)
+	self.name:SetFont(ns.M.font, 14)
+	self.name:ClearAllPoints()
+	self.name:SetPoint("BOTTOM", overlay, "TOP", 0, 6)
+	self.name:SetPoint("LEFT", overlay, -24, 0)
+	self.name:SetPoint("RIGHT", overlay, 24, 0)
 
 	--RaidIcon
 	self.raid:SetParent(overlay)
@@ -269,13 +269,11 @@ function lsNamePlates_Initialize()
 
 			if curNumChildren ~= prevNumChildren  then
 				for _, f in next, {self:GetChildren()} do
-					if not ns.nameplates[f] then
-						local name = f:GetName()
-						if not f.isNotNamePlate and (name and match(name, "^NamePlate%d")) then
-							lsSetNamePlateStyle(f)
-						else
-							f.isNotNamePlate = true
-						end
+					local name = f:GetName()
+					if not f.isNotNamePlate and (name and match(name, "^NamePlate%d")) then
+						lsSetNamePlateStyle(f)
+					else
+						f.isNotNamePlate = true
 					end
 				end
 			end
@@ -283,9 +281,17 @@ function lsNamePlates_Initialize()
 			interval = 0
 		end
 
-		for plate, overlay in pairs(ns.nameplates) do
+		for plate, overlay in next, ns.nameplates do
 			if plate:IsShown() then
 				overlay:SetAlpha(plate:GetAlpha())
+
+				plate.health:SetStatusBarColor(lsNamePlate_GetColor(plate.health:GetStatusBarColor()))
+
+				if plate.highlight:IsShown() then
+					plate.health.hl:Show()
+				else
+					plate.health.hl:Hide()
+				end
 			end
 		end
 	end)
