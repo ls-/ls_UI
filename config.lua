@@ -104,6 +104,10 @@ local DEFAULT_CONFIG = {
 			point = {"RIGHT", "lsClockInfoBar", "LEFT", -4, 0},
 		},
 	},
+	nameplates = {
+		enabled = true,
+		showText = true,
+	},
 	bars = {
 		enabled = true,
 		bar1 = { -- MainMenuBar
@@ -256,7 +260,9 @@ local function lsConfigLoader_OnEvent(...)
 		end
 
 		-- NamePlates
-		lsNamePlates_Initialize()
+		if ns.C.nameplates.enabled then
+			lsNamePlates_Initialize()
+		end
 
 		-- AuraTracker
 		lsAuraTracker_Initialize()
