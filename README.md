@@ -42,7 +42,8 @@ No support for raid frames will be _**ever**_ provided.
   character _in total_. List of auras can be managed via slash
   commands ingame and is saved per character. List of AuraTracker
   commands can be accessed via either _dropdown menu_ or _/atcmd_
-  slash command.
+  slash command;
+- **NamePlates**. Nice and clean look.
 
 ##Embedded Addons/Plugins
 - [oUF](http://www.wowinterface.com/downloads/info9994-oUF.html);
