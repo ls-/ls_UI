@@ -606,13 +606,13 @@
 						self.text:SetAlpha(0.2)
 					</OnLeave>
 					<OnDragStart>
-						self:AuraTrackerHeader_OnDragStart()
+						self:OnDragStart()
 					</OnDragStart>
 					<OnDragStop>
-						self:AuraTrackerHeader_OnDragStop()
+						self:OnDragStop()
 					</OnDragStop>
 					<OnClick>
-						self:AuraTrackerHeader_OnClick(button)
+						self:OnClick(button)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -671,7 +671,7 @@
 				}
 			</OnLoad>
 			<OnEvent>
-				self:lsAuraTracker_OnEvent(event)
+				self:OnEvent(event)
 			</OnEvent>
 		</Scripts>
 	</Frame>

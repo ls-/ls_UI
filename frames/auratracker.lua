@@ -1,8 +1,49 @@
 local _, ns = ...
 
-local tremove, tinsert, twipe = table.remove, table.insert, table.wipe
+local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 local AURATRACKER_CONFIG, AURATRACKER_LOCKED
 local AuraTracker
+
+local function lsScanAuras(auras, index, filter)
+	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
+	if name and tcontains(AURATRACKER_CONFIG[filter], spellId) then
+		local aura = {}
+		aura.index = index
+		aura.icon = iconTexture
+		aura.count = count
+		aura.debuffType = debuffType
+		aura.duration = duration
+		aura.expire = expirationTime
+		aura.filter = filter
+
+		tinsert(auras, aura)
+	end
+end
+
+local function lsHandleDataCorruption(aType, overflow)
+	local auraList, size = AURATRACKER_CONFIG[aType], #AURATRACKER_CONFIG[aType]
+
+	if size > 0 then
+		for i, v in next, auraList do
+			if not GetSpellInfo(v) then
+				tremove(auraList, i)
+			end
+		end
+	end
+
+	if overflow and size > 4 then
+		for i = 1, size - 4 do
+			local ID = auraList[5]
+			if ID then
+				print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
+
+				tremove(auraList, 5)
+			end
+		end
+
+		print("|cff1ec77eAuraTracker|r: Reduced number of entries to 4 auras per list.")
+	end
+end
 
 local function lsAuraTracker_OnEvent(self, event)
 	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" or event == "CUSTOM_ENABLE" then
@@ -18,55 +59,39 @@ local function lsAuraTracker_OnEvent(self, event)
 				self:SetPoint(unpack(AURATRACKER_CONFIG.point))
 
 				AURATRACKER_LOCKED = AURATRACKER_CONFIG.locked
-				
-				if #AURATRACKER_CONFIG.buffList + #AURATRACKER_CONFIG.debuffList > 8 then
-					print("|cff1ec77eAuraTracker|r: Cleaning up lists. Too many entries.")
 
-					for i = 1, #AURATRACKER_CONFIG.buffList - 4 do
-						print("|cff1ec77eAuraTracker|r: Aura", AURATRACKER_CONFIG.buffList[5], "was removed from the buff list.")
-						
-						tremove(AURATRACKER_CONFIG.buffList, 5)
-					end
+				-- TODO_BEGIN: Remove it later
 
-					for i = 1, #AURATRACKER_CONFIG.debuffList - 4 do
-						print("|cff1ec77eAuraTracker|r: Aura", AURATRACKER_CONFIG.debuffList[5], "was removed from the debuff list.")
-						
-						tremove(AURATRACKER_CONFIG.debuffList, 5)
-					end
+				if #AURATRACKER_CONFIG.buffList > 0 then
+					AURATRACKER_CONFIG.HELPFUL = {unpack(AURATRACKER_CONFIG.buffList)}
+					wipe(AURATRACKER_CONFIG.buffList)
 				end
+
+				if #AURATRACKER_CONFIG.debuffList > 0 then
+					AURATRACKER_CONFIG.HARMFUL = {unpack(AURATRACKER_CONFIG.debuffList)}
+					wipe(AURATRACKER_CONFIG.debuffList)
+				end
+
+				-- TODO_END
+
+				local overflow = #AURATRACKER_CONFIG.HELPFUL + #AURATRACKER_CONFIG.HARMFUL > 8
+
+				lsHandleDataCorruption("HELPFUL", overflow)
+				lsHandleDataCorruption("HARMFUL", overflow)
+
+				overflow = nil
 			end
 
 			if not AURATRACKER_CONFIG.showHeader then self.header:Hide() end
 		end
 
-		self.auras = twipe(self.auras or {})
+		self.auras = {}
 		for i = 1, 32 do
-			local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitBuff("player", i)
-			if name and tContains(AURATRACKER_CONFIG.buffList, spellId) then
-				local aura = {}
-				aura.index = i
-				aura.icon = iconTexture
-				aura.count = count
-				aura.duration = duration
-				aura.expire = expirationTime
-				aura.filter = "HELPFUL"
-				self.auras[#self.auras + 1] = aura
-			end
+			lsScanAuras(self.auras, i, "HELPFUL")
 		end
 
 		for i = 1, 16 do
-			local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff("player", i)
-			if name and tContains(AURATRACKER_CONFIG.debuffList, spellId) then
-				local aura = {}
-				aura.index = i
-				aura.icon = iconTexture
-				aura.count = count
-				aura.duration = duration
-				aura.expire = expirationTime
-				aura.debuffType = debuffType
-				aura.filter = "HARMFUL"
-				self.auras[#self.auras + 1] = aura
-			end
+			lsScanAuras(self.auras, i, "HARMFUL")
 		end
 
 		for i = #self.auras + 1, 8 do
@@ -100,10 +125,9 @@ local function lsAuraTracker_OnEvent(self, event)
 			end
 			button.border:SetVertexColor(color.r, color.g, color.b)
 
-			local timeLeft
 			button:SetScript("OnUpdate", function(self, elapsed)
 				self.elapsed = (self.elapsed or 0) + elapsed
-				
+
 				if self.elapsed > 0.1 then
 					self.count:SetText(self.stacks > 0 and self.stacks or "")
 
@@ -111,7 +135,7 @@ local function lsAuraTracker_OnEvent(self, event)
 						GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
 					end
 
-					timeLeft = self.expire - GetTime()
+					local timeLeft = self.expire - GetTime()
 					if timeLeft > 0 then
 						if timeLeft <= 30 and not self.animation:IsPlaying() then
 							self.animation:Play()
@@ -143,7 +167,7 @@ local function lsAuraTracker_OnEvent(self, event)
 							self:SetAlpha(1)
 						end
 					end
-					
+
 					self.elapsed = 0
 				end
 			end)
@@ -163,14 +187,14 @@ local function lsAuraTracker_PrintCommands()
 	print("|cff00ccff/at enable/disable|r - enables or disables the module.")
 end
 
-local function AuraTrackerHeader_OnDragStart(self)
+local function lsAuraTrackerHeader_OnDragStart(self)
 	if not AURATRACKER_LOCKED then
 		local frame = self:GetParent()
 		frame:StartMoving()
 	end
 end
 
-local function AuraTrackerHeader_OnDragStop(self)
+local function lsAuraTrackerHeader_OnDragStop(self)
 	if not AURATRACKER_LOCKED then
 		local frame = self:GetParent()
 		frame:StopMovingOrSizing()
@@ -180,7 +204,7 @@ local function AuraTrackerHeader_OnDragStop(self)
 	end
 end
 
-local function AuraTrackerHeader_OnClick(self, button)
+local function lsAuraTrackerHeader_OnClick(self, button)
 	if button == "RightButton" then
 		ToggleDropDownMenu(1, nil, self.menu, "cursor", 3, -3)
 	end
@@ -203,104 +227,142 @@ local function lsAuraTrackerHeaderDropDown_Initialize(self)
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
+local function lsAuraTracker_AddToList(aType, ID)
+	if #AURATRACKER_CONFIG.HELPFUL + #AURATRACKER_CONFIG.HARMFUL == 8 then
+		print("|cff1ec77eAuraTracker|r: Can\'t add aura. List is full. Max of 8.")
+		return
+	end
+
+	if not AURATRACKER_CONFIG.enabled then
+		print("|cff1ec77eAuraTracker|r: Can\'t add aura. Module is disabled.")
+		return
+	end
+
+	local name = GetSpellInfo(ID)
+	if not name then
+		print("|cff1ec77eAuraTracker|r: Can\'t add aura, that doesn't exist.")
+		return
+	end
+
+	if tcontains(AURATRACKER_CONFIG[aType], ID) then
+		print("|cff1ec77eAuraTracker|r: Can\'t add aura. Already in the list.")
+		return
+	end
+
+	tinsert(AURATRACKER_CONFIG[aType], ID)
+
+	print("|cff1ec77eAuraTracker|r: Added "..name.." ("..ID..").")
+
+	AuraTracker:OnEvent("CUSTOM_FORCE_UPDATE")
+end
+
+local function lsAuraTracker_RemoveFromList(aType, ID)
+	for i, v in next, AURATRACKER_CONFIG[aType] do
+		if v == ID then
+			tremove(AURATRACKER_CONFIG[aType], i)
+
+			print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
+			return true
+		end
+	end
+end
+
 local function lsAuraTracker_CreateSlashCommands()
-	SLASH_ATBUFF1 = '/atbuff'
+	SLASH_ATBUFF1 = "/atbuff"
 	SlashCmdList["ATBUFF"] = function(msg)
-		if #AURATRACKER_CONFIG.buffList + #AURATRACKER_CONFIG.debuffList == 8 then print("|cff1ec77eAuraTracker|r: Can\'t add aura. List is full. Max of 8.") return end
-		if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r: Can\'t add aura. Module is disabled.") return end
-		if tContains(AURATRACKER_CONFIG.buffList, tonumber(msg)) then print("|cff1ec77eAuraTracker|r: Can\'t add aura. Already in the list.") return end
-
-		local name = GetSpellInfo(tonumber(msg))
-		if not name then print("|cff1ec77eAuraTracker|r: Can\'t add aura, that doesn't exist.") return end
-		print("|cff1ec77eAuraTracker|r: "..name.." ("..msg..") was added to the list.")
-		
-		tinsert(AURATRACKER_CONFIG.buffList, tonumber(msg))
-		
-		AuraTracker:lsAuraTracker_OnEvent("CUSTOM_FORCE_UPDATE")
+		lsAuraTracker_AddToList("HELPFUL", tonumber(msg))
 	end
 
-	SLASH_ATDEBUFF1 = '/atdebuff'
+	SLASH_ATDEBUFF1 = "/atdebuff"
 	SlashCmdList["ATDEBUFF"] = function(msg)
-		if #AURATRACKER_CONFIG.buffList + #AURATRACKER_CONFIG.debuffList == 8 then print("|cff1ec77eAuraTracker|r: Can\'t add aura. List is full. Max of 8.") return end
-		if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r: Can\'t add aura. Module is disabled.") return end
-		if tContains(AURATRACKER_CONFIG.debuffList, tonumber(msg)) then print("|cff1ec77eAuraTracker|r: Can\'t add aura. Already in the list.") return end
-
-		local name = GetSpellInfo(tonumber(msg))
-		if not name then print("|cff1ec77eAuraTracker|r: Can\'t add aura, that doesn't exist.") return end
-		print("|cff1ec77eAuraTracker|r: "..name.." ("..msg..") was added to the list.")
-		
-		tinsert(AURATRACKER_CONFIG.debuffList, tonumber(msg))
-
-		AuraTracker:lsAuraTracker_OnEvent("CUSTOM_FORCE_UPDATE")
+		lsAuraTracker_AddToList("HARMFUL", tonumber(msg))
 	end
 
-	SLASH_ATREM1 = '/atrem'
+	SLASH_ATREM1 = "/atrem"
 	SlashCmdList["ATREM"] = function(msg)
-		if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r: Can\'t remove aura. Module is disabled.") return end
-
-		for k,v in next, AURATRACKER_CONFIG.buffList do
-			if v == tonumber(msg) then
-				tremove(AURATRACKER_CONFIG.buffList, k)
-
-				local name = GetSpellInfo(v) or " "
-				print("|cff1ec77eAuraTracker|r: "..name.." ("..v..") was removed from the list of buffs.")
-			end
+		if not AURATRACKER_CONFIG.enabled then
+			print("|cff1ec77eAuraTracker|r: Can\'t remove aura. Module is disabled.")
+			return
 		end
 
-		for k,v in next, AURATRACKER_CONFIG.debuffList do
-			if v == tonumber(msg) then
-				tremove(AURATRACKER_CONFIG.debuffList, k)
-
-				local name = GetSpellInfo(v) or " "
-				print("|cff1ec77eAuraTracker|r: "..name.." ("..v..") was removed from the list of debuffs.")
-			end
+		local ID = tonumber(msg)
+		if not GetSpellInfo(ID) then
+			print("|cff1ec77eAuraTracker|r: Can\'t remove aura, that doesn't exist.")
+			return
 		end
 
-		AuraTracker:lsAuraTracker_OnEvent("CUSTOM_FORCE_UPDATE")
+		local br = lsAuraTracker_RemoveFromList("HELPFUL", ID)
+		local dr = lsAuraTracker_RemoveFromList("HARMFUL", ID)
+
+		if br or dr then
+			AuraTracker:OnEvent("CUSTOM_FORCE_UPDATE")
+		end
 	end
 
-	SLASH_ATLIST1 = '/atlist'
+	SLASH_ATLIST1 = "/atlist"
 	SlashCmdList["ATLIST"] = function(msg)
-		if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r: Can\'t print the list. Module is disabled.") return end
+		if not AURATRACKER_CONFIG.enabled then
+			print("|cff1ec77eAuraTracker|r: Can\'t print the list. Module is disabled.")
+			return
+		end
 
 		print("|cff1ec77eAuraTracker|r: List of auras:")
-		for k,v in next, AURATRACKER_CONFIG.buffList do
+
+		for _, v in next, AURATRACKER_CONFIG.HELPFUL do
 			local name = GetSpellInfo(v) or " "
 			print("|cff00ccff+|r "..name.." ("..v..")")
 		end
 
-		for k,v in next, AURATRACKER_CONFIG.debuffList do
+		for _, v in next, AURATRACKER_CONFIG.HARMFUL do
 			local name = GetSpellInfo(v) or " "
 			print("|cffd01717-|r "..name.." ("..v..")")
 		end
 	end
 
-	SLASH_ATWIPE1 = '/atwipe'
+	SLASH_ATWIPE1 = "/atwipe"
 	SlashCmdList["ATWIPE"] = function(msg)
-		if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r: Can\'t wipe the list. Module is disabled.") return end
+		if not AURATRACKER_CONFIG.enabled then
+			print("|cff1ec77eAuraTracker|r: Can\'t wipe the list. Module is disabled.")
+			return
+		end
 
-		AURATRACKER_CONFIG.buffList = {}
+		AURATRACKER_CONFIG.HELPFUL = {}
+		AURATRACKER_CONFIG.HARMFUL = {}
 
-		print("|cff1ec77eAuraTracker|r: List of auras was wiped.")
+		print("|cff1ec77eAuraTracker|r: Wiped aura list.")
 
-		AuraTracker:lsAuraTracker_OnEvent("CUSTOM_FORCE_UPDATE")
+		AuraTracker:OnEvent("CUSTOM_FORCE_UPDATE")
 	end
 
-	SLASH_AT1 = '/at'
+	SLASH_AT1 = "/at"
 	SlashCmdList["AT"] = function(msg)
 		if msg == "enable" then
-			if AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r is already enabled.") return end
-			if InCombatLockdown() then print("|cff1ec77eAuraTracker|r can\'t be enabled, while in combat.") return end
+			if AURATRACKER_CONFIG.enabled then
+				print("|cff1ec77eAuraTracker|r is already enabled.")
+				return
+			end
+
+			if InCombatLockdown() then
+				print("|cff1ec77eAuraTracker|r can\'t be enabled, while in combat.")
+				return
+			end
 
 			print("|cff1ec77eAuraTracker|r was enabled.")
 
 			AURATRACKER_CONFIG.enabled = true
 
 			AuraTracker:Show()
-			AuraTracker:lsAuraTracker_OnEvent("CUSTOM_ENABLE")
+			AuraTracker:OnEvent("CUSTOM_ENABLE")
 		elseif msg == "disable" then
-			if not AURATRACKER_CONFIG.enabled then print("|cff1ec77eAuraTracker|r is already disabled.") return end
-			if InCombatLockdown() then print("|cff1ec77eAuraTracker|r can\'t be disabled, while in combat.") return end
+			if not AURATRACKER_CONFIG.enabled then
+				print("|cff1ec77eAuraTracker|r is already disabled.")
+				return
+			end
+
+			if InCombatLockdown() then
+				print("|cff1ec77eAuraTracker|r can\'t be disabled, while in combat.")
+				return
+			end
 
 			print("|cff1ec77eAuraTracker|r was disabled.")
 
@@ -313,9 +375,12 @@ local function lsAuraTracker_CreateSlashCommands()
 		end
 	end
 
-	SLASH_ATHEADER1 = '/atheader'
+	SLASH_ATHEADER1 = "/atheader"
 	SlashCmdList["ATHEADER"] = function(msg)
-		if InCombatLockdown() then print("|cff1ec77eAuraTracker|r\'s header can\'t be toggled, while in combat.") return end
+		if InCombatLockdown() then
+			print("|cff1ec77eAuraTracker|r\'s header visibility can\'t be toggled, while in combat.")
+			return
+		end
 
 		if AuraTracker.header:IsShown() then
 			AuraTracker.header:Hide()
@@ -326,7 +391,7 @@ local function lsAuraTracker_CreateSlashCommands()
 		end
 	end
 
-	SLASH_ATCMD1 = '/atcmd'
+	SLASH_ATCMD1 = "/atcmd"
 	SlashCmdList["ATCMD"] = function(msg)
 		lsAuraTracker_PrintCommands()
 	end
@@ -336,15 +401,14 @@ function ns.lsAuraTracker_Initialize()
 	AURATRACKER_CONFIG = ns.C.auratracker
 
 	AuraTracker = CreateFrame("Frame", nil, UIParent, "lsAuraTrackerTemplate")
-	AuraTracker.lsAuraTracker_OnEvent = lsAuraTracker_OnEvent
-	AuraTracker:lsAuraTracker_OnEvent("CUSTOM_ENABLE")
-
-	lsAuraTracker_CreateSlashCommands()
+	AuraTracker.OnEvent = lsAuraTracker_OnEvent
+	AuraTracker:OnEvent("CUSTOM_ENABLE")
 
 	local atHeader = AuraTracker.header
-	atHeader.AuraTrackerHeader_OnDragStart = AuraTrackerHeader_OnDragStart
-	atHeader.AuraTrackerHeader_OnDragStop = AuraTrackerHeader_OnDragStop
-	atHeader.AuraTrackerHeader_OnClick = AuraTrackerHeader_OnClick
+	atHeader.OnDragStart = lsAuraTrackerHeader_OnDragStart
+	atHeader.OnDragStop = lsAuraTrackerHeader_OnDragStop
+	atHeader.OnClick = lsAuraTrackerHeader_OnClick
 
+	lsAuraTracker_CreateSlashCommands()
 	UIDropDownMenu_Initialize(atHeader.menu, lsAuraTrackerHeaderDropDown_Initialize, "MENU")
 end
