@@ -1,5 +1,7 @@
 local _, ns = ...
-local format, match, floor = string.format, string.match, math.floor
+
+local format, match, floor = format, strmatch, floor
+local SCALE
 
 ns.nameplates = {}
 
@@ -44,8 +46,6 @@ local function lsNamePlate_OnShow(self)
 	healthbar:SetSize(120, 12)
 	healthbar:ClearAllPoints()
 	healthbar:SetPoint("TOP", self.overlay, "TOP", 0, 0)
-
-	healthbar.interval = nil
 
 	if healthbar.text then
 		healthbar.text:SetText(ns.NumFormat(healthbar:GetValue()))
@@ -123,7 +123,6 @@ local function lsSetNamePlateStyle(self)
 
 	local overlay = CreateFrame("Frame", "ls"..self:GetName().."Overlay", WorldFrame)
 	overlay:SetSize(120, 32)
-	overlay:Hide()
 	self.overlay = overlay
 
 	ns.nameplates[self] = overlay
@@ -250,47 +249,50 @@ local function lsSetNamePlateStyle(self)
 	self:HookScript("OnShow", lsNamePlate_OnShow)
 	self:HookScript("OnHide", lsNamePlate_OnHide)
 
-	lsNamePlate_OnShow(self)
+	if self:IsShown() then
+		lsNamePlate_OnShow(self)
+	else
+		overlay:Hide()
+	end
 end
 
 function ns.lsNamePlates_Initialize()
-	local interval = 0
 	local prevNumChildren, curNumChildren = 0
 
 	WorldFrame:HookScript("OnUpdate", function(self, elapsed)
-		interval = interval + elapsed
+		self.elapsed = (self.elapsed or 0) + elapsed
 
-		if interval > 0.1 then
+		if self.elapsed > 0.1 then
 			curNumChildren = WorldFrame:GetNumChildren()
 
 			if curNumChildren ~= prevNumChildren  then
-				for _, f in next, {self:GetChildren()} do
-					if not ns.nameplates[f] then
-						local name = f:GetName()
-						if not f.isNotNamePlate and (name and match(name, "^NamePlate%d")) then
-							lsSetNamePlateStyle(f)
-						else
-							f.isNotNamePlate = true
-						end
+				for i = prevNumChildren + 1, curNumChildren do
+					local f = select(i, WorldFrame:GetChildren())
+
+					local name = f:GetName()
+					if (name and match(name, "^NamePlate%d")) and not ns.nameplates[f] then
+						lsSetNamePlateStyle(f)
+					end
+				end
+
+				prevNumChildren = curNumChildren
+			end
+
+			for plate, overlay in next, ns.nameplates do
+				if plate:IsShown() then
+					overlay:SetAlpha(plate:GetAlpha())
+
+					plate.health:SetStatusBarColor(lsNamePlate_GetColor(plate.health:GetStatusBarColor()))
+
+					if plate.highlight:IsShown() then
+						plate.health.hl:Show()
+					else
+						plate.health.hl:Hide()
 					end
 				end
 			end
 
-			interval = 0
-		end
-
-		for plate, overlay in next, ns.nameplates do
-			if plate:IsShown() then
-				overlay:SetAlpha(plate:GetAlpha())
-
-				plate.health:SetStatusBarColor(lsNamePlate_GetColor(plate.health:GetStatusBarColor()))
-
-				if plate.highlight:IsShown() then
-					plate.health.hl:Show()
-				else
-					plate.health.hl:Hide()
-				end
-			end
+			self.elapsed = 0
 		end
 	end)
 end
