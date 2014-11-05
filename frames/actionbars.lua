@@ -1,5 +1,8 @@
 local _, ns = ...
 
+local match, tonumber = strmatch, tonumber
+local BAR_CONFIG, COLORS, TEXTURES
+
 ns.bars = {}
 
 local BAR_LAYOUT = {
@@ -56,7 +59,7 @@ local BAR_LAYOUT = {
 	},
 	bar10 = {
 		num_buttons = 1,
-		condition = "[petbattle] hide; [overridebar][vehicleui][possessbar,@vehicle,exists] show; hide",
+		condition = "[target=vehicle,exists] show; hide",
 	},
 	bar11 = {
 		button_type = {PetBattleFrame.BottomFrame.abilityButtons[1], PetBattleFrame.BottomFrame.abilityButtons[2],
@@ -135,8 +138,6 @@ local function lsActionBar_OnEvent(self, event, ...)
 		]])
 
 		RegisterStateDriver(self, "page", GetPageLayout())
-	else
-		MainMenuBar_OnEvent(self, event, ...)
 	end
 end
 
@@ -149,7 +150,7 @@ local function SetStancePetActionBarPosition(self)
 end
 
 local function lsSetFlashTexture(texture)
-	texture:SetTexture(ns.M.textures.button.flash)
+	texture:SetTexture(TEXTURES.button.flash)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
@@ -221,7 +222,7 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bHotKey then
-		if name and gsub(name, "%d", "") == "PetActionButton" then ns.lsAlwaysHide(bHotKey) end
+		if name and gsub(name, "%d+", "") == "PetActionButton" then ns.lsAlwaysHide(bHotKey) end
 
 		bHotKey:SetFont(ns.M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
@@ -229,9 +230,7 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bCount then
-		if name == "MainMenuBarBackpackButton" or name == "CharacterBag0Slot"
-			or name == "CharacterBag1Slot" or name == " CharacterBag2Slot"
-			or name == "CharacterBag3Slot" then
+		if name == "MainMenuBarBackpackButton" or gsub(name, "%d+", "") == "CharacterBagSlot" then
 			ns.lsAlwaysHide(bCount)
 		end
 
@@ -260,13 +259,13 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bNormalTexture then
-		if name and gsub(name, "%d", "") == "PetActionButton" then hooksecurefunc(button, 'SetNormalTexture', lsSetNilNormalTexture) end
+		if name and gsub(name, "%d+", "") == "PetActionButton" then hooksecurefunc(button, "SetNormalTexture", lsSetNilNormalTexture) end
 
 		bNormalTexture:SetTexture(nil)
 
 		button.lsBorder = ns.lsCreateButtonBorder(button)
 
-		if not petBattle then hooksecurefunc(bNormalTexture, 'SetVertexColor', lsSetVertexColor) end
+		if not petBattle then hooksecurefunc(bNormalTexture, "SetVertexColor", lsSetVertexColor) end
 	end
 
 	if bPushedTexture then
@@ -335,8 +334,8 @@ local function lsSetButtonStyle(button, petBattle)
 
 	if bbIconBorder then
 		ns.lsAlwaysHide(bbIconBorder)
-		
-		hooksecurefunc(bbIconBorder, 'SetVertexColor', lsSetVertexColor)
+
+		hooksecurefunc(bbIconBorder, "SetVertexColor", lsSetVertexColor)
 	end
 
 	button.styled = true
@@ -350,7 +349,6 @@ local function lsSetButtonPosition(self, orientation, originalBar, buttonType, b
 	end
 
 	local previous
-	self.buttons = {}
 
 	for i = 1, total do
 		local button
@@ -390,7 +388,6 @@ local function lsSetButtonPosition(self, orientation, originalBar, buttonType, b
 			lsSetButtonStyle(button, true)
 		end
 
-		self.buttons[i] = button
 		previous = button
 	end
 end
@@ -412,12 +409,12 @@ local function lsActionButton_OnUpdate(button)
 			if isUsable then
 				bIcon:SetVertexColor(1, 1, 1, 1)
 			elseif notEnoughMana then
-				bIcon:SetVertexColor(unpack(ns.M.colors.icon.oom))
+				bIcon:SetVertexColor(unpack(COLORS.icon.oom))
 			else
-				bIcon:SetVertexColor(unpack(ns.M.colors.icon.nu))
+				bIcon:SetVertexColor(unpack(COLORS.icon.nu))
 			end
 		else
-			bIcon:SetVertexColor(unpack(ns.M.colors.icon.oor))
+			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
 		end
 	end
 end
@@ -448,8 +445,8 @@ local function lsCreateLeaveVehicleButton(bar)
 end
 
 local function SetPetBattleButtonPosition()
-	local bdata = BAR_LAYOUT.bar11
-	lsSetButtonPosition(lsPetBattleBar, ns.C.bars.bar11.orientation, bdata.original_bar, bdata.button_type, ns.C.bars.bar11.button_size, ns.C.bars.bar11.button_gap, 6)
+	local bdata1, bdata2 = BAR_LAYOUT.bar11, BAR_CONFIG.bar11
+	lsSetButtonPosition(lsPetBattleBar, bdata2.orientation, bdata1.original_bar, bdata1.button_type, bdata2.button_size, bdata2.button_gap, 6)
 end
 
 local function FlyoutButtonToggleHook(...)
@@ -473,7 +470,7 @@ local function lsActionBarManager_OnEvent(self, event)
 	end
 
 	if lsActionBarManager.bar3Shown then
-		local point, x, y = unpack(ns.C.bars.bar3.point)
+		local point, x, y = unpack(BAR_CONFIG.bar3.point)
 		lsMultiBottomRightBar:SetPoint(point, x, y - multiplier * 32)
 
 		RegisterStateDriver(lsMultiBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
@@ -515,7 +512,9 @@ local function lsActionBarManager_Update(bottomLeftBar, bottomRightBar)
 end
 
 function ns.lsActionBars_Initialize(enableManager)
-	local f = CreateFrame("Frame", "lsBottomLine", UIParent)
+	BAR_CONFIG, COLORS, TEXTURES = ns.C.bars, ns.M.colors, ns.M.textures
+
+	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("BACKGROUND")
 	f:SetFrameLevel(3)
 	f:SetSize(406, 52)
@@ -525,44 +524,44 @@ function ns.lsActionBars_Initialize(enableManager)
 	f.actbar:SetPoint("CENTER")
 	f.actbar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
 
-	for b, bdata in next, (BAR_LAYOUT) do
+	for b, bdata in next, BAR_LAYOUT do
 		local name
 		if type(bdata.button_type) == "string" then
 			name = "ls"..bdata.button_type:gsub("Button", ""):gsub("Bar", "").."Bar"
 		else
-			if tonumber(strmatch(b, "(%d+)")) == 8 then
+			if tonumber(match(b, "(%d+)")) == 8 then
 				name = "lsBagBar"
-			elseif tonumber(strmatch(b, "(%d+)")) == 10 then
+			elseif tonumber(match(b, "(%d+)")) == 10 then
 				name = "lsVehicleExitBar"
-			elseif tonumber(strmatch(b, "(%d+)")) == 11 then
+			elseif tonumber(match(b, "(%d+)")) == 11 then
 				name = "lsPetBattleBar"
-			elseif tonumber(strmatch(b, "(%d+)")) == 11 then
+			elseif tonumber(match(b, "(%d+)")) == 11 then
 				name = "lsPlayerPowerBarAlt"
 			end
 		end
 
 		local bar = CreateFrame("Frame", name, UIParent, "SecureHandlerStateTemplate")
-		if ns.C.bars[b].orientation == "HORIZONTAL" then
-			bar:SetSize(ns.C.bars[b].button_size * bdata.num_buttons + ns.C.bars[b].button_gap * bdata.num_buttons,
-				ns.C.bars[b].button_size + ns.C.bars[b].button_gap)
+		if BAR_CONFIG[b].orientation == "HORIZONTAL" then
+			bar:SetSize(BAR_CONFIG[b].button_size * bdata.num_buttons + BAR_CONFIG[b].button_gap * bdata.num_buttons,
+				BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap)
 		else
-			bar:SetSize(ns.C.bars[b].button_size + ns.C.bars[b].button_gap,
-				ns.C.bars[b].button_size * bdata.num_buttons + ns.C.bars[b].button_gap * bdata.num_buttons)
+			bar:SetSize(BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap,
+				BAR_CONFIG[b].button_size * bdata.num_buttons + BAR_CONFIG[b].button_gap * bdata.num_buttons)
 		end
 		bar:SetFrameStrata("LOW")
 		bar:SetFrameLevel(1)
 
-		if tonumber(strmatch(b, "(%d+)")) == 1 then
+		if tonumber(match(b, "(%d+)")) == 1 then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 			bar:SetScript("OnEvent", lsActionBar_OnEvent)
 		end
 
-		if tonumber(strmatch(b, "(%d+)")) ~= 10 and tonumber(strmatch(b, "(%d+)")) ~= 11 and tonumber(strmatch(b, "(%d+)")) ~= 12 then
-			lsSetButtonPosition(bar, ns.C.bars[b].orientation, bdata.original_bar, bdata.button_type, ns.C.bars[b].button_size, ns.C.bars[b].button_gap, bdata.num_buttons)
-		elseif tonumber(strmatch(b, "(%d+)")) == 10 then
+		if tonumber(match(b, "(%d+)")) ~= 10 and tonumber(match(b, "(%d+)")) ~= 11 and tonumber(match(b, "(%d+)")) ~= 12 then
+			lsSetButtonPosition(bar, BAR_CONFIG[b].orientation, bdata.original_bar, bdata.button_type, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bdata.num_buttons)
+		elseif tonumber(match(b, "(%d+)")) == 10 then
 			lsCreateLeaveVehicleButton(bar)
-		elseif tonumber(strmatch(b, "(%d+)")) == 12 then
+		elseif tonumber(match(b, "(%d+)")) == 12 then
 			PlayerPowerBarAlt:SetParent(bar)
 			PlayerPowerBarAlt:ClearAllPoints()
 			PlayerPowerBarAlt:SetPoint("BOTTOM", bar, "BOTTOM", 0, 0)
@@ -576,12 +575,12 @@ function ns.lsActionBars_Initialize(enableManager)
 		ns.bars[b] = bar
 	end
 
-	for b, bar in pairs(ns.bars) do
-		if ns.C.bars[b].point then
+	for b, bar in next, ns.bars do
+		if BAR_CONFIG[b].point then
 			if b == "bar8" and not lsBagInfoBar then
 				bar:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -20, 6)
 			else
-				bar:SetPoint(unpack(ns.C.bars[b].point))
+				bar:SetPoint(unpack(BAR_CONFIG[b].point))
 			end
 		else
 			SetStancePetActionBarPosition(bar)
@@ -648,14 +647,14 @@ function ns.lsActionBars_Initialize(enableManager)
 		b:SetAttribute("statehidden", true)
 	end
 
-	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(ns.M.colors.exp.bg))
+	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(COLORS.exp.bg))
 
 	PetBattleFrameXPBar:SetFrameStrata("LOW")
 	PetBattleFrameXPBar:SetFrameLevel(4)
 	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 52)
 	PetBattleFrameXPBar:SetSize(378, 8)
-	PetBattleFrameXPBar:SetStatusBarTexture(ns.M.textures.statusbar)
-	PetBattleFrameXPBar:SetStatusBarColor(unpack(ns.M.colors.exp.normal))
+	PetBattleFrameXPBar:SetStatusBarTexture(TEXTURES.statusbar)
+	PetBattleFrameXPBar:SetStatusBarColor(unpack(COLORS.exp.normal))
 
 	PetBattleFrameXPBar.TextString:SetFont(ns.M.font, 10, "THINOUTLINE")
 
@@ -674,6 +673,6 @@ function ns.lsActionBars_Initialize(enableManager)
 		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
 		lsActionBarManager.bar2Shown = true
 		lsActionBarManager.bar3Shown = true
-		hooksecurefunc('SetActionBarToggles', lsActionBarManager_Update)
+		hooksecurefunc("SetActionBarToggles", lsActionBarManager_Update)
 	end
 end
