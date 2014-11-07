@@ -136,16 +136,10 @@ function ns.lsCreateButtonBorder(button, curTexture)
 	return texture
 end
 
-function ns.lsTweakIcon(icon)
-	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+function ns.lsTweakIcon(icon, l, r, t, b)
+	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
 	icon:SetDrawLayer("BACKGROUND", 0)
 	icon:SetAllPoints()
-end
-
-function ns.lsTweakCooldown(cooldown)
-	cooldown:ClearAllPoints()
-	cooldown:SetPoint("TOPLEFT", 1, -1)
-	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 end
 
 function ns.lsSetHighlightTexture(texture)
@@ -241,9 +235,9 @@ function ns.CreateDebuff (self, unit)
 end
 
 function ns.CreateAuraIcon(self, button)
+	button.cd:SetAllPoints()
 	button.cd:SetReverse()
 	button.cd:SetHideCountdownNumbers(true)
-	ns.lsTweakCooldown(button.cd)
 
 	ns.lsTweakIcon(button.icon)
 
