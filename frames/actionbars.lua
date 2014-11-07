@@ -186,6 +186,7 @@ local function lsSetButtonStyle(button, petBattle)
 	local bBorder = button.Border
 	local bNewActionTexture = button.NewActionTexture
 	local bCD = button.cooldown
+	local bCDText = bCD and bCD:GetRegions() -- it's #1 region
 	local bNormalTexture = button:GetNormalTexture()
 	local bPushedTexture = button:GetPushedTexture()
 	local bHighlightTexture = button:GetHighlightTexture()
@@ -255,7 +256,14 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bCD then
-		ns.lsTweakCooldown(bCD)
+		bCD:SetAllPoints()
+
+		if bCDText then
+			bCDText:SetFont(ns.M.font, 12, "THINOUTLINE")
+			bCDText:ClearAllPoints()
+			bCDText:SetPoint("TOPLEFT", button, "TOPLEFT", -2, 2)
+			bCDText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+		end
 	end
 
 	if bNormalTexture then
