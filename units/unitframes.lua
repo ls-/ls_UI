@@ -1,8 +1,6 @@
 local _, ns = ...
 local C, M = ns.C, ns.M
 
-ns.frames, ns.headers = {}, {}
-
 local prevInUse = "NONE"
 local curInUse = {
 	["RUNE"] = {visible = false, slots = 0},
@@ -912,7 +910,7 @@ local function CreateUnitFrameStyle(self, unit)
 
 		if unit ~= "player" then
 			self.ReadyCheck:SetPoint("CENTER")
-			
+
 			if unit == "party" then
 				self.Leader:SetPoint("TOPRIGHT", 18, 6)
 				self.PhaseIcon:SetPoint("RIGHT", 24, 0)
@@ -1012,28 +1010,27 @@ function ns.lsFactory(oUF)
 		if type(udata) == "table" and udata.enabled then
 			local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 			if udata.attributes then
-				ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
+				oUF:SpawnHeader(name, nil, udata.visibility,
 					"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);
 					self:SetAttribute("initial-height", 42); self:SetWidth(124); self:SetHeight(42)]],
 					unpack(udata.attributes))
 			else
-				ns.frames[unit] = oUF:Spawn(unit, name)
+				oUF:Spawn(unit, name)
 			end
 		end
 	end
 
-	for unit, frame in pairs(ns.frames) do
-		frame:SetPoint(unpack(ns.C.units[unit].point))
-		if gsub(unit, "%d", "") == "boss" then
+	for _, object in next, oUF.objects do
+		local unit = object.unit
+		object:SetPoint(unpack(ns.C.units[unit].point))
+		if strmatch(unit, "^boss%d") then
 			local id = strmatch(unit, "boss(%d)")
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:ClearAllPoints()
-			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetParent(frame)
-			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetPoint("RIGHT", frame, "LEFT", -6, 0)
+			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetParent(object)
+			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetPoint("RIGHT", object, "LEFT", -6, 0)
 		end
-		frame:UpdateAllElements()
+		object:UpdateAllElements()
 	end
 
-	for unit, header in pairs(ns.headers) do
-		header:SetPoint(unpack(ns.C.units[unit].point))
-	end
+	oUF.headers[1]:SetPoint(unpack(ns.C.units["party"].point))
 end
