@@ -118,7 +118,7 @@ local function CreateClassPowerBar(self, max, cpType)
 end
 
 local function UpdateClassPowerBar(self, cur, max, changed, event)
-	if changed and max ~= 0 then
+	if event == "ClassPowerEnable" or changed and max ~= 0 then
 		local r, g, b = unpack(M.colors.classpower[self.__cpower])
 		for i = 1, max do
 			self[i]:SetTexCoord(0, 1, 0, 1)

@@ -1,6 +1,6 @@
 ## Interface: 60000
 ## Author: lightspark
-## Version: 1.3.5
+## Version: 1.3.6
 ## Title: oUF: LS
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
