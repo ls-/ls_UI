@@ -170,17 +170,16 @@ local function lsMicroButton_OnEvent(self, event)
 				self.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
 			end
 		elseif name == "lsLFDMicroButton" then
-			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLELFGPARENT")
+			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
 		elseif name == "lsCompanionsMicroButton" then
-			self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEPETJOURNAL")
-		elseif name == "lsMainMenuMicroButton" then
-			self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
+			self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
 		elseif name == "lsEJMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
 		elseif name == "lsStoreMicroButton" then
 			self.tooltipText = BLIZZARD_STORE
 		end
 	end
+
 	UpdateMicroButtonState()
 end
 
@@ -192,13 +191,6 @@ local function lsMicroButton_Initialize(mbutton, events, level, isBlizzConDriven
 	end
 
 	if level then mbutton.minLevel = level end
-
-	if isTrialDriven then
-		if IsBlizzCon() then
-			mbutton:Disable()
-			mbutton:SetAlpha(0.5)
-		end
-	end
 
 	if isTrialDriven then
 		if IsTrialAccount() then
@@ -228,6 +220,7 @@ function ns.lsMicroMenu_Initialize()
 
 	lsMicroButton_Initialize(lsTalentMicroButton, {"PLAYER_LEVEL_UP", "PLAYER_TALENT_UPDATE"}, 10, true)
 	lsTalentMicroButton:SetScript("OnClick", function(...) ToggleTalentFrame() end)
+	TalentMicroButtonAlert:SetPoint("BOTTOM", lsTalentMicroButton, "TOP", 0, 12)
 
 	lsMicroButton_Initialize(lsAchievementMicroButton, {"RECEIVED_ACHIEVEMENT_LIST", "ACHIEVEMENT_EARNED"}, 10)
 	lsAchievementMicroButton:SetScript("OnClick", function(...) ToggleAchievementFrame() end)
@@ -237,19 +230,20 @@ function ns.lsMicroMenu_Initialize()
 	lsMicroButton_Initialize(lsGuildMicroButton, {"PLAYER_GUILD_UPDATE", "NEUTRAL_FACTION_SELECT_RESULT"}, nil, true, true)
 	lsGuildMicroButton:SetScript("OnClick", function(...) ToggleGuildFrame() end)
 
-	lsMicroButton_Initialize(lsLFDMicroButton, {"PLAYER_LEVEL_UP"}, 15, true)
+	lsMicroButton_Initialize(lsLFDMicroButton, nil, 10, true)
 	lsLFDMicroButton:SetScript("OnClick", function(...) PVEFrame_ToggleFrame() end)
+	LFDMicroButtonAlert:SetPoint("BOTTOM", lsLFDMicroButton, "TOP", 0, 12)
 
 	lsCompanionsMicroButton:SetScript("OnClick", function(...) TogglePetJournal() end)
+	CompanionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
+	CollectionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
+	ToyBoxMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
 
 	lsMicroButton_Initialize(lsEJMicroButton, nil, 15, true)
 	lsEJMicroButton:SetScript("OnClick", function(...) ToggleEncounterJournal() end)
 
 	lsMicroButton_Initialize(lsStoreMicroButton, {"STORE_STATUS_CHANGED"})
 	lsStoreMicroButton:SetScript("OnClick", function(...) ToggleStoreUI() end)
-
-	TalentMicroButtonAlert:SetPoint("BOTTOM", lsTalentMicroButton, "TOP", 0, 12)
-	CompanionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
 
 	for mb, mbutton in next, ns.mbuttons do
 		mbutton:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
