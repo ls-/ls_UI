@@ -1,6 +1,8 @@
 local _, ns = ...
 local C, M = ns.C, ns.M
 
+ns.objects, ns.headers = {}, {}
+
 local prevInUse = "NONE"
 local curInUse = {
 	["RUNE"] = {visible = false, slots = 0},
@@ -29,7 +31,6 @@ local function FrameReskin(frame, powerType, visible, slots, sentBy)
 	prevInUse = powerType
 end
 
-
 local function UpdateExperience(self, ...)
 	self.text:UpdateTag()
 end
@@ -46,8 +47,8 @@ end
 
 local function CreateComboBar(self)
 	local bar = CreateFrame("Frame", "$parentComboBar", self)
-	bar:SetFrameStrata("LOW")
-	bar:SetFrameLevel(5)
+	bar:SetFrameStrata(self:GetFrameStrata())
+	bar:SetFrameLevel(self:GetFrameLevel() + 4)
 	bar:SetSize(96, 20)
 	bar:SetPoint("TOPRIGHT", self, "TOPRIGHT", -16, 4.5)
 
@@ -492,12 +493,10 @@ local function CreateUnitFrameStyle(self, unit)
 		ppTextTemplate = "lsUnitFrame12Text"
 	end
 
-	self:SetAttribute("initial-width", width)
-	self:SetAttribute("initial-height", height)
-	self:SetWidth(width)
-	self:SetHeight(height)
-	self:SetFrameStrata("LOW")
-	self:SetFrameLevel(1)
+	if unit ~= "party" then
+		self:SetWidth(width)
+		self:SetHeight(height)
+	end
 
 	self:RegisterForClicks("AnyUp")
 	self:HookScript("OnEnter", ns.UnitFrame_OnEnter)
@@ -508,8 +507,8 @@ local function CreateUnitFrameStyle(self, unit)
 	unit = gsub(unit, "%d", "")
 
 	self.cover = CreateFrame("Frame", "$parentCover", self)
-	self.cover:SetFrameStrata("LOW")
-	self.cover:SetFrameLevel(4)
+	self.cover:SetFrameStrata(self:GetFrameStrata())
+	self.cover:SetFrameLevel(self:GetFrameLevel() + 3) -- +3
 	if unit == "player" then
 		self.cover:SetSize(116, 116)
 		self.cover:SetPoint("CENTER")
@@ -557,8 +556,8 @@ local function CreateUnitFrameStyle(self, unit)
 
 	if unit == "player" then
 		self.FloatingCombatFeedback = CreateFrame("Frame", "$parentFeedbackFrame", self)
-		self.FloatingCombatFeedback:SetFrameStrata("LOW")
-		self.FloatingCombatFeedback:SetFrameLevel(5)
+		self.FloatingCombatFeedback:SetFrameStrata(self:GetFrameStrata())
+		self.FloatingCombatFeedback:SetFrameLevel(self:GetFrameLevel() + 4) -- +4
 		self.FloatingCombatFeedback:SetSize(116, 116)
 		self.FloatingCombatFeedback:SetPoint("CENTER", 0, 78)
 		for i = 1, 4 do
@@ -598,8 +597,8 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 
 	self.Health = CreateFrame("StatusBar", "$parentHealth", self)
-	self.Health:SetFrameStrata("LOW")
-	self.Health:SetFrameLevel(2)
+	self.Health:SetFrameStrata(self:GetFrameStrata())
+	self.Health:SetFrameLevel(self:GetFrameLevel() + 1) -- +1
 	self.Health:SetOrientation(sbOrientation)
 	self.Health:SetStatusBarTexture(hpTexture)
 	self.Health:SetStatusBarColor(1.0, 1.0, 1.0)
@@ -663,8 +662,8 @@ local function CreateUnitFrameStyle(self, unit)
 
 	if unit ~= "focustarget" and unit ~= "targettarget" then
 		self.Power = CreateFrame("StatusBar", "$parentPower", self)
-		self.Power:SetFrameStrata("LOW")
-		self.Power:SetFrameLevel(3)
+		self.Power:SetFrameStrata(self:GetFrameStrata())
+		self.Power:SetFrameLevel(self:GetFrameLevel() + 2) -- +2
 		self.Power:SetOrientation(sbOrientation)
 		self.Power:SetStatusBarTexture(ppTexture)
 		if unit == "player" then
@@ -706,32 +705,32 @@ local function CreateUnitFrameStyle(self, unit)
 	self.HealPrediction.myBar:SetOrientation(sbOrientation)
 	self.HealPrediction.myBar:SetStatusBarTexture(M.textures.statusbar)
 	self.HealPrediction.myBar:SetStatusBarColor(0.0, 0.827, 0.765)
-	self.HealPrediction.myBar:SetFrameStrata("LOW")
-	self.HealPrediction.myBar:SetFrameLevel(2)
+	self.HealPrediction.myBar:SetFrameStrata(self:GetFrameStrata())
+	self.HealPrediction.myBar:SetFrameLevel(self:GetFrameLevel() + 1)
 	self.HealPrediction.myBar:Hide()
 
 	self.HealPrediction.otherBar = CreateFrame("StatusBar", "$parentOtherIncomingHeal", self.Health)
 	self.HealPrediction.otherBar:SetOrientation(sbOrientation)
 	self.HealPrediction.otherBar:SetStatusBarTexture(M.textures.statusbar)
 	self.HealPrediction.otherBar:SetStatusBarColor(0.0, 0.631, 0.557)
-	self.HealPrediction.otherBar:SetFrameStrata("LOW")
-	self.HealPrediction.otherBar:SetFrameLevel(2)
+	self.HealPrediction.otherBar:SetFrameStrata(self:GetFrameStrata())
+	self.HealPrediction.otherBar:SetFrameLevel(self:GetFrameLevel() + 1)
 	self.HealPrediction.otherBar:Hide()
 
 	self.HealPrediction.healAbsorbBar = CreateFrame("StatusBar", "$parentHealAbsorb", self.Health)
 	self.HealPrediction.healAbsorbBar:SetOrientation(sbOrientation)
 	self.HealPrediction.healAbsorbBar:SetStatusBarTexture(M.textures.statusbar)
 	self.HealPrediction.healAbsorbBar:SetStatusBarColor(0.9, 0.1, 0.3)
-	self.HealPrediction.healAbsorbBar:SetFrameStrata("LOW")
-	self.HealPrediction.healAbsorbBar:SetFrameLevel(2)
+	self.HealPrediction.healAbsorbBar:SetFrameStrata(self:GetFrameStrata())
+	self.HealPrediction.healAbsorbBar:SetFrameLevel(self:GetFrameLevel() + 1)
 	self.HealPrediction.healAbsorbBar:Hide()
 
 	self.HealPrediction.absorbBar = CreateFrame("StatusBar", "$parentTotalAbsorb", self.Health)
 	self.HealPrediction.absorbBar:SetOrientation(sbOrientation)
 	self.HealPrediction.absorbBar:SetStatusBarTexture(M.textures.statusbar)
 	self.HealPrediction.absorbBar:SetStatusBarColor(0, 0.7, 0.95)
-	self.HealPrediction.absorbBar:SetFrameStrata("LOW")
-	self.HealPrediction.absorbBar:SetFrameLevel(2)
+	self.HealPrediction.absorbBar:SetFrameStrata(self:GetFrameStrata())
+	self.HealPrediction.absorbBar:SetFrameLevel(self:GetFrameLevel() + 1)
 	self.HealPrediction.absorbBar:Hide()
 	if sbOrientation == "VERTICAL" then
 		self.HealPrediction.myBar:SetPoint("LEFT")
@@ -1010,18 +1009,16 @@ function ns.lsFactory(oUF)
 		if type(udata) == "table" and udata.enabled then
 			local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
 			if udata.attributes then
-				oUF:SpawnHeader(name, nil, udata.visibility,
-					"oUF-initialConfigFunction", [[self:SetAttribute("initial-width", 124);
-					self:SetAttribute("initial-height", 42); self:SetWidth(124); self:SetHeight(42)]],
+				ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
+					"oUF-initialConfigFunction", [[self:SetWidth(124); self:SetHeight(42)]],
 					unpack(udata.attributes))
 			else
-				oUF:Spawn(unit, name)
+				ns.objects[unit] = oUF:Spawn(unit, name)
 			end
 		end
 	end
 
-	for _, object in next, oUF.objects do
-		local unit = object.unit
+	for unit, object in next, ns.objects do
 		object:SetPoint(unpack(ns.C.units[unit].point))
 		if strmatch(unit, "^boss%d") then
 			local id = strmatch(unit, "boss(%d)")
@@ -1029,8 +1026,7 @@ function ns.lsFactory(oUF)
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetParent(object)
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetPoint("RIGHT", object, "LEFT", -6, 0)
 		end
-		object:UpdateAllElements()
 	end
 
-	oUF.headers[1]:SetPoint(unpack(ns.C.units["party"].point))
+	ns.headers.party:SetPoint(unpack(ns.C.units["party"].point))
 end
