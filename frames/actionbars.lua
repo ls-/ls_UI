@@ -85,10 +85,10 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", 0, 126},
-	PET2 = {"BOTTOM", 0, 154},
-	STANCE1 = {"BOTTOM", 0, 154},
-	STANCE2 = {"BOTTOM", 0, 126},
+	PET1 = {"BOTTOM", 0, 127},
+	PET2 = {"BOTTOM", 0, 155},
+	STANCE1 = {"BOTTOM", 0, 155},
+	STANCE2 = {"BOTTOM", 0, 127},
 }
 -- page swapping is taken from tukui, thx :D really usefull thingy
 local PAGE_LAYOUT = {
