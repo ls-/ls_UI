@@ -4,7 +4,7 @@ ns.mbuttons = {}
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"BOTTOM", -318, 8},
+		point = {"BOTTOM", -316, 8},
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
