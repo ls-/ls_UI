@@ -1028,5 +1028,49 @@ function ns.lsFactory(oUF)
 		end
 	end
 
-	ns.headers.party:SetPoint(unpack(ns.C.units["party"].point))
+	local header = ns.headers.party
+	if header then
+		header:SetPoint(unpack(ns.C.units["party"].point))
+
+		if GetDisplayedAllyFrames() ~= "party" then
+			RegisterAttributeDriver(header, "state-visibility", "hide")
+
+			header.isVisible = false
+		else
+			header.isVisible = true
+		end
+
+		local _, condition = strsplit(" ", ns.C.units.party.visibility, 2)
+
+		-- Compact Party Frames support
+		hooksecurefunc("HidePartyFrame", function()
+			if header.isVisible then
+				if not InCombatLockdown() then
+					RegisterAttributeDriver(header, "state-visibility", "hide")
+				end
+				header.isVisible = false
+			end
+		end)
+
+		hooksecurefunc("ShowPartyFrame", function()
+			if not header.isVisible then
+				if not InCombatLockdown() then
+					RegisterAttributeDriver(header, "state-visibility", condition)
+				end
+				header.isVisible = true
+			end
+		end)
+
+		-- We can't show/hide frames, while in combat
+		header:RegisterEvent("PLAYER_REGEN_ENABLED")
+		header:SetScript("OnEvent", function(self, event)
+			if event == "PLAYER_REGEN_ENABLED" then
+				if self.isVisible and not self:IsShown() then
+					RegisterAttributeDriver(self, "state-visibility", condition)
+				elseif not self.isVisible and self:IsShown() then
+					RegisterAttributeDriver(self, "state-visibility", "hide")
+				end
+			end
+		 end)
+	end
 end

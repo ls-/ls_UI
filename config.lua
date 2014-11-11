@@ -34,7 +34,7 @@ local DEFAULT_CONFIG = {
 			enabled = true,
 			point = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
 			attributes = {"showPlayer", true, "showParty", true, "showRaid", false, "point", "BOTTOM", "yOffset", 40},
-			visibility = "party",
+			visibility = "custom [group:raid] hide; [group:party] show; hide",
 		},
 		boss1 = {
 			enabled = true,
