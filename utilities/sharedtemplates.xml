@@ -301,7 +301,7 @@
 		</Scripts>
 	</StatusBar>
 
-	<Frame name="lsClassPowerFrameTemplate" frameStata="LOW" frameLevel="3" hidden="true" virtual="true">
+	<Frame name="lsClassPowerFrameTemplate" hidden="true" virtual="true">
 		<Size>
 			<AbsDimension x="62" y="130"/>
 		</Size>
@@ -309,8 +309,16 @@
 			<Anchor point="CENTER" x="-36" y="0"/>
 		</Anchors>
 		<Frames>
-			<Frame name="$parentCover" frameStata="LOW" frameLevel="5" setAllPoints="true" parentKey="cover"/>
+			<Frame name="$parentCover" setAllPoints="true" parentKey="cover"/>
 		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetFrameStrata(self:GetParent():GetFrameStrata())
+				self:SetFrameLevel(self:GetParent():GetFrameLevel() + 2)
+
+				self.cover:SetFrameLevel(self:GetFrameLevel() + 2)
+			</OnLoad>
+		</Scripts>
 	</Frame>
 
 	<StatusBar name="lsBigCastingBarTemplate" frameStata="LOW" frameLevel="2" hidden="true" virtual="true">
