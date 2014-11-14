@@ -38,6 +38,7 @@ local function SetElementsStyle()
 		MiniMapInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -1, -38},
 		GuildInstanceDifficulty = {"BOTTOM", "Minimap", "BOTTOM", -6, -38},
 		QueueStatusMinimapButton = {"CENTER", "Minimap", "CENTER", 55, -55},
+		GarrisonLandingPageMinimapButton = {"CENTER", "Minimap", "CENTER", -57, -57},
 	} do
 		_G[i]:ClearAllPoints()
 		_G[i]:SetParent(Minimap)
@@ -114,6 +115,9 @@ local function SetElementsStyle()
 	CalendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
 	CalendarBorder:SetSize(32, 32)
 	CalendarBorder:SetPoint("CENTER", 0, 0)
+
+	-- GARRISON
+	GarrisonLandingPageMinimapButton:SetSize(40, 40)
 end
 
 function ns.lsMinimap_Initialize()
