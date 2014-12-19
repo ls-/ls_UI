@@ -6,14 +6,7 @@
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
-plugins\oUF\oUF.xml
-plugins\oUF_Experience\oUF_Experience.lua
-plugins\oUF_Reputation\oUF_Reputation.lua
-plugins\oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua
-plugins\oUF_Smooth.lua
-plugins\oUF_DebuffHighlight.lua
-plugins\oUF_BurningEmbers.lua
-plugins\oUF_DemonicFury.lua
+embeds\_embeds.xml
 
 localization\en.lua
 localization\ru.lua

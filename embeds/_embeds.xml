@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Include file="oUF\oUF.xml"/>
+	<Script file="oUF_Experience\oUF_Experience.lua"/>
+	<Script file="oUF_Reputation\oUF_Reputation.lua"/>
+	<Script file="oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua"/>
+	<Script file="oUF_DebuffHighlight\oUF_DebuffHighlight.lua"/>
+	<Script file="oUF_BurningEmbers\oUF_BurningEmbers.lua"/>
+	<Script file="oUF_DemonicFury\oUF_DemonicFury.lua"/>
+	<Script file="oUF_Smooth\oUF_Smooth.lua"/>
+</Ui>
