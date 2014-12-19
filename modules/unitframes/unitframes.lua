@@ -1,5 +1,5 @@
 local _, ns = ...
-local C, M = ns.C, ns.M
+local E, C, M = ns.E, ns.C, ns.M
 
 ns.objects, ns.headers = {}, {}
 
@@ -288,7 +288,7 @@ local function UpdateTotemBar(self, priorities, haveTotem, name, start, duration
 			local timeLeft = start + duration - GetTime()
 			self:SetValue(timeLeft)
 			if timeLeft <= 15 then
-				self.text:SetText(ns.TimeFormat(timeLeft))
+				self.text:SetText(E:TimeFormat(timeLeft))
 			end
 			if timeLeft <= 0 then
 				self.text:SetText("")
@@ -467,6 +467,8 @@ end
 
 local function CreateUnitFrameStyle(self, unit)
 	local width, height, sbOrientation, hpTexture, ppTexture, hpTextTemplate, ppTextTemplate
+	unit = gsub(unit, "%d", "")
+
 	if unit == "player" then
 		self.frameType = "orb"
 		width, height = 160, 160
@@ -504,7 +506,6 @@ local function CreateUnitFrameStyle(self, unit)
 
 	self.mouseovers = {}
 
-	unit = gsub(unit, "%d", "")
 
 	self.cover = CreateFrame("Frame", "$parentCover", self)
 	self.cover:SetFrameStrata(self:GetFrameStrata())
@@ -953,27 +954,27 @@ local function CreateUnitFrameStyle(self, unit)
 	if unit == "player" then
 		FrameReskin(self, "NONE", true, 0, "NONE")
 
-		if ns.C.playerclass == "MONK" then
+		if ns.E.playerclass == "MONK" then
 			self.ClassIcons = CreateClassPowerBar(self, 5, "CHI")
 			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if ns.C.playerclass == "DEATHKNIGHT" then
+		if ns.E.playerclass == "DEATHKNIGHT" then
 			self.Runes = CreateRuneBar(self)
 			self.Runes.PostUpdateRune = PostUpdateRuneBar
 		end
 
-		if ns.C.playerclass == "SHAMAN" then
+		if ns.E.playerclass == "SHAMAN" then
 			self.Totems = CreateTotemBar(self)
 			self.Totems.PostUpdate = UpdateTotemBar
 		end
 
-		if ns.C.playerclass == "PALADIN" then
+		if ns.E.playerclass == "PALADIN" then
 			self.ClassIcons = CreateClassPowerBar(self, 5, "HOLYPOWER")
 			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if ns.C.playerclass == "WARLOCK" then
+		if ns.E.playerclass == "WARLOCK" then
 				self.ClassIcons = CreateClassPowerBar(self, 4, "SOULSHARD")
 				self.ClassIcons.PostUpdate = UpdateClassPowerBar
 
@@ -986,12 +987,12 @@ local function CreateUnitFrameStyle(self, unit)
 				self.DemonicFury.Smooth = true
 		end
 
-		if ns.C.playerclass == "PRIEST" then
+		if ns.E.playerclass == "PRIEST" then
 			self.ClassIcons = CreateClassPowerBar(self, 5, "SHADOWORB")
 			self.ClassIcons.PostUpdate = UpdateClassPowerBar
 		end
 
-		if ns.C.playerclass == "DRUID" then
+		if ns.E.playerclass == "DRUID" then
 			self.EclipseBar = CreateEclipseBar(self)
 			self.EclipseBar.PostDirectionChange = UpdateEclipseBarDirection
 			self.EclipseBar.PostUnitAura = UpdateEclipseBarGlow
@@ -1007,25 +1008,41 @@ function ns.lsFactory(oUF)
 
 	for unit, udata in pairs(ns.C.units) do
 		if type(udata) == "table" and udata.enabled then
-			local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
-			if udata.attributes then
-				ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
-					"oUF-initialConfigFunction", [[self:SetWidth(124); self:SetHeight(42)]],
-					unpack(udata.attributes))
+			if unit ~= "boss" then
+				local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
+				if udata.attributes then
+					ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
+						"oUF-initialConfigFunction", [[self:SetWidth(124); self:SetHeight(42)]],
+						unpack(udata.attributes))
+				else
+					ns.objects[unit] = oUF:Spawn(unit, name)
+				end
 			else
-				ns.objects[unit] = oUF:Spawn(unit, name)
+				for i = 1, 5 do
+				-- "lsBoss"..i.."Frame"
+				ns.objects["boss"..i] = oUF:Spawn("boss"..i, "lsBoss"..i.."Frame")
+				end
 			end
 		end
 	end
 
 	for unit, object in next, ns.objects do
-		object:SetPoint(unpack(ns.C.units[unit].point))
+		-- print(unit, object)
 		if strmatch(unit, "^boss%d") then
-			local id = strmatch(unit, "boss(%d)")
+			local id = tonumber(strmatch(unit, "boss(%d)"))
+			if id == 1 then
+				object:SetPoint(unpack(ns.C.units.boss.point))
+			else
+				object:SetPoint("TOP", "lsBoss"..(id - 1).."Frame", "BOTTOM", 0, -ns.C.units.boss.yOffset)
+			end
+
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:ClearAllPoints()
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetParent(object)
 			_G["Boss"..id.."TargetFramePowerBarAlt"]:SetPoint("RIGHT", object, "LEFT", -6, 0)
+		else
+			object:SetPoint(unpack(ns.C.units[unit].point))
 		end
+			-- ns.lsAlwaysShow(object)
 	end
 
 	local header = ns.headers.party

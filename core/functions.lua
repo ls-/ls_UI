@@ -1,5 +1,48 @@
 local _, ns = ...
-local oUF = ns.oUF or oUF
+local E, M, oUF = ns.E, ns.M, ns.oUF or oUF
+
+--[[ NEW ]]
+
+function E:CreateFontString(parent, size, name, shadow, outline, ...)
+	local r, g, b, a = ...
+
+	object = parent:CreateFontString(name, "ARTWORK")
+	object:SetFont(M.font, size, outline)
+	object:SetTextColor(r, g, b, a)
+
+	if shadow then
+		object:SetShadowColor(0, 0, 0)
+		object:SetShadowOffset(1, -1)
+	end
+
+	return object
+end
+
+function E:TweakIcon(icon, l, r, t, b)
+	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
+	icon:SetDrawLayer("BACKGROUND", 0)
+	icon:SetAllPoints()
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -----------
 -- DEBUG --
@@ -29,44 +72,6 @@ function ns.lsAlwaysHide(self)
 	if not self then return end
 	self:Hide()
 	self.Show = self.Hide
-end
-
-function ns.NumFormat(v, nomod)
-	if nomod == true then
-		if abs(v) >= 1E6 then
-			return format("%.0f"..gsub(SECOND_NUMBER_CAP, "[ ]", ""), v / 1E6)
-		elseif abs(v) >= 1E4 then
-			return format("%.0f"..gsub(FIRST_NUMBER_CAP, "[ ]", ""), v / 1E3)
-		else
-			return v
-		end
-	else
-		if abs(v) >= 1E6 then
-			return format("%.1f"..gsub(SECOND_NUMBER_CAP, "[ ]", ""), v / 1E6)
-		elseif abs(v) >= 1E4 then
-			return format("%.1f"..gsub(FIRST_NUMBER_CAP, "[ ]", ""), v / 1E3)
-		else
-			return v
-		end
-	end
-
-end
-
-function ns.PercFormat(v1, v2)
-	return ("%.1f"):format((v1 / v2) * 100)
-end
-
-function ns.TimeFormat(s)
-	if s >= 86400 then
-		return format(gsub(DAY_ONELETTER_ABBR, "[ .]", ""), floor(s / 86400 + 0.5))
-	elseif s >= 3600 then
-		return format(gsub(HOUR_ONELETTER_ABBR, "[ .]", ""), floor(s / 3600 + 0.5))
-	elseif s >= 60 then
-		return format(gsub(MINUTE_ONELETTER_ABBR, "[ .]", ""), floor(s / 60 + 0.5))
-	elseif s >= 1 then
-		return format(gsub(SECOND_ONELETTER_ABBR, "[ .]", ""), math.fmod(s, 60))
-	end
-	return format("%.1f", s)
 end
 
 function ns.UnitFrame_OnEnter(self)
@@ -293,7 +298,7 @@ function ns.UpdateAuraIcon(self, unit, icon, index, offset)
 					elseif timeLeft <= 5 then
 						self.timer:SetTextColor(0.9, 0.1, 0.1)
 					end
-					self.timer:SetText(ns.TimeFormat(timeLeft))
+					self.timer:SetText(E:TimeFormat(timeLeft))
 				else
 					self.timer:SetText(nil)
 				end
@@ -351,11 +356,12 @@ function ns.UpdateHealth(self, unit, cur, max)
 
 	if not self.value then print(unit, "no health value") return end
 
+	local color
 	if not UnitIsConnected(unit) then
-		local color = self.__owner.colors.disconnected
-		return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, PLAYER_OFFLINE)
+		color = E:RGBToHEX(self.__owner.colors.disconnected)
+		return self.value:SetFormattedText("|cff"..color.."%s|r", PLAYER_OFFLINE)
 	elseif UnitIsDeadOrGhost(unit) then
-		local color = self.__owner.colors.disconnected
+		color = E:RGBToHEX(self.__owner.colors.disconnected)
 		local deadText
 		if UnitIsPlayer(unit) and unit == "player" then
 			if UnitSex(unit) == 2 or UnitSex(unit) == 1 then
@@ -364,23 +370,21 @@ function ns.UpdateHealth(self, unit, cur, max)
 				deadText = gsub(SPELL_FAILED_CASTER_DEAD_FEMALE, "[.]", "")
 			end
 		end
-		return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, deadText and deadText or DEAD)
+		return self.value:SetFormattedText("|cff"..color.."%s|r", deadText and deadText or DEAD)
 	end
-
-	local color = { 1, 1, 1 }
 
 	if cur < max then
 		if self.__owner.isMouseOver then
-			return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur))
+			return self.value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
 		else
 			if GetCVar("statusTextDisplay") == "PERCENT" then
-				return self.value:SetFormattedText("|cff%02x%02x%02x%d%%|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.PercFormat(cur, max))
+				return self.value:SetFormattedText("|cffffffff%d%%|r", E:NumberToPerc(cur, max))
 			else
-				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur))
+				self.value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
 			end
 		end
 	elseif self.__owner.isMouseOver then
-		return self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(max))
+		return self.value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(max, 1))
 	else
 		return self.value:SetText(nil)
 	end
@@ -424,22 +428,22 @@ function ns.UpdatePower(self, unit, cur, max)
 	end
 
 	local _, powerType = UnitPowerType(unit)
-	local color = self.__owner.colors.power[powerType] or self.__owner.colors.power["FOCUS"]
+	local color = E:RGBToHEX(self.__owner.colors.power[powerType] or self.__owner.colors.power["FOCUS"])
 
 	if cur < max then
 		if self.__owner.isMouseOver then
-			self.value:SetFormattedText("%s / |cff%02x%02x%02x%s|r", ns.NumFormat(cur, true), color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(max, true))
+			self.value:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur), E:NumberFormat(max))
 		elseif cur > 0 then
 			if GetCVar("statusTextDisplay") == "PERCENT" then
-				self.value:SetFormattedText("%d|cff%02x%02x%02x%%|r", ns.PercFormat(cur, max), color[1] * 255, color[2] * 255, color[3] * 255)
+				self.value:SetFormattedText("%d|cff"..color.."%%|r", E:NumberToPerc(cur, max))
 			else
-				self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur, true))
+				self.value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
 			end
 		else
 			self.value:SetText(nil)
 		end
 	elseif self.__owner.isMouseOver then
-		self.value:SetFormattedText("|cff%02x%02x%02x%s|r", color[1] * 255, color[2] * 255, color[3] * 255, ns.NumFormat(cur, true))
+		self.value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
 	else
 		self.value:SetText(nil)
 	end
@@ -665,5 +669,5 @@ function ns.lsOTDragHeader_Initialize()
 	ObjectiveTrackerFrame.ClearAllPoints = function() return end
 	ObjectiveTrackerFrame:SetPoint(unpack(ns.C.objectivetracker.point))
 	ObjectiveTrackerFrame.SetPoint = function() return end
-	ObjectiveTrackerFrame:SetHeight(ns.C.height * 0.6)
+	ObjectiveTrackerFrame:SetHeight(ns.E.height * 0.6)
 end

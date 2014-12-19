@@ -1,4 +1,5 @@
 local _, ns = ...
+local E = ns.E
 
 local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 local AURATRACKER_CONFIG, AURATRACKER_LOCKED
@@ -155,7 +156,7 @@ local function lsAuraTracker_OnEvent(self, event)
 								self.timer:SetTextColor(0.9, 0.1, 0.1)
 							end
 
-							self.timer:SetText(ns.TimeFormat(timeLeft))
+							self.timer:SetText(E:TimeFormat(timeLeft))
 						end
 					else
 						if not OmniCC then

@@ -1,30 +1,15 @@
 ## Interface: 60000
 ## Author: lightspark
-## Version: 1.3.8
+## Version: 2.0.0-alpha
 ## Title: oUF: LS
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
+init.lua
+config\_config.xml
 embeds\_embeds.xml
-
-localization\en.lua
-localization\ru.lua
-localization\cn.lua
-
-config.lua
-
-utilities\sharedmedia.lua
-utilities\sharedtemplates.xml
-utilities\functions.lua
-utilities\tags.lua
-
-units\unitframes.lua
-
-frames\minimap.lua
-frames\infobars.lua
-frames\buffs.lua
-frames\actionbars.lua
-frames\auratracker.lua
-frames\micromenu.lua
-frames\nameplates.lua
+media\_media.xml
+locales\_locales.xml
+modules\_modules.xml
+core\_core.xml

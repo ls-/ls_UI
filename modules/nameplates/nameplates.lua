@@ -1,4 +1,5 @@
 local _, ns = ...
+local E = ns.E
 
 local format, match, floor = format, strmatch, floor
 local SCALE
@@ -44,7 +45,7 @@ local function lsNamePlate_OnShow(self)
 	end
 
 	if healthbar.text then
-		healthbar.text:SetText(ns.NumFormat(self.health:GetValue()))
+		healthbar.text:SetText(E:NumFormat(self.health:GetValue()))
 	end
 
 	local name = self.name:GetText() or UNKNOWNOBJECT
@@ -87,7 +88,7 @@ local function lsNamePlateHealthBar_OnValueChanged(self, value)
 	self.bar:SetValue(value)
 
 	if self.bar.text then
-		self.bar.text:SetText(ns.NumFormat(value))
+		self.bar.text:SetText(E:NumFormat(value))
 	end
 end
 

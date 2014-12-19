@@ -1,4 +1,5 @@
 local _, ns = ...
+local M = ns.M
 
 local function CreateMapOverlay()
 	local t1 = Minimap:CreateTexture(nil, "BORDER", nil, 0)
@@ -29,6 +30,59 @@ local function CreateMapZoom()
 			Minimap_ZoomOut()
 		end
 	end)
+end
+
+local function SetButtonStyle(button, border, icon, bg)
+	local highlight = button:GetHighlightTexture()
+	local pushed = button:GetPushedTexture()
+	local normal = button:GetNormalTexture()
+
+	button:SetSize(32, 32)
+
+	if border then
+		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
+		border:SetDrawLayer("BORDER", 0)
+		border:ClearAllPoints()
+		border:SetAllPoints(button)
+	else
+		local border = button:CreateTexture(nil, "BACKGROUND", 0)
+		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
+		border:SetDrawLayer("BORDER", 0)
+		border:ClearAllPoints()
+		border:SetAllPoints(button)
+	end
+
+	if icon then
+		icon:SetDrawLayer("ARTWORK", 0)
+		icon:ClearAllPoints()
+		icon:SetPoint("CENTER", 0, 0)
+	end
+
+	if bg and not bg == "create" then
+		bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+		bg:SetVertexColor(0, 0, 0, 0.8)
+		bg:SetDrawLayer("BACKGROUND", 0)
+		bg:ClearAllPoints()
+		bg:SetAllPoints(button)
+	elseif bg == "create" then
+		local bg = button:CreateTexture(nil, "BACKGROUND", 0)
+		bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+		bg:SetVertexColor(0, 0, 0, 0.8)
+		bg:SetAllPoints(button)
+	end
+
+	if normal then
+		normal:SetTexture("")
+	end
+
+	if pushed then
+		pushed:SetTexture("")
+	end
+
+	if highlight then
+		highlight:ClearAllPoints()
+		highlight:SetAllPoints(button)
+	end
 end
 
 local function SetElementsStyle()
@@ -63,60 +117,33 @@ local function SetElementsStyle()
 			_G[f]:UnregisterAllEvents()
 		end
 
-		_G[f]:SetParent(ns.hiddenParentFrame)
+		_G[f]:SetParent(M.hiddenParent)
 	end
 
 	for _, child in next, {Minimap:GetChildren()} do
 		child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 	end
 
-	MiniMapTracking:SetSize(32, 32)
-	MiniMapTrackingBackground:SetSize(32, 32)
-	MiniMapTrackingBackground:ClearAllPoints()
-	MiniMapTrackingBackground:SetPoint("CENTER", 0, 0)
-	MiniMapTrackingBackground:SetVertexColor(0, 0, 0, 0.8)
-	MiniMapTrackingButtonBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-	MiniMapTrackingButtonBorder:SetSize(32, 32)
+	-- Tracking
+	SetButtonStyle(MiniMapTrackingButton, MiniMapTrackingButtonBorder, nil, MiniMapTrackingBackground)
+	
 	MiniMapTrackingIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_search")
 	MiniMapTrackingIcon:SetSize(18, 18)
 	MiniMapTrackingIcon:SetVertexColor(0.6, 0.6, 0.6, 1)
 
-	--QUEUE
-	QueueStatusMinimapButton:SetSize(32, 32)
-	QueueStatusMinimapButtonIcon:SetPoint("CENTER", 0, -1)
-	QueueStatusMinimapButtonIcon:SetSize(36, 36)
-	QueueStatusMinimapButtonBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-	QueueStatusMinimapButtonBorder:SetPoint("CENTER", 0, 0)
-	QueueStatusMinimapButtonBorder:SetSize(32, 32)
-	QueueStatusMinimapButton:GetHighlightTexture():ClearAllPoints()
-	QueueStatusMinimapButton:GetHighlightTexture():SetPoint("CENTER", 1, -2)
+	-- Queue
+	SetButtonStyle(QueueStatusMinimapButton, QueueStatusMinimapButtonBorder)
 
-	--CALENDAR
-	local CalendarFrame = _G["GameTimeFrame"]
-	CalendarFrame:SetSize(32, 32)
-	CalendarFrame:SetScript("OnEnter", nil)
-	CalendarFrame:SetScript("OnLeave", nil)
-	CalendarFrame:SetNormalTexture("")
-	CalendarFrame:SetPushedTexture("")
+	-- Calendar
+	SetButtonStyle(GameTimeFrame, nil, nil, "create")
 
-	local CalendarText = select(5, GameTimeFrame:GetRegions())
-	CalendarText:SetTextColor(0.52, 0.46, 0.36)
-	CalendarText:SetFont(ns.M.font, 13, "THINOUTLINE")
-	CalendarText:ClearAllPoints()
-	CalendarText:SetPoint("CENTER", 0, 0)
+	local text = select(5, GameTimeFrame:GetRegions())
+	text:SetTextColor(0.52, 0.46, 0.36)
+	text:SetFont(M.font, 12, "THINOUTLINE")
+	text:ClearAllPoints()
+	text:SetPoint("CENTER", 0, 0)
 
-	local CalendarBackground = CalendarFrame:CreateTexture(nil, "BACKGROUND")
-	CalendarBackground:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-	CalendarBackground:SetVertexColor(0, 0, 0, 0.8)
-	CalendarBackground:SetPoint("CENTER", 0, 0)
-	CalendarBackground:SetSize(32, 32)
-
-	local CalendarBorder = CalendarFrame:CreateTexture(nil, "BORDER")
-	CalendarBorder:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-	CalendarBorder:SetSize(32, 32)
-	CalendarBorder:SetPoint("CENTER", 0, 0)
-
-	-- GARRISON
+	-- Garrison
 	GarrisonLandingPageMinimapButton:SetSize(40, 40)
 end
 

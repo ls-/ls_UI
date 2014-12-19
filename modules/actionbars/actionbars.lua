@@ -1,4 +1,5 @@
 local _, ns = ...
+local E = ns.E
 
 local match, tonumber = strmatch, tonumber
 local BAR_CONFIG, COLORS, TEXTURES
@@ -101,7 +102,7 @@ local PAGE_LAYOUT = {
 
 local function GetPageLayout()
 	local condition = PAGE_LAYOUT["DEFAULT"]
-	local page = PAGE_LAYOUT[ns.C.playerclass]
+	local page = PAGE_LAYOUT[ns.E.playerclass]
 
 	if page then
 		condition = condition.." "..page
@@ -143,9 +144,9 @@ end
 
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "lsPetActionBar" then
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]]))
+		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
 	else
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]]))
+		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
 	end
 end
 
@@ -242,6 +243,7 @@ local function lsSetButtonStyle(button, petBattle)
 
 	if bName then
 		bName:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bName:SetJustifyH("CENTER")
 		bName:ClearAllPoints()
 		bName:SetPoint("BOTTOMLEFT", -2, 0)
 		bName:SetPoint("BOTTOMRIGHT", 2, 0)
@@ -404,13 +406,6 @@ local function lsActionButton_OnUpdate(button)
 	local bIcon = button.icon
 	local bName = button.Name
 
-	if bName then
-		local text = GetActionText(button.action)
-		if text then
-			bName:SetText(strsub(text, 1, 6))
-		end
-	end
-
 	if bIcon then
 		if button.action and IsActionInRange(button.action) ~= false then
 			local isUsable, notEnoughMana = IsUsableAction(button.action)
@@ -423,6 +418,13 @@ local function lsActionButton_OnUpdate(button)
 			end
 		else
 			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
+		end
+	end
+
+	if bName then
+		local text = bName:GetText()
+		if text then
+			bName:SetText(E:StringTruncate(text, 4))
 		end
 	end
 end
@@ -486,10 +488,10 @@ local function lsActionBarManager_OnEvent(self, event)
 		RegisterStateDriver(lsMultiBottomRightBar, "visibility", "hide")
 	end
 
-	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
 	lsPetActionBar:SetPoint(point, x, y - multiplier * 32)
 
-	local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.C.playerclass]])
+	local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
 	lsStanceBar:SetPoint(point, x, y - multiplier * 32)
 
 	if event == "PLAYER_REGEN_ENABLED" then
@@ -613,7 +615,7 @@ function ns.lsActionBars_Initialize(enableManager)
 		PetBattleFrame.BottomFrame.Delimiter,
 		PetBattleFrame.BottomFrame.MicroButtonFrame,
 	} do
-		f:SetParent(ns.hiddenParentFrame)
+		f:SetParent(ns.M.hiddenParent)
 		f.ignoreFramePositionManager = true
 	end
 

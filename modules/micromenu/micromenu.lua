@@ -252,7 +252,7 @@ function ns.lsMicroMenu_Initialize()
 
 	for _, f in next, MICRO_BUTTONS do
 		_G[f]:UnregisterAllEvents()
-		_G[f]:SetParent(ns.hiddenParentFrame)
+		_G[f]:SetParent(ns.M.hiddenParent)
 	end
 
 	hooksecurefunc("UpdateMicroButtons", UpdateMicroButtonState)
