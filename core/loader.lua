@@ -6,7 +6,7 @@ E:SetScript("OnEvent", function(self, event, ...)
 end)
 
 function E:ADDON_LOADED(arg)
-	if arg ~= "oUF_LS2" then return end
+	if arg ~= "oUF_LS" then return end
 
 	-- use bar manager with default settings only
 	local enableActionBarManager = true
