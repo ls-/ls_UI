@@ -31,12 +31,12 @@ local MICRO_BUTTON_LAYOUT = {
 		point = {"LEFT", "lsGuildMicroButton", "RIGHT", 6, 0},
 		icon = "lfg",
 	},
-	["CompanionsMicroButton"] = {
+	["CollectionsMicroButton"] = {
 		point = {"LEFT", "lsLFDMicroButton", "RIGHT", 6, 0},
 		icon = "pet",
 	},
 	["EJMicroButton"] = {
-		point = {"LEFT", "lsCompanionsMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "lsCollectionsMicroButton", "RIGHT", 6, 0},
 		icon = "ej",
 	},
 	["StoreMicroButton"] = {
@@ -97,7 +97,7 @@ local function UpdateMicroButtonState()
 		lsQuestLogMicroButton:SetButtonState("NORMAL")
 	end
 
-	if IsTrialAccount() or factionGroup == "Neutral" then
+	if IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) or factionGroup == "Neutral" then
 		lsGuildMicroButton:Disable()
 	elseif (GuildFrame and GuildFrame:IsShown()) or (LookingForGuildFrame and LookingForGuildFrame:IsShown()) then
 		lsGuildMicroButton:Enable()
@@ -123,10 +123,10 @@ local function UpdateMicroButtonState()
 		end
 	end
 
-	if PetJournalParent and PetJournalParent:IsShown() then
-		lsCompanionsMicroButton:SetButtonState("PUSHED", true)
+	if CollectionsJournal and CollectionsJournal:IsShown() then
+		lsCollectionsMicroButton:SetButtonState("PUSHED", true)
 	else
-		lsCompanionsMicroButton:SetButtonState("NORMAL")
+		lsCollectionsMicroButton:SetButtonState("NORMAL")
 	end
 
 	if EncounterJournal and EncounterJournal:IsShown() then
@@ -135,8 +135,11 @@ local function UpdateMicroButtonState()
 		lsEJMicroButton:SetButtonState("NORMAL")
 	end
 
-	if IsTrialAccount() then
-		lsStoreMicroButton.disabledTooltip = ERR_GUILD_TRIAL_ACCOUNT
+	if GameLimitedMode_IsActive() then
+		lsStoreMicroButton.disabledTooltip = GameLimitedMode_GetString("ERR_FEATURE_RESTRICTED")
+		lsStoreMicroButton:Disable()
+	elseif C_StorePublic.IsDisabledByParentalControls() then
+		lsStoreMicroButton.disabledTooltip = BLIZZARD_STORE_ERROR_PARENTAL_CONTROLS
 		lsStoreMicroButton:Disable()
 	else
 		lsStoreMicroButton.disabledTooltip = nil
@@ -171,7 +174,7 @@ local function lsMicroButton_OnEvent(self, event)
 			end
 		elseif name == "lsLFDMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-		elseif name == "lsCompanionsMicroButton" then
+		elseif name == "lsCollectionsMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
 		elseif name == "lsEJMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
@@ -234,10 +237,8 @@ function ns.lsMicroMenu_Initialize()
 	lsLFDMicroButton:SetScript("OnClick", function(...) PVEFrame_ToggleFrame() end)
 	LFDMicroButtonAlert:SetPoint("BOTTOM", lsLFDMicroButton, "TOP", 0, 12)
 
-	lsCompanionsMicroButton:SetScript("OnClick", function(...) TogglePetJournal() end)
-	CompanionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
-	CollectionsMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
-	ToyBoxMicroButtonAlert:SetPoint("BOTTOM", lsCompanionsMicroButton, "TOP", 0, 12)
+	lsCollectionsMicroButton:SetScript("OnClick", function(...) ToggleCollectionsJournal() end)
+	CollectionsMicroButtonAlert:SetPoint("BOTTOM", lsCollectionsMicroButton, "TOP", 0, 12)
 
 	lsMicroButton_Initialize(lsEJMicroButton, nil, 15, true)
 	lsEJMicroButton:SetScript("OnClick", function(...) ToggleEncounterJournal() end)
