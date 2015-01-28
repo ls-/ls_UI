@@ -15,7 +15,11 @@ function E:NumberFormat(v, mod)
 end
 
 function E:NumberToPerc(v1, v2)
-	return format("%d", v1 / v2 * 100)
+	return tonumber(format("%d", v1 / v2 * 100))
+end
+
+function E:Round(v)
+	return tonumber(floor(v + 0.5))
 end
 
 function E:RGBToHEX(r, g, b)
