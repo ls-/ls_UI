@@ -105,10 +105,6 @@ D["infobars"] = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 	},
-	mail = {
-		enabled = true,
-		point = {"RIGHT", "lsClockInfoBar", "LEFT", -4, 0},
-	},
 }
 
 D["nameplates"] = {

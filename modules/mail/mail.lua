@@ -5,7 +5,7 @@ E.Mail = {}
 
 local Mail = E.Mail
 
-local LazyLootMail, RecieveMail
+local LazyLootMail, ReceiveMail
 
 local function GetFreeSlots()
 	local free = 0
@@ -21,13 +21,59 @@ local function GetFreeSlots()
 	return free
 end
 
-local function Button_OnEvent(self)
-	self:Enable()
-	self.Icon:SetDesaturated(false)
-	self:UnregisterEvent("MAIL_INBOX_UPDATE")
+local function MailWidget_OnEvent(self, event)
+	if HasNewMail() and event ~= "HideMailWidget" then
+		self:SetAlpha(1)
+		self:EnableMouse(true)
+	else
+		self:SetAlpha(0)
+		self:EnableMouse(false)
+	end
 end
 
-local function Button_OnEnter(self)
+local function MailWidget_OnEnter(self)
+	if HasNewMail() then
+		local sender1, sender2, sender3 = GetLatestThreeSenders()
+
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
+
+		if sender1 or sender2 or sender3 then
+			GameTooltip:AddLine(HAVE_MAIL_FROM, 1, 1, 1)
+		else
+			GameTooltip:AddLine(HAVE_MAIL, 1, 1, 1)
+		end
+
+		if sender1 then
+			GameTooltip:AddLine(sender1)
+		end
+
+		if sender2 then
+			GameTooltip:AddLine(sender2)
+		end
+
+		if sender3 then
+			GameTooltip:AddLine(sender3)
+		end
+
+		GameTooltip:Show()
+	end
+end
+
+local function ReceiveButton_OnEvent(self, event)
+	if event == "MAIL_INBOX_UPDATE" then
+		self:Enable()
+		self:UnregisterEvent("MAIL_INBOX_UPDATE")
+
+		self.Icon:SetDesaturated(false)
+	elseif event == "MAIL_CLOSED" then
+		self:Disable()
+		self:RegisterEvent("MAIL_INBOX_UPDATE")
+
+		self.Icon:SetDesaturated(true)
+	end
+end
+
+local function ReceiveButton_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 
 	local numItems, totalItems = GetInboxNumItems()
@@ -65,7 +111,7 @@ local function Button_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function Button_OnLeave(self)
+local function Frame_OnLeave(self)
 	GameTooltip:Hide()
 end
 
@@ -83,7 +129,7 @@ function LazyLootMail(index, delay)
 
 				if money > 0 or (hasItem and hasItem <= freeSlots) then
 					local mod = 1
-					
+
 					if money > 0 then
 						TakeInboxMoney(index)
 					elseif hasItem and hasItem > 0 then
@@ -104,12 +150,14 @@ function LazyLootMail(index, delay)
 		InboxFrame_Update()
 
 		if Mail.overflow then
-			RecieveMail()
+			ReceiveMail()
+		else
+			MailWidget_OnEvent(Mail.Frame, "HideMailWidget")
 		end
 	end
 end
 
-function RecieveMail()
+function ReceiveMail()
 	local numItems, totalItems = GetInboxNumItems()
 	Mail.overflow = totalItems > numItems
 
@@ -121,16 +169,41 @@ function RecieveMail()
 end
 
 function Mail:Initialize()
+	local icon
+
+	local frame = CreateFrame("Frame", nil, UIParent)
+	frame:SetSize(28, 28)
+	frame:SetPoint("RIGHT", "lsClockInfoBar", "LEFT", -4, 0)
+	frame:EnableMouse(false)
+	frame:SetAlpha(0)
+
+	frame:RegisterEvent("UPDATE_PENDING_MAIL")
+
+	frame:SetScript("OnEvent", MailWidget_OnEvent)
+	frame:SetScript("OnEnter", MailWidget_OnEnter)
+	frame:SetScript("OnLeave", Frame_OnLeave)
+
+	frame.Border = ns.lsCreateButtonBorder(frame)
+
+	icon = frame:CreateTexture()
+	icon:SetTexture("Interface\\ICONS\\INV_Letter_09")
+	E:TweakIcon(icon)
+
+	frame.Icon = icon
+
+	self.Frame = frame
+
 	local button = CreateFrame("Button", nil, InboxFrame)
 	button:SetSize(28, 28)
 	button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
 
 	button:RegisterEvent("MAIL_INBOX_UPDATE")
+	button:RegisterEvent("MAIL_CLOSED")
 
-	button:SetScript("OnEvent", Button_OnEvent)
-	button:SetScript("OnEnter", Button_OnEnter)
-	button:SetScript("OnLeave", Button_OnLeave)
-	button:SetScript("OnClick", RecieveMail)
+	button:SetScript("OnEvent", ReceiveButton_OnEvent)
+	button:SetScript("OnEnter", ReceiveButton_OnEnter)
+	button:SetScript("OnLeave", Frame_OnLeave)
+	button:SetScript("OnClick", ReceiveMail)
 
 	button:SetHighlightTexture(1)
 	ns.lsSetHighlightTexture(button:GetHighlightTexture())
@@ -140,24 +213,12 @@ function Mail:Initialize()
 
 	button:Disable()
 
-	local border = ns.lsCreateButtonBorder(button)
+	button.Border = ns.lsCreateButtonBorder(button)
 
-	local icon = button:CreateTexture()
+	icon = button:CreateTexture()
 	icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
 	icon:SetDesaturated(true)
 	E:TweakIcon(icon)
 
 	button.Icon = icon
-
-	self.Button = button
-
-	-- hooksecurefunc(UIErrorsFrame, "AddMessage", function(self, msg)
-	-- 	if msg == ERR_MAIL_DATABASE_ERROR then
-	-- 		print("==DB_ERROR==")
-	-- 	elseif msg == ERR_ITEM_NOT_FOUND then
-	-- 		print("==ITEM_ERROR==")
-	-- 	end
-	-- end)
-
-	-- ns.DebugTexture(UIErrorsFrame)
 end
