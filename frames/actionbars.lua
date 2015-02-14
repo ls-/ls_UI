@@ -49,7 +49,7 @@ local BAR_LAYOUT = {
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar8 = {
-		button_type = {"CharacterBag3Slot", "CharacterBag2Slot", "CharacterBag1Slot", "CharacterBag0Slot", "MainMenuBarBackpackButton"},
+		button_type = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"},
 		num_buttons = 5,
 	},
 	bar9 = {
@@ -170,6 +170,10 @@ local function lsSetVertexColor(self, r, g, b)
 	end
 end
 
+local function CustomSetText(self, text)
+	self:SetFormattedText("%s", gsub(text, "[ ()]", ""))
+end
+
 local function lsSetButtonStyle(button, petBattle)
 	if not button then return end
 	if button.styled then return end
@@ -230,13 +234,11 @@ local function lsSetButtonStyle(button, petBattle)
 	end
 
 	if bCount then
-		if name == "MainMenuBarBackpackButton" or gsub(name, "%d+", "") == "CharacterBagSlot" then
-			ns.lsAlwaysHide(bCount)
-		end
-
 		bCount:SetFont(ns.M.font, 10, "THINOUTLINE")
 		bCount:ClearAllPoints()
 		bCount:SetPoint("BOTTOMRIGHT", 2, -1)
+
+		hooksecurefunc(bCount, "SetText", CustomSetText)
 	end
 
 	if bName then
@@ -490,6 +492,71 @@ local function lsCreateLeaveVehicleButton(bar)
 	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
 end
 
+local function GetBagUsageInfo()
+	local free, total, slots, bagType = 0, 0
+
+	for i = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+		slots, bagType = GetContainerNumFreeSlots(i)
+
+		if bagType == 0 then
+			free, total = free + slots, total + GetContainerNumSlots(i)
+		end
+	end
+
+	return total - free, total, free
+end
+
+local function BagUsageToColor(used, total)
+	local usage = tonumber(ns.PercFormat(used, total))
+
+	if usage ~= 0 then
+		if usage > 85 then
+			return unpack(COLORS.infobar.red)
+		elseif usage > 50 then
+			return unpack(COLORS.infobar.yellow)
+		else
+			return unpack(COLORS.infobar.green)
+		end
+	else
+		return unpack(COLORS.infobar.black)
+	end
+end
+
+local function BackpackButton_OnClick(self, button)
+	if button == "RightButton" then
+		if not InCombatLockdown() then
+			if CharacterBag0Slot:IsShown() then
+				for i = 3, 0, -1 do
+					_G["CharacterBag"..i.."Slot"]:Hide()
+					-- E:FadeOut(_G["CharacterBag"..i.."Slot"])
+				end
+			else
+				for i = 0, 3 do
+					_G["CharacterBag"..i.."Slot"]:Show()
+					-- E:FadeIn(_G["CharacterBag"..i.."Slot"])
+				end
+			end
+		end
+
+		BackpackButton_UpdateChecked(self)
+	else
+		ToggleAllBags()
+
+		BackpackButton_UpdateChecked(self)
+	end
+end
+
+local function BackpackButton_OnEvent(self, event, ...)
+	if event == "BAG_UPDATE" then
+		local bag = ...
+		if bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
+			self.icon:SetVertexColor(BagUsageToColor(GetBagUsageInfo()))
+		end
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		self.icon:SetVertexColor(BagUsageToColor(GetBagUsageInfo()))
+	end
+end
+
 local function SetPetBattleButtonPosition()
 	local bdata1, bdata2 = BAR_LAYOUT.bar11, BAR_CONFIG.bar11
 	lsSetButtonPosition(lsPetBattleBar, bdata2.orientation, bdata1.original_bar, bdata1.button_type, bdata2.button_size, bdata2.button_gap, 6)
@@ -614,6 +681,22 @@ function ns.lsActionBars_Initialize(enableManager)
 			PlayerPowerBarAlt.ignoreFramePositionManager = true
 		end
 
+		if tonumber(match(b, "(%d+)")) == 8 then
+			MainMenuBarBackpackButton.icon:SetDesaturated(true)
+			MainMenuBarBackpackButton.icon.SetDesaturated = function() return true end
+
+			MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
+			MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
+
+			for _, bag in next, bdata.button_type do
+				_G[bag]:UnregisterEvent("ITEM_PUSH")
+
+				if bag ~= "MainMenuBarBackpackButton" then
+					_G[bag]:Hide()
+				end
+			end
+		end
+
 		if bdata.condition then
 			RegisterStateDriver(bar, "visibility", bdata.condition)
 		end
@@ -623,8 +706,8 @@ function ns.lsActionBars_Initialize(enableManager)
 
 	for b, bar in next, ns.bars do
 		if BAR_CONFIG[b].point then
-			if b == "bar8" and not lsBagInfoBar then
-				bar:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -20, 6)
+			if b == "bar8" then
+				bar:SetPoint("LEFT", "lsLatencyInfoBar", "RIGHT", 24, 0)
 			else
 				bar:SetPoint(unpack(BAR_CONFIG[b].point))
 			end
