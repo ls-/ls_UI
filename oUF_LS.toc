@@ -23,6 +23,7 @@ units\unitframes.lua
 
 frames\minimap.lua
 frames\infobars.lua
+frames\mail.lua
 frames\buffs.lua
 frames\actionbars.lua
 frames\auratracker.lua

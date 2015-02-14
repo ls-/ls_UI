@@ -28,10 +28,6 @@ local INFOBAR_INFO = {
 		infobar_type = "Button",
 		length = "Short",
 	},
-	Mail = {
-		infobar_type = "Frame",
-		length = "Short",
-	},
 }
 
 local function lsLocationInfoBar_OnEnter(self)
@@ -293,41 +289,6 @@ local function lsClockInfoBar_OnUpdate(self, elapsed)
 	end
 end
 
-local function lsMailInfoBar_Initialize()
-	lsMailInfoBar.text:SetText(BUTTON_LAG_MAIL)
-	lsMailInfoBar:RegisterEvent("UPDATE_PENDING_MAIL")
-end
-
-local function lsMailInfoBar_OnEnter(self)
-	if HasNewMail() then
-		local sender1, sender2, sender3 = GetLatestThreeSenders()
-		GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-		if sender1 or sender2 or sender3 then
-			GameTooltip:AddLine(HAVE_MAIL_FROM, 1, 1, 1)
-		else
-			GameTooltip:AddLine(HAVE_MAIL, 1, 1, 1)
-		end
-		if sender1 then
-			GameTooltip:AddLine(sender1)
-		end
-		if sender2 then
-			GameTooltip:AddLine(sender2)
-		end
-		if sender3 then
-			GameTooltip:AddLine(sender3)
-		end
-		GameTooltip:Show()
-	end
-end
-
-local function lsMailInfoBar_OnEvent(self)
-	if HasNewMail() then
-		self.filling:SetVertexColor(unpack(ibcolors.green))
-	else
-		self.filling:SetVertexColor(unpack(ibcolors.black))
-	end
-end
-
 function ns.lsInfobars_Initialize()
 	for ib, ibdata in next, INFOBAR_INFO do
 		local ibar = CreateFrame(ibdata.infobar_type, "ls"..ib.."InfoBar", UIParent, "lsInfoBarButtonTemplate-"..ibdata.length)
@@ -363,8 +324,4 @@ function ns.lsInfobars_Initialize()
 	lsClockInfoBar:SetScript("OnClick", lsClockInfoBar_OnClick)
 	lsClockInfoBar:SetScript("OnEnter", lsClockInfoBar_OnEnter)
 	lsClockInfoBar:SetScript("OnUpdate", lsClockInfoBar_OnUpdate)
-
-	lsMailInfoBar_Initialize()
-	lsMailInfoBar:SetScript("OnEnter", lsMailInfoBar_OnEnter)
-	lsMailInfoBar:SetScript("OnEvent", lsMailInfoBar_OnEvent)
 end

@@ -101,10 +101,6 @@ local DEFAULT_CONFIG = {
 			enabled = true,
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 		},
-		mail = {
-			enabled = true,
-			point = {"RIGHT", "lsClockInfoBar", "LEFT", -4, 0},
-		},
 	},
 	nameplates = {
 		enabled = true,
@@ -198,6 +194,9 @@ local DEFAULT_CONFIG = {
 		aura_size = 28,
 		aura_gap = 4,
 	},
+	mail = {
+		enabled = true,
+	},
 	width = 0,
 	height = 0,
 	playerclass = "",
@@ -271,6 +270,9 @@ local function lsConfigLoader_OnEvent(...)
 
 		-- ObjectiveTracker
 		ns.lsOTDragHeader_Initialize()
+
+		--Mail
+		ns.Mail:Initialize()
 
 		if ns.C.units.enabled then
 			oUF:Factory(ns.lsFactory)
