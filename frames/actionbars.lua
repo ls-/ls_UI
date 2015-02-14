@@ -59,7 +59,6 @@ local BAR_LAYOUT = {
 	},
 	bar10 = {
 		num_buttons = 1,
-		condition = "[target=vehicle,exists] show; hide",
 	},
 	bar11 = {
 		button_type = {PetBattleFrame.BottomFrame.abilityButtons[1], PetBattleFrame.BottomFrame.abilityButtons[2],
@@ -427,13 +426,48 @@ local function lsActionButton_OnUpdate(button)
 	end
 end
 
+local function LeaveButton_OnEvent(self, event)
+	if not InCombatLockdown() then
+		if event == "PLAYER_REGEN_ENABLED" then
+			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		end
+
+		if UnitOnTaxi("player") then
+			RegisterStateDriver(self.parent, "visibility", "show")
+		else
+			RegisterStateDriver(self.parent, "visibility", "[canexitvehicle] show; hide")
+		end
+
+		self.icon:SetDesaturated(false)
+		self:Enable()
+	else
+		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	end
+end
+
+local function LeaveButton_OnClick(self)
+	if UnitOnTaxi("player") then
+		TaxiRequestEarlyLanding()
+
+		self:SetButtonState("NORMAL")
+		self.icon:SetDesaturated(true)
+		self:Disable()
+	else
+		VehicleExit()
+	end
+end
+
 local function lsCreateLeaveVehicleButton(bar)
 	local button = CreateFrame("Button", "lsVehicleExitButton", bar, "SecureHandlerClickTemplate")
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
-	button:RegisterForClicks("AnyUp")
-	button:SetScript("OnClick", function() VehicleExit() end)
 	button:SetAllPoints(bar)
+
+	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+	button:RegisterEvent("VEHICLE_UPDATE")
+
+	button:SetScript("OnEvent", LeaveButton_OnEvent)
+	button:SetScript("OnClick", LeaveButton_OnClick)
 
 	button.icon = button:CreateTexture(nil, "BACKGROUND", nil, 0)
 	button.icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
@@ -450,6 +484,10 @@ local function lsCreateLeaveVehicleButton(bar)
 
 	button:SetPushedTexture(1, 1, 1)
 	ns.lsSetPushedTexture(button:GetPushedTexture())
+
+	button.parent = bar
+
+	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
 end
 
 local function SetPetBattleButtonPosition()
