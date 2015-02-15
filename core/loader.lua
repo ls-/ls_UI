@@ -36,9 +36,10 @@ function E:ADDON_LOADED(arg)
 
 	-- Actionbars & MicroMenu
 	if ns.C.bars.enabled then
-		ns.lsActionBars_Initialize(enableActionBarManager)
+		E.ActionBars:Initialize(enableActionBarManager)
 		ns.lsMicroMenu_Initialize()
 		E.Vehicle:Initialize()
+		E.Extra:Initialize()
 	end
 
 	-- NamePlates

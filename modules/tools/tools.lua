@@ -1,6 +1,8 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
 
+local COLORS, TEXTURES = ns.M.colors, M.textures
+
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "lsPetActionBar" then
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
@@ -9,19 +11,19 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function lsSetFlashTexture(texture)
+local function SetFlashTexture(texture)
 	texture:SetTexture(TEXTURES.button.flash)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
 
-local function lsSetNilNormalTexture(self, texture)
+local function SetNilNormalTexture(self, texture)
 	if texture then
 		self:SetNormalTexture(nil)
 	end
 end
 
-local function lsSetVertexColor(self, r, g, b)
+local function SetCustomVertexColor(self, r, g, b)
 	local button = self:GetParent()
 
 	if button == ExtraActionButton1 then
@@ -35,7 +37,7 @@ local function CustomSetText(self, text)
 	self:SetFormattedText("%s", gsub(text, "[ ()]", ""))
 end
 
-local function SkinButton(button, pbButton)
+local function SkinButton(button)
 	local name = button:GetName()
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
@@ -46,35 +48,28 @@ local function SkinButton(button, pbButton)
 	local bName = button.Name
 	local bBorder = button.Border
 	local bNewActionTexture = button.NewActionTexture
-	local bCD = button.cooldown
+	local bCD = button.cooldown or button.Cooldown
 	local bCDText = bCD and bCD:GetRegions() -- it's #1 region
 	local bNormalTexture = button.GetNormalTexture and button:GetNormalTexture()
 	local bPushedTexture = button.GetPushedTexture and button:GetPushedTexture()
 	local bHighlightTexture = button.GetHighlightTexture and button:GetHighlightTexture()
 	local bCheckedTexture = button.GetCheckedTexture and button:GetCheckedTexture()
-	local bFloatingBG = not pbButton and _G[name.."FloatingBG"]
-
-	-- PET
-	local pAutoCast = not pbButton and _G[name.."AutoCastable"]
-	local pShine = not pbButton and _G[name.."Shine"]
 
 	E:TweakIcon(bIcon)
 
 	if bFlash then
-		lsSetFlashTexture(bFlash)
+		SetFlashTexture(bFlash)
 	end
 
 	if bFOBorder then
-		ns.lsAlwaysHide(bFOBorder)
+		E:AlwaysHide(bFOBorder)
 	end
 
 	if bFOBorderShadow then
-		ns.lsAlwaysHide(bFOBorderShadow)
+		E:AlwaysHide(bFOBorderShadow)
 	end
 
 	if bHotKey then
-		if name and gsub(name, "%d+", "") == "PetActionButton" then ns.lsAlwaysHide(bHotKey) end
-
 		bHotKey:SetFont(ns.M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetPoint("TOPRIGHT", 2, 1)
@@ -108,19 +103,17 @@ local function SkinButton(button, pbButton)
 		if bCDText then
 			bCDText:SetFont(ns.M.font, 12, "THINOUTLINE")
 			bCDText:ClearAllPoints()
-			bCDText:SetPoint("TOPLEFT", button, "TOPLEFT", -2, 2)
-			bCDText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+			bCDText:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
+			bCDText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -4)
 		end
 	end
 
 	if bNormalTexture then
-		if name and gsub(name, "%d+", "") == "PetActionButton" then hooksecurefunc(button, "SetNormalTexture", lsSetNilNormalTexture) end
-
 		bNormalTexture:SetTexture(nil)
 
-		button.lsBorder = ns.lsCreateButtonBorder(button)
+		button.lsBorder = E:CreateButtonBorder(button)
 
-		if not petBattle then hooksecurefunc(bNormalTexture, "SetVertexColor", lsSetVertexColor) end
+		hooksecurefunc(bNormalTexture, "SetVertexColor", SetCustomVertexColor)
 	end
 
 	if bPushedTexture then
@@ -133,26 +126,6 @@ local function SkinButton(button, pbButton)
 
 	if bCheckedTexture then
 		ns.lsSetCheckedTexture(bCheckedTexture)
-	end
-
-	if bFloatingBG then
-		ns.lsAlwaysHide(bFloatingBG)
-	end
-
-	if pShine then
-		pShine:ClearAllPoints()
-		pShine:SetPoint("TOPLEFT", 1, -1)
-		pShine:SetPoint("BOTTOMRIGHT", -1, 1)
-	end
-
-	if pAutoCast then
-		pAutoCast:ClearAllPoints()
-		pAutoCast:SetPoint("TOPLEFT", -14, 14)
-		pAutoCast:SetPoint("BOTTOMRIGHT", 14, -14)
-	end
-
-	if name == "ExtraActionButton1" then
-		ns.lsAlwaysHide(button.style)
 	end
 end
 
@@ -221,9 +194,9 @@ function E:SkinBagButton(button)
 	local bIconBorder = button.IconBorder
 
 	if bIconBorder then
-		ns.lsAlwaysHide(bIconBorder)
+		E:AlwaysHide(bIconBorder)
 
-		hooksecurefunc(bIconBorder, "SetVertexColor", lsSetVertexColor)
+		hooksecurefunc(bIconBorder, "SetVertexColor", SetCustomVertexColor)
 	end
 
 	if bCount then
@@ -275,6 +248,60 @@ function E:SkinPetBattleButton(button)
 		bBetterIcon:SetSize(18, 18)
 		bBetterIcon:ClearAllPoints()
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
+	end
+
+	button.styled = true
+end
+
+function E:SkinExtraActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	E:AlwaysHide(button.style)
+	E:AlwaysHide(button.HotKey)
+
+	button.styled = true
+end
+
+function E:SkinPetActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local name = button:GetName()
+	local bAutoCast = _G[name.."AutoCastable"]
+	local bShine = _G[name.."Shine"]
+
+	if bAutoCast then
+		bAutoCast:ClearAllPoints()
+		bAutoCast:SetPoint("TOPLEFT", -14, 14)
+		bAutoCast:SetPoint("BOTTOMRIGHT", 14, -14)
+	end
+
+	if bShine then
+		bShine:ClearAllPoints()
+		bShine:SetPoint("TOPLEFT", 1, -1)
+		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
+	end
+
+	hooksecurefunc(button, "SetNormalTexture", SetNilNormalTexture)
+
+	E:AlwaysHide(button.HotKey)
+
+	button.styled = true
+end
+
+function E:SkinActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local name = button:GetName()
+	local bFloatingBG = _G[name.."FloatingBG"]
+
+	if bFloatingBG then
+		E:AlwaysHide(bFloatingBG)
 	end
 
 	button.styled = true

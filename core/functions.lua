@@ -24,6 +24,30 @@ function E:TweakIcon(icon, l, r, t, b)
 	icon:SetAllPoints()
 end
 
+function E:CreateButtonBorder(button, curTexture)
+	local texture = curTexture or button:CreateTexture()
+	texture:SetDrawLayer("BORDER", 2)
+	texture:SetTexture(ns.M.textures.button.normal)
+	texture:SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
+	texture:ClearAllPoints()
+	texture:SetPoint("TOPLEFT", -3, 3)
+	texture:SetPoint("BOTTOMRIGHT", 3, -3)
+
+	return texture
+end
+
+function E:AlwaysShow(self)
+	if not self then return end
+	self:Show()
+	self.Hide = self.Show
+end
+
+function E:AlwaysHide(self)
+	if not self then return end
+	self:Hide()
+	self.Show = self.Hide
+end
+
 
 
 

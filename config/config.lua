@@ -97,17 +97,9 @@ D["infobars"] = {
 		enabled = true,
 		point = {"LEFT", "lsFPSInfoBar", "RIGHT", 4, 0},
 	},
-	bag = {
-		enabled = true,
-		point = {"LEFT", "lsLatencyInfoBar", "RIGHT", 24, 0},
-	},
 	clock = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
-	},
-	mail = {
-		enabled = true,
-		point = {"RIGHT", "lsClockInfoBar", "LEFT", -4, 0},
 	},
 }
 
@@ -123,30 +115,35 @@ D["bars"] = {
 		button_size = 28,
 		button_gap = 4,
 		orientation = "HORIZONTAL",
+		direction = "RIGHT",
 	},
 	bar2 = { -- MultiBarBottomLeft
 		point = {"BOTTOM", 0, 62},
 		button_size = 28,
 		button_gap = 4,
 		orientation = "HORIZONTAL",
+		direction = "RIGHT",
 	},
 	bar3 = { -- MultiBarBottomRight
 		point = {"BOTTOM", 0, 94},
 		button_size = 28,
 		button_gap = 4,
 		orientation = "HORIZONTAL",
+		direction = "RIGHT",
 	},
 	bar4 = { -- MultiBarLeft
 		point = {"BOTTOMRIGHT", -32, 300},
 		button_size = 28,
 		button_gap = 4,
 		orientation = "VERTICAL",
+		direction = "DOWN",
 	},
 	bar5 = { -- MultiBarRight
 		point = {"BOTTOMRIGHT", 0, 300},
 		button_size = 28,
 		button_gap = 4,
 		orientation = "VERTICAL",
+		direction = "DOWN",
 	},
 	bar6 = { --PetAction
 		-- point = {}, -- NYI
@@ -159,18 +156,11 @@ D["bars"] = {
 		button_size = 24,
 		button_gap = 4,
 		orientation = "HORIZONTAL",
+		direction = "RIGHT",
 	},
-	bar9 = { -- ExtraAction
+	extra = { -- ExtraAction
 		point = {"BOTTOM", -171, 154},
 		button_size = 40,
-		button_gap = 4,
-		orientation = "HORIZONTAL",
-	},
-	bar12 = { --PlayerPowerBarAlt
-		point = {"BOTTOM", 0, 240},
-		button_size = 128,
-		button_gap = 4,
-		orientation = "HORIZONTAL",
 	},
 	vehicle = { -- LeaveVehicle
 		point = {"BOTTOM", 171, 154},
