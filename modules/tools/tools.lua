@@ -48,7 +48,7 @@ local function SkinButton(button)
 	local bName = button.Name
 	local bBorder = button.Border
 	local bNewActionTexture = button.NewActionTexture
-	local bCD = button.cooldown or button.Cooldown
+	local bCD = button.cooldown
 	local bCDText = bCD and bCD:GetRegions() -- it's #1 region
 	local bNormalTexture = button.GetNormalTexture and button:GetNormalTexture()
 	local bPushedTexture = button.GetPushedTexture and button:GetPushedTexture()
