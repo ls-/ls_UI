@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
 
-local ibcolors = ns.M.colors.infobar
+local COLORS = ns.M.colors
 
 E.Bags = {}
 
@@ -36,14 +36,14 @@ local function BagUsageToColor(used, total)
 
 	if usage ~= 0 then
 		if usage > 85 then
-			return unpack(ibcolors.red)
+			return unpack(COLORS.red)
 		elseif usage > 50 then
-			return unpack(ibcolors.yellow)
+			return unpack(COLORS.yellow)
 		else
-			return unpack(ibcolors.green)
+			return unpack(COLORS.green)
 		end
 	else
-		return unpack(ibcolors.black)
+		return unpack(COLORS.black)
 	end
 end
 

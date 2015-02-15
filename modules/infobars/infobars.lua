@@ -1,6 +1,7 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-local ibcolors = ns.M.colors.infobar
+
+local COLORS = ns.M.colors
 
 ns.infobars = {}
 
@@ -42,25 +43,25 @@ local function lsLocationInfoBar_OnEnter(self)
   	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 	GameTooltip:AddLine(zoneName, 1, 1, 1)
 	if pvpType == "sanctuary" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.blue))
-		GameTooltip:AddLine(SANCTUARY_TERRITORY, unpack(ibcolors.blue))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.blue))
+		GameTooltip:AddLine(SANCTUARY_TERRITORY, unpack(COLORS.blue))
 	elseif pvpType == "arena" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.red))
-		GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, unpack(ibcolors.red))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.red))
+		GameTooltip:AddLine(FREE_FOR_ALL_TERRITORY, unpack(COLORS.red))
 	elseif pvpType == "friendly" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.green))
-		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(ibcolors.green))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.green))
+		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(COLORS.green))
 	elseif pvpType == "hostile" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.red))
-		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(ibcolors.red))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.red))
+		GameTooltip:AddLine(format(FACTION_CONTROLLED_TERRITORY, factionName), unpack(COLORS.red))
 	elseif pvpType == "contested" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.yellow))
-		GameTooltip:AddLine(CONTESTED_TERRITORY, unpack(ibcolors.yellow))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.yellow))
+		GameTooltip:AddLine(CONTESTED_TERRITORY, unpack(COLORS.yellow))
 	elseif pvpType == "combat" then
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.red))
-		GameTooltip:AddLine(COMBAT_ZONE, unpack(ibcolors.red))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.red))
+		GameTooltip:AddLine(COMBAT_ZONE, unpack(COLORS.red))
 	else
-		GameTooltip:AddLine(subzoneName, unpack(ibcolors.yellow))
+		GameTooltip:AddLine(subzoneName, unpack(COLORS.yellow))
 	end
 	if coords then
 		GameTooltip:AddLine(coords)
@@ -76,17 +77,17 @@ local function lsLocationInfoBar_OnUpdate(self, elapsed)
 		self.text:SetText(GetMinimapZoneText())
 		local pvpType = GetZonePVPInfo()
 		if pvpType == "sanctuary" then
-			self.filling:SetVertexColor(unpack(ibcolors.blue))
+			self.filling:SetVertexColor(unpack(COLORS.blue))
 		elseif pvpType == "arena" then
-			self.filling:SetVertexColor(unpack(ibcolors.red))
+			self.filling:SetVertexColor(unpack(COLORS.red))
 		elseif pvpType == "friendly" then
-			self.filling:SetVertexColor(unpack(ibcolors.green))
+			self.filling:SetVertexColor(unpack(COLORS.green))
 		elseif pvpType == "hostile" then
-			self.filling:SetVertexColor(unpack(ibcolors.red))
+			self.filling:SetVertexColor(unpack(COLORS.red))
 		elseif pvpType == "contested" then
-			self.filling:SetVertexColor(unpack(ibcolors.yellow))
+			self.filling:SetVertexColor(unpack(COLORS.yellow))
 		else
-			self.filling:SetVertexColor(unpack(ibcolors.yellow))
+			self.filling:SetVertexColor(unpack(COLORS.yellow))
 		end
 		if GameTooltip:IsOwned(self) then
 			lsLocationInfoBar_OnEnter(self)
@@ -153,11 +154,11 @@ local function lsFPSInfoBar_OnUpdate(self, elapsed)
 		self.updateInterval = 0.2
 		local fps = GetFramerate()
 		if fps > 35 then
-			self.filling:SetVertexColor(unpack(ibcolors.green))
+			self.filling:SetVertexColor(unpack(COLORS.green))
 		elseif fps > 20 then
-			self.filling:SetVertexColor(unpack(ibcolors.yellow))
+			self.filling:SetVertexColor(unpack(COLORS.yellow))
 		else
-			self.filling:SetVertexColor(unpack(ibcolors.red))
+			self.filling:SetVertexColor(unpack(COLORS.red))
 		end
 		self.text:SetText(floor(fps).." "..FPS_ABBR)
 	end
@@ -179,11 +180,11 @@ local function lsLatencyInfoBar_OnUpdate(self, elapsed)
 		self.updateInterval = 10
 		local latency = select(4, GetNetStats())
 		if latency > PERFORMANCEBAR_MEDIUM_LATENCY then
-			self.filling:SetVertexColor(unpack(ibcolors.red))
+			self.filling:SetVertexColor(unpack(COLORS.red))
 		elseif latency > PERFORMANCEBAR_LOW_LATENCY then
-			self.filling:SetVertexColor(unpack(ibcolors.yellow))
+			self.filling:SetVertexColor(unpack(COLORS.yellow))
 		else
-			self.filling:SetVertexColor(unpack(ibcolors.green))
+			self.filling:SetVertexColor(unpack(COLORS.green))
 		end
 		self.text:SetText(latency.." "..MILLISECONDS_ABBR)
 		if GameTooltip:IsOwned(self) then
@@ -204,9 +205,9 @@ local function lsClockInfoBar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
 		GameTooltip:AddLine(TIMEMANAGER_TOOLTIP_TITLE, 1, 1, 1)
 	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true),
-		ibcolors.yellow[1], ibcolors.yellow[2], ibcolors.yellow[3], 1, 1, 1)
+		COLORS.yellow[1], COLORS.yellow[2], COLORS.yellow[3], 1, 1, 1)
 	GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true),
-		ibcolors.yellow[1], ibcolors.yellow[2], ibcolors.yellow[3], 1, 1, 1)
+		COLORS.yellow[1], COLORS.yellow[2], COLORS.yellow[3], 1, 1, 1)
 	GameTooltip:Show()
 end
 
@@ -220,9 +221,9 @@ local function lsClockInfoBar_OnUpdate(self, elapsed)
 			lsClockInfoBar_OnEnter(self)
 		end
 		if TimeManagerClockButton.alarmFiring then
-			self.filling:SetVertexColor(unpack(ibcolors.red))
+			self.filling:SetVertexColor(unpack(COLORS.red))
 		else
-			self.filling:SetVertexColor(unpack(ibcolors.black))
+			self.filling:SetVertexColor(unpack(COLORS.black))
 		end
 	end
 end
