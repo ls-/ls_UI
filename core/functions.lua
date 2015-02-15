@@ -162,6 +162,7 @@ function ns.lsCreateButtonBorder(button, curTexture)
 	texture:ClearAllPoints()
 	texture:SetPoint("TOPLEFT", -3, 3)
 	texture:SetPoint("BOTTOMRIGHT", 3, -3)
+
 	return texture
 end
 
@@ -268,12 +269,12 @@ function ns.CreateAuraIcon(self, button)
 	button.cd:SetReverse()
 	button.cd:SetHideCountdownNumbers(true)
 
-	ns.lsTweakIcon(button.icon)
+	E:TweakIcon(button.icon)
 
-	ns.lsCreateButtonBorder(nil, button.overlay)
+	E:CreateButtonBorder(button, button.overlay)
 	ns.lsAlwaysShow(button.overlay)
 
-	ns.lsCreateButtonBorder(nil, button.stealable)
+	E:CreateButtonBorder(button, button.stealable)
 	button.stealable:SetVertexColor(1.0, 0.82, 0.0)
 
 	button.fg = CreateFrame("Frame", nil, button)
@@ -291,7 +292,7 @@ function ns.CreateAuraIcon(self, button)
 end
 
 function ns.UpdateAuraIcon(self, unit, icon, index, offset)
-	local _, _, _, _, _, duration, expirationTime, _, stealable = UnitAura(unit, index, icon.filter)
+	local name, _, _, _, _, duration, expirationTime, _, stealable = UnitAura(unit, index, icon.filter)
 	local texture = icon.icon
 
 	if not self.onlyShowPlayer then

@@ -167,7 +167,7 @@ function lsOptionsFrame_Initialize()
 	button10:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
 
 	lsOptionsMainFrame["infobars"]["enabled"] = button10
-	
+
 	local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Infobars")
 	header2:SetPoint("LEFT", button10, "RIGHT", 4, 0)
 

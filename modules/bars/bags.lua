@@ -105,7 +105,7 @@ function Bags:Initialize()
 
 	MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 	MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
-	
+
 	for _, bag in next, BAGS do
 		bag:UnregisterEvent("ITEM_PUSH")
 

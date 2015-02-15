@@ -270,7 +270,7 @@ function ActionBars:Initialize(enableManager)
 			bar:SetSize(BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap,
 				BAR_CONFIG[b].button_size * #bdata.buttons + BAR_CONFIG[b].button_gap * #bdata.buttons)
 		end
-		
+
 		if tonumber(match(b, "(%d+)")) == 1 then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")

@@ -126,7 +126,7 @@ local function SetElementsStyle()
 
 	-- Tracking
 	SetButtonStyle(MiniMapTrackingButton, MiniMapTrackingButtonBorder, nil, MiniMapTrackingBackground)
-	
+
 	MiniMapTrackingIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_search")
 	MiniMapTrackingIcon:SetSize(18, 18)
 	MiniMapTrackingIcon:SetVertexColor(0.6, 0.6, 0.6, 1)
