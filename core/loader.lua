@@ -67,6 +67,8 @@ function E:ADDON_LOADED(arg)
 		E.PetBattle:Initialize()
 	end
 
+	E.OT:Initialize()
+
 	lsOptionsFrame_Initialize()
 
 	self:UnregisterEvent("ADDON_LOADED")

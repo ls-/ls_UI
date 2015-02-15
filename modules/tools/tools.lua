@@ -306,3 +306,13 @@ function E:SkinActionButton(button)
 
 	button.styled = true
 end
+
+function E:SkinOTButton()
+	if not self or self.styled then return end
+
+	SkinButton(self)
+
+	E:AlwaysHide(self.HotKey)
+
+	self.styled = true
+end
