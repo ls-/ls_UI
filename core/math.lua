@@ -42,7 +42,7 @@ end
 
 function E:StringTruncate(s, l)
 	if not s or not l then return end
-	 
+
 	local len, lenutf8 = strlen(s), strlenutf8(s)
 
 	if len > lenutf8 then
