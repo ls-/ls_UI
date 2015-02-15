@@ -38,6 +38,7 @@ function E:ADDON_LOADED(arg)
 	if ns.C.bars.enabled then
 		ns.lsActionBars_Initialize(enableActionBarManager)
 		ns.lsMicroMenu_Initialize()
+		E.Vehicle:Initialize()
 	end
 
 	-- NamePlates
@@ -56,6 +57,14 @@ function E:ADDON_LOADED(arg)
 	end
 
 	E.Mail:Initialize()
+
+	if ns.C.bags.enabled then
+		E.Bags:Initialize()
+	end
+
+	if ns.C.petbattle.enabled then
+		E.PetBattle:Initialize()
+	end
 
 	lsOptionsFrame_Initialize()
 

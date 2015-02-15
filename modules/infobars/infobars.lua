@@ -21,10 +21,6 @@ local INFOBAR_INFO = {
 		infobar_type = "Frame",
 		length = "Short",
 	},
-	Bag = {
-		infobar_type = "Button",
-		length = "Short",
-	},
 	Clock = {
 		infobar_type = "Button",
 		length = "Short",
@@ -196,65 +192,6 @@ local function lsLatencyInfoBar_OnUpdate(self, elapsed)
 	end
 end
 
-
-local function lsBagInfoBar_Initialize()
-	lsBagInfoBar:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	lsBagInfoBar:RegisterEvent("BAG_UPDATE")
-	if not InCombatLockdown() then
-		CharacterBag3Slot:Hide()
-		CharacterBag2Slot:Hide()
-		CharacterBag1Slot:Hide()
-		CharacterBag0Slot:Hide()
-		MainMenuBarBackpackButton:Hide()
-	end
-end
-
-local function lsBagInfoBar_OnClick(self, button)
-	if button == "RightButton" then
-		if not InCombatLockdown() then
-			if MainMenuBarBackpackButton:IsShown() then
-				CharacterBag3Slot:Hide()
-				CharacterBag2Slot:Hide()
-				CharacterBag1Slot:Hide()
-				CharacterBag0Slot:Hide()
-				MainMenuBarBackpackButton:Hide()
-			else
-				CharacterBag3Slot:Show()
-				CharacterBag2Slot:Show()
-				CharacterBag1Slot:Show()
-				CharacterBag0Slot:Show()
-				MainMenuBarBackpackButton:Show()
-			end
-		end
-	else
-		ToggleAllBags()
-	end
-end
-
-local slots, bagType
-local function lsBagInfoBar_OnEvent(self)
-	local free, total, used = 0, 0, 0
-	for i = 0, NUM_BAG_SLOTS do
-		slots, bagType = GetContainerNumFreeSlots(i)
-		if bagType == 0 then
-			free, total = free + slots, total + GetContainerNumSlots(i)
-		end
-	end
-	used = total - free
-	self.text:SetText(used.."/"..total)
-	if total ~= 0 then
-		if floor((used / total) * 100) > 85 then
-			self.filling:SetVertexColor(unpack(ibcolors.red))
-		elseif floor((used / total) * 100) > 50 then
-			self.filling:SetVertexColor(unpack(ibcolors.yellow))
-		else
-			self.filling:SetVertexColor(unpack(ibcolors.green))
-		end
-	else
-		self.filling:SetVertexColor(unpack(ibcolors.black))
-	end
-end
-
 local function lsClockInfoBar_Initialize()
 	lsClockInfoBar:RegisterForClicks("LeftButtonUp")
 end
@@ -315,11 +252,6 @@ function ns.lsInfobars_Initialize()
 
 	lsLatencyInfoBar:SetScript("OnEnter", lsLatencyInfoBar_OnEnter)
 	lsLatencyInfoBar:SetScript("OnUpdate", lsLatencyInfoBar_OnUpdate)
-
-	lsBagInfoBar_Initialize()
-	lsBagInfoBar_OnEvent(lsBagInfoBar)
-	lsBagInfoBar:SetScript("OnClick", lsBagInfoBar_OnClick)
-	lsBagInfoBar:SetScript("OnEvent", lsBagInfoBar_OnEvent)
 
 	lsClockInfoBar_Initialize()
 	lsClockInfoBar:SetScript("OnClick", lsClockInfoBar_OnClick)
