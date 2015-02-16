@@ -194,7 +194,7 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-local function lsActionBarManager_OnEvent(self, event)
+local function ActionBarManager_OnEvent(self, event)
 	local multiplier = 2 - (lsActionBarManager.bar2Shown and 1 or 0) - (lsActionBarManager.bar3Shown and 1 or 0)
 
 	if lsActionBarManager.bar2Shown then
@@ -224,7 +224,7 @@ local function lsActionBarManager_OnEvent(self, event)
 	end
 end
 
-local function lsActionBarManager_Update(bottomLeftBar, bottomRightBar)
+local function ActionBarManager_Update(bottomLeftBar, bottomRightBar)
 	if not lsActionBarManager.forceUpdate then
 		lsActionBarManager.forceUpdate = lsActionBarManager.bar2Shown ~= bottomLeftBar
 		if not lsActionBarManager.forceUpdate then
@@ -238,9 +238,9 @@ local function lsActionBarManager_Update(bottomLeftBar, bottomRightBar)
 
 		if InCombatLockdown() then
 			lsActionBarManager:RegisterEvent("PLAYER_REGEN_ENABLED")
-			lsActionBarManager:SetScript("OnEvent", lsActionBarManager_OnEvent)
+			lsActionBarManager:SetScript("OnEvent", ActionBarManager_OnEvent)
 		else
-			lsActionBarManager_OnEvent(lsActionBarManager, "CUSTOM_FORCE_UPDATE")
+			ActionBarManager_OnEvent(lsActionBarManager, "CUSTOM_FORCE_UPDATE")
 		end
 	end
 end
@@ -350,6 +350,6 @@ function ActionBars:Initialize(enableManager)
 		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
 		lsActionBarManager.bar2Shown = true
 		lsActionBarManager.bar3Shown = true
-		hooksecurefunc("SetActionBarToggles", lsActionBarManager_Update)
+		hooksecurefunc("SetActionBarToggles", ActionBarManager_Update)
 	end
 end
