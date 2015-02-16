@@ -241,7 +241,7 @@
 				self:SetAlpha(0.5)
 			</OnDisable>
 			<OnEvent>
-				self:lsMicroButton_OnEvent(event)
+				self:MicroButton_OnEvent(event)
 			</OnEvent>
 			<OnLeave>
 				GameTooltip:Hide()

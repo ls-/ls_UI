@@ -168,6 +168,15 @@ D["bars"] = {
 	},
 }
 
+D["micromenu"] = {
+	holder1 = {
+		point = {"BOTTOM", -270, 8},
+	},
+	holder2 = {
+		point = {"BOTTOM", 270, 8},
+	},
+}
+
 D["auras"] = {
 	enabled = true,
 	buff = {

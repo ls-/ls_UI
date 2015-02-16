@@ -1,46 +1,61 @@
 local _, ns = ...
+local E = ns.E
 
-ns.mbuttons = {}
+E.MM = {}
+
+local MM = E.MM
+
+MM.Buttons = {}
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"BOTTOM", -316, 8},
+		point = {"LEFT", "lsMBHolderLeft", "LEFT", 3, 0},
+		parent = "lsMBHolderLeft",
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
 		point = {"LEFT", "lsCharacterMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderLeft",
 		icon = "spellbook",
 	},
 	["TalentMicroButton"] = {
 		point = {"LEFT", "lsSpellbookMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderLeft",
 		icon = "talents",
 	},
 	["AchievementMicroButton"] = {
 		point = {"LEFT", "lsTalentMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderLeft",
 		icon = "achievement",
 	},
 	["QuestLogMicroButton"] = {
 		point = {"LEFT", "lsAchievementMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderLeft",
 		icon = "quest",
 	},
 	["GuildMicroButton"] = {
-		point = {"BOTTOM", 220, 8},
+		point = {"LEFT", "lsMBHolderRight", "LEFT", 3, 0},
+		parent = "lsMBHolderRight",
 		icon = "guild",
 	},
 	["LFDMicroButton"] = {
 		point = {"LEFT", "lsGuildMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderRight",
 		icon = "lfg",
 	},
 	["CollectionsMicroButton"] = {
 		point = {"LEFT", "lsLFDMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderRight",
 		icon = "pet",
 	},
 	["EJMicroButton"] = {
 		point = {"LEFT", "lsCollectionsMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderRight",
 		icon = "ej",
 	},
 	["StoreMicroButton"] = {
 		point = {"LEFT", "lsEJMicroButton", "RIGHT", 6, 0},
+		parent = "lsMBHolderRight",
 		icon = "store",
 	},
 }
@@ -153,8 +168,9 @@ local function UpdateMicroButtonState()
 	end
 end
 
-local function lsMicroButton_OnEvent(self, event)
+local function MicroButton_OnEvent(self, event)
 	local name = self:GetName()
+
 	if event == "UPDATE_BINDINGS" or event == "CUSTOM_FORCE_UPDATE" then
 		if name == "lsCharacterMicroButton" then
 			self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
@@ -186,69 +202,83 @@ local function lsMicroButton_OnEvent(self, event)
 	UpdateMicroButtonState()
 end
 
-local function lsMicroButton_Initialize(mbutton, events, level, isBlizzConDriven, isTrialDriven)
+local function InitializeMicroButton(self, events, level, isBlizzConDriven, isTrialDriven)
 	if events then
 		for i = 1, #events do
-			mbutton:RegisterEvent(events[i])
+			self:RegisterEvent(events[i])
 		end
 	end
 
-	if level then mbutton.minLevel = level end
+	if level then self.minLevel = level end
 
 	if isTrialDriven then
 		if IsTrialAccount() then
-			mbutton:Disable()
-			mbutton:SetAlpha(0.5)
-			mbutton.disabledTooltip = ERR_RESTRICTED_ACCOUNT
+			self:Disable()
+			self:SetAlpha(0.5)
+			self.disabledTooltip = ERR_RESTRICTED_ACCOUNT
 		end
 	end
 end
 
-function ns.lsMicroMenu_Initialize()
-	for mb, mbdata in next, MICRO_BUTTON_LAYOUT do
-		local mbutton = CreateFrame("Button", "ls"..mb, UIParent, "lsMicroButtonTemplate")
-		mbutton:SetFrameStrata("LOW")
-		mbutton:SetFrameLevel(1)
+function MM:Initialize()
+	local MM_CONFIG = ns.C.micromenu
 
-		mbutton.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\"..mbdata.icon)
+	local holder1 = CreateFrame("Frame", "lsMBHolderLeft", UIParent)
+	holder1:SetFrameStrata("LOW")
+	holder1:SetFrameLevel(1)
+	holder1:SetSize(18 * 5 + 6 * 5, 24 + 6)
+	holder1:SetPoint(unpack(MM_CONFIG.holder1.point))
 
-		mbutton.lsMicroButton_OnEvent = lsMicroButton_OnEvent
+	local holder2 = CreateFrame("Frame", "lsMBHolderRight", UIParent)
+	holder2:SetFrameStrata("LOW")
+	holder2:SetFrameLevel(1)
+	holder2:SetSize(18 * 5 + 6 * 5, 24 + 6)
+	holder2:SetPoint(unpack(MM_CONFIG.holder2.point))
 
-		ns.mbuttons[mb] = mbutton
+	for mb, data in next, MICRO_BUTTON_LAYOUT do
+		local button = CreateFrame("Button", "ls"..mb, _G[data.parent], "lsMicroButtonTemplate")
+		button:SetFrameStrata("LOW")
+		button:SetFrameLevel(2)
+
+		button.icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\"..data.icon)
+
+		button.MicroButton_OnEvent = MicroButton_OnEvent
+
+		MM.Buttons[mb] = button
 	end
 
 	lsCharacterMicroButton:SetScript("OnClick", function(...) ToggleCharacter("PaperDollFrame") end)
 
 	lsSpellbookMicroButton:SetScript("OnClick", function(...) ToggleFrame(SpellBookFrame) end)
 
-	lsMicroButton_Initialize(lsTalentMicroButton, {"PLAYER_LEVEL_UP", "PLAYER_TALENT_UPDATE"}, 10, true)
+	InitializeMicroButton(lsTalentMicroButton, {"PLAYER_LEVEL_UP", "PLAYER_TALENT_UPDATE"}, 10, true)
 	lsTalentMicroButton:SetScript("OnClick", function(...) ToggleTalentFrame() end)
 	TalentMicroButtonAlert:SetPoint("BOTTOM", lsTalentMicroButton, "TOP", 0, 12)
 
-	lsMicroButton_Initialize(lsAchievementMicroButton, {"RECEIVED_ACHIEVEMENT_LIST", "ACHIEVEMENT_EARNED"}, 10)
+	InitializeMicroButton(lsAchievementMicroButton, {"RECEIVED_ACHIEVEMENT_LIST", "ACHIEVEMENT_EARNED"}, 10)
 	lsAchievementMicroButton:SetScript("OnClick", function(...) ToggleAchievementFrame() end)
 
 	lsQuestLogMicroButton:SetScript("OnClick", function(...) ToggleQuestLog() end)
 
-	lsMicroButton_Initialize(lsGuildMicroButton, {"PLAYER_GUILD_UPDATE", "NEUTRAL_FACTION_SELECT_RESULT"}, nil, true, true)
+	InitializeMicroButton(lsGuildMicroButton, {"PLAYER_GUILD_UPDATE", "NEUTRAL_FACTION_SELECT_RESULT"}, nil, true, true)
 	lsGuildMicroButton:SetScript("OnClick", function(...) ToggleGuildFrame() end)
 
-	lsMicroButton_Initialize(lsLFDMicroButton, nil, 10, true)
+	InitializeMicroButton(lsLFDMicroButton, nil, 10, true)
 	lsLFDMicroButton:SetScript("OnClick", function(...) PVEFrame_ToggleFrame() end)
 	LFDMicroButtonAlert:SetPoint("BOTTOM", lsLFDMicroButton, "TOP", 0, 12)
 
 	lsCollectionsMicroButton:SetScript("OnClick", function(...) ToggleCollectionsJournal() end)
 	CollectionsMicroButtonAlert:SetPoint("BOTTOM", lsCollectionsMicroButton, "TOP", 0, 12)
 
-	lsMicroButton_Initialize(lsEJMicroButton, nil, 15, true)
+	InitializeMicroButton(lsEJMicroButton, nil, 15, true)
 	lsEJMicroButton:SetScript("OnClick", function(...) ToggleEncounterJournal() end)
 
-	lsMicroButton_Initialize(lsStoreMicroButton, {"STORE_STATUS_CHANGED"})
+	InitializeMicroButton(lsStoreMicroButton, {"STORE_STATUS_CHANGED"})
 	lsStoreMicroButton:SetScript("OnClick", function(...) ToggleStoreUI() end)
 
-	for mb, mbutton in next, ns.mbuttons do
-		mbutton:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
-		mbutton:lsMicroButton_OnEvent("CUSTOM_FORCE_UPDATE")
+	for mb, button in next, MM.Buttons do
+		button:SetPoint(unpack(MICRO_BUTTON_LAYOUT[mb].point))
+		button:MicroButton_OnEvent("CUSTOM_FORCE_UPDATE")
 	end
 
 	for _, f in next, MICRO_BUTTONS do

@@ -37,7 +37,7 @@ function E:ADDON_LOADED(arg)
 	-- Actionbars & MicroMenu
 	if ns.C.bars.enabled then
 		E.ActionBars:Initialize(enableActionBarManager)
-		ns.lsMicroMenu_Initialize()
+		E.MM:Initialize()
 		E.Vehicle:Initialize()
 		E.Extra:Initialize()
 	end
