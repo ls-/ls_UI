@@ -305,6 +305,11 @@ local function UpdateTotemBar(self, priorities, haveTotem, name, start, duration
 				end
 			end
 		end)
+	else
+		totem.text:SetText("")
+		totem.glow.animation:Finish()
+		totem.text.animation:Finish()
+		totem:SetScript("OnUpdate", nil)
 	end
 	if UnitHasVehicleUI("player") then
 		self:Hide()
