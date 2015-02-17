@@ -316,3 +316,18 @@ function E:SkinOTButton()
 
 	self.styled = true
 end
+
+function E:SkinSquareButton(button)
+	local texture = button.icon:GetTexture()
+	local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = button.icon:GetTexCoord()
+	local highlight = button:GetHighlightTexture()
+
+	highlight:SetTexture(texture)
+	highlight:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+	highlight:ClearAllPoints()
+	highlight:SetPoint("CENTER", 0, 0)
+	highlight:SetSize(12, 12)
+	
+	button:SetNormalTexture("")
+	button:SetPushedTexture("")
+end

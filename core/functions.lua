@@ -48,6 +48,16 @@ function E:AlwaysHide(self)
 	self.Show = self.Hide
 end
 
+function E:GetCoords(object)
+	local p, anchor, rP, x, y = object:GetPoint()
+
+	if not x then
+		return p, anchor, rP, x, y
+	else
+		return p, anchor and anchor:GetName() or "UIParent", rP, E:Round(x), E:Round(y)
+	end
+end
+
 
 
 
