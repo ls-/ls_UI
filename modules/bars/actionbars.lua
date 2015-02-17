@@ -27,7 +27,7 @@ local BAR_LAYOUT = {
 			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12
 		},
 		original_bar = MultiBarBottomLeft,
-		name = "lsMultiBarBottomLeft",
+		name = "lsMultiBarBottomLeftBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar3 = {
@@ -37,7 +37,7 @@ local BAR_LAYOUT = {
 			MultiBarBottomRightButton9, MultiBarBottomRightButton10, MultiBarBottomRightButton11, MultiBarBottomRightButton12
 		},
 		original_bar = MultiBarBottomRight,
-		name = "lsMultiBarBottomRight",
+		name = "lsMultiBarBottomRightBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar4 = {
@@ -47,7 +47,7 @@ local BAR_LAYOUT = {
 			MultiBarLeftButton9, MultiBarLeftButton10, MultiBarLeftButton11, MultiBarLeftButton12
 		},
 		original_bar = MultiBarLeft,
-		name = "lsMultiBarLeft",
+		name = "lsMultiBarLeftBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar5 = {
@@ -57,7 +57,7 @@ local BAR_LAYOUT = {
 			MultiBarRightButton9, MultiBarRightButton10, MultiBarRightButton11, MultiBarRightButton12
 		},
 		original_bar = MultiBarRight,
-		name = "lsMultiBarRight",
+		name = "lsMultiBarRightBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar6 = {
@@ -198,18 +198,18 @@ local function ActionBarManager_OnEvent(self, event)
 	local multiplier = 2 - (lsActionBarManager.bar2Shown and 1 or 0) - (lsActionBarManager.bar3Shown and 1 or 0)
 
 	if lsActionBarManager.bar2Shown then
-		RegisterStateDriver(lsMultiBarBottomLeft, "visibility", BAR_LAYOUT.bar2.condition)
+		RegisterStateDriver(lsMultiBarBottomLeftBar, "visibility", BAR_LAYOUT.bar2.condition)
 	else
-		RegisterStateDriver(lsMultiBarBottomLeft, "visibility", "hide")
+		RegisterStateDriver(lsMultiBarBottomLeftBar, "visibility", "hide")
 	end
 
 	if lsActionBarManager.bar3Shown then
 		local point, x, y = unpack(BAR_CONFIG.bar3.point)
-		lsMultiBarBottomRight:SetPoint(point, x, y - multiplier * 32)
+		lsMultiBarBottomRightBar:SetPoint(point, x, y - multiplier * 32)
 
-		RegisterStateDriver(lsMultiBarBottomRight, "visibility", BAR_LAYOUT.bar3.condition)
+		RegisterStateDriver(lsMultiBarBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
 	else
-		RegisterStateDriver(lsMultiBarBottomRight, "visibility", "hide")
+		RegisterStateDriver(lsMultiBarBottomRightBar, "visibility", "hide")
 	end
 
 	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
