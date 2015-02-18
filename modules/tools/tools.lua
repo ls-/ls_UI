@@ -317,6 +317,56 @@ function E:SkinOTButton()
 	self.styled = true
 end
 
+function E:SkinAuraButton(button)
+	if not button or button.styled then return end
+
+	local name = button:GetName()
+	local bIcon = _G[name.."Icon"]
+	local bBorder = _G[name.."Border"]
+	local bCount = _G[name.."Count"]
+	local bDuration = _G[name.."Duration"]
+
+	if bIcon then
+		if name == "ConsolidatedBuffs" then
+			ns.lsTweakIcon(bIcon, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
+		else
+			ns.lsTweakIcon(bIcon)
+		end
+	end
+
+	E:CreateBorder(button, 8)
+
+	if bBorder then
+		bBorder:SetTexture(nil)
+
+		if gsub(name, "%d", "") == "TempEnchant" then
+			button:SetBorderColor(0.37, 0.15, 0.55)
+		else
+			hooksecurefunc(bBorder, "SetVertexColor", SetCustomVertexColor)
+		end
+	end
+
+	if bCount then
+		bCount:SetFont(M.font, 10, "THINOUTLINE")
+		bCount:SetDrawLayer("OVERLAY", 1)
+		bCount:ClearAllPoints()
+		bCount:SetPoint("TOPRIGHT", 2, 1)
+	end
+
+	if bDuration then
+		bDuration:SetFont(M.font, 11, "THINOUTLINE")
+		bDuration:SetJustifyH("CENTER")
+		bDuration:SetDrawLayer("OVERLAY", 1)
+		bDuration:ClearAllPoints()
+		bDuration:SetPoint("BOTTOMLEFT", -4, 0)
+		bDuration:SetPoint("BOTTOMRIGHT", 4, 0)
+
+		hooksecurefunc(bDuration, "SetFormattedText", SetCustomFormattedText)
+	end
+
+	button.styled = true
+end
+
 function E:SkinSquareButton(button)
 	local texture = button.icon:GetTexture()
 	local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = button.icon:GetTexCoord()

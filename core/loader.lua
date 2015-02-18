@@ -26,7 +26,7 @@ function E:ADDON_LOADED(arg)
 
 	-- Player buffs/debuffs/tempenchants
 	if ns.C.auras.enabled then
-		ns.lsBuffFrame_Initialize()
+		E.Auras:Initialize()
 	end
 
 	-- Infobars
