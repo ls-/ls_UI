@@ -51,8 +51,8 @@ function Vehicle:Initialize()
 	button:SetScript("OnEvent", LeaveButton_OnEvent)
 	button:SetScript("OnClick", LeaveButton_OnClick)
 
-	button.Border = ns.lsCreateButtonBorder(button)
-	button.Border:SetVertexColor(1, 0.1, 0.15)
+	E:CreateBorder(button)
+	button:SetBorderColor(1, 0.1, 0.15)
 
 	icon = button:CreateTexture()
 	icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")

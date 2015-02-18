@@ -1,15 +1,7 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
 
-local COLORS, TEXTURES = ns.M.colors, M.textures
-
-local function SetStancePetActionBarPosition(self)
-	if self:GetName() == "lsPetActionBar" then
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
-	else
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
-	end
-end
+local COLORS, TEXTURES = M.colors, M.textures
 
 local function SetFlashTexture(texture)
 	texture:SetTexture(TEXTURES.button.flash)
@@ -27,14 +19,18 @@ local function SetCustomVertexColor(self, r, g, b)
 	local button = self:GetParent()
 
 	if button == ExtraActionButton1 then
-		button.lsBorder:SetVertexColor(0.9, 0.4, 0.1)
+		button:SetBorderColor(0.9, 0.4, 0.1)
 	else
-		button.lsBorder:SetVertexColor(r, g, b)
+		button:SetBorderColor(r, g, b)
 	end
 end
 
-local function CustomSetText(self, text)
-	self:SetFormattedText("%s", gsub(text, "[ ()]", ""))
+local function SetCustomText(self, text)
+	self:SetFormattedText("%s", gsub(text, "[ .()]", ""))
+end
+
+local function SetCustomFormattedText(self, arg1, arg2)
+	self:SetText(format(gsub(arg1, "[ .()]", ""), arg2))
 end
 
 local function SkinButton(button)
@@ -70,19 +66,19 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bHotKey:SetFont(M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetPoint("TOPRIGHT", 2, 1)
 	end
 
 	if bCount then
-		bCount:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bCount:SetFont(M.font, 10, "THINOUTLINE")
 		bCount:ClearAllPoints()
 		bCount:SetPoint("BOTTOMRIGHT", 2, -1)
 	end
 
 	if bName then
-		bName:SetFont(ns.M.font, 10, "THINOUTLINE")
+		bName:SetFont(M.font, 10, "THINOUTLINE")
 		bName:SetJustifyH("CENTER")
 		bName:ClearAllPoints()
 		bName:SetPoint("BOTTOMLEFT", -4, 0)
@@ -101,7 +97,7 @@ local function SkinButton(button)
 		bCD:SetAllPoints()
 
 		if bCDText then
-			bCDText:SetFont(ns.M.font, 12, "THINOUTLINE")
+			bCDText:SetFont(M.font, 12, "THINOUTLINE")
 			bCDText:ClearAllPoints()
 			bCDText:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
 			bCDText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -4)
@@ -111,7 +107,7 @@ local function SkinButton(button)
 	if bNormalTexture then
 		bNormalTexture:SetTexture(nil)
 
-		button.lsBorder = E:CreateButtonBorder(button)
+		E:CreateBorder(button, 8)
 
 		hooksecurefunc(bNormalTexture, "SetVertexColor", SetCustomVertexColor)
 	end
@@ -200,7 +196,7 @@ function E:SkinBagButton(button)
 	end
 
 	if bCount then
-		hooksecurefunc(bCount, "SetText", CustomSetText)
+		hooksecurefunc(bCount, "SetText", SetCustomText)
 	end
 
 	button.styled = true
@@ -227,7 +223,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bCD then
-		bCD:SetFont(ns.M.font, 16, "THINOUTLINE")
+		bCD:SetFont(M.font, 16, "THINOUTLINE")
 		bCD:ClearAllPoints()
 		bCD:SetPoint("CENTER", 0, -2)
 	end
@@ -258,6 +254,8 @@ function E:SkinExtraActionButton(button)
 
 	SkinButton(button)
 
+	button:SetBorderSize(10)
+
 	E:AlwaysHide(button.style)
 	E:AlwaysHide(button.HotKey)
 
@@ -268,6 +266,8 @@ function E:SkinPetActionButton(button)
 	if not button or button.styled then return end
 
 	SkinButton(button)
+
+	button:SetBorderSize(6)
 
 	local name = button:GetName()
 	local bAutoCast = _G[name.."AutoCastable"]
@@ -327,7 +327,7 @@ function E:SkinSquareButton(button)
 	highlight:ClearAllPoints()
 	highlight:SetPoint("CENTER", 0, 0)
 	highlight:SetSize(12, 12)
-	
+
 	button:SetNormalTexture("")
 	button:SetPushedTexture("")
 end

@@ -183,7 +183,7 @@ function Mail:Initialize()
 	frame:SetScript("OnEnter", MailWidget_OnEnter)
 	frame:SetScript("OnLeave", Frame_OnLeave)
 
-	frame.Border = ns.lsCreateButtonBorder(frame)
+	E:CreateBorder(button, 8)
 
 	icon = frame:CreateTexture()
 	icon:SetTexture("Interface\\ICONS\\INV_Letter_09")
@@ -213,7 +213,7 @@ function Mail:Initialize()
 
 	button:Disable()
 
-	button.Border = ns.lsCreateButtonBorder(button)
+	E:CreateBorder(button, 8)
 
 	icon = button:CreateTexture()
 	icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
