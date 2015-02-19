@@ -1,7 +1,7 @@
 ## Interface: 60100
 ## Author: lightspark
-## Version: 1.3.9-beta.1
-## Title: oUF: LS
+## Version: 1.4.0-beta.1
+## Title: oUF: |cff1a9fc0LS|r
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
