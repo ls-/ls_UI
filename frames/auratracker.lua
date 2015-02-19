@@ -3,25 +3,27 @@ local _, ns = ...
 local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 local AURATRACKER_CONFIG, AURATRACKER_LOCKED
 local AuraTracker
+local spec
 
 local function lsScanAuras(auras, index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
-	if name and tcontains(AURATRACKER_CONFIG[filter], spellId) then
-		local aura = {}
-		aura.index = index
-		aura.icon = iconTexture
-		aura.count = count
-		aura.debuffType = debuffType
-		aura.duration = duration
-		aura.expire = expirationTime
-		aura.filter = filter
+	if name and tcontains(AURATRACKER_CONFIG[spec][filter], spellId) then
+		local aura = {
+			index = index,
+			icon = iconTexture,
+			count = count,
+			debuffType = debuffType,
+			duration = duration,
+			expire = expirationTime,
+			filter = filter,
+		}
 
 		tinsert(auras, aura)
 	end
 end
 
-local function lsHandleDataCorruption(aType, overflow)
-	local auraList, size = AURATRACKER_CONFIG[aType], #AURATRACKER_CONFIG[aType]
+local function lsHandleDataCorruption(aType, spec, overflow)
+	local auraList, size = AURATRACKER_CONFIG[spec][aType], #AURATRACKER_CONFIG[spec][aType]
 
 	if size > 0 then
 		for i, v in next, auraList do
@@ -45,133 +47,164 @@ local function lsHandleDataCorruption(aType, overflow)
 	end
 end
 
-local function lsAuraTracker_OnEvent(self, event)
-	if event == "UNIT_AURA" or event == "PLAYER_LOGIN" or event == "CUSTOM_FORCE_UPDATE" or event == "CUSTOM_ENABLE" then
-		if event == "PLAYER_LOGIN" or event == "CUSTOM_ENABLE" then
-			if not AURATRACKER_CONFIG.enabled then
-				self:Hide()
+local function lsAuraTracker_OnEvent(self, event, ...)
+	if event == "CUSTOM_ENABLE" then
+		if not AURATRACKER_CONFIG.enabled then
+			self:Hide()
 
-				print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
-				return
-			else
-				if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
+			print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
+		else
+			if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
+			if not self:IsEventRegistered("PLAYER_SPECIALIZATION_CHANGED") then self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED") end
 
-				self:SetPoint(unpack(AURATRACKER_CONFIG.point))
+			self:SetPoint(unpack(AURATRACKER_CONFIG.point))
 
-				AURATRACKER_LOCKED = AURATRACKER_CONFIG.locked
+			spec = tostring(GetSpecialization() or 0)
 
-				-- TODO_BEGIN: Remove it later
+			-- TODO_BEGIN: Remove it later
+			if #AURATRACKER_CONFIG.HELPFUL > 0 then
+				AURATRACKER_CONFIG["0"].HELPFUL = {unpack(AURATRACKER_CONFIG.HELPFUL)}
 
-				if #AURATRACKER_CONFIG.buffList > 0 then
-					AURATRACKER_CONFIG.HELPFUL = {unpack(AURATRACKER_CONFIG.buffList)}
-					wipe(AURATRACKER_CONFIG.buffList)
-				end
-
-				if #AURATRACKER_CONFIG.debuffList > 0 then
-					AURATRACKER_CONFIG.HARMFUL = {unpack(AURATRACKER_CONFIG.debuffList)}
-					wipe(AURATRACKER_CONFIG.debuffList)
-				end
-
-				-- TODO_END
-
-				local overflow = #AURATRACKER_CONFIG.HELPFUL + #AURATRACKER_CONFIG.HARMFUL > 8
-
-				lsHandleDataCorruption("HELPFUL", overflow)
-				lsHandleDataCorruption("HARMFUL", overflow)
-
-				overflow = nil
+				AURATRACKER_CONFIG.HELPFUL = {}
 			end
 
-			if not AURATRACKER_CONFIG.showHeader then self.header:Hide() end
+			if #AURATRACKER_CONFIG.HARMFUL > 0 then
+				AURATRACKER_CONFIG["0"].HARMFUL = {unpack(AURATRACKER_CONFIG.HARMFUL)}
+
+				AURATRACKER_CONFIG.HARMFUL = {}
+			end
+			-- TODO_END
+
+			AURATRACKER_LOCKED = AURATRACKER_CONFIG.locked
 		end
 
-		self.auras = {}
-		for i = 1, 32 do
-			lsScanAuras(self.auras, i, "HELPFUL")
-		end
+		if not AURATRACKER_CONFIG.showHeader then self.header:Hide() end
 
-		for i = 1, 16 do
-			lsScanAuras(self.auras, i, "HARMFUL")
-		end
+		return
+	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+		local oldSpec = spec
+		spec = tostring(GetSpecialization() or 0)
+		print(oldSpec, spec)
 
-		for i = #self.auras + 1, 8 do
-			if self.buttons[i] then
-				self.buttons[i]:Hide()
-				self.buttons[i]:SetScript("OnUpdate", nil)
+		if oldSpec ~= spec then
+			if #AURATRACKER_CONFIG[spec].HELPFUL + #AURATRACKER_CONFIG[spec].HARMFUL == 0 then
+				AURATRACKER_CONFIG[spec].HELPFUL = {unpack(AURATRACKER_CONFIG[oldSpec].HELPFUL)}
+				AURATRACKER_CONFIG[spec].HARMFUL = {unpack(AURATRACKER_CONFIG[oldSpec].HARMFUL)}
+			end
+
+			if oldSpec == "0" then
+				AURATRACKER_CONFIG[oldSpec].HELPFUL = {}
+				AURATRACKER_CONFIG[oldSpec].HARMFUL = {}
 			end
 		end
 
-		for i = 1, #self.auras do
-			local button, aura = self.buttons[i], self.auras[i]
+		return
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		local num = GetNumSpecializations()
 
-			button:Show()
-			button:SetID(aura.index)
-			button.icon:SetTexture(aura.icon)
-			button.cd:SetCooldown(aura.expire - aura.duration, aura.duration)
-			button.debuffType = aura.debuffType
-			button.filter = aura.filter
-			button.expire = aura.expire
-			button.stacks = aura.count
+		for i = 0, num do
+			i = tostring(i)
 
-			local color
-			if button.filter == "HARMFUL" then
-				color = {r = 0.8, g = 0, b = 0}
+			local overflow = #AURATRACKER_CONFIG[i].HELPFUL + #AURATRACKER_CONFIG[i].HARMFUL > 8
 
-				if button.debuffType then
-					color = DebuffTypeColor[button.debuffType]
-				end
-			else
-				color = {r = 1, g = 1, b = 1}
+			lsHandleDataCorruption("HELPFUL", i, overflow)
+			lsHandleDataCorruption("HARMFUL", i, overflow)
+		end
+
+		spec = tostring(GetSpecialization() or 0)
+
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		self:OnEvent("CUSTOM_FORCE_UPDATE")
+
+		return
+	end
+
+	self.auras = {}
+	for i = 1, 32 do
+		lsScanAuras(self.auras, i, "HELPFUL")
+	end
+
+	for i = 1, 16 do
+		lsScanAuras(self.auras, i, "HARMFUL")
+	end
+
+	for i = #self.auras + 1, 8 do
+		if self.buttons[i] then
+			self.buttons[i]:Hide()
+			self.buttons[i]:SetScript("OnUpdate", nil)
+		end
+	end
+
+	for i = 1, #self.auras do
+		local button, aura = self.buttons[i], self.auras[i]
+
+		button:Show()
+		button:SetID(aura.index)
+		button.icon:SetTexture(aura.icon)
+		button.cd:SetCooldown(aura.expire - aura.duration, aura.duration)
+		button.debuffType = aura.debuffType
+		button.filter = aura.filter
+		button.expire = aura.expire
+		button.stacks = aura.count
+
+		local color
+		if button.filter == "HARMFUL" then
+			color = {r = 0.8, g = 0, b = 0}
+
+			if button.debuffType then
+				color = DebuffTypeColor[button.debuffType]
 			end
-			button.border:SetVertexColor(color.r, color.g, color.b)
+		else
+			color = {r = 1, g = 1, b = 1}
+		end
+		button.border:SetVertexColor(color.r, color.g, color.b)
 
-			button:SetScript("OnUpdate", function(self, elapsed)
-				self.elapsed = (self.elapsed or 0) + elapsed
+		button:SetScript("OnUpdate", function(self, elapsed)
+			self.elapsed = (self.elapsed or 0) + elapsed
 
-				if self.elapsed > 0.1 then
-					self.count:SetText(self.stacks > 0 and self.stacks or "")
+			if self.elapsed > 0.1 then
+				self.count:SetText(self.stacks > 0 and self.stacks or "")
 
-					if GameTooltip:IsOwned(self) then
-						GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+				if GameTooltip:IsOwned(self) then
+					GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+				end
+
+				local timeLeft = self.expire - GetTime()
+				if timeLeft > 0 then
+					if timeLeft <= 30 and not self.animation:IsPlaying() then
+						self.animation:Play()
 					end
 
-					local timeLeft = self.expire - GetTime()
-					if timeLeft > 0 then
-						if timeLeft <= 30 and not self.animation:IsPlaying() then
-							self.animation:Play()
-						end
-
-						if timeLeft > 30 and self.animation:IsPlaying() then
-							self.animation:Stop()
-							self:SetAlpha(1)
-						end
-
-						if not OmniCC then
-							if timeLeft > 10 then
-								self.timer:SetTextColor(0.9, 0.9, 0.9)
-							elseif timeLeft > 5 and timeLeft <= 10 then
-								self.timer:SetTextColor(1, 0.75, 0.1)
-							elseif timeLeft <= 5 then
-								self.timer:SetTextColor(0.9, 0.1, 0.1)
-							end
-
-							self.timer:SetText(ns.TimeFormat(timeLeft))
-						end
-					else
-						if not OmniCC then
-							self.timer:SetText(nil)
-						end
-
-						if self.animation:IsPlaying() then
-							self.animation:Stop()
-							self:SetAlpha(1)
-						end
+					if timeLeft > 30 and self.animation:IsPlaying() then
+						self.animation:Stop()
+						self:SetAlpha(1)
 					end
 
-					self.elapsed = 0
+					if not OmniCC then
+						if timeLeft > 10 then
+							self.timer:SetTextColor(0.9, 0.9, 0.9)
+						elseif timeLeft > 5 and timeLeft <= 10 then
+							self.timer:SetTextColor(1, 0.75, 0.1)
+						elseif timeLeft <= 5 then
+							self.timer:SetTextColor(0.9, 0.1, 0.1)
+						end
+
+						self.timer:SetText(ns.TimeFormat(timeLeft))
+					end
+				else
+					if not OmniCC then
+						self.timer:SetText(nil)
+					end
+
+					if self.animation:IsPlaying() then
+						self.animation:Stop()
+						self:SetAlpha(1)
+					end
 				end
-			end)
-		end
+
+				self.elapsed = 0
+			end
+		end)
 	end
 end
 
@@ -228,7 +261,7 @@ local function lsAuraTrackerHeaderDropDown_Initialize(self)
 end
 
 local function lsAuraTracker_AddToList(aType, ID)
-	if #AURATRACKER_CONFIG.HELPFUL + #AURATRACKER_CONFIG.HARMFUL == 8 then
+	if #AURATRACKER_CONFIG[spec].HELPFUL + #AURATRACKER_CONFIG[spec].HARMFUL == 8 then
 		print("|cff1ec77eAuraTracker|r: Can\'t add aura. List is full. Max of 8.")
 		return
 	end
@@ -244,12 +277,12 @@ local function lsAuraTracker_AddToList(aType, ID)
 		return
 	end
 
-	if tcontains(AURATRACKER_CONFIG[aType], ID) then
+	if tcontains(AURATRACKER_CONFIG[spec][aType], ID) then
 		print("|cff1ec77eAuraTracker|r: Can\'t add aura. Already in the list.")
 		return
 	end
 
-	tinsert(AURATRACKER_CONFIG[aType], ID)
+	tinsert(AURATRACKER_CONFIG[spec][aType], ID)
 
 	print("|cff1ec77eAuraTracker|r: Added "..name.." ("..ID..").")
 
@@ -257,9 +290,9 @@ local function lsAuraTracker_AddToList(aType, ID)
 end
 
 local function lsAuraTracker_RemoveFromList(aType, ID)
-	for i, v in next, AURATRACKER_CONFIG[aType] do
+	for i, v in next, AURATRACKER_CONFIG[spec][aType] do
 		if v == ID then
-			tremove(AURATRACKER_CONFIG[aType], i)
+			tremove(AURATRACKER_CONFIG[spec][aType], i)
 
 			print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
 			return true
@@ -308,12 +341,12 @@ local function lsAuraTracker_CreateSlashCommands()
 
 		print("|cff1ec77eAuraTracker|r: List of auras:")
 
-		for _, v in next, AURATRACKER_CONFIG.HELPFUL do
+		for _, v in next, AURATRACKER_CONFIG[spec].HELPFUL do
 			local name = GetSpellInfo(v) or " "
 			print("|cff00ccff+|r "..name.." ("..v..")")
 		end
 
-		for _, v in next, AURATRACKER_CONFIG.HARMFUL do
+		for _, v in next, AURATRACKER_CONFIG[spec].HARMFUL do
 			local name = GetSpellInfo(v) or " "
 			print("|cffd01717-|r "..name.." ("..v..")")
 		end
@@ -326,8 +359,8 @@ local function lsAuraTracker_CreateSlashCommands()
 			return
 		end
 
-		AURATRACKER_CONFIG.HELPFUL = {}
-		AURATRACKER_CONFIG.HARMFUL = {}
+		AURATRACKER_CONFIG[spec].HELPFUL = {}
+		AURATRACKER_CONFIG[spec].HARMFUL = {}
 
 		print("|cff1ec77eAuraTracker|r: Wiped aura list.")
 
@@ -353,6 +386,7 @@ local function lsAuraTracker_CreateSlashCommands()
 
 			AuraTracker:Show()
 			AuraTracker:OnEvent("CUSTOM_ENABLE")
+			AuraTracker:OnEvent("CUSTOM_FORCE_UPDATE")
 		elseif msg == "disable" then
 			if not AURATRACKER_CONFIG.enabled then
 				print("|cff1ec77eAuraTracker|r is already disabled.")
@@ -370,6 +404,7 @@ local function lsAuraTracker_CreateSlashCommands()
 
 			AuraTracker:Hide()
 			AuraTracker:UnregisterEvent("UNIT_AURA")
+			AuraTracker:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 		else
 			print("|cff1ec77eAuraTracker|r: Unknown command.")
 		end
@@ -401,6 +436,7 @@ function ns.lsAuraTracker_Initialize()
 	AURATRACKER_CONFIG = ns.C.auratracker
 
 	AuraTracker = CreateFrame("Frame", nil, UIParent, "lsAuraTrackerTemplate")
+	AuraTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 	AuraTracker.OnEvent = lsAuraTracker_OnEvent
 	AuraTracker:OnEvent("CUSTOM_ENABLE")
 

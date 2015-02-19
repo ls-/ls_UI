@@ -62,10 +62,28 @@ local DEFAULT_CONFIG = {
 		locked = false,
 		showHeader = true,
 		HELPFUL = {},
-		buffList = {},
 		HARMFUL = {},
-		debuffList = {},
 		point = {"CENTER", "UIParent", "CENTER", 0, 0},
+		["0"] = { -- for level < 10 and buffer
+			HELPFUL = {},
+			HARMFUL = {},
+		},
+		["1"] = {
+			HELPFUL = {},
+			HARMFUL = {},
+		},
+		["2"] = {
+			HELPFUL = {},
+			HARMFUL = {},
+		},
+		["3"] = {
+			HELPFUL = {},
+			HARMFUL = {},
+		},
+		["4"] = {
+			HELPFUL = {},
+			HARMFUL = {},
+		},
 	},
 	minimap = {
 		enabled = true,
