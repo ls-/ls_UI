@@ -84,7 +84,6 @@ local function lsAuraTracker_OnEvent(self, event, ...)
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		local oldSpec = spec
 		spec = tostring(GetSpecialization() or 0)
-		print(oldSpec, spec)
 
 		if oldSpec ~= spec then
 			if #AURATRACKER_CONFIG[spec].HELPFUL + #AURATRACKER_CONFIG[spec].HARMFUL == 0 then
