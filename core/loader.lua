@@ -21,7 +21,7 @@ function E:ADDON_LOADED(arg)
 	-- Minimap
 	if ns.C.minimap.enabled then
 		LoadAddOn("Blizzard_TimeManager")
-		ns.lsMinimap_Initialize()
+		E.Minimap:Initialize()
 	end
 
 	-- Player buffs/debuffs/tempenchants
