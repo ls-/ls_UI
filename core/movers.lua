@@ -3,8 +3,6 @@ local E, M = ns.E, ns.M
 
 E.Movers = {}
 
-local SavePosition, ResetPosition, SetPosition
-
 local MOVERS_CONFIG
 
 local BACKDROP = {
@@ -15,11 +13,11 @@ local BACKDROP = {
 }
 
 
-function SavePosition(self, p, anchor, rP, x, y)
+local function SavePosition(self, p, anchor, rP, x, y)
 	MOVERS_CONFIG[self:GetName()].current = {p, anchor, rP, x, y}
 end
 
-function ResetPosition(self)
+local function ResetPosition(self)
 	if InCombatLockdown() then return end
 
 	local p, anchor, rP, x, y = unpack(MOVERS_CONFIG[self:GetName()].default)
@@ -35,7 +33,7 @@ function ResetPosition(self)
 	self.buttons[5]:Hide()
 end
 
-function SetPosition(self, xOffset, yOffset)
+local function SetPosition(self, xOffset, yOffset)
 	if InCombatLockdown() then return end
 
 	local p, anchor, rP, x, y = E:GetCoords(self)
@@ -209,8 +207,24 @@ function E:ResetMovers()
 	end
 end
 
-function E:ToggleMovers()
+function E:ToggleAllMovers()
+	if InCombatLockdown() then return end
+
 	for _, mover in next, E.Movers do
+		if mover:IsShown() then
+			mover:Hide()
+		else
+			mover:Show()
+		end
+	end
+end
+
+function E:ToggleMover(object)
+	if InCombatLockdown() then return end
+
+	local mover = E.Movers[object:GetName().."Mover"]
+
+	if mover then
 		if mover:IsShown() then
 			mover:Hide()
 		else
@@ -233,6 +247,7 @@ function E:CreateMover(object)
 	mover:SetClampedToScreen(true)
 	mover:RegisterForDrag("LeftButton")
 	mover:SetMovable(true)
+	mover:Hide()
 
 	mover:SetScript("OnEnter", Mover_OnEnter)
 	mover:SetScript("OnLeave", Frame_OnLeave)
