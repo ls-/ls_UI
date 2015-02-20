@@ -134,18 +134,6 @@ function ns.UnitFrame_OnLeave(self)
 	end
 end
 
-function ns.lsCreateButtonBorder(button, curTexture)
-	local texture = curTexture or button:CreateTexture()
-	texture:SetDrawLayer("BORDER", 2)
-	texture:SetTexture(ns.M.textures.button.normal)
-	texture:SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
-	texture:ClearAllPoints()
-	texture:SetPoint("TOPLEFT", -3, 3)
-	texture:SetPoint("BOTTOMRIGHT", 3, -3)
-
-	return texture
-end
-
 function ns.lsTweakIcon(icon, l, r, t, b)
 	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
 	icon:SetDrawLayer("BACKGROUND", 0)
@@ -251,11 +239,11 @@ function ns.CreateAuraIcon(self, button)
 
 	E:TweakIcon(button.icon)
 
-	E:CreateButtonBorder(button, button.overlay)
-	ns.lsAlwaysShow(button.overlay)
+	-- E:CreateButtonBorder(button, button.overlay)
+	-- ns.lsAlwaysShow(button.overlay)
 
-	E:CreateButtonBorder(button, button.stealable)
-	button.stealable:SetVertexColor(1.0, 0.82, 0.0)
+	-- E:CreateButtonBorder(button, button.stealable)
+	-- button.stealable:SetVertexColor(1.0, 0.82, 0.0)
 
 	button.fg = CreateFrame("Frame", nil, button)
 	button.fg:SetAllPoints(button)
