@@ -50,9 +50,6 @@ function E:ADDON_LOADED(arg)
 	-- AuraTracker
 	E.AT:Initialize()
 
-	-- ObjectiveTracker
-	ns.lsOTDragHeader_Initialize()
-
 	if ns.C.units.enabled then
 		oUF:Factory(ns.lsFactory)
 	end
