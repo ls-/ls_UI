@@ -50,14 +50,19 @@ local function CreateCooldownTimer(cooldown, textSize)
 
 end
 
+function SetTimerTextHeight(self, height, flags)
+	self.timer:SetFont(M.font, height, flags or "THINOUTLINE")
+end
+
 function E:HandleCooldown(cooldown, textSize)
 	if OmniCC or cooldown.handled then return end
 
 	cooldown.timer = CreateCooldownTimer(cooldown, textSize)
 
-	hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
-
+	cooldown.SetTimerTextHeight = SetTimerTextHeight
 	cooldown:SetHideCountdownNumbers(true)
+
+	hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
 
 	cooldown.handled = true
 end
