@@ -2,7 +2,6 @@ local _, ns = ...
 local E, M = ns.E, ns.M
 
 local function SetAnimationGroup(object, type, ...)
-	local duration, change = ...
 	if type == "FadeIn" then
 		object[type] = object:CreateAnimationGroup()
 		object[type]:SetToFinalAlpha(true)
@@ -14,40 +13,74 @@ local function SetAnimationGroup(object, type, ...)
 
 		local anim2 = object[type]:CreateAnimation("ALPHA")
 		anim2:SetOrder(2)
-		anim2:SetDuration(duration or 0.15)
-		anim2:SetChange(change or 1)
+		anim2:SetDuration(0.15)
+		anim2:SetChange(1)
 
+		object[type].anim = anim2
 	elseif type == "FadeOut" then
 		object[type] = object:CreateAnimationGroup()
 		object[type]:SetToFinalAlpha(true)
 
 		local anim1 = object[type]:CreateAnimation("ALPHA")
 		anim1:SetOrder(1)
-		anim1:SetDuration(duration or 0.15)
-		anim1:SetChange(-(change or 1))
-		anim1:SetScript("OnFinished", function() object:Hide() end)
+		anim1:SetDuration(0.15)
+		anim1:SetChange(-1)
+
+		object[type].anim = anim1
+	elseif type == "Blink" then
+		object[type] = object:CreateAnimationGroup()
+		object[type]:SetLooping("BOUNCE")
+
+		local anim1 = object[type]:CreateAnimation("ALPHA")
+		anim1:SetDuration(1)
+		anim1:SetChange(-1)
+		anim1:SetScript("OnStop", function() object:SetAlpha(1) end)
+
+		object[type].anim = anim1
 	end
 end
 
 function E:FadeIn(object, duration, change)
 	if not object.FadeIn then
-		SetAnimationGroup(object, "FadeIn", duration, change)
+		SetAnimationGroup(object, "FadeIn")
 	end
 
-	if duration then object.FadeIn.anim1:SetDuration(duration) end
-	if changhe then object.FadeIn.anim1:SetChange(change) end
+	if not object.FadeIn:IsPlaying() then
+		if duration then object.FadeIn.anim:SetDuration(duration) end
+		if change then object.FadeIn.anim:SetChange(change) end
 
-	object:Show()
-	object.FadeIn:Play()
+		object.FadeIn:Play()
+	end
 end
 
 function E:FadeOut(object, duration, change)
 	if not object.FadeOut then
-		SetAnimationGroup(object, "FadeOut", duration, change)
+		SetAnimationGroup(object, "FadeOut")
 	end
 
-	if duration then object.FadeOut.anim1:SetDuration(duration) end
-	if changhe then object.FadeOut.anim1:SetChange(change) end
+	if not object.FadeOut:IsPlaying() then
+		if duration then object.FadeOut.anim1:SetDuration(duration) end
+		if change then object.FadeOut.anim1:SetChange(change) end
 
-	object.FadeOut:Play()
+		object.FadeOut:Play()
+	end
+end
+
+function E:Blink(object, duration, change)
+	if not object.Blink then
+		SetAnimationGroup(object, "Blink")
+	end
+
+	if not object.Blink:IsPlaying() then
+		if duration then object.Blink.anim:SetDuration(duration) end
+		if change then object.Blink.anim:SetChange(change) end
+
+		object.Blink:Play()
+	end
+end
+
+function E:StopBlink(object, force)
+	if object.Blink then
+		if force then object.Blink:Stop() else object.Blink:Finish() end
+	end
 end
