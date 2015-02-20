@@ -62,11 +62,33 @@ D["auratracker"] = {
 	enabled = true,
 	locked = false,
 	showHeader = true,
-	HELPFUL = {},
-	buffList = {},
-	HARMFUL = {},
-	debuffList = {},
 	point = {"CENTER", "UIParent", "CENTER", 0, 0},
+	num_buttons = 8,
+	button_size = 40,
+	button_gap = 5,
+	direction = "RIGHT",
+	HELPFUL = {},
+	HARMFUL = {},
+	["0"] = { -- for level < 10 and buffer
+		HELPFUL = {},
+		HARMFUL = {},
+	},
+	["1"] = {
+		HELPFUL = {},
+		HARMFUL = {},
+	},
+	["2"] = {
+		HELPFUL = {},
+		HARMFUL = {},
+	},
+	["3"] = {
+		HELPFUL = {},
+		HARMFUL = {},
+	},
+	["4"] = {
+		HELPFUL = {},
+		HARMFUL = {},
+	},
 }
 
 D["minimap"] = {

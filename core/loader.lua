@@ -48,7 +48,7 @@ function E:ADDON_LOADED(arg)
 	end
 
 	-- AuraTracker
-	ns.lsAuraTracker_Initialize()
+	E.AT:Initialize()
 
 	-- ObjectiveTracker
 	ns.lsOTDragHeader_Initialize()
