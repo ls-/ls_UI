@@ -263,7 +263,7 @@ function ActionBars:Initialize(enableManager)
 		bar:SetFrameStrata("LOW")
 		bar:SetFrameLevel(1)
 
-		if BAR_CONFIG[b].orientation == "HORIZONTAL" then
+		if BAR_CONFIG[b].direction == "RIGHT" or BAR_CONFIG[b].direction == "LEFT" then
 			bar:SetSize(BAR_CONFIG[b].button_size * #bdata.buttons + BAR_CONFIG[b].button_gap * #bdata.buttons,
 				BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap)
 		else
@@ -278,9 +278,9 @@ function ActionBars:Initialize(enableManager)
 		end
 
 		if tonumber(match(b, "(%d+)")) == 6 then
-			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].orientation, BAR_CONFIG[b].direction, E.SkinPetActionButton, bdata.original_bar)
+			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].direction, E.SkinPetActionButton, bdata.original_bar)
 		else
-			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].orientation, BAR_CONFIG[b].direction, E.SkinActionButton, bdata.original_bar)
+			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].direction, E.SkinActionButton, bdata.original_bar)
 		end
 
 		if bdata.condition then

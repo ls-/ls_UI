@@ -18,7 +18,7 @@ local function SetPetBattleButtonPosition()
 	}
 
 	E:SetButtonPosition(BUTTONS, PB_CONFIG.button_size, PB_CONFIG.button_gap, PetBattle.BarHeader,
-		PB_CONFIG.orientation, PB_CONFIG.direction, E.SkinPetBattleButton)
+		PB_CONFIG.direction, E.SkinPetBattleButton)
 end
 
 function PetBattle:Initialize()
@@ -29,7 +29,7 @@ function PetBattle:Initialize()
 	header:SetFrameStrata("LOW")
 	header:SetFrameLevel(1)
 
-	if PB_CONFIG.orientation == "HORIZONTAL" then
+	if PB_CONFIG.direction == "RIGHT" or PB_CONFIG.direction == "LEFT" then
 		header:SetSize(PB_CONFIG.button_size * 12 + PB_CONFIG.button_gap * 12,
 			PB_CONFIG.button_size + PB_CONFIG.button_gap)
 	else

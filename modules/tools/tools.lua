@@ -45,7 +45,6 @@ local function SkinButton(button)
 	local bBorder = button.Border
 	local bNewActionTexture = button.NewActionTexture
 	local bCD = button.cooldown
-	local bCDText = bCD and bCD:GetRegions() -- it's #1 region
 	local bNormalTexture = button.GetNormalTexture and button:GetNormalTexture()
 	local bPushedTexture = button.GetPushedTexture and button:GetPushedTexture()
 	local bHighlightTexture = button.GetHighlightTexture and button:GetHighlightTexture()
@@ -94,14 +93,11 @@ local function SkinButton(button)
 	end
 
 	if bCD then
-		bCD:SetAllPoints()
-
-		if bCDText then
-			bCDText:SetFont(M.font, 12, "THINOUTLINE")
-			bCDText:ClearAllPoints()
-			bCDText:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
-			bCDText:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 4, -4)
-		end
+		bCD:ClearAllPoints()
+		bCD:SetPoint("TOPLEFT", 1, -1)
+		bCD:SetPoint("BOTTOMRIGHT", -1, 1)
+		
+		E:HandleCooldown(bCD, 12)
 	end
 
 	if bNormalTexture then
@@ -125,7 +121,7 @@ local function SkinButton(button)
 	end
 end
 
-function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, orientation, direction, skinFucntion, originalBar)
+function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
 	if originalBar and originalBar:GetParent() ~= header then
 		originalBar:SetParent(header)
 		originalBar:EnableMouse(false)
@@ -138,40 +134,37 @@ function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, orientation
 		local button = buttons[i]
 
 		button:ClearAllPoints()
-		button:SetSize(buttonSize, buttonSize)
+		button:SetSize(type(buttonSize) == "table" and buttonSize.w or buttonSize,
+			type(buttonSize) == "table" and buttonSize.h or buttonSize)
 
 		if not originalBar then button:SetParent(header) end
 
 		button:SetFrameStrata("LOW")
 		button:SetFrameLevel(2)
 
-		if orientation == "HORIZONTAL" then
-			if direction == "RIGHT" then
-				if i == 1 then
-					button:SetPoint("LEFT", header, "LEFT", buttonGap / 2, 0)
-				else
-					button:SetPoint("LEFT", previous, "RIGHT", buttonGap, 0)
-				end
+		if direction == "RIGHT" then
+			if i == 1 then
+				button:SetPoint("LEFT", header, "LEFT", E:Round(buttonGap / 2), 0)
 			else
-				if i == 1 then
-					button:SetPoint("RIGHT", header, "RIGHT", -buttonGap / 2, 0)
-				else
-					button:SetPoint("RIGHT", previous, "LEFT", -buttonGap, 0)
-				end
+				button:SetPoint("LEFT", previous, "RIGHT", buttonGap, 0)
 			end
-		else
-			if direction == "DOWN" then
-				if i == 1 then
-					button:SetPoint("TOP", header, "TOP", 0, -buttonGap / 2)
-				else
-					button:SetPoint("TOP", previous, "BOTTOM", 0, -buttonGap)
-				end
+		elseif direction == "LEFT" then
+			if i == 1 then
+				button:SetPoint("RIGHT", header, "RIGHT", E:Round(-buttonGap / 2), 0)
 			else
-				if i == 1 then
-					button:SetPoint("BOTTOM", header, "BOTTOM", 0, buttonGap / 2)
-				else
-					button:SetPoint("BOTTOM", previous, "TOP", 0, buttonGap)
-				end
+				button:SetPoint("RIGHT", previous, "LEFT", -buttonGap, 0)
+			end
+		elseif direction == "DOWN" then
+			if i == 1 then
+				button:SetPoint("TOP", header, "TOP", 0, E:Round(-buttonGap / 2))
+			else
+				button:SetPoint("TOP", previous, "BOTTOM", 0, -buttonGap)
+			end
+		elseif direction == "UP" then
+			if i == 1 then
+				button:SetPoint("BOTTOM", header, "BOTTOM", 0, E:Round(buttonGap / 2))
+			else
+				button:SetPoint("BOTTOM", previous, "TOP", 0, buttonGap)
 			end
 		end
 

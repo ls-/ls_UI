@@ -114,48 +114,42 @@ D["bars"] = {
 		point = {"BOTTOM", 0, 15},
 		button_size = 28,
 		button_gap = 4,
-		orientation = "HORIZONTAL",
 		direction = "RIGHT",
 	},
 	bar2 = { -- MultiBarBottomLeft
 		point = {"BOTTOM", 0, 62},
 		button_size = 28,
 		button_gap = 4,
-		orientation = "HORIZONTAL",
 		direction = "RIGHT",
 	},
 	bar3 = { -- MultiBarBottomRight
 		point = {"BOTTOM", 0, 94},
 		button_size = 28,
 		button_gap = 4,
-		orientation = "HORIZONTAL",
 		direction = "RIGHT",
 	},
 	bar4 = { -- MultiBarLeft
 		point = {"BOTTOMRIGHT", -32, 300},
 		button_size = 28,
 		button_gap = 4,
-		orientation = "VERTICAL",
 		direction = "DOWN",
 	},
 	bar5 = { -- MultiBarRight
 		point = {"BOTTOMRIGHT", 0, 300},
 		button_size = 28,
 		button_gap = 4,
-		orientation = "VERTICAL",
 		direction = "DOWN",
 	},
 	bar6 = { --PetAction
 		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
-		orientation = "HORIZONTAL",
+		direction = "RIGHT",
 	},
 	bar7 = { -- Stance
 		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
-		orientation = "HORIZONTAL",
 		direction = "RIGHT",
 	},
 	extra = { -- ExtraAction
@@ -197,7 +191,6 @@ D["petbattle"] = {
 	point = {"BOTTOM", 0, 15},
 	button_size = 28,
 	button_gap = 4,
-	orientation = "HORIZONTAL",
 	direction = "RIGHT",
 }
 
@@ -206,7 +199,6 @@ D["bags"] = {
 	point = {"LEFT", "lsLatencyInfoBar", "RIGHT", 24, 0},
 	button_size = 28,
 	button_gap = 4,
-	orientation = "HORIZONTAL",
 	direction = "RIGHT",
 }
 

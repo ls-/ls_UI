@@ -87,7 +87,7 @@ function Bags:Initialize()
 	header:SetFrameStrata("LOW")
 	header:SetFrameLevel(1)
 
-	if BAGS_CONFIG.orientation == "HORIZONTAL" then
+	if BAGS_CONFIG.direction == "RIGHT" or BAGS_CONFIG.direction == "LEFT" then
 		header:SetSize(BAGS_CONFIG.button_size * 5 + BAGS_CONFIG.button_gap * 5,
 			BAGS_CONFIG.button_size + BAGS_CONFIG.button_gap)
 	else
@@ -98,7 +98,7 @@ function Bags:Initialize()
 	header:SetPoint(unpack(BAGS_CONFIG.point))
 
 	E:SetButtonPosition(BAGS, BAGS_CONFIG.button_size, BAGS_CONFIG.button_gap, header,
-		BAGS_CONFIG.orientation, BAGS_CONFIG.direction, E.SkinBagButton)
+		BAGS_CONFIG.direction, E.SkinBagButton)
 
 	MainMenuBarBackpackButton.icon:SetDesaturated(true)
 	MainMenuBarBackpackButton.icon.SetDesaturated = function() return end
