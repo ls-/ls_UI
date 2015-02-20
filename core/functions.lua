@@ -6,7 +6,7 @@ local E, M, oUF = ns.E, ns.M, ns.oUF or oUF
 function E:CreateFontString(parent, size, name, shadow, outline, ...)
 	local r, g, b, a = ...
 
-	object = parent:CreateFontString(name, "OVERLAY")
+	local object = parent:CreateFontString(name, "OVERLAY")
 	object:SetFont(M.font, size, outline)
 	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
 

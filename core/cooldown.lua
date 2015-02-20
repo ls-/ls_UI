@@ -50,7 +50,7 @@ local function CreateCooldownTimer(cooldown, textSize)
 
 end
 
-function SetTimerTextHeight(self, height, flags)
+local function SetTimerTextHeight(self, height, flags)
 	self.timer:SetFont(M.font, height, flags or "THINOUTLINE")
 end
 

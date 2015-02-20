@@ -136,7 +136,7 @@ local function CreateATButton()
 
 	E:CreateBorder(button)
 
-	icon = button:CreateTexture()
+	local icon = button:CreateTexture()
 	E:TweakIcon(icon)
 
 	button.Icon = icon
