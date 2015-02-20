@@ -6,9 +6,9 @@ local E, M, oUF = ns.E, ns.M, ns.oUF or oUF
 function E:CreateFontString(parent, size, name, shadow, outline, ...)
 	local r, g, b, a = ...
 
-	object = parent:CreateFontString(name, "ARTWORK")
+	object = parent:CreateFontString(name, "OVERLAY")
 	object:SetFont(M.font, size, outline)
-	object:SetTextColor(r, g, b, a)
+	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
 
 	if shadow then
 		object:SetShadowColor(0, 0, 0)
@@ -22,18 +22,6 @@ function E:TweakIcon(icon, l, r, t, b)
 	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
 	icon:SetDrawLayer("BACKGROUND", 0)
 	icon:SetAllPoints()
-end
-
-function E:CreateButtonBorder(button, curTexture)
-	local texture = curTexture or button:CreateTexture()
-	texture:SetDrawLayer("BORDER", 2)
-	texture:SetTexture(ns.M.textures.button.normal)
-	texture:SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
-	texture:ClearAllPoints()
-	texture:SetPoint("TOPLEFT", -3, 3)
-	texture:SetPoint("BOTTOMRIGHT", 3, -3)
-
-	return texture
 end
 
 function E:AlwaysShow(self)
@@ -58,25 +46,7 @@ function E:GetCoords(object)
 	end
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--[[ OLD ]]
 
 -----------
 -- DEBUG --
