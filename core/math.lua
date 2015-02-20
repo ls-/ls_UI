@@ -66,6 +66,6 @@ function E:TimeFormat(s, abbr)
 	elseif s >= 1 then
 		return floor(s), s >= 30 and "|cffe5e5e5" or s >= 10 and "|cffffbf19" or "|cffe51919", abbr and gsub(SECOND_ONELETTER_ABBR, "[ .]", "")
 	else
-		return format("%.1f", s), "|cffe51919", abbr and "%.1f"
+		return tonumber(format("%.1f", s)), "|cffe51919", abbr and "%.1f"
 	end
 end
