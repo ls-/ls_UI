@@ -1,9 +1,9 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
 
-local COLORS = ns.M.colors
+local COLORS = M.colors
 
-local OT_CONFIG, OT_UNLOCKED
+local OT_UNLOCKED
 
 E.OT = {}
 

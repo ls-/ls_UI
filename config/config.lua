@@ -96,11 +96,6 @@ D["minimap"] = {
 	point = {"BOTTOM", "UIParent", "BOTTOM", 306, 86},
 }
 
-D["objectivetracker"] = {
-	point = {"RIGHT", "UIParent", "RIGHT", -100, 0},
-	locked = false,
-}
-
 D["infobars"] = {
 	enabled = true,
 	location = {

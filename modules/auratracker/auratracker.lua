@@ -283,8 +283,8 @@ local function ATHeader_OnLeave(self)
 	self.text:SetAlpha(0.2)
 end
 
-local function ATHeader_OnClick(self, button)
-	ToggleDropDownMenu(1, nil, self.menu, "cursor", 3, -3)
+local function ATHeader_OnClick(self)
+	ToggleDropDownMenu(1, nil, self.menu, "cursor", 2, -2)
 end
 
 local function ATHeader_OnDragStart(self)

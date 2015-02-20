@@ -226,9 +226,15 @@ function E:ToggleAllMovers()
 end
 
 function E:ToggleMover(object)
-	if InCombatLockdown() then return end
-
 	local mover = E.Movers[object:GetName().."Mover"]
+
+	if InCombatLockdown() then
+		if mover then
+			return mover:IsShown()
+		else
+			return
+		end
+	end
 
 	if mover then
 		if mover:IsShown() then
