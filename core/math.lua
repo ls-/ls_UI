@@ -2,7 +2,11 @@ local _, ns = ...
 local E = ns.E
 
 local format, gsub, sub, tonumber = format, gsub, strsub, tonumber
-local floor, fmod = floor, math.fmod
+local floor, ceil = floor, ceil
+
+local FIRST_NUMBER_CAP, SECOND_NUMBER_CAP = FIRST_NUMBER_CAP, SECOND_NUMBER_CAP
+local SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR =
+	SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR
 
 function E:NumberFormat(v, mod)
 	if abs(v) >= 1E6 then
@@ -52,16 +56,16 @@ function E:StringTruncate(s, l)
 	end
 end
 
-function E:TimeFormat(s)
+function E:TimeFormat(s, abbr)
 	if s >= 86400 then
-		return format(gsub(DAY_ONELETTER_ABBR, "[ .]", ""), floor(s / 86400 + 0.5))
+		return ceil(s / 86400), "|cffe5e5e5", abbr and gsub(DAY_ONELETTER_ABBR, "[ .]", "")
 	elseif s >= 3600 then
-		return format(gsub(HOUR_ONELETTER_ABBR, "[ .]", ""), floor(s / 3600 + 0.5))
+		return ceil(s / 3600), "|cffe5e5e5", abbr and gsub(HOUR_ONELETTER_ABBR, "[ .]", "")
 	elseif s >= 60 then
-		return format(gsub(MINUTE_ONELETTER_ABBR, "[ .]", ""), floor(s / 60 + 0.5))
+		return ceil(s / 60), "|cffe5e5e5", abbr and gsub(MINUTE_ONELETTER_ABBR, "[ .]", "")
 	elseif s >= 1 then
-		return format(gsub(SECOND_ONELETTER_ABBR, "[ .]", ""), fmod(s, 60))
+		return floor(s), s >= 30 and "|cffe5e5e5" or s >= 10 and "|cffffbf19" or "|cffe51919", abbr and gsub(SECOND_ONELETTER_ABBR, "[ .]", "")
 	else
-		return format("%.1f", s)
+		return format("%.1f", s), "|cffe51919", abbr and "%.1f"
 	end
 end
