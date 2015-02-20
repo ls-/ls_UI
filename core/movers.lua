@@ -5,6 +5,8 @@ E.Movers = {}
 
 local MOVERS_CONFIG
 
+local DEFAULTS = {}
+
 local BACKDROP = {
 	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -20,7 +22,7 @@ end
 local function ResetPosition(self)
 	if InCombatLockdown() then return end
 
-	local p, anchor, rP, x, y = unpack(MOVERS_CONFIG[self:GetName()].default)
+	local p, anchor, rP, x, y = unpack(DEFAULTS[self:GetName()])
 
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
@@ -213,8 +215,12 @@ function E:ToggleAllMovers()
 	for _, mover in next, E.Movers do
 		if mover:IsShown() then
 			mover:Hide()
+
+			return false
 		else
 			mover:Show()
+
+			return true
 		end
 	end
 end
@@ -227,8 +233,12 @@ function E:ToggleMover(object)
 	if mover then
 		if mover:IsShown() then
 			mover:Hide()
+
+			return false
 		else
 			mover:Show()
+
+			return true
 		end
 	end
 end
@@ -267,13 +277,10 @@ function E:CreateMover(object)
 	mover.buttons = {up, down, left, right, reset}
 
 	if not MOVERS_CONFIG[name] then
-		MOVERS_CONFIG[name] = {
-			default = {E:GetCoords(object)},
-		}
-
-	elseif not MOVERS_CONFIG[name].default then
-		MOVERS_CONFIG[name].default = {E:GetCoords(object)}
+		MOVERS_CONFIG[name] = {}
 	end
+
+	DEFAULTS[name] = {E:GetCoords(object)}
 
 	SetPosition(mover)
 
