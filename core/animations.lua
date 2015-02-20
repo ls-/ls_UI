@@ -33,7 +33,8 @@ local function SetAnimationGroup(object, type, ...)
 
 		local anim1 = object[type]:CreateAnimation("ALPHA")
 		anim1:SetDuration(1)
-		anim1:SetChange(-1)
+		anim1:SetFromAlpha(1)
+		anim1:SetToAlpha(0)
 		anim1:SetScript("OnStop", function() object:SetAlpha(1) end)
 
 		object[type].anim = anim1
@@ -73,7 +74,7 @@ function E:Blink(object, duration, change)
 
 	if not object.Blink:IsPlaying() then
 		if duration then object.Blink.anim:SetDuration(duration) end
-		if change then object.Blink.anim:SetChange(change) end
+		if change then object.Blink.anim:SetToAlpha(change + 1) end
 
 		object.Blink:Play()
 	end
