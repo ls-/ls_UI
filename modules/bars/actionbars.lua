@@ -159,6 +159,7 @@ end
 local function ActionButton_OnUpdate(button)
 	local bIcon = button.icon
 	local bName = button.Name
+	local bHotKey = button.HotKey
 
 	if bIcon then
 		if button.action and IsActionInRange(button.action) ~= false then
@@ -179,6 +180,12 @@ local function ActionButton_OnUpdate(button)
 		local text = bName:GetText()
 		if text then
 			bName:SetText(E:StringTruncate(text, 4))
+		end
+	end
+
+	if bHotKey then
+		if bHotKey:GetText() == RANGE_INDICATOR then
+			bHotKey:SetText("")
 		end
 	end
 end
