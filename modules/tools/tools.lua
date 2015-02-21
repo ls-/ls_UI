@@ -86,6 +86,8 @@ local function SkinButton(button)
 
 	if bBorder then
 		bBorder:SetTexture(nil)
+
+		hooksecurefunc(bBorder, "SetVertexColor", SetCustomVertexColor)
 	end
 
 	if bNewActionTexture then
@@ -96,7 +98,7 @@ local function SkinButton(button)
 		bCD:ClearAllPoints()
 		bCD:SetPoint("TOPLEFT", 1, -1)
 		bCD:SetPoint("BOTTOMRIGHT", -1, 1)
-		
+
 		E:HandleCooldown(bCD, 12)
 	end
 
