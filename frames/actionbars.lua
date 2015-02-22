@@ -5,6 +5,9 @@ local BAR_CONFIG, COLORS, TEXTURES
 
 ns.bars = {}
 
+local NEW = GetBuildInfo()
+NEW = NEW == "6.1.0"
+
 local BAR_LAYOUT = {
 	bar1 = {
 		button_type = "ActionButton",
@@ -434,7 +437,7 @@ local function LeaveButton_OnEvent(self, event)
 			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		end
 
-		if UnitOnTaxi("player") then
+		if NEW and UnitOnTaxi("player") then
 			RegisterStateDriver(self.parent, "visibility", "show")
 		else
 			RegisterStateDriver(self.parent, "visibility", "[canexitvehicle] show; hide")
@@ -448,7 +451,7 @@ local function LeaveButton_OnEvent(self, event)
 end
 
 local function LeaveButton_OnClick(self)
-	if UnitOnTaxi("player") then
+	if NEW and UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 
 		self:SetButtonState("NORMAL")
