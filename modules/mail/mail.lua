@@ -183,7 +183,7 @@ function Mail:Initialize()
 	frame:SetScript("OnEnter", MailWidget_OnEnter)
 	frame:SetScript("OnLeave", Frame_OnLeave)
 
-	E:CreateBorder(button, 8)
+	E:CreateBorder(frame, 8)
 
 	icon = frame:CreateTexture()
 	icon:SetTexture("Interface\\ICONS\\INV_Letter_09")
