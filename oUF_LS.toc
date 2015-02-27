@@ -1,6 +1,6 @@
 ## Interface: 60100
 ## Author: lightspark
-## Version: 1.4.0
+## Version: 1.4.1
 ## Title: oUF: |cff1a9fc0LS|r
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
