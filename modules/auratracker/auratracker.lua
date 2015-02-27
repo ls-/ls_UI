@@ -153,7 +153,7 @@ local function CreateATButton()
 	local cover = CreateFrame("Frame", nil, button)
 	cover:SetAllPoints()
 
-	local count = E:CreateFontString(cover, 14, nil, true)
+	local count = E:CreateFontString(cover, 14, nil, true, "THINOUTLINE")
 	count:SetPoint("TOPRIGHT", 2, 1)
 
 	button.Count = count
