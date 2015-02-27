@@ -69,6 +69,12 @@ local function BackpackButton_OnClick(self, button)
 	end
 end
 
+local function ResetDesaturated(self, flag)
+	if not flag then
+		self:SetDesaturated(true)
+	end
+end
+
 local function BackpackButton_OnEvent(self, event, ...)
 	if event == "BAG_UPDATE" then
 		local bag = ...
@@ -101,7 +107,8 @@ function Bags:Initialize()
 		BAGS_CONFIG.direction, E.SkinBagButton)
 
 	MainMenuBarBackpackButton.icon:SetDesaturated(true)
-	MainMenuBarBackpackButton.icon.SetDesaturated = function() return end
+
+	hooksecurefunc(MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
 
 	MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 	MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
