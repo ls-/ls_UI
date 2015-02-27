@@ -403,15 +403,6 @@ end
 
 local function lsActionButton_OnUpdate(button)
 	local bIcon = button.icon
-	local bName = button.Name
-
-	if bName then
-		local text = GetActionText(button.action)
-		if text then
-			bName:SetText(strsub(text, 1, 6))
-		end
-	end
-
 	if bIcon then
 		if button.action and IsActionInRange(button.action) ~= false then
 			local isUsable, notEnoughMana = IsUsableAction(button.action)
