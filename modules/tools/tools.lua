@@ -378,7 +378,9 @@ function E:SkinActionButton(button)
 		E:AlwaysHide(bFloatingBG)
 	end
 
-	button:HookScript("OnUpdate", ActionButton_OnUpdate)
+	if button:GetScript("OnUpdate") then
+		button:HookScript("OnUpdate", ActionButton_OnUpdate)
+	end
 
 	button.styled = true
 end
