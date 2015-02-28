@@ -33,6 +33,36 @@ local function SetCustomFormattedText(self, arg1, arg2)
 	self:SetText(format(gsub(arg1, "[ .()]", ""), arg2))
 end
 
+local function SetCustomHotKeyText(self)
+	local button = self:GetParent()
+	local bType = button.buttonType
+
+	if not bType then
+		if not strmatch(button:GetName(), "Stance") then
+			if strmatch(button:GetName(), "PetAction") then
+				bType = "BONUSACTIONBUTTON"
+			else
+				bType = "ACTIONBUTTON"
+			end
+		end
+	end
+
+	local text = bType and GetBindingText(GetBindingKey(bType..button:GetID()))
+
+	if text then
+		text = gsub(text, ALT_KEY.."%-", "A")
+		text = gsub(text, CTRL_KEY.."%-", "C")
+		text = gsub(text, SHIFT_KEY.."%-", "S")
+		text = gsub(text, KEY_BUTTON1, "LMB")
+		text = gsub(text, KEY_BUTTON2, "RMB")
+		text = gsub(text, KEY_BUTTON3, "MMB")
+		text = gsub(text, KEY_MOUSEWHEELDOWN, "MWU")
+		text = gsub(text, KEY_MOUSEWHEELUP, "MWD")
+	end
+
+	self:SetFormattedText("%s", text or "")
+end
+
 local function SkinButton(button)
 	local name = button:GetName()
 	local bIcon = button.icon or button.Icon
@@ -68,6 +98,10 @@ local function SkinButton(button)
 		bHotKey:SetFont(M.font, 10, "THINOUTLINE")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetPoint("TOPRIGHT", 2, 1)
+
+		SetCustomHotKeyText(bHotKey)
+
+		hooksecurefunc(bHotKey, "SetText", SetCustomHotKeyText)
 	end
 
 	if bCount then
@@ -252,7 +286,6 @@ function E:SkinExtraActionButton(button)
 	button:SetBorderSize(10)
 
 	E:AlwaysHide(button.style)
-	E:AlwaysHide(button.HotKey)
 
 	button.styled = true
 end
@@ -286,8 +319,6 @@ function E:SkinPetActionButton(button)
 	end
 
 	hooksecurefunc(button, "SetNormalTexture", SetNilNormalTexture)
-
-	E:AlwaysHide(button.HotKey)
 
 	button.styled = true
 end
