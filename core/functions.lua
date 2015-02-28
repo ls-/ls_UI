@@ -24,16 +24,25 @@ function E:TweakIcon(icon, l, r, t, b)
 	icon:SetAllPoints()
 end
 
-function E:AlwaysShow(self)
-	if not self then return end
-	self:Show()
-	self.Hide = self.Show
+function E:AlwaysShow(object)
+	if not object then return end
+
+	object:Show()
+
+	object.Hide = object.Show
 end
 
-function E:AlwaysHide(self)
-	if not self then return end
-	self:Hide()
-	self.Show = self.Hide
+function E:AlwaysHide(object)
+	if not object then return end
+
+	if object.UnregisterAllEvents then
+		object:UnregisterAllEvents()
+		object:SetParent(M.hiddenParent)
+	else
+		object.Show = object.Hide
+	end
+
+	object:Hide()
 end
 
 function E:GetCoords(object)
