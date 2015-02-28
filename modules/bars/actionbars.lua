@@ -156,7 +156,7 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function ActionButton_OnUpdate(button)
+local function LSActionButton_OnUpdate(button)
 	local bIcon = button.icon
 	local bName = button.Name
 	local bHotKey = button.HotKey
@@ -184,9 +184,15 @@ local function ActionButton_OnUpdate(button)
 	end
 
 	if bHotKey then
-		if bHotKey:GetText() == RANGE_INDICATOR then
-			bHotKey:SetText("")
-		end
+		bHotKey:SetVertexColor(1, 1, 1)
+	end
+end
+
+local function LSPetActionButton_OnUpdate(button)
+	local bHotKey = button.HotKey
+
+	if bHotKey then
+		bHotKey:SetVertexColor(1, 1, 1)
 	end
 end
 
@@ -351,7 +357,8 @@ function ActionBars:Initialize(enableManager)
 	end
 
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
-	hooksecurefunc("ActionButton_OnUpdate", ActionButton_OnUpdate)
+	hooksecurefunc("ActionButton_OnUpdate", LSActionButton_OnUpdate)
+	hooksecurefunc("PetActionButton_OnUpdate", LSPetActionButton_OnUpdate)
 
 	if enableManager then
 		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
