@@ -3,12 +3,13 @@ local E, M, oUF = ns.E, ns.M, ns.oUF or oUF
 
 --[[ NEW ]]
 
-function E:CreateFontString(parent, size, name, shadow, outline, ...)
+function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	local r, g, b, a = ...
 
 	local object = parent:CreateFontString(name, "OVERLAY")
 	object:SetFont(M.font, size, outline)
 	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
+	object:SetWordWrap(wrap or false)
 
 	if shadow then
 		object:SetShadowColor(0, 0, 0)

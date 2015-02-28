@@ -509,7 +509,7 @@ function AT:Initialize()
 
 	tracker.header = header
 
-	local label = E:CreateFontString(header, 12, nil, true, nil, 1, 0.75, 0.1)
+	local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.75, 0.1)
 	label:SetPoint("LEFT", 2, 0)
 	label:SetAlpha(0.2)
 	label:SetText(lsAURATRACKER)

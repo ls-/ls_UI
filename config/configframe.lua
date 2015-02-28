@@ -20,7 +20,7 @@ local function lsOptions_CreateDivider(parent)
 end
 
 local function lsOptions_CreateHeader(parent, label)
-	local object = E:CreateFontString(parent, 16, nil, true, nil, 1, 0.82, 0)
+	local object = E:CreateFontString(parent, 16, nil, true, nil, nil, 1, 0.82, 0)
 	object:SetSize(512, 20)
 	object:SetJustifyH("LEFT")
 	object:SetJustifyV("MIDDLE")
