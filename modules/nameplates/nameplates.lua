@@ -1,23 +1,15 @@
 local _, ns = ...
-local E = ns.E
+local E, M = ns.E, ns.M
+E.NP = {}
 
-local format, match, floor = format, strmatch, floor
-local SCALE
+local NP = E.NP
 
-ns.nameplates = {}
+local format, match = format, strmatch
+local prevNumChildren = 0
 
-local function RGBToHEX(r, g, b)
-	if type(r) == "table" then
-		if r.r then
-			r, g, b = r.r, r.g, r.b
-		else
-			r, g, b = unpack(r)
-		end
-	end
-	return format("%02x%02x%02x", r * 255, g * 255, b * 255)
-end
+NP.plates = {}
 
-local function lsNamePlate_GetColor(r, g, b, a)
+local function NamePlate_GetColor(r, g, b, a)
 	r, g, b, a = format("%.2f", r), format("%.2f", g), format("%.2f", b), format("%.2f", a)
 
 	if g + b == 0 then
@@ -33,7 +25,7 @@ local function lsNamePlate_GetColor(r, g, b, a)
 	end
 end
 
-local function lsNamePlate_OnShow(self)
+local function NamePlate_OnShow(self)
 	local scale = UIParent:GetEffectiveScale()
 	local healthbar, overlay = self.health.bar, self.overlay
 
@@ -49,10 +41,8 @@ local function lsNamePlate_OnShow(self)
 	end
 
 	local name = self.name:GetText() or UNKNOWNOBJECT
-	--[[ it's pretty weird, but cuz of nameplate re-usage,
-		sometimes we can have both level number and bossIcon icon present ]]
 	local level = self.bossIcon:IsShown() and -1 or tonumber(self.level:GetText())
-	local color = RGBToHEX(GetQuestDifficultyColor((level > 0) and level or 99))
+	local color = E:RGBToHEX(GetQuestDifficultyColor((level > 0) and level or 99))
 
 	if self.bossIcon:IsShown() then
 		level = "??"
@@ -67,73 +57,88 @@ local function lsNamePlate_OnShow(self)
 	self.overlay:Show()
 end
 
-local function lsNamePlate_OnHide(self)
+local function NamePlate_OnHide(self)
 	self.overlay:Hide()
 end
 
-local function lsNamePlateCastBar_OnShow(self)
-	self.bar:Show()
+local function NamePlateCastBar_OnShow(self)
+	local bar = self.bar
 
-	self.bar.icon:SetTexture(self.icon:GetTexture())
+	bar:Show()
 
-	self.bar.text:SetText(self.text:GetText())
+	bar.icon:SetTexture(self.icon:GetTexture())
+
+	bar.text:SetText(self.text:GetText())
 end
 
-local function lsNamePlateCastBar_OnHide(self)
+local function NamePlateCastBar_OnHide(self)
 	self.bar:Hide()
 end
 
-local function lsNamePlateHealthBar_OnValueChanged(self, value)
-	self.bar:SetMinMaxValues(self:GetMinMaxValues())
-	self.bar:SetValue(value)
+local function NamePlateHealthBar_OnValueChanged(self, value)
+	local bar = self.bar
 
-	if self.bar.text then
-		self.bar.text:SetText(E:NumFormat(value))
+	bar:SetMinMaxValues(self:GetMinMaxValues())
+	bar:SetValue(value)
+
+	if bar.text then
+		bar.text:SetText(E:NumFormat(value))
 	end
 end
 
-local function lsNamePlateCastBar_OnValueChanged(self, value)
-	self.bar:SetMinMaxValues(self:GetMinMaxValues())
-	self.bar:SetValue(value)
+local function NamePlateCastBar_OnValueChanged(self, value)
+	local bar = self.bar
+
+	bar:SetMinMaxValues(self:GetMinMaxValues())
+	bar:SetValue(value)
 
 	if self.shield:IsShown() then
-		self.bar.icon:SetDesaturated(true)
-		self.bar:SetStatusBarColor(0.6, 0.6, 0.6)
-		self.bar.bg:SetVertexColor(0.2, 0.2, 0.2)
+		bar.icon:SetDesaturated(true)
+		bar:SetStatusBarColor(0.6, 0.6, 0.6)
+		bar.bg:SetVertexColor(0.2, 0.2, 0.2)
 	else
-		self.bar.icon:SetDesaturated(false)
-		self.bar:SetStatusBarColor(0.15, 0.15, 0.15)
-		self.bar.bg:SetVertexColor(0.96, 0.7, 0)
+		bar.icon:SetDesaturated(false)
+		bar:SetStatusBarColor(0.15, 0.15, 0.15)
+		bar.bg:SetVertexColor(0.96, 0.7, 0)
 	end
 end
 
-local function lsNamePlate_CreateStatusBar(parent, isCastBar)
+local function NamePlate_CreateStatusBar(parent, isCastBar)
 	local bar = CreateFrame("StatusBar", nil, parent)
 	bar:SetSize(120, 12)
 	bar:SetPoint(isCastBar and "BOTTOM" or "TOP", parent, isCastBar and "BOTTOM" or "TOP", 0, 0)
-	bar:SetStatusBarTexture(ns.M.textures.statusbar)
+	bar:SetStatusBarTexture(M.textures.statusbar)
 	bar:SetStatusBarColor(0.15, 0.15, 0.15)
 
-	bar.bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bar.bg:SetAllPoints(bar)
-	bar.bg:SetTexture(ns.M.textures.statusbar)
-	bar.bg:SetVertexColor(0.15, 0.15, 0.15)
+	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	bg:SetAllPoints(bar)
+	bg:SetTexture(M.textures.statusbar)
+	bg:SetVertexColor(0.15, 0.15, 0.15)
+	bar.bg = bg
 
-	bar.fg = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-	bar.fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	bar.fg:SetTexCoord((isCastBar and 63 or 319) / 512, (isCastBar and 193 or 449) / 512, 5 / 64, 27 / 64)
-	bar.fg:SetSize(130, 22)
-	bar.fg:SetPoint("CENTER", 0, 0)
+	local fg = bar:CreateTexture(nil, "OVERLAY", nil, 0)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
+	fg:SetTexCoord((isCastBar and 63 or 319) / 512, (isCastBar and 193 or 449) / 512, 5 / 64, 27 / 64)
+	fg:SetSize(130, 22)
+	fg:SetPoint("CENTER", 0, 0)
+	bar.fg = fg
 
-	bar.text = bar:CreateFontString(nil, "OVERLAY", "lsUnitFrame10Text")
-	bar.text:SetPoint("LEFT", bar, 2, 0)
-	bar.text:SetPoint("RIGHT", bar, -2, 0)
-	bar.text:SetJustifyH(isCastBar and "CENTER" or "RIGHT")
+	local text = E:CreateFontString(bar, 10, nil, true, nil)
+	text:SetPoint("LEFT", bar, 2, 0)
+	text:SetPoint("RIGHT", bar, -2, 0)
+	text:SetJustifyH(isCastBar and "CENTER" or "RIGHT")
+	bar.text = text
 
 	return bar
 end
 
-local function lsSetNamePlateStyle(self)
+local function Sizer_OnSizeChanged(self, x, y)
+	self.parent:Hide()
+	self.parent:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 24))
+	self.parent:Show()
+end
+
+local function HandleNamePlate(self)
 	self.barFrame, self.nameFrame = self:GetChildren()
 	self.health, self.cast = self.barFrame:GetChildren()
 
@@ -158,16 +163,16 @@ local function lsSetNamePlateStyle(self)
 	self.cast.text:Hide()
 	self.cast.textShadow:SetTexture(nil)
 
-	local overlay = CreateFrame("Frame", "ls"..self:GetName().."Overlay", WorldFrame)
+	local overlay = CreateFrame("Frame", "LS"..self:GetName().."Overlay", WorldFrame)
 	overlay:SetSize(120, 32)
 	self.overlay = overlay
 
-	ns.nameplates[self] = overlay
+	NP.plates[self] = overlay
 
 	-- Health
 	self.health.texture:SetTexture(nil)
 
-	local healthBar = lsNamePlate_CreateStatusBar(overlay)
+	local healthBar = NamePlate_CreateStatusBar(overlay)
 
 	if not ns.C.nameplates.showText then
 		healthBar.text = nil
@@ -175,41 +180,42 @@ local function lsSetNamePlateStyle(self)
 
 	self.health.bar = healthBar
 
-	self.health:HookScript("OnValueChanged", lsNamePlateHealthBar_OnValueChanged)
+	self.health:HookScript("OnValueChanged", NamePlateHealthBar_OnValueChanged)
 
 	-- Castbar
 	self.cast.texture:SetTexture(nil)
 
-	local castBar = lsNamePlate_CreateStatusBar(overlay, true)
+	local castBar = NamePlate_CreateStatusBar(overlay, true)
 
-	castBar.icon = castBar:CreateTexture(nil, "BACKGROUND", nil, 1)
-	castBar.icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
-	castBar.icon:SetSize(32, 32)
-	castBar.icon:SetPoint("RIGHT", overlay, "LEFT", -8, 0)
+	local iconHolder = CreateFrame("Frame", nil, castBar)
+	iconHolder:SetSize(32, 32)
+	iconHolder:SetPoint("RIGHT", overlay, "LEFT", -8, 0)
 
-	castBar.iconborder = castBar:CreateTexture(nil, "BACKGROUND", nil, 2)
-	castBar.iconborder:SetTexture(ns.M.textures.button.normal)
-	castBar.iconborder:SetTexCoord(0.140625, 0.859375, 0.140625, 0.859375)
-	castBar.iconborder:SetPoint("TOPLEFT", castBar.icon, "TOPLEFT", -4, 4)
-	castBar.iconborder:SetPoint("BOTTOMRIGHT", castBar.icon, "BOTTOMRIGHT", 4, -4)
+	local icon = iconHolder:CreateTexture(nil, "BACKGROUND", nil, 1)
+	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+	icon:SetAllPoints()
+	castBar.icon = icon
+
+	E:CreateBorder(iconHolder)
 
 	self.cast.bar = castBar
 
-	self.cast:HookScript("OnShow", lsNamePlateCastBar_OnShow)
-	self.cast:HookScript("OnHide", lsNamePlateCastBar_OnHide)
-	self.cast:HookScript("OnValueChanged", lsNamePlateCastBar_OnValueChanged)
+	self.cast:HookScript("OnShow", NamePlateCastBar_OnShow)
+	self.cast:HookScript("OnHide", NamePlateCastBar_OnHide)
+	self.cast:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
 
 	if self.cast:IsShown() then
-		lsNamePlateCastBar_OnShow(self.cast)
+		NamePlateCastBar_OnShow(self.cast)
 	else
 		castBar:Hide()
 	end
 
 	-- Name
-	overlay.name = overlay:CreateFontString(nil, "OVERLAY", "lsUnitFrame14Text")
-	overlay.name:SetPoint("BOTTOM", overlay, "TOP", 0, 6)
-	overlay.name:SetPoint("LEFT", overlay, -24, 0)
-	overlay.name:SetPoint("RIGHT", overlay, 24, 0)
+	local name = E:CreateFontString(overlay, 14, nil, true, nil)
+	name:SetPoint("BOTTOM", overlay, "TOP", 0, 6)
+	name:SetPoint("LEFT", overlay, -24, 0)
+	name:SetPoint("RIGHT", overlay, 24, 0)
+	overlay.name = name
 
 	-- RaidIcon
 	self.raidIcon:SetParent(overlay)
@@ -218,87 +224,86 @@ local function lsSetNamePlateStyle(self)
 	self.raidIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
 
 	-- Threat
-	overlay.threat = healthBar:CreateTexture(nil, "OVERLAY", nil, 1)
-	overlay.threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	overlay.threat:SetTexCoord(62 / 512, 194 / 512, 36 / 64, 52 / 64)
-	overlay.threat:SetPoint("TOPLEFT", healthBar.fg, "TOPLEFT", -1, 1)
-	overlay.threat:SetPoint("BOTTOMRIGHT", healthBar.fg, "BOTTOMRIGHT", 1, 7)
-	overlay.threat:SetVertexColor(0.15, 0.15, 0.15)
-	overlay.threat:Hide()
+	local threat = healthBar:CreateTexture(nil, "OVERLAY", nil, 1)
+	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
+	threat:SetTexCoord(62 / 512, 194 / 512, 36 / 64, 52 / 64)
+	threat:SetPoint("TOPLEFT", healthBar.fg, "TOPLEFT", -1, 1)
+	threat:SetPoint("BOTTOMRIGHT", healthBar.fg, "BOTTOMRIGHT", 1, 7)
+	threat:SetVertexColor(0.15, 0.15, 0.15)
+	threat:Hide()
+	overlay.threat = threat
 
 	-- Highlight
-	overlay.hl = healthBar:CreateTexture(nil, "OVERLAY", nil, 2)
-	overlay.hl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	overlay.hl:SetTexCoord(321 / 512, 447 / 512, 39 / 64, 57 / 64)
-	overlay.hl:SetSize(126, 18)
-	overlay.hl:SetPoint("CENTER", 0, 0)
-	overlay.hl:SetBlendMode("ADD")
-	overlay.hl:Hide()
+	local hl = healthBar:CreateTexture(nil, "OVERLAY", nil, 2)
+	hl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
+	hl:SetTexCoord(321 / 512, 447 / 512, 39 / 64, 57 / 64)
+	hl:SetSize(126, 18)
+	hl:SetPoint("CENTER", 0, 0)
+	hl:SetBlendMode("ADD")
+	hl:Hide()
+	overlay.hl = hl
 
 	-- Position
 	local sizer = CreateFrame("Frame", nil, overlay)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
-	sizer:SetScript("OnSizeChanged", function(self, x, y)
-		overlay:Hide()
-		overlay:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", floor(x), floor(y - 24))
-		overlay:Show()
-	end)
+	sizer.parent = overlay
+	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
 
-	self:HookScript("OnShow", lsNamePlate_OnShow)
-	self:HookScript("OnHide", lsNamePlate_OnHide)
+	self:HookScript("OnShow", NamePlate_OnShow)
+	self:HookScript("OnHide", NamePlate_OnHide)
 
 	if self:IsShown() then
-		lsNamePlate_OnShow(self)
+		NamePlate_OnShow(self)
 	else
 		overlay:Hide()
 	end
 end
 
-function ns.lsNamePlates_Initialize()
-	local prevNumChildren, curNumChildren = 0
+local function WorldFrame_OnUpdate(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed
 
-	WorldFrame:HookScript("OnUpdate", function(self, elapsed)
-		self.elapsed = (self.elapsed or 0) + elapsed
+	if self.elapsed > 0.1 then
+		local curNumChildren = WorldFrame:GetNumChildren()
 
-		if self.elapsed > 0.1 then
-			curNumChildren = WorldFrame:GetNumChildren()
+		if curNumChildren ~= prevNumChildren  then
+			for i = prevNumChildren + 1, curNumChildren do
+				local f = select(i, WorldFrame:GetChildren())
 
-			if curNumChildren ~= prevNumChildren  then
-				for i = prevNumChildren + 1, curNumChildren do
-					local f = select(i, WorldFrame:GetChildren())
-
-					local name = f:GetName()
-					if (name and match(name, "^NamePlate%d")) and not ns.nameplates[f] then
-						lsSetNamePlateStyle(f)
-					end
-				end
-
-				prevNumChildren = curNumChildren
-			end
-
-			for plate, overlay in next, ns.nameplates do
-				if plate:IsShown() then
-					overlay:SetAlpha(plate:GetAlpha())
-
-					plate.health.bar:SetStatusBarColor(lsNamePlate_GetColor(plate.health:GetStatusBarColor()))
-
-					if plate.threat:IsShown() then
-						overlay.threat:Show()
-						overlay.threat:SetVertexColor(plate.threat:GetVertexColor())
-					else
-						overlay.threat:Hide()
-					end
-
-					if plate.highlight:IsShown() then
-						overlay.hl:Show()
-					else
-						overlay.hl:Hide()
-					end
+				local name = f:GetName()
+				if (name and match(name, "^NamePlate%d")) and not NP.plates[f] then
+					HandleNamePlate(f)
 				end
 			end
 
-			self.elapsed = 0
+			prevNumChildren = curNumChildren
 		end
-	end)
+
+		for plate, overlay in next, NP.plates do
+			if plate:IsShown() then
+				overlay:SetAlpha(plate:GetAlpha())
+
+				plate.health.bar:SetStatusBarColor(NamePlate_GetColor(plate.health:GetStatusBarColor()))
+
+				if plate.threat:IsShown() then
+					overlay.threat:Show()
+					overlay.threat:SetVertexColor(plate.threat:GetVertexColor())
+				else
+					overlay.threat:Hide()
+				end
+
+				if plate.highlight:IsShown() then
+					overlay.hl:Show()
+				else
+					overlay.hl:Hide()
+				end
+			end
+		end
+
+		self.elapsed = 0
+	end
+end
+
+function NP:Initialize()
+	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
 end

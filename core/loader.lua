@@ -44,7 +44,7 @@ function E:ADDON_LOADED(arg)
 
 	-- NamePlates
 	if ns.C.nameplates.enabled then
-		ns.lsNamePlates_Initialize()
+		E.NP:Initialize()
 	end
 
 	-- AuraTracker
