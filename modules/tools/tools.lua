@@ -265,8 +265,13 @@ function E:SkinPetActionButton(button)
 	button:SetBorderSize(6)
 
 	local name = button:GetName()
+	local bCD = button.cooldown
 	local bAutoCast = _G[name.."AutoCastable"]
 	local bShine = _G[name.."Shine"]
+
+	if bCD then
+		bCD:SetTimerTextHeight(10)
+	end
 
 	if bAutoCast then
 		bAutoCast:ClearAllPoints()
