@@ -176,6 +176,8 @@ function MM:Initialize()
 
 		if b == "CharacterMicroButton" then
 			E:AlwaysHide(MicroButtonPortrait)
+		elseif b == "GuildMicroButton" then
+			E:AlwaysHide(GuildMicroButtonTabard)
 		elseif b == "MainMenuMicroButton" then
 			E:AlwaysHide(MainMenuBarPerformanceBar)
 			E:AlwaysHide(MainMenuBarDownload)
