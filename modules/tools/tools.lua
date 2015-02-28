@@ -63,6 +63,46 @@ local function SetCustomHotKeyText(self)
 	self:SetFormattedText("%s", text or "")
 end
 
+local function ActionButton_OnUpdate(button)
+	local bIcon = button.icon
+	local bName = button.Name
+	local bHotKey = button.HotKey
+
+	if bIcon then
+		if button.action and IsActionInRange(button.action) ~= false then
+			local isUsable, notEnoughMana = IsUsableAction(button.action)
+			if isUsable then
+				bIcon:SetVertexColor(1, 1, 1, 1)
+			elseif notEnoughMana then
+				bIcon:SetVertexColor(unpack(COLORS.icon.oom))
+			else
+				bIcon:SetVertexColor(unpack(COLORS.icon.nu))
+			end
+		else
+			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
+		end
+	end
+
+	if bName then
+		local text = bName:GetText()
+		if text then
+			bName:SetText(E:StringTruncate(text, 4))
+		end
+	end
+
+	if bHotKey then
+		bHotKey:SetVertexColor(1, 1, 1)
+	end
+end
+
+local function PetActionButton_OnUpdate(button)
+	local bHotKey = button.HotKey
+
+	if bHotKey then
+		bHotKey:SetVertexColor(1, 1, 1)
+	end
+end
+
 local function SkinButton(button)
 	local name = button:GetName()
 	local bIcon = button.icon or button.Icon
@@ -160,6 +200,7 @@ end
 function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
 	if originalBar and originalBar:GetParent() ~= header then
 		originalBar:SetParent(header)
+		originalBar:SetAllPoints()
 		originalBar:EnableMouse(false)
 		originalBar.ignoreFramePositionManager = true
 	end
@@ -318,6 +359,8 @@ function E:SkinPetActionButton(button)
 		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
 	end
 
+	button:HookScript("OnUpdate", PetActionButton_OnUpdate)
+
 	hooksecurefunc(button, "SetNormalTexture", SetNilNormalTexture)
 
 	button.styled = true
@@ -334,6 +377,8 @@ function E:SkinActionButton(button)
 	if bFloatingBG then
 		E:AlwaysHide(bFloatingBG)
 	end
+
+	button:HookScript("OnUpdate", ActionButton_OnUpdate)
 
 	button.styled = true
 end

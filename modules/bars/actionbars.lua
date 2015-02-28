@@ -1,5 +1,5 @@
 local _, ns = ...
-local E = ns.E
+local E, M = ns.E, ns.M
 
 local match, tonumber = strmatch, tonumber
 local BAR_CONFIG, COLORS, TEXTURES
@@ -156,46 +156,6 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function LSActionButton_OnUpdate(button)
-	local bIcon = button.icon
-	local bName = button.Name
-	local bHotKey = button.HotKey
-
-	if bIcon then
-		if button.action and IsActionInRange(button.action) ~= false then
-			local isUsable, notEnoughMana = IsUsableAction(button.action)
-			if isUsable then
-				bIcon:SetVertexColor(1, 1, 1, 1)
-			elseif notEnoughMana then
-				bIcon:SetVertexColor(unpack(COLORS.icon.oom))
-			else
-				bIcon:SetVertexColor(unpack(COLORS.icon.nu))
-			end
-		else
-			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-		end
-	end
-
-	if bName then
-		local text = bName:GetText()
-		if text then
-			bName:SetText(E:StringTruncate(text, 4))
-		end
-	end
-
-	if bHotKey then
-		bHotKey:SetVertexColor(1, 1, 1)
-	end
-end
-
-local function LSPetActionButton_OnUpdate(button)
-	local bHotKey = button.HotKey
-
-	if bHotKey then
-		bHotKey:SetVertexColor(1, 1, 1)
-	end
-end
-
 local function FlyoutButtonToggleHook(...)
 	local self, flyoutID = ...
 
@@ -325,7 +285,7 @@ function ActionBars:Initialize(enableManager)
 		OverrideActionBarPitchFrame,
 		OverrideActionBarLeaveFrame,
 	} do
-		f:SetParent(ns.M.hiddenParent)
+		f:SetParent(M.hiddenParent)
 		f.ignoreFramePositionManager = true
 	end
 
@@ -347,7 +307,7 @@ function ActionBars:Initialize(enableManager)
 		SpellFlyoutVerticalBackground,
 		SpellFlyoutBackgroundEnd,
 	} do
-		t:SetTexture(nil)
+		E:AlwaysHide(t)
 	end
 
 	for i = 1, 6 do
@@ -357,8 +317,6 @@ function ActionBars:Initialize(enableManager)
 	end
 
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
-	hooksecurefunc("ActionButton_OnUpdate", LSActionButton_OnUpdate)
-	hooksecurefunc("PetActionButton_OnUpdate", LSPetActionButton_OnUpdate)
 
 	if enableManager then
 		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
