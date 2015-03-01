@@ -38,10 +38,10 @@ function E:RGBToHEX(r, g, b)
 	return format("%02x%02x%02x", r * 255, g * 255, b * 255)
 end
 
-function E:HexToRGB(hex)
-	local rhex, ghex, bhex = sub(hex, 1, 2), sub(hex, 3, 4), sub(hex, 5, 6)
+function E:HEXToRGB(hex)
+	local rhex, ghex, bhex = tonumber(sub(hex, 1, 2), 16), tonumber(sub(hex, 3, 4), 16), tonumber(sub(hex, 5, 6), 16)
 
-	return tonumber(rhex, 16), tonumber(ghex, 16), tonumber(bhex, 16)
+	return tonumber(format("%.2f", rhex / 255)), tonumber(format("%.2f", ghex / 255)), tonumber(format("%.2f", bhex / 255))
 end
 
 function E:StringTruncate(s, l)
