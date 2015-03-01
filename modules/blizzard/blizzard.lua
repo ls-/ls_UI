@@ -6,5 +6,6 @@ E.Blizzard = {}
 local B = E.Blizzard
 
 function B:Initialize()
+	self:HandleArchaeology()
 	self:HandleObjectiveTracker()
 end
