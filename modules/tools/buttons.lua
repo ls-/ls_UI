@@ -91,7 +91,7 @@ local function ActionButton_OnUpdate(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetVertexColor(1, 1, 1)
+		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
 	end
 end
 
@@ -99,7 +99,7 @@ local function PetActionButton_OnUpdate(button)
 	local bHotKey = button.HotKey
 
 	if bHotKey then
-		bHotKey:SetVertexColor(1, 1, 1)
+		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
 	end
 end
 
