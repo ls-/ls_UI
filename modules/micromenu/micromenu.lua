@@ -62,21 +62,14 @@ local function MicroButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
-local function HandleMicroButton(name)
-	local button = _G[name]
-
+local function SetCustomNormalTexture(button)
 	local normal = button:GetNormalTexture()
-	local pushed = button:GetPushedTexture()
-	local highlight = button:GetHighlightTexture()
-	local disabled = button:GetDisabledTexture()
-	local flash = button.Flash
-
-	button:SetSize(18, 24)
-	button:SetFrameStrata("LOW")
-	button:SetFrameLevel(2)
-	button:SetHitRectInsets(0, 0, 0, 0)
 
 	if normal then normal:SetTexture(nil) end
+end
+
+local function SetCustomPushedTexture(button)
+	local pushed = button:GetPushedTexture()
 
 	if pushed then
 		pushed:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microbutton")
@@ -85,6 +78,27 @@ local function HandleMicroButton(name)
 		pushed:ClearAllPoints()
 		pushed:SetPoint("CENTER")
 	end
+end
+
+local function SetCustomDisabledTexture(button)
+	local disabled = button:GetDisabledTexture()
+
+	if disabled then disabled:SetTexture(nil) end
+end
+
+local function HandleMicroButton(name)
+	local button = _G[name]
+	local highlight = button:GetHighlightTexture()
+	local flash = button.Flash
+
+	button:SetSize(18, 24)
+	button:SetFrameStrata("LOW")
+	button:SetFrameLevel(2)
+	button:SetHitRectInsets(0, 0, 0, 0)
+
+	SetCustomNormalTexture(button)
+	SetCustomPushedTexture(button)
+	SetCustomDisabledTexture(button)
 
 	if highlight then
 		highlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microbutton")
@@ -93,8 +107,6 @@ local function HandleMicroButton(name)
 		highlight:ClearAllPoints()
 		highlight:SetPoint("CENTER")
 	end
-
-	if disabled then disabled:SetTexture(nil) end
 
 	if flash then
 		flash:SetSize(58, 58)
@@ -163,6 +175,22 @@ function MM:Initialize()
 
 	for _, b in next, MICRO_BUTTONS do
 		local button = _G[b]
+
+		if b == "CharacterMicroButton" then
+			E:AlwaysHide(MicroButtonPortrait)
+		elseif b == "GuildMicroButton" then
+			E:AlwaysHide(GuildMicroButtonTabard)
+			
+			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
+			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
+			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
+		elseif b == "MainMenuMicroButton" then
+			E:AlwaysHide(MainMenuBarDownload)
+			E:AlwaysHide(MainMenuBarPerformanceBar)
+
+			button:SetScript("OnEnter", MicroButton_OnEnter)
+		end
+
 		if MICRO_BUTTON_LAYOUT[b] then
 			HandleMicroButton(b)
 
@@ -172,17 +200,6 @@ function MM:Initialize()
 		else
 			button:UnregisterAllEvents()
 			button:SetParent(M.hiddenParent)
-		end
-
-		if b == "CharacterMicroButton" then
-			E:AlwaysHide(MicroButtonPortrait)
-		elseif b == "GuildMicroButton" then
-			E:AlwaysHide(GuildMicroButtonTabard)
-		elseif b == "MainMenuMicroButton" then
-			E:AlwaysHide(MainMenuBarPerformanceBar)
-			E:AlwaysHide(MainMenuBarDownload)
-
-			button:SetScript("OnEnter", MicroButton_OnEnter)
 		end
 	end
 
