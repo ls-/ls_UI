@@ -182,6 +182,8 @@ local function Minimap_OnMouseWheel(self, direction)
 end
 
 function MM:Initialize()
+	LoadAddOn("Blizzard_TimeManager")
+
 	Minimap:SetParent("UIParent")
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint(unpack(ns.C.minimap.point))

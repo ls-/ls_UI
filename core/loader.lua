@@ -20,7 +20,6 @@ function E:ADDON_LOADED(arg)
 
 	-- Minimap
 	if ns.C.minimap.enabled then
-		LoadAddOn("Blizzard_TimeManager")
 		E.Minimap:Initialize()
 	end
 
