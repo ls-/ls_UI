@@ -76,7 +76,7 @@ function E:HandleStatusBar(bar, cascade)
 			sb:SetAllPoints()
 		end
 
-		E:CreateBorder(bar)
+		E:CreateBorder(bar, 8)
 
 
 	else
