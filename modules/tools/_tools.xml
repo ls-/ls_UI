@@ -2,4 +2,6 @@
 	<Script file="border.lua"/>
 	<Script file="cooldown.lua"/>
 	<Script file="buttons.lua"/>
+	<Script file="smooth.lua"/>
+	<Script file="statusbar.lua"/>
 </Ui>
