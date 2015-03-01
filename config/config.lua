@@ -102,13 +102,9 @@ D["infobars"] = {
 		enabled = true,
 		point = {"TOPLEFT", "UIParent", "TOPLEFT", 4, -4},
 	},
-	memory = {
-		enabled = true,
-		point = {"LEFT", "lsLocationInfoBar", "RIGHT", 24, 0},
-	},
 	fps = {
 		enabled = true,
-		point = {"LEFT", "lsMemoryInfoBar", "RIGHT", 4, 0},
+		point = {"LEFT", "lsLocationInfoBar", "RIGHT", 24, 0},
 	},
 	latency = {
 		enabled = true,

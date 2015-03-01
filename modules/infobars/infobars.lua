@@ -10,10 +10,6 @@ local INFOBAR_INFO = {
 		infobar_type = "Frame",
 		length = "Long",
 	},
-	Memory = {
-		infobar_type = "Button",
-		length = "Short",
-	},
 	FPS = {
 		infobar_type = "Frame",
 		length = "Short",
@@ -94,58 +90,6 @@ local function lsLocationInfoBar_OnUpdate(self, elapsed)
 		end
 	end
 end
-
-local function lsMemoryInfoBar_Initialize()
-	lsMemoryInfoBar.usedMemory = 0
-	lsMemoryInfoBar.activeAddons = {}
-end
-
-local function lsMemoryInfoBar_OnClick(self)
-	UpdateAddOnMemoryUsage()
-	collectgarbage()
-	self.updateInterval = 2
-end
-
-local function lsMemoryInfoBar_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-	GameTooltip:AddLine(lsMEMORY..":")
-	sort(self.activeAddons, function(a, b)
-		if a and b then
-			return a[2] > b[2]
-		end
-	end)
-	for i = 1, #self.activeAddons do
-		if self.activeAddons[i][3] then
-			local r = self.activeAddons[i][2] / self.usedMemory * 3
-			local g = 2 - r
-			GameTooltip:AddDoubleLine(self.activeAddons[i][1], format("%.3f MB",
-				self.activeAddons[i][2] / 1000), 1, 1, 1, r, g, 0)
-		end
-	end
-	GameTooltip:Show()
-end
-
-local function lsMemoryInfoBar_OnUpdate(self, elapsed)
-	if self.updateInterval > 0 then
-		self.updateInterval = self.updateInterval - elapsed
-	else
-		self.updateInterval = 10
-		self.usedMemory = 0
-		UpdateAddOnMemoryUsage()
-		for i = 1, GetNumAddOns() do
-			self.activeAddons[i] = self.activeAddons[i] or {}
-			self.activeAddons[i][1] = select(2, GetAddOnInfo(i))
-			self.activeAddons[i][2] = GetAddOnMemoryUsage(i)
-			self.activeAddons[i][3] = IsAddOnLoaded(i)
-			self.usedMemory = self.usedMemory + self.activeAddons[i][2]
-		end
-		self.text:SetText(format("%.1f MB", self.usedMemory / 1000))
-		if GameTooltip:IsOwned(self) then
-			lsMemoryInfoBar_OnEnter(self)
-		end
-	end
-end
-
 
 local function lsFPSInfoBar_OnUpdate(self, elapsed)
 	if self.updateInterval > 0 then
@@ -243,11 +187,6 @@ function ns.lsInfobars_Initialize()
 
 	lsLocationInfoBar:SetScript("OnEnter", lsLocationInfoBar_OnEnter)
 	lsLocationInfoBar:SetScript("OnUpdate", lsLocationInfoBar_OnUpdate)
-
-	lsMemoryInfoBar_Initialize()
-	lsMemoryInfoBar:SetScript("OnClick", lsMemoryInfoBar_OnClick)
-	lsMemoryInfoBar:SetScript("OnEnter", lsMemoryInfoBar_OnEnter)
-	lsMemoryInfoBar:SetScript("OnUpdate", lsMemoryInfoBar_OnUpdate)
 
 	lsFPSInfoBar:SetScript("OnUpdate", lsFPSInfoBar_OnUpdate)
 

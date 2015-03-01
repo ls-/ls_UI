@@ -58,6 +58,43 @@ local MICRO_BUTTON_LAYOUT = {
 	},
 }
 
+local function MainMenuMicroButton_OnEnter(self)
+	GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, self.newbieText)
+	GameTooltip:AddLine(" ")
+
+	local addons, memory =  {}, 0
+
+	UpdateAddOnMemoryUsage()
+
+	for i = 1, GetNumAddOns() do
+		addons[i] = {
+			[1] = select(2, GetAddOnInfo(i)),
+			[2] = GetAddOnMemoryUsage(i),
+			[3] = IsAddOnLoaded(i),
+		}
+
+		memory = memory + addons[i][2]
+	end
+
+	sort(addons, function(a, b)
+		if a and b then
+			return a[2] > b[2]
+		end
+	end)
+
+	for i = 1, #addons do
+		if addons[i][3] then
+			local r = addons[i][2] / memory * 3
+
+			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", addons[i][2] / 1024), 1, 1, 1, r, 2 - r, 0)
+		end
+	end
+
+	GameTooltip:AddDoubleLine(TOTAL..":", format("%.3f MB", memory / 1024), 1, 1, 0.6, 1, 1, 0.6)
+
+	GameTooltip:Show()
+end
+
 local function MicroButton_OnLeave(self)
 	GameTooltip:Hide()
 end
@@ -176,21 +213,6 @@ function MM:Initialize()
 	for _, b in next, MICRO_BUTTONS do
 		local button = _G[b]
 
-		if b == "CharacterMicroButton" then
-			E:AlwaysHide(MicroButtonPortrait)
-		elseif b == "GuildMicroButton" then
-			E:AlwaysHide(GuildMicroButtonTabard)
-			
-			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
-			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
-			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
-		elseif b == "MainMenuMicroButton" then
-			E:AlwaysHide(MainMenuBarDownload)
-			E:AlwaysHide(MainMenuBarPerformanceBar)
-
-			button:SetScript("OnEnter", MicroButton_OnEnter)
-		end
-
 		if MICRO_BUTTON_LAYOUT[b] then
 			HandleMicroButton(b)
 
@@ -200,6 +222,21 @@ function MM:Initialize()
 		else
 			button:UnregisterAllEvents()
 			button:SetParent(M.hiddenParent)
+		end
+
+		if b == "CharacterMicroButton" then
+			E:AlwaysHide(MicroButtonPortrait)
+		elseif b == "GuildMicroButton" then
+			E:AlwaysHide(GuildMicroButtonTabard)
+
+			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
+			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
+			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
+		elseif b == "MainMenuMicroButton" then
+			E:AlwaysHide(MainMenuBarDownload)
+			E:AlwaysHide(MainMenuBarPerformanceBar)
+
+			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
 		end
 	end
 
