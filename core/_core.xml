@@ -3,9 +3,7 @@
 	<Script file="db.lua"/>
 	<Script file="core.lua"/>
 	<Script file="math.lua"/>
-	<Script file="cooldown.lua"/>
 	<Script file="movers.lua"/>
 	<Script file="functions.lua"/>
-	<Script file="border.lua"/>
 	<Script file="loader.lua"/>
 </Ui>
