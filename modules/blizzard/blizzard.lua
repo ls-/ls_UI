@@ -7,5 +7,6 @@ local B = E.Blizzard
 
 function B:Initialize()
 	self:HandleArchaeology()
+	self:HandleMirrorTimer()
 	self:HandleObjectiveTracker()
 end
