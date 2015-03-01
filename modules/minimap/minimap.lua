@@ -100,7 +100,7 @@ function HandleMinimapButton(button, cascade)
 		highlight:SetAllPoints(button)
 
 		local size = normal and normal:GetSize() or icon:GetSize()
-		local offset = size >= 42 and -2 or size >= 28 and 0 or 5
+		local offset = size >= 42 and -2 or size >= 28 and 0 or 6
 
 		if normal and pushed then
 			normal:SetDrawLayer("ARTWORK", 0)
