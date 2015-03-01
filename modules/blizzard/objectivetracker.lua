@@ -5,9 +5,7 @@ local COLORS = M.colors
 
 local OT_UNLOCKED
 
-E.OT = {}
-
-local OT = E.OT
+local B = E.Blizzard
 
 local function OTButton_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
@@ -45,7 +43,7 @@ local function OTDropDown_Initialize(self)
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
-function OT:Initialize()
+function B:HandleObjectiveTracker()
 	local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
 	holder:SetFrameStrata("LOW")
 	holder:SetFrameLevel(1)

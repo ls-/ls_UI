@@ -64,7 +64,7 @@ function E:ADDON_LOADED(arg)
 		E.PetBattle:Initialize()
 	end
 
-	E.OT:Initialize()
+	E.Blizzard:Initialize()
 
 	lsOptionsFrame_Initialize()
 
