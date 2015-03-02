@@ -201,8 +201,8 @@ D["petbattle"] = {
 
 D["bags"] = {
 	enabled = true,
-	point = {"LEFT", "lsLatencyInfoBar", "RIGHT", 24, 0},
-	button_size = 28,
+	point = {"LEFT", "LSMBHolderRight", "RIGHT", 12, 0},
+	button_size = 26,
 	button_gap = 4,
 	direction = "RIGHT",
 }

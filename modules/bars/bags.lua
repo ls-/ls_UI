@@ -8,6 +8,7 @@ E.Bags = {}
 local Bags = E.Bags
 
 local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
+local GRADIENT = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
 
 local BAGS = {
 	MainMenuBarBackpackButton,
@@ -28,23 +29,7 @@ local function GetBagUsageInfo()
 		end
 	end
 
-	return total - free, total, free
-end
-
-local function BagUsageToColor(used, total)
-	local usage = E:NumberToPerc(used, total)
-
-	if usage ~= 0 then
-		if usage > 85 then
-			return unpack(COLORS.red)
-		elseif usage > 50 then
-			return unpack(COLORS.yellow)
-		else
-			return unpack(COLORS.green)
-		end
-	else
-		return unpack(COLORS.black)
-	end
+	return free, total
 end
 
 local function BackpackButton_OnClick(self, button)
@@ -79,10 +64,14 @@ local function BackpackButton_OnEvent(self, event, ...)
 	if event == "BAG_UPDATE" then
 		local bag = ...
 		if bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
-			self.icon:SetVertexColor(BagUsageToColor(GetBagUsageInfo()))
+			local free, total = GetBagUsageInfo()
+
+			self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		self.icon:SetVertexColor(BagUsageToColor(GetBagUsageInfo()))
+		local free, total = GetBagUsageInfo()
+
+		self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
 	end
 end
 
