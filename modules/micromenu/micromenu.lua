@@ -5,6 +5,9 @@ E.MM = {}
 
 local MM = E.MM
 
+local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
+local GRADIENT = {0.15, 0.65, 0.15, 1, 0.75, 0.1, 0.9, 0.1, 0.1}
+
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
 		point = {"LEFT", "lsMBHolderLeft", "LEFT", 3, 0},
@@ -58,8 +61,25 @@ local MICRO_BUTTON_LAYOUT = {
 	},
 }
 
+local function UpdatePerformanceBar(self)
+	local _, _, latencyHome, latencyWorld = GetNetStats()
+	local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
+
+	self.performance:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT)))
+end
+
 local function MainMenuMicroButton_OnEnter(self)
 	GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, self.newbieText)
+	GameTooltip:AddLine(" ")
+
+	GameTooltip:AddLine("Latency:")
+
+	local _, _, latencyHome, latencyWorld = GetNetStats()
+	local colorHome = E:RGBToHEX(E:ColorGradient(latencyHome / HIGH_LATENCY, unpack(GRADIENT)))
+	local colorWorld = E:RGBToHEX(E:ColorGradient(latencyWorld / HIGH_LATENCY, unpack(GRADIENT)))
+
+	GameTooltip:AddDoubleLine("Home", "|cff"..colorHome..latencyHome.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
+	GameTooltip:AddDoubleLine("World", "|cff"..colorWorld..latencyWorld.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
 	GameTooltip:AddLine(" ")
 
 	local addons, memory =  {}, 0
@@ -82,6 +102,8 @@ local function MainMenuMicroButton_OnEnter(self)
 		end
 	end)
 
+	GameTooltip:AddLine("Memory:")
+
 	for i = 1, #addons do
 		if addons[i][3] then
 			local r = addons[i][2] / memory * 3
@@ -92,7 +114,19 @@ local function MainMenuMicroButton_OnEnter(self)
 
 	GameTooltip:AddDoubleLine(TOTAL..":", format("%.3f MB", memory / 1024), 1, 1, 0.6, 1, 1, 0.6)
 
+	UpdatePerformanceBar(self)
+
 	GameTooltip:Show()
+end
+
+local function MainMenuMicroButton_OnUpdate(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed
+
+	if self.elapsed > 4 then
+		UpdatePerformanceBar(self)
+
+		self.elapsed = 0
+	end
 end
 
 local function MicroButton_OnLeave(self)
@@ -172,6 +206,15 @@ local function HandleMicroButton(name)
 	button:SetScript("OnUpdate", nil)
 end
 
+local function HandlePerformanceBar(parent, bar)
+	bar:SetDrawLayer("BACKGROUND", 3)
+	bar:SetTexture(M.textures.statusbar)
+	bar:SetSize(18, 4)
+	bar:ClearAllPoints()
+	bar:SetPoint("BOTTOM", 0, 0)
+	parent.performance = bar
+end
+
 local function ResetMicroButtonsParent()
 	for _, b in next, MICRO_BUTTONS do
 		local button = _G[b]
@@ -234,9 +277,11 @@ function MM:Initialize()
 			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
 		elseif b == "MainMenuMicroButton" then
 			E:AlwaysHide(MainMenuBarDownload)
-			E:AlwaysHide(MainMenuBarPerformanceBar)
+
+			HandlePerformanceBar(MainMenuMicroButton, MainMenuBarPerformanceBar)
 
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
+			button:SetScript("OnUpdate", MainMenuMicroButton_OnUpdate)
 		end
 	end
 
