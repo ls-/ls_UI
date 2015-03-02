@@ -10,14 +10,6 @@ local INFOBAR_INFO = {
 		infobar_type = "Frame",
 		length = "Long",
 	},
-	FPS = {
-		infobar_type = "Frame",
-		length = "Short",
-	},
-	Latency = {
-		infobar_type = "Frame",
-		length = "Short",
-	},
 	Clock = {
 		infobar_type = "Button",
 		length = "Short",
@@ -91,52 +83,6 @@ local function lsLocationInfoBar_OnUpdate(self, elapsed)
 	end
 end
 
-local function lsFPSInfoBar_OnUpdate(self, elapsed)
-	if self.updateInterval > 0 then
-		self.updateInterval = self.updateInterval - elapsed
-	else
-		self.updateInterval = 0.2
-		local fps = GetFramerate()
-		if fps > 35 then
-			self.filling:SetVertexColor(unpack(COLORS.green))
-		elseif fps > 20 then
-			self.filling:SetVertexColor(unpack(COLORS.yellow))
-		else
-			self.filling:SetVertexColor(unpack(COLORS.red))
-		end
-		self.text:SetText(floor(fps).." "..FPS_ABBR)
-	end
-end
-
-local function lsLatencyInfoBar_OnEnter(self)
-	local _, _, latencyHome, latencyWorld = GetNetStats()
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -4)
-	GameTooltip:AddLine(lsLATENCY..":")
-	GameTooltip:AddLine(format(lsHOME..": %d "..MILLISECONDS_ABBR, latencyHome), 1, 1, 1)
-	GameTooltip:AddLine(format(lsWORLD..": %d "..MILLISECONDS_ABBR, latencyWorld), 1, 1, 1)
-	GameTooltip:Show()
-end
-
-local function lsLatencyInfoBar_OnUpdate(self, elapsed)
-	if self.updateInterval > 0 then
-		self.updateInterval = self.updateInterval - elapsed
-	else
-		self.updateInterval = 10
-		local latency = select(4, GetNetStats())
-		if latency > PERFORMANCEBAR_MEDIUM_LATENCY then
-			self.filling:SetVertexColor(unpack(COLORS.red))
-		elseif latency > PERFORMANCEBAR_LOW_LATENCY then
-			self.filling:SetVertexColor(unpack(COLORS.yellow))
-		else
-			self.filling:SetVertexColor(unpack(COLORS.green))
-		end
-		self.text:SetText(latency.." "..MILLISECONDS_ABBR)
-		if GameTooltip:IsOwned(self) then
-			lsLatencyInfoBar_OnEnter(self)
-		end
-	end
-end
-
 local function lsClockInfoBar_Initialize()
 	lsClockInfoBar:RegisterForClicks("LeftButtonUp")
 end
@@ -187,11 +133,6 @@ function ns.lsInfobars_Initialize()
 
 	lsLocationInfoBar:SetScript("OnEnter", lsLocationInfoBar_OnEnter)
 	lsLocationInfoBar:SetScript("OnUpdate", lsLocationInfoBar_OnUpdate)
-
-	lsFPSInfoBar:SetScript("OnUpdate", lsFPSInfoBar_OnUpdate)
-
-	lsLatencyInfoBar:SetScript("OnEnter", lsLatencyInfoBar_OnEnter)
-	lsLatencyInfoBar:SetScript("OnUpdate", lsLatencyInfoBar_OnUpdate)
 
 	lsClockInfoBar_Initialize()
 	lsClockInfoBar:SetScript("OnClick", lsClockInfoBar_OnClick)
