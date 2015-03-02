@@ -68,6 +68,8 @@ function E:ADDON_LOADED(arg)
 	lsOptionsFrame_Initialize()
 
 	self:UnregisterEvent("ADDON_LOADED")
+
+	collectgarbage("collect")
 end
 
 function E:PLAYER_LOGOUT(...)
