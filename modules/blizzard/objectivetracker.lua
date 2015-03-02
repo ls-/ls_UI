@@ -7,25 +7,6 @@ local OT_UNLOCKED
 
 local B = E.Blizzard
 
-local function OTButton_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed > 0.2 then
-		local bIcon = self.icon
-
-		if bIcon then
-			local valid = IsQuestLogSpecialItemInRange(self:GetID())
-
-			if not valid or valid == 0 then
-				bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-			else
-				bIcon:SetVertexColor(1, 1, 1, 1)
-			end
-		end
-
-		self.elapsed = 0
-	end
-end
-
 local function OTHeader_OnClick(self)
 	ToggleDropDownMenu(1, nil, self.menu, "cursor", 2, -2)
 end
@@ -72,5 +53,4 @@ function B:HandleObjectiveTracker()
 	header.menu = dropdown
 
 	hooksecurefunc("QuestObjectiveItem_OnShow", E.SkinOTButton)
-	hooksecurefunc("QuestObjectiveItem_OnUpdate", OTButton_OnUpdate)
 end

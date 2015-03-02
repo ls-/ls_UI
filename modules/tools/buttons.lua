@@ -35,11 +35,12 @@ end
 
 local function SetCustomHotKeyText(self)
 	local button = self:GetParent()
+	local name = button:GetName()
 	local bType = button.buttonType
 
 	if not bType then
-		if not strmatch(button:GetName(), "Stance") then
-			if strmatch(button:GetName(), "PetAction") then
+		if name and not strmatch(name, "Stance") then
+			if strmatch(name, "PetAction") then
 				bType = "BONUSACTIONBUTTON"
 			else
 				bType = "ACTIONBUTTON"
@@ -100,6 +101,20 @@ local function PetActionButton_OnUpdate(button)
 
 	if bHotKey then
 		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
+	end
+end
+
+local function OTButton_OnUpdate(self, elapsed)
+	local bIcon = self.icon
+
+	if bIcon then
+		local valid = IsQuestLogSpecialItemInRange(self:GetID())
+
+		if valid == 0 then
+			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
+		else
+			bIcon:SetVertexColor(1, 1, 1, 1)
+		end
 	end
 end
 
@@ -390,7 +405,9 @@ function E:SkinOTButton()
 
 	SkinButton(self)
 
-	E:AlwaysHide(self.HotKey)
+	if self:GetScript("OnUpdate") then
+		self:HookScript("OnUpdate", OTButton_OnUpdate)
+	end
 
 	self.styled = true
 end
