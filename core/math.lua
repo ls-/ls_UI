@@ -2,46 +2,32 @@ local _, ns = ...
 local E = ns.E
 
 local format, gsub, sub, tonumber = format, gsub, strsub, tonumber
-local floor, ceil = floor, ceil
+local floor, ceil, modf = floor, ceil, math.modf
 
-local FIRST_NUMBER_CAP, SECOND_NUMBER_CAP = FIRST_NUMBER_CAP, SECOND_NUMBER_CAP
+local FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE
 local SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR =
 	SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR
 
 function E:NumberFormat(v, mod)
 	if abs(v) >= 1E6 then
-		return format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP, v / 1E6)
+		return format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP_NO_SPACE, v / 1E6)
 	elseif abs(v) >= 1E4 then
-		return format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP, v / 1E3)
+		return format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP_NO_SPACE, v / 1E3)
 	else
 		return v
 	end
 end
 
 function E:NumberToPerc(v1, v2)
-	return tonumber(format("%d", v1 / v2 * 100))
+	return floor(v1 / v2 * 100 + 0.5)
 end
 
 function E:Round(v)
-	return tonumber(floor(v + 0.5))
+	return floor(v + 0.5)
 end
 
-function E:RGBToHEX(r, g, b)
-	if type(r) == "table" then
-		if r.r then
-			r, g, b = r.r, r.g, r.b
-		else
-			r, g, b = unpack(r)
-		end
-	end
-
-	return format("%02x%02x%02x", r * 255, g * 255, b * 255)
-end
-
-function E:HEXToRGB(hex)
-	local rhex, ghex, bhex = tonumber(sub(hex, 1, 2), 16), tonumber(sub(hex, 3, 4), 16), tonumber(sub(hex, 5, 6), 16)
-
-	return tonumber(format("%.2f", rhex / 255)), tonumber(format("%.2f", ghex / 255)), tonumber(format("%.2f", bhex / 255))
+function E:NumberTruncate(v, l)
+	return v - (v % (0.1 ^ (l or 0)))
 end
 
 function E:StringTruncate(s, l)
@@ -68,4 +54,36 @@ function E:TimeFormat(s, abbr)
 	else
 		return tonumber(format("%.1f", s)), "|cffe51919", abbr and "%.1f"
 	end
+end
+
+function E:RGBToHEX(r, g, b)
+	if type(r) == "table" then
+		if r.r then
+			r, g, b = r.r, r.g, r.b
+		else
+			r, g, b = unpack(r)
+		end
+	end
+
+	return format("%02x%02x%02x", r * 255, g * 255, b * 255)
+end
+
+function E:HEXToRGB(hex)
+	local rhex, ghex, bhex = tonumber(sub(hex, 1, 2), 16), tonumber(sub(hex, 3, 4), 16), tonumber(sub(hex, 5, 6), 16)
+
+	return tonumber(format("%.2f", rhex / 255)), tonumber(format("%.2f", ghex / 255)), tonumber(format("%.2f", bhex / 255))
+end
+
+-- http://wow.gamepedia.com/ColorGradient for 3 colours
+function E:ColorGradient(perc, ...)
+	if perc >= 1 then
+		return select(7, ...)
+	elseif perc <= 0 then
+		return ...
+	end
+
+	local segment, relperc = modf(perc * 2)
+	local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
+
+	return r1 + (r2 -r1 ) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 end
