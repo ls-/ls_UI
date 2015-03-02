@@ -18,22 +18,18 @@ function E:ADDON_LOADED(arg)
 
 	ns.C = self:CopyTable(D, oUF_LS_CONFIG) -- local config
 
-	-- Minimap
 	if ns.C.minimap.enabled then
 		E.Minimap:Initialize()
 	end
 
-	-- Player buffs/debuffs/tempenchants
 	if ns.C.auras.enabled then
 		E.Auras:Initialize()
 	end
 
-	-- Infobars
 	if ns.C.infobars.enabled then
 		ns.lsInfobars_Initialize()
 	end
 
-	-- Actionbars & MicroMenu
 	if ns.C.bars.enabled then
 		E.ActionBars:Initialize(enableActionBarManager)
 		E.MM:Initialize()
@@ -41,12 +37,10 @@ function E:ADDON_LOADED(arg)
 		E.Extra:Initialize()
 	end
 
-	-- NamePlates
 	if ns.C.nameplates.enabled then
 		E.NP:Initialize()
 	end
 
-	-- AuraTracker
 	E.AT:Initialize()
 
 	if ns.C.units.enabled then
