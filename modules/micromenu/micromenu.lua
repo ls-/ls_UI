@@ -6,60 +6,66 @@ E.MM = {}
 local MM = E.MM
 
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
-local GRADIENT = {0.15, 0.65, 0.15, 1, 0.75, 0.1, 0.9, 0.1, 0.1}
+local GRADIENT = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"LEFT", "lsMBHolderLeft", "LEFT", 3, 0},
-		parent = "lsMBHolderLeft",
+		point = {"LEFT", "LSMBHolderLeft", "LEFT", 3, 0},
+		parent = "LSMBHolderLeft",
 		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
 		point = {"LEFT", "CharacterMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderLeft",
+		parent = "LSMBHolderLeft",
 		icon = "spellbook",
 	},
 	["TalentMicroButton"] = {
 		point = {"LEFT", "SpellbookMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderLeft",
+		parent = "LSMBHolderLeft",
 		icon = "talents",
 	},
 	["AchievementMicroButton"] = {
 		point = {"LEFT", "TalentMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderLeft",
+		parent = "LSMBHolderLeft",
 		icon = "achievement",
 	},
 	["QuestLogMicroButton"] = {
 		point = {"LEFT", "AchievementMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderLeft",
+		parent = "LSMBHolderLeft",
 		icon = "quest",
 	},
 	["GuildMicroButton"] = {
-		point = {"LEFT", "lsMBHolderRight", "LEFT", 3, 0},
-		parent = "lsMBHolderRight",
+		point = {"LEFT", "LSMBHolderRight", "LEFT", 3, 0},
+		parent = "LSMBHolderRight",
 		icon = "guild",
 	},
 	["LFDMicroButton"] = {
 		point = {"LEFT", "GuildMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderRight",
+		parent = "LSMBHolderRight",
 		icon = "lfg",
 	},
 	["CollectionsMicroButton"] = {
 		point = {"LEFT", "LFDMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderRight",
+		parent = "LSMBHolderRight",
 		icon = "pet",
 	},
 	["EJMicroButton"] = {
 		point = {"LEFT", "CollectionsMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderRight",
+		parent = "LSMBHolderRight",
 		icon = "ej",
 	},
 	["MainMenuMicroButton"] = {
 		point = {"LEFT", "EJMicroButton", "RIGHT", 6, 0},
-		parent = "lsMBHolderRight",
+		parent = "LSMBHolderRight",
 		icon = "mainmenu",
 	},
 }
+
+local function SimpleSort(a, b)
+	if a and b then
+		return a[2] > b[2]
+	end
+end
 
 local function UpdatePerformanceBar(self)
 	local _, _, latencyHome, latencyWorld = GetNetStats()
@@ -68,6 +74,7 @@ local function UpdatePerformanceBar(self)
 	self.performance:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT)))
 end
 
+local addons = {}
 local function MainMenuMicroButton_OnEnter(self)
 	GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, self.newbieText)
 	GameTooltip:AddLine(" ")
@@ -82,7 +89,7 @@ local function MainMenuMicroButton_OnEnter(self)
 	GameTooltip:AddDoubleLine("World", "|cff"..colorWorld..latencyWorld.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
 	GameTooltip:AddLine(" ")
 
-	local addons, memory =  {}, 0
+	local memory = 0
 
 	UpdateAddOnMemoryUsage()
 
@@ -96,19 +103,15 @@ local function MainMenuMicroButton_OnEnter(self)
 		memory = memory + addons[i][2]
 	end
 
-	sort(addons, function(a, b)
-		if a and b then
-			return a[2] > b[2]
-		end
-	end)
+	sort(addons, SimpleSort)
 
 	GameTooltip:AddLine("Memory:")
 
 	for i = 1, #addons do
 		if addons[i][3] then
-			local r = addons[i][2] / memory * 3
+			local m = addons[i][2]
 
-			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", addons[i][2] / 1024), 1, 1, 1, r, 2 - r, 0)
+			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory - m), unpack(GRADIENT)))
 		end
 	end
 
@@ -122,7 +125,7 @@ end
 local function MainMenuMicroButton_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
-	if self.elapsed > 4 then
+	if self.elapsed > 30 then
 		UpdatePerformanceBar(self)
 
 		self.elapsed = 0
@@ -241,13 +244,13 @@ end
 function MM:Initialize()
 	local MM_CONFIG = ns.C.micromenu
 
-	local holder1 = CreateFrame("Frame", "lsMBHolderLeft", UIParent)
+	local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
 	holder1:SetFrameStrata("LOW")
 	holder1:SetFrameLevel(1)
 	holder1:SetSize(18 * 5 + 6 * 5, 24 + 6)
 	holder1:SetPoint(unpack(MM_CONFIG.holder1.point))
 
-	local holder2 = CreateFrame("Frame", "lsMBHolderRight", UIParent)
+	local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 	holder2:SetFrameStrata("LOW")
 	holder2:SetFrameLevel(1)
 	holder2:SetSize(18 * 5 + 6 * 5, 24 + 6)
@@ -279,6 +282,8 @@ function MM:Initialize()
 			E:AlwaysHide(MainMenuBarDownload)
 
 			HandlePerformanceBar(MainMenuMicroButton, MainMenuBarPerformanceBar)
+
+			UpdatePerformanceBar(button)
 
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
 			button:SetScript("OnUpdate", MainMenuMicroButton_OnUpdate)
