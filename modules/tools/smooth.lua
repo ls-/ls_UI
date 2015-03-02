@@ -10,15 +10,15 @@ local min, max, pairs = min, max, pairs
 local bars = {}
 
 local function Smooth(self, value)
-	local _, max = self:GetMinMaxValues()
+	local _, barmax = self:GetMinMaxValues()
 
-	if value == self:GetValue() or (self._max and self._max ~= max) then
+	if value == self:GetValue() or (self._max and self._max ~= barmax) then
 		bars[self] = nil
 		self:SetValue_(value)
 	else
 		bars[self] = value
 	end
-	self._max = max
+	self._max = barmax
 end
 
 local function Smoother_OnUpdate(self)
@@ -26,7 +26,6 @@ local function Smoother_OnUpdate(self)
 
 	for bar, value in pairs(bars) do
 		local cur = bar:GetValue()
-		local _, barmax = bar:GetMinMaxValues()
 		local new = cur + min((value - cur) / 10, max(value - cur, limit))
 
 		if new ~= new then
