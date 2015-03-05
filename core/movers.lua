@@ -215,12 +215,8 @@ function E:ToggleAllMovers()
 	for _, mover in next, E.Movers do
 		if mover:IsShown() then
 			mover:Hide()
-
-			return false
 		else
 			mover:Show()
-
-			return true
 		end
 	end
 end
