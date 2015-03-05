@@ -98,10 +98,6 @@ D["minimap"] = {
 
 D["infobars"] = {
 	enabled = true,
-	location = {
-		enabled = true,
-		point = {"TOPLEFT", "UIParent", "TOPLEFT", 4, -4},
-	},
 	clock = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
@@ -179,13 +175,13 @@ D["micromenu"] = {
 D["auras"] = {
 	enabled = true,
 	buff = {
-		point = {"TOPRIGHT", -4, -42},
+		point = {"TOPRIGHT", -4, -40},
 	},
 	debuff = {
-		point = {"TOPRIGHT", -4, -122},
+		point = {"TOPRIGHT", -4, -124},
 	},
 	tempench = {
-		point = {"TOPRIGHT", -4, -162},
+		point = {"TOPRIGHT", -4, -164},
 	},
 	aura_size = 28,
 	aura_gap = 4,
