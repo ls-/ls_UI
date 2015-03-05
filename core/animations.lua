@@ -67,14 +67,15 @@ function E:FadeOut(object, duration, change)
 	end
 end
 
-function E:Blink(object, duration, change)
+function E:Blink(object, duration, fromAlpha, toAlpha)
 	if not object.Blink then
 		SetAnimationGroup(object, "Blink")
 	end
 
 	if not object.Blink:IsPlaying() then
 		if duration then object.Blink.anim:SetDuration(duration) end
-		if change then object.Blink.anim:SetToAlpha(change + 1) end
+		if fromAlpha then object.Blink.anim:SetFromAlpha(fromAlpha) end
+		if toAlpha then object.Blink.anim:SetToAlpha(toAlpha) end
 
 		object.Blink:Play()
 	end

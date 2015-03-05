@@ -112,7 +112,7 @@ local function ATButton_OnUpdate(self, elapsed)
 		local time = self.expire - GetTime()
 		if time > 0.1 then
 			if time <= 30 and not (self.Blink and self.Blink:IsPlaying()) then
-				E:Blink(self, 0.8, -0.75)
+				E:Blink(self, 0.8, nil, 0.25)
 			elseif time >= 30 and (self.Blink and self.Blink:IsPlaying()) then
 				E:StopBlink(self, true)
 			end
