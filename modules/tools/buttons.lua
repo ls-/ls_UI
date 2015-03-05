@@ -66,7 +66,7 @@ end
 
 local function ActionButton_OnUpdate(button)
 	local bIcon = button.icon
-	local bName = button.Name
+	-- local bName = button.Name
 	local bHotKey = button.HotKey
 
 	if bIcon then
@@ -84,12 +84,12 @@ local function ActionButton_OnUpdate(button)
 		end
 	end
 
-	if bName then
-		local text = bName:GetText()
-		if text then
-			bName:SetText(E:StringTruncate(text, 4))
-		end
-	end
+	-- if bName then
+	-- 	local text = bName:GetText()
+	-- 	if text then
+	-- 		bName:SetText(E:StringTruncate(text, 4))
+	-- 	end
+	-- end
 
 	if bHotKey then
 		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
@@ -166,11 +166,12 @@ local function SkinButton(button)
 	end
 
 	if bName then
-		bName:SetFont(M.font, 10, "THINOUTLINE")
-		bName:SetJustifyH("CENTER")
-		bName:ClearAllPoints()
-		bName:SetPoint("BOTTOMLEFT", -4, 0)
-		bName:SetPoint("BOTTOMRIGHT", 4, 0)
+		E:AlwaysHide(bName)
+		-- bName:SetFont(M.font, 10, "THINOUTLINE")
+		-- bName:SetJustifyH("CENTER")
+		-- bName:ClearAllPoints()
+		-- bName:SetPoint("BOTTOMLEFT", -4, 0)
+		-- bName:SetPoint("BOTTOMRIGHT", 4, 0)
 	end
 
 	if bBorder then
@@ -357,6 +358,7 @@ function E:SkinPetActionButton(button)
 	local bCD = button.cooldown
 	local bAutoCast = _G[name.."AutoCastable"]
 	local bShine = _G[name.."Shine"]
+	local bHotKey = button.HotKey
 
 	if bCD then
 		bCD:SetTimerTextHeight(10)
@@ -372,6 +374,10 @@ function E:SkinPetActionButton(button)
 		bShine:ClearAllPoints()
 		bShine:SetPoint("TOPLEFT", 1, -1)
 		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
+	end
+
+	if bHotKey then
+		bHotKey:SetFont(M.font, 8, "THINOUTLINE")
 	end
 
 	button:HookScript("OnUpdate", PetActionButton_OnUpdate)
