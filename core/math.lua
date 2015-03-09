@@ -2,7 +2,7 @@ local _, ns = ...
 local E = ns.E
 
 local format, gsub, sub, tonumber = format, gsub, strsub, tonumber
-local floor, ceil, modf = floor, ceil, math.modf
+local floor, ceil, modf, min = floor, ceil, math.modf, min
 
 local FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE
 local SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR =
@@ -43,6 +43,7 @@ function E:StringTruncate(s, l)
 end
 
 function E:TimeFormat(s, abbr)
+	s = abs(s)
 	if s >= 86400 then
 		return ceil(s / 86400), "|cffe5e5e5", abbr and gsub(DAY_ONELETTER_ABBR, "[ .]", "")
 	elseif s >= 3600 then
@@ -86,4 +87,8 @@ function E:ColorGradient(perc, ...)
 	local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
 
 	return r1 + (r2 -r1 ) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
+end
+
+function E:ColorLighten(r, g, b, perc)
+	return min(1, r + 1 * perc), min(1, g + 1 * perc), min(1, b + 1 * perc)
 end
