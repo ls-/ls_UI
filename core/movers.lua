@@ -7,14 +7,6 @@ local MOVERS_CONFIG
 
 local DEFAULTS = {}
 
-local BACKDROP = {
-	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-	tile = true, tileSize = 12, edgeSize = 12,
-	insets = {left = 2, right = 2, top = 2, bottom = 2},
-}
-
-
 local function SavePosition(self, p, anchor, rP, x, y)
 	MOVERS_CONFIG[self:GetName()].current = {p, anchor, rP, x, y}
 end
@@ -138,6 +130,7 @@ local function CreateMoverButton(self, option)
 
 	local button = CreateFrame("Button", "lsMover"..option, self, "UIPanelSquareButton")
 	button:SetPoint("CENTER", self, anchor, 0, 0)
+	button:SetSize(10, 10)
 	button:Hide()
 
 	button:SetScript("OnClick", click)
@@ -254,12 +247,17 @@ function E:CreateMover(object)
 	mover:SetFrameLevel(object:GetFrameLevel() + 4)
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
-	mover:SetBackdrop(BACKDROP)
-	mover:SetBackdropColor(0.41, 0.8, 0.94, 0.6)
 	mover:SetClampedToScreen(true)
 	mover:RegisterForDrag("LeftButton")
 	mover:SetMovable(true)
 	mover:Hide()
+	
+	E:CreateBorder(mover, 5, -1)
+
+	local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
+	bg:SetTexture(0.41, 0.8, 0.94, 0.6)
+	bg:SetPoint("TOPLEFT", 1, -1)
+	bg:SetPoint("BOTTOMRIGHT", -1, 1)
 
 	mover:SetScript("OnEnter", Mover_OnEnter)
 	mover:SetScript("OnLeave", Frame_OnLeave)

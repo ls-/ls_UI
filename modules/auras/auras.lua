@@ -112,16 +112,19 @@ function Auras:Initialize()
 	header1:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
 		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
 	header1:SetPoint(unpack(AURA_CONFIG.buff.point))
+	E:CreateMover(header1)
 
 	local header2 = CreateFrame("Frame", "LSDebuffHeader", UIParent)
 	header2:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
 		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
 	header2:SetPoint(unpack(AURA_CONFIG.debuff.point))
+	E:CreateMover(header2)
 
 	local header3 = CreateFrame("Frame", "LSTempEnchantHeader", UIParent)
 	header3:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
 		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
 	header3:SetPoint(unpack(AURA_CONFIG.tempench.point))
+	E:CreateMover(header3)
 
 	BuffFrame:SetParent(header1)
 	BuffFrame:SetAllPoints()

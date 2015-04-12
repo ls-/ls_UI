@@ -40,10 +40,13 @@ function Extra:Initialize()
 	local EXTRA_CONFIG = ns.C.bars.extra
 
 	ExtraActionBarFrame:SetParent(UIParent)
+	ExtraActionBarFrame:SetSize(EXTRA_CONFIG.button_size, EXTRA_CONFIG.button_size)
 	ExtraActionBarFrame:ClearAllPoints()
 	ExtraActionBarFrame:SetPoint(unpack(EXTRA_CONFIG.point))
 	ExtraActionBarFrame:EnableMouse(false)
 	ExtraActionBarFrame.ignoreFramePositionManager = true
+
+	E:CreateMover(ExtraActionBarFrame)
 
 	ExtraActionButton1:SetSize(EXTRA_CONFIG.button_size, EXTRA_CONFIG.button_size)
 	ExtraActionButton1:SetFrameStrata("LOW")

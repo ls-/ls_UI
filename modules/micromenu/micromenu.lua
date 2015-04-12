@@ -249,12 +249,14 @@ function MM:Initialize()
 	holder1:SetFrameLevel(1)
 	holder1:SetSize(18 * 5 + 6 * 5, 24 + 6)
 	holder1:SetPoint(unpack(MM_CONFIG.holder1.point))
+	E:CreateMover(holder1)
 
 	local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 	holder2:SetFrameStrata("LOW")
 	holder2:SetFrameLevel(1)
 	holder2:SetSize(18 * 5 + 6 * 5, 24 + 6)
 	holder2:SetPoint(unpack(MM_CONFIG.holder2.point))
+	E:CreateMover(holder2)
 
 	for _, b in next, MICRO_BUTTONS do
 		local button = _G[b]

@@ -39,11 +39,13 @@ end
 function Vehicle:Initialize()
 	local VEHICLE_CONFIG = ns.C.bars.vehicle
 
-	local button = CreateFrame("Button", nil, UIParent, "SecureHandlerBaseTemplate")
+	local button = CreateFrame("Button", "LSVehicleExitButton", UIParent, "SecureHandlerBaseTemplate")
 	button:SetSize(VEHICLE_CONFIG.button_size, VEHICLE_CONFIG.button_size)
 	button:SetPoint(unpack(VEHICLE_CONFIG.point))
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
+
+	E:CreateMover(button)
 
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:RegisterEvent("VEHICLE_UPDATE")

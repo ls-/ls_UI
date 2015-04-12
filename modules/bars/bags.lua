@@ -92,6 +92,8 @@ function Bags:Initialize()
 
 	header:SetPoint(unpack(BAGS_CONFIG.point))
 
+	E:CreateMover(header)
+
 	E:SetButtonPosition(BAGS, BAGS_CONFIG.button_size, BAGS_CONFIG.button_gap, header,
 		BAGS_CONFIG.direction, E.SkinBagButton)
 

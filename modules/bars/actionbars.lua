@@ -221,16 +221,6 @@ end
 function ActionBars:Initialize(enableManager)
 	BAR_CONFIG, COLORS, TEXTURES = ns.C.bars, ns.M.colors, ns.M.textures
 
-	local f = CreateFrame("Frame", nil, UIParent)
-	f:SetFrameStrata("BACKGROUND")
-	f:SetFrameLevel(3)
-	f:SetSize(406, 52)
-	f:SetPoint("BOTTOM", 0, 5)
-
-	f.actbar = f:CreateTexture(nil, "BACKGROUND", nil, -8)
-	f.actbar:SetPoint("CENTER")
-	f.actbar:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
-
 	for b, bdata in next, BAR_LAYOUT do
 		local bar = CreateFrame("Frame", bdata.name, UIParent, "SecureHandlerStateTemplate")
 		bar:SetFrameStrata("LOW")
@@ -269,7 +259,13 @@ function ActionBars:Initialize(enableManager)
 		else
 			SetStancePetActionBarPosition(bar)
 		end
+
+		E:CreateMover(bar)
 	end
+
+	local art = LSMainMenuBar:CreateTexture(nil, "BACKGROUND", nil, -8)
+	art:SetPoint("CENTER")
+	art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
 
 	-- Hiding different useless textures
 	MainMenuBar.slideOut.IsPlaying = function() return true end

@@ -7,7 +7,6 @@ function B:HandleArchaeology()
 	LoadAddOn("Blizzard_ArchaeologyUI")
 
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
-	
 	E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 	E:CreateMover(ArcheologyDigsiteProgressBar)
 end

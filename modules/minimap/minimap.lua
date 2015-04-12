@@ -313,6 +313,7 @@ function MM:Initialize()
 	Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 	Minimap:SetScript("OnEnter", Minimap_OnEnter)
 	Minimap:SetScript("OnLeave", Minimap_OnLeave)
+	E:CreateMover(Minimap)
 
 	RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
