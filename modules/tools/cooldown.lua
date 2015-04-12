@@ -14,16 +14,17 @@ local function Timer_OnUpdate(self, elapsed)
 		local time, color, abbr = E:TimeFormat(timer.duration + timer.start - GetTime(), true)
 
 		if time >= 0.1 then
-			self.timer:SetFormattedText("%s"..abbr.."|r", color, time)
+			timer:SetFormattedText("%s"..abbr.."|r", color, time)
 		else
-			self.timer:SetText("")
+			timer:SetText("")
+			timer:Hide()
 		end
 
 		self.elapsed = 0
 	end
 end
 
-local function SetCustomCooldown(self, start, duration, charges, maxCharges)
+local function SetCustomCooldown(self, start, duration)
 	local timer = self.timer
 
 	if start > 0 and duration > THRESHOLD then
