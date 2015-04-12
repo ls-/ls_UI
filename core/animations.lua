@@ -35,7 +35,6 @@ local function SetAnimationGroup(object, type, ...)
 		anim1:SetDuration(1)
 		anim1:SetFromAlpha(1)
 		anim1:SetToAlpha(0)
-		anim1:SetScript("OnStop", function() object:SetAlpha(1) end)
 
 		object[type].anim = anim1
 	end
