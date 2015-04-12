@@ -77,8 +77,6 @@ function E:HandleStatusBar(bar, cascade)
 		end
 
 		E:CreateBorder(bar, 8)
-
-
 	else
 		return background, text, sbt
 	end
