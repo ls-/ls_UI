@@ -51,9 +51,9 @@ local function SetCustomHotKeyText(self)
 	local text = bType and GetBindingText(GetBindingKey(bType..button:GetID()))
 
 	if text then
-		text = gsub(text, ALT_KEY.."%-", "A")
-		text = gsub(text, CTRL_KEY.."%-", "C")
-		text = gsub(text, SHIFT_KEY.."%-", "S")
+		text = gsub(text, ALT_KEY_TEXT.."%-", "A")
+		text = gsub(text, CTRL_KEY_TEXT.."%-", "C")
+		text = gsub(text, SHIFT_KEY_TEXT.."%-", "S")
 		text = gsub(text, KEY_BUTTON1, "LMB")
 		text = gsub(text, KEY_BUTTON2, "RMB")
 		text = gsub(text, KEY_BUTTON3, "MMB")
