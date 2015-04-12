@@ -167,58 +167,7 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-local function ActionBarManager_OnEvent(self, event)
-	local multiplier = 2 - (LSActionBarManager.bar2Shown and 1 or 0) - (LSActionBarManager.bar3Shown and 1 or 0)
-
-	if LSActionBarManager.bar2Shown then
-		RegisterStateDriver(LSMultiBarBottomLeftBar, "visibility", BAR_LAYOUT.bar2.condition)
-	else
-		RegisterStateDriver(LSMultiBarBottomLeftBar, "visibility", "hide")
-	end
-
-	if LSActionBarManager.bar3Shown then
-		local point, x, y = unpack(BAR_CONFIG.bar3.point)
-		LSMultiBarBottomRightBar:SetPoint(point, x, y - multiplier * 32)
-
-		RegisterStateDriver(LSMultiBarBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
-	else
-		RegisterStateDriver(LSMultiBarBottomRightBar, "visibility", "hide")
-	end
-
-	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
-	LSPetActionBar:SetPoint(point, x, y - multiplier * 32)
-
-	local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
-	LSStanceBar:SetPoint(point, x, y - multiplier * 32)
-
-	if event == "PLAYER_REGEN_ENABLED" then
-		LSActionBarManager:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		LSActionBarManager:SetScript("OnEvent", nil)
-	end
-end
-
-local function ActionBarManager_Update(bottomLeftBar, bottomRightBar)
-	if not LSActionBarManager.forceUpdate then
-		LSActionBarManager.forceUpdate = LSActionBarManager.bar2Shown ~= bottomLeftBar
-		if not LSActionBarManager.forceUpdate then
-			LSActionBarManager.forceUpdate = LSActionBarManager.bar3Shown ~= bottomRightBar
-		end
-	end
-
-	if LSActionBarManager.forceUpdate then
-		LSActionBarManager.bar2Shown = bottomLeftBar
-		LSActionBarManager.bar3Shown = bottomRightBar
-
-		if InCombatLockdown() then
-			LSActionBarManager:RegisterEvent("PLAYER_REGEN_ENABLED")
-			LSActionBarManager:SetScript("OnEvent", ActionBarManager_OnEvent)
-		else
-			ActionBarManager_OnEvent(LSActionBarManager, "CUSTOM_FORCE_UPDATE")
-		end
-	end
-end
-
-function ActionBars:Initialize(enableManager)
+function ActionBars:Initialize()
 	BAR_CONFIG, COLORS, TEXTURES = ns.C.bars, ns.M.colors, ns.M.textures
 
 	for b, bdata in next, BAR_LAYOUT do
@@ -318,11 +267,4 @@ function ActionBars:Initialize(enableManager)
 	end
 
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
-
-	if enableManager then
-		local LSActionBarManager = CreateFrame("Frame", "LSActionBarManager")
-		LSActionBarManager.bar2Shown = true
-		LSActionBarManager.bar3Shown = true
-		hooksecurefunc("SetActionBarToggles", ActionBarManager_Update)
-	end
 end

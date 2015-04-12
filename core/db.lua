@@ -6,14 +6,10 @@ function E:CopyTable(src, dest)
 		dest = {}
 	end
 
-	if type(src) ~= "table" then
-		return dest
-	end
-
 	for k, v in pairs(src) do
 		if type(v) == "table" then
 			dest[k] = self:CopyTable(v, dest[k])
-		elseif type(v) ~= type(dest[k]) then
+		else
 			dest[k] = v
 		end
 	end

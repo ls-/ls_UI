@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, D, oUF = ns.E, ns.D, ns.oUF
+local E, C, D, oUF = ns.E, ns.C, ns.D, ns.oUF
 
 E:SetScript("OnEvent", function(self, event, ...)
 	self[event](self, ...)
@@ -8,53 +8,45 @@ end)
 function E:ADDON_LOADED(arg)
 	if arg ~= "oUF_LS" then return end
 
-	-- use bar manager with default settings only
-	local enableActionBarManager = true
-	if oUF_LS_CONFIG and oUF_LS_CONFIG.bars and (oUF_LS_CONFIG.bars.bar1
-		or oUF_LS_CONFIG.bars.bar2 or oUF_LS_CONFIG.bars.bar3
-		or oUF_LS_CONFIG.bars.bar6 or oUF_LS_CONFIG.bars.bar7) then
-		enableActionBarManager = false
-	end
+	self:CopyTable(self:CopyTable(D, oUF_LS_CONFIG), C)
 
-	ns.C = self:CopyTable(D, oUF_LS_CONFIG) -- replace with merge
-
-	if ns.C.minimap.enabled then
+	if C.minimap.enabled then
 		E.Minimap:Initialize()
 	end
 
-	if ns.C.auras.enabled then
+	if C.auras.enabled then
 		E.Auras:Initialize()
 	end
 
-	if ns.C.infobars.enabled then
+	if C.infobars.enabled then
 		ns.lsInfobars_Initialize()
 	end
 
-	if ns.C.bars.enabled then
-		E.ActionBars:Initialize(enableActionBarManager)
+	if C.bars.enabled then
+		E.ActionBars:Initialize()
 		E.MM:Initialize()
 		E.Vehicle:Initialize()
 		E.Extra:Initialize()
 	end
 
-	if ns.C.nameplates.enabled then
+	if C.nameplates.enabled then
 		E.NP:Initialize()
 	end
 
 	E.AT:Initialize()
 
-	if ns.C.units.enabled then
+	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
 		oUF:Factory(ns.lsFactory)
 	end
 
 	E.Mail:Initialize()
 
-	if ns.C.bags.enabled then
+	if C.bags.enabled then
 		E.Bags:Initialize()
 	end
 
-	if ns.C.petbattle.enabled then
+	if C.petbattle.enabled then
 		E.PetBattle:Initialize()
 	end
 
@@ -67,9 +59,14 @@ function E:ADDON_LOADED(arg)
 	collectgarbage("collect")
 end
 
+function E:PLAYER_ENTERING_WORLD(...)
+	-- E:ToggleAllMovers()
+end
+
 function E:PLAYER_LOGOUT(...)
 	oUF_LS_CONFIG = self:DiffTable(D, ns.C)
 end
 
 E:RegisterEvent("ADDON_LOADED")
+E:RegisterEvent("PLAYER_ENTERING_WORLD")
 E:RegisterEvent("PLAYER_LOGOUT")
