@@ -17,7 +17,7 @@ local BAR_LAYOUT = {
 			ActionButton7, ActionButton8, ActionButton9, ActionButton10, ActionButton11, ActionButton12
 		},
 		original_bar = MainMenuBarArtFrame,
-		name = "lsMainMenuBar",
+		name = "LSMainMenuBar",
 		condition = "[petbattle] hide; show",
 	},
 	bar2 = {
@@ -27,7 +27,7 @@ local BAR_LAYOUT = {
 			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12
 		},
 		original_bar = MultiBarBottomLeft,
-		name = "lsMultiBarBottomLeftBar",
+		name = "LSMultiBarBottomLeftBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar3 = {
@@ -37,7 +37,7 @@ local BAR_LAYOUT = {
 			MultiBarBottomRightButton9, MultiBarBottomRightButton10, MultiBarBottomRightButton11, MultiBarBottomRightButton12
 		},
 		original_bar = MultiBarBottomRight,
-		name = "lsMultiBarBottomRightBar",
+		name = "LSMultiBarBottomRightBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar4 = {
@@ -47,7 +47,7 @@ local BAR_LAYOUT = {
 			MultiBarLeftButton9, MultiBarLeftButton10, MultiBarLeftButton11, MultiBarLeftButton12
 		},
 		original_bar = MultiBarLeft,
-		name = "lsMultiBarLeftBar",
+		name = "LSMultiBarLeftBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar5 = {
@@ -57,7 +57,7 @@ local BAR_LAYOUT = {
 			MultiBarRightButton9, MultiBarRightButton10, MultiBarRightButton11, MultiBarRightButton12
 		},
 		original_bar = MultiBarRight,
-		name = "lsMultiBarRightBar",
+		name = "LSMultiBarRightBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar6 = {
@@ -66,7 +66,7 @@ local BAR_LAYOUT = {
 			PetActionButton6, PetActionButton7, PetActionButton8, PetActionButton9, PetActionButton10
 		},
 		original_bar = PetActionBarFrame,
-		name = "lsPetActionBar",
+		name = "LSPetActionBar",
 		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nobonusbar:5] show; hide",
 	},
 	bar7 = {
@@ -75,7 +75,7 @@ local BAR_LAYOUT = {
 			StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10
 		},
 		original_bar = StanceBarFrame,
-		name = "lsStanceBar",
+		name = "LSStanceBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 }
@@ -119,7 +119,7 @@ local function GetPageLayout()
 	return condition
 end
 
-local function lsActionBar_OnEvent(self, event, ...)
+local function LSActionBar_OnEvent(self, event, ...)
 	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
 		local button
 		for i = 1, NUM_ACTIONBAR_BUTTONS do
@@ -149,7 +149,7 @@ local function lsActionBar_OnEvent(self, event, ...)
 end
 
 local function SetStancePetActionBarPosition(self)
-	if self:GetName() == "lsPetActionBar" then
+	if self:GetName() == "LSPetActionBar" then
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
 	else
 		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
@@ -168,52 +168,52 @@ local function FlyoutButtonToggleHook(...)
 end
 
 local function ActionBarManager_OnEvent(self, event)
-	local multiplier = 2 - (lsActionBarManager.bar2Shown and 1 or 0) - (lsActionBarManager.bar3Shown and 1 or 0)
+	local multiplier = 2 - (LSActionBarManager.bar2Shown and 1 or 0) - (LSActionBarManager.bar3Shown and 1 or 0)
 
-	if lsActionBarManager.bar2Shown then
-		RegisterStateDriver(lsMultiBarBottomLeftBar, "visibility", BAR_LAYOUT.bar2.condition)
+	if LSActionBarManager.bar2Shown then
+		RegisterStateDriver(LSMultiBarBottomLeftBar, "visibility", BAR_LAYOUT.bar2.condition)
 	else
-		RegisterStateDriver(lsMultiBarBottomLeftBar, "visibility", "hide")
+		RegisterStateDriver(LSMultiBarBottomLeftBar, "visibility", "hide")
 	end
 
-	if lsActionBarManager.bar3Shown then
+	if LSActionBarManager.bar3Shown then
 		local point, x, y = unpack(BAR_CONFIG.bar3.point)
-		lsMultiBarBottomRightBar:SetPoint(point, x, y - multiplier * 32)
+		LSMultiBarBottomRightBar:SetPoint(point, x, y - multiplier * 32)
 
-		RegisterStateDriver(lsMultiBarBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
+		RegisterStateDriver(LSMultiBarBottomRightBar, "visibility", BAR_LAYOUT.bar3.condition)
 	else
-		RegisterStateDriver(lsMultiBarBottomRightBar, "visibility", "hide")
+		RegisterStateDriver(LSMultiBarBottomRightBar, "visibility", "hide")
 	end
 
 	local point, x, y = unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
-	lsPetActionBar:SetPoint(point, x, y - multiplier * 32)
+	LSPetActionBar:SetPoint(point, x, y - multiplier * 32)
 
 	local point, x, y = unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]])
-	lsStanceBar:SetPoint(point, x, y - multiplier * 32)
+	LSStanceBar:SetPoint(point, x, y - multiplier * 32)
 
 	if event == "PLAYER_REGEN_ENABLED" then
-		lsActionBarManager:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		lsActionBarManager:SetScript("OnEvent", nil)
+		LSActionBarManager:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		LSActionBarManager:SetScript("OnEvent", nil)
 	end
 end
 
 local function ActionBarManager_Update(bottomLeftBar, bottomRightBar)
-	if not lsActionBarManager.forceUpdate then
-		lsActionBarManager.forceUpdate = lsActionBarManager.bar2Shown ~= bottomLeftBar
-		if not lsActionBarManager.forceUpdate then
-			lsActionBarManager.forceUpdate = lsActionBarManager.bar3Shown ~= bottomRightBar
+	if not LSActionBarManager.forceUpdate then
+		LSActionBarManager.forceUpdate = LSActionBarManager.bar2Shown ~= bottomLeftBar
+		if not LSActionBarManager.forceUpdate then
+			LSActionBarManager.forceUpdate = LSActionBarManager.bar3Shown ~= bottomRightBar
 		end
 	end
 
-	if lsActionBarManager.forceUpdate then
-		lsActionBarManager.bar2Shown = bottomLeftBar
-		lsActionBarManager.bar3Shown = bottomRightBar
+	if LSActionBarManager.forceUpdate then
+		LSActionBarManager.bar2Shown = bottomLeftBar
+		LSActionBarManager.bar3Shown = bottomRightBar
 
 		if InCombatLockdown() then
-			lsActionBarManager:RegisterEvent("PLAYER_REGEN_ENABLED")
-			lsActionBarManager:SetScript("OnEvent", ActionBarManager_OnEvent)
+			LSActionBarManager:RegisterEvent("PLAYER_REGEN_ENABLED")
+			LSActionBarManager:SetScript("OnEvent", ActionBarManager_OnEvent)
 		else
-			ActionBarManager_OnEvent(lsActionBarManager, "CUSTOM_FORCE_UPDATE")
+			ActionBarManager_OnEvent(LSActionBarManager, "CUSTOM_FORCE_UPDATE")
 		end
 	end
 end
@@ -237,7 +237,7 @@ function ActionBars:Initialize(enableManager)
 		if tonumber(match(b, "(%d+)")) == 1 then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-			bar:SetScript("OnEvent", lsActionBar_OnEvent)
+			bar:SetScript("OnEvent", LSActionBar_OnEvent)
 		end
 
 		if tonumber(match(b, "(%d+)")) == 6 then
@@ -299,11 +299,16 @@ function ActionBars:Initialize(enableManager)
 		MainMenuBarTexture3,
 		MainMenuBarLeftEndCap,
 		MainMenuBarRightEndCap,
+	} do
+		E:AlwaysHide(t)
+	end
+
+	for _, t in next, {
 		SpellFlyoutHorizontalBackground,
 		SpellFlyoutVerticalBackground,
 		SpellFlyoutBackgroundEnd,
 	} do
-		E:AlwaysHide(t)
+		t:SetAlpha(0)
 	end
 
 	for i = 1, 6 do
@@ -315,9 +320,9 @@ function ActionBars:Initialize(enableManager)
 	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
 
 	if enableManager then
-		local lsActionBarManager = CreateFrame("Frame", "lsActionBarManager")
-		lsActionBarManager.bar2Shown = true
-		lsActionBarManager.bar3Shown = true
+		local LSActionBarManager = CreateFrame("Frame", "LSActionBarManager")
+		LSActionBarManager.bar2Shown = true
+		LSActionBarManager.bar3Shown = true
 		hooksecurefunc("SetActionBarToggles", ActionBarManager_Update)
 	end
 end
