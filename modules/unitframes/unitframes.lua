@@ -474,15 +474,7 @@ local function CreateUnitFrameStyle(self, unit)
 	local width, height, sbOrientation, hpTexture, ppTexture, hpTextTemplate, ppTextTemplate
 	unit = gsub(unit, "%d", "")
 
-	if unit == "player" then
-		self.frameType = "orb"
-		width, height = 160, 160
-		sbOrientation = "VERTICAL"
-		hpTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_hp"
-		ppTexture = "Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_pp"
-		hpTextTemplate = "lsUnitFrame18Text"
-		ppTextTemplate = "lsUnitFrame14Text"
-	elseif unit == "pet" then
+	if unit == "pet" then
 		self.frameType = "pet"
 		width, height = 44, 140
 		sbOrientation = "VERTICAL"
@@ -515,10 +507,7 @@ local function CreateUnitFrameStyle(self, unit)
 	self.cover = CreateFrame("Frame", "$parentCover", self)
 	self.cover:SetFrameStrata(self:GetFrameStrata())
 	self.cover:SetFrameLevel(self:GetFrameLevel() + 3) -- +3
-	if unit == "player" then
-		self.cover:SetSize(116, 116)
-		self.cover:SetPoint("CENTER")
-	elseif unit == "pet" then
+	if unit == "pet" then
 		self.cover:SetSize(44, 140)
 		self.cover:SetPoint("CENTER")
 	else
@@ -528,50 +517,15 @@ local function CreateUnitFrameStyle(self, unit)
 		self.cover:SetPoint("BOTTOM", 0, 8)
 	end
 
-	if unit == "player" then
-		self.gloss = self.cover:CreateTexture(nil, "ARTWORK", nil, 0)
-		self.gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_gloss")
-		self.gloss:SetAllPoints(self.cover)
-
-		self.chainTexture = self.cover:CreateTexture("$parentChainTexture", "BACKGROUND", nil, 2)
-		self.chainTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_chain_left")
-		self.chainTexture:SetSize(128, 64)
-		self.chainTexture:SetPoint("CENTER", 0, -96)
-
-		self.ringTexture = self.cover:CreateTexture("$parentRingTexture", "BACKGROUND", nil, 3)
-		self.ringTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_ring_r_cracked")
-		self.ringTexture:SetSize(256, 256)
-		self.ringTexture:SetPoint("CENTER")
-	end
-
 	self.fg = self.cover:CreateTexture("$parentForeground", "ARTWORK", nil, 1)
 	self.fg:SetPoint("CENTER")
 	if unit == "pet" then
 		self.fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	end
 
-	if unit ~= "player" then
-		self.bg = self:CreateTexture("$parentBackground", "BACKGROUND", nil, 0)
-		self.bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..self.frameType.."_bg")
-		self.bg:SetPoint("CENTER")
-	else
-		self.hpbg = self:CreateTexture("$parentHPBackground", "BACKGROUND", nil, 0)
-		self.hpbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_hp")
-		self.hpbg:SetPoint("CENTER")
-	end
-
-	if unit == "player" then
-		self.FloatingCombatFeedback = CreateFrame("Frame", "$parentFeedbackFrame", self)
-		self.FloatingCombatFeedback:SetFrameStrata(self:GetFrameStrata())
-		self.FloatingCombatFeedback:SetFrameLevel(self:GetFrameLevel() + 4) -- +4
-		self.FloatingCombatFeedback:SetSize(116, 116)
-		self.FloatingCombatFeedback:SetPoint("CENTER", 0, 78)
-		for i = 1, 4 do
-			self.FloatingCombatFeedback[i] = self.FloatingCombatFeedback:CreateFontString("feeback"..i, "OVERLAY", "lsUnitFrame18Text")
-		end
-		self.FloatingCombatFeedback.Mode = "Fountain"
-		self.FloatingCombatFeedback.YOffset = 20
-	end
+	self.bg = self:CreateTexture("$parentBackground", "BACKGROUND", nil, 0)
+	self.bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_"..self.frameType.."_bg")
+	self.bg:SetPoint("CENTER")
 
 	if unit ~= "focustarget" and unit ~= "targettarget" then
 		self.Threat = self:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 1)
@@ -584,12 +538,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.DebuffHighlightAlpha = 1
 		self.DebuffHighlightFilter = false --MOVE TO CONFIG
 
-		if unit == "player" then
-			self.Threat:SetSize(128, 256)
-			self.Threat:SetPoint("BOTTOMRIGHT", self, "CENTER", 0, -128.5)
-			self.DebuffHighlight:SetSize(128, 256)
-			self.DebuffHighlight:SetPoint("BOTTOMLEFT", self, "CENTER", 0, -128.5)
-		elseif unit == "pet" then
+		if unit == "pet" then
 			self.Threat:SetSize(64, 256)
 			self.Threat:SetPoint("CENTER")
 			self.DebuffHighlight:SetSize(64, 256)
@@ -608,10 +557,7 @@ local function CreateUnitFrameStyle(self, unit)
 	self.Health:SetOrientation(sbOrientation)
 	self.Health:SetStatusBarTexture(hpTexture)
 	self.Health:SetStatusBarColor(1.0, 1.0, 1.0)
-	if unit == "player" then
-		self.Health:SetSize(108, 108)
-		self.Health:SetPoint("CENTER")
-	elseif unit == "pet" then
+	if unit == "pet" then
 		self.Health:SetSize(57, 114)
 		self.Health:SetPoint("CENTER", -5, 0)
 	else
@@ -626,14 +572,12 @@ local function CreateUnitFrameStyle(self, unit)
 	self.Health.colorHealth = true --MOVE TO CONFIG
 	self.Health.colorDisconnected = true
 
-	if unit ~= "party" or unit ~= "player" then
+	if unit ~= "party" then
 		self.Health.colorReaction = true
 	end
 
 	self.Health.value = self.cover:CreateFontString("$parentHealthText", "ARTWORK", hpTextTemplate)
-	if unit == "player" then
-		self.Health.value:SetPoint("CENTER", 0, 8)
-	elseif unit == "pet" then
+	if unit == "pet" then
 		self.Health.value:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", 2, 20)
 	else
 		self.Health.value:SetJustifyH("RIGHT")
@@ -644,38 +588,13 @@ local function CreateUnitFrameStyle(self, unit)
 	end
 	tinsert(self.mouseovers, self.Health)
 
-	if unit == "player" then
-		self.Health.lowHP = self.cover:CreateTexture(nil, "ARTWORK", nil, 2)
-		self.Health.lowHP:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_lowhp")
-		self.Health.lowHP:SetSize(128, 128)
-		self.Health.lowHP:SetPoint("CENTER")
-		self.Health.lowHP:SetVertexColor(0.9, 0.1, 0.25)
-		self.Health.lowHP:SetAlpha(0)
-		lsCreateAlphaAnimation(self.Health.lowHP, 1)
-
-		self.ppbg = self.Health:CreateTexture("$parentPPBackground", "OVERLAY", nil, 0)
-		self.ppbg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_bg_pp")
-		self.ppbg:SetPoint("CENTER")
-
-		self.Health.damageAbsorb = self.cover:CreateFontString("$parentDamageAbsorbsText", "ARTWORK", "lsUnitFrame12Text")
-		self.Health.damageAbsorb:SetPoint("CENTER", 0, 24)
-		self:Tag(self.Health.damageAbsorb, "[custom:damageabsorb]")
-
-		self.Health.healAbsorb = self.cover:CreateFontString("$parentHealAbsorbsText", "ARTWORK", "lsUnitFrame12Text")
-		self.Health.healAbsorb:SetPoint("CENTER", 0, 38)
-		self:Tag(self.Health.healAbsorb, "[custom:healabsorb]")
-	end
-
 	if unit ~= "focustarget" and unit ~= "targettarget" then
 		self.Power = CreateFrame("StatusBar", "$parentPower", self)
 		self.Power:SetFrameStrata(self:GetFrameStrata())
 		self.Power:SetFrameLevel(self:GetFrameLevel() + 2) -- +2
 		self.Power:SetOrientation(sbOrientation)
 		self.Power:SetStatusBarTexture(ppTexture)
-		if unit == "player" then
-			self.Power:SetSize(68, 136)
-			self.Power:SetPoint("CENTER", 35, 0)
-		elseif unit == "pet" then
+		if unit == "pet" then
 			self.Power:SetSize(51, 102)
 			self.Power:SetPoint("CENTER", 5, 0)
 		else
@@ -692,9 +611,7 @@ local function CreateUnitFrameStyle(self, unit)
 		self.Power.frequentUpdates = true
 
 		self.Power.value = self.cover:CreateFontString("$parentPowerText", "ARTWORK", ppTextTemplate)
-		if unit == "player" then
-			self.Power.value:SetPoint("CENTER", 0, -8)
-		elseif unit == "pet" then
+		if unit == "pet" then
 			self.Power.value:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", 8, 6)
 		else
 			self.Power.value:SetJustifyH("LEFT")
@@ -775,7 +692,7 @@ local function CreateUnitFrameStyle(self, unit)
 	self.HealPrediction.frequentUpdates = true
 	self.HealPrediction.PostUpdate = ns.PostUpdateHealPrediction
 
-	if unit ~= "player" and unit ~= "pet" then
+	if unit ~= "pet" then
 		self.NameText = self.cover:CreateFontString("$parentNameText", "ARTWORK", "lsUnitFrame14Text")
 		self.NameText:SetPoint("LEFT", self, "LEFT", 1, self.frameType == "long" and 18.5 or 2.5)
 		self.NameText:SetPoint("RIGHT", self, "RIGHT", -1, self.frameType == "long" and 18.5 or 2.5)
@@ -805,20 +722,15 @@ local function CreateUnitFrameStyle(self, unit)
 		end
 	end
 
-	if unit == "focus" or unit == "target" or unit == "player" or unit == "boss" then
-		if self.frameType == "long" or unit == "player" then
+	if unit == "focus" or unit == "target" or unit == "boss" then
+		if self.frameType == "long" then
 			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "lsBigCastingBarTemplate")
 		else
 			self.Castbar = CreateFrame("StatusBar", "$parentCastingBar", self, "lsSmallCastingBarTemplate")
 		end
 		self.Castbar.CustomTimeText = ns.CustomTimeText
 		self.Castbar.CustomDelayText = ns.CustomDelayText
-		if unit == "player" then
-			self.Castbar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 10, 190)
-			self.Castbar.SafeZone = self.Castbar:CreateTexture(nil, "ARTWORK", nil, 1)
-			self.Castbar.SafeZone:SetTexture(M.textures.statusbar)
-			self.Castbar.SafeZone:SetVertexColor(0.6, 0, 0, 0.6)
-		elseif unit == "boss" then
+		if unit == "boss" then
 			self.Castbar:SetPoint("BOTTOM", 10, -26)
 		else
 			self.Castbar:SetPoint("BOTTOM", 10, -42)
@@ -846,31 +758,9 @@ local function CreateUnitFrameStyle(self, unit)
 		end)
 	end
 
-	if unit == "player" and ns.C.bars.enabled then
-		self.Experience = CreateFrame("StatusBar", "lsExperienceBar", self, "lsExperienceReputationBarTemplate")
-		self.Experience:SetStatusBarColor(unpack(M.colors.exp.normal))
-		self.Experience:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 52)
-
-		self.Experience.Rested = CreateFrame("StatusBar", nil, self.Experience)
-		self.Experience.Rested:SetAllPoints(self.Experience)
-		self.Experience.Rested:SetStatusBarTexture(M.textures.statusbar)
-		self.Experience.Rested:SetStatusBarColor(unpack(M.colors.exp.rested))
-		self.Experience.bg:SetTexture(unpack(M.colors.exp.bg))
-		self.Experience.PostUpdate = UpdateExperience
-
-		self.Reputation = CreateFrame("StatusBar", "lsReputationBar", self, "lsExperienceReputationBarTemplate")
-		self.Reputation:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 2)
-		self.Reputation.border:SetVertexColor(0.4, 0.4, 0.4)
-		self.Reputation.PostUpdate = UpdateReputation
-		self.Reputation.colorStanding = true
-
-		self:Tag(self.Experience.text, COMBAT_XP_GAIN.." [curxp] / [maxxp]")
-		self:Tag(self.Reputation.text, "[reputation] [currep] / [maxrep]")
-	end
-
 -- ICONS
 
-	if unit == "target" or unit == "focus" or unit == "party" or unit == "player" then
+	if unit == "target" or unit == "focus" or unit == "party" then
 		self.Leader = self:CreateTexture("$parentLeaderIcon", "BACKGROUND")
 		self.Leader:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
 		self.Leader:SetTexCoord(2 / 128, 20 / 128, 2 / 64, 20 / 64)
@@ -888,22 +778,13 @@ local function CreateUnitFrameStyle(self, unit)
 			self.PvP.Override = ns.PvPOverride
 		end
 
-		if unit ~= "player" then
-			self.ReadyCheck = self.cover:CreateTexture("$parentReadyCheckIcon", "ARTWORK", nil, 4)
-			self.ReadyCheck:SetSize(32, 32)
+		self.ReadyCheck = self.cover:CreateTexture("$parentReadyCheckIcon", "ARTWORK", nil, 4)
+		self.ReadyCheck:SetSize(32, 32)
 
-			self.PhaseIcon = self:CreateTexture("$parentPhaseIcon", "BACKGROUND")
-			self.PhaseIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
-			self.PhaseIcon:SetTexCoord(62 / 128, 80 / 128, 22 / 64, 40 / 64)
-			self.PhaseIcon:SetSize(18, 18)
-		end
-
-		if unit == "player" then
-			self.Resting = self:CreateTexture("$parentRestingIcon", "BACKGROUND")
-			self.Resting:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
-			self.Resting:SetTexCoord(82 / 128, 100 / 128, 2 / 64, 20 / 64)
-			self.Resting:SetSize(18, 18)
-		end
+		self.PhaseIcon = self:CreateTexture("$parentPhaseIcon", "BACKGROUND")
+		self.PhaseIcon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
+		self.PhaseIcon:SetTexCoord(62 / 128, 80 / 128, 22 / 64, 40 / 64)
+		self.PhaseIcon:SetSize(18, 18)
 
 		if unit == "target" then
 			self.QuestIcon = self:CreateTexture("$parentQuestIcon", "BACKGROUND")
@@ -913,24 +794,17 @@ local function CreateUnitFrameStyle(self, unit)
 			self.QuestIcon:SetPoint("TOPLEFT", 4, 20)
 		end
 
-		if unit ~= "player" then
-			self.ReadyCheck:SetPoint("CENTER")
+		self.ReadyCheck:SetPoint("CENTER")
 
-			if unit == "party" then
-				self.Leader:SetPoint("TOPRIGHT", 18, 6)
-				self.PhaseIcon:SetPoint("RIGHT", 24, 0)
-				self.LFDRole:SetPoint("BOTTOMRIGHT", 18, -6)
-			else
-				self.PvP:SetPoint("BOTTOMLEFT", 16, -17.5)
-				self.PhaseIcon:SetPoint("BOTTOMLEFT", 36, -17.5)
-				self.Leader:SetPoint("BOTTOMRIGHT", -36, -17.5)
-				self.LFDRole:SetPoint("BOTTOMRIGHT", -16, -17.5)
-			end
+		if unit == "party" then
+			self.Leader:SetPoint("TOPRIGHT", 18, 6)
+			self.PhaseIcon:SetPoint("RIGHT", 24, 0)
+			self.LFDRole:SetPoint("BOTTOMRIGHT", 18, -6)
 		else
-			self.PvP:SetPoint("BOTTOM", -28, -18)
-			self.Resting:SetPoint("BOTTOM", -10, -22)
-			self.Leader:SetPoint("BOTTOM", 10, -22)
-			self.LFDRole:SetPoint("BOTTOM", 28, -18)
+			self.PvP:SetPoint("BOTTOMLEFT", 16, -17.5)
+			self.PhaseIcon:SetPoint("BOTTOMLEFT", 36, -17.5)
+			self.Leader:SetPoint("BOTTOMRIGHT", -36, -17.5)
+			self.LFDRole:SetPoint("BOTTOMRIGHT", -16, -17.5)
 		end
 	end
 
@@ -1012,6 +886,8 @@ function ns.lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
+		if unit == "player" then break end
+
 		if type(udata) == "table" and udata.enabled then
 			if unit ~= "boss" then
 				local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"

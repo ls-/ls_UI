@@ -9,7 +9,7 @@ D["units"] = {
 	},
 	pet = {
 		enabled = true,
-		point = {"RIGHT", "lsPlayerFrame" , "LEFT"},
+		point = {"RIGHT", "LSPlayerFrame" , "LEFT", 8, 0},
 	},
 	target = {
 		enabled = true,

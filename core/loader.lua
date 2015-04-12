@@ -16,7 +16,7 @@ function E:ADDON_LOADED(arg)
 		enableActionBarManager = false
 	end
 
-	ns.C = self:CopyTable(D, oUF_LS_CONFIG) -- local config
+	ns.C = self:CopyTable(D, oUF_LS_CONFIG) -- replace with merge
 
 	if ns.C.minimap.enabled then
 		E.Minimap:Initialize()
@@ -44,6 +44,7 @@ function E:ADDON_LOADED(arg)
 	E.AT:Initialize()
 
 	if ns.C.units.enabled then
+		oUF:Factory(E.UF.Initialize)
 		oUF:Factory(ns.lsFactory)
 	end
 
