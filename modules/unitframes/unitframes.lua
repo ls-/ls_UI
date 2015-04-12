@@ -886,22 +886,22 @@ function ns.lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		if unit == "player" then break end
-
-		if type(udata) == "table" and udata.enabled then
-			if unit ~= "boss" then
-				local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
-				if udata.attributes then
-					ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
-						"oUF-initialConfigFunction", [[self:SetWidth(124); self:SetHeight(42)]],
-						unpack(udata.attributes))
+		if unit ~= "player" then
+			if type(udata) == "table" and udata.enabled then
+				if unit ~= "boss" then
+					local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
+					if udata.attributes then
+						ns.headers[unit] = oUF:SpawnHeader(name, nil, udata.visibility,
+							"oUF-initialConfigFunction", [[self:SetWidth(124); self:SetHeight(42)]],
+							unpack(udata.attributes))
+					else
+						ns.objects[unit] = oUF:Spawn(unit, name)
+					end
 				else
-					ns.objects[unit] = oUF:Spawn(unit, name)
-				end
-			else
-				for i = 1, 5 do
-				-- "lsBoss"..i.."Frame"
-				ns.objects["boss"..i] = oUF:Spawn("boss"..i, "lsBoss"..i.."Frame")
+					for i = 1, 5 do
+					-- "lsBoss"..i.."Frame"
+					ns.objects["boss"..i] = oUF:Spawn("boss"..i, "lsBoss"..i.."Frame")
+					end
 				end
 			end
 		end
