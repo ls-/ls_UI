@@ -149,64 +149,64 @@ function lsOptionsFrame_Initialize()
 
 	lsOptionsMainFrame["units"]["boss"]["enabled"] = button9
 
-	local divider1 = lsOptions_CreateDivider(lsOptionsMainFrame)
-	divider1:SetPoint("TOP", button9, "BOTTOM", 0, -8)
+	-- local divider1 = lsOptions_CreateDivider(lsOptionsMainFrame)
+	-- divider1:SetPoint("TOP", button9, "BOTTOM", 0, -8)
 
-	lsOptionsMainFrame["infobars"] = {
-		["location"] = {},
-		["memory"] = {},
-		["fps"] = {},
-		["latency"] = {},
-		["bag"] = {},
-		["clock"] = {},
-		["mail"] = {},
-	}
+	-- lsOptionsMainFrame["infobars"] = {
+	-- 	["location"] = {},
+	-- 	["memory"] = {},
+	-- 	["fps"] = {},
+	-- 	["latency"] = {},
+	-- 	["bag"] = {},
+	-- 	["clock"] = {},
+	-- 	["mail"] = {},
+	-- }
 
-	local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame)
-	button10:SetPoint("LEFT", 0, 0)
-	button10:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
+	-- local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame)
+	-- button10:SetPoint("LEFT", 0, 0)
+	-- button10:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
 
-	lsOptionsMainFrame["infobars"]["enabled"] = button10
+	-- lsOptionsMainFrame["infobars"]["enabled"] = button10
 
-	local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Infobars")
-	header2:SetPoint("LEFT", button10, "RIGHT", 4, 0)
+	-- local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Infobars")
+	-- header2:SetPoint("LEFT", button10, "RIGHT", 4, 0)
 
-	lsOptionsMainFrame["infobars"]["header"] = header2
+	-- lsOptionsMainFrame["infobars"]["header"] = header2
 
-	local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Location")
-	button11:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 0, -8)
+	-- local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Location")
+	-- button11:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["infobars"]["location"]["enabled"] = button11
+	-- lsOptionsMainFrame["infobars"]["location"]["enabled"] = button11
 
-	local button12 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Memory")
-	button12:SetPoint("TOPLEFT", button11, "BOTTOMLEFT", 0, -8)
+	-- local button12 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Memory")
+	-- button12:SetPoint("TOPLEFT", button11, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["infobars"]["memory"]["enabled"] = button12
+	-- lsOptionsMainFrame["infobars"]["memory"]["enabled"] = button12
 
-	local button13 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "FPS")
-	button13:SetPoint("LEFT", button11, "RIGHT", 110, 0)
+	-- local button13 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "FPS")
+	-- button13:SetPoint("LEFT", button11, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["infobars"]["fps"]["enabled"] = button13
+	-- lsOptionsMainFrame["infobars"]["fps"]["enabled"] = button13
 
-	local button14 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Latency")
-	button14:SetPoint("TOPLEFT", button13, "BOTTOMLEFT", 0, -8)
+	-- local button14 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Latency")
+	-- button14:SetPoint("TOPLEFT", button13, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["infobars"]["latency"]["enabled"] = button14
+	-- lsOptionsMainFrame["infobars"]["latency"]["enabled"] = button14
 
-	local button15 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bags")
-	button15:SetPoint("LEFT", button13, "RIGHT", 110, 0)
+	-- local button15 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bags")
+	-- button15:SetPoint("LEFT", button13, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["infobars"]["bag"]["enabled"] = button15
+	-- lsOptionsMainFrame["infobars"]["bag"]["enabled"] = button15
 
-	local button16 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Clock")
-	button16:SetPoint("TOPLEFT", button15, "BOTTOMLEFT", 0, -8)
+	-- local button16 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Clock")
+	-- button16:SetPoint("TOPLEFT", button15, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["infobars"]["clock"]["enabled"] = button16
+	-- lsOptionsMainFrame["infobars"]["clock"]["enabled"] = button16
 
-	local button17 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Mail")
-	button17:SetPoint("LEFT", button15, "RIGHT", 110, 0)
+	-- local button17 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Mail")
+	-- button17:SetPoint("LEFT", button15, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["infobars"]["mail"]["enabled"] = button17
+	-- lsOptionsMainFrame["infobars"]["mail"]["enabled"] = button17
 
 	lsOptionsFrame.okay = function()
 	print("pressed okay")
