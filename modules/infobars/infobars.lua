@@ -58,6 +58,8 @@ function ns.lsInfobars_Initialize()
 
 	for ib, ibar in next, ns.infobars do
 		ibar:SetPoint(unpack(ns.C.infobars[ib].point))
+
+		E:CreateMover(ibar)
 	end
 
 	lsClockInfoBar_Initialize()
