@@ -78,6 +78,9 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Resting = UF:CreateIcon(frame, "Resting")
 	frame.Resting:SetPoint("BOTTOM", -10, -18)
 
+	frame.Combat = UF:CreateIcon(frame, "Combat")
+	frame.Combat:SetPoint("BOTTOM", -10, -18)
+
 	frame.Leader = UF:CreateIcon(frame, "Leader")
 	frame.Leader:SetPoint("BOTTOM", 10, -18)
 
