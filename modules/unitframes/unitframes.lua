@@ -693,7 +693,8 @@ local function CreateUnitFrameStyle(self, unit)
 	self.HealPrediction.PostUpdate = ns.PostUpdateHealPrediction
 
 	if unit ~= "pet" then
-		self.NameText = self.cover:CreateFontString("$parentNameText", "ARTWORK", "lsUnitFrame14Text")
+		self.NameText = E:CreateFontString(self.cover, 14, "$parentNameText", true)
+		-- self.NameText = self.cover:CreateFontString("$parentNameText", "ARTWORK", "lsUnitFrame14Text")
 		self.NameText:SetPoint("LEFT", self, "LEFT", 1, self.frameType == "long" and 18.5 or 2.5)
 		self.NameText:SetPoint("RIGHT", self, "RIGHT", -1, self.frameType == "long" and 18.5 or 2.5)
 		self.NameText:SetPoint("BOTTOM", self, "TOP", 0, self.frameType == "long" and 18.5 or 2.5)
