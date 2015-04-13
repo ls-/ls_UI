@@ -923,7 +923,7 @@ function ns.lsFactory(oUF)
 		else
 			object:SetPoint(unpack(ns.C.units[unit].point))
 		end
-			-- ns.lsAlwaysShow(object)
+			E:CreateMover(object)
 	end
 
 	local header = ns.headers.party

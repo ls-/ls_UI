@@ -286,3 +286,8 @@ function E:CreateMover(object)
 
 	E.Movers[name] = mover
 end
+
+SLASH_LSMOVERS1 = "/lsmovers"
+SlashCmdList["LSMOVERS"] = function()
+	E:ToggleAllMovers()
+end
