@@ -88,5 +88,9 @@ function PetBattle:Initialize()
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
 
+	local art = header:CreateTexture(nil, "BACKGROUND", nil, -8)
+	art:SetPoint("CENTER")
+	art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
+
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 end
