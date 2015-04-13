@@ -195,10 +195,16 @@ local function PostUpdateClassPower(bar, cur, max, changed, event)
 
 	if event == "ClassPowerDisable" then
 		bar:Hide()
+
+		for i = 1, #bar do
+			E:StopBlink(bar[i].Glow, true)
+		end
+
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
 		bar:Show()
 		UF:Reskin(bar:GetParent(), bar.__type, true, max or 5)
+		
 		if cur / max == 1 then
 			for i = 1, max do
 				E:Blink(bar[i].Glow, 0.5, 0, 1)
@@ -269,6 +275,11 @@ local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
 
 	if UnitHasVehicleUI("player") then
 		bar:Hide()
+
+		for i = 1, 6 do
+			E:StopBlink(bar[i].Glow, true)
+		end
+
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
 		bar:Show()
@@ -310,6 +321,8 @@ local function UpdateEclipseBarVisibility(bar, unit)
 	if bar:IsShown() then
 		UF:Reskin(bar:GetParent(), "ECLIPSE", true, 1)
 	else
+		E:StopBlink(bar.Glow, true)
+
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	end
 end
@@ -449,6 +462,11 @@ local function UpdateTotemBar(bar, priorities, haveTotem, name, start, duration)
 
 	if UnitHasVehicleUI("player") then
 		bar:Hide()
+
+		for i = 1, MAX_TOTEMS do
+			E:StopBlink(bar[i].Glow, true)
+		end
+
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
 		bar:Show()
@@ -504,6 +522,8 @@ local function UpdateDemonicFury(bar, cur, max)
 	end
 
 	if not bar:IsShown() then
+		E:StopBlink(bar.Glow, true)
+
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
 		UF:Reskin(bar:GetParent(), bar.__type, true, 1)
