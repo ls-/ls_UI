@@ -73,12 +73,6 @@ function UF:CreatePowerBar(parent, vertical)
 	local value = E:CreateFontString(parent.Cover, 14, "$parentPowerValue", true)
 	power.Value = value
 
-	if unit == "player" then
-		power:SetSize(12, 128)
-		power:SetPoint("RIGHT", -19, 0)
-		value:SetPoint("CENTER", 0, -8)
-	end
-
 	power.colorPower = true
 	power.colorDisconnected = true
 	power.frequentUpdates = true

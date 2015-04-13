@@ -51,6 +51,9 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_fg")
 
 	frame.Health = UF:CreateHealthBar(frame, true, nil, true)
+	frame.Health:SetSize(94, 132)
+	frame.Health:SetPoint("CENTER")
+	frame.Health.Value:SetPoint("CENTER", 0, 8)
 	tinsert(frame.mouseovers, frame.Health)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
@@ -68,6 +71,9 @@ function UF:ConstructPlayerFrame(frame)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_1")
 
 	frame.Power = UF:CreatePowerBar(frame, true)
+	frame.Power:SetSize(12, 128)
+	frame.Power:SetPoint("RIGHT", -19, 0)
+	frame.Power.Value:SetPoint("CENTER", 0, -8)
 	tinsert(frame.mouseovers, frame.Power)
 
 	frame.Castbar = UF:CreateCastBar(frame, 188, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)

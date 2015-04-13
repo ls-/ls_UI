@@ -57,12 +57,6 @@ function UF:CreateHealthBar(parent, vertical, reaction, lowhp)
 	local value = E:CreateFontString(parent.Cover, 18, "$parentHealthValue", true)
 	health.Value = value
 
-	if unit == "player" then
-		health:SetSize(94, 132)
-		health:SetPoint("CENTER")
-		value:SetPoint("CENTER", 0, 8)
-	end
-
 	if lowhp then
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
 		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_lowhp")
