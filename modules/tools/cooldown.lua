@@ -31,17 +31,20 @@ local function SetCustomCooldown(self, start, duration)
 		timer.start = start
 		timer.duration = duration
 		timer:Show()
+
+		self:SetScript("OnUpdate", Timer_OnUpdate)
 	else
 		timer:Hide()
+
+		self:SetScript("OnUpdate", nil)
 	end
 end
 
 local function CreateCooldownTimer(cooldown, textSize)
 	local holder= CreateFrame("Frame", nil, cooldown)
 	holder:SetAllPoints()
-	holder:SetScript("OnUpdate", Timer_OnUpdate)
 
-	local timer = E:CreateFontString(holder, textSize, nil, true, "THINOUTLINE")
+	local timer = E:CreateFontString(holder, textSize, nil, false, true)
 	timer:SetPoint("CENTER", 1, 0)
 	timer:SetJustifyH("CENTER")
 
