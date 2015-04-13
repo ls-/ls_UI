@@ -3,6 +3,8 @@ local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
 
+local abs = abs
+
 local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
 		self:SetStatusBarColor(0.6, 0.6, 0.6)
@@ -37,9 +39,9 @@ local function CustomDelayText(self, duration)
 	end
 
 	if self.casting then
-		self.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, self.delay)
+		self.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, abs(self.delay))
 	elseif self.channeling then
-		self.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, self.delay)
+		self.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, abs(self.delay))
 	end
 end
 
