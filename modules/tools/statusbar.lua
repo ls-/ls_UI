@@ -66,11 +66,12 @@ function E:HandleStatusBar(bar, cascade)
 			text:ClearAllPoints()
 			text:SetPoint("LEFT", 2, 0)
 			text:SetPoint("RIGHT", -2, 0)
+			bar.Text = text
 		end
 
 		sbt:SetDrawLayer("BACKGROUND", 1)
 		sbt:SetTexture(M.textures.statusbar)
-		sbt:SetVertexColor(0.65, 0.26, 0)
+		bar.Texture = sbt
 
 		if sb ~= bar then
 			sb:SetAllPoints()
