@@ -8,5 +8,6 @@ function B:HandleArchaeology()
 
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
 	E:HandleStatusBar(ArcheologyDigsiteProgressBar)
+	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(0.65, 0.26, 0)
 	E:CreateMover(ArcheologyDigsiteProgressBar)
 end
