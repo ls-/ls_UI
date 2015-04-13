@@ -218,6 +218,7 @@ function ActionBars:Initialize()
 
 	-- Hiding different useless textures
 	MainMenuBar.slideOut.IsPlaying = function() return true end
+	PetActionBarFrame:SetScript("OnUpdate", nil)
 
 	for _, f in next, {
 		MainMenuBar,
@@ -235,13 +236,6 @@ function ActionBars:Initialize()
 	end
 
 	for _, t in next, {
-		SlidingActionBarTexture0,
-		SlidingActionBarTexture1,
-		PossessBackground1,
-		PossessBackground2,
-		StanceBarLeft,
-		StanceBarMiddle,
-		StanceBarRight,
 		MainMenuBarTexture0,
 		MainMenuBarTexture1,
 		MainMenuBarTexture2,
@@ -253,6 +247,13 @@ function ActionBars:Initialize()
 	end
 
 	for _, t in next, {
+		PossessBackground1,
+		PossessBackground2,
+		StanceBarLeft,
+		StanceBarMiddle,
+		StanceBarRight,
+		SlidingActionBarTexture0,
+		SlidingActionBarTexture1,
 		SpellFlyoutHorizontalBackground,
 		SpellFlyoutVerticalBackground,
 		SpellFlyoutBackgroundEnd,
