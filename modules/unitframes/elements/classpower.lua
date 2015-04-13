@@ -26,7 +26,7 @@ local LAYOUT = {
 			point = {"CENTER", 0 , 112},
 			glow = {264 / 512, 280 / 512, 16 / 256, 80 / 256},
 		},
-		sep = {},
+		sep = {38 / 512, 58 / 512, 16 / 256, 144 / 256},
 	},
 	[3] = {
 		[1] = {
@@ -44,7 +44,7 @@ local LAYOUT = {
 			point = {"CENTER", 0 , 43},
 			glow = {296 / 512, 312 / 512, 16 / 256, 58 / 256},
 		},
-		sep = {70 / 512, 91 / 512, 16 / 256, 144 / 256},
+		sep = {70 / 512, 90 / 512, 16 / 256, 144 / 256},
 	},
 	[4] = {
 		[1] = {
@@ -67,35 +67,35 @@ local LAYOUT = {
 			point = {"CENTER", 0 , 48},
 			glow = {328 / 512, 344 / 512, 16 / 256, 48 / 256},
 		},
-		sep = {104 / 512, 120 / 512, 16 / 256, 144 / 256},
+		sep = {102 / 512, 122 / 512, 16 / 256, 144 / 256},
 	},
 	[5] = {
 		[1] = {
 			size = 25,
-			point = {},
+			point = {"CENTER", 0, -52},
 			glow = {360 / 512, 376 / 512, 119 / 256, 144 / 256},
 		},
 		[2] = {
 			size = 25,
-			point = {},
+			point = {"CENTER", 0, -27},
 			glow = {360 / 512, 376 / 512, 94 / 256, 119 / 256},
 		},
 		[3] = {
 			size = 28,
-			point = {},
+			point = {"CENTER", 0, 0},
 			glow = {360 / 512, 376 / 512, 66 / 256, 94 / 256},
 		},
 		[4] = {
 			size = 25,
-			point = {},
+			point = {"CENTER", 0, 27},
 			glow = {360 / 512, 376 / 512, 41 / 256, 66 / 256},
 		},
 		[5] = {
 			size = 25,
-			point = {},
+			point = {"CENTER", 0, 52},
 			glow = {360 / 512, 376 / 512, 16 / 256, 41 / 256},
 		},
-		sep = {},
+		sep = {134 / 512, 154 / 512, 16 / 256, 144 / 256},
 	},
 	[6] = {
 		[1] = {
@@ -319,9 +319,15 @@ end
 
 local function UpdateEclipseBarVisibility(bar, unit)
 	if bar:IsShown() then
+		bar.Dir:SetAlpha(1)
+		
 		UF:Reskin(bar:GetParent(), "ECLIPSE", true, 1)
 	else
 		E:StopBlink(bar.Glow, true)
+		E:StopBlink(bar.Sun, true)
+		E:StopBlink(bar.Moon, true)
+		
+		bar.Dir:SetAlpha(0)
 
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	end
