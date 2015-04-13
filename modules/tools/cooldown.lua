@@ -66,6 +66,9 @@ function E:HandleCooldown(cooldown, textSize)
 	cooldown.SetTimerTextHeight = SetTimerTextHeight
 	cooldown:SetHideCountdownNumbers(true)
 
+	local text = cooldown:GetRegions()
+	text:SetAlpha(0)
+
 	hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
 
 	cooldown.handled = true
