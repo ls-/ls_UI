@@ -163,34 +163,28 @@ end
 
 local function AT_Update(self, event, ...)
 	if event == "CUSTOM_ENABLE" then
-		if not AT_CONFIG.enabled then
-			self:Hide()
+		if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
+		if not self:IsEventRegistered("PLAYER_SPECIALIZATION_CHANGED") then self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED") end
 
-			print("|cff1ec77eAuraTracker|r is disabled. Type \"/at enable\" to enable the module.")
-		else
-			if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
-			if not self:IsEventRegistered("PLAYER_SPECIALIZATION_CHANGED") then self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED") end
+		self:SetPoint(unpack(AT_CONFIG.point))
 
-			self:SetPoint(unpack(AT_CONFIG.point))
+		spec = tostring(GetSpecialization() or 0)
 
-			spec = tostring(GetSpecialization() or 0)
+		-- TODO_BEGIN: Remove it later
+		if #AT_CONFIG.HELPFUL > 0 then
+			AT_CONFIG["0"].HELPFUL = {unpack(AT_CONFIG.HELPFUL)}
 
-			-- TODO_BEGIN: Remove it later
-			if #AT_CONFIG.HELPFUL > 0 then
-				AT_CONFIG["0"].HELPFUL = {unpack(AT_CONFIG.HELPFUL)}
-
-				AT_CONFIG.HELPFUL = {}
-			end
-
-			if #AT_CONFIG.HARMFUL > 0 then
-				AT_CONFIG["0"].HARMFUL = {unpack(AT_CONFIG.HARMFUL)}
-
-				AT_CONFIG.HARMFUL = {}
-			end
-			-- TODO_END
-
-			AT_LOCKED = AT_CONFIG.locked
+			AT_CONFIG.HELPFUL = {}
 		end
+
+		if #AT_CONFIG.HARMFUL > 0 then
+			AT_CONFIG["0"].HARMFUL = {unpack(AT_CONFIG.HARMFUL)}
+
+			AT_CONFIG.HARMFUL = {}
+		end
+		-- TODO_END
+
+		AT_LOCKED = AT_CONFIG.locked
 
 		if not AT_CONFIG.showHeader then self.header:Hide() end
 
@@ -310,8 +304,7 @@ local function ATHeader_PrintCommands()
 |cff00ccff/atrem spellId|r - removes aura from the list;
 |cff00ccff/atlist|r - prints the list of tracked auras;
 |cff00ccff/atwipe|r - wipes the list of tracked auras;
-|cff00ccff/atheader|r - toggles AuraTracker header visibility;
-|cff00ccff/at enable/disable|r - enables or disables the module.]])
+|cff00ccff/atheader|r - toggles AuraTracker header visibility.]])
 end
 
 local function ATHeaderDropDown_Initialize(self)
@@ -400,49 +393,6 @@ local function CreateSlashCommands()
 		print("|cff1ec77eAuraTracker|r: Wiped aura list.")
 
 		LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-	end
-
-	SLASH_AT1 = "/at"
-	SlashCmdList["AT"] = function(msg)
-		if msg == "enable" then
-			if AT_CONFIG.enabled then
-				print("|cff1ec77eAuraTracker|r is already enabled.")
-				return
-			end
-
-			if InCombatLockdown() then
-				print("|cff1ec77eAuraTracker|r can\'t be enabled, while in combat.")
-				return
-			end
-
-			print("|cff1ec77eAuraTracker|r was enabled.")
-
-			AT_CONFIG.enabled = true
-
-			LSAuraTracker:Show()
-			LSAuraTracker:Update("CUSTOM_ENABLE")
-			LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-		elseif msg == "disable" then
-			if not AT_CONFIG.enabled then
-				print("|cff1ec77eAuraTracker|r is already disabled.")
-				return
-			end
-
-			if InCombatLockdown() then
-				print("|cff1ec77eAuraTracker|r can\'t be disabled, while in combat.")
-				return
-			end
-
-			print("|cff1ec77eAuraTracker|r was disabled.")
-
-			AT_CONFIG.enabled = false
-
-			LSAuraTracker:Hide()
-			LSAuraTracker:UnregisterEvent("UNIT_AURA")
-			LSAuraTracker:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-		else
-			print("|cff1ec77eAuraTracker|r: Unknown command.")
-		end
 	end
 
 	SLASH_ATHEADER1 = "/atheader"

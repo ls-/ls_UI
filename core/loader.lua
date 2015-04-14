@@ -27,27 +27,28 @@ function E:ADDON_LOADED(arg)
 		E.MM:Initialize()
 		E.Vehicle:Initialize()
 		E.Extra:Initialize()
+		E.PetBattle:Initialize()
 	end
 
 	if C.nameplates.enabled then
 		E.NP:Initialize()
 	end
 
-	E.AT:Initialize()
+	if C.auratracker.enabled then
+		E.AT:Initialize()
+	end
 
 	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
 		oUF:Factory(ns.lsFactory)
 	end
 
-	E.Mail:Initialize()
+	if C.mail.enabled then
+		E.Mail:Initialize()
+	end
 
 	if C.bags.enabled then
 		E.Bags:Initialize()
-	end
-
-	if C.petbattle.enabled then
-		E.PetBattle:Initialize()
 	end
 
 	E.Blizzard:Initialize()

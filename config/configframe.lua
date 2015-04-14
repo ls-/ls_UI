@@ -1,20 +1,14 @@
 local _, ns = ...
-local oUF, E, C, D = ns.oUF or oUF
-
--- TogglePanelOptions = {
--- 	toggleMinimap = {text = "Minimap"},
--- }
-
--- UNITFRAMES --
+local oUF, E, C, D = ns.oUF or oUF, ns.E, ns.C, ns.D
 
 local function lsOptions_CreateDivider(parent)
 	local object = parent:CreateTexture(nil, "ARTWORK");
-	object:SetHeight(8)
+	object:SetHeight(4)
 	object:SetPoint("LEFT", 10, 0)
 	object:SetPoint("RIGHT", 10, 0)
-	object:SetTexture("Interface\\Tooltips\\UI-Tooltip-Border")
-	object:SetTexCoord(0.81, 0.94, 0.5, 1)
-	object:SetVertexColor(0.2, 0.2, 0.2)
+	object:SetTexture("Interface\\AchievementFrame\\UI-Achievement-RecentHeader")
+	object:SetTexCoord(0, 1, 0.0625, 0.65625)
+	object:SetAlpha(0.5)
 
 	return object
 end
@@ -47,46 +41,10 @@ local function lsOptions_CreateCheckButton(parent, label)
 	return object
 end
 
-------------
-
-
-function lsAuraTrackerCheckButton_OnClick(self)
-	ns.C.auratracker.enabled = self:GetChecked()
-end
-
-function lsMinimapCheckButton_OnClick(self)
-	ns.C.minimap.enabled = self:GetChecked()
-end
-
-function lsInfobarsCheckButton_OnClick(self)
-	ns.C.infobars.enabled = self:GetChecked()
-end
-
-function lsActionbarsCheckButton_OnClick(self)
-	ns.C.bars.enabled = self:GetChecked()
-end
-
-function lsAurasCheckButton_OnClick(self)
-	ns.C.auras.enabled = self:GetChecked()
-end
-
 function lsOptionsFrame_Initialize()
-	E, C, D = ns.E, ns.C, ns.D
-	-- print(E, C, D)
-
-	-- local header, object
-
 	lsOptionsFrame.name = "oUF: LS"
-	InterfaceOptions_AddCategory(lsOptionsFrame)
-	-- ns.DebugTexture(lsOptionsFrame_ScrollFrame)
-	-- ns.DebugTexture(lsOptionsMainFrame)
-	--[[
-	UnitFrames
-	8 buttons
-	Infobars
-	7 buttons
-	]]
 
+	InterfaceOptions_AddCategory(lsOptionsFrame)
 
 	lsOptionsMainFrame["units"] = {
 		["player"] = {},
@@ -107,109 +65,120 @@ function lsOptionsFrame_Initialize()
 	local header1 = lsOptions_CreateHeader(lsOptionsMainFrame, "Unit Frames")
 	header1:SetPoint("LEFT", button1, "RIGHT", 4, 0)
 
-	lsOptionsMainFrame["units"]["header"] = header1
-
-	local button2 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Player")
+	local button2 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Player & Pet")
 	button2:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
 	lsOptionsMainFrame["units"]["player"]["enabled"] = button2
+	lsOptionsMainFrame["units"]["pet"]["enabled"] = button2
 
-	local button3 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Player\'s Pet")
-	button3:SetPoint("TOPLEFT", button2, "BOTTOMLEFT", 0, -8)
+	local button3 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Target & ToT")
+	button3:SetPoint("LEFT", button2, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["units"]["pet"]["enabled"] = button3
+	lsOptionsMainFrame["units"]["target"]["enabled"] = button3
+	lsOptionsMainFrame["units"]["targettarget"]["enabled"] = button3
 
-	local button4 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Target")
-	button4:SetPoint("LEFT", button2, "RIGHT", 110, 0)
+	local button4 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Focus & ToF")
+	button4:SetPoint("LEFT", button3, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["units"]["target"]["enabled"] = button4
+	lsOptionsMainFrame["units"]["focus"]["enabled"] = button4
+	lsOptionsMainFrame["units"]["focustarget"]["enabled"] = button4
 
-	local button5 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Target of Target")
-	button5:SetPoint("TOPLEFT", button4, "BOTTOMLEFT", 0, -8)
+	local button5 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Party")
+	button5:SetPoint("LEFT", button4, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["units"]["targettarget"]["enabled"] = button5
+	lsOptionsMainFrame["units"]["party"]["enabled"] = button5
 
-	local button6 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Focus")
-	button6:SetPoint("LEFT", button4, "RIGHT", 110, 0)
+	local button6 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bosses")
+	button6:SetPoint("TOPLEFT", button2, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["units"]["focus"]["enabled"] = button6
+	lsOptionsMainFrame["units"]["boss"]["enabled"] = button6
 
-	local button7 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Target of Focus")
-	button7:SetPoint("TOPLEFT", button6, "BOTTOMLEFT", 0, -8)
+	local divider1 = lsOptions_CreateDivider(lsOptionsMainFrame)
+	divider1:SetPoint("TOP", button6, "BOTTOM", 0, -8)
 
-	lsOptionsMainFrame["units"]["focustarget"]["enabled"] = button7
+	lsOptionsMainFrame["auratracker"] = {}
+	lsOptionsMainFrame["minimap"] = {}
+	lsOptionsMainFrame["infobars"] = {}
+	lsOptionsMainFrame["nameplates"] = {}
+	lsOptionsMainFrame["bars"] = {}
+	lsOptionsMainFrame["auras"] = {}
+	lsOptionsMainFrame["mail"] = {}
+	lsOptionsMainFrame["bags"] = {}
 
-	local button8 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Party")
-	button8:SetPoint("LEFT", button6, "RIGHT", 110, 0)
+	local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Other Modules")
+	header2:SetPoint("TOPLEFT", divider1, "BOTTOMLEFT", 0, -8)
 
-	lsOptionsMainFrame["units"]["party"]["enabled"] = button8
+	local button7 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Aura Tracker")
+	button7:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 20, -8)
 
-	local button9 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bosses")
-	button9:SetPoint("TOPLEFT", button8, "BOTTOMLEFT", 0, -8)
+	lsOptionsMainFrame["auratracker"]["enabled"] = button7
 
-	lsOptionsMainFrame["units"]["boss"]["enabled"] = button9
+	local button8 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Minimap")
+	button8:SetPoint("LEFT", button7, "RIGHT", 110, 0)
 
-	-- local divider1 = lsOptions_CreateDivider(lsOptionsMainFrame)
-	-- divider1:SetPoint("TOP", button9, "BOTTOM", 0, -8)
+	lsOptionsMainFrame["minimap"]["enabled"] = button8
 
-	-- lsOptionsMainFrame["infobars"] = {
-	-- 	["location"] = {},
-	-- 	["memory"] = {},
-	-- 	["fps"] = {},
-	-- 	["latency"] = {},
-	-- 	["bag"] = {},
-	-- 	["clock"] = {},
-	-- 	["mail"] = {},
-	-- }
+	local button9 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Clock")
+	button9:SetPoint("LEFT", button8, "RIGHT", 110, 0)
 
-	-- local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame)
-	-- button10:SetPoint("LEFT", 0, 0)
-	-- button10:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
+	lsOptionsMainFrame["infobars"]["enabled"] = button9
 
-	-- lsOptionsMainFrame["infobars"]["enabled"] = button10
+	local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Nameplates")
+	button10:SetPoint("LEFT", button9, "RIGHT", 110, 0)
 
-	-- local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Infobars")
-	-- header2:SetPoint("LEFT", button10, "RIGHT", 4, 0)
+	lsOptionsMainFrame["nameplates"]["enabled"] = button10
 
-	-- lsOptionsMainFrame["infobars"]["header"] = header2
+	local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Action Bars")
+	button11:SetPoint("TOPLEFT", button7, "BOTTOMLEFT", 0, -8)
 
-	-- local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Location")
-	-- button11:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 0, -8)
+	lsOptionsMainFrame["bars"]["enabled"] = button11
 
-	-- lsOptionsMainFrame["infobars"]["location"]["enabled"] = button11
+	local button12 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Buffs & Debuffs")
+	button12:SetPoint("LEFT", button11, "RIGHT", 110, 0)
 
-	-- local button12 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Memory")
-	-- button12:SetPoint("TOPLEFT", button11, "BOTTOMLEFT", 0, -8)
+	lsOptionsMainFrame["auras"]["enabled"] = button12
 
-	-- lsOptionsMainFrame["infobars"]["memory"]["enabled"] = button12
+	local button13 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Mail")
+	button13:SetPoint("LEFT", button12, "RIGHT", 110, 0)
 
-	-- local button13 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "FPS")
-	-- button13:SetPoint("LEFT", button11, "RIGHT", 110, 0)
+	lsOptionsMainFrame["mail"]["enabled"] = button13
 
-	-- lsOptionsMainFrame["infobars"]["fps"]["enabled"] = button13
+	local button14 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bags")
+	button14:SetPoint("LEFT", button13, "RIGHT", 110, 0)
 
-	-- local button14 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Latency")
-	-- button14:SetPoint("TOPLEFT", button13, "BOTTOMLEFT", 0, -8)
+	lsOptionsMainFrame["bags"]["enabled"] = button14
 
-	-- lsOptionsMainFrame["infobars"]["latency"]["enabled"] = button14
+	local divider2 = lsOptions_CreateDivider(lsOptionsMainFrame)
+	divider2:SetPoint("TOP", button11, "BOTTOM", 0, -8)
 
-	-- local button15 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Bags")
-	-- button15:SetPoint("LEFT", button13, "RIGHT", 110, 0)
+	local header3 = lsOptions_CreateHeader(lsOptionsMainFrame, "Info")
+	header3:SetPoint("TOPLEFT", divider2, "BOTTOMLEFT", 0, -8)
 
-	-- lsOptionsMainFrame["infobars"]["bag"]["enabled"] = button15
+	local infotext = E:CreateFontString(lsOptionsFrame, 10, nil, nil, nil, true)
+	infotext:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -8)
+	infotext:SetPoint("TOPRIGHT", header3, "BOTTOMRIGHT", 0, -8)
+	infotext:SetHeight(200)
+	infotext:SetJustifyH("LEFT")
+	infotext:SetJustifyV("TOP")
+	infotext:SetText([[Once again, welcome to v2-alpha.
 
-	-- local button16 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Clock")
-	-- button16:SetPoint("TOPLEFT", button15, "BOTTOMLEFT", 0, -8)
+|cffffbf19First of all, this config panel is WIP and will be changed later! Obviously!|r
 
-	-- lsOptionsMainFrame["infobars"]["clock"]["enabled"] = button16
+I'll be releasing alpha builds approximately every weekend. Please, be patient.
 
-	-- local button17 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Mail")
-	-- button17:SetPoint("LEFT", button15, "RIGHT", 110, 0)
+Things can be, and definitely will be, buggy and inconsistent; that's alpha build for you! If it bothers you, consider switching back to stable release channel.
 
-	-- lsOptionsMainFrame["infobars"]["mail"]["enabled"] = button17
+If you find a bug, please, use Curse/WoWI comment section to post a report.
+
+If you have ideas on how to improve my layout, now is the best time to speak out!
+
+I'm currently working on unit frames, so I won't be touching other aspects of my layout for now.
+
+To toggle frame movers use |cffffbf19/lsmovers|r command.
+
+You have to |cffe51919manually reload UI|r to apply changes, use |cffffbf19/rl|r or |cffffbf19/reload|r commands to do so.]])
 
 	lsOptionsFrame.okay = function()
-	print("pressed okay")
 		E:ApplySettings(lsOptionsMainFrame, C)
 		-- ReloadUI()
 	end
@@ -219,7 +188,13 @@ function lsOptionsFrame_Initialize()
 	end
 
 	lsOptionsFrame.default = function()
-		print("pressed default")
 		E:FetchSettings(lsOptionsMainFrame, D)
 	end
+
+	SLASH_LSCONFIG1 = "/lsconfig"
+	SlashCmdList["LSCONFIG"] = function()
+		InterfaceOptionsFrame_OpenToCategory(lsOptionsFrame)
+		InterfaceOptionsFrame_OpenToCategory(lsOptionsFrame)
+	end
+
 end

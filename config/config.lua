@@ -172,6 +172,10 @@ D["micromenu"] = {
 	},
 }
 
+D["mail"] = {
+	enabled = true,
+}
+
 D["auras"] = {
 	enabled = true,
 	buff = {
@@ -188,7 +192,6 @@ D["auras"] = {
 }
 
 D["petbattle"] = {
-	enabled = true,
 	point = {"BOTTOM", 0, 15},
 	button_size = 28,
 	button_gap = 4,

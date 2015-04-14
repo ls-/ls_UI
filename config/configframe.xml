@@ -51,7 +51,7 @@
 				</Anchors>
 				<ScrollChild>
 					<Frame name="lsOptionsMainFrame">
-						<Size x="566" y="2560"/>
+						<Size x="566" y="566"/>
 					</Frame>
 				</ScrollChild>
 				<Scripts>
