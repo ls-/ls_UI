@@ -9,7 +9,7 @@ function E:CopyTable(src, dest)
 	for k, v in pairs(src) do
 		if type(v) == "table" then
 			dest[k] = self:CopyTable(v, dest[k])
-		else
+		elseif type(v) ~= type(dest[k]) then
 			dest[k] = v
 		end
 	end
@@ -48,7 +48,7 @@ function E:FetchSettings(panel, table)
 			self:FetchSettings(panel[k], v)
 		else
 			if panel[k] then
-					-- print(k, v)
+				-- print(k, v)
 				panel[k]:SetValue(v)
 			end
 		end
