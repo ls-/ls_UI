@@ -6,34 +6,48 @@ local UF = E.UF
 function UF:ConstructPlayerFrame(frame)
 	frame.mouseovers = {}
 
-	frame:SetFrameLevel(3)
+	frame:SetFrameLevel(1)
 	frame:SetSize(164, 164)
-	frame:SetPoint("BOTTOM", "UIParent", "BOTTOM", -306 , 80)
+	-- frame:SetPoint("BOTTOM", "UIParent", "BOTTOM", -306 , 80)
 
 	local chains = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
 	chains:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_chain_left")
 	chains:SetSize(128, 64)
 	chains:SetPoint("CENTER", 0, -96)
 
-	local ring = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
+	local bg1 = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
+	bg1:SetPoint("CENTER")
+	bg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_1")
+
+	local mid = CreateFrame("Frame", nil, frame)
+	mid:SetFrameLevel(3)
+	mid:SetAllPoints()
+
+	local ring = mid:CreateTexture(nil, "BACKGROUND", nil, 1)
 	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\ring_cracked_r")
 	ring:SetSize(256, 256)
 	ring:SetPoint("CENTER")
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetPoint("CENTER")
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_2")
+	local bg2 = mid:CreateTexture(nil, "BACKGROUND", nil, 2)
+	bg2:SetPoint("CENTER")
+	bg2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_2")
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(6)
+	cover:SetFrameLevel(4)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
-	local tube = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
-	tube:SetSize(20, 144)
-	tube:SetPoint("LEFT", 15, 0)
-	cover.Tube = tube
+	local tube1 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
+	tube1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
+	tube1:SetSize(20, 144)
+	tube1:SetPoint("LEFT", 15, 0)
+	cover.Tube = tube1
+
+	local tube2 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
+	tube2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
+	tube2:SetTexCoord(6 / 512, 26 / 512, 8 / 256, 152 / 256)
+	tube2:SetSize(20, 144)
+	tube2:SetPoint("RIGHT", -15, 0)
 
 	local sep = cover:CreateTexture(nil, "ARTWORK", nil, 1)
 	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
@@ -41,7 +55,7 @@ function UF:ConstructPlayerFrame(frame)
 	sep:SetPoint("LEFT", 15, 0)
 	cover.Sep = sep
 
-	local gloss = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
+	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
 	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_gloss")
 	gloss:SetSize(140, 140)
 	gloss:SetPoint("CENTER")
@@ -50,7 +64,7 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetPoint("CENTER")
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_fg")
 
-	frame.Health = UF:CreateHealthBar(frame, true, nil, true)
+	frame.Health = UF:CreateHealthBar(frame, true, 18, nil, true)
 	frame.Health:SetSize(94, 132)
 	frame.Health:SetPoint("CENTER")
 	frame.Health.Value:SetPoint("CENTER", 0, 8)
@@ -66,11 +80,9 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-	bg = frame.Health:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetPoint("CENTER")
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_1")
 
-	frame.Power = UF:CreatePowerBar(frame, true)
+
+	frame.Power = UF:CreatePowerBar(frame, true, 14)
 	frame.Power:SetSize(12, 128)
 	frame.Power:SetPoint("RIGHT", -19, 0)
 	frame.Power.Value:SetPoint("CENTER", 0, -8)
@@ -147,5 +159,5 @@ function UF:ConstructPlayerFrame(frame)
 	debuffhl:SetAlpha(0)
 	frame.DebuffHighlight = debuffhl
 	frame.DebuffHighlightAlpha = 1
-	frame.DebuffHighlightFilter = false --MOVE TO CONFIG
+	frame.DebuffHighlightFilter = false
 end

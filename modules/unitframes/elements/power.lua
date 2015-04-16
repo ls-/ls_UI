@@ -55,22 +55,16 @@ local function PostUpdatePower(bar, unit, cur, max)
 	end
 end
 
-function UF:CreatePowerBar(parent, vertical)
+function UF:CreatePowerBar(parent, vertical, textsize)
 	local unit = parent.unit
 
 	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
-	power:SetFrameLevel(4)
+	power:SetFrameLevel(3)
 	power:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(power)
 
-	local tex = power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tex:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
-	tex:SetTexCoord(6 / 512, 26 / 512, 8 / 256, 152 / 256)
-	tex:SetSize(20, 144)
-	tex:SetPoint("CENTER")
-
-	local value = E:CreateFontString(parent.Cover, 14, "$parentPowerValue", true)
+	local value = E:CreateFontString(parent.Cover, textsize, "$parentPowerValue", true)
 	power.Value = value
 
 	power.colorPower = true

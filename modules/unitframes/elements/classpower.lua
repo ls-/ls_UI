@@ -290,7 +290,7 @@ end
 function UF:CreateRuneBar(parent)
 	local bar = CreateFrame("Frame", "$parentRuneBar", parent)
 	bar.__type = "RUNE"
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 

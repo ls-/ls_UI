@@ -45,7 +45,7 @@ local function PostUpdateHealth(bar, unit, cur, max)
 	end
 end
 
-function UF:CreateHealthBar(parent, vertical, reaction, lowhp)
+function UF:CreateHealthBar(parent, vertical, textsize, reaction, lowhp)
 	local unit = parent.unit
 
 	local health = CreateFrame("StatusBar", "$parentHealthBar", parent)
@@ -54,7 +54,7 @@ function UF:CreateHealthBar(parent, vertical, reaction, lowhp)
 	health:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(health)
 
-	local value = E:CreateFontString(parent.Cover, 18, "$parentHealthValue", true)
+	local value = E:CreateFontString(parent.Cover, textsize, "$parentHealthValue", true)
 	health.Value = value
 
 	if lowhp then
