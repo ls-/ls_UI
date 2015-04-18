@@ -15,16 +15,16 @@ local function LSUnitFrame_OnEnter(self)
 
 	UnitFrame_OnEnter(self)
 
-	-- local frameName = gsub(self:GetName(), "%d", "")
+	local name = gsub(self:GetName(), "%d", "")
 	-- if frameName == "lsPartyFrameUnitButton" then
 	-- 	PartyMemberBuffTooltip:ClearAllPoints()
 	-- 	PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
 	-- 	PartyMemberBuffTooltip_Update(self)
-	-- elseif frameName == "lsPetFrame" then
-	-- 	PartyMemberBuffTooltip:ClearAllPoints()
-	-- 	PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
-	-- 	PartyMemberBuffTooltip_Update(self)
-	-- end
+	if name == "LSPetFrame" then
+		PartyMemberBuffTooltip:ClearAllPoints()
+		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
+		PartyMemberBuffTooltip_Update(self)
+	end
 
 	self.isMouseOver = true
 	if self.mouseovers then
@@ -45,12 +45,12 @@ local function LSUnitFrame_OnLeave(self)
 
 	UnitFrame_OnLeave(self)
 
-	-- local frameName = gsub(self:GetName(), "%d", "")
-	-- if frameName == "lsPartyFrameUnitButton" then
+	local name = gsub(self:GetName(), "%d", "")
+	-- if name == "lsPartyFrameUnitButton" then
 	-- 	PartyMemberBuffTooltip:Hide()
-	-- elseif frameName == "lsPetFrame" then
-	-- 	PartyMemberBuffTooltip:Hide()
-	-- end
+	if name == "LSPetFrame" then
+		PartyMemberBuffTooltip:Hide()
+	end
 
 	self.isMouseOver = nil
 	if self.mouseovers then

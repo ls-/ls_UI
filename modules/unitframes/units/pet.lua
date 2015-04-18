@@ -31,18 +31,18 @@ function UF:ConstructPetFrame(frame)
 
 	frame.Health = UF:CreateHealthBar(frame, true, 12)
 	frame.Health:SetSize(8, 112)
-	frame.Health:SetPoint("CENTER", 6, 0)
+	frame.Health:SetPoint("CENTER", -6, 0)
 	frame.Health.Value:SetJustifyH("RIGHT")
-	frame.Health.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 30)
+	frame.Health.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 	tinsert(frame.mouseovers, frame.Health)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
 	frame.Power = UF:CreatePowerBar(frame, true, 12)
 	frame.Power:SetSize(8, 102)
-	frame.Power:SetPoint("CENTER", -6, 0)
+	frame.Power:SetPoint("CENTER", 6, 0)
 	frame.Power.Value:SetJustifyH("RIGHT")
-	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 18)
+	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet")
