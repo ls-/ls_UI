@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="castbar.lua"/>
 	<Script file="classpower.lua"/>
+	<Script file="debuffhighlight.lua"/>
 	<Script file="healprediction.lua"/>
 	<Script file="health.lua"/>
 	<Script file="icons.lua"/>
