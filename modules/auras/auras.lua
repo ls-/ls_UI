@@ -94,17 +94,6 @@ local function UpdateTemporaryEnchantAnchors()
 	end
 end
 
-local function AddSpellID(self, unit, id, filter)
-	if unit == "player" or unit == "vehicle" then
-		local spellId = select(11, UnitAura(unit, id, filter))
-
-		if spellId then
-			self:AddLine("ID: "..spellId, 0.11, 0.75, 0.95)
-			self:Show()
-		end
-	end
-end
-
 function Auras:Initialize()
 	AURA_CONFIG = ns.C.auras
 
@@ -136,7 +125,6 @@ function Auras:Initialize()
 
 	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
 	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
-	hooksecurefunc(GameTooltip, "SetUnitAura", AddSpellID)
 
 	E:SkinAuraButton(ConsolidatedBuffs)
 	

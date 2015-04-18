@@ -9,5 +9,6 @@
 	<Script file="minimap\minimap.lua"/>
 	<Script file="mail\mail.lua"/>
 	<Script file="nameplates\nameplates.lua"/>
+	<Include file="tooltips\_tooltips.xml"/>
 	<Include file="unitframes\_unitframes.xml"/>
 </Ui>

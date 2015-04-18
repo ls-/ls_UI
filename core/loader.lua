@@ -28,6 +28,10 @@ function E:ADDON_LOADED(arg)
 		E.Vehicle:Initialize()
 		E.Extra:Initialize()
 		E.PetBattle:Initialize()
+
+		if C.bags.enabled then
+			E.Bags:Initialize()
+		end
 	end
 
 	if C.nameplates.enabled then
@@ -47,9 +51,7 @@ function E:ADDON_LOADED(arg)
 		E.Mail:Initialize()
 	end
 
-	if C.bags.enabled then
-		E.Bags:Initialize()
-	end
+	E.TT:Initialize()
 
 	E.Blizzard:Initialize()
 
