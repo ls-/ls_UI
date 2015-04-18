@@ -40,22 +40,6 @@ D["units"] = {
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -240},
 		yOffset = 46,
 	},
-	-- boss2 = {
-	-- 	enabled = true,
-	-- 	point = {"TOP", "lsBoss1Frame", "BOTTOM", 0, -46},
-	-- },
-	-- boss3 = {
-	-- 	enabled = true,
-	-- 	point = {"TOP", "lsBoss2Frame", "BOTTOM", 0, -46},
-	-- },
-	-- boss4 = {
-	-- 	enabled = true,
-	-- 	point = {"TOP", "lsBoss3Frame", "BOTTOM", 0, -46},
-	-- },
-	-- boss5 = {
-	-- 	enabled = true,
-	-- 	point = {"TOP", "lsBoss4Frame", "BOTTOM", 0, -46},
-	-- },
 }
 
 D["auratracker"] = {
