@@ -17,9 +17,18 @@ end
 
 local function SetCustomVertexColor(self, r, g, b)
 	local button = self:GetParent()
+	local name = gsub(button:GetName(), "%d", "")
 
-	if button == ExtraActionButton1 then
+	if name == "ExtraActionButton" then
 		button:SetBorderColor(0.9, 0.4, 0.1)
+
+		return
+	end
+
+	if r == 1 and g == 1 and b == 1 then
+		if name == "ActionButton" then
+			button:SetBorderColor(255 / 255, 200 / 255, 15 / 255)
+		end
 	else
 		button:SetBorderColor(r, g, b)
 	end
@@ -331,6 +340,8 @@ function E:SkinPetBattleButton(button)
 		bBetterIcon:ClearAllPoints()
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
 	end
+
+	button:SetBorderColor(255 / 255, 200 / 255, 15 / 255)
 
 	button.styled = true
 end
