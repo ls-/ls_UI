@@ -36,10 +36,26 @@ local function ItemTooltipHook(self)
 	self:Show()
 end
 
+local function SpellTooltipHook(self)
+	local _, _, id = self:GetSpell()
+
+	local line
+	for i = 1, self:NumLines() do
+		if find(_G["GameTooltipTextLeft"..i]:GetText(), ID..": "..id) then
+			return
+		end
+	end
+
+	self:AddLine(" ")
+	self:AddLine(ID..": "..id, 1, 1, 1)
+	self:Show()
+end
+
 function TT:Initialize()
 	hooksecurefunc(GameTooltip, "SetUnitAura", AuraTooltipHook)
 	hooksecurefunc(GameTooltip, "SetUnitBuff", AuraTooltipHook)
 	hooksecurefunc(GameTooltip, "SetUnitDebuff", AuraTooltipHook)
 
 	GameTooltip:HookScript("OnTooltipSetItem", ItemTooltipHook)
+	GameTooltip:HookScript("OnTooltipSetSpell", SpellTooltipHook)
 end
