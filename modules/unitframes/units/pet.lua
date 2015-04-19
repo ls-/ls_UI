@@ -29,7 +29,7 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	fg:SetTexCoord(42 / 256, 84 / 256, 0, 134 / 256)
 
-	frame.Health = UF:CreateHealthBar(frame, true, 12)
+	frame.Health = UF:CreateHealthBar(frame, true, 12, true)
 	frame.Health:SetSize(8, 112)
 	frame.Health:SetPoint("CENTER", -6, 0)
 	frame.Health.Value:SetJustifyH("RIGHT")
@@ -50,14 +50,13 @@ function UF:ConstructPetFrame(frame)
 	frame.Threat:SetSize(21, 134)
 	frame.Threat:SetPoint("CENTER", frame, "CENTER", -10, 0)
 
-	local debuffhl = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
-	debuffhl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
-	debuffhl:SetTexCoord(147 / 256, 168 / 256, 0, 134 / 256)
-	debuffhl:SetSize(21, 134)
-	debuffhl:SetPoint("CENTER", frame, "CENTER", 10, 0)
-	debuffhl:SetAlpha(0)
-
-	frame.DebuffHighlight = debuffhl
-	frame.DebuffHighlightAlpha = 1
-	frame.DebuffHighlightFilter = false
+	local dbh = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
+	dbh:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
+	dbh:SetTexCoord(147 / 256, 168 / 256, 0, 134 / 256)
+	dbh:SetSize(21, 134)
+	dbh:SetPoint("CENTER", frame, "CENTER", 10, 0)
+	dbh:SetAlpha(0)
+	dbh.Alpha = 1
+	dbh.Filter = true
+	frame.DebuffHighlight = dbh
 end

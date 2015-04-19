@@ -80,8 +80,6 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-
-
 	frame.Power = UF:CreatePowerBar(frame, true, 14)
 	frame.Power:SetSize(12, 128)
 	frame.Power:SetPoint("RIGHT", -19, 0)
@@ -152,12 +150,12 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Threat:SetSize(128, 256)
 	frame.Threat:SetPoint("BOTTOMRIGHT", frame, "CENTER", 0, -128)
 
-	local debuffhl = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
-	debuffhl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_debuff")
-	debuffhl:SetSize(128, 256)
-	debuffhl:SetPoint("BOTTOMLEFT", frame, "CENTER", 0, -128)
-	debuffhl:SetAlpha(0)
-	frame.DebuffHighlight = debuffhl
-	frame.DebuffHighlightAlpha = 1
-	frame.DebuffHighlightFilter = false
+	local dbh = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
+	dbh:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_debuff")
+	dbh:SetSize(128, 256)
+	dbh:SetPoint("BOTTOMLEFT", frame, "CENTER", 0, -128)
+	dbh:SetAlpha(0)
+	dbh.Alpha = 1
+	dbh.Filter = true
+	frame.DebuffHighlight = dbh
 end
