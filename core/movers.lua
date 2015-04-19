@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
 
 E.Movers = {}
 
@@ -46,7 +46,7 @@ local function SetPosition(self, xOffset, yOffset)
 	self.parent:ClearAllPoints()
 	self.parent:SetPoint(p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
-	SavePosition(self, p, anchor, rP, x, y)
+	SavePosition(self, p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
 	self.buttons[5]:Show()
 end
@@ -239,7 +239,7 @@ function E:ToggleMover(object)
 end
 
 function E:CreateMover(object)
-	MOVERS_CONFIG = ns.C.movers
+	MOVERS_CONFIG = C.movers
 
 	local name = object:GetName().."Mover"
 
