@@ -150,12 +150,7 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Threat:SetSize(128, 256)
 	frame.Threat:SetPoint("BOTTOMRIGHT", frame, "CENTER", 0, -128)
 
-	local dbh = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
-	dbh:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_debuff")
-	dbh:SetSize(128, 256)
-	dbh:SetPoint("BOTTOMLEFT", frame, "CENTER", 0, -128)
-	dbh:SetAlpha(0)
-	dbh.Alpha = 1
-	dbh.Filter = true
-	frame.DebuffHighlight = dbh
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player_debuff")
+	frame.DebuffHighlight:SetSize(128, 256)
+	frame.DebuffHighlight:SetPoint("BOTTOMLEFT", frame, "CENTER", 0, -128)
 end

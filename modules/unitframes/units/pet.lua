@@ -13,7 +13,7 @@ function UF:ConstructPetFrame(frame)
 	bg:SetAllPoints()
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	bg:SetTexCoord(84 / 256, 126 / 256, 0, 134 / 256)
-	
+
 	local cover = CreateFrame("Frame", nil, frame)
 	cover:SetFrameLevel(4)
 	cover:SetAllPoints()
@@ -50,13 +50,8 @@ function UF:ConstructPetFrame(frame)
 	frame.Threat:SetSize(21, 134)
 	frame.Threat:SetPoint("CENTER", frame, "CENTER", -10, 0)
 
-	local dbh = frame:CreateTexture("$parentDebuffGlow", "BACKGROUND", nil, 1)
-	dbh:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
-	dbh:SetTexCoord(147 / 256, 168 / 256, 0, 134 / 256)
-	dbh:SetSize(21, 134)
-	dbh:SetPoint("CENTER", frame, "CENTER", 10, 0)
-	dbh:SetAlpha(0)
-	dbh.Alpha = 1
-	dbh.Filter = true
-	frame.DebuffHighlight = dbh
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet")
+	frame.DebuffHighlight:SetTexCoord(147 / 256, 168 / 256, 0, 134 / 256)
+	frame.DebuffHighlight:SetSize(21, 134)
+	frame.DebuffHighlight:SetPoint("CENTER", frame, "CENTER", 10, 0)
 end
