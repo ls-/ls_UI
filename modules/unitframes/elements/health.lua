@@ -23,7 +23,7 @@ local function PostUpdateHealth(bar, unit, cur, max)
 		color = E:RGBToHEX(bar.__owner.colors.disconnected)
 
 		-- for some locales DEAD string is loosely translated
-		return bar.Value:SetFormattedText("|cff"..color.."%s|r", gsub(SPELL_FAILED_CASTER_DEAD, "[.]", ""))
+		return bar.Value:SetFormattedText("|cff"..color.."%s|r", gsub(unit == "player" and SPELL_FAILED_CASTER_DEAD or DEAD, "[.]", ""))
 	end
 
 	if cur < max then
@@ -59,8 +59,9 @@ function UF:CreateHealthBar(parent, vertical, textsize, reaction, lowhp)
 
 	if lowhp then
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_lowhp")
-		glow:SetSize(256, 256)
+		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+		glow:SetTexCoord(98 / 512, 198 / 512, 202 / 512, 340 / 512)
+		glow:SetSize(100, 138)
 		glow:SetPoint("CENTER")
 		glow:SetVertexColor(0.9, 0.15, 0.15)
 		glow:SetAlpha(0)

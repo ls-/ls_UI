@@ -8,29 +8,22 @@ function UF:ConstructPlayerFrame(frame)
 
 	frame:SetFrameLevel(1)
 	frame:SetSize(164, 164)
-	-- frame:SetPoint("BOTTOM", "UIParent", "BOTTOM", -306 , 80)
 
-	local chains = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
-	chains:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_chain_left")
-	chains:SetSize(128, 64)
-	chains:SetPoint("CENTER", 0, -96)
-
-	local bg1 = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
-	bg1:SetPoint("CENTER")
-	bg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_1")
+	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	bg:SetTexCoord(318 / 512, 422 / 512, 9 / 512, 159 / 512)
+	bg:SetSize(104, 150)
+	bg:SetPoint("CENTER")
 
 	local mid = CreateFrame("Frame", nil, frame)
 	mid:SetFrameLevel(3)
 	mid:SetAllPoints()
 
 	local ring = mid:CreateTexture(nil, "BACKGROUND", nil, 1)
-	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\ring_cracked_r")
-	ring:SetSize(256, 256)
-	ring:SetPoint("CENTER")
-
-	local bg2 = mid:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg2:SetPoint("CENTER")
-	bg2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_bg_2")
+	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	ring:SetTexCoord(0 / 512, 168 / 512, 0 / 512, 202 / 512)
+	ring:SetSize(168, 202)
+	ring:SetPoint("CENTER", 0, -17)
 
 	local cover = CreateFrame("Frame", nil, frame)
 	cover:SetFrameLevel(4)
@@ -56,13 +49,16 @@ function UF:ConstructPlayerFrame(frame)
 	cover.Sep = sep
 
 	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_gloss")
-	gloss:SetSize(140, 140)
+	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	gloss:SetTexCoord(0 / 512, 98 / 512, 202 / 512, 342 / 512)
+	gloss:SetSize(98, 140)
 	gloss:SetPoint("CENTER")
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	fg:SetTexCoord(168 / 512, 318 / 512, 9 / 512, 159 / 512)
+	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_fg")
 
 	frame.Health = UF:CreateHealthBar(frame, true, 18, nil, true)
 	frame.Health:SetSize(94, 132)
@@ -71,6 +67,15 @@ function UF:ConstructPlayerFrame(frame)
 	tinsert(frame.mouseovers, frame.Health)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
+
+	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	absrobGlow:SetTexCoord(372 / 512, 474 / 512, 202 / 512, 241 / 512)
+	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
+	absrobGlow:SetSize(102, 39)
+	absrobGlow:SetPoint("CENTER", 0, 54)
+	absrobGlow:SetAlpha(0)
+	frame.AbsorbGlow = absrobGlow
 
 	local damageAbsorb = E:CreateFontString(cover, 12, "$parentDamageAbsorbsText", true)
 	damageAbsorb:SetPoint("CENTER", 0, 24)
