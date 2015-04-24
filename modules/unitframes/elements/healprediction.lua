@@ -19,6 +19,7 @@ function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
 	local otherHeals = self.otherBar
 	local healAbsorb = self.healAbsorbBar
 	local damageAbsorb = self.absorbBar
+	local absorbGlow = self.__owner.AbsorbGlow
 
 	local _, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
 	local myInitialHealAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
@@ -41,6 +42,14 @@ function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
 
 	if damageAbsorb and damageAbsorb:GetValue() > 0 then
 		appendTexture = UpdateHealPredictionAnchor(damageAbsorb, orientation, appendTexture)
+	end
+
+	if absorbGlow then
+		if overAbsorb then
+			E:Blink(absorbGlow, 0.5, 0, 1)
+		else
+			E:StopBlink(absorbGlow)
+		end
 	end
 end
 
