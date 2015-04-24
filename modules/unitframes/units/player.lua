@@ -38,19 +38,19 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Cover = cover
 
 	local tube1 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
+	tube1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
 	tube1:SetSize(20, 144)
 	tube1:SetPoint("LEFT", 15, 0)
 	cover.Tube = tube1
 
 	local tube2 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
+	tube2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
 	tube2:SetTexCoord(6 / 512, 26 / 512, 8 / 256, 152 / 256)
 	tube2:SetSize(20, 144)
 	tube2:SetPoint("RIGHT", -15, 0)
 
 	local sep = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\power")
+	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
 	sep:SetSize(20, 128)
 	sep:SetPoint("LEFT", 15, 0)
 	cover.Sep = sep
