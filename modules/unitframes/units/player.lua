@@ -146,11 +146,11 @@ function UF:ConstructPlayerFrame(frame)
 	fcf.Mode = "Fountain"
 	fcf.YOffset = 20
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player_threat")
-	frame.Threat:SetSize(128, 256)
-	frame.Threat:SetPoint("BOTTOMRIGHT", frame, "CENTER", 0, -128)
+	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 198 / 512, 285 / 512, 202 / 512, 340 / 512)
+	frame.Threat:SetSize(87, 138)
+	frame.Threat:SetPoint("CENTER", -44, 17)
 
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player_debuff")
-	frame.DebuffHighlight:SetSize(128, 256)
-	frame.DebuffHighlight:SetPoint("BOTTOMLEFT", frame, "CENTER", 0, -128)
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 285 / 512, 372 / 512, 202 / 512, 340 / 512)
+	frame.DebuffHighlight:SetSize(87, 138)
+	frame.DebuffHighlight:SetPoint("CENTER", 44, 17)
 end

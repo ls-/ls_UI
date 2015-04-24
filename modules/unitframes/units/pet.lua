@@ -45,13 +45,11 @@ function UF:ConstructPetFrame(frame)
 	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet")
-	frame.Threat:SetTexCoord(126 / 256, 147 / 256, 0, 134 / 256)
+	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 126 / 256, 147 / 256, 0, 134 / 256)
 	frame.Threat:SetSize(21, 134)
-	frame.Threat:SetPoint("CENTER", frame, "CENTER", -10, 0)
+	frame.Threat:SetPoint("CENTER", -10, 0)
 
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet")
-	frame.DebuffHighlight:SetTexCoord(147 / 256, 168 / 256, 0, 134 / 256)
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 147 / 256, 168 / 256, 0, 134 / 256)
 	frame.DebuffHighlight:SetSize(21, 134)
-	frame.DebuffHighlight:SetPoint("CENTER", frame, "CENTER", 10, 0)
+	frame.DebuffHighlight:SetPoint("CENTER", 10, 0)
 end
