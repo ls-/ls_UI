@@ -28,6 +28,9 @@ end
 
 local function ItemTooltipHook(self)
 	local item, link = self:GetItem()
+
+	if not link then return end
+
 	local total = GetItemCount(item, true)
 	local _, _, id = find(link, "item:(%d+)")
 
@@ -45,6 +48,8 @@ end
 
 local function SpellTooltipHook(self)
 	local _, _, id = self:GetSpell()
+
+	if not id then return end
 
 	local line
 	for i = 1, self:NumLines() do
