@@ -13,7 +13,7 @@ local DISPELTYPES = {
 	MAGE = {Curse = false},
 }
 
-local CanDispel = DISPELTYPES[PlayerClass]
+local CanDispel = DISPELTYPES[PlayerClass] or {}
 local OriginalColors = {}
 local DebuffTypeColor = DebuffTypeColor
 
