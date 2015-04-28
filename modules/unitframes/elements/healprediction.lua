@@ -20,24 +20,23 @@ function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
 	local healAbsorb = self.healAbsorbBar
 	local damageAbsorb = self.absorbBar
 	local absorbGlow = self.__owner.AbsorbGlow
-
-	local _, maxHealth = UnitHealth(unit), UnitHealthMax(unit)
-	local myInitialHealAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
-
 	local appendTexture = healthbar:GetStatusBarTexture()
 	local orientation = self.myBar:GetOrientation()
 	local healthSize = orientation == "HORIZONTAL" and healthbar:GetWidth() or healthbar:GetHeight()
+	local totalHealAbsorbValue = UnitGetTotalHealAbsorbs(unit) or 0
+	local curHealAbsorbValue = healAbsorb:GetValue()
+	local maxHealth = UnitHealthMax(unit)
 
 	if myHeals and myHeals:GetValue() > 0 then
-		appendTexture = UpdateHealPredictionAnchor(myHeals, orientation, appendTexture, -(healthSize * myInitialHealAbsorb / maxHealth))
+		appendTexture = UpdateHealPredictionAnchor(myHeals, orientation, appendTexture, -(healthSize * totalHealAbsorbValue / maxHealth))
 	end
 
 	if otherHeals and otherHeals:GetValue() > 0 then
 		appendTexture = UpdateHealPredictionAnchor(otherHeals, orientation, appendTexture)
 	end
 
-	if healAbsorb and healAbsorb:GetValue() > 0 then
-		appendTexture = UpdateHealPredictionAnchor(healAbsorb, orientation, healthbar:GetStatusBarTexture(), -(healthSize * healAbsorbValue / maxHealth))
+	if healAbsorb and curHealAbsorbValue > 0 then
+		appendTexture = UpdateHealPredictionAnchor(healAbsorb, orientation, healthbar:GetStatusBarTexture(), -(healthSize * curHealAbsorbValue / maxHealth))
 	end
 
 	if damageAbsorb and damageAbsorb:GetValue() > 0 then
