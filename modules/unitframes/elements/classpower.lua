@@ -220,7 +220,7 @@ end
 function UF:CreateClassPowerBar(parent, max, cpType)
 	local bar = CreateFrame("Frame", "$parent"..cpType.."Bar", parent)
 	bar.__type = strupper(cpType)
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -365,7 +365,7 @@ end
 function UF:CreateEclipseBar(parent)
 	local bar = CreateFrame("Frame", "$parentEclipseBar", parent)
 	bar.__type = "ECLIPSE"
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -483,7 +483,7 @@ end
 function UF:CreateTotemBar(parent)
 	local bar = CreateFrame("Frame", "$parentTotemBar", parent)
 	bar.__type = "TOTEM"
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -540,7 +540,7 @@ function UF:CreateDemonicFury(parent)
 	local bar = CreateFrame("StatusBar", "$parentFuryBar", parent)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:SetOrientation("VERTICAL")
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 	bar.__type = "FURY"
@@ -605,7 +605,7 @@ end
 function UF:CreateBurningEmbers(parent)
 	local bar = CreateFrame("Frame", "$parentEmberBar", parent)
 	bar.__type = "EMBER"
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(3)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
