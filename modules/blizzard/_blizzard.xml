@@ -3,4 +3,5 @@
 	<Script file="archaeology.lua"/>
 	<Script file="mirror.lua"/>
 	<Script file="objectivetracker.lua"/>
+	<Script file="powerbaralt.lua"/>
 </Ui>

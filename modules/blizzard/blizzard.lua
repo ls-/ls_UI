@@ -9,4 +9,5 @@ function B:Initialize()
 	self:HandleArchaeology()
 	self:HandleMirrorTimer()
 	self:HandleObjectiveTracker()
+	self:HandlePowerBarAlt()
 end
