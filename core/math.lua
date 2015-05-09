@@ -90,5 +90,25 @@ function E:ColorGradient(perc, ...)
 end
 
 function E:ColorLighten(r, g, b, perc)
+	if type(r) == "table" then
+		if r.r then
+			r, g, b = r.r, r.g, r.b
+		else
+			r, g, b = unpack(r)
+		end
+	end
+
 	return min(1, r + 1 * perc), min(1, g + 1 * perc), min(1, b + 1 * perc)
+end
+
+function E:ColorDarken(r, g, b, perc)
+	if type(r) == "table" then
+		if r.r then
+			r, g, b = r.r, r.g, r.b
+		else
+			r, g, b = unpack(r)
+		end
+	end
+
+	return max(0, r - 1 * perc), max(0, g - 1 * perc), max(0, b - 1 * perc)
 end
