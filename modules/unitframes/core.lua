@@ -73,6 +73,8 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructPlayerFrame(frame)
 	elseif unit == "pet" then
 		UF:ConstructPetFrame(frame)
+	elseif unit == "target" then
+		UF:ConstructTargetFrame(frame)
 	end
 end
 
@@ -84,6 +86,7 @@ function UF:Initialize()
 	if ns.C.units.player.enabled then
 		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
 		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
+		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
 	end
 
 	for unit, object in next, UF.objects do

@@ -60,9 +60,10 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, true, 18, nil, true)
+	frame.Health = UF:CreateHealthBar(frame, 18, 2, nil, true, true)
 	frame.Health:SetSize(94, 132)
 	frame.Health:SetPoint("CENTER")
+	frame.Health.Value:SetParent(frame.Cover)
 	frame.Health.Value:SetPoint("CENTER", 0, 8)
 	tinsert(frame.mouseovers, frame.Health)
 
@@ -85,13 +86,14 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-	frame.Power = UF:CreatePowerBar(frame, true, 14)
+	frame.Power = UF:CreatePowerBar(frame, 14, 3, true)
 	frame.Power:SetSize(12, 128)
 	frame.Power:SetPoint("RIGHT", -19, 0)
+	frame.Power.Value:SetParent(frame.Cover)
 	frame.Power.Value:SetPoint("CENTER", 0, -8)
 	tinsert(frame.mouseovers, frame.Power)
 
-	frame.Castbar = UF:CreateCastBar(frame, 188, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)
+	frame.Castbar = UF:CreateCastBar(frame, 198, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)
 
 	frame.PvP = UF:CreateIcon(frame, "PvP")
 	frame.PvP:SetPoint("BOTTOM", -28, -14)

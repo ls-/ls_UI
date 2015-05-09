@@ -29,19 +29,21 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	fg:SetTexCoord(42 / 256, 84 / 256, 0, 134 / 256)
 
-	frame.Health = UF:CreateHealthBar(frame, true, 12, true)
+	frame.Health = UF:CreateHealthBar(frame, 12, 2, nil, true)
 	frame.Health:SetSize(8, 112)
 	frame.Health:SetPoint("CENTER", -6, 0)
 	frame.Health.Value:SetJustifyH("RIGHT")
+	frame.Health.Value:SetParent(frame.Cover)
 	frame.Health.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 	tinsert(frame.mouseovers, frame.Health)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
-	frame.Power = UF:CreatePowerBar(frame, true, 12)
+	frame.Power = UF:CreatePowerBar(frame, 12, 3, true)
 	frame.Power:SetSize(8, 102)
 	frame.Power:SetPoint("CENTER", 6, 0)
 	frame.Power.Value:SetJustifyH("RIGHT")
+	frame.Power.Value:SetParent(frame.Cover)
 	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 

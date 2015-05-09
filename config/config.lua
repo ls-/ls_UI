@@ -18,7 +18,7 @@ D["units"] = {
 	},
 	targettarget = {
 		enabled = true,
-		point = { "LEFT", "lsTargetFrame", "RIGHT", 14, 0 },
+		point = { "LEFT", "LSTargetFrame", "RIGHT", 14, 0 },
 	},
 	focus = {
 		enabled = true,

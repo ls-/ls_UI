@@ -887,7 +887,7 @@ function ns.lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		if unit ~= "player" and unit ~= "pet" then
+		if unit ~= "player" and unit ~= "pet" and unit ~= "target" then
 			if type(udata) == "table" and udata.enabled then
 				if unit ~= "boss" then
 					local name = "ls"..unit:gsub("%a", strupper, 1):gsub("target", "Target"):gsub("pet", "Pet").."Frame"
