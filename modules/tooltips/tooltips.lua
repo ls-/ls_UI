@@ -11,6 +11,8 @@ local find = strfind
 local function AuraTooltipHook(self, unit, index, filter)
 	local caster, _, _, id = select(8, UnitAura(unit, index, filter))
 
+	if not id then return end
+
 	self:AddLine(" ")
 
 	if caster then
