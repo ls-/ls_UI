@@ -27,7 +27,7 @@ D["units"] = {
 	},
 	focustarget = {
 		enabled = true,
-		point = { "RIGHT", "lsFocusFrame", "LEFT", -14, 0 },
+		point = { "RIGHT", "LSFocusFrame", "LEFT", -14, 0 },
 	},
 	party = {
 		enabled = true,

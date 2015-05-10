@@ -75,6 +75,8 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructPetFrame(frame)
 	elseif unit == "target" then
 		UF:ConstructTargetFrame(frame)
+	elseif unit == "focus" then
+		UF:ConstructFocusFrame(frame)
 	end
 end
 
@@ -87,6 +89,7 @@ function UF:Initialize()
 		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
 		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
 		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
+		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
 	end
 
 	for unit, object in next, UF.objects do
