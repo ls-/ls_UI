@@ -204,7 +204,7 @@ local function PostUpdateClassPower(bar, cur, max, changed, event)
 	else
 		bar:Show()
 		UF:Reskin(bar:GetParent(), bar.__type, true, max or 5)
-		
+
 		if cur / max == 1 then
 			for i = 1, max do
 				E:Blink(bar[i].Glow, 0.5, 0, 1)
@@ -320,13 +320,13 @@ end
 local function UpdateEclipseBarVisibility(bar, unit)
 	if bar:IsShown() then
 		bar.Dir:SetAlpha(1)
-		
+
 		UF:Reskin(bar:GetParent(), "ECLIPSE", true, 1)
 	else
 		E:StopBlink(bar.Glow, true)
 		E:StopBlink(bar.Sun, true)
 		E:StopBlink(bar.Moon, true)
-		
+
 		bar.Dir:SetAlpha(0)
 
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
@@ -609,9 +609,9 @@ function UF:CreateBurningEmbers(parent)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
-	for i = 1, 4 do
-		local r, g, b = unpack(M.colors.classpower.EMBER)
+	local r, g, b = unpack(M.colors.classpower.EMBER)
 
+	for i = 1, 4 do
 		local element = CreateFrame("StatusBar", nil, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -632,6 +632,63 @@ function UF:CreateBurningEmbers(parent)
 	end
 
 	bar.PostUpdate = UpdateBurningEmbers
+
+	return bar
+end
+
+local function UpdateComboBar(bar, cp)
+	if not bar[1]:IsShown() then
+		bar:Hide()
+	else
+		bar:Show()
+
+		if cp / 5 == 1 then
+			E:Blink(bar.Glow, 0.5)
+		else
+			E:StopBlink(bar.Glow)
+		end
+	end
+end
+
+function UF:CreateComboBar(parent)
+	local bar = CreateFrame("Frame", "$parentComboBar", parent)
+	bar:SetFrameLevel(4)
+	bar:SetSize(60, 2)
+	bar:SetPoint("TOPRIGHT", -25, -7)
+
+	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 0)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
+	fg:SetTexCoord(406 / 512, 484 / 512, 4 / 128, 14 / 128)
+	fg:SetSize(78, 10)
+	fg:SetPoint("CENTER")
+
+	local r, g, b = unpack(M.colors.classpower.COMBO)
+
+	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
+	glow:SetTexCoord(406 / 512, 470 / 512, 14 / 128, 20 / 128)
+	glow:SetSize(64, 6)
+	glow:SetPoint("CENTER")
+	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
+	glow:SetAlpha(0)
+	bar.Glow = glow
+
+	for i = 1, 5 do
+		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:SetVertexColor(r, g, b)
+		element:SetSize((i ~= 1 and i ~= 5) and 10 or 11, 2)
+
+		if i == 1 then
+			element:SetPoint("LEFT", 0, 0)
+		else
+			element:SetPoint("LEFT", bar[i - 1], "RIGHT", 2, 0)
+		end
+
+		bar[i] = element
+	end
+
+	bar.PostUpdate = UpdateComboBar
 
 	return bar
 end
