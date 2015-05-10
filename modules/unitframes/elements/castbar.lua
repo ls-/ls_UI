@@ -72,10 +72,10 @@ function UF:CreateCastBar(parent, width, coords, safezone, delay)
 	text:SetPoint("RIGHT", -2, 0)
 	bar.Text = text
 
-	local time = E:CreateFontString(bar, 12, nil, true)
+	local time = E:CreateFontString(bar, 10, nil, true)
 	time:SetJustifyH("RIGHT")
 	time:SetDrawLayer("ARTWORK", 1)
-	time:SetPoint("BOTTOMRIGHT", -2, -8)
+	time:SetPoint("BOTTOMRIGHT", 0, -5)
 	bar.Time = time
 
 	if safezone then
