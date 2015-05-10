@@ -90,6 +90,8 @@ function UF:ConstructTargetFrame(frame)
 	frame.RaidIcon:SetSize(24, 24)
 	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 22)
 
+	frame.CPoints = UF:CreateComboBar(frame)
+
 	local name = E:CreateFontString(cover, 14, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
@@ -111,4 +113,7 @@ function UF:ConstructTargetFrame(frame)
 	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 105 / 512, 210 / 512, 58 / 128, 91 / 128)
 	frame.DebuffHighlight:SetSize(105, 33)
 	frame.DebuffHighlight:SetPoint("CENTER", 53, 5)
+
+	frame.Buffs = UF:CreateBuffs(frame, {"BOTTOMRIGHT", frame, "TOPRIGHT", 0, 30}, 8)
+	frame.Debuffs = UF:CreateDebuffs(frame, {"BOTTOMLEFT", frame, "TOPLEFT", 0, 30}, 8)
 end
