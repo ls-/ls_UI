@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="auras.lua"/>
+	<Script file="castbar.lua"/>
+	<Script file="classpower.lua"/>
+	<Script file="debuffhighlight.lua"/>
+	<Script file="healprediction.lua"/>
+	<Script file="health.lua"/>
+	<Script file="icons.lua"/>
+	<Script file="power.lua"/>
+	<Script file="repexp.lua"/>
+	<Script file="tags.lua"/>
+	<Script file="threat.lua"/>
+</Ui>

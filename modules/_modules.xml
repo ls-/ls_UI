@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Include file="tools\_tools.xml"/>
+	<Script file="auras\auras.lua"/>
+	<Script file="auratracker\auratracker.lua"/>
+	<Include file="bars\_bars.xml"/>
+	<Include file="blizzard\_blizzard.xml"/>
+	<Script file="infobars\infobars.lua"/>
+	<Script file="micromenu\micromenu.lua"/>
+	<Script file="minimap\minimap.lua"/>
+	<Script file="mail\mail.lua"/>
+	<Script file="nameplates\nameplates.lua"/>
+	<Include file="tooltips\_tooltips.xml"/>
+	<Include file="unitframes\_unitframes.xml"/>
+</Ui>

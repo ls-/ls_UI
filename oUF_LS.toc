@@ -1,31 +1,18 @@
 ## Interface: 60100
 ## Author: lightspark
-## Version: 1.4.1
+## Version: 2.0.0-alpha
 ## Title: oUF: |cff1a9fc0LS|r
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
+init.lua
+config\_config.xml
 embeds\_embeds.xml
+media\_media.xml
+locales\_locales.xml
+modules\_modules.xml
+core\_core.xml
 
-localization\en.lua
-localization\ru.lua
-localization\cn.lua
-
-config.lua
-
-utilities\sharedmedia.lua
-utilities\sharedtemplates.xml
-utilities\functions.lua
-utilities\tags.lua
-
-units\unitframes.lua
-
-frames\minimap.lua
-frames\infobars.lua
-frames\mail.lua
-frames\buffs.lua
-frames\actionbars.lua
-frames\auratracker.lua
-frames\micromenu.lua
-frames\nameplates.lua
+# dev crap
+test\_test.xml
