@@ -50,7 +50,7 @@ function E:HandleStatusBar(bar, cascade)
 
 	if not cascade then
 		bar.ignoreFramePositionManager = true
-		bar:SetSize(198, 18)
+		bar:SetSize(196, 18)
 
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
