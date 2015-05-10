@@ -26,19 +26,17 @@ local function PostUpdateHealth(bar, unit, cur, max)
 		return bar.Value:SetFormattedText("|cff"..color.."%s|r", gsub(unit == "player" and SPELL_FAILED_CASTER_DEAD or DEAD, "[.]", ""))
 	end
 
+	local pattern = (unit ~= "player" and unit ~= "pet" and unit ~= "party") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
+
 	if cur < max then
 		if bar.__owner.isMouseOver then
-			bar.Value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
+			bar.Value:SetFormattedText(pattern, E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
 		else
-			if GetCVar("statusTextDisplay") == "PERCENT" then
-				bar.Value:SetFormattedText("|cffffffff%d%%|r", E:NumberToPerc(cur, max))
-			else
-				bar.Value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
-			end
+			bar.Value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
 		end
 	else
 		if bar.__owner.isMouseOver then
-			bar.Value:SetFormattedText("|cffffffff%s|r", E:NumberFormat(max, 1))
+			bar.Value:SetFormattedText(pattern, E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
 		else
 			bar.Value:SetText(nil)
 		end

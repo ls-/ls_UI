@@ -4,22 +4,13 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 local function PostUpdatePower(bar, unit, cur, max)
-	-- bar.Value:SetText(E:NumberFormat(cur))
-	-- bar.Value:SetVertexColor(0.4, 0.65, 0.95)
-	-- bar.Value:SetVertexColor(0.11, 0.75, 0.95)
-	-- local realUnit = self.__owner:GetAttribute("oUF-guessUnit") or unit
-	-- if realUnit ~= "player" and realUnit ~= "vehicle" and realUnit ~= "pet" then
-	-- 	if self.prevMax ~= max then
-	-- 		self.prevMax = max
-	-- 		if max == 0 then
-	-- 			ns.UnitFrameReskin(self.__owner, "sol")
-	-- 			return self:Hide(), self.Value:Hide()
-	-- 		else
-	-- 			ns.UnitFrameReskin(self.__owner, "sep")
-	-- 			self:Show() self.Value:Show()
-	-- 		end
-	-- 	end
-	-- end
+	if bar.Tube then
+		if max == 0 then
+			bar.Tube:Hide()
+		else
+			bar.Tube:Show()
+		end
+	end
 
 	if not bar.Value then return end
 
@@ -38,11 +29,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 		if bar.__owner.isMouseOver then
 			bar.Value:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur), E:NumberFormat(max))
 		elseif cur > 0 then
-			if GetCVar("statusTextDisplay") == "PERCENT" then
-				bar.Value:SetFormattedText("%d|cff"..color.."%%|r", E:NumberToPerc(cur, max))
-			else
-				bar.Value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
-			end
+			bar.Value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
 		else
 			bar.Value:SetText(nil)
 		end
@@ -55,7 +42,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 	end
 end
 
-function UF:CreatePowerBar(parent, textsize, level, vertical)
+function UF:CreatePowerBar(parent, textsize, level, textbg, vertical)
 	local unit = parent.unit
 
 	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
@@ -66,6 +53,15 @@ function UF:CreatePowerBar(parent, textsize, level, vertical)
 
 	local value = E:CreateFontString(power, textsize, "$parentPowerValue", true)
 	power.Value = value
+
+	if textbg then
+		local shadow = power:CreateTexture(nil, "OVERLAY", nil, 1)
+		shadow:SetTexture("Interface\\Scenarios\\Objective-Lineglow")
+		shadow:SetTexCoord(0, 1, 0, 13 / 16)
+		shadow:SetVertexColor(0, 0, 0)
+		shadow:SetPoint("TOPLEFT", value, "TOPLEFT", 0, -2)
+		shadow:SetPoint("BOTTOMRIGHT", value, "BOTTOMRIGHT", 0, 2)
+	end
 
 	power.colorPower = true
 	power.colorDisconnected = true

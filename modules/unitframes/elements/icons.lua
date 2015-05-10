@@ -51,10 +51,10 @@ local function CombatPostUpdate(self, inCombat)
 	end
 end
 
-function UF:CreateIcon(parent, type)
+function UF:CreateIcon(parent, type, size)
 	local icon = parent:CreateTexture("$parent"..type.."Icon", "BACKGROUND")
 	icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
-	icon:SetSize(18, 18)
+	icon:SetSize(size or 18, size or 18)
 
 	if ICONS[type] then
 		icon:SetTexCoord(unpack(ICONS[type]))

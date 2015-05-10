@@ -86,14 +86,14 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-	frame.Power = UF:CreatePowerBar(frame, 14, 3, true)
+	frame.Power = UF:CreatePowerBar(frame, 14, 3, nil, true)
 	frame.Power:SetSize(12, 128)
 	frame.Power:SetPoint("RIGHT", -19, 0)
 	frame.Power.Value:SetParent(frame.Cover)
 	frame.Power.Value:SetPoint("CENTER", 0, -8)
 	tinsert(frame.mouseovers, frame.Power)
 
-	frame.Castbar = UF:CreateCastBar(frame, 198, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)
+	frame.Castbar = UF:CreateCastBar(frame, 196, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)
 
 	frame.PvP = UF:CreateIcon(frame, "PvP")
 	frame.PvP:SetPoint("BOTTOM", -28, -14)

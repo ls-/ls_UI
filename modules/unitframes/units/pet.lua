@@ -39,7 +39,7 @@ function UF:ConstructPetFrame(frame)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
-	frame.Power = UF:CreatePowerBar(frame, 12, 3, true)
+	frame.Power = UF:CreatePowerBar(frame, 12, 3, nil, true)
 	frame.Power:SetSize(8, 102)
 	frame.Power:SetPoint("CENTER", 6, 0)
 	frame.Power.Value:SetJustifyH("RIGHT")
