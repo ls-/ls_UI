@@ -4,12 +4,12 @@ local E, M = ns.E, ns.M
 local THRESHOLD = 1.5
 
 local function Timer_OnUpdate(self, elapsed)
-	if not self.timer:IsShown() then return end
+	if not self.Timer:IsShown() then return end
 
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
-		local timer = self.timer
+		local timer = self.Timer
 
 		local time, color, abbr = E:TimeFormat(timer.duration + timer.start - GetTime(), true)
 
@@ -25,7 +25,7 @@ local function Timer_OnUpdate(self, elapsed)
 end
 
 local function SetCustomCooldown(self, start, duration)
-	local timer = self.timer
+	local timer = self.Timer
 
 	if start > 0 and duration > THRESHOLD then
 		timer.start = start
@@ -42,26 +42,25 @@ end
 
 local function CreateCooldownTimer(cooldown, textSize)
 	local holder= CreateFrame("Frame", nil, cooldown)
+	holder:SetFrameLevel(6)
 	holder:SetAllPoints()
 
 	local timer = E:CreateFontString(holder, textSize, nil, false, true)
 	timer:SetPoint("CENTER", 1, 0)
 	timer:SetJustifyH("CENTER")
 
-	holder.timer = timer
-
 	return timer
 
 end
 
 local function SetTimerTextHeight(self, height, flags)
-	self.timer:SetFont(M.font, height, flags or "THINOUTLINE")
+	self.Timer:SetFont(M.font, height, flags or "THINOUTLINE")
 end
 
 function E:HandleCooldown(cooldown, textSize)
 	if OmniCC or cooldown.handled then return end
 
-	cooldown.timer = CreateCooldownTimer(cooldown, textSize)
+	cooldown.Timer = CreateCooldownTimer(cooldown, textSize)
 
 	cooldown.SetTimerTextHeight = SetTimerTextHeight
 	cooldown:SetHideCountdownNumbers(true)
