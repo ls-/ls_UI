@@ -37,7 +37,7 @@ local function NamePlate_OnShow(self)
 	end
 
 	if healthbar.text then
-		healthbar.text:SetText(E:NumFormat(self.health:GetValue()))
+		healthbar.text:SetText(E:NumberFormat(self.health:GetValue()))
 	end
 
 	local name = self.name:GetText() or UNKNOWNOBJECT
@@ -82,7 +82,7 @@ local function NamePlateHealthBar_OnValueChanged(self, value)
 	bar:SetValue(value)
 
 	if bar.text then
-		bar.text:SetText(E:NumFormat(value))
+		bar.text:SetText(E:NumberFormat(value))
 	end
 end
 
