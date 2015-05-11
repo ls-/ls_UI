@@ -169,7 +169,7 @@ function HandleMinimapButton(button, cascade)
 end
 
 local function UpdateZoneText(text)
-	text:SetText(ZONE_COLOR_CODES[GetZonePVPInfo() or "other"]..GetMinimapZoneText().."|r")
+	text:SetText(ZONE_COLOR_CODES[GetZonePVPInfo() or "other"]..(GetMinimapZoneText() or UNKNOWN).."|r")
 end
 
 local function CheckTexPoint(point, base)
