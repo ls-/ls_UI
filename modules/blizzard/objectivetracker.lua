@@ -29,7 +29,7 @@ function B:HandleObjectiveTracker()
 	holder:SetFrameStrata("LOW")
 	holder:SetFrameLevel(1)
 	holder:SetSize(250, 18)
-	holder:SetPoint("TOPRIGHT", -170, -210)
+	holder:SetPoint("TOPRIGHT", -188, -210)
 
 	E:CreateMover(holder)
 
