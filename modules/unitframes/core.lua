@@ -75,8 +75,23 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructPetFrame(frame)
 	elseif unit == "target" then
 		UF:ConstructTargetFrame(frame)
+	elseif unit == "targettarget" then
+		UF:ConstructTargetTargetFrame(frame)
 	elseif unit == "focus" then
 		UF:ConstructFocusFrame(frame)
+	elseif unit == "focustarget" then
+		UF:ConstructFocusTargetFrame(frame)
+	elseif unit == "boss1" then
+		UF:CreateBossHeader()
+		UF:ConstructBossFrame(frame)
+	elseif unit == "boss2" then
+		UF:ConstructBossFrame(frame)
+	elseif unit == "boss3" then
+		UF:ConstructBossFrame(frame)
+	elseif unit == "boss4" then
+		UF:ConstructBossFrame(frame)
+	elseif unit == "boss5" then
+		UF:ConstructBossFrame(frame)
 	end
 end
 
@@ -85,16 +100,32 @@ function UF:Initialize()
 	self:RegisterStyle("LSv2", ConstructUnitFrame)
 	self:SetActiveStyle("LSv2")
 
-	if ns.C.units.player.enabled then
+	-- if ns.C.units.player.enabled then
 		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
 		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
 		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
+		UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
 		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
-	end
+		UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
+		UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
+		UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
+		UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
+		UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
+		UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
+	-- end
 
 	for unit, object in next, UF.objects do
-		object:SetPoint(unpack(C.units[unit].point))
+		if strmatch(unit, "^boss%d") then
+			local id = tonumber(strmatch(unit, "boss(%d)"))
+			if id == 1 then
+				object:SetPoint("TOP", "LSBossHeader", "TOP", 0, - 16)
+			else
+				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -C.units.boss.yOffset)
+			end
+		else
+			object:SetPoint(unpack(C.units[unit].point))
 
-		E:CreateMover(object)
+			E:CreateMover(object)
+		end
 	end
 end

@@ -106,13 +106,13 @@ function UF:ConstructFocusFrame(frame)
 	class:SetPoint("BOTTOM", frame, "TOP", 0, 0)
 	frame:Tag(class, "[difficulty][level][shortclassification]|r [custom:racetype]")
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 0 / 512, 105 / 512, 58 / 128, 91 / 128)
+	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 0 / 512, 105 / 512, 59 / 128, 92 / 128)
 	frame.Threat:SetSize(105, 33)
-	frame.Threat:SetPoint("CENTER", -53, 5)
+	frame.Threat:SetPoint("CENTER", -53, 4)
 
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 105 / 512, 210 / 512, 58 / 128, 91 / 128)
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 105 / 512, 210 / 512, 59 / 128, 92 / 128)
 	frame.DebuffHighlight:SetSize(105, 33)
-	frame.DebuffHighlight:SetPoint("CENTER", 53, 5)
+	frame.DebuffHighlight:SetPoint("CENTER", 53, 4)
 
 	frame.Buffs = UF:CreateBuffs(frame, {"BOTTOMRIGHT", frame, "TOPRIGHT", 0, 30}, 8)
 	frame.Debuffs = UF:CreateDebuffs(frame, {"BOTTOMLEFT", frame, "TOPLEFT", 0, 30}, 8)

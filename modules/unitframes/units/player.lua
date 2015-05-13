@@ -71,7 +71,7 @@ function UF:ConstructPlayerFrame(frame)
 
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
 	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	absrobGlow:SetTexCoord(372 / 512, 474 / 512, 202 / 512, 241 / 512)
+	absrobGlow:SetTexCoord(373 / 512, 475 / 512, 202 / 512, 241 / 512)
 	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
 	absrobGlow:SetSize(102, 39)
 	absrobGlow:SetPoint("CENTER", 0, 54)
@@ -93,7 +93,7 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Power.Value:SetPoint("CENTER", 0, -8)
 	tinsert(frame.mouseovers, frame.Power)
 
-	frame.Castbar = UF:CreateCastBar(frame, 196, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, true, true)
+	frame.Castbar = UF:CreateCastBar(frame, 196, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, nil, true, true)
 
 	frame.PvP = UF:CreateIcon(frame, "PvP")
 	frame.PvP:SetPoint("BOTTOM", -28, -14)
@@ -153,11 +153,11 @@ function UF:ConstructPlayerFrame(frame)
 	fcf.Mode = "Fountain"
 	fcf.YOffset = 20
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 198 / 512, 285 / 512, 202 / 512, 340 / 512)
+	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 199 / 512, 286 / 512, 202 / 512, 340 / 512)
 	frame.Threat:SetSize(87, 138)
 	frame.Threat:SetPoint("CENTER", -44, 17)
 
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 285 / 512, 372 / 512, 202 / 512, 340 / 512)
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 286 / 512, 373 / 512, 202 / 512, 340 / 512)
 	frame.DebuffHighlight:SetSize(87, 138)
 	frame.DebuffHighlight:SetPoint("CENTER", 44, 17)
 end
