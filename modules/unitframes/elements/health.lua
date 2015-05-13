@@ -26,7 +26,8 @@ local function PostUpdateHealth(bar, unit, cur, max)
 		return bar.Value:SetFormattedText("|cff"..color.."%s|r", gsub(unit == "player" and SPELL_FAILED_CASTER_DEAD or DEAD, "[.]", ""))
 	end
 
-	local pattern = (unit ~= "player" and unit ~= "pet" and unit ~= "party") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
+	local pattern = (unit == "target" or unit == "focus") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
+	-- local pattern = (unit ~= "player" and unit ~= "pet" and unit ~= "party" and unit ~= "vehicle") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
 
 	if cur < max then
 		if bar.__owner.isMouseOver then

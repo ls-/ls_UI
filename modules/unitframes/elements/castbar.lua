@@ -45,7 +45,7 @@ local function CustomDelayText(self, duration)
 	end
 end
 
-function UF:CreateCastBar(parent, width, coords, safezone, delay)
+function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	local bar = CreateFrame("StatusBar", parent:GetName().."CastBar", parent)
 	bar:SetStatusBarTexture(M.textures.statusbar)
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
@@ -66,7 +66,7 @@ function UF:CreateCastBar(parent, width, coords, safezone, delay)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
-	local text = E:CreateFontString(bar, 12, nil, true)
+	local text = E:CreateFontString(bar, textsize or 12, nil, true)
 	text:SetDrawLayer("ARTWORK", 1)
 	text:SetPoint("LEFT", 2, 0)
 	text:SetPoint("RIGHT", -2, 0)
