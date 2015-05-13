@@ -198,7 +198,9 @@ local function SkinButton(button)
 		bCD:SetPoint("TOPLEFT", 1, -1)
 		bCD:SetPoint("BOTTOMRIGHT", -1, 1)
 
-		E:HandleCooldown(bCD, 12)
+		if bCD:IsObjectType("Frame") then
+			E:HandleCooldown(bCD, 12)
+		end
 	end
 
 	if bNormalTexture then
