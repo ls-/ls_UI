@@ -18,7 +18,7 @@ D["units"] = {
 	},
 	targettarget = {
 		enabled = true,
-		point = { "LEFT", "LSTargetFrame", "RIGHT", 14, 0 },
+		point = { "LEFT", "LSTargetFrame", "RIGHT", 6, 0 },
 	},
 	focus = {
 		enabled = true,
@@ -27,7 +27,7 @@ D["units"] = {
 	},
 	focustarget = {
 		enabled = true,
-		point = { "RIGHT", "LSFocusFrame", "LEFT", -14, 0 },
+		point = { "RIGHT", "LSFocusFrame", "LEFT", -6, 0 },
 	},
 	party = {
 		enabled = true,
@@ -37,8 +37,8 @@ D["units"] = {
 	},
 	boss = {
 		enabled = true,
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -84, -240},
-		yOffset = 46,
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+		yOffset = 40,
 	},
 }
 
