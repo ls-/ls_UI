@@ -2,5 +2,4 @@
 	<Script file="core.lua"/>
 	<Include file="elements\_elements.xml"/>
 	<Include file="units\_units.xml"/>
-	<Script file="unitframes.lua"/>
 </Ui>

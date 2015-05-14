@@ -81,6 +81,8 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructFocusFrame(frame)
 	elseif unit == "focustarget" then
 		UF:ConstructFocusTargetFrame(frame)
+	elseif unit == "party" then
+		UF:ConstructPartyFrame(frame)
 	elseif unit == "boss1" then
 		UF:CreateBossHeader()
 		UF:ConstructBossFrame(frame)
@@ -100,19 +102,18 @@ function UF:Initialize()
 	self:RegisterStyle("LSv2", ConstructUnitFrame)
 	self:SetActiveStyle("LSv2")
 
-	-- if ns.C.units.player.enabled then
-		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
-		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
-		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
-		UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
-		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
-		UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
-		UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
-		UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
-		UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
-		UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
-		UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
-	-- end
+	UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
+	UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
+	UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
+	UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
+	UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
+	UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
+	UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
+	UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
+	UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
+	UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
+	UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
+	UF.objects["party"] = self:SpawnHeader("party", nil, C.units["party"].visibility, unpack(C.units["party"].attributes))
 
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
