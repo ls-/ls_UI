@@ -38,7 +38,7 @@ end
 local function OnLeaveHook(self)
 	self.isMouseOver = nil
 	self:ForceUpdate()
-	
+
 	GameTooltip:Hide()
 end
 
@@ -57,7 +57,7 @@ function UF:CreateAltPowerBar(parent, width, coords)
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetAllPoints()
 	bg:SetTexture(0.15, 0.15, 0.15, 1)
-	
+
 	local value = E:CreateFontString(bar, 10, "$parentAltPowerValue", true)
 	bar.Value = value
 

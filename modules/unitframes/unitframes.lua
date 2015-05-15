@@ -380,7 +380,7 @@ function ns.lsFactory(oUF)
 	oUF:SetActiveStyle("LS")
 
 	for unit, udata in pairs(ns.C.units) do
-		if unit ~= "player" and unit ~= "pet" and unit ~= "target" and unit ~= "focus" 
+		if unit ~= "player" and unit ~= "pet" and unit ~= "target" and unit ~= "focus"
 			and unit ~= "targettarget" and unit ~= "focustarget" then
 			if type(udata) == "table" and udata.enabled then
 				if unit ~= "boss" then

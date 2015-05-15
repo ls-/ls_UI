@@ -5,7 +5,7 @@ local UF = E.UF
 
 function UF:ConstructTargetFrame(frame)
 	local level = frame:GetFrameLevel()
-	
+
 	frame.mouseovers = {}
 	frame:SetSize(206, 38)
 

@@ -127,6 +127,6 @@ function Auras:Initialize()
 	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
 
 	E:SkinAuraButton(ConsolidatedBuffs)
-	
+
 	ConsolidatedBuffsTooltip:SetScale(1)
 end

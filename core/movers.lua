@@ -251,7 +251,7 @@ function E:CreateMover(object)
 	mover:RegisterForDrag("LeftButton")
 	mover:SetMovable(true)
 	mover:Hide()
-	
+
 	E:CreateBorder(mover, 5, -1)
 
 	local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)

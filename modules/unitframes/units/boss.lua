@@ -12,7 +12,7 @@ end
 
 function UF:ConstructBossFrame(frame)
 	local level = frame:GetFrameLevel()
-	
+
 	frame.mouseovers = {}
 	frame:SetSize(112, 38)
 
