@@ -49,6 +49,7 @@ function PetBattle:Initialize()
 		PetBattleFrame.BottomFrame.FlowFrame,
 		PetBattleFrame.BottomFrame.Delimiter,
 		PetBattleFrame.BottomFrame.MicroButtonFrame,
+		PetBattleFrameXPBar,
 	} do
 		f:SetParent(ns.M.hiddenParent)
 		f.ignoreFramePositionManager = true
@@ -59,31 +60,9 @@ function PetBattle:Initialize()
 		PetBattleFrame.BottomFrame.LeftEndCap,
 		PetBattleFrame.BottomFrame.RightEndCap,
 		PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2,
-		PetBattleFrameXPBarLeft,
-		PetBattleFrameXPBarMiddle,
-		PetBattleFrameXPBarRight,
 	} do
 		t:SetTexture(nil)
 	end
-
-	for i = 7, 12 do
-		select(i, PetBattleFrameXPBar:GetRegions()):SetTexture(nil)
-	end
-
-	select(5, PetBattleFrameXPBar:GetRegions()):SetTexture(unpack(COLORS.exp.bg))
-
-	PetBattleFrameXPBar:SetFrameStrata("LOW")
-	PetBattleFrameXPBar:SetFrameLevel(4)
-	PetBattleFrameXPBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 52)
-	PetBattleFrameXPBar:SetSize(378, 8)
-	PetBattleFrameXPBar:SetStatusBarTexture(TEXTURES.statusbar)
-	PetBattleFrameXPBar:SetStatusBarColor(unpack(COLORS.exp.normal))
-
-	PetBattleFrameXPBar.TextString:SetFont(ns.M.font, 10, "THINOUTLINE")
-
-	PetBattleFrameXPBar.Border = PetBattleFrameXPBar:CreateTexture(nil, "OVERLAY")
-	PetBattleFrameXPBar.Border:SetPoint("CENTER", 0, 0)
-	PetBattleFrameXPBar.Border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\exp_rep_border")
 
 	PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)

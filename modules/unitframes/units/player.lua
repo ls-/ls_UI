@@ -132,14 +132,6 @@ function UF:ConstructPlayerFrame(frame)
 		frame.Totems = UF:CreateTotemBar(frame)
 	end
 
-	frame.Experience = UF:CreateRepExpBar(frame, "Exp")
-	frame.Experience:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 52)
-	E:CreateMover(frame.Experience)
-
-	frame.Reputation = UF:CreateRepExpBar(frame, "Rep")
-	frame.Reputation:SetPoint("BOTTOM", "UIParent","BOTTOM", 0, 2)
-	E:CreateMover(frame.Reputation)
-
 	local fcf = CreateFrame("Frame", "$parentFeedbackFrame", frame)
 	fcf:SetFrameLevel(7)
 	fcf:SetSize(94, 94)
