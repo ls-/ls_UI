@@ -4,9 +4,9 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 function UF:ConstructPetFrame(frame)
+	local level = frame:GetFrameLevel()
+	
 	frame.mouseovers = {}
-
-	frame:SetFrameLevel(1)
 	frame:SetSize(42, 134)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -15,7 +15,7 @@ function UF:ConstructPetFrame(frame)
 	bg:SetTexCoord(84 / 256, 126 / 256, 0, 134 / 256)
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(4)
+	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -29,21 +29,23 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	fg:SetTexCoord(42 / 256, 84 / 256, 0, 134 / 256)
 
-	frame.Health = UF:CreateHealthBar(frame, 12, 2, nil, true)
+	frame.Health = UF:CreateHealthBar(frame, 12, nil, true)
+	frame.Health:SetFrameLevel(level + 1)
 	frame.Health:SetSize(8, 112)
 	frame.Health:SetPoint("CENTER", -6, 0)
 	frame.Health.Value:SetJustifyH("RIGHT")
-	frame.Health.Value:SetParent(frame.Cover)
+	frame.Health.Value:SetParent(cover)
 	frame.Health.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 	tinsert(frame.mouseovers, frame.Health)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
-	frame.Power = UF:CreatePowerBar(frame, 12, 3, nil, true)
+	frame.Power = UF:CreatePowerBar(frame, 12, nil, true)
+	frame.Power:SetFrameLevel(level + 2)
 	frame.Power:SetSize(8, 102)
 	frame.Power:SetPoint("CENTER", 6, 0)
 	frame.Power.Value:SetJustifyH("RIGHT")
-	frame.Power.Value:SetParent(frame.Cover)
+	frame.Power.Value:SetParent(cover)
 	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 

@@ -54,34 +54,32 @@ end
 
 function UF:CreateHealPrediction(parent, vertical)
 	local healthbar = parent.Health
+	local level = healthbar:GetFrameLevel()
+	local width, height = healthbar:GetSize()
 
 	local myBar = CreateFrame("StatusBar", "$parentMyIncomingHeal", healthbar)
-	myBar:SetFrameStrata(healthbar:GetFrameStrata())
-	myBar:SetFrameLevel(2)
+	myBar:SetFrameLevel(level)
 	myBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	myBar:SetStatusBarColor(0.0, 0.827, 0.765)
 	myBar:Hide()
 
 	local otherBar = CreateFrame("StatusBar", "$parentOtherIncomingHeal", healthbar)
-	otherBar:SetFrameStrata(healthbar:GetFrameStrata())
-	otherBar:SetFrameLevel(2)
+	otherBar:SetFrameLevel(level)
 	otherBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	otherBar:SetStatusBarColor(0.0, 0.631, 0.557)
 	otherBar:Hide()
 
 	local healAbsorbBar = CreateFrame("StatusBar", "$parentHealAbsorb", healthbar)
-	healAbsorbBar:SetFrameStrata(healthbar:GetFrameStrata())
-	healAbsorbBar:SetFrameLevel(2)
+	healAbsorbBar:SetFrameLevel(level + 1)
 	healAbsorbBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	healAbsorbBar:SetStatusBarColor(0.9, 0.1, 0.3)
 	healAbsorbBar:Hide()
 
 	local damageAbsorbBar = CreateFrame("StatusBar", "$parentTotalAbsorb", healthbar)
-	damageAbsorbBar:SetFrameStrata(healthbar:GetFrameStrata())
-	damageAbsorbBar:SetFrameLevel(2)
+	damageAbsorbBar:SetFrameLevel(level + 1)
 	damageAbsorbBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	damageAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	damageAbsorbBar:SetStatusBarColor(0, 0.7, 0.95)
@@ -90,35 +88,35 @@ function UF:CreateHealPrediction(parent, vertical)
 	if vertical then
 		myBar:SetPoint("LEFT")
 		myBar:SetPoint("RIGHT")
-		myBar:SetHeight(healthbar:GetHeight())
+		myBar:SetHeight(height)
 
 		otherBar:SetPoint("LEFT")
 		otherBar:SetPoint("RIGHT")
-		otherBar:SetHeight(healthbar:GetHeight())
+		otherBar:SetHeight(height)
 
 		healAbsorbBar:SetPoint("LEFT")
 		healAbsorbBar:SetPoint("RIGHT")
-		healAbsorbBar:SetHeight(healthbar:GetHeight())
+		healAbsorbBar:SetHeight(height)
 
 		damageAbsorbBar:SetPoint("LEFT")
 		damageAbsorbBar:SetPoint("RIGHT")
-		damageAbsorbBar:SetHeight(healthbar:GetHeight())
+		damageAbsorbBar:SetHeight(height)
 	else
 		myBar:SetPoint("TOP")
 		myBar:SetPoint("BOTTOM")
-		myBar:SetWidth(healthbar:GetWidth())
+		myBar:SetWidth(width)
 
 		otherBar:SetPoint("TOP")
 		otherBar:SetPoint("BOTTOM")
-		otherBar:SetWidth(healthbar:GetWidth())
+		otherBar:SetWidth(width)
 
 		healAbsorbBar:SetPoint("TOP")
 		healAbsorbBar:SetPoint("BOTTOM")
-		healAbsorbBar:SetWidth(healthbar:GetWidth())
+		healAbsorbBar:SetWidth(width)
 
 		damageAbsorbBar:SetPoint("TOP")
 		damageAbsorbBar:SetPoint("BOTTOM")
-		damageAbsorbBar:SetWidth(healthbar:GetWidth())
+		damageAbsorbBar:SetWidth(width)
 	end
 
 	return {

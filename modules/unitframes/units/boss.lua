@@ -11,10 +11,13 @@ function UF:CreateBossHeader()
 end
 
 function UF:ConstructBossFrame(frame)
+	local level = frame:GetFrameLevel()
+	
 	frame.mouseovers = {}
-
-	frame:SetFrameLevel(1)
 	frame:SetSize(112, 38)
+
+	frame.unit = "player"
+	E:AlwaysShow(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
@@ -22,7 +25,7 @@ function UF:ConstructBossFrame(frame)
 	bg:SetAllPoints()
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(3)
+	cover:SetFrameLevel(level + 2)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -38,7 +41,8 @@ function UF:ConstructBossFrame(frame)
 	fg:SetSize(106, 30)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, 12, 2, true)
+	frame.Health = UF:CreateHealthBar(frame, 12, true)
+	frame.Health:SetFrameLevel(level + 1)
 	frame.Health:SetSize(90, 20)
 	frame.Health:SetPoint("CENTER")
 	frame.Health.Value:SetJustifyH("RIGHT")
@@ -57,7 +61,8 @@ function UF:ConstructBossFrame(frame)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
 
-	frame.Power = UF:CreatePowerBar(frame, 10, 4, true)
+	frame.Power = UF:CreatePowerBar(frame, 10, true)
+	frame.Power:SetFrameLevel(level + 3)
 	frame.Power:SetSize(62, 2)
 	frame.Power:SetPoint("CENTER", 0, -11)
 	frame.Power.Value:SetJustifyH("LEFT")

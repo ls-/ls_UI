@@ -36,7 +36,7 @@ local function PostCreateAuraIcon(frame, button)
 
 	local fg = CreateFrame("Frame", nil, button)
 	fg:SetAllPoints(button)
-	fg:SetFrameLevel(5)
+	fg:SetFrameLevel(button:GetFrameLevel() + 2)
 	button.Fg = fg
 
 	E:CreateBorder(fg, 6)

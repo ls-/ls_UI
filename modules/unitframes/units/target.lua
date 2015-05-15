@@ -4,9 +4,9 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 function UF:ConstructTargetFrame(frame)
+	local level = frame:GetFrameLevel()
+	
 	frame.mouseovers = {}
-
-	frame:SetFrameLevel(1)
 	frame:SetSize(206, 38)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -15,7 +15,7 @@ function UF:ConstructTargetFrame(frame)
 	bg:SetAllPoints()
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(3)
+	cover:SetFrameLevel(level + 2)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -31,7 +31,8 @@ function UF:ConstructTargetFrame(frame)
 	fg:SetSize(200, 30)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, 12, 2, true)
+	frame.Health = UF:CreateHealthBar(frame, 12, true)
+	frame.Health:SetFrameLevel(level + 1)
 	frame.Health:SetSize(184, 20)
 	frame.Health:SetPoint("CENTER")
 	frame.Health.Value:SetJustifyH("RIGHT")
@@ -50,7 +51,8 @@ function UF:ConstructTargetFrame(frame)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
 
-	frame.Power = UF:CreatePowerBar(frame, 10, 4, true)
+	frame.Power = UF:CreatePowerBar(frame, 10, true)
+	frame.Power:SetFrameLevel(level + 3)
 	frame.Power:SetSize(156, 2)
 	frame.Power:SetPoint("CENTER", 0, -11)
 	frame.Power.Value:SetJustifyH("LEFT")
@@ -90,7 +92,7 @@ function UF:ConstructTargetFrame(frame)
 	frame.RaidIcon:SetSize(24, 24)
 	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 22)
 
-	frame.CPoints = UF:CreateComboBar(frame)
+	frame.CPoints = UF:CreateComboBar(frame, level + 3)
 
 	local name = E:CreateFontString(cover, 14, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)

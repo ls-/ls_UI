@@ -4,9 +4,9 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 function UF:ConstructPlayerFrame(frame)
+	local level = frame:GetFrameLevel()
+	
 	frame.mouseovers = {}
-
-	frame:SetFrameLevel(1)
 	frame:SetSize(164, 164)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
@@ -16,7 +16,7 @@ function UF:ConstructPlayerFrame(frame)
 	bg:SetPoint("CENTER")
 
 	local mid = CreateFrame("Frame", nil, frame)
-	mid:SetFrameLevel(3)
+	mid:SetFrameLevel(level + 3)
 	mid:SetAllPoints()
 
 	local ring = mid:CreateTexture(nil, "BACKGROUND", nil, 1)
@@ -26,7 +26,7 @@ function UF:ConstructPlayerFrame(frame)
 	ring:SetPoint("CENTER", 0, -17)
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(4)
+	cover:SetFrameLevel(level + 5)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -60,10 +60,11 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, 18, 2, nil, true, true)
+	frame.Health = UF:CreateHealthBar(frame, 18, nil, true, true)
+	frame.Health:SetFrameLevel(level + 1)
 	frame.Health:SetSize(94, 132)
 	frame.Health:SetPoint("CENTER")
-	frame.Health.Value:SetParent(frame.Cover)
+	frame.Health.Value:SetParent(cover)
 	frame.Health.Value:SetPoint("CENTER", 0, 8)
 	tinsert(frame.mouseovers, frame.Health)
 
@@ -86,10 +87,11 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-	frame.Power = UF:CreatePowerBar(frame, 14, 3, nil, true)
+	frame.Power = UF:CreatePowerBar(frame, 14, nil, true)
+	frame.Power:SetFrameLevel(level + 4)
 	frame.Power:SetSize(12, 128)
 	frame.Power:SetPoint("RIGHT", -19, 0)
-	frame.Power.Value:SetParent(frame.Cover)
+	frame.Power.Value:SetParent(cover)
 	frame.Power.Value:SetPoint("CENTER", 0, -8)
 	tinsert(frame.mouseovers, frame.Power)
 
@@ -113,23 +115,23 @@ function UF:ConstructPlayerFrame(frame)
 	UF:Reskin(frame, "NONE", true, 0, "NONE")
 
 	if E.playerclass == "PRIEST" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "ShadowOrb")
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "ShadowOrb", level + 4)
 	elseif E.playerclass == "MONK" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Chi")
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Chi", level + 4)
 	elseif E.playerclass == "PALADIN" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holypower")
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holypower", level + 4)
 	elseif ns.E.playerclass == "WARLOCK" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "SoulShard")
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "SoulShard", level + 4)
 
-		frame.BurningEmbers = UF:CreateBurningEmbers(frame)
+		frame.BurningEmbers = UF:CreateBurningEmbers(frame, level + 4)
 
-		frame.DemonicFury = UF:CreateDemonicFury(frame)
+		frame.DemonicFury = UF:CreateDemonicFury(frame, level + 4)
 	elseif E.playerclass == "DEATHKNIGHT" then
-		frame.Runes = UF:CreateRuneBar(frame)
+		frame.Runes = UF:CreateRuneBar(frame, level + 4)
 	elseif E.playerclass == "DRUID" then
-		frame.EclipseBar = UF:CreateEclipseBar(frame)
+		frame.EclipseBar = UF:CreateEclipseBar(frame, level + 4)
 	elseif E.playerclass == "SHAMAN" then
-		frame.Totems = UF:CreateTotemBar(frame)
+		frame.Totems = UF:CreateTotemBar(frame, level + 4)
 	end
 
 	local fcf = CreateFrame("Frame", "$parentFeedbackFrame", frame)

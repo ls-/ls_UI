@@ -217,10 +217,10 @@ local function PostUpdateClassPower(bar, cur, max, changed, event)
 	end
 end
 
-function UF:CreateClassPowerBar(parent, max, cpType)
+function UF:CreateClassPowerBar(parent, max, cpType, level)
 	local bar = CreateFrame("Frame", "$parent"..cpType.."Bar", parent)
 	bar.__type = strupper(cpType)
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -287,10 +287,10 @@ local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
 	end
 end
 
-function UF:CreateRuneBar(parent)
+function UF:CreateRuneBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentRuneBar", parent)
 	bar.__type = "RUNE"
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -362,10 +362,10 @@ local function UpdateEclipseBarDirection(bar, unit)
 	end
 end
 
-function UF:CreateEclipseBar(parent)
+function UF:CreateEclipseBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentEclipseBar", parent)
 	bar.__type = "ECLIPSE"
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -480,10 +480,10 @@ local function UpdateTotemBar(bar, priorities, haveTotem, name, start, duration)
 	end
 end
 
-function UF:CreateTotemBar(parent)
+function UF:CreateTotemBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentTotemBar", parent)
 	bar.__type = "TOTEM"
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -536,11 +536,11 @@ local function UpdateDemonicFury(bar, cur, max)
 	end
 end
 
-function UF:CreateDemonicFury(parent)
+function UF:CreateDemonicFury(parent, level)
 	local bar = CreateFrame("StatusBar", "$parentFuryBar", parent)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:SetOrientation("VERTICAL")
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 	bar.__type = "FURY"
@@ -602,10 +602,10 @@ local function UpdateBurningEmbers(bar, full, count)
 	end
 end
 
-function UF:CreateBurningEmbers(parent)
+function UF:CreateBurningEmbers(parent, level)
 	local bar = CreateFrame("Frame", "$parentEmberBar", parent)
 	bar.__type = "EMBER"
-	bar:SetFrameLevel(3)
+	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
@@ -650,9 +650,9 @@ local function UpdateComboBar(bar, cp)
 	end
 end
 
-function UF:CreateComboBar(parent)
+function UF:CreateComboBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentComboBar", parent)
-	bar:SetFrameLevel(4)
+	bar:SetFrameLevel(level)
 	bar:SetSize(60, 2)
 	bar:SetPoint("TOPRIGHT", -25, -7)
 

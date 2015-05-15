@@ -44,11 +44,10 @@ local function PostUpdateHealth(bar, unit, cur, max)
 	end
 end
 
-function UF:CreateHealthBar(parent, textsize, level, reaction, vertical, lowhp)
+function UF:CreateHealthBar(parent, textsize, reaction, vertical, lowhp)
 	local unit = parent.unit
 
 	local health = CreateFrame("StatusBar", "$parentHealthBar", parent)
-	health:SetFrameLevel(level)
 	health:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	health:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(health)

@@ -4,9 +4,9 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 function UF:ConstructFocusTargetFrame(frame)
+	local level = frame:GetFrameLevel()
+	
 	frame.mouseovers = {}
-
-	frame:SetFrameLevel(1)
 	frame:SetSize(112, 38)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -15,7 +15,7 @@ function UF:ConstructFocusTargetFrame(frame)
 	bg:SetAllPoints()
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(3)
+	cover:SetFrameLevel(level + 2)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -31,7 +31,8 @@ function UF:ConstructFocusTargetFrame(frame)
 	fg:SetSize(106, 30)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, 12, 2, true)
+	frame.Health = UF:CreateHealthBar(frame, 12, true)
+	frame.Health:SetFrameLevel(level + 1)
 	frame.Health:SetSize(90, 20)
 	frame.Health:SetPoint("CENTER")
 	frame.Health.Value:SetJustifyH("RIGHT")

@@ -42,11 +42,10 @@ local function PostUpdatePower(bar, unit, cur, max)
 	end
 end
 
-function UF:CreatePowerBar(parent, textsize, level, textbg, vertical)
+function UF:CreatePowerBar(parent, textsize, textbg, vertical)
 	local unit = parent.unit
 
 	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
-	power:SetFrameLevel(level)
 	power:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(power)
