@@ -16,9 +16,6 @@ function UF:ConstructBossFrame(frame)
 	frame.mouseovers = {}
 	frame:SetSize(112, 38)
 
-	frame.unit = "player"
-	E:AlwaysShow(frame)
-
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
 	bg:SetTexCoord(0 / 256, 112 / 256, 0 / 128, 38 / 128)
