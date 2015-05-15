@@ -6,7 +6,11 @@ E.MM = {}
 local MM = E.MM
 
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
-local GRADIENT = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
+local GRADIENT_GYR = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
+local GRADIENT_RYG = {0.9, 0.15, 0.15, 0.9, 0.65, 0.15, 0.15, 0.65, 0.15}
+local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
+
+local wipe, find = wipe, strfind
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
@@ -61,6 +65,24 @@ local MICRO_BUTTON_LAYOUT = {
 	},
 }
 
+local function ShowTooltipStatusBar(self, min, max, value, ...)
+	self:AddLine(" ")
+
+	local index = self.shownStatusBars + 1
+	local statusBar = _G["GameTooltipStatusBar"..index]
+
+	statusBar.Text:SetText(value.." / "..max)
+	statusBar:SetMinMaxValues(min, max)
+	statusBar:SetValue(value)
+	statusBar:SetStatusBarColor(...)
+	statusBar:SetPoint("LEFT", self:GetName().."TextLeft"..self:NumLines(), "LEFT", 0, -2)
+	statusBar:SetPoint("RIGHT", self, "RIGHT", -9, 0)
+	statusBar:Show()
+
+	self.shownStatusBars = index
+	self:SetMinimumWidth(140)
+end
+
 local function SimpleSort(a, b)
 	if a and b then
 		return a[2] > b[2]
@@ -71,19 +93,19 @@ local function UpdatePerformanceBar(self)
 	local _, _, latencyHome, latencyWorld = GetNetStats()
 	local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
 
-	self.performance:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT)))
+	self.performance:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT_GYR)))
 end
 
 local addons = {}
 local function MainMenuMicroButton_OnEnter(self)
-	GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, self.newbieText)
+	GameTooltip_AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
 	GameTooltip:AddLine(" ")
 
 	GameTooltip:AddLine("Latency:")
 
 	local _, _, latencyHome, latencyWorld = GetNetStats()
-	local colorHome = E:RGBToHEX(E:ColorGradient(latencyHome / HIGH_LATENCY, unpack(GRADIENT)))
-	local colorWorld = E:RGBToHEX(E:ColorGradient(latencyWorld / HIGH_LATENCY, unpack(GRADIENT)))
+	local colorHome = E:RGBToHEX(E:ColorGradient(latencyHome / HIGH_LATENCY, unpack(GRADIENT_GYR)))
+	local colorWorld = E:RGBToHEX(E:ColorGradient(latencyWorld / HIGH_LATENCY, unpack(GRADIENT_GYR)))
 
 	GameTooltip:AddDoubleLine("Home", "|cff"..colorHome..latencyHome.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
 	GameTooltip:AddDoubleLine("World", "|cff"..colorWorld..latencyWorld.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
@@ -111,7 +133,7 @@ local function MainMenuMicroButton_OnEnter(self)
 		if addons[i][3] then
 			local m = addons[i][2]
 
-			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory - m), unpack(GRADIENT)))
+			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory - m), unpack(GRADIENT_GYR)))
 		end
 	end
 
@@ -132,7 +154,92 @@ local function MainMenuMicroButton_OnUpdate(self, elapsed)
 	end
 end
 
+local function CharacterMicroButton_OnEnter(self)
+	if C_PetBattles.IsInBattle() then
+		for i = 1, 3 do
+			local petID, _, _, _, locked = C_PetJournal.GetPetLoadOutInfo(i)
+
+			if petID and not locked then
+				local _, customName, level, xp, maxXp, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
+				local _, _, _, _, rarity = C_PetJournal.GetPetStats(petID)
+				local color = ITEM_QUALITY_COLORS[rarity - 1]
+
+				if level < 25 then
+					if i == 1 then
+						GameTooltip:AddLine(EXPERIENCE_COLON)
+					else
+						GameTooltip:AddLine(" ")
+					end
+
+					GameTooltip:AddLine(customName or name, color.r, color.g, color.b)
+					ShowTooltipStatusBar(GameTooltip, 0, maxXp, xp, 0.11, 0.75, 0.95)
+				end
+			end
+		end
+	else
+		local total, cur, max = 100
+
+		for _, v in next, DURABILITY_SLOTS do
+			cur, max = GetInventoryItemDurability(v)
+
+			if cur then
+				cur = cur / max * 100
+
+				if cur < total then
+					total = cur
+				end
+			end
+		end
+
+		GameTooltip:AddDoubleLine(DURABILITY..":", E:Round(total).."%", 1, 0.82, 0, E:ColorGradient(total / 100, unpack(GRADIENT_RYG)))
+
+		if UnitLevel('player') < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(EXPERIENCE_COLON)
+			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, 0.11, 0.75, 0.95)
+			ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), 0.11, 0.75, 0.95)
+		end
+
+		local name, standing, repMin, repMax, repValue, factionID = GetWatchedFactionInfo()
+
+		if name then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine(REPUTATION..":")
+
+			local min, max, value = 0, 1, 1
+			local text = GetText("FACTION_STANDING_LABEL"..standing, UnitSex("player"))
+			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+
+			if friendRep then
+				if nextFriendThreshold then
+					min, max, value = friendThreshold, nextFriendThreshold, friendRep
+				else
+					max, value = 1, 1
+				end
+
+				standing = 5
+				text = friendTextLevel
+			else
+				max, value = repMax - repMin, repValue - repMin
+			end
+
+			local color = FACTION_BAR_COLORS[standing]
+
+			GameTooltip:AddDoubleLine(name, text, 1, 1, 1, color.r, color.g, color.b)
+			ShowTooltipStatusBar(GameTooltip, 0, max, value, color.r, color.g, color.b)
+		end
+	end
+
+	GameTooltip:Show()
+end
+
 local function MicroButton_OnLeave(self)
+	for i = 1, GameTooltip.shownStatusBars do
+		_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(0.15, 0.65, 0.15)
+		_G[GameTooltip:GetName().."StatusBar"..i]:Hide()
+	end
+
+	GameTooltip.shownStatusBars = 0
 	GameTooltip:Hide()
 end
 
@@ -274,6 +381,7 @@ function MM:Initialize()
 
 		if b == "CharacterMicroButton" then
 			E:AlwaysHide(MicroButtonPortrait)
+			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
 		elseif b == "GuildMicroButton" then
 			E:AlwaysHide(GuildMicroButtonTabard)
 

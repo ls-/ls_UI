@@ -65,6 +65,18 @@ local function SpellTooltipHook(self)
 	self:Show()
 end
 
+local function AddTooltipStatusBar(self, num)
+	local bar
+	for i = 1, num do
+		bar = CreateFrame("StatusBar", "GameTooltipStatusBar"..i, self, "TooltipStatusBarTemplate")
+		bar:SetStatusBarColor(0.15, 0.65, 0.15)
+		E:HandleStatusBar(bar, nil, 12)
+		bar.Text:SetFont(M.font, 10)
+	end
+
+	self.numStatusBars, self.shownStatusBars = num, 0
+end
+
 function TT:Initialize()
 	hooksecurefunc(GameTooltip, "SetUnitAura", AuraTooltipHook)
 	hooksecurefunc(GameTooltip, "SetUnitBuff", AuraTooltipHook)
@@ -72,4 +84,6 @@ function TT:Initialize()
 
 	GameTooltip:HookScript("OnTooltipSetItem", ItemTooltipHook)
 	GameTooltip:HookScript("OnTooltipSetSpell", SpellTooltipHook)
+
+	AddTooltipStatusBar(GameTooltip, 6)
 end

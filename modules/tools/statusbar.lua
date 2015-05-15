@@ -1,7 +1,7 @@
 local AddOn, ns = ...
 local E, M = ns.E, ns.M
 
-function E:HandleStatusBar(bar, cascade)
+function E:HandleStatusBar(bar, addBorder, height, cascade)
 	local children = {bar:GetChildren()}
 	local regions = {bar:GetRegions()}
 
@@ -36,7 +36,7 @@ function E:HandleStatusBar(bar, cascade)
 
 	for _, child in next, children do
 		if child:IsObjectType("StatusBar") then
-			tbackground, ttext, tsbt = self:HandleStatusBar(child, true)
+			tbackground, ttext, tsbt = self:HandleStatusBar(child, nil, nil, true)
 		end
 	end
 
@@ -50,7 +50,7 @@ function E:HandleStatusBar(bar, cascade)
 
 	if not cascade then
 		bar.ignoreFramePositionManager = true
-		bar:SetSize(196, 18)
+		bar:SetSize(196, height or 18)
 
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -77,7 +77,9 @@ function E:HandleStatusBar(bar, cascade)
 			sb:SetAllPoints()
 		end
 
-		E:CreateBorder(bar, 8)
+		if addBorder then
+			E:CreateBorder(bar, 8)
+		end
 	else
 		return background, text, sbt
 	end
