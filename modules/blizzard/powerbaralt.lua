@@ -5,10 +5,8 @@ local B = E.Blizzard
 
 function B:HandlePowerBarAlt()
 	local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
-	holder:SetFrameLevel(1)
 	holder:SetSize(64, 64)
 	holder:SetPoint("BOTTOM", 0, 230)
-
 	E:CreateMover(holder)
 
 	PlayerPowerBarAlt:ClearAllPoints()

@@ -193,7 +193,7 @@ local function CharacterMicroButton_OnEnter(self)
 
 		GameTooltip:AddDoubleLine(DURABILITY..":", E:Round(total).."%", 1, 0.82, 0, E:ColorGradient(total / 100, unpack(GRADIENT_RYG)))
 
-		if UnitLevel('player') < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
+		if UnitLevel("player") < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(EXPERIENCE_COLON)
 			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, 0.11, 0.75, 0.95)

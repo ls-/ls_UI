@@ -77,7 +77,7 @@ D["auratracker"] = {
 
 D["minimap"] = {
 	enabled = true,
-	point = {"BOTTOM", "UIParent", "BOTTOM", 306, 86},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 306 , 80},
 }
 
 D["infobars"] = {
@@ -96,19 +96,19 @@ D["nameplates"] = {
 D["bars"] = {
 	enabled = true,
 	bar1 = { -- MainMenuBar
-		point = {"BOTTOM", 0, 15},
+		point = {"BOTTOM", 0, 12},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
 	},
 	bar2 = { -- MultiBarBottomLeft
-		point = {"BOTTOM", 0, 62},
+		point = {"BOTTOM", 0, 53},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
 	},
 	bar3 = { -- MultiBarBottomRight
-		point = {"BOTTOM", 0, 94},
+		point = {"BOTTOM", 0, 85},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
@@ -138,21 +138,21 @@ D["bars"] = {
 		direction = "RIGHT",
 	},
 	extra = { -- ExtraAction
-		point = {"BOTTOM", -171, 154},
+		point = {"BOTTOM", -170, 149},
 		button_size = 40,
 	},
 	vehicle = { -- LeaveVehicle
-		point = {"BOTTOM", 171, 154},
+		point = {"BOTTOM", 170, 149},
 		button_size = 40,
 	},
 }
 
 D["micromenu"] = {
 	holder1 = {
-		point = {"BOTTOM", -270, 8},
+		point = {"BOTTOM", -266, 4},
 	},
 	holder2 = {
-		point = {"BOTTOM", 270, 8},
+		point = {"BOTTOM", 266, 4},
 	},
 }
 
@@ -184,7 +184,7 @@ D["petbattle"] = {
 
 D["bags"] = {
 	enabled = true,
-	point = {"LEFT", "LSMBHolderRight", "RIGHT", 12, 0},
+	point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
 	button_size = 26,
 	button_gap = 4,
 	direction = "RIGHT",

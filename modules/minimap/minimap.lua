@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
 
 E.Minimap = {}
 
@@ -301,10 +301,15 @@ end
 function MM:Initialize()
 	LoadAddOn("Blizzard_TimeManager")
 
+	local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
+	holder:SetSize(164, 164)
+	holder:SetPoint(unpack(C.minimap.point))
+	E:CreateMover(holder)
+
 	Minimap:EnableMouseWheel()
-	Minimap:SetParent("UIParent")
+	Minimap:SetParent(holder)
 	Minimap:ClearAllPoints()
-	Minimap:SetPoint(unpack(ns.C.minimap.point))
+	Minimap:SetPoint("CENTER")
 	Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
 	Minimap:RegisterEvent("ZONE_CHANGED");
 	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS");
@@ -313,7 +318,6 @@ function MM:Initialize()
 	Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 	Minimap:SetScript("OnEnter", Minimap_OnEnter)
 	Minimap:SetScript("OnLeave", Minimap_OnLeave)
-	E:CreateMover(Minimap)
 
 	RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
