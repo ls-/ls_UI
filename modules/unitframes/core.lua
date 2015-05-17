@@ -108,7 +108,6 @@ local function ConstructUnitFrame(frame, unit)
 	elseif unit == "focustarget" then
 		UF:ConstructFocusTargetFrame(frame)
 	elseif unit == "boss1" then
-		UF:CreateBossHeader()
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss2" then
 		UF:ConstructBossFrame(frame)
@@ -142,8 +141,11 @@ function UF:Initialize()
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
 			local id = tonumber(strmatch(unit, "boss(%d)"))
+
 			if id == 1 then
-				object:SetPoint("TOP", "LSBossHeader", "TOP", 0, - 16)
+				UF:CreateBossHolder()
+
+				object:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, - 16)
 			else
 				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -40)
 			end

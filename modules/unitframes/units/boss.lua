@@ -3,11 +3,11 @@ local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
 
-function UF:CreateBossHeader()
-	local header = CreateFrame("Frame", "LSBossHeader", UIParent)
-	header:SetSize(112, (38 + 18) * 5 + 40 * 3)
-	header:SetPoint(unpack(C.units.boss.point))
-	E:CreateMover(header)
+function UF:CreateBossHolder()
+	local holder = CreateFrame("Frame", "LSBossHolder", UIParent)
+	holder:SetSize(112 + 4 + 102, (38 + 18) * 5 + 40 * 3)
+	holder:SetPoint(unpack(C.units.boss.point))
+	E:CreateMover(holder)
 end
 
 function UF:ConstructBossFrame(frame)
