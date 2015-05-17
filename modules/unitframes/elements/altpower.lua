@@ -6,9 +6,13 @@ local UF = E.UF
 local function PostUpdateAltPower(bar, min, cur, max)
 	if not bar.Value then return end
 
-	local unit = bar.__owner.unit
-	local _, r, g, b = UnitAlternatePowerTextureInfo(unit, 2)
-	local color = E:RGBToHEX(r or 0.9, g or 0.65, b or 0.15)
+	local _, r, g, b = UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
+
+	if (r == 1 and g == 1 and b == 1) or not b then
+		r, g, b = 0.4, 0.65, 0.95
+	end
+
+	bar:SetStatusBarColor(r, g, b)
 
 	if cur < max then
 		if bar.isMouseOver then
