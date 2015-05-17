@@ -16,11 +16,12 @@ local function LSUnitFrame_OnEnter(self)
 	UnitFrame_OnEnter(self)
 
 	local name = gsub(self:GetName(), "%d", "")
-	-- if frameName == "lsPartyFrameUnitButton" then
-	-- 	PartyMemberBuffTooltip:ClearAllPoints()
-	-- 	PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
-	-- 	PartyMemberBuffTooltip_Update(self)
-	if name == "LSPetFrame" then
+
+	if name == "LSPartyFrameUnitButton" then
+		PartyMemberBuffTooltip:ClearAllPoints()
+		PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
+		PartyMemberBuffTooltip_Update(self)
+	elseif name == "LSPetFrame" then
 		PartyMemberBuffTooltip:ClearAllPoints()
 		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		PartyMemberBuffTooltip_Update(self)
@@ -68,9 +69,10 @@ local function LSUnitFrame_OnLeave(self)
 	UnitFrame_OnLeave(self)
 
 	local name = gsub(self:GetName(), "%d", "")
-	-- if name == "lsPartyFrameUnitButton" then
-	-- 	PartyMemberBuffTooltip:Hide()
-	if name == "LSPetFrame" then
+
+	if name == "LSPartyFrameUnitButton" then
+		PartyMemberBuffTooltip:Hide()
+	elseif name == "LSPetFrame" then
 		PartyMemberBuffTooltip:Hide()
 	end
 
@@ -116,27 +118,26 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss5" then
 		UF:ConstructBossFrame(frame)
+	elseif unit == "party" then
+		UF:ConstructPartyFrame(frame)
 	end
 end
 
 function UF:Initialize()
-	-- self is oUF
 	self:RegisterStyle("LSv2", ConstructUnitFrame)
 	self:SetActiveStyle("LSv2")
 
-	-- if ns.C.units.player.enabled then
-		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
-		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
-		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
-		UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
-		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
-		UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
-		UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
-		UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
-		UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
-		UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
-		UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
-	-- end
+	UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
+	UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
+	UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
+	UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
+	UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
+	UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
+	UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
+	UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
+	UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
+	UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
+	UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
 
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
@@ -152,4 +153,18 @@ function UF:Initialize()
 			E:CreateMover(object)
 		end
 	end
+
+	UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
+		"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
+		"oUF-initialConfigFunction", [[self:SetWidth(112); self:SetHeight(38)]],
+		"showPlayer", true,
+		"showParty", true,
+		"groupBy", "ROLE",
+		"groupingOrder", "TANK,HEALER,DAMAGER",
+		"point", "TOP", "yOffset", -40)
+
+	UF:CreatePartyHolder()
+
+	UF.headers["party"]:SetParent(LSPartyHolder)
+	UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, - 16)
 end
