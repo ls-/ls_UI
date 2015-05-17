@@ -22,9 +22,9 @@ local function LFDRoleOverride(frame, event)
 
 	if role and role ~= "NONE" then
 		icon:SetTexCoord(unpack(ICONS[role]))
-		icon:Show()
+		icon:SetAlpha(1)
 	else
-		icon:Hide()
+		icon:SetAlpha(0)
 	end
 end
 
@@ -36,25 +36,62 @@ local function PvPOverride(frame, event, unit)
 
 	if UnitIsPVPFreeForAll(unit) then
 		icon:SetTexCoord(42 / 128, 60 / 128, 22 / 64, 40 / 64)
-		icon:Show()
+		icon:SetAlpha(1)
 	elseif UnitIsPVP(unit) and faction and faction ~= "Neutral" then
 		icon:SetTexCoord(unpack(ICONS[faction]))
-		icon:Show()
+		icon:SetAlpha(1)
 	else
-		icon:Hide()
+		icon:SetAlpha(0)
 	end
 end
 
-local function CombatPostUpdate(self, inCombat)
-	if inCombat then
-		self.__owner.Resting:Hide()
+local function CombatOverride(self)
+	local icon = self.Combat
+
+	if UnitAffectingCombat("player") then
+		icon:SetAlpha(1)
+		self.Resting:SetAlpha(0)
+	else
+		icon:SetAlpha(0)
+	end
+end
+
+local function PhaseOverride(self)
+	local icon = self.PhaseIcon
+
+	if not UnitInPhase(self.unit) then
+		icon:SetAlpha(1)
+	else
+		icon:SetAlpha(0)
+	end
+end
+
+local function LeaderOverride(self)
+	local icon = self.Leader
+	local unit = self.unit
+
+	if (UnitInParty(unit) or UnitInRaid(unit)) and UnitIsGroupLeader(unit) then
+		icon:SetAlpha(1)
+	else
+		icon:SetAlpha(0)
+	end
+end
+
+local function RestingOverride(self)
+	local icon = self.Resting
+
+	if IsResting() then
+		icon:SetAlpha(1)
+	else
+		icon:SetAlpha(0)
 	end
 end
 
 function UF:CreateIcon(parent, type, size)
-	local icon = parent:CreateTexture("$parent"..type.."Icon", "BACKGROUND")
+	local icon = parent:CreateTexture("$parent"..type.."Icon", "ARTWORK", nil, 3)
 	icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\icons")
 	icon:SetSize(size or 18, size or 18)
+	icon:Hide()
 
 	if ICONS[type] then
 		icon:SetTexCoord(unpack(ICONS[type]))
@@ -65,7 +102,13 @@ function UF:CreateIcon(parent, type, size)
 	elseif type == "PvP" then
 		icon.Override = PvPOverride
 	elseif type == "Combat" then
-		icon.PostUpdate = CombatPostUpdate
+		icon.Override = CombatOverride
+	elseif type == "Phase" then
+		icon.Override = PhaseOverride
+	elseif type == "Leader" then
+		icon.Override = LeaderOverride
+	elseif type == "Resting" then
+		icon.Override = RestingOverride
 	end
 
 	return icon

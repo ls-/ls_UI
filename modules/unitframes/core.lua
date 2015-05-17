@@ -28,11 +28,33 @@ local function LSUnitFrame_OnEnter(self)
 
 	self.isMouseOver = true
 	if self.mouseovers then
-		for _, element in ipairs(self.mouseovers) do
+		for _, element in next, self.mouseovers do
 			if element.ForceUpdate then
 				element:ForceUpdate()
-			else
-				element:Show()
+
+				if element:IsObjectType("Texture") then
+					element:Show()
+				end
+			end
+		end
+	end
+
+	local first = true
+	if self.rearrangeables then
+		local prev
+		for _, element in next, self.rearrangeables do
+			if element:GetAlpha() == 1 then
+				element:ClearAllPoints()
+
+				if first then
+					first = nil
+
+					element:SetPoint("TOPLEFT", 4, 0)
+				else
+					element:SetPoint("LEFT", prev, "RIGHT", 2, 0)
+				end
+
+				prev = element
 			end
 		end
 	end
@@ -54,11 +76,13 @@ local function LSUnitFrame_OnLeave(self)
 
 	self.isMouseOver = nil
 	if self.mouseovers then
-		for _, element in ipairs(self.mouseovers) do
+		for _, element in next, self.mouseovers do
 			if element.ForceUpdate then
 				element:ForceUpdate()
-			else
-				element:Hide()
+
+				if element:IsObjectType("Texture") then
+					element:Hide()
+				end
 			end
 		end
 	end
@@ -120,7 +144,7 @@ function UF:Initialize()
 			if id == 1 then
 				object:SetPoint("TOP", "LSBossHeader", "TOP", 0, - 16)
 			else
-				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -C.units.boss.yOffset)
+				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -40)
 			end
 		else
 			object:SetPoint(unpack(C.units[unit].point))

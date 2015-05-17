@@ -36,7 +36,6 @@ D["units"] = {
 	boss = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
-		yOffset = 40,
 	},
 }
 

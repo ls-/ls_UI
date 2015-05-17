@@ -7,6 +7,7 @@ function UF:ConstructFocusFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
+	frame.rearrangeables = {}
 	frame:SetSize(206, 38)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -67,19 +68,23 @@ function UF:ConstructFocusFrame(frame)
 	tube:SetPoint("CENTER")
 	frame.Power.Tube = tube
 
-	frame.Castbar = UF:CreateCastBar(frame, 196, {"TOP", frame, "BOTTOM", 0, -20})
+	frame.Castbar = UF:CreateCastBar(frame, 196, {"TOP", frame, "BOTTOM", 0, 0})
 
-	frame.PvP = UF:CreateIcon(frame, "PvP", 14)
-	frame.PvP:SetPoint("BOTTOMLEFT", 4, -12)
+	frame.PvP = UF:CreateIcon(cover, "PvP", 14)
+	tinsert(frame.mouseovers, frame.PvP)
+	tinsert(frame.rearrangeables, frame.PvP)
 
-	frame.PhaseIcon = UF:CreateIcon(frame, "Phase", 14)
-	frame.PhaseIcon:SetPoint("BOTTOMLEFT", 20, -12)
+	frame.PhaseIcon = UF:CreateIcon(cover, "Phase", 14)
+	tinsert(frame.mouseovers, frame.PhaseIcon)
+	tinsert(frame.rearrangeables, frame.PhaseIcon)
 
-	frame.Leader = UF:CreateIcon(frame, "Leader", 14)
-	frame.Leader:SetPoint("BOTTOMRIGHT", -20, -12)
+	frame.Leader = UF:CreateIcon(cover, "Leader", 14)
+	tinsert(frame.mouseovers, frame.Leader)
+	tinsert(frame.rearrangeables, frame.Leader)
 
-	frame.LFDRole = UF:CreateIcon(frame, "LFDRole", 14)
-	frame.LFDRole:SetPoint("BOTTOMRIGHT", -4, -12)
+	frame.LFDRole = UF:CreateIcon(cover, "LFDRole", 14)
+	tinsert(frame.mouseovers, frame.LFDRole)
+	tinsert(frame.rearrangeables, frame.LFDRole)
 
 	frame.QuestIcon = UF:CreateIcon(frame, "Quest", 14)
 	frame.QuestIcon:SetPoint("TOPLEFT", 4, 12)
@@ -90,7 +95,7 @@ function UF:ConstructFocusFrame(frame)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
-	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 22)
+	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 26)
 
 	local name = E:CreateFontString(cover, 14, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
