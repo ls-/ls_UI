@@ -44,7 +44,6 @@ function E:ADDON_LOADED(arg)
 
 	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
-		oUF:Factory(ns.lsFactory)
 	end
 
 	if C.mail.enabled then

@@ -32,8 +32,6 @@ D["units"] = {
 	party = {
 		enabled = true,
 		point = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
-		attributes = {"showPlayer", true, "showParty", true, "showRaid", false, "point", "BOTTOM", "yOffset", 40},
-		visibility = "custom [group:raid] hide; [group:party] show; hide",
 	},
 	boss = {
 		enabled = true,
