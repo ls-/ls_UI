@@ -22,8 +22,7 @@ local function PostUpdateHealth(bar, unit, cur, max)
 	elseif UnitIsDeadOrGhost(unit) then
 		color = E:RGBToHEX(bar.__owner.colors.disconnected)
 
-		-- for some locales DEAD string is loosely translated
-		return bar.Value:SetFormattedText("|cff"..color.."%s|r", gsub(unit == "player" and SPELL_FAILED_CASTER_DEAD or DEAD, "[.]", ""))
+		return bar.Value:SetFormattedText("|cff"..color.."%s|r", DEAD)
 	end
 
 	local pattern = (unit == "target" or unit == "focus") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"

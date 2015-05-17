@@ -16,7 +16,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 
 	if max == 0 then
 		return bar.Value:SetText(nil)
-	elseif UnitIsDeadOrGhost(unit) then
+	elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
 		bar:SetValue(0)
 
 		return bar.Value:SetText(nil)
