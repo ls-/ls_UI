@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
 
-local COLORS = ns.M.colors
+local COLORS = M.colors
 
 E.Bags = {}
 
@@ -32,6 +32,12 @@ local function GetBagUsageInfo()
 	return free, total
 end
 
+local function ResetDesaturated(self, flag)
+	if not flag then
+		self:SetDesaturated(true)
+	end
+end
+
 local function BackpackButton_OnClick(self, button)
 	if button == "RightButton" then
 		if not InCombatLockdown() then
@@ -54,10 +60,20 @@ local function BackpackButton_OnClick(self, button)
 	end
 end
 
-local function ResetDesaturated(self, flag)
-	if not flag then
-		self:SetDesaturated(true)
+local function BackpackButton_OnEnter(self)
+	GameTooltip:AddLine(" ")
+	GameTooltip:AddLine(CURRENCY..":")
+	GameTooltip:AddDoubleLine("Gold", GetMoneyString(GetMoney()), 1, 1, 1, 1, 1, 1)
+
+	for i=1, 3 do
+		name, count, icon, currencyID = GetBackpackCurrencyInfo(i)
+
+		if name then
+			GameTooltip:AddDoubleLine(name, count.."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
+		end
 	end
+
+	GameTooltip:Show()
 end
 
 local function BackpackButton_OnEvent(self, event, ...)
@@ -102,6 +118,7 @@ function Bags:Initialize()
 	hooksecurefunc(MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
 
 	MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
+	MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
 	MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
 
 	for _, bag in next, BAGS do
