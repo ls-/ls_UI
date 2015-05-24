@@ -3,23 +3,26 @@ local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
 
-local function ThreatUpdateOverride (self, event, unit)
-	if(unit ~= self.unit) then return end
-	if not self:IsEventRegistered("UNIT_THREAT_LIST_UPDATE") and (self.unit == "target" or self.unit == "focus" or string.sub(self.unit, 1, 4) == "boss") then
-		self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", ns.ThreatUpdateOverride)
+local ThreatUpdateOverride
+
+function ThreatUpdateOverride(self, event, unit)
+	if unit ~= self.unit then return end
+
+	if not self:IsEventRegistered("UNIT_THREAT_LIST_UPDATE") then
+		self:RegisterEvent("UNIT_THREAT_LIST_UPDATE", ThreatUpdateOverride)
 	end
+
 	local threat = self.Threat
 	local status
-	if UnitPlayerControlled(unit) then
+
+	if UnitPlayerControlled(unit) and unit ~= "target" and unit ~= "focus" then
 		status = UnitThreatSituation(unit)
 	else
 		status = UnitThreatSituation("player", unit)
 	end
 
-	local r, g, b
 	if(status and status > 0) then
-		r, g, b = GetThreatStatusColor(status)
-		threat:SetVertexColor(r, g, b)
+		threat:SetVertexColor(GetThreatStatusColor(status))
 		threat:Show()
 	else
 		threat:Hide()
