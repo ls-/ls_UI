@@ -442,9 +442,9 @@ function E:SkinAuraButton(button)
 
 	if bIcon then
 		if name == "ConsolidatedBuffs" then
-			ns.lsTweakIcon(bIcon, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
+			E:TweakIcon(bIcon, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
 		else
-			ns.lsTweakIcon(bIcon)
+			E:TweakIcon(bIcon)
 		end
 	end
 
