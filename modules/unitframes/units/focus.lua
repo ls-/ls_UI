@@ -95,7 +95,7 @@ function UF:ConstructFocusFrame(frame)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
-	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 26)
+	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 22)
 
 	local name = E:CreateFontString(cover, 14, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
