@@ -3,6 +3,8 @@ local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
 
+local UnitCanAssist, UnitCanAttack, GetCVar = UnitCanAssist, UnitCanAttack, GetCVar
+
 local function SetCustomVertexColor(self, r, g, b)
 	local fg = self:GetParent().Fg
 
@@ -23,6 +25,8 @@ local function PostCreateAuraIcon(frame, button)
 	E:TweakIcon(bIcon)
 
 	E:HandleCooldown(bCD, 10)
+
+	bCD:SetReverse(true)
 
 	if bCD.Timer then
 		bCD.Timer:ClearAllPoints()
@@ -54,17 +58,55 @@ local function PostCreateAuraIcon(frame, button)
 	bSteal:SetPoint("BOTTOMRIGHT", 1, -1)
 end
 
-local function PostUpdateAuraIcon(self, unit, button, index, offset)
-	local _, _, _, _, _, _, _, _, stealable = UnitAura(unit, index, button.filter)
-	local texture = button.icon
+local function PostUpdateAuraIcon(self, unit, aura, index, offset)
+	local _, _, _, _, _, _, _, caster, isStealable  = UnitAura(unit, index, aura.filter)
+	local icon = aura.icon
+	local isMine = aura.isPlayer or caster == "pet"
 
 	if not self.onlyShowPlayer then
-		if button.isPlayer or stealable then
-			texture:SetDesaturated(false)
-			texture:SetAlpha(1)
+		if isMine or isStealable  then
+			icon:SetDesaturated(false)
+			icon:SetAlpha(1)
 		else
-			texture:SetDesaturated(true)
-			texture:SetAlpha(0.65)
+			icon:SetDesaturated(true)
+			icon:SetAlpha(0.65)
+		end
+	end
+end
+
+local function PreUpdateBuffIcon(self, unit)
+	if GetCVar("showCastableBuffs") == "1" and UnitCanAssist("player", unit) then
+		self.filter = "HELPFUL|RAID"
+	else
+		self.filter = nil
+	end
+end
+
+local function PreUpdateDebuffIcon(self, unit)
+	if GetCVar("showDispelDebuffs") == "1" and UnitCanAssist("player", unit) then
+		self.filter = "HARMFUL|RAID"
+	else
+		self.filter = nil
+	end
+end
+
+function CustomDebuffFilter(self, unit, debuff, ...)
+	local name, _, _, _, _, _, _, caster, _, _, spellID = ...
+	local isMine = debuff.isPlayer or caster == "pet"
+
+	if GetCVar("showAllEnemyDebuffs") == "1" or not UnitCanAttack("player", unit) or (self.onlyShowPlayer and isMine) then
+		return true
+	else
+		if SpellIsAlwaysShown(spellID) then
+			return true
+		end
+
+		local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
+
+		if hasCustom then
+			return showForMySpec or (alwaysShowMine and isMine)
+		else
+			return isMine
 		end
 	end
 end
@@ -86,8 +128,7 @@ function UF:CreateBuffs(parent, coords, count)
 
 	frame.PostCreateIcon = PostCreateAuraIcon
 	frame.PostUpdateIcon = PostUpdateAuraIcon
-
-	-- frame.PreUpdate = ns.BuffPreUpdate
+	frame.PreUpdate = PreUpdateBuffIcon
 
 	return frame
 end
@@ -106,9 +147,8 @@ function UF:CreateDebuffs(parent, coords, count)
 
 	frame.PostCreateIcon = PostCreateAuraIcon
 	frame.PostUpdateIcon = PostUpdateAuraIcon
-
-	-- frame.PreUpdate = ns.DebuffPreUpdate
-	-- frame.CustomFilter = ns.CustomDebuffFilter
+	frame.PreUpdate = PreUpdateDebuffIcon
+	frame.CustomFilter = CustomDebuffFilter
 
 	return frame
 end
