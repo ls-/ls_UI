@@ -63,7 +63,6 @@ end
 local function BackpackButton_OnEnter(self)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(CURRENCY..":")
-	GameTooltip:AddDoubleLine("Gold", GetMoneyString(GetMoney()), 1, 1, 1, 1, 1, 1)
 
 	for i=1, 3 do
 		name, count, icon, currencyID = GetBackpackCurrencyInfo(i)
@@ -73,6 +72,7 @@ local function BackpackButton_OnEnter(self)
 		end
 	end
 
+	GameTooltip:AddDoubleLine("Gold", GetMoneyString(GetMoney()), 1, 1, 1, 1, 1, 1)
 	GameTooltip:Show()
 end
 
