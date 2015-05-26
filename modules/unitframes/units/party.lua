@@ -18,6 +18,8 @@ local function PartyHolder_OnEvent(self, event, ...)
 	end
 
 	if not InCombatLockdown() then
+		self.toShow = nil
+
 		if self.toShow then
 			self:Show()
 		else
@@ -32,25 +34,25 @@ local function HidePartyFrameHook()
 	if LSPartyHolder:IsShown() then
 		if not InCombatLockdown()  then
 			LSPartyHolder:Hide()
+			LSPartyHolder:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		else
+			LSPartyHolder.toShow = nil
 			LSPartyHolder:RegisterEvent("PLAYER_REGEN_ENABLED")
 		end
-
-		LSPartyHolder.toShow = nil
 	end
 end
 
 local function ShowPartyFrameHook()
 	if GetDisplayedAllyFrames() ~= "party" then return end
 
-	if  not LSPartyHolder:IsShown() then
+	if not LSPartyHolder:IsShown() then
 		if not InCombatLockdown() then
 			LSPartyHolder:Show()
+			LSPartyHolder:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		else
+			LSPartyHolder.toShow = true
 			LSPartyHolder:RegisterEvent("PLAYER_REGEN_ENABLED")
 		end
-
-		LSPartyHolder.toShow = true
 	end
 end
 
