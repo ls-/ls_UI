@@ -440,10 +440,13 @@ function MM:Initialize()
 			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
 		elseif b == "EJMicroButton" then
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
+
+			button.NewAdventureNotice:ClearAllPoints()
+			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
 			E:AlwaysHide(MainMenuBarDownload)
 
-			HandlePerformanceBar(MainMenuMicroButton, MainMenuBarPerformanceBar)
+			HandlePerformanceBar(button, MainMenuBarPerformanceBar)
 
 			UpdatePerformanceBar(button)
 
@@ -457,6 +460,8 @@ function MM:Initialize()
 	CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
 
 	LFDMicroButtonAlert:SetPoint("BOTTOM", "LFDMicroButton", "TOP", 0, 12)
+
+	EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
 
 	hooksecurefunc("UpdateMicroButtonsParent", ResetMicroButtonsParent)
 	hooksecurefunc("MoveMicroButtons", ResetMicroButtonsPosition)
