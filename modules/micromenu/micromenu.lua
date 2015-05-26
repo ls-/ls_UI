@@ -233,6 +233,56 @@ local function CharacterMicroButton_OnEnter(self)
 	GameTooltip:Show()
 end
 
+local function EJMicroButton_OnEnter(self)
+	local savedInstances = GetNumSavedInstances()
+	local savedWorldBosses = GetNumSavedWorldBosses()
+
+	if savedInstances + savedWorldBosses == 0 then return end
+
+	local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
+	local toTitle = true
+
+	RequestRaidInfo()
+
+	for i = 1, savedInstances + savedWorldBosses do
+		if i <= savedInstances then
+			instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+			if instanceReset > 0 then
+				if toTitle then
+					GameTooltip:AddLine(RAID_INFO..":")
+
+					toTitle = nil
+				else
+					GameTooltip:AddLine(" ")
+				end
+
+				local color = encounterProgress == numEncounters and {0.9, 0.15, 0.15} or {0.15, 0.65, 0.15}
+
+				GameTooltip:AddDoubleLine(instanceName, encounterProgress.."/"..numEncounters, 1, 1, 1, unpack(color))
+				GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+			end
+		else
+			instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
+			if instanceReset > 0 then
+				if toTitle then
+					GameTooltip:AddLine(RAID_INFO..":")
+
+					toTitle = nil
+				else
+					GameTooltip:AddLine(" ")
+				end
+
+				GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0, 0)
+				GameTooltip:AddDoubleLine(RAID_INFO_WORLD_BOSS, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+			end
+		end
+	end
+
+	if not toTitle then
+		GameTooltip:Show()
+	end
+end
+
 local function MicroButton_OnLeave(self)
 	for i = 1, GameTooltip.shownStatusBars do
 		_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(0.15, 0.65, 0.15)
@@ -388,6 +438,8 @@ function MM:Initialize()
 			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
 			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
 			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
+		elseif b == "EJMicroButton" then
+			button:HookScript("OnEnter", EJMicroButton_OnEnter)
 		elseif b == "MainMenuMicroButton" then
 			E:AlwaysHide(MainMenuBarDownload)
 
