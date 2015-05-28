@@ -272,7 +272,7 @@ local function EJMicroButton_OnEnter(self)
 					GameTooltip:AddLine(" ")
 				end
 
-				GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0, 0)
+				GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0.15, 0.15)
 				GameTooltip:AddDoubleLine(RAID_INFO_WORLD_BOSS, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 			end
 		end
