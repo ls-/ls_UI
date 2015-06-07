@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="arena.lua"/>
 	<Script file="boss.lua"/>
 	<Script file="focus.lua"/>
 	<Script file="focustarget.lua"/>
