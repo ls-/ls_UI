@@ -37,6 +37,10 @@ D["units"] = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
 	},
+	arena = {
+		enabled = true,
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+	},
 }
 
 D["auratracker"] = {
