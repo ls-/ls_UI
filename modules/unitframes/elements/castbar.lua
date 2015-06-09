@@ -8,9 +8,11 @@ local abs = abs
 local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
 		self:SetStatusBarColor(0.6, 0.6, 0.6)
+		self.Icon:SetDesaturated(true)
 		self.bg:SetVertexColor(0.2, 0.2, 0.2)
 	else
 		self:SetStatusBarColor(0.15, 0.15, 0.15)
+		self.Icon:SetDesaturated(false)
 		self.bg:SetVertexColor(0.9, 0.65, 0.15)
 	end
 end
@@ -18,9 +20,11 @@ end
 local function PostChannelStart(self, unit, name)
 	if self.interrupt then
 		self:SetStatusBarColor(0.6, 0.6, 0.6)
+		self.Icon:SetDesaturated(true)
 		self.bg:SetVertexColor(0.2, 0.2, 0.2)
 	else
 		self:SetStatusBarColor(0.15, 0.15, 0.15)
+		self.Icon:SetDesaturated(false)
 		self.bg:SetVertexColor(0.9, 0.65, 0.15)
 	end
 end
@@ -46,12 +50,15 @@ local function CustomDelayText(self, duration)
 end
 
 function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
-	local bar = CreateFrame("StatusBar", parent:GetName().."CastBar", parent)
+	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent)
+	holder:SetSize(width, 26)
+	holder:SetPoint(unpack(coords))
+
+	local bar = CreateFrame("StatusBar", parent:GetName().."CastBar", holder)
 	bar:SetStatusBarTexture(M.textures.statusbar)
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
-	bar:SetSize(width, 18)
-	bar:SetPoint(unpack(coords))
-	bar:Hide()
+	bar:SetSize(width - 32, 18)
+	bar:SetPoint("TOPRIGHT")
 	E:CreateBorder(bar, 8)
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -64,16 +71,23 @@ function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
-	local text = E:CreateFontString(bar, textsize or 12, nil, true)
+	local text = E:CreateFontString(bar, 10, nil, true)
 	text:SetDrawLayer("ARTWORK", 1)
 	text:SetPoint("LEFT", 2, 0)
 	text:SetPoint("RIGHT", -2, 0)
 	bar.Text = text
 
+	local iconHolder = CreateFrame("Frame", nil, bar)
+	iconHolder:SetSize(26, 26)
+	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -6, 0)
+	E:CreateBorder(iconHolder, 8)
+
+	local icon = iconHolder:CreateTexture()
+	E:TweakIcon(icon)
+	bar.Icon = icon
+
 	local time = E:CreateFontString(bar, 10, nil, true)
-	time:SetJustifyH("RIGHT")
-	time:SetDrawLayer("ARTWORK", 1)
-	time:SetPoint("BOTTOMRIGHT", 0, -5)
+	time:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 2, -1)
 	bar.Time = time
 
 	if safezone then
