@@ -121,6 +121,14 @@ local function ConstructUnitFrame(frame, unit)
 		UF:ConstructPartyFrame(frame)
 	elseif unit == "arena1" then
 		UF:ConstructArenaFrame(frame)
+	elseif unit == "arena2" then
+		UF:ConstructArenaFrame(frame)
+	elseif unit == "arena3" then
+		UF:ConstructArenaFrame(frame)
+	elseif unit == "arena4" then
+		UF:ConstructArenaFrame(frame)
+	elseif unit == "arena5" then
+		UF:ConstructArenaFrame(frame)
 	end
 end
 
@@ -140,6 +148,10 @@ function UF:Initialize()
 	UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
 	UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
 	UF.objects["arena1"] = self:Spawn("arena1", "LSArena1Frame")
+	UF.objects["arena2"] = self:Spawn("arena2", "LSArena2Frame")
+	UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
+	UF.objects["arena4"] = self:Spawn("arena4", "LSArena4Frame")
+	UF.objects["arena5"] = self:Spawn("arena5", "LSArena5Frame")
 
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
@@ -158,9 +170,9 @@ function UF:Initialize()
 			if id == 1 then
 				UF:CreateArenaHolder()
 
-				object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", 0, - 16)
+				object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
 			else
-				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -40)
+				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -12)
 			end
 		else
 			object:SetPoint(unpack(C.units[unit].point))

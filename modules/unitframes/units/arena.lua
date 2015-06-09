@@ -3,9 +3,36 @@ local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
 
+
+local function ArenaFrame_OnEvent(self, event, ...)
+	local id = tonumber(strmatch(self.unit, "arena(%d)"))
+	local specID = GetArenaOpponentSpec(id)
+
+	-- local specID = 64
+
+	if specID and specID > 0 then 
+		local _, _, _, icon = GetSpecializationInfoByID(specID)
+
+		self.SpecInfo.Icon:SetTexture(icon)
+	end
+end
+
+local function Trinket_OnEvent(self, event, ...)
+	local _, name, _, _, spellID = ...
+
+	if spellID == 42292 or spellID == 59752 then
+		CooldownFrame_SetTimer(self.CD, GetTime(), 120, 1)
+		self.CD.start = GetTime()
+	elseif spellID == 7744 then
+		if 120 - (GetTime() - (self.CD.start or 0)) < 30 then
+			CooldownFrame_SetTimer(self.CD, GetTime(), 30, 1)
+		end
+	end
+end
+
 function UF:CreateArenaHolder()
 	local holder = CreateFrame("Frame", "LSArenaHolder", UIParent)
-	holder:SetSize(112 + 4 + 102, (38 + 18) * 5 + 40 * 3)
+	holder:SetSize(112 + 2 + 124 + 2 + 28 + 6 + 28 + 2 * 2, 38 * 5 + 12 * 5 + 2)
 	holder:SetPoint(unpack(C.units.arena.point))
 	E:CreateMover(holder)
 end
@@ -15,6 +42,8 @@ function UF:ConstructArenaFrame(frame)
 
 	frame.mouseovers = {}
 	frame:SetSize(112, 38)
+	-- frame:RegisterEvent("PLAYER_ENTERING_WORLD", ArenaFrame_OnEvent)
+	frame:RegisterEvent("ARENA_OPPONENT_UPDATE", ArenaFrame_OnEvent)
 
 	-- frame.unit = "player"
 	-- E:AlwaysShow(frame)
@@ -77,7 +106,7 @@ function UF:ConstructArenaFrame(frame)
 	tube:SetPoint("CENTER")
 	frame.Power.Tube = tube
 
-	frame.Castbar = UF:CreateCastBar(frame, 102, {"RIGHT", frame, "LEFT", -4, 0}, 10)
+	frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 0}, 10)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
@@ -89,4 +118,37 @@ function UF:ConstructArenaFrame(frame)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
 	frame:Tag(name, "[custom:name]")
+
+	local specinfo = CreateFrame("Frame", nil, frame)
+	specinfo:SetSize(28, 28)
+	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
+	frame.SpecInfo = specinfo 
+
+	E:CreateBorder(specinfo)
+
+	local icon = specinfo:CreateTexture()
+	icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+	E:TweakIcon(icon)
+	specinfo.Icon = icon
+
+	local trinket = CreateFrame("Frame", nil, frame)
+	trinket:SetSize(28, 28)
+	trinket:SetPoint("LEFT", specinfo, "RIGHT", 6, 0)
+	trinket:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", frame.unit)
+	trinket:SetScript("OnEvent", Trinket_OnEvent)
+	frame.Trinket = trinket
+
+	E:CreateBorder(trinket)
+
+	icon = trinket:CreateTexture()
+	icon:SetTexture(UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
+	E:TweakIcon(icon)
+	trinket.Icon = icon
+
+	local cd = CreateFrame("Cooldown", nil, trinket, "CooldownFrameTemplate")
+	cd:ClearAllPoints()
+	cd:SetPoint("TOPLEFT", 1, -1)
+	cd:SetPoint("BOTTOMRIGHT", -1, 1)
+	E:HandleCooldown(cd, 12)
+	trinket.CD = cd
 end
