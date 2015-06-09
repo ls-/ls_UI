@@ -160,9 +160,9 @@ function UF:Initialize()
 			if id == 1 then
 				UF:CreateBossHolder()
 
-				object:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, - 16)
+				object:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, -16)
 			else
-				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -40)
+				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -36)
 			end
 		 elseif strmatch(unit, "^arena%d") then
 			local id = tonumber(strmatch(unit, "arena(%d)"))

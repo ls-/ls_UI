@@ -5,7 +5,7 @@ local UF = E.UF
 
 function UF:CreateBossHolder()
 	local holder = CreateFrame("Frame", "LSBossHolder", UIParent)
-	holder:SetSize(112 + 4 + 102, (38 + 18) * 5 + 40 * 3)
+	holder:SetSize(112 + 124 + 2, 38 * 5 + 36 * 5)
 	holder:SetPoint(unpack(C.units.boss.point))
 	E:CreateMover(holder)
 end
@@ -15,6 +15,9 @@ function UF:ConstructBossFrame(frame)
 
 	frame.mouseovers = {}
 	frame:SetSize(112, 38)
+
+	-- frame.unit = "player"
+	-- E:AlwaysShow(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
@@ -74,7 +77,7 @@ function UF:ConstructBossFrame(frame)
 	tube:SetPoint("CENTER")
 	frame.Power.Tube = tube
 
-	frame.Castbar = UF:CreateCastBar(frame, 102, {"TOP", frame, "BOTTOM", 0, 0}, 10)
+	frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 0}, 10)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
@@ -95,6 +98,6 @@ function UF:ConstructBossFrame(frame)
 	frame.DebuffHighlight:SetSize(58, 33)
 	frame.DebuffHighlight:SetPoint("CENTER", 29, 4)
 
-	frame.AltPowerBar = UF:CreateAltPowerBar(frame, 102, {"RIGHT", frame, "LEFT", -4, 0})
+	frame.AltPowerBar = UF:CreateAltPowerBar(frame, 102, {"TOP", frame, "BOTTOM", 0, 0})
 	frame.AltPowerBar.Value:SetPoint("CENTER")
 end
