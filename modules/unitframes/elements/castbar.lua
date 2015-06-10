@@ -57,7 +57,7 @@ function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	local bar = CreateFrame("StatusBar", parent:GetName().."CastBar", holder)
 	bar:SetStatusBarTexture(M.textures.statusbar)
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
-	bar:SetSize(width - 32, 18)
+	bar:SetSize(width - 32, 16)
 	bar:SetPoint("TOPRIGHT")
 	E:CreateBorder(bar, 8)
 
@@ -67,11 +67,11 @@ function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	bar.bg = bg
 
 	local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
-	spark:SetSize(18, 32)
+	spark:SetSize(18, 30)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
-	local text = E:CreateFontString(bar, 10, nil, true)
+	local text = E:CreateFontString(bar, 12, nil, true)
 	text:SetDrawLayer("ARTWORK", 1)
 	text:SetPoint("LEFT", 2, 0)
 	text:SetPoint("RIGHT", -2, 0)
