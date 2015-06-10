@@ -10,7 +10,7 @@ local function ArenaFrame_OnEvent(self, event, ...)
 
 	-- local specID = 64
 
-	if specID and specID > 0 then 
+	if specID and specID > 0 then
 		local _, _, _, icon = GetSpecializationInfoByID(specID)
 
 		self.SpecInfo.Icon:SetTexture(icon)
@@ -122,7 +122,7 @@ function UF:ConstructArenaFrame(frame)
 	local specinfo = CreateFrame("Frame", nil, frame)
 	specinfo:SetSize(28, 28)
 	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
-	frame.SpecInfo = specinfo 
+	frame.SpecInfo = specinfo
 
 	E:CreateBorder(specinfo)
 
