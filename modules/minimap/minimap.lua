@@ -26,6 +26,7 @@ local ZONE_COLOR_CODES = {
 	["sanctuary"] = "|cff68ccef",
 	["arena"] = "|cffe52626",
 	["combat"] = "|cffe52626",
+	["hostile"] = "|cffe52626",
 	["contested"] = "|cffe5a526",
 	["friendly"] = "|cff26a526",
 	["other"] = "|cffffffff",
