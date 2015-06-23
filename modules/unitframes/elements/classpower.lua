@@ -370,6 +370,7 @@ function UF:CreateEclipseBar(parent, level)
 	bar:SetPoint("LEFT", 19, 0)
 
 	local lunar = CreateFrame("StatusBar", "lsLunarBar", bar)
+	lunar:SetFrameLevel(bar:GetFrameLevel())
 	lunar:SetOrientation("VERTICAL")
 	lunar:SetSize(12, 128)
 	lunar:SetPoint("BOTTOM", bar, "BOTTOM")
@@ -378,6 +379,7 @@ function UF:CreateEclipseBar(parent, level)
 	bar.LunarBar = lunar
 
 	local solar = CreateFrame("StatusBar", "lsSolarBar", bar)
+	solar:SetFrameLevel(bar:GetFrameLevel())
 	solar:SetOrientation("VERTICAL")
 	solar:SetSize(12, 128)
 	solar:SetPoint("BOTTOM", lunar:GetStatusBarTexture(), "TOP")
