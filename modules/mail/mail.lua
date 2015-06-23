@@ -97,7 +97,12 @@ function LazyLootMail(index, delay)
 					elseif hasItem and hasItem > 0 then
 						local name, _, count = GetInboxItem(index, hasItem)
 						mod = 1.5
-						TakeInboxItem(index, hasItem)
+
+						if not name then
+							AutoLootMailItem(index)
+						else
+							TakeInboxItem(index, hasItem)
+						end
 					end
 
 					C_Timer.After(delay * mod, function() LazyLootMail(index, delay) end)
