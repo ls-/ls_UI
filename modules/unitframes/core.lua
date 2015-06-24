@@ -136,22 +136,36 @@ function UF:Initialize()
 	self:RegisterStyle("LSv2", ConstructUnitFrame)
 	self:SetActiveStyle("LSv2")
 
-	UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
-	UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
-	UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
-	UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
-	UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
-	UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
-	UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
-	UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
-	UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
-	UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
-	UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
-	UF.objects["arena1"] = self:Spawn("arena1", "LSArena1Frame")
-	UF.objects["arena2"] = self:Spawn("arena2", "LSArena2Frame")
-	UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
-	UF.objects["arena4"] = self:Spawn("arena4", "LSArena4Frame")
-	UF.objects["arena5"] = self:Spawn("arena5", "LSArena5Frame")
+	if C.units.player.enabled then
+		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
+		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
+	end
+
+	if C.units.target.enabled then
+		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
+		UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
+	end
+
+	if C.units.focus.enabled then
+		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
+		UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
+	end
+
+	if C.units.boss.enabled then
+		UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
+		UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
+		UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
+		UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
+		UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
+	end
+
+	if C.units.arena.enabled then
+		UF.objects["arena1"] = self:Spawn("arena1", "LSArena1Frame")
+		UF.objects["arena2"] = self:Spawn("arena2", "LSArena2Frame")
+		UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
+		UF.objects["arena4"] = self:Spawn("arena4", "LSArena4Frame")
+		UF.objects["arena5"] = self:Spawn("arena5", "LSArena5Frame")
+	end
 
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
@@ -181,17 +195,19 @@ function UF:Initialize()
 		end
 	end
 
-	UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
-		"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
-		"oUF-initialConfigFunction", [[self:SetWidth(112); self:SetHeight(38)]],
-		"showPlayer", true,
-		"showParty", true,
-		"groupBy", "ROLE",
-		"groupingOrder", "TANK,HEALER,DAMAGER",
-		"point", "TOP", "yOffset", -40)
+	if C.units.party.enabled then
+		UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
+			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
+			"oUF-initialConfigFunction", [[self:SetWidth(112); self:SetHeight(38)]],
+			"showPlayer", true,
+			"showParty", true,
+			"groupBy", "ROLE",
+			"groupingOrder", "TANK,HEALER,DAMAGER",
+			"point", "TOP", "yOffset", -40)
 
-	UF:CreatePartyHolder()
+		UF:CreatePartyHolder()
 
-	UF.headers["party"]:SetParent(LSPartyHolder)
-	UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, - 16)
+		UF.headers["party"]:SetParent(LSPartyHolder)
+		UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, - 16)
+	end
 end

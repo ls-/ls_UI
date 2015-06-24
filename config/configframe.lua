@@ -55,6 +55,7 @@ function lsOptionsFrame_Initialize()
 		["focustarget"] = {},
 		["party"] = {},
 		["boss"] = {},
+		["arena"] = {},
 	}
 
 	local button1 = lsOptions_CreateCheckButton(lsOptionsMainFrame)
@@ -92,6 +93,11 @@ function lsOptionsFrame_Initialize()
 	button6:SetPoint("TOPLEFT", button2, "BOTTOMLEFT", 0, -8)
 
 	lsOptionsMainFrame["units"]["boss"]["enabled"] = button6
+
+	local button15 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Arena")
+	button15:SetPoint("LEFT", button6, "RIGHT", 110, 0)
+
+	lsOptionsMainFrame["units"]["arena"]["enabled"] = button15
 
 	local divider1 = lsOptions_CreateDivider(lsOptionsMainFrame)
 	divider1:SetPoint("TOP", button6, "BOTTOM", 0, -8)
