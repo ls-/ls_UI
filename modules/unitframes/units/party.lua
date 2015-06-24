@@ -4,54 +4,9 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
 local function PartyHolder_OnEvent(self, event, ...)
-	if event == "PLAYER_REGEN_ENABLED" then
-		self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	end
-
 	if event == "PLAYER_ENTERING_WORLD" then
 		if GetDisplayedAllyFrames() ~= "party" then
-			self.toShow = nil
 			self:Hide()
-
-			return
-		end
-	end
-
-	if not InCombatLockdown() then
-		self.toShow = nil
-
-		if self.toShow then
-			self:Show()
-		else
-			self:Hide()
-		end
-	else
-		LSPartyHolder:RegisterEvent("PLAYER_REGEN_ENABLED")
-	end
-end
-
-local function HidePartyFrameHook()
-	if LSPartyHolder:IsShown() then
-		if not InCombatLockdown()  then
-			LSPartyHolder:Hide()
-			LSPartyHolder:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		else
-			LSPartyHolder.toShow = nil
-			LSPartyHolder:RegisterEvent("PLAYER_REGEN_ENABLED")
-		end
-	end
-end
-
-local function ShowPartyFrameHook()
-	if GetDisplayedAllyFrames() ~= "party" then return end
-
-	if not LSPartyHolder:IsShown() then
-		if not InCombatLockdown() then
-			LSPartyHolder:Show()
-			LSPartyHolder:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		else
-			LSPartyHolder.toShow = true
-			LSPartyHolder:RegisterEvent("PLAYER_REGEN_ENABLED")
 		end
 	end
 end
@@ -61,13 +16,9 @@ function UF:CreatePartyHolder()
 	holder:SetSize(112, (38 + 18) * 5 + 40 * 3)
 	holder:SetPoint(unpack(C.units.party.point))
 	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
-	holder:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	holder:SetScript("OnEvent", PartyHolder_OnEvent)
 	holder.toShow = true
 	E:CreateMover(holder)
-
-	hooksecurefunc("HidePartyFrame", HidePartyFrameHook)
-	hooksecurefunc("ShowPartyFrame", ShowPartyFrameHook)
 end
 
 function UF:ConstructPartyFrame(frame, ...)
