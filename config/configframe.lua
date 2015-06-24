@@ -163,22 +163,24 @@ function lsOptionsFrame_Initialize()
 	local infotext = E:CreateFontString(lsOptionsFrame, 10, nil, nil, nil, true)
 	infotext:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -8)
 	infotext:SetPoint("TOPRIGHT", header3, "BOTTOMRIGHT", 0, -8)
-	infotext:SetHeight(200)
+	infotext:SetHeight(240)
 	infotext:SetJustifyH("LEFT")
 	infotext:SetJustifyV("TOP")
-	infotext:SetText([[Once again, welcome to v2-alpha.
+	infotext:SetText([[Once again, welcome to v2-beta.
 
 |cffffbf19First of all, this config panel is WIP and will be changed later! Obviously!|r
 
-I'll be releasing alpha builds approximately every weekend. Please, be patient.
+I decided to release public beta build, because I reached a certain milestone, such as new unit frames.
 
-Things can be, and definitely will be, buggy and inconsistent; that's alpha build for you! If it bothers you, consider switching back to stable release channel.
+I'd like you to test new UFs, especially arena frames, I'm no PvPer, so I have no idea how they should properly work.
+
+From now on my TODO list has further priorities: in-game config, hotfixes and performance optimisation and other.
 
 If you find a bug, please, use Curse/WoWI comment section to post a report.
 
-If you have ideas on how to improve my layout, now is the best time to speak out!
+If you're an advanced user or a programmer, you can report bugs directly to my GitHub Issue Tracker.
 
-I'm currently working on unit frames, so I won't be touching other aspects of my layout for now.
+If you have ideas on how to improve my layout, now is the best time to speak out!
 
 To toggle frame movers use |cffffbf19/lsmovers|r command.
 
