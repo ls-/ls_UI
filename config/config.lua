@@ -5,7 +5,7 @@ D["units"] = {
 	enabled =  true,
 	player = {
 		enabled = true,
-		point = {"BOTTOM", "UIParent", "BOTTOM", -306 , 80},
+		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
 	},
 	pet = {
 		enabled = true,
@@ -78,7 +78,7 @@ D["auratracker"] = {
 
 D["minimap"] = {
 	enabled = true,
-	point = {"BOTTOM", "UIParent", "BOTTOM", 306 , 80},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 314 , 80},
 }
 
 D["infobars"] = {

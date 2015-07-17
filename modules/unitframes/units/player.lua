@@ -139,6 +139,8 @@ function UF:ConstructPlayerFrame(frame)
 		frame.Totems = UF:CreateTotemBar(frame, level + 4)
 	end
 
+	frame.CPoints = UF:CreateComboBar(frame, level + 3)
+
 	local fcf = CreateFrame("Frame", "$parentFeedbackFrame", frame)
 	fcf:SetFrameLevel(7)
 	fcf:SetSize(94, 94)

@@ -130,11 +130,12 @@ local LAYOUT = {
 		},
 		sep = {166 / 512, 186 / 512, 16 / 256, 144 / 256},
 	},
-	["sun"] = {426 / 512, 438 / 512, 16 / 256, 144 / 256},
-	["moon"] = {458 / 512, 470 / 512, 16 / 256, 144 / 256},
+	["sun"] = {416 / 512, 428 / 512, 16 / 256, 144 / 256},
+	["moon"] = {428 / 512, 440 / 512, 16 / 256, 144 / 256},
 	["none"] = {0, 1 / 512, 0, 1 / 256},
 }
 
+local MAX_COMBO_POINTS = MAX_COMBO_POINTS
 local MAX_TOTEMS = MAX_TOTEMS
 
 local prevInUse = "NONE"
@@ -638,59 +639,156 @@ function UF:CreateBurningEmbers(parent, level)
 	return bar
 end
 
-local function UpdateComboBar(bar, cp)
-	if not bar[1]:IsShown() then
-		bar:Hide()
+-- local function UpdateComboBar(bar, cp)
+-- 	if not bar[1]:IsShown() then
+-- 		bar:Hide()
+-- 	else
+-- 		bar:Show()
+
+-- 		if cp / 5 == 1 then
+-- 			E:Blink(bar.Glow, 0.5)
+-- 		else
+-- 			E:StopBlink(bar.Glow)
+-- 		end
+-- 	end
+-- end
+
+-- function UF:CreateComboBar(parent, level)
+-- 	local bar = CreateFrame("Frame", "$parentComboBar", parent)
+-- 	bar:SetFrameLevel(level)
+-- 	bar:SetSize(60, 2)
+-- 	bar:SetPoint("TOPRIGHT", -25, -7)
+
+-- 	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 0)
+-- 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
+-- 	fg:SetTexCoord(406 / 512, 484 / 512, 4 / 128, 14 / 128)
+-- 	fg:SetSize(78, 10)
+-- 	fg:SetPoint("CENTER")
+
+-- 	local r, g, b = unpack(M.colors.classpower.COMBO)
+
+-- 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+-- 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
+-- 	glow:SetTexCoord(406 / 512, 470 / 512, 14 / 128, 20 / 128)
+-- 	glow:SetSize(64, 6)
+-- 	glow:SetPoint("CENTER")
+-- 	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
+-- 	glow:SetAlpha(0)
+-- 	bar.Glow = glow
+
+-- 	for i = 1, 5 do
+-- 		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+-- 		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+-- 		element:SetVertexColor(r, g, b)
+-- 		element:SetSize((i ~= 1 and i ~= 5) and 10 or 11, 2)
+
+-- 		if i == 1 then
+-- 			element:SetPoint("LEFT", 0, 0)
+-- 		else
+-- 			element:SetPoint("LEFT", bar[i - 1], "RIGHT", 2, 0)
+-- 		end
+
+-- 		bar[i] = element
+-- 	end
+
+-- 	bar.PostUpdate = UpdateComboBar
+
+-- 	return bar
+-- end
+
+local function OverrideComboBar(self, event, unit)
+	if unit == "pet" then return end
+
+	local bar = self.CPoints
+
+	local cp
+	if UnitHasVehicleUI("player") then
+		cp = UnitPower("vehicle", 4)
 	else
+		cp = UnitPower("player", 4)
+	end
+
+	for i = 1, MAX_COMBO_POINTS do
+		if i <= cp then
+			bar[i]:Show()
+		else
+			bar[i]:Hide()
+		end
+	end
+
+	if cp > 0 then
 		bar:Show()
 
-		if cp / 5 == 1 then
+		if cp == 5 then
 			E:Blink(bar.Glow, 0.5)
 		else
 			E:StopBlink(bar.Glow)
 		end
+	else
+		E:StopBlink(bar.Glow, true)
+
+		bar:Hide()
 	end
 end
 
 function UF:CreateComboBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentComboBar", parent)
 	bar:SetFrameLevel(level)
-	bar:SetSize(60, 2)
-	bar:SetPoint("TOPRIGHT", -25, -7)
+	bar:SetSize(26, 100)
+	bar:SetPoint("LEFT", "LSPlayerFrame" , "RIGHT", 2, 0)
+	E:CreateMover(bar)
 
-	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 0)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
-	fg:SetTexCoord(406 / 512, 484 / 512, 4 / 128, 14 / 128)
-	fg:SetSize(78, 10)
-	fg:SetPoint("CENTER")
+	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	bg:SetTexCoord(472 / 512, 504 / 512, 16 / 256, 144 / 256)
+	bg:SetSize(32, 128)
+	bg:SetPoint("CENTER")
+
+	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	fg1:SetTexCoord(440 / 512, 472 / 512, 16 / 256, 144 / 256)
+	fg1:SetSize(32, 128)
+	fg1:SetPoint("CENTER")
+
+	local fg2 = bar:CreateTexture(nil, "ARTWORK", nil, 2)
+	fg2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	fg2:SetTexCoord(128 / 512, 160 / 512, 149 / 256, 251 / 256)
+	fg2:SetSize(32, 102)
+	fg2:SetPoint("CENTER")
+
+	local fg3 = bar:CreateTexture(nil, "ARTWORK", nil, 3)
+	fg3:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	fg3:SetTexCoord(0 / 512, 32 / 512, 160 / 256, 256 / 256)
+	fg3:SetSize(32, 96)
+	fg3:SetPoint("CENTER")
 
 	local r, g, b = unpack(M.colors.classpower.COMBO)
 
-	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
-	glow:SetTexCoord(406 / 512, 470 / 512, 14 / 128, 20 / 128)
-	glow:SetSize(64, 6)
+	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
+	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	glow:SetTexCoord(352 / 512, 384 / 512, 149 / 256, 251 / 256)
+	glow:SetSize(32, 102)
 	glow:SetPoint("CENTER")
 	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
 	glow:SetAlpha(0)
 	bar.Glow = glow
 
-	for i = 1, 5 do
-		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	for i = 1, MAX_COMBO_POINTS do
+		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetVertexColor(r, g, b)
-		element:SetSize((i ~= 1 and i ~= 5) and 10 or 11, 2)
+		element:SetSize(8, 20)
 
 		if i == 1 then
-			element:SetPoint("LEFT", 0, 0)
+			element:SetPoint("BOTTOM", 0, 0)
 		else
-			element:SetPoint("LEFT", bar[i - 1], "RIGHT", 2, 0)
+			element:SetPoint("BOTTOM", bar[i - 1], "TOP", 0, 0)
 		end
 
 		bar[i] = element
 	end
 
-	bar.PostUpdate = UpdateComboBar
+	bar.Override = OverrideComboBar
 
 	return bar
 end
