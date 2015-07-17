@@ -122,7 +122,7 @@ function UF:ConstructPlayerFrame(frame)
 	if E.playerclass == "PRIEST" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "ShadowOrb", level + 4)
 	elseif E.playerclass == "MONK" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Chi", level + 4)
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
 	elseif E.playerclass == "PALADIN" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holypower", level + 4)
 	elseif ns.E.playerclass == "WARLOCK" then
