@@ -300,7 +300,9 @@ local function Calendar_OnUpdate(self, elapsed)
 end
 
 function MM:Initialize()
-	LoadAddOn("Blizzard_TimeManager")
+	if not IsAddOnLoaded("Blizzard_TimeManager") then
+		E:ForceLoadAddOn("Blizzard_TimeManager")
+	end
 
 	local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
 	holder:SetSize(164, 164)

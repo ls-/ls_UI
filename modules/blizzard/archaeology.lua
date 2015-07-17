@@ -4,7 +4,9 @@ local E, M = ns.E, ns.M
 local B = E.Blizzard
 
 function B:HandleArchaeology()
-	LoadAddOn("Blizzard_ArchaeologyUI")
+	if not IsAddOnLoaded("Blizzard_ArchaeologyUI") then
+		E:ForceLoadAddOn("Blizzard_ArchaeologyUI")
+	end
 
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
 	E:HandleStatusBar(ArcheologyDigsiteProgressBar, true)

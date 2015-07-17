@@ -55,3 +55,18 @@ function E:GetCoords(object)
 		return p, anchor and anchor:GetName() or "UIParent", rP, E:Round(x), E:Round(y)
 	end
 end
+
+-- Some authors like to disable blizzard addons my UI utilises
+function E:ForceLoadAddOn(name)
+	local loaded, reason = LoadAddOn(name)
+
+	if not loaded then
+		if reason == "DISABLED" then
+			EnableAddOn(name)
+
+			E:ForceLoadAddOn(name)
+		else
+			print(format(ADDON_LOAD_FAILED, name, _G["ADDON_"..reason]))
+		end
+	end
+end
