@@ -14,7 +14,8 @@ oUF LS not only replaces blizzard unit frames, but also customizes buttons, acti
 Player, Pet, Target, Target of Target, Focus, Target of Focus, Party (w/o pets and targets), Bosses and Arena (w/ PvP trinket tracker).
 No support for raid frames will be *ever* provided.
 
-##Player frame is split into *three* parts
+Player frame is split into *three* parts:
+
 - Left - class resources, i.e. holy power, shadow orbs, etc;
 - Centre - player health;
 - Right - player power, i.e. mana, rage, etc.
@@ -29,7 +30,7 @@ No support for raid frames will be *ever* provided.
 - Druid (Owl) - Lunar/Solar Energy;
 - Rogue/Druid (Cat) - Combo Points.
 
-##Other modules
+##Other Modules
 - Default UI elements, such as **ActionBars**, **MicroMenu**, **Minimap** and **Buttons**, are all customized;
 - **Frame "movers"** for various interface elements;
 - **Floating Combat Feedback** on player frame;
