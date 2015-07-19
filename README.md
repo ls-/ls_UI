@@ -35,7 +35,6 @@ No support for raid frames will be *ever* provided.
 - **Floating Combat Feedback** on player frame;
 - **AuraTracker** for monitoring up to 8 buffs and debuffs on player character in total. List of auras can be managed via slash commands ingame and is saved per character. List of AuraTracker commands can be accessed via either dropdown menu or /atcmd slash command.
 - **NamePlates**. Nice and clean look;
-- Arena frames with **PvP trinket tracker**;
 - And more.
 
 ##Embedded Addons/Plugins
