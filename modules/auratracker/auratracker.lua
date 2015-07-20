@@ -27,44 +27,6 @@ local function ScanAuras(auras, index, filter)
 	end
 end
 
-local function AddToList(filter, ID)
-	if #AT_CONFIG[spec].HELPFUL + #AT_CONFIG[spec].HARMFUL == 8 then
-		print("|cff1ec77eAuraTracker|r: Can\'t add aura. List is full. Max of 8.")
-		return
-	end
-
-	if not AT_CONFIG.enabled then
-		print("|cff1ec77eAuraTracker|r: Can\'t add aura. Module is disabled.")
-		return
-	end
-
-	local name = GetSpellInfo(ID)
-	if not name then
-		print("|cff1ec77eAuraTracker|r: Can\'t add aura, that doesn't exist.")
-		return
-	end
-
-	if tcontains(AT_CONFIG[spec][filter], ID) then
-		print("|cff1ec77eAuraTracker|r: Can\'t add aura. Already in the list.")
-		return
-	end
-
-	tinsert(AT_CONFIG[spec][filter], ID)
-
-	print("|cff1ec77eAuraTracker|r: Added "..name.." ("..ID..").")
-end
-
-local function RemoveFromList(filter, ID)
-	for i, v in next, AT_CONFIG[spec][filter] do
-		if v == ID then
-			tremove(AT_CONFIG[spec][filter], i)
-
-			print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
-			return true
-		end
-	end
-end
-
 local function HandleDataCorruption(filter, spec, overflow)
 	local auraList, size = AT_CONFIG[spec][filter], #AT_CONFIG[spec][filter]
 
@@ -76,17 +38,17 @@ local function HandleDataCorruption(filter, spec, overflow)
 		end
 	end
 
-	if overflow and size > 4 then
-		for i = 1, size - 4 do
-			local ID = auraList[5]
+	if overflow and size > 6 then
+		for i = 1, size - 6 do
+			local ID = auraList[7]
 			if ID then
 				print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
 
-				tremove(auraList, 5)
+				tremove(auraList, 7)
 			end
 		end
 
-		print("|cff1ec77eAuraTracker|r: Reduced number of entries to 4 auras per list.")
+		print("|cff1ec77eAuraTracker|r: Reduced number of entries to 7 auras per list.")
 	end
 end
 
@@ -146,14 +108,14 @@ local function CreateATButton()
 	cd:SetPoint("TOPLEFT", 1, -1)
 	cd:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	E:HandleCooldown(cd, 16)
+	E:HandleCooldown(cd, 14)
 
 	button.CD = cd
 
 	local cover = CreateFrame("Frame", nil, button)
 	cover:SetAllPoints()
 
-	local count = E:CreateFontString(cover, 14, nil, true, "THINOUTLINE")
+	local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
 	count:SetPoint("TOPRIGHT", 2, 1)
 
 	button.Count = count
@@ -212,7 +174,7 @@ local function AT_Update(self, event, ...)
 		for i = 0, num do
 			i = tostring(i)
 
-			local overflow = #AT_CONFIG[i].HELPFUL + #AT_CONFIG[i].HARMFUL > 8
+			local overflow = #AT_CONFIG[i].HELPFUL + #AT_CONFIG[i].HARMFUL > 12
 
 			HandleDataCorruption("HELPFUL", i, overflow)
 			HandleDataCorruption("HARMFUL", i, overflow)
@@ -235,7 +197,7 @@ local function AT_Update(self, event, ...)
 		ScanAuras(self.auras, i, "HARMFUL")
 	end
 
-	for i = #self.auras + 1, 8 do
+	for i = #self.auras + 1, 12 do
 		if self.buttons[i] then
 			self.buttons[i]:Hide()
 		end
@@ -269,6 +231,43 @@ local function AT_Update(self, event, ...)
 	end
 end
 
+function AT:AddToList(filter, ID)
+	if #AT_CONFIG[spec].HELPFUL + #AT_CONFIG[spec].HARMFUL == 12 then
+		return false, "|cffe52626Error!|r Can\'t add aura. List is full. Max of 12."
+	end
+
+	if not AT_CONFIG.enabled then
+		return false, "|cffe52626Error!|r Can\'t add aura. Module is disabled."
+	end
+
+	local name = GetSpellInfo(ID)
+	if not name then
+		return false, "|cffe52626Error!|r Can\'t add aura, that doesn't exist."
+	end
+
+	if tcontains(AT_CONFIG[spec][filter], ID) then
+		return false, "|cffe52626Error!|r Can\'t add aura. Already in the list."
+	end
+
+	tinsert(AT_CONFIG[spec][filter], ID)
+
+	LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
+
+	return true, "|cff26a526Success!|r Added "..name.." ("..ID..")."
+end
+
+function AT:RemoveFromList(filter, ID)
+	for i, v in next, AT_CONFIG[spec][filter] do
+		if v == ID then
+			tremove(AT_CONFIG[spec][filter], i)
+
+			LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
+
+			return true, "|cff26a526Success!|r Removed "..GetSpellInfo(ID).." ("..ID..")."
+		end
+	end
+end
+
 local function ATHeader_OnEnter(self)
 	self.text:SetAlpha(1)
 end
@@ -297,16 +296,6 @@ local function ATHeader_OnDragStop(self)
 	end
 end
 
-local function ATHeader_PrintCommands()
-	print([[|cff1ec77eAuraTracker|r: List of commands:
-|cff00ccff/atbuff spellId|r - adds aura to the list of buffs;
-|cff00ccff/atdebuff spellId|r - adds aura to the list of debuffs;
-|cff00ccff/atrem spellId|r - removes aura from the list;
-|cff00ccff/atlist|r - prints the list of tracked auras;
-|cff00ccff/atwipe|r - wipes the list of tracked auras;
-|cff00ccff/atheader|r - toggles AuraTracker header visibility.]])
-end
-
 local function ATHeaderDropDown_Initialize(self)
 	local info = UIDropDownMenu_CreateInfo()
 	info.notCheckable = 1
@@ -316,85 +305,9 @@ local function ATHeaderDropDown_Initialize(self)
 		AT_CONFIG.locked = AT_LOCKED
 	end
 	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-
-	info = UIDropDownMenu_CreateInfo()
-	info.notCheckable = 1
-	info.text = lsLISTOFCOMMANDS
-	info.func = ATHeader_PrintCommands
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
 local function CreateSlashCommands()
-	SLASH_ATBUFF1 = "/atbuff"
-	SlashCmdList["ATBUFF"] = function(msg)
-		AddToList("HELPFUL", tonumber(msg))
-
-		LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-	end
-
-	SLASH_ATDEBUFF1 = "/atdebuff"
-	SlashCmdList["ATDEBUFF"] = function(msg)
-		AddToList("HARMFUL", tonumber(msg))
-
-		LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-	end
-
-	SLASH_ATREM1 = "/atrem"
-	SlashCmdList["ATREM"] = function(msg)
-		if not AT_CONFIG.enabled then
-			print("|cff1ec77eAuraTracker|r: Can\'t remove aura. Module is disabled.")
-			return
-		end
-
-		local ID = tonumber(msg)
-		if not GetSpellInfo(ID) then
-			print("|cff1ec77eAuraTracker|r: Can\'t remove aura, that doesn't exist.")
-			return
-		end
-
-		local br = RemoveFromList("HELPFUL", ID)
-		local dr = RemoveFromList("HARMFUL", ID)
-
-		if br or dr then
-			LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-		end
-	end
-
-	SLASH_ATLIST1 = "/atlist"
-	SlashCmdList["ATLIST"] = function(msg)
-		if not AT_CONFIG.enabled then
-			print("|cff1ec77eAuraTracker|r: Can\'t print the list. Module is disabled.")
-			return
-		end
-
-		print("|cff1ec77eAuraTracker|r: List of auras:")
-
-		for _, v in next, AT_CONFIG[spec].HELPFUL do
-			local name = GetSpellInfo(v) or " "
-			print("|cff00ccff+|r "..name.." ("..v..")")
-		end
-
-		for _, v in next, AT_CONFIG[spec].HARMFUL do
-			local name = GetSpellInfo(v) or " "
-			print("|cffd01717-|r "..name.." ("..v..")")
-		end
-	end
-
-	SLASH_ATWIPE1 = "/atwipe"
-	SlashCmdList["ATWIPE"] = function(msg)
-		if not AT_CONFIG.enabled then
-			print("|cff1ec77eAuraTracker|r: Can\'t wipe the list. Module is disabled.")
-			return
-		end
-
-		AT_CONFIG[spec].HELPFUL = {}
-		AT_CONFIG[spec].HARMFUL = {}
-
-		print("|cff1ec77eAuraTracker|r: Wiped aura list.")
-
-		LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
-	end
-
 	SLASH_ATHEADER1 = "/atheader"
 	SlashCmdList["ATHEADER"] = function(msg)
 		if InCombatLockdown() then
@@ -416,6 +329,7 @@ function AT:Initialize()
 	AT_CONFIG = ns.C.auratracker
 
 	local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
+	tracker:SetClampedToScreen(true)
 	tracker:SetFrameStrata("LOW")
 	tracker:SetFrameLevel(1)
 	tracker:SetMovable(true)
@@ -471,5 +385,5 @@ function AT:Initialize()
 
 	header.menu = dropdown
 
-	CreateSlashCommands()
+	-- CreateSlashCommands()
 end

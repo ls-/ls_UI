@@ -7,12 +7,12 @@
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
 init.lua
-config\_config.xml
 embeds\_embeds.xml
 media\_media.xml
 locales\_locales.xml
 modules\_modules.xml
 core\_core.xml
+config\_config.xml
 
 # dev crap
 test\_test.xml

@@ -42,7 +42,7 @@ local function lsOptions_CreateCheckButton(parent, label)
 end
 
 function lsOptionsFrame_Initialize()
-	lsOptionsFrame.name = "oUF: LS"
+	lsOptionsFrame.name = "oUF: |cff1a9fc0LS|r"
 
 	InterfaceOptions_AddCategory(lsOptionsFrame)
 
@@ -205,4 +205,5 @@ You have to |cffe51919manually reload UI|r to apply changes, use |cffffbf19/rl|r
 		InterfaceOptionsFrame_OpenToCategory(lsOptionsFrame)
 	end
 
+		E:ATConfig_Initialize()
 end
