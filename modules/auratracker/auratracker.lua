@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
 E.AT = {}
 
@@ -7,12 +7,11 @@ local AT = E.AT
 
 local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
-local AT_CONFIG, AT_LOCKED
-local spec
+local AT_CONFIG
 
 local function ScanAuras(auras, index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
-	if name and tcontains(AT_CONFIG[spec][filter], spellId) then
+	if name and tcontains(AT_CONFIG[AT.Spec][filter], spellId) then
 		local aura = {
 			index = index,
 			icon = iconTexture,
@@ -86,89 +85,8 @@ local function ATButton_OnUpdate(self, elapsed)
 	end
 end
 
-local function CreateATButton()
-	local button = CreateFrame("Frame", nil, UIParent)
-	button:SetFrameStrata("LOW")
-	button:SetFrameLevel(2)
-	button:Hide()
-
-	button:SetScript("OnEnter", ATButton_OnEnter)
-	button:SetScript("OnLeave", ATButton_OnLeave)
-	button:SetScript("OnUpdate", ATButton_OnUpdate)
-
-	E:CreateBorder(button)
-
-	local icon = button:CreateTexture()
-	E:TweakIcon(icon)
-
-	button.Icon = icon
-
-	local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
-	cd:ClearAllPoints()
-	cd:SetPoint("TOPLEFT", 1, -1)
-	cd:SetPoint("BOTTOMRIGHT", -1, 1)
-
-	E:HandleCooldown(cd, 14)
-
-	button.CD = cd
-
-	local cover = CreateFrame("Frame", nil, button)
-	cover:SetAllPoints()
-
-	local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
-	count:SetPoint("TOPRIGHT", 2, 1)
-
-	button.Count = count
-
-	return button
-end
-
 local function AT_Update(self, event, ...)
-	if event == "CUSTOM_ENABLE" then
-		if not self:IsEventRegistered("UNIT_AURA") then self:RegisterUnitEvent("UNIT_AURA", "player", "vehicle") end
-		if not self:IsEventRegistered("PLAYER_SPECIALIZATION_CHANGED") then self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED") end
-
-		self:SetPoint(unpack(AT_CONFIG.point))
-
-		spec = tostring(GetSpecialization() or 0)
-
-		-- TODO_BEGIN: Remove it later
-		if #AT_CONFIG.HELPFUL > 0 then
-			AT_CONFIG["0"].HELPFUL = {unpack(AT_CONFIG.HELPFUL)}
-
-			AT_CONFIG.HELPFUL = {}
-		end
-
-		if #AT_CONFIG.HARMFUL > 0 then
-			AT_CONFIG["0"].HARMFUL = {unpack(AT_CONFIG.HARMFUL)}
-
-			AT_CONFIG.HARMFUL = {}
-		end
-		-- TODO_END
-
-		AT_LOCKED = AT_CONFIG.locked
-
-		if not AT_CONFIG.showHeader then self.header:Hide() end
-
-		return
-	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-		local oldSpec = spec
-		spec = tostring(GetSpecialization() or 0)
-
-		if oldSpec ~= spec then
-			if #AT_CONFIG[spec].HELPFUL + #AT_CONFIG[spec].HARMFUL == 0 then
-				AT_CONFIG[spec].HELPFUL = {unpack(AT_CONFIG[oldSpec].HELPFUL)}
-				AT_CONFIG[spec].HARMFUL = {unpack(AT_CONFIG[oldSpec].HARMFUL)}
-			end
-
-			if oldSpec == "0" then
-				AT_CONFIG[oldSpec].HELPFUL = {}
-				AT_CONFIG[oldSpec].HARMFUL = {}
-			end
-		end
-
-		return
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	if event == "PLAYER_ENTERING_WORLD" or event == "FORCE_INIT" then
 		local num = GetNumSpecializations()
 
 		for i = 0, num do
@@ -180,15 +98,34 @@ local function AT_Update(self, event, ...)
 			HandleDataCorruption("HARMFUL", i, overflow)
 		end
 
-		spec = tostring(GetSpecialization() or 0)
+		if event == "PLAYER_ENTERING_WORLD" then
+			AT:Enable()
 
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-		self:Update("CUSTOM_FORCE_UPDATE")
+			self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
-		return
+			return
+		end
+	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+		local oldSpec = AT.Spec
+		local newSpec = tostring(GetSpecialization() or 0)
+
+		if oldSpec ~= newSpec then
+			if #AT_CONFIG[newSpec].HELPFUL + #AT_CONFIG[newSpec].HARMFUL == 0 then
+				AT_CONFIG[newSpec].HELPFUL = {unpack(AT_CONFIG[oldSpec].HELPFUL)}
+				AT_CONFIG[newSpec].HARMFUL = {unpack(AT_CONFIG[oldSpec].HARMFUL)}
+			end
+
+			if oldSpec == "0" then
+				AT_CONFIG[oldSpec].HELPFUL = {}
+				AT_CONFIG[oldSpec].HARMFUL = {}
+			end
+		end
+
+		AT.Spec = newSpec
 	end
 
-	self.auras = {}
+	self.auras = wipe(self.auras or {})
+
 	for i = 1, 32 do
 		ScanAuras(self.auras, i, "HELPFUL")
 	end
@@ -205,6 +142,7 @@ local function AT_Update(self, event, ...)
 
 	for i = 1, #self.auras do
 		local button, aura = self.buttons[i], self.auras[i]
+		local color
 
 		button:Show()
 		button:SetID(aura.index)
@@ -216,7 +154,6 @@ local function AT_Update(self, event, ...)
 
 		CooldownFrame_SetTimer(button.CD, aura.expire - aura.duration, aura.duration, true)
 
-		local color
 		if button.filter == "HARMFUL" then
 			color = {r = 0.8, g = 0, b = 0}
 
@@ -231,8 +168,55 @@ local function AT_Update(self, event, ...)
 	end
 end
 
+function AT:IsRunning()
+	return not not AT.Tracker
+end
+
+function AT:Enable()
+ 	if InCombatLockdown() then
+ 		return false, "|cffe52626Error!|r Can't be done, while in combat."
+ 	end
+	if not AT:IsRunning() then
+ 		AT:Initialize()
+ 	end
+
+	AT.Tracker:Show()
+	AT.Tracker:ClearAllPoints()
+	AT.Tracker:SetPoint(unpack(AT_CONFIG.point))
+	AT.Tracker:RegisterEvent("UNIT_AURA")
+	AT.Tracker:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+
+	AT.Spec = tostring(GetSpecialization() or 0)
+
+	if not AT:IsRunning() then
+		AT_Update(AT.Tracker, "FORCE_INIT")
+	else
+		AT_Update(AT.Tracker, "ENABLE")
+	end
+
+	if AT_CONFIG.locked then AT.Header:Hide() end
+
+ 	return true, "|cff26a526Success!|r AT is on."
+end
+
+function AT:Disable()
+	if AT:IsRunning() then
+		if InCombatLockdown() then
+	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
+	 	end
+
+		AT.Tracker:Hide()
+		AT.Tracker:UnregisterEvent("UNIT_AURA")
+		AT.Tracker:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+
+	 	return true, "|cff26a526Success!|r AT will be disabled on next UI reload."
+	 else
+	 	return true, "|cff26a526Success!|r AT is off."
+	 end
+end
+
 function AT:AddToList(filter, ID)
-	if #AT_CONFIG[spec].HELPFUL + #AT_CONFIG[spec].HARMFUL == 12 then
+	if #AT_CONFIG[AT.Spec].HELPFUL + #AT_CONFIG[AT.Spec].HARMFUL == 12 then
 		return false, "|cffe52626Error!|r Can\'t add aura. List is full. Max of 12."
 	end
 
@@ -245,23 +229,23 @@ function AT:AddToList(filter, ID)
 		return false, "|cffe52626Error!|r Can\'t add aura, that doesn't exist."
 	end
 
-	if tcontains(AT_CONFIG[spec][filter], ID) then
+	if tcontains(AT_CONFIG[AT.Spec][filter], ID) then
 		return false, "|cffe52626Error!|r Can\'t add aura. Already in the list."
 	end
 
-	tinsert(AT_CONFIG[spec][filter], ID)
+	tinsert(AT_CONFIG[AT.Spec][filter], ID)
 
-	LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
+	AT_Update(AT.Tracker, "ADD_TO_LIST")
 
 	return true, "|cff26a526Success!|r Added "..name.." ("..ID..")."
 end
 
 function AT:RemoveFromList(filter, ID)
-	for i, v in next, AT_CONFIG[spec][filter] do
+	for i, v in next, AT_CONFIG[AT.Spec][filter] do
 		if v == ID then
-			tremove(AT_CONFIG[spec][filter], i)
+			tremove(AT_CONFIG[AT.Spec][filter], i)
 
-			LSAuraTracker:Update("CUSTOM_FORCE_UPDATE")
+			AT_Update(AT.Tracker, "REMOVE_FROM_LIST")
 
 			return true, "|cff26a526Success!|r Removed "..GetSpellInfo(ID).." ("..ID..")."
 		end
@@ -269,121 +253,89 @@ function AT:RemoveFromList(filter, ID)
 end
 
 local function ATHeader_OnEnter(self)
-	self.text:SetAlpha(1)
+	self.Text:SetAlpha(1)
 end
 
 local function ATHeader_OnLeave(self)
-	self.text:SetAlpha(0.2)
-end
-
-local function ATHeader_OnClick(self)
-	ToggleDropDownMenu(1, nil, self.menu, "cursor", 2, -2)
+	self.Text:SetAlpha(0.2)
 end
 
 local function ATHeader_OnDragStart(self)
-	if not AT_LOCKED then
-		local frame = self:GetParent()
-		frame:StartMoving()
-	end
+	self:GetParent():StartMoving()
 end
 
 local function ATHeader_OnDragStop(self)
-	if not AT_LOCKED then
-		local frame = self:GetParent()
-		frame:StopMovingOrSizing()
+	self:GetParent():StopMovingOrSizing()
 
-		AT_CONFIG.point = {E:GetCoords(frame)}
-	end
-end
-
-local function ATHeaderDropDown_Initialize(self)
-	local info = UIDropDownMenu_CreateInfo()
-	info.notCheckable = 1
-	info.text = AT_LOCKED and UNLOCK_FRAME or LOCK_FRAME
-	info.func = function()
-		AT_LOCKED = not AT_LOCKED
-		AT_CONFIG.locked = AT_LOCKED
-	end
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-end
-
-local function CreateSlashCommands()
-	SLASH_ATHEADER1 = "/atheader"
-	SlashCmdList["ATHEADER"] = function(msg)
-		if InCombatLockdown() then
-			print("|cff1ec77eAuraTracker|r\'s header visibility can\'t be toggled, while in combat.")
-			return
-		end
-
-		if LSAuraTracker.header:IsShown() then
-			LSAuraTracker.header:Hide()
-			AT_CONFIG.showHeader = false
-		else
-			LSAuraTracker.header:Show()
-			AT_CONFIG.showHeader = true
-		end
-	end
+	AT_CONFIG.point = {E:GetCoords(self:GetParent())}
 end
 
 function AT:Initialize()
-	AT_CONFIG = ns.C.auratracker
+	AT_CONFIG = C.auratracker
 
 	local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
 	tracker:SetClampedToScreen(true)
-	tracker:SetFrameStrata("LOW")
-	tracker:SetFrameLevel(1)
 	tracker:SetMovable(true)
-
 	tracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 	tracker:SetScript("OnEvent", AT_Update)
-
-	tracker.Update = AT_Update
-
-	tracker:Update("CUSTOM_ENABLE")
+	AT.Tracker = tracker
 
 	local buttons = {}
 
-	for i = 1, AT_CONFIG.num_buttons do
-		buttons[i] = CreateATButton()
+	for i = 1, 12 do
+		local button = CreateFrame("Frame", nil, UIParent)
+		button:SetFrameLevel(tracker:GetFrameLevel() + 1)
+		button:Hide()
+		button:SetScript("OnEnter", ATButton_OnEnter)
+		button:SetScript("OnLeave", ATButton_OnLeave)
+		button:SetScript("OnUpdate", ATButton_OnUpdate)
+		E:CreateBorder(button)
+		buttons[i] = button
+
+		local icon = button:CreateTexture()
+		E:TweakIcon(icon)
+		button.Icon = icon
+
+		local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+		cd:ClearAllPoints()
+		cd:SetPoint("TOPLEFT", 1, -1)
+		cd:SetPoint("BOTTOMRIGHT", -1, 1)
+		E:HandleCooldown(cd, 14)
+		button.CD = cd
+
+		local cover = CreateFrame("Frame", nil, button)
+		cover:SetAllPoints()
+
+		local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
+		count:SetPoint("TOPRIGHT", 2, 1)
+		button.Count = count
 	end
 
 	tracker.buttons = buttons
 
 	if AT_CONFIG.direction == "RIGHT" or AT_CONFIG.direction == "LEFT" then
-		tracker:SetSize(AT_CONFIG.button_size * AT_CONFIG.num_buttons + AT_CONFIG.button_gap * AT_CONFIG.num_buttons,
-			AT_CONFIG.button_size + AT_CONFIG.button_gap)
+		tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
 	else
-		tracker:SetSize(AT_CONFIG.button_size + AT_CONFIG.button_gap,
-			AT_CONFIG.button_size * AT_CONFIG.num_buttons + AT_CONFIG.button_gap * AT_CONFIG.num_buttons)
+		tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
 	end
 
-	E:SetButtonPosition(buttons, AT_CONFIG.button_size, AT_CONFIG.button_gap, tracker, AT_CONFIG.direction)
+	E:SetButtonPosition(buttons, 36, 4, tracker, AT_CONFIG.direction)
 
 	local header = CreateFrame("Button", nil, tracker)
-	header:SetSize(66, 20)
+	header:SetClampedToScreen(true)
 	header:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, 0)
 	header:RegisterForDrag("LeftButton")
-	header:RegisterForClicks("RightButtonUp")
 	header:SetScript("OnEnter", ATHeader_OnEnter)
 	header:SetScript("OnLeave", ATHeader_OnLeave)
-	header:SetScript("OnClick", ATHeader_OnClick)
 	header:SetScript("OnDragStart", ATHeader_OnDragStart)
 	header:SetScript("OnDragStop", ATHeader_OnDragStop)
+	AT.Header = header
 
-	tracker.header = header
-
-	local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.75, 0.1)
+	local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.82, 0)
 	label:SetPoint("LEFT", 2, 0)
 	label:SetAlpha(0.2)
-	label:SetText(lsAURATRACKER)
+	label:SetText(BUFFOPTIONS_LABEL)
+	header.Text = label
 
-	header.text = label
-
-	local dropdown = CreateFrame("Frame", "LSAuraTrackerDropDown", header, "UIDropDownMenuTemplate")
-	UIDropDownMenu_Initialize(dropdown, ATHeaderDropDown_Initialize, "MENU")
-
-	header.menu = dropdown
-
-	-- CreateSlashCommands()
+	header:SetSize(label:GetWidth(), 22)
 end

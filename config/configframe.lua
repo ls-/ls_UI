@@ -1,6 +1,8 @@
 local _, ns = ...
 local oUF, E, C, D = ns.oUF or oUF, ns.E, ns.C, ns.D
 
+local CFG, AT = E.CFG, E.AT
+
 local function lsOptions_CreateDivider(parent)
 	local object = parent:CreateTexture(nil, "ARTWORK");
 	object:SetHeight(4)
@@ -205,5 +207,5 @@ You have to |cffe51919manually reload UI|r to apply changes, use |cffffbf19/rl|r
 		InterfaceOptionsFrame_OpenToCategory(lsOptionsFrame)
 	end
 
-		E:ATConfig_Initialize()
+	CFG:AT_Initialize()
 end

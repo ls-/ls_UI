@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="config.lua"/>
+	<Script file="core.lua"/>
 	<Script file="auratracker.lua"/>
 	<Include file="configframe.xml"/>
 </Ui>
