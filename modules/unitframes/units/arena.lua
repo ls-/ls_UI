@@ -5,10 +5,7 @@ local UF = E.UF
 
 
 local function ArenaFrame_OnEvent(self, event, ...)
-	local id = tonumber(strmatch(self.unit, "arena(%d)"))
-	local specID = GetArenaOpponentSpec(id)
-
-	-- local specID = 64
+	local specID = GetArenaOpponentSpec(self:GetID())
 
 	if specID and specID > 0 then
 		local _, _, _, icon = GetSpecializationInfoByID(specID)
@@ -42,8 +39,9 @@ function UF:ConstructArenaFrame(frame)
 
 	frame.mouseovers = {}
 	frame:SetSize(112, 38)
-	-- frame:RegisterEvent("PLAYER_ENTERING_WORLD", ArenaFrame_OnEvent)
+	frame:RegisterEvent("UNIT_NAME_UPDATE", ArenaFrame_OnEvent)
 	frame:RegisterEvent("ARENA_OPPONENT_UPDATE", ArenaFrame_OnEvent)
+	frame:SetID(strmatch(frame.unit, "arena(%d)"))
 
 	-- frame.unit = "player"
 	-- E:AlwaysShow(frame)
