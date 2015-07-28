@@ -15,8 +15,17 @@ local function SetNilNormalTexture(self, texture)
 	end
 end
 
+local function SetItemButtonBorderColor(self)
+	local button = self:GetParent()
+
+	if self:IsShown() then
+		button:SetBorderColor(self:GetVertexColor())
+	end
+end
+
 local function SetCustomVertexColor(self, r, g, b)
 	local button = self:GetParent()
+	local action = button.action
 	local name = gsub(button:GetName(), "%d", "")
 
 	if name == "ExtraActionButton" then
@@ -25,9 +34,17 @@ local function SetCustomVertexColor(self, r, g, b)
 		return
 	end
 
+	if action and IsEquippedAction(action) then
+		button:SetBorderColor(0.1, 0.9, 0.1)
+
+		return
+	end
+
 	if r == 1 and g == 1 and b == 1 then
 		if name == "ActionButton" then
 			button:SetBorderColor(255 / 255, 200 / 255, 15 / 255)
+		else
+			button:SetBorderColor(r, g, b)
 		end
 	else
 		button:SetBorderColor(r, g, b)
@@ -74,13 +91,14 @@ local function SetCustomHotKeyText(self)
 end
 
 local function ActionButton_OnUpdate(button)
+	local action = button.action
 	local bIcon = button.icon
-	-- local bName = button.Name
+	local bName = button.Name
 	local bHotKey = button.HotKey
 
 	if bIcon then
-		if button.action and IsActionInRange(button.action) ~= false then
-			local isUsable, notEnoughMana = IsUsableAction(button.action)
+		if IsActionInRange(action) ~= false then
+			local isUsable, notEnoughMana = IsUsableAction(action)
 			if isUsable then
 				bIcon:SetVertexColor(1, 1, 1, 1)
 			elseif notEnoughMana then
@@ -93,12 +111,12 @@ local function ActionButton_OnUpdate(button)
 		end
 	end
 
-	-- if bName then
-	-- 	local text = bName:GetText()
-	-- 	if text then
-	-- 		bName:SetText(E:StringTruncate(text, 4))
-	-- 	end
-	-- end
+	if bName then
+		local text = bName:GetText()
+		if text then
+			bName:SetText(E:StringTruncate(text, 4))
+		end
+	end
 
 	if bHotKey then
 		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
@@ -175,18 +193,15 @@ local function SkinButton(button)
 	end
 
 	if bName then
-		E:AlwaysHide(bName)
-		-- bName:SetFont(M.font, 10, "THINOUTLINE")
-		-- bName:SetJustifyH("CENTER")
-		-- bName:ClearAllPoints()
-		-- bName:SetPoint("BOTTOMLEFT", -4, 0)
-		-- bName:SetPoint("BOTTOMRIGHT", 4, 0)
+		bName:SetFont(M.font, 10, "THINOUTLINE")
+		bName:SetJustifyH("CENTER")
+		bName:ClearAllPoints()
+		bName:SetPoint("BOTTOMLEFT", -4, 0)
+		bName:SetPoint("BOTTOMRIGHT", 4, 0)
 	end
 
 	if bBorder then
 		bBorder:SetTexture(nil)
-
-		hooksecurefunc(bBorder, "SetVertexColor", SetCustomVertexColor)
 	end
 
 	if bNewActionTexture then
@@ -287,9 +302,9 @@ function E:SkinBagButton(button)
 	local bIconBorder = button.IconBorder
 
 	if bIconBorder then
-		E:AlwaysHide(bIconBorder)
-
-		hooksecurefunc(bIconBorder, "SetVertexColor", SetCustomVertexColor)
+		bIconBorder:SetTexture(nil)
+		hooksecurefunc(bIconBorder, "Hide", SetItemButtonBorderColor)
+		hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
 	end
 
 	if bCount then
