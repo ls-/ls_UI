@@ -116,13 +116,8 @@ function lsOptionsFrame_Initialize()
 	local header2 = lsOptions_CreateHeader(lsOptionsMainFrame, "Other Modules")
 	header2:SetPoint("TOPLEFT", divider1, "BOTTOMLEFT", 0, -8)
 
-	local button7 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Aura Tracker")
-	button7:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 20, -8)
-
-	lsOptionsMainFrame["auratracker"]["enabled"] = button7
-
 	local button8 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Minimap")
-	button8:SetPoint("LEFT", button7, "RIGHT", 110, 0)
+	button8:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 20, -8)
 
 	lsOptionsMainFrame["minimap"]["enabled"] = button8
 
@@ -137,7 +132,7 @@ function lsOptionsFrame_Initialize()
 	lsOptionsMainFrame["nameplates"]["enabled"] = button10
 
 	local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Action Bars")
-	button11:SetPoint("TOPLEFT", button7, "BOTTOMLEFT", 0, -8)
+	button11:SetPoint("TOPLEFT", button8, "BOTTOMLEFT", 0, -8)
 
 	lsOptionsMainFrame["bars"]["enabled"] = button11
 
@@ -168,25 +163,7 @@ function lsOptionsFrame_Initialize()
 	infotext:SetHeight(240)
 	infotext:SetJustifyH("LEFT")
 	infotext:SetJustifyV("TOP")
-	infotext:SetText([[Once again, welcome to v2-beta.
-
-|cffffbf19First of all, this config panel is WIP and will be changed later! Obviously!|r
-
-I decided to release public beta build, because I reached a certain milestone, such as new unit frames.
-
-I'd like you to test new UFs, especially arena frames, I'm no PvPer, so I have no idea how they should properly work.
-
-From now on my TODO list has further priorities: in-game config, hotfixes and performance optimisation and other.
-
-If you find a bug, please, use Curse/WoWI comment section to post a report.
-
-If you're an advanced user or a programmer, you can report bugs directly to my GitHub Issue Tracker.
-
-If you have ideas on how to improve my layout, now is the best time to speak out!
-
-To toggle frame movers use |cffffbf19/lsmovers|r command.
-
-You have to |cffe51919manually reload UI|r to apply changes, use |cffffbf19/rl|r or |cffffbf19/reload|r commands to do so.]])
+	infotext:SetText([[Yo! This section is still WIP, stay tuned.]])
 
 	lsOptionsFrame.okay = function()
 		E:ApplySettings(lsOptionsMainFrame, C)
