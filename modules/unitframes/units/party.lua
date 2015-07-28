@@ -5,7 +5,9 @@ local UF = E.UF
 
 local function PartyHolder_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
-		if GetDisplayedAllyFrames() ~= "party" then
+		if GetDisplayedAllyFrames() == "party" then
+			self:Show()
+		else
 			self:Hide()
 		end
 	end
