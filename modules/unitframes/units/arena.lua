@@ -52,7 +52,7 @@ function UF:ConstructArenaFrame(frame)
 	bg:SetAllPoints()
 
 	local cover = CreateFrame("Frame", nil, frame)
-	cover:SetFrameLevel(level + 2)
+	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
