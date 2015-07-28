@@ -264,6 +264,10 @@ local function Rune_OnUpdate(self, elapsed)
 end
 
 local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
+	if rune.Glow.Blink and rune.Glow.Blink:IsPlaying() and not rune:GetScript("OnUpdate") then
+		E:StopBlink(rune.Glow, true)
+	end
+
 	if runeReady and start == 0 then
 		local r, g, b = rune:GetStatusBarColor()
 
