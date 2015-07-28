@@ -7,7 +7,7 @@ local B = E.Blizzard
 
 function B:Initialize()
 	self:HandleArchaeology()
-	self:HandleMirrorTimer()
+	self:HandleTimers()
 	self:HandleObjectiveTracker()
 	self:HandlePowerBarAlt()
 end
