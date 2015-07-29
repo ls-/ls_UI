@@ -198,6 +198,8 @@ function CFG:SetupControlDependency(parent, child)
 end
 
 function CFG:ToggleDependantControls(forceDisable)
+	if InCombatLockdown() then return end
+
 	if not self:GetValue() or forceDisable then
 		for _, child in next, self.children do
 			child:Disable()

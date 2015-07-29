@@ -88,6 +88,12 @@ local function AuraList_Update(frame)
 end
 
 local function ATConfigPanel_OnShow(self)
+	if InCombatLockdown() then
+		self.StatusLog:SetText("|cffe52626Error!|r Can't be done, while in combat.")
+
+		return
+	end
+
 	AuraList_Update(self.AuraList)
 
 	self.StatusLog:SetText("")
