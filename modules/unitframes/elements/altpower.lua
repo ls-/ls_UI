@@ -31,7 +31,7 @@ local function PostUpdateAltPower(bar, min, cur, max)
 	end
 end
 
-local function OnEnterHook(self)
+local function OnEnter(self)
 	if not self:IsVisible() then return end
 
 	self.isMouseOver = true
@@ -39,7 +39,7 @@ local function OnEnterHook(self)
 	self:UpdateTooltip()
 end
 
-local function OnLeaveHook(self)
+local function OnLeave(self)
 	self.isMouseOver = nil
 	self:ForceUpdate()
 
@@ -53,8 +53,8 @@ function UF:CreateAltPowerBar(parent, width, coords)
 	bar:SetSize(width, 18)
 	bar:SetPoint(unpack(coords))
 	bar:EnableMouse(true)
-	bar:HookScript("OnEnter", OnEnterHook)
-	bar:HookScript("OnLeave", OnLeaveHook)
+	bar:SetScript("OnEnter", OnEnter)
+	bar:SetScript("OnLeave", OnLeave)
 	E:SmoothBar(bar)
 	E:CreateBorder(bar, 8)
 
