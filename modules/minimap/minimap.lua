@@ -388,7 +388,6 @@ function MM:Initialize()
 	calendar.Border:SetPoint("BOTTOMRIGHT", 2, -2)
 	calendar.NormalTexture:SetTexture("")
 	calendar.PushedTexture:SetTexture("")
-	calendar:SetPushedTextOffset(2, -1)
 	calendar:SetHitRectInsets(-2, -2, -2, -2)
 
 	calendar.pendingInvites = 0
