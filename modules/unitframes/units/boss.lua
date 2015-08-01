@@ -62,7 +62,7 @@ function UF:ConstructBossFrame(frame)
 	frame.AbsorbGlow = absrobGlow
 
 	frame.Power = UF:CreatePowerBar(frame, 10, true)
-	frame.Power:SetFrameLevel(level + 3)
+	frame.Power:SetFrameLevel(level + 4)
 	frame.Power:SetSize(62, 2)
 	frame.Power:SetPoint("CENTER", 0, -11)
 	frame.Power.Value:SetJustifyH("LEFT")
