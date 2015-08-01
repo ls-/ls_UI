@@ -1,24 +1,25 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
+
 E.NP = {}
 
 local NP = E.NP
 
-local format, match = format, strmatch
+local tonumber, format, match = tonumber, format, strmatch
 local prevNumChildren = 0
 
 NP.plates = {}
 
 local function NamePlate_GetColor(r, g, b, a)
-	r, g, b, a = format("%.2f", r), format("%.2f", g), format("%.2f", b), format("%.2f", a)
+	r, g, b, a = tonumber(format("%.2f", r)), tonumber(format("%.2f", g)), tonumber(format("%.2f", b)), tonumber(format("%.2f", a))
 
-	if g + b == 0 then
+	if r == 1 and g == 0 and b == 0 then
 		return 0.9, 0.15, 0.15, 1
-	elseif r + b == 0 then
+	elseif r == 0 and g == 1 and b == 0 then
 		return 0.15, 0.65, 0.15, 1
-	elseif r + g == 2 then
+	elseif r == 1 and g == 1 and b == 0 then
 		return 1, 0.80, 0.10, 1
-	elseif r + g == 0 then
+	elseif r == 0 and g == 0 and b == 1 then
 		return 0.41, 0.8, 0.94, 1
 	else
 		return r, g, b, a
@@ -27,7 +28,7 @@ end
 
 local function NamePlate_OnShow(self)
 	local scale = UIParent:GetEffectiveScale()
-	local healthbar, overlay = self.health.bar, self.overlay
+	local healthbar, overlay = self.Health.Bar, self.Overlay
 
 	overlay:SetScale(scale)
 
@@ -36,219 +37,196 @@ local function NamePlate_OnShow(self)
 		overlay:SetScale(scale * 0.7)
 	end
 
-	if healthbar.text then
-		healthbar.text:SetText(E:NumberFormat(self.health:GetValue()))
+	if healthbar.Text:IsShown() then
+		healthbar.Text:SetText(E:NumberFormat(self.Health:GetValue()))
 	end
 
-	local name = self.name:GetText() or UNKNOWNOBJECT
-	local level = self.bossIcon:IsShown() and -1 or tonumber(self.level:GetText())
+	local name = self.Name:GetText() or UNKNOWNOBJECT
+	local level = self.BossIcon:IsShown() and -1 or tonumber(self.Level:GetText())
 	local color = E:RGBToHEX(GetQuestDifficultyColor((level > 0) and level or 99))
 
-	if self.bossIcon:IsShown() then
+	if self.BossIcon:IsShown() then
 		level = "??"
 	end
 
-	if self.eliteIcon:IsShown() then
+	if self.EliteIcon:IsShown() then
 		level = level.."+"
 	end
 
-	overlay.name:SetFormattedText("|cff%s%s|r %s", color, level, name)
+	overlay.Name:SetFormattedText("|cff%s%s|r %s", color, level, name)
 
-	self.overlay:Show()
+	overlay:Show()
 end
 
 local function NamePlate_OnHide(self)
-	self.overlay:Hide()
+	self.Overlay:Hide()
 end
 
 local function NamePlateCastBar_OnShow(self)
-	local bar = self.bar
-
+	local bar = self.Bar
 	bar:Show()
-
-	bar.icon:SetTexture(self.icon:GetTexture())
-
-	bar.text:SetText(self.text:GetText())
+	bar.Icon:SetTexture(self.Icon:GetTexture())
+	bar.Text:SetText(self.Text:GetText())
 end
 
 local function NamePlateCastBar_OnHide(self)
-	self.bar:Hide()
+	self.Bar:Hide()
 end
 
 local function NamePlateHealthBar_OnValueChanged(self, value)
-	local bar = self.bar
-
+	local bar = self.Bar
 	bar:SetMinMaxValues(self:GetMinMaxValues())
 	bar:SetValue(value)
 
-	if bar.text then
-		bar.text:SetText(E:NumberFormat(value))
+	if bar.Text:IsShown() then
+		bar.Text:SetText(E:NumberFormat(value))
 	end
 end
 
 local function NamePlateCastBar_OnValueChanged(self, value)
-	local bar = self.bar
-
+	local bar = self.Bar
 	bar:SetMinMaxValues(self:GetMinMaxValues())
 	bar:SetValue(value)
 
-	if self.shield:IsShown() then
-		bar.icon:SetDesaturated(true)
+	if self.Shield:IsShown() then
 		bar:SetStatusBarColor(0.6, 0.6, 0.6)
-		bar.bg:SetVertexColor(0.2, 0.2, 0.2)
+		bar.Icon:SetDesaturated(true)
+		bar.Bg:SetVertexColor(0.2, 0.2, 0.2)
 	else
-		bar.icon:SetDesaturated(false)
 		bar:SetStatusBarColor(0.15, 0.15, 0.15)
-		bar.bg:SetVertexColor(0.96, 0.7, 0)
+		bar.Icon:SetDesaturated(false)
+		bar.Bg:SetVertexColor(0.96, 0.7, 0)
 	end
 end
 
 local function NamePlate_CreateStatusBar(parent, isCastBar)
 	local bar = CreateFrame("StatusBar", nil, parent)
-	bar:SetSize(120, 12)
+	bar:SetSize(120, 14)
 	bar:SetPoint(isCastBar and "BOTTOM" or "TOP", parent, isCastBar and "BOTTOM" or "TOP", 0, 0)
 	bar:SetStatusBarTexture(M.textures.statusbar)
 	bar:SetStatusBarColor(0.15, 0.15, 0.15)
+	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
+	E:CreateBorder(bar, 8)
+
+	if not isCastBar then
+		bar:SetBorderColor(E:HEXToRGB("dfb21b"))
+	end
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetAllPoints(bar)
 	bg:SetTexture(M.textures.statusbar)
 	bg:SetVertexColor(0.15, 0.15, 0.15)
-	bar.bg = bg
-
-	local fg = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	fg:SetTexCoord((isCastBar and 63 or 319) / 512, (isCastBar and 193 or 449) / 512, 5 / 64, 27 / 64)
-	fg:SetSize(130, 22)
-	fg:SetPoint("CENTER", 0, 0)
-	bar.fg = fg
+	bar.Bg = bg
 
 	local text = E:CreateFontString(bar, 10, nil, true, nil)
 	text:SetPoint("LEFT", bar, 2, 0)
 	text:SetPoint("RIGHT", bar, -2, 0)
 	text:SetJustifyH(isCastBar and "CENTER" or "RIGHT")
-	bar.text = text
+	bar.Text = text
 
 	return bar
 end
 
 local function Sizer_OnSizeChanged(self, x, y)
-	self.parent:Hide()
-	self.parent:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 24))
-	self.parent:Show()
+	local parent = self.Parent
+	parent:Hide()
+	parent:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 24))
+	parent:Show()
 end
 
 local function HandleNamePlate(self)
-	self.barFrame, self.nameFrame = self:GetChildren()
-	self.health, self.cast = self.barFrame:GetChildren()
+	local barFrame, nameFrame = self:GetChildren()
+	self.Health, self.Cast = barFrame:GetChildren()
+	
+	local border, raidIcon
+	self.Threat, border, self.Highlight, self.Level, self.BossIcon, raidIcon, self.EliteIcon = barFrame:GetRegions()
+	self.Name = nameFrame:GetRegions()
+	local healthTexture = self.Health:GetRegions()
+	local castTexture, castBorder, castTextShadow
+	castTexture, castBorder, self.Cast.Shield, self.Cast.Icon, self.Cast.Text, castTextShadow = self.Cast:GetRegions()
 
-	self.threat, self.border, self.highlight, self.level, self.bossIcon, self.raidIcon, self.eliteIcon = self.barFrame:GetRegions()
-	self.name = self.nameFrame:GetRegions()
-	self.health.texture = self.health:GetRegions()
-	self.cast.texture, self.cast.border, self.cast.shield, self.cast.icon, self.cast.text, self.cast.textShadow = self.cast:GetRegions()
-
-	self.threat:SetTexture(nil)
-	self.border:SetTexture(nil)
-	self.level:SetSize(0.001, 0.001)
-	self.level:Hide()
-	self.bossIcon:SetTexture(nil)
-	self.eliteIcon:SetAlpha(0)
-
-	self.name:Hide()
-
-	self.cast.border:SetTexture(nil)
-	self.cast.shield:SetTexture(nil)
-	self.cast.icon:SetTexCoord(0, 0, 0, 0)
-	self.cast.icon:SetSize(0.001, 0.001)
-	self.cast.text:Hide()
-	self.cast.textShadow:SetTexture(nil)
+	self.Threat:SetTexture(nil)
+	self.Level:SetSize(0.001, 0.001)
+	self.Level:Hide()
+	self.BossIcon:SetTexture(nil)
+	self.EliteIcon:SetAlpha(0)
+	self.Highlight:SetTexture(nil)
+	self.Name:Hide()
+	self.Cast.Shield:SetTexture(nil)
+	self.Cast.Icon:SetTexCoord(0, 0, 0, 0)
+	self.Cast.Icon:SetSize(0.001, 0.001)
+	self.Cast.Text:Hide()
+	border:SetTexture(nil)
+	castBorder:SetTexture(nil)
+	castTextShadow:SetTexture(nil)
 
 	local overlay = CreateFrame("Frame", "LS"..self:GetName().."Overlay", WorldFrame)
 	overlay:SetSize(120, 32)
-	self.overlay = overlay
-
+	self.Overlay = overlay
 	NP.plates[self] = overlay
 
 	-- Health
-	self.health.texture:SetTexture(nil)
+	healthTexture:SetTexture(nil)
 
 	local healthBar = NamePlate_CreateStatusBar(overlay)
-
-	if not ns.C.nameplates.showText then
-		healthBar.text = nil
-	end
-
-	self.health.bar = healthBar
-
-	self.health:HookScript("OnValueChanged", NamePlateHealthBar_OnValueChanged)
+	healthBar.Text:Hide()
+	self.Health.Bar = healthBar
+	self.Health:HookScript("OnValueChanged", NamePlateHealthBar_OnValueChanged)
 
 	-- Castbar
-	self.cast.texture:SetTexture(nil)
+	castTexture:SetTexture(nil)
 
 	local castBar = NamePlate_CreateStatusBar(overlay, true)
+	self.Cast.Bar = castBar
+	self.Cast:HookScript("OnShow", NamePlateCastBar_OnShow)
+	self.Cast:HookScript("OnHide", NamePlateCastBar_OnHide)
+	self.Cast:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
+
+	if self.Cast:IsShown() then
+		NamePlateCastBar_OnShow(self.Cast)
+	else
+		castBar:Hide()
+	end
 
 	local iconHolder = CreateFrame("Frame", nil, castBar)
 	iconHolder:SetSize(32, 32)
 	iconHolder:SetPoint("RIGHT", overlay, "LEFT", -8, 0)
+	E:CreateBorder(iconHolder)
 
 	local icon = iconHolder:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 	icon:SetAllPoints()
-	castBar.icon = icon
-
-	E:CreateBorder(iconHolder)
-
-	self.cast.bar = castBar
-
-	self.cast:HookScript("OnShow", NamePlateCastBar_OnShow)
-	self.cast:HookScript("OnHide", NamePlateCastBar_OnHide)
-	self.cast:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
-
-	if self.cast:IsShown() then
-		NamePlateCastBar_OnShow(self.cast)
-	else
-		castBar:Hide()
-	end
+	castBar.Icon = icon
 
 	-- Name
 	local name = E:CreateFontString(overlay, 14, nil, true, nil)
 	name:SetPoint("BOTTOM", overlay, "TOP", 0, 6)
 	name:SetPoint("LEFT", overlay, -24, 0)
 	name:SetPoint("RIGHT", overlay, 24, 0)
-	overlay.name = name
+	overlay.Name = name
 
 	-- RaidIcon
-	self.raidIcon:SetParent(overlay)
-	self.raidIcon:SetSize(32, 32)
-	self.raidIcon:ClearAllPoints()
-	self.raidIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
+	raidIcon:SetParent(overlay)
+	raidIcon:SetSize(32, 32)
+	raidIcon:ClearAllPoints()
+	raidIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
 
 	-- Threat
 	local threat = healthBar:CreateTexture(nil, "OVERLAY", nil, 1)
 	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
 	threat:SetTexCoord(62 / 512, 194 / 512, 36 / 64, 52 / 64)
-	threat:SetPoint("TOPLEFT", healthBar.fg, "TOPLEFT", -1, 1)
-	threat:SetPoint("BOTTOMRIGHT", healthBar.fg, "BOTTOMRIGHT", 1, 7)
+	-- threat:SetPoint("TOPLEFT", healthBar, "TOPLEFT", -5, 5)
+	-- threat:SetPoint("BOTTOMRIGHT", healthBar, "BOTTOMRIGHT", 5, 8)
 	threat:SetVertexColor(0.15, 0.15, 0.15)
 	threat:Hide()
-	overlay.threat = threat
-
-	-- Highlight
-	local hl = healthBar:CreateTexture(nil, "OVERLAY", nil, 2)
-	hl:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	hl:SetTexCoord(321 / 512, 447 / 512, 39 / 64, 57 / 64)
-	hl:SetSize(126, 18)
-	hl:SetPoint("CENTER", 0, 0)
-	hl:SetBlendMode("ADD")
-	hl:Hide()
-	overlay.hl = hl
+	overlay.Threat = threat
 
 	-- Position
 	local sizer = CreateFrame("Frame", nil, overlay)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
-	sizer.parent = overlay
 	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
+	sizer.Parent = overlay
 
 	self:HookScript("OnShow", NamePlate_OnShow)
 	self:HookScript("OnHide", NamePlate_OnHide)
@@ -283,20 +261,22 @@ local function WorldFrame_OnUpdate(self, elapsed)
 			if plate:IsShown() then
 				overlay:SetAlpha(plate:GetAlpha())
 
-				plate.health.bar:SetStatusBarColor(NamePlate_GetColor(plate.health:GetStatusBarColor()))
+				plate.Health.Bar:SetStatusBarColor(NamePlate_GetColor(plate.Health:GetStatusBarColor()))
 
-				if plate.threat:IsShown() then
-					overlay.threat:Show()
-					overlay.threat:SetVertexColor(plate.threat:GetVertexColor())
+				if plate.Threat:IsShown() then
+					-- overlay.threat:Show()
+					-- plate.Health.bar:SetBorderColor(plate.Threat:GetVertexColor())
+					-- overlay.threat:SetVertexColor(plate.Threat:GetVertexColor())
 				else
-					overlay.threat:Hide()
+					-- overlay.threat:Hide()
+
+					if plate.Highlight:IsShown() then
+						overlay.Name:SetTextColor(1, 0.8, 0.1)
+					else
+						overlay.Name:SetTextColor(1, 1, 1)
+					end
 				end
 
-				if plate.highlight:IsShown() then
-					overlay.hl:Show()
-				else
-					overlay.hl:Hide()
-				end
 			end
 		end
 
