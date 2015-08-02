@@ -48,15 +48,3 @@ function ns.lsSetCheckedTexture(texture)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
 	texture:SetAllPoints()
 end
-
-do
-	oUF.colors.health = ns.M.colors.health
-
-	for r, data in pairs(ns.M.colors.reaction) do
-		oUF.colors.reaction[r] = data
-	end
-
-	for p, data in pairs(ns.M.colors.power) do
-		oUF.colors.power[p] = data
-	end
-end

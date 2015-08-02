@@ -1,7 +1,9 @@
 local AddOn, ns = ...
 local E, M = ns.E, ns.M
-
 local B = E.Blizzard
+local COLORS = M.colors
+
+local unpack = unpack
 
 function B:HandleArchaeology()
 	if not IsAddOnLoaded("Blizzard_ArchaeologyUI") then
@@ -10,6 +12,6 @@ function B:HandleArchaeology()
 
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
 	E:HandleStatusBar(ArcheologyDigsiteProgressBar, true)
-	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(0.65, 0.26, 0)
+	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(unpack(COLORS.orange))
 	E:CreateMover(ArcheologyDigsiteProgressBar)
 end

@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+local HPCOLORS = M.colors.healprediction
 
 local function UpdateHealPredictionAnchor(self, orientation, appendTexture, offset)
 	if orientation == "HORIZONTAL" then
@@ -61,28 +61,28 @@ function UF:CreateHealPrediction(parent, vertical)
 	myBar:SetFrameLevel(level)
 	myBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	myBar:SetStatusBarColor(0.0, 0.827, 0.765)
+	myBar:SetStatusBarColor(unpack(HPCOLORS.myheal))
 	myBar:Hide()
 
 	local otherBar = CreateFrame("StatusBar", "$parentOtherIncomingHeal", healthbar)
 	otherBar:SetFrameLevel(level)
 	otherBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	otherBar:SetStatusBarColor(0.0, 0.631, 0.557)
+	otherBar:SetStatusBarColor(unpack(HPCOLORS.otherheal))
 	otherBar:Hide()
 
 	local healAbsorbBar = CreateFrame("StatusBar", "$parentHealAbsorb", healthbar)
 	healAbsorbBar:SetFrameLevel(level + 1)
 	healAbsorbBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	healAbsorbBar:SetStatusBarColor(0.9, 0.1, 0.3)
+	healAbsorbBar:SetStatusBarColor(unpack(HPCOLORS.healabsorb))
 	healAbsorbBar:Hide()
 
 	local damageAbsorbBar = CreateFrame("StatusBar", "$parentTotalAbsorb", healthbar)
 	damageAbsorbBar:SetFrameLevel(level + 1)
 	damageAbsorbBar:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	damageAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	damageAbsorbBar:SetStatusBarColor(0, 0.7, 0.95)
+	damageAbsorbBar:SetStatusBarColor(unpack(HPCOLORS.damageabsorb))
 	damageAbsorbBar:Hide()
 
 	if vertical then

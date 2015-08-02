@@ -2,30 +2,31 @@ local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
 
 local UF = E.UF
+local COLORS = M.colors
 
-local abs = abs
+local abs, unpack = abs, unpack
 
 local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
-		self:SetStatusBarColor(0.6, 0.6, 0.6)
+		self:SetStatusBarColor(unpack(COLORS.gray))
 		self.Icon:SetDesaturated(true)
-		self.bg:SetVertexColor(0.2, 0.2, 0.2)
+		self.bg:SetVertexColor(unpack(COLORS.darkgray))
 	else
-		self:SetStatusBarColor(0.15, 0.15, 0.15)
+		self:SetStatusBarColor(unpack(COLORS.darkgray))
 		self.Icon:SetDesaturated(false)
-		self.bg:SetVertexColor(0.9, 0.65, 0.15)
+		self.bg:SetVertexColor(unpack(COLORS.yellow))
 	end
 end
 
 local function PostChannelStart(self, unit, name)
 	if self.interrupt then
-		self:SetStatusBarColor(0.6, 0.6, 0.6)
+		self:SetStatusBarColor(unpack(COLORS.gray))
 		self.Icon:SetDesaturated(true)
-		self.bg:SetVertexColor(0.2, 0.2, 0.2)
+		self.bg:SetVertexColor(unpack(COLORS.darkgray))
 	else
-		self:SetStatusBarColor(0.15, 0.15, 0.15)
+		self:SetStatusBarColor(unpack(COLORS.darkgray))
 		self.Icon:SetDesaturated(false)
-		self.bg:SetVertexColor(0.9, 0.65, 0.15)
+		self.bg:SetVertexColor(unpack(COLORS.yellow))
 	end
 end
 
@@ -93,7 +94,8 @@ function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	if safezone then
 		local zone = bar:CreateTexture(nil, "BACKGROUND", nil, 2)
 		zone:SetTexture(M.textures.statusbar)
-		zone:SetVertexColor(0.6, 0, 0, 0.6)
+		zone:SetVertexColor(unpack(COLORS.red))
+		zone:SetAlpha(0.6)
 		bar.SafeZone = zone
 	end
 

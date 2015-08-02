@@ -1,7 +1,8 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
 local COLORS, TEXTURES = M.colors, M.textures
+
+local unpack = unpack
 
 local function SetFlashTexture(texture)
 	texture:SetTexture(TEXTURES.button.flash)
@@ -29,20 +30,20 @@ local function SetCustomVertexColor(self, r, g, b)
 	local name = gsub(button:GetName(), "%d", "")
 
 	if name == "ExtraActionButton" then
-		button:SetBorderColor(0.9, 0.4, 0.1)
+		button:SetBorderColor(unpack(COLORS.orange))
 
 		return
 	end
 
 	if action and IsEquippedAction(action) then
-		button:SetBorderColor(0.1, 0.9, 0.1)
+		button:SetBorderColor(unpack(COLORS.green))
 
 		return
 	end
 
 	if r == 1 and g == 1 and b == 1 then
 		if name == "ActionButton" then
-			button:SetBorderColor(255 / 255, 200 / 255, 15 / 255)
+			button:SetBorderColor(unpack(COLORS.yellow))
 		else
 			button:SetBorderColor(r, g, b)
 		end
@@ -119,7 +120,7 @@ local function ActionButton_OnUpdate(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
+		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
 	end
 end
 
@@ -127,7 +128,7 @@ local function PetActionButton_OnUpdate(button)
 	local bHotKey = button.HotKey
 
 	if bHotKey then
-		bHotKey:SetVertexColor(0.75, 0.75, 0.75)
+		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
 	end
 end
 
@@ -358,7 +359,7 @@ function E:SkinPetBattleButton(button)
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
 	end
 
-	button:SetBorderColor(255 / 255, 200 / 255, 15 / 255)
+	button:SetBorderColor(unpack(COLORS.yellow))
 
 	button.styled = true
 end

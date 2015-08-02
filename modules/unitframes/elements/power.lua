@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+local POWERCOLORS = M.colors.power
 
 local function PostUpdatePower(bar, unit, cur, max)
 	if bar.Tube then
@@ -23,7 +23,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 	end
 
 	local _, powerType = UnitPowerType(unit)
-	local color = E:RGBToHEX(bar.__owner.colors.power[powerType] or bar.__owner.colors.power["FOCUS"])
+	local color = E:RGBToHEX(POWERCOLORS[powerType] or POWERCOLORS["FOCUS"])
 
 	if cur < max then
 		if bar.__owner.isMouseOver then

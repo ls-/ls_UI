@@ -1,16 +1,19 @@
 local _, ns = ...
-local E, oUF = ns.E, ns.oUF or oUF
+local E, M, oUF = ns.E, ns.M, ns.oUF
+local COLORS = M.colors
+local HPCOLORS = COLORS.healprediction
+local THREATCOLORS = COLORS.threat
 
 oUF.Tags.Methods["custom:color"] = function(unit)
 	local color
 	if UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
-		color = oUF.colors.disconnected
+		color = COLORS.disconnected
 	elseif UnitIsPlayer(unit) then
-		color = oUF.colors.class[select(2, UnitClass(unit))]
+		color = COLORS.class[select(2, UnitClass(unit))]
 	elseif UnitIsUnit(unit, "target") and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
-		color = oUF.colors.tapped
+		color = COLORS.tapped
 	else
-		color = oUF.colors.reaction[UnitReaction(unit, "player")]
+		color = COLORS.reaction[UnitReaction(unit, "player")]
 	end
 
  	if color then
@@ -43,7 +46,7 @@ oUF.Tags.Events["custom:racetype"] = "UNIT_CLASSIFICATION_CHANGED"
 
 oUF.Tags.Methods["custom:threat"] = function(unit)
 	local _, status, scaledPercent = UnitDetailedThreatSituation("player", unit)
-	local color = E:RGBToHEX(GetThreatStatusColor(status))
+	local color = E:RGBToHEX(THREATCOLORS[status])
 	if scaledPercent and scaledPercent ~= 0 and ShowNumericThreat() and UnitClassification(unit) ~= "minus" then
 		return "|cff"..color..format("%d", scaledPercent).."%|r"
 	else
@@ -55,7 +58,7 @@ oUF.Tags.Events["custom:threat"] = "UNIT_THREAT_LIST_UPDATE UNIT_THREAT_SITUATIO
 
 oUF.Tags.Methods["custom:healabsorb"] = function(unit)
 	local healAbsorb = UnitGetTotalHealAbsorbs("player") or 0
-	local color = E:RGBToHEX(0.9, 0.1, 0.3)
+	local color = E:RGBToHEX(HPCOLORS.healabsorb)
 	if healAbsorb > 0 then
 		return "|cff"..color.."-|r"..E:NumberFormat(healAbsorb)
 	else
@@ -67,7 +70,7 @@ oUF.Tags.Events["custom:healabsorb"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
 
 oUF.Tags.Methods["custom:damageabsorb"] = function(unit)
 	local damageAbsorb = UnitGetTotalAbsorbs(unit) or 0
-	local color = E:RGBToHEX(0, 0.7, 0.95)
+	local color = E:RGBToHEX(HPCOLORS.damageabsorb)
 	if damageAbsorb > 0 then
 		return "|cff"..color.."+|r"..E:NumberFormat(damageAbsorb)
 	else

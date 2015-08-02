@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+local COLORS = M.colors
 
 local function PostUpdateHealth(bar, unit, cur, max)
 	if bar.LowHP then
@@ -16,17 +16,16 @@ local function PostUpdateHealth(bar, unit, cur, max)
 
 	local color
 	if not UnitIsConnected(unit) then
-		color = E:RGBToHEX(bar.__owner.colors.disconnected)
+		color = E:RGBToHEX(COLORS.disconnected)
 
 		return bar.Value:SetFormattedText("|cff"..color.."%s|r", PLAYER_OFFLINE)
 	elseif UnitIsDeadOrGhost(unit) then
-		color = E:RGBToHEX(bar.__owner.colors.disconnected)
+		color = E:RGBToHEX(COLORS.disconnected)
 
 		return bar.Value:SetFormattedText("|cff"..color.."%s|r", DEAD)
 	end
 
 	local pattern = (unit == "target" or unit == "focus") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
-	-- local pattern = (unit ~= "player" and unit ~= "pet" and unit ~= "party" and unit ~= "vehicle") and "|cffffffff%s - %d%%|r" or "|cffffffff%s|r"
 
 	if cur < max then
 		if bar.__owner.isMouseOver then
@@ -60,7 +59,7 @@ function UF:CreateHealthBar(parent, textsize, reaction, vertical, lowhp)
 		glow:SetTexCoord(98 / 512, 198 / 512, 202 / 512, 340 / 512)
 		glow:SetSize(100, 138)
 		glow:SetPoint("CENTER")
-		glow:SetVertexColor(0.9, 0.15, 0.15)
+		glow:SetVertexColor(unpack(COLORS.red))
 		glow:SetAlpha(0)
 		health.LowHP = glow
 	end

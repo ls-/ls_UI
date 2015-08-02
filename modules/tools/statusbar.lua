@@ -1,5 +1,8 @@
 local AddOn, ns = ...
 local E, M = ns.E, ns.M
+local COLORS = M.colors
+
+local unpack = unpack
 
 function E:HandleStatusBar(bar, addBorder, height, cascade)
 	local children = {bar:GetChildren()}
@@ -57,7 +60,7 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 		end
 
 		background:SetTexture(M.textures.statusbar)
-		background:SetVertexColor(0.15, 0.15, 0.15, 1)
+		background:SetVertexColor(unpack(COLORS.darkgray))
 		background:SetAllPoints()
 
 		if text then

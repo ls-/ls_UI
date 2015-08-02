@@ -1,7 +1,9 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+local CLASSPOWER_COLORS = M.colors.classpower
+
+local unpack, pairs = unpack, pairs
 
 local LAYOUT = {
 	[0] = {
@@ -179,7 +181,7 @@ end
 
 local function PostUpdateClassPower(bar, cur, max, changed, event)
 	if event == "ClassPowerEnable" or changed and max ~= 0 then
-		local r, g, b = unpack(M.colors.classpower[bar.__type])
+		local r, g, b = unpack(CLASSPOWER_COLORS[bar.__type])
 		for i = 1, max do
 			local element = bar[i]
 			element:SetSize(12, LAYOUT[max][i].size)
@@ -343,10 +345,10 @@ local function UpdateEclipseBarGlow(bar, unit)
 		local r, g, b
 
 		if bar.hasSolarEclipse == true then
-			r, g, b = unpack(M.colors.eclipse["sun"])
+			r, g, b = unpack(CLASSPOWER_COLORS["ECLIPSE"]["SUN"])
 			E:Blink(bar.Sun, 0.5, 0, 1)
 		else
-			r, g, b = unpack(M.colors.eclipse["moon"])
+			r, g, b = unpack(CLASSPOWER_COLORS["ECLIPSE"]["MOON"])
 			E:Blink(bar.Moon, 0.5, 0, 1)
 		end
 
@@ -380,7 +382,7 @@ function UF:CreateEclipseBar(parent, level)
 	lunar:SetSize(12, 128)
 	lunar:SetPoint("BOTTOM", bar, "BOTTOM")
 	lunar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	lunar:SetStatusBarColor(unpack(M.colors.eclipse["moon"]))
+	lunar:SetStatusBarColor(unpack(CLASSPOWER_COLORS["ECLIPSE"]["MOON"]))
 	bar.LunarBar = lunar
 
 	local solar = CreateFrame("StatusBar", "lsSolarBar", bar)
@@ -389,7 +391,7 @@ function UF:CreateEclipseBar(parent, level)
 	solar:SetSize(12, 128)
 	solar:SetPoint("BOTTOM", lunar:GetStatusBarTexture(), "TOP")
 	solar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	solar:SetStatusBarColor(unpack(M.colors.eclipse["sun"]))
+	solar:SetStatusBarColor(unpack(CLASSPOWER_COLORS["ECLIPSE"]["SUN"]))
 	bar.SolarBar = solar
 
 	local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
@@ -495,7 +497,7 @@ function UF:CreateTotemBar(parent, level)
 	bar:SetPoint("LEFT", 19, 0)
 
 	for i = 1, MAX_TOTEMS do
-		local r, g, b = unpack(M.colors.totem[i])
+		local r, g, b = unpack(CLASSPOWER_COLORS["TOTEM"][i])
 
 		local element = CreateFrame("StatusBar", nil, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
@@ -616,7 +618,7 @@ function UF:CreateBurningEmbers(parent, level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
-	local r, g, b = unpack(M.colors.classpower.EMBER)
+	local r, g, b = unpack(CLASSPOWER_COLORS["EMBER"])
 
 	for i = 1, 4 do
 		local element = CreateFrame("StatusBar", nil, bar)
@@ -669,7 +671,7 @@ end
 -- 	fg:SetSize(78, 10)
 -- 	fg:SetPoint("CENTER")
 
--- 	local r, g, b = unpack(M.colors.classpower.COMBO)
+-- 	local r, g, b = unpack(CLASSPOWER_COLORS.COMBO)
 
 -- 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 -- 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
@@ -766,7 +768,7 @@ function UF:CreateComboBar(parent, level)
 	fg3:SetSize(32, 96)
 	fg3:SetPoint("CENTER")
 
-	local r, g, b = unpack(M.colors.classpower.COMBO)
+	local r, g, b = unpack(CLASSPOWER_COLORS["COMBO"])
 
 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")

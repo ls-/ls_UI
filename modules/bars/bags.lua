@@ -1,14 +1,15 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
 local COLORS = M.colors
+local GRADIENT = COLORS.gradient["GYR"]
 
 E.Bags = {}
 
 local Bags = E.Bags
 
 local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
-local GRADIENT = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
+
+local unpack = unpack
 
 local BAGS = {
 	MainMenuBarBackpackButton,

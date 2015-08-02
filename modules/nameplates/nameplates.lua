@@ -4,18 +4,20 @@ local C, E, M = ns.C, ns.E, ns.M
 E.NP = {}
 
 local NP = E.NP
+local COLORS = M.colors
 
-local tonumber, format, match = tonumber, format, strmatch
+local tonumber, format, match, unpack = tonumber, format, strmatch, unpack
+
 local prevNumChildren = 0
 
 NP.plates = {}
 
 local function NamePlate_CreateStatusBar(parent, isCastBar)
 	local bar = CreateFrame("StatusBar", nil, parent)
-	bar:SetSize(120, 14)
+	bar:SetSize(122, 14)
 	bar:SetPoint(isCastBar and "BOTTOM" or "TOP", parent, isCastBar and "BOTTOM" or "TOP", 0, isCastBar and 0 or -16)
 	bar:SetStatusBarTexture(M.textures.statusbar)
-	bar:SetStatusBarColor(0.15, 0.15, 0.15)
+	bar:SetStatusBarColor(unpack(COLORS.darkgray))
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
 
 	if isCastBar then
@@ -31,7 +33,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar)
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetAllPoints(bar)
 	bg:SetTexture(M.textures.statusbar)
-	bg:SetVertexColor(0.15, 0.15, 0.15)
+	bg:SetVertexColor(unpack(COLORS.darkgray))
 	bar.Bg = bg
 
 	local text = E:CreateFontString(bar, isCastBar and 10 or 12, nil, true, nil)
@@ -46,13 +48,13 @@ local function NamePlate_GetColor(r, g, b, a)
 	r, g, b, a = tonumber(format("%.2f", r)), tonumber(format("%.2f", g)), tonumber(format("%.2f", b)), tonumber(format("%.2f", a))
 
 	if r == 1 and g == 0 and b == 0 then
-		return 0.9, 0.15, 0.15, 1
+		return unpack(COLORS.red)
 	elseif r == 0 and g == 1 and b == 0 then
-		return 0.15, 0.65, 0.15, 1
+		return unpack(COLORS.green)
 	elseif r == 1 and g == 1 and b == 0 then
-		return 1, 0.80, 0.10, 1
+		return unpack(COLORS.yellow)
 	elseif r == 0 and g == 0 and b == 1 then
-		return 0.41, 0.8, 0.94, 1
+		return unpack(COLORS.blue)
 	else
 		return r, g, b, a
 	end
@@ -86,13 +88,13 @@ local function NamePlateCastBar_OnValueChanged(self, value)
 	bar:SetValue(value)
 
 	if self.Shield:IsShown() then
-		bar:SetStatusBarColor(0.6, 0.6, 0.6)
+		bar:SetStatusBarColor(unpack(COLORS.gray))
 		bar.Icon:SetDesaturated(true)
-		bar.Bg:SetVertexColor(0.2, 0.2, 0.2)
+		bar.Bg:SetVertexColor(unpack(COLORS.darkgray))
 	else
-		bar:SetStatusBarColor(0.15, 0.15, 0.15)
+		bar:SetStatusBarColor(unpack(COLORS.darkgray))
 		bar.Icon:SetDesaturated(false)
-		bar.Bg:SetVertexColor(0.96, 0.7, 0)
+		bar.Bg:SetVertexColor(unpack(COLORS.yellow))
 	end
 end
 
@@ -274,7 +276,7 @@ local function WorldFrame_OnUpdate(self, elapsed)
 					overlay.Threat:Hide()
 
 					if plate.Highlight:IsShown() then
-						overlay.Name:SetTextColor(1, 0.8, 0.1)
+						overlay.Name:SetTextColor(unpack(COLORS.yellow))
 					else
 						overlay.Name:SetTextColor(1, 1, 1)
 					end

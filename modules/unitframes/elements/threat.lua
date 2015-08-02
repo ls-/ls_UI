@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+local THREATCOLORS = M.colors.threat
 
 local ThreatUpdateOverride
 
@@ -22,7 +22,7 @@ function ThreatUpdateOverride(self, event, unit)
 	end
 
 	if(status and status > 0) then
-		threat:SetVertexColor(GetThreatStatusColor(status))
+		threat:SetVertexColor(unpack(THREATCOLORS[status]))
 		threat:Show()
 	else
 		threat:Hide()

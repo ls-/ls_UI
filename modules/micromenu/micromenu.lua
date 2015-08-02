@@ -1,16 +1,16 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
+local COLORS = M.colors
+local GRADIENT_GYR = COLORS.gradient["GYR"]
+local GRADIENT_RYG = COLORS.gradient["RYG"]
 
 E.MM = {}
 
 local MM = E.MM
-
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
-local GRADIENT_GYR = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15}
-local GRADIENT_RYG = {0.9, 0.15, 0.15, 0.9, 0.65, 0.15, 0.15, 0.65, 0.15}
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
 
-local wipe, find = wipe, strfind
+local wipe, find, unpack = wipe, strfind, unpack
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
@@ -172,7 +172,7 @@ local function CharacterMicroButton_OnEnter(self)
 					end
 
 					GameTooltip:AddLine(customName or name, color.r, color.g, color.b)
-					ShowTooltipStatusBar(GameTooltip, 0, maxXp, xp, 0.11, 0.75, 0.95)
+					ShowTooltipStatusBar(GameTooltip, 0, maxXp, xp, unpack(COLORS.experience))
 				end
 			end
 		end
@@ -196,8 +196,8 @@ local function CharacterMicroButton_OnEnter(self)
 		if UnitLevel("player") < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(EXPERIENCE_COLON)
-			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, 0.11, 0.75, 0.95)
-			ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), 0.11, 0.75, 0.95)
+			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
+			ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), unpack(COLORS.experience))
 		end
 
 		local name, standing, repMin, repMax, repValue, factionID = GetWatchedFactionInfo()
@@ -285,7 +285,7 @@ end
 
 local function MicroButton_OnLeave(self)
 	for i = 1, GameTooltip.shownStatusBars do
-		_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(0.15, 0.65, 0.15)
+		_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(unpack(COLORS.green))
 		_G[GameTooltip:GetName().."StatusBar"..i]:Hide()
 	end
 

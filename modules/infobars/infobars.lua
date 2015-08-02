@@ -42,7 +42,7 @@ local function lsClockInfoBar_OnUpdate(self, elapsed)
 		if TimeManagerClockButton.alarmFiring then
 			self.filling:SetVertexColor(unpack(COLORS.red))
 		else
-			self.filling:SetVertexColor(unpack(COLORS.black))
+			self.filling:SetVertexColor(unpack(COLORS.darkgray))
 		end
 	end
 end

@@ -1,7 +1,8 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+
+local unpack = unpack
 
 local function PostUpdateAltPower(bar, min, cur, max)
 	if not bar.Value then return end
@@ -9,7 +10,7 @@ local function PostUpdateAltPower(bar, min, cur, max)
 	local _, r, g, b = UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
 
 	if (r == 1 and g == 1 and b == 1) or not b then
-		r, g, b = 0.4, 0.65, 0.95
+		r, g, b = unpack(COLORS.indigo)
 	end
 
 	bar:SetStatusBarColor(r, g, b)
@@ -60,7 +61,7 @@ function UF:CreateAltPowerBar(parent, width, coords)
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetAllPoints()
-	bg:SetTexture(0.15, 0.15, 0.15, 1)
+	bg:SetTexture(unpack(COLOR.darkgray))
 
 	local value = E:CreateFontString(bar, 10, "$parentAltPowerValue", true)
 	bar.Value = value

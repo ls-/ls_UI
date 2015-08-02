@@ -4,12 +4,13 @@ local E, C, M = ns.E, ns.C, ns.M
 E.TT = {}
 
 local TT = E.TT
+local COLORS = M.colors
+local CLASSCOLORS = COLORS.class
 
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
-local find = strfind
+local find, unpack = strfind, unpack
 
 local function AuraTooltipHook(self, unit, index, filter)
-	local caster, _, _, id = select(8, UnitAura(unit, index, filter))
+	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
 
 	if not id then return end
 
@@ -18,9 +19,9 @@ local function AuraTooltipHook(self, unit, index, filter)
 	if caster then
 		local name = UnitName(caster)
 		local _, class = UnitClass(caster)
-		local color = RAID_CLASS_COLORS[class]
+		local r, g, b = unpack(CLASSCOLORS[class])
 
-		self:AddDoubleLine("|cffffd100"..ID..":|r "..id, name, 1, 1 , 1, color.r, color.g, color.b)
+		self:AddDoubleLine("|cffffd100"..ID..":|r "..id, name, 1, 1 , 1, r, g, b)
 	else
 		self:AddLine("|cffffd100"..ID..":|r "..id, 1, 1, 1)
 	end
@@ -69,7 +70,7 @@ local function AddTooltipStatusBar(self, num)
 	local bar
 	for i = 1, num do
 		bar = CreateFrame("StatusBar", "GameTooltipStatusBar"..i, self, "TooltipStatusBarTemplate")
-		bar:SetStatusBarColor(0.15, 0.65, 0.15)
+		bar:SetStatusBarColor(unpack(COLORS.green))
 		E:HandleStatusBar(bar, nil, 12)
 		bar.Text:SetFont(M.font, 10)
 	end
