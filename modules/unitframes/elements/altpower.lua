@@ -1,5 +1,6 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
+local COLORS = M.colors
 local UF = E.UF
 
 local unpack = unpack
@@ -61,7 +62,7 @@ function UF:CreateAltPowerBar(parent, width, coords)
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetAllPoints()
-	bg:SetTexture(unpack(COLOR.darkgray))
+	bg:SetTexture(unpack(COLORS.darkgray))
 
 	local value = E:CreateFontString(bar, 10, "$parentAltPowerValue", true)
 	bar.Value = value
