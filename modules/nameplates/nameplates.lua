@@ -34,7 +34,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar)
 	bg:SetVertexColor(0.15, 0.15, 0.15)
 	bar.Bg = bg
 
-	local text = E:CreateFontString(bar, 12, nil, true, nil)
+	local text = E:CreateFontString(bar, isCastBar and 10 or 12, nil, true, nil)
 	text:SetAllPoints(bar)
 	text:SetJustifyH(isCastBar and "CENTER" or "RIGHT")
 	bar.Text = text
@@ -191,7 +191,7 @@ local function HandleNamePlate(self)
 
 	local iconHolder = CreateFrame("Frame", nil, castBar)
 	iconHolder:SetSize(32, 32)
-	iconHolder:SetPoint("RIGHT", overlay, "LEFT", -8, 0)
+	iconHolder:SetPoint("BOTTOMRIGHT", overlay, "BOTTOMLEFT", -8, 0)
 	E:CreateBorder(iconHolder)
 
 	local icon = iconHolder:CreateTexture(nil, "BACKGROUND", nil, 1)
