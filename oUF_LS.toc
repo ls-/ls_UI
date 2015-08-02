@@ -6,13 +6,13 @@
 ## X-Category: UnitFrame
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
-init.lua
 embeds\_embeds.xml
+core\_core.xml
 media\_media.xml
 locales\_locales.xml
 modules\_modules.xml
-core\_core.xml
 config\_config.xml
+init.lua
 
 # dev crap
 test\_test.xml

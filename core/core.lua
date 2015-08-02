@@ -1,4 +1,6 @@
-local _, ns = ...
+local AddOn, ns = ...
+ns.E, ns.C, ns.D, ns.M, ns.L = CreateFrame("Frame"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
+
 local E, M = ns.E, ns.M
 
 E.width, E.height = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
@@ -70,3 +72,6 @@ function E:ForceLoadAddOn(name)
 		end
 	end
 end
+
+SLASH_RELOADUI1 = "/rl"
+SlashCmdList.RELOADUI = ReloadUI
