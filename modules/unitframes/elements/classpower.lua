@@ -5,6 +5,8 @@ local POWERCOLORS = M.colors.power
 
 local unpack, pairs, gsub = unpack, pairs, gsub
 
+local UnitHealthMax, UnitStagger = UnitHealthMax, UnitStagger
+
 local LAYOUT = {
 	[0] = {
 		sep = {0, 1 / 512, 0, 1 / 256},
@@ -643,63 +645,6 @@ function UF:CreateBurningEmbers(parent, level)
 	return bar
 end
 
--- local function UpdateComboBar(bar, cp)
--- 	if not bar[1]:IsShown() then
--- 		bar:Hide()
--- 	else
--- 		bar:Show()
-
--- 		if cp / 5 == 1 then
--- 			E:Blink(bar.Glow, 0.5)
--- 		else
--- 			E:StopBlink(bar.Glow)
--- 		end
--- 	end
--- end
-
--- function UF:CreateComboBar(parent, level)
--- 	local bar = CreateFrame("Frame", "$parentComboBar", parent)
--- 	bar:SetFrameLevel(level)
--- 	bar:SetSize(60, 2)
--- 	bar:SetPoint("TOPRIGHT", -25, -7)
-
--- 	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 0)
--- 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
--- 	fg:SetTexCoord(406 / 512, 484 / 512, 4 / 128, 14 / 128)
--- 	fg:SetSize(78, 10)
--- 	fg:SetPoint("CENTER")
-
--- 	local r, g, b = unpack(POWERCOLORS.COMBO)
-
--- 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
--- 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
--- 	glow:SetTexCoord(406 / 512, 470 / 512, 14 / 128, 20 / 128)
--- 	glow:SetSize(64, 6)
--- 	glow:SetPoint("CENTER")
--- 	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
--- 	glow:SetAlpha(0)
--- 	bar.Glow = glow
-
--- 	for i = 1, 5 do
--- 		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
--- 		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
--- 		element:SetVertexColor(r, g, b)
--- 		element:SetSize((i ~= 1 and i ~= 5) and 10 or 11, 2)
-
--- 		if i == 1 then
--- 			element:SetPoint("LEFT", 0, 0)
--- 		else
--- 			element:SetPoint("LEFT", bar[i - 1], "RIGHT", 2, 0)
--- 		end
-
--- 		bar[i] = element
--- 	end
-
--- 	bar.PostUpdate = UpdateComboBar
-
--- 	return bar
--- end
-
 local function OverrideComboBar(self, event, unit)
 	if unit == "pet" then return end
 
@@ -756,7 +701,7 @@ function UF:CreateComboBar(parent, level)
 
 	local fg2 = bar:CreateTexture(nil, "ARTWORK", nil, 2)
 	fg2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg2:SetTexCoord(128 / 512, 160 / 512, 149 / 256, 251 / 256)
+	fg2:SetTexCoord(32 / 512, 64 / 512, 149 / 256, 251 / 256)
 	fg2:SetSize(32, 102)
 	fg2:SetPoint("CENTER")
 
@@ -770,7 +715,7 @@ function UF:CreateComboBar(parent, level)
 
 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	glow:SetTexCoord(352 / 512, 384 / 512, 149 / 256, 251 / 256)
+	glow:SetTexCoord(64 / 512, 96 / 512, 149 / 256, 251 / 256)
 	glow:SetSize(32, 102)
 	glow:SetPoint("CENTER")
 	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
@@ -792,6 +737,67 @@ function UF:CreateComboBar(parent, level)
 	end
 
 	bar.Override = OverrideComboBar
+
+	return bar
+end
+
+local function OverrideStaggerBar(self, event, unit)
+	if unit and unit ~= self.unit then return end
+	local bar = self.Stagger
+
+	local maxHealth = UnitHealthMax("player")
+	local stagger = UnitStagger("player")
+
+	bar:SetMinMaxValues(0, maxHealth)
+	bar:SetValue(stagger)
+
+	local r, g, b = E:ColorGradient(stagger / maxHealth, unpack(POWERCOLORS["STAGGER"]))
+	local hex = E:RGBToHEX(r, g, b)
+
+	bar:SetStatusBarColor(r, g, b)
+
+	if bar.__owner.isMouseOver then
+		bar.Value:SetFormattedText("%s / |cff"..hex.."%s|r", E:NumberFormat(stagger), E:NumberFormat(maxHealth))
+	else
+		if stagger > 0 then
+			bar.Value:SetFormattedText("|cff"..hex.."%s|r", E:NumberFormat(stagger))
+		else
+			bar.Value:SetText(nil)
+		end
+	end
+end
+
+function UF:CreateStaggerBar(parent, level)
+	local bar = CreateFrame("StatusBar", "$parentStaggerBar", parent)
+	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	bar:SetOrientation("VERTICAL")
+	bar:SetFrameLevel(level)
+	bar:SetSize(8, 100)
+	bar:SetPoint("LEFT", 7, 0)
+	E:SmoothBar(bar)
+
+	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	bg:SetTexCoord(128 / 512, 160 / 512, 149 / 256, 251 / 256)
+	bg:SetSize(32, 102)
+	bg:SetPoint("CENTER")
+
+	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	fg1:SetTexCoord(440 / 512, 472 / 512, 16 / 256, 144 / 256)
+	fg1:SetSize(32, 128)
+	fg1:SetPoint("CENTER")
+
+	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 2)
+	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	fg1:SetTexCoord(96 / 512, 128 / 512, 149 / 256, 251 / 256)
+	fg1:SetSize(32, 102)
+	fg1:SetPoint("CENTER")
+
+	local value = E:CreateFontString(bar, 12, "$parentStaggerValue", true)
+	bar.Value = value
+
+	bar.Override = OverrideStaggerBar
 
 	return bar
 end

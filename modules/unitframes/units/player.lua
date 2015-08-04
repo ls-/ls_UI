@@ -123,6 +123,11 @@ function UF:ConstructPlayerFrame(frame)
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Shadow_Orbs", level + 4)
 	elseif E.playerclass == "MONK" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
+
+		frame.Stagger = UF:CreateStaggerBar(frame, level + 6)
+		frame.Stagger.Value:SetParent(cover)
+		frame.Stagger.Value:SetPoint("CENTER", 0, -20)
+		tinsert(frame.mouseovers, frame.Stagger)
 	elseif E.playerclass == "PALADIN" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holy_Power", level + 4)
 	elseif ns.E.playerclass == "WARLOCK" then
