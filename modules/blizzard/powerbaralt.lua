@@ -1,7 +1,8 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
 local B = E.Blizzard
+
+local PlayerPowerBarAlt = PlayerPowerBarAlt
 
 local function ClearAllPointsHook(self)
 	self:SetPoint("BOTTOM", LSPowerBarAltHolder, "BOTTOM", 0, 0)

@@ -10,7 +10,9 @@ function B:HandleArchaeology()
 		E:ForceLoadAddOn("Blizzard_ArchaeologyUI")
 	end
 
+	local ArcheologyDigsiteProgressBar = ArcheologyDigsiteProgressBar
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
+	ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
 	E:HandleStatusBar(ArcheologyDigsiteProgressBar, true)
 	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(unpack(COLORS.orange))
 	E:CreateMover(ArcheologyDigsiteProgressBar)

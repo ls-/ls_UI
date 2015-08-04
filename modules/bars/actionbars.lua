@@ -218,10 +218,14 @@ function ActionBars:Initialize()
 
 	-- Hiding different useless textures
 	MainMenuBar.slideOut.IsPlaying = function() return true end
+	MainMenuBar:SetParent(M.hiddenParent)
+	for _, v in next, {MainMenuBar:GetChildren()} do
+		E:ForceHide(v)
+	end
+
 	PetActionBarFrame:SetScript("OnUpdate", nil)
 
-	for _, f in next, {
-		MainMenuBar,
+	for _, v in next, {
 		MainMenuBarPageNumber,
 		ActionBarDownButton,
 		ActionBarUpButton,
@@ -230,23 +234,13 @@ function ActionBars:Initialize()
 		OverrideActionBarPowerBar,
 		OverrideActionBarPitchFrame,
 		OverrideActionBarLeaveFrame,
-	} do
-		f:SetParent(M.hiddenParent)
-		f.ignoreFramePositionManager = true
-	end
-
-	for _, t in next, {
+		IconIntroTracker,
 		MainMenuBarTexture0,
 		MainMenuBarTexture1,
 		MainMenuBarTexture2,
 		MainMenuBarTexture3,
 		MainMenuBarLeftEndCap,
 		MainMenuBarRightEndCap,
-	} do
-		E:AlwaysHide(t)
-	end
-
-	for _, t in next, {
 		PossessBackground1,
 		PossessBackground2,
 		StanceBarLeft,
@@ -258,7 +252,7 @@ function ActionBars:Initialize()
 		SpellFlyoutVerticalBackground,
 		SpellFlyoutBackgroundEnd,
 	} do
-		t:SetAlpha(0)
+		E:ForceHide(v)
 	end
 
 	for i = 1, 6 do

@@ -73,5 +73,32 @@ function E:ForceLoadAddOn(name)
 	end
 end
 
+local function HideHook(self)
+	self:Show()
+end
+
+local function ShowHook(self)
+	self:Hide()
+end
+
+function E:ForceHide(object)
+	if object.UnregisterAllEvents then
+		object:UnregisterAllEvents()
+		object:SetParent(M.hiddenParent)
+	else
+		-- will see how it works, I hate taints
+		hooksecurefunc(object, "Show", ShowHook)
+	end
+
+	object:Hide()
+end
+
+function E:ForceShow(object)
+	-- will see how it works, I hate taints
+	hooksecurefunc(object, "Hide", HideHook)
+
+	object:Show()
+end
+
 SLASH_RELOADUI1 = "/rl"
 SlashCmdList.RELOADUI = ReloadUI
