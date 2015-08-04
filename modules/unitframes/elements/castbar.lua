@@ -51,7 +51,7 @@ local function CustomDelayText(self, duration)
 end
 
 function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
-	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent)
+	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
 	holder:SetSize(width, 26)
 	holder:SetPoint(unpack(coords))
 
