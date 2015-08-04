@@ -1,9 +1,9 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
-local CLASSPOWER_COLORS = M.colors.classpower
+local POWERCOLORS = M.colors.power
 
-local unpack, pairs = unpack, pairs
+local unpack, pairs, gsub = unpack, pairs, gsub
 
 local LAYOUT = {
 	[0] = {
@@ -143,13 +143,13 @@ local MAX_TOTEMS = MAX_TOTEMS
 local prevInUse = "NONE"
 local curInUse = {
 	["RUNE"] = {visible = false, slots = 0},
-	["TOTEM"] = {visible = false, slots = 0},
+	["TOTEMS"] = {visible = false, slots = 0},
 	["CHI"] = {visible = false, slots = 0},
-	["HOLYPOWER"] = {visible = false, slots = 0},
-	["SOULSHARD"] = {visible = false, slots = 0},
-	["SHADOWORB"] = {visible = false, slots = 0},
-	["EMBER"] = {visible = false, slots = 0},
-	["FURY"] = {visible = false, slots = 0},
+	["HOLY_POWER"] = {visible = false, slots = 0},
+	["SOUL_SHARDS"] = {visible = false, slots = 0},
+	["SHADOW_ORBS"] = {visible = false, slots = 0},
+	["BURNING_EMBERS"] = {visible = false, slots = 0},
+	["DEMONIC_FURY"] = {visible = false, slots = 0},
 	["ECLIPSE"] = {visible = false, slots = 0},
 	["NONE"] = {visible = false, slots = 0},
 }
@@ -181,7 +181,7 @@ end
 
 local function PostUpdateClassPower(bar, cur, max, changed, event)
 	if event == "ClassPowerEnable" or changed and max ~= 0 then
-		local r, g, b = unpack(CLASSPOWER_COLORS[bar.__type])
+		local r, g, b = unpack(POWERCOLORS[bar.__type])
 		for i = 1, max do
 			local element = bar[i]
 			element:SetSize(12, LAYOUT[max][i].size)
@@ -221,7 +221,7 @@ local function PostUpdateClassPower(bar, cur, max, changed, event)
 end
 
 function UF:CreateClassPowerBar(parent, max, cpType, level)
-	local bar = CreateFrame("Frame", "$parent"..cpType.."Bar", parent)
+	local bar = CreateFrame("Frame", "$parent"..gsub(cpType, "_", "").."Bar", parent)
 	bar.__type = strupper(cpType)
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
@@ -345,10 +345,10 @@ local function UpdateEclipseBarGlow(bar, unit)
 		local r, g, b
 
 		if bar.hasSolarEclipse == true then
-			r, g, b = unpack(CLASSPOWER_COLORS["ECLIPSE"]["SUN"])
+			r, g, b = unpack(POWERCOLORS["ECLIPSE"].positive)
 			E:Blink(bar.Sun, 0.5, 0, 1)
 		else
-			r, g, b = unpack(CLASSPOWER_COLORS["ECLIPSE"]["MOON"])
+			r, g, b = unpack(POWERCOLORS["ECLIPSE"].negative)
 			E:Blink(bar.Moon, 0.5, 0, 1)
 		end
 
@@ -382,7 +382,7 @@ function UF:CreateEclipseBar(parent, level)
 	lunar:SetSize(12, 128)
 	lunar:SetPoint("BOTTOM", bar, "BOTTOM")
 	lunar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	lunar:SetStatusBarColor(unpack(CLASSPOWER_COLORS["ECLIPSE"]["MOON"]))
+	lunar:SetStatusBarColor(unpack(POWERCOLORS["ECLIPSE"].negative))
 	bar.LunarBar = lunar
 
 	local solar = CreateFrame("StatusBar", "lsSolarBar", bar)
@@ -391,7 +391,7 @@ function UF:CreateEclipseBar(parent, level)
 	solar:SetSize(12, 128)
 	solar:SetPoint("BOTTOM", lunar:GetStatusBarTexture(), "TOP")
 	solar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	solar:SetStatusBarColor(unpack(CLASSPOWER_COLORS["ECLIPSE"]["SUN"]))
+	solar:SetStatusBarColor(unpack(POWERCOLORS["ECLIPSE"].positive))
 	bar.SolarBar = solar
 
 	local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
@@ -491,13 +491,13 @@ end
 
 function UF:CreateTotemBar(parent, level)
 	local bar = CreateFrame("Frame", "$parentTotemBar", parent)
-	bar.__type = "TOTEM"
+	bar.__type = "TOTEMS"
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
 	for i = 1, MAX_TOTEMS do
-		local r, g, b = unpack(CLASSPOWER_COLORS["TOTEM"][i])
+		local r, g, b = unpack(POWERCOLORS["TOTEMS"][i])
 
 		local element = CreateFrame("StatusBar", nil, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
@@ -552,7 +552,7 @@ function UF:CreateDemonicFury(parent, level)
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
-	bar.__type = "FURY"
+	bar.__type = "DEMONIC_FURY"
 	E:SmoothBar(bar)
 
 	local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
@@ -560,7 +560,7 @@ function UF:CreateDemonicFury(parent, level)
 	glow:SetPoint("CENTER", bar, "CENTER", 0, 0)
 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
 	glow:SetTexCoord(unpack(LAYOUT[1][1].glow))
-	glow:SetVertexColor(0, 1, 0.1)
+	glow:SetVertexColor(E:ColorLighten(0, 1, 0.1, 0.45))
 	glow:SetAlpha(0)
 	bar.Glow = glow
 
@@ -613,12 +613,10 @@ end
 
 function UF:CreateBurningEmbers(parent, level)
 	local bar = CreateFrame("Frame", "$parentEmberBar", parent)
-	bar.__type = "EMBER"
+	bar.__type = "BURNING_EMBERS"
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
-
-	local r, g, b = unpack(CLASSPOWER_COLORS["EMBER"])
 
 	for i = 1, 4 do
 		local element = CreateFrame("StatusBar", nil, bar)
@@ -635,7 +633,7 @@ function UF:CreateBurningEmbers(parent, level)
 		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
 		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
 		glow:SetTexCoord(unpack(LAYOUT[4][i].glow))
-		glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
+		glow:SetVertexColor(E:ColorLighten(0.9, 0.4, 0.1, 0.35))
 		glow:SetAlpha(0)
 		element.Glow = glow
 	end
@@ -671,7 +669,7 @@ end
 -- 	fg:SetSize(78, 10)
 -- 	fg:SetPoint("CENTER")
 
--- 	local r, g, b = unpack(CLASSPOWER_COLORS.COMBO)
+-- 	local r, g, b = unpack(POWERCOLORS.COMBO)
 
 -- 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 -- 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
@@ -738,7 +736,7 @@ local function OverrideComboBar(self, event, unit)
 end
 
 function UF:CreateComboBar(parent, level)
-	local bar = CreateFrame("Frame", "$parentComboBar", parent)
+	local bar = CreateFrame("Frame", "$parentComboPointsBar", parent)
 	bar:SetFrameLevel(level)
 	bar:SetSize(26, 100)
 	bar:SetPoint("LEFT", "LSPlayerFrame" , "RIGHT", 2, 0)
@@ -768,7 +766,7 @@ function UF:CreateComboBar(parent, level)
 	fg3:SetSize(32, 96)
 	fg3:SetPoint("CENTER")
 
-	local r, g, b = unpack(CLASSPOWER_COLORS["COMBO"])
+	local r, g, b = unpack(POWERCOLORS["COMBO_POINTS"])
 
 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
 	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
@@ -784,14 +782,13 @@ function UF:CreateComboBar(parent, level)
 		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetVertexColor(r, g, b)
 		element:SetSize(8, 20)
+		bar[i] = element
 
 		if i == 1 then
 			element:SetPoint("BOTTOM", 0, 0)
 		else
 			element:SetPoint("BOTTOM", bar[i - 1], "TOP", 0, 0)
 		end
-
-		bar[i] = element
 	end
 
 	bar.Override = OverrideComboBar

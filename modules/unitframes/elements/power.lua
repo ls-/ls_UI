@@ -3,6 +3,8 @@ local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 local POWERCOLORS = M.colors.power
 
+local UnitIsDeadOrGhost, UnitIsConnected = UnitIsDeadOrGhost, UnitIsConnected
+
 local function PostUpdatePower(bar, unit, cur, max)
 	if bar.Tube then
 		if max == 0 then
@@ -22,8 +24,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 		return bar.Value:SetText(nil)
 	end
 
-	local _, powerType = UnitPowerType(unit)
-	local color = E:RGBToHEX(POWERCOLORS[powerType] or POWERCOLORS["FOCUS"])
+	local color = E:RGBToHEX(bar:GetStatusBarColor())
 
 	if cur < max then
 		if bar.__owner.isMouseOver then

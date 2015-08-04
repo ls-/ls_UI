@@ -120,13 +120,13 @@ function UF:ConstructPlayerFrame(frame)
 	UF:Reskin(frame, "NONE", true, 0, "NONE")
 
 	if E.playerclass == "PRIEST" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "ShadowOrb", level + 4)
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Shadow_Orbs", level + 4)
 	elseif E.playerclass == "MONK" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
 	elseif E.playerclass == "PALADIN" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holypower", level + 4)
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holy_Power", level + 4)
 	elseif ns.E.playerclass == "WARLOCK" then
-		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "SoulShard", level + 4)
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "Soul_Shards", level + 4)
 
 		frame.BurningEmbers = UF:CreateBurningEmbers(frame, level + 4)
 
