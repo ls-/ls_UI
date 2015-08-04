@@ -67,7 +67,7 @@ local BAR_LAYOUT = {
 		},
 		original_bar = PetActionBarFrame,
 		name = "LSPetActionBar",
-		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nobonusbar:5] show; hide",
+		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
 	},
 	bar7 = {
 		buttons = {
