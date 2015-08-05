@@ -571,35 +571,8 @@ function UF:CreateDemonicFury(parent, level)
 	return bar
 end
 
-local function UpdateBurningEmbers(bar, full, count)
-	local resetAnimation
-	if bar.oldFull ~= full then
-		bar.oldFull = full
-
-		resetAnimation = true
-	end
-
-	if full > 0 then
-		for i = 1, full do
-			if resetAnimation then
-				E:StopBlink(bar[i].Glow, true)
-			end
-
-			E:Blink(bar[i].Glow, 0.5)
-		end
-
-		for i = 4, full + 1, -1 do
-			E:StopBlink(bar[i].Glow)
-		end
-	else
-		for i = 1, 4 do
-			E:StopBlink(bar[i].Glow)
-		end
-	end
-
-	resetAnimation = false
-
-	if not bar[1]:IsShown() then
+local function UpdateBurningEmbers(bar, cur, max, num, full, changed, event)
+	if event == "BurningEmbersDisable" then
 		bar:Hide()
 
 		for i = 1, 4 do
@@ -608,8 +581,22 @@ local function UpdateBurningEmbers(bar, full, count)
 
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
-		bar:Show()
-		UF:Reskin(bar:GetParent(), bar.__type, true, 4)
+		if changed then
+			for i = 1, num do
+				E:StopBlink(bar[i].Glow, true)
+			end
+		end
+
+		if full > 0 then
+			for i = 1, full do
+				E:Blink(bar[i].Glow, 0.5)
+			end
+		end
+
+		if event == "BurningEmbersEnable" then
+			bar:Show()
+			UF:Reskin(bar:GetParent(), bar.__type, true, 4)
+		end
 	end
 end
 

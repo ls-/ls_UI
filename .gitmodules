@@ -4,3 +4,6 @@
 [submodule "embeds/oUF_FloatingCombatFeedback"]
 	path = embeds/oUF_FloatingCombatFeedback
 	url = git://github.com/ls-/oUF_FloatingCombatFeedback.git
+[submodule "embeds/oUF_BurningEmbers"]
+	path = embeds/oUF_BurningEmbers
+	url = https://github.com/ls-/oUF_BurningEmbers.git
