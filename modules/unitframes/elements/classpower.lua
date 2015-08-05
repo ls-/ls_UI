@@ -182,22 +182,6 @@ function UF:Reskin(frame, powerType, visible, slots, sentBy)
 end
 
 local function PostUpdateClassPower(bar, cur, max, changed, event)
-	if event == "ClassPowerEnable" or changed and max ~= 0 then
-		local r, g, b = unpack(POWERCOLORS[bar.__type])
-		for i = 1, max do
-			local element = bar[i]
-			element:SetSize(12, LAYOUT[max][i].size)
-			element:SetPoint(unpack(LAYOUT[max][i].point))
-			element:SetVertexColor(r, g, b)
-
-			local glow = element.Glow
-			glow:SetSize(16, LAYOUT[max][i].size)
-			glow:SetPoint("CENTER", element, "CENTER", 0, 0)
-			glow:SetTexCoord(unpack(LAYOUT[max][i].glow))
-			glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-		end
-	end
-
 	if event == "ClassPowerDisable" then
 		bar:Hide()
 
@@ -207,8 +191,24 @@ local function PostUpdateClassPower(bar, cur, max, changed, event)
 
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
 	else
-		bar:Show()
-		UF:Reskin(bar:GetParent(), bar.__type, true, max or 5)
+		if event == "ClassPowerEnable" or changed then
+			bar:Show()
+			UF:Reskin(bar:GetParent(), bar.__type, true, max or 5)
+
+			local r, g, b = unpack(POWERCOLORS[bar.__type])
+			for i = 1, max do
+				local element = bar[i]
+				element:SetSize(12, LAYOUT[max][i].size)
+				element:SetPoint(unpack(LAYOUT[max][i].point))
+				element:SetVertexColor(r, g, b)
+
+				local glow = element.Glow
+				glow:SetSize(16, LAYOUT[max][i].size)
+				glow:SetPoint("CENTER", element, "CENTER", 0, 0)
+				glow:SetTexCoord(unpack(LAYOUT[max][i].glow))
+				glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
+			end
+		end
 
 		if cur / max == 1 then
 			for i = 1, max do
