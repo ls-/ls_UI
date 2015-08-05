@@ -531,19 +531,21 @@ function UF:CreateTotemBar(parent, level)
 	return bar
 end
 
-local function UpdateDemonicFury(bar, cur, max)
-	if cur == max then
-		E:Blink(bar.Glow, 0.5)
-	else
-		E:StopBlink(bar.Glow)
-	end
+local function UpdateDemonicFury(bar, cur, max, isActivated, event)
+	if event ~= "DemonicFuryDisable" then
+		if cur == max then
+			E:Blink(bar.Glow, 0.5)
+		else
+			E:StopBlink(bar.Glow)
+		end
 
-	if not bar:IsShown() then
+		if event == "DemonicFuryEnable" then
+			UF:Reskin(bar:GetParent(), bar.__type, true, 1)
+		end
+	else
 		E:StopBlink(bar.Glow, true)
 
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
-	else
-		UF:Reskin(bar:GetParent(), bar.__type, true, 1)
 	end
 end
 
