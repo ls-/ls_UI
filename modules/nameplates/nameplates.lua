@@ -6,7 +6,7 @@ E.NP = {}
 local NP = E.NP
 local COLORS = M.colors
 
-local tonumber, format, match, unpack = tonumber, format, strmatch, unpack
+local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
 
 local prevNumChildren = 0
 
@@ -107,30 +107,31 @@ end
 
 local function NamePlate_OnShow(self)
 	local scale = UIParent:GetEffectiveScale()
-	local overlay = self.Overlay
+	local Overlay, NameText, LevelText, HighLevelIcon, EliteIcon =
+		self.Overlay, self.NameText, self.LevelText, self.HighLevelIcon, self.EliteIcon
 
-	overlay:SetScale(scale)
+	Overlay:SetScale(scale)
 
-	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", overlay:GetWidth()))
+	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", Overlay:GetWidth()))
 	if sw < ow then
-		overlay:SetScale(scale * 0.7)
+		Overlay:SetScale(scale * 0.7)
 	end
 
-	local name = self.Name:GetText() or UNKNOWNOBJECT
-	local level = self.BossIcon:IsShown() and -1 or tonumber(self.Level:GetText())
+	local name = NameText:GetText() or UNKNOWNOBJECT
+	local level = HighLevelIcon:IsShown() and -1 or tonumber(LevelText:GetText())
 	local color = E:RGBToHEX(GetQuestDifficultyColor((level > 0) and level or 99))
 
-	if self.BossIcon:IsShown() then
+	if HighLevelIcon:IsShown() then
 		level = "??"
 	end
 
-	if self.EliteIcon:IsShown() then
+	if EliteIcon:IsShown() then
 		level = level.."+"
 	end
 
-	overlay.Name:SetFormattedText("|cff%s%s|r %s", color, level, name)
+	Overlay.Name:SetFormattedText("|cff%s%s|r %s", color, level, name)
 
-	overlay:Show()
+	Overlay:Show()
 end
 
 local function NamePlate_OnHide(self)
@@ -138,31 +139,29 @@ local function NamePlate_OnHide(self)
 end
 
 local function HandleNamePlate(self)
-	local barFrame, nameFrame = self:GetChildren()
-	local health, cast = barFrame:GetChildren()
+	local ArtContainer, NameContainer = self:GetChildren()
+	local HealthBar, AbsorbBar, CastBar = ArtContainer:GetChildren() -- doesn't seem to work yet
 
-	local border, raidIcon
-	self.Threat, border, self.Highlight, self.Level, self.BossIcon, raidIcon, self.EliteIcon = barFrame:GetRegions()
-	self.Name = nameFrame:GetRegions()
-	local healthTexture = health:GetRegions()
-	local castTexture, castBorder, castTextShadow
-	castTexture, castBorder, cast.Shield, cast.Icon, cast.Text, castTextShadow = cast:GetRegions()
+	local Threat, Border, Highlight, LevelText, HighLevelIcon, RaidTargetIcon, EliteIcon = ArtContainer:GetRegions()
+	local NameText = NameContainer:GetRegions()
+	local HealthBarTexture, OverAbsorb = HealthBar:GetRegions()
+	local AbsorbBarTexture, AbsorbBarOverlay = AbsorbBar:GetRegions()
+	local CastBarTexture, CastBarBorder, CastBarFrameShield, CastBarSpellIcon, CastBarText, CastBarTextBG = CastBar:GetRegions()
 
-	self.Threat:SetTexture(nil)
-	self.Threat:Hide()
-	self.Level:SetSize(0.001, 0.001)
-	self.Level:Hide()
-	self.BossIcon:SetTexture(nil)
-	self.EliteIcon:SetAlpha(0)
-	self.Highlight:SetTexture(nil)
-	self.Name:Hide()
-	cast.Shield:SetTexture(nil)
-	cast.Icon:SetTexCoord(0, 0, 0, 0)
-	cast.Icon:SetSize(0.001, 0.001)
-	cast.Text:Hide()
-	border:SetTexture(nil)
-	castBorder:SetTexture(nil)
-	castTextShadow:SetTexture(nil)
+	Border:SetTexture(nil)
+
+	LevelText:SetSize(0.001, 0.001)
+	LevelText:Hide()
+	self.LevelText = LevelText
+
+	HighLevelIcon:SetTexture(nil)
+	self.HighLevelIcon = HighLevelIcon
+
+	EliteIcon:SetAlpha(0)
+	self.EliteIcon = EliteIcon
+
+	Highlight:SetTexture(nil)
+	self.Highlight = Highlight
 
 	local overlay = CreateFrame("Frame", "LS"..self:GetName().."Overlay", WorldFrame)
 	overlay:SetFrameStrata(self:GetFrameStrata())
@@ -170,28 +169,40 @@ local function HandleNamePlate(self)
 	self.Overlay = overlay
 	NP.plates[self] = overlay
 
-	healthTexture:SetTexture(nil)
+	HealthBarTexture:SetTexture(nil)
 
-	local healthBar = NamePlate_CreateStatusBar(overlay)
-	overlay.Health = healthBar
-	health.Bar = healthBar
-	health:HookScript("OnShow", NamePlateHealthBar_Update)
-	health:HookScript("OnValueChanged", NamePlateHealthBar_Update)
+	local MyHealthBar = NamePlate_CreateStatusBar(overlay)
+	overlay.Health = MyHealthBar
+	HealthBar.Bar = MyHealthBar
+	HealthBar:HookScript("OnShow", NamePlateHealthBar_Update)
+	HealthBar:HookScript("OnValueChanged", NamePlateHealthBar_Update)
 
 	if not C.nameplates.showText then
-		healthBar.Text:Hide()
+		MyHealthBar.Text:Hide()
 	end
 
-	if health:IsShown() then
-		NamePlateHealthBar_Update(health)
+	if HealthBar:IsShown() then
+		NamePlateHealthBar_Update(HealthBar)
 	end
 
-	castTexture:SetTexture(nil)
+	CastBarSpellIcon:SetTexCoord(0, 0, 0, 0)
+	CastBarSpellIcon:SetSize(0.001, 0.001)
+	CastBar.Icon = CastBarSpellIcon
 
-	local castBar = NamePlate_CreateStatusBar(overlay, true)
-	cast.Bar = castBar
+	CastBarText:Hide()
+	CastBar.Text = CastBarText
 
-	local iconHolder = CreateFrame("Frame", nil, castBar)
+	CastBarFrameShield:SetTexture(nil)
+	CastBar.Shield = CastBarFrameShield
+
+	CastBarTexture:SetTexture(nil)
+	CastBarBorder:SetTexture(nil)
+	CastBarTextBG:SetTexture(nil)
+
+	local MyCastBar = NamePlate_CreateStatusBar(overlay, true)
+	CastBar.Bar = MyCastBar
+
+	local iconHolder = CreateFrame("Frame", nil, MyCastBar)
 	iconHolder:SetSize(32, 32)
 	iconHolder:SetPoint("BOTTOMRIGHT", overlay, "BOTTOMLEFT", -8, 0)
 	E:CreateBorder(iconHolder)
@@ -199,17 +210,20 @@ local function HandleNamePlate(self)
 	local icon = iconHolder:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 	icon:SetAllPoints()
-	castBar.Icon = icon
+	MyCastBar.Icon = icon
 
-	cast:HookScript("OnShow", NamePlateCastBar_OnShow)
-	cast:HookScript("OnHide", NamePlateCastBar_OnHide)
-	cast:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
+	CastBar:HookScript("OnShow", NamePlateCastBar_OnShow)
+	CastBar:HookScript("OnHide", NamePlateCastBar_OnHide)
+	CastBar:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
 
-	if cast:IsShown() then
-		NamePlateCastBar_OnShow(cast)
+	if CastBar:IsShown() then
+		NamePlateCastBar_OnShow(CastBar)
 	else
-		castBar:Hide()
+		MyCastBar:Hide()
 	end
+
+	NameText:Hide()
+	self.NameText = NameText
 
 	local name = E:CreateFontString(overlay, 14, nil, true, nil)
 	name:SetPoint("TOP", overlay, "TOP", 0, 2)
@@ -217,12 +231,16 @@ local function HandleNamePlate(self)
 	name:SetPoint("RIGHT", overlay, 24, 0)
 	overlay.Name = name
 
-	raidIcon:SetParent(overlay)
-	raidIcon:SetSize(32, 32)
-	raidIcon:ClearAllPoints()
-	raidIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
+	RaidTargetIcon:SetParent(overlay)
+	RaidTargetIcon:SetSize(32, 32)
+	RaidTargetIcon:ClearAllPoints()
+	RaidTargetIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
 
-	local threat = healthBar:CreateTexture(nil, "OVERLAY", nil, 0)
+	Threat:SetTexture(nil)
+	Threat:Hide()
+	self.Threat = Threat
+
+	local threat = MyHealthBar:CreateTexture(nil, "OVERLAY", nil, 0)
 	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
 	threat:SetTexCoord(62 / 512, 194 / 512, 36 / 64, 60 / 64)
 	threat:SetSize(132, 24)
