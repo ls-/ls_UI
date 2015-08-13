@@ -338,4 +338,18 @@ function AT:Initialize()
 	header.Text = label
 
 	header:SetSize(label:GetWidth(), 22)
+
+	SLASH_ATBUFF1 = "/atbuff"
+	SlashCmdList["ATBUFF"] = function(msg)
+		local _, text = AT:AddToList("HELPFUL", tonumber(msg))
+
+		print("|cff1ec77eAuraTracker|r: "..text)
+	end
+
+	SLASH_ATDEBUFF1 = "/atdebuff"
+	SlashCmdList["ATDEBUFF"] = function(msg)
+		local _, text = AT:AddToList("HARMFUL", tonumber(msg))
+
+		print("|cff1ec77eAuraTracker|r: "..text)
+	end
 end
