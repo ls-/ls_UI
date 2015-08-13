@@ -34,7 +34,7 @@ Player frame is split into *three* parts:
 - Default UI elements, such as **ActionBars**, **MicroMenu**, **Minimap** and **Buttons**, are all customized;
 - **Frame "movers"** for various interface elements;
 - **Floating Combat Feedback** on player frame;
-- **AuraTracker** for monitoring up to 8 buffs and debuffs on player character in total. List of auras can be managed via slash commands ingame and is saved per character. List of AuraTracker commands can be accessed via either dropdown menu or /atcmd slash command.
+- **AuraTracker** for monitoring up to 12 buffs and debuffs on player character in total. List of auras can be managed via config frame, and is saved per character.
 - **NamePlates**. Nice and clean look;
 - And more.
 
