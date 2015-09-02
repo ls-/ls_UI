@@ -60,5 +60,5 @@ function UF:ConstructFocusTargetFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
-	frame:Tag(name, "[difficulty][level][shortclassification]|r [custom:name]")
+	frame:Tag(name, "[custom:difficulty][level][shortclassification]|r [custom:name]")
 end

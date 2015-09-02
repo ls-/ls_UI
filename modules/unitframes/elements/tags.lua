@@ -79,3 +79,10 @@ oUF.Tags.Methods["custom:damageabsorb"] = function(unit)
 end
 
 oUF.Tags.Events["custom:damageabsorb"] = "UNIT_ABSORB_AMOUNT_CHANGED"
+
+oUF.Tags.Methods["custom:difficulty"] = function(unit)
+	if UnitCanAttack("player", unit) then
+		local l = UnitEffectiveLevel(unit)
+		return Hex(GetCreatureDifficultyColor((l > 0) and l or 99))
+	end
+end

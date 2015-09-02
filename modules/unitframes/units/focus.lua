@@ -109,7 +109,7 @@ function UF:ConstructFocusFrame(frame)
 	class:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	class:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	class:SetPoint("BOTTOM", frame, "TOP", 0, 0)
-	frame:Tag(class, "[difficulty][level][shortclassification]|r [custom:racetype]")
+	frame:Tag(class, "[custom:difficulty][level][shortclassification]|r [custom:racetype]")
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_long", 0 / 512, 105 / 512, 59 / 128, 92 / 128)
 	frame.Threat:SetSize(105, 33)

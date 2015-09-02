@@ -112,7 +112,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
-	frame:Tag(name, "[difficulty][level][shortclassification]|r [custom:name]")
+	frame:Tag(name, "[custom:difficulty][level][shortclassification]|r [custom:name]")
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_short", 0 / 256, 58 / 256, 59 / 128, 92 / 128)
 	frame.Threat:SetSize(58, 33)
