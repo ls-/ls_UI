@@ -96,6 +96,7 @@ function UF:ConstructPlayerFrame(frame)
 	tinsert(frame.mouseovers, frame.Power)
 
 	frame.Castbar = UF:CreateCastBar(frame, 196, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, nil, true, true)
+	E:CreateMover(frame.Castbar.Holder)
 
 	frame.PvP = UF:CreateIcon(frame, "PvP")
 	frame.PvP:SetPoint("BOTTOM", -28, -14)

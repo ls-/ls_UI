@@ -53,7 +53,10 @@ end
 function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
 	holder:SetSize(width, 26)
-	holder:SetPoint(unpack(coords))
+
+	if coords then
+		holder:SetPoint(unpack(coords))
+	end
 
 	local bar = CreateFrame("StatusBar", parent:GetName().."CastBar", holder)
 	bar:SetStatusBarTexture(M.textures.statusbar)
@@ -99,6 +102,7 @@ function UF:CreateCastBar(parent, width, coords, textsize, safezone, delay)
 		bar.SafeZone = zone
 	end
 
+	bar.Holder = holder
 	bar.PostCastStart = PostCastStart
 	bar.PostChannelStart = PostChannelStart
 	bar.CustomTimeText = CustomTimeText
