@@ -1,19 +1,35 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
+
+local SHARED_FRAME_TEXTURES = M.frame_textures.shared
+local LONG_FRAME_TEXTURES = M.frame_textures.long
+
+local unpack = unpack
 
 function UF:ConstructTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
 	frame.rearrangeables = {}
-	frame:SetSize(206, 38)
+	frame:SetSize(204, 36)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
-	bg:SetTexCoord(0 / 512, 206 / 512, 0 / 128, 38 / 128)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	bg:SetTexCoord(unpack(LONG_FRAME_TEXTURES.bg.coords))
 	bg:SetAllPoints()
+
+	local bgIndicatorLeft = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
+	bgIndicatorLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	frame.BgIndicatorLeft = bgIndicatorLeft
+
+	local bgIndicatorMiddle = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
+	bgIndicatorMiddle:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	frame.BgIndicatorMiddle = bgIndicatorMiddle
+
+	local bgIndicatorRight = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
+	bgIndicatorRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	frame.BgIndicatorRight = bgIndicatorRight
 
 	local cover = CreateFrame("Frame", nil, frame)
 	cover:SetFrameLevel(level + 3)
@@ -27,10 +43,22 @@ function UF:ConstructTargetFrame(frame)
 	gloss:SetPoint("CENTER")
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
-	fg:SetTexCoord(206 / 512, 406 / 512, 4 / 128, 34 / 128)
-	fg:SetSize(200, 30)
-	fg:SetPoint("CENTER")
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	frame.Fg = fg
+
+	local fgLeft = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	fgLeft:SetTexCoord(unpack(SHARED_FRAME_TEXTURES.inside_left.coords))
+	fgLeft:SetSize(unpack(SHARED_FRAME_TEXTURES.inside_left.size))
+	fgLeft:SetPoint("LEFT", 5, 0)
+
+	local fgRight = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\WIP")
+	fgRight:SetTexCoord(unpack(SHARED_FRAME_TEXTURES.inside_right.coords))
+	fgRight:SetSize(unpack(SHARED_FRAME_TEXTURES.inside_right.size))
+	fgRight:SetPoint("RIGHT", -5, 0)
+
+	UF:SetupRarityIndication(frame)
 
 	frame.Health = UF:CreateHealthBar(frame, 12, true)
 	frame.Health:SetFrameLevel(level + 1)
@@ -43,14 +71,14 @@ function UF:ConstructTargetFrame(frame)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame)
 
-	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
-	absrobGlow:SetTexCoord(362 / 512, 378 / 512, 38 / 128, 64 / 128)
-	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
-	absrobGlow:SetSize(16, 26)
-	absrobGlow:SetPoint("CENTER", 89, 0)
-	absrobGlow:SetAlpha(0)
-	frame.AbsorbGlow = absrobGlow
+	-- local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	-- absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_long")
+	-- absrobGlow:SetTexCoord(362 / 512, 378 / 512, 38 / 128, 64 / 128)
+	-- absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
+	-- absrobGlow:SetSize(16, 26)
+	-- absrobGlow:SetPoint("CENTER", 89, 0)
+	-- absrobGlow:SetAlpha(0)
+	-- frame.AbsorbGlow = absrobGlow
 
 	frame.Power = UF:CreatePowerBar(frame, 10, true)
 	frame.Power:SetFrameLevel(level + 4)
