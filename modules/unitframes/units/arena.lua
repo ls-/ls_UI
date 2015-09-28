@@ -152,7 +152,7 @@ function UF:ConstructArenaFrame(frame)
 	name:SetDrawLayer("ARTWORK", 4)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
+	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
 	frame:Tag(name, "[custom:name]")
 
 	local specinfo = CreateFrame("Frame", nil, frame)
