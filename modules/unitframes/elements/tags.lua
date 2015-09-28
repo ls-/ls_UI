@@ -81,8 +81,21 @@ end
 oUF.Tags.Events["custom:damageabsorb"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 
 oUF.Tags.Methods["custom:difficulty"] = function(unit)
-	if UnitCanAttack("player", unit) then
-		local l = UnitEffectiveLevel(unit)
-		return Hex(GetCreatureDifficultyColor((l > 0) and l or 99))
+	local l = UnitEffectiveLevel(unit)
+	return "|cff"..E:RGBToHEX(GetCreatureDifficultyColor((l > 0) and l or 99))
+end
+
+oUF.Tags.Methods["custom:effectivelevel"] = function(unit)
+	local l = UnitEffectiveLevel(unit)
+	if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
+		l = UnitBattlePetLevel(unit)
+	end
+
+	if l > 0 then
+		return l
+	else
+		return "??"
 	end
 end
+
+oUF.Tags.Events["custom:effectivelevel"] = "UNIT_LEVEL PLAYER_LEVEL_UP"

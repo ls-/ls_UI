@@ -1,6 +1,5 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local UF = E.UF
 
 local function PartyHolder_OnEvent(self, event, ...)
@@ -15,7 +14,7 @@ end
 
 function UF:CreatePartyHolder()
 	local holder = CreateFrame("Frame", "LSPartyHolder", UIParent, "SecureHandlerStateTemplate")
-	holder:SetSize(112, (38 + 18) * 5 + 40 * 3)
+	holder:SetSize(110, (36 + 18) * 5 + 40 * 3)
 	holder:SetPoint(unpack(C.units.party.point))
 	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
 	holder:SetScript("OnEvent", PartyHolder_OnEvent)
@@ -30,8 +29,8 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.rearrangeables = {}
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
-	bg:SetTexCoord(0 / 256, 112 / 256, 0 / 128, 38 / 128)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
 	local cover = CreateFrame("Frame", nil, frame)
@@ -40,16 +39,29 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.Cover = cover
 
 	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
-	gloss:SetTexCoord(80 / 256, 174 / 256, 38 / 128, 58 / 128)
+	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	gloss:SetTexCoord(0, 1, 0 / 64, 20 / 64)
 	gloss:SetSize(94, 20)
 	gloss:SetPoint("CENTER")
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
-	fg:SetTexCoord(112 / 256, 218 / 256, 4 / 128, 34 / 128)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fg:SetTexCoord(112 / 512, 218 / 512, 160 / 256, 190 / 256)
 	fg:SetSize(106, 30)
-	fg:SetPoint("CENTER")
+	fg:SetPoint("BOTTOM", 0, 3)
+	frame.Fg = fg
+
+	local fgLeft = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fgLeft:SetTexCoord(116 / 512, 130 / 512, 66 / 256, 92 / 256)
+	fgLeft:SetSize(14, 26)
+	fgLeft:SetPoint("LEFT", 5, 0)
+
+	local fgRight = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fgRight:SetTexCoord(130 / 512, 144 / 512, 66 / 256, 92 / 256)
+	fgRight:SetSize(14, 26)
+	fgRight:SetPoint("RIGHT", -5, 0)
 
 	frame.Health = UF:CreateHealthBar(frame, 12, true)
 	frame.Health:SetFrameLevel(level + 1)
@@ -62,12 +74,11 @@ function UF:ConstructPartyFrame(frame, ...)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame)
 
-	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
-	absrobGlow:SetTexCoord(218 / 256, 234 / 256, 4 / 128, 30 / 128)
-	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
-	absrobGlow:SetSize(16, 26)
-	absrobGlow:SetPoint("CENTER", 42, 0)
+	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 3)
+	absrobGlow:SetTexture("Interface\\RAIDFRAME\\Shield-Overshield")
+	absrobGlow:SetBlendMode("ADD")
+	absrobGlow:SetSize(10, 18)
+	absrobGlow:SetPoint("RIGHT", -6, 0)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
 
@@ -80,12 +91,43 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.Power.Value:SetDrawLayer("OVERLAY", 2)
 	tinsert(frame.mouseovers, frame.Power)
 
-	local tube = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tube:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other_short")
-	tube:SetTexCoord(0 / 256, 80 / 256, 38 / 128, 48 / 128)
-	tube:SetSize(80, 10)
-	tube:SetPoint("CENTER")
-	frame.Power.Tube = tube
+	local tubeLeft = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
+	tubeLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 43 / 64, 53 / 64)
+	tubeLeft:SetSize(12, 10)
+	tubeLeft:SetPoint("LEFT", -10, 0)
+
+	local tubeMiddleTop = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
+	tubeMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
+	tubeMiddleTop:SetHeight(3)
+	tubeMiddleTop:SetPoint("TOPLEFT", 0, 3)
+	tubeMiddleTop:SetPoint("TOPRIGHT", 0, 3)
+
+	local tubeGloss = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
+	tubeMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeMiddleTop:SetTexCoord(0, 1, 0 / 64, 20 / 64)
+	tubeMiddleTop:SetAllPoints()
+
+	local tubeMiddleBottom = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
+	tubeMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
+	tubeMiddleBottom:SetHeight(3)
+	tubeMiddleBottom:SetPoint("BOTTOMLEFT", 0, -3)
+	tubeMiddleBottom:SetPoint("BOTTOMRIGHT", 0, -3)
+
+	local tubeRight = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
+	tubeRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeRight:SetTexCoord(20 / 32, 32 / 32, 43 / 64, 53 / 64)
+	tubeRight:SetSize(12, 10)
+	tubeRight:SetPoint("RIGHT", 10, 0)
+
+	frame.Power.Tube = {
+		[1] = tubeLeft,
+		[2] = tubeMiddleTop,
+		[3] = tubeMiddleBottom,
+		[4] = tubeRight,
+	}
 
 	frame.PhaseIcon = UF:CreateIcon(cover, "Phase", 14)
 	tinsert(frame.mouseovers, frame.PhaseIcon)
@@ -112,15 +154,15 @@ function UF:ConstructPartyFrame(frame, ...)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
-	frame:Tag(name, "[custom:difficulty][level][shortclassification]|r [custom:name]")
+	frame:Tag(name, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_short", 0 / 256, 58 / 256, 59 / 128, 92 / 128)
-	frame.Threat:SetSize(58, 33)
-	frame.Threat:SetPoint("CENTER", -29, 4)
+	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 56 / 512, 166 / 256, 196 / 256)
+	frame.Threat:SetSize(56, 30)
+	frame.Threat:SetPoint("TOPLEFT", -3, 3)
 
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other_short", 58 / 256, 116 / 256, 59 / 128, 92 / 128)
-	frame.DebuffHighlight:SetSize(58, 33)
-	frame.DebuffHighlight:SetPoint("CENTER", 29, 4)
+	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 56 / 512, 112 / 512, 166 / 256, 196 / 256)
+	frame.DebuffHighlight:SetSize(56, 30)
+	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
 	frame.Debuffs = UF:CreateDebuffs(frame, {"TOP", frame, "BOTTOM", 0, 4}, 4)
 end
