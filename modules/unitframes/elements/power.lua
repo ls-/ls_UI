@@ -8,9 +8,13 @@ local UnitIsDeadOrGhost, UnitIsConnected = UnitIsDeadOrGhost, UnitIsConnected
 local function PostUpdatePower(bar, unit, cur, max)
 	if bar.Tube then
 		if max == 0 then
-			bar.Tube:Hide()
+			for i = 1, #bar.Tube do
+				bar.Tube[i]:Hide()
+			end
 		else
-			bar.Tube:Show()
+			for i = 1, #bar.Tube do
+				bar.Tube[i]:Show()
+			end
 		end
 	end
 

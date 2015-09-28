@@ -205,7 +205,7 @@ function UF:Initialize()
 
 		UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
 			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
-			"oUF-initialConfigFunction", [[self:SetWidth(112); self:SetHeight(38)]],
+			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
 			"showPlayer", true,
 			"showParty", true,
 			"groupBy", "ROLE",
