@@ -1,6 +1,5 @@
 local AddOn, ns = ...
 local E, M = ns.E, ns.M
-
 local B = E.Blizzard
 
 function B:HandleTimers()

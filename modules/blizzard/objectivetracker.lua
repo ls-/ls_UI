@@ -1,11 +1,9 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
 local COLORS = M.colors
+local B = E.Blizzard
 
 local OT_UNLOCKED
-
-local B = E.Blizzard
 
 local function OTHeader_OnClick(self)
 	ToggleDropDownMenu(1, nil, self.menu, "cursor", 2, -2)
