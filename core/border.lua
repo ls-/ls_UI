@@ -52,7 +52,7 @@ function E:CreateBorder(object, size, offset)
 	local t = {}
 
 	for i = 1, #sections do
-		local x = object:CreateTexture(nil, "BORDER", 2)
+		local x = object:CreateTexture(nil, "BORDER", nil, 2)
 		x:SetTexture(M.textures.button.normal)
 		t[sections[i]] = x
 	end
