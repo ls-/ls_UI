@@ -12,6 +12,7 @@ function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	local object = parent:CreateFontString(name, "OVERLAY", outline and "LS"..size.."Font_Outline" or "LS"..size.."Font")
 	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
 	object:SetWordWrap(wrap or false)
+	object:SetJustifyV("MIDDLE")
 
 	if shadow then
 		object:SetShadowColor(0, 0, 0)
