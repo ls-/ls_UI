@@ -1,10 +1,10 @@
 local _, ns = ...
 local C, E, M = ns.C, ns.E, ns.M
+local COLORS = M.colors
 
 E.NP = {}
 
 local NP = E.NP
-local COLORS = M.colors
 
 local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
 
@@ -13,33 +13,23 @@ local prevNumChildren = 0
 NP.plates = {}
 
 local function NamePlate_CreateStatusBar(parent, isCastBar)
-	local bar = CreateFrame("StatusBar", nil, parent)
-	bar:SetSize(122, 14)
-	bar:SetPoint(isCastBar and "BOTTOM" or "TOP", parent, isCastBar and "BOTTOM" or "TOP", 0, isCastBar and 0 or -16)
-	bar:SetStatusBarTexture(M.textures.statusbar)
-	bar:SetStatusBarColor(unpack(COLORS.darkgray))
-	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
+	local bar = E:CreateStatusBar(parent, nil, 120, 12, 10)
 
 	if isCastBar then
-		E:CreateBorder(bar, 8)
+		bar = E:CreateStatusBar(parent, nil, 112, 12, 10, true)
+		bar:SetPoint("BOTTOM", parent, "BOTTOM", 0, 0)
 	else
+		bar = E:CreateStatusBar(parent, nil, 120, 12, 12)
+		bar:SetPoint("TOP", parent, "TOP", 0, -16)
+
+		bar.Text:SetJustifyH("RIGHT")
+
 		local fg = bar:CreateTexture(nil, "OVERLAY", nil, 1)
 		fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-		fg:SetTexCoord(319 / 512, 449 / 512, 5 / 64, 27 / 64)
-		fg:SetSize(130, 22)
-		fg:SetPoint("CENTER", 0, 0)
+		bar.Fg = fg
 	end
 
-	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetAllPoints(bar)
-	bg:SetTexture(M.textures.statusbar)
-	bg:SetVertexColor(unpack(COLORS.darkgray))
-	bar.Bg = bg
-
-	local text = E:CreateFontString(bar, isCastBar and 10 or 12, nil, true, nil)
-	text:SetAllPoints(bar)
-	text:SetJustifyH(isCastBar and "CENTER" or "RIGHT")
-	bar.Text = text
+	bar:SetStatusBarColor(unpack(COLORS.darkgray))
 
 	return bar
 end
@@ -90,11 +80,11 @@ local function NamePlateCastBar_OnValueChanged(self, value)
 	if self.Shield:IsShown() then
 		bar:SetStatusBarColor(unpack(COLORS.gray))
 		bar.Icon:SetDesaturated(true)
-		bar.Bg:SetVertexColor(unpack(COLORS.darkgray))
+		bar.Bg:SetTexture(unpack(COLORS.darkgray))
 	else
 		bar:SetStatusBarColor(unpack(COLORS.darkgray))
 		bar.Icon:SetDesaturated(false)
-		bar.Bg:SetVertexColor(unpack(COLORS.yellow))
+		bar.Bg:SetTexture(unpack(COLORS.yellow))
 	end
 end
 
@@ -109,6 +99,7 @@ local function NamePlate_OnShow(self)
 	local scale = UIParent:GetEffectiveScale()
 	local Overlay, NameText, LevelText, HighLevelIcon, EliteIcon =
 		self.Overlay, self.NameText, self.LevelText, self.HighLevelIcon, self.EliteIcon
+	local OverlayFg, OverlayNameText = Overlay.Health.Fg, Overlay.Name
 
 	Overlay:SetScale(scale)
 
@@ -127,9 +118,21 @@ local function NamePlate_OnShow(self)
 
 	if EliteIcon:IsShown() then
 		level = level.."+"
+
+		OverlayFg:SetTexCoord(130 / 512, 262 / 512, 0 / 64, 26 / 64)
+		OverlayFg:SetSize(132, 26)
+		OverlayFg:SetPoint("CENTER", 0, 1)
+
+		OverlayNameText:SetPoint("TOP", Overlay, "TOP", 0, 3)
+	else
+		OverlayFg:SetTexCoord(0 / 512, 130 / 512, 0 / 64, 22 / 64)
+		OverlayFg:SetSize(130, 22)
+		OverlayFg:SetPoint("CENTER", 0, 0)
+
+		OverlayNameText:SetPoint("TOP", Overlay, "TOP", 0, 2)
 	end
 
-	Overlay.Name:SetFormattedText("|cff%s%s|r %s", color, level, name)
+	OverlayNameText:SetFormattedText("|cff%s%s|r %s", color, level, name)
 
 	Overlay:Show()
 end
@@ -226,7 +229,6 @@ local function HandleNamePlate(self)
 	self.NameText = NameText
 
 	local name = E:CreateFontString(overlay, 14, nil, true, nil)
-	name:SetPoint("TOP", overlay, "TOP", 0, 2)
 	name:SetPoint("LEFT", overlay, -24, 0)
 	name:SetPoint("RIGHT", overlay, 24, 0)
 	overlay.Name = name
@@ -242,9 +244,9 @@ local function HandleNamePlate(self)
 
 	local threat = MyHealthBar:CreateTexture(nil, "OVERLAY", nil, 0)
 	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
-	threat:SetTexCoord(62 / 512, 194 / 512, 36 / 64, 60 / 64)
-	threat:SetSize(132, 24)
-	threat:SetPoint("CENTER", 0, 0)
+	threat:SetTexCoord(0 / 512, 136 / 512, 26 / 64, 44 / 64)
+	threat:SetSize(136, 18)
+	threat:SetPoint("TOP", MyHealthBar.Fg, "TOP", 0, 3)
 	threat:Hide()
 	overlay.Threat = threat
 
