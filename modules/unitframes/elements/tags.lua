@@ -4,6 +4,13 @@ local COLORS = M.colors
 local HPCOLORS = COLORS.healprediction
 local THREATCOLORS = COLORS.threat
 
+local UnitIsDeadOrGhost, UnitIsConnected, UnitIsPlayer, UnitIsUnit, UnitIsTapped, UnitIsTappedByPlayer, UnitIsWildBattlePet, UnitIsBattlePetCompanion =
+	UnitIsDeadOrGhost, UnitIsConnected, UnitIsPlayer, UnitIsUnit, UnitIsTapped, UnitIsTappedByPlayer, UnitIsWildBattlePet, UnitIsBattlePetCompanion
+local UnitReaction, UnitName, UnitClass, UnitRace, UnitCreatureType, UnitEffectiveLevel, UnitBattlePetLevel =
+	UnitReaction, UnitName, UnitClass, UnitRace, UnitCreatureType, UnitEffectiveLevel, UnitBattlePetLevel
+local UnitGetTotalAbsorbs, UnitGetTotalHealAbsorbs = UnitGetTotalAbsorbs, UnitGetTotalHealAbsorbs
+local GetCreatureDifficultyColor = GetCreatureDifficultyColor
+
 oUF.Tags.Methods["custom:color"] = function(unit)
 	local color
 	if UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
@@ -43,18 +50,6 @@ oUF.Tags.Methods["custom:racetype"] = function(unit)
 end
 
 oUF.Tags.Events["custom:racetype"] = "UNIT_CLASSIFICATION_CHANGED"
-
-oUF.Tags.Methods["custom:threat"] = function(unit)
-	local _, status, scaledPercent = UnitDetailedThreatSituation("player", unit)
-	local color = E:RGBToHEX(THREATCOLORS[status])
-	if scaledPercent and scaledPercent ~= 0 and ShowNumericThreat() and UnitClassification(unit) ~= "minus" then
-		return "|cff"..color..format("%d", scaledPercent).."%|r"
-	else
-		return " "
-	end
-end
-
-oUF.Tags.Events["custom:threat"] = "UNIT_THREAT_LIST_UPDATE UNIT_THREAT_SITUATION_UPDATE"
 
 oUF.Tags.Methods["custom:healabsorb"] = function(unit)
 	local healAbsorb = UnitGetTotalHealAbsorbs("player") or 0
