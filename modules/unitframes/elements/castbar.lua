@@ -5,6 +5,21 @@ local COLORS = M.colors
 
 local abs, unpack = abs, unpack
 
+local PRESETS = {
+	["14"] = {
+		sparkSize = {26, 26},
+		iconGap = 14,
+		spacing = 49,
+		anchorPoint = {"TOPRIGHT", -7, -2},
+	},
+	["12"] = {
+		sparkSize = {24, 24},
+		iconGap = 12,
+		spacing = 46,
+		anchorPoint = {"TOPRIGHT", -6, -2},
+	},
+}
+
 local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
 		self:SetStatusBarColor(unpack(COLORS.gray))
@@ -49,25 +64,27 @@ local function CustomDelayText(self, duration)
 	end
 end
 
-function UF:CreateCastBar(parent, width, coords, textSize, safezone, delay)
+function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
-	holder:SetSize(width, 26)
+	holder:SetSize(width, 28)
+
+	local PRESET = PRESETS[preset or "14"]
 
 	if coords then
 		holder:SetPoint(unpack(coords))
 	end
 
-	local bar = E:CreateStatusBar(holder, parent:GetName().."CastBar", width - 43, 12, textSize, true)
-	bar:SetPoint("TOPRIGHT", -6, -2)
+	local bar = E:CreateStatusBar(holder, parent:GetName().."CastBar", width - PRESET.spacing, preset or "14", true)
+	bar:SetPoint(unpack(PRESET.anchorPoint))
 
 	local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
-	spark:SetSize(18, 30)
+	spark:SetSize(unpack(PRESET.sparkSize))
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
 	local iconHolder = CreateFrame("Frame", nil, bar)
-	iconHolder:SetSize(26, 26)
-	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -12, 0)
+	iconHolder:SetSize(28, 28)
+	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -PRESET.iconGap, 0)
 	E:CreateBorder(iconHolder, 8)
 	iconHolder:SetBorderColor(unpack(COLORS.yellow))
 

@@ -106,7 +106,7 @@ function UF:ConstructArenaFrame(frame)
 
 	local tubeLeft = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
 	tubeLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 43 / 64, 53 / 64)
+	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 23 / 64, 33 / 64)
 	tubeLeft:SetSize(12, 10)
 	tubeLeft:SetPoint("LEFT", -10, 0)
 
@@ -131,7 +131,7 @@ function UF:ConstructArenaFrame(frame)
 
 	local tubeRight = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
 	tubeRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeRight:SetTexCoord(20 / 32, 32 / 32, 43 / 64, 53 / 64)
+	tubeRight:SetTexCoord(20 / 32, 32 / 32, 23 / 64, 33 / 64)
 	tubeRight:SetSize(12, 10)
 	tubeRight:SetPoint("RIGHT", 10, 0)
 
@@ -142,7 +142,7 @@ function UF:ConstructArenaFrame(frame)
 		[4] = tubeRight,
 	}
 
-	frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 0}, 10)
+	frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 2}, "12")
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)

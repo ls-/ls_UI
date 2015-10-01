@@ -1,25 +1,21 @@
-local AddOn, ns = ...
+local _, ns = ...
 local E, M = ns.E, ns.M
 local COLORS = M.colors
 
 local unpack = unpack
 
-local SIZE_CHART = {
-	[12] = {
-		capWidth = 12,
-		capHeight = 20,
-		borderHeight = 3,
-		gap = 3,
+local PRESETS = {
+	["14"] = {
+		capSize = {14, 22},
+		textHeight = 12,
 	},
-	[10] = {
-		capWidth = 10,
-		capHeight = 16,
-		borderHeight = 2,
-		gap = 2,
+	["12"] = {
+		capSize = {12, 20},
+		textHeight = 10,
 	},
 }
 
-function E:HandleStatusBar(bar, addBorder, height, cascade)
+function E:HandleStatusBar(bar, addBorder, preset, cascade)
 	local children = {bar:GetChildren()}
 	local regions = {bar:GetRegions()}
 
@@ -67,9 +63,10 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 	-- print("|cffffff7fBG|r", not not background, "|cffffff7fTEXT|r", not not text, "|cffffff7fSBT|r", not not sbt, "|cffffff7fSB|r", not not sb)
 
 	if not cascade then
-		height = height or 12
+		local PRESET = PRESETS[preset or "14"]
+
 		bar.ignoreFramePositionManager = true
-		bar:SetSize(184, height)
+		bar:SetSize(166, tonumber(preset or "14"))
 
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -79,7 +76,7 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 		background:SetAllPoints()
 
 		if text then
-			text:SetFont(M.font, 10)
+			text:SetFont(M.font, PRESET.textHeight)
 			text:SetWordWrap(false)
 			text:SetJustifyV("MIDDLE")
 			text:SetDrawLayer("OVERLAY", 1)
@@ -105,54 +102,53 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 		gloss:SetAllPoints()
 
 		if addBorder then
-			local capWidth, capHeight, borderHeight, gap =
-				SIZE_CHART[height].capWidth, SIZE_CHART[height].capHeight, SIZE_CHART[height].borderHeight, SIZE_CHART[height].gap
+			local capWidth, capHeight = unpack(PRESET.capSize)
 
-		local fgLeft = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-		fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgLeft:SetTexCoord(0 / 32, 12 / 32, 23 / 64, 43 / 64)
-		fgLeft:SetSize(capWidth, capHeight)
-		fgLeft:SetPoint("RIGHT", bar, "LEFT", gap, 0)
+			local fgLeft = bar:CreateTexture(nil, "OVERLAY", nil, 0)
+			fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+			fgLeft:SetTexCoord(0 / 32, 14 / 32, 33 / 64, 55 / 64)
+			fgLeft:SetSize(capWidth, capHeight)
+			fgLeft:SetPoint("RIGHT", bar, "LEFT", 3, 0)
 
-		local fgMiddleTop = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-		fgMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
-		fgMiddleTop:SetHeight(borderHeight)
-		fgMiddleTop:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
-		fgMiddleTop:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
+			local fgMiddleTop = bar:CreateTexture(nil, "OVERLAY", nil, 0)
+			fgMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+			fgMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
+			fgMiddleTop:SetHeight(3)
+			fgMiddleTop:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
+			fgMiddleTop:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
 
-		local fgMiddleBottom = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-		fgMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
-		fgMiddleBottom:SetHeight(borderHeight)
-		fgMiddleBottom:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
-		fgMiddleBottom:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
+			local fgMiddleBottom = bar:CreateTexture(nil, "OVERLAY", nil, 0)
+			fgMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+			fgMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
+			fgMiddleBottom:SetHeight(3)
+			fgMiddleBottom:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
+			fgMiddleBottom:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
 
-		local fgRight = bar:CreateTexture(nil, "OVERLAY", nil, 0)
-		fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgRight:SetTexCoord(20 / 32, 32 / 32, 23 / 64, 43 / 64)
-		fgRight:SetSize(capWidth, capHeight)
-		fgRight:SetPoint("LEFT", bar, "RIGHT", -gap, 0)
+			local fgRight = bar:CreateTexture(nil, "OVERLAY", nil, 0)
+			fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+			fgRight:SetTexCoord(18 / 32, 32 / 32, 33 / 64, 55 / 64)
+			fgRight:SetSize(capWidth, capHeight)
+			fgRight:SetPoint("LEFT", bar, "RIGHT", -3, 0)
 		end
 	else
 		return background, text, sbt
 	end
 end
 
-function E:CreateStatusBar(parent, name, width, height, textSize, addBorder)
-	height = height or 12
+function E:CreateStatusBar(parent, name, width, preset, addBorder)
+	local PRESET = PRESETS[preset]
 
 	local bar = CreateFrame("StatusBar", name, parent)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
-	bar:SetSize(width, height)
+	bar:SetSize(width, tonumber(preset))
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetTexture(unpack(COLORS.darkgray))
 	bg:SetAllPoints()
 	bar.Bg = bg
 
-	local text = E:CreateFontString(bar, textSize or 10, nil, true)
+	local text = E:CreateFontString(bar, PRESET.textHeight, nil, true)
 	text:SetDrawLayer("OVERLAY", 1)
 	text:SetPoint("TOPLEFT", 1, 0)
 	text:SetPoint("BOTTOMRIGHT", -1, 0)
@@ -164,34 +160,33 @@ function E:CreateStatusBar(parent, name, width, height, textSize, addBorder)
 	gloss:SetAllPoints()
 
 	if addBorder then
-		local capWidth, capHeight, borderHeight, gap =
-			SIZE_CHART[height].capWidth, SIZE_CHART[height].capHeight, SIZE_CHART[height].borderHeight, SIZE_CHART[height].gap
+		local capWidth, capHeight = unpack(PRESET.capSize)
 
 		local fgLeft = bar:CreateTexture(nil, "OVERLAY", nil, 0)
 		fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgLeft:SetTexCoord(0 / 32, 12 / 32, 23 / 64, 43 / 64)
+		fgLeft:SetTexCoord(0 / 32, 14 / 32, 33 / 64, 55 / 64)
 		fgLeft:SetSize(capWidth, capHeight)
-		fgLeft:SetPoint("RIGHT", bar, "LEFT", gap, 0)
+		fgLeft:SetPoint("RIGHT", bar, "LEFT", 3, 0)
 
 		local fgMiddleTop = bar:CreateTexture(nil, "OVERLAY", nil, 0)
 		fgMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
 		fgMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
-		fgMiddleTop:SetHeight(borderHeight)
+		fgMiddleTop:SetHeight(3)
 		fgMiddleTop:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
 		fgMiddleTop:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
 
 		local fgMiddleBottom = bar:CreateTexture(nil, "OVERLAY", nil, 0)
 		fgMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
 		fgMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
-		fgMiddleBottom:SetHeight(borderHeight)
+		fgMiddleBottom:SetHeight(3)
 		fgMiddleBottom:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
 		fgMiddleBottom:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
 
 		local fgRight = bar:CreateTexture(nil, "OVERLAY", nil, 0)
 		fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgRight:SetTexCoord(20 / 32, 32 / 32, 23 / 64, 43 / 64)
+		fgRight:SetTexCoord(18 / 32, 32 / 32, 33 / 64, 55 / 64)
 		fgRight:SetSize(capWidth, capHeight)
-		fgRight:SetPoint("LEFT", bar, "RIGHT", -gap, 0)
+		fgRight:SetPoint("LEFT", bar, "RIGHT", -3, 0)
 	end
 
 	return bar

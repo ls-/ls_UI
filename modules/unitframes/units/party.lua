@@ -93,7 +93,7 @@ function UF:ConstructPartyFrame(frame, ...)
 
 	local tubeLeft = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
 	tubeLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 43 / 64, 53 / 64)
+	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 23 / 64, 33 / 64)
 	tubeLeft:SetSize(12, 10)
 	tubeLeft:SetPoint("LEFT", -10, 0)
 
@@ -118,7 +118,7 @@ function UF:ConstructPartyFrame(frame, ...)
 
 	local tubeRight = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
 	tubeRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeRight:SetTexCoord(20 / 32, 32 / 32, 43 / 64, 53 / 64)
+	tubeRight:SetTexCoord(20 / 32, 32 / 32, 23 / 64, 33 / 64)
 	tubeRight:SetSize(12, 10)
 	tubeRight:SetPoint("RIGHT", 10, 0)
 
