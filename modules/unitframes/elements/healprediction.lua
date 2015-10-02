@@ -85,6 +85,9 @@ function UF:CreateHealPrediction(parent, vertical)
 	damageAbsorbBar:SetStatusBarColor(unpack(HPCOLORS.damageabsorb))
 	damageAbsorbBar:Hide()
 
+	local damageAbsorbOverlay = damageAbsorbBar:CreateTexture(nil, "ARTWORK", "TotalAbsorbBarOverlayTemplate", 1)
+	damageAbsorbOverlay:SetAllPoints(damageAbsorbBar:GetStatusBarTexture())
+
 	if vertical then
 		myBar:SetPoint("LEFT")
 		myBar:SetPoint("RIGHT")

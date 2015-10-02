@@ -50,7 +50,7 @@ colors.healprediction = {
 	["myheal"] = {0, 0.827, 0.765},
 	["otherheal"] = {0.0, 0.631, 0.557},
 	["healabsorb"] = {0.9, 0.1, 0.3},
-	["damageabsorb"] = {0, 0.7, 0.95},
+	["damageabsorb"] = {0.85, 0.85, 0.9},
 }
 
 colors.red = {0.9, 0.15, 0.15}
