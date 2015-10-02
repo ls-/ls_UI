@@ -212,7 +212,7 @@ local function CharacterMicroButton_OnEnter(self)
 
 			if friendRep then
 				if nextFriendThreshold then
-					min, max, value = friendThreshold, nextFriendThreshold, friendRep
+					max, value = nextFriendThreshold - friendThreshold, friendRep - friendThreshold
 				else
 					max, value = 1, 1
 				end
