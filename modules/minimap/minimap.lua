@@ -11,11 +11,11 @@ local STEP = 0.00390625 -- 1 / 256
 local DELAY = 337.5 -- 256 * 337.5 = 86400 = 24H
 
 local WIDGETS = {
-	MiniMapMailFrame = {"CENTER", -57, 57},
-	MiniMapVoiceChatFrame = {"CENTER", 31, 73},
+	MiniMapMailFrame = {"CENTER", -58, 58},
+	MiniMapVoiceChatFrame = {"CENTER", 32, 74},
 	GameTimeFrame = {"CENTER", 58, 58},
-	MiniMapTracking = {"CENTER", 73, 31},
-	QueueStatusMinimapButton = {"CENTER", 57, -57},
+	MiniMapTracking = {"CENTER", 74, 32},
+	QueueStatusMinimapButton = {"CENTER", 58, -58},
 	MiniMapInstanceDifficulty = {"BOTTOM", -1, -38},
 	GuildInstanceDifficulty = {"BOTTOM", -6, -38},
 	MiniMapChallengeMode = {"BOTTOM", -1, -34},
@@ -106,7 +106,7 @@ function HandleMinimapButton(button, cascade)
 	-- print("|cffffff7fHL|r", not not highlight, "|cffffff7fI|r", (not not icon or not not (normal and pushed)), "|cffffff7fB|r", not not border, "|cffffff7fBG|r", not not background)
 
 	if not cascade then
-		button:SetSize(32, 32)
+		button:SetSize(30, 30)
 		button:SetHitRectInsets(0, 0, 0, 0)
 
 		if highlight then
@@ -149,9 +149,9 @@ function HandleMinimapButton(button, cascade)
 			border = button:CreateTexture()
 		end
 
-		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap_button")
-		border:SetTexCoord(14 / 64, 50 / 64, 14 / 64, 50 / 64)
-		border:SetDrawLayer("OVERLAY", 0)
+		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+		border:SetTexCoord(462 / 512, 496 / 512, 0, 34 / 256)
+		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
 		button.Border = border
 
@@ -313,10 +313,11 @@ function MM:Initialize()
 	Minimap:SetParent(holder)
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint("CENTER")
+	Minimap:SetSize(144, 144)
 	Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
-	Minimap:RegisterEvent("ZONE_CHANGED");
-	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS");
-	Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+	Minimap:RegisterEvent("ZONE_CHANGED")
+	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
+	Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	Minimap:HookScript("OnEvent", Minimap_OnEventHook)
 	Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 	Minimap:SetScript("OnEnter", Minimap_OnEnter)
@@ -324,23 +325,23 @@ function MM:Initialize()
 
 	RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
-	local t1 = Minimap:CreateTexture(nil, "BORDER", nil, 0)
-	t1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_filling_gloss")
-	t1:SetPoint("CENTER", 0, 0)
-	t1:SetSize(Minimap:GetSize())
-	t1:SetAlpha(0.75)
+	local ring = Minimap:CreateTexture(nil, "BORDER", nil, 0)
+	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+	ring:SetTexCoord(0, 168 / 512, 0, 202 / 256)
+	ring:SetSize(168, 202)
+	ring:SetPoint("CENTER", 0, -17)
 
-	local t2 = Minimap:CreateTexture(nil, "BORDER", nil, 1)
-	t2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_chain_right")
-	t2:SetPoint("CENTER", 0, -96)
+	local gloss = Minimap:CreateTexture(nil, "BORDER", nil, 1)
+	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+	gloss:SetTexCoord(318 / 512, 462 / 512, 0, 144 / 256)
+	gloss:SetSize(144, 144)
+	gloss:SetPoint("CENTER", 0, 0)
 
-	local t3 = Minimap:CreateTexture(nil, "BORDER", nil, 2)
-	t3:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_ring_l_cracked")
-	t3:SetPoint("CENTER", 0, 0)
-
-	local t4 = Minimap:CreateTexture(nil, "BORDER", nil, 3)
-	t4:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_orb_sol")
-	t4:SetPoint("CENTER", 0, 0)
+	local fg = Minimap:CreateTexture(nil, "BORDER", nil, 2)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+	fg:SetTexCoord(168 / 512, 318 / 512, 0, 150 / 256)
+	fg:SetSize(150, 150)
+	fg:SetPoint("CENTER", 0, 0)
 
 	for i, k in next, WIDGETS do
 		_G[i]:ClearAllPoints()
@@ -384,8 +385,7 @@ function MM:Initialize()
 	local calendar = GameTimeFrame
 
 	HandleMinimapButton(calendar)
-	calendar.Border:SetPoint("TOPLEFT", -2, 2)
-	calendar.Border:SetPoint("BOTTOMRIGHT", 2, -2)
+	calendar:SetSize(34, 34)
 	calendar.NormalTexture:SetTexture("")
 	calendar.PushedTexture:SetTexture("")
 	calendar:SetHitRectInsets(-2, -2, -2, -2)
@@ -394,8 +394,8 @@ function MM:Initialize()
 
 	local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 	texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
-	texture:SetPoint("TOPLEFT", 1, -1)
-	texture:SetPoint("BOTTOMRIGHT", -1, 1)
+	texture:SetPoint("TOPLEFT", 2, -2)
+	texture:SetPoint("BOTTOMRIGHT", -2, 2)
 	calendar.daytime = texture
 
 	local _, mark, glow, _, date = calendar:GetRegions()
@@ -411,10 +411,11 @@ function MM:Initialize()
 	glow:SetTexture("")
 
 	date:SetFont(M.font, 14, "THINOUTLINE")
+	date:ClearAllPoints()
+	date:SetPoint("CENTER", 1, 0)
 	date:SetVertexColor(1, 1, 1)
 	date:SetDrawLayer("BACKGROUND", 2)
 	date:SetJustifyH("CENTER")
-	date:SetPoint("CENTER", 0, 0)
 
 	calendar:SetScript("OnEnter", Calendar_OnEnter)
 	calendar:SetScript("OnLeave", Calendar_OnLeave)
