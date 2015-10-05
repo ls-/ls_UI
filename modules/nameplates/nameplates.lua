@@ -87,11 +87,9 @@ local function NamePlateCastBar_OnValueChanged(self, value)
 	if self.Shield:IsShown() then
 		bar:SetStatusBarColor(unpack(COLORS.gray))
 		bar.Icon:SetDesaturated(true)
-		bar.Bg:SetTexture(unpack(COLORS.darkgray))
 	else
-		bar:SetStatusBarColor(unpack(COLORS.darkgray))
+		bar:SetStatusBarColor(unpack(COLORS.yellow))
 		bar.Icon:SetDesaturated(false)
-		bar.Bg:SetTexture(unpack(COLORS.yellow))
 	end
 end
 

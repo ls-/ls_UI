@@ -24,11 +24,9 @@ local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
 		self:SetStatusBarColor(unpack(COLORS.gray))
 		self.Icon:SetDesaturated(true)
-		self.Bg:SetTexture(unpack(COLORS.darkgray))
 	else
-		self:SetStatusBarColor(unpack(COLORS.darkgray))
+		self:SetStatusBarColor(unpack(COLORS.yellow))
 		self.Icon:SetDesaturated(false)
-		self.Bg:SetTexture(unpack(COLORS.yellow))
 	end
 end
 
@@ -36,11 +34,9 @@ local function PostChannelStart(self, unit, name)
 	if self.interrupt then
 		self:SetStatusBarColor(unpack(COLORS.gray))
 		self.Icon:SetDesaturated(true)
-		self.Bg:SetTexture(unpack(COLORS.darkgray))
 	else
-		self:SetStatusBarColor(unpack(COLORS.darkgray))
+		self:SetStatusBarColor(unpack(COLORS.yellow))
 		self.Icon:SetDesaturated(false)
-		self.Bg:SetTexture(unpack(COLORS.yellow))
 	end
 end
 
