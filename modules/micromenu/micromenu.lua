@@ -233,6 +233,13 @@ local function CharacterMicroButton_OnEnter(self)
 	GameTooltip:Show()
 end
 
+local function QuestLogMicroButton_OnEnter(self)
+	local questReset = GetQuestResetTime()
+
+	GameTooltip:AddDoubleLine("Daily quest reset time:", SecondsToTime(questReset, true, nil, 3), 1, 0.82, 0, 1, 1, 1)
+	GameTooltip:Show()
+end
+
 local function EJMicroButton_OnEnter(self)
 	local savedInstances = GetNumSavedInstances()
 	local savedWorldBosses = GetNumSavedWorldBosses()
@@ -438,6 +445,8 @@ function MM:Initialize()
 			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
 			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
 			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
+		elseif b == "QuestLogMicroButton" then
+			button:HookScript("OnEnter", QuestLogMicroButton_OnEnter)
 		elseif b == "EJMicroButton" then
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
 
