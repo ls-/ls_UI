@@ -64,7 +64,7 @@ local function NamePlateHealthBar_Update(self)
 	bar:SetStatusBarColor(NamePlate_GetColor(self:GetStatusBarColor()))
 
 	if bar.Text:IsShown() then
-		bar.Text:SetText(E:NumberFormat(self:GetValue()))
+		bar.Text:SetText(E:NumberToPerc(self:GetValue(), 1).."%")
 	end
 end
 
