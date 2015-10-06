@@ -19,18 +19,6 @@ end
 -- UTILS --
 -----------
 
-function ns.lsAlwaysShow(self)
-	if not self then return end
-	self:Show()
-	self.Hide = self.Show
-end
-
-function ns.lsAlwaysHide(self)
-	if not self then return end
-	self:Hide()
-	self.Show = self.Hide
-end
-
 function ns.lsSetHighlightTexture(texture)
 	texture:SetTexture(ns.M.textures.button.highlight)
 	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)

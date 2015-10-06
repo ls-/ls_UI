@@ -437,10 +437,10 @@ function MM:Initialize()
 		end
 
 		if b == "CharacterMicroButton" then
-			E:AlwaysHide(MicroButtonPortrait)
+			E:ForceHide(MicroButtonPortrait)
 			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
 		elseif b == "GuildMicroButton" then
-			E:AlwaysHide(GuildMicroButtonTabard)
+			E:ForceHide(GuildMicroButtonTabard)
 
 			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
 			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
@@ -453,7 +453,7 @@ function MM:Initialize()
 			button.NewAdventureNotice:ClearAllPoints()
 			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
-			E:AlwaysHide(MainMenuBarDownload)
+			E:ForceHide(MainMenuBarDownload)
 
 			HandlePerformanceBar(button, MainMenuBarPerformanceBar)
 

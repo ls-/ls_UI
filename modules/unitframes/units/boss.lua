@@ -152,5 +152,5 @@ function UF:ConstructBossFrame(frame)
 	frame.AltPowerBar.Value:SetPoint("CENTER")
 
 	-- frame.unit = "player"
-	-- E:AlwaysShow(frame)
+	-- E:ForceShow(frame)
 end

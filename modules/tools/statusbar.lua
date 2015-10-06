@@ -34,11 +34,11 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 				elseif texture and strfind(texture, "Background") then
 					background = region
 				else
-					E:AlwaysHide(region)
+					E:ForceHide(region)
 				end
 			else
 				if region ~= sbt then
-					E:AlwaysHide(region)
+					E:ForceHide(region)
 				end
 			end
 		elseif region:IsObjectType("FontString") then

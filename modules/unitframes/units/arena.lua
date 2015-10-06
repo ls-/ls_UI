@@ -189,5 +189,5 @@ function UF:ConstructArenaFrame(frame)
 	trinket.CD = cd
 
 	-- frame.unit = "player"
-	-- E:AlwaysShow(frame)
+	-- E:ForceShow(frame)
 end

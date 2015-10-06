@@ -28,7 +28,7 @@ function E:TweakIcon(icon, l, r, t, b)
 	icon:SetAllPoints()
 end
 
-function E:AlwaysShow(object)
+function E:ForceShow(object)
 	if not object then return end
 
 	object:Show()
@@ -36,7 +36,7 @@ function E:AlwaysShow(object)
 	object.Hide = object.Show
 end
 
-function E:AlwaysHide(object)
+function E:ForceHide(object)
 	if not object then return end
 
 	if object.UnregisterAllEvents then
@@ -72,33 +72,6 @@ function E:ForceLoadAddOn(name)
 			print(format(ADDON_LOAD_FAILED, name, _G["ADDON_"..reason]))
 		end
 	end
-end
-
-local function HideHook(self)
-	self:Show()
-end
-
-local function ShowHook(self)
-	self:Hide()
-end
-
-function E:ForceHide(object)
-	if object.UnregisterAllEvents then
-		object:UnregisterAllEvents()
-		object:SetParent(M.hiddenParent)
-	else
-		-- will see how it works, I hate taints
-		hooksecurefunc(object, "Show", ShowHook)
-	end
-
-	object:Hide()
-end
-
-function E:ForceShow(object)
-	-- will see how it works, I hate taints
-	hooksecurefunc(object, "Hide", HideHook)
-
-	object:Show()
 end
 
 SLASH_RELOADUI1 = "/rl"

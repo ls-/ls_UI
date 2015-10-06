@@ -170,11 +170,11 @@ local function SkinButton(button)
 	end
 
 	if bFOBorder then
-		E:AlwaysHide(bFOBorder)
+		E:ForceHide(bFOBorder)
 	end
 
 	if bFOBorderShadow then
-		E:AlwaysHide(bFOBorderShadow)
+		E:ForceHide(bFOBorderShadow)
 	end
 
 	if bHotKey then
@@ -371,7 +371,7 @@ function E:SkinExtraActionButton(button)
 
 	button:SetBorderSize(10)
 
-	E:AlwaysHide(button.style)
+	E:ForceHide(button.style)
 
 	button.styled = true
 end
@@ -425,7 +425,7 @@ function E:SkinActionButton(button)
 	local bFloatingBG = _G[name.."FloatingBG"]
 
 	if bFloatingBG then
-		E:AlwaysHide(bFloatingBG)
+		E:ForceHide(bFloatingBG)
 	end
 
 	if button:GetScript("OnUpdate") then
