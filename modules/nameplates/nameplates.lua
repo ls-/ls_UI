@@ -12,11 +12,11 @@ local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpa
 
 local prevNumChildren = 0
 
-local function NamePlate_CreateStatusBar(parent, isCastBar)
+local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
 
 	if isCastBar then
-		bar = E:CreateStatusBar(parent, nil, 112, "12", true)
+		bar = E:CreateStatusBar(parent, npName, 112, "12", true)
 		bar:SetPoint("BOTTOM", parent, "BOTTOM", 0, 1)
 
 		local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
@@ -26,7 +26,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar)
 		spark:SetBlendMode("ADD")
 		bar.Spark = spark
 	else
-		bar = E:CreateStatusBar(parent, nil, 120, "12")
+		bar = E:CreateStatusBar(parent, npName, 120, "12")
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
 		bar.Text:SetJustifyH("RIGHT")
@@ -179,7 +179,7 @@ local function HandleNamePlate(self)
 
 	HealthBarTexture:SetTexture(nil)
 
-	local myHealthBar = NamePlate_CreateStatusBar(overlay)
+	local myHealthBar = NamePlate_CreateStatusBar(overlay, nil, self:GetName())
 	overlay.HealthBar = myHealthBar
 	HealthBar.Bar = myHealthBar
 	HealthBar:HookScript("OnShow", NamePlateHealthBar_Update)
@@ -207,7 +207,7 @@ local function HandleNamePlate(self)
 	CastBarBorder:SetTexture(nil)
 	CastBarTextBG:SetTexture(nil)
 
-	local myCastBar = NamePlate_CreateStatusBar(overlay, true)
+	local myCastBar = NamePlate_CreateStatusBar(overlay, true, self:GetName())
 	CastBar.Bar = myCastBar
 
 	local iconHolder = CreateFrame("Frame", nil, myCastBar)
