@@ -69,10 +69,10 @@ end
 local function AddTooltipStatusBar(self, num)
 	local bar
 	for i = 1, num do
-		bar = CreateFrame("StatusBar", "GameTooltipStatusBar"..i, self, "TooltipStatusBarTemplate")
+		bar = E:CreateStatusBar(self, "GameTooltipStatusBar"..i, 0, "12")
 		bar:SetStatusBarColor(unpack(COLORS.green))
-		E:HandleStatusBar(bar, nil, "12")
-		bar.Text:SetFont(M.font, 10)
+		E:CreateBorder(bar, 8)
+		bar:SetBorderColor(unpack(COLORS.gray))
 	end
 
 	self.numStatusBars, self.shownStatusBars = num, 0
