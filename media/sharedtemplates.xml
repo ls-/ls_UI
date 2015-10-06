@@ -31,7 +31,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
-				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
+				<Texture name="$parentFilling" file="Interface\BUTTONS\WHITE8X8" parentkey="filling">
 					<Size>
 						<AbsDimension x="154" y="22"/>
 					</Size>
@@ -109,7 +109,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND" textureSubLevel="1">
-				<Texture name="$parentFilling" file="Interface\AddOns\oUF_LS\media\statusbar" parentkey="filling">
+				<Texture name="$parentFilling" file="Interface\BUTTONS\WHITE8X8" parentkey="filling">
 					<Size>
 						<AbsDimension x="76" y="22"/>
 					</Size>
