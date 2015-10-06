@@ -7,7 +7,6 @@ M.hiddenParent:Hide()
 M["font"] = STANDARD_TEXT_FONT
 
 M["textures"] = {
-	statusbar = "Interface\\AddOns\\oUF_LS\\media\\statusbar",
 	button = {
 		normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
 		normalmetal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",

@@ -94,7 +94,7 @@ function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 
 	if safezone then
 		local zone = bar:CreateTexture(nil, "BACKGROUND", nil, 2)
-		zone:SetTexture(M.textures.statusbar)
+		zone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		zone:SetVertexColor(unpack(COLORS.red))
 		zone:SetAlpha(0.6)
 		bar.SafeZone = zone

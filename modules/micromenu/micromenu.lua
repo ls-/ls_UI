@@ -353,7 +353,7 @@ local function HandleMicroButton(name)
 	end
 
 	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture(M.textures.statusbar)
+	bg:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 	bg:SetVertexColor(0.15, 0.15, 0.15)
 	bg:SetAllPoints()
 
@@ -375,7 +375,7 @@ end
 
 local function HandlePerformanceBar(parent, bar)
 	bar:SetDrawLayer("BACKGROUND", 3)
-	bar:SetTexture(M.textures.statusbar)
+	bar:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:SetSize(18, 4)
 	bar:ClearAllPoints()
 	bar:SetPoint("BOTTOM", 0, 0)
