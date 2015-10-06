@@ -38,6 +38,8 @@ local function OnEnter(self)
 
 	self.isMouseOver = true
 	self:ForceUpdate()
+
+	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	self:UpdateTooltip()
 end
 
@@ -48,25 +50,15 @@ local function OnLeave(self)
 	GameTooltip:Hide()
 end
 
-function UF:CreateAltPowerBar(parent, width, coords)
-	local bar = CreateFrame("StatusBar", parent:GetName().."AltPowerBar", parent)
-	bar:SetStatusBarTexture(M.textures.statusbar)
-	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
-	bar:SetSize(width, 18)
+function UF:CreateAltPowerBar(parent, width, coords, preset)
+	local bar = E:CreateStatusBar(parent, parent:GetName().."AltPowerBar", width - tonumber(preset), preset or "14", true)
 	bar:SetPoint(unpack(coords))
 	bar:EnableMouse(true)
 	bar:SetScript("OnEnter", OnEnter)
 	bar:SetScript("OnLeave", OnLeave)
 	E:SmoothBar(bar)
-	E:CreateBorder(bar, 8)
 
-	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetAllPoints()
-	bg:SetTexture(unpack(COLORS.darkgray))
-
-	local value = E:CreateFontString(bar, 10, "$parentAltPowerValue", true)
-	bar.Value = value
-
+	bar.Value = bar.Text
 	bar.colorTexture = true
 	bar.PostUpdate = PostUpdateAltPower
 

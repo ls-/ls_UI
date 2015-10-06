@@ -148,8 +148,7 @@ function UF:ConstructBossFrame(frame)
 	frame.DebuffHighlight:SetSize(56, 30)
 	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
-	frame.AltPowerBar = UF:CreateAltPowerBar(frame, 102, {"TOP", frame, "BOTTOM", 0, 0})
-	frame.AltPowerBar.Value:SetPoint("CENTER")
+	frame.AltPowerBar = UF:CreateAltPowerBar(frame, 102, {"TOP", frame, "BOTTOM", 0, -2}, "12")
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
