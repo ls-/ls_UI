@@ -34,7 +34,7 @@ Player frame is split into *three* parts:
 - Default UI elements, such as **ActionBars**, **MicroMenu**, **Minimap** and **Buttons**, are all customized;
 - **Frame "movers"** for various interface elements;
 - **Floating Combat Feedback** on player frame;
-- **AuraTracker** for monitoring up to 12 buffs and debuffs on player character in total. List of auras can be managed via config frame, and is saved per character.
+- **AuraTracker** for monitoring up to 12 buffs and debuffs on player character in total. List of auras can be managed via config frame, and is saved per character;
 - **NamePlates**. Nice and clean look;
 - And more.
 
@@ -42,8 +42,8 @@ Player frame is split into *three* parts:
 - [oUF](http://www.wowinterface.com/downloads/info9994-oUF.html);
 - [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html);
 - [oUF_DebuffHighlight](http://www.wowinterface.com/downloads/info21715-oUFDebuffHighlightRedux.html) - *modified*;
-- oUF_BurningEmbers - *custom, NTBR*;
-- oUF_DemonicFury - *custom, NTBR*.
+- [oUF_BurningEmbers](https://github.com/ls-/oUF_BurningEmbers);
+- [oUF_DemonicFury](https://github.com/ls-/oUF_DemonicFury).
 
 #Feedback And Feature Requests
 If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/oUF_LS/issues?state=open) on my GitHub page, or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662-oUFLS.html#comments) or [Curse](http://www.curse.com/addons/wow/ouf-ls#comments).
