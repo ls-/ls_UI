@@ -1,4 +1,4 @@
-### Version 2.5
+#Version 2.5
 
 - Added rarity indication to unit frames and nameplates;
 - Added daily quest reset time to quest micro button tooltip;
