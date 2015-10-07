@@ -222,7 +222,7 @@ function CFG:AT_Initialize()
 	panel.ATToggle = attoggle
 	panel.settings.auratracker.enabled = attoggle
 
-	local infotext1 = CFG:CreateTextLabel(panel, 10, "These options allow you to setup player aura tracking. |cffffd100You can track up to 12 auras at once.|r")
+	local infotext1 = CFG:CreateTextLabel(panel, 10, "These options allow you to setup player aura tracking. |cffffd100You can track up to 12 auras at once.|r\nWhilst in combat, please, use |cffffd100/atbuff|r and |cffffd100/atdebuff|r commands to add auras to the list.")
 	infotext1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
