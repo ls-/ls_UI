@@ -1,6 +1,6 @@
 ## Interface: 60200
 ## Author: lightspark
-## Version: 2.0.3
+## Version: 2.5
 ## Title: oUF: |cff1a9fc0LS|r
 ## Notes: PvE-oriented oUF-based UI
 ## X-Category: UnitFrame
