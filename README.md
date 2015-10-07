@@ -24,7 +24,7 @@ Player frame is split into *three* parts:
 - Death Knight - Runes;
 - Warlock - Demonic Fury, Burning Embers, Soul Shards;
 - Priest - Shadow Orbs;
-- Monk - Chi;
+- Monk - Chi, Stagger;
 - Paladin - Holy Power;
 - Shaman - Totems;
 - Druid (Owl) - Lunar/Solar Energy;
