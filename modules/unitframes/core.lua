@@ -159,10 +159,6 @@ function UF:Initialize()
 	end
 
 	if C.units.arena.enabled then
-		if not IsAddOnLoaded("Blizzard_ArenaUI") then
-			E:ForceLoadAddOn("Blizzard_ArenaUI")
-		end
-
 		UF.objects["arena1"] = self:Spawn("arena1", "LSArena1Frame")
 		UF.objects["arena2"] = self:Spawn("arena2", "LSArena2Frame")
 		UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
@@ -199,9 +195,9 @@ function UF:Initialize()
 	end
 
 	if C.units.party.enabled then
-		if not IsAddOnLoaded("Blizzard_CompactRaidFrames") then
-			E:ForceLoadAddOn("Blizzard_CompactRaidFrames")
-		end
+		-- if not IsAddOnLoaded("Blizzard_CompactRaidFrames") then
+		-- 	E:ForceLoadAddOn("Blizzard_CompactRaidFrames")
+		-- end
 
 		UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
 			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
