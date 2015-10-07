@@ -236,7 +236,7 @@ end
 local function QuestLogMicroButton_OnEnter(self)
 	local questReset = GetQuestResetTime()
 
-	GameTooltip:AddDoubleLine("Daily quest reset time:", SecondsToTime(questReset, true, nil, 3), 1, 0.82, 0, 1, 1, 1)
+	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", SecondsToTime(questReset, true, nil, 3), 1, 0.82, 0, 1, 1, 1)
 	GameTooltip:Show()
 end
 
