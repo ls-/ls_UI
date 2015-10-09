@@ -46,7 +46,7 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 		end
 	end
 
-	local tbackground, ttext, tstatusbar
+	local tbackground, ttext, tsbt
 
 	for _, child in next, children do
 		if child:IsObjectType("StatusBar") then
@@ -74,19 +74,23 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 
 		background:SetTexture(unpack(COLORS.darkgray))
 		background:SetAllPoints()
+		bar.Bg = background
 
-		if text then
+		if not text then
+			text = E:CreateFontString(bar, PRESET.textHeight, bar:GetName().."Text", true)
+		else
 			text:SetFont(M.font, PRESET.textHeight)
 			text:SetWordWrap(false)
 			text:SetJustifyV("MIDDLE")
-			text:SetDrawLayer("OVERLAY", 1)
-			text:ClearAllPoints()
-			text:SetPoint("TOPLEFT", 1, 0)
-			text:SetPoint("BOTTOMRIGHT", -1, 0)
 			text:SetShadowColor(0, 0, 0)
 			text:SetShadowOffset(1, -1)
-			bar.Text = text
 		end
+
+		text:SetDrawLayer("OVERLAY", 1)
+		text:ClearAllPoints()
+		text:SetPoint("TOPLEFT", 1, 0)
+		text:SetPoint("BOTTOMRIGHT", -1, 0)
+		bar.Text = text
 
 		sbt:SetDrawLayer("BACKGROUND", 1)
 		sbt:SetTexture("Interface\\BUTTONS\\WHITE8X8")
