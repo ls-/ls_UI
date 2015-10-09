@@ -77,7 +77,7 @@ oUF.Tags.Events["custom:damageabsorb"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 
 oUF.Tags.Methods["custom:difficulty"] = function(unit)
 	local l = UnitEffectiveLevel(unit)
-	return "|cff"..E:RGBToHEX(GetCreatureDifficultyColor((l > 0) and l or 99))
+	return "|cff"..E:RGBToHEX(GetCreatureDifficultyColor((l > 0) and l or 199))
 end
 
 oUF.Tags.Methods["custom:effectivelevel"] = function(unit)
