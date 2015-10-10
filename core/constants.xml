@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">"/>
+	<Script file="constants.lua"/>
+
 	<FontFamily name="LS10Font" virtual="true">
 		<Member alphabet="roman">
 			<Font font="Fonts\FRIZQT__.TTF" height="10"/>

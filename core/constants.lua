@@ -1,6 +1,11 @@
 local _, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
+M.font = STANDARD_TEXT_FONT
+
+M.HiddenParent = CreateFrame("Frame")
+M.HiddenParent:Hide()
+
 oUF.colors.health = {0.15, 0.65, 0.15}
 
 oUF.colors.reaction = {
@@ -62,6 +67,8 @@ colors.gray = {0.6, 0.6, 0.6}
 colors.darkgray = {0.15, 0.15, 0.15}
 colors.indigo = {0.36, 0.46, 0.8}
 colors.orange = {0.9, 0.4, 0.1}
+colors.dodgerblue = {0.12, 0.56, 1}
+colors.jade = {0, 0.66, 0.42}
 
 colors.gradient = {
 	["GYR"] = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15},
@@ -74,3 +81,25 @@ for i = 1, 3 do
 end
 
 M.colors = colors
+
+local textures = {
+	inlineicons = {
+		["QUEST"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:82:100:22:40|t",
+		["TANK"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:62:80:2:20|t",
+		["HEALER"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:42:60:2:20|t",
+		["DAMAGER"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:22:40:2:20|t",
+		["LEADER"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:2:20|t",
+		["ALLIANCE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:22:40:22:40|t",
+		["HORDE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:22:40|t",
+	},
+	button = {
+		normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
+		normalmetal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",
+		highlight = "Interface\\AddOns\\oUF_LS\\media\\button\\highlight",
+		pushed = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
+		checked = "Interface\\AddOns\\oUF_LS\\media\\button\\checked",
+		flash = "Interface\\AddOns\\oUF_LS\\media\\button\\flash",
+	},
+}
+
+M.textures = textures

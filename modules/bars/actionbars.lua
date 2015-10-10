@@ -218,7 +218,7 @@ function ActionBars:Initialize()
 
 	-- Hiding different useless textures
 	MainMenuBar.slideOut.IsPlaying = function() return true end
-	MainMenuBar:SetParent(M.hiddenParent)
+	MainMenuBar:SetParent(M.HiddenParent)
 	for _, v in next, {MainMenuBar:GetChildren()} do
 		E:ForceHide(v)
 	end

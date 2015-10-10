@@ -366,7 +366,7 @@ function MM:Initialize()
 			_G[f]:UnregisterAllEvents()
 		end
 
-		_G[f]:SetParent(M.hiddenParent)
+		_G[f]:SetParent(M.HiddenParent)
 	end
 
 	HandleMinimapButton(MiniMapVoiceChatFrame)

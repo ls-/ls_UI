@@ -51,7 +51,7 @@ function PetBattle:Initialize()
 		PetBattleFrame.BottomFrame.MicroButtonFrame,
 		PetBattleFrameXPBar,
 	} do
-		f:SetParent(ns.M.hiddenParent)
+		f:SetParent(ns.M.HiddenParent)
 		f.ignoreFramePositionManager = true
 	end
 

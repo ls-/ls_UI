@@ -389,7 +389,7 @@ local function ResetMicroButtonsParent()
 		if MICRO_BUTTON_LAYOUT[b] then
 			button:SetParent(MICRO_BUTTON_LAYOUT[b].parent)
 		else
-			button:SetParent(M.hiddenParent)
+			button:SetParent(M.HiddenParent)
 		end
 	end
 end
@@ -433,7 +433,7 @@ function MM:Initialize()
 			button:SetPoint(unpack(MICRO_BUTTON_LAYOUT[b].point))
 		else
 			button:UnregisterAllEvents()
-			button:SetParent(M.hiddenParent)
+			button:SetParent(M.HiddenParent)
 		end
 
 		if b == "CharacterMicroButton" then
