@@ -5,10 +5,61 @@ E.TT = {}
 
 local TT = E.TT
 local COLORS = M.colors
+local INLINE_ICONS = M.textures.inlineicons
 
-local find, match, unpack = strfind, strmatch, unpack
+local find, match = strfind, strmatch
+local unpack, tcontains = unpack, tContains
+local min = min
 
 local GameTooltip, GameTooltipStatusBar = GameTooltip, GameTooltipStatusBar
+
+local function CleanLines(self, offset, set)
+	local numLines = self:NumLines()
+	local lastHidden
+
+	for i = numLines, min(offset, numLines), -1 do
+		local line = _G["GameTooltipTextLeft"..i]
+		local lineText = line:GetText()
+
+		if tcontains(set, lineText) then
+			for j = i, numLines do
+				_G["GameTooltipTextLeft"..j]:SetText(_G["GameTooltipTextLeft"..j + 1]:GetText())
+
+				if not _G["GameTooltipTextLeft"..j + 1]:IsShown() then
+					_G["GameTooltipTextLeft"..j]:Hide()
+
+					lastHidden = j
+					break
+				end
+			end
+		end
+	end
+
+	return lastHidden or offset
+end
+
+local function GetAvailableLine(self, offset)
+	local availableLine
+	local numLines = self:NumLines()
+
+	for i = min(offset, numLines), numLines do
+		local line = _G["GameTooltipTextLeft"..i]
+		local lineText = line:GetText()
+
+		if not lineText and not line:IsShown() then
+			line:SetText(" ")
+			line:Show()
+
+			return line, min(i + 1, numLines)
+		end
+	end
+
+	if not availableLine then
+		self:AddLine(" ")
+
+		return _G["GameTooltipTextLeft"..numLines + 1], numLines + 1
+	end
+end
 
 local function GameTooltip_AuraTooltipHook(self, unit, index, filter)
 	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
@@ -34,7 +85,6 @@ local function GameTooltip_AuraTooltipHook(self, unit, index, filter)
 
 	self:Show()
 end
-
 
 local function GameTooltip_OnEventHook(self, event, ...)
 	local key = ...
@@ -81,11 +131,14 @@ local function GameTooltip_SpellTooltipHook(self)
 end
 
 local function GetLevelLine(self, level, offset)
-	for i = offset, self:NumLines() do
-		local line = _G["GameTooltipTextLeft"..i]
+	local numLines = self:NumLines()
 
-		if find(line:GetText(), level) then
-			return line, i
+	for i = min(offset, numLines), numLines do
+		local line = _G["GameTooltipTextLeft"..i]
+		local lineText = line:GetText()
+
+		if find(lineText, level) then
+			return line, i + 1
 		end
 	end
 end
@@ -116,6 +169,12 @@ local function GameTooltip_UnitTooltipHook(self)
 	local reactionColor = E:GetUnitReactionColor(unit)
 	local difficultyColor = E:GetCreatureDifficultyColor(level)
 	local nameColor = E:GetSmartReactionColor(unit)
+	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
+	local availableLine
+	local levelLine
+	local offset = 2
+
+	CleanLines(self, offset, {PVP, FACTION_ALLIANCE, FACTION_HORDE})
 
 	if UnitIsPlayer(unit) then
 		local name, realm = UnitName(unit)
@@ -124,6 +183,7 @@ local function GameTooltip_UnitTooltipHook(self)
 		local guildName, _, _, guildRealm = GetGuildInfo(unit)
 		local classDisplayName = UnitClass(unit)
 		local classColor = E:GetUnitClassColor(unit)
+		local isInGroup = UnitInParty(unit) or UnitInRaid(unit)
 
 		name = pvpName or name
 
@@ -139,15 +199,37 @@ local function GameTooltip_UnitTooltipHook(self)
 			end
 		end
 
+		local afkFlag = ""
 		if UnitIsAFK(unit) then
-			name = CHAT_FLAG_AFK..name
+			afkFlag = CHAT_FLAG_AFK
 		elseif UnitIsDND(unit) then
-			name = CHAT_FLAG_DND..name
+			afkFlag = CHAT_FLAG_DND
 		end
 
-		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor.hex, name)
+		_G["GameTooltipTextLeft"..1]:SetFormattedText("|cff999999%s|r|cff%s%s|r", afkFlag, nameColor.hex, name)
 
-		local Offset = 2
+		local statusInfo = ""
+		if isInGroup then
+			local role = UnitGroupRolesAssigned(unit)
+
+			if UnitIsGroupLeader(unit) then
+				statusInfo = statusInfo..INLINE_ICONS["LEADER"]
+			end
+
+			if role and role ~= "NONE" then
+				statusInfo = statusInfo..INLINE_ICONS[role]
+			end
+		end
+
+		if isPVPReady then
+			statusInfo = statusInfo..INLINE_ICONS[pvpFaction]
+		end
+
+		if statusInfo ~= "" then
+			_G["GameTooltipTextRight"..1]:SetText(statusInfo)
+			_G["GameTooltipTextRight"..1]:Show()
+		end
+
 		if guildName then
 			if guildRealm and isShiftKeyDown then
 				guildName = guildName.."-"..guildRealm
@@ -155,11 +237,10 @@ local function GameTooltip_UnitTooltipHook(self)
 
 			GameTooltipTextLeft2:SetText(guildName)
 
-			Offset = 3
+			offset = 3
 		end
 
-		local levelLine, levelLineIndex = GetLevelLine(self, level > 0 and level or "%?%?", Offset)
-
+		levelLine, offset = GetLevelLine(self, level > 0 and level or "%?%?", offset)
 		if levelLine then
 			local race = UnitRace(unit)
 
@@ -169,11 +250,25 @@ local function GameTooltip_UnitTooltipHook(self)
 		local name = UnitName(unit)
 		local isPet = UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)
 
-		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor.hex, name)
+		_G["GameTooltipTextLeft"..1]:SetFormattedText("|cff%s%s|r", nameColor.hex, name)
+
+		local statusInfo = ""
+		if UnitIsQuestBoss(unit) then
+			statusInfo = statusInfo..INLINE_ICONS["QUEST"]
+		end
+
+		if isPVPReady then
+			statusInfo = statusInfo..INLINE_ICONS[pvpFaction]
+		end
+
+		if statusInfo ~= "" then
+			_G["GameTooltipTextRight"..1]:SetText(statusInfo)
+			_G["GameTooltipTextRight"..1]:Show()
+		end
 
 		level = isPet and UnitBattlePetLevel(unit) or level
 
-		local levelLine, levelLineIndex = GetLevelLine(self, level > 0 and level or "%?%?", 2)
+		levelLine, offset = GetLevelLine(self, level > 0 and level or "%?%?", offset)
 		if levelLine then
 			local creatureType = UnitCreatureType(unit) or ""
 			local classification = E:GetUnitClassification(unit)
@@ -182,6 +277,7 @@ local function GameTooltip_UnitTooltipHook(self)
 			if isPet then
 				local teamLevel = C_PetJournal.GetPetTeamAverageLevel()
 				level = UnitBattlePetLevel(unit)
+
 				if teamLevel then
 					difficultyColor.hex = E:RGBToHEX(GetRelativeDifficultyColor(teamLevel, level))
 				else
@@ -193,23 +289,25 @@ local function GameTooltip_UnitTooltipHook(self)
 
 			levelLine:SetFormattedText("|cff%s%s%s|r %s%s", difficultyColor.hex, level > 0 and level or "??", classification, creatureType, petClass)
 		end
-
 	end
 
 	local unitTarget = unit.."target"
 	if UnitExists(unitTarget) then
 		nameColor = E:GetSmartReactionColor(unitTarget)
 
-		GameTooltip:AddLine("|cffffd100"..TARGET..": |r"..UnitName(unitTarget), nameColor.r, nameColor.g, nameColor.b)
+		availableLine, offset = GetAvailableLine(self, offset)
+		availableLine:SetFormattedText("|cffffd100%s: |r|cff%s%s|r", TARGET, nameColor.hex, UnitName(unitTarget))
 	end
 
 	if GameTooltipStatusBar:IsShown() then
-		self:AddLine(" ")
-		self:SetMinimumWidth(140)
+		availableLine, offset = GetAvailableLine(self, offset)
+
 		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("LEFT", self:GetName().."TextLeft"..self:NumLines(), "LEFT", 0, -2)
+		GameTooltipStatusBar:SetPoint("LEFT", availableLine, "LEFT", 0, -2)
 		GameTooltipStatusBar:SetPoint("RIGHT", self, "RIGHT", -9, 0)
 		GameTooltipStatusBar:SetStatusBarColor(reactionColor.r, reactionColor.g, reactionColor.b)
+
+		self:SetMinimumWidth(140)
 	end
 end
 
