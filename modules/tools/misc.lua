@@ -1,12 +1,12 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
 local COLORS = M.colors
 
 local select = select
+local strupper = strupper
 
 function E:GetCreatureDifficultyColor(level)
-	color = GetCreatureDifficultyColor(level > 0 and level or 199)
+	local color = GetCreatureDifficultyColor(level > 0 and level or 199)
 
 	return {r = color.r, g = color.g, b = color.b, hex = E:RGBToHEX(color)}
 end
@@ -14,7 +14,7 @@ end
 function E:GetUnitReactionColor(unit)
 	local color
 	if unit then
-		color = COLORS.reaction[UnitReaction(unit, "player")]
+		color = COLORS.reaction[UnitReaction(unit, "player") or 4]
 
 		return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 	else
@@ -67,5 +67,17 @@ function E:GetUnitClassification(unit)
 		return "-"
 	else
 		return ""
+	end
+end
+
+function E:GetUnitPVPStatus(unit)
+	local faction = UnitFactionGroup(unit)
+
+	if UnitIsPVPFreeForAll(unit) then
+		return true, "FFA"
+	elseif UnitIsPVP(unit) and faction and faction ~= "Neutral" then
+		return true, strupper(faction)
+	else
+		return
 	end
 end
