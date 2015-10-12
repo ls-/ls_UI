@@ -7,17 +7,29 @@ local TT = E.TT
 local COLORS = M.colors
 local INLINE_ICONS = M.textures.inlineicons
 
+local LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND =
+	LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND
+
 local find, match = strfind, strmatch
 local unpack, tcontains = unpack, tContains
 local min = min
 
-local GameTooltip, GameTooltipStatusBar = GameTooltip, GameTooltipStatusBar
+local GameTooltip, GameTooltipStatusBar, GameTooltipTextLeft1, GameTooltipTextRight1 = GameTooltip, GameTooltipStatusBar, GameTooltipTextLeft1, GameTooltipTextRight1
+
+local GetPetTeamAverageLevel = C_PetJournal.GetPetTeamAverageLevel
+local IsShiftKeyDown, GetMouseFocus, GetGuildInfo = IsShiftKeyDown, GetMouseFocus, GetGuildInfo
+local UnitInParty, UnitInRaid = UnitInParty, UnitInRaid
+local UnitIsAFK, UnitIsDND, UnitIsGroupLeader, UnitIsPlayer, UnitIsWildBattlePet, UnitIsBattlePetCompanion =
+	UnitIsAFK, UnitIsDND, UnitIsGroupLeader, UnitIsPlayer, UnitIsWildBattlePet, UnitIsBattlePetCompanion
+local UnitBattlePetLevel, UnitClass, UnitCreatureType, UnitEffectiveLevel, UnitExists, UnitGroupRolesAssigned, UnitName, UnitPVPName, UnitRace, UnitRealmRelationship =
+	UnitBattlePetLevel, UnitClass, UnitCreatureType, UnitEffectiveLevel, UnitExists, UnitGroupRolesAssigned, UnitName, UnitPVPName, UnitRace, UnitRealmRelationship
 
 local function CleanLines(self, offset, set)
 	local numLines = self:NumLines()
+	local offset = min(offset, numLines)
 	local lastHidden
 
-	for i = numLines, min(offset, numLines), -1 do
+	for i = numLines, offset, -1 do
 		local line = _G["GameTooltipTextLeft"..i]
 		local lineText = line:GetText()
 
@@ -39,10 +51,11 @@ local function CleanLines(self, offset, set)
 end
 
 local function GetAvailableLine(self, offset)
-	local availableLine
 	local numLines = self:NumLines()
+	local offset = min(offset, numLines)
+	local availableLine
 
-	for i = min(offset, numLines), numLines do
+	for i = offset, numLines do
 		local line = _G["GameTooltipTextLeft"..i]
 		local lineText = line:GetText()
 
@@ -132,15 +145,18 @@ end
 
 local function GetLevelLine(self, level, offset)
 	local numLines = self:NumLines()
+	local offset = min(offset, numLines)
 
-	for i = min(offset, numLines), numLines do
+	for i = offset, numLines do
 		local line = _G["GameTooltipTextLeft"..i]
 		local lineText = line:GetText()
 
-		if find(lineText, level) then
+		if lineText and find(lineText, level) then
 			return line, i + 1
 		end
 	end
+
+	return nil, offset
 end
 
 local PET_TOOLTIP_CLASS_PATTERN = gsub(TOOLTIP_WILDBATTLEPET_LEVEL_CLASS, "%%s", "(.+)")
@@ -206,7 +222,7 @@ local function GameTooltip_UnitTooltipHook(self)
 			afkFlag = CHAT_FLAG_DND
 		end
 
-		_G["GameTooltipTextLeft"..1]:SetFormattedText("|cff999999%s|r|cff%s%s|r", afkFlag, nameColor.hex, name)
+		GameTooltipTextLeft1:SetFormattedText("|cff999999%s|r|cff%s%s|r", afkFlag, nameColor.hex, name)
 
 		local statusInfo = ""
 		if isInGroup then
@@ -226,8 +242,8 @@ local function GameTooltip_UnitTooltipHook(self)
 		end
 
 		if statusInfo ~= "" then
-			_G["GameTooltipTextRight"..1]:SetText(statusInfo)
-			_G["GameTooltipTextRight"..1]:Show()
+			GameTooltipTextRight1:SetText(statusInfo)
+			GameTooltipTextRight1:Show()
 		end
 
 		if guildName then
@@ -250,7 +266,7 @@ local function GameTooltip_UnitTooltipHook(self)
 		local name = UnitName(unit)
 		local isPet = UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)
 
-		_G["GameTooltipTextLeft"..1]:SetFormattedText("|cff%s%s|r", nameColor.hex, name)
+		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor.hex, name)
 
 		local statusInfo = ""
 		if UnitIsQuestBoss(unit) then
@@ -262,8 +278,8 @@ local function GameTooltip_UnitTooltipHook(self)
 		end
 
 		if statusInfo ~= "" then
-			_G["GameTooltipTextRight"..1]:SetText(statusInfo)
-			_G["GameTooltipTextRight"..1]:Show()
+			GameTooltipTextRight1:SetText(statusInfo)
+			GameTooltipTextRight1:Show()
 		end
 
 		level = isPet and UnitBattlePetLevel(unit) or level
@@ -275,7 +291,7 @@ local function GameTooltip_UnitTooltipHook(self)
 			local petClass = ""
 
 			if isPet then
-				local teamLevel = C_PetJournal.GetPetTeamAverageLevel()
+				local teamLevel = GetPetTeamAverageLevel()
 				level = UnitBattlePetLevel(unit)
 
 				if teamLevel then
