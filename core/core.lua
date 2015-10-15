@@ -41,11 +41,9 @@ function E:ForceHide(object)
 
 	if object.UnregisterAllEvents then
 		object:UnregisterAllEvents()
-		object:SetParent(M.HiddenParent)
-	else
-		object.Show = object.Hide
 	end
 
+	object:SetParent(M.HiddenParent)
 	object:Hide()
 end
 
