@@ -195,10 +195,6 @@ function UF:Initialize()
 	end
 
 	if C.units.party.enabled then
-		-- if not IsAddOnLoaded("Blizzard_CompactRaidFrames") then
-		-- 	E:ForceLoadAddOn("Blizzard_CompactRaidFrames")
-		-- end
-
 		UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
 			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
 			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
@@ -211,6 +207,6 @@ function UF:Initialize()
 		UF:CreatePartyHolder()
 
 		UF.headers["party"]:SetParent(LSPartyHolder)
-		UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, - 16)
+		UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, -16)
 	end
 end
