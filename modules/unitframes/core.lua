@@ -169,7 +169,6 @@ function UF:Initialize()
 	for unit, object in next, UF.objects do
 		if strmatch(unit, "^boss%d") then
 			local id = tonumber(strmatch(unit, "boss(%d)"))
-
 			if id == 1 then
 				UF:CreateBossHolder()
 
@@ -179,17 +178,15 @@ function UF:Initialize()
 			end
 		 elseif strmatch(unit, "^arena%d") then
 			local id = tonumber(strmatch(unit, "arena(%d)"))
-
 			if id == 1 then
 				UF:CreateArenaHolder()
 
 				object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
 			else
-				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -12)
+				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
 			end
 		else
 			object:SetPoint(unpack(C.units[unit].point))
-
 			E:CreateMover(object)
 		end
 	end

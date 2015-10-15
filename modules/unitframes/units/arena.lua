@@ -2,9 +2,45 @@ local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
 
-local function ArenaFrame_OnEvent(self, event, ...)
-	local specID = GetArenaOpponentSpec(self:GetID())
+local unpack, tcontains = unpack, tContains
 
+local UnitAura = UnitAura
+local GetArenaOpponentSpec, GetSpecializationInfoByID = GetArenaOpponentSpec, GetSpecializationInfoByID
+local CooldownFrame_SetTimer, GetTime = CooldownFrame_SetTimer, GetTime
+
+local CROWDCONTROL = {
+	-- hex
+	51514,
+	-- polymorphs
+	118,
+	28271,
+	28272,
+	61305,
+	61721,
+	61780,
+	126819,
+	161353,
+	161354,
+	161355,
+	161372,
+	-- test
+	-- 41425,
+}
+
+local function ArenaFrame_OnEvent(self, event, ...)
+	if event == "UNIT_AURA" then
+		local unit = ...
+		for i = 1, 16 do
+			local name, _, iconTexture, _, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
+			if name and tcontains(CROWDCONTROL, spellId) then
+				self.SpecInfo.Icon:SetTexture(iconTexture)
+
+				return CooldownFrame_SetTimer(self.SpecInfo.CD, expirationTime - duration, duration, true)
+			end
+		end
+	end
+
+	local specID = GetArenaOpponentSpec(self:GetID())
 	if specID and specID > 0 then
 		local _, _, _, icon = GetSpecializationInfoByID(specID)
 
@@ -27,7 +63,7 @@ end
 
 function UF:CreateArenaHolder()
 	local holder = CreateFrame("Frame", "LSArenaHolder", UIParent)
-	holder:SetSize(110 + 2 + 124 + 2 + 28 + 6 + 28 + 2 * 2, 36 * 5 + 12 * 5 + 2)
+	holder:SetSize(110 + 2 + 124 + 2 + 28 + 6 + 28 + 2 * 2, 36 * 5 + 14 * 5 + 2)
 	holder:SetPoint(unpack(C.units.arena.point))
 	E:CreateMover(holder)
 end
@@ -37,6 +73,7 @@ function UF:ConstructArenaFrame(frame)
 
 	frame.mouseovers = {}
 	frame:SetSize(110, 36)
+	frame:RegisterEvent("UNIT_AURA", ArenaFrame_OnEvent)
 	frame:RegisterEvent("UNIT_NAME_UPDATE", ArenaFrame_OnEvent)
 	frame:RegisterEvent("ARENA_OPPONENT_UPDATE", ArenaFrame_OnEvent)
 	frame:SetID(strmatch(frame.unit, "arena(%d)"))
@@ -159,7 +196,6 @@ function UF:ConstructArenaFrame(frame)
 	specinfo:SetSize(28, 28)
 	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
 	frame.SpecInfo = specinfo
-
 	E:CreateBorder(specinfo)
 
 	local icon = specinfo:CreateTexture()
@@ -167,21 +203,27 @@ function UF:ConstructArenaFrame(frame)
 	E:TweakIcon(icon)
 	specinfo.Icon = icon
 
+	local cd = CreateFrame("Cooldown", nil, specinfo, "CooldownFrameTemplate")
+	cd:ClearAllPoints()
+	cd:SetPoint("TOPLEFT", 1, -1)
+	cd:SetPoint("BOTTOMRIGHT", -1, 1)
+	E:HandleCooldown(cd, 12)
+	specinfo.CD = cd
+
 	local trinket = CreateFrame("Frame", nil, frame)
 	trinket:SetSize(28, 28)
 	trinket:SetPoint("LEFT", specinfo, "RIGHT", 6, 0)
 	trinket:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", frame.unit)
 	trinket:SetScript("OnEvent", Trinket_OnEvent)
-	frame.Trinket = trinket
-
 	E:CreateBorder(trinket)
+	frame.Trinket = trinket
 
 	icon = trinket:CreateTexture()
 	icon:SetTexture(UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
 	E:TweakIcon(icon)
 	trinket.Icon = icon
 
-	local cd = CreateFrame("Cooldown", nil, trinket, "CooldownFrameTemplate")
+	cd = CreateFrame("Cooldown", nil, trinket, "CooldownFrameTemplate")
 	cd:ClearAllPoints()
 	cd:SetPoint("TOPLEFT", 1, -1)
 	cd:SetPoint("BOTTOMRIGHT", -1, 1)
