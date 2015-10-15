@@ -44,14 +44,11 @@ function Vehicle:Initialize()
 	button:SetPoint(unpack(VEHICLE_CONFIG.point))
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
-
-	E:CreateMover(button)
-
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:RegisterEvent("VEHICLE_UPDATE")
-
 	button:SetScript("OnEvent", LeaveButton_OnEvent)
 	button:SetScript("OnClick", LeaveButton_OnClick)
+	E:CreateMover(button)
 
 	E:CreateBorder(button)
 	button:SetBorderColor(1, 0.1, 0.15)
@@ -59,7 +56,6 @@ function Vehicle:Initialize()
 	icon = button:CreateTexture()
 	icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 	E:TweakIcon(icon, 12 / 64, 52 / 64, 12 / 64, 52 / 64)
-
 	button.Icon = icon
 
 	button:SetHighlightTexture(1, 1, 1)

@@ -128,7 +128,6 @@ function ReceiveMail()
 	local numItems, totalItems = GetInboxNumItems()
 	Mail.overflow = totalItems > numItems
 
-	-- ERR_MAIL_DATABASE_ERROR and ERR_ITEM_NOT_FOUND, better to have extra delay
 	local _, _, lag = GetNetStats()
 	lag = lag > 0 and lag / 500 or 0.1
 
@@ -139,14 +138,13 @@ function Mail:Initialize()
 	local button = CreateFrame("Button", nil, InboxFrame)
 	button:SetSize(28, 28)
 	button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
-
 	button:RegisterEvent("MAIL_INBOX_UPDATE")
 	button:RegisterEvent("MAIL_CLOSED")
-
 	button:SetScript("OnEvent", ReceiveButton_OnEvent)
 	button:SetScript("OnEnter", ReceiveButton_OnEnter)
 	button:SetScript("OnLeave", ReceiveButton_OnLeave)
 	button:SetScript("OnClick", ReceiveMail)
+	button:Disable()
 
 	button:SetHighlightTexture(1)
 	ns.lsSetHighlightTexture(button:GetHighlightTexture())
@@ -154,14 +152,11 @@ function Mail:Initialize()
 	button:SetPushedTexture(1)
 	ns.lsSetPushedTexture(button:GetPushedTexture())
 
-	button:Disable()
-
 	E:CreateBorder(button, 8)
 
 	local icon = button:CreateTexture()
 	icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
 	icon:SetDesaturated(true)
 	E:TweakIcon(icon)
-
 	button.Icon = icon
 end
