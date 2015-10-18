@@ -1,7 +1,8 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
-local POWERCOLORS = M.colors.power
+local COLORS = M.colors
+local POWERCOLORS = COLORS.power
 
 local unpack, pairs, gsub = unpack, pairs, gsub
 
@@ -137,6 +138,33 @@ local LAYOUT = {
 	["sun"] = {416 / 512, 428 / 512, 16 / 256, 144 / 256},
 	["moon"] = {428 / 512, 440 / 512, 16 / 256, 144 / 256},
 	["none"] = {0, 1 / 512, 0, 1 / 256},
+}
+
+local COMBO_BAR_PRESETS ={
+	["HORIZONTAL"] = {
+		bar_size = {26, 100},
+		point = {"LEFT", "LSPlayerFrame" , "RIGHT", 2, 0},
+		bg_size = {8, 100},
+		fg_size = {26, 118},
+		fg_coords = {0 / 256, 26 / 256, 0 / 128, 118 / 128},
+		glow_size = {12, 102},
+		glow_coords = {26 / 256, 38 / 256, 0 / 128, 102 / 128},
+		cp_size = {8, 20},
+		cp_point1 = "BOTTOM",
+		cp_point2 = "TOP",
+	},
+	["VERTICAL"] = {
+		bar_size = {100, 26},
+		point = {"BOTTOM", "LSPlayerFrame" , "TOP", 0, 2},
+		bg_size = {100, 8},
+		fg_size = {118, 26},
+		fg_coords = {38 / 256, 156 / 256, 0 / 128, 26 / 128},
+		glow_size = {102, 12},
+		glow_coords = {38 / 256, 140 / 256, 26 / 128, 38 / 128},
+		cp_size = {20, 8},
+		cp_point1 = "LEFT",
+		cp_point2 = "RIGHT",
+	},
 }
 
 local MAX_COMBO_POINTS = MAX_COMBO_POINTS
@@ -636,7 +664,6 @@ end
 
 local function OverrideComboBar(self, event, unit)
 	if unit == "pet" then return end
-
 	local bar = self.CPoints
 
 	local cp
@@ -670,42 +697,31 @@ local function OverrideComboBar(self, event, unit)
 end
 
 function UF:CreateComboBar(parent, level)
+	local PRESET = COMBO_BAR_PRESETS[C.units.player.combo_bar_type]
+
 	local bar = CreateFrame("Frame", "$parentComboPointsBar", parent)
 	bar:SetFrameLevel(level)
-	bar:SetSize(26, 100)
-	bar:SetPoint("LEFT", "LSPlayerFrame" , "RIGHT", 2, 0)
+	bar:SetSize(unpack(PRESET.bar_size))
+	bar:SetPoint(unpack(PRESET.point))
 	E:CreateMover(bar)
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	bg:SetTexCoord(472 / 512, 504 / 512, 16 / 256, 144 / 256)
-	bg:SetSize(32, 128)
+	bg:SetTexture(unpack(COLORS.darkgray))
+	bg:SetSize(unpack(PRESET.bg_size))
 	bg:SetPoint("CENTER")
 
-	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg1:SetTexCoord(440 / 512, 472 / 512, 16 / 256, 144 / 256)
-	fg1:SetSize(32, 128)
-	fg1:SetPoint("CENTER")
-
-	local fg2 = bar:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg2:SetTexCoord(32 / 512, 64 / 512, 149 / 256, 251 / 256)
-	fg2:SetSize(32, 102)
-	fg2:SetPoint("CENTER")
-
-	local fg3 = bar:CreateTexture(nil, "ARTWORK", nil, 3)
-	fg3:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg3:SetTexCoord(0 / 512, 32 / 512, 160 / 256, 256 / 256)
-	fg3:SetSize(32, 96)
-	fg3:SetPoint("CENTER")
+	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
+	fg:SetTexCoord(unpack(PRESET.fg_coords))
+	fg:SetSize(unpack(PRESET.fg_size))
+	fg:SetPoint("CENTER")
 
 	local r, g, b = unpack(POWERCOLORS["COMBO_POINTS"])
 
 	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
-	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	glow:SetTexCoord(64 / 512, 96 / 512, 149 / 256, 251 / 256)
-	glow:SetSize(32, 102)
+	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
+	glow:SetTexCoord(unpack(PRESET.glow_coords))
+	glow:SetSize(unpack(PRESET.glow_size))
 	glow:SetPoint("CENTER")
 	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
 	glow:SetAlpha(0)
@@ -715,13 +731,13 @@ function UF:CreateComboBar(parent, level)
 		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetVertexColor(r, g, b)
-		element:SetSize(8, 20)
+		element:SetSize(unpack(PRESET.cp_size))
 		bar[i] = element
 
 		if i == 1 then
-			element:SetPoint("BOTTOM", 0, 0)
+			element:SetPoint(PRESET.cp_point1, 0, 0)
 		else
-			element:SetPoint("BOTTOM", bar[i - 1], "TOP", 0, 0)
+			element:SetPoint(PRESET.cp_point1, bar[i - 1], PRESET.cp_point2, 0, 0)
 		end
 	end
 

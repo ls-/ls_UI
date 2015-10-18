@@ -6,6 +6,7 @@ D["units"] = {
 	player = {
 		enabled = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
+		combo_bar_type = "VERTICAL"
 	},
 	pet = {
 		enabled = true,
@@ -14,7 +15,6 @@ D["units"] = {
 	target = {
 		enabled = true,
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
-		long = true,
 	},
 	targettarget = {
 		enabled = true,
@@ -23,7 +23,6 @@ D["units"] = {
 	focus = {
 		enabled = true,
 		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
-		long = true,
 	},
 	focustarget = {
 		enabled = true,
