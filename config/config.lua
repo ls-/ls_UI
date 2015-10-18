@@ -6,7 +6,7 @@ D["units"] = {
 	player = {
 		enabled = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
-		combo_bar_type = "VERTICAL"
+		combo_bar_type = "HORIZONTAL" -- "VERTICAL" is second option
 	},
 	pet = {
 		enabled = true,
