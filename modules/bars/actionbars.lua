@@ -234,7 +234,6 @@ function ActionBars:Initialize()
 		OverrideActionBarPowerBar,
 		OverrideActionBarPitchFrame,
 		OverrideActionBarLeaveFrame,
-		IconIntroTracker,
 		MainMenuBarTexture0,
 		MainMenuBarTexture1,
 		MainMenuBarTexture2,
