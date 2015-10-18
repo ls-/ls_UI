@@ -9,6 +9,7 @@ local INLINE_ICONS = M.textures.inlineicons
 
 local LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND =
 	LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND
+local PET = PET
 
 local find, match = strfind, strmatch
 local unpack, tcontains = unpack, tContains
@@ -289,10 +290,9 @@ local function GameTooltip_UnitTooltipHook(self)
 			local creatureType = UnitCreatureType(unit) or ""
 			local classification = E:GetUnitClassification(unit)
 			local petClass = ""
-
 			if isPet then
 				local teamLevel = GetPetTeamAverageLevel()
-				level = UnitBattlePetLevel(unit)
+				creatureType = creatureType == "" and PET or creatureType
 
 				if teamLevel then
 					difficultyColor.hex = E:RGBToHEX(GetRelativeDifficultyColor(teamLevel, level))
