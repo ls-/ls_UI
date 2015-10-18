@@ -44,7 +44,7 @@ function E:GetSmartReactionColor(unit)
 	elseif not UnitIsUnit(unit, "player") and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
 		color = COLORS.tapped
 	else
-		color = COLORS.reaction[UnitReaction(unit, "player")]
+		color = COLORS.reaction[UnitReaction(unit, "player") or 4]
 	end
 
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
