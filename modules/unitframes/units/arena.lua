@@ -1,8 +1,10 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
 local UF = E.UF
+local COLORS = M.colors
+local INLINE_ICONS = M.textures.inlineicons
 
-local unpack, tcontains = unpack, tContains
+local wipe, unpack, tcontains = wipe, unpack, tContains
 
 local UnitAura = UnitAura
 local GetArenaOpponentSpec, GetSpecializationInfoByID = GetArenaOpponentSpec, GetSpecializationInfoByID
@@ -27,6 +29,14 @@ local CROWDCONTROL = {
 	-- 41425,
 }
 
+-- local TESTSPECS = {
+-- 	[1] = 64,
+-- 	[2] = 262,
+-- 	[3] = 258,
+-- 	[4] = 269,
+-- 	[5] = 105
+-- }
+
 local function ArenaFrame_OnEvent(self, event, ...)
 	if event == "UNIT_AURA" then
 		local unit = ...
@@ -40,12 +50,26 @@ local function ArenaFrame_OnEvent(self, event, ...)
 		end
 	end
 
-	local specID = GetArenaOpponentSpec(self:GetID())
+	local specID, gender = GetArenaOpponentSpec(self:GetID())
 	if specID and specID > 0 then
-		local _, _, _, icon = GetSpecializationInfoByID(specID)
+		local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID)
+		local className = gender == 3 and LOCALIZED_CLASS_NAMES_FEMALE[class] or LOCALIZED_CLASS_NAMES_MALE[class]
 
-		self.SpecInfo.Icon:SetTexture(icon)
+		self.SpecInfo.Icon:SetTexture(specIcon)
+		self.SpecInfo.tooltipInfo = {INLINE_ICONS[role], className, specName, E:RGBToHEX(COLORS.class[class])}
 	end
+end
+
+local function SpecInfo_OnEnter(self)
+	if self.tooltipInfo and #self.tooltipInfo > 0 then
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+		GameTooltip:AddLine("|cff"..self.tooltipInfo[4]..self.tooltipInfo[2].." ("..self.tooltipInfo[3]..")|r ".. self.tooltipInfo[1])
+		GameTooltip:Show()
+	end
+end
+
+local function SpecInfo_OnLeave(self)
+	GameTooltip:Hide()
 end
 
 local function Trinket_OnEvent(self, event, ...)
@@ -71,6 +95,8 @@ end
 function UF:ConstructArenaFrame(frame)
 	local level = frame:GetFrameLevel()
 
+	-- frame:SetID(strmatch(frame.unit, "arena(%d)"))
+	-- frame.unit = "player"
 	frame.mouseovers = {}
 	frame:SetSize(110, 36)
 	frame:RegisterEvent("UNIT_AURA", ArenaFrame_OnEvent)
@@ -197,6 +223,8 @@ function UF:ConstructArenaFrame(frame)
 	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
 	frame.SpecInfo = specinfo
 	E:CreateBorder(specinfo)
+	specinfo:SetScript("OnEnter", SpecInfo_OnEnter)
+	specinfo:SetScript("OnLeave", SpecInfo_OnLeave)
 
 	local icon = specinfo:CreateTexture()
 	icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
@@ -232,4 +260,67 @@ function UF:ConstructArenaFrame(frame)
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
+end
+
+local function ArenaPrepFrameHandler_OnEvent(self, event, ...)
+	if event == "ARENA_OPPONENT_UPDATE" then
+		return self:Hide()
+	end
+
+	self:Show()
+
+	local numOpps = GetNumArenaOpponentSpecs()
+	for i = 1, 5 do
+		local frame = self[i]
+		if i <= numOpps then
+			local specID, gender = GetArenaOpponentSpec(i)
+			if specID and specID > 0 then
+				local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID)
+				local className = gender == 3 and LOCALIZED_CLASS_NAMES_FEMALE[class] or LOCALIZED_CLASS_NAMES_MALE[class]
+
+				frame.Icon:SetTexture(specIcon)
+				frame.tooltipInfo = {INLINE_ICONS[role], className, specName, E:RGBToHEX(COLORS.class[class])}
+				frame:Show()
+			else
+				frame:Hide()
+			end
+		else
+			frame:Hide()
+		end
+	end
+end
+
+local function ConstructArenaPrepFrame(index, parent)
+	local frame = CreateFrame("Frame", "LSArenaPreparation"..index, parent)
+	frame:SetSize(28, 28)
+	E:CreateBorder(frame)
+	frame:SetScript("OnEnter", SpecInfo_OnEnter)
+	frame:SetScript("OnLeave", SpecInfo_OnLeave)
+
+	local icon = frame:CreateTexture()
+	icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+	E:TweakIcon(icon)
+	frame.Icon = icon
+
+	return frame
+end
+
+function UF:SetupArenaPrepFrames()
+	local frame = CreateFrame("Frame", "LSArenaPrepFrameHandler", UIParent)
+	frame:SetSize(12, 12)
+	frame:RegisterEvent("ARENA_OPPONENT_UPDATE")
+	frame:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+	frame:SetScript("OnEvent", ArenaPrepFrameHandler_OnEvent)
+	frame:Hide()
+
+	local label = E:CreateFontString(frame, 12, "$parentLabel", true, nil, nil, 1, 0.82, 0)
+	label:SetPoint("TOPLEFT", 2, -2)
+	label:SetText(UNIT_NAME_ENEMY..":")
+	frame.Label = label
+
+	for i = 1, 5 do
+		frame[i] = ConstructArenaPrepFrame(i, frame)
+	end
+
+	return frame
 end

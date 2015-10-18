@@ -135,6 +135,8 @@ function UF:Initialize()
 	self:RegisterStyle("LSv2", ConstructUnitFrame)
 	self:SetActiveStyle("LSv2")
 
+	local ArenaPrepFrames
+
 	if C.units.player.enabled then
 		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
 		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
@@ -164,6 +166,8 @@ function UF:Initialize()
 		UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
 		UF.objects["arena4"] = self:Spawn("arena4", "LSArena4Frame")
 		UF.objects["arena5"] = self:Spawn("arena5", "LSArena5Frame")
+
+		ArenaPrepFrames = UF:SetupArenaPrepFrames()
 	end
 
 	for unit, object in next, UF.objects do
@@ -188,6 +192,18 @@ function UF:Initialize()
 		else
 			object:SetPoint(unpack(C.units[unit].point))
 			E:CreateMover(object)
+		end
+	end
+
+	if ArenaPrepFrames then
+		ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
+
+		for i = 1, 5 do
+			if i == 1 then
+				ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
+			else
+				ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
+			end
 		end
 	end
 
