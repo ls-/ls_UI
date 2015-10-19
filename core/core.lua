@@ -72,5 +72,9 @@ function E:ForceLoadAddOn(name)
 	end
 end
 
+function E:EventHandler(event, ...)
+	self[event](self, ...)
+end
+
 SLASH_RELOADUI1 = "/rl"
 SlashCmdList.RELOADUI = ReloadUI

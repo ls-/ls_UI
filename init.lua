@@ -1,9 +1,7 @@
 local _, ns = ...
 local E, C, D, oUF = ns.E, ns.C, ns.D, ns.oUF
 
-E:SetScript("OnEvent", function(self, event, ...)
-	self[event](self, ...)
-end)
+E:SetScript("OnEvent", E.EventHandler)
 
 function E:ADDON_LOADED(arg)
 	if arg ~= "oUF_LS" then return end
