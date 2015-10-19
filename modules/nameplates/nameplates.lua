@@ -2,7 +2,7 @@ local _, ns = ...
 local C, E, M = ns.C, ns.E, ns.M
 local COLORS = M.colors
 
-E.NP = {}
+E.NP = CreateFrame("Frame")
 
 local NP = E.NP
 
@@ -10,7 +10,12 @@ NP.plates = {}
 
 local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
 
+local playerGUID
 local prevNumChildren = 0
+local targetExists, mouseoverExists = false, false
+local updateTarget, updateMouseover = false, false
+local updateRequired = false
+local updateDelay = 0
 
 local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
@@ -139,11 +144,19 @@ local function NamePlate_OnShow(self)
 
 	OverlayNameText:SetFormattedText("|cff%s%s|r %s", color, level, name)
 
+	if self:GetAlpha() == 1 and targetExists then
+		updateRequired = true
+		isOddIteration = true
+	end
+
 	Overlay:Show()
 end
 
 local function NamePlate_OnHide(self)
 	self.Overlay:Hide()
+	self.targetMark:Hide()
+	self.unit = nil
+	self.GUID = nil
 end
 
 local function HandleNamePlate(self)
@@ -256,6 +269,12 @@ local function HandleNamePlate(self)
 	threat:Hide()
 	overlay.Threat = threat
 
+	local targetMark = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+	targetMark:SetTexture(1,0,0)
+	targetMark:SetPoint("TOP", 0, 10)
+	targetMark:Hide()
+	self.targetMark = targetMark
+
 	local sizer = CreateFrame("Frame", nil, overlay)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
@@ -272,6 +291,31 @@ local function HandleNamePlate(self)
 	end
 end
 
+local function UpdateUnitInfo(self)
+	local isTarget = self:GetAlpha() == 1 and targetExists
+	local isMouseover = self.Highlight:IsShown() and mouseoverExists
+
+	if isTarget then
+		self.unit = "target"
+		self.GUID = UnitGUID("target")
+	elseif isMouseover then
+		self.unit = "mouseover"
+		self.GUID = UnitGUID("mouseover")
+	else
+		self.unit = nil
+	end
+end
+
+local function UpdateTargetMark(self)
+	if self.unit == "target" then
+		self.targetMark:Show()
+	else
+		self.targetMark:Hide()
+	end
+end
+
+
+local isOddIteration = true
 local function WorldFrame_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
@@ -302,14 +346,38 @@ local function WorldFrame_OnUpdate(self, elapsed)
 					overlay.Threat:Hide()
 
 					if plate.Highlight:IsShown() then
+						plate.updateThis = true
 						overlay.Name:SetTextColor(unpack(COLORS.yellow))
 					else
 						overlay.Name:SetTextColor(1, 1, 1)
 					end
 				end
 
+				if plate.updateThis then
+					-- print("mouseovers begin")
+					UpdateUnitInfo(plate)
+					-- print(plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
+					plate.updateThis = false
+					-- print("mouseovers end")
+				end
+
+				if not isOddIteration then
+					if updateRequired then
+						-- print("everything begin")
+						UpdateUnitInfo(plate)
+						-- print("running update for:", plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
+						UpdateTargetMark(plate)
+						-- print("everything end")
+					end
+				end
 			end
 		end
+
+		if not isOddIteration then
+			updateRequired = false
+		end
+
+		isOddIteration = not isOddIteration
 
 		self.elapsed = 0
 	end
@@ -325,6 +393,33 @@ function NP:ToggleHealthText()
 	end
 end
 
+function NP:PLAYER_TARGET_CHANGED(...)
+	if UnitGUID("target") and UnitExists("target") and not UnitIsUnit("target", "player") and not UnitIsDead("target") then
+		targetExists = true
+	else
+		targetExists = false
+	end
+
+	updateRequired = true
+	isOddIteration = true
+end
+
+function NP:UPDATE_MOUSEOVER_UNIT(...)
+	if UnitGUID("mouseover") and UnitExists("mouseover") and not UnitIsUnit("mouseover", "player") and not UnitIsDead("mouseover") then
+		mouseoverExists = true
+	else
+		mouseoverExists = false
+	end
+end
+
 function NP:Initialize()
 	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
+
+	if UnitGUID("player") then
+		playerGUID = UnitGUID("player")
+	end
+
+	self:RegisterEvent("PLAYER_TARGET_CHANGED")
+	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	self:SetScript("OnEvent", E.EventHandler)
 end
