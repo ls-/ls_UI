@@ -10,12 +10,19 @@ NP.plates = {}
 
 local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
 
+local GUIDs = {}
 local playerGUID
 local prevNumChildren = 0
 local targetExists, mouseoverExists = false, false
-local updateTarget, updateMouseover = false, false
+local targetName = ""
 local updateRequired = false
-local updateDelay = 0
+
+local FS_PATTERN = gsub(FOREIGN_SERVER_LABEL, "[*()]", "%%%1")
+
+local function IsTargetNamePlate(self, ignoreAlpha)
+	local name = gsub(self.NameText:GetText(), FS_PATTERN, "")
+	return (ignoreAlpha and true or self:GetAlpha() == 1) and targetExists and name == targetName
+end
 
 local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
@@ -144,7 +151,7 @@ local function NamePlate_OnShow(self)
 
 	OverlayNameText:SetFormattedText("|cff%s%s|r %s", color, level, name)
 
-	if self:GetAlpha() == 1 and targetExists then
+	if IsTargetNamePlate(self, true) then
 		updateRequired = true
 		isOddIteration = true
 	end
@@ -155,8 +162,14 @@ end
 local function NamePlate_OnHide(self)
 	self.Overlay:Hide()
 	self.targetMark:Hide()
+	self.ComboBar:Hide()
+	E:StopBlink(self.ComboBar.Glow, true)
 	self.unit = nil
-	self.GUID = nil
+
+	if self.GUID then
+		GUIDs[self.GUID] = nil
+		self.GUID = nil
+	end
 end
 
 local function HandleNamePlate(self)
@@ -275,6 +288,33 @@ local function HandleNamePlate(self)
 	targetMark:Hide()
 	self.targetMark = targetMark
 
+	local r, g, b = unpack(COLORS.power["COMBO_POINTS"])
+
+	local comboBar = CreateFrame("StatusBar", self:GetName().."ComboBar", overlay)
+	comboBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	comboBar:SetStatusBarColor(r, g, b)
+	comboBar:SetFrameLevel(myHealthBar:GetFrameLevel() + 1)
+	comboBar:SetSize(80, 2)
+	comboBar:SetMinMaxValues(0, 5)
+	comboBar:SetPoint("TOP", myHealthBar, "BOTTOM", 0, 0)
+	comboBar:Hide()
+	self.ComboBar = comboBar
+
+	local cbFG = comboBar:CreateTexture(nil, "OVERLAY", nil, 0)
+	cbFG:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
+	cbFG:SetTexCoord(38 / 256, 136 / 256, 38 / 128, 48 / 128)
+	cbFG:SetSize(98, 10)
+	cbFG:SetPoint("CENTER")
+
+	local cbGlow = comboBar:CreateTexture(nil, "OVERLAY", nil, 1)
+	cbGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
+	cbGlow:SetTexCoord(38 / 256, 122 / 256, 48 / 128, 54 / 128)
+	cbGlow:SetSize(84, 6)
+	cbGlow:SetPoint("CENTER")
+	cbGlow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
+	cbGlow:SetAlpha(0)
+	comboBar.Glow = cbGlow
+
 	local sizer = CreateFrame("Frame", nil, overlay)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
@@ -292,25 +332,70 @@ local function HandleNamePlate(self)
 end
 
 local function UpdateUnitInfo(self)
-	local isTarget = self:GetAlpha() == 1 and targetExists
-	local isMouseover = self.Highlight:IsShown() and mouseoverExists
+	local isTarget = IsTargetNamePlate(self)
+	local isMouseover = self.isMouseover
 
+	local GUID
 	if isTarget then
 		self.unit = "target"
-		self.GUID = UnitGUID("target")
+		GUID = UnitGUID("target")
 	elseif isMouseover then
 		self.unit = "mouseover"
-		self.GUID = UnitGUID("mouseover")
+		GUID = UnitGUID("mouseover")
 	else
 		self.unit = nil
 	end
+
+	if self.GUID then
+		if GUID and self.GUID ~= GUID then
+			GUIDs[self.GUID] = nil
+			GUIDs[GUID] = self
+			self.GUID = GUID
+		end
+	else
+		if GUID then
+			GUIDs[GUID] = self
+			self.GUID = GUID
+		end
+	end
 end
 
-local function UpdateTargetMark(self)
+
+local function UpdateComboBarByGUID(GUID)
+	local plate = GUIDs[GUID]
+	if plate then
+		local cp
+		if UnitHasVehicleUI("player") then
+			cp = UnitPower("vehicle", 4)
+		else
+			cp = UnitPower("player", 4)
+		end
+
+		plate.ComboBar:SetValue(cp)
+
+		if cp > 0 then
+			plate.ComboBar:Show()
+
+			if cp == 5 then
+				E:Blink(plate.ComboBar.Glow, 0.5)
+			else
+				E:StopBlink(plate.ComboBar.Glow)
+			end
+		else
+			E:StopBlink(plate.ComboBar.Glow, true)
+
+			plate.ComboBar:Hide()
+		end
+	end
+end
+
+local function UpdateTargetPlate(self)
 	if self.unit == "target" then
 		self.targetMark:Show()
+		UpdateComboBarByGUID(UnitGUID("target"))
 	else
 		self.targetMark:Hide()
+		self.ComboBar:Hide()
 	end
 end
 
@@ -344,13 +429,13 @@ local function WorldFrame_OnUpdate(self, elapsed)
 					overlay.Threat:SetVertexColor(plate.Threat:GetVertexColor())
 				else
 					overlay.Threat:Hide()
+				end
 
-					if plate.Highlight:IsShown() then
-						plate.updateThis = true
-						overlay.Name:SetTextColor(unpack(COLORS.yellow))
-					else
-						overlay.Name:SetTextColor(1, 1, 1)
-					end
+				if plate.Highlight:IsShown() then
+					plate.updateThis = true
+					overlay.Name:SetTextColor(unpack(COLORS.yellow))
+				else
+					overlay.Name:SetTextColor(1, 1, 1)
 				end
 
 				if plate.updateThis then
@@ -366,7 +451,7 @@ local function WorldFrame_OnUpdate(self, elapsed)
 						-- print("everything begin")
 						UpdateUnitInfo(plate)
 						-- print("running update for:", plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
-						UpdateTargetMark(plate)
+						UpdateTargetPlate(plate)
 						-- print("everything end")
 					end
 				end
@@ -396,8 +481,10 @@ end
 function NP:PLAYER_TARGET_CHANGED(...)
 	if UnitGUID("target") and UnitExists("target") and not UnitIsUnit("target", "player") and not UnitIsDead("target") then
 		targetExists = true
+		targetName = UnitName("target")
 	else
 		targetExists = false
+		targetName = ""
 	end
 
 	updateRequired = true
@@ -412,6 +499,16 @@ function NP:UPDATE_MOUSEOVER_UNIT(...)
 	end
 end
 
+
+
+function NP:UNIT_COMBO_POINTS(unit)
+	if unit == "player" or unit == "vehicle" then
+
+
+		UpdateComboBarByGUID(UnitGUID("target"))
+	end
+end
+
 function NP:Initialize()
 	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
 
@@ -421,5 +518,6 @@ function NP:Initialize()
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	self:RegisterEvent("UNIT_COMBO_POINTS")
 	self:SetScript("OnEvent", E.EventHandler)
 end
