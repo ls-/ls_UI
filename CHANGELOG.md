@@ -1,3 +1,7 @@
+#Version 2.7
+
+- Fixed combo bar issue.
+
 #Version 2.6
 
 - Added customized unit tooltip;
