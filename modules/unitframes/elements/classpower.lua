@@ -141,7 +141,7 @@ local LAYOUT = {
 }
 
 local COMBO_BAR_PRESETS ={
-	["HORIZONTAL"] = {
+	["VERTICAL"] = {
 		bar_size = {26, 100},
 		point = {"LEFT", "LSPlayerFrame" , "RIGHT", 2, 0},
 		bg_size = {8, 100},
@@ -153,7 +153,7 @@ local COMBO_BAR_PRESETS ={
 		cp_point1 = "BOTTOM",
 		cp_point2 = "TOP",
 	},
-	["VERTICAL"] = {
+	["HORIZONTAL"] = {
 		bar_size = {100, 26},
 		point = {"BOTTOM", "LSPlayerFrame" , "TOP", 0, 2},
 		bg_size = {100, 8},
