@@ -6,10 +6,11 @@ E.NP = CreateFrame("Frame")
 
 local NP = E.NP
 
-NP.plates = {}
-
 local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
 
+local WorldFrame = WorldFrame
+
+local Plates = {}
 local GUIDs = {}
 local playerGUID
 local prevNumChildren = 0
@@ -107,63 +108,56 @@ end
 
 local function Sizer_OnSizeChanged(self, x, y)
 	local parent = self.Parent
-	parent:Hide()
-	parent:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 20))
-	parent:Show()
+	if parent:IsShown() then
+		parent.Overlay:Hide()
+		parent.Overlay:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 20))
+		parent.Overlay:Show()
+	end
 end
 
 local function NamePlate_OnShow(self)
+	local overlay = self.Overlay
+	local healthBarFg = self.HealthBar.Bar.Fg
+
 	local scale = UIParent:GetEffectiveScale()
-	local Overlay, NameText, LevelText, HighLevelIcon, EliteIcon =
-		self.Overlay, self.NameText, self.LevelText, self.HighLevelIcon, self.EliteIcon
-	local OverlayFg, OverlayNameText = Overlay.HealthBar.Fg, Overlay.Name
+	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", overlay:GetWidth()))
 
-	Overlay:SetScale(scale)
+	local name = self.NameText:GetText() or UNKNOWNOBJECT
+	local level = self.HighLevelIcon:IsShown() and "??" or tonumber(self.LevelText:GetText())
+	local color = E:GetCreatureDifficultyColor(level == "??" and -1 or level)
 
-	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", Overlay:GetWidth()))
-	if sw < ow then
-		Overlay:SetScale(scale * 0.75)
-	end
-
-	local name = NameText:GetText() or UNKNOWNOBJECT
-	local level = HighLevelIcon:IsShown() and -1 or tonumber(LevelText:GetText())
-	local color = E:RGBToHEX(GetCreatureDifficultyColor((level > 0) and level or 99))
-
-	if HighLevelIcon:IsShown() then
-		level = "??"
-	end
-
-	if EliteIcon:IsShown() then
+	if self.EliteIcon:IsShown() then
 		level = level.."+"
 
-		OverlayFg:SetTexCoord(130 / 512, 262 / 512, 0 / 64, 26 / 64)
-		OverlayFg:SetSize(132, 26)
-		OverlayFg:SetPoint("CENTER", 0, 1)
+		healthBarFg:SetTexCoord(130 / 512, 262 / 512, 0 / 64, 26 / 64)
+		healthBarFg:SetSize(132, 26)
+		healthBarFg:SetPoint("CENTER", 0, 1)
 
-		OverlayNameText:SetPoint("TOP", Overlay, "TOP", 0, 3)
+		overlay.NameText:SetPoint("TOP", overlay, "TOP", 0, 3)
 	else
-		OverlayFg:SetTexCoord(0 / 512, 130 / 512, 0 / 64, 22 / 64)
-		OverlayFg:SetSize(130, 22)
-		OverlayFg:SetPoint("CENTER", 0, 0)
+		healthBarFg:SetTexCoord(0 / 512, 130 / 512, 0 / 64, 22 / 64)
+		healthBarFg:SetSize(130, 22)
+		healthBarFg:SetPoint("CENTER", 0, 0)
 
-		OverlayNameText:SetPoint("TOP", Overlay, "TOP", 0, 2)
+		overlay.NameText:SetPoint("TOP", overlay, "TOP", 0, 2)
 	end
 
-	OverlayNameText:SetFormattedText("|cff%s%s|r %s", color, level, name)
+	overlay.NameText:SetText("|cff"..color.hex..level.."|r "..name)
 
 	if IsTargetNamePlate(self, true) then
 		updateRequired = true
 		isOddIteration = true
 	end
 
-	Overlay:Show()
+	overlay:SetScale(sw < ow and (scale * 0.75) or scale)
+	overlay:Show()
 end
 
 local function NamePlate_OnHide(self)
 	self.Overlay:Hide()
-	self.targetMark:Hide()
-	self.ComboBar:Hide()
-	E:StopBlink(self.ComboBar.Glow, true)
+	self.TargetMark:Hide()
+	-- self.ComboBar:Hide()
+	-- E:StopBlink(self.ComboBar.Glow, true)
 	self.unit = nil
 
 	if self.GUID then
@@ -182,31 +176,79 @@ local function HandleNamePlate(self)
 	local AbsorbBarTexture, AbsorbBarOverlay = AbsorbBar:GetRegions()
 	local CastBarTexture, CastBarBorder, CastBarFrameShield, CastBarSpellIcon, CastBarText, CastBarTextBG = CastBar:GetRegions()
 
-	Border:SetTexture(nil)
+	----------------
+	-- NEED BEGIN --
+	----------------
 
-	LevelText:SetSize(0.001, 0.001)
-	LevelText:Hide()
+	self.HealthBar = HealthBar -- frame.ArtContainer.HealthBar
+	self.CastBar = CastBar -- self.ArtContainer.CastBar
+
+	E:ForceHide(Threat) -- self.ArtContainer.AggroWarningTexture
+	self.Threat = Threat
+
+	E:ForceHide(LevelText) -- self.ArtContainer.LevelText
 	self.LevelText = LevelText
 
-	HighLevelIcon:SetTexture(nil)
+	E:ForceHide(NameText) -- self.NameContainer.NameText
+	self.NameText = NameText
+
+	E:ForceHide(CastBarSpellIcon) -- self.ArtContainer.CastBarSpellIcon
+	CastBar.Icon = CastBarSpellIcon
+
+	E:ForceHide(CastBarText) -- self.ArtContainer.CastBarText
+	CastBar.Text = CastBarText
+
+	HealthBarTexture:SetTexture("")
+	HealthBar.StatusBarTexture = HealthBarTexture
+
+	HighLevelIcon:SetTexture("") -- self.ArtContainer.HighLevelIcon
+	HighLevelIcon:SetTexCoord(0, 0, 0, 0)
+	HighLevelIcon:SetSize(0.001, 0.001)
 	self.HighLevelIcon = HighLevelIcon
 
-	EliteIcon:SetAlpha(0)
+	EliteIcon:SetTexture("") -- self.ArtContainer.EliteIcon
+	EliteIcon:SetTexCoord(0, 0, 0, 0)
+	EliteIcon:SetSize(0.001, 0.001)
 	self.EliteIcon = EliteIcon
 
-	Highlight:SetTexture(nil)
+	Highlight:SetTexture("") -- self.ArtContainer.Highlight
+	Highlight:SetTexCoord(0, 0, 0, 0)
+	Highlight:SetSize(0.001, 0.001)
 	self.Highlight = Highlight
+
+	CastBarFrameShield:SetTexture("") -- self.ArtContainer.CastBarFrameShield
+	CastBarFrameShield:SetTexCoord(0, 0, 0, 0)
+	CastBarFrameShield:SetSize(0.001, 0.001)
+	CastBar.Shield = CastBarFrameShield
+
+	--------------
+	-- NEED END --
+	--------------
+
+	--------------------
+	-- NEED NOT BEGIN --
+	--------------------
+
+	E:ForceHide(Border) -- self.ArtContainer.Border
+	E:ForceHide(OverAbsorb) -- self.ArtContainer.HealthBar.OverAbsorb
+	E:ForceHide(AbsorbBarOverlay) -- self.ArtContainer.AbsorbBar.Overlay
+	E:ForceHide(CastBarBorder) -- self.ArtContainer.CastBarBorder
+	E:ForceHide(CastBarTextBG) -- self.ArtContainer.CastBarTextBG
+	AbsorbBarTexture:SetTexture("")
+	CastBarTexture:SetTexture("")
+
+	------------------
+	-- NEED NOT END --
+	------------------
 
 	local overlay = CreateFrame("Frame", "LS"..self:GetName().."Overlay", WorldFrame)
 	overlay:SetFrameStrata(self:GetFrameStrata())
 	overlay:SetSize(120, 48)
+	overlay:Hide()
 	self.Overlay = overlay
-	NP.plates[self] = overlay
-
-	HealthBarTexture:SetTexture(nil)
+	Plates[self] = overlay
 
 	local myHealthBar = NamePlate_CreateStatusBar(overlay, nil, self:GetName())
-	overlay.HealthBar = myHealthBar
 	HealthBar.Bar = myHealthBar
 	HealthBar:HookScript("OnShow", NamePlateHealthBar_Update)
 	HealthBar:HookScript("OnValueChanged", NamePlateHealthBar_Update)
@@ -219,30 +261,17 @@ local function HandleNamePlate(self)
 		NamePlateHealthBar_Update(HealthBar)
 	end
 
-	CastBarSpellIcon:SetTexCoord(0, 0, 0, 0)
-	CastBarSpellIcon:SetSize(0.001, 0.001)
-	CastBar.Icon = CastBarSpellIcon
-
-	CastBarText:Hide()
-	CastBar.Text = CastBarText
-
-	CastBarFrameShield:SetTexture(nil)
-	CastBar.Shield = CastBarFrameShield
-
-	CastBarTexture:SetTexture(nil)
-	CastBarBorder:SetTexture(nil)
-	CastBarTextBG:SetTexture(nil)
-
 	local myCastBar = NamePlate_CreateStatusBar(overlay, true, self:GetName())
+	myCastBar:Hide()
 	CastBar.Bar = myCastBar
 
-	local iconHolder = CreateFrame("Frame", nil, myCastBar)
-	iconHolder:SetSize(32, 32)
-	iconHolder:SetPoint("BOTTOMRIGHT", overlay, "BOTTOMLEFT", -8, 1)
-	E:CreateBorder(iconHolder)
-	iconHolder:SetBorderColor(unpack(COLORS.yellow))
+	local holder = CreateFrame("Frame", nil, myCastBar)
+	holder:SetSize(32, 32)
+	holder:SetPoint("BOTTOMRIGHT", overlay, "BOTTOMLEFT", -8, 1)
+	E:CreateBorder(holder)
+	holder:SetBorderColor(unpack(COLORS.yellow))
 
-	local icon = iconHolder:CreateTexture(nil, "BACKGROUND", nil, 1)
+	local icon = holder:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 	icon:SetAllPoints()
 	myCastBar.Icon = icon
@@ -253,26 +282,17 @@ local function HandleNamePlate(self)
 
 	if CastBar:IsShown() then
 		NamePlateCastBar_OnShow(CastBar)
-	else
-		myCastBar:Hide()
 	end
-
-	NameText:Hide()
-	self.NameText = NameText
-
-	local name = E:CreateFontString(overlay, 14, nil, true, nil)
-	name:SetPoint("LEFT", overlay, -24, 0)
-	name:SetPoint("RIGHT", overlay, 24, 0)
-	overlay.Name = name
 
 	RaidTargetIcon:SetParent(overlay)
 	RaidTargetIcon:SetSize(32, 32)
 	RaidTargetIcon:ClearAllPoints()
 	RaidTargetIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
 
-	Threat:SetTexture(nil)
-	Threat:Hide()
-	self.Threat = Threat
+	local name = E:CreateFontString(overlay, 14, nil, true, nil)
+	name:SetPoint("LEFT", overlay, -24, 0)
+	name:SetPoint("RIGHT", overlay, 24, 0)
+	overlay.NameText = name
 
 	local threat = myHealthBar:CreateTexture(nil, "OVERLAY", nil, 0)
 	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\nameplate")
@@ -286,7 +306,9 @@ local function HandleNamePlate(self)
 	targetMark:SetTexture(1,0,0)
 	targetMark:SetPoint("TOP", 0, 10)
 	targetMark:Hide()
-	self.targetMark = targetMark
+	self.TargetMark = targetMark
+
+	--[[
 
 	local r, g, b = unpack(COLORS.power["COMBO_POINTS"])
 
@@ -315,20 +337,20 @@ local function HandleNamePlate(self)
 	cbGlow:SetAlpha(0)
 	comboBar.Glow = cbGlow
 
-	local sizer = CreateFrame("Frame", nil, overlay)
-	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
-	sizer:SetPoint("TOPRIGHT", self, "CENTER")
-	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
-	sizer.Parent = overlay
 
+]]
 	self:HookScript("OnShow", NamePlate_OnShow)
 	self:HookScript("OnHide", NamePlate_OnHide)
 
 	if self:IsShown() then
 		NamePlate_OnShow(self)
-	else
-		overlay:Hide()
 	end
+
+	local sizer = CreateFrame("Frame", nil, overlay)
+	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
+	sizer:SetPoint("TOPRIGHT", self, "CENTER")
+	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
+	sizer.Parent = self
 end
 
 local function UpdateUnitInfo(self)
@@ -391,11 +413,11 @@ end
 
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
-		self.targetMark:Show()
-		UpdateComboBarByGUID(UnitGUID("target"))
+		self.TargetMark:Show()
+		-- UpdateComboBarByGUID(UnitGUID("target"))
 	else
-		self.targetMark:Hide()
-		self.ComboBar:Hide()
+		self.TargetMark:Hide()
+		-- self.ComboBar:Hide()
 	end
 end
 
@@ -406,13 +428,11 @@ local function WorldFrame_OnUpdate(self, elapsed)
 
 	if self.elapsed > 0.1 then
 		local curNumChildren = WorldFrame:GetNumChildren()
-
 		if curNumChildren ~= prevNumChildren  then
 			for i = prevNumChildren + 1, curNumChildren do
 				local f = select(i, WorldFrame:GetChildren())
-
 				local name = f:GetName()
-				if (name and match(name, "^NamePlate%d")) and not NP.plates[f] then
+				if (name and match(name, "^NamePlate%d")) and not Plates[f] then
 					HandleNamePlate(f)
 				end
 			end
@@ -420,10 +440,9 @@ local function WorldFrame_OnUpdate(self, elapsed)
 			prevNumChildren = curNumChildren
 		end
 
-		for plate, overlay in next, NP.plates do
+		for plate, overlay in next, Plates do
 			if plate:IsShown() then
 				overlay:SetAlpha(plate:GetAlpha())
-
 				if plate.Threat:IsShown() then
 					overlay.Threat:Show()
 					overlay.Threat:SetVertexColor(plate.Threat:GetVertexColor())
@@ -432,18 +451,12 @@ local function WorldFrame_OnUpdate(self, elapsed)
 				end
 
 				if plate.Highlight:IsShown() then
-					plate.updateThis = true
-					overlay.Name:SetTextColor(unpack(COLORS.yellow))
-				else
-					overlay.Name:SetTextColor(1, 1, 1)
-				end
-
-				if plate.updateThis then
-					-- print("mouseovers begin")
 					UpdateUnitInfo(plate)
 					-- print(plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
-					plate.updateThis = false
-					-- print("mouseovers end")
+
+					overlay.NameText:SetTextColor(unpack(COLORS.yellow))
+				else
+					overlay.NameText:SetTextColor(1, 1, 1)
 				end
 
 				if not isOddIteration then
@@ -469,7 +482,7 @@ local function WorldFrame_OnUpdate(self, elapsed)
 end
 
 function NP:ToggleHealthText()
-	for plate, overlay in next, NP.plates do
+	for plate, overlay in next, Plates do
 		if not C.nameplates.showText then
 			overlay.HealthBar.Text:Hide()
 		else
@@ -499,12 +512,8 @@ function NP:UPDATE_MOUSEOVER_UNIT(...)
 	end
 end
 
-
-
 function NP:UNIT_COMBO_POINTS(unit)
 	if unit == "player" or unit == "vehicle" then
-
-
 		UpdateComboBarByGUID(UnitGUID("target"))
 	end
 end
@@ -518,6 +527,6 @@ function NP:Initialize()
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-	self:RegisterEvent("UNIT_COMBO_POINTS")
+	-- self:RegisterEvent("UNIT_COMBO_POINTS")
 	self:SetScript("OnEvent", E.EventHandler)
 end
