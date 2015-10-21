@@ -315,7 +315,7 @@ function UF:SetupArenaPrepFrames()
 
 	local label = E:CreateFontString(frame, 12, "$parentLabel", true, nil, nil, 1, 0.82, 0)
 	label:SetPoint("TOPLEFT", 2, -2)
-	label:SetText(UNIT_NAME_ENEMY..":")
+	label:SetText(UNIT_NAME_ENEMY)
 	frame.Label = label
 
 	for i = 1, 5 do
