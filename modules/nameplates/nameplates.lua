@@ -4,30 +4,74 @@ local COLORS = M.colors
 local NP_CFG
 
 E.NP = CreateFrame("Frame")
-
 local NP = E.NP
 
-local tonumber, format, match, unpack, select = tonumber, format, strmatch, unpack, select
+local tonumber, format, match, unpack, select, setmetatable, next	=
+	tonumber, format, strmatch, unpack, select, setmetatable, next
+
+local UnitGUID, UnitCanAttack, UnitHasVehicleUI, UnitPower, UnitExists, UnitIsUnit, UnitIsDead =
+	UnitGUID, UnitCanAttack, UnitHasVehicleUI, UnitPower, UnitExists, UnitIsUnit, UnitIsDead
 
 local WorldFrame = WorldFrame
+local UNKNOWNOBJECT = UNKNOWNOBJECT
 
 local Plates = {}
 local GUIDs = {}
-local playerGUID
+-- local playerGUID
 local prevNumChildren = 0
 local targetExists, mouseoverExists = false, false
 local targetName = ""
 local updateRequired = false
-
 local FS_PATTERN = gsub(FOREIGN_SERVER_LABEL, "[*()]", "%%%1")
 
+local PlateMeta = setmetatable({}, {__index = function(t, frame)
+		t[frame] = setmetatable({}, {
+			__index = function(t, key)
+				if key == "NameText" then
+					t[key] = frame.NameContainer.NameText
+				elseif key == "Threat" then
+					t[key] = frame.ArtContainer.AggroWarningTexture
+				elseif key == "SkullIcon" then
+					t[key] = frame.ArtContainer.HighLevelIcon
+				elseif key == "RaidIcon" then
+					t[key] = frame.ArtContainer.RaidTargetIcon
+				elseif key == "HBTexture" then
+					t[key] = frame.ArtContainer.HealthBar:GetRegions()
+				elseif key == "HBOverAbsorb" then
+					t[key] = frame.ArtContainer.HealthBar.OverAbsorb
+				elseif key == "ABTexture" then
+					t[key] = frame.ArtContainer.AbsorbBar:GetRegions()
+				elseif key == "ABOverlay" then
+					t[key] = frame.ArtContainer.AbsorbBar.Overlay
+				elseif key == "CBTexture" then
+					t[key] = frame.ArtContainer.CastBar:GetRegions()
+				elseif key == "CBShield" then
+					t[key] = frame.ArtContainer.CastBarFrameShield
+				elseif key == "CBIcon" then
+					t[key] = frame.ArtContainer.CastBarSpellIcon
+				else
+					t[key] = frame.ArtContainer[key] or false
+				end
+
+				if not t[key] then
+					print("|cffe56619Unknown index:|r ", key)
+				end
+
+				return t[key]
+			end
+		})
+		return t[frame]
+	end
+})
+
+
 local function IsTargetNamePlate(self, ignoreAlpha)
-	local name = gsub(self.NameText:GetText(), FS_PATTERN, "")
+	local name = gsub(PlateMeta[self].NameText:GetText(), FS_PATTERN, "")
 	return (ignoreAlpha and true or self:GetAlpha() == 1) and targetExists and name == targetName
 end
 
 local function IsMouseoverNamePlate(self)
-	return mouseoverExists and self.Highlight:IsShown()
+	return mouseoverExists and PlateMeta[self].Highlight:IsShown()
 end
 
 local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
@@ -86,8 +130,8 @@ end
 
 local function NamePlateCastBar_OnShow(self)
 	local bar = self.Bar
-	bar.Icon:SetTexture(self.Icon:GetTexture())
-	bar.Text:SetText(self.Text:GetText())
+	bar.Icon:SetTexture(PlateMeta[self.ParentPlate].CBIcon:GetTexture())
+	bar.Text:SetText(PlateMeta[self.ParentPlate].CastBarText:GetText())
 	bar:Show()
 end
 
@@ -100,7 +144,7 @@ local function NamePlateCastBar_OnValueChanged(self, value)
 	bar:SetMinMaxValues(self:GetMinMaxValues())
 	bar:SetValue(value)
 
-	if self.Shield:IsShown() then
+	if PlateMeta[self.ParentPlate].CBShield:IsShown() then
 		bar:SetStatusBarColor(unpack(COLORS.gray))
 		bar.Icon:SetDesaturated(true)
 	else
@@ -110,37 +154,39 @@ local function NamePlateCastBar_OnValueChanged(self, value)
 end
 
 local function Sizer_OnSizeChanged(self, x, y)
-	local parent = self.Parent
+	local parent = self.ParentFrame
 	if parent:IsShown() then
-		parent.Overlay:Hide()
-		parent.Overlay:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 20))
-		parent.Overlay:Show()
+		local overlay = Plates[parent]
+		overlay:Hide()
+		overlay:SetPoint("CENTER", WorldFrame, "BOTTOMLEFT", E:Round(x), E:Round(y - 20))
+		overlay:Show()
 	end
 end
 
 local function NamePlate_OnShow(self)
-	local overlay = self.Overlay
-	local healthBarFg = self.HealthBar.Bar.Fg
+	local plateTable = PlateMeta[self]
+	local overlay = Plates[self]
+	local hbFg = plateTable.HealthBar.Bar.Fg
 
 	local scale = UIParent:GetEffectiveScale()
 	local sw, ow = tonumber(format("%d", self:GetWidth())), tonumber(format("%d", overlay:GetWidth()))
 
-	local name = self.NameText:GetText() or UNKNOWNOBJECT
-	local level = self.HighLevelIcon:IsShown() and "??" or tonumber(self.LevelText:GetText())
+	local name = plateTable.NameText:GetText() or UNKNOWNOBJECT
+	local level = plateTable.SkullIcon:IsShown() and "??" or tonumber(plateTable.LevelText:GetText())
 	local color = E:GetCreatureDifficultyColor(level == "??" and -1 or level)
 
-	if self.EliteIcon:IsShown() then
+	if plateTable.EliteIcon:IsShown() then
 		level = level.."+"
 
-		healthBarFg:SetTexCoord(130 / 512, 262 / 512, 0 / 64, 26 / 64)
-		healthBarFg:SetSize(132, 26)
-		healthBarFg:SetPoint("CENTER", 0, 1)
+		hbFg:SetTexCoord(130 / 512, 262 / 512, 0 / 64, 26 / 64)
+		hbFg:SetSize(132, 26)
+		hbFg:SetPoint("CENTER", 0, 1)
 
 		overlay.NameText:SetPoint("TOP", overlay, "TOP", 0, 3)
 	else
-		healthBarFg:SetTexCoord(0 / 512, 130 / 512, 0 / 64, 22 / 64)
-		healthBarFg:SetSize(130, 22)
-		healthBarFg:SetPoint("CENTER", 0, 0)
+		hbFg:SetTexCoord(0 / 512, 130 / 512, 0 / 64, 22 / 64)
+		hbFg:SetSize(130, 22)
+		hbFg:SetPoint("CENTER", 0, 0)
 
 		overlay.NameText:SetPoint("TOP", overlay, "TOP", 0, 2)
 	end
@@ -154,10 +200,10 @@ local function NamePlate_OnShow(self)
 end
 
 local function NamePlate_OnHide(self)
-	self.Overlay:Hide()
-	self.TargetMark:Hide()
-	E:StopBlink(self.ComboBar.Glow, true)
-	self.ComboBar:Hide()
+	Plates[self]:Hide()
+	Plates[self].TargetMark:Hide()
+	E:StopBlink(Plates[self].ComboBar.Glow, true)
+	Plates[self].ComboBar:Hide()
 	self.isMouseover = nil
 	self.isTarget = nil
 	self.unit = nil
@@ -169,103 +215,77 @@ local function NamePlate_OnHide(self)
 end
 
 local function HandleNamePlate(self)
-	local ArtContainer, NameContainer = self:GetChildren()
-	local HealthBar, AbsorbBar, CastBar = ArtContainer:GetChildren() -- AbsorbBar doesn't seem to work yet
+	local plateTable = PlateMeta[self]
 
-	local Threat, Border, Highlight, LevelText, HighLevelIcon, RaidTargetIcon, EliteIcon = ArtContainer:GetRegions()
-	local NameText = NameContainer:GetRegions()
-	local HealthBarTexture, OverAbsorb = HealthBar:GetRegions()
-	local AbsorbBarTexture, AbsorbBarOverlay = AbsorbBar:GetRegions()
-	local CastBarTexture, CastBarBorder, CastBarFrameShield, CastBarSpellIcon, CastBarText, CastBarTextBG = CastBar:GetRegions()
+	plateTable.LevelText:SetSize(0.001, 0.001)
+	plateTable.NameText:SetSize(0.001, 0.001)
+	plateTable.CastBarText:SetSize(0.001, 0.001)
 
-	----------------
-	-- NEED BEGIN --
-	----------------
+	plateTable.Threat:SetTexture("")
+	plateTable.Threat:SetTexCoord(0, 0, 0, 0)
+	plateTable.Threat:SetSize(0.001, 0.001)
 
-	self.HealthBar = HealthBar -- frame.ArtContainer.HealthBar
-	self.CastBar = CastBar -- self.ArtContainer.CastBar
+	plateTable.Border:SetTexture("")
+	plateTable.Border:SetTexCoord(0, 0, 0, 0)
+	plateTable.Border:SetSize(0.001, 0.001)
 
-	E:ForceHide(Threat) -- self.ArtContainer.AggroWarningTexture
-	self.Threat = Threat
+	plateTable.Highlight:SetTexture("")
+	plateTable.Highlight:SetTexCoord(0, 0, 0, 0)
+	plateTable.Highlight:SetSize(0.001, 0.001)
 
-	E:ForceHide(LevelText) -- self.ArtContainer.LevelText
-	self.LevelText = LevelText
+	plateTable.SkullIcon:SetTexture("")
+	plateTable.SkullIcon:SetTexCoord(0, 0, 0, 0)
+	plateTable.SkullIcon:SetSize(0.001, 0.001)
 
-	E:ForceHide(NameText) -- self.NameContainer.NameText
-	self.NameText = NameText
+	plateTable.EliteIcon:SetTexture("")
+	plateTable.EliteIcon:SetTexCoord(0, 0, 0, 0)
+	plateTable.EliteIcon:SetSize(0.001, 0.001)
 
-	E:ForceHide(CastBarSpellIcon) -- self.ArtContainer.CastBarSpellIcon
-	CastBar.Icon = CastBarSpellIcon
+	plateTable.CastBarBorder:SetTexture("")
+	plateTable.CastBarBorder:SetTexCoord(0, 0, 0, 0)
+	plateTable.CastBarBorder:SetSize(0.001, 0.001)
 
-	E:ForceHide(CastBarText) -- self.ArtContainer.CastBarText
-	CastBar.Text = CastBarText
+	plateTable.CBShield:SetTexture("")
+	plateTable.CBShield:SetTexCoord(0, 0, 0, 0)
+	plateTable.CBShield:SetSize(0.001, 0.001)
 
-	HealthBarTexture:SetTexture("")
-	HealthBar.StatusBarTexture = HealthBarTexture
+	plateTable.CastBarTextBG:SetTexture("")
+	plateTable.CastBarTextBG:SetTexCoord(0, 0, 0, 0)
+	plateTable.CastBarTextBG:SetSize(0.001, 0.001)
 
-	HighLevelIcon:SetTexture("") -- self.ArtContainer.HighLevelIcon
-	HighLevelIcon:SetTexCoord(0, 0, 0, 0)
-	HighLevelIcon:SetSize(0.001, 0.001)
-	self.HighLevelIcon = HighLevelIcon
+	plateTable.HBTexture:SetTexture("")
+	plateTable.ABTexture:SetTexture("")
+	plateTable.CBTexture:SetTexture("")
 
-	EliteIcon:SetTexture("") -- self.ArtContainer.EliteIcon
-	EliteIcon:SetTexCoord(0, 0, 0, 0)
-	EliteIcon:SetSize(0.001, 0.001)
-	self.EliteIcon = EliteIcon
+	E:ForceHide(plateTable.CBIcon)
 
-	Highlight:SetTexture("") -- self.ArtContainer.Highlight
-	Highlight:SetTexCoord(0, 0, 0, 0)
-	Highlight:SetSize(0.001, 0.001)
-	self.Highlight = Highlight
-
-	CastBarFrameShield:SetTexture("") -- self.ArtContainer.CastBarFrameShield
-	CastBarFrameShield:SetTexCoord(0, 0, 0, 0)
-	CastBarFrameShield:SetSize(0.001, 0.001)
-	CastBar.Shield = CastBarFrameShield
-
-	--------------
-	-- NEED END --
-	--------------
-
-	--------------------
-	-- NEED NOT BEGIN --
-	--------------------
-
-	E:ForceHide(Border) -- self.ArtContainer.Border
-	E:ForceHide(OverAbsorb) -- self.ArtContainer.HealthBar.OverAbsorb
-	E:ForceHide(AbsorbBarOverlay) -- self.ArtContainer.AbsorbBar.Overlay
-	E:ForceHide(CastBarBorder) -- self.ArtContainer.CastBarBorder
-	E:ForceHide(CastBarTextBG) -- self.ArtContainer.CastBarTextBG
-	AbsorbBarTexture:SetTexture("")
-	CastBarTexture:SetTexture("")
-
-	------------------
-	-- NEED NOT END --
-	------------------
-
-	local overlay = CreateFrame("Frame", "LS"..self:GetName().."Overlay", WorldFrame)
-	overlay:SetFrameStrata(self:GetFrameStrata())
+	local overlay = CreateFrame("Frame", "LS"..self:GetName().."OverlayFrame", WorldFrame)
 	overlay:SetSize(120, 48)
 	overlay:Hide()
-	self.Overlay = overlay
+	self.OverlayFrame = overlay
 	Plates[self] = overlay
 
+	local healthBar = plateTable.HealthBar
+
 	local myHealthBar = NamePlate_CreateStatusBar(overlay, nil, self:GetName())
-	HealthBar.Bar = myHealthBar
-	HealthBar:HookScript("OnShow", NamePlateHealthBar_Update)
-	HealthBar:HookScript("OnValueChanged", NamePlateHealthBar_Update)
+	healthBar.Bar = myHealthBar
+	healthBar:HookScript("OnShow", NamePlateHealthBar_Update)
+	healthBar:HookScript("OnValueChanged", NamePlateHealthBar_Update)
 
 	if not NP_CFG.show_text then
 		myHealthBar.Text:Hide()
 	end
 
-	if HealthBar:IsShown() then
-		NamePlateHealthBar_Update(HealthBar)
+	if healthBar:IsShown() then
+		NamePlateHealthBar_Update(healthBar)
 	end
+
+	local castBar = plateTable.CastBar
+	castBar.ParentPlate = self
 
 	local myCastBar = NamePlate_CreateStatusBar(overlay, true, self:GetName())
 	myCastBar:Hide()
-	CastBar.Bar = myCastBar
+	castBar.Bar = myCastBar
 
 	local holder = CreateFrame("Frame", nil, myCastBar)
 	holder:SetSize(32, 32)
@@ -278,18 +298,18 @@ local function HandleNamePlate(self)
 	icon:SetAllPoints()
 	myCastBar.Icon = icon
 
-	CastBar:HookScript("OnShow", NamePlateCastBar_OnShow)
-	CastBar:HookScript("OnHide", NamePlateCastBar_OnHide)
-	CastBar:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
+	castBar:HookScript("OnShow", NamePlateCastBar_OnShow)
+	castBar:HookScript("OnHide", NamePlateCastBar_OnHide)
+	castBar:HookScript("OnValueChanged", NamePlateCastBar_OnValueChanged)
 
-	if CastBar:IsShown() then
-		NamePlateCastBar_OnShow(CastBar)
+	if castBar:IsShown() then
+		NamePlateCastBar_OnShow(castBar)
 	end
 
-	RaidTargetIcon:SetParent(overlay)
-	RaidTargetIcon:SetSize(32, 32)
-	RaidTargetIcon:ClearAllPoints()
-	RaidTargetIcon:SetPoint("LEFT", overlay, "RIGHT", 8, 0)
+	local raidIcon = plateTable.RaidIcon
+	raidIcon:ClearAllPoints()
+	raidIcon:SetSize(20, 20)
+	raidIcon:SetPoint("LEFT", overlay, "RIGHT", 4, 0)
 
 	local name = E:CreateFontString(overlay, 14, nil, true, nil)
 	name:SetPoint("LEFT", overlay, -24, 0)
@@ -308,7 +328,7 @@ local function HandleNamePlate(self)
 	targetMark:SetTexture(1,0,0)
 	targetMark:SetPoint("TOP", 0, 10)
 	targetMark:Hide()
-	self.TargetMark = targetMark
+	overlay.TargetMark = targetMark
 
 	local r, g, b = unpack(COLORS.power["COMBO_POINTS"])
 
@@ -320,7 +340,7 @@ local function HandleNamePlate(self)
 	comboBar:SetMinMaxValues(0, 5)
 	comboBar:SetPoint("TOP", myHealthBar, "BOTTOM", 0, 0)
 	comboBar:Hide()
-	self.ComboBar = comboBar
+	overlay.ComboBar = comboBar
 
 	local cbFG = comboBar:CreateTexture(nil, "OVERLAY", nil, 0)
 	cbFG:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
@@ -348,7 +368,7 @@ local function HandleNamePlate(self)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
 	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
-	sizer.Parent = self
+	sizer.ParentFrame = self
 end
 
 local function UpdateUnitInfo(self)
@@ -378,15 +398,15 @@ local function UpdateUnitInfo(self)
 			self.GUID = GUID
 		end
 	end
-
-	-- self.Overlay.NameText:SetText(self.GUID or self:GetName())
 end
 
 local function ShowComboBarAtGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
+		local comboBar = Plates[plate].ComboBar
+
 		if not plate.unit or (plate.unit and not UnitCanAttack("player", plate.unit)) then
-			return plate.ComboBar:Hide()
+			return comboBar:Hide()
 		end
 
 		local cp
@@ -396,20 +416,20 @@ local function ShowComboBarAtGUID(GUID)
 			cp = UnitPower("player", 4)
 		end
 
-		plate.ComboBar:SetValue(cp)
+		comboBar:SetValue(cp)
 
 		if cp > 0 then
-			plate.ComboBar:Show()
+			comboBar:Show()
 
 			if cp == 5 then
-				E:Blink(plate.ComboBar.Glow, 0.5)
+				E:Blink(comboBar.Glow, 0.5)
 			else
-				E:StopBlink(plate.ComboBar.Glow)
+				E:StopBlink(comboBar.Glow)
 			end
 		else
-			E:StopBlink(plate.ComboBar.Glow, true)
+			E:StopBlink(comboBar.Glow, true)
 
-			plate.ComboBar:Hide()
+			comboBar:Hide()
 		end
 	end
 end
@@ -417,19 +437,19 @@ end
 local function HideComboBarAtGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
-		E:StopBlink(plate.ComboBar.Glow, true)
-		plate.ComboBar:Hide()
+		E:StopBlink(Plates[plate].ComboBar.Glow, true)
+		Plates[plate].ComboBar:Hide()
 	end
 end
 
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
-		self.TargetMark:Show()
+		Plates[self].TargetMark:Show()
 		ShowComboBarAtGUID(UnitGUID("target"))
 	else
-		self.TargetMark:Hide()
-		E:StopBlink(self.ComboBar.Glow, true)
-		self.ComboBar:Hide()
+		Plates[self].TargetMark:Hide()
+		E:StopBlink(Plates[self].ComboBar.Glow, true)
+		Plates[self].ComboBar:Hide()
 	end
 end
 
@@ -457,15 +477,19 @@ local function WorldFrame_OnUpdate(self, elapsed)
 
 	for plate, overlay in next, Plates do
 		if plate:IsShown() then
+			local plateTable = PlateMeta[plate]
+
 			overlay:SetAlpha(plate:GetAlpha())
-			if plate.Threat:IsShown() then
+			overlay:SetFrameStrata(plate:GetFrameStrata())
+
+			if plateTable.Threat:IsShown() then
 				overlay.Threat:Show()
-				overlay.Threat:SetVertexColor(plate.Threat:GetVertexColor())
+				overlay.Threat:SetVertexColor(plateTable.Threat:GetVertexColor())
 			else
 				overlay.Threat:Hide()
 			end
 
-			if plate.Highlight:IsShown() then
+			if plateTable.Highlight:IsShown() then
 				plate.updateMe = true
 
 				overlay.NameText:SetTextColor(unpack(COLORS.yellow))
@@ -597,7 +621,7 @@ end
 
 function NP:ShowHealthText()
 	for plate, _ in next, Plates do
-		plate.HealthBar.Bar.Text:Show()
+		PlateMeta[plate].HealthBar.Bar.Text:Show()
 	end
 
 	return true, "|cff26a526Success!|r Health percentage is now shown."
@@ -605,7 +629,7 @@ end
 
 function NP:HideHealthText()
 	for plate, _ in next, Plates do
-		plate.HealthBar.Bar.Text:Hide()
+		PlateMeta[plate].HealthBar.Bar.Text:Hide()
 	end
 
 	return true, "|cff26a526Success!|r Health percentage is now hidden."
@@ -616,17 +640,13 @@ function NP:Initialize()
 
 	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
 
-	if UnitGUID("player") then
-		playerGUID = UnitGUID("player")
-	end
+	-- if UnitGUID("player") then
+	-- 	playerGUID = UnitGUID("player")
+	-- end
 
 	if NP_CFG.show_combo then
 		self:EnableComboBar()
 	end
-
-	-- if NP_CFG.show_text then
-	-- 	self:EnableComboBar()
-	-- end
 
 	self.isRunning = true
 end
