@@ -382,7 +382,7 @@ local function UpdateUnitInfo(self)
 	-- self.Overlay.NameText:SetText(self.GUID or self:GetName())
 end
 
-local function UpdateComboBarByGUID(GUID)
+local function ShowComboBarAtGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
 		if not plate.unit or (plate.unit and not UnitCanAttack("player", plate.unit)) then
@@ -414,7 +414,7 @@ local function UpdateComboBarByGUID(GUID)
 	end
 end
 
-local function DisableComboBarByGUID(GUID)
+local function HideComboBarAtGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
 		E:StopBlink(plate.ComboBar.Glow, true)
@@ -425,7 +425,7 @@ end
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
 		self.TargetMark:Show()
-		UpdateComboBarByGUID(UnitGUID("target"))
+		ShowComboBarAtGUID(UnitGUID("target"))
 	else
 		self.TargetMark:Hide()
 		E:StopBlink(self.ComboBar.Glow, true)
@@ -524,7 +524,7 @@ end
 
 function NP:UNIT_COMBO_POINTS(unit)
 	if unit == "player" or unit == "vehicle" then
-		UpdateComboBarByGUID(UnitGUID("target"))
+		ShowComboBarAtGUID(UnitGUID("target"))
 	end
 end
 
@@ -565,7 +565,7 @@ function NP:EnableComboBar(...)
 			not UnitIsUnit("target", "player") and not UnitIsDead("target") then
 			targetExists = true
 			targetName = UnitName("target")
-			UpdateComboBarByGUID(UnitGUID("target"))
+			ShowComboBarAtGUID(UnitGUID("target"))
 		end
 
 	 	return true, "|cff26a526Success!|r NP combo bar is enabled."
@@ -581,7 +581,7 @@ function NP:DisableComboBar(...)
 	 	end
 
 		if targetExists then
-			DisableComboBarByGUID(UnitGUID("target"))
+			HideComboBarAtGUID(UnitGUID("target"))
 		end
 
 		self:UnregisterEvent("UNIT_COMBO_POINTS")
