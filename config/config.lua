@@ -87,7 +87,8 @@ D["infobars"] = {
 
 D["nameplates"] = {
 	enabled = true,
-	showText = false,
+	show_text = false,
+	show_combo = false,
 }
 
 D["bars"] = {

@@ -11,7 +11,7 @@ local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDo
 function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true, nil, true)
 	object:SetJustifyH("LEFT")
-	object:SetJustifyV("MIDDLE")
+	object:SetJustifyV("TOP")
 	object:SetText(text)
 
 	return object
