@@ -185,4 +185,5 @@ function lsOptionsFrame_Initialize()
 	end
 
 	CFG:AT_Initialize()
+	CFG:NP_Initialize()
 end
