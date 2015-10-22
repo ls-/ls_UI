@@ -1,6 +1,7 @@
 local _, ns = ...
 local C, E, M = ns.C, ns.E, ns.M
 local COLORS = M.colors
+local NP_CFG
 
 E.NP = CreateFrame("Frame")
 
@@ -46,6 +47,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 		bar = E:CreateStatusBar(parent, npName, 120, "12")
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
+		bar.Text:SetFont(M.font, 12)
 		bar.Text:SetJustifyH("RIGHT")
 
 		local fg = bar:CreateTexture(nil, "OVERLAY", nil, 1)
@@ -79,10 +81,7 @@ local function NamePlateHealthBar_Update(self)
 	bar:SetMinMaxValues(self:GetMinMaxValues())
 	bar:SetValue(self:GetValue())
 	bar:SetStatusBarColor(NamePlate_GetColor(self:GetStatusBarColor()))
-
-	if bar.Text:IsShown() then
-		bar.Text:SetText(E:NumberToPerc(self:GetValue(), 1).."%")
-	end
+	bar.Text:SetText(E:NumberToPerc(self:GetValue(), 1).."%")
 end
 
 local function NamePlateCastBar_OnShow(self)
@@ -256,7 +255,7 @@ local function HandleNamePlate(self)
 	HealthBar:HookScript("OnShow", NamePlateHealthBar_Update)
 	HealthBar:HookScript("OnValueChanged", NamePlateHealthBar_Update)
 
-	if not C.nameplates.showText then
+	if not NP_CFG.show_text then
 		myHealthBar.Text:Hide()
 	end
 
@@ -383,7 +382,6 @@ local function UpdateUnitInfo(self)
 	-- self.Overlay.NameText:SetText(self.GUID or self:GetName())
 end
 
-
 local function UpdateComboBarByGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
@@ -416,12 +414,21 @@ local function UpdateComboBarByGUID(GUID)
 	end
 end
 
+local function DisableComboBarByGUID(GUID)
+	local plate = GUIDs[GUID]
+	if plate then
+		E:StopBlink(plate.ComboBar.Glow, true)
+		plate.ComboBar:Hide()
+	end
+end
+
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
 		self.TargetMark:Show()
 		UpdateComboBarByGUID(UnitGUID("target"))
 	else
 		self.TargetMark:Hide()
+		E:StopBlink(self.ComboBar.Glow, true)
 		self.ComboBar:Hide()
 	end
 end
@@ -493,18 +500,9 @@ local function WorldFrame_OnUpdate(self, elapsed)
 	isOddIteration = not isOddIteration
 end
 
-function NP:ToggleHealthText()
-	for plate, overlay in next, Plates do
-		if not C.nameplates.showText then
-			overlay.HealthBar.Text:Hide()
-		else
-			overlay.HealthBar.Text:Show()
-		end
-	end
-end
-
 function NP:PLAYER_TARGET_CHANGED(...)
-	if UnitGUID("target") and UnitExists("target") and not UnitIsUnit("target", "player") and not UnitIsDead("target") then
+	if UnitGUID("target") and UnitExists("target") and
+		not UnitIsUnit("target", "player") and not UnitIsDead("target") then
 		targetExists = true
 		targetName = UnitName("target")
 	else
@@ -516,7 +514,8 @@ function NP:PLAYER_TARGET_CHANGED(...)
 end
 
 function NP:UPDATE_MOUSEOVER_UNIT(...)
-	if UnitGUID("mouseover") and UnitExists("mouseover") and not UnitIsUnit("mouseover", "player") and not UnitIsDead("mouseover") then
+	if UnitGUID("mouseover") and UnitExists("mouseover") and
+		not UnitIsUnit("mouseover", "player") and not UnitIsDead("mouseover") then
 		mouseoverExists = true
 	else
 		mouseoverExists = false
@@ -529,15 +528,105 @@ function NP:UNIT_COMBO_POINTS(unit)
 	end
 end
 
+function NP:IsEnabled()
+	return self.isRunning
+end
+
+function NP:Enable()
+	if InCombatLockdown() then
+		return false, "|cffe52626Error!|r Can't be done, while in combat."
+	end
+
+	if not NP:IsEnabled() then
+		NP:Initialize()
+	else
+		return true, "|cffe56619Warning!|r NP is already enabled."
+	end
+
+	return true, "|cff26a526Success!|r NP is enabled."
+end
+
+function NP:IsComboBarEnabled()
+	return self:IsEventRegistered("UNIT_COMBO_POINTS")
+end
+
+function NP:EnableComboBar(...)
+	if not NP:IsComboBarEnabled() then
+		if InCombatLockdown() then
+	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
+	 	end
+
+		self:RegisterEvent("PLAYER_TARGET_CHANGED")
+		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+		self:RegisterEvent("UNIT_COMBO_POINTS")
+		self:SetScript("OnEvent", E.EventHandler)
+
+		if UnitGUID("target") and UnitExists("target") and
+			not UnitIsUnit("target", "player") and not UnitIsDead("target") then
+			targetExists = true
+			targetName = UnitName("target")
+			UpdateComboBarByGUID(UnitGUID("target"))
+		end
+
+	 	return true, "|cff26a526Success!|r NP combo bar is enabled."
+	 else
+	 	return true, "|cffe56619Warning!|r NP combo bar is already enabled."
+	 end
+end
+
+function NP:DisableComboBar(...)
+	if NP:IsComboBarEnabled() then
+		if InCombatLockdown() then
+	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
+	 	end
+
+		if targetExists then
+			DisableComboBarByGUID(UnitGUID("target"))
+		end
+
+		self:UnregisterEvent("UNIT_COMBO_POINTS")
+		self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+		self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
+		self:SetScript("OnEvent", nil)
+
+	 	return true, "|cff26a526Success!|r NP combo bar is disabled."
+	else
+	 	return true, "|cffe56619Warning!|r NP combo bar is already disabled."
+	end
+end
+
+function NP:ShowHealthText()
+	for plate, _ in next, Plates do
+		plate.HealthBar.Bar.Text:Show()
+	end
+
+	return true, "|cff26a526Success!|r Health percentage is now shown."
+end
+
+function NP:HideHealthText()
+	for plate, _ in next, Plates do
+		plate.HealthBar.Bar.Text:Hide()
+	end
+
+	return true, "|cff26a526Success!|r Health percentage is now hidden."
+end
+
 function NP:Initialize()
+	NP_CFG = C.nameplates
+
 	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
 
 	if UnitGUID("player") then
 		playerGUID = UnitGUID("player")
 	end
 
-	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-	self:RegisterEvent("UNIT_COMBO_POINTS")
-	self:SetScript("OnEvent", E.EventHandler)
+	if NP_CFG.show_combo then
+		self:EnableComboBar()
+	end
+
+	-- if NP_CFG.show_text then
+	-- 	self:EnableComboBar()
+	-- end
+
+	self.isRunning = true
 end
