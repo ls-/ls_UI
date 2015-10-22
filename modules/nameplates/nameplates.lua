@@ -25,6 +25,10 @@ local function IsTargetNamePlate(self, ignoreAlpha)
 	return (ignoreAlpha and true or self:GetAlpha() == 1) and targetExists and name == targetName
 end
 
+local function IsMouseoverNamePlate(self)
+	return mouseoverExists and self.Highlight:IsShown()
+end
+
 local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
 
@@ -144,10 +148,7 @@ local function NamePlate_OnShow(self)
 
 	overlay.NameText:SetText("|cff"..color.hex..level.."|r "..name)
 
-	if IsTargetNamePlate(self, true) then
-		updateRequired = true
-		isOddIteration = true
-	end
+	self.updateMe = true
 
 	overlay:SetScale(sw < ow and (scale * 0.75) or scale)
 	overlay:Show()
@@ -156,8 +157,10 @@ end
 local function NamePlate_OnHide(self)
 	self.Overlay:Hide()
 	self.TargetMark:Hide()
-	-- self.ComboBar:Hide()
-	-- E:StopBlink(self.ComboBar.Glow, true)
+	E:StopBlink(self.ComboBar.Glow, true)
+	self.ComboBar:Hide()
+	self.isMouseover = nil
+	self.isTarget = nil
 	self.unit = nil
 
 	if self.GUID then
@@ -308,8 +311,6 @@ local function HandleNamePlate(self)
 	targetMark:Hide()
 	self.TargetMark = targetMark
 
-	--[[
-
 	local r, g, b = unpack(COLORS.power["COMBO_POINTS"])
 
 	local comboBar = CreateFrame("StatusBar", self:GetName().."ComboBar", overlay)
@@ -337,8 +338,6 @@ local function HandleNamePlate(self)
 	cbGlow:SetAlpha(0)
 	comboBar.Glow = cbGlow
 
-
-]]
 	self:HookScript("OnShow", NamePlate_OnShow)
 	self:HookScript("OnHide", NamePlate_OnHide)
 
@@ -354,16 +353,16 @@ local function HandleNamePlate(self)
 end
 
 local function UpdateUnitInfo(self)
-	local isTarget = IsTargetNamePlate(self)
-	local isMouseover = self.isMouseover
+	self.isMouseover = IsMouseoverNamePlate(self)
+	self.isTarget = IsTargetNamePlate(self)
 
 	local GUID
-	if isTarget then
-		self.unit = "target"
-		GUID = UnitGUID("target")
-	elseif isMouseover then
+	if self.isMouseover then
 		self.unit = "mouseover"
 		GUID = UnitGUID("mouseover")
+	elseif self.isTarget then
+		self.unit = "target"
+		GUID = UnitGUID("target")
 	else
 		self.unit = nil
 	end
@@ -380,12 +379,18 @@ local function UpdateUnitInfo(self)
 			self.GUID = GUID
 		end
 	end
+
+	-- self.Overlay.NameText:SetText(self.GUID or self:GetName())
 end
 
 
 local function UpdateComboBarByGUID(GUID)
 	local plate = GUIDs[GUID]
 	if plate then
+		if not plate.unit or (plate.unit and not UnitCanAttack("player", plate.unit)) then
+			return plate.ComboBar:Hide()
+		end
+
 		local cp
 		if UnitHasVehicleUI("player") then
 			cp = UnitPower("vehicle", 4)
@@ -414,14 +419,14 @@ end
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
 		self.TargetMark:Show()
-		-- UpdateComboBarByGUID(UnitGUID("target"))
+		UpdateComboBarByGUID(UnitGUID("target"))
 	else
 		self.TargetMark:Hide()
-		-- self.ComboBar:Hide()
+		self.ComboBar:Hide()
 	end
 end
 
-
+local updateOnOddIteration
 local isOddIteration = true
 local function WorldFrame_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
@@ -440,45 +445,52 @@ local function WorldFrame_OnUpdate(self, elapsed)
 			prevNumChildren = curNumChildren
 		end
 
-		for plate, overlay in next, Plates do
-			if plate:IsShown() then
-				overlay:SetAlpha(plate:GetAlpha())
-				if plate.Threat:IsShown() then
-					overlay.Threat:Show()
-					overlay.Threat:SetVertexColor(plate.Threat:GetVertexColor())
-				else
-					overlay.Threat:Hide()
-				end
-
-				if plate.Highlight:IsShown() then
-					UpdateUnitInfo(plate)
-					-- print(plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
-
-					overlay.NameText:SetTextColor(unpack(COLORS.yellow))
-				else
-					overlay.NameText:SetTextColor(1, 1, 1)
-				end
-
-				if not isOddIteration then
-					if updateRequired then
-						-- print("everything begin")
-						UpdateUnitInfo(plate)
-						-- print("running update for:", plate:GetName(), plate.unit, "|cff00ccff"..plate.NameText:GetText().."|r")
-						UpdateTargetPlate(plate)
-						-- print("everything end")
-					end
-				end
-			end
-		end
-
-		if not isOddIteration then
-			updateRequired = false
-		end
-
-		isOddIteration = not isOddIteration
-
 		self.elapsed = 0
 	end
+
+	for plate, overlay in next, Plates do
+		if plate:IsShown() then
+			overlay:SetAlpha(plate:GetAlpha())
+			if plate.Threat:IsShown() then
+				overlay.Threat:Show()
+				overlay.Threat:SetVertexColor(plate.Threat:GetVertexColor())
+			else
+				overlay.Threat:Hide()
+			end
+
+			if plate.Highlight:IsShown() then
+				plate.updateMe = true
+
+				overlay.NameText:SetTextColor(unpack(COLORS.yellow))
+			else
+				overlay.NameText:SetTextColor(1, 1, 1)
+			end
+
+			if plate.updateMe or updateRequired then
+				UpdateUnitInfo(plate)
+				-- suddenly, a wild gamble appears!
+				-- there might be our target, but we dun really know
+				-- cuz alpha lies, so we ignore it
+				if IsTargetNamePlate(plate, true) or updateRequired then
+					updateOnOddIteration = not isOddIteration
+				end
+				plate.updateMe = false
+			end
+			-- update stuff on next iteration
+			if updateOnOddIteration == isOddIteration then
+				UpdateUnitInfo(plate)
+				UpdateTargetPlate(plate)
+			end
+		end
+	end
+
+	if updateOnOddIteration == isOddIteration then
+		updateOnOddIteration = nil
+	end
+
+	updateRequired = false
+
+	isOddIteration = not isOddIteration
 end
 
 function NP:ToggleHealthText()
@@ -501,7 +513,6 @@ function NP:PLAYER_TARGET_CHANGED(...)
 	end
 
 	updateRequired = true
-	isOddIteration = true
 end
 
 function NP:UPDATE_MOUSEOVER_UNIT(...)
@@ -527,6 +538,6 @@ function NP:Initialize()
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-	-- self:RegisterEvent("UNIT_COMBO_POINTS")
+	self:RegisterEvent("UNIT_COMBO_POINTS")
 	self:SetScript("OnEvent", E.EventHandler)
 end
