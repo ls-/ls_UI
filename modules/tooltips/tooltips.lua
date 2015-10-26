@@ -310,7 +310,7 @@ local function GameTooltip_UnitTooltipHook(self)
 			end
 
 			levelLine:SetFormattedText("|cff%s%s%s|r %s%s", difficultyColor.hex,
-				level > 0 and (level ~= actualLevel and level.." ("..actualLevel..")" or level) or "??",
+				level > 0 and ((level ~= actualLevel and not isPet) and level.." ("..actualLevel..")" or level) or "??",
 				classification, creatureType, petClass)
 		end
 	end
