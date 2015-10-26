@@ -78,7 +78,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
 
 	if isCastBar then
-		bar = E:CreateStatusBar(parent, npName, 112, "12", true)
+		bar = E:CreateStatusBar(parent, npName.."CastBar", 112, "12", true)
 		bar:SetPoint("BOTTOM", parent, "BOTTOM", 0, 1)
 
 		local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
@@ -88,7 +88,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 		spark:SetBlendMode("ADD")
 		bar.Spark = spark
 	else
-		bar = E:CreateStatusBar(parent, npName, 120, "12")
+		bar = E:CreateStatusBar(parent, npName.."HealthBar", 120, "12")
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
 		bar.Text:SetFont(M.font, 12)
@@ -130,8 +130,9 @@ end
 
 local function NamePlateCastBar_OnShow(self)
 	local bar = self.Bar
-	bar.Icon:SetTexture(PlateMeta[self.ParentPlate].CBIcon:GetTexture())
-	bar.Text:SetText(PlateMeta[self.ParentPlate].CastBarText:GetText())
+	local plateTable = PlateMeta[self.ParentPlate]
+	bar.Icon:SetTexture(plateTable.CBIcon:GetTexture())
+	bar.Text:SetText(plateTable.CastBarText:GetText())
 	bar:Show()
 end
 
@@ -218,8 +219,11 @@ local function HandleNamePlate(self)
 	local plateTable = PlateMeta[self]
 
 	plateTable.LevelText:SetSize(0.001, 0.001)
+	plateTable.LevelText:Hide()
 	plateTable.NameText:SetSize(0.001, 0.001)
+	plateTable.NameText:Hide()
 	plateTable.CastBarText:SetSize(0.001, 0.001)
+	plateTable.CastBarText:Hide()
 
 	plateTable.Threat:SetTexture("")
 	plateTable.Threat:SetTexCoord(0, 0, 0, 0)
@@ -228,6 +232,7 @@ local function HandleNamePlate(self)
 	plateTable.Border:SetTexture("")
 	plateTable.Border:SetTexCoord(0, 0, 0, 0)
 	plateTable.Border:SetSize(0.001, 0.001)
+	plateTable.Border:Hide()
 
 	plateTable.Highlight:SetTexture("")
 	plateTable.Highlight:SetTexCoord(0, 0, 0, 0)
@@ -244,6 +249,7 @@ local function HandleNamePlate(self)
 	plateTable.CastBarBorder:SetTexture("")
 	plateTable.CastBarBorder:SetTexCoord(0, 0, 0, 0)
 	plateTable.CastBarBorder:SetSize(0.001, 0.001)
+	plateTable.CastBarBorder:Hide()
 
 	plateTable.CBShield:SetTexture("")
 	plateTable.CBShield:SetTexCoord(0, 0, 0, 0)
@@ -252,10 +258,13 @@ local function HandleNamePlate(self)
 	plateTable.CastBarTextBG:SetTexture("")
 	plateTable.CastBarTextBG:SetTexCoord(0, 0, 0, 0)
 	plateTable.CastBarTextBG:SetSize(0.001, 0.001)
+	plateTable.CastBarTextBG:Hide()
 
 	plateTable.HBTexture:SetTexture("")
 	plateTable.ABTexture:SetTexture("")
 	plateTable.CBTexture:SetTexture("")
+
+	plateTable.RaidIcon:SetAlpha(0)
 
 	E:ForceHide(plateTable.CBIcon)
 
@@ -306,10 +315,12 @@ local function HandleNamePlate(self)
 		NamePlateCastBar_OnShow(castBar)
 	end
 
-	local raidIcon = plateTable.RaidIcon
-	raidIcon:ClearAllPoints()
-	raidIcon:SetSize(20, 20)
-	raidIcon:SetPoint("LEFT", overlay, "RIGHT", 4, 0)
+	local raidIcon = overlay:CreateTexture(nil, "OVERLAY", nil, 0)
+	raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	raidIcon:SetSize(32, 32)
+	raidIcon:SetPoint("BOTTOMLEFT", overlay, "BOTTOMRIGHT", 8, 1)
+	raidIcon:Hide()
+	overlay.RaidIcon = raidIcon
 
 	local name = E:CreateFontString(overlay, 14, nil, true, nil)
 	name:SetPoint("LEFT", overlay, -24, 0)
@@ -495,6 +506,13 @@ local function WorldFrame_OnUpdate(self, elapsed)
 				overlay.NameText:SetTextColor(unpack(COLORS.yellow))
 			else
 				overlay.NameText:SetTextColor(1, 1, 1)
+			end
+
+			if plateTable.RaidIcon:IsShown() then
+				overlay.RaidIcon:SetTexCoord(plateTable.RaidIcon:GetTexCoord())
+				overlay.RaidIcon:Show()
+			else
+				overlay.RaidIcon:Hide()
 			end
 
 			if plate.updateMe or updateRequired then
