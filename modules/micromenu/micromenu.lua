@@ -93,7 +93,7 @@ local function UpdatePerformanceBar(self)
 	local _, _, latencyHome, latencyWorld = GetNetStats()
 	local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
 
-	self.performance:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT_GYR)))
+	self.Indicator:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT_GYR)))
 end
 
 local addons = {}
@@ -155,6 +155,8 @@ local function MainMenuMicroButton_OnUpdate(self, elapsed)
 end
 
 local function CharacterMicroButton_OnEnter(self)
+	local hasInfo
+
 	if C_PetBattles.IsInBattle() then
 		for i = 1, 3 do
 			local petID, _, _, _, locked = C_PetJournal.GetPetLoadOutInfo(i)
@@ -176,34 +178,21 @@ local function CharacterMicroButton_OnEnter(self)
 				end
 			end
 		end
+
+		hasInfo = true
 	else
-		local total, cur, max = 100
-
-		for _, v in next, DURABILITY_SLOTS do
-			cur, max = GetInventoryItemDurability(v)
-
-			if cur then
-				cur = cur / max * 100
-
-				if cur < total then
-					total = cur
-				end
-			end
-		end
-
-		GameTooltip:AddDoubleLine(DURABILITY..":", E:Round(total).."%", 1, 0.82, 0, E:ColorGradient(total / 100, unpack(GRADIENT_RYG)))
-
 		if UnitLevel("player") < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
-			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(EXPERIENCE_COLON)
 			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
 			ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), unpack(COLORS.experience))
+
+			hasInfo = true
 		end
 
 		local name, standing, repMin, repMax, repValue, factionID = GetWatchedFactionInfo()
 
 		if name then
-			GameTooltip:AddLine(" ")
+			if hasInfo then GameTooltip:AddLine(" ") end
 			GameTooltip:AddLine(REPUTATION..":")
 
 			local min, max, value = 0, 1, 1
@@ -227,10 +216,34 @@ local function CharacterMicroButton_OnEnter(self)
 
 			GameTooltip:AddDoubleLine(name, text, 1, 1, 1, color.r, color.g, color.b)
 			ShowTooltipStatusBar(GameTooltip, 0, max, value, color.r, color.g, color.b)
+
+			hasInfo = true
 		end
 	end
 
-	GameTooltip:Show()
+	if hasInfo then
+		GameTooltip:Show()
+	end
+end
+
+local function CharacterMicroButton_OnEvent(self, event, ...)
+	if event == "UPDATE_INVENTORY_DURABILITY" then
+		local total, cur, max = 100
+
+		for _, v in next, DURABILITY_SLOTS do
+			cur, max = GetInventoryItemDurability(v)
+
+			if cur then
+				cur = cur / max * 100
+
+				if cur < total then
+					total = cur
+				end
+			end
+		end
+
+		self.Indicator:SetVertexColor(E:ColorGradient(total / 100, unpack(GRADIENT_RYG)))
+	end
 end
 
 local function QuestLogMicroButton_OnEnter(self)
@@ -247,7 +260,7 @@ local function EJMicroButton_OnEnter(self)
 	if savedInstances + savedWorldBosses == 0 then return end
 
 	local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
-	local toTitle = true
+	local hasTitle
 
 	RequestRaidInfo()
 
@@ -255,10 +268,10 @@ local function EJMicroButton_OnEnter(self)
 		if i <= savedInstances then
 			instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
 			if instanceReset > 0 then
-				if toTitle then
+				if not hasTitle then
 					GameTooltip:AddLine(RAID_INFO..":")
 
-					toTitle = nil
+					hasTitle = true
 				else
 					GameTooltip:AddLine(" ")
 				end
@@ -271,10 +284,10 @@ local function EJMicroButton_OnEnter(self)
 		else
 			instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
 			if instanceReset > 0 then
-				if toTitle then
+				if not hasTitle then
 					GameTooltip:AddLine(RAID_INFO..":")
 
-					toTitle = nil
+					hasTitle = true
 				else
 					GameTooltip:AddLine(" ")
 				end
@@ -285,7 +298,7 @@ local function EJMicroButton_OnEnter(self)
 		end
 	end
 
-	if not toTitle then
+	if hasTitle then
 		GameTooltip:Show()
 	end
 end
@@ -373,13 +386,17 @@ local function HandleMicroButton(name)
 	button:SetScript("OnUpdate", nil)
 end
 
-local function HandlePerformanceBar(parent, bar)
-	bar:SetDrawLayer("BACKGROUND", 3)
-	bar:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	bar:SetSize(18, 4)
-	bar:ClearAllPoints()
-	bar:SetPoint("BOTTOM", 0, 0)
-	parent.performance = bar
+local function HandleMicroButtonIndicator(parent, indicator)
+	if not indicator then
+		indicator = parent:CreateTexture("$parentIndicator")
+	end
+
+	indicator:SetDrawLayer("BACKGROUND", 3)
+	indicator:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+	indicator:SetSize(18, 4)
+	indicator:ClearAllPoints()
+	indicator:SetPoint("BOTTOM", 0, 0)
+	parent.Indicator = indicator
 end
 
 local function ResetMicroButtonsParent()
@@ -438,7 +455,11 @@ function MM:Initialize()
 
 		if b == "CharacterMicroButton" then
 			E:ForceHide(MicroButtonPortrait)
+			HandleMicroButtonIndicator(button)
+
+			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
+			button:HookScript("OnEvent", CharacterMicroButton_OnEvent)
 		elseif b == "GuildMicroButton" then
 			E:ForceHide(GuildMicroButtonTabard)
 
@@ -449,14 +470,11 @@ function MM:Initialize()
 			button:HookScript("OnEnter", QuestLogMicroButton_OnEnter)
 		elseif b == "EJMicroButton" then
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
-
 			button.NewAdventureNotice:ClearAllPoints()
 			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
 			E:ForceHide(MainMenuBarDownload)
-
-			HandlePerformanceBar(button, MainMenuBarPerformanceBar)
-
+			HandleMicroButtonIndicator(button, MainMenuBarPerformanceBar)
 			UpdatePerformanceBar(button)
 
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
