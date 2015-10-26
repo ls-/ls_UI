@@ -195,16 +195,15 @@ local function GameTooltip_UnitTooltipHook(self)
 
 	if UnitIsPlayer(unit) then
 		local name, realm = UnitName(unit)
-		local relationship = UnitRealmRelationship(unit)
 		local pvpName = UnitPVPName(unit)
 		local guildName, _, _, guildRealm = GetGuildInfo(unit)
-		local classDisplayName = UnitClass(unit)
-		local classColor = E:GetUnitClassColor(unit)
 		local isInGroup = UnitInParty(unit) or UnitInRaid(unit)
 
 		name = pvpName or name
 
 		if realm and realm ~= "" then
+			local relationship = UnitRealmRelationship(unit)
+
 			if isShiftKeyDown then
 				name = name.."-"..realm
 			else
@@ -259,9 +258,14 @@ local function GameTooltip_UnitTooltipHook(self)
 
 		levelLine, offset = GetLevelLine(self, level > 0 and level or "%?%?", offset)
 		if levelLine then
+			local actualLevel = UnitLevel(unit)
 			local race = UnitRace(unit)
+			local classColor = E:GetUnitClassColor(unit)
+			local classDisplayName = UnitClass(unit)
 
-			levelLine:SetFormattedText("|cff%s%s|r %s |cff%s%s|r", difficultyColor.hex, level > 0 and level or "??", race, classColor.hex, classDisplayName)
+			levelLine:SetFormattedText("|cff%s%s|r %s |cff%s%s|r", difficultyColor.hex,
+				level > 0 and (level ~= actualLevel and level.." ("..actualLevel..")" or level) or "??",
+				race, classColor.hex, classDisplayName)
 		end
 	else
 		local name = UnitName(unit)
@@ -287,9 +291,11 @@ local function GameTooltip_UnitTooltipHook(self)
 
 		levelLine, offset = GetLevelLine(self, level > 0 and level or "%?%?", offset)
 		if levelLine then
-			local creatureType = UnitCreatureType(unit) or ""
+			local actualLevel = UnitLevel(unit)
 			local classification = E:GetUnitClassification(unit)
+			local creatureType = UnitCreatureType(unit) or ""
 			local petClass = ""
+
 			if isPet then
 				local teamLevel = GetPetTeamAverageLevel()
 				creatureType = creatureType == "" and PET or creatureType
@@ -303,7 +309,9 @@ local function GameTooltip_UnitTooltipHook(self)
 				petClass = ", "..GetPetClass(levelLine:GetText())
 			end
 
-			levelLine:SetFormattedText("|cff%s%s%s|r %s%s", difficultyColor.hex, level > 0 and level or "??", classification, creatureType, petClass)
+			levelLine:SetFormattedText("|cff%s%s%s|r %s%s", difficultyColor.hex,
+				level > 0 and (level ~= actualLevel and level.." ("..actualLevel..")" or level) or "??",
+				classification, creatureType, petClass)
 		end
 	end
 
