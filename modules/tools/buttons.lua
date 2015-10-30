@@ -3,6 +3,20 @@ local E, M = ns.E, ns.M
 local COLORS, TEXTURES = M.colors, M.textures
 
 local unpack = unpack
+local NUM_BAG_SLOTS = NUM_BAG_SLOTS
+
+local function GetContainerSlotByItemLink(itemLink)
+	for i = 0, NUM_BAG_SLOTS do
+		for j = 1, GetContainerNumSlots(i) do
+			local _, _, _, _, _, _, link = GetContainerItemInfo(i, j)
+			if link == itemLink then
+				return i, j
+			end
+		end
+	end
+
+	return
+end
 
 local function SetFlashTexture(texture)
 	texture:SetTexture(TEXTURES.button.flash)
@@ -435,6 +449,16 @@ function E:SkinActionButton(button)
 	button.styled = true
 end
 
+local function OTButton_OnDrag(self)
+	if IsModifiedClick("PICKUPACTION") then
+		local link = GetQuestLogSpecialItemInfo(self:GetID())
+		local bagID, slot = GetContainerSlotByItemLink(link)
+		if bagID then
+			PickupContainerItem(bagID, slot)
+		end
+	end
+end
+
 function E:SkinOTButton()
 	if not self or self.styled then return end
 
@@ -443,6 +467,10 @@ function E:SkinOTButton()
 	if self:GetScript("OnUpdate") then
 		self:HookScript("OnUpdate", OTButton_OnUpdate)
 	end
+
+	self:RegisterForDrag("LeftButton")
+	self:HookScript("OnDragStart", OTButton_OnDrag)
+	self:HookScript("OnReceiveDrag", OTButton_OnDrag)
 
 	self.styled = true
 end
