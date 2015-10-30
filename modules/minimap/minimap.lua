@@ -362,11 +362,7 @@ function MM:Initialize()
 		"TimeManagerClockButton",
 		"MiniMapTrackingIconOverlay",
 	} do
-		if not _G[f]:IsObjectType("Texture") then
-			_G[f]:UnregisterAllEvents()
-		end
-
-		_G[f]:SetParent(M.HiddenParent)
+		E:ForceHide(_G[f])
 	end
 
 	HandleMinimapButton(MiniMapVoiceChatFrame)
