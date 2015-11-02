@@ -148,12 +148,14 @@ local function GetLevelLine(self, level, offset)
 	local numLines = self:NumLines()
 	local offset = min(offset, numLines)
 
-	for i = offset, numLines do
-		local line = _G["GameTooltipTextLeft"..i]
-		local lineText = line:GetText()
+	if numLines ~= 1 then
+		for i = offset, numLines do
+			local line = _G["GameTooltipTextLeft"..i]
+			local lineText = line:GetText()
 
-		if lineText and find(lineText, level) then
-			return line, i + 1
+			if lineText and find(lineText, level) then
+				return line, i + 1
+			end
 		end
 	end
 
