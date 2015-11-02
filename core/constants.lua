@@ -91,6 +91,7 @@ local textures = {
 		["LEADER"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:2:20|t",
 		["ALLIANCE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:22:40:22:40|t",
 		["HORDE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:22:40|t",
+		["FFA"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:42:60:22:40|t",
 	},
 	button = {
 		normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
