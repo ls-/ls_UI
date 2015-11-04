@@ -107,7 +107,6 @@ function lsOptionsFrame_Initialize()
 	lsOptionsMainFrame["auratracker"] = {}
 	lsOptionsMainFrame["minimap"] = {}
 	lsOptionsMainFrame["infobars"] = {}
-	lsOptionsMainFrame["nameplates"] = {}
 	lsOptionsMainFrame["bars"] = {}
 	lsOptionsMainFrame["auras"] = {}
 	lsOptionsMainFrame["mail"] = {}
@@ -126,13 +125,13 @@ function lsOptionsFrame_Initialize()
 
 	lsOptionsMainFrame["infobars"]["enabled"] = button9
 
-	local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Nameplates")
-	button10:SetPoint("LEFT", button9, "RIGHT", 110, 0)
+	-- local button10 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Nameplates")
+	-- button10:SetPoint("LEFT", button9, "RIGHT", 110, 0)
 
-	lsOptionsMainFrame["nameplates"]["enabled"] = button10
+	-- lsOptionsMainFrame["nameplates"]["enabled"] = button10
 
 	local button11 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Action Bars")
-	button11:SetPoint("TOPLEFT", button8, "BOTTOMLEFT", 0, -8)
+	button11:SetPoint("LEFT", button9, "RIGHT", 110, 0)
 
 	lsOptionsMainFrame["bars"]["enabled"] = button11
 
@@ -142,7 +141,7 @@ function lsOptionsFrame_Initialize()
 	lsOptionsMainFrame["auras"]["enabled"] = button12
 
 	local button13 = lsOptions_CreateCheckButton(lsOptionsMainFrame, "Mail")
-	button13:SetPoint("LEFT", button12, "RIGHT", 110, 0)
+	button13:SetPoint("TOPLEFT", button8, "BOTTOMLEFT", 0, -8)
 
 	lsOptionsMainFrame["mail"]["enabled"] = button13
 
@@ -152,7 +151,7 @@ function lsOptionsFrame_Initialize()
 	lsOptionsMainFrame["bags"]["enabled"] = button14
 
 	local divider2 = lsOptions_CreateDivider(lsOptionsMainFrame)
-	divider2:SetPoint("TOP", button11, "BOTTOM", 0, -8)
+	divider2:SetPoint("TOP", button13, "BOTTOM", 0, -8)
 
 	local header3 = lsOptions_CreateHeader(lsOptionsMainFrame, "Info")
 	header3:SetPoint("TOPLEFT", divider2, "BOTTOMLEFT", 0, -8)
