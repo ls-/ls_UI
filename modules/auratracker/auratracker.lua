@@ -183,8 +183,8 @@ function AT:Enable()
 	AT.Tracker:Show()
 	AT.Tracker:ClearAllPoints()
 	AT.Tracker:SetPoint(unpack(AT_CONFIG.point))
-	AT.Tracker:RegisterEvent("UNIT_AURA")
-	AT.Tracker:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	AT.Tracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+	AT.Tracker:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 
 	AT.Spec = tostring(GetSpecialization() or 0)
 
