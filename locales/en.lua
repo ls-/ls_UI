@@ -1,6 +1,1 @@
-﻿lsMEMORY = "Memory"
-lsLATENCY = "Latency"
-lsHOME = "Home"
-lsWORLD = "World"
-lsAURATRACKER = "Auras"
-lsLISTOFCOMMANDS = "List of Commands"
+﻿
