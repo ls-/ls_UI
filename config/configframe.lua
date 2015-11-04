@@ -1,6 +1,5 @@
 local _, ns = ...
 local oUF, E, C, D = ns.oUF or oUF, ns.E, ns.C, ns.D
-
 local CFG, AT = E.CFG, E.AT
 
 local function lsOptions_CreateDivider(parent)

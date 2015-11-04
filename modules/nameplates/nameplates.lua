@@ -1,17 +1,13 @@
 local _, ns = ...
 local C, E, M = ns.C, ns.E, ns.M
+local NP = CreateFrame("Frame", "LSNamePlateModule"); E.NP = NP
 local COLORS = M.colors
 local NP_CFG
 
-E.NP = CreateFrame("Frame")
-local NP = E.NP
-
 local tonumber, format, match, unpack, select, setmetatable, next	=
 	tonumber, format, strmatch, unpack, select, setmetatable, next
-
 local UnitGUID, UnitCanAttack, UnitHasVehicleUI, UnitPower, UnitExists, UnitIsUnit, UnitIsDead =
 	UnitGUID, UnitCanAttack, UnitHasVehicleUI, UnitPower, UnitExists, UnitIsUnit, UnitIsDead
-
 local WorldFrame = WorldFrame
 local UNKNOWNOBJECT = UNKNOWNOBJECT
 
@@ -466,7 +462,7 @@ end
 
 local updateOnOddIteration
 local isOddIteration = true
-local function WorldFrame_OnUpdate(self, elapsed)
+local function WorldFrame_OnUpdateHook(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
@@ -656,7 +652,7 @@ end
 function NP:Initialize()
 	NP_CFG = C.nameplates
 
-	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdate)
+	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdateHook)
 
 	-- if UnitGUID("player") then
 	-- 	playerGUID = UnitGUID("player")

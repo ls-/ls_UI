@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-local COLORS = M.colors
 local B = E.Blizzard
+local COLORS = M.colors
 
 local OT_UNLOCKED
 

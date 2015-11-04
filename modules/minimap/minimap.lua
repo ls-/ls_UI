@@ -1,9 +1,6 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
-E.Minimap = {}
-
-local MM = E.Minimap
+local MM = CreateFrame("Frame", "LSMinimapModule"); E.Minimap = MM
 
 local Minimap = Minimap
 

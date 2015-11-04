@@ -1,11 +1,10 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
+local PetBattle = CreateFrame("Frame", "LSPetBattleBarModule"); E.PetBattle = PetBattle
+local PB_CFG
 
-E.PetBattle = {}
-
-local PetBattle = E.PetBattle
-
-local BUTTONS, PB_CONFIG
+local PetBattleFrame = PetBattleFrame
+local BUTTONS
 
 local function SetPetBattleButtonPosition()
 	BUTTONS = {
@@ -17,27 +16,27 @@ local function SetPetBattleButtonPosition()
 		PetBattleFrame.BottomFrame.ForfeitButton
 	}
 
-	E:SetButtonPosition(BUTTONS, PB_CONFIG.button_size, PB_CONFIG.button_gap, PetBattle.BarHeader,
-		PB_CONFIG.direction, E.SkinPetBattleButton)
+	E:SetButtonPosition(BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PetBattle.BarHeader,
+		PB_CFG.direction, E.SkinPetBattleButton)
 end
 
 function PetBattle:Initialize()
-	PB_CONFIG = ns.C.petbattle
+	PB_CFG = ns.C.petbattle
 	local COLORS, TEXTURES = ns.M.colors, ns.M.textures
 
-	local header = CreateFrame("Frame", "lsPetBattleBarHeader", UIParent, "SecureHandlerBaseTemplate")
+	local header = CreateFrame("Frame", "LSPetBattleBarHeader", UIParent, "SecureHandlerBaseTemplate")
 	header:SetFrameStrata("LOW")
 	header:SetFrameLevel(1)
 
-	if PB_CONFIG.direction == "RIGHT" or PB_CONFIG.direction == "LEFT" then
-		header:SetSize(PB_CONFIG.button_size * 12 + PB_CONFIG.button_gap * 12,
-			PB_CONFIG.button_size + PB_CONFIG.button_gap)
+	if PB_CFG.direction == "RIGHT" or PB_CFG.direction == "LEFT" then
+		header:SetSize(PB_CFG.button_size * 12 + PB_CFG.button_gap * 12,
+			PB_CFG.button_size + PB_CFG.button_gap)
 	else
-		header:SetSize(PB_CONFIG.button_size + PB_CONFIG.button_gap,
-			PB_CONFIG.button_size * 12 + PB_CONFIG.button_gap * 12)
+		header:SetSize(PB_CFG.button_size + PB_CFG.button_gap,
+			PB_CFG.button_size * 12 + PB_CFG.button_gap * 12)
 	end
 
-	header:SetPoint(unpack(PB_CONFIG.point))
+	header:SetPoint(unpack(PB_CFG.point))
 
 	RegisterStateDriver(header, "visibility", "[petbattle] show; hide")
 

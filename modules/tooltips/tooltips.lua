@@ -1,22 +1,15 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
-
-E.TT = {}
-
-local TT = E.TT
+local TT = CreateFrame("Frame", "LSTooltipModule"); E.TT = TT
 local COLORS = M.colors
 local INLINE_ICONS = M.textures.inlineicons
 
-local LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND =
-	LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND
-local PET = PET
-
+local LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND, PET =
+	LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND, PET
 local find, match = strfind, strmatch
 local unpack, tcontains = unpack, tContains
 local min = min
-
 local GameTooltip, GameTooltipStatusBar, GameTooltipTextLeft1, GameTooltipTextRight1 = GameTooltip, GameTooltipStatusBar, GameTooltipTextLeft1, GameTooltipTextRight1
-
 local GetPetTeamAverageLevel = C_PetJournal.GetPetTeamAverageLevel
 local IsShiftKeyDown, GetMouseFocus, GetGuildInfo = IsShiftKeyDown, GetMouseFocus, GetGuildInfo
 local UnitInParty, UnitInRaid = UnitInParty, UnitInRaid

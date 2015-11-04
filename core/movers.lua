@@ -1,14 +1,13 @@
 local _, ns = ...
 local E, C, M = ns.E, ns.C, ns.M
+local MOVERS_CFG
 
 E.Movers = {}
-
-local MOVERS_CONFIG
 
 local DEFAULTS = {}
 
 local function SavePosition(self, p, anchor, rP, x, y)
-	MOVERS_CONFIG[self:GetName()].current = {p, anchor, rP, x, y}
+	MOVERS_CFG[self:GetName()].current = {p, anchor, rP, x, y}
 end
 
 local function ResetPosition(self)
@@ -22,7 +21,7 @@ local function ResetPosition(self)
 	self.parent:ClearAllPoints()
 	self.parent:SetPoint(p, anchor, rP, x, y)
 
-	MOVERS_CONFIG[self:GetName()].current = nil
+	MOVERS_CFG[self:GetName()].current = nil
 
 	self.buttons[5]:Hide()
 end
@@ -33,8 +32,8 @@ local function SetPosition(self, xOffset, yOffset)
 	local p, anchor, rP, x, y = E:GetCoords(self)
 
 	if not x then
-		if MOVERS_CONFIG[self:GetName()].current then
-			p, anchor, rP, x, y = unpack(MOVERS_CONFIG[self:GetName()].current)
+		if MOVERS_CFG[self:GetName()].current then
+			p, anchor, rP, x, y = unpack(MOVERS_CFG[self:GetName()].current)
 		end
 
 		if not x then ResetPosition(self) return end
@@ -239,7 +238,7 @@ function E:ToggleMover(object)
 end
 
 function E:CreateMover(object)
-	MOVERS_CONFIG = C.movers
+	MOVERS_CFG = C.movers
 
 	local name = object:GetName().."Mover"
 
@@ -277,8 +276,8 @@ function E:CreateMover(object)
 
 	mover.buttons = {up, down, left, right, reset}
 
-	if not MOVERS_CONFIG[name] then
-		MOVERS_CONFIG[name] = {}
+	if not MOVERS_CFG[name] then
+		MOVERS_CFG[name] = {}
 	end
 
 	DEFAULTS[name] = {E:GetCoords(object)}

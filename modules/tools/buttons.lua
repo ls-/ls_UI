@@ -3,6 +3,7 @@ local E, M = ns.E, ns.M
 local COLORS, TEXTURES = M.colors, M.textures
 
 local unpack = unpack
+local gsub = gsub
 local NUM_BAG_SLOTS = NUM_BAG_SLOTS
 
 local function GetContainerSlotByItemLink(itemLink)

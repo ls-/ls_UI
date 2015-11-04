@@ -1,7 +1,6 @@
 local AddOn, ns = ...
-ns.E, ns.C, ns.D, ns.M, ns.L = CreateFrame("Frame"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
-
-local E, M = ns.E, ns.M
+local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
+ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 
 E.width, E.height = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
 E.playerclass = select(2, UnitClass("player"))

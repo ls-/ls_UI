@@ -1,9 +1,6 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
-E.Extra = {}
-
-local Extra = E.Extra
+local Extra = CreateFrame("Frame", "LSExtraButtonModule"); E.Extra = Extra
 
 local function LeaveButton_OnEvent(self, event)
 	if not InCombatLockdown() then

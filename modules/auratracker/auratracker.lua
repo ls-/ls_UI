@@ -1,17 +1,14 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local AT = CreateFrame("Frame", "LSAuraTrackerModule"); E.AT = AT
+local AT_CFG
 
-E.AT = {}
-
-local AT = E.AT
-
-local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
-local AT_CONFIG
+local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 
 local function ScanAuras(auras, index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
-	if name and tcontains(AT_CONFIG[AT.Spec][filter], spellId) then
+	if name and tcontains(AT_CFG[AT.Spec][filter], spellId) then
 		local aura = {
 			index = index,
 			icon = iconTexture,
@@ -27,7 +24,7 @@ local function ScanAuras(auras, index, filter)
 end
 
 local function HandleDataCorruption(filter, spec, overflow)
-	local auraList, size = AT_CONFIG[spec][filter], #AT_CONFIG[spec][filter]
+	local auraList, size = AT_CFG[spec][filter], #AT_CFG[spec][filter]
 
 	if size > 0 then
 		for i, v in next, auraList do
@@ -92,7 +89,7 @@ local function AT_Update(self, event, ...)
 		for i = 0, num do
 			i = tostring(i)
 
-			local overflow = #AT_CONFIG[i].HELPFUL + #AT_CONFIG[i].HARMFUL > 12
+			local overflow = #AT_CFG[i].HELPFUL + #AT_CFG[i].HARMFUL > 12
 
 			HandleDataCorruption("HELPFUL", i, overflow)
 			HandleDataCorruption("HARMFUL", i, overflow)
@@ -110,14 +107,14 @@ local function AT_Update(self, event, ...)
 		local newSpec = tostring(GetSpecialization() or 0)
 
 		if oldSpec ~= newSpec then
-			if #AT_CONFIG[newSpec].HELPFUL + #AT_CONFIG[newSpec].HARMFUL == 0 then
-				AT_CONFIG[newSpec].HELPFUL = {unpack(AT_CONFIG[oldSpec].HELPFUL)}
-				AT_CONFIG[newSpec].HARMFUL = {unpack(AT_CONFIG[oldSpec].HARMFUL)}
+			if #AT_CFG[newSpec].HELPFUL + #AT_CFG[newSpec].HARMFUL == 0 then
+				AT_CFG[newSpec].HELPFUL = {unpack(AT_CFG[oldSpec].HELPFUL)}
+				AT_CFG[newSpec].HARMFUL = {unpack(AT_CFG[oldSpec].HARMFUL)}
 			end
 
 			if oldSpec == "0" then
-				AT_CONFIG[oldSpec].HELPFUL = {}
-				AT_CONFIG[oldSpec].HARMFUL = {}
+				AT_CFG[oldSpec].HELPFUL = {}
+				AT_CFG[oldSpec].HARMFUL = {}
 			end
 		end
 
@@ -182,7 +179,7 @@ function AT:Enable()
 
 	AT.Tracker:Show()
 	AT.Tracker:ClearAllPoints()
-	AT.Tracker:SetPoint(unpack(AT_CONFIG.point))
+	AT.Tracker:SetPoint(unpack(AT_CFG.point))
 	AT.Tracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 	AT.Tracker:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 
@@ -194,7 +191,7 @@ function AT:Enable()
 		AT_Update(AT.Tracker, "ENABLE")
 	end
 
-	if AT_CONFIG.locked then AT.Header:Hide() end
+	if AT_CFG.locked then AT.Header:Hide() end
 
  	return true, "|cff26a526Success!|r AT is on."
 end
@@ -216,11 +213,11 @@ function AT:Disable()
 end
 
 function AT:AddToList(filter, ID)
-	if #AT_CONFIG[AT.Spec].HELPFUL + #AT_CONFIG[AT.Spec].HARMFUL == 12 then
+	if #AT_CFG[AT.Spec].HELPFUL + #AT_CFG[AT.Spec].HARMFUL == 12 then
 		return false, "|cffe52626Error!|r Can\'t add aura. List is full. Max of 12."
 	end
 
-	if not AT_CONFIG.enabled then
+	if not AT_CFG.enabled then
 		return false, "|cffe52626Error!|r Can\'t add aura. Module is disabled."
 	end
 
@@ -229,11 +226,11 @@ function AT:AddToList(filter, ID)
 		return false, "|cffe52626Error!|r Can\'t add aura, that doesn't exist."
 	end
 
-	if tcontains(AT_CONFIG[AT.Spec][filter], ID) then
+	if tcontains(AT_CFG[AT.Spec][filter], ID) then
 		return false, "|cffe52626Error!|r Can\'t add aura. Already in the list."
 	end
 
-	tinsert(AT_CONFIG[AT.Spec][filter], ID)
+	tinsert(AT_CFG[AT.Spec][filter], ID)
 
 	AT_Update(AT.Tracker, "ADD_TO_LIST")
 
@@ -241,9 +238,9 @@ function AT:AddToList(filter, ID)
 end
 
 function AT:RemoveFromList(filter, ID)
-	for i, v in next, AT_CONFIG[AT.Spec][filter] do
+	for i, v in next, AT_CFG[AT.Spec][filter] do
 		if v == ID then
-			tremove(AT_CONFIG[AT.Spec][filter], i)
+			tremove(AT_CFG[AT.Spec][filter], i)
 
 			AT_Update(AT.Tracker, "REMOVE_FROM_LIST")
 
@@ -267,11 +264,11 @@ end
 local function ATHeader_OnDragStop(self)
 	self:GetParent():StopMovingOrSizing()
 
-	AT_CONFIG.point = {E:GetCoords(self:GetParent())}
+	AT_CFG.point = {E:GetCoords(self:GetParent())}
 end
 
 function AT:Initialize()
-	AT_CONFIG = C.auratracker
+	AT_CFG = C.auratracker
 
 	local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
 	tracker:SetClampedToScreen(true)
@@ -313,13 +310,13 @@ function AT:Initialize()
 
 	tracker.buttons = buttons
 
-	if AT_CONFIG.direction == "RIGHT" or AT_CONFIG.direction == "LEFT" then
+	if AT_CFG.direction == "RIGHT" or AT_CFG.direction == "LEFT" then
 		tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
 	else
 		tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
 	end
 
-	E:SetButtonPosition(buttons, 36, 4, tracker, AT_CONFIG.direction)
+	E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
 
 	local header = CreateFrame("Button", nil, tracker)
 	header:SetClampedToScreen(true)

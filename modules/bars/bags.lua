@@ -1,15 +1,12 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
+local Bags = CreateFrame("Frame", "LSBagModule"); E.Bags = Bags
 local COLORS = M.colors
 local GRADIENT = COLORS.gradient["GYR"]
-
-E.Bags = {}
-
-local Bags = E.Bags
-
-local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
+local BAGS_CFG
 
 local unpack = unpack
+local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
 
 local BAGS = {
 	MainMenuBarBackpackButton,
@@ -93,26 +90,26 @@ local function BackpackButton_OnEvent(self, event, ...)
 end
 
 function Bags:Initialize()
-	local BAGS_CONFIG = ns.C.bags
+	BAGS_CFG = C.bags
 
 	local header = CreateFrame("Frame", "lsBagsHeader", UIParent, "SecureHandlerBaseTemplate")
 	header:SetFrameStrata("LOW")
 	header:SetFrameLevel(1)
 
-	if BAGS_CONFIG.direction == "RIGHT" or BAGS_CONFIG.direction == "LEFT" then
-		header:SetSize(BAGS_CONFIG.button_size * 5 + BAGS_CONFIG.button_gap * 5,
-			BAGS_CONFIG.button_size + BAGS_CONFIG.button_gap)
+	if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
+		header:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
+			BAGS_CFG.button_size + BAGS_CFG.button_gap)
 	else
-		header:SetSize(BAGS_CONFIG.button_size + BAGS_CONFIG.button_gap,
-			BAGS_CONFIG.button_size * 5 + BAGS_CONFIG.button_gap * 5)
+		header:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
+			BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5)
 	end
 
-	header:SetPoint(unpack(BAGS_CONFIG.point))
+	header:SetPoint(unpack(BAGS_CFG.point))
 
 	E:CreateMover(header)
 
-	E:SetButtonPosition(BAGS, BAGS_CONFIG.button_size, BAGS_CONFIG.button_gap, header,
-		BAGS_CONFIG.direction, E.SkinBagButton)
+	E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, header,
+		BAGS_CFG.direction, E.SkinBagButton)
 
 	MainMenuBarBackpackButton.icon:SetDesaturated(true)
 

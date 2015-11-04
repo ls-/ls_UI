@@ -1,13 +1,10 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
-E.Blizzard = {}
-
-local B = E.Blizzard
+local B = CreateFrame("Frame", "LSBlizzardModule"); E.Blizzard = B
 
 function B:Initialize()
-	self:HandleArchaeology()
-	self:HandleTimers()
-	self:HandleObjectiveTracker()
-	self:HandlePowerBarAlt()
+	B:HandleArchaeology()
+	B:HandleTimers()
+	B:HandleObjectiveTracker()
+	B:HandlePowerBarAlt()
 end

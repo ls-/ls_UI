@@ -1,14 +1,13 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
+local ActionBars = CreateFrame("Frame", "LSActionBarModule"); E.ActionBars = ActionBars
+local COLORS, TEXTURES = M.colors, M.textures
+local BAR_CFG
 
-local match, tonumber = strmatch, tonumber
-local BAR_CONFIG, COLORS, TEXTURES
+local tonumber = tonumber
+local match = strmatch
 
-E.ActionBars = {}
-
-local ActionBars = E.ActionBars
-
-ns.bars = {}
+ActionBars.bars = {}
 
 local BAR_LAYOUT = {
 	bar1 = {
@@ -168,19 +167,19 @@ local function FlyoutButtonToggleHook(...)
 end
 
 function ActionBars:Initialize()
-	BAR_CONFIG, COLORS, TEXTURES = ns.C.bars, ns.M.colors, ns.M.textures
+	BAR_CFG = C.bars
 
 	for b, bdata in next, BAR_LAYOUT do
 		local bar = CreateFrame("Frame", bdata.name, UIParent, "SecureHandlerStateTemplate")
 		bar:SetFrameStrata("LOW")
 		bar:SetFrameLevel(1)
 
-		if BAR_CONFIG[b].direction == "RIGHT" or BAR_CONFIG[b].direction == "LEFT" then
-			bar:SetSize(BAR_CONFIG[b].button_size * #bdata.buttons + BAR_CONFIG[b].button_gap * #bdata.buttons,
-				BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap)
+		if BAR_CFG[b].direction == "RIGHT" or BAR_CFG[b].direction == "LEFT" then
+			bar:SetSize(BAR_CFG[b].button_size * #bdata.buttons + BAR_CFG[b].button_gap * #bdata.buttons,
+				BAR_CFG[b].button_size + BAR_CFG[b].button_gap)
 		else
-			bar:SetSize(BAR_CONFIG[b].button_size + BAR_CONFIG[b].button_gap,
-				BAR_CONFIG[b].button_size * #bdata.buttons + BAR_CONFIG[b].button_gap * #bdata.buttons)
+			bar:SetSize(BAR_CFG[b].button_size + BAR_CFG[b].button_gap,
+				BAR_CFG[b].button_size * #bdata.buttons + BAR_CFG[b].button_gap * #bdata.buttons)
 		end
 
 		if tonumber(match(b, "(%d+)")) == 1 then
@@ -190,21 +189,22 @@ function ActionBars:Initialize()
 		end
 
 		if tonumber(match(b, "(%d+)")) == 6 then
-			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].direction, E.SkinPetActionButton, bdata.original_bar)
+			E:SetButtonPosition(bdata.buttons, BAR_CFG[b].button_size, BAR_CFG[b].button_gap, bar, BAR_CFG[b].direction, E.SkinPetActionButton, bdata.original_bar)
 		else
-			E:SetButtonPosition(bdata.buttons, BAR_CONFIG[b].button_size, BAR_CONFIG[b].button_gap, bar, BAR_CONFIG[b].direction, E.SkinActionButton, bdata.original_bar)
+			E:SetButtonPosition(bdata.buttons, BAR_CFG[b].button_size, BAR_CFG[b].button_gap, bar, BAR_CFG[b].direction, E.SkinActionButton, bdata.original_bar)
 		end
 
 		if bdata.condition then
 			RegisterStateDriver(bar, "visibility", bdata.condition)
 		end
 
-		ns.bars[b] = bar
+		ActionBars.bars[b] = bar
 	end
 
-	for b, bar in next, ns.bars do
-		if BAR_CONFIG[b].point then
-			bar:SetPoint(unpack(BAR_CONFIG[b].point))
+
+	for b, bar in next, ActionBars.bars do
+		if BAR_CFG[b].point then
+			bar:SetPoint(unpack(BAR_CFG[b].point))
 		else
 			SetStancePetActionBarPosition(bar)
 		end

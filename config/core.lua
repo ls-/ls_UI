@@ -1,9 +1,7 @@
 local _, ns = ...
 local E, C, D = ns.E, ns.C, ns.D
 
-E.CFG = CreateFrame("Frame")
-
-local CFG = E.CFG
+local CFG = CreateFrame("Frame", "LSConfigModule"); E.CFG = CFG
 
 local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton =
 	UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton

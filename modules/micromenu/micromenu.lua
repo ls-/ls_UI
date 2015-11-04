@@ -1,16 +1,14 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
+local MM = CreateFrame("Frame", "LSMicroMenuModule"); E.MM = MM
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
 
-E.MM = {}
-
-local MM = E.MM
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
-
-local wipe, find, unpack = wipe, strfind, unpack
+local wipe, unpack = wipe, unpack
+local find = strfind
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {

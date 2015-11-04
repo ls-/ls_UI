@@ -1,9 +1,6 @@
 local _, ns = ...
 local E, M = ns.E, ns.M
-
-E.Mail = {}
-
-local Mail = E.Mail
+local Mail = CreateFrame("Frame", "LSMailModule"); E.Mail = Mail
 
 local LazyLootMail, ReceiveMail
 

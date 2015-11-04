@@ -1,9 +1,6 @@
 local _, ns = ...
 local E, C, M, oUF = ns.E, ns.C, ns.M, ns.oUF
-
-E.UF = {}
-
-local UF = E.UF
+local UF = CreateFrame("Frame", "LSUnitFrameModule") E.UF = UF
 
 UF.objects, UF.headers = {}, {}
 

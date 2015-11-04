@@ -1,9 +1,7 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
-
-E.Vehicle = {}
-
-local Vehicle = E.Vehicle
+local E, C, M = ns.E, ns.C, ns.M
+local Vehicle = CreateFrame("Frame", "LSVehicleExitButtonModule"); E.Vehicle = Vehicle
+local VEHICLE_CFG
 
 local function LeaveButton_OnEvent(self, event)
 	if not InCombatLockdown() then
@@ -37,11 +35,11 @@ local function LeaveButton_OnClick(self)
 end
 
 function Vehicle:Initialize()
-	local VEHICLE_CONFIG = ns.C.bars.vehicle
+	VEHICLE_CFG = C.bars.vehicle
 
 	local button = CreateFrame("Button", "LSVehicleExitButton", UIParent, "SecureHandlerBaseTemplate")
-	button:SetSize(VEHICLE_CONFIG.button_size, VEHICLE_CONFIG.button_size)
-	button:SetPoint(unpack(VEHICLE_CONFIG.point))
+	button:SetSize(VEHICLE_CFG.button_size, VEHICLE_CFG.button_size)
+	button:SetPoint(unpack(VEHICLE_CFG.point))
 	button:SetFrameStrata("LOW")
 	button:SetFrameLevel(2)
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
@@ -49,11 +47,10 @@ function Vehicle:Initialize()
 	button:SetScript("OnEvent", LeaveButton_OnEvent)
 	button:SetScript("OnClick", LeaveButton_OnClick)
 	E:CreateMover(button)
-
 	E:CreateBorder(button)
 	button:SetBorderColor(1, 0.1, 0.15)
 
-	icon = button:CreateTexture()
+	local icon = button:CreateTexture()
 	icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 	E:TweakIcon(icon, 12 / 64, 52 / 64, 12 / 64, 52 / 64)
 	button.Icon = icon

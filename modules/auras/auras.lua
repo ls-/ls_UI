@@ -1,15 +1,10 @@
 ﻿local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M = ns.E, ns.C, ns.M
+local Auras = CreateFrame("Frame", "LSAurasModule"); E.Auras = Auras
+local AURAS_CFG
 
-E.Auras = {}
-
-local Auras = E.Auras
-
-local AURA_CONFIG
-
-local BuffFrame = BuffFrame
-local ConsolidatedBuffs = ConsolidatedBuffs
-local TemporaryEnchantFrame = TemporaryEnchantFrame
+local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs =
+	BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
 
 local function UpdateBuffAnchors()
 	local numBuffs, slack = 0, 0
@@ -27,13 +22,13 @@ local function UpdateBuffAnchors()
 			index = numBuffs + slack
 
 			button:ClearAllPoints()
-			button:SetSize(AURA_CONFIG.aura_size, AURA_CONFIG.aura_size)
+			button:SetSize(AURAS_CFG.aura_size, AURAS_CFG.aura_size)
 
 			if index > 1 and (mod(index, 16) == 1) then
 				if index == 17 then
-					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -AURA_CONFIG.aura_gap)
+					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -AURAS_CFG.aura_gap)
 				else
-					button:SetPoint("TOP", above, "BOTTOM", 0, -AURA_CONFIG.aura_gap)
+					button:SetPoint("TOP", above, "BOTTOM", 0, -AURAS_CFG.aura_gap)
 				end
 
 				above = button
@@ -43,9 +38,9 @@ local function UpdateBuffAnchors()
 				above = button
 			else
 				if numBuffs == 1 then
-					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -AURA_CONFIG.aura_gap, 0)
+					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -AURAS_CFG.aura_gap, 0)
 				else
-					button:SetPoint("RIGHT", previous, "LEFT", -AURA_CONFIG.aura_gap, 0)
+					button:SetPoint("RIGHT", previous, "LEFT", -AURAS_CFG.aura_gap, 0)
 				end
 			end
 
@@ -58,14 +53,13 @@ end
 
 local function UpdateDebuffAnchors(name, i)
 	local button = _G[name..i]
-
 	button:ClearAllPoints()
-	button:SetSize(AURA_CONFIG.aura_size, AURA_CONFIG.aura_size)
+	button:SetSize(AURAS_CFG.aura_size, AURAS_CFG.aura_size)
 
 	if i == 1 then
 		button:SetPoint("CENTER", LSDebuffHeader, "CENTER", 0, 0)
 	else
-		button:SetPoint("RIGHT", _G[name..(i - 1)], "LEFT", -AURA_CONFIG.aura_gap, 0)
+		button:SetPoint("RIGHT", _G[name..(i - 1)], "LEFT", -AURAS_CFG.aura_gap, 0)
 	end
 
 	E:SkinAuraButton(button)
@@ -79,12 +73,12 @@ local function UpdateTemporaryEnchantAnchors()
 
 		if button then
 			button:ClearAllPoints()
-			button:SetSize(AURA_CONFIG.aura_size, AURA_CONFIG.aura_size)
+			button:SetSize(AURAS_CFG.aura_size, AURAS_CFG.aura_size)
 
 			if i == 1 then
 				button:SetPoint("CENTER", 0, 0)
 			else
-				button:SetPoint("RIGHT", previous, "LEFT", -AURA_CONFIG.aura_gap, 0)
+				button:SetPoint("RIGHT", previous, "LEFT", -AURAS_CFG.aura_gap, 0)
 			end
 
 			E:SkinAuraButton(button)
@@ -95,24 +89,24 @@ local function UpdateTemporaryEnchantAnchors()
 end
 
 function Auras:Initialize()
-	AURA_CONFIG = ns.C.auras
+	AURAS_CFG = C.auras
 
 	local header1 = CreateFrame("Frame", "LSBuffHeader", UIParent)
-	header1:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
-		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
-	header1:SetPoint(unpack(AURA_CONFIG.buff.point))
+	header1:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+	header1:SetPoint(unpack(AURAS_CFG.buff.point))
 	E:CreateMover(header1)
 
 	local header2 = CreateFrame("Frame", "LSDebuffHeader", UIParent)
-	header2:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
-		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
-	header2:SetPoint(unpack(AURA_CONFIG.debuff.point))
+	header2:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+	header2:SetPoint(unpack(AURAS_CFG.debuff.point))
 	E:CreateMover(header2)
 
 	local header3 = CreateFrame("Frame", "LSTempEnchantHeader", UIParent)
-	header3:SetSize(AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2,
-		AURA_CONFIG.aura_size + AURA_CONFIG.aura_gap * 2)
-	header3:SetPoint(unpack(AURA_CONFIG.tempench.point))
+	header3:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+	header3:SetPoint(unpack(AURAS_CFG.tempench.point))
 	E:CreateMover(header3)
 
 	BuffFrame:SetParent(header1)
