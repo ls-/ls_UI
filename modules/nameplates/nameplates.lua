@@ -202,7 +202,7 @@ end
 
 local function NamePlate_OnHide(self)
 	Plates[self]:Hide()
-	Plates[self].TargetMark:Hide()
+	-- Plates[self].TargetMark:Hide()
 	E:StopBlink(Plates[self].ComboBar.Glow, true)
 	Plates[self].ComboBar:Hide()
 	self.isMouseover = nil
@@ -335,11 +335,11 @@ local function HandleNamePlate(self)
 	threat:Hide()
 	overlay.Threat = threat
 
-	local targetMark = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
-	targetMark:SetTexture(1,0,0)
-	targetMark:SetPoint("TOP", 0, 10)
-	targetMark:Hide()
-	overlay.TargetMark = targetMark
+	-- local targetMark = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+	-- targetMark:SetTexture(1,0,0)
+	-- targetMark:SetPoint("TOP", 0, 10)
+	-- targetMark:Hide()
+	-- overlay.TargetMark = targetMark
 
 	local r, g, b = unpack(COLORS.power["COMBO_POINTS"])
 
@@ -455,10 +455,10 @@ end
 
 local function UpdateTargetPlate(self)
 	if self.unit == "target" then
-		Plates[self].TargetMark:Show()
+		-- Plates[self].TargetMark:Show()
 		ShowComboBarAtGUID(UnitGUID("target"))
 	else
-		Plates[self].TargetMark:Hide()
+		-- Plates[self].TargetMark:Hide()
 		E:StopBlink(Plates[self].ComboBar.Glow, true)
 		Plates[self].ComboBar:Hide()
 	end
