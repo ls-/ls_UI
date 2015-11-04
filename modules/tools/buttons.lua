@@ -403,7 +403,7 @@ function E:SkinPetActionButton(button)
 	local bShine = _G[name.."Shine"]
 	local bHotKey = button.HotKey
 
-	if bCD then
+	if bCD and bCD.SetTimerTextHeight then
 		bCD:SetTimerTextHeight(10)
 	end
 
