@@ -1,3 +1,11 @@
+#Version 2.8
+
+- Added nameplate combo-bar and simple in-game config;
+- Added a possibility to pick up usable items directly from quest tracker. Hold shift button, drag it and then drop it on your actionbar;
+- Replaced character micro button tooltip durability text with a simple indicator on the button;
+- Restored compatibility with OmniCC;
+- Fixed few bugs here and there.
+
 #Version 2.7
 
 - Fixed combo bar issue.
