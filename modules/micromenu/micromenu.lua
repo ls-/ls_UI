@@ -156,6 +156,7 @@ local function CharacterMicroButton_OnEnter(self)
 	local hasInfo
 
 	if C_PetBattles.IsInBattle() then
+		local hasTitle = false
 		for i = 1, 3 do
 			local petID, _, _, _, locked = C_PetJournal.GetPetLoadOutInfo(i)
 
@@ -165,8 +166,10 @@ local function CharacterMicroButton_OnEnter(self)
 				local color = ITEM_QUALITY_COLORS[rarity - 1]
 
 				if level < 25 then
-					if i == 1 then
+					if not hasTitle then
 						GameTooltip:AddLine(EXPERIENCE_COLON)
+
+						hasTitle = true
 					else
 						GameTooltip:AddLine(" ")
 					end
