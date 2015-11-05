@@ -75,5 +75,39 @@ function E:EventHandler(event, ...)
 	self[event](self, ...)
 end
 
+function E:AddModule(name, addEventHandler)
+	local module = CreateFrame("Frame", "LS"..name.."Module")
+
+	if addEventHandler then
+		module:SetScript("OnEvent", E.EventHandler)
+	end
+
+	if not E.Modules then
+		E.Modules = {}
+	end
+
+	E.Modules[name] = module
+
+	return module
+end
+
+function E:GetModule(name)
+	if not E.Modules[name] then
+		error("Module "..name.." doesn't exist!")
+	end
+
+	return E.Modules[name]
+end
+
+function E:InitializeModules()
+	for name, module in next, E.Modules do
+		if not module.Initialize then
+			print("Module "..name.." doesn\'t have initializer.")
+		else
+			module:Initialize()
+		end
+	end
+end
+
 SLASH_RELOADUI1 = "/rl"
 SlashCmdList.RELOADUI = ReloadUI
