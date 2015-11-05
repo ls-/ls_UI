@@ -14,7 +14,7 @@ local UNKNOWNOBJECT = UNKNOWNOBJECT
 local Plates = {}
 local GUIDs = {}
 -- local playerGUID
-local prevNumChildren = 0
+local plateIndex
 local targetExists, mouseoverExists = false, false
 local targetName = ""
 local updateRequired = false
@@ -201,6 +201,7 @@ local function NamePlate_OnHide(self)
 	-- Plates[self].TargetMark:Hide()
 	E:StopBlink(Plates[self].ComboBar.Glow, true)
 	Plates[self].ComboBar:Hide()
+	Plates[self].Threat:Hide()
 	self.isMouseover = nil
 	self.isTarget = nil
 	self.unit = nil
@@ -376,6 +377,8 @@ local function HandleNamePlate(self)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
 	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)
 	sizer.ParentFrame = self
+
+	plateIndex = plateIndex + 1
 end
 
 local function UpdateUnitInfo(self)
@@ -462,24 +465,21 @@ end
 
 local updateOnOddIteration
 local isOddIteration = true
-local function WorldFrame_OnUpdateHook(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	if self.elapsed > 0.1 then
-		local curNumChildren = WorldFrame:GetNumChildren()
-		if curNumChildren ~= prevNumChildren  then
-			for i = prevNumChildren + 1, curNumChildren do
-				local f = select(i, WorldFrame:GetChildren())
-				local name = f:GetName()
-				if (name and match(name, "^NamePlate%d")) and not Plates[f] then
-					HandleNamePlate(f)
-				end
+local function NP_OnUpdate(self, elapsed)
+	if not plateIndex then
+		for _, plate in next, {WorldFrame:GetChildren()} do
+			local name = plate:GetName()
+			if name and match(name, "^NamePlate%d+$") then
+				plateIndex = match(name, "(%d+)")
+				HandleNamePlate(plate)
+				break
 			end
-
-			prevNumChildren = curNumChildren
 		end
-
-		self.elapsed = 0
+	else
+		local plate = _G["NamePlate"..plateIndex]
+		if plate and not Plates[plate] then
+			HandleNamePlate(plate)
+		end
 	end
 
 	for plate, overlay in next, Plates do
