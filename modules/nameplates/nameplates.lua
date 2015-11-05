@@ -1,7 +1,7 @@
 local _, ns = ...
 local C, E, M = ns.C, ns.E, ns.M
-local NP = CreateFrame("Frame", "LSNamePlateModule"); E.NP = NP
 local COLORS = M.colors
+local NP = E:AddModule("NamePlates", true)
 local NP_CFG
 
 local tonumber, format, match, unpack, select, setmetatable, next	=
@@ -575,8 +575,8 @@ function NP:Enable()
 		return false, "|cffe52626Error!|r Can't be done, while in combat."
 	end
 
-	if not NP:IsEnabled() then
-		NP:Initialize()
+	if not self:IsEnabled() then
+		self:Initialize(true)
 	else
 		return true, "|cffe56619Warning!|r NP is already enabled."
 	end
@@ -589,7 +589,7 @@ function NP:IsComboBarEnabled()
 end
 
 function NP:EnableComboBar(...)
-	if not NP:IsComboBarEnabled() then
+	if not self:IsComboBarEnabled() then
 		if InCombatLockdown() then
 	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
 	 	end
@@ -597,7 +597,6 @@ function NP:EnableComboBar(...)
 		self:RegisterEvent("PLAYER_TARGET_CHANGED")
 		self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 		self:RegisterEvent("UNIT_COMBO_POINTS")
-		self:SetScript("OnEvent", E.EventHandler)
 
 		if UnitGUID("target") and UnitExists("target") and
 			not UnitIsUnit("target", "player") and not UnitIsDead("target") then
@@ -613,7 +612,7 @@ function NP:EnableComboBar(...)
 end
 
 function NP:DisableComboBar(...)
-	if NP:IsComboBarEnabled() then
+	if self:IsComboBarEnabled() then
 		if InCombatLockdown() then
 	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
 	 	end
@@ -625,7 +624,6 @@ function NP:DisableComboBar(...)
 		self:UnregisterEvent("UNIT_COMBO_POINTS")
 		self:UnregisterEvent("PLAYER_TARGET_CHANGED")
 		self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
-		self:SetScript("OnEvent", nil)
 
 	 	return true, "|cff26a526Success!|r NP combo bar is disabled."
 	else
@@ -649,18 +647,20 @@ function NP:HideHealthText()
 	return true, "|cff26a526Success!|r Health percentage is now hidden."
 end
 
-function NP:Initialize()
+function NP:Initialize(forceInit)
 	NP_CFG = C.nameplates
 
-	WorldFrame:HookScript("OnUpdate", WorldFrame_OnUpdateHook)
+	if NP_CFG.enabled or forceInit then
+		self:SetScript("OnUpdate", NP_OnUpdate)
 
-	-- if UnitGUID("player") then
-	-- 	playerGUID = UnitGUID("player")
-	-- end
+		-- if UnitGUID("player") then
+		-- 	playerGUID = UnitGUID("player")
+		-- end
 
-	if NP_CFG.show_combo then
-		self:EnableComboBar()
+		if NP_CFG.show_combo then
+			self:EnableComboBar()
+		end
+
+		self.isRunning = true
 	end
-
-	self.isRunning = true
 end

@@ -1,6 +1,7 @@
 local _, ns = ...
 local E, C, D = ns.E, ns.C, ns.D
-local CFG, NP = E.CFG, E.NP
+local CFG = E.CFG
+local NP = E:GetModule("NamePlates")
 
 local function NPConfigPanel_OnShow(self)
 	if InCombatLockdown() then

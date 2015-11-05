@@ -32,9 +32,9 @@ function E:ADDON_LOADED(arg)
 		end
 	end
 
-	if C.nameplates.enabled then
-		E.NP:Initialize()
-	end
+	-- if C.nameplates.enabled then
+	-- 	E.NP:Initialize()
+	-- end
 
 	if C.auratracker.enabled then
 		E.AT:Initialize()
@@ -47,6 +47,8 @@ function E:ADDON_LOADED(arg)
 	if C.mail.enabled then
 		E.Mail:Initialize()
 	end
+
+	E:InitializeModules()
 
 	E.TT:Initialize()
 
