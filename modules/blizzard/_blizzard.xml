@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="blizzard.lua"/>
+	<Script file="core.lua"/>
 	<Script file="archaeology.lua"/>
 	<Script file="timer.lua"/>
 	<Script file="objectivetracker.lua"/>
