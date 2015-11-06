@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local Bags = CreateFrame("Frame", "LSBagModule"); E.Bags = Bags
 local COLORS = M.colors
 local GRADIENT = COLORS.gradient["GYR"]

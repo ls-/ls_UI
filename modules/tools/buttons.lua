@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS, TEXTURES = M.colors, M.textures
 
 local unpack = unpack

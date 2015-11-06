@@ -1,5 +1,5 @@
 local _, ns = ...
-local C, E, M = ns.C, ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
 local NP = E:AddModule("NamePlates", true)
 local NP_CFG

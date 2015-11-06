@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local Extra = CreateFrame("Frame", "LSExtraButtonModule"); E.Extra = Extra
 
 local function LeaveButton_OnEvent(self, event)

@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E.UF
 
 local ICONS = {

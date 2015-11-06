@@ -1,7 +1,7 @@
 -- Based on code from oUF Smooth Update by Xuerian
 
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
 local Smoother = CreateFrame("Frame")
 

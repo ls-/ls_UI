@@ -1,7 +1,7 @@
 -- Based on code from oUF_Phanx by Phanx <addons@phanx.net>
 
 local _, ns = ...
-local E, M = ns.E, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
 local sections = {"TOPLEFT", "TOP", "TOPRIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT", "LEFT", "RIGHT"}
 

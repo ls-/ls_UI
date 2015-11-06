@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local ActionBars = CreateFrame("Frame", "LSActionBarModule"); E.ActionBars = ActionBars
 local COLORS, TEXTURES = M.colors, M.textures
 local BAR_CFG
