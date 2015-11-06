@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
-local B = E.Blizzard
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local B = E:GetModule("Blizzard")
 
 function B:HandleTimers()
 	E:HandleStatusBar(MirrorTimer1, true)

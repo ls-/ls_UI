@@ -30,8 +30,6 @@ function E:ADDON_LOADED(arg)
 
 	E:InitializeModules()
 
-	E.Blizzard:Initialize()
-
 	lsOptionsFrame_Initialize()
 
 	self:UnregisterEvent("ADDON_LOADED")

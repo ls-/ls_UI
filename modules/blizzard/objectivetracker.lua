@@ -1,7 +1,7 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
-local B = E.Blizzard
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
+local B = E:GetModule("Blizzard")
 
 local OT_UNLOCKED
 

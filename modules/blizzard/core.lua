@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
-local B = CreateFrame("Frame", "LSBlizzardModule"); E.Blizzard = B
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local B = E:AddModule("Blizzard")
 
 function B:Initialize()
 	B:HandleArchaeology()
