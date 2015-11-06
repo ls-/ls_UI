@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, M = ns.E, ns.M
-local Mail = CreateFrame("Frame", "LSMailModule"); E.Mail = Mail
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local Mail = E:AddModule("Mail")
 
 local LazyLootMail, ReceiveMail
 
@@ -132,28 +132,30 @@ function ReceiveMail()
 end
 
 function Mail:Initialize()
-	local button = CreateFrame("Button", nil, InboxFrame)
-	button:SetSize(28, 28)
-	button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
-	button:RegisterEvent("MAIL_INBOX_UPDATE")
-	button:RegisterEvent("MAIL_CLOSED")
-	button:SetScript("OnEvent", ReceiveButton_OnEvent)
-	button:SetScript("OnEnter", ReceiveButton_OnEnter)
-	button:SetScript("OnLeave", ReceiveButton_OnLeave)
-	button:SetScript("OnClick", ReceiveMail)
-	button:Disable()
+	if C.mail.enabled then
+		local button = CreateFrame("Button", nil, InboxFrame)
+		button:SetSize(28, 28)
+		button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
+		button:RegisterEvent("MAIL_INBOX_UPDATE")
+		button:RegisterEvent("MAIL_CLOSED")
+		button:SetScript("OnEvent", ReceiveButton_OnEvent)
+		button:SetScript("OnEnter", ReceiveButton_OnEnter)
+		button:SetScript("OnLeave", ReceiveButton_OnLeave)
+		button:SetScript("OnClick", ReceiveMail)
+		button:Disable()
 
-	button:SetHighlightTexture(1)
-	ns.lsSetHighlightTexture(button:GetHighlightTexture())
+		button:SetHighlightTexture(1)
+		ns.lsSetHighlightTexture(button:GetHighlightTexture())
 
-	button:SetPushedTexture(1)
-	ns.lsSetPushedTexture(button:GetPushedTexture())
+		button:SetPushedTexture(1)
+		ns.lsSetPushedTexture(button:GetPushedTexture())
 
-	E:CreateBorder(button, 8)
+		E:CreateBorder(button, 8)
 
-	local icon = button:CreateTexture()
-	icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
-	icon:SetDesaturated(true)
-	E:TweakIcon(icon)
-	button.Icon = icon
+		local icon = button:CreateTexture()
+		icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
+		icon:SetDesaturated(true)
+		E:TweakIcon(icon)
+		button.Icon = icon
+	end
 end

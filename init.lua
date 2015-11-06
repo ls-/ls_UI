@@ -8,14 +8,6 @@ function E:ADDON_LOADED(arg)
 
 	self:CopyTable(self:CopyTable(D, oUF_LS_CONFIG), C)
 
-	if C.minimap.enabled then
-		E.Minimap:Initialize()
-	end
-
-	if C.auras.enabled then
-		E.Auras:Initialize()
-	end
-
 	if C.infobars.enabled then
 		ns.lsInfobars_Initialize()
 	end
@@ -32,25 +24,11 @@ function E:ADDON_LOADED(arg)
 		end
 	end
 
-	-- if C.nameplates.enabled then
-	-- 	E.NP:Initialize()
-	-- end
-
-	if C.auratracker.enabled then
-		E.AT:Initialize()
-	end
-
 	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
 	end
 
-	if C.mail.enabled then
-		E.Mail:Initialize()
-	end
-
 	E:InitializeModules()
-
-	E.TT:Initialize()
 
 	E.Blizzard:Initialize()
 

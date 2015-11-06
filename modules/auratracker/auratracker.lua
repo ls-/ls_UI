@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local AT = CreateFrame("Frame", "LSAuraTrackerModule"); E.AT = AT
+local AT = E:AddModule("AuraTracker")
 local AT_CFG
 
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
@@ -174,7 +174,7 @@ function AT:Enable()
  		return false, "|cffe52626Error!|r Can't be done, while in combat."
  	end
 	if not AT:IsRunning() then
- 		AT:Initialize()
+ 		AT:Initialize(true)
  	end
 
 	AT.Tracker:Show()
@@ -267,86 +267,88 @@ local function ATHeader_OnDragStop(self)
 	AT_CFG.point = {E:GetCoords(self:GetParent())}
 end
 
-function AT:Initialize()
+function AT:Initialize(forceInit)
 	AT_CFG = C.auratracker
 
-	local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
-	tracker:SetClampedToScreen(true)
-	tracker:SetMovable(true)
-	tracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-	tracker:SetScript("OnEvent", AT_Update)
-	AT.Tracker = tracker
+	if AT_CFG.enabled or forceInit then
+		local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
+		tracker:SetClampedToScreen(true)
+		tracker:SetMovable(true)
+		tracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+		tracker:SetScript("OnEvent", AT_Update)
+		AT.Tracker = tracker
 
-	local buttons = {}
+		local buttons = {}
 
-	for i = 1, 12 do
-		local button = CreateFrame("Frame", nil, UIParent)
-		button:SetFrameLevel(tracker:GetFrameLevel() + 1)
-		button:Hide()
-		button:SetScript("OnEnter", ATButton_OnEnter)
-		button:SetScript("OnLeave", ATButton_OnLeave)
-		button:SetScript("OnUpdate", ATButton_OnUpdate)
-		E:CreateBorder(button)
-		buttons[i] = button
+		for i = 1, 12 do
+			local button = CreateFrame("Frame", nil, UIParent)
+			button:SetFrameLevel(tracker:GetFrameLevel() + 1)
+			button:Hide()
+			button:SetScript("OnEnter", ATButton_OnEnter)
+			button:SetScript("OnLeave", ATButton_OnLeave)
+			button:SetScript("OnUpdate", ATButton_OnUpdate)
+			E:CreateBorder(button)
+			buttons[i] = button
 
-		local icon = button:CreateTexture()
-		E:TweakIcon(icon)
-		button.Icon = icon
+			local icon = button:CreateTexture()
+			E:TweakIcon(icon)
+			button.Icon = icon
 
-		local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
-		cd:ClearAllPoints()
-		cd:SetPoint("TOPLEFT", 1, -1)
-		cd:SetPoint("BOTTOMRIGHT", -1, 1)
-		E:HandleCooldown(cd, 14)
-		button.CD = cd
+			local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+			cd:ClearAllPoints()
+			cd:SetPoint("TOPLEFT", 1, -1)
+			cd:SetPoint("BOTTOMRIGHT", -1, 1)
+			E:HandleCooldown(cd, 14)
+			button.CD = cd
 
-		local cover = CreateFrame("Frame", nil, button)
-		cover:SetAllPoints()
+			local cover = CreateFrame("Frame", nil, button)
+			cover:SetAllPoints()
 
-		local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
-		count:SetPoint("TOPRIGHT", 2, 1)
-		button.Count = count
-	end
+			local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
+			count:SetPoint("TOPRIGHT", 2, 1)
+			button.Count = count
+		end
 
-	tracker.buttons = buttons
+		tracker.buttons = buttons
 
-	if AT_CFG.direction == "RIGHT" or AT_CFG.direction == "LEFT" then
-		tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
-	else
-		tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
-	end
+		if AT_CFG.direction == "RIGHT" or AT_CFG.direction == "LEFT" then
+			tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
+		else
+			tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
+		end
 
-	E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
+		E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
 
-	local header = CreateFrame("Button", nil, tracker)
-	header:SetClampedToScreen(true)
-	header:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, 0)
-	header:RegisterForDrag("LeftButton")
-	header:SetScript("OnEnter", ATHeader_OnEnter)
-	header:SetScript("OnLeave", ATHeader_OnLeave)
-	header:SetScript("OnDragStart", ATHeader_OnDragStart)
-	header:SetScript("OnDragStop", ATHeader_OnDragStop)
-	AT.Header = header
+		local header = CreateFrame("Button", nil, tracker)
+		header:SetClampedToScreen(true)
+		header:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, 0)
+		header:RegisterForDrag("LeftButton")
+		header:SetScript("OnEnter", ATHeader_OnEnter)
+		header:SetScript("OnLeave", ATHeader_OnLeave)
+		header:SetScript("OnDragStart", ATHeader_OnDragStart)
+		header:SetScript("OnDragStop", ATHeader_OnDragStop)
+		AT.Header = header
 
-	local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.82, 0)
-	label:SetPoint("LEFT", 2, 0)
-	label:SetAlpha(0.2)
-	label:SetText(BUFFOPTIONS_LABEL)
-	header.Text = label
+		local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.82, 0)
+		label:SetPoint("LEFT", 2, 0)
+		label:SetAlpha(0.2)
+		label:SetText(BUFFOPTIONS_LABEL)
+		header.Text = label
 
-	header:SetSize(label:GetWidth(), 22)
+		header:SetSize(label:GetWidth(), 22)
 
-	SLASH_ATBUFF1 = "/atbuff"
-	SlashCmdList["ATBUFF"] = function(msg)
-		local _, text = AT:AddToList("HELPFUL", tonumber(msg))
+		SLASH_ATBUFF1 = "/atbuff"
+		SlashCmdList["ATBUFF"] = function(msg)
+			local _, text = AT:AddToList("HELPFUL", tonumber(msg))
 
-		print("|cff1ec77eAuraTracker|r: "..text)
-	end
+			print("|cff1ec77eAuraTracker|r: "..text)
+		end
 
-	SLASH_ATDEBUFF1 = "/atdebuff"
-	SlashCmdList["ATDEBUFF"] = function(msg)
-		local _, text = AT:AddToList("HARMFUL", tonumber(msg))
+		SLASH_ATDEBUFF1 = "/atdebuff"
+		SlashCmdList["ATDEBUFF"] = function(msg)
+			local _, text = AT:AddToList("HARMFUL", tonumber(msg))
 
-		print("|cff1ec77eAuraTracker|r: "..text)
+			print("|cff1ec77eAuraTracker|r: "..text)
+		end
 	end
 end

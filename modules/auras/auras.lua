@@ -1,6 +1,6 @@
 ﻿local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
-local Auras = CreateFrame("Frame", "LSAurasModule"); E.Auras = Auras
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local AURAS = E:AddModule("Auras")
 local AURAS_CFG
 
 local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs =
@@ -88,39 +88,41 @@ local function UpdateTemporaryEnchantAnchors()
 	end
 end
 
-function Auras:Initialize()
+function AURAS:Initialize()
 	AURAS_CFG = C.auras
 
-	local header1 = CreateFrame("Frame", "LSBuffHeader", UIParent)
-	header1:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
-		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
-	header1:SetPoint(unpack(AURAS_CFG.buff.point))
-	E:CreateMover(header1)
+	if AURAS_CFG.enabled then
+		local header1 = CreateFrame("Frame", "LSBuffHeader", UIParent)
+		header1:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+			AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+		header1:SetPoint(unpack(AURAS_CFG.buff.point))
+		E:CreateMover(header1)
 
-	local header2 = CreateFrame("Frame", "LSDebuffHeader", UIParent)
-	header2:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
-		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
-	header2:SetPoint(unpack(AURAS_CFG.debuff.point))
-	E:CreateMover(header2)
+		local header2 = CreateFrame("Frame", "LSDebuffHeader", UIParent)
+		header2:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+			AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+		header2:SetPoint(unpack(AURAS_CFG.debuff.point))
+		E:CreateMover(header2)
 
-	local header3 = CreateFrame("Frame", "LSTempEnchantHeader", UIParent)
-	header3:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
-		AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
-	header3:SetPoint(unpack(AURAS_CFG.tempench.point))
-	E:CreateMover(header3)
+		local header3 = CreateFrame("Frame", "LSTempEnchantHeader", UIParent)
+		header3:SetSize(AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2,
+			AURAS_CFG.aura_size + AURAS_CFG.aura_gap * 2)
+		header3:SetPoint(unpack(AURAS_CFG.tempench.point))
+		E:CreateMover(header3)
 
-	BuffFrame:SetParent(header1)
-	BuffFrame:SetAllPoints()
+		BuffFrame:SetParent(header1)
+		BuffFrame:SetAllPoints()
 
-	TemporaryEnchantFrame:SetParent(header3)
-	TemporaryEnchantFrame:SetAllPoints()
+		TemporaryEnchantFrame:SetParent(header3)
+		TemporaryEnchantFrame:SetAllPoints()
 
-	UpdateTemporaryEnchantAnchors(header3)
+		UpdateTemporaryEnchantAnchors(header3)
 
-	hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
-	hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
+		hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
+		hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
 
-	E:SkinAuraButton(ConsolidatedBuffs)
+		E:SkinAuraButton(ConsolidatedBuffs)
 
-	ConsolidatedBuffsTooltip:SetScale(1)
+		ConsolidatedBuffsTooltip:SetScale(1)
+	end
 end

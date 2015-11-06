@@ -1,8 +1,8 @@
 local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
-local TT = CreateFrame("Frame", "LSTooltipModule"); E.TT = TT
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
 local INLINE_ICONS = M.textures.inlineicons
+local TT = E:AddModule("Tooltip")
 
 local LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND, PET =
 	LE_REALM_RELATION_VIRTUAL, INTERACTIVE_SERVER_LABEL, FOREIGN_SERVER_LABEL, CHAT_FLAG_AFK, CHAT_FLAG_DND, PET

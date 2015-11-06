@@ -1,6 +1,7 @@
 local _, ns = ...
 local E, C, D = ns.E, ns.C, ns.D
-local CFG, AT = E.CFG, E.AT
+local CFG = E.CFG
+local AT = E:GetModule("AuraTracker")
 
 local FauxScrollFrame_Update, FauxScrollFrame_OnVerticalScroll, FauxScrollFrame_SetOffset, FauxScrollFrame_GetOffset =
 	FauxScrollFrame_Update, FauxScrollFrame_OnVerticalScroll, FauxScrollFrame_SetOffset, FauxScrollFrame_GetOffset
