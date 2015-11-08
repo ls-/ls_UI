@@ -254,54 +254,65 @@ local function QuestLogMicroButton_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function EJMicroButton_OnEnter(self)
-	local savedInstances = GetNumSavedInstances()
-	local savedWorldBosses = GetNumSavedWorldBosses()
+local function UpdateEJMicroButtonTooltip(button, event)
+	if event == "UPDATE_INSTANCE_INFO" or event == "FORCE_UPDATE" then
+		if GameTooltip:GetOwner() ~= button then return end
 
-	if savedInstances + savedWorldBosses == 0 then return end
+		if event == "UPDATE_INSTANCE_INFO" then
+			GameTooltip:Hide()
+			GameTooltip_AddNewbieTip(button, button.tooltipText, 1, 1, 1, button.newbieText)
+			GameTooltip:AddLine(" ")
+		end
 
-	local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
-	local hasTitle
+		local savedInstances = GetNumSavedInstances()
+		local savedWorldBosses = GetNumSavedWorldBosses()
 
-	RequestRaidInfo()
+		if savedInstances + savedWorldBosses == 0 then return end
 
-	for i = 1, savedInstances + savedWorldBosses do
-		if i <= savedInstances then
-			instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
-			if instanceReset > 0 then
-				if not hasTitle then
-					GameTooltip:AddLine(RAID_INFO..":")
+		local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
+		local hasTitle
 
-					hasTitle = true
-				else
-					GameTooltip:AddLine(" ")
+		for i = 1, savedInstances + savedWorldBosses do
+			if i <= savedInstances then
+				instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+				if instanceReset > 0 then
+					if not hasTitle then
+						GameTooltip:AddLine(RAID_INFO..":")
+
+						hasTitle = true
+					else
+						GameTooltip:AddLine(" ")
+					end
+
+					local color = encounterProgress == numEncounters and {0.9, 0.15, 0.15} or {0.15, 0.65, 0.15}
+
+					GameTooltip:AddDoubleLine(instanceName, encounterProgress.."/"..numEncounters, 1, 1, 1, unpack(color))
+					GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 				end
+			else
+				instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
+				if instanceReset > 0 then
+					if not hasTitle then
+						GameTooltip:AddLine(RAID_INFO..":")
 
-				local color = encounterProgress == numEncounters and {0.9, 0.15, 0.15} or {0.15, 0.65, 0.15}
+						hasTitle = true
+					else
+						GameTooltip:AddLine(" ")
+					end
 
-				GameTooltip:AddDoubleLine(instanceName, encounterProgress.."/"..numEncounters, 1, 1, 1, unpack(color))
-				GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
-			end
-		else
-			instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
-			if instanceReset > 0 then
-				if not hasTitle then
-					GameTooltip:AddLine(RAID_INFO..":")
-
-					hasTitle = true
-				else
-					GameTooltip:AddLine(" ")
+					GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0.15, 0.15)
+					GameTooltip:AddDoubleLine(RAID_INFO_WORLD_BOSS, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 				end
-
-				GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0.15, 0.15)
-				GameTooltip:AddDoubleLine(RAID_INFO_WORLD_BOSS, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 			end
 		end
-	end
 
-	if hasTitle then
 		GameTooltip:Show()
 	end
+end
+
+local function EJMicroButton_OnEnter(self)
+	RequestRaidInfo()
+	UpdateEJMicroButtonTooltip(self, "FORCE_UPDATE")
 end
 
 local function MicroButton_OnLeave(self)
@@ -470,7 +481,9 @@ function MM:Initialize()
 		elseif b == "QuestLogMicroButton" then
 			button:HookScript("OnEnter", QuestLogMicroButton_OnEnter)
 		elseif b == "EJMicroButton" then
+			button:RegisterEvent("UPDATE_INSTANCE_INFO")
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
+			button:HookScript("OnEvent", UpdateEJMicroButtonTooltip)
 			button.NewAdventureNotice:ClearAllPoints()
 			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
