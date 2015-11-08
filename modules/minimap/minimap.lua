@@ -17,6 +17,7 @@ local WIDGETS = {
 	GuildInstanceDifficulty = {"BOTTOM", -6, -38},
 	MiniMapChallengeMode = {"BOTTOM", -1, -34},
 	GarrisonLandingPageMinimapButton = {"CENTER", -58, -58},
+	TimeManagerClockButton = {"TOP", 0, 12},
 }
 
 local ZONE_COLOR_CODES = {
@@ -225,7 +226,7 @@ local function Minimap_OnEventHook(self, event)
 			end
 		end
 
-		Step(GameTimeFrame.daytime, GetDeltas())
+		Step(GameTimeFrame.DayTimeIndicator, GetDeltas())
 
 		self.handled = true
 	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS"
@@ -260,12 +261,12 @@ local function Calendar_OnEvent(self, event, ...)
 
 		if pendingInvites > self.pendingInvites then
 			if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
-				E:Blink(self.mark, nil, 0, 1)
+				E:Blink(self.InvIndicator, nil, 0, 1)
 
 				self.pendingInvites = pendingInvites
 			end
 		elseif pendingInvites == 0 then
-			E:StopBlink(self.mark)
+			E:StopBlink(self.InvIndicator)
 		end
 	elseif event == "CALENDAR_EVENT_ALARM" then
 		local title = ...
@@ -276,8 +277,8 @@ local function Calendar_OnEvent(self, event, ...)
 end
 
 local function Calendar_OnClick(self)
-	if self.mark.Blink and self.mark.Blink:IsPlaying() then
-		E:StopBlink(self.mark, 1)
+	if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
+		E:StopBlink(self.InvIndicator, 1)
 
 		self.pendingInvites = 0
 	end
@@ -357,7 +358,6 @@ function MM:Initialize()
 			"MinimapBorder",
 			"MinimapBorderTop",
 			"MinimapBackdrop",
-			"TimeManagerClockButton",
 			"MiniMapTrackingIconOverlay",
 		} do
 			E:ForceHide(_G[f])
@@ -366,9 +366,10 @@ function MM:Initialize()
 		HandleMinimapButton(MiniMapVoiceChatFrame)
 		HandleMinimapButton(GarrisonLandingPageMinimapButton)
 
-		HandleMinimapButton(MiniMapMailFrame)
-		MiniMapMailFrame.Icon:SetPoint("TOPLEFT", 5, -5)
-		MiniMapMailFrame.Icon:SetPoint("BOTTOMRIGHT", -5, 5)
+		local mail = MiniMapMailFrame
+		HandleMinimapButton(mail)
+		mail.Icon:SetPoint("TOPLEFT", 5, -5)
+		mail.Icon:SetPoint("BOTTOMRIGHT", -5, 5)
 
 		HandleMinimapButton(MiniMapTracking)
 		MiniMapTracking.Icon:SetVertexColor(0.72, 0.66, 0.56)
@@ -377,30 +378,27 @@ function MM:Initialize()
 		QueueStatusMinimapButton.Background:SetTexture("")
 
 		local calendar = GameTimeFrame
-
 		HandleMinimapButton(calendar)
 		calendar:SetSize(34, 34)
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar:SetHitRectInsets(-2, -2, -2, -2)
-
 		calendar.pendingInvites = 0
 
 		local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
 		texture:SetPoint("TOPLEFT", 2, -2)
 		texture:SetPoint("BOTTOMRIGHT", -2, 2)
-		calendar.daytime = texture
+		calendar.DayTimeIndicator = texture
 
 		local _, mark, glow, _, date = calendar:GetRegions()
-
 		mark:SetDrawLayer("OVERLAY", 2)
 		mark:SetTexCoord(7 / 128, 81 / 128, 7 / 128, 109 / 128)
 		mark:SetSize(22, 30)
 		mark:SetPoint("CENTER", 0, 0)
 		mark:Show()
 		mark:SetAlpha(0)
-		calendar.mark = mark
+		calendar.InvIndicator = mark
 
 		glow:SetTexture("")
 
@@ -425,5 +423,21 @@ function MM:Initialize()
 		zone:Hide()
 		UpdateZoneText(zone)
 		Minimap.zone = zone
+
+		local clock = TimeManagerClockButton
+		local bg, ticker, glow = clock:GetRegions()
+		clock:SetSize(46, 22)
+		clock:SetHitRectInsets(0, 0, 0, 0)
+
+		bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+		bg:SetTexCoord(462 / 512, 508 / 512, 34 / 256, 56 / 256)
+
+		ticker:ClearAllPoints()
+		ticker:SetPoint("CENTER", 0, 1)
+
+		glow:SetTexCoord(2 / 64, 52 / 64, 33 / 64, 55 / 64)
+		glow:SetSize(50, 22)
+		glow:ClearAllPoints()
+		glow:SetPoint("CENTER", -1, 0)
 	end
 end
