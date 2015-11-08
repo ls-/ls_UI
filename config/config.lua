@@ -77,14 +77,6 @@ D["minimap"] = {
 	point = {"BOTTOM", "UIParent", "BOTTOM", 314 , 80},
 }
 
-D["infobars"] = {
-	enabled = true,
-	clock = {
-		enabled = true,
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
-	},
-}
-
 D["nameplates"] = {
 	enabled = true,
 	show_text = false,
@@ -112,13 +104,13 @@ D["bars"] = {
 		direction = "RIGHT",
 	},
 	bar4 = { -- MultiBarLeft
-		point = {"BOTTOMRIGHT", -32, 300},
+		point = {"BOTTOMRIGHT", -36, 300},
 		button_size = 28,
 		button_gap = 4,
 		direction = "DOWN",
 	},
 	bar5 = { -- MultiBarRight
-		point = {"BOTTOMRIGHT", 0, 300},
+		point = {"BOTTOMRIGHT", -4, 300},
 		button_size = 28,
 		button_gap = 4,
 		direction = "DOWN",
@@ -173,13 +165,13 @@ D["mail"] = {
 D["auras"] = {
 	enabled = true,
 	buff = {
-		point = {"TOPRIGHT", -4, -40},
+		point = {"TOPRIGHT", -4, -4},
 	},
 	debuff = {
-		point = {"TOPRIGHT", -4, -124},
+		point = {"TOPRIGHT", -4, -88},
 	},
 	tempench = {
-		point = {"TOPRIGHT", -4, -164},
+		point = {"TOPRIGHT", -4, -128},
 	},
 	aura_size = 28,
 	aura_gap = 4,

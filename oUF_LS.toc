@@ -8,7 +8,6 @@
 
 embeds\_embeds.xml
 core\_core.xml
-media\_media.xml
 locales\_locales.xml
 modules\_modules.xml
 config\_config.xml

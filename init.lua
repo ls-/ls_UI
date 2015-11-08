@@ -8,10 +8,6 @@ function E:ADDON_LOADED(arg)
 
 	self:CopyTable(self:CopyTable(D, oUF_LS_CONFIG), C)
 
-	if C.infobars.enabled then
-		ns.lsInfobars_Initialize()
-	end
-
 	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
 	end
