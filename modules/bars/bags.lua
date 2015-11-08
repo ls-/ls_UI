@@ -1,12 +1,18 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local Bags = CreateFrame("Frame", "LSBagModule"); E.Bags = Bags
 local COLORS = M.colors
 local GRADIENT = COLORS.gradient["GYR"]
+local B = E:GetModule("Bars")
 local BAGS_CFG
 
 local unpack = unpack
 local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
+local MainMenuBarBackpackButton, CharacterBag0Slot, CharacterBag1Slot, CharacterBag2Slot, CharacterBag3Slot =
+	MainMenuBarBackpackButton, CharacterBag0Slot, CharacterBag1Slot, CharacterBag2Slot, CharacterBag3Slot
+local GameTooltip = GameTooltip
+local GetContainerNumFreeSlots, GetContainerNumSlots = GetContainerNumFreeSlots, GetContainerNumSlots
+local BackpackButton_UpdateChecked = BackpackButton_UpdateChecked
+local ToggleAllBags = ToggleAllBags
 
 local BAGS = {
 	MainMenuBarBackpackButton,
@@ -89,41 +95,43 @@ local function BackpackButton_OnEvent(self, event, ...)
 	end
 end
 
-function Bags:Initialize()
-	BAGS_CFG = C.bags
+function B:HandleBags()
+	BAGS_CFG = C.bars.bags
 
-	local header = CreateFrame("Frame", "lsBagsHeader", UIParent, "SecureHandlerBaseTemplate")
-	header:SetFrameStrata("LOW")
-	header:SetFrameLevel(1)
+	if BAGS_CFG.enabled then
+		local header = CreateFrame("Frame", "lsBagsHeader", UIParent, "SecureHandlerBaseTemplate")
+		header:SetFrameStrata("LOW")
+		header:SetFrameLevel(1)
 
-	if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
-		header:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
-			BAGS_CFG.button_size + BAGS_CFG.button_gap)
-	else
-		header:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
-			BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5)
-	end
+		if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
+			header:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
+				BAGS_CFG.button_size + BAGS_CFG.button_gap)
+		else
+			header:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
+				BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5)
+		end
 
-	header:SetPoint(unpack(BAGS_CFG.point))
+		header:SetPoint(unpack(BAGS_CFG.point))
 
-	E:CreateMover(header)
+		E:CreateMover(header)
 
-	E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, header,
-		BAGS_CFG.direction, E.SkinBagButton)
+		E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, header,
+			BAGS_CFG.direction, E.SkinBagButton)
 
-	MainMenuBarBackpackButton.icon:SetDesaturated(true)
+		MainMenuBarBackpackButton.icon:SetDesaturated(true)
 
-	hooksecurefunc(MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
+		hooksecurefunc(MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
 
-	MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
-	MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
-	MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
+		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
+		MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
+		MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
 
-	for _, bag in next, BAGS do
-		bag:UnregisterEvent("ITEM_PUSH")
+		for _, bag in next, BAGS do
+			bag:UnregisterEvent("ITEM_PUSH")
 
-		if bag ~= MainMenuBarBackpackButton then
-			bag:Hide()
+			if bag ~= MainMenuBarBackpackButton then
+				bag:Hide()
+			end
 		end
 	end
 end

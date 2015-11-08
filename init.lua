@@ -12,18 +12,6 @@ function E:ADDON_LOADED(arg)
 		ns.lsInfobars_Initialize()
 	end
 
-	if C.bars.enabled then
-		E.ActionBars:Initialize()
-		E.MM:Initialize()
-		E.Vehicle:Initialize()
-		E.Extra:Initialize()
-		E.PetBattle:Initialize()
-
-		if C.bags.enabled then
-			E.Bags:Initialize()
-		end
-	end
-
 	if C.units.enabled then
 		oUF:Factory(E.UF.Initialize)
 	end

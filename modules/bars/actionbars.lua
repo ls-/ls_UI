@@ -1,13 +1,13 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local ActionBars = CreateFrame("Frame", "LSActionBarModule"); E.ActionBars = ActionBars
 local COLORS, TEXTURES = M.colors, M.textures
+local B = E:GetModule("Bars")
 local BAR_CFG
 
 local tonumber = tonumber
 local match = strmatch
 
-ActionBars.bars = {}
+local Bars = {}
 
 local BAR_LAYOUT = {
 	bar1 = {
@@ -166,7 +166,7 @@ local function FlyoutButtonToggleHook(...)
 	end
 end
 
-function ActionBars:Initialize()
+function B:HandleActionBars()
 	BAR_CFG = C.bars
 
 	for b, bdata in next, BAR_LAYOUT do
@@ -198,11 +198,11 @@ function ActionBars:Initialize()
 			RegisterStateDriver(bar, "visibility", bdata.condition)
 		end
 
-		ActionBars.bars[b] = bar
+		Bars[b] = bar
 	end
 
 
-	for b, bar in next, ActionBars.bars do
+	for b, bar in next, Bars do
 		if BAR_CFG[b].point then
 			bar:SetPoint(unpack(BAR_CFG[b].point))
 		else

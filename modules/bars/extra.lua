@@ -1,40 +1,9 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local Extra = CreateFrame("Frame", "LSExtraButtonModule"); E.Extra = Extra
+local B = E:GetModule("Bars")
 
-local function LeaveButton_OnEvent(self, event)
-	if not InCombatLockdown() then
-		if event == "PLAYER_REGEN_ENABLED" then
-			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		end
-
-		if UnitOnTaxi("player") then
-			RegisterStateDriver(self, "visibility", "show")
-		else
-			RegisterStateDriver(self, "visibility", "[canexitExtra] show; hide")
-		end
-
-		self.Icon:SetDesaturated(false)
-		self:Enable()
-	else
-		self:RegisterEvent("PLAYER_REGEN_ENABLED")
-	end
-end
-
-local function LeaveButton_OnClick(self)
-	if UnitOnTaxi("player") then
-		TaxiRequestEarlyLanding()
-
-		self:SetButtonState("NORMAL")
-		self.Icon:SetDesaturated(true)
-		self:Disable()
-	else
-		VehicleExit()
-	end
-end
-
-function Extra:Initialize()
-	local EXTRA_CONFIG = ns.C.bars.extra
+function B:HandleExtraActionButton()
+	local EXTRA_CONFIG = C.bars.extra
 
 	ExtraActionBarFrame:SetParent(UIParent)
 	ExtraActionBarFrame:SetSize(EXTRA_CONFIG.button_size, EXTRA_CONFIG.button_size)

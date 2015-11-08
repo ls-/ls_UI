@@ -1,9 +1,9 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local MM = CreateFrame("Frame", "LSMicroMenuModule"); E.MM = MM
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
+local B = E:GetModule("Bars")
 
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
@@ -434,21 +434,21 @@ local function ResetMicroButtonsPosition()
 	end
 end
 
-function MM:Initialize()
-	local MM_CONFIG = ns.C.micromenu
+function B:HandleMicroMenu()
+	local MM_CFG = C.bars.micromenu
 
 	local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
 	holder1:SetFrameStrata("LOW")
 	holder1:SetFrameLevel(1)
 	holder1:SetSize(18 * 5 + 6 * 5, 24 + 6)
-	holder1:SetPoint(unpack(MM_CONFIG.holder1.point))
+	holder1:SetPoint(unpack(MM_CFG.holder1.point))
 	E:CreateMover(holder1)
 
 	local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 	holder2:SetFrameStrata("LOW")
 	holder2:SetFrameLevel(1)
 	holder2:SetSize(18 * 5 + 6 * 5, 24 + 6)
-	holder2:SetPoint(unpack(MM_CONFIG.holder2.point))
+	holder2:SetPoint(unpack(MM_CFG.holder2.point))
 	E:CreateMover(holder2)
 
 	for _, b in next, MICRO_BUTTONS do

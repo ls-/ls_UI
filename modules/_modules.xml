@@ -5,7 +5,6 @@
 	<Include file="bars\_bars.xml"/>
 	<Include file="blizzard\_blizzard.xml"/>
 	<Script file="infobars\infobars.lua"/>
-	<Script file="micromenu\micromenu.lua"/>
 	<Include file="minimap\_minimap.xml"/>
 	<Include file="mail\_mail.xml"/>
 	<Include file="nameplates\_nameplates.xml"/>

@@ -143,14 +143,26 @@ D["bars"] = {
 		point = {"BOTTOM", 170, 149},
 		button_size = 40,
 	},
-}
-
-D["micromenu"] = {
-	holder1 = {
-		point = {"BOTTOM", -266, 4},
+	micromenu = {
+		holder1 = {
+			point = {"BOTTOM", -266, 4},
+		},
+		holder2 = {
+			point = {"BOTTOM", 266, 4},
+		},
 	},
-	holder2 = {
-		point = {"BOTTOM", 266, 4},
+	petbattle = {
+		point = {"BOTTOM", 0, 15},
+		button_size = 28,
+		button_gap = 4,
+		direction = "RIGHT",
+	},
+	bags = {
+		enabled = true,
+		point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
+		button_size = 26,
+		button_gap = 4,
+		direction = "RIGHT",
 	},
 }
 
@@ -173,20 +185,6 @@ D["auras"] = {
 	aura_gap = 4,
 }
 
-D["petbattle"] = {
-	point = {"BOTTOM", 0, 15},
-	button_size = 28,
-	button_gap = 4,
-	direction = "RIGHT",
-}
-
-D["bags"] = {
-	enabled = true,
-	point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
-	button_size = 26,
-	button_gap = 4,
-	direction = "RIGHT",
-}
 
 D["movers"] = {}
 

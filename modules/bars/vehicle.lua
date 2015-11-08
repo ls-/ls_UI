@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local Vehicle = CreateFrame("Frame", "LSVehicleExitButtonModule"); E.Vehicle = Vehicle
+local B = E:GetModule("Bars")
 local VEHICLE_CFG
 
 local function LeaveButton_OnEvent(self, event)
@@ -34,7 +34,7 @@ local function LeaveButton_OnClick(self)
 	end
 end
 
-function Vehicle:Initialize()
+function B:HandleVehicleExitButton()
 	VEHICLE_CFG = C.bars.vehicle
 
 	local button = CreateFrame("Button", "LSVehicleExitButton", UIParent, "SecureHandlerBaseTemplate")
