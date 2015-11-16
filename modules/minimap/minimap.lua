@@ -384,7 +384,6 @@ function MM:Initialize()
 		calendar:SetSize(34, 34)
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
-		calendar:SetHitRectInsets(-2, -2, -2, -2)
 		calendar.pendingCalendarInvites = 0
 
 		local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
