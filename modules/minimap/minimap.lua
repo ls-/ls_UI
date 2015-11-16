@@ -436,10 +436,17 @@ function MM:Initialize()
 
 		ticker:ClearAllPoints()
 		ticker:SetPoint("CENTER", 0, 1)
+		clock.Ticker = ticker
 
 		glow:SetTexCoord(2 / 64, 52 / 64, 33 / 64, 55 / 64)
 		glow:SetSize(50, 22)
 		glow:ClearAllPoints()
 		glow:SetPoint("CENTER", -1, 0)
+
+		clock:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\minimap", "ADD")
+		clock:GetHighlightTexture():SetTexCoord(462 / 512, 508 / 512, 56 / 256, 78 / 256)
+
+		clock:SetScript("OnMouseUp", function(self) self.Ticker:SetPoint("CENTER", 0, 1) end)
+		clock:SetScript("OnMouseDown", function(self) self.Ticker:SetPoint("CENTER", 1, 0) end)
 	end
 end
