@@ -299,6 +299,14 @@ local function Calendar_OnUpdate(self, elapsed)
 	end
 end
 
+local function Clock_OnMouseUp(self)
+	self.Ticker:SetPoint("CENTER", 0, 1)
+end
+
+local function Clock_OnMouseDown(self)
+	self.Ticker:SetPoint("CENTER", 1, 0)
+end
+
 function MM:Initialize()
 	if C.minimap.enabled then
 		if not IsAddOnLoaded("Blizzard_TimeManager") then
@@ -445,7 +453,7 @@ function MM:Initialize()
 		clock:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\minimap", "ADD")
 		clock:GetHighlightTexture():SetTexCoord(462 / 512, 508 / 512, 56 / 256, 78 / 256)
 
-		clock:SetScript("OnMouseUp", function(self) self.Ticker:SetPoint("CENTER", 0, 1) end)
-		clock:SetScript("OnMouseDown", function(self) self.Ticker:SetPoint("CENTER", 1, 0) end)
+		clock:SetScript("OnMouseUp", Clock_OnMouseUp)
+		clock:SetScript("OnMouseDown", Clock_OnMouseDown)
 	end
 end
