@@ -306,7 +306,9 @@ local function UpdateEJMicroButtonTooltip(button, event)
 			end
 		end
 
-		GameTooltip:Show()
+		if hasTitle then
+			GameTooltip:Show()
+		end
 	end
 end
 
