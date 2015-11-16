@@ -209,7 +209,7 @@ end
 local function Calendar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 10, 10)
 
-	if self.pendingInvites > 0 then
+	if self.pendingCalendarInvites > 0 then
 		GameTooltip:AddLine(GAMETIME_TOOLTIP_CALENDAR_INVITES)
 	end
 
@@ -260,15 +260,14 @@ end
 
 local function Calendar_OnEvent(self, event, ...)
 	if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
-		local pendingInvites = CalendarGetNumPendingInvites()
-
-		if pendingInvites > self.pendingInvites then
+		local pendingCalendarInvites = CalendarGetNumPendingInvites()
+		if pendingCalendarInvites > self.pendingCalendarInvites then
 			if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
 				E:Blink(self.InvIndicator, nil, 0, 1)
 
-				self.pendingInvites = pendingInvites
+				self.pendingCalendarInvites = pendingCalendarInvites
 			end
-		elseif pendingInvites == 0 then
+		elseif pendingCalendarInvites == 0 then
 			E:StopBlink(self.InvIndicator)
 		end
 	elseif event == "CALENDAR_EVENT_ALARM" then
@@ -283,7 +282,7 @@ local function Calendar_OnClick(self)
 	if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
 		E:StopBlink(self.InvIndicator, 1)
 
-		self.pendingInvites = 0
+		self.pendingCalendarInvites = 0
 	end
 
 	ToggleCalendar()
@@ -386,7 +385,7 @@ function MM:Initialize()
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar:SetHitRectInsets(-2, -2, -2, -2)
-		calendar.pendingInvites = 0
+		calendar.pendingCalendarInvites = 0
 
 		local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
