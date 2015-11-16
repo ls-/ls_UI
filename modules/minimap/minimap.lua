@@ -104,6 +104,9 @@ function HandleMinimapButton(button, cascade)
 	-- print("|cffffff7fHL|r", not not highlight, "|cffffff7fI|r", (not not icon or not not (normal and pushed)), "|cffffff7fB|r", not not border, "|cffffff7fBG|r", not not background)
 
 	if not cascade then
+		-- These aren't the dro- buttons you're looking for
+		if not icon and not (normal and pushed) then return end
+
 		button:SetSize(30, 30)
 		button:SetHitRectInsets(0, 0, 0, 0)
 
