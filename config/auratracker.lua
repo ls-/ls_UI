@@ -217,12 +217,14 @@ function CFG:AT_Initialize()
 
 	local atToggle = CFG:CreateCheckButton(panel, "ATToggle", nil, "Switches aura tracker module on or off")
 	atToggle:HookScript("OnClick", ATToggle_OnClick)
-	atToggle:SetPoint("TOPRIGHT", -16, -16)
+	atToggle:SetPoint("TOPRIGHT", -16, -14)
 	panel.ATToggle = atToggle
 	panel.settings.auratracker.enabled = atToggle
 
 	local infoText1 = CFG:CreateTextLabel(panel, 10, "These options allow you to setup player aura tracking. |cffffd100You can track up to 12 auras at once.|r\nWhilst in combat, please, use |cffffd100/atbuff|r and |cffffd100/atdebuff|r commands to add auras to the list.")
+	infoText1:SetHeight(32)
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	infoText1:SetPoint("RIGHT", -16, 0)
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
@@ -230,7 +232,7 @@ function CFG:AT_Initialize()
 
 	local auraList = CreateFrame("ScrollFrame", "ATAuraList", panel, "FauxScrollFrameTemplate")
 	auraList:SetSize(210, 266) -- 30 * 8 + 6 * 2 + 7 * 2
-	auraList:SetPoint("TOPLEFT", infoText1, "TOPLEFT", 0, -62)
+	auraList:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", 0, -40) -- 8 + 32 (default offset + tab height)
 	auraList:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -296,6 +298,8 @@ function CFG:AT_Initialize()
 	auraList.BuffTab = buffTab
 	CFG:SetupControlDependency(atToggle, buffTab)
 
+	print(buffTab:GetHeight())
+
 	local debuffTab = CreateFrame("Button", "ATAuraListTab2", auraList, "TabButtonTemplate")
 	debuffTab.type = "Button"
 	debuffTab:SetID(2)
@@ -339,13 +343,13 @@ function CFG:AT_Initialize()
 	PanelTemplates_SetTab(auraList, 1)
 
 	local lockToggle = CFG:CreateCheckButton(panel, "MovementToggle", LOCK_FRAME)
-	lockToggle:SetPoint("TOPLEFT", delButton, "BOTTOMLEFT", 0, -8)
+	lockToggle:SetPoint("TOPLEFT", delButton, "BOTTOMLEFT", -2, -8)
 	lockToggle:HookScript("OnClick", LockToggle_OnClick)
 	panel.settings.auratracker.locked = lockToggle
 	CFG:SetupControlDependency(atToggle, lockToggle)
 
 	local growthDropdown = CFG:CreateDropDownMenu(panel, "DirectionDropDown", "Growth direction", "GrowthDirectionDropDownMenu_Initialize")
-	growthDropdown:SetPoint("TOPLEFT", lockToggle, "BOTTOMLEFT", -13, -24)
+	growthDropdown:SetPoint("TOPLEFT", lockToggle, "BOTTOMLEFT", -11, -24)
 	panel.GrowthDirectionDropDownMenu = growthDropdown
 	panel.settings.auratracker.direction = growthDropdown
 	CFG:SetupControlDependency(atToggle, growthDropdown)

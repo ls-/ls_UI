@@ -45,6 +45,7 @@ function CFG:General_Initialize()
 	local infoText1 = CFG:CreateTextLabel(panel, 10, "WIP general settings.")
 	infoText1:SetHeight(32)
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	infoText1:SetPoint("RIGHT", -16, 0)
 
 	local header2 = CFG:CreateTextLabel(panel, 16, "|cffffd100Unit Frames|r")
 	header2:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", 0, -8)
@@ -57,7 +58,7 @@ function CFG:General_Initialize()
 	panel.settings.units.enabled = ufToggle
 
 	local button1 = CFG:CreateCheckButton(panel, "PlayerPetFramesToggle", "Player & Pet")
-	button1:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", 0, -8)
+	button1:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -2, -8)
 	panel.settings.units.player.enabled = button1
 	panel.settings.units.pet.enabled = button1
 	CFG:SetupControlDependency(ufToggle, button1)
@@ -113,7 +114,7 @@ function CFG:General_Initialize()
 	header3:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
 
 	local button8 = CFG:CreateCheckButton(panel, "ActionBarsToggle", "Action Bars")
-	button8:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -8)
+	button8:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", -2, -8)
 	button8:HookScript("OnClick", ABToggle_OnClick)
 	tinsert(panel.controllers, button8)
 	panel.settings.bars.enabled = button8
@@ -139,6 +140,18 @@ function CFG:General_Initialize()
 	local button13 = CFG:CreateCheckButton(panel, "TooltipsToggle", "Tooltips")
 	button13:SetPoint("LEFT", button12, "RIGHT", 110, 0)
 	panel.settings.tooltips.enabled = button13
+
+	local divider2 = CFG:CreateDivider(panel)
+	divider2:SetPoint("TOP", button12, "BOTTOM", 0, -8)
+
+	local header4 = CFG:CreateTextLabel(panel, 16, "|cffffd100Info|r")
+	header4:SetPoint("LEFT", 16, 0)
+	header4:SetPoint("TOP", divider2, "BOTTOM", 0, -8)
+
+	local infoText2 = CFG:CreateTextLabel(panel, 10, "Although in-game config is still WIP, you can use |cffffd100/lsmovers|r command to move unit frames and other layout elements around.")
+	infoText2:SetHeight(32)
+	infoText2:SetPoint("TOPLEFT", header4, "BOTTOMLEFT", 0, -8)
+	infoText2:SetPoint("RIGHT", -16, 0)
 
 	panel.okay = function() CFG:OptionsPanelOkay(panel) end
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end

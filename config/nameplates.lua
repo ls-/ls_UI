@@ -80,7 +80,7 @@ function CFG:NP_Initialize()
 
 	local npToggle = CFG:CreateCheckButton(panel, "NPToggle", nil, "Switches nameplates module on or off")
 	npToggle:HookScript("OnClick", NPToggle_OnClick)
-	npToggle:SetPoint("TOPRIGHT", -16, -16)
+	npToggle:SetPoint("TOPRIGHT", -16, -14)
 	panel.NPToggle = npToggle
 	panel.settings.nameplates.enabled = npToggle
 
