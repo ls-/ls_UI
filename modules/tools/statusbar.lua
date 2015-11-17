@@ -195,3 +195,32 @@ function E:CreateStatusBar(parent, name, width, preset, addBorder)
 
 	return bar
 end
+
+function E:AddTooltipStatusBar(tooltip, index)
+	local bar = E:CreateStatusBar(tooltip, "GameTooltipStatusBar"..index, 0, "12")
+	bar:SetStatusBarColor(unpack(COLORS.green))
+	E:CreateBorder(bar, 8)
+	bar:SetBorderColor(unpack(COLORS.gray))
+
+	tooltip.numStatusBars = index
+
+	return bar
+end
+
+function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
+	tooltip:AddLine(" ")
+
+	local index = (tooltip.shownStatusBars or 0) + 1
+	local bar = _G["GameTooltipStatusBar"..index] or E:AddTooltipStatusBar(tooltip, index)
+	bar:SetMinMaxValues(min, max)
+	bar:SetValue(value)
+	bar:SetStatusBarColor(...)
+	bar:SetPoint("LEFT", tooltip:GetName().."TextLeft"..tooltip:NumLines(), "LEFT", 0, -2)
+	bar:SetPoint("RIGHT", tooltip, "RIGHT", -9, 0)
+	bar:Show()
+
+	bar.Text:SetText(value.." / "..max)
+
+	tooltip.shownStatusBars = index
+	tooltip:SetMinimumWidth(140)
+end
