@@ -196,7 +196,7 @@ local function ATToggle_OnClick(self)
 		result, msg = AT:Enable()
 	end
 
-	CFG.ToggleDependantControls(parent.ATToggle, not AT:IsRunning())
+	CFG.ToggleDependantControls(self, not AT:IsRunning())
 
 	parent.StatusLog:SetText(msg)
 end
