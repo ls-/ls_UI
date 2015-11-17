@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, D = ns.E, ns.C, ns.D
-local CFG = E.CFG
+local CFG = E:GetModule("Config")
 local AT = E:GetModule("AuraTracker")
 
 local FauxScrollFrame_Update, FauxScrollFrame_OnVerticalScroll, FauxScrollFrame_SetOffset, FauxScrollFrame_GetOffset =
@@ -202,13 +202,11 @@ local function ATToggle_OnClick(self)
 end
 
 function CFG:AT_Initialize()
-	local panel = CreateFrame("Frame", "ATConfigPanel")
+	local panel = CreateFrame("Frame", "LSATConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "Aura Tracker"
 	panel.parent = "oUF: |cff1a9fc0LS|r"
 	panel:HookScript("OnShow", ATConfigPanel_OnShow)
 	panel:Hide()
-
-	InterfaceOptions_AddCategory(panel)
 
 	panel.settings = {
 		auratracker = {},
@@ -356,4 +354,6 @@ function CFG:AT_Initialize()
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end
 	panel.refresh = function() CFG:OptionsPanelRefresh(panel) end
 	panel.default = function() CFG:OptionsPanelDefault(panel) end
+
+	InterfaceOptions_AddCategory(panel)
 end

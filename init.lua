@@ -14,8 +14,6 @@ function E:ADDON_LOADED(arg)
 
 	E:InitializeModules()
 
-	lsOptionsFrame_Initialize()
-
 	self:UnregisterEvent("ADDON_LOADED")
 
 	collectgarbage("collect")

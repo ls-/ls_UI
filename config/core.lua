@@ -1,7 +1,6 @@
 local _, ns = ...
-local E, C, D = ns.E, ns.C, ns.D
-
-local CFG = CreateFrame("Frame", "LSConfigModule"); E.CFG = CFG
+local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local CFG = E:AddModule("Config")
 
 local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton =
 	UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton
@@ -138,6 +137,18 @@ function CFG:CreateDropDownMenu(parent, name, text, func)
 	return object
 end
 
+function CFG:CreateDivider(parent)
+	local object = parent:CreateTexture(nil, "ARTWORK")
+	object:SetHeight(4)
+	object:SetPoint("LEFT", 10, 0)
+	object:SetPoint("RIGHT", 10, 0)
+	object:SetTexture("Interface\\AchievementFrame\\UI-Achievement-RecentHeader")
+	object:SetTexCoord(0, 1, 0.0625, 0.65625)
+	object:SetAlpha(0.5)
+
+	return object
+end
+
 function CFG:OptionsPanelOkay(panel)
 	-- print("OKAY", panel:GetName(), self:GetName())
 	E:ApplySettings(panel.settings, C)
@@ -207,4 +218,18 @@ function CFG:ToggleDependantControls(forceDisable)
 			child:Enable()
 		end
 	end
+end
+
+local function LSConfigFrameToggle()
+	InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
+	InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
+end
+
+function CFG:Initialize()
+	CFG:General_Initialize()
+	CFG:AT_Initialize()
+	CFG:NP_Initialize()
+
+	SLASH_LSCONFIG1 = "/lsconfig"
+	SlashCmdList["LSCONFIG"] = LSConfigFrameToggle
 end

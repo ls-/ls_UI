@@ -6,14 +6,17 @@ D["units"] = {
 	player = {
 		enabled = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
-		combo_bar_type = "VERTICAL" -- "HORIZONTAL" is a second option
+		combo_bar_type = "VERTICAL", -- "HORIZONTAL" is a second option
+		castbar = true,
 	},
 	pet = {
 		enabled = true,
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+		castbar = true,
 	},
 	target = {
 		enabled = true,
+		castbar = true,
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 	},
 	targettarget = {
@@ -23,6 +26,7 @@ D["units"] = {
 	focus = {
 		enabled = true,
 		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
+		castbar = true,
 	},
 	focustarget = {
 		enabled = true,
@@ -36,10 +40,12 @@ D["units"] = {
 	boss = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+		castbar = true,
 	},
 	arena = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+		castbar = true,
 	},
 }
 
@@ -175,6 +181,10 @@ D["auras"] = {
 	},
 	aura_size = 28,
 	aura_gap = 4,
+}
+
+D["tooltips"] = {
+	enabled = true,
 }
 
 

@@ -127,7 +127,9 @@ function UF:ConstructBossFrame(frame)
 		[4] = tubeRight,
 	}
 
-	frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 2}, "12")
+	if C.units.boss.castbar then
+		frame.Castbar = UF:CreateCastBar(frame, 124, {"RIGHT", frame, "LEFT", -2, 2}, "12")
+	end
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)

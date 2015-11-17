@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, D = ns.E, ns.C, ns.D
-local CFG = E.CFG
+local CFG = E:GetModule("Config")
 local NP = E:GetModule("NamePlates")
 
 local function NPConfigPanel_OnShow(self)
@@ -65,13 +65,11 @@ local function HPTextToggle_OnClick(self)
 end
 
 function CFG:NP_Initialize()
-	local panel = CreateFrame("Frame", "NPConfigPanel")
+	local panel = CreateFrame("Frame", "LSNPConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "Nameplates"
 	panel.parent = "oUF: |cff1a9fc0LS|r"
 	panel:HookScript("OnShow", NPConfigPanel_OnShow)
 	panel:Hide()
-
-	InterfaceOptions_AddCategory(panel)
 
 	panel.settings = {
 		nameplates = {},
@@ -110,4 +108,6 @@ function CFG:NP_Initialize()
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end
 	panel.refresh = function() CFG:OptionsPanelRefresh(panel) end
 	panel.default = function() CFG:OptionsPanelDefault(panel) end
+
+	InterfaceOptions_AddCategory(panel)
 end

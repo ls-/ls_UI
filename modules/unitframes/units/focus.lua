@@ -121,7 +121,9 @@ function UF:ConstructFocusFrame(frame)
 		[4] = tubeRight,
 	}
 
-	frame.Castbar = UF:CreateCastBar(frame, 196, {"TOP", frame, "BOTTOM", 0, -2})
+	if C.units.focus.castbar then
+		frame.Castbar = UF:CreateCastBar(frame, 196, {"TOP", frame, "BOTTOM", 0, -2})
+	end
 
 	frame.PvP = UF:CreateIcon(cover, "PvP", 14)
 	tinsert(frame.mouseovers, frame.PvP)

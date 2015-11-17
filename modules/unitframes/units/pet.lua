@@ -48,9 +48,11 @@ function UF:ConstructPetFrame(frame)
 	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 
-	frame.Castbar = UF:CreateCastBar(frame, 196, nil, nil, true, true)
-	frame.Castbar.Holder:SetAllPoints(LSPlayerFrameCastBarHolder)
-	RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+	if C.units.pet.castbar then
+		frame.Castbar = UF:CreateCastBar(frame, 196, nil, nil, true, true)
+		frame.Castbar.Holder:SetAllPoints(LSPlayerFrameCastBarHolder)
+		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+	end
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 126 / 256, 147 / 256, 0, 134 / 256)
 	frame.Threat:SetSize(21, 134)
