@@ -50,7 +50,7 @@ function UF:ConstructPetFrame(frame)
 
 	if C.units.pet.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 196, nil, nil, true, true)
-		frame.Castbar.Holder:SetAllPoints(LSPlayerFrameCastBarHolder)
+		frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
 		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 	end
 
