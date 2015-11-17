@@ -358,33 +358,25 @@ local function GameTooltipStatusBar_OnValueChangedHook(self, value)
 	self:SetStatusBarColor(reactionColor.r, reactionColor.g, reactionColor.b)
 end
 
-local function AddTooltipStatusBar(self, num)
-	local bar
-	for i = 1, num do
-		bar = E:CreateStatusBar(self, "GameTooltipStatusBar"..i, 0, "12")
-		bar:SetStatusBarColor(unpack(COLORS.green))
-		E:CreateBorder(bar, 8)
-		bar:SetBorderColor(unpack(COLORS.gray))
-	end
-
-	self.numStatusBars, self.shownStatusBars = num, 0
-end
-
 function TT:Initialize()
-	hooksecurefunc(GameTooltip, "SetUnitAura", GameTooltip_AuraTooltipHook)
-	hooksecurefunc(GameTooltip, "SetUnitBuff", GameTooltip_AuraTooltipHook)
-	hooksecurefunc(GameTooltip, "SetUnitDebuff", GameTooltip_AuraTooltipHook)
+	if C.tooltips.enabled then
+		hooksecurefunc(GameTooltip, "SetUnitAura", GameTooltip_AuraTooltipHook)
+		hooksecurefunc(GameTooltip, "SetUnitBuff", GameTooltip_AuraTooltipHook)
+		hooksecurefunc(GameTooltip, "SetUnitDebuff", GameTooltip_AuraTooltipHook)
 
-	GameTooltip:RegisterEvent("MODIFIER_STATE_CHANGED")
-	GameTooltip:HookScript("OnEvent", GameTooltip_OnEventHook)
-	GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_ItemTooltipHook)
-	GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_SpellTooltipHook)
-	GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_UnitTooltipHook)
+		GameTooltip:RegisterEvent("MODIFIER_STATE_CHANGED")
+		GameTooltip:HookScript("OnEvent", GameTooltip_OnEventHook)
+		GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_ItemTooltipHook)
+		GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_SpellTooltipHook)
+		GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_UnitTooltipHook)
 
-	AddTooltipStatusBar(GameTooltip, 6)
+		for i = 1, 6 do
+			E:AddTooltipStatusBar(GameTooltip, 6)
+		end
 
-	E:HandleStatusBar(GameTooltipStatusBar, nil, "12")
-	E:CreateBorder(GameTooltipStatusBar, 8)
-	GameTooltipStatusBar:SetBorderColor(unpack(COLORS.gray))
-	GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
+		E:HandleStatusBar(GameTooltipStatusBar, nil, "12")
+		E:CreateBorder(GameTooltipStatusBar, 8)
+		GameTooltipStatusBar:SetBorderColor(unpack(COLORS.gray))
+		GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
+	end
 end

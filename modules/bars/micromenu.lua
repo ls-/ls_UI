@@ -63,24 +63,6 @@ local MICRO_BUTTON_LAYOUT = {
 	},
 }
 
-local function ShowTooltipStatusBar(self, min, max, value, ...)
-	self:AddLine(" ")
-
-	local index = self.shownStatusBars + 1
-	local statusBar = _G["GameTooltipStatusBar"..index]
-
-	statusBar.Text:SetText(value.." / "..max)
-	statusBar:SetMinMaxValues(min, max)
-	statusBar:SetValue(value)
-	statusBar:SetStatusBarColor(...)
-	statusBar:SetPoint("LEFT", self:GetName().."TextLeft"..self:NumLines(), "LEFT", 0, -2)
-	statusBar:SetPoint("RIGHT", self, "RIGHT", -9, 0)
-	statusBar:Show()
-
-	self.shownStatusBars = index
-	self:SetMinimumWidth(140)
-end
-
 local function SimpleSort(a, b)
 	if a and b then
 		return a[2] > b[2]
@@ -175,7 +157,7 @@ local function CharacterMicroButton_OnEnter(self)
 					end
 
 					GameTooltip:AddLine(customName or name, color.r, color.g, color.b)
-					ShowTooltipStatusBar(GameTooltip, 0, maxXp, xp, unpack(COLORS.experience))
+					E:ShowTooltipStatusBar(GameTooltip, 0, maxXp, xp, unpack(COLORS.experience))
 				end
 			end
 		end
@@ -185,7 +167,7 @@ local function CharacterMicroButton_OnEnter(self)
 		if UnitLevel("player") < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
 			GameTooltip:AddLine(EXPERIENCE_COLON)
 			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
-			ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), unpack(COLORS.experience))
+			E:ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), unpack(COLORS.experience))
 
 			hasInfo = true
 		end
@@ -216,7 +198,7 @@ local function CharacterMicroButton_OnEnter(self)
 			local color = FACTION_BAR_COLORS[standing]
 
 			GameTooltip:AddDoubleLine(name, text, 1, 1, 1, color.r, color.g, color.b)
-			ShowTooltipStatusBar(GameTooltip, 0, max, value, color.r, color.g, color.b)
+			E:ShowTooltipStatusBar(GameTooltip, 0, max, value, color.r, color.g, color.b)
 
 			hasInfo = true
 		end
