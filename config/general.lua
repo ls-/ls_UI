@@ -42,16 +42,16 @@ function CFG:General_Initialize()
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100General|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local infotext1 = CFG:CreateTextLabel(panel, 10, "WIP general settings.")
-	infotext1:SetHeight(32)
-	infotext1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	local infoText1 = CFG:CreateTextLabel(panel, 10, "WIP general settings.")
+	infoText1:SetHeight(32)
+	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
 	local header2 = CFG:CreateTextLabel(panel, 16, "|cffffd100Unit Frames|r")
-	header2:SetPoint("TOPLEFT", infotext1, "BOTTOMLEFT", 0, -8)
+	header2:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", 0, -8)
 
 	local ufToggle = CFG:CreateCheckButton(panel, "UFToggle", nil, "Switches unit frame module on or off")
 	ufToggle:HookScript("OnClick", UFToggle_OnClick)
-	ufToggle:SetPoint("TOP", infotext1, "BOTTOM", 0, -6)
+	ufToggle:SetPoint("TOP", infoText1, "BOTTOM", 0, -6)
 	ufToggle:SetPoint("RIGHT", -16, 0)
 	tinsert(panel.controllers, ufToggle)
 	panel.settings.units.enabled = ufToggle
@@ -89,7 +89,7 @@ function CFG:General_Initialize()
 	panel.settings.units.arena.enabled = button6
 	CFG:SetupControlDependency(ufToggle, button6)
 
-	local button7 = CFG:CreateCheckButton(panel, "CastbarToggle", "Castbars", "Switches player, target and focus frames castbars on or off")
+	local button7 = CFG:CreateCheckButton(panel, "CastbarToggle", "Castbars", "Switches player, target and focus castbars on or off")
 	button7:SetPoint("TOPLEFT", button5, "BOTTOMLEFT", 0, -8)
 	panel.settings.units.player.castbar = button7
 	panel.settings.units.pet.castbar = button7

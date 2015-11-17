@@ -78,23 +78,23 @@ function CFG:NP_Initialize()
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100Nameplates|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local npToggle = CFG:CreateCheckButton(panel, "npToggle", nil, "Switches Nameplates module on or off")
+	local npToggle = CFG:CreateCheckButton(panel, "NPToggle", nil, "Switches nameplates module on or off")
 	npToggle:HookScript("OnClick", NPToggle_OnClick)
 	npToggle:SetPoint("TOPRIGHT", -16, -16)
 	panel.NPToggle = npToggle
 	panel.settings.nameplates.enabled = npToggle
 
-	local infotext1 = CFG:CreateTextLabel(panel, 10, "Nameplates and stuff.")
-	infotext1:SetHeight(32)
-	infotext1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	local infoText1 = CFG:CreateTextLabel(panel, 10, "Nameplates and stuff.")
+	infoText1:SetHeight(32)
+	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
-	local cbToggle = CFG:CreateCheckButton(panel, "cbToggle", "Show combo points")
-	cbToggle:SetPoint("TOPLEFT", infotext1, "BOTTOMLEFT", -2, -8)
+	local cbToggle = CFG:CreateCheckButton(panel, "ComboBarToggle", "Show combo points")
+	cbToggle:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -2, -8)
 	cbToggle:HookScript("OnClick", CBToggle_OnClick)
 	panel.settings.nameplates.show_combo = cbToggle
 	CFG:SetupControlDependency(npToggle, cbToggle)
 
-	local hpTextToggle = CFG:CreateCheckButton(panel, "hpTextToggle", "Show health percentage")
+	local hpTextToggle = CFG:CreateCheckButton(panel, "HealthTextToggle", "Show health percentage")
 	hpTextToggle:SetPoint("TOPLEFT", cbToggle, "BOTTOMLEFT", 0, -8)
 	hpTextToggle:HookScript("OnClick", HPTextToggle_OnClick)
 	panel.settings.nameplates.show_text = hpTextToggle

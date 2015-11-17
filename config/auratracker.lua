@@ -103,53 +103,53 @@ local function ATConfigPanel_OnShow(self)
 end
 
 local function AuraListTab_OnClick(self)
-	local auralist = self:GetParent()
+	local auraList = self:GetParent()
 
-	FauxScrollFrame_SetOffset(auralist, 0)
+	FauxScrollFrame_SetOffset(auraList, 0)
 
-	PanelTemplates_Tab_OnClick(self, auralist)
+	PanelTemplates_Tab_OnClick(self, auraList)
 
-	AuraList_Update(auralist)
+	AuraList_Update(auraList)
 end
 
 local function AuraList_AddAura(self)
-	local auralist = self:GetParent()
-	local spellID = auralist.AddEditBox:GetText()
+	local auraList = self:GetParent()
+	local spellID = auraList.AddEditBox:GetText()
 
 	if spellID and spellID ~= "" then
-		local result, msg = AT:AddToList(auralist.filter, tonumber(spellID))
+		local result, msg = AT:AddToList(auraList.filter, tonumber(spellID))
 
-		auralist:GetParent().StatusLog:SetText(msg)
+		auraList:GetParent().StatusLog:SetText(msg)
 
 		if result then
-			auralist.AddEditBox:SetText("")
-			auralist.AddEditBox:ClearFocus()
+			auraList.AddEditBox:SetText("")
+			auraList.AddEditBox:ClearFocus()
 
-			AuraList_Update(auralist)
+			AuraList_Update(auraList)
 		end
 	end
 end
 
 local function AuraList_DeleteAura(self, ...)
-	local auralist = self:GetParent()
-	local buttons = auralist.buttons
-	local offset = FauxScrollFrame_GetOffset(auralist)
+	local auraList = self:GetParent()
+	local buttons = auraList.buttons
+	local offset = FauxScrollFrame_GetOffset(auraList)
 
 	for i =1, #buttons do
 		local button = buttons[i]
 
 		if button:IsVisible() and button:GetChecked() then
-			local _, msg = AT:RemoveFromList(auralist.filter, button.spellID)
+			local _, msg = AT:RemoveFromList(auraList.filter, button.spellID)
 
-			auralist:GetParent().StatusLog:SetText(msg)
+			auraList:GetParent().StatusLog:SetText(msg)
 		end
 	end
 
 	if offset > 0 then
-		FauxScrollFrame_SetOffset(auralist, offset - 1)
+		FauxScrollFrame_SetOffset(auraList, offset - 1)
 	end
 
-	AuraList_Update(auralist)
+	AuraList_Update(auraList)
 end
 
 local function AuraList_OnVerticalScroll(self, offset)
@@ -215,42 +215,42 @@ function CFG:AT_Initialize()
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100Aura Tracker|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local attoggle = CFG:CreateCheckButton(panel, "Toggle", nil, "Switches Aura Tracker module on or off")
-	attoggle:HookScript("OnClick", ATToggle_OnClick)
-	attoggle:SetPoint("TOPRIGHT", -16, -16)
-	panel.ATToggle = attoggle
-	panel.settings.auratracker.enabled = attoggle
+	local atToggle = CFG:CreateCheckButton(panel, "ATToggle", nil, "Switches aura tracker module on or off")
+	atToggle:HookScript("OnClick", ATToggle_OnClick)
+	atToggle:SetPoint("TOPRIGHT", -16, -16)
+	panel.ATToggle = atToggle
+	panel.settings.auratracker.enabled = atToggle
 
-	local infotext1 = CFG:CreateTextLabel(panel, 10, "These options allow you to setup player aura tracking. |cffffd100You can track up to 12 auras at once.|r\nWhilst in combat, please, use |cffffd100/atbuff|r and |cffffd100/atdebuff|r commands to add auras to the list.")
-	infotext1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	local infoText1 = CFG:CreateTextLabel(panel, 10, "These options allow you to setup player aura tracking. |cffffd100You can track up to 12 auras at once.|r\nWhilst in combat, please, use |cffffd100/atbuff|r and |cffffd100/atdebuff|r commands to add auras to the list.")
+	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
 	panel.StatusLog = log1
 
-	local auralist = CreateFrame("ScrollFrame", "ATAuraList", panel, "FauxScrollFrameTemplate")
-	auralist:SetSize(210, 266) -- 30 * 8 + 6 * 2 + 7 * 2
-	auralist:SetPoint("TOPLEFT", infotext1, "TOPLEFT", 0, -62)
-	auralist:SetBackdrop({
+	local auraList = CreateFrame("ScrollFrame", "ATAuraList", panel, "FauxScrollFrameTemplate")
+	auraList:SetSize(210, 266) -- 30 * 8 + 6 * 2 + 7 * 2
+	auraList:SetPoint("TOPLEFT", infoText1, "TOPLEFT", 0, -62)
+	auraList:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 		tile = false, tileSize = 0,
 		edgeSize = 16, insets = { left = 4, right = 4, top = 4, bottom = 4 }
 	})
-	auralist:SetBackdropColor(0, 0, 0, 1)
-	auralist:SetBackdropBorderColor(0.6, 0.6, 0.6)
-	auralist:SetScript("OnVerticalScroll", AuraList_OnVerticalScroll)
-	panel.AuraList = auralist
+	auraList:SetBackdropColor(0, 0, 0, 1)
+	auraList:SetBackdropBorderColor(0.6, 0.6, 0.6)
+	auraList:SetScript("OnVerticalScroll", AuraList_OnVerticalScroll)
+	panel.AuraList = auraList
 
-	local scrollbar = auralist.ScrollBar
+	local scrollbar = auraList.ScrollBar
 	scrollbar:ClearAllPoints()
-	scrollbar:SetPoint("TOPRIGHT", auralist,"TOPRIGHT", -6, -22)
-	scrollbar:SetPoint("BOTTOMRIGHT", auralist,"BOTTOMRIGHT", -6, 22)
+	scrollbar:SetPoint("TOPRIGHT", auraList,"TOPRIGHT", -6, -22)
+	scrollbar:SetPoint("BOTTOMRIGHT", auraList,"BOTTOMRIGHT", -6, 22)
 
-	auralist.buttons = {}
+	auraList.buttons = {}
 
 	for i = 1, 8 do
-		local button = CreateFrame("CheckButton", auralist:GetName().."Button"..i, auralist)
+		local button = CreateFrame("CheckButton", auraList:GetName().."Button"..i, auraList)
 		button.type = "Button"
 		button:SetHeight(30)
 		button:EnableMouse(true)
@@ -259,7 +259,7 @@ function CFG:AT_Initialize()
 		button:GetCheckedTexture():SetVertexColor(0.9, 0.5, 0,1)
 		button:SetScript("OnEnter", AuraButton_OnEnter)
 		button:SetScript("OnLeave", AuraButton_OnLeave)
-		tinsert(auralist.buttons, button)
+		tinsert(auraList.buttons, button)
 
 		local iconholder = CreateFrame("Frame", nil, button)
 		iconholder:SetSize(24, 24)
@@ -280,75 +280,75 @@ function CFG:AT_Initialize()
 		if i == 1 then
 			button:SetPoint("TOPLEFT", 0, -6)
 		else
-			button:SetPoint("TOPLEFT", auralist.buttons[i-1], "BOTTOMLEFT", 0, -2)
+			button:SetPoint("TOPLEFT", auraList.buttons[i-1], "BOTTOMLEFT", 0, -2)
 		end
 
 		button:SetPoint("RIGHT", scrollbar, "LEFT", 0, -6)
 
-		CFG:SetupControlDependency(attoggle, button)
+		CFG:SetupControlDependency(atToggle, button)
 	end
 
-	local bufftab = CreateFrame("Button", "ATAuraListTab1", auralist, "TabButtonTemplate")
-	bufftab.type = "Button"
-	bufftab:SetID(1)
-	bufftab:SetPoint("BOTTOMLEFT", auralist, "TOPLEFT", 8, -2)
-	bufftab:SetScript("OnClick", AuraListTab_OnClick)
-	auralist.BuffTab = bufftab
-	CFG:SetupControlDependency(attoggle, bufftab)
+	local buffTab = CreateFrame("Button", "ATAuraListTab1", auraList, "TabButtonTemplate")
+	buffTab.type = "Button"
+	buffTab:SetID(1)
+	buffTab:SetPoint("BOTTOMLEFT", auraList, "TOPLEFT", 8, -2)
+	buffTab:SetScript("OnClick", AuraListTab_OnClick)
+	auraList.BuffTab = buffTab
+	CFG:SetupControlDependency(atToggle, buffTab)
 
-	local debufftab = CreateFrame("Button", "ATAuraListTab2", auralist, "TabButtonTemplate")
-	debufftab.type = "Button"
-	debufftab:SetID(2)
-	debufftab:SetPoint("LEFT", bufftab, "RIGHT", 0, 0)
-	debufftab:SetScript("OnClick", AuraListTab_OnClick)
-	auralist.DebuffTab = debufftab
-	CFG:SetupControlDependency(attoggle, debufftab)
+	local debuffTab = CreateFrame("Button", "ATAuraListTab2", auraList, "TabButtonTemplate")
+	debuffTab.type = "Button"
+	debuffTab:SetID(2)
+	debuffTab:SetPoint("LEFT", buffTab, "RIGHT", 0, 0)
+	debuffTab:SetScript("OnClick", AuraListTab_OnClick)
+	auraList.DebuffTab = debuffTab
+	CFG:SetupControlDependency(atToggle, debuffTab)
 
-	local addeditbox = CreateFrame("EditBox", "ATAuraListEditBox", auralist, "InputBoxInstructionsTemplate")
-	addeditbox.type = "EditBox"
-	addeditbox:SetSize(120, 22)
-	addeditbox:SetAutoFocus(false)
-	addeditbox:SetNumeric(true)
-	addeditbox.Instructions:SetText("Enter Spell ID")
-	addeditbox:SetPoint("TOPLEFT", auralist, "BOTTOMLEFT", 6, 0)
-	addeditbox:SetScript("OnEnterPressed", AuraList_AddAura)
-	CFG:SetupControlDependency(attoggle, addeditbox)
-	auralist.AddEditBox = addeditbox
+	local addEditBox = CreateFrame("EditBox", "ATAuraListEditBox", auraList, "InputBoxInstructionsTemplate")
+	addEditBox.type = "EditBox"
+	addEditBox:SetSize(120, 22)
+	addEditBox:SetAutoFocus(false)
+	addEditBox:SetNumeric(true)
+	addEditBox.Instructions:SetText("Enter Spell ID")
+	addEditBox:SetPoint("TOPLEFT", auraList, "BOTTOMLEFT", 6, 0)
+	addEditBox:SetScript("OnEnterPressed", AuraList_AddAura)
+	CFG:SetupControlDependency(atToggle, addEditBox)
+	auraList.AddEditBox = addEditBox
 
-	local addbutton = CreateFrame("Button", "ATAuraListAddButton", auralist, "UIPanelButtonTemplate")
-	addbutton.type = "Button"
-	addbutton:SetSize(82, 22)
-	addbutton:SetText(ADD)
-	addbutton:SetPoint("LEFT", addeditbox, "RIGHT", 2, 0)
-	addbutton:SetScript("OnClick", AuraList_AddAura)
-	auralist.AddButton = addbutton
-	CFG:SetupControlDependency(attoggle, addbutton)
+	local addButton = CreateFrame("Button", "ATAuraListAddButton", auraList, "UIPanelButtonTemplate")
+	addButton.type = "Button"
+	addButton:SetSize(82, 22)
+	addButton:SetText(ADD)
+	addButton:SetPoint("LEFT", addEditBox, "RIGHT", 2, 0)
+	addButton:SetScript("OnClick", AuraList_AddAura)
+	auraList.AddButton = addButton
+	CFG:SetupControlDependency(atToggle, addButton)
 
-	local delbutton = CreateFrame("Button", "ATAuraListDeleteButton", auralist, "UIPanelButtonTemplate")
-	delbutton.type = "Button"
-	delbutton:SetSize(64, 22)
-	delbutton:SetText(DELETE)
-	delbutton:SetPoint("TOP", addeditbox, "BOTTOM", 0, -4)
-	delbutton:SetPoint("RIGHT", auralist, "RIGHT", 0, 0)
-	delbutton:SetPoint("LEFT", auralist, "LEFT", 0, 0)
-	delbutton:SetScript("OnClick", AuraList_DeleteAura)
-	auralist.DeleteButton = delbutton
-	CFG:SetupControlDependency(attoggle, delbutton)
+	local delButton = CreateFrame("Button", "ATAuraListDeleteButton", auraList, "UIPanelButtonTemplate")
+	delButton.type = "Button"
+	delButton:SetSize(64, 22)
+	delButton:SetText(DELETE)
+	delButton:SetPoint("TOP", addEditBox, "BOTTOM", 0, -4)
+	delButton:SetPoint("RIGHT", auraList, "RIGHT", 0, 0)
+	delButton:SetPoint("LEFT", auraList, "LEFT", 0, 0)
+	delButton:SetScript("OnClick", AuraList_DeleteAura)
+	auraList.DeleteButton = delButton
+	CFG:SetupControlDependency(atToggle, delButton)
 
-	PanelTemplates_SetNumTabs(auralist, 2)
-	PanelTemplates_SetTab(auralist, 1)
+	PanelTemplates_SetNumTabs(auraList, 2)
+	PanelTemplates_SetTab(auraList, 1)
 
-	local locktoggle = CFG:CreateCheckButton(panel, "MovementToggle", LOCK_FRAME)
-	locktoggle:SetPoint("TOPLEFT", delbutton, "BOTTOMLEFT", 0, -8)
-	locktoggle:HookScript("OnClick", LockToggle_OnClick)
-	panel.settings.auratracker.locked = locktoggle
-	CFG:SetupControlDependency(attoggle, locktoggle)
+	local lockToggle = CFG:CreateCheckButton(panel, "MovementToggle", LOCK_FRAME)
+	lockToggle:SetPoint("TOPLEFT", delButton, "BOTTOMLEFT", 0, -8)
+	lockToggle:HookScript("OnClick", LockToggle_OnClick)
+	panel.settings.auratracker.locked = lockToggle
+	CFG:SetupControlDependency(atToggle, lockToggle)
 
-	local growthdropdown = CFG:CreateDropDownMenu(panel, "DirectionDropDown", "Growth direction", "GrowthDirectionDropDownMenu_Initialize")
-	growthdropdown:SetPoint("TOPLEFT", locktoggle, "BOTTOMLEFT", -13, -24)
-	panel.GrowthDirectionDropDownMenu = growthdropdown
-	panel.settings.auratracker.direction = growthdropdown
-	CFG:SetupControlDependency(attoggle, growthdropdown)
+	local growthDropdown = CFG:CreateDropDownMenu(panel, "DirectionDropDown", "Growth direction", "GrowthDirectionDropDownMenu_Initialize")
+	growthDropdown:SetPoint("TOPLEFT", lockToggle, "BOTTOMLEFT", -13, -24)
+	panel.GrowthDirectionDropDownMenu = growthDropdown
+	panel.settings.auratracker.direction = growthDropdown
+	CFG:SetupControlDependency(atToggle, growthDropdown)
 
 	panel.okay = function() CFG:OptionsPanelOkay(panel) end
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end
