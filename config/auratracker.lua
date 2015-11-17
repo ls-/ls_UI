@@ -298,8 +298,6 @@ function CFG:AT_Initialize()
 	auraList.BuffTab = buffTab
 	CFG:SetupControlDependency(atToggle, buffTab)
 
-	print(buffTab:GetHeight())
-
 	local debuffTab = CreateFrame("Button", "ATAuraListTab2", auraList, "TabButtonTemplate")
 	debuffTab.type = "Button"
 	debuffTab:SetID(2)
