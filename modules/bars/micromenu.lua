@@ -300,12 +300,14 @@ local function EJMicroButton_OnEnter(self)
 end
 
 local function MicroButton_OnLeave(self)
-	for i = 1, GameTooltip.shownStatusBars do
-		_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(unpack(COLORS.green))
-		_G[GameTooltip:GetName().."StatusBar"..i]:Hide()
+	if GameTooltip.shownStatusBars then
+		for i = 1, GameTooltip.shownStatusBars do
+			_G[GameTooltip:GetName().."StatusBar"..i]:SetStatusBarColor(unpack(COLORS.green))
+			_G[GameTooltip:GetName().."StatusBar"..i]:Hide()
+		end
+		GameTooltip.shownStatusBars = 0
 	end
 
-	GameTooltip.shownStatusBars = 0
 	GameTooltip:Hide()
 end
 
