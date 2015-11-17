@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E.UF
+local UF = E:GetModule("UnitFrames")
 
 local function PartyHolder_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -9,6 +9,8 @@ local function PartyHolder_OnEvent(self, event, ...)
 		else
 			self:Hide()
 		end
+
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	end
 end
 

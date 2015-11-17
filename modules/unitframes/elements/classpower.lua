@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E.UF
+local UF = E:GetModule("UnitFrames")
 local COLORS = M.colors
 local POWERCOLORS = COLORS.power
 

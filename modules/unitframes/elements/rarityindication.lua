@@ -1,7 +1,6 @@
 local _, ns = ...
 local E, M = ns. E, ns.M
-local UF = E.UF
-
+local UF = E:GetModule("UnitFrames")
 local FRAME_TEXTURES = M.frame_textures
 local SHARED_FRAME_TEXTURES = FRAME_TEXTURES.shared
 

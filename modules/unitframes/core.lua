@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, oUF = ns.E, ns.C, ns.M, ns.oUF
-local UF = CreateFrame("Frame", "LSUnitFrameModule") E.UF = UF
+local UF = E:AddModule("UnitFrames")
 
 UF.objects, UF.headers = {}, {}
 
@@ -86,7 +86,7 @@ local function LSUnitFrame_OnLeave(self)
 	end
 end
 
-local function ConstructUnitFrame(frame, unit)
+local function UnitFrameConstructor(frame, unit)
 	frame:RegisterForClicks("AnyUp")
 	frame:SetScript("OnEnter", LSUnitFrame_OnEnter)
 	frame:SetScript("OnLeave", LSUnitFrame_OnLeave)
@@ -128,41 +128,40 @@ local function ConstructUnitFrame(frame, unit)
 	end
 end
 
-function UF:Initialize()
-	self:RegisterStyle("LSv2", ConstructUnitFrame)
-	self:SetActiveStyle("LSv2")
-
-	local ArenaPrepFrames
+local function MainConstructor()
+	oUF:RegisterStyle("LSv2", UnitFrameConstructor)
+	oUF:SetActiveStyle("LSv2")
 
 	if C.units.player.enabled then
-		UF.objects["player"] = self:Spawn("player", "LSPlayerFrame")
-		UF.objects["pet"] = self:Spawn("pet", "LSPetFrame")
+		UF.objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
+		UF.objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
 	end
 
 	if C.units.target.enabled then
-		UF.objects["target"] = self:Spawn("target", "LSTargetFrame")
-		UF.objects["targettarget"] = self:Spawn("targettarget", "LSTargetTargetFrame")
+		UF.objects["target"] = oUF:Spawn("target", "LSTargetFrame")
+		UF.objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
 	end
 
 	if C.units.focus.enabled then
-		UF.objects["focus"] = self:Spawn("focus", "LSFocusFrame")
-		UF.objects["focustarget"] = self:Spawn("focustarget", "LSFocusTargetFrame")
+		UF.objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
+		UF.objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
 	end
 
 	if C.units.boss.enabled then
-		UF.objects["boss1"] = self:Spawn("boss1", "LSBoss1Frame")
-		UF.objects["boss2"] = self:Spawn("boss2", "LSBoss2Frame")
-		UF.objects["boss3"] = self:Spawn("boss3", "LSBoss3Frame")
-		UF.objects["boss4"] = self:Spawn("boss4", "LSBoss4Frame")
-		UF.objects["boss5"] = self:Spawn("boss5", "LSBoss5Frame")
+		UF.objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
+		UF.objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
+		UF.objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
+		UF.objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
+		UF.objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
 	end
 
+	local ArenaPrepFrames
 	if C.units.arena.enabled then
-		UF.objects["arena1"] = self:Spawn("arena1", "LSArena1Frame")
-		UF.objects["arena2"] = self:Spawn("arena2", "LSArena2Frame")
-		UF.objects["arena3"] = self:Spawn("arena3", "LSArena3Frame")
-		UF.objects["arena4"] = self:Spawn("arena4", "LSArena4Frame")
-		UF.objects["arena5"] = self:Spawn("arena5", "LSArena5Frame")
+		UF.objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
+		UF.objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
+		UF.objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
+		UF.objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
+		UF.objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
 
 		ArenaPrepFrames = UF:SetupArenaPrepFrames()
 	end
@@ -205,7 +204,7 @@ function UF:Initialize()
 	end
 
 	if C.units.party.enabled then
-		UF.headers["party"] = self:SpawnHeader("LSPartyFrame", nil,
+		UF.headers["party"] = oUF:SpawnHeader("LSPartyFrame", nil,
 			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
 			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
 			"showPlayer", true,
@@ -218,5 +217,11 @@ function UF:Initialize()
 
 		UF.headers["party"]:SetParent(LSPartyHolder)
 		UF.headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, -16)
+	end
+end
+
+function UF:Initialize(forceInit)
+	if C.units.enabled or forceInit then
+		oUF:Factory(MainConstructor)
 	end
 end
