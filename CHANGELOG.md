@@ -1,3 +1,11 @@
+#Version 2.9
+
+- Fixed massive memory leak in aura tracker module;
+- Added an option to disable player, target and focus castbars;
+- Added an option to disable tooltip module;
+- Removed clock form top right corner, reskinned and repositioned blizz clock on minimap is used instead of it now;
+- Numerous bug fixes and tweaks.
+
 #Version 2.8
 
 - Added nameplate combo bar and simple in-game config;
