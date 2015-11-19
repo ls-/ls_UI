@@ -4,10 +4,10 @@ local UF = E:GetModule("UnitFrames")
 
 local function PartyHolder_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
-		if GetDisplayedAllyFrames() == "party" then
-			self:Show()
-		else
+		if GetCVarBool("useCompactPartyFrames") then
 			self:Hide()
+		else
+			self:Show()
 		end
 
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
