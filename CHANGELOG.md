@@ -1,3 +1,8 @@
+#Version 2.10
+
+- Fixed party frame visibility issue.
+
+
 #Version 2.9
 
 - Fixed massive memory leak in aura tracker module;
