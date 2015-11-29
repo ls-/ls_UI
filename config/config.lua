@@ -91,6 +91,7 @@ D["nameplates"] = {
 
 D["bars"] = {
 	enabled = true,
+	restricted = true,
 	bar1 = { -- MainMenuBar
 		point = {"BOTTOM", 0, 12},
 		button_size = 28,
@@ -143,10 +144,12 @@ D["bars"] = {
 	},
 	micromenu = {
 		holder1 = {
-			point = {"BOTTOM", -266, 4},
+			point = {"BOTTOM", -312, 4},
+			-- point = {"BOTTOM", -266, 4},
 		},
 		holder2 = {
-			point = {"BOTTOM", 266, 4},
+			point = {"BOTTOM", 312, 4},
+			-- point = {"BOTTOM", 266, 4},
 		},
 	},
 	petbattle = {
@@ -157,7 +160,8 @@ D["bars"] = {
 	},
 	bags = {
 		enabled = true,
-		point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
+		point = {"LEFT", "LSMBHolderRight", "RIGHT", 116, 0},
+		-- point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
 		button_size = 26,
 		button_gap = 4,
 		direction = "RIGHT",

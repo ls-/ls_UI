@@ -258,12 +258,13 @@ end
 function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
 	if originalBar and originalBar:GetParent() ~= header then
 		originalBar:SetParent(header)
-		originalBar:SetAllPoints()
 		originalBar:EnableMouse(false)
 		originalBar.ignoreFramePositionManager = true
 	end
 
 	local previous
+
+	header.buttons = buttons
 
 	for i = 1, #buttons do
 		local button = buttons[i]
@@ -271,11 +272,14 @@ function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, 
 		button:ClearAllPoints()
 		button:SetSize(type(buttonSize) == "table" and buttonSize.w or buttonSize,
 			type(buttonSize) == "table" and buttonSize.h or buttonSize)
-
+		
+		-- button:SetParent(header)
 		if not originalBar then button:SetParent(header) end
 
-		button:SetFrameStrata("LOW")
-		button:SetFrameLevel(2)
+		-- print(header:GetName(), "\n", header:IsProtected())
+		-- print("     ", button:IsProtected())
+
+		button:SetFrameLevel(header:GetFrameLevel() + 1)
 
 		if direction == "RIGHT" then
 			if i == 1 then

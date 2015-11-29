@@ -25,15 +25,13 @@ function B:HandlePetBattleBar()
 	PB_CFG = C.bars.petbattle
 
 	local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerBaseTemplate")
-	bar:SetFrameStrata("LOW")
-	bar:SetFrameLevel(1)
 
 	if PB_CFG.direction == "RIGHT" or PB_CFG.direction == "LEFT" then
-		bar:SetSize(PB_CFG.button_size * 12 + PB_CFG.button_gap * 12,
+		bar:SetSize(PB_CFG.button_size * 6 + PB_CFG.button_gap * 6,
 			PB_CFG.button_size + PB_CFG.button_gap)
 	else
 		bar:SetSize(PB_CFG.button_size + PB_CFG.button_gap,
-			PB_CFG.button_size * 12 + PB_CFG.button_gap * 12)
+			PB_CFG.button_size * 6 + PB_CFG.button_gap * 6)
 	end
 
 	bar:SetPoint(unpack(PB_CFG.point))
@@ -64,9 +62,11 @@ function B:HandlePetBattleBar()
 	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
 
-	local art = bar:CreateTexture(nil, "BACKGROUND", nil, -8)
-	art:SetPoint("CENTER")
-	art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
+	-- local art = bar:CreateTexture(nil, "BACKGROUND", nil, -8)
+	-- art:SetPoint("CENTER")
+	-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
 
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
+
+	B:SetupControlledBar(bar, "PetBattle") 
 end

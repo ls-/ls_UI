@@ -12,55 +12,86 @@ local find = strfind
 
 local MICRO_BUTTON_LAYOUT = {
 	["CharacterMicroButton"] = {
-		point = {"LEFT", "LSMBHolderLeft", "LEFT", 3, 0},
+		point = {"LEFT", "LSMBHolderLeft", "LEFT", 2, 0},
 		parent = "LSMBHolderLeft",
-		icon = "character",
 	},
 	["SpellbookMicroButton"] = {
-		point = {"LEFT", "CharacterMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "CharacterMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
-		icon = "spellbook",
+		icon = "Spellbook",
 	},
 	["TalentMicroButton"] = {
-		point = {"LEFT", "SpellbookMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "SpellbookMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
-		icon = "talents",
+		icon = "Talent",
 	},
 	["AchievementMicroButton"] = {
-		point = {"LEFT", "TalentMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "TalentMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
-		icon = "achievement",
+		icon = "Achievement2",
 	},
 	["QuestLogMicroButton"] = {
-		point = {"LEFT", "AchievementMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "AchievementMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
-		icon = "quest",
+		icon = "Quest",
 	},
 	["GuildMicroButton"] = {
-		point = {"LEFT", "LSMBHolderRight", "LEFT", 3, 0},
+		point = {"LEFT", "LSMBHolderRight", "LEFT", 2, 0},
 		parent = "LSMBHolderRight",
-		icon = "guild",
+		icon = "Guild",
 	},
 	["LFDMicroButton"] = {
-		point = {"LEFT", "GuildMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "GuildMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
-		icon = "lfg",
+		icon = "LFD",
 	},
 	["CollectionsMicroButton"] = {
-		point = {"LEFT", "LFDMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "LFDMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
-		icon = "pet",
+		icon = "Collections2",
 	},
 	["EJMicroButton"] = {
-		point = {"LEFT", "CollectionsMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "CollectionsMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
-		icon = "ej",
+		icon = "EJ",
 	},
 	["MainMenuMicroButton"] = {
-		point = {"LEFT", "EJMicroButton", "RIGHT", 6, 0},
+		point = {"LEFT", "EJMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
-		icon = "mainmenu",
+		icon = "MainMenu",
 	},
+}
+
+local ICONS = {
+	WARRIOR = {36 / 256, 52 / 256, 20 / 64, 42 / 64},
+	DEATHKNIGHT = {52 / 256, 68 / 256, 20 / 64, 42 / 64},
+	HUNTER = {68 / 256, 84 / 256, 20 / 64, 42 / 64},
+	DRUID = {84 / 256, 100 / 256, 20 / 64, 42 / 64},
+	MAGE = {100 / 256, 116 / 256, 20 / 64, 42 / 64},
+	SHAMAN = {116 / 256, 132 / 256, 20 / 64, 42 / 64},
+
+	MONK = {36 / 256, 52 / 256, 42 / 64, 64 / 64},
+	PALADIN = {52 / 256, 68 / 256, 42 / 64, 64 / 64},
+	PRIEST = {68 / 256, 84 / 256, 42 / 64, 64 / 64},
+	ROGUE = {84 / 256, 100 / 256, 42 / 64, 64 / 64},
+	WARLOCK = {100 / 256, 116 / 256, 42 / 64, 64 / 64},
+	DEMONHUNTER = {116 / 256, 132 / 256, 42 / 64, 64 / 64},
+
+	Spellbook = {132 / 256, 148 / 256, 20 / 64, 42 / 64},
+	Talent = 	{148 / 256, 164 / 256, 20 / 64, 42 / 64},
+	Achievement = {164 / 256, 180 / 256, 20 / 64, 42 / 64},
+	Quest = {180 / 256, 196 / 256, 20 / 64, 42 / 64},
+	Guild = {196 / 256, 212 / 256, 20 / 64, 42 / 64},
+	LFD = {212 / 256, 228 / 256, 20 / 64, 42 / 64},
+	Collections = {228 / 256, 244 / 256, 20 / 64, 42 / 64},
+
+	EJ = {132 / 256, 148 / 256, 42 / 64, 64 / 64},
+	MainMenu = {148 / 256, 164 / 256, 42 / 64, 64 / 64},
+	Achievement2 = {164 / 256, 180 / 256, 42 / 64, 64 / 64},
+	Achievement3 = {180 / 256, 196 / 256, 42 / 64, 64 / 64},
+	Guild2 = {196 / 256, 212 / 256, 42 / 64, 64 / 64},
+	Quest3 = {212 / 256, 228 / 256, 42 / 64, 64 / 64},
+	Collections2 = {228 / 256, 244 / 256, 42 / 64, 64 / 64},
 }
 
 local function SimpleSort(a, b)
@@ -244,6 +275,11 @@ local function UpdateEJMicroButtonTooltip(button, event)
 			GameTooltip:Hide()
 			GameTooltip_AddNewbieTip(button, button.tooltipText, 1, 1, 1, button.newbieText)
 			GameTooltip:AddLine(" ")
+
+			if not button:IsEnabled() then
+				GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
+				GameTooltip:Show()
+			end
 		end
 
 		local savedInstances = GetNumSavedInstances()
@@ -311,50 +347,44 @@ local function MicroButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
-local function SetCustomNormalTexture(button)
+local function SetNormalTextureOverride(button)
 	local normal = button:GetNormalTexture()
-
 	if normal then normal:SetTexture(nil) end
 end
 
-local function SetCustomPushedTexture(button)
+local function SetPushedTextureOverride(button)
 	local pushed = button:GetPushedTexture()
-
 	if pushed then
-		pushed:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microbutton")
-		pushed:SetTexCoord(0.7734375, 0.9140625, 0.3125, 0.6875)
-		pushed:SetSize(18, 24)
+		pushed:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+		pushed:SetBlendMode("ADD")
+		pushed:SetTexCoord(18 / 256, 36 / 256, 20 / 64, 44 / 64)
 		pushed:ClearAllPoints()
-		pushed:SetPoint("CENTER")
+		pushed:SetAllPoints()
 	end
 end
 
-local function SetCustomDisabledTexture(button)
+local function SetDisabledTextureOverride(button)
 	local disabled = button:GetDisabledTexture()
-
 	if disabled then disabled:SetTexture(nil) end
 end
 
-local function HandleMicroButton(name)
+local function HandleMicroButton(name, setIcon)
 	local button = _G[name]
 	local highlight = button:GetHighlightTexture()
 	local flash = button.Flash
 
 	button:SetSize(18, 24)
-	button:SetFrameStrata("LOW")
-	button:SetFrameLevel(2)
 	button:SetHitRectInsets(0, 0, 0, 0)
 
-	SetCustomNormalTexture(button)
-	SetCustomPushedTexture(button)
-	SetCustomDisabledTexture(button)
+	SetNormalTextureOverride(button)
+	SetPushedTextureOverride(button)
+	SetDisabledTextureOverride(button)
 
 	if highlight then
-		highlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microbutton")
-		highlight:SetTexCoord(0.40625, 0.59375, 0.265625, 0.734375)
-		highlight:SetSize(24, 30)
+		highlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+		highlight:SetTexCoord(0 / 256, 18 / 256, 20 / 64, 44 / 64)
 		highlight:ClearAllPoints()
-		highlight:SetPoint("CENTER")
+		highlight:SetAllPoints()
 	end
 
 	if flash then
@@ -364,21 +394,16 @@ local function HandleMicroButton(name)
 	end
 
 	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	bg:SetVertexColor(0.15, 0.15, 0.15)
+	bg:SetTexture(0, 0, 0, 1)
 	bg:SetAllPoints()
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-	icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microicon\\"..MICRO_BUTTON_LAYOUT[name].icon)
-	icon:SetVertexColor(0.52, 0.46, 0.36)
-	icon:SetSize(24, 24)
-	icon:SetPoint("CENTER")
+	icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+	icon:SetSize(16, 22)
+	icon:SetPoint("CENTER", 0, 0)
+	button.Icon = icon
 
-	local border = button:CreateTexture(nil, "BORDER", nil, 0)
-	border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\microbutton")
-	border:SetTexCoord(0.0625, 0.28125, 0.234375, 0.765625)
-	border:SetSize(28, 34)
-	border:SetPoint("CENTER")
+	E:CreateBorder(button, 8)
 
 	button:SetScript("OnLeave", MicroButton_OnLeave)
 	button:SetScript("OnUpdate", nil)
@@ -395,6 +420,47 @@ local function HandleMicroButtonIndicator(parent, indicator)
 	indicator:ClearAllPoints()
 	indicator:SetPoint("BOTTOM", 0, 0)
 	parent.Indicator = indicator
+end
+
+local function SetMicroButtonIcon(button, texCoord)
+	button.Icon:SetTexCoord(unpack(texCoord))
+end
+
+local function GuildTabardUpdateHook()
+	if GuildMicroButton.Tabard:IsShown() then
+		GuildMicroButton.Tabard.background:Show()
+		GuildMicroButton.Tabard.emblem:Show()
+
+		GuildMicroButton.Icon:Hide()
+	else
+		GuildMicroButton.Tabard.background:Hide()
+		GuildMicroButton.Tabard.emblem:Hide()
+
+		GuildMicroButton.Icon:Show()
+	end
+
+	SetNormalTextureOverride(GuildMicroButton)
+	SetPushedTextureOverride(GuildMicroButton)
+	SetDisabledTextureOverride(GuildMicroButton)
+end
+
+local function HandleGuildButtonTabard(button)
+	button.Tabard = GuildMicroButtonTabard
+
+	local banner = button.Tabard.background
+	banner:SetParent(button)
+	banner:SetSize(18, 30)
+	banner:ClearAllPoints()
+	banner:SetPoint("TOP", 0, 0)
+	banner:SetTexCoord(6 / 32, 26 / 32, 0.5, 1)
+	banner:SetDrawLayer("BACKGROUND", 2)
+
+	local emblem = button.Tabard.emblem
+	emblem:SetParent(button)
+	emblem:SetPoint("CENTER", 0, 0)
+	emblem:SetDrawLayer("BACKGROUND", 3)
+
+	hooksecurefunc("GuildMicroButton_UpdateTabard", GuildTabardUpdateHook)
 end
 
 local function ResetMicroButtonsParent()
@@ -424,18 +490,21 @@ function B:HandleMicroMenu()
 	local MM_CFG = C.bars.micromenu
 
 	local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
-	holder1:SetFrameStrata("LOW")
-	holder1:SetFrameLevel(1)
-	holder1:SetSize(18 * 5 + 6 * 5, 24 + 6)
-	holder1:SetPoint(unpack(MM_CFG.holder1.point))
-	E:CreateMover(holder1)
+	holder1:SetSize(18 * 5 + 4 * 5, 24 + 4)
 
 	local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
-	holder2:SetFrameStrata("LOW")
-	holder2:SetFrameLevel(1)
-	holder2:SetSize(18 * 5 + 6 * 5, 24 + 6)
-	holder2:SetPoint(unpack(MM_CFG.holder2.point))
-	E:CreateMover(holder2)
+	holder2:SetSize(18 * 5 + 4 * 5, 24 + 4)
+
+	if C.bars.restricted then
+		B:SetupControlledBar(holder1, "MicroMenuLeft")
+		B:SetupControlledBar(holder2, "MicroMenuRight")
+	else
+		holder1:SetPoint(unpack(MM_CFG.holder1.point))
+		E:CreateMover(holder1)
+
+		holder2:SetPoint(unpack(MM_CFG.holder2.point))
+		E:CreateMover(holder2)
+	end
 
 	for _, b in next, MICRO_BUTTONS do
 		local button = _G[b]
@@ -446,6 +515,10 @@ function B:HandleMicroMenu()
 			button:SetParent(MICRO_BUTTON_LAYOUT[b].parent)
 			button:ClearAllPoints()
 			button:SetPoint(unpack(MICRO_BUTTON_LAYOUT[b].point))
+
+			if MICRO_BUTTON_LAYOUT[b].icon then
+				SetMicroButtonIcon(button, ICONS[MICRO_BUTTON_LAYOUT[b].icon])
+			end
 		else
 			button:UnregisterAllEvents()
 			button:SetParent(M.HiddenParent)
@@ -455,21 +528,20 @@ function B:HandleMicroMenu()
 			E:ForceHide(MicroButtonPortrait)
 			HandleMicroButtonIndicator(button)
 
+			SetMicroButtonIcon(button, ICONS[E.playerclass])
+
 			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
 			button:HookScript("OnEvent", CharacterMicroButton_OnEvent)
 		elseif b == "GuildMicroButton" then
-			E:ForceHide(GuildMicroButtonTabard)
-
-			hooksecurefunc(GuildMicroButton, "SetNormalTexture", SetCustomNormalTexture)
-			hooksecurefunc(GuildMicroButton, "SetPushedTexture", SetCustomPushedTexture)
-			hooksecurefunc(GuildMicroButton, "SetDisabledTexture", SetCustomDisabledTexture)
+			HandleGuildButtonTabard(button)
 		elseif b == "QuestLogMicroButton" then
 			button:HookScript("OnEnter", QuestLogMicroButton_OnEnter)
 		elseif b == "EJMicroButton" then
 			button:RegisterEvent("UPDATE_INSTANCE_INFO")
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
 			button:HookScript("OnEvent", UpdateEJMicroButtonTooltip)
+
 			button.NewAdventureNotice:ClearAllPoints()
 			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
