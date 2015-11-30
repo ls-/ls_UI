@@ -1,8 +1,6 @@
 local _, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
-M.font = STANDARD_TEXT_FONT
-
 M.HiddenParent = CreateFrame("Frame", "LSHiddenParent")
 M.HiddenParent:Hide()
 
@@ -92,14 +90,6 @@ local textures = {
 		["ALLIANCE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:22:40:22:40|t",
 		["HORDE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:22:40|t",
 		["FFA"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:42:60:22:40|t",
-	},
-	button = {
-		normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
-		normalmetal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",
-		highlight = "Interface\\AddOns\\oUF_LS\\media\\button\\highlight",
-		pushed = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
-		checked = "Interface\\AddOns\\oUF_LS\\media\\button\\checked",
-		flash = "Interface\\AddOns\\oUF_LS\\media\\button\\flash",
 	},
 }
 

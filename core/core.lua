@@ -13,11 +13,6 @@ function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	object:SetWordWrap(wrap or false)
 	object:SetJustifyV("MIDDLE")
 
-	if shadow then
-		object:SetShadowColor(0, 0, 0)
-		object:SetShadowOffset(1, -1)
-	end
-
 	return object
 end
 
