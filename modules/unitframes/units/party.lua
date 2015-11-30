@@ -40,7 +40,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
-	local cover = CreateFrame("Frame", nil, frame)
+	local cover = CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover

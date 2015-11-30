@@ -38,7 +38,7 @@ function B:HandleObjectiveTracker()
 	ObjectiveTrackerFrame.SetPoint = function() return end
 	ObjectiveTrackerFrame:SetHeight(E.height * 0.6)
 
-	local header = CreateFrame("Button", nil, ObjectiveTrackerFrame)
+	local header = CreateFrame("Button", "LSOTFrameHeader", ObjectiveTrackerFrame)
 	header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 2)
 	header:SetSize(250, 24)
 	header:SetPoint("TOP", -8, 0)

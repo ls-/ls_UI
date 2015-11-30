@@ -41,7 +41,7 @@ local function SetCustomCooldown(self, start, duration)
 end
 
 local function CreateCooldownTimer(cooldown, textSize)
-	local holder = CreateFrame("Frame", nil, cooldown)
+	local holder = CreateFrame("Frame", "$parentTextHolder", cooldown)
 	holder:SetFrameLevel(6)
 	holder:SetAllPoints()
 

@@ -127,7 +127,7 @@ local function CreateMoverButton(self, option)
 		or option == "Left" and MoveLeftOnClick or option == "Right" and MoveRightOnClick
 		or option == "Reset" and ResetOnClick
 
-	local button = CreateFrame("Button", "lsMover"..option, self, "UIPanelSquareButton")
+	local button = CreateFrame("Button", "LSMover"..option.."Button", self, "UIPanelSquareButton")
 	button:SetPoint("CENTER", self, anchor, 0, 0)
 	button:SetSize(10, 10)
 	button:Hide()

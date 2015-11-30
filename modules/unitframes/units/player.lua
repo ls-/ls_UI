@@ -14,7 +14,7 @@ function UF:ConstructPlayerFrame(frame)
 	bg:SetSize(104, 150)
 	bg:SetPoint("CENTER")
 
-	local mid = CreateFrame("Frame", nil, frame)
+	local mid = CreateFrame("Frame", "$parentMiddle", frame)
 	mid:SetFrameLevel(level + 3)
 	mid:SetAllPoints()
 
@@ -24,7 +24,7 @@ function UF:ConstructPlayerFrame(frame)
 	ring:SetSize(168, 202)
 	ring:SetPoint("CENTER", 0, -17)
 
-	local cover = CreateFrame("Frame", nil, frame)
+	local cover = CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 5)
 	cover:SetAllPoints()
 	frame.Cover = cover

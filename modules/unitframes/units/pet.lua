@@ -13,7 +13,7 @@ function UF:ConstructPetFrame(frame)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	bg:SetTexCoord(84 / 256, 126 / 256, 0, 134 / 256)
 
-	local cover = CreateFrame("Frame", nil, frame)
+	local cover = CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover

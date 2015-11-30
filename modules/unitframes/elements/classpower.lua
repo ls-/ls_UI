@@ -332,7 +332,7 @@ function UF:CreateRuneBar(parent, level)
 	bar:SetPoint("LEFT", 19, 0)
 
 	for i = 1, 6 do
-		local element = CreateFrame('StatusBar', nil, bar)
+		local element = CreateFrame('StatusBar', "$parentRune"..i, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetOrientation("VERTICAL")
@@ -406,7 +406,7 @@ function UF:CreateEclipseBar(parent, level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
 
-	local lunar = CreateFrame("StatusBar", "lsLunarBar", bar)
+	local lunar = CreateFrame("StatusBar", "$parentLunarBar", bar)
 	lunar:SetFrameLevel(bar:GetFrameLevel())
 	lunar:SetOrientation("VERTICAL")
 	lunar:SetSize(12, 128)
@@ -415,7 +415,7 @@ function UF:CreateEclipseBar(parent, level)
 	lunar:SetStatusBarColor(unpack(POWERCOLORS["ECLIPSE"].negative))
 	bar.LunarBar = lunar
 
-	local solar = CreateFrame("StatusBar", "lsSolarBar", bar)
+	local solar = CreateFrame("StatusBar", "$parentSolarBar", bar)
 	solar:SetFrameLevel(bar:GetFrameLevel())
 	solar:SetOrientation("VERTICAL")
 	solar:SetSize(12, 128)
@@ -529,7 +529,7 @@ function UF:CreateTotemBar(parent, level)
 	for i = 1, MAX_TOTEMS do
 		local r, g, b = unpack(POWERCOLORS["TOTEMS"][i])
 
-		local element = CreateFrame("StatusBar", nil, bar)
+		local element = CreateFrame("StatusBar", "$parentTotem"..i, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetOrientation("VERTICAL")
@@ -638,7 +638,7 @@ function UF:CreateBurningEmbers(parent, level)
 	bar:SetPoint("LEFT", 19, 0)
 
 	for i = 1, 4 do
-		local element = CreateFrame("StatusBar", nil, bar)
+		local element = CreateFrame("StatusBar", "$parentEmber"..i, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetOrientation("VERTICAL")

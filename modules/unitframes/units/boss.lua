@@ -32,7 +32,7 @@ function UF:ConstructBossFrame(frame)
 	bgIndicatorRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
 	frame.BgIndicatorRight = bgIndicatorRight
 
-	local cover = CreateFrame("Frame", nil, frame)
+	local cover = CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover

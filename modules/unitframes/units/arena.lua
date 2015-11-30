@@ -109,7 +109,7 @@ function UF:ConstructArenaFrame(frame)
 	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
-	local cover = CreateFrame("Frame", nil, frame)
+	local cover = CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
@@ -220,7 +220,7 @@ function UF:ConstructArenaFrame(frame)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
 	frame:Tag(name, "[custom:name]")
 
-	local specinfo = CreateFrame("Frame", nil, frame)
+	local specinfo = CreateFrame("Frame", "$parentSpecInfo", frame)
 	specinfo:SetSize(28, 28)
 	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
 	frame.SpecInfo = specinfo
@@ -233,14 +233,14 @@ function UF:ConstructArenaFrame(frame)
 	E:TweakIcon(icon)
 	specinfo.Icon = icon
 
-	local cd = CreateFrame("Cooldown", nil, specinfo, "CooldownFrameTemplate")
+	local cd = CreateFrame("Cooldown", "$parentCooldown", specinfo, "CooldownFrameTemplate")
 	cd:ClearAllPoints()
 	cd:SetPoint("TOPLEFT", 1, -1)
 	cd:SetPoint("BOTTOMRIGHT", -1, 1)
 	E:HandleCooldown(cd, 12)
 	specinfo.CD = cd
 
-	local trinket = CreateFrame("Frame", nil, frame)
+	local trinket = CreateFrame("Frame", "$parentTrinket", frame)
 	trinket:SetSize(28, 28)
 	trinket:SetPoint("LEFT", specinfo, "RIGHT", 6, 0)
 	trinket:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", frame.unit)
@@ -253,7 +253,7 @@ function UF:ConstructArenaFrame(frame)
 	E:TweakIcon(icon)
 	trinket.Icon = icon
 
-	cd = CreateFrame("Cooldown", nil, trinket, "CooldownFrameTemplate")
+	cd = CreateFrame("Cooldown", "$parentCooldown", trinket, "CooldownFrameTemplate")
 	cd:ClearAllPoints()
 	cd:SetPoint("TOPLEFT", 1, -1)
 	cd:SetPoint("BOTTOMRIGHT", -1, 1)
