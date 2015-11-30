@@ -268,14 +268,12 @@ function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, 
 	for i = 1, #buttons do
 		local button = buttons[i]
 
+		button:SetFrameLevel(header:GetFrameLevel() + 1)
 		button:ClearAllPoints()
 		button:SetSize(type(buttonSize) == "table" and buttonSize.w or buttonSize,
 			type(buttonSize) == "table" and buttonSize.h or buttonSize)
 
 		if not originalBar then button:SetParent(header) end
-
-		button:SetFrameStrata("LOW")
-		button:SetFrameLevel(2)
 
 		if direction == "RIGHT" then
 			if i == 1 then
