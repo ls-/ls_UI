@@ -155,17 +155,6 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function FlyoutButtonToggleHook(...)
-	local self, flyoutID = ...
-
-	if not self:IsShown() then return end
-
-	local _, _, numSlots = GetFlyoutInfo(flyoutID)
-	for i = 1, numSlots do
-		E:SkinActionButton(_G["SpellFlyoutButton"..i])
-	end
-end
-
 function B:HandleActionBars()
 	BAR_CFG = C.bars
 
@@ -259,6 +248,4 @@ function B:HandleActionBars()
 		b:UnregisterAllEvents()
 		b:SetAttribute("statehidden", true)
 	end
-
-	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
 end
