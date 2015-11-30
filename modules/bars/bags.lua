@@ -3,7 +3,6 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
 local GRADIENT = COLORS.gradient["GYR"]
 local B = E:GetModule("Bars")
-local BAGS_CFG
 
 local unpack = unpack
 local BACKPACK_CONTAINER, NUM_BAG_SLOTS = BACKPACK_CONTAINER, NUM_BAG_SLOTS
@@ -20,6 +19,14 @@ local BAGS = {
 	CharacterBag1Slot,
 	CharacterBag2Slot,
 	CharacterBag3Slot
+}
+
+local BAGS_CFG = {
+	enabled = true,
+	point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 426, 4},
+	button_size = 26,
+	button_gap = 4,
+	direction = "RIGHT",
 }
 
 local function GetBagUsageInfo()
@@ -96,27 +103,29 @@ local function BackpackButton_OnEvent(self, event, ...)
 end
 
 function B:HandleBags()
-	BAGS_CFG = C.bars.bags
+	if not C.bars.restricted then
+		BAGS_CFG = C.bars.bags
+	end
 
 	if BAGS_CFG.enabled then
-		local header = CreateFrame("Frame", "lsBagsHeader", UIParent, "SecureHandlerBaseTemplate")
-		header:SetFrameStrata("LOW")
-		header:SetFrameLevel(1)
+		local holder = CreateFrame("Frame", "LSBagsHolder", UIParent, "SecureHandlerBaseTemplate")
 
 		if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
-			header:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
+			holder:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
 				BAGS_CFG.button_size + BAGS_CFG.button_gap)
 		else
-			header:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
+			holder:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
 				BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5)
 		end
 
-		header:SetPoint(unpack(BAGS_CFG.point))
-
-		E:CreateMover(header)
-
-		E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, header,
+		E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, holder,
 			BAGS_CFG.direction, E.SkinBagButton)
+
+		holder:SetPoint(unpack(BAGS_CFG.point))
+
+		if not C.bars.restricted then
+			E:CreateMover(holder)
+		end
 
 		MainMenuBarBackpackButton.icon:SetDesaturated(true)
 

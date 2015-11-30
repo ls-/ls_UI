@@ -2,12 +2,20 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS, TEXTURES = M.colors, M.textures
 local B = E:GetModule("Bars")
-local BARS_CFG
 
 local tonumber = tonumber
 local match = strmatch
 
 local Bars = {}
+
+local BARS_CFG = {
+	bar1 = {
+		point = {"BOTTOM", 0, 12},
+		button_size = 28,
+		button_gap = 4,
+		direction = "RIGHT",
+	},
+}
 
 local BAR_LAYOUT = {
 	bar1 = {
@@ -97,11 +105,6 @@ local STANCE_PET_VISIBILITY = {
 	STANCE2 = {"BOTTOM", 0, 117},
 }
 
-
-local CFG_OVERRIDE = {
-	
-}
-
 -- page swapping is taken from tukui, thx :D really usefull thingy
 local PAGE_LAYOUT = {
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
@@ -113,7 +116,7 @@ local PAGE_LAYOUT = {
 
 local function GetPageLayout()
 	local condition = PAGE_LAYOUT["DEFAULT"]
-	local page = PAGE_LAYOUT[ns.E.playerclass]
+	local page = PAGE_LAYOUT[E.playerclass]
 
 	if page then
 		condition = condition.." "..page
@@ -159,167 +162,98 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function FlyoutButtonToggleHook(...)
-	local self, flyoutID = ...
-
-	if not self:IsShown() then return end
-
-	local _, _, numSlots = GetFlyoutInfo(flyoutID)
-	for i = 1, numSlots do
-		E:SkinActionButton(_G["SpellFlyoutButton"..i])
-	end
-end
-
 function B:HandleActionBars()
-	BARS_CFG = C.bars
-
-	for key, data in next, BAR_LAYOUT do
-		local BAR_CFG = BARS_CFG[key]
-		
-		local index = match(key, "(%d+)")
-		local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
-
-		if BAR_CFG.direction == "RIGHT" or BAR_CFG.direction == "LEFT" then
-			bar:SetSize(BAR_CFG.button_size * #data.buttons + BAR_CFG.button_gap * #data.buttons,
-				BAR_CFG.button_size + BAR_CFG.button_gap)
+	if C.bars.enabled then
+		if C.bars.restricted then
+			BARS_CFG.bar2 = C.bars.bar2
+			BARS_CFG.bar3 = C.bars.bar3
+			BARS_CFG.bar4 = C.bars.bar4
+			BARS_CFG.bar5 = C.bars.bar5
+			BARS_CFG.bar6 = C.bars.bar6
+			BARS_CFG.bar7 = C.bars.bar7
 		else
-			bar:SetSize(BAR_CFG.button_size + BAR_CFG.button_gap,
-				BAR_CFG.button_size * #data.buttons + BAR_CFG.button_gap * #data.buttons)
+			BARS_CFG = C.bars
 		end
 
-		if index == "1" then
-			bar:RegisterEvent("PLAYER_LOGIN")
-			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-			bar:SetScript("OnEvent", LSActionBar_OnEvent)
-		end
+		for key, data in next, BAR_LAYOUT do
+			local config = BARS_CFG[key]
+			local index = match(key, "(%d+)")
+			local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
 
-		-- print(bar:GetName(), "\n", bar:IsProtected())
-		-- print("     ", data.original_bar:IsProtected())
-		
-		if index == "6" then
-			E:SetButtonPosition(data.buttons, BAR_CFG.button_size, BAR_CFG.button_gap, bar, BAR_CFG.direction, E.SkinPetActionButton, data.original_bar)
-		else
-			E:SetButtonPosition(data.buttons, BAR_CFG.button_size, BAR_CFG.button_gap, bar, BAR_CFG.direction, E.SkinActionButton, data.original_bar)
-		end
-
-		if data.original_bar then
-			-- print(data.original_bar:GetID())
-			-- data.original_bar:HookScript("OnEnter", function() print("entered") end)
-			-- SecureHandlerWrapScript(data.original_bar, "OnEnter", bar, [[
-				-- print(self, owner)
-				-- return nil, "nothing"
-				-- ]])
-
-			-- ns.DebugTexture(bar)
-			-- local firstbutton = data.buttons[1]
-			-- function firstbutton:FadeInBar(bar)
-			-- 	print("was here")
-			-- 	E:FadeIn(_G[bar])
-			-- end
-			-- firstbutton:HookScript("OnHide", function(self) print("|cffcc00ff", self:GetName(), "hiding button|r")end)
-			-- bar:WrapScript(firstbutton, "OnHide", [[
-			-- 	print("hide prehook")
-
-			-- 	return true
-			-- ]])
-
-			-- firstbutton:HookScript("OnShow", function(self) print("|cffcc00ff", self:GetName(), "showing button|r")end)
-			-- bar:WrapScript(firstbutton, "OnShow", [[
-			-- 	print("show prehook")
-
-			-- 	self:ClearAllPoints()
-			-- 	self:SetPoint("CENTER", owner, "LEFT", 0, 0)				
-			-- 	self:CallMethod("FadeInBar", owner:GetName())
-				
-			-- 	return true
-			-- ]])
-
-		end
-		if data.condition then
-			RegisterStateDriver(bar, "visibility", data.condition)
-		end
-
-		if BARS_CFG.restricted then
-			if index == "1" then
-				bar.controlled = true
-
-				B:SetupControlledBar(bar, "Main")
-			-- elseif index == "2" or index == "3" or index == "6" or index == "7" then
-			-- 	bar.controlled = true
-
-			-- 	B:SetupControlledBar(bar)
-			end
-		end
-
-		-- if data.original_bar then
-		-- 	data.original_bar:HookScript("OnShow", E.FadeIn)
-		-- else
-		-- 	bar:HookScript("OnShow", E.FadeIn)
-		-- end
-
-		Bars[key] = bar
-	end
-
-	for key, bar in next, Bars do
-		if not bar.controlled then
-			if BARS_CFG[key].point then
-				bar:SetPoint(unpack(BARS_CFG[key].point))
+			if config.direction == "RIGHT" or config.direction == "LEFT" then
+				bar:SetSize(config.button_size * #data.buttons + config.button_gap * #data.buttons,
+					config.button_size + config.button_gap)
 			else
-				SetStancePetActionBarPosition(bar)
+				bar:SetSize(config.button_size + config.button_gap,
+					config.button_size * #data.buttons + config.button_gap * #data.buttons)
+			end
+
+			if index == "6" then
+				E:SetButtonPosition(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
+			else
+				E:SetButtonPosition(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
+			end
+
+			if data.condition then
+				RegisterStateDriver(bar, "visibility", data.condition)
+			end
+
+			if index == "1" then
+				bar:RegisterEvent("PLAYER_LOGIN")
+				bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+				bar:SetScript("OnEvent", LSActionBar_OnEvent)
+
+				if C.bars.restricted then
+					B:SetupControlledBar(bar, "Main")
+				end
+			end
+
+			Bars[key] = bar
+		end
+
+		for key, bar in next, Bars do
+			if not bar.controlled then
+				if BARS_CFG[key].point then
+					bar:SetPoint(unpack(BARS_CFG[key].point))
+				else
+					SetStancePetActionBarPosition(bar)
+				end
+
+				E:CreateMover(bar)
 			end
 		end
 
-		if not bar.controlled then
-			E:CreateMover(bar)
+		-- local art = LSMainMenuBar:CreateTexture(nil, "BACKGROUND", nil, -8)
+		-- art:SetPoint("CENTER")
+		-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
+
+		PetActionBarFrame:SetScript("OnUpdate", nil)
+
+		for _, v in next, {
+			MainMenuBar,
+			ActionBarDownButton,
+			ActionBarUpButton,
+			MainMenuBarTexture0,
+			MainMenuBarTexture1,
+			MainMenuBarTexture2,
+			MainMenuBarTexture3,
+			MainMenuBarLeftEndCap,
+			MainMenuBarRightEndCap,
+			MainMenuBarPageNumber,
+			MultiCastActionBarFrame,
+			OverrideActionBar,
+			PossessBarFrame,
+			ReputationWatchBar,
+			StanceBarLeft,
+			StanceBarMiddle,
+			StanceBarRight,
+			SlidingActionBarTexture0,
+			SlidingActionBarTexture1,
+			SpellFlyoutHorizontalBackground,
+			SpellFlyoutVerticalBackground,
+			SpellFlyoutBackgroundEnd,
+		} do
+			E:ForceHide(v)
 		end
 	end
-		
-	-- local art = LSMainMenuBar:CreateTexture(nil, "BACKGROUND", nil, -8)
-	-- art:SetPoint("CENTER")
-	-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
-
-	-- Hiding different useless textures
-	MainMenuBar.slideOut.IsPlaying = function() return true end
-	MainMenuBar:SetParent(M.HiddenParent)
-	for _, v in next, {MainMenuBar:GetChildren()} do
-		E:ForceHide(v)
-	end
-
-	PetActionBarFrame:SetScript("OnUpdate", nil)
-
-	for _, v in next, {
-		MainMenuBarPageNumber,
-		-- ActionBarDownButton,
-		-- ActionBarUpButton,
-		OverrideActionBarExpBar,
-		OverrideActionBarHealthBar,
-		OverrideActionBarPowerBar,
-		OverrideActionBarPitchFrame,
-		OverrideActionBarLeaveFrame,
-		MainMenuBarTexture0,
-		MainMenuBarTexture1,
-		MainMenuBarTexture2,
-		MainMenuBarTexture3,
-		MainMenuBarLeftEndCap,
-		MainMenuBarRightEndCap,
-		PossessBackground1,
-		PossessBackground2,
-		StanceBarLeft,
-		StanceBarMiddle,
-		StanceBarRight,
-		SlidingActionBarTexture0,
-		SlidingActionBarTexture1,
-		SpellFlyoutHorizontalBackground,
-		SpellFlyoutVerticalBackground,
-		SpellFlyoutBackgroundEnd,
-	} do
-		E:ForceHide(v)
-	end
-
-	for i = 1, 6 do
-		local b = _G["OverrideActionBarButton"..i]
-		b:SetAttribute("statehidden", true)
-	end
-
-	hooksecurefunc(SpellFlyout, "Toggle", FlyoutButtonToggleHook)
 end

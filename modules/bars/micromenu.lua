@@ -1,61 +1,67 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local B = E:GetModule("Bars")
+
+local MICRO_BUTTONS = MICRO_BUTTONS
+local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
+local wipe, unpack = wipe, unpack
+local find = string.find
+local GameTooltip = GameTooltip
+local GetNetStats = GetNetStats
+local SecondsToTime = SecondsToTime
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
-local B = E:GetModule("Bars")
 
-local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
-local wipe, unpack = wipe, unpack
-local find = strfind
 
 local MICRO_BUTTON_LAYOUT = {
-	["CharacterMicroButton"] = {
+	CharacterMicroButton = {
 		point = {"LEFT", "LSMBHolderLeft", "LEFT", 2, 0},
 		parent = "LSMBHolderLeft",
+		icon = E.playerclass,
 	},
-	["SpellbookMicroButton"] = {
+	SpellbookMicroButton = {
 		point = {"LEFT", "CharacterMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
 		icon = "Spellbook",
 	},
-	["TalentMicroButton"] = {
+	TalentMicroButton = {
 		point = {"LEFT", "SpellbookMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
 		icon = "Talent",
 	},
-	["AchievementMicroButton"] = {
+	AchievementMicroButton = {
 		point = {"LEFT", "TalentMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
-		icon = "Achievement2",
+		icon = "Achievement",
 	},
-	["QuestLogMicroButton"] = {
+	QuestLogMicroButton = {
 		point = {"LEFT", "AchievementMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderLeft",
 		icon = "Quest",
 	},
-	["GuildMicroButton"] = {
+	GuildMicroButton = {
 		point = {"LEFT", "LSMBHolderRight", "LEFT", 2, 0},
 		parent = "LSMBHolderRight",
 		icon = "Guild",
 	},
-	["LFDMicroButton"] = {
+	LFDMicroButton = {
 		point = {"LEFT", "GuildMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
 		icon = "LFD",
 	},
-	["CollectionsMicroButton"] = {
+	CollectionsMicroButton = {
 		point = {"LEFT", "LFDMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
-		icon = "Collections2",
+		icon = "Collections",
 	},
-	["EJMicroButton"] = {
+	EJMicroButton = {
 		point = {"LEFT", "CollectionsMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
 		icon = "EJ",
 	},
-	["MainMenuMicroButton"] = {
+	MainMenuMicroButton = {
 		point = {"LEFT", "EJMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
 		icon = "MainMenu",
@@ -63,35 +69,36 @@ local MICRO_BUTTON_LAYOUT = {
 }
 
 local ICONS = {
-	WARRIOR = {36 / 256, 52 / 256, 20 / 64, 42 / 64},
-	DEATHKNIGHT = {52 / 256, 68 / 256, 20 / 64, 42 / 64},
-	HUNTER = {68 / 256, 84 / 256, 20 / 64, 42 / 64},
-	DRUID = {84 / 256, 100 / 256, 20 / 64, 42 / 64},
-	MAGE = {100 / 256, 116 / 256, 20 / 64, 42 / 64},
-	SHAMAN = {116 / 256, 132 / 256, 20 / 64, 42 / 64},
-
-	MONK = {36 / 256, 52 / 256, 42 / 64, 64 / 64},
-	PALADIN = {52 / 256, 68 / 256, 42 / 64, 64 / 64},
-	PRIEST = {68 / 256, 84 / 256, 42 / 64, 64 / 64},
-	ROGUE = {84 / 256, 100 / 256, 42 / 64, 64 / 64},
-	WARLOCK = {100 / 256, 116 / 256, 42 / 64, 64 / 64},
-	DEMONHUNTER = {116 / 256, 132 / 256, 42 / 64, 64 / 64},
-
-	Spellbook = {132 / 256, 148 / 256, 20 / 64, 42 / 64},
-	Talent = 	{148 / 256, 164 / 256, 20 / 64, 42 / 64},
-	Achievement = {164 / 256, 180 / 256, 20 / 64, 42 / 64},
-	Quest = {180 / 256, 196 / 256, 20 / 64, 42 / 64},
-	Guild = {196 / 256, 212 / 256, 20 / 64, 42 / 64},
-	LFD = {212 / 256, 228 / 256, 20 / 64, 42 / 64},
-	Collections = {228 / 256, 244 / 256, 20 / 64, 42 / 64},
-
-	EJ = {132 / 256, 148 / 256, 42 / 64, 64 / 64},
-	MainMenu = {148 / 256, 164 / 256, 42 / 64, 64 / 64},
-	Achievement2 = {164 / 256, 180 / 256, 42 / 64, 64 / 64},
-	Achievement3 = {180 / 256, 196 / 256, 42 / 64, 64 / 64},
-	Guild2 = {196 / 256, 212 / 256, 42 / 64, 64 / 64},
-	Quest3 = {212 / 256, 228 / 256, 42 / 64, 64 / 64},
-	Collections2 = {228 / 256, 244 / 256, 42 / 64, 64 / 64},
+	--line one
+	WARRIOR = {18 / 256, 34 / 256, 0, 22 / 64},
+	PALADIN = {34 / 256, 50 / 256, 0, 22 / 64},
+	HUNTER = {50 / 256, 66 / 256, 0, 22 / 64},
+	ROGUE = {66 / 256, 82 / 256, 0, 22 / 64},
+	PRIEST = {82 / 256, 98 / 256, 0, 22 / 64},
+	DEATHKNIGHT = {98 / 256, 114 / 256, 0, 22 / 64},
+	--line two
+	SHAMAN = {18 / 256, 34 / 256, 22 / 64, 44 / 64},
+	MAGE = {34 / 256, 50 / 256, 22 / 64, 44 / 64},
+	WARLOCK = {50 / 256, 66 / 256, 22 / 64, 44 / 64},
+	MONK = {66 / 256, 82 / 256, 22 / 64, 44 / 64},
+	DRUID = {82 / 256, 98 / 256, 22 / 64, 44 / 64},
+	-- DEMONHUNTER = {98 / 256, 132 / 256, 22 / 64, 44 / 64},
+	--line one
+	Spellbook = {114 / 256, 130 / 256, 0, 22 / 64},
+	Talent = 	{130 / 256, 146 / 256, 0, 22 / 64},
+	Achievement = {146 / 256, 162 / 256, 0, 22 / 64},
+	Quest = {162 / 256, 178 / 256, 0, 22 / 64},
+	Guild = {178 / 256, 194 / 256, 0, 22 / 64},
+	LFD = {194 / 256, 210 / 256, 0, 22 / 64},
+	Collections = {210 / 256, 226 / 256, 0, 22 / 64},
+	--line two
+	EJ = {114 / 256, 130 / 256, 22 / 64, 44 / 64},
+	MainMenu = {130 / 256, 146 / 256, 22 / 64, 44 / 64},
+	-- Temp1 = {146 / 256, 162 / 256, 22 / 64, 44 / 64},
+	-- Temp2 = {162 / 256, 178 / 256, 22 / 64, 44 / 64},
+	-- Temp3 = {178 / 256, 194 / 256, 22 / 64, 44 / 64},
+	-- Temp4 = {194 / 256, 210 / 256, 22 / 64, 44 / 64},
+	-- Temp5 = {210 / 256, 226 / 256, 22 / 64, 44 / 64},
 }
 
 local function SimpleSort(a, b)
@@ -261,9 +268,7 @@ local function CharacterMicroButton_OnEvent(self, event, ...)
 end
 
 local function QuestLogMicroButton_OnEnter(self)
-	local questReset = GetQuestResetTime()
-
-	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", SecondsToTime(questReset, true, nil, 3), 1, 0.82, 0, 1, 1, 1)
+	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", SecondsToTime(GetQuestResetTime(), true, nil, 3), 1, 0.82, 0, 1, 1, 1)
 	GameTooltip:Show()
 end
 
@@ -357,7 +362,7 @@ local function SetPushedTextureOverride(button)
 	if pushed then
 		pushed:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
 		pushed:SetBlendMode("ADD")
-		pushed:SetTexCoord(18 / 256, 36 / 256, 20 / 64, 44 / 64)
+		pushed:SetTexCoord(0 / 256, 18 / 256, 24 / 64, 48 / 64)
 		pushed:ClearAllPoints()
 		pushed:SetAllPoints()
 	end
@@ -368,8 +373,7 @@ local function SetDisabledTextureOverride(button)
 	if disabled then disabled:SetTexture(nil) end
 end
 
-local function HandleMicroButton(name, setIcon)
-	local button = _G[name]
+local function HandleMicroButton(button, setIcon)
 	local highlight = button:GetHighlightTexture()
 	local flash = button.Flash
 
@@ -382,7 +386,7 @@ local function HandleMicroButton(name, setIcon)
 
 	if highlight then
 		highlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
-		highlight:SetTexCoord(0 / 256, 18 / 256, 20 / 64, 44 / 64)
+		highlight:SetTexCoord(0 / 256, 18 / 256, 0, 24 / 64)
 		highlight:ClearAllPoints()
 		highlight:SetAllPoints()
 	end
@@ -430,12 +434,10 @@ local function GuildTabardUpdateHook()
 	if GuildMicroButton.Tabard:IsShown() then
 		GuildMicroButton.Tabard.background:Show()
 		GuildMicroButton.Tabard.emblem:Show()
-
 		GuildMicroButton.Icon:Hide()
 	else
 		GuildMicroButton.Tabard.background:Hide()
 		GuildMicroButton.Tabard.emblem:Hide()
-
 		GuildMicroButton.Icon:Show()
 	end
 
@@ -449,16 +451,16 @@ local function HandleGuildButtonTabard(button)
 
 	local banner = button.Tabard.background
 	banner:SetParent(button)
+	banner:SetDrawLayer("BACKGROUND", 2)
 	banner:SetSize(18, 30)
 	banner:ClearAllPoints()
 	banner:SetPoint("TOP", 0, 0)
 	banner:SetTexCoord(6 / 32, 26 / 32, 0.5, 1)
-	banner:SetDrawLayer("BACKGROUND", 2)
 
 	local emblem = button.Tabard.emblem
 	emblem:SetParent(button)
-	emblem:SetPoint("CENTER", 0, 0)
 	emblem:SetDrawLayer("BACKGROUND", 3)
+	emblem:SetPoint("CENTER", 0, 0)
 
 	hooksecurefunc("GuildMicroButton_UpdateTabard", GuildTabardUpdateHook)
 end
@@ -510,25 +512,20 @@ function B:HandleMicroMenu()
 		local button = _G[b]
 
 		if MICRO_BUTTON_LAYOUT[b] then
-			HandleMicroButton(b)
+			HandleMicroButton(button)
 
 			button:SetParent(MICRO_BUTTON_LAYOUT[b].parent)
 			button:ClearAllPoints()
 			button:SetPoint(unpack(MICRO_BUTTON_LAYOUT[b].point))
 
-			if MICRO_BUTTON_LAYOUT[b].icon then
-				SetMicroButtonIcon(button, ICONS[MICRO_BUTTON_LAYOUT[b].icon])
-			end
+			SetMicroButtonIcon(button, ICONS[MICRO_BUTTON_LAYOUT[b].icon])
 		else
-			button:UnregisterAllEvents()
-			button:SetParent(M.HiddenParent)
+			E:ForceHide(button)
 		end
 
 		if b == "CharacterMicroButton" then
 			E:ForceHide(MicroButtonPortrait)
 			HandleMicroButtonIndicator(button)
-
-			SetMicroButtonIcon(button, ICONS[E.playerclass])
 
 			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
@@ -555,11 +552,8 @@ function B:HandleMicroMenu()
 	end
 
 	TalentMicroButtonAlert:SetPoint("BOTTOM", "TalentMicroButton", "TOP", 0, 12)
-
 	CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
-
 	LFDMicroButtonAlert:SetPoint("BOTTOM", "LFDMicroButton", "TOP", 0, 12)
-
 	EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
 
 	hooksecurefunc("UpdateMicroButtonsParent", ResetMicroButtonsParent)
