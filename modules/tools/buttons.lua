@@ -258,8 +258,10 @@ end
 function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
 	if originalBar and originalBar:GetParent() ~= header then
 		originalBar:SetParent(header)
+		originalBar:SetAllPoints()
 		originalBar:EnableMouse(false)
 		originalBar.ignoreFramePositionManager = true
+		originalBar.SetPoint = function() return end
 	end
 
 	local previous
