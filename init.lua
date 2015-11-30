@@ -16,7 +16,7 @@ function E:ADDON_LOADED(arg)
 end
 
 function E:PLAYER_LOGOUT(...)
-	oUF_LS_CONFIG = E:DiffTable(D, ns.C)
+	oUF_LS_CONFIG = E:DiffTable(D, C)
 end
 
 E:RegisterEvent("ADDON_LOADED")
