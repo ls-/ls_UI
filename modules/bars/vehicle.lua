@@ -55,11 +55,8 @@ function B:HandleVehicleExitButton()
 	E:TweakIcon(icon, 12 / 64, 52 / 64, 12 / 64, 52 / 64)
 	button.Icon = icon
 
-	button:SetHighlightTexture(1, 1, 1)
-	ns.lsSetHighlightTexture(button:GetHighlightTexture())
-
-	button:SetPushedTexture(1, 1, 1)
-	ns.lsSetPushedTexture(button:GetPushedTexture())
+	E:UpdateHighlightTexture(button)
+	E:UpdatePushedTexture(button)
 
 	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
 end

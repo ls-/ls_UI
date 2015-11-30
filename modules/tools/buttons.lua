@@ -1,3 +1,25 @@
+--[[
+ActionButtonTemplate Draw Layers:
+BACKGROUND:
+- Icon -- 0
+BORDER:
+
+ARTWORK:
+- NormalTexture -- 0
+- PushedTexture -- 0
+- Flash -- 1
+- FlyoutArrow -- 2
+- HotKey -- 2
+- Count -- 2
+OVERLAY:
+- Name -- 0
+- Border -- 0
+- CheckedTexture -- 0
+- NewActionTexture -- 1
+HIGHLIGHT:
+- HighlightTexture -- 0
+]]
+
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS, TEXTURES = M.colors, M.textures
@@ -19,16 +41,37 @@ local function GetContainerSlotByItemLink(itemLink)
 	return
 end
 
-local function SetFlashTexture(texture)
-	texture:SetTexture(TEXTURES.button.flash)
-	texture:SetTexCoord(0.234375, 0.765625, 0.234375, 0.765625)
-	texture:SetAllPoints()
-end
-
-local function SetNilNormalTexture(self, texture)
+local function SetNormalTextureHook(self, texture)
 	if texture then
 		self:SetNormalTexture(nil)
 	end
+end
+
+function E:UpdatePushedTexture(button)
+	if not button.SetPushedTexture then return end
+
+	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
+	texture = button:GetPushedTexture()
+	texture:SetTexCoord(120 / 256, 176 / 256, 0 / 64, 56 / 64)
+	texture:SetAllPoints()
+end
+
+function E:UpdateHighlightTexture(button)
+	if not button.SetHighlightTexture then return end
+
+	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
+	texture = button:GetHighlightTexture()
+	texture:SetTexCoord(64 / 256, 120 / 256, 0 / 64, 56 / 64)
+	texture:SetAllPoints()
+end
+
+function E:UpdateCheckedTexture(button)
+	if not button.SetCheckedTexture then return end
+
+	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
+	texture = button:GetCheckedTexture()
+	texture:SetBlendMode("ADD")
+	texture:SetAllPoints()
 end
 
 local function SetItemButtonBorderColor(self)
@@ -181,7 +224,8 @@ local function SkinButton(button)
 	E:TweakIcon(bIcon)
 
 	if bFlash then
-		SetFlashTexture(bFlash)
+		bFlash:SetTexture(0.9, 0.15, 0.15, 0.65)
+		bFlash:SetAllPoints()
 	end
 
 	if bFOBorder then
@@ -243,15 +287,15 @@ local function SkinButton(button)
 	end
 
 	if bPushedTexture then
-		ns.lsSetPushedTexture(bPushedTexture)
+		E:UpdatePushedTexture(button)
 	end
 
 	if bHighlightTexture then
-		ns.lsSetHighlightTexture(bHighlightTexture)
+		E:UpdateHighlightTexture(bHighlightTexture)
 	end
 
 	if bCheckedTexture then
-		ns.lsSetCheckedTexture(bCheckedTexture)
+		E:UpdateCheckedTexture(button)
 	end
 end
 
@@ -427,7 +471,7 @@ function E:SkinPetActionButton(button)
 
 	button:HookScript("OnUpdate", PetActionButton_OnUpdate)
 
-	hooksecurefunc(button, "SetNormalTexture", SetNilNormalTexture)
+	hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
 
 	button.styled = true
 end

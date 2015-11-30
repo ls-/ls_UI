@@ -143,13 +143,8 @@ function Mail:Initialize()
 		button:SetScript("OnLeave", ReceiveButton_OnLeave)
 		button:SetScript("OnClick", ReceiveMail)
 		button:Disable()
-
-		button:SetHighlightTexture(1)
-		ns.lsSetHighlightTexture(button:GetHighlightTexture())
-
-		button:SetPushedTexture(1)
-		ns.lsSetPushedTexture(button:GetPushedTexture())
-
+		E:UpdateHighlightTexture(button)
+		E:UpdatePushedTexture(button)
 		E:CreateBorder(button, 8)
 
 		local icon = button:CreateTexture()
