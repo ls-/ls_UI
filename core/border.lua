@@ -53,20 +53,20 @@ function E:CreateBorder(object, size, offset)
 
 	for i = 1, #sections do
 		local x = object:CreateTexture(nil, "OVERLAY", nil, -8)
-		x:SetTexture(M.textures.button.normal)
+		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\button")
 		t[sections[i]] = x
 	end
 
-	t.TOPLEFT:SetTexCoord(0, 10 / 64, 0, 10 / 64)
-	t.TOP:SetTexCoord(10 / 64, 54 / 64, 0, 10 / 64)
-	t.TOPRIGHT:SetTexCoord(54 / 64, 1, 0, 10 / 64)
+	t.TOPLEFT:SetTexCoord(0, 10 / 256, 0, 10 / 64)
+	t.TOP:SetTexCoord(10 / 256, 54 / 256, 0, 10 / 64)
+	t.TOPRIGHT:SetTexCoord(54 / 256, 64 / 256, 0, 10 / 64)
 
-	t.BOTTOMLEFT:SetTexCoord(0, 10 / 64, 54 / 64, 1)
-	t.BOTTOM:SetTexCoord(10 / 64, 54 / 64, 54 / 64, 1)
-	t.BOTTOMRIGHT:SetTexCoord(54 / 64, 1, 54 / 64, 1)
+	t.BOTTOMLEFT:SetTexCoord(0, 10 / 256, 54 / 64, 64 / 64)
+	t.BOTTOM:SetTexCoord(10 / 256, 54 / 256, 54 / 64, 64 / 64)
+	t.BOTTOMRIGHT:SetTexCoord(54 / 256, 64 / 256, 54 / 64, 64 / 64)
 
-	t.LEFT:SetTexCoord(0, 10 / 64, 10 / 64, 54 / 64)
-	t.RIGHT:SetTexCoord(54 / 64, 1, 10 / 64, 54 / 64)
+	t.LEFT:SetTexCoord(0, 10 / 256, 10 / 64, 54 / 64)
+	t.RIGHT:SetTexCoord(54 / 256, 64 / 256, 10 / 64, 54 / 64)
 
 	t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT")
 	t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT")
