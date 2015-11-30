@@ -3,7 +3,7 @@ local E, M, oUF = ns.E, ns.M, ns.oUF
 
 M.font = STANDARD_TEXT_FONT
 
-M.HiddenParent = CreateFrame("Frame")
+M.HiddenParent = CreateFrame("Frame", "LSHiddenParent")
 M.HiddenParent:Hide()
 
 oUF.colors.health = {0.15, 0.65, 0.15}

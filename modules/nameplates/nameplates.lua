@@ -293,7 +293,7 @@ local function HandleNamePlate(self)
 	myCastBar:Hide()
 	castBar.Bar = myCastBar
 
-	local holder = CreateFrame("Frame", nil, myCastBar)
+	local holder = CreateFrame("Frame", "$parentIconHolder", myCastBar)
 	holder:SetSize(32, 32)
 	holder:SetPoint("BOTTOMRIGHT", overlay, "BOTTOMLEFT", -8, 1)
 	E:CreateBorder(holder)
@@ -372,7 +372,7 @@ local function HandleNamePlate(self)
 		NamePlate_OnShow(self)
 	end
 
-	local sizer = CreateFrame("Frame", nil, overlay)
+	local sizer = CreateFrame("Frame", "$parentSizer", overlay)
 	sizer:SetPoint("BOTTOMLEFT", WorldFrame)
 	sizer:SetPoint("TOPRIGHT", self, "CENTER")
 	sizer:SetScript("OnSizeChanged", Sizer_OnSizeChanged)

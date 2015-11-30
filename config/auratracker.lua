@@ -263,7 +263,7 @@ function CFG:AT_Initialize()
 		button:SetScript("OnLeave", AuraButton_OnLeave)
 		tinsert(auraList.buttons, button)
 
-		local iconholder = CreateFrame("Frame", nil, button)
+		local iconholder = CreateFrame("Frame", "$parentIconHolder", button)
 		iconholder:SetSize(24, 24)
 		iconholder:SetPoint("LEFT", 8, 0)
 		E:CreateBorder(iconholder, 8)

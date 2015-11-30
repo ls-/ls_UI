@@ -281,7 +281,7 @@ function AT:Initialize(forceInit)
 		local buttons = {}
 
 		for i = 1, 12 do
-			local button = CreateFrame("Frame", nil, UIParent)
+			local button = CreateFrame("Frame", "$parentButton"..i, tracker)
 			button:SetFrameLevel(tracker:GetFrameLevel() + 1)
 			button:Hide()
 			button:SetScript("OnEnter", ATButton_OnEnter)
@@ -294,14 +294,14 @@ function AT:Initialize(forceInit)
 			E:TweakIcon(icon)
 			button.Icon = icon
 
-			local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+			local cd = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
 			cd:ClearAllPoints()
 			cd:SetPoint("TOPLEFT", 1, -1)
 			cd:SetPoint("BOTTOMRIGHT", -1, 1)
 			E:HandleCooldown(cd, 14)
 			button.CD = cd
 
-			local cover = CreateFrame("Frame", nil, button)
+			local cover = CreateFrame("Frame", "$parentCover", button)
 			cover:SetAllPoints()
 
 			local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
@@ -319,7 +319,7 @@ function AT:Initialize(forceInit)
 
 		E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
 
-		local header = CreateFrame("Button", nil, tracker)
+		local header = CreateFrame("Button", "$parentHeader", tracker)
 		header:SetClampedToScreen(true)
 		header:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, 0)
 		header:RegisterForDrag("LeftButton")

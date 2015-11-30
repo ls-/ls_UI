@@ -78,7 +78,7 @@ function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
-	local iconHolder = CreateFrame("Frame", nil, bar)
+	local iconHolder = CreateFrame("Frame", "$parentIconHolder", bar)
 	iconHolder:SetSize(28, 28)
 	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -PRESET.iconGap, 0)
 	E:CreateBorder(iconHolder, 8)

@@ -133,7 +133,7 @@ end
 
 function Mail:Initialize()
 	if C.mail.enabled then
-		local button = CreateFrame("Button", nil, InboxFrame)
+		local button = CreateFrame("Button", "$parentReceiveMailButton", InboxFrame)
 		button:SetSize(28, 28)
 		button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")
