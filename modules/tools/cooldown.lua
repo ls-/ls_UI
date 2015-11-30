@@ -53,8 +53,8 @@ local function CreateCooldownTimer(cooldown, textSize)
 
 end
 
-local function SetTimerTextHeight(self, height, flags)
-	self.Timer:SetFont(M.font, height, flags or "THINOUTLINE")
+local function SetTimerTextHeight(self, height)
+	self.Timer:SetFontObject("LS"..height.."Font_Outline")
 end
 
 function E:HandleCooldown(cooldown, textSize)

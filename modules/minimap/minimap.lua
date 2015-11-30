@@ -411,7 +411,7 @@ function MM:Initialize()
 
 		glow:SetTexture("")
 
-		date:SetFont(M.font, 14, "THINOUTLINE")
+		date:SetFontObject("LS14Font_Outline")
 		date:ClearAllPoints()
 		date:SetPoint("CENTER", 1, 0)
 		date:SetVertexColor(1, 1, 1)
@@ -425,7 +425,7 @@ function MM:Initialize()
 		calendar:SetScript("OnUpdate", Calendar_OnUpdate)
 
 		local zone = MinimapZoneText
-		zone:SetFont(M.font, 12)
+		zone:SetFontObject("LS12Font")
 		zone:SetParent(Minimap)
 		zone:ClearAllPoints()
 		zone:SetPoint("TOP", 0, 32)

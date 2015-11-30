@@ -237,7 +237,7 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetFont(M.font, 10, "THINOUTLINE")
+		bHotKey:SetFontObject("LS10Font_Outline")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetPoint("TOPRIGHT", 2, 1)
 
@@ -247,13 +247,13 @@ local function SkinButton(button)
 	end
 
 	if bCount then
-		bCount:SetFont(M.font, 10, "THINOUTLINE")
+		bCount:SetFontObject("LS10Font_Outline")
 		bCount:ClearAllPoints()
 		bCount:SetPoint("BOTTOMRIGHT", 2, -1)
 	end
 
 	if bName then
-		bName:SetFont(M.font, 10, "THINOUTLINE")
+		bName:SetFontObject("LS10Font_Outline")
 		bName:SetJustifyH("CENTER")
 		bName:ClearAllPoints()
 		bName:SetPoint("BOTTOMLEFT", -4, 0)
@@ -396,7 +396,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bCD then
-		bCD:SetFont(M.font, 16, "THINOUTLINE")
+		bCD:SetFontObject("LS16Font_Outline")
 		bCD:ClearAllPoints()
 		bCD:SetPoint("CENTER", 0, -2)
 	end
@@ -466,7 +466,7 @@ function E:SkinPetActionButton(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetFont(M.font, 8, "THINOUTLINE")
+		bHotKey:SetFontObject("LS8Font_Outline")
 	end
 
 	button:HookScript("OnUpdate", PetActionButton_OnUpdate)
@@ -551,14 +551,14 @@ function E:SkinAuraButton(button)
 	end
 
 	if bCount then
-		bCount:SetFont(M.font, 10, "THINOUTLINE")
+		bCount:SetFontObject("LS10Font_Outline")
 		bCount:SetDrawLayer("OVERLAY", 1)
 		bCount:ClearAllPoints()
 		bCount:SetPoint("TOPRIGHT", 2, 1)
 	end
 
 	if bDuration then
-		bDuration:SetFont(M.font, 11, "THINOUTLINE")
+		bDuration:SetFontObject("LS10Font_Outline")
 		bDuration:SetJustifyH("CENTER")
 		bDuration:SetDrawLayer("OVERLAY", 1)
 		bDuration:ClearAllPoints()

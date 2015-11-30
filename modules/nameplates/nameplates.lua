@@ -87,7 +87,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 		bar = E:CreateStatusBar(parent, npName.."HealthBar", 120, "12")
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
-		bar.Text:SetFont(M.font, 12)
+		bar.Text:SetFontObject("LS12Font")
 		bar.Text:SetJustifyH("RIGHT")
 
 		local fg = bar:CreateTexture(nil, "OVERLAY", nil, 1)
