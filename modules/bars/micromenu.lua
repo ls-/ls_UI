@@ -2,6 +2,7 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local B = E:GetModule("Bars")
 
+-- Blizz stuff
 local MICRO_BUTTONS = MICRO_BUTTONS
 local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
 local wipe, unpack = wipe, unpack
@@ -9,6 +10,8 @@ local find = string.find
 local GameTooltip = GameTooltip
 local GetNetStats = GetNetStats
 local SecondsToTime = SecondsToTime
+
+-- My stuff
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
@@ -379,6 +382,7 @@ local function HandleMicroButton(button, setIcon)
 
 	button:SetSize(18, 24)
 	button:SetHitRectInsets(0, 0, 0, 0)
+	E:CreateBorder(button)
 
 	SetNormalTextureOverride(button)
 	SetPushedTextureOverride(button)
@@ -406,8 +410,6 @@ local function HandleMicroButton(button, setIcon)
 	icon:SetSize(16, 22)
 	icon:SetPoint("CENTER", 0, 0)
 	button.Icon = icon
-
-	E:CreateBorder(button, 8)
 
 	button:SetScript("OnLeave", MicroButton_OnLeave)
 	button:SetScript("OnUpdate", nil)

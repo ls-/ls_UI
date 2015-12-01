@@ -22,9 +22,8 @@ local BAGS = {
 }
 
 local BAGS_CFG = {
-	enabled = true,
 	point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 426, 4},
-	button_size = 26,
+	button_size = {28, 24, 24, 24, 24},
 	button_gap = 4,
 	direction = "RIGHT",
 }
@@ -107,15 +106,14 @@ function B:HandleBags()
 		BAGS_CFG = C.bars.bags
 	end
 
-	if BAGS_CFG.enabled then
+	if C.bars.bags.enabled then
+		local size = type(BAGS_CFG.button_size) == "table" and BAGS_CFG.button_size[1] or BAGS_CFG.button_size
 		local holder = CreateFrame("Frame", "LSBagsHolder", UIParent, "SecureHandlerBaseTemplate")
 
 		if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
-			holder:SetSize(BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5,
-				BAGS_CFG.button_size + BAGS_CFG.button_gap)
+			holder:SetSize(size * 5 + BAGS_CFG.button_gap * 5, size + BAGS_CFG.button_gap)
 		else
-			holder:SetSize(BAGS_CFG.button_size + BAGS_CFG.button_gap,
-				BAGS_CFG.button_size * 5 + BAGS_CFG.button_gap * 5)
+			holder:SetSize(size + BAGS_CFG.button_gap, size * 5 + BAGS_CFG.button_gap * 5)
 		end
 
 		E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, holder,

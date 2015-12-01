@@ -11,15 +11,25 @@ function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	local object = parent:CreateFontString(name, "OVERLAY", outline and "LS"..size.."Font_Outline" or "LS"..size.."Font")
 	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
 	object:SetWordWrap(wrap or false)
-	object:SetJustifyV("MIDDLE")
 
 	return object
 end
 
-function E:TweakIcon(icon, l, r, t, b)
-	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
-	icon:SetDrawLayer("BACKGROUND", 0)
-	icon:SetAllPoints()
+function E:CreateNewFontString(parent, size, name, outline, sublevel)
+	local object = parent:CreateFontString(name, "OVERLAY", outline and "LS"..size.."Font_Outline" or "LS"..size.."Font", sublevel or 0)
+	object:SetWordWrap(false)
+
+	return object
+end
+
+function E:DebugHighlight(object)
+	if not object.CreateTexture then
+		object.tex = object:GetParent():CreateTexture(nil, "BACKGROUND", nil, -8)
+	else
+		object.tex = object:CreateTexture(nil, "BACKGROUND", nil, -8)
+	end
+	object.tex:SetAllPoints(object)
+	object.tex:SetTexture(1, 0, 0.5, 0.4)
 end
 
 function E:ForceShow(object)

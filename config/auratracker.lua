@@ -252,7 +252,7 @@ function CFG:AT_Initialize()
 	auraList.buttons = {}
 
 	for i = 1, 8 do
-		local button = CreateFrame("CheckButton", auraList:GetName().."Button"..i, auraList)
+		local button = CreateFrame("CheckButton", "$parentButton"..i, auraList)
 		button.type = "Button"
 		button:SetHeight(30)
 		button:EnableMouse(true)
@@ -266,7 +266,7 @@ function CFG:AT_Initialize()
 		local iconholder = CreateFrame("Frame", "$parentIconHolder", button)
 		iconholder:SetSize(24, 24)
 		iconholder:SetPoint("LEFT", 8, 0)
-		E:CreateBorder(iconholder, 8)
+		E:CreateBorder(iconholder, 6)
 
 		button.Icon = E:UpdateIcon(iconholder)
 

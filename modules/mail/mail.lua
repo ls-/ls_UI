@@ -3,6 +3,11 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local Mail = E:AddModule("Mail")
 
 local LazyLootMail, ReceiveMail
+local InboxFrame = InboxFrame
+local C_Timer = C_Timer
+local GetInboxHeaderInfo, GetInboxItem, TakeInboxMoney, TakeInboxItem, AutoLootMailItem, DeleteInboxItem =
+	GetInboxHeaderInfo, GetInboxItem, TakeInboxMoney, TakeInboxItem, AutoLootMailItem, DeleteInboxItem
+local GetContainerNumFreeSlots = GetContainerNumFreeSlots
 
 local function GetFreeSlots()
 	local free = 0

@@ -178,14 +178,13 @@ function B:HandleActionBars()
 		for key, data in next, BAR_LAYOUT do
 			local config = BARS_CFG[key]
 			local index = match(key, "(%d+)")
+			local size = type(config.button_size) == "table" and config.button_size[1] or config.button_size
 			local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
 
 			if config.direction == "RIGHT" or config.direction == "LEFT" then
-				bar:SetSize(config.button_size * #data.buttons + config.button_gap * #data.buttons,
-					config.button_size + config.button_gap)
+				bar:SetSize(size * #data.buttons + config.button_gap * #data.buttons, size + config.button_gap)
 			else
-				bar:SetSize(config.button_size + config.button_gap,
-					config.button_size * #data.buttons + config.button_gap * #data.buttons)
+				bar:SetSize(size + config.button_gap, size * #data.buttons + config.button_gap * #data.buttons)
 			end
 
 			if index == "6" then
