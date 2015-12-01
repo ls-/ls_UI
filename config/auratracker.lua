@@ -268,9 +268,7 @@ function CFG:AT_Initialize()
 		iconholder:SetPoint("LEFT", 8, 0)
 		E:CreateBorder(iconholder, 8)
 
-		local icon = iconholder:CreateTexture()
-		E:TweakIcon(icon)
-		button.Icon = icon
+		button.Icon = E:UpdateIcon(iconholder)
 
 		local text = button:CreateFontString(nil, "ARTWORK", "LS12Font")
 		text:SetJustifyH("LEFT")

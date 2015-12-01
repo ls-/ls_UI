@@ -21,7 +21,7 @@ local function PostCreateAuraIcon(frame, button)
 	local bCount = button.count
 	local bSteal = button.stealable
 
-	E:TweakIcon(bIcon)
+	E:UpdateIcon(bIcon)
 
 	E:HandleCooldown(bCD, 10)
 

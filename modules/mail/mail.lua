@@ -116,6 +116,7 @@ function LazyLootMail(index, delay)
 		if Mail.overflow then
 			ReceiveMail()
 		else
+			InboxFrame.ReceiveButton:SetChecked(false)
 			MiniMapMailFrame:Hide()
 		end
 	end
@@ -133,8 +134,7 @@ end
 
 function Mail:Initialize()
 	if C.mail.enabled then
-		local button = CreateFrame("Button", "$parentReceiveMailButton", InboxFrame)
-		button:SetSize(28, 28)
+		local button = E:CreateCheckButton(InboxFrame, "$parentReceiveMailButton")
 		button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")
 		button:RegisterEvent("MAIL_CLOSED")
@@ -143,14 +143,9 @@ function Mail:Initialize()
 		button:SetScript("OnLeave", ReceiveButton_OnLeave)
 		button:SetScript("OnClick", ReceiveMail)
 		button:Disable()
-		E:UpdateHighlightTexture(button)
-		E:UpdatePushedTexture(button)
-		E:CreateBorder(button, 8)
+		InboxFrame.ReceiveButton = button
 
-		local icon = button:CreateTexture()
-		icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
-		icon:SetDesaturated(true)
-		E:TweakIcon(icon)
-		button.Icon = icon
+		button.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
+		button.Icon:SetDesaturated(true)
 	end
 end

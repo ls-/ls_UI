@@ -228,17 +228,8 @@ function UF:ConstructArenaFrame(frame)
 	specinfo:SetScript("OnEnter", SpecInfo_OnEnter)
 	specinfo:SetScript("OnLeave", SpecInfo_OnLeave)
 
-	local icon = specinfo:CreateTexture()
-	icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
-	E:TweakIcon(icon)
-	specinfo.Icon = icon
-
-	local cd = CreateFrame("Cooldown", "$parentCooldown", specinfo, "CooldownFrameTemplate")
-	cd:ClearAllPoints()
-	cd:SetPoint("TOPLEFT", 1, -1)
-	cd:SetPoint("BOTTOMRIGHT", -1, 1)
-	E:HandleCooldown(cd, 12)
-	specinfo.CD = cd
+	specinfo.Icon = E:UpdateIcon(specinfo, "Interface\\ICONS\\INV_Misc_QuestionMark")
+	specinfo.CD = E:CreateCooldown(specinfo, 12)
 
 	local trinket = CreateFrame("Frame", "$parentTrinket", frame)
 	trinket:SetSize(28, 28)
@@ -248,17 +239,8 @@ function UF:ConstructArenaFrame(frame)
 	E:CreateBorder(trinket)
 	frame.Trinket = trinket
 
-	icon = trinket:CreateTexture()
-	icon:SetTexture(UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
-	E:TweakIcon(icon)
-	trinket.Icon = icon
-
-	cd = CreateFrame("Cooldown", "$parentCooldown", trinket, "CooldownFrameTemplate")
-	cd:ClearAllPoints()
-	cd:SetPoint("TOPLEFT", 1, -1)
-	cd:SetPoint("BOTTOMRIGHT", -1, 1)
-	E:HandleCooldown(cd, 12)
-	trinket.CD = cd
+	trinket.Icon = E:UpdateIcon(specinfo, UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
+	trinket.CD = E:CreateCooldown(trinket, 12)
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
@@ -299,10 +281,7 @@ local function ConstructArenaPrepFrame(index, parent)
 	frame:SetScript("OnEnter", SpecInfo_OnEnter)
 	frame:SetScript("OnLeave", SpecInfo_OnLeave)
 
-	local icon = frame:CreateTexture()
-	icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
-	E:TweakIcon(icon)
-	frame.Icon = icon
+	frame.Icon = E:UpdateIcon(frame, "Interface\\ICONS\\INV_Misc_QuestionMark")
 
 	return frame
 end

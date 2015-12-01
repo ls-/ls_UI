@@ -84,9 +84,7 @@ function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 	E:CreateBorder(iconHolder, 8)
 	iconHolder:SetBorderColor(unpack(COLORS.yellow))
 
-	local icon = iconHolder:CreateTexture()
-	E:TweakIcon(icon)
-	bar.Icon = icon
+	bar.Icon = E:UpdateIcon(iconHolder)
 
 	local time = E:CreateFontString(bar, 10, nil, true)
 	time:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 3, -2)
