@@ -52,7 +52,7 @@ function E:CreateBorder(object, size, offset)
 	local t = {}
 
 	for i = 1, #sections do
-		local x = object:CreateTexture(nil, "OVERLAY", nil, -8)
+		local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
 		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\button")
 		t[sections[i]] = x
 	end
@@ -88,5 +88,5 @@ function E:CreateBorder(object, size, offset)
 	object.GetBorderColor = GetBorderColor
 	object.GetBorderSize = GetBorderSize
 
-	object:SetBorderSize(size or 10, offset or 0)
+	object:SetBorderSize(size or 8, offset or 0)
 end
