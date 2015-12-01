@@ -2,6 +2,7 @@
 	<Script file="config.lua"/>
 	<Script file="core.lua"/>
 	<Script file="general.lua"/>
+	<Script file="actionbars.lua"/>
 	<Script file="auratracker.lua"/>
 	<Script file="nameplates.lua"/>
 </Ui>
