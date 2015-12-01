@@ -8,9 +8,9 @@ ARTWORK:
 - NormalTexture -- 0
 - PushedTexture -- 0
 - Flash -- 1
-- FlyoutArrow -- 2
-- HotKey -- 2
-- Count -- 2
+- FlyoutArrow -- 2 -> OVERLAY 2
+- HotKey -- 2 -> OVERLAY 2
+- Count -- 2 -> OVERLAY 2
 OVERLAY:
 - Name -- 0
 - Border -- 0
@@ -47,33 +47,6 @@ local function SetNormalTextureHook(self, texture)
 	end
 end
 
-function E:UpdatePushedTexture(button)
-	if not button.SetPushedTexture then return end
-
-	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
-	texture = button:GetPushedTexture()
-	texture:SetTexCoord(120 / 256, 176 / 256, 0 / 64, 56 / 64)
-	texture:SetAllPoints()
-end
-
-function E:UpdateHighlightTexture(button)
-	if not button.SetHighlightTexture then return end
-
-	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
-	texture = button:GetHighlightTexture()
-	texture:SetTexCoord(64 / 256, 120 / 256, 0 / 64, 56 / 64)
-	texture:SetAllPoints()
-end
-
-function E:UpdateCheckedTexture(button)
-	if not button.SetCheckedTexture then return end
-
-	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
-	texture = button:GetCheckedTexture()
-	texture:SetBlendMode("ADD")
-	texture:SetAllPoints()
-end
-
 local function SetItemButtonBorderColor(self)
 	local button = self:GetParent()
 
@@ -82,7 +55,7 @@ local function SetItemButtonBorderColor(self)
 	end
 end
 
-local function SetCustomVertexColor(self, r, g, b)
+local function SetVertexColorHook(self, r, g, b)
 	local button = self:GetParent()
 	local action = button.action
 	local name = gsub(button:GetName(), "%d", "")
@@ -110,15 +83,15 @@ local function SetCustomVertexColor(self, r, g, b)
 	end
 end
 
-local function SetCustomText(self, text)
+local function SetTextHook(self, text)
 	self:SetFormattedText("%s", gsub(text, "[ .()]", ""))
 end
 
-local function SetCustomFormattedText(self, arg1, arg2)
+local function SetFormattedTextHook(self, arg1, arg2)
 	self:SetText(format(gsub(arg1, "[ .()]", ""), arg2))
 end
 
-local function SetCustomHotKeyText(self)
+local function SetHotKeyTextHook(self)
 	local button = self:GetParent()
 	local name = button:GetName()
 	local bType = button.buttonType
@@ -149,7 +122,7 @@ local function SetCustomHotKeyText(self)
 	self:SetFormattedText("%s", text or "")
 end
 
-local function ActionButton_OnUpdate(button)
+local function ActionButton_OnUpdateHook(button)
 	local action = button.action
 	local bIcon = button.icon
 	local bName = button.Name
@@ -182,7 +155,7 @@ local function ActionButton_OnUpdate(button)
 	end
 end
 
-local function PetActionButton_OnUpdate(button)
+local function PetActionButton_OnUpdateHook(button)
 	local bHotKey = button.HotKey
 
 	if bHotKey then
@@ -190,7 +163,7 @@ local function PetActionButton_OnUpdate(button)
 	end
 end
 
-local function OTButton_OnUpdate(self, elapsed)
+local function OTButton_OnUpdateHook(self, elapsed)
 	local bIcon = self.icon
 
 	if bIcon then
@@ -204,10 +177,21 @@ local function OTButton_OnUpdate(self, elapsed)
 	end
 end
 
+local function OTButton_OnDragHook(self)
+	if IsModifiedClick("PICKUPACTION") then
+		local link = GetQuestLogSpecialItemInfo(self:GetID())
+		local bagID, slot = GetContainerSlotByItemLink(link)
+		if bagID then
+			PickupContainerItem(bagID, slot)
+		end
+	end
+end
+
 local function SkinButton(button)
 	local name = button:GetName()
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
+	local bFOArrow = button.FlyoutArrow
 	local bFOBorder = button.FlyoutBorder
 	local bFOBorderShadow = button.FlyoutBorderShadow
 	local bHotKey = button.HotKey
@@ -221,11 +205,15 @@ local function SkinButton(button)
 	local bHighlightTexture = button.GetHighlightTexture and button:GetHighlightTexture()
 	local bCheckedTexture = button.GetCheckedTexture and button:GetCheckedTexture()
 
-	E:TweakIcon(bIcon)
+	E:UpdateIcon(bIcon)
 
 	if bFlash then
 		bFlash:SetTexture(0.9, 0.15, 0.15, 0.65)
 		bFlash:SetAllPoints()
+	end
+
+	if bFOArrow then
+		bFOArrow:SetDrawLayer("OVERLAY", 2)
 	end
 
 	if bFOBorder then
@@ -238,26 +226,36 @@ local function SkinButton(button)
 
 	if bHotKey then
 		bHotKey:SetFontObject("LS10Font_Outline")
+		bHotKey:SetJustifyH("RIGHT")
+		bHotKey:SetDrawLayer("OVERLAY", 2)
 		bHotKey:ClearAllPoints()
-		bHotKey:SetPoint("TOPRIGHT", 2, 1)
+		bHotKey:SetPoint("TOPLEFT", -2, 0)
+		bHotKey:SetPoint("TOPRIGHT", 2, 0)
+		bHotKey:SetWidth(button:GetWidth())
 
-		SetCustomHotKeyText(bHotKey)
+		SetHotKeyTextHook(bHotKey)
 
-		hooksecurefunc(bHotKey, "SetText", SetCustomHotKeyText)
+		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
 	end
 
 	if bCount then
 		bCount:SetFontObject("LS10Font_Outline")
+		bCount:SetJustifyH("RIGHT")
+		bCount:SetDrawLayer("OVERLAY", 2)
 		bCount:ClearAllPoints()
-		bCount:SetPoint("BOTTOMRIGHT", 2, -1)
+		bCount:SetPoint("BOTTOMLEFT", -2, 0)
+		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
+		bCount:SetWidth(button:GetWidth())
 	end
 
 	if bName then
 		bName:SetFontObject("LS10Font_Outline")
 		bName:SetJustifyH("CENTER")
+		bName:SetDrawLayer("OVERLAY", 2)
 		bName:ClearAllPoints()
 		bName:SetPoint("BOTTOMLEFT", -4, 0)
 		bName:SetPoint("BOTTOMRIGHT", 4, 0)
+		bName:SetWidth(button:GetWidth())
 	end
 
 	if bBorder then
@@ -281,9 +279,9 @@ local function SkinButton(button)
 	if bNormalTexture then
 		bNormalTexture:SetTexture(nil)
 
-		E:CreateBorder(button, 8)
+		E:CreateBorder(button, button:GetWidth() < 26 and 6 or nil)
 
-		hooksecurefunc(bNormalTexture, "SetVertexColor", SetCustomVertexColor)
+		hooksecurefunc(bNormalTexture, "SetVertexColor", SetVertexColorHook)
 	end
 
 	if bPushedTexture then
@@ -291,12 +289,127 @@ local function SkinButton(button)
 	end
 
 	if bHighlightTexture then
-		E:UpdateHighlightTexture(bHighlightTexture)
+		E:UpdateHighlightTexture(button)
 	end
 
 	if bCheckedTexture then
 		E:UpdateCheckedTexture(button)
 	end
+end
+
+function E:UpdateIcon(object, texture, l, r, t, b)
+	local icon
+	if object.CreateTexture then
+		icon = object:CreateTexture(nil, "BACKGROUND", nil, 0)
+	else
+		icon = object
+		icon:SetDrawLayer("BACKGROUND", 0)
+	end
+
+	if texture then
+		icon:SetTexture(texture)
+	end
+
+	icon:SetAllPoints()
+	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
+
+	return icon
+end
+
+function E:UpdatePushedTexture(button)
+	if not button.SetPushedTexture then return end
+
+	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
+	texture = button:GetPushedTexture()
+	texture:SetTexCoord(120 / 256, 176 / 256, 0 / 64, 56 / 64)
+	texture:SetAllPoints()
+end
+
+function E:UpdateHighlightTexture(button)
+	if not button.SetHighlightTexture then return end
+
+	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
+	texture = button:GetHighlightTexture()
+	texture:SetTexCoord(64 / 256, 120 / 256, 0 / 64, 56 / 64)
+	texture:SetAllPoints()
+end
+
+function E:UpdateCheckedTexture(button)
+	if not button.SetCheckedTexture then return end
+
+	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
+	texture = button:GetCheckedTexture()
+	texture:SetBlendMode("ADD")
+	texture:SetAllPoints()
+end
+
+function E:CreateButton(parent, name, isSandwich)
+	local button = CreateFrame("Button", name, parent, "SecureHandlerClickTemplate")
+	button:SetSize(28, 28)
+
+	button.Icon = E:UpdateIcon(button)
+
+	E:CreateBorder(button)
+
+	local count = E:CreateNewFontString(button, 10, "$parentCount", true, 2)
+	count:SetJustifyH("RIGHT")
+	count:SetPoint("TOPRIGHT", 2, 0)
+	button.Count = count
+
+	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, 2)
+	duration:SetPoint("BOTTOMLEFT", -4, 0)
+	duration:SetPoint("BOTTOMRIGHT", 4, 0)
+	button.Duration = duration
+
+	button.CD = E:CreateCooldown(button, 12)
+
+	E:UpdatePushedTexture(button)
+	E:UpdateHighlightTexture(button)
+
+	if isSandwich then
+		local cover = CreateFrame("Frame", "$parentCover", button)
+		cover:SetAllPoints()
+
+		count:SetParent(cover)
+		duration:SetParent(cover)
+	end
+
+	return button
+end
+
+function E:CreateCheckButton(parent, name, isSandwich)
+	local button = CreateFrame("CheckButton", name, parent, "SecureHandlerClickTemplate")
+	button:SetSize(28, 28)
+
+	button.Icon = E:UpdateIcon(button)
+
+	E:CreateBorder(button)
+
+	local count = E:CreateNewFontString(button, 10, "$parentCount", true, 2)
+	count:SetJustifyH("RIGHT")
+	count:SetPoint("TOPRIGHT", 2, 0)
+	button.Count = count
+
+	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, 2)
+	duration:SetPoint("BOTTOMLEFT", -4, 0)
+	duration:SetPoint("BOTTOMRIGHT", 4, 0)
+	button.Duration = duration
+
+	button.CD = E:CreateCooldown(button, 12)
+
+	E:UpdatePushedTexture(button)
+	E:UpdateHighlightTexture(button)
+	E:UpdateCheckedTexture(button)
+
+	if isSandwich then
+		local cover = CreateFrame("Frame", "$parentCover", button)
+		cover:SetAllPoints()
+
+		count:SetParent(cover)
+		duration:SetParent(cover)
+	end
+
+	return button
 end
 
 function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
@@ -312,13 +425,15 @@ function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, 
 
 	header.buttons = buttons
 
+
 	for i = 1, #buttons do
 		local button = buttons[i]
 
+		local size = type(buttonSize) == "table" and buttonSize[i] or buttonSize
+
 		button:SetFrameLevel(header:GetFrameLevel() + 1)
 		button:ClearAllPoints()
-		button:SetSize(type(buttonSize) == "table" and buttonSize.w or buttonSize,
-			type(buttonSize) == "table" and buttonSize.h or buttonSize)
+		button:SetSize(size, size)
 
 		if not originalBar then button:SetParent(header) end
 
@@ -369,7 +484,7 @@ function E:SkinBagButton(button)
 	end
 
 	if bCount then
-		hooksecurefunc(bCount, "SetText", SetCustomText)
+		hooksecurefunc(bCount, "SetText", SetTextHook)
 	end
 
 	button.styled = true
@@ -402,6 +517,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bSelectedHighlight then
+		bSelectedHighlight:SetDrawLayer("OVERLAY", 2)
 		bSelectedHighlight:ClearAllPoints()
 		bSelectedHighlight:SetPoint("TOPLEFT", -8, 8)
 		bSelectedHighlight:SetPoint("BOTTOMRIGHT", 8, -8)
@@ -414,6 +530,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bBetterIcon then
+		bBetterIcon:SetDrawLayer("OVERLAY", 2)
 		bBetterIcon:SetSize(18, 18)
 		bBetterIcon:ClearAllPoints()
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
@@ -429,8 +546,6 @@ function E:SkinExtraActionButton(button)
 
 	SkinButton(button)
 
-	button:SetBorderSize(10)
-
 	E:ForceHide(button.style)
 
 	button.styled = true
@@ -440,8 +555,6 @@ function E:SkinPetActionButton(button)
 	if not button or button.styled then return end
 
 	SkinButton(button)
-
-	button:SetBorderSize(6)
 
 	local name = button:GetName()
 	local bCD = button.cooldown
@@ -454,9 +567,10 @@ function E:SkinPetActionButton(button)
 	end
 
 	if bAutoCast then
+		bAutoCast:SetDrawLayer("OVERLAY", 2)
 		bAutoCast:ClearAllPoints()
-		bAutoCast:SetPoint("TOPLEFT", -14, 14)
-		bAutoCast:SetPoint("BOTTOMRIGHT", 14, -14)
+		bAutoCast:SetPoint("TOPLEFT", -12, 12)
+		bAutoCast:SetPoint("BOTTOMRIGHT", 12, -12)
 	end
 
 	if bShine then
@@ -469,7 +583,7 @@ function E:SkinPetActionButton(button)
 		bHotKey:SetFontObject("LS8Font_Outline")
 	end
 
-	button:HookScript("OnUpdate", PetActionButton_OnUpdate)
+	button:HookScript("OnUpdate", PetActionButton_OnUpdateHook)
 
 	hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
 
@@ -489,20 +603,10 @@ function E:SkinActionButton(button)
 	end
 
 	if button:GetScript("OnUpdate") then
-		button:HookScript("OnUpdate", ActionButton_OnUpdate)
+		button:HookScript("OnUpdate", ActionButton_OnUpdateHook)
 	end
 
 	button.styled = true
-end
-
-local function OTButton_OnDrag(self)
-	if IsModifiedClick("PICKUPACTION") then
-		local link = GetQuestLogSpecialItemInfo(self:GetID())
-		local bagID, slot = GetContainerSlotByItemLink(link)
-		if bagID then
-			PickupContainerItem(bagID, slot)
-		end
-	end
 end
 
 function E:SkinOTButton()
@@ -511,12 +615,12 @@ function E:SkinOTButton()
 	SkinButton(self)
 
 	if self:GetScript("OnUpdate") then
-		self:HookScript("OnUpdate", OTButton_OnUpdate)
+		self:HookScript("OnUpdate", OTButton_OnUpdateHook)
 	end
 
 	self:RegisterForDrag("LeftButton")
-	self:HookScript("OnDragStart", OTButton_OnDrag)
-	self:HookScript("OnReceiveDrag", OTButton_OnDrag)
+	self:HookScript("OnDragStart", OTButton_OnDragHook)
+	self:HookScript("OnReceiveDrag", OTButton_OnDragHook)
 
 	self.styled = true
 end
@@ -532,40 +636,44 @@ function E:SkinAuraButton(button)
 
 	if bIcon then
 		if name == "ConsolidatedBuffs" then
-			E:TweakIcon(bIcon, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
+			E:UpdateIcon(bIcon, nil, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
 		else
-			E:TweakIcon(bIcon)
+			E:UpdateIcon(bIcon)
 		end
 	end
 
-	E:CreateBorder(button, 8)
+	E:CreateBorder(button)
 
 	if bBorder then
 		bBorder:SetTexture(nil)
 
 		if gsub(name, "%d", "") == "TempEnchant" then
-			button:SetBorderColor(0.37, 0.15, 0.55)
+			button:SetBorderColor(unpack(COLORS.darkmagenta))
 		else
-			hooksecurefunc(bBorder, "SetVertexColor", SetCustomVertexColor)
+			hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
 		end
 	end
 
 	if bCount then
 		bCount:SetFontObject("LS10Font_Outline")
-		bCount:SetDrawLayer("OVERLAY", 1)
+		bCount:SetJustifyH("RIGHT")
+		bCount:SetDrawLayer("OVERLAY", 2)
 		bCount:ClearAllPoints()
-		bCount:SetPoint("TOPRIGHT", 2, 1)
+		bCount:SetPoint("TOPLEFT", -2, 0)
+		bCount:SetPoint("TOPRIGHT", 2, 0)
+		bCount:SetWidth(button:GetWidth())
 	end
 
 	if bDuration then
 		bDuration:SetFontObject("LS10Font_Outline")
 		bDuration:SetJustifyH("CENTER")
-		bDuration:SetDrawLayer("OVERLAY", 1)
+		bDuration:SetDrawLayer("OVERLAY", 2)
 		bDuration:ClearAllPoints()
 		bDuration:SetPoint("BOTTOMLEFT", -4, 0)
 		bDuration:SetPoint("BOTTOMRIGHT", 4, 0)
+		bDuration:SetWidth(button:GetWidth())
 
-		hooksecurefunc(bDuration, "SetFormattedText", SetCustomFormattedText)
+		hooksecurefunc(bDuration, "SetFormattedText", SetFormattedTextHook)
 	end
 
 	button.styled = true
@@ -573,13 +681,12 @@ end
 
 function E:SkinSquareButton(button)
 	local texture = button.icon:GetTexture()
-	local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = button.icon:GetTexCoord()
 	local highlight = button:GetHighlightTexture()
 
 	button.icon:SetSize(10, 10)
 
 	highlight:SetTexture(texture)
-	highlight:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+	highlight:SetTexCoord(button.icon:GetTexCoord())
 	highlight:ClearAllPoints()
 	highlight:SetPoint("CENTER", 0, 0)
 	highlight:SetSize(10, 10)
