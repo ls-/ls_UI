@@ -411,7 +411,7 @@ function MM:Initialize()
 
 		glow:SetTexture("")
 
-		date:SetFontObject("LS14Font_Outline")
+		calendar:SetNormalFontObject("LS14Font_Outline")
 		date:ClearAllPoints()
 		date:SetPoint("CENTER", 1, 0)
 		date:SetVertexColor(1, 1, 1)
