@@ -67,6 +67,7 @@ colors.indigo = {0.36, 0.46, 0.8}
 colors.orange = {0.9, 0.4, 0.1}
 colors.dodgerblue = {0.12, 0.56, 1}
 colors.jade = {0, 0.66, 0.42}
+colors.darkmagenta = {0.545, 0, 0.545}
 
 colors.gradient = {
 	["GYR"] = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15},
