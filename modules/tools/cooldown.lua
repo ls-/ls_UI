@@ -57,6 +57,15 @@ local function SetTimerTextHeight(self, height)
 	self.Timer:SetFontObject("LS"..height.."Font_Outline")
 end
 
+function E:CreateCooldown(parent, textSize)
+	local cooldown = CreateFrame("Cooldown", "$parentCooldown", parent, "CooldownFrameTemplate")
+	cooldown:SetPoint("TOPLEFT", 1, -1)
+	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
+	E:HandleCooldown(cooldown, textSize)
+
+	return cooldown
+end
+
 function E:HandleCooldown(cooldown, textSize)
 	if OmniCC or cooldown.handled then return end
 
