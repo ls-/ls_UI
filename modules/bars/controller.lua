@@ -214,11 +214,17 @@ function B:SetupControlledBar(bar, barType)
 	end
 end
 
+function B:IsInRestrictedMode()
+	return not not BarController
+end
+
 function B:ActionBarController_Initialize()
 	if C.bars.restricted then
+		local hasSixButtons = HasOverrideActionBar() or HasVehicleActionBar() or HasTempShapeshiftActionBar() or C_PetBattles.IsInBattle()
+
 		BarController = CreateFrame("Frame", "LSActionBarArtContainer", UIParent, "SecureHandlerStateTemplate")
-		BarController:SetSize(32 * 12, 50)
-		BarController:SetPoint("BOTTOM", 0, -4)
+		BarController:SetSize(32 * (hasSixButtons and 6 or 12), 50)
+		BarController:SetPoint("BOTTOM", 0, -3)
 		BarController:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
 		BarController:SetScript("OnEvent", BarController_OnEvent)
 		B.BarController = BarController
@@ -263,7 +269,7 @@ function B:ActionBarController_Initialize()
 			local width = 32 * newstate
 			if width ~= floor(self:GetWidth()) then
 				self:CallMethod("Update")
-				self:SetWidth(32 * newstate)
+				self:SetWidth(width)
 			end
 		]])
 
