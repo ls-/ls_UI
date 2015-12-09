@@ -396,9 +396,11 @@ local function HandleMicroButton(button, setIcon)
 	end
 
 	if flash then
-		flash:SetSize(58, 58)
+		flash:SetTexCoord(0 / 64, 33 / 64, 0, 42 / 64)
+		flash:SetSize(28, 34)
+		flash:SetDrawLayer("OVERLAY", 2)
 		flash:ClearAllPoints()
-		flash:SetPoint("CENTER", 14, -10)
+		flash:SetPoint("CENTER", 0, 0)
 	end
 
 	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
