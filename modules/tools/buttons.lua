@@ -22,11 +22,14 @@ HIGHLIGHT:
 
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS, TEXTURES = M.colors, M.textures
+local B = E:GetModule("Bars")
 
 local unpack = unpack
 local gsub = gsub
 local NUM_BAG_SLOTS = NUM_BAG_SLOTS
+local COLORS, TEXTURES = M.colors, M.textures
+
+B.HandledHotKeys, B.HandledMacroNames = {}, {}
 
 local function GetContainerSlotByItemLink(itemLink)
 	for i = 0, NUM_BAG_SLOTS do
@@ -143,14 +146,14 @@ local function ActionButton_OnUpdateHook(button)
 		end
 	end
 
-	if bName then
+	if bName and bName:IsShown() then
 		local text = bName:GetText()
 		if text then
 			bName:SetText(E:StringTruncate(text, 4))
 		end
 	end
 
-	if bHotKey then
+	if bHotKey and bHotKey:IsShown() then
 		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
 	end
 end
@@ -234,8 +237,9 @@ local function SkinButton(button)
 		bHotKey:SetWidth(button:GetWidth())
 
 		SetHotKeyTextHook(bHotKey)
-
 		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
+
+		tinsert(B.HandledHotKeys, bHotKey)
 	end
 
 	if bCount then
@@ -256,6 +260,8 @@ local function SkinButton(button)
 		bName:SetPoint("BOTTOMLEFT", -4, 0)
 		bName:SetPoint("BOTTOMRIGHT", 4, 0)
 		bName:SetWidth(button:GetWidth())
+
+		tinsert(B.HandledMacroNames, bName)
 	end
 
 	if bBorder then
@@ -490,14 +496,15 @@ function E:SkinBagButton(button)
 	local bCount = button.Count
 	local bIconBorder = button.IconBorder
 
+	if bCount then
+		SetTextHook(bCount, bCount:GetText())
+		hooksecurefunc(bCount, "SetText", SetTextHook)
+	end
+
 	if bIconBorder then
 		bIconBorder:SetTexture(nil)
 		hooksecurefunc(bIconBorder, "Hide", SetItemButtonBorderColor)
 		hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
-	end
-
-	if bCount then
-		hooksecurefunc(bCount, "SetText", SetTextHook)
 	end
 
 	button.styled = true
@@ -594,6 +601,8 @@ function E:SkinPetActionButton(button)
 
 	if bHotKey then
 		bHotKey:SetFontObject("LS8Font_Outline")
+
+		tinsert(B.HandledHotKeys, bHotKey)
 	end
 
 	button:HookScript("OnUpdate", PetActionButton_OnUpdateHook)
@@ -707,3 +716,36 @@ function E:SkinSquareButton(button)
 	button:SetNormalTexture("")
 	button:SetPushedTexture("")
 end
+
+function B:ShowHotKeyText()
+	for _, v in next, B.HandledHotKeys do
+		v:Show()
+	end
+
+	return true, "|cff26a526Success!|r Binding text is now shown."
+end
+
+function B:HideHotKeyText()
+	for _, v in next, B.HandledHotKeys do
+		v:Hide()
+	end
+
+	return true, "|cff26a526Success!|r Binding text is now hidden."
+end
+
+function B:ShowMacroNameText()
+	for _, v in next, B.HandledMacroNames do
+		v:Show()
+	end
+
+	return true, "|cff26a526Success!|r Macro text is now shown."
+end
+
+function B:HideMacroNameText()
+	for _, v in next, B.HandledMacroNames do
+		v:Hide()
+	end
+
+	return true, "|cff26a526Success!|r Macro text is now hidden."
+end
+
