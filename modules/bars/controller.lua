@@ -106,7 +106,7 @@ local function ConstructCap(side)
 		cog:SetPoint("CENTER", cap, "BOTTOMLEFT", 4, 7)
 
 		nest:SetTexCoord(78 / 256, 224 / 256, 10 / 128, 20 / 128)
-		nest:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 36, 4)
+		nest:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 36, 3)
 	else
 		CreateActionPageButton(cap, side)
 
@@ -116,7 +116,7 @@ local function ConstructCap(side)
 		cog:SetPoint("CENTER", cap, "BOTTOMRIGHT", -4, 7)
 
 		nest:SetTexCoord(78 / 256, 224 / 256, 0, 10 / 128)
-		nest:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -36, 4)
+		nest:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -36, 3)
 	end
 end
 
@@ -196,13 +196,19 @@ function B:SetupControlledBar(bar, barType)
 	elseif barType == "MicroMenuLeft" then
 		bar:SetParent(BarController)
 		bar:ClearAllPoints()
-		bar:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -62, 10)
+		bar:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -62, 9)
 
 		bar.controlled = true
 	elseif barType == "MicroMenuRight" then
 		bar:SetParent(BarController)
 		bar:ClearAllPoints()
-		bar:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 62, 10)
+		bar:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 62, 9)
+
+		bar.controlled = true
+	elseif barType == "Bags" then
+		bar:SetParent(BarController)
+		bar:ClearAllPoints()
+		bar:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 202, 9)
 
 		bar.controlled = true
 	end
@@ -246,6 +252,12 @@ function B:ActionBarController_Initialize()
 
 		ConstructCap("Left")
 		ConstructCap("Right")
+
+		texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
+		texture:SetSize(50, 10)
+		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
+		texture:SetTexCoord(78 / 256, 128 / 256, 20 / 128, 30 / 128)
+		texture:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 192, 3)
 
 		BarController:SetAttribute("_onstate-numbuttons", [[
 			local width = 32 * newstate
