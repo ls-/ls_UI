@@ -6,16 +6,16 @@ local tinsert = table.insert
 
 local function LSGeneralConfigPanel_OnShow(self)
 	for _, controller in next, self.controllers do
-		CFG.ToggleDependantControls(controller)
+		CFG:ToggleDependantControls(controller)
 	end
 end
 
 local function UFToggle_OnClick(self)
-	CFG.ToggleDependantControls(self)
+	CFG:ToggleDependantControls(self)
 end
 
 local function ABToggle_OnClick(self)
-	CFG.ToggleDependantControls(self)
+	CFG:ToggleDependantControls(self)
 end
 
 function CFG:General_Initialize()
@@ -113,20 +113,8 @@ function CFG:General_Initialize()
 	header3:SetPoint("LEFT", 16, 0)
 	header3:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
 
-	local button8 = CFG:CreateCheckButton(panel, "ActionBarsToggle", "Action Bars")
-	button8:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", -2, -8)
-	button8:HookScript("OnClick", ABToggle_OnClick)
-	tinsert(panel.controllers, button8)
-	panel.settings.bars.enabled = button8
-	panel.settings.bars.bags.enabled = button8
-
-	local button9 = CFG:CreateCheckButton(panel, "BagsToggle", "Bags")
-	button9:SetPoint("LEFT", button8, "RIGHT", 110, 0)
-	panel.settings.bars.bags.enabled = button9
-	CFG:SetupControlDependency(button8, button9)
-
 	local button10 = CFG:CreateCheckButton(panel, "MinimapToggle", "Minimap")
-	button10:SetPoint("LEFT", button9, "RIGHT", 110, 0)
+	button10:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", -2, -8)
 	panel.settings.minimap.enabled = button10
 
 	local button11 = CFG:CreateCheckButton(panel, "AurasToggle", "Buffs & Debuffs")
@@ -134,7 +122,7 @@ function CFG:General_Initialize()
 	panel.settings.auras.enabled = button11
 
 	local button12 = CFG:CreateCheckButton(panel, "MailToggle", "Mail")
-	button12:SetPoint("TOPLEFT", button8, "BOTTOMLEFT", 0, -8)
+	button12:SetPoint("LEFT", button11, "RIGHT", 110, 0)
 	panel.settings.mail.enabled = button12
 
 	local button13 = CFG:CreateCheckButton(panel, "TooltipsToggle", "Tooltips")
@@ -142,7 +130,7 @@ function CFG:General_Initialize()
 	panel.settings.tooltips.enabled = button13
 
 	local divider2 = CFG:CreateDivider(panel)
-	divider2:SetPoint("TOP", button12, "BOTTOM", 0, -8)
+	divider2:SetPoint("TOP", button10, "BOTTOM", 0, -8)
 
 	local header4 = CFG:CreateTextLabel(panel, 16, "|cffffd100Info|r")
 	header4:SetPoint("LEFT", 16, 0)

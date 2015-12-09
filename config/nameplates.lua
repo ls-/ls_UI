@@ -12,7 +12,7 @@ local function NPConfigPanel_OnShow(self)
 
 	self.StatusLog:SetText("")
 
-	CFG.ToggleDependantControls(self.NPToggle, not NP:IsEnabled())
+	CFG:ToggleDependantControls(self.NPToggle, not NP:IsEnabled())
 end
 
 local function NPToggle_OnClick(self)
@@ -29,7 +29,7 @@ local function NPToggle_OnClick(self)
 		result, msg = NP:Enable()
 	end
 
-	CFG.ToggleDependantControls(parent.NPToggle, not NP:IsEnabled())
+	CFG:ToggleDependantControls(self, not NP:IsEnabled())
 
 	parent.StatusLog:SetText(msg)
 end
