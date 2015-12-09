@@ -48,7 +48,20 @@ function CFG:CreateCheckButton(parent, name, text, tooltiptext)
 	return object
 end
 
+local function ValidateValue(self, value)
+	local button
+	for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+		button = _G["DropDownList"..UIDROPDOWNMENU_MENU_LEVEL.."Button"..i]
+		if button:IsShown() and button.value == value then
+			return value
+		end
+	end
+
+	return _G["DropDownList"..UIDROPDOWNMENU_MENU_LEVEL.."Button1"].value
+end
+
 local function DropDownMenu_SetValue(self, value)
+	self.oldValue = self.value
 	self.value = value
 	UIDropDownMenu_SetSelectedValue(self, value)
 end
@@ -57,66 +70,11 @@ local function DropDownMenu_GetValue(self)
 	return UIDropDownMenu_GetSelectedValue(self)
 end
 
-local function DropDownMenu_OnShow(self)
+local function DropDownMenu_RefreshValue(self)
 	UIDropDownMenu_Initialize(self, self.initialize)
+	self.oldValue = self.value
+	self.value = ValidateValue(self, self.value)
 	UIDropDownMenu_SetSelectedValue(self, self.value)
-end
-
-local function DropDownMenu_OnClick(self)
-	self.owner.GrowthDirectionDropDownMenu:SetValue(self.value)
-
-	if self.owner.StatusLog then
-		self.owner.StatusLog:SetText("|cff26a526Success!|r This setting will be applied on next UI reload.")
-	end
-end
-
-function CFG:GrowthDirectionDropDownMenu_Initialize(...)
-	local selectedValue = UIDropDownMenu_GetSelectedValue(self)
-	local info = UIDropDownMenu_CreateInfo()
-
-	info.text = "Right"
-	info.func = DropDownMenu_OnClick
-	info.value = "RIGHT"
-	info.owner = self:GetParent()
-	if info.value == selectedValue then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-
-	info.text = "Left"
-	info.func = DropDownMenu_OnClick
-	info.value = "LEFT"
-	info.owner = self:GetParent()
-	if info.value == selectedValue then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-
-	info.text = "Up"
-	info.func = DropDownMenu_OnClick
-	info.value = "UP"
-	info.owner = self:GetParent()
-	if info.value == selectedValue then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
-
-	info.text = "Down"
-	info.func = DropDownMenu_OnClick
-	info.value = "DOWN"
-	info.owner = self:GetParent()
-	if info.value == selectedValue then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
 function CFG:CreateDropDownMenu(parent, name, text, func)
@@ -124,20 +82,63 @@ function CFG:CreateDropDownMenu(parent, name, text, func)
 	object.type = "DropDownMenu"
 	object.SetValue = DropDownMenu_SetValue
 	object.GetValue = DropDownMenu_GetValue
-	object:HookScript("OnShow", DropDownMenu_OnShow)
-	UIDropDownMenu_Initialize(object, CFG[func])
+	object.RefreshValue = DropDownMenu_RefreshValue
+	UIDropDownMenu_Initialize(object, func)
 
 	local label = E:CreateFontString(object, 12, "$parentLabel", true, nil, true)
 	label:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 16, 3)
 	label:SetJustifyH("LEFT")
 	label:SetJustifyV("MIDDLE")
 	label:SetText(text)
+	label:SetVertexColor(1, 0.82, 0)
 	object.Text = label
+
+	CFG:RegisterControlForRefresh(parent, object)
 
 	return object
 end
 
-function CFG:CreateDivider(parent)
+local function Slider_SetValue(self, value)
+	self:SetDisplayValue(value)
+	self.CurrentValue:SetText(value)
+	self.oldValue = self.value
+	self.value = value
+end
+
+function CFG:CreateSlider(parent, name, text, minValue, maxValue)
+	local object = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
+	object.type = "Slider"
+	object:SetMinMaxValues(minValue, maxValue)
+	object:SetValueStep(2)
+	object:SetObeyStepOnDrag(true)
+	object.SetDisplayValue = object.SetValue
+	object.SetValue = Slider_SetValue
+	object:SetScript("OnValueChanged", function(self, value)
+		object.CurrentValue:SetText(value)
+		self.value = value
+	end)
+
+	local label = _G[object:GetName().."Text"]
+	label:SetText(text)
+	label:SetVertexColor(1, 0.82, 0)
+	object.Text = label
+
+	local lowText = _G[object:GetName().."Low"]
+	lowText:SetText(minValue)
+	object.LowValue = lowText
+
+	local curText = object:CreateFontString("$parentCurrent", "ARTWORK", "GameFontHighlightSmall")
+	curText:SetPoint("TOP", object, "BOTTOM", 0, 3)
+	object.CurrentValue = curText
+
+	local highText = _G[object:GetName().."High"]
+	highText:SetText(maxValue)
+	object.HighValue = highText
+
+	return object
+end
+
+function CFG:CreateDivider(parent, text)
 	local object = parent:CreateTexture(nil, "ARTWORK")
 	object:SetHeight(4)
 	object:SetPoint("LEFT", 10, 0)
@@ -146,75 +147,157 @@ function CFG:CreateDivider(parent)
 	object:SetTexCoord(0, 1, 0.0625, 0.65625)
 	object:SetAlpha(0.5)
 
+	local label = E:CreateNewFontString(parent, 14)
+	label:SetPoint("LEFT", object, "LEFT", 12, 1)
+	label:SetPoint("RIGHT", object, "RIGHT", -12, 1)
+	label:SetText(text)
+	label:SetVertexColor(1, 0.82, 0)
+	object.Text = label
+
 	return object
 end
 
 function CFG:OptionsPanelOkay(panel)
-	-- print("OKAY", panel:GetName(), self:GetName())
 	E:ApplySettings(panel.settings, C)
 end
 
 function CFG:OptionsPanelRefresh(panel)
-	-- print("REFRESH", panel:GetName(), self:GetName())
 	E:FetchSettings(panel.settings, C)
+
+	for _, control in next, panel.controls do
+		if control.RefreshValue then
+			control:RefreshValue()
+		end
+	end
 end
 
 function CFG:OptionsPanelDefault(panel)
-	-- print("DEFAULT", panel:GetName(), self:GetName())
 	E:FetchSettings(panel.settings, D)
 end
 
-function CFG:SetupControlDependency(parent, child)
+function CFG:RegisterControlForRefresh(parent, control)
+	if not parent or not control then
+		return
+	end
+
+	parent.controls = parent.controls or {}
+	tinsert(parent.controls, control)
+end
+
+local function ButtonChild_Enable(self)
+	getmetatable(self).__index.Enable(self)
+
+	if self.Text then
+		self.Text:SetVertexColor(1, 1, 1)
+	end
+
+	if self.Icon then
+		self.Icon:SetDesaturated(false)
+	end
+end
+
+local function ButtonChild_Disable(self)
+	getmetatable(self).__index.Disable(self)
+
+	if self.Text then
+		self.Text:SetVertexColor(0.5, 0.5, 0.5)
+	end
+
+	if self.Icon then
+		self.Icon:SetDesaturated(true)
+	end
+end
+
+local function DropDownChild_Enable(self)
+	UIDropDownMenu_EnableDropDown(self)
+end
+
+local function DropDownChild_Disable(self)
+	UIDropDownMenu_DisableDropDown(self)
+end
+
+local function SliderChild_Enable(self)
+	getmetatable(self).__index.Enable(self)
+
+	if self.Text then
+		self.Text:SetVertexColor(1, 0.82, 0)
+	end
+
+	if self.LowValue then
+		self.LowValue:SetVertexColor(1, 1, 1)
+	end
+
+	if self.CurrentValue then
+		self.CurrentValue:SetVertexColor(1, 1, 1)
+	end
+
+	if self.HighValue then
+		self.HighValue:SetVertexColor(1, 1, 1)
+	end
+end
+
+local function SliderChild_Disable(self)
+	getmetatable(self).__index.Disable(self)
+
+	if self.Text then
+		self.Text:SetVertexColor(0.5, 0.5, 0.5)
+	end
+
+	if self.LowValue then
+		self.LowValue:SetVertexColor(0.5, 0.5, 0.5)
+	end
+
+	if self.CurrentValue then
+		self.CurrentValue:SetVertexColor(0.5, 0.5, 0.5)
+	end
+
+	if self.HighValue then
+		self.HighValue:SetVertexColor(0.5, 0.5, 0.5)
+	end
+end
+
+function CFG:SetupControlDependency(parent, child, setResersed)
 	if not parent then return end
 
 	parent.children = parent.children or {}
 	tinsert(parent.children, child)
 
 	if child.type == "Button" then
-
-		child.Disable = function(self)
-			getmetatable(self).__index.Disable(self)
-
-			if child.Text then
-				child.Text:SetVertexColor(0.5, 0.5, 0.5)
-			end
-
-			if child.Icon then
-				child.Icon:SetDesaturated(true)
-			end
-		end
-
-		child.Enable = function(self)
-			getmetatable(self).__index.Enable(self)
-
-			if child.Text then
-				child.Text:SetVertexColor(1, 1, 1)
-			end
-
-			if child.Icon then
-				child.Icon:SetDesaturated(false)
-			end
+		if setResersed then
+			child.Enable = ButtonChild_Disable
+			child.Disable = ButtonChild_Enable
+		else
+			child.Enable = ButtonChild_Enable
+			child.Disable = ButtonChild_Disable
 		end
 	elseif child.type == "DropDownMenu" then
-		child.Disable = function(self)
-			UIDropDownMenu_DisableDropDown(self)
+		if setResersed then
+			child.Enable = DropDownChild_Disable
+			child.Disable = DropDownChild_Enable
+		else
+			child.Enable = DropDownChild_Enable
+			child.Disable = DropDownChild_Disable
 		end
-
-		child.Enable = function(self)
-			UIDropDownMenu_EnableDropDown(self)
+	elseif child.type == "Slider" then
+		if setResersed then
+			child.Enable = SliderChild_Disable
+			child.Disable = SliderChild_Enable
+		else
+			child.Enable = SliderChild_Enable
+			child.Disable = SliderChild_Disable
 		end
 	end
 end
 
-function CFG:ToggleDependantControls(forceDisable)
-	if InCombatLockdown() then return end
+function CFG:ToggleDependantControls(parent, forceDisable)
+	if InCombatLockdown() or not parent.children then return end
 
-	if not self:GetValue() or forceDisable then
-		for _, child in next, self.children do
+	if not parent:GetValue() or forceDisable then
+		for _, child in next, parent.children do
 			child:Disable()
 		end
 	else
-		for _, child in next, self.children do
+		for _, child in next, parent.children do
 			child:Enable()
 		end
 	end
