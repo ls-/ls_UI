@@ -99,10 +99,10 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", 0, 117},
-	PET2 = {"BOTTOM", 0, 145},
-	STANCE1 = {"BOTTOM", 0, 145},
-	STANCE2 = {"BOTTOM", 0, 117},
+	PET1 = {"BOTTOM", 0, 110},
+	PET2 = {"BOTTOM", 0, 138},
+	STANCE1 = {"BOTTOM", 0, 138},
+	STANCE2 = {"BOTTOM", 0, 110},
 }
 
 -- page swapping is taken from tukui, thx :D really usefull thingy
@@ -163,96 +163,83 @@ local function SetStancePetActionBarPosition(self)
 end
 
 function B:HandleActionBars()
-	if C.bars.enabled then
-		if C.bars.restricted then
-			BARS_CFG.bar2 = C.bars.bar2
-			BARS_CFG.bar3 = C.bars.bar3
-			BARS_CFG.bar4 = C.bars.bar4
-			BARS_CFG.bar5 = C.bars.bar5
-			BARS_CFG.bar6 = C.bars.bar6
-			BARS_CFG.bar7 = C.bars.bar7
+	if C.bars.restricted then
+		BARS_CFG.bar2 = C.bars.bar2
+		BARS_CFG.bar3 = C.bars.bar3
+		BARS_CFG.bar4 = C.bars.bar4
+		BARS_CFG.bar5 = C.bars.bar5
+		BARS_CFG.bar6 = C.bars.bar6
+		BARS_CFG.bar7 = C.bars.bar7
+	else
+		BARS_CFG = C.bars
+	end
+
+	for key, data in next, BAR_LAYOUT do
+		local config = BARS_CFG[key]
+		local index = match(key, "(%d+)")
+		local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
+
+		if index == "6" then
+			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
 		else
-			BARS_CFG = C.bars
+			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
 		end
 
-		for key, data in next, BAR_LAYOUT do
-			local config = BARS_CFG[key]
-			local index = match(key, "(%d+)")
-			local size = type(config.button_size) == "table" and config.button_size[1] or config.button_size
-			local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
+		if data.condition then
+			RegisterStateDriver(bar, "visibility", data.condition)
+		end
 
-			if config.direction == "RIGHT" or config.direction == "LEFT" then
-				bar:SetSize(size * #data.buttons + config.button_gap * #data.buttons, size + config.button_gap)
+		if index == "1" then
+			bar:RegisterEvent("PLAYER_LOGIN")
+			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+			bar:SetScript("OnEvent", LSActionBar_OnEvent)
+
+			if C.bars.restricted then
+				B:SetupControlledBar(bar, "Main")
+			end
+		end
+
+		Bars[key] = bar
+	end
+
+	for key, bar in next, Bars do
+		if not bar.controlled then
+			if BARS_CFG[key].point then
+				bar:SetPoint(unpack(BARS_CFG[key].point))
 			else
-				bar:SetSize(size + config.button_gap, size * #data.buttons + config.button_gap * #data.buttons)
+				SetStancePetActionBarPosition(bar)
 			end
 
-			if index == "6" then
-				E:SetButtonPosition(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
-			else
-				E:SetButtonPosition(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
-			end
-
-			if data.condition then
-				RegisterStateDriver(bar, "visibility", data.condition)
-			end
-
-			if index == "1" then
-				bar:RegisterEvent("PLAYER_LOGIN")
-				bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-				bar:SetScript("OnEvent", LSActionBar_OnEvent)
-
-				if C.bars.restricted then
-					B:SetupControlledBar(bar, "Main")
-				end
-			end
-
-			Bars[key] = bar
+			E:CreateMover(bar)
 		end
+	end
 
-		for key, bar in next, Bars do
-			if not bar.controlled then
-				if BARS_CFG[key].point then
-					bar:SetPoint(unpack(BARS_CFG[key].point))
-				else
-					SetStancePetActionBarPosition(bar)
-				end
+	PetActionBarFrame:SetScript("OnUpdate", nil)
 
-				E:CreateMover(bar)
-			end
-		end
-
-		-- local art = LSMainMenuBar:CreateTexture(nil, "BACKGROUND", nil, -8)
-		-- art:SetPoint("CENTER")
-		-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
-
-		PetActionBarFrame:SetScript("OnUpdate", nil)
-
-		for _, v in next, {
-			MainMenuBar,
-			ActionBarDownButton,
-			ActionBarUpButton,
-			MainMenuBarTexture0,
-			MainMenuBarTexture1,
-			MainMenuBarTexture2,
-			MainMenuBarTexture3,
-			MainMenuBarLeftEndCap,
-			MainMenuBarRightEndCap,
-			MainMenuBarPageNumber,
-			MultiCastActionBarFrame,
-			OverrideActionBar,
-			PossessBarFrame,
-			ReputationWatchBar,
-			StanceBarLeft,
-			StanceBarMiddle,
-			StanceBarRight,
-			SlidingActionBarTexture0,
-			SlidingActionBarTexture1,
-			SpellFlyoutHorizontalBackground,
-			SpellFlyoutVerticalBackground,
-			SpellFlyoutBackgroundEnd,
-		} do
-			E:ForceHide(v)
-		end
+	for _, v in next, {
+		MainMenuBar,
+		ActionBarDownButton,
+		ActionBarUpButton,
+		MainMenuBarTexture0,
+		MainMenuBarTexture1,
+		MainMenuBarTexture2,
+		MainMenuBarTexture3,
+		MainMenuBarLeftEndCap,
+		MainMenuBarRightEndCap,
+		MainMenuBarPageNumber,
+		MultiCastActionBarFrame,
+		OverrideActionBar,
+		PossessBarFrame,
+		ReputationWatchBar,
+		StanceBarLeft,
+		StanceBarMiddle,
+		StanceBarRight,
+		SlidingActionBarTexture0,
+		SlidingActionBarTexture1,
+		SpellFlyoutHorizontalBackground,
+		SpellFlyoutVerticalBackground,
+		SpellFlyoutBackgroundEnd,
+	} do
+		E:ForceHide(v)
 	end
 end

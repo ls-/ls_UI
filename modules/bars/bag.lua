@@ -22,8 +22,7 @@ local BAGS = {
 }
 
 local BAGS_CFG = {
-	point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 426, 4},
-	button_size = {28, 24, 24, 24, 24},
+	button_size = 26,
 	button_gap = 4,
 	direction = "RIGHT",
 }
@@ -74,7 +73,7 @@ local function BackpackButton_OnEnter(self)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(CURRENCY..":")
 
-	for i=1, 3 do
+	for i = 1, 3 do
 		name, count, icon = GetBackpackCurrencyInfo(i)
 
 		if name then
@@ -86,7 +85,7 @@ local function BackpackButton_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function BackpackButton_OnEvent(self, event, ...)
+local function BackpackButton_Update(self, event, ...)
 	if event == "BAG_UPDATE" then
 		local bag = ...
 		if bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
@@ -94,44 +93,60 @@ local function BackpackButton_OnEvent(self, event, ...)
 
 			self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
 		end
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	elseif event == "CUSTOM_FORCE_UPDATE" then
 		local free, total = GetBagUsageInfo()
 
 		self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
 	end
 end
 
-function B:HandleBags()
+function B:IsBagEnabled()
+	return not not LSBagBar
+end
+
+function B:EnableBag()
+	if InCombatLockdown() then
+		return false, "|cffe52626Error!|r Can't be done, while in combat."
+	end
+
+	if not B:IsBagEnabled() then
+		B:HandleBag(true)
+	else
+		return true, "|cffe56619Warning!|r Bag sub-module is already enabled."
+	end
+
+	return true, "|cff26a526Success!|r Bag sub-module is enabled."
+end
+
+function B:HandleBag(forceInit)
 	if not C.bars.restricted then
 		BAGS_CFG = C.bars.bags
 	end
 
-	if C.bars.bags.enabled then
-		local size = type(BAGS_CFG.button_size) == "table" and BAGS_CFG.button_size[1] or BAGS_CFG.button_size
-		local holder = CreateFrame("Frame", "LSBagsHolder", UIParent, "SecureHandlerBaseTemplate")
+	if C.bars.bags.enabled or forceInit then
+		local size = BAGS_CFG.button_size
+		local bar = CreateFrame("Frame", "LSBagBar", UIParent, "SecureHandlerBaseTemplate")
 
-		if BAGS_CFG.direction == "RIGHT" or BAGS_CFG.direction == "LEFT" then
-			holder:SetSize(size * 5 + BAGS_CFG.button_gap * 5, size + BAGS_CFG.button_gap)
-		else
-			holder:SetSize(size + BAGS_CFG.button_gap, size * 5 + BAGS_CFG.button_gap * 5)
-		end
-
-		E:SetButtonPosition(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, holder,
+		E:SetupBar(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, bar,
 			BAGS_CFG.direction, E.SkinBagButton)
 
-		holder:SetPoint(unpack(BAGS_CFG.point))
-
-		if not C.bars.restricted then
-			E:CreateMover(holder)
+		if C.bars.restricted then
+			B:SetupControlledBar(bar, "Bags")
+		else
+			bar:SetPoint(unpack(BAGS_CFG.point))
+			E:CreateMover(bar)
 		end
 
 		MainMenuBarBackpackButton.icon:SetDesaturated(true)
-
 		hooksecurefunc(MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
 
 		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 		MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
-		MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_OnEvent)
+		MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_Update)
+
+		if forceInit then
+			BackpackButton_Update(MainMenuBarBackpackButton, "CUSTOM_FORCE_UPDATE")
+		end
 
 		for _, bag in next, BAGS do
 			bag:UnregisterEvent("ITEM_PUSH")

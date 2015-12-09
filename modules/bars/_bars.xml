@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
 	<Script file="controller.lua"/>
-	<Script file="bags.lua"/>
+	<Script file="bag.lua"/>
 	<Script file="extra.lua"/>
 	<Script file="petbattle.lua"/>
 	<Script file="vehicle.lua"/>

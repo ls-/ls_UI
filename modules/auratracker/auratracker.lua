@@ -294,13 +294,7 @@ function AT:Initialize(forceInit)
 
 		tracker.buttons = buttons
 
-		if AT_CFG.direction == "RIGHT" or AT_CFG.direction == "LEFT" then
-			tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
-		else
-			tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
-		end
-
-		E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
+		E:SetupBar(buttons, 36, 4, tracker, AT_CFG.direction)
 
 		local header = CreateFrame("Button", "$parentHeader", tracker)
 		header:SetClampedToScreen(true)
