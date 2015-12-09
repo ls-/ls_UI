@@ -92,90 +92,74 @@ D["nameplates"] = {
 D["bars"] = {
 	enabled = true,
 	restricted = true,
+	show_hotkey = true,
+	show_name = true,
+	masque_support = false,
 	bar1 = { -- MainMenuBar
-		point = {"BOTTOM", 0, 12},
+		point = {"BOTTOM", 0, 4},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar2 = { -- MultiBarBottomLeft
-		point = {"BOTTOM", 0, 53},
+		point = {"BOTTOM", 0, 46},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar3 = { -- MultiBarBottomRight
-		point = {"BOTTOM", 0, 85},
+		point = {"BOTTOM", 0, 78},
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar4 = { -- MultiBarLeft
 		point = {"BOTTOMRIGHT", -36, 300},
 		button_size = 28,
 		button_gap = 4,
 		direction = "DOWN",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar5 = { -- MultiBarRight
 		point = {"BOTTOMRIGHT", -4, 300},
 		button_size = 28,
 		button_gap = 4,
 		direction = "DOWN",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar6 = { --PetAction
 		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
 		direction = "RIGHT",
-		show_hotkey = true,
-		show_name = true,
 	},
 	bar7 = { -- Stance
 		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
 		direction = "RIGHT",
-		show_hotkey = true,
-		show_name = true,
 	},
 	extra = { -- ExtraAction
-		point = {"BOTTOM", -170, 149},
+		point = {"BOTTOM", -170, 138},
 		button_size = 40,
 	},
 	vehicle = { -- LeaveVehicle
-		point = {"BOTTOM", 170, 149},
+		point = {"BOTTOM", 170, 138},
 		button_size = 40,
 	},
 	micromenu = {
 		holder1 = {
-			point = {"BOTTOM", -312, 4},
+			point = {"BOTTOM", -256, 4},
 			-- point = {"BOTTOM", -266, 4},
 		},
 		holder2 = {
-			point = {"BOTTOM", 312, 4},
+			point = {"BOTTOM", 256, 4},
 			-- point = {"BOTTOM", 266, 4},
 		},
 	},
-	petbattle = {
-		point = {"BOTTOM", 0, 15},
-		button_size = 28,
-		button_gap = 4,
-		direction = "RIGHT",
-	},
 	bags = {
 		enabled = true,
-		point = {"LEFT", "LSMBHolderRight", "RIGHT", 116, 0},
+		point = {"BOTTOM", 400, 4},
 		-- point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
+		-- button_size = 26,
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",
@@ -204,7 +188,6 @@ D["auras"] = {
 D["tooltips"] = {
 	enabled = true,
 }
-
 
 D["movers"] = {}
 

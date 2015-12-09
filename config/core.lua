@@ -310,6 +310,7 @@ end
 
 function CFG:Initialize()
 	CFG:General_Initialize()
+	CFG:B_Initialize()
 	CFG:AT_Initialize()
 	CFG:NP_Initialize()
 
