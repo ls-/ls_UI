@@ -343,8 +343,8 @@ function E:UpdateCheckedTexture(button)
 	texture:SetAllPoints()
 end
 
-function E:CreateButton(parent, name, isSandwich)
-	local button = CreateFrame("Button", name, parent, "SecureHandlerClickTemplate")
+function E:CreateButton(parent, name, isSandwich, isSecure )
+	local button = CreateFrame("Button", name, parent, isSecure and "SecureHandlerClickTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
@@ -377,8 +377,8 @@ function E:CreateButton(parent, name, isSandwich)
 	return button
 end
 
-function E:CreateCheckButton(parent, name, isSandwich)
-	local button = CreateFrame("CheckButton", name, parent, "SecureHandlerClickTemplate")
+function E:CreateCheckButton(parent, name, isSandwich, isSecure)
+	local button = CreateFrame("CheckButton", name, parent, isSecure and "SecureHandlerClickTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
