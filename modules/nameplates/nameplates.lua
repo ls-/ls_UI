@@ -60,7 +60,6 @@ local PlateMeta = setmetatable({}, {__index = function(t, frame)
 	end
 })
 
-
 local function IsTargetNamePlate(self, ignoreAlpha)
 	local name = gsub(PlateMeta[self].NameText:GetText(), FS_PATTERN, "")
 	return (ignoreAlpha and true or self:GetAlpha() == 1) and targetExists and name == targetName

@@ -376,7 +376,7 @@ local function SetDisabledTextureOverride(button)
 	if disabled then disabled:SetTexture(nil) end
 end
 
-local function HandleMicroButton(button, setIcon)
+local function HandleMicroButton(button)
 	local highlight = button:GetHighlightTexture()
 	local flash = button.Flash
 
