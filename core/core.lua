@@ -35,10 +35,6 @@ end
 function E:ForceShow(object)
 	if not object then return end
 
-	if object.SetAttribute then
-		object:SetAttribute("statehidden", false)
-	end
-
 	object:Show()
 
 	object.Hide = object.Show
@@ -52,10 +48,6 @@ function E:ForceHide(object)
 	end
 
 	object:SetParent(M.HiddenParent)
-
-	if object.SetAttribute then
-		object:SetAttribute("statehidden", true)
-	end
 
 	object:Hide()
 end
