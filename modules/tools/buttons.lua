@@ -412,7 +412,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	return button
 end
 
-function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
+function E:SetupBar(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
 	if originalBar and originalBar:GetParent() ~= header then
 		originalBar:SetParent(header)
 		originalBar:SetAllPoints()
@@ -421,49 +421,62 @@ function E:SetButtonPosition(buttons, buttonSize, buttonGap, header, direction, 
 		originalBar.SetPoint = function() return end
 	end
 
-	local previous
-
 	header.buttons = buttons
 
+	E:UpdateBarLayout(header, buttonSize, buttonGap, direction)
 
 	for i = 1, #buttons do
 		local button = buttons[i]
-
-		local size = type(buttonSize) == "table" and buttonSize[i] or buttonSize
-
 		button:SetFrameLevel(header:GetFrameLevel() + 1)
-		button:ClearAllPoints()
-		button:SetSize(size, size)
 
 		if not originalBar then button:SetParent(header) end
 
+		if skinFucntion then skinFucntion(E, button) end
+	end
+end
+
+function E:UpdateBarLayout(bar, size, gap, direction)
+	if not bar.buttons then return end
+
+	local previous
+	local num = #bar.buttons
+
+	if direction == "RIGHT" or direction == "LEFT" then
+		bar:SetSize(size * num + gap * num, size + gap)
+	else
+		bar:SetSize(size + gap, size * num + gap * num)
+	end
+
+	for i = 1, num do
+		local button = bar.buttons[i]
+		button:ClearAllPoints()
+		button:SetSize(size, size)
+
 		if direction == "RIGHT" then
 			if i == 1 then
-				button:SetPoint("LEFT", header, "LEFT", E:Round(buttonGap / 2), 0)
+				button:SetPoint("LEFT", bar, "LEFT", gap / 2, 0)
 			else
-				button:SetPoint("LEFT", previous, "RIGHT", buttonGap, 0)
+				button:SetPoint("LEFT", previous, "RIGHT", gap, 0)
 			end
 		elseif direction == "LEFT" then
 			if i == 1 then
-				button:SetPoint("RIGHT", header, "RIGHT", E:Round(-buttonGap / 2), 0)
+				button:SetPoint("RIGHT", bar, "RIGHT", -gap / 2, 0)
 			else
-				button:SetPoint("RIGHT", previous, "LEFT", -buttonGap, 0)
+				button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
 			end
 		elseif direction == "DOWN" then
 			if i == 1 then
-				button:SetPoint("TOP", header, "TOP", 0, E:Round(-buttonGap / 2))
+				button:SetPoint("TOP", bar, "TOP", 0, -gap / 2)
 			else
-				button:SetPoint("TOP", previous, "BOTTOM", 0, -buttonGap)
+				button:SetPoint("TOP", previous, "BOTTOM", 0, -gap)
 			end
 		elseif direction == "UP" then
 			if i == 1 then
-				button:SetPoint("BOTTOM", header, "BOTTOM", 0, E:Round(buttonGap / 2))
+				button:SetPoint("BOTTOM", bar, "BOTTOM", 0, gap / 2)
 			else
-				button:SetPoint("BOTTOM", previous, "TOP", 0, buttonGap)
+				button:SetPoint("BOTTOM", previous, "TOP", 0, gap)
 			end
 		end
-
-		if skinFucntion then skinFucntion(E, button) end
 
 		previous = button
 	end
