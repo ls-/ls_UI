@@ -3,6 +3,11 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local Mail = E:AddModule("Mail")
 
 local LazyLootMail, ReceiveMail
+local InboxFrame = InboxFrame
+local C_Timer = C_Timer
+local GetInboxHeaderInfo, GetInboxItem, TakeInboxMoney, TakeInboxItem, AutoLootMailItem, DeleteInboxItem =
+	GetInboxHeaderInfo, GetInboxItem, TakeInboxMoney, TakeInboxItem, AutoLootMailItem, DeleteInboxItem
+local GetContainerNumFreeSlots = GetContainerNumFreeSlots
 
 local function GetFreeSlots()
 	local free = 0
@@ -116,6 +121,7 @@ function LazyLootMail(index, delay)
 		if Mail.overflow then
 			ReceiveMail()
 		else
+			InboxFrame.ReceiveButton:SetChecked(false)
 			MiniMapMailFrame:Hide()
 		end
 	end
@@ -133,8 +139,7 @@ end
 
 function Mail:Initialize()
 	if C.mail.enabled then
-		local button = CreateFrame("Button", "$parentReceiveMailButton", InboxFrame)
-		button:SetSize(28, 28)
+		local button = E:CreateCheckButton(InboxFrame, "$parentReceiveMailButton")
 		button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")
 		button:RegisterEvent("MAIL_CLOSED")
@@ -143,19 +148,9 @@ function Mail:Initialize()
 		button:SetScript("OnLeave", ReceiveButton_OnLeave)
 		button:SetScript("OnClick", ReceiveMail)
 		button:Disable()
+		InboxFrame.ReceiveButton = button
 
-		button:SetHighlightTexture(1)
-		ns.lsSetHighlightTexture(button:GetHighlightTexture())
-
-		button:SetPushedTexture(1)
-		ns.lsSetPushedTexture(button:GetPushedTexture())
-
-		E:CreateBorder(button, 8)
-
-		local icon = button:CreateTexture()
-		icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
-		icon:SetDesaturated(true)
-		E:TweakIcon(icon)
-		button.Icon = icon
+		button.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
+		button.Icon:SetDesaturated(true)
 	end
 end

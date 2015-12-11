@@ -2,12 +2,20 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS, TEXTURES = M.colors, M.textures
 local B = E:GetModule("Bars")
-local BAR_CFG
 
 local tonumber = tonumber
 local match = strmatch
 
 local Bars = {}
+
+local BARS_CFG = {
+	bar1 = {
+		point = {"BOTTOM", 0, 12},
+		button_size = 28,
+		button_gap = 4,
+		direction = "RIGHT",
+	},
+}
 
 local BAR_LAYOUT = {
 	bar1 = {
@@ -91,23 +99,24 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", 0, 117},
-	PET2 = {"BOTTOM", 0, 145},
-	STANCE1 = {"BOTTOM", 0, 145},
-	STANCE2 = {"BOTTOM", 0, 117},
+	PET1 = {"BOTTOM", 0, 110},
+	PET2 = {"BOTTOM", 0, 138},
+	STANCE1 = {"BOTTOM", 0, 138},
+	STANCE2 = {"BOTTOM", 0, 110},
 }
+
 -- page swapping is taken from tukui, thx :D really usefull thingy
 local PAGE_LAYOUT = {
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 	["PRIEST"] = "[bonusbar:1] 7;",
 	["ROGUE"] = "[bonusbar:1] 7;",
 	["MONK"] = "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9;",
-	["DEFAULT"] = "[vehicleui:12] 12; [possessbar] 12; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
+	["DEFAULT"] = "[vehicleui] 12; [possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
 local function GetPageLayout()
 	local condition = PAGE_LAYOUT["DEFAULT"]
-	local page = PAGE_LAYOUT[ns.E.playerclass]
+	local page = PAGE_LAYOUT[E.playerclass]
 
 	if page then
 		condition = condition.." "..page
@@ -119,11 +128,9 @@ local function GetPageLayout()
 end
 
 local function LSActionBar_OnEvent(self, event, ...)
-	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
-		local button
+	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "FORCE_CUSTOM_UPDATE" then
 		for i = 1, NUM_ACTIONBAR_BUTTONS do
-			button = _G["ActionButton"..i]
-			self:SetFrameRef("ActionButton"..i, button)
+			self:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
 
 		self:Execute([[
@@ -156,81 +163,74 @@ local function SetStancePetActionBarPosition(self)
 end
 
 function B:HandleActionBars()
-	BAR_CFG = C.bars
+	if C.bars.restricted then
+		BARS_CFG.bar2 = C.bars.bar2
+		BARS_CFG.bar3 = C.bars.bar3
+		BARS_CFG.bar4 = C.bars.bar4
+		BARS_CFG.bar5 = C.bars.bar5
+		BARS_CFG.bar6 = C.bars.bar6
+		BARS_CFG.bar7 = C.bars.bar7
+	else
+		BARS_CFG = C.bars
+	end
 
-	for b, bdata in next, BAR_LAYOUT do
-		local bar = CreateFrame("Frame", bdata.name, UIParent, "SecureHandlerStateTemplate")
-		bar:SetFrameStrata("LOW")
-		bar:SetFrameLevel(1)
+	for key, data in next, BAR_LAYOUT do
+		local config = BARS_CFG[key]
+		local index = match(key, "(%d+)")
+		local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
 
-		if BAR_CFG[b].direction == "RIGHT" or BAR_CFG[b].direction == "LEFT" then
-			bar:SetSize(BAR_CFG[b].button_size * #bdata.buttons + BAR_CFG[b].button_gap * #bdata.buttons,
-				BAR_CFG[b].button_size + BAR_CFG[b].button_gap)
+		if index == "6" then
+			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
 		else
-			bar:SetSize(BAR_CFG[b].button_size + BAR_CFG[b].button_gap,
-				BAR_CFG[b].button_size * #bdata.buttons + BAR_CFG[b].button_gap * #bdata.buttons)
+			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
 		end
 
-		if tonumber(match(b, "(%d+)")) == 1 then
+		if data.condition then
+			RegisterStateDriver(bar, "visibility", data.condition)
+		end
+
+		if index == "1" then
 			bar:RegisterEvent("PLAYER_LOGIN")
 			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 			bar:SetScript("OnEvent", LSActionBar_OnEvent)
+
+			if C.bars.restricted then
+				B:SetupControlledBar(bar, "Main")
+			end
 		end
 
-		if tonumber(match(b, "(%d+)")) == 6 then
-			E:SetButtonPosition(bdata.buttons, BAR_CFG[b].button_size, BAR_CFG[b].button_gap, bar, BAR_CFG[b].direction, E.SkinPetActionButton, bdata.original_bar)
-		else
-			E:SetButtonPosition(bdata.buttons, BAR_CFG[b].button_size, BAR_CFG[b].button_gap, bar, BAR_CFG[b].direction, E.SkinActionButton, bdata.original_bar)
-		end
-
-		if bdata.condition then
-			RegisterStateDriver(bar, "visibility", bdata.condition)
-		end
-
-		Bars[b] = bar
+		Bars[key] = bar
 	end
 
+	for key, bar in next, Bars do
+		if not bar.controlled then
+			if BARS_CFG[key].point then
+				bar:SetPoint(unpack(BARS_CFG[key].point))
+			else
+				SetStancePetActionBarPosition(bar)
+			end
 
-	for b, bar in next, Bars do
-		if BAR_CFG[b].point then
-			bar:SetPoint(unpack(BAR_CFG[b].point))
-		else
-			SetStancePetActionBarPosition(bar)
+			E:CreateMover(bar)
 		end
-
-		E:CreateMover(bar)
-	end
-
-	local art = LSMainMenuBar:CreateTexture(nil, "BACKGROUND", nil, -8)
-	art:SetPoint("CENTER")
-	art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
-
-	-- Hiding different useless textures
-	MainMenuBar.slideOut.IsPlaying = function() return true end
-	MainMenuBar:SetParent(M.HiddenParent)
-	for _, v in next, {MainMenuBar:GetChildren()} do
-		E:ForceHide(v)
 	end
 
 	PetActionBarFrame:SetScript("OnUpdate", nil)
 
 	for _, v in next, {
-		MainMenuBarPageNumber,
+		MainMenuBar,
 		ActionBarDownButton,
 		ActionBarUpButton,
-		OverrideActionBarExpBar,
-		OverrideActionBarHealthBar,
-		OverrideActionBarPowerBar,
-		OverrideActionBarPitchFrame,
-		OverrideActionBarLeaveFrame,
 		MainMenuBarTexture0,
 		MainMenuBarTexture1,
 		MainMenuBarTexture2,
 		MainMenuBarTexture3,
 		MainMenuBarLeftEndCap,
 		MainMenuBarRightEndCap,
-		PossessBackground1,
-		PossessBackground2,
+		MainMenuBarPageNumber,
+		MultiCastActionBarFrame,
+		OverrideActionBar,
+		PossessBarFrame,
+		ReputationWatchBar,
 		StanceBarLeft,
 		StanceBarMiddle,
 		StanceBarRight,
@@ -241,11 +241,5 @@ function B:HandleActionBars()
 		SpellFlyoutBackgroundEnd,
 	} do
 		E:ForceHide(v)
-	end
-
-	for i = 1, 6 do
-		local b = _G["OverrideActionBarButton"..i]
-		b:UnregisterAllEvents()
-		b:SetAttribute("statehidden", true)
 	end
 end

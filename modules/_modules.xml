@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Include file="tools\_tools.xml"/>
 	<Include file="auras\_auras.xml"/>
 	<Include file="auratracker\_auratracker.xml"/>
 	<Include file="bars\_bars.xml"/>
@@ -9,4 +8,5 @@
 	<Include file="nameplates\_nameplates.xml"/>
 	<Include file="tooltips\_tooltips.xml"/>
 	<Include file="unitframes\_unitframes.xml"/>
+	<Include file="tools\_tools.xml"/>
 </Ui>

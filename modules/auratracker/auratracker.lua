@@ -281,43 +281,20 @@ function AT:Initialize(forceInit)
 		local buttons = {}
 
 		for i = 1, 12 do
-			local button = CreateFrame("Frame", "$parentButton"..i, tracker)
-			button:SetFrameLevel(tracker:GetFrameLevel() + 1)
+			local button = E:CreateButton(tracker, "$parentButton"..i, true)
 			button:Hide()
 			button:SetScript("OnEnter", ATButton_OnEnter)
 			button:SetScript("OnLeave", ATButton_OnLeave)
 			button:SetScript("OnUpdate", ATButton_OnUpdate)
-			E:CreateBorder(button)
 			buttons[i] = button
 
-			local icon = button:CreateTexture()
-			E:TweakIcon(icon)
-			button.Icon = icon
-
-			local cd = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
-			cd:ClearAllPoints()
-			cd:SetPoint("TOPLEFT", 1, -1)
-			cd:SetPoint("BOTTOMRIGHT", -1, 1)
-			E:HandleCooldown(cd, 14)
-			button.CD = cd
-
-			local cover = CreateFrame("Frame", "$parentCover", button)
-			cover:SetAllPoints()
-
-			local count = E:CreateFontString(cover, 12, nil, true, "THINOUTLINE")
-			count:SetPoint("TOPRIGHT", 2, 1)
-			button.Count = count
+			button.CD:SetTimerTextHeight(14)
+			button.Count:SetFontObject("LS12Font_Outline")
 		end
 
 		tracker.buttons = buttons
 
-		if AT_CFG.direction == "RIGHT" or AT_CFG.direction == "LEFT" then
-			tracker:SetSize(36 * 12 + 4 * 12, 36 + 4)
-		else
-			tracker:SetSize(36 + 4, 36 * 12 + 4 * 12)
-		end
-
-		E:SetButtonPosition(buttons, 36, 4, tracker, AT_CFG.direction)
+		E:SetupBar(buttons, 36, 4, tracker, AT_CFG.direction)
 
 		local header = CreateFrame("Button", "$parentHeader", tracker)
 		header:SetClampedToScreen(true)

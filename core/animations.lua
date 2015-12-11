@@ -6,24 +6,24 @@ local function SetAnimationGroup(object, type, ...)
 		object[type] = object:CreateAnimationGroup()
 		object[type]:SetToFinalAlpha(true)
 
-		local anim1 = object[type]:CreateAnimation("ALPHA")
-		anim1:SetOrder(1)
-		anim1:SetDuration(0)
-		anim1:SetChange(-1)
+		local anim = object[type]:CreateAnimation("ALPHA")
+		anim:SetOrder(1)
+		anim:SetDuration(0)
+		anim:SetChange(-1)
 
-		local anim2 = object[type]:CreateAnimation("ALPHA")
-		anim2:SetOrder(2)
-		anim2:SetDuration(0.15)
-		anim2:SetChange(1)
+		anim = object[type]:CreateAnimation("ALPHA")
+		anim:SetOrder(2)
+		anim:SetDuration(0.075)
+		anim:SetChange(1)
 
-		object[type].anim = anim2
+		object[type].anim = anim
 	elseif type == "FadeOut" then
 		object[type] = object:CreateAnimationGroup()
 		object[type]:SetToFinalAlpha(true)
 
 		local anim1 = object[type]:CreateAnimation("ALPHA")
 		anim1:SetOrder(1)
-		anim1:SetDuration(0.15)
+		anim1:SetDuration(0.05)
 		anim1:SetChange(-1)
 
 		object[type].anim = anim1
@@ -53,16 +53,28 @@ function E:FadeIn(object, duration, change)
 	end
 end
 
+function E:StopFadeIn(object)
+	if object.FadeIn then
+		object.FadeIn:Stop()
+	end
+end
+
 function E:FadeOut(object, duration, change)
 	if not object.FadeOut then
 		SetAnimationGroup(object, "FadeOut")
 	end
 
 	if not object.FadeOut:IsPlaying() then
-		if duration then object.FadeOut.anim1:SetDuration(duration) end
-		if change then object.FadeOut.anim1:SetChange(change) end
+		if duration then object.FadeOut.anim:SetDuration(duration) end
+		if change then object.FadeOut.anim:SetChange(change) end
 
 		object.FadeOut:Play()
+	end
+end
+
+function E:StopFadeOut(object)
+	if object.FadeOut then
+		object.FadeOut:Stop()
 	end
 end
 

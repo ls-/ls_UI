@@ -60,7 +60,6 @@ local PlateMeta = setmetatable({}, {__index = function(t, frame)
 	end
 })
 
-
 local function IsTargetNamePlate(self, ignoreAlpha)
 	local name = gsub(PlateMeta[self].NameText:GetText(), FS_PATTERN, "")
 	return (ignoreAlpha and true or self:GetAlpha() == 1) and targetExists and name == targetName
@@ -87,7 +86,7 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 		bar = E:CreateStatusBar(parent, npName.."HealthBar", 120, "12")
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
-		bar.Text:SetFont(M.font, 12)
+		bar.Text:SetFontObject("LS12Font")
 		bar.Text:SetJustifyH("RIGHT")
 
 		local fg = bar:CreateTexture(nil, "OVERLAY", nil, 1)

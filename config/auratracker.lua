@@ -99,7 +99,7 @@ local function ATConfigPanel_OnShow(self)
 
 	self.StatusLog:SetText("")
 
-	CFG.ToggleDependantControls(self.ATToggle, not AT:IsRunning())
+	CFG:ToggleDependantControls(self.ATToggle, not AT:IsRunning())
 end
 
 local function AuraListTab_OnClick(self)
@@ -196,9 +196,48 @@ local function ATToggle_OnClick(self)
 		result, msg = AT:Enable()
 	end
 
-	CFG.ToggleDependantControls(self, not AT:IsRunning())
+	CFG:ToggleDependantControls(self, not AT:IsRunning())
 
 	parent.StatusLog:SetText(msg)
+end
+
+local function GrowthDirectionDropDownMenu_OnClick(self)
+	self.owner:SetValue(self.value)
+
+	if self.owner:GetParent().StatusLog then
+		self.owner:GetParent().StatusLog:SetText("|cff26a526Success!|r This setting will be applied on next UI reload.")
+	end
+end
+
+local function GrowthDirectionDropDownMenu_Initialize(self, ...)
+	local info = UIDropDownMenu_CreateInfo()
+	info.text = "Right"
+	info.func = GrowthDirectionDropDownMenu_OnClick
+	info.value = "RIGHT"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
+
+	info.text = "Left"
+	info.func = GrowthDirectionDropDownMenu_OnClick
+	info.value = "LEFT"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
+
+	info.text = "Up"
+	info.func = GrowthDirectionDropDownMenu_OnClick
+	info.value = "UP"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
+
+	info.text = "Down"
+	info.func = GrowthDirectionDropDownMenu_OnClick
+	info.value = "DOWN"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
 end
 
 function CFG:AT_Initialize()
@@ -252,7 +291,7 @@ function CFG:AT_Initialize()
 	auraList.buttons = {}
 
 	for i = 1, 8 do
-		local button = CreateFrame("CheckButton", auraList:GetName().."Button"..i, auraList)
+		local button = CreateFrame("CheckButton", "$parentButton"..i, auraList)
 		button.type = "Button"
 		button:SetHeight(30)
 		button:EnableMouse(true)
@@ -266,11 +305,9 @@ function CFG:AT_Initialize()
 		local iconholder = CreateFrame("Frame", "$parentIconHolder", button)
 		iconholder:SetSize(24, 24)
 		iconholder:SetPoint("LEFT", 8, 0)
-		E:CreateBorder(iconholder, 8)
+		E:CreateBorder(iconholder, 6)
 
-		local icon = iconholder:CreateTexture()
-		E:TweakIcon(icon)
-		button.Icon = icon
+		button.Icon = E:UpdateIcon(iconholder)
 
 		local text = button:CreateFontString(nil, "ARTWORK", "LS12Font")
 		text:SetJustifyH("LEFT")
@@ -346,7 +383,7 @@ function CFG:AT_Initialize()
 	panel.settings.auratracker.locked = lockToggle
 	CFG:SetupControlDependency(atToggle, lockToggle)
 
-	local growthDropdown = CFG:CreateDropDownMenu(panel, "DirectionDropDown", "Growth direction", "GrowthDirectionDropDownMenu_Initialize")
+	local growthDropdown = CFG:CreateDropDownMenu(panel, "DirectionDropDown", "Growth direction", GrowthDirectionDropDownMenu_Initialize)
 	growthDropdown:SetPoint("TOPLEFT", lockToggle, "BOTTOMLEFT", -11, -24)
 	panel.GrowthDirectionDropDownMenu = growthDropdown
 	panel.settings.auratracker.direction = growthDropdown

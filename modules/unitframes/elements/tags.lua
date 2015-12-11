@@ -33,7 +33,7 @@ end
 oUF.Tags.Methods["custom:name"] = function(unit, r)
 	local color = oUF.Tags.Methods["custom:color"](r or unit)
 	local name = UnitName(r or unit)
-	return "|cff"..color..(name).."|r"
+	return "|cff"..color..(name or UNKNOWN).."|r"
 end
 
 oUF.Tags.Events["custom:name"] = "UNIT_NAME_UPDATE UNIT_HEALTH UNIT_CONNECTION"

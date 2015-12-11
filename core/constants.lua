@@ -1,8 +1,6 @@
 local _, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
-M.font = STANDARD_TEXT_FONT
-
 M.HiddenParent = CreateFrame("Frame", "LSHiddenParent")
 M.HiddenParent:Hide()
 
@@ -69,6 +67,7 @@ colors.indigo = {0.36, 0.46, 0.8}
 colors.orange = {0.9, 0.4, 0.1}
 colors.dodgerblue = {0.12, 0.56, 1}
 colors.jade = {0, 0.66, 0.42}
+colors.darkmagenta = {0.545, 0, 0.545}
 
 colors.gradient = {
 	["GYR"] = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15},
@@ -92,14 +91,6 @@ local textures = {
 		["ALLIANCE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:22:40:22:40|t",
 		["HORDE"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:2:20:22:40|t",
 		["FFA"] = "|TInterface\\AddOns\\oUF_LS\\media\\icons:14:14:0:0:128:64:42:60:22:40|t",
-	},
-	button = {
-		normal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal",
-		normalmetal = "Interface\\AddOns\\oUF_LS\\media\\button\\normal_bronze",
-		highlight = "Interface\\AddOns\\oUF_LS\\media\\button\\highlight",
-		pushed = "Interface\\AddOns\\oUF_LS\\media\\button\\pushed",
-		checked = "Interface\\AddOns\\oUF_LS\\media\\button\\checked",
-		flash = "Interface\\AddOns\\oUF_LS\\media\\button\\flash",
 	},
 }
 

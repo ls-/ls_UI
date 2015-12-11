@@ -14,9 +14,7 @@ function B:HandleExtraActionButton()
 
 	E:CreateMover(ExtraActionBarFrame)
 
-	ExtraActionButton1:SetSize(EXTRA_CONFIG.button_size, EXTRA_CONFIG.button_size)
-	ExtraActionButton1:SetFrameStrata("LOW")
-	ExtraActionButton1:SetFrameLevel(2)
+	ExtraActionButton1:SetAllPoints()
 
 	E:SkinExtraActionButton(ExtraActionButton1)
 end

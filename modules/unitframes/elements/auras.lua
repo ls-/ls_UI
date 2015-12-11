@@ -21,7 +21,7 @@ local function PostCreateAuraIcon(frame, button)
 	local bCount = button.count
 	local bSteal = button.stealable
 
-	E:TweakIcon(bIcon)
+	E:UpdateIcon(bIcon)
 
 	E:HandleCooldown(bCD, 10)
 
@@ -44,7 +44,7 @@ local function PostCreateAuraIcon(frame, button)
 
 	E:CreateBorder(fg, 6)
 
-	bCount:SetFont(M.font, 10, "THINOUTLINE")
+	bCount:SetFontObject("LS10Font_Outline")
 	bCount:SetParent(fg)
 	bCount:ClearAllPoints()
 	bCount:SetPoint("TOPRIGHT", 2, 1)

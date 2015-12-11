@@ -237,6 +237,15 @@ function E:ToggleMover(object)
 	end
 end
 
+function E:UpdateMoverSize(object)
+	local mover = E.Movers[object:GetName().."Mover"]
+
+	if mover then
+		mover:SetWidth(object:GetWidth())
+		mover:SetHeight(object:GetHeight())
+	end
+end
+
 function E:CreateMover(object)
 	MOVERS_CFG = C.movers
 

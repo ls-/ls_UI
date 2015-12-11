@@ -79,7 +79,7 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 		if not text then
 			text = E:CreateFontString(bar, PRESET.textHeight, bar:GetName().."Text", true)
 		else
-			text:SetFont(M.font, PRESET.textHeight)
+			text:SetFontObject("LS"..PRESET.textHeight.."Font")
 			text:SetWordWrap(false)
 			text:SetJustifyV("MIDDLE")
 			text:SetShadowColor(0, 0, 0)

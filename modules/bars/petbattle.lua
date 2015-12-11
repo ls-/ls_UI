@@ -2,10 +2,16 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS, TEXTURES = M.colors, M.textures
 local B = E:GetModule("Bars")
-local PB_CFG
 
 local PetBattleBottomFrame = PetBattleFrame.BottomFrame
 local BUTTONS
+
+local PB_CFG = {
+	point = {"BOTTOM", 0, 12},
+	button_size = 28,
+	button_gap = 4,
+	direction = "RIGHT",
+}
 
 local function SetPetBattleButtonPosition()
 	BUTTONS = {
@@ -17,25 +23,16 @@ local function SetPetBattleButtonPosition()
 		PetBattleBottomFrame.ForfeitButton
 	}
 
-	E:SetButtonPosition(BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, LSPetBattleBar,
+	E:SetupBar(BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, LSPetBattleBar,
 		PB_CFG.direction, E.SkinPetBattleButton)
 end
 
 function B:HandlePetBattleBar()
-	PB_CFG = C.bars.petbattle
-
-	local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerBaseTemplate")
-	bar:SetFrameStrata("LOW")
-	bar:SetFrameLevel(1)
-
-	if PB_CFG.direction == "RIGHT" or PB_CFG.direction == "LEFT" then
-		bar:SetSize(PB_CFG.button_size * 12 + PB_CFG.button_gap * 12,
-			PB_CFG.button_size + PB_CFG.button_gap)
-	else
-		bar:SetSize(PB_CFG.button_size + PB_CFG.button_gap,
-			PB_CFG.button_size * 12 + PB_CFG.button_gap * 12)
+	if not C.bars.restricted then
+		PB_CFG = C.bars.bar1
 	end
 
+	local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerBaseTemplate")
 	bar:SetPoint(unpack(PB_CFG.point))
 
 	RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
@@ -62,11 +59,13 @@ function B:HandlePetBattleBar()
 	end
 
 	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
-	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
+	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 8)
 
-	local art = bar:CreateTexture(nil, "BACKGROUND", nil, -8)
-	art:SetPoint("CENTER")
-	art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
+	-- local art = bar:CreateTexture(nil, "BACKGROUND", nil, -8)
+	-- art:SetPoint("CENTER")
+	-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
 
 	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
+
+	B:SetupControlledBar(bar, "PetBattle")
 end
