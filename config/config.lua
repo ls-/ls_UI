@@ -94,7 +94,6 @@ D["bars"] = {
 	restricted = true,
 	show_hotkey = true,
 	show_name = true,
-	masque_support = false,
 	bar1 = { -- MainMenuBar
 		point = {"BOTTOM", 0, 4},
 		button_size = 28,
@@ -126,13 +125,11 @@ D["bars"] = {
 		direction = "DOWN",
 	},
 	bar6 = { --PetAction
-		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
 		direction = "RIGHT",
 	},
 	bar7 = { -- Stance
-		-- point = {}, -- NYI
 		button_size = 24,
 		button_gap = 4,
 		direction = "RIGHT",
@@ -148,18 +145,14 @@ D["bars"] = {
 	micromenu = {
 		holder1 = {
 			point = {"BOTTOM", -256, 4},
-			-- point = {"BOTTOM", -266, 4},
 		},
 		holder2 = {
 			point = {"BOTTOM", 256, 4},
-			-- point = {"BOTTOM", 266, 4},
 		},
 	},
 	bags = {
 		enabled = true,
 		point = {"BOTTOM", 400, 4},
-		-- point = {"LEFT", "LSMBHolderRight", "RIGHT", 6, 0},
-		-- button_size = 26,
 		button_size = 28,
 		button_gap = 4,
 		direction = "RIGHT",

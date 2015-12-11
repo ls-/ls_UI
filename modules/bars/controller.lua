@@ -245,7 +245,7 @@ function B:ActionBarController_Initialize()
 		animation:SetOffset(0, 50)
 		animation:SetDuration(0.25)
 
-		function BarController:Update()
+		function BarController:Update(newstate)
 			self.SlideInOut:Play()
 		end
 

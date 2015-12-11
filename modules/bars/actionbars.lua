@@ -128,7 +128,7 @@ local function GetPageLayout()
 end
 
 local function LSActionBar_OnEvent(self, event, ...)
-	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "FORCE_CUSTOM_UPDATE" then
 		for i = 1, NUM_ACTIONBAR_BUTTONS do
 			self:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
