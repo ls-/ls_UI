@@ -240,6 +240,10 @@ local function SkinButton(button)
 		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
 
 		tinsert(B.HandledHotKeys, bHotKey)
+
+		if not C.bars.show_hotkey then
+			bHotKey:Hide()
+		end
 	end
 
 	if bCount then
@@ -262,6 +266,10 @@ local function SkinButton(button)
 		bName:SetWidth(button:GetWidth())
 
 		tinsert(B.HandledMacroNames, bName)
+
+		if not C.bars.show_name then
+			bName:Hide()
+		end
 	end
 
 	if bBorder then
@@ -603,6 +611,10 @@ function E:SkinPetActionButton(button)
 		bHotKey:SetFontObject("LS8Font_Outline")
 
 		tinsert(B.HandledHotKeys, bHotKey)
+
+		if not C.bars.show_hotkey then
+			bHotKey:Hide()
+		end
 	end
 
 	button:HookScript("OnUpdate", PetActionButton_OnUpdateHook)
