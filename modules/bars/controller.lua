@@ -35,11 +35,11 @@ local function CreateActionPageButton(anchor, side)
 	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_1", "ADD")
 
 	if side == "Right" then
-		button:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -4, 7)
+		button:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -3, 7)
 		bg:SetTexCoord(22 / 64, 44 / 64, 150 / 256, 172 / 256)
 		button:GetHighlightTexture():SetTexCoord(0, 22 / 64, 150 / 256, 172 / 256)
 	else
-		button:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 4, 7)
+		button:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 3, 7)
 		bg:SetTexCoord(44 / 64, 22 / 64, 150 / 256, 172 / 256)
 		button:GetHighlightTexture():SetTexCoord(22 / 64, 0, 150 / 256, 172 / 256)
 	end
