@@ -12,11 +12,16 @@ function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	object:SetTextColor(r or 1, g or 1, b or 1, a or 1)
 	object:SetWordWrap(wrap or false)
 
+    if shadow then
+        object:SetShadowColor(0, 0, 0)
+        object:SetShadowOffset(1, -1)
+    end
+
 	return object
 end
 
-function E:CreateNewFontString(parent, size, name, outline, sublevel)
-	local object = parent:CreateFontString(name, "OVERLAY", outline and "LS"..size.."Font_Outline" or "LS"..size.."Font", sublevel or 0)
+function E:CreateNewFontString(parent, size, name, outline, shadow, sublevel)
+	local object = parent:CreateFontString(name, "OVERLAY", outline and "LS"..size.."Font_Outline" or (shadow and "LS"..size.."Font_Shadow" or "LS"..size.."Font"), sublevel or 0)
 	object:SetWordWrap(false)
 
 	return object
