@@ -14,7 +14,7 @@ function B:Initialize()
 		B:HandleExtraActionButton()
 		B:HandleVehicleExitButton()
 		B:HandleMicroMenu()
-		B:HandleBag()
+		B:HandleBags()
 
 		B.isRunning = true
 	end

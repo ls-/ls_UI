@@ -21,7 +21,7 @@ local BARS = {
 	bar5 = {"LSMultiBarRightBar"},
 	bar6 = {"LSPetActionBar"},
 	bar7 = {"LSStanceBar"},
-	bags = {"LSBagsBar"},
+	bags = {"LSBagBar"},
 }
 
 local function LSBarsConfigPanel_OnShow(self)
@@ -210,7 +210,7 @@ local function LSBagsToggle_OnClickHook(self)
 	if not self:GetChecked() then
 		msg = "|cff26a526Success!|r Bag sub-module will be disabled on next UI reload."
 	else
-		result, msg = B:EnableBag()
+		result, msg = B:EnableBags()
 	end
 
 	parent.StatusLog:SetText(msg)
@@ -381,12 +381,6 @@ function CFG:B_Initialize()
 	bagsToggle:HookScript("OnClick", LSBagsToggle_OnClickHook)
 	panel.settings.bars.bags.enabled = bagsToggle
 	CFG:SetupControlDependency(barsToggle, bagsToggle)
-
-	local masqueToggle = CFG:CreateCheckButton(panel, "MasqueSupportToggle", "Masque Support")
-	masqueToggle:SetPoint("LEFT", bagsToggle, "RIGHT", 110, 0)
-	-- masqueToggle:HookScript("OnClick", MasqueSupportToggle_OnClickHook)
-	panel.settings.bars.masque_support = masqueToggle
-	CFG:SetupControlDependency(barsToggle, masqueToggle)
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)

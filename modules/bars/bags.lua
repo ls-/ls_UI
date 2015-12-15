@@ -104,13 +104,13 @@ function B:IsBagEnabled()
 	return not not LSBagBar
 end
 
-function B:EnableBag()
+function B:EnableBags()
 	if InCombatLockdown() then
 		return false, "|cffe52626Error!|r Can't be done, while in combat."
 	end
 
 	if not B:IsBagEnabled() then
-		B:HandleBag(true)
+		B:HandleBags(true)
 	else
 		return true, "|cffe56619Warning!|r Bag sub-module is already enabled."
 	end
@@ -118,7 +118,7 @@ function B:EnableBag()
 	return true, "|cff26a526Success!|r Bag sub-module is enabled."
 end
 
-function B:HandleBag(forceInit)
+function B:HandleBags(forceInit)
 	if not C.bars.restricted then
 		BAGS_CFG = C.bars.bags
 	end
