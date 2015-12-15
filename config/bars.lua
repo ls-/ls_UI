@@ -305,7 +305,7 @@ function CFG:B_Initialize()
 	panel.BarsToggle = barsToggle
 	panel.settings.bars.enabled = barsToggle
 
-	local modeToggle = CFG:CreateCheckButton(panel, "BarModeToggle", "Restricted mode")
+	local modeToggle = CFG:CreateCheckButton(panel, "BarModeToggle", "Restricted mode", "Enables main action bar artwork, animations\nand dynamic resizing.\n\n|cffe52626You won't be able to move micro menu,\nmain action and bag bars around!|r")
 	modeToggle:SetPoint("RIGHT", barsToggle, "LEFT", -8, 0)
 	modeToggle.Text:ClearAllPoints()
 	modeToggle.Text:SetPoint("RIGHT", modeToggle, "LEFT", -2, 1)
