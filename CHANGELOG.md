@@ -1,6 +1,6 @@
 #Version 2.11
 
-- Bottom bar revamp. New artwork, animations, features and in-game config.
+- Bottom bar revamp. New artwork, animations, features and in-game config;
 - Misc bug fixes and tweaks.
 
 #Version 2.10
