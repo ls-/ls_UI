@@ -151,7 +151,7 @@ local function ActionButton_OnUpdateHook(button)
 	if bName and bName:IsShown() then
 		local text = bName:GetText()
 		if text then
-			bName:SetText(E:StringTruncate(text, 4))
+			bName:SetText(E:StringTruncate(text, E:Round(button:GetWidth() / 8)))
 		end
 	end
 
@@ -255,7 +255,6 @@ local function SkinButton(button)
 		bCount:ClearAllPoints()
 		bCount:SetPoint("BOTTOMLEFT", -2, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
-		bCount:SetWidth(button:GetWidth())
 	end
 
 	if bName then
@@ -263,9 +262,8 @@ local function SkinButton(button)
 		bName:SetJustifyH("CENTER")
 		bName:SetDrawLayer("OVERLAY", 2)
 		bName:ClearAllPoints()
-		bName:SetPoint("BOTTOMLEFT", -4, 0)
-		bName:SetPoint("BOTTOMRIGHT", 4, 0)
-		bName:SetWidth(button:GetWidth())
+		bName:SetPoint("BOTTOMLEFT", -6, 0)
+		bName:SetPoint("BOTTOMRIGHT", 6, 0)
 
 		tinsert(B.HandledMacroNames, bName)
 
@@ -367,12 +365,12 @@ function E:CreateButton(parent, name, isSandwich, isSecure )
 
 	E:CreateBorder(button)
 
-	local count = E:CreateNewFontString(button, 10, "$parentCount", true, 2)
+	local count = E:CreateNewFontString(button, 10, "$parentCount", true, nil, 2)
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
-	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, 2)
+	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
 	duration:SetPoint("BOTTOMLEFT", -4, 0)
 	duration:SetPoint("BOTTOMRIGHT", 4, 0)
 	button.Duration = duration
@@ -401,12 +399,12 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 
 	E:CreateBorder(button)
 
-	local count = E:CreateNewFontString(button, 10, "$parentCount", true, 2)
+	local count = E:CreateNewFontString(button, 10, "$parentCount", true, nil, 2)
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
-	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, 2)
+	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
 	duration:SetPoint("BOTTOMLEFT", -4, 0)
 	duration:SetPoint("BOTTOMRIGHT", 4, 0)
 	button.Duration = duration
