@@ -67,6 +67,8 @@ function E:CreateCooldown(parent, textSize)
 end
 
 function E:HandleCooldown(cooldown, textSize)
+	cooldown:SetDrawEdge(false)
+
 	if OmniCC or cooldown.handled then return end
 
 	cooldown.Timer = CreateCooldownTimer(cooldown, textSize)
