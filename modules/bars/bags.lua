@@ -93,7 +93,7 @@ local function BackpackButton_Update(self, event, ...)
 
 			self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
 		end
-	elseif event == "CUSTOM_FORCE_UPDATE" then
+	elseif event == "PLAYER_ENTERING_WORLD" or event == "CUSTOM_FORCE_UPDATE" then
 		local free, total = GetBagUsageInfo()
 
 		self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(GRADIENT)))
