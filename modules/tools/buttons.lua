@@ -357,8 +357,8 @@ function E:UpdateCheckedTexture(button)
 	texture:SetAllPoints()
 end
 
-function E:CreateButton(parent, name, isSandwich, isSecure )
-	local button = CreateFrame("Button", name, parent, isSecure and "SecureHandlerClickTemplate")
+function E:CreateButton(parent, name, isSandwich, isSecure)
+	local button = CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
@@ -370,10 +370,10 @@ function E:CreateButton(parent, name, isSandwich, isSecure )
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
-	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
-	duration:SetPoint("BOTTOMLEFT", -4, 0)
-	duration:SetPoint("BOTTOMRIGHT", 4, 0)
-	button.Duration = duration
+	-- local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
+	-- duration:SetPoint("BOTTOMLEFT", -4, 0)
+	-- duration:SetPoint("BOTTOMRIGHT", 4, 0)
+	-- button.Duration = duration
 
 	button.CD = E:CreateCooldown(button, 12)
 
@@ -382,17 +382,18 @@ function E:CreateButton(parent, name, isSandwich, isSecure )
 
 	if isSandwich then
 		local cover = CreateFrame("Frame", "$parentCover", button)
+		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
 
 		count:SetParent(cover)
-		duration:SetParent(cover)
+		-- duration:SetParent(cover)
 	end
 
 	return button
 end
 
 function E:CreateCheckButton(parent, name, isSandwich, isSecure)
-	local button = CreateFrame("CheckButton", name, parent, isSecure and "SecureHandlerClickTemplate")
+	local button = CreateFrame("CheckButton", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
@@ -404,10 +405,10 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
-	local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
-	duration:SetPoint("BOTTOMLEFT", -4, 0)
-	duration:SetPoint("BOTTOMRIGHT", 4, 0)
-	button.Duration = duration
+	-- local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
+	-- duration:SetPoint("BOTTOMLEFT", -4, 0)
+	-- duration:SetPoint("BOTTOMRIGHT", 4, 0)
+	-- button.Duration = duration
 
 	button.CD = E:CreateCooldown(button, 12)
 
@@ -417,10 +418,11 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 
 	if isSandwich then
 		local cover = CreateFrame("Frame", "$parentCover", button)
+		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
 
 		count:SetParent(cover)
-		duration:SetParent(cover)
+		-- duration:SetParent(cover)
 	end
 
 	return button
