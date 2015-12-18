@@ -4,57 +4,68 @@ local UF = E:GetModule("UnitFrames")
 
 local UnitCanAssist, UnitCanAttack, GetCVar = UnitCanAssist, UnitCanAttack, GetCVar
 
-local function SetCustomVertexColor(self, r, g, b)
-	local fg = self:GetParent().Fg
+local function SetVertexColorOverride(self, r, g, b)
+	local button = self:GetParent()
 
 	if not r then
-		fg:SetBorderColor(1, 1, 1)
+		button:SetBorderColor(1, 1, 1)
 	else
-		fg:SetBorderColor(r, g, b)
+		button:SetBorderColor(r, g, b)
 	end
 end
 
-local function PostCreateAuraIcon(frame, button)
-	local bIcon = button.icon
-	local bCD = button.cd
-	local bOverlay = button.overlay
-	local bCount = button.count
-	local bSteal = button.stealable
+local function UpdateTooltip(self)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+end
 
-	E:UpdateIcon(bIcon)
+local function AuraButton_OnEnter(self)
+	if not self:IsVisible() then return end
 
-	E:HandleCooldown(bCD, 10)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	self:UpdateTooltip()
+end
 
-	bCD:SetReverse(true)
+local function AuraButton_OnLeave()
+	GameTooltip:Hide()
+end
 
-	if bCD.Timer then
-		bCD.Timer:ClearAllPoints()
-		bCD.Timer:SetPoint("BOTTOM", 1, 0)
-	end
+local function CreateAuraIcon(frame, index)
+	local button = E:CreateButton(frame, "$parentButton"..index, true)
+	button:SetBorderSize(6)
 
-	bOverlay:Hide()
-	bOverlay.Hide = SetCustomVertexColor
-	bOverlay.SetVertexColor = SetCustomVertexColor
-	bOverlay.Show = function() return end
+	button.icon = button.Icon
+	button.Icon = nil
 
-	local fg = CreateFrame("Frame", nil, button)
-	fg:SetAllPoints(button)
-	fg:SetFrameLevel(button:GetFrameLevel() + 2)
-	button.Fg = fg
+	button.count = button.Count
+	button.Count = nil
 
-	E:CreateBorder(fg, 6)
+	button.cd = button.CD
+	button.cd:SetTimerTextHeight(10)
+	button.CD = nil
 
-	bCount:SetFontObject("LS10Font_Outline")
-	bCount:SetParent(fg)
-	bCount:ClearAllPoints()
-	bCount:SetPoint("TOPRIGHT", 2, 1)
+	button:SetPushedTexture("")
+	button:SetHighlightTexture("")
 
-	bSteal:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
-	bSteal:SetParent(fg)
-	bSteal:SetDrawLayer("BORDER", 3)
-	bSteal:ClearAllPoints()
-	bSteal:SetPoint("TOPLEFT", -1, 1)
-	bSteal:SetPoint("BOTTOMRIGHT", 1, -1)
+	local overlay = button:CreateTexture(nil, "OVERLAY")
+	overlay:Hide()
+	overlay.Hide = SetVertexColorOverride
+	overlay.SetVertexColor = SetVertexColorOverride
+	overlay.Show = function() return end
+	button.overlay = overlay
+
+	local stealable = _G[button:GetName().."Cover"]:CreateTexture(nil, "OVERLAY", nil, 2)
+	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
+	stealable:SetPoint("TOPLEFT", -1, 1)
+	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
+	stealable:SetBlendMode("ADD")
+	button.stealable = stealable
+
+	button.UpdateTooltip = UpdateTooltip
+	button:SetScript("OnEnter", AuraButton_OnEnter)
+	button:SetScript("OnLeave", AuraButton_OnLeave)
+
+	return button
 end
 
 local function PostUpdateAuraIcon(self, unit, aura, index, offset)
@@ -113,7 +124,7 @@ end
 function UF:CreateBuffs(parent, coords, count)
 	local rows = E:Round(count / 4)
 
-	local frame = CreateFrame("Frame", nil, parent)
+	local frame = CreateFrame("Frame", "$parentBuffs", parent)
 	frame:SetPoint(unpack(coords))
 	frame:SetSize(22 * 4 + 3 * 4, 22 * rows + 3)
 
@@ -125,7 +136,7 @@ function UF:CreateBuffs(parent, coords, count)
 	frame["spacing-y"] = 3
 	frame.showStealableBuffs = true
 
-	frame.PostCreateIcon = PostCreateAuraIcon
+	frame.CreateIcon = CreateAuraIcon
 	frame.PostUpdateIcon = PostUpdateAuraIcon
 	frame.PreUpdate = PreUpdateBuffIcon
 
@@ -134,7 +145,7 @@ end
 
 function UF:CreateDebuffs(parent, coords, count)
 	local rows = E:Round(count / 4)
-	local frame = CreateFrame("Frame", nil, parent)
+	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
 	frame:SetPoint(unpack(coords))
 	frame:SetSize(22 * 4 + 3 * 4, 22 * rows + 3)
 
@@ -144,7 +155,7 @@ function UF:CreateDebuffs(parent, coords, count)
 	frame["spacing-x"] = 3
 	frame["spacing-y"] = 3
 
-	frame.PostCreateIcon = PostCreateAuraIcon
+	frame.CreateIcon = CreateAuraIcon
 	frame.PostUpdateIcon = PostUpdateAuraIcon
 	frame.PreUpdate = PreUpdateDebuffIcon
 	frame.CustomFilter = CustomDebuffFilter
