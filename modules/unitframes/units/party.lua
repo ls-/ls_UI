@@ -4,6 +4,7 @@ local UF = E:GetModule("UnitFrames")
 
 local function PartyHolder_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
+		print(GetCVarBool("useCompactPartyFrames") )
 		if GetCVarBool("useCompactPartyFrames") then
 			self:Hide()
 		else
@@ -33,7 +34,6 @@ function UF:ConstructPartyFrame(frame, ...)
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
-	frame.rearrangeables = {}
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
@@ -136,17 +136,12 @@ function UF:ConstructPartyFrame(frame, ...)
 		[4] = tubeRight,
 	}
 
-	frame.PhaseIcon = UF:CreateIcon(cover, "Phase", 14)
-	tinsert(frame.mouseovers, frame.PhaseIcon)
-	tinsert(frame.rearrangeables, frame.PhaseIcon)
-
-	frame.Leader = UF:CreateIcon(cover, "Leader", 14)
-	tinsert(frame.mouseovers, frame.Leader)
-	tinsert(frame.rearrangeables, frame.Leader)
-
-	frame.LFDRole = UF:CreateIcon(cover, "LFDRole", 14)
-	tinsert(frame.mouseovers, frame.LFDRole)
-	tinsert(frame.rearrangeables, frame.LFDRole)
+	local status_left = E:CreateNewFontString(cover, 16, "$parentLeftStatusIcons")
+	status_left:SetDrawLayer("ARTWORK", 3)
+	status_left:SetJustifyH("LEFT")
+	status_left:SetPoint("TOPLEFT", 4, 2)
+	frame:Tag(status_left, "[ls:classicon][ls:lfdroleicon][ls:leadericon][ls:phaseicon]")
+	tinsert(frame.mouseovers, status_left)
 
 	frame.ReadyCheck = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
 	frame.ReadyCheck:SetSize(32, 32)

@@ -32,26 +32,8 @@ local function LSUnitFrame_OnEnter(self)
 				if element:IsObjectType("Texture") then
 					element:Show()
 				end
-			end
-		end
-	end
-
-	local first = true
-	if self.rearrangeables then
-		local prev
-		for _, element in next, self.rearrangeables do
-			if element:GetAlpha() == 1 then
-				element:ClearAllPoints()
-
-				if first then
-					first = nil
-
-					element:SetPoint("TOPLEFT", 4, 0)
-				else
-					element:SetPoint("LEFT", prev, "RIGHT", 2, 0)
-				end
-
-				prev = element
+			else
+				element:Show()
 			end
 		end
 	end
@@ -81,6 +63,8 @@ local function LSUnitFrame_OnLeave(self)
 				if element:IsObjectType("Texture") then
 					element:Hide()
 				end
+			else
+				element:Hide()
 			end
 		end
 	end

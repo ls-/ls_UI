@@ -6,7 +6,6 @@ function UF:ConstructTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
-	frame.rearrangeables = {}
 	frame:SetSize(204, 36)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -125,25 +124,6 @@ function UF:ConstructTargetFrame(frame)
 		frame.Castbar = UF:CreateCastBar(frame, 196, {"TOP", frame, "BOTTOM", 0, -2})
 	end
 
-	frame.PvP = UF:CreateIcon(cover, "PvP", 14)
-	tinsert(frame.mouseovers, frame.PvP)
-	tinsert(frame.rearrangeables, frame.PvP)
-
-	frame.PhaseIcon = UF:CreateIcon(cover, "Phase", 14)
-	tinsert(frame.mouseovers, frame.PhaseIcon)
-	tinsert(frame.rearrangeables, frame.PhaseIcon)
-
-	frame.Leader = UF:CreateIcon(cover, "Leader", 14)
-	tinsert(frame.mouseovers, frame.Leader)
-	tinsert(frame.rearrangeables, frame.Leader)
-
-	frame.LFDRole = UF:CreateIcon(cover, "LFDRole", 14)
-	tinsert(frame.mouseovers, frame.LFDRole)
-	tinsert(frame.rearrangeables, frame.LFDRole)
-
-	frame.QuestIcon = UF:CreateIcon(cover, "Quest", 14)
-	frame.QuestIcon:SetPoint("TOPLEFT", 4, 16)
-
 	frame.ReadyCheck = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
 	frame.ReadyCheck:SetSize(32, 32)
 	frame.ReadyCheck:SetPoint("CENTER")
@@ -152,21 +132,26 @@ function UF:ConstructTargetFrame(frame)
 	frame.RaidIcon:SetSize(24, 24)
 	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 26)
 
-	-- frame.CPoints = UF:CreateComboBar(frame, level + 3)
-
-	local name = E:CreateFontString(cover, 14, "$parentNameText", true)
+	local name = E:CreateNewFontString(cover, 12, "$parentNameText", nil, true)
 	name:SetDrawLayer("ARTWORK", 4)
-	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
-	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	name:SetPoint("BOTTOM", frame, "TOP", 0, 14)
-	frame:Tag(name, "[custom:name]")
+	name:SetPoint("LEFT", frame, "LEFT", 4, 0)
+	name:SetPoint("RIGHT", frame, "RIGHT", -4, 0)
+	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
+	frame:Tag(name, "[ls:questicon][custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
 
-	local class = E:CreateFontString(cover, 12, "$parentClassText", true)
-	class:SetDrawLayer("ARTWORK", 4)
-	class:SetPoint("LEFT", frame, "LEFT", 2, 0)
-	class:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	class:SetPoint("BOTTOM", frame, "TOP", 0, 0)
-	frame:Tag(class, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:racetype]")
+	local status_top_left = E:CreateNewFontString(cover, 16, "$parentTopLeftStatusIcons")
+	status_top_left:SetDrawLayer("ARTWORK", 3)
+	status_top_left:SetJustifyH("LEFT")
+	status_top_left:SetPoint("TOPLEFT", 4, 2)
+	frame:Tag(status_top_left, "[ls:sheepicon][ls:pvpicon]")
+
+	local status_top_right = E:CreateNewFontString(cover, 16, "$parentTopRightStatusIcons")
+	status_top_right:SetDrawLayer("ARTWORK", 3)
+	status_top_right:SetJustifyH("RIGHT")
+	status_top_right:SetPoint("TOPRIGHT", -4, 2)
+	status_top_right:Hide()
+	frame:Tag(status_top_right, "[ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
+	tinsert(frame.mouseovers, status_top_right)
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 103 / 512, 36 / 256, 66 / 256)
 	frame.Threat:SetSize(103, 30)

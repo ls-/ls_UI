@@ -7,7 +7,6 @@
 	<Script file="debuffhighlight.lua"/>
 	<Script file="healprediction.lua"/>
 	<Script file="health.lua"/>
-	<Script file="icons.lua"/>
 	<Script file="power.lua"/>
 	<Script file="rarityindication.lua"/>
 	<Script file="tags.lua"/>

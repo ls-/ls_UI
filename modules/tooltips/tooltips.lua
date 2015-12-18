@@ -224,16 +224,16 @@ local function GameTooltip_UnitTooltipHook(self)
 			local role = UnitGroupRolesAssigned(unit)
 
 			if UnitIsGroupLeader(unit) then
-				statusInfo = statusInfo..INLINE_ICONS["LEADER"]
+				statusInfo = statusInfo..format(INLINE_ICONS["LEADER"], 13, 13)
 			end
 
 			if role and role ~= "NONE" then
-				statusInfo = statusInfo..INLINE_ICONS[role]
+				statusInfo = statusInfo..format(INLINE_ICONS[role], 13, 13)
 			end
 		end
 
 		if isPVPReady then
-			statusInfo = statusInfo..INLINE_ICONS[pvpFaction]
+			statusInfo = statusInfo..format(INLINE_ICONS[pvpFaction], 13, 13)
 		end
 
 		if statusInfo ~= "" then
@@ -270,11 +270,11 @@ local function GameTooltip_UnitTooltipHook(self)
 
 		local statusInfo = ""
 		if UnitIsQuestBoss(unit) then
-			statusInfo = statusInfo..INLINE_ICONS["QUEST"]
+			statusInfo = statusInfo..format(INLINE_ICONS["QUEST"], 13, 13)
 		end
 
 		if isPVPReady then
-			statusInfo = statusInfo..INLINE_ICONS[pvpFaction]
+			statusInfo = statusInfo..format(INLINE_ICONS[pvpFaction], 13, 13)
 		end
 
 		if statusInfo ~= "" then

@@ -99,25 +99,11 @@ function UF:ConstructPlayerFrame(frame)
 		E:CreateMover(frame.Castbar.Holder)
 	end
 
-	frame.PvP = UF:CreateIcon(frame, "PvP")
-	frame.PvP:SetPoint("BOTTOM", -28, -14)
-	tinsert(frame.mouseovers, frame.PvP)
-
-	frame.Resting = UF:CreateIcon(frame, "Resting")
-	frame.Resting:SetPoint("BOTTOM", -10, -18)
-	tinsert(frame.mouseovers, frame.Resting)
-
-	frame.Combat = UF:CreateIcon(frame, "Combat")
-	frame.Combat:SetPoint("BOTTOM", -10, -18)
-	tinsert(frame.mouseovers, frame.Combat)
-
-	frame.Leader = UF:CreateIcon(frame, "Leader")
-	frame.Leader:SetPoint("BOTTOM", 10, -18)
-	tinsert(frame.mouseovers, frame.Leader)
-
-	frame.LFDRole = UF:CreateIcon(frame, "LFDRole")
-	frame.LFDRole:SetPoint("BOTTOM", 28, -14)
-	tinsert(frame.mouseovers, frame.LFDRole)
+	local status = E:CreateNewFontString(frame, 16, "$parentStatusIcons")
+	status:SetDrawLayer("ARTWORK", 3)
+	status:SetJustifyH("CENTER")
+	status:SetPoint("BOTTOM", 0, -18)
+	frame:Tag(status, "[ls:combatresticon][ls:pvpicon][ls:lfdroleicon][ls:leadericon]")
 
 	UF:Reskin(frame, "NONE", true, 0, "NONE")
 
