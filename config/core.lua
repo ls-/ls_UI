@@ -5,6 +5,8 @@ local CFG = E:AddModule("Config")
 local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton =
 	UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton
 
+CFG.Panels = {}
+
 function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true, nil, true)
 	object:SetJustifyH("LEFT")
@@ -153,6 +155,24 @@ function CFG:CreateDivider(parent, text)
 	label:SetText(text)
 	label:SetVertexColor(1, 0.82, 0)
 	object.Text = label
+
+	return object
+end
+
+local function ReloadUIButton_OnClick(self)
+	for _, panel in next, CFG.Panels do
+		E:ApplySettings(panel.settings, C)
+	end
+
+	ReloadUI()
+end
+
+function CFG:CreateReloadUIButton(parent)
+	local object = CreateFrame("CheckButton", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
+	object.type = "Button"
+	object:SetText(RELOADUI)
+	object:SetWidth(object:GetTextWidth() + 18)
+	object:SetScript("OnClick", ReloadUIButton_OnClick)
 
 	return object
 end

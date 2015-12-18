@@ -141,10 +141,15 @@ function CFG:General_Initialize()
 	infoText2:SetPoint("TOPLEFT", header4, "BOTTOMLEFT", 0, -8)
 	infoText2:SetPoint("RIGHT", -16, 0)
 
+	local reloadButton = CFG:CreateReloadUIButton(panel)
+	reloadButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -16, 16)
+
 	panel.okay = function() CFG:OptionsPanelOkay(panel) end
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end
 	panel.refresh = function() CFG:OptionsPanelRefresh(panel) end
 	panel.default = function() CFG:OptionsPanelDefault(panel) end
 
 	InterfaceOptions_AddCategory(panel)
+
+	tinsert(CFG.Panels, panel)
 end

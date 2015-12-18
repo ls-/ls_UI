@@ -389,10 +389,15 @@ function CFG:AT_Initialize()
 	panel.settings.auratracker.direction = growthDropdown
 	CFG:SetupControlDependency(atToggle, growthDropdown)
 
+	local reloadButton = CFG:CreateReloadUIButton(panel)
+	reloadButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -16, 16)
+
 	panel.okay = function() CFG:OptionsPanelOkay(panel) end
 	panel.cancel = function() CFG:OptionsPanelOkay(panel) end
 	panel.refresh = function() CFG:OptionsPanelRefresh(panel) end
 	panel.default = function() CFG:OptionsPanelDefault(panel) end
 
 	InterfaceOptions_AddCategory(panel)
+
+	tinsert(CFG.Panels, panel)
 end
