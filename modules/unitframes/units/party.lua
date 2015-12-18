@@ -4,7 +4,6 @@ local UF = E:GetModule("UnitFrames")
 
 local function PartyHolder_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
-		print(GetCVarBool("useCompactPartyFrames") )
 		if GetCVarBool("useCompactPartyFrames") then
 			self:Hide()
 		else
