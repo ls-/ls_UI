@@ -335,7 +335,7 @@ function E:UpdatePushedTexture(button)
 
 	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
 	texture = button:GetPushedTexture()
-	texture:SetTexCoord(120 / 256, 176 / 256, 0 / 64, 56 / 64)
+	texture:SetTexCoord(124 / 256, 180 / 256, 1 / 64, 57 / 64)
 	texture:SetAllPoints()
 end
 
@@ -344,7 +344,7 @@ function E:UpdateHighlightTexture(button)
 
 	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
 	texture = button:GetHighlightTexture()
-	texture:SetTexCoord(64 / 256, 120 / 256, 0 / 64, 56 / 64)
+	texture:SetTexCoord(66 / 256, 122 / 256, 1 / 64, 57 / 64)
 	texture:SetAllPoints()
 end
 
