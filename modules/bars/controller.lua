@@ -36,12 +36,12 @@ local function CreateActionPageButton(anchor, side)
 
 	if side == "Right" then
 		button:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -3, 7)
-		bg:SetTexCoord(22 / 64, 44 / 64, 150 / 256, 172 / 256)
-		button:GetHighlightTexture():SetTexCoord(0, 22 / 64, 150 / 256, 172 / 256)
+		bg:SetTexCoord(25 / 64, 47 / 64, 154 / 256, 176 / 256)
+		button:GetHighlightTexture():SetTexCoord(1 / 64, 23 / 64, 154 / 256, 176 / 256)
 	else
 		button:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 3, 7)
-		bg:SetTexCoord(44 / 64, 22 / 64, 150 / 256, 172 / 256)
-		button:GetHighlightTexture():SetTexCoord(22 / 64, 0, 150 / 256, 172 / 256)
+		bg:SetTexCoord(47 / 64, 25 / 64, 154 / 256, 176 / 256)
+		button:GetHighlightTexture():SetTexCoord(23 / 64, 1 / 64, 154 / 256, 176 / 256)
 	end
 end
 
@@ -87,7 +87,7 @@ local function ConstructCap(side)
 
 	local cog = BarController:CreateTexture(nil, "ARTWORK", nil, -2)
 	cog:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
-	cog:SetTexCoord(0, 78 / 256, 0, 78 / 128)
+	cog:SetTexCoord(1 / 256, 79 / 256, 1 / 128, 79 / 128)
 	cog:SetSize(72, 72)
 
 	local nest = BarController:CreateTexture(nil, "ARTWORK", nil, 3)
@@ -100,22 +100,22 @@ local function ConstructCap(side)
 	if side == "Right" then
 		CreateActionPageButton(cap, side)
 
-		cap:SetTexCoord(0, 48 / 64, 100 / 256, 150 / 256)
+		cap:SetTexCoord(1 / 64, 49 / 64, 102 / 256, 152 / 256)
 		cap:SetPoint("LEFT", BarController.Fg, "RIGHT", -3, 0)
 
 		cog:SetPoint("CENTER", cap, "BOTTOMLEFT", 4, 7)
 
-		nest:SetTexCoord(78 / 256, 224 / 256, 10 / 128, 20 / 128)
+		nest:SetTexCoord(80 / 256, 226 / 256, 12 / 128, 22 / 128)
 		nest:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 36, 3)
 	else
 		CreateActionPageButton(cap, side)
 
-		cap:SetTexCoord(0, 48 / 64, 50 / 256, 100 / 256)
+		cap:SetTexCoord(1 / 64, 49 / 64, 51 / 256, 101 / 256)
 		cap:SetPoint("RIGHT", BarController.Fg, "LEFT", 3, 0)
 
 		cog:SetPoint("CENTER", cap, "BOTTOMRIGHT", -4, 7)
 
-		nest:SetTexCoord(78 / 256, 224 / 256, 0, 10 / 128)
+		nest:SetTexCoord(80 / 256, 226 / 256, 1 / 128, 11 / 128)
 		nest:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -36, 3)
 	end
 end
@@ -262,7 +262,7 @@ function B:ActionBarController_Initialize()
 		texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
 		texture:SetSize(50, 10)
 		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
-		texture:SetTexCoord(78 / 256, 128 / 256, 20 / 128, 30 / 128)
+		texture:SetTexCoord(80 / 256, 130 / 256, 23 / 128, 33 / 128)
 		texture:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 192, 3)
 
 		BarController:SetAttribute("_onstate-numbuttons", [[
