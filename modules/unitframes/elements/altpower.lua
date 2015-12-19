@@ -51,7 +51,7 @@ local function OnLeave(self)
 end
 
 function UF:CreateAltPowerBar(parent, width, coords, preset)
-	local bar = E:CreateStatusBar(parent, parent:GetName().."AltPowerBar", width - tonumber(preset), preset or "14", true)
+	local bar = E:CreateStatusBar(parent, "$parentAltPowerBar", "HORIZONTAL", preset or "14", width - tonumber(preset), true)
 	bar:SetPoint(unpack(coords))
 	bar:EnableMouse(true)
 	bar:SetScript("OnEnter", OnEnter)

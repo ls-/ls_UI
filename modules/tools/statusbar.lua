@@ -5,17 +5,81 @@ local COLORS = M.colors
 local unpack = unpack
 
 local PRESETS = {
-	["14"] = {
-		capSize = {14, 22},
-		textHeight = 12,
+	HORIZONTAL = {
+		texture = "Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal",
+		caps = {
+			["2"] = {
+				size = {11, 10},
+				first = {1 / 64, 12 / 64, 25 / 64, 35 / 64},
+				second= {1 / 64, 12 / 64, 36 / 64, 46 / 64},
+			},
+			["12"] = {
+				size = {12, 20},
+				first = {13 / 64, 27 / 64, 25 / 64, 47 / 64},
+				second= {28 / 64, 42 / 64, 25 / 64, 47 / 64},
+			},
+			["14"] = {
+				size = {14, 22},
+				first = {13 / 64, 27 / 64, 25 / 64, 47 / 64},
+				second= {28 / 64, 42 / 64, 25 / 64, 47 / 64},
+			},
+			first_point = {"RIGHT", "$parent", "LEFT", 3, 0},
+			second_point = {"LEFT", "$parent", "RIGHT", -3, 0},
+		},
+		gloss = {0 / 64, 64 / 64, 0 / 64, 20 / 64},
+		middle = {
+			first = {0 / 64, 64 / 64, 21 / 64, 24 / 64},
+			first_point1 = {"TOPLEFT", 0, 3},
+			first_point2 = {"TOPRIGHT", 0, 3},
+			second = {0 / 64, 64 / 64, 24 / 64, 21 / 64},
+			second_point1 = {"BOTTOMLEFT", 0, -3},
+			second_point2 = {"BOTTOMRIGHT", 0, -3},
+		},
+		text_size = {
+			["2"] = 10,
+			["12"] = 10,
+			["14"] = 12,
+		},
 	},
-	["12"] = {
-		capSize = {12, 20},
-		textHeight = 10,
+	VERTICAL = {
+		texture = "Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical",
+		caps = {
+			["2"] = {
+				size = {10, 11},
+				first = {25 / 64, 35 / 64, 1 / 64, 12 / 64},
+				second= {36 / 64, 46 / 64, 1 / 64, 12 / 64},
+			},
+			["12"] = {
+				size = {20, 12},
+				first = {25 / 64, 47 / 64, 13 / 64, 27 / 64},
+				second= {25 / 64, 47 / 64, 28 / 64, 42 / 64},
+			},
+			["14"] = {
+				size = {22, 14},
+				first = {25 / 64, 47 / 64, 13 / 64, 27 / 64},
+				second= {25 / 64, 47 / 64, 28 / 64, 42 / 64},
+			},
+			first_point = {"BOTTOM", "$parent", "TOP", 0, -3},
+			second_point = {"TOP", "$parent", "BOTTOM", 0, 3},
+		},
+		gloss = {0 / 64, 20 / 64, 0 / 64, 64 / 64},
+		middle = {
+			first = {21 / 64, 24 / 64, 0 / 64, 64 / 64},
+			first_point1 = {"TOPRIGHT", "$parent", "TOPLEFT", 0, 0},
+			first_point2 = {"BOTTOMRIGHT", "$parent", "BOTTOMLEFT", 0, 0},
+			second = {24 / 64, 21 / 64, 0 / 64, 64 / 64},
+			second_point1 = {"TOPLEFT", "$parent", "TOPRIGHT", 0, 0},
+			second_point2 = {"BOTTOMLEFT", "$parent", "BOTTOMRIGHT", 0, 0},
+		},
+		text_size = {
+			["2"] = 10,
+			["12"] = 10,
+			["14"] = 12,
+		},
 	},
 }
 
-function E:HandleStatusBar(bar, addBorder, preset, cascade)
+function E:HandleStatusBar(bar, addBorder, height, cascade)
 	local children = {bar:GetChildren()}
 	local regions = {bar:GetRegions()}
 
@@ -63,10 +127,11 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 	-- print("|cffffff7fBG|r", not not background, "|cffffff7fTEXT|r", not not text, "|cffffff7fSBT|r", not not sbt, "|cffffff7fSB|r", not not sb)
 
 	if not cascade then
-		local PRESET = PRESETS[preset or "14"]
+		local PRESET = PRESETS["HORIZONTAL"]
+		height = height or "14"
 
 		bar.ignoreFramePositionManager = true
-		bar:SetSize(166, tonumber(preset or "14"))
+		bar:SetSize(166, tonumber(height))
 
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND")
@@ -77,13 +142,11 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 		bar.Bg = background
 
 		if not text then
-			text = E:CreateFontString(bar, PRESET.textHeight, bar:GetName().."Text", true)
+			text = E:CreateNewFontString(bar, PRESET.text_size[height], "$parentText", nil, true, 1)
 		else
-			text:SetFontObject("LS"..PRESET.textHeight.."Font")
+			text:SetFontObject("LS"..PRESET.text_size[height].."Font_Shadow")
 			text:SetWordWrap(false)
 			text:SetJustifyV("MIDDLE")
-			text:SetShadowColor(0, 0, 0)
-			text:SetShadowOffset(1, -1)
 		end
 
 		text:SetDrawLayer("OVERLAY", 1)
@@ -101,103 +164,129 @@ function E:HandleStatusBar(bar, addBorder, preset, cascade)
 		end
 
 		local gloss = bar:CreateTexture(nil, "BORDER", nil, -8)
-		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		gloss:SetTexCoord(0, 1, 0 / 64, 20 / 64)
+		gloss:SetTexture(PRESET.texture)
+		gloss:SetTexCoord(unpack(PRESET.gloss))
 		gloss:SetAllPoints()
 
 		if addBorder then
-			local capWidth, capHeight = unpack(PRESET.capSize)
+			local capWidth, capHeight = unpack(PRESET.caps[height].size)
 
-			local fgLeft = bar:CreateTexture(nil, "BORDER")
-			fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-			fgLeft:SetTexCoord(0 / 32, 14 / 32, 33 / 64, 55 / 64)
-			fgLeft:SetSize(capWidth, capHeight)
-			fgLeft:SetPoint("RIGHT", bar, "LEFT", 3, 0)
+			local firstCap = bar:CreateTexture(nil, "BORDER")
+			firstCap:SetTexture(PRESET.texture)
+			firstCap:SetTexCoord(unpack(PRESET.caps[height].first))
+			firstCap:SetSize(capWidth, capHeight)
+			firstCap:SetPoint(unpack(PRESET.caps.first_point))
 
-			local fgMiddleTop = bar:CreateTexture(nil, "BORDER")
-			fgMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-			fgMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
-			fgMiddleTop:SetHeight(3)
-			fgMiddleTop:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
-			fgMiddleTop:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
+			local firstMid = bar:CreateTexture(nil, "BORDER")
+			firstMid:SetTexture(PRESET.texture)
+			firstMid:SetTexCoord(unpack(PRESET.middle.first))
+			firstMid:SetHeight(3)
+			firstMid:SetPoint(unpack(PRESET.middle.first_point1))
+			firstMid:SetPoint(unpack(PRESET.middle.first_point2))
 
-			local fgMiddleBottom = bar:CreateTexture(nil, "BORDER")
-			fgMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-			fgMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
-			fgMiddleBottom:SetHeight(3)
-			fgMiddleBottom:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
-			fgMiddleBottom:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
+			local secondMid = bar:CreateTexture(nil, "BORDER")
+			secondMid:SetTexture(PRESET.texture)
+			secondMid:SetTexCoord(unpack(PRESET.middle.second))
+			secondMid:SetHeight(3)
+			secondMid:SetPoint(unpack(PRESET.middle.second_point1))
+			secondMid:SetPoint(unpack(PRESET.middle.second_point2))
 
-			local fgRight = bar:CreateTexture(nil, "BORDER")
-			fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-			fgRight:SetTexCoord(18 / 32, 32 / 32, 33 / 64, 55 / 64)
-			fgRight:SetSize(capWidth, capHeight)
-			fgRight:SetPoint("LEFT", bar, "RIGHT", -3, 0)
+			local secondCap = bar:CreateTexture(nil, "BORDER")
+			secondCap:SetTexture(PRESET.texture)
+			secondCap:SetTexCoord(unpack(PRESET.caps[height].second))
+			secondCap:SetSize(capWidth, capHeight)
+			secondCap:SetPoint(unpack(PRESET.caps.second_point))
+
+			bar.Tube = {
+				[1] = firstCap,
+				[2] = firstMid,
+				[3] = secondMid,
+				[4] = secondCap,
+			}
 		end
 	else
 		return background, text, sbt
 	end
 end
 
-function E:CreateStatusBar(parent, name, width, preset, addBorder)
-	local PRESET = PRESETS[preset]
+function E:CreateStatusBar(parent, name, orientation, preset, barSize, addBorder)
+	local PRESET = PRESETS[orientation]
 
 	local bar = CreateFrame("StatusBar", name, parent)
+	bar:SetOrientation(orientation)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
-	bar:SetSize(width, tonumber(preset))
 
-	local bg = bar:CreateTexture(nil, "BACKGROUND")
+	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
 	bg:SetTexture(unpack(COLORS.darkgray))
 	bg:SetAllPoints()
 	bar.Bg = bg
 
-	local text = E:CreateFontString(bar, PRESET.textHeight, name.."Text", true)
-	text:SetDrawLayer("OVERLAY", 1)
-	text:SetPoint("TOPLEFT", 1, 0)
-	text:SetPoint("BOTTOMRIGHT", -1, 0)
+	local text = E:CreateNewFontString(bar, PRESET.text_size[preset], "$parentText", nil, true, 1)
 	bar.Text = text
 
 	local gloss = bar:CreateTexture(nil, "BORDER", nil, -8)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	gloss:SetTexCoord(0, 1, 0 / 64, 20 / 64)
+	gloss:SetTexture(PRESET.texture)
+	gloss:SetTexCoord(unpack(PRESET.gloss))
 	gloss:SetAllPoints()
 
+	if orientation == "HORIZONTAL" then
+		bar:SetSize(barSize or 2, tonumber(preset))
+		text:SetPoint("TOPLEFT", 1, 0)
+		text:SetPoint("BOTTOMRIGHT", -1, 0)
+	else
+		bar:SetSize(tonumber(preset), barSize or 2)
+		text:SetPoint("CENTER", 0, 0)
+	end
+
 	if addBorder then
-		local capWidth, capHeight = unpack(PRESET.capSize)
+		local capWidth, capHeight = unpack(PRESET.caps[preset].size)
 
-		local fgLeft = bar:CreateTexture(nil, "BORDER")
-		fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgLeft:SetTexCoord(0 / 32, 14 / 32, 33 / 64, 55 / 64)
-		fgLeft:SetSize(capWidth, capHeight)
-		fgLeft:SetPoint("RIGHT", bar, "LEFT", 3, 0)
+		local firstCap = bar:CreateTexture(nil, "BORDER")
+		firstCap:SetTexture(PRESET.texture)
+		firstCap:SetTexCoord(unpack(PRESET.caps[preset].first))
+		firstCap:SetSize(capWidth, capHeight)
+		firstCap:SetPoint(unpack(PRESET.caps.first_point))
 
-		local fgMiddleTop = bar:CreateTexture(nil, "BORDER")
-		fgMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
-		fgMiddleTop:SetHeight(3)
-		fgMiddleTop:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
-		fgMiddleTop:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
+		local firstMid = bar:CreateTexture(nil, "BORDER")
+		firstMid:SetTexture(PRESET.texture)
+		firstMid:SetTexCoord(unpack(PRESET.middle.first))
+		firstMid:SetPoint(unpack(PRESET.middle.first_point1))
+		firstMid:SetPoint(unpack(PRESET.middle.first_point2))
 
-		local fgMiddleBottom = bar:CreateTexture(nil, "BORDER")
-		fgMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
-		fgMiddleBottom:SetHeight(3)
-		fgMiddleBottom:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
-		fgMiddleBottom:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
+		local secondMid = bar:CreateTexture(nil, "BORDER")
+		secondMid:SetTexture(PRESET.texture)
+		secondMid:SetTexCoord(unpack(PRESET.middle.second))
+		secondMid:SetPoint(unpack(PRESET.middle.second_point1))
+		secondMid:SetPoint(unpack(PRESET.middle.second_point2))
 
-		local fgRight = bar:CreateTexture(nil, "BORDER")
-		fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-		fgRight:SetTexCoord(18 / 32, 32 / 32, 33 / 64, 55 / 64)
-		fgRight:SetSize(capWidth, capHeight)
-		fgRight:SetPoint("LEFT", bar, "RIGHT", -3, 0)
+		local secondCap = bar:CreateTexture(nil, "BORDER")
+		secondCap:SetTexture(PRESET.texture)
+		secondCap:SetTexCoord(unpack(PRESET.caps[preset].second))
+		secondCap:SetSize(capWidth, capHeight)
+		secondCap:SetPoint(unpack(PRESET.caps.second_point))
+
+		if orientation == "HORIZONTAL" then
+			firstMid:SetHeight(3)
+			secondMid:SetHeight(3)
+		else
+			firstMid:SetWidth(3)
+			secondMid:SetWidth(3)
+		end
+
+		bar.Tube = {
+			[1] = firstCap,
+			[2] = firstMid,
+			[3] = secondMid,
+			[4] = secondCap,
+		}
 	end
 
 	return bar
 end
 
 function E:AddTooltipStatusBar(tooltip, index)
-	local bar = E:CreateStatusBar(tooltip, "GameTooltipStatusBar"..index, 0, "12")
+	local bar = E:CreateStatusBar(tooltip, "GameTooltipStatusBar"..index, "HORIZONTAL", "12", 0)
 	bar:SetStatusBarColor(unpack(COLORS.green))
 	E:CreateBorder(bar, 8)
 	bar:SetBorderColor(unpack(COLORS.gray))

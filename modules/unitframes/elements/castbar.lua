@@ -70,7 +70,7 @@ function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 		holder:SetPoint(unpack(coords))
 	end
 
-	local bar = E:CreateStatusBar(holder, parent:GetName().."CastBar", width - PRESET.spacing, preset or "14", true)
+	local bar = E:CreateStatusBar(holder, "$parentCastBar", "HORIZONTAL", preset or "14", width - PRESET.spacing, true)
 	bar:SetPoint(unpack(PRESET.anchorPoint))
 
 	local spark = bar:CreateTexture(nil, "BORDER", nil, 1)

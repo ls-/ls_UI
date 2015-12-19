@@ -89,42 +89,43 @@ function UF:ConstructBossFrame(frame)
 	frame.Power.Value:SetDrawLayer("OVERLAY", 2)
 	tinsert(frame.mouseovers, frame.Power)
 
-	local tubeLeft = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tubeLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeLeft:SetTexCoord(0 / 32, 12 / 32, 23 / 64, 33 / 64)
-	tubeLeft:SetSize(12, 10)
-	tubeLeft:SetPoint("LEFT", -10, 0)
+	local firstCap = frame.Power:CreateTexture(nil, "BORDER")
+	firstCap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	firstCap:SetTexCoord(1 / 64, 12 / 64, 25 / 64, 35 / 64)
+	firstCap:SetSize(11, 10)
+	firstCap:SetPoint("RIGHT", "$parent", "LEFT", 3, 0)
 
-	local tubeMiddleTop = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tubeMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeMiddleTop:SetTexCoord(0, 1, 20 / 64, 23 / 64)
-	tubeMiddleTop:SetHeight(3)
-	tubeMiddleTop:SetPoint("TOPLEFT", 0, 3)
-	tubeMiddleTop:SetPoint("TOPRIGHT", 0, 3)
+	local firstMid = frame.Power:CreateTexture(nil, "BORDER")
+	firstMid:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	firstMid:SetTexCoord(0 / 64, 64 / 64, 21 / 64, 24 / 64)
+	firstMid:SetHeight(3)
+	firstMid:SetPoint("TOPLEFT", 0, 3)
+	firstMid:SetPoint("TOPRIGHT", 0, 3)
 
-	local tubeGloss = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tubeMiddleTop:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeMiddleTop:SetTexCoord(0, 1, 0 / 64, 20 / 64)
-	tubeMiddleTop:SetAllPoints()
+	local tubeGloss = frame.Power:CreateTexture(nil, "BORDER", nil, -8)
+	tubeGloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	tubeGloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
+	tubeGloss:SetAllPoints()
 
-	local tubeMiddleBottom = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tubeMiddleBottom:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeMiddleBottom:SetTexCoord(0, 1, 23 / 64, 20 / 64)
-	tubeMiddleBottom:SetHeight(3)
-	tubeMiddleBottom:SetPoint("BOTTOMLEFT", 0, -3)
-	tubeMiddleBottom:SetPoint("BOTTOMRIGHT", 0, -3)
+	local secondMid = frame.Power:CreateTexture(nil, "BORDER")
+	secondMid:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	secondMid:SetTexCoord(0 / 64, 64 / 64, 24 / 64, 21 / 64)
+	secondMid:SetHeight(3)
+	secondMid:SetPoint("BOTTOMLEFT", 0, -3)
+	secondMid:SetPoint("BOTTOMRIGHT", 0, -3)
 
-	local tubeRight = frame.Power:CreateTexture(nil, "OVERLAY", nil, 0)
-	tubeRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeRight:SetTexCoord(20 / 32, 32 / 32, 23 / 64, 33 / 64)
-	tubeRight:SetSize(12, 10)
-	tubeRight:SetPoint("RIGHT", 10, 0)
+	local secondCap = frame.Power:CreateTexture(nil, "BORDER")
+	secondCap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	secondCap:SetTexCoord(1 / 64, 12 / 64, 36 / 64, 46 / 64)
+	secondCap:SetSize(11, 10)
+	secondCap:SetPoint("LEFT", "$parent", "RIGHT", -3, 0)
 
 	frame.Power.Tube = {
-		[1] = tubeLeft,
-		[2] = tubeMiddleTop,
-		[3] = tubeMiddleBottom,
-		[4] = tubeRight,
+		[1] = firstCap,
+		[2] = firstMid,
+		[3] = secondMid,
+		[4] = secondCap,
+		[5] = tubeGloss,
 	}
 
 	if C.units.boss.castbar then

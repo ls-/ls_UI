@@ -53,6 +53,7 @@ function UF:CreatePowerBar(parent, textsize, textbg, vertical)
 	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
 	power:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	power:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
 	E:SmoothBar(power)
 
 	local value = E:CreateFontString(power, textsize, "$parentPowerValue", true)
