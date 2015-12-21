@@ -5,7 +5,7 @@ local CFG = E:AddModule("Config")
 local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton =
 	UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDownMenu_Initialize, UIDropDownMenu_CreateInfo, UIDropDownMenu_AddButton
 
-CFG.Panels = {}
+local Panels = {}
 
 function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true, nil, true)
@@ -79,6 +79,15 @@ local function DropDownMenu_RefreshValue(self)
 	UIDropDownMenu_SetSelectedValue(self, self.value)
 end
 
+local function RegisterControlForRefresh(parent, control)
+	if not parent or not control then
+		return
+	end
+
+	parent.controls = parent.controls or {}
+	tinsert(parent.controls, control)
+end
+
 function CFG:CreateDropDownMenu(parent, name, text, func)
 	local object = CreateFrame("Frame", "$parent"..name, parent, "UIDropDownMenuTemplate")
 	object.type = "DropDownMenu"
@@ -95,7 +104,7 @@ function CFG:CreateDropDownMenu(parent, name, text, func)
 	label:SetVertexColor(1, 0.82, 0)
 	object.Text = label
 
-	CFG:RegisterControlForRefresh(parent, object)
+	RegisterControlForRefresh(parent, object)
 
 	return object
 end
@@ -160,7 +169,7 @@ function CFG:CreateDivider(parent, text)
 end
 
 local function ReloadUIButton_OnClick(self)
-	for _, panel in next, CFG.Panels do
+	for _, panel in next, Panels do
 		E:ApplySettings(panel.settings, C)
 	end
 
@@ -175,33 +184,6 @@ function CFG:CreateReloadUIButton(parent)
 	object:SetScript("OnClick", ReloadUIButton_OnClick)
 
 	return object
-end
-
-function CFG:OptionsPanelOkay(panel)
-	E:ApplySettings(panel.settings, C)
-end
-
-function CFG:OptionsPanelRefresh(panel)
-	E:FetchSettings(panel.settings, C)
-
-	for _, control in next, panel.controls do
-		if control.RefreshValue then
-			control:RefreshValue()
-		end
-	end
-end
-
-function CFG:OptionsPanelDefault(panel)
-	E:FetchSettings(panel.settings, D)
-end
-
-function CFG:RegisterControlForRefresh(parent, control)
-	if not parent or not control then
-		return
-	end
-
-	parent.controls = parent.controls or {}
-	tinsert(parent.controls, control)
 end
 
 local function ButtonChild_Enable(self)
@@ -321,6 +303,34 @@ function CFG:ToggleDependantControls(parent, forceDisable)
 			child:Enable()
 		end
 	end
+end
+
+local function OptionsPanelOkay(panel)
+	E:ApplySettings(panel.settings, C)
+end
+
+local function OptionsPanelRefresh(panel)
+	E:FetchSettings(panel.settings, C)
+
+	for _, control in next, panel.controls do
+		if control.RefreshValue then
+			control:RefreshValue()
+		end
+	end
+end
+
+local function OptionsPanelDefault(panel)
+	E:FetchSettings(panel.settings, D)
+end
+
+function CFG:AddCatergory(panel)
+	panel.okay = OptionsPanelOkay
+	panel.cancel = OptionsPanelOkay
+	panel.refresh = OptionsPanelRefresh
+	panel.default = OptionsPanelDefault
+
+	InterfaceOptions_AddCategory(panel)
+	tinsert(Panels, panel)
 end
 
 local function LSConfigFrameToggle()
