@@ -1,6 +1,6 @@
 ## Interface: 60200
 ## Author: lightspark
-## Version: 2.12
+## Version: 2.13
 ## Title: oUF: |cff1a9fc0LS|r
 ## Notes: oUF-based UI
 ## X-Category: UnitFrame
