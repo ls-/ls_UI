@@ -1,3 +1,7 @@
+#Version 2.13
+
+- Fixed tag issue.
+
 #Version 2.12
 
 - Updated unit frame status icons (leader, role, pvp, etc), added new class and sheep icons;
