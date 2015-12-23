@@ -1,3 +1,11 @@
+#Version 2.12
+
+- Updated unit frame status icons (leader, role, pvp, etc), added new class and sheep icons;
+  - Sheep icons is a simple polymorph/hex indicator;
+- Added "Reload UI" button to config panels;
+- Fixed numerous texture issues;
+- Misc bug fixes and tweaks.
+
 #Version 2.11
 
 - Bottom bar revamp. New artwork, animations, features and in-game config;
