@@ -117,7 +117,11 @@ oUF.Tags.Events["ls:questicon"] = "UNIT_CLASSIFICATION_CHANGED"
 oUF.Tags.Methods["ls:classicon"] = function(unit)
 	if UnitIsPlayer(unit) then
 		local _, class = UnitClass(unit)
-		return format(ICONS[class], 0, 0)
+		if class then
+			return format(ICONS[class], 0, 0)
+		else
+			return ""
+		end
 	else
 		-- return format(ICONS["QUEST"], 0, 0)
 		return ""
