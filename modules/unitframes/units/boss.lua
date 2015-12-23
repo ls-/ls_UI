@@ -140,7 +140,7 @@ function UF:ConstructBossFrame(frame)
 	name:SetDrawLayer("ARTWORK", 4)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
+	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
 	frame:Tag(name, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
 
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 56 / 512, 166 / 256, 196 / 256)

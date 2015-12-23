@@ -81,6 +81,6 @@ function UF:ConstructFocusTargetFrame(frame)
 	name:SetDrawLayer("ARTWORK", 4)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	name:SetPoint("BOTTOM", frame, "TOP", 0, 0)
+	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
 	frame:Tag(name, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
 end
