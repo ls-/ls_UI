@@ -162,6 +162,10 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
+local function UnlockPetActionBarHook()
+	PetActionBarFrame.locked = true
+end
+
 function B:HandleActionBars()
 	if C.bars.restricted then
 		BARS_CFG.bar2 = C.bars.bar2
@@ -215,6 +219,8 @@ function B:HandleActionBars()
 	end
 
 	PetActionBarFrame:SetScript("OnUpdate", nil)
+	PetActionBarFrame.locked = true
+	hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
 
 	for _, v in next, {
 		MainMenuBar,
