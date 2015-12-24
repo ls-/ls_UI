@@ -218,6 +218,7 @@ function B:HandleActionBars()
 		end
 	end
 
+	PetActionBarFrame:Show()
 	PetActionBarFrame:SetScript("OnUpdate", nil)
 	PetActionBarFrame.locked = true
 	hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
