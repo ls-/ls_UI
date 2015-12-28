@@ -146,6 +146,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	status_right:SetDrawLayer("ARTWORK", 3)
 	status_right:SetJustifyH("LEFT")
 	status_right:SetPoint("TOPRIGHT", -4, 2)
+	status_right:Hide()
 	frame:Tag(status_right, "[ls:classicon][ls:phaseicon]")
 	tinsert(frame.mouseovers, status_right)
 
