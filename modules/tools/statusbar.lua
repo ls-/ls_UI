@@ -204,6 +204,8 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 				[4] = secondCap,
 			}
 		end
+
+		bar.styled = true
 	else
 		return background, text, sbt
 	end
@@ -282,6 +284,8 @@ function E:CreateStatusBar(parent, name, orientation, preset, barSize, addBorder
 		}
 	end
 
+	bar.styled = true
+
 	return bar
 end
 
@@ -301,6 +305,11 @@ function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
 
 	local index = (tooltip.shownStatusBars or 0) + 1
 	local bar = _G["GameTooltipStatusBar"..index] or E:AddTooltipStatusBar(tooltip, index)
+
+	if not bar.styled then
+		E:HandleStatusBar(bar)
+	end
+
 	bar:SetMinMaxValues(min, max)
 	bar:SetValue(value)
 	bar:SetStatusBarColor(...)
