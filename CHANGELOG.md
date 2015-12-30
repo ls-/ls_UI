@@ -1,3 +1,10 @@
+#Version 2.14
+
+- Added a pin to unit frames and nameplate textrues at 35% health mark.
+- Restored compatibility with OmniCC, yet again;
+- Fixed pet action bar taint issue.
+- Misc bug fixes and tweaks.
+
 #Version 2.13
 
 - Fixed tag issue.
