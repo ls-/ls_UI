@@ -288,7 +288,10 @@ function AT:Initialize(forceInit)
 			button:SetScript("OnUpdate", ATButton_OnUpdate)
 			buttons[i] = button
 
-			button.CD:SetTimerTextHeight(14)
+			if button.CD.SetTimerTextHeight then
+				button.CD:SetTimerTextHeight(14)
+			end
+
 			button.Count:SetFontObject("LS12Font_Outline")
 		end
 

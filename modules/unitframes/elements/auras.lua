@@ -40,8 +40,11 @@ local function CreateAuraIcon(frame, index)
 	button.Count = nil
 
 	button.cd = button.CD
-	button.cd:SetTimerTextHeight(10)
 	button.CD = nil
+
+	if button.cd.SetTimerTextHeight then
+		button.cd:SetTimerTextHeight(10)
+	end
 
 	button:SetPushedTexture("")
 	button:SetHighlightTexture("")
