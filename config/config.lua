@@ -18,6 +18,98 @@ D["units"] = {
 		enabled = true,
 		castbar = true,
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
+		auras = {
+			["0"] = { -- for level < 10 and buffer
+				auratracker_enabled = false,
+				HELPFUL = {
+					include_all = false, -- both, overrides everything else
+					include_stealable = true, -- hostile
+					highlight_stealable = true, -- hostile
+					include_boss = true, -- hostile
+					include_castable = true, -- friendly
+					include_relevant = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+				HARMFUL = {
+					include_all = false, -- both, overrides everything else
+					include_relevant = true, -- both
+					include_dispellable = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+			},
+			["1"] = {
+				auratracker_enabled = false,
+				HELPFUL = {
+					include_all = false, -- both, overrides everything else
+					include_stealable = true, -- hostile
+					highlight_stealable = true, -- hostile
+					include_boss = true, -- hostile
+					include_castable = true, -- friendly
+					include_relevant = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+				HARMFUL = {
+					include_all = false, -- both, overrides everything else
+					include_relevant = true, -- both
+					include_dispellable = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+			},
+			["2"] = {
+				auratracker_enabled = false,
+				HELPFUL = {
+					include_all = false, -- both, overrides everything else
+					include_stealable = true, -- hostile
+					highlight_stealable = true, -- hostile
+					include_boss = true, -- hostile
+					include_castable = true, -- friendly
+					include_relevant = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+				HARMFUL = {
+					include_all = false, -- both, overrides everything else
+					include_relevant = true, -- both
+					include_dispellable = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+			},
+			["3"] = {
+				auratracker_enabled = false,
+				HELPFUL = {
+					include_all = false, -- both, overrides everything else
+					include_stealable = true, -- hostile
+					highlight_stealable = true, -- hostile
+					include_boss = true, -- hostile
+					include_castable = true, -- friendly
+					include_relevant = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+				HARMFUL = {
+					include_all = false, -- both, overrides everything else
+					include_relevant = true, -- both
+					include_dispellable = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+			},
+			["4"] = {
+				auratracker_enabled = false,
+				HELPFUL = {
+					include_all = false, -- both, overrides everything else
+					include_stealable = true, -- hostile
+					highlight_stealable = true, -- hostile
+					include_boss = true, -- hostile
+					include_castable = true, -- friendly
+					include_relevant = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+				HARMFUL = {
+					include_all = false, -- both, overrides everything else
+					include_relevant = true, -- both
+					include_dispellable = true, -- friendly
+					auralist = {}, -- used by auratracker
+				},
+			},
+		},
 	},
 	targettarget = {
 		enabled = true,
