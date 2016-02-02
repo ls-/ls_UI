@@ -5,6 +5,19 @@ ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 E.width, E.height = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
 E.playerclass = select(2, UnitClass("player"))
 
+function E:PLAYER_ENTERING_WORLD()
+	E.playerspec = tostring(GetSpecialization() or 0)
+
+	E:UnregisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+function E:PLAYER_SPECIALIZATION_CHANGED()
+	E.playerspec = tostring(GetSpecialization() or 0)
+end
+
+E:RegisterEvent("PLAYER_ENTERING_WORLD")
+E:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+
 function E:CreateFontString(parent, size, name, shadow, outline, wrap, ...)
 	local r, g, b, a = ...
 
