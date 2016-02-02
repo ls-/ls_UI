@@ -51,4 +51,6 @@ function B:HandleVehicleExitButton()
 	button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 
 	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
+
+	MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
 end
