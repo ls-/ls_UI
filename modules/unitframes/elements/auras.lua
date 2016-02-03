@@ -96,89 +96,95 @@ function CustomAuraTrackerFilter(frame, aura, unit, index, filter)
 end
 
 function CustomBuffFilter(frame, unit, buff, ...)
-	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura = ...
+	local name, _, _, _, _, _, _, caster, isStealable, _, spellID, _, isBossAura = ...
 	local config = frame.aura_config[E.playerspec].HELPFUL
 	local filter = buff.filter
 	local isMine = buff.isPlayer or caster == "pet"
-	local canAssist = UnitCanAssist("player", unit)
+	local isFriendlyUnit = not UnitCanAttack("player", unit)
 
-	if canAssist then
-		if config.include_castable or config.include_relevant then
-			if config.include_castable then
-				if UnitAura(unit, name, nil, filter.."|RAID") then
-					return true
-				end
-			end
+	print(name, filter)
 
-			if config.include_relevant then
-				if isBossAura then
-					return true
-				end
-
-				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-
-				if hasCustom and showForMySpec then
-					return true
-				end
-			end
-
-			return false
-		else -- show all
+	if isFriendlyUnit then
+		if config.show_all_friendly_buffs then
 			return true
 		end
+
+		if config.include_relevant then
+			if UnitAura(unit, name, nil, filter.."|RAID") then
+				return true
+			end
+
+			if isBossAura then
+				return true
+			end
+
+			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+
+			if hasCustom and showForMySpec then
+				return true
+			end
+		end
+
+		return false
 	else
-		if config.include_relevant or config.include_stealable then
-			if config.include_relevant then
-				if isBossAura then
-					return true
-				end
-			end
-
-			if config.include_stealable then
-				if isStealable then
-					return true
-				end
-			end
-
-			return false
-		else -- show all
+		if config.show_all_enemy_buffs then
 			return true
 		end
+
+		if config.include_relevant then
+			if isBossAura then
+				return true
+			end
+		end
+
+		if config.include_stealable then
+			if isStealable then
+				return true
+			end
+		end
+
+		return false
 	end
 end
 
 function CustomDebuffFilter(frame, unit, debuff, ...)
-	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura = ...
+	local name, _, _, _, dtype, _, _, caster, _, _, spellID, _, isBossAura = ...
 	local config = frame.aura_config[E.playerspec].HARMFUL
 	local filter = debuff.filter
 	local isMine = debuff.isPlayer or caster == "pet"
-	local canAssist = UnitCanAssist("player", unit)
+	local isFriendlyUnit = not UnitCanAttack("player", unit)
 
-	if canAssist then
-		if config.include_dispellable or config.include_relevant then
-			if config.include_dispellable then
-				if UnitAura(unit, name, nil, filter.."|RAID") then
-					return true
-				end
-			end
+	print(name, filter)
 
-			if config.include_relevant then
-				if isMine or isBossAura then
-					return true
-				end
-
-				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-
-				if hasCustom and showForMySpec then
-					return true
-				end
-			end
-
-			return false
-		else -- show all
+	if isFriendlyUnit then
+		if config.show_all_friendly_debuffs then
 			return true
 		end
+
+		if config.include_dispellable then
+			if UnitAura(unit, name, nil, filter.."|RAID") then
+				return true
+			end
+		end
+
+		if config.include_relevant then
+			if isMine or isBossAura then
+				return true
+			end
+
+			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+
+			if hasCustom and showForMySpec then
+				return true
+			end
+		end
+
+		return false
 	else
+		if config.show_all_enemy_debuffs then
+			return true
+		end
+
 		if config.include_relevant then
 			if SpellIsAlwaysShown(spellID) then
 				return true
@@ -194,10 +200,9 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 				return true
 			end
 
-			return false
-		else -- show all
-			return true
 		end
+
+		return false
 	end
 end
 
@@ -220,7 +225,6 @@ function UF:CreateBuffs(parent, coords, count)
 	if parent.unit == "target" then
 		frame.aura_config = C.units.target.auras
 
-		-- frame.UpdateIcon = UpdateIconOverride
 		frame.CustomFilter = CustomBuffFilter
 	end
 
@@ -244,7 +248,6 @@ function UF:CreateDebuffs(parent, coords, count)
 	if parent.unit == "target" then
 		frame.aura_config = C.units.target.auras
 
-		-- frame.UpdateIcon = UpdateIconOverride
 		frame.CustomFilter = CustomDebuffFilter
 	end
 
