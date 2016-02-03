@@ -51,6 +51,9 @@ local function CreateAuraIcon(frame, index)
 
 	local overlay = button:CreateTexture(nil, "OVERLAY")
 	overlay:Hide()
+    overlay.Hide = SetVertexColorOverride
+    overlay.SetVertexColor = SetVertexColorOverride
+    overlay.Show = function() return end
 	button.overlay = overlay
 
 	local stealable = _G[button:GetName().."Cover"]:CreateTexture(nil, "OVERLAY", nil, 2)
@@ -92,54 +95,40 @@ function CustomAuraTrackerFilter(frame, aura, unit, index, filter)
 	local name, rank, texture, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura, isCastByPlayer = UnitAura(unit, index, filter)
 end
 
-function CustomBuffFilter(frame, buff, unit, index, filter)
+function CustomBuffFilter(frame, unit, buff, ...)
+	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura = ...
 	local config = frame.aura_config[E.playerspec].HELPFUL
-	local isMine = buff.isPlayer
+	local filter = buff.filter
+	local isMine = buff.isPlayer or caster == "pet"
 	local canAssist = UnitCanAssist("player", unit)
 
 	if canAssist then
-		if config.include_all then
-			local name = UnitAura(unit, index, "HELPFUL")
-
-			if name then
-				return true
+		if config.include_castable or config.include_relevant then
+			if config.include_castable then
+				if UnitAura(unit, name, nil, filter.."|RAID") then
+					return true
+				end
 			end
-		end
 
-		if config.include_castable then
-			local name = UnitAura(unit, index, "HELPFUL|RAID")
-
-			if name then
-				return true
-			end
-		end
-
-		if config.include_relevant then
-			local name, rank, texture, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura, isCastByPlayer = UnitAura(unit, index, "HELPFUL")
-
-			if name then
-				if isMine or isBossAura then
+			if config.include_relevant then
+				if isBossAura then
 					return true
 				end
 
-				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT");
+				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
 				if hasCustom and showForMySpec then
 					return true
 				end
 			end
+
+			return false
+		else -- show all
+			return true
 		end
-
-		return false
 	else
-		local name, _, _, _, _, _, _, _, isStealable, _, _, _, isBossAura = UnitAura(unit, index, "HELPFUL")
-
-		if name then
-			if config.include_all then
-				return true
-			end
-
-			if config.include_boss then
+		if config.include_relevant or config.include_stealable then
+			if config.include_relevant then
 				if isBossAura then
 					return true
 				end
@@ -150,38 +139,30 @@ function CustomBuffFilter(frame, buff, unit, index, filter)
 					return true
 				end
 			end
-		end
 
-		return false
+			return false
+		else -- show all
+			return true
+		end
 	end
 end
 
-function CustomDebuffFilter(frame, debuff, unit, index, filter)
+function CustomDebuffFilter(frame, unit, debuff, ...)
+	local name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura = ...
 	local config = frame.aura_config[E.playerspec].HARMFUL
-	local isMine = debuff.isPlayer
+	local filter = debuff.filter
+	local isMine = debuff.isPlayer or caster == "pet"
 	local canAssist = UnitCanAssist("player", unit)
 
 	if canAssist then
-		if config.include_all then
-			local name = UnitAura(unit, index, "HARMFUL")
-
-			if name then
-				return true
+		if config.include_dispellable or config.include_relevant then
+			if config.include_dispellable then
+				if UnitAura(unit, name, nil, filter.."|RAID") then
+					return true
+				end
 			end
-		end
 
-		if config.include_dispellable then
-			local name = UnitAura(unit, index, "HARMFUL|RAID")
-
-			if name then
-				return true
-			end
-		end
-
-		if config.include_relevant then
-			local name, _, _, _, _, _, _, _, _, _, spellID, _, isBossAura = UnitAura(unit, index, "HARMFUL")
-
-			if name then
+			if config.include_relevant then
 				if isMine or isBossAura then
 					return true
 				end
@@ -192,96 +173,30 @@ function CustomDebuffFilter(frame, debuff, unit, index, filter)
 					return true
 				end
 			end
+
+			return false
+		else -- show all
+			return true
 		end
-
-		return false
 	else
-		local name, _, _, _, _, _, _, _, _, _, spellID, _, isBossAura = UnitAura(unit, index, "HARMFUL")
-
-		if name then
-			if config.include_all then
+		if config.include_relevant then
+			if SpellIsAlwaysShown(spellID) then
 				return true
 			end
 
-			if config.include_relevant then
-				if SpellIsAlwaysShown(spellID) then
-					return true
-				end
-
-				if isMine or isBossAura then
-					return true
-				end
-
-				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
-
-				if hasCustom and showForMySpec then
-					return true
-				end
-			end
-		end
-
-		return false
-	end
-end
-
-local function UpdateIconOverride(unit, icons, index, offset, filter, isDebuff, visible)
-	local name, _, texture, count, dtype, duration, timeLeft, caster, isStealable = UnitAura(unit, index, filter)
-	if name then
-		local n = visible + offset + 1
-		local icon = icons[n]
-		if not icon then
-			local prev = icons.createdIcons
-			icon = CreateAuraIcon(icons, n)
-
-			if prev == icons.createdIcons then
-				table.insert(icons, icon)
-				icons.createdIcons = icons.createdIcons + 1
-			end
-		end
-
-		icon.owner = caster
-		icon.filter = filter
-		icon.isDebuff = isDebuff
-		icon.isPlayer = caster == "player" or caster == "vehicle" or caster == "pet"
-
-		local show = icons.CustomFilter(icons, icon, unit, index, filter)
-		if show then
-			local cd = icon.cd
-			if cd and not icons.disableCooldown then
-				if(duration and duration > 0) then
-					CooldownFrame_SetTimer(cd, timeLeft - duration, duration, true)
-
-					cd:Show()
-				else
-					cd:Hide()
-				end
+			if isMine or isBossAura then
+				return true
 			end
 
-			if(isDebuff and icons.showDebuffType) or (not isDebuff and icons.showBuffType) or icons.showType then
-				local color = DebuffTypeColor[dtype] or DebuffTypeColor.none
+			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
 
-				icon:SetBorderColor(color.r, color.g, color.b)
+			if hasCustom and showForMySpec then
+				return true
 			end
 
-			if not isDebuff and isStealable and icons.showStealableBuffs and not UnitIsUnit("player", unit) then
-				icon.stealable:Show()
-			else
-				icon.stealable:Hide()
-			end
-
-			icon.icon:SetTexture(texture)
-			icon.count:SetText((count > 1 and count))
-
-			local size = icons.size or 16
-			icon:SetSize(size, size)
-
-			icon:EnableMouse(true)
-			icon:SetID(index)
-			icon:Show()
-
-			return 1
-		else
-			return 0
+			return false
+		else -- show all
+			return true
 		end
 	end
 end
@@ -300,10 +215,12 @@ function UF:CreateBuffs(parent, coords, count)
 	frame["spacing-y"] = 3
 	frame.showStealableBuffs = true
 
+    frame.CreateIcon = CreateAuraIcon
+
 	if parent.unit == "target" then
 		frame.aura_config = C.units.target.auras
 
-		frame.UpdateIcon = UpdateIconOverride
+		-- frame.UpdateIcon = UpdateIconOverride
 		frame.CustomFilter = CustomBuffFilter
 	end
 
@@ -322,10 +239,12 @@ function UF:CreateDebuffs(parent, coords, count)
 	frame["spacing-x"] = 3
 	frame["spacing-y"] = 3
 
+    frame.CreateIcon = CreateAuraIcon
+
 	if parent.unit == "target" then
 		frame.aura_config = C.units.target.auras
 
-		frame.UpdateIcon = UpdateIconOverride
+		-- frame.UpdateIcon = UpdateIconOverride
 		frame.CustomFilter = CustomDebuffFilter
 	end
 
