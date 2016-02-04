@@ -19,89 +19,90 @@ D["units"] = {
 		castbar = true,
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 		auras = {
+			enabled = true,
 			["0"] = { -- for level < 10 and buffer
-				auratracker_enabled = false,
 				HELPFUL = {
-					show_all_enemy_buffs = false,
-					show_all_friendly_buffs = false,
-					include_relevant = true, -- both
-					include_stealable = true, -- hostile
-					auralist = {}, -- used by auratracker
+					include_all_enemy_buffs = false,
+					include_stealable = true,
+					include_all_friendly_buffs = false,
+					include_castable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 				HARMFUL = {
 					show_all_enemy_debuffs = false,
 					show_all_friendly_debuffs = false,
-					include_relevant = true, -- both
-					include_dispellable = true, -- friendly
-					auralist = {}, -- used by auratracker
+					include_dispellable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 			},
 			["1"] = {
-				auratracker_enabled = false,
 				HELPFUL = {
-					show_all_enemy_buffs = false,
-					show_all_friendly_buffs = false,
-					include_relevant = true, -- both
-					include_stealable = true, -- hostile
-					auralist = {}, -- used by auratracker
+					include_all_enemy_buffs = false,
+					include_stealable = true,
+					include_all_friendly_buffs = false,
+					include_castable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 				HARMFUL = {
 					show_all_enemy_debuffs = false,
 					show_all_friendly_debuffs = false,
-					include_relevant = true, -- both
-					include_dispellable = true, -- friendly
-					auralist = {}, -- used by auratracker
+					include_dispellable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 			},
 			["2"] = {
-				auratracker_enabled = false,
 				HELPFUL = {
-					show_all_enemy_buffs = false,
-					show_all_friendly_buffs = false,
-					include_relevant = true, -- both
-					include_stealable = true, -- hostile
-					auralist = {}, -- used by auratracker
+					include_all_enemy_buffs = false,
+					include_stealable = true,
+					include_all_friendly_buffs = false,
+					include_castable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 				HARMFUL = {
 					show_all_enemy_debuffs = false,
 					show_all_friendly_debuffs = false,
-					include_relevant = true, -- both
-					include_dispellable = true, -- friendly
-					auralist = {}, -- used by auratracker
+					include_dispellable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 			},
 			["3"] = {
-				auratracker_enabled = false,
 				HELPFUL = {
-					show_all_enemy_buffs = false,
-					show_all_friendly_buffs = false,
-					include_relevant = true, -- both
-					include_stealable = true, -- hostile
-					auralist = {}, -- used by auratracker
+					include_all_enemy_buffs = false,
+					include_stealable = true,
+					include_all_friendly_buffs = false,
+					include_castable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 				HARMFUL = {
 					show_all_enemy_debuffs = false,
 					show_all_friendly_debuffs = false,
-					include_relevant = true, -- both
-					include_dispellable = true, -- friendly
-					auralist = {}, -- used by auratracker
+					include_dispellable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 			},
 			["4"] = {
-				auratracker_enabled = false,
 				HELPFUL = {
-					show_all_enemy_buffs = false,
-					show_all_friendly_buffs = false,
-					include_relevant = true, -- both
-					include_stealable = true, -- hostile
-					auralist = {}, -- used by auratracker
+					include_all_enemy_buffs = false,
+					include_stealable = true,
+					include_all_friendly_buffs = false,
+					include_castable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 				HARMFUL = {
 					show_all_enemy_debuffs = false,
 					show_all_friendly_debuffs = false,
-					include_relevant = true, -- both
-					include_dispellable = true, -- friendly
-					auralist = {}, -- used by auratracker
+					include_dispellable = true,
+					include_relevant = true,
+					auralist = {},
 				},
 			},
 		},

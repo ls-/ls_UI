@@ -2,6 +2,8 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
 
+local tcontains = tContains
+
 local UnitCanAssist, UnitCanAttack, GetCVar = UnitCanAssist, UnitCanAttack, GetCVar
 
 local function SetVertexColorOverride(self, r, g, b)
@@ -91,60 +93,64 @@ end
 -- NEW --
 ---------
 
-function CustomAuraTrackerFilter(frame, aura, unit, index, filter)
-	local name, rank, texture, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossAura, isCastByPlayer = UnitAura(unit, index, filter)
-end
-
 function CustomBuffFilter(frame, unit, buff, ...)
-	local name, _, _, _, _, _, _, caster, isStealable, _, spellID, _, isBossAura = ...
+	local name, _, _, _, _, _, _, caster, isStealable, _, spellID, canApplyAura, isBossAura = ...
 	local config = frame.aura_config[E.playerspec].HELPFUL
 	local filter = buff.filter
 	local isMine = buff.isPlayer or caster == "pet"
-	local isFriendlyUnit = not UnitCanAttack("player", unit)
 
-	print(name, filter)
+	if isBossAura then
+		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
+		return true
+	elseif tcontains(config.auralist, spellID) then
+		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
+		return true
+	elseif isMine and canApplyAura then
+		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526YOURS|r")
+		return true
+	end
 
-	if isFriendlyUnit then
-		if config.show_all_friendly_buffs then
+	if UnitCanAttack("player", unit) or not UnitCanAssist("player", unit) then -- hostile
+		if config.include_all_enemy_buffs then
 			return true
-		end
-
-		if config.include_relevant then
-			if UnitAura(unit, name, nil, filter.."|RAID") then
-				return true
-			end
-
-			if isBossAura then
-				return true
-			end
-
-			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-
-			if hasCustom and showForMySpec then
-				return true
-			end
-		end
-
-		return false
-	else
-		if config.show_all_enemy_buffs then
-			return true
-		end
-
-		if config.include_relevant then
-			if isBossAura then
-				return true
-			end
 		end
 
 		if config.include_stealable then
 			if isStealable then
+				-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe52626HOSTILE STEALABLE|r")
 				return true
 			end
 		end
 
-		return false
+		-- ALWAYS shown for hostile NPCs
+		if not UnitPlayerControlled(unit) and SpellIsSelfBuff(spellID) then
+			-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC SELFCAST|r")
+			return true
+		end
+	else -- friendly
+		if config.include_all_friendly_buffs then
+			return true
+		end
+
+		if config.include_castable then
+			if UnitAura(unit, name, nil, filter.."|RAID") then
+				-- print("|cff26a526"..filter.."|r", name, spellID, "|cff26a526FRIENDLY CASTABLE|r")
+				return true
+			end
+		end
+
+		if config.include_relevant then
+			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+
+			if hasCustom and showForMySpec then
+				-- print("|cff26a526"..filter.."|r", name, spellID, "|cff26a526FRIENDLY RELEVANT|r")
+				return true
+			end
+		end
 	end
+
+	-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526JUNK|r")
+	return false
 end
 
 function CustomDebuffFilter(frame, unit, debuff, ...)
@@ -152,58 +158,62 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 	local config = frame.aura_config[E.playerspec].HARMFUL
 	local filter = debuff.filter
 	local isMine = debuff.isPlayer or caster == "pet"
-	local isFriendlyUnit = not UnitCanAttack("player", unit)
 
-	print(name, filter)
+	-- ALWAYS shown
+	if isBossAura then
+		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
+		return true
+	elseif tcontains(config.auralist, spellID) then
+		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
+		return true
+	elseif isMine then
+		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526YOURS|r")
+		return true
+	end
 
-	if isFriendlyUnit then
-		if config.show_all_friendly_debuffs then
-			return true
-		end
-
-		if config.include_dispellable then
-			if UnitAura(unit, name, nil, filter.."|RAID") then
-				return true
-			end
-		end
-
-		if config.include_relevant then
-			if isMine or isBossAura then
-				return true
-			end
-
-			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-
-			if hasCustom and showForMySpec then
-				return true
-			end
-		end
-
-		return false
-	else
+	-- OPTIONAL stuff
+	if UnitCanAttack("player", unit) or not UnitCanAssist("player", unit) then -- hostile
 		if config.show_all_enemy_debuffs then
 			return true
 		end
 
 		if config.include_relevant then
 			if SpellIsAlwaysShown(spellID) then
-				return true
-			end
-
-			if isMine or isBossAura then
+				-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (ALWAYS)|r")
 				return true
 			end
 
 			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
 
 			if hasCustom and showForMySpec then
+				-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (MY SPEC)|r")
 				return true
 			end
-
+		end
+	else -- friendly
+		if config.show_all_friendly_debuffs then
+			return true
 		end
 
-		return false
+		if config.include_dispellable then
+			if UnitAura(unit, name, nil, filter.."|RAID") then
+				-- print("|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY DISPELLABLE|r")
+				return true
+			end
+		end
+
+		if config.include_relevant then
+			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+
+			if hasCustom and showForMySpec then
+				-- print("|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY RELEVANT (MY SPEC)|r")
+				return true
+			end
+		end
 	end
+
+	-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526JUNK|r")
+	return false
 end
 
 function UF:CreateBuffs(parent, coords, count)
