@@ -106,9 +106,14 @@ function CustomBuffFilter(frame, unit, buff, ...)
 	if isBossAura then
 		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
 		return true
-	elseif config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], playerSpec) then
-		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
-		return true
+	elseif config.auralist[spellID] then
+		if E:IsFilterApplied(config.auralist[spellID], playerSpec) then
+			-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526FROM WHITELIST|r")
+			return true
+		else
+			-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526FROM BLACKLIST|r")
+			return false
+		end
 	elseif isMine and canApplyAura then
 		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526YOURS|r")
 		return true
@@ -168,9 +173,14 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 	if isBossAura then
 		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
 		return true
-	elseif config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], playerSpec) then
-		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
-		return true
+	elseif config.auralist[spellID] then
+		if E:IsFilterApplied(config.auralist[spellID], playerSpec) then
+			-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM WHITELIST|r")
+			return true
+		else
+			-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM BLACKLIST|r")
+			return false
+		end
 	elseif isMine then
 		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526YOURS|r")
 		return true
