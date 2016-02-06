@@ -65,7 +65,7 @@ function E:ApplySettings(panel, table)
 		else
 			if panel[k] then
 				-- print(k, v, panel[k]:GetValue())
-				table[k] = panel[k]:GetValue()
+				table[k] = panel[k]:GetValue(v)
 			end
 		end
 	end
