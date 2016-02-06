@@ -4,6 +4,15 @@ local UF = E:GetModule("UnitFrames")
 
 local tcontains = tContains
 
+local PLAYERSPECS_FILTERS = {
+	-- [-1] = 0x00000000, -- none
+	[0] = 0x0000000f, -- all
+	[1] = 0x00000001, -- 1st
+	[2] = 0x00000002, -- 2nd
+	[3] = 0x00000004, -- 3rd
+	[4] = 0x00000008, -- 4th
+}
+
 local UnitCanAssist, UnitCanAttack, GetCVar = UnitCanAssist, UnitCanAttack, GetCVar
 
 local function SetVertexColorOverride(self, r, g, b)
@@ -46,6 +55,9 @@ local function CreateAuraIcon(frame, index)
 
 	if button.cd.SetTimerTextHeight then
 		button.cd:SetTimerTextHeight(10)
+
+		button.cd.Timer:ClearAllPoints()
+		button.cd.Timer:SetPoint("BOTTOM")
 	end
 
 	button:SetPushedTexture("")
@@ -95,14 +107,14 @@ end
 
 function CustomBuffFilter(frame, unit, buff, ...)
 	local name, _, _, _, _, _, _, caster, isStealable, _, spellID, canApplyAura, isBossAura = ...
-	local config = frame.aura_config[E.playerspec].HELPFUL
+	local config = frame.aura_config.HELPFUL
 	local filter = buff.filter
 	local isMine = buff.isPlayer or caster == "pet"
 
 	if isBossAura then
 		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
 		return true
-	elseif tcontains(config.auralist, spellID) then
+	elseif config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 		-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
 		return true
 	elseif isMine and canApplyAura then
@@ -111,11 +123,11 @@ function CustomBuffFilter(frame, unit, buff, ...)
 	end
 
 	if UnitCanAttack("player", unit) or not UnitCanAssist("player", unit) then -- hostile
-		if config.include_all_enemy_buffs then
+		if E:IsFilterApplied(config.include_all_enemy_buffs, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			return true
 		end
 
-		if config.include_stealable then
+		if E:IsFilterApplied(config.include_stealable, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			if isStealable then
 				-- print("|cff26a526"..filter.."|r", name, spellID, "|cffe52626HOSTILE STEALABLE|r")
 				return true
@@ -128,18 +140,18 @@ function CustomBuffFilter(frame, unit, buff, ...)
 			return true
 		end
 	else -- friendly
-		if config.include_all_friendly_buffs then
+		if E:IsFilterApplied(config.include_all_friendly_buffs, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			return true
 		end
 
-		if config.include_castable then
+		if E:IsFilterApplied(config.include_castable, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			if UnitAura(unit, name, nil, filter.."|RAID") then
 				-- print("|cff26a526"..filter.."|r", name, spellID, "|cff26a526FRIENDLY CASTABLE|r")
 				return true
 			end
 		end
 
-		if config.include_relevant then
+		if E:IsFilterApplied(config.include_relevant, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
 			if hasCustom and showForMySpec then
@@ -155,7 +167,7 @@ end
 
 function CustomDebuffFilter(frame, unit, debuff, ...)
 	local name, _, _, _, dtype, _, _, caster, _, _, spellID, _, isBossAura = ...
-	local config = frame.aura_config[E.playerspec].HARMFUL
+	local config = frame.aura_config.HARMFUL
 	local filter = debuff.filter
 	local isMine = debuff.isPlayer or caster == "pet"
 
@@ -163,7 +175,7 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 	if isBossAura then
 		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
 		return true
-	elseif tcontains(config.auralist, spellID) then
+	elseif config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 		-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM AURALIST|r")
 		return true
 	elseif isMine then
@@ -173,11 +185,11 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 
 	-- OPTIONAL stuff
 	if UnitCanAttack("player", unit) or not UnitCanAssist("player", unit) then -- hostile
-		if config.show_all_enemy_debuffs then
+		if E:IsFilterApplied(config.show_all_enemy_debuffs, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			return true
 		end
 
-		if config.include_relevant then
+		if E:IsFilterApplied(config.include_relevant, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			if SpellIsAlwaysShown(spellID) then
 				-- print("|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (ALWAYS)|r")
 				return true
@@ -191,18 +203,18 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 			end
 		end
 	else -- friendly
-		if config.show_all_friendly_debuffs then
+		if E:IsFilterApplied(config.show_all_friendly_debuffs, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			return true
 		end
 
-		if config.include_dispellable then
+		if E:IsFilterApplied(config.include_dispellable, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			if UnitAura(unit, name, nil, filter.."|RAID") then
 				-- print("|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY DISPELLABLE|r")
 				return true
 			end
 		end
 
-		if config.include_relevant then
+		if E:IsFilterApplied(config.include_relevant, PLAYERSPECS_FILTERS[E.playerspec or 0]) then
 			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
 			if hasCustom and showForMySpec then
@@ -217,6 +229,12 @@ function CustomDebuffFilter(frame, unit, debuff, ...)
 end
 
 function UF:CreateBuffs(parent, coords, count)
+	if parent.unit ~= "target" then return end
+
+	local config = C.units[parent.unit].auras
+
+	if not E:IsFilterApplied(config.enabled, PLAYERSPECS_FILTERS[E.playerspec or 0]) then return end
+
 	local rows = E:Round(count / 4)
 	local frame = CreateFrame("Frame", "$parentBuffs", parent)
 	frame:SetPoint(unpack(coords))
@@ -230,18 +248,20 @@ function UF:CreateBuffs(parent, coords, count)
 	frame["spacing-y"] = 3
 	frame.showStealableBuffs = true
 
-    frame.CreateIcon = CreateAuraIcon
-
-	if parent.unit == "target" then
-		frame.aura_config = C.units.target.auras
-
-		frame.CustomFilter = CustomBuffFilter
-	end
+	frame.aura_config = config
+	frame.CreateIcon = CreateAuraIcon
+	frame.CustomFilter = CustomBuffFilter
 
 	return frame
 end
 
 function UF:CreateDebuffs(parent, coords, count)
+	if parent.unit ~= "target" then return end
+
+	local config = C.units[parent.unit].auras
+
+	if not E:IsFilterApplied(config.enabled, PLAYERSPECS_FILTERS[E.playerspec or 0]) then return end
+
 	local rows = E:Round(count / 4)
 	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
 	frame:SetPoint(unpack(coords))
@@ -253,13 +273,9 @@ function UF:CreateDebuffs(parent, coords, count)
 	frame["spacing-x"] = 3
 	frame["spacing-y"] = 3
 
-    frame.CreateIcon = CreateAuraIcon
-
-	if parent.unit == "target" then
-		frame.aura_config = C.units.target.auras
-
-		frame.CustomFilter = CustomDebuffFilter
-	end
+	frame.aura_config = config
+	frame.CreateIcon = CreateAuraIcon
+	frame.CustomFilter = CustomDebuffFilter
 
 	return frame
 end
