@@ -9,15 +9,6 @@ local _, playerClass = UnitClass("player")
 local playerSpec = GetSpecialization() or 0
 local playerRole
 
-local PLAYER_SPEC_FLAGS = {
-	-- [-1] = 0x00000000, -- none
-	[0] = 0x0000000f, -- all
-	[1] = 0x00000001, -- 1st
-	[2] = 0x00000002, -- 2nd
-	[3] = 0x00000004, -- 3rd
-	[4] = 0x00000008, -- 4th
-}
-
 function E:GetCreatureDifficultyColor(level)
 	local color = GetCreatureDifficultyColor(level > 0 and level or 199)
 
@@ -109,7 +100,7 @@ function E:GetPlayerSpec()
 end
 
 function E:GetPlayerSpecFlag()
-	return PLAYER_SPEC_FLAGS[playerSpec]
+	return M.PLAYER_SPEC_FLAGS[playerSpec]
 end
 
 function E:GetPlayerRole(spec)

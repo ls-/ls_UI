@@ -201,3 +201,12 @@ local textures = {
 }
 
 M.textures = textures
+
+M.PLAYER_SPEC_FLAGS = {
+	-- [-1] = 0x00000000, -- none
+	[0] = 0x0000000f, -- all
+	[1] = 0x00000001, -- 1st
+	[2] = 0x00000002, -- 2nd
+	[3] = 0x00000004, -- 3rd
+	[4] = 0x00000008, -- 4th
+}
