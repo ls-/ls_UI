@@ -118,13 +118,9 @@ function E:IsFilterApplied(mask, filter)
 end
 
 function E:AddFilterToMask(mask, filter)
-	mask = bitor(mask, filter)
-
-	return mask
+	return bitor(mask, filter)
 end
 
 function E:DeleteFilterFromMask(mask, filter)
-	mask = bitand(mask, bitnot(filter))
-
-	return mask
+	return bitand(mask, bitnot(filter))
 end
