@@ -7,6 +7,99 @@ local UIDropDownMenu_SetSelectedValue, UIDropDownMenu_GetSelectedValue, UIDropDo
 
 local Panels = {}
 
+local function MaskDial_OnShow(self)
+	for i = 1, 4 do
+		if i > GetNumSpecializations() then
+			self[i]:Hide()
+			self[i] = nil
+		end
+	end
+
+	self:SetSize(#self * 14 + (#self - 1) * 2, 14)
+	self:SetScript("OnShow", nil)
+end
+
+local function MaskDial_GetMask(self)
+	local mask = 0x00000000
+
+	for i = 1, #self do
+		local button = self[i]
+
+		if button:IsPositive() then
+			mask = E:AddFilterToMask(mask, button.value)
+		end
+	end
+
+	return mask
+end
+
+local function MaskDial_SetMask(self, mask)
+	for i = 1, #self do
+		local button = self[i]
+
+		if E:IsFilterApplied(mask, M.PLAYER_SPEC_FLAGS[i]) then
+			self:SetButtonState("NORMAL", true) -- positive
+		else
+			self:SetButtonState("PUSHED", true) -- negative
+		end
+	end
+end
+
+local function MaskDialIndicator_OnMouseDown(self)
+	if self:GetButtonState() == "NORMAL" then
+		self:SetButtonState("PUSHED", true)
+	else
+		self:SetButtonState("NORMAL", true)
+	end
+end
+
+local function MaskDialIndicator_OnEnter(self)
+	local _, name = GetSpecializationInfo(self:GetID())
+	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
+	GameTooltip:AddLine(name)
+	GameTooltip:Show()
+end
+
+local function MaskDialIndicator_OnLeave(self)
+	GameTooltip:Hide()
+end
+
+local function MaskDialIndicator_IsPositive(self)
+	return self:GetButtonState() == "NORMAL" and true or false
+end
+
+function CFG:CreateMaskDial(parent, name)
+	local maskDial = CreateFrame("Frame", "$parent"..name, parent)
+	maskDial:SetSize(56, 14)
+	maskDial:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -4)
+	maskDial:SetScript("OnShow", MaskDial_OnShow)
+	maskDial.GetMask = MaskDial_GetMask
+
+	for i = 1, 4 do
+		local button = CreateFrame("Button", "$parentSpecIndicator"..i, maskDial)
+		button:SetSize(14, 14)
+		button:SetID(i)
+		button:SetNormalTexture("Interface\\Store\\Services")
+		button:GetNormalTexture():SetTexCoord(0.02148438, 0.04003906, 0.08105469, 0.09960938)
+		button:SetPushedTexture("Interface\\Store\\Services")
+		button:GetPushedTexture():SetTexCoord(0.00097656, 0.01953125, 0.08105469, 0.09960938)
+		button:SetScript("OnMouseDown", MaskDialIndicator_OnMouseDown)
+		button:SetScript("OnEnter", MaskDialIndicator_OnEnter)
+		button:SetScript("OnLeave", MaskDialIndicator_OnLeave)
+		button.IsPositive = MaskDialIndicator_IsPositive
+		button.value = M.PLAYER_SPEC_FLAGS[i]
+		maskDial[i] = button
+
+		if i == 1 then
+			button:SetPoint("LEFT", 0, 0)
+		else
+			button:SetPoint("LEFT", maskDial[i - 1], "RIGHT", 2, 0)
+		end
+	end
+
+	return maskDial
+end
+
 function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true, nil, true)
 	object:SetJustifyH("LEFT")
