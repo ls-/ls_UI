@@ -115,10 +115,23 @@ local function LSUFAuraList_Update(frame)
 end
 
 local function AuraList_AddAura(self, ...)
+	local log = panel.StatusLog
 	local auraList = panel.AuraList
 	local spellID = auraList.AddEditBox:GetText()
+	local name = GetSpellInfo(spellID)
 
-	print(auraList.MaskDial:GetMask())
+	if name then
+		if auraList.config[spellID] then
+			log:SetText("HurrDurr! Already in the list!")
+		else
+			auraList.config[spellID] = auraList.MaskDial:GetMask()
+			auraList:Update()
+
+			auraList.AddEditBox:SetText("")
+
+			log:SetText("Success! Added aura to the list!")
+		end
+	end
 end
 
 local function AuraListEditBox_OnTextChanged(self, isUserInput)
@@ -161,8 +174,32 @@ local function AuraButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
+local function UnitOptions_Refresh(oldIndex, newIndex)
+	local oldConfig = C.units[oldIndex].auras
+	local settings = panel.settings.units[oldIndex].auras
+
+	-- saving old options here
+	-- E:ApplySettings(settings, oldConfig)
+
+	wipe(settings)
+
+	activeConfig = C.units[newIndex].auras
+	settings = panel.settings.units[newIndex].auras
+
+	-- loading new options here
+	-- E:FetchSettings(settings, activeConfig)
+
+	panel.AuraList:Update()
+	panel.UnitSelector:RefreshValue()
+	panel.UnitSelector.Indicator:SetMask(activeConfig.enabled)
+end
+
 local function UnitSelectorDropDown_OnClick(self)
-	print(self.value)
+	local oldValue = self.owner:GetValue()
+
+	self.owner:SetValue(self.value)
+
+	UnitOptions_Refresh(oldValue, self.value)
 end
 
 local function UnitSelectorDropDown_Initialize(self, ...)
@@ -174,16 +211,22 @@ local function UnitSelectorDropDown_Initialize(self, ...)
 	info.owner = self
 	info.checked = nil
 	UIDropDownMenu_AddButton(info)
+
+	info.text = "Focus"
+	info.func = UnitSelectorDropDown_OnClick
+	info.value = "focus"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
 end
 
 local function UFAurasConfigPanel_OnShow(self)
 	self.AuraList:Update()
-
-	self.UnitSelector.Indicator:SetMask(C.units.target.auras.enabled)
+	self.UnitSelector.Indicator:SetMask(activeConfig.enabled)
 end
 
 local function UnitDropDownMaskDialIndicator_OnMouseUp(self)
-	C.units.target.auras.enabled = self:GetParent():GetMask()
+	activeConfig.enabled = self:GetParent():GetMask()
 end
 
 local function AuraButtonMaskDialIndicator_OnMouseUp(self)
@@ -191,7 +234,10 @@ local function AuraButtonMaskDialIndicator_OnMouseUp(self)
 end
 
 local function DeleteAuraButton_OnClick(self)
-	print("will delete ID:", self:GetParent().spellID)
+	print("deleted ID:", self:GetParent().spellID)
+
+	panel.AuraList.config[self:GetParent().spellID] = nil
+	panel.AuraList:Update()
 end
 
 local function EditUnitButton_OnClick(self)
@@ -220,6 +266,9 @@ function CFG:UFAuras_Initialize()
 			target = {
 				auras = {},
 			},
+			focus = {
+				auras = {},
+			},
 		},
 	}
 
@@ -231,7 +280,8 @@ function CFG:UFAuras_Initialize()
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
 	local unitSelector = CFG:CreateDropDownMenu(panel, "UnitSelectorDropDown", nil, UnitSelectorDropDown_Initialize)
-	unitSelector:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -18, -6)
+	unitSelector:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -8, -6)
+	UIDropDownMenu_SetWidth(unitSelector, 160)
 	unitSelector:SetValue("target")
 	panel.UnitSelector = unitSelector
 
@@ -245,7 +295,7 @@ function CFG:UFAuras_Initialize()
 
 	local auraList = CreateFrame("ScrollFrame", "LSUFAuraList", panel, "FauxScrollFrameTemplate")
 	auraList:SetSize(210, 330) -- 30 * 10 + 6 * 2 + 9 * 2
-	auraList:SetPoint("TOPLEFT", unitSelector, "BOTTOMLEFT", 18, -40) -- 8 + 32 (default offset + tab height)
+	auraList:SetPoint("TOPLEFT", unitSelector, "BOTTOMLEFT", 8, -40) -- 8 + 32 (default offset + tab height)
 	auraList:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
