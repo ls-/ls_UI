@@ -8,8 +8,9 @@ local FauxScrollFrame_Update, FauxScrollFrame_OnVerticalScroll, FauxScrollFrame_
 local PanelTemplates_SetNumTabs, PanelTemplates_Tab_OnClick, PanelTemplates_SetTab, PanelTemplates_TabResize =
 	PanelTemplates_SetNumTabs, PanelTemplates_Tab_OnClick, PanelTemplates_SetTab, PanelTemplates_TabResize
 
-local sortedAuras = {}
+local panel
 local activeConfig
+local sortedAuras = {}
 
 local function SortAurasByName(a, b)
 	return a.name < b.name or (a.name == b.name and a.id < b.id)
@@ -68,7 +69,7 @@ local function LSUFAuraList_Update(frame)
 
 		bufftable = PrepareSortedAuraList(bufftable)
 
-		for i = 1, 12 do
+		for i = 1, 10 do
 			aura = bufftable[i + offset]
 			button = buttons[i]
 
@@ -79,7 +80,7 @@ local function LSUFAuraList_Update(frame)
 				button.spellID = aura.id
 				button.value = aura.filter
 
-				button.Indicator:Update(aura.filter)
+				button.Indicator:SetMask(aura.filter)
 
 				if (i + offset)%2 == 0 then
 					button.Bg:Show()
@@ -113,6 +114,27 @@ local function LSUFAuraList_Update(frame)
 	end
 end
 
+local function AuraList_AddAura(self, ...)
+	local auraList = panel.AuraList
+	local spellID = auraList.AddEditBox:GetText()
+
+	print(auraList.MaskDial:GetMask())
+end
+
+local function AuraListEditBox_OnTextChanged(self, isUserInput)
+	if isUserInput then
+		local log = panel.StatusLog
+		local spellID = self:GetText()
+		local name = GetSpellInfo(spellID)
+
+		if name then
+			log:SetText("Found spell: \""..name.."\".")
+		else
+			log:SetText("No spell found.")
+		end
+	end
+end
+
 local function LSUFAuraList_OnVerticalScroll(self, offset)
 	FauxScrollFrame_OnVerticalScroll(self, offset, 30, LSUFAuraList_Update)
 end
@@ -125,6 +147,18 @@ local function LSUFAuraListTab_OnClick(self)
 	PanelTemplates_Tab_OnClick(self, auraList)
 
 	LSUFAuraList_Update(auraList)
+end
+
+local function AuraButton_OnEnter(self)
+	if not self.spellID then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip:SetSpellByID(self.spellID)
+	GameTooltip:Show()
+end
+
+local function AuraButton_OnLeave(self)
+	GameTooltip:Hide()
 end
 
 local function UnitSelectorDropDown_OnClick(self)
@@ -144,155 +178,16 @@ end
 
 local function UFAurasConfigPanel_OnShow(self)
 	self.AuraList:Update()
-	self.UnitSelector.Indicator:Update(self.UnitSelector.EditButton:GetValue())
+
+	self.UnitSelector.Indicator:SetMask(C.units.target.auras.enabled)
 end
 
-local function SpecIndicator_OnShow(self)
-	if not self[1] then
-		self:SetSize(GetNumSpecializations() * 13, 13)
-		for i = 1 , GetNumSpecializations() do
-			local indicator = self:CreateTexture(nil, "ARTWORK")
-			indicator:SetTexture("Interface\\Store\\Services")
-			indicator:SetTexCoord(0.02148438, 0.04003906, 0.08105469, 0.09960938)
-			indicator:SetSize(13, 13)
-			self[i] = indicator
-
-			if i == 1 then
-				indicator:SetPoint("LEFT", 0, 0)
-			else
-				indicator:SetPoint("LEFT", self[i - 1], "RIGHT", 0, 0)
-			end
-		end
-	end
+local function UnitDropDownMaskDialIndicator_OnMouseUp(self)
+	C.units.target.auras.enabled = self:GetParent():GetMask()
 end
 
-local function SpecIndicator_Update(self, mask, index)
-	if index and index <= GetNumSpecializations() then
-		if E:IsFilterApplied(mask, M.PLAYER_SPEC_FLAGS[index]) then
-			self[index]:SetTexCoord(0.02148438, 0.04003906, 0.08105469, 0.09960938)
-		else
-			self[index]:SetTexCoord(0.00097656, 0.01953125, 0.08105469, 0.09960938)
-		end
-	else
-		for i = 1 , GetNumSpecializations() do
-			if E:IsFilterApplied(mask, M.PLAYER_SPEC_FLAGS[i]) then
-				self[i]:SetTexCoord(0.02148438, 0.04003906, 0.08105469, 0.09960938)
-			else
-				self[i]:SetTexCoord(0.00097656, 0.01953125, 0.08105469, 0.09960938)
-			end
-		end
-	end
-end
-
-local function IsFilterItemChecked(self)
-	if not self.owner then return end
-
-	return E:IsFilterApplied(self.owner.value or 0, self.arg1)
-end
-
-local function IsAnyFilterItemChecked(self)
-	local button
-	for i = 1, self:GetID() - 1 do
-		button = _G["DropDownList"..UIDROPDOWNMENU_MENU_LEVEL.."Button"..i]
-
-		if IsFilterItemChecked(button) then
-			return false
-		end
-	end
-
-	return true
-end
-
-
-
-local function UnitFilterDropDownMenu_OnClick(self, arg1, arg2, isChecked)
-	if arg1 == 0x00000000 then
-		self.owner.value = arg1
-	else
-		if isChecked then
-			self.owner.value = E:AddFilterToMask(self.owner.value, arg1)
-		else
-			self.owner.value = E:DeleteFilterFromMask(self.owner.value, arg1)
-		end
-	end
-
-	if self.owner.Indicator then
-		self.owner.Indicator:Update(self.owner.value, self:GetID())
-	end
-
-	UIDropDownMenu_Refresh(self.owner.DropDown)
-end
-
-local function UnitFilterDropDown_Initialize(self, ...)
-	local info = UIDropDownMenu_CreateInfo()
-
-	for i = 1 , GetNumSpecializations() do
-		local _, name = GetSpecializationInfo(i)
-		info.text = name
-		info.func = UnitFilterDropDownMenu_OnClick
-		info.arg1 = M.PLAYER_SPEC_FLAGS[i]
-		info.owner = self:GetParent()
-		info.checked = IsFilterItemChecked
-		info.isNotRadio = true;
-		info.keepShownOnClick = true;
-		UIDropDownMenu_AddButton(info)
-	end
-
-	info.text = NONE
-	info.func = UnitFilterDropDownMenu_OnClick
-	info.arg1 = 0x00000000
-	info.owner = self:GetParent()
-	info.checked = IsAnyFilterItemChecked
-	info.isNotRadio = true
-	info.keepShownOnClick = true;
-	UIDropDownMenu_AddButton(info)
-end
-
-local function AuraListFilterDropDown_OnClick(self, arg1, arg2, isChecked)
-	local config = activeConfig[self.owner:GetParent().filter].auralist
-	local mask
-
-	if arg1 == 0x00000000 then
-		mask = arg1
-	else
-		if isChecked then
-			mask = E:AddFilterToMask(config[self.owner.spellID], arg1)
-		else
-			mask = E:DeleteFilterFromMask(config[self.owner.spellID], arg1)
-		end
-	end
-
-	self.owner.value = mask
-	config[self.owner.spellID] = mask
-
-	self.owner.Indicator:Update(mask, self:GetID())
-
-	UIDropDownMenu_Refresh(self.owner:GetParent().DropDown) -- updating dropdown
-end
-
-local function AuraListFilterDropDown_Initialize(self, ...)
-	local info = UIDropDownMenu_CreateInfo()
-
-	for i = 1 , GetNumSpecializations() do
-		local _, name = GetSpecializationInfo(i)
-		info.text = name
-		info.func = AuraListFilterDropDown_OnClick
-		info.arg1 = M.PLAYER_SPEC_FLAGS[i]
-		info.owner = self._owner
-		info.checked = IsFilterItemChecked
-		info.isNotRadio = true;
-		info.keepShownOnClick = true;
-		UIDropDownMenu_AddButton(info)
-	end
-
-	info.text = NONE
-	info.func = AuraListFilterDropDown_OnClick
-	info.arg1 = 0x00000000
-	info.owner = self._owner
-	info.checked = IsAnyFilterItemChecked
-	info.isNotRadio = true
-	info.keepShownOnClick = true;
-	UIDropDownMenu_AddButton(info)
+local function AuraButtonMaskDialIndicator_OnMouseUp(self)
+	panel.AuraList.config[self:GetParent():GetParent().spellID] = self:GetParent():GetMask()
 end
 
 local function DeleteAuraButton_OnClick(self)
@@ -301,18 +196,6 @@ end
 
 local function EditUnitButton_OnClick(self)
 	ToggleDropDownMenu(1, nil, self.DropDown, self)
-end
-
-local function EditAuraButton_OnClick(self)
-	local dropdown = self:GetParent():GetParent().DropDown
-	local oldowner = dropdown._owner
-	dropdown._owner = self:GetParent()
-
-	if oldowner ~= dropdown._owner then
-		HideDropDownMenu(1)
-	end
-
-	ToggleDropDownMenu(1, nil, dropdown, self)
 end
 
 local function SmallButton_OnEnter(self)
@@ -326,7 +209,7 @@ end
 function CFG:UFAuras_Initialize()
 	activeConfig = C.units.target.auras
 
-	local panel = CreateFrame("Frame", "LSUFAurasConfigPanel", InterfaceOptionsFramePanelContainer)
+	panel = CreateFrame("Frame", "LSUFAurasConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "Buffs and Debuffs"
 	panel.parent = "oUF: |cff1a9fc0LS|r"
 	panel:HookScript("OnShow", UFAurasConfigPanel_OnShow)
@@ -352,37 +235,16 @@ function CFG:UFAuras_Initialize()
 	unitSelector:SetValue("target")
 	panel.UnitSelector = unitSelector
 
-	local indicator = CreateFrame("Frame", "editUnitFilterIndicatorButton", unitSelector)
+	local indicator = CFG:CreateMaskDial(unitSelector, "MaskDial")
 	indicator:SetFrameLevel(unitSelector:GetFrameLevel() + 1)
 	indicator:SetPoint("LEFT", unitSelector, "LEFT", 24, 2)
-	indicator.Update = SpecIndicator_Update
-	indicator:SetScript("OnShow", SpecIndicator_OnShow)
+	for i = 1, #indicator do
+		indicator[i]:SetScript("OnMouseUp", UnitDropDownMaskDialIndicator_OnMouseUp)
+	end
 	unitSelector.Indicator = indicator
 
-	local editUnitButton = CreateFrame("Button", "$parentTestFilter", unitSelector)
-	editUnitButton:SetSize(16, 16)
-	editUnitButton:SetPoint("LEFT", unitSelector:GetName().."Right", "RIGHT", -12, 1)
-	editUnitButton:SetScript("OnClick", EditUnitButton_OnClick)
-	editUnitButton:SetScript("OnEnter", SmallButton_OnEnter)
-	editUnitButton:SetScript("OnLeave", SmallButton_OnLeave)
-	editUnitButton.SetValue = function(self, value) self.value = value end
-	editUnitButton.GetValue = function(self, value) return self.value end
-	panel.settings.units.target.auras.enabled = editUnitButton
-	unitSelector.EditButton = editUnitButton
-
-	local icon = editUnitButton:CreateTexture(nil, "ARTWORK")
-	icon:SetTexture("Interface\\WorldMap\\GEAR_64GREY")
-	icon:SetAlpha(0.5)
-	icon:SetAllPoints()
-	editUnitButton.Icon = icon
-
-	local editUnitFilterDropDownButton = CreateFrame("Frame", "LSUFUnitFilterDropDown", editUnitButton, "UIDropDownMenuTemplate")
-	UIDropDownMenu_Initialize(editUnitFilterDropDownButton, UnitFilterDropDown_Initialize, "MENU")
-	UIDropDownMenu_SetAnchor(editUnitFilterDropDownButton, -2, -4, "TOPLEFT", nil, "BOTTOMLEFT")
-	editUnitButton.DropDown = editUnitFilterDropDownButton
-
 	local auraList = CreateFrame("ScrollFrame", "LSUFAuraList", panel, "FauxScrollFrameTemplate")
-	auraList:SetSize(210, 394) -- 30 * 12 + 6 * 2 + 11 * 2
+	auraList:SetSize(210, 330) -- 30 * 10 + 6 * 2 + 9 * 2
 	auraList:SetPoint("TOPLEFT", unitSelector, "BOTTOMLEFT", 18, -40) -- 8 + 32 (default offset + tab height)
 	auraList:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
@@ -425,11 +287,12 @@ function CFG:UFAuras_Initialize()
 		text:SetPoint("RIGHT", button, "RIGHT", -4, 0)
 		button.Text = text
 
-		local indicator = CreateFrame("Frame", "$parentFilterIndicator", button)
-		indicator:SetFrameLevel(button:GetFrameLevel() + 1)
+		local indicator = CFG:CreateMaskDial(button, "MaskDial")
+		indicator:SetFrameLevel(button:GetFrameLevel() + 4)
 		indicator:SetPoint("BOTTOMLEFT", iconholder, "BOTTOMRIGHT", 4, -2)
-		indicator.Update = SpecIndicator_Update
-		indicator:SetScript("OnShow", SpecIndicator_OnShow)
+		for i = 1, #indicator do
+			indicator[i]:SetScript("OnMouseUp", AuraButtonMaskDialIndicator_OnMouseUp)
+		end
 		button.Indicator = indicator
 
 		local deleteButton = CreateFrame("Button", "$parentDeleteButton", button)
@@ -449,20 +312,6 @@ function CFG:UFAuras_Initialize()
 		icon:SetPoint("BOTTOMRIGHT", -1, 1)
 		deleteButton.Icon = icon
 
-		local editAuraButton = CreateFrame("Button", "$parentEditButton", button)
-		editAuraButton:SetSize(16, 16)
-		editAuraButton:SetPoint("RIGHT", deleteButton, "LEFT", 0, 0)
-		editAuraButton:SetScript("OnClick", EditAuraButton_OnClick)
-		editAuraButton:SetScript("OnEnter", SmallButton_OnEnter)
-		editAuraButton:SetScript("OnLeave", SmallButton_OnLeave)
-		button.EditButton = editAuraButton
-
-		local icon = editAuraButton:CreateTexture(nil, "ARTWORK")
-		icon:SetTexture("Interface\\WorldMap\\GEAR_64GREY")
-		icon:SetAlpha(0.5)
-		icon:SetAllPoints()
-		editAuraButton.Icon = icon
-
 		local bg = button:CreateTexture(nil, "BACKGROUND")
 		bg:SetAllPoints()
 		bg:SetTexture(0.15, 0.15, 0.15)
@@ -475,8 +324,6 @@ function CFG:UFAuras_Initialize()
 		end
 
 		button:SetPoint("RIGHT", scrollbar, "LEFT", -2, -6)
-
-		-- CFG:SetupControlDependency(atToggle, button)
 	end
 
 	local buffTab = CreateFrame("Button", "LSUFAuraListTab1", auraList, "TabButtonTemplate")
@@ -487,7 +334,6 @@ function CFG:UFAuras_Initialize()
 	buffTab:SetScript("OnClick", LSUFAuraListTab_OnClick)
 	auraList.BuffTab = buffTab
 	-- CFG:SetupControlDependency(atToggle, buffTab)
-	PanelTemplates_TabResize(buffTab, 0)
 
 	local debuffTab = CreateFrame("Button", "LSUFAuraListTab2", auraList, "TabButtonTemplate")
 	debuffTab.type = "Button"
@@ -497,16 +343,43 @@ function CFG:UFAuras_Initialize()
 	debuffTab:SetScript("OnClick", LSUFAuraListTab_OnClick)
 	auraList.DebuffTab = debuffTab
 	-- CFG:SetupControlDependency(atToggle, debuffTab).
-	PanelTemplates_TabResize(debuffTab, 0)
 
+	PanelTemplates_TabResize(buffTab, 0)
+	PanelTemplates_TabResize(debuffTab, 0)
 	PanelTemplates_SetNumTabs(auraList, 2)
 	PanelTemplates_SetTab(auraList, 1)
 
-	local auraListFilterDropDown = CreateFrame("Frame", "LSUFAuraListFilterDropDown", auraList, "UIDropDownMenuTemplate")
-	UIDropDownMenu_Initialize(auraListFilterDropDown, AuraListFilterDropDown_Initialize, "MENU")
-	UIDropDownMenu_SetAnchor(auraListFilterDropDown, -2, -4, "TOPLEFT", nil, "BOTTOMLEFT")
-	auraList.DropDown = auraListFilterDropDown
+	local addEditBox = CreateFrame("EditBox", "ATAuraListEditBox", auraList, "InputBoxInstructionsTemplate")
+	addEditBox.type = "EditBox"
+	addEditBox:SetSize(120, 22)
+	addEditBox:SetAutoFocus(false)
+	addEditBox:SetNumeric(true)
+	addEditBox.Instructions:SetText("Enter Spell ID")
+	addEditBox:SetPoint("TOPLEFT", auraList, "BOTTOMLEFT", 6, 0)
+	addEditBox:SetScript("OnEnterPressed", AuraList_AddAura)
+	addEditBox:HookScript("OnTextChanged", AuraListEditBox_OnTextChanged)
+	-- CFG:SetupControlDependency(atToggle, addEditBox)
+	auraList.AddEditBox = addEditBox
 
+	local addButton = CreateFrame("Button", "ATAuraListAddButton", auraList, "UIPanelButtonTemplate")
+	addButton.type = "Button"
+	addButton:SetSize(82, 22)
+	addButton:SetText(ADD)
+	addButton:SetPoint("LEFT", addEditBox, "RIGHT", 2, 0)
+	addButton:SetScript("OnClick", AuraList_AddAura)
+	auraList.AddButton = addButton
+
+	local maskDial = CFG:CreateMaskDial(auraList, "AddAuraMaskDial")
+	maskDial:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -4)
+	auraList.MaskDial = maskDial
+
+	local log1 = CFG:CreateTextLabel(panel, 10, "")
+	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
+	log1:SetText("################################################################")
+	panel.StatusLog = log1
+
+	local reloadButton = CFG:CreateReloadUIButton(panel)
+	reloadButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -16, 16)
 
 	CFG:AddCatergory(panel)
 end
