@@ -38,9 +38,9 @@ local function MaskDial_SetMask(self, mask)
 		local button = self[i]
 
 		if E:IsFilterApplied(mask, M.PLAYER_SPEC_FLAGS[i]) then
-			self:SetButtonState("NORMAL", true) -- positive
+			button:SetButtonState("NORMAL", true) -- positive
 		else
-			self:SetButtonState("PUSHED", true) -- negative
+			button:SetButtonState("PUSHED", true) -- negative
 		end
 	end
 end
@@ -55,7 +55,7 @@ end
 
 local function MaskDialIndicator_OnEnter(self)
 	local _, name = GetSpecializationInfo(self:GetID())
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -4, -4)
 	GameTooltip:AddLine(name)
 	GameTooltip:Show()
 end
@@ -71,8 +71,10 @@ end
 function CFG:CreateMaskDial(parent, name)
 	local maskDial = CreateFrame("Frame", "$parent"..name, parent)
 	maskDial:SetSize(56, 14)
+	maskDial:EnableMouse(true)
 	maskDial:SetScript("OnShow", MaskDial_OnShow)
 	maskDial.GetMask = MaskDial_GetMask
+	maskDial.SetMask = MaskDial_SetMask
 
 	for i = 1, 4 do
 		local button = CreateFrame("Button", "$parentSpecIndicator"..i, maskDial)
