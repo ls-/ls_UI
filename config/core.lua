@@ -71,7 +71,6 @@ end
 function CFG:CreateMaskDial(parent, name)
 	local maskDial = CreateFrame("Frame", "$parent"..name, parent)
 	maskDial:SetSize(56, 14)
-	maskDial:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -4)
 	maskDial:SetScript("OnShow", MaskDial_OnShow)
 	maskDial.GetMask = MaskDial_GetMask
 
