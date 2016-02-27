@@ -117,7 +117,7 @@ end
 local function AuraList_AddAura(self, ...)
 	local log = panel.StatusLog
 	local auraList = panel.AuraList
-	local spellID = auraList.AddEditBox:GetText()
+	local spellID = tonumber(auraList.AddEditBox:GetText())
 	local name = GetSpellInfo(spellID)
 
 	if name then
@@ -220,6 +220,24 @@ local function UnitSelectorDropDown_Initialize(self, ...)
 	UIDropDownMenu_AddButton(info)
 end
 
+local function ConfigCopyDropDown_Initialize(self, ...)
+	local info = UIDropDownMenu_CreateInfo()
+
+	info.text = "Target"
+	-- info.func = UnitSelectorDropDown_OnClick
+	info.value = "target"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
+
+	info.text = "Focus"
+	-- info.func = UnitSelectorDropDown_OnClick
+	info.value = "focus"
+	info.owner = self
+	info.checked = nil
+	UIDropDownMenu_AddButton(info)
+end
+
 local function UFAurasConfigPanel_OnShow(self)
 	self.AuraList:Update()
 	self.UnitSelector.Indicator:SetMask(activeConfig.enabled)
@@ -231,6 +249,12 @@ end
 
 local function AuraButtonMaskDialIndicator_OnMouseUp(self)
 	panel.AuraList.config[self:GetParent():GetParent().spellID] = self:GetParent():GetMask()
+end
+
+local function WipeButton_OnClick(self)
+	wipe(panel.AuraList.config)
+
+	panel.AuraList:Update()
 end
 
 local function DeleteAuraButton_OnClick(self)
@@ -272,6 +296,13 @@ function CFG:UFAuras_Initialize()
 		},
 	}
 
+	-- local testo = panel:CreateTexture(nil, "BACKGROUND")
+	-- testo:SetTexture(0, 0, 0, 1)
+	-- testo:SetPoint("TOP")
+	-- testo:SetPoint("BOTTOM")
+	-- testo:SetPoint("LEFT", panel, "CENTER", -1, 0)
+	-- testo:SetPoint("RIGHT", panel, "CENTER", 1, 0)
+
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100Buffs and Debuffs|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
@@ -279,8 +310,8 @@ function CFG:UFAuras_Initialize()
 	infoText1:SetHeight(32)
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
-	local unitSelector = CFG:CreateDropDownMenu(panel, "UnitSelectorDropDown", nil, UnitSelectorDropDown_Initialize)
-	unitSelector:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -8, -6)
+	local unitSelector = CFG:CreateDropDownMenu(panel, "UnitSelectorDropDown", "Unit Frame", UnitSelectorDropDown_Initialize)
+	unitSelector:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -8, -18)
 	UIDropDownMenu_SetWidth(unitSelector, 160)
 	unitSelector:SetValue("target")
 	panel.UnitSelector = unitSelector
@@ -327,11 +358,11 @@ function CFG:UFAuras_Initialize()
 		local iconholder = CreateFrame("Frame", "$parentIconHolder", button)
 		iconholder:SetSize(24, 24)
 		iconholder:SetPoint("LEFT", 3, 0)
-		E:CreateBorder(iconholder, 6)
+		E:CreateBorder(iconholder)
 
 		button.Icon = E:UpdateIcon(iconholder)
 
-		local text = button:CreateFontString(nil, "ARTWORK", "LS12Font")
+		local text = E:CreateNewFontString(button, 12, "$parentLabel", false, true)
 		text:SetJustifyH("LEFT")
 		text:SetPoint("TOPLEFT", iconholder, "TOPRIGHT", 4, 2)
 		text:SetPoint("RIGHT", button, "RIGHT", -4, 0)
@@ -376,6 +407,18 @@ function CFG:UFAuras_Initialize()
 		button:SetPoint("RIGHT", scrollbar, "LEFT", -2, -6)
 	end
 
+	local wipeButton = E:CreateButton(auraList, "$parentWipeButton")
+	wipeButton:SetSize(24, 24)
+	wipeButton:SetPoint("TOPLEFT", auraList, "TOPRIGHT", 1, -14)
+	wipeButton.Icon:SetTexture("Interface\\ICONS\\INV_Pet_Broom")
+	wipeButton:SetScript("OnClick", WipeButton_OnClick)
+	auraList.WipeButton = wipeButton
+
+	local wipeButtonBG = wipeButton:CreateTexture(nil, "BACKGROUND", nil, -8)
+	wipeButtonBG:SetSize(50, 50)
+	wipeButtonBG:SetPoint("LEFT", -3, -4)
+	wipeButtonBG:SetTexture("Interface\\SPELLBOOK\\SpellBook-SkillLineTab")
+
 	local buffTab = CreateFrame("Button", "LSUFAuraListTab1", auraList, "TabButtonTemplate")
 	buffTab.type = "Button"
 	buffTab:SetID(1)
@@ -419,13 +462,50 @@ function CFG:UFAuras_Initialize()
 	addButton:SetScript("OnClick", AuraList_AddAura)
 	auraList.AddButton = addButton
 
+	local maskLabel = CFG:CreateTextLabel(auraList, 12, "Mask:")
+	maskLabel:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -2)
+	maskLabel:SetVertexColor(1, 0.82, 0)
+
 	local maskDial = CFG:CreateMaskDial(auraList, "AddAuraMaskDial")
-	maskDial:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -4)
+	maskDial:SetPoint("LEFT", maskLabel, "RIGHT", 2, -1)
 	auraList.MaskDial = maskDial
+
+	local configCopyDropDown = CFG:CreateDropDownMenu(panel, "ConfigCopyDropDown", "Copy Config From", ConfigCopyDropDown_Initialize)
+	configCopyDropDown:SetPoint("LEFT", panel, "CENTER", 6, 0)
+	configCopyDropDown:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
+	UIDropDownMenu_SetWidth(configCopyDropDown, 160)
+	configCopyDropDown:SetValue("focus")
+
+	local configCopyButton = CreateFrame("Button", "$parentConfigCopyButton", panel, "UIPanelButtonTemplate")
+	configCopyButton:SetText("Copy")
+	configCopyButton:SetWidth(configCopyButton:GetTextWidth() + 18)
+	configCopyButton:SetPoint("LEFT", configCopyDropDown, "RIGHT", -15, 3)
+
+	local hostileOptionsBG = panel:CreateTexture("$parentHostileOptionBG", "BACKGROUND")
+	hostileOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	hostileOptionsBG:SetHeight(160)
+	hostileOptionsBG:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -16)
+	hostileOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
+	hostileOptionsBG:SetPoint("RIGHT", -16, 0)
+
+	local hostileOptionsLabel = CFG:CreateTextLabel(panel, 12, "Hostile Filter Settings:")
+	hostileOptionsLabel:SetPoint("TOPLEFT", hostileOptionsBG, "TOPLEFT", 6, -6)
+	hostileOptionsLabel:SetVertexColor(1, 0.82, 0)
+
+	local friendlyOptionsBG = panel:CreateTexture("$parentHostileOptionBG", "BACKGROUND")
+	friendlyOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	friendlyOptionsBG:SetHeight(160)
+	friendlyOptionsBG:SetPoint("TOP", hostileOptionsBG, "BOTTOM", 0, -8)
+	friendlyOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
+	friendlyOptionsBG:SetPoint("RIGHT", -16, 0)
+
+	local friendlyOptionsLabel = CFG:CreateTextLabel(panel, 12, "Friendly Filter Settings:")
+	friendlyOptionsLabel:SetPoint("TOPLEFT", friendlyOptionsBG, "TOPLEFT", 6, -6)
+	friendlyOptionsLabel:SetVertexColor(1, 0.82, 0)
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
-	log1:SetText("################################################################")
+	log1:SetText("")
 	panel.StatusLog = log1
 
 	local reloadButton = CFG:CreateReloadUIButton(panel)
