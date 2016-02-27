@@ -3,6 +3,8 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
 
 function UF:ConstructPetFrame(frame)
+	tinsert(UF.framesByUnit["pet"], frame)
+
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}

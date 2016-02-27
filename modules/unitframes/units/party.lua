@@ -30,6 +30,8 @@ function UF:CreatePartyHolder()
 end
 
 function UF:ConstructPartyFrame(frame, ...)
+	tinsert(UF.framesByUnit["party"], frame)
+
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
