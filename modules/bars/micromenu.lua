@@ -154,7 +154,7 @@ local function MainMenuMicroButton_OnEnter(self)
 		if addons[i][3] then
 			local m = addons[i][2]
 
-			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory - m), unpack(GRADIENT_GYR)))
+			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory == m and 1 or (memory - m)), unpack(GRADIENT_GYR)))
 		end
 	end
 
