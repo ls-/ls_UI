@@ -177,7 +177,7 @@ local function ReloadUIButton_OnClick(self)
 end
 
 function CFG:CreateReloadUIButton(parent)
-	local object = CreateFrame("CheckButton", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
+	local object = CreateFrame("Button", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
 	object.type = "Button"
 	object:SetText(RELOADUI)
 	object:SetWidth(object:GetTextWidth() + 18)
