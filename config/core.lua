@@ -45,7 +45,25 @@ local function MaskDial_SetMask(self, mask)
 	end
 end
 
+local function MaskDial_Enable(self)
+	for i = 1, #self do
+		self[i]:Enable()
+	end
+
+	self.Text:SetVertexColor(1, 0.82, 0)
+end
+
+local function MaskDial_Disable(self)
+	for i = 1, #self do
+		self[i]:Disable()
+	end
+
+	self.Text:SetVertexColor(0.5, 0.5, 0.5)
+end
+
 local function MaskDialIndicator_OnMouseDown(self)
+	if not self:IsEnabled() then return end
+
 	if self:GetButtonState() == "NORMAL" then
 		self:SetButtonState("PUSHED", true)
 	else
@@ -68,16 +86,32 @@ local function MaskDialIndicator_IsPositive(self)
 	return self:GetButtonState() == "NORMAL" and true or false
 end
 
-function CFG:CreateMaskDial(parent, name)
-	local maskDial = CreateFrame("Frame", "$parent"..name, parent)
-	maskDial:SetSize(56, 14)
-	maskDial:EnableMouse(true)
-	maskDial:SetScript("OnShow", MaskDial_OnShow)
-	maskDial.GetMask = MaskDial_GetMask
-	maskDial.SetMask = MaskDial_SetMask
+local function MaskDialIndicator_Enable(self)
+	getmetatable(self).__index.Enable(self)
+
+	self:GetNormalTexture():SetDesaturated(false)
+	self:GetPushedTexture():SetDesaturated(false)
+end
+
+local function MaskDialIndicator_Disable(self)
+	getmetatable(self).__index.Disable(self)
+
+	self:GetNormalTexture():SetDesaturated(true)
+	self:GetPushedTexture():SetDesaturated(true)
+end
+
+function CFG:CreateMaskDial(parent, name, text)
+	local object = CreateFrame("Frame", "$parent"..name, parent)
+	object:SetSize(56, 14)
+	object:EnableMouse(true)
+	object:SetScript("OnShow", MaskDial_OnShow)
+	object.GetMask = MaskDial_GetMask
+	object.SetMask = MaskDial_SetMask
+	object.Enable = MaskDial_Enable
+	object.Disable = MaskDial_Disable
 
 	for i = 1, 4 do
-		local button = CreateFrame("Button", "$parentSpecIndicator"..i, maskDial)
+		local button = CreateFrame("Button", "$parentSpecIndicator"..i, object)
 		button:SetSize(14, 14)
 		button:SetID(i)
 		button:SetNormalTexture("Interface\\Store\\Services")
@@ -88,17 +122,25 @@ function CFG:CreateMaskDial(parent, name)
 		button:SetScript("OnEnter", MaskDialIndicator_OnEnter)
 		button:SetScript("OnLeave", MaskDialIndicator_OnLeave)
 		button.IsPositive = MaskDialIndicator_IsPositive
+		button.Enable = MaskDialIndicator_Enable
+		button.Disable = MaskDialIndicator_Disable
 		button.value = M.PLAYER_SPEC_FLAGS[i]
-		maskDial[i] = button
+		object[i] = button
 
 		if i == 1 then
 			button:SetPoint("LEFT", 0, 0)
 		else
-			button:SetPoint("LEFT", maskDial[i - 1], "RIGHT", 2, 0)
+			button:SetPoint("LEFT", object[i - 1], "RIGHT", 2, 0)
 		end
 	end
 
-	return maskDial
+	local label = E:CreateNewFontString(object, 10, "$parentText", nil, true)
+	label:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 0, 2)
+	label:SetVertexColor(1, 0.82, 0)
+	label:SetText(text)
+	object.Text = label
+
+	return object
 end
 
 function CFG:CreateTextLabel(parent, size, text)
