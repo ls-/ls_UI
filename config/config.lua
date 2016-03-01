@@ -20,18 +20,13 @@ D["units"] = {
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
 		auras = {
 			enabled = 0x0000000f,
+			-- ctrl_shift_override = 0x0000000f,
 			HELPFUL = {
-				include_all_enemy_buffs = 0x00000000,
-				include_all_friendly_buffs = 0x00000000,
-				include_castable = 0x00000000,
-				include_relevant = 0x0000000f,
+				include_castable = 0x00000000, -- f
 				auralist = {},
 			},
 			HARMFUL = {
-				show_all_enemy_debuffs = 0x00000000,
-				show_all_friendly_debuffs = 0x00000000,
-				include_dispellable = 0x00000000,
-				include_relevant = 0x0000000f,
+				show_only_dispellable = 0x00000000, -- f
 				auralist = {},
 			},
 		},
@@ -46,18 +41,13 @@ D["units"] = {
 		castbar = true,
 		auras = {
 			enabled = 0x0000000f,
+			-- ctrl_shift_override = 0x0000000f,
 			HELPFUL = {
-				include_all_enemy_buffs = 0x00000000,
-				include_all_friendly_buffs = 0x00000000,
 				include_castable = 0x00000000,
-				include_relevant = 0x0000000f,
 				auralist = {},
 			},
 			HARMFUL = {
-				show_all_enemy_debuffs = 0x00000000,
-				show_all_friendly_debuffs = 0x00000000,
-				include_dispellable = 0x00000000,
-				include_relevant = 0x0000000f,
+				show_only_dispellable = 0x00000000,
 				auralist = {},
 			},
 		},
@@ -70,16 +60,6 @@ D["units"] = {
 		enabled = true,
 		point1 = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
 		point2 = {"TOPLEFT", "UIParent", "TOPLEFT", 14, -140},
-		auras = {
-			enabled = 0x0000000f,
-			HARMFUL = {
-				show_all_enemy_debuffs = 0x00000000,
-				show_all_friendly_debuffs = 0x00000000,
-				include_dispellable = 0x00000000,
-				include_relevant = 0x00000000,
-				auralist = {},
-			},
-		},
 	},
 	boss = {
 		enabled = true,
@@ -88,17 +68,11 @@ D["units"] = {
 		-- auras = {
 		-- 	enabled = 0x0000000f,
 		-- 	HELPFUL = {
-		-- 		include_all_enemy_buffs = 0x00000000,
-		-- 		include_all_friendly_buffs = 0x00000000,
 		-- 		include_castable = 0x00000000,
-		-- 		include_relevant = 0x0000000f,
 		-- 		auralist = {},
 		-- 	},
 		-- 	HARMFUL = {
-		-- 		show_all_enemy_debuffs = 0x00000000,
-		-- 		show_all_friendly_debuffs = 0x00000000,
-		-- 		include_dispellable = 0x00000000,
-		-- 		include_relevant = 0x0000000f,
+		-- 		show_only_dispellable = 0x00000000,
 		-- 		auralist = {},
 		-- 	},
 		-- },
