@@ -45,12 +45,8 @@ local function LSUFAuraList_Update(frame)
 
 	local tab = frame.selectedTab
 	local buttons = frame.buttons
-	local button, aura
-	local offset = FauxScrollFrame_GetOffset(frame)
-	local spec = GetSpecialization() or 0
-	local bufftable = activeConfig["HELPFUL"].auralist
-	local debufftable = activeConfig["HARMFUL"].auralist
 
+	local button
 	for i = 1, #buttons do
 		button = buttons[i]
 
@@ -62,55 +58,97 @@ local function LSUFAuraList_Update(frame)
 		button.Bg:Hide()
 	end
 
+
 	if tab == 1  then
-		frame.config = bufftable
-		frame.filter = "HELPFUL"
-		local total = 0
+		if not activeConfig["HELPFUL"] then
+			frame.AddEditBox:Disable()
+			frame.AddButton:Disable()
+			frame.MaskDial:Disable()
+			frame.WipeButton:Disable()
+		else
+			frame.AddEditBox:Enable()
+			frame.AddButton:Enable()
+			frame.MaskDial:Enable()
+			frame.WipeButton:Enable()
 
-		bufftable = PrepareSortedAuraList(bufftable)
+			local bufftable = activeConfig["HELPFUL"].auralist
+			local offset = FauxScrollFrame_GetOffset(frame)
+			local total = 0
 
-		for i = 1, 10 do
-			aura = bufftable[i + offset]
-			button = buttons[i]
+			frame.config = bufftable
+			frame.filter = "HELPFUL"
 
-			if aura then
-				button:Show()
-				button.Text:SetText(aura.name)
-				button.Icon:SetTexture(aura.icon)
-				button.spellID = aura.id
-				button.value = aura.filter
+			bufftable = PrepareSortedAuraList(bufftable)
 
-				button.Indicator:SetMask(aura.filter)
+			local aura
+			for i = 1, 10 do
+				aura = bufftable[i + offset]
+				button = buttons[i]
 
-				if (i + offset)%2 == 0 then
-					button.Bg:Show()
+				if aura then
+					button:Show()
+					button.Text:SetText(aura.name)
+					button.Icon:SetTexture(aura.icon)
+					button.spellID = aura.id
+					button.value = aura.filter
+
+					button.Indicator:SetMask(aura.filter)
+
+					if (i + offset)%2 == 0 then
+						button.Bg:Show()
+					end
+
+					total = total + 1
 				end
-
-				total = total + 1
 			end
+
+			FauxScrollFrame_Update(frame, #bufftable, total, 30, nil, nil, nil, nil, nil, nil, true)
 		end
-
-		FauxScrollFrame_Update(frame, #bufftable, total, 30, nil, nil, nil, nil, nil, nil, true)
 	else
-	-- 	frame.filter = "HARMFUL"
-	-- 	local total = 0
+		if not activeConfig["HARMFUL"] then
+			frame.AddEditBox:Disable()
+			frame.AddButton:Disable()
+			frame.MaskDial:Disable()
+			frame.WipeButton:Disable()
+		else
+			frame.AddEditBox:Enable()
+			frame.AddButton:Enable()
+			frame.MaskDial:Enable()
+			frame.WipeButton:Enable()
 
-	-- 	for i = 1, 8 do
-	-- 		value = debufftable[i + offset]
-	-- 		button = buttons[i]
+			local debufftable = activeConfig["HARMFUL"].auralist
+			local offset = FauxScrollFrame_GetOffset(frame)
+			local total = 0
 
-	-- 		if value then
-	-- 			local name, _, icon = GetSpellInfo(value)
-	-- 			button:Show()
-	-- 			button.Text:SetText(name)
-	-- 			button.Icon:SetTexture(icon)
-	-- 			button.spellID = value
+			frame.config = debufftable
+			frame.filter = "HARMFUL"
 
-	-- 			total = total + 1
-	-- 		end
-		-- end
+			debufftable = PrepareSortedAuraList(debufftable)
 
-	-- 	FauxScrollFrame_Update(frame, #debufftable, total, 30, nil, nil, nil, nil, nil, nil, true)
+			local aura
+			for i = 1, 10 do
+				aura = debufftable[i + offset]
+				button = buttons[i]
+
+				if aura then
+					button:Show()
+					button.Text:SetText(aura.name)
+					button.Icon:SetTexture(aura.icon)
+					button.spellID = aura.id
+					button.value = aura.filter
+
+					button.Indicator:SetMask(aura.filter)
+
+					if (i + offset)%2 == 0 then
+						button.Bg:Show()
+					end
+
+					total = total + 1
+				end
+			end
+
+			FauxScrollFrame_Update(frame, #debufftable, total, 30, nil, nil, nil, nil, nil, nil, true)
+		end
 	end
 end
 
@@ -174,32 +212,28 @@ local function AuraButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
-local function UnitOptions_Refresh(oldIndex, newIndex)
-	local oldConfig = C.units[oldIndex].auras
-	local settings = panel.settings.units[oldIndex].auras
-
-	-- saving old options here
-	-- E:ApplySettings(settings, oldConfig)
-
-	wipe(settings)
-
+local function UnitOptions_Refresh(newIndex)
 	activeConfig = C.units[newIndex].auras
-	settings = panel.settings.units[newIndex].auras
-
-	-- loading new options here
-	-- E:FetchSettings(settings, activeConfig)
 
 	panel.AuraList:Update()
 	panel.UnitSelector:RefreshValue()
 	panel.UnitSelector.Indicator:SetMask(activeConfig.enabled)
+	panel.IncludeCastableBuffsMaskDial:SetMask(activeConfig.HELPFUL.include_castable)
+	panel.ShowOnlyDispellableDebuffsMaskDial:SetMask(activeConfig.HARMFUL.show_only_dispellable)
 end
 
 local function UnitSelectorDropDown_OnClick(self)
-	local oldValue = self.owner:GetValue()
+	local newValue = self.value
 
-	self.owner:SetValue(self.value)
+	if newValue == panel.ConfigCopyDropDown:GetValue() then
+		panel.ConfigCopyButton:Disable()
+	else
+		panel.ConfigCopyButton:Enable()
+	end
 
-	UnitOptions_Refresh(oldValue, self.value)
+	self.owner:SetValue(newValue)
+
+	UnitOptions_Refresh(newValue)
 end
 
 local function UnitSelectorDropDown_Initialize(self, ...)
@@ -220,27 +254,51 @@ local function UnitSelectorDropDown_Initialize(self, ...)
 	UIDropDownMenu_AddButton(info)
 end
 
+local function ConfigCopyDropDown__OnClick(self)
+	if self.value == panel.UnitSelector:GetValue() then
+		panel.ConfigCopyButton:Disable()
+	else
+		panel.ConfigCopyButton:Enable()
+	end
+
+	self.owner:SetValue(self.value)
+end
+
 local function ConfigCopyDropDown_Initialize(self, ...)
 	local info = UIDropDownMenu_CreateInfo()
 
 	info.text = "Target"
-	-- info.func = UnitSelectorDropDown_OnClick
+	info.func = ConfigCopyDropDown__OnClick
 	info.value = "target"
 	info.owner = self
 	info.checked = nil
 	UIDropDownMenu_AddButton(info)
 
 	info.text = "Focus"
-	-- info.func = UnitSelectorDropDown_OnClick
+	info.func = ConfigCopyDropDown__OnClick
 	info.value = "focus"
 	info.owner = self
 	info.checked = nil
 	UIDropDownMenu_AddButton(info)
 end
 
+local function ConfigCopyButton_OnClick(self)
+	local srcValue, destValue = panel.ConfigCopyDropDown:GetValue(), panel.UnitSelector:GetValue()
+
+	E:CopyTable(C.units[srcValue].auras, C.units[destValue].auras)
+
+	UnitOptions_Refresh(destValue)
+
+	panel.StatusLog:SetText("copied config from "..srcValue.." to "..destValue..".")
+end
+
 local function UFAurasConfigPanel_OnShow(self)
 	self.AuraList:Update()
+	self.UnitSelector:RefreshValue()
 	self.UnitSelector.Indicator:SetMask(activeConfig.enabled)
+	self.IncludeCastableBuffsMaskDial:SetMask(activeConfig.HELPFUL.include_castable)
+	self.ShowOnlyDispellableDebuffsMaskDial:SetMask(activeConfig.HARMFUL.show_only_dispellable)
+	self.ConfigCopyButton:Disable()
 end
 
 local function UnitDropDownMaskDialIndicator_OnMouseUp(self)
@@ -256,6 +314,23 @@ local function WipeButton_OnClick(self)
 
 	panel.AuraList:Update()
 end
+
+local function WipeButton_Enable(self)
+	getmetatable(self).__index.Enable(self)
+
+	if self.Icon then
+		self.Icon:SetDesaturated(false)
+	end
+end
+
+local function WipeButton_Disable(self)
+	getmetatable(self).__index.Disable(self)
+
+	if self.Icon then
+		self.Icon:SetDesaturated(true)
+	end
+end
+
 
 local function DeleteAuraButton_OnClick(self)
 	print("deleted ID:", self:GetParent().spellID)
@@ -284,17 +359,6 @@ function CFG:UFAuras_Initialize()
 	panel.parent = "oUF: |cff1a9fc0LS|r"
 	panel:HookScript("OnShow", UFAurasConfigPanel_OnShow)
 	panel:Hide()
-
-	panel.settings = {
-		units = {
-			target = {
-				auras = {},
-			},
-			focus = {
-				auras = {},
-			},
-		},
-	}
 
 	-- local testo = panel:CreateTexture(nil, "BACKGROUND")
 	-- testo:SetTexture(0, 0, 0, 1)
@@ -412,6 +476,8 @@ function CFG:UFAuras_Initialize()
 	wipeButton:SetPoint("TOPLEFT", auraList, "TOPRIGHT", 1, -14)
 	wipeButton.Icon:SetTexture("Interface\\ICONS\\INV_Pet_Broom")
 	wipeButton:SetScript("OnClick", WipeButton_OnClick)
+	wipeButton.Enable = WipeButton_Enable
+	wipeButton.Disable = WipeButton_Disable
 	auraList.WipeButton = wipeButton
 
 	local wipeButtonBG = wipeButton:CreateTexture(nil, "BACKGROUND", nil, -8)
@@ -426,7 +492,6 @@ function CFG:UFAuras_Initialize()
 	buffTab:SetPoint("BOTTOMLEFT", auraList, "TOPLEFT", 8, -2)
 	buffTab:SetScript("OnClick", LSUFAuraListTab_OnClick)
 	auraList.BuffTab = buffTab
-	-- CFG:SetupControlDependency(atToggle, buffTab)
 
 	local debuffTab = CreateFrame("Button", "LSUFAuraListTab2", auraList, "TabButtonTemplate")
 	debuffTab.type = "Button"
@@ -435,7 +500,6 @@ function CFG:UFAuras_Initialize()
 	debuffTab:SetPoint("LEFT", buffTab, "RIGHT", 0, 0)
 	debuffTab:SetScript("OnClick", LSUFAuraListTab_OnClick)
 	auraList.DebuffTab = debuffTab
-	-- CFG:SetupControlDependency(atToggle, debuffTab).
 
 	PanelTemplates_TabResize(buffTab, 0)
 	PanelTemplates_TabResize(debuffTab, 0)
@@ -451,7 +515,6 @@ function CFG:UFAuras_Initialize()
 	addEditBox:SetPoint("TOPLEFT", auraList, "BOTTOMLEFT", 6, 0)
 	addEditBox:SetScript("OnEnterPressed", AuraList_AddAura)
 	addEditBox:HookScript("OnTextChanged", AuraListEditBox_OnTextChanged)
-	-- CFG:SetupControlDependency(atToggle, addEditBox)
 	auraList.AddEditBox = addEditBox
 
 	local addButton = CreateFrame("Button", "ATAuraListAddButton", auraList, "UIPanelButtonTemplate")
@@ -468,40 +531,49 @@ function CFG:UFAuras_Initialize()
 
 	local maskDial = CFG:CreateMaskDial(auraList, "AddAuraMaskDial")
 	maskDial:SetPoint("LEFT", maskLabel, "RIGHT", 2, -1)
+	maskDial.Text = maskLabel
 	auraList.MaskDial = maskDial
 
 	local configCopyDropDown = CFG:CreateDropDownMenu(panel, "ConfigCopyDropDown", "Copy Config From", ConfigCopyDropDown_Initialize)
 	configCopyDropDown:SetPoint("LEFT", panel, "CENTER", 6, 0)
 	configCopyDropDown:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
 	UIDropDownMenu_SetWidth(configCopyDropDown, 160)
-	configCopyDropDown:SetValue("focus")
+	panel.ConfigCopyDropDown = configCopyDropDown
 
 	local configCopyButton = CreateFrame("Button", "$parentConfigCopyButton", panel, "UIPanelButtonTemplate")
 	configCopyButton:SetText("Copy")
 	configCopyButton:SetWidth(configCopyButton:GetTextWidth() + 18)
 	configCopyButton:SetPoint("LEFT", configCopyDropDown, "RIGHT", -15, 3)
+	configCopyButton:SetScript("OnClick", ConfigCopyButton_OnClick)
+	panel.ConfigCopyButton = configCopyButton
 
-	local hostileOptionsBG = panel:CreateTexture("$parentHostileOptionBG", "BACKGROUND")
-	hostileOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
-	hostileOptionsBG:SetHeight(160)
-	hostileOptionsBG:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -16)
-	hostileOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
-	hostileOptionsBG:SetPoint("RIGHT", -16, 0)
-
-	local hostileOptionsLabel = CFG:CreateTextLabel(panel, 12, "Hostile Filter Settings:")
-	hostileOptionsLabel:SetPoint("TOPLEFT", hostileOptionsBG, "TOPLEFT", 6, -6)
-	hostileOptionsLabel:SetVertexColor(1, 0.82, 0)
-
-	local friendlyOptionsBG = panel:CreateTexture("$parentHostileOptionBG", "BACKGROUND")
+	local friendlyOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
 	friendlyOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
-	friendlyOptionsBG:SetHeight(160)
-	friendlyOptionsBG:SetPoint("TOP", hostileOptionsBG, "BOTTOM", 0, -8)
+	friendlyOptionsBG:SetHeight(62)
+	friendlyOptionsBG:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -40)
 	friendlyOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
 	friendlyOptionsBG:SetPoint("RIGHT", -16, 0)
 
 	local friendlyOptionsLabel = CFG:CreateTextLabel(panel, 12, "Friendly Filter Settings:")
 	friendlyOptionsLabel:SetPoint("TOPLEFT", friendlyOptionsBG, "TOPLEFT", 6, -6)
 	friendlyOptionsLabel:SetVertexColor(1, 0.82, 0)
+
+	local includeCastableBuffsLabel = CFG:CreateTextLabel(panel, 12, "Include Castable Buffs")
+	includeCastableBuffsLabel:SetPoint("TOPLEFT", friendlyOptionsLabel, "BOTTOMLEFT", 0, -6)
+
+	local includeCastableBuffsDial = CFG:CreateMaskDial(panel, "IncludeCastableBuffsMaskDial")
+	includeCastableBuffsDial:SetPoint("TOP", friendlyOptionsLabel, "BOTTOM", 0, -7)
+	includeCastableBuffsDial:SetPoint("RIGHT", friendlyOptionsBG, "RIGHT", -6, 0)
+	includeCastableBuffsDial.Text = includeCastableBuffsLabel
+	panel.IncludeCastableBuffsMaskDial = includeCastableBuffsDial
+
+	local showOnlyDispellableDebuffsLabel = CFG:CreateTextLabel(panel, 12, "Show Only Dispellable Debuffs")
+	showOnlyDispellableDebuffsLabel:SetPoint("TOPLEFT", includeCastableBuffsLabel, "BOTTOMLEFT", 0, -6)
+
+	local showOnlyDispellableDebuffsDial = CFG:CreateMaskDial(panel, "ShowOnlyDispellableDebuffsMaskDial")
+	showOnlyDispellableDebuffsDial:SetPoint("TOPRIGHT", includeCastableBuffsDial, "BOTTOMRIGHT", 0, -4)
+	showOnlyDispellableDebuffsDial.Text = showOnlyDispellableDebuffsLabel
+	panel.ShowOnlyDispellableDebuffsMaskDial = showOnlyDispellableDebuffsDial
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
