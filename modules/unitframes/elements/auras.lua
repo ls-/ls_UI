@@ -266,3 +266,48 @@ function UF:CreateDebuffs(parent, unit, count)
 
 	return frame
 end
+
+-- local function CustomAuraFilterOverride()
+-- 	return true
+-- end
+
+-- local alteredState = false
+-- function UF:MODIFIER_STATE_CHANGED(...)
+-- 	if not alteredState then
+-- 		if IsControlKeyDown() and IsShiftKeyDown() then
+-- 			for _, object in pairs(oUF.objects) do
+-- 				local buffs = object.Buffs
+-- 				if buffs then
+-- 					buffs.CustomFilter = CustomAuraFilterOverride
+-- 					buffs:ForceUpdate()
+-- 				end
+
+-- 				local debuffs = object.Debuffs
+-- 				if debuffs then
+-- 					debuffs.CustomFilter = CustomAuraFilterOverride
+-- 					debuffs:ForceUpdate()
+-- 				end
+-- 			end
+
+-- 			alteredState = true
+-- 		end
+-- 	else
+-- 		for _, object in pairs(oUF.objects) do
+-- 			local buffs = object.Buffs
+-- 			if buffs then
+-- 				buffs.CustomFilter = CustomAuraFilter
+-- 				buffs:ForceUpdate()
+-- 			end
+
+-- 			local debuffs = object.Debuffs
+-- 			if debuffs then
+-- 				debuffs.CustomFilter = CustomAuraFilter
+-- 				debuffs:ForceUpdate()
+-- 			end
+-- 		end
+
+-- 		alteredState = false
+-- 	end
+-- end
+
+-- UF:RegisterEvent("MODIFIER_STATE_CHANGED")
