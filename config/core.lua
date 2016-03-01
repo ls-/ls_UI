@@ -232,7 +232,7 @@ function CFG:CreateDropDownMenu(parent, name, text, func)
 	object.RefreshValue = DropDownMenu_RefreshValue
 	UIDropDownMenu_Initialize(object, func)
 
-	local label = E:CreateFontString(object, 12, "$parentLabel", true, nil, true)
+	local label = E:CreateFontString(object, 10, "$parentLabel", true, nil, true)
 	label:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 16, 3)
 	label:SetJustifyH("LEFT")
 	label:SetJustifyV("MIDDLE")
@@ -313,7 +313,7 @@ local function ReloadUIButton_OnClick(self)
 end
 
 function CFG:CreateReloadUIButton(parent)
-	local object = CreateFrame("CheckButton", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
+	local object = CreateFrame("Button", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
 	object.type = "Button"
 	object:SetText(RELOADUI)
 	object:SetWidth(object:GetTextWidth() + 18)
