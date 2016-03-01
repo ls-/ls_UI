@@ -6,6 +6,8 @@ local UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControll
 	UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControlled, UnitAura
 local SpellGetVisibilityInfo, SpellIsAlwaysShown = SpellGetVisibilityInfo, SpellIsAlwaysShown
 
+local mceil = math.ceil
+
 local function SetVertexColorOverride(self, r, g, b)
 	local button = self:GetParent()
 
@@ -199,52 +201,49 @@ function CustomAuraFilter(frame, unit, buff, ...)
 	return false
 end
 
-function UF:CreateBuffs(parent, coords, count)
-	if parent.unit ~= "target" then return end
 
-	local config = C.units[parent.unit].auras
 
-	if not E:IsFilterApplied(config.enabled, E:GetPlayerSpecFlag()) then return end
+local function UpdateDebuffsPosition(self)
+	local rows = mceil(self.visibleBuffs / 8)
+	local debuffs = self.__owner.Debuffs
 
-	local rows = E:Round(count / 4)
+	debuffs:ClearAllPoints()
+	debuffs:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 26 * rows) -- 22 + 4
+end
+
+function UF:CreateBuffs(parent, unit, count)
+	local rows = mceil(count / 8)
 	local frame = CreateFrame("Frame", "$parentBuffs", parent)
-	frame:SetPoint(unpack(coords))
-	frame:SetSize(22 * 4 + 3 * 4, 22 * rows + 3)
+	frame:SetSize(204, 22 * rows + 4 * (rows - 1)) -- 22 * 8 + 4 * 7
+
+	frame["num"] = count
+	frame["size"] = 22
+	frame["spacing-x"] = 4
+	frame["spacing-y"] = 4
+	frame.showStealableBuffs = true
+
+	frame.aura_config = C.units[unit].auras
+	frame.CreateIcon = CreateAuraIcon
+	frame.CustomFilter = CustomAuraFilter
+	frame.PostUpdate = UpdateDebuffsPosition
+
+	return frame
+end
+
+function UF:CreateDebuffs(parent, unit, count)
+	local rows = mceil(count / 8)
+	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
+	frame:SetSize(204, 22 * rows + 4 * (rows - 1)) -- 22 * 8 + 4 * 7
 
 	frame["growth-x"] = "LEFT"
 	frame["initialAnchor"] = "BOTTOMRIGHT"
 	frame["num"] = count
 	frame["size"] = 22
-	frame["spacing-x"] = 3
-	frame["spacing-y"] = 3
-	frame.showStealableBuffs = true
-
-	frame.aura_config = config
-	frame.CreateIcon = CreateAuraIcon
-	frame.CustomFilter = CustomAuraFilter
-
-	return frame
-end
-
-function UF:CreateDebuffs(parent, coords, count)
-	if parent.unit ~= "target" then return end
-
-	local config = C.units[parent.unit].auras
-
-	if not E:IsFilterApplied(config.enabled, E:GetPlayerSpecFlag()) then return end
-
-	local rows = E:Round(count / 4)
-	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetPoint(unpack(coords))
-	frame:SetSize(22 * 4 + 3 * 4, 22 * rows + 3)
-
+	frame["spacing-x"] = 4
+	frame["spacing-y"] = 4
 	frame["showType"] = true
-	frame["num"] = count
-	frame["size"] = 22
-	frame["spacing-x"] = 3
-	frame["spacing-y"] = 3
 
-	frame.aura_config = config
+	frame.aura_config = C.units[unit].auras
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = CustomAuraFilter
 

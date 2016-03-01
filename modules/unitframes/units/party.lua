@@ -175,5 +175,6 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.DebuffHighlight:SetSize(56, 30)
 	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
-	frame.Debuffs = UF:CreateDebuffs(frame, {"TOP", frame, "BOTTOM", 0, 4}, 4)
+	frame.Debuffs = UF:CreateDebuffs(frame, "party", 4)
+	frame.Debuffs:SetPoint("TOP", frame, "BOTTOM", 0, 4)
 end

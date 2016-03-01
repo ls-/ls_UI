@@ -164,6 +164,9 @@ function UF:ConstructFocusFrame(frame)
 	frame.DebuffHighlight:SetSize(103, 30)
 	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
-	frame.Buffs = UF:CreateBuffs(frame, {"BOTTOMRIGHT", frame, "TOPRIGHT", 0, 30}, 8)
-	frame.Debuffs = UF:CreateDebuffs(frame, {"BOTTOMLEFT", frame, "TOPLEFT", 0, 30}, 8)
+	frame.Buffs = UF:CreateBuffs(frame, "focus", 16)
+	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 16)
+
+	frame.Debuffs = UF:CreateDebuffs(frame, "focust", 16)
+	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 0, 16)
 end
