@@ -285,7 +285,7 @@ end
 local function ConfigCopyButton_OnClick(self)
 	local srcValue, destValue = panel.ConfigCopyDropDown:GetValue(), panel.UnitSelector:GetValue()
 
-	E:CopyTable(C.units[srcValue].auras, C.units[destValue].auras)
+	E:ReplaceTable(C.units[srcValue].auras, C.units[destValue].auras)
 
 	UnitOptions_Refresh(destValue)
 
@@ -307,6 +307,14 @@ end
 
 local function AuraButtonMaskDialIndicator_OnMouseUp(self)
 	panel.AuraList.config[self:GetParent():GetParent().spellID] = self:GetParent():GetMask()
+end
+
+local function IncludeCastableBuffsMaskDialIndicator_OnMouseUp(self)
+	activeConfig.HELPFUL.include_castable = self:GetParent():GetMask()
+end
+
+local function ShowOnlyDispellableDebuffsMaskDialIndicator_OnMouseUp(self)
+	activeConfig.HARMFUL.show_only_dispellable = self:GetParent():GetMask()
 end
 
 local function WipeButton_OnClick(self)
@@ -535,6 +543,7 @@ function CFG:UFAuras_Initialize()
 	auraList.MaskDial = maskDial
 
 	local configCopyDropDown = CFG:CreateDropDownMenu(panel, "ConfigCopyDropDown", "Copy Config From", ConfigCopyDropDown_Initialize)
+	configCopyDropDown:SetValue("target")
 	configCopyDropDown:SetPoint("LEFT", panel, "CENTER", 6, 0)
 	configCopyDropDown:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
 	UIDropDownMenu_SetWidth(configCopyDropDown, 160)
@@ -565,6 +574,9 @@ function CFG:UFAuras_Initialize()
 	includeCastableBuffsDial:SetPoint("TOP", friendlyOptionsLabel, "BOTTOM", 0, -7)
 	includeCastableBuffsDial:SetPoint("RIGHT", friendlyOptionsBG, "RIGHT", -6, 0)
 	includeCastableBuffsDial.Text = includeCastableBuffsLabel
+	for i = 1, #includeCastableBuffsDial do
+		includeCastableBuffsDial[i]:SetScript("OnMouseUp", IncludeCastableBuffsMaskDialIndicator_OnMouseUp)
+	end
 	panel.IncludeCastableBuffsMaskDial = includeCastableBuffsDial
 
 	local showOnlyDispellableDebuffsLabel = CFG:CreateTextLabel(panel, 12, "Show Only Dispellable Debuffs")
@@ -573,6 +585,9 @@ function CFG:UFAuras_Initialize()
 	local showOnlyDispellableDebuffsDial = CFG:CreateMaskDial(panel, "ShowOnlyDispellableDebuffsMaskDial")
 	showOnlyDispellableDebuffsDial:SetPoint("TOPRIGHT", includeCastableBuffsDial, "BOTTOMRIGHT", 0, -4)
 	showOnlyDispellableDebuffsDial.Text = showOnlyDispellableDebuffsLabel
+	for i = 1, #showOnlyDispellableDebuffsDial do
+		showOnlyDispellableDebuffsDial[i]:SetScript("OnMouseUp", ShowOnlyDispellableDebuffsMaskDialIndicator_OnMouseUp)
+	end
 	panel.ShowOnlyDispellableDebuffsMaskDial = showOnlyDispellableDebuffsDial
 
 	local log1 = CFG:CreateTextLabel(panel, 10, "")
