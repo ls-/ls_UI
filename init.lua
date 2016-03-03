@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, D, oUF = ns.E, ns.C, ns.D, ns.oUF
+local E, C, M, D, oUF = ns.E, ns.C, ns.M, ns.D, ns.oUF
 
 E:SetScript("OnEvent", E.EventHandler)
 
@@ -15,9 +15,14 @@ function E:ADDON_LOADED(arg)
 	collectgarbage("collect")
 end
 
+function E:PLAYER_LOGIN()
+	M:UpdateConstants()
+end
+
 function E:PLAYER_LOGOUT(...)
 	oUF_LS_CONFIG = E:DiffTable(D, C)
 end
 
 E:RegisterEvent("ADDON_LOADED")
+E:RegisterEvent("PLAYER_LOGIN")
 E:RegisterEvent("PLAYER_LOGOUT")
