@@ -143,6 +143,29 @@ function CFG:CreateMaskDial(parent, name, text)
 	return object
 end
 
+local function StatusLogHyperlink_OnEnter(self, linkData, link)
+	GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
+	GameTooltip:SetHyperlink(link)
+	GameTooltip:Show()
+end
+
+local function StatusLogHyperlink_OnLeave(self)
+	GameTooltip:Hide()
+end
+
+function CFG:CreateStatusLog(parent)
+	local object = CreateFrame("SimpleHTML", "$parentStatusLog", parent)
+	object:SetHeight(20)
+	object:SetFontObject("LS10Font")
+	object:SetJustifyH("LEFT")
+	object:SetJustifyV("TOP")
+
+	object:SetScript("OnHyperlinkEnter", StatusLogHyperlink_OnEnter)
+	object:SetScript("OnHyperlinkLeave", StatusLogHyperlink_OnLeave)
+
+	return object
+end
+
 function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true, nil, true)
 	object:SetJustifyH("LEFT")
