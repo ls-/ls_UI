@@ -1,3 +1,11 @@
+#Version 2.15
+
+- Updated aura widget on unit frames;
+- Added in-game config for unit frame auras;
+- Misc bug fixes and tweaks.
+
+NOTE: As of now you can white- or blacklist buffs and debuffs on said frames, or completely disable aura widget, if you wish to do so.
+
 #Version 2.14
 
 - Added a pin to unit frames and nameplate textures at 35% health mark;
