@@ -12,6 +12,13 @@ local panel
 local activeConfig
 local sortedAuras = {}
 
+local SUCCESS_TEXT = "|cff26a526Success!|r"
+local WARNING_TEXT = "|cffffd100Warning!|r"
+local ERROR_TEXT = "|cffe52626Error!|r"
+
+local ENABLED_ICON_INLINE = "|TInterface\\Store\\Services:0:0:0:0:1024:1024:22:41:83:102|t"
+local DISABLED_ICON_INLINE = "|TInterface\\Store\\Services:0:0:0:0:1024:1024:1:20:83:102|t"
+
 local function SortAurasByName(a, b)
 	return a.name < b.name or (a.name == b.name and a.id < b.id)
 end
@@ -57,7 +64,6 @@ local function LSUFAuraList_Update(frame)
 		button.value = nil
 		button.Bg:Hide()
 	end
-
 
 	if tab == 1  then
 		if not activeConfig["HELPFUL"] then
@@ -156,18 +162,21 @@ local function AuraList_AddAura(self, ...)
 	local log = panel.StatusLog
 	local auraList = panel.AuraList
 	local spellID = tonumber(auraList.AddEditBox:GetText())
-	local name = GetSpellInfo(spellID)
 
-	if name then
+	if spellID and spellID > 2147483647 then return end
+
+	local link = GetSpellLink(spellID)
+
+	if link then
 		if auraList.config[spellID] then
-			log:SetText("HurrDurr! Already in the list!")
+			log:SetText(ERROR_TEXT..link.." is already in the list.")
 		else
 			auraList.config[spellID] = auraList.MaskDial:GetMask()
 			auraList:Update()
 
 			auraList.AddEditBox:SetText("")
 
-			log:SetText("Success! Added aura to the list!")
+			log:SetText(SUCCESS_TEXT.." Added "..link..".")
 		end
 	end
 end
@@ -175,11 +184,14 @@ end
 local function AuraListEditBox_OnTextChanged(self, isUserInput)
 	if isUserInput then
 		local log = panel.StatusLog
-		local spellID = self:GetText()
-		local name = GetSpellInfo(spellID)
+		local spellID = tonumber(self:GetText())
 
-		if name then
-			log:SetText("Found spell: \""..name.."\".")
+		if spellID and spellID > 2147483647 then return end
+
+		local link = GetSpellLink(spellID)
+
+		if link then
+			log:SetText("Found spell: "..link..".")
 		else
 			log:SetText("No spell found.")
 		end
@@ -289,7 +301,7 @@ local function ConfigCopyButton_OnClick(self)
 
 	UnitOptions_Refresh(destValue)
 
-	panel.StatusLog:SetText("copied config from "..srcValue.." to "..destValue..".")
+	panel.StatusLog:SetText(SUCCESS_TEXT.." Copied "..srcValue.." data to "..destValue..".")
 end
 
 local function UFAurasConfigPanel_OnShow(self)
@@ -299,6 +311,7 @@ local function UFAurasConfigPanel_OnShow(self)
 	self.IncludeCastableBuffsMaskDial:SetMask(activeConfig.HELPFUL.include_castable)
 	self.ShowOnlyDispellableDebuffsMaskDial:SetMask(activeConfig.HARMFUL.show_only_dispellable)
 	self.ConfigCopyButton:Disable()
+	self.StatusLog:SetText("")
 end
 
 local function UnitDropDownMaskDialIndicator_OnMouseUp(self)
@@ -321,6 +334,7 @@ local function WipeButton_OnClick(self)
 	wipe(panel.AuraList.config)
 
 	panel.AuraList:Update()
+	panel.StatusLog:SetText(SUCCESS_TEXT.." Wiped aura list.")
 end
 
 local function WipeButton_Enable(self)
@@ -339,11 +353,11 @@ local function WipeButton_Disable(self)
 	end
 end
 
-
 local function DeleteAuraButton_OnClick(self)
-	print("deleted ID:", self:GetParent().spellID)
+	local spellID = self:GetParent().spellID
 
-	panel.AuraList.config[self:GetParent().spellID] = nil
+	panel.StatusLog:SetText(SUCCESS_TEXT.." Removed "..GetSpellLink(spellID)..".")
+	panel.AuraList.config[spellID] = nil
 	panel.AuraList:Update()
 end
 
@@ -368,17 +382,10 @@ function CFG:UFAuras_Initialize()
 	panel:HookScript("OnShow", UFAurasConfigPanel_OnShow)
 	panel:Hide()
 
-	-- local testo = panel:CreateTexture(nil, "BACKGROUND")
-	-- testo:SetTexture(0, 0, 0, 1)
-	-- testo:SetPoint("TOP")
-	-- testo:SetPoint("BOTTOM")
-	-- testo:SetPoint("LEFT", panel, "CENTER", -1, 0)
-	-- testo:SetPoint("RIGHT", panel, "CENTER", 1, 0)
-
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100Buffs and Debuffs|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local infoText1 = CFG:CreateTextLabel(panel, 10, "Something something unit frames something something auras.")
+	local infoText1 = CFG:CreateTextLabel(panel, 10, "These options allow you to control how buffs and debuffs are displayed on unit frames.")
 	infoText1:SetHeight(32)
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
 
@@ -534,7 +541,7 @@ function CFG:UFAuras_Initialize()
 	auraList.AddButton = addButton
 
 	local maskLabel = CFG:CreateTextLabel(auraList, 12, "Mask:")
-	maskLabel:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", 0, -2)
+	maskLabel:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", -4, -2)
 	maskLabel:SetVertexColor(1, 0.82, 0)
 
 	local maskDial = CFG:CreateMaskDial(auraList, "AddAuraMaskDial")
@@ -579,7 +586,7 @@ function CFG:UFAuras_Initialize()
 	end
 	panel.IncludeCastableBuffsMaskDial = includeCastableBuffsDial
 
-	local showOnlyDispellableDebuffsLabel = CFG:CreateTextLabel(panel, 12, "Show Only Dispellable Debuffs")
+	local showOnlyDispellableDebuffsLabel = CFG:CreateTextLabel(panel, 12, "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0:0:0:-1|tShow |cffffd100Only|r Dispellable Debuffs")
 	showOnlyDispellableDebuffsLabel:SetPoint("TOPLEFT", includeCastableBuffsLabel, "BOTTOMLEFT", 0, -6)
 
 	local showOnlyDispellableDebuffsDial = CFG:CreateMaskDial(panel, "ShowOnlyDispellableDebuffsMaskDial")
@@ -590,13 +597,10 @@ function CFG:UFAuras_Initialize()
 	end
 	panel.ShowOnlyDispellableDebuffsMaskDial = showOnlyDispellableDebuffsDial
 
-	local log1 = CFG:CreateTextLabel(panel, 10, "")
+	local log1 = CFG:CreateStatusLog(panel)
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
-	log1:SetText("")
+	log1:SetWidth(512)
 	panel.StatusLog = log1
-
-	local reloadButton = CFG:CreateReloadUIButton(panel)
-	reloadButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -16, 16)
 
 	CFG:AddCatergory(panel)
 end
