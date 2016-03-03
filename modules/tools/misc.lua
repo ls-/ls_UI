@@ -5,6 +5,10 @@ local COLORS = M.colors
 local select = select
 local strupper = strupper
 
+local _, playerClass = UnitClass("player")
+local playerSpec = GetSpecialization() or 0
+local playerRole
+
 function E:GetCreatureDifficultyColor(level)
 	local color = GetCreatureDifficultyColor(level > 0 and level or 199)
 
@@ -86,3 +90,38 @@ function E:GetUnitPVPStatus(unit)
 		return
 	end
 end
+
+function E:GetPlayerClass()
+	return playerClass
+end
+
+function E:GetPlayerSpec()
+	return playerSpec
+end
+
+function E:GetPlayerSpecFlag()
+	return M.PLAYER_SPEC_FLAGS[playerSpec]
+end
+
+function E:GetPlayerRole(spec)
+	local _, _, _, _, _, role = GetSpecializationInfo(playerSpec)
+	return role or "DAMAGER"
+end
+
+function E:PLAYER_SPECIALIZATION_CHANGED()
+	local oldSpec = playerSpec
+	local oldRole = playerRole
+
+	playerSpec = GetSpecialization() or 0
+	playerRole = E:GetPlayerRole(playerSpec)
+
+	if oldSpec ~= playerSpec then
+		-- do smth
+	end
+
+	if oldRole ~= playerRole then
+		-- do smth
+	end
+end
+
+E:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

@@ -93,6 +93,8 @@ function UF:CreateArenaHolder()
 end
 
 function UF:ConstructArenaFrame(frame)
+	tinsert(UF.framesByUnit["arena"], frame)
+
 	local level = frame:GetFrameLevel()
 
 	-- frame:SetID(strmatch(frame.unit, "arena(%d)"))

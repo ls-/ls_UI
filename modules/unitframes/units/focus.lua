@@ -3,6 +3,8 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
 
 function UF:ConstructFocusFrame(frame)
+	tinsert(UF.framesByUnit["focus"], frame)
+
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
@@ -162,6 +164,9 @@ function UF:ConstructFocusFrame(frame)
 	frame.DebuffHighlight:SetSize(103, 30)
 	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
-	frame.Buffs = UF:CreateBuffs(frame, {"BOTTOMRIGHT", frame, "TOPRIGHT", 0, 30}, 8)
-	frame.Debuffs = UF:CreateDebuffs(frame, {"BOTTOMLEFT", frame, "TOPLEFT", 0, 30}, 8)
+	frame.Buffs = UF:CreateBuffs(frame, "focus", 16)
+	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 16)
+
+	frame.Debuffs = UF:CreateDebuffs(frame, "focus", 16, "LEFT", "BOTTOMRIGHT")
+	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 0, 16)
 end

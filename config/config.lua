@@ -18,6 +18,18 @@ D["units"] = {
 		enabled = true,
 		castbar = true,
 		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
+		auras = {
+			enabled = 0x0000000f,
+			-- ctrl_shift_override = 0x0000000f,
+			HELPFUL = {
+				include_castable = 0x00000000, -- f
+				auralist = {},
+			},
+			HARMFUL = {
+				show_only_dispellable = 0x00000000, -- f
+				auralist = {},
+			},
+		},
 	},
 	targettarget = {
 		enabled = true,
@@ -27,6 +39,18 @@ D["units"] = {
 		enabled = true,
 		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
 		castbar = true,
+		auras = {
+			enabled = 0x0000000f,
+			-- ctrl_shift_override = 0x0000000f,
+			HELPFUL = {
+				include_castable = 0x00000000,
+				auralist = {},
+			},
+			HARMFUL = {
+				show_only_dispellable = 0x00000000,
+				auralist = {},
+			},
+		},
 	},
 	focustarget = {
 		enabled = true,
@@ -41,6 +65,17 @@ D["units"] = {
 		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
 		castbar = true,
+		-- auras = {
+		-- 	enabled = 0x0000000f,
+		-- 	HELPFUL = {
+		-- 		include_castable = 0x00000000,
+		-- 		auralist = {},
+		-- 	},
+		-- 	HARMFUL = {
+		-- 		show_only_dispellable = 0x00000000,
+		-- 		auralist = {},
+		-- 	},
+		-- },
 	},
 	arena = {
 		enabled = true,

@@ -39,6 +39,22 @@ function E:DiffTable(src , dest)
 	return dest
 end
 
+function E:ReplaceTable(src, dest)
+	if type(dest) ~= "table" then
+		dest = {}
+	end
+
+	for k, v in pairs(src) do
+		if type(v) == "table" then
+			dest[k] = self:ReplaceTable(v, dest[k])
+		else
+			dest[k] = v
+		end
+	end
+
+	return dest
+end
+
 function E:FetchSettings(panel, table)
 	if not table then return end
 
@@ -65,7 +81,7 @@ function E:ApplySettings(panel, table)
 		else
 			if panel[k] then
 				-- print(k, v, panel[k]:GetValue())
-				table[k] = panel[k]:GetValue()
+				table[k] = panel[k]:GetValue(v)
 			end
 		end
 	end

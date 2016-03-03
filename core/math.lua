@@ -3,6 +3,7 @@ local E = ns.E
 
 local format, gsub, sub, tonumber = format, gsub, strsub, tonumber
 local floor, ceil, modf, min = floor, ceil, math.modf, min
+local bitand, bitor, bitnot = bit.band, bit.bor, bit.bnot
 local FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE, SECOND_NUMBER_CAP_NO_SPACE
 local SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR =
 	SECOND_ONELETTER_ABBR, MINUTE_ONELETTER_ABBR, HOUR_ONELETTER_ABBR, DAY_ONELETTER_ABBR
@@ -110,4 +111,16 @@ function E:ColorDarken(r, g, b, perc)
 	end
 
 	return max(0, r - 1 * perc), max(0, g - 1 * perc), max(0, b - 1 * perc)
+end
+
+function E:IsFilterApplied(mask, filter)
+	return bitand(mask, filter) == filter
+end
+
+function E:AddFilterToMask(mask, filter)
+	return bitor(mask, filter)
+end
+
+function E:DeleteFilterFromMask(mask, filter)
+	return bitand(mask, bitnot(filter))
 end
