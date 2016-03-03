@@ -6,7 +6,7 @@ local UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControll
 	UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControlled, UnitAura
 local SpellGetVisibilityInfo, SpellIsAlwaysShown = SpellGetVisibilityInfo, SpellIsAlwaysShown
 
-local mceil = math.ceil
+local mceil, mmin = math.ceil, math.min
 
 local function SetVertexColorOverride(self, r, g, b)
 	local button = self:GetParent()
@@ -90,7 +90,7 @@ local filterFunctions = {
 		if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
 
 		local config = frame.aura_config[filter]
-		local name, _, _, _, _, _, _, caster, isStealable, _, spellID, _, isBossAura = ...
+		local name, _, _, _, _, _, _, caster, isStealable, shouldConsolidate, spellID, _, isBossAura = ...
 		local isMine = aura.isPlayer or caster == "pet"
 		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
 
@@ -119,7 +119,7 @@ local filterFunctions = {
 		elseif caster and (UnitIsUnit(caster, "vehicle") and not UnitIsPlayer("vehicle")) then
 			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526VEHICLE|r")
 			return true
-		elseif not caster then
+		elseif not caster and not shouldConsolidate then
 			if not IsInInstance() then
 				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526UNKNOWN (JUNK, NOT IN INSTANCE)|r")
 				return false
@@ -216,6 +216,11 @@ local filterFunctions = {
 			return true
 		end
 
+		-- Temporal Displacement, Sated, Exhaustion, Insanity, Fatigued
+		-- if spellID == 80354 or spellID == 57724 or spellID == 57723 or spellID == 95809 or spellID == 160455 then
+		-- 	return true
+		-- end
+
 		return false
 	end,
 }
@@ -231,7 +236,7 @@ end
 function UF:CreateBuffs(parent, unit, count)
 	local rows = mceil(count / 8)
 	local frame = CreateFrame("Frame", "$parentBuffs", parent)
-	frame:SetSize(204, 22 * rows + 4 * (rows - 1)) -- 22 * 8 + 4 * 7
+	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
 
 	frame["num"] = count
 	frame["size"] = 22
@@ -247,13 +252,13 @@ function UF:CreateBuffs(parent, unit, count)
 	return frame
 end
 
-function UF:CreateDebuffs(parent, unit, count)
+function UF:CreateDebuffs(parent, unit, count, growthDirectionX, initAnchor)
 	local rows = mceil(count / 8)
 	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetSize(204, 22 * rows + 4 * (rows - 1)) -- 22 * 8 + 4 * 7
+	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
 
-	frame["growth-x"] = "LEFT"
-	frame["initialAnchor"] = "BOTTOMRIGHT"
+	frame["growth-x"] = growthDirectionX
+	frame["initialAnchor"] = initAnchor
 	frame["num"] = count
 	frame["size"] = 22
 	frame["spacing-x"] = 4

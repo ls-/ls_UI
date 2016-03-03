@@ -167,6 +167,6 @@ function UF:ConstructTargetFrame(frame)
 	frame.Buffs = UF:CreateBuffs(frame, "target", 16)
 	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 16)
 
-	frame.Debuffs = UF:CreateDebuffs(frame, "target", 16)
+	frame.Debuffs = UF:CreateDebuffs(frame, "target", 16, "LEFT", "BOTTOMRIGHT")
 	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 0, 16)
 end
