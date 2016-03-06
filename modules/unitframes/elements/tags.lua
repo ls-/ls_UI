@@ -209,3 +209,32 @@ oUF.Tags.Events["ls:combatresticon"] = "PLAYER_UPDATE_RESTING PLAYER_REGEN_DISAB
 
 oUF.Tags.SharedEvents["PLAYER_REGEN_DISABLED"] = true
 oUF.Tags.SharedEvents["PLAYER_REGEN_ENABLED"] = true
+
+oUF.Tags.Methods["ls:debuffstatus"] = function(unit)
+	local types = E:GetDispelTypes()
+	if not types or not UnitCanAssist("player", unit) then return "" end
+
+	local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}
+	local status = ""
+
+	for i = 1, 40 do
+		local name, _, _, _, debuffType = UnitDebuff(unit, i, "RAID")
+		if name then
+			if types[debuffType] and not hasDebuff[debuffType] then
+				status = status.."|TInterface\\RaidFrame\\Raid-Icon-Debuff"..debuffType..":0:0:0:0:16:16:2:14:2:14|t"
+				hasDebuff[debuffType] = true
+			end
+		else
+			break
+		end
+	end
+
+	-- status = "|TInterface\\RaidFrame\\Raid-Icon-DebuffCurse:0:0:0:0:16:16:2:14:2:14|t"
+	-- status = status.."|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:0:0:0:0:16:16:2:14:2:14|t"
+	-- status = status.."|TInterface\\RaidFrame\\Raid-Icon-DebuffMagic:0:0:0:0:16:16:2:14:2:14|t"
+	-- status = status.."|TInterface\\RaidFrame\\Raid-Icon-DebuffPoison:0:0:0:0:16:16:2:14:2:14|t"
+
+	return status
+end
+
+oUF.Tags.Events["ls:debuffstatus"] = "UNIT_AURA"

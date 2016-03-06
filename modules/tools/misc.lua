@@ -9,6 +9,15 @@ local _, playerClass = UnitClass("player")
 local playerSpec = GetSpecialization() or 0
 local playerRole
 
+local dispelTypesByClass = {
+	PALADIN = {},
+	SHAMAN = {},
+	DRUID = {},
+	PRIEST = {},
+	MONK = {},
+	MAGE = {},
+}
+
 function E:GetCreatureDifficultyColor(level)
 	local color = GetCreatureDifficultyColor(level > 0 and level or 199)
 
@@ -115,13 +124,46 @@ function E:PLAYER_SPECIALIZATION_CHANGED()
 	playerSpec = GetSpecialization() or 0
 	playerRole = E:GetPlayerRole(playerSpec)
 
-	if oldSpec ~= playerSpec then
+	-- if oldSpec ~= playerSpec then
 		-- do smth
-	end
+	-- end
 
-	if oldRole ~= playerRole then
+	-- if oldRole ~= playerRole then
 		-- do smth
+	-- end
+end
+
+function E:GetDispelTypes()
+	return dispelTypesByClass[playerClass]
+end
+
+function E:SPELLS_CHANGED(...)
+	local dispelTypes = dispelTypesByClass[playerClass]
+
+	if dispelTypes then
+		if playerClass == "PALADIN" then
+			dispelTypes.Disease = IsPlayerSpell(4987) or nil -- Cleanse
+			dispelTypes.Magic = IsPlayerSpell(53551) or nil -- Sacred Cleansing
+			dispelTypes.Poison = dispelTypes.Disease
+		elseif playerClass == "SHAMAN" then
+			dispelTypes.Curse = IsPlayerSpell(51886) or IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
+			dispelTypes.Magic = IsPlayerSpell(77130) or nil -- Purify Spirit
+		elseif playerClass == "DRUID" then
+			dispelTypes.Curse = IsPlayerSpell(2782) or IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
+			dispelTypes.Magic = IsPlayerSpell(88423) or nil -- Nature's Cure
+			dispelTypes.Poison = dispelTypes.Curse
+		elseif playerClass == "PRIEST"  then
+			dispelTypes.Disease = IsPlayerSpell(527) or nil -- Purify
+			dispelTypes.Magic = IsPlayerSpell(527) or IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
+		elseif playerClass == "MONK" then
+			dispelTypes.Disease = IsPlayerSpell(115450) or nil -- Detox
+			dispelTypes.Magic = IsPlayerSpell(115451) or nil -- Internal Medicine
+			dispelTypes.Poison = dispelTypes.Disease
+		elseif playerClass == "MAGE" then
+			dispelTypes.Curse = IsPlayerSpell(475) or nil -- Remove Curse
+		end
 	end
 end
 
 E:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+E:RegisterEvent("SPELLS_CHANGED")
