@@ -370,11 +370,6 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
-	-- local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
-	-- duration:SetPoint("BOTTOMLEFT", -4, 0)
-	-- duration:SetPoint("BOTTOMRIGHT", 4, 0)
-	-- button.Duration = duration
-
 	button.CD = E:CreateCooldown(button, 12)
 
 	E:UpdatePushedTexture(button)
@@ -404,11 +399,6 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
-
-	-- local duration = E:CreateNewFontString(button, 10, "$parentDuration", true, nil, 2)
-	-- duration:SetPoint("BOTTOMLEFT", -4, 0)
-	-- duration:SetPoint("BOTTOMRIGHT", 4, 0)
-	-- button.Duration = duration
 
 	button.CD = E:CreateCooldown(button, 12)
 
