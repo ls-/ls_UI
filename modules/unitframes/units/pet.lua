@@ -66,7 +66,10 @@ function UF:ConstructPetFrame(frame)
 		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 	end
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 126 / 256, 147 / 256, 0, 134 / 256)
-	frame.Threat:SetSize(21, 134)
-	frame.Threat:SetPoint("CENTER", -10, 0)
+	local threat = UF:CreateThreat(frame)
+	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
+	threat:SetTexCoord(126 / 256, 168 / 256, 0 / 256, 100 / 256)
+	threat:SetSize(42, 100)
+	threat:SetPoint("CENTER", 0, 18)
+	frame.Threat = threat
 end

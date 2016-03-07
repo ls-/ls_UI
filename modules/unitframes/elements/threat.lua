@@ -3,9 +3,7 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
 local THREATCOLORS = M.colors.threat
 
-local ThreatUpdateOverride
-
-function ThreatUpdateOverride(self, event, unit)
+local function ThreatUpdateOverride(self, event, unit)
 	if unit ~= self.unit then return end
 
 	if not self:IsEventRegistered("UNIT_THREAT_LIST_UPDATE") then
@@ -29,10 +27,8 @@ function ThreatUpdateOverride(self, event, unit)
 	end
 end
 
-function UF:CreateThreat(parent, texture, l, r, t, b)
+function UF:CreateThreat(parent)
 	local threat = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 1)
-	threat:SetTexture(texture)
-	threat:SetTexCoord(l, r, t, b)
 	threat.Override = ThreatUpdateOverride
 
 	return threat

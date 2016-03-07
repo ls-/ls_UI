@@ -175,9 +175,12 @@ function UF:ConstructPartyFrame(frame, ...)
 	debuffStatus:SetPoint("LEFT", 12, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 56 / 512, 166 / 256, 196 / 256)
-	frame.Threat:SetSize(56, 30)
-	frame.Threat:SetPoint("TOPLEFT", -3, 3)
+	local threat = UF:CreateThreat(frame)
+	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	threat:SetTexCoord(210 / 512, 326 / 512, 200 / 256, 230 / 256)
+	threat:SetSize(116, 30)
+	threat:SetPoint("CENTER", 0, 6)
+	frame.Threat = threat
 
 	frame.Debuffs = UF:CreateDebuffs(frame, "party", 4)
 	frame.Debuffs:SetPoint("TOP", frame, "BOTTOM", 0, 0)

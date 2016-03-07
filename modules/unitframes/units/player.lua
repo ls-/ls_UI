@@ -160,7 +160,10 @@ function UF:ConstructPlayerFrame(frame)
 	fcf.Mode = "Fountain"
 	fcf.YOffset = 20
 
-	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 199 / 512, 286 / 512, 202 / 512, 340 / 512)
-	frame.Threat:SetSize(87, 138)
-	frame.Threat:SetPoint("CENTER", -44, 17)
+	local threat = UF:CreateThreat(frame)
+	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	threat:SetTexCoord(199 / 512, 373 / 512, 202 / 512, 340 / 512)
+	threat:SetSize(174, 138)
+	threat:SetPoint("CENTER", 0, 17)
+	frame.Threat = threat
 end
