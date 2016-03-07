@@ -111,6 +111,13 @@ function UF:ConstructPlayerFrame(frame)
 	status:SetPoint("BOTTOM", 0, -18)
 	frame:Tag(status, "[ls:combatresticon][ls:pvpicon][ls:lfdroleicon][ls:leadericon]")
 
+	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
+	debuffStatus:SetWidth(14)
+	debuffStatus:SetWordWrap(true)
+	debuffStatus:SetDrawLayer("OVERLAY")
+	debuffStatus:SetPoint("LEFT", health, "LEFT", 0, 0)
+	frame:Tag(debuffStatus, "[ls:debuffstatus]")
+
 	UF:Reskin(frame, "NONE", true, 0, "NONE")
 
 	if E.playerclass == "PRIEST" then
@@ -156,8 +163,4 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 199 / 512, 286 / 512, 202 / 512, 340 / 512)
 	frame.Threat:SetSize(87, 138)
 	frame.Threat:SetPoint("CENTER", -44, 17)
-
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_player", 286 / 512, 373 / 512, 202 / 512, 340 / 512)
-	frame.DebuffHighlight:SetSize(87, 138)
-	frame.DebuffHighlight:SetPoint("CENTER", 44, 17)
 end

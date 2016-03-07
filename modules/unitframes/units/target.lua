@@ -159,13 +159,14 @@ function UF:ConstructTargetFrame(frame)
 	frame:Tag(status_top_right, "[ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 	tinsert(frame.mouseovers, status_top_right)
 
+	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
+	debuffStatus:SetDrawLayer("OVERLAY")
+	debuffStatus:SetPoint("LEFT", 12, 0)
+	frame:Tag(debuffStatus, "[ls:debuffstatus]")
+
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 103 / 512, 36 / 256, 66 / 256)
 	frame.Threat:SetSize(103, 30)
 	frame.Threat:SetPoint("TOPLEFT", -3, 3)
-
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 103 / 512, 206 / 512, 36 / 256, 66 / 256)
-	frame.DebuffHighlight:SetSize(103, 30)
-	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
 	frame.Buffs = UF:CreateBuffs(frame, "target", 16)
 	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 0, 16)

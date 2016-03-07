@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Include file="oUF\oUF.xml"/>
 	<Script file="oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua"/>
-	<Script file="oUF_DebuffHighlight\oUF_DebuffHighlight.lua"/>
 	<Script file="oUF_BurningEmbers\oUF_BurningEmbers.lua"/>
 	<Script file="oUF_DemonicFury\oUF_DemonicFury.lua"/>
 </Ui>

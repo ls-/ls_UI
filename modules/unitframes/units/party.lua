@@ -170,13 +170,14 @@ function UF:ConstructPartyFrame(frame, ...)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
 	frame:Tag(name, "[custom:difficulty][custom:effectivelevel]|r [custom:name]")
 
+	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
+	debuffStatus:SetDrawLayer("OVERLAY")
+	debuffStatus:SetPoint("LEFT", 12, 0)
+	frame:Tag(debuffStatus, "[ls:debuffstatus]")
+
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 0 / 512, 56 / 512, 166 / 256, 196 / 256)
 	frame.Threat:SetSize(56, 30)
 	frame.Threat:SetPoint("TOPLEFT", -3, 3)
-
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_other", 56 / 512, 112 / 512, 166 / 256, 196 / 256)
-	frame.DebuffHighlight:SetSize(56, 30)
-	frame.DebuffHighlight:SetPoint("TOPRIGHT", 3, 3)
 
 	frame.Debuffs = UF:CreateDebuffs(frame, "party", 4)
 	frame.Debuffs:SetPoint("TOP", frame, "BOTTOM", 0, 0)

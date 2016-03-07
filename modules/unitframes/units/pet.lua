@@ -53,6 +53,13 @@ function UF:ConstructPetFrame(frame)
 	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 	tinsert(frame.mouseovers, frame.Power)
 
+	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
+	debuffStatus:SetWidth(14)
+	debuffStatus:SetWordWrap(true)
+	debuffStatus:SetDrawLayer("OVERLAY")
+	debuffStatus:SetPoint("CENTER")
+	frame:Tag(debuffStatus, "[ls:debuffstatus]")
+
 	if C.units.pet.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 196, nil, nil, true, true)
 		frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
@@ -62,8 +69,4 @@ function UF:ConstructPetFrame(frame)
 	frame.Threat = UF:CreateThreat(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 126 / 256, 147 / 256, 0, 134 / 256)
 	frame.Threat:SetSize(21, 134)
 	frame.Threat:SetPoint("CENTER", -10, 0)
-
-	frame.DebuffHighlight = UF:CreateDebuffHighlight(frame, "Interface\\AddOns\\oUF_LS\\media\\frame_pet", 147 / 256, 168 / 256, 0, 134 / 256)
-	frame.DebuffHighlight:SetSize(21, 134)
-	frame.DebuffHighlight:SetPoint("CENTER", 10, 0)
 end

@@ -4,7 +4,6 @@
 	<Script file="auras.lua"/>
 	<Script file="castbar.lua"/>
 	<Script file="classpower.lua"/>
-	<Script file="debuffhighlight.lua"/>
 	<Script file="healprediction.lua"/>
 	<Script file="health.lua"/>
 	<Script file="power.lua"/>
