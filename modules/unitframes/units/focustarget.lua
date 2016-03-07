@@ -56,14 +56,17 @@ function UF:ConstructFocusTargetFrame(frame)
 
 	UF:SetupRarityIndication(frame, "short")
 
-	frame.Health = UF:CreateHealthBar(frame, 12, true)
-	frame.Health:SetFrameLevel(level + 1)
-	frame.Health:SetSize(90, 20)
-	frame.Health:SetPoint("CENTER")
-	frame.Health.Value:SetJustifyH("RIGHT")
-	frame.Health.Value:SetParent(cover)
-	frame.Health.Value:SetPoint("RIGHT", -12, 0)
-	tinsert(frame.mouseovers, frame.Health)
+	local health = UF:CreateHealthBar(frame, 12, true)
+	health:SetFrameLevel(level + 1)
+	health:SetSize(90, 20)
+	health:SetPoint("CENTER")
+	tinsert(frame.mouseovers, health)
+	frame.Health = health
+
+	local healthValue = E:CreateFontString(cover, 12, "$parentHealthValue", true)
+	healthValue:SetJustifyH("RIGHT")
+	healthValue:SetPoint("RIGHT", -12, 0)
+	frame.Health.Value = healthValue
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame)
 

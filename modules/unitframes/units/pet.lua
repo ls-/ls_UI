@@ -30,14 +30,17 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
 	fg:SetTexCoord(42 / 256, 84 / 256, 0, 134 / 256)
 
-	frame.Health = UF:CreateHealthBar(frame, 12, nil, true)
-	frame.Health:SetFrameLevel(level + 1)
-	frame.Health:SetSize(8, 112)
-	frame.Health:SetPoint("CENTER", -6, 0)
-	frame.Health.Value:SetJustifyH("RIGHT")
-	frame.Health.Value:SetParent(cover)
-	frame.Health.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
-	tinsert(frame.mouseovers, frame.Health)
+	local health = UF:CreateHealthBar(frame, 12, nil, true)
+	health:SetFrameLevel(level + 1)
+	health:SetSize(8, 112)
+	health:SetPoint("CENTER", -6, 0)
+	tinsert(frame.mouseovers, health)
+	frame.Health = health
+
+	local healthValue = E:CreateFontString(cover, 12, "$parentHealthValue", true)
+	healthValue:SetJustifyH("RIGHT")
+	healthValue:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
+	frame.Health.Value = healthValue
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 

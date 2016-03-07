@@ -61,13 +61,17 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
 
-	frame.Health = UF:CreateHealthBar(frame, 18, nil, true, true)
-	frame.Health:SetFrameLevel(level + 1)
-	frame.Health:SetSize(94, 132)
-	frame.Health:SetPoint("CENTER")
-	frame.Health.Value:SetParent(cover)
-	frame.Health.Value:SetPoint("CENTER", 0, 8)
-	tinsert(frame.mouseovers, frame.Health)
+	local health = UF:CreateHealthBar(frame, 12, nil, true)
+	health:SetFrameLevel(level + 1)
+	health:SetSize(94, 132)
+	health:SetPoint("CENTER")
+	tinsert(frame.mouseovers, health)
+	frame.Health = health
+
+	local healthValue = E:CreateFontString(cover, 18, "$parentHealthValue", true)
+	healthValue:SetJustifyH("RIGHT")
+	healthValue:SetPoint("CENTER", 0, 8)
+	frame.Health.Value = healthValue
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 

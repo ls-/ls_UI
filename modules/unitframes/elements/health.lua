@@ -4,14 +4,6 @@ local UF = E:GetModule("UnitFrames")
 local COLORS = M.colors
 
 local function PostUpdateHealth(bar, unit, cur, max)
-	if bar.LowHP then
-		if E:NumberToPerc(cur, max) <= 25 and cur > 1 then
-			E:Blink(bar.LowHP, 0.5)
-		else
-			E:StopBlink(bar.LowHP)
-		end
-	end
-
 	if not bar.Value then return end
 
 	local color
@@ -42,27 +34,11 @@ local function PostUpdateHealth(bar, unit, cur, max)
 	end
 end
 
-function UF:CreateHealthBar(parent, textsize, reaction, vertical, lowhp)
-	local unit = parent.unit
-
+function UF:CreateHealthBar(parent, textsize, reaction, vertical)
 	local health = CreateFrame("StatusBar", "$parentHealthBar", parent)
 	health:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	health:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(health)
-
-	local value = E:CreateFontString(health, textsize, "$parentHealthValue", true)
-	health.Value = value
-
-	if lowhp then
-		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-		glow:SetTexCoord(98 / 512, 198 / 512, 202 / 512, 340 / 512)
-		glow:SetSize(100, 138)
-		glow:SetPoint("CENTER")
-		glow:SetVertexColor(unpack(COLORS.red))
-		glow:SetAlpha(0)
-		health.LowHP = glow
-	end
 
 	health.colorHealth = true
 	health.colorDisconnected = true
