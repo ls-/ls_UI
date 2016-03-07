@@ -138,13 +138,13 @@ function UF:ConstructPartyFrame(frame, ...)
 		[5] = tubeGloss,
 	}
 
-	local status_left = E:CreateNewFontString(cover, 16, "$parentLeftStatusIcons")
+	local status_left = E:CreateFontString(cover, 16, "$parentLeftStatusIcons")
 	status_left:SetDrawLayer("ARTWORK", 3)
 	status_left:SetJustifyH("LEFT")
 	status_left:SetPoint("TOPLEFT", 4, 2)
 	frame:Tag(status_left, "[ls:lfdroleicon][ls:leadericon]")
 
-	local status_right = E:CreateNewFontString(cover, 16, "$parentRightStatusIcons")
+	local status_right = E:CreateFontString(cover, 16, "$parentRightStatusIcons")
 	status_right:SetDrawLayer("ARTWORK", 3)
 	status_right:SetJustifyH("LEFT")
 	status_right:SetPoint("TOPRIGHT", -4, 2)

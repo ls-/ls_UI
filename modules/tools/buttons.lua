@@ -365,7 +365,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 
 	E:CreateBorder(button)
 
-	local count = E:CreateNewFontString(button, 10, "$parentCount", true, nil, 2)
+	local count = E:CreateFontString(button, 10, "$parentCount", nil, true)
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
@@ -400,7 +400,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 
 	E:CreateBorder(button)
 
-	local count = E:CreateNewFontString(button, 10, "$parentCount", true, nil, 2)
+	local count = E:CreateFontString(button, 10, "$parentCount", nil, true)
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count

@@ -547,7 +547,7 @@ function UF:CreateTotemBar(parent, level)
 		glow:SetAlpha(0)
 		element.Glow = glow
 
-		local timer = E:CreateFontString(parent.Cover, 14, false, "THINOUTLINE")
+		local timer = E:CreateFontString(parent.Cover, 14, nil, nil, true)
 		timer:SetDrawLayer("ARTWORK", 4)
 		timer:SetPoint("CENTER", element, "CENTER", 0, 0)
 		timer:SetAlpha(0)

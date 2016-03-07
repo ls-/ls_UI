@@ -142,7 +142,7 @@ function E:HandleStatusBar(bar, addBorder, height, cascade)
 		bar.Bg = background
 
 		if not text then
-			text = E:CreateNewFontString(bar, PRESET.text_size[height], "$parentText", nil, true, 1)
+			text = E:CreateFontString(bar, PRESET.text_size[height], "$parentText", true)
 		else
 			text:SetFontObject("LS"..PRESET.text_size[height].."Font_Shadow")
 			text:SetWordWrap(false)
@@ -224,7 +224,7 @@ function E:CreateStatusBar(parent, name, orientation, preset, barSize, addBorder
 	bg:SetAllPoints()
 	bar.Bg = bg
 
-	local text = E:CreateNewFontString(bar, PRESET.text_size[preset], "$parentText", nil, true, 1)
+	local text = E:CreateFontString(bar, PRESET.text_size[preset], "$parentText", true)
 	bar.Text = text
 
 	local gloss = bar:CreateTexture(nil, "BORDER", nil, -8)

@@ -101,7 +101,7 @@ function UF:ConstructPlayerFrame(frame)
 		E:CreateMover(frame.Castbar.Holder)
 	end
 
-	local status = E:CreateNewFontString(frame, 16, "$parentStatusIcons")
+	local status = E:CreateFontString(frame, 16, "$parentStatusIcons")
 	status:SetDrawLayer("ARTWORK", 3)
 	status:SetJustifyH("CENTER")
 	status:SetPoint("BOTTOM", 0, -18)

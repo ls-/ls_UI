@@ -45,7 +45,7 @@ local function CreateCooldownTimer(cooldown, textSize)
 	holder:SetFrameLevel(6)
 	holder:SetAllPoints()
 
-	local timer = E:CreateFontString(holder, textSize, nil, false, true)
+	local timer = E:CreateFontString(holder, textSize, nil, nil, true)
 	timer:SetPoint("CENTER", 1, 0)
 	timer:SetJustifyH("CENTER")
 

@@ -134,7 +134,7 @@ function CFG:CreateMaskDial(parent, name, text)
 		end
 	end
 
-	local label = E:CreateNewFontString(object, 10, "$parentText", nil, true)
+	local label = E:CreateFontString(object, 10, "$parentText", true)
 	label:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 0, 2)
 	label:SetVertexColor(1, 0.82, 0)
 	label:SetText(text)
@@ -167,7 +167,7 @@ function CFG:CreateStatusLog(parent)
 end
 
 function CFG:CreateTextLabel(parent, size, text)
-	local object = E:CreateFontString(parent, size, nil, true, nil, true)
+	local object = E:CreateFontString(parent, size, nil, true)
 	object:SetJustifyH("LEFT")
 	object:SetJustifyV("TOP")
 	object:SetText(text)
@@ -255,7 +255,7 @@ function CFG:CreateDropDownMenu(parent, name, text, func)
 	object.RefreshValue = DropDownMenu_RefreshValue
 	UIDropDownMenu_Initialize(object, func)
 
-	local label = E:CreateFontString(object, 10, "$parentLabel", true, nil, true)
+	local label = E:CreateFontString(object, 10, "$parentLabel", true)
 	label:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 16, 3)
 	label:SetJustifyH("LEFT")
 	label:SetJustifyV("MIDDLE")
@@ -317,7 +317,7 @@ function CFG:CreateDivider(parent, text)
 	object:SetTexCoord(0, 1, 0.0625, 0.65625)
 	object:SetAlpha(0.5)
 
-	local label = E:CreateNewFontString(parent, 14)
+	local label = E:CreateFontString(parent, 14)
 	label:SetPoint("LEFT", object, "LEFT", 12, 1)
 	label:SetPoint("RIGHT", object, "RIGHT", -12, 1)
 	label:SetText(text)

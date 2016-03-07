@@ -309,7 +309,7 @@ function AT:Initialize(forceInit)
 		header:SetScript("OnDragStop", ATHeader_OnDragStop)
 		AT.Header = header
 
-		local label = E:CreateFontString(header, 12, nil, true, nil, nil, 1, 0.82, 0)
+		local label = E:CreateFontString(header, 12, nil, true)
 		label:SetPoint("LEFT", 2, 0)
 		label:SetAlpha(0.2)
 		label:SetText(BUFFOPTIONS_LABEL)

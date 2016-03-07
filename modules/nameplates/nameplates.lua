@@ -318,7 +318,7 @@ local function HandleNamePlate(self)
 	raidIcon:Hide()
 	overlay.RaidIcon = raidIcon
 
-	local name = E:CreateFontString(overlay, 14, nil, true, nil)
+	local name = E:CreateFontString(overlay, 14, nil, true)
 	name:SetPoint("LEFT", overlay, -24, 0)
 	name:SetPoint("RIGHT", overlay, 24, 0)
 	overlay.NameText = name

@@ -441,7 +441,7 @@ function CFG:UFAuras_Initialize()
 
 		button.Icon = E:UpdateIcon(iconholder)
 
-		local text = E:CreateNewFontString(button, 12, "$parentLabel", false, true)
+		local text = E:CreateFontString(button, 12, "$parentLabel", true)
 		text:SetJustifyH("LEFT")
 		text:SetPoint("TOPLEFT", iconholder, "TOPRIGHT", 4, 2)
 		text:SetPoint("RIGHT", button, "RIGHT", -4, 0)
