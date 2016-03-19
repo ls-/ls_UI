@@ -61,17 +61,17 @@ function UF:ConstructPlayerFrame(frame)
 	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
 
-	local health = UF:CreateHealthBar(frame, 12, nil, true)
+	local health = UF:CreateHealthBar(frame, 18, nil, true)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(94, 132)
 	health:SetPoint("CENTER")
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
-	local healthValue = E:CreateFontString(cover, 18, "$parentHealthValue", true)
-	healthValue:SetJustifyH("RIGHT")
-	healthValue:SetPoint("CENTER", 0, 8)
-	frame.Health.Value = healthValue
+	local healthText = health.Text
+	healthText:SetParent(cover)
+	healthText:SetJustifyH("RIGHT")
+	healthText:SetPoint("CENTER", 0, 8)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
@@ -92,16 +92,21 @@ function UF:ConstructPlayerFrame(frame)
 	healAbsorb:SetPoint("CENTER", 0, 38)
 	frame:Tag(healAbsorb, "[custom:healabsorb]")
 
-	frame.Power = UF:CreatePowerBar(frame, 14, nil, true)
-	frame.Power:SetFrameLevel(level + 4)
-	frame.Power:SetSize(12, 128)
-	frame.Power:SetPoint("RIGHT", -19, 0)
-	frame.Power.Value:SetParent(cover)
-	frame.Power.Value:SetPoint("CENTER", 0, -8)
-	tinsert(frame.mouseovers, frame.Power)
+	local power = UF:CreatePowerBar(frame, 14, nil, true)
+	power:SetFrameLevel(level + 4)
+	power:SetSize(12, 128)
+	power:SetPoint("RIGHT", -19, 0)
+	tinsert(frame.mouseovers, power)
+	frame.Power = power
+
+	local powerText = power.Text
+	powerText:SetParent(cover)
+	powerText:SetPoint("CENTER", 0, -8)
 
 	if C.units.player.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 196, {"BOTTOM", "UIParent", "BOTTOM", 0, 190}, nil, true, true)
+		frame.Castbar = UF:CreateCastBar(frame, 196, true, true)
+
+		frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 		E:CreateMover(frame.Castbar.Holder)
 	end
 

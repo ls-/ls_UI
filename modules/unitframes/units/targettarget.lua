@@ -63,10 +63,10 @@ function UF:ConstructTargetTargetFrame(frame)
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
-	local healthValue = E:CreateFontString(cover, 12, "$parentHealthValue", true)
-	healthValue:SetJustifyH("RIGHT")
-	healthValue:SetPoint("RIGHT", -12, 0)
-	frame.Health.Value = healthValue
+	local healthText = health.Text
+	healthText:SetParent(cover)
+	healthText:SetJustifyH("RIGHT")
+	healthText:SetPoint("RIGHT", -12, 0)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame)
 

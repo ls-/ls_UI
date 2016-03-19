@@ -371,11 +371,12 @@ function TT:Initialize()
 		GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_UnitTooltipHook)
 
 		for i = 1, 6 do
-			E:AddTooltipStatusBar(GameTooltip, 6)
+			E:AddTooltipStatusBar(GameTooltip, i)
 		end
 
-		E:HandleStatusBar(GameTooltipStatusBar, nil, "12")
+		E:HandleStatusBar(GameTooltipStatusBar)
 		E:CreateBorder(GameTooltipStatusBar, 8)
+		GameTooltipStatusBar.Text:SetFontObject("LS10Font_Shadow")
 		GameTooltipStatusBar:SetBorderColor(unpack(COLORS.gray))
 		GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
 	end

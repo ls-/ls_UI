@@ -50,9 +50,10 @@ local function OnLeave(self)
 	GameTooltip:Hide()
 end
 
-function UF:CreateAltPowerBar(parent, width, coords, preset)
-	local bar = E:CreateStatusBar(parent, "$parentAltPowerBar", "HORIZONTAL", preset or "14", width - tonumber(preset), true)
+function UF:CreateAltPowerBar(parent, width, coords)
+	local bar = E:CreateStatusBar(parent, "$parentAltPowerBar", "HORIZONTAL")
 	bar:SetPoint(unpack(coords))
+	bar:SetSize(width - 12, 12)
 	bar:EnableMouse(true)
 	bar:SetScript("OnEnter", OnEnter)
 	bar:SetScript("OnLeave", OnLeave)

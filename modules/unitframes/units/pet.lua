@@ -37,21 +37,22 @@ function UF:ConstructPetFrame(frame)
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
-	local healthValue = E:CreateFontString(cover, 12, "$parentHealthValue", true)
-	healthValue:SetJustifyH("RIGHT")
-	healthValue:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
-	frame.Health.Value = healthValue
+	local healthText = health.Text
+	healthText:SetJustifyH("RIGHT")
+	healthText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
-	frame.Power = UF:CreatePowerBar(frame, 12, nil, true)
-	frame.Power:SetFrameLevel(level + 2)
-	frame.Power:SetSize(8, 102)
-	frame.Power:SetPoint("CENTER", 6, 0)
-	frame.Power.Value:SetJustifyH("RIGHT")
-	frame.Power.Value:SetParent(cover)
-	frame.Power.Value:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
-	tinsert(frame.mouseovers, frame.Power)
+	local power = UF:CreatePowerBar(frame, 12, nil, true)
+	power:SetFrameLevel(level + 2)
+	power:SetSize(8, 102)
+	power:SetPoint("CENTER", 6, 0)
+	tinsert(frame.mouseovers, power)
+	frame.Power = power
+
+	local powerText = power.Text
+	powerText:SetJustifyH("RIGHT")
+	powerText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 
 	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
 	debuffStatus:SetWidth(14)

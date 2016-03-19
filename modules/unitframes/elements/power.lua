@@ -8,64 +8,61 @@ local UnitIsDeadOrGhost, UnitIsConnected = UnitIsDeadOrGhost, UnitIsConnected
 local function PostUpdatePower(bar, unit, cur, max)
 	if bar.Tube then
 		if max == 0 then
-			for i = 1, #bar.Tube do
+			for i = 0, #bar.Tube do
 				bar.Tube[i]:Hide()
 			end
 		else
-			for i = 1, #bar.Tube do
+			for i = 0, #bar.Tube do
 				bar.Tube[i]:Show()
 			end
 		end
 	end
 
-	if not bar.Value then return end
+	if not bar.Text then return end
 
 	if max == 0 then
-		return bar.Value:SetText(nil)
+		return bar.Text:SetText(nil)
 	elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
 		bar:SetValue(0)
 
-		return bar.Value:SetText(nil)
+		return bar.Text:SetText(nil)
 	end
 
 	local color = E:RGBToHEX(bar:GetStatusBarColor())
 
 	if cur < max then
 		if bar.__owner.isMouseOver then
-			bar.Value:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur), E:NumberFormat(max))
+			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur), E:NumberFormat(max))
 		elseif cur > 0 then
-			bar.Value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
 		else
-			bar.Value:SetText(nil)
+			bar.Text:SetText(nil)
 		end
 	else
 		if bar.__owner.isMouseOver then
-			bar.Value:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
 		else
-			bar.Value:SetText(nil)
+			bar.Text:SetText(nil)
 		end
 	end
 end
 
-function UF:CreatePowerBar(parent, textsize, textbg, vertical)
-	local unit = parent.unit
-
+function UF:CreatePowerBar(parent, textSize, textBg, vertical)
 	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
 	power:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	power:GetStatusBarTexture():SetDrawLayer("BACKGROUND", 1)
 	E:SmoothBar(power)
 
-	local value = E:CreateFontString(power, textsize, "$parentPowerValue", true)
-	power.Value = value
+	local text = E:CreateFontString(power, textSize, "$parentPowerValue", true)
+	power.Text = text
 
-	if textbg then
-		local shadow = power:CreateTexture(nil, "OVERLAY", nil, 1)
+	if textBg then
+		local shadow = power:CreateTexture(nil, "ARTWORK", nil, 7)
 		shadow:SetTexture("Interface\\Scenarios\\Objective-Lineglow")
 		shadow:SetTexCoord(0, 1, 0, 13 / 16)
 		shadow:SetVertexColor(0, 0, 0)
-		shadow:SetPoint("TOPLEFT", value, "TOPLEFT", 0, -2)
-		shadow:SetPoint("BOTTOMRIGHT", value, "BOTTOMRIGHT", 0, 2)
+		shadow:SetPoint("TOPLEFT", text, "TOPLEFT", 0, -2)
+		shadow:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", 0, 2)
 	end
 
 	power.colorPower = true

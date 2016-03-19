@@ -13,7 +13,8 @@ function B:HandleArchaeology()
 	local ArcheologyDigsiteProgressBar = ArcheologyDigsiteProgressBar
 	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
 	ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
-	E:HandleStatusBar(ArcheologyDigsiteProgressBar, true)
+	E:HandleStatusBar(ArcheologyDigsiteProgressBar)
+	E:SetStatusBarSkin(ArcheologyDigsiteProgressBar, "HORIZONTAL-BIG")
 	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(unpack(COLORS.orange))
 	E:CreateMover(ArcheologyDigsiteProgressBar)
 end

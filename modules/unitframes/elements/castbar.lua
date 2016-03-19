@@ -5,21 +5,6 @@ local COLORS = M.colors
 
 local abs, unpack = abs, unpack
 
-local PRESETS = {
-	["14"] = {
-		sparkSize = {26, 26},
-		iconGap = 14,
-		spacing = 49,
-		anchorPoint = {"TOPRIGHT", -7, -2},
-	},
-	["12"] = {
-		sparkSize = {24, 24},
-		iconGap = 12,
-		spacing = 46,
-		anchorPoint = {"TOPRIGHT", -6, -2},
-	},
-}
-
 local function PostCastStart(self, unit, name, castid)
 	if self.interrupt then
 		self:SetStatusBarColor(unpack(COLORS.gray))
@@ -60,27 +45,26 @@ local function CustomDelayText(self, duration)
 	end
 end
 
-function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
+function UF:CreateCastBar(parent, width, safezone, delay)
 	local holder = CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
-	holder:SetSize(width, 28)
+	holder:SetSize(width, 32)
 
-	local PRESET = PRESETS[preset or "14"]
+	local bar = E:CreateStatusBar(holder, "$parentCastBar", "HORIZONTAL")
+	bar:SetSize(width - 46, 12)
+	bar:SetPoint("TOPRIGHT", -6, -2)
+	E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
 
-	if coords then
-		holder:SetPoint(unpack(coords))
-	end
+	bar.Text:SetPoint("TOPLEFT", 1, 0)
+	bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)
 
-	local bar = E:CreateStatusBar(holder, "$parentCastBar", "HORIZONTAL", preset or "14", width - PRESET.spacing, true)
-	bar:SetPoint(unpack(PRESET.anchorPoint))
-
-	local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
-	spark:SetSize(unpack(PRESET.sparkSize))
+	local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	spark:SetSize(24, 24)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
 	local iconHolder = CreateFrame("Frame", "$parentIconHolder", bar)
 	iconHolder:SetSize(28, 28)
-	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -PRESET.iconGap, 0)
+	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -8, 0)
 	E:CreateBorder(iconHolder, 8)
 	iconHolder:SetBorderColor(unpack(COLORS.yellow))
 
@@ -91,7 +75,7 @@ function UF:CreateCastBar(parent, width, coords, preset, safezone, delay)
 	bar.Time = time
 
 	if safezone then
-		local zone = bar:CreateTexture(nil, "BACKGROUND", nil, 2)
+		local zone = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 		zone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		zone:SetVertexColor(unpack(COLORS.red))
 		zone:SetAlpha(0.6)

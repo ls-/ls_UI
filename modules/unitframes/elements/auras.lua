@@ -90,12 +90,13 @@ local filterFunctions = {
 		if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
 
 		local config = frame.aura_config[filter]
-		local name, _, _, _, _, _, _, caster, isStealable, shouldConsolidate, spellID, _, isBossAura = ...
+		local name, _, _, _, debuffType, _, _, caster, isStealable, shouldConsolidate, spellID, _, isBossAura = ...
 		local isMine = aura.isPlayer or caster == "pet"
 		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
+		local dispelTypes = E:GetDispelTypes()
 
 		if not hostileTarget and filter == "HARMFUL" then
-			if E:IsFilterApplied(config.show_only_dispellable, playerSpec) then
+			if E:IsFilterApplied(config.show_only_dispellable, playerSpec) and dispelTypes[debuffType] then
 				if UnitAura(unit, name, nil, filter.."|RAID") then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY DISPELLABLE|r")
 					return true
@@ -191,9 +192,10 @@ local filterFunctions = {
 		return false
 	end,
 	party = function(frame, unit, aura, ...)
-		local name, _, _, _, _, _, _, _, _, _, spellID, _, isBossAura = ...
+		local name, _, _, _, debuffType, _, _, _, _, _, spellID, _, isBossAura = ...
 		local filter = aura.filter
 		local playerClass = E:GetPlayerClass()
+		local dispelTypes = E:GetDispelTypes()
 
 		-- gibe de pusseh, b0ss
 		if isBossAura then
@@ -201,7 +203,7 @@ local filterFunctions = {
 		end
 
 		-- dispellable debuffs
-		if UnitAura(unit, name, nil, filter.."|RAID") then
+		if UnitAura(unit, name, nil, filter.."|RAID") and dispelTypes[debuffType] then
 			return true
 		end
 

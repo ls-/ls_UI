@@ -78,10 +78,10 @@ function UF:ConstructPartyFrame(frame, ...)
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
-	local healthValue = E:CreateFontString(cover, 12, "$parentHealthValue", true)
-	healthValue:SetJustifyH("RIGHT")
-	healthValue:SetPoint("RIGHT", -12, 0)
-	frame.Health.Value = healthValue
+	local healthText = health.Text
+	healthText:SetParent(cover)
+	healthText:SetJustifyH("RIGHT")
+	healthText:SetPoint("RIGHT", -12, 0)
 
 	frame.HealPrediction = UF:CreateHealPrediction(frame)
 
@@ -93,53 +93,18 @@ function UF:ConstructPartyFrame(frame, ...)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
 
-	frame.Power = UF:CreatePowerBar(frame, 10, true)
-	frame.Power:SetFrameLevel(level + 4)
-	frame.Power:SetSize(62, 2)
-	frame.Power:SetPoint("CENTER", 0, -11)
-	frame.Power.Value:SetJustifyH("LEFT")
-	frame.Power.Value:SetPoint("LEFT")
-	frame.Power.Value:SetDrawLayer("OVERLAY", 2)
-	tinsert(frame.mouseovers, frame.Power)
+	local power = UF:CreatePowerBar(frame, 10, true)
+	power:SetFrameLevel(level + 4)
+	power:SetSize(62, 2)
+	power:SetPoint("CENTER", 0, -11)
+	E:SetStatusBarSkin(power, "HORIZONTAL-SMALL")
+	tinsert(frame.mouseovers, power)
+	frame.Power = power
 
-	local firstCap = frame.Power:CreateTexture(nil, "BORDER")
-	firstCap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	firstCap:SetTexCoord(1 / 64, 12 / 64, 25 / 64, 35 / 64)
-	firstCap:SetSize(11, 10)
-	firstCap:SetPoint("RIGHT", "$parent", "LEFT", 3, 0)
-
-	local firstMid = frame.Power:CreateTexture(nil, "BORDER")
-	firstMid:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	firstMid:SetTexCoord(0 / 64, 64 / 64, 21 / 64, 24 / 64)
-	firstMid:SetHeight(3)
-	firstMid:SetPoint("TOPLEFT", 0, 3)
-	firstMid:SetPoint("TOPRIGHT", 0, 3)
-
-	local tubeGloss = frame.Power:CreateTexture(nil, "BORDER", nil, -8)
-	tubeGloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	tubeGloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
-	tubeGloss:SetAllPoints()
-
-	local secondMid = frame.Power:CreateTexture(nil, "BORDER")
-	secondMid:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	secondMid:SetTexCoord(0 / 64, 64 / 64, 24 / 64, 21 / 64)
-	secondMid:SetHeight(3)
-	secondMid:SetPoint("BOTTOMLEFT", 0, -3)
-	secondMid:SetPoint("BOTTOMRIGHT", 0, -3)
-
-	local secondCap = frame.Power:CreateTexture(nil, "BORDER")
-	secondCap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
-	secondCap:SetTexCoord(1 / 64, 12 / 64, 36 / 64, 46 / 64)
-	secondCap:SetSize(11, 10)
-	secondCap:SetPoint("LEFT", "$parent", "RIGHT", -3, 0)
-
-	frame.Power.Tube = {
-		[1] = firstCap,
-		[2] = firstMid,
-		[3] = secondMid,
-		[4] = secondCap,
-		[5] = tubeGloss,
-	}
+	local powerText = power.Text
+	powerText:SetDrawLayer("OVERLAY")
+	powerText:SetJustifyH("LEFT")
+	powerText:SetPoint("LEFT")
 
 	local status_left = E:CreateFontString(cover, 16, "$parentLeftStatusIcons")
 	status_left:SetDrawLayer("ARTWORK", 3)

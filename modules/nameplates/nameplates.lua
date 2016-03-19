@@ -73,8 +73,14 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 	local bar
 
 	if isCastBar then
-		bar = E:CreateStatusBar(parent, npName.."CastBar", "HORIZONTAL", "12", 112, true)
+		bar = E:CreateStatusBar(parent, npName.."CastBar", "HORIZONTAL")
+		bar:SetSize(114, 12)
 		bar:SetPoint("BOTTOM", parent, "BOTTOM", 0, 1)
+		E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
+
+		bar.Text:SetFontObject("LS10Font_Shadow")
+		bar.Text:SetPoint("TOPLEFT", 1, 0)
+		bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)
 
 		local spark = bar:CreateTexture(nil, "BORDER", nil, 1)
 		spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
@@ -83,9 +89,11 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 		spark:SetBlendMode("ADD")
 		bar.Spark = spark
 	else
-		bar = E:CreateStatusBar(parent, npName.."HealthBar", "HORIZONTAL", "12", 120)
+		bar = E:CreateStatusBar(parent, npName.."HealthBar", "HORIZONTAL")
+		bar:SetSize(120, 12)
 		bar:SetPoint("TOP", parent, "TOP", 0, -16)
 
+		bar.Text:SetPoint("RIGHT", -1, 0)
 		bar.Text:SetFontObject("LS12Font")
 		bar.Text:SetJustifyH("RIGHT")
 
