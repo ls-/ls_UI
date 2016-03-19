@@ -329,7 +329,9 @@ end
 
 local function ReloadUIButton_OnClick(self)
 	for _, panel in next, Panels do
-		E:ApplySettings(panel.settings, C)
+		if panel.settings then
+			E:ApplySettings(panel.settings, C)
+		end
 	end
 
 	ReloadUI()
