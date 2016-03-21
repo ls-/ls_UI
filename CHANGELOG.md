@@ -1,3 +1,9 @@
+#Version 2.16
+
+- As of now dispellable debuffs are also shown as special icons on health bars;
+- Removed unit frame debuff highlight;
+- Misc bug fixes and tweaks.
+
 #Version 2.15
 
 - Updated aura widget on unit frames;
