@@ -62,7 +62,7 @@ function UF:ConstructPetFrame(frame)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
 	if C.units.pet.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 196, nil, nil, true, true)
+		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
 		frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
 		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 	end

@@ -74,11 +74,10 @@ local function NamePlate_CreateStatusBar(parent, isCastBar, npName)
 
 	if isCastBar then
 		bar = E:CreateStatusBar(parent, npName.."CastBar", "HORIZONTAL")
-		bar:SetSize(114, 12)
+		bar:SetSize(116, 12)
 		bar:SetPoint("BOTTOM", parent, "BOTTOM", 0, 1)
 		E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
 
-		bar.Text:SetFontObject("LS10Font_Shadow")
 		bar.Text:SetPoint("TOPLEFT", 1, 0)
 		bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)
 

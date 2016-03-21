@@ -104,7 +104,7 @@ function UF:ConstructPlayerFrame(frame)
 	powerText:SetPoint("CENTER", 0, -8)
 
 	if C.units.player.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 196, true, true)
+		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
 
 		frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 		E:CreateMover(frame.Castbar.Holder)

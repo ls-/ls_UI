@@ -92,7 +92,7 @@ function UF:ConstructFocusFrame(frame)
 	powerText:SetPoint("LEFT")
 
 	if C.units.focus.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 196)
+		frame.Castbar = UF:CreateCastBar(frame, 202)
 
 		frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
 	end
