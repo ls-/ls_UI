@@ -12,6 +12,3 @@ locales\_locales.xml
 modules\_modules.xml
 config\_config.xml
 init.lua
-
-# dev crap
-test\_test.xml
