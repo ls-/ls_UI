@@ -386,6 +386,8 @@ function MM:Initialize()
 
 		HandleMinimapButton(QueueStatusMinimapButton)
 		QueueStatusMinimapButton.Background:SetTexture("")
+		QueueStatusFrame:ClearAllPoints()
+		QueueStatusFrame:SetPoint("BOTTOMRIGHT", QueueStatusMinimapButton, "TOPLEFT", 8, -8)
 
 		local calendar = GameTimeFrame
 		HandleMinimapButton(calendar)
