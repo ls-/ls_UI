@@ -6,7 +6,7 @@ local COLORS = M.colors
 local unpack = unpack
 
 local function PostUpdateAltPower(bar, min, cur, max)
-	if not bar.Value then return end
+	if not bar.Text then return end
 
 	local _, r, g, b = UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
 
@@ -18,17 +18,17 @@ local function PostUpdateAltPower(bar, min, cur, max)
 
 	if cur < max then
 		if bar.isMouseOver then
-			bar.Value:SetFormattedText("%s / %s - %d%%", E:NumberFormat(cur), E:NumberFormat(max), E:NumberToPerc(cur, max))
+			bar.Text:SetFormattedText("%s / %s - %d%%", E:NumberFormat(cur), E:NumberFormat(max), E:NumberToPerc(cur, max))
 		elseif cur > 0 then
-			bar.Value:SetFormattedText("%s", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("%s", E:NumberFormat(cur))
 		else
-			bar.Value:SetText(nil)
+			bar.Text:SetText(nil)
 		end
 	else
 		if bar.isMouseOver then
-			bar.Value:SetFormattedText("%s", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("%s", E:NumberFormat(cur))
 		else
-			bar.Value:SetText(nil)
+			bar.Text:SetText(nil)
 		end
 	end
 end
@@ -50,16 +50,18 @@ local function OnLeave(self)
 	GameTooltip:Hide()
 end
 
-function UF:CreateAltPowerBar(parent, width, coords)
+function UF:CreateAltPowerBar(parent, width)
 	local bar = E:CreateStatusBar(parent, "$parentAltPowerBar", "HORIZONTAL")
-	bar:SetPoint(unpack(coords))
-	bar:SetSize(width - 12, 12)
+	bar:SetSize(width - 8, 12)
 	bar:EnableMouse(true)
 	bar:SetScript("OnEnter", OnEnter)
 	bar:SetScript("OnLeave", OnLeave)
 	E:SmoothBar(bar)
+	E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
 
-	bar.Value = bar.Text
+	bar.Text:SetPoint("TOPLEFT", 1, 0)
+	bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)
+
 	bar.colorTexture = true
 	bar.PostUpdate = PostUpdateAltPower
 

@@ -127,7 +127,9 @@ function UF:ConstructBossFrame(frame)
 	threat:SetPoint("CENTER", 0, 6)
 	frame.Threat = threat
 
-	frame.AltPowerBar = UF:CreateAltPowerBar(frame, 102, {"TOP", frame, "BOTTOM", 0, -2})
+	local altPower = UF:CreateAltPowerBar(frame, 102)
+	altPower:SetPoint("TOP", frame, "BOTTOM", 0, -2)
+	frame.AltPowerBar = altPower
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
