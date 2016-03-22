@@ -2,16 +2,20 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local B = E:GetModule("Bars")
 
--- Blizz stuff
-local MICRO_BUTTONS = MICRO_BUTTONS
-local HIGH_LATENCY = PERFORMANCEBAR_MEDIUM_LATENCY
-local wipe, unpack = wipe, unpack
-local find = string.find
-local GameTooltip = GameTooltip
-local GetNetStats = GetNetStats
-local SecondsToTime = SecondsToTime
+-- Lua
+local _G = _G
+local pairs, next, select, unpack = pairs, next, select, unpack
+local strformat = string.format
+local twipe, tsort = table.wipe, table.sort
 
--- My stuff
+--Blizz
+local GameTooltip = GameTooltip
+local GetInventoryItemDurability = GetInventoryItemDurability
+local GetLFGRandomDungeonInfo = GetLFGRandomDungeonInfo
+local GetRFDungeonInfo = GetRFDungeonInfo
+local IsLFGDungeonJoinable = IsLFGDungeonJoinable
+
+-- Mine
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
@@ -104,6 +108,12 @@ local ICONS = {
 	-- Temp5 = {210 / 256, 226 / 256, 22 / 64, 44 / 64},
 }
 
+local CTA_REWARDS = {
+	TANK = {},
+	HEALER = {},
+	DAMAGER = {},
+}
+
 local function SimpleSort(a, b)
 	if a and b then
 		return a[2] > b[2]
@@ -111,42 +121,41 @@ local function SimpleSort(a, b)
 end
 
 local function UpdatePerformanceBar(self)
-	local _, _, latencyHome, latencyWorld = GetNetStats()
+	local _, _, latencyHome, latencyWorld = _G.GetNetStats()
 	local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
 
-	self.Indicator:SetVertexColor(E:ColorGradient(latency / HIGH_LATENCY, unpack(GRADIENT_GYR)))
+	self.Indicator:SetVertexColor(E:ColorGradient(latency / _G.PERFORMANCEBAR_MEDIUM_LATENCY, unpack(GRADIENT_GYR)))
 end
 
 local addons = {}
 local function MainMenuMicroButton_OnEnter(self)
-	GameTooltip_AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
+	_G.GameTooltip_AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
 	GameTooltip:AddLine(" ")
-
 	GameTooltip:AddLine("Latency:")
 
-	local _, _, latencyHome, latencyWorld = GetNetStats()
-	local colorHome = E:RGBToHEX(E:ColorGradient(latencyHome / HIGH_LATENCY, unpack(GRADIENT_GYR)))
-	local colorWorld = E:RGBToHEX(E:ColorGradient(latencyWorld / HIGH_LATENCY, unpack(GRADIENT_GYR)))
+	local _, _, latencyHome, latencyWorld = _G.GetNetStats()
+	local colorHome = E:RGBToHEX(E:ColorGradient(latencyHome / _G.PERFORMANCEBAR_MEDIUM_LATENCY, unpack(GRADIENT_GYR)))
+	local colorWorld = E:RGBToHEX(E:ColorGradient(latencyWorld / _G.PERFORMANCEBAR_MEDIUM_LATENCY, unpack(GRADIENT_GYR)))
 
-	GameTooltip:AddDoubleLine("Home", "|cff"..colorHome..latencyHome.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
-	GameTooltip:AddDoubleLine("World", "|cff"..colorWorld..latencyWorld.."|r "..MILLISECONDS_ABBR, 1, 1, 1)
+	GameTooltip:AddDoubleLine("Home", "|cff"..colorHome..latencyHome.."|r ".._G.MILLISECONDS_ABBR, 1, 1, 1)
+	GameTooltip:AddDoubleLine("World", "|cff"..colorWorld..latencyWorld.."|r ".._G.MILLISECONDS_ABBR, 1, 1, 1)
 	GameTooltip:AddLine(" ")
 
 	local memory = 0
 
-	UpdateAddOnMemoryUsage()
+	_G.UpdateAddOnMemoryUsage()
 
-	for i = 1, GetNumAddOns() do
+	for i = 1, _G.GetNumAddOns() do
 		addons[i] = {
-			[1] = select(2, GetAddOnInfo(i)),
-			[2] = GetAddOnMemoryUsage(i),
-			[3] = IsAddOnLoaded(i),
+			[1] = select(2, _G.GetAddOnInfo(i)),
+			[2] = _G.GetAddOnMemoryUsage(i),
+			[3] = _G.IsAddOnLoaded(i),
 		}
 
 		memory = memory + addons[i][2]
 	end
 
-	sort(addons, SimpleSort)
+	tsort(addons, SimpleSort)
 
 	GameTooltip:AddLine("Memory:")
 
@@ -154,11 +163,11 @@ local function MainMenuMicroButton_OnEnter(self)
 		if addons[i][3] then
 			local m = addons[i][2]
 
-			GameTooltip:AddDoubleLine(addons[i][1], format("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory == m and 1 or (memory - m)), unpack(GRADIENT_GYR)))
+			GameTooltip:AddDoubleLine(addons[i][1], strformat("%.3f MB", m / 1024), 1, 1, 1, E:ColorGradient(m / (memory == m and 1 or (memory - m)), unpack(GRADIENT_GYR)))
 		end
 	end
 
-	GameTooltip:AddDoubleLine(TOTAL..":", format("%.3f MB", memory / 1024), 1, 1, 0.6, 1, 1, 0.6)
+	GameTooltip:AddDoubleLine(_G.TOTAL..":", strformat("%.3f MB", memory / 1024), 1, 1, 0.6, 1, 1, 0.6)
 
 	UpdatePerformanceBar(self)
 
@@ -178,19 +187,19 @@ end
 local function CharacterMicroButton_OnEnter(self)
 	local hasInfo
 
-	if C_PetBattles.IsInBattle() then
+	if _G.C_PetBattles.IsInBattle() then
 		local hasTitle = false
 		for i = 1, 3 do
-			local petID, _, _, _, locked = C_PetJournal.GetPetLoadOutInfo(i)
+			local petID, _, _, _, locked = _G.C_PetJournal.GetPetLoadOutInfo(i)
 
 			if petID and not locked then
-				local _, customName, level, xp, maxXp, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
-				local _, _, _, _, rarity = C_PetJournal.GetPetStats(petID)
-				local color = ITEM_QUALITY_COLORS[rarity - 1]
+				local _, customName, level, xp, maxXp, _, _, name = _G.C_PetJournal.GetPetInfoByPetID(petID)
+				local _, _, _, _, rarity = _G.C_PetJournal.GetPetStats(petID)
+				local color = _G.ITEM_QUALITY_COLORS[rarity - 1]
 
 				if level < 25 then
 					if not hasTitle then
-						GameTooltip:AddLine(EXPERIENCE_COLON)
+						GameTooltip:AddLine(_G.EXPERIENCE_COLON)
 
 						hasTitle = true
 					else
@@ -205,23 +214,23 @@ local function CharacterMicroButton_OnEnter(self)
 
 		hasInfo = true
 	else
-		if UnitLevel("player") < MAX_PLAYER_LEVEL and not IsXPUserDisabled() then
-			GameTooltip:AddLine(EXPERIENCE_COLON)
-			GameTooltip:AddDoubleLine("Bonus XP", GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
-			E:ShowTooltipStatusBar(GameTooltip, 0, UnitXPMax("player"), UnitXP("player"), unpack(COLORS.experience))
+		if _G.UnitLevel("player") < _G.MAX_PLAYER_LEVEL and not _G.IsXPUserDisabled() then
+			GameTooltip:AddLine(_G.EXPERIENCE_COLON)
+			GameTooltip:AddDoubleLine("Bonus XP", _G.GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
+			E:ShowTooltipStatusBar(GameTooltip, 0, _G.UnitXPMax("player"), _G.UnitXP("player"), unpack(COLORS.experience))
 
 			hasInfo = true
 		end
 
-		local name, standing, repMin, repMax, repValue, factionID = GetWatchedFactionInfo()
+		local name, standing, repMin, repMax, repValue, factionID = _G.GetWatchedFactionInfo()
 
 		if name then
 			if hasInfo then GameTooltip:AddLine(" ") end
-			GameTooltip:AddLine(REPUTATION..":")
+			GameTooltip:AddLine(_G.REPUTATION..":")
 
 			local min, max, value = 0, 1, 1
-			local text = GetText("FACTION_STANDING_LABEL"..standing, UnitSex("player"))
-			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+			local text = _G.GetText("FACTION_STANDING_LABEL"..standing, _G.UnitSex("player"))
+			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = _G.GetFriendshipReputation(factionID)
 
 			if friendRep then
 				if nextFriendThreshold then
@@ -236,7 +245,7 @@ local function CharacterMicroButton_OnEnter(self)
 				max, value = repMax - repMin, repValue - repMin
 			end
 
-			local color = FACTION_BAR_COLORS[standing]
+			local color = _G.FACTION_BAR_COLORS[standing]
 
 			GameTooltip:AddDoubleLine(name, text, 1, 1, 1, color.r, color.g, color.b)
 			E:ShowTooltipStatusBar(GameTooltip, 0, max, value, color.r, color.g, color.b)
@@ -271,8 +280,156 @@ local function CharacterMicroButton_OnEvent(self, event, ...)
 end
 
 local function QuestLogMicroButton_OnEnter(self)
-	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", SecondsToTime(GetQuestResetTime(), true, nil, 3), 1, 0.82, 0, 1, 1, 1)
+	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", _G.SecondsToTime(_G.GetQuestResetTime(), true, nil, 3), 1, 0.82, 0, 1, 1, 1)
 	GameTooltip:Show()
+end
+
+local function PopulateCTARewardsTable(dungeonID, dungeonNAME)
+	local isAvailable = IsLFGDungeonJoinable(dungeonID)
+	if isAvailable then
+		for i = 1, _G.LFG_ROLE_NUM_SHORTAGE_TYPES do
+			local eligible, forTank, forHealer, forDamage, itemCount = _G.GetLFGRoleShortageRewards(dungeonID, i)
+			local _, tank, healer, dps = _G.GetLFGRoles()
+			if eligible and itemCount > 0 then
+				if tank and forTank then
+					CTA_REWARDS.TANK[dungeonID] = CTA_REWARDS.TANK[dungeonID] or {}
+					CTA_REWARDS.TANK[dungeonID].name = dungeonNAME
+
+					for rewardIndex = 1, itemCount do
+						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
+						CTA_REWARDS.TANK[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+					end
+				end
+
+				if healer and forHealer then
+					CTA_REWARDS.HEALER[dungeonID] = CTA_REWARDS.HEALER[dungeonID] or {}
+					CTA_REWARDS.HEALER[dungeonID].name = dungeonNAME
+
+					for rewardIndex = 1, itemCount do
+						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
+						CTA_REWARDS.HEALER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+					end
+				end
+
+				if dps and forDamage then
+					CTA_REWARDS.DAMAGER[dungeonID] = CTA_REWARDS.DAMAGER[dungeonID] or {}
+					CTA_REWARDS.DAMAGER[dungeonID].name = dungeonNAME
+
+					for rewardIndex = 1, itemCount do
+						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
+						CTA_REWARDS.DAMAGER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+					end
+				end
+			end
+		end
+	end
+end
+
+local function UpdateLFDMicroButtonTooltip(button, event)
+	if event == "LFG_LOCK_INFO_RECEIVED" or event == "FORCE_UPDATE" then
+		if event == "LFG_LOCK_INFO_RECEIVED" then
+			 -- this event is quite spammy sometimes
+			local curTime = _G.GetTime()
+			if curTime - (button.recentLockInfoUpdateTime or 0) < 0.1 then
+				return
+			else
+				button.recentLockInfoUpdateTime = curTime
+			end
+
+			twipe(CTA_REWARDS.TANK)
+			twipe(CTA_REWARDS.HEALER)
+			twipe(CTA_REWARDS.DAMAGER)
+
+			-- dungeons
+			for i = 1, _G.GetNumRandomDungeons() do
+				PopulateCTARewardsTable(GetLFGRandomDungeonInfo(i))
+			end
+
+			-- raids
+			for i = 1, _G.GetNumRFDungeons() do
+				PopulateCTARewardsTable(GetRFDungeonInfo(i))
+			end
+
+			if GameTooltip:GetOwner() ~= button then return end
+		end
+
+		GameTooltip:Hide()
+		_G.GameTooltip_AddNewbieTip(button, button.tooltipText, 1, 1, 1, button.newbieText)
+		GameTooltip:AddLine(" ")
+
+		if not button:IsEnabled() then
+			GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
+			GameTooltip:Show()
+
+			return
+		end
+
+		local hasTankTitle
+		for k, v in pairs(CTA_REWARDS.TANK) do
+			if v then
+				if not hasTankTitle then
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.TANK))
+
+					hasTankTitle = true
+				end
+
+				GameTooltip:AddLine(v.name, 1, 1, 1)
+				for i = 1, #v do
+					GameTooltip:AddDoubleLine(v[i].name, v[i].quantity..v[i].texture, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+				end
+			end
+		end
+
+		local hasHealerTitle
+		for k, v in pairs(CTA_REWARDS.HEALER) do
+			if v then
+				if not hasHealerTitle then
+					if hasTankTitle then
+						GameTooltip:AddLine(" ")
+					end
+
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.HEALER))
+
+					hasHealerTitle = true
+				end
+
+				GameTooltip:AddLine(v.name, 1, 1, 1)
+				for i = 1, #v do
+					GameTooltip:AddDoubleLine(v[i].name, v[i].quantity..v[i].texture, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+				end
+			end
+		end
+
+		local hasDamagerTitle
+		for k, v in pairs(CTA_REWARDS.DAMAGER) do
+			if v then
+				if not hasDamagerTitle then
+					if hasTankTitle or hasHealerTitle then
+						GameTooltip:AddLine(" ")
+					end
+
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.DAMAGER))
+
+					hasDamagerTitle = true
+				end
+
+				GameTooltip:AddLine(v.name, 1, 1, 1)
+				for i = 1, #v do
+					GameTooltip:AddDoubleLine(v[i].name, v[i].quantity..v[i].texture, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+				end
+			end
+		end
+
+		if hasTankTitle or hasHealerTitle or hasDamagerTitle then
+			GameTooltip:Show()
+		end
+	end
+end
+
+local function LFDMicroButton_OnEnter(self)
+	_G.RequestLFDPlayerLockInfo()
+	_G.RequestLFDPartyLockInfo()
+	UpdateLFDMicroButtonTooltip(self, "FORCE_UPDATE")
 end
 
 local function UpdateEJMicroButtonTooltip(button, event)
@@ -281,17 +438,19 @@ local function UpdateEJMicroButtonTooltip(button, event)
 
 		if event == "UPDATE_INSTANCE_INFO" then
 			GameTooltip:Hide()
-			GameTooltip_AddNewbieTip(button, button.tooltipText, 1, 1, 1, button.newbieText)
+			_G.GameTooltip_AddNewbieTip(button, button.tooltipText, 1, 1, 1, button.newbieText)
 			GameTooltip:AddLine(" ")
 
 			if not button:IsEnabled() then
-				GameTooltip:AddLine(format(FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
+				GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
 				GameTooltip:Show()
+
+				return
 			end
 		end
 
-		local savedInstances = GetNumSavedInstances()
-		local savedWorldBosses = GetNumSavedWorldBosses()
+		local savedInstances = _G.GetNumSavedInstances()
+		local savedWorldBosses = _G.GetNumSavedWorldBosses()
 
 		if savedInstances + savedWorldBosses == 0 then return end
 
@@ -300,34 +459,30 @@ local function UpdateEJMicroButtonTooltip(button, event)
 
 		for i = 1, savedInstances + savedWorldBosses do
 			if i <= savedInstances then
-				instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+				instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = _G.GetSavedInstanceInfo(i)
 				if instanceReset > 0 then
 					if not hasTitle then
-						GameTooltip:AddLine(RAID_INFO..":")
+						GameTooltip:AddLine(_G.RAID_INFO..":")
 
 						hasTitle = true
-					else
-						GameTooltip:AddLine(" ")
 					end
 
 					local color = encounterProgress == numEncounters and {0.9, 0.15, 0.15} or {0.15, 0.65, 0.15}
 
 					GameTooltip:AddDoubleLine(instanceName, encounterProgress.."/"..numEncounters, 1, 1, 1, unpack(color))
-					GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+					GameTooltip:AddDoubleLine(difficultyName, _G.SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 				end
 			else
-				instanceName, instanceID, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
+				instanceName, _, instanceReset = _G.GetSavedWorldBossInfo(i - savedInstances)
 				if instanceReset > 0 then
 					if not hasTitle then
-						GameTooltip:AddLine(RAID_INFO..":")
+						GameTooltip:AddLine(_G.RAID_INFO..":")
 
 						hasTitle = true
-					else
-						GameTooltip:AddLine(" ")
 					end
 
 					GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, 0.9, 0.15, 0.15)
-					GameTooltip:AddDoubleLine(RAID_INFO_WORLD_BOSS, SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+					GameTooltip:AddDoubleLine(_G.RAID_INFO_WORLD_BOSS, _G.SecondsToTime(instanceReset, true, nil, 3), 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 				end
 			end
 		end
@@ -339,7 +494,7 @@ local function UpdateEJMicroButtonTooltip(button, event)
 end
 
 local function EJMicroButton_OnEnter(self)
-	RequestRaidInfo()
+	_G.RequestRaidInfo()
 	UpdateEJMicroButtonTooltip(self, "FORCE_UPDATE")
 end
 
@@ -435,23 +590,23 @@ local function SetMicroButtonIcon(button, texCoord)
 end
 
 local function GuildTabardUpdateHook()
-	if GuildMicroButton.Tabard:IsShown() then
-		GuildMicroButton.Tabard.background:Show()
-		GuildMicroButton.Tabard.emblem:Show()
-		GuildMicroButton.Icon:Hide()
+	if _G.GuildMicroButton.Tabard:IsShown() then
+		_G.GuildMicroButton.Tabard.background:Show()
+		_G.GuildMicroButton.Tabard.emblem:Show()
+		_G.GuildMicroButton.Icon:Hide()
 	else
-		GuildMicroButton.Tabard.background:Hide()
-		GuildMicroButton.Tabard.emblem:Hide()
-		GuildMicroButton.Icon:Show()
+		_G.GuildMicroButton.Tabard.background:Hide()
+		_G.GuildMicroButton.Tabard.emblem:Hide()
+		_G.GuildMicroButton.Icon:Show()
 	end
 
-	SetNormalTextureOverride(GuildMicroButton)
-	SetPushedTextureOverride(GuildMicroButton)
-	SetDisabledTextureOverride(GuildMicroButton)
+	SetNormalTextureOverride(_G.GuildMicroButton)
+	SetPushedTextureOverride(_G.GuildMicroButton)
+	SetDisabledTextureOverride(_G.GuildMicroButton)
 end
 
 local function HandleGuildButtonTabard(button)
-	button.Tabard = GuildMicroButtonTabard
+	button.Tabard = _G.GuildMicroButtonTabard
 
 	local banner = button.Tabard.background
 	banner:SetParent(button)
@@ -466,11 +621,11 @@ local function HandleGuildButtonTabard(button)
 	emblem:SetDrawLayer("BACKGROUND", 3)
 	emblem:SetPoint("CENTER", 0, 0)
 
-	hooksecurefunc("GuildMicroButton_UpdateTabard", GuildTabardUpdateHook)
+	_G.hooksecurefunc("GuildMicroButton_UpdateTabard", GuildTabardUpdateHook)
 end
 
 local function ResetMicroButtonsParent()
-	for _, b in next, MICRO_BUTTONS do
+	for _, b in next, _G.MICRO_BUTTONS do
 		local button = _G[b]
 
 		if MICRO_BUTTON_LAYOUT[b] then
@@ -482,7 +637,7 @@ local function ResetMicroButtonsParent()
 end
 
 local function ResetMicroButtonsPosition()
-	for _, b in next, MICRO_BUTTONS do
+	for _, b in next, _G.MICRO_BUTTONS do
 		local button = _G[b]
 
 		if MICRO_BUTTON_LAYOUT[b] then
@@ -495,10 +650,10 @@ end
 function B:HandleMicroMenu()
 	local MM_CFG = C.bars.micromenu
 
-	local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
+	local holder1 = _G.CreateFrame("Frame", "LSMBHolderLeft", _G.UIParent)
 	holder1:SetSize(18 * 5 + 4 * 5, 24 + 4)
 
-	local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
+	local holder2 = _G.CreateFrame("Frame", "LSMBHolderRight", _G.UIParent)
 	holder2:SetSize(18 * 5 + 4 * 5, 24 + 4)
 
 	if C.bars.restricted then
@@ -512,7 +667,7 @@ function B:HandleMicroMenu()
 		E:CreateMover(holder2)
 	end
 
-	for _, b in next, MICRO_BUTTONS do
+	for _, b in next, _G.MICRO_BUTTONS do
 		local button = _G[b]
 
 		if MICRO_BUTTON_LAYOUT[b] then
@@ -528,7 +683,7 @@ function B:HandleMicroMenu()
 		end
 
 		if b == "CharacterMicroButton" then
-			E:ForceHide(MicroButtonPortrait)
+			E:ForceHide(_G.MicroButtonPortrait)
 			HandleMicroButtonIndicator(button)
 
 			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
@@ -538,6 +693,10 @@ function B:HandleMicroMenu()
 			HandleGuildButtonTabard(button)
 		elseif b == "QuestLogMicroButton" then
 			button:HookScript("OnEnter", QuestLogMicroButton_OnEnter)
+		elseif b == "LFDMicroButton" then
+			button:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+			button:SetScript("OnEnter", LFDMicroButton_OnEnter)
+			button:HookScript("OnEvent", UpdateLFDMicroButtonTooltip)
 		elseif b == "EJMicroButton" then
 			button:RegisterEvent("UPDATE_INSTANCE_INFO")
 			button:HookScript("OnEnter", EJMicroButton_OnEnter)
@@ -546,8 +705,8 @@ function B:HandleMicroMenu()
 			button.NewAdventureNotice:ClearAllPoints()
 			button.NewAdventureNotice:SetPoint("CENTER")
 		elseif b == "MainMenuMicroButton" then
-			E:ForceHide(MainMenuBarDownload)
-			HandleMicroButtonIndicator(button, MainMenuBarPerformanceBar)
+			E:ForceHide(_G.MainMenuBarDownload)
+			HandleMicroButtonIndicator(button, _G.MainMenuBarPerformanceBar)
 			UpdatePerformanceBar(button)
 
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
@@ -555,11 +714,11 @@ function B:HandleMicroMenu()
 		end
 	end
 
-	TalentMicroButtonAlert:SetPoint("BOTTOM", "TalentMicroButton", "TOP", 0, 12)
-	CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
-	LFDMicroButtonAlert:SetPoint("BOTTOM", "LFDMicroButton", "TOP", 0, 12)
-	EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
+	_G.TalentMicroButtonAlert:SetPoint("BOTTOM", "TalentMicroButton", "TOP", 0, 12)
+	_G.CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
+	_G.LFDMicroButtonAlert:SetPoint("BOTTOM", "LFDMicroButton", "TOP", 0, 12)
+	_G.EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
 
-	hooksecurefunc("UpdateMicroButtonsParent", ResetMicroButtonsParent)
-	hooksecurefunc("MoveMicroButtons", ResetMicroButtonsPosition)
+	_G.hooksecurefunc("UpdateMicroButtonsParent", ResetMicroButtonsParent)
+	_G.hooksecurefunc("MoveMicroButtons", ResetMicroButtonsPosition)
 end
