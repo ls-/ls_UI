@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:AddModule("Bars")
+local B = E:AddModule("Bars", true)
 
 function B:IsEnabled()
 	return B.isRunning

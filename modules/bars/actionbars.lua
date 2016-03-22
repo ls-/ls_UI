@@ -166,6 +166,26 @@ local function UnlockPetActionBarHook()
 	PetActionBarFrame.locked = true
 end
 
+function B:PLAYER_REGEN_ENABLED()
+	if UnitLevel("player") >= 10 and not PetActionBarFrame:IsShown() then
+		PetActionBarFrame:Show()
+
+		B:UnregisterEvent("PLAYER_REGEN_ENABLED")
+	end
+end
+
+function B:PLAYER_LEVEL_UP(level)
+	if level >= 10 then
+		if InCombatLockdown() then
+			B:RegisterEvent("PLAYER_REGEN_ENABLED")
+		else
+			PetActionBarFrame:Show()
+		end
+
+		B:UnregisterEvent("PLAYER_LEVEL_UP")
+	end
+end
+
 function B:HandleActionBars()
 	if C.bars.restricted then
 		BARS_CFG.bar2 = C.bars.bar2
@@ -218,7 +238,14 @@ function B:HandleActionBars()
 		end
 	end
 
-	PetActionBarFrame:Show()
+	if UnitLevel("player") < 10 then
+		PetActionBarFrame:Hide()
+
+		B:RegisterEvent("PLAYER_LEVEL_UP")
+	else
+		PetActionBarFrame:Show()
+	end
+
 	PetActionBarFrame:SetScript("OnUpdate", nil)
 	PetActionBarFrame.locked = true
 	hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
