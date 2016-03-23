@@ -9,6 +9,9 @@ local strformat = string.format
 local twipe, tsort = table.wipe, table.sort
 
 --Blizz
+local TANK = "|cff1e8eff"..TANK.."|r"
+local HEALER = "|cff26a526"..HEALER.."|r"
+local DAMAGER = "|cffe52626"..DAMAGER.."|r"
 local GameTooltip = GameTooltip
 local GetInventoryItemDurability = GetInventoryItemDurability
 local GetLFGRandomDungeonInfo = GetLFGRandomDungeonInfo
@@ -297,7 +300,7 @@ local function PopulateCTARewardsTable(dungeonID, dungeonNAME)
 
 					for rewardIndex = 1, itemCount do
 						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
-						CTA_REWARDS.TANK[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+						CTA_REWARDS.TANK[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity or 1}
 					end
 				end
 
@@ -307,7 +310,7 @@ local function PopulateCTARewardsTable(dungeonID, dungeonNAME)
 
 					for rewardIndex = 1, itemCount do
 						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
-						CTA_REWARDS.HEALER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+						CTA_REWARDS.HEALER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity or 1}
 					end
 				end
 
@@ -317,7 +320,7 @@ local function PopulateCTARewardsTable(dungeonID, dungeonNAME)
 
 					for rewardIndex = 1, itemCount do
 						local name, texture, quantity = _G.GetLFGDungeonShortageRewardInfo(dungeonID, i, rewardIndex)
-						CTA_REWARDS.DAMAGER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity}
+						CTA_REWARDS.DAMAGER[dungeonID][rewardIndex] = {name = name, texture = "|T"..texture..":0|t", quantity = quantity or 1}
 					end
 				end
 			end
@@ -328,7 +331,7 @@ end
 local function UpdateLFDMicroButtonTooltip(button, event)
 	if event == "LFG_LOCK_INFO_RECEIVED" or event == "FORCE_UPDATE" then
 		if event == "LFG_LOCK_INFO_RECEIVED" then
-			 -- this event is quite spammy sometimes
+			-- this event is quite spammy sometimes
 			local curTime = _G.GetTime()
 			if curTime - (button.recentLockInfoUpdateTime or 0) < 0.1 then
 				return
@@ -368,7 +371,7 @@ local function UpdateLFDMicroButtonTooltip(button, event)
 		for k, v in pairs(CTA_REWARDS.TANK) do
 			if v then
 				if not hasTankTitle then
-					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.TANK))
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, TANK))
 
 					hasTankTitle = true
 				end
@@ -388,7 +391,7 @@ local function UpdateLFDMicroButtonTooltip(button, event)
 						GameTooltip:AddLine(" ")
 					end
 
-					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.HEALER))
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, HEALER))
 
 					hasHealerTitle = true
 				end
@@ -408,7 +411,7 @@ local function UpdateLFDMicroButtonTooltip(button, event)
 						GameTooltip:AddLine(" ")
 					end
 
-					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, _G.DAMAGER))
+					GameTooltip:AddLine(strformat(_G.LFG_CALL_TO_ARMS, DAMAGER))
 
 					hasDamagerTitle = true
 				end
