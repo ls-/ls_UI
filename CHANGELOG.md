@@ -1,3 +1,9 @@
+#Version 2.17
+
+- NEW! Call To Arms bonus tracker in "Group Finder" micro button tooltip;
+- Fixed alt power bars on boss frames;
+- Fixed pet action bar display.
+
 #Version 2.16
 
 - As of now dispellable debuffs are also shown as special icons on health bars;
