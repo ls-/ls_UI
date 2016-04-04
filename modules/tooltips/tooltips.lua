@@ -377,6 +377,7 @@ function TT:Initialize()
 		E:HandleStatusBar(GameTooltipStatusBar)
 		E:CreateBorder(GameTooltipStatusBar, 8)
 		GameTooltipStatusBar.Text:SetFontObject("LS10Font_Shadow")
+		GameTooltipStatusBar.Text:SetDrawLayer("OVERLAY") -- FIXME
 		GameTooltipStatusBar:SetBorderColor(unpack(COLORS.gray))
 		GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
 	end
