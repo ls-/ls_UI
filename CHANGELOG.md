@@ -1,3 +1,7 @@
+#Version 2.18
+
+- Fixed number abbreviation for Korean and Simplified/Traditional Chinese locales.
+
 #Version 2.17
 
 - NEW! Call To Arms bonus tracker in "Group Finder" micro button tooltip;
