@@ -69,6 +69,10 @@ function HandleMinimapButton(button, cascade)
 				elseif layer == "OVERLAY" or layer == "BORDER" then
 					if texture and strfind(texture, "TrackingBorder") then
 						border = region
+					elseif name and strfind(name, "border") then
+						border = region
+					elseif name and strfind(name, "Border") then
+						border = region
 					end
 				end
 			end
