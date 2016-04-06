@@ -2,12 +2,17 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
 
-local select = select
-local strupper = strupper
+local _G = _G
+local pairs, tonumber, select = pairs, tonumber, select
+local strupper, strgsub, strmatch = string.upper, string.gsub, string.match
+local mfloor = math.floor
 
 local _, playerClass = UnitClass("player")
 local playerSpec = GetSpecialization() or 0
 local playerRole
+
+local ScanTooltip = _G.CreateFrame("GameTooltip", "LSiLevelScanTooltip", nil, "GameTooltipTemplate")
+ScanTooltip:SetOwner(_G.WorldFrame, "ANCHOR_NONE")
 
 local dispelTypesByClass = {
 	PALADIN = {},
@@ -17,6 +22,10 @@ local dispelTypesByClass = {
 	MONK = {},
 	MAGE = {},
 }
+
+local ITEM_LEVEL_PATTERN = gsub(ITEM_LEVEL, "%%d", "(%%d+)")
+
+local INSPECT_ILVL_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
 
 function E:GetCreatureDifficultyColor(level)
 	local color = GetCreatureDifficultyColor(level > 0 and level or 199)
@@ -162,6 +171,66 @@ function E:SPELLS_CHANGED(...)
 		elseif playerClass == "MAGE" then
 			dispelTypes.Curse = IsPlayerSpell(475) or nil -- Remove Curse
 		end
+	end
+end
+
+function E:GetUnitSpecializationInfo(unit)
+	local isPlayer = _G.UnitIsUnit(unit, "player")
+	local specID = isPlayer and playerSpec or _G.GetInspectSpecialization(unit)
+
+	if specID and specID > 0 then
+		if isPlayer then
+			local _, name = _G.GetSpecializationInfo(specID)
+
+			return name
+		else
+			if _G.GetSpecializationRoleByID(specID) then
+				local _, name = _G.GetSpecializationInfoByID(specID)
+
+				return name
+			end
+		end
+	end
+end
+
+function E:GetItemLevel(itemLink)
+	ScanTooltip:ClearLines()
+	ScanTooltip:SetHyperlink(itemLink)
+
+	for i = 2, ScanTooltip:NumLines() do
+		local text = _G["LSiLevelScanTooltipTextLeft"..i]:GetText()
+
+		if(text and text ~= "") then
+			local iLevel = tonumber(strmatch(text, ITEM_LEVEL_PATTERN))
+
+			if iLevel then
+				return iLevel
+			end
+		end
+	end
+end
+
+function E:GetUnitAverageItemLevel(unit)
+	local isPlayer = _G.UnitIsUnit(unit, "player")
+
+	if isPlayer then
+		local _, avgItemLevelEquipped = _G.GetAverageItemLevel()
+
+		return mfloor(avgItemLevelEquipped)
+	else
+		local iLevelTotal, numItems = 0
+		for _, id in pairs(INSPECT_ILVL_SLOTS) do
+			local itemLink = _G.GetInventoryItemLink(unit, id)
+			if itemLink then
+				local iLevel = E:GetItemLevel(itemLink)
+				if iLevel and iLevel > 0 then
+					numItems = (numItems or 0) + 1
+					iLevelTotal = iLevelTotal + iLevel
+				end
+			end
+		end
+
+		return numItems and mfloor(iLevelTotal / numItems)
 	end
 end
 
