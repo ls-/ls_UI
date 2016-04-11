@@ -503,7 +503,7 @@ function CFG:Initialize()
 	CFG:General_Initialize()
 	CFG:UFAuras_Initialize()
 	CFG:B_Initialize()
-	CFG:AT_Initialize()
+	-- CFG:AT_Initialize()
 	CFG:NP_Initialize()
 
 	SLASH_LSCONFIG1 = "/lsconfig"
