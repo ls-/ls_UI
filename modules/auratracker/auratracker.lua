@@ -1,14 +1,33 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local AT = E:AddModule("AuraTracker")
-local AT_CFG
+local AT = E:AddModule("AuraTracker", true)
 
+-- Lua
+local _G = _G
+local pairs, unpack = pairs, unpack
+local tonumber, tostring = tonumber, tostring
+local tremove, tinsert, tcontains, twipe = tremove, tinsert, tContains, wipe
+
+-- Blizz
+local BUFF_MAX_DISPLAY = BUFF_MAX_DISPLAY
+local DEBUFF_MAX_DISPLAY = DEBUFF_MAX_DISPLAY
+local GameTooltip = GameTooltip
+local GetSpellInfo = GetSpellInfo
+local GetTime = GetTime
+local UnitAura = UnitAura
 local CooldownFrame_SetTimer = CooldownFrame_SetTimer
-local tremove, tinsert, tcontains, tonumber = tremove, tinsert, tContains, tonumber
 
-local function ScanAuras(auras, index, filter)
+--Mine
+local AT_LABEL = "|cffffd100".. BUFFOPTIONS_LABEL.."|r"
+local AT_CFG
+local AuraTracker
+local activeAuras = {}
+
+local function PopulateActiveAurasTable(index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
-	if name and tcontains(AT_CFG[AT.Spec][filter], spellId) then
+	local playerSpec = E:GetPlayerSpecFlag()
+
+	if name and AT_CFG[filter][spellId] and E:IsFilterApplied(AT_CFG[filter][spellId], playerSpec) then
 		local aura = {
 			index = index,
 			icon = iconTexture,
@@ -19,32 +38,17 @@ local function ScanAuras(auras, index, filter)
 			filter = filter,
 		}
 
-		tinsert(auras, aura)
+		tinsert(activeAuras, aura)
 	end
 end
 
-local function HandleDataCorruption(filter, spec, overflow)
-	local auraList, size = AT_CFG[spec][filter], #AT_CFG[spec][filter]
+local function HandleDataCorruption(filter)
+	local auraList = AT_CFG[filter]
 
-	if size > 0 then
-		for i, v in next, auraList do
-			if not GetSpellInfo(v) then
-				tremove(auraList, i)
-			end
+	for k, v in pairs(auraList) do
+		if not GetSpellInfo(k) then
+			auraList[k] = nil
 		end
-	end
-
-	if overflow and size > 6 then
-		for i = 1, size - 6 do
-			local ID = auraList[7]
-			if ID then
-				print("|cff1ec77eAuraTracker|r: Removed "..GetSpellInfo(ID).." ("..ID..").")
-
-				tremove(auraList, 7)
-			end
-		end
-
-		print("|cff1ec77eAuraTracker|r: Reduced number of entries to 7 auras per list.")
 	end
 end
 
@@ -57,195 +61,150 @@ local function ATButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
-local function ATButton_OnUpdate(self, elapsed)
+local function AT_OnEvent(self, event, ...)
+	activeAuras = twipe(activeAuras)
+
+	for i = 1, BUFF_MAX_DISPLAY do
+		PopulateActiveAurasTable(i, "HELPFUL")
+	end
+
+	for i = 1, DEBUFF_MAX_DISPLAY do
+		PopulateActiveAurasTable(i, "HARMFUL")
+	end
+
+	for i = 1, 12 do
+		self.buttons[i]:Hide()
+	end
+
+	for i = 1, #activeAuras do
+		local button, aura = self.buttons[i], activeAuras[i]
+
+		if button then
+			local color = {r = 1, g = 1, b = 1}
+
+			button:Show()
+			button:SetID(aura.index)
+			button.Icon:SetTexture(aura.icon)
+			button.filter = aura.filter
+			button.expire = aura.expire
+			button.stacks = aura.count
+
+			CooldownFrame_SetTimer(button.CD, aura.expire - aura.duration, aura.duration, true)
+
+			if button.filter == "HARMFUL" then
+				color = {r = 0.8, g = 0, b = 0}
+
+				if aura.debuffType then
+					color = _G.DebuffTypeColor[aura.debuffType]
+				end
+			end
+
+			button:SetBorderColor(color.r, color.g, color.b)
+		end
+	end
+end
+
+local function AT_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
-		if GameTooltip:IsOwned(self) then
-			GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
-		end
+		for i = 1, 12 do
+			local button = self.buttons[i]
+			if button:IsShown() then
+				if GameTooltip:IsOwned(button) then
+					GameTooltip:SetUnitAura("player", button:GetID(), button.filter)
+				end
 
-		self.Count:SetText(self.stacks > 0 and self.stacks or "")
+				button.Count:SetText(button.stacks > 0 and button.stacks or "")
 
-		local time = self.expire - GetTime()
-		if time > 0.1 then
-			if time <= 30 and not (self.Blink and self.Blink:IsPlaying()) then
-				E:Blink(self, 0.8, nil, 0.25)
-			elseif time >= 30 and (self.Blink and self.Blink:IsPlaying()) then
-				E:StopBlink(self, true)
+				local time = button.expire - GetTime()
+				if time > 0.1 then
+					if time <= 30 and not (button.Blink and button.Blink:IsPlaying()) then
+						E:Blink(button, 0.8, nil, 0.25)
+					elseif time >= 30 and (button.Blink and button.Blink:IsPlaying()) then
+						E:StopBlink(button, true)
+					end
+				else
+					E:StopBlink(button)
+				end
 			end
-		else
-			E:StopBlink(self)
 		end
 
 		self.elapsed = 0
 	end
 end
 
-local function AT_Update(self, event, ...)
-	if event == "PLAYER_ENTERING_WORLD" or event == "FORCE_INIT" then
-		local num = GetNumSpecializations()
+-- function AT:IsRunning()
+-- 	return not not AT.Tracker
+-- end
 
-		for i = 0, num do
-			i = tostring(i)
+-- function AT:Enable()
+--  	if InCombatLockdown() then
+--  		return false, "|cffe52626Error!|r Can't be done, while in combat."
+--  	end
+-- 	if not AT:IsRunning() then
+--  		AT:Initialize(true)
+--  	end
 
-			local overflow = #AT_CFG[i].HELPFUL + #AT_CFG[i].HARMFUL > 12
+-- 	AT.Tracker:Show()
+-- 	AT.Tracker:ClearAllPoints()
+-- 	AT.Tracker:SetPoint(unpack(AT_CFG.point))
+-- 	AT.Tracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 
-			HandleDataCorruption("HELPFUL", i, overflow)
-			HandleDataCorruption("HARMFUL", i, overflow)
-		end
+-- 	if not AT:IsRunning() then
+-- 		AT_OnEvent(AT.Tracker, "FORCE_INIT")
+-- 	else
+-- 		AT_OnEvent(AT.Tracker, "ENABLE")
+-- 	end
 
-		if event == "PLAYER_ENTERING_WORLD" then
-			AT:Enable()
+-- 	if AT_CFG.locked then AT.Header:Hide() end
 
-			self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+--  	return true, "|cff26a526Success!|r AT is on."
+-- end
 
-			return
-		end
-	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-		local oldSpec = AT.Spec
-		local newSpec = tostring(GetSpecialization() or 0)
+-- function AT:Disable()
+-- 	if AT:IsRunning() then
+-- 		if InCombatLockdown() then
+-- 	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
+-- 	 	end
 
-		if oldSpec ~= newSpec then
-			if #AT_CFG[newSpec].HELPFUL + #AT_CFG[newSpec].HARMFUL == 0 then
-				AT_CFG[newSpec].HELPFUL = {unpack(AT_CFG[oldSpec].HELPFUL)}
-				AT_CFG[newSpec].HARMFUL = {unpack(AT_CFG[oldSpec].HARMFUL)}
-			end
+-- 		AT.Tracker:Hide()
+-- 		AT.Tracker:UnregisterEvent("UNIT_AURA")
 
-			if oldSpec == "0" then
-				AT_CFG[oldSpec].HELPFUL = {}
-				AT_CFG[oldSpec].HARMFUL = {}
-			end
-		end
+-- 	 	return true, "|cff26a526Success!|r AT will be disabled on next UI reload."
+-- 	 else
+-- 	 	return true, "|cff26a526Success!|r AT is off."
+-- 	 end
+-- end
 
-		AT.Spec = newSpec
-	end
-
-	self.auras = wipe(self.auras or {})
-
-	for i = 1, 32 do
-		ScanAuras(self.auras, i, "HELPFUL")
-	end
-
-	for i = 1, 16 do
-		ScanAuras(self.auras, i, "HARMFUL")
-	end
-
-	for i = #self.auras + 1, 12 do
-		if self.buttons[i] then
-			self.buttons[i]:Hide()
-		end
-	end
-
-	for i = 1, #self.auras do
-		local button, aura = self.buttons[i], self.auras[i]
-		local color
-
-		button:Show()
-		button:SetID(aura.index)
-		button.Icon:SetTexture(aura.icon)
-		button.debuffType = aura.debuffType
-		button.filter = aura.filter
-		button.expire = aura.expire
-		button.stacks = aura.count
-
-		CooldownFrame_SetTimer(button.CD, aura.expire - aura.duration, aura.duration, true)
-
-		if button.filter == "HARMFUL" then
-			color = {r = 0.8, g = 0, b = 0}
-
-			if button.debuffType then
-				color = DebuffTypeColor[button.debuffType]
-			end
-		else
-			color = {r = 1, g = 1, b = 1}
-		end
-
-		button:SetBorderColor(color.r, color.g, color.b)
-	end
-end
-
-function AT:IsRunning()
-	return not not AT.Tracker
-end
-
-function AT:Enable()
- 	if InCombatLockdown() then
- 		return false, "|cffe52626Error!|r Can't be done, while in combat."
- 	end
-	if not AT:IsRunning() then
- 		AT:Initialize(true)
- 	end
-
-	AT.Tracker:Show()
-	AT.Tracker:ClearAllPoints()
-	AT.Tracker:SetPoint(unpack(AT_CFG.point))
-	AT.Tracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-	AT.Tracker:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-
-	AT.Spec = tostring(GetSpecialization() or 0)
-
-	if not AT:IsRunning() then
-		AT_Update(AT.Tracker, "FORCE_INIT")
-	else
-		AT_Update(AT.Tracker, "ENABLE")
-	end
-
-	if AT_CFG.locked then AT.Header:Hide() end
-
- 	return true, "|cff26a526Success!|r AT is on."
-end
-
-function AT:Disable()
-	if AT:IsRunning() then
-		if InCombatLockdown() then
-	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
-	 	end
-
-		AT.Tracker:Hide()
-		AT.Tracker:UnregisterEvent("UNIT_AURA")
-		AT.Tracker:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-
-	 	return true, "|cff26a526Success!|r AT will be disabled on next UI reload."
-	 else
-	 	return true, "|cff26a526Success!|r AT is off."
-	 end
-end
-
-function AT:AddToList(filter, ID)
-	if #AT_CFG[AT.Spec].HELPFUL + #AT_CFG[AT.Spec].HARMFUL == 12 then
-		return false, "|cffe52626Error!|r Can\'t add aura. List is full. Max of 12."
-	end
-
+function AT:AddToList(filter, spellID)
 	if not AT_CFG.enabled then
 		return false, "|cffe52626Error!|r Can\'t add aura. Module is disabled."
 	end
 
-	local name = GetSpellInfo(ID)
+	local name = GetSpellInfo(spellID)
 	if not name then
 		return false, "|cffe52626Error!|r Can\'t add aura, that doesn't exist."
 	end
 
-	if tcontains(AT_CFG[AT.Spec][filter], ID) then
+	if AT_CFG[filter][spellID] then
 		return false, "|cffe52626Error!|r Can\'t add aura. Already in the list."
 	end
 
-	tinsert(AT_CFG[AT.Spec][filter], ID)
+	AT_CFG[filter][spellID] = E:GetPlayerSpecFlag()
 
-	AT_Update(AT.Tracker, "ADD_TO_LIST")
+	AT:ForceUpdate()
 
-	return true, "|cff26a526Success!|r Added "..name.." ("..ID..")."
+	return true, "|cff26a526Success!|r Added "..name.." ("..spellID..")."
 end
 
-function AT:RemoveFromList(filter, ID)
-	for i, v in next, AT_CFG[AT.Spec][filter] do
-		if v == ID then
-			tremove(AT_CFG[AT.Spec][filter], i)
+function AT:RemoveFromList(filter, spellID)
+	if AT_CFG[filter][spellID] then
+		AT_CFG[filter][spellID] = nil
 
-			AT_Update(AT.Tracker, "REMOVE_FROM_LIST")
+		AT:ForceUpdate()
 
-			return true, "|cff26a526Success!|r Removed "..GetSpellInfo(ID).." ("..ID..")."
-		end
+		return true, "|cff26a526Success!|r Removed "..GetSpellInfo(spellID).." ("..spellID..")."
 	end
 end
 
@@ -267,25 +226,37 @@ local function ATHeader_OnDragStop(self)
 	AT_CFG.point = {E:GetCoords(self:GetParent())}
 end
 
+function AT:ForceUpdate()
+	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
+end
+
+function AT:PLAYER_LOGIN()
+	HandleDataCorruption("HELPFUL")
+	HandleDataCorruption("HARMFUL")
+
+	AT:ForceUpdate()
+end
+
 function AT:Initialize(forceInit)
 	AT_CFG = C.auratracker
 
 	if AT_CFG.enabled or forceInit then
-		local tracker = CreateFrame("Frame", "LSAuraTracker", UIParent)
-		tracker:SetClampedToScreen(true)
-		tracker:SetMovable(true)
-		tracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-		tracker:SetScript("OnEvent", AT_Update)
-		AT.Tracker = tracker
+		AuraTracker = _G.CreateFrame("Frame", "LSAuraTracker", _G.UIParent)
+		AuraTracker:SetPoint(unpack(AT_CFG.point))
+		AuraTracker:SetMovable(true)
+		AuraTracker:SetClampedToScreen(true)
+		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+		AuraTracker:SetScript("OnEvent", AT_OnEvent)
+		AuraTracker:SetScript("OnUpdate", AT_OnUpdate)
 
 		local buttons = {}
-
 		for i = 1, 12 do
-			local button = E:CreateButton(tracker, "$parentButton"..i, true)
+			local button = E:CreateButton(AuraTracker, "$parentButton"..i, true)
+			button:SetPushedTexture("")
+			button:SetHighlightTexture("")
 			button:Hide()
 			button:SetScript("OnEnter", ATButton_OnEnter)
 			button:SetScript("OnLeave", ATButton_OnLeave)
-			button:SetScript("OnUpdate", ATButton_OnUpdate)
 			buttons[i] = button
 
 			if button.CD.SetTimerTextHeight then
@@ -295,40 +266,44 @@ function AT:Initialize(forceInit)
 			button.Count:SetFontObject("LS12Font_Outline")
 		end
 
-		tracker.buttons = buttons
+		AuraTracker.buttons = buttons
 
-		E:SetupBar(buttons, 36, 4, tracker, AT_CFG.direction)
+		E:SetupBar(buttons, 36, 4, AuraTracker, AT_CFG.direction)
 
-		local header = CreateFrame("Button", "$parentHeader", tracker)
+		local header = _G.CreateFrame("Button", "$parentHeader", AuraTracker)
 		header:SetClampedToScreen(true)
-		header:SetPoint("BOTTOMLEFT", tracker, "TOPLEFT", 0, 0)
+		header:SetPoint("BOTTOMLEFT", AuraTracker, "TOPLEFT", 0, 0)
 		header:RegisterForDrag("LeftButton")
 		header:SetScript("OnEnter", ATHeader_OnEnter)
 		header:SetScript("OnLeave", ATHeader_OnLeave)
 		header:SetScript("OnDragStart", ATHeader_OnDragStart)
 		header:SetScript("OnDragStop", ATHeader_OnDragStop)
-		AT.Header = header
+		AuraTracker.Header = header
 
 		local label = E:CreateFontString(header, 12, nil, true)
 		label:SetPoint("LEFT", 2, 0)
 		label:SetAlpha(0.2)
-		label:SetText(BUFFOPTIONS_LABEL)
+		label:SetText(AT_LABEL)
 		header.Text = label
 
 		header:SetSize(label:GetWidth(), 22)
 
+		if AT_CFG.locked then header:Hide() end
+
 		SLASH_ATBUFF1 = "/atbuff"
-		SlashCmdList["ATBUFF"] = function(msg)
+		_G.SlashCmdList["ATBUFF"] = function(msg)
 			local _, text = AT:AddToList("HELPFUL", tonumber(msg))
 
 			print("|cff1ec77eAuraTracker|r: "..text)
 		end
 
 		SLASH_ATDEBUFF1 = "/atdebuff"
-		SlashCmdList["ATDEBUFF"] = function(msg)
+		_G.SlashCmdList["ATDEBUFF"] = function(msg)
 			local _, text = AT:AddToList("HARMFUL", tonumber(msg))
 
 			print("|cff1ec77eAuraTracker|r: "..text)
 		end
 	end
 end
+
+AT:RegisterEvent("PLAYER_LOGIN")
