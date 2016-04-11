@@ -6,7 +6,7 @@ local AT = E:AddModule("AuraTracker", true)
 local _G = _G
 local pairs, unpack = pairs, unpack
 local tonumber, tostring = tonumber, tostring
-local tremove, tinsert, tcontains, twipe = tremove, tinsert, tContains, wipe
+local tremove, tinsert, tcontains, twipe = table.remove, table.insert, tContains, table.wipe
 
 -- Blizz
 local BUFF_MAX_DISPLAY = BUFF_MAX_DISPLAY
@@ -19,6 +19,8 @@ local CooldownFrame_SetTimer = CooldownFrame_SetTimer
 
 --Mine
 local AT_LABEL = "|cffffd100".. BUFFOPTIONS_LABEL.."|r"
+local SUCCESS_TEXT = "|cff26a526Success!|r"
+local ERROR_TEXT = "|cffe52626Error!|r"
 local AT_CFG
 local AuraTracker
 local activeAuras = {}
@@ -49,6 +51,15 @@ local function HandleDataCorruption(filter)
 		if not GetSpellInfo(k) then
 			auraList[k] = nil
 		end
+	end
+
+	-- DB converter
+	for spec = 1, 4 do
+		local auraList = AT_CFG[tostring(spec)][filter]
+		for _, spellID in pairs(auraList) do
+			AT_CFG[filter][spellID] = E:AddFilterToMask(AT_CFG[filter][spellID] or 0x00000000, M.PLAYER_SPEC_FLAGS[spec])
+		end
+		twipe(auraList)
 	end
 end
 
@@ -134,78 +145,58 @@ local function AT_OnUpdate(self, elapsed)
 	end
 end
 
--- function AT:IsRunning()
--- 	return not not AT.Tracker
--- end
+function AT:IsRunning()
+	return not not AuraTracker
+end
 
--- function AT:Enable()
---  	if InCombatLockdown() then
---  		return false, "|cffe52626Error!|r Can't be done, while in combat."
---  	end
--- 	if not AT:IsRunning() then
---  		AT:Initialize(true)
---  	end
+function AT:Enable()
+	if not AT:IsRunning() then
+ 		AT:Initialize(true)
 
--- 	AT.Tracker:Show()
--- 	AT.Tracker:ClearAllPoints()
--- 	AT.Tracker:SetPoint(unpack(AT_CFG.point))
--- 	AT.Tracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+		HandleDataCorruption("HELPFUL")
+		HandleDataCorruption("HARMFUL")
+ 	else
+		AuraTracker:Show()
+		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+ 	end
 
--- 	if not AT:IsRunning() then
--- 		AT_OnEvent(AT.Tracker, "FORCE_INIT")
--- 	else
--- 		AT_OnEvent(AT.Tracker, "ENABLE")
--- 	end
+	AT:ForceUpdate()
 
--- 	if AT_CFG.locked then AT.Header:Hide() end
+	if AT_CFG.locked then AT:HideHeader() end
 
---  	return true, "|cff26a526Success!|r AT is on."
--- end
+ 	return true, SUCCESS_TEXT.." AT is on."
+end
 
--- function AT:Disable()
--- 	if AT:IsRunning() then
--- 		if InCombatLockdown() then
--- 	 		return false, "|cffe52626Error!|r Can't be done, while in combat."
--- 	 	end
+function AT:Disable()
+	if AT:IsRunning() then
+		AuraTracker:Hide()
+		AuraTracker:UnregisterEvent("UNIT_AURA")
 
--- 		AT.Tracker:Hide()
--- 		AT.Tracker:UnregisterEvent("UNIT_AURA")
-
--- 	 	return true, "|cff26a526Success!|r AT will be disabled on next UI reload."
--- 	 else
--- 	 	return true, "|cff26a526Success!|r AT is off."
--- 	 end
--- end
+	 	return true, SUCCESS_TEXT.." AT will be disabled on next UI reload."
+	 else
+	 	return true, SUCCESS_TEXT.." AT is off."
+	 end
+end
 
 function AT:AddToList(filter, spellID)
 	if not AT_CFG.enabled then
-		return false, "|cffe52626Error!|r Can\'t add aura. Module is disabled."
+		return false, ERROR_TEXT.." Can\'t add aura. Module is disabled."
 	end
 
 	local name = GetSpellInfo(spellID)
 	if not name then
-		return false, "|cffe52626Error!|r Can\'t add aura, that doesn't exist."
+		return false, ERROR_TEXT.." Can\'t add aura, that doesn't exist."
 	end
 
 	if AT_CFG[filter][spellID] then
-		return false, "|cffe52626Error!|r Can\'t add aura. Already in the list."
+		return false, ERROR_TEXT.." Can\'t add aura. Already in the list."
 	end
 
 	AT_CFG[filter][spellID] = E:GetPlayerSpecFlag()
 
 	AT:ForceUpdate()
 
-	return true, "|cff26a526Success!|r Added "..name.." ("..spellID..")."
-end
-
-function AT:RemoveFromList(filter, spellID)
-	if AT_CFG[filter][spellID] then
-		AT_CFG[filter][spellID] = nil
-
-		AT:ForceUpdate()
-
-		return true, "|cff26a526Success!|r Removed "..GetSpellInfo(spellID).." ("..spellID..")."
-	end
+	return true, SUCCESS_TEXT.." Added "..name.." ("..spellID..")."
 end
 
 local function ATHeader_OnEnter(self)
@@ -226,6 +217,18 @@ local function ATHeader_OnDragStop(self)
 	AT_CFG.point = {E:GetCoords(self:GetParent())}
 end
 
+function AT:GetAuraTracker()
+	return AuraTracker
+end
+
+function AT:ShowHeader()
+	AuraTracker.Header:Show()
+end
+
+function AT:HideHeader()
+	AuraTracker.Header:Hide()
+end
+
 function AT:ForceUpdate()
 	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
 end
@@ -234,7 +237,9 @@ function AT:PLAYER_LOGIN()
 	HandleDataCorruption("HELPFUL")
 	HandleDataCorruption("HARMFUL")
 
-	AT:ForceUpdate()
+	if AT:IsRunning() then
+		AT:ForceUpdate()
+	end
 end
 
 function AT:Initialize(forceInit)
@@ -268,7 +273,7 @@ function AT:Initialize(forceInit)
 
 		AuraTracker.buttons = buttons
 
-		E:SetupBar(buttons, 36, 4, AuraTracker, AT_CFG.direction)
+		E:SetupBar(buttons, AT_CFG.button_size, AT_CFG.button_gap, AuraTracker, AT_CFG.direction)
 
 		local header = _G.CreateFrame("Button", "$parentHeader", AuraTracker)
 		header:SetClampedToScreen(true)
@@ -288,7 +293,7 @@ function AT:Initialize(forceInit)
 
 		header:SetSize(label:GetWidth(), 22)
 
-		if AT_CFG.locked then header:Hide() end
+		if AT_CFG.locked then AT:HideHeader() end
 
 		SLASH_ATBUFF1 = "/atbuff"
 		_G.SlashCmdList["ATBUFF"] = function(msg)
