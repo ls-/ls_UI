@@ -166,13 +166,13 @@ local function AuraButtonMaskDialIndicator_OnMouseUp(self)
 end
 
 local function AuraListTab_OnClick(self)
-	local auraList = self:GetParent()
+	local auraList = panel.AuraList
 
 	_G.FauxScrollFrame_SetOffset(auraList, 0)
 
 	_G.PanelTemplates_Tab_OnClick(self, auraList)
 
-	AuraList_Update(auraList)
+	auraList:Update()
 end
 
 local function AuraList_AddAura(self)
@@ -199,7 +199,7 @@ local function AuraList_AddAura(self)
 end
 
 local function AuraList_OnVerticalScroll(self, offset)
-	FauxScrollFrame_OnVerticalScroll(self, offset, 30, AuraList_Update)
+	_G.FauxScrollFrame_OnVerticalScroll(self, offset, 30, AuraList_Update)
 end
 
 local function AuraListEditBox_OnTextChanged(self, isUserInput)
@@ -381,7 +381,6 @@ function CFG:AT_Initialize()
 	scrollbar:SetPoint("BOTTOMRIGHT", auraList,"BOTTOMRIGHT", -6, 22)
 
 	auraList.buttons = {}
-
 	for i = 1, 12 do
 		local button = _G.CreateFrame("CheckButton", "$parentButton"..i, auraList)
 		button.type = "Button"
@@ -507,15 +506,15 @@ function CFG:AT_Initialize()
 	maskDial.Text = maskLabel
 	auraList.MaskDial = maskDial
 
-	local barOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
-	barOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
-	barOptionsBG:SetHeight(144)
-	barOptionsBG:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
-	barOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
-	barOptionsBG:SetPoint("RIGHT", -16, 0)
+	local trackerOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
+	trackerOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	trackerOptionsBG:SetHeight(144)
+	trackerOptionsBG:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
+	trackerOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
+	trackerOptionsBG:SetPoint("RIGHT", -16, 0)
 
 	local buttonSizeSlider = CFG:CreateSlider(panel, "$parentButtonSizeSlider", "Button size", 32, 48)
-	buttonSizeSlider:SetPoint("TOPLEFT", barOptionsBG, "TOPLEFT", 16, -16)
+	buttonSizeSlider:SetPoint("TOPLEFT", trackerOptionsBG, "TOPLEFT", 16, -16)
 	panel.ButtonSizeSlider = buttonSizeSlider
 	panel.settings.auratracker.button_size = buttonSizeSlider
 
@@ -533,11 +532,11 @@ function CFG:AT_Initialize()
 	applyButton.type = "Button"
 	applyButton:SetSize(82, 22)
 	applyButton:SetText(_G.APPLY)
-	applyButton:SetPoint("TOPRIGHT", barOptionsBG, "TOPRIGHT", -8, -8)
+	applyButton:SetPoint("TOPRIGHT", trackerOptionsBG, "TOPRIGHT", -8, -8)
 	applyButton:SetScript("OnClick", ATButtonSettingsApplyButton_OnClick)
 
 	local lockToggle = CFG:CreateCheckButton(panel, "MovementToggle", _G.LOCK_FRAME)
-	lockToggle:SetPoint("TOPLEFT", barOptionsBG, "BOTTOMLEFT", -2, -8)
+	lockToggle:SetPoint("TOPLEFT", trackerOptionsBG, "BOTTOMLEFT", -2, -8)
 	lockToggle:HookScript("OnClick", LockToggle_OnClick)
 	panel.settings.auratracker.locked = lockToggle
 

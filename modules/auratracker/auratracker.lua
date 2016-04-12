@@ -208,13 +208,13 @@ local function ATHeader_OnLeave(self)
 end
 
 local function ATHeader_OnDragStart(self)
-	self:GetParent():StartMoving()
+	AuraTracker:StartMoving()
 end
 
 local function ATHeader_OnDragStop(self)
-	self:GetParent():StopMovingOrSizing()
+	AuraTracker:StopMovingOrSizing()
 
-	AT_CFG.point = {E:GetCoords(self:GetParent())}
+	AT_CFG.point = {E:GetCoords(AuraTracker)}
 end
 
 function AT:GetAuraTracker()
