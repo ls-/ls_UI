@@ -115,8 +115,7 @@ function UF:ConstructBossFrame(frame)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
 	frame:Tag(name, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
 
-	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
-	debuffStatus:SetDrawLayer("OVERLAY")
+	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 

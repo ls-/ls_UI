@@ -110,15 +110,13 @@ function UF:ConstructPlayerFrame(frame)
 		E:CreateMover(frame.Castbar.Holder)
 	end
 
-	local status = E:CreateFontString(frame, 16, "$parentStatusIcons")
-	status:SetDrawLayer("ARTWORK", 3)
+	local status = cover:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	status:SetJustifyH("CENTER")
 	status:SetPoint("BOTTOM", 0, -18)
 	frame:Tag(status, "[ls:combatresticon][ls:pvpicon][ls:lfdroleicon][ls:leadericon]")
 
-	local debuffStatus = E:CreateFontString(cover, 12, "$parentDebuffStatus")
+	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetWidth(14)
-	debuffStatus:SetWordWrap(true)
 	debuffStatus:SetDrawLayer("OVERLAY")
 	debuffStatus:SetPoint("LEFT", health, "LEFT", 0, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
