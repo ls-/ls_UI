@@ -1,0 +1,12 @@
+# Zip archives
+*.zip
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Mac crap
+.DS_Store
