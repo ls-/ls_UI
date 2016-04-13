@@ -212,7 +212,7 @@ function UF:ConstructArenaFrame(frame)
 	E:CreateBorder(trinket)
 	frame.Trinket = trinket
 
-	trinket.Icon = E:UpdateIcon(specinfo, UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
+	trinket.Icon = E:UpdateIcon(trinket, UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
 	trinket.CD = E:CreateCooldown(trinket, 12)
 
 	-- frame.unit = "player"
