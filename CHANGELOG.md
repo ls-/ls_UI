@@ -3,7 +3,7 @@
 - NEW! Added character info to unit tooltip, hold down Shift button to display spec and iLvl;
 - Updated AuraTracker module, brand new flexible in-game config;
 - Fixed status icons' height on unit frames;
-- Misc bug fixes and tweakes.
+- Misc bug fixes and tweaks.
 
 #Version 2.18
 
