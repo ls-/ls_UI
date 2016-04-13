@@ -1,4 +1,4 @@
-Copyright © 2013-2016 [Val Voronov](https://github.com/ls-) <i.lightspark@gmail.com>.
+Copyright © 2013-2016 Val Voronov <i.lightspark@gmail.com>.
 
 The contents of this addon, excluding third-party resources, are copyrighted to its authors with all rights reserved.
 
