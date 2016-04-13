@@ -27,5 +27,6 @@ New-Item -Name $folderName -ItemType Directory | Out-Null
 Copy-Item $includedFiles -Destination $folderName -Recurse
 Remove-Item $folderName -Include $filesToRemove -Recurse -Force
 Compress-Archive -Path $folderName -DestinationPath $zipName
+Move-Item ".\oUF_LS-*.zip" -Destination "..\" -Force
 
 Remove-Item $folderName -Recurse -Force
