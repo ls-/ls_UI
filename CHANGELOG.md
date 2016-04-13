@@ -1,3 +1,10 @@
+#Version 2.19
+
+- NEW! Added character info to unit tooltip, hold down Shift button to display spec and iLvl;
+- Updated AuraTracker module, brand new flexible in-game config;
+- Fixed status icons' height on unit frames;
+- Misc bug fixes and tweakes.
+
 #Version 2.18
 
 - Fixed number abbreviation for Korean and Simplified/Traditional Chinese locales.
