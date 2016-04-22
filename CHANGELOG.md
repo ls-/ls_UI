@@ -1,3 +1,9 @@
+#Version 2.20
+
+- NEW! Finally re-skinned garrison ability button;
+- Fixed spec/trinket icons on arena frames;
+- Improved item level calculation on unit tooltip.
+
 #Version 2.19
 
 - NEW! Added character info to unit tooltip, hold down Shift button to display spec and iLvl;
