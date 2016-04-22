@@ -179,6 +179,10 @@ D["bars"] = {
 		point = {"BOTTOM", 170, 138},
 		button_size = 40,
 	},
+	garrison = {-- Garrison
+		point = {"BOTTOM", -170, 182},
+		button_size = 40,
+	},
 	micromenu = {
 		holder1 = {
 			point = {"BOTTOM", -256, 4},
