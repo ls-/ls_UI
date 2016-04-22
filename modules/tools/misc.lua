@@ -26,7 +26,8 @@ local dispelTypesByClass = {
 
 local ITEM_LEVEL_PATTERN = strgsub(ITEM_LEVEL, "%%d", "(%%d+)")
 
-local INSPECT_ILVL_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}
+local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+local INSPECT_WEAPON_SLOTS = {16, 17}
 
 function E:GetCreatureDifficultyColor(level)
 	local color = _G.GetCreatureDifficultyColor(level > 0 and level or 199)
@@ -195,6 +196,8 @@ function E:GetUnitSpecializationInfo(unit)
 end
 
 function E:GetItemLevel(itemLink)
+	if not itemLink then return end
+
 	ScanTooltip:ClearLines()
 	ScanTooltip:SetHyperlink(itemLink)
 
@@ -212,26 +215,49 @@ function E:GetItemLevel(itemLink)
 end
 
 function E:GetUnitAverageItemLevel(unit)
-	local isPlayer = _G.UnitIsUnit(unit, "player")
-
-	if isPlayer then
+	if _G.UnitIsUnit(unit, "player") then
 		local _, avgItemLevelEquipped = _G.GetAverageItemLevel()
 
 		return mfloor(avgItemLevelEquipped)
 	else
-		local iLevelTotal, numItems = 0
-		for _, id in pairs(INSPECT_ILVL_SLOTS) do
+		local isInspectSuccessful = true
+		local iLevelTotal = 0
+		for _, id in pairs(INSPECT_ARMOR_SLOTS) do
 			local itemLink = _G.GetInventoryItemLink(unit, id)
+			local hasItem = ScanTooltip:SetInventoryItem(unit, id)
 			if itemLink then
 				local iLevel = E:GetItemLevel(itemLink)
 				if iLevel and iLevel > 0 then
-					numItems = (numItems or 0) + 1
 					iLevelTotal = iLevelTotal + iLevel
+				end
+			else
+				if hasItem then
+					isInspectSuccessful = false
 				end
 			end
 		end
 
-		return numItems and mfloor(iLevelTotal / numItems)
+		local numItems = 14
+		for _, id in pairs(INSPECT_WEAPON_SLOTS) do
+			local itemLink = _G.GetInventoryItemLink(unit, id)
+			local hasItem = ScanTooltip:SetInventoryItem(unit, id)
+			if itemLink then
+				local iLevel = E:GetItemLevel(itemLink)
+				if iLevel and iLevel > 0 then
+					numItems = numItems + 1
+					iLevelTotal = iLevelTotal + iLevel
+				end
+			else
+				if hasItem then
+					isInspectSuccessful = false
+				end
+			end
+		end
+
+		numItems = numItems < 15 and 15 or numItems
+
+		-- print(numItems, "total:", iLevelTotal, "cur:", mfloor(iLevelTotal / numItems), isInspectSuccessful and "SUCCESS!" or "FAIL!")
+		return isInspectSuccessful and mfloor(iLevelTotal / numItems)
 	end
 end
 
