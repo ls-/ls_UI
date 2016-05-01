@@ -417,10 +417,9 @@ end
 function TT:INSPECT_READY(unitGUID)
 	if lastGUID ~= unitGUID then return end
 
-	local unit = "mouseover"
-	if _G.UnitExists(unit) then
-		local specName = E:GetUnitSpecializationInfo(unit)
-		local itemLevel = E:GetUnitAverageItemLevel(unit)
+	if _G.UnitExists("mouseover") then
+		local specName = E:GetUnitSpecializationInfo("mouseover")
+		local itemLevel = E:GetUnitAverageItemLevel("mouseover")
 
 		if itemLevel or specName then
 			inspectGUIDCache[unitGUID] = {
@@ -429,7 +428,7 @@ function TT:INSPECT_READY(unitGUID)
 				itemLevel = itemLevel,
 			}
 
-			GameTooltip:SetUnit(unit)
+			GameTooltip:SetUnit("mouseover")
 		end
 	end
 
