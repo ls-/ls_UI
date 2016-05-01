@@ -22,6 +22,7 @@ local IsLFGDungeonJoinable = IsLFGDungeonJoinable
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
+local DAILY_QUEST_RESET_TIME = "|cffffd100Daily Quest Reset Time:|r %s"
 
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
 
@@ -283,7 +284,7 @@ local function CharacterMicroButton_OnEvent(self, event, ...)
 end
 
 local function QuestLogMicroButton_OnEnter(self)
-	GameTooltip:AddDoubleLine("Daily Quest Reset Time:", _G.SecondsToTime(_G.GetQuestResetTime(), true, nil, 3), 1, 0.82, 0, 1, 1, 1)
+	GameTooltip:AddLine(strformat(DAILY_QUEST_RESET_TIME, _G.SecondsToTime(_G.GetQuestResetTime())), 1, 1, 1)
 	GameTooltip:Show()
 end
 
