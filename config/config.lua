@@ -224,9 +224,3 @@ D["tooltips"] = {
 }
 
 D["movers"] = {}
-
-D["width"] = 0
-
-D["height"] = 0
-
-D["playerclass"] = ""

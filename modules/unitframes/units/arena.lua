@@ -175,7 +175,6 @@ function UF:ConstructArenaFrame(frame)
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
 
-
 	if C.units.arena.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 124)
 
