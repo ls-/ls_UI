@@ -57,7 +57,7 @@ local function HandleDataCorruption(filter)
 	for spec = 1, 4 do
 		local auraList = AT_CFG[tostring(spec)][filter]
 		for _, spellID in pairs(auraList) do
-			AT_CFG[filter][spellID] = E:AddFilterToMask(AT_CFG[filter][spellID] or 0x00000000, M.PLAYER_SPEC_FLAGS[spec])
+			AT_CFG[filter][spellID] = E:AddFilterToMask(AT_CFG[filter][spellID] or 0x00000000, E.PLAYER_SPEC_FLAGS[spec])
 		end
 		twipe(auraList)
 	end

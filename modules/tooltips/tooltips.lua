@@ -21,7 +21,7 @@ local ID = "|cffffd100"..ID..":|r %d"
 local TOTAL = "|cffffd100"..TOTAL..":|r %d"
 local PET_CLASS_PATTERN = strgsub(TOOLTIP_WILDBATTLEPET_LEVEL_CLASS, "%%s", "(.+)")
 local LINES_TO_REMOVE = {PVP, FACTION_ALLIANCE, FACTION_HORDE}
-local playerGUID, lastGUID = UnitGUID("player")
+local lastGUID
 local inspectGUIDCache = {}
 
 local function CleanLines(self)
@@ -182,7 +182,7 @@ local function ShowInspectInfo(unit, classColorHEX, numTries)
 	if not _G.CanInspect(unit) or numTries > 1 then	return end
 
 	local unitGUID = _G.UnitGUID(unit)
-	if unitGUID == playerGUID then
+	if unitGUID == E.PLAYER_GUID then
 		local line = GetAvailableLine(GameTooltip)
 		line:SetFormattedText(SPECIALIZATION, classColorHEX, E:GetUnitSpecializationInfo(unit))
 

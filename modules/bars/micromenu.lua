@@ -29,7 +29,7 @@ local MICRO_BUTTON_LAYOUT = {
 	CharacterMicroButton = {
 		point = {"LEFT", "LSMBHolderLeft", "LEFT", 2, 0},
 		parent = "LSMBHolderLeft",
-		icon = E.playerclass,
+		icon = E.PLAYER_CLASS,
 	},
 	SpellbookMicroButton = {
 		point = {"LEFT", "CharacterMicroButton", "RIGHT", 4, 0},

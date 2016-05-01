@@ -132,7 +132,7 @@ oUF.Tags.Events["ls:classicon"] = "UNIT_CLASSIFICATION_CHANGED"
 
 oUF.Tags.Methods["ls:sheepicon"] = function(unit)
 	if (UnitIsPlayer(unit) or tcontains(SHEEPABLE_TYPES, UnitCreatureType(unit))) and
-		UnitCanAttack("player", unit) and (E.playerclass == "MAGE" or E.playerclass == "SHAMAN") then
+		UnitCanAttack("player", unit) and (E.PLAYER_CLASS == "MAGE" or E.PLAYER_CLASS == "SHAMAN") then
 		return format(ICONS["SHEEP"], 0, 0)
 	else
 		-- return format(ICONS["QUEST"], 0, 0)

@@ -194,7 +194,6 @@ local filterFunctions = {
 	party = function(frame, unit, aura, ...)
 		local name, _, _, _, debuffType, _, _, _, _, _, spellID, _, isBossAura = ...
 		local filter = aura.filter
-		local playerClass = E:GetPlayerClass()
 		local dispelTypes = E:GetDispelTypes()
 
 		-- gibe de pusseh, b0ss
@@ -214,7 +213,7 @@ local filterFunctions = {
 		end
 
 		-- Forbearance and Weakened Soul
-		if (playerClass == "PALADIN" and spellID == 25771) or (playerClass == "PRIEST" and spellID == 6788) then
+		if (E.PLAYER_CLASS == "PALADIN" and spellID == 25771) or (E.PLAYER_CLASS == "PRIEST" and spellID == 6788) then
 			return true
 		end
 

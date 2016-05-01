@@ -16,7 +16,7 @@ function E:ADDON_LOADED(arg)
 end
 
 function E:PLAYER_LOGIN()
-	M:UpdateConstants()
+	E:UpdateConstants()
 end
 
 function E:PLAYER_LOGOUT(...)

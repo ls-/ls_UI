@@ -123,28 +123,28 @@ function UF:ConstructPlayerFrame(frame)
 
 	UF:Reskin(frame, "NONE", true, 0, "NONE")
 
-	if E.playerclass == "PRIEST" then
+	if E.PLAYER_CLASS == "PRIEST" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Shadow_Orbs", level + 4)
-	elseif E.playerclass == "MONK" then
+	elseif E.PLAYER_CLASS == "MONK" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
 
 		frame.Stagger = UF:CreateStaggerBar(frame, level + 6)
 		frame.Stagger.Value:SetParent(cover)
 		frame.Stagger.Value:SetPoint("CENTER", 0, -20)
 		tinsert(frame.mouseovers, frame.Stagger)
-	elseif E.playerclass == "PALADIN" then
+	elseif E.PLAYER_CLASS == "PALADIN" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holy_Power", level + 4)
-	elseif ns.E.playerclass == "WARLOCK" then
+	elseif ns.E.PLAYER_CLASS == "WARLOCK" then
 		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "Soul_Shards", level + 4)
 
 		frame.BurningEmbers = UF:CreateBurningEmbers(frame, level + 4)
 
 		frame.DemonicFury = UF:CreateDemonicFury(frame, level + 4)
-	elseif E.playerclass == "DEATHKNIGHT" then
+	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 		frame.Runes = UF:CreateRuneBar(frame, level + 4)
-	elseif E.playerclass == "DRUID" then
+	elseif E.PLAYER_CLASS == "DRUID" then
 		frame.EclipseBar = UF:CreateEclipseBar(frame, level + 4)
-	elseif E.playerclass == "SHAMAN" then
+	elseif E.PLAYER_CLASS == "SHAMAN" then
 		frame.Totems = UF:CreateTotemBar(frame, level + 4)
 	end
 

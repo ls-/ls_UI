@@ -36,7 +36,7 @@ function B:HandleObjectiveTracker()
 	ObjectiveTrackerFrame.ClearAllPoints = function() return end
 	ObjectiveTrackerFrame:SetPoint("TOP", holder, "BOTTOM", 8, 2)
 	ObjectiveTrackerFrame.SetPoint = function() return end
-	ObjectiveTrackerFrame:SetHeight(E.height * 0.6)
+	ObjectiveTrackerFrame:SetHeight(E.SCREEN_HEIGHT * 0.6)
 
 	local header = CreateFrame("Button", "LSOTFrameHeader", ObjectiveTrackerFrame)
 	header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 2)

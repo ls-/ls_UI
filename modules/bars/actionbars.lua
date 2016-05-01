@@ -116,7 +116,7 @@ local PAGE_LAYOUT = {
 
 local function GetPageLayout()
 	local condition = PAGE_LAYOUT["DEFAULT"]
-	local page = PAGE_LAYOUT[E.playerclass]
+	local page = PAGE_LAYOUT[E.PLAYER_CLASS]
 
 	if page then
 		condition = condition.." "..page
@@ -156,9 +156,9 @@ end
 
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "LSPetActionBar" then
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
+		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[E.PLAYER_CLASS]]))
 	else
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[ns.E.playerclass]]))
+		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[E.PLAYER_CLASS]]))
 	end
 end
 

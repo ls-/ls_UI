@@ -2,9 +2,6 @@ local AddOn, ns = ...
 local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
 ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 
-E.width, E.height = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
-E.playerclass = select(2, UnitClass("player"))
-
 function E:CreateFontString(parent, size, name, shadow, outline)
 	local object = parent:CreateFontString(name, nil, shadow and "LS"..size.."Font_Shadow" or (outline and "LS"..size.."Font_Outline" or "LS"..size.."Font"))
 	object:SetWordWrap(false)

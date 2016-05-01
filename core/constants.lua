@@ -1,6 +1,11 @@
 local _, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
+-- Lua
+local _G = _G
+local select = select
+
+-- Mine
 M.HiddenParent = CreateFrame("Frame", "LSHiddenParent")
 M.HiddenParent:Hide()
 
@@ -202,7 +207,11 @@ local textures = {
 
 M.textures = textures
 
-M.PLAYER_SPEC_FLAGS = {
+E.SCREEN_WIDTH, E.SCREEN_HEIGHT = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
+
+E.PLAYER_CLASS = select(2, UnitClass("player"))
+
+E.PLAYER_SPEC_FLAGS = {
 	-- [-1] = 0x00000000, -- none
 	-- [0] = 0x00000000, -- all
 	[1] = 0x00000001, -- 1st
@@ -211,8 +220,11 @@ M.PLAYER_SPEC_FLAGS = {
 	[4] = 0x00000008, -- 4th
 }
 
-function M:UpdateConstants()
-	for i = 1, GetNumSpecializations() do
-		M.PLAYER_SPEC_FLAGS[0] = E:AddFilterToMask(M.PLAYER_SPEC_FLAGS[0] or 0, M.PLAYER_SPEC_FLAGS[i])
+-- Everything that's not available at ADDON_LOADED goes here
+function E:UpdateConstants()
+	for i = 1, _G.GetNumSpecializations() do
+		E.PLAYER_SPEC_FLAGS[0] = E:AddFilterToMask(E.PLAYER_SPEC_FLAGS[0] or 0, E.PLAYER_SPEC_FLAGS[i])
 	end
+
+	E.PLAYER_GUID = _G.UnitGUID("player")
 end

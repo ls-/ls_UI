@@ -37,7 +37,7 @@ local function MaskDial_SetMask(self, mask)
 	for i = 1, #self do
 		local button = self[i]
 
-		if E:IsFilterApplied(mask, M.PLAYER_SPEC_FLAGS[i]) then
+		if E:IsFilterApplied(mask, E.PLAYER_SPEC_FLAGS[i]) then
 			button:SetButtonState("NORMAL", true) -- positive
 		else
 			button:SetButtonState("PUSHED", true) -- negative
@@ -124,7 +124,7 @@ function CFG:CreateMaskDial(parent, name, text)
 		button.IsPositive = MaskDialIndicator_IsPositive
 		button.Enable = MaskDialIndicator_Enable
 		button.Disable = MaskDialIndicator_Disable
-		button.value = M.PLAYER_SPEC_FLAGS[i]
+		button.value = E.PLAYER_SPEC_FLAGS[i]
 		object[i] = button
 
 		if i == 1 then
