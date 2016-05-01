@@ -9,19 +9,22 @@ local strformat = string.format
 local twipe, tsort = table.wipe, table.sort
 
 --Blizz
-local TANK = "|cff1e8eff"..TANK.."|r"
-local HEALER = "|cff26a526"..HEALER.."|r"
-local DAMAGER = "|cffe52626"..DAMAGER.."|r"
 local GameTooltip = GameTooltip
+local GetAddOnInfo = GetAddOnInfo
+local GetAddOnMemoryUsage = GetAddOnMemoryUsage
 local GetInventoryItemDurability = GetInventoryItemDurability
 local GetLFGRandomDungeonInfo = GetLFGRandomDungeonInfo
 local GetRFDungeonInfo = GetRFDungeonInfo
+local IsAddOnLoaded = IsAddOnLoaded
 local IsLFGDungeonJoinable = IsLFGDungeonJoinable
 
 -- Mine
 local COLORS = M.colors
 local GRADIENT_GYR = COLORS.gradient["GYR"]
 local GRADIENT_RYG = COLORS.gradient["RYG"]
+local TANK = "|cff1e8eff"..TANK.."|r"
+local HEALER = "|cff26a526"..HEALER.."|r"
+local DAMAGER = "|cffe52626"..DAMAGER.."|r"
 local DAILY_QUEST_RESET_TIME = "|cffffd100Daily Quest Reset Time:|r %s"
 
 local DURABILITY_SLOTS = {1, 3, 5, 6, 7, 8, 9, 10, 16, 17}
@@ -151,9 +154,9 @@ local function MainMenuMicroButton_OnEnter(self)
 
 	for i = 1, _G.GetNumAddOns() do
 		addons[i] = {
-			[1] = select(2, _G.GetAddOnInfo(i)),
-			[2] = _G.GetAddOnMemoryUsage(i),
-			[3] = _G.IsAddOnLoaded(i),
+			[1] = select(2, GetAddOnInfo(i)),
+			[2] = GetAddOnMemoryUsage(i),
+			[3] = IsAddOnLoaded(i),
 		}
 
 		memory = memory + addons[i][2]
