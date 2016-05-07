@@ -32,16 +32,8 @@ local function CleanLines(self)
 			local lineText = line:GetText()
 
 			if tcontains(LINES_TO_REMOVE, lineText) then
-				for j = i, numLines do
-					_G["GameTooltipTextLeft"..j]:SetText(_G["GameTooltipTextLeft"..j + 1]:GetText())
-
-					if not _G["GameTooltipTextLeft"..j + 1]:IsShown() then
-						_G["GameTooltipTextLeft"..j]:SetText(nil)
-						_G["GameTooltipTextLeft"..j]:Hide()
-
-						break
-					end
-				end
+				line:SetText(nil)
+				line:Hide()
 			end
 		end
 	end
@@ -368,11 +360,6 @@ local function GameTooltip_UnitTooltipHook(self)
 	end
 
 	if GameTooltipStatusBar:IsShown() then
-		local line = GetAvailableLine(self)
-
-		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("LEFT", line, "LEFT", 0, -2)
-		GameTooltipStatusBar:SetPoint("RIGHT", self, "RIGHT", -9, 0)
 		GameTooltipStatusBar:SetStatusBarColor(reactionColor.r, reactionColor.g, reactionColor.b)
 
 		self:SetMinimumWidth(140)
@@ -451,10 +438,12 @@ function TT:Initialize()
 
 		E:HandleStatusBar(GameTooltipStatusBar)
 		E:CreateBorder(GameTooltipStatusBar, 8)
+		GameTooltipStatusBar:ClearAllPoints()
+		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 3, -2)
+		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -3, -2)
+		GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
 		GameTooltipStatusBar.Text:SetFontObject("LS10Font_Shadow")
 		GameTooltipStatusBar.Text:SetDrawLayer("OVERLAY") -- FIXME
-		GameTooltipStatusBar:SetBorderColor(unpack(M.colors.gray))
-		GameTooltipStatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChangedHook)
 
 		TT:RegisterEvent("MODIFIER_STATE_CHANGED")
 	end
