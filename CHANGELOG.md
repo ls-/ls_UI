@@ -1,3 +1,9 @@
+#Version 2.21
+
+- Revamped "Recieve Mail" button tooltip. Now it shows detailed info about mailbox content;
+- As of now player castbar has dynamic latency indicator;
+- Misc bug fixes and tweaks.
+
 #Version 2.20
 
 - NEW! Finally re-skinned garrison ability button;
