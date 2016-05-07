@@ -201,7 +201,7 @@ local function MainConstructor()
 
 	if C.units.party.enabled then
 		headers["party"] = oUF:SpawnHeader("LSPartyFrame", nil,
-			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid6,exists]hide;show",
+			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid1,exists]hide;show",
 			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
 			"showPlayer", true,
 			"showParty", true,
