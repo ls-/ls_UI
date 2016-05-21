@@ -3,51 +3,35 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local AURAS = E:AddModule("Auras")
 local AURAS_CFG
 
-local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs =
-	BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
+local BuffFrame, TemporaryEnchantFrame = BuffFrame, TemporaryEnchantFrame
 
 local function UpdateBuffAnchors()
-	local numBuffs, slack = 0, 0
+	local numBuffs = 0
 	local button, previous, above, index
-
-	if IsInGroup() and GetCVarBool("consolidateBuffs") then
-		slack = 1
-	end
 
 	for i = 1, BUFF_ACTUAL_DISPLAY do
 		button = _G["BuffButton"..i]
+		numBuffs = numBuffs + 1
+		index = numBuffs
 
-		if not button.consolidated then
-			numBuffs = numBuffs + 1
-			index = numBuffs + slack
+		button:ClearAllPoints()
+		button:SetSize(AURAS_CFG.aura_size, AURAS_CFG.aura_size)
 
-			button:ClearAllPoints()
-			button:SetSize(AURAS_CFG.aura_size, AURAS_CFG.aura_size)
+		if index > 1 and (mod(index, 16) == 1) then
+			button:SetPoint("TOP", above, "BOTTOM", 0, -AURAS_CFG.aura_gap)
 
-			if index > 1 and (mod(index, 16) == 1) then
-				if index == 17 then
-					button:SetPoint("TOP", ConsolidatedBuffs, "BOTTOM", 0, -AURAS_CFG.aura_gap)
-				else
-					button:SetPoint("TOP", above, "BOTTOM", 0, -AURAS_CFG.aura_gap)
-				end
+			above = button
+		elseif index == 1 then
+			button:SetPoint("CENTER", LSBuffHeader, "CENTER", 0, 0)
 
-				above = button
-			elseif index == 1 then
-				button:SetPoint("CENTER", 0, 0)
-
-				above = button
-			else
-				if numBuffs == 1 then
-					button:SetPoint("RIGHT", ConsolidatedBuffs, "LEFT", -AURAS_CFG.aura_gap, 0)
-				else
-					button:SetPoint("RIGHT", previous, "LEFT", -AURAS_CFG.aura_gap, 0)
-				end
-			end
-
-			E:SkinAuraButton(button)
-
-			previous = button
+			above = button
+		else
+			button:SetPoint("RIGHT", previous, "LEFT", -AURAS_CFG.aura_gap, 0)
 		end
+
+		E:SkinAuraButton(button)
+
+		previous = button
 	end
 end
 
@@ -120,9 +104,5 @@ function AURAS:Initialize()
 
 		hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", UpdateBuffAnchors)
 		hooksecurefunc("DebuffButton_UpdateAnchors", UpdateDebuffAnchors)
-
-		E:SkinAuraButton(ConsolidatedBuffs)
-
-		ConsolidatedBuffsTooltip:SetScale(1)
 	end
 end

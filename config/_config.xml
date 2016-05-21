@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="config.lua"/>
-	<Script file="core.lua"/>
+<!-- 	<Script file="core.lua"/>
 	<Script file="general.lua"/>
 	<Script file="bars.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="auratracker.lua"/>
-	<Script file="nameplates.lua"/>
+	<Script file="nameplates.lua"/> -->
 </Ui>

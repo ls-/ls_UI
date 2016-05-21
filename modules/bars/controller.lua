@@ -47,7 +47,6 @@ end
 
 local function CreateAnimationSet(object, side)
 	local group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	group:SetLooping("REPEAT")
 	BarController[side.."RotationNormal"] = group
 
@@ -56,7 +55,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(20)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationRewind"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -64,7 +62,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(0.25)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationFastForward"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -72,7 +69,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(0.25)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationLongRewind"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -230,7 +226,6 @@ function B:ActionBarController_Initialize()
 		B.BarController = BarController
 
 		local group = BarController:CreateAnimationGroup()
-		group:SetIgnoreFramerateThrottle(true)
 		group:SetScript("OnPlay", BarControllerAnimation_OnPlay)
 		group:SetScript("OnFinished", BarControllerAnimation_OnFinished)
 		BarController.SlideInOut = group

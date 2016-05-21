@@ -66,7 +66,7 @@ function E:GetSmartReactionColor(unit)
 			color = M.colors.disconnected
 		elseif _G.UnitIsPlayer(unit) then
 			color = M.colors.class[select(2, _G.UnitClass(unit))]
-		elseif not _G.UnitIsUnit(unit, "player") and _G.UnitIsTapped(unit) and not _G.UnitIsTappedByPlayer(unit) then
+		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
 			color = M.colors.tapped
 		else
 			color = M.colors.reaction[_G.UnitReaction(unit, "player")]

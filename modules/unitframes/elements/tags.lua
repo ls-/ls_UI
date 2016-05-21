@@ -25,7 +25,7 @@ oUF.Tags.Methods["custom:color"] = function(unit)
 		color = COLORS.disconnected
 	elseif UnitIsPlayer(unit) then
 		color = COLORS.class[select(2, UnitClass(unit))]
-	elseif UnitIsUnit(unit, "target") and UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
+	elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
 		color = COLORS.tapped
 	else
 		color = COLORS.reaction[UnitReaction(unit, "player")]

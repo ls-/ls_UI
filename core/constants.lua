@@ -207,7 +207,7 @@ local textures = {
 
 M.textures = textures
 
-E.SCREEN_WIDTH, E.SCREEN_HEIGHT = string.match(GetCVar("gxResolution"), "(%d+)x(%d+)")
+E.SCREEN_WIDTH, E.SCREEN_HEIGHT = format("%d", GetScreenWidth()), format("%d", GetScreenHeight())
 
 E.PLAYER_CLASS = select(2, UnitClass("player"))
 
