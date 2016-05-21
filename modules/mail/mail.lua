@@ -163,7 +163,7 @@ local function LazyLootMail(index, delay)
 					if money > 0 then
 						TakeInboxMoney(index)
 					elseif itemCount and itemCount > 0 then
-						mod = 1.25
+						mod = 1.33
 
 						local name, _, count = GetInboxItem(index, itemCount)
 						if not name then
@@ -181,6 +181,7 @@ local function LazyLootMail(index, delay)
 		end
 	elseif index == 0 then
 		_G.InboxFrame_Update()
+		_G.CheckInbox()
 
 		if Mail.overflow then
 			ReceiveMail()
