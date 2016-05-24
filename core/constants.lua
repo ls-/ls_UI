@@ -22,28 +22,23 @@ oUF.colors.reaction = {
 	[8] = {0.15, 0.65, 0.15},
 }
 
-oUF.colors.power["MANA"] = {0.15, 0.75, 0.95}
-oUF.colors.power["FOCUS"] = {1, 0.5, 0.25}
-oUF.colors.power["ENERGY"] = {0.9, 0.65, 0.15}
-oUF.colors.power["CHI"] = {0.4, 0.95, 0.62}
-oUF.colors.power["RUNIC_POWER"] = {0.4, 0.65, 1}
-oUF.colors.power["SOUL_SHARDS"] = {0.5, 0.3, 0.75}
-oUF.colors.power["ECLIPSE"] = {
-	negative = {0.3, 0.52, 0.9},
-	positive = {1, 0.5, 0.25},
-}
-oUF.colors.power["HOLY_POWER"] = {0.95, 0.9, 0.25}
+oUF.colors.power["MANA"] = {13 / 255, 140 / 255, 255 / 255}
+oUF.colors.power["ENERGY"] = {255 / 255, 206 / 255, 13 / 255}
+oUF.colors.power["INSANITY"] = {158 / 255, 6 / 255, 227 / 255}
+oUF.colors.power["ARCANE_CHARGES"] = {29 / 255, 124 / 255, 226 / 255}
+oUF.colors.power["COMBO_POINTS"] = {229 / 255, 76 / 255, 38 / 255}
+oUF.colors.power["RUNES"] = {106 / 255, 184 / 255, 247 / 255}
+-- oUF.colors.power["SOUL_SHARDS"] = {175 / 255, 110 / 255, 255 / 255}
 
 local colors = E:CopyTable(oUF.colors, {})
 
-colors.power["SHADOW_ORBS"] = {0.85, 0.2, 0.7}
-colors.power["COMBO_POINTS"] = {0.9, 0.3, 0.15}
-colors.power["TOTEMS"] = {
-	[1] = {0.3, 0.8, 0.16},
-	[2] = {0.8, 0.29, 0.13},
-	[3] = {0.22, 0.67, 0.8},
-	[4] = {0.65, 0.22, 1},
-}
+colors.power["ARCANE_CHARGES_GLOW"] = {19 / 255, 239 / 255, 237 / 255}
+colors.power["COMBO_POINTS_GLOW"] = {242 / 255, 133 / 255, 28 / 255}
+colors.power["HOLY_POWER_GLOW"] = {249 / 255, 213 / 255, 145 / 255}
+colors.power["RUNES_GLOW"] = {95 / 255, 251 / 255, 238 / 255}
+colors.power["SOUL_SHARDS_GLOW"] = {254 / 255, 97 / 255, 255 / 255}
+colors.power["CHI_GLOW"] = {168 / 255, 255 / 255, 181 / 255}
+
 colors.power["STAGGER"] = {0.52, 1, 0.52, 1, 0.98, 0.72, 1, 0.42, 0.42}
 
 colors.icon = {
