@@ -31,20 +31,15 @@ function UF:ConstructPlayerFrame(frame)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
-	local tube1 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	tube1:SetSize(20, 144)
-	tube1:SetPoint("LEFT", 15, 0)
-	cover.Tube = tube1
-
-	local tube2 = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	tube2:SetTexCoord(6 / 512, 26 / 512, 8 / 256, 152 / 256)
-	tube2:SetSize(20, 144)
-	tube2:SetPoint("RIGHT", -15, 0)
+	local tube = cover:CreateTexture(nil, "ARTWORK", nil, 0)
+	tube:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
+	tube:SetTexCoord(1 / 512, 21 / 512, 1 / 512, 129 / 512)
+	tube:SetSize(20, 128)
+	tube:SetPoint("LEFT", 15, 0)
+	cover.Tube = tube
 
 	local sep = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
 	sep:SetSize(20, 128)
 	sep:SetPoint("LEFT", 15, 0)
 	cover.Sep = sep
@@ -96,6 +91,7 @@ function UF:ConstructPlayerFrame(frame)
 	power:SetFrameLevel(level + 4)
 	power:SetSize(12, 128)
 	power:SetPoint("RIGHT", -19, 0)
+	E:SetBarSkin(power, "VERTICAL-L")
 	tinsert(frame.mouseovers, power)
 	frame.Power = power
 
@@ -125,30 +121,38 @@ function UF:ConstructPlayerFrame(frame)
 
 	-- if E.PLAYER_CLASS == "PRIEST" then
 	-- 	frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Shadow_Orbs", level + 4)
-	-- elseif E.PLAYER_CLASS == "MONK" then
-	-- 	frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
+	if E.PLAYER_CLASS == "MONK" then
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 6, "Chi", level + 4)
 
-	-- 	frame.Stagger = UF:CreateStaggerBar(frame, level + 6)
-	-- 	frame.Stagger.Value:SetParent(cover)
-	-- 	frame.Stagger.Value:SetPoint("CENTER", 0, -20)
-	-- 	tinsert(frame.mouseovers, frame.Stagger)
-	-- elseif E.PLAYER_CLASS == "PALADIN" then
-	-- 	frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holy_Power", level + 4)
-	-- elseif ns.E.PLAYER_CLASS == "WARLOCK" then
-	-- 	frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "Soul_Shards", level + 4)
-
+		frame.Stagger = UF:CreateStaggerBar(frame, level + 4)
+		frame.Stagger.Value:SetParent(cover)
+		frame.Stagger.Value:SetPoint("CENTER", 0, -20)
+		tinsert(frame.mouseovers, frame.Stagger)
+	end
+	if E.PLAYER_CLASS == "PALADIN" then
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Holy_Power", level + 4)
+	end
+	if ns.E.PLAYER_CLASS == "WARLOCK" then
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 5, "Soul_Shards", level + 4)
+	end
 	-- 	frame.BurningEmbers = UF:CreateBurningEmbers(frame, level + 4)
 
 	-- 	frame.DemonicFury = UF:CreateDemonicFury(frame, level + 4)
-	-- elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
-	-- 	frame.Runes = UF:CreateRuneBar(frame, level + 4)
+	if E.PLAYER_CLASS == "DEATHKNIGHT" then
+		frame.Runes = UF:CreateRuneBar(frame, level + 4)
+	end
 	-- elseif E.PLAYER_CLASS == "DRUID" then
 	-- 	frame.EclipseBar = UF:CreateEclipseBar(frame, level + 4)
 	-- elseif E.PLAYER_CLASS == "SHAMAN" then
 	-- 	frame.Totems = UF:CreateTotemBar(frame, level + 4)
 	-- end
+	if E.PLAYER_CLASS == "MAGE" then
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 4, "Arcane_Charges", level + 4)
+	end
 
-	-- frame.CPoints = UF:CreateComboBar(frame, level + 3)
+	if E.PLAYER_CLASS == "ROGUE" or E.PLAYER_CLASS == "DRUID" then
+		frame.ClassIcons = UF:CreateClassPowerBar(frame, 9, "Combo_Points", level + 4)
+	end
 
 	local fcf = CreateFrame("Frame", "$parentFeedbackFrame", frame)
 	fcf:SetFrameLevel(7)
