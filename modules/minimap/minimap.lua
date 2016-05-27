@@ -233,7 +233,7 @@ local function Minimap_OnEventHook(self, event)
 			end
 		end
 
-		Step(GameTimeFrame.DayTimeIndicator, GetDeltas())
+		-- Step(GameTimeFrame.DayTimeIndicator, GetDeltas())
 
 		self.handled = true
 	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS"
@@ -400,11 +400,11 @@ function MM:Initialize()
 		calendar.PushedTexture:SetTexture("")
 		calendar.pendingCalendarInvites = 0
 
-		local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
-		texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
-		texture:SetPoint("TOPLEFT", 2, -2)
-		texture:SetPoint("BOTTOMRIGHT", -2, 2)
-		calendar.DayTimeIndicator = texture
+		-- local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
+		-- texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
+		-- texture:SetPoint("TOPLEFT", 2, -2)
+		-- texture:SetPoint("BOTTOMRIGHT", -2, 2)
+		-- calendar.DayTimeIndicator = texture
 
 		local _, mark, glow, _, date = calendar:GetRegions()
 		mark:SetDrawLayer("OVERLAY", 2)
