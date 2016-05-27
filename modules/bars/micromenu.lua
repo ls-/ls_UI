@@ -566,7 +566,7 @@ local function HandleMicroButton(button)
 	end
 
 	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture(0, 0, 0, 1)
+	bg:SetColorTexture(0, 0, 0, 1)
 	bg:SetAllPoints()
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)

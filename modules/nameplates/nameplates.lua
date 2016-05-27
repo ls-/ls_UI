@@ -339,7 +339,7 @@ local function HandleNamePlate(self)
 	overlay.Threat = threat
 
 	-- local targetMark = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
-	-- targetMark:SetTexture(1,0,0)
+	-- targetMark:SetColorTexture(1,0,0)
 	-- targetMark:SetPoint("TOP", 0, 10)
 	-- targetMark:Hide()
 	-- overlay.TargetMark = targetMark

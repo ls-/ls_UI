@@ -16,7 +16,7 @@ function E:DebugHighlight(object)
 		object.tex = object:CreateTexture(nil, "BACKGROUND", nil, -8)
 	end
 	object.tex:SetAllPoints(object)
-	object.tex:SetTexture(1, 0, 0.5, 0.4)
+	object.tex:SetColorTexture(1, 0, 0.5, 0.4)
 end
 
 function E:ForceShow(object)

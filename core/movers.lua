@@ -264,7 +264,7 @@ function E:CreateMover(object)
 	E:CreateBorder(mover, 5, -1)
 
 	local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture(0.41, 0.8, 0.94, 0.6)
+	bg:SetColorTexture(0.41, 0.8, 0.94, 0.6)
 	bg:SetPoint("TOPLEFT", 1, -1)
 	bg:SetPoint("BOTTOMRIGHT", -1, 1)
 

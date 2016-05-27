@@ -213,7 +213,7 @@ local function SkinButton(button)
 	E:UpdateIcon(bIcon)
 
 	if bFlash then
-		bFlash:SetTexture(0.9, 0.15, 0.15, 0.65)
+		bFlash:SetColorTexture(0.9, 0.15, 0.15, 0.65)
 		bFlash:SetAllPoints()
 	end
 
