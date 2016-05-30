@@ -27,7 +27,7 @@ function UF:ConstructPlayerFrame(frame)
 	ring:SetPoint("CENTER", 0, -17)
 
 	local cover = CreateFrame("Frame", "$parentCover", frame)
-	cover:SetFrameLevel(level + 5)
+	cover:SetFrameLevel(level + 6)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
@@ -91,9 +91,12 @@ function UF:ConstructPlayerFrame(frame)
 	power:SetFrameLevel(level + 4)
 	power:SetSize(12, 128)
 	power:SetPoint("RIGHT", -19, 0)
-	E:SetBarSkin(power, "VERTICAL-L")
 	tinsert(frame.mouseovers, power)
 	frame.Power = power
+
+	local pwrCover = CreateFrame("Frame", "$parentCover", power)
+	pwrCover:SetAllPoints()
+	E:SetBarSkin(pwrCover, "VERTICAL-L")
 
 	local powerText = power.Text
 	powerText:SetParent(cover)
