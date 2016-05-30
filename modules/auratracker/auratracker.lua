@@ -15,7 +15,7 @@ local GameTooltip = GameTooltip
 local GetSpellInfo = GetSpellInfo
 local GetTime = GetTime
 local UnitAura = UnitAura
-local CooldownFrame_SetTimer = CooldownFrame_SetTimer
+local CooldownFrame_Set = CooldownFrame_Set
 
 --Mine
 local AT_LABEL = "|cffffd100".. BUFFOPTIONS_LABEL.."|r"
@@ -100,7 +100,7 @@ local function AT_OnEvent(self, event, ...)
 			button.expire = aura.expire
 			button.stacks = aura.count
 
-			CooldownFrame_SetTimer(button.CD, aura.expire - aura.duration, aura.duration, true)
+			CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
 			if button.filter == "HARMFUL" then
 				color = {r = 0.8, g = 0, b = 0}

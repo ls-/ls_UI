@@ -8,7 +8,7 @@ local wipe, unpack, tcontains = wipe, unpack, tContains
 
 local UnitAura = UnitAura
 local GetArenaOpponentSpec, GetSpecializationInfoByID = GetArenaOpponentSpec, GetSpecializationInfoByID
-local CooldownFrame_SetTimer, GetTime = CooldownFrame_SetTimer, GetTime
+local CooldownFrame_Set, GetTime = CooldownFrame_Set, GetTime
 
 local CROWDCONTROL = {
 	-- hex
@@ -45,7 +45,7 @@ local function ArenaFrame_OnEvent(self, event, ...)
 			if name and tcontains(CROWDCONTROL, spellId) then
 				self.SpecInfo.Icon:SetTexture(iconTexture)
 
-				return CooldownFrame_SetTimer(self.SpecInfo.CD, expirationTime - duration, duration, true)
+				return CooldownFrame_Set(self.SpecInfo.CD, expirationTime - duration, duration, true)
 			end
 		end
 	end
@@ -76,11 +76,11 @@ local function Trinket_OnEvent(self, event, ...)
 	local _, name, _, _, spellID = ...
 
 	if spellID == 42292 or spellID == 59752 then
-		CooldownFrame_SetTimer(self.CD, GetTime(), 120, 1)
+		CooldownFrame_Set(self.CD, GetTime(), 120, 1)
 		self.CD.start = GetTime()
 	elseif spellID == 7744 then
 		if 120 - (GetTime() - (self.CD.start or 0)) < 30 then
-			CooldownFrame_SetTimer(self.CD, GetTime(), 30, 1)
+			CooldownFrame_Set(self.CD, GetTime(), 30, 1)
 		end
 	end
 end
