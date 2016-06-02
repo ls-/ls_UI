@@ -134,17 +134,17 @@ function UF:ConstructPlayerFrame(frame)
 	frame.ClassIcons = UF:CreateClassPowerBar(frame, level + 4)
 
 	local fcf = CreateFrame("Frame", "$parentFeedbackFrame", frame)
-	fcf:SetFrameLevel(7)
-	fcf:SetSize(94, 94)
-	fcf:SetPoint("CENTER", 0, 78)
+	fcf:SetFrameLevel(9)
+	fcf:SetSize(32, 32)
+	fcf:SetPoint("CENTER", 0, 0)
 	frame.FloatingCombatFeedback =  fcf
 
-	for i = 1, 4 do
-		fcf[i] = E:CreateFontString(fcf, 18, nil, true)
+	for i = 1, 6 do
+		fcf[i] = fcf:CreateFontString(nil, "OVERLAY", "CombatTextFont")
 	end
 
-	fcf.Mode = "Fountain"
-	fcf.YOffset = 20
+	fcf.mode = "Fountain"
+	fcf.abbreviateNumbers = true
 
 	local threat = UF:CreateThreat(frame)
 	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
