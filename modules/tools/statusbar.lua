@@ -58,7 +58,7 @@ function E:HandleStatusBar(bar, cascade)
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND")
 		end
-		background:SetTexture(unpack(COLORS.darkgray))
+		background:SetColorTexture(unpack(COLORS.darkgray))
 		background:SetAllPoints()
 		bar.Bg = background
 
@@ -101,7 +101,7 @@ function E:CreateStatusBar(parent, name, orientation)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetTexture(unpack(COLORS.darkgray))
+	bg:SetColorTexture(unpack(COLORS.darkgray))
 	bg:SetAllPoints()
 	bar.Bg = bg
 
