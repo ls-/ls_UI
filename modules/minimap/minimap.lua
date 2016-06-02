@@ -2,8 +2,15 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local MM = E:AddModule("MiniMap")
 
+-- Lua
+local _G = _G
+local next = next
+local strfind = string.find
+local mmodf = math.modf
+-- Blizz
 local Minimap = Minimap
 
+-- Mine
 local STEP = 0.00390625 -- 1 / 256
 local DELAY = 337.5 -- 256 * 337.5 = 86400 = 24H
 
@@ -30,8 +37,7 @@ local ZONE_COLOR_CODES = {
 	["other"] = "|cffffffff",
 }
 
-local HandleMinimapButton
-function HandleMinimapButton(button, cascade)
+local function HandleMinimapButton(button, cascade)
 	local regions = {button:GetRegions()}
 	local children = {button:GetChildren()}
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
@@ -193,7 +199,9 @@ end
 local function GetDeltas()
 	local h, m = GetGameTime()
 	local s = (h * 60 + m) * 60
-	local mult = math.modf(s / DELAY)
+	local mult = mmodf(s / DELAY)
+
+	print(mult, s, DELAY)
 
 	return (mult + 1) * DELAY - s, STEP * mult -- delay, offset
 end
@@ -207,7 +215,7 @@ function Step(t, delay, offset)
 	t:SetTexCoord(t.l, t.r, 0 / 128, 128 / 128)
 	t:SetMask("Interface\\Minimap\\UI-Minimap-Background")
 
-	C_Timer.After(delay, function() Step(t, DELAY, STEP) end)
+	_G.C_Timer.After(delay, function() Step(t, DELAY, STEP) end)
 end
 
 local function Calendar_OnEnter(self)
@@ -296,7 +304,7 @@ local function Calendar_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 1 then
-		local _, _, day = CalendarGetDate()
+		local _, _, day = _G.CalendarGetDate()
 		self:SetText(day)
 
 		self.elapsed = 0
