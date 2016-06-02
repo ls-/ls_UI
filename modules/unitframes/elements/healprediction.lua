@@ -21,7 +21,7 @@ local function UpdateHealPredictionAnchor(self, orientation, appendTexture, offs
 	return self:GetStatusBarTexture()
 end
 
-function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
+local function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
 	local healthbar = self.__owner.Health
 	local myHeals = self.myBar
 	local otherHeals = self.otherBar
