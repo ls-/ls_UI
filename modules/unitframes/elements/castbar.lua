@@ -8,28 +8,29 @@ local unpack = unpack
 local abs = math.abs
 
 -- event args: unit, spellName, spellRank, spellTarget, castID
-local function OnCastStart(self, event, unit, ...)
-	if self.unit ~= unit and self.realUnit ~= unit then return end
+-- local function OnCastSend(self, event, unit, ...)
+-- 	if self.unit ~= unit and self.realUnit ~= unit then return end
 
-	self.Castbar.sendTime = _G.GetTime()
-end
+-- 	self.Castbar.sendTime = _G.GetTime()
+-- end
 
 local function PostCastStart(castbar, unit, name, castID)
-	local safezone = castbar.AdaptiveSafeZone
-	if safezone then
-		if castbar.sendTime then
-			local lag = _G.GetTime() - castbar.sendTime
-			lag = lag > castbar.max and castbar.max or lag
+	-- local safezone = castbar.AdaptiveSafeZone
+	-- if safezone then
+	-- 	if castbar.sendTime then
+	-- 		local lag = _G.GetTime() - castbar.sendTime
+	-- 		print(castbar.sendTime, lag, castbar.max)
+	-- 		lag = lag > castbar.max and castbar.max or lag
 
-			safezone:ClearAllPoints()
-			safezone:SetPoint("RIGHT")
-			safezone:SetPoint("TOP")
-			safezone:SetPoint("BOTTOM")
-			safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
-		else
-			safezone:SetWidth(0.1)
-		end
-	end
+	-- 		safezone:ClearAllPoints()
+	-- 		safezone:SetPoint("RIGHT")
+	-- 		safezone:SetPoint("TOP")
+	-- 		safezone:SetPoint("BOTTOM")
+	-- 		safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
+	-- 	else
+	-- 		safezone:SetWidth(0.1)
+	-- 	end
+	-- end
 
 	if castbar.interrupt then
 		castbar:SetStatusBarColor(unpack(M.colors.gray))
@@ -41,21 +42,21 @@ local function PostCastStart(castbar, unit, name, castID)
 end
 
 local function PostChannelStart(castbar, unit, name)
-	local safezone = castbar.AdaptiveSafeZone
-	if safezone then
-		if castbar.sendTime then
-			local lag = _G.GetTime() - castbar.sendTime
-			lag = lag > castbar.max and castbar.max or lag
+	-- local safezone = castbar.AdaptiveSafeZone
+	-- if safezone then
+	-- 	if castbar.sendTime then
+	-- 		local lag = _G.GetTime() - castbar.sendTime
+	-- 		lag = lag > castbar.max and castbar.max or lag
 
-			safezone:ClearAllPoints()
-			safezone:SetPoint("LEFT")
-			safezone:SetPoint("TOP")
-			safezone:SetPoint("BOTTOM")
-			safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
-		else
-			safezone:SetWidth(0.1)
-		end
-	end
+	-- 		safezone:ClearAllPoints()
+	-- 		safezone:SetPoint("LEFT")
+	-- 		safezone:SetPoint("TOP")
+	-- 		safezone:SetPoint("BOTTOM")
+	-- 		safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
+	-- 	else
+	-- 		safezone:SetWidth(0.1)
+	-- 	end
+	-- end
 
 	if castbar.interrupt then
 		castbar:SetStatusBarColor(unpack(M.colors.gray))
@@ -116,13 +117,13 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 	bar.Time = time
 
 	if safezone then
-		parent:RegisterEvent("UNIT_SPELLCAST_SENT", OnCastStart, true)
+		-- parent:RegisterEvent("UNIT_SPELLCAST_SENT", OnCastSend, true)
 
 		local zone = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 		zone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		zone:SetVertexColor(unpack(M.colors.red))
 		zone:SetAlpha(0.6)
-		bar.AdaptiveSafeZone = zone
+		bar.SafeZone = zone
 	end
 
 	bar.Holder = holder
