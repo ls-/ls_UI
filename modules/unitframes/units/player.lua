@@ -139,6 +139,18 @@ function UF:ConstructPlayerFrame(frame)
 		mainBar = mainPCP,
 		altBar = altPCP
 	}
+
+	local PvP = cover:CreateTexture(nil, "ARTWORK", nil, 6)
+	PvP:SetSize(28, 28)
+	PvP:SetPoint("TOPLEFT", 36, 4)
+
+	local Prestige = cover:CreateTexture(nil, "ARTWORK", nil, 5)
+	Prestige:SetSize(40, 42)
+	Prestige:SetPoint("CENTER", PvP, "CENTER")
+
+	frame.PvP = PvP
+	frame.PvP.Prestige = Prestige
+
 	if C.units.player.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
 
@@ -149,7 +161,7 @@ function UF:ConstructPlayerFrame(frame)
 	local status = cover:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	status:SetJustifyH("CENTER")
 	status:SetPoint("BOTTOM", 0, -18)
-	frame:Tag(status, "[ls:combatresticon][ls:pvpicon][ls:lfdroleicon][ls:leadericon]")
+	frame:Tag(status, "[ls:combatresticon][ls:lfdroleicon][ls:leadericon]")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetWidth(14)
