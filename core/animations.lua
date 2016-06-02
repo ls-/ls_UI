@@ -9,12 +9,14 @@ local function SetAnimationGroup(object, type, ...)
 		local anim = object[type]:CreateAnimation("ALPHA")
 		anim:SetOrder(1)
 		anim:SetDuration(0)
-		anim:SetChange(-1)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
 
 		anim = object[type]:CreateAnimation("ALPHA")
 		anim:SetOrder(2)
 		anim:SetDuration(0.075)
-		anim:SetChange(1)
+		anim:SetFromAlpha(0)
+		anim:SetToAlpha(1)
 
 		object[type].anim = anim
 	elseif type == "FadeOut" then
@@ -24,7 +26,8 @@ local function SetAnimationGroup(object, type, ...)
 		local anim1 = object[type]:CreateAnimation("ALPHA")
 		anim1:SetOrder(1)
 		anim1:SetDuration(0.05)
-		anim1:SetChange(-1)
+		anim1:SetFromAlpha(1)
+		anim1:SetToAlpha(0)
 
 		object[type].anim = anim1
 	elseif type == "Blink" then
