@@ -102,6 +102,43 @@ function UF:ConstructPlayerFrame(frame)
 	powerText:SetParent(cover)
 	powerText:SetPoint("CENTER", 0, -8)
 
+	local altMana = CreateFrame("StatusBar", "$parentDruidPowerBar", frame)
+	altMana:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	altMana:SetOrientation("VERTICAL")
+	altMana:SetFrameLevel(level + 7)
+	altMana:SetSize(8, 106)
+	altMana:SetPoint("RIGHT", -7, 0)
+	altMana.colorPower = true
+   	frame.DruidMana = altMana
+
+	local dmMana = CreateFrame("Frame", "$parentCover", altMana)
+	dmMana:SetAllPoints()
+	E:SetBarSkin(dmMana, "VERTICAL-M")
+
+	local mainPCP = CreateFrame("StatusBar", "$parentPowerCostPrediction", power)
+	mainPCP:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	mainPCP:SetStatusBarColor(0.55, 0.75, 0.95)
+	mainPCP:SetOrientation("VERTICAL")
+	mainPCP:SetReverseFill(true)
+	mainPCP:SetPoint("LEFT")
+	mainPCP:SetPoint("RIGHT")
+	mainPCP:SetPoint("TOP", power:GetStatusBarTexture(), "TOP")
+	mainPCP:SetHeight(128)
+
+	local altPCP = CreateFrame("StatusBar", "$parentPowerCostPrediction", altMana)
+	altPCP:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	altPCP:SetStatusBarColor(0.55, 0.75, 0.95)
+	altPCP:SetOrientation("VERTICAL")
+	altPCP:SetReverseFill(true)
+	altPCP:SetPoint("LEFT")
+	altPCP:SetPoint("RIGHT")
+	altPCP:SetPoint("TOP", altMana:GetStatusBarTexture(), "TOP")
+	altPCP:SetHeight(106)
+
+	frame.PowerPrediction = {
+		mainBar = mainPCP,
+		altBar = altPCP
+	}
 	if C.units.player.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
 
