@@ -201,4 +201,6 @@ function UF:ConstructPlayerFrame(frame)
 	threat:SetSize(174, 138)
 	threat:SetPoint("CENTER", 0, 17)
 	frame.Threat = threat
+
+	UF:HandleTotems(frame)
 end
