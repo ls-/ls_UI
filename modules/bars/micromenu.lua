@@ -192,7 +192,7 @@ local function MainMenuMicroButton_OnUpdate(self, elapsed)
 end
 
 local function CharacterMicroButton_OnEnter(self)
-	local hasInfo
+	local hasInfo = false
 
 	if _G.C_PetBattles.IsInBattle() then
 		local hasTitle = false
@@ -221,18 +221,63 @@ local function CharacterMicroButton_OnEnter(self)
 
 		hasInfo = true
 	else
+		-- XP
 		if _G.UnitLevel("player") < _G.MAX_PLAYER_LEVEL and not _G.IsXPUserDisabled() then
+			local r, g, b = unpack(COLORS.experience)
+
 			GameTooltip:AddLine(_G.EXPERIENCE_COLON)
-			GameTooltip:AddDoubleLine("Bonus XP", _G.GetXPExhaustion() or 0, 1, 1, 1, unpack(COLORS.experience))
-			E:ShowTooltipStatusBar(GameTooltip, 0, _G.UnitXPMax("player"), _G.UnitXP("player"), unpack(COLORS.experience))
+			GameTooltip:AddDoubleLine("Bonus XP", _G.GetXPExhaustion() or 0, 1, 1, 1, r, g, b)
+			E:ShowTooltipStatusBar(GameTooltip, 0, _G.UnitXPMax("player"), _G.UnitXP("player"), r, g, b)
 
 			hasInfo = true
 		end
 
+		-- ARTIFACT
+		if _G.HasArtifactEquipped() then
+			if hasInfo then GameTooltip:AddLine(" ") end
+
+			GameTooltip:AddLine(_G.ARTIFACT_POWER..":")
+
+			local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = _G.C_ArtifactUI.GetEquippedArtifactInfo()
+			local points, xpCur, xpMax = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
+			local r, g, b = unpack(COLORS.artifact)
+
+			GameTooltip:AddDoubleLine("Trait Points", points, 1, 1, 1, r, g, b)
+			E:ShowTooltipStatusBar(GameTooltip, 0, xpMax, xpCur, r, g, b)
+
+			hasInfo = true
+		end
+
+		-- HONOR
+		if _G.UnitLevel("player") >= _G.MAX_PLAYER_LEVEL and (_G.IsWatchingHonorAsXP() or _G.InActiveBattlefield()) then
+			if hasInfo then GameTooltip:AddLine(" ") end
+
+			local cur = _G.UnitHonor("player")
+			local max = _G.UnitHonorMax("player")
+			local r, g, b = unpack(COLORS.honor)
+
+			GameTooltip:AddLine(_G.HONOR..":")
+			GameTooltip:AddDoubleLine("Bonus Honor", _G.GetHonorExhaustion() or 0, 1, 1, 1, r, g, b)
+
+			if _G.UnitHonorLevel("player") == _G.GetMaxPlayerHonorLevel() then
+				cur, max = 1, 1
+
+				if _G.CanPrestige() then
+					GameTooltip:AddLine(_G.PVP_HONOR_PRESTIGE_AVAILABLE, r, g, b)
+				else
+					GameTooltip:AddLine(_G.MAX_HONOR_LEVEL, r, g, b)
+				end
+			end
+
+			E:ShowTooltipStatusBar(GameTooltip, 0, max, cur, r, g, b)
+		end
+
+		-- REPUTATION
 		local name, standing, repMin, repMax, repValue, factionID = _G.GetWatchedFactionInfo()
 
 		if name then
 			if hasInfo then GameTooltip:AddLine(" ") end
+
 			GameTooltip:AddLine(_G.REPUTATION..":")
 
 			local min, max, value = 0, 1, 1
