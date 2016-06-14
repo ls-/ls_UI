@@ -48,6 +48,8 @@ colors.icon = {
 }
 
 colors.experience = {0.11, 0.75, 0.95}
+colors.artifact = {0.901, 0.8, 0.601}
+colors.honor = {1.0, 0.24, 0}
 
 colors.healprediction = {
 	["myheal"] = {0, 0.827, 0.765},
