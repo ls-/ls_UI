@@ -123,6 +123,7 @@ function UF:ConstructPlayerFrame(frame)
 	mainPCP:SetPoint("LEFT")
 	mainPCP:SetPoint("RIGHT")
 	mainPCP:SetPoint("TOP", power:GetStatusBarTexture(), "TOP")
+	E:SmoothBar(mainPCP)
 	mainPCP:SetHeight(128)
 
 	local altPCP = CreateFrame("StatusBar", "$parentPowerCostPrediction", altMana)
@@ -133,6 +134,7 @@ function UF:ConstructPlayerFrame(frame)
 	altPCP:SetPoint("LEFT")
 	altPCP:SetPoint("RIGHT")
 	altPCP:SetPoint("TOP", altMana:GetStatusBarTexture(), "TOP")
+	E:SmoothBar(altPCP)
 	altPCP:SetHeight(106)
 
 	frame.PowerPrediction = {
