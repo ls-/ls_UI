@@ -140,16 +140,8 @@ function UF:ConstructPlayerFrame(frame)
 		altBar = altPCP
 	}
 
-	local PvP = cover:CreateTexture(nil, "ARTWORK", nil, 6)
-	PvP:SetSize(28, 28)
-	PvP:SetPoint("TOPLEFT", 36, 4)
-
-	local Prestige = cover:CreateTexture(nil, "ARTWORK", nil, 5)
-	Prestige:SetSize(40, 42)
-	Prestige:SetPoint("CENTER", PvP, "CENTER")
-
-	frame.PvP = PvP
-	frame.PvP.Prestige = Prestige
+	frame.PvP = UF:CreatePvPIcon(cover)
+	frame.PvP:SetPoint("TOP", cover, "BOTTOM", 0, 10)
 
 	if C.units.player.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)

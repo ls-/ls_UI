@@ -7,6 +7,7 @@
 	<Script file="healprediction.lua"/>
 	<Script file="health.lua"/>
 	<Script file="power.lua"/>
+	<Script file="pvp.lua"/>
 	<Script file="rarityindication.lua"/>
 	<Script file="tags.lua"/>
 	<Script file="threat.lua"/>
