@@ -3,7 +3,7 @@ local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine
 ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 
 function E:CreateFontString(parent, size, name, shadow, outline)
-	local object = parent:CreateFontString(name, nil, shadow and "LS"..size.."Font_Shadow" or (outline and "LS"..size.."Font_Outline" or "LS"..size.."Font"))
+	local object = parent:CreateFontString(name, nil, "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
 	object:SetWordWrap(false)
 
 	return object
