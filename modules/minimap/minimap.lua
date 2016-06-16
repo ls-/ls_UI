@@ -4,11 +4,15 @@ local MM = E:AddModule("MiniMap")
 
 -- Lua
 local _G = _G
-local next = next
-local strfind = string.find
+local unpack, pairs = unpack, pairs
+local strfind, strformat = string.find, string.format
 local mmodf = math.modf
+
 -- Blizz
+local GameTooltip = GameTooltip
 local Minimap = Minimap
+local Minimap_ZoomIn = Minimap_ZoomIn
+local Minimap_ZoomOut = Minimap_ZoomOut
 
 -- Mine
 local STEP = 0.00390625 -- 1 / 256
@@ -27,14 +31,14 @@ local WIDGETS = {
 	TimeManagerClockButton = {"TOP", 0, 12},
 }
 
-local ZONE_COLOR_CODES = {
-	["sanctuary"] = "|cff68ccef",
-	["arena"] = "|cffe52626",
-	["combat"] = "|cffe52626",
-	["hostile"] = "|cffe52626",
-	["contested"] = "|cffe5a526",
-	["friendly"] = "|cff26a526",
-	["other"] = "|cffffffff",
+local ZONE_COLORS = {
+	["sanctuary"] = {r = 0.41, g = 0.8, b = 0.94, hex = "|cff68ccef"},
+	["arena"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
+	["combat"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
+	["hostile"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
+	["contested"] = {r = 0.9, g = 0.65, b = 0.15, hex = "|cffe5a526"},
+	["friendly"] = {r = 0.15, g = 0.65, b = 0.15, hex = "|cff26a526"},
+	["other"] = {r = 0.9, g = 0.65, b = 0.15, hex = "|cffffffff"},
 }
 
 local function HandleMinimapButton(button, cascade)
@@ -46,7 +50,7 @@ local function HandleMinimapButton(button, cascade)
 
 	-- print("====",button:GetName(), #children, #regions,"====")
 
-	for _, region in next, regions do
+	for _, region in pairs(regions) do
 		if region:IsObjectType("Texture") then
 			texture, layer, name = region:GetTexture(), region:GetDrawLayer(), region:GetName()
 			-- print(texture, layer)
@@ -87,7 +91,7 @@ local function HandleMinimapButton(button, cascade)
 
 	local thighlight, ticon, tborder, tbackground, tnormal, tpushed
 
-	for _, child in next, children do
+	for _, child in pairs(children) do
 		name, oType = child:GetName(), child:GetObjectType()
 		local strata, level = child:GetFrameStrata(), child:GetFrameLevel()
 		-- print("|cffffff7f"..name.."|r", strata, level, child:GetObjectType())
@@ -161,7 +165,7 @@ local function HandleMinimapButton(button, cascade)
 		end
 
 		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		border:SetTexCoord(462 / 512, 496 / 512, 0, 34 / 256)
+		border:SetTexCoord(466 / 512, 500 / 512, 1 / 512, 35 / 512)
 		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
 		button.Border = border
@@ -175,13 +179,19 @@ local function HandleMinimapButton(button, cascade)
 		background:SetDrawLayer("BACKGROUND", 0)
 		background:SetAllPoints(button)
 		button.Background = background
+
+		return button
 	else
 		return highlight, icon, border, background, normal, pushed
 	end
 end
 
-local function UpdateZoneText(text)
-	text:SetText(ZONE_COLOR_CODES[GetZonePVPInfo() or "other"]..(GetMinimapZoneText() or UNKNOWN).."|r")
+local function UpdateZoneInfo()
+	local color = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]
+
+	Minimap.ZoneText:SetText(color.hex..(_G.GetMinimapZoneText() or _G.UNKNOWN).."|r")
+	Minimap.Spin1:SetVertexColor(color.r, color.g, color.b)
+	Minimap.Spin2:SetVertexColor(color.r, color.g, color.b)
 end
 
 local function CheckTexPoint(point, base)
@@ -197,17 +207,14 @@ local function CheckTexPoint(point, base)
 end
 
 local function GetDeltas()
-	local h, m = GetGameTime()
+	local h, m = _G.GetGameTime()
 	local s = (h * 60 + m) * 60
 	local mult = mmodf(s / DELAY)
-
-	print(mult, s, DELAY)
 
 	return (mult + 1) * DELAY - s, STEP * mult -- delay, offset
 end
 
-local Step
-function Step(t, delay, offset)
+local function Step(t, delay, offset)
 	t.l = CheckTexPoint(t.l, 64) + offset
 	t.r = CheckTexPoint(t.r, 192) + offset
 
@@ -219,34 +226,31 @@ function Step(t, delay, offset)
 end
 
 local function Calendar_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 10, 10)
+	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
 
 	if self.pendingCalendarInvites > 0 then
-		GameTooltip:AddLine(GAMETIME_TOOLTIP_CALENDAR_INVITES)
+		GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_CALENDAR_INVITES)
 	end
 
-	GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR)
+	GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR)
 	GameTooltip:Show()
 end
 
 local function Minimap_OnEventHook(self, event)
-	if event == "PLAYER_ENTERING_WORLD" and not self.handled then
-		for _, child in next, {self:GetChildren()} do
+	if event == "PLAYER_ENTERING_WORLD" then
+		for _, child in pairs({self:GetChildren()}) do
 			child:SetFrameLevel(self:GetFrameLevel() + 1)
 
-			if child:IsObjectType("Button") then
-				if not WIDGETS[child:GetName()] then
-					HandleMinimapButton(child)
-				end
+			if child:IsObjectType("Button") and not WIDGETS[child:GetName()] then
+				HandleMinimapButton(child)
 			end
 		end
 
-		-- Step(GameTimeFrame.DayTimeIndicator, GetDeltas())
+		Step(_G.GameTimeFrame.DayTimeIndicator, GetDeltas())
 
-		self.handled = true
-	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS"
-		or event == "ZONE_CHANGED_NEW_AREA" then
-		UpdateZoneText(self.zone)
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+		UpdateZoneInfo()
 	end
 end
 
@@ -259,11 +263,11 @@ local function Minimap_OnMouseWheel(self, direction)
 end
 
 local function Minimap_OnEnter(self)
-	self.zone:Show()
+	self.ZoneText:Show()
 end
 
 local function Minimap_OnLeave(self)
-	self.zone:Hide()
+	self.ZoneText:Hide()
 end
 
 local function Calendar_OnLeave(self)
@@ -272,9 +276,10 @@ end
 
 local function Calendar_OnEvent(self, event, ...)
 	if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
-		local pendingCalendarInvites = CalendarGetNumPendingInvites()
+		local pendingCalendarInvites = _G.CalendarGetNumPendingInvites()
+
 		if pendingCalendarInvites > self.pendingCalendarInvites then
-			if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
+			if not _G.CalendarFrame or (_G.CalendarFrame and not _G.CalendarFrame:IsShown()) then
 				E:Blink(self.InvIndicator, nil, 0, 1)
 
 				self.pendingCalendarInvites = pendingCalendarInvites
@@ -284,9 +289,9 @@ local function Calendar_OnEvent(self, event, ...)
 		end
 	elseif event == "CALENDAR_EVENT_ALARM" then
 		local title = ...
-		local info = ChatTypeInfo["SYSTEM"]
+		local info = _G.ChatTypeInfo["SYSTEM"]
 
-		DEFAULT_CHAT_FRAME:AddMessage(format(CALENDAR_EVENT_ALARM_MESSAGE, title), info.r, info.g, info.b, info.id)
+		_G.DEFAULT_CHAT_FRAME:AddMessage(strformat(_G.CALENDAR_EVENT_ALARM_MESSAGE, title), info.r, info.g, info.b, info.id)
 	end
 end
 
@@ -297,7 +302,7 @@ local function Calendar_OnClick(self)
 		self.pendingCalendarInvites = 0
 	end
 
-	ToggleCalendar()
+	_G.ToggleCalendar()
 end
 
 local function Calendar_OnUpdate(self, elapsed)
@@ -321,11 +326,11 @@ end
 
 function MM:Initialize()
 	if C.minimap.enabled then
-		if not IsAddOnLoaded("Blizzard_TimeManager") then
+		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
 			E:ForceLoadAddOn("Blizzard_TimeManager")
 		end
 
-		local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
+		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
 		holder:SetSize(164, 164)
 		holder:SetPoint(unpack(C.minimap.point))
 		E:CreateMover(holder)
@@ -340,37 +345,68 @@ function MM:Initialize()
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 		Minimap:HookScript("OnEvent", Minimap_OnEventHook)
-		Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 		Minimap:SetScript("OnEnter", Minimap_OnEnter)
 		Minimap:SetScript("OnLeave", Minimap_OnLeave)
+		Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 
-		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
+		_G.RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
+
+		local spin1 = Minimap:CreateTexture(nil, "BORDER", nil, -2)
+		spin1:SetBlendMode("ADD")
+		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+		spin1:SetTexCoord(1 / 512, 169 / 512, 204 / 512, 372 / 512)
+		spin1:SetSize(168, 168)
+		spin1:SetPoint("CENTER", 0, 0)
+		Minimap.Spin1 = spin1
+
+		local spin2 = Minimap:CreateTexture(nil, "BORDER", nil, -3)
+		spin2:SetBlendMode("ADD")
+		spin2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
+		spin2:SetTexCoord(169 / 512, 1 / 512, 204 / 512, 372 / 512)
+		spin2:SetSize(168, 168)
+		spin2:SetPoint("CENTER", 0, 0)
+		Minimap.Spin2 = spin2
+
+		local ag = Minimap:CreateAnimationGroup()
+		ag:SetLooping("REPEAT")
+
+		local anim = ag:CreateAnimation("Rotation")
+		anim:SetChildKey("Spin1")
+		anim:SetOrder(1)
+		anim:SetDuration(60)
+		anim:SetDegrees(-360)
+
+		anim = ag:CreateAnimation("Rotation")
+		anim:SetChildKey("Spin2")
+		anim:SetOrder(1)
+		anim:SetDuration(60)
+		anim:SetDegrees(720)
 
 		local ring = Minimap:CreateTexture(nil, "BORDER", nil, 0)
 		ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		ring:SetTexCoord(0, 168 / 512, 0, 202 / 256)
+		ring:SetTexCoord(1 / 512, 169 / 512, 1 / 512, 203 / 512)
 		ring:SetSize(168, 202)
 		ring:SetPoint("CENTER", 0, -17)
 
 		local gloss = Minimap:CreateTexture(nil, "BORDER", nil, 1)
 		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		gloss:SetTexCoord(318 / 512, 462 / 512, 0, 144 / 256)
+		gloss:SetTexCoord(321 / 512, 465 / 512, 1 / 512, 145 / 512)
 		gloss:SetSize(144, 144)
 		gloss:SetPoint("CENTER", 0, 0)
 
 		local fg = Minimap:CreateTexture(nil, "BORDER", nil, 2)
 		fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		fg:SetTexCoord(168 / 512, 318 / 512, 0, 150 / 256)
+		fg:SetTexCoord(170 / 512, 320 / 512, 1 / 512, 151 / 512)
 		fg:SetSize(150, 150)
 		fg:SetPoint("CENTER", 0, 0)
 
-		for i, k in next, WIDGETS do
-			_G[i]:ClearAllPoints()
-			_G[i]:SetParent(Minimap)
-			_G[i]:SetPoint(unpack(k))
+		for name, coords in pairs(WIDGETS) do
+			_G[name]:ClearAllPoints()
+			_G[name]:SetParent(Minimap)
+			_G[name]:SetPoint(unpack(coords))
 		end
 
-		for _, f in next, {
+		for _, name in pairs({
 			"MinimapCluster",
 			"MiniMapWorldMapButton",
 			"MinimapZoomIn",
@@ -381,38 +417,43 @@ function MM:Initialize()
 			"MinimapBorderTop",
 			"MinimapBackdrop",
 			"MiniMapTrackingIconOverlay",
-		} do
-			E:ForceHide(_G[f])
+		}) do
+			E:ForceHide(_G[name])
 		end
 
-		HandleMinimapButton(MiniMapVoiceChatFrame)
-		HandleMinimapButton(GarrisonLandingPageMinimapButton)
+		-- Garrison
+		local garrison = HandleMinimapButton(_G.GarrisonLandingPageMinimapButton)
+		garrison:SetSize(34, 34)
 
-		local mail = MiniMapMailFrame
-		HandleMinimapButton(mail)
+		-- Mail
+		local mail = HandleMinimapButton(_G.MiniMapMailFrame)
 		mail.Icon:SetPoint("TOPLEFT", 5, -5)
 		mail.Icon:SetPoint("BOTTOMRIGHT", -5, 5)
 
-		HandleMinimapButton(MiniMapTracking)
-		MiniMapTracking.Icon:SetVertexColor(0.72, 0.66, 0.56)
+		-- Queue
+		local queue = HandleMinimapButton(_G.QueueStatusMinimapButton)
+		queue.Background:SetTexture("")
+		_G.QueueStatusFrame:ClearAllPoints()
+		_G.QueueStatusFrame:SetPoint("BOTTOMRIGHT", queue, "TOPLEFT", 8, -8)
 
-		HandleMinimapButton(QueueStatusMinimapButton)
-		QueueStatusMinimapButton.Background:SetTexture("")
-		QueueStatusFrame:ClearAllPoints()
-		QueueStatusFrame:SetPoint("BOTTOMRIGHT", QueueStatusMinimapButton, "TOPLEFT", 8, -8)
-
-		local calendar = GameTimeFrame
-		HandleMinimapButton(calendar)
+		-- Calendar
+		local calendar = HandleMinimapButton(_G.GameTimeFrame)
 		calendar:SetSize(34, 34)
+		calendar:SetNormalFontObject("LS14Font_Outline")
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar.pendingCalendarInvites = 0
+		calendar:SetScript("OnEnter", Calendar_OnEnter)
+		calendar:SetScript("OnLeave", Calendar_OnLeave)
+		calendar:SetScript("OnEvent", Calendar_OnEvent)
+		calendar:SetScript("OnClick", Calendar_OnClick)
+		calendar:SetScript("OnUpdate", Calendar_OnUpdate)
 
-		-- local texture = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
-		-- texture:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
-		-- texture:SetPoint("TOPLEFT", 2, -2)
-		-- texture:SetPoint("BOTTOMRIGHT", -2, 2)
-		-- calendar.DayTimeIndicator = texture
+		local indicator = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
+		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
+		indicator:SetPoint("TOPLEFT", 2, -2)
+		indicator:SetPoint("BOTTOMRIGHT", -2, 2)
+		calendar.DayTimeIndicator = indicator
 
 		local _, mark, glow, _, date = calendar:GetRegions()
 		mark:SetDrawLayer("OVERLAY", 2)
@@ -425,35 +466,34 @@ function MM:Initialize()
 
 		glow:SetTexture("")
 
-		calendar:SetNormalFontObject("LS14Font_Outline")
 		date:ClearAllPoints()
 		date:SetPoint("CENTER", 1, 0)
 		date:SetVertexColor(1, 1, 1)
-		date:SetDrawLayer("BACKGROUND", 2)
+		date:SetDrawLayer("BACKGROUND")
 		date:SetJustifyH("CENTER")
 
-		calendar:SetScript("OnEnter", Calendar_OnEnter)
-		calendar:SetScript("OnLeave", Calendar_OnLeave)
-		calendar:SetScript("OnEvent", Calendar_OnEvent)
-		calendar:SetScript("OnClick", Calendar_OnClick)
-		calendar:SetScript("OnUpdate", Calendar_OnUpdate)
-
-		local zone = MinimapZoneText
-		zone:SetFontObject("LS12Font")
+		-- Zone Text
+		local zone = _G.MinimapZoneText
+		zone:SetFontObject("LS12Font_Shadow")
 		zone:SetParent(Minimap)
 		zone:ClearAllPoints()
 		zone:SetPoint("TOP", 0, 32)
 		zone:Hide()
-		UpdateZoneText(zone)
-		Minimap.zone = zone
+		Minimap.ZoneText = zone
 
-		local clock = TimeManagerClockButton
+		-- Clock
+		local clock = _G.TimeManagerClockButton
 		local bg, ticker, glow = clock:GetRegions()
+
 		clock:SetSize(46, 22)
 		clock:SetHitRectInsets(0, 0, 0, 0)
+		clock:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\minimap", "ADD")
+		clock:GetHighlightTexture():SetTexCoord(170 / 512, 216 / 512, 175 / 512, 197 / 512)
+		clock:SetScript("OnMouseUp", Clock_OnMouseUp)
+		clock:SetScript("OnMouseDown", Clock_OnMouseDown)
 
 		bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		bg:SetTexCoord(462 / 512, 508 / 512, 34 / 256, 56 / 256)
+		bg:SetTexCoord(170 / 512, 216 / 512, 152 / 512, 174 / 512)
 
 		ticker:ClearAllPoints()
 		ticker:SetPoint("CENTER", 0, 1)
@@ -464,10 +504,10 @@ function MM:Initialize()
 		glow:ClearAllPoints()
 		glow:SetPoint("CENTER", -1, 0)
 
-		clock:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\minimap", "ADD")
-		clock:GetHighlightTexture():SetTexCoord(462 / 512, 508 / 512, 56 / 256, 78 / 256)
-
-		clock:SetScript("OnMouseUp", Clock_OnMouseUp)
-		clock:SetScript("OnMouseDown", Clock_OnMouseDown)
+		-- Misc
+		HandleMinimapButton(_G.MiniMapTracking)
+		HandleMinimapButton(_G.MiniMapVoiceChatFrame)
+		UpdateZoneInfo()
+		ag:Play()
 	end
 end
