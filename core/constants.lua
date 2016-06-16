@@ -28,7 +28,7 @@ oUF.colors.power["INSANITY"] = {158 / 255, 6 / 255, 227 / 255}
 oUF.colors.power["ARCANE_CHARGES"] = {29 / 255, 124 / 255, 226 / 255}
 oUF.colors.power["COMBO_POINTS"] = {229 / 255, 76 / 255, 38 / 255}
 oUF.colors.power["RUNES"] = {106 / 255, 184 / 255, 247 / 255}
--- oUF.colors.power["SOUL_SHARDS"] = {175 / 255, 110 / 255, 255 / 255}
+oUF.colors.power["SOUL_SHARDS"] = {175 / 255, 110 / 255, 255 / 255}
 
 local colors = E:CopyTable(oUF.colors, {})
 
@@ -38,7 +38,6 @@ colors.power["HOLY_POWER_GLOW"] = {249 / 255, 213 / 255, 145 / 255}
 colors.power["RUNES_GLOW"] = {95 / 255, 251 / 255, 238 / 255}
 colors.power["SOUL_SHARDS_GLOW"] = {254 / 255, 97 / 255, 255 / 255}
 colors.power["CHI_GLOW"] = {168 / 255, 255 / 255, 181 / 255}
-
 colors.power["STAGGER"] = {0.52, 1, 0.52, 1, 0.98, 0.72, 1, 0.42, 0.42}
 
 colors.icon = {
