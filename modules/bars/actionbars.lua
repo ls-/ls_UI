@@ -206,6 +206,8 @@ function B:HandleActionBars()
 
 		if index == "6" then
 			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
+		elseif index == "7" then
+			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinStanceButton, data.original_bar)
 		else
 			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
 		end

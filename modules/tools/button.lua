@@ -24,12 +24,38 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local B = E:GetModule("Bars")
 
-local unpack = unpack
+-- Lua
+local _G = _G
+local unpack, next = unpack, next
 local gsub = gsub
+
+-- Blizz
 local NUM_BAG_SLOTS = NUM_BAG_SLOTS
+local ATTACK_BUTTON_FLASH_TIME = ATTACK_BUTTON_FLASH_TIME
+local IsQuestLogSpecialItemInRange = IsQuestLogSpecialItemInRange
+local IsActionInRange = IsActionInRange
+local IsUsableAction = IsUsableAction
+local TOOLTIP_UPDATE_TIME = TOOLTIP_UPDATE_TIME
+
+-- Mine
+local Buttons = {}
+local ActionButtons = {}
+
 local COLORS, TEXTURES = M.colors, M.textures
 
 B.HandledHotKeys, B.HandledMacroNames = {}, {}
+
+local function Button_HasAction(self)
+	if self.__type == "action" then
+		return _G.HasAction(self.action)
+	elseif self.__type == "petaction" then
+		local name = _G.GetPetActionInfo(self:GetID())
+
+		return name
+	elseif self.__type == "objective" then
+		return self:IsShown()
+	end
+end
 
 local function GetContainerSlotByItemLink(itemLink)
 	for i = 0, NUM_BAG_SLOTS do
@@ -125,61 +151,6 @@ local function SetHotKeyTextHook(self)
 	end
 
 	self:SetFormattedText("%s", text or "")
-end
-
-local function ActionButton_OnUpdateHook(button)
-	local action = button.action
-	local bIcon = button.icon
-	local bName = button.Name
-	local bHotKey = button.HotKey
-
-	if bIcon then
-		if IsActionInRange(action) ~= false then
-			local isUsable, notEnoughMana = IsUsableAction(action)
-			if isUsable then
-				bIcon:SetVertexColor(1, 1, 1, 1)
-			elseif notEnoughMana then
-				bIcon:SetVertexColor(unpack(COLORS.icon.oom))
-			else
-				bIcon:SetVertexColor(unpack(COLORS.icon.nu))
-			end
-		else
-			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-		end
-	end
-
-	if bName and bName:IsShown() then
-		local text = bName:GetText()
-		if text then
-			bName:SetText(E:StringTruncate(text, E:Round(button:GetWidth() / 8)))
-		end
-	end
-
-	if bHotKey and bHotKey:IsShown() then
-		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
-	end
-end
-
-local function PetActionButton_OnUpdateHook(button)
-	local bHotKey = button.HotKey
-
-	if bHotKey then
-		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
-	end
-end
-
-local function OTButton_OnUpdateHook(self, elapsed)
-	local bIcon = self.icon
-
-	if bIcon then
-		local valid = IsQuestLogSpecialItemInRange(self:GetID())
-
-		if valid == 0 then
-			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-		else
-			bIcon:SetVertexColor(1, 1, 1, 1)
-		end
-	end
 end
 
 local function OTButton_OnDragHook(self)
@@ -309,6 +280,12 @@ local function SkinButton(button)
 	if bCheckedTexture then
 		E:UpdateCheckedTexture(button)
 	end
+
+	button:SetScript("OnUpdate", nil)
+
+	button.HasAction = Button_HasAction
+
+	Buttons[button] = true
 end
 
 function E:UpdateIcon(object, texture, l, r, t, b)
@@ -334,7 +311,7 @@ function E:UpdatePushedTexture(button)
 	if not button.SetPushedTexture then return end
 
 	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
-	texture = button:GetPushedTexture()
+	local texture = button:GetPushedTexture()
 	texture:SetTexCoord(124 / 256, 180 / 256, 1 / 64, 57 / 64)
 	texture:SetAllPoints()
 end
@@ -343,7 +320,7 @@ function E:UpdateHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
 	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
-	texture = button:GetHighlightTexture()
+	local texture = button:GetHighlightTexture()
 	texture:SetTexCoord(66 / 256, 122 / 256, 1 / 64, 57 / 64)
 	texture:SetAllPoints()
 end
@@ -352,7 +329,7 @@ function E:UpdateCheckedTexture(button)
 	if not button.SetCheckedTexture then return end
 
 	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
-	texture = button:GetCheckedTexture()
+	local texture = button:GetCheckedTexture()
 	texture:SetBlendMode("ADD")
 	texture:SetAllPoints()
 end
@@ -507,13 +484,14 @@ function E:SkinBagButton(button)
 		hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
 	end
 
+	button.__type = "bag"
 	button.styled = true
 end
 
 function E:SkinPetBattleButton(button)
 	if not button or button.styled then return end
 
-	SkinButton(button, true)
+	SkinButton(button)
 
 	local bCDShadow = button.CooldownShadow
 	local bCDFlash = button.CooldownFlash
@@ -558,6 +536,7 @@ function E:SkinPetBattleButton(button)
 
 	button:SetBorderColor(unpack(COLORS.yellow))
 
+	button.__type = "petbattle"
 	button.styled = true
 end
 
@@ -573,6 +552,7 @@ function E:SkinExtraActionButton(button)
 		CD:SetTimerTextHeight(14)
 	end
 
+	button.__type = "extra"
 	button.styled = true
 end
 
@@ -614,10 +594,9 @@ function E:SkinPetActionButton(button)
 		end
 	end
 
-	button:HookScript("OnUpdate", PetActionButton_OnUpdateHook)
-
 	hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
 
+	button.__type = "petaction"
 	button.styled = true
 end
 
@@ -633,10 +612,23 @@ function E:SkinActionButton(button)
 		E:ForceHide(bFloatingBG)
 	end
 
-	if button:GetScript("OnUpdate") then
-		button:HookScript("OnUpdate", ActionButton_OnUpdateHook)
+	button.__type = "action"
+	button.styled = true
+end
+
+function E:SkinStanceButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local name = button:GetName()
+	local bFloatingBG = _G[name.."FloatingBG"]
+
+	if bFloatingBG then
+		E:ForceHide(bFloatingBG)
 	end
 
+	button.__type = "stance"
 	button.styled = true
 end
 
@@ -645,14 +637,12 @@ function E:SkinOTButton()
 
 	SkinButton(self)
 
-	if self:GetScript("OnUpdate") then
-		self:HookScript("OnUpdate", OTButton_OnUpdateHook)
-	end
-
 	self:RegisterForDrag("LeftButton")
 	self:HookScript("OnDragStart", OTButton_OnDragHook)
 	self:HookScript("OnReceiveDrag", OTButton_OnDragHook)
 
+
+	self.__type = "objective"
 	self.styled = true
 end
 
@@ -757,3 +747,82 @@ function B:HideMacroNameText()
 
 	return true, "|cff26a526Success!|r Macro text is now hidden."
 end
+
+----------------
+-- DISPATCHER --
+----------------
+
+-- one OnUpdate to rule them all!
+local flashTime = 0
+local rangeTimer = -1
+
+local function Dispatcher_OnUpdate(self, elapsed)
+	flashTime = flashTime - elapsed
+	rangeTimer = rangeTimer - elapsed
+
+	if flashTime <= 0 or rangeTimer <= 0 then
+		for button in next, ActionButtons do
+			if button.Flash and flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
+				if button.Flash:IsShown() then
+					button.Flash:Hide()
+				else
+					button.Flash:Show()
+				end
+			end
+
+			if rangeTimer <= 0 then
+				if button.__type == "objective" then
+					local valid = IsQuestLogSpecialItemInRange(button:GetID())
+
+					if valid == 0 then
+						button.icon:SetVertexColor(unpack(COLORS.icon.oor))
+					else
+						button.icon:SetVertexColor(1, 1, 1, 1)
+					end
+				elseif button.__type == "action" then
+					if IsActionInRange(button.action) == false then
+						button.icon:SetVertexColor(unpack(COLORS.icon.oor))
+					else
+						local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+						if isUsable then
+							button.icon:SetVertexColor(1, 1, 1, 1)
+						elseif notEnoughMana then
+							button.icon:SetVertexColor(unpack(COLORS.icon.oom))
+						else
+							button.icon:SetVertexColor(unpack(COLORS.icon.nu))
+						end
+					end
+				end
+			end
+		end
+
+		if flashTime <= 0 then
+			flashTime = flashTime + ATTACK_BUTTON_FLASH_TIME
+		end
+
+		if rangeTimer <= 0 then
+			rangeTimer = TOOLTIP_UPDATE_TIME
+		end
+	end
+end
+
+local function Dispatcher_OnEvent(self, event, ...)
+	for button in next, Buttons do
+		if button:HasAction() then
+			ActionButtons[button] = true
+		else
+			ActionButtons[button] = nil
+		end
+	end
+end
+
+local dispatcher = _G.CreateFrame("Frame")
+dispatcher:SetScript("OnEvent", Dispatcher_OnEvent)
+dispatcher:SetScript("OnUpdate", Dispatcher_OnUpdate)
+
+dispatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+dispatcher:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+dispatcher:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+dispatcher:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+
