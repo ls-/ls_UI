@@ -47,7 +47,7 @@ B.HandledHotKeys, B.HandledMacroNames = {}, {}
 
 local function Button_HasAction(self)
 	if self.__type == "action" then
-		return _G.HasAction(self.action)
+		return self.action and _G.HasAction(self.action)
 	elseif self.__type == "petaction" then
 		local name = _G.GetPetActionInfo(self:GetID())
 
@@ -282,6 +282,7 @@ local function SkinButton(button)
 	end
 
 	button:SetScript("OnUpdate", nil)
+	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE");
 
 	button.HasAction = Button_HasAction
 
@@ -405,6 +406,7 @@ function E:SetupBar(buttons, buttonSize, buttonGap, header, direction, skinFucnt
 	end
 
 	header.buttons = buttons
+	header.originalBar = originalBar
 
 	E:UpdateBarLayout(header, buttonSize, buttonGap, direction)
 
@@ -754,56 +756,46 @@ end
 
 -- one OnUpdate to rule them all!
 local flashTime = 0
-local rangeTimer = -1
 
 local function Dispatcher_OnUpdate(self, elapsed)
 	flashTime = flashTime - elapsed
-	rangeTimer = rangeTimer - elapsed
 
-	if flashTime <= 0 or rangeTimer <= 0 then
-		for button in next, ActionButtons do
-			if button.Flash and flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
-				if button.Flash:IsShown() then
-					button.Flash:Hide()
+	for button in next, ActionButtons do
+		if button.Flash and flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
+			if button.Flash:IsShown() then
+				button.Flash:Hide()
+			else
+				button.Flash:Show()
+			end
+		end
+
+		if button.__type == "objective" then
+			local valid = IsQuestLogSpecialItemInRange(button:GetID())
+
+			if valid == 0 then
+				button.icon:SetVertexColor(unpack(COLORS.icon.oor))
+			else
+				button.icon:SetVertexColor(1, 1, 1, 1)
+			end
+		elseif button.__type == "action" then
+			if IsActionInRange(button.action) == false then
+				button.icon:SetVertexColor(unpack(COLORS.icon.oor))
+			else
+				local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+				if isUsable then
+					button.icon:SetVertexColor(1, 1, 1, 1)
+				elseif notEnoughMana then
+					button.icon:SetVertexColor(unpack(COLORS.icon.oom))
 				else
-					button.Flash:Show()
-				end
-			end
-
-			if rangeTimer <= 0 then
-				if button.__type == "objective" then
-					local valid = IsQuestLogSpecialItemInRange(button:GetID())
-
-					if valid == 0 then
-						button.icon:SetVertexColor(unpack(COLORS.icon.oor))
-					else
-						button.icon:SetVertexColor(1, 1, 1, 1)
-					end
-				elseif button.__type == "action" then
-					if IsActionInRange(button.action) == false then
-						button.icon:SetVertexColor(unpack(COLORS.icon.oor))
-					else
-						local isUsable, notEnoughMana = IsUsableAction(button.action)
-
-						if isUsable then
-							button.icon:SetVertexColor(1, 1, 1, 1)
-						elseif notEnoughMana then
-							button.icon:SetVertexColor(unpack(COLORS.icon.oom))
-						else
-							button.icon:SetVertexColor(unpack(COLORS.icon.nu))
-						end
-					end
+					button.icon:SetVertexColor(unpack(COLORS.icon.nu))
 				end
 			end
 		end
+	end
 
-		if flashTime <= 0 then
-			flashTime = flashTime + ATTACK_BUTTON_FLASH_TIME
-		end
-
-		if rangeTimer <= 0 then
-			rangeTimer = TOOLTIP_UPDATE_TIME
-		end
+	if flashTime <= 0 then
+		flashTime = flashTime + ATTACK_BUTTON_FLASH_TIME
 	end
 end
 
@@ -823,6 +815,5 @@ dispatcher:SetScript("OnUpdate", Dispatcher_OnUpdate)
 
 dispatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
 dispatcher:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-dispatcher:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-dispatcher:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-
+-- dispatcher:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+-- dispatcher:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
