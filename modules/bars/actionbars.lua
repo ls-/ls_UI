@@ -23,7 +23,7 @@ local BAR_LAYOUT = {
 			ActionButton1, ActionButton2, ActionButton3, ActionButton4, ActionButton5, ActionButton6,
 			ActionButton7, ActionButton8, ActionButton9, ActionButton10, ActionButton11, ActionButton12
 		},
-		original_bar = MainMenuBarArtFrame,
+		-- original_bar = MainMenuBarArtFrame,
 		name = "LSMainMenuBar",
 		condition = "[petbattle] hide; show",
 	},
