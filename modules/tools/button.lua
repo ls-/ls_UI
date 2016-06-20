@@ -33,7 +33,6 @@ local strgsub, strmatch, strformat = string.gsub, string.match, string.format
 local IsActionInRange = IsActionInRange
 local IsQuestLogSpecialItemInRange = IsQuestLogSpecialItemInRange
 local IsUsableAction = IsUsableAction
-local NUM_BAG_SLOTS = NUM_BAG_SLOTS
 local ATTACK_BUTTON_FLASH_TIME = ATTACK_BUTTON_FLASH_TIME
 local ALT_KEY_TEXT = ALT_KEY_TEXT.."%-"
 local CTRL_KEY_TEXT = CTRL_KEY_TEXT.."%-"
