@@ -193,12 +193,6 @@ function UF:ConstructPlayerFrame(frame)
 	fcf.mode = "Fountain"
 	fcf.abbreviateNumbers = true
 
-	local threat = UF:CreateThreat(frame)
-	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	threat:SetTexCoord(199 / 512, 373 / 512, 202 / 512, 340 / 512)
-	threat:SetSize(174, 138)
-	threat:SetPoint("CENTER", 0, 17)
-	frame.Threat = threat
-
+	UF:CreateStatusHighlight(frame)
 	UF:HandleTotems(frame)
 end
