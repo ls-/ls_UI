@@ -21,7 +21,7 @@ function UF:ConstructPlayerFrame(frame)
 	mid:SetAllPoints()
 
 	local ring = mid:CreateTexture(nil, "BACKGROUND", nil, 1)
-	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
+	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_new")
 	ring:SetTexCoord(0 / 512, 168 / 512, 0 / 512, 202 / 512)
 	ring:SetSize(168, 202)
 	ring:SetPoint("CENTER", 0, -17)
