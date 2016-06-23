@@ -76,8 +76,8 @@ colors.gradient = {
 }
 
 colors.threat = {}
-for i = 1, 3 do
-	colors.threat[i] = {GetThreatStatusColor(i)}
+for i = 1, 4 do
+	colors.threat[i] = {GetThreatStatusColor(i - 1)}
 end
 
 M.colors = colors
