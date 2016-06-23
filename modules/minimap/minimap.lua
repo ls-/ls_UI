@@ -165,7 +165,7 @@ local function HandleMinimapButton(button, cascade)
 		end
 
 		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		border:SetTexCoord(466 / 512, 500 / 512, 1 / 512, 35 / 512)
+		border:SetTexCoord(466 / 512, 500 / 512, 1 / 256, 35 / 256)
 		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
 		button.Border = border
@@ -353,16 +353,16 @@ function MM:Initialize()
 
 		local spin1 = Minimap:CreateTexture(nil, "BORDER", nil, -2)
 		spin1:SetBlendMode("ADD")
-		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		spin1:SetTexCoord(1 / 512, 169 / 512, 204 / 512, 372 / 512)
+		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
+		spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
 		spin1:SetSize(168, 168)
 		spin1:SetPoint("CENTER", 0, 0)
 		Minimap.Spin1 = spin1
 
 		local spin2 = Minimap:CreateTexture(nil, "BORDER", nil, -3)
 		spin2:SetBlendMode("ADD")
-		spin2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		spin2:SetTexCoord(169 / 512, 1 / 512, 204 / 512, 372 / 512)
+		spin2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
+		spin2:SetTexCoord(169 / 256, 1 / 256, 1 / 256, 169 / 256)
 		spin2:SetSize(168, 168)
 		spin2:SetPoint("CENTER", 0, 0)
 		Minimap.Spin2 = spin2
@@ -384,19 +384,19 @@ function MM:Initialize()
 
 		local ring = Minimap:CreateTexture(nil, "BORDER", nil, 0)
 		ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		ring:SetTexCoord(1 / 512, 169 / 512, 1 / 512, 203 / 512)
+		ring:SetTexCoord(1 / 512, 169 / 512, 1 / 256, 203 / 256)
 		ring:SetSize(168, 202)
 		ring:SetPoint("CENTER", 0, -17)
 
 		local gloss = Minimap:CreateTexture(nil, "BORDER", nil, 1)
 		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		gloss:SetTexCoord(321 / 512, 465 / 512, 1 / 512, 145 / 512)
+		gloss:SetTexCoord(321 / 512, 465 / 512, 1 / 256, 145 / 256)
 		gloss:SetSize(144, 144)
 		gloss:SetPoint("CENTER", 0, 0)
 
 		local fg = Minimap:CreateTexture(nil, "BORDER", nil, 2)
 		fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		fg:SetTexCoord(170 / 512, 320 / 512, 1 / 512, 151 / 512)
+		fg:SetTexCoord(170 / 512, 320 / 512, 1 / 256, 151 / 256)
 		fg:SetSize(150, 150)
 		fg:SetPoint("CENTER", 0, 0)
 
@@ -488,12 +488,12 @@ function MM:Initialize()
 		clock:SetSize(46, 22)
 		clock:SetHitRectInsets(0, 0, 0, 0)
 		clock:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\minimap", "ADD")
-		clock:GetHighlightTexture():SetTexCoord(170 / 512, 216 / 512, 175 / 512, 197 / 512)
+		clock:GetHighlightTexture():SetTexCoord(170 / 512, 216 / 512, 175 / 256, 197 / 256)
 		clock:SetScript("OnMouseUp", Clock_OnMouseUp)
 		clock:SetScript("OnMouseDown", Clock_OnMouseDown)
 
 		bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		bg:SetTexCoord(170 / 512, 216 / 512, 152 / 512, 174 / 512)
+		bg:SetTexCoord(170 / 512, 216 / 512, 152 / 256, 174 / 256)
 
 		ticker:ClearAllPoints()
 		ticker:SetPoint("CENTER", 0, 1)
