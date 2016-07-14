@@ -337,10 +337,8 @@ end
 function E:UpdateHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
-	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
-	local texture = button:GetHighlightTexture()
-	texture:SetTexCoord(66 / 256, 122 / 256, 1 / 64, 57 / 64)
-	texture:SetAllPoints()
+	button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+	button:GetHighlightTexture():SetAllPoints()
 end
 
 function E:UpdateCheckedTexture(button)
