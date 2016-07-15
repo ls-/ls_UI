@@ -238,9 +238,8 @@ local function Mover_OnDragStart(self)
 		self.parent:ClearAllPoints()
 		self.parent:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
 	else
-
+		self:SetScript("OnUpdate", Mover_OnUpdate)
 	end
-	self:SetScript("OnUpdate", Mover_OnUpdate)
 end
 
 local function Mover_OnDragStop(self)
@@ -289,15 +288,11 @@ end
 function E:ToggleMover(object)
 	local mover = movers[object:GetName().."Mover"]
 
-	if _G.InCombatLockdown() then
-		if mover then
+	if mover and not mover.isSimple then
+		if _G.InCombatLockdown() then
 			return mover:IsShown()
-		else
-			return
 		end
-	end
 
-	if mover then
 		if mover:IsShown() then
 			mover:Hide()
 
