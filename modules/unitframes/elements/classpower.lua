@@ -271,49 +271,30 @@ local LAYOUT = {
 	},
 }
 
-local prevInUse = "NONE"
-local curInUse = {
-	["RUNES"] = {visible = false, slots = 0},
-	["CHI"] = {visible = false, slots = 0},
-	["HOLY_POWER"] = {visible = false, slots = 0},
-	["SOUL_SHARDS"] = {visible = false, slots = 0},
-	["COMBO_POINTS"] = {visible = false, slots = 0},
-	["ARCANE_CHARGES"] = {visible = false, slots = 0},
-	["STAGGER"] = {visible = false, slots = 0},
-	["NONE"] = {visible = false, slots = 0},
-}
+local inUse = {} -- slots, visible
 
-function UF:Reskin(frame, powerType, visible, slots, sentBy)
-	local cur, prev = curInUse[powerType], curInUse[prevInUse]
+function UF:Reskin(frame, slots, visible)
+	if slots == inUse.slots and visible == inUse.visible then return end
 
-	if (cur.visible == visible and cur.slots == slots) or (powerType == "NONE" and prevInUse ~= "NONE" and prevInUse ~= sentBy) then return end
-	prev.visible = false
-	prev.slots = 0
+	inUse = {slots = slots, visible = visible}
 
-	cur.visible = visible
-	cur.slots = slots
+	frame.Cover.Sep:SetTexCoord(unpack(LAYOUT[slots].sep))
 
-	if cur.visible then
-		frame.Cover.Sep:SetTexCoord(unpack(LAYOUT[slots].sep))
-	end
-
-	if powerType == "NONE" then
-		frame.Cover.Tube:Show()
-	else
+	if visible then
 		frame.Cover.Tube:Hide()
+	else
+		frame.Cover.Tube:Show()
 	end
-
-	prevInUse = powerType
 end
 
 local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
 	if event == "ClassPowerDisable" then
 		bar:Hide()
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, powerType)
+		UF:Reskin(bar:GetParent(), 0, false)
 	else
 		if event == "ClassPowerEnable" or changed then
 			bar:Show()
-			UF:Reskin(bar:GetParent(), powerType, true, max or 9)
+			UF:Reskin(bar:GetParent(), max or 9, true)
 
 			for i = 1, max do
 				local element = bar[i]
@@ -430,10 +411,10 @@ local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
 
 	if UnitHasVehicleUI("player") then
 		bar:Hide()
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, "RUNES")
+		UF:Reskin(bar:GetParent(), 0, false)
 	else
 		bar:Show()
-		UF:Reskin(bar:GetParent(), "RUNES", true, 6)
+		UF:Reskin(bar:GetParent(), 6, true)
 	end
 end
 
@@ -517,11 +498,11 @@ local function OverrideStaggerBar(self, event, unit)
 end
 
 local function StaggerBar_OnShow(self)
-	UF:Reskin(self:GetParent(), "STAGGER", true, 0)
+	UF:Reskin(self:GetParent(), 0, true)
 end
 
 local function StaggerBar_OnHide(self)
-	UF:Reskin(self:GetParent(), "NONE", true, 0, "STAGGER")
+	UF:Reskin(self:GetParent(), 0, false)
 end
 
 function UF:CreateStaggerBar(parent, level)

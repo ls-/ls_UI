@@ -167,7 +167,7 @@ function UF:ConstructPlayerFrame(frame)
 	debuffStatus:SetPoint("LEFT", health, "LEFT", 0, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
-	UF:Reskin(frame, "NONE", true, 0, "NONE")
+	UF:Reskin(frame, 0, false)
 
 	if E.PLAYER_CLASS == "MONK" then
 		frame.Stagger = UF:CreateStaggerBar(frame, level + 4)
