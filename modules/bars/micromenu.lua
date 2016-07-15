@@ -631,7 +631,7 @@ local function HandleMicroButtonIndicator(parent, indicator)
 
 	indicator:SetDrawLayer("BACKGROUND", 3)
 	indicator:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	indicator:SetSize(18, 4)
+	indicator:SetSize(18, 3)
 	indicator:ClearAllPoints()
 	indicator:SetPoint("BOTTOM", 0, 0)
 	parent.Indicator = indicator
