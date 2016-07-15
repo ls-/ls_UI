@@ -273,10 +273,10 @@ local LAYOUT = {
 
 local inUse = {} -- slots, visible
 
-function UF:Reskin(frame, slots, visible)
-	if slots == inUse.slots and visible == inUse.visible then return end
+function UF:Reskin(frame, slots, visible, sender)
+	if (slots == inUse.slots and visible == inUse.visible) or (not visible and sender ~= inUse.sender) then return end
 
-	inUse = {slots = slots, visible = visible}
+	inUse = {slots = slots, visible = visible, sender = sender}
 
 	frame.Cover.Sep:SetTexCoord(unpack(LAYOUT[slots].sep))
 
@@ -290,11 +290,11 @@ end
 local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
 	if event == "ClassPowerDisable" then
 		bar:Hide()
-		UF:Reskin(bar:GetParent(), 0, false)
+		UF:Reskin(bar:GetParent(), 0, false, "CP")
 	else
 		if event == "ClassPowerEnable" or changed then
 			bar:Show()
-			UF:Reskin(bar:GetParent(), max or 9, true)
+			UF:Reskin(bar:GetParent(), max or 9, true, "CP")
 
 			for i = 1, max do
 				local element = bar[i]
@@ -411,10 +411,10 @@ local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
 
 	if UnitHasVehicleUI("player") then
 		bar:Hide()
-		UF:Reskin(bar:GetParent(), 0, false)
+		UF:Reskin(bar:GetParent(), 0, false, "RUNES")
 	else
 		bar:Show()
-		UF:Reskin(bar:GetParent(), 6, true)
+		UF:Reskin(bar:GetParent(), 6, true, "RUNES")
 	end
 end
 
@@ -498,11 +498,11 @@ local function OverrideStaggerBar(self, event, unit)
 end
 
 local function StaggerBar_OnShow(self)
-	UF:Reskin(self:GetParent(), 0, true)
+	UF:Reskin(self:GetParent(), 0, true, "STAGGER")
 end
 
 local function StaggerBar_OnHide(self)
-	UF:Reskin(self:GetParent(), 0, false)
+	UF:Reskin(self:GetParent(), 0, false, "STAGGER")
 end
 
 function UF:CreateStaggerBar(parent, level)
