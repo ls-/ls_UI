@@ -3,52 +3,39 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local COLORS = M.colors
 local B = E:GetModule("Blizzard")
 
-local OT_UNLOCKED
+-- Lua
+local _G = _G
 
-local function OTHeader_OnClick(self)
-	ToggleDropDownMenu(1, nil, self.menu, "cursor", 2, -2)
-end
+-- Blizz
+local ObjectiveTrackerFrame = ObjectiveTrackerFrame
 
-local function ToggleOTMover(self)
-	OT_UNLOCKED = E:ToggleMover(LSOTFrameHolder)
-end
+-- Mine
+local header
 
-local function OTDropDown_Initialize(self)
-	local info = UIDropDownMenu_CreateInfo()
-	info = UIDropDownMenu_CreateInfo()
-	info.notCheckable = 1
-	info.text = OT_UNLOCKED and LOCK_FRAME or UNLOCK_FRAME
-	info.func = ToggleOTMover
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+local function MinimizeButton_OnClickHook(self)
+	if ObjectiveTrackerFrame.collapsed then
+		E:UpdateMoverSize(header, 84)
+	else
+		E:UpdateMoverSize(header)
+	end
 end
 
 function B:HandleObjectiveTracker()
-	local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
-	holder:SetFrameStrata("LOW")
-	holder:SetFrameLevel(1)
-	holder:SetSize(250, 18)
-	holder:SetPoint("TOPRIGHT", -188, -210)
+	header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
+	header:SetFrameStrata("LOW")
+	header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
+	header:SetSize(229, 25)
+	header:SetPoint("TOPRIGHT", -192, -192)
 
-	E:CreateMover(holder)
+	E:CreateMover(header, true, {-4, 18, 4, -4})
 
 	-- ugly, but works fine
 	ObjectiveTrackerFrame:ClearAllPoints()
 	ObjectiveTrackerFrame.ClearAllPoints = function() return end
-	ObjectiveTrackerFrame:SetPoint("TOP", holder, "BOTTOM", 8, 2)
+	ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
 	ObjectiveTrackerFrame.SetPoint = function() return end
-	ObjectiveTrackerFrame:SetHeight(E.SCREEN_HEIGHT * 0.6)
+	ObjectiveTrackerFrame:SetHeight(E.SCREEN_HEIGHT * 0.75)
+	ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", MinimizeButton_OnClickHook)
 
-	local header = CreateFrame("Button", "LSOTFrameHeader", ObjectiveTrackerFrame)
-	header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 2)
-	header:SetSize(250, 24)
-	header:SetPoint("TOP", -8, 0)
-	header:RegisterForClicks("RightButtonUp")
-	header:SetScript("OnClick", OTHeader_OnClick)
-
-	local dropdown = CreateFrame("Frame", "LSOTDropDown", holder, "UIDropDownMenuTemplate")
-	UIDropDownMenu_Initialize(dropdown, OTDropDown_Initialize, "MENU")
-
-	header.menu = dropdown
-
-	hooksecurefunc("QuestObjectiveItem_OnShow", E.SkinOTButton)
+	_G.hooksecurefunc("QuestObjectiveItem_OnShow", E.SkinOTButton)
 end
