@@ -30,7 +30,7 @@ function E:CreateBorder(object, size, offset)
 
 	for i = 1, #sections do
 		local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
-		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\border_"..sections[i], i > 4 and true or nil)
+		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\border-"..sections[i], i > 4 and true or nil)
 		t[sections[i]] = x
 	end
 
