@@ -352,13 +352,14 @@ function MM:Initialize()
 		_G.RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
 		local spin1 = Minimap:CreateTexture(nil, "BORDER", nil, -2)
-		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
+		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner-alt")
 		spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
-		spin1:SetSize(168, 168)
+		spin1:SetSize(170, 170)
 		spin1:SetPoint("CENTER", 0, 0)
 		Minimap.Spin1 = spin1
 
 		local spin2 = Minimap:CreateTexture(nil, "BORDER", nil, -3)
+		spin2:SetBlendMode("ADD")
 		spin2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
 		spin2:SetTexCoord(169 / 256, 1 / 256, 1 / 256, 169 / 256)
 		spin2:SetSize(168, 168)

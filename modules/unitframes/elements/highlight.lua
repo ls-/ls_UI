@@ -20,17 +20,18 @@ function UF:CreateStatusHighlight(parent)
 	local color = M.colors.class[E.PLAYER_CLASS]
 
 	local spin1 = parent:CreateTexture(nil, "BACKGROUND", nil, -1)
-	spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
+	spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner-alt")
 	spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
 	spin1:SetVertexColor(color[1], color[2], color[3])
-	spin1:SetSize(168, 168)
+	spin1:SetSize(170, 170)
 	spin1:SetPoint("CENTER", 0, 0)
 	parent.Spin1 = spin1
 
 	local spin2 = parent:CreateTexture(nil, "BACKGROUND", nil, -2)
+	spin2:SetBlendMode("ADD")
 	spin2:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner")
 	spin2:SetVertexColor(color[1], color[2], color[3])
-	spin2:SetTexCoord(169 / 256, 1 / 256, 169 / 256, 1 / 256)
+	spin2:SetTexCoord(169 / 256, 1 / 256, 1 / 256, 169 / 256)
 	spin2:SetSize(168, 168)
 	spin2:SetPoint("CENTER", 0, 0)
 	parent.Spin2 = spin2
