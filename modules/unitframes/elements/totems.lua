@@ -35,8 +35,8 @@ function UF:HandleTotems(parent, level)
 		iconFrame:SetAllPoints()
 
 		border = iconFrame:CreateTexture(nil, "ARTWORK", nil, 1)
-		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap")
-		border:SetTexCoord(466 / 512, 500 / 512, 1 / 256, 35 / 256)
+		border:SetTexture("Interface\\AddOns\\oUF_LS\\media\\minimap-button")
+		border:SetTexCoord(1 / 64, 35 / 64, 1 / 64, 35 / 64)
 		border:SetAllPoints()
 
 		icon:SetMask("Interface\\Minimap\\UI-Minimap-Background")
