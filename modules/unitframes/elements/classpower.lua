@@ -10,6 +10,7 @@ local strgsub, strupper = string.gsub, string.upper
 -- Blizz
 local UnitHealthMax = UnitHealthMax
 local UnitStagger = UnitStagger
+local UnitHasVehicleUI = UnitHasVehicleUI
 
 -- Mine
 local LAYOUT = {
@@ -427,7 +428,7 @@ local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
 		rune.InAnim:Play()
 	end
 
-	if _G.UnitHasVehicleUI("player") then
+	if UnitHasVehicleUI("player") then
 		bar:Hide()
 		UF:Reskin(bar:GetParent(), "NONE", true, 0, "RUNES")
 	else
@@ -484,7 +485,7 @@ function UF:CreateRuneBar(parent, level)
 		anim:SetToScale(1.1, 1.1)
 	end
 
-	bar.PostUpdateRune = PostUpdateRuneBar
+	bar.PostUpdate = PostUpdateRuneBar
 
 	return bar
 end
