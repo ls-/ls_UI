@@ -203,7 +203,11 @@ local textures = {
 
 M.textures = textures
 
-E.SCREEN_WIDTH, E.SCREEN_HEIGHT = format("%d", GetScreenWidth()), format("%d", GetScreenHeight())
+E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
+E.SCREEN_HEIGHT = E:Round(UIParent:GetTop())
+E.SCREEN_CENTER_X, E.SCREEN_CENTER_Y = UIParent:GetCenter()
+E.SCREEN_CENTER_X, E.SCREEN_CENTER_Y = E:Round(E.SCREEN_CENTER_X), E:Round(E.SCREEN_CENTER_Y)
+
 
 E.PLAYER_CLASS = select(2, UnitClass("player"))
 
