@@ -8,12 +8,11 @@ local strupper, strgsub, strmatch = string.upper, string.gsub, string.match
 local mfloor = math.floor
 
 -- Mine
+local ITEM_LEVEL_PATTERN = strgsub(ITEM_LEVEL, "%%d", "(%%d+)")
+local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+local INSPECT_WEAPON_SLOTS = {16, 17}
 local playerSpec = _G.GetSpecialization() or 0
 local playerRole
-
-local ScanTooltip = _G.CreateFrame("GameTooltip", "LSiLevelScanTooltip", nil, "GameTooltipTemplate")
-ScanTooltip:SetOwner(_G.WorldFrame, "ANCHOR_NONE")
-
 local dispelTypesByClass = {
 	PALADIN = {},
 	SHAMAN = {},
@@ -23,10 +22,18 @@ local dispelTypesByClass = {
 	MAGE = {},
 }
 
-local ITEM_LEVEL_PATTERN = strgsub(ITEM_LEVEL, "%%d", "(%%d+)")
+local ScanTooltip = _G.CreateFrame("GameTooltip", "LSiLevelScanTooltip", nil, "GameTooltipTemplate")
+ScanTooltip:SetOwner(_G.WorldFrame, "ANCHOR_NONE")
 
-local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-local INSPECT_WEAPON_SLOTS = {16, 17}
+function E:GetUnitClassColor(unit)
+	local color = {1, 1, 1}
+
+	if unit then
+		color = M.colors.class[select(2, _G.UnitClass(unit))]
+	end
+
+	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
+end
 
 function E:GetCreatureDifficultyColor(level)
 	local color = _G.GetCreatureDifficultyColor(level > 0 and level or 199)
@@ -35,45 +42,29 @@ function E:GetCreatureDifficultyColor(level)
 end
 
 function E:GetUnitReactionColor(unit)
-	local color
+	local color = M.colors.reaction[4]
+
 	if unit then
 		color = M.colors.reaction[_G.UnitReaction(unit, "player")]
 	end
-
-	color = color or M.colors.reaction[4] -- use Neutral faction colour by default
-
-	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
-end
-
-function E:GetUnitClassColor(unit)
-	local color
-
-	if unit then
-		local _, class = _G.UnitClass(unit)
-		color = M.colors.class[class]
-	end
-
-	color = color or M.colors.reaction[4]
 
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 end
 
 function E:GetSmartReactionColor(unit)
-	local color
+	local color = M.colors.reaction[4]
 
 	if unit then
 		if _G.UnitIsDeadOrGhost(unit) or not _G.UnitIsConnected(unit) then
 			color = M.colors.disconnected
 		elseif _G.UnitIsPlayer(unit) then
 			color = M.colors.class[select(2, _G.UnitClass(unit))]
-		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+		elseif not _G.UnitPlayerControlled(unit) and _G.UnitIsTapDenied(unit) then
 			color = M.colors.tapped
 		else
 			color = M.colors.reaction[_G.UnitReaction(unit, "player")]
 		end
 	end
-
-	color = color or M.colors.reaction[4]
 
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 end
@@ -104,6 +95,14 @@ function E:GetUnitPVPStatus(unit)
 	if _G.UnitIsPVPFreeForAll(unit) then
 		return true, "FFA"
 	elseif _G.UnitIsPVP(unit) and faction and faction ~= "Neutral" then
+		if(_G.UnitIsMercenary(unit)) then
+			if(faction == "Horde") then
+				faction = "Alliance"
+			elseif(faction == "Alliance") then
+				faction = "Horde"
+			end
+		end
+
 		return true, strupper(faction)
 	else
 		return
