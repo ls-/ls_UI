@@ -10,7 +10,7 @@ function UF:ConstructFocusFrame(frame)
 	frame.mouseovers = {}
 	frame:SetSize(204, 36)
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
+	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
 	bg:SetTexCoord(0 / 512, 204 / 512, 0 / 256, 36 / 256)
 	bg:SetAllPoints()
@@ -87,9 +87,14 @@ function UF:ConstructFocusFrame(frame)
 	frame.Power = power
 
 	local powerText = power.Text
-	powerText:SetDrawLayer("OVERLAY")
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
+
+	frame.PvP = UF:CreatePvPIcon(frame, "BACKGROUND", 2, true)
+	frame.PvP:SetPoint("TOPLEFT", frame, "TOPRIGHT", 3, -14)
+
+	frame.PvP.Hook:SetPoint("TOPLEFT", frame.PvP, "TOPLEFT", -16, 14)
+	frame.PvP.Hook:SetTexCoord(34 / 64, 1 / 64, 1 / 64, 37 / 64)
 
 	if C.units.focus.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202)

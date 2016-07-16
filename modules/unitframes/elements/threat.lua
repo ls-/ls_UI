@@ -35,7 +35,7 @@ local function ThreatUpdateOverride(self, event, unit)
 end
 
 function UF:CreateThreat(parent)
-	local threat = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 1)
+	local threat = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 0)
 	threat.Override = ThreatUpdateOverride
 
 	return threat
