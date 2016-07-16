@@ -14,26 +14,26 @@ local function Override(self, event, unit)
 
 	local pvp = self.PvP
 
-	local status = "Horde"
-	local level = 0
+	-- local status = "Horde"
+	-- local level = 0
 
-	-- local status
-	-- local level = _G.UnitPrestige(unit)
-	-- local factionGroup = _G.UnitFactionGroup(unit)
+	local status
+	local level = _G.UnitPrestige(unit)
+	local factionGroup = _G.UnitFactionGroup(unit)
 
-	-- if(_G.UnitIsPVPFreeForAll(unit)) then
-	-- 	status = "FFA"
-	-- elseif(factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit)) then
-	-- 	if(_G.UnitIsMercenary(unit)) then
-	-- 		if(factionGroup == "Horde") then
-	-- 			factionGroup = "Alliance"
-	-- 		elseif(factionGroup == "Alliance") then
-	-- 			factionGroup = "Horde"
-	-- 		end
-	-- 	end
+	if(_G.UnitIsPVPFreeForAll(unit)) then
+		status = "FFA"
+	elseif(factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit)) then
+		if(_G.UnitIsMercenary(unit)) then
+			if(factionGroup == "Horde") then
+				factionGroup = "Alliance"
+			elseif(factionGroup == "Alliance") then
+				factionGroup = "Horde"
+			end
+		end
 
-	-- 	status = factionGroup
-	-- end
+		status = factionGroup
+	end
 
 	if(status) then
 		if(level > 0 and pvp.Prestige) then
