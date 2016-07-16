@@ -354,7 +354,7 @@ function MM:Initialize()
 		local spin1 = Minimap:CreateTexture(nil, "BORDER", nil, -2)
 		spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner-alt")
 		spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
-		spin1:SetSize(170, 170)
+		spin1:SetSize(172, 172)
 		spin1:SetPoint("CENTER", 0, 0)
 		Minimap.Spin1 = spin1
 

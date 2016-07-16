@@ -23,7 +23,7 @@ function UF:CreateStatusHighlight(parent)
 	spin1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\spinner-alt")
 	spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
 	spin1:SetVertexColor(color[1], color[2], color[3])
-	spin1:SetSize(170, 170)
+	spin1:SetSize(172, 172)
 	spin1:SetPoint("CENTER", 0, 0)
 	parent.Spin1 = spin1
 
