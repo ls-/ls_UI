@@ -81,11 +81,11 @@ function UF:ConstructPlayerFrame(frame)
 
 	local damageAbsorb = E:CreateFontString(cover, 12, "$parentDamageAbsorbsText", true)
 	damageAbsorb:SetPoint("CENTER", 0, 24)
-	frame:Tag(damageAbsorb, "[custom:damageabsorb]")
+	frame:Tag(damageAbsorb, "[ls:damageabsorb]")
 
 	local healAbsorb = E:CreateFontString(cover, 12, "$parentHealAbsorbsText", true)
 	healAbsorb:SetPoint("CENTER", 0, 38)
-	frame:Tag(healAbsorb, "[custom:healabsorb]")
+	frame:Tag(healAbsorb, "[ls:healabsorb]")
 
 	local power = UF:CreatePowerBar(frame, 14, nil, true)
 	power:SetFrameLevel(level + 4)
