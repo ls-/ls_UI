@@ -683,7 +683,7 @@ local function ResetMicroButtonsParent()
 		if MICRO_BUTTON_LAYOUT[b] then
 			button:SetParent(MICRO_BUTTON_LAYOUT[b].parent)
 		else
-			button:SetParent(M.HiddenParent)
+			button:SetParent(E.HIDDEN_PARENT)
 		end
 	end
 end

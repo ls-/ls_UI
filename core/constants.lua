@@ -6,8 +6,11 @@ local _G = _G
 local select = select
 
 -- Mine
-M.HiddenParent = CreateFrame("Frame", "LSHiddenParent")
-M.HiddenParent:Hide()
+E.HIDDEN_PARENT = CreateFrame("Frame", "LSHiddenParent")
+E.HIDDEN_PARENT:Hide()
+
+E.NOA = E:CreateAnimationGroup()
+E.NOOP = function() end
 
 oUF.colors.health = {0.15, 0.65, 0.15}
 

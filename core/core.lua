@@ -34,7 +34,7 @@ function E:ForceHide(object)
 		object:UnregisterAllEvents()
 	end
 
-	object:SetParent(M.HiddenParent)
+	object:SetParent(E.HIDDEN_PARENT)
 
 	object:Hide()
 end
