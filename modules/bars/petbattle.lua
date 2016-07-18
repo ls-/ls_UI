@@ -23,8 +23,7 @@ local function SetPetBattleButtonPosition()
 		PetBattleBottomFrame.ForfeitButton
 	}
 
-	E:SetupBar(BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, LSPetBattleBar,
-		PB_CFG.direction, E.SkinPetBattleButton)
+	E:SetupBar(LSPetBattleBar, BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PB_CFG.direction, E.SkinPetBattleButton)
 end
 
 function B:HandlePetBattleBar()

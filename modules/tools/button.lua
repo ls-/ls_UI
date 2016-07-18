@@ -22,7 +22,6 @@ HIGHLIGHT:
 
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
 
 -- Lua
 local _G = _G
@@ -44,8 +43,8 @@ local KEY_MOUSEWHEELDOWN = KEY_MOUSEWHEELDOWN
 local KEY_MOUSEWHEELUP = KEY_MOUSEWHEELUP
 
 -- Mine
-local Buttons = {}
-local ActionButtons = {}
+local buttons = {}
+local actionButtons = {}
 
 local function Button_HasAction(self)
 	if self.__type == "action" or self.__type == "extra" then
@@ -302,8 +301,12 @@ local function SkinButton(button)
 
 	button.HasAction = Button_HasAction
 
-	Buttons[button] = true
+	buttons[button] = true
 end
+
+-----------
+-- UTILS --
+-----------
 
 function E:UpdateIcon(object, texture, l, r, t, b)
 	local icon
@@ -408,77 +411,6 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	end
 
 	return button
-end
-
-function E:SetupBar(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
-	if originalBar and originalBar:GetParent() ~= header then
-		originalBar:SetParent(header)
-		originalBar:SetAllPoints()
-		originalBar:EnableMouse(false)
-		originalBar.ignoreFramePositionManager = true
-		originalBar.SetPoint = function() return end
-	end
-
-	header.buttons = buttons
-	header.originalBar = originalBar
-
-	E:UpdateBarLayout(header, buttonSize, buttonGap, direction)
-
-	for i = 1, #buttons do
-		local button = buttons[i]
-		button:SetFrameLevel(header:GetFrameLevel() + 1)
-
-		if not originalBar then button:SetParent(header) end
-
-		if skinFucntion then skinFucntion(E, button) end
-	end
-end
-
-function E:UpdateBarLayout(bar, size, gap, direction)
-	if not bar.buttons then return end
-
-	local previous
-	local num = #bar.buttons
-
-	if direction == "RIGHT" or direction == "LEFT" then
-		bar:SetSize(size * num + gap * num, size + gap)
-	else
-		bar:SetSize(size + gap, size * num + gap * num)
-	end
-
-	for i = 1, num do
-		local button = bar.buttons[i]
-		button:ClearAllPoints()
-		button:SetSize(size, size)
-
-		if direction == "RIGHT" then
-			if i == 1 then
-				button:SetPoint("LEFT", bar, "LEFT", gap / 2, 0)
-			else
-				button:SetPoint("LEFT", previous, "RIGHT", gap, 0)
-			end
-		elseif direction == "LEFT" then
-			if i == 1 then
-				button:SetPoint("RIGHT", bar, "RIGHT", -gap / 2, 0)
-			else
-				button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
-			end
-		elseif direction == "DOWN" then
-			if i == 1 then
-				button:SetPoint("TOP", bar, "TOP", 0, -gap / 2)
-			else
-				button:SetPoint("TOP", previous, "BOTTOM", 0, -gap)
-			end
-		elseif direction == "UP" then
-			if i == 1 then
-				button:SetPoint("BOTTOM", bar, "BOTTOM", 0, gap / 2)
-			else
-				button:SetPoint("BOTTOM", previous, "TOP", 0, gap)
-			end
-		end
-
-		previous = button
-	end
 end
 
 function E:SkinBagButton(button)
@@ -726,44 +658,70 @@ function E:SkinSquareButton(button)
 	button:SetPushedTexture("")
 end
 
-function B:ShowHotKeyText()
-	for button in next, Buttons do
-		if button.HotKey then
-			button.HotKey:Show()
+function E:SetupBar(bar, buttons, buttonSize, buttonGap, direction, skinFucntion)
+	bar.buttons = buttons
+
+	E:UpdateBarLayout(bar, buttonSize, buttonGap, direction)
+
+	for i = 1, #buttons do
+		local button = buttons[i]
+		button:SetFrameLevel(bar:GetFrameLevel() + 1)
+
+		if skinFucntion then
+			skinFucntion(E, button)
 		end
 	end
-
-	return true, "|cff26a526Success!|r Binding text is now shown."
 end
 
-function B:HideHotKeyText()
-	for button in next, Buttons do
-		if button.HotKey then
-			button.HotKey:Hide()
-		end
+function E:UpdateBarLayout(bar, size, gap, direction)
+	if not bar.buttons then return end
+
+	local previous
+	local num = #bar.buttons
+
+	if direction == "RIGHT" or direction == "LEFT" then
+		bar:SetSize(size * num + gap * num, size + gap)
+	else
+		bar:SetSize(size + gap, size * num + gap * num)
 	end
 
-	return true, "|cff26a526Success!|r Binding text is now hidden."
+	for i = 1, num do
+		local button = bar.buttons[i]
+		button:ClearAllPoints()
+		button:SetSize(size, size)
+
+		if direction == "RIGHT" then
+			if i == 1 then
+				button:SetPoint("LEFT", bar, "LEFT", gap / 2, 0)
+			else
+				button:SetPoint("LEFT", previous, "RIGHT", gap, 0)
+			end
+		elseif direction == "LEFT" then
+			if i == 1 then
+				button:SetPoint("RIGHT", bar, "RIGHT", -gap / 2, 0)
+			else
+				button:SetPoint("RIGHT", previous, "LEFT", -gap, 0)
+			end
+		elseif direction == "DOWN" then
+			if i == 1 then
+				button:SetPoint("TOP", bar, "TOP", 0, -gap / 2)
+			else
+				button:SetPoint("TOP", previous, "BOTTOM", 0, -gap)
+			end
+		elseif direction == "UP" then
+			if i == 1 then
+				button:SetPoint("BOTTOM", bar, "BOTTOM", 0, gap / 2)
+			else
+				button:SetPoint("BOTTOM", previous, "TOP", 0, gap)
+			end
+		end
+
+		previous = button
+	end
 end
 
-function B:ShowMacroNameText()
-	for button in next, Buttons do
-		if button.Name then
-			button.Name:Show()
-		end
-	end
-
-	return true, "|cff26a526Success!|r Macro text is now shown."
-end
-
-function B:HideMacroNameText()
-	for button in next, Buttons do
-		if button.Name then
-			button.Name:Hide()
-		end
-	end
-
-	return true, "|cff26a526Success!|r Macro text is now hidden."
+function E:GetButtons()
+	return buttons
 end
 
 ----------------
@@ -776,7 +734,7 @@ local flashTime = 0
 local function Dispatcher_OnUpdate(self, elapsed)
 	flashTime = flashTime - elapsed
 
-	for button in next, ActionButtons do
+	for button in next, actionButtons do
 		if button.Flash and flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
 			if button.Flash:IsShown() then
 				button.Flash:Hide()
@@ -816,11 +774,11 @@ local function Dispatcher_OnUpdate(self, elapsed)
 end
 
 local function Dispatcher_OnEvent(self, event, ...)
-	for button in next, Buttons do
+	for button in next, buttons do
 		if button:HasAction() then
-			ActionButtons[button] = true
+			actionButtons[button] = true
 		else
-			ActionButtons[button] = nil
+			actionButtons[button] = nil
 		end
 	end
 end

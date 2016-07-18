@@ -273,7 +273,7 @@ function AT:Initialize(forceInit)
 
 		AuraTracker.buttons = buttons
 
-		E:SetupBar(buttons, AT_CFG.button_size, AT_CFG.button_gap, AuraTracker, AT_CFG.direction)
+		E:SetupBar(AuraTracker, buttons, AT_CFG.button_size, AT_CFG.button_gap, AT_CFG.direction)
 
 		local header = _G.CreateFrame("Button", "$parentHeader", AuraTracker)
 		header:SetClampedToScreen(true)
