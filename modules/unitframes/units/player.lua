@@ -11,8 +11,8 @@ function UF:ConstructPlayerFrame(frame)
 	frame:SetSize(164, 164)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	bg:SetTexCoord(318 / 512, 422 / 512, 9 / 512, 159 / 512)
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-bg")
+	bg:SetTexCoord(1 / 256, 105 / 256, 1 / 256, 151 / 256)
 	bg:SetSize(104, 150)
 	bg:SetPoint("CENTER")
 
@@ -21,8 +21,8 @@ function UF:ConstructPlayerFrame(frame)
 	mid:SetAllPoints()
 
 	local ring = mid:CreateTexture(nil, "BACKGROUND", nil, 1)
-	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_new")
-	ring:SetTexCoord(0 / 512, 168 / 512, 0 / 512, 202 / 512)
+	ring:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-main")
+	ring:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 203 / 256)
 	ring:SetSize(168, 202)
 	ring:SetPoint("CENTER", 0, -17)
 
@@ -32,27 +32,21 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Cover = cover
 
 	local tube = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tube:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
-	tube:SetTexCoord(1 / 512, 21 / 512, 1 / 512, 129 / 512)
+	tube:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-classpower")
+	tube:SetTexCoord(1 / 512, 21 / 512, 1 / 256, 129 / 256)
 	tube:SetSize(20, 128)
 	tube:SetPoint("LEFT", 15, 0)
 	cover.Tube = tube
 
 	local sep = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
+	sep:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-classpower")
 	sep:SetSize(20, 128)
 	sep:SetPoint("LEFT", 15, 0)
 	cover.Sep = sep
 
-	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	gloss:SetTexCoord(0 / 512, 98 / 512, 202 / 512, 342 / 512)
-	gloss:SetSize(98, 140)
-	gloss:SetPoint("CENTER")
-
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	fg:SetTexCoord(168 / 512, 318 / 512, 9 / 512, 159 / 512)
+	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-fg")
+	fg:SetTexCoord(1 / 256, 151 / 256, 1 / 256, 151 / 256)
 	fg:SetSize(150, 150)
 	fg:SetPoint("CENTER")
 
@@ -71,10 +65,10 @@ function UF:ConstructPlayerFrame(frame)
 	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
 
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player")
-	absrobGlow:SetTexCoord(373 / 512, 475 / 512, 202 / 512, 241 / 512)
+	absrobGlow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-absorb")
+	absrobGlow:SetTexCoord(1 / 128, 103 / 128, 1 / 64, 41 / 64)
 	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
-	absrobGlow:SetSize(102, 39)
+	absrobGlow:SetSize(102, 40)
 	absrobGlow:SetPoint("CENTER", 0, 54)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
