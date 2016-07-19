@@ -1,18 +1,22 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local B = E:GetModule("Bars")
-local VEHICLE_CFG
 
+-- Lua
+local _G = _G
+local unpack = unpack
+
+-- Mine
 local function LeaveButton_OnEvent(self, event)
-	if not InCombatLockdown() then
+	if not _G.InCombatLockdown() then
 		if event == "PLAYER_REGEN_ENABLED" then
 			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		end
 
-		if UnitOnTaxi("player") then
-			RegisterStateDriver(self, "visibility", "show")
+		if _G.UnitOnTaxi("player") then
+			_G.RegisterStateDriver(self, "visibility", "show")
 		else
-			RegisterStateDriver(self, "visibility", "[canexitvehicle] show; hide")
+			_G.RegisterStateDriver(self, "visibility", "[canexitvehicle] show; hide")
 		end
 
 		self.Icon:SetDesaturated(false)
@@ -23,23 +27,23 @@ local function LeaveButton_OnEvent(self, event)
 end
 
 local function LeaveButton_OnClick(self)
-	if UnitOnTaxi("player") then
-		TaxiRequestEarlyLanding()
+	if _G.UnitOnTaxi("player") then
+		_G.TaxiRequestEarlyLanding()
 
 		self:SetButtonState("NORMAL")
 		self.Icon:SetDesaturated(true)
 		self:Disable()
 	else
-		VehicleExit()
+		_G.VehicleExit()
 	end
 end
 
 function B:HandleVehicleExitButton()
-	VEHICLE_CFG = C.bars.vehicle
+	C.bars.vehicle = C.bars.vehicle
 
-	local button = E:CreateButton(UIParent, "LSVehicleExitButton")
-	button:SetSize(VEHICLE_CFG.button_size, VEHICLE_CFG.button_size)
-	button:SetPoint(unpack(VEHICLE_CFG.point))
+	local button = E:CreateButton(_G.UIParent, "LSVehicleExitButton")
+	button:SetSize(C.bars.vehicle.button_size, C.bars.vehicle.button_size)
+	button:SetPoint(unpack(C.bars.vehicle.point))
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:RegisterEvent("VEHICLE_UPDATE")
 	button:SetScript("OnEvent", LeaveButton_OnEvent)
@@ -52,5 +56,5 @@ function B:HandleVehicleExitButton()
 
 	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
 
-	MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+	_G.MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
 end

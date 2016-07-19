@@ -1,10 +1,16 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS, TEXTURES = M.colors, M.textures
 local B = E:GetModule("Bars")
 
+-- Lua
+local _G = _G
+local pairs, unpack = pairs, unpack
+
+-- Blizz
 local PetBattleBottomFrame = PetBattleFrame.BottomFrame
-local BUTTONS
+
+-- Mine
+local PetBattleBar
 
 local PB_CFG = {
 	point = {"BOTTOM", 0, 12},
@@ -14,7 +20,7 @@ local PB_CFG = {
 }
 
 local function SetPetBattleButtonPosition()
-	BUTTONS = {
+	local BUTTONS = {
 		PetBattleBottomFrame.abilityButtons[1],
 		PetBattleBottomFrame.abilityButtons[2],
 		PetBattleBottomFrame.abilityButtons[3],
@@ -23,7 +29,11 @@ local function SetPetBattleButtonPosition()
 		PetBattleBottomFrame.ForfeitButton
 	}
 
-	E:SetupBar(LSPetBattleBar, BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PB_CFG.direction, E.SkinPetBattleButton)
+	for _, button in pairs(BUTTONS) do
+		button:SetParent(PetBattleBar)
+	end
+
+	E:SetupBar(PetBattleBar, BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PB_CFG.direction, E.SkinPetBattleButton)
 end
 
 function B:HandlePetBattleBar()
@@ -31,40 +41,30 @@ function B:HandlePetBattleBar()
 		PB_CFG = C.bars.bar1
 	end
 
-	local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerBaseTemplate")
-	bar:SetPoint(unpack(PB_CFG.point))
+	PetBattleBar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
+	PetBattleBar:SetPoint(unpack(PB_CFG.point))
+	_G.RegisterStateDriver(PetBattleBar, "visibility", "[petbattle] show; hide")
+	B:SetupControlledBar(PetBattleBar, "PetBattle")
 
-	RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
+	_G.FlowContainer_PauseUpdates(PetBattleBottomFrame.FlowFrame)
 
-	FlowContainer_PauseUpdates(PetBattleBottomFrame.FlowFrame)
-
-	for _, f in next, {
+	for _, f in pairs({
 		PetBattleBottomFrame.FlowFrame,
 		PetBattleBottomFrame.Delimiter,
 		PetBattleBottomFrame.MicroButtonFrame,
-		PetBattleFrameXPBar,
-	} do
-		f:SetParent(E.HIDDEN_PARENT)
-		f.ignoreFramePositionManager = true
-	end
-
-	for _, t in next, {
+		_G.PetBattleFrameXPBar,
 		PetBattleBottomFrame.Background,
 		PetBattleBottomFrame.LeftEndCap,
 		PetBattleBottomFrame.RightEndCap,
 		PetBattleBottomFrame.TurnTimer.ArtFrame2,
-	} do
-		t:SetTexture(nil)
+	}) do
+		E:ForceHide(f)
 	end
 
+	PetBattleBottomFrame:SetParent(E.HIDDEN_PARENT)
+	PetBattleBottomFrame.TurnTimer:SetParent(PetBattleBar)
 	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
-	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 8)
+	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 8)
 
-	-- local art = bar:CreateTexture(nil, "BACKGROUND", nil, -8)
-	-- art:SetPoint("CENTER")
-	-- art:SetTexture("Interface\\AddOns\\oUF_LS\\media\\actionbar")
-
-	hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
-
-	B:SetupControlledBar(bar, "PetBattle")
+	_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 end

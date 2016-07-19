@@ -8,7 +8,7 @@ local pairs, next, select, unpack = pairs, next, select, unpack
 local strformat = string.format
 local twipe, tsort = table.wipe, table.sort
 
---Blizz
+-- Blizz
 local GameTooltip = GameTooltip
 local GetAddOnInfo = GetAddOnInfo
 local GetAddOnMemoryUsage = GetAddOnMemoryUsage
