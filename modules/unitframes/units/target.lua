@@ -10,7 +10,7 @@ function UF:ConstructTargetFrame(frame)
 	frame.mouseovers = {}
 	frame:SetSize(204, 36)
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
+	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 1)
 	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
 	bg:SetTexCoord(0 / 512, 204 / 512, 0 / 256, 36 / 256)
 	bg:SetAllPoints()
@@ -90,6 +90,12 @@ function UF:ConstructTargetFrame(frame)
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
 
+	frame.PvP = UF:CreatePvPIcon(frame, "BACKGROUND", 2, true)
+	frame.PvP:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, -14)
+
+	frame.PvP.Hook:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 16, 14)
+	frame.PvP.Hook:SetTexCoord(1 / 64, 34 / 64, 1 / 64, 37 / 64)
+
 	if C.units.target.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202)
 
@@ -109,19 +115,12 @@ function UF:ConstructTargetFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 4, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -4, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:questicon][custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
-
-	local statusTopLeft = cover:CreateFontString("$parentTopLeftStatusIcons", "ARTWORK", "LSStatusIcon16Font")
-	statusTopLeft:SetJustifyH("LEFT")
-	statusTopLeft:SetPoint("TOPLEFT", 4, 2)
-	frame:Tag(statusTopLeft, "[ls:sheepicon][ls:pvpicon]")
+	frame:Tag(name, "[ls:questicon][ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name]")
 
 	local statusTopRight = cover:CreateFontString("$parentTopRightStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	statusTopRight:SetJustifyH("RIGHT")
 	statusTopRight:SetPoint("TOPRIGHT", -4, 2)
-	statusTopRight:Hide()
-	frame:Tag(statusTopRight, "[ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
-	tinsert(frame.mouseovers, statusTopRight)
+	frame:Tag(statusTopRight, "[ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)

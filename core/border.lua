@@ -3,7 +3,12 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
-local sections = {"TOPLEFT", "TOP", "TOPRIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT", "LEFT", "RIGHT"}
+-- Lua
+local _G = _G
+local type, pairs = type, pairs
+
+-- Mine
+local sections = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}
 
 local function SetBorderColor(self, r, g, b, a)
 	local t = self.BorderTextures
@@ -18,34 +23,6 @@ local function GetBorderColor(self)
 	return self.BorderTextures and self.BorderTextures.TOPLEFT:GetVertexColor()
 end
 
-local function SetBorderSize(self, size, offset)
-	local t = self.BorderTextures
-	if not t then return end
-
-	offset = offset or 0
-
-	for _, tex in pairs(t) do
-		tex:SetSize(size, size)
-	end
-
-	local d = E:Round(size * 5 / 10)
-	local parent = t.TOPLEFT:GetParent()
-
-	t.TOPLEFT:SetPoint("TOPLEFT", parent, -d - offset, d + offset)
-	t.TOPRIGHT:SetPoint("TOPRIGHT", parent, d + offset, d + offset)
-	t.BOTTOMLEFT:SetPoint("BOTTOMLEFT", parent, -d - offset, -d - offset)
-	t.BOTTOMRIGHT:SetPoint("BOTTOMRIGHT", parent, d + offset, -d - offset)
-
-	t.TOPLEFT.offset = offset
-end
-
-local function GetBorderSize(self)
-	local t = self.BorderTextures
-	if not t then return end
-
-	return t.TOPLEFT:GetWidth(), t.TOPLEFT.offset
-end
-
 function E:CreateBorder(object, size, offset)
 	if type(object) ~= "table" or not object.CreateTexture or object.BorderTextures then return end
 
@@ -53,40 +30,43 @@ function E:CreateBorder(object, size, offset)
 
 	for i = 1, #sections do
 		local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
-		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\button")
+		x:SetTexture("Interface\\AddOns\\oUF_LS\\media\\border-"..sections[i], i > 4 and true or nil)
 		t[sections[i]] = x
 	end
 
-	t.TOPLEFT:SetTexCoord(0, 10 / 256, 0, 10 / 64)
-	t.TOP:SetTexCoord(10 / 256, 54 / 256, 0, 10 / 64)
-	t.TOPRIGHT:SetTexCoord(54 / 256, 64 / 256, 0, 10 / 64)
+	t.TOPLEFT:SetSize(8, 8)
+	t.TOPLEFT:SetPoint("BOTTOMRIGHT", object, "TOPLEFT", 4, -4)
 
-	t.BOTTOMLEFT:SetTexCoord(0, 10 / 256, 54 / 64, 64 / 64)
-	t.BOTTOM:SetTexCoord(10 / 256, 54 / 256, 54 / 64, 64 / 64)
-	t.BOTTOMRIGHT:SetTexCoord(54 / 256, 64 / 256, 54 / 64, 64 / 64)
+	t.TOPRIGHT:SetSize(8, 8)
+	t.TOPRIGHT:SetPoint("BOTTOMLEFT", object, "TOPRIGHT", -4 , -4)
 
-	t.LEFT:SetTexCoord(0, 10 / 256, 10 / 64, 54 / 64)
-	t.RIGHT:SetTexCoord(54 / 256, 64 / 256, 10 / 64, 54 / 64)
+	t.BOTTOMLEFT:SetSize(8, 8)
+	t.BOTTOMLEFT:SetPoint("TOPRIGHT", object, "BOTTOMLEFT", 4, 4)
 
-	t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT")
-	t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT")
+	t.BOTTOMRIGHT:SetSize(8, 8)
+	t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -4, 4)
 
-	t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT")
-	t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT")
+	t.TOP:SetHeight(8)
+	t.TOP:SetHorizTile(true)
+	t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT", 0, 2)
+	t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT", 0, 2)
 
-	t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT")
-	t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT")
+	t.BOTTOM:SetHeight(8)
+	t.BOTTOM:SetHorizTile(true)
+	t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT", 0, -2)
+	t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT", 0, -2)
 
-	t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT")
-	t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT")
+	t.LEFT:SetWidth(8)
+	t.LEFT:SetVertTile(true)
+	t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT", -2, 0)
+	t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT", -2, 0)
+
+	t.RIGHT:SetWidth(8)
+	t.RIGHT:SetVertTile(true)
+	t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 2, 0)
+	t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 2, 0)
 
 	object.BorderTextures = t
-
 	object.SetBorderColor = SetBorderColor
-	object.SetBorderSize = SetBorderSize
-
 	object.GetBorderColor = GetBorderColor
-	object.GetBorderSize = GetBorderSize
-
-	object:SetBorderSize(size or 8, offset or 0)
 end

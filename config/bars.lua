@@ -349,7 +349,7 @@ function CFG:B_Initialize()
 	CFG:SetupControlDependency(barsToggle, applyButton)
 
 	local barOptionsBG = panel:CreateTexture("$parentBarOptionBG", "BACKGROUND")
-	barOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	barOptionsBG:SetColorTexture(0.3, 0.3, 0.3, 0.3)
 	barOptionsBG:SetSize(192, 144)
 	barOptionsBG:SetPoint("TOP", barSelector, "BOTTOM", 0, -8)
 	barOptionsBG:SetPoint("LEFT", barSelector, "LEFT", 19, 0)

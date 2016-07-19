@@ -32,15 +32,15 @@ local function PostUpdatePower(bar, unit, cur, max)
 
 	if cur < max then
 		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur), E:NumberFormat(max))
+			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
 		elseif cur > 0 then
-			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
 		else
 			bar.Text:SetText(nil)
 		end
 	else
 		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur))
+			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
 		else
 			bar.Text:SetText(nil)
 		end

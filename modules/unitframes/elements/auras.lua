@@ -35,7 +35,6 @@ end
 
 local function CreateAuraIcon(frame, index)
 	local button = E:CreateButton(frame, "$parentButton"..index, true)
-	button:SetBorderSize(6)
 
 	button.icon = button.Icon
 	button.Icon = nil

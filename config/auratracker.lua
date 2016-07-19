@@ -431,7 +431,7 @@ function CFG:AT_Initialize()
 
 		local bg = button:CreateTexture(nil, "BACKGROUND")
 		bg:SetAllPoints()
-		bg:SetTexture(0.15, 0.15, 0.15)
+		bg:SetColorTexture(0.15, 0.15, 0.15)
 		button.Bg = bg
 
 		if i == 1 then
@@ -507,7 +507,7 @@ function CFG:AT_Initialize()
 	auraList.MaskDial = maskDial
 
 	local trackerOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
-	trackerOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	trackerOptionsBG:SetColorTexture(0.3, 0.3, 0.3, 0.3)
 	trackerOptionsBG:SetHeight(144)
 	trackerOptionsBG:SetPoint("TOP", infoText1, "BOTTOM", 0, -18)
 	trackerOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)

@@ -3,7 +3,7 @@ local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine
 ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 
 function E:CreateFontString(parent, size, name, shadow, outline)
-	local object = parent:CreateFontString(name, nil, shadow and "LS"..size.."Font_Shadow" or (outline and "LS"..size.."Font_Outline" or "LS"..size.."Font"))
+	local object = parent:CreateFontString(name, nil, "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
 	object:SetWordWrap(false)
 
 	return object
@@ -16,7 +16,7 @@ function E:DebugHighlight(object)
 		object.tex = object:CreateTexture(nil, "BACKGROUND", nil, -8)
 	end
 	object.tex:SetAllPoints(object)
-	object.tex:SetTexture(1, 0, 0.5, 0.4)
+	object.tex:SetColorTexture(1, 0, 0.5, 0.4)
 end
 
 function E:ForceShow(object)
@@ -34,7 +34,7 @@ function E:ForceHide(object)
 		object:UnregisterAllEvents()
 	end
 
-	object:SetParent(M.HiddenParent)
+	object:SetParent(E.HIDDEN_PARENT)
 
 	object:Hide()
 end

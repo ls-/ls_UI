@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">"/>
 	<Script file="core.lua"/>
 	<Script file="db.lua"/>
+	<Script file="math.lua"/>
 	<Include file="constants.xml"/>
 	<Script file="animations.lua"/>
 	<Script file="border.lua"/>
-	<Script file="math.lua"/>
 	<Script file="movers.lua"/>
 </Ui>

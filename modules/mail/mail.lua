@@ -101,7 +101,7 @@ local function ReceiveButton_OnEnter(self)
 			for j = 1, itemCount do
 				local itemLink = GetInboxItemLink(i, j)
 				if itemLink then
-					local name, icon, count = GetInboxItem(i, j)
+					local name, _, icon, count = GetInboxItem(i, j)
 					local _, _, quality = GetItemInfo(itemLink)
 
 					if MailItems[name] then

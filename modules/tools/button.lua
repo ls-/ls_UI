@@ -22,19 +22,46 @@ HIGHLIGHT:
 
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
 
-local unpack = unpack
-local gsub = gsub
-local NUM_BAG_SLOTS = NUM_BAG_SLOTS
-local COLORS, TEXTURES = M.colors, M.textures
+-- Lua
+local _G = _G
+local unpack, next = unpack, next
+local strgsub, strmatch, strformat = string.gsub, string.match, string.format
 
-B.HandledHotKeys, B.HandledMacroNames = {}, {}
+-- Blizz
+local IsActionInRange = IsActionInRange
+local IsQuestLogSpecialItemInRange = IsQuestLogSpecialItemInRange
+local IsUsableAction = IsUsableAction
+local ATTACK_BUTTON_FLASH_TIME = ATTACK_BUTTON_FLASH_TIME
+local ALT_KEY_TEXT = ALT_KEY_TEXT.."%-"
+local CTRL_KEY_TEXT = CTRL_KEY_TEXT.."%-"
+local SHIFT_KEY_TEXT = SHIFT_KEY_TEXT.."%-"
+local KEY_BUTTON1 = KEY_BUTTON1
+local KEY_BUTTON2 = KEY_BUTTON2
+local KEY_BUTTON3 = KEY_BUTTON3
+local KEY_MOUSEWHEELDOWN = KEY_MOUSEWHEELDOWN
+local KEY_MOUSEWHEELUP = KEY_MOUSEWHEELUP
+
+-- Mine
+local buttons = {}
+local actionButtons = {}
+
+local function Button_HasAction(self)
+	if self.__type == "action" or self.__type == "extra" then
+		return self.action and _G.HasAction(self.action)
+	elseif self.__type == "petaction" then
+		local name = _G.GetPetActionInfo(self:GetID())
+
+		return name
+	elseif self.__type == "objective" then
+		return self:IsShown()
+	end
+end
 
 local function GetContainerSlotByItemLink(itemLink)
-	for i = 0, NUM_BAG_SLOTS do
-		for j = 1, GetContainerNumSlots(i) do
-			local _, _, _, _, _, _, link = GetContainerItemInfo(i, j)
+	for i = 0, _G.NUM_BAG_SLOTS do
+		for j = 1, _G.GetContainerNumSlots(i) do
+			local _, _, _, _, _, _, link = _G.GetContainerItemInfo(i, j)
 			if link == itemLink then
 				return i, j
 			end
@@ -61,23 +88,17 @@ end
 local function SetVertexColorHook(self, r, g, b)
 	local button = self:GetParent()
 	local action = button.action
-	local name = gsub(button:GetName(), "%d", "")
+	local name = strgsub(button:GetName(), "%d", "")
 
-	if name == "ExtraActionButton" then
-		button:SetBorderColor(unpack(COLORS.orange))
-
-		return
-	end
-
-	if action and IsEquippedAction(action) then
-		button:SetBorderColor(unpack(COLORS.green))
+	if action and _G.IsEquippedAction(action) then
+		button:SetBorderColor(unpack(M.colors.green))
 
 		return
 	end
 
 	if r == 1 and g == 1 and b == 1 then
 		if name == "ActionButton" then
-			button:SetBorderColor(unpack(COLORS.yellow))
+			button:SetBorderColor(unpack(M.colors.yellow))
 		else
 			button:SetBorderColor(r, g, b)
 		end
@@ -89,11 +110,11 @@ end
 local function SetTextHook(self, text)
 	if not text then return end
 
-	self:SetFormattedText("%s", gsub(text, "[ .()]", ""))
+	self:SetFormattedText("%s", strgsub(text, "[ .()]", ""))
 end
 
 local function SetFormattedTextHook(self, arg1, arg2)
-	self:SetText(format(gsub(arg1, "[ .()]", ""), arg2))
+	self:SetText(strformat(strgsub(arg1, "[ .()]", ""), arg2))
 end
 
 local function SetHotKeyTextHook(self)
@@ -111,83 +132,46 @@ local function SetHotKeyTextHook(self)
 		end
 	end
 
-	local text = bType and GetBindingText(GetBindingKey(bType..button:GetID()))
+	local text = bType and _G.GetBindingText(_G.GetBindingKey(bType..button:GetID()))
 
 	if text then
-		text = gsub(text, ALT_KEY_TEXT.."%-", "A")
-		text = gsub(text, CTRL_KEY_TEXT.."%-", "C")
-		text = gsub(text, SHIFT_KEY_TEXT.."%-", "S")
-		text = gsub(text, KEY_BUTTON1, "LMB")
-		text = gsub(text, KEY_BUTTON2, "RMB")
-		text = gsub(text, KEY_BUTTON3, "MMB")
-		text = gsub(text, KEY_MOUSEWHEELDOWN, "MWU")
-		text = gsub(text, KEY_MOUSEWHEELUP, "MWD")
+		text = strgsub(text, ALT_KEY_TEXT, "A")
+		text = strgsub(text, CTRL_KEY_TEXT, "C")
+		text = strgsub(text, SHIFT_KEY_TEXT, "S")
+		text = strgsub(text, KEY_BUTTON1, "LMB")
+		text = strgsub(text, KEY_BUTTON2, "RMB")
+		text = strgsub(text, KEY_BUTTON3, "MMB")
+		text = strgsub(text, KEY_MOUSEWHEELDOWN, "MWU")
+		text = strgsub(text, KEY_MOUSEWHEELUP, "MWD")
 	end
 
 	self:SetFormattedText("%s", text or "")
 end
 
-local function ActionButton_OnUpdateHook(button)
-	local action = button.action
-	local bIcon = button.icon
+local function SetHotKeyVertexColorHook(self, r, g, b)
+	if r ~= 0.85 or g ~= 0.85 or b ~= 0.85 then
+		self:SetVertexColor(0.85, 0.85, 0.85) -- M.colors.lightgray
+	end
+end
+
+local function SetMacroTextHook(self)
+	local button = self:GetParent()
 	local bName = button.Name
-	local bHotKey = button.HotKey
 
-	if bIcon then
-		if IsActionInRange(action) ~= false then
-			local isUsable, notEnoughMana = IsUsableAction(action)
-			if isUsable then
-				bIcon:SetVertexColor(1, 1, 1, 1)
-			elseif notEnoughMana then
-				bIcon:SetVertexColor(unpack(COLORS.icon.oom))
-			else
-				bIcon:SetVertexColor(unpack(COLORS.icon.nu))
-			end
-		else
-			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-		end
-	end
+	if bName then
+		local text = bName:GetText() or ""
 
-	if bName and bName:IsShown() then
-		local text = bName:GetText()
-		if text then
-			bName:SetText(E:StringTruncate(text, E:Round(button:GetWidth() / 8)))
-		end
-	end
-
-	if bHotKey and bHotKey:IsShown() then
-		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
-	end
-end
-
-local function PetActionButton_OnUpdateHook(button)
-	local bHotKey = button.HotKey
-
-	if bHotKey then
-		bHotKey:SetVertexColor(unpack(COLORS.lightgray))
-	end
-end
-
-local function OTButton_OnUpdateHook(self, elapsed)
-	local bIcon = self.icon
-
-	if bIcon then
-		local valid = IsQuestLogSpecialItemInRange(self:GetID())
-
-		if valid == 0 then
-			bIcon:SetVertexColor(unpack(COLORS.icon.oor))
-		else
-			bIcon:SetVertexColor(1, 1, 1, 1)
-		end
+		bName:SetFormattedText("%s", E:StringTruncate(text, E:Round(button:GetWidth() / 8)))
 	end
 end
 
 local function OTButton_OnDragHook(self)
-	if IsModifiedClick("PICKUPACTION") then
-		local link = GetQuestLogSpecialItemInfo(self:GetID())
+	if _G.IsModifiedClick("PICKUPACTION") then
+		local link = _G.GetQuestLogSpecialItemInfo(self:GetID())
 		local bagID, slot = GetContainerSlotByItemLink(link)
+
 		if bagID then
-			PickupContainerItem(bagID, slot)
+			_G.PickupContainerItem(bagID, slot)
 		end
 	end
 end
@@ -213,7 +197,7 @@ local function SkinButton(button)
 	E:UpdateIcon(bIcon)
 
 	if bFlash then
-		bFlash:SetTexture(0.9, 0.15, 0.15, 0.65)
+		bFlash:SetColorTexture(0.9, 0.15, 0.15, 0.65)
 		bFlash:SetAllPoints()
 	end
 
@@ -232,16 +216,17 @@ local function SkinButton(button)
 	if bHotKey then
 		bHotKey:SetFontObject("LS10Font_Outline")
 		bHotKey:SetJustifyH("RIGHT")
-		bHotKey:SetDrawLayer("OVERLAY", 2)
+		bHotKey:SetDrawLayer("OVERLAY")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetPoint("TOPLEFT", -2, 0)
 		bHotKey:SetPoint("TOPRIGHT", 2, 0)
 		bHotKey:SetWidth(button:GetWidth())
 
 		SetHotKeyTextHook(bHotKey)
-		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
+		_G.hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
 
-		tinsert(B.HandledHotKeys, bHotKey)
+		bHotKey:SetVertexColor(unpack(M.colors.lightgray))
+		_G.hooksecurefunc(bHotKey, "SetVertexColor", SetHotKeyVertexColorHook)
 
 		if not C.bars.show_hotkey then
 			bHotKey:Hide()
@@ -251,7 +236,7 @@ local function SkinButton(button)
 	if bCount then
 		bCount:SetFontObject("LS10Font_Outline")
 		bCount:SetJustifyH("RIGHT")
-		bCount:SetDrawLayer("OVERLAY", 2)
+		bCount:SetDrawLayer("OVERLAY")
 		bCount:ClearAllPoints()
 		bCount:SetPoint("BOTTOMLEFT", -2, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
@@ -260,12 +245,13 @@ local function SkinButton(button)
 	if bName then
 		bName:SetFontObject("LS10Font_Outline")
 		bName:SetJustifyH("CENTER")
-		bName:SetDrawLayer("OVERLAY", 2)
+		bName:SetDrawLayer("OVERLAY")
 		bName:ClearAllPoints()
-		bName:SetPoint("BOTTOMLEFT", -6, 0)
-		bName:SetPoint("BOTTOMRIGHT", 6, 0)
+		bName:SetPoint("BOTTOMLEFT", -2, 0)
+		bName:SetPoint("BOTTOMRIGHT", 2, 0)
 
-		tinsert(B.HandledMacroNames, bName)
+		SetMacroTextHook(bName)
+		_G.hooksecurefunc(bName, "SetText", SetMacroTextHook)
 
 		if not C.bars.show_name then
 			bName:Hide()
@@ -295,7 +281,7 @@ local function SkinButton(button)
 
 		E:CreateBorder(button, button:GetWidth() < 26 and 6 or nil)
 
-		hooksecurefunc(bNormalTexture, "SetVertexColor", SetVertexColorHook)
+		_G.hooksecurefunc(bNormalTexture, "SetVertexColor", SetVertexColorHook)
 	end
 
 	if bPushedTexture then
@@ -309,10 +295,22 @@ local function SkinButton(button)
 	if bCheckedTexture then
 		E:UpdateCheckedTexture(button)
 	end
+
+	button:SetScript("OnUpdate", nil)
+	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE");
+
+	button.HasAction = Button_HasAction
+
+	buttons[button] = true
 end
+
+-----------
+-- UTILS --
+-----------
 
 function E:UpdateIcon(object, texture, l, r, t, b)
 	local icon
+
 	if object.CreateTexture then
 		icon = object:CreateTexture(nil, "BACKGROUND", nil, 0)
 	else
@@ -333,32 +331,29 @@ end
 function E:UpdatePushedTexture(button)
 	if not button.SetPushedTexture then return end
 
-	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button")
-	texture = button:GetPushedTexture()
-	texture:SetTexCoord(124 / 256, 180 / 256, 1 / 64, 57 / 64)
+	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button-pushed")
+	local texture = button:GetPushedTexture()
 	texture:SetAllPoints()
 end
 
 function E:UpdateHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
-	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\button", "ADD")
-	texture = button:GetHighlightTexture()
-	texture:SetTexCoord(66 / 256, 122 / 256, 1 / 64, 57 / 64)
-	texture:SetAllPoints()
+	button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+	button:GetHighlightTexture():SetAllPoints()
 end
 
 function E:UpdateCheckedTexture(button)
 	if not button.SetCheckedTexture then return end
 
 	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
-	texture = button:GetCheckedTexture()
+	local texture = button:GetCheckedTexture()
 	texture:SetBlendMode("ADD")
 	texture:SetAllPoints()
 end
 
 function E:CreateButton(parent, name, isSandwich, isSecure)
-	local button = CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
+	local button = _G.CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
@@ -376,7 +371,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	E:UpdateHighlightTexture(button)
 
 	if isSandwich then
-		local cover = CreateFrame("Frame", "$parentCover", button)
+		local cover = _G.CreateFrame("Frame", "$parentCover", button)
 		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
 
@@ -388,7 +383,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 end
 
 function E:CreateCheckButton(parent, name, isSandwich, isSecure)
-	local button = CreateFrame("CheckButton", name, parent, isSecure and "SecureActionButtonTemplate")
+	local button = _G.CreateFrame("CheckButton", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
 	button.Icon = E:UpdateIcon(button)
@@ -407,7 +402,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	E:UpdateCheckedTexture(button)
 
 	if isSandwich then
-		local cover = CreateFrame("Frame", "$parentCover", button)
+		local cover = _G.CreateFrame("Frame", "$parentCover", button)
 		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
 
@@ -418,26 +413,263 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	return button
 end
 
-function E:SetupBar(buttons, buttonSize, buttonGap, header, direction, skinFucntion, originalBar)
-	if originalBar and originalBar:GetParent() ~= header then
-		originalBar:SetParent(header)
-		originalBar:SetAllPoints()
-		originalBar:EnableMouse(false)
-		originalBar.ignoreFramePositionManager = true
-		originalBar.SetPoint = function() return end
+function E:SkinBagButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local bCount = button.Count
+	local bIconBorder = button.IconBorder
+
+	if bCount then
+		SetTextHook(bCount, bCount:GetText())
+		_G.hooksecurefunc(bCount, "SetText", SetTextHook)
 	end
 
-	header.buttons = buttons
+	if bIconBorder then
+		bIconBorder:SetTexture(nil)
 
-	E:UpdateBarLayout(header, buttonSize, buttonGap, direction)
+		_G.hooksecurefunc(bIconBorder, "Hide", SetItemButtonBorderColor)
+		_G.hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
+	end
+
+	button.__type = "bag"
+	button.styled = true
+end
+
+function E:SkinPetBattleButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local bCDShadow = button.CooldownShadow
+	local bCDFlash = button.CooldownFlash
+	local bCD = button.Cooldown
+	local bSelectedHighlight = button.SelectedHighlight
+	local bLock = button.Lock
+	local bBetterIcon = button.BetterIcon
+
+	if bCDShadow then
+		bCDShadow:SetAllPoints()
+	end
+
+	if bCDFlash then
+		bCDFlash:SetAllPoints()
+	end
+
+	if bCD then
+		bCD:SetFontObject("LS16Font_Outline")
+		bCD:ClearAllPoints()
+		bCD:SetPoint("CENTER", 0, -2)
+	end
+
+	if bSelectedHighlight then
+		bSelectedHighlight:SetDrawLayer("OVERLAY", 2)
+		bSelectedHighlight:ClearAllPoints()
+		bSelectedHighlight:SetPoint("TOPLEFT", -8, 8)
+		bSelectedHighlight:SetPoint("BOTTOMRIGHT", 8, -8)
+	end
+
+	if bLock then
+		bLock:ClearAllPoints()
+		bLock:SetPoint("TOPLEFT", 2, -2)
+		bLock:SetPoint("BOTTOMRIGHT", -2, 2)
+	end
+
+	if bBetterIcon then
+		bBetterIcon:SetDrawLayer("OVERLAY", 2)
+		bBetterIcon:SetSize(18, 18)
+		bBetterIcon:ClearAllPoints()
+		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
+	end
+
+	button:SetBorderColor(unpack(M.colors.yellow))
+
+	button.__type = "petbattle"
+	button.styled = true
+end
+
+function E:SkinExtraActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	E:ForceHide(button.style or button.Style)
+
+	local CD = button.cooldown or button.Cooldown
+
+	if CD.SetTimerTextHeight then
+		CD:SetTimerTextHeight(14)
+	end
+
+	button.__type = "extra"
+	button.styled = true
+end
+
+function E:SkinPetActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local name = button:GetName()
+	local bCD = button.cooldown
+	local bAutoCast = _G[name.."AutoCastable"]
+	local bShine = _G[name.."Shine"]
+	local bHotKey = button.HotKey
+
+	if bCD and bCD.SetTimerTextHeight then
+		bCD:SetTimerTextHeight(10)
+	end
+
+	if bAutoCast then
+		bAutoCast:SetDrawLayer("OVERLAY", 2)
+		bAutoCast:ClearAllPoints()
+		bAutoCast:SetPoint("TOPLEFT", -12, 12)
+		bAutoCast:SetPoint("BOTTOMRIGHT", 12, -12)
+	end
+
+	if bShine then
+		bShine:ClearAllPoints()
+		bShine:SetPoint("TOPLEFT", 1, -1)
+		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
+	end
+
+	if bHotKey then
+		bHotKey:SetFontObject("LS8Font_Outline")
+
+		if not C.bars.show_hotkey then
+			bHotKey:Hide()
+		end
+	end
+
+	_G.hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
+
+	button.__type = "petaction"
+	button.styled = true
+end
+
+function E:SkinActionButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local bFloatingBG = _G[button:GetName().."FloatingBG"]
+
+	if bFloatingBG then
+		E:ForceHide(bFloatingBG)
+	end
+
+	button.__type = "action"
+	button.styled = true
+end
+
+function E:SkinStanceButton(button)
+	if not button or button.styled then return end
+
+	SkinButton(button)
+
+	local bFloatingBG = _G[button:GetName().."FloatingBG"]
+
+	if bFloatingBG then
+		E:ForceHide(bFloatingBG)
+	end
+
+	button.__type = "stance"
+	button.styled = true
+end
+
+function E:SkinOTButton()
+	if not self or self.styled then return end
+
+	SkinButton(self)
+
+	self:RegisterForDrag("LeftButton")
+	self:HookScript("OnDragStart", OTButton_OnDragHook)
+	self:HookScript("OnReceiveDrag", OTButton_OnDragHook)
+
+	self.__type = "objective"
+	self.styled = true
+end
+
+function E:SkinAuraButton(button)
+	if not button or button.styled then return end
+
+	local name = button:GetName()
+	local bIcon = _G[name.."Icon"]
+	local bBorder = _G[name.."Border"]
+	local bCount = _G[name.."Count"]
+	local bDuration = _G[name.."Duration"]
+
+	if bIcon then
+		E:UpdateIcon(bIcon)
+	end
+
+	E:CreateBorder(button)
+
+	if bBorder then
+		bBorder:SetTexture(nil)
+
+		if strgsub(name, "%d", "") == "TempEnchant" then
+			button:SetBorderColor(unpack(M.colors.darkmagenta))
+		else
+			_G.hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
+		end
+	end
+
+	if bCount then
+		bCount:SetFontObject("LS10Font_Outline")
+		bCount:SetJustifyH("RIGHT")
+		bCount:SetDrawLayer("OVERLAY", 2)
+		bCount:ClearAllPoints()
+		bCount:SetPoint("TOPLEFT", -2, 0)
+		bCount:SetPoint("TOPRIGHT", 2, 0)
+		bCount:SetWidth(button:GetWidth())
+	end
+
+	if bDuration then
+		bDuration:SetFontObject("LS10Font_Outline")
+		bDuration:SetJustifyH("CENTER")
+		bDuration:SetDrawLayer("OVERLAY", 2)
+		bDuration:ClearAllPoints()
+		bDuration:SetPoint("BOTTOMLEFT", -4, 0)
+		bDuration:SetPoint("BOTTOMRIGHT", 4, 0)
+		bDuration:SetWidth(button:GetWidth())
+
+		_G.hooksecurefunc(bDuration, "SetFormattedText", SetFormattedTextHook)
+	end
+
+	button.styled = true
+end
+
+function E:SkinSquareButton(button)
+	local icon = button.icon
+	local texture = icon:GetTexture()
+	local highlight = button:GetHighlightTexture()
+
+	icon:SetSize(10, 10)
+
+	highlight:SetTexture(texture)
+	highlight:SetTexCoord(icon:GetTexCoord())
+	highlight:ClearAllPoints()
+	highlight:SetPoint("CENTER", 0, 0)
+	highlight:SetSize(10, 10)
+
+	button:SetNormalTexture("")
+	button:SetPushedTexture("")
+end
+
+function E:SetupBar(bar, buttons, buttonSize, buttonGap, direction, skinFucntion)
+	bar.buttons = buttons
+
+	E:UpdateBarLayout(bar, buttonSize, buttonGap, direction)
 
 	for i = 1, #buttons do
 		local button = buttons[i]
-		button:SetFrameLevel(header:GetFrameLevel() + 1)
+		button:SetFrameLevel(bar:GetFrameLevel() + 1)
 
-		if not originalBar then button:SetParent(header) end
-
-		if skinFucntion then skinFucntion(E, button) end
+		if skinFucntion then
+			skinFucntion(E, button)
+		end
 	end
 end
 
@@ -488,272 +720,73 @@ function E:UpdateBarLayout(bar, size, gap, direction)
 	end
 end
 
-function E:SkinBagButton(button)
-	if not button or button.styled then return end
-
-	SkinButton(button)
-
-	local bCount = button.Count
-	local bIconBorder = button.IconBorder
-
-	if bCount then
-		SetTextHook(bCount, bCount:GetText())
-		hooksecurefunc(bCount, "SetText", SetTextHook)
-	end
-
-	if bIconBorder then
-		bIconBorder:SetTexture(nil)
-		hooksecurefunc(bIconBorder, "Hide", SetItemButtonBorderColor)
-		hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
-	end
-
-	button.styled = true
+function E:GetButtons()
+	return buttons
 end
 
-function E:SkinPetBattleButton(button)
-	if not button or button.styled then return end
+----------------
+-- DISPATCHER --
+----------------
 
-	SkinButton(button, true)
+-- one OnUpdate to rule them all!
+local flashTime = 0
 
-	local bCDShadow = button.CooldownShadow
-	local bCDFlash = button.CooldownFlash
-	local bCD = button.Cooldown
-	local bSelectedHighlight = button.SelectedHighlight
-	local bLock = button.Lock
-	local bBetterIcon = button.BetterIcon
+local function Dispatcher_OnUpdate(self, elapsed)
+	flashTime = flashTime - elapsed
 
-	if bCDShadow then
-		bCDShadow:SetAllPoints()
-	end
+	for button in next, actionButtons do
+		if button.Flash and flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
+			if button.Flash:IsShown() then
+				button.Flash:Hide()
+			else
+				button.Flash:Show()
+			end
+		end
 
-	if bCDFlash then
-		bCDFlash:SetAllPoints()
-	end
+		if button.__type == "objective" then
+			local valid = IsQuestLogSpecialItemInRange(button:GetID())
 
-	if bCD then
-		bCD:SetFontObject("LS16Font_Outline")
-		bCD:ClearAllPoints()
-		bCD:SetPoint("CENTER", 0, -2)
-	end
+			if valid == 0 then
+				button.icon:SetVertexColor(unpack(M.colors.icon.oor))
+			else
+				button.icon:SetVertexColor(1, 1, 1, 1)
+			end
+		elseif button.__type == "action" or button.__type == "extra" then
+			if IsActionInRange(button.action) == false then
+				button.icon:SetVertexColor(unpack(M.colors.icon.oor))
+			else
+				local isUsable, notEnoughMana = IsUsableAction(button.action)
 
-	if bSelectedHighlight then
-		bSelectedHighlight:SetDrawLayer("OVERLAY", 2)
-		bSelectedHighlight:ClearAllPoints()
-		bSelectedHighlight:SetPoint("TOPLEFT", -8, 8)
-		bSelectedHighlight:SetPoint("BOTTOMRIGHT", 8, -8)
-	end
-
-	if bLock then
-		bLock:ClearAllPoints()
-		bLock:SetPoint("TOPLEFT", 2, -2)
-		bLock:SetPoint("BOTTOMRIGHT", -2, 2)
-	end
-
-	if bBetterIcon then
-		bBetterIcon:SetDrawLayer("OVERLAY", 2)
-		bBetterIcon:SetSize(18, 18)
-		bBetterIcon:ClearAllPoints()
-		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
-	end
-
-	button:SetBorderColor(unpack(COLORS.yellow))
-
-	button.styled = true
-end
-
-function E:SkinExtraActionButton(button)
-	if not button or button.styled then return end
-
-	SkinButton(button)
-
-	E:ForceHide(button.style or button.Style)
-
-	local CD = button.cooldown or button.Cooldown
-	if CD.SetTimerTextHeight then
-		CD:SetTimerTextHeight(14)
-	end
-
-	button.styled = true
-end
-
-function E:SkinPetActionButton(button)
-	if not button or button.styled then return end
-
-	SkinButton(button)
-
-	local name = button:GetName()
-	local bCD = button.cooldown
-	local bAutoCast = _G[name.."AutoCastable"]
-	local bShine = _G[name.."Shine"]
-	local bHotKey = button.HotKey
-
-	if bCD and bCD.SetTimerTextHeight then
-		bCD:SetTimerTextHeight(10)
-	end
-
-	if bAutoCast then
-		bAutoCast:SetDrawLayer("OVERLAY", 2)
-		bAutoCast:ClearAllPoints()
-		bAutoCast:SetPoint("TOPLEFT", -12, 12)
-		bAutoCast:SetPoint("BOTTOMRIGHT", 12, -12)
-	end
-
-	if bShine then
-		bShine:ClearAllPoints()
-		bShine:SetPoint("TOPLEFT", 1, -1)
-		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
-	end
-
-	if bHotKey then
-		bHotKey:SetFontObject("LS8Font_Outline")
-
-		tinsert(B.HandledHotKeys, bHotKey)
-
-		if not C.bars.show_hotkey then
-			bHotKey:Hide()
+				if isUsable then
+					button.icon:SetVertexColor(1, 1, 1, 1)
+				elseif notEnoughMana then
+					button.icon:SetVertexColor(unpack(M.colors.icon.oom))
+				else
+					button.icon:SetVertexColor(unpack(M.colors.icon.nu))
+				end
+			end
 		end
 	end
 
-	button:HookScript("OnUpdate", PetActionButton_OnUpdateHook)
-
-	hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
-
-	button.styled = true
+	if flashTime <= 0 then
+		flashTime = flashTime + ATTACK_BUTTON_FLASH_TIME
+	end
 end
 
-function E:SkinActionButton(button)
-	if not button or button.styled then return end
-
-	SkinButton(button)
-
-	local name = button:GetName()
-	local bFloatingBG = _G[name.."FloatingBG"]
-
-	if bFloatingBG then
-		E:ForceHide(bFloatingBG)
-	end
-
-	if button:GetScript("OnUpdate") then
-		button:HookScript("OnUpdate", ActionButton_OnUpdateHook)
-	end
-
-	button.styled = true
-end
-
-function E:SkinOTButton()
-	if not self or self.styled then return end
-
-	SkinButton(self)
-
-	if self:GetScript("OnUpdate") then
-		self:HookScript("OnUpdate", OTButton_OnUpdateHook)
-	end
-
-	self:RegisterForDrag("LeftButton")
-	self:HookScript("OnDragStart", OTButton_OnDragHook)
-	self:HookScript("OnReceiveDrag", OTButton_OnDragHook)
-
-	self.styled = true
-end
-
-function E:SkinAuraButton(button)
-	if not button or button.styled then return end
-
-	local name = button:GetName()
-	local bIcon = _G[name.."Icon"]
-	local bBorder = _G[name.."Border"]
-	local bCount = _G[name.."Count"]
-	local bDuration = _G[name.."Duration"]
-
-	if bIcon then
-		if name == "ConsolidatedBuffs" then
-			E:UpdateIcon(bIcon, nil, 18 / 128, 46 / 128, 18 / 64, 46 / 64)
+local function Dispatcher_OnEvent(self, event, ...)
+	for button in next, buttons do
+		if button:HasAction() then
+			actionButtons[button] = true
 		else
-			E:UpdateIcon(bIcon)
+			actionButtons[button] = nil
 		end
 	end
-
-	E:CreateBorder(button)
-
-	if bBorder then
-		bBorder:SetTexture(nil)
-
-		if gsub(name, "%d", "") == "TempEnchant" then
-			button:SetBorderColor(unpack(COLORS.darkmagenta))
-		else
-			hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
-		end
-	end
-
-	if bCount then
-		bCount:SetFontObject("LS10Font_Outline")
-		bCount:SetJustifyH("RIGHT")
-		bCount:SetDrawLayer("OVERLAY", 2)
-		bCount:ClearAllPoints()
-		bCount:SetPoint("TOPLEFT", -2, 0)
-		bCount:SetPoint("TOPRIGHT", 2, 0)
-		bCount:SetWidth(button:GetWidth())
-	end
-
-	if bDuration then
-		bDuration:SetFontObject("LS10Font_Outline")
-		bDuration:SetJustifyH("CENTER")
-		bDuration:SetDrawLayer("OVERLAY", 2)
-		bDuration:ClearAllPoints()
-		bDuration:SetPoint("BOTTOMLEFT", -4, 0)
-		bDuration:SetPoint("BOTTOMRIGHT", 4, 0)
-		bDuration:SetWidth(button:GetWidth())
-
-		hooksecurefunc(bDuration, "SetFormattedText", SetFormattedTextHook)
-	end
-
-	button.styled = true
 end
 
-function E:SkinSquareButton(button)
-	local texture = button.icon:GetTexture()
-	local highlight = button:GetHighlightTexture()
-
-	button.icon:SetSize(10, 10)
-
-	highlight:SetTexture(texture)
-	highlight:SetTexCoord(button.icon:GetTexCoord())
-	highlight:ClearAllPoints()
-	highlight:SetPoint("CENTER", 0, 0)
-	highlight:SetSize(10, 10)
-
-	button:SetNormalTexture("")
-	button:SetPushedTexture("")
-end
-
-function B:ShowHotKeyText()
-	for _, v in next, B.HandledHotKeys do
-		v:Show()
-	end
-
-	return true, "|cff26a526Success!|r Binding text is now shown."
-end
-
-function B:HideHotKeyText()
-	for _, v in next, B.HandledHotKeys do
-		v:Hide()
-	end
-
-	return true, "|cff26a526Success!|r Binding text is now hidden."
-end
-
-function B:ShowMacroNameText()
-	for _, v in next, B.HandledMacroNames do
-		v:Show()
-	end
-
-	return true, "|cff26a526Success!|r Macro text is now shown."
-end
-
-function B:HideMacroNameText()
-	for _, v in next, B.HandledMacroNames do
-		v:Hide()
-	end
-
-	return true, "|cff26a526Success!|r Macro text is now hidden."
-end
+local dispatcher = _G.CreateFrame("Frame")
+dispatcher:SetScript("OnEvent", Dispatcher_OnEvent)
+dispatcher:SetScript("OnUpdate", Dispatcher_OnUpdate)
+dispatcher:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+dispatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+dispatcher:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+dispatcher:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")

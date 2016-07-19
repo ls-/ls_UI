@@ -28,26 +28,25 @@ local function CreateActionPageButton(anchor, side)
 
 	local bg = BarController:CreateTexture(nil, "ARTWORK", nil, -1)
 	bg:SetAllPoints(button)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_1")
+	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-page-button")
 	bg:SetVertexColor(0.15, 0.65, 0.15)
 	button.Bg = bg
 
-	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_1", "ADD")
+	button:SetHighlightTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-page-button", "ADD")
 
 	if side == "Right" then
 		button:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -3, 7)
-		bg:SetTexCoord(25 / 64, 47 / 64, 154 / 256, 176 / 256)
-		button:GetHighlightTexture():SetTexCoord(1 / 64, 23 / 64, 154 / 256, 176 / 256)
+		bg:SetTexCoord(25 / 64, 47 / 64, 1 / 32, 23 / 32)
+		button:GetHighlightTexture():SetTexCoord(1 / 64, 23 / 64, 1 / 32, 23 / 32)
 	else
 		button:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 3, 7)
-		bg:SetTexCoord(47 / 64, 25 / 64, 154 / 256, 176 / 256)
-		button:GetHighlightTexture():SetTexCoord(23 / 64, 1 / 64, 154 / 256, 176 / 256)
+		bg:SetTexCoord(47 / 64, 25 / 64, 1 / 32, 23 / 32)
+		button:GetHighlightTexture():SetTexCoord(23 / 64, 1 / 64, 1 / 32, 23 / 32)
 	end
 end
 
 local function CreateAnimationSet(object, side)
 	local group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	group:SetLooping("REPEAT")
 	BarController[side.."RotationNormal"] = group
 
@@ -56,7 +55,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(20)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationRewind"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -64,7 +62,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(0.25)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationFastForward"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -72,7 +69,6 @@ local function CreateAnimationSet(object, side)
 	animation:SetDuration(0.25)
 
 	group = object:CreateAnimationGroup()
-	group:SetIgnoreFramerateThrottle(true)
 	BarController[side.."RotationLongRewind"] = group
 
 	animation = group:CreateAnimation("ROTATION")
@@ -83,16 +79,16 @@ end
 local function ConstructCap(side)
 	local cap = BarController:CreateTexture(nil, "ARTWORK", nil, 2)
 	cap:SetSize(48, 50)
-	cap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_1")
+	cap:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-main")
 
 	local cog = BarController:CreateTexture(nil, "ARTWORK", nil, -2)
-	cog:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
-	cog:SetTexCoord(1 / 256, 79 / 256, 1 / 128, 79 / 128)
+	cog:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-cog")
+	cog:SetTexCoord(1 / 128, 79 / 128, 1 / 128, 79 / 128)
 	cog:SetSize(72, 72)
 
 	local nest = BarController:CreateTexture(nil, "ARTWORK", nil, 3)
 	nest:SetSize(146, 10)
-	nest:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
+	nest:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-nest")
 
 	CreateAnimationSet(cog, side)
 	BarController[side.."RotationNormal"]:Play()
@@ -105,7 +101,7 @@ local function ConstructCap(side)
 
 		cog:SetPoint("CENTER", cap, "BOTTOMLEFT", 4, 7)
 
-		nest:SetTexCoord(80 / 256, 226 / 256, 12 / 128, 22 / 128)
+		nest:SetTexCoord(1 / 256, 147 / 256, 12 / 64, 22 / 64)
 		nest:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 36, 3)
 	else
 		CreateActionPageButton(cap, side)
@@ -115,7 +111,7 @@ local function ConstructCap(side)
 
 		cog:SetPoint("CENTER", cap, "BOTTOMRIGHT", -4, 7)
 
-		nest:SetTexCoord(80 / 256, 226 / 256, 1 / 128, 11 / 128)
+		nest:SetTexCoord(1 / 256, 147 / 256, 1 / 64, 11 / 64)
 		nest:SetPoint("BOTTOMRIGHT", BarController, "BOTTOMLEFT", -36, 3)
 	end
 end
@@ -172,14 +168,25 @@ function B:SetupControlledBar(bar, barType)
 			self:Show()
 		]])
 		RegisterStateDriver(bar, "numbuttons", "[vehicleui][possessbar][overridebar] 6; 12")
-		-- RegisterStateDriver(bar, "numbuttons", "[combat] 6; 12")
 
 		if #bar.buttons > 6 then
 			for i = 7, #bar.buttons, 1 do
-				RegisterStateDriver(bar.buttons[i], "visibility", "[vehicleui][possessbar][overridebar] hide; show")
-				-- RegisterStateDriver(bar.buttons[i], "visibility", "[combat] hide; show")
+				bar.buttons[i]:SetAttribute("_childupdate-button-toggle", [[
+					if message == "show" then
+						self:Show()
+					else
+						self:Hide()
+					end
+				]])
 			end
 		end
+
+		bar:SetAttribute("_onstate-button-toggle", [[
+			control:ChildUpdate("button-toggle", newstate)
+		]])
+
+		RegisterStateDriver(bar, "button-toggle", "[vehicleui][possessbar][overridebar] hide; show")
+
 		BarController.MainBars = BarController.MainBars or {}
 		tinsert(BarController.MainBars, bar)
 
@@ -230,7 +237,6 @@ function B:ActionBarController_Initialize()
 		B.BarController = BarController
 
 		local group = BarController:CreateAnimationGroup()
-		group:SetIgnoreFramerateThrottle(true)
 		group:SetScript("OnPlay", BarControllerAnimation_OnPlay)
 		group:SetScript("OnFinished", BarControllerAnimation_OnFinished)
 		BarController.SlideInOut = group
@@ -251,9 +257,9 @@ function B:ActionBarController_Initialize()
 
 		local texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
 		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_1", true)
+		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-main", true)
 		texture:SetHorizTile(true)
-		texture:SetTexCoord(0, 1, 0, 50 / 256)
+		texture:SetTexCoord(0 / 64, 64 / 64, 0 / 256, 50 / 256)
 		BarController.Fg = texture
 
 		ConstructCap("Left")
@@ -261,8 +267,8 @@ function B:ActionBarController_Initialize()
 
 		texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
 		texture:SetSize(50, 10)
-		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar_2")
-		texture:SetTexCoord(80 / 256, 130 / 256, 23 / 128, 33 / 128)
+		texture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\bottombar-nest")
+		texture:SetTexCoord(1 / 256, 51 / 256, 23 / 64, 33 / 64)
 		texture:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 192, 3)
 
 		BarController:SetAttribute("_onstate-numbuttons", [[

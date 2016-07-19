@@ -5,7 +5,7 @@
 	<Include file="blizzard\_blizzard.xml"/>
 	<Include file="minimap\_minimap.xml"/>
 	<Include file="mail\_mail.xml"/>
-	<Include file="nameplates\_nameplates.xml"/>
+	<!-- <Include file="nameplates\_nameplates.xml"/> -->
 	<Include file="tooltips\_tooltips.xml"/>
 	<Include file="unitframes\_unitframes.xml"/>
 	<Include file="tools\_tools.xml"/>

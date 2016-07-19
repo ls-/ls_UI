@@ -1,12 +1,13 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS, TEXTURES = M.colors, M.textures
 local B = E:GetModule("Bars")
 
-local tonumber = tonumber
-local match = strmatch
+-- Lua
+local _G = _G
+local unpack, tonumber, pairs = unpack, tonumber, pairs
 
-local Bars = {}
+-- Mine
+local bars = {}
 
 local BARS_CFG = {
 	bar1 = {
@@ -23,13 +24,12 @@ local BAR_LAYOUT = {
 			ActionButton1, ActionButton2, ActionButton3, ActionButton4, ActionButton5, ActionButton6,
 			ActionButton7, ActionButton8, ActionButton9, ActionButton10, ActionButton11, ActionButton12
 		},
-		original_bar = MainMenuBarArtFrame,
 		name = "LSMainMenuBar",
 		condition = "[petbattle] hide; show",
 	},
 	bar2 = {
 		buttons = {
-			MultiBarBottomLeftButton1, MultiBarBottomLeftButton2, MultiBarBottomLeftButton3,	MultiBarBottomLeftButton4,
+			MultiBarBottomLeftButton1, MultiBarBottomLeftButton2, MultiBarBottomLeftButton3, MultiBarBottomLeftButton4,
 			MultiBarBottomLeftButton5, MultiBarBottomLeftButton6, MultiBarBottomLeftButton7, MultiBarBottomLeftButton8,
 			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12
 		},
@@ -75,6 +75,7 @@ local BAR_LAYOUT = {
 		original_bar = PetActionBarFrame,
 		name = "LSPetActionBar",
 		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
+		skin_function = "SkinPetActionButton"
 	},
 	bar7 = {
 		buttons = {
@@ -84,10 +85,21 @@ local BAR_LAYOUT = {
 		original_bar = StanceBarFrame,
 		name = "LSStanceBar",
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		skin_function = "SkinStanceButton"
 	},
 }
 
-local STANCE_PET_VISIBILITY = {
+local PET_LAYOUT = {
+	[1] = {"BOTTOM", 0, 110},
+	[2] = {"BOTTOM", 0, 138},
+}
+
+local STANCE_LAYOUT = {
+	[1] = {"BOTTOM", 0, 138},
+	[2] = {"BOTTOM", 0, 110},
+}
+
+local LAYOUT_ID = {
 	WARRIOR = 2,
 	PALADIN = 2,
 	HUNTER = 1,
@@ -99,13 +111,10 @@ local STANCE_PET_VISIBILITY = {
 	WARLOCK = 1,
 	MONK = 2,
 	DRUID = 2,
-	PET1 = {"BOTTOM", 0, 110},
-	PET2 = {"BOTTOM", 0, 138},
-	STANCE1 = {"BOTTOM", 0, 138},
-	STANCE2 = {"BOTTOM", 0, 110},
+	DEMONHUNTER = 1,
 }
 
--- page swapping is taken from tukui, thx :D really usefull thingy
+-- page swapping is taken from tukui, thx :D
 local PAGE_LAYOUT = {
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 	["PRIEST"] = "[bonusbar:1] 7;",
@@ -127,48 +136,21 @@ local function GetPageLayout()
 	return condition
 end
 
-local function LSActionBar_OnEvent(self, event, ...)
-	if event == "PLAYER_LOGIN" or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "FORCE_CUSTOM_UPDATE" then
-		for i = 1, NUM_ACTIONBAR_BUTTONS do
-			self:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
-		end
-
-		self:Execute([[
-			buttons = table.new()
-			for i = 1, 12 do
-				table.insert(buttons, self:GetFrameRef("ActionButton"..i))
-			end
-		]])
-
-		self:SetAttribute("_onstate-page", [[
-			if HasTempShapeshiftActionBar() then
-				newstate = GetTempShapeshiftBarIndex() or newstate
-			end
-
-			for i, button in ipairs(buttons) do
-				button:SetAttribute("actionpage", tonumber(newstate))
-			end
-		]])
-
-		RegisterStateDriver(self, "page", GetPageLayout())
-	end
-end
-
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "LSPetActionBar" then
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["PET"..STANCE_PET_VISIBILITY[E.PLAYER_CLASS]]))
+		self:SetPoint(unpack(PET_LAYOUT[LAYOUT_ID[E.PLAYER_CLASS]]))
 	else
-		self:SetPoint(unpack(STANCE_PET_VISIBILITY["STANCE"..STANCE_PET_VISIBILITY[E.PLAYER_CLASS]]))
+		self:SetPoint(unpack(STANCE_LAYOUT[LAYOUT_ID[E.PLAYER_CLASS]]))
 	end
 end
 
 local function UnlockPetActionBarHook()
-	PetActionBarFrame.locked = true
+	_G.PetActionBarFrame.locked = true
 end
 
 function B:PLAYER_REGEN_ENABLED()
-	if UnitLevel("player") >= 10 and not PetActionBarFrame:IsShown() then
-		PetActionBarFrame:Show()
+	if _G.UnitLevel("player") >= 10 and not _G.PetActionBarFrame:IsShown() then
+		_G.PetActionBarFrame:Show()
 
 		B:UnregisterEvent("PLAYER_REGEN_ENABLED")
 	end
@@ -176,10 +158,10 @@ end
 
 function B:PLAYER_LEVEL_UP(level)
 	if level >= 10 then
-		if InCombatLockdown() then
+		if _G.InCombatLockdown() then
 			B:RegisterEvent("PLAYER_REGEN_ENABLED")
 		else
-			PetActionBarFrame:Show()
+			_G.PetActionBarFrame:Show()
 		end
 
 		B:UnregisterEvent("PLAYER_LEVEL_UP")
@@ -198,35 +180,62 @@ function B:HandleActionBars()
 		BARS_CFG = C.bars
 	end
 
-	for key, data in next, BAR_LAYOUT do
+	for key, data in pairs(BAR_LAYOUT) do
 		local config = BARS_CFG[key]
-		local index = match(key, "(%d+)")
-		local bar = CreateFrame("Frame", data.name, UIParent, "SecureHandlerStateTemplate")
+		local bar = _G.CreateFrame("Frame", data.name, _G.UIParent, "SecureHandlerStateTemplate")
 
-		if index == "6" then
-			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinPetActionButton, data.original_bar)
-		else
-			E:SetupBar(data.buttons, config.button_size, config.button_gap, bar, config.direction, E.SkinActionButton, data.original_bar)
-		end
+		E:SetupBar(bar, data.buttons, config.button_size, config.button_gap, config.direction, E[data.skin_function or "SkinActionButton"])
 
 		if data.condition then
-			RegisterStateDriver(bar, "visibility", data.condition)
+			_G.RegisterStateDriver(bar, "visibility", data.condition)
 		end
 
-		if index == "1" then
-			bar:RegisterEvent("PLAYER_LOGIN")
-			bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-			bar:SetScript("OnEvent", LSActionBar_OnEvent)
+		if data.name == "LSMainMenuBar" then
+			for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
+				bar:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
+			end
+
+			bar:Execute([[
+				buttons = table.new()
+
+				for i = 1, 12 do
+					table.insert(buttons, self:GetFrameRef("ActionButton"..i))
+				end
+			]])
+
+			bar:SetAttribute("_onstate-page", [[
+				if HasTempShapeshiftActionBar() then
+					newstate = GetTempShapeshiftBarIndex() or newstate
+				end
+
+				for i, button in ipairs(buttons) do
+					button:SetAttribute("actionpage", tonumber(newstate))
+				end
+			]])
+
+			_G.RegisterStateDriver(bar, "page", GetPageLayout())
 
 			if C.bars.restricted then
 				B:SetupControlledBar(bar, "Main")
 			end
 		end
 
-		Bars[key] = bar
+		if data.original_bar then
+			data.original_bar.slideOut = E.NOA
+			data.original_bar:SetParent(bar)
+			data.original_bar:SetAllPoints()
+			data.original_bar:EnableMouse(false)
+			_G.UIPARENT_MANAGED_FRAME_POSITIONS[data.original_bar:GetName()] = nil
+		else
+			for _, button in pairs(data.buttons) do
+				button:SetParent(bar)
+			end
+		end
+
+		bars[key] = bar
 	end
 
-	for key, bar in next, Bars do
+	for key, bar in pairs(bars) do
 		if not bar.controlled then
 			if BARS_CFG[key].point then
 				bar:SetPoint(unpack(BARS_CFG[key].point))
@@ -238,42 +247,44 @@ function B:HandleActionBars()
 		end
 	end
 
-	if UnitLevel("player") < 10 then
-		PetActionBarFrame:Hide()
+	if _G.UnitLevel("player") < 10 then
+		_G.PetActionBarFrame:Hide()
 
 		B:RegisterEvent("PLAYER_LEVEL_UP")
 	else
-		PetActionBarFrame:Show()
+		_G.PetActionBarFrame:Show()
 	end
 
-	PetActionBarFrame:SetScript("OnUpdate", nil)
-	PetActionBarFrame.locked = true
-	hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
+	_G.PetActionBarFrame:SetScript("OnUpdate", nil)
+	_G.PetActionBarFrame.locked = true
+	_G.hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
 
-	for _, v in next, {
-		MainMenuBar,
-		ActionBarDownButton,
-		ActionBarUpButton,
-		MainMenuBarTexture0,
-		MainMenuBarTexture1,
-		MainMenuBarTexture2,
-		MainMenuBarTexture3,
-		MainMenuBarLeftEndCap,
-		MainMenuBarRightEndCap,
-		MainMenuBarPageNumber,
-		MultiCastActionBarFrame,
-		OverrideActionBar,
-		PossessBarFrame,
-		ReputationWatchBar,
-		StanceBarLeft,
-		StanceBarMiddle,
-		StanceBarRight,
-		SlidingActionBarTexture0,
-		SlidingActionBarTexture1,
-		SpellFlyoutHorizontalBackground,
-		SpellFlyoutVerticalBackground,
-		SpellFlyoutBackgroundEnd,
-	} do
+	for _, v in pairs({
+		_G.ActionBarDownButton,
+		_G.ActionBarUpButton,
+		_G.MainMenuBar,
+		_G.MainMenuBarLeftEndCap,
+		_G.MainMenuBarPageNumber,
+		_G.MainMenuBarRightEndCap,
+		_G.MainMenuBarTexture0,
+		_G.MainMenuBarTexture1,
+		_G.MainMenuBarTexture2,
+		_G.MainMenuBarTexture3,
+		_G.MultiCastActionBarFrame,
+		_G.OverrideActionBar,
+		_G.PossessBarFrame,
+		_G.ReputationWatchBar,
+		_G.SlidingActionBarTexture0,
+		_G.SlidingActionBarTexture1,
+		_G.SpellFlyoutBackgroundEnd,
+		_G.SpellFlyoutHorizontalBackground,
+		_G.SpellFlyoutVerticalBackground,
+		_G.StanceBarLeft,
+		_G.StanceBarMiddle,
+		_G.StanceBarRight,
+	})do
 		E:ForceHide(v)
 	end
+
+	_G.MainMenuBarArtFrame:SetParent(E.HIDDEN_PARENT)
 end

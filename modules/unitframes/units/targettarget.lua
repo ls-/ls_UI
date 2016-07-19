@@ -87,5 +87,5 @@ function UF:ConstructTargetTargetFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[custom:difficulty][custom:effectivelevel][shortclassification]|r [custom:name]")
+	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name]")
 end

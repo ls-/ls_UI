@@ -474,7 +474,7 @@ function CFG:UFAuras_Initialize()
 
 		local bg = button:CreateTexture(nil, "BACKGROUND")
 		bg:SetAllPoints()
-		bg:SetTexture(0.15, 0.15, 0.15)
+		bg:SetColorTexture(0.15, 0.15, 0.15)
 		button.Bg = bg
 
 		if i == 1 then
@@ -564,7 +564,7 @@ function CFG:UFAuras_Initialize()
 	panel.ConfigCopyButton = configCopyButton
 
 	local friendlyOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
-	friendlyOptionsBG:SetTexture(0.3, 0.3, 0.3, 0.3)
+	friendlyOptionsBG:SetColorTexture(0.3, 0.3, 0.3, 0.3)
 	friendlyOptionsBG:SetHeight(62)
 	friendlyOptionsBG:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -40)
 	friendlyOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)

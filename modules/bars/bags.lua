@@ -124,11 +124,9 @@ function B:HandleBags(forceInit)
 	end
 
 	if C.bars.bags.enabled or forceInit then
-		local size = BAGS_CFG.button_size
 		local bar = CreateFrame("Frame", "LSBagBar", UIParent, "SecureHandlerBaseTemplate")
 
-		E:SetupBar(BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, bar,
-			BAGS_CFG.direction, E.SkinBagButton)
+		E:SetupBar(bar, BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, BAGS_CFG.direction, E.SkinBagButton)
 
 		if C.bars.restricted then
 			B:SetupControlledBar(bar, "Bags")
@@ -150,6 +148,7 @@ function B:HandleBags(forceInit)
 
 		for _, bag in next, BAGS do
 			bag:UnregisterEvent("ITEM_PUSH")
+			bag:SetParent(bar)
 
 			if bag ~= MainMenuBarBackpackButton then
 				bag:Hide()

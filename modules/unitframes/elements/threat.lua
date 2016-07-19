@@ -1,8 +1,15 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local THREATCOLORS = M.colors.threat
 
+-- Lua
+local unpack = unpack
+
+-- Blizz
+local UnitPlayerControlled = UnitPlayerControlled
+local UnitThreatSituation = UnitThreatSituation
+
+-- Mine
 local function ThreatUpdateOverride(self, event, unit)
 	if unit ~= self.unit then return end
 
@@ -19,8 +26,8 @@ local function ThreatUpdateOverride(self, event, unit)
 		status = UnitThreatSituation("player", unit)
 	end
 
-	if(status and status > 0) then
-		threat:SetVertexColor(unpack(THREATCOLORS[status]))
+	if status then
+		threat:SetVertexColor(unpack(M.colors.threat[status + 1]))
 		threat:Show()
 	else
 		threat:Hide()
@@ -28,7 +35,7 @@ local function ThreatUpdateOverride(self, event, unit)
 end
 
 function UF:CreateThreat(parent)
-	local threat = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 1)
+	local threat = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 0)
 	threat.Override = ThreatUpdateOverride
 
 	return threat

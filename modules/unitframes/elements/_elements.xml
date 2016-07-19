@@ -6,8 +6,11 @@
 	<Script file="classpower.lua"/>
 	<Script file="healprediction.lua"/>
 	<Script file="health.lua"/>
+	<Script file="highlight.lua"/>
 	<Script file="power.lua"/>
+	<Script file="pvp.lua"/>
 	<Script file="rarityindication.lua"/>
 	<Script file="tags.lua"/>
 	<Script file="threat.lua"/>
+	<Script file="totems.lua"/>
 </Ui>

@@ -1,271 +1,402 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local COLORS = M.colors
-local POWERCOLORS = COLORS.power
 
-local unpack, pairs, gsub = unpack, pairs, gsub
+-- Lua
+local _G = _G
+local unpack, pairs = unpack, pairs
+local strgsub, strupper = string.gsub, string.upper
 
-local UnitHealthMax, UnitStagger = UnitHealthMax, UnitStagger
+-- Blizz
+local UnitHealthMax = UnitHealthMax
+local UnitStagger = UnitStagger
+local UnitHasVehicleUI = UnitHasVehicleUI
 
+-- Mine
 local LAYOUT = {
 	[0] = {
-		sep = {0, 1 / 512, 0, 1 / 256},
+		sep = {0, 0, 0, 0},
 	},
 	[1] = {
 		[1] = {
 			size = 128,
-			point = {"CENTER"},
+			point = {"BOTTOM", 0, 0},
 			glow = {232 / 512, 248 / 512, 16 / 256, 144 / 256},
 		},
-		sep = {0, 1 / 512, 0, 1 / 256},
+		sep = {190 / 512, 206 / 512, 1 / 512, 129 / 512},
 	},
 	[2] = {
 		[1] = {
 			size = 64,
-			point = {"CENTER", 0 , -112},
-			glow = {264 / 512, 280 / 512, 80 / 256, 144 / 256},
+			point = {"BOTTOM", 0, 0},
+			glow = {207 / 512, 223 / 512, 65 / 512, 129 / 512},
 		},
 		[2] = {
 			size = 64,
-			point = {"CENTER", 0 , 112},
-			glow = {264 / 512, 280 / 512, 16 / 256, 80 / 256},
+			point = {"BOTTOM", 0, 64},
+			glow = {207 / 512, 223 / 512, 1 / 512, 65 / 512 },
 		},
-		sep = {38 / 512, 58 / 512, 16 / 256, 144 / 256},
+		sep = {22 / 512, 42 / 512, 1 / 512, 129 / 512},
 	},
 	[3] = {
 		[1] = {
 			size = 42,
-			point = {"CENTER", 0 , -43},
-			glow = {296 / 512, 312 / 512, 102 / 256, 144 / 256},
+			point = {"BOTTOM", 0, 0},
+			glow = {224 / 512, 240 / 512, 87 / 512, 129 / 512},
 		},
 		[2] = {
 			size = 44,
-			point = {"CENTER", 0, 0},
-			glow = {296 / 512, 312 / 512, 58 / 256, 102 / 256},
+			point = {"BOTTOM", 0, 42},
+			glow = {224 / 512, 240 / 512, 43 / 512, 87 / 512},
 		},
 		[3] = {
 			size = 42,
-			point = {"CENTER", 0 , 43},
-			glow = {296 / 512, 312 / 512, 16 / 256, 58 / 256},
+			point = {"BOTTOM", 0, 86},
+			glow = {224 / 512, 240 / 512, 1 / 512, 43 / 512},
 		},
-		sep = {70 / 512, 90 / 512, 16 / 256, 144 / 256},
+		sep = {43 / 512, 63 / 512, 1 / 512, 129 / 512},
 	},
 	[4] = {
 		[1] = {
 			size = 32,
-			point = {"CENTER", 0 , -48},
-			glow = {328 / 512, 344 / 512, 112 / 256, 144 / 256},
+			point = {"BOTTOM", 0, 0},
+			glow = {241 / 512, 257 / 512, 97 / 512, 129 / 512},
 		},
 		[2] = {
 			size = 32,
-			point = {"CENTER", 0 , -16},
-			glow = {328 / 512, 344 / 512, 80 / 256, 112 / 256},
+			point = {"BOTTOM", 0, 32},
+			glow = {241 / 512, 257 / 512, 65 / 512, 97 / 512},
 		},
 		[3] = {
 			size = 32,
-			point = {"CENTER", 0 , 16},
-			glow = {328 / 512, 344 / 512, 48 / 256, 80 / 256},
+			point = {"BOTTOM", 0, 64},
+			glow = {241 / 512, 257 / 512, 33 / 512, 65 / 512},
 		},
 		[4] = {
 			size = 32,
-			point = {"CENTER", 0 , 48},
-			glow = {328 / 512, 344 / 512, 16 / 256, 48 / 256},
+			point = {"BOTTOM", 0, 96},
+			glow = {241 / 512, 257 / 512, 1 / 512, 33 / 512},
 		},
-		sep = {102 / 512, 122 / 512, 16 / 256, 144 / 256},
+		sep = {64 / 512, 84 / 512, 1 / 512, 129 / 512},
 	},
 	[5] = {
 		[1] = {
 			size = 25,
-			point = {"CENTER", 0, -52},
-			glow = {360 / 512, 376 / 512, 119 / 256, 144 / 256},
+			point = {"BOTTOM", 0, 0},
+			glow = {258 / 512, 274 / 512, 104 / 512, 129 / 512},
 		},
 		[2] = {
 			size = 25,
-			point = {"CENTER", 0, -27},
-			glow = {360 / 512, 376 / 512, 94 / 256, 119 / 256},
+			point = {"BOTTOM", 0, 25},
+			glow = {258 / 512, 274 / 512, 79 / 512, 104 / 512},
 		},
 		[3] = {
 			size = 28,
-			point = {"CENTER", 0, 0},
-			glow = {360 / 512, 376 / 512, 66 / 256, 94 / 256},
+			point = {"BOTTOM", 0, 50},
+			glow = {258 / 512, 274 / 512, 51 / 512, 79 / 512},
 		},
 		[4] = {
 			size = 25,
-			point = {"CENTER", 0, 27},
-			glow = {360 / 512, 376 / 512, 41 / 256, 66 / 256},
+			point = {"BOTTOM", 0, 78},
+			glow = {258 / 512, 274 / 512, 26 / 512, 51 / 512},
 		},
 		[5] = {
 			size = 25,
-			point = {"CENTER", 0, 52},
-			glow = {360 / 512, 376 / 512, 16 / 256, 41 / 256},
+			point = {"BOTTOM", 0, 103},
+			glow = {258 / 512, 274 / 512, 1 / 512, 26 / 512},
 		},
-		sep = {134 / 512, 154 / 512, 16 / 256, 144 / 256},
+		sep = {85 / 512, 105 / 512, 1 / 512, 129 / 512},
 	},
 	[6] = {
 		[1] = {
 			size = 21,
-			point = {"CENTER", 0, -54},
-			glow = {392 / 512, 408 / 512, 123 / 256, 144 / 256},
+			point = {"BOTTOM", 0, 0},
+			glow = {275 / 512, 291 / 512, 108 / 512, 129 / 512},
 		},
 		[2] = {
 			size = 21,
-			point = {"CENTER", 0, -33},
-			glow = {392 / 512, 408 / 512, 102 / 256, 123 / 256},
+			point = {"BOTTOM", 0, 21},
+			glow = {275 / 512, 291 / 512, 87 / 512, 108 / 512},
 		},
 		[3] = {
 			size = 22,
-			point = {"CENTER", 0, -11},
-			glow = {392 / 512, 408 / 512, 80 / 256, 102 / 256},
+			point = {"BOTTOM", 0, 42},
+			glow = {275 / 512, 291 / 512, 65 / 512, 87 / 512},
 		},
 		[4] = {
 			size = 22,
-			point = {"CENTER", 0, 11},
-			glow = {392 / 512, 408 / 512, 58 / 256, 80 / 256},
+			point = {"BOTTOM", 0, 64},
+			glow = {275 / 512, 291 / 512, 43 / 512, 65 / 512},
 		},
 		[5] = {
 			size = 21,
-			point = {"CENTER", 0, 32},
-			glow = {392 / 512, 408 / 512, 37 / 256, 58 / 256},
+			point = {"BOTTOM", 0, 86},
+			glow = {275 / 512, 291 / 512, 22 / 512, 43 / 512},
 		},
 		[6] = {
 			size = 21,
-			point = {"CENTER", 0, 53},
-			glow = {392 / 512, 408 / 512, 16 / 256, 37 / 256},
+			point = {"BOTTOM", 0, 107},
+			glow = {275 / 512, 291 / 512, 1 / 512, 22 / 512},
 		},
-		sep = {166 / 512, 186 / 512, 16 / 256, 144 / 256},
+		sep = {106 / 512, 126 / 512, 1 / 512, 129 / 512},
 	},
-	["sun"] = {416 / 512, 428 / 512, 16 / 256, 144 / 256},
-	["moon"] = {428 / 512, 440 / 512, 16 / 256, 144 / 256},
-	["none"] = {0, 1 / 512, 0, 1 / 256},
+	[7] = {
+		[1] = {
+			size = 18,
+			point = {"BOTTOM", 0, 0},
+			glow = {292 / 512, 308 / 512, 111 / 512, 129 / 512}
+		},
+		[2] = {
+			size = 18,
+			point = {"BOTTOM", 0, 18},
+			glow = {292 / 512, 308 / 512, 93 / 512, 111 / 512}
+		},
+		[3] = {
+			size = 18,
+			point = {"BOTTOM", 0, 36},
+			glow = {292 / 512, 308 / 512, 75 / 512, 93 / 512}
+		},
+		[4] = {
+			size = 20,
+			point = {"BOTTOM", 0, 54},
+			glow = {292 / 512, 308 / 512, 55 / 512, 75 / 512}
+		},
+		[5] = {
+			size = 18,
+			point = {"BOTTOM", 0, 74},
+			glow = {292 / 512, 308 / 512, 37 / 512, 55 / 512}
+		},
+		[6] = {
+			size = 18,
+			point = {"BOTTOM", 0, 92},
+			glow = {292 / 512, 308 / 512, 19 / 512, 37 / 512}
+		},
+		[7] = {
+			size = 18,
+			point = {"BOTTOM", 0, 110},
+			glow = {292 / 512, 308 / 512, 1 / 512, 19 / 512}
+		},
+		sep = {127 / 512, 147 / 512, 1 / 512, 129 / 512},
+	},
+	[8] = {
+		[1] = {
+			size = 16,
+			point = {"BOTTOM", 0, 0},
+			glow = {309 / 512, 325 / 512, 113 / 512, 129 / 512}
+		},
+		[2] = {
+			size = 16,
+			point = {"BOTTOM", 0, 16},
+			glow = {309 / 512, 325 / 512, 97 / 512, 113 / 512}
+		},
+		[3] = {
+			size = 16,
+			point = {"BOTTOM", 0, 32},
+			glow = {309 / 512, 325 / 512, 81 / 512, 97 / 512}
+		},
+		[4] = {
+			size = 16,
+			point = {"BOTTOM", 0, 48},
+			glow = {309 / 512, 325 / 512, 65 / 512, 81 / 512}
+		},
+		[5] = {
+			size = 16,
+			point = {"BOTTOM", 0, 64},
+			glow = {309 / 512, 325 / 512, 49 / 512, 65 / 512}
+		},
+		[6] = {
+			size = 16,
+			point = {"BOTTOM", 0, 80},
+			glow = {309 / 512, 325 / 512, 33 / 512, 49 / 512}
+		},
+		[7] = {
+			size = 16,
+			point = {"BOTTOM", 0, 96},
+			glow = {309 / 512, 325 / 512, 17 / 512, 33 / 512}
+		},
+		[8] = {
+			size = 16,
+			point = {"BOTTOM", 0, 112},
+			glow = {309 / 512, 325 / 512, 1 / 512, 17 / 512}
+		},
+		sep = {148 / 512, 168 / 512, 1 / 512, 129 / 512},
+	},
+	[9] = {
+		[1] = {
+			size = 14,
+			point = {"BOTTOM", 0, 0},
+			glow = {326 / 512, 342 / 512, 115 / 512, 129 / 512}
+		},
+		[2] = {
+			size = 14,
+			point = {"BOTTOM", 0, 14},
+			glow = {326 / 512, 342 / 512, 101 / 512, 115 / 512}
+		},
+		[3] = {
+			size = 14,
+			point = {"BOTTOM", 0, 28},
+			glow = {326 / 512, 342 / 512, 101 / 512, 115 / 512}
+		},
+		[4] = {
+			size = 14,
+			point = {"BOTTOM", 0, 42},
+			glow = {326 / 512, 342 / 512, 73 / 512, 87 / 512}
+		},
+		[5] = {
+			size = 16,
+			point = {"BOTTOM", 0, 56},
+			glow = {326 / 512, 342 / 512, 57 / 512, 73 / 512}
+		},
+		[6] = {
+			size = 14,
+			point = {"BOTTOM", 0, 72},
+			glow = {326 / 512, 342 / 512, 43 / 512, 57 / 512}
+		},
+		[7] = {
+			size = 14,
+			point = {"BOTTOM", 0, 86},
+			glow = {326 / 512, 342 / 512, 29 / 512, 43 / 512}
+		},
+		[8] = {
+			size = 14,
+			point = {"BOTTOM", 0, 100},
+			glow = {326 / 512, 342 / 512, 15 / 512, 29 / 512}
+		},
+		[9] = {
+			size = 14,
+			point = {"BOTTOM", 0, 114},
+			glow = {326 / 512, 342 / 512, 1 / 512, 15 / 512}
+		},
+		sep = {169 / 512, 189 / 512, 1 / 512, 129 / 512},
+	},
 }
 
-local COMBO_BAR_PRESETS ={
-	["VERTICAL"] = {
-		bar_size = {26, 100},
-		point = {"LEFT", "LSPlayerFrame" , "RIGHT", 2, 0},
-		bg_size = {8, 100},
-		fg_size = {26, 118},
-		fg_coords = {0 / 256, 26 / 256, 0 / 128, 118 / 128},
-		glow_size = {12, 102},
-		glow_coords = {26 / 256, 38 / 256, 0 / 128, 102 / 128},
-		cp_size = {8, 20},
-		cp_point1 = "BOTTOM",
-		cp_point2 = "TOP",
-	},
-	["HORIZONTAL"] = {
-		bar_size = {100, 26},
-		point = {"BOTTOM", "LSPlayerFrame" , "TOP", 0, 2},
-		bg_size = {100, 8},
-		fg_size = {118, 26},
-		fg_coords = {38 / 256, 156 / 256, 0 / 128, 26 / 128},
-		glow_size = {102, 12},
-		glow_coords = {38 / 256, 140 / 256, 26 / 128, 38 / 128},
-		cp_size = {20, 8},
-		cp_point1 = "LEFT",
-		cp_point2 = "RIGHT",
-	},
-}
+local inUse = {} -- slots, visible
 
-local MAX_COMBO_POINTS = MAX_COMBO_POINTS
-local MAX_TOTEMS = MAX_TOTEMS
+function UF:Reskin(frame, slots, visible, sender)
+	if (slots == inUse.slots and visible == inUse.visible) or (not visible and sender ~= inUse.sender) then return end
 
-local prevInUse = "NONE"
-local curInUse = {
-	["RUNE"] = {visible = false, slots = 0},
-	["TOTEMS"] = {visible = false, slots = 0},
-	["CHI"] = {visible = false, slots = 0},
-	["HOLY_POWER"] = {visible = false, slots = 0},
-	["SOUL_SHARDS"] = {visible = false, slots = 0},
-	["SHADOW_ORBS"] = {visible = false, slots = 0},
-	["BURNING_EMBERS"] = {visible = false, slots = 0},
-	["DEMONIC_FURY"] = {visible = false, slots = 0},
-	["ECLIPSE"] = {visible = false, slots = 0},
-	["NONE"] = {visible = false, slots = 0},
-}
+	inUse = {slots = slots, visible = visible, sender = sender}
 
-function UF:Reskin(frame, powerType, visible, slots, sentBy)
-	local cur, prev = curInUse[powerType], curInUse[prevInUse]
+	frame.Cover.Sep:SetTexCoord(unpack(LAYOUT[slots].sep))
 
-	if (cur.visible == visible and cur.slots == slots) or (powerType == "NONE" and prevInUse ~= "NONE" and prevInUse ~= sentBy) then return end
-	prev.visible = false
-	prev.slots = 0
-
-	cur.visible = visible
-	cur.slots = slots
-
-	for ptype, pdata in pairs(curInUse) do
-		if pdata.visible then
-			frame.Cover.Sep:SetTexCoord(unpack(LAYOUT[slots].sep))
-		end
-	end
-
-	if powerType == "NONE" then
-		frame.Cover.Tube:SetTexCoord(198 / 512, 218 / 512, 8 / 256, 152 / 256)
+	if visible then
+		frame.Cover.Tube:Hide()
 	else
-		frame.Cover.Tube:SetTexCoord(6 / 512, 26 / 512, 8 / 256, 152 / 256)
+		frame.Cover.Tube:Show()
 	end
-
-	prevInUse = powerType
 end
 
-local function PostUpdateClassPower(bar, cur, max, changed, event)
+local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
 	if event == "ClassPowerDisable" then
 		bar:Hide()
-
-		for i = 1, #bar do
-			E:StopBlink(bar[i].Glow, true)
-		end
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
+		UF:Reskin(bar:GetParent(), 0, false, "CP")
 	else
 		if event == "ClassPowerEnable" or changed then
 			bar:Show()
-			UF:Reskin(bar:GetParent(), bar.__type, true, max or 5)
+			UF:Reskin(bar:GetParent(), max or 9, true, "CP")
 
-			local r, g, b = unpack(POWERCOLORS[bar.__type])
 			for i = 1, max do
 				local element = bar[i]
 				element:SetSize(12, LAYOUT[max][i].size)
 				element:SetPoint(unpack(LAYOUT[max][i].point))
-				element:SetVertexColor(r, g, b)
+				element.Texture:SetVertexColor(unpack(M.colors.power[powerType]))
 
 				local glow = element.Glow
 				glow:SetSize(16, LAYOUT[max][i].size)
-				glow:SetPoint("CENTER", element, "CENTER", 0, 0)
 				glow:SetTexCoord(unpack(LAYOUT[max][i].glow))
-				glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-			end
-		end
-
-		if cur / max == 1 then
-			for i = 1, max do
-				E:Blink(bar[i].Glow, 0.5, 0, 1)
-			end
-		else
-			for i = 1, max do
-				E:StopBlink(bar[i].Glow)
+				glow:SetVertexColor(unpack(M.colors.power[powerType.."_GLOW"]))
 			end
 		end
 	end
 end
 
-function UF:CreateClassPowerBar(parent, max, cpType, level)
-	local bar = CreateFrame("Frame", "$parent"..gsub(cpType, "_", "").."Bar", parent)
-	bar.__type = strupper(cpType)
+local function Element_OnShow(self)
+	self.OutAnim:Stop()
+
+	if not self.active and not self.InAnim:IsPlaying() then
+		self.InAnim:Play()
+		self.active = true
+	end
+end
+
+local function Element_OnHide(self)
+	self.InAnim:Stop()
+
+	if self.active and not self.OutAnim:IsPlaying() then
+		self.OutAnim:Play()
+		self.active = false
+	end
+end
+
+function UF:CreateClassPowerBar(parent, level)
+	local bar = _G.CreateFrame("Frame", "$parentClassPowerBar", parent)
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
+	E:SetBarSkin(bar, "VERTICAL-L")
 
-	for i = 1, max do
-		element = bar:CreateTexture(nil, "BACKGROUND", nil, 3)
-		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+	for i = 1, 9 do
+		local element = _G.CreateFrame("Frame", "$parentElement"..i, bar)
+		element:SetFrameLevel(bar:GetFrameLevel())
+		element:SetScript("OnShow", Element_OnShow)
+		element:SetScript("OnHide", Element_OnHide)
 		bar[i] = element
 
+		local texture = element:CreateTexture(nil, "BACKGROUND", nil, 3)
+		texture:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		texture:SetAllPoints()
+		element.Texture = texture
+
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
+		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
 		glow:SetAlpha(0)
 		element.Glow = glow
+
+		local ag = glow:CreateAnimationGroup()
+		element.InAnim = ag
+
+		local anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetDuration(0.35)
+		anim:SetFromAlpha(0)
+		anim:SetToAlpha(1)
+
+		anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(2)
+		anim:SetDuration(0.15)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+
+		anim = ag:CreateAnimation("Scale")
+		anim:SetOrder(1)
+		anim:SetDuration(0.35)
+		anim:SetFromScale(0.9, 0.9)
+		anim:SetToScale(1.1, 1.1)
+
+		ag = glow:CreateAnimationGroup()
+		element.OutAnim = ag
+
+		anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetDuration(0.2)
+		anim:SetFromAlpha(0)
+		anim:SetToAlpha(1)
+
+		anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(2)
+		anim:SetDuration(0.2)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+
+		anim = ag:CreateAnimation("Scale")
+		anim:SetOrder(1)
+		anim:SetDuration(0.2)
+		anim:SetFromScale(1.1, 1.1)
+		anim:SetToScale(0.9, 0.9)
+
+		element:Hide()
 	end
 
 	bar.PostUpdate = PostUpdateClassPower
@@ -273,475 +404,69 @@ function UF:CreateClassPowerBar(parent, max, cpType, level)
 	return bar
 end
 
-local function Rune_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	if self.elapsed > 0.1 then
-		self.animState = self.Glow.Blink:GetLoopState()
-
-		if self.animState == "REVERSE" then
-			self.initStop = true
-		end
-
-		if self.initStop then
-			self.initStop = false
-
-			E:StopBlink(self.Glow)
-
-			return self:SetScript("OnUpdate", nil)
-		end
-
-		self.elapsed = 0
-	end
-end
-
 local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
-	if rune.Glow.Blink and rune.Glow.Blink:IsPlaying() and rune:GetScript("OnUpdate") then
-		E:StopBlink(rune.Glow, true)
-	end
-
 	if runeReady and start == 0 then
-		local r, g, b = rune:GetStatusBarColor()
-
-		rune.Glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-
-		E:Blink(rune.Glow, 0.5, 0, 1)
-
-		rune:SetScript("OnUpdate", Rune_OnUpdate)
+		rune.InAnim:Play()
 	end
 
 	if UnitHasVehicleUI("player") then
 		bar:Hide()
-
-		for i = 1, 6 do
-			E:StopBlink(bar[i].Glow, true)
-		end
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
+		UF:Reskin(bar:GetParent(), 0, false, "RUNES")
 	else
 		bar:Show()
-		UF:Reskin(bar:GetParent(), "RUNE", true, 6)
+		UF:Reskin(bar:GetParent(), 6, true, "RUNES")
 	end
 end
 
 function UF:CreateRuneBar(parent, level)
-	local bar = CreateFrame("Frame", "$parentRuneBar", parent)
-	bar.__type = "RUNE"
+	local bar = _G.CreateFrame("Frame", "$parentRuneBar", parent)
 	bar:SetFrameLevel(level)
 	bar:SetSize(12, 128)
 	bar:SetPoint("LEFT", 19, 0)
+	E:SetBarSkin(bar, "VERTICAL-L")
 
 	for i = 1, 6 do
-		local element = CreateFrame('StatusBar', "$parentRune"..i, bar)
+		local element = _G.CreateFrame('StatusBar', "$parentRune"..i, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetOrientation("VERTICAL")
 		element:SetSize(12, LAYOUT[6][i].size)
 		element:SetPoint(unpack(LAYOUT[6][i].point))
+		element:SetStatusBarColor(unpack(M.colors.power.RUNES))
 		bar[i] = element
 
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
 		glow:SetSize(16, LAYOUT[6][i].size)
-		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
+		glow:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
+		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power_new")
+		glow:SetVertexColor(unpack(M.colors.power.RUNES_GLOW))
 		glow:SetTexCoord(unpack(LAYOUT[6][i].glow))
 		glow:SetAlpha(0)
 		element.Glow = glow
+
+		local ag = glow:CreateAnimationGroup()
+		element.InAnim = ag
+
+		local anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetDuration(0.25)
+		anim:SetFromAlpha(0)
+		anim:SetToAlpha(1)
+
+		anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(2)
+		anim:SetDuration(0.25)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+
+		anim = ag:CreateAnimation("Scale")
+		anim:SetOrder(1)
+		anim:SetDuration(0.33)
+		anim:SetFromScale(0.1, 0.1)
+		anim:SetToScale(1.1, 1.1)
 	end
 
-	bar.PostUpdateRune = PostUpdateRuneBar
-
-	return bar
-end
-
-local function UpdateEclipseBarVisibility(bar, unit)
-	if bar:IsShown() then
-		bar.Dir:SetAlpha(1)
-
-		UF:Reskin(bar:GetParent(), "ECLIPSE", true, 1)
-	else
-		E:StopBlink(bar.Glow, true)
-		E:StopBlink(bar.Sun, true)
-		E:StopBlink(bar.Moon, true)
-
-		bar.Dir:SetAlpha(0)
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
-	end
-end
-
-local function UpdateEclipseBarGlow(bar, unit)
-	if bar.hasLunarEclipse == true or bar.hasSolarEclipse == true then
-		local r, g, b
-
-		if bar.hasSolarEclipse == true then
-			r, g, b = unpack(POWERCOLORS["ECLIPSE"].positive)
-			E:Blink(bar.Sun, 0.5, 0, 1)
-		else
-			r, g, b = unpack(POWERCOLORS["ECLIPSE"].negative)
-			E:Blink(bar.Moon, 0.5, 0, 1)
-		end
-
-		bar.Glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-		E:Blink(bar.Glow, 0.5, 0, 1)
-	else
-		E:StopBlink(bar.Glow)
-		E:StopBlink(bar.Sun)
-		E:StopBlink(bar.Moon)
-	end
-end
-
-local function UpdateEclipseBarDirection(bar, unit)
-	if bar.direction then
-		bar.Dir:SetTexCoord(unpack(LAYOUT[bar.direction]))
-	else
-		bar.Dir:SetTexCoord(unpack(LAYOUT["none"]))
-	end
-end
-
-function UF:CreateEclipseBar(parent, level)
-	local bar = CreateFrame("Frame", "$parentEclipseBar", parent)
-	bar.__type = "ECLIPSE"
-	bar:SetFrameLevel(level)
-	bar:SetSize(12, 128)
-	bar:SetPoint("LEFT", 19, 0)
-
-	local lunar = CreateFrame("StatusBar", "$parentLunarBar", bar)
-	lunar:SetFrameLevel(bar:GetFrameLevel())
-	lunar:SetOrientation("VERTICAL")
-	lunar:SetSize(12, 128)
-	lunar:SetPoint("BOTTOM", bar, "BOTTOM")
-	lunar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	lunar:SetStatusBarColor(unpack(POWERCOLORS["ECLIPSE"].negative))
-	bar.LunarBar = lunar
-
-	local solar = CreateFrame("StatusBar", "$parentSolarBar", bar)
-	solar:SetFrameLevel(bar:GetFrameLevel())
-	solar:SetOrientation("VERTICAL")
-	solar:SetSize(12, 128)
-	solar:SetPoint("BOTTOM", lunar:GetStatusBarTexture(), "TOP")
-	solar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	solar:SetStatusBarColor(unpack(POWERCOLORS["ECLIPSE"].positive))
-	bar.SolarBar = solar
-
-	local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-	glow:SetSize(16, LAYOUT[1][1].size)
-	glow:SetPoint("CENTER", bar, "CENTER", 0, 0)
-	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	glow:SetTexCoord(unpack(LAYOUT[1][1].glow))
-	glow:SetAlpha(0)
-	bar.Glow = glow
-
-	local moon = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-	moon:SetPoint("BOTTOMLEFT", -12, -8)
-	moon:SetSize(36, 36)
-	moon:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
-	moon:SetTexCoord(0.73437500, 0.90234375, 0.00781250, 0.35937500)
-	moon:SetAlpha(0)
-	bar.Moon = moon
-
-	local sun = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-	sun:SetPoint("TOPLEFT", -12, 8)
-	sun:SetSize(36, 36)
-	sun:SetTexture("Interface\\PlayerFrame\\UI-DruidEclipse")
-	sun:SetTexCoord(0.55859375, 0.72656250, 0.00781250, 0.35937500)
-	sun:SetAlpha(0)
-	bar.Sun = sun
-
-	local dir = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	dir:SetAllPoints(bar)
-	dir:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	bar.Dir = dir
-
-	bar.PostUpdateVisibility = UpdateEclipseBarVisibility
-	bar.PostUnitAura = UpdateEclipseBarGlow
-	bar.PostDirectionChange = UpdateEclipseBarDirection
-
-	return bar
-end
-
-local function Totem_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	if self.elapsed > 0.1 then
-		local duration = self.start + self.duration - GetTime()
-		local time, color, abbr = E:TimeFormat(duration, true)
-
-		self:SetValue(duration)
-
-		if duration >= 0.1 then
-			if duration <= 10 then
-				E:Blink(self.Glow, 0.5, 0, 1)
-				E:Blink(self.Timer, 0.5, 0, 1)
-				self.Timer:SetFormattedText("%s"..abbr.."|r", color, time)
-			else
-				E:StopBlink(self.Glow)
-				E:StopBlink(self.Timer)
-			end
-		else
-			E:StopBlink(self.Glow)
-			E:StopBlink(self.Timer)
-
-			return self:SetScript("OnUpdate", nil)
-		end
-
-		self.elapsed = 0
-	end
-end
-
-local function UpdateTotemBar(bar, priorities, haveTotem, name, start, duration)
-	local totem = bar[priorities]
-
-	totem.start, totem.duration = start, duration
-
-	totem:SetMinMaxValues(0, duration)
-
-	if duration > 0.1 then
-		totem:SetScript("OnUpdate", Totem_OnUpdate)
-	else
-		E:StopBlink(totem.Glow)
-		E:StopBlink(totem.Timer)
-
-		totem:SetScript("OnUpdate", nil)
-	end
-
-	if UnitHasVehicleUI("player") then
-		bar:Hide()
-
-		for i = 1, MAX_TOTEMS do
-			E:StopBlink(bar[i].Glow, true)
-		end
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
-	else
-		bar:Show()
-		UF:Reskin(bar:GetParent(), bar.__type, true, 4)
-	end
-end
-
-function UF:CreateTotemBar(parent, level)
-	local bar = CreateFrame("Frame", "$parentTotemBar", parent)
-	bar.__type = "TOTEMS"
-	bar:SetFrameLevel(level)
-	bar:SetSize(12, 128)
-	bar:SetPoint("LEFT", 19, 0)
-
-	for i = 1, MAX_TOTEMS do
-		local r, g, b = unpack(POWERCOLORS["TOTEMS"][i])
-
-		local element = CreateFrame("StatusBar", "$parentTotem"..i, bar)
-		element:SetFrameLevel(bar:GetFrameLevel())
-		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:SetOrientation("VERTICAL")
-		element:SetSize(12, LAYOUT[MAX_TOTEMS][i].size)
-		element:SetPoint(unpack(LAYOUT[MAX_TOTEMS][i].point))
-		element:SetStatusBarColor(r, g, b)
-		bar[i] = element
-
-		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetSize(16, LAYOUT[MAX_TOTEMS][i].size)
-		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-		glow:SetTexCoord(unpack(LAYOUT[MAX_TOTEMS][i].glow))
-		glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-		glow:SetAlpha(0)
-		element.Glow = glow
-
-		local timer = E:CreateFontString(parent.Cover, 14, nil, nil, true)
-		timer:SetDrawLayer("ARTWORK", 4)
-		timer:SetPoint("CENTER", element, "CENTER", 0, 0)
-		timer:SetAlpha(0)
-		element.Timer = timer
-	end
-
-	bar.PostUpdate = UpdateTotemBar
-
-	return bar
-end
-
-local function UpdateDemonicFury(bar, cur, max, isActivated, event)
-	if event ~= "DemonicFuryDisable" then
-		if cur == max then
-			E:Blink(bar.Glow, 0.5)
-		else
-			E:StopBlink(bar.Glow)
-		end
-
-		if event == "DemonicFuryEnable" then
-			UF:Reskin(bar:GetParent(), bar.__type, true, 1)
-		end
-	else
-		E:StopBlink(bar.Glow, true)
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
-	end
-end
-
-function UF:CreateDemonicFury(parent, level)
-	local bar = CreateFrame("StatusBar", "$parentFuryBar", parent)
-	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	bar:SetOrientation("VERTICAL")
-	bar:SetFrameLevel(level)
-	bar:SetSize(12, 128)
-	bar:SetPoint("LEFT", 19, 0)
-	bar.__type = "DEMONIC_FURY"
-	E:SmoothBar(bar)
-
-	local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-	glow:SetSize(16, LAYOUT[1][1].size)
-	glow:SetPoint("CENTER", bar, "CENTER", 0, 0)
-	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	glow:SetTexCoord(unpack(LAYOUT[1][1].glow))
-	glow:SetVertexColor(E:ColorLighten(0, 1, 0.1, 0.45))
-	glow:SetAlpha(0)
-	bar.Glow = glow
-
-	bar.PostUpdate = UpdateDemonicFury
-
-	return bar
-end
-
-local function UpdateBurningEmbers(bar, cur, max, num, full, changed, event)
-	if event == "BurningEmbersDisable" then
-		bar:Hide()
-
-		for i = 1, 4 do
-			E:StopBlink(bar[i].Glow, true)
-		end
-
-		UF:Reskin(bar:GetParent(), "NONE", true, 0, bar.__type)
-	else
-		if changed then
-			for i = 1, num do
-				E:StopBlink(bar[i].Glow, true)
-			end
-		end
-
-		if full > 0 then
-			for i = 1, full do
-				E:Blink(bar[i].Glow, 0.5)
-			end
-		end
-
-		if event == "BurningEmbersEnable" then
-			bar:Show()
-			UF:Reskin(bar:GetParent(), bar.__type, true, 4)
-		end
-	end
-end
-
-function UF:CreateBurningEmbers(parent, level)
-	local bar = CreateFrame("Frame", "$parentEmberBar", parent)
-	bar.__type = "BURNING_EMBERS"
-	bar:SetFrameLevel(level)
-	bar:SetSize(12, 128)
-	bar:SetPoint("LEFT", 19, 0)
-
-	for i = 1, 4 do
-		local element = CreateFrame("StatusBar", "$parentEmber"..i, bar)
-		element:SetFrameLevel(bar:GetFrameLevel())
-		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:SetOrientation("VERTICAL")
-		element:SetSize(12, LAYOUT[4][i].size)
-		element:SetPoint(unpack(LAYOUT[4][i].point))
-		E:SmoothBar(element)
-		bar[i] = element
-
-		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetSize(16, LAYOUT[4][i].size)
-		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-		glow:SetTexCoord(unpack(LAYOUT[4][i].glow))
-		glow:SetVertexColor(E:ColorLighten(0.9, 0.4, 0.1, 0.35))
-		glow:SetAlpha(0)
-		element.Glow = glow
-	end
-
-	bar.PostUpdate = UpdateBurningEmbers
-
-	return bar
-end
-
-local function OverrideComboBar(self, event, unit)
-	if unit == "pet" then return end
-	local bar = self.CPoints
-
-	local cp
-	if UnitHasVehicleUI("player") then
-		cp = UnitPower("vehicle", 4)
-	else
-		cp = UnitPower("player", 4)
-	end
-
-	for i = 1, MAX_COMBO_POINTS do
-		if i <= cp then
-			bar[i]:Show()
-		else
-			bar[i]:Hide()
-		end
-	end
-
-	if cp > 0 then
-		bar:Show()
-
-		if cp == 5 then
-			E:Blink(bar.Glow, 0.5)
-		else
-			E:StopBlink(bar.Glow)
-		end
-	else
-		E:StopBlink(bar.Glow, true)
-
-		bar:Hide()
-	end
-end
-
-function UF:CreateComboBar(parent, level)
-	local PRESET = COMBO_BAR_PRESETS[C.units.player.combo_bar_type]
-
-	local bar = CreateFrame("Frame", "$parentComboPointsBar", parent)
-	bar:SetFrameLevel(level)
-	bar:SetSize(unpack(PRESET.bar_size))
-	bar:SetPoint(unpack(PRESET.point))
-	E:CreateMover(bar)
-
-	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture(unpack(COLORS.darkgray))
-	bg:SetSize(unpack(PRESET.bg_size))
-	bg:SetPoint("CENTER")
-
-	local fg = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
-	fg:SetTexCoord(unpack(PRESET.fg_coords))
-	fg:SetSize(unpack(PRESET.fg_size))
-	fg:SetPoint("CENTER")
-
-	local r, g, b = unpack(POWERCOLORS["COMBO_POINTS"])
-
-	local glow  = bar:CreateTexture(nil, "ARTWORK", nil, 4)
-	glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\combo_bar")
-	glow:SetTexCoord(unpack(PRESET.glow_coords))
-	glow:SetSize(unpack(PRESET.glow_size))
-	glow:SetPoint("CENTER")
-	glow:SetVertexColor(E:ColorLighten(r, g, b, 0.35))
-	glow:SetAlpha(0)
-	bar.Glow = glow
-
-	for i = 1, MAX_COMBO_POINTS do
-		local element = bar:CreateTexture(nil, "BACKGROUND", nil, 1)
-		element:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:SetVertexColor(r, g, b)
-		element:SetSize(unpack(PRESET.cp_size))
-		bar[i] = element
-
-		if i == 1 then
-			element:SetPoint(PRESET.cp_point1, 0, 0)
-		else
-			element:SetPoint(PRESET.cp_point1, bar[i - 1], PRESET.cp_point2, 0, 0)
-		end
-	end
-
-	bar.Override = OverrideComboBar
+	bar.PostUpdate = PostUpdateRuneBar
 
 	return bar
 end
@@ -756,7 +481,7 @@ local function OverrideStaggerBar(self, event, unit)
 	bar:SetMinMaxValues(0, maxHealth)
 	bar:SetValue(stagger)
 
-	local r, g, b = E:ColorGradient(stagger / maxHealth, unpack(POWERCOLORS["STAGGER"]))
+	local r, g, b = E:ColorGradient(stagger / maxHealth, unpack(M.colors.power["STAGGER"]))
 	local hex = E:RGBToHEX(r, g, b)
 
 	bar:SetStatusBarColor(r, g, b)
@@ -772,32 +497,25 @@ local function OverrideStaggerBar(self, event, unit)
 	end
 end
 
+local function StaggerBar_OnShow(self)
+	UF:Reskin(self:GetParent(), 0, true, "STAGGER")
+end
+
+local function StaggerBar_OnHide(self)
+	UF:Reskin(self:GetParent(), 0, false, "STAGGER")
+end
+
 function UF:CreateStaggerBar(parent, level)
-	local bar = CreateFrame("StatusBar", "$parentStaggerBar", parent)
+	local bar = _G.CreateFrame("StatusBar", "$parentStaggerBar", parent)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	bar:SetOrientation("VERTICAL")
 	bar:SetFrameLevel(level)
-	bar:SetSize(8, 100)
-	bar:SetPoint("LEFT", 7, 0)
+	bar:SetSize(12, 128)
+	bar:SetPoint("LEFT", 19, 0)
+	bar:SetScript("OnShow", StaggerBar_OnShow)
+	bar:SetScript("OnHide", StaggerBar_OnHide)
+	E:SetBarSkin(bar, "VERTICAL-L")
 	E:SmoothBar(bar)
-
-	local bg = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	bg:SetTexCoord(128 / 512, 160 / 512, 149 / 256, 251 / 256)
-	bg:SetSize(32, 102)
-	bg:SetPoint("CENTER")
-
-	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg1:SetTexCoord(440 / 512, 472 / 512, 16 / 256, 144 / 256)
-	fg1:SetSize(32, 128)
-	fg1:SetPoint("CENTER")
-
-	local fg1 = bar:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg1:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_player_power")
-	fg1:SetTexCoord(96 / 512, 128 / 512, 149 / 256, 251 / 256)
-	fg1:SetSize(32, 102)
-	fg1:SetPoint("CENTER")
 
 	local value = E:CreateFontString(bar, 12, "$parentStaggerValue", true)
 	bar.Value = value

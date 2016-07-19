@@ -1,52 +1,66 @@
--- Based on code from oUF Smooth Update by Xuerian
+-- Based on SmoothStatusBarMixin code.
 
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E = ns.E
 
-local Smoother = CreateFrame("Frame")
+-- Lua
+local _G = _G
+local pairs = pairs
+local mabs = math.abs
 
-local min, max, pairs = min, max, pairs
+-- Blizz
+local FrameDeltaLerp = FrameDeltaLerp
 
+--Mine
 local bars = {}
 
-local function Smooth(self, value)
-	local _, barmax = self:GetMinMaxValues()
+local function ProcessSmoothStatusBars()
+	for bar, targetValue in pairs(bars) do
+		local newValue = FrameDeltaLerp(bar:GetValue(), targetValue, .25)
 
-	if value == self:GetValue() or (self._max and self._max ~= barmax) then
-		bars[self] = nil
-		self:SetValue_(value)
-	else
-		bars[self] = value
-	end
-	self._max = barmax
-end
-
-local function Smoother_OnUpdate(self)
-	local limit = 30/GetFramerate()
-
-	for bar, value in pairs(bars) do
-		local cur = bar:GetValue()
-		local new = cur + min((value - cur) / 10, max(value - cur, limit))
-
-		if new ~= new then
-			-- Mad hax to prevent QNAN.
-			new = value
-		end
-
-		bar:SetValue_(new)
-
-		if cur == value or abs(new - value) < 2 then
-			bar:SetValue_(value)
+		if mabs(newValue - targetValue) < .005 then
 			bars[bar] = nil
 		end
+
+		bar:SetValue_(newValue)
 	end
+end
+
+_G.C_Timer.NewTicker(0, ProcessSmoothStatusBars)
+
+local function SetSmoothedValue(self, value)
+	bars[self] = value
+	self._value = value
+end
+
+local function SetMinMaxSmoothedValues(self, min, max)
+	self:SetMinMaxValues_(min, max)
+
+	if self._max and self._max ~= max then
+		local targetValue = bars[self]
+		local curValue = self._value
+		local ratio = 1
+
+		if max ~= 0 and self._max and self._max ~= 0 then
+			ratio = max / (self._max or max)
+		end
+
+		if targetValue then
+			bars[self] = targetValue * ratio
+		end
+
+		if curValue then
+			self:SetValue_(curValue * ratio)
+		end
+	end
+
+	self._min = min
+	self._max = max
 end
 
 function E:SmoothBar(bar)
 	bar.SetValue_ = bar.SetValue
-	bar.SetValue = Smooth
-
-	if not Smoother:GetScript("OnUpdate") then
-		Smoother:SetScript("OnUpdate", Smoother_OnUpdate)
-	end
+	bar.SetMinMaxValues_ = bar.SetMinMaxValues
+	bar.SetValue = SetSmoothedValue
+	bar.SetMinMaxValues = SetMinMaxSmoothedValues
 end

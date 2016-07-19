@@ -6,16 +6,16 @@ local B = E:GetModule("Bars")
 local unpack = unpack
 
 -- Blizz
-local DraenorZoneAbilityFrame = DraenorZoneAbilityFrame
+local ZoneAbilityFrame = ZoneAbilityFrame
 
 function B:HandleGarrisonButton()
-	DraenorZoneAbilityFrame:SetSize(C.bars.garrison.button_size, C.bars.garrison.button_size)
-	DraenorZoneAbilityFrame:ClearAllPoints()
-	DraenorZoneAbilityFrame:SetPoint(unpack(C.bars.garrison.point))
-	DraenorZoneAbilityFrame:EnableMouse(false)
-	DraenorZoneAbilityFrame.ignoreFramePositionManager = true
-	E:CreateMover(DraenorZoneAbilityFrame)
+	ZoneAbilityFrame:SetSize(C.bars.garrison.button_size, C.bars.garrison.button_size)
+	ZoneAbilityFrame:ClearAllPoints()
+	ZoneAbilityFrame:SetPoint(unpack(C.bars.garrison.point))
+	ZoneAbilityFrame:EnableMouse(false)
+	ZoneAbilityFrame.ignoreFramePositionManager = true
+	E:CreateMover(ZoneAbilityFrame)
 
-	DraenorZoneAbilityFrame.SpellButton:SetAllPoints()
-	E:SkinExtraActionButton(DraenorZoneAbilityFrame.SpellButton)
+	ZoneAbilityFrame.SpellButton:SetAllPoints()
+	E:SkinExtraActionButton(ZoneAbilityFrame.SpellButton)
 end

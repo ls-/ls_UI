@@ -20,10 +20,10 @@ function UF:ConstructPetFrame(frame)
 	cover:SetAllPoints()
 	frame.Cover = cover
 
-	local tubes = cover:CreateTexture(nil, "ARTWORK", nil, 0)
-	tubes:SetAllPoints()
-	tubes:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
-	tubes:SetTexCoord(0, 42 / 256, 0, 134 / 256)
+	-- local tubes = cover:CreateTexture(nil, "ARTWORK", nil, 0)
+	-- tubes:SetAllPoints()
+	-- tubes:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_pet")
+	-- tubes:SetTexCoord(0, 42 / 256, 0, 134 / 256)
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 1)
 	fg:SetAllPoints()
@@ -34,6 +34,7 @@ function UF:ConstructPetFrame(frame)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
+	E:SetBarSkin(health, "VERTICAL-M")
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
@@ -48,6 +49,7 @@ function UF:ConstructPetFrame(frame)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
 	tinsert(frame.mouseovers, power)
+	E:SetBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
 	local powerText = power.Text

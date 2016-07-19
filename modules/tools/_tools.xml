@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="misc.lua"/>
 	<Script file="cooldown.lua"/>
-	<Script file="buttons.lua"/>
+	<Script file="button.lua"/>
 	<Script file="smooth.lua"/>
 	<Script file="statusbar.lua"/>
 </Ui>

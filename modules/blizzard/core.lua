@@ -4,6 +4,7 @@ local B = E:AddModule("Blizzard")
 
 function B:Initialize()
 	B:HandleArchaeology()
+	B:HandleCommandBar()
 	B:HandleSpellFlyout()
 	B:HandleObjectiveTracker()
 	B:HandlePowerBarAlt()
