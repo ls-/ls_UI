@@ -120,12 +120,6 @@ D["minimap"] = {
 	point = {"BOTTOM", "UIParent", "BOTTOM", 314 , 80},
 }
 
-D["nameplates"] = {
-	enabled = true,
-	show_text = false,
-	show_combo = false,
-}
-
 D["bars"] = {
 	enabled = true,
 	restricted = true,
