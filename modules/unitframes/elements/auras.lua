@@ -2,12 +2,23 @@ local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
 
-local UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControlled, UnitAura =
-	UnitCanAssist, UnitCanAttack, UnitIsUnit, UnitIsPlayer, UnitPlayerControlled, UnitAura
-local SpellGetVisibilityInfo, SpellIsAlwaysShown = SpellGetVisibilityInfo, SpellIsAlwaysShown
-
+-- Lua
+local _G = _G
 local mceil, mmin = math.ceil, math.min
 
+-- Blizz
+local IsInInstance = IsInInstance
+local SpellGetVisibilityInfo = SpellGetVisibilityInfo
+local SpellIsAlwaysShown = SpellIsAlwaysShown
+local UnitAffectingCombat = UnitAffectingCombat
+local UnitAura = UnitAura
+local UnitCanAssist = UnitCanAssist
+local UnitCanAttack = UnitCanAttack
+local UnitIsPlayer = UnitIsPlayer
+local UnitIsUnit = UnitIsUnit
+local UnitPlayerControlled = UnitPlayerControlled
+
+-- Mine
 local function SetVertexColorOverride(self, r, g, b)
 	local button = self:GetParent()
 
@@ -19,22 +30,23 @@ local function SetVertexColorOverride(self, r, g, b)
 end
 
 local function UpdateTooltip(self)
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+	_G.GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
 local function AuraButton_OnEnter(self)
 	if not self:IsVisible() then return end
 
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	self:UpdateTooltip()
 end
 
 local function AuraButton_OnLeave()
-	GameTooltip:Hide()
+	_G.GameTooltip:Hide()
 end
 
 local function CreateAuraIcon(frame, index)
 	local button = E:CreateButton(frame, "$parentButton"..index, true)
+	button:SetBorderSize(6)
 
 	button.icon = button.Icon
 	button.Icon = nil
@@ -57,9 +69,9 @@ local function CreateAuraIcon(frame, index)
 
 	local overlay = button:CreateTexture(nil, "OVERLAY")
 	overlay:Hide()
-    overlay.Hide = SetVertexColorOverride
-    overlay.SetVertexColor = SetVertexColorOverride
-    overlay.Show = function() return end
+	overlay.Hide = SetVertexColorOverride
+	overlay.SetVertexColor = SetVertexColorOverride
+	overlay.Show = function() return end
 	button.overlay = overlay
 
 	local stealable = _G[button:GetName().."Cover"]:CreateTexture(nil, "OVERLAY", nil, 2)
@@ -132,7 +144,7 @@ local filterFunctions = {
 		if hostileTarget then -- hostile
 			if filter == "HELPFUL" then
 				-- ALWAYS shown
-				if not UnitPlayerControlled(unit) and caster == unit then
+				if not UnitPlayerControlled(unit) and caster and UnitIsUnit(unit, caster) then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC SELFCAST|r")
 					return true
 				end
@@ -235,7 +247,7 @@ end
 
 function UF:CreateBuffs(parent, unit, count)
 	local rows = mceil(count / 8)
-	local frame = CreateFrame("Frame", "$parentBuffs", parent)
+	local frame = _G.CreateFrame("Frame", "$parentBuffs", parent)
 	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
 
 	frame["num"] = count
@@ -254,7 +266,7 @@ end
 
 function UF:CreateDebuffs(parent, unit, count, growthDirectionX, initAnchor)
 	local rows = mceil(count / 8)
-	local frame = CreateFrame("Frame", "$parentDebuffs", parent)
+	local frame = _G.CreateFrame("Frame", "$parentDebuffs", parent)
 	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
 
 	frame["growth-x"] = growthDirectionX
