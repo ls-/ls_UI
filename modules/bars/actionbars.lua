@@ -89,29 +89,22 @@ local BAR_LAYOUT = {
 	},
 }
 
-local PET_LAYOUT = {
-	[1] = {"BOTTOM", 0, 110},
-	[2] = {"BOTTOM", 0, 138},
-}
-
-local STANCE_LAYOUT = {
-	[1] = {"BOTTOM", 0, 138},
-	[2] = {"BOTTOM", 0, 110},
-}
+local TOP_POINT = {"BOTTOM", 0, 138}
+local BOTTOM_POINT = {"BOTTOM", 0, 110}
 
 local LAYOUT_ID = {
-	WARRIOR = 2,
-	PALADIN = 2,
-	HUNTER = 1,
-	ROGUE = 1,
-	PRIEST = 2,
-	DEATHKNIGHT = 2,
-	SHAMAN = 1,
-	MAGE = 1,
-	WARLOCK = 1,
-	MONK = 2,
-	DRUID = 2,
-	DEMONHUNTER = 1,
+	WARRIOR = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	PALADIN = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	HUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
+	ROGUE = {pet = BOTTOM_POINT, stance = TOP_POINT},
+	PRIEST = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	DEATHKNIGHT = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	SHAMAN = {pet = BOTTOM_POINT, stance = TOP_POINT},
+	MAGE = {pet = BOTTOM_POINT, stance = TOP_POINT},
+	WARLOCK = {pet = BOTTOM_POINT, stance = TOP_POINT},
+	MONK = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	DRUID = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	DEMONHUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
 }
 
 -- page swapping is taken from tukui, thx :D
@@ -138,9 +131,9 @@ end
 
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "LSPetActionBar" then
-		self:SetPoint(unpack(PET_LAYOUT[LAYOUT_ID[E.PLAYER_CLASS]]))
+		self:SetPoint(unpack(LAYOUT_ID[E.PLAYER_CLASS].pet))
 	else
-		self:SetPoint(unpack(STANCE_LAYOUT[LAYOUT_ID[E.PLAYER_CLASS]]))
+		self:SetPoint(unpack(LAYOUT_ID[E.PLAYER_CLASS].stance))
 	end
 end
 
