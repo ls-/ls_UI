@@ -20,8 +20,8 @@ local function ThreatUpdateOverride(self, event, unit)
 	local threat = self.Threat
 	local status
 
-	if UnitPlayerControlled(unit) and unit ~= "target" and unit ~= "focus" then
-		status = UnitThreatSituation(unit)
+	if UnitPlayerControlled(unit) then
+		status = UnitThreatSituation(unit, unit.."target")
 	else
 		status = UnitThreatSituation("player", unit)
 	end
