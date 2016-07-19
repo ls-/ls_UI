@@ -163,7 +163,7 @@ end
 
 oUF.Tags.Events["ls:lfdroleicon"] = "GROUP_ROSTER_UPDATE"
 
-oUF.Tags.Methods["ls:combatresticon"] = function(unit, realunit)
+oUF.Tags.Methods["ls:combatresticon"] = function()
 	if UnitAffectingCombat("player") then
 		return strformat(M.textures.inlineicons["COMBAT"], 0, 0)
 	else
