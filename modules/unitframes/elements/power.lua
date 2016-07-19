@@ -1,10 +1,15 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local POWERCOLORS = M.colors.power
 
-local UnitIsDeadOrGhost, UnitIsConnected = UnitIsDeadOrGhost, UnitIsConnected
+-- Lua
+local _G = _G
 
+-- Blizz
+local UnitIsConnected = UnitIsConnected
+local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+
+-- Mine
 local function PostUpdatePower(bar, unit, cur, max)
 	if bar.Tube then
 		if max == 0 then
@@ -30,25 +35,27 @@ local function PostUpdatePower(bar, unit, cur, max)
 
 	local color = E:RGBToHEX(bar:GetStatusBarColor())
 
-	if cur < max then
+	if cur == max then
 		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
-		elseif cur > 0 then
 			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
 		else
-			bar.Text:SetText(nil)
+			if unit == "player" or unit == "vehicle" or unit == "pet" then
+				bar.Text:SetText(nil)
+			else
+				bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
+			end
 		end
 	else
 		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
+			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
 		else
-			bar.Text:SetText(nil)
+			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
 		end
 	end
 end
 
 function UF:CreatePowerBar(parent, textSize, textBg, vertical)
-	local power = CreateFrame("StatusBar", "$parentPowerBar", parent)
+	local power = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
 	power:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
 	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(power)
