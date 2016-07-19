@@ -32,10 +32,13 @@ function E:ForceHide(object)
 
 	if object.UnregisterAllEvents then
 		object:UnregisterAllEvents()
+
+		if object:GetName() then
+			_G.UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
+		end
 	end
 
 	object:SetParent(E.HIDDEN_PARENT)
-
 	object:Hide()
 end
 
