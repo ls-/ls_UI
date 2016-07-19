@@ -1,11 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
 	<Script file="controller.lua"/>
+	<Script file="actionbars.lua"/>
 	<Script file="bags.lua"/>
 	<Script file="extra.lua"/>
-	<Script file="garrison.lua"/>
+	<Script file="micromenu.lua"/>
 	<Script file="petbattle.lua"/>
 	<Script file="vehicle.lua"/>
-	<Script file="actionbars.lua"/>
-	<Script file="micromenu.lua"/>
+	<Script file="zoneability.lua"/>
 </Ui>

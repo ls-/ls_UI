@@ -6,7 +6,6 @@ local B = E:AddModule("Bars", true)
 local pairs = pairs
 
 -- Mine
-
 function B:IsEnabled()
 	return B.isRunning
 end
