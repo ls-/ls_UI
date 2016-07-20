@@ -1,3 +1,9 @@
+## Version 3.02
+
+- Fixed movers' strata and visibility issues;
+- Fixed unit frame power text;
+- Fixed few colour issues.
+
 ## Version 3.01
 
 - Added Legion 7.0 support;
