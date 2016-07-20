@@ -26,11 +26,13 @@ local ScanTooltip = _G.CreateFrame("GameTooltip", "LSiLevelScanTooltip", nil, "G
 ScanTooltip:SetOwner(_G.WorldFrame, "ANCHOR_NONE")
 
 function E:GetUnitClassColor(unit)
-	local color = {1, 1, 1}
+	local color
 
 	if unit then
 		color = M.colors.class[select(2, _G.UnitClass(unit))]
 	end
+
+	color = color or {1, 1, 1}
 
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 end
@@ -42,17 +44,19 @@ function E:GetCreatureDifficultyColor(level)
 end
 
 function E:GetUnitReactionColor(unit)
-	local color = M.colors.reaction[4]
+	local color
 
 	if unit then
 		color = M.colors.reaction[_G.UnitReaction(unit, "player")]
 	end
 
+	color = color or M.colors.reaction[4]
+
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 end
 
 function E:GetSmartReactionColor(unit)
-	local color = M.colors.reaction[4]
+	local color
 
 	if unit then
 		if _G.UnitIsDeadOrGhost(unit) or not _G.UnitIsConnected(unit) then
@@ -65,6 +69,8 @@ function E:GetSmartReactionColor(unit)
 			color = M.colors.reaction[_G.UnitReaction(unit, "player")]
 		end
 	end
+
+	color = color or M.colors.reaction[4]
 
 	return {r = color[1], g = color[2], b = color[3], hex = E:RGBToHEX(color)}
 end
