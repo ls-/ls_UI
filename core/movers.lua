@@ -332,7 +332,6 @@ function E:CreateMover(object, isSimple, insets)
 
 	local mover = _G.CreateFrame("Button", name, _G.UIParent)
 	mover:SetFrameLevel(object:GetFrameLevel() + 1)
-	mover:SetFrameStrata("DIALOG")
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
 	mover:SetClampedToScreen(true)
@@ -383,6 +382,8 @@ function E:CreateMover(object, isSimple, insets)
 	SetPosition(mover)
 
 	movers[name] = mover
+
+	return mover
 end
 
 _G.SLASH_LSMOVERS1 = "/lsmovers"
