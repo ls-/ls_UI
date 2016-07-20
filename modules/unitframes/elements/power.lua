@@ -35,7 +35,7 @@ local function PostUpdatePower(bar, unit, cur, max)
 
 	local color = E:RGBToHEX(bar:GetStatusBarColor())
 
-	if cur == max then
+	if cur == max or cur == 0 then
 		if bar.__owner.isMouseOver then
 			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
 		else
