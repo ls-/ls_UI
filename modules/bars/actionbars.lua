@@ -98,7 +98,7 @@ local LAYOUT_ID = {
 	HUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
 	ROGUE = {pet = BOTTOM_POINT, stance = TOP_POINT},
 	PRIEST = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	DEATHKNIGHT = {pet = TOP_POINT, stance = BOTTOM_POINT},
+	DEATHKNIGHT = {pet = BOTTOM_POINT, stance = TOP_POINT},
 	SHAMAN = {pet = BOTTOM_POINT, stance = TOP_POINT},
 	MAGE = {pet = BOTTOM_POINT, stance = TOP_POINT},
 	WARLOCK = {pet = BOTTOM_POINT, stance = TOP_POINT},
