@@ -104,6 +104,13 @@ local function ReceiveButton_OnEnter(self)
 					local name, _, icon, count = GetInboxItem(i, j)
 					local _, _, quality = GetItemInfo(itemLink)
 
+					if not name then
+						name = _G.UNKNOWN
+						icon = "Interface\\Icons\\INV_Misc_QuestionMark"
+						count = 1
+						quality = 0
+					end
+
 					if MailItems[name] then
 						MailItems[name].count = MailItems[name].count + count
 					else
