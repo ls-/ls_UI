@@ -1,13 +1,17 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local HPCOLORS = M.colors.healprediction
 
-local function UpdateHealPredictionAnchor(self, orientation, appendTexture, offset)
+-- Lua
+local _G = _G
+local unpack = unpack
+
+-- Mine
+local function UpdateHealPredictionAnchor(self, orientation, appendTexture)
 	if orientation == "HORIZONTAL" then
-		self:SetPoint('LEFT', appendTexture, 'RIGHT', offset or 0, 0)
+		self:SetPoint("LEFT", appendTexture, "RIGHT")
 	else
-		self:SetPoint('BOTTOM', appendTexture, 'TOP', 0, offset or 0)
+		self:SetPoint("BOTTOM", appendTexture, "TOP")
 	end
 
 	if self.Overlay then
@@ -22,29 +26,19 @@ local function UpdateHealPredictionAnchor(self, orientation, appendTexture, offs
 end
 
 local function PostUpdateHealPrediction(self, unit, overAbsorb, overHealAbsorb)
-	local healthbar = self.__owner.Health
 	local myHeals = self.myBar
 	local otherHeals = self.otherBar
-	local healAbsorb = self.healAbsorbBar
 	local damageAbsorb = self.absorbBar
 	local absorbGlow = self.__owner.AbsorbGlow
-	local appendTexture = healthbar:GetStatusBarTexture()
+	local appendTexture = self.__owner.Health:GetStatusBarTexture()
 	local orientation = self.myBar:GetOrientation()
-	local healthSize = orientation == "HORIZONTAL" and healthbar:GetWidth() or healthbar:GetHeight()
-	local totalHealAbsorbValue = UnitGetTotalHealAbsorbs(unit) or 0
-	local curHealAbsorbValue = healAbsorb:GetValue()
-	local maxHealth = UnitHealthMax(unit)
 
 	if myHeals and myHeals:GetValue() > 0 then
-		appendTexture = UpdateHealPredictionAnchor(myHeals, orientation, appendTexture, -(healthSize * totalHealAbsorbValue / maxHealth))
+		appendTexture = UpdateHealPredictionAnchor(myHeals, orientation, appendTexture)
 	end
 
 	if otherHeals and otherHeals:GetValue() > 0 then
 		appendTexture = UpdateHealPredictionAnchor(otherHeals, orientation, appendTexture)
-	end
-
-	if healAbsorb and curHealAbsorbValue > 0 then
-		appendTexture = UpdateHealPredictionAnchor(healAbsorb, orientation, healthbar:GetStatusBarTexture(), -(healthSize * curHealAbsorbValue / maxHealth))
 	end
 
 	if damageAbsorb then
@@ -65,32 +59,33 @@ function UF:CreateHealPrediction(parent, isVertical)
 	local level = healthbar:GetFrameLevel()
 	local width, height = healthbar:GetSize()
 
-	local myBar = CreateFrame("StatusBar", "$parentMyIncomingHeal", healthbar)
+	local myBar = _G.CreateFrame("StatusBar", "$parentMyIncomingHeal", healthbar)
 	myBar:SetFrameLevel(level)
 	myBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	myBar:SetStatusBarColor(unpack(HPCOLORS.myheal))
+	myBar:SetStatusBarColor(unpack(M.colors.healprediction.myheal))
 	myBar:Hide()
 
-	local otherBar = CreateFrame("StatusBar", "$parentOtherIncomingHeal", healthbar)
+	local otherBar = _G.CreateFrame("StatusBar", "$parentOtherIncomingHeal", healthbar)
 	otherBar:SetFrameLevel(level)
 	otherBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	otherBar:SetStatusBarColor(unpack(HPCOLORS.otherheal))
+	otherBar:SetStatusBarColor(unpack(M.colors.healprediction.otherheal))
 	otherBar:Hide()
 
-	local healAbsorbBar = CreateFrame("StatusBar", "$parentHealAbsorb", healthbar)
+	local healAbsorbBar = _G.CreateFrame("StatusBar", "$parentHealAbsorb", healthbar)
+	healAbsorbBar:SetReverseFill(true)
 	healAbsorbBar:SetFrameLevel(level + 1)
 	healAbsorbBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	healAbsorbBar:SetStatusBarColor(unpack(HPCOLORS.healabsorb))
+	healAbsorbBar:SetStatusBarColor(unpack(M.colors.healprediction.healabsorb))
 	healAbsorbBar:Hide()
 
-	local damageAbsorbBar = CreateFrame("StatusBar", "$parentTotalAbsorb", healthbar)
+	local damageAbsorbBar = _G.CreateFrame("StatusBar", "$parentTotalAbsorb", healthbar)
 	damageAbsorbBar:SetFrameLevel(level + 1)
 	damageAbsorbBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	damageAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	damageAbsorbBar:SetStatusBarColor(unpack(HPCOLORS.damageabsorb))
+	damageAbsorbBar:SetStatusBarColor(unpack(M.colors.healprediction.damageabsorb))
 	damageAbsorbBar:Hide()
 
 	damageAbsorbBar.Overlay = damageAbsorbBar:CreateTexture(nil, "ARTWORK", "TotalAbsorbBarOverlayTemplate", 1)
@@ -107,6 +102,7 @@ function UF:CreateHealPrediction(parent, isVertical)
 
 		healAbsorbBar:SetPoint("LEFT")
 		healAbsorbBar:SetPoint("RIGHT")
+		healAbsorbBar:SetPoint("TOP", healthbar:GetStatusBarTexture(), "TOP")
 		healAbsorbBar:SetHeight(height)
 
 		damageAbsorbBar:SetPoint("LEFT")
@@ -123,6 +119,7 @@ function UF:CreateHealPrediction(parent, isVertical)
 
 		healAbsorbBar:SetPoint("TOP")
 		healAbsorbBar:SetPoint("BOTTOM")
+		healAbsorbBar:SetPoint("RIGHT", healthbar:GetStatusBarTexture(), "RIGHT")
 		healAbsorbBar:SetWidth(width)
 
 		damageAbsorbBar:SetPoint("TOP")
