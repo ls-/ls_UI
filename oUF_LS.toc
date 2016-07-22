@@ -1,6 +1,6 @@
 ## Interface: 70000
 ## Author: lightspark
-## Version: 3.02
+## Version: 3.03
 ## Title: oUF: |cff1a9fc0LS|r
 ## Notes: oUF-based UI
 ## X-Category: UnitFrame
