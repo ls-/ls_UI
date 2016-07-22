@@ -1,6 +1,13 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
+-- Lua
+local _G = _G
+
+-- Blizz
+local GetTime = GetTime
+
+-- Mine
 local THRESHOLD = 1.5
 
 local function Timer_OnUpdate(self, elapsed)
@@ -41,7 +48,7 @@ local function SetCustomCooldown(self, start, duration)
 end
 
 local function CreateCooldownTimer(cooldown, textSize)
-	local holder = CreateFrame("Frame", "$parentTextHolder", cooldown)
+	local holder = _G.CreateFrame("Frame", "$parentTextHolder", cooldown)
 	holder:SetFrameLevel(6)
 	holder:SetAllPoints()
 
@@ -58,7 +65,7 @@ local function SetTimerTextHeight(self, height)
 end
 
 function E:CreateCooldown(parent, textSize)
-	local cooldown = CreateFrame("Cooldown", "$parentCooldown", parent, "CooldownFrameTemplate")
+	local cooldown = _G.CreateFrame("Cooldown", "$parentCooldown", parent, "CooldownFrameTemplate")
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 	E:HandleCooldown(cooldown, textSize)
@@ -69,7 +76,7 @@ end
 function E:HandleCooldown(cooldown, textSize)
 	cooldown:SetDrawEdge(false)
 
-	if OmniCC or cooldown.handled then return end
+	if _G.OmniCC or cooldown.handled then return end
 
 	cooldown.Timer = CreateCooldownTimer(cooldown, textSize)
 
@@ -79,7 +86,7 @@ function E:HandleCooldown(cooldown, textSize)
 	local text = cooldown:GetRegions()
 	text:SetAlpha(0)
 
-	hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
+	_G.hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
 
 	cooldown.handled = true
 end
