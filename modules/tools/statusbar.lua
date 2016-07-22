@@ -127,8 +127,7 @@ function E:AddTooltipStatusBar(tooltip, index)
 	bar.Text:SetPoint("CENTER", 0, 0)
 	bar.Text:SetFontObject("LS10Font_Shadow")
 
-	E:CreateBorder(bar, 8)
-	bar:SetBorderColor(unpack(COLORS.gray))
+	E:CreateBorder(bar)
 
 	tooltip.numStatusBars = index
 
@@ -143,8 +142,7 @@ function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
 
 	if not bar.styled then
 		E:HandleStatusBar(bar)
-		E:CreateBorder(bar, 8)
-		bar:SetBorderColor(unpack(COLORS.gray))
+		E:CreateBorder(bar)
 	end
 
 	bar:SetMinMaxValues(min, max)
