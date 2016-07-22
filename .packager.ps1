@@ -18,7 +18,11 @@ $includedFiles = @(
 
 $filesToRemove = @(
 	".git",
-	"README.md"
+	".packager.ps1",
+	"CHANGELOG",
+	"CHANGELOG.*",
+	"README",
+	"README.*"
 )
 
 Remove-Item * -Include @("*.zip", $folderName) -Recurse -Force
