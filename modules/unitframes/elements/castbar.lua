@@ -5,33 +5,10 @@ local UF = E:GetModule("UnitFrames")
 --Lua
 local _G = _G
 local unpack = unpack
-local abs = math.abs
+local mabs = math.abs
 
--- event args: unit, spellName, spellRank, spellTarget, castID
--- local function OnCastSend(self, event, unit, ...)
--- 	if self.unit ~= unit and self.realUnit ~= unit then return end
-
--- 	self.Castbar.sendTime = _G.GetTime()
--- end
-
+-- Mine
 local function PostCastStart(castbar, unit, name, castID)
-	-- local safezone = castbar.AdaptiveSafeZone
-	-- if safezone then
-	-- 	if castbar.sendTime then
-	-- 		local lag = _G.GetTime() - castbar.sendTime
-	-- 		print(castbar.sendTime, lag, castbar.max)
-	-- 		lag = lag > castbar.max and castbar.max or lag
-
-	-- 		safezone:ClearAllPoints()
-	-- 		safezone:SetPoint("RIGHT")
-	-- 		safezone:SetPoint("TOP")
-	-- 		safezone:SetPoint("BOTTOM")
-	-- 		safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
-	-- 	else
-	-- 		safezone:SetWidth(0.1)
-	-- 	end
-	-- end
-
 	if castbar.interrupt then
 		castbar:SetStatusBarColor(unpack(M.colors.gray))
 		castbar.Icon:SetDesaturated(true)
@@ -42,22 +19,6 @@ local function PostCastStart(castbar, unit, name, castID)
 end
 
 local function PostChannelStart(castbar, unit, name)
-	-- local safezone = castbar.AdaptiveSafeZone
-	-- if safezone then
-	-- 	if castbar.sendTime then
-	-- 		local lag = _G.GetTime() - castbar.sendTime
-	-- 		lag = lag > castbar.max and castbar.max or lag
-
-	-- 		safezone:ClearAllPoints()
-	-- 		safezone:SetPoint("LEFT")
-	-- 		safezone:SetPoint("TOP")
-	-- 		safezone:SetPoint("BOTTOM")
-	-- 		safezone:SetWidth(castbar:GetWidth() * lag / castbar.max)
-	-- 	else
-	-- 		safezone:SetWidth(0.1)
-	-- 	end
-	-- end
-
 	if castbar.interrupt then
 		castbar:SetStatusBarColor(unpack(M.colors.gray))
 		castbar.Icon:SetDesaturated(true)
@@ -81,9 +42,9 @@ local function CustomDelayText(castbar, duration)
 	end
 
 	if castbar.casting then
-		castbar.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, abs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, mabs(castbar.delay))
 	elseif castbar.channeling then
-		castbar.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, abs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, mabs(castbar.delay))
 	end
 end
 
@@ -117,8 +78,6 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 	bar.Time = time
 
 	if safezone then
-		-- parent:RegisterEvent("UNIT_SPELLCAST_SENT", OnCastSend, true)
-
 		local zone = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 		zone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		zone:SetVertexColor(unpack(M.colors.red))
