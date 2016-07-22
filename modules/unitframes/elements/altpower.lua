@@ -1,17 +1,19 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local COLORS = M.colors
 
+-- Lua
+local _G = _G
 local unpack = unpack
 
+-- Mine
 local function PostUpdateAltPower(bar, min, cur, max)
 	if not bar.Text then return end
 
-	local _, r, g, b = UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
+	local _, r, g, b = _G.UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
 
 	if (r == 1 and g == 1 and b == 1) or not b then
-		r, g, b = unpack(COLORS.indigo)
+		r, g, b = unpack(M.colors.indigo)
 	end
 
 	bar:SetStatusBarColor(r, g, b)
@@ -39,7 +41,7 @@ local function OnEnter(self)
 	self.isMouseOver = true
 	self:ForceUpdate()
 
-	GameTooltip_SetDefaultAnchor(GameTooltip, self)
+	_G.GameTooltip_SetDefaultAnchor(_G.GameTooltip, self)
 	self:UpdateTooltip()
 end
 
@@ -47,7 +49,7 @@ local function OnLeave(self)
 	self.isMouseOver = nil
 	self:ForceUpdate()
 
-	GameTooltip:Hide()
+	_G.GameTooltip:Hide()
 end
 
 function UF:CreateAltPowerBar(parent, width)
