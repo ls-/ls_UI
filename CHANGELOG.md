@@ -1,3 +1,10 @@
+## Version 3.03
+
+- Fixed combo points visibility for druids and vehicles;
+- Fixed issue caused by an empty item link in mail module;
+- Fixed heal prediction anchoring issues;
+- Misc tweaks.
+
 ## Version 3.02
 
 - Fixed movers' strata and visibility issues;
