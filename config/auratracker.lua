@@ -338,7 +338,7 @@ end
 function CFG:AT_Initialize()
 	panel = _G.CreateFrame("Frame", "LSATConfigPanel", _G.InterfaceOptionsFramePanelContainer)
 	panel.name = "Aura Tracker"
-	panel.parent = "oUF: |cff1a9fc0LS|r"
+	panel.parent = "|cff1a9fc0ls:|r UI"
 	panel:HookScript("OnShow", ATConfigPanel_OnShow)
 	panel:Hide()
 

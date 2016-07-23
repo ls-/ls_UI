@@ -20,7 +20,7 @@ end
 
 function CFG:General_Initialize()
 	local panel = CreateFrame("Frame", "LSGeneralConfigPanel", InterfaceOptionsFramePanelContainer)
-	panel.name = "oUF: |cff1a9fc0LS|r"
+	panel.name = "|cff1a9fc0ls:|r UI"
 	panel:HookScript("OnShow", LSGeneralConfigPanel_OnShow)
 	panel:Hide()
 

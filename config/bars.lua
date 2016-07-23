@@ -276,7 +276,7 @@ end
 function CFG:B_Initialize()
 	local panel = CreateFrame("Frame", "LSBarsConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "Bars"
-	panel.parent = "oUF: |cff1a9fc0LS|r"
+	panel.parent = "|cff1a9fc0ls:|r UI"
 	panel:HookScript("OnShow", LSBarsConfigPanel_OnShow)
 	panel:Hide()
 

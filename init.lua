@@ -4,7 +4,7 @@ local E, C, M, D, oUF = ns.E, ns.C, ns.M, ns.D, ns.oUF
 E:SetScript("OnEvent", E.EventHandler)
 
 function E:ADDON_LOADED(arg)
-	if arg ~= "oUF_LS" then return end
+	if arg ~= "ls_UI" then return end
 
 	E:CopyTable(E:CopyTable(D, oUF_LS_CONFIG), C)
 

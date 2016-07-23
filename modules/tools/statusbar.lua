@@ -84,7 +84,7 @@ function E:HandleStatusBar(bar, cascade)
 		end
 
 		local gloss = bar:CreateTexture(nil, "ARTWORK", nil, 6)
-		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 		gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
 		gloss:SetAllPoints()
 		bar.Gloss = gloss
@@ -106,7 +106,7 @@ function E:CreateStatusBar(parent, name, orientation)
 	bar.Bg = bg
 
 	local gloss = bar:CreateTexture(nil, "ARTWORK", nil, 6)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 	gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
 	gloss:SetAllPoints()
 	bar.Gloss = gloss
@@ -172,20 +172,20 @@ function E:SetStatusBarSkin(bar, skinType)
 
 	if orientation == "HORIZONTAL" then
 		local gloss = bar.Tube[0]
-		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 		gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
 		gloss:SetAllPoints()
 
 		local leftTexture = bar.Tube[1]
-		leftTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+		leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 		leftTexture:SetPoint("RIGHT", bar, "LEFT", 3, 0)
 
 		local rightTexture = bar.Tube[2]
-		rightTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+		rightTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 		rightTexture:SetPoint("LEFT", bar, "RIGHT", -3, 0)
 
 		local topTexture = bar.Tube[3]
-		topTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal", true)
+		topTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal", true)
 		topTexture:SetTexCoord(0 / 64, 64 / 64, 21 / 64, 24 / 64)
 		topTexture:SetHeight(3)
 		topTexture:SetHorizTile(true)
@@ -193,7 +193,7 @@ function E:SetStatusBarSkin(bar, skinType)
 		topTexture:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
 
 		local bottomTexture = bar.Tube[4]
-		bottomTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal", true)
+		bottomTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal", true)
 		bottomTexture:SetTexCoord(0 / 64, 64 / 64, 24 / 64, 21 / 64)
 		bottomTexture:SetHeight(3)
 		bottomTexture:SetHorizTile(true)
@@ -221,12 +221,12 @@ function E:SetStatusBarSkin(bar, skinType)
 		end
 	elseif orientation == "VERTICAL" then
 		local gloss = bar.Tube[0]
-		gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical")
+		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
 		gloss:SetTexCoord(0 / 64, 20 / 64, 0 / 64, 64 / 64)
 		gloss:SetAllPoints()
 
 		local leftTexture = bar.Tube[1]
-		leftTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical", true)
+		leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical", true)
 		leftTexture:SetTexCoord(21 / 64, 24 / 64, 0 / 64, 64 / 64)
 		leftTexture:SetWidth(3)
 		leftTexture:SetVertTile(true)
@@ -234,7 +234,7 @@ function E:SetStatusBarSkin(bar, skinType)
 		leftTexture:SetPoint("BOTTOMRIGHT", bar, "BOTTOMLEFT", 0, 0)
 
 		local rightTexture = bar.Tube[2]
-		rightTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical", true)
+		rightTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical", true)
 		rightTexture:SetTexCoord(24 / 64, 21 / 64, 0 / 64, 64 / 64)
 		rightTexture:SetWidth(3)
 		rightTexture:SetVertTile(true)
@@ -242,11 +242,11 @@ function E:SetStatusBarSkin(bar, skinType)
 		rightTexture:SetPoint("BOTTOMLEFT", bar, "BOTTOMRIGHT", 0, 0)
 
 		local topTexture = bar.Tube[3]
-		topTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical")
+		topTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
 		topTexture:SetPoint("BOTTOM", bar, "TOP", 0, -3)
 
 		local bottomTexture = bar.Tube[4]
-		bottomTexture:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_vertical")
+		bottomTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
 		bottomTexture:SetPoint("TOP", bar, "BOTTOM", 0, 3)
 
 		if size == "S" then

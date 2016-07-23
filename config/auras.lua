@@ -378,7 +378,7 @@ function CFG:UFAuras_Initialize()
 
 	panel = CreateFrame("Frame", "LSUFAurasConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = "Buffs and Debuffs"
-	panel.parent = "oUF: |cff1a9fc0LS|r"
+	panel.parent = "|cff1a9fc0ls:|r UI"
 	panel:HookScript("OnShow", UFAurasConfigPanel_OnShow)
 	panel:Hide()
 

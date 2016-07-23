@@ -12,7 +12,7 @@ function UF:ConstructPetFrame(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetSize(38, 114)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-pet-bg")
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-bg")
 	bg:SetTexCoord(1 / 64, 39 / 64, 1 / 128, 115 / 128)
 	bg:SetPoint("CENTER", 0, 0)
 
@@ -23,7 +23,7 @@ function UF:ConstructPetFrame(frame)
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 1)
 	fg:SetSize(32, 70)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-pet-fg")
+	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-fg")
 	fg:SetTexCoord(1 / 64, 33 / 64, 1 / 128, 71 / 128)
 	fg:SetPoint("CENTER", 0, 0)
 
@@ -67,7 +67,7 @@ function UF:ConstructPetFrame(frame)
 	end
 
 	local threat = UF:CreateThreat(frame)
-	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-pet-threat")
+	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")
 	threat:SetTexCoord(1 / 64, 45 / 64, 1 / 64, 51 / 64)
 	threat:SetSize(44, 50)
 	threat:SetPoint("CENTER", 0, 0)

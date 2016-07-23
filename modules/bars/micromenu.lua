@@ -570,7 +570,7 @@ end
 local function SetPushedTextureOverride(button)
 	local pushed = button:GetPushedTexture()
 	if pushed then
-		pushed:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+		pushed:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
 		pushed:SetBlendMode("ADD")
 		pushed:SetTexCoord(0 / 256, 18 / 256, 24 / 64, 48 / 64)
 		pushed:ClearAllPoints()
@@ -596,7 +596,7 @@ local function HandleMicroButton(button)
 	SetDisabledTextureOverride(button)
 
 	if highlight then
-		highlight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+		highlight:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
 		highlight:SetTexCoord(0 / 256, 18 / 256, 0, 24 / 64)
 		highlight:ClearAllPoints()
 		highlight:SetAllPoints()
@@ -615,7 +615,7 @@ local function HandleMicroButton(button)
 	bg:SetAllPoints()
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-	icon:SetTexture("Interface\\AddOns\\oUF_LS\\media\\micromenu")
+	icon:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
 	icon:SetSize(16, 22)
 	icon:SetPoint("CENTER", 0, 0)
 	button.Icon = icon

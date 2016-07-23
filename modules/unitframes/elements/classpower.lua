@@ -349,7 +349,7 @@ function UF:CreateClassPowerBar(parent, level)
 		element.Texture = texture
 
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-classpower")
+		glow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
 		glow:SetPoint("CENTER", element, "CENTER", 0, 0)
 		glow:SetAlpha(0)
 		element.Glow = glow
@@ -438,7 +438,7 @@ function UF:CreateRuneBar(parent, level)
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
 		glow:SetSize(16, LAYOUT[6][i].size)
 		glow:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
-		glow:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame-player-classpower")
+		glow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
 		glow:SetVertexColor(unpack(M.colors.power.RUNES_GLOW))
 		glow:SetTexCoord(unpack(LAYOUT[6][i].glow))
 		glow:SetAlpha(0)

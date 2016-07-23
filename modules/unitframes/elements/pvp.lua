@@ -40,11 +40,11 @@ local function Override(self, event, unit)
 			pvp:SetTexture(_G.GetPrestigeInfo(level))
 			pvp:SetTexCoord(0, 1, 0, 1)
 		else
-			pvp:SetTexture("Interface\\AddOns\\oUF_LS\\media\\pvp-banner-"..status)
+			pvp:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
 			pvp:SetTexCoord(48 / 128, 78 / 128, 1 / 64, 31 / 64)
 		end
 
-		pvp.Prestige:SetTexture("Interface\\AddOns\\oUF_LS\\media\\pvp-banner-"..status)
+		pvp.Prestige:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
 		pvp.Prestige:SetTexCoord(1 / 128, 47 / 128, 1 / 64, 49 / 64)
 
 		pvp:Show()
@@ -74,7 +74,7 @@ function UF:CreatePvPIcon(parent, layer, sublayer, hook)
 
 	if hook then
 		hook = parent:CreateTexture(nil, layer, nil, sublayer)
-		hook:SetTexture("Interface\\AddOns\\oUF_LS\\media\\pvp-banner-hook")
+		hook:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
 		hook:SetSize(33, 36)
 		pvp.Hook = hook
 	end

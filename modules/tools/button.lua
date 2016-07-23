@@ -331,7 +331,7 @@ end
 function E:UpdatePushedTexture(button)
 	if not button.SetPushedTexture then return end
 
-	button:SetPushedTexture("Interface\\AddOns\\oUF_LS\\media\\button-pushed")
+	button:SetPushedTexture("Interface\\AddOns\\ls_UI\\media\\button-pushed")
 	local texture = button:GetPushedTexture()
 	texture:SetAllPoints()
 end

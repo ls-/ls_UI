@@ -37,7 +37,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.mouseovers = {}
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
@@ -47,26 +47,26 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame.Cover = cover
 
 	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	gloss:SetTexture("Interface\\AddOns\\oUF_LS\\media\\statusbar_horizontal")
+	gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 	gloss:SetTexCoord(0, 1, 0 / 64, 20 / 64)
 	gloss:SetSize(94, 20)
 	gloss:SetPoint("CENTER")
 
 	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	fg:SetTexCoord(112 / 512, 218 / 512, 160 / 256, 190 / 256)
 	fg:SetSize(106, 30)
 	fg:SetPoint("BOTTOM", 0, 3)
 	frame.Fg = fg
 
 	local fgLeft = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	fgLeft:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fgLeft:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	fgLeft:SetTexCoord(116 / 512, 130 / 512, 66 / 256, 92 / 256)
 	fgLeft:SetSize(14, 26)
 	fgLeft:SetPoint("LEFT", 5, 0)
 
 	local fgRight = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	fgRight:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	fgRight:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	fgRight:SetTexCoord(130 / 512, 144 / 512, 66 / 256, 92 / 256)
 	fgRight:SetSize(14, 26)
 	fgRight:SetPoint("RIGHT", -5, 0)
@@ -137,7 +137,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
 	local threat = UF:CreateThreat(frame)
-	threat:SetTexture("Interface\\AddOns\\oUF_LS\\media\\frame_other")
+	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	threat:SetTexCoord(210 / 512, 326 / 512, 200 / 256, 230 / 256)
 	threat:SetSize(116, 30)
 	threat:SetPoint("CENTER", 0, 6)
