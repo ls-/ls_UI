@@ -1,3 +1,12 @@
+## Version 3.04
+
+- Renamed addon, oUF LS -> ls: UI;
+- Updated embedded oUF_FCF plug-in;
+- Fixed issue in auras module, that caused TempEnchant3 button to be erroneously shown;
+- Fixed pet selector availability during pet battles;
+- Fixed issue which caused additional bars to stay hidden after pet battle was over;
+- Misc bug fixes and tweaks.
+
 ## Version 3.03
 
 - Fixed combo points visibility for druids and vehicles;
