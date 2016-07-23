@@ -1,5 +1,5 @@
-## oUF LS
-oUF-based UI, that not only replaces default unit frames, but also customises buttons, action bars, minimap, etc. and provides some extra features.
+## ls: UI
+Yet another UI, but this one is a bit special.
 
 ## Download
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662-oUFLS.html)

@@ -1,9 +1,8 @@
 ## Interface: 70000
 ## Author: lightspark
 ## Version: 3.03
-## Title: oUF: |cff1a9fc0LS|r
-## Notes: oUF-based UI
-## X-Category: UnitFrame
+## Title: |cff1a9fc0ls:|r UI
+## Notes: Yet another UI, duh. This one is a bit special though...
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
 embeds\_embeds.xml
