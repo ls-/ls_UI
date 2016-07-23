@@ -1,8 +1,8 @@
 ## Interface: 70000
 ## Author: lightspark
-## Version: 3.03
+## Version: 3.04
 ## Title: |cff1a9fc0ls:|r UI
-## Notes: Yet another UI, duh. This one is a bit special though...
+## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: oUF_LS_CONFIG
 
 embeds\_embeds.xml
