@@ -36,6 +36,13 @@ local function SetPetBattleButtonPosition()
 	E:SetupBar(PetBattleBar, BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PB_CFG.direction, E.SkinPetBattleButton)
 end
 
+local function ActionBarController_OnEventHook(self, event)
+	if event == "PET_BATTLE_CLOSE" then
+		print("here!")
+		_G.C_Timer.After(0.5, _G.MultiActionBar_Update)
+	end
+end
+
 function B:HandlePetBattleBar()
 	if not C.bars.restricted then
 		PB_CFG = C.bars.bar1
@@ -72,4 +79,7 @@ function B:HandlePetBattleBar()
 	PetBattleBottomFrame.PetSelectionFrame:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 32)
 
 	_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
+
+	-- hack: sometimes it fails to update multi-action bar visibility
+	_G.ActionBarController:HookScript("OnEvent", ActionBarController_OnEventHook)
 end
