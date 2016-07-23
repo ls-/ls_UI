@@ -4,8 +4,8 @@ Yet another UI, but this one is a bit special.
 ![image](http://i.imgur.com/15MMfNR.gif)
 
 ## Download
-- [WoWInterface](http://www.wowinterface.com/downloads/info22662-oUFLS.html)
-- [Curse](http://mods.curse.com/addons/wow/ouf-ls)
+- [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
+- [Curse](http://mods.curse.com/addons/wow/ls-ui)
 
 ## Supported Frames
 Player, Pet, Target, Target of Target, Focus, Target of Focus, Party (w/o pets and targets), Bosses and Arena (w/ PvP trinket tracker).
@@ -36,7 +36,7 @@ Player frame is split into three parts:
 - [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html).
 
 ## Feedback And Feature Requests
-If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662-oUFLS.html#comments) or [Curse](http://mods.curse.com/addons/wow/ouf-ls#comments).
+If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662.html#comments) or [Curse](http://mods.curse.com/addons/wow/ls-ui#comments).
 
 Feel free to write feedback on how to improve some class-specific features, because I only play as PvE mage and PvP DK.
 
