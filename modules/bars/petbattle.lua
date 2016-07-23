@@ -62,9 +62,14 @@ function B:HandlePetBattleBar()
 	end
 
 	PetBattleBottomFrame:SetParent(E.HIDDEN_PARENT)
+
 	PetBattleBottomFrame.TurnTimer:SetParent(PetBattleBar)
 	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
 	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 8)
+
+	PetBattleBottomFrame.PetSelectionFrame:SetParent(PetBattleBar)
+	PetBattleBottomFrame.PetSelectionFrame:ClearAllPoints()
+	PetBattleBottomFrame.PetSelectionFrame:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 32)
 
 	_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
 end
