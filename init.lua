@@ -6,7 +6,12 @@ E:SetScript("OnEvent", E.EventHandler)
 function E:ADDON_LOADED(arg)
 	if arg ~= "ls_UI" then return end
 
-	E:CopyTable(E:CopyTable(D, oUF_LS_CONFIG), C)
+	if oUF_LS_CONFIG then
+		E:CopyTable(E:CopyTable(D, oUF_LS_CONFIG), C)
+		oUF_LS_CONFIG = nil
+	else
+		E:CopyTable(E:CopyTable(D, LS_UI_CONFIG), C)
+	end
 
 	E:InitializeModules()
 
@@ -20,7 +25,7 @@ function E:PLAYER_LOGIN()
 end
 
 function E:PLAYER_LOGOUT(...)
-	oUF_LS_CONFIG = E:DiffTable(D, C)
+	LS_UI_CONFIG = E:DiffTable(D, C)
 end
 
 E:RegisterEvent("ADDON_LOADED")

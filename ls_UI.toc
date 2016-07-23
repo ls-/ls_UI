@@ -3,7 +3,8 @@
 ## Version: 3.04
 ## Title: |cff1a9fc0ls:|r UI
 ## Notes: Yet another UI, but this one is a bit special...
-## SavedVariablesPerCharacter: oUF_LS_CONFIG
+## SavedVariablesPerCharacter: LS_UI_CONFIG
+## RequiredDeps: oUF_LS
 
 embeds\_embeds.xml
 core\_core.xml
