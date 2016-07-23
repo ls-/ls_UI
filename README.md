@@ -1,6 +1,8 @@
 ## ls: UI
 Yet another UI, but this one is a bit special.
 
+![image](http://i.imgur.com/Kt4vTHf.gif)
+
 ## Download
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662-oUFLS.html)
 - [Curse](http://mods.curse.com/addons/wow/ouf-ls)
