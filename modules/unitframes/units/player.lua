@@ -185,6 +185,8 @@ function UF:ConstructPlayerFrame(frame)
 	end
 
 	fcf.mode = "Fountain"
+	fcf.xOffset = 15
+	fcf.yOffset = 20
 	fcf.abbreviateNumbers = true
 
 	UF:CreateStatusHighlight(frame)
