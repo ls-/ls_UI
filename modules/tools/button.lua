@@ -279,7 +279,7 @@ local function SkinButton(button)
 	if bNormalTexture then
 		bNormalTexture:SetTexture(nil)
 
-		E:CreateBorder(button, button:GetWidth() < 26 and 6 or nil)
+		E:CreateBorder(button)
 
 		_G.hooksecurefunc(bNormalTexture, "SetVertexColor", SetVertexColorHook)
 	end

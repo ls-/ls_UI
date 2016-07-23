@@ -11,7 +11,7 @@ local type, pairs = type, pairs
 local sections = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}
 
 local function SetBorderColor(self, r, g, b, a)
-	local t = self.BorderTextures
+	local t = self.borderTextures
 	if not t then return end
 
 	for _, tex in pairs(t) do
@@ -20,13 +20,14 @@ local function SetBorderColor(self, r, g, b, a)
 end
 
 local function GetBorderColor(self)
-	return self.BorderTextures and self.BorderTextures.TOPLEFT:GetVertexColor()
+	return self.borderTextures and self.borderTextures.TOPLEFT:GetVertexColor()
 end
 
-function E:CreateBorder(object, size, offset)
-	if type(object) ~= "table" or not object.CreateTexture or object.BorderTextures then return end
+function E:CreateBorder(object, offset)
+	if type(object) ~= "table" or not object.CreateTexture or object.borderTextures then return end
 
 	local t = {}
+	offset = offset or 0
 
 	for i = 1, #sections do
 		local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
@@ -35,16 +36,16 @@ function E:CreateBorder(object, size, offset)
 	end
 
 	t.TOPLEFT:SetSize(8, 8)
-	t.TOPLEFT:SetPoint("BOTTOMRIGHT", object, "TOPLEFT", 4, -4)
+	t.TOPLEFT:SetPoint("BOTTOMRIGHT", object, "TOPLEFT", 4 + offset, -4 - offset)
 
 	t.TOPRIGHT:SetSize(8, 8)
-	t.TOPRIGHT:SetPoint("BOTTOMLEFT", object, "TOPRIGHT", -4 , -4)
+	t.TOPRIGHT:SetPoint("BOTTOMLEFT", object, "TOPRIGHT", -4 - offset, -4 - offset)
 
 	t.BOTTOMLEFT:SetSize(8, 8)
-	t.BOTTOMLEFT:SetPoint("TOPRIGHT", object, "BOTTOMLEFT", 4, 4)
+	t.BOTTOMLEFT:SetPoint("TOPRIGHT", object, "BOTTOMLEFT", 4 + offset, 4 + offset)
 
 	t.BOTTOMRIGHT:SetSize(8, 8)
-	t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -4, 4)
+	t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -4 - offset, 4 + offset)
 
 	t.TOP:SetHeight(8)
 	t.TOP:SetHorizTile(true)
@@ -66,7 +67,7 @@ function E:CreateBorder(object, size, offset)
 	t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 2, 0)
 	t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 2, 0)
 
-	object.BorderTextures = t
+	object.borderTextures = t
 	object.SetBorderColor = SetBorderColor
 	object.GetBorderColor = GetBorderColor
 end

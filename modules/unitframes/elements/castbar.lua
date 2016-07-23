@@ -68,7 +68,7 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 	local iconHolder = _G.CreateFrame("Frame", "$parentIconHolder", bar)
 	iconHolder:SetSize(28, 28)
 	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -8, 0)
-	E:CreateBorder(iconHolder, 8)
+	E:CreateBorder(iconHolder)
 	iconHolder:SetBorderColor(unpack(M.colors.yellow))
 
 	bar.Icon = E:UpdateIcon(iconHolder)

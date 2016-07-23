@@ -437,7 +437,7 @@ function TT:Initialize()
 		end
 
 		E:HandleStatusBar(GameTooltipStatusBar)
-		E:CreateBorder(GameTooltipStatusBar, 8)
+		E:CreateBorder(GameTooltipStatusBar)
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 3, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -3, -2)
