@@ -35,14 +35,14 @@ Player frame is split into three parts:
 - [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html).
 
 ## Feedback And Feature Requests
-If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/oUF_LS/issues?state=open) on my GitHub page, or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662-oUFLS.html#comments) or [Curse](http://mods.curse.com/addons/wow/ouf-ls#comments).
+If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662-oUFLS.html#comments) or [Curse](http://mods.curse.com/addons/wow/ouf-ls#comments).
 
 Feel free to write feedback on how to improve some class-specific features, because I only play as PvE mage and PvP DK.
 
 However, keep in mind that I'm not going to implement any features, as a replacement for *BIG* addons. I want my UI to be as lightweight as possible.
 
 ## License
-Please see [LICENSE](https://github.com/ls-/oUF_LS/blob/master/LICENSE.txt) file.
+Please see [LICENSE](https://github.com/ls-/ls_UI/blob/master/LICENSE.txt) file.
 
 ## Credits
 Credits go to zork, Phanx, haste, p3lim, stako, Blazeflack and artist from Blizzard Entertainment who drew default minimap texture!
