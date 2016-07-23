@@ -7,8 +7,7 @@ Yet another UI, but this one is a bit special.
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662-oUFLS.html)
 - [Curse](http://mods.curse.com/addons/wow/ouf-ls)
 
-## Features
-### Supported Frames
+## Supported Frames
 Player, Pet, Target, Target of Target, Focus, Target of Focus, Party (w/o pets and targets), Bosses and Arena (w/ PvP trinket tracker).
 
 Player frame is split into three parts:
@@ -16,7 +15,7 @@ Player frame is split into three parts:
 - Centre - player health;
 - Right - player power, e.g. mana, rage.
 
-### Supported Resources
+## Supported Resources
 - All - Combo Points;
 - Death Knight - Runes;
 - Mage - Arcane Charges;
@@ -24,7 +23,7 @@ Player frame is split into three parts:
 - Paladin - Holy Power;
 - Warlock - Soul Shards.
 
-### Other
+## Other Features
 - Many major elements of default UI are customised;
 - Frame "movers" for various interface elements, use **/lsmovers** command to toggle them;
 - Floating combat feedback on player frame;
