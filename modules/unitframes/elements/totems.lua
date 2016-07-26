@@ -49,6 +49,9 @@ function UF:HandleTotems(parent, level)
 		cd:SetPoint("BOTTOMRIGHT", -2, 2)
 
 		E:HandleCooldown(cd, 10)
-		cd.Timer:SetPoint("BOTTOM", 0, 2)
+
+		if cd.Timer then
+			cd.Timer:SetPoint("BOTTOM", 0, 2)
+		end
 	end
 end
