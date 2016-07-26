@@ -25,22 +25,23 @@ oUF.colors.reaction = {
 	[8] = {0.15, 0.65, 0.15},
 }
 
-oUF.colors.power["MANA"] = {13 / 255, 140 / 255, 255 / 255}
-oUF.colors.power["ENERGY"] = {255 / 255, 206 / 255, 13 / 255}
-oUF.colors.power["INSANITY"] = {158 / 255, 6 / 255, 227 / 255}
 oUF.colors.power["ARCANE_CHARGES"] = {29 / 255, 124 / 255, 226 / 255}
 oUF.colors.power["COMBO_POINTS"] = {229 / 255, 76 / 255, 38 / 255}
+oUF.colors.power["ENERGY"] = {255 / 255, 206 / 255, 13 / 255}
+oUF.colors.power["INSANITY"] = {158 / 255, 6 / 255, 227 / 255}
+oUF.colors.power["MANA"] = {13 / 255, 140 / 255, 255 / 255}
+oUF.colors.power["POWER_TYPE_POWER"] = {255 / 255, 206 / 255, 13 / 255}
 oUF.colors.power["RUNES"] = {106 / 255, 184 / 255, 247 / 255}
 oUF.colors.power["SOUL_SHARDS"] = {175 / 255, 110 / 255, 255 / 255}
 
 local colors = E:CopyTable(oUF.colors, {})
 
 colors.power["ARCANE_CHARGES_GLOW"] = {19 / 255, 239 / 255, 237 / 255}
+colors.power["CHI_GLOW"] = {168 / 255, 255 / 255, 181 / 255}
 colors.power["COMBO_POINTS_GLOW"] = {242 / 255, 133 / 255, 28 / 255}
 colors.power["HOLY_POWER_GLOW"] = {249 / 255, 213 / 255, 145 / 255}
 colors.power["RUNES_GLOW"] = {95 / 255, 251 / 255, 238 / 255}
 colors.power["SOUL_SHARDS_GLOW"] = {254 / 255, 97 / 255, 255 / 255}
-colors.power["CHI_GLOW"] = {168 / 255, 255 / 255, 181 / 255}
 colors.power["STAGGER"] = {0.52, 1, 0.52, 1, 0.98, 0.72, 1, 0.42, 0.42}
 
 colors.icon = {
@@ -60,18 +61,18 @@ colors.healprediction = {
 	["damageabsorb"] = {0.85, 0.85, 0.9},
 }
 
-colors.red = {0.9, 0.15, 0.15}
-colors.green = {0.15, 0.65, 0.15}
 colors.blue = {0.41, 0.8, 0.94}
-colors.yellow = {0.9, 0.65, 0.15}
-colors.lightgray = {0.85, 0.85, 0.85}
-colors.gray = {0.6, 0.6, 0.6}
 colors.darkgray = {0.15, 0.15, 0.15}
-colors.indigo = {0.36, 0.46, 0.8}
-colors.orange = {0.9, 0.4, 0.1}
-colors.dodgerblue = {0.12, 0.56, 1}
-colors.jade = {0, 0.66, 0.42}
 colors.darkmagenta = {0.545, 0, 0.545}
+colors.dodgerblue = {0.12, 0.56, 1}
+colors.gray = {0.6, 0.6, 0.6}
+colors.green = {0.15, 0.65, 0.15}
+colors.indigo = {0.36, 0.46, 0.8}
+colors.jade = {0, 0.66, 0.42}
+colors.lightgray = {0.85, 0.85, 0.85}
+colors.orange = {0.9, 0.4, 0.1}
+colors.red = {0.9, 0.15, 0.15}
+colors.yellow = {0.9, 0.65, 0.15}
 
 colors.gradient = {
 	["GYR"] = {0.15, 0.65, 0.15, 0.9, 0.65, 0.15, 0.9, 0.15, 0.15},
