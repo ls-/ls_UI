@@ -13,13 +13,13 @@ if (-Not (Test-Path (".\" + $name + ".toc"))) {
 }
 
 $version = if ((Get-Content (".\" + $name + ".toc") | Where {
-    $_ -match "Version: ([0-9]+\.[0-9]+)"
+	$_ -match "Version: ([0-9]+\.[0-9]+)"
 }) -match "([0-9]+\.[0-9]+)") {
-    $matches[1]
+	$matches[1]
 }
 
 if (-Not $version) {
-    throw "Bad version format"
+	throw "Bad version format"
 }
 
 $includedFiles = @(
