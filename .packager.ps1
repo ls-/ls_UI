@@ -1,8 +1,18 @@
 Set-Location $PSScriptRoot
 
-$curVersion = if ((Get-Content ".\ls_UI.toc" | Where { $_ -match "Version: ([0-9]+\.[0-9]+)" } ) -match "([0-9]+\.[0-9]+)") {$matches[1]}
-$folderName = "ls_UI"
-$zipName = $folderName + "-" + $curVersion + ".zip"
+if (-not (Test-Path "C:\PROGRA~1\7-Zip\7z.exe")) {
+	throw "7z.exe not found"
+}
+
+Set-Alias 7z "C:\PROGRA~1\7-Zip\7z.exe"
+
+$addonName = (Get-Item .).Name
+
+if (-not (Test-Path (".\" + $addonName + ".toc"))) {
+	throw ".toc not found"
+}
+
+$curVersion = if ((Get-Content (".\" + $addonName + ".toc") | Where { $_ -match "Version: ([0-9]+\.[0-9]+)" } ) -match "([0-9]+\.[0-9]+)") {$matches[1]}
 
 $includedFiles = @(
 	".\init.lua",
@@ -23,12 +33,20 @@ $filesToRemove = @(
 	"README*"
 )
 
-Remove-Item * -Include @("*.zip", $folderName) -Recurse -Force
+if (Test-Path ".\temp\") {
+	Remove-Item ".\temp\" -Recurse -Force
+}
 
-New-Item -Name $folderName -ItemType Directory | Out-Null
-Copy-Item $includedFiles -Destination $folderName -Recurse
-Remove-Item $folderName -Include $filesToRemove -Recurse -Force
-Compress-Archive -Path $folderName -DestinationPath $zipName
-Move-Item ".\ls_UI-*.zip" -Destination "..\" -Force
+New-Item -Path (".\temp\" + $addonName) -ItemType Directory
+Copy-Item "..\!includes\oUF_LS\" -Destination ".\temp" -Recurse
+Copy-Item $includedFiles -Destination (".\temp\" + $addonName) -Recurse
+Remove-Item ".\temp" -Include $filesToRemove -Recurse -Force
 
-Remove-Item $folderName -Recurse -Force
+Set-Location ".\temp\"
+
+7z a -tzip -mx9 ($addonName + "-" + $curVersion + ".zip") (Get-ChildItem -Path "..\temp")
+
+Set-Location "..\"
+
+Move-Item ".\temp\*.zip" -Destination "..\" -Force
+Remove-Item ".\temp" -Recurse -Force
