@@ -120,7 +120,7 @@ local function GameTooltip_ItemTooltipHook(self)
 	local total = _G.GetItemCount(link, true)
 	local _, _, id = strfind(link, "item:(%d+)")
 
-	if id == "0" then return end
+	if not id then return end
 
 	for i = 2, self:NumLines() do
 		if strfind(_G["GameTooltipTextLeft"..i]:GetText(), strformat(ID, id)) then
