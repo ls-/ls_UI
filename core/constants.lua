@@ -30,7 +30,6 @@ oUF.colors.power["COMBO_POINTS"] = {229 / 255, 76 / 255, 38 / 255}
 oUF.colors.power["ENERGY"] = {255 / 255, 206 / 255, 13 / 255}
 oUF.colors.power["INSANITY"] = {158 / 255, 6 / 255, 227 / 255}
 oUF.colors.power["MANA"] = {13 / 255, 140 / 255, 255 / 255}
-oUF.colors.power["POWER_TYPE_POWER"] = {255 / 255, 206 / 255, 13 / 255}
 oUF.colors.power["RUNES"] = {106 / 255, 184 / 255, 247 / 255}
 oUF.colors.power["SOUL_SHARDS"] = {175 / 255, 110 / 255, 255 / 255}
 
