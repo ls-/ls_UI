@@ -1,3 +1,10 @@
+## Version 3.05
+
+- Fixed archive readability on Macs, blame M$ for this one;
+- Fixed power colour issue;
+- Fixed 0 ids in item tooltips;
+- Restored compatibility with OmniCC, ugh.
+
 ## Version 3.04
 
 - Renamed addon, oUF LS -> ls: UI;
