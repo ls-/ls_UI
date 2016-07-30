@@ -135,9 +135,9 @@ local function SetHotKeyTextHook(self)
 	local text = bType and _G.GetBindingText(_G.GetBindingKey(bType..button:GetID()))
 
 	if text then
-		text = strgsub(text, ALT_KEY_TEXT, "A")
-		text = strgsub(text, CTRL_KEY_TEXT, "C")
 		text = strgsub(text, SHIFT_KEY_TEXT, "S")
+		text = strgsub(text, CTRL_KEY_TEXT, "C")
+		text = strgsub(text, ALT_KEY_TEXT, "A")
 		text = strgsub(text, KEY_BUTTON1, "LMB")
 		text = strgsub(text, KEY_BUTTON2, "RMB")
 		text = strgsub(text, KEY_BUTTON3, "MMB")
