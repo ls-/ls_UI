@@ -234,9 +234,7 @@ local function GameTooltip_UnitTooltipHook(self)
 			if isShiftKeyDown then
 				name = name.."-"..realm
 			else
-				if relationship == _G.LE_REALM_RELATION_VIRTUAL then
-					name = name.._G.INTERACTIVE_SERVER_LABEL
-				else
+				if relationship ~= _G.LE_REALM_RELATION_VIRTUAL then
 					name = name.._G.FOREIGN_SERVER_LABEL
 				end
 			end
