@@ -1,0 +1,23 @@
+## Interface: 70000
+## LoadOnDemand: 1
+## Title: Lib: LibKeyBound-1.0
+## Notes: An intuitive keybindings library.
+## Notes-deDE: LibKeyBound ist eine Bibliothek, die bei Keybindings hilft.
+## Notes-frFR: Une biblioth簵e d'aide �a keybindings.
+## Notes-esES: Una biblioteca para ayudar con las keybindings.
+## Notes-esMX: Una biblioteca para ayudar con las keybindings.
+## Author: Gello, Maul, Tuller, Toadkiller
+## X-Category: Library
+## X-Credits: ClickBinder by Gello and TrinityBinder by Maul -> keyBound by Tuller -> LibKeyBound library by Toadkiller
+## X-Website: http://www.wowace.com/wiki/LibKeyBound-1.0
+## X-AceForum: 9752
+## X-Category: Library
+## X-Curse-Packaged-Version: r104 release
+## X-Curse-Project-Name: LibKeyBound-1.0
+## X-Curse-Project-ID: libkeybound-1-0
+## X-Curse-Repository-ID: wow/libkeybound-1-0/mainline
+
+
+LibStub\LibStub.lua
+CallbackHandler-1.0\CallbackHandler-1.0.lua
+LibKeyBound-1.0\lib.xml

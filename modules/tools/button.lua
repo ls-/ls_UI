@@ -42,9 +42,88 @@ local KEY_BUTTON3 = KEY_BUTTON3
 local KEY_MOUSEWHEELDOWN = KEY_MOUSEWHEELDOWN
 local KEY_MOUSEWHEELUP = KEY_MOUSEWHEELUP
 
+-- LibKeyBound
+local KeyBound = LibStub("LibKeyBound-1.0")
+
 -- Mine
 local buttons = {}
 local actionButtons = {}
+
+-- Button Keybinding functions for use with libKeyBound
+local function GetButtonBindingName(button)
+	local bType = button.buttonType
+	local name = button:GetName()
+	if not bType then
+		if name and strmatch(name, "Stance") then
+			bType = "SHAPESHIFTBUTTON"
+		elseif name and strmatch(name, "PetAction") then
+			bType = "BONUSACTIONBUTTON"
+		else
+			bType = "ACTIONBUTTON"
+		end
+	end
+	if bType then
+		return format(bType.."%d", button:GetID())
+	else
+		return "CLICK "..button:GetName()..":LeftButton"
+	end
+end
+
+local function Button_OnEnter(self, ...)
+	KeyBound:Set(self)
+end
+
+local function Button_GetActionName(self)
+	-- ugly hack for boss button , which don't have a name
+	if (self:GetName()) then
+		return self:GetName()
+	else
+		return "Boss/Extra button"
+	end
+end
+
+local function Button_GetHotKey(self)
+	local ret = nil
+	if self:GetID() then
+		ret = _G.GetBindingKey(GetButtonBindingName(self))
+	end
+	return ret
+end
+
+-- function taken from elvui, thx :D
+local function getKeys(binding, keys)
+	keys = keys or ""
+	for i = 1, select("#", _G.GetBindingKey(binding)) do
+		local hotKey = select(i, _G.GetBindingKey(binding))
+		if keys ~= "" then
+			keys = keys .. ", "
+		end
+		keys = keys .. _G.GetBindingText(hotKey, "KEY_")
+	end
+	return keys
+end
+
+function Button_GetBindings(self)
+	local keys, binding
+	keys = getKeys(GetButtonBindingName(self))
+	-- ugly hack for boss button , which don't have a name
+	if (self:GetName()) then
+		keys = getKeys("CLICK "..self:GetName()..":LeftButton", keys)
+	end
+	return keys
+end
+
+function Button_SetKey(self, key)
+	_G.SetBinding(key, GetButtonBindingName(self))
+end
+
+function Button_ClearBindings(self)
+	local binding = _G.GetBindingKey(GetButtonBindingName(self))
+	while (binding) do
+		_G.SetBinding(binding, nil)
+		binding = _G.GetBindingKey(GetButtonBindingName(self))
+	end
+end
 
 local function Button_HasAction(self)
 	if self.__type == "action" or self.__type == "extra" then
@@ -119,20 +198,7 @@ end
 
 local function SetHotKeyTextHook(self)
 	local button = self:GetParent()
-	local name = button:GetName()
-	local bType = button.buttonType
-
-	if not bType then
-		if name and not strmatch(name, "Stance") then
-			if strmatch(name, "PetAction") then
-				bType = "BONUSACTIONBUTTON"
-			else
-				bType = "ACTIONBUTTON"
-			end
-		end
-	end
-
-	local text = bType and _G.GetBindingText(_G.GetBindingKey(bType..button:GetID()))
+	local text = _G.GetBindingText(_G.GetBindingKey(GetButtonBindingName(button)))
 
 	if text then
 		text = strgsub(text, SHIFT_KEY_TEXT, "S")
@@ -300,7 +366,14 @@ local function SkinButton(button)
 	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE");
 
 	button.HasAction = Button_HasAction
-
+	
+	button.GetHotkey = Button_GetHotKey
+	button.GetBindings = Button_GetBindings
+	button.ClearBindings = Button_ClearBindings
+	button.SetKey = Button_SetKey
+	button.GetActionName = Button_GetActionName
+	button:SetScript("OnEnter", Button_OnEnter)
+	
 	buttons[button] = true
 end
 
