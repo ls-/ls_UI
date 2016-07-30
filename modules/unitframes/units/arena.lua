@@ -190,7 +190,7 @@ function UF:ConstructArenaFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:name]")
+	frame:Tag(name, "[ls:smartreaction][ls:name][ls:server]|r")
 
 	local specinfo = CreateFrame("Frame", "$parentSpecInfo", frame)
 	specinfo:SetSize(28, 28)

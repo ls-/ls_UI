@@ -28,6 +28,9 @@ local UnitIsPlayer = UnitIsPlayer
 local UnitIsQuestBoss = UnitIsQuestBoss
 local UnitIsWildBattlePet = UnitIsWildBattlePet
 local UnitName = UnitName
+local UnitRealmRelationship = UnitRealmRelationship
+local FOREIGN_SERVER_LABEL = FOREIGN_SERVER_LABEL
+local LE_REALM_RELATION_VIRTUAL = LE_REALM_RELATION_VIRTUAL
 local UNKNOWN = UNKNOWN
 
 -- Mine
@@ -36,14 +39,37 @@ local SHEEPABLE_TYPES = {
 	"Humanoid", "Humanoide", "Humanoïde", "Umanoide", "Гуманоид", "인간형", "人型生物", "人形生物",
 }
 
-oUF.Tags.Methods["ls:name"] = function(unit, r)
-	local name = UnitName(r or unit)
+oUF.Tags.Methods["ls:smartreaction"] = function(unit, r)
 	local color = E:GetSmartReactionColor(r or unit)
 
-	return "|cff"..color.hex..(name or UNKNOWN).."|r"
+	return "|cff"..color.hex
 end
 
-oUF.Tags.Events["ls:name"] = "UNIT_NAME_UPDATE UNIT_HEALTH UNIT_CONNECTION"
+oUF.Tags.Events["ls:smartreaction"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE"
+
+oUF.Tags.Methods["ls:name"] = function(unit, r)
+	local name = UnitName(r or unit)
+
+	return name or UNKNOWN
+end
+
+oUF.Tags.Events["ls:name"] = "UNIT_NAME_UPDATE"
+
+oUF.Tags.Methods["ls:server"] = function(unit, r)
+	local _, realm = UnitName(r or unit)
+
+	if realm and realm ~= "" then
+		local relationship = UnitRealmRelationship(r or unit)
+
+		if relationship ~= LE_REALM_RELATION_VIRTUAL then
+			return FOREIGN_SERVER_LABEL
+		else
+			return ""
+		end
+	end
+end
+
+oUF.Tags.Events["ls:server"] = "UNIT_NAME_UPDATE"
 
 oUF.Tags.Methods["ls:healabsorb"] = function(unit)
 	local healAbsorb = UnitGetTotalHealAbsorbs("player") or 0

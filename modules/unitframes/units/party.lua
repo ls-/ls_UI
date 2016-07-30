@@ -130,7 +130,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:difficulty][ls:effectivelevel]|r [ls:name]")
+	frame:Tag(name, "[ls:difficulty][ls:effectivelevel]|r [ls:smartreaction][ls:name][ls:server]|r")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)

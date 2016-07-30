@@ -115,7 +115,7 @@ function UF:ConstructFocusFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 4, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -4, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:questicon][ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name]")
+	frame:Tag(name, "[ls:questicon][ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:smartreaction][ls:name][ls:server]|r")
 
 	local statusTopLeft = cover:CreateFontString("$parentTopLeftStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	statusTopLeft:SetJustifyH("LEFT")
