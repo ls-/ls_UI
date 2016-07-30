@@ -19,7 +19,6 @@ local ITEM_LEVEL = "|cffffd100"..ITEM_LEVEL_ABBR..":|r %d"
 local TARGET = "|cffffd100"..TARGET..":|r |cff%s%s|r"
 local ID = "|cffffd100"..ID..":|r %d"
 local TOTAL = "|cffffd100"..TOTAL..":|r %d"
-local PET_CLASS_PATTERN = strgsub(TOOLTIP_WILDBATTLEPET_LEVEL_CLASS, "%%s", "(.+)")
 local LINES_TO_REMOVE = {PVP, FACTION_ALLIANCE, FACTION_HORDE}
 local lastGUID
 local inspectGUIDCache = {}
@@ -162,12 +161,6 @@ local function GetLevelLine(self, level)
 	end
 
 	return nil
-end
-
-local function GetPetClass(lineText)
-	local _, petClass = strmatch(lineText, PET_CLASS_PATTERN)
-
-	return petClass
 end
 
 local function ShowInspectInfo(unit, classColorHEX, numTries)
@@ -334,6 +327,7 @@ local function GameTooltip_UnitTooltipHook(self)
 
 			if isPet then
 				local teamLevel = _G.C_PetJournal.GetPetTeamAverageLevel()
+				local petType = _G["BATTLE_PET_NAME_".._G.UnitBattlePetType(unit)]
 				creatureType = creatureType == "" and _G.PET or creatureType
 
 				if teamLevel then
@@ -342,7 +336,7 @@ local function GameTooltip_UnitTooltipHook(self)
 					difficultyColor.hex = E:RGBToHEX(_G.GetCreatureDifficultyColor(level))
 				end
 
-				petClass = ", "..GetPetClass(levelLine:GetText())
+				petClass = ", "..petType
 			end
 
 			levelLine:SetFormattedText("|cff%s%s%s|r %s%s", difficultyColor.hex,
