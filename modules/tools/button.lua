@@ -141,8 +141,8 @@ local function SetHotKeyTextHook(self)
 		text = strgsub(text, KEY_BUTTON1, "LMB")
 		text = strgsub(text, KEY_BUTTON2, "RMB")
 		text = strgsub(text, KEY_BUTTON3, "MMB")
-		text = strgsub(text, KEY_MOUSEWHEELDOWN, "MWU")
-		text = strgsub(text, KEY_MOUSEWHEELUP, "MWD")
+		text = strgsub(text, KEY_MOUSEWHEELDOWN, "MWD")
+		text = strgsub(text, KEY_MOUSEWHEELUP, "MWU")
 	end
 
 	self:SetFormattedText("%s", text or "")
