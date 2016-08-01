@@ -265,11 +265,13 @@ function B:ActionBarController_Initialize()
 		ConstructCap("Left")
 		ConstructCap("Right")
 
-		texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
-		texture:SetSize(50, 10)
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-nest")
-		texture:SetTexCoord(1 / 256, 51 / 256, 23 / 64, 33 / 64)
-		texture:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 192, 3)
+		if C.bars.bags.enabled then
+			texture = BarController:CreateTexture(nil, "ARTWORK", nil, 1)
+			texture:SetSize(50, 10)
+			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-nest")
+			texture:SetTexCoord(1 / 256, 51 / 256, 23 / 64, 33 / 64)
+			texture:SetPoint("BOTTOMLEFT", BarController, "BOTTOMRIGHT", 192, 3)
+		end
 
 		BarController:SetAttribute("_onstate-numbuttons", [[
 			local width = 32 * newstate
