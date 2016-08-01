@@ -38,7 +38,6 @@ end
 
 local function ActionBarController_OnEventHook(self, event)
 	if event == "PET_BATTLE_CLOSE" then
-		print("here!")
 		_G.C_Timer.After(0.5, _G.MultiActionBar_Update)
 	end
 end
