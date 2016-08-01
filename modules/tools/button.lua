@@ -33,14 +33,16 @@ local IsActionInRange = IsActionInRange
 local IsQuestLogSpecialItemInRange = IsQuestLogSpecialItemInRange
 local IsUsableAction = IsUsableAction
 local ATTACK_BUTTON_FLASH_TIME = ATTACK_BUTTON_FLASH_TIME
-local ALT_KEY_TEXT = ALT_KEY_TEXT.."%-"
-local CTRL_KEY_TEXT = CTRL_KEY_TEXT.."%-"
-local SHIFT_KEY_TEXT = SHIFT_KEY_TEXT.."%-"
+local ALT_KEY_TEXT = ALT_KEY_TEXT
+local CTRL_KEY_TEXT = CTRL_KEY_TEXT
+local SHIFT_KEY_TEXT = SHIFT_KEY_TEXT
 local KEY_BUTTON1 = KEY_BUTTON1
 local KEY_BUTTON2 = KEY_BUTTON2
 local KEY_BUTTON3 = KEY_BUTTON3
 local KEY_MOUSEWHEELDOWN = KEY_MOUSEWHEELDOWN
 local KEY_MOUSEWHEELUP = KEY_MOUSEWHEELUP
+local KEY_MOUSEWHEELUP = KEY_MOUSEWHEELUP
+local KEY_SPACE = KEY_SPACE
 
 -- Mine
 local buttons = {}
@@ -138,11 +140,13 @@ local function SetHotKeyTextHook(self)
 		text = strgsub(text, SHIFT_KEY_TEXT, "S")
 		text = strgsub(text, CTRL_KEY_TEXT, "C")
 		text = strgsub(text, ALT_KEY_TEXT, "A")
-		text = strgsub(text, KEY_BUTTON1, "LMB")
-		text = strgsub(text, KEY_BUTTON2, "RMB")
-		text = strgsub(text, KEY_BUTTON3, "MMB")
+		text = strgsub(text, KEY_BUTTON1, "LM")
+		text = strgsub(text, KEY_BUTTON2, "RM")
+		text = strgsub(text, KEY_BUTTON3, "MM")
 		text = strgsub(text, KEY_MOUSEWHEELDOWN, "MWD")
 		text = strgsub(text, KEY_MOUSEWHEELUP, "MWU")
+		text = strgsub(text, KEY_SPACE, "SP")
+		text = strgsub(text, "%-", "")
 	end
 
 	self:SetFormattedText("%s", text or "")
