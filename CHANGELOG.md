@@ -1,3 +1,10 @@
+## Version 3.06
+
+- Fixed hot key texts;
+- Fixed battle pet tooltips;
+- Restored compatibility with OmniCC, again;
+- Misc bug fixes and tweaks.
+
 ## Version 3.05
 
 - Fixed archive readability on Macs, blame M$ for this one;
