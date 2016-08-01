@@ -74,7 +74,7 @@ function E:CreateCooldown(parent, textSize)
 end
 
 function E:HandleCooldown(cooldown, textSize)
-	if _G.OmniCC or cooldown.handled then return end
+	if E.OMNICC or cooldown.handled then return end
 
 	cooldown:SetDrawEdge(false)
 	cooldown:SetHideCountdownNumbers(true)
