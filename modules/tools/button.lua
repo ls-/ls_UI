@@ -556,7 +556,8 @@ function E:SkinActionButton(button)
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
 
 	if bFloatingBG then
-		E:ForceHide(bFloatingBG)
+		bFloatingBG:SetAllPoints()
+		bFloatingBG:SetColorTexture(0, 0, 0, 0.65)
 	end
 
 	button.__type = "action"
@@ -571,7 +572,8 @@ function E:SkinStanceButton(button)
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
 
 	if bFloatingBG then
-		E:ForceHide(bFloatingBG)
+		bFloatingBG:SetAllPoints()
+		bFloatingBG:SetColorTexture(0, 0, 0, 0.65)
 	end
 
 	button.__type = "stance"
