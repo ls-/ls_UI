@@ -292,7 +292,7 @@ local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
 		bar:Hide()
 		UF:Reskin(bar:GetParent(), 0, false, "CP")
 	else
-		if event == "ClassPowerEnable" or changed then
+		if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
 			bar:Show()
 			UF:Reskin(bar:GetParent(), max or 9, true, "CP")
 
