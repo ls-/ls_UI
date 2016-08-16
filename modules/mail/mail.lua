@@ -188,11 +188,11 @@ local function LazyLootMail(index, delay)
 			LazyLootMail(index - 1, delay)
 		end
 	elseif index == 0 then
-		_G.InboxFrame_Update()
 		_G.CheckInbox()
+		_G.InboxFrame_Update()
 
 		if Mail.overflow then
-			ReceiveMail()
+			C_Timer.After(delay * 1.33, ReceiveMail)
 		else
 			_G.InboxFrame.ReceiveButton:SetChecked(false)
 			_G.MiniMapMailFrame:Hide()
