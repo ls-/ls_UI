@@ -230,8 +230,8 @@ local function UnitOptions_Refresh(newIndex)
 	panel.AuraList:Update()
 	panel.UnitSelector:RefreshValue()
 	panel.UnitSelector.Indicator:SetMask(activeConfig.enabled)
+	panel.ShowOnlyFilteredAurasMaskDial:SetMask(activeConfig.show_only_filtered)
 	panel.IncludeCastableBuffsMaskDial:SetMask(activeConfig.HELPFUL.include_castable)
-	panel.ShowOnlyDispellableDebuffsMaskDial:SetMask(activeConfig.HARMFUL.show_only_dispellable)
 end
 
 local function UnitSelectorDropDown_OnClick(self)
@@ -308,8 +308,8 @@ local function UFAurasConfigPanel_OnShow(self)
 	self.AuraList:Update()
 	self.UnitSelector:RefreshValue()
 	self.UnitSelector.Indicator:SetMask(activeConfig.enabled)
+	self.ShowOnlyFilteredAurasMaskDial:SetMask(activeConfig.show_only_filtered)
 	self.IncludeCastableBuffsMaskDial:SetMask(activeConfig.HELPFUL.include_castable)
-	self.ShowOnlyDispellableDebuffsMaskDial:SetMask(activeConfig.HARMFUL.show_only_dispellable)
 	self.ConfigCopyButton:Disable()
 	self.StatusLog:SetText("")
 end
@@ -326,8 +326,8 @@ local function IncludeCastableBuffsMaskDialIndicator_OnMouseUp(self)
 	activeConfig.HELPFUL.include_castable = self:GetParent():GetMask()
 end
 
-local function ShowOnlyDispellableDebuffsMaskDialIndicator_OnMouseUp(self)
-	activeConfig.HARMFUL.show_only_dispellable = self:GetParent():GetMask()
+local function ShowOnlyFilteredAurasMaskDialIndicator_OnMouseUp(self)
+	activeConfig.show_only_filtered = self:GetParent():GetMask()
 end
 
 local function WipeButton_OnClick(self)
@@ -385,9 +385,15 @@ function CFG:UFAuras_Initialize()
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100Buffs and Debuffs|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local infoText1 = CFG:CreateTextLabel(panel, 10, "These options allow you to control how buffs and debuffs are displayed on unit frames.")
-	infoText1:SetHeight(32)
+	local infoText1 = CFG:CreateTextLabel(panel, 10, "These options allow you to control how buffs and debuffs are displayed on unit frames.\n"..ENABLED_ICON_INLINE.." - enabled\\whitelisted, "..DISABLED_ICON_INLINE.." - disabled\\blacklisted.")
 	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	infoText1:SetPoint("RIGHT", -16, 0)
+	infoText1:SetHeight(32)
+	infoText1:SetJustifyH("LEFT")
+	infoText1:SetJustifyV("TOP")
+	infoText1:SetNonSpaceWrap(true)
+	infoText1:SetWordWrap(true)
+	infoText1:SetMaxLines(3)
 
 	local unitSelector = CFG:CreateDropDownMenu(panel, "UnitSelectorDropDown", "Unit Frame", UnitSelectorDropDown_Initialize)
 	unitSelector:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", -8, -18)
@@ -402,6 +408,9 @@ function CFG:UFAuras_Initialize()
 		indicator[i]:SetScript("OnMouseUp", UnitDropDownMaskDialIndicator_OnMouseUp)
 	end
 	unitSelector.Indicator = indicator
+
+	local unitSelectorInfo = CFG:CreateInfoButton(panel, "UnitSelectorInfo", "You can completely disable auras for certain specs.")
+	unitSelectorInfo:SetPoint("LEFT", unitSelector, "RIGHT", -12, 1)
 
 	local auraList = CreateFrame("ScrollFrame", "LSUFAuraList", panel, "FauxScrollFrameTemplate")
 	auraList:SetSize(210, 330) -- 30 * 10 + 6 * 2 + 9 * 2
@@ -500,7 +509,7 @@ function CFG:UFAuras_Initialize()
 	wipeButtonBG:SetPoint("LEFT", -3, -4)
 	wipeButtonBG:SetTexture("Interface\\SPELLBOOK\\SpellBook-SkillLineTab")
 
-	local buffTab = CreateFrame("Button", "LSUFAuraListTab1", auraList, "TabButtonTemplate")
+	local buffTab = CreateFrame("Button", "$parentTab1", auraList, "TabButtonTemplate")
 	buffTab.type = "Button"
 	buffTab:SetID(1)
 	buffTab:SetText("Buffs")
@@ -508,7 +517,7 @@ function CFG:UFAuras_Initialize()
 	buffTab:SetScript("OnClick", LSUFAuraListTab_OnClick)
 	auraList.BuffTab = buffTab
 
-	local debuffTab = CreateFrame("Button", "LSUFAuraListTab2", auraList, "TabButtonTemplate")
+	local debuffTab = CreateFrame("Button", "$parentTab2", auraList, "TabButtonTemplate")
 	debuffTab.type = "Button"
 	debuffTab:SetID(2)
 	debuffTab:SetText("Debuffs")
@@ -521,7 +530,7 @@ function CFG:UFAuras_Initialize()
 	PanelTemplates_SetNumTabs(auraList, 2)
 	PanelTemplates_SetTab(auraList, 1)
 
-	local addEditBox = CreateFrame("EditBox", "ATAuraListEditBox", auraList, "InputBoxInstructionsTemplate")
+	local addEditBox = CreateFrame("EditBox", "$parentEditBox", auraList, "InputBoxInstructionsTemplate")
 	addEditBox.type = "EditBox"
 	addEditBox:SetSize(120, 22)
 	addEditBox:SetAutoFocus(false)
@@ -532,7 +541,7 @@ function CFG:UFAuras_Initialize()
 	addEditBox:HookScript("OnTextChanged", AuraListEditBox_OnTextChanged)
 	auraList.AddEditBox = addEditBox
 
-	local addButton = CreateFrame("Button", "ATAuraListAddButton", auraList, "UIPanelButtonTemplate")
+	local addButton = CreateFrame("Button", "$parentAddButton", auraList, "UIPanelButtonTemplate")
 	addButton.type = "Button"
 	addButton:SetSize(82, 22)
 	addButton:SetText(ADD)
@@ -563,39 +572,50 @@ function CFG:UFAuras_Initialize()
 	configCopyButton:SetScript("OnClick", ConfigCopyButton_OnClick)
 	panel.ConfigCopyButton = configCopyButton
 
-	local friendlyOptionsBG = panel:CreateTexture("$parentFriendlyOptionBG", "BACKGROUND")
-	friendlyOptionsBG:SetColorTexture(0.3, 0.3, 0.3, 0.3)
-	friendlyOptionsBG:SetHeight(62)
-	friendlyOptionsBG:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -40)
-	friendlyOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
-	friendlyOptionsBG:SetPoint("RIGHT", -16, 0)
+	local filterSettings = _G.CreateFrame("Frame", "$parentFilterSettings", panel)
+	filterSettings:SetHeight(62+6+12)
+	filterSettings:SetPoint("TOP", configCopyDropDown, "BOTTOM", 0, -40)
+	filterSettings:SetPoint("LEFT", panel, "CENTER", 14, 0)
+	filterSettings:SetPoint("RIGHT", -16, 0)
 
-	local friendlyOptionsLabel = CFG:CreateTextLabel(panel, 12, "Friendly Filter Settings:")
-	friendlyOptionsLabel:SetPoint("TOPLEFT", friendlyOptionsBG, "TOPLEFT", 6, -6)
+	local bg = filterSettings:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	bg:SetColorTexture(0.3, 0.3, 0.3, 0.3)
+
+	local filterOverrideLabel = CFG:CreateTextLabel(filterSettings, 12, "Filter Overrides:")
+	filterOverrideLabel:SetPoint("TOPLEFT", filterSettings, "TOPLEFT", 6, -6)
+	filterOverrideLabel:SetVertexColor(1, 0.82, 0)
+
+	local onlyShowFilteredLabel = CFG:CreateTextLabel(filterSettings, 12, "Show Only Listed Auras")
+	onlyShowFilteredLabel:SetPoint("TOPLEFT", filterOverrideLabel, "BOTTOMLEFT", 0, -6)
+
+	local onlyShowFilteredInfo = CFG:CreateInfoButton(filterSettings, "OverrideInfo", "Friendly, hostile and default filter settings will be ignored. |cffffd200Only auras from aura list will be shown.|r")
+	onlyShowFilteredInfo:SetPoint("LEFT", onlyShowFilteredLabel, "RIGHT", 2, -1)
+
+	local showOnlyFilteredDial = CFG:CreateMaskDial(filterSettings, "ShowOnlyFilteredAurasMaskDial")
+	showOnlyFilteredDial:SetPoint("TOP", onlyShowFilteredLabel, "TOP", 0, -1)
+	showOnlyFilteredDial:SetPoint("RIGHT", filterSettings, "RIGHT", -6, 0)
+	showOnlyFilteredDial.Text = onlyShowFilteredLabel
+	for i = 1, #showOnlyFilteredDial do
+		showOnlyFilteredDial[i]:SetScript("OnMouseUp", ShowOnlyFilteredAurasMaskDialIndicator_OnMouseUp)
+	end
+	panel.ShowOnlyFilteredAurasMaskDial = showOnlyFilteredDial
+
+	local friendlyOptionsLabel = CFG:CreateTextLabel(filterSettings, 12, "Friendly Filter Settings:")
+	friendlyOptionsLabel:SetPoint("TOPLEFT", onlyShowFilteredLabel, "BOTTOMLEFT", 0, -6)
 	friendlyOptionsLabel:SetVertexColor(1, 0.82, 0)
 
-	local includeCastableBuffsLabel = CFG:CreateTextLabel(panel, 12, "Include Castable Buffs")
+	local includeCastableBuffsLabel = CFG:CreateTextLabel(filterSettings, 12, "Include Castable Buffs")
 	includeCastableBuffsLabel:SetPoint("TOPLEFT", friendlyOptionsLabel, "BOTTOMLEFT", 0, -6)
 
-	local includeCastableBuffsDial = CFG:CreateMaskDial(panel, "IncludeCastableBuffsMaskDial")
+	local includeCastableBuffsDial = CFG:CreateMaskDial(filterSettings, "IncludeCastableBuffsMaskDial")
 	includeCastableBuffsDial:SetPoint("TOP", friendlyOptionsLabel, "BOTTOM", 0, -7)
-	includeCastableBuffsDial:SetPoint("RIGHT", friendlyOptionsBG, "RIGHT", -6, 0)
+	includeCastableBuffsDial:SetPoint("RIGHT", filterSettings, "RIGHT", -6, 0)
 	includeCastableBuffsDial.Text = includeCastableBuffsLabel
 	for i = 1, #includeCastableBuffsDial do
 		includeCastableBuffsDial[i]:SetScript("OnMouseUp", IncludeCastableBuffsMaskDialIndicator_OnMouseUp)
 	end
 	panel.IncludeCastableBuffsMaskDial = includeCastableBuffsDial
-
-	local showOnlyDispellableDebuffsLabel = CFG:CreateTextLabel(panel, 12, "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0:0:0:-1|tShow |cffffd100Only|r Dispellable Debuffs")
-	showOnlyDispellableDebuffsLabel:SetPoint("TOPLEFT", includeCastableBuffsLabel, "BOTTOMLEFT", 0, -6)
-
-	local showOnlyDispellableDebuffsDial = CFG:CreateMaskDial(panel, "ShowOnlyDispellableDebuffsMaskDial")
-	showOnlyDispellableDebuffsDial:SetPoint("TOPRIGHT", includeCastableBuffsDial, "BOTTOMRIGHT", 0, -4)
-	showOnlyDispellableDebuffsDial.Text = showOnlyDispellableDebuffsLabel
-	for i = 1, #showOnlyDispellableDebuffsDial do
-		showOnlyDispellableDebuffsDial[i]:SetScript("OnMouseUp", ShowOnlyDispellableDebuffsMaskDialIndicator_OnMouseUp)
-	end
-	panel.ShowOnlyDispellableDebuffsMaskDial = showOnlyDispellableDebuffsDial
 
 	local log1 = CFG:CreateStatusLog(panel)
 	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)

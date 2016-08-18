@@ -96,30 +96,18 @@ local filterFunctions = {
 		if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
 
 		local config = frame.aura_config[filter]
-		local name, _, _, _, debuffType, _, _, caster, isStealable, shouldConsolidate, spellID, _, isBossAura = ...
+		local name, _, _, _, debuffType, _, _, caster, isStealable, _, spellID, _, isBossAura = ...
 		local isMine = aura.isPlayer or caster == "pet"
 		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
 		local dispelTypes = E:GetDispelTypes()
 
 		if E:IsFilterApplied(frame.aura_config.show_only_filtered, playerSpec) then
-			if config.auralist[spellID] then
-				if E:IsFilterApplied(config.auralist[spellID], playerSpec) then
-					return true
-				end
+			if config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], playerSpec) then
+				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526OVERRIDE|r")
+				return true
 			end
 
 			return false
-		end
-
-		if not hostileTarget and filter == "HARMFUL" then
-			if E:IsFilterApplied(config.show_only_dispellable, playerSpec) and dispelTypes[debuffType] then
-				if UnitAura(unit, name, nil, filter.."|RAID") then
-					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY DISPELLABLE|r")
-					return true
-				else
-					return false
-				end
-			end
 		end
 
 		if isBossAura then
@@ -136,7 +124,7 @@ local filterFunctions = {
 		elseif caster and (UnitIsUnit(caster, "vehicle") and not UnitIsPlayer("vehicle")) then
 			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526VEHICLE|r")
 			return true
-		elseif not caster and not shouldConsolidate then
+		elseif not caster and filter == "HARMFUL" then
 			if not IsInInstance() then
 				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526UNKNOWN (JUNK, NOT IN INSTANCE)|r")
 				return false
@@ -158,7 +146,7 @@ local filterFunctions = {
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE STEALABLE|r")
 					return true
 				end
-			else
+			elseif filter == "HARMFUL" then
 				-- ALWAYS shown
 				if isMine then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (MINE)|r")
@@ -193,7 +181,12 @@ local filterFunctions = {
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY RELEVANT|r")
 					return true
 				end
-			else
+			elseif filter == "HARMFUL" then
+				if dispelTypes and dispelTypes[debuffType] and UnitAura(unit, name, nil, filter.."|RAID") then
+					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY DISPELLABLE|r")
+					return true
+				end
+
 				-- ALWAYS shown
 				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
@@ -209,27 +202,20 @@ local filterFunctions = {
 	end,
 	party = function(frame, unit, aura, ...)
 		local name, _, _, _, debuffType, _, _, _, _, _, spellID, _, isBossAura = ...
-		local filter = aura.filter
+		local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 		local dispelTypes = E:GetDispelTypes()
+		local filter = aura.filter
 
-		-- gibe de pusseh, b0ss
 		if isBossAura then
 			return true
-		end
-
-		-- dispellable debuffs
-		if UnitAura(unit, name, nil, filter.."|RAID") and dispelTypes[debuffType] then
+		elseif dispelTypes and dispelTypes[debuffType] and UnitAura(unit, name, nil, filter.."|RAID") then
+			-- dispellable debuffs
 			return true
-		end
-
-		-- something defined by blizz
-		local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-		if hasCustom and showForMySpec then
+		elseif hasCustom and showForMySpec then
+			-- something defined by blizz
 			return true
-		end
-
-		-- Forbearance and Weakened Soul
-		if (E.PLAYER_CLASS == "PALADIN" and spellID == 25771) or (E.PLAYER_CLASS == "PRIEST" and spellID == 6788) then
+		elseif (E.PLAYER_CLASS == "PALADIN" and spellID == 25771) or (E.PLAYER_CLASS == "PRIEST" and spellID == 6788) then
+			-- Forbearance and Weakened Soul
 			return true
 		end
 

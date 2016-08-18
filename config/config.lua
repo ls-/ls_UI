@@ -25,7 +25,6 @@ D["units"] = {
 				auralist = {},
 			},
 			HARMFUL = {
-				show_only_dispellable = 0x00000000, -- f
 				auralist = {},
 			},
 		},
@@ -46,7 +45,6 @@ D["units"] = {
 				auralist = {},
 			},
 			HARMFUL = {
-				show_only_dispellable = 0x00000000,
 				auralist = {},
 			},
 		},
@@ -71,7 +69,6 @@ D["units"] = {
 		-- 		auralist = {},
 		-- 	},
 		-- 	HARMFUL = {
-		-- 		show_only_dispellable = 0x00000000,
 		-- 		auralist = {},
 		-- 	},
 		-- },

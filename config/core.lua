@@ -327,6 +327,54 @@ function CFG:CreateDivider(parent, text)
 	return object
 end
 
+local function InfoButton_OnEnter(self)
+	_G.HelpPlate_TooltipHide()
+
+	if self.tooltipDir == "UP" then
+		HelpPlateTooltip.ArrowUP:Show()
+		HelpPlateTooltip.ArrowGlowUP:Show()
+		HelpPlateTooltip:SetPoint("BOTTOM", self, "TOP", 0, 10)
+	elseif self.tooltipDir == "DOWN" then
+		HelpPlateTooltip.ArrowDOWN:Show()
+		HelpPlateTooltip.ArrowGlowDOWN:Show()
+		HelpPlateTooltip:SetPoint("TOP", self, "BOTTOM", 0, -10)
+	elseif self.tooltipDir == "LEFT" then
+		HelpPlateTooltip.ArrowLEFT:Show()
+		HelpPlateTooltip.ArrowGlowLEFT:Show()
+		HelpPlateTooltip:SetPoint("RIGHT", self, "LEFT", -10, 0)
+	elseif self.tooltipDir == "RIGHT" then
+		HelpPlateTooltip.ArrowRIGHT:Show()
+		HelpPlateTooltip.ArrowGlowRIGHT:Show()
+		HelpPlateTooltip:SetPoint("LEFT", self, "RIGHT", 10, 0)
+	end
+
+	HelpPlateTooltip.Text:SetText(self.toolTipText)
+	HelpPlateTooltip:Show()
+end
+
+local function InfoButton_OnLeave(self)
+	_G.HelpPlate_TooltipHide()
+end
+
+function CFG:CreateInfoButton(parent, name, tooltipText)
+	local object = _G.CreateFrame("Button", "$parent"..name, parent)
+	object:SetSize(16, 16)
+	object:SetScript("OnEnter", InfoButton_OnEnter)
+	object:SetScript("OnLeave", InfoButton_OnLeave)
+	object.toolTipText = tooltipText
+	object.tooltipDir = "UP"
+
+	object:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
+
+	local texture = object:CreateTexture(nil, "ARTWORK")
+	texture:SetAllPoints()
+	texture:SetTexture("Interface\\COMMON\\help-i")
+	texture:SetTexCoord(13 / 64, 51 / 64, 13 / 64, 51 / 64)
+	texture:SetBlendMode("BLEND")
+
+	return object
+end
+
 local function ReloadUIButton_OnClick(self)
 	for _, panel in next, Panels do
 		if panel.settings then
