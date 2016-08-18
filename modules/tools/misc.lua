@@ -153,8 +153,8 @@ function E:SPELLS_CHANGED(...)
 
 	if dispelTypes then
 		if E.PLAYER_CLASS == "PALADIN" then
-			dispelTypes.Disease = _G.IsPlayerSpell(4987) or nil -- Cleanse
-			dispelTypes.Magic = _G.IsPlayerSpell(53551) or nil -- Sacred Cleansing
+			dispelTypes.Disease = _G.IsPlayerSpell(4987) or _G.IsPlayerSpell(213644) or nil -- Cleanse or Cleanse Toxins
+			dispelTypes.Magic = _G.IsPlayerSpell(4987) or nil -- Cleanse
 			dispelTypes.Poison = dispelTypes.Disease
 		elseif E.PLAYER_CLASS == "SHAMAN" then
 			dispelTypes.Curse = _G.IsPlayerSpell(51886) or _G.IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
@@ -168,10 +168,8 @@ function E:SPELLS_CHANGED(...)
 			dispelTypes.Magic = _G.IsPlayerSpell(527) or _G.IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
 		elseif E.PLAYER_CLASS == "MONK" then
 			dispelTypes.Disease = _G.IsPlayerSpell(115450) or nil -- Detox
-			dispelTypes.Magic = _G.IsPlayerSpell(115451) or nil -- Internal Medicine
+			dispelTypes.Magic = dispelTypes.Disease
 			dispelTypes.Poison = dispelTypes.Disease
-		elseif E.PLAYER_CLASS == "MAGE" then
-			dispelTypes.Curse = _G.IsPlayerSpell(475) or nil -- Remove Curse
 		end
 	end
 end
