@@ -29,7 +29,7 @@ local CROWDCONTROL = {
 	161354, -- monkey
 	161355, -- penguin
 	161372, -- turtle
-	41425, -- hypothermia for testing
+	-- 41425, -- hypothermia for testing
 }
 
 -- local TESTSPECS = {
