@@ -88,10 +88,6 @@ local function CreateAuraIcon(frame, index)
 	return button
 end
 
----------
--- NEW --
----------
-
 local filterFunctions = {
 	default = function(frame, unit, aura, ...)
 		local filter = aura.filter
@@ -104,6 +100,16 @@ local filterFunctions = {
 		local isMine = aura.isPlayer or caster == "pet"
 		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
 		local dispelTypes = E:GetDispelTypes()
+
+		if E:IsFilterApplied(frame.aura_config.show_only_filtered, playerSpec) then
+			if config.auralist[spellID] then
+				if E:IsFilterApplied(config.auralist[spellID], playerSpec) then
+					return true
+				end
+			end
+
+			return false
+		end
 
 		if not hostileTarget and filter == "HARMFUL" then
 			if E:IsFilterApplied(config.show_only_dispellable, playerSpec) and dispelTypes[debuffType] then
@@ -237,20 +243,20 @@ local filterFunctions = {
 }
 
 local function UpdateDebuffsPosition(self)
-	local rows = mceil(self.visibleBuffs / 8)
+	local rows = mceil(self.visibleBuffs / 7)
 	local debuffs = self.__owner.Debuffs
 
 	debuffs:ClearAllPoints()
-	debuffs:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 26 * rows) -- 22 + 4
+	debuffs:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 28 * rows) -- 24 + 4
 end
 
 function UF:CreateBuffs(parent, unit, count)
-	local rows = mceil(count / 8)
-	local frame = _G.CreateFrame("Frame", "$parentBuffs", parent)
-	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
+	local rows = mceil(count / 7)
+	local frame = _G.CreateFrame("Frame", nil, parent)
+	frame:SetSize(24 * mmin(count, 7) + 4 * mmin(count - 1, 6), 24 * rows + 4 * (rows - 1))
 
 	frame["num"] = count
-	frame["size"] = 22
+	frame["size"] = 24
 	frame["spacing-x"] = 4
 	frame["spacing-y"] = 4
 	frame.showStealableBuffs = true
@@ -258,20 +264,21 @@ function UF:CreateBuffs(parent, unit, count)
 	frame.aura_config = C.units[unit].auras
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	-- frame.CustomFilter = function() return true end
 	frame.PostUpdate = UpdateDebuffsPosition
 
 	return frame
 end
 
 function UF:CreateDebuffs(parent, unit, count, growthDirectionX, initAnchor)
-	local rows = mceil(count / 8)
+	local rows = mceil(count / 7)
 	local frame = _G.CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetSize(22 * mmin(count, 8) + 4 * mmin(count - 1, 7), 22 * rows + 4 * (rows - 1))
+	frame:SetSize(24 * mmin(count, 7) + 4 * mmin(count - 1, 6), 24 * rows + 4 * (rows - 1))
 
 	frame["growth-x"] = growthDirectionX
 	frame["initialAnchor"] = initAnchor
 	frame["num"] = count
-	frame["size"] = 22
+	frame["size"] = 24
 	frame["spacing-x"] = 4
 	frame["spacing-y"] = 4
 	frame["showType"] = true
@@ -279,6 +286,7 @@ function UF:CreateDebuffs(parent, unit, count, growthDirectionX, initAnchor)
 	frame.aura_config = C.units[unit].auras
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	-- frame.CustomFilter = function() return true end
 
 	return frame
 end
