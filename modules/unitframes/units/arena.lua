@@ -1,32 +1,35 @@
 local _, ns = ...
 local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 local UF = E:GetModule("UnitFrames")
-local COLORS = M.colors
-local INLINE_ICONS = M.textures.inlineicons
 
-local wipe, unpack, tcontains = wipe, unpack, tContains
+-- Lua
+local _G = _G
+local unpack = unpack
+local tcontains, tinsert = tContains, table.insert
+local strmatch = string.match
 
+-- Blizz
+local CooldownFrame_Clear = CooldownFrame_Clear
+local CooldownFrame_Set = CooldownFrame_Set
+local GetArenaOpponentSpec = GetArenaOpponentSpec
+local GetSpecializationInfoByID = GetSpecializationInfoByID
 local UnitAura = UnitAura
-local GetArenaOpponentSpec, GetSpecializationInfoByID = GetArenaOpponentSpec, GetSpecializationInfoByID
-local CooldownFrame_Set, GetTime = CooldownFrame_Set, GetTime
 
+-- Mine
 local CROWDCONTROL = {
-	-- hex
-	51514,
-	-- polymorphs
-	118,
-	28271,
-	28272,
-	61305,
-	61721,
-	61780,
-	126819,
-	161353,
-	161354,
-	161355,
-	161372,
-	-- test
-	-- 41425,
+	118, -- sheep
+	28271, -- turtle
+	28272, -- pig
+	51514, -- hex
+	61305, -- black cat
+	61721, -- rabbit
+	61780, -- turkey
+	126819, -- pig
+	161353, -- polar bear cub
+	161354, -- monkey
+	161355, -- penguin
+	161372, -- turtle
+	41425, -- hypothermia for testing
 }
 
 -- local TESTSPECS = {
@@ -40,53 +43,76 @@ local CROWDCONTROL = {
 local function ArenaFrame_OnEvent(self, event, ...)
 	if event == "UNIT_AURA" then
 		local unit = ...
+
 		for i = 1, 16 do
-			local name, _, iconTexture, _, _, duration, expirationTime, _, _, _, spellId = UnitAura(unit, i, "HARMFUL")
-			if name and tcontains(CROWDCONTROL, spellId) then
+			local name, _, iconTexture, _, _, duration, expirationTime, _, _, _, spellID = UnitAura(unit, i, "HARMFUL")
+
+			if name and tcontains(CROWDCONTROL, spellID) then
 				self.SpecInfo.Icon:SetTexture(iconTexture)
 
 				return CooldownFrame_Set(self.SpecInfo.CD, expirationTime - duration, duration, true)
 			end
 		end
-	end
 
-	local specID, gender = GetArenaOpponentSpec(self:GetID())
-	if specID and specID > 0 then
-		local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID)
-		local className = gender == 3 and LOCALIZED_CLASS_NAMES_FEMALE[class] or LOCALIZED_CLASS_NAMES_MALE[class]
+		local specID, gender = GetArenaOpponentSpec(self:GetID())
 
-		self.SpecInfo.Icon:SetTexture(specIcon)
-		self.SpecInfo.tooltipInfo = {INLINE_ICONS[role], className, specName, E:RGBToHEX(COLORS.class[class])}
+		if specID and specID > 0 then
+			local _, _, _, specIcon = GetSpecializationInfoByID(specID, gender)
+
+			self.SpecInfo.Icon:SetTexture(specIcon)
+		end
+	else
+		local specID, gender = GetArenaOpponentSpec(self:GetID())
+
+		if specID and specID > 0 then
+			local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID, gender)
+			local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
+
+			self.SpecInfo.Icon:SetTexture(specIcon)
+			self.SpecInfo.tooltipInfo = {M.textures.inlineicons[role], className, specName, E:RGBToHEX(M.colors.class[class])}
+		end
 	end
 end
 
 local function SpecInfo_OnEnter(self)
 	if self.tooltipInfo and #self.tooltipInfo > 0 then
-		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-		GameTooltip:AddLine("|cff"..self.tooltipInfo[4]..self.tooltipInfo[2].." ("..self.tooltipInfo[3]..")|r ".. self.tooltipInfo[1])
-		GameTooltip:Show()
+		_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+		_G.GameTooltip:AddLine("|cff"..self.tooltipInfo[4]..self.tooltipInfo[2].." ("..self.tooltipInfo[3]..")|r ".. self.tooltipInfo[1])
+		_G.GameTooltip:Show()
 	end
 end
 
 local function SpecInfo_OnLeave(self)
-	GameTooltip:Hide()
+	_G.GameTooltip:Hide()
 end
 
 local function Trinket_OnEvent(self, event, ...)
 	local _, name, _, _, spellID = ...
 
-	if spellID == 42292 or spellID == 59752 then
-		CooldownFrame_Set(self.CD, GetTime(), 120, 1)
-		self.CD.start = GetTime()
-	elseif spellID == 7744 then
-		if 120 - (GetTime() - (self.CD.start or 0)) < 30 then
-			CooldownFrame_Set(self.CD, GetTime(), 30, 1)
+	if spellID == 195710 then -- Honorable Medallion
+		CooldownFrame_Clear(self.CD)
+		CooldownFrame_Set(self.CD, _G.GetTime(), 180, 1)
+
+		self.CD.start = _G.GetTime()
+	elseif spellID == 42292 or spellID == 59752 then -- PvP Trinket, Every Man for Himself
+		CooldownFrame_Clear(self.CD)
+		CooldownFrame_Set(self.CD, _G.GetTime(), 120, 1)
+
+		self.CD.start = _G.GetTime()
+	elseif spellID == 7744 then -- Will of the Forsaken
+		if 120 - (_G.GetTime() - (self.CD.start or 0)) < 30 then
+			CooldownFrame_Clear(self.CD)
+			CooldownFrame_Set(self.CD, _G.GetTime(), 30, 1)
 		end
 	end
 end
 
+local function Trinket_OnShow(self)
+	self.Icon:SetTexture(_G.UnitFactionGroup(self:GetParent().unit) == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
+end
+
 function UF:CreateArenaHolder()
-	local holder = CreateFrame("Frame", "LSArenaHolder", UIParent)
+	local holder = _G.CreateFrame("Frame", "LSArenaHolder", _G.UIParent)
 	holder:SetSize(110 + 2 + 124 + 2 + 28 + 6 + 28 + 2 * 2, 36 * 5 + 14 * 5 + 2)
 	holder:SetPoint(unpack(C.units.arena.point))
 	E:CreateMover(holder)
@@ -111,7 +137,7 @@ function UF:ConstructArenaFrame(frame)
 	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
-	local cover = CreateFrame("Frame", "$parentCover", frame)
+	local cover = _G.CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
@@ -192,7 +218,7 @@ function UF:ConstructArenaFrame(frame)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
 	frame:Tag(name, "[ls:smartreaction][ls:name][ls:server]|r")
 
-	local specinfo = CreateFrame("Frame", "$parentSpecInfo", frame)
+	local specinfo = _G.CreateFrame("Frame", "$parentSpecInfo", frame)
 	specinfo:SetSize(28, 28)
 	specinfo:SetPoint("LEFT", frame, "RIGHT", 2, 0)
 	frame.SpecInfo = specinfo
@@ -203,18 +229,18 @@ function UF:ConstructArenaFrame(frame)
 	specinfo.Icon = E:UpdateIcon(specinfo, "Interface\\ICONS\\INV_Misc_QuestionMark")
 	specinfo.CD = E:CreateCooldown(specinfo, 12)
 
-	local trinket = CreateFrame("Frame", "$parentTrinket", frame)
+	local trinket = _G.CreateFrame("Frame", "$parentTrinket", frame)
 	trinket:SetSize(28, 28)
 	trinket:SetPoint("LEFT", specinfo, "RIGHT", 6, 0)
 	trinket:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", frame.unit)
 	trinket:SetScript("OnEvent", Trinket_OnEvent)
+	trinket:SetScript("OnShow", Trinket_OnShow)
 	E:CreateBorder(trinket)
 	frame.Trinket = trinket
 
-	trinket.Icon = E:UpdateIcon(trinket, UnitFactionGroup("player") == "Horde" and "Interface\\ICONS\\INV_Jewelry_TrinketPVP_02" or "Interface\\ICONS\\INV_Jewelry_TrinketPVP_01")
+	trinket.Icon = E:UpdateIcon(trinket, "Interface\\ICONS\\INV_Misc_QuestionMark")
 	trinket.CD = E:CreateCooldown(trinket, 12)
 
-	-- frame.unit = "player"
 	-- E:ForceShow(frame)
 end
 
@@ -225,21 +251,23 @@ local function ArenaPrepFrameHandler_OnEvent(self, event, ...)
 
 	self:Show()
 
-	local numOpps = GetNumArenaOpponentSpecs()
+	local numOpps = _G.GetNumArenaOpponentSpecs()
+
 	for i = 1, 5 do
 		local frame = self[i]
+
 		if i <= numOpps then
 			local specID, gender = GetArenaOpponentSpec(i)
+
 			if specID and specID > 0 then
 				local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID)
-				local className = gender == 3 and LOCALIZED_CLASS_NAMES_FEMALE[class] or LOCALIZED_CLASS_NAMES_MALE[class]
+				local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
 
 				frame.Icon:SetTexture(specIcon)
-				frame.tooltipInfo = {INLINE_ICONS[role], className, specName, E:RGBToHEX(COLORS.class[class])}
-				frame:Show()
-			else
-				frame:Hide()
+				frame.tooltipInfo = {M.textures.inlineicons[role], className, specName, E:RGBToHEX(M.colors.class[class])}
 			end
+
+			frame:Show()
 		else
 			frame:Hide()
 		end
@@ -247,7 +275,7 @@ local function ArenaPrepFrameHandler_OnEvent(self, event, ...)
 end
 
 local function ConstructArenaPrepFrame(index, parent)
-	local frame = CreateFrame("Frame", "LSArenaPreparation"..index, parent)
+	local frame = _G.CreateFrame("Frame", "LSArenaPreparation"..index, parent)
 	frame:SetSize(28, 28)
 	E:CreateBorder(frame)
 	frame:SetScript("OnEnter", SpecInfo_OnEnter)
@@ -259,7 +287,7 @@ local function ConstructArenaPrepFrame(index, parent)
 end
 
 function UF:SetupArenaPrepFrames()
-	local frame = CreateFrame("Frame", "LSArenaPrepFrameHandler", UIParent)
+	local frame = _G.CreateFrame("Frame", "LSArenaPrepFrameHandler", _G.UIParent)
 	frame:SetSize(12, 12)
 	frame:RegisterEvent("ARENA_OPPONENT_UPDATE")
 	frame:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
@@ -268,7 +296,7 @@ function UF:SetupArenaPrepFrames()
 
 	local label = E:CreateFontString(frame, 12, "$parentLabel", true, nil, nil, 1, 0.82, 0)
 	label:SetPoint("TOPLEFT", 2, -2)
-	label:SetText(UNIT_NAME_ENEMY)
+	label:SetText(_G.UNIT_NAME_ENEMY)
 	frame.Label = label
 
 	for i = 1, 5 do
