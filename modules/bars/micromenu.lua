@@ -410,8 +410,16 @@ local function UpdateLFDMicroButtonTooltip(button, event)
 		GameTooltip:AddLine(" ")
 
 		if not button:IsEnabled() then
-			GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
-			GameTooltip:Show()
+			if button.factionGroup == "Neutral" then
+				GameTooltip:AddLine(_G.FEATURE_NOT_AVAILBLE_PANDAREN, 1, 0.1, 0.1, true)
+				GameTooltip:Show()
+			elseif button.minLevel then
+				GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
+				GameTooltip:Show()
+			elseif button.disabledTooltip then
+				GameTooltip:AddLine(button.disabledTooltip, 1, 0.1, 0.1, true)
+				GameTooltip:Show()
+			end
 
 			return
 		end
@@ -494,8 +502,16 @@ local function UpdateEJMicroButtonTooltip(button, event)
 			GameTooltip:AddLine(" ")
 
 			if not button:IsEnabled() then
-				GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
-				GameTooltip:Show()
+				if button.factionGroup == "Neutral" then
+					GameTooltip:AddLine(_G.FEATURE_NOT_AVAILBLE_PANDAREN, 1, 0.1, 0.1, true)
+					GameTooltip:Show()
+				elseif button.minLevel then
+					GameTooltip:AddLine(strformat(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL, button.minLevel), 1, 0.1, 0.1, true)
+					GameTooltip:Show()
+				elseif button.disabledTooltip then
+					GameTooltip:AddLine(button.disabledTooltip, 1, 0.1, 0.1, true)
+					GameTooltip:Show()
+				end
 
 				return
 			end
