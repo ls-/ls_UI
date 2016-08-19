@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Include file="oUF\oUF.xml"/>
 	<Script file="oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua"/>
+	<Script file="UTF8\utf8data.lua.lua"/>
+	<Script file="UTF8\utf8.lua.lua"/>
 </Ui>
