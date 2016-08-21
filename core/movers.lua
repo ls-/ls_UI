@@ -3,7 +3,7 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
 -- Lua
 local _G = _G
-local unpack, next = unpack, next
+local unpack, pairs = unpack, pairs
 local strupper = string.upper
 
 -- Blizz
@@ -38,45 +38,35 @@ end
 
 local function CalculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
-	local p, rP, x, y
+	local p, x, y
 
 	if moverCenterX and moverCenterY then
-		moverCenterX, moverCenterY = E:Round(moverCenterX), E:Round(moverCenterY)
+		local screenWidth = _G.UIParent:GetRight()
+		local screenHeight = _G.UIParent:GetTop()
+		local screenCenterX, screenCenterY = _G.UIParent:GetCenter()
+		local screenLeft = screenWidth / 3
+		local screenRight = screenWidth *  2 / 3
 
-		if moverCenterX >= E.SCREEN_CENTER_X then
-			-- RIGHT
-			x = E:Round(self:GetRight()) - E.SCREEN_WIDTH
-
-			if moverCenterY >= E.SCREEN_CENTER_Y then
-				-- TOP
-				p  = "TOPRIGHT"
-				rP  = "TOPRIGHT"
-				y = E:Round(self:GetTop()) - E.SCREEN_HEIGHT
-			else
-				-- BOTTOM
-				p  = "BOTTOMRIGHT"
-				rP  = "BOTTOMRIGHT"
-				y = E:Round(self:GetBottom())
-			end
+		if moverCenterY >= screenCenterY then
+			p = "TOP"
+			y = self:GetTop() - screenHeight
 		else
-			-- LEFT
-			x = E:Round(self:GetLeft())
+			p = "BOTTOM"
+			y = self:GetBottom()
+		end
 
-			if moverCenterY >= E.SCREEN_CENTER_Y then
-				-- TOP
-				p  = "TOPLEFT"
-				rP  = "TOPLEFT"
-				y = E:Round(self:GetTop()) - E.SCREEN_HEIGHT
-			else
-				-- BOTTOM
-				p  = "BOTTOMLEFT"
-				rP  = "BOTTOMLEFT"
-				y = E:Round(self:GetBottom())
-			end
+		if moverCenterX >= screenRight then
+			p = p.."RIGHT"
+			x = self:GetRight() - screenWidth
+		elseif moverCenterX <= screenLeft then
+			p = p.."LEFT"
+			x = self:GetLeft()
+		else
+			x = moverCenterX - screenCenterX
 		end
 	end
 
-	return p, rP, x, y
+	return p, p, E:Round(x), E:Round(y)
 end
 
 local function SetPosition(self, xOffset, yOffset)
@@ -266,7 +256,7 @@ local function Mover_OnClick(self, button)
 end
 
 function E:ResetMovers()
-	for _, mover in next, movers do
+	for _, mover in pairs(movers) do
 		ResetPosition(mover)
 	end
 end
@@ -274,7 +264,7 @@ end
 function E:ToggleAllMovers()
 	if _G.InCombatLockdown() then return end
 
-	for _, mover in next, movers do
+	for _, mover in pairs(movers) do
 		if not mover.isSimple then
 			if mover:IsShown() then
 				mover:Hide()
