@@ -376,6 +376,24 @@ function E:CreateMover(object, isSimple, insets)
 	return mover
 end
 
+local function Dispatcher_OnEvent(self, event, ...)
+	if event == "PLAYER_REGEN_DISABLED" then
+		for _, mover in pairs(movers) do
+			if mover:IsMouseEnabled() then
+				Mover_OnDragStop(mover)
+			end
+
+			if not mover.isSimple then
+				mover:Hide()
+			end
+		end
+	end
+end
+
+local dispatcher = CreateFrame("Frame")
+dispatcher:SetScript("OnEvent", Dispatcher_OnEvent)
+dispatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+
 _G.SLASH_LSMOVERS1 = "/lsmovers"
 _G.SlashCmdList["LSMOVERS"] = function()
 	E:ToggleAllMovers()
