@@ -218,7 +218,7 @@ D["movers"] = {}
 D["char_info"] = {
 	enabled = true,
 	xp_enabled = true,
-	artifact_enabled = true,
 	honor_enabled = true,
+	artifact_enabled = true,
 	reputation_enabled = true,
 }

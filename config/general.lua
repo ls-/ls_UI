@@ -1,30 +1,121 @@
 local _, ns = ...
 local oUF, E, C, D = ns.oUF or oUF, ns.E, ns.C, ns.D
 local CFG = E:GetModule("Config")
+local STATS = E:GetModule("Stats")
 
+-- Lua
+local _G = _G
+local pairs = pairs
 local tinsert = table.insert
 
+-- Mine
+local SUCCESS_TEXT = "|cff26a526Success!|r"
+-- local WARNING_TEXT = "|cffffd100Warning!|r"
+-- local ERROR_TEXT = "|cffe52626Error!|r"
+local panel
+
 local function LSGeneralConfigPanel_OnShow(self)
-	for _, controller in next, self.controllers do
+	for _, controller in pairs(self.controllers) do
 		CFG:ToggleDependantControls(controller)
+	end
+
+	self.StatusLog:SetText("")
+end
+
+local function OTToggle_OnClick(self)
+	local checked = self:GetValue()
+	local initialized = STATS:IsLoaded()
+
+	if checked then
+		if not initialized then
+			STATS:Initialize(true)
+		else
+			STATS:Refresh(true)
+		end
+
+		panel.StatusLog:SetText(SUCCESS_TEXT.." Enabled character info module for objective tracker.")
+	else
+		if initialized then
+			STATS:Refresh(false)
+		end
+
+		panel.StatusLog:SetText(SUCCESS_TEXT.." Disabled character info module for objective tracker.")
 	end
 end
 
-local function UFToggle_OnClick(self)
-	CFG:ToggleDependantControls(self)
+local function XPToggle_OnClick(self)
+	local checked = self:GetValue()
+	local _, enabled = STATS:IsLoaded()
+
+	if enabled then
+		if checked then
+			STATS:ToggleXP(true)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Added XP bar to objective tracker. It\'ll be shown, when available.")
+		else
+			STATS:ToggleXP(false)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed XP bar from objective tracker.")
+		end
+	end
 end
 
-local function ABToggle_OnClick(self)
-	CFG:ToggleDependantControls(self)
+local function HonorToggle_OnClick(self)
+	local checked = self:GetValue()
+	local _, enabled = STATS:IsLoaded()
+
+	if enabled then
+		if checked then
+			STATS:ToggleHonor(true)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Added honour bar to objective tracker. It\'ll be shown, when available.")
+		else
+			STATS:ToggleHonor(false)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed honour bar from objective tracker.")
+		end
+	end
+end
+
+local function ArtifactToggle_OnClick(self)
+	local checked = self:GetValue()
+	local _, enabled = STATS:IsLoaded()
+
+	if enabled then
+		if checked then
+			STATS:ToggleArtifact(true)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Added artefact power bar to objective tracker. It\'ll be shown, when available.")
+		else
+			STATS:ToggleArtifact(false)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed artefact power bar from objective tracker.")
+		end
+	end
+end
+
+local function RepToggle_OnClick(self)
+	local checked = self:GetValue()
+	local _, enabled = STATS:IsLoaded()
+
+	if enabled then
+		if checked then
+			STATS:ToggleReputation(true)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Added reputation bar to objective tracker. It\'ll be shown, when available.")
+		else
+			STATS:ToggleReputation(false)
+
+			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed reputation bar from objective tracker.")
+		end
+	end
 end
 
 function CFG:General_Initialize()
-	local panel = CreateFrame("Frame", "LSGeneralConfigPanel", InterfaceOptionsFramePanelContainer)
+	panel = _G.CreateFrame("Frame", "LSGeneralConfigPanel", _G.InterfaceOptionsFramePanelContainer)
 	panel.name = "|cff1a9fc0ls:|r UI"
 	panel:HookScript("OnShow", LSGeneralConfigPanel_OnShow)
 	panel:Hide()
-
-	panel.controllers = {}
 
 	panel.settings = {}
 	panel.settings.units = {
@@ -42,23 +133,23 @@ function CFG:General_Initialize()
 	local header1 = CFG:CreateTextLabel(panel, 16, "|cffffd100General|r")
 	header1:SetPoint("TOPLEFT", 16, -16)
 
-	local infoText1 = CFG:CreateTextLabel(panel, 10, "WIP general settings.")
-	infoText1:SetHeight(32)
-	infoText1:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
-	infoText1:SetPoint("RIGHT", -16, 0)
+	local subText = CFG:CreateTextLabel(panel, 10, "Thome thettings, duh...")
+	subText:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -8)
+	subText:SetPoint("RIGHT", -16, 0)
+	subText:SetHeight(32)
+	subText:SetMaxLines(3)
 
-	local header2 = CFG:CreateTextLabel(panel, 16, "|cffffd100Unit Frames|r")
-	header2:SetPoint("TOPLEFT", infoText1, "BOTTOMLEFT", 0, -8)
+	local divider = CFG:CreateDivider(panel, "Unit Frames")
+	divider:SetPoint("TOP", subText, "BOTTOM", 0, -10)
 
-	local ufToggle = CFG:CreateCheckButton(panel, "UFToggle", nil, "Switches unit frame module on or off")
-	ufToggle:HookScript("OnClick", UFToggle_OnClick)
-	ufToggle:SetPoint("TOP", infoText1, "BOTTOM", 0, -6)
+	local ufToggle = CFG:CreateCheckButton(panel, "UFToggle", nil, "Switches unit frame module on or off.")
+	ufToggle:SetPoint("TOP", divider, "TOP", 0, 11)
 	ufToggle:SetPoint("RIGHT", -16, 0)
-	tinsert(panel.controllers, ufToggle)
 	panel.settings.units.enabled = ufToggle
+	CFG:SetupController(panel, ufToggle)
 
 	local button1 = CFG:CreateCheckButton(panel, "PlayerPetFramesToggle", "Player & Pet")
-	button1:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -2, -8)
+	button1:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 4, -8)
 	panel.settings.units.player.enabled = button1
 	panel.settings.units.pet.enabled = button1
 	CFG:SetupControlDependency(ufToggle, button1)
@@ -90,7 +181,7 @@ function CFG:General_Initialize()
 	panel.settings.units.arena.enabled = button6
 	CFG:SetupControlDependency(ufToggle, button6)
 
-	local button7 = CFG:CreateCheckButton(panel, "CastbarToggle", "Castbars", "Switches player, target and focus castbars on or off")
+	local button7 = CFG:CreateCheckButton(panel, "CastbarToggle", "Castbars", "Switches player, target and focus castbars on or off.")
 	button7:SetPoint("TOPLEFT", button5, "BOTTOMLEFT", 0, -8)
 	panel.settings.units.player.castbar = button7
 	panel.settings.units.pet.castbar = button7
@@ -98,8 +189,8 @@ function CFG:General_Initialize()
 	panel.settings.units.focus.castbar = button7
 	CFG:SetupControlDependency(ufToggle, button7)
 
-	local divider1 = CFG:CreateDivider(panel)
-	divider1:SetPoint("TOP", button7, "BOTTOM", 0, -8)
+	divider = CFG:CreateDivider(panel, "Other Modules")
+	divider:SetPoint("TOP", button7, "BOTTOM", 0, -12)
 
 	panel.settings.bars = {
 		bags = {}
@@ -109,12 +200,8 @@ function CFG:General_Initialize()
 	panel.settings.mail = {}
 	panel.settings.tooltips = {}
 
-	local header3 = CFG:CreateTextLabel(panel, 16, "|cffffd100Other Modules|r")
-	header3:SetPoint("LEFT", 16, 0)
-	header3:SetPoint("TOP", divider1, "BOTTOM", 0, -8)
-
 	local button10 = CFG:CreateCheckButton(panel, "MinimapToggle", "Minimap")
-	button10:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", -2, -8)
+	button10:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 4, -8)
 	panel.settings.minimap.enabled = button10
 
 	local button11 = CFG:CreateCheckButton(panel, "AurasToggle", "Buffs & Debuffs")
@@ -129,17 +216,61 @@ function CFG:General_Initialize()
 	button13:SetPoint("LEFT", button12, "RIGHT", 110, 0)
 	panel.settings.tooltips.enabled = button13
 
-	local divider2 = CFG:CreateDivider(panel)
-	divider2:SetPoint("TOP", button10, "BOTTOM", 0, -8)
+	divider = CFG:CreateDivider(panel, "Character Info")
+	divider:SetPoint("TOP", button10, "BOTTOM", 0, -12)
 
-	local header4 = CFG:CreateTextLabel(panel, 16, "|cffffd100Info|r")
-	header4:SetPoint("LEFT", 16, 0)
-	header4:SetPoint("TOP", divider2, "BOTTOM", 0, -8)
+	subText = CFG:CreateTextLabel(panel, 10, "Here you can enable experience, honour, artefact power and reputation bars for your objective tracker.")
+	subText:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
+	subText:SetPoint("RIGHT", -16, 0)
+	subText:SetHeight(32)
+	subText:SetMaxLines(3)
 
-	local infoText2 = CFG:CreateTextLabel(panel, 10, "Although in-game config is still WIP, you can use |cffffd100/lsmovers|r command to move unit frames and other layout elements around.")
-	infoText2:SetHeight(32)
-	infoText2:SetPoint("TOPLEFT", header4, "BOTTOMLEFT", 0, -8)
-	infoText2:SetPoint("RIGHT", -16, 0)
+	panel.settings.char_info = {}
+
+	local otToggle = CFG:CreateCheckButton(panel, "OTToggle", nil, "Switches character info module for objective tracker on or off.")
+	otToggle:SetPoint("TOP", divider, "TOP", 0, 11)
+	otToggle:SetPoint("RIGHT", -16, 0)
+	otToggle:HookScript("OnClick", OTToggle_OnClick)
+	panel.settings.char_info.enabled = otToggle
+	CFG:SetupController(panel, otToggle)
+
+	local button14 = CFG:CreateCheckButton(panel, "OTXPToggle", "Experience")
+	button14:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", -2, -8)
+	button14:HookScript("OnClick", XPToggle_OnClick)
+	panel.settings.char_info.xp_enabled = button14
+	CFG:SetupControlDependency(otToggle, button14)
+
+	local button15 = CFG:CreateCheckButton(panel, "OTHonorToggle", "Honour", "|cffe52626Available at level 110.|r\nOpen \"".._G.PVP_TALENTS.."\" panel, right-click the bar and choose \"".._G.SHOW_FACTION_ON_MAINSCREEN.."\".")
+	button15:SetPoint("LEFT", button14, "RIGHT", 110, 0)
+	button15:HookScript("OnClick", HonorToggle_OnClick)
+	panel.settings.char_info.honor_enabled = button15
+	CFG:SetupControlDependency(otToggle, button15)
+
+	local button16 = CFG:CreateCheckButton(panel, "OTAPToggle", "Artefact Power")
+	button16:SetPoint("LEFT", button15, "RIGHT", 110, 0)
+	button16:HookScript("OnClick", ArtifactToggle_OnClick)
+	panel.settings.char_info.artifact_enabled = button16
+	CFG:SetupControlDependency(otToggle, button16)
+
+	local button17 = CFG:CreateCheckButton(panel, "OTHRepToggle", "Reputation")
+	button17:SetPoint("LEFT", button16, "RIGHT", 110, 0)
+	button17:HookScript("OnClick", RepToggle_OnClick)
+	panel.settings.char_info.reputation_enabled = button17
+	CFG:SetupControlDependency(otToggle, button17)
+
+	divider = CFG:CreateDivider(panel, "Side Notes")
+	divider:SetPoint("TOP", button14, "BOTTOM", 0, -12)
+
+	subText = CFG:CreateTextLabel(panel, 10, "Although in-game config is still WIP, you can use |cffffd100/lsmovers|r command to move unit frames and other layout elements around.")
+	subText:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
+	subText:SetPoint("RIGHT", -16, 0)
+	subText:SetHeight(32)
+	subText:SetMaxLines(3)
+
+	local log1 = CFG:CreateStatusLog(panel)
+	log1:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
+	log1:SetWidth(512)
+	panel.StatusLog = log1
 
 	local reloadButton = CFG:CreateReloadUIButton(panel)
 	reloadButton:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -16, 16)
