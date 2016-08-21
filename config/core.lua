@@ -170,6 +170,8 @@ function CFG:CreateTextLabel(parent, size, text)
 	local object = E:CreateFontString(parent, size, nil, true)
 	object:SetJustifyH("LEFT")
 	object:SetJustifyV("TOP")
+	object:SetWordWrap(true)
+	object:SetNonSpaceWrap(true)
 	object:SetText(text)
 
 	return object
@@ -185,7 +187,7 @@ end
 
 local function CheckButton_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-	GameTooltip:AddLine(self.tooltipText)
+	GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, true)
 	GameTooltip:Show()
 end
 
@@ -312,7 +314,7 @@ function CFG:CreateDivider(parent, text)
 	local object = parent:CreateTexture(nil, "ARTWORK")
 	object:SetHeight(4)
 	object:SetPoint("LEFT", 10, 0)
-	object:SetPoint("RIGHT", 10, 0)
+	object:SetPoint("RIGHT", -10, 0)
 	object:SetTexture("Interface\\AchievementFrame\\UI-Achievement-RecentHeader")
 	object:SetTexCoord(0, 1, 0.0625, 0.65625)
 	object:SetAlpha(0.5)
@@ -393,6 +395,19 @@ function CFG:CreateReloadUIButton(parent)
 	object:SetScript("OnClick", ReloadUIButton_OnClick)
 
 	return object
+end
+
+local function Controller_OnClick(self)
+	CFG:ToggleDependantControls(self)
+end
+
+function CFG:SetupController(panel, controller)
+	if not controller then return end
+
+	panel.controllers = panel.controllers or {}
+	tinsert(panel.controllers, controller)
+
+	controller:HookScript("OnClick", Controller_OnClick)
 end
 
 local function ButtonChild_Enable(self)

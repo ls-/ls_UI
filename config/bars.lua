@@ -34,7 +34,6 @@ local function LSBarsConfigPanel_OnShow(self)
 	self.StatusLog:SetText("")
 
 	CFG:ToggleDependantControls(self.BarsToggle)
-	CFG:ToggleDependantControls(self.ModeToggle)
 end
 
 local function LSBarsToggle_OnClickHook(self)
@@ -58,8 +57,6 @@ local function LSBarsToggle_OnClickHook(self)
 			msg = "|cff26a526Success!|r Bar module will be enabled on next UI reload."
 		end
 	end
-
-	CFG:ToggleDependantControls(self)
 
 	parent.StatusLog:SetText(msg)
 end
@@ -142,8 +139,6 @@ local function ModeToggle_OnClickHook(self)
 			msg = "|cff26a526Success!|r Restricted mode will be enabled on next UI reload."
 		end
 	end
-
-	CFG:ToggleDependantControls(self)
 
 	parent.BarSelectorDropDown.initialize = self:GetChecked() and RestrictedBarSelectorDropDown_Initialize or BarSelectorDropDown_Initialize
 	parent.BarSelectorDropDown:RefreshValue()
@@ -304,8 +299,9 @@ function CFG:B_Initialize()
 	barsToggle:SetPoint("TOPRIGHT", -16, -14)
 	panel.BarsToggle = barsToggle
 	panel.settings.bars.enabled = barsToggle
+	CFG:SetupController(panel, barsToggle)
 
-	local modeToggle = CFG:CreateCheckButton(panel, "BarModeToggle", "Restricted mode", "Enables main action bar artwork, animations\nand dynamic resizing.\n\n|cffe52626You won't be able to move micro menu,\nmain action and bag bars around!|r")
+	local modeToggle = CFG:CreateCheckButton(panel, "BarModeToggle", "Restricted mode", "Enables main action bar artwork, animations and dynamic resizing.\n\n|cffe52626You won't be able to move micro menu, main action and bag bars around!|r")
 	modeToggle:SetPoint("RIGHT", barsToggle, "LEFT", -8, 0)
 	modeToggle.Text:ClearAllPoints()
 	modeToggle.Text:SetPoint("RIGHT", modeToggle, "LEFT", -2, 1)
