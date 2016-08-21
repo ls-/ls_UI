@@ -23,7 +23,7 @@ function E:NumberToPerc(v1, v2)
 end
 
 function E:Round(v)
-	return floor(v + 0.5)
+	return v and floor(v + 0.5) or nil
 end
 
 function E:NumberTruncate(v, l)
