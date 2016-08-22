@@ -4,6 +4,7 @@ local UF = E:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
+local strgsub = string.gsub
 
 -- Mine
 -- local ICON_COORDS = {48 / 128, 78 / 128, 1 / 64, 31 / 64}
@@ -53,6 +54,29 @@ local function Override(self, event, unit)
 		if pvp.Hook then
 			pvp.Hook:Show()
 		end
+
+		if pvp.Timer then
+			if _G.IsPVPTimerRunning() then
+				pvp.Timer:Show()
+
+				if not pvp.Timer.ticker then
+					-- XXX: It may look ugly, but it works!
+					pvp.Timer.ticker = _G.C_Timer.NewTicker(1, function()
+						local pattern, time = _G.SecondsToTimeAbbrev(_G.GetPVPTimer() / 1000)
+
+						pvp.Timer:SetFormattedText(strgsub(pattern, " ", ""), time)
+					end)
+				end
+			else
+				if pvp.Timer.ticker then
+					pvp.Timer.ticker:Cancel()
+					pvp.Timer.ticker = nil
+				end
+
+				pvp.Timer:Hide()
+				pvp.Timer:SetText("")
+			end
+		end
 	else
 		pvp:Hide()
 		pvp.Prestige:Hide()
@@ -60,10 +84,20 @@ local function Override(self, event, unit)
 		if pvp.Hook then
 			pvp.Hook:Hide()
 		end
+
+		if pvp.Timer then
+			if pvp.Timer.ticker then
+				pvp.Timer.ticker:Cancel()
+				pvp.Timer.ticker = nil
+			end
+
+			pvp.Timer:Hide()
+			pvp.Timer:SetText("")
+		end
 	end
 end
 
-function UF:CreatePvPIcon(parent, layer, sublayer, hook)
+function UF:CreatePvPIcon(parent, layer, sublayer, hook, pvpTimer)
 	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
 	pvp:SetSize(30, 30)
 
@@ -77,6 +111,14 @@ function UF:CreatePvPIcon(parent, layer, sublayer, hook)
 		hook:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
 		hook:SetSize(33, 36)
 		pvp.Hook = hook
+	end
+
+	if pvpTimer then
+		pvpTimer = E:CreateFontString(parent, 10, "$parentPvPTimer", nil, true)
+		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
+		pvpTimer:SetTextColor(1, 0.82, 0)
+		pvpTimer:SetJustifyH("RIGHT")
+		pvp.Timer = pvpTimer
 	end
 
 	pvp.Override = Override

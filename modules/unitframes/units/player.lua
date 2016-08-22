@@ -136,8 +136,9 @@ function UF:ConstructPlayerFrame(frame)
 		altBar = altPCP
 	}
 
-	frame.PvP = UF:CreatePvPIcon(cover, "ARTWORK", 6)
+	frame.PvP = UF:CreatePvPIcon(cover, "ARTWORK", 6, nil, true)
 	frame.PvP:SetPoint("TOP", cover, "BOTTOM", 0, 12)
+	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", frame.PvP.Override)
 
 	if C.units.player.castbar then
 		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
