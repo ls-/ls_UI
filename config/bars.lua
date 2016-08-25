@@ -351,13 +351,13 @@ function CFG:B_Initialize()
 	barOptionsBG:SetPoint("LEFT", barSelector, "LEFT", 19, 0)
 	barOptionsBG:SetPoint("RIGHT", applyButton, "RIGHT", -2, 0)
 
-	local buttonSizeSlider = CFG:CreateSlider(panel, "$parentButtonSizeSlider", "Button size", 24, 48)
+	local buttonSizeSlider = CFG:CreateSlider(panel, "$parentButtonSizeSlider", "Button size", 2, 24, 48)
 	buttonSizeSlider:SetPoint("TOPLEFT", barOptionsBG, "TOPLEFT", 16, -16)
 	panel.ButtonSizeSlider = buttonSizeSlider
 	panel.settings.bars.bar2.button_size = buttonSizeSlider
 	CFG:SetupControlDependency(barsToggle, buttonSizeSlider)
 
-	local buttonSpacingSlider = CFG:CreateSlider(panel, "$parentButtonSpacingSlider", "Button spacing", 2, 12)
+	local buttonSpacingSlider = CFG:CreateSlider(panel, "$parentButtonSpacingSlider", "Button spacing", 2, 2, 12)
 	buttonSpacingSlider:SetPoint("TOPLEFT", buttonSizeSlider, "BOTTOMLEFT", 0, -25)
 	panel.ButtonSpacingSlider = buttonSpacingSlider
 	panel.settings.bars.bar2.button_gap = buttonSpacingSlider

@@ -277,18 +277,24 @@ local function Slider_SetValue(self, value)
 	self.value = value
 end
 
-function CFG:CreateSlider(parent, name, text, minValue, maxValue)
+local function Slider_OnValueChanged(self, value, userInput)
+	if userInput then
+
+		if value ~= self.value then
+			self:SetValue(value)
+		end
+	end
+end
+
+function CFG:CreateSlider(parent, name, text, stepValue, minValue, maxValue)
 	local object = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
 	object.type = "Slider"
 	object:SetMinMaxValues(minValue, maxValue)
-	object:SetValueStep(2)
+	object:SetValueStep(stepValue)
 	object:SetObeyStepOnDrag(true)
 	object.SetDisplayValue = object.SetValue
 	object.SetValue = Slider_SetValue
-	object:SetScript("OnValueChanged", function(self, value)
-		object.CurrentValue:SetText(value)
-		self.value = value
-	end)
+	object:SetScript("OnValueChanged", Slider_OnValueChanged)
 
 	local label = _G[object:GetName().."Text"]
 	label:SetText(text)

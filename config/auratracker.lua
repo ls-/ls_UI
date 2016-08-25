@@ -513,12 +513,12 @@ function CFG:AT_Initialize()
 	trackerOptionsBG:SetPoint("LEFT", panel, "CENTER", 14, 0)
 	trackerOptionsBG:SetPoint("RIGHT", -16, 0)
 
-	local buttonSizeSlider = CFG:CreateSlider(panel, "$parentButtonSizeSlider", "Button size", 32, 48)
+	local buttonSizeSlider = CFG:CreateSlider(panel, "$parentButtonSizeSlider", "Button size", 2, 32, 48)
 	buttonSizeSlider:SetPoint("TOPLEFT", trackerOptionsBG, "TOPLEFT", 16, -16)
 	panel.ButtonSizeSlider = buttonSizeSlider
 	panel.settings.auratracker.button_size = buttonSizeSlider
 
-	local buttonSpacingSlider = CFG:CreateSlider(panel, "$parentButtonSpacingSlider", "Button spacing", 2, 12)
+	local buttonSpacingSlider = CFG:CreateSlider(panel, "$parentButtonSpacingSlider", "Button spacing", 2, 2, 12)
 	buttonSpacingSlider:SetPoint("TOPLEFT", buttonSizeSlider, "BOTTOMLEFT", 0, -25)
 	panel.ButtonSpacingSlider = buttonSpacingSlider
 	panel.settings.auratracker.button_gap = buttonSpacingSlider
