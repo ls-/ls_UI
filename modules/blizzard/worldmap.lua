@@ -30,4 +30,7 @@ function B:HandleWorldMap()
 
 		_G.WorldMapActionButtonMixin.Refresh(self)
 	end
+
+	WorldMapFrame.questLogMode = true
+	QuestMapFrame_Open(true)
 end
