@@ -558,8 +558,11 @@ function CFG:AddCatergory(panel)
 end
 
 local function LSConfigFrameToggle()
-	InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
-	InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
+	if not LSGeneralConfigPanel:IsShown() then
+		InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
+	else
+		InterfaceOptionsFrameOkay_OnClick(InterfaceOptionsFrame)
+	end
 end
 
 function CFG:Initialize()
