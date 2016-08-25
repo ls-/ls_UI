@@ -64,7 +64,12 @@ local function Override(self, event, unit)
 					pvp.Timer.ticker = _G.C_Timer.NewTicker(1, function()
 						local pattern, time = _G.SecondsToTimeAbbrev(_G.GetPVPTimer() / 1000)
 
-						pvp.Timer:SetFormattedText(strgsub(pattern, " ", ""), time)
+						if time < 1 then
+							pvp.Timer.ticker:Cancel()
+							pvp.Timer.ticker = nil
+						else
+							pvp.Timer:SetFormattedText(strgsub(pattern, " ", ""), time)
+						end
 					end)
 				end
 			else
