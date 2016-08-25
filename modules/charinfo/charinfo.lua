@@ -21,8 +21,6 @@ local isEnabled = false
 -------------
 
 local function CreateCharInfoTracker()
-	_G.OBJECTIVE_TRACKER_UPDATE_ALL = 0xFFFFFFFF
-
 	local charInfoHeader = _G.CreateFrame("Frame", nil, _G.ObjectiveTrackerBlocksFrame, "ObjectiveTrackerHeaderTemplate")
 	_G.ObjectiveTrackerFrame.BlocksFrame.CharInfoHeader = charInfoHeader
 
