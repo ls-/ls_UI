@@ -2,6 +2,10 @@ local AddOn, ns = ...
 local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
 ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
 
+-- Mine
+local modules = {}
+local delayedModules = {}
+
 function E:CreateFontString(parent, size, name, shadow, outline)
 	local object = parent:CreateFontString(name, "ARTWORK", "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
 	object:SetWordWrap(false)
@@ -71,32 +75,42 @@ function E:EventHandler(event, ...)
 	self[event](self, ...)
 end
 
-function E:AddModule(name, addEventHandler)
+function E:AddModule(name, addEventHandler, isDelayed)
 	local module = CreateFrame("Frame", "LS"..name.."Module")
 
 	if addEventHandler then
 		module:SetScript("OnEvent", E.EventHandler)
 	end
 
-	if not E.Modules then
-		E.Modules = {}
+	if isDelayed then
+		delayedModules[name] = module
+	else
+		modules[name] = module
 	end
-
-	E.Modules[name] = module
 
 	return module
 end
 
 function E:GetModule(name)
-	if not E.Modules[name] then
+	if not modules[name] and not delayedModules[name] then
 		error("Module "..name.." doesn't exist!")
 	end
 
-	return E.Modules[name]
+	return modules[name] or delayedModules[name]
 end
 
 function E:InitializeModules()
-	for name, module in next, E.Modules do
+	for name, module in next, modules do
+		if not module.Initialize then
+			print("Module "..name.." doesn\'t have initializer.")
+		else
+			module:Initialize()
+		end
+	end
+end
+
+function E:InitializeDelayedModules()
+	for name, module in next, delayedModules do
 		if not module.Initialize then
 			print("Module "..name.." doesn\'t have initializer.")
 		else
