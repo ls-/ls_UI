@@ -222,3 +222,10 @@ D["char_info"] = {
 	artifact_enabled = true,
 	reputation_enabled = true,
 }
+
+D["blizzard"] ={
+	["ot"] = {
+		enabled = true,
+		height = 600,
+	}
+}
