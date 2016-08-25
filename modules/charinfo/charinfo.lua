@@ -146,6 +146,7 @@ local function CreateCharInfoTracker()
 			local max = _G.UnitXPMax("player")
 			local r, g, b = unpack(M.colors.experience)
 
+			self.Bar:SetMinMaxValues(0, max)
 			CharInfoProgressBar_SetValue(self, cur, max, {r = r, g = g, b = b})
 		elseif event == "HONOR_XP_UPDATE" then
 			local isMaxHonorLevel = _G.UnitHonorLevel("player") == _G.GetMaxPlayerHonorLevel()
