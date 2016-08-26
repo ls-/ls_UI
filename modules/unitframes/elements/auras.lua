@@ -19,6 +19,10 @@ local UnitIsUnit = UnitIsUnit
 local UnitPlayerControlled = UnitPlayerControlled
 
 -- Mine
+local AURA_GAP = 4
+local AURA_SIZE = 28
+local AURAS_PER_ROW = 6
+
 local function SetVertexColorOverride(self, r, g, b)
 	local button = self:GetParent()
 
@@ -59,8 +63,7 @@ local function CreateAuraIcon(frame, index)
 	if button.cd.SetTimerTextHeight then
 		button.cd:SetTimerTextHeight(10)
 
-		button.cd.Timer:ClearAllPoints()
-		button.cd.Timer:SetPoint("BOTTOM")
+		button.cd.Timer:SetJustifyV("BOTTOM")
 	end
 
 	button:SetPushedTexture("")
@@ -229,22 +232,22 @@ local filterFunctions = {
 }
 
 local function UpdateDebuffsPosition(self)
-	local rows = mceil(self.visibleBuffs / 7)
+	local rows = mceil(self.visibleBuffs / AURAS_PER_ROW)
 	local debuffs = self.__owner.Debuffs
 
 	debuffs:ClearAllPoints()
-	debuffs:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 28 * rows) -- 24 + 4
+	debuffs:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, (AURA_SIZE + AURA_GAP) * rows)
 end
 
 function UF:CreateBuffs(parent, unit, count)
-	local rows = mceil(count / 7)
+	local rows = mceil(count / AURAS_PER_ROW)
 	local frame = _G.CreateFrame("Frame", nil, parent)
-	frame:SetSize(24 * mmin(count, 7) + 4 * mmin(count - 1, 6), 24 * rows + 4 * (rows - 1))
+	frame:SetSize(AURA_SIZE * mmin(count, AURAS_PER_ROW) + AURA_GAP * mmin(count - 1, AURAS_PER_ROW - 1), AURA_SIZE * rows + AURA_GAP * (rows - 1))
 
 	frame["num"] = count
-	frame["size"] = 24
-	frame["spacing-x"] = 4
-	frame["spacing-y"] = 4
+	frame["size"] = AURA_SIZE
+	frame["spacing-x"] = AURA_GAP
+	frame["spacing-y"] = AURA_GAP
 	frame.showStealableBuffs = true
 
 	frame.aura_config = C.units[unit].auras
@@ -257,16 +260,16 @@ function UF:CreateBuffs(parent, unit, count)
 end
 
 function UF:CreateDebuffs(parent, unit, count, growthDirectionX, initAnchor)
-	local rows = mceil(count / 7)
+	local rows = mceil(count / AURAS_PER_ROW)
 	local frame = _G.CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetSize(24 * mmin(count, 7) + 4 * mmin(count - 1, 6), 24 * rows + 4 * (rows - 1))
+	frame:SetSize(AURA_SIZE * mmin(count, AURAS_PER_ROW) + AURA_GAP * mmin(count - 1, AURAS_PER_ROW - 1), AURA_SIZE * rows + AURA_GAP * (rows - 1))
 
 	frame["growth-x"] = growthDirectionX
 	frame["initialAnchor"] = initAnchor
 	frame["num"] = count
-	frame["size"] = 24
-	frame["spacing-x"] = 4
-	frame["spacing-y"] = 4
+	frame["size"] = AURA_SIZE
+	frame["spacing-x"] = AURA_GAP
+	frame["spacing-y"] = AURA_GAP
 	frame["showType"] = true
 
 	frame.aura_config = C.units[unit].auras

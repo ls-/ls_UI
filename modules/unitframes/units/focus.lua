@@ -133,9 +133,9 @@ function UF:ConstructFocusFrame(frame)
 	threat:SetPoint("CENTER", 0, 6)
 	frame.Threat = threat
 
-	frame.Buffs = UF:CreateBuffs(frame, "focus", 14)
-	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 6, 16)
+	frame.Buffs = UF:CreateBuffs(frame, "focus", 12)
+	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 8, 16)
 
-	frame.Debuffs = UF:CreateDebuffs(frame, "focus", 14, "LEFT", "BOTTOMRIGHT")
-	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -6, 16)
+	frame.Debuffs = UF:CreateDebuffs(frame, "focus", 12, "LEFT", "BOTTOMRIGHT")
+	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -8, 16)
 end
