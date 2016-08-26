@@ -387,6 +387,16 @@ function CFG:CreateInfoButton(parent, name, tooltipText)
 	return object
 end
 
+function CFG:CreateConfigButton(parent, name, text, func)
+	local object = _G.CreateFrame("Button", "$parent"..name, parent, "UIPanelButtonTemplate")
+	object.type = "Button"
+	object:SetText(text)
+	object:SetWidth(object:GetTextWidth() + 18)
+	object:SetScript("OnClick", func)
+
+	return object
+end
+
 local function ReloadUIButton_OnClick(self)
 	for _, panel in next, Panels do
 		if panel.settings then
@@ -398,13 +408,7 @@ local function ReloadUIButton_OnClick(self)
 end
 
 function CFG:CreateReloadUIButton(parent)
-	local object = CreateFrame("Button", "$parentReloadUIButton", parent, "UIPanelButtonTemplate")
-	object.type = "Button"
-	object:SetText(RELOADUI)
-	object:SetWidth(object:GetTextWidth() + 18)
-	object:SetScript("OnClick", ReloadUIButton_OnClick)
-
-	return object
+	return CFG:CreateConfigButton(parent, "ReloadUIButton", _G.RELOADUI, ReloadUIButton_OnClick)
 end
 
 local function Controller_OnClick(self)
