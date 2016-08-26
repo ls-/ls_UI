@@ -107,11 +107,12 @@ local LAYOUT_ID = {
 	DEMONHUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
 }
 
--- page swapping is taken from tukui, thx :D
 local PAGE_LAYOUT = {
-	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
+	-- XXX: unstealthed cat, stealthed cat, bear, owl; tree form [bonusbar:2] was removed
+	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
+	-- XXX: stealth, shadow dance
 	["ROGUE"] = "[bonusbar:1] 7;",
-	["DEFAULT"] = "[vehicleui] 12; [possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
+	["DEFAULT"] = "[vehicleui][possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
 local function GetPageLayout()
