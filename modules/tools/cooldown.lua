@@ -53,8 +53,10 @@ local function CreateCooldownTimer(cooldown, textSize)
 	holder:SetAllPoints()
 
 	local timer = E:CreateFontString(holder, textSize, nil, nil, true)
-	timer:SetPoint("CENTER", 1, 0)
+	timer:SetPoint("TOPLEFT", -4, 0)
+	timer:SetPoint("BOTTOMRIGHT", 4, 0)
 	timer:SetJustifyH("CENTER")
+	timer:SetJustifyV("MIDDLE")
 
 	return timer
 
