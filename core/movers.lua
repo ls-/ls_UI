@@ -339,9 +339,7 @@ function E:CreateMover(object, isSimple, insets)
 		mover:SetScript("OnClick", Mover_OnClick)
 		mover:SetScript("OnEnter", Mover_OnEnter)
 		mover:SetScript("OnLeave", Frame_OnLeave)
-
 		mover:Hide()
-		E:CreateBorder(mover, 1)
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
 		bg:SetColorTexture(0.41, 0.8, 0.94, 0.6)
