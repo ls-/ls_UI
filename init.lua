@@ -22,6 +22,7 @@ end
 
 function E:PLAYER_LOGIN()
 	E:UpdateConstants()
+	E:InitializeDelayedModules()
 end
 
 function E:PLAYER_LOGOUT(...)
