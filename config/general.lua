@@ -212,7 +212,7 @@ function CFG:General_Initialize()
 	divider = CFG:CreateDivider(panel, "Objective Tracker")
 	divider:SetPoint("TOP", button6, "BOTTOM", 0, -12)
 
-	subText = CFG:CreateTextLabel(panel, 10, "By enabling this module, you'll be able to move objective tracker and change its height.\n"..WARNING_TEXT.." If you're using other addons that alter objective tracker behaviour, disable this feature.")
+	subText = CFG:CreateTextLabel(panel, 10, "By enabling this module, you'll be able to move objective tracker and change its height.\n"..WARNING_TEXT.." If you're using other addons that alter tracker's behaviour, disable this feature.")
 	subText:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
 	subText:SetPoint("RIGHT", -16, 0)
 	subText:SetHeight(32)
