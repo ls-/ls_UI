@@ -223,11 +223,11 @@ D["tooltips"] = {
 D["movers"] = {}
 
 D["char_info"] = {
-	enabled = true,
-	xp_enabled = true,
-	honor_enabled = true,
-	artifact_enabled = true,
-	reputation_enabled = true,
+	enabled = false,
+	xp_enabled = false,
+	honor_enabled = false,
+	artifact_enabled = false,
+	reputation_enabled = false,
 }
 
 D["blizzard"] ={
