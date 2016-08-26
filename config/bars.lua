@@ -14,10 +14,10 @@ local panel
 
 local BAR_NAMES = {
 	[1] = "Main Action Bar",
-	[2] = "Bottom Bar 1",
-	[3] = "Bottom Bar 2",
-	[4] = "Side Bar Left",
-	[5] = "Side Bar Right",
+	[2] = "Action Bar 1",
+	[3] = "Action Bar 2",
+	[4] = "Action Bar 3",
+	[5] = "Action Bar 4",
 	[6] = "Pet Action Bar",
 	[7] = "Stance Bar",
 }
