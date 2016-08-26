@@ -167,8 +167,12 @@ function B:ToggleBar(name, state)
 	if _G[name] then
 		if _G.InCombatLockdown() then
 			queue[name] = state
+
+			return false, name, state == "Show" and true or false
 		else
 			UpdateBarState(name, state)
+
+			return true, name, state == "Show" and true or false
 		end
 	end
 end

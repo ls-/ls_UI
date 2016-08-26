@@ -7,6 +7,9 @@ local BARS = E:GetModule("Bars")
 local _G = _G
 
 -- Mine
+local SUCCESS_TEXT = "|cff26a526Success!|r "
+local WARNING_TEXT = "|cffffd100Warning!|r "
+local ERROR_TEXT = "|cffe52626Error!|r "
 local panel
 
 local BAR_NAMES = {
@@ -74,9 +77,16 @@ end
 local function BarToggle_OnClick(self)
 	local checked = self:GetValue()
 
-	-- print("toggle ", BARS)
+	local result, name, state = BARS:ToggleBar(self.bar, checked and "Show" or "Hide")
 
-	BARS:ToggleBar(self.bar, checked and "Show" or "Hide")
+	-- XXX: Makes more sense for a user
+	name = self.Text:GetText()
+
+	if result then
+		panel.StatusLog:SetText(SUCCESS_TEXT..name.." is "..(state and "shown" or "hidden").." now.")
+	else
+		panel.StatusLog:SetText(WARNING_TEXT..name.." will be "..(state and "shown" or "hidden")..", when you leave combat.")
+	end
 end
 
 -------------
