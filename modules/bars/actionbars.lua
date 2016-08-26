@@ -8,9 +8,11 @@ local unpack, tonumber, pairs = unpack, tonumber, pairs
 
 -- Mine
 local bars = {}
+local queue = {}
 
 local BARS_CFG = {
 	bar1 = {
+		enabled = true,
 		point = {"BOTTOM", 0, 12},
 		button_size = 28,
 		button_gap = 4,
@@ -33,8 +35,8 @@ local BAR_LAYOUT = {
 			MultiBarBottomLeftButton5, MultiBarBottomLeftButton6, MultiBarBottomLeftButton7, MultiBarBottomLeftButton8,
 			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12
 		},
-		original_bar = MultiBarBottomLeft,
 		name = "LSMultiBarBottomLeftBar",
+		page = 6,
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar3 = {
@@ -43,8 +45,8 @@ local BAR_LAYOUT = {
 			MultiBarBottomRightButton5, MultiBarBottomRightButton6, MultiBarBottomRightButton7, MultiBarBottomRightButton8,
 			MultiBarBottomRightButton9, MultiBarBottomRightButton10, MultiBarBottomRightButton11, MultiBarBottomRightButton12
 		},
-		original_bar = MultiBarBottomRight,
 		name = "LSMultiBarBottomRightBar",
+		page = 5,
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar4 = {
@@ -53,8 +55,8 @@ local BAR_LAYOUT = {
 			MultiBarLeftButton5, MultiBarLeftButton6, MultiBarLeftButton7, MultiBarLeftButton8,
 			MultiBarLeftButton9, MultiBarLeftButton10, MultiBarLeftButton11, MultiBarLeftButton12
 		},
-		original_bar = MultiBarLeft,
 		name = "LSMultiBarLeftBar",
+		page = 4,
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar5 = {
@@ -63,8 +65,8 @@ local BAR_LAYOUT = {
 			MultiBarRightButton5, MultiBarRightButton6, MultiBarRightButton7, MultiBarRightButton8,
 			MultiBarRightButton9, MultiBarRightButton10, MultiBarRightButton11, MultiBarRightButton12
 		},
-		original_bar = MultiBarRight,
 		name = "LSMultiBarRightBar",
+		page = 3,
 		condition = "[vehicleui][petbattle][overridebar] hide; show",
 	},
 	bar6 = {
@@ -136,28 +138,49 @@ local function SetStancePetActionBarPosition(self)
 	end
 end
 
-local function UnlockPetActionBarHook()
-	_G.PetActionBarFrame.locked = true
+local function GetBarCondition(name)
+	for _, data in pairs(BAR_LAYOUT) do
+		if name == data.name then
+			return data.condition
+		end
+	end
+
+	return nil
+end
+
+local function UpdateBarState(name, state)
+	local bar = _G[name]
+	local condition = GetBarCondition(name)
+
+	if condition then
+		if state == "Show" then
+			_G.RegisterStateDriver(bar, "visibility", condition)
+		elseif state == "Hide" then
+			_G.RegisterStateDriver(bar, "visibility", "hide")
+		end
+	else
+		bar[state](bar)
+	end
+end
+
+function B:ToggleBar(name, state)
+	if _G[name] then
+		if _G.InCombatLockdown() then
+			queue[name] = state
+		else
+			UpdateBarState(name, state)
+		end
+	end
+end
+
+local function ManageQueue()
+	for name, state in pairs(queue) do
+		UpdateBarState(name, state)
+	end
 end
 
 function B:PLAYER_REGEN_ENABLED()
-	if _G.UnitLevel("player") >= 10 and not _G.PetActionBarFrame:IsShown() then
-		_G.PetActionBarFrame:Show()
-
-		B:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	end
-end
-
-function B:PLAYER_LEVEL_UP(level)
-	if level >= 10 then
-		if _G.InCombatLockdown() then
-			B:RegisterEvent("PLAYER_REGEN_ENABLED")
-		else
-			_G.PetActionBarFrame:Show()
-		end
-
-		B:UnregisterEvent("PLAYER_LEVEL_UP")
-	end
+	ManageQueue()
 end
 
 function B:HandleActionBars()
@@ -179,7 +202,11 @@ function B:HandleActionBars()
 		E:SetupBar(bar, data.buttons, config.button_size, config.button_gap, config.direction, E[data.skin_function or "SkinActionButton"])
 
 		if data.condition then
-			_G.RegisterStateDriver(bar, "visibility", data.condition)
+			if config.enabled then
+				_G.RegisterStateDriver(bar, "visibility", data.condition)
+			else
+				_G.RegisterStateDriver(bar, "visibility", "hide")
+			end
 		end
 
 		if data.name == "LSMainMenuBar" then
@@ -200,7 +227,7 @@ function B:HandleActionBars()
 					newstate = GetTempShapeshiftBarIndex() or newstate
 				end
 
-				for i, button in ipairs(buttons) do
+				for _, button in pairs(buttons) do
 					button:SetAttribute("actionpage", tonumber(newstate))
 				end
 			]])
@@ -221,6 +248,10 @@ function B:HandleActionBars()
 		else
 			for _, button in pairs(data.buttons) do
 				button:SetParent(bar)
+
+				if data.page then
+					button:SetAttribute("actionpage", data.page)
+				end
 			end
 		end
 
@@ -239,8 +270,22 @@ function B:HandleActionBars()
 		end
 	end
 
+	B:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+	--------------------
+	-- PET ACTION BAR --
+	--------------------
+
 	if _G.UnitLevel("player") < 10 then
 		_G.PetActionBarFrame:Hide()
+
+		function B:PLAYER_LEVEL_UP(level)
+			if level >= 10 then
+				B:ToggleBar("PetActionBarFrame", "Show")
+
+				B:UnregisterEvent("PLAYER_LEVEL_UP")
+			end
+		end
 
 		B:RegisterEvent("PLAYER_LEVEL_UP")
 	else
@@ -249,7 +294,29 @@ function B:HandleActionBars()
 
 	_G.PetActionBarFrame:SetScript("OnUpdate", nil)
 	_G.PetActionBarFrame.locked = true
-	_G.hooksecurefunc("UnlockPetActionBar", UnlockPetActionBarHook)
+	_G.hooksecurefunc("UnlockPetActionBar", function()
+		_G.PetActionBarFrame.locked = true
+	end)
+
+	--------------------------
+	-- BLIZZ BAR CONTROLLER --
+	--------------------------
+
+	-- XXX: Bye Fe... ActionBarController
+	_G.ActionBarController:UnregisterAllEvents()
+
+	-- XXX: But let it handle stance bar updates
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+	_G.StanceBar_Update()
+
+	-- XXX: ... and extra action bar
+	_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+
+	----------
+	-- MISC --
+	----------
 
 	for _, v in pairs({
 		_G.ActionBarDownButton,
@@ -262,6 +329,10 @@ function B:HandleActionBars()
 		_G.MainMenuBarTexture1,
 		_G.MainMenuBarTexture2,
 		_G.MainMenuBarTexture3,
+		_G.MultiBarBottomLeft,
+		_G.MultiBarBottomRight,
+		_G.MultiBarLeft,
+		_G.MultiBarRight,
 		_G.MultiCastActionBarFrame,
 		_G.OverrideActionBar,
 		_G.PossessBarFrame,
