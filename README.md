@@ -28,12 +28,14 @@ Player frame is split into three parts:
 - Frame "movers" for various interface elements, use **/lsmovers** command to toggle them;
 - Floating combat feedback on player frame;
 - Aura tracker. It can display up to 12 buffs and debuffs on player character. List of auras can be managed via config frame, and is saved per character;
+- Optional experience, honour, artefact power and reputation bars in objective tracker;
 - In-game config;
 - And more!
 
 ## Embedded Addons And Plugins
 - [oUF](http://www.wowinterface.com/downloads/info9994-oUF.html);
-- [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html).
+- [oUF_FloatingCombatFeedback](http://www.wowinterface.com/downloads/info22674-oUFFloatingCombatFeedback.html);
+- [UTF8](https://www.wowace.com/addons/utf8/).
 
 ## Feedback And Feature Requests
 If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or use [Curse Ticket Tracker](https://wow.curseforge.com/addons/ls-ui/tickets/), or post a comment on [WoWInterfrace](http://www.wowinterface.com/downloads/info22662.html#comments) or [Curse](http://mods.curse.com/addons/wow/ls-ui#comments).
