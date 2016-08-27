@@ -1,3 +1,18 @@
+## Version 3.07
+
+- NEW! Added optional experience, honour, artefact power and reputation bars to objective tracker. Disabled by default. Settings can be found in general section of a config;
+- NEW! Added pvp flag expiration timer. However, there's a bug in API, and function may return bogus numbers, in this case timer won't be shown;
+- Reworked unit frame aura buttons. Increased size from 22px to 28px, buffs and debuffs are handled by one widget now, added buff/debuff indicators to aura buttons;
+- Fixed C stack overflow error in mail module. Finally! While auto-receiving mail loot, inbox will be properly refreshed, if you have more than 50 letters;
+- Fixed position calculation for movers, now works better with scaled UIs;
+- Tweaked unit frame aura filter. Now you can override it from in-game config, and show only auras from your list;
+- Additional action bars' visibility is now handled by the addon. Added a note about it to Blizz config;
+- Updated unit frame aura, action bar and general config sections;
+- Updated embedded addons and plugins;
+- Misc bug fixes and tweaks.
+
+NOTE: At this point in-game config became quite messy. I'll revamp it in next update.
+
 ## Version 3.06
 
 - Fixed hot key texts;
