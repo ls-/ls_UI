@@ -76,13 +76,18 @@ local function CreateAuraIcon(frame, index)
 	overlay.Show = function() return end
 	button.overlay = overlay
 
-	local stealable = _G[button:GetName().."Cover"]:CreateTexture(nil, "OVERLAY", nil, 2)
+	local stealable = button.Cover:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
 	stealable:SetPoint("TOPLEFT", -1, 1)
 	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
 	stealable:SetBlendMode("ADD")
 	button.stealable = stealable
+
+	local auraType = button.Cover:CreateTexture(nil, "OVERLAY", nil, 3)
+	auraType:SetSize(16, 16)
+	auraType:SetPoint("TOPLEFT", -2, 2)
+	button.AuraType = auraType
 
 	button.UpdateTooltip = UpdateTooltip
 	button:SetScript("OnEnter", AuraButton_OnEnter)
@@ -230,6 +235,36 @@ local filterFunctions = {
 		return false
 	end,
 }
+
+local function UpdateAuraType(self, unit, aura)
+	if aura.isDebuff then
+		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
+	else
+		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+	end
+end
+
+function UF:CreateAuras(parent, unit, count)
+	local rows = mceil(count / AURAS_PER_ROW)
+	local frame = _G.CreateFrame("Frame", nil, parent)
+	frame:SetSize(AURA_SIZE * mmin(count, AURAS_PER_ROW) + AURA_GAP * mmin(count - 1, AURAS_PER_ROW - 1), AURA_SIZE * rows + AURA_GAP * (rows - 1))
+
+	frame.numBuffs = count / 2
+	frame.numDebuffs = count / 2
+	frame.size = AURA_SIZE
+	frame["spacing-x"] = AURA_GAP
+	frame["spacing-y"] = AURA_GAP
+	frame.showStealableBuffs = true
+	frame.showDebuffType = true
+
+	frame.aura_config = C.units[unit].auras
+	frame.CreateIcon = CreateAuraIcon
+	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	-- frame.CustomFilter = function() return true end
+	frame.PostUpdateIcon = UpdateAuraType
+
+	return frame
+end
 
 local function UpdateDebuffsPosition(self)
 	local rows = mceil(self.visibleBuffs / AURAS_PER_ROW)

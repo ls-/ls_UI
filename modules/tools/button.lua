@@ -378,6 +378,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 		local cover = _G.CreateFrame("Frame", "$parentCover", button)
 		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
+		button.Cover = cover
 
 		count:SetParent(cover)
 		-- duration:SetParent(cover)

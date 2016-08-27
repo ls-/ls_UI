@@ -133,9 +133,6 @@ function UF:ConstructTargetFrame(frame)
 	threat:SetPoint("CENTER", 0, 6)
 	frame.Threat = threat
 
-	frame.Buffs = UF:CreateBuffs(frame, "target", 12)
-	frame.Buffs:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 8, 16)
-
-	frame.Debuffs = UF:CreateDebuffs(frame, "target", 12, "LEFT", "BOTTOMRIGHT")
-	frame.Debuffs:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -8, 16)
+	frame.Auras = UF:CreateAuras(frame, "target", 24)
+	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 8, 16)
 end
