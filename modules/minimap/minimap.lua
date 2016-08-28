@@ -491,6 +491,12 @@ function MM:Initialize()
 		glow:ClearAllPoints()
 		glow:SetPoint("CENTER", -1, 0)
 
+		-- Compass
+		local compass = _G.MinimapCompassTexture
+		compass:SetParent(Minimap)
+		compass:ClearAllPoints()
+		compass:SetPoint("CENTER", 0, 0)
+
 		-- Misc
 		HandleMinimapButton(_G.MiniMapTracking)
 		HandleMinimapButton(_G.MiniMapVoiceChatFrame)
