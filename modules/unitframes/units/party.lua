@@ -143,6 +143,6 @@ function UF:ConstructPartyFrame(frame, ...)
 	threat:SetPoint("CENTER", 0, 6)
 	frame.Threat = threat
 
-	frame.Debuffs = UF:CreateDebuffs(frame, "party", 4)
+	frame.Debuffs = UF:CreateDebuffs(frame, "party", 4, 22)
 	frame.Debuffs:SetPoint("TOP", frame, "BOTTOM", 0, 0)
 end
