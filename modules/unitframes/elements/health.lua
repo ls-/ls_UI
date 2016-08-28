@@ -30,7 +30,7 @@ local function PostUpdateHealth(bar, unit, cur, max)
 
 	if cur == max then
 		if bar.__owner.isMouseOver then
-			if unit == "target" or unit == "focus" or strmatch(unit, "arena") then
+			if unit == "target" or unit == "focus" then
 				bar.Text:SetFormattedText("|cffffffff%s - %d%%|r", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
 			else
 				bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
@@ -44,7 +44,7 @@ local function PostUpdateHealth(bar, unit, cur, max)
 		end
 	else
 		if bar.__owner.isMouseOver then
-			if unit == "target" or unit == "focus" or strmatch(unit, "arena") then
+			if unit == "target" or unit == "focus" then
 				bar.Text:SetFormattedText("|cffffffff%s - %d%%|r", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
 			else
 				bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
