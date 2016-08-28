@@ -1,3 +1,8 @@
+## Version 3.08
+
+- Restored minimap rotation and compass;
+- Fixed party frame auras.
+
 ## Version 3.07
 
 - NEW! Added optional experience, honour, artefact power and reputation bars to objective tracker. Disabled by default. Settings can be found in general section of a config;
