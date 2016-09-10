@@ -7,30 +7,36 @@ local _G = _G
 
 -- Mine
 function B:HandleWorldMap()
-	function _G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation(self)
-		if _G.InCombatLockdown() then
-			return
-		end
+	if _G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation == _G.WorldMapBountyBoardMixin.GetDisplayLocation then
+		_G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation = function(frame)
+			if _G.InCombatLockdown() then
+				return
+			end
 
-		return _G.WorldMapBountyBoardMixin.GetDisplayLocation(self)
+			return _G.WorldMapBountyBoardMixin.GetDisplayLocation(frame)
+		end
 	end
 
-	function _G.WorldMapFrame.UIElementsFrame.ActionButton.GetDisplayLocation(self, useAlternateLocation)
-		if _G.InCombatLockdown() then
-			return
-		end
+	if _G.WorldMapFrame.UIElementsFrame.ActionButton.GetDisplayLocation == _G.WorldMapActionButtonMixin.GetDisplayLocation then
+		_G.WorldMapFrame.UIElementsFrame.ActionButton.GetDisplayLocation = function(frame, useAlternateLocation)
+			if _G.InCombatLockdown() then
+				return
+			end
 
-		return _G.WorldMapActionButtonMixin.GetDisplayLocation(self, useAlternateLocation)
+			return _G.WorldMapActionButtonMixin.GetDisplayLocation(frame, useAlternateLocation)
+		end
 	end
 
-	function _G.WorldMapFrame.UIElementsFrame.ActionButton.Refresh(self)
-		if _G.InCombatLockdown() then
-			return
-		end
+	if _G.WorldMapFrame.UIElementsFrame.ActionButton.Refresh == _G.WorldMapActionButtonMixin.Refresh then
+		_G.WorldMapFrame.UIElementsFrame.ActionButton.Refresh = function(frame)
+			if _G.InCombatLockdown() then
+				return
+			end
 
-		_G.WorldMapActionButtonMixin.Refresh(self)
+			_G.WorldMapActionButtonMixin.Refresh(frame)
+		end
 	end
 
-	WorldMapFrame.questLogMode = true
-	QuestMapFrame_Open(true)
+	_G.WorldMapFrame.questLogMode = true
+	_G.QuestMapFrame_Open(true)
 end
