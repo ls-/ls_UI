@@ -1,6 +1,6 @@
 ## Interface: 70000
 ## Author: lightspark
-## Version: 3.08
+## Version: 3.09
 ## Title: |cff1a9fc0ls:|r UI
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CONFIG
