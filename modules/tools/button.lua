@@ -561,8 +561,13 @@ function E:SkinActionButton(button)
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
 
 	if bFloatingBG then
+		bFloatingBG:SetAlpha(1)
 		bFloatingBG:SetAllPoints()
-		bFloatingBG:SetColorTexture(0, 0, 0, 0.65)
+		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
+	else
+		bFloatingBG = button:CreateTexture("$parentFloatingBG", "BACKGROUND", nil, -1)
+		bFloatingBG:SetAllPoints()
+		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
 	end
 
 	button.__type = "action"
