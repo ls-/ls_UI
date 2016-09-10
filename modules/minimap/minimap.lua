@@ -242,7 +242,15 @@ local function Minimap_OnEventHook(self, event)
 			child:SetFrameLevel(self:GetFrameLevel() + 1)
 
 			if child:IsObjectType("Button") and not WIDGETS[child:GetName()] then
-				HandleMinimapButton(child)
+				if not child:IsShown() then
+					child:Show()
+
+					HandleMinimapButton(child)
+
+					child:Hide()
+				else
+					HandleMinimapButton(child)
+				end
 			end
 		end
 
