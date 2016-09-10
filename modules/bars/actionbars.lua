@@ -37,7 +37,7 @@ local BAR_LAYOUT = {
 		},
 		name = "LSMultiBarBottomLeftBar",
 		page = 6,
-		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar3 = {
 		buttons = {
@@ -47,7 +47,7 @@ local BAR_LAYOUT = {
 		},
 		name = "LSMultiBarBottomRightBar",
 		page = 5,
-		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar4 = {
 		buttons = {
@@ -57,7 +57,7 @@ local BAR_LAYOUT = {
 		},
 		name = "LSMultiBarLeftBar",
 		page = 4,
-		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar5 = {
 		buttons = {
@@ -67,7 +67,7 @@ local BAR_LAYOUT = {
 		},
 		name = "LSMultiBarRightBar",
 		page = 3,
-		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar6 = {
 		buttons = {
@@ -86,7 +86,7 @@ local BAR_LAYOUT = {
 		},
 		original_bar = StanceBarFrame,
 		name = "LSStanceBar",
-		condition = "[vehicleui][petbattle][overridebar] hide; show",
+		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 		skin_function = "SkinStanceButton"
 	},
 }
