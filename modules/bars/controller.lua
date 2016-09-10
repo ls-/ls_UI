@@ -166,26 +166,17 @@ function B:SetupControlledBar(bar, barType)
 			self:Hide()
 			self:SetWidth(32 * newstate)
 			self:Show()
-		]])
-		RegisterStateDriver(bar, "numbuttons", "[vehicleui][possessbar][overridebar] 6; 12")
 
-		if #bar.buttons > 6 then
-			for i = 7, #bar.buttons, 1 do
-				bar.buttons[i]:SetAttribute("_childupdate-button-toggle", [[
-					if message == "show" then
-						self:Show()
-					else
-						self:Hide()
-					end
-				]])
+			for i = 7, 12 do
+				if newstate == 6 then
+					buttons[i]:Hide()
+				else
+					buttons[i]:Show()
+				end
 			end
-		end
-
-		bar:SetAttribute("_onstate-button-toggle", [[
-			control:ChildUpdate("button-toggle", newstate)
 		]])
 
-		RegisterStateDriver(bar, "button-toggle", "[vehicleui][possessbar][overridebar] hide; show")
+		RegisterStateDriver(bar, "numbuttons", "[vehicleui][possessbar][overridebar] 6; 12")
 
 		BarController.MainBars = BarController.MainBars or {}
 		tinsert(BarController.MainBars, bar)
@@ -251,7 +242,7 @@ function B:ActionBarController_Initialize()
 		animation:SetOffset(0, 50)
 		animation:SetDuration(0.25)
 
-		function BarController:Update(newstate)
+		function BarController:Update()
 			self.SlideInOut:Play()
 		end
 

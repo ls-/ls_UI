@@ -187,6 +187,44 @@ function B:PLAYER_REGEN_ENABLED()
 	ManageQueue()
 end
 
+-- XXX: At least show icons
+function B:UPDATE_VEHICLE_ACTIONBAR()
+	if HasVehicleActionBar() then
+		for i = 1, 6 do
+			local button = _G["ActionButton"..i]
+			local action = ActionButton_CalculateAction(button)
+
+			if HasAction(action) then
+				local texture = GetActionTexture(action)
+
+				if texture then
+					button.icon:SetTexture(texture)
+					button.icon:Show()
+				end
+			end
+		end
+	end
+end
+
+-- XXX: At least show icons
+function B:UPDATE_OVERRIDE_ACTIONBAR()
+	if HasOverrideActionBar() then
+		for i = 1, 6 do
+			local button = _G["ActionButton"..i]
+			local action = ActionButton_CalculateAction(button)
+
+			if HasAction(action) then
+				local texture = GetActionTexture(action)
+
+				if texture then
+					button.icon:SetTexture(texture)
+					button.icon:Show()
+				end
+			end
+		end
+	end
+end
+
 function B:HandleActionBars()
 	if C.bars.restricted then
 		BARS_CFG.bar2 = C.bars.bar2
@@ -233,6 +271,14 @@ function B:HandleActionBars()
 
 				for _, button in pairs(buttons) do
 					button:SetAttribute("actionpage", tonumber(newstate))
+
+					if newstate == 12 then
+						button:SetAttribute("showgrid", 1)
+						button:CallMethod("SetBorderColor", 0.9, 0.65, 0.15)
+						button:Show()
+					else
+						button:SetAttribute("showgrid", 0)
+					end
 				end
 			]])
 
@@ -275,6 +321,8 @@ function B:HandleActionBars()
 	end
 
 	B:RegisterEvent("PLAYER_REGEN_ENABLED")
+	B:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	B:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 
 	--------------------
 	-- PET ACTION BAR --
