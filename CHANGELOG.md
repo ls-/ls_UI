@@ -1,3 +1,8 @@
+## Version 3.09
+
+- Fixed additional action bar visibility, when player possesses something;
+- Fixed vehicle/override buttons update process, e.g. you'll be able to get/use new abilities during Illidan scenario in BRH.
+
 ## Version 3.08
 
 - Restored minimap rotation and compass;
