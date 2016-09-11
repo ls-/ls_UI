@@ -332,6 +332,28 @@ local function Clock_OnMouseDown(self)
 	self.Ticker:SetPoint("CENTER", 1, 0)
 end
 
+local function GarrisonMinimapButton_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+	GameTooltip:SetText(_G.LANDING_PAGE_REPORT, 1, 1, 1)
+	GameTooltip:AddLine("LMB: |cffffffff".._G.ORDER_HALL_LANDING_PAGE_TITLE.."|r", nil, nil, nil, true)
+	GameTooltip:AddLine("RMB: |cffffffff".._G.GARRISON_LANDING_PAGE_TITLE.."|r", nil, nil, nil, true)
+	GameTooltip:Show()
+end
+
+local function GarrisonMinimapButton_OnClick(_, button)
+	local garrTypeID = _G.LE_GARRISON_TYPE_7_0
+
+	if button == "RightButton" then
+		garrTypeID = _G.LE_GARRISON_TYPE_6_0
+	end
+
+	if _G.GarrisonLandingPage and _G.GarrisonLandingPage:IsShown() and _G.GarrisonLandingPage.garrTypeID == garrTypeID then
+		_G.HideUIPanel(_G.GarrisonLandingPage)
+	else
+		_G.ShowGarrisonLandingPage(garrTypeID)
+	end
+end
+
 function MM:Initialize()
 	if C.minimap.enabled then
 		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
@@ -419,6 +441,9 @@ function MM:Initialize()
 		-- Garrison
 		local garrison = HandleMinimapButton(_G.GarrisonLandingPageMinimapButton)
 		garrison:SetSize(34, 34)
+		garrison:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+		garrison:SetScript("OnEnter", GarrisonMinimapButton_OnEnter)
+		garrison:SetScript("OnClick", GarrisonMinimapButton_OnClick)
 
 		-- Mail
 		local mail = HandleMinimapButton(_G.MiniMapMailFrame)
