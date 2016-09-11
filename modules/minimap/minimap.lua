@@ -347,8 +347,13 @@ local function GarrisonMinimapButton_OnClick(_, button)
 		garrTypeID = _G.LE_GARRISON_TYPE_6_0
 	end
 
-	if _G.GarrisonLandingPage and _G.GarrisonLandingPage:IsShown() and _G.GarrisonLandingPage.garrTypeID == garrTypeID then
-		_G.HideUIPanel(_G.GarrisonLandingPage)
+	if _G.GarrisonLandingPage and _G.GarrisonLandingPage:IsShown() then
+		if _G.GarrisonLandingPage.garrTypeID == garrTypeID then
+			_G.HideUIPanel(_G.GarrisonLandingPage)
+		else
+			_G.ShowGarrisonLandingPage(garrTypeID)
+			_G.GarrisonLandingPageReport_OnShow(_G.GarrisonLandingPageReport)
+		end
 	else
 		_G.ShowGarrisonLandingPage(garrTypeID)
 	end
