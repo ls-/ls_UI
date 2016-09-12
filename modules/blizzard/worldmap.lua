@@ -20,6 +20,18 @@ function B:HandleWorldMap()
 		end
 	end
 
+	local old_QuestMapFrame_OpenToQuestDetails = _G.QuestMapFrame_OpenToQuestDetails
+
+	_G.QuestMapFrame_OpenToQuestDetails = function(questID)
+		if _G.InCombatLockdown() then
+			_G.ShowUIPanel(_G.WorldMapFrame);
+			_G.QuestMapFrame_ShowQuestDetails(questID)
+			_G.QuestMapFrame.DetailsFrame.mapID = nil
+		else
+			old_QuestMapFrame_OpenToQuestDetails(questID)
+		end
+	end
+
 	if _G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation == _G.WorldMapBountyBoardMixin.GetDisplayLocation then
 		_G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation = function(frame)
 			if _G.InCombatLockdown() then
