@@ -1,3 +1,8 @@
+## Version 3.10
+
+- NEW! Reworked garrison minimap button. Left-click it to open Class Hall report, right-click for Garrison report;
+- Added experimental workaround for world map zooming issue. You'll have to zoom in and out manually while in combat. I may remove it later, if it breaks more than it fixes.
+
 ## Version 3.09
 
 - Fixed additional action bar visibility, when player possesses something;
