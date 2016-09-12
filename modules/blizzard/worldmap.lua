@@ -7,6 +7,19 @@ local _G = _G
 
 -- Mine
 function B:HandleWorldMap()
+	local old_ResetZoom = _G.WorldMapScrollFrame_ResetZoom
+
+	_G.WorldMapScrollFrame_ResetZoom = function()
+		if _G.InCombatLockdown() then
+			_G.WorldMapFrame_Update()
+			_G.WorldMapScrollFrame_ReanchorQuestPOIs()
+			_G.WorldMapFrame_ResetPOIHitTranslations()
+			_G.WorldMapBlobFrame_DelayedUpdateBlobs()
+		else
+			old_ResetZoom()
+		end
+	end
+
 	if _G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation == _G.WorldMapBountyBoardMixin.GetDisplayLocation then
 		_G.WorldMapFrame.UIElementsFrame.BountyBoard.GetDisplayLocation = function(frame)
 			if _G.InCombatLockdown() then
