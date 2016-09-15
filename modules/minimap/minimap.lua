@@ -333,29 +333,59 @@ local function Clock_OnMouseDown(self)
 end
 
 local function GarrisonMinimapButton_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-	GameTooltip:SetText(_G.LANDING_PAGE_REPORT, 1, 1, 1)
-	GameTooltip:AddLine("LMB: |cffffffff".._G.ORDER_HALL_LANDING_PAGE_TITLE.."|r", nil, nil, nil, true)
-	GameTooltip:AddLine("RMB: |cffffffff".._G.GARRISON_LANDING_PAGE_TITLE.."|r", nil, nil, nil, true)
-	GameTooltip:Show()
-end
+	self.__mainType = nil
+	self.__secondaryType = nil
+	local cAvailable = _G.C_Garrison.GetGarrisonInfo(_G.LE_GARRISON_TYPE_7_0)
+	local gAvailable = _G.C_Garrison.GetGarrisonInfo(_G.LE_GARRISON_TYPE_6_0)
+	local lText, rText
 
-local function GarrisonMinimapButton_OnClick(_, button)
-	local garrTypeID = _G.LE_GARRISON_TYPE_7_0
+	if cAvailable and gAvailable then
+		lText = _G.ORDER_HALL_LANDING_PAGE_TITLE
+		rText = _G.GARRISON_LANDING_PAGE_TITLE
 
-	if button == "RightButton" then
-		garrTypeID = _G.LE_GARRISON_TYPE_6_0
+		self.__mainType = _G.LE_GARRISON_TYPE_7_0
+		self.__secondaryType = _G.LE_GARRISON_TYPE_6_0
+	elseif cAvailable and not gAvailable then
+		lText = _G.ORDER_HALL_LANDING_PAGE_TITLE
+
+		self.__mainType = _G.LE_GARRISON_TYPE_7_0
+	elseif not cAvailable and gAvailable then
+		lText = _G.GARRISON_LANDING_PAGE_TITLE
+
+		self.__mainType = _G.LE_GARRISON_TYPE_6_0
 	end
 
-	if _G.GarrisonLandingPage and _G.GarrisonLandingPage:IsShown() then
-		if _G.GarrisonLandingPage.garrTypeID == garrTypeID then
-			_G.HideUIPanel(_G.GarrisonLandingPage)
+	if lText then
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		GameTooltip:SetText(_G.LANDING_PAGE_REPORT, 1, 1, 1)
+		GameTooltip:AddLine("LMB: |cffffffff"..lText.."|r", nil, nil, nil, true)
+
+		if rText then
+			GameTooltip:AddLine("RMB: |cffffffff"..rText.."|r", nil, nil, nil, true)
+		end
+
+		GameTooltip:Show()
+	end
+end
+
+local function GarrisonMinimapButton_OnClick(self, button)
+	if self.__mainType then
+		local garrTypeID = self.__mainType
+
+		if button == "RightButton" and self.__secondaryType then
+			garrTypeID = self.__secondaryType
+		end
+
+		if _G.GarrisonLandingPage and _G.GarrisonLandingPage:IsShown() then
+			if _G.GarrisonLandingPage.garrTypeID == garrTypeID then
+				_G.HideUIPanel(_G.GarrisonLandingPage)
+			else
+				_G.ShowGarrisonLandingPage(garrTypeID)
+				_G.GarrisonLandingPageReport_OnShow(_G.GarrisonLandingPageReport)
+			end
 		else
 			_G.ShowGarrisonLandingPage(garrTypeID)
-			_G.GarrisonLandingPageReport_OnShow(_G.GarrisonLandingPageReport)
 		end
-	else
-		_G.ShowGarrisonLandingPage(garrTypeID)
 	end
 end
 
