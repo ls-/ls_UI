@@ -1,3 +1,7 @@
+## Version 3.11
+
+- Fixed garrison minimap button for people who don't have either class hall or garrison.
+
 ## Version 3.10
 
 - NEW! Reworked garrison minimap button. Left-click it to open Class Hall report, right-click for Garrison report;
