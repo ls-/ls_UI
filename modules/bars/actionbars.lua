@@ -358,10 +358,16 @@ function B:HandleActionBars()
 	_G.ActionBarController:UnregisterAllEvents()
 
 	-- XXX: But let it handle stance bar updates
+	_G.ActionBarController:RegisterEvent("PLAYER_ENTERING_WORLD")
 	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
-	_G.StanceBar_Update()
+
+	_G.ActionBarController:HookScript("OnEvent", function(self, event)
+		if event == "PLAYER_ENTERING_WORLD" then
+			self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		end
+	end)
 
 	-- XXX: ... and extra action bar
 	_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
