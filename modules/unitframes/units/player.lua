@@ -179,7 +179,7 @@ function UF:ConstructPlayerFrame(frame)
 	fcf:SetFrameLevel(9)
 	fcf:SetSize(32, 32)
 	fcf:SetPoint("CENTER", 0, 0)
-	frame.FloatingCombatFeedback =  fcf
+	frame.FloatingCombatFeedback = fcf
 
 	for i = 1, 6 do
 		fcf[i] = fcf:CreateFontString(nil, "OVERLAY", "CombatTextFont")
