@@ -103,7 +103,7 @@ function UF:ConstructPlayerFrame(frame)
 	altMana:SetSize(8, 106)
 	altMana:SetPoint("RIGHT", -7, 0)
 	altMana.colorPower = true
-   	frame.DruidMana = altMana
+	frame.AdditionalPower = altMana
 
 	local dmMana = CreateFrame("Frame", "$parentCover", altMana)
 	dmMana:SetAllPoints()
