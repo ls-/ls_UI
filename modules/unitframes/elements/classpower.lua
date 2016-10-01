@@ -404,8 +404,8 @@ function UF:CreateClassPowerBar(parent, level)
 	return bar
 end
 
-local function PostUpdateRuneBar(bar, rune, rid, start, duration, runeReady)
-	if runeReady and start == 0 then
+local function PostUpdateRuneBar(bar, rune, _, _, _, runeReady)
+	if runeReady then
 		rune:SetStatusBarColor(unpack(M.colors.power.RUNES))
 		rune.InAnim:Play()
 	else
