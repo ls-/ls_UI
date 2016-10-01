@@ -72,6 +72,7 @@ local function ReceiveButton_OnEvent(self, event)
 
 		self.Icon:SetDesaturated(false)
 	elseif event == "MAIL_CLOSED" then
+		self:SetChecked(false)
 		self:Disable()
 		self:RegisterEvent("MAIL_INBOX_UPDATE")
 
@@ -82,7 +83,7 @@ end
 local function ReceiveButton_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 
-	local numMessages, totalMessages = _G.GetInboxNumItems()
+	local numMessages = _G.GetInboxNumItems()
 	local gold, items, cod = 0, 0, 0
 	twipe(MailItems)
 
@@ -151,11 +152,15 @@ local function ReceiveButton_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function ReceiveButton_OnLeave(self)
+local function ReceiveButton_OnLeave()
 	GameTooltip:Hide()
 end
 
 local function LazyLootMail(index, delay)
+	if not _G.MailFrame:IsShown() then
+		return
+	end
+
 	local _, _, _, _, money, CODAmount, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(index)
 
 	if index > 0 then
@@ -173,7 +178,7 @@ local function LazyLootMail(index, delay)
 					elseif itemCount and itemCount > 0 then
 						mod = 1.33
 
-						local name, _, count = GetInboxItem(index, itemCount)
+						local name = GetInboxItem(index, itemCount)
 						if not name then
 							AutoLootMailItem(index)
 						else
