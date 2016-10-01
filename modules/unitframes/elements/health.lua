@@ -4,55 +4,48 @@ local UF = E:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
-local strmatch = string.match
 
 -- Blizz
-local UnitIsConnected = UnitIsConnected
-local UnitIsDeadOrGhost = UnitIsDeadOrGhost
-local DEAD = DEAD
-local PLAYER_OFFLINE = PLAYER_OFFLINE
+local UnitIsConnected = _G.UnitIsConnected
+local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
+local DEAD = _G.DEAD
+local PLAYER_OFFLINE = _G.PLAYER_OFFLINE
 
 -- Mine
 local function PostUpdateHealth(bar, unit, cur, max)
 	if not bar.Text then return end
 
-	local color
-
 	if not UnitIsConnected(unit) then
-		color = E:RGBToHEX(M.colors.disconnected)
+		bar:SetValue(0)
 
-		return bar.Text:SetFormattedText("|cff"..color.."%s|r", PLAYER_OFFLINE)
+		return bar.Text:SetText(PLAYER_OFFLINE)
 	elseif UnitIsDeadOrGhost(unit) then
-		color = E:RGBToHEX(M.colors.disconnected)
+		bar:SetValue(0)
 
-		return bar.Text:SetFormattedText("|cff"..color.."%s|r", DEAD)
+		return bar.Text:SetText(DEAD)
 	end
 
-	if cur == max then
-		if bar.__owner.isMouseOver then
-			if unit == "target" or unit == "focus" then
-				bar.Text:SetFormattedText("|cffffffff%s - %d%%|r", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-			else
-				bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
-			end
-		else
-			if unit == "player" or unit == "vehicle" or unit == "pet" then
-				bar.Text:SetText(nil)
-			else
-				bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
-			end
+	if bar.__owner.isMouseOver then
+		if unit == "target" or unit == "focus" then
+			return bar.Text:SetFormattedText("%s - %s%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+		elseif unit:gsub("%d+", "") == "boss" then
+			return bar.Text:SetFormattedText("%s", E:NumberFormat(cur, 1))
 		end
 	else
-		if bar.__owner.isMouseOver then
-			if unit == "target" or unit == "focus" then
-				bar.Text:SetFormattedText("|cffffffff%s - %d%%|r", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-			else
-				bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
+		if cur == max then
+			if unit == "player" or unit == "vehicle" or unit == "pet" then
+				return bar.Text:SetText(nil)
 			end
 		else
-			bar.Text:SetFormattedText("|cffffffff%s|r", E:NumberFormat(cur, 1))
+			if unit == "target" or unit == "focus" then
+				return bar.Text:SetFormattedText("%s - %s%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+			elseif unit:gsub("%d+", "") == "boss" then
+				return bar.Text:SetFormattedText("%s%%", E:NumberToPerc(cur, max))
+			end
 		end
 	end
+
+	bar.Text:SetFormattedText("%s", E:NumberFormat(cur, 1))
 end
 
 function UF:CreateHealthBar(parent, textSize, reaction, vertical)

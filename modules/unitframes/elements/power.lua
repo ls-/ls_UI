@@ -6,8 +6,8 @@ local UF = E:GetModule("UnitFrames")
 local _G = _G
 
 -- Blizz
-local UnitIsConnected = UnitIsConnected
-local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+local UnitIsConnected = _G.UnitIsConnected
+local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
 -- Mine
 local function PostUpdatePower(bar, unit, cur, max)
@@ -35,23 +35,19 @@ local function PostUpdatePower(bar, unit, cur, max)
 
 	local color = E:RGBToHEX(bar:GetStatusBarColor())
 
-	if cur == max or cur == 0 then
-		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
-		else
-			if unit == "player" or unit == "vehicle" or unit == "pet" then
-				bar.Text:SetText(nil)
-			else
-				bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
-			end
+	if bar.__owner.isMouseOver then
+		if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
+			return bar.Text:SetFormattedText("%s / |cff%s%s|r", E:NumberFormat(cur, 1), color, E:NumberFormat(max, 1))
 		end
 	else
-		if bar.__owner.isMouseOver then
-			bar.Text:SetFormattedText("%s / |cff"..color.."%s|r", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
-		else
-			bar.Text:SetFormattedText("|cff"..color.."%s|r", E:NumberFormat(cur, 1))
+		if cur == max or cur == 0 then
+			if unit == "player" or unit == "vehicle" or unit == "pet" then
+				return bar.Text:SetText(nil)
+			end
 		end
 	end
+
+	bar.Text:SetFormattedText("|cff%s%s|r", color, E:NumberFormat(cur, 1))
 end
 
 function UF:CreatePowerBar(parent, textSize, textBg, vertical)
