@@ -46,7 +46,6 @@ if (Test-Path ".\temp\") {
 }
 
 New-Item -Path (".\temp\" + $name) -ItemType Directory | Out-Null
-Copy-Item "..\!includes\oUF_LS\" -Destination ".\temp" -Recurse
 Copy-Item $includedFiles -Destination (".\temp\" + $name) -Recurse
 Remove-Item ".\temp" -Include $filesToRemove -Recurse -Force
 
