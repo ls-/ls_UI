@@ -7,7 +7,6 @@ local _G = _G
 local mceil, mmin = math.ceil, math.min
 
 -- Blizz
-local IsInInstance = IsInInstance
 local SpellGetVisibilityInfo = SpellGetVisibilityInfo
 local SpellIsAlwaysShown = SpellIsAlwaysShown
 local UnitAffectingCombat = UnitAffectingCombat
@@ -104,7 +103,7 @@ local filterFunctions = {
 		if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
 
 		local config = frame.aura_config[filter]
-		local name, _, _, _, debuffType, _, _, caster, isStealable, _, spellID, _, isBossAura = ...
+		local name, _, _, _, debuffType, duration, expirationTime, caster, isStealable, _, spellID, _, isBossAura = ...
 		local isMine = aura.isPlayer or caster == "pet"
 		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
 		local dispelTypes = E:GetDispelTypes()
@@ -158,6 +157,11 @@ local filterFunctions = {
 				-- ALWAYS shown
 				if isMine then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (MINE)|r")
+					return true
+				end
+
+				if not UnitPlayerControlled(unit) and duration == 0 and expirationTime == 0 then
+					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC ENV|r")
 					return true
 				end
 
