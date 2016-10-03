@@ -4,7 +4,6 @@
 ## Title: |cff1a9fc0ls:|r UI
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CONFIG
-## RequiredDeps: oUF_LS
 
 embeds\_embeds.xml
 core\_core.xml

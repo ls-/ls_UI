@@ -1,32 +1,23 @@
 local _, ns = ...
-local E, C, M, D, oUF = ns.E, ns.C, ns.M, ns.D, ns.oUF
-
-E:SetScript("OnEvent", E.EventHandler)
+local E, C, D = ns.E, ns.C, ns.D
 
 function E:ADDON_LOADED(arg)
 	if arg ~= "ls_UI" then return end
 
-	if oUF_LS_CONFIG then
-		E:CopyTable(E:CopyTable(D, oUF_LS_CONFIG), C)
-		oUF_LS_CONFIG = nil
-	else
-		E:CopyTable(E:CopyTable(D, LS_UI_CONFIG), C)
-	end
+	self:CopyTable(self:CopyTable(D, _G.LS_UI_CONFIG), C)
+	self:InitializeModules()
+	self:UnregisterEvent("ADDON_LOADED")
 
-	E:InitializeModules()
-
-	E:UnregisterEvent("ADDON_LOADED")
-
-	collectgarbage("collect")
+	_G.collectgarbage("collect")
 end
 
 function E:PLAYER_LOGIN()
-	E:UpdateConstants()
-	E:InitializeDelayedModules()
+	self:UpdateConstants()
+	self:InitializeDelayedModules()
 end
 
-function E:PLAYER_LOGOUT(...)
-	LS_UI_CONFIG = E:DiffTable(D, C)
+function E:PLAYER_LOGOUT()
+	_G.LS_UI_CONFIG = self:DiffTable(D, C)
 end
 
 E:RegisterEvent("ADDON_LOADED")
