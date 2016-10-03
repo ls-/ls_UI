@@ -1,8 +1,12 @@
-local AddOn, ns = ...
-local E, C, D, M, L = CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
-ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
+local _, ns = ...
+
+-- Lua
+local _G = _G
 
 -- Mine
+local E, C, D, M, L = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
+ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
+
 local modules = {}
 local delayedModules = {}
 
@@ -56,30 +60,32 @@ function E:GetCoords(object)
 	end
 end
 
+local function EventHandler(self, event, ...)
+	self[event](self, ...)
+end
+
+E:SetScript("OnEvent", EventHandler)
+
 -- Some authors like to disable blizzard addons my UI utilises
 function E:ForceLoadAddOn(name)
-	local loaded, reason = LoadAddOn(name)
+	local loaded, reason = _G.LoadAddOn(name)
 
 	if not loaded then
 		if reason == "DISABLED" then
-			EnableAddOn(name)
+			_G.EnableAddOn(name)
 
 			E:ForceLoadAddOn(name)
 		else
-			print(format(ADDON_LOAD_FAILED, name, _G["ADDON_"..reason]))
+			print(_G.ADDON_LOAD_FAILED:format(name, _G["ADDON_"..reason]))
 		end
 	end
 end
 
-function E:EventHandler(event, ...)
-	self[event](self, ...)
-end
-
 function E:AddModule(name, addEventHandler, isDelayed)
-	local module = CreateFrame("Frame", "LS"..name.."Module")
+	local module = _G.CreateFrame("Frame", "LS"..name.."Module")
 
 	if addEventHandler then
-		module:SetScript("OnEvent", E.EventHandler)
+		module:SetScript("OnEvent", EventHandler)
 	end
 
 	if isDelayed then
@@ -119,5 +125,5 @@ function E:InitializeDelayedModules()
 	end
 end
 
-SLASH_RELOADUI1 = "/rl"
-SlashCmdList.RELOADUI = ReloadUI
+_G.SLASH_RELOADUI1 = "/rl"
+_G.SlashCmdList["RELOADUI"] = _G.ReloadUI
