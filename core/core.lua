@@ -8,14 +8,19 @@ local table = _G.table
 local E, C, D, M, L, P = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales, private
 ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
 
-local modules = {}
-local delayedModules = {}
+-------------
+-- PRIVATE --
+-------------
 
 function P.print(...)
 	print("|cff1a9fc0ls:|r |cffffd200UI:|r", ...)
 end
 
 local print = P.print
+
+-----------
+-- UTILS --
+-----------
 
 function E:CreateFontString(parent, size, name, shadow, outline)
 	local object = parent:CreateFontString(name, "ARTWORK", "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
@@ -63,7 +68,7 @@ function E:GetCoords(object)
 	if not x then
 		return p, anchor, rP, x, y
 	else
-		return p, anchor and anchor:GetName() or "UIParent", rP, E:Round(x), E:Round(y)
+		return p, anchor and anchor:GetName() or "UIParent", rP, self:Round(x), self:Round(y)
 	end
 end
 
@@ -81,12 +86,22 @@ function E:ForceLoadAddOn(name)
 		if reason == "DISABLED" then
 			_G.EnableAddOn(name)
 
-			E:ForceLoadAddOn(name)
+			self:ForceLoadAddOn(name)
 		else
 			print(_G.ADDON_LOAD_FAILED:format(name, _G["ADDON_"..reason]))
 		end
 	end
 end
+
+_G.SLASH_RELOADUI1 = "/rl"
+_G.SlashCmdList["RELOADUI"] = _G.ReloadUI
+
+-------------
+-- MODULES --
+-------------
+
+local modules = {}
+local delayedModules = {}
 
 function E:AddModule(name, addEventHandler, isDelayed)
 	local module = _G.CreateFrame("Frame", "LS"..name.."Module")
@@ -106,10 +121,10 @@ end
 
 function E:GetModule(name)
 	if not modules[name] and not delayedModules[name] then
-		error("Module "..name.." doesn't exist!")
+		print("Module "..name.." doesn't exist!")
+	else
+		return modules[name] or delayedModules[name]
 	end
-
-	return modules[name] or delayedModules[name]
 end
 
 function E:InitializeModules()
@@ -131,9 +146,6 @@ function E:InitializeDelayedModules()
 		end
 	end
 end
-
-_G.SLASH_RELOADUI1 = "/rl"
-_G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 
 --------------------------
 -- ADDON SPECIFIC STUFF --
