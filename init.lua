@@ -25,3 +25,5 @@ end
 E:RegisterEvent("ADDON_LOADED")
 E:RegisterEvent("PLAYER_LOGIN")
 E:RegisterEvent("PLAYER_LOGOUT")
+
+ns.P = nil

@@ -5,11 +5,17 @@ local _G = _G
 local table = _G.table
 
 -- Mine
-local E, C, D, M, L = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
-ns.E, ns.C, ns.D, ns.M, ns.L = E, C, D, M, L
+local E, C, D, M, L, P = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales, private
+ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
 
 local modules = {}
 local delayedModules = {}
+
+function P.print(...)
+	print("|cff1a9fc0ls:|r |cffffd200UI:|r", ...)
+end
+
+local print = P.print
 
 function E:CreateFontString(parent, size, name, shadow, outline)
 	local object = parent:CreateFontString(name, "ARTWORK", "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
