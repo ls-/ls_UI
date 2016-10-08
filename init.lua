@@ -17,6 +17,8 @@ function E:PLAYER_LOGIN()
 end
 
 function E:PLAYER_LOGOUT()
+	self:CleanUpMoversConfig()
+
 	_G.LS_UI_CONFIG = self:DiffTable(D, C)
 end
 

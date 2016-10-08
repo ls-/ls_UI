@@ -1,21 +1,22 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E, C = ns.E, ns.C
 
 -- Lua
 local _G = _G
-local unpack, pairs = unpack, pairs
-local strupper = string.upper
+local unpack = _G.unpack
+local pairs = _G.pairs
+local string = _G.string
 
 -- Blizz
-local GameTooltip = GameTooltip
+local GameTooltip = _G.GameTooltip
 
 -- Mine
 local movers = {}
 local defaults = {}
-local MOVERS_CFG
+local CFG
 
 local function SavePosition(self, p, anchor, rP, x, y)
-	MOVERS_CFG[self:GetName()].point = {p, anchor, rP, x, y}
+	CFG[self:GetName()].point = {p, anchor, rP, x, y}
 end
 
 local function ResetPosition(self)
@@ -29,10 +30,10 @@ local function ResetPosition(self)
 	self.parent:ClearAllPoints()
 	self.parent:SetPoint(p, anchor, rP, x, y)
 
-	MOVERS_CFG[self:GetName()].point = nil
+	CFG[self:GetName()].point = nil
 
 	if not self.isSimple then
-		self.buttons[5]:Hide()
+		self.Reset:Hide()
 	end
 end
 
@@ -45,7 +46,7 @@ local function CalculatePosition(self)
 		local screenHeight = _G.UIParent:GetTop()
 		local screenCenterX, screenCenterY = _G.UIParent:GetCenter()
 		local screenLeft = screenWidth / 3
-		local screenRight = screenWidth *  2 / 3
+		local screenRight = screenWidth * 2 / 3
 
 		if moverCenterY >= screenCenterY then
 			p = "TOP"
@@ -77,8 +78,8 @@ local function SetPosition(self, xOffset, yOffset)
 	local p, rP, x, y = CalculatePosition(self)
 
 	if not x then
-		if MOVERS_CFG[self:GetName()].point then
-			p, anchor, rP, x, y = unpack(MOVERS_CFG[self:GetName()].point)
+		if CFG[self:GetName()].point then
+			p, anchor, rP, x, y = unpack(CFG[self:GetName()].point)
 		end
 
 		if not x then ResetPosition(self) return end
@@ -93,7 +94,7 @@ local function SetPosition(self, xOffset, yOffset)
 	SavePosition(self, p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
 	if not self.isSimple then
-		self.buttons[5]:Show()
+		self.Reset:Show()
 	end
 end
 
@@ -103,16 +104,17 @@ local function Button_OnEnter(self)
 	GameTooltip:SetOwner(mover, _G.cursor, 0, 0)
 	GameTooltip:AddLine(mover:GetName())
 
-	if self:GetName() == "lsMoverReset" then
-		GameTooltip:AddLine("Restore frame position", 1, 1, 1)
+	if self == mover.Reset then
+		GameTooltip:AddLine("Reset frame position", 1, 1, 1)
 	else
-		local _, anchor, rP, x, y = E:GetCoords(mover)
+		local p, anchor, rP, x, y = E:GetCoords(mover)
 
 		if anchor == "UIParent" then
-			_, rP, x, y = CalculatePosition(mover)
+			p, rP, x, y = CalculatePosition(mover)
 		end
 
-		GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." of "..anchor, 1, 1, 1)
+		GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
+		GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
 		GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
 	end
 
@@ -177,16 +179,17 @@ local MOVER_BUTTONS = {
 	Reset = {anchor = "TOPRIGHT", func = ResetOnClick}
 }
 
-local function CreateMoverButton(self, type)
-	local button = _G.CreateFrame("Button", "LSMover"..type.."Button", self, "UIPanelSquareButton")
-	button:SetPoint("CENTER", self, MOVER_BUTTONS[type].anchor, 0, 0)
+local function CreateMoverButton(mover, type)
+	local button = _G.CreateFrame("Button", nil, mover, "UIPanelSquareButton")
+	button:SetPoint("CENTER", mover, MOVER_BUTTONS[type].anchor, 0, 0)
 	button:SetSize(10, 10)
 	button:Hide()
 	button:SetScript("OnClick", MOVER_BUTTONS[type].func)
 	button:SetScript("OnEnter", Button_OnEnter)
 	button:SetScript("OnLeave", Frame_OnLeave)
+	mover[type] = button
 
-	_G.SquareButton_SetIcon(button, strupper(type))
+	_G.SquareButton_SetIcon(button, string.upper(type))
 
 	E:SkinSquareButton(button)
 
@@ -194,15 +197,16 @@ local function CreateMoverButton(self, type)
 end
 
 local function Mover_OnEnter(self)
-	local _, anchor, rP, x, y = E:GetCoords(self)
+	local p, anchor, rP, x, y = E:GetCoords(self)
 
 	if anchor == "UIParent" then
-		_, rP, x, y = CalculatePosition(self)
+		p, rP, x, y = CalculatePosition(self)
 	end
 
 	GameTooltip:SetOwner(self, _G.cursor, 0, 0)
 	GameTooltip:AddLine(self:GetName())
-	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." of "..anchor, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
 	GameTooltip:Show()
 end
@@ -311,13 +315,13 @@ end
 function E:CreateMover(object, isSimple, insets)
 	if not object then return end
 
-	MOVERS_CFG = C.movers
+	CFG = C.movers
 
 	local name = object:GetName().."Mover"
 	local iL, iR, iT, iB
 
 	if insets then
-		iL, iR, iT, iB = insets[1],  insets[2], insets[3], insets[4]
+		iL, iR, iT, iB = insets[1], insets[2], insets[3], insets[4]
 	end
 
 	local mover = _G.CreateFrame("Button", name, _G.UIParent)
@@ -325,7 +329,7 @@ function E:CreateMover(object, isSimple, insets)
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
 	mover:SetClampedToScreen(true)
-	mover:SetClampRectInsets(iL or -4, iR or 4, iR or 4, iB or -4)
+	mover:SetClampRectInsets(iL or -4, iR or 4, iT or 4, iB or -4)
 	mover:SetMovable(true)
 	mover:SetToplevel(true)
 	mover:RegisterForDrag("LeftButton")
@@ -356,16 +360,16 @@ function E:CreateMover(object, isSimple, insets)
 		}
 	end
 
-	if not MOVERS_CFG[name] then
-		MOVERS_CFG[name] = {}
+	if not CFG[name] then
+		CFG[name] = {}
 	else
-		if MOVERS_CFG[name].current then
-			MOVERS_CFG[name].point = {unpack(MOVERS_CFG[name].current)}
-			MOVERS_CFG[name].current = nil
+		if CFG[name].current then
+			CFG[name].point = {unpack(CFG[name].current)}
+			CFG[name].current = nil
 		end
 	end
 
-	defaults[name] = {E:GetCoords(object)}
+	defaults[name] = {self:GetCoords(object)}
 
 	SetPosition(mover)
 
@@ -374,7 +378,11 @@ function E:CreateMover(object, isSimple, insets)
 	return mover
 end
 
-local function Dispatcher_OnEvent(self, event, ...)
+function E:CleanUpMoversConfig()
+	C.movers = self:DiffTable(defaults, CFG)
+end
+
+local function Dispatcher_OnEvent(self, event)
 	if event == "PLAYER_REGEN_DISABLED" then
 		for _, mover in pairs(movers) do
 			if mover:IsMouseEnabled() then
@@ -388,7 +396,7 @@ local function Dispatcher_OnEvent(self, event, ...)
 	end
 end
 
-local dispatcher = CreateFrame("Frame")
+local dispatcher = _G.CreateFrame("Frame")
 dispatcher:SetScript("OnEvent", Dispatcher_OnEvent)
 dispatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
 
