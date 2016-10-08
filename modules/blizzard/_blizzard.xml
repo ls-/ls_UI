@@ -2,9 +2,13 @@
 	<Script file="core.lua"/>
 	<Script file="archaeology.lua"/>
 	<Script file="commandbar.lua"/>
+	<Script file="durability.lua"/>
 	<Script file="flyout.lua"/>
+	<Script file="gm.lua"/>
+	<Script file="npe.lua"/>
 	<Script file="objectivetracker.lua"/>
 	<Script file="powerbaralt.lua"/>
 	<Script file="timer.lua"/>
+	<Script file="vehicle.lua"/>
 	<Script file="worldmap.lua"/>
 </Ui>
