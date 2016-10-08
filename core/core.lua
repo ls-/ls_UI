@@ -2,6 +2,7 @@ local _, ns = ...
 
 -- Lua
 local _G = _G
+local table = _G.table
 
 -- Mine
 local E, C, D, M, L = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales
@@ -127,3 +128,27 @@ end
 
 _G.SLASH_RELOADUI1 = "/rl"
 _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
+
+--------------------------
+-- ADDON SPECIFIC STUFF --
+--------------------------
+
+local addonOnLoadActions = {}
+
+_G.hooksecurefunc("LoadAddOn", function(addonName)
+	local actions = addonOnLoadActions[addonName]
+
+	if actions then
+		if not _G.IsAddOnLoaded(addonName) then return end
+
+		for i = 1, #actions do
+			actions[i]()
+		end
+	end
+end)
+
+function E:AddAddonOnLoadTask(addonName, func)
+	addonOnLoadActions[addonName] = addonOnLoadActions[addonName] or {}
+
+	table.insert(addonOnLoadActions[addonName], func)
+end
