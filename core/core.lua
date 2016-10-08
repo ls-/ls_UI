@@ -133,22 +133,22 @@ _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 -- ADDON SPECIFIC STUFF --
 --------------------------
 
-local addonOnLoadActions = {}
+local onLoadTasks = {}
 
 _G.hooksecurefunc("LoadAddOn", function(addonName)
-	local actions = addonOnLoadActions[addonName]
+	local tasks = onLoadTasks[addonName]
 
-	if actions then
+	if tasks then
 		if not _G.IsAddOnLoaded(addonName) then return end
 
-		for i = 1, #actions do
-			actions[i]()
+		for i = 1, #tasks do
+			tasks[i]()
 		end
 	end
 end)
 
-function E:AddAddonOnLoadTask(addonName, func)
-	addonOnLoadActions[addonName] = addonOnLoadActions[addonName] or {}
+function E:AddOnLoadTask(addonName, func)
+	onLoadTasks[addonName] = onLoadTasks[addonName] or {}
 
-	table.insert(addonOnLoadActions[addonName], func)
+	table.insert(onLoadTasks[addonName], func)
 end

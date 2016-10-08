@@ -3,7 +3,7 @@ local E = ns.E
 local B = E:GetModule("Blizzard")
 
 function B:HandleNPE()
-	E:AddAddonOnLoadTask("Blizzard_Tutorial", function()
+	E:AddOnLoadTask("Blizzard_Tutorial", function()
 		_G.NPE_TutorialInterfaceHelp:ClearAllPoints()
 		_G.NPE_TutorialInterfaceHelp:SetPoint("BOTTOM", _G.UIParent, "BOTTOM", 0, 336)
 
