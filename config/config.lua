@@ -204,13 +204,13 @@ D["mail"] = {
 D["auras"] = {
 	enabled = true,
 	buff = {
-		point = {"TOPRIGHT", -2, -4},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 	},
 	debuff = {
-		point = {"TOPRIGHT", -2, -88},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -88},
 	},
 	tempench = {
-		point = {"TOPRIGHT", -2, -128},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -128},
 	},
 	aura_size = 28,
 	aura_gap = 4,
