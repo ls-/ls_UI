@@ -570,5 +570,11 @@ function MM:Initialize()
 		HandleMinimapButton(_G.MiniMapVoiceChatFrame)
 		UpdateZoneInfo()
 		ag:Play()
+
+		-- Hacks
+		_G.MovieFrame:HookScript("OnHide", function()
+			indicator:SetMask(nil)
+			indicator:SetMask("Interface\\Minimap\\UI-Minimap-Background")
+		end)
 	end
 end
