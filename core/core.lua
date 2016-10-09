@@ -104,7 +104,7 @@ local modules = {}
 local delayedModules = {}
 
 function E:AddModule(name, addEventHandler, isDelayed)
-	local module = _G.CreateFrame("Frame", "LS"..name.."Module")
+	local module = _G.CreateFrame("Frame")
 
 	if addEventHandler then
 		module:SetScript("OnEvent", EventHandler)
