@@ -1,18 +1,16 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E, C = ns.E, ns.C
 local MM = E:AddModule("MiniMap")
 
 -- Lua
 local _G = _G
-local unpack, pairs = unpack, pairs
-local strfind, strformat = string.find, string.format
-local mmodf = math.modf
+local string = _G.string
+local math = _G.math
+local unpack = _G.unpack
+local pairs = _G.pairs
 
 -- Blizz
-local GameTooltip = GameTooltip
-local Minimap = Minimap
-local Minimap_ZoomIn = Minimap_ZoomIn
-local Minimap_ZoomOut = Minimap_ZoomOut
+local Minimap = _G.Minimap
 
 -- Mine
 local STEP = 0.00390625 -- 1 / 256
@@ -57,10 +55,10 @@ local function HandleMinimapButton(button, cascade)
 			-- print(layer == "HIGHLIGHT" and "|cff00ccffis highlight texture|r" or "")
 			-- print(region == normal and "|cffff5c7fis normal texture|r" or "")
 			-- print(region == pushed and "|cffff7f5cis pushed texture|r" or "")
-			-- print((texture and strfind(texture, "TrackingBorder")) and "|cffff7f5cis border texture|r" or (name and strfind(name, "Border")) and "|cffff7f5cis border texture|r" or "")
-			-- print((name and strfind(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and strfind(name, "Icon")) and "|cfff45c7fis Icon texture|r" or
+			-- print((texture and string.find(texture, "TrackingBorder")) and "|cffff7f5cis border texture|r" or (name and string.find(name, "Border")) and "|cffff7f5cis border texture|r" or "")
+			-- print((name and string.find(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and string.find(name, "Icon")) and "|cfff45c7fis Icon texture|r" or
 			-- 	(button.icon and button.icon == region) and "|cfff45c7fis .icon texture|r" or (button.Icon and button.Icon == region) and "|cfff45c7fis .Icon texture|r" or "")
-			-- print((layer == "BACKGROUND" and (texture and strfind(texture, "Background"))) and "|cffff11bbis background texture|r" or "")
+			-- print((layer == "BACKGROUND" and (texture and string.find(texture, "Background"))) and "|cffff11bbis background texture|r" or "")
 			if layer == "HIGHLIGHT" then
 				highlight = region
 			elseif not normal and not pushed then
@@ -69,19 +67,19 @@ local function HandleMinimapButton(button, cascade)
 						icon = region
 					elseif button.Icon and button.Icon == region then
 						icon = region
-					elseif name and strfind(name, "icon") then
+					elseif name and string.find(name, "icon") then
 						icon = region
-					elseif name and strfind(name, "Icon") then
+					elseif name and string.find(name, "Icon") then
 						icon = region
-					elseif texture and strfind(texture, "Background") then
+					elseif texture and string.find(texture, "Background") then
 						background = region
 					end
 				elseif layer == "OVERLAY" or layer == "BORDER" then
-					if texture and strfind(texture, "TrackingBorder") then
+					if texture and string.find(texture, "TrackingBorder") then
 						border = region
-					elseif name and strfind(name, "border") then
+					elseif name and string.find(name, "border") then
 						border = region
-					elseif name and strfind(name, "Border") then
+					elseif name and string.find(name, "Border") then
 						border = region
 					end
 				end
@@ -93,13 +91,13 @@ local function HandleMinimapButton(button, cascade)
 
 	for _, child in pairs(children) do
 		name, oType = child:GetName(), child:GetObjectType()
-		local strata, level = child:GetFrameStrata(), child:GetFrameLevel()
+		-- local strata, level = child:GetFrameStrata(), child:GetFrameLevel()
 		-- print("|cffffff7f"..name.."|r", strata, level, child:GetObjectType())
-		-- print((name and strfind(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and strfind(name, "Icon")) and "|cfff45c7fis Icon texture|r" or "")
+		-- print((name and string.find(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and string.find(name, "Icon")) and "|cfff45c7fis Icon texture|r" or "")
 		if oType == "Frame" and oType ~= "Button" then
-			if name and strfind(name, "icon") then
+			if name and string.find(name, "icon") then
 				icon = child
-			elseif name and strfind(name, "Icon") then
+			elseif name and string.find(name, "Icon") then
 				icon = child
 			end
 		elseif oType == "Button" then
@@ -209,7 +207,7 @@ end
 local function GetDeltas()
 	local h, m = _G.GetGameTime()
 	local s = (h * 60 + m) * 60
-	local mult = mmodf(s / DELAY)
+	local mult = math.modf(s / DELAY)
 
 	return (mult + 1) * DELAY - s, STEP * mult -- delay, offset
 end
@@ -226,14 +224,14 @@ local function Step(t, delay, offset)
 end
 
 local function Calendar_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
+	_G.GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
 
 	if self.pendingCalendarInvites > 0 then
-		GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_CALENDAR_INVITES)
+		_G.GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_CALENDAR_INVITES)
 	end
 
-	GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR)
-	GameTooltip:Show()
+	_G.GameTooltip:AddLine(_G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR)
+	_G.GameTooltip:Show()
 end
 
 local function Minimap_OnEventHook(self, event)
@@ -264,9 +262,9 @@ end
 
 local function Minimap_OnMouseWheel(self, direction)
 	if direction > 0 then
-		Minimap_ZoomIn()
+		_G.Minimap_ZoomIn()
 	else
-		Minimap_ZoomOut()
+		_G.Minimap_ZoomOut()
 	end
 end
 
@@ -278,8 +276,8 @@ local function Minimap_OnLeave(self)
 	self.ZoneText:Hide()
 end
 
-local function Calendar_OnLeave(self)
-	GameTooltip:Hide()
+local function Calendar_OnLeave()
+	_G.GameTooltip:Hide()
 end
 
 local function Calendar_OnEvent(self, event, ...)
@@ -299,7 +297,7 @@ local function Calendar_OnEvent(self, event, ...)
 		local title = ...
 		local info = _G.ChatTypeInfo["SYSTEM"]
 
-		_G.DEFAULT_CHAT_FRAME:AddMessage(strformat(_G.CALENDAR_EVENT_ALARM_MESSAGE, title), info.r, info.g, info.b, info.id)
+		_G.DEFAULT_CHAT_FRAME:AddMessage(string.format(_G.CALENDAR_EVENT_ALARM_MESSAGE, title), info.r, info.g, info.b, info.id)
 	end
 end
 
@@ -356,15 +354,15 @@ local function GarrisonMinimapButton_OnEnter(self)
 	end
 
 	if lText then
-		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-		GameTooltip:SetText(_G.LANDING_PAGE_REPORT, 1, 1, 1)
-		GameTooltip:AddLine("LMB: |cffffffff"..lText.."|r", nil, nil, nil, true)
+		_G.GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+		_G.GameTooltip:SetText(_G.LANDING_PAGE_REPORT, 1, 1, 1)
+		_G.GameTooltip:AddLine("LMB: |cffffffff"..lText.."|r", nil, nil, nil, true)
 
 		if rText then
-			GameTooltip:AddLine("RMB: |cffffffff"..rText.."|r", nil, nil, nil, true)
+			_G.GameTooltip:AddLine("RMB: |cffffffff"..rText.."|r", nil, nil, nil, true)
 		end
 
-		GameTooltip:Show()
+		_G.GameTooltip:Show()
 	end
 end
 
