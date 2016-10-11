@@ -406,10 +406,7 @@ end
 
 local function PostUpdateRuneBar(bar, rune, _, _, _, runeReady)
 	if runeReady then
-		rune:SetStatusBarColor(unpack(M.colors.power.RUNES))
 		rune.InAnim:Play()
-	else
-		rune:SetStatusBarColor(unpack(M.colors.gray))
 	end
 
 	if UnitHasVehicleUI("player") then
