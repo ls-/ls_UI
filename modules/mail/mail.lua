@@ -1,32 +1,20 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E, C = ns.E, ns.C
 local Mail = E:AddModule("Mail")
 
 -- Lua
 local _G = _G
-local pairs = pairs
-local twipe, tsort = table.wipe, table.sort
-
--- Blizz
-local C_Timer = C_Timer
-local GameTooltip = GameTooltip
-local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
-local AutoLootMailItem = AutoLootMailItem
-local DeleteInboxItem = DeleteInboxItem
-local GetContainerNumFreeSlots = GetContainerNumFreeSlots
-local GetInboxHeaderInfo = GetInboxHeaderInfo
-local GetInboxItem = GetInboxItem
-local GetInboxItemLink = GetInboxItemLink
-local GetItemInfo = GetItemInfo
-local TakeInboxItem = TakeInboxItem
-local TakeInboxMoney = TakeInboxMoney
+local pairs = _G.pairs
+local table = _G.table
 
 -- Mine
+local mailItems = {}
 local ReceiveMail
-local MailItems = {}
+local isReceiving
+local overflow
 
 -- http://wow.gamepedia.com/Orderedpairs
-local function orderednext(t, n)
+local function orderednext(t)
 	local key = t[t.__next]
 	if not key then return end
 
@@ -39,14 +27,14 @@ local keys = {}
 local function orderedpairs(t)
 	local kn = 1
 
-	twipe(keys)
+	table.wipe(keys)
 	keys = {__source = t, __next = 1}
 
 	for k in pairs(t) do
 		keys[kn], kn = k, kn + 1
 	end
 
-	tsort(keys)
+	table.sort(keys)
 
 	return orderednext, keys
 end
@@ -55,7 +43,7 @@ local function GetFreeSlots()
 	local free = 0
 
 	for i = 0, _G.NUM_BAG_SLOTS do
-		local freeSlots, bagType = GetContainerNumFreeSlots(i)
+		local freeSlots, bagType = _G.GetContainerNumFreeSlots(i)
 
 		if bagType == 0 then
 			free = free + freeSlots
@@ -81,30 +69,30 @@ local function ReceiveButton_OnEvent(self, event)
 end
 
 local function ReceiveButton_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 
 	local numMessages = _G.GetInboxNumItems()
 	local gold, items, cod = 0, 0, 0
-	twipe(MailItems)
+	table.wipe(mailItems)
 
 	for i = 1, numMessages do
-		local _, _, _, _, money, CODAmount, _, itemCount = GetInboxHeaderInfo(i)
+		local _, _, _, _, money, CODAmount, _, itemCount = _G.GetInboxHeaderInfo(i)
 
 		if money and money > 0 then
 			gold = gold + money
 		end
 
-		if CODAmount and CODAmount> 0 then
+		if CODAmount and CODAmount > 0 then
 			cod = cod + CODAmount
 		end
 
 		if itemCount then
 			for j = 1, itemCount do
-				local itemLink = GetInboxItemLink(i, j)
+				local itemLink = _G.GetInboxItemLink(i, j)
 
 				if itemLink then
-					local name, _, icon, count = GetInboxItem(i, j)
-					local _, _, quality = GetItemInfo(itemLink)
+					local name, _, icon, count = _G.GetInboxItem(i, j)
+					local _, _, quality = _G.GetItemInfo(itemLink)
 
 					if not name then
 						name = _G.UNKNOWN
@@ -113,10 +101,10 @@ local function ReceiveButton_OnEnter(self)
 						quality = 0
 					end
 
-					if MailItems[name] then
-						MailItems[name].count = MailItems[name].count + count
+					if mailItems[name] then
+						mailItems[name].count = mailItems[name].count + count
 					else
-						MailItems[name] = {count = count, icon = "|T"..icon..":0|t", color = ITEM_QUALITY_COLORS[quality].hex}
+						mailItems[name] = {count = count, icon = "|T"..icon..":0|t", color = _G.ITEM_QUALITY_COLORS[quality].hex}
 					end
 				end
 
@@ -126,78 +114,82 @@ local function ReceiveButton_OnEnter(self)
 	end
 
 	if gold > 0 or cod > 0 or items > 0 then
-		GameTooltip:AddLine(_G.MAIL_LABEL, 1, 1, 1)
+		_G.GameTooltip:AddLine(_G.MAIL_LABEL, 1, 1, 1)
 	end
 
 	if gold > 0 then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(_G.ENCLOSED_MONEY..":")
-		GameTooltip:AddLine(_G.GetMoneyString(gold), 1, 1, 1)
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.ENCLOSED_MONEY..":")
+		_G.GameTooltip:AddLine(_G.GetMoneyString(gold), 1, 1, 1)
 	end
 
 	if cod > 0 then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(_G.COD_AMOUNT)
-		GameTooltip:AddLine(_G.GetMoneyString(cod), 1, 1, 1)
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.COD_AMOUNT)
+		_G.GameTooltip:AddLine(_G.GetMoneyString(cod), 1, 1, 1)
 	end
 
 	if items > 0 then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddLine(_G.ITEMS..":")
-		for k, v in orderedpairs(MailItems) do
-			GameTooltip:AddDoubleLine(v.color..k.."|r", v.count..v.icon, 1, 1, 1, 1, 1, 1)
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.ITEMS..":")
+		for k, v in orderedpairs(mailItems) do
+			_G.GameTooltip:AddDoubleLine(v.color..k.."|r", v.count..v.icon, 1, 1, 1, 1, 1, 1)
 		end
 	end
 
-	GameTooltip:Show()
+	_G.GameTooltip:Show()
 end
 
 local function ReceiveButton_OnLeave()
-	GameTooltip:Hide()
+	_G.GameTooltip:Hide()
 end
 
 local function LazyLootMail(index, delay)
 	if not _G.MailFrame:IsShown() then
+		isReceiving = false
+
 		return
 	end
 
-	local _, _, _, _, money, CODAmount, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(index)
+	local _, _, _, _, money, CODAmount, _, itemCount, _, _, _, _, isGM = _G.GetInboxHeaderInfo(index)
 
 	if index > 0 then
 		if not (CODAmount and CODAmount > 0 or isGM) then
 			if money == 0 and not itemCount then
-				DeleteInboxItem(index)
+				_G.DeleteInboxItem(index)
 
-				C_Timer.After(delay, function() LazyLootMail(index - 1, delay) end)
+				_G.C_Timer.After(delay, function() LazyLootMail(index - 1, delay) end)
 			else
 				if GetFreeSlots() > 0 then
 					local mod = 1
 
 					if money > 0 then
-						TakeInboxMoney(index)
+						_G.TakeInboxMoney(index)
 					elseif itemCount and itemCount > 0 then
 						mod = 1.33
 
-						local name = GetInboxItem(index, itemCount)
+						local name = _G.GetInboxItem(index, itemCount)
 						if not name then
-							AutoLootMailItem(index)
+							_G.AutoLootMailItem(index)
 						else
-							TakeInboxItem(index, itemCount)
+							_G.TakeInboxItem(index, itemCount)
 						end
 					end
 
-					C_Timer.After(delay * mod, function() LazyLootMail(index, delay) end)
+					_G.C_Timer.After(delay * mod, function() LazyLootMail(index, delay) end)
 				end
 			end
 		else
 			LazyLootMail(index - 1, delay)
 		end
-	elseif index == 0 then
+	else
 		_G.CheckInbox()
 		_G.InboxFrame_Update()
 
-		if Mail.overflow then
-			C_Timer.After(delay * 1.33, ReceiveMail)
+		isReceiving = false
+
+		if overflow then
+			_G.C_Timer.After(delay * 1.33, ReceiveMail)
 		else
 			_G.InboxFrame.ReceiveButton:SetChecked(false)
 			_G.MiniMapMailFrame:Hide()
@@ -206,11 +198,14 @@ local function LazyLootMail(index, delay)
 end
 
 function ReceiveMail()
-	local _, _, lag = _G.GetNetStats()
-	local numMessages, totalMessages = _G.GetInboxNumItems()
-	Mail.overflow = totalMessages > numMessages
+	if not isReceiving then
+		local _, _, lag = _G.GetNetStats()
+		local numMessages, totalMessages = _G.GetInboxNumItems()
+		overflow = totalMessages > numMessages
+		isReceiving = true
 
-	LazyLootMail(numMessages, lag > 0 and lag / 750 or 0.1)
+		LazyLootMail(numMessages, lag > 0 and lag / 750 or 0.1)
+	end
 end
 
 function Mail:Initialize()
