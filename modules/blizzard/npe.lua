@@ -2,6 +2,10 @@ local _, ns = ...
 local E = ns.E
 local B = E:GetModule("Blizzard")
 
+-- Lua
+local _G = _G
+
+-- Mine
 function B:HandleNPE()
 	E:AddOnLoadTask("Blizzard_Tutorial", function()
 		_G.NPE_TutorialInterfaceHelp:ClearAllPoints()
