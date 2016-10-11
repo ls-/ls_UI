@@ -1,6 +1,13 @@
 local _, ns = ...
 local E = ns.E
 
+-- Lua
+local _G = _G
+local type = _G.type
+local pairs = _G.pairs
+local next = _G.next
+
+-- Mine
 function E:CopyTable(src, dest)
 	if type(dest) ~= "table" then
 		dest = {}
@@ -53,6 +60,46 @@ function E:ReplaceTable(src, dest)
 	end
 
 	return dest
+end
+
+local function IsEqualTable(a, b)
+	for k, v in pairs(a) do
+		if type(v) == "table" and type(b[k]) == "table" then
+			if not IsEqualTable(v, b[k]) then
+				return false
+			end
+		else
+			if v ~= b[k] then
+				return false
+			end
+		end
+	end
+
+	for k, v in pairs(b) do
+		if type(v) == "table" and type(a[k]) == "table" then
+			if not IsEqualTable(v, a[k]) then
+				return false
+			end
+		else
+			if v ~= a[k] then
+				return false
+			end
+		end
+	end
+
+	return true
+end
+
+function E:IsEqual(a, b)
+	if type(a) ~= type(b) then
+		return false
+	end
+
+	if type(a) == "table" then
+		return IsEqualTable(a, b)
+	else
+		return a == b
+	end
 end
 
 function E:FetchSettings(panel, table)
