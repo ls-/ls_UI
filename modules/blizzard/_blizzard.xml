@@ -8,6 +8,7 @@
 	<Script file="npe.lua"/>
 	<Script file="objectivetracker.lua"/>
 	<Script file="powerbaralt.lua"/>
+	<Script file="talkinghead.lua"/>
 	<Script file="timer.lua"/>
 	<Script file="vehicle.lua"/>
 	<Script file="worldmap.lua"/>
