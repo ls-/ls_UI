@@ -22,7 +22,7 @@ end
 local function ResetPosition(self)
 	if _G.InCombatLockdown() then return end
 
-	local p, anchor, rP, x, y = unpack(defaults[self:GetName()])
+	local p, anchor, rP, x, y = unpack(defaults[self:GetName()].point)
 
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
@@ -82,7 +82,11 @@ local function SetPosition(self, xOffset, yOffset)
 			p, anchor, rP, x, y = unpack(CFG[self:GetName()].point)
 		end
 
-		if not x then ResetPosition(self) return end
+		if not x then
+			ResetPosition(self)
+
+			return
+		end
 	end
 
 	self:ClearAllPoints()
@@ -93,7 +97,7 @@ local function SetPosition(self, xOffset, yOffset)
 
 	SavePosition(self, p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
-	if not self.isSimple then
+	if not (self.isSimple or E:IsEqual(defaults[self:GetName()], CFG[self:GetName()])) then
 		self.Reset:Show()
 	end
 end
@@ -369,7 +373,13 @@ function E:CreateMover(object, isSimple, insets)
 		end
 	end
 
-	defaults[name] = {self:GetCoords(object)}
+	if not defaults[name] then
+		defaults[name] = {}
+	end
+
+	defaults[name].point = {self:GetCoords(object)}
+
+	self:CopyTable(defaults[name], CFG[name])
 
 	SetPosition(mover)
 
