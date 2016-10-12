@@ -36,10 +36,8 @@ function B:OT_Initialize(forceEnable)
 		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
 		header:SetSize(229, 25)
 		header:SetPoint("TOPRIGHT", -192, -192)
-
 		E:CreateMover(header, true, {-4, 18, 4, -4})
 
-		-- ugly, but works fine
 		_G.ObjectiveTrackerFrame:SetMovable(true)
 		_G.ObjectiveTrackerFrame:SetUserPlaced(true)
 		_G.ObjectiveTrackerFrame:SetParent(header)
