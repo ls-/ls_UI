@@ -16,7 +16,7 @@ D["units"] = {
 	target = {
 		enabled = true,
 		castbar = true,
-		point = {"BOTTOMLEFT", "UIParent", "BOTTOM", 166, 336},
+		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
 		auras = {
 			enabled = 0x0000000f,
 			show_only_filtered = 0x00000000,
@@ -35,7 +35,7 @@ D["units"] = {
 	},
 	focus = {
 		enabled = true,
-		point = { "BOTTOMRIGHT", "UIParent", "BOTTOM", -166, 336},
+		point = {"BOTTOM", "UIParent", "BOTTOM", -268, 336},
 		castbar = true,
 		auras = {
 			enabled = 0x0000000f,
