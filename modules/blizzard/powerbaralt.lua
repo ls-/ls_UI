@@ -1,23 +1,21 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E = ns.E
 local B = E:GetModule("Blizzard")
 
-local PlayerPowerBarAlt = PlayerPowerBarAlt
-
-local function ClearAllPointsHook(self)
-	self:SetPoint("BOTTOM", LSPowerBarAltHolder, "BOTTOM", 0, 0)
-end
-
 function B:HandlePowerBarAlt()
-	local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
+	_G.PlayerPowerBarAlt.ignoreFramePositionManager = true
+	_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
+	_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Bottom"] = nil
+	_G.UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
+
+	local holder = _G.CreateFrame("Frame", "LSPowerBarAltHolder", _G.UIParent)
 	holder:SetSize(64, 64)
 	holder:SetPoint("BOTTOM", 0, 230)
 	E:CreateMover(holder)
 
-	PlayerPowerBarAlt:SetParent(holder)
-	PlayerPowerBarAlt:ClearAllPoints()
-	PlayerPowerBarAlt:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
-	PlayerPowerBarAlt.ignoreFramePositionManager = true
-
-	hooksecurefunc(PlayerPowerBarAlt, "ClearAllPoints", ClearAllPointsHook)
+	_G.PlayerPowerBarAlt:SetMovable(true)
+	_G.PlayerPowerBarAlt:SetUserPlaced(true)
+	_G.PlayerPowerBarAlt:SetParent(holder)
+	_G.PlayerPowerBarAlt:ClearAllPoints()
+	_G.PlayerPowerBarAlt:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
 end
