@@ -1,20 +1,28 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS = M.colors
+local E, M = ns.E, ns.M
 local B = E:GetModule("Blizzard")
 
-local unpack = unpack
+-- Lua
+local _G = _G
+local unpack = _G.unpack
 
+-- Mine
 function B:HandleArchaeology()
-	if not IsAddOnLoaded("Blizzard_ArchaeologyUI") then
-		E:ForceLoadAddOn("Blizzard_ArchaeologyUI")
+	local isLoaded = true
+
+	if not _G.IsAddOnLoaded("Blizzard_ArchaeologyUI") then
+		isLoaded = _G.LoadAddOn("Blizzard_ArchaeologyUI")
 	end
 
-	local ArcheologyDigsiteProgressBar = ArcheologyDigsiteProgressBar
-	ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
-	ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
-	E:HandleStatusBar(ArcheologyDigsiteProgressBar)
-	E:SetStatusBarSkin(ArcheologyDigsiteProgressBar, "HORIZONTAL-BIG")
-	ArcheologyDigsiteProgressBar.Texture:SetVertexColor(unpack(COLORS.orange))
-	E:CreateMover(ArcheologyDigsiteProgressBar)
+	if isLoaded then
+		_G.ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
+		_G.UIPARENT_MANAGED_FRAME_POSITIONS["ArcheologyDigsiteProgressBar"] = nil
+
+		E:HandleStatusBar(_G.ArcheologyDigsiteProgressBar)
+		E:SetStatusBarSkin(_G.ArcheologyDigsiteProgressBar, "HORIZONTAL-BIG")
+		_G.ArcheologyDigsiteProgressBar.Texture:SetVertexColor(unpack(M.colors.orange))
+
+		_G.ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", 0, 250)
+		E:CreateMover(_G.ArcheologyDigsiteProgressBar)
+	end
 end
