@@ -142,6 +142,11 @@ local filterFunctions = {
 		end
 
 		if hostileTarget then -- hostile
+			if not UnitPlayerControlled(unit) and caster and UnitIsUnit(unit, caster) and duration == 0 and expirationTime == 0 then
+				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC ENV|r")
+				return true
+			end
+
 			if filter == "HELPFUL" then
 				-- ALWAYS shown
 				if not UnitPlayerControlled(unit) and caster and UnitIsUnit(unit, caster) then
@@ -157,11 +162,6 @@ local filterFunctions = {
 				-- ALWAYS shown
 				if isMine then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (MINE)|r")
-					return true
-				end
-
-				if not UnitPlayerControlled(unit) and duration == 0 and expirationTime == 0 then
-					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC ENV|r")
 					return true
 				end
 
