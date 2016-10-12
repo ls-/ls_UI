@@ -1,31 +1,35 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E, C = ns.E, ns.C
 local UF = E:GetModule("UnitFrames")
 
-local function PartyHolder_OnEvent(self, event, ...)
-	if event == "PLAYER_ENTERING_WORLD" then
-		if GetCVarBool("useCompactPartyFrames") then
+-- Lua
+local _G = _G
+local table = _G.table
+local unpack = _G.unpack
+
+-- Mine
+local function PartyHolder_OnEvent(self, event)
+	if event == "PLAYER_LOGIN" then
+		if _G.GetCVarBool("useCompactPartyFrames") then
 			self:Hide()
 		else
 			self:Show()
 		end
-
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	end
 end
 
 function UF:CreatePartyHolder()
-	local holder = CreateFrame("Frame", "LSPartyHolder", UIParent, "SecureHandlerStateTemplate")
+	local holder = _G.CreateFrame("Frame", "LSPartyHolder", _G.UIParent, "SecureHandlerStateTemplate")
 	holder:SetSize(110, (36 + 18) * 5 + 40 * 3)
 	holder:SetPoint(unpack(C.units.party.point))
-	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
+	holder:RegisterEvent("PLAYER_LOGIN")
 	holder:SetScript("OnEvent", PartyHolder_OnEvent)
 
 	E:CreateMover(holder)
 end
 
 function UF:ConstructPartyFrame(frame, ...)
-	tinsert(UF.framesByUnit["party"], frame)
+	table.insert(UF.framesByUnit["party"], frame)
 
 	local level = frame:GetFrameLevel()
 
@@ -36,7 +40,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
 	bg:SetAllPoints()
 
-	local cover = CreateFrame("Frame", "$parentCover", frame)
+	local cover = _G.CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
@@ -70,7 +74,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(90, 20)
 	health:SetPoint("CENTER")
-	tinsert(frame.mouseovers, health)
+	table.insert(frame.mouseovers, health)
 	frame.Health = health
 
 	local healthText = health.Text
@@ -93,7 +97,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	power:SetSize(62, 2)
 	power:SetPoint("CENTER", 0, -11)
 	E:SetStatusBarSkin(power, "HORIZONTAL-SMALL")
-	tinsert(frame.mouseovers, power)
+	table.insert(frame.mouseovers, power)
 	frame.Power = power
 
 	local powerText = power.Text
