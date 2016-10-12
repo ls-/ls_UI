@@ -222,13 +222,13 @@ D["tooltips"] = {
 
 D["movers"] = {}
 
-D["char_info"] = {
-	enabled = false,
-	xp_enabled = false,
-	honor_enabled = false,
-	artifact_enabled = false,
-	reputation_enabled = false,
-}
+-- D["char_info"] = {
+-- 	enabled = false,
+-- 	xp_enabled = false,
+-- 	honor_enabled = false,
+-- 	artifact_enabled = false,
+-- 	reputation_enabled = false,
+-- }
 
 D["blizzard"] ={
 	["ot"] = {

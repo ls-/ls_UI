@@ -1,7 +1,6 @@
 local _, ns = ...
 local oUF, E, C, D = ns.oUF or oUF, ns.E, ns.C, ns.D
 local CFG = E:GetModule("Config")
-local STATS = E:GetModule("Stats")
 local BLIZZARD = E:GetModule("Blizzard")
 
 -- Lua
@@ -38,95 +37,6 @@ local function OTToggle_OnClick(self)
 	else
 		if initialized then
 			panel.StatusLog:SetText(WARNING_TEXT.." Objective tracker module will be disabled on next UI reload.")
-		end
-	end
-end
-
-local function CharInfoToggle_OnClick(self)
-	local checked = self:GetValue()
-	local initialized = STATS:IsLoaded()
-
-	if checked then
-		if not initialized then
-			STATS:Initialize(true)
-		else
-			STATS:Refresh(true)
-		end
-
-		panel.StatusLog:SetText(SUCCESS_TEXT.." Enabled character info module for objective tracker.")
-	else
-		if initialized then
-			STATS:Refresh(false)
-		end
-
-		panel.StatusLog:SetText(SUCCESS_TEXT.." Disabled character info module for objective tracker.")
-	end
-end
-
-local function XPToggle_OnClick(self)
-	local checked = self:GetValue()
-	local _, enabled = STATS:IsLoaded()
-
-	if enabled then
-		if checked then
-			STATS:ToggleXP(true)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Added XP bar to objective tracker. It\'ll be shown, when available.")
-		else
-			STATS:ToggleXP(false)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed XP bar from objective tracker.")
-		end
-	end
-end
-
-local function HonorToggle_OnClick(self)
-	local checked = self:GetValue()
-	local _, enabled = STATS:IsLoaded()
-
-	if enabled then
-		if checked then
-			STATS:ToggleHonor(true)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Added honour bar to objective tracker. It\'ll be shown, when available.")
-		else
-			STATS:ToggleHonor(false)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed honour bar from objective tracker.")
-		end
-	end
-end
-
-local function ArtifactToggle_OnClick(self)
-	local checked = self:GetValue()
-	local _, enabled = STATS:IsLoaded()
-
-	if enabled then
-		if checked then
-			STATS:ToggleArtifact(true)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Added artefact power bar to objective tracker. It\'ll be shown, when available.")
-		else
-			STATS:ToggleArtifact(false)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed artefact power bar from objective tracker.")
-		end
-	end
-end
-
-local function RepToggle_OnClick(self)
-	local checked = self:GetValue()
-	local _, enabled = STATS:IsLoaded()
-
-	if enabled then
-		if checked then
-			STATS:ToggleReputation(true)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Added reputation bar to objective tracker. It\'ll be shown, when available.")
-		else
-			STATS:ToggleReputation(false)
-
-			panel.StatusLog:SetText(SUCCESS_TEXT.." Removed reputation bar from objective tracker.")
 		end
 	end
 end
@@ -243,50 +153,8 @@ function CFG:General_Initialize()
 	panel.settings.blizzard.ot.height = slider1
 	CFG:SetupControlDependency(otToggle, slider1)
 
-	divider = CFG:CreateDivider(panel, "Character Info")
-	divider:SetPoint("TOP", slider1, "BOTTOM", 0, -16)
-
-	subText = CFG:CreateTextLabel(panel, 10, "Here you can enable experience, honour, artefact power and reputation bars for your objective tracker.")
-	subText:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
-	subText:SetPoint("RIGHT", -16, 0)
-	subText:SetHeight(32)
-	subText:SetMaxLines(3)
-
-	panel.settings.char_info = {}
-
-	local charInfoToggle = CFG:CreateCheckButton(panel, "CharInfoToggle", nil, "Switches character info module for objective tracker on or off.")
-	charInfoToggle:SetPoint("TOP", divider, "TOP", 0, 11)
-	charInfoToggle:SetPoint("RIGHT", -16, 0)
-	charInfoToggle:HookScript("OnClick", CharInfoToggle_OnClick)
-	panel.settings.char_info.enabled = charInfoToggle
-	CFG:SetupController(panel, charInfoToggle)
-
-	local button14 = CFG:CreateCheckButton(panel, "OTXPToggle", "Experience")
-	button14:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", -2, -8)
-	button14:HookScript("OnClick", XPToggle_OnClick)
-	panel.settings.char_info.xp_enabled = button14
-	CFG:SetupControlDependency(charInfoToggle, button14)
-
-	local button15 = CFG:CreateCheckButton(panel, "OTHonorToggle", "Honour", "|cffe52626Available at level 110.|r\nOpen \"".._G.PVP_TALENTS.."\" panel, right-click the bar and choose \"".._G.SHOW_FACTION_ON_MAINSCREEN.."\".")
-	button15:SetPoint("LEFT", button14, "RIGHT", 110, 0)
-	button15:HookScript("OnClick", HonorToggle_OnClick)
-	panel.settings.char_info.honor_enabled = button15
-	CFG:SetupControlDependency(charInfoToggle, button15)
-
-	local button16 = CFG:CreateCheckButton(panel, "OTAPToggle", "Artefact Power")
-	button16:SetPoint("LEFT", button15, "RIGHT", 110, 0)
-	button16:HookScript("OnClick", ArtifactToggle_OnClick)
-	panel.settings.char_info.artifact_enabled = button16
-	CFG:SetupControlDependency(charInfoToggle, button16)
-
-	local button17 = CFG:CreateCheckButton(panel, "OTHRepToggle", "Reputation")
-	button17:SetPoint("LEFT", button16, "RIGHT", 110, 0)
-	button17:HookScript("OnClick", RepToggle_OnClick)
-	panel.settings.char_info.reputation_enabled = button17
-	CFG:SetupControlDependency(charInfoToggle, button17)
-
 	divider = CFG:CreateDivider(panel, "Other Modules")
-	divider:SetPoint("TOP", button14, "BOTTOM", 0, -12)
+	divider:SetPoint("TOP", slider1, "BOTTOM", 0, -16)
 
 	panel.settings.bars = {
 		bags = {}
