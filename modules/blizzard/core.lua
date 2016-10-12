@@ -13,6 +13,5 @@ function B:Initialize()
 	B:HandleTH()
 	B:HandleTimers()
 	B:HandleVehicleSeatIndicator()
-	B:HandleWorldMap()
 	B:OT_Initialize()
 end

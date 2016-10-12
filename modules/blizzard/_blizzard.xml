@@ -11,5 +11,4 @@
 	<Script file="talkinghead.lua"/>
 	<Script file="timer.lua"/>
 	<Script file="vehicle.lua"/>
-	<Script file="worldmap.lua"/>
 </Ui>
