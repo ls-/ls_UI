@@ -55,8 +55,6 @@ local function Button_HasAction(self)
 		local name = _G.GetPetActionInfo(self:GetID())
 
 		return name
-	elseif self.__type == "objective" then
-		return self:IsShown()
 	end
 end
 
@@ -590,19 +588,6 @@ function E:SkinStanceButton(button)
 	button.styled = true
 end
 
-function E:SkinOTButton()
-	if not self or self.styled then return end
-
-	SkinButton(self)
-
-	self:RegisterForDrag("LeftButton")
-	self:HookScript("OnDragStart", OTButton_OnDragHook)
-	self:HookScript("OnReceiveDrag", OTButton_OnDragHook)
-
-	self.__type = "objective"
-	self.styled = true
-end
-
 function E:SkinAuraButton(button)
 	if not button or button.styled then return end
 
@@ -755,15 +740,7 @@ local function Dispatcher_OnUpdate(self, elapsed)
 			end
 		end
 
-		if button.__type == "objective" then
-			local valid = IsQuestLogSpecialItemInRange(button:GetID())
-
-			if valid == 0 then
-				button.icon:SetVertexColor(unpack(M.colors.icon.oor))
-			else
-				button.icon:SetVertexColor(1, 1, 1, 1)
-			end
-		elseif button.__type == "action" or button.__type == "extra" then
+		if button.__type == "action" or button.__type == "extra" then
 			if IsActionInRange(button.action) == false then
 				button.icon:SetVertexColor(unpack(M.colors.icon.oor))
 			else

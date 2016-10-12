@@ -5,37 +5,9 @@ local B = E:GetModule("Blizzard")
 -- Lua
 local _G = _G
 
--- Blizz
-local ObjectiveTrackerFrame = ObjectiveTrackerFrame
-
 -- Mine
 local isInitialized = false
 local isEnabled = false
-local header
-
-local function MinimizeButton_OnClickHook(self)
-	if ObjectiveTrackerFrame.collapsed then
-		E:UpdateMoverSize(header, 84)
-	else
-		E:UpdateMoverSize(header)
-	end
-end
-
-local function HeaderMenu_OnShow(self)
-	local mover = E:GetMover(header)
-
-	if mover then
-		mover:Show()
-	end
-end
-
-local function HeaderMenu_OnHide(self)
-	local mover = E:GetMover(header)
-
-	if mover then
-		mover:Hide()
-	end
-end
 
 function B:OT_IsLoaded()
 	return isInitialized, isEnabled
@@ -47,9 +19,7 @@ function B:OT_SetHeight(height)
 		C.blizzard.ot.height = height
 
 		if isEnabled then
-			ObjectiveTrackerFrame:SetHeight(height)
-
-			_G.ObjectiveTracker_Update(0x0)
+			_G.ObjectiveTrackerFrame:SetHeight(height)
 		end
 	end
 end
@@ -61,25 +31,42 @@ function B:OT_Initialize(forceEnable)
 	end
 
 	if C.blizzard.ot.enabled then
-		header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
+		local header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
 		header:SetFrameStrata("LOW")
-		header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
+		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
 		header:SetSize(229, 25)
 		header:SetPoint("TOPRIGHT", -192, -192)
 
 		E:CreateMover(header, true, {-4, 18, 4, -4})
 
 		-- ugly, but works fine
-		ObjectiveTrackerFrame:ClearAllPoints()
-		ObjectiveTrackerFrame.ClearAllPoints = function() return end
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
-		ObjectiveTrackerFrame.SetPoint = function() return end
-		ObjectiveTrackerFrame:SetHeight(C.blizzard.ot.height)
-		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", MinimizeButton_OnClickHook)
-		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", HeaderMenu_OnShow)
-		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", HeaderMenu_OnHide)
+		_G.ObjectiveTrackerFrame:SetMovable(true)
+		_G.ObjectiveTrackerFrame:SetUserPlaced(true)
+		_G.ObjectiveTrackerFrame:SetParent(header)
+		_G.ObjectiveTrackerFrame:ClearAllPoints()
+		_G.ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
+		_G.ObjectiveTrackerFrame:SetHeight(C.blizzard.ot.height)
+		_G.ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
+			if _G.ObjectiveTrackerFrame.collapsed then
+				E:UpdateMoverSize(header, 84)
+			else
+				E:UpdateMoverSize(header)
+			end
+		end)
+		_G.ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
+			local mover = E:GetMover(header)
 
-		_G.hooksecurefunc("QuestObjectiveItem_OnShow", E.SkinOTButton)
+			if mover then
+				mover:Show()
+			end
+		end)
+		_G.ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", function()
+			local mover = E:GetMover(header)
+
+			if mover then
+				mover:Hide()
+			end
+		end)
 
 		isInitialized = true
 		isEnabled = true
