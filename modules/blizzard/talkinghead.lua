@@ -4,10 +4,18 @@ local B = E:GetModule("Blizzard")
 
 -- Lua
 local _G = _G
+local table = _G.table
+local pairs = _G.pairs
 
 -- Mine
 function B:HandleTH()
-	local function Handler()
+	local isLoaded = true
+
+	if not _G.IsAddOnLoaded("Blizzard_TalkingHeadUI") then
+		isLoaded = _G.LoadAddOn("Blizzard_TalkingHeadUI")
+	end
+
+	if isLoaded then
 		_G.TalkingHeadFrame.ignoreFramePositionManager = true
 		_G.UIPARENT_MANAGED_FRAME_POSITIONS["TalkingHeadFrame"] = nil
 
@@ -19,13 +27,6 @@ function B:HandleTH()
 
 		_G.TalkingHeadFrame:ClearAllPoints()
 		_G.TalkingHeadFrame:SetPoint("TOP", "UIParent", "TOP", 0, -188)
-
 		E:CreateMover(_G.TalkingHeadFrame)
-	end
-
-	if _G.IsAddOnLoaded("Blizzard_TalkingHeadUI") then
-		Handler()
-	else
-		E:AddOnLoadTask("Blizzard_TalkingHeadUI", Handler)
 	end
 end
