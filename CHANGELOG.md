@@ -1,3 +1,13 @@
+## Version 3.12
+
+- **Removed experience, reputation, artefact power and honour bars from objective tracker.** I had to do so to fix world map frame issues that were caused by tainted objective tracker, e.g. not working Class Hall ability button. I was planning to remove it in 7.1, but I had to push this change a bit earlier. I'll try to find another way to show these stats, but later;
+- Removed quest item button skinning, for the same reason as above;
+- Updated embedded oUF;
+- Added aura filter to show permanent (de)buffs on hostile NPCs;
+- Added "talking head", vehicle seat indicator, durability frame, and few more movers;
+- Fixed stance bar taint;
+- Numerous quite important, but not really interesting code tweaks and bug fixes.
+
 ## Version 3.11
 
 - Fixed garrison minimap button for people who don't have either class hall or garrison.
