@@ -17,14 +17,9 @@ end
 function UF:CreatePartyHolder()
 	local holder = CreateFrame("Frame", "LSPartyHolder", UIParent, "SecureHandlerStateTemplate")
 	holder:SetSize(110, (36 + 18) * 5 + 40 * 3)
+	holder:SetPoint(unpack(C.units.party.point))
 	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
 	holder:SetScript("OnEvent", PartyHolder_OnEvent)
-
-	if CompactRaidFrameManager then
-		holder:SetPoint(unpack(C.units.party.point1))
-	else
-		holder:SetPoint(unpack(C.units.party.point2))
-	end
 
 	E:CreateMover(holder)
 end

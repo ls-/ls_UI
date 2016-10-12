@@ -55,8 +55,7 @@ D["units"] = {
 	},
 	party = {
 		enabled = true,
-		point1 = {"TOPLEFT", "CompactRaidFrameManager", "TOPRIGHT", 6, 0},
-		point2 = {"TOPLEFT", "UIParent", "TOPLEFT", 14, -140},
+		point = {"TOPLEFT", "UIParent", "TOPLEFT", 42, -140},
 	},
 	boss = {
 		enabled = true,
