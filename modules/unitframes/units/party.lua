@@ -9,12 +9,14 @@ local unpack = _G.unpack
 
 -- Mine
 local function PartyHolder_OnEvent(self, event)
-	if event == "PLAYER_LOGIN" then
+	if event == "PLAYER_ENTERING_WORLD" then
 		if _G.GetCVarBool("useCompactPartyFrames") then
 			self:Hide()
 		else
 			self:Show()
 		end
+
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	end
 end
 
@@ -22,7 +24,7 @@ function UF:CreatePartyHolder()
 	local holder = _G.CreateFrame("Frame", "LSPartyHolder", _G.UIParent, "SecureHandlerStateTemplate")
 	holder:SetSize(110, (36 + 18) * 5 + 40 * 3)
 	holder:SetPoint(unpack(C.units.party.point))
-	holder:RegisterEvent("PLAYER_LOGIN")
+	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
 	holder:SetScript("OnEvent", PartyHolder_OnEvent)
 
 	E:CreateMover(holder)
