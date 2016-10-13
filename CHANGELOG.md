@@ -1,3 +1,7 @@
+## Version 3.13
+
+- Fixed party frames visibility.
+
 ## Version 3.12
 
 - **Removed experience, reputation, artefact power and honour bars from objective tracker.** I had to do so to fix world map frame issues that were caused by tainted objective tracker, e.g. not working Class Hall ability button. I was planning to remove it in 7.1, but I had to push this change a bit earlier. I'll try to find another way to show these stats, but later;
