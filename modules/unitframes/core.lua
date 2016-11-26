@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, oUF = ns.E, ns.C, ns.M, ns.oUF
-local UF = E:AddModule("UnitFrames")
+local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
+local UF = P:AddModule("UnitFrames")
 
 UF.framesByUnit = {
 	player = {},
@@ -209,14 +209,14 @@ local function MainConstructor()
 			"groupingOrder", "TANK,HEALER,DAMAGER",
 			"point", "TOP", "yOffset", -40)
 
-		UF:CreatePartyHolder()
+		local holder = UF:CreatePartyHolder()
 
-		headers["party"]:SetParent(LSPartyHolder)
-		headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, -16)
+		headers["party"]:SetParent(holder)
+		headers["party"]:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, -16)
 	end
 end
 
-function UF:Initialize(forceInit)
+function UF:Init(forceInit)
 	if C.units.enabled or forceInit then
 		oUF:Factory(MainConstructor)
 	end

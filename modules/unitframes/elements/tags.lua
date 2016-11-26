@@ -1,12 +1,11 @@
 local _, ns = ...
-local E, M, oUF = ns.E, ns.M, ns.oUF
+local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
 
 --Lua
 local strformat = string.format
 local tcontains = tContains
 
 --Blizz
-local GetCreatureDifficultyColor = GetCreatureDifficultyColor
 local IsResting = IsResting
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitBattlePetLevel = UnitBattlePetLevel
@@ -39,13 +38,11 @@ local SHEEPABLE_TYPES = {
 	"Humanoid", "Humanoide", "Humanoïde", "Umanoide", "Гуманоид", "인간형", "人型生物", "人形生物",
 }
 
-oUF.Tags.Methods["ls:smartreaction"] = function(unit, r)
-	local color = E:GetSmartReactionColor(r or unit)
-
-	return "|cff"..color.hex
+oUF.Tags.Methods["ls:unitcolor"] = function(unit, r)
+	return "|cff"..E:GetUnitColor(r or unit, true, false, true, true, true):GetHEX()
 end
 
-oUF.Tags.Events["ls:smartreaction"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE"
+oUF.Tags.Events["ls:unitcolor"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE"
 
 oUF.Tags.Methods["ls:name"] = function(unit, r)
 	local name = UnitName(r or unit)
@@ -72,11 +69,11 @@ end
 oUF.Tags.Events["ls:server"] = "UNIT_NAME_UPDATE"
 
 oUF.Tags.Methods["ls:healabsorb"] = function(unit)
-	local healAbsorb = UnitGetTotalHealAbsorbs("player") or 0
-	local color = E:RGBToHEX(M.colors.healprediction.healabsorb)
+	local healAbsorb = UnitGetTotalHealAbsorbs(unit) or 0
+	local hex = M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX()
 
 	if healAbsorb > 0 then
-		return "|cff"..color.."-|r"..E:NumberFormat(healAbsorb)
+		return "|cff"..hex.."-|r"..E:NumberFormat(healAbsorb)
 	else
 		return " "
 	end
@@ -86,10 +83,10 @@ oUF.Tags.Events["ls:healabsorb"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
 
 oUF.Tags.Methods["ls:damageabsorb"] = function(unit)
 	local damageAbsorb = UnitGetTotalAbsorbs(unit) or 0
-	local color = E:RGBToHEX(M.colors.healprediction.damageabsorb)
+	local hex = M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX()
 
 	if damageAbsorb > 0 then
-		return "|cff"..color.."+|r"..E:NumberFormat(damageAbsorb)
+		return "|cff"..hex.."+|r"..E:NumberFormat(damageAbsorb)
 	else
 		return " "
 	end
@@ -98,10 +95,7 @@ end
 oUF.Tags.Events["ls:damageabsorb"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 
 oUF.Tags.Methods["ls:difficulty"] = function(unit)
-	local level = UnitEffectiveLevel(unit)
-	local color = E:GetCreatureDifficultyColor(level)
-
-	return "|cff"..color.hex
+	return "|cff"..E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
 end
 
 oUF.Tags.Methods["ls:effectivelevel"] = function(unit)
