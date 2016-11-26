@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C = ns.E, ns.C
+local E, C, M = ns.E, ns.C, ns.M
 
 -- Lua
 local _G = _G
@@ -20,7 +20,7 @@ local function SavePosition(self, p, anchor, rP, x, y)
 end
 
 local function ResetPosition(self)
-	if _G.InCombatLockdown() then return end
+	if not self.isSimple and _G.InCombatLockdown() then return end
 
 	local p, anchor, rP, x, y = unpack(defaults[self:GetName()].point)
 
@@ -71,7 +71,7 @@ local function CalculatePosition(self)
 end
 
 local function SetPosition(self, xOffset, yOffset)
-	if _G.InCombatLockdown() then return end
+	if not self.isSimple and _G.InCombatLockdown() then return end
 
 	local anchor = "UIParent"
 
@@ -97,7 +97,7 @@ local function SetPosition(self, xOffset, yOffset)
 
 	SavePosition(self, p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
-	if not (self.isSimple or E:IsEqual(defaults[self:GetName()], CFG[self:GetName()])) then
+	if not (self.isSimple or E:IsEqualTable(defaults[self:GetName()], CFG[self:GetName()])) then
 		self.Reset:Show()
 	end
 end
@@ -125,7 +125,7 @@ local function Button_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function Frame_OnLeave(self)
+local function Frame_OnLeave()
 	GameTooltip:Hide()
 end
 
@@ -228,7 +228,7 @@ local function Mover_OnUpdate(self, elapsed)
 end
 
 local function Mover_OnDragStart(self)
-	if _G.InCombatLockdown() then return end
+	if not self.isSimple and _G.InCombatLockdown() then return end
 
 	self:StartMoving()
 
@@ -241,7 +241,7 @@ local function Mover_OnDragStart(self)
 end
 
 local function Mover_OnDragStop(self)
-	if _G.InCombatLockdown() then return end
+	if not self.isSimple and _G.InCombatLockdown() then return end
 
 	self:StopMovingOrSizing()
 	self:SetScript("OnUpdate", nil)
@@ -251,7 +251,7 @@ local function Mover_OnDragStop(self)
 	self:SetUserPlaced(false)
 end
 
-local function Mover_OnClick(self, button)
+local function Mover_OnClick(self)
 	if self.buttons[1]:IsShown() then
 		for i = 1, #self.buttons - 1 do
 			self.buttons[i]:Hide()
@@ -350,7 +350,7 @@ function E:CreateMover(object, isSimple, insets)
 		mover:Hide()
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
-		bg:SetColorTexture(0.41, 0.8, 0.94, 0.6)
+		bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
 		bg:SetPoint("TOPLEFT", 1, -1)
 		bg:SetPoint("BOTTOMRIGHT", -1, 1)
 		mover.Bg = bg
@@ -392,23 +392,19 @@ function E:CleanUpMoversConfig()
 	C.movers = self:DiffTable(defaults, CFG)
 end
 
-local function Dispatcher_OnEvent(self, event)
-	if event == "PLAYER_REGEN_DISABLED" then
-		for _, mover in pairs(movers) do
+local function HideMovers()
+	for _, mover in pairs(movers) do
+		if not mover.isSimple then
 			if mover:IsMouseEnabled() then
 				Mover_OnDragStop(mover)
 			end
 
-			if not mover.isSimple then
-				mover:Hide()
-			end
+			mover:Hide()
 		end
 	end
 end
 
-local dispatcher = _G.CreateFrame("Frame")
-dispatcher:SetScript("OnEvent", Dispatcher_OnEvent)
-dispatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+E:RegisterEvent("PLAYER_REGEN_DISABLED", HideMovers)
 
 _G.SLASH_LSMOVERS1 = "/lsmovers"
 _G.SlashCmdList["LSMOVERS"] = function()

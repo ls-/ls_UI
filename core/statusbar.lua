@@ -1,8 +1,10 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS = M.colors
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
-local unpack = unpack
+-- Lua
+local _G = _G
+local string = _G.string
+local unpack = _G.unpack
 
 function E:HandleStatusBar(bar, cascade)
 	local children = {bar:GetChildren()}
@@ -18,9 +20,9 @@ function E:HandleStatusBar(bar, cascade)
 		if region:IsObjectType("Texture") then
 			texture, layer = region:GetTexture(), region:GetDrawLayer()
 			if layer == "BACKGROUND" then
-				if texture and strfind(texture, "Color") then
+				if texture and string.find(texture, "Color") then
 					background = region
-				elseif texture and strfind(texture, "Background") then
+				elseif texture and string.find(texture, "Background") then
 					background = region
 				else
 					E:ForceHide(region)
@@ -58,7 +60,7 @@ function E:HandleStatusBar(bar, cascade)
 		if not background then
 			background = bar:CreateTexture(nil, "BACKGROUND")
 		end
-		background:SetColorTexture(unpack(COLORS.darkgray))
+		background:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 		background:SetAllPoints()
 		bar.Bg = background
 
@@ -96,12 +98,12 @@ function E:HandleStatusBar(bar, cascade)
 end
 
 function E:CreateStatusBar(parent, name, orientation)
-	local bar = CreateFrame("StatusBar", name, parent)
+	local bar = _G.CreateFrame("StatusBar", name, parent)
 	bar:SetOrientation(orientation)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetColorTexture(unpack(COLORS.darkgray))
+	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 	bg:SetAllPoints()
 	bar.Bg = bg
 
@@ -121,13 +123,10 @@ end
 
 function E:AddTooltipStatusBar(tooltip, index)
 	local bar = E:CreateStatusBar(tooltip, "GameTooltipStatusBar"..index, "HORIZONTAL")
-	bar:SetStatusBarColor(unpack(COLORS.green))
-	bar:SetHeight(12)
+	bar:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+	bar:SetHeight(10)
 
 	bar.Text:SetPoint("CENTER", 0, 0)
-	bar.Text:SetFontObject("LS10Font_Shadow")
-
-	E:CreateBorder(bar)
 
 	tooltip.numStatusBars = index
 
@@ -148,8 +147,8 @@ function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
 	bar:SetMinMaxValues(min, max)
 	bar:SetValue(value)
 	bar:SetStatusBarColor(...)
-	bar:SetPoint("LEFT", tooltip:GetName().."TextLeft"..tooltip:NumLines(), "LEFT", 0, -2)
-	bar:SetPoint("RIGHT", tooltip, "RIGHT", -9, 0)
+	bar:SetPoint("TOPLEFT", tooltip:GetName().."TextLeft"..tooltip:NumLines(), "TOPLEFT", 0, -2)
+	bar:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
 	bar:Show()
 
 	bar.Text:SetText(value.." / "..max)

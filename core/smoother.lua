@@ -5,35 +5,37 @@ local E = ns.E
 
 -- Lua
 local _G = _G
-local pairs = pairs
-local mabs = math.abs
+local math = _G.math
+local pairs = _G.pairs
 
 -- Blizz
-local FrameDeltaLerp = FrameDeltaLerp
+local FrameDeltaLerp = _G.FrameDeltaLerp
 
 --Mine
 local bars = {}
 
 local function ProcessSmoothStatusBars()
 	for bar, targetValue in pairs(bars) do
-		local newValue = FrameDeltaLerp(bar:GetValue(), targetValue, .25)
+		local newValue = FrameDeltaLerp(bar._value, targetValue, .25)
 
-		if mabs(newValue - targetValue) < .005 then
+		if math.abs(newValue - targetValue) <= .005 then
+			newValue = targetValue
 			bars[bar] = nil
 		end
 
 		bar:SetValue_(newValue)
+		bar._value = newValue
 	end
 end
 
 _G.C_Timer.NewTicker(0, ProcessSmoothStatusBars)
 
 local function SetSmoothedValue(self, value)
+	self._value = self:GetValue()
 	bars[self] = value
-	self._value = value
 end
 
-local function SetMinMaxSmoothedValues(self, min, max)
+local function SetSmoothedMinMaxValues(self, min, max)
 	self:SetMinMaxValues_(min, max)
 
 	if self._max and self._max ~= max then
@@ -62,5 +64,5 @@ function E:SmoothBar(bar)
 	bar.SetValue_ = bar.SetValue
 	bar.SetMinMaxValues_ = bar.SetMinMaxValues
 	bar.SetValue = SetSmoothedValue
-	bar.SetMinMaxValues = SetMinMaxSmoothedValues
+	bar.SetMinMaxValues = SetSmoothedMinMaxValues
 end
