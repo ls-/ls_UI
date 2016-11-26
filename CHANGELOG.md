@@ -1,3 +1,13 @@
+## Version 70100.01
+
+- Added 7.1 support;
+- New version format: INTERFACE_VERSION.PATCH;
+- Updated embedded oUF;
+- Updated tooltip ilvl calculator;
+- Fixed tooltip issue which was caused by sometimes nonexistent `.GetAttribute` method.
+
+NOTE: I decided to change version format, because I'm planning to introduce quite many internal changes that will be followed by texture overhaul in the "near" future, however, I won't be able to do so within one single update, it'll take some time. But if I kept previous version format, I'd have to bump major version number few times, and that's not something I'd like to do.
+
 ## Version 3.13
 
 - Fixed party frames visibility.
