@@ -1,17 +1,32 @@
 local _, ns = ...
-local E = ns.E
-local B = E:AddModule("Blizzard", nil, true)
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BLIZZARD = P:AddModule("Blizzard", true)
 
-function B:Initialize()
-	B:HandleArchaeology()
-	B:HandleCommandBar()
-	B:HandleDurabilityFrame()
-	B:HandleGM()
-	B:HandleNPE()
-	B:HandlePowerBarAlt()
-	B:HandleSpellFlyout()
-	B:HandleTH()
-	B:HandleTimers()
-	B:HandleVehicleSeatIndicator()
-	B:OT_Initialize()
+-- Mine
+local isInit = false
+
+-----------------
+-- INITIALISER --
+-----------------
+
+function BLIZZARD:IsInit()
+	return isInit
+end
+
+function BLIZZARD:Init(isForced)
+	if not isInit and (C.blizzard.enabled or isForced) then
+		self:CommandBar_Init(isForced)
+		self:DigsiteBar_Init(isForced)
+		self:Durability_Init(isForced)
+		self:GM_Init(isForced)
+		self:NPE_Init(isForced)
+		self:ObjectiveTracker_Init(isForced)
+		self:PlayerAltPowerBar_Init(isForced)
+		self:TalkingHead_Init(isForced)
+		self:Timer_Init(isForced)
+		self:Vehicle_Init(isForced)
+
+		-- Finalise
+		isInit = true
+	end
 end
