@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local TOOLTIPS = P:AddModule("Tooltips")
+local TOOLTIPS = P:AddModule("Tooltip")
 
 -- Lua
 local _G = _G

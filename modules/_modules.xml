@@ -5,6 +5,6 @@
 	<Include file="blizzard\_blizzard.xml"/>
 	<Include file="mail\_mail.xml"/>
 	<Include file="minimap\_minimap.xml"/>
-	<Include file="tooltips\_tooltips.xml"/>
+	<Include file="tooltip\_tooltip.xml"/>
 	<Include file="unitframes\_unitframes.xml"/>
 </Ui>
