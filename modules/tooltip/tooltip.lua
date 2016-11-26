@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local TOOLTIPS = P:AddModule("Tooltips")
+local TOOLTIPS = P:AddModule("Tooltip")
 
 -- Lua
 local _G = _G
@@ -351,7 +351,13 @@ local function Tooltip_SetUnit(self)
 
 	local name = _G.UnitPVPName(unit) or _G.UNKNOWN
 	local effectiveLevel = _G.UnitEffectiveLevel(unit)
-	local nameColor = E:GetUnitColor(unit, true, true, true, true, true) -- FIXME: Add options for it
+	local nameColor = E:GetUnitColor(
+		unit,
+		C.tooltips.unit.name_color_disconnected,
+		C.tooltips.unit.name_color_pvp_hostility,
+		C.tooltips.unit.name_color_class,
+		C.tooltips.unit.name_color_tapped,
+		C.tooltips.unit.name_color_reaction)
 	local difficultyColor = E:GetCreatureDifficultyColor(effectiveLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
 	local isShiftKeyDown = _G.IsShiftKeyDown()
