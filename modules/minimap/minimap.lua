@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C = ns.E, ns.C
-local MM = E:AddModule("MiniMap")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local MINIMAP = P:AddModule("MiniMap", true)
 
 -- Lua
 local _G = _G
@@ -15,6 +15,7 @@ local Minimap = _G.Minimap
 -- Mine
 local STEP = 0.00390625 -- 1 / 256
 local DELAY = 337.5 -- 256 * 337.5 = 86400 = 24H
+local isInit = false
 
 local WIDGETS = {
 	MiniMapMailFrame = {"CENTER", -58, 58},
@@ -30,56 +31,72 @@ local WIDGETS = {
 }
 
 local ZONE_COLORS = {
-	["sanctuary"] = {r = 0.41, g = 0.8, b = 0.94, hex = "|cff68ccef"},
-	["arena"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
-	["combat"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
-	["hostile"] = {r = 0.9, g = 0.15, b = 0.15, hex = "|cffe52626"},
-	["contested"] = {r = 0.9, g = 0.65, b = 0.15, hex = "|cffe5a526"},
-	["friendly"] = {r = 0.15, g = 0.65, b = 0.15, hex = "|cff26a526"},
-	["other"] = {r = 0.9, g = 0.65, b = 0.15, hex = "|cffffffff"},
+	["sanctuary"] = M.COLORS.LIGHT_BLUE,
+	["arena"] = M.COLORS.RED,
+	["combat"] = M.COLORS.RED,
+	["hostile"] = M.COLORS.RED,
+	["contested"] = M.COLORS.YELLOW,
+	["friendly"] = M.COLORS.GREEN,
+	["other"] = M.COLORS.YELLOW
 }
+
+-----------
+-- UTILS --
+-----------
 
 local function HandleMinimapButton(button, cascade)
 	local regions = {button:GetRegions()}
 	local children = {button:GetChildren()}
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	local pushed = button.GetPushedTexture and button:GetPushedTexture()
-	local texture, layer, name, oType, icon, highlight, border, background
+	local hl, icon, border, bg, thl, ticon, tborder, tbg, tnormal, tpushed
 
-	-- print("====",button:GetName(), #children, #regions,"====")
+	-- print("====|cffff0000", button:GetDebugName(), "|r:", #children, #regions,"====")
 
 	for _, region in pairs(regions) do
 		if region:IsObjectType("Texture") then
-			texture, layer, name = region:GetTexture(), region:GetDrawLayer(), region:GetName()
-			-- print(texture, layer)
-			-- print(layer == "HIGHLIGHT" and "|cff00ccffis highlight texture|r" or "")
-			-- print(region == normal and "|cffff5c7fis normal texture|r" or "")
-			-- print(region == pushed and "|cffff7f5cis pushed texture|r" or "")
-			-- print((texture and string.find(texture, "TrackingBorder")) and "|cffff7f5cis border texture|r" or (name and string.find(name, "Border")) and "|cffff7f5cis border texture|r" or "")
-			-- print((name and string.find(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and string.find(name, "Icon")) and "|cfff45c7fis Icon texture|r" or
-			-- 	(button.icon and button.icon == region) and "|cfff45c7fis .icon texture|r" or (button.Icon and button.Icon == region) and "|cfff45c7fis .Icon texture|r" or "")
-			-- print((layer == "BACKGROUND" and (texture and string.find(texture, "Background"))) and "|cffff11bbis background texture|r" or "")
+			local name = region:GetDebugName()
+			local texture = region:GetTexture()
+			local layer = region:GetDrawLayer()
+			-- print("|cffffff00", name, "|r:", texture, layer)
+
 			if layer == "HIGHLIGHT" then
-				highlight = region
+				hl = region
 			elseif not normal and not pushed then
 				if layer == "ARTWORK" or layer == "BACKGROUND" then
-					if button.icon and button.icon == region then
+					if button.icon and region == button.icon then
+						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r")
 						icon = region
-					elseif button.Icon and button.Icon == region then
+					elseif button.Icon and region == button.Icon then
+						-- print("|cffffff00", name, "|ris |cff00ff00.Icon|r")
 						icon = region
-					elseif name and string.find(name, "icon") then
+					elseif string.match(name, "[iI][cC][oO][nN]") then
+						-- print("|cffffff00", name, "|ris |cff00ff00icon|r")
 						icon = region
-					elseif name and string.find(name, "Icon") then
+					elseif texture and string.match(texture, "[iI][cC][oO][nN]") then
+						-- print("|cffffff00", name, "|ris |cff00ff00-icon|r")
 						icon = region
-					elseif texture and string.find(texture, "Background") then
-						background = region
+					elseif texture and texture == 136467 then
+						bg = region
+					elseif texture and string.match(texture, "[bB][aA][cC][kK][gG][rR][oO][uU][nN][dD]") then
+						-- print("|cffffff00", name, "|ris |cff00ff00-background|r")
+						bg = region
 					end
 				elseif layer == "OVERLAY" or layer == "BORDER" then
-					if texture and string.find(texture, "TrackingBorder") then
+					if button.border and button.border == region then
+						-- print("|cffffff00", name, "|ris |cff00ff00.border|r")
 						border = region
-					elseif name and string.find(name, "border") then
+					elseif button.Border and button.Border == region then
+						-- print("|cffffff00", name, "|ris |cff00ff00.Border|r")
 						border = region
-					elseif name and string.find(name, "Border") then
+					elseif string.match(name, "[bB][oO][rR][dD][eE][rR]") then
+						-- print("|cffffff00", name, "|ris |cff00ff00border|r")
+						border = region
+					elseif texture and texture == 136430 then
+						-- print("|cffffff00", name, "|ris |cff00ff00#136430|r")
+						border = region
+					elseif texture and string.match(texture, "[bB][oO][rR][dD][eE][rR]") then
+						-- print("|cffffff00", name, "|ris |cff00ff00-TrackingBorder|r")
 						border = region
 					end
 				end
@@ -87,33 +104,26 @@ local function HandleMinimapButton(button, cascade)
 		end
 	end
 
-	local thighlight, ticon, tborder, tbackground, tnormal, tpushed
-
 	for _, child in pairs(children) do
-		name, oType = child:GetName(), child:GetObjectType()
-		-- local strata, level = child:GetFrameStrata(), child:GetFrameLevel()
-		-- print("|cffffff7f"..name.."|r", strata, level, child:GetObjectType())
-		-- print((name and string.find(name, "icon")) and "|cfff45c7fis icon texture|r" or (name and string.find(name, "Icon")) and "|cfff45c7fis Icon texture|r" or "")
-		if oType == "Frame" and oType ~= "Button" then
-			if name and string.find(name, "icon") then
-				icon = child
-			elseif name and string.find(name, "Icon") then
+		local name = child:GetDebugName()
+		local oType = child:GetObjectType()
+		-- print("|cffffff00", name, "|r:", oType)
+
+		if oType == "Frame" then
+			if name and string.match(name, "[iI][cC][oO][nN]") then
 				icon = child
 			end
 		elseif oType == "Button" then
-			thighlight, ticon, tborder, tbackground, tnormal, tpushed = HandleMinimapButton(child, true)
+			thl, ticon, tborder, tbg, tnormal, tpushed = HandleMinimapButton(child, true)
 		end
 	end
 
 	normal = normal or tnormal
 	pushed = pushed or tpushed
-	highlight = highlight or thighlight
+	hl = hl or thl
 	icon = icon or ticon
 	border = border or tborder
-	background = background or tbackground
-
-	-- print(cascade and "CASCADE!!" or "")
-	-- print("|cffffff7fHL|r", not not highlight, "|cffffff7fI|r", (not not icon or not not (normal and pushed)), "|cffffff7fB|r", not not border, "|cffffff7fBG|r", not not background)
+	bg = bg or tbg
 
 	if not cascade then
 		-- These aren't the dro- buttons you're looking for
@@ -122,9 +132,9 @@ local function HandleMinimapButton(button, cascade)
 		button:SetSize(30, 30)
 		button:SetHitRectInsets(0, 0, 0, 0)
 
-		if highlight then
-			highlight:ClearAllPoints()
-			highlight:SetAllPoints(button)
+		if hl then
+			hl:ClearAllPoints()
+			hl:SetAllPoints(button)
 		end
 
 		local size = normal and normal:GetSize() or icon:GetSize()
@@ -168,30 +178,31 @@ local function HandleMinimapButton(button, cascade)
 		border:SetAllPoints(button)
 		button.Border = border
 
-		if not background then
-			background = button:CreateTexture()
+		if not bg then
+			bg = button:CreateTexture()
 		end
 
-		background:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-		background:SetVertexColor(0, 0, 0, 0.8)
-		background:SetDrawLayer("BACKGROUND", 0)
-		background:SetAllPoints(button)
-		button.Background = background
+		bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+		bg:SetVertexColor(M.COLORS.BLACK:GetRGBA(0.8))
+		bg:SetDrawLayer("BACKGROUND", 0)
+		bg:SetAllPoints(button)
+		button.Background = bg
 
 		return button
 	else
-		return highlight, icon, border, background, normal, pushed
+		return hl, icon, border, bg, normal, pushed
 	end
 end
 
 local function UpdateZoneInfo()
-	local color = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]
+	local r, g, b, hex = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]:GetRGBHEX()
 
-	Minimap.ZoneText:SetText(color.hex..(_G.GetMinimapZoneText() or _G.UNKNOWN).."|r")
-	Minimap.Spin1:SetVertexColor(color.r, color.g, color.b)
-	Minimap.Spin2:SetVertexColor(color.r, color.g, color.b)
+	Minimap.ZoneText:SetText("|cff"..hex..(_G.GetMinimapZoneText() or _G.UNKNOWN).."|r")
+	Minimap.Spin1:SetVertexColor(r, g, b)
+	Minimap.Spin2:SetVertexColor(r, g, b)
 end
 
+-- Horizontal texture scrolling
 local function CheckTexPoint(point, base)
 	if point then
 		if point >= base / 256 + 1 then
@@ -212,7 +223,7 @@ local function GetDeltas()
 	return (mult + 1) * DELAY - s, STEP * mult -- delay, offset
 end
 
-local function Step(t, delay, offset)
+local function ScrollTexture(t, delay, offset)
 	t.l = CheckTexPoint(t.l, 64) + offset
 	t.r = CheckTexPoint(t.r, 192) + offset
 
@@ -220,7 +231,39 @@ local function Step(t, delay, offset)
 	t:SetTexCoord(t.l, t.r, 0 / 128, 128 / 128)
 	t:SetMask("Interface\\Minimap\\UI-Minimap-Background")
 
-	_G.C_Timer.After(delay, function() Step(t, DELAY, STEP) end)
+	_G.C_Timer.After(delay, function() ScrollTexture(t, DELAY, STEP) end)
+end
+
+--------------
+-- HANDLERS --
+--------------
+
+local function Minimap_OnEnter(self)
+	self.ZoneText:Show()
+end
+
+local function Minimap_OnLeave(self)
+	self.ZoneText:Hide()
+end
+
+local function Minimap_OnMouseWheel(_, direction)
+	if direction > 0 then
+		_G.Minimap_ZoomIn()
+	else
+		_G.Minimap_ZoomOut()
+	end
+end
+
+local function Minimap_OnEvent(_, event)
+	if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+		UpdateZoneInfo()
+	end
+end
+
+-- Calendar
+local function Calendar_OnShow(self)
+	self.DayTimeIndicator:SetMask(nil)
+	self.DayTimeIndicator:SetMask("Interface\\Minimap\\UI-Minimap-Background")
 end
 
 local function Calendar_OnEnter(self)
@@ -234,50 +277,18 @@ local function Calendar_OnEnter(self)
 	_G.GameTooltip:Show()
 end
 
-local function Minimap_OnEventHook(self, event)
-	if event == "PLAYER_ENTERING_WORLD" then
-		for _, child in pairs({self:GetChildren()}) do
-			child:SetFrameLevel(self:GetFrameLevel() + 1)
-
-			if child:IsObjectType("Button") and not WIDGETS[child:GetName()] then
-				if not child:IsShown() then
-					child:Show()
-
-					HandleMinimapButton(child)
-
-					child:Hide()
-				else
-					HandleMinimapButton(child)
-				end
-			end
-		end
-
-		Step(_G.GameTimeFrame.DayTimeIndicator, GetDeltas())
-
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-		UpdateZoneInfo()
-	end
-end
-
-local function Minimap_OnMouseWheel(self, direction)
-	if direction > 0 then
-		_G.Minimap_ZoomIn()
-	else
-		_G.Minimap_ZoomOut()
-	end
-end
-
-local function Minimap_OnEnter(self)
-	self.ZoneText:Show()
-end
-
-local function Minimap_OnLeave(self)
-	self.ZoneText:Hide()
-end
-
 local function Calendar_OnLeave()
 	_G.GameTooltip:Hide()
+end
+
+local function Calendar_OnClick(self)
+	if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
+		E:StopBlink(self.InvIndicator, 1)
+
+		self.pendingCalendarInvites = 0
+	end
+
+	_G.ToggleCalendar()
 end
 
 local function Calendar_OnEvent(self, event, ...)
@@ -299,16 +310,6 @@ local function Calendar_OnEvent(self, event, ...)
 
 		_G.DEFAULT_CHAT_FRAME:AddMessage(string.format(_G.CALENDAR_EVENT_ALARM_MESSAGE, title), info.r, info.g, info.b, info.id)
 	end
-end
-
-local function Calendar_OnClick(self)
-	if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
-		E:StopBlink(self.InvIndicator, 1)
-
-		self.pendingCalendarInvites = 0
-	end
-
-	_G.ToggleCalendar()
 end
 
 local function Calendar_OnUpdate(self, elapsed)
@@ -387,10 +388,18 @@ local function GarrisonMinimapButton_OnClick(self, button)
 	end
 end
 
-function MM:Initialize()
-	if C.minimap.enabled then
+-----------------
+-- INITIALISER --
+-----------------
+
+function MINIMAP:IsInit()
+	return isInit
+end
+
+function MINIMAP:Init(isForced)
+	if not isInit and (C.minimap.enabled or isForced) then
 		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
-			E:ForceLoadAddOn("Blizzard_TimeManager")
+			_G.LoadAddOn("Blizzard_TimeManager")
 		end
 
 		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
@@ -403,11 +412,10 @@ function MM:Initialize()
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint("CENTER")
 		Minimap:SetSize(144, 144)
-		Minimap:RegisterEvent("PLAYER_ENTERING_WORLD")
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		Minimap:HookScript("OnEvent", Minimap_OnEventHook)
+		Minimap:HookScript("OnEvent", Minimap_OnEvent)
 		Minimap:SetScript("OnEnter", Minimap_OnEnter)
 		Minimap:SetScript("OnLeave", Minimap_OnLeave)
 		Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
@@ -496,6 +504,7 @@ function MM:Initialize()
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar.pendingCalendarInvites = 0
+		calendar:HookScript("OnShow", Calendar_OnShow)
 		calendar:SetScript("OnEnter", Calendar_OnEnter)
 		calendar:SetScript("OnLeave", Calendar_OnLeave)
 		calendar:SetScript("OnEvent", Calendar_OnEvent)
@@ -521,36 +530,34 @@ function MM:Initialize()
 
 		date:ClearAllPoints()
 		date:SetPoint("CENTER", 1, 0)
-		date:SetVertexColor(1, 1, 1)
+		date:SetVertexColor(M.COLORS.WHITE:GetRGB())
 		date:SetDrawLayer("BACKGROUND")
 		date:SetJustifyH("CENTER")
 
 		-- Zone Text
-		local zone = _G.MinimapZoneText
-		zone:SetFontObject("LS12Font_Shadow")
-		zone:SetParent(Minimap)
-		zone:ClearAllPoints()
-		zone:SetPoint("TOP", 0, 32)
-		zone:Hide()
-		Minimap.ZoneText = zone
+		_G.MinimapZoneText:SetFontObject("LS12Font_Shadow")
+		_G.MinimapZoneText:SetParent(Minimap)
+		_G.MinimapZoneText:ClearAllPoints()
+		_G.MinimapZoneText:SetPoint("TOP", 0, 32)
+		_G.MinimapZoneText:Hide()
+		Minimap.ZoneText = _G.MinimapZoneText
 
 		-- Clock
-		local clock = _G.TimeManagerClockButton
-		local bg, ticker, glow = clock:GetRegions()
+		local bg, ticker, glow = _G.TimeManagerClockButton:GetRegions()
 
-		clock:SetSize(46, 22)
-		clock:SetHitRectInsets(0, 0, 0, 0)
-		clock:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\minimap-clock", "ADD")
-		clock:GetHighlightTexture():SetTexCoord(1 / 64, 47 / 64, 24 / 64, 46 / 64)
-		clock:SetScript("OnMouseUp", Clock_OnMouseUp)
-		clock:SetScript("OnMouseDown", Clock_OnMouseDown)
+		_G.TimeManagerClockButton:SetSize(46, 22)
+		_G.TimeManagerClockButton:SetHitRectInsets(0, 0, 0, 0)
+		_G.TimeManagerClockButton:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\minimap-clock", "ADD")
+		_G.TimeManagerClockButton:GetHighlightTexture():SetTexCoord(1 / 64, 47 / 64, 24 / 64, 46 / 64)
+		_G.TimeManagerClockButton:SetScript("OnMouseUp", Clock_OnMouseUp)
+		_G.TimeManagerClockButton:SetScript("OnMouseDown", Clock_OnMouseDown)
 
 		bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-clock")
 		bg:SetTexCoord(1 / 64, 47 / 64, 1 / 64, 23 / 64)
 
 		ticker:ClearAllPoints()
 		ticker:SetPoint("CENTER", 0, 1)
-		clock.Ticker = ticker
+		_G.TimeManagerClockButton.Ticker = ticker
 
 		glow:SetTexCoord(2 / 64, 52 / 64, 33 / 64, 55 / 64)
 		glow:SetSize(50, 22)
@@ -558,21 +565,35 @@ function MM:Initialize()
 		glow:SetPoint("CENTER", -1, 0)
 
 		-- Compass
-		local compass = _G.MinimapCompassTexture
-		compass:SetParent(Minimap)
-		compass:ClearAllPoints()
-		compass:SetPoint("CENTER", 0, 0)
+		_G.MinimapCompassTexture:SetParent(Minimap)
+		_G.MinimapCompassTexture:ClearAllPoints()
+		_G.MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 
 		-- Misc
 		HandleMinimapButton(_G.MiniMapTracking)
 		HandleMinimapButton(_G.MiniMapVoiceChatFrame)
+
+		for _, child in pairs({Minimap:GetChildren()}) do
+			child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
+
+			if child:IsObjectType("Button") and not WIDGETS[child:GetName()] then
+				if not child:IsShown() then
+					child:Show()
+
+					HandleMinimapButton(child)
+
+					child:Hide()
+				else
+					HandleMinimapButton(child)
+				end
+			end
+		end
+
+		-- Finalise
+		ScrollTexture(indicator, GetDeltas())
 		UpdateZoneInfo()
 		ag:Play()
 
-		-- Hacks
-		_G.MovieFrame:HookScript("OnHide", function()
-			indicator:SetMask(nil)
-			indicator:SetMask("Interface\\Minimap\\UI-Minimap-Background")
-		end)
+		isInit = true
 	end
 end
