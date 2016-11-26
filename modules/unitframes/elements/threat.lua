@@ -1,13 +1,13 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
-local unpack = unpack
+local _G = _G
 
 -- Blizz
-local UnitPlayerControlled = UnitPlayerControlled
-local UnitThreatSituation = UnitThreatSituation
+local UnitPlayerControlled = _G.UnitPlayerControlled
+local UnitThreatSituation = _G.UnitThreatSituation
 
 -- Mine
 local function ThreatUpdateOverride(self, event, unit)
@@ -27,7 +27,7 @@ local function ThreatUpdateOverride(self, event, unit)
 	end
 
 	if status then
-		threat:SetVertexColor(unpack(M.colors.threat[status + 1]))
+		threat:SetVertexColor(M.COLORS.THREAT[status + 1]:GetRGB())
 		threat:Show()
 	else
 		threat:Hide()

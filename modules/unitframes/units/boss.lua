@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 function UF:CreateBossHolder()
 	local holder = CreateFrame("Frame", "LSBossHolder", UIParent)
@@ -113,7 +113,7 @@ function UF:ConstructBossFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:smartreaction][ls:name][ls:server]|r")
+	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:unitcolor][ls:name][ls:server]|r")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)

@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C = ns.E, ns.C
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
@@ -8,26 +8,25 @@ local table = _G.table
 local unpack = _G.unpack
 
 -- Mine
-local function PartyHolder_OnEvent(self, event)
-	if event == "PLAYER_ENTERING_WORLD" then
-		if _G.GetCVarBool("useCompactPartyFrames") then
-			self:Hide()
-		else
-			self:Show()
-		end
-
-		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	end
-end
-
 function UF:CreatePartyHolder()
-	local holder = _G.CreateFrame("Frame", "LSPartyHolder", _G.UIParent, "SecureHandlerStateTemplate")
+	local holder = _G.CreateFrame("Frame", "LSPartyHolder", _G.UIParent)
 	holder:SetSize(110, (36 + 18) * 5 + 40 * 3)
 	holder:SetPoint(unpack(C.units.party.point))
-	holder:RegisterEvent("PLAYER_ENTERING_WORLD")
-	holder:SetScript("OnEvent", PartyHolder_OnEvent)
-
 	E:CreateMover(holder)
+
+	local function Check()
+		if _G.GetCVarBool("useCompactPartyFrames") then
+			holder:Hide()
+		else
+			holder:Show()
+		end
+
+		E:UnregisterEvent("PLAYER_ENTERING_WORLD", Check)
+	end
+
+	E:RegisterEvent("PLAYER_ENTERING_WORLD", Check)
+
+	return holder
 end
 
 function UF:ConstructPartyFrame(frame, ...)
@@ -131,7 +130,7 @@ function UF:ConstructPartyFrame(frame, ...)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:difficulty][ls:effectivelevel]|r [ls:smartreaction][ls:name][ls:server]|r")
+	frame:Tag(name, "[ls:difficulty][ls:effectivelevel]|r [ls:unitcolor][ls:name][ls:server]|r")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)

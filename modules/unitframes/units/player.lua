@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 function UF:ConstructPlayerFrame(frame)
 	tinsert(UF.framesByUnit["player"], frame)
@@ -67,7 +67,7 @@ function UF:ConstructPlayerFrame(frame)
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 1)
 	absrobGlow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-absorb")
 	absrobGlow:SetTexCoord(1 / 128, 103 / 128, 1 / 64, 41 / 64)
-	absrobGlow:SetVertexColor(E:ColorLighten(0, 0.7, 0.95, 0.35))
+	absrobGlow:SetVertexColor(0.35, 1, 1)
 	absrobGlow:SetSize(102, 40)
 	absrobGlow:SetPoint("CENTER", 0, 54)
 	absrobGlow:SetAlpha(0)
