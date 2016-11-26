@@ -1,6 +1,6 @@
 ﻿local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local AURAS = E:AddModule("Auras")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local AURAS = P:AddModule("Auras")
 
 -- Lua
 local _G = _G
@@ -80,7 +80,7 @@ local function UpdateTemporaryEnchantAnchors()
 	end
 end
 
-function AURAS:Initialize()
+function AURAS:Init()
 	AURAS_CFG = C.auras
 
 	if AURAS_CFG.enabled then
