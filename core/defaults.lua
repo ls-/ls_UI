@@ -82,32 +82,12 @@ D["units"] = {
 D["auratracker"] = {
 	enabled = true,
 	locked = false,
-	point = {"CENTER", "UIParent", "CENTER", 0, 0},
 	button_size = 36,
 	button_gap = 4,
-	direction = "RIGHT",
+	init_anchor = "TOPLEFT",
+	buttons_per_row = 12,
 	HELPFUL = {},
 	HARMFUL = {},
-	["0"] = { -- for level < 10 and buffer
-		HELPFUL = {},
-		HARMFUL = {},
-	},
-	["1"] = {
-		HELPFUL = {},
-		HARMFUL = {},
-	},
-	["2"] = {
-		HELPFUL = {},
-		HARMFUL = {},
-	},
-	["3"] = {
-		HELPFUL = {},
-		HARMFUL = {},
-	},
-	["4"] = {
-		HELPFUL = {},
-		HARMFUL = {},
-	},
 }
 
 D["minimap"] = {
@@ -121,65 +101,76 @@ D["bars"] = {
 	show_hotkey = true,
 	show_name = true,
 	bar1 = { -- MainMenuBar
-		enabled = true,
+		visible = true,
 		point = {"BOTTOM", 0, 4},
 		button_size = 28,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 12,
 	},
 	bar2 = { -- MultiBarBottomLeft
-		enabled = true,
+		visible = true,
 		point = {"BOTTOM", 0, 46},
 		button_size = 28,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 12,
 	},
 	bar3 = { -- MultiBarBottomRight
-		enabled = true,
+		visible = true,
 		point = {"BOTTOM", 0, 78},
 		button_size = 28,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 12,
 	},
 	bar4 = { -- MultiBarLeft
-		enabled = true,
+		visible = true,
 		point = {"BOTTOMRIGHT", -36, 300},
 		button_size = 28,
 		button_gap = 4,
-		direction = "DOWN",
+		init_anchor = "TOPRIGHT",
+		buttons_per_row = 1,
 	},
 	bar5 = { -- MultiBarRight
-		enabled = true,
+		visible = true,
 		point = {"BOTTOMRIGHT", -4, 300},
 		button_size = 28,
 		button_gap = 4,
-		direction = "DOWN",
+		init_anchor = "TOPRIGHT",
+		buttons_per_row = 1,
 	},
 	bar6 = { --PetAction
-		enabled = true,
+		visible = true,
 		button_size = 24,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 10,
 	},
 	bar7 = { -- Stance
-		enabled = true,
+		visible = true,
 		button_size = 24,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 10,
 	},
 	extra = { -- ExtraAction
+		visible = true,
 		point = {"BOTTOM", -170, 138},
 		button_size = 40,
 	},
 	vehicle = { -- LeaveVehicle
+		visible = true,
 		point = {"BOTTOM", 170, 138},
 		button_size = 40,
 	},
-	garrison = {-- Garrison
+	garrison = {
+		visible = true,
 		point = {"BOTTOM", -170, 182},
 		button_size = 40,
 	},
 	micromenu = {
+		visible = true,
 		holder1 = {
 			point = {"BOTTOM", -256, 4},
 		},
@@ -189,10 +180,12 @@ D["bars"] = {
 	},
 	bags = {
 		enabled = true,
+		visible = true,
 		point = {"BOTTOM", 400, 4},
 		button_size = 28,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 5,
 	},
 }
 
@@ -222,8 +215,36 @@ D["tooltips"] = {
 D["movers"] = {}
 
 D["blizzard"] ={
-	["ot"] = {
+	enabled = true,
+	command_bar = { -- OrderHallCommandBar
+		enabled = true
+	},
+	digsite_bar = { -- ArcheologyDigsiteProgressBar
+		enabled = true,
+	},
+	durability = { -- DurabilityFrame
+		enabled = true
+	},
+	gm = { -- TicketStatusFrame
+		enabled = true
+	},
+	npe = { -- NPE_TutorialInterfaceHelp
+		enabled = true
+	},
+	objective_tracker = { -- ObjectiveTrackerFrame
 		enabled = true,
 		height = 600,
-	}
+	},
+	player_alt_power_bar = { -- PlayerPowerBarAlt
+		enabled = true
+	},
+	talking_head = { -- TalkingHeadFrame
+		enabled = true
+	},
+	timer = { -- MirrorTimer*, TimerTrackerTimer*
+		enabled = true
+	},
+	vehicle = { -- VehicleSeatIndicator
+		enabled = true
+	},
 }
