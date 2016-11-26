@@ -1,36 +1,33 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Blizzard")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = _G
 
 -- Mine
-local isInitialized = false
-local isEnabled = false
+local isInit = false
 
-function B:OT_IsLoaded()
-	return isInitialized, isEnabled
-end
+-----------
+-- UTILS --
+-----------
 
-function B:OT_SetHeight(height)
-	if height then
-		-- FIX-ME
-		C.blizzard.ot.height = height
-
-		if isEnabled then
-			_G.ObjectiveTrackerFrame:SetHeight(height)
-		end
+function BLIZZARD:ObjectiveTracker_SetHeight(height)
+	if isInit then
+		_G.ObjectiveTrackerFrame:SetHeight(height)
 	end
 end
 
-function B:OT_Initialize(forceEnable)
-	-- FIX-ME: I need to rewrite how config refreshes values
-	if forceEnable then
-		C.blizzard.ot.enabled = true
-	end
+-----------------
+-- INITIALISER --
+-----------------
 
-	if C.blizzard.ot.enabled then
+function BLIZZARD:ObjectiveTracker_IsInit()
+	return isInit
+end
+
+function BLIZZARD:ObjectiveTracker_Init(forceEnable)
+	if not isInit and (C.blizzard.objective_tracker.enabled or forceEnable) then
 		local header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
 		header:SetFrameStrata("LOW")
 		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
@@ -43,7 +40,7 @@ function B:OT_Initialize(forceEnable)
 		_G.ObjectiveTrackerFrame:SetParent(header)
 		_G.ObjectiveTrackerFrame:ClearAllPoints()
 		_G.ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
-		_G.ObjectiveTrackerFrame:SetHeight(C.blizzard.ot.height)
+		_G.ObjectiveTrackerFrame:SetHeight(C.blizzard.objective_tracker.height)
 		_G.ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
 			if _G.ObjectiveTrackerFrame.collapsed then
 				E:UpdateMoverSize(header, 84)
@@ -66,7 +63,7 @@ function B:OT_Initialize(forceEnable)
 			end
 		end)
 
-		isInitialized = true
-		isEnabled = true
+		-- Finalise
+		isInit = true
 	end
 end
