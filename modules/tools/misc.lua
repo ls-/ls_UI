@@ -3,14 +3,12 @@ local E, C, M, L = ns.E, ns.C, ns.M, ns.L
 
 -- Lua
 local _G = _G
+local math = _G.math
 local pairs, tonumber, select = pairs, tonumber, select
 local strupper, strgsub, strmatch = string.upper, string.gsub, string.match
-local mfloor = math.floor
 
 -- Mine
-local ITEM_LEVEL_PATTERN = strgsub(ITEM_LEVEL, "%%d", "(%%d+)")
 local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-local INSPECT_WEAPON_SLOTS = {16, 17}
 local playerSpec = _G.GetSpecialization() or 0
 local playerRole
 local dispelTypesByClass = {
@@ -175,87 +173,81 @@ function E:SPELLS_CHANGED(...)
 end
 
 function E:GetUnitSpecializationInfo(unit)
-	local isPlayer = _G.UnitIsUnit(unit, "player")
-	local specID = isPlayer and playerSpec or _G.GetInspectSpecialization(unit)
+	if unit and _G.UnitExists(unit) then
+		local isPlayer = _G.UnitIsUnit(unit, "player")
+		local specID = isPlayer and _G.GetSpecialization() or _G.GetInspectSpecialization(unit)
 
-	if specID and specID > 0 then
-		if isPlayer then
-			local _, name = _G.GetSpecializationInfo(specID)
+		if specID and specID > 0 then
+			if isPlayer then
+				local _, name = _G.GetSpecializationInfo(specID)
 
-			return name
-		else
-			if _G.GetSpecializationRoleByID(specID) then
+				return name
+			else
 				local _, name = _G.GetSpecializationInfoByID(specID)
 
 				return name
 			end
 		end
 	end
-end
 
-function E:GetItemLevel(itemLink)
-	if not itemLink then return end
-
-	ScanTooltip:ClearLines()
-	ScanTooltip:SetHyperlink(itemLink)
-
-	for i = 2, ScanTooltip:NumLines() do
-		local text = _G["LSiLevelScanTooltipTextLeft"..i]:GetText()
-
-		if(text and text ~= "") then
-			local iLevel = tonumber(strmatch(text, ITEM_LEVEL_PATTERN))
-
-			if iLevel then
-				return iLevel
-			end
-		end
-	end
+	return _G.UNKNOWN
 end
 
 function E:GetUnitAverageItemLevel(unit)
 	if _G.UnitIsUnit(unit, "player") then
-		local _, avgItemLevelEquipped = _G.GetAverageItemLevel()
-
-		return mfloor(avgItemLevelEquipped)
+		return math.floor(select(2, _G.GetAverageItemLevel()))
 	else
 		local isInspectSuccessful = true
-		local iLevelTotal = 0
+		local total = 0
+
+		-- Armour
 		for _, id in pairs(INSPECT_ARMOR_SLOTS) do
-			local itemLink = _G.GetInventoryItemLink(unit, id)
-			local hasItem = ScanTooltip:SetInventoryItem(unit, id)
-			if itemLink then
-				local iLevel = E:GetItemLevel(itemLink)
-				if iLevel and iLevel > 0 then
-					iLevelTotal = iLevelTotal + iLevel
+			local link = _G.GetInventoryItemLink(unit, id)
+			local texture = _G.GetInventoryItemTexture(unit, id)
+
+			if link then
+				local cur = _G.GetDetailedItemLevelInfo(link)
+
+				if cur and cur > 0 then
+					total = total + cur
 				end
-			else
-				if hasItem then
-					isInspectSuccessful = false
-				end
+			elseif texture then
+				isInspectSuccessful = false
 			end
 		end
 
-		local numItems = 14
-		for _, id in pairs(INSPECT_WEAPON_SLOTS) do
-			local itemLink = _G.GetInventoryItemLink(unit, id)
-			local hasItem = ScanTooltip:SetInventoryItem(unit, id)
-			if itemLink then
-				local iLevel = E:GetItemLevel(itemLink)
-				if iLevel and iLevel > 0 then
-					numItems = numItems + 1
-					iLevelTotal = iLevelTotal + iLevel
-				end
-			else
-				if hasItem then
-					isInspectSuccessful = false
-				end
-			end
+		-- Main hand
+		local link = _G.GetInventoryItemLink(unit, 16)
+		local texture = _G.GetInventoryItemTexture(unit, 16)
+		local mainItemLevel, mainQuality, mainEquipLoc, _
+
+		if link then
+			mainItemLevel = _G.GetDetailedItemLevelInfo(link)
+			_, _, mainQuality, _, _, _, _, _, mainEquipLoc = _G.GetItemInfo(link)
+		elseif texture then
+			isInspectSuccessful = false
 		end
 
-		numItems = numItems < 15 and 15 or numItems
+		-- Off hand
+		link = _G.GetInventoryItemLink(unit, 17)
+		texture = _G.GetInventoryItemTexture(unit, 17)
+		local offItemLevel, offEquipLoc
 
-		-- print(numItems, "total:", iLevelTotal, "cur:", mfloor(iLevelTotal / numItems), isInspectSuccessful and "SUCCESS!" or "FAIL!")
-		return isInspectSuccessful and mfloor(iLevelTotal / numItems)
+		if link then
+			offItemLevel = _G.GetDetailedItemLevelInfo(link)
+			_, _, _, _, _, _, _, _, offEquipLoc = _G.GetItemInfo(link)
+		elseif texture then
+			isInspectSuccessful = false
+		end
+
+		if mainQuality == 6 or (mainEquipLoc == "INVTYPE_2HWEAPON" and not offEquipLoc and _G.GetInspectSpecialization(unit) ~= 72) then
+			total = total + mainItemLevel * 2
+		else
+			total = total + (mainItemLevel or 0) + (offItemLevel or 0)
+		end
+
+		-- print("total:", total, "cur:", math.floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
+		return isInspectSuccessful and math.floor(total / 16) or nil
 	end
 end
 
