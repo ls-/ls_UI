@@ -4,12 +4,12 @@ local UF = E:GetModule("UnitFrames")
 
 --Lua
 local _G = _G
-local unpack = unpack
-local mabs = math.abs
+local math = _G.math
+local unpack = _G.unpack
 
 -- Mine
-local function PostCastStart(castbar, unit, name, castID)
-	if castbar.interrupt then
+local function PostCastStart(castbar)
+	if castbar.notInterruptible then
 		castbar:SetStatusBarColor(unpack(M.colors.gray))
 		castbar.Icon:SetDesaturated(true)
 	else
@@ -18,14 +18,12 @@ local function PostCastStart(castbar, unit, name, castID)
 	end
 end
 
-local function PostChannelStart(castbar, unit, name)
-	if castbar.interrupt then
-		castbar:SetStatusBarColor(unpack(M.colors.gray))
-		castbar.Icon:SetDesaturated(true)
-	else
-		castbar:SetStatusBarColor(unpack(M.colors.yellow))
-		castbar.Icon:SetDesaturated(false)
-	end
+local function PostCastFailed(castbar)
+	castbar:SetMinMaxValues(0, 1)
+	castbar:SetValue(1)
+	castbar:SetStatusBarColor(unpack(M.colors.red))
+
+	castbar.Spark:SetPoint("CENTER", castbar, "RIGHT")
 end
 
 local function CustomTimeText(castbar, duration)
@@ -42,9 +40,9 @@ local function CustomDelayText(castbar, duration)
 	end
 
 	if castbar.casting then
-		castbar.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, mabs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffe52626+%.1f|r ", duration, math.abs(castbar.delay))
 	elseif castbar.channeling then
-		castbar.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, mabs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffe52626-%.1f|r ", duration, math.abs(castbar.delay))
 	end
 end
 
@@ -87,9 +85,12 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 
 	bar.Holder = holder
 	bar.PostCastStart = PostCastStart
-	bar.PostChannelStart = PostChannelStart
+	bar.PostChannelStart = PostCastStart
+	bar.PostCastFailed = PostCastFailed
+	bar.PostCastInterrupted = PostCastFailed
 	bar.CustomTimeText = CustomTimeText
 	bar.CustomDelayText = delay and CustomDelayText
+	bar.timeToHold = 0.4
 
 	return bar
 end
