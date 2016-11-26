@@ -1,100 +1,103 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = _G
-local unpack, tonumber, pairs = unpack, tonumber, pairs
+local pairs = _G.pairs
+local hooksecurefunc = _G.hooksecurefunc
+local unpack = _G.unpack
 
 -- Mine
-local bars = {}
-local queue = {}
+local isInit = false
+local actionbars = {}
 
-local BARS_CFG = {
+local CFG = {
 	bar1 = {
-		enabled = true,
+		visible = true,
 		point = {"BOTTOM", 0, 12},
 		button_size = 28,
 		button_gap = 4,
-		direction = "RIGHT",
+		init_anchor = "TOPLEFT",
+		buttons_per_row = 12,
 	},
 }
 
-local BAR_LAYOUT = {
+local ACTION_BARS = {
 	bar1 = {
 		buttons = {
-			ActionButton1, ActionButton2, ActionButton3, ActionButton4, ActionButton5, ActionButton6,
-			ActionButton7, ActionButton8, ActionButton9, ActionButton10, ActionButton11, ActionButton12
+			_G.ActionButton1, _G.ActionButton2, _G.ActionButton3, _G.ActionButton4, _G.ActionButton5, _G.ActionButton6,
+			_G.ActionButton7, _G.ActionButton8, _G.ActionButton9, _G.ActionButton10, _G.ActionButton11, _G.ActionButton12
 		},
 		name = "LSMainMenuBar",
-		condition = "[petbattle] hide; show",
+		visibility = "[petbattle] hide; show",
 	},
 	bar2 = {
 		buttons = {
-			MultiBarBottomLeftButton1, MultiBarBottomLeftButton2, MultiBarBottomLeftButton3, MultiBarBottomLeftButton4,
-			MultiBarBottomLeftButton5, MultiBarBottomLeftButton6, MultiBarBottomLeftButton7, MultiBarBottomLeftButton8,
-			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12
+			_G.MultiBarBottomLeftButton1, _G.MultiBarBottomLeftButton2, _G.MultiBarBottomLeftButton3, _G.MultiBarBottomLeftButton4,
+			_G.MultiBarBottomLeftButton5, _G.MultiBarBottomLeftButton6, _G.MultiBarBottomLeftButton7, _G.MultiBarBottomLeftButton8,
+			_G.MultiBarBottomLeftButton9, _G.MultiBarBottomLeftButton10, _G.MultiBarBottomLeftButton11, _G.MultiBarBottomLeftButton12
 		},
 		name = "LSMultiBarBottomLeftBar",
 		page = 6,
-		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar3 = {
 		buttons = {
-			MultiBarBottomRightButton1, MultiBarBottomRightButton2, MultiBarBottomRightButton3, MultiBarBottomRightButton4,
-			MultiBarBottomRightButton5, MultiBarBottomRightButton6, MultiBarBottomRightButton7, MultiBarBottomRightButton8,
-			MultiBarBottomRightButton9, MultiBarBottomRightButton10, MultiBarBottomRightButton11, MultiBarBottomRightButton12
+			_G.MultiBarBottomRightButton1, _G.MultiBarBottomRightButton2, _G.MultiBarBottomRightButton3, _G.MultiBarBottomRightButton4,
+			_G.MultiBarBottomRightButton5, _G.MultiBarBottomRightButton6, _G.MultiBarBottomRightButton7, _G.MultiBarBottomRightButton8,
+			_G.MultiBarBottomRightButton9, _G.MultiBarBottomRightButton10, _G.MultiBarBottomRightButton11, _G.MultiBarBottomRightButton12
 		},
 		name = "LSMultiBarBottomRightBar",
 		page = 5,
-		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar4 = {
 		buttons = {
-			MultiBarLeftButton1, MultiBarLeftButton2, MultiBarLeftButton3, MultiBarLeftButton4,
-			MultiBarLeftButton5, MultiBarLeftButton6, MultiBarLeftButton7, MultiBarLeftButton8,
-			MultiBarLeftButton9, MultiBarLeftButton10, MultiBarLeftButton11, MultiBarLeftButton12
+			_G.MultiBarLeftButton1, _G.MultiBarLeftButton2, _G.MultiBarLeftButton3, _G.MultiBarLeftButton4,
+			_G.MultiBarLeftButton5, _G.MultiBarLeftButton6, _G.MultiBarLeftButton7, _G.MultiBarLeftButton8,
+			_G.MultiBarLeftButton9, _G.MultiBarLeftButton10, _G.MultiBarLeftButton11, _G.MultiBarLeftButton12
 		},
 		name = "LSMultiBarLeftBar",
 		page = 4,
-		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar5 = {
 		buttons = {
-			MultiBarRightButton1, MultiBarRightButton2, MultiBarRightButton3, MultiBarRightButton4,
-			MultiBarRightButton5, MultiBarRightButton6, MultiBarRightButton7, MultiBarRightButton8,
-			MultiBarRightButton9, MultiBarRightButton10, MultiBarRightButton11, MultiBarRightButton12
+			_G.MultiBarRightButton1, _G.MultiBarRightButton2, _G.MultiBarRightButton3, _G.MultiBarRightButton4,
+			_G.MultiBarRightButton5, _G.MultiBarRightButton6, _G.MultiBarRightButton7, _G.MultiBarRightButton8,
+			_G.MultiBarRightButton9, _G.MultiBarRightButton10, _G.MultiBarRightButton11, _G.MultiBarRightButton12
 		},
 		name = "LSMultiBarRightBar",
 		page = 3,
-		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 	},
 	bar6 = {
 		buttons = {
-			PetActionButton1, PetActionButton2, PetActionButton3, PetActionButton4, PetActionButton5,
-			PetActionButton6, PetActionButton7, PetActionButton8, PetActionButton9, PetActionButton10
+			_G.PetActionButton1, _G.PetActionButton2, _G.PetActionButton3, _G.PetActionButton4, _G.PetActionButton5,
+			_G.PetActionButton6, _G.PetActionButton7, _G.PetActionButton8, _G.PetActionButton9, _G.PetActionButton10
 		},
-		original_bar = PetActionBarFrame,
+		original_bar = _G.PetActionBarFrame,
 		name = "LSPetActionBar",
-		condition = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
+		visibility = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
 		skin_function = "SkinPetActionButton"
 	},
 	bar7 = {
 		buttons = {
-			StanceButton1, StanceButton2, StanceButton3, StanceButton4, StanceButton5,
-			StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10
+			_G.StanceButton1, _G.StanceButton2, _G.StanceButton3, _G.StanceButton4, _G.StanceButton5,
+			_G.StanceButton6, _G.StanceButton7, _G.StanceButton8, _G.StanceButton9, _G.StanceButton10
 		},
-		original_bar = StanceBarFrame,
+		original_bar = _G.StanceBarFrame,
 		name = "LSStanceBar",
-		condition = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 		skin_function = "SkinStanceButton"
 	},
 }
 
-local TOP_POINT = {"BOTTOM", 0, 138}
-local BOTTOM_POINT = {"BOTTOM", 0, 110}
+local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 138}
+local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 110}
 
-local LAYOUT_ID = {
+local LAYOUT = {
 	WARRIOR = {pet = TOP_POINT, stance = BOTTOM_POINT},
 	PALADIN = {pet = TOP_POINT, stance = BOTTOM_POINT},
 	HUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
@@ -109,17 +112,17 @@ local LAYOUT_ID = {
 	DEMONHUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
 }
 
-local PAGE_LAYOUT = {
-	-- XXX: unstealthed cat, stealthed cat, bear, owl; tree form [bonusbar:2] was removed
+local PAGE = {
+	-- Unstealthed cat, stealthed cat, bear, owl; tree form [bonusbar:2] was removed
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
-	-- XXX: stealth, shadow dance
+	-- Stealth, shadow dance
 	["ROGUE"] = "[bonusbar:1] 7;",
 	["DEFAULT"] = "[vehicleui][possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
-local function GetPageLayout()
-	local condition = PAGE_LAYOUT["DEFAULT"]
-	local page = PAGE_LAYOUT[E.PLAYER_CLASS]
+local function GetPage()
+	local condition = PAGE["DEFAULT"]
+	local page = PAGE[E.PLAYER_CLASS]
 
 	if page then
 		condition = condition.." "..page
@@ -132,280 +135,247 @@ end
 
 local function SetStancePetActionBarPosition(self)
 	if self:GetName() == "LSPetActionBar" then
-		self:SetPoint(unpack(LAYOUT_ID[E.PLAYER_CLASS].pet))
+		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].pet))
 	else
-		self:SetPoint(unpack(LAYOUT_ID[E.PLAYER_CLASS].stance))
+		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].stance))
 	end
 end
 
-local function GetBarCondition(name)
-	for _, data in pairs(BAR_LAYOUT) do
-		if name == data.name then
-			return data.condition
+local function UPDATE_VEHICLE_ACTIONBAR()
+	if _G.HasVehicleActionBar() then
+		for i = 1, 6 do
+			local button = _G["ActionButton"..i]
+			local action = _G.ActionButton_CalculateAction(button)
+
+			if _G.HasAction(action) then
+				local texture = _G.GetActionTexture(action)
+
+				if texture then
+					button.icon:SetTexture(texture)
+					button.icon:Show()
+				end
+			end
 		end
 	end
-
-	return nil
 end
 
-local function UpdateBarState(name, state)
-	local bar = _G[name]
-	local condition = GetBarCondition(name)
+local function UPDATE_OVERRIDE_ACTIONBAR()
+	if _G.HasOverrideActionBar() then
+		for i = 1, 6 do
+			local button = _G["ActionButton"..i]
+			local action = _G.ActionButton_CalculateAction(button)
 
-	if condition then
-		if state == "Show" then
-			_G.RegisterStateDriver(bar, "visibility", condition)
-		elseif state == "Hide" then
-			_G.RegisterStateDriver(bar, "visibility", "hide")
+			if _G.HasAction(action) then
+				local texture = _G.GetActionTexture(action)
+
+				if texture then
+					button.icon:SetTexture(texture)
+					button.icon:Show()
+				end
+			end
 		end
-	else
-		bar[state](bar)
 	end
 end
 
-function B:ToggleBar(name, state)
-	if _G[name] then
-		if _G.InCombatLockdown() then
-			queue[name] = state
+-----------------
+-- INITIALISER --
+-----------------
 
-			return false, name, state == "Show" and true or false
+function BARS:ActionBars_IsInit()
+	return isInit
+end
+
+function BARS:ActionBars_Init()
+	if not isInit then
+		if C.bars.restricted then
+			CFG.bar2 = C.bars.bar2
+			CFG.bar3 = C.bars.bar3
+			CFG.bar4 = C.bars.bar4
+			CFG.bar5 = C.bars.bar5
+			CFG.bar6 = C.bars.bar6
+			CFG.bar7 = C.bars.bar7
 		else
-			UpdateBarState(name, state)
-
-			return true, name, state == "Show" and true or false
+			CFG = C.bars
 		end
-	end
-end
 
-local function ManageQueue()
-	for name, state in pairs(queue) do
-		UpdateBarState(name, state)
-	end
-end
+		-- Bar setup
+		for key, data in pairs(ACTION_BARS) do
+			local cfg = CFG[key]
+			local bar = _G.CreateFrame("Frame", data.name, _G.UIParent, "SecureHandlerStateTemplate")
 
-function B:PLAYER_REGEN_ENABLED()
-	ManageQueue()
-end
+			if data.original_bar then
+				data.original_bar.slideOut = E.NOA
+				data.original_bar:SetParent(bar)
+				data.original_bar:SetAllPoints()
+				data.original_bar:EnableMouse(false)
+				_G.UIPARENT_MANAGED_FRAME_POSITIONS[data.original_bar:GetName()] = nil
 
--- XXX: At least show icons
-function B:UPDATE_VEHICLE_ACTIONBAR()
-	if HasVehicleActionBar() then
-		for i = 1, 6 do
-			local button = _G["ActionButton"..i]
-			local action = ActionButton_CalculateAction(button)
-
-			if HasAction(action) then
-				local texture = GetActionTexture(action)
-
-				if texture then
-					button.icon:SetTexture(texture)
-					button.icon:Show()
+				for _, button in pairs(data.buttons) do
+					E[data.skin_function or "SkinActionButton"](E, button)
 				end
-			end
-		end
-	end
-end
-
--- XXX: At least show icons
-function B:UPDATE_OVERRIDE_ACTIONBAR()
-	if HasOverrideActionBar() then
-		for i = 1, 6 do
-			local button = _G["ActionButton"..i]
-			local action = ActionButton_CalculateAction(button)
-
-			if HasAction(action) then
-				local texture = GetActionTexture(action)
-
-				if texture then
-					button.icon:SetTexture(texture)
-					button.icon:Show()
-				end
-			end
-		end
-	end
-end
-
-function B:HandleActionBars()
-	if C.bars.restricted then
-		BARS_CFG.bar2 = C.bars.bar2
-		BARS_CFG.bar3 = C.bars.bar3
-		BARS_CFG.bar4 = C.bars.bar4
-		BARS_CFG.bar5 = C.bars.bar5
-		BARS_CFG.bar6 = C.bars.bar6
-		BARS_CFG.bar7 = C.bars.bar7
-	else
-		BARS_CFG = C.bars
-	end
-
-	for key, data in pairs(BAR_LAYOUT) do
-		local config = BARS_CFG[key]
-		local bar = _G.CreateFrame("Frame", data.name, _G.UIParent, "SecureHandlerStateTemplate")
-
-		E:SetupBar(bar, data.buttons, config.button_size, config.button_gap, config.direction, E[data.skin_function or "SkinActionButton"])
-
-		if data.condition then
-			if config.enabled then
-				_G.RegisterStateDriver(bar, "visibility", data.condition)
 			else
-				_G.RegisterStateDriver(bar, "visibility", "hide")
-			end
-		end
+				for _, button in pairs(data.buttons) do
+					button:SetParent(bar)
+					E[data.skin_function or "SkinActionButton"](E, button)
 
-		if data.name == "LSMainMenuBar" then
-			for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
-				bar:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
-			end
-
-			bar:Execute([[
-				buttons = table.new()
-
-				for i = 1, 12 do
-					table.insert(buttons, self:GetFrameRef("ActionButton"..i))
-				end
-			]])
-
-			bar:SetAttribute("_onstate-page", [[
-				if HasTempShapeshiftActionBar() then
-					newstate = GetTempShapeshiftBarIndex() or newstate
-				end
-
-				for _, button in pairs(buttons) do
-					button:SetAttribute("actionpage", tonumber(newstate))
-
-					if newstate == 12 then
-						button:SetAttribute("showgrid", 1)
-						button:CallMethod("SetBorderColor", 0.9, 0.65, 0.15)
-						button:Show()
-					else
-						button:SetAttribute("showgrid", 0)
+					if data.page then
+						button:SetAttribute("actionpage", data.page)
 					end
 				end
-			]])
-
-			_G.RegisterStateDriver(bar, "page", GetPageLayout())
-
-			if C.bars.restricted then
-				B:SetupControlledBar(bar, "Main")
 			end
-		end
 
-		if data.original_bar then
-			data.original_bar.slideOut = E.NOA
-			data.original_bar:SetParent(bar)
-			data.original_bar:SetAllPoints()
-			data.original_bar:EnableMouse(false)
-			_G.UIPARENT_MANAGED_FRAME_POSITIONS[data.original_bar:GetName()] = nil
-		else
-			for _, button in pairs(data.buttons) do
-				button:SetParent(bar)
+			bar.buttons = data.buttons
 
-				if data.page then
-					button:SetAttribute("actionpage", data.page)
+			E:UpdateBarLayout(bar, bar.buttons, cfg.button_size, cfg.button_gap, cfg.init_anchor, cfg.buttons_per_row)
+
+			if data.name == "LSMainMenuBar" then
+				for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
+					bar:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
+				end
+
+				bar:Execute([[
+					buttons = table.new()
+
+					for i = 1, 12 do
+						table.insert(buttons, self:GetFrameRef("ActionButton"..i))
+					end
+				]])
+
+				bar:SetAttribute("_onstate-page", [[
+					if HasTempShapeshiftActionBar() then
+						newstate = GetTempShapeshiftBarIndex() or newstate
+					end
+
+					for _, button in pairs(buttons) do
+						button:SetAttribute("actionpage", tonumber(newstate))
+
+						if newstate == 12 then
+							button:SetAttribute("showgrid", 1)
+							button:CallMethod("SetBorderColor", 244 / 255, 202 / 255, 22 / 255) -- M.COLORS.YELLOW
+							button:Show()
+						else
+							button:SetAttribute("showgrid", 0)
+						end
+					end
+				]])
+
+				_G.RegisterStateDriver(bar, "page", GetPage())
+
+				if C.bars.restricted then
+					BARS:SetupControlledBar(bar, "Main")
 				end
 			end
-		end
 
-		bars[key] = bar
-	end
+			if data.visibility then
+				E:SaveFrameState(bar, "visibility", data.visibility)
 
-	for key, bar in pairs(bars) do
-		if not bar.controlled then
-			if BARS_CFG[key].point then
-				bar:SetPoint(unpack(BARS_CFG[key].point))
-			else
-				SetStancePetActionBarPosition(bar)
+				_G.RegisterStateDriver(bar, "visibility", cfg.visible and data.visibility or "hide")
 			end
 
-			E:CreateMover(bar)
+			actionbars[bar] = key
 		end
-	end
 
-	B:RegisterEvent("PLAYER_REGEN_ENABLED")
-	B:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	B:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		for bar, key in pairs(actionbars) do
+			if not bar.controlled then
+				if CFG[key].point then
+					bar:SetPoint(unpack(CFG[key].point))
+				else
+					SetStancePetActionBarPosition(bar)
+				end
 
-	--------------------
-	-- PET ACTION BAR --
-	--------------------
-
-	if _G.UnitLevel("player") < 10 then
-		_G.PetActionBarFrame:Hide()
-
-		function B:PLAYER_LEVEL_UP(level)
-			if level >= 10 then
-				B:ToggleBar("PetActionBarFrame", "Show")
-
-				B:UnregisterEvent("PLAYER_LEVEL_UP")
+				E:CreateMover(bar)
 			end
 		end
 
-		B:RegisterEvent("PLAYER_LEVEL_UP")
-	else
-		_G.PetActionBarFrame:Show()
-	end
+		E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UPDATE_VEHICLE_ACTIONBAR)
+		E:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", UPDATE_OVERRIDE_ACTIONBAR)
 
-	_G.PetActionBarFrame:SetScript("OnUpdate", nil)
-	_G.PetActionBarFrame.locked = true
-	_G.hooksecurefunc("UnlockPetActionBar", function()
+		-- Pet action bar
+		if _G.UnitLevel("player") < 10 then
+			_G.PetActionBarFrame:Hide()
+
+			local function PLAYER_LEVEL_UP(level)
+				if level >= 10 then
+					E:SetFrameState(_G.PetActionBarFrame, "Show")
+					E:UnregisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
+				end
+			end
+
+			E:RegisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
+		else
+			_G.PetActionBarFrame:Show()
+		end
+
+		_G.PetActionBarFrame:SetScript("OnUpdate", nil)
 		_G.PetActionBarFrame.locked = true
-	end)
+		hooksecurefunc("UnlockPetActionBar", function()
+			_G.PetActionBarFrame.locked = true
+		end)
 
-	--------------------------
-	-- BLIZZ BAR CONTROLLER --
-	--------------------------
+		-- Blizz bar controller
+		-- XXX: Bye Fe... ActionBarController
+		_G.ActionBarController:UnregisterAllEvents()
 
-	-- XXX: Bye Fe... ActionBarController
-	_G.ActionBarController:UnregisterAllEvents()
+		-- XXX: But let it handle stance bar updates
+		_G.ActionBarController:RegisterEvent("PLAYER_ENTERING_WORLD")
+		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
 
-	-- XXX: But let it handle stance bar updates
-	_G.ActionBarController:RegisterEvent("PLAYER_ENTERING_WORLD")
-	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
-	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+		_G.ActionBarController:HookScript("OnEvent", function(self, event)
+			if event == "PLAYER_ENTERING_WORLD" then
+				self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+			end
+		end)
 
-	_G.ActionBarController:HookScript("OnEvent", function(self, event)
-		if event == "PLAYER_ENTERING_WORLD" then
-			self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-		end
-	end)
+		-- XXX: ... and extra action bar
+		_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 
-	-- XXX: ... and extra action bar
-	_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+		-- Flyout
+		hooksecurefunc(_G.SpellFlyout, "Toggle", function(self, ID)
+			if not self:IsShown() then return end
 
-	----------
-	-- MISC --
-	----------
+			local _, _, numSlots = _G.GetFlyoutInfo(ID)
 
-	for _, v in pairs({
-		_G.ActionBarDownButton,
-		_G.ActionBarUpButton,
-		_G.MainMenuBar,
-		_G.MainMenuBarLeftEndCap,
-		_G.MainMenuBarPageNumber,
-		_G.MainMenuBarRightEndCap,
-		_G.MainMenuBarTexture0,
-		_G.MainMenuBarTexture1,
-		_G.MainMenuBarTexture2,
-		_G.MainMenuBarTexture3,
-		_G.MultiBarBottomLeft,
-		_G.MultiBarBottomRight,
-		_G.MultiBarLeft,
-		_G.MultiBarRight,
-		_G.MultiCastActionBarFrame,
-		_G.OverrideActionBar,
-		_G.PossessBarFrame,
-		_G.ReputationWatchBar,
-		_G.SlidingActionBarTexture0,
-		_G.SlidingActionBarTexture1,
-		_G.SpellFlyoutBackgroundEnd,
-		_G.SpellFlyoutHorizontalBackground,
-		_G.SpellFlyoutVerticalBackground,
-		_G.StanceBarLeft,
-		_G.StanceBarMiddle,
-		_G.StanceBarRight,
-	})do
-		E:ForceHide(v)
+			for i = 1, numSlots do
+				E:SkinActionButton(_G["SpellFlyoutButton"..i])
+			end
+		end)
+
+		-- Misc
+		E:ForceHide(_G.ActionBarDownButton)
+		E:ForceHide(_G.ActionBarUpButton)
+		E:ForceHide(_G.ArtifactWatchBar)
+		E:ForceHide(_G.HonorWatchBar)
+		E:ForceHide(_G.MainMenuBar)
+		E:ForceHide(_G.MainMenuBarLeftEndCap)
+		E:ForceHide(_G.MainMenuBarPageNumber)
+		E:ForceHide(_G.MainMenuBarRightEndCap)
+		E:ForceHide(_G.MainMenuBarTexture0)
+		E:ForceHide(_G.MainMenuBarTexture1)
+		E:ForceHide(_G.MainMenuBarTexture2)
+		E:ForceHide(_G.MainMenuBarTexture3)
+		E:ForceHide(_G.MainMenuExpBar)
+		E:ForceHide(_G.MultiBarBottomLeft)
+		E:ForceHide(_G.MultiBarBottomRight)
+		E:ForceHide(_G.MultiBarLeft)
+		E:ForceHide(_G.MultiBarRight)
+		E:ForceHide(_G.MultiCastActionBarFrame)
+		E:ForceHide(_G.OverrideActionBar)
+		E:ForceHide(_G.PossessBarFrame)
+		E:ForceHide(_G.ReputationWatchBar)
+		E:ForceHide(_G.SlidingActionBarTexture0)
+		E:ForceHide(_G.SlidingActionBarTexture1)
+		E:ForceHide(_G.SpellFlyoutBackgroundEnd)
+		E:ForceHide(_G.SpellFlyoutHorizontalBackground)
+		E:ForceHide(_G.SpellFlyoutVerticalBackground)
+		E:ForceHide(_G.StanceBarLeft)
+		E:ForceHide(_G.StanceBarMiddle)
+		E:ForceHide(_G.StanceBarRight)
+
+		_G.MainMenuBarArtFrame:SetParent(E.HIDDEN_PARENT)
+
+		-- Finalise
+		isInit = true
 	end
-
-	_G.MainMenuBarArtFrame:SetParent(E.HIDDEN_PARENT)
 end

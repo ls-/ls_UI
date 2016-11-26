@@ -1,53 +1,44 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = _G
-local unpack, pairs = unpack, pairs
-
--- Blizz
-local BACKPACK_CONTAINER = BACKPACK_CONTAINER
-local NUM_BAG_SLOTS = NUM_BAG_SLOTS
-local GameTooltip = GameTooltip
-local GetContainerNumFreeSlots = GetContainerNumFreeSlots
-local GetContainerNumSlots = GetContainerNumSlots
+local unpack = _G.unpack
+local pairs = _G.pairs
 
 -- Mine
-local bagBar
+local isInit = false
+local CURRENCY = _G.CURRENCY..":"
 
-local BAGS = {
-	MainMenuBarBackpackButton,
-	CharacterBag0Slot,
-	CharacterBag1Slot,
-	CharacterBag2Slot,
-	CharacterBag3Slot
-}
-
-local BAGS_CFG = {
+local CFG = {
+	visible = true,
 	button_size = 26,
 	button_gap = 4,
-	direction = "RIGHT",
+	init_anchor = "TOPLEFT",
+	buttons_per_row = 5,
+}
+
+local BAGS = {
+	_G.MainMenuBarBackpackButton,
+	_G.CharacterBag0Slot,
+	_G.CharacterBag1Slot,
+	_G.CharacterBag2Slot,
+	_G.CharacterBag3Slot
 }
 
 local function GetBagUsageInfo()
-	local free, total, slots, bagType = 0, 0
+	local free, total = 0, 0
 
-	for i = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-		slots, bagType = GetContainerNumFreeSlots(i)
+	for i = _G.BACKPACK_CONTAINER, _G.NUM_BAG_SLOTS do
+		local slots, bagType = _G.GetContainerNumFreeSlots(i)
 
 		if bagType == 0 then
-			free, total = free + slots, total + GetContainerNumSlots(i)
+			free, total = free + slots, total + _G.GetContainerNumSlots(i)
 		end
 	end
 
 	return free, total
-end
-
-local function ResetDesaturated(self, flag)
-	if not flag then
-		self:SetDesaturated(true)
-	end
 end
 
 local function BackpackButton_OnClick(self, button)
@@ -72,89 +63,97 @@ local function BackpackButton_OnClick(self, button)
 end
 
 local function BackpackButton_OnEnter(self)
-	GameTooltip:AddLine(" ")
-	GameTooltip:AddLine(_G.CURRENCY..":")
+	_G.GameTooltip:AddLine(" ")
+	_G.GameTooltip:AddLine(CURRENCY)
 
 	for i = 1, 3 do
 		local name, count, icon = _G.GetBackpackCurrencyInfo(i)
 
 		if name then
-			GameTooltip:AddDoubleLine(name, count.."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
+			_G.GameTooltip:AddDoubleLine(name, count.."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
 		end
 	end
 
-	GameTooltip:AddDoubleLine("Gold", _G.GetMoneyString(_G.GetMoney()), 1, 1, 1, 1, 1, 1)
-	GameTooltip:Show()
+	_G.GameTooltip:AddDoubleLine("Gold", _G.GetMoneyString(_G.GetMoney()), 1, 1, 1, 1, 1, 1)
+	_G.GameTooltip:Show()
 end
 
 local function BackpackButton_Update(self, event, ...)
 	if event == "BAG_UPDATE" then
 		local bag = ...
 
-		if bag >= BACKPACK_CONTAINER and bag <= NUM_BAG_SLOTS then
+		if bag >= _G.BACKPACK_CONTAINER and bag <= _G.NUM_BAG_SLOTS then
 			local free, total = GetBagUsageInfo()
 
-			self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(M.colors.gradient["GYR"])))
+			self.icon:SetVertexColor(M.COLORS.GYR:GetRGB(1 - free / total))
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" or event == "FORCE_UPDATE" then
 		local free, total = GetBagUsageInfo()
 
-		self.icon:SetVertexColor(E:ColorGradient(1 - free / total, unpack(M.colors.gradient["GYR"])))
+		self.icon:SetVertexColor(M.COLORS.GYR:GetRGB(1 - free / total))
 	end
 end
 
-function B:IsBagEnabled()
-	return not not bagBar
+-----------------
+-- INITIALISER --
+-----------------
+
+function BARS:Bags_IsInit()
+	return isInit
 end
 
-function B:EnableBags()
-	if _G.InCombatLockdown() then
-		return false, "|cffe52626Error!|r Can't be done, while in combat."
-	end
-
-	if not B:IsBagEnabled() then
-		B:HandleBags(true)
-	else
-		return true, "|cffe56619Warning!|r Bag sub-module is already enabled."
-	end
-
-	return true, "|cff26a526Success!|r Bag sub-module is enabled."
-end
-
-function B:HandleBags(forceInit)
-	if not C.bars.restricted then
-		BAGS_CFG = C.bars.bags
-	end
-
-	if C.bars.bags.enabled or forceInit then
-		bagBar = _G.CreateFrame("Frame", "LSBagBar", _G.UIParent, "SecureHandlerBaseTemplate")
-
-		E:SetupBar(bagBar, BAGS, BAGS_CFG.button_size, BAGS_CFG.button_gap, BAGS_CFG.direction, E.SkinBagButton)
-
-		if C.bars.restricted then
-			B:SetupControlledBar(bagBar, "Bags")
-		else
-			bagBar:SetPoint(unpack(BAGS_CFG.point))
-			E:CreateMover(bagBar)
+function BARS:Bags_Init(isForced)
+	if not isInit and (C.bars.bags.enabled or isForced) then
+		if not C.bars.restricted then
+			CFG = C.bars.bags
 		end
 
-		_G.MainMenuBarBackpackButton.icon:SetDesaturated(true)
+		local bar = _G.CreateFrame("Frame", "LSBagBar", _G.UIParent, "SecureHandlerBaseTemplate")
+
+		E:SaveFrameState(bar, "visibility", "show")
+
+		_G.RegisterStateDriver(bar, "visibility", CFG.visible and "show" or "hide")
+
+		if C.bars.restricted then
+			BARS:SetupControlledBar(bar, "Bags")
+		else
+			bar:SetPoint(unpack(CFG.point))
+
+			E:CreateMover(bar)
+		end
+
 		_G.MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 		_G.MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
 		_G.MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_Update)
-		_G.hooksecurefunc(_G.MainMenuBarBackpackButton.icon, "SetDesaturated", ResetDesaturated)
-
-		if forceInit then
-			BackpackButton_Update(_G.MainMenuBarBackpackButton, "FORCE_UPDATE")
-		end
 
 		for _, bag in pairs(BAGS) do
 			bag:UnregisterEvent("ITEM_PUSH")
-			bag:SetParent(bagBar)
+			bag:SetParent(bar)
+			E:SkinBagButton(bag)
 
 			if bag ~= _G.MainMenuBarBackpackButton then
 				bag:Hide()
 			end
 		end
+
+		_G.MainMenuBarBackpackButton.icon:SetDesaturated(true)
+		_G.hooksecurefunc(_G.MainMenuBarBackpackButton.icon, "SetDesaturated", function(self, flag)
+			if not flag then
+				self:SetDesaturated(true)
+			end
+		end)
+
+		bar.buttons = BAGS
+
+		E:UpdateBarLayout(bar, bar.buttons, CFG.button_size, CFG.button_gap, CFG.init_anchor, CFG.buttons_per_row)
+
+		-- Finalise
+		_G.MainMenuBarBackpackButton_UpdateFreeSlots()
+
+		if isForced then
+			BackpackButton_Update(_G.MainMenuBarBackpackButton, "FORCE_UPDATE")
+		end
+
+		isInit = true
 	end
 end

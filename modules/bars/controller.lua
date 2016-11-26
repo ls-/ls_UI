@@ -1,7 +1,7 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local COLORS, TEXTURES = M.colors, M.textures
-local B = E:GetModule("Bars")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local COLORS, TEXTURES = M.COLORS, M.textures
+local B = P:GetModule("Bars")
 
 local pi = math.pi
 local GetActionBarPage = GetActionBarPage
@@ -9,11 +9,11 @@ local GetActionBarPage = GetActionBarPage
 local BarController
 
 local function PageButton_OnMouseDown(self)
-	self.Bg:SetVertexColor(0.9, 0.65, 0.15)
+	self.Bg:SetVertexColor(M.COLORS.YELLOW:GetRGB())
 end
 
 local function PageButton_OnMouseUp(self)
-	self.Bg:SetVertexColor(0.15, 0.65, 0.15)
+	self.Bg:SetVertexColor(M.COLORS.GREEN:GetRGB())
 	PlaySound("UChatScrollButton")
 end
 
@@ -29,7 +29,7 @@ local function CreateActionPageButton(anchor, side)
 	local bg = BarController:CreateTexture(nil, "ARTWORK", nil, -1)
 	bg:SetAllPoints(button)
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-page-button")
-	bg:SetVertexColor(0.15, 0.65, 0.15)
+	bg:SetVertexColor(M.COLORS.GREEN:GetRGB())
 	button.Bg = bg
 
 	button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-page-button", "ADD")
