@@ -1,32 +1,25 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = _G
-local unpack = unpack
+local unpack = _G.unpack
 
 -- Mine
-local function LeaveButton_OnEvent(self, event)
-	if not _G.InCombatLockdown() then
-		if event == "PLAYER_REGEN_ENABLED" then
-			self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-		end
+local isInit = false
 
-		if _G.UnitOnTaxi("player") then
-			_G.RegisterStateDriver(self, "visibility", "show")
-		else
-			_G.RegisterStateDriver(self, "visibility", "[canexitvehicle] show; hide")
-		end
-
+local function VehicleExitButton_OnEvent(self)
+	if _G.UnitOnTaxi("player") or _G.CanExitVehicle() then
+		self:Show()
 		self.Icon:SetDesaturated(false)
 		self:Enable()
 	else
-		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+		self:Hide()
 	end
 end
 
-local function LeaveButton_OnClick(self)
+local function VehicleExitButton_OnClick(self)
 	if _G.UnitOnTaxi("player") then
 		_G.TaxiRequestEarlyLanding()
 
@@ -38,23 +31,35 @@ local function LeaveButton_OnClick(self)
 	end
 end
 
-function B:HandleVehicleExitButton()
-	C.bars.vehicle = C.bars.vehicle
+-----------------
+-- INITIALISER --
+-----------------
 
-	local button = E:CreateButton(_G.UIParent, "LSVehicleExitButton")
-	button:SetSize(C.bars.vehicle.button_size, C.bars.vehicle.button_size)
-	button:SetPoint(unpack(C.bars.vehicle.point))
-	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button:RegisterEvent("VEHICLE_UPDATE")
-	button:SetScript("OnEvent", LeaveButton_OnEvent)
-	button:SetScript("OnClick", LeaveButton_OnClick)
-	E:CreateMover(button)
-	button:SetBorderColor(1, 0.1, 0.15)
+function BARS:VehicleExitButton_IsInit()
+	return isInit
+end
 
-	button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
-	button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
+function BARS:VehicleExitButton_Init()
+	if not isInit then
+		local button = E:CreateButton(_G.UIParent, "LSVehicleExitButton")
+		button:SetSize(C.bars.vehicle.button_size, C.bars.vehicle.button_size)
+		button:SetPoint(unpack(C.bars.vehicle.point))
+		button:SetBorderColor(1, 0.1, 0.15)
+		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		button:RegisterEvent("UNIT_EXITED_VEHICLE")
+		button:SetScript("OnEvent", VehicleExitButton_OnEvent)
+		button:SetScript("OnClick", VehicleExitButton_OnClick)
+		E:CreateMover(button)
 
-	LeaveButton_OnEvent(button, "CUSTOM_FORCE_UPDATE")
+		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
+		button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 
-	_G.MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+		VehicleExitButton_OnEvent(button)
+
+		_G.MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+
+		-- Finalise
+		isInit = true
+	end
 end

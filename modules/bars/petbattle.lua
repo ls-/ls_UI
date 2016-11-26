@@ -1,84 +1,85 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Bars")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = _G
-local pairs, unpack = pairs, unpack
-
--- Blizz
-local PetBattleBottomFrame = PetBattleFrame.BottomFrame
+local pairs = _G.pairs
+local unpack = _G.unpack
 
 -- Mine
-local PetBattleBar
-
-local PB_CFG = {
+local isInit = false
+local CFG = {
 	point = {"BOTTOM", 0, 12},
 	button_size = 28,
 	button_gap = 4,
-	direction = "RIGHT",
+	init_anchor = "TOPLEFT",
+	buttons_per_row = 6,
 }
 
-local function SetPetBattleButtonPosition()
-	local BUTTONS = {
-		PetBattleBottomFrame.abilityButtons[1],
-		PetBattleBottomFrame.abilityButtons[2],
-		PetBattleBottomFrame.abilityButtons[3],
-		PetBattleBottomFrame.SwitchPetButton,
-		PetBattleBottomFrame.CatchButton,
-		PetBattleBottomFrame.ForfeitButton
-	}
+-----------------
+-- INITIALISER --
+-----------------
 
-	for _, button in pairs(BUTTONS) do
-		button:SetParent(PetBattleBar)
-	end
-
-	E:SetupBar(PetBattleBar, BUTTONS, PB_CFG.button_size, PB_CFG.button_gap, PB_CFG.direction, E.SkinPetBattleButton)
+function BARS:PetBattleBar_IsInit()
+	return isInit
 end
 
-local function ActionBarController_OnEventHook(self, event)
-	if event == "PET_BATTLE_CLOSE" then
-		_G.C_Timer.After(0.5, _G.MultiActionBar_Update)
+function BARS:PetBattleBar_Init()
+	if not isInit then
+		if not C.bars.restricted then
+			CFG = C.bars.bar1
+		end
+
+		local bar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
+		bar:SetPoint(unpack(CFG.point))
+
+		_G.RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
+
+		if C.bars.restricted then
+			self:SetupControlledBar(bar, "PetBattle")
+		end
+
+		_G.FlowContainer_PauseUpdates(_G.PetBattleFrame.BottomFrame.FlowFrame)
+
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.FlowFrame)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.Delimiter)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.MicroButtonFrame)
+		E:ForceHide(_G.PetBattleFrameXPBar)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.Background)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.LeftEndCap)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.RightEndCap)
+		E:ForceHide(_G.PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2)
+
+		_G.PetBattleFrame.BottomFrame:SetParent(E.HIDDEN_PARENT)
+
+		_G.PetBattleFrame.BottomFrame.TurnTimer:SetParent(bar)
+		_G.PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
+		_G.PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 8)
+
+		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(bar)
+		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:ClearAllPoints()
+		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:SetPoint("BOTTOM", bar, "TOP", 0, 32)
+
+		_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
+			local buttons = {
+				_G.PetBattleFrame.BottomFrame.abilityButtons[1],
+				_G.PetBattleFrame.BottomFrame.abilityButtons[2],
+				_G.PetBattleFrame.BottomFrame.abilityButtons[3],
+				_G.PetBattleFrame.BottomFrame.SwitchPetButton,
+				_G.PetBattleFrame.BottomFrame.CatchButton,
+				_G.PetBattleFrame.BottomFrame.ForfeitButton
+			}
+
+			for _, button in pairs(buttons) do
+				E:SkinPetBattleButton(button)
+
+				button:SetParent(bar)
+			end
+
+			bar.buttons = buttons
+
+			E:UpdateBarLayout(bar, bar.buttons, CFG.button_size, CFG.button_gap, CFG.init_anchor, CFG.buttons_per_row)
+		end)
 	end
-end
-
-function B:HandlePetBattleBar()
-	if not C.bars.restricted then
-		PB_CFG = C.bars.bar1
-	end
-
-	PetBattleBar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
-	PetBattleBar:SetPoint(unpack(PB_CFG.point))
-	_G.RegisterStateDriver(PetBattleBar, "visibility", "[petbattle] show; hide")
-	B:SetupControlledBar(PetBattleBar, "PetBattle")
-
-	_G.FlowContainer_PauseUpdates(PetBattleBottomFrame.FlowFrame)
-
-	for _, f in pairs({
-		PetBattleBottomFrame.FlowFrame,
-		PetBattleBottomFrame.Delimiter,
-		PetBattleBottomFrame.MicroButtonFrame,
-		_G.PetBattleFrameXPBar,
-		PetBattleBottomFrame.Background,
-		PetBattleBottomFrame.LeftEndCap,
-		PetBattleBottomFrame.RightEndCap,
-		PetBattleBottomFrame.TurnTimer.ArtFrame2,
-	}) do
-		E:ForceHide(f)
-	end
-
-	PetBattleBottomFrame:SetParent(E.HIDDEN_PARENT)
-
-	PetBattleBottomFrame.TurnTimer:SetParent(PetBattleBar)
-	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
-	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 8)
-
-	PetBattleBottomFrame.PetSelectionFrame:SetParent(PetBattleBar)
-	PetBattleBottomFrame.PetSelectionFrame:ClearAllPoints()
-	PetBattleBottomFrame.PetSelectionFrame:SetPoint("BOTTOM", PetBattleBar, "TOP", 0, 32)
-
-	_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", SetPetBattleButtonPosition)
-
-	-- hack: sometimes it fails to update multi-action bar visibility
-	_G.ActionBarController:HookScript("OnEvent", ActionBarController_OnEventHook)
 end
