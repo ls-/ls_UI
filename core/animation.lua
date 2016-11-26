@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E = ns.E
 
 local function SetAnimationGroup(object, type, ...)
 	if type == "FadeIn" then

@@ -1,11 +1,12 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E = ns.E
 
 -- Lua
 local _G = _G
+local hooksecurefunc = _G.hooksecurefunc
 
 -- Blizz
-local GetTime = GetTime
+local GetTime = _G.GetTime
 
 -- Mine
 local THRESHOLD = 1.5
@@ -59,7 +60,6 @@ local function CreateCooldownTimer(cooldown, textSize)
 	timer:SetJustifyV("MIDDLE")
 
 	return timer
-
 end
 
 local function SetTimerTextHeight(self, height)
@@ -67,7 +67,7 @@ local function SetTimerTextHeight(self, height)
 end
 
 function E:CreateCooldown(parent, textSize)
-	local cooldown = _G.CreateFrame("Cooldown", "$parentCooldown", parent, "CooldownFrameTemplate")
+	local cooldown = _G.CreateFrame("Cooldown", nil, parent, "CooldownFrameTemplate")
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 	E:HandleCooldown(cooldown, textSize)
@@ -87,7 +87,7 @@ function E:HandleCooldown(cooldown, textSize)
 	local text = cooldown:GetRegions()
 	text:SetAlpha(0)
 
-	_G.hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
+	hooksecurefunc(cooldown, "SetCooldown", SetCustomCooldown)
 
 	cooldown.handled = true
 end

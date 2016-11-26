@@ -1,9 +1,14 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
-	<Script file="db.lua"/>
-	<Script file="math.lua"/>
+	<Script file="util.lua"/>
 	<Include file="constants.xml"/>
-	<Script file="animations.lua"/>
+	<Script file="animation.lua"/>
+	<Script file="bar.lua"/>
 	<Script file="border.lua"/>
-	<Script file="movers.lua"/>
+	<Script file="button.lua"/>
+	<Script file="cooldown.lua"/>
+	<Script file="defaults.lua"/>
+	<Script file="mover.lua"/>
+	<Script file="smoother.lua"/>
+	<Script file="statusbar.lua"/>
 </Ui>
