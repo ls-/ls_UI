@@ -202,7 +202,7 @@ local function GameTooltip_UnitTooltipHook(self)
 
 	if not unit then
 		local frameID = _G.GetMouseFocus()
-		if frameID and frameID:GetAttribute("unit") then
+		if frameID and frameID.GetAttribute then
 			unit = frameID:GetAttribute("unit")
 		end
 
