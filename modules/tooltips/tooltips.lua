@@ -14,8 +14,8 @@ local GameTooltipStatusBar = GameTooltipStatusBar
 
 -- Mine
 local INLINE_ICONS = M.textures.inlineicons
-local SPECIALIZATION = "|cffffd100"..SPECIALIZATION..":|r |cff%s%s|r"
-local ITEM_LEVEL = "|cffffd100"..ITEM_LEVEL_ABBR..":|r %d"
+local ITEM_LEVEL = "|cffffd100".._G.ITEM_LEVEL_ABBR..":|r |cff%s%s|r"
+local SPECIALIZATION = "|cffffd100".._G.SPECIALIZATION..":|r |cff%s%s|r"
 local TARGET = "|cffffd100"..TARGET..":|r |cff%s%s|r"
 local ID = "|cffffd100"..ID..":|r %d"
 local TOTAL = "|cffffd100"..TOTAL..":|r %d"
@@ -164,30 +164,31 @@ local function GetLevelLine(self, level)
 end
 
 local function ShowInspectInfo(unit, classColorHEX, numTries)
-	if not _G.CanInspect(unit) or numTries > 1 then	return end
+	if not _G.CanInspect(unit) or numTries > 2 then return end
 
 	local unitGUID = _G.UnitGUID(unit)
+
 	if unitGUID == E.PLAYER_GUID then
 		local line = GetAvailableLine(GameTooltip)
 		line:SetFormattedText(SPECIALIZATION, classColorHEX, E:GetUnitSpecializationInfo(unit))
 
 		line = GetAvailableLine(GameTooltip)
-		line:SetFormattedText(ITEM_LEVEL, E:GetUnitAverageItemLevel(unit))
+		line:SetFormattedText(ITEM_LEVEL, "ffffff", E:GetUnitAverageItemLevel(unit))
 	elseif inspectGUIDCache[unitGUID] then
 		local specName = inspectGUIDCache[unitGUID].specName
 		local itemLevel = inspectGUIDCache[unitGUID].itemLevel
 
-		if (_G.GetTime() - inspectGUIDCache[unitGUID].time) > 900 or not specName or not itemLevel then
+		if not (specName and itemLevel) or _G.GetTime() - inspectGUIDCache[unitGUID].time > 120 then
 			inspectGUIDCache[unitGUID] = nil
 
-			return ShowInspectInfo(unit, classColorHEX, numTries + 1)
+			return _G.C_Timer.After(0.25, function() ShowInspectInfo(unit, classColorHEX, numTries + 1) end)
 		end
 
 		local line = GetAvailableLine(GameTooltip)
 		line:SetFormattedText(SPECIALIZATION, classColorHEX, specName)
 
 		line = GetAvailableLine(GameTooltip)
-		line:SetFormattedText(ITEM_LEVEL, itemLevel)
+		line:SetFormattedText(ITEM_LEVEL, "ffffff", itemLevel)
 	else
 		lastGUID = unitGUID
 
