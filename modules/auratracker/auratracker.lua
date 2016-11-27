@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local AT = P:AddModule("AuraTracker", true)
+local AURATRACKER = P:AddModule("AuraTracker", true)
 
 -- Lua
 local _G = _G
@@ -17,18 +17,17 @@ local GetSpellInfo = _G.GetSpellInfo
 local UnitAura = _G.UnitAura
 
 --Mine
+local isInit = false
 local SUCCESS_TEXT = "|cff26a526Success!|r"
 local ERROR_TEXT = "|cffe52626Error!|r"
 local activeAuras = {}
-local print = P.print
-local AT_CFG
 local AuraTracker
 
 local function PopulateActiveAurasTable(index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
 	local playerSpec = E:GetPlayerSpecFlag()
 
-	if name and AT_CFG[filter][spellID] and E:IsFilterApplied(AT_CFG[filter][spellID], playerSpec) then
+	if name and C.auratracker[filter][spellID] and E:IsFilterApplied(C.auratracker[filter][spellID], playerSpec) then
 		local aura = {
 			index = index,
 			icon = iconTexture,
@@ -44,7 +43,7 @@ local function PopulateActiveAurasTable(index, filter)
 end
 
 local function HandleDataCorruption(filter)
-	local auraList = AT_CFG[filter]
+	local auraList = C.auratracker[filter]
 
 	for k in pairs(auraList) do
 		if not GetSpellInfo(k) then
@@ -91,7 +90,7 @@ local function AT_OnEvent()
 			CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
 			if button.filter == "HARMFUL" then
-				color = {r = 0.8, g = 0, b = 0}
+				color = {M.COLORS.RED:GetRGB()}
 
 				if aura.debuffType then
 					color = DebuffTypeColor[aura.debuffType]
@@ -104,8 +103,12 @@ local function AT_OnEvent()
 	end
 end
 
-function AT:AddToList(filter, spellID)
-	if not AT_CFG.enabled then
+-----------
+-- UTILS --
+-----------
+
+function AURATRACKER:AddToList(filter, spellID)
+	if not C.auratracker.enabled then
 		return false, ERROR_TEXT.." Can\'t add aura. Module is disabled."
 	end
 
@@ -114,24 +117,30 @@ function AT:AddToList(filter, spellID)
 		return false, ERROR_TEXT.." Can\'t add aura that doesn't exist."
 	end
 
-	if AT_CFG[filter][spellID] then
+	if C.auratracker[filter][spellID] then
 		return false, ERROR_TEXT.." Can\'t add aura. Already in the list."
 	end
 
-	AT_CFG[filter][spellID] = E:GetPlayerSpecFlag()
+	C.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
 
 	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
 
 	return true, SUCCESS_TEXT.." Added "..name.." ("..spellID..")."
 end
 
-function AT:Init(forceInit)
-	AT_CFG = C.auratracker
+-----------------
+-- INITIALISER --
+-----------------
 
-	HandleDataCorruption("HELPFUL")
-	HandleDataCorruption("HARMFUL")
+function AURATRACKER:IsInit()
+	return isInit
+end
 
-	if AT_CFG.enabled or forceInit then
+function AURATRACKER:Init(isForced)
+	if not isInit and (C.auratracker.enabled or isForced) then
+		HandleDataCorruption("HELPFUL")
+		HandleDataCorruption("HARMFUL")
+
 		local header = _G.CreateFrame("Frame", "LSAuraTrackerHeader", _G.UIParent)
 		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
@@ -145,8 +154,8 @@ function AT:Init(forceInit)
 		E:CreateMover(header, true)
 
 		-- FIX-ME: Remove it later
-		AT_CFG.point = nil
-		AT_CFG.direction = nil
+		C.auratracker.point = nil
+		C.auratracker.direction = nil
 
 		AuraTracker = _G.CreateFrame("Frame", nil, _G.UIParent)
 		AuraTracker:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
@@ -173,16 +182,19 @@ function AT:Init(forceInit)
 			button.Count:SetFontObject("LS12Font_Outline")
 		end
 
-		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, AT_CFG.button_size, AT_CFG.button_gap, AT_CFG.init_anchor, AT_CFG.buttons_per_row)
+		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
 
 		_G.SLASH_ATBUFF1 = "/atbuff"
 		_G.SlashCmdList["ATBUFF"] = function(msg)
-			print(select(2, AT:AddToList("HELPFUL", tonumber(msg))))
+			P.print(select(2, AURATRACKER:AddToList("HELPFUL", tonumber(msg))))
 		end
 
 		_G.SLASH_ATDEBUFF1 = "/atdebuff"
 		_G.SlashCmdList["ATDEBUFF"] = function(msg)
-			print(select(2, AT:AddToList("HARMFUL", tonumber(msg))))
+			P.print(select(2, AURATRACKER:AddToList("HARMFUL", tonumber(msg))))
 		end
+
+		-- Finalise
+		isInit = true
 	end
 end
