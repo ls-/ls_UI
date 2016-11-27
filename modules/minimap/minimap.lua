@@ -215,14 +215,6 @@ local function CheckTexPoint(point, base)
 	end
 end
 
-local function GetDeltas()
-	local h, m = _G.GetGameTime()
-	local s = (h * 60 + m) * 60
-	local mult = math.modf(s / DELAY)
-
-	return (mult + 1) * DELAY - s, STEP * mult -- delay, offset
-end
-
 local function ScrollTexture(t, delay, offset)
 	t.l = CheckTexPoint(t.l, 64) + offset
 	t.r = CheckTexPoint(t.r, 192) + offset
@@ -590,7 +582,12 @@ function MINIMAP:Init(isForced)
 		end
 
 		-- Finalise
-		ScrollTexture(indicator, GetDeltas())
+		local h, m = _G.GetGameTime()
+		local s = (h * 60 + m) * 60
+		local mult = math.modf(s / DELAY)
+
+		ScrollTexture(indicator, (mult + 1) * DELAY - s, STEP * mult)
+
 		UpdateZoneInfo()
 		ag:Play()
 
