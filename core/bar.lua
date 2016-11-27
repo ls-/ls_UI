@@ -4,7 +4,6 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 -- Lua
 local _G = _G
 local math = _G.math
-local pairs = _G.pairs
 
 -- Mine
 function E:UpdateBarLayout(bar, buttons, bSize, bGap, initialAnchor, columns)
