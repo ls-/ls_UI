@@ -8,10 +8,6 @@ local _G = _G
 -- Mine
 local isInit = false
 
------------------
--- COMMAND BAR --
------------------
-
 local function CommandBar_OnEnter(self)
 	if not self.isShown then
 		self.isShown = true
