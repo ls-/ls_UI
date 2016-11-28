@@ -1,6 +1,6 @@
 ## Interface: 70100
 ## Author: lightspark
-## Version: 70100.01
+## Version: dev
 ## Title: |cff1a9fc0ls:|r UI
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CONFIG
