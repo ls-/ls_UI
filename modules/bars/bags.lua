@@ -114,11 +114,8 @@ function BARS:Bags_Init(isForced)
 
 		_G.RegisterStateDriver(bar, "visibility", CFG.visible and "show" or "hide")
 
-		if C.bars.restricted then
-			BARS:SetupControlledBar(bar, "Bags")
-		else
+		if not C.bars.restricted then
 			bar:SetPoint(unpack(CFG.point))
-
 			E:CreateMover(bar)
 		end
 

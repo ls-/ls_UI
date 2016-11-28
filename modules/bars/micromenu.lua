@@ -642,10 +642,7 @@ function BARS:MicroMenu_Init()
 	local holder2 = _G.CreateFrame("Frame", "LSMBHolderRight", _G.UIParent)
 	holder2:SetSize(18 * 5 + 4 * 5, 24 + 4)
 
-	if C.bars.restricted then
-		self:SetupControlledBar(holder1, "MicroMenuLeft")
-		self:SetupControlledBar(holder2, "MicroMenuRight")
-	else
+	if not C.bars.restricted then
 		holder1:SetPoint(unpack(CFG.holder1.point))
 		holder1:SetShown(CFG.visibile)
 		E:CreateMover(holder1)
