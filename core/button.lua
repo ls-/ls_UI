@@ -46,10 +46,6 @@ local SHIFT_KEY_TEXT = _G.SHIFT_KEY_TEXT
 local actionButtons = {}
 local handledButtons = {}
 
--------------
--- HELPERS --
--------------
-
 local function Button_HasAction(self)
 	if self.__type == "action" or self.__type == "extra" then
 		return self.action and _G.HasAction(self.action)
@@ -301,7 +297,7 @@ local function SkinButton(button)
 	end
 
 	button:SetScript("OnUpdate", nil)
-	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE");
+	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 
 	button.HasAction = Button_HasAction
 
@@ -656,49 +652,58 @@ do
 		end
 	end
 
+	local function PLAYER_ENTERING_WORLD()
+		UpdateActionButtonsTable()
+
+		local flash_timer = 0
+
+		local function OnUpdate(_, elapsed)
+			flash_timer = flash_timer - elapsed
+
+			for button in next, actionButtons do
+				if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
+					if button.Flash:IsShown() then
+						button.Flash:Hide()
+					else
+						button.Flash:Show()
+					end
+				end
+
+				if button.__type == "action" or button.__type == "extra" then
+					if IsActionInRange(button.action) == false then
+						button.icon:SetDesaturated(true)
+						button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
+					else
+						local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+						if isUsable then
+							button.icon:SetDesaturated(false)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA())
+						elseif notEnoughMana then
+							button.icon:SetDesaturated(true)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+						else
+							button.icon:SetDesaturated(true)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+						end
+					end
+				end
+			end
+
+			if flash_timer <= 0 then
+				flash_timer = 0.4
+			end
+		end
+
+		-- Don't use C_Timer.NewTicker here
+		local updater = _G.CreateFrame("Frame")
+		updater:SetScript("OnUpdate", OnUpdate)
+
+		E:UnregisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
+	end
+
+	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
-	E:RegisterEvent("PLAYER_LOGIN", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
 end
-
-local function OnUpdate(self, elapsed)
-	self.flashTime = (self.flashTime or 0) - elapsed
-
-	for button in next, actionButtons do
-		if button.Flash and self.flashTime <= 0 and (button.flashing == true or button.flashing == 1) then
-			if button.Flash:IsShown() then
-				button.Flash:Hide()
-			else
-				button.Flash:Show()
-			end
-		end
-
-		if button.__type == "action" or button.__type == "extra" then
-			if IsActionInRange(button.action) == false then
-				button.icon:SetDesaturated(true)
-				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-			else
-				local isUsable, notEnoughMana = IsUsableAction(button.action)
-
-				if isUsable then
-					button.icon:SetDesaturated(false)
-					button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA())
-				elseif notEnoughMana then
-					button.icon:SetDesaturated(true)
-					button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
-				else
-					button.icon:SetDesaturated(true)
-					button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-				end
-			end
-		end
-	end
-
-	if self.flashTime <= 0 then
-		self.flashTime = self.flashTime + 0.4
-	end
-end
-
-local updater = _G.CreateFrame("Frame")
-updater:SetScript("OnUpdate", OnUpdate)
