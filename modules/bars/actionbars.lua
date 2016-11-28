@@ -29,7 +29,7 @@ local ACTION_BARS = {
 			_G.ActionButton1, _G.ActionButton2, _G.ActionButton3, _G.ActionButton4, _G.ActionButton5, _G.ActionButton6,
 			_G.ActionButton7, _G.ActionButton8, _G.ActionButton9, _G.ActionButton10, _G.ActionButton11, _G.ActionButton12
 		},
-		name = "LSMainMenuBar",
+		name = "LSMainBar",
 		visibility = "[petbattle] hide; show",
 	},
 	bar2 = {
@@ -78,7 +78,7 @@ local ACTION_BARS = {
 			_G.PetActionButton6, _G.PetActionButton7, _G.PetActionButton8, _G.PetActionButton9, _G.PetActionButton10
 		},
 		original_bar = _G.PetActionBarFrame,
-		name = "LSPetActionBar",
+		name = "LSPetBar",
 		visibility = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
 		skin_function = "SkinPetActionButton"
 	},
@@ -134,7 +134,7 @@ local function GetPage()
 end
 
 local function SetStancePetActionBarPosition(self)
-	if self:GetName() == "LSPetActionBar" then
+	if self:GetName() == "LSPetBar" then
 		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].pet))
 	else
 		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].stance))
@@ -228,7 +228,7 @@ function BARS:ActionBars_Init()
 
 			E:UpdateBarLayout(bar, bar.buttons, cfg.button_size, cfg.button_gap, cfg.init_anchor, cfg.buttons_per_row)
 
-			if data.name == "LSMainMenuBar" then
+			if data.name == "LSMainBar" then
 				for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
 					bar:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 				end
@@ -252,7 +252,10 @@ function BARS:ActionBars_Init()
 						if newstate == 12 then
 							button:SetAttribute("showgrid", 1)
 							button:CallMethod("SetBorderColor", 244 / 255, 202 / 255, 22 / 255) -- M.COLORS.YELLOW
-							button:Show()
+
+							if not button:GetAttribute("ls-hidden") then
+								button:Show()
+							end
 						else
 							button:SetAttribute("showgrid", 0)
 						end
@@ -260,10 +263,6 @@ function BARS:ActionBars_Init()
 				]])
 
 				_G.RegisterStateDriver(bar, "page", GetPage())
-
-				if C.bars.restricted then
-					BARS:SetupControlledBar(bar, "Main")
-				end
 			end
 
 			if data.visibility then
@@ -276,7 +275,7 @@ function BARS:ActionBars_Init()
 		end
 
 		for bar, key in pairs(actionbars) do
-			if not bar.controlled then
+			if not (key == "bar1" and C.bars.restricted) then
 				if CFG[key].point then
 					bar:SetPoint(unpack(CFG[key].point))
 				else

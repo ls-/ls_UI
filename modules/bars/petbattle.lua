@@ -36,10 +36,6 @@ function BARS:PetBattleBar_Init()
 
 		_G.RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
 
-		if C.bars.restricted then
-			self:SetupControlledBar(bar, "PetBattle")
-		end
-
 		_G.FlowContainer_PauseUpdates(_G.PetBattleFrame.BottomFrame.FlowFrame)
 
 		E:ForceHide(_G.PetBattleFrame.BottomFrame.FlowFrame)
