@@ -125,23 +125,37 @@ local ICON_COORDS = {
 }
 
 -- Handler & Utils
-local function HandleMicroButtonIndicator(parent, indicator)
-	if not indicator then
-		indicator = parent:CreateTexture("$parentIndicator")
+local function HandleMicroButtonIndicator(parent, indicators, num)
+	indicators = indicators or {}
+
+	for i = 1, num do
+		local indicator = indicators[i]
+
+		if not indicator then
+			indicator = parent:CreateTexture()
+			indicators[i] = indicator
+		end
+
+		indicator:SetDrawLayer("BACKGROUND", 3)
+		indicator:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		indicator:SetSize(18 / num, 3)
+		indicator:ClearAllPoints()
+
+		if i == 1 then
+			indicator:SetPoint("BOTTOMLEFT", 0, 0)
+		else
+			indicator:SetPoint("BOTTOMLEFT", indicators[i - 1], "BOTTOMRIGHT", 0, 0)
+		end
 	end
 
-	indicator:SetDrawLayer("BACKGROUND", 3)
-	indicator:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	indicator:SetSize(18, 3)
-	indicator:ClearAllPoints()
-	indicator:SetPoint("BOTTOM", 0, 0)
-	parent.Indicator = indicator
+	parent.Indicators = indicators
 end
 
 local function UpdatePerformanceIndicator(self)
 	local _, _, latencyHome, latencyWorld = _G.GetNetStats()
 
-	self.Indicator:SetVertexColor(M.COLORS.GYR:GetRGB((latencyHome > latencyWorld and latencyHome or latencyWorld) / _G.PERFORMANCEBAR_MEDIUM_LATENCY))
+	self.Indicators[1]:SetVertexColor(M.COLORS.GYR:GetRGB(latencyHome / _G.PERFORMANCEBAR_MEDIUM_LATENCY))
+	self.Indicators[2]:SetVertexColor(M.COLORS.GYR:GetRGB(latencyWorld / _G.PERFORMANCEBAR_MEDIUM_LATENCY))
 end
 
 local function SetNormalTextureOverride(button)
@@ -414,7 +428,7 @@ local function CharacterMicroButton_OnEvent(self, event)
 			end
 		end
 
-		self.Indicator:SetVertexColor(M.COLORS.RYG:GetRGB(total / 100))
+		self.Indicators[1]:SetVertexColor(M.COLORS.RYG:GetRGB(total / 100))
 	end
 end
 
@@ -669,7 +683,7 @@ function BARS:MicroMenu_Init()
 
 		if b == "CharacterMicroButton" then
 			E:ForceHide(_G.MicroButtonPortrait)
-			HandleMicroButtonIndicator(button)
+			HandleMicroButtonIndicator(button, {}, 1)
 
 			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
@@ -723,7 +737,7 @@ function BARS:MicroMenu_Init()
 			_G.RequestLFDPartyLockInfo()
 		elseif b == "MainMenuMicroButton" then
 			E:ForceHide(_G.MainMenuBarDownload)
-			HandleMicroButtonIndicator(button, _G.MainMenuBarPerformanceBar)
+			HandleMicroButtonIndicator(button, {_G.MainMenuBarPerformanceBar}, 2)
 			UpdatePerformanceIndicator(button)
 
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
