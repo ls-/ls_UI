@@ -28,7 +28,6 @@ local _G = _G
 local string = _G.string
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
-local unpack = _G.unpack
 
 -- Blizz
 local IsActionInRange = _G.IsActionInRange
@@ -119,6 +118,8 @@ local function SetHotKeyTextHook(self)
 			else
 				bType = "ACTIONBUTTON"
 			end
+		elseif not name then
+			bType = "ACTIONBUTTON"
 		end
 	end
 
@@ -222,9 +223,8 @@ local function SkinButton(button)
 		bHotKey:SetJustifyH("RIGHT")
 		bHotKey:SetDrawLayer("OVERLAY")
 		bHotKey:ClearAllPoints()
-		bHotKey:SetPoint("TOPLEFT", -2, 0)
+		bHotKey:SetWidth(0, 0)
 		bHotKey:SetPoint("TOPRIGHT", 2, 0)
-		bHotKey:SetWidth(button:GetWidth())
 
 		SetHotKeyTextHook(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
@@ -242,7 +242,7 @@ local function SkinButton(button)
 		bCount:SetJustifyH("RIGHT")
 		bCount:SetDrawLayer("OVERLAY")
 		bCount:ClearAllPoints()
-		bCount:SetPoint("BOTTOMLEFT", -2, 0)
+		bCount:SetSize(0, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
 	end
 
