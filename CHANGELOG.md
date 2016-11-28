@@ -1,3 +1,7 @@
+## Version 70100.02
+
+- Fixed tooltip issue which was caused by sometimes nonexistent `.GetAttribute` method. There's one more call...
+
 ## Version 70100.01
 
 - Added 7.1 support;
