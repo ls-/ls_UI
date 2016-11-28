@@ -1,7 +1,9 @@
 Set-Location $PSScriptRoot
 
 if (-Not (Test-Path "C:\PROGRA~1\7-Zip\7z.exe")) {
-	throw "7z.exe not found"
+	Write-Host "7z.exe not found"
+
+	return Read-Host
 }
 
 Set-Alias 7z "C:\PROGRA~1\7-Zip\7z.exe"
@@ -9,17 +11,17 @@ Set-Alias 7z "C:\PROGRA~1\7-Zip\7z.exe"
 $name = (Get-Item .).Name
 
 if (-Not (Test-Path (".\" + $name + ".toc"))) {
-	throw ".toc not found"
+	Write-Host ".toc not found"
+
+	return Read-Host
 }
 
-$version = if ((Get-Content (".\" + $name + ".toc") | Where {
-	$_ -match "Version: ([0-9]+\.[0-9]+)"
-}) -match "([0-9]+\.[0-9]+)") {
-	$matches[1]
-}
+if (Get-Content (".\" + $name + ".toc") | Where { $_ -match "(Version: +)([a-zA-Z0-9.-]+)" }) {
+	$version = $matches[2]
+} else {
+	Write-Host "Bad version format"
 
-if (-Not $version) {
-	throw "Bad version format"
+	return Read-Host
 }
 
 $includedFiles = @(
