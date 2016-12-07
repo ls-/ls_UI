@@ -10,8 +10,6 @@ function UF:CreateBossHolder()
 end
 
 function UF:ConstructBossFrame(frame)
-	tinsert(UF.framesByUnit["boss"], frame)
-
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}

@@ -3,8 +3,6 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 function UF:ConstructPlayerFrame(frame)
-	tinsert(UF.framesByUnit["player"], frame)
-
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}

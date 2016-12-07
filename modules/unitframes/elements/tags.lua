@@ -42,7 +42,7 @@ oUF.Tags.Methods["ls:unitcolor"] = function(unit, r)
 	return "|cff"..E:GetUnitColor(r or unit, true, false, true, true, true):GetHEX()
 end
 
-oUF.Tags.Events["ls:unitcolor"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE"
+oUF.Tags.Events["ls:unitcolor"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE UNIT_FACTION"
 
 oUF.Tags.Methods["ls:name"] = function(unit, r)
 	local name = UnitName(r or unit)
@@ -73,7 +73,7 @@ oUF.Tags.Methods["ls:healabsorb"] = function(unit)
 	local hex = M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX()
 
 	if healAbsorb > 0 then
-		return "|cff"..hex.."-|r"..E:NumberFormat(healAbsorb)
+		return "|cff"..hex.."-|r"..E:NumberFormat(healAbsorb, 1)
 	else
 		return " "
 	end
@@ -86,7 +86,7 @@ oUF.Tags.Methods["ls:damageabsorb"] = function(unit)
 	local hex = M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX()
 
 	if damageAbsorb > 0 then
-		return "|cff"..hex.."+|r"..E:NumberFormat(damageAbsorb)
+		return "|cff"..hex.."+|r"..E:NumberFormat(damageAbsorb, 1)
 	else
 		return " "
 	end
