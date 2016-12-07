@@ -9,12 +9,11 @@ UF.framesByUnit = {
 	targettarget = {},
 	focus = {},
 	focustarget = {},
-	party = {},
 	boss = {},
 	arena = {},
 }
 
-local objects, headers = {}, {}
+local objects = {}
 
 local function LSUnitFrame_OnEnter(self)
 	if self.__owner then
@@ -25,11 +24,7 @@ local function LSUnitFrame_OnEnter(self)
 
 	local name = gsub(self:GetName(), "%d", "")
 
-	if name == "LSPartyFrameUnitButton" then
-		PartyMemberBuffTooltip:ClearAllPoints()
-		PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
-		PartyMemberBuffTooltip_Update(self)
-	elseif name == "LSPetFrame" then
+	if name == "LSPetFrame" then
 		PartyMemberBuffTooltip:ClearAllPoints()
 		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		PartyMemberBuffTooltip_Update(self)
@@ -60,9 +55,7 @@ local function LSUnitFrame_OnLeave(self)
 
 	local name = gsub(self:GetName(), "%d", "")
 
-	if name == "LSPartyFrameUnitButton" then
-		PartyMemberBuffTooltip:Hide()
-	elseif name == "LSPetFrame" then
+	if name == "LSPetFrame" then
 		PartyMemberBuffTooltip:Hide()
 	end
 
@@ -109,8 +102,6 @@ local function UnitFrameConstructor(frame, unit)
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss5" then
 		UF:ConstructBossFrame(frame)
-	elseif unit == "party" then
-		UF:ConstructPartyFrame(frame)
 	elseif unit == "arena1" then
 		UF:ConstructArenaFrame(frame)
 	elseif unit == "arena2" then
@@ -197,22 +188,6 @@ local function MainConstructor()
 				ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
 			end
 		end
-	end
-
-	if C.units.party.enabled then
-		headers["party"] = oUF:SpawnHeader("LSPartyFrame", nil,
-			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid1,exists]hide;show",
-			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
-			"showPlayer", true,
-			"showParty", true,
-			"groupBy", "ROLE",
-			"groupingOrder", "TANK,HEALER,DAMAGER",
-			"point", "TOP", "yOffset", -40)
-
-		local holder = UF:CreatePartyHolder()
-
-		headers["party"]:SetParent(holder)
-		headers["party"]:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, -16)
 	end
 end
 
