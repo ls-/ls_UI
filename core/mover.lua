@@ -283,22 +283,24 @@ function E:ToggleAllMovers()
 	end
 end
 
-function E:ToggleMover(object)
+function E:ToggleMover(object, state)
 	local mover = movers[object:GetName().."Mover"]
 
-	if mover and not mover.isSimple then
-		if _G.InCombatLockdown() then
+	if mover then
+		if _G.InCombatLockdown() and not mover.isSimple then
 			return mover:IsShown()
 		end
 
-		if mover:IsShown() then
-			mover:Hide()
+		if state ~= nil then
+			mover:SetShown(state)
 
-			return false
+			return state
 		else
-			mover:Show()
+			local isShown = mover:IsShown()
 
-			return true
+			mover:SetShown(not isShown)
+
+			return not isShown
 		end
 	end
 end
