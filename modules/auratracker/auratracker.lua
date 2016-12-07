@@ -5,8 +5,10 @@ local AURATRACKER = P:AddModule("AuraTracker", true)
 -- Lua
 local _G = _G
 local table = _G.table
+local string = _G.string
 local pairs = _G.pairs
 local tonumber = _G.tonumber
+local select = _G.select
 
 -- Blizz
 local BUFF_MAX_DISPLAY = _G.BUFF_MAX_DISPLAY
@@ -18,8 +20,6 @@ local UnitAura = _G.UnitAura
 
 --Mine
 local isInit = false
-local SUCCESS_TEXT = "|cff26a526Success!|r"
-local ERROR_TEXT = "|cffe52626Error!|r"
 local activeAuras = {}
 local AuraTracker
 
@@ -103,31 +103,43 @@ local function AT_OnEvent()
 	end
 end
 
------------
--- UTILS --
------------
+local function AddToList(filter, spellID)
+	if not (C.auratracker.enabled and filter and spellID) then return end
 
-function AURATRACKER:AddToList(filter, spellID)
-	if not C.auratracker.enabled then
-		return false, ERROR_TEXT.." Can\'t add aura. Module is disabled."
-	end
+	local link = _G.GetSpellLink(spellID)
 
-	local name = GetSpellInfo(spellID)
-	if not name then
-		return false, ERROR_TEXT.." Can\'t add aura that doesn't exist."
+	if not link then
+		return false, L["LOG_NOTHING_FOUND"]
 	end
 
 	if C.auratracker[filter][spellID] then
-		return false, ERROR_TEXT.." Can\'t add aura. Already in the list."
+		return false, string.format(L["LOG_ITEM_ADDED_ERR"], link)
 	end
 
 	C.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
 
-	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
+	AURATRACKER:Refresh()
 
-	return true, SUCCESS_TEXT.." Added "..name.." ("..spellID..")."
+	return true, string.format(L["LOG_ITEM_ADDED"], link)
 end
 
+----------------------
+-- UTILS & SETTINGS --
+----------------------
+
+function AURATRACKER:ToggleHeader(state)
+	AuraTracker.Header:SetShown(state)
+
+	E:ToggleMover(AuraTracker.Header, state)
+end
+
+function AURATRACKER:Refresh()
+	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
+end
+
+function AURATRACKER:UpdateLayout()
+	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
+end
 -----------------
 -- INITIALISER --
 -----------------
@@ -164,6 +176,7 @@ function AURATRACKER:Init(isForced)
 		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 		AuraTracker:SetScript("OnEvent", AT_OnEvent)
 
+		AuraTracker.Header = header
 		AuraTracker.buttons = {}
 
 		for i = 1, 12 do
@@ -186,15 +199,23 @@ function AURATRACKER:Init(isForced)
 
 		_G.SLASH_ATBUFF1 = "/atbuff"
 		_G.SlashCmdList["ATBUFF"] = function(msg)
-			P.print(select(2, AURATRACKER:AddToList("HELPFUL", tonumber(msg))))
+			P.print(select(2, AddToList("HELPFUL", tonumber(msg))))
 		end
 
 		_G.SLASH_ATDEBUFF1 = "/atdebuff"
 		_G.SlashCmdList["ATDEBUFF"] = function(msg)
-			P.print(select(2, AURATRACKER:AddToList("HARMFUL", tonumber(msg))))
+			P.print(select(2, AddToList("HARMFUL", tonumber(msg))))
 		end
 
 		-- Finalise
+		if isForced then
+			self:Refresh()
+		end
+
+		self:ToggleHeader(not C.auratracker.locked)
+
 		isInit = true
+
+		return true
 	end
 end
