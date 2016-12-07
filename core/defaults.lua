@@ -9,7 +9,6 @@ D["units"] = {
 		castbar = true,
 	},
 	pet = {
-		enabled = true,
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
 		castbar = true,
 	},
@@ -30,7 +29,6 @@ D["units"] = {
 		},
 	},
 	targettarget = {
-		enabled = true,
 		point = { "LEFT", "LSTargetFrame", "RIGHT", 6, 0 },
 	},
 	focus = {
@@ -50,12 +48,7 @@ D["units"] = {
 		},
 	},
 	focustarget = {
-		enabled = true,
 		point = { "RIGHT", "LSFocusFrame", "LEFT", -6, 0 },
-	},
-	party = {
-		enabled = true,
-		point = {"TOPLEFT", "UIParent", "TOPLEFT", 42, -140},
 	},
 	boss = {
 		enabled = true,
