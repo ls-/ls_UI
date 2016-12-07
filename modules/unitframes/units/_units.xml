@@ -3,7 +3,6 @@
 	<Script file="boss.lua"/>
 	<Script file="focus.lua"/>
 	<Script file="focustarget.lua"/>
-	<Script file="party.lua"/>
 	<Script file="pet.lua"/>
 	<Script file="player.lua"/>
 	<Script file="target.lua"/>
