@@ -73,7 +73,7 @@ oUF.Tags.Methods["ls:healabsorb"] = function(unit)
 	local hex = M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX()
 
 	if healAbsorb > 0 then
-		return "|cff"..hex.."-|r"..E:NumberFormat(healAbsorb)
+		return "|cff"..hex.."-|r"..E:NumberFormat(healAbsorb, 1)
 	else
 		return " "
 	end
@@ -86,7 +86,7 @@ oUF.Tags.Methods["ls:damageabsorb"] = function(unit)
 	local hex = M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX()
 
 	if damageAbsorb > 0 then
-		return "|cff"..hex.."+|r"..E:NumberFormat(damageAbsorb)
+		return "|cff"..hex.."+|r"..E:NumberFormat(damageAbsorb, 1)
 	else
 		return " "
 	end
