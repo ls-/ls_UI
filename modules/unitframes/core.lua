@@ -2,17 +2,14 @@ local _, ns = ...
 local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
 local UF = P:AddModule("UnitFrames")
 
-UF.framesByUnit = {
-	player = {},
-	pet = {},
-	target = {},
-	targettarget = {},
-	focus = {},
-	focustarget = {},
-	boss = {},
-	arena = {},
-}
+-- Lua
+local _G = _G
+local string = _G.string
+local pairs = _G.pairs
+local tonumber = _G.tonumber
+local unpack = _G.unpack
 
+-- Mine
 local objects = {}
 
 local function LSUnitFrame_OnEnter(self)
@@ -20,19 +17,18 @@ local function LSUnitFrame_OnEnter(self)
 		self = self.__owner
 	end
 
-	UnitFrame_OnEnter(self)
+	_G.UnitFrame_OnEnter(self)
 
-	local name = gsub(self:GetName(), "%d", "")
-
-	if name == "LSPetFrame" then
-		PartyMemberBuffTooltip:ClearAllPoints()
-		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
-		PartyMemberBuffTooltip_Update(self)
+	if string.match(self:GetName(), "LSPetFrame") then
+		_G.PartyMemberBuffTooltip:ClearAllPoints()
+		_G.PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
+		_G.PartyMemberBuffTooltip_Update(self)
 	end
 
 	self.isMouseOver = true
+
 	if self.mouseovers then
-		for _, element in next, self.mouseovers do
+		for _, element in pairs(self.mouseovers) do
 			if element.ForceUpdate then
 				element:ForceUpdate()
 
@@ -51,17 +47,16 @@ local function LSUnitFrame_OnLeave(self)
 		self = self.__owner
 	end
 
-	UnitFrame_OnLeave(self)
+	_G.UnitFrame_OnLeave(self)
 
-	local name = gsub(self:GetName(), "%d", "")
-
-	if name == "LSPetFrame" then
-		PartyMemberBuffTooltip:Hide()
+	if string.match(self:GetName(), "LSPetFrame") then
+		_G.PartyMemberBuffTooltip:Hide()
 	end
 
 	self.isMouseOver = nil
+
 	if self.mouseovers then
-		for _, element in next, self.mouseovers do
+		for _, element in pairs(self.mouseovers) do
 			if element.ForceUpdate then
 				element:ForceUpdate()
 
@@ -153,9 +148,10 @@ local function MainConstructor()
 	-- 	ArenaPrepFrames = UF:SetupArenaPrepFrames()
 	-- end
 
-	for unit, object in next, objects do
-		if strmatch(unit, "^boss%d") then
-			local id = tonumber(strmatch(unit, "boss(%d)"))
+	for unit, object in pairs(objects) do
+		if string.match(unit, "^boss") then
+			local id = tonumber(string.match(unit, "boss(%d)"))
+
 			if id == 1 then
 				UF:CreateBossHolder()
 
