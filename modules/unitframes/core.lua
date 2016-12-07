@@ -102,16 +102,16 @@ local function UnitFrameConstructor(frame, unit)
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss5" then
 		UF:ConstructBossFrame(frame)
-	elseif unit == "arena1" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena2" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena3" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena4" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena5" then
-		UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena1" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena2" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena3" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena4" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena5" then
+	-- 	UF:ConstructArenaFrame(frame)
 	end
 end
 
@@ -142,16 +142,16 @@ local function MainConstructor()
 		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
 	end
 
-	local ArenaPrepFrames
-	if C.units.arena.enabled then
-		objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
-		objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
-		objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
-		objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
-		objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
+	-- local ArenaPrepFrames
+	-- if C.units.arena.enabled then
+	-- 	objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
+	-- 	objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
+	-- 	objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
+	-- 	objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
+	-- 	objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
 
-		ArenaPrepFrames = UF:SetupArenaPrepFrames()
-	end
+	-- 	ArenaPrepFrames = UF:SetupArenaPrepFrames()
+	-- end
 
 	for unit, object in next, objects do
 		if strmatch(unit, "^boss%d") then
@@ -163,32 +163,32 @@ local function MainConstructor()
 			else
 				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -36)
 			end
-		 elseif strmatch(unit, "^arena%d") then
-			local id = tonumber(strmatch(unit, "arena(%d)"))
-			if id == 1 then
-				UF:CreateArenaHolder()
+		-- elseif strmatch(unit, "^arena%d") then
+		-- 	local id = tonumber(strmatch(unit, "arena(%d)"))
+		-- 	if id == 1 then
+		-- 		UF:CreateArenaHolder()
 
-				object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
-			else
-				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
-			end
+		-- 		object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
+		-- 	else
+		-- 		object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
+		-- 	end
 		else
 			object:SetPoint(unpack(C.units[unit].point))
 			E:CreateMover(object)
 		end
 	end
 
-	if ArenaPrepFrames then
-		ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
+	-- if ArenaPrepFrames then
+	-- 	ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
 
-		for i = 1, 5 do
-			if i == 1 then
-				ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
-			else
-				ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
-			end
-		end
-	end
+	-- 	for i = 1, 5 do
+	-- 		if i == 1 then
+	-- 			ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
+	-- 		else
+	-- 			ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function UF:Init(forceInit)
