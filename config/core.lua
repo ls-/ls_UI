@@ -123,7 +123,7 @@ do
 	end
 
 	function CFG:CreateCheckButton(panel, data)
-		local object = _G.CreateFrame("CheckButton", "$parent"..data.name, panel, "InterfaceOptionsCheckButtonTemplate")
+		local object = _G.CreateFrame("CheckButton", data.name, data.parent, "InterfaceOptionsCheckButtonTemplate")
 		object:SetHitRectInsets(0, 0, 0, 0)
 		object.type = "Button"
 		object.GetValue = data.get
@@ -295,6 +295,71 @@ do
 	end
 end
 
+-- Tabbed Frame
+do
+	local function Tab_OnClick(self)
+		_G.PanelTemplates_SetTab(self:GetParent(), self:GetID())
+
+		self:GetParent():SetValue(self:GetID())
+		self:GetParent():RefreshValue()
+	end
+
+	local function Tab_OnEnter(self)
+		_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -4, -4)
+		_G.GameTooltip:AddLine(self.tooltipText)
+		_G.GameTooltip:Show()
+	end
+
+	local function Tab_OnLeave()
+		_G.GameTooltip:Hide()
+	end
+
+	function CFG:CreateTabbedFrame(panel, data)
+		local object = _G.CreateFrame("Frame", data.name, data.parent)
+		object:SetBackdrop({
+			bgFile = "Interface\\BUTTONS\\WHITE8X8",
+			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+			tile = true, tileSize = 16,
+			edgeSize = 16, insets = { left = 4, right = 4, top = 4, bottom = 4 }
+		})
+		object:SetBackdropColor(0, 0, 0, 1)
+		object:SetBackdropBorderColor(0.6, 0.6, 0.6)
+		object.GetValue = data.get
+		object.SetValue = data.set
+		object.RefreshValue = data.refresh
+
+		object.tabs = {}
+
+		for i = 1, #data.tabs do
+			local tab = _G.CreateFrame("Button", "$parentTab"..i, object, "TabButtonTemplate")
+			tab:SetID(i)
+			tab:SetText(data.tabs[i].text)
+			tab:SetScript("OnClick", Tab_OnClick)
+			tab:SetScript("OnEnter", Tab_OnEnter)
+			tab:SetScript("OnLeave", Tab_OnLeave)
+			tab.tooltipText = data.tabs[i].tooltip_text
+			object.tabs[i] = tab
+
+			_G.PanelTemplates_TabResize(tab, 0, 82)
+
+		end
+
+		for i = 1, #object.tabs do
+			if i == 1 then
+				object.tabs[i]:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 8, -2)
+			else
+				object.tabs[i]:SetPoint("LEFT", object.tabs[i - 1], "RIGHT", 0, 0)
+			end
+		end
+
+		_G.PanelTemplates_SetNumTabs(object, #data.tabs)
+
+		RegisterControlForRefresh(panel, object)
+
+		return object
+	end
+end
+
 -- Aura List
 do
 	local activeAuraList
@@ -308,7 +373,7 @@ do
 	end
 
 	local function Tab_OnClick(self)
-		_G.PanelTemplates_Tab_OnClick(self, self:GetParent())
+		_G.PanelTemplates_SetTab(self:GetParent(), self:GetID())
 
 		self:GetParent():SetValue(self:GetID())
 		self:GetParent():RefreshValue()
@@ -343,31 +408,6 @@ do
 		activeAuraList:RefreshValue()
 
 		activePanel.Log:SetText(L["LOG_DONE"])
-	end
-
-	local function WipeButton_OnClick()
-		-- FIXME: Add pop-up!
-	-- 	table.wipe(activeAuraList.table)
-
-		activeAuraList:RefreshValue()
-
-		activePanel.Log:SetText(L["LOG_DONE"])
-	end
-
-	local function WipeButton_Enable(self)
-		getmetatable(self).__index.Enable(self)
-
-		if self.Icon then
-			self.Icon:SetDesaturated(false)
-		end
-	end
-
-	local function WipeButton_Disable(self)
-		getmetatable(self).__index.Disable(self)
-
-		if self.Icon then
-			self.Icon:SetDesaturated(true)
-		end
 	end
 
 	local function EditBox_OnTextChanged(self, isUserInput)
@@ -416,9 +456,9 @@ do
 		local object = _G.CreateFrame("ScrollFrame", "$parentAuraList", panel, "FauxScrollFrameTemplate")
 		object:SetSize(210, 330) -- 30 * 10 + 6 * 2 + 9 * 2
 		object:SetBackdrop({
-			bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+			bgFile = "Interface\\BUTTONS\\WHITE8X8",
 			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-			tile = false, tileSize = 0,
+			tile = true, tileSize = 16,
 			edgeSize = 16, insets = { left = 4, right = 4, top = 4, bottom = 4 }
 		})
 		object:SetBackdropColor(0, 0, 0, 1)
@@ -453,30 +493,6 @@ do
 		_G.PanelTemplates_TabResize(debuffTab, 0)
 		_G.PanelTemplates_SetNumTabs(object, 2)
 		_G.PanelTemplates_SetTab(object, 1)
-
-		local wipeButton = _G.CreateFrame("Button", "$parentDeleteButton", object)
-		wipeButton:SetSize(24, 24)
-		wipeButton:SetPoint("TOPLEFT", object, "TOPRIGHT", 1, -14)
-		wipeButton:SetScript("OnClick", WipeButton_OnClick)
-		wipeButton.Enable = WipeButton_Enable
-		wipeButton.Disable = WipeButton_Disable
-		object.WipeButton = wipeButton
-
-		local wipeButtonIcon = wipeButton:CreateTexture(nil, "BACKGROUND", nil, 0)
-		wipeButtonIcon:SetTexture("Interface\\ICONS\\INV_Pet_Broom")
-		wipeButtonIcon:SetAllPoints()
-		wipeButton.Icon = wipeButtonIcon
-
-		wipeButton:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
-		wipeButton:GetPushedTexture():SetAllPoints()
-
-		wipeButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
-		wipeButton:GetHighlightTexture():SetAllPoints()
-
-		local wipeButtonBG = wipeButton:CreateTexture(nil, "BACKGROUND", nil, -8)
-		wipeButtonBG:SetSize(50, 50)
-		wipeButtonBG:SetPoint("LEFT", -3, -4)
-		wipeButtonBG:SetTexture("Interface\\SPELLBOOK\\SpellBook-SkillLineTab")
 
 		local addEditBox = _G.CreateFrame("EditBox", "$parentEditBox", object, "InputBoxInstructionsTemplate")
 		addEditBox.type = "EditBox"
@@ -598,7 +614,7 @@ do
 	end
 
 	function CFG:CreateSlider(panel, data) --[[, name, text, stepValue, minValue, maxValue)]]
-		local object = _G.CreateFrame("Slider", data.name, panel, "OptionsSliderTemplate")
+		local object = _G.CreateFrame("Slider", data.name, data.parent, "OptionsSliderTemplate")
 		object.type = "Slider"
 		object:SetMinMaxValues(data.min, data.max)
 		object:SetValueStep(data.step)
@@ -640,7 +656,7 @@ do
 	end
 
 	function CFG:CreateDropDownMenu(panel, data)
-		local object = _G.CreateFrame("Frame",  data.name, panel, "UIDropDownMenuTemplate")
+		local object = _G.CreateFrame("Frame",  data.name, data.parent, "UIDropDownMenuTemplate")
 		object.type = "DropDownMenu"
 		object.SetValue = data.set
 		object.GetValue = data.get
@@ -660,53 +676,55 @@ do
 	end
 end
 
--- local function InfoButton_OnEnter(self)
--- 	_G.HelpPlate_TooltipHide()
+-- Info Button
+local function InfoButton_OnEnter(self)
+	_G.HelpPlate_TooltipHide()
 
--- 	if self.tooltipDir == "UP" then
--- 		HelpPlateTooltip.ArrowUP:Show()
--- 		HelpPlateTooltip.ArrowGlowUP:Show()
--- 		HelpPlateTooltip:SetPoint("BOTTOM", self, "TOP", 0, 10)
--- 	elseif self.tooltipDir == "DOWN" then
--- 		HelpPlateTooltip.ArrowDOWN:Show()
--- 		HelpPlateTooltip.ArrowGlowDOWN:Show()
--- 		HelpPlateTooltip:SetPoint("TOP", self, "BOTTOM", 0, -10)
--- 	elseif self.tooltipDir == "LEFT" then
--- 		HelpPlateTooltip.ArrowLEFT:Show()
--- 		HelpPlateTooltip.ArrowGlowLEFT:Show()
--- 		HelpPlateTooltip:SetPoint("RIGHT", self, "LEFT", -10, 0)
--- 	elseif self.tooltipDir == "RIGHT" then
--- 		HelpPlateTooltip.ArrowRIGHT:Show()
--- 		HelpPlateTooltip.ArrowGlowRIGHT:Show()
--- 		HelpPlateTooltip:SetPoint("LEFT", self, "RIGHT", 10, 0)
--- 	end
+	if self.tooltipDir == "UP" then
+		_G.HelpPlateTooltip.ArrowUP:Show()
+		_G.HelpPlateTooltip.ArrowGlowUP:Show()
+		_G.HelpPlateTooltip:SetPoint("BOTTOM", self, "TOP", 0, 10)
+	elseif self.tooltipDir == "DOWN" then
+		_G.HelpPlateTooltip.ArrowDOWN:Show()
+		_G.HelpPlateTooltip.ArrowGlowDOWN:Show()
+		_G.HelpPlateTooltip:SetPoint("TOP", self, "BOTTOM", 0, -10)
+	elseif self.tooltipDir == "LEFT" then
+		_G.HelpPlateTooltip.ArrowLEFT:Show()
+		_G.HelpPlateTooltip.ArrowGlowLEFT:Show()
+		_G.HelpPlateTooltip:SetPoint("RIGHT", self, "LEFT", -10, 0)
+	elseif self.tooltipDir == "RIGHT" then
+		_G.HelpPlateTooltip.ArrowRIGHT:Show()
+		_G.HelpPlateTooltip.ArrowGlowRIGHT:Show()
+		_G.HelpPlateTooltip:SetPoint("LEFT", self, "RIGHT", 10, 0)
+	end
 
--- 	HelpPlateTooltip.Text:SetText(self.toolTipText)
--- 	HelpPlateTooltip:Show()
--- end
+	_G.HelpPlateTooltip.Text:SetText(self.toolTipText)
+	_G.HelpPlateTooltip:Show()
+end
 
--- local function InfoButton_OnLeave(self)
--- 	_G.HelpPlate_TooltipHide()
--- end
+local function InfoButton_OnLeave()
+	_G.HelpPlate_TooltipHide()
+end
 
--- function CFG:CreateInfoButton(parent, name, tooltipText)
--- 	local object = _G.CreateFrame("Button", "$parent"..name, parent)
--- 	object:SetSize(16, 16)
--- 	object:SetScript("OnEnter", InfoButton_OnEnter)
--- 	object:SetScript("OnLeave", InfoButton_OnLeave)
--- 	object.toolTipText = tooltipText
--- 	object.tooltipDir = "UP"
+function CFG:CreateInfoButton(parent, data)
+	local object = _G.CreateFrame("Button", data.name, parent)
+	object:SetSize(16, 16)
+	object:SetScript("OnClick", data.click)
+	object:SetScript("OnEnter", InfoButton_OnEnter)
+	object:SetScript("OnLeave", InfoButton_OnLeave)
+	object.toolTipText = data.tooltip_text
+	object.tooltipDir = "UP"
 
--- 	object:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
+	object:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
 
--- 	local texture = object:CreateTexture(nil, "ARTWORK")
--- 	texture:SetAllPoints()
--- 	texture:SetTexture("Interface\\COMMON\\help-i")
--- 	texture:SetTexCoord(13 / 64, 51 / 64, 13 / 64, 51 / 64)
--- 	texture:SetBlendMode("BLEND")
+	local texture = object:CreateTexture(nil, "ARTWORK")
+	texture:SetAllPoints()
+	texture:SetTexture("Interface\\COMMON\\help-i")
+	texture:SetTexCoord(13 / 64, 51 / 64, 13 / 64, 51 / 64)
+	texture:SetBlendMode("BLEND")
 
--- 	return object
--- end
+	return object
+end
 
 -- local function Controller_OnClick(self)
 -- 	CFG:ToggleDependantControls(self)
