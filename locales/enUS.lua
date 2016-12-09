@@ -57,6 +57,7 @@ L["STANCE_BAR"] = "Stance Bar"
 L["STANCE_BAR_SHORT"] = "Stance"
 
 L["BAGS"] = "Bags"
+L["ENABLE_BAGS"] = "Enable Bags"
 
 L["SETTINGS_ACTION_BARS_DESC"] = "Action bars, bags and stuff."
 
