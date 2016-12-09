@@ -10,7 +10,12 @@ function E:UpdateBarLayout(bar, buttons, bSize, bGap, initialAnchor, columns)
 	local level = bar:GetFrameLevel() + 1
 	local growthX = (initialAnchor == "TOPLEFT" or initialAnchor == "BOTTOMLEFT") and 1 or -1
 	local growthY = (initialAnchor == "BOTTOMLEFT" or initialAnchor == "BOTTOMRIGHT") and 1 or -1
-	columns = columns or #buttons
+
+	if columns and columns > #buttons then
+		columns = #buttons
+	else
+		columns = columns or #buttons
+	end
 
 	bar:SetSize(columns * (bSize + bGap), math.ceil(#buttons / columns) * (bSize + bGap))
 
