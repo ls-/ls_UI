@@ -114,11 +114,6 @@ function BARS:Bags_Init(isForced)
 
 		_G.RegisterStateDriver(bar, "visibility", CFG.visible and "show" or "hide")
 
-		if not C.bars.restricted then
-			bar:SetPoint(unpack(CFG.point))
-			E:CreateMover(bar)
-		end
-
 		_G.MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 		_G.MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
 		_G.MainMenuBarBackpackButton:HookScript("OnEvent", BackpackButton_Update)
@@ -144,12 +139,14 @@ function BARS:Bags_Init(isForced)
 
 		E:UpdateBarLayout(bar, bar.buttons, CFG.button_size, CFG.button_gap, CFG.init_anchor, CFG.buttons_per_row)
 
+		if not C.bars.restricted then
+			bar:SetPoint(unpack(CFG.point))
+			E:CreateMover(bar)
+		end
+
 		-- Finalise
 		_G.MainMenuBarBackpackButton_UpdateFreeSlots()
-
-		if isForced then
-			BackpackButton_Update(_G.MainMenuBarBackpackButton, "FORCE_UPDATE")
-		end
+		BackpackButton_Update(_G.MainMenuBarBackpackButton, "FORCE_UPDATE")
 
 		isInit = true
 	end

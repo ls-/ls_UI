@@ -177,6 +177,29 @@ local function UPDATE_OVERRIDE_ACTIONBAR()
 	end
 end
 
+----------------------
+-- UTILS & SETTINGS --
+----------------------
+
+function BARS:ToggleBar(key, isVisible)
+	local bar = actionbars[key]
+
+	if bar then
+		if isVisible then
+			return E:ResetFrameState(bar, "visibility")
+		else
+			return E:SetFrameState(bar, "visibility", "hide")
+		end
+	end
+end
+
+function BARS:UpdateLayout(key)
+	local bar = actionbars[key]
+
+	E:UpdateBarLayout(bar, bar.buttons, C.bars[key].button_size, C.bars[key].button_gap, C.bars[key].init_anchor, C.bars[key].buttons_per_row)
+	E:UpdateMoverSize(bar)
+end
+
 -----------------
 -- INITIALISER --
 -----------------
@@ -271,10 +294,10 @@ function BARS:ActionBars_Init()
 				_G.RegisterStateDriver(bar, "visibility", cfg.visible and data.visibility or "hide")
 			end
 
-			actionbars[bar] = key
+			actionbars[key] = bar
 		end
 
-		for bar, key in pairs(actionbars) do
+		for key, bar in pairs(actionbars) do
 			if not (key == "bar1" and C.bars.restricted) then
 				if CFG[key].point then
 					bar:SetPoint(unpack(CFG[key].point))
