@@ -899,14 +899,61 @@ end
 -----------------
 
 function CFG:Init()
+	_G.SetActionBarToggles(false, false, false, false)
+	_G.MultiActionBar_Update()
+	_G.UIParent_ManageFramePositions()
+
+	_G.InterfaceOptionsActionBarsPanelBottomLeft:SetChecked(true)
+	_G.InterfaceOptionsActionBarsPanelBottomLeft:Click()
+	_G.InterfaceOptionsActionBarsPanelBottomLeft:Disable()
+
+	_G.InterfaceOptionsActionBarsPanelBottomRight:SetChecked(true)
+	_G.InterfaceOptionsActionBarsPanelBottomRight:Click()
+	_G.InterfaceOptionsActionBarsPanelBottomRight:Disable()
+
+	_G.InterfaceOptionsActionBarsPanelRightTwo:SetChecked(true)
+	_G.InterfaceOptionsActionBarsPanelRightTwo:Click()
+	_G.InterfaceOptionsActionBarsPanelRightTwo:Disable()
+
+	_G.InterfaceOptionsActionBarsPanelRight:SetChecked(true)
+	_G.InterfaceOptionsActionBarsPanelRight:Click()
+	_G.InterfaceOptionsActionBarsPanelRight:Disable()
+
+	local infoButton = CFG:CreateInfoButton(_G.InterfaceOptionsActionBarsPanel,
+		{
+			name = "$parentLSUIBarsInfo",
+			tooltip_text = L["ACTION_BARS_INFO_TOOLTIP"],
+			click = function()
+				if not _G.LSUIBarsConfigPanel then
+					CFG:General_Init()
+					CFG:AuraTracker_Init()
+					CFG:Bars_Init()
+
+					_G.InterfaceAddOnsList_Update()
+					_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
+					return _G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIBarsConfigPanel)
+				end
+
+				if not _G.LSUIBarsConfigPanel:IsShown() then
+					_G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIBarsConfigPanel)
+				else
+					_G.InterfaceOptionsFrameOkay_OnClick(_G.InterfaceOptionsFrame)
+				end
+			end
+		})
+	infoButton:SetPoint("LEFT", "InterfaceOptionsActionBarsPanelBottomLeftText", "RIGHT", 6, 0)
+
 	_G.SLASH_LSUI1 = "/lsui"
 	_G.SlashCmdList["LSUI"] = function(msg)
 		if msg == "" then
 			if not _G.LSUIGeneralConfigPanel then
 				CFG:General_Init()
 				CFG:AuraTracker_Init()
+				CFG:Bars_Init()
 
-				_G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIGeneralConfigPanel)
+				_G.InterfaceAddOnsList_Update()
+				_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
+				return _G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIGeneralConfigPanel)
 			end
 
 			if not _G.LSUIGeneralConfigPanel:IsShown() then

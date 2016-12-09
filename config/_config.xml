@@ -2,6 +2,6 @@
 	<Script file="core.lua"/>
 	<Script file="general.lua"/>
 	<Script file="auratracker.lua"/>
-<!-- 	<Script file="bars.lua"/>
-	<Script file="auras.lua"/> -->
+	<Script file="bars.lua"/>
+	<!-- <Script file="auras.lua"/> -->
 </Ui>
