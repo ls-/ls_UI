@@ -438,7 +438,7 @@ function CFG:Bars_Init()
 		{
 			parent = panel,
 			name = "$parentBarsToggle",
-			text = L["BAGS"],
+			text = L["ENABLE_BAGS"],
 			get = function() return C.bars.bags.enabled end,
 			set = function(_, value)
 				C.bars.bags.enabled = value
