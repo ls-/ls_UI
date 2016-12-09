@@ -33,8 +33,6 @@ end
 local function AuraList_Update(frame)
 	if not frame.buttons then return end
 
-	-- _G.DevTools_Dump(frame.table)
-
 	for i = 1, 10 do
 		local button = frame.buttons[i]
 
@@ -47,11 +45,7 @@ local function AuraList_Update(frame)
 
 	PrepareSortedAuraList(frame.table)
 
-	if #sortedAuras == 0 then
-		frame.WipeButton:Disable()
-	else
-		frame.WipeButton:Enable()
-
+	if #sortedAuras ~= 0 then
 		local offset = _G.FauxScrollFrame_GetOffset(frame)
 		local total = 0
 
@@ -105,7 +99,8 @@ function CFG:AuraTracker_Init()
 
 	local atToggle = CFG:CreateCheckButton(panel,
 		{
-			name = "AuraTrackerToggle",
+			parent = panel,
+			name = "$parentAuraTrackerToggle",
 			text = L["ENABLE"],
 			get = function() return C.auratracker.enabled end,
 			set = function(_, value)
@@ -121,17 +116,27 @@ function CFG:AuraTracker_Init()
 
 				if isChecked then
 					if AURATRACKER:IsInit() then
-						panel.Log:SetText(string.format(L["LOG_MODULE_ENABLED_ERR"], L["AURA_TRACKER"]))
+						panel.Log:SetText(string.format(
+							L["LOG_ENABLED_ERR"],
+							L["AURA_TRACKER"]))
 					else
 						local result = AURATRACKER:Init(true)
 
 						if result then
-							panel.Log:SetText(string.format(L["LOG_MODULE_ENABLED"], L["ICON_GREEN_INLINE"], L["AURA_TRACKER"], ""))
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["AURA_TRACKER"],
+								""))
 						end
 					end
 				else
 					if AURATRACKER:IsInit() then
-						panel.Log:SetText(string.format(L["LOG_MODULE_DISABLED"], L["ICON_RED_INLINE"], L["AURA_TRACKER"], L["REQUIRES_RELOAD"]))
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["AURA_TRACKER"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -140,7 +145,8 @@ function CFG:AuraTracker_Init()
 
 	local lockToggle = CFG:CreateCheckButton(panel,
 		{
-			name = "LockToggle",
+			parent = panel,
+			name = "$parentLockToggle",
 			text = L["LOCK_FRAME"],
 			get = function() return C.auratracker.locked end,
 			set = function(_, value)
@@ -159,7 +165,7 @@ function CFG:AuraTracker_Init()
 				end
 			end,
 		})
-	lockToggle:SetPoint("LEFT", atToggle, "RIGHT", 112, 0)
+	lockToggle:SetPoint("LEFT", atToggle, "RIGHT", 110, 0)
 
 	local auraList = CFG:CreateAuraList(panel,
 		{ -- aura list data
@@ -197,6 +203,7 @@ function CFG:AuraTracker_Init()
 
 	local buttonSizeSlider = CFG:CreateSlider(panel,
 		{
+			parent = panel,
 			name = "$parentButtonSizeSlider",
 			min = 32,
 			max = 48,
@@ -217,6 +224,7 @@ function CFG:AuraTracker_Init()
 
 	local buttonSpacingSlider = CFG:CreateSlider(panel,
 		{
+			parent = panel,
 			name = "$parentButtonSpacingSlider",
 			min = 2,
 			max = 12,
@@ -236,6 +244,7 @@ function CFG:AuraTracker_Init()
 
 	local buttonsPerRowSlider = CFG:CreateSlider(panel,
 		{
+			parent = panel,
 			name = "$parentButtonsPerRowSlider",
 			min = 1,
 			max = 12,
@@ -255,6 +264,7 @@ function CFG:AuraTracker_Init()
 
 	local growthDropdown = CFG:CreateDropDownMenu(panel,
 		{
+			parent = panel,
 			name = "$parentInitAnchorDropDown",
 			text = L["BUTTON_ANCHOR_POINT"],
 			init = function(self)
