@@ -17,8 +17,8 @@ function Blizzard:Timer_IsInit()
 	return isInit
 end
 
-function Blizzard:Timer_Init(isForced)
-	if not isInit and (C.blizzard.timer.enabled or isForced) then
+function Blizzard:Timer_Init()
+	if not isInit and C.blizzard.timer.enabled then
 		E:HandleStatusBar(_G.MirrorTimer1)
 		E:SetStatusBarSkin(_G.MirrorTimer1, "HORIZONTAL-L")
 
@@ -51,5 +51,7 @@ function Blizzard:Timer_Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

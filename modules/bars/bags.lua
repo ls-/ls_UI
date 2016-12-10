@@ -102,8 +102,8 @@ function BARS:Bags_IsInit()
 	return isInit
 end
 
-function BARS:Bags_Init(isForced)
-	if not isInit and (C.bars.bags.enabled or isForced) then
+function BARS:Bags_Init()
+	if not isInit and C.bars.bags.enabled then
 		if not C.bars.restricted then
 			CFG = C.bars.bags
 		end
@@ -149,5 +149,7 @@ function BARS:Bags_Init(isForced)
 		BackpackButton_Update(_G.MainMenuBarBackpackButton, "FORCE_UPDATE")
 
 		isInit = true
+
+		return true
 	end
 end

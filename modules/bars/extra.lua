@@ -34,5 +34,7 @@ function BARS:ExtraActionButton_Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

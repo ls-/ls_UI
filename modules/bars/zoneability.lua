@@ -33,5 +33,7 @@ function BARS:ZoneAbilityButton_Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

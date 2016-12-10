@@ -221,8 +221,8 @@ function Mail:IsInit()
 	return isInit
 end
 
-function Mail:Init(isForced)
-	if not isInit and (C.mail.enabled or isForced) then
+function Mail:Init()
+	if not isInit and C.mail.enabled then
 		local button = E:CreateCheckButton(_G.InboxFrame, "$parentReceiveMailButton")
 		button:SetPoint("BOTTOMRIGHT", _G.MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")
@@ -239,5 +239,7 @@ function Mail:Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

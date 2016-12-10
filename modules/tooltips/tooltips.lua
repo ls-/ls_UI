@@ -529,7 +529,7 @@ function TOOLTIPS:IsInit()
 end
 
 function TOOLTIPS:Init()
-	if C.tooltips.enabled then
+	if not isInit and C.tooltips.enabled then
 		-- XXX: It's done the way it's done for a reason
 
 		-- Spells

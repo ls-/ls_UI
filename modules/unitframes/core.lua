@@ -10,6 +10,7 @@ local tonumber = _G.tonumber
 local unpack = _G.unpack
 
 -- Mine
+local isInit = false
 local objects = {}
 
 local function LSUnitFrame_OnEnter(self)
@@ -187,8 +188,21 @@ local function MainConstructor()
 	-- end
 end
 
-function UF:Init(forceInit)
-	if C.units.enabled or forceInit then
+-----------------
+-- INITIALISER --
+-----------------
+
+function UF:IsInit()
+	return isInit
+end
+
+function UF:Init()
+	if not isInit and C.units.enabled then
 		oUF:Factory(MainConstructor)
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

@@ -77,5 +77,10 @@ function BARS:PetBattleBar_Init()
 
 			E:UpdateBarLayout(bar, bar.buttons, CFG.button_size, CFG.button_gap, CFG.init_anchor, CFG.buttons_per_row)
 		end)
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

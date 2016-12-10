@@ -61,5 +61,7 @@ function BARS:VehicleExitButton_Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

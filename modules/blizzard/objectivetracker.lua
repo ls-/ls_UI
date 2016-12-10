@@ -8,6 +8,10 @@ local _G = _G
 -- Mine
 local isInit = false
 
+--------------
+-- SETTINGS --
+--------------
+
 function BLIZZARD:ObjectiveTracker_SetHeight(height)
 	_G.ObjectiveTrackerFrame:SetHeight(height)
 end
@@ -20,8 +24,8 @@ function BLIZZARD:ObjectiveTracker_IsInit()
 	return isInit
 end
 
-function BLIZZARD:ObjectiveTracker_Init(forceEnable)
-	if not isInit and (C.blizzard.objective_tracker.enabled or forceEnable) then
+function BLIZZARD:ObjectiveTracker_Init()
+	if not isInit and C.blizzard.objective_tracker.enabled then
 		local header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
 		header:SetFrameStrata("LOW")
 		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
@@ -59,5 +63,7 @@ function BLIZZARD:ObjectiveTracker_Init(forceEnable)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

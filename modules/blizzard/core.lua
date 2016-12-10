@@ -13,18 +13,18 @@ function BLIZZARD:IsInit()
 	return isInit
 end
 
-function BLIZZARD:Init(isForced)
-	if not isInit and (C.blizzard.enabled or isForced) then
-		self:CommandBar_Init(isForced)
-		self:DigsiteBar_Init(isForced)
-		self:Durability_Init(isForced)
-		self:GM_Init(isForced)
-		self:NPE_Init(isForced)
-		self:ObjectiveTracker_Init(isForced)
-		self:PlayerAltPowerBar_Init(isForced)
-		self:TalkingHead_Init(isForced)
-		self:Timer_Init(isForced)
-		self:Vehicle_Init(isForced)
+function BLIZZARD:Init()
+	if not isInit and C.blizzard.enabled then
+		self:CommandBar_Init()
+		self:DigsiteBar_Init()
+		self:Durability_Init()
+		self:GM_Init()
+		self:NPE_Init()
+		self:ObjectiveTracker_Init()
+		self:PlayerAltPowerBar_Init()
+		self:TalkingHead_Init()
+		self:Timer_Init()
+		self:Vehicle_Init()
 
 		-- Finalise
 		isInit = true

@@ -17,8 +17,8 @@ function AURAS:IsInit()
 	return isInit
 end
 
-function AURAS:Init(isForced)
-	if not isInit and (C.auras.enabled or isForced) then
+function AURAS:Init()
+	if not isInit and C.auras.enabled then
 		-- Buffs
 		local buffHeader = _G.CreateFrame("Frame", "LSBuffHeader", _G.UIParent)
 		buffHeader:SetSize(C.auras.aura_size + C.auras.aura_gap, C.auras.aura_size + C.auras.aura_gap)
@@ -105,5 +105,10 @@ function AURAS:Init(isForced)
 		end
 
 		_G.TemporaryEnchantFrame_Update(_G.GetWeaponEnchantInfo())
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

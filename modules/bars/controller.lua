@@ -273,5 +273,7 @@ function BARS:ActionBarController_Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

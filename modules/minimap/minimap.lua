@@ -388,8 +388,8 @@ function MINIMAP:IsInit()
 	return isInit
 end
 
-function MINIMAP:Init(isForced)
-	if not isInit and (C.minimap.enabled or isForced) then
+function MINIMAP:Init()
+	if not isInit and C.minimap.enabled then
 		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
 			_G.LoadAddOn("Blizzard_TimeManager")
 		end
@@ -592,5 +592,7 @@ function MINIMAP:Init(isForced)
 		ag:Play()
 
 		isInit = true
+
+		return true
 	end
 end

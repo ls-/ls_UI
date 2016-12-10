@@ -384,5 +384,7 @@ function BARS:ActionBars_Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

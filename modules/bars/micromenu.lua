@@ -783,4 +783,6 @@ function BARS:MicroMenu_Init()
 	end)
 
 	isInit = true
+
+	return true
 end

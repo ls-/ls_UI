@@ -148,8 +148,8 @@ function AURATRACKER:IsInit()
 	return isInit
 end
 
-function AURATRACKER:Init(isForced)
-	if not isInit and (C.auratracker.enabled or isForced) then
+function AURATRACKER:Init()
+	if not isInit and C.auratracker.enabled then
 		HandleDataCorruption("HELPFUL")
 		HandleDataCorruption("HARMFUL")
 
@@ -208,11 +208,8 @@ function AURATRACKER:Init(isForced)
 		end
 
 		-- Finalise
-		if isForced then
-			self:Refresh()
-		end
-
 		self:ToggleHeader(not C.auratracker.locked)
+		self:Refresh()
 
 		isInit = true
 

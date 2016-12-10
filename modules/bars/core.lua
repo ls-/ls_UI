@@ -56,8 +56,8 @@ function BARS:IsInit()
 	return isInit
 end
 
-function BARS:Init(isForced)
-	if not isInit and (C.bars.enabled or isForced) then
+function BARS:Init()
+	if not isInit and C.bars.enabled then
 		self:ActionBars_Init()
 		self:Bags_Init()
 		self:ExtraActionButton_Init()

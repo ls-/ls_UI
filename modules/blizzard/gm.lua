@@ -16,8 +16,8 @@ function BLIZZARD:GM_IsInit()
 	return isInit
 end
 
-function BLIZZARD:GM_Init(isForced)
-	if not isInit and (C.blizzard.gm.enabled or isForced) then
+function BLIZZARD:GM_Init()
+	if not isInit and C.blizzard.gm.enabled then
 		_G.TicketStatusFrame:ClearAllPoints()
 		_G.TicketStatusFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -136, -168)
 		E:CreateMover(_G.TicketStatusFrame)
@@ -39,5 +39,7 @@ function BLIZZARD:GM_Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

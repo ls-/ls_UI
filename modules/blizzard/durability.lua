@@ -16,8 +16,8 @@ function BLIZZARD:Durability_IsInit()
 	return isInit
 end
 
-function BLIZZARD:Durability_Init(isForced)
-	if not isInit and (C.blizzard.durability.enabled or isForced) then
+function BLIZZARD:Durability_Init()
+	if not isInit and C.blizzard.durability.enabled then
 		_G.DurabilityFrame:ClearAllPoints()
 		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
 		E:CreateMover(_G.DurabilityFrame)
@@ -39,5 +39,7 @@ function BLIZZARD:Durability_Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

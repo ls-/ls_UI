@@ -18,8 +18,8 @@ function BLIZZARD:TalkingHead_IsInit()
 	return isInit
 end
 
-function BLIZZARD:TalkingHead_Init(isForced)
-	if not isInit and (C.blizzard.talking_head.enabled or isForced) then
+function BLIZZARD:TalkingHead_Init()
+	if not isInit and C.blizzard.talking_head.enabled then
 		local isLoaded = true
 
 		if not _G.IsAddOnLoaded("Blizzard_TalkingHeadUI") then
@@ -42,6 +42,8 @@ function BLIZZARD:TalkingHead_Init(isForced)
 
 			-- Finalise
 			isInit = true
+
+			return true
 		end
 	end
 end
