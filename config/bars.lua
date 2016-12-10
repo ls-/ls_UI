@@ -10,7 +10,7 @@ local string = _G.string
 -- Mine
 function CFG:Bars_Init()
 	local panel = _G.CreateFrame("Frame", "LSUIBarsConfigPanel", _G.InterfaceOptionsFramePanelContainer)
-	panel.name = L["ACTION_BARS"]
+	panel.name = L["ACTION_BAR"]
 	panel.parent = L["LS_UI"]
 	panel:Hide()
 
@@ -18,7 +18,7 @@ function CFG:Bars_Init()
 	title:SetPoint("TOPLEFT", 16, -16)
 	title:SetJustifyH("LEFT")
 	title:SetJustifyV("TOP")
-	title:SetText(L["ACTION_BARS"])
+	title:SetText(L["ACTION_BAR"])
 
 	local subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	subtext:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
@@ -28,7 +28,7 @@ function CFG:Bars_Init()
 	subtext:SetJustifyV("TOP")
 	subtext:SetNonSpaceWrap(true)
 	subtext:SetMaxLines(4)
-	subtext:SetText(L["SETTINGS_ACTION_BARS_DESC"])
+	subtext:SetText(L["ACTION_BAR_DESC"])
 
 	local barsToggle = CFG:CreateCheckButton(panel,
 		{
@@ -51,7 +51,7 @@ function CFG:Bars_Init()
 					if BARS:IsInit() then
 						panel.Log:SetText(string.format(
 							L["LOG_ENABLED_ERR"],
-							L["ACTION_BARS"]))
+							L["ACTION_BAR"]))
 					else
 						local result = BARS:Init(true)
 
@@ -59,8 +59,27 @@ function CFG:Bars_Init()
 							panel.Log:SetText(string.format(
 								L["LOG_ENABLED"],
 								L["ICON_GREEN_INLINE"],
-								L["ACTION_BARS"],
+								L["ACTION_BAR"],
 								""))
+
+							if BARS:ActionBarController_IsInit() then
+								_G.PanelTemplates_SetTab(panel.TabbedFrame, 2)
+								_G.PanelTemplates_DisableTab(panel.TabbedFrame, 1)
+
+								panel.TabbedFrame.key = "bar2"
+								panel.TabbedFrame.ButtonSizeSlider.key = "bar2"
+								panel.TabbedFrame.ButtonSpacingSlider.key = "bar2"
+								panel.TabbedFrame.ButtonsPerRowSlider.key = "bar2"
+								panel.TabbedFrame.GrowthDropdown.key = "bar2"
+							else
+								_G.PanelTemplates_SetTab(panel.TabbedFrame, 1)
+
+								panel.TabbedFrame.key = "bar1"
+								panel.TabbedFrame.ButtonSizeSlider.key = "bar1"
+								panel.TabbedFrame.ButtonSpacingSlider.key = "bar1"
+								panel.TabbedFrame.ButtonsPerRowSlider.key = "bar1"
+								panel.TabbedFrame.GrowthDropdown.key = "bar1"
+							end
 						end
 					end
 				else
@@ -68,12 +87,12 @@ function CFG:Bars_Init()
 						panel.Log:SetText(string.format(
 							L["LOG_DISABLED"],
 							L["ICON_YELLOW_INLINE"],
-							L["ACTION_BARS"],
+							L["ACTION_BAR"],
 							L["REQUIRES_RELOAD"]))
 					else
 						panel.Log:SetText(string.format(
 							L["LOG_DISABLED_ERR"],
-							L["ACTION_BARS"]))
+							L["ACTION_BAR"]))
 					end
 				end
 			end
@@ -98,29 +117,31 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				if isChecked then
-					if BARS:ActionBarController_IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED_ERR"],
-							L["ACTION_BAR_RESTRICTED_MODE"]))
+				if BARS:IsInit() then
+					if isChecked then
+						if BARS:ActionBarController_IsInit() then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["ACTION_BAR_RESTRICTED_MODE"]))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_YELLOW_INLINE"],
+								L["ACTION_BAR_RESTRICTED_MODE"],
+								L["REQUIRES_RELOAD"]))
+						end
 					else
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["ACTION_BAR_RESTRICTED_MODE"],
-							L["REQUIRES_RELOAD"]))
-					end
-				else
-					if BARS:ActionBarController_IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["ACTION_BAR_RESTRICTED_MODE"],
-							L["REQUIRES_RELOAD"]))
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED_ERR"],
-							L["ACTION_BAR_RESTRICTED_MODE"]))
+						if BARS:ActionBarController_IsInit() then
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED"],
+								L["ICON_YELLOW_INLINE"],
+								L["ACTION_BAR_RESTRICTED_MODE"],
+								L["REQUIRES_RELOAD"]))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED_ERR"],
+								L["ACTION_BAR_RESTRICTED_MODE"]))
+						end
 					end
 				end
 			end,
@@ -147,7 +168,9 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar2", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar2", isChecked)
+				end
 			end
 		})
 	ab2Toggle:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
@@ -169,7 +192,9 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar3", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar3", isChecked)
+				end
 			end
 		})
 	ab3Toggle:SetPoint("LEFT", ab2Toggle, "RIGHT", 110, 0)
@@ -191,7 +216,9 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar4", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar4", isChecked)
+				end
 			end
 		})
 	ab4Toggle:SetPoint("LEFT", ab3Toggle, "RIGHT", 110, 0)
@@ -213,7 +240,9 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar5", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar5", isChecked)
+				end
 			end
 		})
 	ab5Toggle:SetPoint("LEFT", ab4Toggle, "RIGHT", 110, 0)
@@ -235,7 +264,9 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar6", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar6", isChecked)
+				end
 			end
 		})
 	ab6Toggle:SetPoint("TOPLEFT", ab2Toggle, "BOTTOMLEFT", 0, -8)
@@ -257,13 +288,63 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				BARS:ToggleBar("bar7", isChecked)
+				if BARS:IsInit() then
+					BARS:ToggleBar("bar7", isChecked)
+				end
 			end
 		})
 	ab7Toggle:SetPoint("LEFT", ab6Toggle, "RIGHT", 110, 0)
 
 	divider = CFG:CreateDivider(panel, L["BUTTONS"])
 	divider:SetPoint("TOP", ab6Toggle, "BOTTOM", 0, -10)
+
+	local macroToggle = CFG:CreateCheckButton(panel,
+		{
+			parent = panel,
+			name = "$parentMacroTextToggle",
+			text = L["MACRO_TEXT"],
+			get = function() return C.bars.show_name end,
+			set = function(_, value)
+				C.bars.show_name = value
+			end,
+			refresh = function(self)
+				self:SetChecked(C.bars.show_name)
+			end,
+			click = function(self)
+				local isChecked = self:GetChecked()
+
+				self:SetValue(isChecked)
+
+				if BARS:IsInit() then
+					BARS:ToggleMacroText(isChecked)
+				end
+			end
+		})
+	macroToggle:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
+
+	local hotKeyText = CFG:CreateCheckButton(panel,
+		{
+			parent = panel,
+			name = "$parentHotKeyToggle",
+			text = L["KEY_BINDING_TEXT"],
+			get = function() return C.bars.show_hotkey end,
+			set = function(_, value)
+				C.bars.show_hotkey = value
+			end,
+			refresh = function(self)
+				self:SetChecked(C.bars.show_hotkey)
+			end,
+			click = function(self)
+				local isChecked = self:GetChecked()
+
+				self:SetValue(isChecked)
+
+				if BARS:IsInit() then
+					BARS:ToggleHotKeyText(isChecked)
+				end
+			end
+		})
+	hotKeyText:SetPoint("LEFT", macroToggle, "RIGHT", 110, 0)
 
 	local tabbedFrame = CFG:CreateTabbedFrame(panel,
 		{
@@ -315,9 +396,10 @@ function CFG:Bars_Init()
 				},
 			},
 		})
-	tabbedFrame:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -40)
+	tabbedFrame:SetPoint("TOPLEFT", macroToggle, "BOTTOMLEFT", 6, -40)
 	tabbedFrame:SetPoint("RIGHT", panel, "RIGHT", -16, 0)
 	tabbedFrame:SetHeight(112)
+	panel.TabbedFrame = tabbedFrame
 
 	local buttonSizeSlider = CFG:CreateSlider(panel,
 		{
@@ -331,7 +413,9 @@ function CFG:Bars_Init()
 			set = function(self, value)
 				C.bars[self.key].button_size = value
 
-				BARS:UpdateLayout(self.key)
+				if BARS:IsInit() then
+					BARS:UpdateLayout(self.key)
+				end
 			end,
 		})
 	buttonSizeSlider:SetPoint("TOPLEFT", tabbedFrame, "TOPLEFT", 16, -22)
@@ -349,11 +433,13 @@ function CFG:Bars_Init()
 			set = function(self, value)
 				C.bars[self.key].button_gap = value
 
-				BARS:UpdateLayout(self.key)
+				if BARS:IsInit() then
+					BARS:UpdateLayout(self.key)
+				end
 			end,
 
 		})
-	buttonSpacingSlider:SetPoint("LEFT", buttonSizeSlider, "RIGHT", 64, 0)
+	buttonSpacingSlider:SetPoint("LEFT", buttonSizeSlider, "RIGHT", 61, 0)
 	tabbedFrame.ButtonSpacingSlider = buttonSpacingSlider
 
 	local buttonsPerRowSlider = CFG:CreateSlider(panel,
@@ -368,11 +454,12 @@ function CFG:Bars_Init()
 			set = function(self, value)
 				C.bars[self.key].buttons_per_row = value
 
-				BARS:UpdateLayout(self.key)
+				if BARS:IsInit() then
+					BARS:UpdateLayout(self.key)
+				end
 			end,
-
 		})
-	buttonsPerRowSlider:SetPoint("LEFT", buttonSpacingSlider, "RIGHT", 64, 0)
+	buttonsPerRowSlider:SetPoint("LEFT", buttonSpacingSlider, "RIGHT", 61, 0)
 	tabbedFrame.ButtonsPerRowSlider = buttonsPerRowSlider
 
 	local growthDropdown = CFG:CreateDropDownMenu(panel,
@@ -406,7 +493,9 @@ function CFG:Bars_Init()
 
 				C.bars[self.key].init_anchor = value
 
-				BARS:UpdateLayout(self.key)
+				if BARS:IsInit() then
+					BARS:UpdateLayout(self.key)
+				end
 			end,
 		})
 	growthDropdown:SetPoint("TOPLEFT", buttonSizeSlider, "BOTTOMLEFT", -18, -32)
@@ -451,41 +540,43 @@ function CFG:Bars_Init()
 
 				self:SetValue(isChecked)
 
-				if isChecked then
-					if BARS:Bags_IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED_ERR"],
-							L["BAGS"]))
-					else
-						if BARS:ActionBarController_IsInit() then
+				if BARS:IsInit() then
+					if isChecked then
+						if BARS:Bags_IsInit() then
 							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
+								L["LOG_ENABLED_ERR"],
+								L["BAGS"]))
+						else
+							if BARS:ActionBarController_IsInit() then
+								panel.Log:SetText(string.format(
+									L["LOG_ENABLED"],
+									L["ICON_YELLOW_INLINE"],
+									L["BAGS"],
+									L["REQUIRES_RELOAD"]))
+							else
+								local result = BARS:Bags_Init(true)
+
+								if result then
+									panel.Log:SetText(string.format(
+										L["LOG_ENABLED"],
+										L["ICON_GREEN_INLINE"],
+										L["BAGS"],
+										""))
+								end
+							end
+						end
+					else
+						if BARS:Bags_IsInit() then
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED"],
 								L["ICON_YELLOW_INLINE"],
 								L["BAGS"],
 								L["REQUIRES_RELOAD"]))
 						else
-							local result = BARS:Bags_Init(true)
-
-							if result then
-								panel.Log:SetText(string.format(
-									L["LOG_ENABLED"],
-									L["ICON_GREEN_INLINE"],
-									L["BAGS"],
-									""))
-							end
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED_ERR"],
+								L["BAGS"]))
 						end
-					end
-				else
-					if BARS:Bags_IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BAGS"],
-							L["REQUIRES_RELOAD"]))
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED_ERR"],
-							L["BAGS"]))
 					end
 				end
 			end

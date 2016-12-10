@@ -28,7 +28,7 @@ function CFG:General_Init()
 	subtext:SetJustifyV("TOP")
 	subtext:SetNonSpaceWrap(true)
 	subtext:SetMaxLines(4)
-	subtext:SetText(L["SETTINGS_GENERAL_DESC"])
+	subtext:SetText(L["LS_UI_DESC"])
 
 	local divider = CFG:CreateDivider(panel, L["INFO"])
 	divider:SetPoint("TOP", subtext, "BOTTOM", 0, -10)

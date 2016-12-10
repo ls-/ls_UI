@@ -894,6 +894,26 @@ end
 -- 	end
 -- end
 
+local function OpenToCategory(category)
+	if not _G[category] then
+		CFG:General_Init()
+		CFG:AuraTracker_Init()
+		CFG:Bars_Init()
+		CFG:Blizzard_Init()
+		CFG:Tooltips_Init()
+
+		_G.InterfaceAddOnsList_Update()
+		_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
+		return _G.InterfaceOptionsFrame_OpenToCategory(_G[category])
+	end
+
+	if not _G[category]:IsShown() then
+		_G.InterfaceOptionsFrame_OpenToCategory(_G[category])
+	else
+		_G.InterfaceOptionsFrameOkay_OnClick(_G.InterfaceOptionsFrame)
+	end
+end
+
 -----------------
 -- INITIALISER --
 -----------------
@@ -922,23 +942,9 @@ function CFG:Init()
 	local infoButton = CFG:CreateInfoButton(_G.InterfaceOptionsActionBarsPanel,
 		{
 			name = "$parentLSUIBarsInfo",
-			tooltip_text = L["ACTION_BARS_INFO_TOOLTIP"],
+			tooltip_text = L["ACTION_BAR_INFO_TOOLTIP"],
 			click = function()
-				if not _G.LSUIBarsConfigPanel then
-					CFG:General_Init()
-					CFG:AuraTracker_Init()
-					CFG:Bars_Init()
-
-					_G.InterfaceAddOnsList_Update()
-					_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
-					return _G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIBarsConfigPanel)
-				end
-
-				if not _G.LSUIBarsConfigPanel:IsShown() then
-					_G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIBarsConfigPanel)
-				else
-					_G.InterfaceOptionsFrameOkay_OnClick(_G.InterfaceOptionsFrame)
-				end
+				OpenToCategory("LSUIBarsConfigPanel")
 			end
 		})
 	infoButton:SetPoint("LEFT", "InterfaceOptionsActionBarsPanelBottomLeftText", "RIGHT", 6, 0)
@@ -946,21 +952,7 @@ function CFG:Init()
 	_G.SLASH_LSUI1 = "/lsui"
 	_G.SlashCmdList["LSUI"] = function(msg)
 		if msg == "" then
-			if not _G.LSUIGeneralConfigPanel then
-				CFG:General_Init()
-				CFG:AuraTracker_Init()
-				CFG:Bars_Init()
-
-				_G.InterfaceAddOnsList_Update()
-				_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
-				return _G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIGeneralConfigPanel)
-			end
-
-			if not _G.LSUIGeneralConfigPanel:IsShown() then
-				_G.InterfaceOptionsFrame_OpenToCategory(_G.LSUIGeneralConfigPanel)
-			else
-				_G.InterfaceOptionsFrameOkay_OnClick(_G.InterfaceOptionsFrame)
-			end
+			OpenToCategory("LSUIGeneralConfigPanel")
 		end
 	end
 end

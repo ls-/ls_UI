@@ -95,7 +95,7 @@ function CFG:AuraTracker_Init()
 	subtext:SetJustifyV("TOP")
 	subtext:SetNonSpaceWrap(true)
 	subtext:SetMaxLines(4)
-	subtext:SetText(L["SETTINGS_AURA_TRACKER_DESC"])
+	subtext:SetText(L["AURA_TRACKER_DESC"])
 
 	local atToggle = CFG:CreateCheckButton(panel,
 		{

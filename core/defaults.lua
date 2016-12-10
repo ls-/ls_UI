@@ -203,11 +203,11 @@ D["auras"] = {
 
 D["tooltips"] = {
 	enabled = true,
+	show_id = true,
 	unit = {
-		name_color_disconnected = true,
 		name_color_pvp_hostility = true,
 		name_color_class = true,
-		name_color_tapped = true,
+		name_color_tapping = true,
 		name_color_reaction = true,
 	}
 }
