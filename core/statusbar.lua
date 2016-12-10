@@ -277,3 +277,7 @@ function E:SetStatusBarSkin(bar, skinType)
 end
 
 E.SetBarSkin = E.SetStatusBarSkin
+
+for i = 1, 6 do
+	E:AddTooltipStatusBar(_G.GameTooltip, i)
+end

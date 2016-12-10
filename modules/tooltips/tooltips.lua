@@ -622,11 +622,6 @@ function TOOLTIPS:Init()
 		hooksecurefunc(GameTooltip, "SetLFGDungeonReward", Tooltip_SetLFGDungeonReward)
 		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", Tooltip_SetLFGDungeonShortageReward)
 
-		-- Status bars
-		for i = 1, 6 do
-			E:AddTooltipStatusBar(GameTooltip, i)
-		end
-
 		local function GameTooltipStatusBar_OnValueChanged(bar, value)
 			if not value then return end
 
