@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local TOOLTIPS = P:AddModule("Tooltip")
+local TOOLTIPS = P:AddModule("Tooltips")
 
 -- Lua
 local _G = _G
@@ -31,7 +31,7 @@ local lastGUID
 -----------
 
 local function AddGenericInfo(tooltip, id)
-	if not id then return end
+	if not (id and C.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -50,7 +50,7 @@ local function AddGenericInfo(tooltip, id)
 end
 
 local function AddSpellInfo(tooltip, id, caster)
-	if not id then return end
+	if not (id and C.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -81,7 +81,7 @@ local function AddSpellInfo(tooltip, id, caster)
 end
 
 local function AddItemInfo(tooltip, id, showQuantity)
-	if not id then return end
+	if not (id and C.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -353,10 +353,9 @@ local function Tooltip_SetUnit(self)
 	local effectiveLevel = _G.UnitEffectiveLevel(unit)
 	local nameColor = E:GetUnitColor(
 		unit,
-		C.tooltips.unit.name_color_disconnected,
 		C.tooltips.unit.name_color_pvp_hostility,
 		C.tooltips.unit.name_color_class,
-		C.tooltips.unit.name_color_tapped,
+		C.tooltips.unit.name_color_tapping,
 		C.tooltips.unit.name_color_reaction)
 	local difficultyColor = E:GetCreatureDifficultyColor(effectiveLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
@@ -493,9 +492,9 @@ local function Tooltip_SetUnit(self)
 		name = _G.UnitName(unitTarget)
 
 		if _G.UnitIsPlayer(unitTarget) then
- 			name = string.format(PLAYER_TEMPLATE, E:GetUnitClassColor(unitTarget):GetHEX(), name, E:GetUnitColor(unitTarget, true, true):GetHEX())
+ 			name = string.format(PLAYER_TEMPLATE, E:GetUnitClassColor(unitTarget):GetHEX(), name, E:GetUnitColor(unitTarget, true):GetHEX())
 		else
-			name = string.format("|cff%s%s|r", E:GetUnitColor(unitTarget, false, false, false, true, true):GetHEX(), name)
+			name = string.format("|cff%s%s|r", E:GetUnitColor(unitTarget, false, false, true, true):GetHEX(), name)
 		end
 
 		self:AddLine(string.format(TARGET, name), 1, 1, 1)
@@ -675,5 +674,7 @@ function TOOLTIPS:Init()
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end
