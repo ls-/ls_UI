@@ -13,7 +13,7 @@ local SHEEPABLE_TYPES = {
 }
 
 oUF.Tags.Methods["ls:unitcolor"] = function(unit, r)
-	return "|cff"..E:GetUnitColor(r or unit, true, false, true, true, true):GetHEX()
+	return "|cff"..E:GetUnitColor(r or unit, false, true, true, true):GetHEX()
 end
 
 oUF.Tags.Events["ls:unitcolor"] = "UNIT_HEALTH UNIT_CONNECTION UNIT_THREAT_SITUATION_UPDATE UNIT_FACTION"

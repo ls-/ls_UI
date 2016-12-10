@@ -396,12 +396,10 @@ function E:GetUnitReactionColor(unit)
 	return GetUnitReactionColor(unit) or M.COLORS.REACTION[4]
 end
 
-function E:GetUnitColor(unit, cDisconnected, cPvPHostility, cClass, cTapped, cReaction)
+function E:GetUnitColor(unit, cPvPHostility, cClass, cTapped, cReaction)
 	local color
 
-	if cDisconnected then
-		color = GetUnitDisconnectedColor(unit)
-	end
+	color = GetUnitDisconnectedColor(unit)
 
 	if not color and cPvPHostility then
 		color = GetUnitPVPHostilityColor(unit)
