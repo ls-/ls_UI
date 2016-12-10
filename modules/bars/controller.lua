@@ -88,7 +88,7 @@ local function CreateCap(side)
 	button.Bg = bg
 
 	-- Micro menu artwork
-	local nest = frame:CreateTexture(nil, "ARTWORK", nil, 3)
+	local nest = controller:CreateTexture(nil, "ARTWORK", nil, 3)
 	nest:SetSize(146, 10)
 	nest:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-nest")
 
