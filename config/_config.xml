@@ -3,5 +3,4 @@
 	<Script file="general.lua"/>
 	<Script file="auratracker.lua"/>
 	<Script file="bars.lua"/>
-	<!-- <Script file="auras.lua"/> -->
 </Ui>
