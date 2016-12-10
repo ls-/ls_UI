@@ -28,5 +28,7 @@ function BLIZZARD:Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end

@@ -9,9 +9,7 @@ local _G = _G
 local isInit = false
 
 function BLIZZARD:ObjectiveTracker_SetHeight(height)
-	if isInit then
-		_G.ObjectiveTrackerFrame:SetHeight(height)
-	end
+	_G.ObjectiveTrackerFrame:SetHeight(height)
 end
 
 -----------------
