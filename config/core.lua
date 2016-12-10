@@ -33,18 +33,12 @@ do
 	end
 
 	local function OptionsPanelRefresh(panel)
-		-- E:FetchSettings(panel.settings, C)
-
 		for _, control in pairs(panel.controls) do
 			if control.RefreshValue then
 				control:RefreshValue()
 			end
 		end
 	end
-
-	-- local function OptionsPanelDefault(panel)
-	-- 	E:FetchSettings(panel.settings, D)
-	-- end
 
 	local function OnHyperlinkEnter(self, _, link)
 		_G.GameTooltip:SetOwner(self, "ANCHOR_CURSOR_RIGHT")
@@ -57,10 +51,7 @@ do
 	end
 
 	function CFG:AddPanel(panel)
-		-- panel.okay = OptionsPanelOkay
-		-- panel.cancel = OptionsPanelOkay
 		panel.refresh = OptionsPanelRefresh
-		-- panel.default = OptionsPanelDefault
 
 		panel:SetScript("OnShow", OnShow)
 
@@ -726,179 +717,11 @@ function CFG:CreateInfoButton(parent, data)
 	return object
 end
 
--- local function Controller_OnClick(self)
--- 	CFG:ToggleDependantControls(self)
--- end
-
--- function CFG:SetupController(panel, controller)
--- 	if not controller then return end
-
--- 	panel.controllers = panel.controllers or {}
--- 	tinsert(panel.controllers, controller)
-
--- 	controller:HookScript("OnClick", Controller_OnClick)
--- end
-
--- local function ButtonChild_Enable(self)
--- 	getmetatable(self).__index.Enable(self)
-
--- 	if self.Text then
--- 		self.Text:SetVertexColor(1, 1, 1)
--- 	end
-
--- 	if self.Icon then
--- 		self.Icon:SetDesaturated(false)
--- 	end
--- end
-
--- local function ButtonChild_Disable(self)
--- 	getmetatable(self).__index.Disable(self)
-
--- 	if self.Text then
--- 		self.Text:SetVertexColor(0.5, 0.5, 0.5)
--- 	end
-
--- 	if self.Icon then
--- 		self.Icon:SetDesaturated(true)
--- 	end
--- end
-
--- local function DropDownChild_Enable(self)
--- 	UIDropDownMenu_EnableDropDown(self)
--- end
-
--- local function DropDownChild_Disable(self)
--- 	UIDropDownMenu_DisableDropDown(self)
--- end
-
--- local function SliderChild_Enable(self)
--- 	getmetatable(self).__index.Enable(self)
-
--- 	if self.Text then
--- 		self.Text:SetVertexColor(1, 0.82, 0)
--- 	end
-
--- 	if self.LowValue then
--- 		self.LowValue:SetVertexColor(1, 1, 1)
--- 	end
-
--- 	if self.CurrentValue then
--- 		self.CurrentValue:SetVertexColor(1, 1, 1)
--- 	end
-
--- 	if self.HighValue then
--- 		self.HighValue:SetVertexColor(1, 1, 1)
--- 	end
--- end
-
--- local function SliderChild_Disable(self)
--- 	getmetatable(self).__index.Disable(self)
-
--- 	if self.Text then
--- 		self.Text:SetVertexColor(0.5, 0.5, 0.5)
--- 	end
-
--- 	if self.LowValue then
--- 		self.LowValue:SetVertexColor(0.5, 0.5, 0.5)
--- 	end
-
--- 	if self.CurrentValue then
--- 		self.CurrentValue:SetVertexColor(0.5, 0.5, 0.5)
--- 	end
-
--- 	if self.HighValue then
--- 		self.HighValue:SetVertexColor(0.5, 0.5, 0.5)
--- 	end
--- end
-
--- function CFG:SetupControlDependency(parent, child, setResersed)
--- 	if not parent then return end
-
--- 	parent.children = parent.children or {}
--- 	tinsert(parent.children, child)
-
--- 	if child.type == "Button" then
--- 		if setResersed then
--- 			child.Enable = ButtonChild_Disable
--- 			child.Disable = ButtonChild_Enable
--- 		else
--- 			child.Enable = ButtonChild_Enable
--- 			child.Disable = ButtonChild_Disable
--- 		end
--- 	elseif child.type == "DropDownMenu" then
--- 		if setResersed then
--- 			child.Enable = DropDownChild_Disable
--- 			child.Disable = DropDownChild_Enable
--- 		else
--- 			child.Enable = DropDownChild_Enable
--- 			child.Disable = DropDownChild_Disable
--- 		end
--- 	elseif child.type == "Slider" then
--- 		if setResersed then
--- 			child.Enable = SliderChild_Disable
--- 			child.Disable = SliderChild_Enable
--- 		else
--- 			child.Enable = SliderChild_Enable
--- 			child.Disable = SliderChild_Disable
--- 		end
--- 	end
--- end
-
--- function CFG:ToggleDependantControls(parent, forceDisable)
--- 	if InCombatLockdown() or not parent.children then return end
-
--- 	if not parent:GetValue() or forceDisable then
--- 		for _, child in next, parent.children do
--- 			child:Disable()
--- 		end
--- 	else
--- 		for _, child in next, parent.children do
--- 			child:Enable()
--- 		end
--- 	end
--- end
-
--- local function OptionsPanelOkay(panel)
--- 	E:ApplySettings(panel.settings, C)
--- end
-
--- local function OptionsPanelRefresh(panel)
--- 	E:FetchSettings(panel.settings, C)
-
--- 	for _, control in next, panel.controls do
--- 		if control.RefreshValue then
--- 			control:RefreshValue()
--- 		end
--- 	end
--- end
-
--- local function OptionsPanelDefault(panel)
--- 	E:FetchSettings(panel.settings, D)
--- end
-
--- function CFG:AddCatergory(panel)
--- 	panel.okay = OptionsPanelOkay
--- 	panel.cancel = OptionsPanelOkay
--- 	panel.refresh = OptionsPanelRefresh
--- 	panel.default = OptionsPanelDefault
-
--- 	InterfaceOptions_AddCategory(panel)
--- 	tinsert(Panels, panel)
--- end
-
--- local function LSConfigFrameToggle()
--- 	if not LSGeneralConfigPanel:IsShown() then
--- 		InterfaceOptionsFrame_OpenToCategory(LSGeneralConfigPanel)
--- 	else
--- 		InterfaceOptionsFrameOkay_OnClick(InterfaceOptionsFrame)
--- 	end
--- end
-
 local function OpenToCategory(category)
 	if not _G[category] then
 		CFG:General_Init()
-		CFG:AuraTracker_Init()
 		CFG:Bars_Init()
+		CFG:AuraTracker_Init()
 		CFG:Blizzard_Init()
 		CFG:Tooltips_Init()
 
