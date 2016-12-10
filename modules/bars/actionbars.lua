@@ -177,27 +177,12 @@ local function UPDATE_OVERRIDE_ACTIONBAR()
 	end
 end
 
-----------------------
--- UTILS & SETTINGS --
-----------------------
+-----------
+-- UTILS --
+-----------
 
-function BARS:ToggleBar(key, isVisible)
-	local bar = actionbars[key]
-
-	if bar then
-		if isVisible then
-			return E:ResetFrameState(bar, "visibility")
-		else
-			return E:SetFrameState(bar, "visibility", "hide")
-		end
-	end
-end
-
-function BARS:UpdateLayout(key)
-	local bar = actionbars[key]
-
-	E:UpdateBarLayout(bar, bar.buttons, C.bars[key].button_size, C.bars[key].button_gap, C.bars[key].init_anchor, C.bars[key].buttons_per_row)
-	E:UpdateMoverSize(bar)
+function P:GetActionBars()
+	return actionbars
 end
 
 -----------------

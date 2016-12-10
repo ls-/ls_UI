@@ -2,8 +2,51 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local BARS = P:AddModule("Bars", true)
 
+-- Lua
+local _G = _G
+local pairs = _G.pairs
+
 -- Mine
 local isInit = false
+
+----------------------
+-- UTILS & SETTINGS --
+----------------------
+
+function BARS:ToggleHotKeyText(isVisible)
+	for button in pairs(P:GetHandledButtons()) do
+		if button.HotKey then
+			button.HotKey:SetShown(isVisible)
+		end
+	end
+end
+
+function BARS:ToggleMacroText(isVisible)
+	for button in pairs(P:GetHandledButtons()) do
+		if button.Name then
+			button.Name:SetShown(isVisible)
+		end
+	end
+end
+
+function BARS:ToggleBar(key, isVisible)
+	local bar = P:GetActionBars()[key]
+
+	if bar then
+		if isVisible then
+			return E:ResetFrameState(bar, "visibility")
+		else
+			return E:SetFrameState(bar, "visibility", "hide")
+		end
+	end
+end
+
+function BARS:UpdateLayout(key)
+	local bar = P:GetActionBars()[key]
+
+	E:UpdateBarLayout(bar, bar.buttons, C.bars[key].button_size, C.bars[key].button_gap, C.bars[key].init_anchor, C.bars[key].buttons_per_row)
+	E:UpdateMoverSize(bar)
+end
 
 -----------------
 -- INITIALISER --
@@ -28,5 +71,7 @@ function BARS:Init(isForced)
 
 		-- Finalise
 		isInit = true
+
+		return true
 	end
 end
