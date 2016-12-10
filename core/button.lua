@@ -633,7 +633,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	return button
 end
 
-function E:GetButtons()
+function P:GetHandledButtons()
 	return handledButtons
 end
 
