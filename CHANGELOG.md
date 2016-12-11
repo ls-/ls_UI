@@ -1,3 +1,15 @@
+## Version 70100.03
+
+- Rewrote addon's core, and majority of its modules;
+- Reworked in-game config. Added a lot of new options, but some things are still missing. By default, ls: UI entry isn't present in Interface > AddOns section, to create one use **/lsui** (el ess ui) command, I decided to do so to avoid any possible taint issues;
+- Reworked CTA tracker. Now it rescans all queues every 10s, and highlights 'Group Finder' micro button if player is eligible for CTA rewards;
+- Switched to Munsell colour palette. It should be easier on the eyes;
+- Removed party frames. Because I don't use them on my chars, I use compact raid frames instead, it became a bit difficult to maintain them in adequate state;
+- Temporarily disabled arena frames. They're quite outdated right now;
+- Numerous bug fixes and tweaks.
+
+NOTE: This update is quite big, ~13'000 lines of code, but it doesn't bring a lot of visual changes, they'll come later. I've already started working on new UI design and artwork, however this process will take some time.
+
 ## Version 70100.02
 
 - Fixed tooltip issue which was caused by sometimes nonexistent `.GetAttribute` method. There's one more call...
