@@ -187,7 +187,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:CommandBar_Init()
+						local result = BLIZZARD:CommandBar_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_COMMAND_BAR"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_COMMAND_BAR"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_COMMAND_BAR"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -213,7 +231,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:DigsiteBar_Init()
+						local result = BLIZZARD:DigsiteBar_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_DIGSITE_BAR"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_DIGSITE_BAR"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_DIGSITE_BAR"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -239,7 +275,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:Durability_Init()
+						local result = BLIZZARD:Durability_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_DURABILITY_FRAME"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_DURABILITY_FRAME"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_DURABILITY_FRAME"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -265,7 +319,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:GM_Init()
+						local result = BLIZZARD:GM_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_GM_FRAME"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_GM_FRAME"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_GM_FRAME"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -291,7 +363,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:NPE_Init()
+						local result = BLIZZARD:NPE_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_NPE_FRAME"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_NPE_FRAME"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_NPE_FRAME"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -317,7 +407,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:PlayerAltPowerBar_Init()
+						local result = BLIZZARD:PlayerAltPowerBar_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_PLAYER_ALT_POWER_BAR"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -344,7 +452,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:TalkingHead_Init()
+						local result = BLIZZARD:TalkingHead_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_TALKING_HEAD_FRAME"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_TALKING_HEAD_FRAME"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_TALKING_HEAD_FRAME"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -370,7 +496,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:Timer_Init()
+						local result = BLIZZARD:Timer_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_MIRROR_TIMER"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_MIRROR_TIMER"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_MIRROR_TIMER"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
@@ -396,7 +540,25 @@ function CFG:Blizzard_Init()
 
 				if BLIZZARD:IsInit() then
 					if isChecked then
-						BLIZZARD:Vehicle_Init()
+						local result = BLIZZARD:Vehicle_Init()
+
+						if result then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED"],
+								L["ICON_GREEN_INLINE"],
+								L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
+								""))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["BLIZZARD_VEHICLE_SEAT_INDICATOR"]))
+						end
+					else
+						panel.Log:SetText(string.format(
+							L["LOG_DISABLED"],
+							L["ICON_YELLOW_INLINE"],
+							L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
+							L["REQUIRES_RELOAD"]))
 					end
 				end
 			end
