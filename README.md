@@ -8,7 +8,7 @@ Yet another UI, but this one is a bit special.
 - [Curse](http://mods.curse.com/addons/wow/ls-ui)
 
 ## Supported Frames
-Player, Pet, Target, Target of Target, Focus, Target of Focus, Party (w/o pets and targets), Bosses and Arena (w/ PvP trinket tracker).
+Player, Pet, Target, Target of Target, Focus, Target of Focus, and Bosses.
 
 Player frame is split into three parts:
 - Left - class resources, e.g. holy power, chi;
@@ -24,12 +24,10 @@ Player frame is split into three parts:
 - Warlock - Soul Shards.
 
 ## Other Features
+- In-game config. Use **/lsui** _(el ess ui)_ command to open config panel;
 - Many major elements of default UI are customised;
-- Frame "movers" for various interface elements, use **/lsmovers** command to toggle them;
-- Floating combat feedback on player frame;
+- Frame "movers" for various interface elements;
 - Aura tracker. It can display up to 12 buffs and debuffs on player character. List of auras can be managed via config frame, and is saved per character;
-- Optional experience, honour, artefact power and reputation bars in objective tracker;
-- In-game config;
 - And more!
 
 ## Embedded Addons And Plugins
@@ -42,7 +40,11 @@ If you found a bug or want to share an idea on how to improve my UI, either repo
 
 Feel free to write feedback on how to improve some class-specific features, because I only play as PvE mage and PvP DK.
 
-However, keep in mind that I'm not going to implement any features, as a replacement for *BIG* addons. I want my UI to be as lightweight as possible.
+However, keep in mind that I'm not going to implement any features as a replacement for *BIG* addons.
+
+## FAQ
+**Q:** Will you add party and/or raid frames?<br/>
+**A:** Nope. I prefer using default compact party/raid frames. Moreover, there are quite many great party/raid addons on Curse and WoWInterfrace, pick whichever you like the most.
 
 ## License
 Please see [LICENSE](https://github.com/ls-/ls_UI/blob/master/LICENSE.txt) file.
