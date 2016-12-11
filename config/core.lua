@@ -397,8 +397,6 @@ do
 
 		activeAuraList.table[spellID] = nil
 		activeAuraList:RefreshValue()
-
-		activePanel.Log:SetText(L["LOG_DONE"])
 	end
 
 	local function EditBox_OnTextChanged(self, isUserInput)
