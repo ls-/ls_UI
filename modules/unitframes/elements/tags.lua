@@ -76,7 +76,7 @@ oUF.Tags.Methods["ls:healabsorb"] = function(unit)
 	local color = E:RGBToHEX(M.colors.healprediction.healabsorb)
 
 	if healAbsorb > 0 then
-		return "|cff"..color.."-|r"..E:NumberFormat(healAbsorb, 1)
+		return "|cff"..color.."-|r"..E:NumberFormat(healAbsorb)
 	else
 		return " "
 	end
@@ -89,7 +89,7 @@ oUF.Tags.Methods["ls:damageabsorb"] = function(unit)
 	local color = E:RGBToHEX(M.colors.healprediction.damageabsorb)
 
 	if damageAbsorb > 0 then
-		return "|cff"..color.."+|r"..E:NumberFormat(damageAbsorb, 1)
+		return "|cff"..color.."+|r"..E:NumberFormat(damageAbsorb)
 	else
 		return " "
 	end
