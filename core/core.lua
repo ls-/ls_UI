@@ -182,40 +182,23 @@ _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 -------------
 
 local modules = {}
-local delayedModules = {}
 
-function P:AddModule(name, isDelayed)
-	local module = {}
+function P:AddModule(name)
+	modules[name] = {}
 
-	if isDelayed then
-		delayedModules[name] = module
-	else
-		modules[name] = module
-	end
-
-	return module
+	return modules[name]
 end
 
 function P:GetModule(name)
-	if not modules[name] and not delayedModules[name] then
+	if not modules[name] then
 		print("Module "..name.." doesn't exist!")
 	else
-		return modules[name] or delayedModules[name]
+		return modules[name]
 	end
 end
 
 function P:InitModules()
 	for name, module in next, modules do
-		if not module.Init then
-			print("Module "..name.." doesn\'t have initializer.")
-		else
-			module:Init()
-		end
-	end
-end
-
-function P:InitDelayedModules()
-	for name, module in next, delayedModules do
 		if not module.Init then
 			print("Module "..name.." doesn\'t have initializer.")
 		else

@@ -53,7 +53,7 @@ function CFG:Bars_Init()
 							L["LOG_ENABLED_ERR"],
 							L["ACTION_BAR"]))
 					else
-						local result = BARS:Init(true)
+						local result = BARS:Init()
 
 						if result then
 							panel.Log:SetText(string.format(
@@ -554,7 +554,7 @@ function CFG:Bars_Init()
 									L["BAGS"],
 									L["REQUIRES_RELOAD"]))
 							else
-								local result = BARS:Bags_Init(true)
+								local result = BARS:Bags_Init()
 
 								if result then
 									panel.Log:SetText(string.format(

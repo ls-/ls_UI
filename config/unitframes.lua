@@ -54,7 +54,7 @@ function CFG:UnitFrames_Init()
 							L["LOG_ENABLED_ERR"],
 							L["UNIT_FRAME"]))
 					else
-						local result = UF:Init(true)
+						local result = UF:Init()
 
 						if result then
 							UF:UpdateUnitFrames()

@@ -120,7 +120,7 @@ function CFG:AuraTracker_Init()
 							L["LOG_ENABLED_ERR"],
 							L["AURA_TRACKER"]))
 					else
-						local result = AURATRACKER:Init(true)
+						local result = AURATRACKER:Init()
 
 						if result then
 							panel.Log:SetText(string.format(

@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BLIZZARD = P:AddModule("Blizzard", true)
+local BLIZZARD = P:AddModule("Blizzard")
 
 -- Mine
 local isInit = false

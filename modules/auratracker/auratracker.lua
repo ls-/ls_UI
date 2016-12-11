@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local AURATRACKER = P:AddModule("AuraTracker", true)
+local AURATRACKER = P:AddModule("AuraTracker")
 
 -- Lua
 local _G = _G

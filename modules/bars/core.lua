@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BARS = P:AddModule("Bars", true)
+local BARS = P:AddModule("Bars")
 
 -- Lua
 local _G = _G

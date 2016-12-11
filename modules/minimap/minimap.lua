@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local MINIMAP = P:AddModule("MiniMap", true)
+local MINIMAP = P:AddModule("MiniMap")
 
 -- Lua
 local _G = _G

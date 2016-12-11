@@ -67,7 +67,7 @@ function CFG:General_Init()
 							L["LOG_ENABLED_ERR"],
 							L["AURAS"]))
 					else
-						local result = AURAS:Init(true)
+						local result = AURAS:Init()
 
 						if result then
 							panel.Log:SetText(string.format(

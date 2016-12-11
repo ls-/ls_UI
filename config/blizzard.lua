@@ -52,7 +52,7 @@ function CFG:Blizzard_Init()
 							L["LOG_ENABLED_ERR"],
 							L["BLIZZARD"]))
 					else
-						local result = BLIZZARD:Init(true)
+						local result = BLIZZARD:Init()
 
 						if result then
 							panel.Log:SetText(string.format(
@@ -112,7 +112,7 @@ function CFG:Blizzard_Init()
 								L["LOG_ENABLED_ERR"],
 								L["BLIZZARD_OBJECTIVE_TRACKER"]))
 						else
-							local result = BLIZZARD:ObjectiveTracker_Init(true)
+							local result = BLIZZARD:ObjectiveTracker_Init()
 
 							if result then
 								panel.Log:SetText(string.format(

@@ -9,7 +9,6 @@ local function ADDON_LOADED(arg)
 	if arg ~= "ls_UI" then return end
 
 	E:CopyTable(E:CopyTable(D, _G.LS_UI_CONFIG), C)
-	P:InitModules()
 	E:UnregisterEvent("ADDON_LOADED", ADDON_LOADED)
 
 	_G.collectgarbage("collect")
@@ -17,7 +16,7 @@ end
 
 local function PLAYER_LOGIN()
 	E:UpdateConstants()
-	P:InitDelayedModules()
+	P:InitModules()
 end
 
 local function PLAYER_LOGOUT()

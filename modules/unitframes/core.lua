@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
-local UF = P:AddModule("UnitFrames", true)
+local UF = P:AddModule("UnitFrames")
 
 -- Lua
 local _G = _G

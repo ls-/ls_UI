@@ -52,7 +52,7 @@ function CFG:Tooltips_Init()
 							L["LOG_ENABLED_ERR"],
 							L["TOOLTIP"]))
 					else
-						local result = TOOLTIPS:Init(true)
+						local result = TOOLTIPS:Init()
 
 						if result then
 							panel.Log:SetText(string.format(
