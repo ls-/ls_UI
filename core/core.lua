@@ -1,22 +1,134 @@
-local _, ns = ...
+local an, ns = ...
 
 -- Lua
 local _G = _G
 local table = _G.table
+local string = _G.string
+local debugstack = _G.debugstack
+local error = _G.error
+local next = _G.next
+local pairs = _G.pairs
+local type = _G.type
+local assert = _G.assert
 
 -- Mine
-local E, C, D, M, L, P = _G.CreateFrame("Frame", "LSEngine"), {}, {}, {}, {}, {} -- engine(event handler), config, defaults, media, locales, private
+local E, C, D, M, L, P = {}, {}, {}, {}, {}, {} -- engine, config, defaults, media, locales, private
 ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
 
--------------
--- PRIVATE --
--------------
+------------
+-- PUBLIC --
+------------
 
-function P.print(...)
-	print("|cff1a9fc0ls:|r |cffffd200UI:|r", ...)
+local exportTable = {
+	[1] = ns.E,
+	[2] = ns.C,
+	[3] = ns.M
+}
+
+_G[an] = exportTable
+
+-----------
+-- DEBUG --
+-----------
+
+local function print(...)
+	_G.print("|cff1a9fc0ls:|r |cffffd200UI:|r", ...)
 end
 
-local print = P.print
+P.print = print
+
+local function argcheck(varNum, varValue, ...)
+	assert(type(varNum) == "number", string.format("Bad argument #1 to 'argcheck' ('number' expected, got '%s')", type(varNum)))
+
+	for _, varType in pairs({...}) do
+		if type(varValue) == varType then return end
+	end
+
+	local varTypes = string.join("', '", ...)
+	local funcName = string.match(debugstack(2, 2, 0), ": in function [`<](.-)['>]")
+
+	error(string.format("Bad argument #%d to '%s' ('%s' expected, got '%s')", varNum, funcName, varTypes, type(varValue)), 4)
+end
+
+P.argcheck = argcheck
+
+function P:DebugHighlight(object)
+	if not object.CreateTexture then
+		object.tex = object:GetParent():CreateTexture(nil, "BACKGROUND", nil, -8)
+	else
+		object.tex = object:CreateTexture(nil, "BACKGROUND", nil, -8)
+	end
+	object.tex:SetAllPoints(object)
+	object.tex:SetColorTexture(1, 0, 0.5, 0.4)
+end
+
+------------
+-- EVENTS --
+------------
+
+local dispatcher = _G.CreateFrame("Frame")
+local oneTimeEvents = {ADDON_LOADED = false, PLAYER_LOGIN = false}
+local registeredEvents = {}
+
+local function OnEvent(_, event, ...)
+	for func in pairs(registeredEvents[event]) do
+		func(...)
+	end
+
+	if oneTimeEvents[event] == false then
+		oneTimeEvents[event] = true
+	end
+end
+
+dispatcher:SetScript("OnEvent", OnEvent)
+
+local function Register(event, func, unit1, unit2)
+	argcheck(1, event, "string")
+	argcheck(2, func, "function")
+	argcheck(3, unit1, "string", "nil")
+	argcheck(4, unit2, "string", "nil")
+
+	if oneTimeEvents[event] then
+		error(string.format("Failed to register for '%s' event, already fired!", event), 3)
+	end
+
+	if not registeredEvents[event] then
+		registeredEvents[event] = {}
+
+		if unit1 then
+			dispatcher:RegisterUnitEvent(event, unit1, unit2)
+		else
+			dispatcher:RegisterEvent(event)
+		end
+	end
+
+	registeredEvents[event][func] = true
+end
+
+local function Unregister(event, func)
+	argcheck(1, event, "string")
+	argcheck(2, func, "function")
+
+	local funcs = registeredEvents[event]
+
+	if funcs and funcs[func] then
+		funcs[func] = nil
+
+		if not next(funcs) then
+			registeredEvents[event] = nil
+
+			dispatcher:UnregisterEvent(event)
+		end
+	end
+end
+
+function E.RegisterEvent(_, ...)
+	Register(...)
+end
+
+function E.UnregisterEvent(_, ...)
+	Unregister(...)
+end
 
 -----------
 -- UTILS --
@@ -27,16 +139,6 @@ function E:CreateFontString(parent, size, name, shadow, outline)
 	object:SetWordWrap(false)
 
 	return object
-end
-
-function E:DebugHighlight(object)
-	if not object.CreateTexture then
-		object.tex = object:GetParent():CreateTexture(nil, "BACKGROUND", nil, -8)
-	else
-		object.tex = object:CreateTexture(nil, "BACKGROUND", nil, -8)
-	end
-	object.tex:SetAllPoints(object)
-	object.tex:SetColorTexture(1, 0, 0.5, 0.4)
 end
 
 function E:ForceShow(object)
@@ -58,7 +160,7 @@ function E:ForceHide(object)
 		end
 	end
 
-	object:SetParent(E.HIDDEN_PARENT)
+	object:SetParent(self.HIDDEN_PARENT)
 	object:Hide()
 end
 
@@ -72,27 +174,6 @@ function E:GetCoords(object)
 	end
 end
 
-local function EventHandler(self, event, ...)
-	self[event](self, ...)
-end
-
-E:SetScript("OnEvent", EventHandler)
-
--- Some authors like to disable blizzard addons my UI utilises
-function E:ForceLoadAddOn(name)
-	local loaded, reason = _G.LoadAddOn(name)
-
-	if not loaded then
-		if reason == "DISABLED" then
-			_G.EnableAddOn(name)
-
-			self:ForceLoadAddOn(name)
-		else
-			print(_G.ADDON_LOAD_FAILED:format(name, _G["ADDON_"..reason]))
-		end
-	end
-end
-
 _G.SLASH_RELOADUI1 = "/rl"
 _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 
@@ -101,48 +182,27 @@ _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 -------------
 
 local modules = {}
-local delayedModules = {}
 
-function E:AddModule(name, addEventHandler, isDelayed)
-	local module = _G.CreateFrame("Frame")
+function P:AddModule(name)
+	modules[name] = {}
 
-	if addEventHandler then
-		module:SetScript("OnEvent", EventHandler)
-	end
-
-	if isDelayed then
-		delayedModules[name] = module
-	else
-		modules[name] = module
-	end
-
-	return module
+	return modules[name]
 end
 
-function E:GetModule(name)
-	if not modules[name] and not delayedModules[name] then
+function P:GetModule(name)
+	if not modules[name] then
 		print("Module "..name.." doesn't exist!")
 	else
-		return modules[name] or delayedModules[name]
+		return modules[name]
 	end
 end
 
-function E:InitializeModules()
+function P:InitModules()
 	for name, module in next, modules do
-		if not module.Initialize then
+		if not module.Init then
 			print("Module "..name.." doesn\'t have initializer.")
 		else
-			module:Initialize()
-		end
-	end
-end
-
-function E:InitializeDelayedModules()
-	for name, module in next, delayedModules do
-		if not module.Initialize then
-			print("Module "..name.." doesn\'t have initializer.")
-		else
-			module:Initialize()
+			module:Init()
 		end
 	end
 end
@@ -169,4 +229,62 @@ function E:AddOnLoadTask(addonName, func)
 	onLoadTasks[addonName] = onLoadTasks[addonName] or {}
 
 	table.insert(onLoadTasks[addonName], func)
+end
+
+-----------------
+-- FRAME QUEUE --
+-----------------
+
+local queue = {} -- frame = {state = "string, condition = "string" or "nil"}
+local frames = {}
+
+local function Process(frame, state, condition)
+	if condition then
+		_G.RegisterStateDriver(frame, state, condition)
+	else
+		frame[state](frame)
+	end
+end
+
+local function ManageQueue()
+	for frame, t in pairs(queue) do
+		Process(frame, t.state, t.condition)
+
+		queue[frame] = nil
+	end
+end
+
+E:RegisterEvent("PLAYER_REGEN_ENABLED", ManageQueue)
+
+function E:SaveFrameState(frame, state, condition)
+	if not frames[frame] then
+		frames[frame] = {}
+	end
+
+	frames[frame][state] = condition
+end
+
+function E:ResetFrameState(frame, state)
+	if frames[frame] and frames[frame][state] then
+		return self:SetFrameState(frame, state, frames[frame][state])
+	end
+
+	return nil
+end
+
+function E:SetFrameState(frame, state, condition)
+	if frame then
+		P.argcheck(2, state, "string")
+		P.argcheck(3, condition, "string", "nil")
+
+		if _G.InCombatLockdown() and frame:IsProtected() then
+			queue[frame] = {state = state, condition = condition}
+
+			return false, frame, state, condition
+		else
+			Process(frame, state, condition)
+
+			return true, frame, state, condition
+		end
+	end
 end

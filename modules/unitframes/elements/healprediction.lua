@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
@@ -63,14 +63,14 @@ function UF:CreateHealPrediction(parent, isVertical)
 	myBar:SetFrameLevel(level)
 	myBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	myBar:SetStatusBarColor(unpack(M.colors.healprediction.myheal))
+	myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 	myBar:Hide()
 
 	local otherBar = _G.CreateFrame("StatusBar", "$parentOtherIncomingHeal", healthbar)
 	otherBar:SetFrameLevel(level)
 	otherBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	otherBar:SetStatusBarColor(unpack(M.colors.healprediction.otherheal))
+	otherBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.OTHER_HEAL:GetRGB())
 	otherBar:Hide()
 
 	local healAbsorbBar = _G.CreateFrame("StatusBar", "$parentHealAbsorb", healthbar)
@@ -78,14 +78,14 @@ function UF:CreateHealPrediction(parent, isVertical)
 	healAbsorbBar:SetFrameLevel(level + 1)
 	healAbsorbBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	healAbsorbBar:SetStatusBarColor(unpack(M.colors.healprediction.healabsorb))
+	healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 	healAbsorbBar:Hide()
 
 	local damageAbsorbBar = _G.CreateFrame("StatusBar", "$parentTotalAbsorb", healthbar)
 	damageAbsorbBar:SetFrameLevel(level + 1)
 	damageAbsorbBar:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
 	damageAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	damageAbsorbBar:SetStatusBarColor(unpack(M.colors.healprediction.damageabsorb))
+	-- damageAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetRGB())
 	damageAbsorbBar:Hide()
 
 	damageAbsorbBar.Overlay = damageAbsorbBar:CreateTexture(nil, "ARTWORK", "TotalAbsorbBarOverlayTemplate", 1)

@@ -1,66 +1,77 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:AddModule("Bars", true)
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BARS = P:AddModule("Bars")
 
 -- Lua
-local pairs = pairs
+local _G = _G
+local pairs = _G.pairs
 
 -- Mine
-function B:IsEnabled()
-	return B.isRunning
-end
+local isInit = false
 
-function B:ShowHotKeyText()
-	for button in pairs(E:GetButtons()) do
+----------------------
+-- UTILS & SETTINGS --
+----------------------
+
+function BARS:ToggleHotKeyText(isVisible)
+	for button in pairs(P:GetHandledButtons()) do
 		if button.HotKey then
-			button.HotKey:Show()
+			button.HotKey:SetShown(isVisible)
 		end
 	end
-
-	return true, "|cff26a526Success!|r Binding text is now shown."
 end
 
-function B:HideHotKeyText()
-	for button in pairs(E:GetButtons()) do
-		if button.HotKey then
-			button.HotKey:Hide()
-		end
-	end
-
-	return true, "|cff26a526Success!|r Binding text is now hidden."
-end
-
-function B:ShowMacroNameText()
-	for button in pairs(E:GetButtons()) do
+function BARS:ToggleMacroText(isVisible)
+	for button in pairs(P:GetHandledButtons()) do
 		if button.Name then
-			button.Name:Show()
+			button.Name:SetShown(isVisible)
 		end
 	end
-
-	return true, "|cff26a526Success!|r Macro text is now shown."
 end
 
-function B:HideMacroNameText()
-	for button in pairs(E:GetButtons()) do
-		if button.Name then
-			button.Name:Hide()
+function BARS:ToggleBar(key, isVisible)
+	local bar = P:GetActionBars()[key]
+
+	if bar then
+		if isVisible then
+			return E:ResetFrameState(bar, "visibility")
+		else
+			return E:SetFrameState(bar, "visibility", "hide")
 		end
 	end
-
-	return true, "|cff26a526Success!|r Macro text is now hidden."
 end
 
-function B:Initialize()
-	if C.bars.enabled then
-		B:ActionBarController_Initialize()
-		B:HandleActionBars()
-		B:HandlePetBattleBar()
-		B:HandleExtraActionButton()
-		B:HandleGarrisonButton()
-		B:HandleVehicleExitButton()
-		B:HandleMicroMenu()
-		B:HandleBags()
+function BARS:UpdateLayout(key)
+	local bar = P:GetActionBars()[key]
 
-		B.isRunning = true
+	E:UpdateBarLayout(bar, bar.buttons, C.bars[key].button_size, C.bars[key].button_gap, C.bars[key].init_anchor, C.bars[key].buttons_per_row)
+	E:UpdateMoverSize(bar)
+end
+
+-----------------
+-- INITIALISER --
+-----------------
+
+function BARS:IsInit()
+	return isInit
+end
+
+function BARS:Init()
+	if not isInit and C.bars.enabled then
+		self:ActionBars_Init()
+		self:Bags_Init()
+		self:ExtraActionButton_Init()
+		self:MicroMenu_Init()
+		self:PetBattleBar_Init()
+		self:VehicleExitButton_Init()
+		self:ZoneAbilityButton_Init()
+
+		-- Should be the last one
+		self:ActionBarController_Init()
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

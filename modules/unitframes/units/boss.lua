@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 function UF:CreateBossHolder()
 	local holder = CreateFrame("Frame", "LSBossHolder", UIParent)
@@ -10,8 +10,6 @@ function UF:CreateBossHolder()
 end
 
 function UF:ConstructBossFrame(frame)
-	tinsert(UF.framesByUnit["boss"], frame)
-
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
@@ -98,11 +96,8 @@ function UF:ConstructBossFrame(frame)
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
 
-	if C.units.boss.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 124)
-
-		frame.Castbar.Holder:SetPoint("RIGHT", frame, "LEFT", -2, 2)
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 124)
+	frame.Castbar.Holder:SetPoint("RIGHT", frame, "LEFT", -2, 2)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
@@ -113,7 +108,7 @@ function UF:ConstructBossFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:smartreaction][ls:name][ls:server]|r")
+	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:unitcolor][ls:name][ls:server]|r")
 
 	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
 	debuffStatus:SetPoint("LEFT", 12, 0)

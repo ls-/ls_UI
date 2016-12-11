@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C = ns.E, ns.C
-local Mail = E:AddModule("Mail")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local MAIL = P:AddModule("Mail")
 
 -- Lua
 local _G = _G
@@ -9,34 +9,27 @@ local table = _G.table
 
 -- Mine
 local mailItems = {}
-local ReceiveMail
-local isReceiving
+local isInit = false
+local isReceiving = false
 local overflow
+local ReceiveMail
 
--- http://wow.gamepedia.com/Orderedpairs
-local function orderednext(t)
-	local key = t[t.__next]
-	if not key then return end
+-----------
+-- UTILS --
+-----------
 
-	t.__next = t.__next + 1
-
-	return key, t.__source[key]
+local function SortByName(a, b)
+	return a.name < b.name
 end
 
-local keys = {}
-local function orderedpairs(t)
-	local kn = 1
-
-	table.wipe(keys)
-	keys = {__source = t, __next = 1}
-
-	for k in pairs(t) do
-		keys[kn], kn = k, kn + 1
+local function GetIndexForName(t, name)
+	for k, v in pairs(t) do
+		if name == v.name then
+			return k
+		end
 	end
 
-	table.sort(keys)
-
-	return orderednext, keys
+	return
 end
 
 local function GetFreeSlots()
@@ -51,97 +44,6 @@ local function GetFreeSlots()
 	end
 
 	return free
-end
-
-local function ReceiveButton_OnEvent(self, event)
-	if event == "MAIL_INBOX_UPDATE" then
-		self:Enable()
-		self:UnregisterEvent("MAIL_INBOX_UPDATE")
-
-		self.Icon:SetDesaturated(false)
-	elseif event == "MAIL_CLOSED" then
-		self:SetChecked(false)
-		self:Disable()
-		self:RegisterEvent("MAIL_INBOX_UPDATE")
-
-		self.Icon:SetDesaturated(true)
-	end
-end
-
-local function ReceiveButton_OnEnter(self)
-	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-
-	local numMessages = _G.GetInboxNumItems()
-	local gold, items, cod = 0, 0, 0
-	table.wipe(mailItems)
-
-	for i = 1, numMessages do
-		local _, _, _, _, money, CODAmount, _, itemCount = _G.GetInboxHeaderInfo(i)
-
-		if money and money > 0 then
-			gold = gold + money
-		end
-
-		if CODAmount and CODAmount > 0 then
-			cod = cod + CODAmount
-		end
-
-		if itemCount then
-			for j = 1, itemCount do
-				local itemLink = _G.GetInboxItemLink(i, j)
-
-				if itemLink then
-					local name, _, icon, count = _G.GetInboxItem(i, j)
-					local _, _, quality = _G.GetItemInfo(itemLink)
-
-					if not name then
-						name = _G.UNKNOWN
-						icon = "Interface\\Icons\\INV_Misc_QuestionMark"
-						count = 1
-						quality = 0
-					end
-
-					if mailItems[name] then
-						mailItems[name].count = mailItems[name].count + count
-					else
-						mailItems[name] = {count = count, icon = "|T"..icon..":0|t", color = _G.ITEM_QUALITY_COLORS[quality].hex}
-					end
-				end
-
-				items = items + 1
-			end
-		end
-	end
-
-	if gold > 0 or cod > 0 or items > 0 then
-		_G.GameTooltip:AddLine(_G.MAIL_LABEL, 1, 1, 1)
-	end
-
-	if gold > 0 then
-		_G.GameTooltip:AddLine(" ")
-		_G.GameTooltip:AddLine(_G.ENCLOSED_MONEY..":")
-		_G.GameTooltip:AddLine(_G.GetMoneyString(gold), 1, 1, 1)
-	end
-
-	if cod > 0 then
-		_G.GameTooltip:AddLine(" ")
-		_G.GameTooltip:AddLine(_G.COD_AMOUNT)
-		_G.GameTooltip:AddLine(_G.GetMoneyString(cod), 1, 1, 1)
-	end
-
-	if items > 0 then
-		_G.GameTooltip:AddLine(" ")
-		_G.GameTooltip:AddLine(_G.ITEMS..":")
-		for k, v in orderedpairs(mailItems) do
-			_G.GameTooltip:AddDoubleLine(v.color..k.."|r", v.count..v.icon, 1, 1, 1, 1, 1, 1)
-		end
-	end
-
-	_G.GameTooltip:Show()
-end
-
-local function ReceiveButton_OnLeave()
-	_G.GameTooltip:Hide()
 end
 
 local function LazyLootMail(index, delay)
@@ -208,20 +110,136 @@ function ReceiveMail()
 	end
 end
 
-function Mail:Initialize()
-	if C.mail.enabled then
+--------------------
+-- RECEIVE BUTTON --
+--------------------
+
+local function ReceiveButton_OnClick()
+	ReceiveMail()
+end
+local function ReceiveButton_OnEvent(self, event)
+	if event == "MAIL_INBOX_UPDATE" then
+		self:Enable()
+		self:UnregisterEvent("MAIL_INBOX_UPDATE")
+
+		self.Icon:SetDesaturated(false)
+	elseif event == "MAIL_CLOSED" then
+		self:SetChecked(false)
+		self:Disable()
+		self:RegisterEvent("MAIL_INBOX_UPDATE")
+
+		self.Icon:SetDesaturated(true)
+	end
+end
+
+local function ReceiveButton_OnEnter(self)
+	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+
+	local numMessages = _G.GetInboxNumItems()
+	local gold, items, cod = 0, 0, 0
+	table.wipe(mailItems)
+
+	for i = 1, numMessages do
+		local _, _, _, _, money, CODAmount, _, itemCount = _G.GetInboxHeaderInfo(i)
+
+		if money and money > 0 then
+			gold = gold + money
+		end
+
+		if CODAmount and CODAmount > 0 then
+			cod = cod + CODAmount
+		end
+
+		if itemCount then
+			for j = 1, itemCount do
+				local itemLink = _G.GetInboxItemLink(i, j)
+
+				if itemLink then
+					local _, _, _, count = _G.GetInboxItem(i, j)
+					local name, _, quality, _, _, _, _, _, _, icon = _G.GetItemInfo(itemLink)
+
+					if not name then
+						name = _G.UNKNOWN
+						icon = icon or "Interface\\Icons\\INV_Misc_QuestionMark"
+						count = count or 1
+						quality = quality or 0
+					end
+
+					local index = GetIndexForName(mailItems, name)
+
+					if index then
+						mailItems[index].count = mailItems[index].count + count
+					else
+						table.insert(mailItems, {name = name, count = count, icon = "|T"..icon..":0|t", color = _G.ITEM_QUALITY_COLORS[quality].hex})
+					end
+				end
+
+				items = items + 1
+			end
+		end
+	end
+
+	if gold > 0 or cod > 0 or items > 0 then
+		_G.GameTooltip:AddLine(_G.MAIL_LABEL, 1, 1, 1)
+	end
+
+	if gold > 0 then
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.ENCLOSED_MONEY..":")
+		_G.GameTooltip:AddLine(_G.GetMoneyString(gold), 1, 1, 1)
+	end
+
+	if cod > 0 then
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.COD_AMOUNT)
+		_G.GameTooltip:AddLine(_G.GetMoneyString(cod), 1, 1, 1)
+	end
+
+	if items > 0 then
+		table.sort(mailItems, SortByName)
+
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(_G.ITEMS..":")
+
+		for _, v in pairs(mailItems) do
+			_G.GameTooltip:AddDoubleLine(v.color..v.name.."|r", v.count..v.icon, 1, 1, 1, 1, 1, 1)
+		end
+	end
+
+	_G.GameTooltip:Show()
+end
+
+local function ReceiveButton_OnLeave()
+	_G.GameTooltip:Hide()
+end
+
+-----------------
+-- INITIALISER --
+-----------------
+
+function MAIL:IsInit()
+	return isInit
+end
+
+function MAIL:Init()
+	if not isInit and C.mail.enabled then
 		local button = E:CreateCheckButton(_G.InboxFrame, "$parentReceiveMailButton")
 		button:SetPoint("BOTTOMRIGHT", _G.MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")
 		button:RegisterEvent("MAIL_CLOSED")
+		button:SetScript("OnClick", ReceiveButton_OnClick)
 		button:SetScript("OnEvent", ReceiveButton_OnEvent)
 		button:SetScript("OnEnter", ReceiveButton_OnEnter)
 		button:SetScript("OnLeave", ReceiveButton_OnLeave)
-		button:SetScript("OnClick", ReceiveMail)
 		button:Disable()
 		_G.InboxFrame.ReceiveButton = button
 
 		button.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
 		button.Icon:SetDesaturated(true)
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

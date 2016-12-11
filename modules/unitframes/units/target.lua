@@ -1,10 +1,8 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 function UF:ConstructTargetFrame(frame)
-	tinsert(UF.framesByUnit["target"], frame)
-
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
@@ -96,11 +94,8 @@ function UF:ConstructTargetFrame(frame)
 	frame.PvP.Hook:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 16, 14)
 	frame.PvP.Hook:SetTexCoord(1 / 64, 34 / 64, 1 / 64, 37 / 64)
 
-	if C.units.target.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 202)
-
-		frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 202)
+	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
 
 	frame.ReadyCheck = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
 	frame.ReadyCheck:SetSize(32, 32)
@@ -115,7 +110,7 @@ function UF:ConstructTargetFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 4, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -4, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:questicon][ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:smartreaction][ls:name][ls:server]|r")
+	frame:Tag(name, "[ls:questicon][ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:unitcolor][ls:name][ls:server]|r")
 
 	local statusTopRight = cover:CreateFontString("$parentTopRightStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	statusTopRight:SetJustifyH("RIGHT")

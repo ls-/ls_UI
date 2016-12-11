@@ -1,25 +1,45 @@
 local _, ns = ...
-local E = ns.E
-local B = E:GetModule("Blizzard")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local BLIZZARD = P:GetModule("Blizzard")
 
-function B:HandleVehicleSeatIndicator()
-	_G.VehicleSeatIndicator:ClearAllPoints()
-	_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
+-- Lua
+local _G = _G
 
-	E:CreateMover(_G.VehicleSeatIndicator)
+-- Mine
+local isInit = false
 
-	_G.hooksecurefunc(_G.VehicleSeatIndicator, "SetPoint", function(self, ...)
-		local _, parent = ...
+-----------------
+-- INITIALISER --
+-----------------
 
-		if parent == "MinimapCluster" or parent == _G.MinimapCluster then
-			local mover = E:GetMover(self)
+function BLIZZARD:Vehicle_IsInit()
+	return isInit
+end
 
-			if mover then
-				self:ClearAllPoints()
-				self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", 0, 0)
+function BLIZZARD:Vehicle_Init()
+	if not isInit and C.blizzard.vehicle.enabled then
+		_G.VehicleSeatIndicator:ClearAllPoints()
+		_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
+		E:CreateMover(_G.VehicleSeatIndicator)
+
+		_G.hooksecurefunc(_G.VehicleSeatIndicator, "SetPoint", function(self, ...)
+			local _, parent = ...
+
+			if parent == "MinimapCluster" or parent == _G.MinimapCluster then
+				local mover = E:GetMover(self)
+
+				if mover then
+					self:ClearAllPoints()
+					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", 0, 0)
+				end
 			end
-		end
-	end)
+		end)
 
-	_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.MinimapCluster, "TOPRIGHT", 0, 0)
+		_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.MinimapCluster, "TOPRIGHT", 0, 0)
+
+		-- Finalise
+		isInit = true
+
+		return true
+	end
 end

@@ -1,16 +1,10 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
-local unpack, pairs = unpack, pairs
-local strgsub, strupper = string.gsub, string.upper
-
--- Blizz
-local UnitHealthMax = UnitHealthMax
-local UnitStagger = UnitStagger
-local UnitHasVehicleUI = UnitHasVehicleUI
+local unpack = _G.unpack
 
 -- Mine
 local LAYOUT = {
@@ -287,7 +281,7 @@ function UF:Reskin(frame, slots, visible, sender)
 	end
 end
 
-local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
+local function PostUpdateClassPower(bar, _, max, changed, powerType, event)
 	if event == "ClassPowerDisable" then
 		bar:Hide()
 		UF:Reskin(bar:GetParent(), 0, false, "CP")
@@ -300,12 +294,12 @@ local function PostUpdateClassPower(bar, cur, max, changed, powerType, event)
 				local element = bar[i]
 				element:SetSize(12, LAYOUT[max][i].size)
 				element:SetPoint(unpack(LAYOUT[max][i].point))
-				element.Texture:SetVertexColor(unpack(M.colors.power[powerType]))
+				element.Texture:SetVertexColor(M.COLORS.POWER[powerType]:GetRGB())
 
 				local glow = element.Glow
 				glow:SetSize(16, LAYOUT[max][i].size)
 				glow:SetTexCoord(unpack(LAYOUT[max][i].glow))
-				glow:SetVertexColor(unpack(M.colors.power[powerType.."_GLOW"]))
+				glow:SetVertexColor(M.COLORS.POWER.GLOW[powerType]:GetRGB())
 			end
 		end
 	end
@@ -409,7 +403,7 @@ local function PostUpdateRuneBar(bar, rune, _, _, _, runeReady)
 		rune.InAnim:Play()
 	end
 
-	if UnitHasVehicleUI("player") then
+	if _G.UnitHasVehicleUI("player") then
 		bar:Hide()
 		UF:Reskin(bar:GetParent(), 0, false, "RUNES")
 	else
@@ -432,14 +426,14 @@ function UF:CreateRuneBar(parent, level)
 		element:SetOrientation("VERTICAL")
 		element:SetSize(12, LAYOUT[6][i].size)
 		element:SetPoint(unpack(LAYOUT[6][i].point))
-		element:SetStatusBarColor(unpack(M.colors.power.RUNES))
+		element:SetStatusBarColor(M.COLORS.POWER.RUNES:GetRGB())
 		bar[i] = element
 
 		local glow = parent.Cover:CreateTexture(nil, "ARTWORK", nil, 3)
 		glow:SetSize(16, LAYOUT[6][i].size)
 		glow:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
 		glow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
-		glow:SetVertexColor(unpack(M.colors.power.RUNES_GLOW))
+		glow:SetVertexColor(M.COLORS.POWER.GLOW.RUNES:GetRGB())
 		glow:SetTexCoord(unpack(LAYOUT[6][i].glow))
 		glow:SetAlpha(0)
 		element.Glow = glow
@@ -471,18 +465,17 @@ function UF:CreateRuneBar(parent, level)
 	return bar
 end
 
-local function OverrideStaggerBar(self, event, unit)
+local function OverrideStaggerBar(self, _, unit)
 	if unit and unit ~= self.unit then return end
 	local bar = self.Stagger
 
-	local maxHealth = UnitHealthMax("player")
-	local stagger = UnitStagger("player")
+	local maxHealth = _G.UnitHealthMax("player")
+	local stagger = _G.UnitStagger("player")
 
 	bar:SetMinMaxValues(0, maxHealth)
 	bar:SetValue(stagger)
 
-	local r, g, b = E:ColorGradient(stagger / maxHealth, unpack(M.colors.power["STAGGER"]))
-	local hex = E:RGBToHEX(r, g, b)
+	local r, g, b, hex = M.COLORS.POWER.STAGGER:GetRGBHEX(stagger / maxHealth)
 
 	bar:SetStatusBarColor(r, g, b)
 

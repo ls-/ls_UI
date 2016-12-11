@@ -1,43 +1,36 @@
 local _, ns = ...
-local E, C, M, oUF = ns.E, ns.C, ns.M, ns.oUF
-local UF = E:AddModule("UnitFrames")
+local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
+local UF = P:AddModule("UnitFrames")
 
-UF.framesByUnit = {
-	player = {},
-	pet = {},
-	target = {},
-	targettarget = {},
-	focus = {},
-	focustarget = {},
-	party = {},
-	boss = {},
-	arena = {},
-}
+-- Lua
+local _G = _G
+local string = _G.string
+local getmetatable = _G.getmetatable
+local pairs = _G.pairs
+local tonumber = _G.tonumber
+local unpack = _G.unpack
 
-local objects, headers = {}, {}
+-- Mine
+local isInit = false
+local objects = {}
 
 local function LSUnitFrame_OnEnter(self)
 	if self.__owner then
 		self = self.__owner
 	end
 
-	UnitFrame_OnEnter(self)
+	_G.UnitFrame_OnEnter(self)
 
-	local name = gsub(self:GetName(), "%d", "")
-
-	if name == "LSPartyFrameUnitButton" then
-		PartyMemberBuffTooltip:ClearAllPoints()
-		PartyMemberBuffTooltip:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", -10, 10)
-		PartyMemberBuffTooltip_Update(self)
-	elseif name == "LSPetFrame" then
-		PartyMemberBuffTooltip:ClearAllPoints()
-		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
-		PartyMemberBuffTooltip_Update(self)
+	if string.match(self:GetName(), "LSPetFrame") then
+		_G.PartyMemberBuffTooltip:ClearAllPoints()
+		_G.PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
+		_G.PartyMemberBuffTooltip_Update(self)
 	end
 
 	self.isMouseOver = true
+
 	if self.mouseovers then
-		for _, element in next, self.mouseovers do
+		for _, element in pairs(self.mouseovers) do
 			if element.ForceUpdate then
 				element:ForceUpdate()
 
@@ -56,19 +49,16 @@ local function LSUnitFrame_OnLeave(self)
 		self = self.__owner
 	end
 
-	UnitFrame_OnLeave(self)
+	_G.UnitFrame_OnLeave(self)
 
-	local name = gsub(self:GetName(), "%d", "")
-
-	if name == "LSPartyFrameUnitButton" then
-		PartyMemberBuffTooltip:Hide()
-	elseif name == "LSPetFrame" then
-		PartyMemberBuffTooltip:Hide()
+	if string.match(self:GetName(), "LSPetFrame") then
+		_G.PartyMemberBuffTooltip:Hide()
 	end
 
 	self.isMouseOver = nil
+
 	if self.mouseovers then
-		for _, element in next, self.mouseovers do
+		for _, element in pairs(self.mouseovers) do
 			if element.ForceUpdate then
 				element:ForceUpdate()
 
@@ -109,18 +99,16 @@ local function UnitFrameConstructor(frame, unit)
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss5" then
 		UF:ConstructBossFrame(frame)
-	elseif unit == "party" then
-		UF:ConstructPartyFrame(frame)
-	elseif unit == "arena1" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena2" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena3" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena4" then
-		UF:ConstructArenaFrame(frame)
-	elseif unit == "arena5" then
-		UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena1" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena2" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena3" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena4" then
+	-- 	UF:ConstructArenaFrame(frame)
+	-- elseif unit == "arena5" then
+	-- 	UF:ConstructArenaFrame(frame)
 	end
 end
 
@@ -151,20 +139,21 @@ local function MainConstructor()
 		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
 	end
 
-	local ArenaPrepFrames
-	if C.units.arena.enabled then
-		objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
-		objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
-		objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
-		objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
-		objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
+	-- local ArenaPrepFrames
+	-- if C.units.arena.enabled then
+	-- 	objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
+	-- 	objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
+	-- 	objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
+	-- 	objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
+	-- 	objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
 
-		ArenaPrepFrames = UF:SetupArenaPrepFrames()
-	end
+	-- 	ArenaPrepFrames = UF:SetupArenaPrepFrames()
+	-- end
 
-	for unit, object in next, objects do
-		if strmatch(unit, "^boss%d") then
-			local id = tonumber(strmatch(unit, "boss(%d)"))
+	for unit, object in pairs(objects) do
+		if string.match(unit, "^boss") then
+			local id = tonumber(string.match(unit, "boss(%d)"))
+
 			if id == 1 then
 				UF:CreateBossHolder()
 
@@ -172,52 +161,204 @@ local function MainConstructor()
 			else
 				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -36)
 			end
-		 elseif strmatch(unit, "^arena%d") then
-			local id = tonumber(strmatch(unit, "arena(%d)"))
-			if id == 1 then
-				UF:CreateArenaHolder()
+		-- elseif strmatch(unit, "^arena%d") then
+		-- 	local id = tonumber(strmatch(unit, "arena(%d)"))
+		-- 	if id == 1 then
+		-- 		UF:CreateArenaHolder()
 
-				object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
-			else
-				object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
-			end
+		-- 		object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
+		-- 	else
+		-- 		object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
+		-- 	end
 		else
 			object:SetPoint(unpack(C.units[unit].point))
 			E:CreateMover(object)
 		end
 	end
 
-	if ArenaPrepFrames then
-		ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
+	-- if ArenaPrepFrames then
+	-- 	ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
 
-		for i = 1, 5 do
-			if i == 1 then
-				ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
-			else
-				ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
-			end
+	-- 	for i = 1, 5 do
+	-- 		if i == 1 then
+	-- 			ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
+	-- 		else
+	-- 			ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
+	-- 		end
+	-- 	end
+	-- end
+end
+
+--------------
+-- SETTINGS --
+--------------
+
+function UF:SpawnFrame(unit)
+	if unit == "player" and not objects["player"] then
+		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
+		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
+
+		objects["player"]:SetPoint(unpack(C.units.player.point))
+		E:CreateMover(objects["player"])
+
+		objects["pet"]:SetPoint(unpack(C.units.pet.point))
+		E:CreateMover(objects["pet"])
+
+		if not C.units.player.castbar then
+			objects["player"]:DisableElement("Castbar")
+			objects["pet"]:DisableElement("Castbar")
+
+			UF:EnableDefaultCastingBars()
 		end
-	end
 
-	if C.units.party.enabled then
-		headers["party"] = oUF:SpawnHeader("LSPartyFrame", nil,
-			"custom [nogroup][group:party,@party1,noexists][group:raid,@raid1,exists]hide;show",
-			"oUF-initialConfigFunction", [[self:SetWidth(110); self:SetHeight(36)]],
-			"showPlayer", true,
-			"showParty", true,
-			"groupBy", "ROLE",
-			"groupingOrder", "TANK,HEALER,DAMAGER",
-			"point", "TOP", "yOffset", -40)
+		return true
+	elseif unit == "target" and not objects["target"] then
+		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
+		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
 
-		UF:CreatePartyHolder()
+		objects["target"]:SetPoint(unpack(C.units.target.point))
+		E:CreateMover(objects["target"])
 
-		headers["party"]:SetParent(LSPartyHolder)
-		headers["party"]:SetPoint("TOPLEFT", "LSPartyHolder", "TOPLEFT", 0, -16)
+		objects["targettarget"]:SetPoint(unpack(C.units.targettarget.point))
+		E:CreateMover(objects["targettarget"])
+
+		if not C.units.target.castbar then
+			objects["target"]:DisableElement("Castbar")
+		end
+
+		return true
+	elseif unit == "focus" and not objects["focus"] then
+		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
+		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
+
+		objects["focus"]:SetPoint(unpack(C.units.focus.point))
+		E:CreateMover(objects["focus"])
+
+		objects["focustarget"]:SetPoint(unpack(C.units.focustarget.point))
+		E:CreateMover(objects["focustarget"])
+
+		if not C.units.focus.castbar then
+			objects["focus"]:DisableElement("Castbar")
+		end
+
+		return true
+	elseif unit == "boss" and not objects["boss1"] then
+		objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
+		objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
+		objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
+		objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
+		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
+
+		UF:CreateBossHolder()
+
+		objects["boss1"]:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, -16)
+		objects["boss2"]:SetPoint("TOP", objects["boss1"], "BOTTOM", 0, -36)
+		objects["boss3"]:SetPoint("TOP", objects["boss2"], "BOTTOM", 0, -36)
+		objects["boss4"]:SetPoint("TOP", objects["boss3"], "BOTTOM", 0, -36)
+		objects["boss5"]:SetPoint("TOP", objects["boss4"], "BOTTOM", 0, -36)
+
+		if not C.units.boss.castbar then
+			objects["boss1"]:DisableElement("Castbar")
+			objects["boss2"]:DisableElement("Castbar")
+			objects["boss3"]:DisableElement("Castbar")
+			objects["boss4"]:DisableElement("Castbar")
+			objects["boss5"]:DisableElement("Castbar")
+		end
+
+		return true
 	end
 end
 
-function UF:Initialize(forceInit)
-	if C.units.enabled or forceInit then
+function UF:EnableElement(unit, element)
+	if objects[unit] then
+		objects[unit]:EnableElement(element)
+	end
+end
+
+function UF:DisableElement(unit, element)
+	if objects[unit] then
+		objects[unit]:DisableElement(element)
+	end
+end
+
+function UF:UpdateUnitFrames()
+	for _, frame in pairs(objects) do
+		frame:UpdateAllElements("ForceUpdate")
+	end
+end
+
+function UF:EnableDefaultCastingBars()
+	_G.CastingBarFrame.Show = getmetatable(_G.CastingBarFrame).__index.Show
+	_G.CastingBarFrame.unit = nil
+	_G.CastingBarFrame_OnLoad(_G.CastingBarFrame, "player", true, false)
+
+	_G.PetCastingBarFrame.Show = getmetatable(_G.PetCastingBarFrame).__index.Show
+	_G.PetCastingBarFrame.unit = nil
+	_G.PetCastingBarFrame_OnLoad(_G.PetCastingBarFrame)
+end
+
+-----------------
+-- INITIALISER --
+-----------------
+
+function UF:IsInit()
+	return isInit
+end
+
+function UF:Init()
+	if not isInit and C.units.enabled then
 		oUF:Factory(MainConstructor)
+
+		-- Castbars
+		if not C.units.player.castbar then
+			if objects["player"] then
+				objects["player"]:DisableElement("Castbar")
+			end
+
+			if objects["pet"] then
+				objects["pet"]:DisableElement("Castbar")
+			end
+
+			UF:EnableDefaultCastingBars()
+		end
+
+		if not C.units.target.castbar then
+			if objects["target"] then
+				objects["target"]:DisableElement("Castbar")
+			end
+		end
+
+		if not C.units.focus.castbar then
+		 	if objects["focus"] then
+				objects["focus"]:DisableElement("Castbar")
+			end
+		end
+
+		if not C.units.boss.castbar then
+			if objects["boss1"] then
+				objects["boss1"]:DisableElement("Castbar")
+			end
+
+			if objects["boss2"] then
+				objects["boss2"]:DisableElement("Castbar")
+			end
+
+			if objects["boss3"] then
+				objects["boss3"]:DisableElement("Castbar")
+			end
+
+			if objects["boss4"] then
+				objects["boss4"]:DisableElement("Castbar")
+			end
+
+			if objects["boss5"] then
+				objects["boss5"]:DisableElement("Castbar")
+			end
+		end
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end

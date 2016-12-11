@@ -1,10 +1,8 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 function UF:ConstructPetFrame(frame)
-	tinsert(UF.framesByUnit["pet"], frame)
-
 	local level = frame:GetFrameLevel()
 
 	frame.mouseovers = {}
@@ -60,11 +58,9 @@ function UF:ConstructPetFrame(frame)
 	status:SetPoint("CENTER")
 	frame:Tag(status, "[ls:debuffstatus]")
 
-	if C.units.pet.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
-		frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
-		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
+	frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
+	RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
 	local threat = UF:CreateThreat(frame)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")

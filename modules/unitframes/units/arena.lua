@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
@@ -69,7 +69,7 @@ local function ArenaFrame_OnEvent(self, event, ...)
 			local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
 
 			self.SpecInfo.Icon:SetTexture(specIcon)
-			self.SpecInfo.tooltipInfo = {M.textures.inlineicons[role], className, specName, E:RGBToHEX(M.colors.class[class])}
+			self.SpecInfo.tooltipInfo = {M.textures.inlineicons[role], className, specName, M.COLORS.CLASS[class]:GetHEX()}
 		end
 	end
 end
@@ -216,7 +216,7 @@ function UF:ConstructArenaFrame(frame)
 	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
 	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:smartreaction][ls:name][ls:server]|r")
+	frame:Tag(name, "[ls:unitcolor][ls:name][ls:server]|r")
 
 	local specinfo = _G.CreateFrame("Frame", "$parentSpecInfo", frame)
 	specinfo:SetSize(28, 28)
@@ -226,7 +226,7 @@ function UF:ConstructArenaFrame(frame)
 	specinfo:SetScript("OnEnter", SpecInfo_OnEnter)
 	specinfo:SetScript("OnLeave", SpecInfo_OnLeave)
 
-	specinfo.Icon = E:UpdateIcon(specinfo, "Interface\\ICONS\\INV_Misc_QuestionMark")
+	specinfo.Icon = E:SetIcon(specinfo, "Interface\\ICONS\\INV_Misc_QuestionMark")
 	specinfo.CD = E:CreateCooldown(specinfo, 12)
 
 	local trinket = _G.CreateFrame("Frame", "$parentTrinket", frame)
@@ -238,7 +238,7 @@ function UF:ConstructArenaFrame(frame)
 	E:CreateBorder(trinket)
 	frame.Trinket = trinket
 
-	trinket.Icon = E:UpdateIcon(trinket, "Interface\\ICONS\\INV_Misc_QuestionMark")
+	trinket.Icon = E:SetIcon(trinket, "Interface\\ICONS\\INV_Misc_QuestionMark")
 	trinket.CD = E:CreateCooldown(trinket, 12)
 
 	-- E:ForceShow(frame)
@@ -264,7 +264,7 @@ local function ArenaPrepFrameHandler_OnEvent(self, event, ...)
 				local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
 
 				frame.Icon:SetTexture(specIcon)
-				frame.tooltipInfo = {M.textures.inlineicons[role], className, specName, E:RGBToHEX(M.colors.class[class])}
+				frame.tooltipInfo = {M.textures.inlineicons[role], className, specName, M.COLORS.CLASS[class]:GetHEX()}
 			end
 
 			frame:Show()
@@ -281,7 +281,7 @@ local function ConstructArenaPrepFrame(index, parent)
 	frame:SetScript("OnEnter", SpecInfo_OnEnter)
 	frame:SetScript("OnLeave", SpecInfo_OnLeave)
 
-	frame.Icon = E:UpdateIcon(frame, "Interface\\ICONS\\INV_Misc_QuestionMark")
+	frame.Icon = E:SetIcon(frame, "Interface\\ICONS\\INV_Misc_QuestionMark")
 
 	return frame
 end

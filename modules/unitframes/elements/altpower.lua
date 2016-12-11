@@ -1,6 +1,6 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local UF = E:GetModule("UnitFrames")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
@@ -13,7 +13,7 @@ local function PostUpdateAltPower(bar, min, cur, max)
 	local _, r, g, b = _G.UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
 
 	if (r == 1 and g == 1 and b == 1) or not b then
-		r, g, b = unpack(M.colors.indigo)
+		r, g, b = M.COLORS.INDIGO:GetRGB()
 	end
 
 	bar:SetStatusBarColor(r, g, b)

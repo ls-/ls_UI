@@ -1,11 +1,12 @@
 -- Based on code from oUF_Phanx by Phanx <addons@phanx.net>
 
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
+local E = ns.E
 
 -- Lua
 local _G = _G
-local type, pairs = type, pairs
+local type = _G.type
+local pairs = _G.pairs
 
 -- Mine
 local sections = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}

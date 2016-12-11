@@ -1,35 +1,33 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local AT = E:AddModule("AuraTracker", true)
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local AURATRACKER = P:AddModule("AuraTracker")
 
 -- Lua
 local _G = _G
-local pairs, unpack = pairs, unpack
-local tonumber, tostring = tonumber, tostring
-local tremove, tinsert, tcontains, twipe = table.remove, table.insert, tContains, table.wipe
+local table = _G.table
+local string = _G.string
+local pairs = _G.pairs
+local tonumber = _G.tonumber
+local select = _G.select
 
 -- Blizz
-local BUFF_MAX_DISPLAY = BUFF_MAX_DISPLAY
-local DEBUFF_MAX_DISPLAY = DEBUFF_MAX_DISPLAY
-local GameTooltip = GameTooltip
-local GetSpellInfo = GetSpellInfo
-local GetTime = GetTime
-local UnitAura = UnitAura
-local CooldownFrame_Set = CooldownFrame_Set
+local BUFF_MAX_DISPLAY = _G.BUFF_MAX_DISPLAY
+local DEBUFF_MAX_DISPLAY = _G.DEBUFF_MAX_DISPLAY
+local CooldownFrame_Set = _G.CooldownFrame_Set
+local DebuffTypeColor = _G.DebuffTypeColor
+local GetSpellInfo = _G.GetSpellInfo
+local UnitAura = _G.UnitAura
 
 --Mine
-local AT_LABEL = "|cffffd100".. BUFFOPTIONS_LABEL.."|r"
-local SUCCESS_TEXT = "|cff26a526Success!|r"
-local ERROR_TEXT = "|cffe52626Error!|r"
-local AT_CFG
-local AuraTracker
+local isInit = false
 local activeAuras = {}
+local AuraTracker
 
 local function PopulateActiveAurasTable(index, filter)
-	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitAura("player", index, filter)
+	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
 	local playerSpec = E:GetPlayerSpecFlag()
 
-	if name and AT_CFG[filter][spellId] and E:IsFilterApplied(AT_CFG[filter][spellId], playerSpec) then
+	if name and C.auratracker[filter][spellID] and E:IsFilterApplied(C.auratracker[filter][spellID], playerSpec) then
 		local aura = {
 			index = index,
 			icon = iconTexture,
@@ -40,40 +38,31 @@ local function PopulateActiveAurasTable(index, filter)
 			filter = filter,
 		}
 
-		tinsert(activeAuras, aura)
+		table.insert(activeAuras, aura)
 	end
 end
 
 local function HandleDataCorruption(filter)
-	local auraList = AT_CFG[filter]
+	local auraList = C.auratracker[filter]
 
-	for k, v in pairs(auraList) do
+	for k in pairs(auraList) do
 		if not GetSpellInfo(k) then
 			auraList[k] = nil
 		end
 	end
-
-	-- DB converter
-	for spec = 1, 4 do
-		local auraList = AT_CFG[tostring(spec)][filter]
-		for _, spellID in pairs(auraList) do
-			AT_CFG[filter][spellID] = E:AddFilterToMask(AT_CFG[filter][spellID] or 0x00000000, E.PLAYER_SPEC_FLAGS[spec])
-		end
-		twipe(auraList)
-	end
 end
 
 local function ATButton_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	_G.GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
 end
 
-local function ATButton_OnLeave(self)
-	GameTooltip:Hide()
+local function ATButton_OnLeave()
+	_G.GameTooltip:Hide()
 end
 
-local function AT_OnEvent(self, event, ...)
-	activeAuras = twipe(activeAuras)
+local function AT_OnEvent()
+	activeAuras = table.wipe(activeAuras)
 
 	for i = 1, BUFF_MAX_DISPLAY do
 		PopulateActiveAurasTable(i, "HELPFUL")
@@ -84,185 +73,120 @@ local function AT_OnEvent(self, event, ...)
 	end
 
 	for i = 1, 12 do
-		self.buttons[i]:Hide()
+		AuraTracker.buttons[i]:Hide()
 	end
 
 	for i = 1, #activeAuras do
-		local button, aura = self.buttons[i], activeAuras[i]
+		local button, aura = AuraTracker.buttons[i], activeAuras[i]
 
 		if button then
 			local color = {r = 1, g = 1, b = 1}
 
-			button:Show()
 			button:SetID(aura.index)
 			button.Icon:SetTexture(aura.icon)
+			button.Count:SetText(aura.count > 1 and aura.count)
 			button.filter = aura.filter
-			button.expire = aura.expire
-			button.stacks = aura.count
 
 			CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
 			if button.filter == "HARMFUL" then
-				color = {r = 0.8, g = 0, b = 0}
+				color = {M.COLORS.RED:GetRGB()}
 
 				if aura.debuffType then
-					color = _G.DebuffTypeColor[aura.debuffType]
+					color = DebuffTypeColor[aura.debuffType]
 				end
 			end
 
 			button:SetBorderColor(color.r, color.g, color.b)
+			button:Show()
 		end
 	end
 end
 
-local function AT_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
+local function AddToList(filter, spellID)
+	if not (C.auratracker.enabled and filter and spellID) then return end
 
-	if self.elapsed > 0.1 then
-		for i = 1, 12 do
-			local button = self.buttons[i]
-			if button:IsShown() then
-				if GameTooltip:IsOwned(button) then
-					GameTooltip:SetUnitAura("player", button:GetID(), button.filter)
-				end
+	local link = _G.GetSpellLink(spellID)
 
-				button.Count:SetText(button.stacks > 0 and button.stacks or "")
-
-				local time = button.expire - GetTime()
-				if time > 0.1 then
-					if time <= 30 and not (button.Blink and button.Blink:IsPlaying()) then
-						E:Blink(button, 0.8, nil, 0.25)
-					elseif time >= 30 and (button.Blink and button.Blink:IsPlaying()) then
-						E:StopBlink(button, true)
-					end
-				else
-					E:StopBlink(button)
-				end
-			end
-		end
-
-		self.elapsed = 0
-	end
-end
-
-function AT:IsRunning()
-	return not not AuraTracker
-end
-
-function AT:Enable()
-	if not AT:IsRunning() then
- 		AT:Initialize(true)
-
-		HandleDataCorruption("HELPFUL")
-		HandleDataCorruption("HARMFUL")
- 	else
-		AuraTracker:Show()
-		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
- 	end
-
-	AT:ForceUpdate()
-
-	if AT_CFG.locked then AT:HideHeader() end
-
- 	return true, SUCCESS_TEXT.." AT is on."
-end
-
-function AT:Disable()
-	if AT:IsRunning() then
-		AuraTracker:Hide()
-		AuraTracker:UnregisterEvent("UNIT_AURA")
-
-	 	return true, SUCCESS_TEXT.." AT will be disabled on next UI reload."
-	 else
-	 	return true, SUCCESS_TEXT.." AT is off."
-	 end
-end
-
-function AT:AddToList(filter, spellID)
-	if not AT_CFG.enabled then
-		return false, ERROR_TEXT.." Can\'t add aura. Module is disabled."
+	if not link then
+		return false, L["LOG_NOTHING_FOUND"]
 	end
 
-	local name = GetSpellInfo(spellID)
-	if not name then
-		return false, ERROR_TEXT.." Can\'t add aura, that doesn't exist."
+	if C.auratracker[filter][spellID] then
+		return false, string.format(L["LOG_ITEM_ADDED_ERR"], link)
 	end
 
-	if AT_CFG[filter][spellID] then
-		return false, ERROR_TEXT.." Can\'t add aura. Already in the list."
-	end
+	C.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
 
-	AT_CFG[filter][spellID] = E:GetPlayerSpecFlag()
+	AURATRACKER:Refresh()
 
-	AT:ForceUpdate()
-
-	return true, SUCCESS_TEXT.." Added "..name.." ("..spellID..")."
+	return true, string.format(L["LOG_ITEM_ADDED"], link)
 end
 
-local function ATHeader_OnEnter(self)
-	self.Text:SetAlpha(1)
+----------------------
+-- UTILS & SETTINGS --
+----------------------
+
+function AURATRACKER:ToggleHeader(state)
+	AuraTracker.Header:SetShown(state)
+
+	E:ToggleMover(AuraTracker.Header, state)
 end
 
-local function ATHeader_OnLeave(self)
-	self.Text:SetAlpha(0.2)
-end
-
-local function ATHeader_OnDragStart(self)
-	AuraTracker:StartMoving()
-end
-
-local function ATHeader_OnDragStop(self)
-	AuraTracker:StopMovingOrSizing()
-
-	AT_CFG.point = {E:GetCoords(AuraTracker)}
-end
-
-function AT:GetAuraTracker()
-	return AuraTracker
-end
-
-function AT:ShowHeader()
-	AuraTracker.Header:Show()
-end
-
-function AT:HideHeader()
-	AuraTracker.Header:Hide()
-end
-
-function AT:ForceUpdate()
+function AURATRACKER:Refresh()
 	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
 end
 
-function AT:PLAYER_LOGIN()
-	HandleDataCorruption("HELPFUL")
-	HandleDataCorruption("HARMFUL")
+function AURATRACKER:UpdateLayout()
+	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
+end
+-----------------
+-- INITIALISER --
+-----------------
 
-	if AT:IsRunning() then
-		AT:ForceUpdate()
-	end
+function AURATRACKER:IsInit()
+	return isInit
 end
 
-function AT:Initialize(forceInit)
-	AT_CFG = C.auratracker
+function AURATRACKER:Init()
+	if not isInit and C.auratracker.enabled then
+		HandleDataCorruption("HELPFUL")
+		HandleDataCorruption("HARMFUL")
 
-	if AT_CFG.enabled or forceInit then
-		AuraTracker = _G.CreateFrame("Frame", "LSAuraTracker", _G.UIParent)
-		AuraTracker:SetPoint(unpack(AT_CFG.point))
+		local header = _G.CreateFrame("Frame", "LSAuraTrackerHeader", _G.UIParent)
+		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+
+		local label = E:CreateFontString(header, 12, nil, true)
+		label:SetPoint("LEFT", 2, 0)
+		label:SetAlpha(0.4)
+		label:SetText("|cffffd100".._G.BUFFOPTIONS_LABEL.."|r")
+		header.Text = label
+
+		header:SetSize(label:GetWidth(), 22)
+		E:CreateMover(header, true)
+
+		-- FIX-ME: Remove it later
+		C.auratracker.point = nil
+		C.auratracker.direction = nil
+
+		AuraTracker = _G.CreateFrame("Frame", nil, _G.UIParent)
+		AuraTracker:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
 		AuraTracker:SetMovable(true)
 		AuraTracker:SetClampedToScreen(true)
 		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
 		AuraTracker:SetScript("OnEvent", AT_OnEvent)
-		AuraTracker:SetScript("OnUpdate", AT_OnUpdate)
 
-		local buttons = {}
+		AuraTracker.Header = header
+		AuraTracker.buttons = {}
+
 		for i = 1, 12 do
-			local button = E:CreateButton(AuraTracker, "$parentButton"..i, true)
+			local button = E:CreateButton(AuraTracker, nil, true)
 			button:SetPushedTexture("")
 			button:SetHighlightTexture("")
 			button:Hide()
 			button:SetScript("OnEnter", ATButton_OnEnter)
 			button:SetScript("OnLeave", ATButton_OnLeave)
-			buttons[i] = button
+			AuraTracker.buttons[i] = button
 
 			if button.CD.SetTimerTextHeight then
 				button.CD:SetTimerTextHeight(14)
@@ -271,44 +195,24 @@ function AT:Initialize(forceInit)
 			button.Count:SetFontObject("LS12Font_Outline")
 		end
 
-		AuraTracker.buttons = buttons
+		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
 
-		E:SetupBar(AuraTracker, buttons, AT_CFG.button_size, AT_CFG.button_gap, AT_CFG.direction)
-
-		local header = _G.CreateFrame("Button", "$parentHeader", AuraTracker)
-		header:SetClampedToScreen(true)
-		header:SetPoint("BOTTOMLEFT", AuraTracker, "TOPLEFT", 0, 0)
-		header:RegisterForDrag("LeftButton")
-		header:SetScript("OnEnter", ATHeader_OnEnter)
-		header:SetScript("OnLeave", ATHeader_OnLeave)
-		header:SetScript("OnDragStart", ATHeader_OnDragStart)
-		header:SetScript("OnDragStop", ATHeader_OnDragStop)
-		AuraTracker.Header = header
-
-		local label = E:CreateFontString(header, 12, nil, true)
-		label:SetPoint("LEFT", 2, 0)
-		label:SetAlpha(0.2)
-		label:SetText(AT_LABEL)
-		header.Text = label
-
-		header:SetSize(label:GetWidth(), 22)
-
-		if AT_CFG.locked then AT:HideHeader() end
-
-		SLASH_ATBUFF1 = "/atbuff"
+		_G.SLASH_ATBUFF1 = "/atbuff"
 		_G.SlashCmdList["ATBUFF"] = function(msg)
-			local _, text = AT:AddToList("HELPFUL", tonumber(msg))
-
-			print("|cff1ec77eAuraTracker|r: "..text)
+			P.print(select(2, AddToList("HELPFUL", tonumber(msg))))
 		end
 
-		SLASH_ATDEBUFF1 = "/atdebuff"
+		_G.SLASH_ATDEBUFF1 = "/atdebuff"
 		_G.SlashCmdList["ATDEBUFF"] = function(msg)
-			local _, text = AT:AddToList("HARMFUL", tonumber(msg))
-
-			print("|cff1ec77eAuraTracker|r: "..text)
+			P.print(select(2, AddToList("HARMFUL", tonumber(msg))))
 		end
+
+		-- Finalise
+		self:ToggleHeader(not C.auratracker.locked)
+		self:Refresh()
+
+		isInit = true
+
+		return true
 	end
 end
-
-AT:RegisterEvent("PLAYER_LOGIN")

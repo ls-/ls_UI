@@ -1,27 +1,57 @@
 local _, ns = ...
-local E, C, M, L = ns.E, ns.C, ns.M, ns.L
-local B = E:GetModule("Blizzard")
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local Blizzard = P:GetModule("Blizzard")
 
-function B:HandleTimers()
-	E:HandleStatusBar(MirrorTimer1)
-	E:SetStatusBarSkin(MirrorTimer1, "HORIZONTAL-BIG")
+-- Lua
+local _G = _G
+local pairs = _G.pairs
 
-	MirrorTimer2:ClearAllPoints()
-	MirrorTimer2:SetPoint("TOP", "MirrorTimer1", "BOTTOM", 0, -6)
-	E:HandleStatusBar(MirrorTimer2)
-	E:SetStatusBarSkin(MirrorTimer2, "HORIZONTAL-BIG")
+-- Mine
+local isInit = false
 
-	MirrorTimer3:ClearAllPoints()
-	MirrorTimer3:SetPoint("TOP", "MirrorTimer2", "BOTTOM", 0, -6)
-	E:HandleStatusBar(MirrorTimer3)
-	E:SetStatusBarSkin(MirrorTimer3, "HORIZONTAL-BIG")
+-----------------
+-- INITIALISER --
+-----------------
 
-	-- 3 should be enough
-	for i = 1, 3 do
-		local timer = CreateFrame("FRAME", "TimerTrackerTimer"..i, UIParent, "StartTimerBar")
-		TimerTracker.timerList[i] = timer
+function Blizzard:Timer_IsInit()
+	return isInit
+end
 
-		E:HandleStatusBar(timer.bar)
-		E:SetStatusBarSkin(timer.bar, "HORIZONTAL-BIG")
+function Blizzard:Timer_Init()
+	if not isInit and C.blizzard.timer.enabled then
+		E:HandleStatusBar(_G.MirrorTimer1)
+		E:SetStatusBarSkin(_G.MirrorTimer1, "HORIZONTAL-L")
+
+		_G.MirrorTimer2:ClearAllPoints()
+		_G.MirrorTimer2:SetPoint("TOP", "MirrorTimer1", "BOTTOM", 0, -6)
+		E:HandleStatusBar(_G.MirrorTimer2)
+		E:SetStatusBarSkin(_G.MirrorTimer2, "HORIZONTAL-L")
+
+		_G.MirrorTimer3:ClearAllPoints()
+		_G.MirrorTimer3:SetPoint("TOP", "MirrorTimer2", "BOTTOM", 0, -6)
+		E:HandleStatusBar(_G.MirrorTimer3)
+		E:SetStatusBarSkin(_G.MirrorTimer3, "HORIZONTAL-L")
+
+		-- 3 should be enough
+		local indices = {}
+
+		for i = 1, 3 do
+			if not _G["TimerTrackerTimer"..i] then
+				indices[i] = true
+			end
+		end
+
+		for i in pairs(indices) do
+			local timer = _G.CreateFrame("FRAME", "TimerTrackerTimer"..i, _G.UIParent, "StartTimerBar")
+			_G.TimerTracker.timerList[i] = timer
+
+			E:HandleStatusBar(timer.bar)
+			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-L")
+		end
+
+		-- Finalise
+		isInit = true
+
+		return true
 	end
 end
