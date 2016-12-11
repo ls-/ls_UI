@@ -104,6 +104,7 @@ function AURAS:Init()
 			end
 		end
 
+		_G.BuffFrame_UpdateAllBuffAnchors()
 		_G.TemporaryEnchantFrame_Update(_G.GetWeaponEnchantInfo())
 
 		-- Finalise
