@@ -724,6 +724,7 @@ local function OpenToCategory(category)
 		CFG:AuraTracker_Init()
 		CFG:Blizzard_Init()
 		CFG:Tooltips_Init()
+		CFG:UnitFrames_Init()
 
 		_G.InterfaceAddOnsList_Update()
 		_G.InterfaceOptionsOptionsFrame_RefreshAddOns()

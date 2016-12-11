@@ -5,4 +5,5 @@
 	<Script file="bars.lua"/>
 	<Script file="blizzard.lua"/>
 	<Script file="tooltips.lua"/>
+	<Script file="unitframes.lua"/>
 </Ui>
