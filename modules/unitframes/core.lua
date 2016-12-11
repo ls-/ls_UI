@@ -1,10 +1,11 @@
 local _, ns = ...
 local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
-local UF = P:AddModule("UnitFrames")
+local UF = P:AddModule("UnitFrames", true)
 
 -- Lua
 local _G = _G
 local string = _G.string
+local getmetatable = _G.getmetatable
 local pairs = _G.pairs
 local tonumber = _G.tonumber
 local unpack = _G.unpack
@@ -188,6 +189,114 @@ local function MainConstructor()
 	-- end
 end
 
+--------------
+-- SETTINGS --
+--------------
+
+function UF:SpawnFrame(unit)
+	if unit == "player" and not objects["player"] then
+		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
+		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
+
+		objects["player"]:SetPoint(unpack(C.units.player.point))
+		E:CreateMover(objects["player"])
+
+		objects["pet"]:SetPoint(unpack(C.units.pet.point))
+		E:CreateMover(objects["pet"])
+
+		if not C.units.player.castbar then
+			objects["player"]:DisableElement("Castbar")
+			objects["pet"]:DisableElement("Castbar")
+
+			UF:EnableDefaultCastingBars()
+		end
+
+		return true
+	elseif unit == "target" and not objects["target"] then
+		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
+		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
+
+		objects["target"]:SetPoint(unpack(C.units.target.point))
+		E:CreateMover(objects["target"])
+
+		objects["targettarget"]:SetPoint(unpack(C.units.targettarget.point))
+		E:CreateMover(objects["targettarget"])
+
+		if not C.units.target.castbar then
+			objects["target"]:DisableElement("Castbar")
+		end
+
+		return true
+	elseif unit == "focus" and not objects["focus"] then
+		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
+		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
+
+		objects["focus"]:SetPoint(unpack(C.units.focus.point))
+		E:CreateMover(objects["focus"])
+
+		objects["focustarget"]:SetPoint(unpack(C.units.focustarget.point))
+		E:CreateMover(objects["focustarget"])
+
+		if not C.units.focus.castbar then
+			objects["focus"]:DisableElement("Castbar")
+		end
+
+		return true
+	elseif unit == "boss" and not objects["boss1"] then
+		objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
+		objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
+		objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
+		objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
+		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
+
+		UF:CreateBossHolder()
+
+		objects["boss1"]:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, -16)
+		objects["boss2"]:SetPoint("TOP", objects["boss1"], "BOTTOM", 0, -36)
+		objects["boss3"]:SetPoint("TOP", objects["boss2"], "BOTTOM", 0, -36)
+		objects["boss4"]:SetPoint("TOP", objects["boss3"], "BOTTOM", 0, -36)
+		objects["boss5"]:SetPoint("TOP", objects["boss4"], "BOTTOM", 0, -36)
+
+		if not C.units.boss.castbar then
+			objects["boss1"]:DisableElement("Castbar")
+			objects["boss2"]:DisableElement("Castbar")
+			objects["boss3"]:DisableElement("Castbar")
+			objects["boss4"]:DisableElement("Castbar")
+			objects["boss5"]:DisableElement("Castbar")
+		end
+
+		return true
+	end
+end
+
+function UF:EnableElement(unit, element)
+	if objects[unit] then
+		objects[unit]:EnableElement(element)
+	end
+end
+
+function UF:DisableElement(unit, element)
+	if objects[unit] then
+		objects[unit]:DisableElement(element)
+	end
+end
+
+function UF:UpdateUnitFrames()
+	for _, frame in pairs(objects) do
+		frame:UpdateAllElements("ForceUpdate")
+	end
+end
+
+function UF:EnableDefaultCastingBars()
+	_G.CastingBarFrame.Show = getmetatable(_G.CastingBarFrame).__index.Show
+	_G.CastingBarFrame.unit = nil
+	_G.CastingBarFrame_OnLoad(_G.CastingBarFrame, "player", true, false)
+
+	_G.PetCastingBarFrame.Show = getmetatable(_G.PetCastingBarFrame).__index.Show
+	_G.PetCastingBarFrame.unit = nil
+	_G.PetCastingBarFrame_OnLoad(_G.PetCastingBarFrame)
+end
+
 -----------------
 -- INITIALISER --
 -----------------
@@ -199,6 +308,53 @@ end
 function UF:Init()
 	if not isInit and C.units.enabled then
 		oUF:Factory(MainConstructor)
+
+		-- Castbars
+		if not C.units.player.castbar then
+			if objects["player"] then
+				objects["player"]:DisableElement("Castbar")
+			end
+
+			if objects["pet"] then
+				objects["pet"]:DisableElement("Castbar")
+			end
+
+			UF:EnableDefaultCastingBars()
+		end
+
+		if not C.units.target.castbar then
+			if objects["target"] then
+				objects["target"]:DisableElement("Castbar")
+			end
+		end
+
+		if not C.units.focus.castbar then
+		 	if objects["focus"] then
+				objects["focus"]:DisableElement("Castbar")
+			end
+		end
+
+		if not C.units.boss.castbar then
+			if objects["boss1"] then
+				objects["boss1"]:DisableElement("Castbar")
+			end
+
+			if objects["boss2"] then
+				objects["boss2"]:DisableElement("Castbar")
+			end
+
+			if objects["boss3"] then
+				objects["boss3"]:DisableElement("Castbar")
+			end
+
+			if objects["boss4"] then
+				objects["boss4"]:DisableElement("Castbar")
+			end
+
+			if objects["boss5"] then
+				objects["boss5"]:DisableElement("Castbar")
+			end
+		end
 
 		-- Finalise
 		isInit = true

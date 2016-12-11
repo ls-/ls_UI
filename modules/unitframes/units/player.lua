@@ -138,12 +138,9 @@ function UF:ConstructPlayerFrame(frame)
 	frame.PvP:SetPoint("TOP", cover, "BOTTOM", 0, 12)
 	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", frame.PvP.Override)
 
-	if C.units.player.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
-
-		frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
-		E:CreateMover(frame.Castbar.Holder)
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
+	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
+	E:CreateMover(frame.Castbar.Holder)
 
 	local statusLeft = cover:CreateFontString("$parentLeftStatusIcons", "OVERLAY", "LSStatusIcon16Font")
 	statusLeft:SetWidth(18)

@@ -94,11 +94,8 @@ function UF:ConstructFocusFrame(frame)
 	frame.PvP.Hook:SetPoint("TOPLEFT", frame.PvP, "TOPLEFT", -16, 14)
 	frame.PvP.Hook:SetTexCoord(34 / 64, 1 / 64, 1 / 64, 37 / 64)
 
-	if C.units.focus.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 202)
-
-		frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 202)
+	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
 
 	frame.ReadyCheck = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
 	frame.ReadyCheck:SetSize(32, 32)

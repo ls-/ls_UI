@@ -58,11 +58,9 @@ function UF:ConstructPetFrame(frame)
 	status:SetPoint("CENTER")
 	frame:Tag(status, "[ls:debuffstatus]")
 
-	if C.units.pet.castbar then
-		frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
-		frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
-		RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
-	end
+	frame.Castbar = UF:CreateCastBar(frame, 202, true, true)
+	frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
+	RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
 	local threat = UF:CreateThreat(frame)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")
