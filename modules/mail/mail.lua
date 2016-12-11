@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local Mail = P:AddModule("Mail")
+local MAIL = P:AddModule("Mail")
 
 -- Lua
 local _G = _G
@@ -217,11 +217,11 @@ end
 -- INITIALISER --
 -----------------
 
-function Mail:IsInit()
+function MAIL:IsInit()
 	return isInit
 end
 
-function Mail:Init()
+function MAIL:Init()
 	if not isInit and C.mail.enabled then
 		local button = E:CreateCheckButton(_G.InboxFrame, "$parentReceiveMailButton")
 		button:SetPoint("BOTTOMRIGHT", _G.MailFrameInset, "TOPRIGHT", -2, 4)
