@@ -5,12 +5,11 @@ D["units"] = {
 	enabled =  true,
 	player = {
 		enabled = true,
-		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
 		castbar = true,
+		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
-		castbar = true,
 	},
 	target = {
 		enabled = true,
@@ -33,8 +32,8 @@ D["units"] = {
 	},
 	focus = {
 		enabled = true,
-		point = {"BOTTOM", "UIParent", "BOTTOM", -268, 336},
 		castbar = true,
+		point = {"BOTTOM", "UIParent", "BOTTOM", -268, 336},
 		auras = {
 			enabled = 0x0000000f,
 			show_only_filtered = 0x00000000,
@@ -52,24 +51,14 @@ D["units"] = {
 	},
 	boss = {
 		enabled = true,
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
 		castbar = true,
-		-- auras = {
-		-- 	enabled = 0x0000000f,
-		-- 	HELPFUL = {
-		-- 		include_castable = 0x00000000,
-		-- 		auralist = {},
-		-- 	},
-		-- 	HARMFUL = {
-		-- 		auralist = {},
-		-- 	},
-		-- },
-	},
-	arena = {
-		enabled = true,
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
-		castbar = true,
 	},
+	-- arena = {
+	-- 	enabled = true,
+	-- 	point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+	-- 	castbar = true,
+	-- },
 }
 
 D["auratracker"] = {
