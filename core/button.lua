@@ -32,15 +32,6 @@ local next = _G.next
 -- Blizz
 local IsActionInRange = _G.IsActionInRange
 local IsUsableAction = _G.IsUsableAction
-local ALT_KEY_TEXT = _G.ALT_KEY_TEXT
-local CTRL_KEY_TEXT = _G.CTRL_KEY_TEXT
-local KEY_BUTTON1 = _G.KEY_BUTTON1
-local KEY_BUTTON2 = _G.KEY_BUTTON2
-local KEY_BUTTON3 = _G.KEY_BUTTON3
-local KEY_MOUSEWHEELDOWN = _G.KEY_MOUSEWHEELDOWN
-local KEY_MOUSEWHEELUP = _G.KEY_MOUSEWHEELUP
-local KEY_SPACE = _G.KEY_SPACE
-local SHIFT_KEY_TEXT = _G.SHIFT_KEY_TEXT
 
 -- Mine
 local actionButtons = {}
@@ -119,19 +110,31 @@ local function SetHotKeyTextHook(self)
 		end
 	end
 
-	local text = bType and _G.GetBindingText(_G.GetBindingKey(bType..button:GetID())) or ""
+	local text = bType and _G.GetBindingKey(bType..button:GetID()) or ""
 
 	if text and text ~= "" then
-		text = string.gsub(text, SHIFT_KEY_TEXT, "S")
-		text = string.gsub(text, CTRL_KEY_TEXT, "C")
-		text = string.gsub(text, ALT_KEY_TEXT, "A")
-		text = string.gsub(text, KEY_BUTTON1, "LM")
-		text = string.gsub(text, KEY_BUTTON2, "RM")
-		text = string.gsub(text, KEY_BUTTON3, "MM")
-		text = string.gsub(text, KEY_MOUSEWHEELDOWN, "MWD")
-		text = string.gsub(text, KEY_MOUSEWHEELUP, "MWU")
-		text = string.gsub(text, KEY_SPACE, "SP")
-		text = string.gsub(text, "%-", "")
+		text = string.gsub(text, "SHIFT%-", "S")
+		text = string.gsub(text, "CTRL%-", "C")
+		text = string.gsub(text, "ALT%-", "A")
+		text = string.gsub(text, "BUTTON1", "LM")
+		text = string.gsub(text, "BUTTON2", "RM")
+		text = string.gsub(text, "BUTTON3", "MM")
+		text = string.gsub(text, "BUTTON", "M")
+		text = string.gsub(text, "MOUSEWHEELDOWN", "WD")
+		text = string.gsub(text, "MOUSEWHEELUP", "WU")
+		text = string.gsub(text, "NUMPADDECIMAL", "N.")
+		text = string.gsub(text, "NUMPADDIVIDE", "N/")
+		text = string.gsub(text, "NUMPADMINUS", "N-")
+		text = string.gsub(text, "NUMPADMULTIPLY", "N*")
+		text = string.gsub(text, "NUMPADPLUS", "N+")
+		text = string.gsub(text, "NUMPAD", "N")
+		text = string.gsub(text, "PAGEDOWN", "PD")
+		text = string.gsub(text, "PAGEUP", "PU")
+		text = string.gsub(text, "SPACE", "Sp")
+		text = string.gsub(text, "DOWN", "Dn")
+		text = string.gsub(text, "LEFT", "Lt")
+		text = string.gsub(text, "RIGHT", "Rt")
+		text = string.gsub(text, "UP", "Up")
 	end
 
 	self:SetFormattedText("%s", text or "")
