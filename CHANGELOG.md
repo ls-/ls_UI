@@ -1,3 +1,7 @@
+## Version 70100.04
+
+- Fixed binding texts on action buttons.
+
 ## Version 70100.03
 
 - Rewrote addon's core, and majority of its modules;
