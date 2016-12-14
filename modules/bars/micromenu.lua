@@ -658,11 +658,9 @@ function BARS:MicroMenu_Init()
 
 	if not C.bars.restricted then
 		holder1:SetPoint(unpack(CFG.holder1.point))
-		holder1:SetShown(CFG.visibile)
 		E:CreateMover(holder1)
 
 		holder2:SetPoint(unpack(CFG.holder2.point))
-		holder2:SetShown(CFG.visibile)
 		E:CreateMover(holder2)
 	end
 
