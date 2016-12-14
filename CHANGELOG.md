@@ -1,3 +1,7 @@
+## Version 70100.05
+
+- Fixed micro menu visibility in non-restricted bar mode.
+
 ## Version 70100.04
 
 - Fixed binding texts on action buttons.
