@@ -263,6 +263,59 @@ local LAYOUT = {
 		},
 		sep = {169 / 512, 189 / 512, 1 / 256, 129 / 256},
 	},
+	[10] = {
+		[1] = {
+			size = 13,
+			point = {"BOTTOM", 0, 0},
+			glow = {364 / 512, 380 / 512, 116 / 256, 129 / 256}
+		},
+		[2] = {
+			size = 13,
+			point = {"BOTTOM", 0, 13},
+			glow = {364 / 512, 380 / 512, 103 / 256, 116 / 256}
+		},
+		[3] = {
+			size = 13,
+			point = {"BOTTOM", 0, 26},
+			glow = {364 / 512, 380 / 512, 90 / 256, 103 / 256}
+		},
+		[4] = {
+			size = 13,
+			point = {"BOTTOM", 0, 39},
+			glow = {364 / 512, 380 / 512, 77 / 256, 90 / 256}
+		},
+		[5] = {
+			size = 12,
+			point = {"BOTTOM", 0, 52},
+			glow = {364 / 512, 380 / 512, 65 / 256, 77 / 256}
+		},
+		[6] = {
+			size = 12,
+			point = {"BOTTOM", 0, 64},
+			glow = {364 / 512, 380 / 512, 53 / 256, 65 / 256}
+		},
+		[7] = {
+			size = 13,
+			point = {"BOTTOM", 0, 76},
+			glow = {364 / 512, 380 / 512, 40 / 256, 53 / 256}
+		},
+		[8] = {
+			size = 13,
+			point = {"BOTTOM", 0, 89},
+			glow = {364 / 512, 380 / 512, 27 / 256, 40 / 256}
+		},
+		[9] = {
+			size = 13,
+			point = {"BOTTOM", 0, 102},
+			glow = {364 / 512, 380 / 512, 14 / 256, 27 / 256}
+		},
+		[10] = {
+			size = 13,
+			point = {"BOTTOM", 0, 115},
+			glow = {364 / 512, 380 / 512, 1 / 256, 14 / 256}
+		},
+		sep = {343 / 512, 363 / 512, 1 / 256, 129 / 256},
+	},
 }
 
 local inUse = {} -- slots, visible
@@ -288,7 +341,7 @@ local function PostUpdateClassPower(bar, _, max, changed, powerType, event)
 	else
 		if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
 			bar:Show()
-			UF:Reskin(bar:GetParent(), max or 9, true, "CP")
+			UF:Reskin(bar:GetParent(), max or 10, true, "CP")
 
 			for i = 1, max do
 				local element = bar[i]
@@ -330,7 +383,7 @@ function UF:CreateClassPowerBar(parent, level)
 	bar:SetPoint("LEFT", 19, 0)
 	E:SetBarSkin(bar, "VERTICAL-L")
 
-	for i = 1, 9 do
+	for i = 1, 10 do
 		local element = _G.CreateFrame("Frame", "$parentElement"..i, bar)
 		element:SetFrameLevel(bar:GetFrameLevel())
 		element:SetScript("OnShow", Element_OnShow)
