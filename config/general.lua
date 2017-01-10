@@ -182,5 +182,39 @@ function CFG:General_Init()
 		})
 	mailToggle:SetPoint("LEFT", minimapToggle, "RIGHT", 110, 0)
 
+	local loginMsgToggle = CFG:CreateCheckButton(panel,
+		{
+			parent = panel,
+			name = "$parentLoginMsgToggle",
+			text = L["LOGIN_MSG"],
+			get = function() return C.login_msg end,
+			set = function(_, value)
+				C.login_msg = value
+			end,
+			refresh = function(self)
+				self:SetChecked(C.login_msg)
+			end,
+			click = function(self)
+				local isChecked = self:GetChecked()
+
+				self:SetValue(isChecked)
+
+				if isChecked then
+					panel.Log:SetText(string.format(
+						L["LOG_ENABLED"],
+						L["ICON_GREEN_INLINE"],
+						L["LOGIN_MSG"],
+						""))
+				else
+					panel.Log:SetText(string.format(
+						L["LOG_DISABLED"],
+						L["ICON_YELLOW_INLINE"],
+						L["LOGIN_MSG"],
+						""))
+				end
+			end
+		})
+	loginMsgToggle:SetPoint("LEFT", mailToggle, "RIGHT", 110, 0)
+
 	CFG:AddPanel(panel)
 end

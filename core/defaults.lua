@@ -237,3 +237,5 @@ D["blizzard"] ={
 		enabled = true
 	},
 }
+
+D["login_msg"] = true

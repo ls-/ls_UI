@@ -3,6 +3,8 @@ local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = _G
+local string = _G.string
+local print = _G.print
 
 -- Mine
 local function ADDON_LOADED(arg)
@@ -16,7 +18,12 @@ end
 
 local function PLAYER_LOGIN()
 	E:UpdateConstants()
+
 	P:InitModules()
+
+	if C.login_msg then
+		print(string.format(L["LOGIN_MSG_TEXT"], E.VERSION))
+	end
 end
 
 local function PLAYER_LOGOUT()

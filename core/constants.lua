@@ -264,6 +264,8 @@ M.textures = textures
 
 E.OMNICC = select(4, _G.GetAddOnInfo("OmniCC"))
 
+E.VERSION = _G.GetAddOnMetadata("ls_UI", "Version")
+
 E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
 E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
 
