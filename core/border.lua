@@ -32,7 +32,7 @@ function E:CreateBorder(object, offset)
 
 	for i = 1, #sections do
 		local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
-		x:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-"..sections[i], i > 4 and true or nil)
+		x:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-"..sections[i])
 		t[sections[i]] = x
 	end
 
@@ -49,24 +49,20 @@ function E:CreateBorder(object, offset)
 	t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -4 - offset, 4 + offset)
 
 	t.TOP:SetHeight(8)
-	t.TOP:SetHorizTile(true)
-	t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT", 0, 2)
-	t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT", 0, 2)
+	t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT", 0, 0)
+	t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT", 0, 0)
 
 	t.BOTTOM:SetHeight(8)
-	t.BOTTOM:SetHorizTile(true)
-	t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT", 0, -2)
-	t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT", 0, -2)
+	t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT", 0, 0)
+	t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT", 0, 0)
 
 	t.LEFT:SetWidth(8)
-	t.LEFT:SetVertTile(true)
-	t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT", -2, 0)
-	t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT", -2, 0)
+	t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT", 0, 0)
+	t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT", 0, 0)
 
 	t.RIGHT:SetWidth(8)
-	t.RIGHT:SetVertTile(true)
-	t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 2, 0)
-	t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 2, 0)
+	t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
+	t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
 
 	object.borderTextures = t
 	object.SetBorderColor = SetBorderColor
