@@ -24,9 +24,9 @@ Player frame is split into three parts:
 - Warlock - Soul Shards.
 
 ## Other Features
-- In-game config. Use **/lsui** _(el ess ui)_ command to open config panel;
+- In-game config. Use **/LSUI** _(el ess ui)_ command to open config panel;
 - Many major elements of default UI are customised;
-- Frame "movers" for various interface elements. Use **/lsmovers** _(el ess movers)_ command to toggle them;
+- Frame "movers" for various interface elements. Use **/LSMOVERS** _(el ess movers)_ command to toggle them;
 - Aura tracker. It can display up to 12 buffs and debuffs on player character. List of auras can be managed via config frame, and is saved per character;
 - And more!
 
