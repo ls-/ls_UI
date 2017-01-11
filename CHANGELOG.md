@@ -1,3 +1,8 @@
+## Version 70100.06
+
+- Added 7.1.5 support;
+- Added login chat message. It can be disabled via in-game config. Quite many people asked for it.
+
 ## Version 70100.05
 
 - Fixed micro menu visibility in non-restricted bar mode.
