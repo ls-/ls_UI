@@ -65,7 +65,7 @@ local function ArenaFrame_OnEvent(self, event, ...)
 		local specID, gender = GetArenaOpponentSpec(self:GetID())
 
 		if specID and specID > 0 then
-			local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID, gender)
+			local _, specName, _, specIcon, role, class = GetSpecializationInfoByID(specID, gender)
 			local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
 
 			self.SpecInfo.Icon:SetTexture(specIcon)
@@ -260,7 +260,7 @@ local function ArenaPrepFrameHandler_OnEvent(self, event, ...)
 			local specID, gender = GetArenaOpponentSpec(i)
 
 			if specID and specID > 0 then
-				local _, specName, _, specIcon, _, role, class = GetSpecializationInfoByID(specID)
+				local _, specName, _, specIcon, role, class = GetSpecializationInfoByID(specID)
 				local className = gender == 3 and _G.LOCALIZED_CLASS_NAMES_FEMALE[class] or _G.LOCALIZED_CLASS_NAMES_MALE[class]
 
 				frame.Icon:SetTexture(specIcon)
