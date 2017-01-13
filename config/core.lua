@@ -771,10 +771,7 @@ function CFG:Init()
 		})
 	infoButton:SetPoint("LEFT", "InterfaceOptionsActionBarsPanelBottomLeftText", "RIGHT", 6, 0)
 
-	_G.SLASH_LSUI1 = "/lsui"
-	_G.SlashCmdList["LSUI"] = function(msg)
-		if msg == "" then
-			OpenToCategory("LSUIGeneralConfigPanel")
-		end
-	end
+	P:AddCommand("", function()
+		OpenToCategory("LSUIGeneralConfigPanel")
+	end)
 end

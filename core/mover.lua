@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M = ns.E, ns.C, ns.M
+local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = _G
@@ -408,7 +408,6 @@ end
 
 E:RegisterEvent("PLAYER_REGEN_DISABLED", HideMovers)
 
-_G.SLASH_LSMOVERS1 = "/lsmovers"
-_G.SlashCmdList["LSMOVERS"] = function()
+P:AddCommand("movers", function()
 	E:ToggleAllMovers()
-end
+end)

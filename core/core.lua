@@ -288,3 +288,36 @@ function E:SetFrameState(frame, state, condition)
 		end
 	end
 end
+
+--------------------
+-- SLASH COMMANDS --
+--------------------
+
+local commands = {}
+
+_G.SLASH_LSUI1 = "/lsui"
+_G.SlashCmdList["LSUI"] = function(msg)
+	msg = string.gsub(msg, "^ +", "")
+	local command, arg = string.split(" ", msg, 2)
+	arg = arg and string.gsub(arg, " ", "")
+
+	if commands[command] then
+		commands[command].func(arg)
+	else
+		P.print("Unknown command:", command)
+	end
+end
+
+function P:AddCommand(command, handler, desc)
+	commands[command] = {func = handler, desc = desc or "no description"}
+end
+
+P:AddCommand("help", function()
+	P.print(L["SLASH_CMD"])
+
+	for k, v in pairs(commands) do
+		if k ~= "help" and k ~= "" then
+			P.print("/lsui", k, v.desc)
+		end
+	end
+end)

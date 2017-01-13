@@ -197,15 +197,21 @@ function AURATRACKER:Init()
 
 		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
 
-		_G.SLASH_ATBUFF1 = "/atbuff"
-		_G.SlashCmdList["ATBUFF"] = function(msg)
-			P.print(select(2, AddToList("HELPFUL", tonumber(msg))))
-		end
+		P:AddCommand("atbuff", function(arg)
+			arg = tonumber(arg)
 
-		_G.SLASH_ATDEBUFF1 = "/atdebuff"
-		_G.SlashCmdList["ATDEBUFF"] = function(msg)
-			P.print(select(2, AddToList("HARMFUL", tonumber(msg))))
-		end
+			if arg then
+				P.print(select(2, AddToList("HELPFUL", arg)))
+			end
+		end)
+
+		P:AddCommand("atdebuff", function(arg)
+			arg = tonumber(arg)
+
+			if arg then
+				P.print(select(2, AddToList("HARMFUL", arg)))
+			end
+		end)
 
 		-- Finalise
 		self:ToggleHeader(not C.auratracker.locked)
