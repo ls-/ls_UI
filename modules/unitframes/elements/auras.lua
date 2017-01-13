@@ -154,6 +154,11 @@ local filterFunctions = {
 					return true
 				end
 
+				if UnitIsPlayer(unit) and caster and UnitIsUnit(unit, caster) and duration ~= 0  and expirationTime ~= 0 then
+					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE PC SELFCAST|r")
+					return true
+				end
+
 				if isStealable then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE STEALABLE|r")
 					return true
