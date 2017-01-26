@@ -4,157 +4,164 @@ local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = _G
+local unpack = _G.unpack
+local pairs = _G.pairs
 
 -- Mine
 local isInit = false
 local controller
 
-local function PageButton_OnMouseDown(self)
-	self.Bg:SetVertexColor(M.COLORS.YELLOW:GetRGB())
-end
+local elements = {
+	top = {
+		left = {
+			size = {226 / 2, 84 / 2},
+			coords = {1 / 2048, 227 / 2048, 1 / 128, 85 / 128},
+		},
+		mid = {
+			size = {432 / 2, 84 / 2},
+			coords = {227 / 2048, 659 / 2048, 1 / 128, 85 / 128},
+		},
+		right = {
+			size = {226 / 2, 84 / 2},
+			coords = {659 / 2048, 885 / 2048, 1 / 128, 85 / 128},
+		},
+	},
+	bottom = {
+		left = {
+			size = {544 / 2, 32 / 2},
+			coords = {1 / 2048, 545 / 2048, 86 / 128, 118 / 128},
+		},
+		mid = {
+			size = {432 / 2, 32 / 2},
+			coords = {545 / 2048, 977 / 2048, 86 / 128, 118 / 128},
+		},
+		right = {
+			size = {544 / 2, 32 / 2},
+			coords = {977 / 2048, 1521 / 2048, 86 / 128, 118 / 128},
+		},
+	},
+}
 
-local function PageButton_OnMouseUp(self)
-	self.Bg:SetVertexColor(M.COLORS.GREEN:GetRGB())
+local WIDGETS = {
+	ACTION_BAR = {
+		frame = false,
+		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+		attribute = {
+			name = "_childupdate-numbuttons",
+			condition = [[
+				self:Hide()
+				self:SetWidth(36 * message)
+				self:Show()
 
-	_G.PlaySound("UChatScrollButton")
-end
-
-local function CreateCap(side)
-	local frame = _G.CreateFrame("Frame", "$parent"..side.."Cap", controller)
-	frame:SetFrameLevel(controller:GetFrameLevel() - 1)
-	frame:SetSize(48, 50)
-
-	local fg = controller:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetAllPoints(frame)
-	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-main")
-
-	-- Cogwheel
-	local cog = frame:CreateTexture(nil, "ARTWORK", nil, -2)
-	cog:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-cog")
-	cog:SetTexCoord(1 / 128, 79 / 128, 1 / 128, 79 / 128)
-	cog:SetSize(72, 72)
-	frame.Cog = cog
-
-	local ag = frame:CreateAnimationGroup()
-	ag:SetLooping("REPEAT")
-	controller[side.."RotationNormal"] = ag
-
-	local anim = ag:CreateAnimation("Rotation")
-	anim:SetChildKey("Cog")
-	anim:SetOrder(1)
-	anim:SetDegrees(-360)
-	anim:SetDuration(20)
-
-	ag:Play()
-
-	ag = frame:CreateAnimationGroup()
-	controller[side.."RotationRewind"] = ag
-
-	anim = ag:CreateAnimation("Rotation")
-	anim:SetChildKey("Cog")
-	anim:SetDegrees(90)
-	anim:SetDuration(0.25)
-
-	ag = frame:CreateAnimationGroup()
-	controller[side.."RotationFastForward"] = ag
-
-	anim = ag:CreateAnimation("Rotation")
-	anim:SetChildKey("Cog")
-	anim:SetDegrees(-90)
-	anim:SetDuration(0.25)
-
-	ag = frame:CreateAnimationGroup()
-	controller[side.."RotationLongRewind"] = ag
-
-	anim = ag:CreateAnimation("Rotation")
-	anim:SetChildKey("Cog")
-	anim:SetDegrees(180)
-	anim:SetDuration(0.5)
-
-	-- Page button
-	local button = _G.CreateFrame("Button", "$parent"..side.."PageButton", controller, "SecureActionButtonTemplate")
-	button:SetFrameLevel(controller:GetFrameLevel() + 1)
-	button:SetSize(22, 22)
-	button:SetScript("OnMouseDown", PageButton_OnMouseDown)
-	button:SetScript("OnMouseUp", PageButton_OnMouseUp)
-	button:SetAttribute("type", "actionbar")
-	button:SetAttribute("action", side == "Right" and "increment" or "decrement")
-	button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-page-button", "ADD")
-
-	local bg = controller:CreateTexture(nil, "ARTWORK", nil, -1)
-	bg:SetAllPoints(button)
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-page-button")
-	bg:SetVertexColor(M.COLORS.GREEN:GetRGB())
-	button.Bg = bg
-
-	-- Micro menu artwork
-	local nest = controller:CreateTexture(nil, "ARTWORK", nil, 3)
-	nest:SetSize(146, 10)
-	nest:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-nest")
-
-	if side == "Left" then
-		frame:SetPoint("BOTTOMRIGHT", controller, "BOTTOMLEFT", 3, 0)
-		fg:SetTexCoord(1 / 64, 49 / 64, 51 / 256, 101 / 256)
-		cog:SetPoint("CENTER", frame, "BOTTOMRIGHT", -4, 7)
-
-		button:SetPoint("BOTTOMRIGHT", controller, "BOTTOMLEFT", -3, 7)
-		bg:SetTexCoord(25 / 64, 47 / 64, 1 / 32, 23 / 32)
-		button:GetHighlightTexture():SetTexCoord(1 / 64, 23 / 64, 1 / 32, 23 / 32)
-
-		nest:SetTexCoord(1 / 256, 147 / 256, 1 / 64, 11 / 64)
-		nest:SetPoint("BOTTOMRIGHT", controller, "BOTTOMLEFT", -36, 3)
-	else
-		frame:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", -3, 0)
-		fg:SetTexCoord(1 / 64, 49 / 64, 102 / 256, 152 / 256)
-		cog:SetPoint("CENTER", frame, "BOTTOMLEFT", 4, 7)
-
-		button:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", 3, 7)
-		bg:SetTexCoord(47 / 64, 25 / 64, 1 / 32, 23 / 32)
-		button:GetHighlightTexture():SetTexCoord(23 / 64, 1 / 64, 1 / 32, 23 / 32)
-
-		nest:SetTexCoord(1 / 256, 147 / 256, 12 / 64, 22 / 64)
-		nest:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", 36, 3)
-	end
-end
-
-local function Controller_OnEvent(self)
-	if _G.GetActionBarPage() > (self.Page or 1) then
-		self.LeftRotationFastForward:Play()
-		self.RightRotationFastForward:Play()
-	else
-		self.LeftRotationRewind:Play()
-		self.RightRotationRewind:Play()
-	end
-
-	self.Page = _G.GetActionBarPage()
-end
+				for i = 7, 12 do
+					if message == 6 then
+						buttons[i]:SetAttribute("ls-hidden", true)
+						buttons[i]:Hide()
+					else
+						buttons[i]:SetAttribute("ls-hidden", false)
+						buttons[i]:Show()
+					end
+				end
+			]]
+		},
+	},
+	PET_BATTLE_BAR = {
+		frame = false,
+		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+	},
+	BAG = {
+		frame = false,
+		point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 294, 11},
+	},
+	MM_LEFT = {
+		frame = false,
+		point = {"BOTTOMRIGHT", "LSActionBarArtContainerBottom", "BOTTOMLEFT", -148, 11},
+	},
+	MM_RIGHT = {
+		frame = false,
+		point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 148, 11},
+	},
+	EXP_BAR = {
+		frame = false,
+		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 0},
+		post = function(_, newstate)
+			BARS:SetExpBarMode(newstate == 6 and "SHORT" or "DEFAULT")
+		end
+	},
+}
 
 local function ControllerAnimation_OnPlay()
-	controller.LeftRotationNormal:Stop()
-	controller.LeftRotationLongRewind:Stop()
+	local newstate = controller:GetAttribute("numbuttons")
 
-	controller.RightRotationNormal:Stop()
-	controller.RightRotationLongRewind:Stop()
+	for _, widget in pairs(WIDGETS) do
+		if widget.frame then
+			E:StopFadeIn(widget.frame)
+			E:FadeOut(widget.frame, 0.001)
+		end
+	end
 
-	E:StopFadeIn(_G.LSMainBar)
-	E:FadeOut(_G.LSMainBar)
+	_G.C_Timer.After(0.02, function()
+		for _, widget in pairs(WIDGETS) do
+			if widget.frame and widget.post then
+				widget.post(widget.frame, newstate)
+			end
+		end
+	end)
 
-	E:StopFadeIn(_G.LSPetBattleBar)
-	E:FadeOut(_G.LSPetBattleBar)
+	_G.C_Timer.After(0.25, function()
+		controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
+		controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
+	end)
 end
 
 local function ControllerAnimation_OnFinished()
-	controller.LeftRotationNormal:Play()
-	controller.LeftRotationLongRewind:Play()
+	for _, widget in pairs(WIDGETS) do
+		if widget.frame then
+			E:StopFadeOut(widget.frame)
+			E:FadeIn(widget.frame, 0.1)
+		end
+	end
+end
 
-	controller.RightRotationNormal:Play()
-	controller.RightRotationLongRewind:Play()
+------------
+-- PUBLIC --
+------------
 
-	E:StopFadeOut(_G.LSMainBar)
-	E:FadeIn(_G.LSMainBar)
+local isDriverRegistered = false
 
-	E:StopFadeOut(_G.LSPetBattleBar)
-	E:FadeIn(_G.LSPetBattleBar)
+function BARS:ActionBarController_AddWidget(frame, slot)
+	if isInit then
+		if WIDGETS[slot].frame == false then
+			WIDGETS[slot].frame = frame
+
+			frame:SetParent(controller)
+			frame:ClearAllPoints()
+			frame:SetPoint(unpack(WIDGETS[slot].point))
+
+			if slot == "ACTION_BAR" or slot == "MM_LEFT" or slot == "MM_RIGHT" or slot == "BAG" then
+				frame:SetFrameLevel(controller:GetFrameLevel() + 2)
+			elseif slot == "EXP_BAR" then
+				frame:SetFrameLevel(controller:GetFrameLevel() + 3)
+			end
+
+			if WIDGETS[slot].attribute then
+				frame:SetAttribute(WIDGETS[slot].attribute.name, WIDGETS[slot].attribute.condition)
+			end
+
+			-- register state driver & trigger update
+			if not isDriverRegistered
+				and WIDGETS["ACTION_BAR"].frame
+				and WIDGETS["PET_BATTLE_BAR"].frame
+				and WIDGETS["MM_LEFT"].frame
+				and WIDGETS["MM_RIGHT"].frame
+				and WIDGETS["EXP_BAR"].frame
+				and (C.bars.bags.enabled and WIDGETS["EXP_BAR"].frame or not C.bars.bags.enabled) then
+				_G.RegisterStateDriver(controller, "width", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
+
+				isDriverRegistered = true
+			end
+		end
+	end
 end
 
 -----------------
@@ -167,91 +174,108 @@ end
 
 function BARS:ActionBarController_Init()
 	if not isInit and C.bars.restricted then
-		local hasSixButtons = _G.HasOverrideActionBar() or _G.HasVehicleActionBar() or _G.HasTempShapeshiftActionBar() or _G.C_PetBattles.IsInBattle()
-
 		controller = _G.CreateFrame("Frame", "LSActionBarArtContainer", _G.UIParent, "SecureHandlerStateTemplate")
-		controller:SetSize(32 * (hasSixButtons and 6 or 12), 50)
-		controller:SetPoint("BOTTOM", 0, -3)
-		controller:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
-		controller:SetScript("OnEvent", Controller_OnEvent)
+		controller:SetSize(32, 32)
+		controller:SetPoint("BOTTOM", 0, 0)
+		controller:SetAttribute("numbuttons", 12)
+		controller.Update = function()
+			controller.Shuffle:Play()
+		end
+
+		-- top
+		local top = _G.CreateFrame("Frame", "$parentTop", controller)
+		top:SetFrameLevel(controller:GetFrameLevel() + 1)
+		top:SetPoint("BOTTOM", 0, 20 / 2)
+		top:SetSize(unpack(elements.top.mid.size))
+		controller.Top = top
+
+		local texture = top:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.top.left.coords))
+		texture:SetPoint("BOTTOMRIGHT", top, "BOTTOMLEFT", 0, 0)
+		texture:SetSize(unpack(elements.top.left.size))
+		top.Left = texture
+
+		texture = top:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.top.mid.coords))
+		texture:SetAllPoints()
+		top.Mid = texture
+
+		texture = top:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.top.right.coords))
+		texture:SetPoint("BOTTOMLEFT", top, "BOTTOMRIGHT", 0, 0)
+		texture:SetSize(unpack(elements.top.right.size))
+		top.Right = texture
+
+		-- bottom
+		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller)
+		bottom:SetFrameLevel(controller:GetFrameLevel() + 7)
+		bottom:SetPoint("BOTTOM", 0, 0)
+		bottom:SetSize(unpack(elements.bottom.mid.size))
+		controller.Bottom = bottom
+
+		texture = bottom:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.bottom.left.coords))
+		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", 0, 0)
+		texture:SetSize(unpack(elements.bottom.left.size))
+		bottom.Left = texture
+
+		texture = bottom:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.bottom.mid.coords))
+		texture:SetAllPoints()
+		bottom.Mid = texture
+
+		texture = bottom:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.bottom.right.coords))
+		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 0, 0)
+		texture:SetSize(unpack(elements.bottom.right.size))
+		bottom.Right = texture
 
 		local ag = controller:CreateAnimationGroup()
 		ag:SetScript("OnPlay", ControllerAnimation_OnPlay)
 		ag:SetScript("OnFinished", ControllerAnimation_OnFinished)
+		controller.Shuffle = ag
 
 		local anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Top")
 		anim:SetOrder(1)
-		anim:SetOffset(0, -50)
+		anim:SetOffset(0, -52)
+		anim:SetStartDelay(0.02)
+		anim:SetDuration(0.15)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Bottom")
+		anim:SetOrder(2)
+		anim:SetOffset(0, -16)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
-		anim:SetOrder(2)
-		anim:SetOffset(0, 50)
-		anim:SetDuration(0.2)
+		anim:SetChildKey("Bottom")
+		anim:SetOrder(3)
+		anim:SetOffset(0, 16)
+		anim:SetDuration(0.1)
 
-		function controller.Update()
-			ag:Play()
-		end
-
-		local texture = controller:CreateTexture(nil, "ARTWORK", nil, 1)
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-main", true)
-		texture:SetHorizTile(true)
-		texture:SetTexCoord(0 / 64, 64 / 64, 0 / 256, 50 / 256)
-		controller.Fg = texture
-
-		CreateCap("Left")
-		CreateCap("Right")
-
-		_G.LSMainBar:SetParent(controller)
-		_G.LSMainBar:ClearAllPoints()
-		_G.LSMainBar:SetPoint("CENTER", controller, "CENTER", 0, 0)
-		_G.LSMainBar:SetAttribute("_childupdate-numbuttons", [[
-			self:Hide()
-			self:SetWidth(32 * message)
-			self:Show()
-
-			for i = 7, 12 do
-				if message == 6 then
-					buttons[i]:SetAttribute("ls-hidden", true)
-					buttons[i]:Hide()
-				else
-					buttons[i]:SetAttribute("ls-hidden", false)
-					buttons[i]:Show()
-				end
-			end
-		]])
-
-		_G.LSPetBattleBar:SetParent(controller)
-		_G.LSPetBattleBar:ClearAllPoints()
-		_G.LSPetBattleBar:SetPoint("CENTER", controller, "CENTER", 0, 0)
-
-		_G.LSMBHolderLeft:SetParent(controller)
-		_G.LSMBHolderLeft:ClearAllPoints()
-		_G.LSMBHolderLeft:SetPoint("BOTTOMRIGHT", controller, "BOTTOMLEFT", -62, 9)
-
-		_G.LSMBHolderRight:SetParent(controller)
-		_G.LSMBHolderRight:ClearAllPoints()
-		_G.LSMBHolderRight:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", 62, 9)
-
-		if C.bars.bags.enabled then
-			_G.LSBagBar:SetParent(controller)
-			_G.LSBagBar:ClearAllPoints()
-			_G.LSBagBar:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", 202, 9)
-
-			texture = controller:CreateTexture(nil, "ARTWORK", nil, 1)
-			texture:SetSize(50, 10)
-			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\bottombar-nest")
-			texture:SetTexCoord(1 / 256, 51 / 256, 23 / 64, 33 / 64)
-			texture:SetPoint("BOTTOMLEFT", controller, "BOTTOMRIGHT", 192, 3)
-		end
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Top")
+		anim:SetOrder(4)
+		anim:SetOffset(0, 52)
+		anim:SetDuration(0.15)
 
 		-- _"childupdate-numbuttons" is executed in controller's environment
 		for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
 			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
 
+		controller:SetFrameRef("top", top)
+		controller:SetFrameRef("bottom", bottom)
 		controller:Execute([[
+			top = self:GetFrameRef("top")
+			bottom = self:GetFrameRef("bottom")
 			buttons = table.new()
 
 			for i = 1, 12 do
@@ -259,17 +283,13 @@ function BARS:ActionBarController_Init()
 			end
 		]])
 
-		controller:SetAttribute("_onstate-numbuttons", [[
-			local width = 32 * newstate
-
-			if width ~= floor(self:GetWidth()) then
+		controller:SetAttribute("_onstate-width", [[
+			if newstate ~= self:GetAttribute("numbuttons") then
+				self:SetAttribute("numbuttons", newstate)
 				self:CallMethod("Update")
-				self:SetWidth(width)
 				self:ChildUpdate("numbuttons", newstate)
 			end
 		]])
-
-		_G.RegisterStateDriver(controller, "numbuttons", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 		-- Finalise
 		isInit = true

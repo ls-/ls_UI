@@ -9,9 +9,11 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+
+-- DO NOT add it to D table
 local CFG = {
-	point = {"BOTTOM", 0, 12},
-	button_size = 28,
+	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 16},
+	button_size = 32,
 	button_gap = 4,
 	init_anchor = "TOPLEFT",
 	buttons_per_row = 6,
@@ -27,12 +29,13 @@ end
 
 function BARS:PetBattleBar_Init()
 	if not isInit then
-		if not C.bars.restricted then
-			CFG = C.bars.bar1
-		end
-
 		local bar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
-		bar:SetPoint(unpack(CFG.point))
+
+		if not C.bars.restricted then
+			bar:SetPoint(unpack(CFG.point))
+		else
+			self:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
+		end
 
 		_G.RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
 

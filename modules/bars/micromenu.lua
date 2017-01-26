@@ -6,7 +6,9 @@ local BARS = P:GetModule("Bars")
 local _G = _G
 local table = _G.table
 local string = _G.string
-local pairs, select, unpack = _G.pairs, _G.select, _G.unpack
+local pairs = _G.pairs
+local select = _G.select
+local unpack = _G.unpack
 
 -- Blizz
 local GetAddOnInfo = _G.GetAddOnInfo
@@ -27,6 +29,8 @@ local MEMORY = "Memory:"
 local MEMORY_TEXT = "%.3f MB"
 local RAID_INFO = _G.RAID_INFO..":"
 local TOTAL = _G.TOTAL..":"
+local MICRO_BUTTON_WIDTH = 36 / 2
+local MICRO_BUTTON_HEIGHT = 48 / 2
 
 local ROLE_NAMES = {
 	tank = "|cff1798fb".._G.TANK.."|r",
@@ -89,37 +93,42 @@ local MICRO_BUTTONS = {
 	},
 }
 
-local ICON_COORDS = {
-	--line one
-	WARRIOR = {18 / 256, 34 / 256, 0, 22 / 64},
-	PALADIN = {34 / 256, 50 / 256, 0, 22 / 64},
-	HUNTER = {50 / 256, 66 / 256, 0, 22 / 64},
-	ROGUE = {66 / 256, 82 / 256, 0, 22 / 64},
-	PRIEST = {82 / 256, 98 / 256, 0, 22 / 64},
-	DEATHKNIGHT = {98 / 256, 114 / 256, 0, 22 / 64},
-	--line two
-	SHAMAN = {18 / 256, 34 / 256, 22 / 64, 44 / 64},
-	MAGE = {34 / 256, 50 / 256, 22 / 64, 44 / 64},
-	WARLOCK = {50 / 256, 66 / 256, 22 / 64, 44 / 64},
-	MONK = {66 / 256, 82 / 256, 22 / 64, 44 / 64},
-	DRUID = {82 / 256, 98 / 256, 22 / 64, 44 / 64},
-	DEMONHUNTER = {98 / 256, 114 / 256, 22 / 64, 44 / 64},
-	--line one
-	Spellbook = {114 / 256, 130 / 256, 0, 22 / 64},
-	Talent = 	{130 / 256, 146 / 256, 0, 22 / 64},
-	Achievement = {146 / 256, 162 / 256, 0, 22 / 64},
-	Quest = {162 / 256, 178 / 256, 0, 22 / 64},
-	Guild = {178 / 256, 194 / 256, 0, 22 / 64},
-	LFD = {194 / 256, 210 / 256, 0, 22 / 64},
-	Collections = {210 / 256, 226 / 256, 0, 22 / 64},
-	--line two
-	EJ = {114 / 256, 130 / 256, 22 / 64, 44 / 64},
-	MainMenu = {130 / 256, 146 / 256, 22 / 64, 44 / 64},
-	-- Temp1 = {146 / 256, 162 / 256, 22 / 64, 44 / 64},
-	-- Temp2 = {162 / 256, 178 / 256, 22 / 64, 44 / 64},
-	-- Temp3 = {178 / 256, 194 / 256, 22 / 64, 44 / 64},
-	-- Temp4 = {194 / 256, 210 / 256, 22 / 64, 44 / 64},
-	-- Temp5 = {210 / 256, 226 / 256, 22 / 64, 44 / 64},
+local TEXTURES = {
+	-- line #1
+	WARRIOR = {1 / 256, 33 / 256, 1 / 256, 45 / 256},
+	DEATHKNIGHT = {33 / 256, 65 / 256, 1 / 256, 45 / 256},
+	PALADIN = {65 / 256, 97 / 256, 1 / 256, 45 / 256},
+	MONK = {97 / 256, 129 / 256, 1 / 256, 45 / 256},
+	PRIEST = {129 / 256, 161 / 256, 1 / 256, 45 / 256},
+	SHAMAN = {161 / 256, 193 / 256, 1 / 256, 45 / 256},
+	DRUID = {193 / 256, 225 / 256, 1 / 256, 45 / 256},
+	-- line #2
+	ROGUE = {1 / 256, 33 / 256, 45 / 256, 89 / 256},
+	MAGE = {33 / 256, 65 / 256, 45 / 256, 89 / 256},
+	WARLOCK = {65 / 256, 97 / 256, 45 / 256, 89 / 256},
+	HUNTER = {97 / 256, 129 / 256, 45 / 256, 89 / 256},
+	DEMONHUNTER = {129 / 256, 161 / 256, 45 / 256, 89 / 256},
+	Spellbook = {161 / 256, 193 / 256, 45 / 256, 89 / 256},
+	Talent = {193 / 256, 225 / 256, 45 / 256, 89 / 256},
+	-- line #3
+	Achievement = {1 / 256, 33 / 256, 89 / 256, 133 / 256},
+	Quest = {33 / 256, 65 / 256, 89 / 256, 133 / 256},
+	Guild = {65 / 256, 97 / 256, 89 / 256, 133 / 256},
+	LFD = {97 / 256, 129 / 256, 89 / 256, 133 / 256},
+	Collections = {129 / 256, 161 / 256, 89 / 256, 133 / 256},
+	EJ = {161 / 256, 193 / 256, 89 / 256, 133 / 256},
+	MainMenu = {193 / 256, 225 / 256, 89 / 256, 133 / 256},
+	-- line #4
+	-- temp = {1 / 256, 33 / 256, 133 / 256, 177 / 256},
+	-- temp = {33 / 256, 65 / 256, 133 / 256, 177 / 256},
+	-- temp = {65 / 256, 97 / 256, 133 / 256, 177 / 256},
+	-- temp = {97 / 256, 129 / 256, 133 / 256, 177 / 256},
+	-- temp = {129 / 256, 161 / 256, 133 / 256, 177 / 256},
+	-- temp = {161 / 256, 193 / 256, 133 / 256, 177 / 256},
+	-- temp = {193 / 256, 225 / 256, 133 / 256, 177 / 256},
+	-- line #5
+	highlight = {1 / 256, 33 / 256, 177 / 256, 221 / 256},
+	pushed = {33 / 256, 65 / 256, 177 / 256, 221 / 256},
 }
 
 -- Handler & Utils
@@ -136,7 +145,7 @@ local function HandleMicroButtonIndicator(parent, indicators, num)
 
 		indicator:SetDrawLayer("BACKGROUND", 3)
 		indicator:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-		indicator:SetSize(18 / num, 3)
+		indicator:SetSize(MICRO_BUTTON_WIDTH / num, 3)
 		indicator:ClearAllPoints()
 
 		if i == 1 then
@@ -158,23 +167,30 @@ end
 
 local function SetNormalTextureOverride(button)
 	local normal = button:GetNormalTexture()
-	if normal then normal:SetTexture(nil) end
+
+	if normal then
+		normal:SetTexture(nil)
+	end
 end
 
 local function SetPushedTextureOverride(button)
 	local pushed = button:GetPushedTexture()
+
 	if pushed then
 		pushed:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
-		pushed:SetBlendMode("ADD")
-		pushed:SetTexCoord(0 / 256, 18 / 256, 24 / 64, 48 / 64)
+		pushed:SetTexCoord(unpack(TEXTURES.pushed))
 		pushed:ClearAllPoints()
-		pushed:SetAllPoints()
+		pushed:SetPoint("TOPLEFT", 1, -1)
+		pushed:SetPoint("BOTTOMRIGHT", -1, 1)
 	end
 end
 
 local function SetDisabledTextureOverride(button)
 	local disabled = button:GetDisabledTexture()
-	if disabled then disabled:SetTexture(nil) end
+
+	if disabled then
+		disabled:SetTexture(nil)
+	end
 end
 
 local function MicroButton_OnLeave()
@@ -194,7 +210,7 @@ local function HandleMicroButton(button)
 	local highlight = button:GetHighlightTexture()
 	local flash = button.Flash
 
-	button:SetSize(18, 24)
+	button:SetSize(MICRO_BUTTON_WIDTH, MICRO_BUTTON_HEIGHT)
 	button:SetHitRectInsets(0, 0, 0, 0)
 	E:CreateBorder(button)
 
@@ -204,17 +220,18 @@ local function HandleMicroButton(button)
 
 	if highlight then
 		highlight:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
-		highlight:SetTexCoord(0 / 256, 18 / 256, 0, 24 / 64)
+		highlight:SetTexCoord(unpack(TEXTURES.highlight))
 		highlight:ClearAllPoints()
-		highlight:SetAllPoints()
+		highlight:SetPoint("TOPLEFT", 1, -1)
+		highlight:SetPoint("BOTTOMRIGHT", -1, 1)
 	end
 
 	if flash then
 		flash:SetTexCoord(0 / 64, 33 / 64, 0, 42 / 64)
-		flash:SetSize(28, 34)
 		flash:SetDrawLayer("OVERLAY", 2)
 		flash:ClearAllPoints()
-		flash:SetPoint("CENTER", 0, 0)
+		flash:SetPoint("TOPLEFT", button, "TOPLEFT", -5, 5)
+		flash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 5, -5)
 	end
 
 	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -223,8 +240,8 @@ local function HandleMicroButton(button)
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
-	icon:SetSize(16, 22)
-	icon:SetPoint("CENTER", 0, 0)
+	icon:SetPoint("TOPLEFT", 1, -1)
+	icon:SetPoint("BOTTOMRIGHT", -1, 1)
 	button.Icon = icon
 
 	button:SetScript("OnLeave", MicroButton_OnLeave)
@@ -540,6 +557,9 @@ function BARS:MicroMenu_Init()
 
 		holder2:SetPoint(unpack(CFG.holder2.point))
 		E:CreateMover(holder2)
+	else
+		self:ActionBarController_AddWidget(holder1, "MM_LEFT")
+		self:ActionBarController_AddWidget(holder2, "MM_RIGHT")
 	end
 
 	for _, b in pairs(_G.MICRO_BUTTONS) do
@@ -552,7 +572,7 @@ function BARS:MicroMenu_Init()
 			button:ClearAllPoints()
 			button:SetPoint(unpack(MICRO_BUTTONS[b].point))
 
-			button.Icon:SetTexCoord(unpack(ICON_COORDS[MICRO_BUTTONS[b].icon]))
+			button.Icon:SetTexCoord(unpack(TEXTURES[MICRO_BUTTONS[b].icon]))
 		else
 			E:ForceHide(button)
 		end
@@ -569,11 +589,12 @@ function BARS:MicroMenu_Init()
 			button.Tabard = _G.GuildMicroButtonTabard
 
 			button.Tabard.background:SetParent(button)
-			button.Tabard.background:SetDrawLayer("BACKGROUND", 2)
-			button.Tabard.background:SetSize(18, 30)
 			button.Tabard.background:ClearAllPoints()
-			button.Tabard.background:SetPoint("TOP", 0, 0)
-			button.Tabard.background:SetTexCoord(6 / 32, 26 / 32, 0.5, 1)
+			button.Tabard.background:SetPoint("TOPLEFT", 1, -1)
+			button.Tabard.background:SetPoint("BOTTOMRIGHT", -1, 1)
+			button.Tabard.background:SetDrawLayer("BACKGROUND", 2)
+			button.Tabard.background:SetTexture("Interface\\GUILDFRAME\\GuildDifficulty")
+			button.Tabard.background:SetTexCoord(6 / 128, 38 / 128, 6 / 64, 50 / 64)
 
 			button.Tabard.emblem:SetParent(button)
 			button.Tabard.emblem:SetDrawLayer("BACKGROUND", 3)

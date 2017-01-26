@@ -16,7 +16,7 @@ local CFG = {
 	bar1 = {
 		visible = true,
 		point = {"BOTTOM", 0, 12},
-		button_size = 28,
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 12,
@@ -94,8 +94,8 @@ local ACTION_BARS = {
 	},
 }
 
-local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 138}
-local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 110}
+local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 152}
+local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 124}
 
 local LAYOUT = {
 	WARRIOR = {pet = TOP_POINT, stance = BOTTOM_POINT},
@@ -291,6 +291,8 @@ function BARS:ActionBars_Init()
 				end
 
 				E:CreateMover(bar)
+			else
+				self:ActionBarController_AddWidget(bar, "ACTION_BAR")
 			end
 		end
 

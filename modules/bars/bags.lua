@@ -13,7 +13,7 @@ local CURRENCY = _G.CURRENCY..":"
 
 local CFG = {
 	visible = true,
-	button_size = 26,
+	button_size = 32,
 	button_gap = 4,
 	init_anchor = "TOPLEFT",
 	buttons_per_row = 5,
@@ -142,6 +142,8 @@ function BARS:Bags_Init()
 		if not C.bars.restricted then
 			bar:SetPoint(unpack(CFG.point))
 			E:CreateMover(bar)
+		else
+			self:ActionBarController_AddWidget(bar, "BAG")
 		end
 
 		-- Finalise
