@@ -60,6 +60,7 @@ function BARS:Init()
 	if not isInit and C.bars.enabled then
 		self:ActionBars_Init()
 		self:Bags_Init()
+		self:ExpBar_Init()
 		self:ExtraActionButton_Init()
 		self:MicroMenu_Init()
 		self:PetBattleBar_Init()

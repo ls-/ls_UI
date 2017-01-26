@@ -18,7 +18,6 @@ local IsLFGDungeonJoinable = _G.IsLFGDungeonJoinable
 
 -- Mine
 local isInit = false
-local ARTIFACT_POWER = _G.ARTIFACT_POWER..":"
 local DAILY_QUEST_RESET_TIME = "|cffffd100Daily Quest Reset Time:|r %s"
 local LATENCY = "Latency:"
 local LATENCY_HOME = "Home"
@@ -27,7 +26,6 @@ local LATENCY_TEXT = "|cff%s%s|r ".._G.MILLISECONDS_ABBR
 local MEMORY = "Memory:"
 local MEMORY_TEXT = "%.3f MB"
 local RAID_INFO = _G.RAID_INFO..":"
-local REPUTATION = _G.REPUTATION..":"
 local TOTAL = _G.TOTAL..":"
 
 local ROLE_NAMES = {
@@ -291,126 +289,6 @@ end
 -------------------
 -- MICRO BUTTONS --
 -------------------
-
-local function CharacterMicroButton_OnEnter()
-	local hasInfo = false
-
-	if _G.C_PetBattles.IsInBattle() then
-		local hasTitle = false
-		for i = 1, 3 do
-			local petID, _, _, _, locked = _G.C_PetJournal.GetPetLoadOutInfo(i)
-
-			if petID and not locked then
-				local _, customName, level, xp, maxXp, _, _, name = _G.C_PetJournal.GetPetInfoByPetID(petID)
-				local _, _, _, _, rarity = _G.C_PetJournal.GetPetStats(petID)
-				local color = _G.ITEM_QUALITY_COLORS[rarity - 1]
-
-				if level < 25 then
-					if not hasTitle then
-						_G.GameTooltip:AddLine(_G.EXPERIENCE_COLON)
-
-						hasTitle = true
-					else
-						_G.GameTooltip:AddLine(" ")
-					end
-
-					_G.GameTooltip:AddLine(customName or name, color.r, color.g, color.b)
-					E:ShowTooltipStatusBar(_G.GameTooltip, 0, maxXp, xp, M.COLORS.EX:GetRGB())
-				end
-			end
-		end
-
-		hasInfo = true
-	else
-		-- XP
-		if _G.UnitLevel("player") < _G.MAX_PLAYER_LEVEL and not _G.IsXPUserDisabled() then
-			local r, g, b = M.COLORS.XP:GetRGB()
-
-			_G.GameTooltip:AddLine(_G.EXPERIENCE_COLON)
-			_G.GameTooltip:AddDoubleLine("Bonus XP", _G.GetXPExhaustion() or 0, 1, 1, 1, r, g, b)
-			E:ShowTooltipStatusBar(_G.GameTooltip, 0, _G.UnitXPMax("player"), _G.UnitXP("player"), r, g, b)
-
-			hasInfo = true
-		end
-
-		-- Artefact
-		if _G.HasArtifactEquipped() then
-			if hasInfo then _G.GameTooltip:AddLine(" ") end
-
-			_G.GameTooltip:AddLine(ARTIFACT_POWER)
-
-			local _, _, _, _, totalXP, pointsSpent = _G.C_ArtifactUI.GetEquippedArtifactInfo()
-			local points, xpCur, xpMax = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
-
-			_G.GameTooltip:AddDoubleLine("Trait Points", points, 1, 1, 1, r, g, b)
-			E:ShowTooltipStatusBar(_G.GameTooltip, 0, xpMax, xpCur, r, g, b)
-
-			hasInfo = true
-		end
-
-		-- Honour
-		if _G.UnitLevel("player") >= _G.MAX_PLAYER_LEVEL and (_G.IsWatchingHonorAsXP() or _G.InActiveBattlefield()) then
-			if hasInfo then _G.GameTooltip:AddLine(" ") end
-
-			local cur = _G.UnitHonor("player")
-			local max = _G.UnitHonorMax("player")
-			local r, g, b = M.COLORS.HONOR:GetRGB()
-
-			_G.GameTooltip:AddLine(_G.HONOR..":")
-			_G.GameTooltip:AddDoubleLine("Bonus Honor", _G.GetHonorExhaustion() or 0, 1, 1, 1, r, g, b)
-
-			if _G.UnitHonorLevel("player") == _G.GetMaxPlayerHonorLevel() then
-				cur, max = 1, 1
-
-				if _G.CanPrestige() then
-					_G.GameTooltip:AddLine(_G.PVP_HONOR_PRESTIGE_AVAILABLE, r, g, b)
-				else
-					_G.GameTooltip:AddLine(_G.MAX_HONOR_LEVEL, r, g, b)
-				end
-			end
-
-			E:ShowTooltipStatusBar(_G.GameTooltip, 0, max, cur, r, g, b)
-		end
-
-		-- Reputation
-		local name, standing, repMin, repMax, repValue, factionID = _G.GetWatchedFactionInfo()
-
-		if name then
-			if hasInfo then _G.GameTooltip:AddLine(" ") end
-
-			_G.GameTooltip:AddLine(REPUTATION)
-
-			local max, value
-			local text = _G.GetText("FACTION_STANDING_LABEL"..standing, _G.UnitSex("player"))
-			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = _G.GetFriendshipReputation(factionID)
-
-			if friendRep then
-				if nextFriendThreshold then
-					max, value = nextFriendThreshold - friendThreshold, friendRep - friendThreshold
-				else
-					max, value = 1, 1
-				end
-
-				standing = 5
-				text = friendTextLevel
-			else
-				max, value = repMax - repMin, repValue - repMin
-			end
-
-			local color = _G.FACTION_BAR_COLORS[standing]
-
-			_G.GameTooltip:AddDoubleLine(name, text, 1, 1, 1, color.r, color.g, color.b)
-			E:ShowTooltipStatusBar(_G.GameTooltip, 0, max, value, color.r, color.g, color.b)
-
-			hasInfo = true
-		end
-	end
-
-	if hasInfo then
-		_G.GameTooltip:Show()
-	end
-end
 
 local function CharacterMicroButton_OnEvent(self, event)
 	if event == "UPDATE_INVENTORY_DURABILITY" or event == "FORCE_UPDATE" then
@@ -684,7 +562,6 @@ function BARS:MicroMenu_Init()
 			HandleMicroButtonIndicator(button, {}, 1)
 
 			button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-			button:HookScript("OnEnter", CharacterMicroButton_OnEnter)
 			button:HookScript("OnEvent", CharacterMicroButton_OnEvent)
 
 			CharacterMicroButton_OnEvent(button, "FORCE_UPDATE")

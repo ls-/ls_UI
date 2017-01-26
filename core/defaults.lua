@@ -169,6 +169,10 @@ D["bars"] = {
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 5,
 	},
+	expbar = {
+		point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
+		mode = "DEFAULT",
+	},
 }
 
 D["mail"] = {
