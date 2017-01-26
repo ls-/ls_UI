@@ -697,7 +697,7 @@ end
 
 function CFG:CreateInfoButton(parent, data)
 	local object = _G.CreateFrame("Button", data.name, parent)
-	object:SetSize(16, 16)
+	object:SetSize(24, 24)
 	object:SetScript("OnClick", data.click)
 	object:SetScript("OnEnter", InfoButton_OnEnter)
 	object:SetScript("OnLeave", InfoButton_OnLeave)
@@ -711,6 +711,26 @@ function CFG:CreateInfoButton(parent, data)
 	texture:SetTexture("Interface\\COMMON\\help-i")
 	texture:SetTexCoord(13 / 64, 51 / 64, 13 / 64, 51 / 64)
 	texture:SetBlendMode("BLEND")
+
+	return object
+end
+
+-- Warning Plate
+function CFG:CreateWarningPlate(parent, data)
+	local object = _G.CreateFrame("Frame", data.name, parent, "ThinBorderTemplate")
+	object:EnableMouse(true)
+	object:Show()
+
+	for i = 1, #object.Textures do
+		object.Textures[i]:SetVertexColor(1, 0.82, 0)
+	end
+
+	local texture = object:CreateTexture(nil, "BACKGROUND")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\warning-bg", true, true)
+	texture:SetHorizTile(true)
+	texture:SetVertTile(true)
+	texture:SetAllPoints()
+	texture:SetVertexColor(1, 0.82, 0, 0.5)
 
 	return object
 end
@@ -745,23 +765,16 @@ function CFG:Init()
 	_G.MultiActionBar_Update()
 	_G.UIParent_ManageFramePositions()
 
-	_G.InterfaceOptionsActionBarsPanelBottomLeft:SetChecked(true)
-	_G.InterfaceOptionsActionBarsPanelBottomLeft:Click()
-	_G.InterfaceOptionsActionBarsPanelBottomLeft:Disable()
+	local warningPlate = CFG:CreateWarningPlate(_G.InterfaceOptionsActionBarsPanel,
+		{
+			name = "$parentLSUIBarsWarning"
+		})
+	warningPlate:SetFrameLevel(_G.InterfaceOptionsActionBarsPanelBottomLeft:GetFrameLevel() + 1)
+	warningPlate:SetPoint("TOPLEFT", "InterfaceOptionsActionBarsPanelBottomLeft", "TOPLEFT", -4, 4)
+	warningPlate:SetPoint("BOTTOM", "InterfaceOptionsActionBarsPanelRightTwo", "BOTTOM", 0, -4)
+	warningPlate:SetPoint("RIGHT", "InterfaceOptionsActionBarsPanelBottomRightText", "RIGHT", 4, 0)
 
-	_G.InterfaceOptionsActionBarsPanelBottomRight:SetChecked(true)
-	_G.InterfaceOptionsActionBarsPanelBottomRight:Click()
-	_G.InterfaceOptionsActionBarsPanelBottomRight:Disable()
-
-	_G.InterfaceOptionsActionBarsPanelRightTwo:SetChecked(true)
-	_G.InterfaceOptionsActionBarsPanelRightTwo:Click()
-	_G.InterfaceOptionsActionBarsPanelRightTwo:Disable()
-
-	_G.InterfaceOptionsActionBarsPanelRight:SetChecked(true)
-	_G.InterfaceOptionsActionBarsPanelRight:Click()
-	_G.InterfaceOptionsActionBarsPanelRight:Disable()
-
-	local infoButton = CFG:CreateInfoButton(_G.InterfaceOptionsActionBarsPanel,
+	local infoButton = CFG:CreateInfoButton(warningPlate,
 		{
 			name = "$parentLSUIBarsInfo",
 			tooltip_text = L["ACTION_BAR_INFO_TOOLTIP"],
@@ -769,7 +782,7 @@ function CFG:Init()
 				OpenToCategory("LSUIBarsConfigPanel")
 			end
 		})
-	infoButton:SetPoint("LEFT", "InterfaceOptionsActionBarsPanelBottomLeftText", "RIGHT", 6, 0)
+	infoButton:SetPoint("TOPRIGHT", warningPlate, "TOPRIGHT", -8, -8)
 
 	P:AddCommand("", function()
 		OpenToCategory("LSUIGeneralConfigPanel")
