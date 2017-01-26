@@ -6,7 +6,7 @@ D["units"] = {
 	player = {
 		enabled = true,
 		castbar = true,
-		point = {"BOTTOM", "UIParent", "BOTTOM", -314 , 80},
+		point = {"BOTTOM", "UIParent", "BOTTOM", -318, 90},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
@@ -74,7 +74,7 @@ D["auratracker"] = {
 
 D["minimap"] = {
 	enabled = true,
-	point = {"BOTTOM", "UIParent", "BOTTOM", 314 , 80},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 318 , 90},
 }
 
 D["bars"] = {
@@ -84,40 +84,40 @@ D["bars"] = {
 	show_name = true,
 	bar1 = { -- MainMenuBar
 		visible = true,
-		point = {"BOTTOM", 0, 4},
-		button_size = 28,
+		point = {"BOTTOM", 0, 16},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 12,
 	},
 	bar2 = { -- MultiBarBottomLeft
 		visible = true,
-		point = {"BOTTOM", 0, 46},
-		button_size = 28,
+		point = {"BOTTOM", 0, 52},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 12,
 	},
 	bar3 = { -- MultiBarBottomRight
 		visible = true,
-		point = {"BOTTOM", 0, 78},
-		button_size = 28,
+		point = {"BOTTOM", 0, 88},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 12,
 	},
 	bar4 = { -- MultiBarLeft
 		visible = true,
-		point = {"BOTTOMRIGHT", -36, 300},
-		button_size = 28,
+		point = {"BOTTOMRIGHT", -40, 240},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPRIGHT",
 		buttons_per_row = 1,
 	},
 	bar5 = { -- MultiBarRight
 		visible = true,
-		point = {"BOTTOMRIGHT", -4, 300},
-		button_size = 28,
+		point = {"BOTTOMRIGHT", -4, 240},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPRIGHT",
 		buttons_per_row = 1,
@@ -154,17 +154,17 @@ D["bars"] = {
 	micromenu = {
 		visible = true,
 		holder1 = {
-			point = {"BOTTOM", -256, 4},
+			point = {"BOTTOM", -280, 16},
 		},
 		holder2 = {
-			point = {"BOTTOM", 256, 4},
+			point = {"BOTTOM", 280, 16},
 		},
 	},
 	bags = {
 		enabled = true,
 		visible = true,
-		point = {"BOTTOM", 400, 4},
-		button_size = 28,
+		point = {"BOTTOM", 434, 16},
+		button_size = 32,
 		button_gap = 4,
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 5,
@@ -181,12 +181,12 @@ D["auras"] = {
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 	},
 	debuff = {
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -88},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -76},
 	},
 	tempench = {
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -128},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -112},
 	},
-	aura_size = 28,
+	aura_size = 32,
 	aura_gap = 4,
 }
 
