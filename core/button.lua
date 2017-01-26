@@ -162,7 +162,10 @@ end
 local function SetPushedTexture(button)
 	if not button.SetPushedTexture then return end
 
-	button:SetPushedTexture("Interface\\AddOns\\ls_UI\\media\\button-pushed")
+	button:SetPushedTexture("Interface\\Buttons\\ButtonHilight-Square")
+	button:GetPushedTexture():SetBlendMode("ADD")
+	button:GetPushedTexture():SetDesaturated(true)
+	button:GetPushedTexture():SetVertexColor(1.0, 0.82, 0.0)
 	button:GetPushedTexture():SetAllPoints()
 end
 
@@ -506,7 +509,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bBetterIcon then
-		bBetterIcon:SetDrawLayer("OVERLAY", 2)
+		bBetterIcon:SetDrawLayer("OVERLAY", 3)
 		bBetterIcon:SetSize(18, 18)
 		bBetterIcon:ClearAllPoints()
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
