@@ -174,6 +174,45 @@ function E:GetCoords(object)
 	end
 end
 
+function E:GetScreenQuadrant(frame)
+	local x, y = frame:GetCenter()
+
+	if not (x and y) then
+		return "UNKNOWN"
+	end
+
+	local screenWidth = _G.UIParent:GetRight()
+	local screenHeight = _G.UIParent:GetTop()
+	local screenLeft = screenWidth / 3
+	local screenRight = screenWidth * 2 / 3
+
+	if y >= screenHeight * 2 / 3 then
+		if x <= screenLeft then
+			return "TOPLEFT"
+		elseif x >= screenRight then
+			return "TOPRIGHT"
+		else
+			return "TOP"
+		end
+	elseif y <= screenHeight / 3 then
+		if x <= screenLeft then
+			return "BOTTOMLEFT"
+		elseif x >= screenRight then
+			return "BOTTOMRIGHT"
+		else
+			return "BOTTOM"
+		end
+	else
+		if x <= screenLeft then
+			return "LEFT"
+		elseif x >= screenRight then
+			return "RIGHT"
+		else
+			return "CENTER"
+		end
+	end
+end
+
 _G.SLASH_RELOADUI1 = "/rl"
 _G.SlashCmdList["RELOADUI"] = _G.ReloadUI
 
