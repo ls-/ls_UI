@@ -8,7 +8,7 @@ local function SetAnimationGroup(object, type)
 
 		local anim = object[type]:CreateAnimation("Alpha")
 		anim:SetOrder(1)
-		anim:SetDuration(0)
+		anim:SetDuration(0.001)
 		anim:SetFromAlpha(1)
 		anim:SetToAlpha(0)
 
