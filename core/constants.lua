@@ -23,6 +23,7 @@ local COLORS = {
 	POWER = {},
 	REACTION = {},
 	THREAT = {},
+	ITEM_QUALITY = {},
 }
 
 ------------------------
@@ -101,6 +102,10 @@ for k, v in pairs(_G.QuestDifficultyColors) do
 	if k ~= "header" then
 		COLORS.DIFFICULTY[string.upper(k)] = E:CreateColor(v.r, v.g, v.b)
 	end
+end
+
+for k, color in pairs(_G.ITEM_QUALITY_COLORS) do
+	COLORS.ITEM_QUALITY[k + 1] = E:CreateColor(color.r, color.g, color.b)
 end
 
 COLORS.POWER.GLOW = {
