@@ -9,12 +9,11 @@ local function SetAnimationGroup(object, type)
 		local anim = object[type]:CreateAnimation("Alpha")
 		anim:SetOrder(1)
 		anim:SetDuration(0.001)
-		anim:SetFromAlpha(1)
 		anim:SetToAlpha(0)
 
 		anim = object[type]:CreateAnimation("Alpha")
 		anim:SetOrder(2)
-		anim:SetDuration(0.05)
+		anim:SetDuration(0.1)
 		anim:SetFromAlpha(0)
 		anim:SetToAlpha(1)
 
