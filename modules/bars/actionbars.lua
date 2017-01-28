@@ -195,15 +195,15 @@ end
 
 function BARS:ActionBars_Init()
 	if not isInit then
-		if C.bars.restricted then
+		if not self:ActionBarController_IsInit() then
+			CFG = C.bars
+		else
 			CFG.bar2 = C.bars.bar2
 			CFG.bar3 = C.bars.bar3
 			CFG.bar4 = C.bars.bar4
 			CFG.bar5 = C.bars.bar5
 			CFG.bar6 = C.bars.bar6
 			CFG.bar7 = C.bars.bar7
-		else
-			CFG = C.bars
 		end
 
 		-- Bar setup
@@ -283,7 +283,9 @@ function BARS:ActionBars_Init()
 		end
 
 		for key, bar in pairs(actionbars) do
-			if not (key == "bar1" and C.bars.restricted) then
+			if key == "bar1" and self:ActionBarController_IsInit() then
+				self:ActionBarController_AddWidget(bar, "ACTION_BAR")
+			else
 				if CFG[key].point then
 					bar:SetPoint(unpack(CFG[key].point))
 				else
@@ -291,8 +293,6 @@ function BARS:ActionBars_Init()
 				end
 
 				E:CreateMover(bar)
-			else
-				self:ActionBarController_AddWidget(bar, "ACTION_BAR")
 			end
 		end
 

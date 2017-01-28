@@ -349,7 +349,7 @@ local function Tooltip_SetUnit(self)
 
 	if not (unit and _G.UnitExists(unit)) then return end
 
-	local name = _G.UnitPVPName(unit) or _G.UNKNOWN
+	local name = _G.UnitPVPName(unit) or _G.UnitName(unit) or _G.UNKNOWN
 	local effectiveLevel = _G.UnitEffectiveLevel(unit)
 	local nameColor = E:GetUnitColor(
 		unit,

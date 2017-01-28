@@ -31,10 +31,10 @@ function BARS:PetBattleBar_Init()
 	if not isInit then
 		local bar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
 
-		if not C.bars.restricted then
-			bar:SetPoint(unpack(CFG.point))
-		else
+		if self:ActionBarController_IsInit() then
 			self:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
+		else
+			bar:SetPoint(unpack(CFG.point))
 		end
 
 		_G.RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
