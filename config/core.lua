@@ -702,7 +702,7 @@ function CFG:CreateInfoButton(parent, data)
 	object:SetScript("OnEnter", InfoButton_OnEnter)
 	object:SetScript("OnLeave", InfoButton_OnLeave)
 	object.toolTipText = data.tooltip_text
-	object.tooltipDir = "UP"
+	object.tooltipDir = data.tooltip_dir or "UP"
 
 	object:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
 
@@ -716,8 +716,9 @@ function CFG:CreateInfoButton(parent, data)
 end
 
 -- Warning Plate
-function CFG:CreateWarningPlate(parent, data)
-	local object = _G.CreateFrame("Frame", data.name, parent, "ThinBorderTemplate")
+function CFG:CreateWarningPlate(panel, data)
+	local object = _G.CreateFrame("Frame", data.name, data.parent, "ThinBorderTemplate")
+	object:SetFrameLevel(data.frame_level)
 	object:EnableMouse(true)
 	object:Show()
 
@@ -731,6 +732,21 @@ function CFG:CreateWarningPlate(parent, data)
 	texture:SetVertTile(true)
 	texture:SetAllPoints()
 	texture:SetVertexColor(1, 0.82, 0, 0.5)
+
+	local info = self:CreateInfoButton(object,
+		{
+			name = "$parentInfoButton",
+			click = data.click,
+			tooltip_text = data.tooltip_text,
+			tooltip_dir = data.tooltip_dir,
+		})
+	info:SetPoint("CENTER", object, "CENTER", 0, 0)
+
+	if data.refresh then
+		object.RefreshValue = data.refresh
+
+		RegisterControlForRefresh(panel, object)
+	end
 
 	return object
 end
@@ -767,22 +783,16 @@ function CFG:Init()
 
 	local warningPlate = CFG:CreateWarningPlate(_G.InterfaceOptionsActionBarsPanel,
 		{
-			name = "$parentLSUIBarsWarning"
-		})
-	warningPlate:SetFrameLevel(_G.InterfaceOptionsActionBarsPanelBottomLeft:GetFrameLevel() + 1)
-	warningPlate:SetPoint("TOPLEFT", "InterfaceOptionsActionBarsPanelBottomLeft", "TOPLEFT", -4, 4)
-	warningPlate:SetPoint("BOTTOM", "InterfaceOptionsActionBarsPanelRightTwo", "BOTTOM", 0, -4)
-	warningPlate:SetPoint("RIGHT", "InterfaceOptionsActionBarsPanelBottomRightText", "RIGHT", 4, 0)
-
-	local infoButton = CFG:CreateInfoButton(warningPlate,
-		{
-			name = "$parentLSUIBarsInfo",
+			parent = _G.InterfaceOptionsActionBarsPanel,
+			name = "$parentLSUIBarsWarning",
+			frame_level =_G.InterfaceOptionsActionBarsPanelBottomLeft:GetFrameLevel() + 1,
 			tooltip_text = L["ACTION_BAR_INFO_TOOLTIP"],
 			click = function()
 				OpenToCategory("LSUIBarsConfigPanel")
 			end
 		})
-	infoButton:SetPoint("TOPRIGHT", warningPlate, "TOPRIGHT", -8, -8)
+	warningPlate:SetPoint("TOPLEFT", "InterfaceOptionsActionBarsPanelBottomLeft", "TOPLEFT", -4, 4)
+	warningPlate:SetPoint("BOTTOMRIGHT", "InterfaceOptionsActionBarsPanelRightTwo", "BOTTOMRIGHT", 4, -4)
 
 	P:AddCommand("", function()
 		OpenToCategory("LSUIGeneralConfigPanel")
