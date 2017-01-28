@@ -39,55 +39,131 @@ local elements = {
 			size = {544 / 2, 32 / 2},
 			coords = {977 / 2048, 1521 / 2048, 86 / 128, 118 / 128},
 		},
+		bag = {
+			size = {128 / 2, 32 / 2},
+			coords = {886 / 2048, 1014 / 2048, 53 / 128, 85 / 128}
+		},
 	},
 }
 
-local WIDGETS = {
-	ACTION_BAR = {
-		frame = false,
-		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
-		attribute = {
-			name = "_childupdate-numbuttons",
-			condition = [[
-				self:Hide()
-				self:SetWidth(36 * message)
-				self:Show()
+local WIDGETS = {}
 
-				for i = 7, 12 do
-					if message == 6 then
-						buttons[i]:SetAttribute("ls-hidden", true)
-						buttons[i]:Hide()
-					else
-						buttons[i]:SetAttribute("ls-hidden", false)
-						buttons[i]:Show()
-					end
+WIDGETS.ACTION_BAR = {
+	frame = false,
+	children = false,
+	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+	on_add = function ()
+		WIDGETS.ACTION_BAR.children = {
+			[1] = _G.LSMultiBarBottomLeftBar,
+			[2] = _G.LSMultiBarBottomRightBar,
+			[3] = _G.LSMultiBarLeftBar,
+			[4] = _G.LSMultiBarRightBar,
+			[5] = _G.LSPetBar,
+			[6] = _G.LSStanceBar,
+		}
+	end,
+	attribute = {
+		name = "_childupdate-numbuttons",
+		condition = [[
+			self:Hide()
+			self:SetWidth(36 * message)
+			self:Show()
+
+			for i = 7, 12 do
+				if message == 6 then
+					buttons[i]:SetAttribute("ls-hidden", true)
+					buttons[i]:Hide()
+				else
+					buttons[i]:SetAttribute("ls-hidden", false)
+					buttons[i]:Show()
 				end
-			]]
-		},
+			end
+		]]
 	},
-	PET_BATTLE_BAR = {
-		frame = false,
-		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
-	},
-	BAG = {
-		frame = false,
-		point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 294, 11},
-	},
-	MM_LEFT = {
-		frame = false,
-		point = {"BOTTOMRIGHT", "LSActionBarArtContainerBottom", "BOTTOMLEFT", -148, 11},
-	},
-	MM_RIGHT = {
-		frame = false,
-		point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 148, 11},
-	},
-	EXP_BAR = {
-		frame = false,
-		point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 0},
-		post = function(_, newstate)
-			BARS:SetExpBarMode(newstate == 6 and "SHORT" or "DEFAULT")
-		end
-	},
+}
+
+WIDGETS.PET_BATTLE_BAR = {
+	frame = false,
+	children = false,
+	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+}
+
+WIDGETS.BAG = {
+	frame = false,
+	children = false,
+	point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 294, 11},
+	on_add = function(self)
+		local texture = controller.Bottom:CreateTexture(nil, "ARTWORK")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexCoord(unpack(elements.bottom.bag.coords))
+		texture:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 280 , 0)
+		texture:SetSize(unpack(elements.bottom.bag.size))
+		controller.Bottom.Bag = texture
+
+		local holder = _G.CreateFrame("Frame", nil, self)
+		holder:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 287 , 0)
+		holder:SetSize(100 / 2, 16 / 2)
+
+		texture = holder:CreateTexture(nil, "ARTWORK")
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
+		texture:SetHorizTile(true)
+		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
+
+		local bar = _G.CreateFrame("StatusBar", nil, holder)
+		bar:SetAllPoints()
+		bar:SetFrameLevel(holder:GetFrameLevel() + 1)
+		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		bar:SetStatusBarColor(0, 0, 0, 0)
+		E:SmoothBar(bar)
+		self.Indicator = bar
+
+		bar.Texture = _G.CreateFrame("Frame", nil, bar, "LSUILineTemplate")
+		bar.Texture:SetFrameLevel(bar:GetFrameLevel() + 1)
+
+		bar.Texture.Fill:SetStartPoint("LEFT", bar:GetStatusBarTexture())
+		bar.Texture.Fill:SetStartPoint("RIGHT", bar:GetStatusBarTexture())
+
+		bar.Texture.FillScroll1:SetStartPoint("LEFT", bar:GetStatusBarTexture())
+		bar.Texture.FillScroll1:SetEndPoint("RIGHT", bar:GetStatusBarTexture())
+
+		bar.Texture.FillScroll2:SetStartPoint("LEFT", bar:GetStatusBarTexture())
+		bar.Texture.FillScroll2:SetEndPoint("RIGHT", bar:GetStatusBarTexture())
+
+		local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+		spark:SetSize(16, 16)
+		spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+		spark:SetBlendMode("ADD")
+		spark:SetPoint("CENTER", bar:GetStatusBarTexture(), "RIGHT", 0, 0)
+		bar.Spark = spark
+
+		bar.Texture.ScrollAnim:Play()
+
+		WIDGETS.BAG.children = {
+			[1] = holder,
+		}
+	end
+}
+
+WIDGETS.MM_LEFT = {
+	frame = false,
+	children = false,
+	point = {"BOTTOMRIGHT", "LSActionBarArtContainerBottom", "BOTTOMLEFT", -148, 11},
+}
+
+WIDGETS.MM_RIGHT = {
+	frame = false,
+	children = false,
+	point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 148, 11},
+}
+
+WIDGETS.XP_BAR = {
+	frame = false,
+	children = false,
+	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 0},
+	on_play = function(_, newstate)
+		BARS:SetXPBarStyle(newstate == 6 and "SHORT" or "DEFAULT")
+	end
 }
 
 local function ControllerAnimation_OnPlay()
@@ -95,15 +171,20 @@ local function ControllerAnimation_OnPlay()
 
 	for _, widget in pairs(WIDGETS) do
 		if widget.frame then
-			E:StopFadeIn(widget.frame)
-			E:FadeOut(widget.frame, 0.001)
+			widget.frame:SetAlpha(0)
+
+			if widget.children then
+				for _, child in pairs(widget.children) do
+					child:SetAlpha(0)
+				end
+			end
 		end
 	end
 
 	_G.C_Timer.After(0.02, function()
 		for _, widget in pairs(WIDGETS) do
-			if widget.frame and widget.post then
-				widget.post(widget.frame, newstate)
+			if widget.frame and widget.on_play then
+				widget.on_play(widget.frame, newstate)
 			end
 		end
 	end)
@@ -117,8 +198,21 @@ end
 local function ControllerAnimation_OnFinished()
 	for _, widget in pairs(WIDGETS) do
 		if widget.frame then
-			E:StopFadeOut(widget.frame)
-			E:FadeIn(widget.frame, 0.1)
+			if widget.frame:IsShown() then
+				E:FadeIn(widget.frame)
+			else
+				widget.frame:SetAlpha(1)
+			end
+
+			if widget.children then
+				for _, child in pairs(widget.children) do
+					if child:IsShown() then
+						E:FadeIn(child)
+					else
+						child:SetAlpha(1)
+					end
+				end
+			end
 		end
 	end
 end
@@ -126,8 +220,6 @@ end
 ------------
 -- PUBLIC --
 ------------
-
-local isDriverRegistered = false
 
 function BARS:ActionBarController_AddWidget(frame, slot)
 	if isInit then
@@ -140,7 +232,7 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 
 			if slot == "ACTION_BAR" or slot == "MM_LEFT" or slot == "MM_RIGHT" or slot == "BAG" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 2)
-			elseif slot == "EXP_BAR" then
+			elseif slot == "XP_BAR" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 3)
 			end
 
@@ -148,17 +240,21 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 				frame:SetAttribute(WIDGETS[slot].attribute.name, WIDGETS[slot].attribute.condition)
 			end
 
+			if WIDGETS[slot].on_add then
+				WIDGETS[slot].on_add(frame)
+			end
+
 			-- register state driver & trigger update
-			if not isDriverRegistered
+			if not controller.isDriverRegistered
 				and WIDGETS["ACTION_BAR"].frame
 				and WIDGETS["PET_BATTLE_BAR"].frame
 				and WIDGETS["MM_LEFT"].frame
 				and WIDGETS["MM_RIGHT"].frame
-				and WIDGETS["EXP_BAR"].frame
-				and (C.bars.bags.enabled and WIDGETS["EXP_BAR"].frame or not C.bars.bags.enabled) then
+				and WIDGETS["XP_BAR"].frame
+				and (C.bars.bags.enabled and WIDGETS["BAG"].frame or not C.bars.bags.enabled) then
 				_G.RegisterStateDriver(controller, "width", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
-				isDriverRegistered = true
+				controller.isDriverRegistered = true
 			end
 		end
 	end
@@ -286,8 +382,8 @@ function BARS:ActionBarController_Init()
 		controller:SetAttribute("_onstate-width", [[
 			if newstate ~= self:GetAttribute("numbuttons") then
 				self:SetAttribute("numbuttons", newstate)
-				self:CallMethod("Update")
 				self:ChildUpdate("numbuttons", newstate)
+				self:CallMethod("Update")
 			end
 		]])
 

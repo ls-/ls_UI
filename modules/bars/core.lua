@@ -58,15 +58,14 @@ end
 
 function BARS:Init()
 	if not isInit and C.bars.enabled then
-		-- Should be the first one
 		self:ActionBarController_Init()
 		self:ActionBars_Init()
 		self:Bags_Init()
-		self:ExpBar_Init()
 		self:ExtraActionButton_Init()
 		self:MicroMenu_Init()
 		self:PetBattleBar_Init()
 		self:VehicleExitButton_Init()
+		self:XPBar_Init()
 		self:ZoneAbilityButton_Init()
 
 		-- Finalise

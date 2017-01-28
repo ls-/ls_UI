@@ -169,9 +169,9 @@ D["bars"] = {
 		init_anchor = "TOPLEFT",
 		buttons_per_row = 5,
 	},
-	expbar = {
+	xpbar = {
+		enabled = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
-		mode = "DEFAULT",
 	},
 }
 

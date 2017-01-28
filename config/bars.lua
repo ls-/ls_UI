@@ -583,5 +583,71 @@ function CFG:Bars_Init()
 		})
 	bagsToggle:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
 
+	local xpToggle = CFG:CreateCheckButton(panel,
+		{
+			parent = panel,
+			name = "$parentXPBarToggle",
+			text = L["ENABLE_XP_BAR"],
+			get = function() return C.bars.xpbar.enabled end,
+			set = function(_, value)
+				C.bars.xpbar.enabled = value
+			end,
+			refresh = function(self)
+				self:SetChecked(C.bars.xpbar.enabled)
+			end,
+			click = function(self)
+				local isChecked = self:GetChecked()
+
+				self:SetValue(isChecked)
+
+				if BARS:IsInit() then
+					if isChecked then
+						if BARS:XPBar_IsInit() then
+							panel.Log:SetText(string.format(
+								L["LOG_ENABLED_ERR"],
+								L["XP_BAR"]))
+						else
+							local result = BARS:XPBar_Init()
+
+							if result then
+								panel.Log:SetText(string.format(
+									L["LOG_ENABLED"],
+									L["ICON_GREEN_INLINE"],
+									L["XP_BAR"],
+									""))
+							end
+						end
+					else
+						if BARS:XPBar_IsInit() then
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED"],
+								L["ICON_YELLOW_INLINE"],
+								L["XP_BAR"],
+								L["REQUIRES_RELOAD"]))
+						else
+							panel.Log:SetText(string.format(
+								L["LOG_DISABLED_ERR"],
+								L["XP_BAR"]))
+						end
+					end
+				end
+			end
+		})
+	xpToggle:SetPoint("LEFT", bagsToggle, "RIGHT", 110, 0)
+
+	local xpToggleRMWarning = CFG:CreateWarningPlate(panel,
+		{
+			parent = xpToggle,
+			name = "$parentRMWarning",
+			tooltip_text = L["FEATURE_NOT_AVAILBLE_RESTRICTED"],
+			frame_level = xpToggle:GetFrameLevel() + 1,
+			refresh = function(self)
+				self:SetShown(BARS:ActionBarController_IsInit())
+			end,
+
+		})
+	xpToggleRMWarning:SetPoint("TOPLEFT", xpToggle, "TOPLEFT", -4, 4)
+	xpToggleRMWarning:SetPoint("BOTTOMRIGHT", xpToggle, "BOTTOMRIGHT", 4, -4)
+
 	CFG:AddPanel(panel)
 end

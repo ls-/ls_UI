@@ -364,9 +364,28 @@
 		</Layers>
 		<Animations>
 			<AnimationGroup parentKey="ScrollAnim" setToFinalAlpha="true" looping="REPEAT">
-				<TextureCoordTranslation childKey="FillScroll1" duration="12" order="1" offsetU="1" offsetV="0" />
-				<TextureCoordTranslation childKey="FillScroll2" duration="12" order="1" offsetU="-1" offsetV="0" />
+				<TextureCoordTranslation childKey="FillScroll1" duration="12" order="1" offsetU="1" offsetV="0"/>
+				<TextureCoordTranslation childKey="FillScroll2" duration="12" order="1" offsetU="-1" offsetV="0"/>
 			</AnimationGroup>
 		</Animations>
+		<Scripts>
+			<OnLoad>
+				local scale = _G.UIParent:GetScale()
+
+				self.Fill:SetThickness(16 * scale)
+				self.FillScroll1:SetThickness(16 * scale)
+				self.FillScroll2:SetThickness(16 * scale)
+
+				self:RegisterEvent("DISPLAY_SIZE_CHANGED")
+				self:RegisterEvent("UI_SCALE_CHANGED")
+			</OnLoad>
+			<OnEvent>
+				local scale = _G.UIParent:GetScale()
+
+				self.Fill:SetThickness(16 * scale)
+				self.FillScroll1:SetThickness(16 * scale)
+				self.FillScroll2:SetThickness(16 * scale)
+			</OnEvent>
+		</Scripts>
 	</Frame>
 </Ui>

@@ -7,63 +7,48 @@ local _G = _G
 local table = _G.table
 local unpack = _G.unpack
 
--- Blizz
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-
 -- Mine
 local isInit = false
 local bar
-local mode
+
+local BAR_VALUE_TEMPLATE = "%s / |cff%s%s|r"
 local MAX_BARS = 3
-local BAR_WIDTH = 1494 / 2
-local ARTIFACT_NUM_PURCHASED_RANKS = _G.ARTIFACTS_NUM_PURCHASED_RANKS:gsub("%%d", "|cff%%s%%s|r")
-local ARTIFACT_NUM_TRAIT_POINTS = "Trait Points: |cff%s%s|r"
-local ARTIFACT_POWER = _G.ARTIFACT_POWER
-local BONUS_EXPERIENCE = "Bonus XP: |cff%s%s|r"
-local BONUS_HONOR = "Bonus Honor: |cff%s%s|r"
-local EXP_BAR_VALUE_TEMPLATE = "%s / |cff%s%s|r"
-local EXPERIENCE = "Experience"
-local HONOR = _G.HONOR
-local HONOR_LEVEL = "Honor Level: |cff%s%s|r"
-local LEVEL = _G.LEVEL..": |cff%s%d|r"
-local NAME = "Name: |cff%s%s|r"
-local PRESTIGE_LEVEL = "Prestige Level: |cff%s%s|r"
-local REPUTATION = _G.REPUTATION
+local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
 
 local LAYOUT = {
 	[1] = {
 		[1] = {
-			point = {"TOPLEFT", "LSUIExpBar", "TOPLEFT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
 		},
 	},
 	[2] = {
 		[1] = {
-			point = {"TOPLEFT", "LSUIExpBar", "TOPLEFT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
 		},
 		[2] = {
-			point = {"TOPLEFT", "LSUIExpBarSegment1", "TOPRIGHT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBarSegment1", "TOPRIGHT", 0, 0},
 		},
 	},
 	[3] = {
 		[1] = {
-			point = {"TOPLEFT", "LSUIExpBar", "TOPLEFT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
 		},
 		[2] = {
-			point = {"TOPLEFT", "LSUIExpBarSegment1", "TOPRIGHT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBarSegment1", "TOPRIGHT", 0, 0},
 		},
 		[3] = {
-			point = {"TOPLEFT", "LSUIExpBarSegment2", "TOPRIGHT", 0, 0},
+			point = {"TOPLEFT", "LSUIXPBarSegment2", "TOPRIGHT", 0, 0},
 		},
 	},
 }
 
 local CFG = {
+	enabled = true,
 	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
-	mode = "DEFAULT",
 }
 
-local function UpdateExperienceBars(self)
+local function UpdateXPBars()
 	local index = 0
 
 	if _G.C_PetBattles.IsInBattle() then
@@ -78,26 +63,21 @@ local function UpdateExperienceBars(self)
 					local rarity = _G.C_PetBattles.GetBreedQuality(1, i)
 					local cur, max = _G.C_PetBattles.GetXP(1, i)
 					local r, g, b = M.COLORS.XP:GetRGB()
-					local hex = M.COLORS.XP:GetHEX()
 
-					self[index].tooltipInfo = {
-						header = EXPERIENCE,
+					bar[index].tooltipInfo = {
+						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
 						line1 = {
-							text = NAME:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name)
-						},
-						line2 = {
-							text = LEVEL:format(hex, level)
+							text = L["XP_BAR_LEVEL_TOOLTIP"]:format(level)
 						},
 					}
 
-					self[index].Text:SetFormattedText(EXP_BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), hex, BreakUpLargeNumbers(max))
+					bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
+					bar[index].Texture.Fill:SetVertexColor(r, g, b)
+					bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
+					bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
 
-					self[index].Texture.Fill:SetVertexColor(r, g, b)
-					self[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-					self[index].Texture.FillScroll2:SetVertexColor(r, g, b)
-
-					self[index]:SetMinMaxValues(0, max)
-					self[index]:SetValue(cur)
+					bar[index]:SetMinMaxValues(0, max)
+					bar[index]:SetValue(cur)
 				end
 			end
 		end
@@ -109,26 +89,24 @@ local function UpdateExperienceBars(self)
 			local _, _, _, _, totalXP, pointsSpent = _G.C_ArtifactUI.GetEquippedArtifactInfo()
 			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
 			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
-			local hex = M.COLORS.ARTIFACT:GetHEX()
 
-			self[index].tooltipInfo = {
-				header = ARTIFACT_POWER,
+			bar[index].tooltipInfo = {
+				header = L["ARTIFACT_POWER"],
 				line1 = {
-					text = ARTIFACT_NUM_TRAIT_POINTS:format(hex, points)
+					text = L["XP_BAR_ARTIFACT_NUM_TRAIT_POINTS"]:format(points)
 				},
 				line2 = {
-					text = ARTIFACT_NUM_PURCHASED_RANKS:format(hex, pointsSpent)
+					text = L["XP_BAR_ARTIFACT_NUM_PURCHASED_RANKS_TOOLTIP"]:format(pointsSpent)
 				},
 			}
 
-			self[index].Text:SetFormattedText(EXP_BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), hex, BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.ARTIFACT:GetHEX(), _G.BreakUpLargeNumbers(max))
+			bar[index].Texture.Fill:SetVertexColor(r, g, b)
+			bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
+			bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
 
-			self[index].Texture.Fill:SetVertexColor(r, g, b)
-			self[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-			self[index].Texture.FillScroll2:SetVertexColor(r, g, b)
-
-			self[index]:SetMinMaxValues(0, max)
-			self[index]:SetValue(cur)
+			bar[index]:SetMinMaxValues(0, max)
+			bar[index]:SetValue(cur)
 		end
 
 		-- XP / Honour
@@ -138,31 +116,29 @@ local function UpdateExperienceBars(self)
 
 				local cur, max = _G.UnitXP("player"), _G.UnitXPMax("player")
 				local r, g, b = M.COLORS.XP:GetRGB()
-				local hex = M.COLORS.XP:GetHEX()
 
-				self[index].tooltipInfo = {
-					header = EXPERIENCE,
+				bar[index].tooltipInfo = {
+					header = L["EXPERIENCE"],
 					line1 = {
-						text = LEVEL:format(hex, _G.UnitLevel("player"))
+						text = L["XP_BAR_LEVEL_TOOLTIP"]:format(_G.UnitLevel("player"))
 					},
 				}
 
 				if _G.GetXPExhaustion() and _G.GetXPExhaustion() > 0 then
-					self[index].tooltipInfo.line2 = {
-						text = BONUS_EXPERIENCE:format(hex, _G.GetXPExhaustion())
+					bar[index].tooltipInfo.line2 = {
+						text = L["XP_BAR_XP_BONUS_TOOLTIP"]:format(_G.GetXPExhaustion())
 					}
 				else
-					self[index].tooltipInfo.line2 = nil
+					bar[index].tooltipInfo.line2 = nil
 				end
 
-				self[index].Text:SetFormattedText(EXP_BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), hex, BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
+				bar[index].Texture.Fill:SetVertexColor(r, g, b)
+				bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
+				bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
 
-				self[index].Texture.Fill:SetVertexColor(r, g, b)
-				self[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-				self[index].Texture.FillScroll2:SetVertexColor(r, g, b)
-
-				self[index]:SetMinMaxValues(0, max)
-				self[index]:SetValue(cur)
+				bar[index]:SetMinMaxValues(0, max)
+				bar[index]:SetValue(cur)
 			end
 		else
 			if _G.IsWatchingHonorAsXP() or _G.InActiveBattlefield() or _G.IsInActiveWorldPVP() then
@@ -170,30 +146,28 @@ local function UpdateExperienceBars(self)
 
 				local cur, max = _G.UnitHonor("player"), _G.UnitHonorMax("player")
 				local r, g, b = M.COLORS.HONOR:GetRGB()
-				local hex = M.COLORS.HONOR:GetHEX()
 
-				self[index].tooltipInfo = {
-					header = HONOR,
+				bar[index].tooltipInfo = {
+					header = L["HONOR"],
 					line1 = {
-						text = HONOR_LEVEL:format(hex, _G.UnitHonorLevel("player")),
+						text = L["XP_BAR_HONOR_TOOLTIP"]:format(_G.UnitHonorLevel("player")),
 					},
 					line2 = {
-						text = PRESTIGE_LEVEL:format(hex, _G.UnitPrestige("player"))
+						text = L["XP_BAR_PRESTIGE_LEVEL_TOOLTIP"]:format(_G.UnitPrestige("player"))
 					},
 				}
 
 				if _G.GetHonorExhaustion() and _G.GetHonorExhaustion() > 0 then
-					self[index].tooltipInfo.line3.text = BONUS_HONOR:format(hex, _G.GetHonorExhaustion())
+					bar[index].tooltipInfo.line3.text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(_G.GetHonorExhaustion())
 				end
 
-				self[index].Text:SetFormattedText(EXP_BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), hex, BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.HONOR:GetHEX(), _G.BreakUpLargeNumbers(max))
+				bar[index].Texture.Fill:SetVertexColor(r, g, b)
+				bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
+				bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
 
-				self[index].Texture.Fill:SetVertexColor(r, g, b)
-				self[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-				self[index].Texture.FillScroll2:SetVertexColor(r, g, b)
-
-				self[index]:SetMinMaxValues(0, max)
-				self[index]:SetValue(cur)
+				bar[index]:SetMinMaxValues(0, max)
+				bar[index]:SetValue(cur)
 			end
 		end
 
@@ -223,67 +197,83 @@ local function UpdateExperienceBars(self)
 			local r, g, b = M.COLORS.REACTION[standing]:GetRGB()
 			local hex = M.COLORS.REACTION[standing]:GetHEX()
 
-			self[index].tooltipInfo = {
-				header = REPUTATION,
+			bar[index].tooltipInfo = {
+				header = L["REPUTATION"],
 				line1 = {
 					text = REPUTATION_TEMPLATE:format(name, hex, repTextLevel)
 				},
 			}
 
-			self[index].Text:SetFormattedText(EXP_BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), hex, BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+			bar[index].Texture.Fill:SetVertexColor(r, g, b)
+			bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
+			bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
 
-			self[index].Texture.Fill:SetVertexColor(r, g, b)
-			self[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-			self[index].Texture.FillScroll2:SetVertexColor(r, g, b)
-
-			self[index]:SetMinMaxValues(0, max)
-			self[index]:SetValue(cur)
+			bar[index]:SetMinMaxValues(0, max)
+			bar[index]:SetValue(cur)
 		end
 	end
 
 	for i = 1, MAX_BARS do
 		if i <= index then
-			self[i]:SetSize(unpack(LAYOUT[index][i].size))
-			self[i]:SetPoint(unpack(LAYOUT[index][i].point))
-			self[i]:Show()
+			bar[i]:SetSize(unpack(LAYOUT[index][i].size))
+			bar[i]:SetPoint(unpack(LAYOUT[index][i].point))
+			bar[i]:Show()
 
-			self[i].Texture.ScrollAnim:Play()
+			bar[i].Texture.ScrollAnim:Play()
 		else
-			self[i]:SetMinMaxValues(0, 1)
-			self[i]:SetValue(0)
-			self[i]:ClearAllPoints()
-			self[i]:Hide()
+			bar[i]:SetMinMaxValues(0, 1)
+			bar[i]:SetValue(0)
+			bar[i]:ClearAllPoints()
+			bar[i]:Hide()
 
-			self[i].Texture.ScrollAnim:Stop()
+			bar[i].Texture.ScrollAnim:Stop()
 		end
 	end
 
 	for i = 1, 2 do
 		if i <= index - 1 then
-			self[i].Sep:Show()
+			bar[i].Sep:Show()
 		else
-			self[i].Sep:Hide()
+			bar[i].Sep:Hide()
 		end
+	end
+
+	if index == 0 then
+		local r, g, b = M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB()
+
+		bar[1]:SetPoint(unpack(LAYOUT[1][1].point))
+		bar[1]:SetSize(unpack(LAYOUT[1][1].size))
+		bar[1]:SetMinMaxValues(0, 1)
+		bar[1]:SetValue(1)
+		bar[1]:Show()
+
+		bar[1].Spark:Hide()
+		bar[1].Text:SetText(nil)
+		bar[1].Texture.Fill:SetVertexColor(r, g, b)
+		bar[1].Texture.FillScroll1:SetVertexColor(r, g, b)
+		bar[1].Texture.FillScroll2:SetVertexColor(r, g, b)
+		bar[1].Texture.ScrollAnim:Play()
+	else
+		bar[1].Spark:Show()
 	end
 end
 
-local function UpdateExpBarSize()
-	if mode == "FULLSCREEN" then
-		BAR_WIDTH = _G.UIParent:GetWidth()
-	elseif mode == "SHORT" then
-		BAR_WIDTH = 1062 / 2
-	elseif mode == "DEFAULT" then
-		BAR_WIDTH = 1494 / 2
+local function SetXPBarStyle(style)
+	local width = 1492 / 2
+
+	if style == "SHORT" then
+		width = 1060 / 2
 	end
 
-	LAYOUT[1][1].size = {BAR_WIDTH / 1, 16 / 2}
-	LAYOUT[2][1].size = {BAR_WIDTH / 2, 16 / 2}
-	LAYOUT[2][2].size = {BAR_WIDTH / 2, 16 / 2}
-	LAYOUT[3][1].size = {BAR_WIDTH / 3, 16 / 2}
-	LAYOUT[3][2].size = {BAR_WIDTH / 3, 16 / 2}
-	LAYOUT[3][3].size = {BAR_WIDTH / 3, 16 / 2}
+	LAYOUT[1][1].size = {width / 1, 16 / 2}
+	LAYOUT[2][1].size = {width / 2, 16 / 2}
+	LAYOUT[2][2].size = {width / 2, 16 / 2}
+	LAYOUT[3][1].size = {width / 3, 16 / 2}
+	LAYOUT[3][2].size = {width / 3, 16 / 2}
+	LAYOUT[3][3].size = {width / 3, 16 / 2}
 
-	bar:SetSize(BAR_WIDTH, 16 / 2)
+	bar:SetSize(width, 16 / 2)
 
 	local total = 0
 
@@ -297,38 +287,19 @@ local function UpdateExpBarSize()
 		bar[i]:SetSize(unpack(LAYOUT[total][i].size))
 		bar[i]:SetPoint(unpack(LAYOUT[total][i].point))
 	end
+
+	UpdateXPBars()
 end
 
--- mode: "FULLSCREEN", "DEFAULT", "SHORT"
-local function SetExpBarMode(new)
-	if new == "FULLSCREEN" or new == "SHORT" then
-		mode = new
-	else
-		mode = "DEFAULT"
-	end
-
-	UpdateExpBarSize()
-end
-
-local function ExpBar_OnEvent(self, event, ...)
-	if event == "UI_SCALE_CHANGED" or event == "DISPLAY_SIZE_CHANGED" then
-		local scale = _G.UIParent:GetScale()
-
-		for i = 1, MAX_BARS do
-			self[i].Texture.Fill:SetThickness(16 * scale)
-			self[i].Texture.FillScroll1:SetThickness(16 * scale)
-			self[i].Texture.FillScroll2:SetThickness(16 * scale)
-		end
-
-		UpdateExperienceBars(self)
-	elseif event == "UNIT_INVENTORY_CHANGED" then
+local function XPBar_OnEvent(_, event, ...)
+	if event == "UNIT_INVENTORY_CHANGED" then
 		local unit = ...
 
 		if unit == "player" then
-			UpdateExperienceBars(self)
+			UpdateXPBars()
 		end
 	else
-		UpdateExperienceBars(self)
+		UpdateXPBars()
 	end
 end
 
@@ -343,15 +314,15 @@ local function Segment_OnEnter(self)
 
 		_G.GameTooltip:SetOwner(self, "ANCHOR_NONE")
 		_G.GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
-		_G.GameTooltip:AddLine(self.tooltipInfo.header)
-		_G.GameTooltip:AddLine(self.tooltipInfo.line1.text, 1, 1, 1)
+		_G.GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
+		_G.GameTooltip:AddLine(self.tooltipInfo.line1.text)
 
 		if self.tooltipInfo.line2 then
-			_G.GameTooltip:AddLine(self.tooltipInfo.line2.text, 1, 1, 1)
+			_G.GameTooltip:AddLine(self.tooltipInfo.line2.text)
 		end
 
 		if self.tooltipInfo.line3 then
-			_G.GameTooltip:AddLine(self.tooltipInfo.line3.text, 1, 1, 1)
+			_G.GameTooltip:AddLine(self.tooltipInfo.line3.text)
 		end
 
 		_G.GameTooltip:Show()
@@ -370,40 +341,34 @@ end
 -- PUBLIC --
 ------------
 
-function BARS:SetExpBarMode(new)
-	SetExpBarMode(new)
+function BARS:SetXPBarStyle(style)
+	SetXPBarStyle(style)
 end
 
-function BARS:EnableExpBarMouse(flag)
-	bar:EnableMouse(flag)
-end
-
-function BARS:IsExpBarMouseEnabled()
-	return bar:IsMouseEnabled()
+function BARS:UpdateXPBars()
+	UpdateXPBars()
 end
 
 -----------------
 -- INITIALISER --
 -----------------
 
-function BARS:ExpBar_IsInit()
+function BARS:XPBar_IsInit()
 	return isInit
 end
 
-function BARS:ExpBar_Init()
-	if not isInit then
-		if not C.bars.restricted then
-			CFG = C.bars.expbar
+function BARS:XPBar_Init()
+	if not isInit and (C.bars.xpbar.enabled or self:ActionBarController_IsInit()) then
+		if not self:ActionBarController_IsInit() then
+			CFG = C.bars.xpbar
 		end
 
-		bar = _G.CreateFrame("Frame", "LSUIExpBar", _G.UIParent, "SecureHandlerStateTemplate")
-		bar:SetScript("OnEvent", ExpBar_OnEvent)
+		bar = _G.CreateFrame("Frame", "LSUIXPBar", _G.UIParent)
+		bar:SetScript("OnEvent", XPBar_OnEvent)
 		-- all
-		bar:RegisterEvent("DISPLAY_SIZE_CHANGED")
 		bar:RegisterEvent("PET_BATTLE_CLOSE")
 		bar:RegisterEvent("PET_BATTLE_OPENING_START")
 		bar:RegisterEvent("PLAYER_UPDATE_RESTING")
-		bar:RegisterEvent("UI_SCALE_CHANGED")
 		bar:RegisterEvent("UPDATE_EXHAUSTION")
 		-- honour
 		bar:RegisterEvent("HONOR_LEVEL_UPDATE")
@@ -438,8 +403,6 @@ function BARS:ExpBar_Init()
 		t:SetHorizTile(true)
 		t:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
 
-		local scale = _G.UIParent:GetScale()
-
 		for i = 1, MAX_BARS do
 			bar[i] = _G.CreateFrame("StatusBar", "$parentSegment"..i, bar)
 			bar[i]:SetFrameLevel(bar:GetFrameLevel() + 1)
@@ -454,25 +417,21 @@ function BARS:ExpBar_Init()
 			bar[i].Texture = _G.CreateFrame("Frame", nil, bar[i], "LSUILineTemplate")
 			bar[i].Texture:SetFrameLevel(bar[i]:GetFrameLevel() + 1)
 
-			bar[i].Texture.Fill:SetThickness(16 * scale)
 			bar[i].Texture.Fill:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
 			bar[i].Texture.Fill:SetStartPoint("RIGHT", bar[i]:GetStatusBarTexture())
 
-			bar[i].Texture.FillScroll1:Show()
-			bar[i].Texture.FillScroll1:SetThickness(16 * scale)
 			bar[i].Texture.FillScroll1:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
 			bar[i].Texture.FillScroll1:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture())
 
-			bar[i].Texture.FillScroll2:Show()
-			bar[i].Texture.FillScroll2:SetThickness(16 * scale)
-			bar[i].Texture.FillScroll2:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture());
-			bar[i].Texture.FillScroll2:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture());
+			bar[i].Texture.FillScroll2:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
+			bar[i].Texture.FillScroll2:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture())
 
 			local spark = bar[i]:CreateTexture(nil, "ARTWORK", nil, 1)
 			spark:SetSize(16, 16)
 			spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
 			spark:SetBlendMode("ADD")
 			spark:SetPoint("CENTER", bar[i]:GetStatusBarTexture(), "RIGHT", 0, 0)
+			bar[i].Spark = spark
 
 			local text = text_parent:CreateFontString(nil, "OVERLAY", "LS10Font_Outline")
 			text:SetAllPoints(bar[i])
@@ -484,7 +443,7 @@ function BARS:ExpBar_Init()
 		local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("CENTER", bar[1], "RIGHT", 0, 0)
 		sep:SetSize(12 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\exp-bar")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\xp-bar")
 		sep:SetTexCoord(1 / 32, 13 / 32, 1 / 32, 17 / 32)
 		sep:Hide()
 		bar[1].Sep = sep
@@ -492,7 +451,7 @@ function BARS:ExpBar_Init()
 		sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("CENTER", bar[2], "RIGHT", 0, 0)
 		sep:SetSize(12 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\exp-bar")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\xp-bar")
 		sep:SetTexCoord(13 / 32, 25 / 32, 1 / 32, 17 / 32)
 		sep:Hide()
 		bar[2].Sep = sep
@@ -510,7 +469,7 @@ function BARS:ExpBar_Init()
 				_G.SetWatchingHonorAsXP(true)
 			end
 
-			UpdateExperienceBars(bar)
+			UpdateXPBars()
 		end
 
 		local function InitializePVPTalentsXPBarDropDown(self, level)
@@ -554,23 +513,21 @@ function BARS:ExpBar_Init()
 				_G.SetWatchedFactionIndex(0)
 			end
 
-			UpdateExperienceBars(bar)
+			UpdateXPBars()
 		end
 
 		_G.ReputationDetailMainScreenCheckBox:SetScript("OnClick", ReputationDetailMainScreenCheckBox_OnClick)
 
-		SetExpBarMode(CFG.mode)
-
-		if not C.bars.restricted then
+		if self:ActionBarController_IsInit() then
+			self:ActionBarController_AddWidget(bar, "XP_BAR")
+		else
 			bar:SetPoint(unpack(CFG.point))
 			E:CreateMover(bar)
 			E:SetBarSkin(cover, "HORIZONTAL-M")
-		else
-			self:ActionBarController_AddWidget(bar, "EXP_BAR")
 		end
 
 		-- Finalise
-		UpdateExperienceBars(bar)
+		SetXPBarStyle("DEFAULT")
 
 		isInit = true
 

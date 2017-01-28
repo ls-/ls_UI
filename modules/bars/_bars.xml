@@ -3,10 +3,10 @@
 	<Script file="controller.lua"/>
 	<Script file="actionbars.lua"/>
 	<Script file="bags.lua"/>
-	<Script file="expbar.lua"/>
 	<Script file="extra.lua"/>
 	<Script file="micromenu.lua"/>
 	<Script file="petbattle.lua"/>
 	<Script file="vehicle.lua"/>
+	<Script file="xpbar.lua"/>
 	<Script file="zoneability.lua"/>
 </Ui>
