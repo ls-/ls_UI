@@ -352,7 +352,7 @@ function P:AddCommand(command, handler, desc)
 end
 
 P:AddCommand("help", function()
-	P.print(L["SLASH_CMD"])
+	P.print(L["LIST_OF_COMMANDS_COLON"])
 
 	for k, v in pairs(commands) do
 		if k ~= "help" and k ~= "" then
