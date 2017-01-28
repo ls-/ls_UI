@@ -1,7 +1,7 @@
 ## ls: UI
 Yet another UI, but this one is a bit special.
 
-![image](http://i.imgur.com/15MMfNR.gif)
+![image](http://i.imgur.com/vQr1enV.gif)
 
 ## Download
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
@@ -26,7 +26,7 @@ Player frame is split into three parts:
 ## Other Features
 - In-game config. Use **/LSUI** _(el ess ui)_ command to open config panel;
 - Many major elements of default UI are customised;
-- Frame "movers" for various interface elements. Use **/LSMOVERS** _(el ess movers)_ command to toggle them;
+- Frame "movers" for various interface elements. Use **/LSUI MOVERS** _(el ess ui movers)_ command to toggle them;
 - Aura tracker. It can display up to 12 buffs and debuffs on player character. List of auras can be managed via config frame, and is saved per character;
 - And more!
 
