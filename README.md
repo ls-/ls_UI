@@ -7,27 +7,11 @@ Yet another UI, but this one is a bit special.
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
 - [Curse](http://mods.curse.com/addons/wow/ls-ui)
 
-## Supported Frames
-Player, Pet, Target, Target of Target, Focus, Target of Focus, and Bosses.
-
-Player frame is split into three parts:
-- Left - class resources, e.g. holy power, chi;
-- Centre - player health;
-- Right - player power, e.g. mana, rage.
-
-## Supported Resources
-- All - Combo Points;
-- Death Knight - Runes;
-- Mage - Arcane Charges;
-- Monk - Chi, Stagger;
-- Paladin - Holy Power;
-- Warlock - Soul Shards.
-
-## Other Features
+## Features
+- Unique artwork;
+- Unit frames. Supported frames: player, pet, target, target of target, focus, target of focus, and bosses;
+- Action bars, micro menu, bags, and XP bar are all customised;
 - In-game config. Use **/LSUI** _(el ess ui)_ command to open config panel;
-- Many major elements of default UI are customised;
-- Frame "movers" for various interface elements. Use **/LSUI MOVERS** _(el ess ui movers)_ command to toggle them;
-- Aura tracker. It can display up to 12 buffs and debuffs on player character. List of auras can be managed via config frame, and is saved per character;
 - And more!
 
 ## Embedded Addons and Plugins
