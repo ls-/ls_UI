@@ -1,3 +1,9 @@
+## Version 70100.07
+
+- Revamped bottom bar. New high-res textures, default button size is 32px, up from 28px, added XP/AP/honour/rep bars;
+- Reworked slash commands. Now there's only one command, `/LSUI`, others are passed as arguments, e.g. `/LSMOVERS` is now `/LSUI MOVERS`;
+- Misc bug fixes and tweaks.
+
 ## Version 70100.06
 
 - Added 7.1.5 support;
