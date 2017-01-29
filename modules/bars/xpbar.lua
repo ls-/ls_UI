@@ -518,6 +518,8 @@ function BARS:XPBar_Init()
 
 		_G.ReputationDetailMainScreenCheckBox:SetScript("OnClick", ReputationDetailMainScreenCheckBox_OnClick)
 
+		SetXPBarStyle("DEFAULT")
+
 		if self:ActionBarController_IsInit() then
 			self:ActionBarController_AddWidget(bar, "XP_BAR")
 		else
@@ -527,8 +529,6 @@ function BARS:XPBar_Init()
 		end
 
 		-- Finalise
-		SetXPBarStyle("DEFAULT")
-
 		isInit = true
 
 		return true
