@@ -14,34 +14,34 @@ local controller
 local elements = {
 	top = {
 		left = {
-			size = {226 / 2, 84 / 2},
-			coords = {1 / 2048, 227 / 2048, 1 / 128, 85 / 128},
+			size = {232 / 2, 90 / 2},
+			coords = {1 / 2048, 233 / 2048, 1 / 256, 91 / 256},
 		},
 		mid = {
-			size = {432 / 2, 84 / 2},
-			coords = {227 / 2048, 659 / 2048, 1 / 128, 85 / 128},
+			size = {432 / 2, 90 / 2},
+			coords = {233 / 2048, 665 / 2048, 1 / 256, 91 / 256},
 		},
 		right = {
-			size = {226 / 2, 84 / 2},
-			coords = {659 / 2048, 885 / 2048, 1 / 128, 85 / 128},
+			size = {232 / 2, 90 / 2},
+			coords = {665 / 2048, 897 / 2048, 1 / 256, 91 / 256},
 		},
 	},
 	bottom = {
 		left = {
-			size = {544 / 2, 32 / 2},
-			coords = {1 / 2048, 545 / 2048, 86 / 128, 118 / 128},
+			size = {550 / 2, 38 / 2},
+			coords = {1 / 2048, 551 / 2048, 92 / 256, 130 / 256},
 		},
 		mid = {
-			size = {432 / 2, 32 / 2},
-			coords = {545 / 2048, 977 / 2048, 86 / 128, 118 / 128},
+			size = {432 / 2, 38 / 2},
+			coords = {551 / 2048, 983 / 2048, 92 / 256, 130 / 256},
 		},
 		right = {
-			size = {544 / 2, 32 / 2},
-			coords = {977 / 2048, 1521 / 2048, 86 / 128, 118 / 128},
+			size = {550 / 2, 38 / 2},
+			coords = {983 / 2048, 1533 / 2048, 92 / 256, 130 / 256},
 		},
 		bag = {
-			size = {128 / 2, 32 / 2},
-			coords = {886 / 2048, 1014 / 2048, 53 / 128, 85 / 128}
+			size = {140 / 2, 38 / 2},
+			coords = {898 / 2048, 1038 / 2048, 53 / 256, 91 / 256 }
 		},
 	},
 }
@@ -91,32 +91,28 @@ WIDGETS.PET_BATTLE_BAR = {
 WIDGETS.BAG = {
 	frame = false,
 	children = false,
-	point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 294, 11},
+	point = {"BOTTOMLEFT", "LSActionBarArtContainerBag", "BOTTOMLEFT", 17, 11},
 	on_add = function(self)
-		local texture = controller.Bottom:CreateTexture(nil, "ARTWORK")
+		local texture = controller.Bag:CreateTexture(nil, "ARTWORK")
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
 		texture:SetTexCoord(unpack(elements.bottom.bag.coords))
-		texture:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 280 , 0)
-		texture:SetSize(unpack(elements.bottom.bag.size))
-		controller.Bottom.Bag = texture
-
-		local holder = _G.CreateFrame("Frame", nil, self)
-		holder:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 287 , 0)
-		holder:SetSize(100 / 2, 16 / 2)
-
-		texture = holder:CreateTexture(nil, "ARTWORK")
 		texture:SetAllPoints()
-		texture:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
-		texture:SetHorizTile(true)
-		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
+		texture:SetSize(unpack(elements.bottom.bag.size))
 
-		local bar = _G.CreateFrame("StatusBar", nil, holder)
-		bar:SetAllPoints()
-		bar:SetFrameLevel(holder:GetFrameLevel() + 1)
+		local bar = _G.CreateFrame("StatusBar", nil, controller.Bag)
+		bar:SetPoint("BOTTOM", 0, 0)
+		bar:SetSize(100 / 2, 16 / 2)
+		bar:SetFrameLevel(controller.Bag:GetFrameLevel() - 2)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		bar:SetStatusBarColor(0, 0, 0, 0)
 		E:SmoothBar(bar)
 		self.Indicator = bar
+
+		texture = bar:CreateTexture(nil, "ARTWORK")
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
+		texture:SetHorizTile(true)
+		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
 
 		bar.Texture = _G.CreateFrame("Frame", nil, bar, "LSUILineTemplate")
 		bar.Texture:SetFrameLevel(bar:GetFrameLevel() + 1)
@@ -140,7 +136,7 @@ WIDGETS.BAG = {
 		bar.Texture.ScrollAnim:Play()
 
 		WIDGETS.BAG.children = {
-			[1] = holder,
+			[1] = bar,
 		}
 	end
 }
@@ -332,6 +328,12 @@ function BARS:ActionBarController_Init()
 		texture:SetSize(unpack(elements.bottom.right.size))
 		bottom.Right = texture
 
+		-- bag, don't create textures here
+		local bag = _G.CreateFrame("Frame", "$parentBag", controller)
+		bag:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 290 , 0)
+		bag:SetSize(unpack(elements.bottom.bag.size))
+		controller.Bag = bag
+
 		local ag = controller:CreateAnimationGroup()
 		ag:SetScript("OnPlay", ControllerAnimation_OnPlay)
 		ag:SetScript("OnFinished", ControllerAnimation_OnFinished)
@@ -340,26 +342,38 @@ function BARS:ActionBarController_Init()
 		local anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Top")
 		anim:SetOrder(1)
-		anim:SetOffset(0, -52)
+		anim:SetOffset(0, -55)
 		anim:SetStartDelay(0.02)
 		anim:SetDuration(0.15)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -16)
+		anim:SetOffset(0, -19)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Bag")
+		anim:SetOrder(2)
+		anim:SetOffset(0, -19)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(3)
-		anim:SetOffset(0, 16)
+		anim:SetOffset(0, 19)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Bag")
+		anim:SetOrder(3)
+		anim:SetOffset(0, 19)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Top")
 		anim:SetOrder(4)
-		anim:SetOffset(0, 52)
+		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
 
 		-- _"childupdate-numbuttons" is executed in controller's environment
