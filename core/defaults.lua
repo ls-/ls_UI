@@ -74,7 +74,7 @@ D["auratracker"] = {
 
 D["minimap"] = {
 	enabled = true,
-	point = {"BOTTOM", "UIParent", "BOTTOM", 318 , 90},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 }
 
 D["bars"] = {

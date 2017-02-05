@@ -17,17 +17,28 @@ local STEP = 0.00390625 -- 1 / 256
 local DELAY = 337.5 -- 256 * 337.5 = 86400 = 24H
 local isInit = false
 
+local TEXTURES = {
+	BIG = {
+		size = {88 / 2, 88 / 2},
+		coords = {1 / 256, 89 / 256, 1 / 256, 89 / 256},
+	},
+	SMALL = {
+		size = {72 / 2, 72 / 2},
+		coords = {90 / 256, 162 / 256, 1 / 256, 73 / 256},
+	},
+}
+
 local WIDGETS = {
-	MiniMapMailFrame = {"CENTER", -58, 58},
-	MiniMapVoiceChatFrame = {"CENTER", 32, 74},
-	GameTimeFrame = {"CENTER", 58, 58},
+	TimeManagerClockButton = {"BOTTOM", "Minimap", "TOP", 0, -14},
+
+	GameTimeFrame = {"CENTER", 60, 60},
+	GarrisonLandingPageMinimapButton = {"CENTER", -60, -60},
+	GuildInstanceDifficulty = {"TOP", "Minimap", "BOTTOM", -2, 8},
+	MiniMapChallengeMode = {"TOP", "Minimap", "BOTTOM", 0, 2},
+	MiniMapInstanceDifficulty = {"TOP", "Minimap", "BOTTOM", 0, 7},
+	MiniMapMailFrame = {"CENTER", -57, 57},
 	MiniMapTracking = {"CENTER", 74, 32},
-	QueueStatusMinimapButton = {"CENTER", 58, -58},
-	MiniMapInstanceDifficulty = {"BOTTOM", -1, -38},
-	GuildInstanceDifficulty = {"BOTTOM", -6, -38},
-	MiniMapChallengeMode = {"BOTTOM", -1, -34},
-	GarrisonLandingPageMinimapButton = {"CENTER", -58, -58},
-	TimeManagerClockButton = {"TOP", 0, 12},
+	QueueStatusMinimapButton = {"CENTER", 57, -57},
 }
 
 local ZONE_COLORS = {
@@ -65,12 +76,13 @@ local function HandleMinimapButton(button, cascade)
 			elseif not normal and not pushed then
 				if layer == "ARTWORK" or layer == "BACKGROUND" then
 					if button.icon and region == button.icon then
-						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r")
+						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r", region, button.icon)
 						icon = region
 					elseif button.Icon and region == button.Icon then
 						-- print("|cffffff00", name, "|ris |cff00ff00.Icon|r")
 						icon = region
-					elseif string.match(name, "[iI][cC][oO][nN]") then
+						-- ignore all LDBIcons
+					elseif not string.match(name, "^LibDBIcon") and string.match(name, "[iI][cC][oO][nN]") then
 						-- print("|cffffff00", name, "|ris |cff00ff00icon|r")
 						icon = region
 					elseif texture and string.match(texture, "[iI][cC][oO][nN]") then
@@ -129,16 +141,20 @@ local function HandleMinimapButton(button, cascade)
 		-- These aren't the dro- buttons you're looking for
 		if not icon and not (normal and pushed) then return end
 
-		button:SetSize(30, 30)
+		-- garrison: < 53
+		-- calendar: 40
+		-- others: < 32
+
+		local t = button:GetWidth() >= 40 and "BIG" or "SMALL"
+		local offset = button:GetWidth() > 43 and -2 or 9
+
+		button:SetSize(unpack(TEXTURES[t].size))
 		button:SetHitRectInsets(0, 0, 0, 0)
 
 		if hl then
 			hl:ClearAllPoints()
 			hl:SetAllPoints(button)
 		end
-
-		local size = normal and normal:GetSize() or icon:GetSize()
-		local offset = size >= 42 and -3 or size >= 28 and 0 or 6
 
 		if normal and pushed then
 			normal:SetDrawLayer("ARTWORK", 0)
@@ -172,8 +188,8 @@ local function HandleMinimapButton(button, cascade)
 			border = button:CreateTexture()
 		end
 
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-button")
-		border:SetTexCoord(1 / 64, 35 / 64, 1 / 64, 35 / 64)
+		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+		border:SetTexCoord(unpack(TEXTURES[t].coords))
 		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
 		button.Border = border
@@ -185,7 +201,10 @@ local function HandleMinimapButton(button, cascade)
 		bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
 		bg:SetVertexColor(M.COLORS.BLACK:GetRGBA(0.8))
 		bg:SetDrawLayer("BACKGROUND", 0)
-		bg:SetAllPoints(button)
+		bg:ClearAllPoints()
+		bg:SetPoint("TOPLEFT", 6, -6)
+		bg:SetPoint("BOTTOMRIGHT", -6, 6)
+		bg:SetAlpha(1)
 		button.Background = bg
 
 		return button
@@ -195,11 +214,9 @@ local function HandleMinimapButton(button, cascade)
 end
 
 local function UpdateZoneInfo()
-	local r, g, b, hex = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]:GetRGBHEX()
+	local hex = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]:GetHEX()
 
 	Minimap.ZoneText:SetText("|cff"..hex..(_G.GetMinimapZoneText() or _G.UNKNOWN).."|r")
-	Minimap.Spin1:SetVertexColor(r, g, b)
-	Minimap.Spin2:SetVertexColor(r, g, b)
 end
 
 -- Horizontal texture scrolling
@@ -315,14 +332,6 @@ local function Calendar_OnUpdate(self, elapsed)
 	end
 end
 
-local function Clock_OnMouseUp(self)
-	self.Ticker:SetPoint("CENTER", 0, 1)
-end
-
-local function Clock_OnMouseDown(self)
-	self.Ticker:SetPoint("CENTER", 1, 0)
-end
-
 local function GarrisonMinimapButton_OnEnter(self)
 	self.__mainType = nil
 	self.__secondaryType = nil
@@ -395,7 +404,7 @@ function MINIMAP:Init()
 		end
 
 		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
-		holder:SetSize(164, 164)
+		holder:SetSize(332 / 2, 332 / 2)
 		holder:SetPoint(unpack(C.minimap.point))
 		E:CreateMover(holder)
 
@@ -403,7 +412,7 @@ function MINIMAP:Init()
 		Minimap:SetParent(holder)
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint("CENTER")
-		Minimap:SetSize(144, 144)
+		Minimap:SetSize(146, 146)
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -414,41 +423,11 @@ function MINIMAP:Init()
 
 		_G.RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
-		local spin1 = Minimap:CreateTexture(nil, "BORDER", nil, -2)
-		spin1:SetTexture("Interface\\AddOns\\ls_UI\\media\\spinner-alt")
-		spin1:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 169 / 256)
-		spin1:SetSize(172, 172)
-		spin1:SetPoint("CENTER", 0, 0)
-		Minimap.Spin1 = spin1
-
-		local spin2 = Minimap:CreateTexture(nil, "BORDER", nil, -3)
-		spin2:SetBlendMode("ADD")
-		spin2:SetTexture("Interface\\AddOns\\ls_UI\\media\\spinner")
-		spin2:SetTexCoord(169 / 256, 1 / 256, 1 / 256, 169 / 256)
-		spin2:SetSize(168, 168)
-		spin2:SetPoint("CENTER", 0, 0)
-		Minimap.Spin2 = spin2
-
-		local ag = Minimap:CreateAnimationGroup()
-		ag:SetLooping("REPEAT")
-
-		local anim = ag:CreateAnimation("Rotation")
-		anim:SetChildKey("Spin1")
-		anim:SetOrder(1)
-		anim:SetDuration(60)
-		anim:SetDegrees(-360)
-
-		anim = ag:CreateAnimation("Rotation")
-		anim:SetChildKey("Spin2")
-		anim:SetOrder(1)
-		anim:SetDuration(60)
-		anim:SetDegrees(720)
-
 		local border = Minimap:CreateTexture(nil, "BORDER")
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-main")
-		border:SetTexCoord(1 / 256, 169 / 256, 1 / 256, 203 / 256)
-		border:SetSize(168, 202)
-		border:SetPoint("CENTER", 0, -17)
+		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap")
+		border:SetTexCoord(1 / 512, 333 / 512, 1 / 512, 333 / 512)
+		border:SetSize(332 / 2, 332 / 2)
+		border:SetPoint("CENTER", 0, 0)
 
 		for name, coords in pairs(WIDGETS) do
 			_G[name]:ClearAllPoints()
@@ -473,15 +452,14 @@ function MINIMAP:Init()
 
 		-- Garrison
 		local garrison = HandleMinimapButton(_G.GarrisonLandingPageMinimapButton)
-		garrison:SetSize(34, 34)
 		garrison:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		garrison:SetScript("OnEnter", GarrisonMinimapButton_OnEnter)
 		garrison:SetScript("OnClick", GarrisonMinimapButton_OnClick)
 
 		-- Mail
 		local mail = HandleMinimapButton(_G.MiniMapMailFrame)
-		mail.Icon:SetPoint("TOPLEFT", 5, -5)
-		mail.Icon:SetPoint("BOTTOMRIGHT", -5, 5)
+		mail.Icon:SetPoint("TOPLEFT", 8, -8)
+		mail.Icon:SetPoint("BOTTOMRIGHT", -8, 8)
 
 		-- Queue
 		local queue = HandleMinimapButton(_G.QueueStatusMinimapButton)
@@ -491,8 +469,8 @@ function MINIMAP:Init()
 
 		-- Calendar
 		local calendar = HandleMinimapButton(_G.GameTimeFrame)
-		calendar:SetSize(34, 34)
-		calendar:SetNormalFontObject("LS14Font_Outline")
+		calendar:SetNormalFontObject("LS16Font_Outline")
+		calendar:SetPushedTextOffset(1, -1)
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar.pendingCalendarInvites = 0
@@ -505,8 +483,8 @@ function MINIMAP:Init()
 
 		local indicator = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
-		indicator:SetPoint("TOPLEFT", 2, -2)
-		indicator:SetPoint("BOTTOMRIGHT", -2, 2)
+		indicator:SetPoint("TOPLEFT", 6, -6)
+		indicator:SetPoint("BOTTOMRIGHT", -6, 6)
 		calendar.DayTimeIndicator = indicator
 
 		local _, mark, glow, _, date = calendar:GetRegions()
@@ -521,45 +499,54 @@ function MINIMAP:Init()
 		glow:SetTexture("")
 
 		date:ClearAllPoints()
-		date:SetPoint("CENTER", 1, 0)
+		date:SetPoint("TOPLEFT", 9, -8)
+		date:SetPoint("BOTTOMRIGHT", -8, 8)
 		date:SetVertexColor(M.COLORS.WHITE:GetRGB())
 		date:SetDrawLayer("BACKGROUND")
 		date:SetJustifyH("CENTER")
+		date:SetJustifyV("MIDDLE")
 
 		-- Zone Text
 		_G.MinimapZoneText:SetFontObject("LS12Font_Shadow")
 		_G.MinimapZoneText:SetParent(Minimap)
 		_G.MinimapZoneText:ClearAllPoints()
-		_G.MinimapZoneText:SetPoint("TOP", 0, 32)
+		_G.MinimapZoneText:SetPoint("TOP", 0, 28)
 		_G.MinimapZoneText:Hide()
 		Minimap.ZoneText = _G.MinimapZoneText
 
 		-- Clock
+		_G.TimeManagerClockButton:SetSize(104  / 2, 56 / 2)
+		_G.TimeManagerClockButton:SetHitRectInsets(0, 0, 0, 0)
+		_G.TimeManagerClockButton:SetScript("OnMouseUp", nil)
+		_G.TimeManagerClockButton:SetScript("OnMouseDown", nil)
+		_G.TimeManagerClockButton:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons", "ADD")
+		_G.TimeManagerClockButton:GetHighlightTexture():SetTexCoord(106 / 256, 210 / 256, 90 / 256, 146 / 256)
+		_G.TimeManagerClockButton:SetPushedTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+		_G.TimeManagerClockButton:GetPushedTexture():SetBlendMode("ADD")
+		_G.TimeManagerClockButton:GetPushedTexture():SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
+
 		local bg, ticker, glow = _G.TimeManagerClockButton:GetRegions()
 
-		_G.TimeManagerClockButton:SetSize(46, 22)
-		_G.TimeManagerClockButton:SetHitRectInsets(0, 0, 0, 0)
-		_G.TimeManagerClockButton:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\minimap-clock", "ADD")
-		_G.TimeManagerClockButton:GetHighlightTexture():SetTexCoord(1 / 64, 47 / 64, 24 / 64, 46 / 64)
-		_G.TimeManagerClockButton:SetScript("OnMouseUp", Clock_OnMouseUp)
-		_G.TimeManagerClockButton:SetScript("OnMouseDown", Clock_OnMouseDown)
-
-		bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-clock")
-		bg:SetTexCoord(1 / 64, 47 / 64, 1 / 64, 23 / 64)
+		bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+		bg:SetTexCoord(1 / 256, 105 / 256, 90 / 256, 146 / 256)
 
 		ticker:ClearAllPoints()
-		ticker:SetPoint("CENTER", 0, 1)
+		ticker:SetPoint("TOPLEFT", 8, -8)
+		ticker:SetPoint("BOTTOMRIGHT", -8, 8)
+		ticker:SetJustifyH("CENTER")
+		ticker:SetJustifyV("MIDDLE")
 		_G.TimeManagerClockButton.Ticker = ticker
 
-		glow:SetTexCoord(2 / 64, 52 / 64, 33 / 64, 55 / 64)
-		glow:SetSize(50, 22)
-		glow:ClearAllPoints()
-		glow:SetPoint("CENTER", -1, 0)
+		glow:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+		glow:SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
 
 		-- Compass
 		_G.MinimapCompassTexture:SetParent(Minimap)
 		_G.MinimapCompassTexture:ClearAllPoints()
 		_G.MinimapCompassTexture:SetPoint("CENTER", 0, 0)
+
+		-- Queue
+		_G.QueueStatusMinimapButton.Icon:SetAllPoints()
 
 		-- Misc
 		HandleMinimapButton(_G.MiniMapTracking)
@@ -589,7 +576,6 @@ function MINIMAP:Init()
 		ScrollTexture(indicator, (mult + 1) * DELAY - s, STEP * mult)
 
 		UpdateZoneInfo()
-		ag:Play()
 
 		isInit = true
 
