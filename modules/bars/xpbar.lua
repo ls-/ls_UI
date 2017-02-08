@@ -427,17 +427,17 @@ function BARS:XPBar_Init()
 
 		local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("CENTER", bar[1], "RIGHT", 0, 0)
-		sep:SetSize(12 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\xp-bar")
-		sep:SetTexCoord(1 / 32, 13 / 32, 1 / 32, 17 / 32)
+		sep:SetSize(24 / 2, 16 / 2)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
 		sep:Hide()
 		bar[1].Sep = sep
 
 		sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("CENTER", bar[2], "RIGHT", 0, 0)
-		sep:SetSize(12 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\xp-bar")
-		sep:SetTexCoord(13 / 32, 25 / 32, 1 / 32, 17 / 32)
+		sep:SetSize(24 / 2, 16 / 2)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
 		sep:Hide()
 		bar[2].Sep = sep
 
@@ -510,7 +510,7 @@ function BARS:XPBar_Init()
 		else
 			bar:SetPoint(unpack(CFG.point))
 			E:CreateMover(bar)
-			E:SetBarSkin(cover, "HORIZONTAL-M")
+			E:SetBarSkin_new(cover, "HORIZONTAL-M")
 		end
 
 		-- Finalise
