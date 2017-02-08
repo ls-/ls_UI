@@ -358,12 +358,16 @@ function UF:ConstructPlayerFrame(frame)
 	indicator_parent:SetSize(90, 118)
 	indicator_parent:SetPoint("CENTER")
 
-	frame.LeftIndicator = self:CreateIndicator(indicator_parent, true)
+	frame.LeftIndicator = self:CreateIndicator(indicator_parent, {
+		is_vertical = true
+	})
 	frame.LeftIndicator:SetFrameLevel(level + 2)
 	frame.LeftIndicator:SetPoint("LEFT", 0, 0)
 	frame.LeftIndicator:SetSize(8, 118)
 
-	frame.RightIndicator = self:CreateIndicator(indicator_parent, true)
+	frame.RightIndicator = self:CreateIndicator(indicator_parent, {
+		is_vertical = true
+	})
 	frame.RightIndicator:SetFrameLevel(level + 2)
 	frame.RightIndicator:SetPoint("RIGHT", 0, 0)
 	frame.RightIndicator:SetSize(8, 118)
@@ -410,27 +414,27 @@ function UF:ConstructPlayerFrame(frame)
 		class_power_tube.Seps[i] = sep
 	end
 
-	class_power_tube.Refresh = function(_, slots, visible, sender)
-		if (slots == class_power_tube.slots and visible == class_power_tube.visible)
-			or (not visible and sender ~= class_power_tube.sender) then return end
+	class_power_tube.Refresh = function(self, slots, visible, sender)
+		if (slots == self.slots and visible == self.visible)
+			or (not visible and sender ~= self.sender) then return end
 
-		class_power_tube.slots = slots
-		class_power_tube.visible = visible
-		class_power_tube.sender = sender
+		self.slots = slots
+		self.visible = visible
+		self.sender = sender
 
 		if visible then
-			class_power_tube:Show()
+			self:Show()
 
 			for i = 1, 9 do
 				if i < slots then
-					class_power_tube.Seps[i]:SetPoint("CENTER", class_power_tube, unpack(CLASS_POWER_LAYOUT[slots][i + 1].point))
-					class_power_tube.Seps[i]:Show()
+					self.Seps[i]:SetPoint("CENTER", self, unpack(CLASS_POWER_LAYOUT[slots][i + 1].point))
+					self.Seps[i]:Show()
 				else
-					class_power_tube.Seps[i]:Hide()
+					self.Seps[i]:Hide()
 				end
 			end
 		else
-			class_power_tube:Hide()
+			self:Hide()
 		end
 	end
 
@@ -571,22 +575,22 @@ function UF:ConstructPlayerFrame(frame)
 		frame.Stagger.Text:SetPoint("TOP", frame.Power.Text, "BOTTOM", 0, -1)
 		E:ResetFontStringHeight(frame.Stagger.Text)
 
-		frame.Stagger.Override = function(_, _, unit)
-			if unit and unit ~= frame.unit then return end
+		frame.Stagger.Override = function(owner, _, unit)
+			if unit and unit ~= owner.unit then return end
 
 			local max = _G.UnitHealthMax("player")
 			local cur = _G.UnitStagger("player")
 			local r, g, b, hex = M.COLORS.POWER.STAGGER:GetRGBHEX(cur / max)
 
-			frame.Stagger:SetMinMaxValues(0, max)
-			frame.Stagger:SetValue(cur)
-			frame.Stagger:SetStatusBarColor(r, g, b)
+			owner.Stagger:SetMinMaxValues(0, max)
+			owner.Stagger:SetValue(cur)
+			owner.Stagger:SetStatusBarColor(r, g, b)
 
 			if cur == 0 then
-				return frame.Stagger.Text:SetText(nil)
+				return owner.Stagger.Text:SetText(nil)
 			end
 
-			frame.Stagger.Text:SetFormattedText("|cff%s%s|r", hex, E:NumberFormat(cur))
+			owner.Stagger.Text:SetFormattedText("|cff%s%s|r", hex, E:NumberFormat(cur))
 		end
 	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 		frame.Runes = _G.CreateFrame("Frame", "$parentRuneBar", frame)
@@ -635,16 +639,16 @@ function UF:ConstructPlayerFrame(frame)
 			anim:SetToScale(1.1, 1.1)
 		end
 
-		frame.Runes.PostUpdate = function(_, rune, _, _, _, runeReady)
+		frame.Runes.PostUpdate = function(self, rune, _, _, _, runeReady)
 			if runeReady then
 				rune.InAnim:Play()
 			end
 
 			if _G.UnitHasVehicleUI("player") then
-				frame.Runes:Hide()
+				self:Hide()
 				class_power_tube:Refresh(0, false, "RUNES")
 			else
-				frame.Runes:Show()
+				self:Show()
 				class_power_tube:Refresh(6, true, "RUNES")
 			end
 		end
@@ -735,17 +739,17 @@ function UF:ConstructPlayerFrame(frame)
 		anim:SetToScale(0.9, 0.9)
 	end
 
-	frame.ClassIcons.PostUpdate = function(_, _, max, changed, powerType, event)
+	frame.ClassIcons.PostUpdate = function(self, _, max, changed, powerType, event)
 		if event == "ClassPowerDisable" then
-			frame.ClassIcons:Hide()
+			self:Hide()
 			class_power_tube:Refresh(0, false, "CP")
 		else
 			if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
-				frame.ClassIcons:Show()
+				self:Show()
 				class_power_tube:Refresh(max or 10, true, "CP")
 
 				for i = 1, max do
-					local element = frame.ClassIcons[i]
+					local element = self[i]
 					element:SetSize(12, CLASS_POWER_LAYOUT[max][i].size)
 					element:SetPoint(unpack(CLASS_POWER_LAYOUT[max][i].point))
 
@@ -760,7 +764,7 @@ function UF:ConstructPlayerFrame(frame)
 	end
 
 	-- pvp
-	frame.PvP = self:CreatePvPIcon_new(frame, "ARTWORK", 6)
+	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6)
 	frame.PvP:SetPoint("TOP", fg_parent, "BOTTOM", 0, 10)
 	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", frame.PvP.Override)
 

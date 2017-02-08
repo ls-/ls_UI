@@ -12,24 +12,20 @@ local function OnShow(self)
 	end
 end
 
-function UF:CreateIndicator(parent, isVertical)
+function UF:CreateIndicator(parent, options)
 	P.argcheck(1, parent, "table")
-	P.argcheck(2, isVertical, "boolean")
+
+	options = options or {}
 
 	local indicator = _G.CreateFrame("Frame", nil, parent, "LSUILineTemplate")
 	indicator:SetScript("OnShow", OnShow)
 
-	indicator.ResetPoints = function(self)
-		if isVertical then
-			indicator:SetStartPoint("BOTTOM", indicator)
-			indicator:SetEndPoint("TOP", indicator)
-		else
-			indicator:SetStartPoint("LEFT", indicator)
-			indicator:SetEndPoint("RIGHT", indicator)
-		end
+	indicator.ResetPoints = function()
+		indicator:SetStartPoint(options.is_vertical and "BOTTOM" or "LEFT", indicator)
+		indicator:SetEndPoint(options.is_vertical and "TOP" or "RIGHT", indicator)
 	end
 
-	indicator.Refresh = function(self)
+	indicator.Refresh = function()
 		local status = _G.UnitThreatSituation("player")
 		local r, g, b = M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB()
 
@@ -37,27 +33,20 @@ function UF:CreateIndicator(parent, isVertical)
 			r, g, b = M.COLORS.THREAT[status and status + 1 or 1]:GetRGB()
 		end
 
-		E:SetSmoothedVertexColor(self, r, g, b)
+		E:SetSmoothedVertexColor(indicator, r, g, b)
 	end
 
-	indicator.Free = function(self, flag)
-		self.free = flag
+	indicator.Free = function(_, flag)
+		indicator.free = flag
 	end
 
-	indicator.IsFree = function(self)
-		return self.free
-	end
-
-	if isVertical then
-		indicator:SetStartPoint("BOTTOM", indicator)
-		indicator:SetEndPoint("TOP", indicator)
-	else
-		indicator:SetStartPoint("LEFT", indicator)
-		indicator:SetEndPoint("RIGHT", indicator)
+	indicator.IsFree = function()
+		return indicator.free
 	end
 
 	indicator:Free(true)
 	indicator:Refresh()
+	indicator:ResetPoints()
 	indicator.ScrollAnim:Play()
 
 	return indicator

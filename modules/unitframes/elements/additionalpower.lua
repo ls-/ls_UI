@@ -114,8 +114,8 @@ end
 
 local function OnHide(self)
 	self.Indicator:Free(true)
-	self.Indicator:ResetPoints()
 	self.Indicator:Refresh()
+	self.Indicator:ResetPoints()
 end
 
 function UF:CreateAdditionalPowerBar(parent, options)
