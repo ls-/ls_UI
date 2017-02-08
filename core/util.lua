@@ -208,13 +208,15 @@ end
 
 -- http://wow.gamepedia.com/ColorGradient
 local function CalcGradient(colorTable, perc)
+	local num = #colorTable
+
 	if perc >= 1 then
-		return colorTable[7], colorTable[8], colorTable[9]
+		return colorTable[num - 2], colorTable[num - 1], colorTable[num]
 	elseif perc <= 0 then
 		return colorTable[1], colorTable[2], colorTable[3]
 	end
 
-	local i, relperc = math.modf(perc * 2)
+	local i, relperc = math.modf(perc * (num / 3 - 1))
 	local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
 
 	return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, 1
