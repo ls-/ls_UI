@@ -50,7 +50,6 @@ end
 
 local function CreateCooldownTimer(cooldown, textSize)
 	local holder = _G.CreateFrame("Frame", "$parentTextHolder", cooldown)
-	holder:SetFrameLevel(6)
 	holder:SetAllPoints()
 
 	local timer = E:CreateFontString(holder, textSize, nil, nil, true)
