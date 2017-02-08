@@ -102,6 +102,41 @@ local function Override(self, event, unit)
 	end
 end
 
+function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
+	P.argcheck(1, parent, "table")
+	P.argcheck(2, layer, "string")
+	P.argcheck(3, sublayer, "number")
+
+	options = options or {}
+
+	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
+	pvp:SetSize(30, 30)
+
+	local banner = parent:CreateTexture(nil, layer, nil, sublayer - 1)
+	banner:SetSize(46, 48)
+	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
+	pvp.Prestige = banner
+
+	if options.has_hook then
+		local t = parent:CreateTexture(nil, layer, nil, sublayer)
+		t:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
+		t:SetSize(33, 36)
+		pvp.Hook = t
+	end
+
+	if options.has_pvp_timer then
+		local t = parent:CreateFontString(nil, layer, "LS10Font_Shadow")
+		t:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
+		t:SetTextColor(1, 0.82, 0)
+		t:SetJustifyH("RIGHT")
+		pvp.Timer = t
+	end
+
+	pvp.Override = Override
+
+	return pvp
+end
+
 function UF:CreatePvPIcon(parent, layer, sublayer, hook, pvpTimer)
 	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
 	pvp:SetSize(30, 30)

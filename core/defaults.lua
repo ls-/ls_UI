@@ -6,7 +6,7 @@ D["units"] = {
 	player = {
 		enabled = true,
 		castbar = true,
-		point = {"BOTTOM", "UIParent", "BOTTOM", -318, 90},
+		point = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},

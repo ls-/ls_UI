@@ -48,6 +48,30 @@ local function PostUpdateHealth(bar, unit, cur, max)
 	bar.Text:SetFormattedText("%s", E:NumberFormat(cur, 1))
 end
 
+function UF:CreateHealthBar_new(parent, textFontObject, options)
+	P.argcheck(1, parent, "table")
+	P.argcheck(2, textFontObject, "string")
+
+	options = options or {}
+
+	local bar = _G.CreateFrame("StatusBar", "$parentHealthBar", parent)
+	bar:SetOrientation(options.is_vertical and "VERTICAL" or "HORIZONTAL")
+	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	E:SmoothBar(bar)
+
+	local text = (options.text_parent or bar):CreateFontString(nil, "ARTWORK", textFontObject)
+	text:SetWordWrap(false)
+	E:ResetFontStringHeight(text)
+	bar.Text = text
+
+	bar.colorHealth = true
+	bar.colorDisconnected = true
+	bar.colorReaction = options.color_reaction
+	bar.PostUpdate = PostUpdateHealth
+
+	return bar
+end
+
 function UF:CreateHealthBar(parent, textSize, reaction, vertical)
 	local health = _G.CreateFrame("StatusBar", "$parentHealthBar", parent)
 	health:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
