@@ -6,6 +6,7 @@ local _G = _G
 local bit = _G.bit
 local math = _G.math
 local string = _G.string
+local table = _G.table
 local assert = _G.assert
 local next = _G.next
 local pairs = _G.pairs
@@ -16,6 +17,8 @@ local unpack = _G.unpack
 
 -- Blizz
 local FrameDeltaLerp = _G.FrameDeltaLerp
+local GetTickTime = _G.GetTickTime
+local Saturate = _G.Saturate
 local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
 
@@ -323,6 +326,33 @@ function E:HEXToRGB(hex)
 	local rhex, ghex, bhex = tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16)
 
 	return tonumber(string.format("%.2f", rhex / 255)), tonumber(string.format("%.2f", ghex / 255)), tonumber(string.format("%.2f", bhex / 255))
+end
+
+local vc_objects = {}
+
+local function ProcessSmoothColors()
+	for object, target in pairs(vc_objects) do
+		local r, g, b = CalcGradient({object._r, object._g, object._b, target.r, target.g, target.b}, Saturate(0.1 * GetTickTime() * 60.0))
+
+		if math.abs(r - target.r) <= 0.05
+			and math.abs(g - target.g) <= 0.05
+			and math.abs(b - target.b) <= 0.05 then
+			r, g, b = target.r, target.g, target.b
+			vc_objects[object] = nil
+		end
+
+		object:SetVertexColor(r, g, b)
+		object._r, object._g, object._b = r, g, b
+	end
+end
+
+_G.C_Timer.NewTicker(0, ProcessSmoothColors)
+
+function E:SetSmoothedVertexColor(object, r, g, b)
+	if not object.GetVertexColor then return end
+
+	object._r, object._g, object._b = object:GetVertexColor()
+	vc_objects[object] = {r = r, g = g, b = b}
 end
 
 -----------------
