@@ -72,9 +72,7 @@ local function UpdateXPBars()
 					}
 
 					bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
-					bar[index].Texture.Fill:SetVertexColor(r, g, b)
-					bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-					bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
+					E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 					bar[index]:SetMinMaxValues(0, max)
 					bar[index]:SetValue(cur)
@@ -101,9 +99,7 @@ local function UpdateXPBars()
 			}
 
 			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.ARTIFACT:GetHEX(), _G.BreakUpLargeNumbers(max))
-			bar[index].Texture.Fill:SetVertexColor(r, g, b)
-			bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-			bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
+			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
 			bar[index]:SetValue(cur)
@@ -133,9 +129,7 @@ local function UpdateXPBars()
 				end
 
 				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
-				bar[index].Texture.Fill:SetVertexColor(r, g, b)
-				bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-				bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
+				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
 				bar[index]:SetValue(cur)
@@ -162,9 +156,7 @@ local function UpdateXPBars()
 				end
 
 				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.HONOR:GetHEX(), _G.BreakUpLargeNumbers(max))
-				bar[index].Texture.Fill:SetVertexColor(r, g, b)
-				bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-				bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
+				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
 				bar[index]:SetValue(cur)
@@ -205,9 +197,7 @@ local function UpdateXPBars()
 			}
 
 			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
-			bar[index].Texture.Fill:SetVertexColor(r, g, b)
-			bar[index].Texture.FillScroll1:SetVertexColor(r, g, b)
-			bar[index].Texture.FillScroll2:SetVertexColor(r, g, b)
+			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
 			bar[index]:SetValue(cur)
@@ -250,9 +240,7 @@ local function UpdateXPBars()
 
 		bar[1].Spark:Hide()
 		bar[1].Text:SetText(nil)
-		bar[1].Texture.Fill:SetVertexColor(r, g, b)
-		bar[1].Texture.FillScroll1:SetVertexColor(r, g, b)
-		bar[1].Texture.FillScroll2:SetVertexColor(r, g, b)
+		E:SetSmoothedVertexColor(bar[1].Texture, r, g, b)
 		bar[1].Texture.ScrollAnim:Play()
 	else
 		bar[1].Spark:Show()
@@ -416,15 +404,8 @@ function BARS:XPBar_Init()
 
 			bar[i].Texture = _G.CreateFrame("Frame", nil, bar[i], "LSUILineTemplate")
 			bar[i].Texture:SetFrameLevel(bar[i]:GetFrameLevel() + 1)
-
-			bar[i].Texture.Fill:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
-			bar[i].Texture.Fill:SetStartPoint("RIGHT", bar[i]:GetStatusBarTexture())
-
-			bar[i].Texture.FillScroll1:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
-			bar[i].Texture.FillScroll1:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture())
-
-			bar[i].Texture.FillScroll2:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
-			bar[i].Texture.FillScroll2:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture())
+			bar[i].Texture:SetStartPoint("LEFT", bar[i]:GetStatusBarTexture())
+			bar[i].Texture:SetEndPoint("RIGHT", bar[i]:GetStatusBarTexture())
 
 			local spark = bar[i]:CreateTexture(nil, "ARTWORK", nil, 1)
 			spark:SetSize(16, 16)

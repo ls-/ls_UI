@@ -140,9 +140,7 @@ function BARS:Bags_Init()
 			local indicator = self:GetParent().Indicator
 
 			if indicator then
-				indicator.Texture.Fill:SetVertexColor(r, g, b)
-				indicator.Texture.FillScroll1:SetVertexColor(r, g, b)
-				indicator.Texture.FillScroll2:SetVertexColor(r, g, b)
+				indicator.Texture:SetVertexColor(r, g, b)
 
 				indicator:SetMinMaxValues(0, total)
 				indicator:SetValue(total - free)

@@ -116,15 +116,8 @@ WIDGETS.BAG = {
 
 		bar.Texture = _G.CreateFrame("Frame", nil, bar, "LSUILineTemplate")
 		bar.Texture:SetFrameLevel(bar:GetFrameLevel() + 1)
-
-		bar.Texture.Fill:SetStartPoint("LEFT", bar:GetStatusBarTexture())
-		bar.Texture.Fill:SetStartPoint("RIGHT", bar:GetStatusBarTexture())
-
-		bar.Texture.FillScroll1:SetStartPoint("LEFT", bar:GetStatusBarTexture())
-		bar.Texture.FillScroll1:SetEndPoint("RIGHT", bar:GetStatusBarTexture())
-
-		bar.Texture.FillScroll2:SetStartPoint("LEFT", bar:GetStatusBarTexture())
-		bar.Texture.FillScroll2:SetEndPoint("RIGHT", bar:GetStatusBarTexture())
+		bar.Texture:SetStartPoint("LEFT", bar:GetStatusBarTexture())
+		bar.Texture:SetEndPoint("RIGHT", bar:GetStatusBarTexture())
 
 		local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 		spark:SetSize(16, 16)
