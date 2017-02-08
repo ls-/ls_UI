@@ -82,7 +82,7 @@ local function HandleMinimapButton(button, cascade)
 						-- print("|cffffff00", name, "|ris |cff00ff00.Icon|r")
 						icon = region
 						-- ignore all LDBIcons
-					elseif not string.match(name, "^LibDBIcon") and string.match(name, "[iI][cC][oO][nN]") then
+					elseif name and not string.match(name, "^LibDBIcon") and string.match(name, "[iI][cC][oO][nN]") then
 						-- print("|cffffff00", name, "|ris |cff00ff00icon|r")
 						icon = region
 					elseif texture and string.match(texture, "[iI][cC][oO][nN]") then
