@@ -701,3 +701,15 @@ end
 function E:GetDispelTypes()
 	return dispelTypesByClass[E.PLAYER_CLASS]
 end
+
+------------------
+-- FONT STRINGS --
+------------------
+
+function E:ResetFontStringHeight(object)
+	if not object.SetText then return end
+
+	object:SetText("+-1234567890/|\\*")
+	object:SetHeight(object:GetStringHeight())
+	object:SetText(nil)
+end
