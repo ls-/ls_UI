@@ -29,16 +29,15 @@ local TEXTURES = {
 }
 
 local WIDGETS = {
-	TimeManagerClockButton = {"BOTTOM", "Minimap", "TOP", 0, -14},
-
 	GameTimeFrame = {"CENTER", 60, 60},
-	GarrisonLandingPageMinimapButton = {"CENTER", -60, -60},
+	GarrisonLandingPageMinimapButton = {"CENTER", -57, -57},
 	GuildInstanceDifficulty = {"TOP", "Minimap", "BOTTOM", -2, 8},
 	MiniMapChallengeMode = {"TOP", "Minimap", "BOTTOM", 0, 2},
 	MiniMapInstanceDifficulty = {"TOP", "Minimap", "BOTTOM", 0, 7},
 	MiniMapMailFrame = {"CENTER", -57, 57},
 	MiniMapTracking = {"CENTER", 74, 32},
 	QueueStatusMinimapButton = {"CENTER", 57, -57},
+	TimeManagerClockButton = {"BOTTOM", "Minimap", "TOP", 0, -14},
 }
 
 local ZONE_COLORS = {
@@ -141,12 +140,8 @@ local function HandleMinimapButton(button, cascade)
 		-- These aren't the dro- buttons you're looking for
 		if not icon and not (normal and pushed) then return end
 
-		-- garrison: < 53
-		-- calendar: 40
-		-- others: < 32
-
-		local t = button:GetWidth() >= 40 and "BIG" or "SMALL"
-		local offset = button:GetWidth() > 43 and -2 or 9
+		local t = button == _G.GameTimeFrame and "BIG" or "SMALL"
+		local offset = button == _G.GarrisonLandingPageMinimapButton and 0 or 9
 
 		button:SetSize(unpack(TEXTURES[t].size))
 		button:SetHitRectInsets(0, 0, 0, 0)
@@ -500,7 +495,7 @@ function MINIMAP:Init()
 
 		date:ClearAllPoints()
 		date:SetPoint("TOPLEFT", 9, -8)
-		date:SetPoint("BOTTOMRIGHT", -8, 8)
+		date:SetPoint("BOTTOMRIGHT", -8, 9)
 		date:SetVertexColor(M.COLORS.WHITE:GetRGB())
 		date:SetDrawLayer("BACKGROUND")
 		date:SetJustifyH("CENTER")
