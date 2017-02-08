@@ -157,6 +157,126 @@ function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
 	tooltip:SetMinimumWidth(140)
 end
 
+-- flags: "HORIZONTAL-M", "HORIZONTAL-L", "VERTICAL-M", "VERTICAL-L", "VERTICAL-GLASS", "NONE"
+function E:SetStatusBarSkin_new(object, flag)
+	P.argcheck(1, object, "table")
+	P.argcheck(2, flag, "string")
+
+	local s, v = string.split("-", flag)
+
+	object.Tube = object.Tube or {
+		[1] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- left/top
+		[2] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- mid
+		[3] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- right/bottom
+		[4] = object.Glass or object:CreateTexture(nil, "ARTWORK", nil, 6), -- glass
+	}
+
+	if s == "HORIZONTAL" then
+		local glass = object.Tube[4]
+		glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal")
+		glass:SetTexCoord(0 / 128, 128 / 128, 1 / 256, 25 / 256)
+		glass:SetAllPoints()
+
+		if v == "GLASS" then
+			object.Tube[1]:SetTexture(nil)
+			object.Tube[2]:SetTexture(nil)
+			object.Tube[3]:SetTexture(nil)
+		elseif v == "M" or v == "L" then
+			local left = object.Tube[1]
+			left:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal")
+			left:ClearAllPoints()
+			left:SetPoint("RIGHT", object, "LEFT", 10 / 2, 0)
+
+			local right = object.Tube[3]
+			right:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal")
+			right:ClearAllPoints()
+			right:SetPoint("LEFT", object, "RIGHT", -10 / 2, 0)
+
+			local mid = object.Tube[2]
+			mid:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal", true)
+			mid:SetHorizTile(true)
+			mid:ClearAllPoints()
+			mid:SetPoint("TOPLEFT", left, "TOPRIGHT")
+			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT")
+
+			if v == "M" then
+				left:SetTexCoord(1 / 128, 29 / 128, 108 / 256, 144 / 256)
+				left:SetSize(14.0, 18.0)
+
+				right:SetTexCoord(30 / 128, 58 / 128, 108 / 256, 144 / 256)
+				right:SetSize(14.0, 18.0)
+
+				mid:SetTexCoord(0 / 128, 128 / 128, 26 / 256, 62 / 256)
+			elseif v == "L" then
+				left:SetTexCoord(59 / 128, 89 / 128, 108 / 256, 152 / 256)
+				left:SetSize(15.0, 22.0)
+
+				right:SetTexCoord(90 / 128, 120 / 128, 108 / 256, 152 / 256)
+				right:SetSize(15.0, 22.0)
+
+				mid:SetTexCoord(0 / 128, 128 / 128, 63 / 256, 107 / 256)
+			end
+		else
+			P.print("Invalid flag:", flag)
+		end
+	elseif s == "VERTICAL" then
+		local glass = object.Tube[4]
+		glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-vertical")
+		glass:SetTexCoord(1 / 256, 25 / 256, 0 / 128, 128 / 128)
+		glass:SetAllPoints()
+
+		if v == "GLASS" then
+			object.Tube[1]:SetTexture(nil)
+			object.Tube[2]:SetTexture(nil)
+			object.Tube[3]:SetTexture(nil)
+		elseif v == "M" or v == "L" then
+			local top = object.Tube[1]
+			top:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-vertical")
+			top:ClearAllPoints()
+			top:SetPoint("BOTTOM", object, "TOP", 0, -10 / 2)
+
+			local bottom = object.Tube[3]
+			bottom:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-vertical")
+			bottom:ClearAllPoints()
+			bottom:SetPoint("TOP", object, "BOTTOM", 0, 10 / 2)
+
+			local mid = object.Tube[2]
+			mid:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-vertical", true)
+			mid:SetVertTile(true)
+			mid:ClearAllPoints()
+			mid:SetPoint("TOPLEFT", top, "BOTTOMLEFT")
+			mid:SetPoint("BOTTOMRIGHT", bottom, "TOPRIGHT")
+
+			if v == "M" then
+				top:SetTexCoord(108 / 256, 144 / 256, 1 / 128, 29 / 128)
+				top:SetSize(36 / 2, 28 / 2)
+
+				bottom:SetTexCoord(108 / 256, 144 / 256, 30 / 128, 58 / 128)
+				bottom:SetSize(36 / 2, 28 / 2)
+
+				mid:SetTexCoord(26 / 256, 62 / 256, 0 / 128, 128 / 128)
+			elseif v == "L" then
+				top:SetTexCoord(108 / 256, 152 / 256, 58 / 128, 88 / 128)
+				top:SetSize(44 / 2, 30 / 2)
+
+				bottom:SetTexCoord(108 / 256, 152 / 256, 89 / 128, 119 / 128)
+				bottom:SetSize(44 / 2, 30 / 2)
+
+				mid:SetTexCoord(63 / 256, 107 / 256, 0 / 128, 128 / 128)
+			end
+		else
+			P.print("Invalid flag:", flag)
+		end
+	elseif s == "NONE" then
+		object.Tube[1]:SetTexture(nil)
+		object.Tube[2]:SetTexture(nil)
+		object.Tube[3]:SetTexture(nil)
+		object.Tube[4]:SetTexture(nil)
+	else
+		P.print("Invalid flag:", flag)
+	end
+end
+
 -- skinType: "HORIZONTAL-S", "HORIZONTAL-M", "HORIZONTAL-L", "VERTICAL-S", "VERTICAL-M", "VERTICAL-L"
 function E:SetStatusBarSkin(bar, skinType)
 	local orientation, size = strsplit("-", skinType or "")
