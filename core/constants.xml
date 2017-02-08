@@ -370,21 +370,40 @@
 		</Animations>
 		<Scripts>
 			<OnLoad>
-				local scale = _G.UIParent:GetScale()
+				self.SetVertexColor = function(self, r, g, b, a)
+					self.Fill:SetVertexColor(r, g, b, a or 1)
+					self.FillScroll1:SetVertexColor(r, g, b, a or 1)
+					self.FillScroll2:SetVertexColor(r, g, b, a or 1)
+				end
 
-				self.Fill:SetThickness(16 * scale)
-				self.FillScroll1:SetThickness(16 * scale)
-				self.FillScroll2:SetThickness(16 * scale)
+				self.GetVertexColor = function(self)
+					return self.Fill:GetVertexColor()
+				end
+
+				self.SetStartPoint = function(self, p, parent)
+					self.Fill:SetStartPoint(p, parent)
+					self.FillScroll1:SetStartPoint(p, parent)
+					self.FillScroll2:SetStartPoint(p, parent)
+				end
+
+				self.SetEndPoint = function(self, p, parent)
+					self.Fill:SetEndPoint(p, parent)
+					self.FillScroll1:SetEndPoint(p, parent)
+					self.FillScroll2:SetEndPoint(p, parent)
+				end
+
+				self.SetThickness = function(self, thickness)
+					self.Fill:SetThickness(thickness)
+					self.FillScroll1:SetThickness(thickness)
+					self.FillScroll2:SetThickness(thickness)
+				end
 
 				self:RegisterEvent("DISPLAY_SIZE_CHANGED")
 				self:RegisterEvent("UI_SCALE_CHANGED")
+				self:SetThickness(16 * _G.UIParent:GetScale())
 			</OnLoad>
 			<OnEvent>
-				local scale = _G.UIParent:GetScale()
-
-				self.Fill:SetThickness(16 * scale)
-				self.FillScroll1:SetThickness(16 * scale)
-				self.FillScroll2:SetThickness(16 * scale)
+				self:SetThickness(16 * _G.UIParent:GetScale())
 			</OnEvent>
 		</Scripts>
 	</Frame>
