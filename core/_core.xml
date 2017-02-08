@@ -9,6 +9,5 @@
 	<Script file="cooldown.lua"/>
 	<Script file="defaults.lua"/>
 	<Script file="mover.lua"/>
-	<Script file="smoother.lua"/>
 	<Script file="statusbar.lua"/>
 </Ui>

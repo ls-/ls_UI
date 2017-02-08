@@ -15,6 +15,7 @@ local type = _G.type
 local unpack = _G.unpack
 
 -- Blizz
+local FrameDeltaLerp = _G.FrameDeltaLerp
 local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
 
@@ -320,6 +321,65 @@ function E:HEXToRGB(hex)
 	local rhex, ghex, bhex = tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16)
 
 	return tonumber(string.format("%.2f", rhex / 255)), tonumber(string.format("%.2f", ghex / 255)), tonumber(string.format("%.2f", bhex / 255))
+end
+
+-----------------
+-- STATUS BARS --
+-----------------
+
+local sb_objects = {}
+
+local function ProcessSmoothStatusBars()
+	for object, target in pairs(sb_objects) do
+		local new = FrameDeltaLerp(object._value, target, .25)
+
+		if math.abs(new - target) <= .005 then
+			new = target
+			sb_objects[object] = nil
+		end
+
+		object:SetValue_(new)
+		object._value = new
+	end
+end
+
+_G.C_Timer.NewTicker(0, ProcessSmoothStatusBars)
+
+local function SetSmoothedValue(self, value)
+	self._value = self:GetValue()
+	sb_objects[self] = value
+end
+
+local function SetSmoothedMinMaxValues(self, min, max)
+	self:SetMinMaxValues_(min, max)
+
+	if self._max and self._max ~= max then
+		local target = sb_objects[self]
+		local cur = self._value
+		local ratio = 1
+
+		if max ~= 0 and self._max and self._max ~= 0 then
+			ratio = max / (self._max or max)
+		end
+
+		if target then
+			sb_objects[self] = target * ratio
+		end
+
+		if cur then
+			self:SetValue_(cur * ratio)
+		end
+	end
+
+	self._min = min
+	self._max = max
+end
+
+function E:SmoothBar(bar)
+	bar.SetValue_ = bar.SetValue
+	bar.SetMinMaxValues_ = bar.SetMinMaxValues
+	bar.SetValue = SetSmoothedValue
+	bar.SetMinMaxValues = SetSmoothedMinMaxValues
 end
 
 ----------
