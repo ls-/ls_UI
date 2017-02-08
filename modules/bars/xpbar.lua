@@ -152,7 +152,11 @@ local function UpdateXPBars()
 				}
 
 				if _G.GetHonorExhaustion() and _G.GetHonorExhaustion() > 0 then
-					bar[index].tooltipInfo.line3.text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(_G.GetHonorExhaustion())
+					bar[index].tooltipInfo.line3 = {
+						text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(_G.GetHonorExhaustion())
+					}
+				else
+					bar[index].tooltipInfo.line3 = nil
 				end
 
 				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.HONOR:GetHEX(), _G.BreakUpLargeNumbers(max))
