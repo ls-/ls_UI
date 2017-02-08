@@ -45,7 +45,8 @@ local function argcheck(varNum, varValue, ...)
 	end
 
 	local varTypes = string.join("', '", ...)
-	local funcName = debugstack(2, 2, 0):match(": in function [`'<](.-)[`'>]"):match("("..an..".+)")
+	local funcName = debugstack(2, 2, 0):match(": in function [`'<](.-)[`'>]")
+	funcName = funcName:match("("..an..".+)") or funcName
 
 	error(string.format("Bad argument #%d to '%s' ('%s' expected, got '%s')", varNum, funcName, varTypes, type(varValue)), 4)
 end
