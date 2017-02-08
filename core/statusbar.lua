@@ -162,19 +162,14 @@ function E:SetStatusBarSkin(bar, skinType)
 	local orientation, size = strsplit("-", skinType or "")
 
 	bar.Tube = bar.Tube or {
-		[0] = bar.Gloss or bar:CreateTexture(nil, "ARTWORK", nil, 6), -- gloss
 		[1] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- left
 		[2] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- right
 		[3] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- top
 		[4] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- bottom
+		[5] = bar.Gloss or bar:CreateTexture(nil, "ARTWORK", nil, 6), -- gloss
 	}
 
 	if orientation == "HORIZONTAL" then
-		local gloss = bar.Tube[0]
-		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
-		gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
-		gloss:SetAllPoints()
-
 		local leftTexture = bar.Tube[1]
 		leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
 		leftTexture:SetPoint("RIGHT", bar, "LEFT", 3, 0)
@@ -199,6 +194,11 @@ function E:SetStatusBarSkin(bar, skinType)
 		bottomTexture:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
 		bottomTexture:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
 
+		local gloss = bar.Tube[5]
+		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
+		gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
+		gloss:SetAllPoints()
+
 		if size == "SMALL" or size == "S" then
 			leftTexture:SetTexCoord(0 / 64, 10 / 64, 25 / 64, 35 / 64)
 			leftTexture:SetSize(10, 10)
@@ -219,11 +219,6 @@ function E:SetStatusBarSkin(bar, skinType)
 			rightTexture:SetSize(10, 20)
 		end
 	elseif orientation == "VERTICAL" then
-		local gloss = bar.Tube[0]
-		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
-		gloss:SetTexCoord(0 / 64, 20 / 64, 0 / 64, 64 / 64)
-		gloss:SetAllPoints()
-
 		local leftTexture = bar.Tube[1]
 		leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical", true)
 		leftTexture:SetTexCoord(21 / 64, 24 / 64, 0 / 64, 64 / 64)
@@ -248,6 +243,11 @@ function E:SetStatusBarSkin(bar, skinType)
 		bottomTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
 		bottomTexture:SetPoint("TOP", bar, "BOTTOM", 0, 3)
 
+		local gloss = bar.Tube[5]
+		gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
+		gloss:SetTexCoord(0 / 64, 20 / 64, 0 / 64, 64 / 64)
+		gloss:SetAllPoints()
+
 		if size == "S" then
 			topTexture:SetTexCoord(25 / 64, 35 / 64, 0 / 64, 10 / 64)
 			topTexture:SetSize(10, 10)
@@ -268,15 +268,16 @@ function E:SetStatusBarSkin(bar, skinType)
 			bottomTexture:SetSize(20, 10)
 		end
 	elseif orientation == "NONE" then
-		bar.Tube[0]:SetTexture(nil)
 		bar.Tube[1]:SetTexture(nil)
 		bar.Tube[2]:SetTexture(nil)
 		bar.Tube[3]:SetTexture(nil)
 		bar.Tube[4]:SetTexture(nil)
+		bar.Tube[5]:SetTexture(nil)
 	end
 end
 
 E.SetBarSkin = E.SetStatusBarSkin
+E.SetBarSkin_new = E.SetStatusBarSkin_new
 
 for i = 1, 6 do
 	E:AddTooltipStatusBar(_G.GameTooltip, i)
