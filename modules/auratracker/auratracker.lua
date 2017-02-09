@@ -28,7 +28,7 @@ local function PopulateActiveAurasTable(index, filter)
 	local playerSpec = E:GetPlayerSpecFlag()
 
 	if name and C.auratracker[filter][spellID] and E:IsFilterApplied(C.auratracker[filter][spellID], playerSpec) then
-		local aura = {
+		table.insert(activeAuras, {
 			index = index,
 			icon = iconTexture,
 			count = count,
@@ -36,9 +36,7 @@ local function PopulateActiveAurasTable(index, filter)
 			duration = duration,
 			expire = expirationTime,
 			filter = filter,
-		}
-
-		table.insert(activeAuras, aura)
+		})
 	end
 end
 
@@ -62,7 +60,7 @@ local function ATButton_OnLeave()
 end
 
 local function AT_OnEvent()
-	activeAuras = table.wipe(activeAuras)
+	table.wipe(activeAuras)
 
 	for i = 1, BUFF_MAX_DISPLAY do
 		PopulateActiveAurasTable(i, "HELPFUL")
@@ -80,8 +78,6 @@ local function AT_OnEvent()
 		local button, aura = AuraTracker.buttons[i], activeAuras[i]
 
 		if button then
-			local color = {r = 1, g = 1, b = 1}
-
 			button:SetID(aura.index)
 			button.Icon:SetTexture(aura.icon)
 			button.Count:SetText(aura.count > 1 and aura.count)
@@ -90,14 +86,18 @@ local function AT_OnEvent()
 			CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
 			if button.filter == "HARMFUL" then
-				color = {M.COLORS.RED:GetRGB()}
+				local color = DebuffTypeColor[aura.debuffType] or DebuffTypeColor.none
 
-				if aura.debuffType then
-					color = DebuffTypeColor[aura.debuffType]
-				end
+				button:SetBorderColor(color.r, color.g, color.b)
+
+				button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
+
+			else
+				button:SetBorderColor(1, 1, 1)
+
+				button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
 			end
 
-			button:SetBorderColor(color.r, color.g, color.b)
 			button:Show()
 		end
 	end
@@ -123,9 +123,9 @@ local function AddToList(filter, spellID)
 	return true, string.format(L["LOG_ITEM_ADDED"], link)
 end
 
-----------------------
--- UTILS & SETTINGS --
-----------------------
+------------
+-- PUBLIC --
+------------
 
 function AURATRACKER:ToggleHeader(state)
 	AuraTracker.Header:SetShown(state)
@@ -140,6 +140,7 @@ end
 function AURATRACKER:UpdateLayout()
 	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
 end
+
 -----------------
 -- INITIALISER --
 -----------------
@@ -189,10 +190,15 @@ function AURATRACKER:Init()
 			AuraTracker.buttons[i] = button
 
 			if button.CD.SetTimerTextHeight then
-				button.CD:SetTimerTextHeight(14)
+				button.CD.Timer:SetJustifyV("BOTTOM")
 			end
 
 			button.Count:SetFontObject("LS12Font_Outline")
+
+			local auraType = button.Cover:CreateTexture(nil, "OVERLAY", nil, 3)
+			auraType:SetSize(16, 16)
+			auraType:SetPoint("TOPLEFT", -2, 2)
+			button.AuraType = auraType
 		end
 
 		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
