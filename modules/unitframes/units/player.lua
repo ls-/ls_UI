@@ -350,7 +350,8 @@ function UF:ConstructPlayerFrame(frame)
 	scroll_frame:SetPoint("CENTER")
 
 	local health_bar_parent = _G.CreateFrame("Frame", nil, scroll_frame)
-	health_bar_parent:SetAllPoints()
+	health_bar_parent:SetSize(140 / 2, 280 / 2)
+	scroll_frame:SetScrollChild(health_bar_parent)
 
 	-- indicators
 	local indicator_parent = _G.CreateFrame("Frame", nil, frame)
@@ -407,11 +408,10 @@ function UF:ConstructPlayerFrame(frame)
 	class_power_tube.Seps = {}
 
 	for i = 1, 9 do
-		local sep = class_power_tube:CreateTexture(nil, "ARTWORK", nil, 1)
-		sep:SetSize(24 / 2, 24 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		sep:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
-		class_power_tube.Seps[i] = sep
+		class_power_tube.Seps[i] = class_power_tube:CreateTexture(nil, "ARTWORK", nil, 1)
+		class_power_tube.Seps[i]:SetSize(24 / 2, 24 / 2)
+		class_power_tube.Seps[i]:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+		class_power_tube.Seps[i]:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
 	end
 
 	class_power_tube.Refresh = function(self, slots, visible, sender)
