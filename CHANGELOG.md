@@ -1,3 +1,9 @@
+## Version 70100.08
+
+- Revamped player orb;
+- Revamped minimap;
+- Numerous bug fixes and tweaks.
+
 ## Version 70100.07
 
 - Revamped bottom bar. New high-res textures, default button size is 32px, up from 28px, added XP/AP/honour/rep bars;
