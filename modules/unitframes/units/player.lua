@@ -764,9 +764,11 @@ function UF:ConstructPlayerFrame(frame)
 	end
 
 	-- pvp
-	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6)
+	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6, {
+		has_pvp_timer = true,
+	})
 	frame.PvP:SetPoint("TOP", fg_parent, "BOTTOM", 0, 10)
-	frame:RegisterEvent("PLAYER_FLAGS_CHANGED", frame.PvP.Override)
+	frame:RegisterEvent("PVP_TIMER_UPDATE", frame.PvP.Override)
 
 	frame.Castbar = self:CreateCastBar(frame, 202, true, true)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)

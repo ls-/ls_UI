@@ -125,7 +125,7 @@ function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
 	end
 
 	if options.has_pvp_timer then
-		local t = parent:CreateFontString(nil, layer, "LS10Font_Shadow")
+		local t = parent:CreateFontString(nil, layer, "LS10Font_Outline")
 		t:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
 		t:SetTextColor(1, 0.82, 0)
 		t:SetJustifyH("RIGHT")
