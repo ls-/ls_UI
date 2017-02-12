@@ -10,4 +10,5 @@
 	<Script file="defaults.lua"/>
 	<Script file="mover.lua"/>
 	<Script file="statusbar.lua"/>
+	<Include file="dev.xml"/>
 </Ui>
