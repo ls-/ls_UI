@@ -10,6 +10,7 @@ local pairs = _G.pairs
 -- Mine
 local isInit = false
 local controller
+local anim_controller
 
 local elements = {
 	top = {
@@ -51,7 +52,7 @@ local WIDGETS = {}
 WIDGETS.ACTION_BAR = {
 	frame = false,
 	children = false,
-	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
 	on_add = function ()
 		WIDGETS.ACTION_BAR.children = {
 			[1] = _G.LSMultiBarBottomLeftBar,
@@ -85,24 +86,24 @@ WIDGETS.ACTION_BAR = {
 WIDGETS.PET_BATTLE_BAR = {
 	frame = false,
 	children = false,
-	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 11},
+	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
 }
 
 WIDGETS.BAG = {
 	frame = false,
 	children = false,
-	point = {"BOTTOMLEFT", "LSActionBarArtContainerBag", "BOTTOMLEFT", 17, 11},
+	point = {"BOTTOMLEFT", "LSActionBarControllerBag", "BOTTOMLEFT", 17, 11},
 	on_add = function(self)
-		local texture = controller.Bag:CreateTexture(nil, "ARTWORK")
+		local texture = anim_controller.Bag:CreateTexture(nil, "ARTWORK")
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
 		texture:SetTexCoord(unpack(elements.bottom.bag.coords))
 		texture:SetAllPoints()
 		texture:SetSize(unpack(elements.bottom.bag.size))
 
-		local bar = _G.CreateFrame("StatusBar", nil, controller.Bag)
+		local bar = _G.CreateFrame("StatusBar", nil, anim_controller.Bag)
 		bar:SetPoint("BOTTOM", 0, 0)
 		bar:SetSize(100 / 2, 16 / 2)
-		bar:SetFrameLevel(controller.Bag:GetFrameLevel() - 2)
+		bar:SetFrameLevel(anim_controller.Bag:GetFrameLevel() - 2)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		bar:SetStatusBarColor(0, 0, 0, 0)
 		E:SmoothBar(bar)
@@ -137,19 +138,19 @@ WIDGETS.BAG = {
 WIDGETS.MM_LEFT = {
 	frame = false,
 	children = false,
-	point = {"BOTTOMRIGHT", "LSActionBarArtContainerBottom", "BOTTOMLEFT", -148, 11},
+	point = {"BOTTOMRIGHT", "LSActionBarControllerBottom", "BOTTOMLEFT", -148, 11},
 }
 
 WIDGETS.MM_RIGHT = {
 	frame = false,
 	children = false,
-	point = {"BOTTOMLEFT", "LSActionBarArtContainerBottom", "BOTTOMRIGHT", 148, 11},
+	point = {"BOTTOMLEFT", "LSActionBarControllerBottom", "BOTTOMRIGHT", 148, 11},
 }
 
 WIDGETS.XP_BAR = {
 	frame = false,
 	children = false,
-	point = {"BOTTOM", "LSActionBarArtContainerBottom", "BOTTOM", 0, 0},
+	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 	on_play = function(_, newstate)
 		BARS:SetXPBarStyle(newstate == 6 and "SHORT" or "DEFAULT")
 	end
@@ -179,8 +180,8 @@ local function ControllerAnimation_OnPlay()
 	end)
 
 	_G.C_Timer.After(0.25, function()
-		controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
-		controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
+		anim_controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
+		anim_controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
 	end)
 end
 
@@ -259,7 +260,7 @@ end
 
 function BARS:ActionBarController_Init()
 	if not isInit and C.bars.restricted then
-		controller = _G.CreateFrame("Frame", "LSActionBarArtContainer", _G.UIParent, "SecureHandlerStateTemplate")
+		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)
 		controller:SetAttribute("numbuttons", 12)
@@ -267,12 +268,37 @@ function BARS:ActionBarController_Init()
 			controller.Shuffle:Play()
 		end
 
-		-- top
+		anim_controller = _G.CreateFrame("Frame", "LSActionBarAnimController", _G.UIParent)
+		anim_controller:SetFrameLevel(controller:GetFrameLevel())
+		anim_controller:SetAllPoints(controller)
+
+		-- These frames are used as anchors/parents for other frames, so they end up being PROTECTED
 		local top = _G.CreateFrame("Frame", "$parentTop", controller)
 		top:SetFrameLevel(controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
 		controller.Top = top
+		controller:SetFrameRef("top", top)
+
+		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller)
+		bottom:SetFrameLevel(controller:GetFrameLevel() + 7)
+		bottom:SetPoint("BOTTOM", 0, 0)
+		bottom:SetSize(unpack(elements.bottom.mid.size))
+		controller.Bottom = bottom
+		controller:SetFrameRef("bottom", bottom)
+
+		local bag = _G.CreateFrame("Frame", "$parentBag", controller)
+		bag:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 290 , 0)
+		bag:SetSize(unpack(elements.bottom.bag.size))
+		controller.Bag = bag
+		controller:SetFrameRef("bag", bag)
+
+		-- These frames are used as anchor/parents for textures, they are NOT PROTECTED
+		top = _G.CreateFrame("Frame", "$parentTop", anim_controller)
+		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
+		top:SetPoint("BOTTOM", 0, 20 / 2)
+		top:SetSize(unpack(elements.top.mid.size))
+		anim_controller.Top = top
 
 		local texture = top:CreateTexture(nil, "ARTWORK")
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
@@ -294,12 +320,11 @@ function BARS:ActionBarController_Init()
 		texture:SetSize(unpack(elements.top.right.size))
 		top.Right = texture
 
-		-- bottom
-		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller)
-		bottom:SetFrameLevel(controller:GetFrameLevel() + 7)
+		bottom = _G.CreateFrame("Frame", "$parentBottom", anim_controller)
+		bottom:SetFrameLevel(anim_controller:GetFrameLevel() + 7)
 		bottom:SetPoint("BOTTOM", 0, 0)
 		bottom:SetSize(unpack(elements.bottom.mid.size))
-		controller.Bottom = bottom
+		anim_controller.Bottom = bottom
 
 		texture = bottom:CreateTexture(nil, "ARTWORK")
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
@@ -321,13 +346,12 @@ function BARS:ActionBarController_Init()
 		texture:SetSize(unpack(elements.bottom.right.size))
 		bottom.Right = texture
 
-		-- bag, don't create textures here
-		local bag = _G.CreateFrame("Frame", "$parentBag", controller)
-		bag:SetPoint("BOTTOMLEFT", controller.Bottom, "BOTTOMRIGHT", 290 , 0)
+		bag = _G.CreateFrame("Frame", "$parentBag", anim_controller)
+		bag:SetPoint("BOTTOMLEFT", anim_controller.Bottom, "BOTTOMRIGHT", 290 , 0)
 		bag:SetSize(unpack(elements.bottom.bag.size))
-		controller.Bag = bag
+		anim_controller.Bag = bag
 
-		local ag = controller:CreateAnimationGroup()
+		local ag = anim_controller:CreateAnimationGroup()
 		ag:SetScript("OnPlay", ControllerAnimation_OnPlay)
 		ag:SetScript("OnFinished", ControllerAnimation_OnFinished)
 		controller.Shuffle = ag
@@ -374,11 +398,10 @@ function BARS:ActionBarController_Init()
 			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
 
-		controller:SetFrameRef("top", top)
-		controller:SetFrameRef("bottom", bottom)
 		controller:Execute([[
 			top = self:GetFrameRef("top")
 			bottom = self:GetFrameRef("bottom")
+			bag = self:GetFrameRef("bag")
 			buttons = table.new()
 
 			for i = 1, 12 do
@@ -391,6 +414,9 @@ function BARS:ActionBarController_Init()
 				self:SetAttribute("numbuttons", newstate)
 				self:ChildUpdate("numbuttons", newstate)
 				self:CallMethod("Update")
+
+				top:SetWidth(newstate == 6 and 0.001 or 216)
+				bottom:SetWidth(newstate == 6 and 0.001 or 216)
 			end
 		]])
 
