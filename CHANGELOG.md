@@ -1,3 +1,7 @@
+## Version 70100.09
+
+- Fixed action bar taint issues.
+
 ## Version 70100.08
 
 - Revamped player orb;
