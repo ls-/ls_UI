@@ -4,18 +4,19 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = _G
-local mceil, mmin = math.ceil, math.min
+local math = _G.math
 
 -- Blizz
-local SpellGetVisibilityInfo = SpellGetVisibilityInfo
-local SpellIsAlwaysShown = SpellIsAlwaysShown
-local UnitAffectingCombat = UnitAffectingCombat
-local UnitAura = UnitAura
-local UnitCanAssist = UnitCanAssist
-local UnitCanAttack = UnitCanAttack
-local UnitIsPlayer = UnitIsPlayer
-local UnitIsUnit = UnitIsUnit
-local UnitPlayerControlled = UnitPlayerControlled
+local SpellGetVisibilityInfo = _G.SpellGetVisibilityInfo
+local SpellIsAlwaysShown = _G.SpellIsAlwaysShown
+local UnitAffectingCombat = _G.UnitAffectingCombat
+local UnitAura = _G.UnitAura
+local UnitCanAssist = _G.UnitCanAssist
+local UnitCanAttack = _G.UnitCanAttack
+local UnitIsPlayer = _G.UnitIsPlayer
+local UnitIsPVP = _G.UnitIsPVP
+local UnitIsUnit = _G.UnitIsUnit
+local UnitPlayerControlled = _G.UnitPlayerControlled
 
 -- Mine
 local AURA_GAP = 4
@@ -100,25 +101,29 @@ local filterFunctions = {
 		local filter = aura.filter
 		local playerSpec = E:GetPlayerSpecFlag()
 
-		if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
+		-- NOTE: Disabled it for now
+		-- if not E:IsFilterApplied(frame.aura_config.enabled, playerSpec) then return false end
 
 		local config = frame.aura_config[filter]
-		local name, _, _, _, debuffType, duration, expirationTime, caster, isStealable, _, spellID, _, isBossAura = ...
+		local name, _, _, count, debuffType, duration, expirationTime, caster, isStealable, _, spellID, _, isBossAura = ...
 		local isMine = aura.isPlayer or caster == "pet"
-		local hostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
+		local isHostileTarget = UnitCanAttack("player", unit) or not UnitCanAssist("player", unit)
 		local dispelTypes = E:GetDispelTypes()
 
-		if E:IsFilterApplied(frame.aura_config.show_only_filtered, playerSpec) then
-			if config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], playerSpec) then
-				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526OVERRIDE|r")
-				return true
-			end
+		-- NOTE: Disabled it for now
+		-- if E:IsFilterApplied(frame.aura_config.show_only_filtered, playerSpec) then
+		-- 	if config.auralist[spellID] and E:IsFilterApplied(config.auralist[spellID], playerSpec) then
+		-- 		-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526OVERRIDE|r")
+		-- 		return true
+		-- 	end
 
-			return false
-		end
+		-- 	return false
+		-- end
 
-		if isBossAura then
-			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526BOSSAURA|r")
+		-- for some reason isBossAura may not be "true" for auras' applied by a boss
+		if isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2")
+			or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5")) then
+			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, caster, "|cffe5a526BOSSAURA|r")
 			return true
 		elseif config.auralist[spellID] then
 			if E:IsFilterApplied(config.auralist[spellID], playerSpec) then
@@ -128,28 +133,19 @@ local filterFunctions = {
 				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526FROM BLACKLIST|r")
 				return false
 			end
-		elseif caster and (UnitIsUnit(caster, "vehicle") and not UnitIsPlayer("vehicle")) then
+		elseif caster and UnitIsUnit(caster, "vehicle") and not UnitIsPlayer("vehicle") then
 			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526VEHICLE|r")
 			return true
-		-- elseif not caster and filter == "HARMFUL" then
-		-- 	if not IsInInstance() then
-		-- 		-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526UNKNOWN (JUNK, NOT IN INSTANCE)|r")
-		-- 		return false
-		-- 	else
-		-- 		-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526UNKNOWN (IN INSTANCE)|r")
-		-- 		return true
-		-- 	end
 		end
 
-		if hostileTarget then -- hostile
+		if isHostileTarget then -- hostile
 			if not UnitPlayerControlled(unit) and caster and UnitIsUnit(unit, caster) and duration == 0 and expirationTime == 0 then
 				-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC ENV|r")
 				return true
 			end
 
 			if filter == "HELPFUL" then
-				-- ALWAYS shown
-				if not UnitPlayerControlled(unit) and caster and UnitIsUnit(unit, caster) then
+				if not UnitPlayerControlled(unit) and UnitIsPVP(unit) and caster and UnitIsUnit(unit, caster) then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE NPC SELFCAST|r")
 					return true
 				end
@@ -164,7 +160,6 @@ local filterFunctions = {
 					return true
 				end
 			elseif filter == "HARMFUL" then
-				-- ALWAYS shown
 				if isMine then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626HOSTILE RELEVANT (MINE)|r")
 					return true
@@ -191,7 +186,11 @@ local filterFunctions = {
 					end
 				end
 
-				-- ALWAYS shown
+				-- if UnitIsPlayer(unit) and caster and UnitIsUnit(unit, caster) then
+				-- 	-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe52626FRIENDLY PC SELFCAST|r")
+				-- 	return true
+				-- end
+
 				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
 				if hasCustom and showForMySpec then
@@ -204,48 +203,27 @@ local filterFunctions = {
 					return true
 				end
 
-				-- ALWAYS shown
 				local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
 				if hasCustom and showForMySpec then
 					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cff26a526FRIENDLY RELEVANT (MY SPEC)|r")
 					return true
 				end
+
+				-- NOTE: sometimes both caster and isBossAura params are nil, informed TheDanW about this issue, but it might be yet another "feature"
+				if count > 1 then
+					-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, caster, "|cff26a526FRIENDLY STACKABLE|r")
+					return true
+				end
 			end
 		end
 
-		-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526JUNK|r")
+		-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, caster, "|cffe5a526JUNK|r")
 		return false
-	end,
-	party = function(frame, unit, aura, ...)
-		local name, _, _, _, debuffType, _, _, _, _, _, spellID, _, isBossAura = ...
-		local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-		local dispelTypes = E:GetDispelTypes()
-		local filter = aura.filter
-
-		if isBossAura then
-			return true
-		elseif dispelTypes and dispelTypes[debuffType] and UnitAura(unit, name, nil, filter.."|RAID") then
-			-- dispellable debuffs
-			return true
-		elseif hasCustom and showForMySpec then
-			-- something defined by blizz
-			return true
-		elseif (E.PLAYER_CLASS == "PALADIN" and spellID == 25771) or (E.PLAYER_CLASS == "PRIEST" and spellID == 6788) then
-			-- Forbearance and Weakened Soul
-			return true
-		end
-
-		-- Temporal Displacement, Sated, Exhaustion, Insanity, Fatigued
-		if spellID == 80354 or spellID == 57724 or spellID == 57723 or spellID == 95809 or spellID == 160455 then
-			return true
-		end
-
-		return false
-	end,
+	end
 }
 
-local function UpdateAuraType(self, unit, aura)
+local function UpdateAuraType(_, _, aura)
 	if aura.isDebuff then
 		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 	else
@@ -257,10 +235,10 @@ function UF:CreateAuras(parent, unit, num, size, gap, perRow)
 	size = size or AURA_SIZE
 	gap = gap or AURA_GAP
 	perRow = perRow or AURAS_PER_ROW
-	local rows = mceil(num / perRow)
+	local rows = math.ceil(num / perRow)
 
 	local frame = _G.CreateFrame("Frame", "$parentAuras", parent)
-	frame:SetSize(size * mmin(num, perRow) + gap * mmin(num - 1, perRow - 1), size * rows + gap * (rows - 1))
+	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
 
 	frame.numBuffs = num / 2
 	frame.numDebuffs = num / 2
@@ -271,7 +249,6 @@ function UF:CreateAuras(parent, unit, num, size, gap, perRow)
 	frame.showDebuffType = true
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	-- frame.CustomFilter = function() return true end
 	frame.PostUpdateIcon = UpdateAuraType
 	frame.aura_config = C.units[unit].auras
 
@@ -282,10 +259,10 @@ function UF:CreateBuffs(parent, unit, num, size, gap, perRow)
 	size = size or AURA_SIZE
 	gap = gap or AURA_GAP
 	perRow = perRow or AURAS_PER_ROW
-	local rows = mceil(num / perRow)
+	local rows = math.ceil(num / perRow)
 
 	local frame = _G.CreateFrame("Frame", "$parentBuffs", parent)
-	frame:SetSize(size * mmin(num, perRow) + gap * mmin(num - 1, perRow - 1), size * rows + gap * (rows - 1))
+	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
 
 	frame.num = num
 	frame.size = size
@@ -294,7 +271,6 @@ function UF:CreateBuffs(parent, unit, num, size, gap, perRow)
 	frame.showStealableBuffs = true
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	-- frame.CustomFilter = function() return true end
 	frame.aura_config = C.units[unit].auras
 
 	return frame
@@ -304,10 +280,10 @@ function UF:CreateDebuffs(parent, unit, num, size, gap, perRow)
 	size = size or AURA_SIZE
 	gap = gap or AURA_GAP
 	perRow = perRow or AURAS_PER_ROW
-	local rows = mceil(num / perRow)
+	local rows = math.ceil(num / perRow)
 
 	local frame = _G.CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetSize(size * mmin(num, perRow) + gap * mmin(num - 1, perRow - 1), size * rows + gap * (rows - 1))
+	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
 
 	frame.num = num
 	frame.size = size
@@ -316,53 +292,7 @@ function UF:CreateDebuffs(parent, unit, num, size, gap, perRow)
 	frame.showType = true
 	frame.CreateIcon = CreateAuraIcon
 	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	-- frame.CustomFilter = function() return true end
 	frame.aura_config = C.units[unit].auras
 
 	return frame
 end
-
--- local function CustomAuraFilterOverride()
--- 	return true
--- end
-
--- local alteredState = false
--- function UF:MODIFIER_STATE_CHANGED(...)
--- 	if not alteredState then
--- 		if IsControlKeyDown() and IsShiftKeyDown() then
--- 			for _, object in pairs(oUF.objects) do
--- 				local buffs = object.Buffs
--- 				if buffs then
--- 					buffs.CustomFilter = CustomAuraFilterOverride
--- 					buffs:ForceUpdate()
--- 				end
-
--- 				local debuffs = object.Debuffs
--- 				if debuffs then
--- 					debuffs.CustomFilter = CustomAuraFilterOverride
--- 					debuffs:ForceUpdate()
--- 				end
--- 			end
-
--- 			alteredState = true
--- 		end
--- 	else
--- 		for _, object in pairs(oUF.objects) do
--- 			local buffs = object.Buffs
--- 			if buffs then
--- 				buffs.CustomFilter = CustomAuraFilter
--- 				buffs:ForceUpdate()
--- 			end
-
--- 			local debuffs = object.Debuffs
--- 			if debuffs then
--- 				debuffs.CustomFilter = CustomAuraFilter
--- 				debuffs:ForceUpdate()
--- 			end
--- 		end
-
--- 		alteredState = false
--- 	end
--- end
-
--- UF:RegisterEvent("MODIFIER_STATE_CHANGED")
