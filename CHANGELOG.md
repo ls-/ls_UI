@@ -1,3 +1,7 @@
+## Version 70100.10
+
+- Fixed action bar taint issues. Again...
+
 ## Version 70100.09
 
 - Fixed action bar taint issues.
