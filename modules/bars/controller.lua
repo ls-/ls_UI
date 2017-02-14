@@ -64,7 +64,7 @@ WIDGETS.ACTION_BAR = {
 		}
 	end,
 	attribute = {
-		name = "_childupdate-numbuttons",
+		name = "_childupdate-lsctrlnumbuttons",
 		condition = [[
 			self:Hide()
 			self:SetWidth(36 * message)
@@ -157,7 +157,7 @@ WIDGETS.XP_BAR = {
 }
 
 local function ControllerAnimation_OnPlay()
-	local newstate = controller:GetAttribute("numbuttons")
+	local newstate = controller:GetAttribute("lsctrlnumbuttons")
 
 	for _, widget in pairs(WIDGETS) do
 		if widget.frame then
@@ -242,7 +242,7 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
 				and (C.bars.bags.enabled and WIDGETS["BAG"].frame or not C.bars.bags.enabled) then
-				_G.RegisterStateDriver(controller, "width", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
+				_G.RegisterStateDriver(controller, "lsctrlmode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 				controller.isDriverRegistered = true
 			end
@@ -263,7 +263,7 @@ function BARS:ActionBarController_Init()
 		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)
-		controller:SetAttribute("numbuttons", 12)
+		controller:SetAttribute("lsctrlnumbuttons", 12)
 		controller.Update = function()
 			controller.Shuffle:Play()
 		end
@@ -393,7 +393,7 @@ function BARS:ActionBarController_Init()
 		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
 
-		-- _"childupdate-numbuttons" is executed in controller's environment
+		-- _"childupdate-lsctrlnumbuttons" is executed in controller's environment
 		for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
 			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
@@ -409,10 +409,10 @@ function BARS:ActionBarController_Init()
 			end
 		]])
 
-		controller:SetAttribute("_onstate-width", [[
-			if newstate ~= self:GetAttribute("numbuttons") then
-				self:SetAttribute("numbuttons", newstate)
-				self:ChildUpdate("numbuttons", newstate)
+		controller:SetAttribute("_onstate-lsctrlmode", [[
+			if newstate ~= self:GetAttribute("lsctrlnumbuttons") then
+				self:SetAttribute("lsctrlnumbuttons", newstate)
+				self:ChildUpdate("lsctrlnumbuttons", newstate)
 				self:CallMethod("Update")
 
 				top:SetWidth(newstate == 6 and 0.001 or 216)
