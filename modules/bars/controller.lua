@@ -64,7 +64,7 @@ WIDGETS.ACTION_BAR = {
 		}
 	end,
 	attribute = {
-		name = "_childupdate-lsctrlnumbuttons",
+		name = "_childupdate-numbuttons",
 		condition = [[
 			self:Hide()
 			self:SetWidth(36 * message)
@@ -157,7 +157,7 @@ WIDGETS.XP_BAR = {
 }
 
 local function ControllerAnimation_OnPlay()
-	local newstate = controller:GetAttribute("lsctrlnumbuttons")
+	local newstate = controller:GetAttribute("numbuttons")
 
 	for _, widget in pairs(WIDGETS) do
 		if widget.frame then
@@ -242,7 +242,7 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
 				and (C.bars.bags.enabled and WIDGETS["BAG"].frame or not C.bars.bags.enabled) then
-				_G.RegisterStateDriver(controller, "lsctrlmode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
+				_G.RegisterStateDriver(controller, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 				controller.isDriverRegistered = true
 			end
@@ -263,7 +263,7 @@ function BARS:ActionBarController_Init()
 		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)
-		controller:SetAttribute("lsctrlnumbuttons", 12)
+		controller:SetAttribute("numbuttons", 12)
 		controller.Update = function()
 			controller.Shuffle:Play()
 		end
@@ -272,28 +272,29 @@ function BARS:ActionBarController_Init()
 		anim_controller:SetFrameLevel(controller:GetFrameLevel())
 		anim_controller:SetAllPoints(controller)
 
-		-- These frames are used as anchors/parents for other frames, so they end up being PROTECTED
-		local top = _G.CreateFrame("Frame", "$parentTop", controller)
+		-- These frames are used as anchors/parents for other frames, some of
+		-- which are protected, so make these secure too
+		local top = _G.CreateFrame("Frame", "$parentTop", controller, "SecureHandlerBaseTemplate")
 		top:SetFrameLevel(controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
 		controller.Top = top
 		controller:SetFrameRef("top", top)
 
-		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller)
+		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller, "SecureHandlerBaseTemplate")
 		bottom:SetFrameLevel(controller:GetFrameLevel() + 7)
 		bottom:SetPoint("BOTTOM", 0, 0)
 		bottom:SetSize(unpack(elements.bottom.mid.size))
 		controller.Bottom = bottom
 		controller:SetFrameRef("bottom", bottom)
 
-		local bag = _G.CreateFrame("Frame", "$parentBag", controller)
+		local bag = _G.CreateFrame("Frame", "$parentBag", controller, "SecureHandlerBaseTemplate")
 		bag:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 290 , 0)
 		bag:SetSize(unpack(elements.bottom.bag.size))
 		controller.Bag = bag
 		controller:SetFrameRef("bag", bag)
 
-		-- These frames are used as anchor/parents for textures, they are NOT PROTECTED
+		-- These frames are used as anchor/parents for textures
 		top = _G.CreateFrame("Frame", "$parentTop", anim_controller)
 		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
@@ -393,7 +394,7 @@ function BARS:ActionBarController_Init()
 		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
 
-		-- _"childupdate-lsctrlnumbuttons" is executed in controller's environment
+		-- _"childupdate-numbuttons" is executed in controller's environment
 		for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
 			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
@@ -409,10 +410,10 @@ function BARS:ActionBarController_Init()
 			end
 		]])
 
-		controller:SetAttribute("_onstate-lsctrlmode", [[
-			if newstate ~= self:GetAttribute("lsctrlnumbuttons") then
-				self:SetAttribute("lsctrlnumbuttons", newstate)
-				self:ChildUpdate("lsctrlnumbuttons", newstate)
+		controller:SetAttribute("_onstate-mode", [[
+			if newstate ~= self:GetAttribute("numbuttons") then
+				self:SetAttribute("numbuttons", newstate)
+				self:ChildUpdate("numbuttons", newstate)
 				self:CallMethod("Update")
 
 				top:SetWidth(newstate == 6 and 0.001 or 216)
