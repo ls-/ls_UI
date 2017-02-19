@@ -11,9 +11,7 @@ local string = _G.string
 
 -- Mine
 function CFG:General_Init()
-	local panel = _G.CreateFrame("Frame", "LSUIGeneralConfigPanel", _G.InterfaceOptionsFramePanelContainer)
-	panel.name = L["LS_UI"]
-	panel:Hide()
+	local panel = _G.LSUIGeneralConfigPanel
 
 	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
@@ -215,6 +213,4 @@ function CFG:General_Init()
 			end
 		})
 	loginMsgToggle:SetPoint("LEFT", mailToggle, "RIGHT", 110, 0)
-
-	CFG:AddPanel(panel)
 end

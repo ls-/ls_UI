@@ -4,6 +4,7 @@ local CFG = P:AddModule("Config")
 
 -- Lua
 local _G = _G
+local math = _G.math
 local string = _G.string
 local table = _G.table
 local getmetatable = _G.getmetatable
@@ -20,16 +21,19 @@ local function RegisterControlForRefresh(panel, control)
 	table.insert(panel.controls, control)
 end
 
+local function RLUI()
+	_G.ReloadUI()
+end
+
 -- Panel
-local activePanel
+local activeLog
 
 do
 	local panels = {}
 
 	local function OnShow(self)
-		activePanel = self
-
-		self.Log:SetText("")
+		activeLog = self.Log
+		activeLog:SetText("")
 	end
 
 	local function OptionsPanelRefresh(panel)
@@ -51,15 +55,25 @@ do
 	end
 
 	function CFG:AddPanel(panel)
+		table.insert(panels, panel)
+
 		panel.refresh = OptionsPanelRefresh
 
 		panel:SetScript("OnShow", OnShow)
 
-		local anchorToggle = self:CreateButton(panel, "MoversToggle", L["TOGGLE_ANCHORS"], E.ToggleAllMovers)
-		anchorToggle:SetPoint("TOPRIGHT", -16, -16)
+		local reloadButton = self:CreateButton(panel,{
+			name = "$parentReloadUIButton",
+			text = L["RELOADUI"],
+			func = RLUI
+		})
+		reloadButton:SetPoint("TOPRIGHT", -16, -16)
 
-		local reloadButton = self:CreateButton(panel, "ReloadUIButton", L["RELOADUI"], _G.ReloadUI)
-		reloadButton:SetPoint("RIGHT", anchorToggle, "LEFT", -16, 0)
+		local anchorToggle = self:CreateButton(panel, {
+			name = "$parentMoversToggle",
+			text = L["TOGGLE_ANCHORS"],
+			func = E.ToggleAllMovers
+		})
+		anchorToggle:SetPoint("RIGHT", reloadButton, "LEFT", -2, 0)
 
 		local log = _G.CreateFrame("SimpleHTML", "$parentLog", panel)
 		log:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 16, 16)
@@ -73,7 +87,8 @@ do
 		panel.Log = log
 
 		_G.InterfaceOptions_AddCategory(panel, true)
-		table.insert(panels, panel)
+		_G.InterfaceAddOnsList_Update()
+		_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
 	end
 end
 
@@ -136,12 +151,14 @@ do
 end
 
 -- Button
-function CFG:CreateButton(panel, name, text, func)
-	local object = _G.CreateFrame("Button", "$parent"..name, panel, "UIPanelButtonTemplate")
+function CFG:CreateButton(panel, params)
+	params = params or {}
+
+	local object = _G.CreateFrame("Button", params.name, params.parent or panel, "UIPanelButtonTemplate")
 	object.type = "Button"
-	object:SetText(text)
-	object:SetWidth(object:GetTextWidth() + 18)
-	object:SetScript("OnClick", func)
+	object:SetText(params.text)
+	object:SetWidth(math.max(object:GetTextWidth() + 18, 70))
+	object:SetScript("OnClick", params.func)
 
 	return object
 end
@@ -380,14 +397,14 @@ do
 
 		if link then
 			if activeAuraList.table[spellID] then
-				activePanel.Log:SetText(string.format(L["LOG_ITEM_ADDED_ERR"], link))
+				activeLog:SetText(string.format(L["LOG_ITEM_ADDED_ERR"], link))
 			else
 				activeAuraList.AddEditBox:SetText("")
 
 				activeAuraList.table[spellID] = mask
 				activeAuraList:RefreshValue()
 
-				activePanel.Log:SetText(string.format(L["LOG_ITEM_ADDED"], link))
+				activeLog:SetText(string.format(L["LOG_ITEM_ADDED"], link))
 			end
 		end
 	end
@@ -410,9 +427,9 @@ do
 			local link = _G.GetSpellLink(spellID)
 
 			if link then
-				activePanel.Log:SetText(string.format(L["LOG_FOUND_ITEM"], link))
+				activeLog:SetText(string.format(L["LOG_FOUND_ITEM"], link))
 			else
-				activePanel.Log:SetText(L["LOG_NOTHING_FOUND"])
+				activeLog:SetText(L["LOG_NOTHING_FOUND"])
 			end
 		end
 	end
@@ -760,8 +777,6 @@ local function OpenToCategory(category)
 		CFG:Tooltips_Init()
 		CFG:UnitFrames_Init()
 
-		_G.InterfaceAddOnsList_Update()
-		_G.InterfaceOptionsOptionsFrame_RefreshAddOns()
 		return _G.InterfaceOptionsFrame_OpenToCategory(_G[category])
 	end
 
@@ -781,13 +796,39 @@ function CFG:Init()
 	_G.MultiActionBar_Update()
 	_G.UIParent_ManageFramePositions()
 
-	local warningPlate = CFG:CreateWarningPlate(_G.InterfaceOptionsActionBarsPanel,
+	local panel = _G.CreateFrame("Frame", "LSUIGeneralConfigPanel", _G.InterfaceOptionsFramePanelContainer)
+	panel.name = L["LS_UI"]
+	panel:Hide()
+
+	self:AddPanel(panel)
+
+	local button = self:CreateButton(panel, {
+		name = "$parentEnabler",
+		text = L["ENABLE"],
+		func = function(self)
+			self:ClearAllPoints()
+			self:Hide()
+
+			CFG:General_Init()
+			CFG:Bars_Init()
+			CFG:AuraTracker_Init()
+			CFG:Blizzard_Init()
+			CFG:Tooltips_Init()
+			CFG:UnitFrames_Init()
+		end,
+	})
+	button:SetPoint("TOPLEFT", 16, -16)
+
+	local warningPlate = self:CreateWarningPlate(_G.InterfaceOptionsActionBarsPanel,
 		{
 			parent = _G.InterfaceOptionsActionBarsPanel,
 			name = "$parentLSUIBarsWarning",
 			frame_level =_G.InterfaceOptionsActionBarsPanelBottomLeft:GetFrameLevel() + 1,
 			tooltip_text = L["ACTION_BAR_INFO_TOOLTIP"],
 			click = function()
+				button:ClearAllPoints()
+				button:Hide()
+
 				OpenToCategory("LSUIBarsConfigPanel")
 			end
 		})
