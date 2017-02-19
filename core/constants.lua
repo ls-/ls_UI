@@ -32,21 +32,21 @@ local COLORS = {
 
 COLORS.BLACK = E:CreateColor(0, 0, 0)
 COLORS.BLIZZ_YELLOW = E:CreateColor(255, 210, 0) -- Blizzard Normal Colour
-COLORS.BLUE = E:CreateColor(23, 152, 251) -- Munsell 5PB 6/14 (#1798fb)
-COLORS.DARK_GRAY = E:CreateColor(59, 58, 58) -- Munsell N2 (#3b3a3a)
-COLORS.DARK_RED = E:CreateColor(140, 29, 30) -- Munsell 7.5R 3/10 (#8c1d1e)
-COLORS.DARK_BLUE = E:CreateColor(32, 98, 165) -- Munsell 5PB 4/10 (#2062a5)
-COLORS.GRAY = E:CreateColor(136, 137, 135) -- Munsell N5 (#888987)
-COLORS.GREEN = E:CreateColor(46, 172, 52) -- Munsell 10GY 6/12 (#2eac34)
-COLORS.INDIGO = E:CreateColor(148, 137, 228) -- Munsell 10PB 6/12 (#9489e4)
+COLORS.BLUE = E:CreateColor(21, 155, 243) -- Munsell 2.5PB 6/12 (#159BF3)
+COLORS.DARK_BLUE = E:CreateColor(38, 97, 172) -- Munsell 5PB 4/10 (#2661ac)
+COLORS.DARK_GRAY = E:CreateColor(52, 48, 51) -- Munsell N 2 (#343033)
+COLORS.DARK_RED = E:CreateColor(141, 28, 33) -- Munsell 7.5R 3/10 (#8d1c21)
+COLORS.GRAY = E:CreateColor(125, 122, 125) -- Munsell N 5 (#7d7a7d)
+COLORS.GREEN = E:CreateColor(60, 170, 59) -- Munsell 10GY 6/12 (#3caa3b)
+COLORS.INDIGO = E:CreateColor(151, 135, 237) -- Munsell 10PB 6/12 (#9787ed)
 COLORS.LIGHT_BLUE = E:CreateColor(0.41, 0.8, 0.94) -- Blizzard Sanctuary Colour
-COLORS.LIGHT_GRAY = E:CreateColor(202, 202, 202) -- Munsell N8 (#cacaca)
-COLORS.LIGHT_GREEN = E:CreateColor(110, 228, 99) -- Munsell 10GY 8/12 (#6ee463)
-COLORS.ORANGE = E:CreateColor(230, 118, 47) -- Munsell 2.5YR 6/12 (#e6762f)
-COLORS.PURPLE = E:CreateColor(120, 76, 164) -- Munsell 2.5P 4/12 (#784ca4)
-COLORS.RED = E:CreateColor(220, 68, 54) -- Munsell 7.5R 5/14 (#dc4436)
+COLORS.LIGHT_GRAY = E:CreateColor(205, 201, 205) -- Munsell N 8 (#cdc9cd)
+COLORS.LIGHT_GREEN = E:CreateColor(120, 225, 107) -- Munsell 10GY 8/12 (#78e16b)
+COLORS.ORANGE = E:CreateColor(232, 116, 52) -- Munsell 2.5YR 6/12 (#e87434)
+COLORS.PURPLE = E:CreateColor(122, 75, 170) -- Munsell 2.5P 4/12 (#7a4baa)
+COLORS.RED = E:CreateColor(222, 67, 58) -- Munsell 7.5R 5/14 (#de433a)
 COLORS.WHITE = E:CreateColor(255, 255, 255)
-COLORS.YELLOW = E:CreateColor(255, 183, 60) -- Munsell 7.5YR 8/12 (#ffb73c)
+COLORS.YELLOW = E:CreateColor(250, 193, 74) -- Munsell 2.5Y 8/10 (#fac14a)
 
 COLORS.GYR = E:CreateColorTable({COLORS.GREEN:GetRGB()}, {COLORS.YELLOW:GetRGB()}, {COLORS.RED:GetRGB()})
 COLORS.RYG = E:CreateColorTable({COLORS.RED:GetRGB()}, {COLORS.YELLOW:GetRGB()}, {COLORS.GREEN:GetRGB()})
@@ -70,13 +70,13 @@ oUF.colors.reaction = {
 	[8] = {COLORS.GREEN:GetRGB()},
 }
 
-oUF.colors.power.ARCANE_CHARGES = {38 / 255, 125 / 255, 206 / 255} -- Munsell 5PB 5/12 (#267dce)
-oUF.colors.power.COMBO_POINTS = {215 / 255, 77 / 255, 18 / 255} -- Munsell 10R 5/14 (#d74d12)
-oUF.colors.power.ENERGY = {251 / 255, 195 / 255, 10 / 255} -- Munsell 2.5Y 8/12 (#fbc30a)
-oUF.colors.power.INSANITY = {125 / 255, 70 / 255, 174 / 255} -- Munsell 2.5P 4/14 (#7d46ae)
+oUF.colors.power.ARCANE_CHARGES = {46 / 255, 124 / 255, 214 / 255} -- Munsell 5PB 5/12 (#2e7cd6)
+oUF.colors.power.COMBO_POINTS = {216 / 255, 75 / 255, 24 / 255} -- Munsell 10R 5/14 (#d84b18)
+oUF.colors.power.ENERGY = {COLORS.YELLOW:GetRGB()}
+oUF.colors.power.INSANITY = {126 / 255, 69 / 255, 180 / 255} -- Munsell 2.5P 4/14 (#7e45b4)
 oUF.colors.power.MANA = {COLORS.BLUE:GetRGB()}
-oUF.colors.power.RUNES = {94 / 255, 183 / 255, 248 / 255} -- Munsell 2.5PB 7/10 (#5eb7f8)
-oUF.colors.power.SOUL_SHARDS = {149 / 255, 99 / 255, 202 / 255} -- Munsell 2.5P 5/14 (#9563ca)
+oUF.colors.power.RUNES = {107 / 255, 183 / 255, 238 / 255} -- Munsell 10B 7/8 (#6bb7ee)
+oUF.colors.power.SOUL_SHARDS = {150 / 255, 97 / 255, 210 / 255} -- Munsell 2.5P 5/14 (#9661d2)
 
 for k, color in pairs(oUF.colors.power) do
 	if type(color[1]) ~= "table" then
@@ -124,15 +124,15 @@ COLORS.BUTTON_ICON = {
 }
 
 COLORS.HEALPREDICTION = {
-	MY_HEAL = E:CreateColor(41, 142, 48), -- Munsell 510GY 5/10 (#298e30)
-	OTHER_HEAL = E:CreateColor(63, 164, 155), -- Munsell 10GY 4/8 (#227029)
+	MY_HEAL = E:CreateColor(52, 140, 53), -- Munsell 10GY 5/10 (#348c35)
+	OTHER_HEAL = E:CreateColor(42, 111, 45), -- Munsell 10GY 4/8 (#2a6f2d)
 	HEAL_ABSORB = COLORS.DARK_RED,
-	DAMAGE_ABSORB = E:CreateColor(186, 204, 229), -- Munsell 5PB 8/4 (#bacce5)
+	DAMAGE_ABSORB = E:CreateColor(190, 201, 239), -- Munsell 5PB 8/4 (#bec9ef)
 }
 
 COLORS.FACTION = {
-	ALLIANCE = E:CreateColor(0.29, 0.33, 0.91), -- Blizzard Alliance Colour
-	HORDE = E:CreateColor(0.90, 0.05, 0.07), -- Blizzard Horde Color
+	ALLIANCE = E:CreateColor(74, 89, 184), -- Munsell 7.5PB 4/12 (#4a59b8)
+	HORDE = E:CreateColor(218, 41, 28), -- Munsell 7.5R 5/16 (#e8332e)
 	NEUTRAL = COLORS.WHITE,
 }
 
