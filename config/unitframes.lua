@@ -10,7 +10,7 @@ local table = _G.table
 local pairs = _G.pairs
 
 function CFG:UnitFrames_Init()
-	local panel = _G.CreateFrame("Frame", "LSUIAuraTrackerConfigPanel", _G.InterfaceOptionsFramePanelContainer)
+	local panel = _G.CreateFrame("Frame", "LSUIUnitFramesConfigPanel", _G.InterfaceOptionsFramePanelContainer)
 	panel.name = L["UNIT_FRAME"]
 	panel.parent = L["LS_UI"]
 	panel:Hide()

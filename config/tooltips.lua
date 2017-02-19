@@ -8,7 +8,7 @@ local _G = _G
 local string = _G.string
 
 function CFG:Tooltips_Init()
-	local panel = _G.CreateFrame("Frame", "LSUIAuraTrackerConfigPanel", _G.InterfaceOptionsFramePanelContainer)
+	local panel = _G.CreateFrame("Frame", "LSUITooltipsConfigPanel", _G.InterfaceOptionsFramePanelContainer)
 	panel.name = L["TOOLTIP"]
 	panel.parent = L["LS_UI"]
 	panel:Hide()
