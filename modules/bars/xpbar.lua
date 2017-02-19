@@ -86,7 +86,7 @@ local function UpdateXPBars()
 
 			local _, _, _, _, totalXP, pointsSpent = _G.C_ArtifactUI.GetEquippedArtifactInfo()
 			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
+			local r, g, b, hex = M.COLORS.ARTIFACT:GetRGBHEX()
 
 			bar[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
@@ -98,7 +98,7 @@ local function UpdateXPBars()
 				},
 			}
 
-			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.ARTIFACT:GetHEX(), _G.BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
@@ -111,7 +111,7 @@ local function UpdateXPBars()
 				index = index + 1
 
 				local cur, max = _G.UnitXP("player"), _G.UnitXPMax("player")
-				local r, g, b = M.COLORS.XP:GetRGB()
+				local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
@@ -128,7 +128,7 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line2 = nil
 				end
 
-				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
@@ -139,7 +139,7 @@ local function UpdateXPBars()
 				index = index + 1
 
 				local cur, max = _G.UnitHonor("player"), _G.UnitHonorMax("player")
-				local r, g, b = M.COLORS.HONOR:GetRGB()
+				local r, g, b, hex = M.COLORS.FACTION[_G.UnitFactionGroup("player"):upper()]:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
 					header = L["HONOR"],
@@ -159,7 +159,7 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line3 = nil
 				end
 
-				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.HONOR:GetHEX(), _G.BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
@@ -190,8 +190,7 @@ local function UpdateXPBars()
 				max, cur = repMax - repMin, repCur - repMin
 			end
 
-			local r, g, b = M.COLORS.REACTION[standing]:GetRGB()
-			local hex = M.COLORS.REACTION[standing]:GetHEX()
+			local r, g, b, hex = M.COLORS.REACTION[standing]:GetRGBHEX()
 
 			bar[index].tooltipInfo = {
 				header = L["REPUTATION"],
