@@ -38,10 +38,14 @@ local actionButtons = {}
 local handledButtons = {}
 
 local function Button_HasAction(self)
-	if self.__type == "action" or self.__type == "extra" then
-		return self.action and _G.HasAction(self.action)
-	elseif self.__type == "petaction" then
-		return _G.GetPetActionInfo(self:GetID())
+	if self:IsShown() then
+		if self.__type == "action" or self.__type == "extra" then
+			return self.action and _G.HasAction(self.action)
+		elseif self.__type == "petaction" then
+			return _G.GetPetActionInfo(self:GetID())
+		end
+	else
+		return false
 	end
 end
 
@@ -60,25 +64,7 @@ local function SetItemButtonBorderColor(self)
 end
 
 local function SetVertexColorHook(self, r, g, b)
-	local button = self:GetParent()
-	local action = button.action
-	local name = string.gsub(button:GetName(), "%d", "")
-
-	if action and _G.IsEquippedAction(action) then
-		button:SetBorderColor(M.COLORS.GREEN:GetRGB())
-
-		return
-	end
-
-	if r == 1 and g == 1 and b == 1 then
-		if name == "ActionButton" then
-			button:SetBorderColor(M.COLORS.YELLOW:GetRGB())
-		else
-			button:SetBorderColor(r, g, b)
-		end
-	else
-		button:SetBorderColor(r, g, b)
-	end
+	self:GetParent():SetBorderColor(r, g, b)
 end
 
 local function SetTextHook(self, text)
@@ -138,12 +124,6 @@ local function SetHotKeyTextHook(self)
 	end
 
 	self:SetFormattedText("%s", text or "")
-end
-
-local function SetHotKeyVertexColorHook(self, r, g, b)
-	if r ~= 0.79 or g ~= 0.79 or b ~= 0.79 then
-		self:SetVertexColor(0.79, 0.79, 0.79) -- M.COLORS.LIGHT_GRAY
-	end
 end
 
 local function SetMacroTextHook(self, text)
@@ -232,7 +212,6 @@ local function SkinButton(button)
 		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
 
 		bHotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGB())
-		hooksecurefunc(bHotKey, "SetVertexColor", SetHotKeyVertexColorHook)
 
 		if not C.bars.show_hotkey then
 			bHotKey:Hide()
@@ -286,8 +265,6 @@ local function SkinButton(button)
 		bNormalTexture:SetTexture(nil)
 
 		E:CreateBorder(button)
-
-		hooksecurefunc(bNormalTexture, "SetVertexColor", SetVertexColorHook)
 	end
 
 	if bPushedTexture then
@@ -515,8 +492,6 @@ function E:SkinPetBattleButton(button)
 		bBetterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
 	end
 
-	button:SetBorderColor(M.COLORS.YELLOW:GetRGB())
-
 	button.__type = "petbattle"
 	button.__styled = true
 end
@@ -663,7 +638,8 @@ do
 
 		local flash_timer = 0
 
-		local function OnUpdate(_, elapsed)
+		local updater = _G.CreateFrame("Frame")
+		updater:SetScript("OnUpdate", function (_, elapsed)
 			flash_timer = flash_timer - elapsed
 
 			for button in next, actionButtons do
@@ -676,22 +652,60 @@ do
 				end
 
 				if button.__type == "action" or button.__type == "extra" then
-					if IsActionInRange(button.action) == false then
-						button.icon:SetDesaturated(true)
-						button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-					else
-						local isUsable, notEnoughMana = IsUsableAction(button.action)
+					local isUsable, notEnoughMana = IsUsableAction(button.action)
 
-						if isUsable then
-							button.icon:SetDesaturated(false)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA())
+					if C.bars.use_icon_as_indicator then
+						if not isUsable and not notEnoughMana then
+							button.icon:SetDesaturated(true)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+						elseif IsActionInRange(button.action) == false then
+							button.icon:SetDesaturated(true)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
 						elseif notEnoughMana then
 							button.icon:SetDesaturated(true)
 							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
 						else
+							button.icon:SetDesaturated(false)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+						end
+
+						if button.HotKey then
+							if not isUsable and not notEnoughMana then
+								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(0.65))
+							else
+								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(1))
+							end
+						end
+					else
+						if not isUsable and not notEnoughMana then
 							button.icon:SetDesaturated(true)
 							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+						else
+							button.icon:SetDesaturated(false)
+							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 						end
+
+						if button.HotKey then
+							if not isUsable and not notEnoughMana then
+								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(0.65))
+							elseif IsActionInRange(button.action) == false then
+								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+							elseif notEnoughMana then
+								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
+							else
+								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(1))
+							end
+						end
+					end
+				end
+			end
+
+			for button in next, handledButtons do
+				if button:IsShown() and button.SetBorderColor then
+					if button.action and _G.IsEquippedAction(button.action) then
+						button:SetBorderColor(M.COLORS.GREEN:GetRGB())
+					else
+						button:SetBorderColor(1, 1, 1)
 					end
 				end
 			end
@@ -699,11 +713,7 @@ do
 			if flash_timer <= 0 then
 				flash_timer = 0.4
 			end
-		end
-
-		-- Don't use C_Timer.NewTicker here
-		local updater = _G.CreateFrame("Frame")
-		updater:SetScript("OnUpdate", OnUpdate)
+		end)
 
 		E:UnregisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
 	end

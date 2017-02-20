@@ -302,7 +302,7 @@ function CFG:Bars_Init()
 		{
 			parent = panel,
 			name = "$parentMacroTextToggle",
-			text = L["MACRO_TEXT"],
+			text = L["SHOW_MACRO_TEXT"],
 			get = function() return C.bars.show_name end,
 			set = function(_, value)
 				C.bars.show_name = value
@@ -326,7 +326,7 @@ function CFG:Bars_Init()
 		{
 			parent = panel,
 			name = "$parentHotKeyToggle",
-			text = L["KEY_BINDING_TEXT"],
+			text = L["SHOW_KEY_BINDING_TEXT"],
 			get = function() return C.bars.show_hotkey end,
 			set = function(_, value)
 				C.bars.show_hotkey = value
@@ -344,7 +344,27 @@ function CFG:Bars_Init()
 				end
 			end
 		})
-	hotKeyText:SetPoint("LEFT", macroToggle, "RIGHT", 110, 0)
+	hotKeyText:SetPoint("LEFT", macroToggle, "RIGHT", 246, 0)
+
+	local iconToggle = CFG:CreateCheckButton(panel,
+		{
+			parent = panel,
+			name = "$parentIconToggle",
+			text = L["USE_ICON_AS_INDICATOR_TEXT"],
+			get = function() return C.bars.use_icon_as_indicator end,
+			set = function(_, value)
+				C.bars.use_icon_as_indicator = value
+			end,
+			refresh = function(self)
+				self:SetChecked(C.bars.use_icon_as_indicator)
+			end,
+			click = function(self)
+				local isChecked = self:GetChecked()
+
+				self:SetValue(isChecked)
+			end
+		})
+	iconToggle:SetPoint("TOPLEFT", macroToggle, "BOTTOMLEFT", 0, -8)
 
 	local tabbedFrame = CFG:CreateTabbedFrame(panel,
 		{
@@ -396,7 +416,7 @@ function CFG:Bars_Init()
 				},
 			},
 		})
-	tabbedFrame:SetPoint("TOPLEFT", macroToggle, "BOTTOMLEFT", 6, -40)
+	tabbedFrame:SetPoint("TOPLEFT", iconToggle, "BOTTOMLEFT", 6, -40)
 	tabbedFrame:SetPoint("RIGHT", panel, "RIGHT", -16, 0)
 	tabbedFrame:SetHeight(112)
 	panel.TabbedFrame = tabbedFrame

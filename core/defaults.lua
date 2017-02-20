@@ -82,6 +82,7 @@ D["bars"] = {
 	restricted = true,
 	show_hotkey = true,
 	show_name = true,
+	use_icon_as_indicator = true,
 	bar1 = { -- MainMenuBar
 		visible = true,
 		point = {"BOTTOM", 0, 16},
