@@ -6,4 +6,5 @@
 	<Script file="blizzard.lua"/>
 	<Script file="tooltips.lua"/>
 	<Script file="unitframes.lua"/>
+	<Script file="unitframesauras.lua"/>
 </Ui>

@@ -815,6 +815,7 @@ function CFG:Init()
 			CFG:Blizzard_Init()
 			CFG:Tooltips_Init()
 			CFG:UnitFrames_Init()
+			CFG:UnitFramesAuras_Init()
 		end,
 	})
 	button:SetPoint("TOPLEFT", 16, -16)
