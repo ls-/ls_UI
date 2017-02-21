@@ -1,3 +1,11 @@
+## Version 70100.12
+
+- Added "ls: UI" config entry w/ "Enable" button to interface options panel. However, It doesn't change the fact that you still need to reload UI after you're done setting up the addon;
+- Added "Use Icon as Indicator" option to disable action button's icon colour change that is based on ability's states: not in range, OOM, not usable, etc;
+- Tweaked target/focus frame aura filter, I messed up a bit in v70100.09;
+- Honour bar's colour is now based on player's faction;
+- Changed addon name's colour so it'll no longer interfere w/ addon list sorting;
+
 ## Version 70100.11
 
 - Yet another attempt to fix action bar issues.
