@@ -3,7 +3,7 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local TOOLTIPS = P:AddModule("Tooltips")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 local hooksecurefunc = _G.hooksecurefunc
 local type = _G.type

@@ -6,7 +6,7 @@ local MAIL = P:GetModule("Mail")
 local MINIMAP = P:GetModule("MiniMap")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 
 -- Mine

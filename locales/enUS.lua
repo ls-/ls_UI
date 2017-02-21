@@ -2,7 +2,7 @@
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local next = _G.next
 
 -- Mine

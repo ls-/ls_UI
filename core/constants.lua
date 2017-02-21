@@ -2,7 +2,7 @@ local _, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 local pairs = _G.pairs
 local select = _G.select

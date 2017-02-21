@@ -4,7 +4,7 @@ local CFG = P:GetModule("Config")
 local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 
 function CFG:Blizzard_Init()

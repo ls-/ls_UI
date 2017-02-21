@@ -4,7 +4,7 @@ local CFG = P:GetModule("Config")
 local AURATRACKER = P:GetModule("AuraTracker")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 local table = _G.table
 local pairs = _G.pairs

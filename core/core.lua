@@ -1,7 +1,7 @@
 local an, ns = ...
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local table = _G.table
 local string = _G.string
 local debugstack = _G.debugstack

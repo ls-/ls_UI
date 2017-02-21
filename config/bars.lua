@@ -4,7 +4,7 @@ local CFG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 
 -- Mine

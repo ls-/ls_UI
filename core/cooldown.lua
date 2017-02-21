@@ -2,7 +2,7 @@ local _, ns = ...
 local E = ns.E
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
 -- Blizz

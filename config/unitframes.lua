@@ -4,7 +4,7 @@ local CFG = P:GetModule("Config")
 local UF = P:GetModule("UnitFrames")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 local table = _G.table
 local pairs = _G.pairs

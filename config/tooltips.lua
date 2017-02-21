@@ -4,7 +4,7 @@ local CFG = P:GetModule("Config")
 local TOOLTIPS = P:GetModule("Tooltips")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local string = _G.string
 
 function CFG:Tooltips_Init()

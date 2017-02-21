@@ -3,7 +3,7 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 -- Lua
-local _G = _G
+local _G = getfenv(0)
 local unpack = unpack
 
 -- Blizz
