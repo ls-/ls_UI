@@ -671,29 +671,27 @@ do
 
 						if button.HotKey then
 							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(0.65))
+								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
 							else
-								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(1))
+								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 							end
 						end
 					else
 						if not isUsable and not notEnoughMana then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+							button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
 						else
-							button.icon:SetDesaturated(false)
 							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 						end
 
 						if button.HotKey then
 							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(0.65))
+								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
 							elseif IsActionInRange(button.action) == false then
 								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
 							elseif notEnoughMana then
 								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
 							else
-								button.HotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGBA(1))
+								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 							end
 						end
 					end
