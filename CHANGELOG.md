@@ -1,6 +1,6 @@
 ## Version 70100.13
 
-- Disabled icons' desaturation if they aren't used as indicators.
+- Disable icons' desaturation if they aren't used as indicators.
 
 ## Version 70100.12
 
