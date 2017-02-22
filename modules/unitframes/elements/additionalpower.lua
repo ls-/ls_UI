@@ -103,19 +103,13 @@ end
 local function OnShow(self)
 	self.Indicator:Free(false)
 
-	if self:GetOrientation() == "VERTICAL" then
-		self.Indicator:SetStartPoint("BOTTOM", self:GetStatusBarTexture())
-		self.Indicator:SetEndPoint("TOP", self:GetStatusBarTexture())
-	else
-		self.Indicator:SetStartPoint("LEFT", self:GetStatusBarTexture())
-		self.Indicator:SetEndPoint("RIGHT", self:GetStatusBarTexture())
-	end
+	self.Indicator:SetOrientation(self:GetOrientation())
+	self.Indicator:SetAllPoints(self:GetStatusBarTexture())
 end
 
 local function OnHide(self)
 	self.Indicator:Free(true)
 	self.Indicator:Refresh()
-	self.Indicator:ResetPoints()
 end
 
 function UF:CreateAdditionalPowerBar(parent, options)

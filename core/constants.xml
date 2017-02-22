@@ -380,27 +380,40 @@
 					return self.Fill:GetVertexColor()
 				end
 
-				self.SetStartPoint = function(self, p, parent)
-					self.Fill:SetStartPoint(p, parent)
-					self.FillScroll1:SetStartPoint(p, parent)
-					self.FillScroll2:SetStartPoint(p, parent)
-				end
-
-				self.SetEndPoint = function(self, p, parent)
-					self.Fill:SetEndPoint(p, parent)
-					self.FillScroll1:SetEndPoint(p, parent)
-					self.FillScroll2:SetEndPoint(p, parent)
-				end
-
 				self.SetThickness = function(self, thickness)
 					self.Fill:SetThickness(thickness)
 					self.FillScroll1:SetThickness(thickness)
 					self.FillScroll2:SetThickness(thickness)
 				end
 
+				self.SetOrientation = function(self, flag)
+					if flag == "HORIZONTAL" then
+						self.orientation = flag
+
+						self.Fill:SetStartPoint("LEFT", self)
+						self.FillScroll1:SetStartPoint("LEFT", self)
+						self.FillScroll2:SetStartPoint("LEFT", self)
+
+						self.Fill:SetEndPoint("RIGHT", self)
+						self.FillScroll1:SetEndPoint("RIGHT", self)
+						self.FillScroll2:SetEndPoint("RIGHT", self)
+					else
+						self.orientation = "VERTICAL"
+
+						self.Fill:SetStartPoint("BOTTOM", self)
+						self.FillScroll1:SetStartPoint("BOTTOM", self)
+						self.FillScroll2:SetStartPoint("BOTTOM", self)
+
+						self.Fill:SetEndPoint("TOP", self)
+						self.FillScroll1:SetEndPoint("TOP", self)
+						self.FillScroll2:SetEndPoint("TOP", self)
+					end
+				end
+
+				self:SetOrientation("HORIZONTAL")
+				self:SetThickness(16 * _G.UIParent:GetScale())
 				self:RegisterEvent("DISPLAY_SIZE_CHANGED")
 				self:RegisterEvent("UI_SCALE_CHANGED")
-				self:SetThickness(16 * _G.UIParent:GetScale())
 			</OnLoad>
 			<OnEvent>
 				self:SetThickness(16 * _G.UIParent:GetScale())

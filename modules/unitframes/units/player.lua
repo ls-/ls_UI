@@ -356,22 +356,31 @@ function UF:ConstructPlayerFrame(frame)
 	-- indicators
 	local indicator_parent = _G.CreateFrame("Frame", nil, frame)
 	indicator_parent:SetFrameLevel(level + 1)
-	indicator_parent:SetSize(90, 118)
-	indicator_parent:SetPoint("CENTER")
+	indicator_parent:SetPoint("LEFT", 38, 0)
+	indicator_parent:SetSize(8, 118)
 
 	frame.LeftIndicator = self:CreateIndicator(indicator_parent, {
-		is_vertical = true
+		is_vertical = true,
+		post_update = function(self)
+			self:SetAllPoints(self:GetParent())
+		end
 	})
 	frame.LeftIndicator:SetFrameLevel(level + 2)
-	frame.LeftIndicator:SetPoint("LEFT", 0, 0)
-	frame.LeftIndicator:SetSize(8, 118)
+	frame.LeftIndicator:SetAllPoints()
+
+	indicator_parent = _G.CreateFrame("Frame", nil, frame)
+	indicator_parent:SetFrameLevel(level + 1)
+	indicator_parent:SetPoint("RIGHT", -38, 0)
+	indicator_parent:SetSize(8, 118)
 
 	frame.RightIndicator = self:CreateIndicator(indicator_parent, {
-		is_vertical = true
+		is_vertical = true,
+		post_update = function(self)
+			self:SetAllPoints(self:GetParent())
+		end
 	})
 	frame.RightIndicator:SetFrameLevel(level + 2)
-	frame.RightIndicator:SetPoint("RIGHT", 0, 0)
-	frame.RightIndicator:SetSize(8, 118)
+	frame.RightIndicator:SetAllPoints()
 
 	local function RefreshIndicators()
 		if frame.LeftIndicator:IsFree() then

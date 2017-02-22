@@ -12,41 +12,45 @@ local function OnShow(self)
 	end
 end
 
+local function Refresh(self)
+	local status = _G.UnitThreatSituation("player")
+	local r, g, b = M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB()
+
+	if _G.UnitAffectingCombat("player") then
+		r, g, b = M.COLORS.THREAT[status and status + 1 or 1]:GetRGB()
+	end
+
+	E:SetSmoothedVertexColor(self, r, g, b)
+
+	if self.PostRefresh then
+		self:PostRefresh()
+	end
+end
+
+local function Free(self, flag)
+	self.free = flag
+end
+
+local function IsFree(self)
+	return self.free
+end
+
 function UF:CreateIndicator(parent, options)
 	P.argcheck(1, parent, "table")
 
 	options = options or {}
 
 	local indicator = _G.CreateFrame("Frame", nil, parent, "LSUILineTemplate")
-	indicator:SetScript("OnShow", OnShow)
+	indicator:SetOrientation(options.is_vertical and "VERTICAL" or "HORIZONTAL")
+	indicator:HookScript("OnShow", OnShow)
 
-	indicator.ResetPoints = function()
-		indicator:SetStartPoint(options.is_vertical and "BOTTOM" or "LEFT", indicator)
-		indicator:SetEndPoint(options.is_vertical and "TOP" or "RIGHT", indicator)
-	end
-
-	indicator.Refresh = function()
-		local status = _G.UnitThreatSituation("player")
-		local r, g, b = M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB()
-
-		if _G.UnitAffectingCombat("player") then
-			r, g, b = M.COLORS.THREAT[status and status + 1 or 1]:GetRGB()
-		end
-
-		E:SetSmoothedVertexColor(indicator, r, g, b)
-	end
-
-	indicator.Free = function(_, flag)
-		indicator.free = flag
-	end
-
-	indicator.IsFree = function()
-		return indicator.free
-	end
+	indicator.Refresh = Refresh
+	indicator.PostRefresh = options.post_update
+	indicator.Free = Free
+	indicator.IsFree = IsFree
 
 	indicator:Free(true)
 	indicator:Refresh()
-	indicator:ResetPoints()
 	indicator.ScrollAnim:Play()
 
 	return indicator
