@@ -1,3 +1,7 @@
+## Version 70100.13
+
+- Disabled icons' desaturation if they aren't used as indicators.
+
 ## Version 70100.12
 
 - Added "ls: UI" config entry w/ "Enable" button to interface options panel. However, It doesn't change the fact that you still need to reload UI after you're done setting up the addon;
