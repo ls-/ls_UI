@@ -120,6 +120,7 @@ local function UpdateXPBars()
 				index = index + 1
 
 				local cur, max = _G.UnitXP("player"), _G.UnitXPMax("player")
+				local bonus = _G.GetXPExhaustion()
 				local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
@@ -129,9 +130,9 @@ local function UpdateXPBars()
 					},
 				}
 
-				if _G.GetXPExhaustion() and _G.GetXPExhaustion() > 0 then
+				if bonus and bonus > 0 then
 					bar[index].tooltipInfo.line2 = {
-						text = L["XP_BAR_XP_BONUS_TOOLTIP"]:format(_G.GetXPExhaustion())
+						text = L["XP_BAR_XP_BONUS_TOOLTIP"]:format(bonus)
 					}
 				else
 					bar[index].tooltipInfo.line2 = nil
@@ -148,6 +149,7 @@ local function UpdateXPBars()
 				index = index + 1
 
 				local cur, max = _G.UnitHonor("player"), _G.UnitHonorMax("player")
+				local bonus = _G.GetHonorExhaustion()
 				local r, g, b, hex = M.COLORS.FACTION[_G.UnitFactionGroup("player"):upper()]:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
@@ -160,9 +162,9 @@ local function UpdateXPBars()
 					},
 				}
 
-				if _G.GetHonorExhaustion() and _G.GetHonorExhaustion() > 0 then
+				if bonus and bonus > 0 then
 					bar[index].tooltipInfo.line3 = {
-						text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(_G.GetHonorExhaustion())
+						text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(bonus)
 					}
 				else
 					bar[index].tooltipInfo.line3 = nil
