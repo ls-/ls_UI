@@ -83,8 +83,8 @@ local function UpdateXPBars()
 		if _G.HasArtifactEquipped() then
 			index = index + 1
 
-			local _, _, _, _, totalXP, pointsSpent = _G.C_ArtifactUI.GetEquippedArtifactInfo()
-			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
+			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = _G.C_ArtifactUI.GetEquippedArtifactInfo()
+			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
 			local _, ak = _G.GetCurrencyInfo(1171)
 			local r, g, b, hex = M.COLORS.ARTIFACT:GetRGBHEX()
 
