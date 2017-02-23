@@ -86,6 +86,7 @@ local function UpdateXPBars()
 
 			local _, _, _, _, totalXP, pointsSpent = _G.C_ArtifactUI.GetEquippedArtifactInfo()
 			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP)
+			local _, ak = _G.GetCurrencyInfo(1171)
 			local r, g, b, hex = M.COLORS.ARTIFACT:GetRGBHEX()
 
 			bar[index].tooltipInfo = {
@@ -97,6 +98,14 @@ local function UpdateXPBars()
 					text = L["XP_BAR_ARTIFACT_NUM_PURCHASED_RANKS_TOOLTIP"]:format(pointsSpent)
 				},
 			}
+
+			if ak and ak > 0 then
+				bar[index].tooltipInfo.line3 = {
+					text = L["XP_BAR_ARTIFACT_KNOWLEDGE_LEVEL_TOOLTIP"]:format(ak)
+				}
+			else
+				bar[index].tooltipInfo.line3 = nil
+			end
 
 			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
