@@ -92,7 +92,7 @@ local function UpdateXPBars()
 			bar[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
 				line1 = {
-					text = L["XP_BAR_ARTIFACT_NUM_TRAIT_POINTS"]:format(points)
+					text = L["XP_BAR_ARTIFACT_NUM_UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points)
 				},
 				line2 = {
 					text = L["XP_BAR_ARTIFACT_NUM_PURCHASED_RANKS_TOOLTIP"]:format(pointsSpent)
