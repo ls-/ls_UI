@@ -5,6 +5,7 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local math = _G.math
+local next = _G.next
 
 -- Blizz
 local SpellGetVisibilityInfo = _G.SpellGetVisibilityInfo
@@ -17,11 +18,19 @@ local UnitIsPlayer = _G.UnitIsPlayer
 local UnitIsPVP = _G.UnitIsPVP
 local UnitIsUnit = _G.UnitIsUnit
 local UnitPlayerControlled = _G.UnitPlayerControlled
+local C_MountJournal = _G.C_MountJournal
 
 -- Mine
 local AURA_GAP = 4
 local AURA_SIZE = 28
 local AURAS_PER_ROW = 6
+local MOUNTS = {}
+
+for _, id in next, C_MountJournal.GetMountIDs() do
+	local _, spellID = C_MountJournal.GetMountInfoByID(id)
+
+	MOUNTS[spellID] = true
+end
 
 local function SetVertexColorOverride(self, r, g, b)
 	local button = self:GetParent()
@@ -149,6 +158,10 @@ local filterFunctions = {
 			end
 		elseif caster and UnitIsUnit(caster, "vehicle") and not UnitIsPlayer("vehicle") then
 			-- print(filter == "HELPFUL" and "|cff26a526"..filter.."|r" or "|cffe52626"..filter.."|r", name, spellID, "|cffe5a526VEHICLE|r")
+			return true
+		end
+
+		if MOUNTS[spellID] and E:IsFilterApplied(frame.aura_config.show_mounts, playerSpec) then
 			return true
 		end
 
