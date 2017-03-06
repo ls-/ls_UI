@@ -90,7 +90,7 @@ oUF.Tags.Events["ls:effectivelevel"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
 
 oUF.Tags.Methods["ls:questicon"] = function(unit)
 	if _G.UnitIsQuestBoss(unit) then
-		return string.format(M.textures.inlineicons["QUEST"], 0, 0)
+		return M.textures.inlineicons["QUEST"]:format(0, 0)
 	else
 		return ""
 	end
@@ -103,7 +103,7 @@ oUF.Tags.Methods["ls:classicon"] = function(unit)
 		local _, class = _G.UnitClass(unit)
 
 		if class then
-			return string.format(M.textures.inlineicons[class], 0, 0)
+			return M.textures.inlineicons[class]:format(0, 0)
 		else
 			return ""
 		end
@@ -118,7 +118,7 @@ oUF.Tags.Methods["ls:sheepicon"] = function(unit)
 	if _G.UnitCanAttack("player", unit)
 		and (_G.UnitIsPlayer(unit) or tcontains(SHEEPABLE_TYPES, _G.UnitCreatureType(unit)))
 		and (E.PLAYER_CLASS == "MAGE" or E.PLAYER_CLASS == "SHAMAN") then
-		return string.format(M.textures.inlineicons["SHEEP"], 0, 0)
+		return M.textures.inlineicons["SHEEP"]:format(0, 0)
 	else
 		return ""
 	end
@@ -128,7 +128,7 @@ oUF.Tags.Events["ls:sheepicon"] = "UNIT_CLASSIFICATION_CHANGED"
 
 oUF.Tags.Methods["ls:phaseicon"] = function(unit)
 	if not _G.UnitInPhase(unit) then
-		return string.format(M.textures.inlineicons["PHASE"], 0, 0)
+		return M.textures.inlineicons["PHASE"]:format(0, 0)
 	else
 		return ""
 	end
@@ -138,7 +138,7 @@ oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
 
 oUF.Tags.Methods["ls:leadericon"] = function(unit)
 	if (_G.UnitInParty(unit) or _G.UnitInRaid(unit)) and _G.UnitIsGroupLeader(unit) then
-		return string.format(M.textures.inlineicons["LEADER"], 0, 0)
+		return M.textures.inlineicons["LEADER"]:format(0, 0)
 	else
 		return ""
 	end
@@ -150,7 +150,7 @@ oUF.Tags.Methods["ls:lfdroleicon"] = function(unit)
 	local role = _G.UnitGroupRolesAssigned(unit)
 
 	if role and role ~= "NONE" then
-		return string.format(M.textures.inlineicons[role], 0, 0)
+		return M.textures.inlineicons[role]:format(0, 0)
 	else
 		return ""
 	end
@@ -160,10 +160,10 @@ oUF.Tags.Events["ls:lfdroleicon"] = "GROUP_ROSTER_UPDATE"
 
 oUF.Tags.Methods["ls:combatresticon"] = function()
 	if _G.UnitAffectingCombat("player") then
-		return string.format(M.textures.inlineicons["COMBAT"], 0, 0)
+		return M.textures.inlineicons["COMBAT"]:format(0, 0)
 	else
 		if _G.IsResting() then
-			return string.format(M.textures.inlineicons["RESTING"], 0, 0)
+			return M.textures.inlineicons["RESTING"]:format(0, 0)
 		else
 			return ""
 		end
