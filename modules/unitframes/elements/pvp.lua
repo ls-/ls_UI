@@ -4,7 +4,6 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local strgsub = string.gsub
 
 -- Mine
 -- local ICON_COORDS = {48 / 128, 78 / 128, 1 / 64, 31 / 64}
@@ -22,13 +21,13 @@ local function Override(self, event, unit)
 	local level = _G.UnitPrestige(unit)
 	local factionGroup = _G.UnitFactionGroup(unit)
 
-	if(_G.UnitIsPVPFreeForAll(unit)) then
+	if _G.UnitIsPVPFreeForAll(unit) then
 		status = "FFA"
-	elseif(factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit)) then
-		if(_G.UnitIsMercenary(unit)) then
-			if(factionGroup == "Horde") then
+	elseif factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit) then
+		if _G.UnitIsMercenary(unit) then
+			if factionGroup == "Horde" then
 				factionGroup = "Alliance"
-			elseif(factionGroup == "Alliance") then
+			elseif factionGroup == "Alliance" then
 				factionGroup = "Horde"
 			end
 		end
@@ -36,8 +35,8 @@ local function Override(self, event, unit)
 		status = factionGroup
 	end
 
-	if(status) then
-		if(level > 0 and pvp.Prestige) then
+	if status then
+		if level > 0 and pvp.Prestige then
 			pvp:SetTexture(_G.GetPrestigeInfo(level))
 			pvp:SetTexCoord(0, 1, 0, 1)
 		else
@@ -54,50 +53,12 @@ local function Override(self, event, unit)
 		if pvp.Hook then
 			pvp.Hook:Show()
 		end
-
-		if pvp.Timer then
-			if _G.IsPVPTimerRunning() then
-				pvp.Timer:Show()
-
-				if not pvp.Timer.ticker then
-					-- XXX: It may look ugly, but it works!
-					pvp.Timer.ticker = _G.C_Timer.NewTicker(1, function()
-						local pattern, time = _G.SecondsToTimeAbbrev(_G.GetPVPTimer() / 1000)
-
-						if time < 1 then
-							pvp.Timer.ticker:Cancel()
-							pvp.Timer.ticker = nil
-						else
-							pvp.Timer:SetFormattedText(strgsub(pattern, " ", ""), time)
-						end
-					end)
-				end
-			else
-				if pvp.Timer.ticker then
-					pvp.Timer.ticker:Cancel()
-					pvp.Timer.ticker = nil
-				end
-
-				pvp.Timer:Hide()
-				pvp.Timer:SetText("")
-			end
-		end
 	else
 		pvp:Hide()
 		pvp.Prestige:Hide()
 
 		if pvp.Hook then
 			pvp.Hook:Hide()
-		end
-
-		if pvp.Timer then
-			if pvp.Timer.ticker then
-				pvp.Timer.ticker:Cancel()
-				pvp.Timer.ticker = nil
-			end
-
-			pvp.Timer:Hide()
-			pvp.Timer:SetText("")
 		end
 	end
 end
@@ -122,14 +83,6 @@ function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
 		t:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
 		t:SetSize(33, 36)
 		pvp.Hook = t
-	end
-
-	if options.has_pvp_timer then
-		local t = parent:CreateFontString(nil, layer, "LS10Font_Outline")
-		t:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
-		t:SetTextColor(1, 0.82, 0)
-		t:SetJustifyH("RIGHT")
-		pvp.Timer = t
 	end
 
 	pvp.Override = Override

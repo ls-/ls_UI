@@ -200,3 +200,12 @@ oUF.Tags.Methods["ls:debuffstatus"] = function(unit)
 end
 
 oUF.Tags.Events["ls:debuffstatus"] = "UNIT_AURA"
+
+oUF.Tags.Methods["ls:pvptimer"] = function()
+	if _G.IsPVPTimerRunning() then
+		local pattern, time = _G.SecondsToTimeAbbrev(_G.GetPVPTimer() / 1000)
+		if time >= 1 then
+			return pattern:gsub(" ", ""):format(time)
+		end
+	end
+end

@@ -773,18 +773,23 @@ function UF:ConstructPlayerFrame(frame)
 	end
 
 	-- pvp
-	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6, {
-		has_pvp_timer = true,
-	})
+	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6)
 	frame.PvP:SetPoint("TOP", fg_parent, "BOTTOM", 0, 10)
-	frame:RegisterEvent("PVP_TIMER_UPDATE", frame.PvP.Override)
 
+	-- castbar
 	frame.Castbar = self:CreateCastBar(frame, 202, true, true)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 	E:CreateMover(frame.Castbar.Holder)
 
-	-- status icons
-	local status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	-- status icons/texts
+	local status = text_parent:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	status:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 0, 0)
+	status:SetTextColor(1, 0.82, 0)
+	status:SetJustifyH("RIGHT")
+	status.frequentUpdates = 0.5
+	frame:Tag(status, "[ls:pvptimer]")
+
+	status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("LEFT", frame, "LEFT", 5, 0)
 	frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
