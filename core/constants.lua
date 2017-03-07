@@ -288,7 +288,7 @@ E.PLAYER_SPEC_FLAGS = {
 -- Everything that's not available at ADDON_LOADED goes here
 function E:UpdateConstants()
 	for i = 1, _G.GetNumSpecializations() do
-		E.PLAYER_SPEC_FLAGS[0] = E:AddFilterToMask(E.PLAYER_SPEC_FLAGS[0] or 0, E.PLAYER_SPEC_FLAGS[i])
+		E.PLAYER_SPEC_FLAGS[0] = E:EnableFlag(E.PLAYER_SPEC_FLAGS[0] or 0, E.PLAYER_SPEC_FLAGS[i])
 	end
 
 	E.PLAYER_GUID = _G.UnitGUID("player")

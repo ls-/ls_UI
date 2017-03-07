@@ -27,7 +27,7 @@ local function PopulateActiveAurasTable(index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
 	local playerSpec = E:GetPlayerSpecFlag()
 
-	if name and C.auratracker[filter][spellID] and E:IsFilterApplied(C.auratracker[filter][spellID], playerSpec) then
+	if name and C.auratracker[filter][spellID] and E:CheckFlag(C.auratracker[filter][spellID], playerSpec) then
 		table.insert(activeAuras, {
 			index = index,
 			icon = iconTexture,

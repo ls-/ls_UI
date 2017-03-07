@@ -184,7 +184,7 @@ do
 			local button = self[i]
 
 			if button:IsPositive() then
-				value = E:AddFilterToMask(value, button.value)
+				value = E:EnableFlag(value, button.value)
 			end
 		end
 
@@ -197,7 +197,7 @@ do
 		for i = 1, #self do
 			local button = self[i]
 
-			if E:IsFilterApplied(value, E.PLAYER_SPEC_FLAGS[i]) then
+			if E:CheckFlag(value, self.Flags[i]) then
 				button:SetButtonState("NORMAL", true) -- positive
 			else
 				button:SetButtonState("PUSHED", true) -- negative

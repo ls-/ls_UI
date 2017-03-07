@@ -411,15 +411,20 @@ end
 -- BITS --
 ----------
 
-function E:IsFilterApplied(mask, filter)
-	return bit.band(mask, filter) == filter
+function E:CheckFlag(mask, ...)
+	local flag = bit.bor(...)
+	return bit.band(mask, flag) == flag
 end
 
-function E:AddFilterToMask(mask, filter)
-	return bit.bor(mask, filter)
+function E:ToggleFlag(mask, ...)
+	return bit.bxor(mask, ...)
 end
 
-function E:DeleteFilterFromMask(mask, filter)
+function E:EnableFlag(mask, ...)
+	return bit.bor(mask, ...)
+end
+
+function E:DisableFlag(mask, filter)
 	return bit.band(mask, bit.bnot(filter))
 end
 
