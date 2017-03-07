@@ -93,8 +93,8 @@ do
 end
 
 -- Divider
-function CFG:CreateDivider(panel, text)
-	local object = panel:CreateTexture(nil, "ARTWORK")
+function CFG:CreateDivider(parent, text)
+	local object = parent:CreateTexture(nil, "ARTWORK")
 	object:SetHeight(4)
 	object:SetPoint("LEFT", 10, 0)
 	object:SetPoint("RIGHT", -10, 0)
