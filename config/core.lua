@@ -102,7 +102,7 @@ function CFG:CreateDivider(parent, text)
 	object:SetTexCoord(0, 1, 0.0625, 0.65625)
 	object:SetAlpha(0.5)
 
-	local label = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
+	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
 	label:SetWordWrap(false)
 	label:SetPoint("LEFT", object, "LEFT", 12, 1)
 	label:SetPoint("RIGHT", object, "RIGHT", -12, 1)
@@ -262,7 +262,7 @@ do
 	end
 
 	function CFG:CreateMaskDial(panel, data)
-		local object = _G.CreateFrame("Frame", data.name, panel)
+		local object = _G.CreateFrame("Frame", data.name, data.parent or panel)
 		object:SetSize(14, 14)
 		object:EnableMouse(true)
 		object:SetScript("OnShow", OnShow)
@@ -272,6 +272,7 @@ do
 		object.RefreshValue = RefreshValue
 		object.Enable = Enable
 		object.Disable = Disable
+		object.Flags = data.flags
 
 		for i = 1, 4 do
 			local button = _G.CreateFrame("Button", "$parentSpecIndicator"..i, object)
@@ -287,7 +288,7 @@ do
 			button.IsPositive = Indicator_IsPositive
 			button.Enable = Indicator_Enable
 			button.Disable = Indicator_Disable
-			button.value = E.PLAYER_SPEC_FLAGS[i]
+			button.value = data.flags[i]
 			object[i] = button
 
 			if i == 1 then
@@ -383,13 +384,15 @@ do
 	local function Tab_OnClick(self)
 		_G.PanelTemplates_SetTab(self:GetParent(), self:GetID())
 
+		_G.FauxScrollFrame_SetOffset(self:GetParent(), 0)
+
 		self:GetParent():SetValue(self:GetID())
 		self:GetParent():RefreshValue()
 	end
 
 	local function AddAura()
 		local spellID = tonumber(activeAuraList.AddEditBox:GetText())
-		local mask = activeAuraList.MaskDial:GetValue()
+		local mask = activeAuraList.MaskDial:CalcValue()
 
 		if not (spellID and mask) then return end
 
@@ -458,7 +461,7 @@ do
 		self.Icon:SetAlpha(0.5)
 	end
 
-	function CFG:CreateAuraList(panel, lData, lIndicatorData, bIndicatorData)
+	function CFG:CreateAuraList(panel, params)
 		local object = _G.CreateFrame("ScrollFrame", "$parentAuraList", panel, "FauxScrollFrameTemplate")
 		object:SetSize(210, 330) -- 30 * 10 + 6 * 2 + 9 * 2
 		object:SetBackdrop({
@@ -471,9 +474,9 @@ do
 		object:SetBackdropBorderColor(0.6, 0.6, 0.6)
 		object:SetScript("OnShow", AuraList_OnShow)
 		object:SetScript("OnVerticalScroll", AuraList_OnVerticalScroll)
-		object.GetValue = lData.get
-		object.SetValue = lData.set
-		object.RefreshValue = lData.refresh
+		object.GetValue = params.aura_list_params.get
+		object.SetValue = params.aura_list_params.set
+		object.RefreshValue = params.aura_list_params.refresh
 
 		object.ScrollBar:ClearAllPoints()
 		object.ScrollBar:SetPoint("TOPRIGHT", object,"TOPRIGHT", -6, -22)
@@ -523,7 +526,7 @@ do
 		maskLabel:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", -4, -2)
 		maskLabel:SetText(L["MASK_COLON"])
 
-		local maskDial = self:CreateMaskDial(object, lIndicatorData)
+		local maskDial = self:CreateMaskDial(object, params.add_aura_mask_dial_params)
 		maskDial:SetPoint("LEFT", maskLabel, "RIGHT", 2, -1)
 		object.MaskDial = maskDial
 
@@ -551,7 +554,7 @@ do
 			text:SetPoint("RIGHT", button, "RIGHT", -4, 0)
 			button.Text = text
 
-			local indicator = self:CreateMaskDial(button, bIndicatorData)
+			local indicator = self:CreateMaskDial(button, params.aura_button_mask_dial_params)
 			indicator:SetFrameLevel(button:GetFrameLevel() + 4)
 			indicator:SetPoint("BOTTOMLEFT", icon, "BOTTOMRIGHT", 4, -2)
 			for j = 1, #indicator do

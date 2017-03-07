@@ -168,36 +168,52 @@ function CFG:AuraTracker_Init()
 	lockToggle:SetPoint("LEFT", atToggle, "RIGHT", 110, 0)
 
 	local auraList = CFG:CreateAuraList(panel,
-		{ -- aura list data
-			get = function(self) return self.table end,
-			set = function(self, id)
-				if id == 1 then
-					self.filter = "HELPFUL"
-					self.table = C.auratracker.HELPFUL
-				elseif id == 2 then
-					self.filter = "HARMFUL"
-					self.table = C.auratracker.HARMFUL
-				end
-			end,
-			refresh = function(self)
-				_G.FauxScrollFrame_SetOffset(self, 0)
+		{
+			aura_list_params = {
+				get = function(self) return self.table end,
+				set = function(self, id)
+					if id == 1 then
+						self.filter = "HELPFUL"
+						self.table = C.auratracker.HELPFUL
+					elseif id == 2 then
+						self.filter = "HARMFUL"
+						self.table = C.auratracker.HARMFUL
+					end
+				end,
+				refresh = function(self)
+					AuraList_Update(self)
 
-				AuraList_Update(self)
+					if AURATRACKER:IsInit() then
+						AURATRACKER:Refresh()
+					end
+				end,
+			},
+			add_aura_mask_dial_params = {
+				name = "$parentAddAuraMaskDial",
+				get = function (self) return self.Flags[0] end,
+				flags = {
+					[0] = E.PLAYER_SPEC_FLAGS[0],
+					[1] = E.PLAYER_SPEC_FLAGS[1],
+					[2] = E.PLAYER_SPEC_FLAGS[2],
+					[3] = E.PLAYER_SPEC_FLAGS[3],
+					[4] = E.PLAYER_SPEC_FLAGS[4],
 
-				if AURATRACKER:IsInit() then
-					AURATRACKER:Refresh()
-				end
-			end,
-		},
-		{ -- add aura list indicator data
-			name = "$parentAddAuraMaskDial",
-			get = function () return E.PLAYER_SPEC_FLAGS[0] end
-		},
-		{ -- aura button indicator data
-			get = function(self) return C.auratracker[self.filter][self.key] end,
-			set = function(self, value)
-				C.auratracker[self.filter][self.key] = value
-			end,
+				}
+			},
+			aura_button_mask_dial_params = {
+				get = function(self) return C.auratracker[self.filter][self.key] end,
+				set = function(self, value)
+					C.auratracker[self.filter][self.key] = value
+				end,
+				flags = {
+					[0] = E.PLAYER_SPEC_FLAGS[0],
+					[1] = E.PLAYER_SPEC_FLAGS[1],
+					[2] = E.PLAYER_SPEC_FLAGS[2],
+					[3] = E.PLAYER_SPEC_FLAGS[3],
+					[4] = E.PLAYER_SPEC_FLAGS[4],
+
+				}
+			}
 		})
 	auraList:SetPoint("TOPLEFT", atToggle, "BOTTOMLEFT", 0, -40) -- 8 + 32 (default offset + tab height)
 
