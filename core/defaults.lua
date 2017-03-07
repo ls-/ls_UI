@@ -16,16 +16,24 @@ D["units"] = {
 		castbar = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
 		auras = {
-			enabled = 0x0000000f,
-			show_mounts = 0x0000000f,
-			show_only_filtered = 0x00000000,
-			HELPFUL = {
-				include_castable = 0x00000000, -- f
-				auralist = {},
-			},
-			HARMFUL = {
-				auralist = {},
-			},
+			enabled = true,
+			-- 0x0000000X -- friendly target
+			-- 0x000000X0 -- hostile target
+			-- 0x00000X00 -- buff
+			-- 0x0000X000 -- debuff
+			show_boss = 0x0000ffff,
+			show_mount = 0x000000ff,
+			show_selfcast = 0x0000ffff,
+			show_blizzard = 0x0000ffff,
+			show_player = 0x0000ffff,
+			show_dispellable = 0x000000ff, -- friendly debuffs / enemy buffs
+			-- show_only_filtered = 0x00000000,
+			-- HELPFUL = {
+			-- 	auralist = {},
+			-- },
+			-- HARMFUL = {
+			-- 	auralist = {},
+			-- },
 		},
 	},
 	targettarget = {
@@ -36,16 +44,20 @@ D["units"] = {
 		castbar = true,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -268, 336},
 		auras = {
-			enabled = 0x0000000f,
-			show_mounts = 0x0000000f,
-			show_only_filtered = 0x00000000,
-			HELPFUL = {
-				include_castable = 0x00000000,
-				auralist = {},
-			},
-			HARMFUL = {
-				auralist = {},
-			},
+			enabled = true,
+			show_boss = 0x0000ffff,
+			show_mount = 0x000000ff,
+			show_selfcast = 0x0000ffff,
+			show_blizzard = 0x0000ffff,
+			show_player = 0x0000ffff,
+			show_dispellable = 0x000000ff, -- friendly debuffs / enemy buffs
+			-- show_only_filtered = 0x00000000,
+			-- HELPFUL = {
+			-- 	auralist = {},
+			-- },
+			-- HARMFUL = {
+			-- 	auralist = {},
+			-- },
 		},
 	},
 	focustarget = {
