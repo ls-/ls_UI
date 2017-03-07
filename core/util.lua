@@ -29,13 +29,6 @@ local HOUR_ONELETTER_ABBR = string.gsub(_G.HOUR_ONELETTER_ABBR, "[ .]", "")
 local DAY_ONELETTER_ABBR = string.gsub(_G.DAY_ONELETTER_ABBR, "[ .]", "")
 local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 local argcheck = P.argcheck
-local dispelTypesByClass = {
-	PALADIN = {},
-	SHAMAN = {},
-	DRUID = {},
-	PRIEST = {},
-	MONK = {},
-}
 
 ------------
 -- TABLES --
@@ -660,33 +653,51 @@ end
 -- PLAYER SPECIFIC --
 ---------------------
 
-local function UpdateDispelTypes()
-	local dispelTypes = dispelTypesByClass[E.PLAYER_CLASS]
+do
+	local dispelTypesByClass = {
+		PALADIN = {},
+		SHAMAN = {},
+		DRUID = {},
+		PRIEST = {},
+		MONK = {},
+	}
 
-	if dispelTypes then
-		if E.PLAYER_CLASS == "PALADIN" then
-			dispelTypes.Disease = _G.IsPlayerSpell(4987) or _G.IsPlayerSpell(213644) or nil -- Cleanse or Cleanse Toxins
-			dispelTypes.Magic = _G.IsPlayerSpell(4987) or nil -- Cleanse
-			dispelTypes.Poison = dispelTypes.Disease
-		elseif E.PLAYER_CLASS == "SHAMAN" then
-			dispelTypes.Curse = _G.IsPlayerSpell(51886) or _G.IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
-			dispelTypes.Magic = _G.IsPlayerSpell(77130) or nil -- Purify Spirit
-		elseif E.PLAYER_CLASS == "DRUID" then
-			dispelTypes.Curse = _G.IsPlayerSpell(2782) or _G.IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
-			dispelTypes.Magic = _G.IsPlayerSpell(88423) or nil -- Nature's Cure
-			dispelTypes.Poison = dispelTypes.Curse
-		elseif E.PLAYER_CLASS == "PRIEST"  then
-			dispelTypes.Disease = _G.IsPlayerSpell(527) or nil -- Purify
-			dispelTypes.Magic = _G.IsPlayerSpell(527) or _G.IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
-		elseif E.PLAYER_CLASS == "MONK" then
-			dispelTypes.Disease = _G.IsPlayerSpell(115450) or nil -- Detox
-			dispelTypes.Magic = dispelTypes.Disease
-			dispelTypes.Poison = dispelTypes.Disease
+	E:RegisterEvent("SPELLS_CHANGED", function()
+		local dispelTypes = dispelTypesByClass[E.PLAYER_CLASS]
+
+		if dispelTypes then
+			if E.PLAYER_CLASS == "PALADIN" then
+				dispelTypes.Disease = _G.IsPlayerSpell(4987) or _G.IsPlayerSpell(213644) or nil -- Cleanse or Cleanse Toxins
+				dispelTypes.Magic = _G.IsPlayerSpell(4987) or nil -- Cleanse
+				dispelTypes.Poison = dispelTypes.Disease
+			elseif E.PLAYER_CLASS == "SHAMAN" then
+				dispelTypes.Curse = _G.IsPlayerSpell(51886) or _G.IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
+				dispelTypes.Magic = _G.IsPlayerSpell(77130) or nil -- Purify Spirit
+			elseif E.PLAYER_CLASS == "DRUID" then
+				dispelTypes.Curse = _G.IsPlayerSpell(2782) or _G.IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
+				dispelTypes.Magic = _G.IsPlayerSpell(88423) or nil -- Nature's Cure
+				dispelTypes.Poison = dispelTypes.Curse
+			elseif E.PLAYER_CLASS == "PRIEST"  then
+				dispelTypes.Disease = _G.IsPlayerSpell(527) or nil -- Purify
+				dispelTypes.Magic = _G.IsPlayerSpell(527) or _G.IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
+			elseif E.PLAYER_CLASS == "MONK" then
+				dispelTypes.Disease = _G.IsPlayerSpell(115450) or nil -- Detox
+				dispelTypes.Magic = dispelTypes.Disease
+				dispelTypes.Poison = dispelTypes.Disease
+			end
 		end
+	end)
+
+	function E:GetDispelTypes()
+		return dispelTypesByClass[E.PLAYER_CLASS]
+	end
+
+	function E:IsDispellable(debuffType)
+		if not dispelTypesByClass[E.PLAYER_CLASS] then return end
+
+		return dispelTypesByClass[E.PLAYER_CLASS][debuffType]
 	end
 end
-
-E:RegisterEvent("SPELLS_CHANGED", UpdateDispelTypes)
 
 function E:GetPlayerSpecFlag()
 	return E.PLAYER_SPEC_FLAGS[_G.GetSpecialization()]
@@ -696,10 +707,6 @@ function E:GetPlayerRole()
 	local _, _, _, _, _, role = _G.GetSpecializationInfo(_G.GetSpecialization())
 
 	return role or "DAMAGER"
-end
-
-function E:GetDispelTypes()
-	return dispelTypesByClass[E.PLAYER_CLASS]
 end
 
 ------------------
