@@ -309,7 +309,6 @@ function UF:Init()
 	if not isInit and C.units.enabled then
 		oUF:Factory(MainConstructor)
 
-		-- Castbars
 		if not C.units.player.castbar then
 			if objects["player"] then
 				objects["player"]:DisableElement("Castbar")
@@ -320,18 +319,6 @@ function UF:Init()
 			end
 
 			UF:EnableDefaultCastingBars()
-		end
-
-		if not C.units.target.castbar then
-			if objects["target"] then
-				objects["target"]:DisableElement("Castbar")
-			end
-		end
-
-		if not C.units.focus.castbar then
-		 	if objects["focus"] then
-				objects["focus"]:DisableElement("Castbar")
-			end
 		end
 
 		if not C.units.boss.castbar then
@@ -353,6 +340,26 @@ function UF:Init()
 
 			if objects["boss5"] then
 				objects["boss5"]:DisableElement("Castbar")
+			end
+		end
+
+		if objects["target"] then
+			if not C.units.target.castbar then
+				objects["target"]:DisableElement("Castbar")
+			end
+
+			if not C.units.target.auras.enabled then
+				objects["target"]:DisableElement("Aura")
+			end
+		end
+
+	 	if objects["focus"] then
+			if not C.units.focus.castbar then
+				objects["focus"]:DisableElement("Castbar")
+			end
+
+			if not C.units.focus.auras.enabled then
+				objects["focus"]:DisableElement("Aura")
 			end
 		end
 
