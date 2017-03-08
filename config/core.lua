@@ -163,7 +163,7 @@ function CFG:CreateButton(panel, params)
 	return object
 end
 
--- Dial
+-- Bit Mask Dial
 do
 	local function OnShow(self)
 		for i = 1, 4 do
@@ -173,7 +173,18 @@ do
 			end
 		end
 
-		self:SetSize(#self * 14 + (#self - 1) * 2, 14)
+		for i = #self, 1, -1 do
+			if i == #self then
+				self[i]:SetPoint("TOPRIGHT", 0, 0)
+			else
+				self[i]:SetPoint("RIGHT", self[i + 1], "LEFT", -2, 0)
+			end
+		end
+
+		if self.adjustSizeOnShow then
+			self:AdjustSize()
+		end
+
 		self:SetScript("OnShow", nil)
 	end
 
@@ -197,7 +208,7 @@ do
 		for i = 1, #self do
 			local button = self[i]
 
-			if E:CheckFlag(value, self.Flags[i]) then
+			if E:CheckFlag(value, self.flags[i]) then
 				button:SetButtonState("NORMAL", true) -- positive
 			else
 				button:SetButtonState("PUSHED", true) -- negative
@@ -221,6 +232,13 @@ do
 		self.Text:SetVertexColor(0.5, 0.5, 0.5)
 	end
 
+	local function AdjustSize(self)
+		local textWidth = self.Text:GetWidth()
+		textWidth = textWidth > 1 and textWidth + 4 or 0
+
+		self:SetSize(#self * 14 + (#self - 1) * 2 + textWidth, 14)
+	end
+
 	local function Indicator_OnMouseDown(self)
 		if not self:IsEnabled() then return end
 
@@ -229,6 +247,10 @@ do
 		else
 			self:SetButtonState("NORMAL", true)
 		end
+	end
+
+	local function Indicator_OnMouseUp(self)
+		self:GetParent():SetValue(self:GetParent():CalcValue())
 	end
 
 	local function Indicator_OnEnter(self)
@@ -261,21 +283,27 @@ do
 		self:GetPushedTexture():SetDesaturated(true)
 	end
 
-	function CFG:CreateMaskDial(panel, data)
-		local object = _G.CreateFrame("Frame", data.name, data.parent or panel)
-		object:SetSize(14, 14)
+	function CFG:CreateMaskDial(panel, params)
+		local object = _G.CreateFrame("Frame", params.name, params.parent or panel)
+		object:SetHeight(14)
 		object:EnableMouse(true)
 		object:SetScript("OnShow", OnShow)
-		object.GetValue = data.get
-		object.SetValue = data.set
-		object.CalcValue = CalcValue
+		object.GetValue = params.get or E.NOOP
+		object.SetValue = params.set or E.NOOP
+		object.CalcValue = params.calc or CalcValue
 		object.RefreshValue = RefreshValue
 		object.Enable = Enable
 		object.Disable = Disable
-		object.Flags = data.flags
+		object.AdjustSize = AdjustSize
+		object.flags = params.flags
+		object.adjustSizeOnShow = params.adjust_size_on_show
+
+		local bg = object:CreateTexture(nil, "BACKGROUND")
+		bg:SetAllPoints()
+		object.BG = bg
 
 		for i = 1, 4 do
-			local button = _G.CreateFrame("Button", "$parentSpecIndicator"..i, object)
+			local button = _G.CreateFrame("Button", "$parentIndicator"..i, object)
 			button:SetSize(14, 14)
 			button:SetID(i)
 			button:SetNormalTexture("Interface\\Store\\Services")
@@ -283,20 +311,20 @@ do
 			button:SetPushedTexture("Interface\\Store\\Services")
 			button:GetPushedTexture():SetTexCoord(0.00097656, 0.01953125, 0.08105469, 0.09960938)
 			button:SetScript("OnMouseDown", Indicator_OnMouseDown)
+			button:SetScript("OnMouseUp", Indicator_OnMouseUp)
 			button:SetScript("OnEnter", Indicator_OnEnter)
 			button:SetScript("OnLeave", Indicator_OnLeave)
 			button.IsPositive = Indicator_IsPositive
 			button.Enable = Indicator_Enable
 			button.Disable = Indicator_Disable
-			button.value = data.flags[i]
+			button.value = params.flags[i]
 			object[i] = button
-
-			if i == 1 then
-				button:SetPoint("TOPLEFT", 0, 0)
-			else
-				button:SetPoint("LEFT", object[i - 1], "RIGHT", 2, 0)
-			end
 		end
+
+		local text = object:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+		text:SetPoint("LEFT", object, "LEFT", 2, 0)
+		text:SetText(params.text)
+		object.Text = text
 
 		RegisterControlForRefresh(panel, object)
 
@@ -449,10 +477,6 @@ do
 		_G.GameTooltip:Hide()
 	end
 
-	local function Indicator_OnMouseUp(self)
-		self:GetParent():SetValue(self:GetParent():CalcValue())
-	end
-
 	local function DeleteButton_OnEnter(self)
 		self.Icon:SetAlpha(1)
 	end
@@ -522,12 +546,9 @@ do
 		addButton:SetScript("OnClick", AddAura)
 		object.AddButton = addButton
 
-		local maskLabel = object:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		maskLabel:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", -4, -2)
-		maskLabel:SetText(L["MASK_COLON"])
-
 		local maskDial = self:CreateMaskDial(object, params.add_aura_mask_dial_params)
-		maskDial:SetPoint("LEFT", maskLabel, "RIGHT", 2, -1)
+		maskDial:SetPoint("TOPLEFT", addEditBox, "BOTTOMLEFT", -4, -2)
+		maskDial.Text:SetFontObject("GameFontNormal")
 		object.MaskDial = maskDial
 
 		object.buttons = {}
@@ -557,9 +578,6 @@ do
 			local indicator = self:CreateMaskDial(button, params.aura_button_mask_dial_params)
 			indicator:SetFrameLevel(button:GetFrameLevel() + 4)
 			indicator:SetPoint("BOTTOMLEFT", icon, "BOTTOMRIGHT", 4, -2)
-			for j = 1, #indicator do
-				indicator[j]:SetScript("OnMouseUp", Indicator_OnMouseUp)
-			end
 			button.Indicator = indicator
 
 			local deleteButton = _G.CreateFrame("Button", "$parentDeleteButton", button)

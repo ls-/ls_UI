@@ -170,7 +170,9 @@ function CFG:AuraTracker_Init()
 	local auraList = CFG:CreateAuraList(panel,
 		{
 			aura_list_params = {
-				get = function(self) return self.table end,
+				get = function(self)
+					return self.table
+				end,
 				set = function(self, id)
 					if id == 1 then
 						self.filter = "HELPFUL"
@@ -190,7 +192,11 @@ function CFG:AuraTracker_Init()
 			},
 			add_aura_mask_dial_params = {
 				name = "$parentAddAuraMaskDial",
-				get = function (self) return self.Flags[0] end,
+				text = L["MASK_COLON"],
+				adjust_size_on_show = true,
+				get = function(self)
+					return self.flags[0]
+				end,
 				flags = {
 					[0] = E.PLAYER_SPEC_FLAGS[0],
 					[1] = E.PLAYER_SPEC_FLAGS[1],
@@ -201,7 +207,10 @@ function CFG:AuraTracker_Init()
 				}
 			},
 			aura_button_mask_dial_params = {
-				get = function(self) return C.auratracker[self.filter][self.key] end,
+				adjust_size_on_show = true,
+				get = function(self)
+					return C.auratracker[self.filter][self.key]
+				end,
 				set = function(self, value)
 					C.auratracker[self.filter][self.key] = value
 				end,
