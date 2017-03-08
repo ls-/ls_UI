@@ -102,55 +102,55 @@ end
 local filterFunctions = {
 	default = function(frame, unit, aura, _, _, _, count, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		local config = frame.cfg
-		local friendlyFlag = E:GetPlayerSpecFlag()
-		local enemyFlag = bit.lshift(friendlyFlag, 4)
-		local buffFlag = bit.lshift(friendlyFlag, 8)
-		local debuffFlag = bit.lshift(friendlyFlag, 12)
+		local isFriend = UnitIsFriend("player", unit)
+		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
+		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
+		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
+		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
 		local isPlayerAura = aura.isPlayer or (caster and UnitIsUnit(caster, "pet"))
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
 		-- boss
-		if isBossAura and E:CheckFlag(config.show_boss, debuffFlag, buffFlag, enemyFlag, friendlyFlag) then
+		if isBossAura and E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
 			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
 			return true
 		end
 
 		-- mounts
-		if MOUNTS[spellID] and E:CheckFlag(config.show_mount, enemyFlag, friendlyFlag) then
+		if MOUNTS[spellID] and E:CheckFlag(config.show_mount, hostileBuffFlag, friendlyBuffFlag) then
 			-- print(name, spellID, caster, "|cffe5a526MOUNT|r")
 			return true
 		end
 
 		-- non-permanent self-cast
-		if caster and UnitIsUnit(unit, caster) and duration and duration ~= 0 and E:CheckFlag(config.show_selfcast, debuffFlag, buffFlag, enemyFlag, friendlyFlag) then
+		if caster and UnitIsUnit(unit, caster) and duration and duration ~= 0 and E:CheckFlag(config.show_selfcast, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
 			-- print(name, spellID, caster, "|cffe5a526SELFCAST|r")
 			return true
 		end
 
 		-- applied by player
-		if isPlayerAura and duration and duration ~= 0 and E:CheckFlag(config.show_player, debuffFlag, buffFlag, enemyFlag, friendlyFlag) then
-			-- print(name, spellID, caster, "|cffe5a526APPLIED BY PLAYER|r")
+		if isPlayerAura and duration and duration ~= 0 and E:CheckFlag(config.show_player, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
 			return true
 		end
 
-		if UnitIsFriend("player", unit) then
+		if isFriend then
 			-- defined by blizzard
 			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
-			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, debuffFlag, buffFlag, enemyFlag, friendlyFlag) then
+			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
 				-- print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
 				return true
 			end
 
 			if aura.filter == "HARMFUL"then
 				-- dispellable
-				if debuffType and E:IsDispellable(debuffType) and E:CheckFlag(config.show_dispellable, friendlyFlag) then
+				if debuffType and E:IsDispellable(debuffType) and E:CheckFlag(config.show_dispellable, friendlyBuffFlag) then
 					-- print(name, spellID, caster, "|cffe5a526DISPELLABLE|r")
 					return true
 				end
 
 				-- NOTE: sometimes both caster and isBossAura params are nil, it'll be fixed in 7.2
-				if count > 1 and E:CheckFlag(config.show_boss, friendlyFlag) then
+				if count > 1 and E:CheckFlag(config.show_boss, friendlyBuffFlag) then
 					-- print(name, spellID, caster, "|cffe5a526SBOSS (HACK)|r")
 					return true
 				end
@@ -159,13 +159,13 @@ local filterFunctions = {
 			-- defined by blizzard
 			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
 
-			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, debuffFlag, buffFlag, enemyFlag) then
+			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag) then
 				-- print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
 				return true
 			end
 
 			-- stealable
-			if isStealable and not UnitIsUnit(unit, "player") and E:CheckFlag(config.show_dispellable, enemyFlag) then
+			if isStealable and not UnitIsUnit(unit, "player") and E:CheckFlag(config.show_dispellable, hostileBuffFlag) then
 				-- print(name, spellID, caster, "|cffe5a526STEALABLE|r")
 				return true
 			end

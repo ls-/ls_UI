@@ -17,16 +17,16 @@ D["units"] = {
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
 		auras = {
 			enabled = true,
-			-- 0x0000000X -- friendly target
-			-- 0x000000X0 -- hostile target
-			-- 0x00000X00 -- buff
-			-- 0x0000X000 -- debuff
+			-- 0x0000000X -- friendly buff
+			-- 0x000000X0 -- hostile buff
+			-- 0x00000X00 -- friendly debuff
+			-- 0x0000X000 -- hostile debuff
 			show_boss = 0x0000ffff,
 			show_mount = 0x000000ff,
 			show_selfcast = 0x0000ffff,
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
-			show_dispellable = 0x000000ff, -- friendly debuffs / enemy buffs
+			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
 			-- show_only_filtered = 0x00000000,
 			-- HELPFUL = {
 			-- 	auralist = {},
@@ -50,7 +50,7 @@ D["units"] = {
 			show_selfcast = 0x0000ffff,
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
-			show_dispellable = 0x000000ff, -- friendly debuffs / enemy buffs
+			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
 			-- show_only_filtered = 0x00000000,
 			-- HELPFUL = {
 			-- 	auralist = {},
