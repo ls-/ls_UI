@@ -269,8 +269,6 @@ M.textures = textures
 
 E.OMNICC = select(4, _G.GetAddOnInfo("OmniCC"))
 
-E.VERSION = _G.GetAddOnMetadata("ls_UI", "Version")
-
 E.PLAYER_CLASS = select(2, _G.UnitClass("player"))
 E.PLAYER_SPEC_FLAGS = {
 	-- [-1] = 0x00000000, -- none
@@ -296,8 +294,10 @@ E:RegisterEvent("UI_SCALE_CHANGED", UpdateScreenConstants)
 
 -- Everything that's not available at ADDON_LOADED goes here
 function E:UpdateConstants()
+	E.PLAYER_SPEC_FLAGS[0] = 0
+
 	for i = 1, _G.GetNumSpecializations() do
-		E.PLAYER_SPEC_FLAGS[0] = E:EnableFlag(E.PLAYER_SPEC_FLAGS[0] or 0, E.PLAYER_SPEC_FLAGS[i])
+		E.PLAYER_SPEC_FLAGS[0] = E:EnableFlag(E.PLAYER_SPEC_FLAGS[0], E.PLAYER_SPEC_FLAGS[i])
 	end
 
 	E.PLAYER_GUID = _G.UnitGUID("player")
