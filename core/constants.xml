@@ -291,68 +291,54 @@
 
 	<Font name="LS8Font_Shadow" inherits="LS8Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS10Font_Shadow" inherits="LS10Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS12Font_Shadow" inherits="LS12Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS14Font_Shadow" inherits="LS14Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS16Font_Shadow" inherits="LS16Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS18Font_Shadow" inherits="LS18Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LS20Font_Shadow" inherits="LS20Font" virtual="true">
 		<Shadow>
-			<Offset>
-				<AbsDimension x="1" y="-1"/>
-			</Offset>
+			<Offset x="1" y="-1"/>
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
-	<Frame name="LSUILineTemplate" virtual="true">
+	<Frame name="LSUILineTemplate" mixin="LSUILineMixin" virtual="true">
 		<Layers>
 			<Layer level="ARTWORK" textureSubLevel="1">
 				<Line parentKey="Fill" file="Interface/Artifacts/_Artifacts-DependencyBar-Fill" thickness="16" horizTile="true"/>
