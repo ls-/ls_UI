@@ -75,7 +75,9 @@ function CFG:Blizzard_Init()
 		})
 	blizzToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
 
-	local divider = CFG:CreateDivider(panel, L["BLIZZARD_OBJECTIVE_TRACKER"])
+	local divider = CFG:CreateDivider(panel, {
+		text = L["BLIZZARD_OBJECTIVE_TRACKER"]
+	})
 	divider:SetPoint("TOP", blizzToggle, "BOTTOM", 0, -10)
 
 	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -155,7 +157,9 @@ function CFG:Blizzard_Init()
 		})
 	otHeightSlider:SetPoint("TOPLEFT", otToggle, "BOTTOMLEFT", 8, -22)
 
-	divider = CFG:CreateDivider(panel, L["MISC"])
+	divider = CFG:CreateDivider(panel, {
+		text = L["MISC"]
+	})
 	divider:SetPoint("TOP", otHeightSlider, "BOTTOM", 0, -22)
 
 	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")

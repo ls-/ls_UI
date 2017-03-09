@@ -93,23 +93,42 @@ do
 end
 
 -- Divider
-function CFG:CreateDivider(parent, text)
-	local object = parent:CreateTexture(nil, "ARTWORK")
-	object:SetHeight(4)
-	object:SetPoint("LEFT", 10, 0)
-	object:SetPoint("RIGHT", -10, 0)
-	object:SetTexture("Interface\\AchievementFrame\\UI-Achievement-RecentHeader")
-	object:SetTexCoord(0, 1, 0.0625, 0.65625)
-	object:SetAlpha(0.5)
+do
+	local function Divider_OnEnter(self)
+		_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -4, -4)
+		_G.GameTooltip:SetText(self.tooltip_text)
+		_G.GameTooltip:Show()
+	end
 
-	local label = parent:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	label:SetWordWrap(false)
-	label:SetPoint("LEFT", object, "LEFT", 12, 1)
-	label:SetPoint("RIGHT", object, "RIGHT", -12, 1)
-	label:SetText(text)
-	object.Text = label
+	local function Divider_OnLeave()
+		_G.GameTooltip:Hide()
+	end
 
-	return object
+	function CFG:CreateDivider(parent, params)
+		local object = parent:CreateTexture(nil, "ARTWORK")
+		object:SetHeight(4)
+		object:SetPoint("LEFT", 10, 0)
+		object:SetPoint("RIGHT", -10, 0)
+		object:SetTexture("Interface\\AchievementFrame\\UI-Achievement-RecentHeader")
+		object:SetTexCoord(0, 1, 0.0625, 0.65625)
+		object:SetAlpha(0.5)
+
+		local text = parent:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
+		text:SetWordWrap(false)
+		text:SetPoint("CENTER", object, "CENTER", 0, 1)
+		text:SetText(params.text)
+		object.Text = text
+
+		if params.tooltip_text then
+			local frame = _G.CreateFrame("Frame", nil, parent)
+			frame:SetAllPoints(text)
+			frame:SetScript("OnEnter", Divider_OnEnter)
+			frame:SetScript("OnLeave", Divider_OnLeave)
+			frame.tooltip_text = params.tooltip_text
+		end
+
+		return object
+	end
 end
 
 -- Check Button

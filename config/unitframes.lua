@@ -79,7 +79,9 @@ function CFG:UnitFrames_Init()
 		})
 	ufToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
 
-	local divider = CFG:CreateDivider(panel, L["UNITS"])
+	local divider = CFG:CreateDivider(panel, {
+		text = L["UNITS"]
+	})
 	divider:SetPoint("TOP", ufToggle, "BOTTOM", 0, -10)
 
 	local playerToggle = CFG:CreateCheckButton(panel,
@@ -266,7 +268,9 @@ function CFG:UnitFrames_Init()
 		})
 	bossToggle:SetPoint("LEFT", focusToggle, "RIGHT", 110, 0)
 
-	divider = CFG:CreateDivider(panel, L["UNIT_FRAME_CASTBAR"])
+	divider = CFG:CreateDivider(panel, {
+		text = L["UNIT_FRAME_CASTBAR"]
+	})
 	divider:SetPoint("TOP", playerToggle, "BOTTOM", 0, -10)
 
 	local playerCastBarToggle = CFG:CreateCheckButton(panel,

@@ -75,7 +75,9 @@ function CFG:Tooltips_Init()
 		})
 	ttToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
 
-	local divider = CFG:CreateDivider(panel, L["TOOLTIP_UNIT_NAME_COLOR"])
+	local divider = CFG:CreateDivider(panel, {
+		text = L["TOOLTIP_UNIT_NAME_COLOR"]
+	})
 	divider:SetPoint("TOP", ttToggle, "BOTTOM", 0, -10)
 
 	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
@@ -164,7 +166,9 @@ function CFG:Tooltips_Init()
 		})
 	reactionToggle:SetPoint("TOPLEFT", tapToggle, "BOTTOMLEFT", 0, -8)
 
-	divider = CFG:CreateDivider(panel, L["MISC"])
+	divider = CFG:CreateDivider(panel, {
+		text = L["MISC"]
+	})
 	divider:SetPoint("TOP", reactionToggle, "BOTTOM", 0, -10)
 
 	local idToggle = CFG:CreateCheckButton(panel,

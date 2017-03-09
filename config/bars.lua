@@ -148,7 +148,9 @@ function CFG:Bars_Init()
 		})
 	modeToggle:SetPoint("LEFT", barsToggle, "RIGHT", 110, 0)
 
-	local divider = CFG:CreateDivider(panel, L["BARS"])
+	local divider = CFG:CreateDivider(panel, {
+		text = L["BARS"]
+	})
 	divider:SetPoint("TOP", barsToggle, "BOTTOM", 0, -10)
 
 	local ab2Toggle = CFG:CreateCheckButton(panel,
@@ -295,7 +297,9 @@ function CFG:Bars_Init()
 		})
 	ab7Toggle:SetPoint("LEFT", ab6Toggle, "RIGHT", 110, 0)
 
-	divider = CFG:CreateDivider(panel, L["BUTTONS"])
+	divider = CFG:CreateDivider(panel, {
+		text = L["BUTTONS"]
+	})
 	divider:SetPoint("TOP", ab6Toggle, "BOTTOM", 0, -10)
 
 	local macroToggle = CFG:CreateCheckButton(panel,
@@ -540,7 +544,9 @@ function CFG:Bars_Init()
 		growthDropdown.key = "bar1"
 	end
 
-	divider = CFG:CreateDivider(panel, L["MISC"])
+	divider = CFG:CreateDivider(panel, {
+		text = L["MISC"]
+	})
 	divider:SetPoint("TOP", tabbedFrame, "BOTTOM", 0, -10)
 
 	local bagsToggle = CFG:CreateCheckButton(panel,

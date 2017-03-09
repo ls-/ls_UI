@@ -144,15 +144,21 @@ function CFG:UnitFramesAuras_Init()
 	aurasToggle:SetPoint("TOPLEFT", tabbedFrame, "TOPLEFT", 16, -16)
 	tabbedFrame.AurasToggle = aurasToggle
 
-	local unitHeader = CFG:CreateDivider(tabbedFrame, "Friendly Targets")
+	local unitHeader = self:CreateDivider(tabbedFrame, {
+		text = M.COLORS.GREEN:WrapText(L["UNIT_FRAME_FRIENDLY_TARGET"])
+	})
 	unitHeader:SetPoint("TOP", aurasToggle, "BOTTOM", 0, -12)
 	unitHeader:SetPoint("RIGHT", tabbedFrame, "CENTER", -8, 0)
 
-	unitHeader = CFG:CreateDivider(tabbedFrame, "Hostile Targets")
+	unitHeader = self:CreateDivider(tabbedFrame, {
+		text = M.COLORS.RED:WrapText(L["UNIT_FRAME_ENEMY_TARGET"])
+	})
 	unitHeader:SetPoint("TOP", aurasToggle, "BOTTOM", 0, -12)
 	unitHeader:SetPoint("LEFT", tabbedFrame, "CENTER", 8, 0)
 
-	local divider = CFG:CreateDivider(tabbedFrame, "Boss Auras")
+	local divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_BOSS_AURAS"]
+	})
 	divider:SetPoint("TOP", unitHeader, "BOTTOM", 0, -12)
 
 	local bossAuraFriendlyBuffsDial = self:CreateMaskDial(panel, {
@@ -295,7 +301,9 @@ function CFG:UnitFramesAuras_Init()
 	bossAuraHostileDebuffsDial:SetPoint("TOPLEFT", bossAuraFriendlyDebuffsDial, "TOPRIGHT", 16, 0)
 	tabbedFrame.BossAuraHostileDebuffsDial = bossAuraHostileDebuffsDial
 
-	divider = CFG:CreateDivider(tabbedFrame, "Mount Auras")
+	divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_MOUNT_AURAS"]
+	})
 	divider:SetPoint("TOP", bossAuraFriendlyDebuffsDial, "BOTTOM", 0, -12)
 
 	local mountFriendlyBuffsDial = self:CreateMaskDial(panel, {
@@ -368,7 +376,10 @@ function CFG:UnitFramesAuras_Init()
 	mountHostileBuffsDial:SetPoint("TOPLEFT", mountFriendlyBuffsDial, "TOPRIGHT", 16, 0)
 	tabbedFrame.MountHostileBuffsDial = mountHostileBuffsDial
 
-	divider = CFG:CreateDivider(tabbedFrame, "Self Buffs and Debuffs")
+	divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_SELF_CAST_AURAS"],
+		tooltip_text = L["UNIT_FRAME_SELF_CAST_AURAS_TOOLTIP"]
+	})
 	divider:SetPoint("TOP", mountFriendlyBuffsDial, "BOTTOM", 0, -12)
 
 	local selfCastFriendlyBuffsDial = self:CreateMaskDial(panel, {
@@ -511,7 +522,10 @@ function CFG:UnitFramesAuras_Init()
 	selfCastHostileDebuffsDial:SetPoint("TOPLEFT", selfCastFriendlyDebuffsDial, "TOPRIGHT", 16, 0)
 	tabbedFrame.SelfCastHostileDebuffsDial = selfCastHostileDebuffsDial
 
-	divider = CFG:CreateDivider(tabbedFrame, "Personal Auras")
+	divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_CASTABLE_AURAS"],
+		tooltip_text = L["UNIT_FRAME_CASTABLE_AURAS_TOOLTIP"]
+	})
 	divider:SetPoint("TOP", selfCastFriendlyDebuffsDial, "BOTTOM", 0, -12)
 
 	local personalFriendlyBuffsDial = self:CreateMaskDial(panel, {
@@ -654,7 +668,10 @@ function CFG:UnitFramesAuras_Init()
 	personalHostileDebuffsDial:SetPoint("TOPLEFT", personalFriendlyDebuffsDial, "TOPRIGHT", 16, 0)
 	tabbedFrame.CastableHostileDebuffsDial = personalHostileDebuffsDial
 
-	divider = CFG:CreateDivider(tabbedFrame, "Dispellable Auras")
+	divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_DISPELLABLE_AURAS"],
+		tooltip_text = L["UNIT_FRAME_DISPELLABLE_AURAS_TOOLTIP"]
+	})
 	divider:SetPoint("TOP", personalFriendlyDebuffsDial, "BOTTOM", 0, -12)
 
 	local dispellableFriendlyDebuffsDial = self:CreateMaskDial(panel, {

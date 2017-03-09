@@ -29,7 +29,9 @@ function CFG:General_Init()
 	subtext:SetMaxLines(4)
 	subtext:SetText(L["LS_UI_DESC"])
 
-	local divider = CFG:CreateDivider(panel, L["MISC"])
+	local divider = CFG:CreateDivider(panel, {
+		text = L["MISC"]
+	})
 	divider:SetPoint("TOP", subtext, "BOTTOM", 0, -10)
 
 	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
