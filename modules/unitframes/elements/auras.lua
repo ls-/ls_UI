@@ -134,13 +134,13 @@ local filterFunctions = {
 		end
 
 		if isFriend then
-			-- defined by blizzard
-			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+			-- NOTE: Do not release! Defined by blizzard
+			-- local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
 
-			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
-				-- print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
-				return true
-			end
+			-- if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
+			-- 	print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
+			-- 	return true
+			-- end
 
 			if aura.filter == "HARMFUL"then
 				-- dispellable
@@ -156,13 +156,13 @@ local filterFunctions = {
 				end
 			end
 		else
-			-- defined by blizzard
-			local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
+			-- NOTE: Do not release! Defined by blizzard
+			-- local hasCustom, _, showForMySpec = SpellGetVisibilityInfo(spellID, "ENEMY_TARGET")
 
-			if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag) then
-				-- print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
-				return true
-			end
+			-- if hasCustom and showForMySpec and E:CheckFlag(config.show_blizzard, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag) then
+			-- 	print(name, spellID, caster, "|cffe5a526DEFINED BY BLIZZARD|r")
+			-- 	return true
+			-- end
 
 			-- stealable
 			if isStealable and not UnitIsUnit(unit, "player") and E:CheckFlag(config.show_dispellable, hostileBuffFlag) then
