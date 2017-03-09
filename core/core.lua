@@ -32,7 +32,7 @@ _G[an] = exportTable
 -----------
 
 local function print(...)
-	_G.print("|cff1a9fc0ls:|r |cffffd200UI:|r", ...)
+	_G.print("|cffffd200ls:|r |cff1a9fc0UI:|r", ...)
 end
 
 P.print = print
