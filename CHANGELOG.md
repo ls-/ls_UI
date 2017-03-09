@@ -1,3 +1,13 @@
+## Version 70100.14
+
+- Added unit frame aura filter config, reworked the filter;
+- Added AK info to artefact bar tooltip;
+- Fixed a bug in aura tracker config that didn't allow to scroll aura list;
+- Removed login chat message;
+- Numerous bug fixes and tweaks.
+
+NOTE: This update is quite big, so there might be some bugs.
+
 ## Version 70100.13
 
 - Disable icons' desaturation if they aren't used as indicators.
