@@ -293,3 +293,60 @@ function E:UpdateConstants()
 
 	E.PLAYER_GUID = _G.UnitGUID("player")
 end
+
+do
+	local mixin = {}
+
+	function mixin:SetVertexColor(r, g, b, a)
+		self.Fill:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll1:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll2:SetVertexColor(r, g, b, a or 1)
+	end
+
+	function mixin:GetVertexColor()
+		return self.Fill:GetVertexColor()
+	end
+
+	function mixin:SetThickness(thickness)
+		self.Fill:SetThickness(thickness)
+		self.FillScroll1:SetThickness(thickness)
+		self.FillScroll2:SetThickness(thickness)
+	end
+
+	function mixin:SetOrientation(flag)
+		if flag == "HORIZONTAL" then
+			self.orientation = flag
+
+			self.Fill:SetStartPoint("LEFT", self)
+			self.FillScroll1:SetStartPoint("LEFT", self)
+			self.FillScroll2:SetStartPoint("LEFT", self)
+
+			self.Fill:SetEndPoint("RIGHT", self)
+			self.FillScroll1:SetEndPoint("RIGHT", self)
+			self.FillScroll2:SetEndPoint("RIGHT", self)
+		else
+			self.orientation = "VERTICAL"
+
+			self.Fill:SetStartPoint("BOTTOM", self)
+			self.FillScroll1:SetStartPoint("BOTTOM", self)
+			self.FillScroll2:SetStartPoint("BOTTOM", self)
+
+			self.Fill:SetEndPoint("TOP", self)
+			self.FillScroll1:SetEndPoint("TOP", self)
+			self.FillScroll2:SetEndPoint("TOP", self)
+		end
+	end
+
+	function mixin:OnLoad()
+		self:SetOrientation("HORIZONTAL")
+		self:SetThickness(16 * _G.UIParent:GetScale())
+		self:RegisterEvent("DISPLAY_SIZE_CHANGED")
+		self:RegisterEvent("UI_SCALE_CHANGED")
+	end
+
+	function mixin:OnEvent()
+		self:SetThickness(16 * _G.UIParent:GetScale())
+	end
+
+	LSUILineMixin = mixin
+end
