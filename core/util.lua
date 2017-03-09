@@ -234,6 +234,10 @@ local function GetColorRGBHEX(self)
 	return self.r, self.g, self.b, self.hex
 end
 
+local function WrapTextInColorCode(self, text)
+	return string.format("|cff%s%s|r", self.hex, text)
+end
+
 local function GetGradientHEX(self, perc)
 	return CalcHEXFromRGB(CalcGradient(self, perc))
 end
@@ -256,6 +260,10 @@ local function GetGradientRGBHEX(self, perc)
 	return r, g, b, CalcHEXFromRGB(r, g, b)
 end
 
+local function WrapTextInGradientCode(self, perc, text)
+	return string.format("|cff%s%s|r", GetGradientHEX(self, perc), text)
+end
+
 function E:CreateColor(r, g, b, a)
 	r, g, b, a = r or 1, g or 1, b or 1, a or 1
 
@@ -269,6 +277,7 @@ function E:CreateColor(r, g, b, a)
 	color.GetRGB = GetColorRGB
 	color.GetRGBA = GetColorRGBA
 	color.GetRGBHEX = GetColorRGBHEX
+	color.WrapText = WrapTextInColorCode
 
 	return color
 end
@@ -299,6 +308,7 @@ function E:CreateColorTable(...)
 	params.GetRGB = GetGradientRGB
 	params.GetRGBA = GetGradientRGBA
 	params.GetRGBHEX = GetGradientRGBHEX
+	params.WrapText = WrapTextInGradientCode
 
 	return params
 end
