@@ -27,9 +27,9 @@ local function PostUpdateHealth(bar, unit, cur, max)
 
 	if bar.__owner.isMouseOver then
 		if unit == "target" or unit == "focus" then
-			return bar.Text:SetFormattedText("%s - %s%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-		elseif unit:gsub("%d+", "") == "boss" then
-			return bar.Text:SetFormattedText("%s", E:NumberFormat(cur, 1))
+			return bar.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+		elseif unit:match("(boss)%d+") then
+			return bar.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
 		end
 	else
 		if cur == max then
@@ -38,14 +38,14 @@ local function PostUpdateHealth(bar, unit, cur, max)
 			end
 		else
 			if unit == "target" or unit == "focus" then
-				return bar.Text:SetFormattedText("%s - %s%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-			elseif unit:gsub("%d+", "") == "boss" then
-				return bar.Text:SetFormattedText("%s%%", E:NumberToPerc(cur, max))
+				return bar.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+			elseif unit:match("(boss)%d+") then
+				return bar.Text:SetFormattedText(L["BAR_PERC_TEMPLATE"], E:NumberToPerc(cur, max))
 			end
 		end
 	end
 
-	bar.Text:SetFormattedText("%s", E:NumberFormat(cur, 1))
+	bar.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
 end
 
 function UF:CreateHealthBar_new(parent, textFontObject, options)

@@ -631,7 +631,7 @@ function TOOLTIPS:Init()
 				bar.Text:Hide()
 			else
 				bar.Text:Show()
-				bar.Text:SetText(E:NumberFormat(value, 1).." / "..E:NumberFormat(max, 1))
+				bar.Text:SetFormattedText(L["BAR_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(value, 1), E:NumberFormat(max, 1))
 			end
 		end
 

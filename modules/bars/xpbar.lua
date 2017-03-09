@@ -11,7 +11,6 @@ local unpack = _G.unpack
 local isInit = false
 local bar
 
-local BAR_VALUE_TEMPLATE = "%s / |cff%s%s|r"
 local MAX_BARS = 3
 local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
@@ -71,7 +70,7 @@ local function UpdateXPBars()
 						},
 					}
 
-					bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), M.COLORS.XP:GetHEX(), _G.BreakUpLargeNumbers(max))
+					bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), M.COLORS.XP:GetHEX())
 					E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 					bar[index]:SetMinMaxValues(0, max)
@@ -107,7 +106,7 @@ local function UpdateXPBars()
 				bar[index].tooltipInfo.line3 = nil
 			end
 
-			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
@@ -138,7 +137,7 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line2 = nil
 				end
 
-				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
@@ -170,7 +169,7 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line3 = nil
 				end
 
-				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+				bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
@@ -210,7 +209,7 @@ local function UpdateXPBars()
 				},
 			}
 
-			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)

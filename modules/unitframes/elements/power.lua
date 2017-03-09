@@ -139,7 +139,7 @@ local function PostUpdate(bar, unit, cur, max)
 
 	if bar.__owner.isMouseOver then
 		if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
-			return bar.Text:SetFormattedText("%s / |cff%s%s|r", E:NumberFormat(cur, 1), color, E:NumberFormat(max, 1))
+			return bar.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), color)
 		end
 	else
 		if cur == max or cur == 0 then
@@ -149,7 +149,7 @@ local function PostUpdate(bar, unit, cur, max)
 		end
 	end
 
-	bar.Text:SetFormattedText("|cff%s%s|r", color, E:NumberFormat(cur, 1))
+	bar.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), color)
 end
 
 function UF:CreatePowerBar_new(parent, textFontObject, options)

@@ -160,7 +160,7 @@ function AURATRACKER:Init()
 		local label = E:CreateFontString(header, 12, nil, true)
 		label:SetPoint("LEFT", 2, 0)
 		label:SetAlpha(0.4)
-		label:SetText("|cffffd100"..L["AURA_TRACKER"].."|r")
+		label:SetText(M.COLORS.BLIZZ_YELLOW:WrapText(L["AURA_TRACKER"]))
 		header.Text = label
 
 		header:SetSize(label:GetWidth(), 22)

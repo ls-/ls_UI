@@ -209,9 +209,7 @@ local function HandleMinimapButton(button, cascade)
 end
 
 local function UpdateZoneInfo()
-	local hex = ZONE_COLORS[_G.GetZonePVPInfo() or "other"]:GetHEX()
-
-	Minimap.ZoneText:SetText("|cff"..hex..(_G.GetMinimapZoneText() or _G.UNKNOWN).."|r")
+	Minimap.ZoneText:SetText(ZONE_COLORS[_G.GetZonePVPInfo() or "other"]:WrapText(_G.GetMinimapZoneText() or _G.UNKNOWN))
 end
 
 -- Horizontal texture scrolling

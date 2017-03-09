@@ -28,7 +28,7 @@ function CFG:UnitFramesAuras_Init()
 	subtext:SetJustifyV("TOP")
 	subtext:SetNonSpaceWrap(true)
 	subtext:SetMaxLines(4)
-	subtext:SetText("NYI")
+	subtext:SetText(L["UNIT_FRAME_AURAS_DESC"])
 
 	local tabbedFrame = self:CreateTabbedFrame(panel,
 		{

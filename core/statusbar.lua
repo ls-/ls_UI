@@ -151,7 +151,7 @@ function E:ShowTooltipStatusBar(tooltip, min, max, value, ...)
 	bar:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
 	bar:Show()
 
-	bar.Text:SetText(value.." / "..max)
+	bar.Text:SetFormattedText(L["BAR_DETAILED_VALUE_TEMPLATE"], value, max)
 
 	tooltip.shownStatusBars = index
 	tooltip:SetMinimumWidth(140)

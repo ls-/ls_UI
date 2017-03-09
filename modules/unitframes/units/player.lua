@@ -599,7 +599,7 @@ function UF:ConstructPlayerFrame(frame)
 				return owner.Stagger.Text:SetText(nil)
 			end
 
-			owner.Stagger.Text:SetFormattedText("|cff%s%s|r", hex, E:NumberFormat(cur))
+			owner.Stagger.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur), hex)
 		end
 	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 		frame.Runes = _G.CreateFrame("Frame", "$parentRuneBar", frame)
