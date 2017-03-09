@@ -106,7 +106,7 @@ local function UpdateXPBars()
 				bar[index].tooltipInfo.line3 = nil
 			end
 
-			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), hex, _G.BreakUpLargeNumbers(max))
+			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
