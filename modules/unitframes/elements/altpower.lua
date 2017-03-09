@@ -18,21 +18,15 @@ local function PostUpdateAltPower(bar, min, cur, max)
 
 	bar:SetStatusBarColor(r, g, b)
 
-	if cur < max then
-		if bar.isMouseOver then
-			bar.Text:SetFormattedText("%s / %s - %d%%", E:NumberFormat(cur), E:NumberFormat(max), E:NumberToPerc(cur, max))
-		elseif cur > 0 then
-			bar.Text:SetFormattedText("%s", E:NumberFormat(cur))
-		else
-			bar.Text:SetText(nil)
-		end
+	if bar.isMouseOver then
+		return bar.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), E:RGBToHEX(r, g, b))
 	else
-		if bar.isMouseOver then
-			bar.Text:SetFormattedText("%s", E:NumberFormat(cur))
-		else
-			bar.Text:SetText(nil)
+		if cur == max or cur == 0 then
+			return bar.Text:SetText(nil)
 		end
 	end
+
+	bar.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur))
 end
 
 local function OnEnter(self)
