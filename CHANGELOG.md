@@ -1,3 +1,7 @@
+## Version 70100.15
+
+- Fixed artefact bar text.
+
 ## Version 70100.14
 
 - Added unit frame aura filter config, reworked the filter;
