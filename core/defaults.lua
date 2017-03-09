@@ -27,13 +27,6 @@ D["units"] = {
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
 			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
-			-- show_only_filtered = 0x00000000,
-			-- HELPFUL = {
-			-- 	auralist = {},
-			-- },
-			-- HARMFUL = {
-			-- 	auralist = {},
-			-- },
 		},
 	},
 	targettarget = {
@@ -51,13 +44,6 @@ D["units"] = {
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
 			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
-			-- show_only_filtered = 0x00000000,
-			-- HELPFUL = {
-			-- 	auralist = {},
-			-- },
-			-- HARMFUL = {
-			-- 	auralist = {},
-			-- },
 		},
 	},
 	focustarget = {
