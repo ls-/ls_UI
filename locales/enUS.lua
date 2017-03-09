@@ -21,6 +21,7 @@ L["ICON_YELLOW_INLINE"] = "|TInterface\\COMMON\\Indicator-Yellow:0|t"
 L["INFO"] = _G.INFO
 L["LFG_CALL_TO_ARMS"] = _G.LFG_CALL_TO_ARMS
 L["LOCK_FRAME"] = _G.LOCK_FRAME
+L["LS_UI"] = "ls: |cff1a9fc0UI|r"
 L["MAIL"] = _G.MAIL_LABEL
 L["MINIMAP"] = _G.MINIMAP_LABEL
 L["MISC"] = _G.MISCELLANEOUS
@@ -65,6 +66,7 @@ L["TOOLTIP_UNIT_NAME_COLOR_REACTION_TOOLTIP"] = (function()
 	return temp
 end)()
 
+-- Require translation
 L["ACTION_BAR_1"] = "Main Action Bar"
 L["ACTION_BAR_1_SHORT"] = "Main"
 L["ACTION_BAR_2"] = "Action Bar 1"
@@ -122,9 +124,6 @@ L["LOG_FOUND_ITEM"] = L["ICON_GREEN_INLINE"].."Found: '%s'."
 L["LOG_ITEM_ADDED"] = L["ICON_GREEN_INLINE"].."'%s' has been added to the list."
 L["LOG_ITEM_ADDED_ERR"] = L["ICON_RED_INLINE"].."'%s' is already in the list."
 L["LOG_NOTHING_FOUND"] = L["ICON_RED_INLINE"].."Nothing found."
-L["LOGIN_MSG"] = "Login message"
-L["LOGIN_MSG_TEXT"] = "Welcome to |cff1a9fc0ls:|r UI ver. %s. Use /LSUI (el ess ui) command to open config panel."
-L["LS_UI"] = "ls: |cff1a9fc0UI|r"
 L["LS_UI_DESC"] = "Yet another UI, but this one is a bit special...\nI strongly recommend to |cffe52626/reload|r UI after you're done setting up the addon. Even if you opened and closed this panel without changing anything, |cffe52626/reload|r UI. |cffffd200By doing so, you'll remove this config entry from the system and prevent possible taints.|r"
 L["MASK_COLON"] = "Mask:"
 L["MEMORY_COLON"] = "Memory:"

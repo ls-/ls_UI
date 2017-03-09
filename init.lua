@@ -3,8 +3,6 @@ local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
-local print = _G.print
 
 -- Mine
 local function ADDON_LOADED(arg)
@@ -19,6 +17,7 @@ local function ADDON_LOADED(arg)
 	-- > 70100.14
 	C.bars.expbar = nil
 	C.bars.xpbar.hide_if_empty = nil
+	C.login_msg = nil
 	C.units.boss.auras = nil
 	C.units.focus.auras.HARMFUL = nil
 	C.units.focus.auras.HELPFUL = nil
@@ -45,10 +44,6 @@ local function PLAYER_LOGIN()
 	E:UpdateConstants()
 
 	P:InitModules()
-
-	if C.login_msg then
-		print(string.format(L["LOGIN_MSG_TEXT"], E.VERSION))
-	end
 end
 
 local function PLAYER_LOGOUT()
