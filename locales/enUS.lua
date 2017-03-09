@@ -9,6 +9,14 @@ local next = _G.next
 L["ACTION_BAR"] = _G.ACTIONBAR_LABEL
 L["ARTIFACT_POWER"] = _G.ARTIFACT_POWER
 L["AURAS"] = _G.AURAS
+L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"] = "%1$s / |cff%3$s%2$s|r"
+L["BAR_COLORED_PERC_TEMPLATE"] = "|cff%2$s%1$s%%|r"
+L["BAR_COLORED_VALUE_PERC_TEMPLATE"] = "%1$s - |cff%3$s%2$s%%|r"
+L["BAR_COLORED_VALUE_TEMPLATE"] = "|cff%2$s%1$s|r"
+L["BAR_DETAILED_VALUE_TEMPLATE"] = "%s / %s"
+L["BAR_PERC_TEMPLATE"] = "%s%%"
+L["BAR_VALUE_PERC_TEMPLATE"] = "%s - %s%%"
+L["BAR_VALUE_TEMPLATE"] = "%s"
 L["CURRENCY_COLON"] = _G.CURRENCY..":"
 L["ENABLE"] = _G.ENABLE
 L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"] = _G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL
@@ -29,7 +37,7 @@ L["RAID_INFO_COLON"] = _G.RAID_INFO..":"
 L["RAID_INFO_WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
 L["RELOADUI"] = _G.RELOADUI
 L["REPUTATION"] = _G.REPUTATION
-L["REQUIRES_RELOAD"] = "|cffdc4436".._G.REQUIRES_RELOAD..".|r" -- M.COLORS.RED
+L["REQUIRES_RELOAD"] = M.COLORS.RED:WrapText(_G.REQUIRES_RELOAD)
 L["SUBCAT_OFFSET"] = "   %s"
 L["TOTAL_COLON"] = _G.TOTAL..":"
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
@@ -43,7 +51,7 @@ L["TOOLTIP_UNIT_NAME_COLOR_CLASS_TOOLTIP"] = (function()
 	local temp = ""
 
 	for k, v in next, _G.CLASS_SORT_ORDER do
-		temp = temp.."|cff"..M.COLORS.CLASS[v]:GetHEX().._G.LOCALIZED_CLASS_NAMES_MALE[v].."|r"
+		temp = temp..M.COLORS.CLASS[v]:WrapText(_G.LOCALIZED_CLASS_NAMES_MALE[v])
 
 		if next(_G.CLASS_SORT_ORDER, k) then
 			temp = temp.."\n"
@@ -56,7 +64,7 @@ L["TOOLTIP_UNIT_NAME_COLOR_REACTION_TOOLTIP"] = (function()
 	local temp = ""
 
 	for i = 1, 8 do
-		temp = temp.."|cff"..M.COLORS.REACTION[i]:GetHEX().._G["FACTION_STANDING_LABEL"..i].."|r"
+		temp = temp..M.COLORS.REACTION[i]:WrapText(_G["FACTION_STANDING_LABEL"..i])
 
 		if i ~= 8 then
 			temp = temp.."\n"
@@ -146,6 +154,7 @@ L["TOOLTIP_UNIT_NAME_COLOR_PVP_TOOLTIP"] = "|cffdc4436Can attack you\n|cffffb73c
 L["TOOLTIP_UNIT_NAME_COLOR_REACTION"] = "Reaction"
 L["TOOLTIP_UNIT_NAME_COLOR_TAP"] = "Tapping (NPC Only)"
 L["TOOLTIP_UNIT_NAME_COLOR_TAP_TOOLTIP"] = "|cff888987Tapped|r"
+L["UNIT_FRAME_AURAS_DESC"] = "These settings allow you to configure unit frames' aura filters."
 L["UNIT_FRAME_BOSS"] = "Boss"
 L["UNIT_FRAME_BOSS_AURAS"] = "Boss Auras"
 L["UNIT_FRAME_CASTABLE_AURAS"] = "Castable Auras"
