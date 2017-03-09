@@ -271,11 +271,7 @@ E.OMNICC = select(4, _G.GetAddOnInfo("OmniCC"))
 
 E.VERSION = _G.GetAddOnMetadata("ls_UI", "Version")
 
-E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
-E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
-
 E.PLAYER_CLASS = select(2, _G.UnitClass("player"))
-
 E.PLAYER_SPEC_FLAGS = {
 	-- [-1] = 0x00000000, -- none
 	-- [0] = 0x00000000, -- all
@@ -284,6 +280,19 @@ E.PLAYER_SPEC_FLAGS = {
 	[3] = 0x00000004, -- 3rd
 	[4] = 0x00000008, -- 4th
 }
+
+E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
+E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
+E.SCREEN_SCALE = _G.UIParent:GetScale()
+
+local function UpdateScreenConstants()
+	E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
+	E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
+	E.SCREEN_SCALE = _G.UIParent:GetScale()
+end
+
+E:RegisterEvent("DISPLAY_SIZE_CHANGED", UpdateScreenConstants)
+E:RegisterEvent("UI_SCALE_CHANGED", UpdateScreenConstants)
 
 -- Everything that's not available at ADDON_LOADED goes here
 function E:UpdateConstants()
@@ -339,13 +348,13 @@ do
 
 	function mixin:OnLoad()
 		self:SetOrientation("HORIZONTAL")
-		self:SetThickness(16 * _G.UIParent:GetScale())
+		self:SetThickness(16 * E.SCREEN_SCALE)
 		self:RegisterEvent("DISPLAY_SIZE_CHANGED")
 		self:RegisterEvent("UI_SCALE_CHANGED")
 	end
 
 	function mixin:OnEvent()
-		self:SetThickness(16 * _G.UIParent:GetScale())
+		self:SetThickness(16 * E.SCREEN_SCALE)
 	end
 
 	LSUILineMixin = mixin
