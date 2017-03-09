@@ -357,20 +357,8 @@
 		<Scripts>
 			<OnLoad method="OnLoad"/>
 			<OnEvent method="OnEvent"/>
-			<OnSizeChanged>
-				self.tileAmount = self.orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
-
-				self.Fill:SetTexCoord(0, self.tileAmount, 0, 1)
-				self.FillScroll1:SetTexCoord(0, self.tileAmount, 0, 1)
-				self.FillScroll2:SetTexCoord(0, self.tileAmount, 0, 1)
-			</OnSizeChanged>
-			<OnShow>
-				self.tileAmount = self.orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
-
-				self.Fill:SetTexCoord(0, self.tileAmount, 0, 1)
-				self.FillScroll1:SetTexCoord(0, self.tileAmount, 0, 1)
-				self.FillScroll2:SetTexCoord(0, self.tileAmount, 0, 1)
-			</OnShow>
+			<OnShow method="AdjustTiling"/>
+			<OnSizeChanged method="AdjustTiling"/>
 		</Scripts>
 	</Frame>
 </Ui>
