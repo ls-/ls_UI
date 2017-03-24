@@ -272,6 +272,7 @@ end
 function UF:EnableElement(unit, element)
 	if objects[unit] then
 		objects[unit]:EnableElement(element)
+		objects[unit]:UpdateAllElements("EnableElement")
 	end
 end
 
