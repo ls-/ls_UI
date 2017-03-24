@@ -5,7 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local math = _G.math
--- local unpack = _G.unpack
 
 -- Mine
 local diffThreshold = 0.1
@@ -100,18 +99,6 @@ local function PostUpdate(bar, _, cur, max)
 	end
 end
 
-local function OnShow(self)
-	self.Indicator:Free(false)
-
-	self.Indicator:SetOrientation(self:GetOrientation())
-	self.Indicator:SetAllPoints(self:GetStatusBarTexture())
-end
-
-local function OnHide(self)
-	self.Indicator:Free(true)
-	self.Indicator:Refresh()
-end
-
 function UF:CreateAdditionalPowerBar(parent, options)
 	P.argcheck(1, parent, "table")
 
@@ -119,7 +106,7 @@ function UF:CreateAdditionalPowerBar(parent, options)
 
 	local bar = _G.CreateFrame("StatusBar", "$parentAdditionalPowerBar", parent)
 	bar:SetOrientation(options.is_vertical and "VERTICAL" or "HORIZONTAL")
-	bar:SetStatusBarTexture(options.indicator and "Interface\\AddOns\\ls_UI\\media\\transparent" or "Interface\\BUTTONS\\WHITE8X8")
+	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	E:SmoothBar(bar)
 	bar:Hide()
 
@@ -167,19 +154,6 @@ function UF:CreateAdditionalPowerBar(parent, options)
 
 		lossTexture:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 		lossTexture:SetPoint("BOTTOMLEFT", bar:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-	end
-
-	if options.indicator then
-		bar.Indicator = options.indicator
-
-		_G.hooksecurefunc(bar, "SetStatusBarColor", function(self, r, g, b)
-			if self:IsShown() then
-				E:SetSmoothedVertexColor(self.Indicator, r, g, b)
-			end
-		end)
-
-		bar:HookScript("OnShow", OnShow)
-		bar:HookScript("OnHide", OnHide)
 	end
 
 	bar.colorPower = true

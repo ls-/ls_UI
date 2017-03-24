@@ -521,13 +521,22 @@ function UF:ConstructPlayerFrame(frame)
 	frame.Power.Text:SetPoint("TOP", frame, "CENTER", 0, -1)
 
 	-- additional power bar
-	frame.AdditionalPower = self:CreateAdditionalPowerBar(frame, {
-		is_vertical = true,
-		indicator =  frame.RightIndicator,
-	})
-	frame.AdditionalPower:SetFrameLevel(level + 1)
-	frame.AdditionalPower:SetSize(8, 118)
-	frame.AdditionalPower:SetPoint("RIGHT", -38, 0)
+	do
+		local bar = self:CreateAdditionalPowerBar(frame, {
+			is_vertical = true,
+		})
+		bar:SetFrameLevel(level + 4)
+		bar:SetPoint("LEFT", 23, 0)
+		bar:SetSize(12, 128)
+		bar:Hide()
+		bar:HookScript("OnHide", function()
+			class_power_tube:Refresh(0, false, "APB")
+		end)
+		bar:HookScript("OnShow", function()
+			class_power_tube:Refresh(1, true, "APB")
+		end)
+		frame.AdditionalPower = bar
+	end
 
 	-- power cost prediction
 	frame.PowerPrediction = {}
@@ -551,7 +560,7 @@ function UF:ConstructPlayerFrame(frame)
 	frame.PowerPrediction.altBar:SetPoint("LEFT")
 	frame.PowerPrediction.altBar:SetPoint("RIGHT")
 	frame.PowerPrediction.altBar:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
-	frame.PowerPrediction.altBar:SetHeight(118)
+	frame.PowerPrediction.altBar:SetHeight(128)
 	E:SmoothBar(frame.PowerPrediction.altBar)
 
 	-- class powers
