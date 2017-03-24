@@ -111,26 +111,31 @@ local filterFunctions = {
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
 		-- boss
-		if isBossAura and E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
+		if isBossAura then
 			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
-			return true
+			return E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
 		end
 
 		-- mounts
-		if MOUNTS[spellID] and E:CheckFlag(config.show_mount, hostileBuffFlag, friendlyBuffFlag) then
+		if MOUNTS[spellID] then
 			-- print(name, spellID, caster, "|cffe5a526MOUNT|r")
-			return true
+			return E:CheckFlag(config.show_mount, hostileBuffFlag, friendlyBuffFlag)
 		end
 
-		-- non-permanent self-cast
-		if caster and UnitIsUnit(unit, caster) and duration and duration ~= 0 and E:CheckFlag(config.show_selfcast, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
-			-- print(name, spellID, caster, "|cffe5a526SELFCAST|r")
-			return true
+		-- self-cast
+		if caster and UnitIsUnit(unit, caster) then
+			if duration and duration ~= 0 then
+				-- print(name, spellID, caster, "|cffe5a526SELFCAST|r")
+				return E:CheckFlag(config.show_selfcast, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+			else
+				-- print(name, spellID, caster, "|cffe5a526PERMA-SELFCAST|r")
+				return E:CheckFlag(config.show_selfcast_permanent, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+			end
 		end
 
 		-- applied by player
-		if isPlayerAura and duration and duration ~= 0 and E:CheckFlag(config.show_player, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag) then
-			return true
+		if isPlayerAura and duration and duration ~= 0 then
+			return E:CheckFlag(config.show_player, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
 		end
 
 		if isFriend then
@@ -144,15 +149,9 @@ local filterFunctions = {
 
 			if aura.filter == "HARMFUL"then
 				-- dispellable
-				if debuffType and E:IsDispellable(debuffType) and E:CheckFlag(config.show_dispellable, friendlyBuffFlag) then
+				if debuffType and E:IsDispellable(debuffType) then
 					-- print(name, spellID, caster, "|cffe5a526DISPELLABLE|r")
-					return true
-				end
-
-				-- NOTE: sometimes both caster and isBossAura params are nil, it'll be fixed in 7.2
-				if count > 1 and E:CheckFlag(config.show_boss, friendlyBuffFlag) then
-					-- print(name, spellID, caster, "|cffe5a526SBOSS (HACK)|r")
-					return true
+					return E:CheckFlag(config.show_dispellable, friendlyBuffFlag)
 				end
 			end
 		else
@@ -165,9 +164,9 @@ local filterFunctions = {
 			-- end
 
 			-- stealable
-			if isStealable and not UnitIsUnit(unit, "player") and E:CheckFlag(config.show_dispellable, hostileBuffFlag) then
+			if isStealable and not UnitIsUnit(unit, "player") then
 				-- print(name, spellID, caster, "|cffe5a526STEALABLE|r")
-				return true
+				return E:CheckFlag(config.show_dispellable, hostileBuffFlag)
 			end
 		end
 

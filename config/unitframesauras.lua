@@ -78,6 +78,18 @@ function CFG:UnitFramesAuras_Init()
 				self.SelfCastHostileDebuffsDial.key = self.key
 				self.SelfCastHostileDebuffsDial:RefreshValue()
 
+				self.PermaSelfCastFriendlyBuffsDial.key = self.key
+				self.PermaSelfCastFriendlyBuffsDial:RefreshValue()
+
+				self.PermaSelfCastHostileBuffsDial.key = self.key
+				self.PermaSelfCastHostileBuffsDial:RefreshValue()
+
+				self.PermaSelfCastFriendlyDebuffsDial.key = self.key
+				self.PermaSelfCastFriendlyDebuffsDial:RefreshValue()
+
+				self.PermaSelfCastHostileDebuffsDial.key = self.key
+				self.PermaSelfCastHostileDebuffsDial:RefreshValue()
+
 				self.CastableFriendlyBuffsDial.key = self.key
 				self.CastableFriendlyBuffsDial:RefreshValue()
 
@@ -108,7 +120,7 @@ function CFG:UnitFramesAuras_Init()
 		})
 	tabbedFrame:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 6, -40)
 	tabbedFrame:SetPoint("RIGHT", panel, "RIGHT", -16, 0)
-	tabbedFrame:SetHeight(352)
+	tabbedFrame:SetHeight(416)
 	tabbedFrame.key = "target"
 	_G.PanelTemplates_SetTab(tabbedFrame, 1)
 	panel.TabbedFrame = tabbedFrame
@@ -523,10 +535,156 @@ function CFG:UnitFramesAuras_Init()
 	tabbedFrame.SelfCastHostileDebuffsDial = selfCastHostileDebuffsDial
 
 	divider = self:CreateDivider(tabbedFrame, {
+		text = L["UNIT_FRAME_PERMA_SELF_CAST_AURAS"],
+		tooltip_text = L["UNIT_FRAME_PERMA_SELF_CAST_AURAS_TOOLTIP"]
+	})
+	divider:SetPoint("TOP", selfCastFriendlyDebuffsDial, "BOTTOM", 0, -12)
+
+	local permaSelfCastFriendlyBuffsDial = self:CreateMaskDial(panel, {
+		parent = tabbedFrame,
+		name = "$parentPermaSelfCastFriendlyBuffsDial",
+		text = L["BUFFS"],
+		get = function(self)
+			return C.units[self.key].auras.show_selfcast_permanent
+		end,
+		set = function(self, value)
+			C.units[self.key].auras.show_selfcast_permanent = value
+		end,
+		calc = function(self)
+			local value = C.units[self.key].auras.show_selfcast_permanent
+
+			for i = 1, #self do
+				if self[i]:IsPositive() then
+					value = E:EnableFlag(value, self[i].value)
+				else
+					value = E:DisableFlag(value, self[i].value)
+				end
+			end
+
+			return value
+		end,
+		flags = {
+			[0] = E.PLAYER_SPEC_FLAGS[0],
+			[1] = E.PLAYER_SPEC_FLAGS[1],
+			[2] = E.PLAYER_SPEC_FLAGS[2],
+			[3] = E.PLAYER_SPEC_FLAGS[3],
+			[4] = E.PLAYER_SPEC_FLAGS[4],
+		}
+	})
+	permaSelfCastFriendlyBuffsDial:SetWidth(266)
+	permaSelfCastFriendlyBuffsDial:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 10, -12)
+	tabbedFrame.PermaSelfCastFriendlyBuffsDial = permaSelfCastFriendlyBuffsDial
+
+	local permaSelfCastHostileBuffsDial = self:CreateMaskDial(panel, {
+		parent = tabbedFrame,
+		name = "$parentPermaSelfCastHostileBuffsDial",
+		text = L["BUFFS"],
+		get = function(self)
+			return C.units[self.key].auras.show_selfcast_permanent
+		end,
+		set = function(self, value)
+			C.units[self.key].auras.show_selfcast_permanent = value
+		end,
+		calc = function(self)
+			local value = C.units[self.key].auras.show_selfcast_permanent
+
+			for i = 1, #self do
+				if self[i]:IsPositive() then
+					value = E:EnableFlag(value, self[i].value)
+				else
+					value = E:DisableFlag(value, self[i].value)
+				end
+			end
+
+			return value
+		end,
+		flags = {
+			[0] = bit.lshift(E.PLAYER_SPEC_FLAGS[0], 4),
+			[1] = bit.lshift(E.PLAYER_SPEC_FLAGS[1], 4),
+			[2] = bit.lshift(E.PLAYER_SPEC_FLAGS[2], 4),
+			[3] = bit.lshift(E.PLAYER_SPEC_FLAGS[3], 4),
+			[4] = bit.lshift(E.PLAYER_SPEC_FLAGS[4], 4),
+		}
+	})
+	permaSelfCastHostileBuffsDial:SetWidth(266)
+	permaSelfCastHostileBuffsDial:SetPoint("TOPLEFT", permaSelfCastFriendlyBuffsDial, "TOPRIGHT", 16, 0)
+	tabbedFrame.PermaSelfCastHostileBuffsDial = permaSelfCastHostileBuffsDial
+
+	local permaSelfCastFriendlyDebuffsDial = self:CreateMaskDial(panel, {
+		parent = tabbedFrame,
+		name = "$parentPermaSelfCastFriendlyDebuffsDial",
+		text = L["DEBUFFS"],
+		get = function(self)
+			return C.units[self.key].auras.show_selfcast_permanent
+		end,
+		set = function(self, value)
+			C.units[self.key].auras.show_selfcast_permanent = value
+		end,
+		calc = function(self)
+			local value = C.units[self.key].auras.show_selfcast_permanent
+
+			for i = 1, #self do
+				if self[i]:IsPositive() then
+					value = E:EnableFlag(value, self[i].value)
+				else
+					value = E:DisableFlag(value, self[i].value)
+				end
+			end
+
+			return value
+		end,
+		flags = {
+			[0] = bit.lshift(E.PLAYER_SPEC_FLAGS[0], 8),
+			[1] = bit.lshift(E.PLAYER_SPEC_FLAGS[1], 8),
+			[2] = bit.lshift(E.PLAYER_SPEC_FLAGS[2], 8),
+			[3] = bit.lshift(E.PLAYER_SPEC_FLAGS[3], 8),
+			[4] = bit.lshift(E.PLAYER_SPEC_FLAGS[4], 8),
+		}
+	})
+	permaSelfCastFriendlyDebuffsDial:SetWidth(266)
+	permaSelfCastFriendlyDebuffsDial:SetPoint("TOPLEFT", permaSelfCastFriendlyBuffsDial, "BOTTOMLEFT", 0, -8)
+	tabbedFrame.PermaSelfCastFriendlyDebuffsDial = permaSelfCastFriendlyDebuffsDial
+
+	local permaSelfCastHostileDebuffsDial = self:CreateMaskDial(panel, {
+		parent = tabbedFrame,
+		name = "$parentPermaSelfCastHostileDebuffsDial",
+		text = L["DEBUFFS"],
+		get = function(self)
+			return C.units[self.key].auras.show_selfcast_permanent
+		end,
+		set = function(self, value)
+			C.units[self.key].auras.show_selfcast_permanent = value
+		end,
+		calc = function(self)
+			local value = C.units[self.key].auras.show_selfcast_permanent
+
+			for i = 1, #self do
+				if self[i]:IsPositive() then
+					value = E:EnableFlag(value, self[i].value)
+				else
+					value = E:DisableFlag(value, self[i].value)
+				end
+			end
+
+			return value
+		end,
+		flags = {
+			[0] = bit.lshift(E.PLAYER_SPEC_FLAGS[0], 12),
+			[1] = bit.lshift(E.PLAYER_SPEC_FLAGS[1], 12),
+			[2] = bit.lshift(E.PLAYER_SPEC_FLAGS[2], 12),
+			[3] = bit.lshift(E.PLAYER_SPEC_FLAGS[3], 12),
+			[4] = bit.lshift(E.PLAYER_SPEC_FLAGS[4], 12),
+		}
+	})
+	permaSelfCastHostileDebuffsDial:SetWidth(266)
+	permaSelfCastHostileDebuffsDial:SetPoint("TOPLEFT", permaSelfCastFriendlyDebuffsDial, "TOPRIGHT", 16, 0)
+	tabbedFrame.PermaSelfCastHostileDebuffsDial = permaSelfCastHostileDebuffsDial
+
+	divider = self:CreateDivider(tabbedFrame, {
 		text = L["UNIT_FRAME_CASTABLE_AURAS"],
 		tooltip_text = L["UNIT_FRAME_CASTABLE_AURAS_TOOLTIP"]
 	})
-	divider:SetPoint("TOP", selfCastFriendlyDebuffsDial, "BOTTOM", 0, -12)
+	divider:SetPoint("TOP", permaSelfCastFriendlyDebuffsDial, "BOTTOM", 0, -12)
 
 	local personalFriendlyBuffsDial = self:CreateMaskDial(panel, {
 		parent = tabbedFrame,
