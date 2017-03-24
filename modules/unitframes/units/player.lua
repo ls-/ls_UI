@@ -343,15 +343,12 @@ function UF:ConstructPlayerFrame(frame)
 	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
 	texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 
-	-- health_bar_parent a.k.a. ghetto
-	local scroll_frame = _G.CreateFrame("ScrollFrame", nil, frame)
-	scroll_frame:SetFrameLevel(level)
-	scroll_frame:SetSize(140 / 2, 280 / 2)
-	scroll_frame:SetPoint("CENTER")
-
-	local health_bar_parent = _G.CreateFrame("Frame", nil, scroll_frame)
+	-- health bar parent
+	local health_bar_parent = _G.CreateFrame("Frame", nil, frame)
+	health_bar_parent:SetFrameLevel(level + 1)
 	health_bar_parent:SetSize(140 / 2, 280 / 2)
-	scroll_frame:SetScrollChild(health_bar_parent)
+	health_bar_parent:SetPoint("CENTER")
+	health_bar_parent:SetClipsChildren(true)
 
 	-- indicators
 	local indicator_parent = _G.CreateFrame("Frame", nil, frame)
