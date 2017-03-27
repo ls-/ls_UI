@@ -357,5 +357,13 @@ do
 		self:SetThickness(16 * E.SCREEN_SCALE)
 	end
 
+	function mixin:AdjustTiling()
+		self.tileAmount = self.orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
+
+		self.Fill:SetTexCoord(0, self.tileAmount, 0, 1)
+		self.FillScroll1:SetTexCoord(0, self.tileAmount, 0, 1)
+		self.FillScroll2:SetTexCoord(0, self.tileAmount, 0, 1)
+	end
+
 	LSUILineMixin = mixin
 end
