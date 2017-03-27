@@ -178,10 +178,6 @@ D["bars"] = {
 	},
 }
 
-D["mail"] = {
-	enabled = true,
-}
-
 D["auras"] = {
 	enabled = true,
 	buff = {

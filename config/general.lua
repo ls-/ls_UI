@@ -2,7 +2,6 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local CFG = P:GetModule("Config")
 local AURAS = P:GetModule("Auras")
-local MAIL = P:GetModule("Mail")
 local MINIMAP = P:GetModule("MiniMap")
 
 -- Lua
@@ -135,50 +134,4 @@ function CFG:General_Init()
 			end
 		})
 	minimapToggle:SetPoint("LEFT", aurasToggle, "RIGHT", 110, 0)
-
-	local mailToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentMailToggle",
-			text = L["MAIL"],
-			get = function() return C.mail.enabled end,
-			set = function(_, value)
-				C.mail.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.mail.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if isChecked then
-					if MAIL:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED_ERR"],
-							L["MAIL"]))
-					else
-						local result = MAIL:Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["MAIL"],
-								""))
-						end
-					end
-				else
-					if MAIL:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["MAIL"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	mailToggle:SetPoint("LEFT", minimapToggle, "RIGHT", 110, 0)
 end

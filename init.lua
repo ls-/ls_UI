@@ -31,6 +31,9 @@ local function ADDON_LOADED(arg)
 	C.units.target.auras.show_only_filtered = nil
 	C.units.targettarget.enabled = nil
 
+	--> 70200.01
+	C.mail = nil
+
 	-----------------------
 	-- CONFIG TWEAKS END --
 	-----------------------
