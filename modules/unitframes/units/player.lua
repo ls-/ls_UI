@@ -321,208 +321,205 @@ function UF:ConstructPlayerFrame(frame)
 
 	-- Note: can't touch this
 	-- 1: frame
-		-- 2: health_bar_parent
-			-- 2: frame.Health
-				-- 3: frame.HealPrediction
+		-- 2: frame.Health
+			-- 3: frame.HealPrediction
 		-- 2: frame.AdditionalPower
 			-- 3: frame.PowerPrediction.altBar
-		-- 2: indicator_parent
-			-- 3: frame.LeftIndicator, frame.RightIndicator
+		-- 2: frame.LeftIndicator, frame.RightIndicator
 		-- 4: border_parent
 		-- 5: frame.Power
 			-- 6: frame.PowerPrediction.mainBar
 		-- 5: frame.Stagger, frame.Runes, frame.ClassIcons
-		-- 7: class_power_tube, power_tube
-		-- 8: fg_parent
-		-- 9: text_parent
-		-- 10: fcf
+		-- 7: frame.LeftTube, frame.RightTube
+		-- 8: frame.FGParent
+		-- 9: frame.TextParent
+		-- 10: frame.FloatingCombatFeedback
 
-	-- bg
-	local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
-	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-	texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+	-- bg, border, fg, text parents
+	do
+		-- bg
+		local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+		texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 
-	-- health bar parent
-	local health_bar_parent = _G.CreateFrame("Frame", nil, frame)
-	health_bar_parent:SetFrameLevel(level + 1)
-	health_bar_parent:SetSize(140 / 2, 280 / 2)
-	health_bar_parent:SetPoint("CENTER")
-	health_bar_parent:SetClipsChildren(true)
+		-- border
+		local parent = _G.CreateFrame("Frame", nil, frame)
+		parent:SetFrameLevel(level + 3)
+		parent:SetAllPoints()
+
+		texture = parent:CreateTexture(nil, "BACKGROUND")
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+		texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
+
+		-- fg
+		parent = _G.CreateFrame("Frame", nil, frame)
+		parent:SetFrameLevel(level + 7)
+		parent:SetAllPoints()
+		frame.FGParent = parent
+
+		texture = parent:CreateTexture(nil, "ARTWORK", nil, 2)
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+		texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
+
+		-- text
+		parent = _G.CreateFrame("Frame", nil, frame)
+		parent:SetFrameLevel(level + 8)
+		parent:SetAllPoints()
+		frame.TextParent = parent
+	end
 
 	-- indicators
-	local indicator_parent = _G.CreateFrame("Frame", nil, frame)
-	indicator_parent:SetFrameLevel(level + 1)
-	indicator_parent:SetPoint("LEFT", 38, 0)
-	indicator_parent:SetSize(8, 118)
+	do
+		-- left indicator
+		local indicator = self:CreateIndicator(frame, {
+			is_vertical = true,
+		})
+		indicator:SetFrameLevel(level + 1)
+		indicator:SetPoint("LEFT", 38, 0)
+		indicator:SetSize(8, 118)
+		frame.LeftIndicator = indicator
 
-	frame.LeftIndicator = self:CreateIndicator(indicator_parent, {
-		is_vertical = true,
-		post_update = function(self)
-			self:SetAllPoints(self:GetParent())
-		end
-	})
-	frame.LeftIndicator:SetFrameLevel(level + 2)
-	frame.LeftIndicator:SetAllPoints()
+		-- right indicator
+		indicator = self:CreateIndicator(frame, {
+			is_vertical = true,
+		})
+		indicator:SetFrameLevel(level + 1)
+		indicator:SetPoint("RIGHT", -38, 0)
+		indicator:SetSize(8, 118)
+		frame.RightIndicator = indicator
 
-	indicator_parent = _G.CreateFrame("Frame", nil, frame)
-	indicator_parent:SetFrameLevel(level + 1)
-	indicator_parent:SetPoint("RIGHT", -38, 0)
-	indicator_parent:SetSize(8, 118)
-
-	frame.RightIndicator = self:CreateIndicator(indicator_parent, {
-		is_vertical = true,
-		post_update = function(self)
-			self:SetAllPoints(self:GetParent())
-		end
-	})
-	frame.RightIndicator:SetFrameLevel(level + 2)
-	frame.RightIndicator:SetAllPoints()
-
-	local function RefreshIndicators()
-		if frame.LeftIndicator:IsFree() then
+		local function RefreshIndicators()
 			frame.LeftIndicator:Refresh()
-		end
-
-		if frame.RightIndicator:IsFree() then
 			frame.RightIndicator:Refresh()
 		end
+
+		frame:RegisterEvent("PLAYER_REGEN_ENABLED", RefreshIndicators)
+		frame:RegisterEvent("PLAYER_REGEN_DISABLED", RefreshIndicators)
+		frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE", RefreshIndicators)
+		frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", RefreshIndicators)
 	end
 
-	frame:RegisterEvent("PLAYER_REGEN_ENABLED", RefreshIndicators)
-	frame:RegisterEvent("PLAYER_REGEN_DISABLED", RefreshIndicators)
-	frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE", RefreshIndicators)
-	frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", RefreshIndicators)
-
-	-- border
-	local border_parent = _G.CreateFrame("Frame", nil, frame)
-	border_parent:SetFrameLevel(level + 3)
-	border_parent:SetAllPoints()
-
-	texture = border_parent:CreateTexture(nil, "BACKGROUND")
-	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-	texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
-
-	-- class power textures
-	local class_power_tube = _G.CreateFrame("Frame", nil, frame)
-	class_power_tube:SetFrameLevel(level + 6)
-	class_power_tube:SetSize(12, 128)
-	class_power_tube:SetPoint("LEFT", 23, 0)
-	E:SetBarSkin_new(class_power_tube, "VERTICAL-L")
-
-	class_power_tube.Seps = {}
-
-	for i = 1, 9 do
-		class_power_tube.Seps[i] = class_power_tube:CreateTexture(nil, "ARTWORK", nil, 1)
-		class_power_tube.Seps[i]:SetSize(24 / 2, 24 / 2)
-		class_power_tube.Seps[i]:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		class_power_tube.Seps[i]:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
-	end
-
-	class_power_tube.Refresh = function(self, slots, visible, sender)
-		if (slots == self.slots and visible == self.visible)
-			or (not visible and sender ~= self.sender) then return end
-
-		self.slots = slots
-		self.visible = visible
-		self.sender = sender
-
-		if visible then
-			self:Show()
-
-			for i = 1, 9 do
-				if i < slots then
-					self.Seps[i]:SetPoint("CENTER", self, unpack(CLASS_POWER_LAYOUT[slots][i + 1].point))
-					self.Seps[i]:Show()
-				else
-					self.Seps[i]:Hide()
-				end
-			end
-		else
-			self:Hide()
-		end
-	end
-
-	class_power_tube:Refresh(0, false)
-
-	-- power textures
-	local power_tube = _G.CreateFrame("Frame", nil, frame)
-	power_tube:SetFrameLevel(level + 6)
-	power_tube:SetSize(12, 128)
-	power_tube:SetPoint("RIGHT", -23, 0)
-	E:SetBarSkin_new(power_tube, "VERTICAL-L")
-
-	-- foreground
-	local fg_parent = _G.CreateFrame("Frame", "$parentCover", frame)
-	fg_parent:SetFrameLevel(level + 7)
-	fg_parent:SetAllPoints()
-	frame.Cover = fg_parent
-
-	texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 2)
-	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-	texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
-
-	local text_parent = _G.CreateFrame("Frame", nil, frame)
-	text_parent:SetFrameLevel(level + 8)
-	text_parent:SetAllPoints()
-
-	-- health bar
-	frame.Health = self:CreateHealthBar_new(health_bar_parent, "LS16Font_Shadow", {
-		is_vertical = true,
-		text_parent = text_parent
-	})
-	frame.Health:SetFrameLevel(level + 1)
-	frame.Health:SetSize(140 / 2, 280 / 2)
-	frame.Health:SetPoint("CENTER")
-	table.insert(frame.mouseovers, frame.Health)
-
-	frame.Health.Text:SetPoint("BOTTOM", frame, "CENTER", 0, 1)
-
-	-- heal prediction
-	frame.HealPrediction = self:CreateHealPrediction_new(frame.Health, {
-		is_vertical = true
-	})
-
-	-- local absrobGlow = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
-	-- absrobGlow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-absorb")
-	-- absrobGlow:SetTexCoord(1 / 128, 103 / 128, 1 / 64, 41 / 64)
-	-- absrobGlow:SetVertexColor(0.35, 1, 1)
-	-- absrobGlow:SetSize(102, 40)
-	-- absrobGlow:SetPoint("CENTER", 0, 54)
-	-- absrobGlow:SetAlpha(0)
-	-- frame.AbsorbGlow = absrobGlow
-
-	-- damage absorb text
-	local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-	damage_absorb:SetWordWrap(false)
-	damage_absorb:SetPoint("BOTTOM", frame.Health.Text, "TOP", 0, 1)
-	E:ResetFontStringHeight(damage_absorb)
-	frame:Tag(damage_absorb, "[ls:damageabsorb]")
-
-	-- heal absorb text
-	local heal_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-	heal_absorb:SetPoint("BOTTOM", damage_absorb, "TOP", 0, 1)
-	E:ResetFontStringHeight(heal_absorb)
-	frame:Tag(heal_absorb, "[ls:healabsorb]")
-
-	-- power bar
-	frame.Power = self:CreatePowerBar_new(frame, "LS14Font_Shadow", {
-		is_vertical = true,
-		text_parent = text_parent,
-		tube = power_tube
-	})
-	frame.Power:SetFrameLevel(level + 4)
-	frame.Power:SetSize(12, 128)
-	frame.Power:SetPoint("RIGHT", -23, 0)
-	table.insert(frame.mouseovers, frame.Power)
-
-	frame.Power.Text:SetPoint("TOP", frame, "CENTER", 0, -1)
-
-	-- additional power bar
+	-- class power, power tubes
 	do
-		local bar = self:CreateAdditionalPowerBar(frame, {
+		-- class power
+		local tube = _G.CreateFrame("Frame", nil, frame)
+		tube:SetFrameLevel(level + 6)
+		tube:SetSize(12, 128)
+		tube:SetPoint("LEFT", 23, 0)
+		E:SetBarSkin_new(tube, "VERTICAL-L")
+		frame.LeftTube = tube
+
+		local seps = {}
+
+		for i = 1, 9 do
+			local sep = tube:CreateTexture(nil, "ARTWORK", nil, 1)
+			sep:SetSize(24 / 2, 24 / 2)
+			sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+			sep:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
+			seps[i] = sep
+		end
+
+		tube.Refresh = function(self, slots, visible, sender)
+			if (slots == self.slots and visible == self.visible)
+				or (not visible and sender ~= self.sender) then return end
+
+			self.slots = slots
+			self.visible = visible
+			self.sender = sender
+
+			if visible then
+				self:Show()
+
+				for i = 1, 9 do
+					if i < slots then
+						seps[i]:SetPoint("CENTER", self, unpack(CLASS_POWER_LAYOUT[slots][i + 1].point))
+						seps[i]:Show()
+					else
+						seps[i]:Hide()
+					end
+				end
+			else
+				self:Hide()
+			end
+		end
+
+		tube:Refresh(0, false)
+
+		-- power
+		tube = _G.CreateFrame("Frame", nil, frame)
+		tube:SetFrameLevel(level + 6)
+		tube:SetSize(12, 128)
+		tube:SetPoint("RIGHT", -23, 0)
+		E:SetBarSkin_new(tube, "VERTICAL-L")
+		frame.RightTube = tube
+	end
+
+	-- health, heal prediction bars
+	do
+		-- health
+		local bar = self:CreateHealthBar_new(frame, "LS16Font_Shadow", {
+			is_vertical = true,
+			text_parent = frame.TextParent
+		})
+		bar:SetFrameLevel(level + 1)
+		bar:SetSize(140 / 2, 280 / 2)
+		bar:SetPoint("CENTER")
+		bar:SetClipsChildren(true)
+		table.insert(frame.mouseovers, bar)
+		frame.Health = bar
+
+		bar.Text:SetPoint("BOTTOM", frame, "CENTER", 0, 1)
+
+		-- heal prediction
+		frame.HealPrediction = self:CreateHealPrediction_new(frame.Health, {
+			is_vertical = true
+		})
+
+		-- local absrobGlow = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 1)
+		-- absrobGlow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-absorb")
+		-- absrobGlow:SetTexCoord(1 / 128, 103 / 128, 1 / 64, 41 / 64)
+		-- absrobGlow:SetVertexColor(0.35, 1, 1)
+		-- absrobGlow:SetSize(102, 40)
+		-- absrobGlow:SetPoint("CENTER", 0, 54)
+		-- absrobGlow:SetAlpha(0)
+		-- frame.AbsorbGlow = absrobGlow
+
+		-- damage absorb text
+		local damage_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+		damage_absorb:SetWordWrap(false)
+		damage_absorb:SetPoint("BOTTOM", frame.Health.Text, "TOP", 0, 1)
+		E:ResetFontStringHeight(damage_absorb)
+		frame:Tag(damage_absorb, "[ls:damageabsorb]")
+
+		-- heal absorb text
+		local heal_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+		heal_absorb:SetPoint("BOTTOM", damage_absorb, "TOP", 0, 1)
+		E:ResetFontStringHeight(heal_absorb)
+		frame:Tag(heal_absorb, "[ls:healabsorb]")
+	end
+
+
+	-- power, additional power, power cost prediction bars
+	do
+		-- power bar
+		local bar = self:CreatePowerBar_new(frame, "LS14Font_Shadow", {
+			is_vertical = true,
+			text_parent = frame.TextParent,
+			tube = frame.RightTube
+		})
+		bar:SetFrameLevel(level + 4)
+		bar:SetSize(12, 128)
+		bar:SetPoint("RIGHT", -23, 0)
+		table.insert(frame.mouseovers, bar)
+		frame.Power = bar
+
+		bar.Text:SetPoint("TOP", frame, "CENTER", 0, -1)
+
+		-- additional power bar
+		bar = self:CreateAdditionalPowerBar(frame, {
 			is_vertical = true,
 		})
 		bar:SetFrameLevel(level + 4)
@@ -530,100 +527,102 @@ function UF:ConstructPlayerFrame(frame)
 		bar:SetSize(12, 128)
 		bar:Hide()
 		bar:HookScript("OnHide", function()
-			class_power_tube:Refresh(0, false, "APB")
+			frame.LeftTube:Refresh(0, false, "APB")
 		end)
 		bar:HookScript("OnShow", function()
-			class_power_tube:Refresh(1, true, "APB")
+			frame.LeftTube:Refresh(1, true, "APB")
 		end)
 		frame.AdditionalPower = bar
+
+		-- power cost prediction
+		frame.PowerPrediction = {}
+
+		bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.Power)
+		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
+		bar:SetOrientation("VERTICAL")
+		bar:SetReverseFill(true)
+		bar:SetPoint("LEFT")
+		bar:SetPoint("RIGHT")
+		bar:SetPoint("TOP", frame.Power:GetStatusBarTexture(), "TOP")
+		bar:SetHeight(128)
+		E:SmoothBar(bar)
+		frame.PowerPrediction.mainBar = bar
+
+		bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.AdditionalPower)
+		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
+		bar:SetOrientation("VERTICAL")
+		bar:SetReverseFill(true)
+		bar:SetPoint("LEFT")
+		bar:SetPoint("RIGHT")
+		bar:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
+		bar:SetHeight(128)
+		E:SmoothBar(bar)
+		frame.PowerPrediction.altBar = bar
 	end
 
-	-- power cost prediction
-	frame.PowerPrediction = {}
-
-	frame.PowerPrediction.mainBar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.Power)
-	frame.PowerPrediction.mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	frame.PowerPrediction.mainBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-	frame.PowerPrediction.mainBar:SetOrientation("VERTICAL")
-	frame.PowerPrediction.mainBar:SetReverseFill(true)
-	frame.PowerPrediction.mainBar:SetPoint("LEFT")
-	frame.PowerPrediction.mainBar:SetPoint("RIGHT")
-	frame.PowerPrediction.mainBar:SetPoint("TOP", frame.Power:GetStatusBarTexture(), "TOP")
-	frame.PowerPrediction.mainBar:SetHeight(128)
-	E:SmoothBar(frame.PowerPrediction.mainBar)
-
-	frame.PowerPrediction.altBar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.AdditionalPower)
-	frame.PowerPrediction.altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	frame.PowerPrediction.altBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-	frame.PowerPrediction.altBar:SetOrientation("VERTICAL")
-	frame.PowerPrediction.altBar:SetReverseFill(true)
-	frame.PowerPrediction.altBar:SetPoint("LEFT")
-	frame.PowerPrediction.altBar:SetPoint("RIGHT")
-	frame.PowerPrediction.altBar:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
-	frame.PowerPrediction.altBar:SetHeight(128)
-	E:SmoothBar(frame.PowerPrediction.altBar)
-
-	-- class powers
+	-- stagger, rune bars
 	if E.PLAYER_CLASS == "MONK" then
-		local function OnShow()
-			class_power_tube:Refresh(1, true, "STAGGER")
-		end
+		local bar = _G.CreateFrame("StatusBar", "$parentStaggerBar", frame)
+		bar:SetFrameLevel(level + 4)
+		bar:SetOrientation("VERTICAL")
+		bar:SetPoint("LEFT", 23, 0)
+		bar:SetSize(12, 128)
+		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		bar:Hide()
+		bar:HookScript("OnHide", function()
+			frame.LeftTube:Refresh(0, false, "STAGGER")
+		end)
+		bar:HookScript("OnShow", function()
+			frame.LeftTube:Refresh(1, true, "STAGGER")
+		end)
+		E:SmoothBar(bar)
+		table.insert(frame.mouseovers, bar)
+		frame.Stagger = bar
 
-		local function OnHide()
-			class_power_tube:Refresh(0, false, "STAGGER")
-		end
+		local text = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+		text:SetWordWrap(false)
+		text:SetPoint("TOP", frame.Power.Text, "BOTTOM", 0, -1)
+		E:ResetFontStringHeight(text)
+		bar.Text = text
 
-		frame.Stagger = _G.CreateFrame("StatusBar", "$parentStaggerBar", frame)
-		frame.Stagger:SetFrameLevel(level + 4)
-		frame.Stagger:SetOrientation("VERTICAL")
-		frame.Stagger:SetPoint("LEFT", 23, 0)
-		frame.Stagger:SetSize(12, 128)
-		frame.Stagger:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		frame.Stagger:Hide()
-		frame.Stagger:HookScript("OnHide", OnHide)
-		frame.Stagger:HookScript("OnShow", OnShow)
-		E:SmoothBar(frame.Stagger)
-		table.insert(frame.mouseovers, frame.Stagger)
-
-		frame.Stagger.Text = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-		frame.Stagger.Text:SetWordWrap(false)
-		frame.Stagger.Text:SetPoint("TOP", frame.Power.Text, "BOTTOM", 0, -1)
-		E:ResetFontStringHeight(frame.Stagger.Text)
-
-		frame.Stagger.Override = function(owner, _, unit)
-			if unit and unit ~= owner.unit then return end
+		bar.Override = function(_, _, unit)
+			if unit and unit ~= "player" then return end
 
 			local max = _G.UnitHealthMax("player")
 			local cur = _G.UnitStagger("player")
 			local r, g, b, hex = M.COLORS.POWER.STAGGER:GetRGBHEX(cur / max)
 
-			owner.Stagger:SetMinMaxValues(0, max)
-			owner.Stagger:SetValue(cur)
-			owner.Stagger:SetStatusBarColor(r, g, b)
+			bar:SetMinMaxValues(0, max)
+			bar:SetValue(cur)
+			bar:SetStatusBarColor(r, g, b)
 
 			if cur == 0 then
-				return owner.Stagger.Text:SetText(nil)
+				return bar.Text:SetText(nil)
 			end
 
-			owner.Stagger.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur), hex)
+			bar.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur), hex)
 		end
 	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
-		frame.Runes = _G.CreateFrame("Frame", "$parentRuneBar", frame)
-		frame.Runes:SetFrameLevel(level + 4)
-		frame.Runes:SetPoint("LEFT", 23, 0)
-		frame.Runes:SetSize(12, 128)
+		local bar = _G.CreateFrame("Frame", "$parentRuneBar", frame)
+		bar:SetFrameLevel(level + 4)
+		bar:SetPoint("LEFT", 23, 0)
+		bar:SetSize(12, 128)
+		bar:Hide()
+		frame.Runes = bar
 
 		for i = 1, 6 do
-			local element = _G.CreateFrame("StatusBar", "$parentRune"..i, frame.Runes)
-			element:SetFrameLevel(frame.Runes:GetFrameLevel())
+			local element = _G.CreateFrame("StatusBar", "$parentRune"..i, bar)
+			element:SetFrameLevel(bar:GetFrameLevel())
 			element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 			element:SetOrientation("VERTICAL")
 			element:SetSize(12, CLASS_POWER_LAYOUT[6][i].size)
 			element:SetPoint(unpack(CLASS_POWER_LAYOUT[6][i].point))
 			element:SetStatusBarColor(M.COLORS.POWER.RUNES:GetRGB())
-			frame.Runes[i] = element
+			bar[i] = element
 
-			texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 3)
+			local texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
 			texture:SetSize(16, CLASS_POWER_LAYOUT[6][i].size)
 			texture:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
 			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
@@ -654,133 +653,137 @@ function UF:ConstructPlayerFrame(frame)
 			anim:SetToScale(1.1, 1.1)
 		end
 
-		frame.Runes.PostUpdate = function(self, rune, _, _, _, runeReady)
+		bar.PostUpdate = function(self, rune, _, _, _, runeReady)
 			if runeReady then
 				rune.InAnim:Play()
 			end
 
 			if _G.UnitHasVehicleUI("player") then
 				self:Hide()
-				class_power_tube:Refresh(0, false, "RUNES")
+				frame.LeftTube:Refresh(0, false, "RUNES")
 			else
 				self:Show()
-				class_power_tube:Refresh(6, true, "RUNES")
+				frame.LeftTube:Refresh(6, true, "RUNES")
 			end
 		end
 	end
 
-	local function Element_OnShow(self)
-		self.OutAnim:Stop()
+	-- class power bars
+	do
+		local function OnShow(self)
+			self.OutAnim:Stop()
 
-		if not self.active and not self.InAnim:IsPlaying() then
-			self.InAnim:Play()
-			self.active = true
+			if not self.active and not self.InAnim:IsPlaying() then
+				self.InAnim:Play()
+				self.active = true
+			end
 		end
-	end
 
-	local function Element_OnHide(self)
-		self.InAnim:Stop()
+		local function OnHide(self)
+			self.InAnim:Stop()
 
-		if self.active and not self.OutAnim:IsPlaying() then
-			self.OutAnim:Play()
-			self.active = false
+			if self.active and not self.OutAnim:IsPlaying() then
+				self.OutAnim:Play()
+				self.active = false
+			end
 		end
-	end
 
-	frame.ClassIcons = _G.CreateFrame("Frame", "$parentClassPowerBar", frame)
-	frame.ClassIcons:SetFrameLevel(level + 4)
-	frame.ClassIcons:SetPoint("LEFT", 23, 0)
-	frame.ClassIcons:SetSize(12, 128)
+		local bar = _G.CreateFrame("Frame", "$parentClassPowerBar", frame)
+		bar:SetFrameLevel(level + 4)
+		bar:SetPoint("LEFT", 23, 0)
+		bar:SetSize(12, 128)
+		frame.ClassIcons = bar
 
-	for i = 1, 10 do
-		local element = _G.CreateFrame("Frame", "$parentElement"..i, frame.ClassIcons)
-		element:SetFrameLevel(frame.ClassIcons:GetFrameLevel())
-		element:Hide()
-		element:SetScript("OnShow", Element_OnShow)
-		element:SetScript("OnHide", Element_OnHide)
-		frame.ClassIcons[i] = element
+		for i = 1, 10 do
+			local element = _G.CreateFrame("Frame", "$parentElement"..i, bar)
+			element:SetFrameLevel(bar:GetFrameLevel())
+			element:Hide()
+			element:SetScript("OnShow", OnShow)
+			element:SetScript("OnHide", OnHide)
+			bar[i] = element
 
-		texture = element:CreateTexture(nil, "BACKGROUND", nil, 3)
-		texture:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-		texture:SetAllPoints()
-		element.Texture = texture
+			local texture = element:CreateTexture(nil, "BACKGROUND", nil, 3)
+			texture:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+			texture:SetAllPoints()
+			element.Texture = texture
 
-		texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 3)
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
-		texture:SetPoint("CENTER", element, "CENTER", 0, 0)
-		texture:SetAlpha(0)
-		element.Glow = texture
+			texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
+			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
+			texture:SetPoint("CENTER", element, "CENTER", 0, 0)
+			texture:SetAlpha(0)
+			element.Glow = texture
 
-		local ag = texture:CreateAnimationGroup()
-		element.InAnim = ag
+			local ag = texture:CreateAnimationGroup()
+			element.InAnim = ag
 
-		local anim = ag:CreateAnimation("Alpha")
-		anim:SetOrder(1)
-		anim:SetDuration(0.35)
-		anim:SetFromAlpha(0)
-		anim:SetToAlpha(1)
+			local anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(1)
+			anim:SetDuration(0.35)
+			anim:SetFromAlpha(0)
+			anim:SetToAlpha(1)
 
-		anim = ag:CreateAnimation("Alpha")
-		anim:SetOrder(2)
-		anim:SetDuration(0.15)
-		anim:SetFromAlpha(1)
-		anim:SetToAlpha(0)
+			anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(2)
+			anim:SetDuration(0.15)
+			anim:SetFromAlpha(1)
+			anim:SetToAlpha(0)
 
-		anim = ag:CreateAnimation("Scale")
-		anim:SetOrder(1)
-		anim:SetDuration(0.35)
-		anim:SetFromScale(0.9, 0.9)
-		anim:SetToScale(1.1, 1.1)
+			anim = ag:CreateAnimation("Scale")
+			anim:SetOrder(1)
+			anim:SetDuration(0.35)
+			anim:SetFromScale(0.9, 0.9)
+			anim:SetToScale(1.1, 1.1)
 
-		ag = texture:CreateAnimationGroup()
-		element.OutAnim = ag
+			ag = texture:CreateAnimationGroup()
+			element.OutAnim = ag
 
-		anim = ag:CreateAnimation("Alpha")
-		anim:SetOrder(1)
-		anim:SetDuration(0.2)
-		anim:SetFromAlpha(0)
-		anim:SetToAlpha(1)
+			anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(1)
+			anim:SetDuration(0.2)
+			anim:SetFromAlpha(0)
+			anim:SetToAlpha(1)
 
-		anim = ag:CreateAnimation("Alpha")
-		anim:SetOrder(2)
-		anim:SetDuration(0.2)
-		anim:SetFromAlpha(1)
-		anim:SetToAlpha(0)
+			anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(2)
+			anim:SetDuration(0.2)
+			anim:SetFromAlpha(1)
+			anim:SetToAlpha(0)
 
-		anim = ag:CreateAnimation("Scale")
-		anim:SetOrder(1)
-		anim:SetDuration(0.2)
-		anim:SetFromScale(1.1, 1.1)
-		anim:SetToScale(0.9, 0.9)
-	end
+			anim = ag:CreateAnimation("Scale")
+			anim:SetOrder(1)
+			anim:SetDuration(0.2)
+			anim:SetFromScale(1.1, 1.1)
+			anim:SetToScale(0.9, 0.9)
+		end
 
-	frame.ClassIcons.PostUpdate = function(self, _, max, changed, powerType, event)
-		if event == "ClassPowerDisable" then
-			self:Hide()
-			class_power_tube:Refresh(0, false, "CP")
-		else
-			if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
-				self:Show()
-				class_power_tube:Refresh(max or 10, true, "CP")
+		bar.PostUpdate = function(self, _, max, changed, powerType, event)
+			if event == "ClassPowerDisable" then
+				self:Hide()
+				frame.LeftTube:Refresh(0, false, "CP")
+			else
+				if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
+					self:Show()
+					frame.LeftTube:Refresh(max or 10, true, "CP")
 
-				for i = 1, max do
-					local element = self[i]
-					element:SetSize(12, CLASS_POWER_LAYOUT[max][i].size)
-					element:SetPoint(unpack(CLASS_POWER_LAYOUT[max][i].point))
+					for i = 1, max do
+						local element = self[i]
+						element:SetSize(12, CLASS_POWER_LAYOUT[max][i].size)
+						element:SetPoint(unpack(CLASS_POWER_LAYOUT[max][i].point))
 
-					element.Texture:SetVertexColor(M.COLORS.POWER[powerType]:GetRGB())
+						element.Texture:SetVertexColor(M.COLORS.POWER[powerType]:GetRGB())
 
-					element.Glow:SetSize(16, CLASS_POWER_LAYOUT[max][i].size)
-					element.Glow:SetTexCoord(unpack(CLASS_POWER_LAYOUT[max][i].glow))
-					element.Glow:SetVertexColor(M.COLORS.POWER.GLOW[powerType]:GetRGB())
+						element.Glow:SetSize(16, CLASS_POWER_LAYOUT[max][i].size)
+						element.Glow:SetTexCoord(unpack(CLASS_POWER_LAYOUT[max][i].glow))
+						element.Glow:SetVertexColor(M.COLORS.POWER.GLOW[powerType]:GetRGB())
+					end
 				end
 			end
 		end
 	end
 
 	-- pvp
-	frame.PvP = self:CreatePvPIcon_new(fg_parent, "ARTWORK", 6)
-	frame.PvP:SetPoint("TOP", fg_parent, "BOTTOM", 0, 10)
+	frame.PvP = self:CreatePvPIcon_new(frame.FGParent, "ARTWORK", 6)
+	frame.PvP:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
 
 	-- castbar
 	frame.Castbar = self:CreateCastBar(frame, 202, true, true)
@@ -788,98 +791,103 @@ function UF:ConstructPlayerFrame(frame)
 	E:CreateMover(frame.Castbar.Holder)
 
 	-- status icons/texts
-	local status = text_parent:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	local status = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
 	status:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 0, 0)
 	status:SetTextColor(1, 0.82, 0)
 	status:SetJustifyH("RIGHT")
-	status.frequentUpdates = 0.5
+	status.frequentUpdates = 0.1
 	frame:Tag(status, "[ls:pvptimer]")
 
-	status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("LEFT", frame, "LEFT", 5, 0)
 	frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
 
-	status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("RIGHT", frame, "RIGHT", -5, 0)
 	frame:Tag(status, "[ls:combatresticon]")
 
-	status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon12Font")
+	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon12Font")
 	status:SetWidth(14)
 	status:SetPoint("LEFT", frame.Health, "LEFT", 0, 0)
 	frame:Tag(status, "[ls:debuffstatus]")
 
 	-- floating combat text
-	frame.FloatingCombatFeedback = _G.CreateFrame("Frame", "$parentFeedbackFrame", frame)
-	frame.FloatingCombatFeedback:SetFrameLevel(level + 9)
-	frame.FloatingCombatFeedback:SetSize(32, 32)
-	frame.FloatingCombatFeedback:SetPoint("CENTER", 0, 0)
+	do
+		local feeback = _G.CreateFrame("Frame", "$parentFeedbackFrame", frame)
+		feeback:SetFrameLevel(level + 9)
+		feeback:SetSize(32, 32)
+		feeback:SetPoint("CENTER", 0, 0)
+		frame.FloatingCombatFeedback = feeback
 
-	for i = 1, 6 do
-		frame.FloatingCombatFeedback[i] = frame.FloatingCombatFeedback:CreateFontString(nil, "OVERLAY", "CombatTextFont")
-	end
-
-	frame.FloatingCombatFeedback.mode = "Fountain"
-	frame.FloatingCombatFeedback.xOffset = 15
-	frame.FloatingCombatFeedback.yOffset = 20
-	frame.FloatingCombatFeedback.abbreviateNumbers = true
-
-	-- totems
-	local function Totem_OnEnter(self)
-		local quadrant = E:GetScreenQuadrant(self)
-		local p, rP, sign = "BOTTOMLEFT", "CENTER", 1
-
-		if quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT" then
-			p, sign = "TOPLEFT", -1
+		for i = 1, 6 do
+			feeback[i] = feeback:CreateFontString(nil, "OVERLAY", "CombatTextFont")
 		end
 
-		_G.GameTooltip:SetOwner(self, "ANCHOR_NONE")
-		_G.GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
-		_G.GameTooltip:SetTotem(self.slot)
+		feeback.mode = "Fountain"
+		feeback.xOffset = 15
+		feeback.yOffset = 20
+		feeback.abbreviateNumbers = true
 	end
 
-	for i = 1, _G.MAX_TOTEMS do
-		local totem = _G["TotemFrameTotem"..i]
-		local iconFrame, border = totem:GetChildren()
-		local background = _G["TotemFrameTotem"..i.."Background"]
-		local duration = _G["TotemFrameTotem"..i.."Duration"]
-		local icon = _G["TotemFrameTotem"..i.."IconTexture"]
-		local cd = _G["TotemFrameTotem"..i.."IconCooldown"]
+	-- totems
+	do
+		local function OnEnter(self)
+			local quadrant = E:GetScreenQuadrant(self)
+			local p, rP, sign = "BOTTOMLEFT", "CENTER", 1
 
-		E:ForceHide(background)
-		E:ForceHide(border)
-		E:ForceHide(duration)
-		E:ForceHide(iconFrame)
+			if quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT" then
+				p, sign = "TOPLEFT", -1
+			end
 
-		totem:SetParent(frame)
-		totem:SetSize(72 / 2, 72 / 2)
-		totem:ClearAllPoints()
-		totem:SetPoint(unpack(TOTEM_LAYOUT[i]))
-		totem:SetScript("OnEnter", Totem_OnEnter)
+			_G.GameTooltip:SetOwner(self, "ANCHOR_NONE")
+			_G.GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
+			_G.GameTooltip:SetTotem(self.slot)
+		end
 
-		border = totem:CreateTexture(nil, "OVERLAY")
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
-		border:SetTexCoord(90 / 256, 162 / 256, 1 / 256, 73 / 256)
-		border:SetAllPoints()
+		for i = 1, _G.MAX_TOTEMS do
+			local totem = _G["TotemFrameTotem"..i]
+			local iconFrame, border = totem:GetChildren()
+			local background = _G["TotemFrameTotem"..i.."Background"]
+			local duration = _G["TotemFrameTotem"..i.."Duration"]
+			local icon = _G["TotemFrameTotem"..i.."IconTexture"]
+			local cd = _G["TotemFrameTotem"..i.."IconCooldown"]
 
-		icon:SetParent(totem)
-		icon:SetMask("Interface\\Minimap\\UI-Minimap-Background")
-		icon:ClearAllPoints()
-		icon:SetPoint("TOPLEFT", 6, -6)
-		icon:SetPoint("BOTTOMRIGHT", -6, 6)
+			E:ForceHide(background)
+			E:ForceHide(border)
+			E:ForceHide(duration)
+			E:ForceHide(iconFrame)
 
-		cd:SetParent(totem)
-		cd:SetSwipeTexture("Interface\\PlayerFrame\\ClassOverlay-RuneCooldown")
-		cd:SetReverse(false)
-		cd:ClearAllPoints()
-		cd:SetPoint("TOPLEFT", 6, -6)
-		cd:SetPoint("BOTTOMRIGHT", -6, 6)
+			totem:SetParent(frame)
+			totem:SetSize(72 / 2, 72 / 2)
+			totem:ClearAllPoints()
+			totem:SetPoint(unpack(TOTEM_LAYOUT[i]))
+			totem:SetScript("OnEnter", OnEnter)
 
-		E:HandleCooldown(cd, 10)
+			border = totem:CreateTexture(nil, "OVERLAY")
+			border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+			border:SetTexCoord(90 / 256, 162 / 256, 1 / 256, 73 / 256)
+			border:SetAllPoints()
 
-		if cd.Timer then
-			cd.Timer:SetJustifyV("BOTTOM")
+			icon:SetParent(totem)
+			icon:SetMask("Interface\\Minimap\\UI-Minimap-Background")
+			icon:ClearAllPoints()
+			icon:SetPoint("TOPLEFT", 6, -6)
+			icon:SetPoint("BOTTOMRIGHT", -6, 6)
+
+			cd:SetParent(totem)
+			cd:SetSwipeTexture("Interface\\PlayerFrame\\ClassOverlay-RuneCooldown")
+			cd:SetReverse(false)
+			cd:ClearAllPoints()
+			cd:SetPoint("TOPLEFT", 6, -6)
+			cd:SetPoint("BOTTOMRIGHT", -6, 6)
+
+			E:HandleCooldown(cd, 10)
+
+			if cd.Timer then
+				cd.Timer:SetJustifyV("BOTTOM")
+			end
 		end
 	end
 end
