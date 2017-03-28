@@ -1,3 +1,11 @@
+## Version 70200.01
+
+- Added 7.2 support;
+- Added permanent self buff and debuff filter for focus/target frame auras. Some of permanent buffs and debuffs were [blacklisted](https://github.com/ls-/ls_UI/blob/master/modules/unitframes/elements/auras.lua#L29-L81);
+- Moved additional mana bar, which is used by elemental shamans, balance druids and shadow priests, to the left side of player frame, where various class power bars usually are. Theoretically class power and additional mana bars shouldn't overlap, but if it happens, I'll revert this change;
+- Removed "Receive All" mail button. There's default one now;
+- Misc bug fixes and tweaks.
+
 ## Version 70100.15
 
 - Fixed artefact bar text.
