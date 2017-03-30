@@ -185,6 +185,7 @@ local function UpdateXPBars()
 
 			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = _G.GetFriendshipReputation(factionID)
 			local repTextLevel = _G.GetText("FACTION_STANDING_LABEL"..standing, _G.UnitSex("player"))
+			local isParagon, rewardQuestID, hasRewardPending
 			local cur, max
 
 			if friendRep then
@@ -197,7 +198,21 @@ local function UpdateXPBars()
 				standing = 5
 				repTextLevel = friendTextLevel
 			else
-				max, cur = repMax - repMin, repCur - repMin
+				if standing ~= _G.MAX_REPUTATION_REACTION then
+					max, cur = repMax - repMin, repCur - repMin
+				else
+					isParagon = _G.C_Reputation.IsFactionParagon(factionID)
+
+					if isParagon then
+						cur, max, rewardQuestID, hasRewardPending = _G.C_Reputation.GetFactionParagonInfo(factionID);
+
+						if hasRewardPending then
+							cur = cur + max
+						end
+					else
+						max, cur = 1, 1
+					end
+				end
 			end
 
 			local r, g, b, hex = M.COLORS.REACTION[standing]:GetRGBHEX()
@@ -208,6 +223,18 @@ local function UpdateXPBars()
 					text = REPUTATION_TEMPLATE:format(name, hex, repTextLevel)
 				},
 			}
+
+			if isParagon and hasRewardPending then
+				local text = _G.GetQuestLogCompletionText(_G.GetQuestLogIndexByID(rewardQuestID))
+
+				if text and text ~= "" then
+					bar[index].tooltipInfo.line3 = {
+						text = text
+					}
+				end
+			else
+				bar[index].tooltipInfo.line3 = nil
+			end
 
 			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
