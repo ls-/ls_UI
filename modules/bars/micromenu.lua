@@ -447,7 +447,7 @@ local function EJMicroButton_OnEnter(self)
 
 				local color = encounterProgress == numEncounters and M.COLORS.RED or M.COLORS.GREEN
 
-				_G.GameTooltip:AddDoubleLine(instanceName, encounterProgress.."/"..numEncounters, 1, 1, 1, color:GetRGB())
+				_G.GameTooltip:AddDoubleLine(instanceName, encounterProgress.." / "..numEncounters, 1, 1, 1, color:GetRGB())
 				_G.GameTooltip:AddDoubleLine(difficultyName, _G.SecondsToTime(instanceReset, true, nil, 3), 0.53, 0.54, 0.53, 0.53, 0.54, 0.53) -- M.COLORS.GRAY
 			end
 		else
@@ -461,7 +461,7 @@ local function EJMicroButton_OnEnter(self)
 					hasTitle = true
 				end
 
-				_G.GameTooltip:AddDoubleLine(instanceName, "1/1", 1, 1, 1, M.COLORS.RED:GetRGB())
+				_G.GameTooltip:AddDoubleLine(instanceName, "1 / 1", 1, 1, 1, M.COLORS.RED:GetRGB())
 				_G.GameTooltip:AddDoubleLine(L["RAID_INFO_WORLD_BOSS"], _G.SecondsToTime(instanceReset, true, nil, 3), 0.53, 0.54, 0.53, 0.53, 0.54, 0.53) -- M.COLORS.GRAY
 			end
 		end
