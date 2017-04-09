@@ -1,3 +1,8 @@
+## Version 70200.02
+
+- Added paragon rep support to the rep bar;
+- Reworked backpack tooltip. Nethershards, Seals of Broken Fate and Legionfall War Supplies are always included, you can track something else instead. Added currencies' caps. Capped currencies' counters are coloured red, uncapped green, others white.
+
 ## Version 70200.01
 
 - Added 7.2 support;
