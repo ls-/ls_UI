@@ -18,6 +18,12 @@ local BAGS = {
 	_G.CharacterBag3Slot
 }
 
+local CURRENCIES = {
+	[1226] = true, -- Nethershards
+	[1273] = true, -- Seal of Broken Fate
+	[1342] = true, -- Legionfall War Supplies
+}
+
 local CFG = {
 	visible = true,
 	button_size = 32,
@@ -44,15 +50,43 @@ local function BackpackButton_OnEnter()
 	_G.GameTooltip:AddLine(" ")
 	_G.GameTooltip:AddLine(L["CURRENCY_COLON"])
 
-	for i = 1, 3 do
-		local name, count, icon = _G.GetBackpackCurrencyInfo(i)
+	for id in pairs(CURRENCIES) do
+		local name, cur, icon, _, _, max = _G.GetCurrencyInfo(id)
 
 		if name then
-			_G.GameTooltip:AddDoubleLine(name, count.."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
+			if max and max > 0 then
+				if cur == max then
+					_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.RED:GetRGB())
+				else
+					_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.GREEN:GetRGB())
+				end
+			else
+				_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
+			end
 		end
 	end
 
-	_G.GameTooltip:AddDoubleLine(L["GOLD"], _G.GetMoneyString(_G.GetMoney()), 1, 1, 1, 1, 1, 1)
+	for i = 1, 3 do
+		local _, _, _, id = _G.GetBackpackCurrencyInfo(i)
+
+		if id then
+			local name, cur, icon, _, _, max = _G.GetCurrencyInfo(id)
+
+			if not CURRENCIES[id] then
+				if max and max > 0 then
+					if cur == max then
+						_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.RED:GetRGB())
+					else
+						_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.GREEN:GetRGB())
+					end
+				else
+					_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
+				end
+			end
+		end
+	end
+
+	_G.GameTooltip:AddDoubleLine(L["GOLD"], _G.GetMoneyString(_G.GetMoney(), true), 1, 1, 1, 1, 1, 1)
 	_G.GameTooltip:Show()
 end
 
