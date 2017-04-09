@@ -204,10 +204,11 @@ local function UpdateXPBars()
 					isParagon = _G.C_Reputation.IsFactionParagon(factionID)
 
 					if isParagon then
-						cur, max, rewardQuestID, hasRewardPending = _G.C_Reputation.GetFactionParagonInfo(factionID);
+						cur, max, rewardQuestID, hasRewardPending = _G.C_Reputation.GetFactionParagonInfo(factionID)
+						repTextLevel = repTextLevel.."+"
 
-						if hasRewardPending then
-							cur = cur + max
+						if not hasRewardPending then
+							cur = math.fmod(cur, max)
 						end
 					else
 						max, cur = 1, 1
