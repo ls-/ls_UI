@@ -265,6 +265,10 @@ function BARS:ActionBarController_Init()
 		controller:SetPoint("BOTTOM", 0, 0)
 		controller:SetAttribute("numbuttons", 12)
 		controller.Update = function()
+			if controller.Shuffle:IsPlaying() then
+				controller.Shuffle:Stop()
+			end
+
 			controller.Shuffle:Play()
 		end
 
