@@ -245,9 +245,9 @@ end
 --------------
 
 local function Tooltip_SetArtifactPowerByID(self, powerID)
-	local id = _G.C_ArtifactUI.GetPowerInfo(powerID)
+	local info = _G.C_ArtifactUI.GetPowerInfo(powerID)
 
-	AddSpellInfo(self, id)
+	AddSpellInfo(self, info.spellID)
 end
 
 local function Tooltip_SetAuctionItem(self, aucType, index)
