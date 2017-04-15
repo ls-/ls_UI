@@ -405,8 +405,6 @@ local function LFDMicroButton_OnEvent(self, event)
 end
 
 local function EJMicroButton_OnEnter(self)
-	_G.RequestRaidInfo()
-
 	_G.GameTooltip_AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
 
 	if not self:IsEnabled() then
@@ -424,6 +422,8 @@ local function EJMicroButton_OnEnter(self)
 
 		return
 	end
+
+	_G.RequestRaidInfo()
 
 	local savedInstances = _G.GetNumSavedInstances()
 	local savedWorldBosses = _G.GetNumSavedWorldBosses()
