@@ -491,41 +491,56 @@ local function MainMenuMicroButton_OnEnter(self)
 
 	_G.GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(colorHome, latencyHome), 1, 1, 1)
 	_G.GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(colorWorld, latencyWorld), 1, 1, 1)
-	_G.GameTooltip:AddLine(" ")
 
-	local addons = {}
-	local mem_usage = 0
+	if _G.IsShiftKeyDown() then
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(L["MEMORY_COLON"])
 
-	_G.UpdateAddOnMemoryUsage()
+		local addons = {}
+		local mem_usage = 0
 
-	for i = 1, _G.GetNumAddOns() do
-		addons[i] = {
-			[1] = select(2, GetAddOnInfo(i)),
-			[2] = GetAddOnMemoryUsage(i),
-			[3] = IsAddOnLoaded(i),
-		}
+		_G.UpdateAddOnMemoryUsage()
 
-		mem_usage = mem_usage + addons[i][2]
-	end
+		for i = 1, _G.GetNumAddOns() do
+			addons[i] = {
+				[1] = select(2, GetAddOnInfo(i)),
+				[2] = GetAddOnMemoryUsage(i),
+				[3] = IsAddOnLoaded(i),
+			}
 
-	table.sort(addons, SimpleSort)
-
-	_G.GameTooltip:AddLine(L["MEMORY_COLON"])
-
-	for i = 1, #addons do
-		if addons[i][3] then
-			local m = addons[i][2]
-
-			_G.GameTooltip:AddDoubleLine(addons[i][1], MEMORY_TEMPLATE:format(m / 1024),
-				1, 1, 1, M.COLORS.GYR:GetRGB(m / (mem_usage == m and 1 or (mem_usage - m))))
+			mem_usage = mem_usage + addons[i][2]
 		end
-	end
 
-	_G.GameTooltip:AddDoubleLine(L["TOTAL_COLON"], MEMORY_TEMPLATE:format(mem_usage / 1024))
+		table.sort(addons, SimpleSort)
+
+		for i = 1, #addons do
+			if addons[i][3] then
+				local m = addons[i][2]
+
+				_G.GameTooltip:AddDoubleLine(addons[i][1], MEMORY_TEMPLATE:format(m / 1024),
+					1, 1, 1, M.COLORS.GYR:GetRGB(m / (mem_usage == m and 1 or (mem_usage - m))))
+			end
+		end
+
+		_G.GameTooltip:AddDoubleLine(L["TOTAL"], MEMORY_TEMPLATE:format(mem_usage / 1024))
+	else
+		_G.GameTooltip:AddLine(" ")
+		_G.GameTooltip:AddLine(L["MAIN_MICRO_BUTTON_HOLD_TEXT"])
+	end
 
 	UpdatePerformanceIndicator(self)
 
 	_G.GameTooltip:Show()
+end
+
+local function MainMenuMicroButton_OnEvent(self, event)
+	if event == "MODIFIER_STATE_CHANGED" then
+		if self == _G.GameTooltip:GetOwner() then
+			_G.GameTooltip:Hide()
+
+			MainMenuMicroButton_OnEnter(self)
+		end
+	end
 end
 
 -----------------
@@ -630,6 +645,8 @@ function BARS:MicroMenu_Init()
 			SetMicroButtonIndicator(button, {_G.MainMenuBarPerformanceBar}, 2)
 			UpdatePerformanceIndicator(button)
 
+			button:RegisterEvent("MODIFIER_STATE_CHANGED")
+			button:HookScript("OnEvent", MainMenuMicroButton_OnEvent)
 			button:SetScript("OnEnter", MainMenuMicroButton_OnEnter)
 		end
 	end
