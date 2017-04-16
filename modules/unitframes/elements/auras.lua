@@ -79,6 +79,18 @@ local BLACKLIST = {
 	[225788] = true, -- Sign of the Emissary
 	[227723] = true, -- Mana Divining Stone
 	[231115] = true, -- Treasures of Broken Shore
+	[237137] = true, -- Knowledgeable
+	[237139] = true, -- Power Overwhelming
+	[239966] = true, -- War Effort
+	[239967] = true, -- Seal Your Fate
+	[239968] = true, -- Fate Smiles Upon You
+	[239969] = true, -- Netherstorm
+	[240979] = true, -- Reputable
+	[240980] = true, -- Light As a Feather
+	[240985] = true, -- Reinforced Reins
+	[240986] = true, -- Worthy Champions
+	[240987] = true, -- Well Prepared
+	[240989] = true, -- Heavily Augmented
 }
 
 local function SetVertexColorOverride(self, r, g, b)
