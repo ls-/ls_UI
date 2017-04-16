@@ -57,7 +57,7 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 
 	local bar = E:CreateStatusBar(holder, nil, "HORIZONTAL")
 	bar:SetFrameLevel(holder:GetFrameLevel())
-	bar:SetSize(width - 14, 12)
+	bar:SetSize(width - 20, 12)
 	bar:SetPoint("TOPRIGHT", 0, 0)
 
 	local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
@@ -66,9 +66,9 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 	bar.Spark = spark
 
 	local icon = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
-	icon:SetSize(12, 12)
+	icon:SetSize(18, 12)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
-	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
 	bar.Icon = icon
 
 	local cover = _G.CreateFrame("Frame", nil, bar)
