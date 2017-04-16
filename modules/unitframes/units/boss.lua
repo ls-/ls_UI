@@ -96,8 +96,8 @@ function UF:ConstructBossFrame(frame)
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
 
-	frame.Castbar = UF:CreateCastBar(frame, 124)
-	frame.Castbar.Holder:SetPoint("RIGHT", frame, "LEFT", -2, 2)
+	frame.Castbar = UF:CreateCastBar(frame, 94)
+	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "TOPLEFT", -6, -3)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)

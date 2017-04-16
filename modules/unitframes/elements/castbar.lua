@@ -23,9 +23,15 @@ local function PostCastFailed(castbar)
 	castbar:SetStatusBarColor(M.COLORS.RED:GetRGB())
 
 	castbar.Spark:SetPoint("CENTER", castbar, "RIGHT")
+
+	castbar.Time:SetText("")
 end
 
 local function CustomTimeText(castbar, duration)
+	if castbar.max > 600 then
+		return castbar.Time:SetText("")
+	end
+
 	if castbar.casting then
 		duration = castbar.max - duration
 	end
@@ -47,32 +53,44 @@ end
 
 function UF:CreateCastBar(parent, width, safezone, delay)
 	local holder = _G.CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
-	holder:SetSize(width, 32)
+	holder:SetSize(width, 12)
 
 	local bar = E:CreateStatusBar(holder, nil, "HORIZONTAL")
-	bar:SetSize(width - 46, 12)
-	bar:SetPoint("TOPRIGHT", -6, -2)
-	E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
-
-	bar.Text:SetPoint("TOPLEFT", 1, 0)
-	bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)
+	bar:SetFrameLevel(holder:GetFrameLevel())
+	bar:SetSize(width - 14, 12)
+	bar:SetPoint("TOPRIGHT", 0, 0)
 
 	local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 	spark:SetSize(24, 24)
 	spark:SetBlendMode("ADD")
 	bar.Spark = spark
 
-	local iconHolder = _G.CreateFrame("Frame", nil, bar)
-	iconHolder:SetSize(28, 28)
-	iconHolder:SetPoint("TOPRIGHT", bar, "TOPLEFT", -8, 0)
-	E:CreateBorder(iconHolder)
-	iconHolder:SetBorderColor(M.COLORS.YELLOW:GetRGB())
+	local icon = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	icon:SetSize(12, 12)
+	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
+	icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+	bar.Icon = icon
 
-	bar.Icon = E:SetIcon(iconHolder)
+	local cover = _G.CreateFrame("Frame", nil, bar)
+	cover:SetAllPoints(holder)
+	E:SetStatusBarSkin_new(cover, "HORIZONTAL-L")
 
-	local time = E:CreateFontString(bar, 10, nil, true)
-	time:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 3, -2)
+	local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
+	sep:SetSize(24 / 2, 24 / 2)
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
+	sep:SetPoint("RIGHT", bar, "LEFT", 5, 0)
+
+	local time = E:CreateFontString(cover, 12, nil, true)
+	time:SetJustifyV("MIDDLE")
+	time:SetPoint("TOPRIGHT", 0, 0)
+	time:SetPoint("BOTTOMRIGHT", 0, 0)
 	bar.Time = time
+
+	bar.Text:SetParent(cover)
+	bar.Text:SetJustifyH("LEFT")
+	bar.Text:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, 0)
+	bar.Text:SetPoint("BOTTOMRIGHT", time, "BOTTOMLEFT", -2, 0)
 
 	if safezone then
 		local zone = bar:CreateTexture(nil, "ARTWORK", nil, 1)

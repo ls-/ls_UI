@@ -786,7 +786,7 @@ function UF:ConstructPlayerFrame(frame)
 	frame.PvP:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
 
 	-- castbar
-	frame.Castbar = self:CreateCastBar(frame, 202, true, true)
+	frame.Castbar = self:CreateCastBar(frame, 188, true, true)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 	E:CreateMover(frame.Castbar.Holder)
 
