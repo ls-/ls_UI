@@ -97,7 +97,7 @@ function UF:ConstructBossFrame(frame)
 	powerText:SetPoint("LEFT")
 
 	frame.Castbar = UF:CreateCastBar(frame, 94)
-	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "TOPLEFT", -6, -3)
+	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
 
 	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
 	frame.RaidIcon:SetSize(24, 24)
@@ -122,7 +122,7 @@ function UF:ConstructBossFrame(frame)
 	frame.Threat = threat
 
 	local altPower = UF:CreateAltPowerBar(frame, 102)
-	altPower:SetPoint("TOP", frame, "BOTTOM", 0, -2)
+	altPower:SetPoint("TOPRIGHT", frame, "TOPLEFT", -6, -3)
 	frame.AltPowerBar = altPower
 
 	-- frame.unit = "player"
