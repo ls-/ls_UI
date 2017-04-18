@@ -622,20 +622,12 @@ function TOOLTIPS:Init()
 		hooksecurefunc(GameTooltip, "SetLFGDungeonReward", Tooltip_SetLFGDungeonReward)
 		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", Tooltip_SetLFGDungeonShortageReward)
 
-		local function GameTooltipStatusBar_OnValueChanged(bar, value)
-			if not value then return end
+		E:HandleStatusBar(GameTooltipStatusBar)
+		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
 
-			local _, max = bar:GetMinMaxValues()
-
-			if max == 1 then
-				bar.Text:Hide()
-			else
-				bar.Text:Show()
-				bar.Text:SetFormattedText(L["BAR_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(value, 1), E:NumberFormat(max, 1))
-			end
-		end
-
-		local function GameTooltipStatusBar_OnShow(bar)
+		-- Status Bars
+		GameTooltipStatusBar:SetHeight(10)
+		GameTooltipStatusBar:SetScript("OnShow", function(bar)
 			local tooltip = bar:GetParent()
 
 			if tooltip:NumLines() == 0 or GetLineByText(tooltip, "%-%-", 2) then return end
@@ -651,12 +643,31 @@ function TOOLTIPS:Init()
 			bar:SetPoint("TOPLEFT", line, "TOPLEFT", 0, -2)
 			bar:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
 			bar:SetStatusBarColor(E:GetUnitReactionColor(GetTooltipUnit(tooltip)):GetRGB())
-		end
+		end)
+		GameTooltipStatusBar:SetScript("OnValueChanged", function(bar, value)
+			if not value then return end
 
-		E:HandleStatusBar(GameTooltipStatusBar)
-		GameTooltipStatusBar:SetHeight(10)
-		GameTooltipStatusBar:SetScript("OnShow", GameTooltipStatusBar_OnShow)
-		GameTooltipStatusBar:SetScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+			local _, max = bar:GetMinMaxValues()
+
+			if max == 1 then
+				bar.Text:Hide()
+			else
+				bar.Text:Show()
+				bar.Text:SetFormattedText(L["BAR_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(value, 1), E:NumberFormat(max, 1))
+			end
+		end)
+
+		for i = 1, 6 do
+			local bar = E:CreateStatusBar(_G.GameTooltip, "GameTooltipStatusBar"..i, "HORIZONTAL")
+			bar:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+			bar:SetHeight(10)
+
+			E:SetStatusBarSkin(bar, "HORIZONTAL-GLASS")
+
+			bar.Text:SetPoint("CENTER", 0, 0)
+
+			_G.GameTooltip.numStatusBars = i
+		end
 
 		-- Misc
 		local function MODIFIER_STATE_CHANGED(key)

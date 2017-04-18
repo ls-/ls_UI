@@ -48,12 +48,12 @@ end
 
 function UF:CreateAltPowerBar(parent, width)
 	local bar = E:CreateStatusBar(parent, "$parentAltPowerBar", "HORIZONTAL")
-	bar:SetSize(width - 8, 12)
+	bar:SetSize(width - 16, 12)
 	bar:EnableMouse(true)
 	bar:SetScript("OnEnter", OnEnter)
 	bar:SetScript("OnLeave", OnLeave)
 	E:SmoothBar(bar)
-	E:SetStatusBarSkin(bar, "HORIZONTAL-BIG")
+	E:SetStatusBarSkin(bar, "HORIZONTAL-L")
 
 	bar.Text:SetPoint("TOPLEFT", 1, 0)
 	bar.Text:SetPoint("BOTTOMRIGHT", -1, 0)

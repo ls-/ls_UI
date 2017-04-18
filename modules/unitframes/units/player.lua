@@ -409,7 +409,7 @@ function UF:ConstructPlayerFrame(frame)
 		tube:SetFrameLevel(level + 6)
 		tube:SetSize(12, 128)
 		tube:SetPoint("LEFT", 23, 0)
-		E:SetBarSkin_new(tube, "VERTICAL-L")
+		E:SetStatusBarSkin(tube, "VERTICAL-L")
 		frame.LeftTube = tube
 
 		local seps = {}
@@ -453,7 +453,7 @@ function UF:ConstructPlayerFrame(frame)
 		tube:SetFrameLevel(level + 6)
 		tube:SetSize(12, 128)
 		tube:SetPoint("RIGHT", -23, 0)
-		E:SetBarSkin_new(tube, "VERTICAL-L")
+		E:SetStatusBarSkin(tube, "VERTICAL-L")
 		frame.RightTube = tube
 	end
 

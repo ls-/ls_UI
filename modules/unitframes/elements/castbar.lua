@@ -73,7 +73,7 @@ function UF:CreateCastBar(parent, width, safezone, delay)
 
 	local cover = _G.CreateFrame("Frame", nil, bar)
 	cover:SetAllPoints(holder)
-	E:SetStatusBarSkin_new(cover, "HORIZONTAL-L")
+	E:SetStatusBarSkin(cover, "HORIZONTAL-L")
 
 	local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
 	sep:SetSize(24 / 2, 24 / 2)

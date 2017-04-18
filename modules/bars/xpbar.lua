@@ -547,7 +547,7 @@ function BARS:XPBar_Init()
 		else
 			bar:SetPoint(unpack(CFG.point))
 			E:CreateMover(bar)
-			E:SetBarSkin_new(cover, "HORIZONTAL-M")
+			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
 		end
 
 		-- Finalise

@@ -29,7 +29,7 @@ function UF:ConstructPetFrame(frame)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
-	E:SetBarSkin(health, "VERTICAL-M")
+	E:SetStatusBarSkin(health, "VERTICAL-M")
 	tinsert(frame.mouseovers, health)
 	frame.Health = health
 
@@ -44,7 +44,7 @@ function UF:ConstructPetFrame(frame)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
 	tinsert(frame.mouseovers, power)
-	E:SetBarSkin(power, "VERTICAL-M")
+	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
 	local powerText = power.Text
