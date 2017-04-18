@@ -31,7 +31,7 @@ D["units"] = {
 		},
 	},
 	targettarget = {
-		point = { "LEFT", "LSTargetFrame", "RIGHT", 6, 0 },
+		point = { "LEFT", "LSTargetFrame", "RIGHT", 6, 0},
 	},
 	focus = {
 		enabled = true,
@@ -49,12 +49,12 @@ D["units"] = {
 		},
 	},
 	focustarget = {
-		point = { "RIGHT", "LSFocusFrame", "LEFT", -6, 0 },
+		point = { "RIGHT", "LSFocusFrame", "LEFT", -6, 0},
 	},
 	boss = {
 		enabled = true,
 		castbar = true,
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -76, -240},
 	},
 	-- arena = {
 	-- 	enabled = true,

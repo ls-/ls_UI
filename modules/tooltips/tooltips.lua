@@ -492,7 +492,7 @@ local function Tooltip_SetUnit(self)
 		name = _G.UnitName(unitTarget)
 
 		if _G.UnitIsPlayer(unitTarget) then
- 			name = string.format(PLAYER_TEMPLATE, E:GetUnitClassColor(unitTarget):GetHEX(), name, E:GetUnitColor(unitTarget, true):GetHEX())
+			name = string.format(PLAYER_TEMPLATE, E:GetUnitClassColor(unitTarget):GetHEX(), name, E:GetUnitColor(unitTarget, true):GetHEX())
 		else
 			name = string.format("|cff%s%s|r", E:GetUnitColor(unitTarget, false, false, true, true):GetHEX(), name)
 		end
