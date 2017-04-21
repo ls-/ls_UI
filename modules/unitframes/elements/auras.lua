@@ -79,6 +79,7 @@ local BLACKLIST = {
 	[225788] = true, -- Sign of the Emissary
 	[227723] = true, -- Mana Divining Stone
 	[231115] = true, -- Treasures of Broken Shore
+	[233641] = true, -- Legionfall Commander
 	[237137] = true, -- Knowledgeable
 	[237139] = true, -- Power Overwhelming
 	[239966] = true, -- War Effort
