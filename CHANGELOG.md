@@ -1,3 +1,11 @@
+## Version 70200.03
+
+- Slimmed down cast bars. I'm currently preparing for unit frame revamp, so I needed to make cast bars a bit more compact;
+- Reworked main micro button tooltip. Because many people have either way too many addons installed or use quite "heavy" addons, calculations that are necessary for memory usage info may cause micro freezes. As of now, memory usage info won't be shown until you hold down shift key;
+- Fixed artefact trait tooltips;
+- Fixed action bar controller issues;
+- Misc bug fixes and tweaks.
+
 ## Version 70200.02
 
 - Added paragon rep support to the rep bar;
