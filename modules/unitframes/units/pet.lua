@@ -37,7 +37,7 @@ function UF:ConstructPetFrame(frame)
 	healthText:SetJustifyH("RIGHT")
 	healthText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 
-	frame.HealPrediction = UF:CreateHealPrediction(frame, true)
+	frame.HealthPrediction = UF:CreateHealPrediction(frame, true)
 
 	local power = UF:CreatePowerBar(frame, 12, nil, true)
 	power:SetFrameLevel(level + 2)
@@ -67,5 +67,5 @@ function UF:ConstructPetFrame(frame)
 	threat:SetTexCoord(1 / 64, 45 / 64, 1 / 64, 51 / 64)
 	threat:SetSize(44, 50)
 	threat:SetPoint("CENTER", 0, 0)
-	frame.Threat = threat
+	frame.ThreatIndicator = threat
 end

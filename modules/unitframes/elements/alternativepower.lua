@@ -4,13 +4,12 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local unpack = unpack
 
 -- Mine
-local function PostUpdateAltPower(bar, min, cur, max)
+local function PostUpdateAltPower(bar, unit, cur, _, max)
 	if not bar.Text then return end
 
-	local _, r, g, b = _G.UnitAlternatePowerTextureInfo(bar.__owner.unit, 2)
+	local _, r, g, b = _G.UnitAlternatePowerTextureInfo(unit, 2)
 
 	if (r == 1 and g == 1 and b == 1) or not b then
 		r, g, b = M.COLORS.INDIGO:GetRGB()

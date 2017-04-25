@@ -322,7 +322,7 @@ function UF:ConstructPlayerFrame(frame)
 	-- Note: can't touch this
 	-- 1: frame
 		-- 2: frame.Health
-			-- 3: frame.HealPrediction
+			-- 3: frame.HealthPrediction
 		-- 2: frame.AdditionalPower
 			-- 3: frame.PowerPrediction.altBar
 		-- 2: frame.LeftIndicator, frame.RightIndicator
@@ -474,7 +474,7 @@ function UF:ConstructPlayerFrame(frame)
 		bar.Text:SetPoint("BOTTOM", frame, "CENTER", 0, 1)
 
 		-- heal prediction
-		frame.HealPrediction = self:CreateHealPrediction_new(frame.Health, {
+		frame.HealthPrediction = self:CreateHealPrediction_new(frame.Health, {
 			is_vertical = true
 		})
 
@@ -670,21 +670,21 @@ function UF:ConstructPlayerFrame(frame)
 
 	-- class power bars
 	do
-		local function OnShow(self)
-			self.OutAnim:Stop()
+		local function OnValueChanged(self, value)
+			if value == 1 then
+				self.OutAnim:Stop()
 
-			if not self.active and not self.InAnim:IsPlaying() then
-				self.InAnim:Play()
-				self.active = true
-			end
-		end
+				if not self.active and not self.InAnim:IsPlaying() then
+					self.InAnim:Play()
+					self.active = true
+				end
+			elseif value == 0 then
+				self.InAnim:Stop()
 
-		local function OnHide(self)
-			self.InAnim:Stop()
-
-			if self.active and not self.OutAnim:IsPlaying() then
-				self.OutAnim:Play()
-				self.active = false
+				if self.active and not self.OutAnim:IsPlaying() then
+					self.OutAnim:Play()
+					self.active = false
+				end
 			end
 		end
 
@@ -692,22 +692,17 @@ function UF:ConstructPlayerFrame(frame)
 		bar:SetFrameLevel(level + 4)
 		bar:SetPoint("LEFT", 23, 0)
 		bar:SetSize(12, 128)
-		frame.ClassIcons = bar
+		frame.ClassPower = bar
 
 		for i = 1, 10 do
-			local element = _G.CreateFrame("Frame", "$parentElement"..i, bar)
+			local element = _G.CreateFrame("StatusBar", "$parentElement"..i, bar)
 			element:SetFrameLevel(bar:GetFrameLevel())
-			element:Hide()
-			element:SetScript("OnShow", OnShow)
-			element:SetScript("OnHide", OnHide)
+			element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+			element:SetOrientation("VERTICAL")
+			element:SetScript("OnValueChanged", OnValueChanged)
 			bar[i] = element
 
-			local texture = element:CreateTexture(nil, "BACKGROUND", nil, 3)
-			texture:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-			texture:SetAllPoints()
-			element.Texture = texture
-
-			texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
+			local texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
 			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
 			texture:SetPoint("CENTER", element, "CENTER", 0, 0)
 			texture:SetAlpha(0)
@@ -717,6 +712,27 @@ function UF:ConstructPlayerFrame(frame)
 			element.InAnim = ag
 
 			local anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(1)
+			anim:SetDuration(0.15)
+			anim:SetFromAlpha(0)
+			anim:SetToAlpha(1)
+
+			anim = ag:CreateAnimation("Alpha")
+			anim:SetOrder(2)
+			anim:SetDuration(0.35)
+			anim:SetFromAlpha(1)
+			anim:SetToAlpha(0)
+
+			anim = ag:CreateAnimation("Scale")
+			anim:SetOrder(1)
+			anim:SetDuration(0.15)
+			anim:SetFromScale(0.9, 0.9)
+			anim:SetToScale(1.1, 1.1)
+
+			ag = texture:CreateAnimationGroup()
+			element.OutAnim = ag
+
+			anim = ag:CreateAnimation("Alpha")
 			anim:SetOrder(1)
 			anim:SetDuration(0.35)
 			anim:SetFromAlpha(0)
@@ -731,37 +747,16 @@ function UF:ConstructPlayerFrame(frame)
 			anim = ag:CreateAnimation("Scale")
 			anim:SetOrder(1)
 			anim:SetDuration(0.35)
-			anim:SetFromScale(0.9, 0.9)
-			anim:SetToScale(1.1, 1.1)
-
-			ag = texture:CreateAnimationGroup()
-			element.OutAnim = ag
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(1)
-			anim:SetDuration(0.2)
-			anim:SetFromAlpha(0)
-			anim:SetToAlpha(1)
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(2)
-			anim:SetDuration(0.2)
-			anim:SetFromAlpha(1)
-			anim:SetToAlpha(0)
-
-			anim = ag:CreateAnimation("Scale")
-			anim:SetOrder(1)
-			anim:SetDuration(0.2)
 			anim:SetFromScale(1.1, 1.1)
 			anim:SetToScale(0.9, 0.9)
 		end
 
-		bar.PostUpdate = function(self, _, max, changed, powerType, event)
-			if event == "ClassPowerDisable" then
-				self:Hide()
-				frame.LeftTube:Refresh(0, false, "CP")
-			else
-				if event == "ClassPowerEnable" or event == "RefreshUnit" or changed then
+		bar.PostUpdate = function(self, _, max, _, changed, powerType)
+			if self.state ~= self.isEnabled or self.powerID ~= powerType then
+				if not self.isEnabled then
+					self:Hide()
+					frame.LeftTube:Refresh(0, false, "CP")
+				elseif self.isEnabled or self.powerID ~= powerType or changed then
 					self:Show()
 					frame.LeftTube:Refresh(max or 10, true, "CP")
 
@@ -769,21 +764,23 @@ function UF:ConstructPlayerFrame(frame)
 						local element = self[i]
 						element:SetSize(12, CLASS_POWER_LAYOUT[max][i].size)
 						element:SetPoint(unpack(CLASS_POWER_LAYOUT[max][i].point))
-
-						element.Texture:SetVertexColor(M.COLORS.POWER[powerType]:GetRGB())
+						element:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
 
 						element.Glow:SetSize(16, CLASS_POWER_LAYOUT[max][i].size)
 						element.Glow:SetTexCoord(unpack(CLASS_POWER_LAYOUT[max][i].glow))
 						element.Glow:SetVertexColor(M.COLORS.POWER.GLOW[powerType]:GetRGB())
 					end
 				end
+
+				self.state = self.isEnabled
+				self.powerID = self.powerType
 			end
 		end
 	end
 
 	-- pvp
-	frame.PvP = self:CreatePvPIcon_new(frame.FGParent, "ARTWORK", 6)
-	frame.PvP:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
+	frame.PvPIndicator = self:CreatePvPIcon_new(frame.FGParent, "ARTWORK", 6)
+	frame.PvPIndicator:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
 
 	-- castbar
 	frame.Castbar = self:CreateCastBar(frame, 188, true, true)
@@ -792,7 +789,7 @@ function UF:ConstructPlayerFrame(frame)
 
 	-- status icons/texts
 	local status = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
-	status:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 0, 0)
+	status:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 	status:SetTextColor(1, 0.82, 0)
 	status:SetJustifyH("RIGHT")
 	status.frequentUpdates = 0.1

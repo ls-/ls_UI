@@ -66,7 +66,7 @@ function UF:ConstructTargetFrame(frame)
 	healthText:SetJustifyH("RIGHT")
 	healthText:SetPoint("RIGHT", -12, 0)
 
-	frame.HealPrediction = UF:CreateHealPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealPrediction(frame)
 
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 3)
 	absrobGlow:SetTexture("Interface\\RAIDFRAME\\Shield-Overshield")
@@ -88,22 +88,22 @@ function UF:ConstructTargetFrame(frame)
 	powerText:SetJustifyH("LEFT")
 	powerText:SetPoint("LEFT")
 
-	frame.PvP = UF:CreatePvPIcon(frame, "BACKGROUND", 2, true)
-	frame.PvP:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, -14)
+	frame.PvPIndicator = UF:CreatePvPIcon(frame, "BACKGROUND", 2, true)
+	frame.PvPIndicator:SetPoint("TOPRIGHT", frame, "TOPLEFT", -3, -14)
 
-	frame.PvP.Hook:SetPoint("TOPRIGHT", frame.PvP, "TOPRIGHT", 16, 14)
-	frame.PvP.Hook:SetTexCoord(1 / 64, 34 / 64, 1 / 64, 37 / 64)
+	frame.PvPIndicator.Hook:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 16, 14)
+	frame.PvPIndicator.Hook:SetTexCoord(1 / 64, 34 / 64, 1 / 64, 37 / 64)
 
 	frame.Castbar = UF:CreateCastBar(frame, 188)
 	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -1)
 
-	frame.ReadyCheck = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
-	frame.ReadyCheck:SetSize(32, 32)
-	frame.ReadyCheck:SetPoint("CENTER")
+	frame.ReadyCheckIndicator = cover:CreateTexture("$parentReadyCheckIcon", "BACKGROUND")
+	frame.ReadyCheckIndicator:SetSize(32, 32)
+	frame.ReadyCheckIndicator:SetPoint("CENTER")
 
-	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
-	frame.RaidIcon:SetSize(24, 24)
-	frame.RaidIcon:SetPoint("TOPRIGHT", -4, 26)
+	frame.RaidTargetIndicator = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
+	frame.RaidTargetIndicator:SetSize(24, 24)
+	frame.RaidTargetIndicator:SetPoint("TOPRIGHT", -4, 26)
 
 	local name = E:CreateFontString(cover, 12, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
@@ -121,12 +121,12 @@ function UF:ConstructTargetFrame(frame)
 	debuffStatus:SetPoint("LEFT", 12, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
-	local threat = UF:CreateThreat(frame)
+	local threat = UF:CreateThreat(frame, "player")
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	threat:SetTexCoord(0 / 512, 210 / 512, 200 / 256, 230 / 256)
 	threat:SetSize(210, 30)
 	threat:SetPoint("CENTER", 0, 6)
-	frame.Threat = threat
+	frame.ThreatIndicator = threat
 
 	frame.Auras = UF:CreateAuras(frame, "target", 24)
 	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 8, 16)

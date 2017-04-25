@@ -167,7 +167,7 @@ local function CreateAuraIcon(frame, index)
 end
 
 local filterFunctions = {
-	default = function(frame, unit, aura, _, _, _, count, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(frame, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
 		if BLACKLIST[spellID] then
 			return false

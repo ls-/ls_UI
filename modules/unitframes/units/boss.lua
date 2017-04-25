@@ -73,7 +73,7 @@ function UF:ConstructBossFrame(frame)
 	healthText:SetJustifyH("RIGHT")
 	healthText:SetPoint("RIGHT", -12, 0)
 
-	frame.HealPrediction = UF:CreateHealPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealPrediction(frame)
 
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 3)
 	absrobGlow:SetTexture("Interface\\RAIDFRAME\\Shield-Overshield")
@@ -99,9 +99,9 @@ function UF:ConstructBossFrame(frame)
 	frame.Castbar = UF:CreateCastBar(frame, 94)
 	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
 
-	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
-	frame.RaidIcon:SetSize(24, 24)
-	frame.RaidIcon:SetPoint("TOP", 0, 22)
+	frame.RaidTargetIndicator = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
+	frame.RaidTargetIndicator:SetSize(24, 24)
+	frame.RaidTargetIndicator:SetPoint("TOP", 0, 22)
 
 	local name = E:CreateFontString(cover, 12, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
@@ -114,16 +114,16 @@ function UF:ConstructBossFrame(frame)
 	debuffStatus:SetPoint("LEFT", 12, 0)
 	frame:Tag(debuffStatus, "[ls:debuffstatus]")
 
-	local threat = UF:CreateThreat(frame)
+	local threat = UF:CreateThreat(frame, "player")
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
 	threat:SetTexCoord(210 / 512, 326 / 512, 200 / 256, 230 / 256)
 	threat:SetSize(116, 30)
 	threat:SetPoint("CENTER", 0, 6)
-	frame.Threat = threat
+	frame.ThreatIndicator = threat
 
 	local altPower = UF:CreateAltPowerBar(frame, 102)
 	altPower:SetPoint("TOPRIGHT", frame, "TOPLEFT", -6, -3)
-	frame.AltPowerBar = altPower
+	frame.AlternativePower = altPower
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)

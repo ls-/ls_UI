@@ -54,7 +54,7 @@ local function AttachLossToHorizontalBar(parent, prev, max)
 	parent.Loss:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -offset, 0)
 end
 
-local function PostUpdate(bar, unit, cur, max)
+local function PostUpdate(bar, unit, cur, _, max)
 	if bar.Tube then
 		-- yo dawg! I herd...
 		if bar.Tube.Tube then

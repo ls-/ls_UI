@@ -12,7 +12,7 @@ local _G = getfenv(0)
 local function Override(self, event, unit)
 	if unit ~= self.unit then return end
 
-	local pvp = self.PvP
+	local pvp = self.PvPIndicator
 
 	-- local status = "Horde"
 	-- local level = 0
@@ -24,7 +24,7 @@ local function Override(self, event, unit)
 	if _G.UnitIsPVPFreeForAll(unit) then
 		status = "FFA"
 	elseif factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit) then
-		if _G.UnitIsMercenary(unit) then
+		if unit == 'player' and _G.UnitIsMercenary(unit) then
 			if factionGroup == "Horde" then
 				factionGroup = "Alliance"
 			elseif factionGroup == "Alliance" then

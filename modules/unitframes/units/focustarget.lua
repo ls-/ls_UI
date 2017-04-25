@@ -66,7 +66,7 @@ function UF:ConstructFocusTargetFrame(frame)
 	healthText:SetJustifyH("RIGHT")
 	healthText:SetPoint("RIGHT", -12, 0)
 
-	frame.HealPrediction = UF:CreateHealPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealPrediction(frame)
 
 	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 3)
 	absrobGlow:SetTexture("Interface\\RAIDFRAME\\Shield-Overshield")
@@ -76,9 +76,9 @@ function UF:ConstructFocusTargetFrame(frame)
 	absrobGlow:SetAlpha(0)
 	frame.AbsorbGlow = absrobGlow
 
-	frame.RaidIcon = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
-	frame.RaidIcon:SetSize(24, 24)
-	frame.RaidIcon:SetPoint("TOP", 0, 22)
+	frame.RaidTargetIndicator = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
+	frame.RaidTargetIndicator:SetSize(24, 24)
+	frame.RaidTargetIndicator:SetPoint("TOP", 0, 22)
 
 	local name = E:CreateFontString(cover, 12, "$parentNameText", true)
 	name:SetDrawLayer("ARTWORK", 4)
