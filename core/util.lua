@@ -368,7 +368,7 @@ local function ProcessSmoothStatusBars()
 	for object, target in pairs(sb_objects) do
 		local new = FrameDeltaLerp(object._value, target, .25)
 
-		if math.abs(new - target) <= .005 then
+		if math.abs(new - target) <= .01 then
 			new = target
 			sb_objects[object] = nil
 		end
@@ -382,7 +382,7 @@ _G.C_Timer.NewTicker(0, ProcessSmoothStatusBars)
 
 local function SetSmoothedValue(self, value)
 	self._value = self:GetValue()
-	sb_objects[self] = value
+	sb_objects[self] = value > self._max and self._max or value < self._min and self._min or value
 end
 
 local function SetSmoothedMinMaxValues(self, min, max)
@@ -411,6 +411,10 @@ local function SetSmoothedMinMaxValues(self, min, max)
 end
 
 function E:SmoothBar(bar)
+	-- reset the bar
+	bar:SetMinMaxValues(0, 1)
+	bar:SetValue(0)
+
 	bar.SetValue_ = bar.SetValue
 	bar.SetMinMaxValues_ = bar.SetMinMaxValues
 	bar.SetValue = SetSmoothedValue
