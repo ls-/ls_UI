@@ -1,3 +1,8 @@
+## Version 70200.04
+
+- Updated embedded oUF to 7.0.0;
+- Misc bug fixes and tweaks.
+
 ## Version 70200.03
 
 - Slimmed down cast bars. I'm currently preparing for unit frame revamp, so I needed to make cast bars a bit more compact;
