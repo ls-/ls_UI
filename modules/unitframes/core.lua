@@ -354,7 +354,7 @@ function UF:Init()
 			end
 		end
 
-	 	if objects["focus"] then
+		if objects["focus"] then
 			if not C.units.focus.castbar then
 				objects["focus"]:DisableElement("Castbar")
 			end
