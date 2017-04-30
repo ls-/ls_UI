@@ -64,10 +64,6 @@ local function Override(self, event, unit)
 end
 
 function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
-	P.argcheck(1, parent, "table")
-	P.argcheck(2, layer, "string")
-	P.argcheck(3, sublayer, "number")
-
 	options = options or {}
 
 	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
