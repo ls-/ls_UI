@@ -7,11 +7,10 @@ local next = _G.next
 local s_match = _G.string.match
 local s_split = _G.string.split
 local hooksecurefunc = _G.hooksecurefunc
+local type = _G.type
 
 -- Blizz
 local GetTime = _G.GetTime
-
--- Mine
 
 ----------------
 -- STATUS BAR --
@@ -473,5 +472,93 @@ do
 
 	function E:CreateCooldown(...)
 		return CreateCooldown(...)
+	end
+end
+
+------------
+-- BORDER --
+------------
+
+-- Based on code from oUF_Phanx by Phanx <addons@phanx.net>
+
+do
+	local sections = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}
+
+	local function SetBorderColor(self, r, g, b, a)
+		local t = self.borderTextures
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:SetVertexColor(r or 1, g or 1, b or 1, a or 1)
+		end
+	end
+
+	local function GetBorderColor(self)
+		return self.borderTextures and self.borderTextures.TOPLEFT:GetVertexColor()
+	end
+
+	local function CrateBorder(object, isThick)
+		local t = {}
+		local texture, thickness, offset
+
+		if isThick then
+			texture = "Interface\\AddOns\\ls_UI\\media\\unit-frame-border-"
+			thickness = 16
+			offset = 6
+		else
+			texture = "Interface\\AddOns\\ls_UI\\media\\border-"
+			thickness = 8
+			offset = 4
+		end
+
+		for i = 1, #sections do
+			local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
+			x:SetTexture(texture..sections[i], true)
+			t[sections[i]] = x
+		end
+
+		t.TOPLEFT:SetSize(thickness, thickness)
+		t.TOPLEFT:SetPoint("BOTTOMRIGHT", object, "TOPLEFT", offset, -offset)
+
+		t.TOPRIGHT:SetSize(thickness, thickness)
+		t.TOPRIGHT:SetPoint("BOTTOMLEFT", object, "TOPRIGHT", -offset, -offset)
+
+		t.BOTTOMLEFT:SetSize(thickness, thickness)
+		t.BOTTOMLEFT:SetPoint("TOPRIGHT", object, "BOTTOMLEFT", offset, offset)
+
+		t.BOTTOMRIGHT:SetSize(thickness, thickness)
+		t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -offset, offset)
+
+		t.TOP:SetHeight(thickness)
+		t.TOP:SetHorizTile(true)
+		t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT", 0, 0)
+		t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT", 0, 0)
+
+		t.BOTTOM:SetHeight(thickness)
+		t.BOTTOM:SetHorizTile(true)
+		t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT", 0, 0)
+		t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT", 0, 0)
+
+		t.LEFT:SetWidth(thickness)
+		t.LEFT:SetVertTile(true)
+		t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT", 0, 0)
+		t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT", 0, 0)
+
+		t.RIGHT:SetWidth(thickness)
+		t.RIGHT:SetVertTile(true)
+		t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
+		t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
+
+		object.borderTextures = t
+		object.SetBorderColor = SetBorderColor
+		object.GetBorderColor = GetBorderColor
+	end
+
+	function E:CreateBorder(object, isThick)
+		if type(object) ~= "table" or not object.CreateTexture or object.borderTextures then
+			return
+		end
+
+		CrateBorder(object, isThick)
 	end
 end

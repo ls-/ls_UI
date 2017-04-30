@@ -3,10 +3,9 @@
 	<Script file="util.lua"/>
 	<Include file="constants.xml"/>
 	<Script file="animation.lua"/>
-	<Script file="bar.lua"/>
-	<Script file="border.lua"/>
-	<Script file="button.lua"/>
 	<Script file="widgets.lua"/>
+	<Script file="bar.lua"/>
+	<Script file="button.lua"/>
 	<Script file="defaults.lua"/>
 	<Script file="mover.lua"/>
 </Ui>
