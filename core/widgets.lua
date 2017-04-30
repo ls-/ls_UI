@@ -499,15 +499,14 @@ do
 
 	local function CrateBorder(object, isThick)
 		local t = {}
-		local texture, thickness, offset
+		local thickness = 16
+		local texture, offset
 
 		if isThick then
-			texture = "Interface\\AddOns\\ls_UI\\media\\unit-frame-border-"
-			thickness = 16
+			texture = "Interface\\AddOns\\ls_UI\\media\\border-thick-"
 			offset = 6
 		else
-			texture = "Interface\\AddOns\\ls_UI\\media\\border-"
-			thickness = 8
+			texture = "Interface\\AddOns\\ls_UI\\media\\border-thin-"
 			offset = 4
 		end
 
