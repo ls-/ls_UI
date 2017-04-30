@@ -37,8 +37,9 @@ $includedFiles = @(
 )
 
 $filesToRemove = @(
-	".git",
+	".git*",
 	".packager.ps1",
+	".pkg*",
 	"CHANGELOG*",
 	"README*"
 )
