@@ -6,6 +6,9 @@ local _G = getfenv(0)
 local string = _G.string
 local tcontains = _G.tContains
 
+-- Blizz
+local FOREIGN_SERVER_LABEL = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
+
 -- Mine
 local SHEEPABLE_TYPES = {
 	"Beast", "Wildtier", "Bestia", "Bête", "Fera", "Животное", "야수", "野兽", "野獸",
@@ -33,7 +36,7 @@ oUF.Tags.Methods["ls:server"] = function(unit, r)
 		local relationship = _G.UnitRealmRelationship(r or unit)
 
 		if relationship ~= _G.LE_REALM_RELATION_VIRTUAL then
-			return _G.FOREIGN_SERVER_LABEL
+			return FOREIGN_SERVER_LABEL
 		else
 			return ""
 		end
