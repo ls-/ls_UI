@@ -150,6 +150,10 @@ end
 -- MATHS --
 -----------
 
+local function Clamp(v)
+	return math.min(10, math.max(0, v))
+end
+
 local function Round(v)
 	return math.floor(v + 0.5)
 end
@@ -198,8 +202,80 @@ end
 -- COLOURS --
 -------------
 
-local function CalcHEXFromRGB(r, g, b)
+-- http://marcocorvi.altervista.org/games/imgpr/rgb-hsl.htm
+local function RGBToHSL(r, g, b)
+	local max = math.max(r, g, b)
+	local min = math.min(r, g, b)
+	local l = (max + min) / 2
+	local h, s
+
+	if max == min then
+		h, s = 0, 0
+	else
+		local d = max - min
+
+		if max == r then
+			h = 60 * (g - b) / d
+		elseif max == g then
+			h = 60 * (b - r) / d + 120
+		else
+			h = 60 * (r - g) / d + 240
+		end
+
+		s = l < 0.5 and d / (2 * l) or d / (2 - 2 * l)
+	end
+
+	if h < 0 then
+		h = h + 360
+	end
+
+	return h % 360, s, l
+end
+
+local function HueToRGB(v1, v2, v3)
+	if v3 < 0 then
+		v3 = v3 + 1
+	elseif v3 > 1 then
+		v3 = v3 - 1
+	end
+
+	if v3 < 1 / 6 then
+		return v1 + (v2 - v1) * 6 * v3
+	elseif v3  < 1 / 2 then
+		return v2
+	elseif v3 < 2 / 3 then
+		return v1 + (v2 - v1) * (2 / 3 - v3) * 6
+	end
+
+	return v1
+end
+
+local function HSLToRGB(h, s, l)
+	if s == 0 then
+		return l, l, l
+	else
+		local v2 = l < 0.5 and l * (1 + s) or l + s - l * s
+		local v1 = 2 * l - v2
+		h = h / 360
+
+		return HueToRGB(v1, v2, h + 1 / 3), HueToRGB(v1, v2, h), HueToRGB(v1, v2, h - 1 / 3)
+	end
+end
+
+local function RGBToHEX(r, g, b)
 	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
+end
+
+local function HEXToRGB(hex)
+	local rhex, ghex, bhex = tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16)
+
+	return tonumber(string.format("%.2f", rhex / 255)), tonumber(string.format("%.2f", ghex / 255)), tonumber(string.format("%.2f", bhex / 255))
+end
+
+local function AdjustColor(r, g, b, perc)
+	local h, s, l = RGBToHSL(r, g, b)
+
+	return HSLToRGB(h, s, Clamp(l + perc))
 end
 
 -- http://wow.gamepedia.com/ColorGradient
@@ -222,16 +298,32 @@ local function GetColorHEX(self)
 	return self.hex
 end
 
-local function GetColorRGB(self)
-	return self.r, self.g, self.b
+local function GetColorRGB(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		return AdjustColor(self.r, self.g, self.b, adjustment)
+	else
+		return self.r, self.g, self.b
+	end
 end
 
-local function GetColorRGBA(self, alpha)
-	return self.r, self.g, self.b, alpha or self.a
+local function GetColorRGBA(self, alpha, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = AdjustColor(self.r, self.g, self.b, adjustment)
+
+		return r, g, b, alpha or self.a
+	else
+		return self.r, self.g, self.b, alpha or self.a
+	end
 end
 
-local function GetColorRGBHEX(self)
-	return self.r, self.g, self.b, self.hex
+local function GetColorRGBHEX(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = AdjustColor(self.r, self.g, self.b, adjustment)
+
+		return r, g, b, RGBToHEX(r, g, b)
+	else
+		return self.r, self.g, self.b, self.hex
+	end
 end
 
 local function WrapTextInColorCode(self, text)
@@ -239,7 +331,7 @@ local function WrapTextInColorCode(self, text)
 end
 
 local function GetGradientHEX(self, perc)
-	return CalcHEXFromRGB(CalcGradient(self, perc))
+	return RGBToHEX(CalcGradient(self, perc))
 end
 
 local function GetGradientRGB(self, perc)
@@ -257,7 +349,7 @@ end
 local function GetGradientRGBHEX(self, perc)
 	local r, g, b = CalcGradient(self, perc)
 
-	return r, g, b, CalcHEXFromRGB(r, g, b)
+	return r, g, b, RGBToHEX(r, g, b)
 end
 
 local function WrapTextInGradientCode(self, perc, text)
@@ -271,7 +363,7 @@ function E:CreateColor(r, g, b, a)
 		r, g, b = r / 255, g / 255, b / 255
 	end
 
-	local color = {r = r, g = g, b = b, a = a, hex = CalcHEXFromRGB(r, g, b)}
+	local color = {r = r, g = g, b = b, a = a, hex = RGBToHEX(r, g, b)}
 
 	color.GetHEX = GetColorHEX
 	color.GetRGB = GetColorRGB
@@ -322,13 +414,31 @@ function E:RGBToHEX(r, g, b)
 		end
 	end
 
-	return CalcHEXFromRGB(r, g, b)
+	return RGBToHEX(r, g, b)
 end
 
 function E:HEXToRGB(hex)
-	local rhex, ghex, bhex = tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16)
+	return HEXToRGB(hex)
+end
 
-	return tonumber(string.format("%.2f", rhex / 255)), tonumber(string.format("%.2f", ghex / 255)), tonumber(string.format("%.2f", bhex / 255))
+function E:AdjustColor(r, g, b, perc)
+	if type(r) == "table" then
+		if r.r then
+			r, g, b = r.r, r.g, r.b
+		else
+			r, g, b = unpack(r)
+		end
+	end
+
+	if r > 1 or g > 1 or b > 1 then
+		r, g, b = r / 255, g / 255, b / 255
+	end
+
+	if perc and perc ~= 0 then
+		return AdjustColor(r, g, b, perc)
+	else
+		return r, g, b
+	end
 end
 
 local vc_objects = {}
