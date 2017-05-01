@@ -53,7 +53,7 @@ local function BackpackButton_OnEnter()
 	for id in pairs(CURRENCIES) do
 		local name, cur, icon, _, _, max = _G.GetCurrencyInfo(id)
 
-		if name then
+		if name and icon then
 			if max and max > 0 then
 				if cur == max then
 					_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.RED:GetRGB())
@@ -73,14 +73,16 @@ local function BackpackButton_OnEnter()
 			local name, cur, icon, _, _, max = _G.GetCurrencyInfo(id)
 
 			if not CURRENCIES[id] then
-				if max and max > 0 then
-					if cur == max then
-						_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.RED:GetRGB())
+				if name and icon then
+					if max and max > 0 then
+						if cur == max then
+							_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.RED:GetRGB())
+						else
+							_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.GREEN:GetRGB())
+						end
 					else
-						_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).." / ".._G.BreakUpLargeNumbers(max).."|T"..icon..":0|t", 1, 1, 1, M.COLORS.GREEN:GetRGB())
+						_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
 					end
-				else
-					_G.GameTooltip:AddDoubleLine(name, _G.BreakUpLargeNumbers(cur).."|T"..icon..":0|t", 1, 1, 1, 1, 1, 1)
 				end
 			end
 		end

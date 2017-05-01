@@ -4,6 +4,7 @@ local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local math = _G.math
 local table = _G.table
 local unpack = _G.unpack
 
@@ -205,10 +206,11 @@ local function UpdateXPBars()
 
 					if isParagon then
 						cur, max, rewardQuestID, hasRewardPending = _G.C_Reputation.GetFactionParagonInfo(factionID)
+						cur = math.fmod(cur, max)
 						repTextLevel = repTextLevel.."+"
 
-						if not hasRewardPending then
-							cur = math.fmod(cur, max)
+						if hasRewardPending then
+							cur = cur + max
 						end
 					else
 						max, cur = 1, 1
