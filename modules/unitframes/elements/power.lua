@@ -76,6 +76,14 @@ local function PostUpdate(bar, unit, cur, _, max)
 		end
 	end
 
+	if bar.Inset then
+		if not max or max == 0 then
+			bar.Inset:Collapse()
+		else
+			bar.Inset:Expand()
+		end
+	end
+
 	if bar:IsShown() then
 		local unitGUID = UnitGUID(unit)
 
@@ -135,7 +143,8 @@ local function PostUpdate(bar, unit, cur, _, max)
 		return bar.Text:SetText(nil)
 	end
 
-	local color = E:RGBToHEX(bar:GetStatusBarColor())
+	local r, g, b = bar:GetStatusBarColor()
+	local color = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
 
 	if bar.__owner.isMouseOver then
 		if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
