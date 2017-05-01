@@ -50,36 +50,27 @@ local function Override(self, event, unit)
 		pvp:Show()
 		pvp.Prestige:Show()
 
-		if pvp.Hook then
-			pvp.Hook:Show()
+		if pvp.Inset and not pvp.Inset:IsExpanded() then
+			pvp.Inset:Expand()
 		end
 	else
 		pvp:Hide()
 		pvp.Prestige:Hide()
 
-		if pvp.Hook then
-			pvp.Hook:Hide()
+		if pvp.Inset and pvp.Inset:IsExpanded() then
+			pvp.Inset:Collapse()
 		end
 	end
 end
 
-function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
-	options = options or {}
-
-	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
+function UF:CreatePvPIcon_new(parent, layer, sublayer)
+	local pvp = parent:CreateTexture(nil, layer, nil, sublayer or 0)
 	pvp:SetSize(30, 30)
 
-	local banner = parent:CreateTexture(nil, layer, nil, sublayer - 1)
+	local banner = parent:CreateTexture(nil, layer, nil, (sublayer or 0) - 1)
 	banner:SetSize(46, 48)
 	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
 	pvp.Prestige = banner
-
-	if options.has_hook then
-		local t = parent:CreateTexture(nil, layer, nil, sublayer)
-		t:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
-		t:SetSize(33, 36)
-		pvp.Hook = t
-	end
 
 	pvp.Override = Override
 
