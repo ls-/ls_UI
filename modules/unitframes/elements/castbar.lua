@@ -52,13 +52,14 @@ local function CustomDelayText(castbar, duration)
 end
 
 function UF:CreateCastBar(parent, width, safezone, delay)
-	local holder = _G.CreateFrame("Frame", parent:GetName().."CastBarHolder", parent, "SecureHandlerStateTemplate")
+	local holder = _G.CreateFrame("Frame", parent:GetName().."CastBarHolder", parent)
 	holder:SetSize(width, 12)
+	holder._width = width
 
 	local bar = E:CreateStatusBar(holder, nil, "HORIZONTAL")
 	bar:SetFrameLevel(holder:GetFrameLevel())
-	bar:SetSize(width - 20, 12)
-	bar:SetPoint("TOPRIGHT", 0, 0)
+	bar:SetPoint("TOPLEFT", 20, 0)
+	bar:SetPoint("BOTTOMRIGHT", 0, 0)
 
 	local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 	spark:SetSize(24, 24)
