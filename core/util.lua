@@ -290,8 +290,12 @@ local function CalcGradient(colorTable, perc)
 	return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, 1
 end
 
-local function GetColorHEX(self)
-	return self.hex
+local function GetColorHEX(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		return RGBToHEX(AdjustColor(self.r, self.g, self.b, adjustment))
+	else
+		return self.hex
+	end
 end
 
 local function GetColorRGB(self, adjustment)
@@ -322,34 +326,52 @@ local function GetColorRGBHEX(self, adjustment)
 	end
 end
 
-local function WrapTextInColorCode(self, text)
-	return string.format("|cff%s%s|r", self.hex, text)
+local function WrapTextInColorCode(self, text, adjustment)
+	return string.format("|cff%s%s|r", GetColorHEX(self, adjustment), text)
 end
 
-local function GetGradientHEX(self, perc)
-	return RGBToHEX(CalcGradient(self, perc))
+local function GetGradientHEX(self, perc, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = CalcGradient(self, perc)
+
+		return RGBToHEX(AdjustColor(r, g, b, adjustment))
+	else
+		return RGBToHEX(CalcGradient(self, perc))
+	end
 end
 
-local function GetGradientRGB(self, perc)
+local function GetGradientRGB(self, perc, adjustment)
 	local r, g, b = CalcGradient(self, perc)
+
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
 
 	return r, g, b
 end
 
-local function GetGradientRGBA(self, perc, alpha)
+local function GetGradientRGBA(self, perc, alpha, adjustment)
 	local r, g, b, a = CalcGradient(self, perc)
+
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
 
 	return r, g, b, alpha or a
 end
 
-local function GetGradientRGBHEX(self, perc)
+local function GetGradientRGBHEX(self, perc, adjustment)
 	local r, g, b = CalcGradient(self, perc)
+
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
 
 	return r, g, b, RGBToHEX(r, g, b)
 end
 
-local function WrapTextInGradientCode(self, perc, text)
-	return string.format("|cff%s%s|r", GetGradientHEX(self, perc), text)
+local function WrapTextInGradientCode(self, perc, text, adjustment)
+	return string.format("|cff%s%s|r", GetGradientHEX(self, perc, adjustment), text)
 end
 
 function E:CreateColor(r, g, b, a)
