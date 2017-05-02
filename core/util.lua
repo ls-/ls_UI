@@ -225,10 +225,6 @@ local function RGBToHSL(r, g, b)
 		s = l < 0.5 and d / (2 * l) or d / (2 - 2 * l)
 	end
 
-	if h < 0 then
-		h = h + 360
-	end
-
 	return h % 360, s, l
 end
 
