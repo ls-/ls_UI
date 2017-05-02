@@ -37,10 +37,10 @@ oUF.Tags.Methods["ls:server"] = function(unit, r)
 
 		if relationship ~= _G.LE_REALM_RELATION_VIRTUAL then
 			return FOREIGN_SERVER_LABEL
-		else
-			return ""
 		end
 	end
+
+	return ""
 end
 
 oUF.Tags.Events["ls:server"] = "UNIT_NAME_UPDATE"
