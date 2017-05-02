@@ -134,6 +134,22 @@ D["units"] = {
 				},
 			},
 		},
+		alt_power = {
+			enabled = true,
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "AlternativePower",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
 		name = {
 			tag = "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name][ls:server]",
 			h_alignment = "LEFT",

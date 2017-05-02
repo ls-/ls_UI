@@ -126,6 +126,8 @@ function UF:ConstructTargetFrame(frame)
 	texture:SetPoint("BOTTOMRIGHT", bottom_inset.Right, "BOTTOMLEFT", 0, 0)
 	bottom_inset.Mid = texture
 
+	bottom_inset:Collapse()
+
 	local left_inset = _G.CreateFrame("Frame", nil, frame)
 	left_inset:SetPoint("TOPLEFT", top_inset, "BOTTOMLEFT", 0, 0)
 	left_inset:SetPoint("BOTTOMLEFT", bottom_inset, "TOPLEFT", 0, 0)
@@ -278,6 +280,15 @@ function UF:ConstructTargetFrame(frame)
 
 	power.Inset = bottom_inset
 
+	local alt_power = self:CreateAlternativePower(frame, true, "LS12Font_Shadow", text_parent)
+	alt_power:SetFrameLevel(level + 1)
+	alt_power:SetPoint("TOPLEFT", top_inset, "TOPLEFT", 0, 0)
+	alt_power:SetPoint("BOTTOMRIGHT", top_inset, "BOTTOMRIGHT", 0, 2)
+	E:SetStatusBarSkin(alt_power, "HORIZONTAL-GLASS")
+	frame.AlternativePower = alt_power
+
+	alt_power.Inset = top_inset
+
 	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
 
 	local statusIcons = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
@@ -306,6 +317,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateName(frame)
 	self:UpdateCastbar(frame)
 	self:UpdatePower(frame)
+	self:UpdateAlternativePower(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end
