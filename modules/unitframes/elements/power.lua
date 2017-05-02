@@ -14,54 +14,48 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 -- Mine
 local diffThreshold = 0.1
 
-local function CalcMult(prev, max)
-	local d = prev / max
-
-	return 1 - E:Clamp(d)
-end
-
 local function AttachGainToVerticalBar(parent, prev, max)
-	local offset = parent:GetHeight() * CalcMult(prev, max)
+	local offset = parent:GetHeight() * (1 - E:Clamp(prev / max))
 
 	parent.Gain:SetPoint("BOTTOMLEFT", parent, "TOPLEFT", 0, -offset)
 	parent.Gain:SetPoint("BOTTOMRIGHT", parent, "TOPRIGHT", 0, -offset)
 end
 
 local function AttachLossToVerticalBar(parent, prev, max)
-	local offset = parent:GetHeight() * CalcMult(prev, max)
+	local offset = parent:GetHeight() * (1 - E:Clamp(prev / max))
 
 	parent.Loss:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, -offset)
 	parent.Loss:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -offset)
 end
 
 local function AttachGainToHorizontalBar(parent, prev, max)
-	local offset = parent:GetWidth() * CalcMult(prev, max)
+	local offset = parent:GetWidth() * (1 - E:Clamp(prev / max))
 
 	parent.Gain:SetPoint("TOPLEFT", parent, "TOPRIGHT", -offset, 0)
 	parent.Gain:SetPoint("BOTTOMLEFT", parent, "BOTTOMRIGHT", -offset, 0)
 end
 
 local function AttachLossToHorizontalBar(parent, prev, max)
-	local offset = parent:GetWidth() * CalcMult(prev, max)
+	local offset = parent:GetWidth() * (1 - E:Clamp(prev / max))
 
 	parent.Loss:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -offset, 0)
 	parent.Loss:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -offset, 0)
 end
 
-local function PostUpdate(bar, unit, cur, _, max)
-	if bar.Inset then
+local function PostUpdate(element, unit, cur, _, max)
+	if element.Inset then
 		if not max or max == 0 then
-			bar.Inset:Collapse()
+			element.Inset:Collapse()
 		else
-			bar.Inset:Expand()
+			element.Inset:Expand()
 		end
 	end
 
-	if bar:IsShown() then
+	if element:IsShown() then
 		local unitGUID = UnitGUID(unit)
 
-		if max ~= 0 and unitGUID == bar.lastUnitGUID then
-			local prev = bar.prev or 0
+		if max ~= 0 and unitGUID == element.lastUnitGUID then
+			local prev = element._prev or 0
 			local diff = cur - prev
 
 			if math.abs(diff) / max < diffThreshold then
@@ -69,69 +63,75 @@ local function PostUpdate(bar, unit, cur, _, max)
 			end
 
 			if diff > 0 then
-				if bar.Gain:GetAlpha() == 0 then
-					bar.Gain:SetAlpha(1)
+				if element.Gain:GetAlpha() == 0 then
+					element.Gain:SetAlpha(1)
 
-					if bar:GetOrientation() == "VERTICAL" then
-						AttachGainToVerticalBar(bar, prev, max)
+					if element:GetOrientation() == "VERTICAL" then
+						AttachGainToVerticalBar(element, prev, max)
 					else
-						AttachGainToHorizontalBar(bar, prev, max)
+						AttachGainToHorizontalBar(element, prev, max)
 					end
 
-					bar.Gain.FadeOut:Play()
+					element.Gain.FadeOut:Play()
 				end
 			elseif diff < 0 then
-				bar.Gain.FadeOut:Stop()
-				bar.Gain:SetAlpha(0)
+				element.Gain.FadeOut:Stop()
+				element.Gain:SetAlpha(0)
 
-				if bar.Loss:GetAlpha() == 0 then
-					bar.Loss:SetAlpha(1)
+				if element.Loss:GetAlpha() == 0 then
+					element.Loss:SetAlpha(1)
 
-					if bar:GetOrientation() == "VERTICAL" then
-						AttachLossToVerticalBar(bar, prev, max)
+					if element:GetOrientation() == "VERTICAL" then
+						AttachLossToVerticalBar(element, prev, max)
 					else
-						AttachLossToHorizontalBar(bar, prev, max)
+						AttachLossToHorizontalBar(element, prev, max)
 					end
 
-					bar.Loss.FadeOut:Play()
+					element.Loss.FadeOut:Play()
 				end
 			end
 		else
-			bar.Gain.FadeOut:Stop()
-			bar.Gain:SetAlpha(0)
+			element.Gain.FadeOut:Stop()
+			element.Gain:SetAlpha(0)
 
-			bar.Loss.FadeOut:Stop()
-			bar.Loss:SetAlpha(0)
+			element.Loss.FadeOut:Stop()
+			element.Loss:SetAlpha(0)
 		end
 
-		bar.prev = cur
-		bar.lastUnitGUID = unitGUID
+		element._prev = cur
+		element.lastUnitGUID = unitGUID
+	else
+		return element.Text and element.Text:SetText(nil)
 	end
 
-	if max == 0 then
-		return bar.Text:SetText(nil)
-	elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
-		bar:SetValue(0)
+	if not element.Text then
+		return
+	else
+		if max == 0 then
+			return element.Text:SetText(nil)
+		elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
+			element:SetValue(0)
 
-		return bar.Text:SetText(nil)
+			return element.Text:SetText(nil)
+		end
 	end
 
-	local r, g, b = bar:GetStatusBarColor()
-	local color = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
+	local r, g, b = element:GetStatusBarColor()
+	local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.2))
 
-	if bar.__owner.isMouseOver then
+	if element.__owner.isMouseOver then
 		if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
-			return bar.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), color)
+			return element.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
 		end
 	else
 		if cur == max or cur == 0 then
 			if unit == "player" or unit == "vehicle" or unit == "pet" then
-				return bar.Text:SetText(nil)
+				return element.Text:SetText(nil)
 			end
 		end
 	end
 
-	bar.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), color)
+	element.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), hex)
 end
 
 function UF:CreatePower(parent, text, textFontObject, textParent)
