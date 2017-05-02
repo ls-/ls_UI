@@ -258,12 +258,12 @@ local function HSLToRGB(h, s, l)
 		local v1 = 2 * l - v2
 		h = h / 360
 
-		return HueToRGB(v1, v2, h + 1 / 3), HueToRGB(v1, v2, h), HueToRGB(v1, v2, h - 1 / 3)
+		return Clamp(HueToRGB(v1, v2, h + 1 / 3)), Clamp(HueToRGB(v1, v2, h)), Clamp(HueToRGB(v1, v2, h - 1 / 3))
 	end
 end
 
 local function RGBToHEX(r, g, b)
-	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
+	return string.format("%02x%02x%02x", Clamp(r) * 255, Clamp(g) * 255, Clamp(b) * 255)
 end
 
 local function HEXToRGB(hex)
