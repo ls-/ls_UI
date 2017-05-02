@@ -871,3 +871,23 @@ function E:ResetFontStringHeight(object)
 	object:SetHeight(object:GetStringHeight())
 	object:SetText(nil)
 end
+
+----------
+-- MISC --
+----------
+
+function E:ResolveAnchorPoint(frame, children)
+	if not children or children == "" then
+		return frame
+	else
+		local anchor = frame
+
+		children = {string.split(".", children)}
+
+		for i = 1, #children do
+			anchor = anchor[children[i]]
+		end
+
+		return anchor
+	end
+end
