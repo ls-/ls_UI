@@ -119,6 +119,18 @@ do
 		return bar
 	end
 
+	local function Hide(self)
+		for i = 1, 4 do
+			self[i]:Hide()
+		end
+	end
+
+	local function Show(self)
+		for i = 1, 4 do
+			self[i]:Show()
+		end
+	end
+
 	-- flags:
 	-- "HORIZONTAL-L", "HORIZONTAL-M", "HORIZONTAL-GLASS"
 	-- "VERTICAL-L", "VERTICAL-M", "VERTICAL-GLASS"
@@ -134,6 +146,8 @@ do
 			[2] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- mid
 			[3] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- right/bottom
 			[4] = object.Glass or object:CreateTexture(nil, "ARTWORK", nil, 6), -- glass
+			Hide = Hide,
+			Show = Show,
 		}
 
 		if s == "HORIZONTAL" then
