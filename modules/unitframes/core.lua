@@ -42,6 +42,20 @@ local function LSUnitFrame_OnEnter(self)
 			end
 		end
 	end
+
+	if self._mouseovers then
+		for element in pairs(self._mouseovers) do
+			if element.ForceUpdate then
+				element:ForceUpdate()
+
+				if element:IsObjectType("Texture") then
+					element:Show()
+				end
+			else
+				element:Show()
+			end
+		end
+	end
 end
 
 local function LSUnitFrame_OnLeave(self)
@@ -59,6 +73,20 @@ local function LSUnitFrame_OnLeave(self)
 
 	if self.mouseovers then
 		for _, element in pairs(self.mouseovers) do
+			if element.ForceUpdate then
+				element:ForceUpdate()
+
+				if element:IsObjectType("Texture") then
+					element:Hide()
+				end
+			else
+				element:Hide()
+			end
+		end
+	end
+
+	if self._mouseovers then
+		for element in pairs(self._mouseovers) do
 			if element.ForceUpdate then
 				element:ForceUpdate()
 
@@ -119,24 +147,33 @@ local function MainConstructor()
 	if C.units.player.enabled then
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
+
+		UF:UpdatePlayerFrame(objects["player"])
+
+		if not C.units.player.castbar.enabled then
+			UF:EnableDefaultCastingBars()
+		end
 	end
 
 	if C.units.target.enabled then
 		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
 		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
+
+		UF:UpdateTargetFrame(objects["target"])
+		UF:UpdateTargetTargetFrame(objects["targettarget"])
 	end
 
 	if C.units.focus.enabled then
-		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
-		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
+		-- objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
+		-- objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
 	end
 
 	if C.units.boss.enabled then
-		objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
-		objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
-		objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
-		objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
-		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
+		-- objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
+		-- objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
+		-- objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
+		-- objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
+		-- objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
 	end
 
 	-- local ArenaPrepFrames
@@ -204,10 +241,9 @@ function UF:SpawnFrame(unit)
 		objects["pet"]:SetPoint(unpack(C.units.pet.point))
 		E:CreateMover(objects["pet"])
 
-		if not C.units.player.castbar then
-			objects["player"]:DisableElement("Castbar")
-			objects["pet"]:DisableElement("Castbar")
+		UF:UpdatePlayerFrame(objects["player"])
 
+		if not C.units.player.castbar.enabled then
 			UF:EnableDefaultCastingBars()
 		end
 
@@ -222,9 +258,8 @@ function UF:SpawnFrame(unit)
 		objects["targettarget"]:SetPoint(unpack(C.units.targettarget.point))
 		E:CreateMover(objects["targettarget"])
 
-		if not C.units.target.castbar then
-			objects["target"]:DisableElement("Castbar")
-		end
+		UF:UpdateTargetFrame(objects["target"])
+		UF:UpdateTargetTargetFrame(objects["targettarget"])
 
 		return true
 	elseif unit == "focus" and not objects["focus"] then

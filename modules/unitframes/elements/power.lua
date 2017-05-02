@@ -17,13 +17,7 @@ local diffThreshold = 0.1
 local function CalcMult(prev, max)
 	local d = prev / max
 
-	if d > 1 then
-		d = 1
-	elseif d < 0 then
-		d = 0
-	end
-
-	return 1 - d
+	return 1 - E:Clamp(d)
 end
 
 local function AttachGainToVerticalBar(parent, prev, max)
@@ -55,27 +49,6 @@ local function AttachLossToHorizontalBar(parent, prev, max)
 end
 
 local function PostUpdate(bar, unit, cur, _, max)
-	if bar.Tube then
-		-- yo dawg! I herd...
-		if bar.Tube.Tube then
-			if max == 0 then
-				bar.Tube:Hide()
-			else
-				bar.Tube:Show()
-			end
-		else
-			if max == 0 then
-				for i = 1, #bar.Tube do
-					bar.Tube[i]:Hide()
-				end
-			else
-				for i = 1, #bar.Tube do
-					bar.Tube[i]:Show()
-				end
-			end
-		end
-	end
-
 	if bar.Inset then
 		if not max or max == 0 then
 			bar.Inset:Collapse()
@@ -161,40 +134,27 @@ local function PostUpdate(bar, unit, cur, _, max)
 	bar.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), color)
 end
 
-function UF:CreatePowerBar_new(parent, textFontObject, options)
-	P.argcheck(1, parent, "table")
-	P.argcheck(2, textFontObject, "string")
+function UF:CreatePower(parent, text, textFontObject, textParent)
+	local element = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
+	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	E:SmoothBar(element)
 
-	options = options or {}
-
-	local bar = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
-	bar:SetOrientation(options.is_vertical and "VERTICAL" or "HORIZONTAL")
-	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	E:SmoothBar(bar)
-
-	local text = (options.text_parent or bar):CreateFontString(nil, "ARTWORK", textFontObject)
-	text:SetWordWrap(false)
-	E:ResetFontStringHeight(text)
-	bar.Text = text
-
-	if options.text_has_bg then
-		local bg = bar:CreateTexture(nil, "ARTWORK", nil, 7)
-		bg:SetTexture("Interface\\Scenarios\\Objective-Lineglow")
-		bg:SetTexCoord(0, 1, 0, 13 / 16)
-		bg:SetVertexColor(M.COLORS.BLACK:GetRGB())
-		bg:SetPoint("TOPLEFT", text, "TOPLEFT", 0, -2)
-		bg:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", 0, 2)
+	if text then
+		text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
+		text:SetWordWrap(false)
+		E:ResetFontStringHeight(text)
+		element.Text = text
 	end
 
-	local gainTexture = bar:CreateTexture(nil, "ARTWORK", nil, 1)
+	local gainTexture = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	gainTexture:SetColorTexture(M.COLORS.LIGHT_GREEN:GetRGB())
 	gainTexture:SetAlpha(0)
-	bar.Gain = gainTexture
+	element.Gain = gainTexture
 
-	local lossTexture = bar:CreateTexture(nil, "BACKGROUND")
+	local lossTexture = element:CreateTexture(nil, "BACKGROUND")
 	lossTexture:SetColorTexture(M.COLORS.DARK_RED:GetRGB())
 	lossTexture:SetAlpha(0)
-	bar.Loss = lossTexture
+	element.Loss = lossTexture
 
 	local ag = gainTexture:CreateAnimationGroup()
 	ag:SetToFinalAlpha(true)
@@ -218,102 +178,58 @@ function UF:CreatePowerBar_new(parent, textFontObject, options)
 	anim1:SetStartDelay(0.6)
 	anim1:SetDuration(0.2)
 
-	if options.is_vertical then
-		gainTexture:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-		gainTexture:SetPoint("TOPRIGHT", bar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+	element.colorPower = true
+	element.colorDisconnected = true
+	element.frequentUpdates = true
+	element.PostUpdate = PostUpdate
 
-		lossTexture:SetPoint("BOTTOMLEFT", bar:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-		lossTexture:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-	else
-		gainTexture:SetPoint("TOPRIGHT", bar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-		gainTexture:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-
-		lossTexture:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-		lossTexture:SetPoint("BOTTOMLEFT", bar:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-	end
-
-	bar.Tube = options.tube
-	bar.colorPower = true
-	bar.colorDisconnected = true
-	bar.frequentUpdates = true
-	bar.PostUpdate = PostUpdate
-
-	return bar
+	return element
 end
 
+function UF:UpdatePower(frame)
+	local config = frame._config.power
+	local element = frame.Power
 
-function UF:CreatePowerBar(parent, textSize, textBg, isVertical)
-	local power = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
-	power:SetOrientation(isVertical and "VERTICAL" or "HORIZONTAL")
-	power:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	E:SmoothBar(power)
+	element:SetOrientation(config.orientation)
 
-	local text = E:CreateFontString(power, textSize, "$parentPowerValue", true)
-	power.Text = text
+	if element.Text then
+		element.Text:SetJustifyV(config.text.v_alignment or "MIDDLE")
+		element.Text:SetJustifyH(config.text.h_alignment or "CENTER")
 
-	if textBg then
-		local shadow = power:CreateTexture(nil, "ARTWORK", nil, 7)
-		shadow:SetTexture("Interface\\Scenarios\\Objective-Lineglow")
-		shadow:SetTexCoord(0, 1, 0, 13 / 16)
-		shadow:SetVertexColor(M.COLORS.BLACK:GetRGB())
-		shadow:SetPoint("TOPLEFT", text, "TOPLEFT", 0, -2)
-		shadow:SetPoint("BOTTOMRIGHT", text, "BOTTOMRIGHT", 0, 2)
+		local point1 = config.text.point1
+
+		element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+
+		local point2 = config.text.point2
+
+		if point2 then
+			element.Text:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
+		end
 	end
 
-	local gainTexture = power:CreateTexture(nil, "ARTWORK", nil, 1)
-	gainTexture:SetPoint("TOPRIGHT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-	gainTexture:SetPoint("BOTTOMRIGHT", power:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-	gainTexture:SetColorTexture(M.COLORS.LIGHT_GREEN:GetRGB())
-	gainTexture:SetAlpha(0)
-	power.Gain = gainTexture
+	if config.orientation == "HORIZONTAL" then
+		element.Gain:SetPoint("TOPRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+		element.Gain:SetPoint("BOTTOMRIGHT", element:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 
-	local lossTexture = power:CreateTexture(nil, "BACKGROUND")
-	lossTexture:SetPoint("TOPLEFT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-	lossTexture:SetPoint("BOTTOMLEFT", power:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-	lossTexture:SetColorTexture(M.COLORS.DARK_RED:GetRGB())
-	lossTexture:SetAlpha(0)
-	power.Loss = lossTexture
-
-	local ag = gainTexture:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	gainTexture.FadeOut = ag
-
-	local anim1 = ag:CreateAnimation("Alpha")
-	anim1:SetOrder(1)
-	anim1:SetFromAlpha(1)
-	anim1:SetToAlpha(0)
-	anim1:SetStartDelay(0.6)
-	anim1:SetDuration(0.2)
-
-	ag = lossTexture:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	lossTexture.FadeOut = ag
-
-	anim1 = ag:CreateAnimation("Alpha")
-	anim1:SetOrder(1)
-	anim1:SetFromAlpha(1)
-	anim1:SetToAlpha(0)
-	anim1:SetStartDelay(0.6)
-	anim1:SetDuration(0.2)
-
-	if isVertical then
-		gainTexture:SetPoint("TOPLEFT", power:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-		gainTexture:SetPoint("TOPRIGHT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-
-		lossTexture:SetPoint("BOTTOMLEFT", power:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-		lossTexture:SetPoint("BOTTOMRIGHT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+		element.Loss:SetPoint("TOPLEFT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+		element.Loss:SetPoint("BOTTOMLEFT", element:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 	else
-		gainTexture:SetPoint("TOPRIGHT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-		gainTexture:SetPoint("BOTTOMRIGHT", power:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
+		element.Gain:SetPoint("TOPLEFT", element:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+		element.Gain:SetPoint("TOPRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 
-		lossTexture:SetPoint("TOPLEFT", power:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-		lossTexture:SetPoint("BOTTOMLEFT", power:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
+		element.Loss:SetPoint("BOTTOMLEFT", element:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+		element.Loss:SetPoint("BOTTOMRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 	end
 
-	power.colorPower = true
-	power.colorDisconnected = true
-	power.frequentUpdates = true
-	power.PostUpdate = PostUpdate
+	frame._mouseovers[element] = config.update_on_mouseover and true or nil
 
-	return power
+	if config.enabled and not frame:IsElementEnabled("Power") then
+		frame:EnableElement("Power")
+	elseif not config.enabled and frame:IsElementEnabled("Power") then
+		frame:DisableElement("Power")
+	end
+
+	if frame:IsElementEnabled("Power") then
+		element:ForceUpdate()
+	end
 end

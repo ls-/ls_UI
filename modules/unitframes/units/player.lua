@@ -316,7 +316,9 @@ local TOTEM_LAYOUT = {
 function UF:ConstructPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame.mouseovers = {}
+	frame._config = C.units.player
+	frame._mouseovers = {}
+
 	frame:SetSize(332 / 2, 332 / 2)
 
 	-- Note: can't touch this
@@ -460,18 +462,12 @@ function UF:ConstructPlayerFrame(frame)
 	-- health, heal prediction bars
 	do
 		-- health
-		local bar = self:CreateHealthBar_new(frame, "LS16Font_Shadow", {
-			is_vertical = true,
-			text_parent = frame.TextParent
-		})
+		local bar = self:CreateHealth(frame, true, "LS16Font_Shadow", frame.TextParent)
 		bar:SetFrameLevel(level + 1)
 		bar:SetSize(140 / 2, 280 / 2)
 		bar:SetPoint("CENTER")
 		bar:SetClipsChildren(true)
-		table.insert(frame.mouseovers, bar)
 		frame.Health = bar
-
-		bar.Text:SetPoint("BOTTOM", frame, "CENTER", 0, 1)
 
 		-- heal prediction
 		frame.HealthPrediction = self:CreateHealPrediction_new(frame.Health, {
@@ -505,18 +501,11 @@ function UF:ConstructPlayerFrame(frame)
 	-- power, additional power, power cost prediction bars
 	do
 		-- power bar
-		local bar = self:CreatePowerBar_new(frame, "LS14Font_Shadow", {
-			is_vertical = true,
-			text_parent = frame.TextParent,
-			tube = frame.RightTube
-		})
+		local bar = self:CreatePower(frame, true, "LS14Font_Shadow", frame.TextParent)
 		bar:SetFrameLevel(level + 4)
 		bar:SetSize(12, 128)
 		bar:SetPoint("RIGHT", -23, 0)
-		table.insert(frame.mouseovers, bar)
 		frame.Power = bar
-
-		bar.Text:SetPoint("TOP", frame, "CENTER", 0, -1)
 
 		-- additional power bar
 		bar = self:CreateAdditionalPowerBar(frame, {
@@ -578,7 +567,7 @@ function UF:ConstructPlayerFrame(frame)
 			frame.LeftTube:Refresh(1, true, "STAGGER")
 		end)
 		E:SmoothBar(bar)
-		table.insert(frame.mouseovers, bar)
+		frame._mouseovers[bar] = true
 		frame.Stagger = bar
 
 		local text = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
@@ -783,7 +772,7 @@ function UF:ConstructPlayerFrame(frame)
 	frame.PvPIndicator:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
 
 	-- castbar
-	frame.Castbar = self:CreateCastBar(frame, 188, true, true)
+	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 	E:CreateMover(frame.Castbar.Holder)
 
@@ -887,4 +876,14 @@ function UF:ConstructPlayerFrame(frame)
 			end
 		end
 	end
+end
+
+function UF:UpdatePlayerFrame(frame)
+	-- local config = frame._config
+
+	self:UpdateHealth(frame)
+	self:UpdateCastbar(frame)
+	self:UpdatePower(frame)
+
+	frame:UpdateAllElements("LSUI_PlayerFrameUpdate")
 end

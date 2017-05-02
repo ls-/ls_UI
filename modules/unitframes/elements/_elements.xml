@@ -6,8 +6,11 @@
 	<Script file="health.lua"/>
 	<Script file="healthprediction.lua"/>
 	<Script file="indicator.lua"/>
+	<Script file="insets.lua"/>
+	<Script file="name.lua"/>
 	<Script file="power.lua"/>
 	<Script file="pvpindicator.lua"/>
+	<Script file="raidtargetindicator.lua"/>
 	<Script file="rarityindication.lua"/>
 	<Script file="tags.lua"/>
 	<Script file="threatindicator.lua"/>

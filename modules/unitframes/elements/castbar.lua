@@ -51,64 +51,105 @@ local function CustomDelayText(castbar, duration)
 	end
 end
 
-function UF:CreateCastBar(parent, width, safezone, delay)
-	local holder = _G.CreateFrame("Frame", parent:GetName().."CastBarHolder", parent)
-	holder:SetSize(width, 12)
-	holder._width = width
+function UF:CreateCastbar(parent)
+	local holder = _G.CreateFrame("Frame", parent:GetName().."CastbarHolder", parent)
+	holder:SetHeight(12)
 
-	local bar = E:CreateStatusBar(holder, nil, "HORIZONTAL")
-	bar:SetFrameLevel(holder:GetFrameLevel())
-	bar:SetPoint("TOPLEFT", 20, 0)
-	bar:SetPoint("BOTTOMRIGHT", 0, 0)
 
-	local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-	spark:SetSize(24, 24)
-	spark:SetBlendMode("ADD")
-	bar.Spark = spark
+	local element = _G.CreateFrame("StatusBar", nil, holder)
+	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	element:SetFrameLevel(holder:GetFrameLevel())
+	element:SetPoint("TOPLEFT", 20, 0)
+	element:SetPoint("BOTTOMRIGHT", 0, 0)
 
-	local icon = bar:CreateTexture(nil, "BACKGROUND", nil, 0)
+	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
+	bg:SetAllPoints(holder)
+	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+
+	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetSize(18, 12)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
-	bar.Icon = icon
+	element.Icon_ = icon
 
-	local cover = _G.CreateFrame("Frame", nil, bar)
-	cover:SetAllPoints(holder)
-	E:SetStatusBarSkin(cover, "HORIZONTAL-L")
+	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
+	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+	safeZone:SetVertexColor(M.COLORS.RED:GetRGBA(0.6))
+	element.SafeZone_ = safeZone
 
-	local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
+	local spark = element:CreateTexture(nil, "ARTWORK", nil, 2)
+	spark:SetSize(24, 24)
+	spark:SetBlendMode("ADD")
+	element.Spark = spark
+
+	local sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetSize(24 / 2, 24 / 2)
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
 	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
-	sep:SetPoint("RIGHT", bar, "LEFT", 5, 0)
+	sep:SetPoint("RIGHT", element, "LEFT", 5, 0)
+	element.Sep = sep
 
-	local time = E:CreateFontString(cover, 12, nil, true)
-	time:SetJustifyV("MIDDLE")
-	time:SetPoint("TOPRIGHT", 0, 0)
-	time:SetPoint("BOTTOMRIGHT", 0, 0)
-	bar.Time = time
+	local tex_parent = _G.CreateFrame("Frame", nil, element)
+	tex_parent:SetAllPoints(holder)
+	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-L")
 
-	bar.Text:SetParent(cover)
-	bar.Text:SetJustifyH("LEFT")
-	bar.Text:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, 0)
-	bar.Text:SetPoint("BOTTOMRIGHT", time, "BOTTOMLEFT", -2, 0)
+	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	time:SetWordWrap(false)
+	time:SetPoint("RIGHT", -2, 0)
+	element.Time = time
 
-	if safezone then
-		local zone = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-		zone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-		zone:SetVertexColor(M.COLORS.RED:GetRGB())
-		zone:SetAlpha(0.6)
-		bar.SafeZone = zone
+	local text = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	text:SetWordWrap(false)
+	text:SetJustifyH("LEFT")
+	text:SetPoint("LEFT", element, "LEFT", 2, 0)
+	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
+	element.Text = text
+
+	element.Holder = holder
+	element.PostCastStart = PostCastStart
+	element.PostChannelStart = PostCastStart
+	element.PostCastFailed = PostCastFailed
+	element.PostCastInterrupted = PostCastFailed
+	element.CustomTimeText = CustomTimeText
+	element.CustomDelayText = CustomDelayText
+	element.timeToHold = 0.4
+
+	return element
+end
+
+function UF:UpdateCastbar(frame)
+	local config = frame._config.castbar
+	local element = frame.Castbar
+
+	element.Holder:SetWidth(config.width)
+
+	if config.icon then
+		element.Icon = element.Icon_
+		element.Icon_:Show()
+
+		element.Sep:Show()
+
+		element:SetPoint("TOPLEFT", 20, 0)
+	else
+		element.Icon = nil
+		element.Icon_:Hide()
+
+		element.Sep:Hide()
+
+		element:SetPoint("TOPLEFT", 0, 0)
 	end
 
-	bar.Holder = holder
-	bar.PostCastStart = PostCastStart
-	bar.PostChannelStart = PostCastStart
-	bar.PostCastFailed = PostCastFailed
-	bar.PostCastInterrupted = PostCastFailed
-	bar.CustomTimeText = CustomTimeText
-	bar.CustomDelayText = delay and CustomDelayText
-	bar.timeToHold = 0.4
+	if config.latency then
+		element.SafeZone = element.SafeZone_
+		element.SafeZone_:Show()
+	else
+		element.SafeZone = nil
+		element.SafeZone_:Hide()
+	end
 
-	return bar
+	if config.enabled and not frame:IsElementEnabled("Castbar") then
+		frame:EnableElement("Castbar")
+	elseif not config.enabled and frame:IsElementEnabled("Castbar") then
+		frame:DisableElement("Castbar")
+	end
 end

@@ -2,10 +2,16 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
+-- Lua
+local _G = getfenv(0)
+
+-- Mine
 function UF:ConstructPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame.mouseovers = {}
+	frame._config = C.units.pet
+	frame._mouseovers = {}
+
 	frame:SetSize(42, 134)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
@@ -14,7 +20,7 @@ function UF:ConstructPetFrame(frame)
 	bg:SetTexCoord(1 / 64, 39 / 64, 1 / 128, 115 / 128)
 	bg:SetPoint("CENTER", 0, 0)
 
-	local cover = CreateFrame("Frame", "$parentCover", frame)
+	local cover = _G.CreateFrame("Frame", "$parentCover", frame)
 	cover:SetFrameLevel(level + 3)
 	cover:SetAllPoints()
 	frame.Cover = cover
@@ -25,31 +31,21 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexCoord(1 / 64, 33 / 64, 1 / 128, 71 / 128)
 	fg:SetPoint("CENTER", 0, 0)
 
-	local health = UF:CreateHealthBar(frame, 12, nil, true)
+	local health = UF:CreateHealth(frame, true, "LS12Font_Shadow")
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
 	E:SetStatusBarSkin(health, "VERTICAL-M")
-	tinsert(frame.mouseovers, health)
 	frame.Health = health
-
-	local healthText = health.Text
-	healthText:SetJustifyH("RIGHT")
-	healthText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 26)
 
 	frame.HealthPrediction = UF:CreateHealPrediction(frame, true)
 
-	local power = UF:CreatePowerBar(frame, 12, nil, true)
+	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
 	power:SetFrameLevel(level + 2)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
-	tinsert(frame.mouseovers, power)
 	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
-
-	local powerText = power.Text
-	powerText:SetJustifyH("RIGHT")
-	powerText:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", 8, 14)
 
 	local status = E:CreateFontString(cover, 12, "$parentDebuffStatus")
 	status:SetWidth(14)
@@ -58,9 +54,9 @@ function UF:ConstructPetFrame(frame)
 	status:SetPoint("CENTER")
 	frame:Tag(status, "[ls:debuffstatus]")
 
-	frame.Castbar = UF:CreateCastBar(frame, 188, true, true)
-	frame.Castbar.Holder:SetPoint("BOTTOM", LSPlayerFrameCastBarHolder, "TOP", 0, 4)
-	RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+	frame.Castbar = UF:CreateCastbar(frame)
+	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
+	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
 	local threat = UF:CreateThreat(frame)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")
@@ -68,4 +64,14 @@ function UF:ConstructPetFrame(frame)
 	threat:SetSize(44, 50)
 	threat:SetPoint("CENTER", 0, 0)
 	frame.ThreatIndicator = threat
+end
+
+function UF:UpdatePetFrame(frame)
+	-- local config = frame._config
+
+	self:UpdateHealth(frame)
+	self:UpdateCastbar(frame)
+	self:UpdatePower(frame)
+
+	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end

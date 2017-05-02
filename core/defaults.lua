@@ -5,16 +5,153 @@ D["units"] = {
 	enabled =  true,
 	player = {
 		enabled = true,
-		castbar = true,
+		castbar = {
+			enabled = true,
+			width = 200,
+			icon = true,
+			latency = true,
+		},
 		point = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
+		health = {
+			orientation = "VERTICAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {
+					p = "BOTTOM",
+					anchor = "", -- frame[anchpr] or "" if anchor is frame itself
+					rP = "CENTER",
+					x = 0,
+					y = 1,
+				},
+			},
+		},
+		power = {
+			enabled = true,
+			orientation = "VERTICAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {
+					p = "TOP",
+					anchor = "Health",
+					rP = "CENTER",
+					x = 0,
+					y = -1,
+				},
+			},
+		},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+		castbar = {
+			enabled = true,
+			width = 200,
+			icon = true,
+			latency = true,
+		},
+		health = {
+			orientation = "VERTICAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+			},
+			text = {
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "BOTTOMRIGHT",
+					anchor = "",
+					rP = "BOTTOMRIGHT",
+					x = 8,
+					y = 26,
+				},
+			},
+		},
+		power = {
+			enabled = true,
+			orientation = "VERTICAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "BOTTOMRIGHT",
+					anchor = "",
+					rP = "BOTTOMLEFT",
+					x = 8,
+					y = 14,
+				},
+			},
+		},
 	},
 	target = {
 		enabled = true,
-		castbar = true,
+		width = 250,
+		height = 52,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
+		castbar = {
+			enabled = true,
+			width = 244,
+			icon = true,
+		},
+		health = {
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+				tapped = true,
+				disconnected = true,
+				reaction = true,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Health",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
+		power = {
+			enabled = true,
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Power",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
+		name = {
+			tag = "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name][ls:server]",
+			h_alignment = "LEFT",
+			point1 = {
+				p = "LEFT",
+				anchor = "Health",
+				rP = "LEFT",
+				x = 2,
+				y = 0,
+			},
+			point2 = {
+				p = "RIGHT",
+				anchor = "Health.Text",
+				rP = "LEFT",
+				x = -2,
+				y = 0,
+			},
+		},
 		auras = {
 			enabled = true,
 			-- 0x0000000X -- friendly buff
@@ -31,7 +168,36 @@ D["units"] = {
 		},
 	},
 	targettarget = {
-		point = { "LEFT", "LSTargetFrame", "RIGHT", 6, 0},
+		width = 96,
+		height = 24,
+		point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 8, 0},
+		health = {
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+				tapped = true,
+				disconnected = true,
+				reaction = true,
+			},
+		},
+		name = {
+			tag = "[ls:name][ls:server]|r",
+			point1 = {
+				p = "TOPLEFT",
+				anchor = "Health",
+				rP = "TOPLEFT",
+				x = 2,
+				y = -2,
+			},
+			point2 = {
+				p = "BOTTOMRIGHT",
+				anchor = "Health",
+				rP = "BOTTOMRIGHT",
+				x = -2,
+				y = 2,
+			},
+		},
 	},
 	focus = {
 		enabled = true,
