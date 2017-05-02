@@ -158,6 +158,10 @@ local function Round(v)
 	return math.floor(v + 0.5)
 end
 
+function E:Clamp(v)
+	return v and Clamp(v) or nil
+end
+
 function E:Round(v)
 	return v and Round(v) or nil
 end
