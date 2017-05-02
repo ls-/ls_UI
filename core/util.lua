@@ -151,7 +151,7 @@ end
 -----------
 
 local function Clamp(v)
-	return math.min(10, math.max(0, v))
+	return math.min(1, math.max(0, v))
 end
 
 local function Round(v)
