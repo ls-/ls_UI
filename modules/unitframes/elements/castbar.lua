@@ -122,6 +122,7 @@ function UF:UpdateCastbar(frame)
 	local element = frame.Castbar
 
 	element.Holder:SetWidth(config.width)
+	element.Holder._width = config.width
 
 	if config.icon then
 		element.Icon = element.Icon_
