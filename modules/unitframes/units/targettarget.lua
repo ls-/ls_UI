@@ -41,9 +41,7 @@ function UF:ConstructTargetTargetFrame(frame)
 
 	frame.HealthPrediction = UF:CreateHealPrediction(frame)
 
-	frame.RaidTargetIndicator = fg_parent:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
-	frame.RaidTargetIndicator:SetSize(24, 24)
-	frame.RaidTargetIndicator:SetPoint("TOP", 0, 22)
+	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
 
 	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
 end
@@ -55,6 +53,7 @@ function UF:UpdateTargetTargetFrame(frame)
 
 	self:UpdateHealth(frame)
 	self:UpdateName(frame)
+	self:UpdateRaidTargetIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_ToTFrameUpdate")
 end

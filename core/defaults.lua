@@ -5,12 +5,6 @@ D["units"] = {
 	enabled =  true,
 	player = {
 		enabled = true,
-		castbar = {
-			enabled = true,
-			width = 200,
-			icon = true,
-			latency = true,
-		},
 		point = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
 		health = {
 			orientation = "VERTICAL",
@@ -44,15 +38,26 @@ D["units"] = {
 				},
 			},
 		},
-	},
-	pet = {
-		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
 		castbar = {
 			enabled = true,
 			width = 200,
 			icon = true,
 			latency = true,
 		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = -6,
+			},
+		},
+	},
+	pet = {
+		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
 		health = {
 			orientation = "VERTICAL",
 			update_on_mouseover = true,
@@ -86,17 +91,29 @@ D["units"] = {
 				},
 			},
 		},
+		castbar = {
+			enabled = true,
+			width = 200,
+			icon = true,
+			latency = true,
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
+			},
+		},
 	},
 	target = {
 		enabled = true,
 		width = 250,
 		height = 52,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
-		castbar = {
-			enabled = true,
-			width = 244,
-			icon = true,
-		},
 		health = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
@@ -150,6 +167,11 @@ D["units"] = {
 				},
 			},
 		},
+		castbar = {
+			enabled = true,
+			width = 244,
+			icon = true,
+		},
 		name = {
 			tag = "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name][ls:server]",
 			h_alignment = "LEFT",
@@ -166,6 +188,17 @@ D["units"] = {
 				rP = "LEFT",
 				x = -2,
 				y = 0,
+			},
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
 			},
 		},
 		auras = {
@@ -212,6 +245,17 @@ D["units"] = {
 				rP = "BOTTOMRIGHT",
 				x = -2,
 				y = 2,
+			},
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
 			},
 		},
 	},

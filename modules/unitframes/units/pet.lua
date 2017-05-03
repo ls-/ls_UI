@@ -47,6 +47,9 @@ function UF:ConstructPetFrame(frame)
 	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
+	-- raid target
+	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(cover)
+
 	local status = E:CreateFontString(cover, 12, "$parentDebuffStatus")
 	status:SetWidth(14)
 	status:SetWordWrap(true)
@@ -72,6 +75,7 @@ function UF:UpdatePetFrame(frame)
 	self:UpdateHealth(frame)
 	self:UpdateCastbar(frame)
 	self:UpdatePower(frame)
+	self:UpdateRaidTargetIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end

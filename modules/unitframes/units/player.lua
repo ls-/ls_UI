@@ -771,6 +771,9 @@ function UF:ConstructPlayerFrame(frame)
 	frame.PvPIndicator = self:CreatePvPIcon_new(frame.FGParent, "ARTWORK", 6)
 	frame.PvPIndicator:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
 
+	-- raid target
+	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(frame.TextParent)
+
 	-- castbar
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
@@ -884,6 +887,7 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdateHealth(frame)
 	self:UpdateCastbar(frame)
 	self:UpdatePower(frame)
+	self:UpdateRaidTargetIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PlayerFrameUpdate")
 end

@@ -291,6 +291,8 @@ function UF:ConstructTargetFrame(frame)
 
 	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
 
+	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
+
 	local statusIcons = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
 	-- statusIcons:SetWidth(18)
 	statusIcons:SetJustifyH("LEFT")
@@ -318,6 +320,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateCastbar(frame)
 	self:UpdatePower(frame)
 	self:UpdateAlternativePower(frame)
+	self:UpdateRaidTargetIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end
