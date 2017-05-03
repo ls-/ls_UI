@@ -149,6 +149,7 @@ local function MainConstructor()
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
 
 		UF:UpdatePlayerFrame(objects["player"])
+		UF:UpdatePetFrame(objects["pet"])
 
 		if not C.units.player.castbar.enabled then
 			UF:EnableDefaultCastingBars()
@@ -242,6 +243,7 @@ function UF:SpawnFrame(unit)
 		E:CreateMover(objects["pet"])
 
 		UF:UpdatePlayerFrame(objects["player"])
+		UF:UpdatePetFrame(objects["pet"])
 
 		if not C.units.player.castbar.enabled then
 			UF:EnableDefaultCastingBars()

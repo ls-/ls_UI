@@ -24,7 +24,6 @@ local function ADDON_LOADED(arg)
 	C.units.focus.auras.show_only_filtered = nil
 	C.units.focustarget.enabled = nil
 	C.units.party = nil
-	C.units.pet.castbar = nil
 	C.units.pet.enabled = nil
 	C.units.target.auras.HARMFUL = nil
 	C.units.target.auras.HELPFUL = nil
