@@ -879,10 +879,10 @@ function UF:UpdatePlayerFrame(frame)
 	-- local config = frame._config
 
 	self:UpdateHealth(frame)
-	self:UpdateCastbar(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateAdditionalPower(frame)
+	self:UpdateCastbar(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)

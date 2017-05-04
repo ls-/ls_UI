@@ -69,9 +69,9 @@ function UF:UpdatePetFrame(frame)
 	-- local config = frame._config
 
 	self:UpdateHealth(frame)
-	self:UpdateCastbar(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
+	self:UpdateCastbar(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
 
