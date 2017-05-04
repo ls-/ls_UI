@@ -39,7 +39,7 @@ function UF:ConstructTargetTargetFrame(frame)
 	health:SetAllPoints()
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealthPrediction(frame)
 
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
 
@@ -52,6 +52,7 @@ function UF:UpdateTargetTargetFrame(frame)
 	frame:SetSize(config.width, config.height)
 
 	self:UpdateHealth(frame)
+	self:UpdateHealthPrediction(frame)
 	self:UpdateName(frame)
 	self:UpdateRaidTargetIndicator(frame)
 

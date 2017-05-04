@@ -23,6 +23,10 @@ D["units"] = {
 				},
 			},
 		},
+		health_prediction = {
+			enabled = true,
+			orientation = "VERTICAL",
+		},
 		power = {
 			enabled = true,
 			orientation = "VERTICAL",
@@ -74,6 +78,10 @@ D["units"] = {
 					y = 26,
 				},
 			},
+		},
+		health_prediction = {
+			enabled = true,
+			orientation = "VERTICAL",
 		},
 		power = {
 			enabled = true,
@@ -138,8 +146,13 @@ D["units"] = {
 					rP = "RIGHT",
 					x = -2,
 					y = 0,
+				point2 = {},
 				},
 			},
+		},
+		health_prediction = {
+			enabled = true,
+			orientation = "HORIZONTAL",
 		},
 		power = {
 			enabled = true,
@@ -154,22 +167,7 @@ D["units"] = {
 					rP = "RIGHT",
 					x = -2,
 					y = 0,
-				},
-			},
-		},
-		alt_power = {
-			enabled = true,
-			orientation = "HORIZONTAL",
-			update_on_mouseover = true,
-			text = {
-				-- tag = "", -- I probably should use tags here
-				h_alignment = "RIGHT",
-				point1 = {
-					p = "RIGHT",
-					anchor = "AlternativePower",
-					rP = "RIGHT",
-					x = -2,
-					y = 0,
+				point2 = {},
 				},
 			},
 		},
@@ -235,6 +233,10 @@ D["units"] = {
 				disconnected = true,
 				reaction = true,
 			},
+		},
+		health_prediction = {
+			enabled = true,
+			orientation = "HORIZONTAL",
 		},
 		name = {
 			tag = "[ls:name][ls:server]|r",

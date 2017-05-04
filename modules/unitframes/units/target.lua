@@ -37,6 +37,7 @@ function UF:ConstructTargetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
@@ -116,8 +117,8 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateHealth(frame)
 	self:UpdateName(frame)
 	self:UpdateCastbar(frame)
+	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
-	self:UpdateAlternativePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")

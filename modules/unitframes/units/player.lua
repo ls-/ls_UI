@@ -469,10 +469,7 @@ function UF:ConstructPlayerFrame(frame)
 		bar:SetClipsChildren(true)
 		frame.Health = bar
 
-		-- heal prediction
-		frame.HealthPrediction = self:CreateHealPrediction_new(frame.Health, {
-			is_vertical = true
-		})
+		frame.HealthPrediction = self:CreateHealthPrediction(bar)
 
 		-- local absrobGlow = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 1)
 		-- absrobGlow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-absorb")
@@ -886,6 +883,7 @@ function UF:UpdatePlayerFrame(frame)
 
 	self:UpdateHealth(frame)
 	self:UpdateCastbar(frame)
+	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
 

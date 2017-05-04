@@ -38,7 +38,7 @@ function UF:ConstructPetFrame(frame)
 	E:SetStatusBarSkin(health, "VERTICAL-M")
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealPrediction(frame, true)
+	frame.HealthPrediction = UF:CreateHealthPrediction(frame)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
 	power:SetFrameLevel(level + 2)
@@ -74,6 +74,7 @@ function UF:UpdatePetFrame(frame)
 
 	self:UpdateHealth(frame)
 	self:UpdateCastbar(frame)
+	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
 
