@@ -90,7 +90,7 @@ D["units"] = {
 				point1 = {
 					p = "BOTTOMRIGHT",
 					anchor = "",
-					rP = "BOTTOMRIGHT",
+					rP = "BOTTOMLEFT",
 					x = 8,
 					y = 26,
 				},
