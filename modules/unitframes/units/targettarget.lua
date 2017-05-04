@@ -27,16 +27,12 @@ function UF:ConstructTargetTargetFrame(frame)
 	text_parent:SetAllPoints()
 	frame.TextParent = text_parent
 
-	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
-	glass:SetAllPoints()
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
-	glass:SetHorizTile(true)
-
-	E:CreateBorder(fg_parent, true)
+	frame.Insets = UF:CreateInsets(frame, fg_parent, level)
 
 	local health = UF:CreateHealth(frame)
 	health:SetFrameLevel(level + 1)
-	health:SetAllPoints()
+	health:SetPoint("TOPLEFT", frame.Insets.Left, "TOPRIGHT", 0, 0)
+	health:SetPoint("BOTTOMRIGHT", frame.Insets.Right, "BOTTOMLEFT", 0, 0)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
@@ -45,6 +41,13 @@ function UF:ConstructTargetTargetFrame(frame)
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
 
 	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
+
+	E:CreateBorder(fg_parent, true)
+
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	glass:SetAllPoints(health)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
+	glass:SetHorizTile(true)
 end
 
 function UF:UpdateTargetTargetFrame(frame)
