@@ -763,8 +763,15 @@ function UF:ConstructPlayerFrame(frame)
 	end
 
 	-- pvp
-	frame.PvPIndicator = self:CreatePvPIcon_new(frame.FGParent, "ARTWORK", 6)
+	frame.PvPIndicator = self:CreatePvPIndicator(frame.FGParent)
 	frame.PvPIndicator:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
+
+	local pvp_timer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	pvp_timer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
+	pvp_timer:SetTextColor(1, 0.82, 0)
+	pvp_timer:SetJustifyH("RIGHT")
+	pvp_timer.frequentUpdates = 0.1
+	frame:Tag(pvp_timer, "[ls:pvptimer]")
 
 	-- raid target
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(frame.TextParent)
@@ -775,14 +782,8 @@ function UF:ConstructPlayerFrame(frame)
 	E:CreateMover(frame.Castbar.Holder)
 
 	-- status icons/texts
-	local status = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
-	status:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
-	status:SetTextColor(1, 0.82, 0)
-	status:SetJustifyH("RIGHT")
-	status.frequentUpdates = 0.1
-	frame:Tag(status, "[ls:pvptimer]")
 
-	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	local status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("LEFT", frame, "LEFT", 5, 0)
 	frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
@@ -884,6 +885,7 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
+	self:UpdatePvPIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PlayerFrameUpdate")
 end

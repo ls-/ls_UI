@@ -50,34 +50,24 @@ function UF:ConstructTargetFrame(frame)
 
 
 
-	local pvp_banner_inset = _G.CreateFrame("Frame", nil, frame)
-	pvp_banner_inset:SetFrameLevel(level + 8)
-	pvp_banner_inset:SetHeight(48)
-	pvp_banner_inset.Expand = function(self)
-		self:SetWidth(46)
+	local pvp = self:CreatePvPIndicator(fg_parent)
+	pvp:SetPoint("TOPRIGHT", fg_parent, "BOTTOMRIGHT", -8, -2)
 
+	pvp.Holder.PostExpand = function()
 		local width = frame.Castbar.Holder._width - 48
 		frame.Castbar.Holder._width = width
 
 		frame.Castbar.Holder:SetWidth(width)
-
-		self.expanded = true
 	end
-	pvp_banner_inset.Collapse = function(self)
-		self:SetWidth(0.001)
-
+	pvp.Holder.PostCollapse = function()
 		local width = frame.Castbar.Holder._width + 48
 		frame.Castbar.Holder._width = width
 
 		frame.Castbar.Holder:SetWidth(width)
-
-		self.expanded = false
-	end
-	pvp_banner_inset.IsExpanded = function(self)
-		return self.expanded
 	end
 
 	E:CreateBorder(fg_parent, true)
+	frame.PvPIndicator = pvp
 
 
 	local glass = health:CreateTexture(nil, "OVERLAY")
@@ -97,9 +87,6 @@ function UF:ConstructTargetFrame(frame)
 	statusIcons:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(statusIcons, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
-	frame.PvPIndicator = self:CreatePvPIcon_new(pvp_banner_inset, "OVERLAY", 3)
-	frame.PvPIndicator:SetPoint("TOPRIGHT", fg_parent, "BOTTOMRIGHT", -8, -2)
-	frame.PvPIndicator.Inset = pvp_banner_inset
 
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
@@ -120,6 +107,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
+	self:UpdatePvPIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

@@ -63,6 +63,9 @@ D["units"] = {
 				y = -6,
 			},
 		},
+		pvp = {
+			enabled = true,
+		},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
@@ -208,6 +211,9 @@ D["units"] = {
 				x = 0,
 				y = 6,
 			},
+		},
+		pvp = {
+			enabled = true,
 		},
 		auras = {
 			enabled = true,
