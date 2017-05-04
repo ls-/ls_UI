@@ -114,6 +114,12 @@ D["units"] = {
 		width = 250,
 		height = 52,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
+		insets = {
+			t_height = 14,
+			b_height = 14,
+			l_width = 10,
+			r_width = 10,
+		},
 		health = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
