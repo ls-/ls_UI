@@ -50,12 +50,8 @@ function UF:ConstructPetFrame(frame)
 	-- raid target
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(cover)
 
-	local status = E:CreateFontString(cover, 12, "$parentDebuffStatus")
-	status:SetWidth(14)
-	status:SetWordWrap(true)
-	status:SetDrawLayer("OVERLAY")
-	status:SetPoint("CENTER")
-	frame:Tag(status, "[ls:debuffstatus]")
+	frame.DebuffIndicator = UF:CreateDebuffIndicator(cover)
+	frame.DebuffIndicator:SetWidth(14)
 
 	frame.Castbar = UF:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
@@ -77,6 +73,7 @@ function UF:UpdatePetFrame(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
+	self:UpdateDebuffIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end

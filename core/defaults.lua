@@ -66,6 +66,16 @@ D["units"] = {
 		pvp = {
 			enabled = true,
 		},
+		debuff = {
+			tag = "[ls:debuffs]",
+			point1 = {
+				p = "LEFT",
+				anchor = "Health",
+				rP = "LEFT",
+				x = 0,
+				y = 0,
+			},
+		},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
@@ -121,6 +131,16 @@ D["units"] = {
 				rP = "TOP",
 				x = 0,
 				y = 6,
+			},
+		},
+		debuff = {
+			tag = "[ls:debuffs]",
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "CENTER",
+				x = 0,
+				y = 0,
 			},
 		},
 	},
@@ -214,6 +234,16 @@ D["units"] = {
 		},
 		pvp = {
 			enabled = true,
+		},
+		debuff = {
+			tag = "[ls:debuffs]",
+			point1 = {
+				p = "CENTER",
+				anchor = "Health",
+				rP = "CENTER",
+				x = 0,
+				y = 0,
+			},
 		},
 		auras = {
 			enabled = true,

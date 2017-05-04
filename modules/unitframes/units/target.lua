@@ -69,6 +69,7 @@ function UF:ConstructTargetFrame(frame)
 	E:CreateBorder(fg_parent, true)
 	frame.PvPIndicator = pvp
 
+	frame.DebuffIndicator = UF:CreateDebuffIndicator(text_parent)
 
 	local glass = health:CreateTexture(nil, "OVERLAY")
 	glass:SetAllPoints()
@@ -108,6 +109,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
+	self:UpdateDebuffIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

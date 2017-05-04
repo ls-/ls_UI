@@ -3,6 +3,7 @@
 	<Script file="alternativepower.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="castbar.lua"/>
+	<Script file="debuffindicator.lua"/>
 	<Script file="health.lua"/>
 	<Script file="healthprediction.lua"/>
 	<Script file="indicator.lua"/>

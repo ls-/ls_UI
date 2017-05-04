@@ -793,10 +793,8 @@ function UF:ConstructPlayerFrame(frame)
 	status:SetPoint("RIGHT", frame, "RIGHT", -5, 0)
 	frame:Tag(status, "[ls:combatresticon]")
 
-	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon12Font")
-	status:SetWidth(14)
-	status:SetPoint("LEFT", frame.Health, "LEFT", 0, 0)
-	frame:Tag(status, "[ls:debuffstatus]")
+	frame.DebuffIndicator = UF:CreateDebuffIndicator(frame.TextParent)
+	frame.DebuffIndicator:SetWidth(14)
 
 	-- floating combat text
 	do
@@ -886,6 +884,7 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdatePower(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
+	self:UpdateDebuffIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PlayerFrameUpdate")
 end
