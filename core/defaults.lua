@@ -261,8 +261,8 @@ D["units"] = {
 		},
 	},
 	targettarget = {
-		width = 96,
-		height = 24,
+		width = 112,
+		height = 28,
 		point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 8, 0},
 		health = {
 			orientation = "HORIZONTAL",
