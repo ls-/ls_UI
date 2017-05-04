@@ -505,12 +505,10 @@ function UF:ConstructPlayerFrame(frame)
 		frame.Power = bar
 
 		-- additional power bar
-		bar = self:CreateAdditionalPowerBar(frame, {
-			is_vertical = true,
-		})
+		bar = UF:CreateAdditionalPower(frame)
 		bar:SetFrameLevel(level + 4)
-		bar:SetPoint("LEFT", 23, 0)
 		bar:SetSize(12, 128)
+		bar:SetPoint("LEFT", 23, 0)
 		bar:Hide()
 		bar:HookScript("OnHide", function()
 			frame.LeftTube:Refresh(0, false, "APB")

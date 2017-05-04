@@ -42,6 +42,10 @@ D["units"] = {
 				},
 			},
 		},
+		add_power = {
+			enabled = true,
+			orientation = "VERTICAL",
+		},
 		castbar = {
 			enabled = true,
 			width = 200,
