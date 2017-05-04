@@ -485,13 +485,13 @@ function UF:ConstructPlayerFrame(frame)
 		damage_absorb:SetWordWrap(false)
 		damage_absorb:SetPoint("BOTTOM", frame.Health.Text, "TOP", 0, 1)
 		E:ResetFontStringHeight(damage_absorb)
-		frame:Tag(damage_absorb, "[ls:damageabsorb]")
+		frame:Tag(damage_absorb, "[ls:absorb:damage]")
 
 		-- heal absorb text
 		local heal_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
 		heal_absorb:SetPoint("BOTTOM", damage_absorb, "TOP", 0, 1)
 		E:ResetFontStringHeight(heal_absorb)
-		frame:Tag(heal_absorb, "[ls:healabsorb]")
+		frame:Tag(heal_absorb, "[ls:absorb:heal]")
 	end
 
 	-- power, additional power, power cost prediction bars

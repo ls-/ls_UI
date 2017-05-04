@@ -204,7 +204,7 @@ D["units"] = {
 			icon = true,
 		},
 		name = {
-			tag = "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:name][ls:server]",
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:color:class][ls:name][ls:server]|r",
 			h_alignment = "LEFT",
 			point1 = {
 				p = "LEFT",
@@ -279,7 +279,7 @@ D["units"] = {
 			orientation = "HORIZONTAL",
 		},
 		name = {
-			tag = "[ls:name][ls:server]|r",
+			tag = "[ls:color:class][ls:name][ls:server]|r",
 			point1 = {
 				p = "TOPLEFT",
 				anchor = "Health",
