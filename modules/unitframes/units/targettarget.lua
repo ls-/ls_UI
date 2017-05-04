@@ -37,9 +37,10 @@ function UF:ConstructTargetTargetFrame(frame)
 	local health = UF:CreateHealth(frame)
 	health:SetFrameLevel(level + 1)
 	health:SetAllPoints()
+	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealthPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealthPrediction(health)
 
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
 

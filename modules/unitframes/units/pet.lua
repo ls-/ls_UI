@@ -35,10 +35,11 @@ function UF:ConstructPetFrame(frame)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
+	health:SetClipsChildren(true)
 	E:SetStatusBarSkin(health, "VERTICAL-M")
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealthPrediction(frame)
+	frame.HealthPrediction = UF:CreateHealthPrediction(health)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
 	power:SetFrameLevel(level + 2)
