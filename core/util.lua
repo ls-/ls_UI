@@ -860,9 +860,9 @@ function E:GetPlayerRole()
 	return role or "DAMAGER"
 end
 
-------------------
--- FONT STRINGS --
-------------------
+-------------------------
+-- FONT STRINGS & TEXT --
+-------------------------
 
 function E:ResetFontStringHeight(object)
 	if not object.SetText then return end
@@ -870,6 +870,10 @@ function E:ResetFontStringHeight(object)
 	object:SetText("+-1234567890/|\\*")
 	object:SetHeight(object:GetStringHeight())
 	object:SetText(nil)
+end
+
+function E:TruncateString(v, length)
+	return string.utf8sub(v, 1, length)
 end
 
 ----------
