@@ -4,7 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 --Lua
 local _G = getfenv(0)
-local math = _G.math
+local m_abs = _G.math.abs
 
 -- Mine
 local function PostCastStart(castbar)
@@ -45,16 +45,15 @@ local function CustomDelayText(castbar, duration)
 	end
 
 	if castbar.casting then
-		castbar.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, math.abs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, m_abs(castbar.delay))
 	elseif castbar.channeling then
-		castbar.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, math.abs(castbar.delay))
+		castbar.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, m_abs(castbar.delay))
 	end
 end
 
 function UF:CreateCastbar(parent)
 	local holder = _G.CreateFrame("Frame", parent:GetName().."CastbarHolder", parent)
 	holder:SetHeight(12)
-
 
 	local element = _G.CreateFrame("StatusBar", nil, holder)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -152,5 +151,9 @@ function UF:UpdateCastbar(frame)
 		frame:EnableElement("Castbar")
 	elseif not config.enabled and frame:IsElementEnabled("Castbar") then
 		frame:DisableElement("Castbar")
+	end
+
+	if frame:IsElementEnabled("Castbar") then
+		element:ForceUpdate()
 	end
 end
