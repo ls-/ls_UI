@@ -4,7 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local math = _G.math
+local m_abs = _G.math.abs
 
 -- Blizz
 local UnitGUID = _G.UnitGUID
@@ -62,7 +62,7 @@ local function PostUpdate(element, unit, cur, _, max)
 			local prev = element._prev or 0
 			local diff = cur - prev
 
-			if math.abs(diff) / max < diffThreshold then
+			if m_abs(diff) / max < diffThreshold then
 				diff = 0
 			end
 
