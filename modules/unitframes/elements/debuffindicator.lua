@@ -16,7 +16,6 @@ function UF:UpdateDebuffIndicator(frame)
 
 	element:SetJustifyV(config.v_alignment or "MIDDLE")
 	element:SetJustifyH(config.h_alignment or "CENTER")
-
 	element:ClearAllPoints()
 
 	local point1 = config.point1

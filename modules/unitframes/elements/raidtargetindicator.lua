@@ -17,10 +17,13 @@ function UF:UpdateRaidTargetIndicator(frame)
 	local element = frame.RaidTargetIndicator
 
 	element:SetSize(config.size, config.size)
+	element:ClearAllPoints()
 
 	local point1 = config.point1
 
-	element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	if point1 and point1.p then
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	end
 
 	if config.enabled and not frame:IsElementEnabled("RaidTargetIndicator") then
 		frame:EnableElement("RaidTargetIndicator")

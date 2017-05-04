@@ -199,28 +199,35 @@ function UF:UpdateAlternativePower(frame)
 	if element.Text then
 		element.Text:SetJustifyV(config.text.v_alignment or "MIDDLE")
 		element.Text:SetJustifyH(config.text.h_alignment or "CENTER")
+		element.Text:ClearAllPoints()
 
 		local point1 = config.text.point1
 
-		element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		if point1 and point1.p then
+			element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		end
 
 		local point2 = config.text.point2
 
-		if point2 then
+		if point2 and point2.p then
 			element.Text:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
 		end
 	end
 
 	if config.orientation == "HORIZONTAL" then
+		element.Gain:ClearAllPoints()
 		element.Gain:SetPoint("TOPRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 		element.Gain:SetPoint("BOTTOMRIGHT", element:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 
+		element.Loss:ClearAllPoints()
 		element.Loss:SetPoint("TOPLEFT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 		element.Loss:SetPoint("BOTTOMLEFT", element:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 	else
+		element.Gain:ClearAllPoints()
 		element.Gain:SetPoint("TOPLEFT", element:GetStatusBarTexture(), "TOPLEFT", 0, 0)
 		element.Gain:SetPoint("TOPRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 
+		element.Loss:ClearAllPoints()
 		element.Loss:SetPoint("BOTTOMLEFT", element:GetStatusBarTexture(), "TOPLEFT", 0, 0)
 		element.Loss:SetPoint("BOTTOMRIGHT", element:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 	end

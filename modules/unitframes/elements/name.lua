@@ -20,14 +20,17 @@ function UF:UpdateName(frame)
 
 	element:SetJustifyV(config.v_alignment or "MIDDLE")
 	element:SetJustifyH(config.h_alignment or "CENTER")
+	element:ClearAllPoints()
 
 	local point1 = config.point1
 
-	element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	if point1 and point1.p then
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	end
 
 	local point2 = config.point2
 
-	if point2 then
+	if point2 and point2.p then
 		element:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
 	end
 
