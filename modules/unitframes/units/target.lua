@@ -4,7 +4,6 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local t_insert = _G.table.insert
 
 -- Mine
 function UF:ConstructTargetFrame(frame)
@@ -47,8 +46,12 @@ function UF:ConstructTargetFrame(frame)
 	power.Inset = frame.Insets.Bottom
 	frame.Power = power
 
+	frame.Castbar = self:CreateCastbar(frame)
+	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
+	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
 
+	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
 
 	local pvp = self:CreatePvPIndicator(fg_parent)
 	pvp:SetPoint("TOPRIGHT", fg_parent, "BOTTOMRIGHT", -8, -2)
@@ -66,34 +69,24 @@ function UF:ConstructTargetFrame(frame)
 		frame.Castbar.Holder:SetWidth(width)
 	end
 
-	E:CreateBorder(fg_parent, true)
 	frame.PvPIndicator = pvp
 
 	frame.DebuffIndicator = UF:CreateDebuffIndicator(text_parent)
 
-	local glass = health:CreateTexture(nil, "OVERLAY")
-	glass:SetAllPoints()
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
-	glass:SetHorizTile(true)
-
-
-
-	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
-
-	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
+	frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
+	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
 
 	local statusIcons = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
-	-- statusIcons:SetWidth(18)
 	statusIcons:SetJustifyH("LEFT")
 	statusIcons:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(statusIcons, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
+	E:CreateBorder(fg_parent, true)
 
-	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
-
-	frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
-	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	glass:SetAllPoints(health)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
+	glass:SetHorizTile(true)
 end
 
 function UF:UpdateTargetFrame(frame)

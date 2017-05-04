@@ -494,7 +494,6 @@ function UF:ConstructPlayerFrame(frame)
 		frame:Tag(heal_absorb, "[ls:healabsorb]")
 	end
 
-
 	-- power, additional power, power cost prediction bars
 	do
 		-- power bar
