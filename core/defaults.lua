@@ -22,10 +22,9 @@ D["units"] = {
 					y = 1,
 				},
 			},
-		},
-		health_prediction = {
-			enabled = true,
-			orientation = "VERTICAL",
+			prediction = {
+				enabled = true,
+			},
 		},
 		power = {
 			enabled = true,
@@ -95,10 +94,9 @@ D["units"] = {
 					y = 26,
 				},
 			},
-		},
-		health_prediction = {
-			enabled = true,
-			orientation = "VERTICAL",
+			prediction = {
+				enabled = true,
+			},
 		},
 		power = {
 			enabled = true,
@@ -176,10 +174,9 @@ D["units"] = {
 				point2 = {},
 				},
 			},
-		},
-		health_prediction = {
-			enabled = true,
-			orientation = "HORIZONTAL",
+			prediction = {
+				enabled = true,
+			},
 		},
 		power = {
 			enabled = true,
@@ -279,10 +276,9 @@ D["units"] = {
 				disconnected = true,
 				reaction = true,
 			},
-		},
-		health_prediction = {
-			enabled = true,
-			orientation = "HORIZONTAL",
+			prediction = {
+				enabled = true,
+			},
 		},
 		name = {
 			tag = "[ls:color:class][ls:name][ls:server]|r",

@@ -81,7 +81,7 @@ function UF:CreateHealthPrediction(parent)
 end
 
 function UF:UpdateHealthPrediction(frame)
-	local config = frame._config.health_prediction
+	local config = frame._config.health
 	local element = frame.HealthPrediction
 	local myBar = element.myBar
 	local otherBar = element.otherBar
@@ -129,9 +129,9 @@ function UF:UpdateHealthPrediction(frame)
 		healAbsorbBar:SetPoint("TOP", frame.Health:GetStatusBarTexture(), "TOP")
 	end
 
-	if config.enabled and not frame:IsElementEnabled("HealthPrediction") then
+	if config.prediction.enabled and not frame:IsElementEnabled("HealthPrediction") then
 		frame:EnableElement("HealthPrediction")
-	elseif not config.enabled and frame:IsElementEnabled("HealthPrediction") then
+	elseif not config.prediction.enabled and frame:IsElementEnabled("HealthPrediction") then
 		frame:DisableElement("HealthPrediction")
 	end
 
