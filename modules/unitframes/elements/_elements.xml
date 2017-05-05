@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="additionalpower.lua"/>
 	<Script file="alternativepower.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="castbar.lua"/>
+	<Script file="classpower.lua"/>
 	<Script file="debuffindicator.lua"/>
 	<Script file="health.lua"/>
 	<Script file="healthprediction.lua"/>

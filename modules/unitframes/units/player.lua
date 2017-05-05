@@ -8,304 +8,6 @@ local table = _G.table
 local unpack = _G.unpack
 
 -- Mine
-local CLASS_POWER_LAYOUT = {
-	[1] = {
-		[1] = {
-			size = 128,
-			point = {"BOTTOM", 0, 0},
-			glow = {190 / 512, 206 / 512, 1 / 256, 129 / 256},
-		},
-	},
-	[2] = {
-		[1] = {
-			size = 64,
-			point = {"BOTTOM", 0, 0},
-			glow = {207 / 512, 223 / 512, 65 / 256, 129 / 256},
-		},
-		[2] = {
-			size = 64,
-			point = {"BOTTOM", 0, 64},
-			glow = {207 / 512, 223 / 512, 1 / 256, 65 / 256},
-		},
-	},
-	[3] = {
-		[1] = {
-			size = 42,
-			point = {"BOTTOM", 0, 0},
-			glow = {224 / 512, 240 / 512, 87 / 256, 129 / 256},
-		},
-		[2] = {
-			size = 44,
-			point = {"BOTTOM", 0, 42},
-			glow = {224 / 512, 240 / 512, 43 / 256, 87 / 256},
-		},
-		[3] = {
-			size = 42,
-			point = {"BOTTOM", 0, 86},
-			glow = {224 / 512, 240 / 512, 1 / 256, 43 / 256},
-		},
-	},
-	[4] = {
-		[1] = {
-			size = 32,
-			point = {"BOTTOM", 0, 0},
-			glow = {241 / 512, 257 / 512, 97 / 256, 129 / 256},
-		},
-		[2] = {
-			size = 32,
-			point = {"BOTTOM", 0, 32},
-			glow = {241 / 512, 257 / 512, 65 / 256, 97 / 256},
-		},
-		[3] = {
-			size = 32,
-			point = {"BOTTOM", 0, 64},
-			glow = {241 / 512, 257 / 512, 33 / 256, 65 / 256},
-		},
-		[4] = {
-			size = 32,
-			point = {"BOTTOM", 0, 96},
-			glow = {241 / 512, 257 / 512, 1 / 256, 33 / 256},
-		},
-	},
-	[5] = {
-		[1] = {
-			size = 25,
-			point = {"BOTTOM", 0, 0},
-			glow = {258 / 512, 274 / 512, 104 / 256, 129 / 256},
-		},
-		[2] = {
-			size = 25,
-			point = {"BOTTOM", 0, 25},
-			glow = {258 / 512, 274 / 512, 79 / 256, 104 / 256},
-		},
-		[3] = {
-			size = 28,
-			point = {"BOTTOM", 0, 50},
-			glow = {258 / 512, 274 / 512, 51 / 256, 79 / 256},
-		},
-		[4] = {
-			size = 25,
-			point = {"BOTTOM", 0, 78},
-			glow = {258 / 512, 274 / 512, 26 / 256, 51 / 256},
-		},
-		[5] = {
-			size = 25,
-			point = {"BOTTOM", 0, 103},
-			glow = {258 / 512, 274 / 512, 1 / 256, 26 / 256},
-		},
-	},
-	[6] = {
-		[1] = {
-			size = 21,
-			point = {"BOTTOM", 0, 0},
-			glow = {275 / 512, 291 / 512, 108 / 256, 129 / 256},
-		},
-		[2] = {
-			size = 21,
-			point = {"BOTTOM", 0, 21},
-			glow = {275 / 512, 291 / 512, 87 / 256, 108 / 256},
-		},
-		[3] = {
-			size = 22,
-			point = {"BOTTOM", 0, 42},
-			glow = {275 / 512, 291 / 512, 65 / 256, 87 / 256},
-		},
-		[4] = {
-			size = 22,
-			point = {"BOTTOM", 0, 64},
-			glow = {275 / 512, 291 / 512, 43 / 256, 65 / 256},
-		},
-		[5] = {
-			size = 21,
-			point = {"BOTTOM", 0, 86},
-			glow = {275 / 512, 291 / 512, 22 / 256, 43 / 256},
-		},
-		[6] = {
-			size = 21,
-			point = {"BOTTOM", 0, 107},
-			glow = {275 / 512, 291 / 512, 1 / 256, 22 / 256},
-		},
-	},
-	[7] = {
-		[1] = {
-			size = 18,
-			point = {"BOTTOM", 0, 0},
-			glow = {292 / 512, 308 / 512, 111 / 256, 129 / 256}
-		},
-		[2] = {
-			size = 18,
-			point = {"BOTTOM", 0, 18},
-			glow = {292 / 512, 308 / 512, 93 / 256, 111 / 256}
-		},
-		[3] = {
-			size = 18,
-			point = {"BOTTOM", 0, 36},
-			glow = {292 / 512, 308 / 512, 75 / 256, 93 / 256}
-		},
-		[4] = {
-			size = 20,
-			point = {"BOTTOM", 0, 54},
-			glow = {292 / 512, 308 / 512, 55 / 256, 75 / 256}
-		},
-		[5] = {
-			size = 18,
-			point = {"BOTTOM", 0, 74},
-			glow = {292 / 512, 308 / 512, 37 / 256, 55 / 256}
-		},
-		[6] = {
-			size = 18,
-			point = {"BOTTOM", 0, 92},
-			glow = {292 / 512, 308 / 512, 19 / 256, 37 / 256}
-		},
-		[7] = {
-			size = 18,
-			point = {"BOTTOM", 0, 110},
-			glow = {292 / 512, 308 / 512, 1 / 256, 19 / 256}
-		},
-	},
-	[8] = {
-		[1] = {
-			size = 16,
-			point = {"BOTTOM", 0, 0},
-			glow = {309 / 512, 325 / 512, 113 / 256, 129 / 256}
-		},
-		[2] = {
-			size = 16,
-			point = {"BOTTOM", 0, 16},
-			glow = {309 / 512, 325 / 512, 97 / 256, 113 / 256}
-		},
-		[3] = {
-			size = 16,
-			point = {"BOTTOM", 0, 32},
-			glow = {309 / 512, 325 / 512, 81 / 256, 97 / 256}
-		},
-		[4] = {
-			size = 16,
-			point = {"BOTTOM", 0, 48},
-			glow = {309 / 512, 325 / 512, 65 / 256, 81 / 256}
-		},
-		[5] = {
-			size = 16,
-			point = {"BOTTOM", 0, 64},
-			glow = {309 / 512, 325 / 512, 49 / 256, 65 / 256}
-		},
-		[6] = {
-			size = 16,
-			point = {"BOTTOM", 0, 80},
-			glow = {309 / 512, 325 / 512, 33 / 256, 49 / 256}
-		},
-		[7] = {
-			size = 16,
-			point = {"BOTTOM", 0, 96},
-			glow = {309 / 512, 325 / 512, 17 / 256, 33 / 256}
-		},
-		[8] = {
-			size = 16,
-			point = {"BOTTOM", 0, 112},
-			glow = {309 / 512, 325 / 512, 1 / 256, 17 / 256}
-		},
-	},
-	[9] = {
-		[1] = {
-			size = 14,
-			point = {"BOTTOM", 0, 0},
-			glow = {326 / 512, 342 / 512, 115 / 256, 129 / 256}
-		},
-		[2] = {
-			size = 14,
-			point = {"BOTTOM", 0, 14},
-			glow = {326 / 512, 342 / 512, 101 / 256, 115 / 256}
-		},
-		[3] = {
-			size = 14,
-			point = {"BOTTOM", 0, 28},
-			glow = {326 / 512, 342 / 512, 101 / 256, 115 / 256}
-		},
-		[4] = {
-			size = 14,
-			point = {"BOTTOM", 0, 42},
-			glow = {326 / 512, 342 / 512, 73 / 256, 87 / 256}
-		},
-		[5] = {
-			size = 16,
-			point = {"BOTTOM", 0, 56},
-			glow = {326 / 512, 342 / 512, 57 / 256, 73 / 256}
-		},
-		[6] = {
-			size = 14,
-			point = {"BOTTOM", 0, 72},
-			glow = {326 / 512, 342 / 512, 43 / 256, 57 / 256}
-		},
-		[7] = {
-			size = 14,
-			point = {"BOTTOM", 0, 86},
-			glow = {326 / 512, 342 / 512, 29 / 256, 43 / 256}
-		},
-		[8] = {
-			size = 14,
-			point = {"BOTTOM", 0, 100},
-			glow = {326 / 512, 342 / 512, 15 / 256, 29 / 256}
-		},
-		[9] = {
-			size = 14,
-			point = {"BOTTOM", 0, 114},
-			glow = {326 / 512, 342 / 512, 1 / 256, 15 / 256}
-		},
-	},
-	[10] = {
-		[1] = {
-			size = 13,
-			point = {"BOTTOM", 0, 0},
-			glow = {364 / 512, 380 / 512, 116 / 256, 129 / 256}
-		},
-		[2] = {
-			size = 13,
-			point = {"BOTTOM", 0, 13},
-			glow = {364 / 512, 380 / 512, 103 / 256, 116 / 256}
-		},
-		[3] = {
-			size = 13,
-			point = {"BOTTOM", 0, 26},
-			glow = {364 / 512, 380 / 512, 90 / 256, 103 / 256}
-		},
-		[4] = {
-			size = 13,
-			point = {"BOTTOM", 0, 39},
-			glow = {364 / 512, 380 / 512, 77 / 256, 90 / 256}
-		},
-		[5] = {
-			size = 12,
-			point = {"BOTTOM", 0, 52},
-			glow = {364 / 512, 380 / 512, 65 / 256, 77 / 256}
-		},
-		[6] = {
-			size = 12,
-			point = {"BOTTOM", 0, 64},
-			glow = {364 / 512, 380 / 512, 53 / 256, 65 / 256}
-		},
-		[7] = {
-			size = 13,
-			point = {"BOTTOM", 0, 76},
-			glow = {364 / 512, 380 / 512, 40 / 256, 53 / 256}
-		},
-		[8] = {
-			size = 13,
-			point = {"BOTTOM", 0, 89},
-			glow = {364 / 512, 380 / 512, 27 / 256, 40 / 256}
-		},
-		[9] = {
-			size = 13,
-			point = {"BOTTOM", 0, 102},
-			glow = {364 / 512, 380 / 512, 14 / 256, 27 / 256}
-		},
-		[10] = {
-			size = 13,
-			point = {"BOTTOM", 0, 115},
-			glow = {364 / 512, 380 / 512, 1 / 256, 14 / 256}
-		},
-	},
-}
-
 local TOTEM_LAYOUT = {
 	[1] = {"TOP", -43, 20},
 	[2] = {"TOP", -15, 30},
@@ -424,20 +126,20 @@ function UF:ConstructPlayerFrame(frame)
 			seps[i] = sep
 		end
 
-		tube.Refresh = function(self, slots, visible, sender)
-			if (slots == self.slots and visible == self.visible)
-				or (not visible and sender ~= self.sender) then return end
+		tube.Refresh = function(self, sender, visible, slots)
+			if (slots == self._slots and visible == self._visible)
+				or (not visible and sender ~= self._sender) then return end
 
-			self.slots = slots
-			self.visible = visible
-			self.sender = sender
+			self._slots = slots
+			self._visible = visible
+			self._sender = sender
 
 			if visible then
 				self:Show()
 
 				for i = 1, 9 do
 					if i < slots then
-						seps[i]:SetPoint("CENTER", self, unpack(CLASS_POWER_LAYOUT[slots][i + 1].point))
+						seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
 						seps[i]:Show()
 					else
 						seps[i]:Hide()
@@ -448,7 +150,7 @@ function UF:ConstructPlayerFrame(frame)
 			end
 		end
 
-		tube:Refresh(0, false)
+		tube:Refresh(nil, false, 0)
 
 		-- power
 		tube = _G.CreateFrame("Frame", nil, frame)
@@ -471,15 +173,6 @@ function UF:ConstructPlayerFrame(frame)
 
 		frame.HealthPrediction = self:CreateHealthPrediction(bar)
 
-		-- local absrobGlow = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 1)
-		-- absrobGlow:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-absorb")
-		-- absrobGlow:SetTexCoord(1 / 128, 103 / 128, 1 / 64, 41 / 64)
-		-- absrobGlow:SetVertexColor(0.35, 1, 1)
-		-- absrobGlow:SetSize(102, 40)
-		-- absrobGlow:SetPoint("CENTER", 0, 54)
-		-- absrobGlow:SetAlpha(0)
-		-- frame.AbsorbGlow = absrobGlow
-
 		-- damage absorb text
 		local damage_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
 		damage_absorb:SetWordWrap(false)
@@ -497,268 +190,104 @@ function UF:ConstructPlayerFrame(frame)
 	-- power, additional power, power cost prediction bars
 	do
 		-- power bar
-		local bar = self:CreatePower(frame, true, "LS14Font_Shadow", frame.TextParent)
-		bar:SetFrameLevel(level + 4)
-		bar:SetSize(12, 128)
-		bar:SetPoint("RIGHT", -23, 0)
-		frame.Power = bar
+		local power = self:CreatePower(frame, true, "LS14Font_Shadow", frame.TextParent)
+		power:SetFrameLevel(level + 4)
+		power:SetSize(12, 128)
+		power:SetPoint("RIGHT", -23, 0)
+
+		frame.Power = power
 
 		-- additional power bar
-		bar = UF:CreateAdditionalPower(frame)
-		bar:SetFrameLevel(level + 4)
-		bar:SetSize(12, 128)
-		bar:SetPoint("LEFT", 23, 0)
-		bar:Hide()
-		bar:HookScript("OnHide", function()
-			frame.LeftTube:Refresh(0, false, "APB")
+		local add_power = self:CreateAdditionalPower(frame)
+		add_power:SetFrameLevel(level + 4)
+		add_power:SetSize(12, 128)
+		add_power:SetPoint("LEFT", 23, 0)
+		add_power:Hide()
+
+		add_power:HookScript("OnHide", function(self)
+			frame.LeftTube:Refresh(self, false, 0)
 		end)
-		bar:HookScript("OnShow", function()
-			frame.LeftTube:Refresh(1, true, "APB")
+
+		add_power:HookScript("OnShow", function(self)
+			frame.LeftTube:Refresh(self, true, 1)
 		end)
-		frame.AdditionalPower = bar
+
+		frame.AdditionalPower = add_power
 
 		-- power cost prediction
 		frame.PowerPrediction = {}
 
-		bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.Power)
-		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-		bar:SetOrientation("VERTICAL")
-		bar:SetReverseFill(true)
-		bar:SetPoint("LEFT")
-		bar:SetPoint("RIGHT")
-		bar:SetPoint("TOP", frame.Power:GetStatusBarTexture(), "TOP")
-		bar:SetHeight(128)
-		E:SmoothBar(bar)
-		frame.PowerPrediction.mainBar = bar
+		local main_bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", power)
+		main_bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		main_bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
+		main_bar:SetOrientation("VERTICAL")
+		main_bar:SetReverseFill(true)
+		main_bar:SetPoint("LEFT")
+		main_bar:SetPoint("RIGHT")
+		main_bar:SetPoint("TOP", power:GetStatusBarTexture(), "TOP")
+		main_bar:SetHeight(128)
 
-		bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", frame.AdditionalPower)
-		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-		bar:SetOrientation("VERTICAL")
-		bar:SetReverseFill(true)
-		bar:SetPoint("LEFT")
-		bar:SetPoint("RIGHT")
-		bar:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
-		bar:SetHeight(128)
-		E:SmoothBar(bar)
-		frame.PowerPrediction.altBar = bar
+		E:SmoothBar(main_bar)
+
+		frame.PowerPrediction.mainBar = main_bar
+
+		local alt_bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", add_power)
+		alt_bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		alt_bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
+		alt_bar:SetOrientation("VERTICAL")
+		alt_bar:SetReverseFill(true)
+		alt_bar:SetPoint("LEFT")
+		alt_bar:SetPoint("RIGHT")
+		alt_bar:SetPoint("TOP", add_power:GetStatusBarTexture(), "TOP")
+		alt_bar:SetHeight(128)
+
+		E:SmoothBar(alt_bar)
+
+		frame.PowerPrediction.altBar = alt_bar
 	end
 
-	-- stagger, rune bars
-	if E.PLAYER_CLASS == "MONK" then
-		local bar = _G.CreateFrame("StatusBar", "$parentStaggerBar", frame)
-		bar:SetFrameLevel(level + 4)
-		bar:SetOrientation("VERTICAL")
-		bar:SetPoint("LEFT", 23, 0)
-		bar:SetSize(12, 128)
-		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		bar:Hide()
-		bar:HookScript("OnHide", function()
-			frame.LeftTube:Refresh(0, false, "STAGGER")
-		end)
-		bar:HookScript("OnShow", function()
-			frame.LeftTube:Refresh(1, true, "STAGGER")
-		end)
-		E:SmoothBar(bar)
-		frame._mouseovers[bar] = true
-		frame.Stagger = bar
-
-		local text = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-		text:SetWordWrap(false)
-		text:SetPoint("TOP", frame.Power.Text, "BOTTOM", 0, -1)
-		E:ResetFontStringHeight(text)
-		bar.Text = text
-
-		bar.Override = function(_, _, unit)
-			if unit and unit ~= "player" then return end
-
-			local max = _G.UnitHealthMax("player")
-			local cur = _G.UnitStagger("player")
-			local r, g, b, hex = M.COLORS.POWER.STAGGER:GetRGBHEX(cur / max)
-
-			bar:SetMinMaxValues(0, max)
-			bar:SetValue(cur)
-			bar:SetStatusBarColor(r, g, b)
-
-			if cur == 0 then
-				return bar.Text:SetText(nil)
-			end
-
-			bar.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur), hex)
-		end
-	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
-		local bar = _G.CreateFrame("Frame", "$parentRuneBar", frame)
-		bar:SetFrameLevel(level + 4)
-		bar:SetPoint("LEFT", 23, 0)
-		bar:SetSize(12, 128)
-		bar:Hide()
-		frame.Runes = bar
-
-		for i = 1, 6 do
-			local element = _G.CreateFrame("StatusBar", "$parentRune"..i, bar)
-			element:SetFrameLevel(bar:GetFrameLevel())
-			element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-			element:SetOrientation("VERTICAL")
-			element:SetSize(12, CLASS_POWER_LAYOUT[6][i].size)
-			element:SetPoint(unpack(CLASS_POWER_LAYOUT[6][i].point))
-			element:SetStatusBarColor(M.COLORS.POWER.RUNES:GetRGB())
-			bar[i] = element
-
-			local texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
-			texture:SetSize(16, CLASS_POWER_LAYOUT[6][i].size)
-			texture:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
-			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
-			texture:SetVertexColor(M.COLORS.POWER.GLOW.RUNES:GetRGB())
-			texture:SetTexCoord(unpack(CLASS_POWER_LAYOUT[6][i].glow))
-			texture:SetAlpha(0)
-			element.Glow = texture
-
-			local ag = texture:CreateAnimationGroup()
-			element.InAnim = ag
-
-			local anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(1)
-			anim:SetDuration(0.25)
-			anim:SetFromAlpha(0)
-			anim:SetToAlpha(1)
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(2)
-			anim:SetDuration(0.25)
-			anim:SetFromAlpha(1)
-			anim:SetToAlpha(0)
-
-			anim = ag:CreateAnimation("Scale")
-			anim:SetOrder(1)
-			anim:SetDuration(0.33)
-			anim:SetFromScale(0.1, 0.1)
-			anim:SetToScale(1.1, 1.1)
-		end
-
-		bar.PostUpdate = function(self, rune, _, _, _, runeReady)
-			if runeReady then
-				rune.InAnim:Play()
-			end
-
-			if _G.UnitHasVehicleUI("player") then
-				self:Hide()
-				frame.LeftTube:Refresh(0, false, "RUNES")
-			else
-				self:Show()
-				frame.LeftTube:Refresh(6, true, "RUNES")
-			end
-		end
-	end
-
-	-- class power bars
+	-- class powers, stagger, runes
 	do
-		local function OnValueChanged(self, value)
-			if value == 1 then
-				self.OutAnim:Stop()
+		if E.PLAYER_CLASS == "MONK" then
+			local stagger = self:CreateStagger(frame)
+			stagger:SetFrameLevel(level + 4)
+			stagger:SetPoint("LEFT", 23, 0)
+			stagger:SetSize(12, 128)
 
-				if not self.active and not self.InAnim:IsPlaying() then
-					self.InAnim:Play()
-					self.active = true
-				end
-			elseif value == 0 then
-				self.InAnim:Stop()
+			stagger:HookScript("OnHide", function(self)
+				frame.LeftTube:Refresh(self, false, 0)
+			end)
+			stagger:HookScript("OnShow", function(self)
+				frame.LeftTube:Refresh(self, true, 1)
+			end)
 
-				if self.active and not self.OutAnim:IsPlaying() then
-					self.OutAnim:Play()
-					self.active = false
-				end
-			end
+			frame.Stagger = stagger
+		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
+			local runes = self:CreateRunes(frame)
+			runes:SetFrameLevel(level + 4)
+			runes:SetPoint("LEFT", 23, 0)
+			runes:SetSize(12, 128)
+
+			runes:HookScript("OnHide", function(self)
+				frame.LeftTube:Refresh(self, false, 0)
+			end)
+			runes:HookScript("OnShow", function(self)
+				frame.LeftTube:Refresh(self, true, 6)
+			end)
+
+			frame.Runes = runes
 		end
 
-		local bar = _G.CreateFrame("Frame", "$parentClassPowerBar", frame)
-		bar:SetFrameLevel(level + 4)
-		bar:SetPoint("LEFT", 23, 0)
-		bar:SetSize(12, 128)
-		frame.ClassPower = bar
+		local class_power = self:CreateClassPower(frame)
+		class_power:SetFrameLevel(level + 4)
+		class_power:SetPoint("LEFT", 23, 0)
+		class_power:SetSize(12, 128)
 
-		for i = 1, 10 do
-			local element = _G.CreateFrame("StatusBar", "$parentElement"..i, bar)
-			element:SetFrameLevel(bar:GetFrameLevel())
-			element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-			element:SetOrientation("VERTICAL")
-			element:SetScript("OnValueChanged", OnValueChanged)
-			bar[i] = element
-
-			local texture = frame.FGParent:CreateTexture(nil, "ARTWORK", nil, 3)
-			texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player-classpower")
-			texture:SetPoint("CENTER", element, "CENTER", 0, 0)
-			texture:SetAlpha(0)
-			element.Glow = texture
-
-			local ag = texture:CreateAnimationGroup()
-			element.InAnim = ag
-
-			local anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(1)
-			anim:SetDuration(0.15)
-			anim:SetFromAlpha(0)
-			anim:SetToAlpha(1)
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(2)
-			anim:SetDuration(0.35)
-			anim:SetFromAlpha(1)
-			anim:SetToAlpha(0)
-
-			anim = ag:CreateAnimation("Scale")
-			anim:SetOrder(1)
-			anim:SetDuration(0.15)
-			anim:SetFromScale(0.9, 0.9)
-			anim:SetToScale(1.1, 1.1)
-
-			ag = texture:CreateAnimationGroup()
-			element.OutAnim = ag
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(1)
-			anim:SetDuration(0.35)
-			anim:SetFromAlpha(0)
-			anim:SetToAlpha(1)
-
-			anim = ag:CreateAnimation("Alpha")
-			anim:SetOrder(2)
-			anim:SetDuration(0.15)
-			anim:SetFromAlpha(1)
-			anim:SetToAlpha(0)
-
-			anim = ag:CreateAnimation("Scale")
-			anim:SetOrder(1)
-			anim:SetDuration(0.35)
-			anim:SetFromScale(1.1, 1.1)
-			anim:SetToScale(0.9, 0.9)
+		class_power.UpdateContainer = function(self, isVisible, slots)
+			frame.LeftTube:Refresh(self, isVisible, slots)
 		end
 
-		bar.PostUpdate = function(self, _, max, _, changed, powerType)
-			if self.state ~= self.isEnabled or self.powerID ~= powerType then
-				if not self.isEnabled then
-					self:Hide()
-					frame.LeftTube:Refresh(0, false, "CP")
-				elseif self.isEnabled or self.powerID ~= powerType or changed then
-					self:Show()
-					frame.LeftTube:Refresh(max or 10, true, "CP")
-
-					for i = 1, max do
-						local element = self[i]
-						element:SetSize(12, CLASS_POWER_LAYOUT[max][i].size)
-						element:SetPoint(unpack(CLASS_POWER_LAYOUT[max][i].point))
-						element:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
-
-						element.Glow:SetSize(16, CLASS_POWER_LAYOUT[max][i].size)
-						element.Glow:SetTexCoord(unpack(CLASS_POWER_LAYOUT[max][i].glow))
-						element.Glow:SetVertexColor(M.COLORS.POWER.GLOW[powerType]:GetRGB())
-					end
-				end
-
-				self.state = self.isEnabled
-				self.powerID = self.powerType
-			end
-		end
+		frame.ClassPower = class_power
 	end
 
 	-- pvp
@@ -881,10 +410,19 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateAdditionalPower(frame)
+	self:UpdateClassPower(frame)
 	self:UpdateCastbar(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
+
+	if frame.Runes then
+		self:UpdateRunes(frame)
+	end
+
+	if frame.Stagger then
+		self:UpdateStagger(frame)
+	end
 
 	frame:UpdateAllElements("LSUI_PlayerFrameUpdate")
 end

@@ -41,7 +41,7 @@ D["units"] = {
 				},
 			},
 		},
-		add_power = {
+		class_power = {
 			enabled = true,
 			orientation = "VERTICAL",
 		},
