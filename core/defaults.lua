@@ -150,8 +150,6 @@ D["units"] = {
 		insets = {
 			t_height = 14,
 			b_height = 14,
-			l_width = 10,
-			r_width = 10,
 		},
 		health = {
 			orientation = "HORIZONTAL",
@@ -264,8 +262,6 @@ D["units"] = {
 		insets = {
 			t_height = 14,
 			b_height = 14,
-			l_width = 10,
-			r_width = 10,
 		},
 		health = {
 			orientation = "HORIZONTAL",

@@ -31,8 +31,10 @@ function UF:ConstructTargetTargetFrame(frame)
 
 	local health = UF:CreateHealth(frame)
 	health:SetFrameLevel(level + 1)
-	health:SetPoint("TOPLEFT", frame.Insets.Left, "TOPRIGHT", 0, 0)
-	health:SetPoint("BOTTOMRIGHT", frame.Insets.Right, "BOTTOMLEFT", 0, 0)
+	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
@@ -55,6 +57,7 @@ function UF:UpdateTargetTargetFrame(frame)
 
 	frame:SetSize(config.width, config.height)
 
+	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdateName(frame)

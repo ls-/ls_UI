@@ -31,8 +31,10 @@ function UF:ConstructTargetFrame(frame)
 
 	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
-	health:SetPoint("TOPLEFT", frame.Insets.Left, "TOPRIGHT", 0, 0)
-	health:SetPoint("BOTTOMRIGHT", frame.Insets.Right, "BOTTOMLEFT", 0, 0)
+	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
@@ -40,9 +42,10 @@ function UF:ConstructTargetFrame(frame)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
-	power:SetPoint("TOPLEFT", frame.Insets.Bottom, "TOPLEFT", 0, -2)
-	power:SetPoint("BOTTOMRIGHT", frame.Insets.Bottom, "BOTTOMRIGHT", 0, 0)
-	E:SetStatusBarSkin(power, "HORIZONTAL-GLASS")
+	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
+	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
 	power.Inset = frame.Insets.Bottom
 	frame.Power = power
 
