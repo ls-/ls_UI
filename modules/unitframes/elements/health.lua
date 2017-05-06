@@ -103,12 +103,10 @@ do
 end
 
 do
-	local function UpdateBar(self, width, height, value, orientation, appendTexture)
+	local function UpdateBar(self, value, orientation, appendTexture)
 		if orientation == "HORIZONTAL" then
-			self:SetWidth(width)
 			self:SetPoint("LEFT", appendTexture, "RIGHT")
 		else
-			self:SetHeight(height)
 			self:SetPoint("BOTTOM", appendTexture, "TOP")
 		end
 
@@ -122,18 +120,17 @@ do
 	local function PostUpdate(self, _, myIncomingHeal, otherIncomingHeal, absorb)
 		local appendTexture = self.__owner.Health:GetStatusBarTexture()
 		local orientation = self.__owner.Health:GetOrientation()
-		local width, height = self.__owner.Health:GetSize()
 
 		if self.myBar and myIncomingHeal > 0 then
-			appendTexture = UpdateBar(self.myBar, width, height, myIncomingHeal, orientation, appendTexture)
+			appendTexture = UpdateBar(self.myBar, myIncomingHeal, orientation, appendTexture)
 		end
 
 		if self.otherBar and otherIncomingHeal > 0 then
-			appendTexture = UpdateBar(self.otherBar, width, height, otherIncomingHeal, orientation, appendTexture)
+			appendTexture = UpdateBar(self.otherBar, otherIncomingHeal, orientation, appendTexture)
 		end
 
 		if self.absorbBar then
-			UpdateBar(self.absorbBar, width, height, absorb, orientation, appendTexture)
+			UpdateBar(self.absorbBar, absorb, orientation, appendTexture)
 		end
 	end
 
@@ -169,10 +166,9 @@ do
 		return {
 			myBar = myBar,
 			otherBar = otherBar,
-			healAbsorbBar = healAbsorbBar,
 			absorbBar = absorbBar,
+			healAbsorbBar = healAbsorbBar,
 			maxOverflow = 1,
-			frequentUpdates = true,
 			PostUpdate = PostUpdate
 		}
 	end
@@ -191,39 +187,53 @@ do
 		healAbsorbBar:SetOrientation(config.orientation)
 
 		if config.orientation == "HORIZONTAL" then
+			local width = frame.Health:GetWidth()
+			width = width > 0 and width or frame:GetWidth()
+
 			myBar:ClearAllPoints()
 			myBar:SetPoint("TOP")
 			myBar:SetPoint("BOTTOM")
+			myBar:SetWidth(width)
 
 			otherBar:ClearAllPoints()
 			otherBar:SetPoint("TOP")
 			otherBar:SetPoint("BOTTOM")
+			otherBar:SetWidth(width)
 
 			absorbBar:ClearAllPoints()
 			absorbBar:SetPoint("TOP")
 			absorbBar:SetPoint("BOTTOM")
+			absorbBar:SetWidth(width)
 
 			healAbsorbBar:ClearAllPoints()
 			healAbsorbBar:SetPoint("TOP")
 			healAbsorbBar:SetPoint("BOTTOM")
 			healAbsorbBar:SetPoint("RIGHT", frame.Health:GetStatusBarTexture(), "RIGHT")
+			healAbsorbBar:SetWidth(width)
 		else
+			local height = frame.Health:GetHeight()
+			height = height > 0 and height or frame:GetHeight()
+
 			myBar:ClearAllPoints()
 			myBar:SetPoint("LEFT")
 			myBar:SetPoint("RIGHT")
+			myBar:SetHeight(height)
 
 			otherBar:ClearAllPoints()
 			otherBar:SetPoint("LEFT")
 			otherBar:SetPoint("RIGHT")
+			otherBar:SetHeight(height)
 
 			absorbBar:ClearAllPoints()
 			absorbBar:SetPoint("LEFT")
 			absorbBar:SetPoint("RIGHT")
+			absorbBar:SetHeight(height)
 
 			healAbsorbBar:ClearAllPoints()
 			healAbsorbBar:SetPoint("LEFT")
 			healAbsorbBar:SetPoint("RIGHT")
 			healAbsorbBar:SetPoint("TOP", frame.Health:GetStatusBarTexture(), "TOP")
+			healAbsorbBar:SetHeight(height)
 		end
 
 		if config.prediction.enabled and not frame:IsElementEnabled("HealthPrediction") then
