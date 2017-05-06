@@ -50,6 +50,8 @@ function UF:ConstructTargetTargetFrame(frame)
 	glass:SetAllPoints(health)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
 	glass:SetHorizTile(true)
+
+	self:CreateRarityIndicator(frame)
 end
 
 function UF:UpdateTargetTargetFrame(frame)
