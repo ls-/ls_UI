@@ -232,12 +232,13 @@ D["units"] = {
 		},
 		debuff = {
 			tag = "[ls:debuffs]",
+			h_alignment = "RIGHT",
 			point1 = {
-				p = "CENTER",
+				p = "TOPRIGHT",
 				anchor = "Health",
-				rP = "CENTER",
-				x = 0,
-				y = 0,
+				rP = "TOPRIGHT",
+				x = -2,
+				y = -2,
 			},
 		},
 		auras = {
