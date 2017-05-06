@@ -77,6 +77,8 @@ function UF:ConstructTargetFrame(frame)
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 
+	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
+
 	frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
 	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
 
@@ -109,6 +111,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
+	self:UpdateThreatIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

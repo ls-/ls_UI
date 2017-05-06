@@ -87,6 +87,9 @@ D["units"] = {
 			x_offset = 15,
 			y_offset = 20,
 		},
+		threat = {
+			enabled = true,
+		},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
@@ -152,6 +155,9 @@ D["units"] = {
 				x = 0,
 				y = 0,
 			},
+		},
+		threat = {
+			enabled = true,
 		},
 	},
 	target = {
@@ -250,6 +256,10 @@ D["units"] = {
 				x = -2,
 				y = -2,
 			},
+		},
+		threat = {
+			enabled = true,
+			feedback_unit = "player",
 		},
 		auras = {
 			enabled = true,

@@ -3,10 +3,23 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 -- Mine
-function UF:CreateThreat(parent, feedbackUnit)
-	local element = parent:CreateTexture("$parentThreatGlow", "BACKGROUND", nil, 0)
+function UF:CreateThreatIndicator(parent)
+	return E:CreateBorderGlow(parent, true)
+end
 
-	element.feedbackUnit = feedbackUnit
+function UF:UpdateThreatIndicator(frame)
+	local config = frame._config.threat
+	local element = frame.ThreatIndicator
 
-	return element
+	element.feedbackUnit = config.feedback_unit
+
+	if config.enabled and not frame:IsElementEnabled("ThreatIndicator") then
+		frame:EnableElement("ThreatIndicator")
+	elseif not config.enabled and frame:IsElementEnabled("ThreatIndicator") then
+		frame:DisableElement("ThreatIndicator")
+	end
+
+	if frame:IsElementEnabled("ThreatIndicator") then
+		element:ForceUpdate()
+	end
 end

@@ -58,7 +58,7 @@ function UF:ConstructPetFrame(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
 	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
-	local threat = UF:CreateThreat(frame)
+	local threat = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")
 	threat:SetTexCoord(1 / 64, 45 / 64, 1 / 64, 51 / 64)
 	threat:SetSize(44, 50)
@@ -75,6 +75,7 @@ function UF:UpdatePetFrame(frame)
 	self:UpdateCastbar(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
+	self:UpdateThreatIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end
