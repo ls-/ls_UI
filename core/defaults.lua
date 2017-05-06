@@ -169,7 +169,6 @@ D["units"] = {
 					rP = "RIGHT",
 					x = -2,
 					y = 0,
-				point2 = {},
 				},
 			},
 			prediction = {
@@ -189,7 +188,6 @@ D["units"] = {
 					rP = "RIGHT",
 					x = -2,
 					y = 0,
-				point2 = {},
 				},
 			},
 		},
@@ -275,7 +273,6 @@ D["units"] = {
 			text = {
 				-- tag = "", -- I probably should use tags here
 				point1 = {},
-				point2 = {},
 			},
 			prediction = {
 				enabled = true,
@@ -287,7 +284,6 @@ D["units"] = {
 			text = {
 				-- tag = "", -- I probably should use tags here
 				point1 = {},
-				point2 = {},
 			},
 		},
 		name = {
