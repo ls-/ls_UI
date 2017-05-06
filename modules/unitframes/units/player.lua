@@ -21,7 +21,6 @@ function UF:ConstructPlayerFrame(frame)
 			-- 3: frame.HealthPrediction
 		-- 2: frame.AdditionalPower
 			-- 3: frame.PowerPrediction.altBar
-		-- 2: frame.LeftIndicator, frame.RightIndicator
 		-- 4: border_parent
 		-- 5: frame.Power
 			-- 6: frame.PowerPrediction.mainBar
@@ -117,36 +116,6 @@ function UF:ConstructPlayerFrame(frame)
 
 	E:SetStatusBarSkin(right_tube, "VERTICAL-L")
 
-	-- indicators
-	do
-		-- left indicator
-		local indicator = self:CreateIndicator(frame, {
-			is_vertical = true,
-		})
-		indicator:SetFrameLevel(level + 1)
-		indicator:SetPoint("LEFT", 38, 0)
-		indicator:SetSize(8, 118)
-		frame.LeftIndicator = indicator
-
-		-- right indicator
-		indicator = self:CreateIndicator(frame, {
-			is_vertical = true,
-		})
-		indicator:SetFrameLevel(level + 1)
-		indicator:SetPoint("RIGHT", -38, 0)
-		indicator:SetSize(8, 118)
-		frame.RightIndicator = indicator
-
-		local function RefreshIndicators()
-			frame.LeftIndicator:Refresh()
-			frame.RightIndicator:Refresh()
-		end
-
-		frame:RegisterEvent("PLAYER_REGEN_ENABLED", RefreshIndicators)
-		frame:RegisterEvent("PLAYER_REGEN_DISABLED", RefreshIndicators)
-		frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE", RefreshIndicators)
-		frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", RefreshIndicators)
-	end
 
 	-- health
 	local health = self:CreateHealth(frame, true, "LS16Font_Shadow", text_parent)
