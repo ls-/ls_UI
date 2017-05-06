@@ -65,6 +65,7 @@ function UF:ConstructTargetFrame(frame)
 
 		frame.Castbar.Holder:SetWidth(width)
 	end
+
 	pvp.Holder.PostCollapse = function()
 		local width = frame.Castbar.Holder._width + 48
 		frame.Castbar.Holder._width = width

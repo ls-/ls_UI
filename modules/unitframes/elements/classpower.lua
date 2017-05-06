@@ -81,7 +81,7 @@ local function CreateElement(parent, num, name)
 
 		local glow = bar:CreateTexture(nil, "ARTWORK", nil, 7)
 		glow:SetAllPoints()
-		glow:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		glow:SetColorTexture(1, 1, 1)
 		glow:SetAlpha(0)
 		bar.Glow = glow
 
@@ -124,10 +124,6 @@ do
 	function UF:CreateRunes(parent)
 		local element = CreateElement(parent, 6, "$parentRunes")
 		element:Hide()
-
-		for i = 1, 6 do
-			element[i].Glow:SetVertexColor(M.COLORS.POWER.RUNES:GetRGB(0.3))
-		end
 
 		element.colorSpec = true
 		element.PostUpdate = PostUpdate
@@ -215,8 +211,6 @@ do
 					end
 
 					bar:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
-
-					bar.Glow:SetVertexColor(M.COLORS.POWER[powerType]:GetRGB(0.4))
 				end
 
 				if self.UpdateContainer then
