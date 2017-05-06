@@ -3,6 +3,7 @@
 	<Script file="auras.lua"/>
 	<Script file="castbar.lua"/>
 	<Script file="classpower.lua"/>
+	<Script file="combatfeedback.lua"/>
 	<Script file="debuffindicator.lua"/>
 	<Script file="health.lua"/>
 	<Script file="indicator.lua"/>

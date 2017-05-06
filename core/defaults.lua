@@ -81,6 +81,12 @@ D["units"] = {
 				y = 0,
 			},
 		},
+		combat_feedback = {
+			enabled = true,
+			mode = "Fountain",
+			x_offset = 15,
+			y_offset = 20,
+		},
 	},
 	pet = {
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
