@@ -27,9 +27,9 @@ function UF:ConstructTargetTargetFrame(frame)
 	text_parent:SetAllPoints()
 	frame.TextParent = text_parent
 
-	frame.Insets = UF:CreateInsets(frame, fg_parent, level)
+	frame.Insets = self:CreateInsets(frame, fg_parent, level)
 
-	local health = UF:CreateHealth(frame)
+	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -38,11 +38,11 @@ function UF:ConstructTargetTargetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealthPrediction(health)
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
-	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	E:CreateBorder(fg_parent, true)
 

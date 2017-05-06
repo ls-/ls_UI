@@ -27,7 +27,7 @@ function UF:ConstructTargetFrame(frame)
 	text_parent:SetAllPoints()
 	frame.TextParent = text_parent
 
-	frame.Insets = UF:CreateInsets(frame, fg_parent, level)
+	frame.Insets = self:CreateInsets(frame, fg_parent, level)
 
 	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
@@ -52,9 +52,9 @@ function UF:ConstructTargetFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
-	frame.Name = UF:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
-	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(text_parent)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	local pvp = self:CreatePvPIndicator(fg_parent)
 	pvp:SetPoint("TOPRIGHT", fg_parent, "BOTTOMRIGHT", -8, -2)
@@ -74,15 +74,15 @@ function UF:ConstructTargetFrame(frame)
 
 	frame.PvPIndicator = pvp
 
-	frame.DebuffIndicator = UF:CreateDebuffIndicator(text_parent)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 
 	frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
 	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
 
-	local statusIcons = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
-	statusIcons:SetJustifyH("LEFT")
-	statusIcons:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
-	frame:Tag(statusIcons, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
+	local status = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
+	status:SetJustifyH("LEFT")
+	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
+	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
 	E:CreateBorder(fg_parent, true)
 
