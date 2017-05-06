@@ -43,7 +43,7 @@ local function PostUpdate(element, unit, cur, _, max)
 	end
 
 	local r, g, b = element:GetStatusBarColor()
-	local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.2))
+	local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
 
 	if element.__owner.isMouseOver then
 		if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
