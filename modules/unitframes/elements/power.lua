@@ -188,21 +188,25 @@ do
 
 		if config1.prediction.enabled then
 			local mainBar_ = element.mainBar_
-			local parent = frame.Power
-
 			mainBar_:SetOrientation(config1.orientation)
 			mainBar_:ClearAllPoints()
 
 			if config1.orientation == "HORIZONTAL" then
+				local width = frame.Power:GetWidth()
+				width = width > 0 and width or frame:GetWidth()
+
 				mainBar_:SetPoint("TOP")
 				mainBar_:SetPoint("BOTTOM")
-				mainBar_:SetPoint("RIGHT", parent:GetStatusBarTexture(), "RIGHT")
-				mainBar_:SetWidth(parent:GetWidth())
+				mainBar_:SetPoint("RIGHT", frame.Power:GetStatusBarTexture(), "RIGHT")
+				mainBar_:SetWidth(width)
 			else
+				local height = frame.Power:GetHeight()
+				height = height > 0 and height or frame:GetHeight()
+
 				mainBar_:SetPoint("LEFT")
 				mainBar_:SetPoint("RIGHT")
-				mainBar_:SetPoint("TOP", parent:GetStatusBarTexture(), "TOP")
-				mainBar_:SetHeight(parent:GetHeight())
+				mainBar_:SetPoint("TOP", frame.Power:GetStatusBarTexture(), "TOP")
+				mainBar_:SetHeight(height)
 			end
 
 			element.mainBar = mainBar_
@@ -215,21 +219,25 @@ do
 
 		if config2.prediction.enabled then
 			local altBar_ = element.altBar_
-			local parent = frame.AdditionalPower
-
 			altBar_:SetOrientation(config2.orientation)
 			altBar_:ClearAllPoints()
 
 			if config2.orientation == "HORIZONTAL" then
+				local width = frame.AdditionalPower:GetWidth()
+				width = width > 0 and width or frame:GetWidth()
+
 				altBar_:SetPoint("TOP")
 				altBar_:SetPoint("BOTTOM")
-				altBar_:SetPoint("RIGHT", parent:GetStatusBarTexture(), "RIGHT")
-				altBar_:SetWidth(parent:GetWidth())
+				altBar_:SetPoint("RIGHT", frame.AdditionalPower:GetStatusBarTexture(), "RIGHT")
+				altBar_:SetWidth(width)
 			else
+				local height = frame.AdditionalPower:GetHeight()
+				height = height > 0 and height or frame:GetHeight()
+
 				altBar_:SetPoint("LEFT")
 				altBar_:SetPoint("RIGHT")
-				altBar_:SetPoint("TOP", parent:GetStatusBarTexture(), "TOP")
-				altBar_:SetHeight(parent:GetHeight())
+				altBar_:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
+				altBar_:SetHeight(height)
 			end
 
 			element.altBar = altBar_
