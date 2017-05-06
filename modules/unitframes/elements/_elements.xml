@@ -5,7 +5,6 @@
 	<Script file="classpower.lua"/>
 	<Script file="debuffindicator.lua"/>
 	<Script file="health.lua"/>
-	<Script file="healthprediction.lua"/>
 	<Script file="indicator.lua"/>
 	<Script file="insets.lua"/>
 	<Script file="name.lua"/>
