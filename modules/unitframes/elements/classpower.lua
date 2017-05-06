@@ -77,13 +77,16 @@ local function CreateElement(parent, num, name)
 		bar:SetFrameLevel(element:GetFrameLevel())
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		bar:SetScript("OnValueChanged", OnValueChanged)
+		element[i] = bar
 
 		local glow = bar:CreateTexture(nil, "ARTWORK", nil, 7)
 		glow:SetAllPoints()
 		glow:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 		glow:SetAlpha(0)
+		bar.Glow = glow
 
 		local ag = glow:CreateAnimationGroup()
+		bar.InAnim = ag
 
 		local anim = ag:CreateAnimation("Alpha")
 		anim:SetOrder(1)
@@ -98,13 +101,6 @@ local function CreateElement(parent, num, name)
 		anim:SetFromAlpha(1)
 		anim:SetToAlpha(0)
 		anim:SetSmoothing("IN")
-
-		bar.Glow = glow
-		bar.InAnim = ag
-
-		E:SmoothBar(bar)
-
-		element[i] = bar
 	end
 
 	return element
