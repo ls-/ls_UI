@@ -40,10 +40,16 @@ D["units"] = {
 					y = -1,
 				},
 			},
+			prediction = {
+				enabled = true,
+			},
 		},
 		class_power = {
 			enabled = true,
 			orientation = "VERTICAL",
+			prediction = {
+				enabled = true,
+			},
 		},
 		castbar = {
 			enabled = true,
