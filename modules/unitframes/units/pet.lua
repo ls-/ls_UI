@@ -48,15 +48,14 @@ function UF:ConstructPetFrame(frame)
 	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
-	-- raid target
+	frame.Castbar = UF:CreateCastbar(frame)
+	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
+	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+
 	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(cover)
 
 	frame.DebuffIndicator = UF:CreateDebuffIndicator(cover)
 	frame.DebuffIndicator:SetWidth(14)
-
-	frame.Castbar = UF:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
-	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
 	local threat = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-pet-threat")

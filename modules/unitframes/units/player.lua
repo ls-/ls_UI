@@ -268,8 +268,8 @@ function UF:ConstructPlayerFrame(frame)
 	-- threat, special case
 	local threat = border_parent:CreateTexture(nil, "BACKGROUND", nil, -7)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame-glow")
-	threat:SetSize(336 / 2, 336 / 2)
 	threat:SetTexCoord(1 / 512, 337 / 512, 1 / 512, 337 / 512)
+	threat:SetSize(336 / 2, 336 / 2)
 	threat:SetPoint("CENTER", 0, 0)
 	frame.ThreatIndicator = threat
 
