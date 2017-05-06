@@ -265,12 +265,16 @@ D["units"] = {
 		},
 		health = {
 			orientation = "HORIZONTAL",
-			update_on_mouseover = true,
 			color = {
 				class = false,
 				tapped = true,
 				disconnected = true,
 				reaction = true,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {},
+				point2 = {},
 			},
 			prediction = {
 				enabled = true,
@@ -286,7 +290,7 @@ D["units"] = {
 			},
 		},
 		name = {
-			tag = "[ls:color:class][ls:name][ls:server]|r",
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:color:class][ls:name][ls:server]|r",
 			point1 = {
 				p = "TOPLEFT",
 				anchor = "Health",
