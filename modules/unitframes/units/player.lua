@@ -4,17 +4,9 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local table = _G.table
 local unpack = _G.unpack
 
 -- Mine
-local TOTEM_LAYOUT = {
-	[1] = {"TOP", -43, 20},
-	[2] = {"TOP", -15, 30},
-	[3] = {"TOP", 15, 30},
-	[4] = {"TOP", 43, 20},
-}
-
 function UF:ConstructPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
@@ -39,41 +31,91 @@ function UF:ConstructPlayerFrame(frame)
 		-- 9: frame.TextParent
 		-- 10: frame.FloatingCombatFeedback
 
-	-- bg, border, fg, text parents
-	do
-		-- bg
-		local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-		texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+	-- bg
+	local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+	texture:SetAllPoints()
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 
-		-- border
-		local parent = _G.CreateFrame("Frame", nil, frame)
-		parent:SetFrameLevel(level + 3)
-		parent:SetAllPoints()
+	-- border
+	local border_parent = _G.CreateFrame("Frame", nil, frame)
+	border_parent:SetFrameLevel(level + 3)
+	border_parent:SetAllPoints()
 
-		texture = parent:CreateTexture(nil, "BACKGROUND")
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-		texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
+	texture = border_parent:CreateTexture(nil, "BACKGROUND")
+	texture:SetAllPoints()
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 
-		-- fg
-		parent = _G.CreateFrame("Frame", nil, frame)
-		parent:SetFrameLevel(level + 7)
-		parent:SetAllPoints()
-		frame.FGParent = parent
+	-- fg
+	local fg_parent = _G.CreateFrame("Frame", nil, frame)
+	fg_parent:SetFrameLevel(level + 7)
+	fg_parent:SetAllPoints()
+	frame.FGParent = fg_parent
 
-		texture = parent:CreateTexture(nil, "ARTWORK", nil, 2)
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
-		texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
+	texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 2)
+	texture:SetAllPoints()
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
 
-		-- text
-		parent = _G.CreateFrame("Frame", nil, frame)
-		parent:SetFrameLevel(level + 8)
-		parent:SetAllPoints()
-		frame.TextParent = parent
+	-- text
+	local text_parent = _G.CreateFrame("Frame", nil, frame)
+	text_parent:SetFrameLevel(level + 8)
+	text_parent:SetAllPoints()
+	frame.TextParent = text_parent
+
+	-- class power tube
+	local left_tube = _G.CreateFrame("Frame", nil, frame)
+	left_tube:SetFrameLevel(level + 6)
+	left_tube:SetSize(12, 128)
+	left_tube:SetPoint("LEFT", 23, 0)
+	frame.LeftTube = left_tube
+
+	E:SetStatusBarSkin(left_tube, "VERTICAL-L")
+
+	local seps = {}
+
+	for i = 1, 9 do
+		local sep = left_tube:CreateTexture(nil, "ARTWORK", nil, 1)
+		sep:SetSize(24 / 2, 24 / 2)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+		sep:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
+		seps[i] = sep
 	end
+
+	left_tube.Refresh = function(self, sender, visible, slots)
+		if (slots == self._slots and visible == self._visible)
+			or (not visible and sender ~= self._sender) then return end
+
+		self._slots = slots
+		self._visible = visible
+		self._sender = sender
+
+		if visible then
+			self:Show()
+
+			for i = 1, 9 do
+				if i < slots then
+					seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
+					seps[i]:Show()
+				else
+					seps[i]:Hide()
+				end
+			end
+		else
+			self:Hide()
+		end
+	end
+
+	left_tube:Refresh(nil, false, 0)
+
+	-- power tube
+	local right_tube = _G.CreateFrame("Frame", nil, frame)
+	right_tube:SetFrameLevel(level + 6)
+	right_tube:SetSize(12, 128)
+	right_tube:SetPoint("RIGHT", -23, 0)
+
+	E:SetStatusBarSkin(right_tube, "VERTICAL-L")
 
 	-- indicators
 	do
@@ -106,244 +148,149 @@ function UF:ConstructPlayerFrame(frame)
 		frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE", RefreshIndicators)
 	end
 
-	-- class power, power tubes
-	do
-		-- class power
-		local tube = _G.CreateFrame("Frame", nil, frame)
-		tube:SetFrameLevel(level + 6)
-		tube:SetSize(12, 128)
-		tube:SetPoint("LEFT", 23, 0)
-		E:SetStatusBarSkin(tube, "VERTICAL-L")
-		frame.LeftTube = tube
+	-- health
+	local health = self:CreateHealth(frame, true, "LS16Font_Shadow", text_parent)
+	health:SetFrameLevel(level + 1)
+	health:SetSize(140 / 2, 280 / 2)
+	health:SetPoint("CENTER")
+	health:SetClipsChildren(true)
+	frame.Health = health
 
-		local seps = {}
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-		for i = 1, 9 do
-			local sep = tube:CreateTexture(nil, "ARTWORK", nil, 1)
-			sep:SetSize(24 / 2, 24 / 2)
-			sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-			sep:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
-			seps[i] = sep
-		end
+	-- damage absorb text
+	local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	damage_absorb:SetWordWrap(false)
+	damage_absorb:SetPoint("BOTTOM", frame.Health.Text, "TOP", 0, 1)
 
-		tube.Refresh = function(self, sender, visible, slots)
-			if (slots == self._slots and visible == self._visible)
-				or (not visible and sender ~= self._sender) then return end
+	E:ResetFontStringHeight(damage_absorb)
 
-			self._slots = slots
-			self._visible = visible
-			self._sender = sender
+	frame:Tag(damage_absorb, "[ls:absorb:damage]")
 
-			if visible then
-				self:Show()
+	-- heal absorb text
+	local heal_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	heal_absorb:SetPoint("BOTTOM", damage_absorb, "TOP", 0, 1)
 
-				for i = 1, 9 do
-					if i < slots then
-						seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
-						seps[i]:Show()
-					else
-						seps[i]:Hide()
-					end
-				end
-			else
-				self:Hide()
-			end
-		end
+	E:ResetFontStringHeight(heal_absorb)
 
-		tube:Refresh(nil, false, 0)
+	frame:Tag(heal_absorb, "[ls:absorb:heal]")
 
-		-- power
-		tube = _G.CreateFrame("Frame", nil, frame)
-		tube:SetFrameLevel(level + 6)
-		tube:SetSize(12, 128)
-		tube:SetPoint("RIGHT", -23, 0)
-		E:SetStatusBarSkin(tube, "VERTICAL-L")
-		frame.RightTube = tube
-	end
+	-- power
+	local power = self:CreatePower(frame, true, "LS14Font_Shadow", text_parent)
+	power:SetFrameLevel(level + 4)
+	power:SetSize(12, 128)
+	power:SetPoint("RIGHT", -23, 0)
+	frame.Power = power
 
-	-- health, heal prediction bars
-	do
-		-- health
-		local bar = self:CreateHealth(frame, true, "LS16Font_Shadow", frame.TextParent)
-		bar:SetFrameLevel(level + 1)
-		bar:SetSize(140 / 2, 280 / 2)
-		bar:SetPoint("CENTER")
-		bar:SetClipsChildren(true)
-		frame.Health = bar
+	-- additional power
+	local add_power = self:CreateAdditionalPower(frame)
+	add_power:SetFrameLevel(level + 4)
+	add_power:SetSize(12, 128)
+	add_power:SetPoint("LEFT", 23, 0)
+	add_power:Hide()
+	frame.AdditionalPower = add_power
 
-		frame.HealthPrediction = self:CreateHealthPrediction(bar)
+	add_power:HookScript("OnHide", function(self)
+		left_tube:Refresh(self, false, 0)
+	end)
 
-		-- damage absorb text
-		local damage_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-		damage_absorb:SetWordWrap(false)
-		damage_absorb:SetPoint("BOTTOM", frame.Health.Text, "TOP", 0, 1)
-		E:ResetFontStringHeight(damage_absorb)
-		frame:Tag(damage_absorb, "[ls:absorb:damage]")
+	add_power:HookScript("OnShow", function(self)
+		left_tube:Refresh(self, true, 1)
+	end)
 
-		-- heal absorb text
-		local heal_absorb = frame.TextParent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
-		heal_absorb:SetPoint("BOTTOM", damage_absorb, "TOP", 0, 1)
-		E:ResetFontStringHeight(heal_absorb)
-		frame:Tag(heal_absorb, "[ls:absorb:heal]")
-	end
+	-- power cost prediction
+	frame.PowerPrediction = self:CreatePowerPrediction(power, add_power)
 
-	-- power, additional power, power cost prediction bars
-	do
-		-- power bar
-		local power = self:CreatePower(frame, true, "LS14Font_Shadow", frame.TextParent)
-		power:SetFrameLevel(level + 4)
-		power:SetSize(12, 128)
-		power:SetPoint("RIGHT", -23, 0)
+	if E.PLAYER_CLASS == "MONK" then
+		local stagger = self:CreateStagger(frame)
+		stagger:SetFrameLevel(level + 4)
+		stagger:SetPoint("LEFT", 23, 0)
+		stagger:SetSize(12, 128)
+		frame.Stagger = stagger
 
-		frame.Power = power
-
-		-- additional power bar
-		local add_power = self:CreateAdditionalPower(frame)
-		add_power:SetFrameLevel(level + 4)
-		add_power:SetSize(12, 128)
-		add_power:SetPoint("LEFT", 23, 0)
-		add_power:Hide()
-
-		add_power:HookScript("OnHide", function(self)
-			frame.LeftTube:Refresh(self, false, 0)
+		stagger:HookScript("OnHide", function(self)
+			left_tube:Refresh(self, false, 0)
 		end)
-
-		add_power:HookScript("OnShow", function(self)
-			frame.LeftTube:Refresh(self, true, 1)
+		stagger:HookScript("OnShow", function(self)
+			left_tube:Refresh(self, true, 1)
 		end)
+	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
+		local runes = self:CreateRunes(frame)
+		runes:SetFrameLevel(level + 4)
+		runes:SetPoint("LEFT", 23, 0)
+		runes:SetSize(12, 128)
+		frame.Runes = runes
 
-		frame.AdditionalPower = add_power
-
-		-- power cost prediction
-		frame.PowerPrediction = {}
-
-		local main_bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", power)
-		main_bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		main_bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-		main_bar:SetOrientation("VERTICAL")
-		main_bar:SetReverseFill(true)
-		main_bar:SetPoint("LEFT")
-		main_bar:SetPoint("RIGHT")
-		main_bar:SetPoint("TOP", power:GetStatusBarTexture(), "TOP")
-		main_bar:SetHeight(128)
-
-		E:SmoothBar(main_bar)
-
-		frame.PowerPrediction.mainBar = main_bar
-
-		local alt_bar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", add_power)
-		alt_bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		alt_bar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
-		alt_bar:SetOrientation("VERTICAL")
-		alt_bar:SetReverseFill(true)
-		alt_bar:SetPoint("LEFT")
-		alt_bar:SetPoint("RIGHT")
-		alt_bar:SetPoint("TOP", add_power:GetStatusBarTexture(), "TOP")
-		alt_bar:SetHeight(128)
-
-		E:SmoothBar(alt_bar)
-
-		frame.PowerPrediction.altBar = alt_bar
+		runes:HookScript("OnHide", function(self)
+			left_tube:Refresh(self, false, 0)
+		end)
+		runes:HookScript("OnShow", function(self)
+			left_tube:Refresh(self, true, 6)
+		end)
 	end
 
-	-- class powers, stagger, runes
-	do
-		if E.PLAYER_CLASS == "MONK" then
-			local stagger = self:CreateStagger(frame)
-			stagger:SetFrameLevel(level + 4)
-			stagger:SetPoint("LEFT", 23, 0)
-			stagger:SetSize(12, 128)
+	local class_power = self:CreateClassPower(frame)
+	class_power:SetFrameLevel(level + 4)
+	class_power:SetPoint("LEFT", 23, 0)
+	class_power:SetSize(12, 128)
+	frame.ClassPower = class_power
 
-			stagger:HookScript("OnHide", function(self)
-				frame.LeftTube:Refresh(self, false, 0)
-			end)
-			stagger:HookScript("OnShow", function(self)
-				frame.LeftTube:Refresh(self, true, 1)
-			end)
-
-			frame.Stagger = stagger
-		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
-			local runes = self:CreateRunes(frame)
-			runes:SetFrameLevel(level + 4)
-			runes:SetPoint("LEFT", 23, 0)
-			runes:SetSize(12, 128)
-
-			runes:HookScript("OnHide", function(self)
-				frame.LeftTube:Refresh(self, false, 0)
-			end)
-			runes:HookScript("OnShow", function(self)
-				frame.LeftTube:Refresh(self, true, 6)
-			end)
-
-			frame.Runes = runes
-		end
-
-		local class_power = self:CreateClassPower(frame)
-		class_power:SetFrameLevel(level + 4)
-		class_power:SetPoint("LEFT", 23, 0)
-		class_power:SetSize(12, 128)
-
-		class_power.UpdateContainer = function(self, isVisible, slots)
-			frame.LeftTube:Refresh(self, isVisible, slots)
-		end
-
-		frame.ClassPower = class_power
+	class_power.UpdateContainer = function(self, isVisible, slots)
+		left_tube:Refresh(self, isVisible, slots)
 	end
 
 	-- pvp
-	frame.PvPIndicator = self:CreatePvPIndicator(frame.FGParent)
-	frame.PvPIndicator:SetPoint("TOP", frame.FGParent, "BOTTOM", 0, 10)
+	frame.PvPIndicator = self:CreatePvPIndicator(fg_parent)
+	frame.PvPIndicator:SetPoint("TOP", fg_parent, "BOTTOM", 0, 10)
 
 	local pvp_timer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
 	pvp_timer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 	pvp_timer:SetTextColor(1, 0.82, 0)
 	pvp_timer:SetJustifyH("RIGHT")
 	pvp_timer.frequentUpdates = 0.1
+
 	frame:Tag(pvp_timer, "[ls:pvptimer]")
 
 	-- raid target
-	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(frame.TextParent)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	-- castbar
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
+
 	E:CreateMover(frame.Castbar.Holder)
 
 	-- status icons/texts
-
-	local status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	local status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("LEFT", frame, "LEFT", 5, 0)
+
 	frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
 
-	status = frame.TextParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+	status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
 	status:SetWidth(18)
 	status:SetPoint("RIGHT", frame, "RIGHT", -5, 0)
+
 	frame:Tag(status, "[ls:combatresticon]")
 
-	frame.DebuffIndicator = UF:CreateDebuffIndicator(frame.TextParent)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 	frame.DebuffIndicator:SetWidth(14)
 
 	-- floating combat text
-	do
-		local feeback = _G.CreateFrame("Frame", "$parentFeedbackFrame", frame)
-		feeback:SetFrameLevel(level + 9)
-		feeback:SetSize(32, 32)
-		feeback:SetPoint("CENTER", 0, 0)
-		frame.FloatingCombatFeedback = feeback
-
-		for i = 1, 6 do
-			feeback[i] = feeback:CreateFontString(nil, "OVERLAY", "CombatTextFont")
-		end
-
-		feeback.mode = "Fountain"
-		feeback.xOffset = 15
-		feeback.yOffset = 20
-		feeback.abbreviateNumbers = true
-	end
+	local feeback = self:CreateCombatFeedback(frame)
+	feeback:SetFrameLevel(level + 9)
+	feeback:SetPoint("CENTER", 0, 0)
+	frame.FloatingCombatFeedback = feeback
 
 	-- totems
 	do
+		local TOTEM_LAYOUT = {
+			[1] = {"TOP", -43, 20},
+			[2] = {"TOP", -15, 30},
+			[3] = {"TOP", 15, 30},
+			[4] = {"TOP", 43, 20},
+		}
+
 		local function OnEnter(self)
 			local quadrant = E:GetScreenQuadrant(self)
 			local p, rP, sign = "BOTTOMLEFT", "CENTER", 1
@@ -410,11 +357,13 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdateHealthPrediction(frame)
 	self:UpdatePower(frame)
 	self:UpdateAdditionalPower(frame)
+	self:UpdatePowerPrediction(frame)
 	self:UpdateClassPower(frame)
 	self:UpdateCastbar(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
+	self:UpdateCombatFeedback(frame)
 
 	if frame.Runes then
 		self:UpdateRunes(frame)
