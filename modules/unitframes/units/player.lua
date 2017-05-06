@@ -116,16 +116,30 @@ function UF:ConstructPlayerFrame(frame)
 
 	E:SetStatusBarSkin(right_tube, "VERTICAL-L")
 
+	-- mask
+	local mask = fg_parent:CreateMaskTexture()
+	mask:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame-mask")
+	mask:SetSize(256 / 2, 512 / 2)
+	mask:SetPoint("CENTER")
 
 	-- health
 	local health = self:CreateHealth(frame, true, "LS16Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
-	health:SetSize(140 / 2, 280 / 2)
+	health:SetSize(180 / 2, 280 / 2)
 	health:SetPoint("CENTER")
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+	-- health prediction
+	local health_prediction = self:CreateHealthPrediction(health)
+	frame.HealthPrediction = health_prediction
+
+	-- masking
+	health._texture:AddMaskTexture(mask)
+	health_prediction.myBar._texture:AddMaskTexture(mask)
+	health_prediction.otherBar._texture:AddMaskTexture(mask)
+	health_prediction.absorbBar.Overlay:AddMaskTexture(mask)
+	health_prediction.healAbsorbBar._texture:AddMaskTexture(mask)
 
 	-- damage absorb text
 	local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
