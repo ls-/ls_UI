@@ -40,6 +40,15 @@ function UF:ConstructTargetTargetFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
+	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	power:SetFrameLevel(level + 1)
+	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
+	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
+	power.Inset = frame.Insets.Bottom
+	frame.Power = power
+
 	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
@@ -62,6 +71,7 @@ function UF:UpdateTargetTargetFrame(frame)
 	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)
 	self:UpdateHealthPrediction(frame)
+	self:UpdatePower(frame)
 	self:UpdateName(frame)
 	self:UpdateRaidTargetIndicator(frame)
 

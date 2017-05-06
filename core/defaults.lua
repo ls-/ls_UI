@@ -276,6 +276,15 @@ D["units"] = {
 				enabled = true,
 			},
 		},
+		power = {
+			enabled = false,
+			orientation = "HORIZONTAL",
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {},
+				point2 = {},
+			},
+		},
 		name = {
 			tag = "[ls:color:class][ls:name][ls:server]|r",
 			point1 = {
