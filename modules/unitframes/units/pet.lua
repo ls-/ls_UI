@@ -34,16 +34,14 @@ function UF:ConstructPetFrame(frame)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
 	health:SetClipsChildren(true)
-	E:SetStatusBarSkin(health, "VERTICAL-M")
 	frame.Health = health
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
-	power:SetFrameLevel(level + 2)
+	power:SetFrameLevel(level + 1)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
-	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
 	frame.Castbar = self:CreateCastbar(frame)
@@ -61,6 +59,20 @@ function UF:ConstructPetFrame(frame)
 	threat:SetSize(44, 50)
 	threat:SetPoint("CENTER", 0, 0)
 	frame.ThreatIndicator = threat
+
+	local left_tube = _G.CreateFrame("Frame", nil, frame)
+	left_tube:SetFrameLevel(level + 3)
+	left_tube:SetAllPoints(health)
+	frame.LeftTube = left_tube
+
+	E:SetStatusBarSkin(left_tube, "VERTICAL-M")
+
+	local right_tube = _G.CreateFrame("Frame", nil, frame)
+	right_tube:SetFrameLevel(level + 3)
+	right_tube:SetAllPoints(power)
+	frame.RightTube = right_tube
+
+	E:SetStatusBarSkin(right_tube, "VERTICAL-M")
 end
 
 function UF:UpdatePetFrame(frame)
