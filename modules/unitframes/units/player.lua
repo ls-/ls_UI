@@ -33,7 +33,7 @@ function UF:ConstructPlayerFrame(frame)
 	-- bg
 	local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
 	texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 
 	-- border
@@ -43,7 +43,7 @@ function UF:ConstructPlayerFrame(frame)
 
 	texture = border_parent:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
 	texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 
 	-- fg
@@ -54,7 +54,7 @@ function UF:ConstructPlayerFrame(frame)
 
 	texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 2)
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame-player")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
 	texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
 
 	-- text
