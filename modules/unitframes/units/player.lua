@@ -13,8 +13,6 @@ function UF:ConstructPlayerFrame(frame)
 	frame._config = C.units.player
 	frame._mouseovers = {}
 
-	frame:SetSize(332 / 2, 332 / 2)
-
 	-- Note: can't touch this
 	-- 1: frame
 		-- 2: frame.Health
@@ -342,7 +340,9 @@ function UF:ConstructPlayerFrame(frame)
 end
 
 function UF:UpdatePlayerFrame(frame)
-	-- local config = frame._config
+	local config = frame._config
+
+	frame:SetSize(config.width, config.height)
 
 	self:UpdateHealth(frame)
 	self:UpdateHealthPrediction(frame)

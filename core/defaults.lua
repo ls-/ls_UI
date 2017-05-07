@@ -5,6 +5,8 @@ D["units"] = {
 	enabled =  true,
 	player = {
 		enabled = true,
+		width = 166,
+		height = 166,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
 		health = {
 			orientation = "VERTICAL",
@@ -92,6 +94,8 @@ D["units"] = {
 		},
 	},
 	pet = {
+		width = 42,
+		height = 134,
 		point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
 		health = {
 			orientation = "VERTICAL",

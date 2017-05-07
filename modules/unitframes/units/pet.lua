@@ -12,8 +12,6 @@ function UF:ConstructPetFrame(frame)
 	frame._config = C.units.pet
 	frame._mouseovers = {}
 
-	frame:SetSize(42, 134)
-
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
 	bg:SetSize(38, 114)
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-bg")
@@ -66,7 +64,9 @@ function UF:ConstructPetFrame(frame)
 end
 
 function UF:UpdatePetFrame(frame)
-	-- local config = frame._config
+	local config = frame._config
+
+	frame:SetSize(config.width, config.height)
 
 	self:UpdateHealth(frame)
 	self:UpdateHealthPrediction(frame)
