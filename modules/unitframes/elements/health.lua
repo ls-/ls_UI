@@ -56,7 +56,7 @@ do
 	end
 
 	function UF:CreateHealth(parent, text, textFontObject, textParent)
-		local element = _G.CreateFrame("StatusBar", "$parentHealthBar", parent)
+		local element = _G.CreateFrame("StatusBar", nil, parent)
 		element:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
 
 		E:SmoothBar(element)
@@ -147,26 +147,29 @@ do
 	function UF:CreateHealthPrediction(parent)
 		local level = parent:GetFrameLevel()
 
-		local myBar = _G.CreateFrame("StatusBar", "$parentMyIncomingHeal", parent)
+		local myBar = _G.CreateFrame("StatusBar", nil, parent)
 		myBar:SetFrameLevel(level)
 		myBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
 		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
+		parent.MyHeal = myBar
 
 		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
 		myBar._texture:SetAllPoints(myBar:GetStatusBarTexture())
 		myBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 
-		local otherBar = _G.CreateFrame("StatusBar", "$parentOtherIncomingHeal", parent)
+		local otherBar = _G.CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
 		otherBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		parent.OtherHeal = otherBar
 
 		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
 		otherBar._texture:SetAllPoints(otherBar:GetStatusBarTexture())
 		otherBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.OTHER_HEAL:GetRGB())
 
-		local absorbBar = _G.CreateFrame("StatusBar", "$parentTotalAbsorb", parent)
+		local absorbBar = _G.CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
 		absorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		parent.DamageAbsorb = absorbBar
 
 		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
 		overlay:SetTexture("Interface\\AddOns\\ls_UI\\media\\absorb", true)
@@ -175,11 +178,12 @@ do
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
 		absorbBar.Overlay = overlay
 
-		local healAbsorbBar = _G.CreateFrame("StatusBar", "$parentHealAbsorb", parent)
+		local healAbsorbBar = _G.CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
 		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
+		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())

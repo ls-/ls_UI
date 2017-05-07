@@ -70,11 +70,12 @@ local function OnValueChanged(self, value)
 end
 
 local function CreateElement(parent, num, name)
-	local element = _G.CreateFrame("Frame", name, parent)
+	local element = _G.CreateFrame("Frame", nil, parent)
+	local level = element:GetFrameLevel()
 
 	for i = 1, num do
-		local bar = _G.CreateFrame("StatusBar", "$parentBar"..i, element)
-		bar:SetFrameLevel(element:GetFrameLevel())
+		local bar = _G.CreateFrame("StatusBar", "$parent"..name..i, element)
+		bar:SetFrameLevel(level)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		bar:SetScript("OnValueChanged", OnValueChanged)
 		element[i] = bar
@@ -122,7 +123,7 @@ do
 	end
 
 	function UF:CreateRunes(parent)
-		local element = CreateElement(parent, 6, "$parentRunes")
+		local element = CreateElement(parent, 6, "Rune")
 		element:Hide()
 
 		element.colorSpec = true
@@ -224,7 +225,7 @@ do
 	end
 
 	function UF:CreateClassPower(parent)
-		local element = CreateElement(parent, 10, "$parentClassPower")
+		local element = CreateElement(parent, 10, "ClassPower")
 		element:Hide()
 
 		element.PostUpdate = PostUpdate

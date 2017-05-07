@@ -68,7 +68,7 @@ local function PostUpdate(element, unit, cur, _, max)
 end
 
 function UF:CreateAlternativePower(parent, text, textFontObject, textParent)
-	local element = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
+	local element = _G.CreateFrame("StatusBar", nil, parent)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 	if text then

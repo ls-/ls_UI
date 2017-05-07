@@ -38,6 +38,7 @@ function UF:ConstructPlayerFrame(frame)
 	local border_parent = _G.CreateFrame("Frame", nil, frame)
 	border_parent:SetFrameLevel(level + 3)
 	border_parent:SetAllPoints()
+	frame.BorderParent = border_parent
 
 	texture = border_parent:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints()
@@ -111,6 +112,7 @@ function UF:ConstructPlayerFrame(frame)
 	right_tube:SetFrameLevel(level + 6)
 	right_tube:SetSize(12, 128)
 	right_tube:SetPoint("RIGHT", -23, 0)
+	frame.RightTube = right_tube
 
 	E:SetStatusBarSkin(right_tube, "VERTICAL-L")
 

@@ -52,7 +52,7 @@ local function CustomDelayText(castbar, duration)
 end
 
 function UF:CreateCastbar(parent)
-	local holder = _G.CreateFrame("Frame", parent:GetName().."CastbarHolder", parent)
+	local holder = _G.CreateFrame("Frame", "$parentCastbarHolder", parent)
 	holder:SetHeight(12)
 
 	local element = _G.CreateFrame("StatusBar", nil, holder)

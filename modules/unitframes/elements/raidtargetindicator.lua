@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 -- Mine
 function UF:CreateRaidTargetIndicator(parent)
-	local element = parent:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
+	local element = parent:CreateTexture(nil, "ARTWORK", nil, 3)
 
 	return element
 end

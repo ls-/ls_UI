@@ -18,18 +18,18 @@ function UF:ConstructPetFrame(frame)
 	bg:SetTexCoord(1 / 64, 39 / 64, 1 / 128, 115 / 128)
 	bg:SetPoint("CENTER", 0, 0)
 
-	local cover = _G.CreateFrame("Frame", "$parentCover", frame)
-	cover:SetFrameLevel(level + 3)
-	cover:SetAllPoints()
-	frame.Cover = cover
+	local fg_parent = _G.CreateFrame("Frame", nil, frame)
+	fg_parent:SetFrameLevel(level + 4)
+	fg_parent:SetAllPoints()
+	frame.FGParent = fg_parent
 
-	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 1)
+	local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
 	fg:SetSize(32, 70)
 	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-fg")
 	fg:SetTexCoord(1 / 64, 33 / 64, 1 / 128, 71 / 128)
 	fg:SetPoint("CENTER", 0, 0)
 
-	local health = UF:CreateHealth(frame, true, "LS12Font_Shadow")
+	local health = self:CreateHealth(frame, true, "LS12Font_Shadow")
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
@@ -37,7 +37,7 @@ function UF:ConstructPetFrame(frame)
 	E:SetStatusBarSkin(health, "VERTICAL-M")
 	frame.Health = health
 
-	frame.HealthPrediction = UF:CreateHealthPrediction(health)
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
 	power:SetFrameLevel(level + 2)
@@ -46,13 +46,13 @@ function UF:ConstructPetFrame(frame)
 	E:SetStatusBarSkin(power, "VERTICAL-M")
 	frame.Power = power
 
-	frame.Castbar = UF:CreateCastbar(frame)
+	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
 	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
-	frame.RaidTargetIndicator = UF:CreateRaidTargetIndicator(cover)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(fg_parent)
 
-	frame.DebuffIndicator = UF:CreateDebuffIndicator(cover)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(fg_parent)
 	frame.DebuffIndicator:SetWidth(14)
 
 	local threat = frame:CreateTexture(nil, "BACKGROUND", nil, -7)

@@ -62,7 +62,7 @@ do
 	end
 
 	function UF:CreatePower(parent, text, textFontObject, textParent)
-		local element = _G.CreateFrame("StatusBar", "$parentPowerBar", parent)
+		local element = _G.CreateFrame("StatusBar", nil, parent)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 		if text then
@@ -125,7 +125,7 @@ do
 	end
 
 	function UF:CreateAdditionalPower(parent)
-		local element = _G.CreateFrame("StatusBar", "$parentAdditionalPower", parent)
+		local element = _G.CreateFrame("StatusBar", nil, parent)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 
@@ -160,15 +160,17 @@ end
 
 do
 	function UF:CreatePowerPrediction(parent1, parent2)
-		local mainBar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", parent1)
+		local mainBar = _G.CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		mainBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
 		mainBar:SetReverseFill(true)
+		parent1.CostPrediction = mainBar
 
-		local altBar = _G.CreateFrame("StatusBar", "$parentPowerCostPrediction", parent2)
+		local altBar = _G.CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		altBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
 		altBar:SetReverseFill(true)
+		parent2.CostPrediction = altBar
 
 		E:SmoothBar(mainBar)
 		E:SmoothBar(altBar)

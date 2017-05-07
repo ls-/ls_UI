@@ -88,7 +88,7 @@ local function IsExpanded(self)
 end
 
 function UF:CreatePvPIndicator(parent)
-	local holder = _G.CreateFrame("Frame", "$parentPvPIndicatorHolder", parent)
+	local holder = _G.CreateFrame("Frame", nil, parent)
 	holder:SetSize(46, 48)
 
 	holder.Expand = Expand

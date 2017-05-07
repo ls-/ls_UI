@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 -- Mine
 function UF:CreateCombatFeedback(parent)
-	local element = _G.CreateFrame("Frame", "$parentFeedbackFrame", parent)
+	local element = _G.CreateFrame("Frame", nil, parent)
 	element:SetSize(32, 32)
 
 	for i = 1, 6 do

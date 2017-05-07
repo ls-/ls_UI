@@ -82,7 +82,7 @@ function UF:ConstructTargetFrame(frame)
 	frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
 	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
 
-	local status = text_parent:CreateFontString("$parentStatusIcons", "ARTWORK", "LSStatusIcon16Font")
+	local status = text_parent:CreateFontString(nil, "ARTWORK", "LSStatusIcon16Font")
 	status:SetJustifyH("LEFT")
 	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")

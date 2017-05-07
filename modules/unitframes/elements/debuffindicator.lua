@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 -- Mine
 function UF:CreateDebuffIndicator(parent)
-	return parent:CreateFontString("$parentNameText", "ARTWORK", "LSStatusIcon12Font")
+	return parent:CreateFontString(nil, "ARTWORK", "LSStatusIcon12Font")
 end
 
 function UF:UpdateDebuffIndicator(frame)

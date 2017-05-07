@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 -- Mine
 function UF:CreateName(parent, textFontObject)
-	local element = parent:CreateFontString("$parentNameText", "OVERLAY", textFontObject)
+	local element = parent:CreateFontString(nil, "OVERLAY", textFontObject)
 	element:SetWordWrap(false)
 	E:ResetFontStringHeight(element)
 
