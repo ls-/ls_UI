@@ -50,10 +50,12 @@ local function SetVertexColor(self, r, g, b, a)
 	self.Bottom.Right:SetVertexColor(r, g, b, a)
 end
 
-function UF:CreateInsets(parent, texParent, frameLevel)
+function UF:CreateInsets(parent, texParent)
+	local level = parent:GetFrameLevel()
+
 	-- Top
 	local top_inset = _G.CreateFrame("Frame", nil, parent)
-	top_inset:SetFrameLevel(frameLevel)
+	top_inset:SetFrameLevel(level)
 	top_inset:SetPoint("TOPLEFT", 0, 0)
 	top_inset:SetPoint("TOPRIGHT", 0, 0)
 
@@ -95,7 +97,7 @@ function UF:CreateInsets(parent, texParent, frameLevel)
 
 	-- Bottom
 	local bottom_inset = _G.CreateFrame("Frame", nil, parent)
-	bottom_inset:SetFrameLevel(frameLevel)
+	bottom_inset:SetFrameLevel(level)
 	bottom_inset:SetPoint("BOTTOMLEFT", 0, 0)
 	bottom_inset:SetPoint("BOTTOMRIGHT", 0, 0)
 

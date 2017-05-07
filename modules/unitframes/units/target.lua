@@ -27,7 +27,7 @@ function UF:ConstructTargetFrame(frame)
 	text_parent:SetAllPoints()
 	frame.TextParent = text_parent
 
-	frame.Insets = self:CreateInsets(frame, fg_parent, level)
+	frame.Insets = self:CreateInsets(frame, fg_parent)
 
 	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
