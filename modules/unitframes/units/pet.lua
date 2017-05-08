@@ -12,21 +12,15 @@ function UF:ConstructPetFrame(frame)
 	frame._config = C.units.pet
 	frame._mouseovers = {}
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetSize(38, 114)
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-bg")
-	bg:SetTexCoord(1 / 64, 39 / 64, 1 / 128, 115 / 128)
-	bg:SetPoint("CENTER", 0, 0)
-
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
 	fg_parent:SetFrameLevel(level + 4)
 	fg_parent:SetAllPoints()
 	frame.FGParent = fg_parent
 
 	local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
-	fg:SetSize(32, 70)
-	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-fg")
-	fg:SetTexCoord(1 / 64, 33 / 64, 1 / 128, 71 / 128)
+	fg:SetSize(80 / 2, 148 / 2)
+	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame")
+	fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 	fg:SetPoint("CENTER", 0, 0)
 
 	local health = self:CreateHealth(frame, true, "LS12Font_Shadow")
@@ -36,6 +30,10 @@ function UF:ConstructPetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
+	local health_bg = health:CreateTexture(nil, "BACKGROUND")
+	health_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	health_bg:SetAllPoints()
+
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
@@ -43,6 +41,10 @@ function UF:ConstructPetFrame(frame)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
 	frame.Power = power
+
+	local power_bg = power:CreateTexture(nil, "BACKGROUND")
+	power_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	power_bg:SetAllPoints()
 
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
@@ -55,8 +57,8 @@ function UF:ConstructPetFrame(frame)
 
 	local threat = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-glow")
-	threat:SetTexCoord(1 / 64, 45 / 64, 1 / 64, 51 / 64)
-	threat:SetSize(44, 50)
+	threat:SetTexCoord(1 / 128, 85 / 128, 1 / 128, 97 / 128)
+	threat:SetSize(84 / 2, 96 / 2)
 	threat:SetPoint("CENTER", 0, 0)
 	frame.ThreatIndicator = threat
 
