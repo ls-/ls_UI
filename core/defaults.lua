@@ -347,10 +347,111 @@ D["units"] = {
 	},
 	focus = {
 		enabled = true,
-		castbar = true,
+		width = 250,
+		height = 52,
 		point = {"BOTTOM", "UIParent", "BOTTOM", -268, 336},
+		insets = {
+			t_height = 14,
+			b_height = 14,
+		},
+		health = {
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+				tapped = true,
+				disconnected = true,
+				reaction = true,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Health",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+			prediction = {
+				enabled = true,
+			},
+		},
+		power = {
+			enabled = true,
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Power",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
+		castbar = {
+			enabled = true,
+			width = 244,
+			icon = true,
+		},
+		name = {
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+			h_alignment = "LEFT",
+			point1 = {
+				p = "LEFT",
+				anchor = "Health",
+				rP = "LEFT",
+				x = 2,
+				y = 0,
+			},
+			point2 = {
+				p = "RIGHT",
+				anchor = "Health.Text",
+				rP = "LEFT",
+				x = -2,
+				y = 0,
+			},
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
+			},
+		},
+		pvp = {
+			enabled = true,
+		},
+		debuff = {
+			tag = "[ls:debuffs]",
+			h_alignment = "RIGHT",
+			point1 = {
+				p = "TOPRIGHT",
+				anchor = "Health",
+				rP = "TOPRIGHT",
+				x = -2,
+				y = -2,
+			},
+		},
+		threat = {
+			enabled = true,
+			feedback_unit = "player",
+		},
 		auras = {
 			enabled = true,
+			-- 0x0000000X -- friendly buff
+			-- 0x000000X0 -- hostile buff
+			-- 0x00000X00 -- friendly debuff
+			-- 0x0000X000 -- hostile debuff
 			show_boss = 0x0000ffff,
 			show_mount = 0x000000ff,
 			show_selfcast = 0x0000ffff,
@@ -361,18 +462,199 @@ D["units"] = {
 		},
 	},
 	focustarget = {
-		point = { "RIGHT", "LSFocusFrame", "LEFT", -6, 0},
+		width = 112,
+		height = 28,
+		point = { "BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -8, 0},
+		insets = {
+			t_height = 14,
+			b_height = 14,
+		},
+		health = {
+			orientation = "HORIZONTAL",
+			color = {
+				class = false,
+				tapped = true,
+				disconnected = true,
+				reaction = true,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {},
+			},
+			prediction = {
+				enabled = true,
+			},
+		},
+		power = {
+			enabled = false,
+			orientation = "HORIZONTAL",
+			text = {
+				-- tag = "", -- I probably should use tags here
+				point1 = {},
+			},
+		},
+		name = {
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+			point1 = {
+				p = "TOPLEFT",
+				anchor = "Health",
+				rP = "TOPLEFT",
+				x = 2,
+				y = -2,
+			},
+			point2 = {
+				p = "BOTTOMRIGHT",
+				anchor = "Health",
+				rP = "BOTTOMRIGHT",
+				x = -2,
+				y = 2,
+			},
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
+			},
+		},
+		threat = {
+			enabled = false,
+			feedback_unit = "target",
+		},
 	},
 	boss = {
 		enabled = true,
-		castbar = true,
-		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -76, -240},
+		width = 188,
+		height = 52,
+		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -240},
+		insets = {
+			t_height = 14,
+			b_height = 14,
+		},
+		health = {
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			color = {
+				class = false,
+				tapped = true,
+				disconnected = true,
+				reaction = true,
+			},
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Health",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+			prediction = {
+				enabled = true,
+			},
+		},
+		power = {
+			enabled = true,
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "Power",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
+		alt_power = {
+			enabled = true,
+			orientation = "HORIZONTAL",
+			update_on_mouseover = true,
+			text = {
+				-- tag = "", -- I probably should use tags here
+				h_alignment = "RIGHT",
+				point1 = {
+					p = "RIGHT",
+					anchor = "AlternativePower",
+					rP = "RIGHT",
+					x = -2,
+					y = 0,
+				},
+			},
+		},
+		castbar = {
+			enabled = true,
+			width = 182,
+			icon = true,
+		},
+		name = {
+			tag = "[ls:name]",
+			h_alignment = "LEFT",
+			point1 = {
+				p = "LEFT",
+				anchor = "Health",
+				rP = "LEFT",
+				x = 2,
+				y = 0,
+			},
+			point2 = {
+				p = "RIGHT",
+				anchor = "Health.Text",
+				rP = "LEFT",
+				x = -2,
+				y = 0,
+			},
+		},
+		raid_target = {
+			enabled = true,
+			size = 24,
+			point1 = {
+				p = "CENTER",
+				anchor = "",
+				rP = "TOP",
+				x = 0,
+				y = 6,
+			},
+		},
+		debuff = {
+			tag = "[ls:debuffs]",
+			h_alignment = "RIGHT",
+			point1 = {
+				p = "TOPRIGHT",
+				anchor = "Health",
+				rP = "TOPRIGHT",
+				x = -2,
+				y = -2,
+			},
+		},
+		threat = {
+			enabled = true,
+			feedback_unit = "player",
+		},
+		auras = {
+			enabled = true,
+			-- 0x0000000X -- friendly buff
+			-- 0x000000X0 -- hostile buff
+			-- 0x00000X00 -- friendly debuff
+			-- 0x0000X000 -- hostile debuff
+			show_boss = 0x0000ffff,
+			show_mount = 0x000000ff,
+			show_selfcast = 0x0000ffff,
+			show_selfcast_permanent = 0x0000ffff,
+			show_blizzard = 0x0000ffff,
+			show_player = 0x0000ffff,
+			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+		},
 	},
-	-- arena = {
-	-- 	enabled = true,
-	-- 	point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -72, -240},
-	-- 	castbar = true,
-	-- },
 }
 
 D["auratracker"] = {
