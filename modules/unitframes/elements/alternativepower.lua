@@ -12,19 +12,13 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
 -- Mine
 local function PostUpdate(element, unit, cur, _, max)
-	if element.Inset then
-		if not element:IsShown() or not max or max == 0 then
-			if element.Inset:IsExpanded() then
-				element.Inset:Collapse()
-			end
-		else
-			if not element.Inset:IsExpanded() then
-				element.Inset:Expand()
-			end
-		end
+	local shouldShown = element:IsShown() and max and max ~= 0
+
+	if element.UpdateContainer then
+		element:UpdateContainer(shouldShown)
 	end
 
-	if element:IsShown() then
+	if shouldShown then
 		local unitGUID = UnitGUID(unit)
 
 		element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
@@ -52,7 +46,7 @@ local function PostUpdate(element, unit, cur, _, max)
 		r, g, b = M.COLORS.INDIGO:GetRGB()
 	end
 
-	local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.2))
+	local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
 
 	element:SetStatusBarColor(r, g, b)
 
