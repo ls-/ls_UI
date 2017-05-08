@@ -46,8 +46,19 @@ function UF:ConstructTargetTargetFrame(frame)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
 	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
 	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
-	power.Inset = frame.Insets.Bottom
 	frame.Power = power
+
+	power.UpdateContainer = function(_, shouldShow)
+		if shouldShow then
+			if not frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Expand()
+			end
+		else
+			if frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Collapse()
+			end
+		end
+	end
 
 	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 

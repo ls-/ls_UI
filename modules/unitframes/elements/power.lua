@@ -13,15 +13,13 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 -- Mine
 do
 	local function PostUpdate(element, unit, cur, _, max)
-		if element.Inset then
-			if not max or max == 0 then
-				element.Inset:Collapse()
-			else
-				element.Inset:Expand()
-			end
+		local shouldShown = element:IsShown() and max and max ~= 0
+
+		if element.UpdateContainer then
+			element:UpdateContainer(shouldShown)
 		end
 
-		if element:IsShown() then
+		if shouldShown then
 			local unitGUID = UnitGUID(unit)
 
 			element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
