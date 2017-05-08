@@ -53,6 +53,8 @@ function UF:ConstructTargetTargetFrame(frame)
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
+	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
+
 	E:CreateBorder(fg_parent, true)
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
@@ -74,6 +76,7 @@ function UF:UpdateTargetTargetFrame(frame)
 	self:UpdatePower(frame)
 	self:UpdateName(frame)
 	self:UpdateRaidTargetIndicator(frame)
+	self:UpdateThreatIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_ToTFrameUpdate")
 end

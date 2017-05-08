@@ -340,6 +340,10 @@ D["units"] = {
 				y = 6,
 			},
 		},
+		threat = {
+			enabled = false,
+			feedback_unit = "target",
+		},
 	},
 	focus = {
 		enabled = true,
