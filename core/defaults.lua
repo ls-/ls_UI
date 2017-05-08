@@ -219,7 +219,7 @@ D["units"] = {
 			icon = true,
 		},
 		name = {
-			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:color:class][ls:name][ls:server]|r",
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
 			h_alignment = "LEFT",
 			point1 = {
 				p = "LEFT",
@@ -313,7 +313,7 @@ D["units"] = {
 			},
 		},
 		name = {
-			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:color:class][ls:name][ls:server]|r",
+			tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
 			point1 = {
 				p = "TOPLEFT",
 				anchor = "Health",
