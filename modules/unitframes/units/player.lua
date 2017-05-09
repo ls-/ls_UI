@@ -265,8 +265,8 @@ function UF:ConstructPlayerFrame(frame)
 	feeback:SetPoint("CENTER", 0, 0)
 	frame.FloatingCombatFeedback = feeback
 
-	-- threat, special case
-	local threat = border_parent:CreateTexture(nil, "BACKGROUND", nil, -7)
+	-- threat
+	local threat = self:CreateThreatIndicator(border_parent, true)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame-glow")
 	threat:SetTexCoord(1 / 512, 337 / 512, 1 / 512, 337 / 512)
 	threat:SetSize(336 / 2, 336 / 2)

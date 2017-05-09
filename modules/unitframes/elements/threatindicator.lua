@@ -3,8 +3,25 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 -- Mine
-function UF:CreateThreatIndicator(parent)
-	return E:CreateBorderGlow(parent, true)
+local function PostUpdate(self, _, status)
+	if status and status == 0 then
+		self:SetVertexColor(M.COLORS.THREAT[1]:GetRGB())
+		self:Show()
+	end
+end
+
+function UF:CreateThreatIndicator(parent, isTexture)
+	local element
+
+	if isTexture then
+		element = parent:CreateTexture(nil, "BACKGROUND", nil, -7)
+	else
+		element = E:CreateBorderGlow(parent, true)
+	end
+
+	element.PostUpdate = PostUpdate
+
+	return element
 end
 
 function UF:UpdateThreatIndicator(frame)

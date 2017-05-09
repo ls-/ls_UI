@@ -55,7 +55,7 @@ function UF:ConstructPetFrame(frame)
 	frame.DebuffIndicator = self:CreateDebuffIndicator(fg_parent)
 	frame.DebuffIndicator:SetWidth(14)
 
-	local threat = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+	local threat = self:CreateThreatIndicator(frame, true)
 	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-glow")
 	threat:SetTexCoord(1 / 128, 85 / 128, 1 / 128, 97 / 128)
 	threat:SetSize(84 / 2, 96 / 2)
