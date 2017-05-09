@@ -18,7 +18,6 @@ local function ADDON_LOADED(arg)
 	C.bars.expbar = nil
 	C.bars.xpbar.hide_if_empty = nil
 	C.login_msg = nil
-	C.units.boss.auras = nil
 	C.units.focus.auras.HARMFUL = nil
 	C.units.focus.auras.HELPFUL = nil
 	C.units.focus.auras.show_only_filtered = nil

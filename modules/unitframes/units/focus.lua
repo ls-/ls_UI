@@ -90,8 +90,7 @@ function UF:ConstructFocusFrame(frame)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-	frame.Auras = self:CreateAuras(frame, "focus", 32, nil, nil, 8)
-	frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
+	frame.Auras = self:CreateAuras(frame, "focus")
 
 	local status = text_parent:CreateFontString(nil, "ARTWORK", "LSStatusIcon16Font")
 	status:SetJustifyH("LEFT")
@@ -123,6 +122,7 @@ function UF:UpdateFocusFrame(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
+	self:UpdateAuras(frame)
 
 	frame:UpdateAllElements("LSUI_FocusFrameUpdate")
 end

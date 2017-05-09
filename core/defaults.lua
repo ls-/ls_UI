@@ -267,6 +267,12 @@ D["units"] = {
 		},
 		auras = {
 			enabled = true,
+			per_row = 8,
+			rows = 4,
+			size_override = 0,
+			x_growth = "RIGHT",
+			y_grwoth = "UP",
+			init_anchor = "BOTTOMLEFT",
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff
@@ -278,6 +284,13 @@ D["units"] = {
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
 			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+			point1 = {
+				p = "BOTTOMLEFT",
+				anchor = "",
+				rP = "TOPLEFT",
+				x = -1,
+				y = 7,
+			},
 		},
 	},
 	targettarget = {
@@ -448,6 +461,12 @@ D["units"] = {
 		},
 		auras = {
 			enabled = true,
+			per_row = 8,
+			rows = 4,
+			size_override = 0,
+			x_growth = "RIGHT",
+			y_grwoth = "UP",
+			init_anchor = "BOTTOMLEFT",
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff
@@ -459,6 +478,13 @@ D["units"] = {
 			show_blizzard = 0x0000ffff,
 			show_player = 0x0000ffff,
 			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+			point1 = {
+				p = "BOTTOMLEFT",
+				anchor = "",
+				rP = "TOPLEFT",
+				x = -1,
+				y = 7,
+			},
 		},
 	},
 	focustarget = {
@@ -642,17 +668,24 @@ D["units"] = {
 		},
 		auras = {
 			enabled = true,
+			per_row = 3,
+			rows = 2,
+			size_override = 25,
+			x_growth = "LEFT",
+			y_grwoth = "DOWN",
+			init_anchor = "TOPRIGHT",
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff
 			-- 0x0000X000 -- hostile debuff
 			show_boss = 0x0000ffff,
-			show_mount = 0x000000ff,
-			show_selfcast = 0x0000ffff,
-			show_selfcast_permanent = 0x0000ffff,
-			show_blizzard = 0x0000ffff,
-			show_player = 0x0000ffff,
-			show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+			point1 = {
+				p = "TOPRIGHT",
+				anchor = "",
+				rP = "TOPLEFT",
+				x = -7,
+				y = 1,
+			},
 		},
 	},
 }

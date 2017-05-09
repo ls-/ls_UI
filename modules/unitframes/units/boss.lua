@@ -99,8 +99,7 @@ function UF:ConstructBossFrame(frame)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-	-- frame.Auras = self:CreateAuras(frame, "target", 32, nil, nil, 8)
-	-- frame.Auras:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", -1, 7)
+	frame.Auras = self:CreateAuras(frame, "boss")
 
 	E:CreateBorder(fg_parent, true)
 
@@ -130,6 +129,7 @@ function UF:UpdateBossFrame(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
+	self:UpdateAuras(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

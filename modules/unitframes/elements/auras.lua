@@ -227,7 +227,24 @@ local filterFunctions = {
 		end
 
 		return false
-	end
+	end,
+	boss = function(frame, unit, aura, _, _, _, _, _, _, _, caster, _, _, _, _, isBossAura)
+		local config = frame.cfg
+		local isFriend = UnitIsFriend("player", unit)
+		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
+		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
+		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
+		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
+		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
+
+		-- boss
+		if isBossAura then
+			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
+			return E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+		end
+
+		return false
+	end,
 }
 
 local function UpdateAuraType(_, _, aura)
@@ -238,68 +255,50 @@ local function UpdateAuraType(_, _, aura)
 	end
 end
 
-function UF:CreateAuras(parent, unit, num, size, gap, perRow)
-	size = size or AURA_SIZE
-	gap = gap or AURA_GAP
-	perRow = perRow or AURAS_PER_ROW
-	local rows = math.ceil(num / perRow)
-
-	local frame = _G.CreateFrame("Frame", "$parentAuras", parent)
-	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
-
-	frame.numBuffs = num / 2
-	frame.numDebuffs = num / 2
-	frame.size = size
-	frame["spacing-x"] = gap
-	frame["spacing-y"] = gap
-	frame.showStealableBuffs = true
-	frame.showDebuffType = true
-	frame.CreateIcon = CreateAuraIcon
-	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	frame.PostUpdateIcon = UpdateAuraType
-	frame.cfg = C.units[unit].auras
-
-	return frame
+local function PreSetPosition(self)
+	return nil, math.min(self.anchoredIcons + 1, self.cfg.per_row * self.cfg.rows)
 end
 
-function UF:CreateBuffs(parent, unit, num, size, gap, perRow)
-	size = size or AURA_SIZE
-	gap = gap or AURA_GAP
-	perRow = perRow or AURAS_PER_ROW
-	local rows = math.ceil(num / perRow)
+function UF:CreateAuras(parent, unit)
+	local element = _G.CreateFrame("Frame", "$parentAuras", parent)
 
-	local frame = _G.CreateFrame("Frame", "$parentBuffs", parent)
-	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
+	element.spacing = 4
+	element.showDebuffType = true
+	element.showStealableBuffs = true
+	element.CreateIcon = CreateAuraIcon
+	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	element.PostUpdateIcon = UpdateAuraType
+	element.PreSetPosition = PreSetPosition
+	element.cfg = C.units[unit].auras
 
-	frame.num = num
-	frame.size = size
-	frame["spacing-x"] = gap
-	frame["spacing-y"] = gap
-	frame.showStealableBuffs = true
-	frame.CreateIcon = CreateAuraIcon
-	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	frame.cfg = C.units[unit].auras
-
-	return frame
+	return element
 end
 
-function UF:CreateDebuffs(parent, unit, num, size, gap, perRow)
-	size = size or AURA_SIZE
-	gap = gap or AURA_GAP
-	perRow = perRow or AURAS_PER_ROW
-	local rows = math.ceil(num / perRow)
+function UF:UpdateAuras(frame)
+	local config = frame._config.auras
+	local element = frame.Auras
+	local size = config.size_override ~= 0 and config.size_override or E:Round((frame._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
 
-	local frame = _G.CreateFrame("Frame", "$parentDebuffs", parent)
-	frame:SetSize(size * math.min(num, perRow) + gap * math.min(num - 1, perRow - 1), size * rows + gap * (rows - 1))
+	element:SetSize(size * config.per_row + element.spacing * (config.per_row - 1), size * config.rows + element.spacing * (config.rows - 1))
 
-	frame.num = num
-	frame.size = size
-	frame["spacing-x"] = gap
-	frame["spacing-y"] = gap
-	frame.showType = true
-	frame.CreateIcon = CreateAuraIcon
-	frame.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	frame.cfg = C.units[unit].auras
+	element.size = size
+	element.initialAnchor = config.init_anchor
+	element["growth-x"] = config.x_growth
+	element["growth-y"] = config.y_grwoth
 
-	return frame
+	local point1 = config.point1
+
+	if point1 and point1.p then
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	end
+
+	if config.enabled and not frame:IsElementEnabled("Auras") then
+		frame:EnableElement("Auras")
+	elseif not config.enabled and frame:IsElementEnabled("Auras") then
+		frame:DisableElement("Auras")
+	end
+
+	if frame:IsElementEnabled("Auras") then
+		element:ForceUpdate()
+	end
 end
