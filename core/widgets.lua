@@ -565,7 +565,13 @@ do
 
 		for i = 1, #sections do
 			local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
-			x:SetTexture(texture..sections[i], true)
+
+			if i > 4 then
+				x:SetTexture(texture..sections[i], true)
+			else
+				x:SetTexture(texture..sections[i])
+			end
+
 			t[sections[i]] = x
 		end
 
@@ -665,7 +671,13 @@ do
 
 		for i = 1, #sections do
 			local x = object:CreateTexture(nil, "BACKGROUND", nil, -7)
-			x:SetTexture(texture..sections[i], true)
+
+			if i > 4 then
+				x:SetTexture(texture..sections[i], true)
+			else
+				x:SetTexture(texture..sections[i])
+			end
+
 			t[sections[i]] = x
 		end
 
