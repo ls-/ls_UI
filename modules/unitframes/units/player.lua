@@ -118,8 +118,8 @@ function UF:ConstructPlayerFrame(frame)
 
 	-- mask
 	local mask = fg_parent:CreateMaskTexture()
-	mask:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame-mask")
-	mask:SetSize(256 / 2, 512 / 2)
+	mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+	mask:SetSize(312 / 2, 312 / 2)
 	mask:SetPoint("CENTER")
 
 	-- health
