@@ -170,7 +170,7 @@ D["units"] = {
 		height = 52,
 		point = {"BOTTOM", "UIParent", "BOTTOM", 268, 336},
 		insets = {
-			t_height = 14,
+			t_height = 14, -- should be either 10 or 14
 			b_height = 14,
 		},
 		health = {
