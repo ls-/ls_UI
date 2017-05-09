@@ -119,9 +119,10 @@ end
 function UF:UpdateCastbar(frame)
 	local config = frame._config.castbar
 	local element = frame.Castbar
+	local width = config.width_override ~= 0 and config.width_override or frame._config.width - 6
 
-	element.Holder:SetWidth(config.width)
-	element.Holder._width = config.width
+	element.Holder:SetWidth(width)
+	element.Holder._width = width
 
 	if config.icon then
 		element.Icon = element.Icon_

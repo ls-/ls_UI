@@ -55,7 +55,7 @@ D["units"] = {
 		},
 		castbar = {
 			enabled = true,
-			width = 200,
+			width_override = 200,
 			icon = true,
 			latency = true,
 		},
@@ -215,7 +215,7 @@ D["units"] = {
 		},
 		castbar = {
 			enabled = true,
-			width = 244,
+			width_override = 0,
 			icon = true,
 		},
 		name = {
@@ -396,7 +396,7 @@ D["units"] = {
 		},
 		castbar = {
 			enabled = true,
-			width = 244,
+			width_override = 0,
 			icon = true,
 		},
 		name = {
@@ -593,7 +593,7 @@ D["units"] = {
 		},
 		castbar = {
 			enabled = true,
-			width = 182,
+			width_override = 0,
 			icon = true,
 		},
 		name = {
