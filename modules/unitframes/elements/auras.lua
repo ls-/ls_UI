@@ -4,8 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local math = _G.math
-local bit = _G.bit
+local b_lshift = _G.bit.lshift
 local next = _G.next
 
 -- Blizz
@@ -14,9 +13,6 @@ local UnitIsFriend = _G.UnitIsFriend
 local UnitIsUnit = _G.UnitIsUnit
 
 -- Mine
-local AURA_GAP = 4
-local AURA_SIZE = 28
-local AURAS_PER_ROW = 6
 local MOUNTS = {}
 
 for _, id in next, C_MountJournal.GetMountIDs() do
@@ -176,9 +172,9 @@ local filterFunctions = {
 		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
 		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
-		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
-		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
-		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
+		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
+		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
+		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
 		local isPlayerAura = aura.isPlayer or (caster and UnitIsUnit(caster, "pet"))
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
@@ -232,9 +228,9 @@ local filterFunctions = {
 		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
 		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
-		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
-		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
-		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
+		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
+		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
+		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
 		-- boss
