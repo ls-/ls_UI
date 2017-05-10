@@ -273,6 +273,7 @@ D["units"] = {
 			x_growth = "RIGHT",
 			y_grwoth = "UP",
 			init_anchor = "BOTTOMLEFT",
+			disable_mouse = false,
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff
@@ -467,6 +468,7 @@ D["units"] = {
 			x_growth = "RIGHT",
 			y_grwoth = "UP",
 			init_anchor = "BOTTOMLEFT",
+			disable_mouse = false,
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff
@@ -674,6 +676,7 @@ D["units"] = {
 			x_growth = "LEFT",
 			y_grwoth = "DOWN",
 			init_anchor = "TOPRIGHT",
+			disable_mouse = false,
 			-- 0x0000000X -- friendly buff
 			-- 0x000000X0 -- hostile buff
 			-- 0x00000X00 -- friendly debuff

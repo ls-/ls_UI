@@ -255,10 +255,6 @@ local function UpdateAuraType(_, _, aura)
 	end
 end
 
-local function PreSetPosition(self)
-	return nil, math.min(self.anchoredIcons + 1, self._config.per_row * self._config.rows)
-end
-
 function UF:CreateAuras(parent, unit)
 	local element = _G.CreateFrame("Frame", nil, parent)
 
@@ -268,7 +264,6 @@ function UF:CreateAuras(parent, unit)
 	element.CreateIcon = CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = UpdateAuraType
-	element.PreSetPosition = PreSetPosition
 	element._config = C.units[unit].auras
 
 	return element
@@ -282,7 +277,9 @@ function UF:UpdateAuras(frame)
 	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
 
 	element.size = size
+	element.numTotal = config.per_row * config.rows
 	element.initialAnchor = config.init_anchor
+	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
 	element["growth-y"] = config.y_grwoth
 
