@@ -119,8 +119,8 @@ local function AuraButton_OnLeave()
 	_G.GameTooltip:Hide()
 end
 
-local function CreateAuraIcon(frame, index)
-	local button = E:CreateButton(frame, "$parentButton"..index, true)
+local function CreateAuraIcon(element, index)
+	local button = E:CreateButton(element, "$parentAura"..index, true)
 
 	button.icon = button.Icon
 	button.Icon = nil
@@ -173,7 +173,7 @@ local filterFunctions = {
 			return false
 		end
 
-		local config = frame.cfg
+		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
 		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
 		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
@@ -229,7 +229,7 @@ local filterFunctions = {
 		return false
 	end,
 	boss = function(frame, unit, aura, _, _, _, _, _, _, _, caster, _, _, _, _, isBossAura)
-		local config = frame.cfg
+		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
 		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
 		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and bit.lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
@@ -256,11 +256,11 @@ local function UpdateAuraType(_, _, aura)
 end
 
 local function PreSetPosition(self)
-	return nil, math.min(self.anchoredIcons + 1, self.cfg.per_row * self.cfg.rows)
+	return nil, math.min(self.anchoredIcons + 1, self._config.per_row * self._config.rows)
 end
 
 function UF:CreateAuras(parent, unit)
-	local element = _G.CreateFrame("Frame", "$parentAuras", parent)
+	local element = _G.CreateFrame("Frame", nil, parent)
 
 	element.spacing = 4
 	element.showDebuffType = true
@@ -269,7 +269,7 @@ function UF:CreateAuras(parent, unit)
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = UpdateAuraType
 	element.PreSetPosition = PreSetPosition
-	element.cfg = C.units[unit].auras
+	element._config = C.units[unit].auras
 
 	return element
 end
@@ -279,7 +279,7 @@ function UF:UpdateAuras(frame)
 	local element = frame.Auras
 	local size = config.size_override ~= 0 and config.size_override or E:Round((frame._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
 
-	element:SetSize(size * config.per_row + element.spacing * (config.per_row - 1), size * config.rows + element.spacing * (config.rows - 1))
+	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
 
 	element.size = size
 	element.initialAnchor = config.init_anchor
