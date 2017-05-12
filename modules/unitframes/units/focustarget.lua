@@ -66,6 +66,11 @@ function UF:ConstructFocusTargetFrame(frame)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
+	local status = text_parent:CreateFontString(nil, "ARTWORK", "LSStatusIcon16Font")
+	status:SetJustifyH("RIGHT")
+	status:SetPoint("RIGHT", frame, "BOTTOMRIGHT", -4, -1)
+	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
+
 	E:CreateBorder(fg_parent, true)
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
