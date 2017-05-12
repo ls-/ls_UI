@@ -15,7 +15,7 @@ D["units"] = {
 				class = false,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:health:cur]",
 				point1 = {
 					p = "BOTTOM",
 					anchor = "", -- frame[anchor] or "" if anchor is frame itself
@@ -33,7 +33,7 @@ D["units"] = {
 			orientation = "VERTICAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:color:power][ls:power:cur]|r",
 				point1 = {
 					p = "TOP",
 					anchor = "Health",
@@ -104,6 +104,7 @@ D["units"] = {
 				class = false,
 			},
 			text = {
+				tag = "[ls:health:cur]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "BOTTOMRIGHT",
@@ -122,7 +123,7 @@ D["units"] = {
 			orientation = "VERTICAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:color:power][ls:power:cur]|r",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "BOTTOMRIGHT",
@@ -183,7 +184,7 @@ D["units"] = {
 				reaction = true,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:health:cur-perc]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -202,7 +203,7 @@ D["units"] = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:power:cur-color-max]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -311,7 +312,7 @@ D["units"] = {
 				reaction = true,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "",
 				point1 = {},
 			},
 			prediction = {
@@ -322,7 +323,7 @@ D["units"] = {
 			enabled = false,
 			orientation = "HORIZONTAL",
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "",
 				point1 = {},
 			},
 		},
@@ -378,7 +379,7 @@ D["units"] = {
 				reaction = true,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:health:cur-perc]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -397,7 +398,7 @@ D["units"] = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:power:cur-color-max]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -506,7 +507,7 @@ D["units"] = {
 				reaction = true,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "",
 				point1 = {},
 			},
 			prediction = {
@@ -517,7 +518,7 @@ D["units"] = {
 			enabled = false,
 			orientation = "HORIZONTAL",
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "",
 				point1 = {},
 			},
 		},
@@ -573,7 +574,7 @@ D["units"] = {
 				reaction = true,
 			},
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:health:perc]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -592,7 +593,7 @@ D["units"] = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:power:cur-color-perc]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",
@@ -608,7 +609,7 @@ D["units"] = {
 			orientation = "HORIZONTAL",
 			update_on_mouseover = true,
 			text = {
-				-- tag = "", -- I probably should use tags here
+				tag = "[ls:power:cur-color-perc]",
 				h_alignment = "RIGHT",
 				point1 = {
 					p = "RIGHT",

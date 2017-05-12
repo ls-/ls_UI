@@ -26,38 +26,12 @@ do
 			element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
 
 			element._UnitGUID = unitGUID
-		else
-			return element.Text and element.Text:SetText(nil)
 		end
 
-		if not element.Text then
-			return
-		else
-			if max == 0 then
-				return element.Text:SetText(nil)
-			elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
-				element:SetValue(0)
-
-				return element.Text:SetText(nil)
-			end
+		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			element:SetMinMaxValues(0, 1)
+			element:SetValue(0)
 		end
-
-		local r, g, b = element:GetStatusBarColor()
-		local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
-
-		if element.__owner.isMouseOver then
-			if unit ~= "player" and unit ~= "vehicle" and unit ~= "pet" then
-				return element.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
-			end
-		else
-			if cur == max or cur == 0 then
-				if unit == "player" or unit == "vehicle" or unit == "pet" then
-					return element.Text:SetText(nil)
-				end
-			end
-		end
-
-		element.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), hex)
 	end
 
 	function UF:CreatePower(parent, text, textFontObject, textParent)
@@ -98,11 +72,11 @@ do
 			if point1 and point1.p then
 				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
+
+			frame:Tag(element.Text, config.text.tag)
 		end
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
-
-		frame._mouseovers[element] = config.update_on_mouseover and true or nil
 
 		if config.enabled and not frame:IsElementEnabled("Power") then
 			frame:EnableElement("Power")
@@ -118,9 +92,14 @@ end
 
 -- Additional Power
 do
-	local function PostUpdate(element, _, cur, max)
-		if element:IsShown() then
+	local function PostUpdate(element, unit, cur, max)
+		if element:IsShown() and max and max ~= 0 then
 			element:UpdateGainLoss(cur, max)
+		end
+
+		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			element:SetMinMaxValues(0, 1)
+			element:SetValue(0)
 		end
 	end
 
@@ -173,41 +152,12 @@ do
 			element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
 
 			element._UnitGUID = unitGUID
-		else
-			return element.Text and element.Text:SetText(nil)
 		end
 
-		if not element.Text then
-			return
-		else
-			if max == 0 then
-				return element.Text:SetText(nil)
-			elseif UnitIsDeadOrGhost(unit) or not UnitIsConnected(unit) then
-				element:SetValue(0)
-
-				return element.Text:SetText(nil)
-			end
+		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			element:SetMinMaxValues(0, 1)
+			element:SetValue(0)
 		end
-
-		local _, r, g, b = _G.UnitAlternatePowerTextureInfo(unit, 2)
-
-		if (r == 1 and g == 1 and b == 1) or not b then
-			r, g, b = M.COLORS.INDIGO:GetRGB()
-		end
-
-		local hex = E:RGBToHEX(E:AdjustColor(r, g, b, 0.3))
-
-		element:SetStatusBarColor(r, g, b)
-
-		if element.__owner.isMouseOver then
-			return element.Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
-		else
-			if cur == max or cur == 0 then
-				return element.Text:SetText(nil)
-			end
-		end
-
-		element.Text:SetFormattedText(L["BAR_COLORED_VALUE_TEMPLATE"], E:NumberFormat(cur, 1), hex)
 	end
 
 	function UF:CreateAlternativePower(parent, text, textFontObject, textParent)
@@ -251,11 +201,11 @@ do
 			if point2 and point2.p then
 				element.Text:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
 			end
+
+			frame:Tag(element.Text, config.text.tag)
 		end
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
-
-		frame._mouseovers[element] = config.update_on_mouseover and true or nil
 
 		if config.enabled and not frame:IsElementEnabled("AlternativePower") then
 			frame:EnableElement("AlternativePower")

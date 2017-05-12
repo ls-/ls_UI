@@ -3,22 +3,66 @@ local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
 
 --Lua
 local _G = getfenv(0)
-local string = _G.string
-local t_contains = _G.tContains
+local s_format = _G.string.format
 
 -- Blizz
 local FOREIGN_SERVER_LABEL = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
-local UnitEffectiveLevel = _G.UnitEffectiveLevel
-local UnitName = _G.UnitName
+local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
+local GetPVPTimer = _G.GetPVPTimer
+local IsPVPTimerRunning = _G.IsPVPTimerRunning
+local IsResting = _G.IsResting
+local SecondsToTimeAbbrev = _G.SecondsToTimeAbbrev
+local UnitAffectingCombat = _G.UnitAffectingCombat
+local UnitBattlePetLevel = _G.UnitBattlePetLevel
+local UnitCanAssist = _G.UnitCanAssist
+local UnitCanAttack = _G.UnitCanAttack
 local UnitClass = _G.UnitClass
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitReaction = _G.UnitReaction
 local UnitClassification = _G.UnitClassification
+local UnitCreatureType = _G.UnitCreatureType
+local UnitDebuff = _G.UnitDebuff
+local UnitEffectiveLevel = _G.UnitEffectiveLevel
+local UnitGetTotalAbsorbs = _G.UnitGetTotalAbsorbs
+local UnitGetTotalHealAbsorbs = _G.UnitGetTotalHealAbsorbs
+local UnitGroupRolesAssigned = _G.UnitGroupRolesAssigned
+local UnitHealth = _G.UnitHealth
+local UnitHealthMax = _G.UnitHealthMax
+local UnitInParty = _G.UnitInParty
+local UnitInPhase = _G.UnitInPhase
+local UnitInRaid = _G.UnitInRaid
+local UnitIsBattlePetCompanion = _G.UnitIsBattlePetCompanion
+local UnitIsConnected = _G.UnitIsConnected
+local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
+local UnitIsGroupLeader = _G.UnitIsGroupLeader
+local UnitIsPlayer = _G.UnitIsPlayer
+local UnitIsQuestBoss = _G.UnitIsQuestBoss
+local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
+local UnitLevel = _G.UnitLevel
+local UnitName = _G.UnitName
+local UnitPower = _G.UnitPower
+local UnitPowerMax = _G.UnitPowerMax
+local UnitPowerType = _G.UnitPowerType
+local UnitReaction = _G.UnitReaction
+local UnitRealmRelationship = _G.UnitRealmRelationship
 
 -- Mine
 local SHEEPABLE_TYPES = {
-	"Beast", "Wildtier", "Bestia", "Bête", "Fera", "Животное", "야수", "野兽", "野獸",
-	"Humanoid", "Humanoide", "Humanoïde", "Umanoide", "Гуманоид", "인간형", "人型生物", "人形生物",
+	["Beast"] = true,
+	["Bestia"] = true,
+	["Bête"] = true,
+	["Fera"] = true,
+	["Humanoid"] = true,
+	["Humanoide"] = true,
+	["Humanoïde"] = true,
+	["Umanoide"] = true,
+	["Wildtier"] = true,
+	["Гуманоид"] = true,
+	["Животное"] = true,
+	["야수"] = true,
+	["인간형"] = true,
+	["人型生物"] = true,
+	["人形生物"] = true,
+	["野兽"] = true,
+	["野獸"] = true,
 }
 
 ------------
@@ -54,15 +98,216 @@ oUF.Tags.Methods["ls:color:difficulty"] = function(unit)
 	return "|cff"..E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
 end
 
+oUF.Tags.Methods["ls:color:power"] = function(unit)
+	return "|cff"..M.COLORS.POWER[UnitPowerType(unit)]:GetHEX(0.3)
+end
+------------
+-- HEALTH --
+------------
+
+oUF.Tags.Events["ls:health:cur"] = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED'
+oUF.Tags.Methods["ls:health:cur"] = function(unit)
+	if not UnitIsConnected(unit) then
+		return L["OFFLINE"]
+	elseif UnitIsDeadOrGhost(unit) then
+		return L["DEAD"]
+	else
+		return E:NumberFormat(UnitHealth(unit), 1)
+	end
+end
+
+oUF.Tags.Events["ls:health:perc"] = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED'
+oUF.Tags.Methods["ls:health:perc"] = function(unit)
+	if not UnitIsConnected(unit) then
+		return L["OFFLINE"]
+	elseif UnitIsDeadOrGhost(unit) then
+		return L["DEAD"]
+	else
+		return s_format("%.1f%%", E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))
+	end
+end
+
+oUF.Tags.Events["ls:health:cur-perc"] = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED'
+oUF.Tags.Methods["ls:health:cur-perc"] = function(unit)
+	if not UnitIsConnected(unit) then
+		return L["OFFLINE"]
+	elseif UnitIsDeadOrGhost(unit) then
+		return L["DEAD"]
+	else
+		local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+
+		if cur == max then
+			return E:NumberFormat(cur, 1)
+		else
+			return s_format("%s - %.1f%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+		end
+	end
+end
+
+oUF.Tags.Events["ls:health:deficit"] = 'UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED'
+oUF.Tags.Methods["ls:health:deficit"] = function(unit)
+	if not UnitIsConnected(unit) then
+		return L["OFFLINE"]
+	elseif UnitIsDeadOrGhost(unit) then
+		return L["DEAD"]
+	else
+		local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+
+		if cur == max then
+			return ""
+		else
+			return s_format("-%s", E:NumberFormat(max - cur, 1))
+		end
+	end
+end
+
+-----------
+-- POWER --
+-----------
+
+oUF.Tags.Events["ls:power:cur"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:cur"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		else
+			return E:NumberFormat(cur, 1)
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:max"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:max"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local max = UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		else
+			return E:NumberFormat(max, 1)
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:perc"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:perc"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		else
+			return s_format("%.1f%%", cur, max)
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:cur-perc"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:cur-perc"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		elseif cur == max then
+			return E:NumberFormat(cur, 1)
+		else
+			return s_format("%s - %.1f%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:cur-color-perc"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:cur-color-perc"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		elseif cur == 0 or cur == max then
+			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(cur, 1))
+		else
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.3), E:NumberToPerc(cur, max))
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:cur-max"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:cur-max"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		elseif cur == max then
+			return E:NumberFormat(cur, 1)
+		else
+			return s_format("%s - %s", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:cur-color-max"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:cur-color-max"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 then
+			return ""
+		elseif cur == 0 or cur == max then
+			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(cur, 1))
+		else
+			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(max, 1))
+		end
+	end
+end
+
+oUF.Tags.Events["ls:power:deficit"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
+oUF.Tags.Methods["ls:power:deficit"] = function(unit)
+	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		return ""
+	else
+		local type = UnitPowerType(unit)
+		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+
+		if not max or max == 0 or cur == max then
+			return ""
+		else
+			return s_format("-%s", E:NumberFormat(max - cur, 1))
+		end
+	end
+end
+
 ----------
 -- NAME --
 ----------
 
 oUF.Tags.Events["ls:name"] = "UNIT_NAME_UPDATE"
 oUF.Tags.Methods["ls:name"] = function(unit, r)
-	local name = UnitName(r or unit) or ""
-
-	return name
+	return UnitName(r or unit) or ""
 end
 
 oUF.Tags.Events["ls:name:5"] = "UNIT_NAME_UPDATE"
@@ -98,9 +343,9 @@ oUF.Tags.Methods["ls:server"] = function(unit, r)
 	local _, realm = UnitName(r or unit)
 
 	if realm and realm ~= "" then
-		local relationship = _G.UnitRealmRelationship(r or unit)
+		local relationship = UnitRealmRelationship(r or unit)
 
-		if relationship ~= _G.LE_REALM_RELATION_VIRTUAL then
+		if relationship ~= LE_REALM_RELATION_VIRTUAL then
 			return FOREIGN_SERVER_LABEL
 		end
 	end
@@ -150,45 +395,30 @@ end
 
 oUF.Tags.Events["ls:absorb:heal"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:heal"] = function(unit)
-	local absorb = _G.UnitGetTotalHealAbsorbs(unit) or 0
+	local absorb = UnitGetTotalHealAbsorbs(unit) or 0
 	local hex = M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX()
 
-	return absorb > 0 and string.format("|cff%s-|r%s", hex, E:NumberFormat(absorb, 1)) or " "
+	return absorb > 0 and s_format("|cff%s-|r%s", hex, E:NumberFormat(absorb, 1)) or " "
 end
 
 oUF.Tags.Events["ls:absorb:damage"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:damage"] = function(unit)
-	local absorb = _G.UnitGetTotalAbsorbs(unit) or 0
+	local absorb = UnitGetTotalAbsorbs(unit) or 0
 	local hex = M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX()
 
-	return absorb > 0 and string.format("|cff%s+|r%s", hex, E:NumberFormat(absorb, 1)) or " "
+	return absorb > 0 and s_format("|cff%s+|r%s", hex, E:NumberFormat(absorb, 1)) or " "
 end
 
 -----------
 -- LEVEL --
 -----------
 
-oUF.Tags.Methods["ls:level"] = function(unit)
-	local level = _G.UnitLevel(unit)
-
-	if _G.UnitIsWildBattlePet(unit) or _G.UnitIsBattlePetCompanion(unit) then
-		level = _G.UnitBattlePetLevel(unit)
-	end
-
-	if level > 0 then
-		return level
-	else
-		return "??"
-	end
-end
-
 oUF.Tags.Events["ls:level"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
+oUF.Tags.Methods["ls:level"] = function(unit)
+	local level = UnitLevel(unit)
 
-oUF.Tags.Methods["ls:level:effective"] = function(unit)
-	local level = _G.UnitEffectiveLevel(unit)
-
-	if _G.UnitIsWildBattlePet(unit) or _G.UnitIsBattlePetCompanion(unit) then
-		level = _G.UnitBattlePetLevel(unit)
+	if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
+		level = UnitBattlePetLevel(unit)
 	end
 
 	if level > 0 then
@@ -199,6 +429,19 @@ oUF.Tags.Methods["ls:level:effective"] = function(unit)
 end
 
 oUF.Tags.Events["ls:level:effective"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
+oUF.Tags.Methods["ls:level:effective"] = function(unit)
+	local level = UnitEffectiveLevel(unit)
+
+	if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
+		level = UnitBattlePetLevel(unit)
+	end
+
+	if level > 0 then
+		return level
+	else
+		return "??"
+	end
+end
 
 ----------
 -- MISC --
@@ -206,17 +449,15 @@ oUF.Tags.Events["ls:level:effective"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
 
 oUF.Tags.Events["ls:debuffs"] = "UNIT_AURA"
 oUF.Tags.Methods["ls:debuffs"] = function(unit)
-	-- return "|TInterface\\RaidFrame\\Raid-Icon-DebuffCurse:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffMagic:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffPoison:0:0:0:0:16:16:2:14:2:14|t"
-
 	local types = E:GetDispelTypes()
 
-	if not types or not _G.UnitCanAssist("player", unit) then return "" end
+	if not types or not UnitCanAssist("player", unit) then return "" end
 
 	local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}
 	local status = ""
 
 	for i = 1, 40 do
-		local name, _, _, _, debuffType = _G.UnitDebuff(unit, i, "RAID")
+		local name, _, _, _, debuffType = UnitDebuff(unit, i, "RAID")
 
 		if name then
 			if types[debuffType] and not hasDebuff[debuffType] then
@@ -244,19 +485,19 @@ oUF.Tags.Methods["ls:classicon"] = function(unit)
 	return ""
 end
 
+oUF.Tags.Events["ls:questicon"] = "UNIT_CLASSIFICATION_CHANGED"
 oUF.Tags.Methods["ls:questicon"] = function(unit)
-	if _G.UnitIsQuestBoss(unit) then
+	if UnitIsQuestBoss(unit) then
 		return M.textures.inlineicons["QUEST"]:format(0, 0)
 	else
 		return ""
 	end
 end
 
-oUF.Tags.Events["ls:questicon"] = "UNIT_CLASSIFICATION_CHANGED"
-
+oUF.Tags.Events["ls:sheepicon"] = "UNIT_CLASSIFICATION_CHANGED"
 oUF.Tags.Methods["ls:sheepicon"] = function(unit)
-	if _G.UnitCanAttack("player", unit)
-		and (UnitIsPlayer(unit) or t_contains(SHEEPABLE_TYPES, _G.UnitCreatureType(unit)))
+	if UnitCanAttack("player", unit)
+		and (UnitIsPlayer(unit) or SHEEPABLE_TYPES[UnitCreatureType(unit)])
 		and (E.PLAYER_CLASS == "MAGE" or E.PLAYER_CLASS == "SHAMAN") then
 		return M.textures.inlineicons["SHEEP"]:format(0, 0)
 	else
@@ -264,30 +505,27 @@ oUF.Tags.Methods["ls:sheepicon"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:sheepicon"] = "UNIT_CLASSIFICATION_CHANGED"
-
+oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
 oUF.Tags.Methods["ls:phaseicon"] = function(unit)
-	if not _G.UnitInPhase(unit) then
+	if not UnitInPhase(unit) then
 		return M.textures.inlineicons["PHASE"]:format(0, 0)
 	else
 		return ""
 	end
 end
 
-oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
-
+oUF.Tags.Events["ls:leadericon"] = "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE"
 oUF.Tags.Methods["ls:leadericon"] = function(unit)
-	if (_G.UnitInParty(unit) or _G.UnitInRaid(unit)) and _G.UnitIsGroupLeader(unit) then
+	if (UnitInParty(unit) or UnitInRaid(unit)) and UnitIsGroupLeader(unit) then
 		return M.textures.inlineicons["LEADER"]:format(0, 0)
 	else
 		return ""
 	end
 end
 
-oUF.Tags.Events["ls:leadericon"] = "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE"
-
+oUF.Tags.Events["ls:lfdroleicon"] = "GROUP_ROSTER_UPDATE"
 oUF.Tags.Methods["ls:lfdroleicon"] = function(unit)
-	local role = _G.UnitGroupRolesAssigned(unit)
+	local role = UnitGroupRolesAssigned(unit)
 
 	if role and role ~= "NONE" then
 		return M.textures.inlineicons[role]:format(0, 0)
@@ -296,13 +534,12 @@ oUF.Tags.Methods["ls:lfdroleicon"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:lfdroleicon"] = "GROUP_ROSTER_UPDATE"
-
+oUF.Tags.Events["ls:combatresticon"] = "PLAYER_UPDATE_RESTING PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED"
 oUF.Tags.Methods["ls:combatresticon"] = function()
-	if _G.UnitAffectingCombat("player") then
+	if UnitAffectingCombat("player") then
 		return M.textures.inlineicons["COMBAT"]:format(0, 0)
 	else
-		if _G.IsResting() then
+		if IsResting() then
 			return M.textures.inlineicons["RESTING"]:format(0, 0)
 		else
 			return ""
@@ -310,14 +547,12 @@ oUF.Tags.Methods["ls:combatresticon"] = function()
 	end
 end
 
-oUF.Tags.Events["ls:combatresticon"] = "PLAYER_UPDATE_RESTING PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED"
-
 oUF.Tags.SharedEvents["PLAYER_REGEN_DISABLED"] = true
 oUF.Tags.SharedEvents["PLAYER_REGEN_ENABLED"] = true
-
 oUF.Tags.Methods["ls:pvptimer"] = function()
-	if _G.IsPVPTimerRunning() then
-		local pattern, time = _G.SecondsToTimeAbbrev(_G.GetPVPTimer() / 1000)
+	if IsPVPTimerRunning() then
+		local pattern, time = SecondsToTimeAbbrev(GetPVPTimer() / 1000)
+
 		if time >= 1 then
 			return pattern:gsub(" ", ""):format(time)
 		end

@@ -8,8 +8,6 @@ local _G = getfenv(0)
 -- Blizz
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local DEAD = _G.DEAD
-local PLAYER_OFFLINE = _G.PLAYER_OFFLINE
 
 -- Mine
 do
@@ -17,42 +15,11 @@ do
 		self._texture:SetColorTexture(r, g, b)
 	end
 
-	local function PostUpdate(element, unit, cur, max)
-		if not UnitIsConnected(unit) then
+	local function PostUpdate(element, unit)
+		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			element:SetMinMaxValues(0, 1)
 			element:SetValue(0)
-
-			return element.Text and element.Text:SetText(PLAYER_OFFLINE)
-		elseif UnitIsDeadOrGhost(unit) then
-			element:SetValue(0)
-
-			return element.Text and element.Text:SetText(DEAD)
 		end
-
-		if not element.Text then
-			return
-		end
-
-		if element.__owner.isMouseOver then
-			if unit == "target" or unit == "focus" then
-				return element.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-			elseif unit:match("(boss)%d+") then
-				return element.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
-			end
-		else
-			if cur == max then
-				if unit == "player" or unit == "vehicle" or unit == "pet" then
-					return element.Text:SetText(nil)
-				end
-			else
-				if unit == "target" or unit == "focus" then
-					return element.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-				elseif unit:match("(boss)%d+") then
-					return element.Text:SetFormattedText(L["BAR_PERC_TEMPLATE"], E:NumberToPerc(cur, max))
-				end
-			end
-		end
-
-		element.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
 	end
 
 	function UF:CreateHealth(parent, text, textFontObject, textParent)
@@ -102,9 +69,9 @@ do
 			if point1 and point1.p then
 				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
-		end
 
-		frame._mouseovers[element] = config.update_on_mouseover and true or nil
+			frame:Tag(element.Text, config.text.tag)
+		end
 
 		if element.ForceUpdate then
 			element:ForceUpdate()
