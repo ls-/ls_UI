@@ -167,7 +167,7 @@ function E:Round(v)
 end
 
 function E:NumberToPerc(v1, v2)
-	return (v1 and v2) and Round(v1 / v2 * 100) or nil
+	return (v1 and v2) and v1 / v2 * 100 or nil
 end
 
 function E:NumberFormat(v, mod)
