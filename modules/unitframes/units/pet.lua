@@ -10,7 +10,6 @@ function UF:ConstructPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.units.pet
-	frame._mouseovers = {}
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
 	fg_parent:SetFrameLevel(level + 4)

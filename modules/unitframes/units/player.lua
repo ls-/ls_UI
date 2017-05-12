@@ -11,7 +11,6 @@ function UF:ConstructPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.units.player
-	frame._mouseovers = {}
 
 	-- Note: can't touch this
 	-- 1: frame

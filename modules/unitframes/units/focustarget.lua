@@ -10,7 +10,6 @@ function UF:ConstructFocusTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.units.focustarget
-	frame._mouseovers = {}
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

@@ -6,10 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
--- local ICON_COORDS = {48 / 128, 78 / 128, 1 / 64, 31 / 64}
--- local BANNER_COORDS = {1 / 128, 47 / 128, 1 / 64, 49 / 64}
-
-local function Override(self, event, unit)
+local function Override(self, _, unit)
 	if unit ~= self.unit then return end
 
 	local pvp = self.PvPIndicator

@@ -18,7 +18,6 @@ function UF:ConstructBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.units.boss
-	frame._mouseovers = {}
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

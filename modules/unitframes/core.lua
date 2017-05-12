@@ -26,36 +26,6 @@ local function LSUnitFrame_OnEnter(self)
 		_G.PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		_G.PartyMemberBuffTooltip_Update(self)
 	end
-
-	self.isMouseOver = true
-
-	if self.mouseovers then
-		for _, element in pairs(self.mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Show()
-				end
-			else
-				element:Show()
-			end
-		end
-	end
-
-	if self._mouseovers then
-		for element in pairs(self._mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Show()
-				end
-			else
-				element:Show()
-			end
-		end
-	end
 end
 
 local function LSUnitFrame_OnLeave(self)
@@ -67,36 +37,6 @@ local function LSUnitFrame_OnLeave(self)
 
 	if string.match(self:GetName(), "LSPetFrame") then
 		_G.PartyMemberBuffTooltip:Hide()
-	end
-
-	self.isMouseOver = nil
-
-	if self.mouseovers then
-		for _, element in pairs(self.mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Hide()
-				end
-			else
-				element:Hide()
-			end
-		end
-	end
-
-	if self._mouseovers then
-		for element in pairs(self._mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Hide()
-				end
-			else
-				element:Hide()
-			end
-		end
 	end
 end
 
