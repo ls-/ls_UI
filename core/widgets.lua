@@ -731,3 +731,99 @@ do
 		return CreateBorderGlow(object, isThick)
 	end
 end
+
+-------------------
+-- ANIMATED LINE --
+-------------------
+
+do
+	local function SetVertexColor(self, r, g, b, a)
+		self.Fill:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll1:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll2:SetVertexColor(r, g, b, a or 1)
+	end
+
+	local function GetVertexColor(self)
+		return self.Fill:GetVertexColor()
+	end
+
+	local function SetThickness(self, thickness)
+		self.Fill:SetThickness(thickness)
+		self.FillScroll1:SetThickness(thickness)
+		self.FillScroll2:SetThickness(thickness)
+	end
+
+	local function SetOrientation(self, orientation)
+		if orientation == "HORIZONTAL" then
+			self._orientation = orientation
+
+			self.Fill:SetStartPoint("LEFT", self)
+			self.FillScroll1:SetStartPoint("LEFT", self)
+			self.FillScroll2:SetStartPoint("LEFT", self)
+
+			self.Fill:SetEndPoint("RIGHT", self)
+			self.FillScroll1:SetEndPoint("RIGHT", self)
+			self.FillScroll2:SetEndPoint("RIGHT", self)
+		else
+			self._orientation = "VERTICAL"
+
+			self.Fill:SetStartPoint("BOTTOM", self)
+			self.FillScroll1:SetStartPoint("BOTTOM", self)
+			self.FillScroll2:SetStartPoint("BOTTOM", self)
+
+			self.Fill:SetEndPoint("TOP", self)
+			self.FillScroll1:SetEndPoint("TOP", self)
+			self.FillScroll2:SetEndPoint("TOP", self)
+		end
+	end
+
+	local function OnEvent(self)
+		self:SetThickness(16 * E.SCREEN_SCALE)
+	end
+
+	local function AdjustTiling(self)
+		self._tile = self._orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
+
+		self.Fill:SetTexCoord(0, self._tile, 0, 1)
+		self.FillScroll1:SetTexCoord(0, self._tile, 0, 1)
+		self.FillScroll2:SetTexCoord(0, self._tile, 0, 1)
+	end
+
+	function E:CreateAnimatedLine(parent)
+		local frame = _G.CreateFrame("Frame", nil, parent)
+		frame:SetScript("OnEvent", OnEvent)
+		frame:SetScript("OnShow", AdjustTiling)
+		frame:SetScript("OnSizeChanged", AdjustTiling)
+		frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
+		frame:RegisterEvent("UI_SCALE_CHANGED")
+
+		local line = frame:CreateLine(nil, "ARTWORK", nil, 1)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-Fill", "REPEAT")
+		line:SetThickness(16)
+		frame.Fill = line
+
+		line = frame:CreateLine(nil, "ARTWORK", nil, 2)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-FillScroll1", "REPEAT")
+		line:SetThickness(16)
+		line:SetBlendMode("ADD")
+		frame.FillScroll1 = line
+
+		line = frame:CreateLine(nil, "ARTWORK", nil, 2)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-FillScroll2", "REPEAT")
+		line:SetThickness(16)
+		line:SetBlendMode("ADD")
+		frame.FillScroll2 = line
+
+		frame.ScrollAnim = frame:CreateAnimationGroup(nil, "LSUILineAnimTemplate")
+
+		frame.SetVertexColor = SetVertexColor
+		frame.GetVertexColor = GetVertexColor
+		frame.SetThickness = SetThickness
+		frame.SetOrientation = SetOrientation
+
+		frame:SetOrientation("HORIZONTAL")
+		frame:SetThickness(16 * E.SCREEN_SCALE)
+
+		return frame
+	end
+end

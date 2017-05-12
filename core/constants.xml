@@ -338,27 +338,8 @@
 		</Shadow>
 	</Font>
 
-	<Frame name="LSUILineTemplate" mixin="LSUILineMixin" virtual="true">
-		<Layers>
-			<Layer level="ARTWORK" textureSubLevel="1">
-				<Line parentKey="Fill" file="Interface/Artifacts/_Artifacts-DependencyBar-Fill" thickness="16" hWrapMode="REPEAT"/>
-			</Layer>
-			<Layer level="ARTWORK" textureSubLevel="2">
-				<Line parentKey="FillScroll1" file="Interface/Artifacts/_Artifacts-DependencyBar-FillScroll1" thickness="16" hWrapMode="REPEAT" alphaMode="ADD"/>
-				<Line parentKey="FillScroll2" file="Interface/Artifacts/_Artifacts-DependencyBar-FillScroll2" thickness="16" hWrapMode="REPEAT" alphaMode="ADD"/>
-			</Layer>
-		</Layers>
-		<Animations>
-			<AnimationGroup parentKey="ScrollAnim" setToFinalAlpha="true" looping="REPEAT">
-				<TextureCoordTranslation childKey="FillScroll1" duration="12" order="1" offsetU="1" offsetV="0"/>
-				<TextureCoordTranslation childKey="FillScroll2" duration="12" order="1" offsetU="-1" offsetV="0"/>
-			</AnimationGroup>
-		</Animations>
-		<Scripts>
-			<OnLoad method="OnLoad"/>
-			<OnEvent method="OnEvent"/>
-			<OnShow method="AdjustTiling"/>
-			<OnSizeChanged method="AdjustTiling"/>
-		</Scripts>
-	</Frame>
+	<AnimationGroup name="LSUILineAnimTemplate" looping="REPEAT" virtual="true">
+		<TextureCoordTranslation childKey="FillScroll1" duration="12" order="1" offsetU="1" offsetV="0"/>
+		<TextureCoordTranslation childKey="FillScroll2" duration="12" order="1" offsetU="-1" offsetV="0"/>
+	</AnimationGroup>
 </Ui>

@@ -445,9 +445,8 @@ function BARS:XPBar_Init()
 			E:SmoothBar(bar[i])
 			bar[i]:Hide()
 
-			bar[i].Texture = _G.CreateFrame("Frame", nil, bar[i], "LSUILineTemplate")
+			bar[i].Texture = E:CreateAnimatedLine(bar[i])
 			bar[i].Texture:SetFrameLevel(bar[i]:GetFrameLevel() + 1)
-			bar[i].Texture:SetOrientation("HORIZONTAL")
 			bar[i].Texture:SetAllPoints(bar[i]:GetStatusBarTexture())
 
 			local spark = bar[i]:CreateTexture(nil, "ARTWORK", nil, 1)
