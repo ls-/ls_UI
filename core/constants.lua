@@ -1,4 +1,4 @@
-local _, ns = ...
+local addon, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
 -- Lua
@@ -291,6 +291,11 @@ E.PLAYER_SPEC_FLAGS = {
 E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
 E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
 E.SCREEN_SCALE = _G.UIParent:GetScale()
+
+E.VER = {
+	string = _G.GetAddOnMetadata(addon, "Version")
+}
+E.VER.number = E.VER.string:gsub("%D", "")
 
 local function UpdateScreenConstants()
 	E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
