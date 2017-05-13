@@ -163,6 +163,7 @@ do
 	function UF:CreateAlternativePower(parent, text, textFontObject, textParent)
 		local element = _G.CreateFrame("StatusBar", nil, parent)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:SetStatusBarColor(M.COLORS.INDIGO:GetRGB())
 
 		if text then
 			text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
