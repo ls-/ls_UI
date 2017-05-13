@@ -30,8 +30,12 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 -- Blizz
+local ATTACK_BUTTON_FLASH_TIME = _G.ATTACK_BUTTON_FLASH_TIME
+local TOOLTIP_UPDATE_TIME = _G.TOOLTIP_UPDATE_TIME
 local IsActionInRange = _G.IsActionInRange
 local IsUsableAction = _G.IsUsableAction
+local HasAction = _G.HasAction
+local GetPetActionInfo = _G.GetPetActionInfo
 
 -- Mine
 local actionButtons = {}
@@ -40,9 +44,9 @@ local handledButtons = {}
 local function Button_HasAction(self)
 	if self:IsShown() then
 		if self.__type == "action" or self.__type == "extra" then
-			return self.action and _G.HasAction(self.action)
+			return self.action and HasAction(self.action)
 		elseif self.__type == "petaction" then
-			return _G.GetPetActionInfo(self:GetID())
+			return GetPetActionInfo(self:GetID())
 		end
 	else
 		return false
@@ -637,79 +641,88 @@ do
 		UpdateActionButtonsTable()
 
 		local flash_timer = 0
+		local state_timer = 0
 
-		local updater = _G.CreateFrame("Frame")
-		updater:SetScript("OnUpdate", function (_, elapsed)
+		_G.CreateFrame("Frame"):SetScript("OnUpdate", function (_, elapsed)
 			flash_timer = flash_timer - elapsed
+			state_timer = state_timer - elapsed
 
-			for button in next, actionButtons do
-				if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
-					if button.Flash:IsShown() then
-						button.Flash:Hide()
-					else
-						button.Flash:Show()
-					end
-				end
-
-				if button.__type == "action" or button.__type == "extra" then
-					local isUsable, notEnoughMana = IsUsableAction(button.action)
-
-					if C.bars.use_icon_as_indicator then
-						if not isUsable and not notEnoughMana then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-						elseif IsActionInRange(button.action) == false then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-						elseif notEnoughMana then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+			if flash_timer <= 0 or state_timer <= 0 then
+				for button in next, actionButtons do
+					if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
+						if button.Flash:IsShown() then
+							button.Flash:Hide()
 						else
-							button.icon:SetDesaturated(false)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+							button.Flash:Show()
 						end
+					end
 
-						if button.HotKey then
-							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+					if state_timer <= 0 then
+						if button.__type == "action" or button.__type == "extra" then
+							local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+							if C.bars.use_icon_as_indicator then
+								if not isUsable and not notEnoughMana then
+									button.icon:SetDesaturated(true)
+									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+								elseif IsActionInRange(button.action) == false then
+									button.icon:SetDesaturated(true)
+									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
+								elseif notEnoughMana then
+									button.icon:SetDesaturated(true)
+									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+								else
+									button.icon:SetDesaturated(false)
+									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+								end
+
+								if button.HotKey then
+									if not isUsable and not notEnoughMana then
+										button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+									else
+										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+									end
+								end
 							else
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+								if not isUsable and not notEnoughMana then
+									button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+								else
+									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+								end
+
+								if button.HotKey then
+									if not isUsable and not notEnoughMana then
+										button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+									elseif IsActionInRange(button.action) == false then
+										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+									elseif notEnoughMana then
+										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
+									else
+										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+									end
+								end
 							end
 						end
-					else
-						if not isUsable and not notEnoughMana then
-							button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+					end
+				end
+
+				for button in next, handledButtons do
+					if button:IsShown() and button.SetBorderColor then
+						if button.action and _G.IsEquippedAction(button.action) then
+							button:SetBorderColor(M.COLORS.GREEN:GetRGB())
 						else
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-						end
-
-						if button.HotKey then
-							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-							elseif IsActionInRange(button.action) == false then
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
-							elseif notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
-							else
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-							end
+							button:SetBorderColor(1, 1, 1)
 						end
 					end
 				end
-			end
 
-			for button in next, handledButtons do
-				if button:IsShown() and button.SetBorderColor then
-					if button.action and _G.IsEquippedAction(button.action) then
-						button:SetBorderColor(M.COLORS.GREEN:GetRGB())
-					else
-						button:SetBorderColor(1, 1, 1)
-					end
+				if flash_timer <= 0 then
+					flash_timer = ATTACK_BUTTON_FLASH_TIME
 				end
-			end
 
-			if flash_timer <= 0 then
-				flash_timer = 0.4
+				if state_timer <= 0 then
+					state_timer = TOOLTIP_UPDATE_TIME
+				end
 			end
 		end)
 
@@ -717,6 +730,7 @@ do
 	end
 
 	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
+	E:RegisterEvent("ACTIONBAR_PAGE_CHANGED", UpdateActionButtonsTable)
 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
