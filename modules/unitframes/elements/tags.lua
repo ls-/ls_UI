@@ -6,6 +6,7 @@ local _G = getfenv(0)
 local s_format = _G.string.format
 
 -- Blizz
+local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
 local FOREIGN_SERVER_LABEL = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
 local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
 local GetPVPTimer = _G.GetPVPTimer
@@ -13,6 +14,7 @@ local IsPVPTimerRunning = _G.IsPVPTimerRunning
 local IsResting = _G.IsResting
 local SecondsToTimeAbbrev = _G.SecondsToTimeAbbrev
 local UnitAffectingCombat = _G.UnitAffectingCombat
+local UnitAlternatePowerInfo = _G.UnitAlternatePowerInfo
 local UnitBattlePetLevel = _G.UnitBattlePetLevel
 local UnitCanAssist = _G.UnitCanAssist
 local UnitCanAttack = _G.UnitCanAttack
@@ -102,6 +104,11 @@ end
 oUF.Tags.Methods["ls:color:power"] = function(unit)
 	return "|cff"..M.COLORS.POWER[UnitPowerType(unit)]:GetHEX(0.3)
 end
+
+oUF.Tags.Methods["ls:color:altpower"] = function()
+	return "|cff"..M.COLORS.INDIGO:GetHEX(0.3)
+end
+
 ------------
 -- HEALTH --
 ------------
@@ -209,7 +216,7 @@ oUF.Tags.Methods["ls:power:perc"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		else
-			return s_format("%.1f%%", cur, max)
+			return s_format("%.1f%%", E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -299,6 +306,111 @@ oUF.Tags.Methods["ls:power:deficit"] = function(unit)
 		else
 			return s_format("-%s", E:NumberFormat(max - cur, 1))
 		end
+	end
+end
+
+---------------
+-- ALT POWER --
+---------------
+
+oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		return E:NumberFormat(UnitPower(unit, ALTERNATE_POWER_INDEX), 1)
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:max"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		return E:NumberFormat(UnitPowerMax(unit, ALTERNATE_POWER_INDEX), 1)
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		return s_format("%.1f%%", E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+
+		if cur == max then
+			return E:NumberFormat(cur, 1)
+		else
+			return s_format("%s - %.1f%%", E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
+		end
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+
+		if cur == 0 or cur == max then
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
+		else
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberToPerc(cur, max))
+		end
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+
+		if cur == max then
+			return E:NumberFormat(cur, 1)
+		else
+			return s_format("%s - %s", E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
+		end
+	else
+		return ""
+	end
+end
+
+oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
+	local type = UnitAlternatePowerInfo(unit)
+
+	if type then
+		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
+
+		if cur == 0 or cur == max then
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
+		else
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(max, 1))
+		end
+	else
+		return ""
 	end
 end
 
