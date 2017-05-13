@@ -215,6 +215,8 @@ end
 -- COLOURS --
 -------------
 
+local adjustment_cache = {}
+
 -- http://marcocorvi.altervista.org/games/imgpr/rgb-hsl.htm
 local function RGBToHSL(r, g, b)
 	local max = m_max(r, g, b)
@@ -282,9 +284,22 @@ local function HEXToRGB(hex)
 end
 
 local function AdjustColor(r, g, b, perc)
-	local h, s, l = RGBToHSL(r, g, b)
+	local key = r.."-"..g.."-"..b
 
-	return HSLToRGB(h, s, Clamp(l + perc))
+	if not adjustment_cache[perc] then
+		adjustment_cache[perc] = {}
+	else
+		if adjustment_cache[perc][key] then
+			return unpack(adjustment_cache[perc][key])
+		end
+	end
+
+	local h, s, l = RGBToHSL(r, g, b)
+	r, g, b = HSLToRGB(h, s, Clamp(l + perc))
+
+	adjustment_cache[perc][key] = {r, g, b}
+
+	return r, g, b
 end
 
 -- http://wow.gamepedia.com/ColorGradient
