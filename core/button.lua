@@ -35,10 +35,11 @@ local s_utf8sub = _G.string.utf8sub
 -- Blizz
 local ATTACK_BUTTON_FLASH_TIME = _G.ATTACK_BUTTON_FLASH_TIME
 local TOOLTIP_UPDATE_TIME = _G.TOOLTIP_UPDATE_TIME
-local IsActionInRange = _G.IsActionInRange
-local IsUsableAction = _G.IsUsableAction
-local HasAction = _G.HasAction
 local GetPetActionInfo = _G.GetPetActionInfo
+local HasAction = _G.HasAction
+local IsActionInRange = _G.IsActionInRange
+local IsEquippedAction = _G.IsEquippedAction
+local IsUsableAction = _G.IsUsableAction
 
 -- Mine
 local actionButtons = {}
@@ -171,6 +172,60 @@ local function SetCheckedTexture(button)
 	button:GetCheckedTexture():SetAllPoints()
 end
 
+local function UpdateState(button)
+	if button.__type == "action" or button.__type == "extra" then
+		local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+		if C.bars.use_icon_as_indicator then
+			if not isUsable and not notEnoughMana then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+			elseif IsActionInRange(button.action) == false then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
+			elseif notEnoughMana then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+			else
+				button.icon:SetDesaturated(false)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			end
+
+			if button.HotKey then
+				if not isUsable and not notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+				else
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+				end
+			end
+		else
+			if not isUsable and not notEnoughMana then
+				button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+			else
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			end
+
+			if button.HotKey then
+				if not isUsable and not notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+				elseif IsActionInRange(button.action) == false then
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+				elseif notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
+				else
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+				end
+			end
+		end
+
+		if button.action and IsEquippedAction(button.action) then
+			button:SetBorderColor(M.COLORS.GREEN:GetRGB())
+		else
+			button:SetBorderColor(1, 1, 1)
+		end
+	end
+end
+
 local function SkinButton(button)
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
@@ -287,6 +342,7 @@ local function SkinButton(button)
 	end
 
 	button:SetScript("OnUpdate", nil)
+	button:HookScript("OnEnter", UpdateState)
 	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 
 	button.HasAction = Button_HasAction
@@ -636,6 +692,8 @@ do
 			if button:HasAction() then
 				actionButtons[button] = true
 			else
+				button:SetBorderColor(1, 1, 1)
+
 				actionButtons[button] = nil
 			end
 		end
@@ -662,61 +720,7 @@ do
 					end
 
 					if state_timer <= 0 then
-						if button.__type == "action" or button.__type == "extra" then
-							local isUsable, notEnoughMana = IsUsableAction(button.action)
-
-							if C.bars.use_icon_as_indicator then
-								if not isUsable and not notEnoughMana then
-									button.icon:SetDesaturated(true)
-									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-								elseif IsActionInRange(button.action) == false then
-									button.icon:SetDesaturated(true)
-									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-								elseif notEnoughMana then
-									button.icon:SetDesaturated(true)
-									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
-								else
-									button.icon:SetDesaturated(false)
-									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-								end
-
-								if button.HotKey then
-									if not isUsable and not notEnoughMana then
-										button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-									else
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-									end
-								end
-							else
-								if not isUsable and not notEnoughMana then
-									button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-								else
-									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-								end
-
-								if button.HotKey then
-									if not isUsable and not notEnoughMana then
-										button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-									elseif IsActionInRange(button.action) == false then
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
-									elseif notEnoughMana then
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
-									else
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-									end
-								end
-							end
-						end
-					end
-				end
-
-				for button in next, handledButtons do
-					if button:IsShown() and button.SetBorderColor then
-						if button.action and _G.IsEquippedAction(button.action) then
-							button:SetBorderColor(M.COLORS.GREEN:GetRGB())
-						else
-							button:SetBorderColor(1, 1, 1)
-						end
+						UpdateState(button)
 					end
 				end
 
