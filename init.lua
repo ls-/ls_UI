@@ -10,8 +10,10 @@ local function ADDON_LOADED(arg)
 
 	-- -> 70200.05
 	if not _G.LS_UI_CONFIG.version or _G.LS_UI_CONFIG.version.number < 7020005 then
-		_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
-		_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
+		if _G.LS_UI_CONFIG.movers then
+			_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
+			_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
+		end
 	end
 
 	E:CopyTable(E:CopyTable(D, _G.LS_UI_CONFIG), C)
