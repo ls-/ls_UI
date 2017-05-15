@@ -173,7 +173,7 @@ local function SetCheckedTexture(button)
 end
 
 local function UpdateState(button)
-	if button.__type == "action" or button.__type == "extra" then
+	if button.action and (button.__type == "action" or button.__type == "extra") then
 		local isUsable, notEnoughMana = IsUsableAction(button.action)
 
 		if C.bars.use_icon_as_indicator then
@@ -218,7 +218,7 @@ local function UpdateState(button)
 			end
 		end
 
-		if button.action and IsEquippedAction(button.action) then
+		if IsEquippedAction(button.action) then
 			button:SetBorderColor(M.COLORS.GREEN:GetRGB())
 		else
 			button:SetBorderColor(1, 1, 1)
