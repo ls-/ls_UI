@@ -26,6 +26,10 @@ do
 			element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
 
 			element._UnitGUID = unitGUID
+
+			element.Text:Show()
+		else
+			element.Text:Hide()
 		end
 
 		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
@@ -152,6 +156,10 @@ do
 			element:UpdateGainLoss(cur, max, unitGUID == element._UnitGUID)
 
 			element._UnitGUID = unitGUID
+
+			element.Text:Show()
+		else
+			element.Text:Hide()
 		end
 
 		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
