@@ -22,7 +22,7 @@ function UF:ConstructPetFrame(frame)
 	fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 	fg:SetPoint("CENTER", 0, 0)
 
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow")
+	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", frame)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
@@ -35,7 +35,7 @@ function UF:ConstructPetFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow")
+	local power = self:CreatePower(frame, true, "LS12Font_Shadow", frame)
 	power:SetFrameLevel(level + 1)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
