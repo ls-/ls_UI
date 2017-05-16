@@ -6,10 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
--- local ICON_COORDS = {48 / 128, 78 / 128, 1 / 64, 31 / 64}
--- local BANNER_COORDS = {1 / 128, 47 / 128, 1 / 64, 49 / 64}
-
-local function Override(self, event, unit)
+local function Override(self, _, unit)
 	if unit ~= self.unit then return end
 
 	local pvp = self.PvPIndicator
@@ -50,67 +47,76 @@ local function Override(self, event, unit)
 		pvp:Show()
 		pvp.Prestige:Show()
 
-		if pvp.Hook then
-			pvp.Hook:Show()
+		if not pvp.Holder:IsExpanded() then
+			pvp.Holder:Expand()
 		end
 	else
 		pvp:Hide()
 		pvp.Prestige:Hide()
 
-		if pvp.Hook then
-			pvp.Hook:Hide()
+		if pvp.Holder:IsExpanded() then
+			pvp.Holder:Collapse()
 		end
 	end
 end
 
-function UF:CreatePvPIcon_new(parent, layer, sublayer, options)
-	options = options or {}
+local function Expand(self)
+	self:Show()
 
-	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
-	pvp:SetSize(30, 30)
-
-	local banner = parent:CreateTexture(nil, layer, nil, sublayer - 1)
-	banner:SetSize(46, 48)
-	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
-	pvp.Prestige = banner
-
-	if options.has_hook then
-		local t = parent:CreateTexture(nil, layer, nil, sublayer)
-		t:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
-		t:SetSize(33, 36)
-		pvp.Hook = t
+	if self.PostExpand then
+		self:PostExpand()
 	end
 
+	self._expanded = true
+end
+
+local function Collapse(self)
+	self:Hide()
+
+	if self.PostCollapse then
+		self:PostCollapse()
+	end
+
+	self._expanded = false
+end
+
+local function IsExpanded(self)
+	return self._expanded
+end
+
+function UF:CreatePvPIndicator(parent)
+	local holder = _G.CreateFrame("Frame", nil, parent)
+	holder:SetSize(46, 48)
+
+	holder.Expand = Expand
+	holder.Collapse = Collapse
+	holder.IsExpanded = IsExpanded
+
+	local pvp = holder:CreateTexture(nil, "ARTWORK", nil, 0)
+	pvp:SetSize(30, 30)
+
+	local banner = holder:CreateTexture(nil, "ARTWORK", nil, -1)
+	banner:SetSize(46, 48)
+	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
+
+	pvp.Holder = holder
+	pvp.Prestige = banner
 	pvp.Override = Override
 
 	return pvp
 end
 
-function UF:CreatePvPIcon(parent, layer, sublayer, hook, pvpTimer)
-	local pvp = parent:CreateTexture(nil, layer, nil, sublayer)
-	pvp:SetSize(30, 30)
+function UF:UpdatePvPIndicator(frame)
+	local config = frame._config.pvp
+	local element = frame.PvPIndicator
 
-	local banner = parent:CreateTexture(nil, layer, nil, sublayer - 1)
-	banner:SetSize(46, 48)
-	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
-	pvp.Prestige = banner
-
-	if hook then
-		hook = parent:CreateTexture(nil, layer, nil, sublayer)
-		hook:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-hook")
-		hook:SetSize(33, 36)
-		pvp.Hook = hook
+	if config.enabled and not frame:IsElementEnabled("PvPIndicator") then
+		frame:EnableElement("PvPIndicator")
+	elseif not config.enabled and frame:IsElementEnabled("PvPIndicator") then
+		frame:DisableElement("PvPIndicator")
 	end
 
-	if pvpTimer then
-		pvpTimer = E:CreateFontString(parent, 10, "$parentPvPTimer", nil, true)
-		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
-		pvpTimer:SetTextColor(1, 0.82, 0)
-		pvpTimer:SetJustifyH("RIGHT")
-		pvp.Timer = pvpTimer
+	if frame:IsElementEnabled("PvPIndicator") then
+		element:ForceUpdate()
 	end
-
-	pvp.Override = Override
-
-	return pvp
 end

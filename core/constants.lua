@@ -1,4 +1,4 @@
-local _, ns = ...
+local addon, ns = ...
 local E, M, oUF = ns.E, ns.M, ns.oUF
 
 -- Lua
@@ -70,13 +70,22 @@ oUF.colors.reaction = {
 	[8] = {COLORS.GREEN:GetRGB()},
 }
 
-oUF.colors.power.ARCANE_CHARGES = {46 / 255, 124 / 255, 214 / 255} -- Munsell 5PB 5/12 (#2e7cd6)
-oUF.colors.power.COMBO_POINTS = {216 / 255, 75 / 255, 24 / 255} -- Munsell 10R 5/14 (#d84b18)
-oUF.colors.power.ENERGY = {COLORS.YELLOW:GetRGB()}
-oUF.colors.power.INSANITY = {126 / 255, 69 / 255, 180 / 255} -- Munsell 2.5P 4/14 (#7e45b4)
 oUF.colors.power.MANA = {COLORS.BLUE:GetRGB()}
+oUF.colors.power.ENERGY = {COLORS.YELLOW:GetRGB()}
+oUF.colors.power.COMBO_POINTS = {216 / 255, 75 / 255, 24 / 255} -- Munsell 10R 5/14 (#d84b18)
 oUF.colors.power.RUNES = {107 / 255, 183 / 255, 238 / 255} -- Munsell 10B 7/8 (#6bb7ee)
 oUF.colors.power.SOUL_SHARDS = {150 / 255, 97 / 255, 210 / 255} -- Munsell 2.5P 5/14 (#9661d2)
+oUF.colors.power.INSANITY = {126 / 255, 69 / 255, 180 / 255} -- Munsell 2.5P 4/14 (#7e45b4)
+oUF.colors.power.ARCANE_CHARGES = {46 / 255, 124 / 255, 214 / 255} -- Munsell 5PB 5/12 (#2e7cd6)
+
+-- remap
+oUF.colors.power[0] = oUF.colors.power.MANA
+oUF.colors.power[3] = oUF.colors.power.ENERGY
+oUF.colors.power[4] = oUF.colors.power.COMBO_POINTS
+oUF.colors.power[5] = oUF.colors.power.RUNES
+oUF.colors.power[7] = oUF.colors.power.SOUL_SHARDS
+oUF.colors.power[13] = oUF.colors.power.INSANITY
+oUF.colors.power[16] = oUF.colors.power.ARCANE_CHARGES
 
 for k, color in pairs(oUF.colors.power) do
 	if type(color[1]) ~= "table" then
@@ -283,6 +292,11 @@ E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
 E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
 E.SCREEN_SCALE = _G.UIParent:GetScale()
 
+E.VER = {
+	string = _G.GetAddOnMetadata(addon, "Version")
+}
+E.VER.number = E.VER.string:gsub("%D", "")
+
 local function UpdateScreenConstants()
 	E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
 	E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
@@ -301,69 +315,4 @@ function E:UpdateConstants()
 	end
 
 	E.PLAYER_GUID = _G.UnitGUID("player")
-end
-
-do
-	local mixin = {}
-
-	function mixin:SetVertexColor(r, g, b, a)
-		self.Fill:SetVertexColor(r, g, b, a or 1)
-		self.FillScroll1:SetVertexColor(r, g, b, a or 1)
-		self.FillScroll2:SetVertexColor(r, g, b, a or 1)
-	end
-
-	function mixin:GetVertexColor()
-		return self.Fill:GetVertexColor()
-	end
-
-	function mixin:SetThickness(thickness)
-		self.Fill:SetThickness(thickness)
-		self.FillScroll1:SetThickness(thickness)
-		self.FillScroll2:SetThickness(thickness)
-	end
-
-	function mixin:SetOrientation(flag)
-		if flag == "HORIZONTAL" then
-			self.orientation = flag
-
-			self.Fill:SetStartPoint("LEFT", self)
-			self.FillScroll1:SetStartPoint("LEFT", self)
-			self.FillScroll2:SetStartPoint("LEFT", self)
-
-			self.Fill:SetEndPoint("RIGHT", self)
-			self.FillScroll1:SetEndPoint("RIGHT", self)
-			self.FillScroll2:SetEndPoint("RIGHT", self)
-		else
-			self.orientation = "VERTICAL"
-
-			self.Fill:SetStartPoint("BOTTOM", self)
-			self.FillScroll1:SetStartPoint("BOTTOM", self)
-			self.FillScroll2:SetStartPoint("BOTTOM", self)
-
-			self.Fill:SetEndPoint("TOP", self)
-			self.FillScroll1:SetEndPoint("TOP", self)
-			self.FillScroll2:SetEndPoint("TOP", self)
-		end
-	end
-
-	function mixin:OnLoad()
-		self:SetOrientation("HORIZONTAL")
-		self:SetThickness(16 * E.SCREEN_SCALE)
-		self:RegisterEvent("DISPLAY_SIZE_CHANGED")
-		self:RegisterEvent("UI_SCALE_CHANGED")
-	end
-
-	function mixin:OnEvent()
-		self:SetThickness(16 * E.SCREEN_SCALE)
-	end
-
-	function mixin:AdjustTiling()
-		self.tileAmount = self.orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
-
-		self.Fill:SetTexCoord(0, self.tileAmount, 0, 1)
-		self.FillScroll1:SetTexCoord(0, self.tileAmount, 0, 1)
-		self.FillScroll2:SetTexCoord(0, self.tileAmount, 0, 1)
-	end
-
-	LSUILineMixin = mixin
 end

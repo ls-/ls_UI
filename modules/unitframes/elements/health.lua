@@ -8,83 +8,239 @@ local _G = getfenv(0)
 -- Blizz
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-local DEAD = _G.DEAD
-local PLAYER_OFFLINE = _G.PLAYER_OFFLINE
 
 -- Mine
-local function PostUpdateHealth(bar, unit, cur, max)
-	if not bar.Text then return end
-
-	if not UnitIsConnected(unit) then
-		bar:SetValue(0)
-
-		return bar.Text:SetText(PLAYER_OFFLINE)
-	elseif UnitIsDeadOrGhost(unit) then
-		bar:SetValue(0)
-
-		return bar.Text:SetText(DEAD)
+do
+	local function SetStatusBarColorHook(self, r, g, b)
+		self._texture:SetColorTexture(r, g, b)
 	end
 
-	if bar.__owner.isMouseOver then
-		if unit == "target" or unit == "focus" then
-			return bar.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-		elseif unit:match("(boss)%d+") then
-			return bar.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
+	local function PostUpdate(element, unit)
+		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			element:SetMinMaxValues(0, 1)
+			element:SetValue(0)
 		end
-	else
-		if cur == max then
-			if unit == "player" or unit == "vehicle" or unit == "pet" then
-				return bar.Text:SetText(nil)
+	end
+
+	function UF:CreateHealth(parent, text, textFontObject, textParent)
+		local element = _G.CreateFrame("StatusBar", nil, parent)
+		element:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+
+		E:SmoothBar(element)
+
+		element._texture = element:CreateTexture(nil, "ARTWORK")
+		element._texture:SetAllPoints(element:GetStatusBarTexture())
+
+		_G.hooksecurefunc(element, "SetStatusBarColor", SetStatusBarColorHook)
+
+		if text then
+			text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
+			text:SetWordWrap(false)
+			E:ResetFontStringHeight(text)
+			element.Text = text
+		end
+
+		element.colorHealth = true
+		element.colorTapping = true
+		element.colorDisconnected = true
+		element.PostUpdate = PostUpdate
+
+		return element
+	end
+
+	function UF:UpdateHealth(frame)
+		local config = frame._config.health
+		local element = frame.Health
+
+		element:SetOrientation(config.orientation)
+
+		if config.color then
+			element.colorClass = config.color.class
+			element.colorReaction = config.color.reaction
+		end
+
+		if element.Text then
+			element.Text:SetJustifyV(config.text.v_alignment or "MIDDLE")
+			element.Text:SetJustifyH(config.text.h_alignment or "CENTER")
+			element.Text:ClearAllPoints()
+
+			local point1 = config.text.point1
+
+			if point1 and point1.p then
+				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
+
+			frame:Tag(element.Text, config.text.tag)
+		end
+
+		if element.ForceUpdate then
+			element:ForceUpdate()
+		end
+	end
+end
+
+do
+	local function UpdateBar(self, value, orientation, appendTexture)
+		if orientation == "HORIZONTAL" then
+			self:SetPoint("LEFT", appendTexture, "RIGHT")
 		else
-			if unit == "target" or unit == "focus" then
-				return bar.Text:SetFormattedText(L["BAR_VALUE_PERC_TEMPLATE"], E:NumberFormat(cur, 1), E:NumberToPerc(cur, max))
-			elseif unit:match("(boss)%d+") then
-				return bar.Text:SetFormattedText(L["BAR_PERC_TEMPLATE"], E:NumberToPerc(cur, max))
-			end
+			self:SetPoint("BOTTOM", appendTexture, "TOP")
+		end
+
+		if self.Overlay then
+			self.Overlay:SetShown(value ~= 0)
+		end
+
+		return self:GetStatusBarTexture()
+	end
+
+	local function PostUpdate(self, _, myIncomingHeal, otherIncomingHeal, absorb)
+		local appendTexture = self.__owner.Health:GetStatusBarTexture()
+		local orientation = self.__owner.Health:GetOrientation()
+
+		if self.myBar and myIncomingHeal > 0 then
+			appendTexture = UpdateBar(self.myBar, myIncomingHeal, orientation, appendTexture)
+		end
+
+		if self.otherBar and otherIncomingHeal > 0 then
+			appendTexture = UpdateBar(self.otherBar, otherIncomingHeal, orientation, appendTexture)
+		end
+
+		if self.absorbBar then
+			UpdateBar(self.absorbBar, absorb, orientation, appendTexture)
 		end
 	end
 
-	bar.Text:SetFormattedText(L["BAR_VALUE_TEMPLATE"], E:NumberFormat(cur, 1))
-end
+	function UF:CreateHealthPrediction(parent)
+		local level = parent:GetFrameLevel()
 
-function UF:CreateHealthBar_new(parent, textFontObject, options)
-	P.argcheck(1, parent, "table")
-	P.argcheck(2, textFontObject, "string")
+		local myBar = _G.CreateFrame("StatusBar", nil, parent)
+		myBar:SetFrameLevel(level)
+		myBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
+		parent.MyHeal = myBar
 
-	options = options or {}
+		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
+		myBar._texture:SetAllPoints(myBar:GetStatusBarTexture())
+		myBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 
-	local bar = _G.CreateFrame("StatusBar", "$parentHealthBar", parent)
-	bar:SetOrientation(options.is_vertical and "VERTICAL" or "HORIZONTAL")
-	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	E:SmoothBar(bar)
+		local otherBar = _G.CreateFrame("StatusBar", nil, parent)
+		otherBar:SetFrameLevel(level)
+		otherBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		parent.OtherHeal = otherBar
 
-	local text = (options.text_parent or bar):CreateFontString(nil, "ARTWORK", textFontObject)
-	text:SetWordWrap(false)
-	E:ResetFontStringHeight(text)
-	bar.Text = text
+		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
+		otherBar._texture:SetAllPoints(otherBar:GetStatusBarTexture())
+		otherBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.OTHER_HEAL:GetRGB())
 
-	bar.colorHealth = true
-	bar.colorDisconnected = true
-	bar.colorReaction = options.color_reaction
-	bar.PostUpdate = PostUpdateHealth
+		local absorbBar = _G.CreateFrame("StatusBar", nil, parent)
+		absorbBar:SetFrameLevel(level + 1)
+		absorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		parent.DamageAbsorb = absorbBar
 
-	return bar
-end
+		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
+		overlay:SetTexture("Interface\\AddOns\\ls_UI\\media\\absorb", true)
+		overlay:SetHorizTile(true)
+		overlay:SetVertTile(true)
+		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
+		absorbBar.Overlay = overlay
 
-function UF:CreateHealthBar(parent, textSize, reaction, vertical)
-	local health = _G.CreateFrame("StatusBar", "$parentHealthBar", parent)
-	health:SetOrientation(vertical and "VERTICAL" or "HORIZONTAL")
-	health:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-	E:SmoothBar(health)
+		local healAbsorbBar = _G.CreateFrame("StatusBar", nil, parent)
+		healAbsorbBar:SetReverseFill(true)
+		healAbsorbBar:SetFrameLevel(level + 1)
+		healAbsorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
+		parent.HealAbsorb = healAbsorbBar
 
-	local text = E:CreateFontString(health, textSize, "$parentHealthText", true)
-	health.Text = text
+		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
+		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
+		healAbsorbBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 
-	health.colorHealth = true
-	health.colorDisconnected = true
-	health.colorReaction = reaction
-	health.PostUpdate = PostUpdateHealth
+		E:SmoothBar(myBar)
+		E:SmoothBar(otherBar)
+		E:SmoothBar(healAbsorbBar)
 
-	return health
+		return {
+			myBar = myBar,
+			otherBar = otherBar,
+			absorbBar = absorbBar,
+			healAbsorbBar = healAbsorbBar,
+			maxOverflow = 1,
+			PostUpdate = PostUpdate
+		}
+	end
+
+	function UF:UpdateHealthPrediction(frame)
+		local config = frame._config.health
+		local element = frame.HealthPrediction
+		local myBar = element.myBar
+		local otherBar = element.otherBar
+		local absorbBar = element.absorbBar
+		local healAbsorbBar = element.healAbsorbBar
+
+		myBar:SetOrientation(config.orientation)
+		otherBar:SetOrientation(config.orientation)
+		absorbBar:SetOrientation(config.orientation)
+		healAbsorbBar:SetOrientation(config.orientation)
+
+		if config.orientation == "HORIZONTAL" then
+			local width = frame.Health:GetWidth()
+			width = width > 0 and width or frame:GetWidth()
+
+			myBar:ClearAllPoints()
+			myBar:SetPoint("TOP")
+			myBar:SetPoint("BOTTOM")
+			myBar:SetWidth(width)
+
+			otherBar:ClearAllPoints()
+			otherBar:SetPoint("TOP")
+			otherBar:SetPoint("BOTTOM")
+			otherBar:SetWidth(width)
+
+			absorbBar:ClearAllPoints()
+			absorbBar:SetPoint("TOP")
+			absorbBar:SetPoint("BOTTOM")
+			absorbBar:SetWidth(width)
+
+			healAbsorbBar:ClearAllPoints()
+			healAbsorbBar:SetPoint("TOP")
+			healAbsorbBar:SetPoint("BOTTOM")
+			healAbsorbBar:SetPoint("RIGHT", frame.Health:GetStatusBarTexture(), "RIGHT")
+			healAbsorbBar:SetWidth(width)
+		else
+			local height = frame.Health:GetHeight()
+			height = height > 0 and height or frame:GetHeight()
+
+			myBar:ClearAllPoints()
+			myBar:SetPoint("LEFT")
+			myBar:SetPoint("RIGHT")
+			myBar:SetHeight(height)
+
+			otherBar:ClearAllPoints()
+			otherBar:SetPoint("LEFT")
+			otherBar:SetPoint("RIGHT")
+			otherBar:SetHeight(height)
+
+			absorbBar:ClearAllPoints()
+			absorbBar:SetPoint("LEFT")
+			absorbBar:SetPoint("RIGHT")
+			absorbBar:SetHeight(height)
+
+			healAbsorbBar:ClearAllPoints()
+			healAbsorbBar:SetPoint("LEFT")
+			healAbsorbBar:SetPoint("RIGHT")
+			healAbsorbBar:SetPoint("TOP", frame.Health:GetStatusBarTexture(), "TOP")
+			healAbsorbBar:SetHeight(height)
+		end
+
+		if config.prediction.enabled and not frame:IsElementEnabled("HealthPrediction") then
+			frame:EnableElement("HealthPrediction")
+		elseif not config.prediction.enabled and frame:IsElementEnabled("HealthPrediction") then
+			frame:DisableElement("HealthPrediction")
+		end
+
+		if frame:IsElementEnabled("HealthPrediction") then
+			element:ForceUpdate()
+		end
+	end
 end

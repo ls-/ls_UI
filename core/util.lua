@@ -3,14 +3,23 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local bit = _G.bit
-local math = _G.math
-local string = _G.string
-local table = _G.table
 local assert = _G.assert
+local b_and = _G.bit.band
+local b_not = _G.bit.bnot
+local b_or = _G.bit.bor
+local b_xor = _G.bit.bxor
+local m_abs = _G.math.abs
+local m_floor = _G.math.floor
+local m_max = _G.math.max
+local m_min = _G.math.min
+local m_modf = _G.math.modf
 local next = _G.next
-local pairs = _G.pairs
+local s_format = _G.string.format
+local s_split = _G.string.split
+local s_sub = _G.string.sub
+local s_utf8sub = _G.string.utf8sub
 local select = _G.select
+local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local type = _G.type
 local unpack = _G.unpack
@@ -39,7 +48,7 @@ local function CopyTable(src, dest)
 		dest = {}
 	end
 
-	for k, v in pairs(src) do
+	for k, v in next, src do
 		if type(v) == "table" then
 			dest[k] = CopyTable(v, dest[k])
 		elseif type(v) ~= type(dest[k]) then
@@ -54,10 +63,10 @@ local function ReplaceTable(src, dest)
 	if type(dest) ~= "table" then
 		dest = {}
 	else
-		table.wipe(dest)
+		t_wipe(dest)
 	end
 
-	for k, v in pairs(src) do
+	for k, v in next, src do
 		if type(v) == "table" then
 			dest[k] = ReplaceTable(v, dest[k])
 		else
@@ -77,7 +86,7 @@ local function DiffTable(src , dest)
 		return dest
 	end
 
-	for k, v in pairs(dest) do
+	for k, v in next, dest do
 		if type(v) == "table" then
 			if not next(DiffTable(src[k], v)) then
 				dest[k] = nil
@@ -91,7 +100,7 @@ local function DiffTable(src , dest)
 end
 
 local function IsEqualTable(a, b)
-	for k, v in pairs(a) do
+	for k, v in next, a do
 		if type(v) == "table" and type(b[k]) == "table" then
 			if not IsEqualTable(v, b[k]) then
 				return false
@@ -103,7 +112,7 @@ local function IsEqualTable(a, b)
 		end
 	end
 
-	for k, v in pairs(b) do
+	for k, v in next, b do
 		if type(v) == "table" and type(a[k]) == "table" then
 			if not IsEqualTable(v, a[k]) then
 				return false
@@ -150,8 +159,16 @@ end
 -- MATHS --
 -----------
 
+local function Clamp(v)
+	return m_min(1, m_max(0, v))
+end
+
 local function Round(v)
-	return math.floor(v + 0.5)
+	return m_floor(v + 0.5)
+end
+
+function E:Clamp(v)
+	return v and Clamp(v) or nil
 end
 
 function E:Round(v)
@@ -159,23 +176,23 @@ function E:Round(v)
 end
 
 function E:NumberToPerc(v1, v2)
-	return (v1 and v2) and Round(v1 / v2 * 100) or nil
+	return (v1 and v2) and v1 / v2 * 100 or nil
 end
 
 function E:NumberFormat(v, mod)
-	v = math.abs(v)
+	v = m_abs(v)
 
 	if v >= 1E6 then
-		return string.format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP_NO_SPACE, v / 1E6)
+		return s_format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP_NO_SPACE, v / 1E6)
 	elseif v >= 1E4 then
-		return string.format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP_NO_SPACE, v / 1E3)
+		return s_format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP_NO_SPACE, v / 1E3)
 	else
 		return v
 	end
 end
 
 function E:TimeFormat(v)
-	v = math.abs(v)
+	v = m_abs(v)
 
 	if v >= 86400 then
 		return Round(v / 86400), "|cffe5e5e5", DAY_ONELETTER_ABBR
@@ -190,7 +207,7 @@ function E:TimeFormat(v)
 	elseif v >= 1 then
 		return Round(v), "|cffe51919", SECOND_ONELETTER_ABBR
 	else
-		return tonumber(string.format("%.1f", v)), "|cffe51919", "%.1f"
+		return tonumber(s_format("%.1f", v)), "|cffe51919", "%.1f"
 	end
 end
 
@@ -198,8 +215,91 @@ end
 -- COLOURS --
 -------------
 
-local function CalcHEXFromRGB(r, g, b)
-	return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
+local adjustment_cache = {}
+
+-- http://marcocorvi.altervista.org/games/imgpr/rgb-hsl.htm
+local function RGBToHSL(r, g, b)
+	local max = m_max(r, g, b)
+	local min = m_min(r, g, b)
+	local l = (max + min) / 2
+	local h, s
+
+	if max == min then
+		h, s = 0, 0
+	else
+		local d = max - min
+
+		if max == r then
+			h = 60 * (g - b) / d
+		elseif max == g then
+			h = 60 * (b - r) / d + 120
+		else
+			h = 60 * (r - g) / d + 240
+		end
+
+		s = l < 0.5 and d / (2 * l) or d / (2 - 2 * l)
+	end
+
+	return h % 360, s, l
+end
+
+local function HueToRGB(v1, v2, v3)
+	if v3 < 0 then
+		v3 = v3 + 1
+	elseif v3 > 1 then
+		v3 = v3 - 1
+	end
+
+	if v3 < 1 / 6 then
+		return v1 + (v2 - v1) * 6 * v3
+	elseif v3  < 1 / 2 then
+		return v2
+	elseif v3 < 2 / 3 then
+		return v1 + (v2 - v1) * (2 / 3 - v3) * 6
+	end
+
+	return v1
+end
+
+local function HSLToRGB(h, s, l)
+	if s == 0 then
+		return l, l, l
+	else
+		local v2 = l < 0.5 and l * (1 + s) or l + s - l * s
+		local v1 = 2 * l - v2
+		h = h / 360
+
+		return Clamp(HueToRGB(v1, v2, h + 1 / 3)), Clamp(HueToRGB(v1, v2, h)), Clamp(HueToRGB(v1, v2, h - 1 / 3))
+	end
+end
+
+local function RGBToHEX(r, g, b)
+	return s_format("%02x%02x%02x", Clamp(r) * 255, Clamp(g) * 255, Clamp(b) * 255)
+end
+
+local function HEXToRGB(hex)
+	local rhex, ghex, bhex = tonumber(s_sub(hex, 1, 2), 16), tonumber(s_sub(hex, 3, 4), 16), tonumber(s_sub(hex, 5, 6), 16)
+
+	return tonumber(s_format("%.3f", rhex / 255)), tonumber(s_format("%.3f", ghex / 255)), tonumber(s_format("%.3f", bhex / 255))
+end
+
+local function AdjustColor(r, g, b, perc)
+	local key = r.."-"..g.."-"..b
+
+	if not adjustment_cache[perc] then
+		adjustment_cache[perc] = {}
+	else
+		if adjustment_cache[perc][key] then
+			return unpack(adjustment_cache[perc][key])
+		end
+	end
+
+	local h, s, l = RGBToHSL(r, g, b)
+	r, g, b = HSLToRGB(h, s, Clamp(l + perc))
+
+	adjustment_cache[perc][key] = {r, g, b}
+
+	return r, g, b
 end
 
 -- http://wow.gamepedia.com/ColorGradient
@@ -212,56 +312,94 @@ local function CalcGradient(colorTable, perc)
 		return colorTable[1], colorTable[2], colorTable[3]
 	end
 
-	local i, relperc = math.modf(perc * (num / 3 - 1))
+	local i, relperc = m_modf(perc * (num / 3 - 1))
 	local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
 
 	return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, 1
 end
 
-local function GetColorHEX(self)
-	return self.hex
+local function GetColorHEX(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		return RGBToHEX(AdjustColor(self.r, self.g, self.b, adjustment))
+	else
+		return self.hex
+	end
 end
 
-local function GetColorRGB(self)
-	return self.r, self.g, self.b
+local function GetColorRGB(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		return AdjustColor(self.r, self.g, self.b, adjustment)
+	else
+		return self.r, self.g, self.b
+	end
 end
 
-local function GetColorRGBA(self, alpha)
-	return self.r, self.g, self.b, alpha or self.a
+local function GetColorRGBA(self, alpha, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = AdjustColor(self.r, self.g, self.b, adjustment)
+
+		return r, g, b, alpha or self.a
+	else
+		return self.r, self.g, self.b, alpha or self.a
+	end
 end
 
-local function GetColorRGBHEX(self)
-	return self.r, self.g, self.b, self.hex
+local function GetColorRGBHEX(self, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = AdjustColor(self.r, self.g, self.b, adjustment)
+
+		return r, g, b, RGBToHEX(r, g, b)
+	else
+		return self.r, self.g, self.b, self.hex
+	end
 end
 
-local function WrapTextInColorCode(self, text)
-	return string.format("|cff%s%s|r", self.hex, text)
+local function WrapTextInColorCode(self, text, adjustment)
+	return s_format("|cff%s%s|r", GetColorHEX(self, adjustment), text)
 end
 
-local function GetGradientHEX(self, perc)
-	return CalcHEXFromRGB(CalcGradient(self, perc))
+local function GetGradientHEX(self, perc, adjustment)
+	if adjustment and adjustment ~= 0 then
+		local r, g, b = CalcGradient(self, perc)
+
+		return RGBToHEX(AdjustColor(r, g, b, adjustment))
+	else
+		return RGBToHEX(CalcGradient(self, perc))
+	end
 end
 
-local function GetGradientRGB(self, perc)
+local function GetGradientRGB(self, perc, adjustment)
 	local r, g, b = CalcGradient(self, perc)
+
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
 
 	return r, g, b
 end
 
-local function GetGradientRGBA(self, perc, alpha)
+local function GetGradientRGBA(self, perc, alpha, adjustment)
 	local r, g, b, a = CalcGradient(self, perc)
+
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
 
 	return r, g, b, alpha or a
 end
 
-local function GetGradientRGBHEX(self, perc)
+local function GetGradientRGBHEX(self, perc, adjustment)
 	local r, g, b = CalcGradient(self, perc)
 
-	return r, g, b, CalcHEXFromRGB(r, g, b)
+	if adjustment and adjustment ~= 0 then
+		r, g, b = AdjustColor(r, g, b, adjustment)
+	end
+
+	return r, g, b, RGBToHEX(r, g, b)
 end
 
-local function WrapTextInGradientCode(self, perc, text)
-	return string.format("|cff%s%s|r", GetGradientHEX(self, perc), text)
+local function WrapTextInGradientCode(self, perc, text, adjustment)
+	return s_format("|cff%s%s|r", GetGradientHEX(self, perc, adjustment), text)
 end
 
 function E:CreateColor(r, g, b, a)
@@ -271,7 +409,7 @@ function E:CreateColor(r, g, b, a)
 		r, g, b = r / 255, g / 255, b / 255
 	end
 
-	local color = {r = r, g = g, b = b, a = a, hex = CalcHEXFromRGB(r, g, b)}
+	local color = {r = r, g = g, b = b, a = a, hex = RGBToHEX(r, g, b)}
 
 	color.GetHEX = GetColorHEX
 	color.GetRGB = GetColorRGB
@@ -286,7 +424,7 @@ function E:CreateColorTable(...)
 	local params = {...}
 	local num = #params
 
-	assert((num == 9 or num == 3), string.format("Invalid number of arguments in 'E:CreateColorTable' ('3' or '9' expected, got '%s')", num))
+	assert((num == 9 or num == 3), s_format("Invalid number of arguments in 'E:CreateColorTable' ('3' or '9' expected, got '%s')", num))
 
 	if num == 3 then
 		local temp = {}
@@ -322,24 +460,42 @@ function E:RGBToHEX(r, g, b)
 		end
 	end
 
-	return CalcHEXFromRGB(r, g, b)
+	return RGBToHEX(r, g, b)
 end
 
 function E:HEXToRGB(hex)
-	local rhex, ghex, bhex = tonumber(string.sub(hex, 1, 2), 16), tonumber(string.sub(hex, 3, 4), 16), tonumber(string.sub(hex, 5, 6), 16)
+	return HEXToRGB(hex)
+end
 
-	return tonumber(string.format("%.2f", rhex / 255)), tonumber(string.format("%.2f", ghex / 255)), tonumber(string.format("%.2f", bhex / 255))
+function E:AdjustColor(r, g, b, perc)
+	if type(r) == "table" then
+		if r.r then
+			r, g, b = r.r, r.g, r.b
+		else
+			r, g, b = unpack(r)
+		end
+	end
+
+	if r > 1 or g > 1 or b > 1 then
+		r, g, b = r / 255, g / 255, b / 255
+	end
+
+	if perc and perc ~= 0 then
+		return AdjustColor(r, g, b, perc)
+	else
+		return r, g, b
+	end
 end
 
 local vc_objects = {}
 
 local function ProcessSmoothColors()
-	for object, target in pairs(vc_objects) do
+	for object, target in next, vc_objects do
 		local r, g, b = CalcGradient({object._r, object._g, object._b, target.r, target.g, target.b}, Saturate(0.1 * GetTickTime() * 60.0))
 
-		if math.abs(r - target.r) <= 0.05
-			and math.abs(g - target.g) <= 0.05
-			and math.abs(b - target.b) <= 0.05 then
+		if m_abs(r - target.r) <= 0.05
+			and m_abs(g - target.g) <= 0.05
+			and m_abs(b - target.b) <= 0.05 then
 			r, g, b = target.r, target.g, target.b
 			vc_objects[object] = nil
 		end
@@ -365,10 +521,10 @@ end
 local sb_objects = {}
 
 local function ProcessSmoothStatusBars()
-	for object, target in pairs(sb_objects) do
+	for object, target in next, sb_objects do
 		local new = FrameDeltaLerp(object._value, target, .25)
 
-		if math.abs(new - target) <= .01 then
+		if m_abs(new - target) <= .01 then
 			new = target
 			sb_objects[object] = nil
 		end
@@ -426,20 +582,20 @@ end
 ----------
 
 function E:CheckFlag(mask, ...)
-	local flag = bit.bor(...)
-	return bit.band(mask, flag) == flag
+	local flag = b_or(...)
+	return b_and(mask, flag) == flag
 end
 
 function E:ToggleFlag(mask, ...)
-	return bit.bxor(mask, ...)
+	return b_xor(mask, ...)
 end
 
 function E:EnableFlag(mask, ...)
-	return bit.bor(mask, ...)
+	return b_or(mask, ...)
 end
 
 function E:DisableFlag(mask, filter)
-	return bit.band(mask, bit.bnot(filter))
+	return b_and(mask, b_not(filter))
 end
 
 -----------
@@ -612,13 +768,13 @@ end
 
 function E:GetUnitAverageItemLevel(unit)
 	if _G.UnitIsUnit(unit, "player") then
-		return math.floor(select(2, _G.GetAverageItemLevel()))
+		return m_floor(select(2, _G.GetAverageItemLevel()))
 	else
 		local isInspectSuccessful = true
 		local total = 0
 
 		-- Armour
-		for _, id in pairs(INSPECT_ARMOR_SLOTS) do
+		for _, id in next, INSPECT_ARMOR_SLOTS do
 			local link = _G.GetInventoryItemLink(unit, id)
 			local texture = _G.GetInventoryItemTexture(unit, id)
 
@@ -663,8 +819,8 @@ function E:GetUnitAverageItemLevel(unit)
 			total = total + (mainItemLevel or 0) + (offItemLevel or 0)
 		end
 
-		-- print("total:", total, "cur:", math.floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
-		return isInspectSuccessful and math.floor(total / 16) or nil
+		-- print("total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
+		return isInspectSuccessful and m_floor(total / 16) or nil
 	end
 end
 
@@ -728,9 +884,9 @@ function E:GetPlayerRole()
 	return role or "DAMAGER"
 end
 
-------------------
--- FONT STRINGS --
-------------------
+-------------------------
+-- FONT STRINGS & TEXT --
+-------------------------
 
 function E:ResetFontStringHeight(object)
 	if not object.SetText then return end
@@ -738,4 +894,28 @@ function E:ResetFontStringHeight(object)
 	object:SetText("+-1234567890/|\\*")
 	object:SetHeight(object:GetStringHeight())
 	object:SetText(nil)
+end
+
+function E:TruncateString(v, length)
+	return s_utf8sub(v, 1, length)
+end
+
+----------
+-- MISC --
+----------
+
+function E:ResolveAnchorPoint(frame, children)
+	if not children or children == "" then
+		return frame
+	else
+		local anchor = frame
+
+		children = {s_split(".", children)}
+
+		for i = 1, #children do
+			anchor = anchor[children[i]]
+		end
+
+		return anchor
+	end
 end

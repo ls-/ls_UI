@@ -3,7 +3,7 @@ ActionButtonTemplate Draw Layers:
 BACKGROUND:
 - Icon -- 0
 BORDER:
-
+-
 ARTWORK:
 - NormalTexture -- 0
 - PushedTexture -- 0
@@ -25,12 +25,20 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
+local s_gsub = _G.string.gsub
+local s_match = _G.string.match
+local s_format = _G.string.format
+local s_utf8sub = _G.string.utf8sub
 
 -- Blizz
+local ATTACK_BUTTON_FLASH_TIME = _G.ATTACK_BUTTON_FLASH_TIME
+local TOOLTIP_UPDATE_TIME = _G.TOOLTIP_UPDATE_TIME
+local GetPetActionInfo = _G.GetPetActionInfo
+local HasAction = _G.HasAction
 local IsActionInRange = _G.IsActionInRange
+local IsEquippedAction = _G.IsEquippedAction
 local IsUsableAction = _G.IsUsableAction
 
 -- Mine
@@ -40,9 +48,9 @@ local handledButtons = {}
 local function Button_HasAction(self)
 	if self:IsShown() then
 		if self.__type == "action" or self.__type == "extra" then
-			return self.action and _G.HasAction(self.action)
+			return self.action and HasAction(self.action)
 		elseif self.__type == "petaction" then
-			return _G.GetPetActionInfo(self:GetID())
+			return GetPetActionInfo(self:GetID())
 		end
 	else
 		return false
@@ -70,13 +78,13 @@ end
 local function SetTextHook(self, text)
 	if not text then return end
 
-	self:SetFormattedText("%s", string.gsub(text, "[ .()]", ""))
+	self:SetFormattedText("%s", s_gsub(text, "[ .()]", ""))
 end
 
 local function SetFormattedTextHook(self, pattern, text)
 	if not pattern then return end
 
-	self:SetText(string.format(string.gsub(pattern, "[ .()]", ""), text))
+	self:SetText(s_format(s_gsub(pattern, "[ .()]", ""), text))
 end
 
 local function SetHotKeyTextHook(self)
@@ -85,8 +93,8 @@ local function SetHotKeyTextHook(self)
 	local bType = button.buttonType
 
 	if not bType then
-		if name and not string.match(name, "Stance") then
-			if string.match(name, "PetAction") then
+		if name and not s_match(name, "Stance") then
+			if s_match(name, "PetAction") then
 				bType = "BONUSACTIONBUTTON"
 			else
 				bType = "ACTIONBUTTON"
@@ -99,28 +107,28 @@ local function SetHotKeyTextHook(self)
 	local text = bType and _G.GetBindingKey(bType..button:GetID()) or ""
 
 	if text and text ~= "" then
-		text = string.gsub(text, "SHIFT%-", "S")
-		text = string.gsub(text, "CTRL%-", "C")
-		text = string.gsub(text, "ALT%-", "A")
-		text = string.gsub(text, "BUTTON1", "LM")
-		text = string.gsub(text, "BUTTON2", "RM")
-		text = string.gsub(text, "BUTTON3", "MM")
-		text = string.gsub(text, "BUTTON", "M")
-		text = string.gsub(text, "MOUSEWHEELDOWN", "WD")
-		text = string.gsub(text, "MOUSEWHEELUP", "WU")
-		text = string.gsub(text, "NUMPADDECIMAL", "N.")
-		text = string.gsub(text, "NUMPADDIVIDE", "N/")
-		text = string.gsub(text, "NUMPADMINUS", "N-")
-		text = string.gsub(text, "NUMPADMULTIPLY", "N*")
-		text = string.gsub(text, "NUMPADPLUS", "N+")
-		text = string.gsub(text, "NUMPAD", "N")
-		text = string.gsub(text, "PAGEDOWN", "PD")
-		text = string.gsub(text, "PAGEUP", "PU")
-		text = string.gsub(text, "SPACE", "Sp")
-		text = string.gsub(text, "DOWN", "Dn")
-		text = string.gsub(text, "LEFT", "Lt")
-		text = string.gsub(text, "RIGHT", "Rt")
-		text = string.gsub(text, "UP", "Up")
+		text = s_gsub(text, "SHIFT%-", "S")
+		text = s_gsub(text, "CTRL%-", "C")
+		text = s_gsub(text, "ALT%-", "A")
+		text = s_gsub(text, "BUTTON1", "LM")
+		text = s_gsub(text, "BUTTON2", "RM")
+		text = s_gsub(text, "BUTTON3", "MM")
+		text = s_gsub(text, "BUTTON", "M")
+		text = s_gsub(text, "MOUSEWHEELDOWN", "WD")
+		text = s_gsub(text, "MOUSEWHEELUP", "WU")
+		text = s_gsub(text, "NUMPADDECIMAL", "N.")
+		text = s_gsub(text, "NUMPADDIVIDE", "N/")
+		text = s_gsub(text, "NUMPADMINUS", "N-")
+		text = s_gsub(text, "NUMPADMULTIPLY", "N*")
+		text = s_gsub(text, "NUMPADPLUS", "N+")
+		text = s_gsub(text, "NUMPAD", "N")
+		text = s_gsub(text, "PAGEDOWN", "PD")
+		text = s_gsub(text, "PAGEUP", "PU")
+		text = s_gsub(text, "SPACE", "Sp")
+		text = s_gsub(text, "DOWN", "Dn")
+		text = s_gsub(text, "LEFT", "Lt")
+		text = s_gsub(text, "RIGHT", "Rt")
+		text = s_gsub(text, "UP", "Up")
 	end
 
 	self:SetFormattedText("%s", text or "")
@@ -134,7 +142,7 @@ local function SetMacroTextHook(self, text)
 		text = text or bName:GetText()
 
 		if text then
-			bName:SetFormattedText("%s", string.utf8sub(text, 1, 4))
+			bName:SetFormattedText("%s", s_utf8sub(text, 1, 4))
 		end
 	end
 end
@@ -162,6 +170,60 @@ local function SetCheckedTexture(button)
 	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
 	button:GetCheckedTexture():SetBlendMode("ADD")
 	button:GetCheckedTexture():SetAllPoints()
+end
+
+local function UpdateState(button)
+	if button.action and (button.__type == "action" or button.__type == "extra") then
+		local isUsable, notEnoughMana = IsUsableAction(button.action)
+
+		if C.bars.use_icon_as_indicator then
+			if not isUsable and not notEnoughMana then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+			elseif IsActionInRange(button.action) == false then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
+			elseif notEnoughMana then
+				button.icon:SetDesaturated(true)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+			else
+				button.icon:SetDesaturated(false)
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			end
+
+			if button.HotKey then
+				if not isUsable and not notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+				else
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+				end
+			end
+		else
+			if not isUsable and not notEnoughMana then
+				button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+			else
+				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			end
+
+			if button.HotKey then
+				if not isUsable and not notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+				elseif IsActionInRange(button.action) == false then
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+				elseif notEnoughMana then
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
+				else
+					button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+				end
+			end
+		end
+
+		if IsEquippedAction(button.action) then
+			button:SetBorderColor(M.COLORS.GREEN:GetRGB())
+		else
+			button:SetBorderColor(1, 1, 1)
+		end
+	end
 end
 
 local function SkinButton(button)
@@ -280,6 +342,7 @@ local function SkinButton(button)
 	end
 
 	button:SetScript("OnUpdate", nil)
+	button:HookScript("OnEnter", UpdateState)
 	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 
 	button.HasAction = Button_HasAction
@@ -330,7 +393,7 @@ function E:SkinAuraButton(button)
 	if bBorder then
 		bBorder:SetTexture(nil)
 
-		if string.gsub(name, "%d", "") == "TempEnchant" then
+		if s_gsub(name, "%d", "") == "TempEnchant" then
 			button:SetBorderColor(M.COLORS.PURPLE:GetRGB())
 		else
 			hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
@@ -573,7 +636,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	SetHighlightTexture(button)
 
 	if isSandwich then
-		local cover = _G.CreateFrame("Frame", "$parentCover", button)
+		local cover = _G.CreateFrame("Frame", nil, button)
 		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
 		button.Cover = cover
@@ -604,9 +667,10 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	SetCheckedTexture(button)
 
 	if isSandwich then
-		local cover = _G.CreateFrame("Frame", "$parentCover", button)
+		local cover = _G.CreateFrame("Frame", nil, button)
 		cover:SetFrameLevel(button:GetFrameLevel() + 2)
 		cover:SetAllPoints()
+		button.Cover = cover
 
 		count:SetParent(cover)
 	end
@@ -628,6 +692,8 @@ do
 			if button:HasAction() then
 				actionButtons[button] = true
 			else
+				button:SetBorderColor(1, 1, 1)
+
 				actionButtons[button] = nil
 			end
 		end
@@ -637,79 +703,34 @@ do
 		UpdateActionButtonsTable()
 
 		local flash_timer = 0
+		local state_timer = 0
 
-		local updater = _G.CreateFrame("Frame")
-		updater:SetScript("OnUpdate", function (_, elapsed)
+		_G.CreateFrame("Frame"):SetScript("OnUpdate", function (_, elapsed)
 			flash_timer = flash_timer - elapsed
+			state_timer = state_timer - elapsed
 
-			for button in next, actionButtons do
-				if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
-					if button.Flash:IsShown() then
-						button.Flash:Hide()
-					else
-						button.Flash:Show()
-					end
-				end
-
-				if button.__type == "action" or button.__type == "extra" then
-					local isUsable, notEnoughMana = IsUsableAction(button.action)
-
-					if C.bars.use_icon_as_indicator then
-						if not isUsable and not notEnoughMana then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-						elseif IsActionInRange(button.action) == false then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-						elseif notEnoughMana then
-							button.icon:SetDesaturated(true)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+			if flash_timer <= 0 or state_timer <= 0 then
+				for button in next, actionButtons do
+					if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
+						if button.Flash:IsShown() then
+							button.Flash:Hide()
 						else
-							button.icon:SetDesaturated(false)
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-						end
-
-						if button.HotKey then
-							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-							else
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-							end
-						end
-					else
-						if not isUsable and not notEnoughMana then
-							button.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-						else
-							button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-						end
-
-						if button.HotKey then
-							if not isUsable and not notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-							elseif IsActionInRange(button.action) == false then
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
-							elseif notEnoughMana then
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
-							else
-								button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-							end
+							button.Flash:Show()
 						end
 					end
-				end
-			end
 
-			for button in next, handledButtons do
-				if button:IsShown() and button.SetBorderColor then
-					if button.action and _G.IsEquippedAction(button.action) then
-						button:SetBorderColor(M.COLORS.GREEN:GetRGB())
-					else
-						button:SetBorderColor(1, 1, 1)
+					if state_timer <= 0 then
+						UpdateState(button)
 					end
 				end
-			end
 
-			if flash_timer <= 0 then
-				flash_timer = 0.4
+				if flash_timer <= 0 then
+					flash_timer = ATTACK_BUTTON_FLASH_TIME
+				end
+
+				if state_timer <= 0 then
+					state_timer = TOOLTIP_UPDATE_TIME
+				end
 			end
 		end)
 
@@ -717,6 +738,7 @@ do
 	end
 
 	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
+	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)

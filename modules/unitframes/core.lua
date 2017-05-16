@@ -26,22 +26,6 @@ local function LSUnitFrame_OnEnter(self)
 		_G.PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
 		_G.PartyMemberBuffTooltip_Update(self)
 	end
-
-	self.isMouseOver = true
-
-	if self.mouseovers then
-		for _, element in pairs(self.mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Show()
-				end
-			else
-				element:Show()
-			end
-		end
-	end
 end
 
 local function LSUnitFrame_OnLeave(self)
@@ -53,22 +37,6 @@ local function LSUnitFrame_OnLeave(self)
 
 	if string.match(self:GetName(), "LSPetFrame") then
 		_G.PartyMemberBuffTooltip:Hide()
-	end
-
-	self.isMouseOver = nil
-
-	if self.mouseovers then
-		for _, element in pairs(self.mouseovers) do
-			if element.ForceUpdate then
-				element:ForceUpdate()
-
-				if element:IsObjectType("Texture") then
-					element:Hide()
-				end
-			else
-				element:Hide()
-			end
-		end
 	end
 end
 
@@ -119,36 +87,38 @@ local function MainConstructor()
 	if C.units.player.enabled then
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
+
+		UF:UpdatePlayerFrame(objects["player"])
+		UF:UpdatePetFrame(objects["pet"])
+
+		if not C.units.player.castbar.enabled then
+			UF:EnableDefaultCastingBars()
+		end
 	end
 
 	if C.units.target.enabled then
 		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
 		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
+
+		UF:UpdateTargetFrame(objects["target"])
+		UF:UpdateTargetTargetFrame(objects["targettarget"])
 	end
 
 	if C.units.focus.enabled then
 		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
 		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
+
+		UF:UpdateFocusFrame(objects["focus"])
+		UF:UpdateFocusTargetFrame(objects["focustarget"])
 	end
 
 	if C.units.boss.enabled then
-		objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
-		objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
-		objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
-		objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
-		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
+		for i = 1, 5 do
+			objects["boss"..i] = oUF:Spawn("boss"..i, "LSBoss"..i.."Frame")
+
+			UF:UpdateBossFrame(objects["boss"..i])
+		end
 	end
-
-	-- local ArenaPrepFrames
-	-- if C.units.arena.enabled then
-	-- 	objects["arena1"] = oUF:Spawn("arena1", "LSArena1Frame")
-	-- 	objects["arena2"] = oUF:Spawn("arena2", "LSArena2Frame")
-	-- 	objects["arena3"] = oUF:Spawn("arena3", "LSArena3Frame")
-	-- 	objects["arena4"] = oUF:Spawn("arena4", "LSArena4Frame")
-	-- 	objects["arena5"] = oUF:Spawn("arena5", "LSArena5Frame")
-
-	-- 	ArenaPrepFrames = UF:SetupArenaPrepFrames()
-	-- end
 
 	for unit, object in pairs(objects) do
 		if string.match(unit, "^boss") then
@@ -157,36 +127,15 @@ local function MainConstructor()
 			if id == 1 then
 				UF:CreateBossHolder()
 
-				object:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, -16)
+				object:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, 0)
 			else
-				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -36)
+				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -28)
 			end
-		-- elseif strmatch(unit, "^arena%d") then
-		-- 	local id = tonumber(strmatch(unit, "arena(%d)"))
-		-- 	if id == 1 then
-		-- 		UF:CreateArenaHolder()
-
-		-- 		object:SetPoint("TOPRIGHT", "LSArenaHolder", "TOPRIGHT", -(2 + 28 + 6 + 28 + 2), -16)
-		-- 	else
-		-- 		object:SetPoint("TOP", "LSArena"..(id - 1).."Frame", "BOTTOM", 0, -14)
-		-- 	end
 		else
 			object:SetPoint(unpack(C.units[unit].point))
 			E:CreateMover(object)
 		end
 	end
-
-	-- if ArenaPrepFrames then
-	-- 	ArenaPrepFrames:SetPoint("TOPLEFT", "LSArenaHolder", "TOPLEFT", 0, 0)
-
-	-- 	for i = 1, 5 do
-	-- 		if i == 1 then
-	-- 			ArenaPrepFrames[i]:SetPoint("TOPLEFT", ArenaPrepFrames.Label, "BOTTOMLEFT", 0, -4)
-	-- 		else
-	-- 			ArenaPrepFrames[i]:SetPoint("LEFT", ArenaPrepFrames[i - 1], "RIGHT", 4, 0)
-	-- 		end
-	-- 	end
-	-- end
 end
 
 --------------
@@ -204,10 +153,10 @@ function UF:SpawnFrame(unit)
 		objects["pet"]:SetPoint(unpack(C.units.pet.point))
 		E:CreateMover(objects["pet"])
 
-		if not C.units.player.castbar then
-			objects["player"]:DisableElement("Castbar")
-			objects["pet"]:DisableElement("Castbar")
+		UF:UpdatePlayerFrame(objects["player"])
+		UF:UpdatePetFrame(objects["pet"])
 
+		if not C.units.player.castbar.enabled then
 			UF:EnableDefaultCastingBars()
 		end
 
@@ -222,9 +171,8 @@ function UF:SpawnFrame(unit)
 		objects["targettarget"]:SetPoint(unpack(C.units.targettarget.point))
 		E:CreateMover(objects["targettarget"])
 
-		if not C.units.target.castbar then
-			objects["target"]:DisableElement("Castbar")
-		end
+		UF:UpdateTargetFrame(objects["target"])
+		UF:UpdateTargetTargetFrame(objects["targettarget"])
 
 		return true
 	elseif unit == "focus" and not objects["focus"] then
@@ -237,32 +185,23 @@ function UF:SpawnFrame(unit)
 		objects["focustarget"]:SetPoint(unpack(C.units.focustarget.point))
 		E:CreateMover(objects["focustarget"])
 
-		if not C.units.focus.castbar then
-			objects["focus"]:DisableElement("Castbar")
-		end
+		UF:UpdateFocusFrame(objects["focus"])
+		UF:UpdateFocusTargetFrame(objects["focustarget"])
 
 		return true
 	elseif unit == "boss" and not objects["boss1"] then
-		objects["boss1"] = oUF:Spawn("boss1", "LSBoss1Frame")
-		objects["boss2"] = oUF:Spawn("boss2", "LSBoss2Frame")
-		objects["boss3"] = oUF:Spawn("boss3", "LSBoss3Frame")
-		objects["boss4"] = oUF:Spawn("boss4", "LSBoss4Frame")
-		objects["boss5"] = oUF:Spawn("boss5", "LSBoss5Frame")
-
 		UF:CreateBossHolder()
 
-		objects["boss1"]:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, -16)
-		objects["boss2"]:SetPoint("TOP", objects["boss1"], "BOTTOM", 0, -36)
-		objects["boss3"]:SetPoint("TOP", objects["boss2"], "BOTTOM", 0, -36)
-		objects["boss4"]:SetPoint("TOP", objects["boss3"], "BOTTOM", 0, -36)
-		objects["boss5"]:SetPoint("TOP", objects["boss4"], "BOTTOM", 0, -36)
+		for i = 1, 5 do
+			objects["boss"..i] = oUF:Spawn("boss"..i, "LSBoss"..i.."Frame")
 
-		if not C.units.boss.castbar then
-			objects["boss1"]:DisableElement("Castbar")
-			objects["boss2"]:DisableElement("Castbar")
-			objects["boss3"]:DisableElement("Castbar")
-			objects["boss4"]:DisableElement("Castbar")
-			objects["boss5"]:DisableElement("Castbar")
+			UF:UpdateBossFrame(objects["boss"..i])
+
+			if i == 1 then
+				objects["boss"..i]:SetPoint("TOPRIGHT", "LSBossHolder", "TOPRIGHT", 0, 0)
+			else
+				objects["boss"..i]:SetPoint("TOP", objects["boss"..(i - 1)], "BOTTOM", 0, -28)
+			end
 		end
 
 		return true

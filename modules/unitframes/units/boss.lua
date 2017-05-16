@@ -2,129 +2,133 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
+-- Lua
+local _G = getfenv(0)
+
+-- Mine
 function UF:CreateBossHolder()
-	local holder = CreateFrame("Frame", "LSBossHolder", UIParent)
+	local holder = _G.CreateFrame("Frame", "LSBossHolder", _G.UIParent)
 	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
 	holder:SetPoint(unpack(C.units.boss.point))
+
 	E:CreateMover(holder)
 end
 
 function UF:ConstructBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame.mouseovers = {}
-	frame:SetSize(110, 36)
+	frame._config = C.units.boss
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, 2)
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	bg:SetTexCoord(0 / 512, 110 / 512, 130 / 256, 166 / 256)
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
+	bg:SetHorizTile(true)
 
-	local bgIndicatorLeft = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
-	bgIndicatorLeft:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	frame.BgIndicatorLeft = bgIndicatorLeft
+	local fg_parent = _G.CreateFrame("Frame", nil, frame)
+	fg_parent:SetFrameLevel(level + 7)
+	fg_parent:SetAllPoints()
+	frame.FGParent = fg_parent
 
-	local bgIndicatorMiddle = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
-	bgIndicatorMiddle:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	frame.BgIndicatorMiddle = bgIndicatorMiddle
+	local text_parent = _G.CreateFrame("Frame", nil, frame)
+	text_parent:SetFrameLevel(level + 9)
+	text_parent:SetAllPoints()
+	frame.TextParent = text_parent
 
-	local bgIndicatorRight = frame:CreateTexture(nil, "BACKGROUND", nil, 3)
-	bgIndicatorRight:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	frame.BgIndicatorRight = bgIndicatorRight
+	frame.Insets = self:CreateInsets(frame, fg_parent)
 
-	local cover = CreateFrame("Frame", "$parentCover", frame)
-	cover:SetFrameLevel(level + 3)
-	cover:SetAllPoints()
-	frame.Cover = cover
-
-	local gloss = cover:CreateTexture(nil, "BACKGROUND", nil, 0)
-	gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
-	gloss:SetTexCoord(0, 1, 0 / 64, 20 / 64)
-	gloss:SetSize(94, 20)
-	gloss:SetPoint("CENTER")
-
-	local fg = cover:CreateTexture(nil, "ARTWORK", nil, 2)
-	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	frame.Fg = fg
-
-	local fgLeft = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	fgLeft:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	fgLeft:SetTexCoord(116 / 512, 130 / 512, 66 / 256, 92 / 256)
-	fgLeft:SetSize(14, 26)
-	fgLeft:SetPoint("LEFT", 5, 0)
-
-	local fgRight = cover:CreateTexture(nil, "ARTWORK", nil, 1)
-	fgRight:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	fgRight:SetTexCoord(130 / 512, 144 / 512, 66 / 256, 92 / 256)
-	fgRight:SetSize(14, 26)
-	fgRight:SetPoint("RIGHT", -5, 0)
-
-	UF:SetupRarityIndication(frame, "short")
-
-	local health = UF:CreateHealthBar(frame, 12, true)
+	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
-	health:SetSize(90, 20)
-	health:SetPoint("CENTER")
-	tinsert(frame.mouseovers, health)
+	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
+	health:SetClipsChildren(true)
 	frame.Health = health
 
-	local healthText = health.Text
-	healthText:SetParent(cover)
-	healthText:SetJustifyH("RIGHT")
-	healthText:SetPoint("RIGHT", -12, 0)
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	frame.HealthPrediction = UF:CreateHealPrediction(frame)
-
-	local absrobGlow = cover:CreateTexture(nil, "ARTWORK", nil, 3)
-	absrobGlow:SetTexture("Interface\\RAIDFRAME\\Shield-Overshield")
-	absrobGlow:SetBlendMode("ADD")
-	absrobGlow:SetSize(10, 18)
-	absrobGlow:SetPoint("RIGHT", -6, 0)
-	absrobGlow:SetAlpha(0)
-	frame.AbsorbGlow = absrobGlow
-
-	local power = UF:CreatePowerBar(frame, 10, true)
-	power:SetFrameLevel(level + 4)
-	power:SetSize(62, 2)
-	power:SetPoint("CENTER", 0, -11)
-	E:SetStatusBarSkin(power, "HORIZONTAL-SMALL")
-	tinsert(frame.mouseovers, power)
+	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	power:SetFrameLevel(level + 1)
+	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
+	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
 	frame.Power = power
 
-	local powerText = power.Text
-	powerText:SetDrawLayer("OVERLAY")
-	powerText:SetJustifyH("LEFT")
-	powerText:SetPoint("LEFT")
+	power.UpdateContainer = function(_, shouldShow)
+		if shouldShow then
+			if not frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Expand()
+			end
+		else
+			if frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Collapse()
+			end
+		end
+	end
 
-	frame.Castbar = UF:CreateCastBar(frame, 94)
-	frame.Castbar.Holder:SetPoint("TOP", frame, "BOTTOM", 0, -2)
+	local alt_power = self:CreateAlternativePower(frame, true, "LS12Font_Shadow", text_parent)
+	alt_power:SetFrameLevel(level + 1)
+	alt_power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	alt_power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	alt_power:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
+	alt_power:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
+	frame.AlternativePower = alt_power
 
-	frame.RaidTargetIndicator = cover:CreateTexture("$parentRaidIcon", "ARTWORK", nil, 3)
-	frame.RaidTargetIndicator:SetSize(24, 24)
-	frame.RaidTargetIndicator:SetPoint("TOP", 0, 22)
+	alt_power.UpdateContainer = function(_, shouldShow)
+		if shouldShow then
+			if not frame.Insets.Top:IsExpanded() then
+				frame.Insets.Top:Expand()
+			end
+		else
+			if frame.Insets.Top:IsExpanded() then
+				frame.Insets.Top:Collapse()
+			end
+		end
+	end
 
-	local name = E:CreateFontString(cover, 12, "$parentNameText", true)
-	name:SetDrawLayer("ARTWORK", 4)
-	name:SetPoint("LEFT", frame, "LEFT", 2, 0)
-	name:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
-	name:SetPoint("BOTTOM", frame, "TOP", 0, 1)
-	frame:Tag(name, "[ls:difficulty][ls:effectivelevel][shortclassification]|r [ls:unitcolor][ls:name][ls:server]|r")
+	frame.Castbar = self:CreateCastbar(frame)
+	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
-	local debuffStatus = cover:CreateFontString("$parentDebuffStatus", "OVERLAY", "LSStatusIcon12Font")
-	debuffStatus:SetPoint("LEFT", 12, 0)
-	frame:Tag(debuffStatus, "[ls:debuffstatus]")
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
-	local threat = UF:CreateThreat(frame, "player")
-	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\frame_other")
-	threat:SetTexCoord(210 / 512, 326 / 512, 200 / 256, 230 / 256)
-	threat:SetSize(116, 30)
-	threat:SetPoint("CENTER", 0, 6)
-	frame.ThreatIndicator = threat
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
-	local altPower = UF:CreateAltPowerBar(frame, 102)
-	altPower:SetPoint("TOPRIGHT", frame, "TOPLEFT", -6, -3)
-	frame.AlternativePower = altPower
+	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
+
+	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
+
+	frame.Auras = self:CreateAuras(frame, "boss")
+
+	E:CreateBorder(fg_parent, true)
+
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	glass:SetAllPoints(health)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
+	glass:SetHorizTile(true)
+
+	self:CreateRarityIndicator(frame)
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
+end
+
+function UF:UpdateBossFrame(frame)
+	local config = frame._config
+
+	frame:SetSize(config.width, config.height)
+
+	self:UpdateInsets(frame)
+	self:UpdateHealth(frame)
+	self:UpdateHealthPrediction(frame)
+	self:UpdatePower(frame)
+	self:UpdateAlternativePower(frame)
+	self:UpdateCastbar(frame)
+	self:UpdateName(frame)
+	self:UpdateRaidTargetIndicator(frame)
+	self:UpdateDebuffIndicator(frame)
+	self:UpdateThreatIndicator(frame)
+	self:UpdateAuras(frame)
+
+	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

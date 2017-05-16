@@ -3,10 +3,11 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
+local m_abs = _G.math.abs
 local next = _G.next
 local s_match = _G.string.match
 local s_split = _G.string.split
-local hooksecurefunc = _G.hooksecurefunc
 local type = _G.type
 
 -- Blizz
@@ -119,6 +120,18 @@ do
 		return bar
 	end
 
+	local function Hide(self)
+		for i = 1, 4 do
+			self[i]:Hide()
+		end
+	end
+
+	local function Show(self)
+		for i = 1, 4 do
+			self[i]:Show()
+		end
+	end
+
 	-- flags:
 	-- "HORIZONTAL-L", "HORIZONTAL-M", "HORIZONTAL-GLASS"
 	-- "VERTICAL-L", "VERTICAL-M", "VERTICAL-GLASS"
@@ -134,6 +147,8 @@ do
 			[2] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- mid
 			[3] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- right/bottom
 			[4] = object.Glass or object:CreateTexture(nil, "ARTWORK", nil, 6), -- glass
+			Hide = Hide,
+			Show = Show,
 		}
 
 		if s == "HORIZONTAL" then
@@ -242,121 +257,137 @@ do
 		end
 	end
 
-	local function SetStatusBarSkin_old(bar, skinType)
-		local orientation, size = s_split("-", skinType or "")
+	local diffThreshold = 0.1
 
-		bar.Tube = bar.Tube or {
-			[1] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- left
-			[2] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- right
-			[3] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- top
-			[4] = bar:CreateTexture(nil, "ARTWORK", nil, 7), -- bottom
-			[5] = bar.Gloss or bar:CreateTexture(nil, "ARTWORK", nil, 6), -- gloss
-		}
+	local function AttachGainToVerticalBar(object, prev, max)
+		local offset = object:GetHeight() * (1 - E:Clamp(prev / max))
 
+		object.Gain:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 0, -offset)
+		object.Gain:SetPoint("BOTTOMRIGHT", object, "TOPRIGHT", 0, -offset)
+	end
+
+	local function AttachLossToVerticalBar(object, prev, max)
+		local offset = object:GetHeight() * (1 - E:Clamp(prev / max))
+
+		object.Loss:SetPoint("TOPLEFT", object, "TOPLEFT", 0, -offset)
+		object.Loss:SetPoint("TOPRIGHT", object, "TOPRIGHT", 0, -offset)
+	end
+
+	local function AttachGainToHorizontalBar(object, prev, max)
+		local offset = object:GetWidth() * (1 - E:Clamp(prev / max))
+
+		object.Gain:SetPoint("TOPLEFT", object, "TOPRIGHT", -offset, 0)
+		object.Gain:SetPoint("BOTTOMLEFT", object, "BOTTOMRIGHT", -offset, 0)
+	end
+
+	local function AttachLossToHorizontalBar(object, prev, max)
+		local offset = object:GetWidth() * (1 - E:Clamp(prev / max))
+
+		object.Loss:SetPoint("TOPRIGHT", object, "TOPRIGHT", -offset, 0)
+		object.Loss:SetPoint("BOTTOMRIGHT", object, "BOTTOMRIGHT", -offset, 0)
+	end
+
+	local function UpdateGainLoss(object, cur, max, condition)
+		if max ~= 0 and (condition == nil or condition)then
+			local prev = object._prev or 0
+			local diff = cur - prev
+
+			if m_abs(diff) / max < diffThreshold then
+				diff = 0
+			end
+
+			if diff > 0 then
+				if object.Gain:GetAlpha() == 0 then
+					object.Gain:SetAlpha(1)
+
+					if object:GetOrientation() == "VERTICAL" then
+						AttachGainToVerticalBar(object, prev, max)
+					else
+						AttachGainToHorizontalBar(object, prev, max)
+					end
+
+					object.Gain.FadeOut:Play()
+				end
+			elseif diff < 0 then
+				object.Gain.FadeOut:Stop()
+				object.Gain:SetAlpha(0)
+
+				if object.Loss:GetAlpha() == 0 then
+					object.Loss:SetAlpha(1)
+
+					if object:GetOrientation() == "VERTICAL" then
+						AttachLossToVerticalBar(object, prev, max)
+					else
+						AttachLossToHorizontalBar(object, prev, max)
+					end
+
+					object.Loss.FadeOut:Play()
+				end
+			end
+		else
+			object.Gain.FadeOut:Stop()
+			object.Gain:SetAlpha(0)
+
+			object.Loss.FadeOut:Stop()
+			object.Loss:SetAlpha(0)
+		end
+
+		object._prev = cur
+	end
+
+	local function CreateGainLossIndicators(object)
+		local gainTexture = object:CreateTexture(nil, "ARTWORK", nil, 1)
+		gainTexture:SetColorTexture(M.COLORS.LIGHT_GREEN:GetRGB())
+		gainTexture:SetAlpha(0)
+		object.Gain = gainTexture
+
+		local lossTexture = object:CreateTexture(nil, "BACKGROUND")
+		lossTexture:SetColorTexture(M.COLORS.DARK_RED:GetRGB())
+		lossTexture:SetAlpha(0)
+		object.Loss = lossTexture
+
+		local ag = gainTexture:CreateAnimationGroup()
+		ag:SetToFinalAlpha(true)
+		gainTexture.FadeOut = ag
+
+		local anim1 = ag:CreateAnimation("Alpha")
+		anim1:SetOrder(1)
+		anim1:SetFromAlpha(1)
+		anim1:SetToAlpha(0)
+		anim1:SetStartDelay(0.6)
+		anim1:SetDuration(0.2)
+
+		ag = lossTexture:CreateAnimationGroup()
+		ag:SetToFinalAlpha(true)
+		lossTexture.FadeOut = ag
+
+		anim1 = ag:CreateAnimation("Alpha")
+		anim1:SetOrder(1)
+		anim1:SetFromAlpha(1)
+		anim1:SetToAlpha(0)
+		anim1:SetStartDelay(0.6)
+		anim1:SetDuration(0.2)
+
+		object.UpdateGainLoss = UpdateGainLoss
+	end
+
+	local function ReanchorGainLossIndicators(object, orientation)
 		if orientation == "HORIZONTAL" then
-			local leftTexture = bar.Tube[1]
-			leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
-			leftTexture:SetPoint("RIGHT", bar, "LEFT", 3, 0)
+			object.Gain:ClearAllPoints()
+			object.Gain:SetPoint("TOPRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+			object.Gain:SetPoint("BOTTOMRIGHT", object:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 
-			local rightTexture = bar.Tube[2]
-			rightTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
-			rightTexture:SetPoint("LEFT", bar, "RIGHT", -3, 0)
+			object.Loss:ClearAllPoints()
+			object.Loss:SetPoint("TOPLEFT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+			object.Loss:SetPoint("BOTTOMLEFT", object:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
+		else
+			object.Gain:ClearAllPoints()
+			object.Gain:SetPoint("TOPLEFT", object:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+			object.Gain:SetPoint("TOPRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 
-			local topTexture = bar.Tube[3]
-			topTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal", true)
-			topTexture:SetTexCoord(0 / 64, 64 / 64, 21 / 64, 24 / 64)
-			topTexture:SetHeight(3)
-			topTexture:SetHorizTile(true)
-			topTexture:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 0)
-			topTexture:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 0)
-
-			local bottomTexture = bar.Tube[4]
-			bottomTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal", true)
-			bottomTexture:SetTexCoord(0 / 64, 64 / 64, 24 / 64, 21 / 64)
-			bottomTexture:SetHeight(3)
-			bottomTexture:SetHorizTile(true)
-			bottomTexture:SetPoint("TOPLEFT", bar, "BOTTOMLEFT", 0, 0)
-			bottomTexture:SetPoint("TOPRIGHT", bar, "BOTTOMRIGHT", 0, 0)
-
-			local gloss = bar.Tube[5]
-			gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_horizontal")
-			gloss:SetTexCoord(0 / 64, 64 / 64, 0 / 64, 20 / 64)
-			gloss:SetAllPoints()
-
-			if size == "SMALL" or size == "S" then
-				leftTexture:SetTexCoord(0 / 64, 10 / 64, 25 / 64, 35 / 64)
-				leftTexture:SetSize(10, 10)
-
-				rightTexture:SetTexCoord(0 / 64, 10 / 64, 36 / 64, 46 / 64)
-				rightTexture:SetSize(10, 10)
-			elseif size == "M" then
-				leftTexture:SetTexCoord(33 / 64, 42 / 64, 25 / 64, 41 / 64)
-				leftTexture:SetSize(9, 16)
-
-				rightTexture:SetTexCoord(43 / 64, 52 / 64, 25 / 64, 41 / 64)
-				rightTexture:SetSize(9, 16)
-			elseif size == "BIG" or size == "L" then
-				leftTexture:SetTexCoord(11 / 64, 21 / 64, 25 / 64, 45 / 64)
-				leftTexture:SetSize(10, 20)
-
-				rightTexture:SetTexCoord(22 / 64, 32 / 64, 25 / 64, 45 / 64)
-				rightTexture:SetSize(10, 20)
-			end
-		elseif orientation == "VERTICAL" then
-			local leftTexture = bar.Tube[1]
-			leftTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical", true)
-			leftTexture:SetTexCoord(21 / 64, 24 / 64, 0 / 64, 64 / 64)
-			leftTexture:SetWidth(3)
-			leftTexture:SetVertTile(true)
-			leftTexture:SetPoint("TOPRIGHT", bar, "TOPLEFT", 0, 0)
-			leftTexture:SetPoint("BOTTOMRIGHT", bar, "BOTTOMLEFT", 0, 0)
-
-			local rightTexture = bar.Tube[2]
-			rightTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical", true)
-			rightTexture:SetTexCoord(24 / 64, 21 / 64, 0 / 64, 64 / 64)
-			rightTexture:SetWidth(3)
-			rightTexture:SetVertTile(true)
-			rightTexture:SetPoint("TOPLEFT", bar, "TOPRIGHT", 0, 0)
-			rightTexture:SetPoint("BOTTOMLEFT", bar, "BOTTOMRIGHT", 0, 0)
-
-			local topTexture = bar.Tube[3]
-			topTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
-			topTexture:SetPoint("BOTTOM", bar, "TOP", 0, -3)
-
-			local bottomTexture = bar.Tube[4]
-			bottomTexture:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
-			bottomTexture:SetPoint("TOP", bar, "BOTTOM", 0, 3)
-
-			local gloss = bar.Tube[5]
-			gloss:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar_vertical")
-			gloss:SetTexCoord(0 / 64, 20 / 64, 0 / 64, 64 / 64)
-			gloss:SetAllPoints()
-
-			if size == "S" then
-				topTexture:SetTexCoord(25 / 64, 35 / 64, 0 / 64, 10 / 64)
-				topTexture:SetSize(10, 10)
-
-				bottomTexture:SetTexCoord(36 / 64, 46 / 64, 0 / 64, 10 / 64)
-				bottomTexture:SetSize(10, 10)
-			elseif size == "M" then
-				topTexture:SetTexCoord(25 / 64, 41 / 64, 33 / 64, 42 / 64)
-				topTexture:SetSize(16, 9)
-
-				bottomTexture:SetTexCoord(25 / 64, 41 / 64, 43 / 64, 52 / 64)
-				bottomTexture:SetSize(16, 9)
-			elseif size == "L" then
-				topTexture:SetTexCoord(25 / 64, 45 / 64, 11 / 64, 21 / 64)
-				topTexture:SetSize(20, 10)
-
-				bottomTexture:SetTexCoord(25 / 64, 45 / 64, 22 / 64, 32 / 64)
-				bottomTexture:SetSize(20, 10)
-			end
-		elseif orientation == "NONE" then
-			bar.Tube[1]:SetTexture(nil)
-			bar.Tube[2]:SetTexture(nil)
-			bar.Tube[3]:SetTexture(nil)
-			bar.Tube[4]:SetTexture(nil)
-			bar.Tube[5]:SetTexture(nil)
+			object.Loss:ClearAllPoints()
+			object.Loss:SetPoint("BOTTOMLEFT", object:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+			object.Loss:SetPoint("BOTTOMRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 		end
 	end
 
@@ -368,12 +399,16 @@ do
 		return CreateStatusBar(...)
 	end
 
-	function E:SetStatusBarSkin(object, flag)
-		if flag == "HORIZONTAL-S" or flag == "HORIZONTAL-SMALL" then
-			SetStatusBarSkin_old(object, flag)
-		else
-			SetStatusBarSkin(object, flag)
-		end
+	function E:SetStatusBarSkin(...)
+		SetStatusBarSkin(...)
+	end
+
+	function E:CreateGainLossIndicators(...)
+		CreateGainLossIndicators(...)
+	end
+
+	function E:ReanchorGainLossIndicators(...)
+		ReanchorGainLossIndicators(...)
 	end
 end
 
@@ -497,7 +532,25 @@ do
 		return self.borderTextures and self.borderTextures.TOPLEFT:GetVertexColor()
 	end
 
-	local function CrateBorder(object, isThick)
+	local function ShowBorder(self)
+		local t = self.borderTextures
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:Show()
+		end
+	end
+
+	local function HideBorder(self)
+		local t = self.borderTextures
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:Hide()
+		end
+	end
+
+	local function CreateBorder(object, isThick)
 		local t = {}
 		local thickness = 16
 		local texture, offset
@@ -512,7 +565,13 @@ do
 
 		for i = 1, #sections do
 			local x = object:CreateTexture(nil, "OVERLAY", nil, 1)
-			x:SetTexture(texture..sections[i], true)
+
+			if i > 4 then
+				x:SetTexture(texture..sections[i], true)
+			else
+				x:SetTexture(texture..sections[i])
+			end
+
 			t[sections[i]] = x
 		end
 
@@ -551,6 +610,8 @@ do
 		object.borderTextures = t
 		object.SetBorderColor = SetBorderColor
 		object.GetBorderColor = GetBorderColor
+		object.ShowBorder = ShowBorder
+		object.HideBorder = HideBorder
 	end
 
 	function E:CreateBorder(object, isThick)
@@ -558,6 +619,211 @@ do
 			return
 		end
 
-		CrateBorder(object, isThick)
+		CreateBorder(object, isThick)
+	end
+
+	local function SetGlowColor(self, r, g, b, a)
+		local t = self._t
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:SetVertexColor(r or 1, g or 1, b or 1, a or 1)
+		end
+	end
+
+	local function GetGlowColor(self)
+		return self._t and self._t.TOPLEFT:GetVertexColor()
+	end
+
+	local function ShowGlow(self)
+		local t = self._t
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:Show()
+		end
+	end
+
+	local function HideGlow(self)
+		local t = self._t
+		if not t then return end
+
+		for _, tex in next, t do
+			tex:Hide()
+		end
+	end
+
+	local function CreateBorderGlow(object, isThick)
+		-- PH
+		isThick = true
+
+		local t = {}
+		local thickness = 16
+		local texture, offset
+
+		if isThick then
+			texture = "Interface\\AddOns\\ls_UI\\media\\border-thick-glow-"
+			offset = 6
+		else
+			texture = "Interface\\AddOns\\ls_UI\\media\\border-thin-glow-"
+			offset = 4
+		end
+
+		for i = 1, #sections do
+			local x = object:CreateTexture(nil, "BACKGROUND", nil, -7)
+
+			if i > 4 then
+				x:SetTexture(texture..sections[i], true)
+			else
+				x:SetTexture(texture..sections[i])
+			end
+
+			t[sections[i]] = x
+		end
+
+		t.TOPLEFT:SetSize(thickness, thickness)
+		t.TOPLEFT:SetPoint("BOTTOMRIGHT", object, "TOPLEFT", offset, -offset)
+
+		t.TOPRIGHT:SetSize(thickness, thickness)
+		t.TOPRIGHT:SetPoint("BOTTOMLEFT", object, "TOPRIGHT", -offset, -offset)
+
+		t.BOTTOMLEFT:SetSize(thickness, thickness)
+		t.BOTTOMLEFT:SetPoint("TOPRIGHT", object, "BOTTOMLEFT", offset, offset)
+
+		t.BOTTOMRIGHT:SetSize(thickness, thickness)
+		t.BOTTOMRIGHT:SetPoint("TOPLEFT", object, "BOTTOMRIGHT", -offset, offset)
+
+		t.TOP:SetHeight(thickness)
+		t.TOP:SetHorizTile(true)
+		t.TOP:SetPoint("TOPLEFT", t.TOPLEFT, "TOPRIGHT", 0, 0)
+		t.TOP:SetPoint("TOPRIGHT", t.TOPRIGHT, "TOPLEFT", 0, 0)
+
+		t.BOTTOM:SetHeight(thickness)
+		t.BOTTOM:SetHorizTile(true)
+		t.BOTTOM:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "BOTTOMRIGHT", 0, 0)
+		t.BOTTOM:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "BOTTOMLEFT", 0, 0)
+
+		t.LEFT:SetWidth(thickness)
+		t.LEFT:SetVertTile(true)
+		t.LEFT:SetPoint("TOPLEFT", t.TOPLEFT, "BOTTOMLEFT", 0, 0)
+		t.LEFT:SetPoint("BOTTOMLEFT", t.BOTTOMLEFT, "TOPLEFT", 0, 0)
+
+		t.RIGHT:SetWidth(thickness)
+		t.RIGHT:SetVertTile(true)
+		t.RIGHT:SetPoint("TOPRIGHT", t.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
+		t.RIGHT:SetPoint("BOTTOMRIGHT", t.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
+
+		return {
+			_t = t,
+			SetVertexColor = SetGlowColor,
+			GetVertexColor = GetGlowColor,
+			Show = ShowGlow,
+			Hide = HideGlow,
+			IsObjectType = E.NOOP,
+		}
+	end
+
+	function E:CreateBorderGlow(object, isThick)
+		if type(object) ~= "table" or not object.CreateTexture then
+			return
+		end
+
+		return CreateBorderGlow(object, isThick)
+	end
+end
+
+-------------------
+-- ANIMATED LINE --
+-------------------
+
+do
+	local function SetVertexColor(self, r, g, b, a)
+		self.Fill:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll1:SetVertexColor(r, g, b, a or 1)
+		self.FillScroll2:SetVertexColor(r, g, b, a or 1)
+	end
+
+	local function GetVertexColor(self)
+		return self.Fill:GetVertexColor()
+	end
+
+	local function SetThickness(self, thickness)
+		self.Fill:SetThickness(thickness)
+		self.FillScroll1:SetThickness(thickness)
+		self.FillScroll2:SetThickness(thickness)
+	end
+
+	local function SetOrientation(self, orientation)
+		if orientation == "HORIZONTAL" then
+			self._orientation = orientation
+
+			self.Fill:SetStartPoint("LEFT", self)
+			self.FillScroll1:SetStartPoint("LEFT", self)
+			self.FillScroll2:SetStartPoint("LEFT", self)
+
+			self.Fill:SetEndPoint("RIGHT", self)
+			self.FillScroll1:SetEndPoint("RIGHT", self)
+			self.FillScroll2:SetEndPoint("RIGHT", self)
+		else
+			self._orientation = "VERTICAL"
+
+			self.Fill:SetStartPoint("BOTTOM", self)
+			self.FillScroll1:SetStartPoint("BOTTOM", self)
+			self.FillScroll2:SetStartPoint("BOTTOM", self)
+
+			self.Fill:SetEndPoint("TOP", self)
+			self.FillScroll1:SetEndPoint("TOP", self)
+			self.FillScroll2:SetEndPoint("TOP", self)
+		end
+	end
+
+	local function OnEvent(self)
+		self:SetThickness(16 * E.SCREEN_SCALE)
+	end
+
+	local function AdjustTiling(self)
+		self._tile = self._orientation == "HORIZONTAL" and self:GetWidth() / 128 or self:GetHeight() / 128
+
+		self.Fill:SetTexCoord(0, self._tile, 0, 1)
+		self.FillScroll1:SetTexCoord(0, self._tile, 0, 1)
+		self.FillScroll2:SetTexCoord(0, self._tile, 0, 1)
+	end
+
+	function E:CreateAnimatedLine(parent)
+		local frame = _G.CreateFrame("Frame", nil, parent)
+		frame:SetScript("OnEvent", OnEvent)
+		frame:SetScript("OnShow", AdjustTiling)
+		frame:SetScript("OnSizeChanged", AdjustTiling)
+		frame:RegisterEvent("DISPLAY_SIZE_CHANGED")
+		frame:RegisterEvent("UI_SCALE_CHANGED")
+
+		local line = frame:CreateLine(nil, "ARTWORK", nil, 1)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-Fill", "REPEAT")
+		line:SetThickness(16)
+		frame.Fill = line
+
+		line = frame:CreateLine(nil, "ARTWORK", nil, 2)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-FillScroll1", "REPEAT")
+		line:SetThickness(16)
+		line:SetBlendMode("ADD")
+		frame.FillScroll1 = line
+
+		line = frame:CreateLine(nil, "ARTWORK", nil, 2)
+		line:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-FillScroll2", "REPEAT")
+		line:SetThickness(16)
+		line:SetBlendMode("ADD")
+		frame.FillScroll2 = line
+
+		frame.ScrollAnim = frame:CreateAnimationGroup(nil, "LSUILineAnimTemplate")
+
+		frame.SetVertexColor = SetVertexColor
+		frame.GetVertexColor = GetVertexColor
+		frame.SetThickness = SetThickness
+		frame.SetOrientation = SetOrientation
+
+		frame:SetOrientation("HORIZONTAL")
+		frame:SetThickness(16 * E.SCREEN_SCALE)
+
+		return frame
 	end
 end
