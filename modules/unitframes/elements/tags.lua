@@ -315,9 +315,7 @@ end
 
 oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPower(unit, ALTERNATE_POWER_INDEX), 1)
 	else
 		return ""
@@ -326,9 +324,7 @@ end
 
 oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:max"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPowerMax(unit, ALTERNATE_POWER_INDEX), 1)
 	else
 		return ""
@@ -337,9 +333,7 @@ end
 
 oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		return s_format("%.1f%%", E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))
 	else
 		return ""
@@ -348,9 +342,7 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == max then
@@ -365,9 +357,7 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
@@ -382,9 +372,7 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == max then
@@ -399,9 +387,7 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
-	local type = UnitAlternatePowerInfo(unit)
-
-	if type then
+	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
