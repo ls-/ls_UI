@@ -295,7 +295,7 @@ E.SCREEN_SCALE = _G.UIParent:GetScale()
 E.VER = {
 	string = _G.GetAddOnMetadata(addon, "Version")
 }
-E.VER.number = E.VER.string:gsub("%D", "")
+E.VER.number = tonumber(E.VER.string:gsub("%D", ""), nil)
 
 local function UpdateScreenConstants()
 	E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())

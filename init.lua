@@ -8,8 +8,13 @@ local _G = getfenv(0)
 local function ADDON_LOADED(arg)
 	if arg ~= "ls_UI" then return end
 
+	-- -> 70200.06
+	if _G.LS_UI_CONFIG and _G.LS_UI_CONFIG.version and (not _G.LS_UI_CONFIG.version.number or type(_G.LS_UI_CONFIG.version.number) ~= "number") then
+		_G.LS_UI_CONFIG.version = nil
+	end
+
 	-- -> 70200.05
-	if not _G.LS_UI_CONFIG.version or _G.LS_UI_CONFIG.version.number < 7020005 then
+	if _G.LS_UI_CONFIG and (not _G.LS_UI_CONFIG.version or _G.LS_UI_CONFIG.version.number and _G.LS_UI_CONFIG.version.number < 7020005) then
 		if _G.LS_UI_CONFIG.movers then
 			_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
 			_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
