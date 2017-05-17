@@ -1,3 +1,14 @@
+## Version 70200.05
+
+- Reworked unit frames;
+- Fixed old bug in action button code. It's affecting game performance quite significantly.
+
+KNOWN CAVEATS: Player health bar texture may distort/stretch from time to time. It's a known Blizzard bug, I already reported it, and it's fixed in the latest PTR build.
+
+NOTE #1: There's no in-game config for new unit frames' features yet, however, new unit frames are quite customisable, e.g., you can resize them, enable/disable various elements, etc, so you may want to edit /core/defaults.lua file. I'm not adding new features to in-game config just yet, because I need to add optional horizontal player and pet frames, alternative layout style, figure out new config table(s) structure, and while doing so I also need to consider future addition of profiles. And only then I can start working on new in-game config which will be based on Ace* libs, basically ls: UI is slowly turning into ElvUI w/ artwork.
+
+NOTE #2: I'll be removing AuraTracker in the near future, I tend to use WA more and more nowadays.
+
 ## Version 70200.04
 
 - Updated embedded oUF to 7.0.0;
