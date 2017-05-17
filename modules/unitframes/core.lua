@@ -67,16 +67,6 @@ local function UnitFrameConstructor(frame, unit)
 		UF:ConstructBossFrame(frame)
 	elseif unit == "boss5" then
 		UF:ConstructBossFrame(frame)
-	-- elseif unit == "arena1" then
-	-- 	UF:ConstructArenaFrame(frame)
-	-- elseif unit == "arena2" then
-	-- 	UF:ConstructArenaFrame(frame)
-	-- elseif unit == "arena3" then
-	-- 	UF:ConstructArenaFrame(frame)
-	-- elseif unit == "arena4" then
-	-- 	UF:ConstructArenaFrame(frame)
-	-- elseif unit == "arena5" then
-	-- 	UF:ConstructArenaFrame(frame)
 	end
 end
 
