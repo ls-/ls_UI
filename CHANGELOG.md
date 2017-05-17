@@ -1,3 +1,7 @@
+## Version 70200.06
+
+- Fixed loading process.
+
 ## Version 70200.05
 
 - Reworked unit frames;
