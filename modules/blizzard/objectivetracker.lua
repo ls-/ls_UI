@@ -25,7 +25,7 @@ function BLIZZARD:ObjectiveTracker_IsInit()
 end
 
 function BLIZZARD:ObjectiveTracker_Init()
-	if not isInit and C.blizzard.objective_tracker.enabled then
+	if not isInit and C.db.char.blizzard.objective_tracker.enabled then
 		local header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
 		header:SetFrameStrata("LOW")
 		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
@@ -38,7 +38,7 @@ function BLIZZARD:ObjectiveTracker_Init()
 		_G.ObjectiveTrackerFrame:SetParent(header)
 		_G.ObjectiveTrackerFrame:ClearAllPoints()
 		_G.ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
-		_G.ObjectiveTrackerFrame:SetHeight(C.blizzard.objective_tracker.height)
+		_G.ObjectiveTrackerFrame:SetHeight(C.db.profile.blizzard.objective_tracker.height)
 		_G.ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
 			if _G.ObjectiveTrackerFrame.collapsed then
 				E:UpdateMoverSize(header, 84)

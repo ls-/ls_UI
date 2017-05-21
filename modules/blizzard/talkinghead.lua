@@ -19,7 +19,7 @@ function BLIZZARD:TalkingHead_IsInit()
 end
 
 function BLIZZARD:TalkingHead_Init()
-	if not isInit and C.blizzard.talking_head.enabled then
+	if not isInit and C.db.char.blizzard.talking_head.enabled then
 		local isLoaded = true
 
 		if not _G.IsAddOnLoaded("Blizzard_TalkingHeadUI") then

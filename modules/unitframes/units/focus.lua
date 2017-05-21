@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:ConstructFocusFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.units.focus
+	frame._config = C.db.profile.units[C.db.char.layout].focus
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

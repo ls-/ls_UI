@@ -240,7 +240,7 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 				and WIDGETS["MM_LEFT"].frame
 				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
-				and (C.bars.bags.enabled and WIDGETS["BAG"].frame or not C.bars.bags.enabled) then
+				and (C.db.char.bars.bags.enabled and WIDGETS["BAG"].frame or not C.db.char.bars.bags.enabled) then
 				_G.RegisterStateDriver(controller, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 				controller.isDriverRegistered = true
@@ -258,7 +258,7 @@ function BARS:ActionBarController_IsInit()
 end
 
 function BARS:ActionBarController_Init()
-	if not isInit and C.bars.restricted then
+	if not isInit and C.db.char.bars.restricted then
 		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)

@@ -260,7 +260,7 @@ function UF:CreateAuras(parent, unit)
 	element.CreateIcon = CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = UpdateAuraType
-	element._config = C.units[unit].auras
+	element._config = C.db.profile.units[C.db.char.layout][unit].auras
 
 	return element
 end

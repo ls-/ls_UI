@@ -34,12 +34,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentTooltipsToggle",
 			text = L["ENABLE"],
-			get = function() return C.blizzard.enabled end,
+			get = function() return C.db.char.blizzard.enabled end,
 			set = function(_, value)
-				C.blizzard.enabled = value
+				C.db.char.blizzard.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.enabled)
+				self:SetChecked(C.db.char.blizzard.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -95,12 +95,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentTooltipsToggle",
 			text = L["ENABLE"],
-			get = function() return C.blizzard.objective_tracker.enabled end,
+			get = function() return C.db.char.blizzard.objective_tracker.enabled end,
 			set = function(_, value)
-				C.blizzard.objective_tracker.enabled = value
+				C.db.char.blizzard.objective_tracker.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.objective_tracker.enabled)
+				self:SetChecked(C.db.char.blizzard.objective_tracker.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -146,9 +146,9 @@ function CFG:Blizzard_Init()
 			max = 1000,
 			step = 50,
 			text = L["FRAME_HEIGHT"],
-			get = function(self) return C.blizzard.objective_tracker.height end,
+			get = function(self) return C.db.profile.blizzard.objective_tracker.height end,
 			set = function(self, value)
-				C.blizzard.objective_tracker.height = value
+				C.db.profile.blizzard.objective_tracker.height = value
 
 				if BLIZZARD:ObjectiveTracker_IsInit() then
 					BLIZZARD:ObjectiveTracker_SetHeight(value)
@@ -177,12 +177,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentCommandBarToggle",
 			text = L["BLIZZARD_COMMAND_BAR"],
-			get = function() return C.blizzard.command_bar.enabled end,
+			get = function() return C.db.char.blizzard.command_bar.enabled end,
 			set = function(_, value)
-				C.blizzard.command_bar.enabled = value
+				C.db.char.blizzard.command_bar.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.command_bar.enabled)
+				self:SetChecked(C.db.char.blizzard.command_bar.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -221,12 +221,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentDigsiteBarToggle",
 			text = L["BLIZZARD_DIGSITE_BAR"],
-			get = function() return C.blizzard.digsite_bar.enabled end,
+			get = function() return C.db.char.blizzard.digsite_bar.enabled end,
 			set = function(_, value)
-				C.blizzard.digsite_bar.enabled = value
+				C.db.char.blizzard.digsite_bar.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.digsite_bar.enabled)
+				self:SetChecked(C.db.char.blizzard.digsite_bar.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -265,12 +265,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentDurabilityToggle",
 			text = L["BLIZZARD_DURABILITY_FRAME"],
-			get = function() return C.blizzard.durability.enabled end,
+			get = function() return C.db.char.blizzard.durability.enabled end,
 			set = function(_, value)
-				C.blizzard.durability.enabled = value
+				C.db.char.blizzard.durability.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.durability.enabled)
+				self:SetChecked(C.db.char.blizzard.durability.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -309,12 +309,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentGMToggle",
 			text = L["BLIZZARD_GM_FRAME"],
-			get = function() return C.blizzard.gm.enabled end,
+			get = function() return C.db.char.blizzard.gm.enabled end,
 			set = function(_, value)
-				C.blizzard.gm.enabled = value
+				C.db.char.blizzard.gm.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.gm.enabled)
+				self:SetChecked(C.db.char.blizzard.gm.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -353,12 +353,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentNPEToggle",
 			text = L["BLIZZARD_NPE_FRAME"],
-			get = function() return C.blizzard.npe.enabled end,
+			get = function() return C.db.char.blizzard.npe.enabled end,
 			set = function(_, value)
-				C.blizzard.npe.enabled = value
+				C.db.char.blizzard.npe.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.npe.enabled)
+				self:SetChecked(C.db.char.blizzard.npe.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -397,12 +397,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentPlayerAltPowerToggle",
 			text = L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
-			get = function() return C.blizzard.player_alt_power_bar.enabled end,
+			get = function() return C.db.char.blizzard.player_alt_power_bar.enabled end,
 			set = function(_, value)
-				C.blizzard.player_alt_power_bar.enabled = value
+				C.db.char.blizzard.player_alt_power_bar.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.player_alt_power_bar.enabled)
+				self:SetChecked(C.db.char.blizzard.player_alt_power_bar.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -442,12 +442,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentTalkingHeadToggle",
 			text = L["BLIZZARD_TALKING_HEAD_FRAME"],
-			get = function() return C.blizzard.talking_head.enabled end,
+			get = function() return C.db.char.blizzard.talking_head.enabled end,
 			set = function(_, value)
-				C.blizzard.talking_head.enabled = value
+				C.db.char.blizzard.talking_head.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.talking_head.enabled)
+				self:SetChecked(C.db.char.blizzard.talking_head.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -486,12 +486,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentMirrorTimerToggle",
 			text = L["BLIZZARD_MIRROR_TIMER"],
-			get = function() return C.blizzard.timer.enabled end,
+			get = function() return C.db.char.blizzard.timer.enabled end,
 			set = function(_, value)
-				C.blizzard.timer.enabled = value
+				C.db.char.blizzard.timer.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.timer.enabled)
+				self:SetChecked(C.db.char.blizzard.timer.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -530,12 +530,12 @@ function CFG:Blizzard_Init()
 			parent = panel,
 			name = "$parentVehicleSeatToggle",
 			text = L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
-			get = function() return C.blizzard.vehicle.enabled end,
+			get = function() return C.db.char.blizzard.vehicle.enabled end,
 			set = function(_, value)
-				C.blizzard.vehicle.enabled = value
+				C.db.char.blizzard.vehicle.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.blizzard.vehicle.enabled)
+				self:SetChecked(C.db.char.blizzard.vehicle.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()

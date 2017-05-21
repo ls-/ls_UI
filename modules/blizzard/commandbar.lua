@@ -31,7 +31,7 @@ function BLIZZARD:CommandBar_IsInit()
 end
 
 function BLIZZARD:CommandBar_Init()
-	if not isInit and C.blizzard.command_bar.enabled then
+	if not isInit and C.db.char.blizzard.command_bar.enabled then
 		local isLoaded = true
 
 		if not _G.IsAddOnLoaded("Blizzard_OrderHallUI") then

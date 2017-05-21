@@ -23,9 +23,9 @@ function BARS:ExtraActionButton_Init()
 		_G.UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
 
 		_G.ExtraActionBarFrame:SetParent(_G.UIParent)
-		_G.ExtraActionBarFrame:SetSize(C.bars.extra.button_size, C.bars.extra.button_size)
+		_G.ExtraActionBarFrame:SetSize(C.db.profile.bars.extra.button_size, C.db.profile.bars.extra.button_size)
 		_G.ExtraActionBarFrame:ClearAllPoints()
-		_G.ExtraActionBarFrame:SetPoint(unpack(C.bars.extra.point))
+		_G.ExtraActionBarFrame:SetPoint(unpack(C.db.profile.bars.extra.point))
 		_G.ExtraActionBarFrame:EnableMouse(false)
 		E:CreateMover(_G.ExtraActionBarFrame)
 

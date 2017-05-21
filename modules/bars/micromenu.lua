@@ -552,7 +552,7 @@ function BARS:MicroMenu_IsInit()
 end
 
 function BARS:MicroMenu_Init()
-	local CFG = C.bars.micromenu
+	local CFG = C.db.profile.bars.micromenu
 
 	local holder1 = _G.CreateFrame("Frame", "LSMBHolderLeft", _G.UIParent)
 	holder1:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)

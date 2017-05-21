@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:CreateBossHolder()
 	local holder = _G.CreateFrame("Frame", "LSBossHolder", _G.UIParent)
 	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
-	holder:SetPoint(unpack(C.units.boss.point))
+	holder:SetPoint(unpack(C.db.profile.units[C.db.char.layout].boss.point))
 
 	E:CreateMover(holder)
 end
@@ -17,7 +17,7 @@ end
 function UF:ConstructBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.units.boss
+	frame._config = C.db.profile.units[C.db.char.layout].boss
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

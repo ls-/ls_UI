@@ -303,6 +303,8 @@ local function UpdateScreenConstants()
 	E.SCREEN_SCALE = _G.UIParent:GetScale()
 end
 
+E.NAME_REALM = _G.UnitName("player") .. " - " .. _G.GetRealmName()
+
 E:RegisterEvent("DISPLAY_SIZE_CHANGED", UpdateScreenConstants)
 E:RegisterEvent("UI_SCALE_CHANGED", UpdateScreenConstants)
 

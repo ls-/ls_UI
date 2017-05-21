@@ -1,46 +1,95 @@
-local _, ns = ...
-local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
+local name, ns = ...
 
 -- Lua
 local _G = getfenv(0)
 
 -- Mine
-local function ADDON_LOADED(arg)
-	if arg ~= "ls_UI" then return end
+local E = _G.LibStub("AceAddon-3.0"):NewAddon(name) -- engine
+local C, D, M, L, P = {}, {}, {}, {}, {} -- config, defaults, media, locales, private
+ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
 
-	-- -> 70200.06
-	if _G.LS_UI_CONFIG and _G.LS_UI_CONFIG.version and (not _G.LS_UI_CONFIG.version.number or type(_G.LS_UI_CONFIG.version.number) ~= "number") then
-		_G.LS_UI_CONFIG.version = nil
-	end
+_G[name] = {
+	[1] = ns.E,
+	[2] = ns.L,
+	[3] = ns.M,
+	[4] = ns.C,
+}
 
-	-- -> 70200.05
-	if _G.LS_UI_CONFIG and (not _G.LS_UI_CONFIG.version or _G.LS_UI_CONFIG.version.number and _G.LS_UI_CONFIG.version.number < 7020005) then
-		if _G.LS_UI_CONFIG.movers then
-			_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
-			_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
+local function ConvertConfig(old, base)
+	local temp = {}
+
+	for k, v in next, base do
+		if old[k] ~= nil then
+			if type(v) == "table" then
+				if next(v) then
+					temp[k] = ConvertConfig(old[k], v)
+				else
+					temp[k] = old[k]
+				end
+			else
+				if old[k] ~= v then
+					temp[k] = old[k]
+				end
+
+				old[k] = nil
+			end
 		end
 	end
 
-	E:CopyTable(E:CopyTable(D, _G.LS_UI_CONFIG), C)
-	E:UnregisterEvent("ADDON_LOADED", ADDON_LOADED)
+	return temp
 end
 
-local function PLAYER_LOGIN()
-	E:UpdateConstants()
+function E:OnInitialize()
+	C.db = _G.LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
+	_G.LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
 
-	P:InitModules()
+	-- -> 70200.07
+	-- old config conversion
+	if _G.LS_UI_CONFIG then
+		_G.LS_UI_CONFIG.version = nil
+
+		self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG, D.char), C.db.char)
+
+		if _G.LS_UI_CONFIG.auras then
+			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.auras, D.profile.auras["**"]), C.db.profile.auras.ls)
+
+			_G.LS_UI_CONFIG.auras = nil
+		end
+
+		if _G.LS_UI_CONFIG.units then
+			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.units, D.profile.units["**"]), C.db.profile.units.ls)
+
+			_G.LS_UI_CONFIG.units = nil
+		end
+
+		if _G.LS_UI_CONFIG.minimap then
+			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.minimap, D.profile.minimap["**"]), C.db.profile.minimap.ls)
+
+			_G.LS_UI_CONFIG.minimap = nil
+		end
+
+		if _G.LS_UI_CONFIG.movers then
+			self:CopyTable(_G.LS_UI_CONFIG.movers, C.db.profile.movers.ls)
+
+			_G.LS_UI_CONFIG.movers = nil
+		end
+
+		self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG, D.profile), C.db.profile)
+	end
+
+	C.db:RegisterCallback("OnDatabaseShutdown", function()
+		C.db.char.version = E.VER.number
+		C.db.profile.version = E.VER.number
+
+		E:CleanUpMoversConfig()
+	end)
+
+	self:RegisterEvent("PLAYER_LOGIN", function()
+		E:UpdateConstants()
+
+		P:InitModules()
+	end)
+
+	-- No one needs to see these
+	ns.C, ns.D, ns.L, ns.P = nil, nil, nil, nil
 end
-
-local function PLAYER_LOGOUT()
-	E:CleanUpMoversConfig()
-
-	_G.LS_UI_CONFIG = E:DiffTable(D, C)
-	_G.LS_UI_CONFIG.version = E.VER
-end
-
-E:RegisterEvent("ADDON_LOADED", ADDON_LOADED)
-E:RegisterEvent("PLAYER_LOGIN", PLAYER_LOGIN)
-E:RegisterEvent("PLAYER_LOGOUT", PLAYER_LOGOUT)
-
--- No one needs to see these
-ns.C, ns.D, ns.L, ns.P = nil, nil, nil, nil

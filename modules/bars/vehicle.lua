@@ -42,8 +42,8 @@ end
 function BARS:VehicleExitButton_Init()
 	if not isInit then
 		local button = E:CreateButton(_G.UIParent, "LSVehicleExitButton")
-		button:SetSize(C.bars.vehicle.button_size, C.bars.vehicle.button_size)
-		button:SetPoint(unpack(C.bars.vehicle.point))
+		button:SetSize(C.db.profile.bars.vehicle.button_size, C.db.profile.bars.vehicle.button_size)
+		button:SetPoint(unpack(C.db.profile.bars.vehicle.point))
 		button:SetBorderColor(1, 0.1, 0.15)
 		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")

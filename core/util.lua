@@ -51,7 +51,7 @@ local function CopyTable(src, dest)
 	for k, v in next, src do
 		if type(v) == "table" then
 			dest[k] = CopyTable(v, dest[k])
-		elseif type(v) ~= type(dest[k]) then
+		else
 			dest[k] = v
 		end
 	end
@@ -59,18 +59,18 @@ local function CopyTable(src, dest)
 	return dest
 end
 
-local function ReplaceTable(src, dest)
+local function UpdateTable(src, dest)
 	if type(dest) ~= "table" then
 		dest = {}
-	else
-		t_wipe(dest)
 	end
 
 	for k, v in next, src do
 		if type(v) == "table" then
-			dest[k] = ReplaceTable(v, dest[k])
+			dest[k] = UpdateTable(v, dest[k])
 		else
-			dest[k] = v
+			if dest[k] == nil then
+				dest[k] = v
+			end
 		end
 	end
 
@@ -143,8 +143,8 @@ function E:CopyTable(...)
 	return CopyTable(...)
 end
 
-function E:ReplaceTable(...)
-	return ReplaceTable(...)
+function E:UpdateTable(...)
+	return UpdateTable(...)
 end
 
 function E:DiffTable(...)

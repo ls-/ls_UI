@@ -22,9 +22,9 @@ function BARS:ZoneAbilityButton_Init()
 		_G.ZoneAbilityFrame.ignoreFramePositionManager = true
 		_G.UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
 
-		_G.ZoneAbilityFrame:SetSize(C.bars.garrison.button_size, C.bars.garrison.button_size)
+		_G.ZoneAbilityFrame:SetSize(C.db.profile.bars.garrison.button_size, C.db.profile.bars.garrison.button_size)
 		_G.ZoneAbilityFrame:ClearAllPoints()
-		_G.ZoneAbilityFrame:SetPoint(unpack(C.bars.garrison.point))
+		_G.ZoneAbilityFrame:SetPoint(unpack(C.db.profile.bars.garrison.point))
 		_G.ZoneAbilityFrame:EnableMouse(false)
 		E:CreateMover(_G.ZoneAbilityFrame)
 

@@ -391,14 +391,14 @@ function MINIMAP:IsInit()
 end
 
 function MINIMAP:Init()
-	if not isInit and C.minimap.enabled then
+	if not isInit and C.db.char.minimap.enabled then
 		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
 			_G.LoadAddOn("Blizzard_TimeManager")
 		end
 
 		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
 		holder:SetSize(332 / 2, 332 / 2)
-		holder:SetPoint(unpack(C.minimap.point))
+		holder:SetPoint(unpack(C.db.profile.minimap[C.db.char.layout].point))
 		E:CreateMover(holder)
 
 		Minimap:EnableMouseWheel()

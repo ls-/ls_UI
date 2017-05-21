@@ -35,12 +35,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentBarsToggle",
 			text = L["ENABLE"],
-			get = function() return C.bars.enabled end,
+			get = function() return C.db.char.bars.enabled end,
 			set = function(_, value)
-				C.bars.enabled = value
+				C.db.char.bars.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.enabled)
+				self:SetChecked(C.db.char.bars.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -105,12 +105,12 @@ function CFG:Bars_Init()
 			name = "$parentModeToggle",
 			text = L["ACTION_BAR_RESTRICTED_MODE"],
 			tooltip_text= L["ACTION_BAR_RESTRICTED_MODE_TOOLTIP"],
-			get = function() return C.bars.restricted end,
+			get = function() return C.db.char.bars.restricted end,
 			set = function(_, value)
-				C.bars.restricted = value
+				C.db.char.bars.restricted = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.restricted)
+				self:SetChecked(C.db.char.bars.restricted)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -158,12 +158,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentActionBar2Toggle",
 			text = L["ACTION_BAR_2"],
-			get = function() return C.bars.bar2.visible end,
+			get = function() return C.db.profile.bars.bar2.visible end,
 			set = function(_, value)
-				C.bars.bar2.visible = value
+				C.db.profile.bars.bar2.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar2.visible)
+				self:SetChecked(C.db.profile.bars.bar2.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -182,12 +182,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentActionBar3Toggle",
 			text = L["ACTION_BAR_3"],
-			get = function() return C.bars.bar3.visible end,
+			get = function() return C.db.profile.bars.bar3.visible end,
 			set = function(_, value)
-				C.bars.bar3.visible = value
+				C.db.profile.bars.bar3.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar3.visible)
+				self:SetChecked(C.db.profile.bars.bar3.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -206,12 +206,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentActionBar4Toggle",
 			text = L["ACTION_BAR_4"],
-			get = function() return C.bars.bar4.visible end,
+			get = function() return C.db.profile.bars.bar4.visible end,
 			set = function(_, value)
-				C.bars.bar4.visible = value
+				C.db.profile.bars.bar4.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar4.visible)
+				self:SetChecked(C.db.profile.bars.bar4.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -230,12 +230,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentActionBar5Toggle",
 			text = L["ACTION_BAR_5"],
-			get = function() return C.bars.bar5.visible end,
+			get = function() return C.db.profile.bars.bar5.visible end,
 			set = function(_, value)
-				C.bars.bar5.visible = value
+				C.db.profile.bars.bar5.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar5.visible)
+				self:SetChecked(C.db.profile.bars.bar5.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -254,12 +254,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentPetBarToggle",
 			text = L["PET_BAR"],
-			get = function() return C.bars.bar6.visible end,
+			get = function() return C.db.profile.bars.bar6.visible end,
 			set = function(_, value)
-				C.bars.bar6.visible = value
+				C.db.profile.bars.bar6.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar6.visible)
+				self:SetChecked(C.db.profile.bars.bar6.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -278,12 +278,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentStanceBarToggle",
 			text = L["STANCE_BAR"],
-			get = function() return C.bars.bar7.visible end,
+			get = function() return C.db.profile.bars.bar7.visible end,
 			set = function(_, value)
-				C.bars.bar7.visible = value
+				C.db.profile.bars.bar7.visible = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bar7.visible)
+				self:SetChecked(C.db.profile.bars.bar7.visible)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -307,12 +307,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentMacroTextToggle",
 			text = L["SHOW_MACRO_TEXT"],
-			get = function() return C.bars.show_name end,
+			get = function() return C.db.profile.bars.show_name end,
 			set = function(_, value)
-				C.bars.show_name = value
+				C.db.profile.bars.show_name = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.show_name)
+				self:SetChecked(C.db.profile.bars.show_name)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -331,12 +331,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentHotKeyToggle",
 			text = L["SHOW_KEY_BINDING_TEXT"],
-			get = function() return C.bars.show_hotkey end,
+			get = function() return C.db.profile.bars.show_hotkey end,
 			set = function(_, value)
-				C.bars.show_hotkey = value
+				C.db.profile.bars.show_hotkey = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.show_hotkey)
+				self:SetChecked(C.db.profile.bars.show_hotkey)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -355,12 +355,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentIconToggle",
 			text = L["USE_ICON_AS_INDICATOR_TEXT"],
-			get = function() return C.bars.use_icon_as_indicator end,
+			get = function() return C.db.profile.bars.use_icon_as_indicator end,
 			set = function(_, value)
-				C.bars.use_icon_as_indicator = value
+				C.db.profile.bars.use_icon_as_indicator = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.use_icon_as_indicator)
+				self:SetChecked(C.db.profile.bars.use_icon_as_indicator)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -433,9 +433,9 @@ function CFG:Bars_Init()
 			max = 48,
 			step = 2,
 			text = L["BUTTON_SIZE"],
-			get = function(self) return C.bars[self.key].button_size end,
+			get = function(self) return C.db.profile.bars[self.key].button_size end,
 			set = function(self, value)
-				C.bars[self.key].button_size = value
+				C.db.profile.bars[self.key].button_size = value
 
 				if BARS:IsInit() then
 					BARS:UpdateLayout(self.key)
@@ -453,9 +453,9 @@ function CFG:Bars_Init()
 			max = 12,
 			step = 2,
 			text = L["BUTTON_SPACING"],
-			get = function(self) return C.bars[self.key].button_gap end,
+			get = function(self) return C.db.profile.bars[self.key].button_gap end,
 			set = function(self, value)
-				C.bars[self.key].button_gap = value
+				C.db.profile.bars[self.key].button_gap = value
 
 				if BARS:IsInit() then
 					BARS:UpdateLayout(self.key)
@@ -474,9 +474,9 @@ function CFG:Bars_Init()
 			max = 12,
 			step = 1,
 			text = L["BUTTONS_PER_ROW"],
-			get = function(self) return C.bars[self.key].buttons_per_row end,
+			get = function(self) return C.db.profile.bars[self.key].buttons_per_row end,
 			set = function(self, value)
-				C.bars[self.key].buttons_per_row = value
+				C.db.profile.bars[self.key].buttons_per_row = value
 
 				if BARS:IsInit() then
 					BARS:UpdateLayout(self.key)
@@ -511,11 +511,11 @@ function CFG:Bars_Init()
 				info.checked = nil
 				_G.UIDropDownMenu_AddButton(info)
 			end,
-			get = function(self) return C.bars[self.key].init_anchor end,
+			get = function(self) return C.db.profile.bars[self.key].init_anchor end,
 			set = function(self, value)
 				_G.UIDropDownMenu_SetSelectedValue(self, value)
 
-				C.bars[self.key].init_anchor = value
+				C.db.profile.bars[self.key].init_anchor = value
 
 				if BARS:IsInit() then
 					BARS:UpdateLayout(self.key)
@@ -554,12 +554,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentBarsToggle",
 			text = L["ENABLE_BAGS"],
-			get = function() return C.bars.bags.enabled end,
+			get = function() return C.db.char.bars.bags.enabled end,
 			set = function(_, value)
-				C.bars.bags.enabled = value
+				C.db.char.bars.bags.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.bags.enabled)
+				self:SetChecked(C.db.char.bars.bags.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -614,12 +614,12 @@ function CFG:Bars_Init()
 			parent = panel,
 			name = "$parentXPBarToggle",
 			text = L["ENABLE_XP_BAR"],
-			get = function() return C.bars.xpbar.enabled end,
+			get = function() return C.db.char.bars.xpbar.enabled end,
 			set = function(_, value)
-				C.bars.xpbar.enabled = value
+				C.db.char.bars.xpbar.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.bars.xpbar.enabled)
+				self:SetChecked(C.db.char.bars.xpbar.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()

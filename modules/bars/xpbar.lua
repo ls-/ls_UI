@@ -389,9 +389,9 @@ function BARS:XPBar_IsInit()
 end
 
 function BARS:XPBar_Init()
-	if not isInit and (C.bars.xpbar.enabled or self:ActionBarController_IsInit()) then
+	if not isInit and (C.db.char.bars.xpbar.enabled or self:ActionBarController_IsInit()) then
 		if not self:ActionBarController_IsInit() then
-			CFG = C.bars.xpbar
+			CFG = C.db.profile.bars.xpbar
 		end
 
 		bar = _G.CreateFrame("Frame", "LSUIXPBar", _G.UIParent)

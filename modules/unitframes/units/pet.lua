@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:ConstructPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.units.pet
+	frame._config = C.db.profile.units[C.db.char.layout].pet
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
 	fg_parent:SetFrameLevel(level + 4)

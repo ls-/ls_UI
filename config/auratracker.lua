@@ -102,12 +102,12 @@ function CFG:AuraTracker_Init()
 			parent = panel,
 			name = "$parentAuraTrackerToggle",
 			text = L["ENABLE"],
-			get = function() return C.auratracker.enabled end,
+			get = function() return C.db.char.auratracker.enabled end,
 			set = function(_, value)
-				C.auratracker.enabled = value
+				C.db.char.auratracker.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.auratracker.enabled)
+				self:SetChecked(C.db.char.auratracker.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -148,12 +148,12 @@ function CFG:AuraTracker_Init()
 			parent = panel,
 			name = "$parentLockToggle",
 			text = L["LOCK_FRAME"],
-			get = function() return C.auratracker.locked end,
+			get = function() return C.db.profile.auratracker.locked end,
 			set = function(_, value)
-				C.auratracker.locked = value
+				C.db.profile.auratracker.locked = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.auratracker.locked)
+				self:SetChecked(C.db.profile.auratracker.locked)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -176,10 +176,10 @@ function CFG:AuraTracker_Init()
 				set = function(self, id)
 					if id == 1 then
 						self.filter = "HELPFUL"
-						self.table = C.auratracker.HELPFUL
+						self.table = C.db.profile.auratracker.HELPFUL
 					elseif id == 2 then
 						self.filter = "HARMFUL"
-						self.table = C.auratracker.HARMFUL
+						self.table = C.db.profile.auratracker.HARMFUL
 					end
 				end,
 				refresh = function(self)
@@ -209,10 +209,10 @@ function CFG:AuraTracker_Init()
 			aura_button_mask_dial_params = {
 				adjust_size_on_show = true,
 				get = function(self)
-					return C.auratracker[self.filter][self.key]
+					return C.db.profile.auratracker[self.filter][self.key]
 				end,
 				set = function(self, value)
-					C.auratracker[self.filter][self.key] = value
+					C.db.profile.auratracker[self.filter][self.key] = value
 				end,
 				flags = {
 					[0] = E.PLAYER_SPEC_FLAGS[0],
@@ -234,9 +234,9 @@ function CFG:AuraTracker_Init()
 			max = 48,
 			step = 2,
 			text = L["BUTTON_SIZE"],
-			get = function() return C.auratracker.button_size end,
+			get = function() return C.db.profile.auratracker.button_size end,
 			set = function(_, value)
-				C.auratracker.button_size = value
+				C.db.profile.auratracker.button_size = value
 
 				if AURATRACKER:IsInit() then
 					AURATRACKER:UpdateLayout()
@@ -255,9 +255,9 @@ function CFG:AuraTracker_Init()
 			max = 12,
 			step = 2,
 			text = L["BUTTON_SPACING"],
-			get = function() return C.auratracker.button_gap end,
+			get = function() return C.db.profile.auratracker.button_gap end,
 			set = function(_, value)
-				C.auratracker.button_gap = value
+				C.db.profile.auratracker.button_gap = value
 
 				if AURATRACKER:IsInit() then
 					AURATRACKER:UpdateLayout()
@@ -275,9 +275,9 @@ function CFG:AuraTracker_Init()
 			max = 12,
 			step = 1,
 			text = L["BUTTONS_PER_ROW"],
-			get = function() return C.auratracker.buttons_per_row end,
+			get = function() return C.db.profile.auratracker.buttons_per_row end,
 			set = function(_, value)
-				C.auratracker.buttons_per_row = value
+				C.db.profile.auratracker.buttons_per_row = value
 
 				if AURATRACKER:IsInit() then
 					AURATRACKER:UpdateLayout()
@@ -312,11 +312,11 @@ function CFG:AuraTracker_Init()
 				info.checked = nil
 				_G.UIDropDownMenu_AddButton(info)
 			end,
-			get = function() return C.auratracker.init_anchor end,
+			get = function() return C.db.profile.auratracker.init_anchor end,
 			set = function(self, value)
 				_G.UIDropDownMenu_SetSelectedValue(self, value)
 
-				C.auratracker.init_anchor = value
+				C.db.profile.auratracker.init_anchor = value
 
 				if AURATRACKER:IsInit() then
 					AURATRACKER:UpdateLayout()

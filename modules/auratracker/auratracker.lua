@@ -27,7 +27,7 @@ local function PopulateActiveAurasTable(index, filter)
 	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
 	local playerSpec = E:GetPlayerSpecFlag()
 
-	if name and C.auratracker[filter][spellID] and E:CheckFlag(C.auratracker[filter][spellID], playerSpec) then
+	if name and C.db.profile.auratracker[filter][spellID] and E:CheckFlag(C.db.profile.auratracker[filter][spellID], playerSpec) then
 		table.insert(activeAuras, {
 			index = index,
 			icon = iconTexture,
@@ -41,7 +41,7 @@ local function PopulateActiveAurasTable(index, filter)
 end
 
 local function HandleDataCorruption(filter)
-	local auraList = C.auratracker[filter]
+	local auraList = C.db.profile.auratracker[filter]
 
 	for k in pairs(auraList) do
 		if not GetSpellInfo(k) then
@@ -104,7 +104,7 @@ local function AT_OnEvent()
 end
 
 local function AddToList(filter, spellID)
-	if not (C.auratracker.enabled and filter and spellID) then return end
+	if not (C.db.char.auratracker.enabled and filter and spellID) then return end
 
 	local link = _G.GetSpellLink(spellID)
 
@@ -112,11 +112,11 @@ local function AddToList(filter, spellID)
 		return false, L["LOG_NOTHING_FOUND"]
 	end
 
-	if C.auratracker[filter][spellID] then
+	if C.db.profile.auratracker[filter][spellID] then
 		return false, string.format(L["LOG_ITEM_ADDED_ERR"], link)
 	end
 
-	C.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
+	C.db.profile.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
 
 	AURATRACKER:Refresh()
 
@@ -138,7 +138,7 @@ function AURATRACKER:Refresh()
 end
 
 function AURATRACKER:UpdateLayout()
-	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
+	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.db.profile.auratracker.button_size, C.db.profile.auratracker.button_gap, C.db.profile.auratracker.init_anchor, C.db.profile.auratracker.buttons_per_row)
 end
 
 -----------------
@@ -150,7 +150,7 @@ function AURATRACKER:IsInit()
 end
 
 function AURATRACKER:Init()
-	if not isInit and C.auratracker.enabled then
+	if not isInit and C.db.char.auratracker.enabled then
 		HandleDataCorruption("HELPFUL")
 		HandleDataCorruption("HARMFUL")
 
@@ -167,8 +167,8 @@ function AURATRACKER:Init()
 		E:CreateMover(header, true)
 
 		-- FIX-ME: Remove it later
-		C.auratracker.point = nil
-		C.auratracker.direction = nil
+		C.db.profile.auratracker.point = nil
+		C.db.profile.auratracker.direction = nil
 
 		AuraTracker = _G.CreateFrame("Frame", nil, _G.UIParent)
 		AuraTracker:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
@@ -201,7 +201,7 @@ function AURATRACKER:Init()
 			button.AuraType = auraType
 		end
 
-		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.auratracker.button_size, C.auratracker.button_gap, C.auratracker.init_anchor, C.auratracker.buttons_per_row)
+		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.db.profile.auratracker.button_size, C.db.profile.auratracker.button_gap, C.db.profile.auratracker.init_anchor, C.db.profile.auratracker.buttons_per_row)
 
 		P:AddCommand("atbuff", function(arg)
 			arg = tonumber(arg)
@@ -220,7 +220,7 @@ function AURATRACKER:Init()
 		end)
 
 		-- Finalise
-		self:ToggleHeader(not C.auratracker.locked)
+		self:ToggleHeader(not C.db.profile.auratracker.locked)
 		self:Refresh()
 
 		isInit = true
