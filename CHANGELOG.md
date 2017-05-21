@@ -1,3 +1,10 @@
+## Version 70200.07
+
+- Addon now uses AceDB. I strongly recommend to /reload UI right after your first login on each char, otherwise you risk losing all your settings if you get DCed;
+- Not full class powers are now a bit dimmed.
+
+NOTE: You have to restart your client to make this update work.
+
 ## Version 70200.06
 
 - Fixed loading process.
