@@ -69,6 +69,10 @@ function E:OnInitialize()
 		end
 
 		if _G.LS_UI_CONFIG.movers then
+			_G.LS_UI_CONFIG.movers.LSPetFrameMover = nil
+			_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
+			_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
+
 			self:CopyTable(_G.LS_UI_CONFIG.movers, C.db.profile.movers.ls)
 
 			_G.LS_UI_CONFIG.movers = nil
