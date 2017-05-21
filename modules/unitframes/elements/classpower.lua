@@ -56,14 +56,21 @@ local function OnValueChanged(self, value)
 	local _, max = self:GetMinMaxValues()
 
 	if value == max then
-		if not self._active and not self.InAnim:IsPlaying() then
-			self.InAnim:Play()
+		if not self._active then
+			if not self.InAnim:IsPlaying() then
+				self.InAnim:Play()
+			end
+
+			self:SetAlpha(1)
+
 			self._active = true
 		end
 	else
 		self.InAnim:Stop()
 
 		if self._active  then
+			self:SetAlpha(0.65)
+
 			self._active = false
 		end
 	end
