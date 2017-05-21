@@ -31,7 +31,7 @@ local lastGUID
 -----------
 
 local function AddGenericInfo(tooltip, id)
-	if not (id and C.tooltips.show_id) then return end
+	if not (id and C.db.profile.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -50,7 +50,7 @@ local function AddGenericInfo(tooltip, id)
 end
 
 local function AddSpellInfo(tooltip, id, caster)
-	if not (id and C.tooltips.show_id) then return end
+	if not (id and C.db.profile.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -81,7 +81,7 @@ local function AddSpellInfo(tooltip, id, caster)
 end
 
 local function AddItemInfo(tooltip, id, showQuantity)
-	if not (id and C.tooltips.show_id) then return end
+	if not (id and C.db.profile.tooltips.show_id) then return end
 
 	local name = tooltip:GetName()
 	local textLeft = string.format(ID, id)
@@ -353,10 +353,10 @@ local function Tooltip_SetUnit(self)
 	local effectiveLevel = _G.UnitEffectiveLevel(unit)
 	local nameColor = E:GetUnitColor(
 		unit,
-		C.tooltips.unit.name_color_pvp_hostility,
-		C.tooltips.unit.name_color_class,
-		C.tooltips.unit.name_color_tapping,
-		C.tooltips.unit.name_color_reaction)
+		C.db.profile.tooltips.unit.name_color_pvp_hostility,
+		C.db.profile.tooltips.unit.name_color_class,
+		C.db.profile.tooltips.unit.name_color_tapping,
+		C.db.profile.tooltips.unit.name_color_reaction)
 	local difficultyColor = E:GetCreatureDifficultyColor(effectiveLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
 	local isShiftKeyDown = _G.IsShiftKeyDown()
@@ -529,7 +529,7 @@ function TOOLTIPS:IsInit()
 end
 
 function TOOLTIPS:Init()
-	if not isInit and C.tooltips.enabled then
+	if not isInit and C.db.char.tooltips.enabled then
 		-- XXX: It's done the way it's done for a reason
 
 		-- Spells

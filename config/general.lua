@@ -48,12 +48,12 @@ function CFG:General_Init()
 			parent = panel,
 			name = "$parentAurasToggle",
 			text = L["AURAS"],
-			get = function() return C.auras.enabled end,
+			get = function() return C.db.char.auras.enabled end,
 			set = function(_, value)
-				C.auras.enabled = value
+				C.db.char.auras.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.auras.enabled)
+				self:SetChecked(C.db.char.auras.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -94,12 +94,12 @@ function CFG:General_Init()
 			parent = panel,
 			name = "$parentMailToggle",
 			text = L["MINIMAP"],
-			get = function() return C.minimap.enabled end,
+			get = function() return C.db.char.minimap.enabled end,
 			set = function(_, value)
-				C.minimap.enabled = value
+				C.db.char.minimap.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.minimap.enabled)
+				self:SetChecked(C.db.char.minimap.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()

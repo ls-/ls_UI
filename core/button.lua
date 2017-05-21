@@ -176,7 +176,7 @@ local function UpdateState(button)
 	if button.action and (button.__type == "action" or button.__type == "extra") then
 		local isUsable, notEnoughMana = IsUsableAction(button.action)
 
-		if C.bars.use_icon_as_indicator then
+		if C.db.profile.bars.use_icon_as_indicator then
 			if not isUsable and not notEnoughMana then
 				button.icon:SetDesaturated(true)
 				button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
@@ -275,7 +275,7 @@ local function SkinButton(button)
 
 		bHotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGB())
 
-		if not C.bars.show_hotkey then
+		if not C.db.profile.bars.show_hotkey then
 			bHotKey:Hide()
 		end
 	end
@@ -300,7 +300,7 @@ local function SkinButton(button)
 		SetMacroTextHook(bName)
 		hooksecurefunc(bName, "SetText", SetMacroTextHook)
 
-		if not C.bars.show_name then
+		if not C.db.profile.bars.show_name then
 			bName:Hide()
 		end
 	end
@@ -498,7 +498,7 @@ function E:SkinPetActionButton(button)
 	if bHotKey then
 		bHotKey:SetFontObject("LS8Font_Outline")
 
-		if not C.bars.show_hotkey then
+		if not C.db.profile.bars.show_hotkey then
 			bHotKey:Hide()
 		end
 	end

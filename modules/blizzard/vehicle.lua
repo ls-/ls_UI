@@ -17,7 +17,7 @@ function BLIZZARD:Vehicle_IsInit()
 end
 
 function BLIZZARD:Vehicle_Init()
-	if not isInit and C.blizzard.vehicle.enabled then
+	if not isInit and C.db.char.blizzard.vehicle.enabled then
 		_G.VehicleSeatIndicator:ClearAllPoints()
 		_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
 		E:CreateMover(_G.VehicleSeatIndicator)

@@ -10,7 +10,7 @@ local unpack = _G.unpack
 function UF:ConstructPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.units.player
+	frame._config = C.db.profile.units[C.db.char.layout].player
 
 	-- Note: can't touch this
 	-- 1: frame

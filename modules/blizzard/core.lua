@@ -14,7 +14,7 @@ function BLIZZARD:IsInit()
 end
 
 function BLIZZARD:Init()
-	if not isInit and C.blizzard.enabled then
+	if not isInit and C.db.char.blizzard.enabled then
 		self:CommandBar_Init()
 		self:DigsiteBar_Init()
 		self:Durability_Init()

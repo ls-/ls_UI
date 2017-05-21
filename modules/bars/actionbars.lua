@@ -196,14 +196,14 @@ end
 function BARS:ActionBars_Init()
 	if not isInit then
 		if not self:ActionBarController_IsInit() then
-			CFG = C.bars
+			CFG = C.db.profile.bars
 		else
-			CFG.bar2 = C.bars.bar2
-			CFG.bar3 = C.bars.bar3
-			CFG.bar4 = C.bars.bar4
-			CFG.bar5 = C.bars.bar5
-			CFG.bar6 = C.bars.bar6
-			CFG.bar7 = C.bars.bar7
+			CFG.bar2 = C.db.profile.bars.bar2
+			CFG.bar3 = C.db.profile.bars.bar3
+			CFG.bar4 = C.db.profile.bars.bar4
+			CFG.bar5 = C.db.profile.bars.bar5
+			CFG.bar6 = C.db.profile.bars.bar6
+			CFG.bar7 = C.db.profile.bars.bar7
 		end
 
 		-- Bar setup

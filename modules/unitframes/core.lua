@@ -74,19 +74,19 @@ local function MainConstructor()
 	oUF:RegisterStyle("LSv2", UnitFrameConstructor)
 	oUF:SetActiveStyle("LSv2")
 
-	if C.units.player.enabled then
+	if C.db.profile.units[C.db.char.layout].player.enabled then
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
 
 		UF:UpdatePlayerFrame(objects["player"])
 		UF:UpdatePetFrame(objects["pet"])
 
-		if not C.units.player.castbar.enabled then
+		if not C.db.profile.units[C.db.char.layout].player.castbar.enabled then
 			UF:EnableDefaultCastingBars()
 		end
 	end
 
-	if C.units.target.enabled then
+	if C.db.profile.units[C.db.char.layout].target.enabled then
 		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
 		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
 
@@ -94,7 +94,7 @@ local function MainConstructor()
 		UF:UpdateTargetTargetFrame(objects["targettarget"])
 	end
 
-	if C.units.focus.enabled then
+	if C.db.profile.units[C.db.char.layout].focus.enabled then
 		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
 		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
 
@@ -102,7 +102,7 @@ local function MainConstructor()
 		UF:UpdateFocusTargetFrame(objects["focustarget"])
 	end
 
-	if C.units.boss.enabled then
+	if C.db.profile.units[C.db.char.layout].boss.enabled then
 		for i = 1, 5 do
 			objects["boss"..i] = oUF:Spawn("boss"..i, "LSBoss"..i.."Frame")
 
@@ -122,7 +122,7 @@ local function MainConstructor()
 				object:SetPoint("TOP", "LSBoss"..(id - 1).."Frame", "BOTTOM", 0, -28)
 			end
 		else
-			object:SetPoint(unpack(C.units[unit].point))
+			object:SetPoint(unpack(C.db.profile.units[C.db.char.layout][unit].point))
 			E:CreateMover(object)
 		end
 	end
@@ -137,16 +137,16 @@ function UF:SpawnFrame(unit)
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
 
-		objects["player"]:SetPoint(unpack(C.units.player.point))
+		objects["player"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].player.point))
 		E:CreateMover(objects["player"])
 
-		objects["pet"]:SetPoint(unpack(C.units.pet.point))
+		objects["pet"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].pet.point))
 		E:CreateMover(objects["pet"])
 
 		UF:UpdatePlayerFrame(objects["player"])
 		UF:UpdatePetFrame(objects["pet"])
 
-		if not C.units.player.castbar.enabled then
+		if not C.db.profile.units[C.db.char.layout].player.castbar.enabled then
 			UF:EnableDefaultCastingBars()
 		end
 
@@ -155,10 +155,10 @@ function UF:SpawnFrame(unit)
 		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
 		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
 
-		objects["target"]:SetPoint(unpack(C.units.target.point))
+		objects["target"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].target.point))
 		E:CreateMover(objects["target"])
 
-		objects["targettarget"]:SetPoint(unpack(C.units.targettarget.point))
+		objects["targettarget"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].targettarget.point))
 		E:CreateMover(objects["targettarget"])
 
 		UF:UpdateTargetFrame(objects["target"])
@@ -169,10 +169,10 @@ function UF:SpawnFrame(unit)
 		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
 		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
 
-		objects["focus"]:SetPoint(unpack(C.units.focus.point))
+		objects["focus"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].focus.point))
 		E:CreateMover(objects["focus"])
 
-		objects["focustarget"]:SetPoint(unpack(C.units.focustarget.point))
+		objects["focustarget"]:SetPoint(unpack(C.db.profile.units[C.db.char.layout].focustarget.point))
 		E:CreateMover(objects["focustarget"])
 
 		UF:UpdateFocusFrame(objects["focus"])
@@ -236,10 +236,10 @@ function UF:IsInit()
 end
 
 function UF:Init()
-	if not isInit and C.units.enabled then
+	if not isInit and C.db.char.units.enabled then
 		oUF:Factory(MainConstructor)
 
-		if not C.units.player.castbar then
+		if not C.db.profile.units[C.db.char.layout].player.castbar then
 			if objects["player"] then
 				objects["player"]:DisableElement("Castbar")
 			end
@@ -251,7 +251,7 @@ function UF:Init()
 			UF:EnableDefaultCastingBars()
 		end
 
-		if not C.units.boss.castbar then
+		if not C.db.profile.units[C.db.char.layout].boss.castbar then
 			if objects["boss1"] then
 				objects["boss1"]:DisableElement("Castbar")
 			end
@@ -274,21 +274,21 @@ function UF:Init()
 		end
 
 		if objects["target"] then
-			if not C.units.target.castbar then
+			if not C.db.profile.units[C.db.char.layout].target.castbar then
 				objects["target"]:DisableElement("Castbar")
 			end
 
-			if not C.units.target.auras.enabled then
+			if not C.db.profile.units[C.db.char.layout].target.auras.enabled then
 				objects["target"]:DisableElement("Aura")
 			end
 		end
 
 		if objects["focus"] then
-			if not C.units.focus.castbar then
+			if not C.db.profile.units[C.db.char.layout].focus.castbar then
 				objects["focus"]:DisableElement("Castbar")
 			end
 
-			if not C.units.focus.auras.enabled then
+			if not C.db.profile.units[C.db.char.layout].focus.auras.enabled then
 				objects["focus"]:DisableElement("Aura")
 			end
 		end

@@ -17,7 +17,7 @@ function BLIZZARD:DigsiteBar_IsInit()
 end
 
 function BLIZZARD:DigsiteBar_Init()
-	if not isInit and C.blizzard.digsite_bar.enabled then
+	if not isInit and C.db.char.blizzard.digsite_bar.enabled then
 		local isLoaded = true
 
 		if not _G.IsAddOnLoaded("Blizzard_ArchaeologyUI") then

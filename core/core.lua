@@ -1,4 +1,5 @@
 local an, ns = ...
+local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
@@ -12,21 +13,6 @@ local type = _G.type
 local assert = _G.assert
 
 -- Mine
-local E, C, D, M, L, P = {}, {}, {}, {}, {}, {} -- engine, config, defaults, media, locales, private
-ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
-
-------------
--- PUBLIC --
-------------
-
-local exportTable = {
-	[1] = ns.E,
-	[2] = ns.C,
-	[3] = ns.M
-}
-
-_G[an] = exportTable
-
 -----------
 -- DEBUG --
 -----------

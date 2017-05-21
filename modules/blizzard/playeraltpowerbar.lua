@@ -14,7 +14,7 @@ function BLIZZARD:PlayerAltPowerBar_IsInit()
 end
 
 function BLIZZARD:PlayerAltPowerBar_Init()
-	if not isInit and C.blizzard.player_alt_power_bar.enabled then
+	if not isInit and C.db.char.blizzard.player_alt_power_bar.enabled then
 		_G.PlayerPowerBarAlt.ignoreFramePositionManager = true
 		_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
 		_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Bottom"] = nil

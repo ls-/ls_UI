@@ -321,7 +321,7 @@ end
 function E:CreateMover(object, isSimple, insets)
 	if not object then return end
 
-	CFG = C.movers
+	CFG = C.db.profile.movers[C.db.char.layout]
 
 	local name = object:GetName().."Mover"
 	local iL, iR, iT, iB
@@ -381,7 +381,7 @@ function E:CreateMover(object, isSimple, insets)
 
 	defaults[name].point = {self:GetCoords(object)}
 
-	self:CopyTable(defaults[name], CFG[name])
+	self:UpdateTable(defaults[name], CFG[name])
 
 	SetPosition(mover)
 
@@ -391,7 +391,7 @@ function E:CreateMover(object, isSimple, insets)
 end
 
 function E:CleanUpMoversConfig()
-	C.movers = self:DiffTable(defaults, CFG)
+	C.db.profile.movers[C.db.char.layout] = self:DiffTable(defaults, CFG)
 end
 
 local function HideMovers()

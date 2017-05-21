@@ -34,12 +34,12 @@ function CFG:Tooltips_Init()
 			parent = panel,
 			name = "$parentTooltipsToggle",
 			text = L["ENABLE"],
-			get = function() return C.tooltips.enabled end,
+			get = function() return C.db.char.tooltips.enabled end,
 			set = function(_, value)
-				C.tooltips.enabled = value
+				C.db.char.tooltips.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.enabled)
+				self:SetChecked(C.db.char.tooltips.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -96,12 +96,12 @@ function CFG:Tooltips_Init()
 			name = "$parentPvPToggleToggle",
 			text = L["TOOLTIP_UNIT_NAME_COLOR_PVP"],
 			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_PVP_TOOLTIP"],
-			get = function() return C.tooltips.unit.name_color_pvp_hostility end,
+			get = function() return C.db.profile.tooltips.unit.name_color_pvp_hostility end,
 			set = function(_, value)
-				C.tooltips.unit.name_color_pvp_hostility = value
+				C.db.profile.tooltips.unit.name_color_pvp_hostility = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.unit.name_color_pvp_hostility)
+				self:SetChecked(C.db.profile.tooltips.unit.name_color_pvp_hostility)
 			end,
 			click = function(self)
 				self:SetValue(self:GetChecked())
@@ -115,12 +115,12 @@ function CFG:Tooltips_Init()
 			name = "$parentPvPToggleToggle",
 			text = L["TOOLTIP_UNIT_NAME_COLOR_CLASS"],
 			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_CLASS_TOOLTIP"],
-			get = function() return C.tooltips.unit.name_color_class end,
+			get = function() return C.db.profile.tooltips.unit.name_color_class end,
 			set = function(_, value)
-				C.tooltips.unit.name_color_class = value
+				C.db.profile.tooltips.unit.name_color_class = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.unit.name_color_class)
+				self:SetChecked(C.db.profile.tooltips.unit.name_color_class)
 			end,
 			click = function(self)
 				self:SetValue(self:GetChecked())
@@ -134,12 +134,12 @@ function CFG:Tooltips_Init()
 			name = "$parentPvPToggleToggle",
 			text = L["TOOLTIP_UNIT_NAME_COLOR_TAP"],
 			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_TAP_TOOLTIP"],
-			get = function() return C.tooltips.unit.name_color_tapping end,
+			get = function() return C.db.profile.tooltips.unit.name_color_tapping end,
 			set = function(_, value)
-				C.tooltips.unit.name_color_tapping = value
+				C.db.profile.tooltips.unit.name_color_tapping = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.unit.name_color_tapping)
+				self:SetChecked(C.db.profile.tooltips.unit.name_color_tapping)
 			end,
 			click = function(self)
 				self:SetValue(self:GetChecked())
@@ -153,12 +153,12 @@ function CFG:Tooltips_Init()
 			name = "$parentPvPToggleToggle",
 			text = L["TOOLTIP_UNIT_NAME_COLOR_REACTION"],
 			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_REACTION_TOOLTIP"],
-			get = function() return C.tooltips.unit.name_color_reaction end,
+			get = function() return C.db.profile.tooltips.unit.name_color_reaction end,
 			set = function(_, value)
-				C.tooltips.unit.name_color_reaction = value
+				C.db.profile.tooltips.unit.name_color_reaction = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.unit.name_color_reaction)
+				self:SetChecked(C.db.profile.tooltips.unit.name_color_reaction)
 			end,
 			click = function(self)
 				self:SetValue(self:GetChecked())
@@ -176,12 +176,12 @@ function CFG:Tooltips_Init()
 			parent = panel,
 			name = "$parentIDToggle",
 			text = L["TOOLTIP_SHOW_ID"],
-			get = function() return C.tooltips.show_id end,
+			get = function() return C.db.profile.tooltips.show_id end,
 			set = function(_, value)
-				C.tooltips.show_id = value
+				C.db.profile.tooltips.show_id = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.tooltips.show_id)
+				self:SetChecked(C.db.profile.tooltips.show_id)
 			end,
 			click = function(self)
 				self:SetValue(self:GetChecked())

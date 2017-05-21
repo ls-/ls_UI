@@ -44,7 +44,7 @@ end
 function BARS:UpdateLayout(key)
 	local bar = P:GetActionBars()[key]
 
-	E:UpdateBarLayout(bar, bar.buttons, C.bars[key].button_size, C.bars[key].button_gap, C.bars[key].init_anchor, C.bars[key].buttons_per_row)
+	E:UpdateBarLayout(bar, bar.buttons, C.db.profile.bars[key].button_size, C.db.profile.bars[key].button_gap, C.db.profile.bars[key].init_anchor, C.db.profile.bars[key].buttons_per_row)
 	E:UpdateMoverSize(bar)
 end
 
@@ -57,7 +57,7 @@ function BARS:IsInit()
 end
 
 function BARS:Init()
-	if not isInit and C.bars.enabled then
+	if not isInit and C.db.char.bars.enabled then
 		self:ActionBarController_Init()
 		self:ActionBars_Init()
 		self:Bags_Init()

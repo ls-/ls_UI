@@ -17,7 +17,7 @@ function BLIZZARD:NPE_IsInit()
 end
 
 function BLIZZARD:NPE_Init()
-	if not isInit and C.blizzard.npe.enabled then
+	if not isInit and C.db.char.blizzard.npe.enabled then
 		E:AddOnLoadTask("Blizzard_Tutorial", function()
 			local holder = _G.CreateFrame("Frame", "NPE_TutorialInterfaceHelpHolder", _G.UIParent)
 			holder:SetFrameLevel(_G.NPE_TutorialInterfaceHelp:GetFrameLevel() + 1)

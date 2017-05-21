@@ -147,9 +147,9 @@ function BARS:Bags_IsInit()
 end
 
 function BARS:Bags_Init()
-	if not isInit and C.bars.bags.enabled then
+	if not isInit and C.db.char.bars.bags.enabled then
 		if not self:ActionBarController_IsInit() then
-			CFG = C.bars.bags
+			CFG = C.db.profile.bars.bags
 		end
 
 		local bar = _G.CreateFrame("Frame", "LSBagBar", _G.UIParent, "SecureHandlerBaseTemplate")

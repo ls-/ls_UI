@@ -17,7 +17,7 @@ function BLIZZARD:Durability_IsInit()
 end
 
 function BLIZZARD:Durability_Init()
-	if not isInit and C.blizzard.durability.enabled then
+	if not isInit and C.db.char.blizzard.durability.enabled then
 		_G.DurabilityFrame:ClearAllPoints()
 		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
 		E:CreateMover(_G.DurabilityFrame)
