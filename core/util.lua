@@ -520,11 +520,19 @@ end
 
 local sb_objects = {}
 
+local function IsCloseEnough(new, target, range)
+	if range > 0 then
+		return m_abs((new - target) / range) <= 0.001
+	end
+
+	return true
+end
+
 local function ProcessSmoothStatusBars()
 	for object, target in next, sb_objects do
-		local new = FrameDeltaLerp(object._value, target, .25)
+		local new = FrameDeltaLerp(object._value, target, 0.25)
 
-		if m_abs(new - target) <= .01 then
+		if IsCloseEnough(new, target, object._max - object._min) then
 			new = target
 			sb_objects[object] = nil
 		end
@@ -538,7 +546,7 @@ _G.C_Timer.NewTicker(0, ProcessSmoothStatusBars)
 
 local function SetSmoothedValue(self, value)
 	self._value = self:GetValue()
-	sb_objects[self] = value > self._max and self._max or value < self._min and self._min or value
+	sb_objects[self] = Clamp(value, self._min, self._max)
 end
 
 local function SetSmoothedMinMaxValues(self, min, max)
