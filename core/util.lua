@@ -905,17 +905,31 @@ end
 ----------
 
 function E:ResolveAnchorPoint(frame, children)
-	if not children or children == "" then
-		return frame
-	else
-		local anchor = frame
-
+	if not frame then
 		children = {s_split(".", children)}
 
-		for i = 1, #children do
+		local anchor = _G[children[1]]
+
+		assert(anchor, "Invalid anchor: "..children[1]..".")
+
+		for i = 2, #children do
 			anchor = anchor[children[i]]
 		end
 
 		return anchor
+	else
+		if not children or children == "" then
+			return frame
+		else
+			local anchor = frame
+
+			children = {s_split(".", children)}
+
+			for i = 1, #children do
+				anchor = anchor[children[i]]
+			end
+
+			return anchor
+		end
 	end
 end
