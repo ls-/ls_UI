@@ -19,7 +19,7 @@ end
 function BLIZZARD:GM_Init()
 	if not isInit and C.db.char.blizzard.gm.enabled then
 		_G.TicketStatusFrame:ClearAllPoints()
-		_G.TicketStatusFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -136, -168)
+		_G.TicketStatusFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -132, -196)
 		E:CreateMover(_G.TicketStatusFrame)
 
 		_G.hooksecurefunc(_G.TicketStatusFrame, "SetPoint", function(self, ...)

@@ -19,7 +19,7 @@ end
 function BLIZZARD:Durability_Init()
 	if not isInit and C.db.char.blizzard.durability.enabled then
 		_G.DurabilityFrame:ClearAllPoints()
-		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -168)
+		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -196)
 		E:CreateMover(_G.DurabilityFrame)
 
 		_G.hooksecurefunc(_G.DurabilityFrame, "SetPoint", function(self, ...)
