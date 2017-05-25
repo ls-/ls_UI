@@ -111,7 +111,7 @@ do
 		end
 	end
 
-	function UF:CreateHealthPrediction(parent)
+	function UF:CreateHealthPrediction(parent, text, textFontObject, textParent)
 		local level = parent:GetFrameLevel()
 
 		local myBar = _G.CreateFrame("StatusBar", nil, parent)
@@ -159,6 +159,18 @@ do
 		E:SmoothBar(myBar)
 		E:SmoothBar(otherBar)
 		E:SmoothBar(healAbsorbBar)
+
+		if text then
+			text = (textParent or parent):CreateFontString(nil, "ARTWORK", textFontObject)
+			text:SetWordWrap(false)
+			E:ResetFontStringHeight(text)
+			absorbBar.Text = text
+
+			text = (textParent or parent):CreateFontString(nil, "ARTWORK", textFontObject)
+			text:SetWordWrap(false)
+			E:ResetFontStringHeight(text)
+			healAbsorbBar.Text = text
+		end
 
 		return {
 			myBar = myBar,
@@ -231,6 +243,34 @@ do
 			healAbsorbBar:SetPoint("RIGHT")
 			healAbsorbBar:SetPoint("TOP", frame.Health:GetStatusBarTexture(), "TOP")
 			healAbsorbBar:SetHeight(height)
+		end
+
+		if absorbBar.Text then
+			absorbBar.Text:SetJustifyV(config.prediction.absorb_text.v_alignment or "MIDDLE")
+			absorbBar.Text:SetJustifyH(config.prediction.absorb_text.h_alignment or "CENTER")
+			absorbBar.Text:ClearAllPoints()
+
+			local point1 = config.prediction.absorb_text.point1
+
+			if point1 and point1.p then
+				absorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+			end
+
+			frame:Tag(absorbBar.Text, config.prediction.absorb_text.tag)
+		end
+
+		if healAbsorbBar.Text then
+			healAbsorbBar.Text:SetJustifyV(config.prediction.heal_abosrb_text.v_alignment or "MIDDLE")
+			healAbsorbBar.Text:SetJustifyH(config.prediction.heal_abosrb_text.h_alignment or "CENTER")
+			healAbsorbBar.Text:ClearAllPoints()
+
+			local point1 = config.prediction.heal_abosrb_text.point1
+
+			if point1 and point1.p then
+				healAbsorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+			end
+
+			frame:Tag(healAbsorbBar.Text, config.prediction.heal_abosrb_text.tag)
 		end
 
 		if config.prediction.enabled and not frame:IsElementEnabled("HealthPrediction") then

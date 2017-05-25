@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:ConstructTargetTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.db.profile.units[C.db.char.layout].targettarget
+	frame._config = C.db.profile.units[E.UI_LAYOUT].targettarget
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -77,7 +77,7 @@ function UF:ConstructTargetTargetFrame(frame)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
 	glass:SetHorizTile(true)
 
-	self:CreateRarityIndicator(frame)
+	self:CreateClassIndicator(frame)
 end
 
 function UF:UpdateTargetTargetFrame(frame)
@@ -92,6 +92,7 @@ function UF:UpdateTargetTargetFrame(frame)
 	self:UpdateName(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateThreatIndicator(frame)
+	self:UpdateClassIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_ToTFrameUpdate")
 end

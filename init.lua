@@ -43,6 +43,9 @@ function E:OnInitialize()
 	C.db = _G.LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
 	_G.LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
 
+	-- layout type change shouldn't affect anything after SVs are loaded
+	E.UI_LAYOUT = C.db.char.layout
+
 	-- -> 70200.07
 	-- old config conversion
 	if _G.LS_UI_CONFIG then

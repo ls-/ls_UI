@@ -131,13 +131,13 @@ function CFG:UnitFramesAuras_Init()
 			name = "$parentAuraToggle",
 			text = L["ENABLE"],
 			get = function(self)
-				return C.db.profile.units[C.db.char.layout][self.key].auras.enabled
+				return C.db.profile.units[E.UI_LAYOUT][self.key].auras.enabled
 			end,
 			set = function(self, value)
-				C.db.profile.units[C.db.char.layout][self.key].auras.enabled = value
+				C.db.profile.units[E.UI_LAYOUT][self.key].auras.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout][self.key].auras.enabled)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT][self.key].auras.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -178,13 +178,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentBossAuraFriendlyBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_boss = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -213,13 +213,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentBossAuraHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_boss = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -248,13 +248,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentBossAuraFriendlyDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_boss = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -283,13 +283,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentBossAuraHostileDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_boss = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_boss
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_boss
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -323,13 +323,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentMountFriendlyBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_mount
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_mount = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_mount
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -358,13 +358,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentMountHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_mount
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_mount = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_mount
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_mount
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -399,13 +399,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentSelfCastFriendlyBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -434,13 +434,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentSelfCastHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -469,13 +469,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentSelfCastFriendlyDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -504,13 +504,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentSelfCastHostileDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -545,13 +545,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentPermaSelfCastFriendlyBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -580,13 +580,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentPermaSelfCastHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -615,13 +615,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentPermaSelfCastFriendlyDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -650,13 +650,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentPermaSelfCastHostileDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_selfcast_permanent
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_selfcast_permanent
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -691,13 +691,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentCastableFriendlyBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_player = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -726,13 +726,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentCastableHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_player = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -761,13 +761,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentCastableFriendlyDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_player = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -796,13 +796,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentCastableHostileDebuffsDial",
 		text = L["DEBUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_player = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_player
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_player
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then
@@ -837,13 +837,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentDispellableFriendlyDebuffsDial",
 		text = L["DEBUFFS"],
 			get = function(self)
-				return C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable
+				return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable
 			end,
 			set = function(self, value)
-				C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable = value
+				C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable = value
 			end,
 			calc = function(self)
-				local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable
+				local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable
 
 				for i = 1, #self do
 					if self[i]:IsPositive() then
@@ -872,13 +872,13 @@ function CFG:UnitFramesAuras_Init()
 		name = "$parentDispellableHostileBuffsDial",
 		text = L["BUFFS"],
 		get = function(self)
-			return C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable
+			return C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable
 		end,
 		set = function(self, value)
-			C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable = value
+			C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable = value
 		end,
 		calc = function(self)
-			local value = C.db.profile.units[C.db.char.layout][self.key].auras.show_dispellable
+			local value = C.db.profile.units[E.UI_LAYOUT][self.key].auras.show_dispellable
 
 			for i = 1, #self do
 				if self[i]:IsPositive() then

@@ -89,12 +89,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentPlayerPetToggle",
 			text = L["UNIT_FRAME_PLAYER_PET"],
-			get = function() return C.db.profile.units[C.db.char.layout].player.enabled end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].player.enabled end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].player.enabled = value
+				C.db.profile.units[E.UI_LAYOUT].player.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].player.enabled)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].player.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -135,12 +135,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentTargetToTToggle",
 			text = L["UNIT_FRAME_TARGET_TOT"],
-			get = function() return C.db.profile.units[C.db.char.layout].target.enabled end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].target.enabled end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].target.enabled = value
+				C.db.profile.units[E.UI_LAYOUT].target.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].target.enabled)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].target.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -181,12 +181,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentFocusToFToggle",
 			text = L["UNIT_FRAME_FOCUS_TOF"],
-			get = function() return C.db.profile.units[C.db.char.layout].focus.enabled end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].focus.enabled end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].focus.enabled = value
+				C.db.profile.units[E.UI_LAYOUT].focus.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].focus.enabled)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].focus.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -227,12 +227,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentBossToggle",
 			text = L["UNIT_FRAME_BOSS"],
-			get = function() return C.db.profile.units[C.db.char.layout].boss.enabled end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].boss.enabled end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].boss.enabled = value
+				C.db.profile.units[E.UI_LAYOUT].boss.enabled = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].boss.enabled)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].boss.enabled)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -278,12 +278,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentPlayerPetCastBarToggle",
 			text = L["UNIT_FRAME_PLAYER"],
-			get = function() return C.db.profile.units[C.db.char.layout].player.castbar end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].player.castbar end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].player.castbar = value
+				C.db.profile.units[E.UI_LAYOUT].player.castbar = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].player.castbar)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].player.castbar)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -309,12 +309,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentPlayerPetCastBarToggle",
 			text = L["UNIT_FRAME_TARGET"],
-			get = function() return C.db.profile.units[C.db.char.layout].target.castbar end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].target.castbar end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].target.castbar = value
+				C.db.profile.units[E.UI_LAYOUT].target.castbar = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].target.castbar)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].target.castbar)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -337,12 +337,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentPlayerPetCastBarToggle",
 			text = L["UNIT_FRAME_FOCUS"],
-			get = function() return C.db.profile.units[C.db.char.layout].focus.castbar end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].focus.castbar end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].focus.castbar = value
+				C.db.profile.units[E.UI_LAYOUT].focus.castbar = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].focus.castbar)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].focus.castbar)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()
@@ -365,12 +365,12 @@ function CFG:UnitFrames_Init()
 			parent = panel,
 			name = "$parentPlayerPetCastBarToggle",
 			text = L["UNIT_FRAME_BOSS"],
-			get = function() return C.db.profile.units[C.db.char.layout].boss.castbar end,
+			get = function() return C.db.profile.units[E.UI_LAYOUT].boss.castbar end,
 			set = function(_, value)
-				C.db.profile.units[C.db.char.layout].boss.castbar = value
+				C.db.profile.units[E.UI_LAYOUT].boss.castbar = value
 			end,
 			refresh = function(self)
-				self:SetChecked(C.db.profile.units[C.db.char.layout].boss.castbar)
+				self:SetChecked(C.db.profile.units[E.UI_LAYOUT].boss.castbar)
 			end,
 			click = function(self)
 				local isChecked = self:GetChecked()

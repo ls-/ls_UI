@@ -205,12 +205,6 @@ do
 				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			local point2 = config.text.point2
-
-			if point2 and point2.p then
-				element.Text:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
-			end
-
 			frame:Tag(element.Text, config.text.tag)
 		end
 
