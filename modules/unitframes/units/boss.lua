@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:CreateBossHolder()
 	local holder = _G.CreateFrame("Frame", "LSBossHolder", _G.UIParent)
 	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
-	holder:SetPoint(unpack(C.db.profile.units[C.db.char.layout].boss.point))
+	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
 
 	E:CreateMover(holder)
 end
@@ -17,7 +17,7 @@ end
 function UF:ConstructBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.db.profile.units[C.db.char.layout].boss
+	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -107,7 +107,7 @@ function UF:ConstructBossFrame(frame)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
 	glass:SetHorizTile(true)
 
-	self:CreateRarityIndicator(frame)
+	self:CreateClassIndicator(frame)
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
@@ -129,6 +129,7 @@ function UF:UpdateBossFrame(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
 	self:UpdateAuras(frame)
+	self:UpdateClassIndicator(frame)
 
-	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
+	frame:UpdateAllElements("LSUI_BossFrameUpdate")
 end

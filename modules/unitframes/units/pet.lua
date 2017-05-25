@@ -6,10 +6,10 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:ConstructPetFrame(frame)
+function UF:ConstructVerticalPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.db.profile.units[C.db.char.layout].pet
+	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
 	fg_parent:SetFrameLevel(level + 4)
@@ -46,8 +46,8 @@ function UF:ConstructPetFrame(frame)
 	power_bg:SetAllPoints()
 
 	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
-	_G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+	-- frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
+	-- _G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(fg_parent)
 
@@ -74,12 +74,91 @@ function UF:ConstructPetFrame(frame)
 	frame.RightTube = right_tube
 
 	E:SetStatusBarSkin(right_tube, "VERTICAL-M")
+
+	-- frame.unit = "player"
+	-- E:ForceShow(frame)
+end
+
+function UF:ConstructHorizontalPetFrame(frame)
+	local level = frame:GetFrameLevel()
+
+	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
+
+	local bg = frame:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints()
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
+	bg:SetHorizTile(true)
+
+	local fg_parent = _G.CreateFrame("Frame", nil, frame)
+	fg_parent:SetFrameLevel(level + 7)
+	fg_parent:SetAllPoints()
+	frame.FGParent = fg_parent
+
+	local text_parent = _G.CreateFrame("Frame", nil, frame)
+	text_parent:SetFrameLevel(level + 9)
+	text_parent:SetAllPoints()
+	frame.TextParent = text_parent
+
+	frame.Insets = self:CreateInsets(frame, fg_parent)
+
+	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
+	health:SetFrameLevel(level + 1)
+	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
+	health:SetClipsChildren(true)
+	frame.Health = health
+
+	frame.HealthPrediction = self:CreateHealthPrediction(health)
+
+	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	power:SetFrameLevel(level + 1)
+	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
+	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
+	frame.Power = power
+
+	power.UpdateContainer = function(_, shouldShow)
+		if shouldShow then
+			if not frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Expand()
+			end
+		else
+			if frame.Insets.Bottom:IsExpanded() then
+				frame.Insets.Bottom:Collapse()
+			end
+		end
+	end
+
+	frame.Castbar = self:CreateCastbar(frame)
+	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
+
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
+
+	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
+
+	frame.DebuffIndicator = self:CreateDebuffIndicator(fg_parent)
+
+	E:CreateBorder(fg_parent, true)
+
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	glass:SetAllPoints(health)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
+	glass:SetHorizTile(true)
+
+	self:CreateClassIndicator(frame)
 end
 
 function UF:UpdatePetFrame(frame)
 	local config = frame._config
 
 	frame:SetSize(config.width, config.height)
+
+	if frame.Insets then
+		self:UpdateInsets(frame)
+	end
 
 	self:UpdateHealth(frame)
 	self:UpdateHealthPrediction(frame)
@@ -88,6 +167,10 @@ function UF:UpdatePetFrame(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
+
+	if frame.ClassIndicator then
+		self:UpdateClassIndicator(frame)
+	end
 
 	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end

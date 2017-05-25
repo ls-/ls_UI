@@ -398,7 +398,7 @@ function MINIMAP:Init()
 
 		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
 		holder:SetSize(332 / 2, 332 / 2)
-		holder:SetPoint(unpack(C.db.profile.minimap[C.db.char.layout].point))
+		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
 		E:CreateMover(holder)
 
 		Minimap:EnableMouseWheel()

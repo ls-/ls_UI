@@ -110,6 +110,14 @@ function UF:UpdatePvPIndicator(frame)
 	local config = frame._config.pvp
 	local element = frame.PvPIndicator
 
+	element:ClearAllPoints()
+
+	local point1 = config.point1
+
+	if point1 and point1.p then
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+	end
+
 	if config.enabled and not frame:IsElementEnabled("PvPIndicator") then
 		frame:EnableElement("PvPIndicator")
 	elseif not config.enabled and frame:IsElementEnabled("PvPIndicator") then

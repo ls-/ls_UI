@@ -9,7 +9,7 @@ local _G = getfenv(0)
 function UF:ConstructTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.db.profile.units[C.db.char.layout].target
+	frame._config = C.db.profile.units[E.UI_LAYOUT].target
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -60,14 +60,14 @@ function UF:ConstructTargetFrame(frame)
 	end
 
 	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
+	-- frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
 	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	local pvp = self:CreatePvPIndicator(fg_parent)
-	pvp:SetPoint("TOPRIGHT", fg_parent, "BOTTOMRIGHT", -8, -2)
+	frame.PvPIndicator = pvp
 
 	pvp.Holder.PostExpand = function()
 		local width = frame.Castbar.Holder._width - 48
@@ -82,8 +82,6 @@ function UF:ConstructTargetFrame(frame)
 
 		frame.Castbar.Holder:SetWidth(width)
 	end
-
-	frame.PvPIndicator = pvp
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 
@@ -103,7 +101,7 @@ function UF:ConstructTargetFrame(frame)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
 	glass:SetHorizTile(true)
 
-	self:CreateRarityIndicator(frame)
+	self:CreateClassIndicator(frame)
 end
 
 function UF:UpdateTargetFrame(frame)
@@ -122,6 +120,7 @@ function UF:UpdateTargetFrame(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
 	self:UpdateAuras(frame)
+	self:UpdateClassIndicator(frame)
 
 	frame:UpdateAllElements("LSUI_TargetFrameUpdate")
 end

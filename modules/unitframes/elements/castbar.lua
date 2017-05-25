@@ -121,8 +121,19 @@ function UF:UpdateCastbar(frame)
 	local element = frame.Castbar
 	local width = config.width_override ~= 0 and config.width_override or frame._config.width - 6
 
+	element.Holder:ClearAllPoints()
 	element.Holder:SetWidth(width)
 	element.Holder._width = width
+
+	local point1 = config.point1
+
+	if point1 and point1.p then
+		if config.detached then
+			element.Holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.anchor), point1.rP, point1.x, point1.y)
+		else
+			element.Holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		end
+	end
 
 	if config.icon then
 		element.Icon = element.Icon_
