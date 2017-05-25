@@ -1096,10 +1096,16 @@ D["profile"] = {
 	},
 	["minimap"] = {
 		["**"] = {
+			zone_text = {
+				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
+			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
 		ls = {},
 		traditional = {
+			zone_text = {
+				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
 	},
