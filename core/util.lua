@@ -159,16 +159,16 @@ end
 -- MATHS --
 -----------
 
-local function Clamp(v)
-	return m_min(1, m_max(0, v))
+local function Clamp(v, min, max)
+	return m_min(max or 1, m_max(min or 0, v))
 end
 
 local function Round(v)
 	return m_floor(v + 0.5)
 end
 
-function E:Clamp(v)
-	return v and Clamp(v) or nil
+function E:Clamp(v, ...)
+	return v and Clamp(v, ...) or nil
 end
 
 function E:Round(v)
