@@ -1,7 +1,7 @@
 ## ls: UI
 Yet another UI, but this one is a bit special.
 
-![image](http://i.imgur.com/fTQcbk4.png)
+![image](http://i.imgur.com/TFAuFHW.png)
 
 ## Download
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
