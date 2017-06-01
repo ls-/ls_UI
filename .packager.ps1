@@ -24,10 +24,10 @@ if (Get-Content (".\" + $name + ".toc") | Where { $_ -match "(Version: +)([a-zA-
 	return Read-Host
 }
 
-$includedFiles = @(
+$includedItems = @(
 	".\init.lua",
-	".\ls_UI.toc",
 	".\LICENSE.txt",
+	".\ls_UI.toc",
 	".\config\",
 	".\core\",
 	".\embeds\",
@@ -37,11 +37,16 @@ $includedFiles = @(
 )
 
 $filesToRemove = @(
-	".git*",
-	".packager.ps1",
-	".pkg*",
+	"*.git*",
+	"*.pkg*",
+	"*.ps1",
+	"*.yml",
 	"CHANGELOG*",
 	"README*"
+)
+
+$foldersToRemove = @(
+	".\temp\ls_UI\embeds\oUF\utils"
 )
 
 if (Test-Path ".\temp\") {
@@ -49,8 +54,9 @@ if (Test-Path ".\temp\") {
 }
 
 New-Item -Path (".\temp\" + $name) -ItemType Directory | Out-Null
-Copy-Item $includedFiles -Destination (".\temp\" + $name) -Recurse
+Copy-Item $includedItems -Destination (".\temp\" + $name) -Recurse
 Remove-Item ".\temp" -Include $filesToRemove -Recurse -Force
+Remove-Item $foldersToRemove -Recurse -Force
 
 Set-Location ".\temp\"
 
