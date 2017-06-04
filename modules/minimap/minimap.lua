@@ -223,7 +223,11 @@ end
 
 -- Horizontal texture scrolling
 local function CheckTexPoint(point, base)
-	return point and point % (base / 256) or base / 256
+	if point then
+		return point >= base / 256 + 1 and base / 256 or point
+	else
+		return base / 256
+	end
 end
 
 local function ScrollTexture(t, delay, offset)
