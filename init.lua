@@ -108,80 +108,82 @@ function E:OnInitialize()
 	end
 
 	-- -> 70200.08
-	if C.db.profile.auratracker then
-		if C.db.profile.auratracker.HELPFUL then
-			self:CopyTable(C.db.profile.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
+	if not C.db.profile.version or C.db.profile.version < 7020008 then
+		if C.db.profile.auratracker then
+			if C.db.profile.auratracker.HELPFUL then
+				self:CopyTable(C.db.profile.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
 
-			for k in next, C.db.char.auratracker.filter.HELPFUL do
-				C.db.char.auratracker.filter.HELPFUL[k] = true
+				for k in next, C.db.char.auratracker.filter.HELPFUL do
+					C.db.char.auratracker.filter.HELPFUL[k] = true
+				end
+			end
+
+			if C.db.profile.auratracker.HARMFUL then
+				self:CopyTable(C.db.profile.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
+
+				for k in next, C.db.char.auratracker.filter.HARMFUL do
+					C.db.char.auratracker.filter.HARMFUL[k] = true
+				end
+			end
+
+			C.db.profile.auratracker = nil
+		end
+
+		C.db.profile.tooltips.show_id = nil
+		C.db.profile.tooltips.unit = nil
+
+		for i = 1, 7 do
+			C.db.profile.bars["bar"..i].button_gap = nil
+			C.db.profile.bars["bar"..i].button_size = nil
+			C.db.profile.bars["bar"..i].buttons_per_row = nil
+			C.db.profile.bars["bar"..i].init_anchor = nil
+		end
+
+		C.db.profile.bars.bags.visible = nil
+		C.db.profile.bars.bags.button_gap = nil
+		C.db.profile.bars.bags.button_size = nil
+		C.db.profile.bars.bags.buttons_per_row = nil
+		C.db.profile.bars.bags.init_anchor = nil
+
+		C.db.profile.bars.extra.visible = nil
+		C.db.profile.bars.extra.button_size = nil
+
+		C.db.profile.bars.zone.visible = nil
+		C.db.profile.bars.zone.button_size = nil
+
+		C.db.profile.bars.vehicle.visible = nil
+		C.db.profile.bars.vehicle.button_size = nil
+
+		C.db.profile.bars.garrison = nil
+
+		C.db.profile.bars.micromenu.visible = nil
+
+		for _, v in next, C.db.profile.units.ls do
+			if v.auras then
+				v.auras.show_boss = nil
+				v.auras.show_mount = nil
+				v.auras.show_selfcast = nil
+				v.auras.show_selfcast_permanent = nil
+				v.auras.show_blizzard = nil
+				v.auras.show_player = nil
+				v.auras.show_dispellable = nil
+				v.auras.y_grwoth = nil
+				v.auras.init_anchor = nil
 			end
 		end
 
-		if C.db.profile.auratracker.HARMFUL then
-			self:CopyTable(C.db.profile.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
-
-			for k in next, C.db.char.auratracker.filter.HARMFUL do
-				C.db.char.auratracker.filter.HARMFUL[k] = true
+		for _, v in next, C.db.profile.units.traditional do
+			if v.auras then
+				v.auras.show_boss = nil
+				v.auras.show_mount = nil
+				v.auras.show_selfcast = nil
+				v.auras.show_selfcast_permanent = nil
+				v.auras.show_blizzard = nil
+				v.auras.show_player = nil
+				v.auras.show_dispellable = nil
+				v.auras.y_grwoth = nil
+				v.auras.init_anchor = nil
 			end
-		end
-
-		C.db.profile.auratracker = nil
-	end
-
-	C.db.profile.tooltips.show_id = nil
-	C.db.profile.tooltips.unit = nil
-
-	for i = 1, 7 do
-		C.db.profile.bars["bar"..i].button_gap = nil
-		C.db.profile.bars["bar"..i].button_size = nil
-		C.db.profile.bars["bar"..i].buttons_per_row = nil
-		C.db.profile.bars["bar"..i].init_anchor = nil
-	end
-
-	C.db.profile.bars.bags.visible = nil
-	C.db.profile.bars.bags.button_gap = nil
-	C.db.profile.bars.bags.button_size = nil
-	C.db.profile.bars.bags.buttons_per_row = nil
-	C.db.profile.bars.bags.init_anchor = nil
-
-	C.db.profile.bars.extra.visible = nil
-	C.db.profile.bars.extra.button_size = nil
-
-	C.db.profile.bars.zone.visible = nil
-	C.db.profile.bars.zone.button_size = nil
-
-	C.db.profile.bars.vehicle.visible = nil
-	C.db.profile.bars.vehicle.button_size = nil
-
-	C.db.profile.bars.garrison = nil
-
-	C.db.profile.bars.micromenu.visible = nil
-
-	for _, v in next, C.db.profile.units.ls do
-		if v.auras then
-			v.auras.show_boss = nil
-			v.auras.show_mount = nil
-			v.auras.show_selfcast = nil
-			v.auras.show_selfcast_permanent = nil
-			v.auras.show_blizzard = nil
-			v.auras.show_player = nil
-			v.auras.show_dispellable = nil
-			v.auras.y_grwoth = nil
-			v.auras.init_anchor = nil
-		end
-	end
-
-	for _, v in next, C.db.profile.units.traditional do
-		if v.auras then
-			v.auras.show_boss = nil
-			v.auras.show_mount = nil
-			v.auras.show_selfcast = nil
-			v.auras.show_selfcast_permanent = nil
-			v.auras.show_blizzard = nil
-			v.auras.show_player = nil
-			v.auras.show_dispellable = nil
-			v.auras.y_grwoth = nil
-			v.auras.init_anchor = nil
 		end
 	end
 
