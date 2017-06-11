@@ -1,3 +1,10 @@
+## Version 70200.08
+
+- Reworked in-game config;
+- Updated embeds.
+
+NOTE: This update is huge, there's definitely some bugs here and there.
+
 ## Version 70200.07
 
 - Addon now uses AceDB. I strongly recommend to /reload UI right after your first login on each char, otherwise you risk losing all your settings if you get DCed;
