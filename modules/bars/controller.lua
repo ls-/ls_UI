@@ -151,64 +151,9 @@ WIDGETS.XP_BAR = {
 	children = false,
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 	on_play = function(_, newstate)
-		BARS:SetXPBarStyle(newstate == 6 and "SHORT" or "DEFAULT")
+		BARS:SetXPBarStyle(newstate == 6 and 1060 / 2 or 1492 / 2)
 	end
 }
-
-local function ControllerAnimation_OnPlay()
-	local newstate = controller:GetAttribute("numbuttons")
-
-	for _, widget in pairs(WIDGETS) do
-		if widget.frame then
-			widget.frame:SetAlpha(0)
-
-			if widget.children then
-				for _, child in pairs(widget.children) do
-					child:SetAlpha(0)
-				end
-			end
-		end
-	end
-
-	_G.C_Timer.After(0.02, function()
-		for _, widget in pairs(WIDGETS) do
-			if widget.frame and widget.on_play then
-				widget.on_play(widget.frame, newstate)
-			end
-		end
-	end)
-
-	_G.C_Timer.After(0.25, function()
-		anim_controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
-		anim_controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
-	end)
-end
-
-local function ControllerAnimation_OnFinished()
-	for _, widget in pairs(WIDGETS) do
-		if widget.frame then
-			if widget.frame:IsShown() then
-				E:FadeIn(widget.frame)
-			else
-				widget.frame:SetAlpha(1)
-			end
-
-			if widget.children then
-				for _, child in pairs(widget.children) do
-					if child:IsShown() then
-						E:FadeIn(child)
-					else
-						child:SetAlpha(1)
-					end
-				end
-			end
-		end
-	end
-end
-
-------------
--- PUBLIC --
-------------
 
 function BARS:ActionBarController_AddWidget(frame, slot)
 	if isInit then
@@ -249,16 +194,12 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 	end
 end
 
------------------
--- INITIALISER --
------------------
-
-function BARS:ActionBarController_IsInit()
+function BARS:IsRestricted()
 	return isInit
 end
 
-function BARS:ActionBarController_Init()
-	if not isInit and C.db.char.bars.restricted then
+function BARS:SetupActionBarController()
+	if C.db.char.bars.restricted then
 		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)
@@ -356,8 +297,55 @@ function BARS:ActionBarController_Init()
 		anim_controller.Bag = bag
 
 		local ag = anim_controller:CreateAnimationGroup()
-		ag:SetScript("OnPlay", ControllerAnimation_OnPlay)
-		ag:SetScript("OnFinished", ControllerAnimation_OnFinished)
+		ag:SetScript("OnPlay", function()
+			local newstate = controller:GetAttribute("numbuttons")
+
+			for _, widget in pairs(WIDGETS) do
+				if widget.frame then
+					widget.frame:SetAlpha(0)
+
+					if widget.children then
+						for _, child in pairs(widget.children) do
+							child:SetAlpha(0)
+						end
+					end
+				end
+			end
+
+			_G.C_Timer.After(0.02, function()
+				for _, widget in pairs(WIDGETS) do
+					if widget.frame and widget.on_play then
+						widget.on_play(widget.frame, newstate)
+					end
+				end
+			end)
+
+			_G.C_Timer.After(0.25, function()
+				anim_controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
+				anim_controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
+			end)
+		end)
+		ag:SetScript("OnFinished", function()
+			for _, widget in pairs(WIDGETS) do
+				if widget.frame then
+					if widget.frame:IsShown() then
+						E:FadeIn(widget.frame)
+					else
+						widget.frame:SetAlpha(1)
+					end
+
+					if widget.children then
+						for _, child in pairs(widget.children) do
+							if child:IsShown() then
+								E:FadeIn(child)
+							else
+								child:SetAlpha(1)
+							end
+						end
+					end
+				end
+			end
+		end)
 		controller.Shuffle = ag
 
 		local anim = ag:CreateAnimation("Translation")
@@ -424,9 +412,8 @@ function BARS:ActionBarController_Init()
 			end
 		]])
 
-		-- Finalise
 		isInit = true
 
-		return true
+		self.SetupActionBarController = E.NOOP
 	end
 end

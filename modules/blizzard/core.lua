@@ -5,30 +5,31 @@ local BLIZZARD = P:AddModule("Blizzard")
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
 function BLIZZARD:IsInit()
 	return isInit
 end
 
 function BLIZZARD:Init()
 	if not isInit and C.db.char.blizzard.enabled then
-		self:CommandBar_Init()
-		self:DigsiteBar_Init()
-		self:Durability_Init()
-		self:GM_Init()
-		self:NPE_Init()
-		self:ObjectiveTracker_Init()
-		self:PlayerAltPowerBar_Init()
-		self:TalkingHead_Init()
-		self:Timer_Init()
-		self:Vehicle_Init()
+		self:SetUpCommandBar()
+		self:SetUpDigsiteBar()
+		self:SetUpDurabilityFrame()
+		self:SetUpGMFrame()
+		self:SetUpNPE()
+		self:SetUpObjectiveTracker()
+		self:SetUpAltPowerBar()
+		self:SetUpTalkingHead()
+		self:SetUpMirrorTimer()
+		self:SetUpVehicleSeatFrame()
 
-		-- Finalise
 		isInit = true
 
-		return true
+		self:Update()
+	end
+end
+
+function BLIZZARD:Update()
+	if isInit then
+		self:UpdateObjectiveTracker()
 	end
 end

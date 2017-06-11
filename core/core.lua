@@ -136,10 +136,10 @@ function E:ForceShow(object)
 	object.Hide = object.Show
 end
 
-function E:ForceHide(object)
+function E:ForceHide(object, skipEvents, doNotHide)
 	if not object then return end
 
-	if object.UnregisterAllEvents then
+	if not skipEvents and object.UnregisterAllEvents then
 		object:UnregisterAllEvents()
 
 		if object:GetName() then
@@ -147,8 +147,11 @@ function E:ForceHide(object)
 		end
 	end
 
+	if not doNotHide then
+		object:Hide()
+	end
+
 	object:SetParent(self.HIDDEN_PARENT)
-	object:Hide()
 end
 
 function E:GetCoords(object)
@@ -233,6 +236,14 @@ function P:InitModules()
 	end
 end
 
+function P:UpdateModules()
+	for _, module in next, modules do
+		if module.Update then
+			module:Update()
+		end
+	end
+end
+
 --------------------------
 -- ADDON SPECIFIC STUFF --
 --------------------------
@@ -261,56 +272,39 @@ end
 -- FRAME QUEUE --
 -----------------
 
-local queue = {} -- frame = {state = "string, condition = "string" or "nil"}
-local frames = {}
+do
+	local queue = {} -- frame = {stateID = "string|nil", condition = "string|function"}
 
-local function Process(frame, state, condition)
-	if condition then
-		_G.RegisterStateDriver(frame, state, condition)
-	else
-		frame[state](frame)
-	end
-end
-
-local function ManageQueue()
-	for frame, t in pairs(queue) do
-		Process(frame, t.state, t.condition)
-
-		queue[frame] = nil
-	end
-end
-
-E:RegisterEvent("PLAYER_REGEN_ENABLED", ManageQueue)
-
-function E:SaveFrameState(frame, state, condition)
-	if not frames[frame] then
-		frames[frame] = {}
-	end
-
-	frames[frame][state] = condition
-end
-
-function E:ResetFrameState(frame, state)
-	if frames[frame] and frames[frame][state] then
-		return self:SetFrameState(frame, state, frames[frame][state])
-	end
-
-	return nil
-end
-
-function E:SetFrameState(frame, state, condition)
-	if frame then
-		P.argcheck(2, state, "string")
-		P.argcheck(3, condition, "string", "nil")
-
-		if _G.InCombatLockdown() and frame:IsProtected() then
-			queue[frame] = {state = state, condition = condition}
-
-			return false, frame, state, condition
+	local function Process(frame, stateID, state)
+		if stateID then
+			_G.RegisterStateDriver(frame, stateID, state)
 		else
-			Process(frame, state, condition)
+			state(frame)
+		end
+	end
 
-			return true, frame, state, condition
+	local function ManageQueue()
+		for frame, t in next, queue do
+			Process(frame, t.stateID, t.state)
+
+			queue[frame] = nil
+		end
+	end
+
+	E:RegisterEvent("PLAYER_REGEN_ENABLED", ManageQueue)
+
+
+	function E:SetFrameState(frame, stateID, state)
+		if frame then
+			if _G.InCombatLockdown() and frame:IsProtected() then
+				queue[frame] = {stateID = stateID, state = state}
+
+				return false, frame, stateID, state
+			else
+				Process(frame, stateID, state)
+
+				return true, frame, stateID, state
+			end
 		end
 	end
 end

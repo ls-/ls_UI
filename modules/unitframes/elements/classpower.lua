@@ -6,52 +6,6 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local function CalcLayout(size, num)
-	local size_wo_gaps = size - 2 * (num - 1)
-	local seg_size = size_wo_gaps / num
-	local mod = seg_size % 1
-	local result = {}
-
-	if mod == 0 then
-		for k = 1, num do
-			result[k] = seg_size
-		end
-	else
-		seg_size = E:Round(seg_size)
-
-		if num % 2 == 0 then
-			local range = (num - 2) / 2
-
-			for k = 1, range do
-				result[k] = seg_size
-			end
-
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
-
-			seg_size = (size_wo_gaps - seg_size * range * 2) / 2
-			result[range + 1] = seg_size
-			result[range + 2] = seg_size
-		else
-			local range = (num - 1) / 2
-
-			for k = 1, range do
-				result[k] = seg_size
-			end
-
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
-
-			seg_size = size_wo_gaps - seg_size * range * 2
-			result[range + 1] = seg_size
-		end
-	end
-
-	return result
-end
-
 local function OnValueChanged(self, value)
 	local _, max = self:GetMinMaxValues()
 
@@ -68,7 +22,7 @@ local function OnValueChanged(self, value)
 	else
 		self.InAnim:Stop()
 
-		if self._active  then
+		if self._active then
 			self:SetAlpha(0.65)
 
 			self._active = false
@@ -116,16 +70,22 @@ end
 
 do
 	local function PostUpdate(self)
-		local hasVehicle = _G.UnitHasVehicleUI("player")
-
-		if hasVehicle and self._active then
+		if not self.isEnabled then
 			self:Hide()
 
 			self._active = false
-		elseif not hasVehicle and not self._active then
-			self:Show()
+		else
+			local hasVehicle = _G.UnitHasVehicleUI("player")
 
-			self._active = true
+			if hasVehicle and self._active then
+				self:Hide()
+
+				self._active = false
+			elseif not hasVehicle and not self._active then
+				self:Show()
+
+				self._active = true
+			end
 		end
 	end
 
@@ -133,6 +93,7 @@ do
 		local element = CreateElement(parent, 6, "Rune")
 		element:Hide()
 
+		element.isEnabled = true
 		element.colorSpec = true
 		element.PostUpdate = PostUpdate
 
@@ -146,9 +107,9 @@ do
 		local layout
 
 		if config.orientation == "HORIZONTAL" then
-			layout = CalcLayout(width, 6)
+			layout = E:CalcLayout(width, 6)
 		else
-			layout = CalcLayout(height, 6)
+			layout = E:CalcLayout(height, 6)
 		end
 
 		for i = 1, 6 do
@@ -158,7 +119,9 @@ do
 			bar:ClearAllPoints()
 
 			if config.orientation == "HORIZONTAL" then
-				bar:SetSize(layout[i], height)
+				bar:SetWidth(layout[i])
+				bar:SetPoint("TOP", 0, 0)
+				bar:SetPoint("BOTTOM", 0, 0)
 
 				if i == 1 then
 					bar:SetPoint("LEFT", 0, 0)
@@ -166,7 +129,9 @@ do
 					bar:SetPoint("LEFT", element[i - 1], "RIGHT", 2, 0)
 				end
 			else
-				bar:SetSize(width, layout[i])
+				bar:SetHeight(layout[i])
+				bar:SetPoint("LEFT", 0, 0)
+				bar:SetPoint("RIGHT", 0, 0)
 
 				if i == 1 then
 					bar:SetPoint("BOTTOM", 0, 0)
@@ -178,13 +143,15 @@ do
 
 		if config.enabled and not frame:IsElementEnabled("Runes") then
 			frame:EnableElement("Runes")
+
+			element.isEnabled = true
 		elseif not config.enabled and frame:IsElementEnabled("Runes") then
 			frame:DisableElement("Runes")
+
+			element.isEnabled = false
 		end
 
-		if frame:IsElementEnabled("Runes") then
-			element:ForceUpdate()
-		end
+		element:ForceUpdate()
 	end
 end
 
@@ -204,9 +171,9 @@ do
 				local layout
 
 				if orientation == "HORIZONTAL" then
-					layout = CalcLayout(self:GetWidth(), max)
+					layout = E:CalcLayout(self:GetWidth(), max)
 				else
-					layout = CalcLayout(self:GetHeight(), max)
+					layout = E:CalcLayout(self:GetHeight(), max)
 				end
 
 				for i = 1, max do
@@ -227,7 +194,7 @@ do
 			end
 
 			self._state = self.isEnabled
-			self._powerID = self.powerType
+			self._powerID = powerType
 		end
 	end
 
@@ -253,6 +220,8 @@ do
 
 			if config.orientation == "HORIZONTAL" then
 				bar:SetHeight(height)
+				bar:SetPoint("TOP", 0, 0)
+				bar:SetPoint("BOTTOM", 0, 0)
 
 				if i == 1 then
 					bar:SetPoint("LEFT", 0, 0)
@@ -261,6 +230,8 @@ do
 				end
 			else
 				bar:SetWidth(width)
+				bar:SetPoint("LEFT", 0, 0)
+				bar:SetPoint("RIGHT", 0, 0)
 
 				if i == 1 then
 					element[i]:SetPoint("BOTTOM", 0, 0)
@@ -276,7 +247,8 @@ do
 			frame:DisableElement("ClassPower")
 		end
 
-		if frame:IsElementEnabled("ClassPower") then
+		if element.isEnabled then
+			element._state = nil
 			element:ForceUpdate()
 		end
 	end
@@ -324,11 +296,15 @@ do
 
 		if config.enabled and not frame:IsElementEnabled("Stagger") then
 			frame:EnableElement("Stagger")
+
+			element.isEnabled = true
 		elseif not config.enabled and frame:IsElementEnabled("Stagger") then
 			frame:DisableElement("Stagger")
+
+			element.isEnabled = false
 		end
 
-		if frame:IsElementEnabled("Stagger") then
+		if element.isEnabled then
 			element:ForceUpdate()
 		end
 	end

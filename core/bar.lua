@@ -3,33 +3,52 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local math = _G.math
+local m_min = _G.math.min
+local m_ceil = _G.math.ceil
+local m_floor = _G.math.floor
 
 -- Mine
-function E:UpdateBarLayout(bar, buttons, bSize, bGap, initialAnchor, columns)
+function E:UpdateBarLayout(bar)
+	local config = bar._config
+	local xDir = config.x_growth == "RIGHT" and 1 or -1
+	local yDir = config.y_growth == "UP" and 1 or -1
 	local level = bar:GetFrameLevel() + 1
-	local growthX = (initialAnchor == "TOPLEFT" or initialAnchor == "BOTTOMLEFT") and 1 or -1
-	local growthY = (initialAnchor == "BOTTOMLEFT" or initialAnchor == "BOTTOMRIGHT") and 1 or -1
+	local num = m_min(config.num, #bar._buttons)
+	local initialAnchor
 
-	if columns and columns > #buttons then
-		columns = #buttons
+	if config.y_growth == "UP" then
+		if config.x_growth == "RIGHT" then
+			initialAnchor = "BOTTOMLEFT"
+		else
+			initialAnchor = "BOTTOMRIGHT"
+		end
 	else
-		columns = columns or #buttons
+		if config.x_growth == "RIGHT" then
+			initialAnchor = "TOPLEFT"
+		else
+			initialAnchor = "TOPRIGHT"
+		end
 	end
 
-	bar:SetSize(columns * (bSize + bGap), math.ceil(#buttons / columns) * (bSize + bGap))
+	bar:SetSize(m_min(num, config.per_row) * (config.size + config.spacing), m_ceil(num / config.per_row) * (config.size + config.spacing))
 
-	for i = 1, #buttons do
-		local button = buttons[i]
+	if bar:GetName() and E:HasMover(bar) then
+		E:UpdateMoverSize(bar)
+	end
+
+	for i, button in next, bar._buttons do
 		button:ClearAllPoints()
-		button:SetSize(bSize, bSize)
 
-		local column = (i - 1) % columns
-		local row = math.floor((i - 1) / columns)
+		if i <= num then
+			local col = (i - 1) % config.per_row
+			local row = m_floor((i - 1) / config.per_row)
 
-		button:SetFrameLevel(level)
-		button:SetPoint(initialAnchor, bar, initialAnchor,
-			growthX * ((0.5 + column) * bGap + column * bSize),
-			growthY * ((0.5 + row) * bGap + row * bSize))
+			button:SetParent(button._parent)
+			button:SetFrameLevel(level)
+			button:SetSize(config.size, config.size)
+			button:SetPoint(initialAnchor, bar, initialAnchor, xDir * ((0.5 + col) * config.spacing + col * config.size), yDir * ((0.5 + row) * config.spacing + row * config.size))
+		else
+			button:SetParent(E.HIDDEN_PARENT)
+		end
 	end
 end

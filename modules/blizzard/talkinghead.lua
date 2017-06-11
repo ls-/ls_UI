@@ -10,15 +10,11 @@ local pairs = _G.pairs
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
-function BLIZZARD:TalkingHead_IsInit()
+function BLIZZARD:HasTalkingHead()
 	return isInit
 end
 
-function BLIZZARD:TalkingHead_Init()
+function BLIZZARD:SetUpTalkingHead()
 	if not isInit and C.db.char.blizzard.talking_head.enabled then
 		local isLoaded = true
 
@@ -40,10 +36,9 @@ function BLIZZARD:TalkingHead_Init()
 			_G.TalkingHeadFrame:SetPoint("TOP", "UIParent", "TOP", 0, -188)
 			E:CreateMover(_G.TalkingHeadFrame)
 
-			-- Finalise
 			isInit = true
 
-			return true
+			self.SetUpTalkingHead = E.NOOP
 		end
 	end
 end

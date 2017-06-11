@@ -8,15 +8,11 @@ local _G = getfenv(0)
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
-function BLIZZARD:Durability_IsInit()
+function BLIZZARD:HasDurabilityFrame()
 	return isInit
 end
 
-function BLIZZARD:Durability_Init()
+function BLIZZARD:SetUpDurabilityFrame()
 	if not isInit and C.db.char.blizzard.durability.enabled then
 		_G.DurabilityFrame:ClearAllPoints()
 		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -196)
@@ -37,9 +33,8 @@ function BLIZZARD:Durability_Init()
 
 		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.MinimapCluster, "TOPRIGHT", 0, 0)
 
-		-- Finalise
 		isInit = true
 
-		return true
+		self.SetUpDurabilityFrame = E.NOOP
 	end
 end

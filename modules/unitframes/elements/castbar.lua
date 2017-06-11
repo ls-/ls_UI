@@ -10,10 +10,16 @@ local m_abs = _G.math.abs
 local function PostCastStart(castbar)
 	if castbar.notInterruptible then
 		castbar:SetStatusBarColor(M.COLORS.GRAY:GetRGB())
-		castbar.Icon:SetDesaturated(true)
+
+		if castbar.Icon then
+			castbar.Icon:SetDesaturated(true)
+		end
 	else
 		castbar:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
-		castbar.Icon:SetDesaturated(false)
+
+		if castbar.Icon then
+			castbar.Icon:SetDesaturated(false)
+		end
 	end
 end
 
@@ -58,8 +64,6 @@ function UF:CreateCastbar(parent)
 	local element = _G.CreateFrame("StatusBar", nil, holder)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
-	element:SetPoint("TOPLEFT", 20, 0)
-	element:SetPoint("BOTTOMRIGHT", 0, 0)
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
@@ -67,9 +71,15 @@ function UF:CreateCastbar(parent)
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetSize(18, 12)
-	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
+	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
-	element.Icon_ = icon
+	element.LeftIcon = icon
+
+	icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
+	icon:SetSize(18, 12)
+	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -3, 0)
+	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
+	element.RightIcon = icon
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -86,15 +96,23 @@ function UF:CreateCastbar(parent)
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
 	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
 	sep:SetPoint("RIGHT", element, "LEFT", 5, 0)
-	element.Sep = sep
+	element.LeftSep = sep
+
+	sep = element:CreateTexture(nil, "OVERLAY")
+	sep:SetSize(24 / 2, 24 / 2)
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
+	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
+	sep:SetPoint("LEFT", element, "RIGHT", -5, 0)
+	element.RightSep = sep
 
 	local tex_parent = _G.CreateFrame("Frame", nil, element)
-	tex_parent:SetAllPoints(holder)
+	tex_parent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+	tex_parent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-L")
 
 	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
 	time:SetWordWrap(false)
-	time:SetPoint("RIGHT", -2, 0)
+	time:SetPoint("RIGHT", element, "RIGHT", -2, 0)
 	element.Time = time
 
 	local text = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
@@ -119,36 +137,75 @@ end
 function UF:UpdateCastbar(frame)
 	local config = frame._config.castbar
 	local element = frame.Castbar
-	local width = config.width_override ~= 0 and config.width_override or frame._config.width - 6
+	local holder = element.Holder
+	local hasMover = E:HasMover(holder)
+	local width = (config.detached and config.width_override ~= 0) and config.width_override or frame._config.width
 
-	element.Holder:ClearAllPoints()
-	element.Holder:SetWidth(width)
-	element.Holder._width = width
+	holder:ClearAllPoints()
+	holder:SetWidth(width)
+	holder._width = width
+
+	if hasMover then
+		E:UpdateMoverSize(holder, width, 12)
+	end
 
 	local point1 = config.point1
 
 	if point1 and point1.p then
 		if config.detached then
-			element.Holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.anchor), point1.rP, point1.x, point1.y)
+			holder:SetPoint(point1.p,
+				E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and frame:GetName() or point1.detached_anchor),
+				point1.rP, point1.x, point1.y)
+
+			if not hasMover then
+				E:CreateMover(holder)
+			else
+				E:EnableMover(holder)
+			end
 		else
-			element.Holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+
+			if hasMover then
+				E:DisableMover(holder)
+			end
 		end
 	end
 
-	if config.icon then
-		element.Icon = element.Icon_
-		element.Icon_:Show()
+	if config.icon.enabled then
+		if config.icon.position == "LEFT" then
+			element.Icon = element.LeftIcon
 
-		element.Sep:Show()
+			element.LeftIcon:Show()
+			element.RightIcon:Hide()
 
-		element:SetPoint("TOPLEFT", 20, 0)
+			element.LeftSep:Show()
+			element.RightSep:Hide()
+
+			element:SetPoint("TOPLEFT", 23, 0)
+			element:SetPoint("BOTTOMRIGHT", -3, 0)
+		elseif config.icon.position == "RIGHT" then
+			element.Icon = element.RightIcon
+
+			element.LeftIcon:Hide()
+			element.RightIcon:Show()
+
+			element.LeftSep:Hide()
+			element.RightSep:Show()
+
+			element:SetPoint("TOPLEFT", 3, 0)
+			element:SetPoint("BOTTOMRIGHT", -23, 0)
+		end
 	else
 		element.Icon = nil
-		element.Icon_:Hide()
 
-		element.Sep:Hide()
+		element.LeftIcon:Hide()
+		element.RightIcon:Hide()
 
-		element:SetPoint("TOPLEFT", 0, 0)
+		element.LeftSep:Hide()
+		element.RightSep:Hide()
+
+		element:SetPoint("TOPLEFT", 3, 0)
+		element:SetPoint("BOTTOMRIGHT", -3, 0)
 	end
 
 	if config.latency then

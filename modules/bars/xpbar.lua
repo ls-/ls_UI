@@ -4,9 +4,45 @@ local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local math = _G.math
-local table = _G.table
 local unpack = _G.unpack
+local t_wipe = _G.table.wipe
+local hooksecurefunc = _G.hooksecurefunc
+-- Blizz
+local MAX_PLAYER_LEVEL = _G.MAX_PLAYER_LEVEL
+local MAX_REPUTATION_REACTION = _G.MAX_REPUTATION_REACTION
+local ArtifactUI_GetEquippedArtifactInfo = _G.C_ArtifactUI.GetEquippedArtifactInfo
+local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
+local GetCurrencyInfo = _G.GetCurrencyInfo
+local GetFriendshipReputation = _G.GetFriendshipReputation
+local GetHonorExhaustion = _G.GetHonorExhaustion
+local GetNumArtifactTraitsPurchasableFromXP = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP
+local GetQuestLogCompletionText = _G.GetQuestLogCompletionText
+local GetQuestLogIndexByID = _G.GetQuestLogIndexByID
+local GetText = _G.GetText
+local GetWatchedFactionInfo = _G.GetWatchedFactionInfo
+local GetXPExhaustion = _G.GetXPExhaustion
+local HasArtifactEquipped = _G.HasArtifactEquipped
+local InActiveBattlefield = _G.InActiveBattlefield
+local IsInActiveWorldPVP = _G.IsInActiveWorldPVP
+local IsWatchingHonorAsXP = _G.IsWatchingHonorAsXP
+local IsXPUserDisabled = _G.IsXPUserDisabled
+local PetBattles_GetBreedQuality = _G.C_PetBattles.GetBreedQuality
+local PetBattles_GetLevel = _G.C_PetBattles.GetLevel
+local PetBattles_GetName = _G.C_PetBattles.GetName
+local PetBattles_GetNumPets = _G.C_PetBattles.GetNumPets
+local PetBattles_GetXP = _G.C_PetBattles.GetXP
+local PetBattles_IsInBattle = _G.C_PetBattles.IsInBattle
+local Reputation_GetFactionParagonInfo = _G.C_Reputation.GetFactionParagonInfo
+local Reputation_IsFactionParagon = _G.C_Reputation.IsFactionParagon
+local UnitFactionGroup = _G.UnitFactionGroup
+local UnitHonor = _G.UnitHonor
+local UnitHonorLevel = _G.UnitHonorLevel
+local UnitHonorMax = _G.UnitHonorMax
+local UnitLevel = _G.UnitLevel
+local UnitPrestige = _G.UnitPrestige
+local UnitSex = _G.UnitSex
+local UnitXP = _G.UnitXP
+local UnitXPMax = _G.UnitXPMax
 
 -- Mine
 local isInit = false
@@ -15,6 +51,18 @@ local bar
 local MAX_BARS = 3
 local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
+local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
+
+local CFG = {
+	width = 746,
+	point = {
+		p = "BOTTOM",
+		anchor = "UIParent",
+		rP = "BOTTOM",
+		x = 0,
+		y = 4
+	},
+}
 
 local LAYOUT = {
 	[1] = {
@@ -43,26 +91,21 @@ local LAYOUT = {
 	},
 }
 
-local CFG = {
-	enabled = true,
-	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
-}
-
-local function UpdateXPBars()
+local function UpdateXPBar()
 	local index = 0
 
-	if _G.C_PetBattles.IsInBattle() then
+	if PetBattles_IsInBattle() then
 		for i = 1, 3 do
-			if i < _G.C_PetBattles.GetNumPets(1) then
-				local level = _G.C_PetBattles.GetLevel(1, i)
+			if i < PetBattles_GetNumPets(1) then
+				local level = PetBattles_GetLevel(1, i)
 
 				if level and level < 25 then
 					index = index + 1
 
-					local name = _G.C_PetBattles.GetName(1, i)
-					local rarity = _G.C_PetBattles.GetBreedQuality(1, i)
-					local cur, max = _G.C_PetBattles.GetXP(1, i)
-					local r, g, b = M.COLORS.XP:GetRGB()
+					local name = PetBattles_GetName(1, i)
+					local rarity = PetBattles_GetBreedQuality(1, i)
+					local cur, max = PetBattles_GetXP(1, i)
+					local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
 
 					bar[index].tooltipInfo = {
 						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
@@ -71,7 +114,7 @@ local function UpdateXPBars()
 						},
 					}
 
-					bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), M.COLORS.XP:GetHEX())
+					bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
 					E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 					bar[index]:SetMinMaxValues(0, max)
@@ -81,12 +124,12 @@ local function UpdateXPBars()
 		end
 	else
 		-- Artefact
-		if _G.HasArtifactEquipped() then
+		if HasArtifactEquipped() then
 			index = index + 1
 
-			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = _G.C_ArtifactUI.GetEquippedArtifactInfo()
-			local points, cur, max = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
-			local _, ak = _G.GetCurrencyInfo(1171)
+			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = ArtifactUI_GetEquippedArtifactInfo()
+			local points, cur, max = GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
+			local _, ak = GetCurrencyInfo(1171)
 			local r, g, b, hex = M.COLORS.ARTIFACT:GetRGBHEX()
 
 			bar[index].tooltipInfo = {
@@ -107,7 +150,7 @@ local function UpdateXPBars()
 				bar[index].tooltipInfo.line3 = nil
 			end
 
-			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
@@ -115,18 +158,18 @@ local function UpdateXPBars()
 		end
 
 		-- XP / Honour
-		if _G.UnitLevel("player") < _G.MAX_PLAYER_LEVEL then
-			if not _G.IsXPUserDisabled() then
+		if UnitLevel("player") < MAX_PLAYER_LEVEL then
+			if not IsXPUserDisabled() then
 				index = index + 1
 
-				local cur, max = _G.UnitXP("player"), _G.UnitXPMax("player")
-				local bonus = _G.GetXPExhaustion()
+				local cur, max = UnitXP("player"), UnitXPMax("player")
+				local bonus = GetXPExhaustion()
 				local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
 					line1 = {
-						text = L["XP_BAR_LEVEL_TOOLTIP"]:format(_G.UnitLevel("player"))
+						text = L["XP_BAR_LEVEL_TOOLTIP"]:format(UnitLevel("player"))
 					},
 				}
 
@@ -138,27 +181,27 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line2 = nil
 				end
 
-				bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
 				bar[index]:SetValue(cur)
 			end
 		else
-			if _G.IsWatchingHonorAsXP() or _G.InActiveBattlefield() or _G.IsInActiveWorldPVP() then
+			if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
 				index = index + 1
 
-				local cur, max = _G.UnitHonor("player"), _G.UnitHonorMax("player")
-				local bonus = _G.GetHonorExhaustion()
-				local r, g, b, hex = M.COLORS.FACTION[_G.UnitFactionGroup("player"):upper()]:GetRGBHEX()
+				local cur, max = UnitHonor("player"), UnitHonorMax("player")
+				local bonus = GetHonorExhaustion()
+				local r, g, b, hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGBHEX()
 
 				bar[index].tooltipInfo = {
 					header = L["HONOR"],
 					line1 = {
-						text = L["XP_BAR_HONOR_TOOLTIP"]:format(_G.UnitHonorLevel("player")),
+						text = L["XP_BAR_HONOR_TOOLTIP"]:format(UnitHonorLevel("player")),
 					},
 					line2 = {
-						text = L["XP_BAR_PRESTIGE_LEVEL_TOOLTIP"]:format(_G.UnitPrestige("player"))
+						text = L["XP_BAR_PRESTIGE_LEVEL_TOOLTIP"]:format(UnitPrestige("player"))
 					},
 				}
 
@@ -170,7 +213,7 @@ local function UpdateXPBars()
 					bar[index].tooltipInfo.line3 = nil
 				end
 
-				bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
+				bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
 				E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 				bar[index]:SetMinMaxValues(0, max)
@@ -179,13 +222,13 @@ local function UpdateXPBars()
 		end
 
 		-- Reputation
-		local name, standing, repMin, repMax, repCur, factionID = _G.GetWatchedFactionInfo()
+		local name, standing, repMin, repMax, repCur, factionID = GetWatchedFactionInfo()
 
 		if name then
 			index = index + 1
 
-			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = _G.GetFriendshipReputation(factionID)
-			local repTextLevel = _G.GetText("FACTION_STANDING_LABEL"..standing, _G.UnitSex("player"))
+			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+			local repTextLevel = GetText("FACTION_STANDING_LABEL"..standing, UnitSex("player"))
 			local isParagon, rewardQuestID, hasRewardPending
 			local cur, max
 
@@ -199,14 +242,14 @@ local function UpdateXPBars()
 				standing = 5
 				repTextLevel = friendTextLevel
 			else
-				if standing ~= _G.MAX_REPUTATION_REACTION then
+				if standing ~= MAX_REPUTATION_REACTION then
 					max, cur = repMax - repMin, repCur - repMin
 				else
-					isParagon = _G.C_Reputation.IsFactionParagon(factionID)
+					isParagon = Reputation_IsFactionParagon(factionID)
 
 					if isParagon then
-						cur, max, rewardQuestID, hasRewardPending = _G.C_Reputation.GetFactionParagonInfo(factionID)
-						cur = math.fmod(cur, max)
+						cur, max, rewardQuestID, hasRewardPending = Reputation_GetFactionParagonInfo(factionID)
+						cur = cur % max
 						repTextLevel = repTextLevel.."+"
 
 						if hasRewardPending then
@@ -228,7 +271,7 @@ local function UpdateXPBars()
 			}
 
 			if isParagon and hasRewardPending then
-				local text = _G.GetQuestLogCompletionText(_G.GetQuestLogIndexByID(rewardQuestID))
+				local text = GetQuestLogCompletionText(GetQuestLogIndexByID(rewardQuestID))
 
 				if text and text ~= "" then
 					bar[index].tooltipInfo.line3 = {
@@ -239,7 +282,7 @@ local function UpdateXPBars()
 				bar[index].tooltipInfo.line3 = nil
 			end
 
-			bar[index].Text:SetFormattedText(L["BAR_COLORED_DETAILED_VALUE_TEMPLATE"], _G.BreakUpLargeNumbers(cur), _G.BreakUpLargeNumbers(max), hex)
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
@@ -290,19 +333,22 @@ local function UpdateXPBars()
 	end
 end
 
-local function SetXPBarStyle(style)
-	local width = 1492 / 2
 
-	if style == "SHORT" then
-		width = 1060 / 2
-	end
+-- default width = 1492 / 2, short width = 1060 / 2
+-- I'll expand it later
+local function SetXPBarStyle(width)
+	LAYOUT[1][1].size = {width, 16 / 2}
 
-	LAYOUT[1][1].size = {width / 1, 16 / 2}
-	LAYOUT[2][1].size = {width / 2, 16 / 2}
-	LAYOUT[2][2].size = {width / 2, 16 / 2}
-	LAYOUT[3][1].size = {width / 3, 16 / 2}
-	LAYOUT[3][2].size = {width / 3, 16 / 2}
-	LAYOUT[3][3].size = {width / 3, 16 / 2}
+	local layout = E:CalcLayout(width, 2)
+
+	LAYOUT[2][1].size = {layout[1], 16 / 2}
+	LAYOUT[2][2].size = {layout[2], 16 / 2}
+
+	layout = E:CalcLayout(width, 3)
+
+	LAYOUT[3][1].size = {layout[1], 16 / 2}
+	LAYOUT[3][2].size = {layout[2], 16 / 2}
+	LAYOUT[3][3].size = {layout[3], 16 / 2}
 
 	bar:SetSize(width, 16 / 2)
 
@@ -319,7 +365,7 @@ local function SetXPBarStyle(style)
 		bar[i]:SetPoint(unpack(LAYOUT[total][i].point))
 	end
 
-	UpdateXPBars()
+	UpdateXPBar()
 end
 
 local function XPBar_OnEvent(_, event, ...)
@@ -327,10 +373,10 @@ local function XPBar_OnEvent(_, event, ...)
 		local unit = ...
 
 		if unit == "player" then
-			UpdateXPBars()
+			UpdateXPBar()
 		end
 	else
-		UpdateXPBars()
+		UpdateXPBar()
 	end
 end
 
@@ -368,31 +414,17 @@ local function Segment_OnLeave(self)
 	self.Text:Hide()
 end
 
-------------
--- PUBLIC --
-------------
-
-function BARS:SetXPBarStyle(style)
-	SetXPBarStyle(style)
+function BARS:SetXPBarStyle(...)
+	SetXPBarStyle(...)
 end
 
-function BARS:UpdateXPBars()
-	UpdateXPBars()
-end
-
------------------
--- INITIALISER --
------------------
-
-function BARS:XPBar_IsInit()
+function BARS:HasXPBar()
 	return isInit
 end
 
-function BARS:XPBar_Init()
-	if not isInit and (C.db.char.bars.xpbar.enabled or self:ActionBarController_IsInit()) then
-		if not self:ActionBarController_IsInit() then
-			CFG = C.db.profile.bars.xpbar
-		end
+function BARS:CreateXPBar()
+	if C.db.char.bars.xpbar.enabled or self:IsRestricted() then
+		local config = self:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
 		bar = _G.CreateFrame("Frame", "LSUIXPBar", _G.UIParent)
 		bar:SetScript("OnEvent", XPBar_OnEvent)
@@ -464,7 +496,7 @@ function BARS:XPBar_Init()
 		end
 
 		local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
-		sep:SetPoint("CENTER", bar[1], "RIGHT", 0, 0)
+		sep:SetPoint("LEFT", bar[1], "RIGHT", -5, 0)
 		sep:SetSize(24 / 2, 16 / 2)
 		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
 		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
@@ -472,7 +504,7 @@ function BARS:XPBar_Init()
 		bar[1].Sep = sep
 
 		sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
-		sep:SetPoint("CENTER", bar[2], "RIGHT", 0, 0)
+		sep:SetPoint("LEFT", bar[2], "RIGHT", -5, 0)
 		sep:SetSize(24 / 2, 16 / 2)
 		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
 		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
@@ -492,10 +524,10 @@ function BARS:XPBar_Init()
 				_G.SetWatchingHonorAsXP(true)
 			end
 
-			UpdateXPBars()
+			UpdateXPBar()
 		end
 
-		local function InitializePVPTalentsXPBarDropDown(self, level)
+		local function InitializePVPTalentsXPBarDropDown(_, level)
 			local info = _G.UIDropDownMenu_CreateInfo()
 
 			info.isNotRadio = true
@@ -503,7 +535,7 @@ function BARS:XPBar_Init()
 			info.checked = _G.IsWatchingHonorAsXP()
 			info.func = WatchHonorAsXP
 			_G.UIDropDownMenu_AddButton(info, level)
-			table.wipe(info)
+			t_wipe(info)
 
 			info.notCheckable = true
 			info.text = _G.CANCEL
@@ -519,7 +551,7 @@ function BARS:XPBar_Init()
 
 		local isHonorBarHooked = false
 
-		_G.hooksecurefunc("TalentFrame_LoadUI", function()
+		hooksecurefunc("TalentFrame_LoadUI", function()
 			if not isHonorBarHooked then
 				_G.PlayerTalentFramePVPTalents.XPBar:SetScript("OnMouseUp", PlayerTalentFramePVPTalentsXPBar_OnClick)
 
@@ -536,24 +568,32 @@ function BARS:XPBar_Init()
 				_G.SetWatchedFactionIndex(0)
 			end
 
-			UpdateXPBars()
+			UpdateXPBar()
 		end
 
 		_G.ReputationDetailMainScreenCheckBox:SetScript("OnClick", ReputationDetailMainScreenCheckBox_OnClick)
 
-		SetXPBarStyle("DEFAULT")
+		SetXPBarStyle(config.width)
 
-		if self:ActionBarController_IsInit() then
+		if self:IsRestricted() then
 			self:ActionBarController_AddWidget(bar, "XP_BAR")
 		else
-			bar:SetPoint(unpack(CFG.point))
+			local point = config.point
+
+			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
 			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
 		end
 
-		-- Finalise
-		isInit = true
+		self.CreateXPBar = E.NOOP
 
-		return true
+		isInit = true
 	end
+end
+
+function BARS:UpdateXPBar()
+	local config = self:IsRestricted() and CFG or C.db.profile.bars.xpbar
+
+	self:SetXPBarStyle(config.width)
+	E:UpdateMoverSize(bar)
 end

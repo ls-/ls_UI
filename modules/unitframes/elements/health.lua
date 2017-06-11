@@ -256,7 +256,7 @@ do
 				absorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			frame:Tag(absorbBar.Text, config.prediction.absorb_text.tag)
+			frame:Tag(absorbBar.Text, config.prediction.enabled and config.prediction.absorb_text.tag or "")
 		end
 
 		if healAbsorbBar.Text then
@@ -270,7 +270,7 @@ do
 				healAbsorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			frame:Tag(healAbsorbBar.Text, config.prediction.heal_abosrb_text.tag)
+			frame:Tag(healAbsorbBar.Text, config.prediction.enabled and config.prediction.heal_abosrb_text.tag or "")
 		end
 
 		if config.prediction.enabled and not frame:IsElementEnabled("HealthPrediction") then

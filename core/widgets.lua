@@ -391,6 +391,52 @@ do
 		end
 	end
 
+	local function CalcLayout(size, num)
+		local size_wo_gaps = size - 2 * (num - 1)
+		local seg_size = size_wo_gaps / num
+		local mod = seg_size % 1
+		local result = {}
+
+		if mod == 0 then
+			for k = 1, num do
+				result[k] = seg_size
+			end
+		else
+			seg_size = E:Round(seg_size)
+
+			if num % 2 == 0 then
+				local range = (num - 2) / 2
+
+				for k = 1, range do
+					result[k] = seg_size
+				end
+
+				for k = num - range + 1, num do
+					result[k] = seg_size
+				end
+
+				seg_size = (size_wo_gaps - seg_size * range * 2) / 2
+				result[range + 1] = seg_size
+				result[range + 2] = seg_size
+			else
+				local range = (num - 1) / 2
+
+				for k = 1, range do
+					result[k] = seg_size
+				end
+
+				for k = num - range + 1, num do
+					result[k] = seg_size
+				end
+
+				seg_size = size_wo_gaps - seg_size * range * 2
+				result[range + 1] = seg_size
+			end
+		end
+
+		return result
+	end
+
 	function E:HandleStatusBar(...)
 		return HandleStatusBar(...)
 	end
@@ -409,6 +455,10 @@ do
 
 	function E:ReanchorGainLossIndicators(...)
 		ReanchorGainLossIndicators(...)
+	end
+
+	function E:CalcLayout(...)
+		return CalcLayout(...)
 	end
 end
 

@@ -169,74 +169,81 @@ local filterFunctions = {
 			return false
 		end
 
-		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
-		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
-		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
-		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
-		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
-		local isPlayerAura = aura.isPlayer or (caster and UnitIsUnit(caster, "pet"))
+		local config = isFriend and frame._config.filter.friendly or frame._config.filter.enemy
+		config = aura.isDebuff and config.debuff or config.buff
+
+		if not config then
+			return
+		end
+
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
 		-- boss
 		if isBossAura then
 			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
-			return E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+			return config.boss
 		end
 
 		-- mounts
 		if MOUNTS[spellID] then
 			-- print(name, spellID, caster, "|cffe5a526MOUNT|r")
-			return E:CheckFlag(config.show_mount, hostileBuffFlag, friendlyBuffFlag)
+			return config.mount
 		end
 
 		-- self-cast
 		if caster and UnitIsUnit(unit, caster) then
 			if duration and duration ~= 0 then
 				-- print(name, spellID, caster, "|cffe5a526SELFCAST|r")
-				return E:CheckFlag(config.show_selfcast, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+				return config.selfcast
 			else
 				-- print(name, spellID, caster, "|cffe5a526PERMA-SELFCAST|r")
-				return E:CheckFlag(config.show_selfcast_permanent, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+				return config.selfcast and config.selfcast_permanent
 			end
 		end
 
 		-- applied by player
-		if isPlayerAura and duration and duration ~= 0 then
-			return E:CheckFlag(config.show_player, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+		if aura.isPlayer or (caster and UnitIsUnit(caster, "pet")) then
+			if duration and duration ~= 0 then
+				return config.player
+			else
+				return config.player and config.player_permanent
+			end
 		end
 
 		if isFriend then
-			if aura.filter == "HARMFUL"then
+			if aura.isDebuff then
 				-- dispellable
 				if debuffType and E:IsDispellable(debuffType) then
 					-- print(name, spellID, caster, "|cffe5a526DISPELLABLE|r")
-					return E:CheckFlag(config.show_dispellable, friendlyBuffFlag)
+					return config.dispellable
 				end
 			end
 		else
 			-- stealable
-			if isStealable and not UnitIsUnit(unit, "player") then
+			if isStealable then
 				-- print(name, spellID, caster, "|cffe5a526STEALABLE|r")
-				return E:CheckFlag(config.show_dispellable, hostileBuffFlag)
+				return config.dispellable
 			end
 		end
 
 		return false
 	end,
 	boss = function(frame, unit, aura, _, _, _, _, _, _, _, caster, _, _, _, _, isBossAura)
-		local config = frame._config
 		local isFriend = UnitIsFriend("player", unit)
-		local friendlyBuffFlag = (isFriend and not aura.isDebuff) and E:GetPlayerSpecFlag() or 0x00000000
-		local hostileBuffFlag = (not isFriend and not aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 4) or 0x00000000
-		local friendlyDebuffFlag = (isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 8) or 0x00000000
-		local hostileDebuffFlag = (not isFriend and aura.isDebuff) and b_lshift(E:GetPlayerSpecFlag(), 12) or 0x00000000
+		local config = isFriend and frame._config.filter.friendly or frame._config.filter.enemy
+		config = aura.isDebuff and config.debuff or config.buff
+
+		if not config then
+			return
+		end
+
 		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
 
 		-- boss
 		if isBossAura then
 			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
-			return E:CheckFlag(config.show_boss, hostileDebuffFlag, friendlyDebuffFlag, hostileBuffFlag, friendlyBuffFlag)
+			return config.boss
 		end
 
 		return false
@@ -274,10 +281,23 @@ function UF:UpdateAuras(frame)
 
 	element.size = size
 	element.numTotal = config.per_row * config.rows
-	element.initialAnchor = config.init_anchor
 	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
-	element["growth-y"] = config.y_grwoth
+	element["growth-y"] = config.y_growth
+
+	if config.y_growth == "UP" then
+		if config.x_growth == "RIGHT" then
+			element.initialAnchor = "BOTTOMLEFT"
+		else
+			element.initialAnchor = "BOTTOMRIGHT"
+		end
+	else
+		if config.x_growth == "RIGHT" then
+			element.initialAnchor = "TOPLEFT"
+		else
+			element.initialAnchor = "TOPRIGHT"
+		end
+	end
 
 	local point1 = config.point1
 

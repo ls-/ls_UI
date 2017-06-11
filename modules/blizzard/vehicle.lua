@@ -8,16 +8,12 @@ local _G = getfenv(0)
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
-function BLIZZARD:Vehicle_IsInit()
+function BLIZZARD:HasVehicleSeatFrame()
 	return isInit
 end
 
-function BLIZZARD:Vehicle_Init()
-	if not isInit and C.db.char.blizzard.vehicle.enabled then
+function BLIZZARD:SetUpVehicleSeatFrame()
+	if C.db.char.blizzard.vehicle.enabled then
 		_G.VehicleSeatIndicator:ClearAllPoints()
 		_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -196)
 		E:CreateMover(_G.VehicleSeatIndicator)
@@ -37,9 +33,8 @@ function BLIZZARD:Vehicle_Init()
 
 		_G.VehicleSeatIndicator:SetPoint("TOPRIGHT", _G.MinimapCluster, "TOPRIGHT", 0, 0)
 
-		-- Finalise
 		isInit = true
 
-		return true
+		self.SetUpVehicleSeatFrame = E.NOOP
 	end
 end

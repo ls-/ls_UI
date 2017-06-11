@@ -136,7 +136,7 @@ COLORS.HEALPREDICTION = {
 	MY_HEAL = E:CreateColor(52, 140, 53), -- Munsell 10GY 5/10 (#348c35)
 	OTHER_HEAL = E:CreateColor(42, 111, 45), -- Munsell 10GY 4/8 (#2a6f2d)
 	HEAL_ABSORB = COLORS.DARK_RED,
-	DAMAGE_ABSORB = E:CreateColor(190, 201, 239), -- Munsell 5PB 8/4 (#bec9ef)
+	DAMAGE_ABSORB = COLORS.BLUE,
 }
 
 COLORS.FACTION = {

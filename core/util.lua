@@ -252,7 +252,7 @@ local function HueToRGB(v1, v2, v3)
 
 	if v3 < 1 / 6 then
 		return v1 + (v2 - v1) * 6 * v3
-	elseif v3  < 1 / 2 then
+	elseif v3< 1 / 2 then
 		return v2
 	elseif v3 < 2 / 3 then
 		return v1 + (v2 - v1) * (2 / 3 - v3) * 6
@@ -664,7 +664,7 @@ function E:GetUnitReactionColor(unit)
 	return GetUnitReactionColor(unit) or M.COLORS.REACTION[4]
 end
 
-function E:GetUnitColor(unit, cPvPHostility, cClass, cTapped, cReaction)
+function E:GetUnitColor(unit, cPvPHostility, cClass)
 	local color
 
 	color = GetUnitDisconnectedColor(unit)
@@ -677,11 +677,11 @@ function E:GetUnitColor(unit, cPvPHostility, cClass, cTapped, cReaction)
 		color = GetUnitClassColor(unit)
 	end
 
-	if not color and cTapped then
+	if not color then
 		color = GetUnitTappedColor(unit)
 	end
 
-	if not color and cReaction then
+	if not color then
 		color = GetUnitReactionColor(unit)
 	end
 
@@ -750,7 +750,7 @@ function E:GetUnitSpecializationInfo(unit)
 		end
 	end
 
-	return _G.UNKNOWN
+	return L["UNKNOWN"]
 end
 
 -- XXX: GetRelativeDifficultyColor function in UIParent.lua
@@ -860,7 +860,7 @@ do
 				dispelTypes.Curse = _G.IsPlayerSpell(2782) or _G.IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
 				dispelTypes.Magic = _G.IsPlayerSpell(88423) or nil -- Nature's Cure
 				dispelTypes.Poison = dispelTypes.Curse
-			elseif E.PLAYER_CLASS == "PRIEST"  then
+			elseif E.PLAYER_CLASS == "PRIEST"then
 				dispelTypes.Disease = _G.IsPlayerSpell(527) or nil -- Purify
 				dispelTypes.Magic = _G.IsPlayerSpell(527) or _G.IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
 			elseif E.PLAYER_CLASS == "MONK" then

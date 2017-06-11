@@ -77,7 +77,7 @@ do
 				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			frame:Tag(element.Text, config.text.tag)
+			frame:Tag(element.Text, config.enabled and config.text.tag or "")
 		end
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
@@ -88,9 +88,7 @@ do
 			frame:DisableElement("Power")
 		end
 
-		if frame:IsElementEnabled("Power") then
-			element:ForceUpdate()
-		end
+		element:ForceUpdate()
 	end
 end
 
@@ -216,9 +214,7 @@ do
 			frame:DisableElement("AlternativePower")
 		end
 
-		if frame:IsElementEnabled("AlternativePower") then
-			element:ForceUpdate()
-		end
+		element:ForceUpdate()
 	end
 end
 
@@ -323,8 +319,6 @@ do
 			frame:DisableElement("PowerPrediction")
 		end
 
-		if frame:IsElementEnabled("PowerPrediction") then
-			element:ForceUpdate()
-		end
+		element:ForceUpdate()
 	end
 end

@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:ConstructVerticalPetFrame(frame)
+function UF:CreateVerticalPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
@@ -79,7 +79,7 @@ function UF:ConstructVerticalPetFrame(frame)
 	-- E:ForceShow(frame)
 end
 
-function UF:ConstructHorizontalPetFrame(frame)
+function UF:CreateHorizontalPetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
@@ -135,11 +135,13 @@ function UF:ConstructHorizontalPetFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-	frame.DebuffIndicator = self:CreateDebuffIndicator(fg_parent)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 
 	E:CreateBorder(fg_parent, true)
 
@@ -152,9 +154,9 @@ function UF:ConstructHorizontalPetFrame(frame)
 end
 
 function UF:UpdatePetFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	if frame.Insets then
 		self:UpdateInsets(frame)
@@ -167,6 +169,10 @@ function UF:UpdatePetFrame(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
 	self:UpdateThreatIndicator(frame)
+
+	if frame.Name then
+		self:UpdateName(frame)
+	end
 
 	if frame.ClassIndicator then
 		self:UpdateClassIndicator(frame)

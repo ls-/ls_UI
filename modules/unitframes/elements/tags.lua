@@ -6,8 +6,7 @@ local _G = getfenv(0)
 local s_format = _G.string.format
 
 -- Blizz
-local ALTERNATE_POWER_INDEX = ALTERNATE_POWER_INDEX or 10
-local FOREIGN_SERVER_LABEL = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
+local ALTERNATE_POWER_INDEX = _G.ALTERNATE_POWER_INDEX or 10
 local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
 local GetPVPTimer = _G.GetPVPTimer
 local IsPVPTimerRunning = _G.IsPVPTimerRunning
@@ -102,11 +101,19 @@ oUF.Tags.Methods["ls:color:difficulty"] = function(unit)
 end
 
 oUF.Tags.Methods["ls:color:power"] = function(unit)
-	return "|cff"..M.COLORS.POWER[UnitPowerType(unit)]:GetHEX(0.3)
+	return "|cff"..M.COLORS.POWER[UnitPowerType(unit)]:GetHEX(0.2)
 end
 
 oUF.Tags.Methods["ls:color:altpower"] = function()
-	return "|cff"..M.COLORS.INDIGO:GetHEX(0.3)
+	return "|cff"..M.COLORS.INDIGO:GetHEX(0.2)
+end
+
+oUF.Tags.Methods["ls:color:absorb-damage"] = function()
+	return "|cff"..M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.2)
+end
+
+oUF.Tags.Methods["ls:color:absorb-heal"] = function()
+	return "|cff"..M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.2)
 end
 
 ------------
@@ -250,9 +257,9 @@ oUF.Tags.Methods["ls:power:cur-color-perc"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.3), E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.2), E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -286,9 +293,9 @@ oUF.Tags.Methods["ls:power:cur-color-max"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.3), E:NumberFormat(max, 1))
+			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(max, 1))
 		end
 	end
 end
@@ -361,9 +368,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.2), E:NumberToPerc(cur, max))
 		end
 	else
 		return ""
@@ -391,9 +398,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(max, 1))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(max, 1))
 		end
 	else
 		return ""
@@ -445,7 +452,7 @@ oUF.Tags.Methods["ls:server"] = function(unit, r)
 		local relationship = UnitRealmRelationship(r or unit)
 
 		if relationship ~= LE_REALM_RELATION_VIRTUAL then
-			return FOREIGN_SERVER_LABEL
+			return L["FOREIGN_SERVER_LABEL"]
 		end
 	end
 
@@ -495,17 +502,15 @@ end
 oUF.Tags.Events["ls:absorb:heal"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:heal"] = function(unit)
 	local absorb = UnitGetTotalHealAbsorbs(unit) or 0
-	local hex = M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX()
 
-	return absorb > 0 and s_format("|cff%s-|r%s", hex, E:NumberFormat(absorb, 1)) or " "
+	return absorb > 0 and E:NumberFormat(absorb, 1) or " "
 end
 
 oUF.Tags.Events["ls:absorb:damage"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:damage"] = function(unit)
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
-	local hex = M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX()
 
-	return absorb > 0 and s_format("|cff%s+|r%s", hex, E:NumberFormat(absorb, 1)) or " "
+	return absorb > 0 and E:NumberFormat(absorb, 1) or " "
 end
 
 -----------

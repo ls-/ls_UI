@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local MINIMAP = P:AddModule("MiniMap")
+local MINIMAP = P:AddModule("Minimap")
 
 -- Lua
 local _G = getfenv(0)
@@ -58,10 +58,6 @@ local ZONE_COLORS = {
 	["friendly"] = M.COLORS.GREEN,
 	["other"] = M.COLORS.YELLOW
 }
-
------------
--- UTILS --
------------
 
 local function HandleMinimapButton(button, cascade)
 	local regions = {button:GetRegions()}
@@ -218,7 +214,7 @@ local function HandleMinimapButton(button, cascade)
 end
 
 local function UpdateZoneInfo()
-	Minimap.ZoneText:SetText(ZONE_COLORS[GetZonePVPInfo() or "other"]:WrapText(GetMinimapZoneText() or _G.UNKNOWN))
+	Minimap.ZoneText:SetText(ZONE_COLORS[GetZonePVPInfo() or "other"]:WrapText(GetMinimapZoneText() or L["UNKNOWN"]))
 end
 
 -- Horizontal texture scrolling
@@ -238,10 +234,6 @@ local function ScrollTexture(t, delay, offset)
 
 	_G.C_Timer.After(delay, function() ScrollTexture(t, DELAY, STEP) end)
 end
-
---------------
--- HANDLERS --
---------------
 
 local function Minimap_OnEnter(self)
 	self.ZoneText:Show()
@@ -323,31 +315,6 @@ local function Calendar_OnUpdate(self, elapsed)
 	end
 end
 
------------------
--- INITIALISER --
------------------
-
-function MINIMAP:Update()
-	local config = Minimap._config
-
-	if config.zone_text.mode == 0 then
-		Minimap:SetScript("OnEnter", nil)
-		Minimap:SetScript("OnLeave", nil)
-
-		Minimap.ZoneText:Hide()
-	elseif config.zone_text.mode == 1 then
-		Minimap:SetScript("OnEnter", Minimap_OnEnter)
-		Minimap:SetScript("OnLeave", Minimap_OnLeave)
-
-		Minimap.ZoneText:Hide()
-	elseif config.zone_text.mode == 2 then
-		Minimap:SetScript("OnEnter", nil)
-		Minimap:SetScript("OnLeave", nil)
-
-		Minimap.ZoneText:Show()
-	end
-end
-
 function MINIMAP:IsInit()
 	return isInit
 end
@@ -362,8 +329,6 @@ function MINIMAP:Init()
 		holder:SetSize(332 / 2, 332 / 2)
 		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
 		E:CreateMover(holder)
-
-		Minimap._config = C.db.profile.minimap[E.UI_LAYOUT]
 
 		Minimap:EnableMouseWheel()
 		Minimap:SetParent(holder)
@@ -476,7 +441,7 @@ function MINIMAP:Init()
 
 		-- Clock
 		local clock = _G.TimeManagerClockButton
-		clock:SetSize(104  / 2, 56 / 2)
+		clock:SetSize(104/ 2, 56 / 2)
 		clock:SetHitRectInsets(0, 0, 0, 0)
 		clock:SetScript("OnMouseUp", nil)
 		clock:SetScript("OnMouseDown", nil)
@@ -529,7 +494,6 @@ function MINIMAP:Init()
 			end
 		end
 
-		-- Finalise
 		local h, m = _G.GetGameTime()
 		local s = (h * 60 + m) * 60
 		local mult = m_floor(s / DELAY)
@@ -538,10 +502,31 @@ function MINIMAP:Init()
 
 		UpdateZoneInfo()
 
-		self:Update()
-
 		isInit = true
 
-		return true
+		self:Update()
+	end
+end
+
+function MINIMAP:Update()
+	if isInit then
+		local config = C.db.profile.minimap[E.UI_LAYOUT]
+
+		if config.zone_text.mode == 0 then
+			Minimap:SetScript("OnEnter", nil)
+			Minimap:SetScript("OnLeave", nil)
+
+			Minimap.ZoneText:Hide()
+		elseif config.zone_text.mode == 1 then
+			Minimap:SetScript("OnEnter", Minimap_OnEnter)
+			Minimap:SetScript("OnLeave", Minimap_OnLeave)
+
+			Minimap.ZoneText:Hide()
+		elseif config.zone_text.mode == 2 then
+			Minimap:SetScript("OnEnter", nil)
+			Minimap:SetScript("OnLeave", nil)
+
+			Minimap.ZoneText:Show()
+		end
 	end
 end

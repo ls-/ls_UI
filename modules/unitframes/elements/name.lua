@@ -30,7 +30,7 @@ function UF:UpdateName(frame)
 
 	local point2 = config.point2
 
-	if point2 and point2.p then
+	if point2 and point2.p ~= "" then
 		element:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
 	end
 

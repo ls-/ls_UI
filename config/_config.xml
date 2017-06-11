@@ -1,10 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
-	<Script file="general.lua"/>
 	<Script file="auratracker.lua"/>
 	<Script file="bars.lua"/>
 	<Script file="blizzard.lua"/>
+	<Script file="general.lua"/>
 	<Script file="tooltips.lua"/>
 	<Script file="unitframes.lua"/>
-	<Script file="unitframesauras.lua"/>
+	<Script file="minimap.lua"/>
 </Ui>

@@ -9,10 +9,6 @@ local unpack = _G.unpack
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
 function AURAS:IsInit()
 	return isInit
 end
@@ -107,9 +103,6 @@ function AURAS:Init()
 		_G.BuffFrame_UpdateAllBuffAnchors()
 		_G.TemporaryEnchantFrame_Update(_G.GetWeaponEnchantInfo())
 
-		-- Finalise
 		isInit = true
-
-		return true
 	end
 end

@@ -8,5 +8,5 @@
 	<Script file="petbattle.lua"/>
 	<Script file="vehicle.lua"/>
 	<Script file="xpbar.lua"/>
-	<Script file="zoneability.lua"/>
+	<Script file="zone.lua"/>
 </Ui>

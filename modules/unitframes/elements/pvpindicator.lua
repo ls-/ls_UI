@@ -118,13 +118,27 @@ function UF:UpdatePvPIndicator(frame)
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
+	if element.Holder:IsExpanded() and element.Holder.PostExpand then
+		element.Holder:PostExpand()
+	end
+
 	if config.enabled and not frame:IsElementEnabled("PvPIndicator") then
 		frame:EnableElement("PvPIndicator")
 	elseif not config.enabled and frame:IsElementEnabled("PvPIndicator") then
 		frame:DisableElement("PvPIndicator")
 	end
 
+	local timer = element.Timer
+
+	if timer then
+		timer.frequentUpdates = config.enabled and 0.1 or nil
+		frame:Tag(timer, config.enabled and "[ls:pvptimer]" or "")
+		timer:UpdateTag()
+	end
+
 	if frame:IsElementEnabled("PvPIndicator") then
 		element:ForceUpdate()
+	else
+		element.Holder:Collapse()
 	end
 end

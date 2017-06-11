@@ -7,7 +7,13 @@ local _G = getfenv(0)
 local unpack = _G.unpack
 
 -- Mine
-function UF:ConstructVerticalPlayerFrame(frame)
+local isInit = false
+
+function UF:HasPlayerFrame()
+	return isInit
+end
+
+function UF:CreateVerticalPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].player
@@ -149,7 +155,15 @@ function UF:ConstructVerticalPlayerFrame(frame)
 	power:SetFrameLevel(level + 4)
 	power:SetSize(12, 128)
 	power:SetPoint("RIGHT", -23, 0)
+	power:Hide()
 	frame.Power = power
+
+	power:HookScript("OnHide", function()
+		right_tube:Hide()
+	end)
+	power:HookScript("OnShow", function()
+		right_tube:Show()
+	end)
 
 	-- additional power
 	local add_power = self:CreateAdditionalPower(frame)
@@ -216,18 +230,15 @@ function UF:ConstructVerticalPlayerFrame(frame)
 	pvp_timer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 	pvp_timer:SetTextColor(1, 0.82, 0)
 	pvp_timer:SetJustifyH("RIGHT")
-	pvp_timer.frequentUpdates = 0.1
-
-	frame:Tag(pvp_timer, "[ls:pvptimer]")
+	frame.PvPIndicator.Timer = pvp_timer
 
 	-- raid target
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	-- castbar
 	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 
-	E:CreateMover(frame.Castbar.Holder)
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
 	-- status icons/texts
 	local status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
@@ -325,9 +336,11 @@ function UF:ConstructVerticalPlayerFrame(frame)
 			end
 		end
 	end
+
+	isInit = true
 end
 
-function UF:ConstructHorizontalPlayerFrame(frame)
+function UF:CreateHorizontalPlayerFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].player
@@ -518,6 +531,8 @@ function UF:ConstructHorizontalPlayerFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	-- frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
+	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
 	-- pvp indicator
@@ -525,17 +540,15 @@ function UF:ConstructHorizontalPlayerFrame(frame)
 	frame.PvPIndicator = pvp
 
 	pvp.Holder.PostExpand = function()
-		local width = frame.Castbar.Holder._width - 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 48)
+		end
 	end
 
 	pvp.Holder.PostCollapse = function()
-		local width = frame.Castbar.Holder._width + 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
+		end
 	end
 
 	local pvp_timer = pvp.Holder:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
@@ -551,7 +564,7 @@ function UF:ConstructHorizontalPlayerFrame(frame)
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
 	-- auras
-	-- frame.Auras = self:CreateAuras(frame, "player")
+	frame.Auras = self:CreateAuras(frame, "player")
 
 	-- floating combat text
 	local feeback = self:CreateCombatFeedback(frame)
@@ -572,25 +585,36 @@ function UF:ConstructHorizontalPlayerFrame(frame)
 	glass:SetHorizTile(true)
 
 	self:CreateClassIndicator(frame)
+
+	isInit = true
 end
 
 function UF:UpdatePlayerFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].player
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	if frame.Insets then
 		self:UpdateInsets(frame)
 
-		frame.AdditionalPower:SetSize(config.width, config.insets.t_height - 2)
-		frame.ClassPower:SetSize(config.width, config.insets.t_height - 2)
+		if frame.Power then
+			frame.Power:SetWidth(frame._config.width)
+		end
 
-		if frame.Runes then
-			frame.Runes:SetSize(config.width, config.insets.t_height - 2)
+		if frame.AdditionalPower then
+			frame.AdditionalPower:SetWidth(frame._config.width)
 		end
 
 		if frame.Stagger then
-			frame.Stagger:SetSize(config.width, config.insets.t_height - 2)
+			frame.Stagger:SetWidth(frame._config.width)
+		end
+
+		if frame.Runes then
+			frame.Runes:SetWidth(frame._config.width)
+		end
+
+		if frame.ClassPower then
+			frame.ClassPower:SetWidth(frame._config.width)
 		end
 	end
 
@@ -601,6 +625,7 @@ function UF:UpdatePlayerFrame(frame)
 	self:UpdatePowerPrediction(frame)
 	self:UpdateClassPower(frame)
 	self:UpdateCastbar(frame)
+	self:UpdateName(frame)
 	self:UpdateRaidTargetIndicator(frame)
 	self:UpdatePvPIndicator(frame)
 	self:UpdateDebuffIndicator(frame)
@@ -613,6 +638,10 @@ function UF:UpdatePlayerFrame(frame)
 
 	if frame.Stagger then
 		self:UpdateStagger(frame)
+	end
+
+	if frame.Auras then
+		self:UpdateAuras(frame)
 	end
 
 	if frame.ClassIndicator then

@@ -6,41 +6,55 @@ local BARS = P:GetModule("Bars")
 local _G = getfenv(0)
 local pairs = _G.pairs
 local hooksecurefunc = _G.hooksecurefunc
-local unpack = _G.unpack
+local s_format = _G.string.format
+local m_floor = _G.math.floor
+local m_min = _G.math.min
+local m_ceil = _G.math.ceil
 
 -- Mine
-local isInit = false
-local actionbars = {}
+local bars = {}
 
 local CFG = {
 	bar1 = {
 		visible = true,
-		point = {"BOTTOM", 0, 12},
-		button_size = 32,
-		button_gap = 4,
-		init_anchor = "TOPLEFT",
-		buttons_per_row = 12,
+		num = 12,
+		size = 32,
+		spacing = 4,
+		x_growth = "RIGHT",
+		y_growth = "DOWN",
+		per_row = 12,
+		visibility = "[petbattle] hide; show",
+		point = {
+			p = "BOTTOM",
+			anchor = "UIParent",
+			rP = "BOTTOM",
+			x = 0,
+			y = 16
+		},
 	},
 }
 
 local ACTION_BARS = {
 	bar1 = {
+		name = "LSActionBar1",
 		buttons = {
-			_G.ActionButton1, _G.ActionButton2, _G.ActionButton3, _G.ActionButton4, _G.ActionButton5, _G.ActionButton6,
-			_G.ActionButton7, _G.ActionButton8, _G.ActionButton9, _G.ActionButton10, _G.ActionButton11, _G.ActionButton12
+			_G.ActionButton1, _G.ActionButton2, _G.ActionButton3, _G.ActionButton4,
+			_G.ActionButton5, _G.ActionButton6, _G.ActionButton7, _G.ActionButton8,
+			_G.ActionButton9, _G.ActionButton10, _G.ActionButton11, _G.ActionButton12
 		},
-		name = "LSMainBar",
-		visibility = "[petbattle] hide; show",
+		-- name = "LSMainBar",
+		skin_function = function(...) E:SkinActionButton(...) end
 	},
 	bar2 = {
+		name = "LSActionBar2",
 		buttons = {
 			_G.MultiBarBottomLeftButton1, _G.MultiBarBottomLeftButton2, _G.MultiBarBottomLeftButton3, _G.MultiBarBottomLeftButton4,
 			_G.MultiBarBottomLeftButton5, _G.MultiBarBottomLeftButton6, _G.MultiBarBottomLeftButton7, _G.MultiBarBottomLeftButton8,
 			_G.MultiBarBottomLeftButton9, _G.MultiBarBottomLeftButton10, _G.MultiBarBottomLeftButton11, _G.MultiBarBottomLeftButton12
 		},
-		name = "LSMultiBarBottomLeftBar",
+		-- name = "LSMultiBarBottomLeftBar",
 		page = 6,
-		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		skin_function = function(...) E:SkinActionButton(...) end
 	},
 	bar3 = {
 		buttons = {
@@ -48,71 +62,121 @@ local ACTION_BARS = {
 			_G.MultiBarBottomRightButton5, _G.MultiBarBottomRightButton6, _G.MultiBarBottomRightButton7, _G.MultiBarBottomRightButton8,
 			_G.MultiBarBottomRightButton9, _G.MultiBarBottomRightButton10, _G.MultiBarBottomRightButton11, _G.MultiBarBottomRightButton12
 		},
-		name = "LSMultiBarBottomRightBar",
+		name = "LSActionBar3",
+		-- name = "LSMultiBarBottomRightBar",
 		page = 5,
-		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		skin_function = function(...) E:SkinActionButton(...) end
 	},
 	bar4 = {
+		name = "LSActionBar4",
 		buttons = {
 			_G.MultiBarLeftButton1, _G.MultiBarLeftButton2, _G.MultiBarLeftButton3, _G.MultiBarLeftButton4,
 			_G.MultiBarLeftButton5, _G.MultiBarLeftButton6, _G.MultiBarLeftButton7, _G.MultiBarLeftButton8,
 			_G.MultiBarLeftButton9, _G.MultiBarLeftButton10, _G.MultiBarLeftButton11, _G.MultiBarLeftButton12
 		},
-		name = "LSMultiBarLeftBar",
+		-- name = "LSMultiBarLeftBar",
 		page = 4,
-		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		skin_function = function(...) E:SkinActionButton(...) end
 	},
 	bar5 = {
+		name = "LSActionBar5",
 		buttons = {
 			_G.MultiBarRightButton1, _G.MultiBarRightButton2, _G.MultiBarRightButton3, _G.MultiBarRightButton4,
 			_G.MultiBarRightButton5, _G.MultiBarRightButton6, _G.MultiBarRightButton7, _G.MultiBarRightButton8,
 			_G.MultiBarRightButton9, _G.MultiBarRightButton10, _G.MultiBarRightButton11, _G.MultiBarRightButton12
 		},
-		name = "LSMultiBarRightBar",
+		-- name = "LSMultiBarRightBar",
 		page = 3,
-		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		skin_function = function(...) E:SkinActionButton(...) end
 	},
 	bar6 = {
+		name = "LSPetBar",
 		buttons = {
 			_G.PetActionButton1, _G.PetActionButton2, _G.PetActionButton3, _G.PetActionButton4, _G.PetActionButton5,
 			_G.PetActionButton6, _G.PetActionButton7, _G.PetActionButton8, _G.PetActionButton9, _G.PetActionButton10
 		},
-		original_bar = _G.PetActionBarFrame,
-		name = "LSPetBar",
-		visibility = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
-		skin_function = "SkinPetActionButton"
+		original_bar = "PetActionBarFrame",
+		skin_function = function(...) E:SkinPetActionButton(...) end
 	},
 	bar7 = {
+		name = "LSStanceBar",
 		buttons = {
 			_G.StanceButton1, _G.StanceButton2, _G.StanceButton3, _G.StanceButton4, _G.StanceButton5,
 			_G.StanceButton6, _G.StanceButton7, _G.StanceButton8, _G.StanceButton9, _G.StanceButton10
 		},
-		original_bar = _G.StanceBarFrame,
-		name = "LSStanceBar",
-		visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
-		skin_function = "SkinStanceButton"
+		original_bar = "StanceBarFrame",
+		skin_function = function(...) E:SkinStanceButton(...) end
 	},
 }
 
-local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 152}
-local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 124}
-
-local LAYOUT = {
-	WARRIOR = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	PALADIN = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	HUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	ROGUE = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	PRIEST = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	DEATHKNIGHT = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	SHAMAN = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	MAGE = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	WARLOCK = {pet = BOTTOM_POINT, stance = TOP_POINT},
-	MONK = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	DRUID = {pet = TOP_POINT, stance = BOTTOM_POINT},
-	DEMONHUNTER = {pet = BOTTOM_POINT, stance = TOP_POINT},
+local TOP_POINT = {
+	p = "BOTTOM",
+	anchor = "UIParent",
+	rP = "BOTTOM",
+	x = 0,
+	y = 152,
 }
 
-local PAGE = {
+local BOTTOM_POINT = {
+	p = "BOTTOM",
+	anchor = "UIParent",
+	rP = "BOTTOM",
+	x = 0,
+	y = 124,
+}
+
+local LAYOUT = {
+	WARRIOR = {
+		bar6 = TOP_POINT,
+		bar7 = BOTTOM_POINT
+	},
+	PALADIN = {
+		bar6 = TOP_POINT,
+		bar7 = BOTTOM_POINT
+	},
+	HUNTER = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	ROGUE = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	PRIEST = {
+		bar6 = TOP_POINT,
+		bar7 = BOTTOM_POINT
+	},
+	DEATHKNIGHT = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	SHAMAN = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	MAGE = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	WARLOCK = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+	MONK = {
+		bar6 = TOP_POINT,
+		bar7 = BOTTOM_POINT
+	},
+	DRUID = {
+		bar6 = TOP_POINT,
+		bar7 = BOTTOM_POINT
+	},
+	DEMONHUNTER = {
+		bar6 = BOTTOM_POINT,
+		bar7 = TOP_POINT
+	},
+}
+
+local PAGES = {
 	-- Unstealthed cat, stealthed cat, bear, owl; tree form [bonusbar:2] was removed
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 	-- Stealth, shadow dance
@@ -120,273 +184,288 @@ local PAGE = {
 	["DEFAULT"] = "[vehicleui][possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
-local function GetPage()
-	local condition = PAGE["DEFAULT"]
-	local page = PAGE[E.PLAYER_CLASS]
+local function GetBarPage()
+	local condition = PAGES["DEFAULT"]
+	local page = PAGES[E.PLAYER_CLASS]
 
 	if page then
 		condition = condition.." "..page
 	end
 
-	condition = condition.." [form] 1; 1"
-
-	return condition
+	return condition.." [form] 1; 1"
 end
 
-local function SetStancePetActionBarPosition(self)
-	if self:GetName() == "LSPetBar" then
-		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].pet))
-	else
-		self:SetPoint(unpack(LAYOUT[E.PLAYER_CLASS].stance))
-	end
+local function GetBarPoint(barID)
+	return LAYOUT[E.PLAYER_CLASS][barID]
 end
 
-local function UPDATE_VEHICLE_ACTIONBAR()
-	if _G.HasVehicleActionBar() then
-		for i = 1, 6 do
-			local button = _G["ActionButton"..i]
-			local action = _G.ActionButton_CalculateAction(button)
+local function UpdateOverrideBar()
+	for i = 1, 6 do
+		local button = _G["ActionButton"..i]
+		local action = _G.ActionButton_CalculateAction(button)
 
-			if _G.HasAction(action) then
-				local texture = _G.GetActionTexture(action)
+		if _G.HasAction(action) then
+			local texture = _G.GetActionTexture(action)
 
-				if texture then
-					button.icon:SetTexture(texture)
-					button.icon:Show()
-				end
+			if texture then
+				button.icon:SetTexture(texture)
+				button.icon:Show()
 			end
 		end
 	end
 end
 
-local function UPDATE_OVERRIDE_ACTIONBAR()
-	if _G.HasOverrideActionBar() then
-		for i = 1, 6 do
-			local button = _G["ActionButton"..i]
-			local action = _G.ActionButton_CalculateAction(button)
+local function ResetOriginalBarPoints(bar)
+	E:SetFrameState(bar, nil, function(self)
+		self:SetParent(self._parent)
+		self:SetAllPoints(self._parent)
+	end)
+end
 
-			if _G.HasAction(action) then
-				local texture = _G.GetActionTexture(action)
-
-				if texture then
-					button.icon:SetTexture(texture)
-					button.icon:Show()
-				end
-			end
+function BARS:AddBar(barID, bar)
+	bars[barID] = bar
+	bars[barID].Update = function(self)
+		if self._config.visibility then
+			E:SetFrameState(self, "visibility", self._config.visible and self._config.visibility or "hide")
 		end
+
+		E:UpdateBarLayout(self)
 	end
 end
 
------------
--- UTILS --
------------
+function BARS:CreateBars()
+	local config = {
+		bar1 = self:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1,
+		bar2 = C.db.profile.bars.bar2,
+		bar3 = C.db.profile.bars.bar3,
+		bar4 = C.db.profile.bars.bar4,
+		bar5 = C.db.profile.bars.bar5,
+		bar6 = C.db.profile.bars.bar6,
+		bar7 = C.db.profile.bars.bar7,
+	}
 
-function P:GetActionBars()
-	return actionbars
-end
+	-- constructor
+	for barID, data in pairs(ACTION_BARS) do
+		local bar = _G.CreateFrame("Frame", data.name, _G.UIParent, "SecureHandlerStateTemplate")
 
------------------
--- INITIALISER --
------------------
+		bar._buttons = {}
 
-function BARS:ActionBars_IsInit()
-	return isInit
-end
+		if data.original_bar then
+			local original_bar = _G[data.original_bar]
 
-function BARS:ActionBars_Init()
-	if not isInit then
-		if not self:ActionBarController_IsInit() then
-			CFG = C.db.profile.bars
+			original_bar.slideOut = E.NOA
+			original_bar._parent = bar
+			original_bar:SetParent(bar)
+			original_bar:SetAllPoints(bar)
+			original_bar:EnableMouse(false)
+
+			original_bar.ignoreFramePositionManager = true
+			_G.UIPARENT_MANAGED_FRAME_POSITIONS[data.original_bar] = nil
+
+			hooksecurefunc(original_bar, "SetPoint", ResetOriginalBarPoints)
+
+			for i, button in pairs(data.buttons) do
+				button._parent = original_bar
+				button:SetParent(original_bar)
+
+				data.skin_function(button)
+
+				bar._buttons[i] = button
+			end
 		else
-			CFG.bar2 = C.db.profile.bars.bar2
-			CFG.bar3 = C.db.profile.bars.bar3
-			CFG.bar4 = C.db.profile.bars.bar4
-			CFG.bar5 = C.db.profile.bars.bar5
-			CFG.bar6 = C.db.profile.bars.bar6
-			CFG.bar7 = C.db.profile.bars.bar7
+			for i, button in pairs(data.buttons) do
+				button._parent = bar
+				button:SetParent(bar)
+
+				data.skin_function(button)
+
+				if data.page then
+					button:SetAttribute("actionpage", data.page)
+				end
+
+				bar._buttons[i] = button
+			end
 		end
 
-		-- Bar setup
-		for key, data in pairs(ACTION_BARS) do
-			local cfg = CFG[key]
-			local bar = _G.CreateFrame("Frame", data.name, _G.UIParent, "SecureHandlerStateTemplate")
-
-			if data.original_bar then
-				data.original_bar.slideOut = E.NOA
-				data.original_bar:SetParent(bar)
-				data.original_bar:SetAllPoints()
-				data.original_bar:EnableMouse(false)
-				_G.UIPARENT_MANAGED_FRAME_POSITIONS[data.original_bar:GetName()] = nil
-
-				for _, button in pairs(data.buttons) do
-					E[data.skin_function or "SkinActionButton"](E, button)
-				end
-			else
-				for _, button in pairs(data.buttons) do
-					button:SetParent(bar)
-					E[data.skin_function or "SkinActionButton"](E, button)
-
-					if data.page then
-						button:SetAttribute("actionpage", data.page)
-					end
-				end
+		if barID == "bar1" then
+			for i = 1, #bar._buttons do
+				bar:SetFrameRef("ActionButton"..i, bar._buttons[i])
 			end
 
-			bar.buttons = data.buttons
+			bar:Execute([[
+				buttons = table.new()
 
-			E:UpdateBarLayout(bar, bar.buttons, cfg.button_size, cfg.button_gap, cfg.init_anchor, cfg.buttons_per_row)
+				for i = 1, 12 do
+					table.insert(buttons, self:GetFrameRef("ActionButton"..i))
+				end
+			]])
 
-			if data.name == "LSMainBar" then
-				for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
-					bar:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
+			bar:SetAttribute("_onstate-page", [[
+				if HasTempShapeshiftActionBar() then
+					newstate = GetTempShapeshiftBarIndex() or newstate
 				end
 
-				bar:Execute([[
-					buttons = table.new()
+				for _, button in pairs(buttons) do
+					button:SetAttribute("actionpage", tonumber(newstate))
 
-					for i = 1, 12 do
-						table.insert(buttons, self:GetFrameRef("ActionButton"..i))
-					end
-				]])
+					if newstate == 12 then
+						button:SetAttribute("showgrid", 1)
 
-				bar:SetAttribute("_onstate-page", [[
-					if HasTempShapeshiftActionBar() then
-						newstate = GetTempShapeshiftBarIndex() or newstate
-					end
-
-					for _, button in pairs(buttons) do
-						button:SetAttribute("actionpage", tonumber(newstate))
-
-						if newstate == 12 then
-							button:SetAttribute("showgrid", 1)
-							button:CallMethod("SetBorderColor", 244 / 255, 202 / 255, 22 / 255) -- M.COLORS.YELLOW
-
-							if not button:GetAttribute("ls-hidden") then
-								button:Show()
-							end
-						else
-							button:SetAttribute("showgrid", 0)
+						if not button:GetAttribute("ls-hidden") then
+							button:Show()
 						end
+					else
+						button:SetAttribute("showgrid", 0)
 					end
-				]])
-
-				_G.RegisterStateDriver(bar, "page", GetPage())
-			end
-
-			if data.visibility then
-				E:SaveFrameState(bar, "visibility", data.visibility)
-
-				_G.RegisterStateDriver(bar, "visibility", cfg.visible and data.visibility or "hide")
-			end
-
-			actionbars[key] = bar
-		end
-
-		for key, bar in pairs(actionbars) do
-			if key == "bar1" and self:ActionBarController_IsInit() then
-				self:ActionBarController_AddWidget(bar, "ACTION_BAR")
-			else
-				if CFG[key].point then
-					bar:SetPoint(unpack(CFG[key].point))
-				else
-					SetStancePetActionBarPosition(bar)
 				end
+			]])
 
-				E:CreateMover(bar)
-			end
+			_G.RegisterStateDriver(bar, "page", GetBarPage())
 		end
 
-		E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UPDATE_VEHICLE_ACTIONBAR)
-		E:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", UPDATE_OVERRIDE_ACTIONBAR)
+		_G.RegisterStateDriver(bar, "visibility", config[barID].visible and config[barID].visibility or "hide")
 
-		-- Pet action bar
-		if _G.UnitLevel("player") < 10 then
-			_G.PetActionBarFrame:Hide()
+		self:AddBar(barID, bar)
 
-			local function PLAYER_LEVEL_UP(level)
-				if level >= 10 then
-					E:SetFrameState(_G.PetActionBarFrame, "Show")
-					E:UnregisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
-				end
+		-- hacks
+		if barID == "bar1" then
+			bar.Update = function(self)
+				self._config = BARS:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
+
+				E:UpdateBarLayout(self)
 			end
-
-			E:RegisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
-		else
-			_G.PetActionBarFrame:Show()
 		end
-
-		_G.PetActionBarFrame:SetScript("OnUpdate", nil)
-		_G.PetActionBarFrame.locked = true
-		hooksecurefunc("UnlockPetActionBar", function()
-			_G.PetActionBarFrame.locked = true
-		end)
-
-		-- Blizz bar controller
-		-- XXX: Bye Fe... ActionBarController
-		_G.ActionBarController:UnregisterAllEvents()
-
-		-- XXX: But let it handle stance bar updates
-		_G.ActionBarController:RegisterEvent("PLAYER_ENTERING_WORLD")
-		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
-		_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
-
-		_G.ActionBarController:HookScript("OnEvent", function(self, event)
-			if event == "PLAYER_ENTERING_WORLD" then
-				self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-			end
-		end)
-
-		-- XXX: ... and extra action bar
-		_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
-
-		-- Flyout
-		hooksecurefunc(_G.SpellFlyout, "Toggle", function(self, ID)
-			if not self:IsShown() then return end
-
-			local _, _, numSlots = _G.GetFlyoutInfo(ID)
-
-			for i = 1, numSlots do
-				E:SkinActionButton(_G["SpellFlyoutButton"..i])
-			end
-		end)
-
-		-- Misc
-		E:ForceHide(_G.ActionBarDownButton)
-		E:ForceHide(_G.ActionBarUpButton)
-		E:ForceHide(_G.ArtifactWatchBar)
-		E:ForceHide(_G.HonorWatchBar)
-		E:ForceHide(_G.MainMenuBar)
-		E:ForceHide(_G.MainMenuBarLeftEndCap)
-		E:ForceHide(_G.MainMenuBarPageNumber)
-		E:ForceHide(_G.MainMenuBarRightEndCap)
-		E:ForceHide(_G.MainMenuBarTexture0)
-		E:ForceHide(_G.MainMenuBarTexture1)
-		E:ForceHide(_G.MainMenuBarTexture2)
-		E:ForceHide(_G.MainMenuBarTexture3)
-		E:ForceHide(_G.MainMenuExpBar)
-		E:ForceHide(_G.MultiBarBottomLeft)
-		E:ForceHide(_G.MultiBarBottomRight)
-		E:ForceHide(_G.MultiBarLeft)
-		E:ForceHide(_G.MultiBarRight)
-		E:ForceHide(_G.MultiCastActionBarFrame)
-		E:ForceHide(_G.OverrideActionBar)
-		E:ForceHide(_G.PossessBarFrame)
-		E:ForceHide(_G.ReputationWatchBar)
-		E:ForceHide(_G.SlidingActionBarTexture0)
-		E:ForceHide(_G.SlidingActionBarTexture1)
-		E:ForceHide(_G.SpellFlyoutBackgroundEnd)
-		E:ForceHide(_G.SpellFlyoutHorizontalBackground)
-		E:ForceHide(_G.SpellFlyoutVerticalBackground)
-		E:ForceHide(_G.StanceBarLeft)
-		E:ForceHide(_G.StanceBarMiddle)
-		E:ForceHide(_G.StanceBarRight)
-
-		_G.MainMenuBarArtFrame:SetParent(E.HIDDEN_PARENT)
-
-		-- Finalise
-		isInit = true
-
-		return true
 	end
+
+	-- bar setup
+	for barID, bar in pairs(bars) do
+		if barID == "bar1" and self:IsRestricted() then
+			self:ActionBarController_AddWidget(bar, "ACTION_BAR")
+		else
+			local point = config[barID].point or GetBarPoint(barID)
+
+			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			E:CreateMover(bar)
+		end
+
+		bar._config = config[barID]
+
+		bar:Update()
+	end
+
+	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", function()
+		if _G.HasVehicleActionBar() then
+			UpdateOverrideBar()
+		end
+	end)
+
+	E:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", function()
+		if _G.HasOverrideActionBar() then
+			UpdateOverrideBar()
+		end
+	end)
+
+	-- Pet action bar hacks
+	if _G.UnitLevel("player") < 10 then
+		_G.PetActionBarFrame:Hide()
+
+		local function PLAYER_LEVEL_UP(level)
+			if level >= 10 then
+				E:SetFrameState(_G.PetActionBarFrame, nil, function(self) self:Show() end)
+				E:UnregisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
+			end
+		end
+
+		E:RegisterEvent("PLAYER_LEVEL_UP", PLAYER_LEVEL_UP)
+	else
+		_G.PetActionBarFrame:Show()
+	end
+
+	_G.PetActionBarFrame:SetScript("OnUpdate", nil)
+	_G.PetActionBarFrame.locked = true
+	hooksecurefunc("UnlockPetActionBar", function()
+		_G.PetActionBarFrame.locked = true
+	end)
+
+	-- Bye Fe... ActionBarController, kinda...
+	-- Let it handle stance bar and extra action button updates
+	_G.ActionBarController:UnregisterAllEvents()
+	_G.ActionBarController:RegisterEvent("PLAYER_ENTERING_WORLD")
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+	_G.ActionBarController:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+	_G.ActionBarController:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+
+	_G.ActionBarController:HookScript("OnEvent", function(self, event)
+		if event == "PLAYER_ENTERING_WORLD" then
+			self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		end
+	end)
+
+	-- Flyout
+	P:HookSpellFlyout()
+
+	-- Misc
+	E:ForceHide(_G.ActionBarDownButton)
+	E:ForceHide(_G.ActionBarUpButton)
+	E:ForceHide(_G.ArtifactWatchBar)
+	E:ForceHide(_G.HonorWatchBar)
+	E:ForceHide(_G.MainMenuBar)
+	E:ForceHide(_G.MainMenuBarLeftEndCap)
+	E:ForceHide(_G.MainMenuBarPageNumber)
+	E:ForceHide(_G.MainMenuBarRightEndCap)
+	E:ForceHide(_G.MainMenuBarTexture0)
+	E:ForceHide(_G.MainMenuBarTexture1)
+	E:ForceHide(_G.MainMenuBarTexture2)
+	E:ForceHide(_G.MainMenuBarTexture3)
+	E:ForceHide(_G.MainMenuExpBar)
+	E:ForceHide(_G.MultiBarBottomLeft)
+	E:ForceHide(_G.MultiBarBottomRight)
+	E:ForceHide(_G.MultiBarLeft)
+	E:ForceHide(_G.MultiBarRight)
+	E:ForceHide(_G.MultiCastActionBarFrame)
+	E:ForceHide(_G.OverrideActionBar)
+	E:ForceHide(_G.PossessBarFrame)
+	E:ForceHide(_G.ReputationWatchBar)
+	E:ForceHide(_G.SlidingActionBarTexture0)
+	E:ForceHide(_G.SlidingActionBarTexture1)
+	E:ForceHide(_G.SpellFlyoutBackgroundEnd)
+	E:ForceHide(_G.SpellFlyoutHorizontalBackground)
+	E:ForceHide(_G.SpellFlyoutVerticalBackground)
+	E:ForceHide(_G.StanceBarLeft)
+	E:ForceHide(_G.StanceBarMiddle)
+	E:ForceHide(_G.StanceBarRight)
+	E:ForceHide(_G.MainMenuBarArtFrame, true)
+
+	self.CreateBars = E.NOOP
+end
+
+function BARS:UpdateBar(barID)
+	local bar = bars[barID]
+
+	if not bar then
+		P.print(s_format("Bar with \'%s\' ID doesn't exist.", barID))
+	end
+
+	bar._config = C.db.profile.bars[barID]
+
+	bar:Update()
+end
+
+function BARS:UpdateBars()
+	for id, bar in next, bars do
+		bar._config = C.db.profile.bars[id]
+
+		bar:Update()
+	end
+end
+
+function BARS:ToggleBar(barID, flag)
+	local bar = bars[barID]
+
+	if not bar then
+		P.print(s_format("Bar with \'%s\' ID doesn't exist.", barID))
+	end
+
+	return E:SetFrameState(bar, "visibility", flag and C.db.profile.bars[barID].visibility or "hide")
 end

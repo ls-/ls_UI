@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:ConstructFocusTargetFrame(frame)
+function UF:CreateFocusTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].focustarget
@@ -81,9 +81,9 @@ function UF:ConstructFocusTargetFrame(frame)
 end
 
 function UF:UpdateFocusTargetFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].focustarget
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)

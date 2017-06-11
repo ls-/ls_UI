@@ -6,7 +6,13 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:ConstructFocusFrame(frame)
+local isInit = false
+
+function UF:HasFocusFrame()
+	return isInit
+end
+
+function UF:CreateFocusFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].focus
@@ -60,7 +66,6 @@ function UF:ConstructFocusFrame(frame)
 	end
 
 	frame.Castbar = self:CreateCastbar(frame)
-	-- frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
 	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
@@ -70,17 +75,15 @@ function UF:ConstructFocusFrame(frame)
 	frame.PvPIndicator = pvp
 
 	pvp.Holder.PostExpand = function()
-		local width = frame.Castbar.Holder._width - 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 48)
+		end
 	end
 
 	pvp.Holder.PostCollapse = function()
-		local width = frame.Castbar.Holder._width + 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
+		end
 	end
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
@@ -102,12 +105,14 @@ function UF:ConstructFocusFrame(frame)
 	glass:SetHorizTile(true)
 
 	self:CreateClassIndicator(frame)
+
+	isInit = true
 end
 
 function UF:UpdateFocusFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].focus
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)

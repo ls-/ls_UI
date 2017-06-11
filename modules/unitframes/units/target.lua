@@ -6,7 +6,13 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:ConstructTargetFrame(frame)
+local isInit = false
+
+function UF:HasTargetFrame()
+	return isInit
+end
+
+function UF:CreateTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].target
@@ -37,7 +43,7 @@ function UF:ConstructTargetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+	frame.HealthPrediction = self:CreateHealthPrediction(health, true, "LS10Font_Shadow", text_parent)
 
 	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
@@ -60,7 +66,6 @@ function UF:ConstructTargetFrame(frame)
 	end
 
 	frame.Castbar = self:CreateCastbar(frame)
-	-- frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
 	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
 
@@ -70,17 +75,15 @@ function UF:ConstructTargetFrame(frame)
 	frame.PvPIndicator = pvp
 
 	pvp.Holder.PostExpand = function()
-		local width = frame.Castbar.Holder._width - 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 48)
+		end
 	end
 
 	pvp.Holder.PostCollapse = function()
-		local width = frame.Castbar.Holder._width + 48
-		frame.Castbar.Holder._width = width
-
-		frame.Castbar.Holder:SetWidth(width)
+		if not frame._config.castbar.detached then
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
+		end
 	end
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
@@ -102,12 +105,14 @@ function UF:ConstructTargetFrame(frame)
 	glass:SetHorizTile(true)
 
 	self:CreateClassIndicator(frame)
+
+	isInit = true
 end
 
 function UF:UpdateTargetFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].target
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)

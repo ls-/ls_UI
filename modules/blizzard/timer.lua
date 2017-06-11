@@ -4,20 +4,16 @@ local Blizzard = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local pairs = _G.pairs
+local next = _G.next
 
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
-function Blizzard:Timer_IsInit()
+function Blizzard:HasMirrorTimer()
 	return isInit
 end
 
-function Blizzard:Timer_Init()
+function Blizzard:SetUpMirrorTimer()
 	if not isInit and C.db.char.blizzard.timer.enabled then
 		E:HandleStatusBar(_G.MirrorTimer1)
 		E:SetStatusBarSkin(_G.MirrorTimer1, "HORIZONTAL-L")
@@ -41,7 +37,7 @@ function Blizzard:Timer_Init()
 			end
 		end
 
-		for i in pairs(indices) do
+		for i in next, indices do
 			local timer = _G.CreateFrame("FRAME", "TimerTrackerTimer"..i, _G.UIParent, "StartTimerBar")
 			_G.TimerTracker.timerList[i] = timer
 
@@ -49,9 +45,8 @@ function Blizzard:Timer_Init()
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-L")
 		end
 
-		-- Finalise
 		isInit = true
 
-		return true
+		self.SetUpMirrorTimer = E.NOOP
 	end
 end

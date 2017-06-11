@@ -1,573 +1,286 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
 local CFG = P:GetModule("Config")
 local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
 
-function CFG:Blizzard_Init()
-	local panel = _G.CreateFrame("Frame", "LSUIBlizzardConfigPanel", _G.InterfaceOptionsFramePanelContainer)
-	panel.name = L["BLIZZARD"]
-	panel.parent = L["LS_UI"]
-	panel:Hide()
+-- Mine
+function CFG:CreateBlizzardPanel(order)
+	C.options.args.blizzard = {
+		order = order,
+		type = "group",
+		name = L["BLIZZARD"],
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.char.blizzard.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.enabled = value
 
-	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 16, -16)
-	title:SetJustifyH("LEFT")
-	title:SetJustifyV("TOP")
-	title:SetText(L["BLIZZARD"])
-
-	local subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	subtext:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
-	subtext:SetPoint("RIGHT", -16, 0)
-	subtext:SetHeight(44)
-	subtext:SetJustifyH("LEFT")
-	subtext:SetJustifyV("TOP")
-	subtext:SetNonSpaceWrap(true)
-	subtext:SetMaxLines(4)
-	subtext:SetText(L["BLIZZARD_DESC"])
-
-	local blizzToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentTooltipsToggle",
-			text = L["ENABLE"],
-			get = function() return C.db.char.blizzard.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if isChecked then
-					if BLIZZARD:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED_ERR"],
-							L["BLIZZARD"]))
+					if not BLIZZARD:IsInit() then
+						if value then
+							BLIZZARD:Init()
+						end
 					else
-						local result = BLIZZARD:Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD"],
-								""))
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				else
-					if BLIZZARD:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD"],
-							L["REQUIRES_RELOAD"]))
+				end
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+				width = "full",
+			},
+			command_bar = {
+				order = 10,
+				type = "toggle",
+				name = L["COMMAND_BAR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.command_bar.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.command_bar.enabled = value
+
+					if not BLIZZARD:HasCommandBar() then
+						if value then
+							BLIZZARD:SetUpCommandBar()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
 					end
 				end
-			end
-		})
-	blizzToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
+			},
+			digsite_bar = {
+				order = 11,
+				type = "toggle",
+				name = L["DIGSITE_BAR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.digsite_bar.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.digsite_bar.enabled = value
 
-	local divider = CFG:CreateDivider(panel, {
-		text = L["BLIZZARD_OBJECTIVE_TRACKER"]
-	})
-	divider:SetPoint("TOP", blizzToggle, "BOTTOM", 0, -10)
+					if not BLIZZARD:HasDigsiteBar() then
+						if value then
+							BLIZZARD:SetUpDigsiteBar()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			durability = {
+				order = 12,
+				type = "toggle",
+				name = L["DURABILITY_FRAME"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.durability.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.durability.enabled = value
 
-	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	subtext:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -10)
-	subtext:SetPoint("RIGHT", -16, 0)
-	subtext:SetHeight(44)
-	subtext:SetJustifyH("LEFT")
-	subtext:SetJustifyV("TOP")
-	subtext:SetNonSpaceWrap(true)
-	subtext:SetMaxLines(4)
-	subtext:SetText(L["BLIZZARD_OBJECTIVE_TRACKER_DESC"])
+					if not BLIZZARD:HasDurabilityFrame() then
+						if value then
+							BLIZZARD:SetUpDurabilityFrame()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			gm = {
+				order = 13,
+				type = "toggle",
+				name = L["GM_FRAME"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.gm.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.gm.enabled = value
 
-	local otToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentTooltipsToggle",
-			text = L["ENABLE"],
-			get = function() return C.db.char.blizzard.objective_tracker.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.objective_tracker.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.objective_tracker.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
+					if not BLIZZARD:HasGMFrame() then
+						if value then
+							BLIZZARD:SetUpGMFrame()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			npe = {
+				order = 14,
+				type = "toggle",
+				name = L["NPE_FRAME"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.npe.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.npe.enabled = value
 
-				self:SetValue(isChecked)
+					if not BLIZZARD:HasGMFrame() then
+						if value then
+							BLIZZARD:SetUpGMFrame()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			player_alt_power_bar = {
+				order = 15,
+				type = "toggle",
+				name = L["PLAYER_ALT_POWER_BAR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.player_alt_power_bar.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.player_alt_power_bar.enabled = value
 
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						if BLIZZARD:ObjectiveTracker_IsInit() then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_OBJECTIVE_TRACKER"]))
-						else
-							local result = BLIZZARD:ObjectiveTracker_Init()
+					if not BLIZZARD:HasAltPowerBar() then
+						if value then
+							BLIZZARD:SetUpAltPowerBar()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			talking_head = {
+				order = 16,
+				type = "toggle",
+				name = L["TALKING_HEAD_FRAME"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.talking_head.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.talking_head.enabled = value
 
-							if result then
-								panel.Log:SetText(string.format(
-									L["LOG_ENABLED"],
-									L["ICON_GREEN_INLINE"],
-									L["BLIZZARD_OBJECTIVE_TRACKER"],
-									""))
+					if not BLIZZARD:HasTalkingHead() then
+						if value then
+							BLIZZARD:SetUpTalkingHead()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			timer = {
+				order = 17,
+				type = "toggle",
+				name = L["MIRROR_TIMER"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.timer.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.timer.enabled = value
+
+					if not BLIZZARD:HasMirrorTimer() then
+						if value then
+							BLIZZARD:SetUpMirrorTimer()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			vehicle = {
+				order = 18,
+				type = "toggle",
+				name = L["VEHICLE_SEAT_INDICATOR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function()
+					return C.db.char.blizzard.vehicle.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.vehicle.enabled = value
+
+					if not BLIZZARD:HasVehicleSeatFrame() then
+						if value then
+							BLIZZARD:SetUpVehicleSeatFrame()
+						end
+					else
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			objective_tracker = {
+				type = "group",
+				name = L["OBJECTIVE_TRACKER"],
+				guiInline = true,
+				disabled = function() return not BLIZZARD:IsInit() end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.objective_tracker.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.objective_tracker.enabled = value
+
+							if not BLIZZARD:HasObjectiveTracker() then
+								if value then
+									BLIZZARD:SetUpObjectiveTracker()
+								end
+							else
+								if not value then
+									CFG:ShowStaticPopup("RELOAD_UI")
+								end
 							end
 						end
-					else
-						if BLIZZARD:ObjectiveTracker_IsInit() then
-							panel.Log:SetText(string.format(
-								L["LOG_DISABLED"],
-								L["ICON_YELLOW_INLINE"],
-								L["BLIZZARD_OBJECTIVE_TRACKER"],
-								L["REQUIRES_RELOAD"]))
-						end
-					end
-				end
-			end
-		})
-	otToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
-
-	local otHeightSlider = CFG:CreateSlider(panel,
-		{
-			parent = panel,
-			name = "$parentTrackerHeightSlider",
-			min = 400,
-			max = 1000,
-			step = 50,
-			text = L["FRAME_HEIGHT"],
-			get = function(self) return C.db.profile.blizzard.objective_tracker.height end,
-			set = function(self, value)
-				C.db.profile.blizzard.objective_tracker.height = value
-
-				if BLIZZARD:ObjectiveTracker_IsInit() then
-					BLIZZARD:ObjectiveTracker_SetHeight(value)
-				end
-			end,
-		})
-	otHeightSlider:SetPoint("TOPLEFT", otToggle, "BOTTOMLEFT", 8, -22)
-
-	divider = CFG:CreateDivider(panel, {
-		text = L["MISC"]
-	})
-	divider:SetPoint("TOP", otHeightSlider, "BOTTOM", 0, -22)
-
-	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	subtext:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -10)
-	subtext:SetPoint("RIGHT", -16, 0)
-	subtext:SetHeight(44)
-	subtext:SetJustifyH("LEFT")
-	subtext:SetJustifyV("TOP")
-	subtext:SetNonSpaceWrap(true)
-	subtext:SetMaxLines(4)
-	subtext:SetText(L["BLIZZARD_MISC_DESC"])
-
-	local cbToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentCommandBarToggle",
-			text = L["BLIZZARD_COMMAND_BAR"],
-			get = function() return C.db.char.blizzard.command_bar.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.command_bar.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.command_bar.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:CommandBar_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_COMMAND_BAR"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_COMMAND_BAR"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_COMMAND_BAR"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	cbToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
-
-	local dsbToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentDigsiteBarToggle",
-			text = L["BLIZZARD_DIGSITE_BAR"],
-			get = function() return C.db.char.blizzard.digsite_bar.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.digsite_bar.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.digsite_bar.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:DigsiteBar_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_DIGSITE_BAR"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_DIGSITE_BAR"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_DIGSITE_BAR"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	dsbToggle:SetPoint("TOPLEFT", cbToggle, "BOTTOMLEFT", 0, -8)
-
-	local durabilityToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentDurabilityToggle",
-			text = L["BLIZZARD_DURABILITY_FRAME"],
-			get = function() return C.db.char.blizzard.durability.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.durability.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.durability.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:Durability_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_DURABILITY_FRAME"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_DURABILITY_FRAME"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_DURABILITY_FRAME"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	durabilityToggle:SetPoint("TOPLEFT", dsbToggle, "BOTTOMLEFT", 0, -8)
-
-	local gmToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentGMToggle",
-			text = L["BLIZZARD_GM_FRAME"],
-			get = function() return C.db.char.blizzard.gm.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.gm.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.gm.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:GM_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_GM_FRAME"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_GM_FRAME"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_GM_FRAME"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	gmToggle:SetPoint("TOPLEFT", durabilityToggle, "BOTTOMLEFT", 0, -8)
-
-	local npeToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentNPEToggle",
-			text = L["BLIZZARD_NPE_FRAME"],
-			get = function() return C.db.char.blizzard.npe.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.npe.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.npe.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:NPE_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_NPE_FRAME"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_NPE_FRAME"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_NPE_FRAME"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	npeToggle:SetPoint("TOPLEFT", gmToggle, "BOTTOMLEFT", 0, -8)
-
-	local apbToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentPlayerAltPowerToggle",
-			text = L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
-			get = function() return C.db.char.blizzard.player_alt_power_bar.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.player_alt_power_bar.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.player_alt_power_bar.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:PlayerAltPowerBar_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_PLAYER_ALT_POWER_BAR"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_PLAYER_ALT_POWER_BAR"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	apbToggle:SetPoint("TOP", subtext, "BOTTOM", 0, -8)
-	apbToggle:SetPoint("LEFT", panel, "CENTER", 16, 0)
-
-	local thToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentTalkingHeadToggle",
-			text = L["BLIZZARD_TALKING_HEAD_FRAME"],
-			get = function() return C.db.char.blizzard.talking_head.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.talking_head.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.talking_head.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:TalkingHead_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_TALKING_HEAD_FRAME"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_TALKING_HEAD_FRAME"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_TALKING_HEAD_FRAME"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	thToggle:SetPoint("TOPLEFT", apbToggle, "BOTTOMLEFT", 0, -8)
-
-	local mtToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentMirrorTimerToggle",
-			text = L["BLIZZARD_MIRROR_TIMER"],
-			get = function() return C.db.char.blizzard.timer.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.timer.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.timer.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:Timer_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_MIRROR_TIMER"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_MIRROR_TIMER"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_MIRROR_TIMER"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	mtToggle:SetPoint("TOPLEFT", thToggle, "BOTTOMLEFT", 0, -8)
-
-	local vsiToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentVehicleSeatToggle",
-			text = L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
-			get = function() return C.db.char.blizzard.vehicle.enabled end,
-			set = function(_, value)
-				C.db.char.blizzard.vehicle.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.blizzard.vehicle.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if BLIZZARD:IsInit() then
-					if isChecked then
-						local result = BLIZZARD:Vehicle_Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
-								""))
-						else
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED_ERR"],
-								L["BLIZZARD_VEHICLE_SEAT_INDICATOR"]))
-						end
-					else
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["BLIZZARD_VEHICLE_SEAT_INDICATOR"],
-							L["REQUIRES_RELOAD"]))
-					end
-				end
-			end
-		})
-	vsiToggle:SetPoint("TOPLEFT", mtToggle, "BOTTOMLEFT", 0, -8)
-
-	CFG:AddPanel(panel)
+					},
+					height = {
+						order = 2,
+						type = "range",
+						name = L["HEIGHT"],
+						disabled = function() return not BLIZZARD:HasObjectiveTracker() end,
+						min = 400, max = 1000, step = 2,
+						get = function()
+							return C.db.profile.blizzard.objective_tracker.height
+						end,
+						set = function(_, value)
+							C.db.profile.blizzard.objective_tracker.height = value
+							BLIZZARD:UpdateObjectiveTracker()
+						end,
+					},
+				},
+			},
+		},
+	}
 end

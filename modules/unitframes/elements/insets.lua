@@ -146,8 +146,17 @@ end
 
 function UF:UpdateInsets(frame)
 	local config = frame._config.insets
-	local element = frame.Insets
+	local top = frame.Insets.Top
+	local bottom = frame.Insets.Bottom
 
-	element.Top._height = config.t_height
-	element.Bottom._height = config.b_height
+	top._height = config.t_height
+	bottom._height = config.b_height
+
+	if top:IsExpanded() then
+		top:SetHeight(config.t_height)
+	end
+
+	if bottom:IsExpanded() then
+		bottom:SetHeight(config.b_height)
+	end
 end

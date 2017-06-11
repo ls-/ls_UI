@@ -6,15 +6,22 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
+local isInit = false
+
+function UF:HasBossFrame()
+	return isInit
+end
+
 function UF:CreateBossHolder()
 	local holder = _G.CreateFrame("Frame", "LSBossHolder", _G.UIParent)
 	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
 	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
-
 	E:CreateMover(holder)
+
+	return holder
 end
 
-function UF:ConstructBossFrame(frame)
+function UF:CreateBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
@@ -111,12 +118,14 @@ function UF:ConstructBossFrame(frame)
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)
+
+	isInit = true
 end
 
 function UF:UpdateBossFrame(frame)
-	local config = frame._config
+	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
 
-	frame:SetSize(config.width, config.height)
+	frame:SetSize(frame._config.width, frame._config.height)
 
 	self:UpdateInsets(frame)
 	self:UpdateHealth(frame)

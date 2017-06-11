@@ -4,11 +4,9 @@ local AURATRACKER = P:AddModule("AuraTracker")
 
 -- Lua
 local _G = getfenv(0)
-local table = _G.table
-local string = _G.string
-local pairs = _G.pairs
-local tonumber = _G.tonumber
-local select = _G.select
+local next = _G.next
+local t_insert = _G.table.insert
+local t_wipe = _G.table.wipe
 
 -- Blizz
 local BUFF_MAX_DISPLAY = _G.BUFF_MAX_DISPLAY
@@ -17,133 +15,118 @@ local CooldownFrame_Set = _G.CooldownFrame_Set
 local DebuffTypeColor = _G.DebuffTypeColor
 local GetSpellInfo = _G.GetSpellInfo
 local UnitAura = _G.UnitAura
+local GameTooltip = _G.GameTooltip
 
 --Mine
 local isInit = false
 local activeAuras = {}
-local AuraTracker
+local bar
 
-local function PopulateActiveAurasTable(index, filter)
-	local name, _, iconTexture, count, debuffType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
-	local playerSpec = E:GetPlayerSpecFlag()
+local function VerifyList(filter)
+	local auraList = C.db.char.auratracker.filter[filter]
 
-	if name and C.db.profile.auratracker[filter][spellID] and E:CheckFlag(C.db.profile.auratracker[filter][spellID], playerSpec) then
-		table.insert(activeAuras, {
-			index = index,
-			icon = iconTexture,
-			count = count,
-			debuffType = debuffType,
-			duration = duration,
-			expire = expirationTime,
-			filter = filter,
-		})
-	end
-end
-
-local function HandleDataCorruption(filter)
-	local auraList = C.db.profile.auratracker[filter]
-
-	for k in pairs(auraList) do
+	for k in next, auraList do
 		if not GetSpellInfo(k) then
 			auraList[k] = nil
 		end
 	end
 end
 
-local function ATButton_OnEnter(self)
-	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	_G.GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+local function GetActiveAuras(index, filter)
+	local name, _, texture, count, dType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
+
+	if name	and C.db.char.auratracker.filter[filter][spellID] then
+		t_insert(activeAuras, {
+			index = index,
+			icon = texture,
+			count = count,
+			debuffType = dType,
+			duration = duration,
+			expire = expirationTime,
+			filter = filter,
+		})
+	end
+
+	return not not name
 end
 
-local function ATButton_OnLeave()
-	_G.GameTooltip:Hide()
+local function Button_OnUpdate(self, elapsed)
+	self.elapsed = (self.elapsed or 0) + elapsed
+
+	if self.elapsed > 0.1 then
+		if GameTooltip:IsOwned(self) then
+			GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+		end
+
+		self.elapsed = 0
+	end
 end
 
-local function AT_OnEvent()
-	table.wipe(activeAuras)
+local function Button_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+	GameTooltip:Show()
+
+	self:SetScript("OnUpdate", Button_OnUpdate)
+end
+
+local function Button_OnLeave(self)
+	GameTooltip:Hide()
+
+	self:SetScript("OnUpdate", nil)
+end
+
+local function Update(self)
+	t_wipe(activeAuras)
 
 	for i = 1, BUFF_MAX_DISPLAY do
-		PopulateActiveAurasTable(i, "HELPFUL")
+		if not GetActiveAuras(i, "HELPFUL") then
+			break
+		end
 	end
 
 	for i = 1, DEBUFF_MAX_DISPLAY do
-		PopulateActiveAurasTable(i, "HARMFUL")
+		if not GetActiveAuras(i, "HARMFUL") then
+			break
+		end
 	end
 
-	for i = 1, 12 do
-		AuraTracker.buttons[i]:Hide()
-	end
-
-	for i = 1, #activeAuras do
-		local button, aura = AuraTracker.buttons[i], activeAuras[i]
+	for i = 1, C.db.char.auratracker.num do
+		local button, aura = self._buttons[i], activeAuras[i]
 
 		if button then
-			button:SetID(aura.index)
-			button.Icon:SetTexture(aura.icon)
-			button.Count:SetText(aura.count > 1 and aura.count)
-			button.filter = aura.filter
+			if aura then
+				button:SetID(aura.index)
+				button.Icon:SetTexture(aura.icon)
+				button.Count:SetText(aura.count > 1 and aura.count)
+				button.filter = aura.filter
 
-			CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
+				CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
-			if button.filter == "HARMFUL" then
-				local color = DebuffTypeColor[aura.debuffType] or DebuffTypeColor.none
+				if button.filter == "HARMFUL" then
+					local color = DebuffTypeColor[aura.debuffType] or DebuffTypeColor.none
 
-				button:SetBorderColor(color.r, color.g, color.b)
+					button:SetBorderColor(color.r, color.g, color.b)
+					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 
-				button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
+				else
+					button:SetBorderColor(1, 1, 1)
+					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+				end
 
+				button:Show()
 			else
-				button:SetBorderColor(1, 1, 1)
-
-				button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+				button.AuraType:SetTexture("")
+				button.Count:SetText("")
+				button.filter = nil
+				button.Icon:SetTexture("")
+				button:SetID(0)
+				button:SetScript("OnUpdate", nil)
+				button:Hide()
 			end
-
-			button:Show()
 		end
 	end
 end
-
-local function AddToList(filter, spellID)
-	if not (C.db.char.auratracker.enabled and filter and spellID) then return end
-
-	local link = _G.GetSpellLink(spellID)
-
-	if not link then
-		return false, L["LOG_NOTHING_FOUND"]
-	end
-
-	if C.db.profile.auratracker[filter][spellID] then
-		return false, string.format(L["LOG_ITEM_ADDED_ERR"], link)
-	end
-
-	C.db.profile.auratracker[filter][spellID] = E:GetPlayerSpecFlag()
-
-	AURATRACKER:Refresh()
-
-	return true, string.format(L["LOG_ITEM_ADDED"], link)
-end
-
-------------
--- PUBLIC --
-------------
-
-function AURATRACKER:ToggleHeader(state)
-	AuraTracker.Header:SetShown(state)
-
-	E:ToggleMover(AuraTracker.Header, state)
-end
-
-function AURATRACKER:Refresh()
-	AT_OnEvent(AuraTracker, "FORCE_UPDATE")
-end
-
-function AURATRACKER:UpdateLayout()
-	E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.db.profile.auratracker.button_size, C.db.profile.auratracker.button_gap, C.db.profile.auratracker.init_anchor, C.db.profile.auratracker.buttons_per_row)
-end
-
------------------
--- INITIALISER --
------------------
 
 function AURATRACKER:IsInit()
 	return isInit
@@ -151,8 +134,8 @@ end
 
 function AURATRACKER:Init()
 	if not isInit and C.db.char.auratracker.enabled then
-		HandleDataCorruption("HELPFUL")
-		HandleDataCorruption("HARMFUL")
+		VerifyList("HELPFUL")
+		VerifyList("HARMFUL")
 
 		local header = _G.CreateFrame("Frame", "LSAuraTrackerHeader", _G.UIParent)
 		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
@@ -163,31 +146,29 @@ function AURATRACKER:Init()
 		label:SetText(M.COLORS.BLIZZ_YELLOW:WrapText(L["AURA_TRACKER"]))
 		header.Text = label
 
-		header:SetSize(label:GetWidth(), 22)
+		header:SetSize(label:GetWidth() + 10, 22)
 		E:CreateMover(header, true)
 
-		-- FIX-ME: Remove it later
-		C.db.profile.auratracker.point = nil
-		C.db.profile.auratracker.direction = nil
-
-		AuraTracker = _G.CreateFrame("Frame", nil, _G.UIParent)
-		AuraTracker:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
-		AuraTracker:SetMovable(true)
-		AuraTracker:SetClampedToScreen(true)
-		AuraTracker:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-		AuraTracker:SetScript("OnEvent", AT_OnEvent)
-
-		AuraTracker.Header = header
-		AuraTracker.buttons = {}
+		bar = _G.CreateFrame("Frame", nil, _G.UIParent)
+		bar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+		bar:SetMovable(true)
+		bar:SetClampedToScreen(true)
+		bar:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+		bar:SetScript("OnEvent", Update)
+		bar.Update = function(self)
+			Update(self)
+		end
+		bar.Header = header
+		bar._buttons = {}
 
 		for i = 1, 12 do
-			local button = E:CreateButton(AuraTracker, nil, true)
+			local button = E:CreateButton(bar, nil, true)
 			button:SetPushedTexture("")
 			button:SetHighlightTexture("")
+			button:SetScript("OnEnter", Button_OnEnter)
+			button:SetScript("OnLeave", Button_OnLeave)
 			button:Hide()
-			button:SetScript("OnEnter", ATButton_OnEnter)
-			button:SetScript("OnLeave", ATButton_OnLeave)
-			AuraTracker.buttons[i] = button
+			bar._buttons[i] = button
 
 			if button.CD.SetTimerTextHeight then
 				button.CD.Timer:SetJustifyV("BOTTOM")
@@ -199,32 +180,32 @@ function AURATRACKER:Init()
 			auraType:SetSize(16, 16)
 			auraType:SetPoint("TOPLEFT", -2, 2)
 			button.AuraType = auraType
+
+			button._parent = bar
 		end
-
-		E:UpdateBarLayout(AuraTracker, AuraTracker.buttons, C.db.profile.auratracker.button_size, C.db.profile.auratracker.button_gap, C.db.profile.auratracker.init_anchor, C.db.profile.auratracker.buttons_per_row)
-
-		P:AddCommand("atbuff", function(arg)
-			arg = tonumber(arg)
-
-			if arg then
-				P.print(select(2, AddToList("HELPFUL", arg)))
-			end
-		end)
-
-		P:AddCommand("atdebuff", function(arg)
-			arg = tonumber(arg)
-
-			if arg then
-				P.print(select(2, AddToList("HARMFUL", arg)))
-			end
-		end)
-
-		-- Finalise
-		self:ToggleHeader(not C.db.profile.auratracker.locked)
-		self:Refresh()
 
 		isInit = true
 
-		return true
+		self:Update()
+	end
+end
+
+function AURATRACKER:Update()
+	if isInit then
+		bar._config = C.db.char.auratracker
+
+		E:UpdateBarLayout(bar)
+
+		bar:Update()
+
+		local locked = C.db.char.auratracker.locked
+
+		bar.Header:SetShown(not locked)
+
+		if not locked then
+			E:EnableMover(bar.Header)
+		else
+			E:DisableMover(bar.Header)
+		end
 	end
 end

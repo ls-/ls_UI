@@ -4,86 +4,99 @@ local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local pairs = _G.pairs
-local unpack = _G.unpack
+local next = _G.next
+
+-- Blizzard
+local PetBattleBottomFrame = _G.PetBattleFrame.BottomFrame
 
 -- Mine
-local isInit = false
-
 -- DO NOT add it to D table
 local CFG = {
-	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 16},
-	button_size = 32,
-	button_gap = 4,
-	init_anchor = "TOPLEFT",
-	buttons_per_row = 6,
+	num = 6,
+	size = 32,
+	spacing = 4,
+	x_growth = "RIGHT",
+	y_growth = "DOWN",
+	per_row = 6,
+	visibility = "[petbattle] show; hide",
+	point = {
+		p = "BOTTOM",
+		anchor = "UIParent",
+		rP = "BOTTOM",
+		x = 0,
+		y = 16
+	},
 }
 
------------------
--- INITIALISER --
------------------
+function BARS:CreatePetBattleBar()
+	local config = self:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
-function BARS:PetBattleBar_IsInit()
-	return isInit
-end
+	local bar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
 
-function BARS:PetBattleBar_Init()
-	if not isInit then
-		local bar = _G.CreateFrame("Frame", "LSPetBattleBar", _G.UIParent, "SecureHandlerBaseTemplate")
+	if self:IsRestricted() then
+		self:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
+	else
+		local point = config.point
 
-		if self:ActionBarController_IsInit() then
-			self:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
-		else
-			bar:SetPoint(unpack(CFG.point))
+		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E:CreateMover(bar)
+	end
+
+	_G.RegisterStateDriver(bar, "visibility", config.visibility)
+
+	self:AddBar("pet_battle", bar)
+
+	-- hacks
+	bar.Update = function(self)
+		if self._buttons then
+			self._config = BARS:IsRestricted() and CFG or C.db.profile.bars.pet_battle
+
+			E:UpdateBarLayout(self)
+		end
+	end
+
+	_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
+		local buttons = {
+			PetBattleBottomFrame.abilityButtons[1],
+			PetBattleBottomFrame.abilityButtons[2],
+			PetBattleBottomFrame.abilityButtons[3],
+			PetBattleBottomFrame.SwitchPetButton,
+			PetBattleBottomFrame.CatchButton,
+			PetBattleBottomFrame.ForfeitButton
+		}
+
+		for _, button in next, buttons do
+			button._parent = bar
+			button:SetParent(bar)
+
+			E:SkinPetBattleButton(button)
 		end
 
-		_G.RegisterStateDriver(bar, "visibility", "[petbattle] show; hide")
+		bar._buttons = buttons
 
-		_G.FlowContainer_PauseUpdates(_G.PetBattleFrame.BottomFrame.FlowFrame)
+		bar:Update()
+	end)
 
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.FlowFrame)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.Delimiter)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.MicroButtonFrame)
-		E:ForceHide(_G.PetBattleFrameXPBar)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.Background)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.LeftEndCap)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.RightEndCap)
-		E:ForceHide(_G.PetBattleFrame.BottomFrame.TurnTimer.ArtFrame2)
+	-- Cleanup
+	_G.FlowContainer_PauseUpdates(PetBattleBottomFrame.FlowFrame)
 
-		_G.PetBattleFrame.BottomFrame:SetParent(E.HIDDEN_PARENT)
+	E:ForceHide(PetBattleBottomFrame.FlowFrame)
+	E:ForceHide(PetBattleBottomFrame.Delimiter)
+	E:ForceHide(PetBattleBottomFrame.MicroButtonFrame)
+	E:ForceHide(_G.PetBattleFrameXPBar)
+	E:ForceHide(PetBattleBottomFrame.Background)
+	E:ForceHide(PetBattleBottomFrame.LeftEndCap)
+	E:ForceHide(PetBattleBottomFrame.RightEndCap)
+	E:ForceHide(PetBattleBottomFrame.TurnTimer.ArtFrame2)
+	E:ForceHide(PetBattleBottomFrame, true, true)
 
-		_G.PetBattleFrame.BottomFrame.TurnTimer:SetParent(bar)
-		_G.PetBattleFrame.BottomFrame.TurnTimer:ClearAllPoints()
-		_G.PetBattleFrame.BottomFrame.TurnTimer:SetPoint("BOTTOM", bar, "TOP", 0, 8)
+	PetBattleBottomFrame.TurnTimer:SetParent(bar)
+	PetBattleBottomFrame.TurnTimer:ClearAllPoints()
+	PetBattleBottomFrame.TurnTimer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
 
-		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(bar)
-		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:ClearAllPoints()
-		_G.PetBattleFrame.BottomFrame.PetSelectionFrame:SetPoint("BOTTOM", bar, "TOP", 0, 32)
+	PetBattleBottomFrame.PetSelectionFrame:SetParent(bar)
+	PetBattleBottomFrame.PetSelectionFrame:ClearAllPoints()
+	PetBattleBottomFrame.PetSelectionFrame:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 92)
 
-		_G.hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
-			local buttons = {
-				_G.PetBattleFrame.BottomFrame.abilityButtons[1],
-				_G.PetBattleFrame.BottomFrame.abilityButtons[2],
-				_G.PetBattleFrame.BottomFrame.abilityButtons[3],
-				_G.PetBattleFrame.BottomFrame.SwitchPetButton,
-				_G.PetBattleFrame.BottomFrame.CatchButton,
-				_G.PetBattleFrame.BottomFrame.ForfeitButton
-			}
-
-			for _, button in pairs(buttons) do
-				E:SkinPetBattleButton(button)
-
-				button:SetParent(bar)
-			end
-
-			bar.buttons = buttons
-
-			E:UpdateBarLayout(bar, bar.buttons, CFG.button_size, CFG.button_gap, CFG.init_anchor, CFG.buttons_per_row)
-		end)
-
-		-- Finalise
-		isInit = true
-
-		return true
-	end
+	self.CreatePetBattleBar = E.NOOP
 end

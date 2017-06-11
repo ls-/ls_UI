@@ -8,16 +8,12 @@ local _G = getfenv(0)
 -- Mine
 local isInit = false
 
------------------
--- INITIALISER --
------------------
-
-function BLIZZARD:DigsiteBar_IsInit()
+function BLIZZARD:HasDigsiteBar()
 	return isInit
 end
 
-function BLIZZARD:DigsiteBar_Init()
-	if not isInit and C.db.char.blizzard.digsite_bar.enabled then
+function BLIZZARD:SetUpDigsiteBar()
+	if C.db.char.blizzard.digsite_bar.enabled then
 		local isLoaded = true
 
 		if not _G.IsAddOnLoaded("Blizzard_ArchaeologyUI") then
@@ -36,10 +32,9 @@ function BLIZZARD:DigsiteBar_Init()
 
 			_G.ArcheologyDigsiteProgressBar.Texture:SetVertexColor(M.COLORS.ORANGE:GetRGB())
 
-			-- Finalise
 			isInit = true
 
-			return true
+			self.SetUpDigsiteBar = E.NOOP
 		end
 	end
 end

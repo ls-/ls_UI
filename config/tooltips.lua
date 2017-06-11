@@ -1,193 +1,103 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
 local CFG = P:GetModule("Config")
 local TOOLTIPS = P:GetModule("Tooltips")
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
 
-function CFG:Tooltips_Init()
-	local panel = _G.CreateFrame("Frame", "LSUITooltipsConfigPanel", _G.InterfaceOptionsFramePanelContainer)
-	panel.name = L["TOOLTIP"]
-	panel.parent = L["LS_UI"]
-	panel:Hide()
+function CFG:CreateTooltipsPanel(order)
+	C.options.args.tooltips = {
+		order = order,
+		type = "group",
+		name = L["TOOLTIPS"],
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.char.tooltips.enabled
+				end,
+				set = function(_, value)
+					C.db.char.tooltips.enabled = value
 
-	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 16, -16)
-	title:SetJustifyH("LEFT")
-	title:SetJustifyV("TOP")
-	title:SetText(L["TOOLTIP"])
-
-	local subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	subtext:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
-	subtext:SetPoint("RIGHT", -16, 0)
-	subtext:SetHeight(44)
-	subtext:SetJustifyH("LEFT")
-	subtext:SetJustifyV("TOP")
-	subtext:SetNonSpaceWrap(true)
-	subtext:SetMaxLines(4)
-	subtext:SetText(L["TOOLTIP_DESC"])
-
-	local ttToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentTooltipsToggle",
-			text = L["ENABLE"],
-			get = function() return C.db.char.tooltips.enabled end,
-			set = function(_, value)
-				C.db.char.tooltips.enabled = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.char.tooltips.enabled)
-			end,
-			click = function(self)
-				local isChecked = self:GetChecked()
-
-				self:SetValue(isChecked)
-
-				if isChecked then
-					if TOOLTIPS:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_ENABLED_ERR"],
-							L["TOOLTIP"]))
+					if not TOOLTIPS:IsInit() then
+						if value then
+							TOOLTIPS:Init()
+						end
 					else
-						local result = TOOLTIPS:Init()
-
-						if result then
-							panel.Log:SetText(string.format(
-								L["LOG_ENABLED"],
-								L["ICON_GREEN_INLINE"],
-								L["TOOLTIP"],
-								""))
+						if not value then
+							CFG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				else
-					if TOOLTIPS:IsInit() then
-						panel.Log:SetText(string.format(
-							L["LOG_DISABLED"],
-							L["ICON_YELLOW_INLINE"],
-							L["TOOLTIP"],
-							L["REQUIRES_RELOAD"]))
-					end
 				end
-			end
-		})
-	ttToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
-
-	local divider = CFG:CreateDivider(panel, {
-		text = L["TOOLTIP_UNIT_NAME_COLOR"]
-	})
-	divider:SetPoint("TOP", ttToggle, "BOTTOM", 0, -10)
-
-	subtext = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	subtext:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -10)
-	subtext:SetPoint("RIGHT", -16, 0)
-	subtext:SetHeight(44)
-	subtext:SetJustifyH("LEFT")
-	subtext:SetJustifyV("TOP")
-	subtext:SetNonSpaceWrap(true)
-	subtext:SetMaxLines(4)
-	subtext:SetText(L["TOOLTIP_UNIT_NAME_COLOR_DESC"])
-
-	local pvpToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentPvPToggleToggle",
-			text = L["TOOLTIP_UNIT_NAME_COLOR_PVP"],
-			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_PVP_TOOLTIP"],
-			get = function() return C.db.profile.tooltips.unit.name_color_pvp_hostility end,
-			set = function(_, value)
-				C.db.profile.tooltips.unit.name_color_pvp_hostility = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.profile.tooltips.unit.name_color_pvp_hostility)
-			end,
-			click = function(self)
-				self:SetValue(self:GetChecked())
-			end
-		})
-	pvpToggle:SetPoint("TOPLEFT", subtext, "BOTTOMLEFT", 0, -8)
-
-	local classToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentPvPToggleToggle",
-			text = L["TOOLTIP_UNIT_NAME_COLOR_CLASS"],
-			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_CLASS_TOOLTIP"],
-			get = function() return C.db.profile.tooltips.unit.name_color_class end,
-			set = function(_, value)
-				C.db.profile.tooltips.unit.name_color_class = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.profile.tooltips.unit.name_color_class)
-			end,
-			click = function(self)
-				self:SetValue(self:GetChecked())
-			end
-		})
-	classToggle:SetPoint("TOPLEFT", pvpToggle, "BOTTOMLEFT", 0, -8)
-
-	local tapToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentPvPToggleToggle",
-			text = L["TOOLTIP_UNIT_NAME_COLOR_TAP"],
-			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_TAP_TOOLTIP"],
-			get = function() return C.db.profile.tooltips.unit.name_color_tapping end,
-			set = function(_, value)
-				C.db.profile.tooltips.unit.name_color_tapping = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.profile.tooltips.unit.name_color_tapping)
-			end,
-			click = function(self)
-				self:SetValue(self:GetChecked())
-			end
-		})
-	tapToggle:SetPoint("TOPLEFT", classToggle, "BOTTOMLEFT", 0, -8)
-
-	local reactionToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentPvPToggleToggle",
-			text = L["TOOLTIP_UNIT_NAME_COLOR_REACTION"],
-			tooltip_text = L["TOOLTIP_UNIT_NAME_COLOR_REACTION_TOOLTIP"],
-			get = function() return C.db.profile.tooltips.unit.name_color_reaction end,
-			set = function(_, value)
-				C.db.profile.tooltips.unit.name_color_reaction = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.profile.tooltips.unit.name_color_reaction)
-			end,
-			click = function(self)
-				self:SetValue(self:GetChecked())
-			end
-		})
-	reactionToggle:SetPoint("TOPLEFT", tapToggle, "BOTTOMLEFT", 0, -8)
-
-	divider = CFG:CreateDivider(panel, {
-		text = L["MISC"]
-	})
-	divider:SetPoint("TOP", reactionToggle, "BOTTOM", 0, -10)
-
-	local idToggle = CFG:CreateCheckButton(panel,
-		{
-			parent = panel,
-			name = "$parentIDToggle",
-			text = L["TOOLTIP_SHOW_ID"],
-			get = function() return C.db.profile.tooltips.show_id end,
-			set = function(_, value)
-				C.db.profile.tooltips.show_id = value
-			end,
-			refresh = function(self)
-				self:SetChecked(C.db.profile.tooltips.show_id)
-			end,
-			click = function(self)
-				self:SetValue(self:GetChecked())
-			end
-		})
-	idToggle:SetPoint("TOPLEFT", divider, "BOTTOMLEFT", 6, -8)
-
-	CFG:AddPanel(panel)
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+				width = "full",
+			},
+			title = {
+				order = 10,
+				type = "toggle",
+				name = L["PLAYER_TITLE"],
+				get = function()
+					return C.db.profile.tooltips.title
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.title = value
+				end
+			},
+			target = {
+				order = 11,
+				type = "toggle",
+				name = L["TARGET_INFO"],
+				desc = L["TARGET_INFO_DESC"],
+				get = function()
+					return C.db.profile.tooltips.target
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.target = value
+				end
+			},
+			inspect = {
+				order = 12,
+				type = "toggle",
+				name = L["INSPECT_INFO"],
+				desc = L["INSPECT_INFO_DESC"],
+				get = function()
+					return C.db.profile.tooltips.inspect
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.inspect = value
+					TOOLTIPS:Update()
+				end
+			},
+			id = {
+				order = 13,
+				type = "toggle",
+				name = L["TOOLTIP_IDS"],
+				get = function()
+					return C.db.profile.tooltips.id
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.id = value
+				end
+			},
+			count = {
+				order = 14,
+				type = "toggle",
+				name = L["ITEM_COUNT"],
+				desc = L["ITEM_COUNT_DESC"],
+				get = function()
+					return C.db.profile.tooltips.count
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.count = value
+				end
+			},
+		},
+	}
 end

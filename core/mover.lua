@@ -4,38 +4,17 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
-local pairs = _G.pairs
-local string = _G.string
+local next = _G.next
 
 -- Blizz
 local GameTooltip = _G.GameTooltip
+local IsShiftKeyDown = _G.IsShiftKeyDown
+local InCombatLockdown = _G.InCombatLockdown
 
 -- Mine
-local movers = {}
 local defaults = {}
-local CFG
-
-local function SavePosition(self, p, anchor, rP, x, y)
-	CFG[self:GetName()].point = {p, anchor, rP, x, y}
-end
-
-local function ResetPosition(self)
-	if not self.isSimple and _G.InCombatLockdown() then return end
-
-	local p, anchor, rP, x, y = unpack(defaults[self:GetName()].point)
-
-	self:ClearAllPoints()
-	self:SetPoint(p, anchor, rP, x, y)
-
-	self.parent:ClearAllPoints()
-	self.parent:SetPoint(p, anchor, rP, x, y)
-
-	CFG[self:GetName()].point = nil
-
-	if not self.isSimple then
-		self.Reset:Hide()
-	end
-end
+local disabledMovers = {}
+local enabledMovers = {}
 
 local function CalculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
@@ -70,16 +49,38 @@ local function CalculatePosition(self)
 	return p, p, E:Round(x), E:Round(y)
 end
 
-local function SetPosition(self, xOffset, yOffset)
-	if not self.isSimple and _G.InCombatLockdown() then return end
+local function SavePosition(self, p, anchor, rP, x, y)
+	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = {p, anchor, rP, x, y}
+end
 
-	local anchor = "UIParent"
+local function ResetPosition(self)
+	if not self.isSimple and InCombatLockdown() then return end
+
+	local p, anchor, rP, x, y = unpack(defaults[self:GetName()].point)
+
+	self:ClearAllPoints()
+	self:SetPoint(p, anchor, rP, x, y)
+
+	self.parent:ClearAllPoints()
+	self.parent:SetPoint(p, anchor, rP, x, y)
+
+	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = nil
+
+	if not self.isSimple then
+		self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+	end
+end
+
+local function SetPosition(self, xOffset, yOffset)
+	if not self.isSimple and InCombatLockdown() then return end
 
 	local p, rP, x, y = CalculatePosition(self)
+	local anchor = "UIParent"
 
 	if not x then
-		if CFG[self:GetName()].point then
-			p, anchor, rP, x, y = unpack(CFG[self:GetName()].point)
+		if C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point then
+			p, anchor, rP, x, y = unpack(C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point)
+			anchor = anchor or "UIParent"
 		end
 
 		if not x then
@@ -97,107 +98,13 @@ local function SetPosition(self, xOffset, yOffset)
 
 	SavePosition(self, p, anchor, rP, x + (xOffset or 0), y + (yOffset or 0))
 
-	if not (self.isSimple or E:IsEqualTable(defaults[self:GetName()], CFG[self:GetName()])) then
-		self.Reset:Show()
-	end
-end
-
-local function Button_OnEnter(self)
-	local mover = self:GetParent()
-
-	GameTooltip:SetOwner(mover, _G.cursor, 0, 0)
-	GameTooltip:AddLine(mover:GetName())
-
-	if self == mover.Reset then
-		GameTooltip:AddLine("Reset frame position", 1, 1, 1)
+	if self.isSimple then
+		self:Show()
 	else
-		local p, anchor, rP, x, y = E:GetCoords(mover)
-
-		if anchor == "UIParent" then
-			p, rP, x, y = CalculatePosition(mover)
+		if not E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()]) then
+			self.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
 		end
-
-		GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
-		GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
-		GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
 	end
-
-	GameTooltip:Show()
-end
-
-local function Frame_OnLeave()
-	GameTooltip:Hide()
-end
-
-local function UpOnClick(self)
-	local mover = self:GetParent()
-
-	SetPosition(mover, 0, 1)
-
-	if GameTooltip:IsOwned(mover) then
-		Button_OnEnter(self)
-	end
-end
-
-local function DownOnClick(self)
-	local mover = self:GetParent()
-
-	SetPosition(mover, 0, -1)
-
-	if GameTooltip:IsOwned(mover) then
-		Button_OnEnter(self)
-	end
-end
-
-local function LeftOnClick(self)
-	local mover = self:GetParent()
-
-	SetPosition(mover, -1, 0)
-
-	if GameTooltip:IsOwned(mover) then
-		Button_OnEnter(self)
-	end
-end
-
-local function RightOnClick(self)
-	local mover = self:GetParent()
-
-	SetPosition(mover, 1, 0)
-
-	if GameTooltip:IsOwned(mover) then
-		Button_OnEnter(self)
-	end
-end
-
-local function ResetOnClick(self)
-	if _G.InCombatLockdown() then return end
-
-	ResetPosition(self:GetParent())
-end
-
-local MOVER_BUTTONS = {
-	Up = {anchor = "TOP", func = UpOnClick},
-	Down = {anchor = "BOTTOM", func = DownOnClick},
-	Left = {anchor = "LEFT", func = LeftOnClick},
-	Right = {anchor = "RIGHT", func = RightOnClick},
-	Reset = {anchor = "TOPRIGHT", func = ResetOnClick}
-}
-
-local function CreateMoverButton(mover, type)
-	local button = _G.CreateFrame("Button", nil, mover, "UIPanelSquareButton")
-	button:SetPoint("CENTER", mover, MOVER_BUTTONS[type].anchor, 0, 0)
-	button:SetSize(10, 10)
-	button:Hide()
-	button:SetScript("OnClick", MOVER_BUTTONS[type].func)
-	button:SetScript("OnEnter", Button_OnEnter)
-	button:SetScript("OnLeave", Frame_OnLeave)
-	mover[type] = button
-
-	_G.SquareButton_SetIcon(button, string.upper(type))
-
-	E:SkinSquareButton(button)
-
-	return button
 end
 
 local function Mover_OnEnter(self)
@@ -207,18 +114,23 @@ local function Mover_OnEnter(self)
 		p, rP, x, y = CalculatePosition(self)
 	end
 
-	GameTooltip:SetOwner(self, _G.cursor, 0, 0)
+	GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 	GameTooltip:AddLine(self:GetName())
 	GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
+	GameTooltip:AddLine(L["MOVER_RESET_DESC"])
 	GameTooltip:Show()
+end
+
+local function Mover_OnLeave()
+	GameTooltip:Hide()
 end
 
 local function Mover_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
-	if self.elapsed > 0.2 then
+	if self.elapsed > 0.1 then
 		if GameTooltip:IsOwned(self) then
 			Mover_OnEnter(self)
 		end
@@ -228,7 +140,7 @@ local function Mover_OnUpdate(self, elapsed)
 end
 
 local function Mover_OnDragStart(self)
-	if not self.isSimple and _G.InCombatLockdown() then return end
+	if not self.isSimple and InCombatLockdown() then return end
 
 	self:StartMoving()
 
@@ -241,7 +153,7 @@ local function Mover_OnDragStart(self)
 end
 
 local function Mover_OnDragStop(self)
-	if not self.isSimple and _G.InCombatLockdown() then return end
+	if not self.isSimple and InCombatLockdown() then return end
 
 	self:StopMovingOrSizing()
 	self:SetScript("OnUpdate", nil)
@@ -252,61 +164,120 @@ local function Mover_OnDragStop(self)
 end
 
 local function Mover_OnClick(self)
-	if self.buttons[1]:IsShown() then
-		for i = 1, #self.buttons - 1 do
-			self.buttons[i]:Hide()
-		end
+	if IsShiftKeyDown() then
+		ResetPosition(self)
 	else
-		for i = 1, #self.buttons - 1 do
-			self.buttons[i]:Show()
-		end
-	end
-end
-
-function E:ResetMovers()
-	for _, mover in pairs(movers) do
-		ResetPosition(mover)
-	end
-end
-
-function E:ToggleAllMovers()
-	if _G.InCombatLockdown() then return end
-
-	for _, mover in pairs(movers) do
-		if not mover.isSimple then
-			if mover:IsShown() then
-				mover:Hide()
-			else
-				mover:Show()
+		if self.buttons[1]:IsShown() then
+			for i = 1, #self.buttons do
+				self.buttons[i]:Hide()
+			end
+		else
+			for i = 1, #self.buttons do
+				self.buttons[i]:Show()
 			end
 		end
 	end
 end
 
-function E:ToggleMover(object, state)
-	local mover = movers[object:GetName().."Mover"]
+local function Button_OnEnter(self)
+	Mover_OnEnter(self:GetParent())
+end
 
-	if mover then
-		if _G.InCombatLockdown() and not mover.isSimple then
-			return mover:IsShown()
+local MOVER_BUTTONS = {
+	UP = {
+		anchor = "TOP",
+		func = function(self)
+			local mover = self:GetParent()
+
+			SetPosition(mover, 0, 1)
+
+			if GameTooltip:IsOwned(mover) then
+				Mover_OnEnter(mover)
+			end
 		end
+	},
+	DOWN = {
+		anchor = "BOTTOM",
+		func = function(self)
+			local mover = self:GetParent()
 
-		if state ~= nil then
-			mover:SetShown(state)
+			SetPosition(mover, 0, -1)
 
-			return state
-		else
-			local isShown = mover:IsShown()
+			if GameTooltip:IsOwned(mover) then
+				Mover_OnEnter(mover)
+			end
+		end
+	},
+	LEFT = {
+		anchor = "LEFT",
+		func = function(self)
+			local mover = self:GetParent()
 
-			mover:SetShown(not isShown)
+			SetPosition(mover, -1, 0)
 
-			return not isShown
+			if GameTooltip:IsOwned(mover) then
+				Mover_OnEnter(mover)
+			end
+		end
+	},
+	RIGHT = {
+		anchor = "RIGHT",
+		func = function(self)
+			local mover = self:GetParent()
+
+			SetPosition(mover, 1, 0)
+
+			if GameTooltip:IsOwned(mover) then
+				Mover_OnEnter(mover)
+			end
+		end
+	},
+}
+
+local function CreateMoverButton(mover, type)
+	local button = _G.CreateFrame("Button", nil, mover, "UIPanelSquareButton")
+	button:SetPoint("CENTER", mover, MOVER_BUTTONS[type].anchor, 0, 0)
+	button:SetSize(10, 10)
+	button:SetScript("OnClick", MOVER_BUTTONS[type].func)
+	button:SetScript("OnEnter", Button_OnEnter)
+	button:SetScript("OnLeave", Mover_OnLeave)
+	button:Hide()
+	mover[type] = button
+
+	_G.SquareButton_SetIcon(button, type)
+
+	E:SkinSquareButton(button)
+
+	return button
+end
+
+function E:HasMover(object)
+	local name = object:GetName().."Mover"
+	return enabledMovers[name] or disabledMovers[name]
+end
+
+function E:GetMover(object)
+	return enabledMovers[object:GetName().."Mover"]
+end
+
+do
+	local state = false
+
+	function E:ToggleAllMovers()
+		if InCombatLockdown() then return end
+		state = not state
+
+		for _, mover in next, enabledMovers do
+			if not mover.isSimple then
+				mover:SetShown(state)
+			end
 		end
 	end
 end
 
 function E:UpdateMoverSize(object, width, height)
-	local mover = movers[object:GetName().."Mover"]
+	local name = object:GetName().."Mover"
+	local mover = enabledMovers[name] or disabledMovers[name]
 
 	if mover then
 		mover:SetWidth(width or object:GetWidth())
@@ -314,21 +285,45 @@ function E:UpdateMoverSize(object, width, height)
 	end
 end
 
-function E:GetMover(object)
-	return movers[object:GetName().."Mover"]
+function E:EnableMover(object)
+	local name = object:GetName().."Mover"
+
+	if enabledMovers[name] then return end
+
+	if not disabledMovers[name] then
+		P.print(name, "doesn't exist!")
+	end
+
+	enabledMovers[name] = disabledMovers[name]
+	disabledMovers[name] = nil
+
+	SetPosition(enabledMovers[name])
 end
 
-function E:CreateMover(object, isSimple, insets)
+function E:DisableMover(object)
+	local name = object:GetName().."Mover"
+
+	if disabledMovers[name] then return end
+
+	if not enabledMovers[name] then
+		P.print(name, "doesn't exist!")
+	end
+
+	enabledMovers[name]:Hide()
+
+	disabledMovers[name] = enabledMovers[name]
+	enabledMovers[name] = nil
+end
+
+function E:CreateMover(object, isSimple, ...)
 	if not object then return end
 
-	CFG = C.db.profile.movers[E.UI_LAYOUT]
+	local objectName = object:GetName()
 
-	local name = object:GetName().."Mover"
-	local iL, iR, iT, iB
+	if not objectName then return P.print(object:GetDebugName()) end
 
-	if insets then
-		iL, iR, iT, iB = insets[1], insets[2], insets[3], insets[4]
-	end
+	local name = objectName.."Mover"
+	local iL, iR, iT, iB = ...
 
 	local mover = _G.CreateFrame("Button", name, _G.UIParent)
 	mover:SetFrameLevel(object:GetFrameLevel() + 1)
@@ -348,7 +343,7 @@ function E:CreateMover(object, isSimple, insets)
 	else
 		mover:SetScript("OnClick", Mover_OnClick)
 		mover:SetScript("OnEnter", Mover_OnEnter)
-		mover:SetScript("OnLeave", Frame_OnLeave)
+		mover:SetScript("OnLeave", Mover_OnLeave)
 		mover:Hide()
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -358,20 +353,19 @@ function E:CreateMover(object, isSimple, insets)
 		mover.Bg = bg
 
 		mover.buttons = {
-			CreateMoverButton(mover, "Up"),
-			CreateMoverButton(mover, "Down"),
-			CreateMoverButton(mover, "Left"),
-			CreateMoverButton(mover, "Right"),
-			CreateMoverButton(mover, "Reset")
+			CreateMoverButton(mover, "UP"),
+			CreateMoverButton(mover, "DOWN"),
+			CreateMoverButton(mover, "LEFT"),
+			CreateMoverButton(mover, "RIGHT"),
 		}
 	end
 
-	if not CFG[name] then
-		CFG[name] = {}
+	if not C.db.profile.movers[E.UI_LAYOUT][name] then
+		C.db.profile.movers[E.UI_LAYOUT][name] = {}
 	else
-		if CFG[name].current then
-			CFG[name].point = {unpack(CFG[name].current)}
-			CFG[name].current = nil
+		if C.db.profile.movers[E.UI_LAYOUT][name].current then
+			C.db.profile.movers[E.UI_LAYOUT][name].point = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].current)}
+			C.db.profile.movers[E.UI_LAYOUT][name].current = nil
 		end
 	end
 
@@ -381,21 +375,21 @@ function E:CreateMover(object, isSimple, insets)
 
 	defaults[name].point = {self:GetCoords(object)}
 
-	self:UpdateTable(defaults[name], CFG[name])
+	self:UpdateTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name])
 
 	SetPosition(mover)
 
-	movers[name] = mover
+	enabledMovers[name] = mover
 
 	return mover
 end
 
-function E:CleanUpMoversConfig()
-	C.db.profile.movers[E.UI_LAYOUT] = self:DiffTable(defaults, CFG)
+function E:CleanUpMoverConfig()
+	C.db.profile.movers[E.UI_LAYOUT] = self:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 end
 
 local function HideMovers()
-	for _, mover in pairs(movers) do
+	for _, mover in next, enabledMovers do
 		if not mover.isSimple then
 			if mover:IsMouseEnabled() then
 				Mover_OnDragStop(mover)

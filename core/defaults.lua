@@ -1,80 +1,20 @@
 local _, ns = ...
 local D = ns.D
 
-D["global"] = {}
+D.global = {}
 
-D["profile"] = {
-	["units"] = {
-		["**"] = {
-			["**"] = {
-				enabled = true,
-				insets = {
-					t_height = 14, -- should be either 10 or 14
-					b_height = 14,
-				},
-				health = {
-					orientation = "HORIZONTAL",
-					color = {
-						class = false,
-						tapped = true,
-						disconnected = true,
-						reaction = true,
-					},
-					text = {
-						tag = "",
-						point1 = {},
-					},
-					prediction = {
-						enabled = true,
-						absorb_text = {
-							tag = "",
-							point1 = {},
-						},
-						heal_abosrb_text = {
-							tag = "",
-							point1 = {},
-						},
-					},
-				},
-				power = {
-					enabled = true,
-					orientation = "HORIZONTAL",
-					text = {
-						tag = "",
-						point1 = {},
-					},
-				},
-				name = {
-					tag = "",
-					point1 = {},
-					point2 = {},
-				},
-				raid_target = {
-					enabled = true,
-					size = 24,
-					point1 = {},
-				},
-				debuff = {
-					tag = "",
-					point1 = {},
-				},
-				threat = {
-					enabled = true,
-				},
-				class = {
-					player = true,
-					npc = true,
-				},
-			},
+D.profile = {
+	units = {
+		ls = {
 			player = {
+				enabled = true,
 				width = 166,
 				height = 166,
 				point = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
 				health = {
 					orientation = "VERTICAL",
 					color = {
-						tapped = false,
-						disconnected = false,
+						class = false,
 						reaction = false,
 					},
 					text = {
@@ -88,8 +28,9 @@ D["profile"] = {
 						},
 					},
 					prediction = {
+						enabled = true,
 						absorb_text = {
-							tag = "[ls:absorb:damage]",
+							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
 							point1 = {
 								p = "BOTTOM",
 								anchor = "Health.Text",
@@ -99,7 +40,7 @@ D["profile"] = {
 							},
 						},
 						heal_abosrb_text = {
-							tag = "[ls:absorb:heal]",
+							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							point1 = {
 								p = "BOTTOM",
 								anchor = "Health.Text",
@@ -111,6 +52,7 @@ D["profile"] = {
 					},
 				},
 				power = {
+					enabled = true,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -135,19 +77,44 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = true,
 					detached = true,
 					width_override = 200,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "BOTTOM",
-						anchor = "UIParent",
+						anchor = "",
+						detached_anchor = "UIParent",
 						rP = "BOTTOM",
 						x = 0,
 						y = 190,
 					},
 				},
+				name = {
+					tag = "",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
+					},
+					point2 = {
+						p = "",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
+					},
+				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -167,7 +134,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -176,8 +143,11 @@ D["profile"] = {
 						y = 0,
 					},
 				},
-				combat_feedback = {
+				threat = {
 					enabled = true,
+				},
+				combat_feedback = {
+					enabled = false,
 					mode = "Fountain",
 					x_offset = 15,
 					y_offset = 20,
@@ -190,9 +160,8 @@ D["profile"] = {
 				health = {
 					orientation = "VERTICAL",
 					color = {
-						tapped = false,
-						disconnected = false,
-						reaction = false,
+						class = true,
+						reaction = true,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -205,8 +174,12 @@ D["profile"] = {
 							y = 26,
 						},
 					},
+					prediction = {
+						enabled = true,
+					},
 				},
 				power = {
+					enabled = true,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -222,19 +195,25 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = true,
 					detached = true,
 					width_override = 200,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "BOTTOM",
 						anchor = "LSPlayerFrameCastbarHolder",
+						detached_anchor = "LSPlayerFrameCastbarHolder",
 						rP = "TOP",
 						x = 0,
 						y = 6,
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -244,7 +223,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -253,12 +232,25 @@ D["profile"] = {
 						y = 0,
 					},
 				},
+				threat = {
+					enabled = true,
+				},
 			},
 			target = {
+				enabled = true,
 				width = 250,
 				height = 52,
 				point = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
 				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
 					text = {
 						tag = "[ls:health:cur-perc]",
 						h_alignment = "RIGHT",
@@ -270,8 +262,33 @@ D["profile"] = {
 							y = 0,
 						},
 					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
 				},
 				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-color-max]",
 						h_alignment = "RIGHT",
@@ -286,21 +303,26 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = false,
 					detached = false,
 					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMLEFT",
-						x = 3,
+						x = 0,
 						y = -6,
 					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -317,6 +339,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -336,7 +360,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					h_alignment = "RIGHT",
 					point1 = {
 						p = "TOPRIGHT",
@@ -347,6 +371,7 @@ D["profile"] = {
 					},
 				},
 				threat = {
+					enabled = true,
 					feedback_unit = "player",
 				},
 				auras = {
@@ -355,20 +380,46 @@ D["profile"] = {
 					per_row = 8,
 					size_override = 0,
 					x_growth = "RIGHT",
-					y_grwoth = "UP",
-					init_anchor = "BOTTOMLEFT",
+					y_growth = "UP",
 					disable_mouse = false,
-					-- 0x0000000X -- friendly buff
-					-- 0x000000X0 -- hostile buff
-					-- 0x00000X00 -- friendly debuff
-					-- 0x0000X000 -- hostile debuff
-					show_boss = 0x0000ffff,
-					show_mount = 0x000000ff,
-					show_selfcast = 0x0000ffff,
-					show_selfcast_permanent = 0x0000ffff,
-					show_blizzard = 0x0000ffff,
-					show_player = 0x0000ffff,
-					show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+						},
+					},
 					point1 = {
 						p = "BOTTOMLEFT",
 						anchor = "",
@@ -377,16 +428,57 @@ D["profile"] = {
 						y = 7,
 					},
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 			targettarget = {
 				width = 112,
 				height = 28,
 				point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+					},
+				},
 				power = {
 					enabled = false,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "Health",
@@ -403,6 +495,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -415,12 +509,26 @@ D["profile"] = {
 					enabled = false,
 					feedback_unit = "target",
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 			focus = {
+				enabled = true,
 				width = 250,
 				height = 52,
 				point = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
 				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
 					text = {
 						tag = "[ls:health:cur-perc]",
 						h_alignment = "LEFT",
@@ -434,9 +542,31 @@ D["profile"] = {
 					},
 					prediction = {
 						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
 					},
 				},
 				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-color-max]",
 						h_alignment = "LEFT",
@@ -451,21 +581,26 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = false,
 					detached = false,
 					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPRIGHT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMRIGHT",
-						x = -3,
+						x = 0,
 						y = -6,
 					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -482,6 +617,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -501,17 +638,17 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
-					h_alignment = "RIGHT",
+					enabled = true,
 					point1 = {
-						p = "TOPRIGHT",
+						p = "TOPLEFT",
 						anchor = "Health",
-						rP = "TOPRIGHT",
-						x = -2,
+						rP = "TOPLEFT",
+						x = 2,
 						y = -2,
 					},
 				},
 				threat = {
+					enabled = true,
 					feedback_unit = "player",
 				},
 				auras = {
@@ -520,20 +657,46 @@ D["profile"] = {
 					per_row = 8,
 					size_override = 0,
 					x_growth = "RIGHT",
-					y_grwoth = "UP",
-					init_anchor = "BOTTOMLEFT",
+					y_growth = "UP",
 					disable_mouse = false,
-					-- 0x0000000X -- friendly buff
-					-- 0x000000X0 -- hostile buff
-					-- 0x00000X00 -- friendly debuff
-					-- 0x0000X000 -- hostile debuff
-					show_boss = 0x0000ffff,
-					show_mount = 0x000000ff,
-					show_selfcast = 0x0000ffff,
-					show_selfcast_permanent = 0x0000ffff,
-					show_blizzard = 0x0000ffff,
-					show_player = 0x0000ffff,
-					show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+						},
+					},
 					point1 = {
 						p = "BOTTOMLEFT",
 						anchor = "",
@@ -542,16 +705,57 @@ D["profile"] = {
 						y = 7,
 					},
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 			focustarget = {
 				width = 112,
 				height = 28,
 				point = { "BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+					},
+				},
 				power = {
 					enabled = false,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "Health",
@@ -568,6 +772,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -578,14 +784,29 @@ D["profile"] = {
 				},
 				threat = {
 					enabled = false,
-					feedback_unit = "target",
+					feedback_unit = "focus",
+				},
+				class = {
+					player = true,
+					npc = true,
 				},
 			},
 			boss = {
+				enabled = true,
 				width = 188,
 				height = 52,
+				y_offset = 28,
 				point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
 				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
 					text = {
 						tag = "[ls:health:perc]",
 						h_alignment = "RIGHT",
@@ -597,8 +818,33 @@ D["profile"] = {
 							y = 0,
 						},
 					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
 				},
 				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-color-perc]",
 						h_alignment = "RIGHT",
@@ -628,21 +874,26 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = false,
 					detached = false,
 					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMLEFT",
-						x = 3,
+						x = 0,
 						y = -6,
 					},
 				},
 				name = {
 					tag = "[ls:name]",
 					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -659,6 +910,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -668,7 +921,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					point1 = {
 						p = "CENTER",
 						anchor = "Health",
@@ -678,6 +931,7 @@ D["profile"] = {
 					},
 				},
 				threat = {
+					enabled = true,
 					feedback_unit = "player",
 				},
 				auras = {
@@ -686,20 +940,26 @@ D["profile"] = {
 					per_row = 3,
 					size_override = 25,
 					x_growth = "LEFT",
-					y_grwoth = "DOWN",
-					init_anchor = "TOPRIGHT",
+					y_growth = "DOWN",
 					disable_mouse = false,
-					-- 0x0000000X -- friendly buff
-					-- 0x000000X0 -- hostile buff
-					-- 0x00000X00 -- friendly debuff
-					-- 0x0000X000 -- hostile debuff
-					show_boss = 0x0000ffff,
-					show_mount = 0x000000ff,
-					show_selfcast = 0x0000ffff,
-					show_selfcast_permanent = 0x0000ffff,
-					show_blizzard = 0x0000ffff,
-					show_player = 0x0000ffff,
-					show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+							},
+							debuff = {
+								boss = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+							},
+							debuff = {
+								boss = true,
+							},
+						},
+					},
 					point1 = {
 						p = "TOPRIGHT",
 						anchor = "",
@@ -708,19 +968,27 @@ D["profile"] = {
 						y = 1,
 					},
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 		},
-		ls = {},
 		traditional = {
 			player = {
 				enabled = true,
 				width = 250,
 				height = 52,
 				point = {"BOTTOM", "UIParent", "BOTTOM", -286, 256},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
 				health = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -734,8 +1002,9 @@ D["profile"] = {
 						},
 					},
 					prediction = {
+						enabled = true,
 						absorb_text = {
-							tag = "[ls:absorb:damage]",
+							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
 							h_alignment = "RIGHT",
 							point1 = {
 								p = "BOTTOMRIGHT",
@@ -746,7 +1015,7 @@ D["profile"] = {
 							},
 						},
 						heal_abosrb_text = {
-							tag = "[ls:absorb:heal]",
+							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							h_alignment = "RIGHT",
 							point1 = {
 								p = "TOPRIGHT",
@@ -785,16 +1054,39 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = true,
 					detached = false,
 					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPRIGHT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMRIGHT",
-						x = -3,
+						x = 0,
 						y = -6,
+					},
+				},
+				name = {
+					tag = "",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
+					},
+					point2 = {
+						p = "",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
 					},
 				},
 				raid_target = {
@@ -819,7 +1111,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					point1 = {
 						p = "CENTER",
 						anchor = "Health",
@@ -828,14 +1120,50 @@ D["profile"] = {
 						y = 0,
 					},
 				},
-				combat_feedback = {
+				threat = {
 					enabled = true,
+				},
+				auras = {
+					enabled = false,
+					rows = 4,
+					per_row = 8,
+					size_override = 0,
+					x_growth = "RIGHT",
+					y_growth = "UP",
+					disable_mouse = false,
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								dispellable = true,
+							},
+						},
+					},
+					point1 = {
+						p = "BOTTOMLEFT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = -1,
+						y = 7,
+					},
+				},
+				combat_feedback = {
+					enabled = false,
 					mode = "Standard",
 					x_offset = 64,
 					y_offset = 32,
 				},
-				threat = {
-					enabled = true,
+				class = {
+					player = true,
+					npc = true,
 				},
 			},
 			pet = {
@@ -843,15 +1171,13 @@ D["profile"] = {
 				height = 28,
 				point = { "BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 				insets = {
-					t_height = 14,
+					t_height = 14, -- should be either 10 or 14
 					b_height = 14,
 				},
 				health = {
 					orientation = "HORIZONTAL",
 					color = {
-						class = false,
-						tapped = true,
-						disconnected = true,
+						class = true,
 						reaction = true,
 					},
 					text = {
@@ -886,16 +1212,38 @@ D["profile"] = {
 				},
 				castbar = {
 					enabled = true,
-					icon = true,
 					latency = true,
 					detached = false,
 					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMLEFT",
-						x = 3,
+						x = 0,
 						y = -6,
+					},
+				},
+				name = {
+					tag = "",
+					h_alignment = "CENTER",
+					point1 = {
+						p = "CENTER",
+						anchor = "Health",
+						rP = "CENTER",
+						x = 2,
+						y = 0,
+					},
+					point2 = {
+						p = "",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
 					},
 				},
 				raid_target = {
@@ -910,7 +1258,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -922,15 +1270,26 @@ D["profile"] = {
 				threat = {
 					enabled = true,
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 			target = {
-				point = {"BOTTOM", "UIParent", "BOTTOM", 286, 256},
-			},
-			focus = {
+				enabled = true,
 				width = 250,
 				height = 52,
-				point = {"BOTTOM", "UIParent", "BOTTOM", 286, 480},
+				point = {"BOTTOM", "UIParent", "BOTTOM", 286, 256},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
 				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
 					text = {
 						tag = "[ls:health:cur-perc]",
 						h_alignment = "RIGHT",
@@ -942,8 +1301,33 @@ D["profile"] = {
 							y = 0,
 						},
 					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
 				},
 				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-color-max]",
 						h_alignment = "RIGHT",
@@ -957,17 +1341,27 @@ D["profile"] = {
 					},
 				},
 				castbar = {
+					enabled = true,
+					latency = false,
+					detached = false,
+					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "",
+						detached_anchor = "FRAME",
 						rP = "BOTTOMLEFT",
-						x = 3,
+						x = 0,
 						y = -6,
 					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -984,6 +1378,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1003,7 +1399,7 @@ D["profile"] = {
 					},
 				},
 				debuff = {
-					tag = "[ls:debuffs]",
+					enabled = true,
 					h_alignment = "RIGHT",
 					point1 = {
 						p = "TOPRIGHT",
@@ -1014,6 +1410,7 @@ D["profile"] = {
 					},
 				},
 				threat = {
+					enabled = true,
 					feedback_unit = "player",
 				},
 				auras = {
@@ -1022,20 +1419,46 @@ D["profile"] = {
 					per_row = 8,
 					size_override = 0,
 					x_growth = "RIGHT",
-					y_grwoth = "UP",
-					init_anchor = "BOTTOMLEFT",
+					y_growth = "UP",
 					disable_mouse = false,
-					-- 0x0000000X -- friendly buff
-					-- 0x000000X0 -- hostile buff
-					-- 0x00000X00 -- friendly debuff
-					-- 0x0000X000 -- hostile debuff
-					show_boss = 0x0000ffff,
-					show_mount = 0x000000ff,
-					show_selfcast = 0x0000ffff,
-					show_selfcast_permanent = 0x0000ffff,
-					show_blizzard = 0x0000ffff,
-					show_player = 0x0000ffff,
-					show_dispellable = 0x00000ff0, -- friendly debuff / hostile buff
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+						},
+					},
 					point1 = {
 						p = "BOTTOMLEFT",
 						anchor = "",
@@ -1044,16 +1467,57 @@ D["profile"] = {
 						y = 7,
 					},
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
-			focustarget = {
+			targettarget = {
 				width = 112,
 				height = 28,
-				point = { "BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
+				point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+					},
+				},
 				power = {
 					enabled = false,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
 				},
 				name = {
-					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]|r",
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "TOPLEFT",
 						anchor = "Health",
@@ -1070,6 +1534,8 @@ D["profile"] = {
 					},
 				},
 				raid_target = {
+					enabled = true,
+					size = 24,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1082,130 +1548,699 @@ D["profile"] = {
 					enabled = false,
 					feedback_unit = "target",
 				},
+				class = {
+					player = true,
+					npc = true,
+				},
+			},
+			focus = {
+				enabled = true,
+				width = 250,
+				height = 52,
+				point = {"BOTTOM", "UIParent", "BOTTOM", 286, 480},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "[ls:health:cur-perc]",
+						h_alignment = "RIGHT",
+						point1 = {
+							p = "RIGHT",
+							anchor = "Health",
+							rP = "RIGHT",
+							x = -2,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
+				},
+				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "[ls:power:cur-color-max]",
+						h_alignment = "RIGHT",
+						point1 = {
+							p = "RIGHT",
+							anchor = "Power",
+							rP = "RIGHT",
+							x = -2,
+							y = 0,
+						},
+					},
+				},
+				castbar = {
+					enabled = true,
+					latency = false,
+					detached = false,
+					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "",
+						detached_anchor = "FRAME",
+						rP = "BOTTOMRIGHT",
+						x = 0,
+						y = -6,
+					},
+				},
+				name = {
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
+					point1 = {
+						p = "LEFT",
+						anchor = "Health",
+						rP = "LEFT",
+						x = 2,
+						y = 0,
+					},
+					point2 = {
+						p = "RIGHT",
+						anchor = "Health.Text",
+						rP = "LEFT",
+						x = -2,
+						y = 0,
+					},
+				},
+				raid_target = {
+					enabled = true,
+					size = 24,
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "TOP",
+						x = 0,
+						y = 6,
+					},
+				},
+				pvp = {
+					enabled = true,
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "FGParent",
+						rP = "BOTTOMRIGHT",
+						x = -8,
+						y = -2,
+					},
+				},
+				debuff = {
+					enabled = true,
+					h_alignment = "RIGHT",
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "Health",
+						rP = "TOPRIGHT",
+						x = -2,
+						y = -2,
+					},
+				},
+				threat = {
+					enabled = true,
+					feedback_unit = "player",
+				},
+				auras = {
+					enabled = true,
+					rows = 4,
+					per_row = 8,
+					size_override = 0,
+					x_growth = "RIGHT",
+					y_growth = "UP",
+					disable_mouse = false,
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+								mount = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+							},
+						},
+					},
+					point1 = {
+						p = "BOTTOMLEFT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = -1,
+						y = 7,
+					},
+				},
+				class = {
+					player = true,
+					npc = true,
+				},
+			},
+			focustarget = {
+				width = 112,
+				height = 28,
+				point = { "BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+					},
+				},
+				power = {
+					enabled = false,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "",
+						point1 = {
+							p = "CENTER",
+							anchor = "",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+				},
+				name = {
+					tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+					point1 = {
+						p = "TOPLEFT",
+						anchor = "Health",
+						rP = "TOPLEFT",
+						x = 2,
+						y = -2,
+					},
+					point2 = {
+						p = "BOTTOMRIGHT",
+						anchor = "Health",
+						rP = "BOTTOMRIGHT",
+						x = -2,
+						y = 2,
+					},
+				},
+				raid_target = {
+					enabled = true,
+					size = 24,
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "TOP",
+						x = 0,
+						y = 6,
+					},
+				},
+				threat = {
+					enabled = false,
+					feedback_unit = "target",
+				},
+				class = {
+					player = true,
+					npc = true,
+				},
+			},
+			boss = {
+				enabled = true,
+				width = 188,
+				height = 52,
+				y_offset = 28,
+				point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
+				insets = {
+					t_height = 14, -- should be either 10 or 14
+					b_height = 14,
+				},
+				health = {
+					orientation = "HORIZONTAL",
+					color = {
+						class = false,
+						reaction = true,
+					},
+					text = {
+						tag = "[ls:health:perc]",
+						h_alignment = "RIGHT",
+						point1 = {
+							p = "RIGHT",
+							anchor = "Health",
+							rP = "RIGHT",
+							x = -2,
+							y = 0,
+						},
+					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_abosrb_text = {
+							tag = "",
+							point1 = {
+								p = "CENTER",
+								anchor = "",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
+				},
+				power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "[ls:power:cur-color-perc]",
+						h_alignment = "RIGHT",
+						point1 = {
+							p = "RIGHT",
+							anchor = "Power",
+							rP = "RIGHT",
+							x = -2,
+							y = 0,
+						},
+					},
+				},
+				alt_power = {
+					enabled = true,
+					orientation = "HORIZONTAL",
+					text = {
+						tag = "[ls:altpower:cur-color-perc]",
+						h_alignment = "RIGHT",
+						point1 = {
+							p = "RIGHT",
+							anchor = "AlternativePower",
+							rP = "RIGHT",
+							x = -2,
+							y = 0,
+						},
+					},
+				},
+				castbar = {
+					enabled = true,
+					latency = false,
+					detached = false,
+					width_override = 0,
+					icon = {
+						enabled = true,
+						position = "LEFT", -- or "RIGHT"
+					},
+					point1 = {
+						p = "TOPLEFT",
+						anchor = "",
+						detached_anchor = "FRAME",
+						rP = "BOTTOMLEFT",
+						x = 0,
+						y = -6,
+					},
+				},
+				name = {
+					tag = "[ls:name]",
+					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
+					point1 = {
+						p = "LEFT",
+						anchor = "Health",
+						rP = "LEFT",
+						x = 2,
+						y = 0,
+					},
+					point2 = {
+						p = "RIGHT",
+						anchor = "Health.Text",
+						rP = "LEFT",
+						x = -2,
+						y = 0,
+					},
+				},
+				raid_target = {
+					enabled = true,
+					size = 24,
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "TOP",
+						x = 0,
+						y = 6,
+					},
+				},
+				debuff = {
+					enabled = true,
+					point1 = {
+						p = "CENTER",
+						anchor = "Health",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
+					},
+				},
+				threat = {
+					enabled = true,
+					feedback_unit = "player",
+				},
+				auras = {
+					enabled = true,
+					rows = 2,
+					per_row = 3,
+					size_override = 25,
+					x_growth = "LEFT",
+					y_growth = "DOWN",
+					disable_mouse = false,
+					filter = {
+						friendly = {
+							buff = {
+								boss = true,
+							},
+							debuff = {
+								boss = true,
+							},
+						},
+						enemy = {
+							buff = {
+								boss = true,
+							},
+							debuff = {
+								boss = true,
+							},
+						},
+					},
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = -7,
+						y = 1,
+					},
+				},
+				class = {
+					player = true,
+					npc = true,
+				},
 			},
 		},
 	},
-	["auratracker"] = {
-		locked = false,
-		button_size = 36,
-		button_gap = 4,
-		init_anchor = "TOPLEFT",
-		buttons_per_row = 12,
-		HELPFUL = {},
-		HARMFUL = {},
-	},
-	["minimap"] = {
-		["**"] = {
+	minimap = {
+		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
-		ls = {},
 		traditional = {
 			zone_text = {
-				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				mode = 2,
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
 	},
-	["bars"] = {
-		show_hotkey = true,
-		show_name = true,
-		use_icon_as_indicator = true,
+	bars = {
+		hotkey = true,
+		macro = true,
+		icon_indicator = true,
 		bar1 = { -- MainMenuBar
 			visible = true,
-			point = {"BOTTOM", 0, 16},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 12,
+			num = 12,
+			size = 32,
+			spacing = 4,
+			per_row = 12,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			visibility = "[petbattle] hide; show",
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 0,
+				y = 16
+			},
 		},
 		bar2 = { -- MultiBarBottomLeft
 			visible = true,
-			point = {"BOTTOM", 0, 52},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 12,
+			num = 12,
+			size = 32,
+			spacing = 4,
+			per_row = 12,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 0,
+				y = 52
+			},
 		},
 		bar3 = { -- MultiBarBottomRight
 			visible = true,
-			point = {"BOTTOM", 0, 88},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 12,
+			num = 12,
+			size = 32,
+			spacing = 4,
+			per_row = 12,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 0,
+				y = 88
+			},
 		},
 		bar4 = { -- MultiBarLeft
 			visible = true,
-			point = {"BOTTOMRIGHT", -40, 240},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPRIGHT",
-			buttons_per_row = 1,
+			num = 12,
+			size = 32,
+			spacing = 4,
+			per_row = 1,
+			x_growth = "LEFT",
+			y_growth = "DOWN",
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			point = {
+				p = "BOTTOMRIGHT",
+				anchor = "UIParent",
+				rP = "BOTTOMRIGHT",
+				x = -40,
+				y = 240
+			},
 		},
 		bar5 = { -- MultiBarRight
 			visible = true,
-			point = {"BOTTOMRIGHT", -4, 240},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPRIGHT",
-			buttons_per_row = 1,
+			num = 12,
+			size = 32,
+			spacing = 4,
+			per_row = 1,
+			x_growth = "LEFT",
+			y_growth = "DOWN",
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			point = {
+				p = "BOTTOMRIGHT",
+				anchor = "UIParent",
+				rP = "BOTTOMRIGHT",
+				x = -4,
+				y = 240,
+			},
 		},
 		bar6 = { --PetAction
 			visible = true,
-			button_size = 24,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 10,
+			num = 10,
+			size = 24,
+			spacing = 4,
+			per_row = 10,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			visibility = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
 		},
 		bar7 = { -- Stance
 			visible = true,
-			button_size = 24,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 10,
+			num = 10,
+			size = 24,
+			spacing = 4,
+			per_row = 10,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+		},
+		pet_battle = {
+			num = 6,
+			size = 32,
+			spacing = 4,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			per_row = 6,
+			visibility = "[petbattle] show; hide",
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 0,
+				y = 16
+			},
 		},
 		extra = { -- ExtraAction
-			visible = true,
-			point = {"BOTTOM", -168, 132},
-			button_size = 40,
+			size = 40,
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = -168,
+				y = 130
+			},
+		},
+		zone = { -- ZoneAbility
+			size = 40,
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = -168,
+				y = 174
+			},
 		},
 		vehicle = { -- LeaveVehicle
-			visible = true,
-			point = {"BOTTOM", 168, 132},
-			button_size = 40,
-		},
-		garrison = {
-			visible = true,
-			point = {"BOTTOM", -168, 176},
-			button_size = 40,
+			size = 40,
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 168,
+				y = 130
+			},
 		},
 		micromenu = {
-			visible = true,
 			holder1 = {
-				point = {"BOTTOM", -280, 16},
+				point = {
+					p = "BOTTOM",
+					anchor = "UIParent",
+					rP = "BOTTOM",
+					x = -280,
+					y = 16
+				},
 			},
 			holder2 = {
-				point = {"BOTTOM", 280, 16},
+				point = {
+					p = "BOTTOM",
+					anchor = "UIParent",
+					rP = "BOTTOM",
+					x = 280,
+					y = 16
+				},
+			},
+			tooltip = {
+				character = false,
+				quest = true,
+				lfd = true,
+				ej = true,
+				main = true,
+			}
+		},
+		xpbar = {
+			width = 746,
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 0,
+				y = 4
 			},
 		},
 		bags = {
-			visible = true,
-			point = {"BOTTOM", 434, 16},
-			button_size = 32,
-			button_gap = 4,
-			init_anchor = "TOPLEFT",
-			buttons_per_row = 5,
-		},
-		xpbar = {
-			enabled = true,
-			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
+			num = 5,
+			size = 32,
+			spacing = 4,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			per_row = 5,
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 434,
+				y = 16
+			},
 		},
 	},
-	["auras"] = {
-		["**"] = {
+	auras = {
+		ls = {
+			aura_gap = 4,
+			aura_size = 32,
 			buff = {
 				point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 			},
@@ -1215,11 +2250,10 @@ D["profile"] = {
 			tempench = {
 				point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -112},
 			},
-			aura_size = 32,
-			aura_gap = 4,
 		},
-		ls = {},
 		traditional = {
+			aura_gap = 4,
+			aura_size = 32,
 			buff = {
 				point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -182, -4},
 			},
@@ -1231,38 +2265,48 @@ D["profile"] = {
 			},
 		},
 	},
-	["tooltips"] = {
-		show_id = true,
-		unit = {
-			name_color_pvp_hostility = true,
-			name_color_class = true,
-			name_color_tapping = true,
-			name_color_reaction = true,
-		}
+	tooltips = {
+		id = true,
+		count = true,
+		title = true,
+		target = true,
+		inspect = true,
 	},
-	["blizzard"] = {
+	blizzard = {
 		objective_tracker = { -- ObjectiveTrackerFrame
 			height = 600,
 		},
 	},
-	["movers"] = {
+	movers = {
 		ls = {},
 		traditional = {},
 	},
 }
 
-D["char"] = {
-	["layout"] = "ls", -- or traditional
-	["auratracker"] = {
+D.char = {
+	layout = "ls", -- or traditional
+	auratracker = {
+		enabled = false,
+		locked = false,
+		num = 12,
+		size = 32,
+		spacing = 4,
+		per_row = 12,
+		x_growth = "RIGHT",
+		y_growth = "DOWN",
+		filter = {
+			HELPFUL = {},
+			HARMFUL = {},
+			ALL = {},
+		},
+	},
+	units = {
 		enabled = true,
 	},
-	["units"] = {
+	minimap = {
 		enabled = true,
 	},
-	["minimap"] = {
-		enabled = true,
-	},
-	["bars"] = {
+	bars = {
 		enabled = true,
 		restricted = true,
 		bags = {
@@ -1272,13 +2316,13 @@ D["char"] = {
 			enabled = true,
 		},
 	},
-	["auras"] = {
+	auras = {
 		enabled = true,
 	},
-	["tooltips"] = {
+	tooltips = {
 		enabled = true,
 	},
-	["blizzard"] = {
+	blizzard = {
 		enabled = true,
 		command_bar = { -- OrderHallCommandBar
 			enabled = true

@@ -4,53 +4,32 @@ local BARS = P:AddModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local pairs = _G.pairs
+local next = _G.next
 
 -- Mine
 local isInit = false
 
-----------------------
--- UTILS & SETTINGS --
-----------------------
-
-function BARS:ToggleHotKeyText(isVisible)
-	for button in pairs(P:GetHandledButtons()) do
+function BARS:ToggleHotKeyText(flag)
+	for button in next, P:GetActionButtons() do
 		if button.HotKey then
-			button.HotKey:SetShown(isVisible)
+			button.HotKey:SetShown(flag)
 		end
 	end
 end
 
-function BARS:ToggleMacroText(isVisible)
-	for button in pairs(P:GetHandledButtons()) do
+function BARS:ToggleMacroText(flag)
+	for button in next, P:GetActionButtons() do
 		if button.Name then
-			button.Name:SetShown(isVisible)
+			button.Name:SetShown(flag)
 		end
 	end
 end
 
-function BARS:ToggleBar(key, isVisible)
-	local bar = P:GetActionBars()[key]
-
-	if bar then
-		if isVisible then
-			return E:ResetFrameState(bar, "visibility")
-		else
-			return E:SetFrameState(bar, "visibility", "hide")
-		end
+function BARS:ToggleIconIndicators()
+	for button in next, P:GetActionButtons() do
+		E:UpdateButtonState(button)
 	end
 end
-
-function BARS:UpdateLayout(key)
-	local bar = P:GetActionBars()[key]
-
-	E:UpdateBarLayout(bar, bar.buttons, C.db.profile.bars[key].button_size, C.db.profile.bars[key].button_gap, C.db.profile.bars[key].init_anchor, C.db.profile.bars[key].buttons_per_row)
-	E:UpdateMoverSize(bar)
-end
-
------------------
--- INITIALISER --
------------------
 
 function BARS:IsInit()
 	return isInit
@@ -58,19 +37,27 @@ end
 
 function BARS:Init()
 	if not isInit and C.db.char.bars.enabled then
-		self:ActionBarController_Init()
-		self:ActionBars_Init()
-		self:Bags_Init()
-		self:ExtraActionButton_Init()
-		self:MicroMenu_Init()
-		self:PetBattleBar_Init()
-		self:VehicleExitButton_Init()
-		self:XPBar_Init()
-		self:ZoneAbilityButton_Init()
+		self:SetupActionBarController()
+		self:CreateBars()
+		self:CreatePetBattleBar()
+		self:CreateExtraButton()
+		self:CreateZoneButton()
+		self:CreateVehicleExitButton()
+		self:CreateMicroMenu()
+		self:CreateXPBar()
+		self:CreateBags()
 
-		-- Finalise
 		isInit = true
+	end
+end
 
-		return true
+function BARS:Update()
+	if isInit then
+		self:UpdateBars()
+		self:UpdateExtraButton()
+		self:UpdateZoneButton()
+		self:UpdateMicroButtons()
+		self:UpdateVehicleExitButton()
+		self:UpdateXPBar()
 	end
 end

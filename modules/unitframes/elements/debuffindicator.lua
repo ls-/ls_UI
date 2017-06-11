@@ -24,5 +24,22 @@ function UF:UpdateDebuffIndicator(frame)
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
-	frame:Tag(element, config.tag)
+	frame:Tag(element, config.enabled and "[ls:debuffs]" or "")
 end
+
+function UF:PreviewDebuffIndicator(frame)
+	local element = frame.DebuffIndicator
+
+	if element._preview then
+		frame:Tag(element, frame._config.debuff.enabled and "[ls:debuffs]" or "")
+		element:UpdateTag()
+
+		element._preview = false
+	else
+		frame:Tag(element, "|TInterface\\RaidFrame\\Raid-Icon-DebuffCurse:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffMagic:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffPoison:0:0:0:0:16:16:2:14:2:14|t")
+		element:UpdateTag()
+
+		element._preview = true
+	end
+end
+
