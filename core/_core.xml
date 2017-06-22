@@ -1,11 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
 	<Script file="util.lua"/>
-	<Include file="constants.xml"/>
+	<Script file="defaults.lua"/>
+	<Script file="constants.lua"/>
 	<Script file="animation.lua"/>
-	<Script file="widgets.lua"/>
+	<Include file="widgets.xml"/>
 	<Script file="bar.lua"/>
 	<Script file="button.lua"/>
-	<Script file="defaults.lua"/>
 	<Script file="mover.lua"/>
 </Ui>
