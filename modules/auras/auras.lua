@@ -227,7 +227,7 @@ local function UpdateHeader(filter)
 	if E:HasMover(header) then
 		E:UpdateMoverSize(header)
 	else
-		E:CreateMover(header)
+		E:CreateMover(header, -6, 6, 6, -6)
 	end
 end
 
