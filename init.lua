@@ -2,6 +2,8 @@ local name, ns = ...
 
 -- Lua
 local _G = getfenv(0)
+local type = _G.type
+local next = _G.next
 
 -- Mine
 local E = _G.LibStub("AceAddon-3.0"):NewAddon(name) -- engine

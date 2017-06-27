@@ -293,7 +293,6 @@ do
 
 	E:RegisterEvent("PLAYER_REGEN_ENABLED", ManageQueue)
 
-
 	function E:SetFrameState(frame, stateID, state)
 		if frame then
 			if _G.InCombatLockdown() and frame:IsProtected() then

@@ -5,8 +5,9 @@ local CFG = P:AddModule("Config")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
-local type = _G.type
 local t_wipe = _G.table.wipe
+local tonumber = _G.tonumber
+local type = _G.type
 
 -- Mine
 local AceConfig = _G.LibStub("AceConfig-3.0")

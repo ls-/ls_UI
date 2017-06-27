@@ -333,7 +333,6 @@ local function UpdateXPBar()
 	end
 end
 
-
 -- default width = 1492 / 2, short width = 1060 / 2
 -- I'll expand it later
 local function SetXPBarStyle(width)
