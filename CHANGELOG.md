@@ -1,3 +1,9 @@
+## Version 70200.09
+
+- Reworked auras. Added "Buffs and Debuffs" config entry;
+- Updated embeds;
+- Movers' positions are now properly updated after profile change.
+
 ## Version 70200.08
 
 - Reworked in-game config;
