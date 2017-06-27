@@ -187,6 +187,21 @@ function E:OnInitialize()
 		end
 	end
 
+	-- -> 70200.09
+	if not C.db.profile.version or C.db.profile.version < 7020009 then
+		C.db.profile.auras.ls.aura_gap = nil
+		C.db.profile.auras.ls.aura_size = nil
+		C.db.profile.auras.ls.buff = nil
+		C.db.profile.auras.ls.debuff = nil
+		C.db.profile.auras.ls.tempench = nil
+
+		C.db.profile.auras.traditional.aura_gap = nil
+		C.db.profile.auras.traditional.aura_size = nil
+		C.db.profile.auras.traditional.buff = nil
+		C.db.profile.auras.traditional.debuff = nil
+		C.db.profile.auras.traditional.tempench = nil
+	end
+
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
