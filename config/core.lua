@@ -505,6 +505,7 @@ function CFG:Init()
 	C.options = {
 		type = "group",
 		name = L["LS_UI"],
+		disabled = function() return _G.InCombatLockdown() end,
 		args = {
 			toggle_anchors = {
 				order = 1,
@@ -528,9 +529,10 @@ function CFG:Init()
 	self:CreateActionBarsPanel(4)
 	self:CreateAuraTrackerPanel(5)
 	self:CreateBlizzardPanel(6)
-	self:CreateMinimapPanel(7)
-	self:CreateTooltipsPanel(8)
-	self:CreateUnitFramesPanel(9)
+	self:CreateAurasPanel(7)
+	self:CreateMinimapPanel(8)
+	self:CreateTooltipsPanel(9)
+	self:CreateUnitFramesPanel(10)
 
 	C.options.args.profiles = _G.LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
@@ -547,14 +549,22 @@ function CFG:Init()
 	button:SetWidth(button:GetTextWidth() + 18)
 	button:SetPoint("TOPLEFT", 16, -16)
 	button:SetScript("OnClick", function()
-		_G.InterfaceOptionsFrame_Show()
+		if not _G.InCombatLockdown() then
+			_G.InterfaceOptionsFrame_Show()
 
-		AceConfigDialog:Open(addonName)
+			AceConfigDialog:Open(addonName)
+		end
 	end)
 
 	_G.InterfaceOptions_AddCategory(panel, true)
 
 	P:AddCommand("", function()
-		AceConfigDialog:Open(addonName)
+		if not _G.InCombatLockdown() then
+			AceConfigDialog:Open(addonName)
+		end
+	end)
+
+	E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
+		AceConfigDialog:Close(addonName)
 	end)
 end

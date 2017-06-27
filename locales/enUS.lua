@@ -9,6 +9,7 @@ local _G = getfenv(0)
 L["ADVENTURE_JOURNAL"] = _G.ADVENTURE_JOURNAL
 L["ARTIFACT_POWER"] = _G.ARTIFACT_POWER
 L["AURAS"] = _G.AURAS
+L["BUFFS_AND_DEBUFFS"] = _G.BUFFOPTIONS_LABEL
 L["CHARACTER_BUTTON"] = _G.CHARACTER_BUTTON
 L["CURRENCY_COLON"] = _G.CURRENCY..":"
 L["DEAD"] = _G.DEAD
@@ -84,6 +85,7 @@ Use '||r' to terminate colour tags.
 ]]
 L["ALWAYS_SHOW"] = "Always Show"
 L["ANCHOR"] = "Attach To"
+L["ASCENDING"] = "Ascending"
 L["AURA_TRACKER"] = "Aura Tracker"
 L["BAGS"] = "Bags"
 L["BAR_1"] = "Bar 1"
@@ -115,6 +117,7 @@ Tags:
 Use '||r' to terminate colour tags.
 ]]
 L["DEBUFFS"] = "Debuffs"
+L["DESCENDING"] = "Descending"
 L["DETACH_FROM_FRAME"] = "Detach From Frame"
 L["DIGSITE_BAR"] = "Digsite Progress Bar"
 L["DISABLE_MOUSE_DESC"] = "Ignore mouse events."
@@ -154,6 +157,7 @@ Tags:
 ]]
 L["HEIGHT"] = "Height"
 L["HORIZ_GROWTH_DIR"] = "Horizontal Growth Direction"
+L["INDEX"] = "Index"
 L["INSPECT_INFO_DESC"] = "Display player's specialisation and item level. This data is not available right away. Hold Shift to request and, if available, show this info."
 L["INSPECT_INFO"] = "Inspect Info"
 L["ITEM_COUNT_DESC"] = "Display how many of an item you have in your bags and bank."
@@ -176,6 +180,7 @@ L["MICRO_BUTTONS"] = "Micro Buttons"
 L["MIRROR_TIMER"] = "Mirror Timers"
 L["MOUSEOVER_SHOW"] = "Show On Mouseover"
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset position."
+L["NAME"] = "Name"
 L["NAME_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -191,6 +196,7 @@ Tags:
 
 Use '||r' to terminate colour tags.
 ]]
+L["NO_SEPARATION"] = "No Separation"
 L["NPE_FRAME"] = "NPE Tutorial Frame"
 L["NUM_BUTTONS"] = "Number of Buttons"
 L["NUM_ROWS"] = "Number of Rows"
@@ -198,6 +204,7 @@ L["OBJECTIVE_TRACKER"] = "Objective Tracker"
 L["OPEN_CONFIG"] = "Open Config"
 L["ORBS"] = "Orbs"
 L["OTHER"] = "Other"
+L["OTHERS_FIRST"] = "Others First"
 L["PER_ROW"] = "Per Row"
 L["PET_BAR"] = "Pet Bar"
 L["PET_BATTLE_BAR"] = "Pet Battle Bar"
@@ -236,10 +243,14 @@ L["RESTRICTED_MODE"] = "Restricted Mode"
 L["RIGHT_DOWN"] = "Right and Down"
 L["RIGHT_UP"] = "Right and Up"
 L["RIGHT"] = "Right"
+L["ROWS"] = "Rows"
 L["SECOND_ANCHOR"] = "Second Anchor"
+L["SEPARATION"] = "Separation"
 L["SIZE_OVERRIDE_DESC"] = "If set to 0, element's size will be calculated automatically."
 L["SIZE_OVERRIDE"] = "Size Override"
 L["SIZE"] = "Size"
+L["SORT_DIR"] = "Sort Direction"
+L["SORT_METHOD"] = "Sort Method"
 L["SPACING"] = "Spacing"
 L["STANCE_BAR"] = "Stance Bar"
 L["TALKING_HEAD_FRAME"] = "Talking Head Frame"
@@ -248,6 +259,7 @@ L["TARGET_INFO"] = "Target Info"
 L["TEXT_FORMAT"] = "Format"
 L["TEXT_HORIZ_ALIGNMENT"] = "Horizontal Alignment"
 L["TEXT_VERT_ALIGNMENT"] = "Vertical Alignment"
+L["TIME"] = "Time"
 L["TOGGLE_ANCHORS"] = "Toggle Anchors"
 L["TOOLTIP_IDS"] = "Spell and Item IDs"
 L["TOOLTIPS"] = "Tooltips"
@@ -337,6 +349,7 @@ L["XP_BAR_PRESTIGE_LEVEL_TOOLTIP"] = "Prestige Level: |cffffffff%s|r"
 L["XP_BAR_XP_BONUS_TOOLTIP"] = "Bonus XP: |cffffffff%s|r"
 L["XP_BAR"] = "XP Bar"
 L["Y_OFFSET"] = "yOffset"
+L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
