@@ -40,6 +40,7 @@ end
 
 local function UpdateAll()
 	P:UpdateModules()
+	P:UpdateMoverConfig()
 end
 
 function E:OnInitialize()
@@ -186,7 +187,6 @@ function E:OnInitialize()
 			end
 		end
 	end
-
 	-- -> 70200.09
 	if not C.db.profile.version or C.db.profile.version < 7020009 then
 		C.db.profile.auras.ls.aura_gap = nil
@@ -206,13 +206,13 @@ function E:OnInitialize()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
 
-		E:CleanUpMoverConfig()
+		P:CleanUpMoverConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
 
-		E:CleanUpMoverConfig()
+		P:CleanUpMoverConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", UpdateAll)

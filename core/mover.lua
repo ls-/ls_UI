@@ -11,6 +11,10 @@ local GameTooltip = _G.GameTooltip
 local IsShiftKeyDown = _G.IsShiftKeyDown
 local InCombatLockdown = _G.InCombatLockdown
 
+if not _G.DevTools_Dump then
+	_G.LoadAddOn("Blizzard_DebugTools")
+end
+
 -- Mine
 local defaults = {}
 local disabledMovers = {}
@@ -101,7 +105,9 @@ local function SetPosition(self, xOffset, yOffset)
 	if self.isSimple then
 		self:Show()
 	else
-		if not E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()]) then
+		if E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()]) then
+			self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+		else
 			self.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
 		end
 	end
@@ -384,8 +390,45 @@ function E:CreateMover(object, isSimple, ...)
 	return mover
 end
 
-function E:CleanUpMoverConfig()
-	C.db.profile.movers[E.UI_LAYOUT] = self:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
+function P:CleanUpMoverConfig()
+	C.db.profile.movers[E.UI_LAYOUT] = E:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
+end
+
+function P:UpdateMoverConfig()
+	E:UpdateTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
+
+	for _, mover in next, enabledMovers do
+		local name = mover:GetName()
+		local anchor = "UIParent"
+		local p, rP, x, y
+
+		if C.db.profile.movers[E.UI_LAYOUT][name].point then
+			p, anchor, rP, x, y = unpack(C.db.profile.movers[E.UI_LAYOUT][name].point)
+			anchor = anchor or "UIParent"
+		end
+
+		if not x then
+			ResetPosition(mover)
+
+			return
+		end
+
+		mover:ClearAllPoints()
+		mover:SetPoint(p, anchor, rP, x, y)
+
+		mover.parent:ClearAllPoints()
+		mover.parent:SetPoint(p, anchor, rP, x, y)
+
+		if mover.isSimple then
+			mover:Show()
+		else
+			if E:IsEqualTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name]) then
+				mover.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+			else
+				mover.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
+			end
+		end
+	end
 end
 
 local function HideMovers()
