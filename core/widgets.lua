@@ -512,7 +512,7 @@ do
 		self.Timer:SetFontObject("LS"..height.."Font_Outline")
 	end
 
-	local function HandleCooldown(cooldown, textSize)
+	local function HandleCooldown(cooldown, textSize, textJustifyH, textJustifyV)
 		if E.OMNICC or handled[cooldown] then
 			return
 		end
@@ -528,8 +528,8 @@ do
 		timer:SetPoint("TOPLEFT", -4, 0)
 		timer:SetPoint("BOTTOMRIGHT", 4, 0)
 		timer:SetWordWrap(false)
-		timer:SetJustifyH("CENTER")
-		timer:SetJustifyV("MIDDLE")
+		timer:SetJustifyH(textJustifyH or "CENTER")
+		timer:SetJustifyV(textJustifyV or "MIDDLE")
 
 		hooksecurefunc(cooldown, "SetCooldown", SetCooldownHook)
 
@@ -541,12 +541,12 @@ do
 		return cooldown
 	end
 
-	local function CreateCooldown(parent, textSize)
+	local function CreateCooldown(parent, textSize, textJustifyH, textJustifyV)
 		local cooldown = _G.CreateFrame("Cooldown", nil, parent, "CooldownFrameTemplate")
 		cooldown:SetPoint("TOPLEFT", 1, -1)
 		cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 
-		HandleCooldown(cooldown, textSize)
+		HandleCooldown(cooldown, textSize, textJustifyH, textJustifyV)
 
 		return cooldown
 	end
