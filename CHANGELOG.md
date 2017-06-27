@@ -1,3 +1,7 @@
+## Version 70200.10
+
+- Fixed auras' movers.
+
 ## Version 70200.09
 
 - Reworked auras. Added "Buffs and Debuffs" config entry;
