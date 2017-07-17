@@ -121,7 +121,19 @@ local function Button_OnAttributeChanged(self, attr, value)
 end
 
 local function Button_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+	local quadrant = E:GetScreenQuadrant(self)
+	local p, rP = "TOPRIGHT", "BOTTOMLEFT"
+
+	if quadrant == "TOPLEFT" or quadrant == "LEFT" then
+		p, rP = "TOPLEFT", "BOTTOMRIGHT"
+	elseif quadrant == "BOTTOMRIGHT" or quadrant == "BOTTOM" then
+		p, rP = "BOTTOMRIGHT", "TOPLEFT"
+	elseif quadrant == "BOTTOMLEFT" then
+		p, rP = "BOTTOMLEFT", "TOPRIGHT"
+	end
+
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint(p, self, rP, 0, 0)
 	GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)
 
 	if self:GetAttribute("index") then
