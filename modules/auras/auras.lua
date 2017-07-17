@@ -321,7 +321,6 @@ local function CreateHeader(filter)
 	-- 	header:SetAttribute("includeWeapons", 1)
 	-- 	header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
 	-- end
-
 end
 
 function AURAS:IsInit()
