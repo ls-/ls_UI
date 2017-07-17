@@ -263,6 +263,7 @@ L["TIME"] = "Time"
 L["TOGGLE_ANCHORS"] = "Toggle Anchors"
 L["TOOLTIP_IDS"] = "Spell and Item IDs"
 L["TOOLTIPS"] = "Tooltips"
+L["TOTEMS"] = "Totems"
 L["UI_LAYOUT_DESC"] = [[Orbs: Player frame is an orb, pet and player frames use vertical bars, player frame and minimap are in the bottom section of the screen.
 
 Classic: All unit frames are rectangular and use horizontal bars, minimap is in the top right corner.]]

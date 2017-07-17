@@ -201,6 +201,102 @@ function CFG:CreateAurasPanel(order)
 			},
 			buffs = GetOptionsTable_Aura("HELPFUL", 10, L["BUFFS"]),
 			debuffs = GetOptionsTable_Aura("HARMFUL", 11, L["DEBUFFS"]),
+			totems = {
+				order = 12,
+				type = "group",
+				name = L["TOTEMS"],
+				args = {
+					reset = {
+						type = "execute",
+						order = 1,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CFG:CopySettings(D.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras[E.UI_LAYOUT].TOTEM, {point = true})
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+					spacer1 = {
+						order = 9,
+						type = "description",
+						name = "",
+					},
+					num = {
+						order = 10,
+						type = "range",
+						name = L["NUM_BUTTONS"],
+						min = 1, max = 4, step = 1,
+						disabled = function() return not AURAS:IsInit() end,
+						get = function()
+							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.num
+						end,
+						set = function(_, value)
+							C.db.profile.auras[E.UI_LAYOUT].TOTEM.num = value
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+					per_row = {
+						order = 11,
+						type = "range",
+						name = L["PER_ROW"],
+						min = 1, max = 4, step = 1,
+						disabled = function() return not AURAS:IsInit() end,
+						get = function()
+							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.per_row
+						end,
+						set = function(_, value)
+							C.db.profile.auras[E.UI_LAYOUT].TOTEM.per_row = value
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+					spacing = {
+						order = 12,
+						type = "range",
+						name = L["SPACING"],
+						min = 4, max = 24, step = 2,
+						disabled = function() return not AURAS:IsInit() end,
+						get = function()
+							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.spacing
+						end,
+						set = function(_, value)
+							C.db.profile.auras[E.UI_LAYOUT].TOTEM.spacing = value
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+					size = {
+						order = 13,
+						type = "range",
+						name = L["SIZE"],
+						min = 24, max = 64, step = 1,
+						disabled = function() return not AURAS:IsInit() end,
+						get = function()
+							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.size
+						end,
+						set = function(_, value)
+							C.db.profile.auras[E.UI_LAYOUT].TOTEM.size = value
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+					growth_dir = {
+						order = 14,
+						type = "select",
+						name = L["GROWTH_DIR"],
+						values = {
+							LEFT_DOWN = L["LEFT_DOWN"],
+							LEFT_UP = L["LEFT_UP"],
+							RIGHT_DOWN = L["RIGHT_DOWN"],
+							RIGHT_UP = L["RIGHT_UP"],
+						},
+						disabled = function() return not AURAS:IsInit() end,
+						get = function()
+							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.x_growth.."_"..C.db.profile.auras[E.UI_LAYOUT].TOTEM.y_growth
+						end,
+						set = function(_, value)
+							C.db.profile.auras[E.UI_LAYOUT].TOTEM.x_growth, C.db.profile.auras[E.UI_LAYOUT].TOTEM.y_growth = s_split("_", value)
+							AURAS:UpdateHeader("TOTEM")
+						end,
+					},
+				},
+			},
 		},
 	}
 end

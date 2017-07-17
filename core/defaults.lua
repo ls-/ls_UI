@@ -2275,6 +2275,21 @@ D.profile = {
 					y = -114,
 				},
 			},
+			TOTEM = {
+				num = 4,
+				size = 32,
+				spacing = 4,
+				x_growth = "LEFT",
+				y_growth = "DOWN",
+				per_row = 4,
+				point = {
+					p = "TOPRIGHT",
+					anchor = "UIParent",
+					rP = "TOPRIGHT",
+					x = -4,
+					y = -148,
+				},
+			},
 		},
 		traditional = {
 			HELPFUL = {
