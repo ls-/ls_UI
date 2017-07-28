@@ -5,23 +5,29 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
+-- Blizz
+local CreateFrame = _G.CreateFrame
+local GetPrestigeInfo = _G.GetPrestigeInfo
+local UnitFactionGroup = _G.UnitFactionGroup
+local UnitIsMercenary = _G.UnitIsMercenary
+local UnitIsPVP = _G.UnitIsPVP
+local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
+local UnitPrestige = _G.UnitPrestige
+
 -- Mine
 local function Override(self, _, unit)
 	if unit ~= self.unit then return end
 
 	local pvp = self.PvPIndicator
 
-	-- local status = "Horde"
-	-- local level = 0
-
 	local status
-	local level = _G.UnitPrestige(unit)
-	local factionGroup = _G.UnitFactionGroup(unit)
+	local level = UnitPrestige(unit)
+	local factionGroup = UnitFactionGroup(unit)
 
-	if _G.UnitIsPVPFreeForAll(unit) then
+	if UnitIsPVPFreeForAll(unit) then
 		status = "FFA"
-	elseif factionGroup and factionGroup ~= "Neutral" and _G.UnitIsPVP(unit) then
-		if unit == 'player' and _G.UnitIsMercenary(unit) then
+	elseif factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(unit) then
+		if unit == "player" and UnitIsMercenary(unit) then
 			if factionGroup == "Horde" then
 				factionGroup = "Alliance"
 			elseif factionGroup == "Alliance" then
@@ -32,17 +38,20 @@ local function Override(self, _, unit)
 		status = factionGroup
 	end
 
+	-- local status = "FFA"
+	-- local level = 0
+
 	if status then
 		if level > 0 and pvp.Prestige then
-			pvp:SetTexture(_G.GetPrestigeInfo(level))
+			pvp:SetTexture(GetPrestigeInfo(level))
 			pvp:SetTexCoord(0, 1, 0, 1)
 		else
 			pvp:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
-			pvp:SetTexCoord(48 / 128, 78 / 128, 1 / 64, 31 / 64)
+			pvp:SetTexCoord(102 / 256, 162 / 256, 22 / 128, 82 / 128)
 		end
 
 		pvp.Prestige:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
-		pvp.Prestige:SetTexCoord(1 / 128, 47 / 128, 1 / 64, 49 / 64)
+		pvp.Prestige:SetTexCoord(1 / 256, 101 / 256, 1 / 128, 109 / 128)
 
 		pvp:Show()
 		pvp.Prestige:Show()
@@ -85,8 +94,8 @@ local function IsExpanded(self)
 end
 
 function UF:CreatePvPIndicator(parent)
-	local holder = _G.CreateFrame("Frame", nil, parent)
-	holder:SetSize(46, 48)
+	local holder = CreateFrame("Frame", nil, parent)
+	holder:SetSize(50, 54)
 
 	holder.Expand = Expand
 	holder.Collapse = Collapse
@@ -96,8 +105,8 @@ function UF:CreatePvPIndicator(parent)
 	pvp:SetSize(30, 30)
 
 	local banner = holder:CreateTexture(nil, "ARTWORK", nil, -1)
-	banner:SetSize(46, 48)
-	banner:SetPoint("TOP", pvp, "TOP", 0, 9)
+	banner:SetSize(50, 54)
+	banner:SetPoint("TOP", pvp, "TOP", 0, 11)
 
 	pvp.Holder = holder
 	pvp.Prestige = banner

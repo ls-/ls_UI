@@ -474,7 +474,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	pvp.Holder.PostExpand = function()
 		if not frame._config.castbar.detached then
-			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 48)
+			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 52)
 		end
 	end
 
