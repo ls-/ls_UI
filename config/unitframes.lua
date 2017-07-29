@@ -92,8 +92,22 @@ local function GetOptionsTable_Health(unit, order)
 		type = "group",
 		name = L["UNIT_FRAME_HEALTH"],
 		args = {
-			color = {
+			reset = {
+				type = "execute",
 				order = 1,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].health, C.db.profile.units[E.UI_LAYOUT][unit].health, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			color = {
+				order = 10,
 				type = "group",
 				name = L["BAR_COLOR"],
 				guiInline = true,
@@ -127,7 +141,7 @@ local function GetOptionsTable_Health(unit, order)
 				},
 			},
 			text = {
-				order = 2,
+				order = 11,
 				type = "group",
 				name = L["BAR_TEXT"],
 				guiInline = true,
@@ -216,7 +230,7 @@ local function GetOptionsTable_Health(unit, order)
 				},
 			},
 			prediction = {
-				order = 3,
+				order = 12,
 				type = "group",
 				name = L["UNIT_FRAME_HEAL_PREDICTION"],
 				guiInline = true,
@@ -450,8 +464,22 @@ local function GetOptionsTable_Power(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end,
 			},
-			prediction = {
+			reset = {
+				type = "execute",
 				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].power, C.db.profile.units[E.UI_LAYOUT][unit].power, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			prediction = {
+				order = 10,
 				type = "toggle",
 				name = L["UNIT_FRAME_COST_PREDICTION"],
 				desc = L["UNIT_FRAME_COST_PREDICTION_DESC"],
@@ -464,7 +492,7 @@ local function GetOptionsTable_Power(unit, order)
 				end,
 			},
 			text = {
-				order = 10,
+				order = 11,
 				type = "group",
 				name = L["BAR_TEXT"],
 				guiInline = true,
@@ -580,8 +608,22 @@ local function GetOptionsTable_Castbar(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end
 			},
-			detached = {
+			reset = {
+				type = "execute",
 				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].castbar, C.db.profile.units[E.UI_LAYOUT][unit].castbar, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			detached = {
+				order = 10,
 				type = "toggle",
 				name = L["DETACH_FROM_FRAME"],
 				get = function()
@@ -593,7 +635,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end
 			},
 			width_override ={
-				order = 3,
+				order = 11,
 				type = "range",
 				name = L["WIDTH_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
@@ -608,7 +650,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				disabled = function() return not C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached end,
 			},
 			latency = {
-				order = 4,
+				order = 12,
 				type = "toggle",
 				name = L["UNIT_FRAME_CASTBAR_LATENCY"],
 				get = function()
@@ -620,7 +662,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end
 			},
 			icon = {
-				order = 10,
+				order = 13,
 				type = "group",
 				name = L["UNIT_FRAME_CASTBAR_ICON"],
 				guiInline = true,
@@ -676,8 +718,22 @@ local function GetOptionsTable_Name(unit, order)
 		type = "group",
 		name = L["UNIT_FRAME_NAME"],
 		args = {
-			p = {
+			reset = {
+				type = "execute",
 				order = 1,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].name, C.db.profile.units[E.UI_LAYOUT][unit].name, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			p = {
+				order = 10,
 				type = "select",
 				name = L["POINT"],
 				desc = L["POINT_DESC"],
@@ -691,7 +747,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 			},
 			anchor = {
-				order = 2,
+				order = 11,
 				type = "select",
 				name = L["ANCHOR"],
 				values = GetRegionAnchors(),
@@ -704,7 +760,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 			},
 			rP = {
-				order = 3,
+				order = 12,
 				type = "select",
 				name = L["RELATIVE_POINT"],
 				desc = L["RELATIVE_POINT_DESC"],
@@ -718,7 +774,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 			},
 			x = {
-				order = 4,
+				order = 13,
 				type = "range",
 				name = L["X_OFFSET"],
 				min = -128, max = 128, step = 1,
@@ -731,7 +787,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 			},
 			y = {
-				order = 5,
+				order = 14,
 				type = "range",
 				name = L["Y_OFFSET"],
 				min = -128, max = 128, step = 1,
@@ -744,7 +800,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 			},
 			text_p2 = {
-				order = 10,
+				order = 15,
 				type = "group",
 				name = L["SECOND_ANCHOR"],
 				guiInline = true,
@@ -851,7 +907,7 @@ local function GetOptionsTable_Name(unit, order)
 				},
 			},
 			text_tag = {
-				order = 20,
+				order = 16,
 				type = "input",
 				width = "full",
 				name = L["TEXT_FORMAT"],
@@ -888,8 +944,22 @@ local function GetOptionsTable_RaidIcon(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end
 			},
-			size = {
+			reset = {
+				type = "execute",
 				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].raid_target, C.db.profile.units[E.UI_LAYOUT][unit].raid_target, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			size = {
+				order = 10,
 				type = "range",
 				name = L["SIZE"],
 				min = 8, max = 64, step = 1,
@@ -916,7 +986,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 			},
 			rP = {
-				order = 13,
+				order = 12,
 				type = "select",
 				name = L["RELATIVE_POINT"],
 				desc = L["RELATIVE_POINT_DESC"],
@@ -930,7 +1000,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 			},
 			x = {
-				order = 14,
+				order = 13,
 				type = "range",
 				name = L["X_OFFSET"],
 				min = -128, max = 128, step = 1,
@@ -943,7 +1013,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 			},
 			y = {
-				order = 15,
+				order = 14,
 				type = "range",
 				name = L["Y_OFFSET"],
 				min = -128, max = 128, step = 1,
@@ -979,9 +1049,23 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end
 			},
-			preview = {
+			reset = {
 				type = "execute",
 				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].debuff, C.db.profile.units[E.UI_LAYOUT][unit].debuff, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			preview = {
+				type = "execute",
+				order = 10,
 				name = L["PREVIEW"],
 				func = function()
 					UF:PreviewDebuffIndicator(UF:GetUnitFrameForUnit(unit))
@@ -1078,8 +1162,22 @@ local function GetOptionsTable_Auras(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end
 			},
-			num_rows = {
+			reset = {
+				type = "execute",
 				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {point = true})
+					UF:UpdateUnitFrame(unit)
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = "",
+			},
+			num_rows = {
+				order = 10,
 				type = "range",
 				name = L["NUM_ROWS"],
 				min = 1, max = 4, step = 1,
@@ -1092,7 +1190,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 			},
 			per_row = {
-				order = 3,
+				order = 11,
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 10, step = 1,
@@ -1105,7 +1203,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 			},
 			size_override = {
-				order = 4,
+				order = 12,
 				type = "range",
 				name = L["SIZE_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
@@ -1119,7 +1217,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 			},
 			growth_dir = {
-				order = 5,
+				order = 13,
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = growth_dirs,
@@ -1132,7 +1230,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 			},
 			disable_mouse = {
-				order = 7,
+				order = 14,
 				type = "toggle",
 				name = L["DISABLE_MOUSE"],
 				desc = L["DISABLE_MOUSE_DESC"],
@@ -1144,7 +1242,7 @@ local function GetOptionsTable_Auras(unit, order)
 					UF:UpdateUnitFrame(unit)
 				end
 			},
-			spacer_1 = {
+			spacer_2 = {
 				order = 20,
 				type = "description",
 				name = "",
@@ -1834,20 +1932,34 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					type = "toggle",
 					name = L["ENABLE"],
 				},
-				x_offset = {
+				reset = {
+					type = "execute",
 					order = 2,
+					name = L["RESTORE_DEFAULTS"],
+					func = function()
+						CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].combat_feedback, C.db.profile.units[E.UI_LAYOUT][unit].combat_feedback, {point = true})
+						UF:UpdateUnitFrame(unit)
+					end,
+				},
+				spacer_1 = {
+					order = 9,
+					type = "description",
+					name = "",
+				},
+				x_offset = {
+					order = 10,
 					type = "range",
 					name = L["X_OFFSET"],
 					min = 0, max = 128, step = 1,
 				},
 				y_offset = {
-					order = 3,
+					order = 12,
 					type = "range",
 					name = L["Y_OFFSET"],
 					min = 0, max = 64, step = 1,
 				},
 				mode = {
-					order = 4,
+					order = 13,
 					type = "select",
 					name = L["UNIT_FRAME_FCF_MODE"],
 					values = fcf_modes,
@@ -1932,6 +2044,20 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 						C.db.profile.units[E.UI_LAYOUT][unit].alt_power.enabled = value
 						UF:UpdateUnitFrame(unit)
 					end,
+				},
+				reset = {
+					type = "execute",
+					order = 2,
+					name = L["RESTORE_DEFAULTS"],
+					func = function()
+						CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].alt_power, C.db.profile.units[E.UI_LAYOUT][unit].alt_power, {point = true})
+						UF:UpdateUnitFrame(unit)
+					end,
+				},
+				spacer_1 = {
+					order = 9,
+					type = "description",
+					name = "",
 				},
 				text = {
 					order = 10,
