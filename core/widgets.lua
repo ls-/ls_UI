@@ -478,8 +478,7 @@ do
 
 		if self.elapsed > 0.1 then
 			local timer = self.Timer
-
-			local time, color, abbr = E:TimeFormat(timer.duration + timer.start - GetTime(), true)
+			local time, color, abbr = E:TimeFormat(timer.expire - GetTime(), true)
 
 			if time >= 0.1 then
 				timer:SetFormattedText("%s"..abbr.."|r", color, time)
@@ -496,8 +495,10 @@ do
 		local timer = self.Timer
 
 		if start > 0 and duration > THRESHOLD then
-			timer.start = start
-			timer.duration = duration
+			local expire = start + duration
+
+			-- BUG: start value may be an incorrect number, won't be fixed
+			timer.expire = expire - GetTime() > duration and duration or expire
 			timer:Show()
 
 			self:SetScript("OnUpdate", Timer_OnUpdate)
