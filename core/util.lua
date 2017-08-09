@@ -32,10 +32,10 @@ local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
 
 -- Mine
-local SECOND_ONELETTER_ABBR = string.gsub(_G.SECOND_ONELETTER_ABBR, "[ .]", "")
-local MINUTE_ONELETTER_ABBR = string.gsub(_G.MINUTE_ONELETTER_ABBR, "[ .]", "")
-local HOUR_ONELETTER_ABBR = string.gsub(_G.HOUR_ONELETTER_ABBR, "[ .]", "")
-local DAY_ONELETTER_ABBR = string.gsub(_G.DAY_ONELETTER_ABBR, "[ .]", "")
+local DAY_ONELETTER_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
+local HOUR_ONELETTER_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
+local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
+local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
 local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 local argcheck = P.argcheck
 
@@ -192,8 +192,6 @@ function E:NumberFormat(v, mod)
 end
 
 function E:TimeFormat(v)
-	v = m_abs(v)
-
 	if v >= 86400 then
 		return Round(v / 86400), "|cffe5e5e5", DAY_ONELETTER_ABBR
 	elseif v >= 3600 then
@@ -204,10 +202,12 @@ function E:TimeFormat(v)
 		return Round(v), "|cffe5e5e5", SECOND_ONELETTER_ABBR
 	elseif v >= 10 then
 		return Round(v), "|cffffbf19", SECOND_ONELETTER_ABBR
-	elseif v >= 1 then
+	elseif v >= 5 then
 		return Round(v), "|cffe51919", SECOND_ONELETTER_ABBR
-	else
+	elseif v >= 0 then
 		return tonumber(s_format("%.1f", v)), "|cffe51919", "%.1f"
+	else
+		return 0
 	end
 end
 
