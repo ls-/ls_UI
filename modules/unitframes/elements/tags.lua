@@ -101,19 +101,28 @@ oUF.Tags.Methods["ls:color:difficulty"] = function(unit)
 end
 
 oUF.Tags.Methods["ls:color:power"] = function(unit)
-	return "|cff"..M.COLORS.POWER[UnitPowerType(unit)]:GetHEX(0.2)
+	local type, _, altR, altG, altB = UnitPowerType(unit)
+	local hex
+
+	if altR then
+		hex = E:RGBToHEX(E:AdjustColor(altR, altG, altB, 0.3))
+	else
+		hex = M.COLORS.POWER[type]:GetHEX(0.3)
+	end
+
+	return "|cff"..hex
 end
 
 oUF.Tags.Methods["ls:color:altpower"] = function()
-	return "|cff"..M.COLORS.INDIGO:GetHEX(0.2)
+	return "|cff"..M.COLORS.INDIGO:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-damage"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.2)
+	return "|cff"..M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-heal"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.2)
+	return "|cff"..M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.3)
 end
 
 ------------
@@ -251,15 +260,22 @@ oUF.Tags.Methods["ls:power:cur-color-perc"] = function(unit)
 	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
 		return ""
 	else
-		local type = UnitPowerType(unit)
+		local type, _, altR, altG, altB = UnitPowerType(unit)
 		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+		local hex
+
+		if altR then
+			hex = E:RGBToHEX(E:AdjustColor(altR, altG, altB, 0.3))
+		else
+			hex = M.COLORS.POWER[type]:GetHEX(0.3)
+		end
 
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", hex, E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.2), E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), hex, E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -287,15 +303,22 @@ oUF.Tags.Methods["ls:power:cur-color-max"] = function(unit)
 	if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
 		return ""
 	else
-		local type = UnitPowerType(unit)
+		local type, _, altR, altG, altB = UnitPowerType(unit)
 		local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)
+		local hex
+
+		if altR then
+			hex = E:RGBToHEX(E:AdjustColor(altR, altG, altB, 0.3))
+		else
+			hex = M.COLORS.POWER[type]:GetHEX(0.3)
+		end
 
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", hex, E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur, 1), M.COLORS.POWER[type]:GetHEX(0.2), E:NumberFormat(max, 1))
+			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur, 1), hex, E:NumberFormat(max, 1))
 		end
 	end
 end
@@ -368,9 +391,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.2), E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberToPerc(cur, max))
 		end
 	else
 		return ""
@@ -398,9 +421,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(cur, 1))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur, 1))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.2), E:NumberFormat(max, 1))
+			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur, 1), M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(max, 1))
 		end
 	else
 		return ""
