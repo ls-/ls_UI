@@ -1,3 +1,14 @@
+# CHANGELOG
+
+## Version 70200.11
+
+- New PvP banner artwork;
+- Customisable totem bar. See in-game config Buffs and Debuffs > Totems tab;
+- Added reset buttons for all UF elements;
+- Fixed few cooldown spiral bugs.
+
+NOTE: Totem bar is a reskin of default one. If/when Blizz devs add necessary API to do so, I'll write my own.
+
 ## Version 70200.10
 
 - Fixed auras' movers.
