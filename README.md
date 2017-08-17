@@ -14,7 +14,7 @@ Yet another UI, but this one is a bit special.
 - Unique artwork;
 - Unit frames. Supported frames: player, pet, target, target of target, focus, target of focus, and bosses;
 - Action bars, micro menu, bags, and XP bar are all customised;
-- In-game config. Use **/LSUI** command to open config panel;
+- In-game config. Use **`/LSUI`** command to open config panel;
 - And more!
 
 ## Feedback and Feature Requests
