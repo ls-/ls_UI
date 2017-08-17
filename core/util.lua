@@ -216,6 +216,8 @@ end
 -------------
 
 local adjustment_cache = {}
+local rgb_hex_cache = {}
+local hex_rgb_cache = {}
 
 -- http://marcocorvi.altervista.org/games/imgpr/rgb-hsl.htm
 local function RGBToHSL(r, g, b)
@@ -274,13 +276,28 @@ local function HSLToRGB(h, s, l)
 end
 
 local function RGBToHEX(r, g, b)
-	return s_format("%02x%02x%02x", Clamp(r) * 255, Clamp(g) * 255, Clamp(b) * 255)
+	local key = r.."-"..g.."-"..b
+
+	if rgb_hex_cache[key] then
+		return rgb_hex_cache[key]
+	end
+
+	rgb_hex_cache[key] = s_format("%02x%02x%02x", Clamp(r) * 255, Clamp(g) * 255, Clamp(b) * 255)
+
+	return rgb_hex_cache[key]
 end
 
 local function HEXToRGB(hex)
-	local rhex, ghex, bhex = tonumber(s_sub(hex, 1, 2), 16), tonumber(s_sub(hex, 3, 4), 16), tonumber(s_sub(hex, 5, 6), 16)
+	if hex_rgb_cache[hex] then
+		return unpack(hex_rgb_cache[hex])
+	end
 
-	return tonumber(s_format("%.3f", rhex / 255)), tonumber(s_format("%.3f", ghex / 255)), tonumber(s_format("%.3f", bhex / 255))
+	local r, g, b = tonumber(s_sub(hex, 1, 2), 16), tonumber(s_sub(hex, 3, 4), 16), tonumber(s_sub(hex, 5, 6), 16)
+	r, g, b = tonumber(s_format("%.3f", r / 255)), tonumber(s_format("%.3f", g / 255)), tonumber(s_format("%.3f", b / 255))
+
+	hex_rgb_cache[hex] = {r, g, b}
+
+	return r, g, b
 end
 
 local function AdjustColor(r, g, b, perc)
