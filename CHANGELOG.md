@@ -5,7 +5,8 @@
 - New PvP banner artwork;
 - Customisable totem bar. See in-game config Buffs and Debuffs > Totems tab;
 - Added reset buttons for all UF elements;
-- Fixed few cooldown spiral bugs.
+- Fixed few cooldown spiral bugs;
+- Fixed few colour tag issues.
 
 NOTE: Totem bar is a reskin of default one. If/when Blizz devs add necessary API to do so, I'll write my own.
 
