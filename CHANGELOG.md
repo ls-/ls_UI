@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 70200.12
+
+- Fixed classic layout.
+
 ## Version 70200.11
 
 - New PvP banner artwork;
