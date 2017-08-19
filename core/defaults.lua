@@ -2365,6 +2365,9 @@ D.profile = {
 
 D.char = {
 	layout = "ls", -- or traditional
+	auras = {
+		enabled = true,
+	},
 	auratracker = {
 		enabled = false,
 		locked = false,
@@ -2380,12 +2383,6 @@ D.char = {
 			ALL = {},
 		},
 	},
-	units = {
-		enabled = true,
-	},
-	minimap = {
-		enabled = true,
-	},
 	bars = {
 		enabled = true,
 		restricted = true,
@@ -2395,12 +2392,6 @@ D.char = {
 		xpbar = {
 			enabled = true,
 		},
-	},
-	auras = {
-		enabled = true,
-	},
-	tooltips = {
-		enabled = true,
 	},
 	blizzard = {
 		enabled = true,
@@ -2434,5 +2425,14 @@ D.char = {
 		vehicle = { -- VehicleSeatIndicator
 			enabled = true
 		},
+	},
+	minimap = {
+		enabled = true,
+	},
+	tooltips = {
+		enabled = true,
+	},
+	units = {
+		enabled = true,
 	},
 }
