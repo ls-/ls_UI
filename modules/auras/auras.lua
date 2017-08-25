@@ -309,18 +309,17 @@ local function CreateHeader(filter)
 		header:SetAttribute("unit", "player")
 		header:SetAttribute("template", "SecureActionButtonTemplate")
 
+		if filter == "HELPFUL" then
+			header:SetAttribute("includeWeapons", 1)
+			header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
+		end
+
 		RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")
 	end
 
 	headers[filter] = header
 
 	UpdateHeader(filter)
-
-	-- BUG: Disable till 7.3
-	-- if filter == "HELPFUL" then
-	-- 	header:SetAttribute("includeWeapons", 1)
-	-- 	header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
-	-- end
 end
 
 function AURAS:IsInit()
