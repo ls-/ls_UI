@@ -23,6 +23,7 @@ local GetXPExhaustion = _G.GetXPExhaustion
 local HasArtifactEquipped = _G.HasArtifactEquipped
 local InActiveBattlefield = _G.InActiveBattlefield
 local IsInActiveWorldPVP = _G.IsInActiveWorldPVP
+local IsShiftKeyDown = _G.SetWatchedFactionIndex
 local IsWatchingHonorAsXP = _G.IsWatchingHonorAsXP
 local IsXPUserDisabled = _G.IsXPUserDisabled
 local PetBattles_GetBreedQuality = _G.C_PetBattles.GetBreedQuality
@@ -33,6 +34,7 @@ local PetBattles_GetXP = _G.C_PetBattles.GetXP
 local PetBattles_IsInBattle = _G.C_PetBattles.IsInBattle
 local Reputation_GetFactionParagonInfo = _G.C_Reputation.GetFactionParagonInfo
 local Reputation_IsFactionParagon = _G.C_Reputation.IsFactionParagon
+local PlaySound = _G.PlaySoundKitID or _G.PlaySound
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitHonor = _G.UnitHonor
 local UnitHonorLevel = _G.UnitHonorLevel
@@ -502,65 +504,49 @@ function BARS:CreateXPBar()
 
 		-- Honour & Rep Hooks
 		-- This way I'm able to show honour and reputation bars simultaneously
-		local function WatchHonorAsXP(...)
-			local _, _, _, value = ...
-
-			if value then
-				_G.PlaySound("igMainMenuOptionCheckBoxOff")
-				_G.SetWatchingHonorAsXP(false)
-			else
-				_G.PlaySound("igMainMenuOptionCheckBoxOn")
-				_G.SetWatchingHonorAsXP(true)
-			end
-
-			UpdateXPBar()
-		end
-
-		local function InitializePVPTalentsXPBarDropDown(_, level)
-			local info = _G.UIDropDownMenu_CreateInfo()
-
-			info.isNotRadio = true
-			info.text = _G.SHOW_FACTION_ON_MAINSCREEN
-			info.checked = _G.IsWatchingHonorAsXP()
-			info.func = WatchHonorAsXP
-			_G.UIDropDownMenu_AddButton(info, level)
-			t_wipe(info)
-
-			info.notCheckable = true
-			info.text = _G.CANCEL
-			_G.UIDropDownMenu_AddButton(info, level)
-		end
-
-		local function PlayerTalentFramePVPTalentsXPBar_OnClick(self, button)
-			if button == "RightButton" then
-				_G.UIDropDownMenu_Initialize(self.DropDown, InitializePVPTalentsXPBarDropDown, "MENU")
-				_G.ToggleDropDownMenu(1, nil, self.DropDown, self, 310, 12)
-			end
-		end
-
 		local isHonorBarHooked = false
 
 		hooksecurefunc("TalentFrame_LoadUI", function()
 			if not isHonorBarHooked then
-				_G.PlayerTalentFramePVPTalents.XPBar:SetScript("OnMouseUp", PlayerTalentFramePVPTalentsXPBar_OnClick)
+				PlayerTalentFramePVPTalents.XPBar:SetScript("OnMouseUp", function()
+					if IsShiftKeyDown() then
+						if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
+							PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+							SetWatchingHonorAsXP(false)
+						else
+							PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+							SetWatchingHonorAsXP(true)
+						end
+
+						UpdateXPBar()
+					end
+				end)
+
+				PlayerTalentFramePVPTalents.XPBar:HookScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_TOP")
+					GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
+					GameTooltip:Show()
+				end)
+
+				PlayerTalentFramePVPTalents.XPBar:HookScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
 
 				isHonorBarHooked = true
 			end
 		end)
 
-		local function ReputationDetailMainScreenCheckBox_OnClick(self)
+		ReputationDetailMainScreenCheckBox:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				_G.PlaySound("igMainMenuOptionCheckBoxOn")
-				_G.SetWatchedFactionIndex(_G.GetSelectedFaction())
+				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+				SetWatchedFactionIndex(GetSelectedFaction())
 			else
-				_G.PlaySound("igMainMenuOptionCheckBoxOff")
-				_G.SetWatchedFactionIndex(0)
+				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+				SetWatchedFactionIndex(0)
 			end
 
 			UpdateXPBar()
-		end
-
-		_G.ReputationDetailMainScreenCheckBox:SetScript("OnClick", ReputationDetailMainScreenCheckBox_OnClick)
+		end)
 
 		SetXPBarStyle(config.width)
 
