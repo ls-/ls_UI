@@ -1718,7 +1718,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 	local temp = {
 		order = order,
 		type = "group",
-		childGroups = "select",
+		childGroups = "tab",
 		name = name,
 		args = {
 			copy = {
