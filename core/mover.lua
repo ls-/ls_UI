@@ -7,13 +7,10 @@ local unpack = _G.unpack
 local next = _G.next
 
 -- Blizz
-local GameTooltip = _G.GameTooltip
-local IsShiftKeyDown = _G.IsShiftKeyDown
+local CreateFrame = _G.CreateFrame
 local InCombatLockdown = _G.InCombatLockdown
-
-if not _G.DevTools_Dump then
-	_G.LoadAddOn("Blizzard_DebugTools")
-end
+local IsShiftKeyDown = _G.IsShiftKeyDown
+local SquareButton_SetIcon = _G.SquareButton_SetIcon
 
 -- Mine
 local defaults = {}
@@ -25,9 +22,9 @@ local function CalculatePosition(self)
 	local p, x, y
 
 	if moverCenterX and moverCenterY then
-		local screenWidth = _G.UIParent:GetRight()
-		local screenHeight = _G.UIParent:GetTop()
-		local screenCenterX, screenCenterY = _G.UIParent:GetCenter()
+		local screenWidth = UIParent:GetRight()
+		local screenHeight = UIParent:GetTop()
+		local screenCenterX, screenCenterY = UIParent:GetCenter()
 		local screenLeft = screenWidth / 3
 		local screenRight = screenWidth * 2 / 3
 
@@ -148,13 +145,15 @@ end
 local function Mover_OnDragStart(self)
 	if not self.isSimple and InCombatLockdown() then return end
 
-	self:StartMoving()
+	if not self.IsDragKeyDown or self:IsDragKeyDown() then
+		self:StartMoving()
 
-	if self.isSimple then
-		self.parent:ClearAllPoints()
-		self.parent:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
-	else
-		self:SetScript("OnUpdate", Mover_OnUpdate)
+		if self.isSimple then
+			self.parent:ClearAllPoints()
+			self.parent:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0)
+		else
+			self:SetScript("OnUpdate", Mover_OnUpdate)
+		end
 	end
 end
 
@@ -241,7 +240,7 @@ local MOVER_BUTTONS = {
 }
 
 local function CreateMoverButton(mover, type)
-	local button = _G.CreateFrame("Button", nil, mover, "UIPanelSquareButton")
+	local button = CreateFrame("Button", nil, mover, "UIPanelSquareButton")
 	button:SetPoint("CENTER", mover, MOVER_BUTTONS[type].anchor, 0, 0)
 	button:SetSize(10, 10)
 	button:SetScript("OnClick", MOVER_BUTTONS[type].func)
@@ -250,26 +249,35 @@ local function CreateMoverButton(mover, type)
 	button:Hide()
 	mover[type] = button
 
-	_G.SquareButton_SetIcon(button, type)
+	SquareButton_SetIcon(button, type)
 
 	E:SkinSquareButton(button)
 
 	return button
 end
 
-function E:HasMover(object)
-	local name = object:GetName().."Mover"
+function E.HasMover(_, object)
+	if type(object) == "table" then
+		object = object:GetName()
+	end
+
+	local name = object.."Mover"
+
 	return enabledMovers[name] or disabledMovers[name]
 end
 
-function E:GetMover(object)
-	return enabledMovers[object:GetName().."Mover"]
+function E.GetMover(_, object)
+	if type(object) == "table" then
+		object = object:GetName()
+	end
+
+	return enabledMovers[object.."Mover"]
 end
 
 do
 	local state = false
 
-	function E:ToggleAllMovers()
+	function E.ToggleAllMovers()
 		if InCombatLockdown() then return end
 		state = not state
 
@@ -282,8 +290,7 @@ do
 end
 
 function E:UpdateMoverSize(object, width, height)
-	local name = object:GetName().."Mover"
-	local mover = enabledMovers[name] or disabledMovers[name]
+	local mover = self:GetMover(object)
 
 	if mover then
 		mover:SetWidth(width or object:GetWidth())
@@ -291,8 +298,12 @@ function E:UpdateMoverSize(object, width, height)
 	end
 end
 
-function E:EnableMover(object)
-	local name = object:GetName().."Mover"
+function E.EnableMover(_, object)
+	if type(object) == "table" then
+		object = object:GetName()
+	end
+
+	local name = object.."Mover"
 
 	if enabledMovers[name] then return end
 
@@ -306,8 +317,12 @@ function E:EnableMover(object)
 	SetPosition(enabledMovers[name])
 end
 
-function E:DisableMover(object)
-	local name = object:GetName().."Mover"
+function E.DisableMover(_, object)
+	if type(object) == "table" then
+		object = object:GetName()
+	end
+
+	local name = object.."Mover"
 
 	if disabledMovers[name] then return end
 
@@ -321,7 +336,7 @@ function E:DisableMover(object)
 	enabledMovers[name] = nil
 end
 
-function E:CreateMover(object, isSimple, ...)
+function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
 	if not object then return end
 
 	local objectName = object:GetName()
@@ -331,7 +346,7 @@ function E:CreateMover(object, isSimple, ...)
 	local name = objectName.."Mover"
 	local iL, iR, iT, iB = ...
 
-	local mover = _G.CreateFrame("Button", name, _G.UIParent)
+	local mover = CreateFrame("Button", name, UIParent)
 	mover:SetFrameLevel(object:GetFrameLevel() + 1)
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
@@ -340,9 +355,11 @@ function E:CreateMover(object, isSimple, ...)
 	mover:SetMovable(true)
 	mover:SetToplevel(true)
 	mover:RegisterForDrag("LeftButton")
-	mover.parent = object
 	mover:SetScript("OnDragStart", Mover_OnDragStart)
 	mover:SetScript("OnDragStop", Mover_OnDragStop)
+
+	mover.IsDragKeyDown = isDragKeyDownFunc
+	mover.parent = object
 
 	if isSimple then
 		mover.isSimple = true
@@ -390,11 +407,11 @@ function E:CreateMover(object, isSimple, ...)
 	return mover
 end
 
-function P:CleanUpMoverConfig()
+function P.CleanUpMoverConfig()
 	C.db.profile.movers[E.UI_LAYOUT] = E:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 end
 
-function P:UpdateMoverConfig()
+function P.UpdateMoverConfig()
 	E:UpdateTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 
 	for _, mover in next, enabledMovers do
