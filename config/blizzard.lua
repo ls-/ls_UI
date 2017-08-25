@@ -7,6 +7,27 @@ local BLIZZARD = P:GetModule("Blizzard")
 local _G = getfenv(0)
 
 -- Mine
+local DRAG_KEYS = {
+	[1] = ALT_KEY,
+	[2] = CTRL_KEY,
+	[3] = SHIFT_KEY,
+	[4] = NONE_KEY,
+}
+
+local DRAG_KEY_VALUES = {
+	[1] = "ALT",
+	[2] = "CTRL",
+	[3] = "SHIFT",
+	[4] = "NONE",
+}
+
+local DRAG_KEY_INDICES = {
+	ALT = 1,
+	CTRL = 2,
+	SHIFT = 3,
+	NONE = 4,
+}
+
 function CFG:CreateBlizzardPanel(order)
 	C.options.args.blizzard = {
 		order = order,
@@ -277,6 +298,18 @@ function CFG:CreateBlizzardPanel(order)
 						set = function(_, value)
 							C.db.profile.blizzard.objective_tracker.height = value
 							BLIZZARD:UpdateObjectiveTracker()
+						end,
+					},
+					drag_key = {
+						order = 3,
+						type = "select",
+						name = L["DRAG_KEY"],
+						values = DRAG_KEYS,
+						get = function()
+							return DRAG_KEY_INDICES[C.db.profile.blizzard.objective_tracker.drag_key]
+						end,
+						set = function(_, value)
+							C.db.profile.blizzard.objective_tracker.drag_key = DRAG_KEY_VALUES[value]
 						end,
 					},
 				},

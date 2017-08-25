@@ -2355,6 +2355,7 @@ D.profile = {
 	blizzard = {
 		objective_tracker = { -- ObjectiveTrackerFrame
 			height = 600,
+			drag_key = "NONE"
 		},
 	},
 	movers = {
@@ -2377,6 +2378,7 @@ D.char = {
 		per_row = 12,
 		x_growth = "RIGHT",
 		y_growth = "DOWN",
+		drag_key = "NONE",
 		filter = {
 			HELPFUL = {},
 			HARMFUL = {},

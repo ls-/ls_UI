@@ -8,11 +8,32 @@ local _G = getfenv(0)
 local s_split = _G.string.split
 
 -- Mine
-local growth_dirs = {
+local GROWTH_DIRS = {
 	LEFT_DOWN = L["LEFT_DOWN"],
 	LEFT_UP = L["LEFT_UP"],
 	RIGHT_DOWN = L["RIGHT_DOWN"],
 	RIGHT_UP = L["RIGHT_UP"],
+}
+
+local DRAG_KEYS = {
+	[1] = ALT_KEY,
+	[2] = CTRL_KEY,
+	[3] = SHIFT_KEY,
+	[4] = NONE_KEY,
+}
+
+local DRAG_KEY_VALUES = {
+	[1] = "ALT",
+	[2] = "CTRL",
+	[3] = "SHIFT",
+	[4] = "NONE",
+}
+
+local DRAG_KEY_INDICES = {
+	ALT = 1,
+	CTRL = 2,
+	SHIFT = 3,
+	NONE = 4,
 }
 
 local function Update()
@@ -134,7 +155,7 @@ function CFG:CreateAuraTrackerPanel(order)
 				order = 14,
 				type = "select",
 				name = L["GROWTH_DIR"],
-				values = growth_dirs,
+				values = GROWTH_DIRS,
 				disabled = function() return not AURATRACKER:IsInit() end,
 				get = function()
 					return C.db.char.auratracker.x_growth.."_"..C.db.char.auratracker.y_growth
@@ -144,6 +165,19 @@ function CFG:CreateAuraTrackerPanel(order)
 					AURATRACKER:Update()
 				end,
 			},
+			drag_key = {
+					order = 15,
+					type = "select",
+					name = L["DRAG_KEY"],
+					values = DRAG_KEYS,
+					disabled = function() return not AURATRACKER:IsInit() end,
+					get = function()
+						return DRAG_KEY_INDICES[C.db.char.auratracker.drag_key]
+					end,
+					set = function(_, value)
+						C.db.char.auratracker.drag_key = DRAG_KEY_VALUES[value]
+					end,
+				},
 			spacer2 = {
 				order = 19,
 				type = "description",

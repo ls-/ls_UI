@@ -1,46 +1,56 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BLIZZARD = P:GetModule("Blizzard")
+local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
 
+-- Blizz
+local CreateFrame = _G.CreateFrame
+local IsAltKeyDown = _G.IsAltKeyDown
+local IsControlKeyDown = _G.IsControlKeyDown
+local IsShiftKeyDown = _G.IsShiftKeyDown
+
 -- Mine
 local isInit = false
+local header
 
-function BLIZZARD:HasObjectiveTracker()
+function MODULE.HasObjectiveTracker()
 	return isInit
 end
 
-function BLIZZARD:SetUpObjectiveTracker()
+function MODULE.SetUpObjectiveTracker()
 	if not isInit and C.db.char.blizzard.objective_tracker.enabled then
-		local header = _G.CreateFrame("Frame", "LSOTFrameHolder", _G.UIParent)
+		header = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
 		header:SetFrameStrata("LOW")
-		header:SetFrameLevel(_G.ObjectiveTrackerFrame:GetFrameLevel() + 1)
+		header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
 		header:SetSize(229, 25)
 		header:SetPoint("TOPRIGHT", -192, -192)
-		E:CreateMover(header, true, -4, 18, 4, -4)
+		E:CreateMover(header, true, function()
+			return C.db.profile.blizzard.objective_tracker.drag_key == "NONE"
+				or C.db.profile.blizzard.objective_tracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
+		end, -4, 18, 4, -4)
 
-		_G.ObjectiveTrackerFrame:SetMovable(true)
-		_G.ObjectiveTrackerFrame:SetUserPlaced(true)
-		_G.ObjectiveTrackerFrame:SetParent(header)
-		_G.ObjectiveTrackerFrame:ClearAllPoints()
-		_G.ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
-		_G.ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
-			if _G.ObjectiveTrackerFrame.collapsed then
+		ObjectiveTrackerFrame:SetMovable(true)
+		ObjectiveTrackerFrame:SetUserPlaced(true)
+		ObjectiveTrackerFrame:SetParent(header)
+		ObjectiveTrackerFrame:ClearAllPoints()
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
+		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
+			if ObjectiveTrackerFrame.collapsed then
 				E:UpdateMoverSize(header, 84)
 			else
 				E:UpdateMoverSize(header)
 			end
 		end)
-		_G.ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
+		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
 			local mover = E:GetMover(header)
 
 			if mover then
 				mover:Show()
 			end
 		end)
-		_G.ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", function()
+		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", function()
 			local mover = E:GetMover(header)
 
 			if mover then
@@ -49,15 +59,11 @@ function BLIZZARD:SetUpObjectiveTracker()
 		end)
 
 		isInit = true
-
-		self.SetUpObjectiveTracker = E.NOOP
 	end
 end
 
-function BLIZZARD:UpdateObjectiveTracker()
+function MODULE.UpdateObjectiveTracker()
 	if isInit then
-		local config = C.db.profile.blizzard.objective_tracker
-
-		_G.ObjectiveTrackerFrame:SetHeight(config.height)
+		ObjectiveTrackerFrame:SetHeight(C.db.profile.blizzard.objective_tracker.height)
 	end
 end

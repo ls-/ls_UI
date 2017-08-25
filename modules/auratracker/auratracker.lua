@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local AURATRACKER = P:AddModule("AuraTracker")
+local MODULE = P:AddModule("AuraTracker")
 
 -- Lua
 local _G = getfenv(0)
@@ -9,13 +9,14 @@ local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
 
 -- Blizz
-local BUFF_MAX_DISPLAY = _G.BUFF_MAX_DISPLAY
-local DEBUFF_MAX_DISPLAY = _G.DEBUFF_MAX_DISPLAY
 local CooldownFrame_Set = _G.CooldownFrame_Set
+local CreateFrame = _G.CreateFrame
 local DebuffTypeColor = _G.DebuffTypeColor
 local GetSpellInfo = _G.GetSpellInfo
+local IsAltKeyDown = _G.IsAltKeyDown
+local IsControlKeyDown = _G.IsControlKeyDown
+local IsShiftKeyDown = _G.IsShiftKeyDown
 local UnitAura = _G.UnitAura
-local GameTooltip = _G.GameTooltip
 
 --Mine
 local isInit = false
@@ -128,16 +129,16 @@ local function Update(self)
 	end
 end
 
-function AURATRACKER:IsInit()
+function MODULE.IsInit()
 	return isInit
 end
 
-function AURATRACKER:Init()
+function MODULE.Init()
 	if not isInit and C.db.char.auratracker.enabled then
 		VerifyList("HELPFUL")
 		VerifyList("HARMFUL")
 
-		local header = _G.CreateFrame("Frame", "LSAuraTrackerHeader", _G.UIParent)
+		local header = CreateFrame("Frame", "LSAuraTrackerHeader", UIParent)
 		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
 		local label = E:CreateFontString(header, 12, nil, true)
@@ -147,9 +148,12 @@ function AURATRACKER:Init()
 		header.Text = label
 
 		header:SetSize(label:GetWidth() + 10, 22)
-		E:CreateMover(header, true)
+		E:CreateMover(header, true, function()
+			return C.db.char.auratracker.drag_key == "NONE"
+				or C.db.char.auratracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
+		end)
 
-		bar = _G.CreateFrame("Frame", nil, _G.UIParent)
+		bar = CreateFrame("Frame", nil, UIParent)
 		bar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
 		bar:SetMovable(true)
 		bar:SetClampedToScreen(true)
@@ -186,11 +190,11 @@ function AURATRACKER:Init()
 
 		isInit = true
 
-		self:Update()
+		MODULE:Update()
 	end
 end
 
-function AURATRACKER:Update()
+function MODULE.Update()
 	if isInit then
 		bar._config = C.db.char.auratracker
 
