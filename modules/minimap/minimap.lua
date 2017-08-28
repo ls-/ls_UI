@@ -1,30 +1,35 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local MINIMAP = P:AddModule("Minimap")
+local MODULE = P:AddModule("Minimap")
 
 -- Lua
 local _G = getfenv(0)
-local next = _G.next
-local unpack = _G.unpack
 local m_floor = _G.math.floor
+local next = _G.next
 local s_match = _G.string.match
+local unpack = _G.unpack
 
 -- Blizz
-local CALENDAR_EVENT_ALARM_MESSAGE = _G.CALENDAR_EVENT_ALARM_MESSAGE
-local GAMETIME_TOOLTIP_CALENDAR_INVITES = _G.GAMETIME_TOOLTIP_CALENDAR_INVITES
-local GAMETIME_TOOLTIP_TOGGLE_CALENDAR = _G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR
+local C_Timer_After = _G.C_Timer.After
 local CalendarGetDate = _G.CalendarGetDate
-local GameTooltip = _G.GameTooltip
-local GetMinimapZoneText = _G.GetMinimapZoneText
+local CalendarGetNumPendingInvites = _G.CalendarGetNumPendingInvites
+local CreateFrame = _G.CreateFrame
+local GetGameTime = _G.GetGameTime
 local GetZonePVPInfo = _G.GetZonePVPInfo
-local Minimap = _G.Minimap
+local IsAddOnLoaded = _G.IsAddOnLoaded
+local LoadAddOn = _G.LoadAddOn
 local Minimap_ZoomIn = _G.Minimap_ZoomIn
 local Minimap_ZoomOut = _G.Minimap_ZoomOut
+local RegisterStateDriver = _G.RegisterStateDriver
+local ToggleCalendar = _G.ToggleCalendar
+
+local CHAT_TYPE_INFO = _G.ChatTypeInfo
 
 -- Mine
+local isInit = false
+
 local DELAY = 337.5 -- 256 * 337.5 = 86400 = 24H
 local STEP = 0.00390625 -- 1 / 256
-local isInit = false
 
 local TEXTURES = {
 	BIG = {
@@ -145,8 +150,8 @@ local function HandleMinimapButton(button, cascade)
 		-- These aren't the dro- buttons you're looking for
 		if not icon and not (normal and pushed) then return end
 
-		local t = button == _G.GameTimeFrame and "BIG" or "SMALL"
-		local offset = button == _G.GarrisonLandingPageMinimapButton and 0 or 9
+		local t = button == GameTimeFrame and "BIG" or "SMALL"
+		local offset = button == GarrisonLandingPageMinimapButton and 0 or 9
 
 		button:SetSize(unpack(TEXTURES[t].size))
 		button:SetHitRectInsets(0, 0, 0, 0)
@@ -232,7 +237,7 @@ local function ScrollTexture(t, delay, offset)
 
 	t:SetTexCoord(t.l, t.r, 0 / 128, 128 / 128)
 
-	_G.C_Timer.After(delay, function() ScrollTexture(t, DELAY, STEP) end)
+	C_Timer_After(delay, function() ScrollTexture(t, DELAY, STEP) end)
 end
 
 local function Minimap_OnEnter(self)
@@ -262,10 +267,10 @@ local function Calendar_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
 
 	if self.pendingCalendarInvites > 0 then
-		GameTooltip:AddLine(GAMETIME_TOOLTIP_CALENDAR_INVITES)
+		GameTooltip:AddLine(L["CALENDAR_PENDING_INVITES"])
 	end
 
-	GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR)
+	GameTooltip:AddLine(L["TOGGLE_CALENDAR"])
 	GameTooltip:Show()
 end
 
@@ -280,15 +285,15 @@ local function Calendar_OnClick(self)
 		self.pendingCalendarInvites = 0
 	end
 
-	_G.ToggleCalendar()
+	ToggleCalendar()
 end
 
 local function Calendar_OnEvent(self, event, ...)
 	if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
-		local pendingCalendarInvites = _G.CalendarGetNumPendingInvites()
+		local pendingCalendarInvites = CalendarGetNumPendingInvites()
 
 		if pendingCalendarInvites > self.pendingCalendarInvites then
-			if not _G.CalendarFrame or (_G.CalendarFrame and not _G.CalendarFrame:IsShown()) then
+			if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
 				E:Blink(self.InvIndicator, nil, 0, 1)
 
 				self.pendingCalendarInvites = pendingCalendarInvites
@@ -298,9 +303,9 @@ local function Calendar_OnEvent(self, event, ...)
 		end
 	elseif event == "CALENDAR_EVENT_ALARM" then
 		local title = ...
-		local info = _G.ChatTypeInfo["SYSTEM"]
+		local info = CHAT_TYPE_INFO["SYSTEM"]
 
-		_G.DEFAULT_CHAT_FRAME:AddMessage(CALENDAR_EVENT_ALARM_MESSAGE:format(title), info.r, info.g, info.b, info.id)
+		DEFAULT_CHAT_FRAME:AddMessage(L["CALENDAR_EVENT_ALARM_MESSAGE"]:format(title), info.r, info.g, info.b, info.id)
 	end
 end
 
@@ -315,17 +320,17 @@ local function Calendar_OnUpdate(self, elapsed)
 	end
 end
 
-function MINIMAP:IsInit()
+function MODULE.IsInit()
 	return isInit
 end
 
-function MINIMAP:Init()
+function MODULE.Init()
 	if not isInit and C.db.char.minimap.enabled then
-		if not _G.IsAddOnLoaded("Blizzard_TimeManager") then
-			_G.LoadAddOn("Blizzard_TimeManager")
+		if not IsAddOnLoaded("Blizzard_TimeManager") then
+			LoadAddOn("Blizzard_TimeManager")
 		end
 
-		local holder = _G.CreateFrame("Frame", "LSMinimapHolder", _G.UIParent)
+		local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
 		holder:SetSize(332 / 2, 332 / 2)
 		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
 		E:CreateMover(holder)
@@ -341,7 +346,7 @@ function MINIMAP:Init()
 		Minimap:HookScript("OnEvent", Minimap_OnEvent)
 		Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
 
-		_G.RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
+		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
 		local border = Minimap:CreateTexture(nil, "BORDER")
 		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap")
@@ -371,21 +376,21 @@ function MINIMAP:Init()
 		end
 
 		-- Garrison
-		HandleMinimapButton(_G.GarrisonLandingPageMinimapButton)
+		HandleMinimapButton(GarrisonLandingPageMinimapButton)
 
 		-- Mail
-		local mail = HandleMinimapButton(_G.MiniMapMailFrame)
+		local mail = HandleMinimapButton(MiniMapMailFrame)
 		mail.Icon:SetPoint("TOPLEFT", 8, -8)
 		mail.Icon:SetPoint("BOTTOMRIGHT", -8, 8)
 
 		-- Queue
-		local queue = HandleMinimapButton(_G.QueueStatusMinimapButton)
+		local queue = HandleMinimapButton(QueueStatusMinimapButton)
 		queue.Background:SetTexture("")
-		_G.QueueStatusFrame:ClearAllPoints()
-		_G.QueueStatusFrame:SetPoint("BOTTOMRIGHT", queue, "TOPLEFT", 8, -8)
+		QueueStatusFrame:ClearAllPoints()
+		QueueStatusFrame:SetPoint("BOTTOMRIGHT", queue, "TOPLEFT", 8, -8)
 
 		-- Calendar
-		local calendar = HandleMinimapButton(_G.GameTimeFrame)
+		local calendar = HandleMinimapButton(GameTimeFrame)
 		calendar:SetNormalFontObject("LS16Font_Outline")
 		calendar:SetPushedTextOffset(1, -1)
 		calendar.NormalTexture:SetTexture("")
@@ -429,7 +434,7 @@ function MINIMAP:Init()
 		date:SetJustifyV("MIDDLE")
 
 		-- Zone Text
-		local zoneText = _G.MinimapZoneText
+		local zoneText = MinimapZoneText
 		zoneText:SetFontObject("LS12Font_Shadow")
 		zoneText:SetParent(Minimap)
 		zoneText:SetWidth(0)
@@ -440,7 +445,7 @@ function MINIMAP:Init()
 		Minimap.ZoneText = zoneText
 
 		-- Clock
-		local clock = _G.TimeManagerClockButton
+		local clock = TimeManagerClockButton
 		clock:SetSize(104/ 2, 56 / 2)
 		clock:SetHitRectInsets(0, 0, 0, 0)
 		clock:SetScript("OnMouseUp", nil)
@@ -451,7 +456,8 @@ function MINIMAP:Init()
 		clock:GetPushedTexture():SetBlendMode("ADD")
 		clock:GetPushedTexture():SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
 
-		local bg, ticker, glow = clock:GetRegions()
+		local bg, ticker
+		bg, ticker, glow = clock:GetRegions()
 
 		bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
 		bg:SetTexCoord(1 / 256, 105 / 256, 90 / 256, 146 / 256)
@@ -467,16 +473,16 @@ function MINIMAP:Init()
 		glow:SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
 
 		-- Compass
-		_G.MinimapCompassTexture:SetParent(Minimap)
-		_G.MinimapCompassTexture:ClearAllPoints()
-		_G.MinimapCompassTexture:SetPoint("CENTER", 0, 0)
+		MinimapCompassTexture:SetParent(Minimap)
+		MinimapCompassTexture:ClearAllPoints()
+		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 
 		-- Queue
-		_G.QueueStatusMinimapButton.Icon:SetAllPoints()
+		QueueStatusMinimapButton.Icon:SetAllPoints()
 
 		-- Misc
-		HandleMinimapButton(_G.MiniMapTracking)
-		HandleMinimapButton(_G.MiniMapVoiceChatFrame)
+		HandleMinimapButton(MiniMapTracking)
+		HandleMinimapButton(MiniMapVoiceChatFrame)
 
 		for _, child in next, {Minimap:GetChildren()} do
 			child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
@@ -494,7 +500,7 @@ function MINIMAP:Init()
 			end
 		end
 
-		local h, m = _G.GetGameTime()
+		local h, m = GetGameTime()
 		local s = (h * 60 + m) * 60
 		local mult = m_floor(s / DELAY)
 
@@ -504,11 +510,11 @@ function MINIMAP:Init()
 
 		isInit = true
 
-		self:Update()
+		MODULE:Update()
 	end
 end
 
-function MINIMAP:Update()
+function MODULE.Update()
 	if isInit then
 		local config = C.db.profile.minimap[E.UI_LAYOUT]
 

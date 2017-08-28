@@ -171,8 +171,8 @@ function E:GetScreenQuadrant(frame)
 		return "UNKNOWN"
 	end
 
-	local screenWidth = _G.UIParent:GetRight()
-	local screenHeight = _G.UIParent:GetTop()
+	local screenWidth = UIParent:GetRight()
+	local screenHeight = UIParent:GetTop()
 	local screenLeft = screenWidth / 3
 	local screenRight = screenWidth * 2 / 3
 

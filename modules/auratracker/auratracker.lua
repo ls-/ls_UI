@@ -11,12 +11,13 @@ local t_wipe = _G.table.wipe
 -- Blizz
 local CooldownFrame_Set = _G.CooldownFrame_Set
 local CreateFrame = _G.CreateFrame
-local DebuffTypeColor = _G.DebuffTypeColor
 local GetSpellInfo = _G.GetSpellInfo
 local IsAltKeyDown = _G.IsAltKeyDown
 local IsControlKeyDown = _G.IsControlKeyDown
 local IsShiftKeyDown = _G.IsShiftKeyDown
 local UnitAura = _G.UnitAura
+
+local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
 
 --Mine
 local isInit = false
@@ -105,7 +106,7 @@ local function Update(self)
 				CooldownFrame_Set(button.CD, aura.expire - aura.duration, aura.duration, true)
 
 				if button.filter == "HARMFUL" then
-					local color = DebuffTypeColor[aura.debuffType] or DebuffTypeColor.none
+					local color = DEBUFF_TYPE_COLORS[aura.debuffType] or DEBUFF_TYPE_COLORS.none
 
 					button:SetBorderColor(color.r, color.g, color.b)
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")

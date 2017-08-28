@@ -157,7 +157,7 @@ do
 
 	function CFG:OpenAuraConfig(name, data, activeTabs, inactiveTabs, updateFunc)
 		if not frame then
-			frame = _G.CreateFrame("Frame", "LSAuraConfig", _G.UIParent, "UIPanelDialogTemplate")
+			frame = _G.CreateFrame("Frame", "LSAuraConfig", UIParent, "UIPanelDialogTemplate")
 			frame:EnableMouse(true)
 			frame:SetFrameStrata("TOOLTIP")
 			frame:SetMovable(true)

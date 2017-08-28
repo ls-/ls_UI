@@ -1,27 +1,28 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BLIZZARD = P:GetModule("Blizzard")
+local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local isInit = false
 
-function BLIZZARD:HasGMFrame()
+function MODULE.HasGMFrame()
 	return isInit
 end
 
-function BLIZZARD:SetUpGMFrame()
-	if C.db.char.blizzard.gm.enabled then
-		_G.TicketStatusFrame:ClearAllPoints()
-		_G.TicketStatusFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -132, -196)
-		E:CreateMover(_G.TicketStatusFrame)
+function MODULE.SetUpGMFrame()
+	if not isInit and C.db.char.blizzard.gm.enabled then
+		TicketStatusFrame:ClearAllPoints()
+		TicketStatusFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -132, -196)
+		E:CreateMover(TicketStatusFrame)
 
-		_G.hooksecurefunc(_G.TicketStatusFrame, "SetPoint", function(self, ...)
+		hooksecurefunc(TicketStatusFrame, "SetPoint", function(self, ...)
 			local _, parent = ...
 
-			if parent == "UIParent" or parent == _G.UIParent then
+			if parent == "UIParent" or parent == UIParent then
 				local mover = E:GetMover(self)
 
 				if mover then
@@ -31,10 +32,8 @@ function BLIZZARD:SetUpGMFrame()
 			end
 		end)
 
-		_G.TicketStatusFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", 0, 0)
+		TicketStatusFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, 0)
 
 		isInit = true
-
-		self.SetUpGMFrame = E.NOOP
 	end
 end

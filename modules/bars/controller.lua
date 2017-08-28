@@ -1,11 +1,16 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BARS = P:GetModule("Bars")
+local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 local unpack = _G.unpack
-local pairs = _G.pairs
+
+-- Blizz
+local C_Timer_After = _G.C_Timer.After
+local CreateFrame = _G.CreateFrame
+local RegisterStateDriver = _G.RegisterStateDriver
 
 -- Mine
 local isInit = false
@@ -55,12 +60,12 @@ WIDGETS.ACTION_BAR = {
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
 	on_add = function ()
 		WIDGETS.ACTION_BAR.children = {
-			[1] = _G.LSMultiBarBottomLeftBar,
-			[2] = _G.LSMultiBarBottomRightBar,
-			[3] = _G.LSMultiBarLeftBar,
-			[4] = _G.LSMultiBarRightBar,
-			[5] = _G.LSPetBar,
-			[6] = _G.LSStanceBar,
+			[1] = LSMultiBarBottomLeftBar,
+			[2] = LSMultiBarBottomRightBar,
+			[3] = LSMultiBarLeftBar,
+			[4] = LSMultiBarRightBar,
+			[5] = LSPetBar,
+			[6] = LSStanceBar,
 		}
 	end,
 	attribute = {
@@ -100,7 +105,7 @@ WIDGETS.BAG = {
 		texture:SetAllPoints()
 		texture:SetSize(unpack(elements.bottom.bag.size))
 
-		local bar = _G.CreateFrame("StatusBar", nil, anim_controller.Bag)
+		local bar = CreateFrame("StatusBar", nil, anim_controller.Bag)
 		bar:SetPoint("BOTTOM", 0, 0)
 		bar:SetSize(100 / 2, 16 / 2)
 		bar:SetFrameLevel(anim_controller.Bag:GetFrameLevel() - 2)
@@ -151,11 +156,11 @@ WIDGETS.XP_BAR = {
 	children = false,
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 	on_play = function(_, newstate)
-		BARS:SetXPBarStyle(newstate == 6 and 1060 / 2 or 1492 / 2)
+		MODULE:SetXPBarStyle(newstate == 6 and 1060 / 2 or 1492 / 2)
 	end
 }
 
-function BARS:ActionBarController_AddWidget(frame, slot)
+function MODULE.ActionBarController_AddWidget(_, frame, slot)
 	if isInit then
 		if WIDGETS[slot].frame == false then
 			WIDGETS[slot].frame = frame
@@ -186,7 +191,7 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
 				and (C.db.char.bars.bags.enabled and WIDGETS["BAG"].frame or not C.db.char.bars.bags.enabled) then
-				_G.RegisterStateDriver(controller, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
+				RegisterStateDriver(controller, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 				controller.isDriverRegistered = true
 			end
@@ -194,13 +199,13 @@ function BARS:ActionBarController_AddWidget(frame, slot)
 	end
 end
 
-function BARS:IsRestricted()
+function MODULE.IsRestricted()
 	return isInit
 end
 
-function BARS:SetupActionBarController()
-	if C.db.char.bars.restricted then
-		controller = _G.CreateFrame("Frame", "LSActionBarController", _G.UIParent, "SecureHandlerStateTemplate")
+function MODULE.SetupActionBarController()
+	if not isInit and C.db.char.bars.restricted then
+		controller = CreateFrame("Frame", "LSActionBarController", UIParent, "SecureHandlerStateTemplate")
 		controller:SetSize(32, 32)
 		controller:SetPoint("BOTTOM", 0, 0)
 		controller:SetAttribute("numbuttons", 12)
@@ -212,34 +217,34 @@ function BARS:SetupActionBarController()
 			controller.Shuffle:Play()
 		end
 
-		anim_controller = _G.CreateFrame("Frame", "LSActionBarAnimController", _G.UIParent)
+		anim_controller = CreateFrame("Frame", "LSActionBarAnimController", UIParent)
 		anim_controller:SetFrameLevel(controller:GetFrameLevel())
 		anim_controller:SetAllPoints(controller)
 
 		-- These frames are used as anchors/parents for other frames, some of
 		-- which are protected, so make these secure too
-		local top = _G.CreateFrame("Frame", "$parentTop", controller, "SecureHandlerBaseTemplate")
+		local top = CreateFrame("Frame", "$parentTop", controller, "SecureHandlerBaseTemplate")
 		top:SetFrameLevel(controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
 		controller.Top = top
 		controller:SetFrameRef("top", top)
 
-		local bottom = _G.CreateFrame("Frame", "$parentBottom", controller, "SecureHandlerBaseTemplate")
+		local bottom = CreateFrame("Frame", "$parentBottom", controller, "SecureHandlerBaseTemplate")
 		bottom:SetFrameLevel(controller:GetFrameLevel() + 7)
 		bottom:SetPoint("BOTTOM", 0, 0)
 		bottom:SetSize(unpack(elements.bottom.mid.size))
 		controller.Bottom = bottom
 		controller:SetFrameRef("bottom", bottom)
 
-		local bag = _G.CreateFrame("Frame", "$parentBag", controller, "SecureHandlerBaseTemplate")
+		local bag = CreateFrame("Frame", "$parentBag", controller, "SecureHandlerBaseTemplate")
 		bag:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 290 , 0)
 		bag:SetSize(unpack(elements.bottom.bag.size))
 		controller.Bag = bag
 		controller:SetFrameRef("bag", bag)
 
 		-- These frames are used as anchor/parents for textures
-		top = _G.CreateFrame("Frame", "$parentTop", anim_controller)
+		top = CreateFrame("Frame", "$parentTop", anim_controller)
 		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
@@ -265,7 +270,7 @@ function BARS:SetupActionBarController()
 		texture:SetSize(unpack(elements.top.right.size))
 		top.Right = texture
 
-		bottom = _G.CreateFrame("Frame", "$parentBottom", anim_controller)
+		bottom = CreateFrame("Frame", "$parentBottom", anim_controller)
 		bottom:SetFrameLevel(anim_controller:GetFrameLevel() + 7)
 		bottom:SetPoint("BOTTOM", 0, 0)
 		bottom:SetSize(unpack(elements.bottom.mid.size))
@@ -291,7 +296,7 @@ function BARS:SetupActionBarController()
 		texture:SetSize(unpack(elements.bottom.right.size))
 		bottom.Right = texture
 
-		bag = _G.CreateFrame("Frame", "$parentBag", anim_controller)
+		bag = CreateFrame("Frame", "$parentBag", anim_controller)
 		bag:SetPoint("BOTTOMLEFT", anim_controller.Bottom, "BOTTOMRIGHT", 290 , 0)
 		bag:SetSize(unpack(elements.bottom.bag.size))
 		anim_controller.Bag = bag
@@ -300,33 +305,33 @@ function BARS:SetupActionBarController()
 		ag:SetScript("OnPlay", function()
 			local newstate = controller:GetAttribute("numbuttons")
 
-			for _, widget in pairs(WIDGETS) do
+			for _, widget in next, WIDGETS do
 				if widget.frame then
 					widget.frame:SetAlpha(0)
 
 					if widget.children then
-						for _, child in pairs(widget.children) do
+						for _, child in next, widget.children do
 							child:SetAlpha(0)
 						end
 					end
 				end
 			end
 
-			_G.C_Timer.After(0.02, function()
-				for _, widget in pairs(WIDGETS) do
+			C_Timer_After(0.02, function()
+				for _, widget in next, WIDGETS do
 					if widget.frame and widget.on_play then
 						widget.on_play(widget.frame, newstate)
 					end
 				end
 			end)
 
-			_G.C_Timer.After(0.25, function()
+			C_Timer_After(0.25, function()
 				anim_controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
 				anim_controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
 			end)
 		end)
 		ag:SetScript("OnFinished", function()
-			for _, widget in pairs(WIDGETS) do
+			for _, widget in next, WIDGETS do
 				if widget.frame then
 					if widget.frame:IsShown() then
 						E:FadeIn(widget.frame)
@@ -335,7 +340,7 @@ function BARS:SetupActionBarController()
 					end
 
 					if widget.children then
-						for _, child in pairs(widget.children) do
+						for _, child in next, widget.children do
 							if child:IsShown() then
 								E:FadeIn(child)
 							else
@@ -386,7 +391,7 @@ function BARS:SetupActionBarController()
 		anim:SetDuration(0.15)
 
 		-- _"childupdate-numbuttons" is executed in controller's environment
-		for i = 1, _G.NUM_ACTIONBAR_BUTTONS do
+		for i = 1, NUM_ACTIONBAR_BUTTONS do
 			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
 		end
 
@@ -413,7 +418,5 @@ function BARS:SetupActionBarController()
 		]])
 
 		isInit = true
-
-		self.SetupActionBarController = E.NOOP
 	end
 end

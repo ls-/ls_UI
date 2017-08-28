@@ -1,34 +1,38 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BLIZZARD = P:GetModule("Blizzard")
+local MODULE = P:GetModule("Blizzard")
+
+-- Lua
+local _G = getfenv(0)
+
+-- Blizz
+local CreateFrame = _G.CreateFrame
 
 -- Mine
 local isInit = false
 
-function BLIZZARD:HasAltPowerBar()
+function MODULE.HasAltPowerBar()
 	return isInit
 end
 
-function BLIZZARD:SetUpAltPowerBar()
+function MODULE.SetUpAltPowerBar()
 	if not isInit and C.db.char.blizzard.player_alt_power_bar.enabled then
-		_G.PlayerPowerBarAlt.ignoreFramePositionManager = true
-		_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
-		_G.UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Bottom"] = nil
-		_G.UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
+		PlayerPowerBarAlt.ignoreFramePositionManager = true
+		UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
+		UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Bottom"] = nil
+		UIPARENT_MANAGED_FRAME_POSITIONS["PlayerPowerBarAlt"] = nil
 
-		local holder = _G.CreateFrame("Frame", "LSPowerBarAltHolder", _G.UIParent)
+		local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
 		holder:SetSize(64, 64)
 		holder:SetPoint("BOTTOM", 0, 230)
 		E:CreateMover(holder)
 
-		_G.PlayerPowerBarAlt:SetMovable(true)
-		_G.PlayerPowerBarAlt:SetUserPlaced(true)
-		_G.PlayerPowerBarAlt:SetParent(holder)
-		_G.PlayerPowerBarAlt:ClearAllPoints()
-		_G.PlayerPowerBarAlt:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
+		PlayerPowerBarAlt:SetMovable(true)
+		PlayerPowerBarAlt:SetUserPlaced(true)
+		PlayerPowerBarAlt:SetParent(holder)
+		PlayerPowerBarAlt:ClearAllPoints()
+		PlayerPowerBarAlt:SetPoint("BOTTOM", holder, "BOTTOM", 0, 0)
 
 		isInit = true
-
-		self.SetUpAltPowerBar = E.NOOP
 	end
 end

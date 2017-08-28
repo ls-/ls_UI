@@ -1,23 +1,21 @@
 ﻿local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local AURAS = P:AddModule("Auras")
+local MODULE = P:AddModule("Auras")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 
 -- Blizz
-local MAX_TOTEMS = _G.MAX_TOTEMS
-local BuffFrame = _G.BuffFrame
 local CreateFrame = _G.CreateFrame
-local DebuffTypeColor = _G.DebuffTypeColor
-local GameTooltip = _G.GameTooltip
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetTime = _G.GetTime
 local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
 local RegisterAttributeDriver = _G.RegisterAttributeDriver
 local TemporaryEnchantFrame = _G.TemporaryEnchantFrame
-local UIParent = _G.UIParent
 local UnitAura = _G.UnitAura
+
+local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
 
 -- Mine
 local isInit = false
@@ -76,7 +74,7 @@ local function UpdateAura(button, index)
 		end
 
 		if filter == "HARMFUL" then
-			local color = DebuffTypeColor[debuffType] or DebuffTypeColor.none
+			local color = DEBUFF_TYPE_COLORS[debuffType] or DEBUFF_TYPE_COLORS.none
 
 			button:SetBorderColor(color.r, color.g, color.b)
 		else
@@ -252,7 +250,7 @@ local function UpdateHeader(filter)
 		if E:HasMover(header) then
 			E:UpdateMoverSize(header)
 		else
-			E:CreateMover(header, false, -6, 6, 6, -6)
+			E:CreateMover(header, false, nil, -6, 6, 6, -6)
 		end
 	end
 end
@@ -322,11 +320,11 @@ local function CreateHeader(filter)
 	UpdateHeader(filter)
 end
 
-function AURAS:IsInit()
+function MODULE.IsInit()
 	return isInit
 end
 
-function AURAS:Init()
+function MODULE.Init()
 	if not isInit and C.db.char.auras.enabled then
 		CreateHeader("HELPFUL")
 		CreateHeader("HARMFUL")
@@ -339,12 +337,12 @@ function AURAS:Init()
 	end
 end
 
-function AURAS:Update()
+function MODULE.Update()
 	UpdateHeader("HELPFUL")
 	UpdateHeader("HARMFUL")
 	UpdateHeader("TOTEM")
 end
 
-function AURAS:UpdateHeader(...)
+function MODULE.UpdateHeader(_, ...)
 	UpdateHeader(...)
 end

@@ -1,27 +1,28 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BLIZZARD = P:GetModule("Blizzard")
+local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local isInit = false
 
-function BLIZZARD:HasDurabilityFrame()
+function MODULE.HasDurabilityFrame()
 	return isInit
 end
 
-function BLIZZARD:SetUpDurabilityFrame()
+function MODULE.SetUpDurabilityFrame()
 	if not isInit and C.db.char.blizzard.durability.enabled then
-		_G.DurabilityFrame:ClearAllPoints()
-		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -4, -196)
-		E:CreateMover(_G.DurabilityFrame)
+		DurabilityFrame:ClearAllPoints()
+		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
+		E:CreateMover(DurabilityFrame)
 
-		_G.hooksecurefunc(_G.DurabilityFrame, "SetPoint", function(self, ...)
+		hooksecurefunc(DurabilityFrame, "SetPoint", function(self, ...)
 			local _, parent = ...
 
-			if parent == "MinimapCluster" or parent == _G.MinimapCluster then
+			if parent == "MinimapCluster" or parent == MinimapCluster then
 				local mover = E:GetMover(self)
 
 				if mover then
@@ -31,10 +32,8 @@ function BLIZZARD:SetUpDurabilityFrame()
 			end
 		end)
 
-		_G.DurabilityFrame:SetPoint("TOPRIGHT", _G.MinimapCluster, "TOPRIGHT", 0, 0)
+		DurabilityFrame:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", 0, 0)
 
 		isInit = true
-
-		self.SetUpDurabilityFrame = E.NOOP
 	end
 end

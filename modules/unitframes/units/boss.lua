@@ -13,7 +13,7 @@ function UF:HasBossFrame()
 end
 
 function UF:CreateBossHolder()
-	local holder = _G.CreateFrame("Frame", "LSBossHolder", _G.UIParent)
+	local holder = _G.CreateFrame("Frame", "LSBossHolder", UIParent)
 	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
 	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
 	E:CreateMover(holder)

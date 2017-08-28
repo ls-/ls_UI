@@ -10,7 +10,7 @@ local type = _G.type
 local unpack = _G.unpack
 
 -- Mine
-local hidden = _G.CreateFrame("Frame", nil, _G.UIParent)
+local hidden = _G.CreateFrame("Frame", nil, UIParent)
 hidden:Hide()
 E.HIDDEN_PARENT = hidden
 
@@ -288,9 +288,9 @@ E.PLAYER_SPEC_FLAGS = {
 	[4] = 0x00000008, -- 4th
 }
 
-E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
-E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
-E.SCREEN_SCALE = _G.UIParent:GetScale()
+E.SCREEN_HEIGHT = E:Round(UIParent:GetTop())
+E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
+E.SCREEN_SCALE = UIParent:GetScale()
 
 E.VER = {
 	string = _G.GetAddOnMetadata(addon, "Version")
@@ -298,9 +298,9 @@ E.VER = {
 E.VER.number = tonumber(E.VER.string:gsub("%D", ""), nil)
 
 local function UpdateScreenConstants()
-	E.SCREEN_HEIGHT = E:Round(_G.UIParent:GetTop())
-	E.SCREEN_WIDTH = E:Round(_G.UIParent:GetRight())
-	E.SCREEN_SCALE = _G.UIParent:GetScale()
+	E.SCREEN_HEIGHT = E:Round(UIParent:GetTop())
+	E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
+	E.SCREEN_SCALE = UIParent:GetScale()
 end
 
 E.NAME_REALM = _G.UnitName("player") .. " - " .. _G.GetRealmName()

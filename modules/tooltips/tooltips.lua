@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local TOOLTIPS = P:AddModule("Tooltips")
+local MODULE = P:AddModule("Tooltips")
 
 -- Lua
 local _G = getfenv(0)
@@ -9,17 +9,11 @@ local type = _G.type
 local s_format = _G.string.format
 
 -- Blizz
-local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
 local C_ArtifactUI_GetPowerInfo = _G.C_ArtifactUI.GetPowerInfo
 local C_PetJournal_GetPetTeamAverageLevel = _G.C_PetJournal.GetPetTeamAverageLevel
 local C_Timer_After = _G.C_Timer.After
 local C_TradeSkillUI_GetRecipeReagentItemLink = _G.C_TradeSkillUI.GetRecipeReagentItemLink
 local CanInspect = _G.CanInspect
-local GameTooltip = _G.GameTooltip
-local GameTooltipStatusBar = _G.GameTooltipStatusBar
-local GameTooltipTextLeft1 = _G.GameTooltipTextLeft1
-local GameTooltipTextLeft2 = _G.GameTooltipTextLeft2
-local GameTooltipTextRight1 = _G.GameTooltipTextRight1
 local GetAuctionItemInfo = _G.GetAuctionItemInfo
 local GetBackpackCurrencyInfo = _G.GetBackpackCurrencyInfo
 local GetCurrencyListLink = _G.GetCurrencyListLink
@@ -582,11 +576,11 @@ local function MODIFIER_STATE_CHANGED(key)
 	end
 end
 
-function TOOLTIPS:IsInit()
+function MODULE.IsInit()
 	return isInit
 end
 
-function TOOLTIPS:Init()
+function MODULE:Init()
 	if not isInit and C.db.char.tooltips.enabled then
 		-- Spells
 		GameTooltip:HookScript("OnTooltipSetSpell", Tooltip_SetSpell)
@@ -726,7 +720,7 @@ function TOOLTIPS:Init()
 	end
 end
 
-function TOOLTIPS:Update()
+function MODULE.Update()
 	if isInit then
 		local config = C.db.profile.tooltips
 

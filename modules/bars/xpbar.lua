@@ -5,18 +5,26 @@ local BARS = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
-local t_wipe = _G.table.wipe
 local hooksecurefunc = _G.hooksecurefunc
+
 -- Blizz
-local MAX_PLAYER_LEVEL = _G.MAX_PLAYER_LEVEL
-local MAX_REPUTATION_REACTION = _G.MAX_REPUTATION_REACTION
-local ArtifactUI_GetEquippedArtifactInfo = _G.C_ArtifactUI.GetEquippedArtifactInfo
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
+local C_ArtifactUI_GetEquippedArtifactInfo = _G.C_ArtifactUI.GetEquippedArtifactInfo
+local C_PetBattles_GetBreedQuality = _G.C_PetBattles.GetBreedQuality
+local C_PetBattles_GetLevel = _G.C_PetBattles.GetLevel
+local C_PetBattles_GetName = _G.C_PetBattles.GetName
+local C_PetBattles_GetNumPets = _G.C_PetBattles.GetNumPets
+local C_PetBattles_GetXP = _G.C_PetBattles.GetXP
+local C_PetBattles_IsInBattle = _G.C_PetBattles.IsInBattle
+local C_Reputation_GetFactionParagonInfo = _G.C_Reputation.GetFactionParagonInfo
+local C_Reputation_IsFactionParagon = _G.C_Reputation.IsFactionParagon
+local CreateFrame = _G.CreateFrame
 local GetFriendshipReputation = _G.GetFriendshipReputation
 local GetHonorExhaustion = _G.GetHonorExhaustion
 local GetNumArtifactTraitsPurchasableFromXP = _G.MainMenuBar_GetNumArtifactTraitsPurchasableFromXP
 local GetQuestLogCompletionText = _G.GetQuestLogCompletionText
 local GetQuestLogIndexByID = _G.GetQuestLogIndexByID
+local GetSelectedFaction = _G.GetSelectedFaction
 local GetText = _G.GetText
 local GetWatchedFactionInfo = _G.GetWatchedFactionInfo
 local GetXPExhaustion = _G.GetXPExhaustion
@@ -26,15 +34,9 @@ local IsInActiveWorldPVP = _G.IsInActiveWorldPVP
 local IsShiftKeyDown = _G.SetWatchedFactionIndex
 local IsWatchingHonorAsXP = _G.IsWatchingHonorAsXP
 local IsXPUserDisabled = _G.IsXPUserDisabled
-local PetBattles_GetBreedQuality = _G.C_PetBattles.GetBreedQuality
-local PetBattles_GetLevel = _G.C_PetBattles.GetLevel
-local PetBattles_GetName = _G.C_PetBattles.GetName
-local PetBattles_GetNumPets = _G.C_PetBattles.GetNumPets
-local PetBattles_GetXP = _G.C_PetBattles.GetXP
-local PetBattles_IsInBattle = _G.C_PetBattles.IsInBattle
-local Reputation_GetFactionParagonInfo = _G.C_Reputation.GetFactionParagonInfo
-local Reputation_IsFactionParagon = _G.C_Reputation.IsFactionParagon
 local PlaySound = _G.PlaySoundKitID or _G.PlaySound
+local SetWatchedFactionIndex = _G.SetWatchedFactionIndex
+local SetWatchingHonorAsXP = _G.SetWatchingHonorAsXP
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitHonor = _G.UnitHonor
 local UnitHonorLevel = _G.UnitHonorLevel
@@ -95,17 +97,17 @@ local LAYOUT = {
 local function UpdateXPBar()
 	local index = 0
 
-	if PetBattles_IsInBattle() then
+	if C_PetBattles_IsInBattle() then
 		for i = 1, 3 do
-			if i < PetBattles_GetNumPets(1) then
-				local level = PetBattles_GetLevel(1, i)
+			if i < C_PetBattles_GetNumPets(1) then
+				local level = C_PetBattles_GetLevel(1, i)
 
 				if level and level < 25 then
 					index = index + 1
 
-					local name = PetBattles_GetName(1, i)
-					local rarity = PetBattles_GetBreedQuality(1, i)
-					local cur, max = PetBattles_GetXP(1, i)
+					local name = C_PetBattles_GetName(1, i)
+					local rarity = C_PetBattles_GetBreedQuality(1, i)
+					local cur, max = C_PetBattles_GetXP(1, i)
 					local r, g, b = M.COLORS.XP:GetRGB()
 					local hex = M.COLORS.XP:GetHEX(0.2)
 
@@ -129,7 +131,7 @@ local function UpdateXPBar()
 		if HasArtifactEquipped() then
 			index = index + 1
 
-			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = ArtifactUI_GetEquippedArtifactInfo()
+			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI_GetEquippedArtifactInfo()
 			local points, cur, max = GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
 			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
 			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
@@ -241,10 +243,10 @@ local function UpdateXPBar()
 				if standing ~= MAX_REPUTATION_REACTION then
 					max, cur = repMax - repMin, repCur - repMin
 				else
-					isParagon = Reputation_IsFactionParagon(factionID)
+					isParagon = C_Reputation_IsFactionParagon(factionID)
 
 					if isParagon then
-						cur, max, rewardQuestID, hasRewardPending = Reputation_GetFactionParagonInfo(factionID)
+						cur, max, rewardQuestID, hasRewardPending = C_Reputation_GetFactionParagonInfo(factionID)
 						cur = cur % max
 						repTextLevel = repTextLevel.."+"
 
@@ -330,8 +332,6 @@ local function UpdateXPBar()
 	end
 end
 
--- default width = 1492 / 2, short width = 1060 / 2
--- I'll expand it later
 local function SetXPBarStyle(width)
 	LAYOUT[1][1].size = {width, 16 / 2}
 
@@ -385,44 +385,44 @@ local function Segment_OnEnter(self)
 			p, rP, sign = "TOPLEFT", "BOTTOMLEFT", -1
 		end
 
-		_G.GameTooltip:SetOwner(self, "ANCHOR_NONE")
-		_G.GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
-		_G.GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
-		_G.GameTooltip:AddLine(self.tooltipInfo.line1.text)
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
+		GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
+		GameTooltip:AddLine(self.tooltipInfo.line1.text)
 
 		if self.tooltipInfo.line2 then
-			_G.GameTooltip:AddLine(self.tooltipInfo.line2.text)
+			GameTooltip:AddLine(self.tooltipInfo.line2.text)
 		end
 
 		if self.tooltipInfo.line3 then
-			_G.GameTooltip:AddLine(self.tooltipInfo.line3.text)
+			GameTooltip:AddLine(self.tooltipInfo.line3.text)
 		end
 
-		_G.GameTooltip:Show()
+		GameTooltip:Show()
 	end
 
 	self.Text:Show()
 end
 
 local function Segment_OnLeave(self)
-	_G.GameTooltip:Hide()
+	GameTooltip:Hide()
 
 	self.Text:Hide()
 end
 
-function BARS:SetXPBarStyle(...)
+function BARS.SetXPBarStyle(_, ...)
 	SetXPBarStyle(...)
 end
 
-function BARS:HasXPBar()
+function BARS.HasXPBar()
 	return isInit
 end
 
-function BARS:CreateXPBar()
-	if C.db.char.bars.xpbar.enabled or self:IsRestricted() then
-		local config = self:IsRestricted() and CFG or C.db.profile.bars.xpbar
+function BARS.CreateXPBar()
+	if not isInit and (C.db.char.bars.xpbar.enabled or BARS:IsRestricted()) then
+		local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
-		bar = _G.CreateFrame("Frame", "LSUIXPBar", _G.UIParent)
+		bar = CreateFrame("Frame", "LSUIXPBar", UIParent)
 		bar:SetScript("OnEvent", XPBar_OnEvent)
 		-- all
 		bar:RegisterEvent("PET_BATTLE_CLOSE")
@@ -448,11 +448,11 @@ function BARS:CreateXPBar()
 		-- rep
 		bar:RegisterEvent("UPDATE_FACTION")
 
-		local cover = _G.CreateFrame("Frame", nil, bar)
+		local cover = CreateFrame("Frame", nil, bar)
 		cover:SetAllPoints()
 		cover:SetFrameLevel(bar:GetFrameLevel() + 3)
 
-		local text_parent = _G.CreateFrame("Frame", nil, bar)
+		local text_parent = CreateFrame("Frame", nil, bar)
 		text_parent:SetAllPoints()
 		text_parent:SetFrameLevel(bar:GetFrameLevel() + 5)
 
@@ -463,7 +463,7 @@ function BARS:CreateXPBar()
 		t:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
 
 		for i = 1, MAX_BARS do
-			bar[i] = _G.CreateFrame("StatusBar", "$parentSegment"..i, bar)
+			bar[i] = CreateFrame("StatusBar", "$parentSegment"..i, bar)
 			bar[i]:SetFrameLevel(bar:GetFrameLevel() + 1)
 			bar[i]:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 			bar[i]:SetStatusBarColor(0, 0, 0, 0)
@@ -555,8 +555,8 @@ function BARS:CreateXPBar()
 
 		SetXPBarStyle(config.width)
 
-		if self:IsRestricted() then
-			self:ActionBarController_AddWidget(bar, "XP_BAR")
+		if BARS:IsRestricted() then
+			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
 		else
 			local point = config.point
 
@@ -565,15 +565,15 @@ function BARS:CreateXPBar()
 			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
 		end
 
-		self.CreateXPBar = E.NOOP
-
 		isInit = true
 	end
 end
 
-function BARS:UpdateXPBar()
-	local config = self:IsRestricted() and CFG or C.db.profile.bars.xpbar
+function BARS.UpdateXPBar()
+	if isInit then
+		local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
-	self:SetXPBarStyle(config.width)
-	E:UpdateMoverSize(bar)
+		SetXPBarStyle(config.width)
+		E:UpdateMoverSize(bar)
+	end
 end

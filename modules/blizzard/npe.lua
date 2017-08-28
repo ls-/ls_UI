@@ -15,10 +15,10 @@ end
 function BLIZZARD:SetUpNPE()
 	if not isInit and C.db.char.blizzard.npe.enabled then
 		E:AddOnLoadTask("Blizzard_Tutorial", function()
-			local holder = _G.CreateFrame("Frame", "NPE_TutorialInterfaceHelpHolder", _G.UIParent)
+			local holder = _G.CreateFrame("Frame", "NPE_TutorialInterfaceHelpHolder", UIParent)
 			holder:SetFrameLevel(_G.NPE_TutorialInterfaceHelp:GetFrameLevel() + 1)
 			holder:SetSize(156, 50)
-			holder:SetPoint("BOTTOM", _G.UIParent, "BOTTOM", -34, 336)
+			holder:SetPoint("BOTTOM", UIParent, "BOTTOM", -34, 336)
 			E:CreateMover(holder, true)
 
 			_G.NPE_TutorialInterfaceHelp:ClearAllPoints()

@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BARS = P:GetModule("Bars")
+local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
@@ -8,18 +8,20 @@ local next = _G.next
 local hooksecurefunc = _G.hooksecurefunc
 
 -- Blizz
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER
-local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS
-local GetTime = _G.GetTime
-local C_Timer_After = _G.C_Timer.After
-local IsContainerFiltered = _G.IsContainerFiltered
-local GameTooltip = _G.GameTooltip
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-local GetMoneyString = _G.GetMoneyString
-local GetMoney = _G.GetMoney
-local GetCurrencyInfo = _G.GetCurrencyInfo
+local C_Timer_After = _G.C_Timer.After
+local CreateFrame = _G.CreateFrame
 local GetBackpackCurrencyInfo = _G.GetBackpackCurrencyInfo
-local MainMenuBarBackpackButton = _G.MainMenuBarBackpackButton
+local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetCurrencyInfo = _G.GetCurrencyInfo
+local GetMoney = _G.GetMoney
+local GetMoneyString = _G.GetMoneyString
+local GetTime = _G.GetTime
+local InCombatLockdown = _G.InCombatLockdown
+local IsContainerFiltered = _G.IsContainerFiltered
+local ToggleAllBags = _G.ToggleAllBags
+local UpdateChecked = _G.BackpackButton_UpdateChecked
 
 -- Mine
 local isInit = false
@@ -29,7 +31,7 @@ local CURRENCY_TEMPLATE = "%s |T%s:0|t"
 local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
 
 local BAGS = {
-	MainMenuBarBackpackButton,
+	_G.MainMenuBarBackpackButton,
 	_G.CharacterBag0Slot,
 	_G.CharacterBag1Slot,
 	_G.CharacterBag2Slot,
@@ -62,10 +64,10 @@ local function GetBagUsageInfo()
 	local free, total = 0, 0
 
 	for i = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-		local slots, bagType = _G.GetContainerNumFreeSlots(i)
+		local slots, bagType = GetContainerNumFreeSlots(i)
 
 		if bagType == 0 then
-			free, total = free + slots, total + _G.GetContainerNumSlots(i)
+			free, total = free + slots, total + GetContainerNumSlots(i)
 		end
 	end
 
@@ -120,8 +122,8 @@ end
 
 local function BackpackButton_OnClick(self, button)
 	if button == "RightButton" then
-		if not _G.InCombatLockdown() then
-			if _G.CharacterBag0Slot:IsShown() then
+		if not InCombatLockdown() then
+			if CharacterBag0Slot:IsShown() then
 				for i = 3, 0, -1 do
 					_G["CharacterBag"..i.."Slot"]:Hide()
 				end
@@ -132,10 +134,10 @@ local function BackpackButton_OnClick(self, button)
 			end
 		end
 
-		_G.BackpackButton_UpdateChecked(self)
+		UpdateChecked(self)
 	else
-		_G.ToggleAllBags()
-		_G.BackpackButton_UpdateChecked(self)
+		ToggleAllBags()
+		UpdateChecked(self)
 	end
 end
 
@@ -157,28 +159,28 @@ local function BackpackButton_OnEvent(self, event, ...)
 		end
 	elseif event == "INVENTORY_SEARCH_UPDATE" then
 		if IsContainerFiltered(BACKPACK_CONTAINER) then
-			self.searchOverlay:Show();
+			self.searchOverlay:Show()
 		else
-			self.searchOverlay:Hide();
+			self.searchOverlay:Hide()
 		end
 	end
 end
 
-function BARS:HasBags()
+function MODULE.HasBags()
 	return isInit
 end
 
-function BARS:CreateBags()
-	if C.db.char.bars.bags.enabled then
-		local config = self:IsRestricted() and CFG or C.db.profile.bars.bags
+function MODULE.CreateBags()
+	if not isInit and C.db.char.bars.bags.enabled then
+		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
 
-		bar = _G.CreateFrame("Frame", "LSBagBar", _G.UIParent, "SecureHandlerBaseTemplate")
+		bar = CreateFrame("Frame", "LSBagBar", UIParent, "SecureHandlerBaseTemplate")
 
-		self:AddBar("bags", bar)
+		MODULE:AddBar("bags", bar)
 
 		-- hacks
 		bar.Update = function(self)
-			self._config = BARS:IsRestricted() and CFG or C.db.profile.bars.bags
+			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
 
 			E:UpdateBarLayout(self)
 		end
@@ -216,8 +218,8 @@ function BARS:CreateBags()
 			self.freeSlots = free
 		end
 
-		if self:IsRestricted() then
-			self:ActionBarController_AddWidget(bar, "BAG")
+		if MODULE:IsRestricted() then
+			MODULE:ActionBarController_AddWidget(bar, "BAG")
 		else
 			local point = config.point
 
@@ -238,8 +240,6 @@ function BARS:CreateBags()
 
 		MainMenuBarBackpackButton.Count:Show()
 		MainMenuBarBackpackButton:Update()
-
-		self.CreateBags = E.NOOP
 
 		isInit = true
 	end
