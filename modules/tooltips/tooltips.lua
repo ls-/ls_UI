@@ -9,10 +9,7 @@ local type = _G.type
 local s_format = _G.string.format
 
 -- Blizz
-local FACTION_ALLIANCE = _G.FACTION_ALLIANCE
-local FACTION_HORDE = _G.FACTION_HORDE
 local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
-local PVP = _G.PVP
 local C_ArtifactUI_GetPowerInfo = _G.C_ArtifactUI.GetPowerInfo
 local C_PetJournal_GetPetTeamAverageLevel = _G.C_PetJournal.GetPetTeamAverageLevel
 local C_Timer_After = _G.C_Timer.After
@@ -63,6 +60,10 @@ local UnitRace = _G.UnitRace
 local UnitRealmRelationship = _G.UnitRealmRelationship
 
 -- Mine
+local inspectGUIDCache = {}
+local isInit = false
+local lastGUID
+
 local AFK = "[".._G.AFK.."] "
 local DND = "[".._G.DND.."] "
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE:format("|cff%s%s", "|r%s")
@@ -72,9 +73,12 @@ local SPECIALIZATION = "|cffffd100".._G.SPECIALIZATION..":|r |cff%s%s|r"
 local TARGET = "|cffffd100".._G.TARGET..":|r %s"
 local TOTAL = "|cffffd100".._G.TOTAL..":|r %d"
 local PLAYER_TEMPLATE = "|cff%s%s|r (|cff%s".._G.PLAYER.."|r)"
-local inspectGUIDCache = {}
-local isInit = false
-local lastGUID
+
+local TEXTS_TO_REMOVE = {
+	[_G.FACTION_ALLIANCE] = true,
+	[_G.FACTION_HORDE] = true,
+	[_G.PVP] = true,
+}
 
 local function AddGenericInfo(tooltip, id)
 	if not (id and C.db.profile.tooltips.id) then return end
@@ -199,7 +203,7 @@ local function CleanUp(tooltip)
 		local line = _G["GameTooltipTextLeft"..i]
 		local text = line:GetText()
 
-		if text == PVP or text == FACTION_ALLIANCE or text == FACTION_HORDE then
+		if TEXTS_TO_REMOVE[text] then
 			for j = i, num do
 				local curLine = _G["GameTooltipTextLeft"..j]
 				local nextLine = _G["GameTooltipTextLeft"..(j + 1)]
