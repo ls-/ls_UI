@@ -3,6 +3,7 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 
 -- Mine
 -- These rely on Blizz strings
@@ -25,7 +26,7 @@ L["FEATURE_NOT_AVAILBLE_NEUTRAL"] = _G.FEATURE_NOT_AVAILBLE_PANDAREN
 L["FOREIGN_SERVER_LABEL"] = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
 L["GENERAL"] = _G.GENERAL_LABEL
 L["HEALER_GREEN"] = "|cff2eac34".._G.HEALER.."|r"
-L["HIDE"] =_G.HIDE
+L["HIDE"] = _G.HIDE
 L["HONOR"] = _G.HONOR
 L["LFG_CALL_TO_ARMS"] = _G.LFG_CALL_TO_ARMS
 L["LS_UI"] = "ls: |cff1a9fc0UI|r"
@@ -116,8 +117,8 @@ L["COLOR_DISCONNECTED"] = "Disconnected"
 L["COLOR_REACTION"] = "Reaction"
 L["COLOR_TAPPED"] = "Tapped"
 L["COMMAND_BAR"] = "Command Bar"
-L["COPY_FROM"] ="Copy From"
-L["COPY_FROM_DESC"] ="Select a unit to copy settings from."
+L["COPY_FROM"] = "Copy From"
+L["COPY_FROM_DESC"] = "Select a unit to copy settings from."
 L["DAILY_QUEST_RESET_TIME"] = "Daily Quest Reset Time: |cffffffff%s|r"
 L["DAMAGE_ABSORB_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
