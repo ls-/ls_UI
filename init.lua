@@ -6,7 +6,9 @@ local type = _G.type
 local next = _G.next
 
 -- Mine
-local E = _G.LibStub("AceAddon-3.0"):NewAddon(name) -- engine
+local LibStub = _G.LibStub
+
+local E = LibStub("AceAddon-3.0"):NewAddon(name) -- engine
 local C, D, M, L, P = {}, {}, {}, {}, {} -- config, defaults, media, locales, private
 ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
 
@@ -45,76 +47,76 @@ local function UpdateAll()
 	P:UpdateMoverConfig()
 end
 
-function E:OnInitialize()
-	C.db = _G.LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
-	_G.LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
+function E.OnInitialize()
+	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
+	LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
 
 	-- layout type change shouldn't affect anything after SVs are loaded
 	E.UI_LAYOUT = C.db.char.layout
 
 	-- -> 70200.07
 	-- old config conversion
-	if _G.LS_UI_CONFIG then
-		_G.LS_UI_CONFIG.version = nil
+	if LS_UI_CONFIG then
+		LS_UI_CONFIG.version = nil
 
-		self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG, D.char), C.db.char)
+		E:CopyTable(ConvertConfig(LS_UI_CONFIG, D.char), C.db.char)
 
-		if _G.LS_UI_CONFIG.auras then
-			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.auras, D.profile.auras.ls), C.db.profile.auras.ls)
+		if LS_UI_CONFIG.auras then
+			E:CopyTable(ConvertConfig(LS_UI_CONFIG.auras, D.profile.auras.ls), C.db.profile.auras.ls)
 
-			_G.LS_UI_CONFIG.auras = nil
+			LS_UI_CONFIG.auras = nil
 		end
 
-		if _G.LS_UI_CONFIG.units then
-			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.units, D.profile.units.ls), C.db.profile.units.ls)
+		if LS_UI_CONFIG.units then
+			E:CopyTable(ConvertConfig(LS_UI_CONFIG.units, D.profile.units.ls), C.db.profile.units.ls)
 
-			_G.LS_UI_CONFIG.units = nil
+			LS_UI_CONFIG.units = nil
 		end
 
-		if _G.LS_UI_CONFIG.minimap then
-			self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG.minimap, D.profile.minimap.ls), C.db.profile.minimap.ls)
+		if LS_UI_CONFIG.minimap then
+			E:CopyTable(ConvertConfig(LS_UI_CONFIG.minimap, D.profile.minimap.ls), C.db.profile.minimap.ls)
 
-			_G.LS_UI_CONFIG.minimap = nil
+			LS_UI_CONFIG.minimap = nil
 		end
 
-		if _G.LS_UI_CONFIG.movers then
-			_G.LS_UI_CONFIG.movers.LSPetFrameMover = nil
-			_G.LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
-			_G.LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
+		if LS_UI_CONFIG.movers then
+			LS_UI_CONFIG.movers.LSPetFrameMover = nil
+			LS_UI_CONFIG.movers.LSFocusTargetFrameMover = nil
+			LS_UI_CONFIG.movers.LSTargetTargetFrameMover = nil
 
-			self:CopyTable(_G.LS_UI_CONFIG.movers, C.db.profile.movers.ls)
+			E:CopyTable(LS_UI_CONFIG.movers, C.db.profile.movers.ls)
 
-			_G.LS_UI_CONFIG.movers = nil
+			LS_UI_CONFIG.movers = nil
 		end
 
-		if _G.LS_UI_CONFIG.auratracker then
-			if _G.LS_UI_CONFIG.auratracker.HELPFUL then
-				self:CopyTable(_G.LS_UI_CONFIG.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
+		if LS_UI_CONFIG.auratracker then
+			if LS_UI_CONFIG.auratracker.HELPFUL then
+				E:CopyTable(LS_UI_CONFIG.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
 
 				for k in next, C.db.char.auratracker.filter.HELPFUL do
 					C.db.char.auratracker.filter.HELPFUL[k] = true
 				end
 			end
 
-			if _G.LS_UI_CONFIG.auratracker.HARMFUL then
-				self:CopyTable(_G.LS_UI_CONFIG.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
+			if LS_UI_CONFIG.auratracker.HARMFUL then
+				E:CopyTable(LS_UI_CONFIG.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
 
 				for k in next, C.db.char.auratracker.filter.HARMFUL do
 					C.db.char.auratracker.filter.HARMFUL[k] = true
 				end
 			end
 
-			_G.LS_UI_CONFIG.auratracker = nil
+			LS_UI_CONFIG.auratracker = nil
 		end
 
-		self:CopyTable(ConvertConfig(_G.LS_UI_CONFIG, D.profile), C.db.profile)
+		E:CopyTable(ConvertConfig(LS_UI_CONFIG, D.profile), C.db.profile)
 	end
 
 	-- -> 70200.08
 	if not C.db.profile.version or C.db.profile.version < 7020008 then
 		if C.db.profile.auratracker then
 			if C.db.profile.auratracker.HELPFUL then
-				self:CopyTable(C.db.profile.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
+				E:CopyTable(C.db.profile.auratracker.HELPFUL, C.db.char.auratracker.filter.HELPFUL)
 
 				for k in next, C.db.char.auratracker.filter.HELPFUL do
 					C.db.char.auratracker.filter.HELPFUL[k] = true
@@ -122,7 +124,7 @@ function E:OnInitialize()
 			end
 
 			if C.db.profile.auratracker.HARMFUL then
-				self:CopyTable(C.db.profile.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
+				E:CopyTable(C.db.profile.auratracker.HARMFUL, C.db.char.auratracker.filter.HARMFUL)
 
 				for k in next, C.db.char.auratracker.filter.HARMFUL do
 					C.db.char.auratracker.filter.HARMFUL[k] = true
@@ -165,7 +167,7 @@ function E:OnInitialize()
 			if v.auras then
 				v.auras.show_boss = nil
 				v.auras.show_mount = nil
-				v.auras.show_selfcast = nil
+				v.auras.show_Ecast = nil
 				v.auras.show_selfcast_permanent = nil
 				v.auras.show_blizzard = nil
 				v.auras.show_player = nil
@@ -221,7 +223,7 @@ function E:OnInitialize()
 	C.db:RegisterCallback("OnProfileCopied", UpdateAll)
 	C.db:RegisterCallback("OnProfileReset", UpdateAll)
 
-	self:RegisterEvent("PLAYER_LOGIN", function()
+	E:RegisterEvent("PLAYER_LOGIN", function()
 		E:UpdateConstants()
 
 		P:InitModules()

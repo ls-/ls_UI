@@ -1,37 +1,41 @@
 local addonName, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local CFG = P:AddModule("Config")
+local MODULE = P:AddModule("Config")
 
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_insert = _G.table.insert
+local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local type = _G.type
 
+-- Blizz
+local CreateFrame = _G.CreateFrame
+local FauxScrollFrame_GetOffset = _G.FauxScrollFrame_GetOffset
+local FauxScrollFrame_OnVerticalScroll = _G.FauxScrollFrame_OnVerticalScroll
+local FauxScrollFrame_SetOffset = _G.FauxScrollFrame_SetOffset
+local FauxScrollFrame_Update = _G.FauxScrollFrame_Update
+local GameTooltip = _G.GameTooltip
+local GetSpellInfo = _G.GetSpellInfo
+local GetSpellLink = _G.GetSpellLink
+local InCombatLockdown = _G.InCombatLockdown
+local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory
+local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show
+local PanelTemplates_DisableTab = _G.PanelTemplates_DisableTab
+local PanelTemplates_EnableTab = _G.PanelTemplates_EnableTab
+local PanelTemplates_SetNumTabs = _G.PanelTemplates_SetNumTabs
+local PanelTemplates_SetTab = _G.PanelTemplates_SetTab
+local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
+local ReloadUI = _G.ReloadUI
+
 -- Mine
-local AceConfig = _G.LibStub("AceConfig-3.0")
-local AceConfigDialog = _G.LibStub("AceConfigDialog-3.0")
+local LibStub = _G.LibStub
+local AceConfig = LibStub("AceConfig-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 do
-	-- Lua
-	local t_insert = _G.table.insert
-	local t_sort = _G.table.sort
-
-	-- Blizz
-	local FauxScrollFrame_GetOffset = _G.FauxScrollFrame_GetOffset
-	local FauxScrollFrame_OnVerticalScroll = _G.FauxScrollFrame_OnVerticalScroll
-	local FauxScrollFrame_SetOffset = _G.FauxScrollFrame_SetOffset
-	local FauxScrollFrame_Update = _G.FauxScrollFrame_Update
-	local GameTooltip = _G.GameTooltip
-	local GetSpellInfo = _G.GetSpellInfo
-	local GetSpellLink = _G.GetSpellLink
-	local PanelTemplates_DisableTab = _G.PanelTemplates_DisableTab
-	local PanelTemplates_EnableTab = _G.PanelTemplates_EnableTab
-	local PanelTemplates_SetNumTabs = _G.PanelTemplates_SetNumTabs
-	local PanelTemplates_SetTab = _G.PanelTemplates_SetTab
-	local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
-
 	-- Mine
 	local frame
 	local scrollFrame
@@ -155,9 +159,9 @@ do
 		end
 	end
 
-	function CFG:OpenAuraConfig(name, data, activeTabs, inactiveTabs, updateFunc)
+	function MODULE.OpenAuraConfig(_, name, data, activeTabs, inactiveTabs, updateFunc)
 		if not frame then
-			frame = _G.CreateFrame("Frame", "LSAuraConfig", UIParent, "UIPanelDialogTemplate")
+			frame = CreateFrame("Frame", "LSAuraConfig", UIParent, "UIPanelDialogTemplate")
 			frame:EnableMouse(true)
 			frame:SetFrameStrata("TOOLTIP")
 			frame:SetMovable(true)
@@ -184,7 +188,7 @@ do
 				frame:Hide()
 			end)
 
-			local title = _G.CreateFrame("Button", nil, frame)
+			local title = CreateFrame("Button", nil, frame)
 			title:SetPoint("TOPLEFT", 9, -6)
 			title:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -28, -24)
 			title:EnableMouse(true)
@@ -195,7 +199,7 @@ do
 				self:GetParent():StopMovingOrSizing()
 			end)
 
-			scrollFrame = _G.CreateFrame("ScrollFrame", "LSAuraList", frame, "FauxScrollFrameTemplate")
+			scrollFrame = CreateFrame("ScrollFrame", "LSAuraList", frame, "FauxScrollFrameTemplate")
 			scrollFrame:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -249,7 +253,7 @@ do
 
 			scrollFrame.Tabs = {}
 
-			local buffTab = _G.CreateFrame("Button", nil, frame, "TabButtonTemplate")
+			local buffTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
 			buffTab:SetID(1)
 			buffTab:SetText(L["BUFFS"])
 			buffTab:SetPoint("BOTTOMLEFT", scrollFrame, "TOPLEFT", 8, -2)
@@ -257,7 +261,7 @@ do
 			scrollFrame.Tabs[1] = buffTab
 			PanelTemplates_TabResize(buffTab, 0)
 
-			local debuffTab = _G.CreateFrame("Button", nil, frame, "TabButtonTemplate")
+			local debuffTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
 			debuffTab:SetID(2)
 			debuffTab:SetText(L["DEBUFFS"])
 			debuffTab:SetPoint("LEFT", buffTab, "RIGHT", 0, 0)
@@ -265,7 +269,7 @@ do
 			scrollFrame.Tabs[2] = debuffTab
 			PanelTemplates_TabResize(debuffTab, 0)
 
-			local auraTab = _G.CreateFrame("Button", nil, frame, "TabButtonTemplate")
+			local auraTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
 			auraTab:SetID(3)
 			auraTab:SetText(L["AURAS"])
 			auraTab:SetPoint("LEFT", debuffTab, "RIGHT", 0, 0)
@@ -278,7 +282,7 @@ do
 			scrollFrame._buttons = {}
 
 			for i = 1, NUM_BUTTONS do
-				local button = _G.CreateFrame("Button", nil, scrollFrame)
+				local button = CreateFrame("Button", nil, scrollFrame)
 				button:SetHeight(30)
 				button:EnableMouse(true)
 				button:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar-Blue", "ADD")
@@ -299,7 +303,7 @@ do
 				text:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 0)
 				button.Text = text
 
-				local deleteButton = _G.CreateFrame("Button", nil, button)
+				local deleteButton = CreateFrame("Button", nil, button)
 				deleteButton:SetSize(16, 16)
 				deleteButton:SetPoint("BOTTOMRIGHT", 0, 0)
 				deleteButton:SetScript("OnClick", DeleteButton_OnClick)
@@ -329,7 +333,7 @@ do
 				button:SetPoint("RIGHT", scrollFrame.ScrollBar, "LEFT", -2, -6)
 			end
 
-			local result = _G.CreateFrame("SimpleHTML", nil, frame)
+			local result = CreateFrame("SimpleHTML", nil, frame)
 			result:SetHeight(32)
 			result:SetFontObject("GameFontHighlight")
 			result:SetJustifyV("TOP")
@@ -344,7 +348,7 @@ do
 				GameTooltip:Hide()
 			end)
 
-			local editBox = _G.CreateFrame("EditBox", nil, frame, "InputBoxInstructionsTemplate")
+			local editBox = CreateFrame("EditBox", nil, frame, "InputBoxInstructionsTemplate")
 			editBox:SetHeight(22)
 			editBox:SetAutoFocus(false)
 			editBox:SetNumeric(true)
@@ -432,11 +436,11 @@ do
 			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
 			button1 = L["RELOAD_NOW"],
 			button2 = L["LATER"],
-			OnAccept = function() _G.ReloadUI() end,
+			OnAccept = function() ReloadUI() end,
 			OnCancel = function(self)
 				pendingPopups[self.data] = true
 
-				CFG:SetStatusText(L["RELOAD_UI_WARNING"])
+				MODULE:SetStatusText(L["RELOAD_UI_WARNING"])
 
 				if oldStrata then
 					self:SetFrameStrata(oldStrata)
@@ -449,7 +453,7 @@ do
 		},
 	}
 
-	function CFG:ShowStaticPopup(which)
+	function MODULE.ShowStaticPopup(_, which)
 		if not StaticPopupDialogs["LS_UI_POPUP"] then
 			StaticPopupDialogs["LS_UI_POPUP"] = {}
 		end
@@ -476,7 +480,7 @@ do
 	end
 end
 
-function CFG:SetStatusText(text)
+function MODULE.SetStatusText(_, text)
 	local frame = AceConfigDialog.OpenFrames[addonName]
 
 	if frame then
@@ -484,7 +488,7 @@ function CFG:SetStatusText(text)
 	end
 end
 
-function CFG:CopySettings(src, dest, ignoredKeys)
+function MODULE:CopySettings(src, dest, ignoredKeys)
 	for k, v in next, dest do
 		if not ignoredKeys or not ignoredKeys[k] then
 			if src[k] ~= nil then
@@ -502,11 +506,11 @@ function CFG:CopySettings(src, dest, ignoredKeys)
 	end
 end
 
-function CFG:Init()
+function MODULE.Init()
 	C.options = {
 		type = "group",
 		name = L["LS_UI"],
-		disabled = function() return _G.InCombatLockdown() end,
+		disabled = function() return InCombatLockdown() end,
 		args = {
 			toggle_anchors = {
 				order = 1,
@@ -518,7 +522,7 @@ function CFG:Init()
 				order = 2,
 				type = "execute",
 				name = L["RELOADUI"],
-				func = function() _G.ReloadUI() end,
+				func = function() ReloadUI() end,
 			},
 		},
 	}
@@ -526,41 +530,41 @@ function CFG:Init()
 	AceConfig:RegisterOptionsTable(addonName, C.options)
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
-	self:CreateGeneralPanel(3)
-	self:CreateActionBarsPanel(4)
-	self:CreateAuraTrackerPanel(5)
-	self:CreateBlizzardPanel(6)
-	self:CreateAurasPanel(7)
-	self:CreateMinimapPanel(8)
-	self:CreateTooltipsPanel(9)
-	self:CreateUnitFramesPanel(10)
+	MODULE:CreateGeneralPanel(3)
+	MODULE:CreateActionBarsPanel(4)
+	MODULE:CreateAuraTrackerPanel(5)
+	MODULE:CreateBlizzardPanel(6)
+	MODULE:CreateAurasPanel(7)
+	MODULE:CreateMinimapPanel(8)
+	MODULE:CreateTooltipsPanel(9)
+	MODULE:CreateUnitFramesPanel(10)
 
-	C.options.args.profiles = _G.LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
+	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
 	C.options.args.profiles.desc = nil
 
-	_G.LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles, C.db)
+	LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles, C.db)
 
-	local panel = _G.CreateFrame("Frame", "LSUIConfigPanel", _G.InterfaceOptionsFramePanelContainer)
+	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = L["LS_UI"]
 	panel:Hide()
 
-	local button = _G.CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
 	button:SetText(L["OPEN_CONFIG"])
 	button:SetWidth(button:GetTextWidth() + 18)
 	button:SetPoint("TOPLEFT", 16, -16)
 	button:SetScript("OnClick", function()
-		if not _G.InCombatLockdown() then
-			_G.InterfaceOptionsFrame_Show()
+		if not InCombatLockdown() then
+			InterfaceOptionsFrame_Show()
 
 			AceConfigDialog:Open(addonName)
 		end
 	end)
 
-	_G.InterfaceOptions_AddCategory(panel, true)
+	InterfaceOptions_AddCategory(panel, true)
 
 	P:AddCommand("", function()
-		if not _G.InCombatLockdown() then
+		if not InCombatLockdown() then
 			AceConfigDialog:Open(addonName)
 		end
 	end)

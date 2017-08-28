@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
+local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
 
 -- Lua
@@ -40,7 +40,7 @@ local function GetOptionsTable_Bar(barID, order, name)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
+					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
 					BARS:UpdateBar(barID)
 				end,
 			},
@@ -149,11 +149,11 @@ local function GetOptionsTable_Bar(barID, order, name)
 				if BARS:IsInit() then
 					if BARS:HasBags() then
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					else
 						if BARS:IsRestricted() then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						else
 							if value then
 								BARS:CreateBags()
@@ -186,7 +186,7 @@ local function GetOptionsTable_Bar(barID, order, name)
 	return temp
 end
 
-function CFG:CreateActionBarsPanel(order)
+function CONFIG.CreateActionBarsPanel(_, order)
 	C.options.args.bars = {
 		order = order,
 		type = "group",
@@ -205,7 +205,7 @@ function CFG:CreateActionBarsPanel(order)
 
 					if BARS:IsInit() then
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					else
 						if value then
@@ -226,7 +226,7 @@ function CFG:CreateActionBarsPanel(order)
 					C.db.char.bars.restricted = value
 
 					if BARS:IsInit() then
-						CFG:ShowStaticPopup("RELOAD_UI")
+						CONFIG:ShowStaticPopup("RELOAD_UI")
 					end
 				end
 			},
@@ -299,7 +299,7 @@ function CFG:CreateActionBarsPanel(order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars.extra, C.db.profile.bars.extra, {point = true})
+					CONFIG:CopySettings(D.profile.bars.extra, C.db.profile.bars.extra, {point = true})
 					BARS:UpdateExtraButton()
 				end,
 			},
@@ -336,7 +336,7 @@ function CFG:CreateActionBarsPanel(order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars.zone, C.db.profile.bars.zone, {point = true})
+					CONFIG:CopySettings(D.profile.bars.zone, C.db.profile.bars.zone, {point = true})
 					BARS:UpdateZoneButton()
 				end,
 			},
@@ -373,7 +373,7 @@ function CFG:CreateActionBarsPanel(order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {point = true})
+					CONFIG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {point = true})
 					BARS:UpdateVehicleExitButton()
 				end,
 			},
@@ -410,7 +410,7 @@ function CFG:CreateActionBarsPanel(order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars.micromenu.tooltip, C.db.profile.bars.micromenu.tooltip)
+					CONFIG:CopySettings(D.profile.bars.micromenu.tooltip, C.db.profile.bars.micromenu.tooltip)
 					BARS:UpdateMicroButtons()
 				end,
 			},
@@ -520,7 +520,7 @@ function CFG:CreateActionBarsPanel(order)
 					if BARS:IsInit() then
 						if BARS:HasXPBar() then
 							if not value then
-								CFG:ShowStaticPopup("RELOAD_UI")
+								CONFIG:ShowStaticPopup("RELOAD_UI")
 							end
 						else
 							if value then
@@ -535,7 +535,7 @@ function CFG:CreateActionBarsPanel(order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
+					CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
 					BARS:UpdateXPBar()
 				end,
 				disabled = function() return not BARS:HasXPBar() end,

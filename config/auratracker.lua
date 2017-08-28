@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
 local AURATRACKER = P:GetModule("AuraTracker")
+local CONFIG = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
@@ -16,10 +16,10 @@ local GROWTH_DIRS = {
 }
 
 local DRAG_KEYS = {
-	[1] = ALT_KEY,
-	[2] = CTRL_KEY,
-	[3] = SHIFT_KEY,
-	[4] = NONE_KEY,
+	[1] = _G.ALT_KEY,
+	[2] = _G.CTRL_KEY,
+	[3] = _G.SHIFT_KEY,
+	[4] = _G.NONE_KEY,
 }
 
 local DRAG_KEY_VALUES = {
@@ -40,7 +40,7 @@ local function Update()
 	AURATRACKER:Update()
 end
 
-function CFG:CreateAuraTrackerPanel(order)
+function CONFIG.CreateAuraTrackerPanel(_, order)
 	C.options.args.auratracker = {
 		order = order,
 		type = "group",
@@ -58,7 +58,7 @@ function CFG:CreateAuraTrackerPanel(order)
 
 					if AURATRACKER:IsInit() then
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					else
 						if value then
@@ -86,7 +86,7 @@ function CFG:CreateAuraTrackerPanel(order)
 				name = L["RESTORE_DEFAULTS"],
 				disabled = function() return not AURATRACKER:IsInit() end,
 				func = function()
-					CFG:CopySettings(D.char.auratracker, C.db.char.auratracker, {enabled = true, filter = true})
+					CONFIG:CopySettings(D.char.auratracker, C.db.char.auratracker, {enabled = true, filter = true})
 					AURATRACKER:Update()
 				end,
 			},
@@ -189,7 +189,7 @@ function CFG:CreateAuraTrackerPanel(order)
 				name = L["FILTER_SETTINGS"],
 				disabled = function() return not AURATRACKER:IsInit() end,
 				func = function()
-					CFG:OpenAuraConfig(L["AURA_TRACKER"], C.db.char.auratracker.filter, {1, 2}, {3}, Update)
+					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], C.db.char.auratracker.filter, {1, 2}, {3}, Update)
 				end,
 			},
 		},

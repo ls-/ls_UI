@@ -1,12 +1,12 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
+local CONFIG = P:GetModule("Config")
 local TOOLTIPS = P:GetModule("Tooltips")
 
 -- Lua
 local _G = getfenv(0)
 
-function CFG:CreateTooltipsPanel(order)
+function CONFIG.CreateTooltipsPanel(_, order)
 	C.options.args.tooltips = {
 		order = order,
 		type = "group",
@@ -28,7 +28,7 @@ function CFG:CreateTooltipsPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end

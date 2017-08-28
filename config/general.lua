@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
+local MODULE = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
@@ -11,7 +11,7 @@ local ui_layouts = {
 	traditional = L["CLASSIC"]
 }
 
-function CFG:CreateGeneralPanel(order)
+function MODULE.CreateGeneralPanel(_, order)
 	C.options.args.general = {
 		order = order,
 		type = "group",
@@ -30,7 +30,7 @@ function CFG:CreateGeneralPanel(order)
 					C.db.char.layout = value
 
 					if E.UI_LAYOUT ~= value then
-						CFG:ShowStaticPopup("RELOAD_UI")
+						MODULE:ShowStaticPopup("RELOAD_UI")
 					end
 				end,
 			},

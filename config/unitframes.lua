@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
-local UF = P:GetModule("UnitFrames")
+local CONFIG = P:GetModule("Config")
+local UNITFRAMES = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
@@ -97,8 +97,8 @@ local function GetOptionsTable_Health(unit, order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].health, C.db.profile.units[E.UI_LAYOUT][unit].health, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].health, C.db.profile.units[E.UI_LAYOUT][unit].health, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -122,7 +122,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.color.class = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					reaction = {
@@ -135,7 +135,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.color.reaction = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 				},
@@ -157,7 +157,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.point1.p = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					anchor = {
@@ -170,7 +170,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.point1.anchor = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					rP = {
@@ -184,7 +184,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.point1.rP = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					x = {
@@ -197,7 +197,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.point1.x = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					y = {
@@ -210,7 +210,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.point1.y = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					tag = {
@@ -224,7 +224,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.text.tag = value:gsub("\124\124+", "\124")
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 				},
@@ -244,7 +244,7 @@ local function GetOptionsTable_Health(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.enabled = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					absorb_text = {
@@ -264,7 +264,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.point1.p = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							anchor = {
@@ -277,7 +277,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.point1.anchor = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							rP = {
@@ -291,7 +291,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.point1.rP = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							x = {
@@ -304,7 +304,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.point1.x = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							y = {
@@ -317,7 +317,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.point1.y = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							tag = {
@@ -331,7 +331,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 						},
@@ -353,7 +353,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.point1.p = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							anchor = {
@@ -366,7 +366,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.point1.anchor = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							rP = {
@@ -380,7 +380,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.point1.rP = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							x = {
@@ -393,7 +393,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.point1.x = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							y = {
@@ -406,7 +406,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.point1.y = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							tag = {
@@ -420,7 +420,7 @@ local function GetOptionsTable_Health(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.tag = value:gsub("\124\124+", "\124")
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 						},
@@ -461,7 +461,7 @@ local function GetOptionsTable_Power(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].power.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			reset = {
@@ -469,8 +469,8 @@ local function GetOptionsTable_Power(unit, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].power, C.db.profile.units[E.UI_LAYOUT][unit].power, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].power, C.db.profile.units[E.UI_LAYOUT][unit].power, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -488,7 +488,7 @@ local function GetOptionsTable_Power(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].power.prediction.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			text = {
@@ -508,7 +508,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.point1.p = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					anchor = {
@@ -521,7 +521,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.point1.anchor = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					rP = {
@@ -535,7 +535,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.point1.rP = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					x = {
@@ -548,7 +548,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.point1.x = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					y = {
@@ -561,7 +561,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.point1.y = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					tag = {
@@ -575,7 +575,7 @@ local function GetOptionsTable_Power(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].power.text.tag = value:gsub("\124\124+", "\124")
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 				},
@@ -605,7 +605,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].castbar.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			reset = {
@@ -613,8 +613,8 @@ local function GetOptionsTable_Castbar(unit, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].castbar, C.db.profile.units[E.UI_LAYOUT][unit].castbar, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].castbar, C.db.profile.units[E.UI_LAYOUT][unit].castbar, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -631,7 +631,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			width_override ={
@@ -645,7 +645,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].castbar.width_override = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 				disabled = function() return not C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached end,
 			},
@@ -658,7 +658,7 @@ local function GetOptionsTable_Castbar(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].castbar.latency = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			icon = {
@@ -676,7 +676,7 @@ local function GetOptionsTable_Castbar(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.enabled = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end
 					},
 					position = {
@@ -689,7 +689,7 @@ local function GetOptionsTable_Castbar(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.position = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 				},
@@ -723,8 +723,8 @@ local function GetOptionsTable_Name(unit, order)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].name, C.db.profile.units[E.UI_LAYOUT][unit].name, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].name, C.db.profile.units[E.UI_LAYOUT][unit].name, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -743,7 +743,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.point1.p = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			anchor = {
@@ -756,7 +756,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.point1.anchor = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			rP = {
@@ -770,7 +770,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.point1.rP = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			x = {
@@ -783,7 +783,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.point1.x = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			y = {
@@ -796,7 +796,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.point1.y = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			text_p2 = {
@@ -816,7 +816,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					anchor = {
@@ -829,7 +829,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.point2.anchor = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -844,7 +844,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.point2.rP = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -858,7 +858,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.point2.x = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -872,7 +872,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.point2.y = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -886,7 +886,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.h_alignment = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -900,7 +900,7 @@ local function GetOptionsTable_Name(unit, order)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].name.v_alignment = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 						disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 					},
@@ -917,7 +917,7 @@ local function GetOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].name.tag = value:gsub("\124\124+", "\124")
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 		},
@@ -941,7 +941,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			reset = {
@@ -949,8 +949,8 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].raid_target, C.db.profile.units[E.UI_LAYOUT][unit].raid_target, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].raid_target, C.db.profile.units[E.UI_LAYOUT][unit].raid_target, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -968,7 +968,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.size = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			p = {
@@ -982,7 +982,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.point1.p = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			rP = {
@@ -996,7 +996,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.point1.rP = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			x = {
@@ -1009,7 +1009,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.point1.x = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			y = {
@@ -1022,7 +1022,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].raid_target.point1.y = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 		}
@@ -1046,7 +1046,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			reset = {
@@ -1054,8 +1054,8 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].debuff, C.db.profile.units[E.UI_LAYOUT][unit].debuff, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].debuff, C.db.profile.units[E.UI_LAYOUT][unit].debuff, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -1068,7 +1068,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				order = 10,
 				name = L["PREVIEW"],
 				func = function()
-					UF:PreviewDebuffIndicator(UF:GetUnitFrameForUnit(unit))
+					UNITFRAMES:PreviewDebuffIndicator(UNITFRAMES:GetUnitFrameForUnit(unit))
 				end,
 			},
 			p = {
@@ -1082,7 +1082,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1.p = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			anchor = {
@@ -1095,7 +1095,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1.anchor = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			rP = {
@@ -1109,7 +1109,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1.rP = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			x = {
@@ -1122,7 +1122,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1.x = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			y = {
@@ -1135,7 +1135,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1.y = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 		}
@@ -1159,7 +1159,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			reset = {
@@ -1167,8 +1167,8 @@ local function GetOptionsTable_Auras(unit, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -1186,7 +1186,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.rows = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			per_row = {
@@ -1199,7 +1199,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.per_row = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			size_override = {
@@ -1213,7 +1213,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.size_override = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			growth_dir = {
@@ -1226,7 +1226,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.x_growth, C.db.profile.units[E.UI_LAYOUT][unit].auras.y_growth = s_split("_", value)
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			disable_mouse = {
@@ -1239,7 +1239,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.disable_mouse = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end
 			},
 			spacer_2 = {
@@ -1259,7 +1259,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.p = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			rP = {
@@ -1273,7 +1273,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.rP = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			x = {
@@ -1286,7 +1286,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.x = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			y = {
@@ -1299,7 +1299,7 @@ local function GetOptionsTable_Auras(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.y = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			filter = {
@@ -1324,7 +1324,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.boss = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_mount = {
@@ -1337,7 +1337,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.mount = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_selfcast = {
@@ -1350,7 +1350,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_selfcast_permanent = {
@@ -1363,7 +1363,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast
@@ -1379,7 +1379,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_player_permanent = {
@@ -1392,7 +1392,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player
@@ -1414,7 +1414,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.boss = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_selfcast = {
@@ -1427,7 +1427,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_selfcast_permanent = {
@@ -1440,7 +1440,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast
@@ -1456,7 +1456,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_player_permanent = {
@@ -1469,7 +1469,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player
@@ -1485,7 +1485,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.dispellable = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 						},
@@ -1506,7 +1506,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.boss = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_mount = {
@@ -1519,7 +1519,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.mount = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_selfcast = {
@@ -1532,7 +1532,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_selfcast_permanent = {
@@ -1545,7 +1545,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast
@@ -1561,7 +1561,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							buff_player_permanent = {
@@ -1574,7 +1574,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player
@@ -1590,7 +1590,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.dispellable = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							spacer_1 = {
@@ -1609,7 +1609,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.boss = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_selfcast = {
@@ -1622,7 +1622,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_selfcast_permanent = {
@@ -1635,7 +1635,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast
@@ -1651,7 +1651,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 							},
 							debuff_player_permanent = {
@@ -1664,7 +1664,7 @@ local function GetOptionsTable_Auras(unit, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player_permanent = value
-									UF:UpdateUnitFrame(unit)
+									UNITFRAMES:UpdateUnitFrame(unit)
 								end,
 								disabled = function()
 									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player
@@ -1726,11 +1726,11 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				type = "select",
 				name = L["COPY_FROM"],
 				desc = L["COPY_FROM_DESC"],
-				values = UF:GetUnits({[unit] = true, player = true, pet = true}),
+				values = UNITFRAMES:GetUnits({[unit] = true, player = true, pet = true}),
 				get = function() end,
 				set = function(_, value)
-					CFG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value], C.db.profile.units[E.UI_LAYOUT][unit], {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value], C.db.profile.units[E.UI_LAYOUT][unit], {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			reset = {
@@ -1738,8 +1738,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit], C.db.profile.units[E.UI_LAYOUT][unit], {point = true})
-					UF:UpdateUnitFrame(unit)
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit], C.db.profile.units[E.UI_LAYOUT][unit], {point = true})
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			spacer_1 = {
@@ -1758,7 +1758,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].width = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			height = {
@@ -1771,7 +1771,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].height = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			top_inset = {
@@ -1785,7 +1785,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].insets.t_height = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			bottom_inset = {
@@ -1799,7 +1799,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].insets.b_height = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			threat = {
@@ -1811,7 +1811,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].threat.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			pvp = {
@@ -1823,7 +1823,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[E.UI_LAYOUT][unit].pvp.enabled = value
-					UF:UpdateUnitFrame(unit)
+					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
 			border = {
@@ -1842,7 +1842,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].class.player = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 					npc = {
@@ -1855,7 +1855,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 						end,
 						set = function(_, value)
 							C.db.profile.units[E.UI_LAYOUT][unit].class.npc = value
-							UF:UpdateUnitFrame(unit)
+							UNITFRAMES:UpdateUnitFrame(unit)
 						end,
 					},
 				},
@@ -1879,7 +1879,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 
 	if unit == "player" then
 		temp.disabled = function()
-			return not UF:HasPlayerFrame()
+			return not UNITFRAMES:HasPlayerFrame()
 		end
 
 		temp.args.class_power = {
@@ -1896,7 +1896,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					end,
 					set = function(_, value)
 						C.db.profile.units[E.UI_LAYOUT][unit].class_power.enabled = value
-						UF:UpdateUnitFrame(unit)
+						UNITFRAMES:UpdateUnitFrame(unit)
 					end,
 				},
 				prediction = {
@@ -1909,7 +1909,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					end,
 					set = function(_, value)
 						C.db.profile.units[E.UI_LAYOUT][unit].class_power.prediction.enabled = value
-						UF:UpdateUnitFrame(unit)
+						UNITFRAMES:UpdateUnitFrame(unit)
 					end,
 				},
 			},
@@ -1924,7 +1924,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			end,
 			set = function(info, value)
 				C.db.profile.units[E.UI_LAYOUT][unit].combat_feedback[info[#info]] = value
-				UF:UpdateUnitFrame(unit)
+				UNITFRAMES:UpdateUnitFrame(unit)
 			end,
 			args = {
 				enabled = {
@@ -1937,8 +1937,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					order = 2,
 					name = L["RESTORE_DEFAULTS"],
 					func = function()
-						CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].combat_feedback, C.db.profile.units[E.UI_LAYOUT][unit].combat_feedback, {point = true})
-						UF:UpdateUnitFrame(unit)
+						CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].combat_feedback, C.db.profile.units[E.UI_LAYOUT][unit].combat_feedback, {point = true})
+						UNITFRAMES:UpdateUnitFrame(unit)
 					end,
 				},
 				spacer_1 = {
@@ -1980,7 +1980,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		end
 	elseif unit == "pet" then
 		temp.disabled = function()
-			return not UF:HasPlayerFrame()
+			return not UNITFRAMES:HasPlayerFrame()
 		end
 
 		temp.args.pvp = nil
@@ -1997,11 +1997,11 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		end
 	elseif unit == "target" then
 		temp.disabled = function()
-			return not UF:HasTargetFrame()
+			return not UNITFRAMES:HasTargetFrame()
 		end
 	elseif unit == "targettarget" then
 		temp.disabled = function()
-			return not UF:HasTargetFrame()
+			return not UNITFRAMES:HasTargetFrame()
 		end
 
 		temp.args.pvp = nil
@@ -2010,11 +2010,11 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		temp.args.auras = nil
 	elseif unit == "focus" then
 		temp.disabled = function()
-			return not UF:HasFocusFrame()
+			return not UNITFRAMES:HasFocusFrame()
 		end
 	elseif unit == "focustarget" then
 		temp.disabled = function()
-			return not UF:HasFocusFrame()
+			return not UNITFRAMES:HasFocusFrame()
 		end
 		temp.args.pvp = nil
 		temp.args.castbar = nil
@@ -2022,7 +2022,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		temp.args.auras = nil
 	elseif unit == "boss" then
 		temp.disabled = function()
-			return not UF:HasBossFrame()
+			return not UNITFRAMES:HasBossFrame()
 		end
 
 		temp.args.pvp = nil
@@ -2042,7 +2042,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					end,
 					set = function(_, value)
 						C.db.profile.units[E.UI_LAYOUT][unit].alt_power.enabled = value
-						UF:UpdateUnitFrame(unit)
+						UNITFRAMES:UpdateUnitFrame(unit)
 					end,
 				},
 				reset = {
@@ -2050,8 +2050,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					order = 2,
 					name = L["RESTORE_DEFAULTS"],
 					func = function()
-						CFG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].alt_power, C.db.profile.units[E.UI_LAYOUT][unit].alt_power, {point = true})
-						UF:UpdateUnitFrame(unit)
+						CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].alt_power, C.db.profile.units[E.UI_LAYOUT][unit].alt_power, {point = true})
+						UNITFRAMES:UpdateUnitFrame(unit)
 					end,
 				},
 				spacer_1 = {
@@ -2076,7 +2076,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.p = value
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 						anchor = {
@@ -2089,7 +2089,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.anchor = value
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 						rP = {
@@ -2103,7 +2103,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.rP = value
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 						x = {
@@ -2116,7 +2116,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.x = value
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 						y = {
@@ -2129,7 +2129,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.y = value
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 						tag = {
@@ -2143,7 +2143,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							end,
 							set = function(_, value)
 								C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end,
 						},
 					},
@@ -2155,7 +2155,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 	return temp
 end
 
-function CFG:CreateUnitFramesPanel(order)
+function CONFIG.CreateUnitFramesPanel(_, order)
 	C.options.args.unitframes = {
 		order = order,
 		type = "group",
@@ -2172,13 +2172,13 @@ function CFG:CreateUnitFramesPanel(order)
 				set = function(_, value)
 					C.db.char.units.enabled = value
 
-					if UF:IsInit() then
+					if UNITFRAMES:IsInit() then
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					else
 						if value then
-							UF:Init()
+							UNITFRAMES:Init()
 						end
 					end
 				end
@@ -2189,7 +2189,7 @@ function CFG:CreateUnitFramesPanel(order)
 				name = L["UNITS"],
 				guiInline = true,
 				disabled = function()
-					return not UF:IsInit()
+					return not UNITFRAMES:IsInit()
 				end,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][info[#info]].enabled
@@ -2199,24 +2199,24 @@ function CFG:CreateUnitFramesPanel(order)
 
 					C.db.profile.units[E.UI_LAYOUT][unit].enabled = value
 
-					if UF:IsInit() then
+					if UNITFRAMES:IsInit() then
 						if value then
-							UF:CreateUnitFrame(unit)
+							UNITFRAMES:CreateUnitFrame(unit)
 
 							if unit == "player" then
-								UF:UpdateUnitFrame(unit)
-								UF:UpdateUnitFrame("pet")
+								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame("pet")
 							elseif unit == "target" then
-								UF:UpdateUnitFrame(unit)
-								UF:UpdateUnitFrame("targettarget")
+								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame("targettarget")
 							elseif unit == "focus" then
-								UF:UpdateUnitFrame(unit)
-								UF:UpdateUnitFrame("focustarget")
+								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame("focustarget")
 							else
-								UF:UpdateUnitFrame(unit)
+								UNITFRAMES:UpdateUnitFrame(unit)
 							end
 						else
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,

@@ -1,17 +1,17 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
 local BLIZZARD = P:GetModule("Blizzard")
+local CONFIG = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
 
 -- Mine
 local DRAG_KEYS = {
-	[1] = ALT_KEY,
-	[2] = CTRL_KEY,
-	[3] = SHIFT_KEY,
-	[4] = NONE_KEY,
+	[1] = _G.ALT_KEY,
+	[2] = _G.CTRL_KEY,
+	[3] = _G.SHIFT_KEY,
+	[4] = _G.NONE_KEY,
 }
 
 local DRAG_KEY_VALUES = {
@@ -28,7 +28,7 @@ local DRAG_KEY_INDICES = {
 	NONE = 4,
 }
 
-function CFG:CreateBlizzardPanel(order)
+function CONFIG.CreateBlizzardPanel(_, order)
 	C.options.args.blizzard = {
 		order = order,
 		type = "group",
@@ -50,7 +50,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -78,7 +78,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -100,7 +100,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -122,7 +122,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -144,7 +144,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -166,7 +166,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -188,7 +188,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -210,7 +210,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -232,7 +232,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -254,7 +254,7 @@ function CFG:CreateBlizzardPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end
@@ -281,7 +281,7 @@ function CFG:CreateBlizzardPanel(order)
 								end
 							else
 								if not value then
-									CFG:ShowStaticPopup("RELOAD_UI")
+									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
 						end

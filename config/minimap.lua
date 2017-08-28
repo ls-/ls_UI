@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
+local CONFIG = P:GetModule("Config")
 local MINIMAP = P:GetModule("Minimap")
 
 -- Lua
@@ -13,7 +13,7 @@ local ZONE_TEXT_MODES = {
 	[2] = L["ALWAYS_SHOW"],
 }
 
-function CFG:CreateMinimapPanel(order)
+function CONFIG.CreateMinimapPanel(_, order)
 	C.options.args.minimap = {
 		order = order,
 		type = "group",
@@ -35,7 +35,7 @@ function CFG:CreateMinimapPanel(order)
 						end
 					else
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end

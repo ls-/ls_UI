@@ -1,7 +1,7 @@
 local _, ns = ...
 local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
-local CFG = P:GetModule("Config")
 local AURAS = P:GetModule("Auras")
+local CONFIG = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
@@ -19,7 +19,7 @@ local function GetOptionsTable_Aura(filter, order, name)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.auras[E.UI_LAYOUT][filter], C.db.profile.auras[E.UI_LAYOUT][filter], {point = true})
+					CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT][filter], C.db.profile.auras[E.UI_LAYOUT][filter], {point = true})
 					AURAS:UpdateHeader(filter)
 				end,
 			},
@@ -162,7 +162,7 @@ local function GetOptionsTable_Aura(filter, order, name)
 	return temp
 end
 
-function CFG:CreateAurasPanel(order)
+function CONFIG.CreateAurasPanel(_, order)
 	C.options.args.auras = {
 		order = order,
 		type = "group",
@@ -181,7 +181,7 @@ function CFG:CreateAurasPanel(order)
 
 					if AURAS:IsInit() then
 						if not value then
-							CFG:ShowStaticPopup("RELOAD_UI")
+							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					else
 						if value then
@@ -195,7 +195,7 @@ function CFG:CreateAurasPanel(order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CFG:CopySettings(D.profile.auras[E.UI_LAYOUT], C.db.profile.auras[E.UI_LAYOUT], {point = true})
+					CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT], C.db.profile.auras[E.UI_LAYOUT], {point = true})
 					AURAS:Update()
 				end,
 			},
@@ -211,7 +211,7 @@ function CFG:CreateAurasPanel(order)
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
 						func = function()
-							CFG:CopySettings(D.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras[E.UI_LAYOUT].TOTEM, {point = true})
+							CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras[E.UI_LAYOUT].TOTEM, {point = true})
 							AURAS:UpdateHeader("TOTEM")
 						end,
 					},
