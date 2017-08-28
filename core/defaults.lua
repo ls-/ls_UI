@@ -946,17 +946,27 @@ D.profile = {
 						friendly = {
 							buff = {
 								boss = true,
+								player = false,
+								player_permanent = false,
 							},
 							debuff = {
 								boss = true,
+								player = false,
+								player_permanent = false,
+								dispellable = false,
 							},
 						},
 						enemy = {
 							buff = {
 								boss = true,
+								player = false,
+								player_permanent = false,
+								dispellable = false,
 							},
 							debuff = {
 								boss = true,
+								player = false,
+								player_permanent = false,
 							},
 						},
 					},
@@ -1986,17 +1996,27 @@ D.profile = {
 						friendly = {
 							buff = {
 								boss = true,
+								player = true,
+								player_permanent = true,
 							},
 							debuff = {
 								boss = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
 							},
 						},
 						enemy = {
 							buff = {
 								boss = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
 							},
 							debuff = {
 								boss = true,
+								player = true,
+								player_permanent = true,
 							},
 						},
 					},

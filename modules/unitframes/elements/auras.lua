@@ -229,7 +229,7 @@ local filterFunctions = {
 
 		return false
 	end,
-	boss = function(frame, unit, aura, _, _, _, _, _, _, _, caster, _, _, _, _, isBossAura)
+	boss = function(frame, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
 		local config = isFriend and frame._config.filter.friendly or frame._config.filter.enemy
 		config = aura.isDebuff and config.debuff or config.buff
@@ -244,6 +244,31 @@ local filterFunctions = {
 		if isBossAura then
 			-- print(name, spellID, caster, "|cffe5a526BOSS|r")
 			return config.boss
+		end
+
+		-- applied by player
+		if aura.isPlayer or (caster and UnitIsUnit(caster, "pet")) then
+			if duration and duration ~= 0 then
+				return config.player
+			else
+				return config.player and config.player_permanent
+			end
+		end
+
+		if isFriend then
+			if aura.isDebuff then
+				-- dispellable
+				if debuffType and E:IsDispellable(debuffType) then
+					-- print(name, spellID, caster, "|cffe5a526DISPELLABLE|r")
+					return config.dispellable
+				end
+			end
+		else
+			-- stealable
+			if isStealable then
+				-- print(name, spellID, caster, "|cffe5a526STEALABLE|r")
+				return config.dispellable
+			end
 		end
 
 		return false

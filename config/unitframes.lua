@@ -1689,26 +1689,16 @@ local function GetOptionsTable_Auras(unit, order)
 		temp.args.filter.args.friendly_units.args.buff_mount = nil
 		temp.args.filter.args.friendly_units.args.buff_selfcast = nil
 		temp.args.filter.args.friendly_units.args.buff_selfcast_permanent = nil
-		temp.args.filter.args.friendly_units.args.buff_player = nil
-		temp.args.filter.args.friendly_units.args.buff_player_permanent = nil
 
 		temp.args.filter.args.friendly_units.args.debuff_selfcast = nil
 		temp.args.filter.args.friendly_units.args.debuff_selfcast_permanent = nil
-		temp.args.filter.args.friendly_units.args.debuff_player = nil
-		temp.args.filter.args.friendly_units.args.debuff_player_permanent = nil
-		temp.args.filter.args.friendly_units.args.debuff_dispellable = nil
 
 		temp.args.filter.args.enemy_units.args.buff_mount = nil
 		temp.args.filter.args.enemy_units.args.buff_selfcast = nil
 		temp.args.filter.args.enemy_units.args.buff_selfcast_permanent = nil
-		temp.args.filter.args.enemy_units.args.buff_player = nil
-		temp.args.filter.args.enemy_units.args.buff_player_permanent = nil
-		temp.args.filter.args.enemy_units.args.buff_dispellable = nil
 
 		temp.args.filter.args.enemy_units.args.debuff_selfcast = nil
 		temp.args.filter.args.enemy_units.args.debuff_selfcast_permanent = nil
-		temp.args.filter.args.enemy_units.args.debuff_player = nil
-		temp.args.filter.args.enemy_units.args.debuff_player_permanent = nil
 	end
 
 	return temp
