@@ -157,9 +157,7 @@ local TEXTURES = {
 }
 
 local function SimpleSort(a, b)
-	if a and b then
-		return a[2] > b[2]
-	end
+	return a[2] > b[2]
 end
 
 local function CreateMicroButtonIndicator(parent, indicators, num)
