@@ -106,7 +106,8 @@ local function UpdateXPBar()
 					local name = PetBattles_GetName(1, i)
 					local rarity = PetBattles_GetBreedQuality(1, i)
 					local cur, max = PetBattles_GetXP(1, i)
-					local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
+					local r, g, b = M.COLORS.XP:GetRGB()
+					local hex = M.COLORS.XP:GetHEX(0.2)
 
 					bar[index].tooltipInfo = {
 						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
@@ -130,7 +131,8 @@ local function UpdateXPBar()
 
 			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = ArtifactUI_GetEquippedArtifactInfo()
 			local points, cur, max = GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
-			local r, g, b, hex = M.COLORS.ARTIFACT:GetRGBHEX()
+			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
+			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
 
 			bar[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
@@ -156,7 +158,8 @@ local function UpdateXPBar()
 
 				local cur, max = UnitXP("player"), UnitXPMax("player")
 				local bonus = GetXPExhaustion()
-				local r, g, b, hex = M.COLORS.XP:GetRGBHEX()
+				local r, g, b = M.COLORS.XP:GetRGB()
+				local hex = M.COLORS.XP:GetHEX(0.2)
 
 				bar[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
@@ -185,7 +188,8 @@ local function UpdateXPBar()
 
 				local cur, max = UnitHonor("player"), UnitHonorMax("player")
 				local bonus = GetHonorExhaustion()
-				local r, g, b, hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGBHEX()
+				local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
+				local hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetHEX(0.2)
 
 				bar[index].tooltipInfo = {
 					header = L["HONOR"],
@@ -253,7 +257,8 @@ local function UpdateXPBar()
 				end
 			end
 
-			local r, g, b, hex = M.COLORS.REACTION[standing]:GetRGBHEX()
+			local r, g, b = M.COLORS.REACTION[standing]:GetRGB()
+			local hex = M.COLORS.REACTION[standing]:GetHEX(0.2)
 
 			bar[index].tooltipInfo = {
 				header = L["REPUTATION"],
