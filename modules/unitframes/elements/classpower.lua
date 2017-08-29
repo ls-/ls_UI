@@ -157,7 +157,7 @@ end
 
 do
 	local function PostUpdate(self, _, max, maxChanged, powerType)
-		if self._state ~= self.isEnabled or self._powerID ~= powerType then
+		if self._state ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.isEnabled then
 				self:Hide()
 
