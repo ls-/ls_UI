@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 70300.01
+
+- Added player's and dispellable auras to boss frame aura filter. Disabled by default;
+- Added options to enable objective tracker and aura tracker dragging only if a modifier key is being held down. Disabled by default;
+- Misc bug fixes and tweaks.
+
 ## Version 70200.12
 
 - Fixed classic layout.
