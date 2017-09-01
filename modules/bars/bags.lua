@@ -42,6 +42,7 @@ local CURRENCIES = {
 	[1226] = true, -- Nethershards
 	[1273] = true, -- Seal of Broken Fate
 	[1342] = true, -- Legionfall War Supplies
+	[1508] = true, -- Veiled Argunite
 }
 
 local CFG = {
