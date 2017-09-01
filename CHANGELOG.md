@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 70300.02
+
+- Added Veiled Argunite to backpack tooltip;
+- Fixed vehicle exit button;
+- Fixed and tweaked xp bar.
+
 ## Version 70300.01
 
 - Added player's and dispellable auras to boss frame aura filter. Disabled by default;
