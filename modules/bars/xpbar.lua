@@ -146,7 +146,7 @@ local function UpdateXPBar()
 				},
 			}
 
-			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
+			bar[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
 			E:SetSmoothedVertexColor(bar[index].Texture, r, g, b)
 
 			bar[index]:SetMinMaxValues(0, max)
