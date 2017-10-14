@@ -5,7 +5,15 @@ local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local s_split = _G.string.split
+local t_wipe = _G.table.wipe
+local tonumber = _G.tonumber
+
+-- Blizz
+local GetCurrencyListInfo = _G.GetCurrencyListInfo
+local GetCurrencyListLink = _G.GetCurrencyListLink
+local GetCurrencyListSize = _G.GetCurrencyListSize
 
 -- Mine
 local growth_dirs = {
@@ -14,6 +22,57 @@ local growth_dirs = {
 	RIGHT_DOWN = L["RIGHT_DOWN"],
 	RIGHT_UP = L["RIGHT_UP"],
 }
+
+local CURRENCY_TABLE = {
+	order = 20,
+	type = "group",
+	name = L["CURRENCY"],
+	guiInline = true,
+	args = {}
+}
+
+local function UpdateCurrencyOptions()
+	local options = C.options and C.options.args.bars.args.bags.args.currency.args or CURRENCY_TABLE.args
+	local name, isHeader, icon, link, _
+
+	t_wipe(options)
+
+	for i = 1, GetCurrencyListSize() do
+		name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
+
+		if isHeader then
+			options["currency_"..i] = {
+				order = i,
+				type = "header",
+				name = name,
+			}
+		else
+			link = GetCurrencyListLink(i)
+
+			if link then
+				local id = tonumber(link:match("currency:(%d+)") or "", nil)
+
+				if id then
+					options["currency_"..i] = {
+						order = i,
+						type = "toggle",
+						name = name,
+						image = icon,
+						get = function()
+							return C.db.profile.bars.bags.currency[id]
+						end,
+						set = function(_, value)
+							C.db.profile.bars.bags.currency[id] = value and value or nil
+						end,
+					}
+				end
+			end
+		end
+	end
+end
+
+E:RegisterEvent("CURRENCY_DISPLAY_UPDATE", UpdateCurrencyOptions)
+hooksecurefunc("TokenFrame_Update", UpdateCurrencyOptions)
 
 local function GetOptionsTable_Bar(barID, order, name)
 	local temp = {
@@ -181,6 +240,7 @@ local function GetOptionsTable_Bar(barID, order, name)
 		temp.args.growth_dir.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
 		end
+		temp.args.currency = CURRENCY_TABLE
 	end
 
 	return temp

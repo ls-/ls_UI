@@ -11,7 +11,6 @@ local hooksecurefunc = _G.hooksecurefunc
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
 local C_Timer_After = _G.C_Timer.After
 local CreateFrame = _G.CreateFrame
-local GetBackpackCurrencyInfo = _G.GetBackpackCurrencyInfo
 local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots
 local GetContainerNumSlots = _G.GetContainerNumSlots
 local GetCurrencyInfo = _G.GetCurrencyInfo
@@ -36,13 +35,6 @@ local BAGS = {
 	_G.CharacterBag1Slot,
 	_G.CharacterBag2Slot,
 	_G.CharacterBag3Slot
-}
-
-local CURRENCIES = {
-	[1226] = true, -- Nethershards
-	[1273] = true, -- Seal of Broken Fate
-	[1342] = true, -- Legionfall War Supplies
-	[1508] = true, -- Veiled Argunite
 }
 
 local CFG = {
@@ -79,7 +71,7 @@ local function BackpackButton_OnEnter()
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["CURRENCY_COLON"])
 
-	for id in next, CURRENCIES do
+	for id in next, C.db.profile.bars.bags.currency do
 		local name, cur, icon, _, _, max = GetCurrencyInfo(id)
 
 		if name and icon then
@@ -91,28 +83,6 @@ local function BackpackButton_OnEnter()
 				end
 			else
 				GameTooltip:AddDoubleLine(name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(cur), icon), 1, 1, 1, 1, 1, 1)
-			end
-		end
-	end
-
-	for i = 1, 3 do
-		local _, _, _, id = GetBackpackCurrencyInfo(i)
-
-		if id then
-			local name, cur, icon, _, _, max = GetCurrencyInfo(id)
-
-			if not CURRENCIES[id] then
-				if name and icon then
-					if max and max > 0 then
-						if cur == max then
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, M.COLORS.RED:GetRGB())
-						else
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, M.COLORS.GREEN:GetRGB())
-						end
-					else
-						GameTooltip:AddDoubleLine(name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(cur), icon), 1, 1, 1, 1, 1, 1)
-					end
-				end
 			end
 		end
 	end

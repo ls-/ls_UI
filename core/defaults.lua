@@ -2255,6 +2255,7 @@ D.profile = {
 				x = 434,
 				y = 16
 			},
+			currency = {},
 		},
 	},
 	auras = {
