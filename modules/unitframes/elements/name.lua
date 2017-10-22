@@ -8,8 +8,6 @@ local _G = getfenv(0)
 -- Mine
 function UF:CreateName(parent, textFontObject)
 	local element = parent:CreateFontString(nil, "OVERLAY", textFontObject)
-	element:SetWordWrap(false)
-	E:ResetFontStringHeight(element)
 
 	return element
 end
@@ -20,6 +18,7 @@ function UF:UpdateName(frame)
 
 	element:SetJustifyV(config.v_alignment or "MIDDLE")
 	element:SetJustifyH(config.h_alignment or "CENTER")
+	element:SetWordWrap(config.word_wrap)
 	element:ClearAllPoints()
 
 	local point1 = config.point1

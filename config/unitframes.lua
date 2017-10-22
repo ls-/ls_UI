@@ -920,6 +920,18 @@ local function GetOptionsTable_Name(unit, order)
 					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
+			word_wrap = {
+				order = 17,
+				type = "toggle",
+				name = L["WORD_WRAP"],
+				get = function()
+					return C.db.profile.units[E.UI_LAYOUT][unit].name.word_wrap
+				end,
+				set = function(_, value)
+					C.db.profile.units[E.UI_LAYOUT][unit].name.word_wrap = value
+					UNITFRAMES:UpdateUnitFrame(unit)
+				end
+			},
 		},
 	}
 

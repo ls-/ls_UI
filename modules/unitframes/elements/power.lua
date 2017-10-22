@@ -44,8 +44,6 @@ do
 
 		if text then
 			text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
-			text:SetWordWrap(false)
-			E:ResetFontStringHeight(text)
 			element.Text = text
 		end
 
@@ -173,8 +171,6 @@ do
 
 		if text then
 			text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
-			text:SetWordWrap(false)
-			E:ResetFontStringHeight(text)
 			element.Text = text
 		end
 

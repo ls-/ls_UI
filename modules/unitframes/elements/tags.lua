@@ -574,6 +574,8 @@ end
 -- MISC --
 ----------
 
+oUF.Tags.Methods["nl"] = function() return "\n" end
+
 oUF.Tags.Events["ls:debuffs"] = "UNIT_AURA"
 oUF.Tags.Methods["ls:debuffs"] = function(unit)
 	local types = E:GetDispelTypes()
