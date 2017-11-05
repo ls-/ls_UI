@@ -861,8 +861,9 @@ do
 	end
 
 	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
-	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
+	E:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED", UpdateActionButtonsTable)
+	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
 end
