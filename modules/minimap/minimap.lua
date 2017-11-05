@@ -224,7 +224,6 @@ local function UpdateZoneInfo()
 	Minimap.ZoneText:SetText(ZONE_COLORS[GetZonePVPInfo() or "other"]:WrapText(GetMinimapZoneText() or L["UNKNOWN"]))
 end
 
--- Horizontal texture scrolling
 local function CheckTexPoint(point, base)
 	if point then
 		return point >= base / 256 + 1 and base / 256 or point
@@ -250,78 +249,6 @@ local function Minimap_OnLeave(self)
 	self.ZoneText:Hide()
 end
 
-local function Minimap_OnMouseWheel(_, direction)
-	if direction > 0 then
-		Minimap_ZoomIn()
-	else
-		Minimap_ZoomOut()
-	end
-end
-
-local function Minimap_OnEvent(_, event)
-	if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-		UpdateZoneInfo()
-	end
-end
-
--- Calendar
-local function Calendar_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
-
-	if self.pendingCalendarInvites > 0 then
-		GameTooltip:AddLine(L["CALENDAR_PENDING_INVITES"])
-	end
-
-	GameTooltip:AddLine(L["TOGGLE_CALENDAR"])
-	GameTooltip:Show()
-end
-
-local function Calendar_OnLeave()
-	GameTooltip:Hide()
-end
-
-local function Calendar_OnClick(self)
-	if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
-		E:StopBlink(self.InvIndicator, 1)
-
-		self.pendingCalendarInvites = 0
-	end
-
-	ToggleCalendar()
-end
-
-local function Calendar_OnEvent(self, event, ...)
-	if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
-		local pendingCalendarInvites = CalendarGetNumPendingInvites()
-
-		if pendingCalendarInvites > self.pendingCalendarInvites then
-			if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
-				E:Blink(self.InvIndicator, nil, 0, 1)
-
-				self.pendingCalendarInvites = pendingCalendarInvites
-			end
-		elseif pendingCalendarInvites == 0 then
-			E:StopBlink(self.InvIndicator)
-		end
-	elseif event == "CALENDAR_EVENT_ALARM" then
-		local title = ...
-		local info = ChatTypeInfo["SYSTEM"]
-
-		DEFAULT_CHAT_FRAME:AddMessage(L["CALENDAR_EVENT_ALARM_MESSAGE"]:format(title), info.r, info.g, info.b, info.id)
-	end
-end
-
-local function Calendar_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	if self.elapsed > 1 then
-		local _, _, day = CalendarGetDate()
-		self:SetText(day)
-
-		self.elapsed = 0
-	end
-end
-
 function MODULE.IsInit()
 	return isInit
 end
@@ -345,8 +272,20 @@ function MODULE.Init()
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		Minimap:HookScript("OnEvent", Minimap_OnEvent)
-		Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
+
+		Minimap:HookScript("OnEvent", function(_, event)
+			if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+				UpdateZoneInfo()
+			end
+		end)
+
+		Minimap:SetScript("OnMouseWheel", function(_, direction)
+			if direction > 0 then
+				Minimap_ZoomIn()
+			else
+				Minimap_ZoomOut()
+			end
+		end)
 
 		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
@@ -391,11 +330,63 @@ function MODULE.Init()
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
 		calendar.pendingCalendarInvites = 0
-		calendar:SetScript("OnEnter", Calendar_OnEnter)
-		calendar:SetScript("OnLeave", Calendar_OnLeave)
-		calendar:SetScript("OnEvent", Calendar_OnEvent)
-		calendar:SetScript("OnClick", Calendar_OnClick)
-		calendar:SetScript("OnUpdate", Calendar_OnUpdate)
+
+		calendar:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_LEFT", 4, -4)
+
+			if self.pendingCalendarInvites > 0 then
+				GameTooltip:AddLine(L["CALENDAR_PENDING_INVITES"])
+			end
+
+			GameTooltip:AddLine(L["TOGGLE_CALENDAR"])
+			GameTooltip:Show()
+		end)
+
+		calendar:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+
+		calendar:SetScript("OnEvent", function(self, event, ...)
+			if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
+				local pendingCalendarInvites = CalendarGetNumPendingInvites()
+
+				if pendingCalendarInvites > self.pendingCalendarInvites then
+					if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
+						E:Blink(self.InvIndicator, nil, 0, 1)
+
+						self.pendingCalendarInvites = pendingCalendarInvites
+					end
+				elseif pendingCalendarInvites == 0 then
+					E:StopBlink(self.InvIndicator)
+				end
+			elseif event == "CALENDAR_EVENT_ALARM" then
+				local title = ...
+				local info = ChatTypeInfo["SYSTEM"]
+
+				DEFAULT_CHAT_FRAME:AddMessage(L["CALENDAR_EVENT_ALARM_MESSAGE"]:format(title), info.r, info.g, info.b, info.id)
+			end
+		end)
+
+		calendar:SetScript("OnClick", function(self)
+			if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
+				E:StopBlink(self.InvIndicator, 1)
+
+				self.pendingCalendarInvites = 0
+			end
+
+			ToggleCalendar()
+		end)
+
+		calendar:SetScript("OnUpdate", function(self, elapsed)
+			self.elapsed = (self.elapsed or 0) + elapsed
+
+			if self.elapsed > 1 then
+				local _, _, day = CalendarGetDate()
+				self:SetText(day)
+
+				self.elapsed = 0
+			end
+		end)
 
 		local indicator = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
