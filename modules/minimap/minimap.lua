@@ -9,22 +9,6 @@ local next = _G.next
 local s_match = _G.string.match
 local unpack = _G.unpack
 
--- Blizz
-local C_Timer_After = _G.C_Timer.After
-local CalendarGetDate = _G.CalendarGetDate
-local CalendarGetNumPendingInvites = _G.CalendarGetNumPendingInvites
-local CreateFrame = _G.CreateFrame
-local GetGameTime = _G.GetGameTime
-local GetZonePVPInfo = _G.GetZonePVPInfo
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local LoadAddOn = _G.LoadAddOn
-local Minimap_ZoomIn = _G.Minimap_ZoomIn
-local Minimap_ZoomOut = _G.Minimap_ZoomOut
-local RegisterStateDriver = _G.RegisterStateDriver
-local ToggleCalendar = _G.ToggleCalendar
-
-local CHAT_TYPE_INFO = _G.ChatTypeInfo
-
 -- Mine
 local isInit = false
 
@@ -55,16 +39,19 @@ local WIDGETS = {
 }
 
 local ZONE_COLORS = {
-	["sanctuary"] = M.COLORS.LIGHT_BLUE,
-	["arena"] = M.COLORS.RED,
-	["combat"] = M.COLORS.RED,
-	["hostile"] = M.COLORS.RED,
-	["contested"] = M.COLORS.YELLOW,
-	["friendly"] = M.COLORS.GREEN,
-	["other"] = M.COLORS.YELLOW
+	arena = M.COLORS.RED,
+	combat = M.COLORS.RED,
+	contested = M.COLORS.YELLOW,
+	friendly = M.COLORS.GREEN,
+	hostile = M.COLORS.RED,
+	other = M.COLORS.YELLOW,
+	sanctuary = M.COLORS.LIGHT_BLUE,
 }
 
-local function HandleMinimapButton(button, cascade)
+local handledButtons = {}
+local ignoredButtons = {}
+
+local function HandleMinimapButton(button, recursive)
 	local regions = {button:GetRegions()}
 	local children = {button:GetChildren()}
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
@@ -80,9 +67,7 @@ local function HandleMinimapButton(button, cascade)
 			local layer = region:GetDrawLayer()
 			-- print("|cffffff00", name, "|r:", texture, layer)
 
-			if layer == "HIGHLIGHT" then
-				hl = region
-			elseif not normal and not pushed then
+			if not normal and not pushed then
 				if layer == "ARTWORK" or layer == "BACKGROUND" then
 					if button.icon and region == button.icon then
 						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r", region, button.icon)
@@ -103,23 +88,27 @@ local function HandleMinimapButton(button, cascade)
 						-- print("|cffffff00", name, "|ris |cff00ff00-background|r")
 						bg = region
 					end
-				elseif layer == "OVERLAY" or layer == "BORDER" then
-					if button.border and button.border == region then
-						-- print("|cffffff00", name, "|ris |cff00ff00.border|r")
-						border = region
-					elseif button.Border and button.Border == region then
-						-- print("|cffffff00", name, "|ris |cff00ff00.Border|r")
-						border = region
-					elseif s_match(name, "[bB][oO][rR][dD][eE][rR]") then
-						-- print("|cffffff00", name, "|ris |cff00ff00border|r")
-						border = region
-					elseif texture and texture == 136430 then
-						-- print("|cffffff00", name, "|ris |cff00ff00#136430|r")
-						border = region
-					elseif texture and s_match(texture, "[bB][oO][rR][dD][eE][rR]") then
-						-- print("|cffffff00", name, "|ris |cff00ff00-TrackingBorder|r")
-						border = region
-					end
+				end
+			end
+
+			if layer == "HIGHLIGHT" then
+				hl = region
+			else
+				if button.border and button.border == region then
+					-- print("|cffffff00", name, "|ris |cff00ff00.border|r")
+					border = region
+				elseif button.Border and button.Border == region then
+					-- print("|cffffff00", name, "|ris |cff00ff00.Border|r")
+					border = region
+				elseif s_match(name, "[bB][oO][rR][dD][eE][rR]") then
+					-- print("|cffffff00", name, "|ris |cff00ff00border|r")
+					border = region
+				elseif texture and texture == 136430 then
+					-- print("|cffffff00", name, "|ris |cff00ff00#136430|r")
+					border = region
+				elseif texture and s_match(texture, "[bB][oO][rR][dD][eE][rR]") then
+					-- print("|cffffff00", name, "|ris |cff00ff00-TrackingBorder|r")
+					border = region
 				end
 			end
 		end
@@ -146,15 +135,27 @@ local function HandleMinimapButton(button, cascade)
 	border = border or tborder
 	bg = bg or tbg
 
-	if not cascade then
+	if not recursive then
 		-- These aren't the dro- buttons you're looking for
-		if not icon and not (normal and pushed) then return end
+		if not icon and not (normal and pushed) then
+			ignoredButtons[button] = true
+
+			return
+		end
+
+		handledButtons[button] = true
 
 		local t = button == GameTimeFrame and "BIG" or "SMALL"
-		local offset = button == GarrisonLandingPageMinimapButton and 0 or 9
+		local offset = button == GarrisonLandingPageMinimapButton and 0 or 8
 
 		button:SetSize(unpack(TEXTURES[t].size))
 		button:SetHitRectInsets(0, 0, 0, 0)
+
+		local mask = button:CreateMaskTexture()
+		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		mask:SetPoint("TOPLEFT", 6, -6)
+		mask:SetPoint("BOTTOMRIGHT", -6, 6)
+		button.MaskTexture = mask
 
 		if hl then
 			hl:ClearAllPoints()
@@ -166,12 +167,14 @@ local function HandleMinimapButton(button, cascade)
 			normal:ClearAllPoints()
 			normal:SetPoint("TOPLEFT", offset, -offset)
 			normal:SetPoint("BOTTOMRIGHT", -offset, offset)
+			normal:AddMaskTexture(mask)
 			button.NormalTexture = normal
 
 			pushed:SetDrawLayer("ARTWORK", 0)
 			pushed:ClearAllPoints()
 			pushed:SetPoint("TOPLEFT", offset, -offset)
 			pushed:SetPoint("BOTTOMRIGHT", -offset, offset)
+			pushed:AddMaskTexture(mask)
 			button.PushedTexture = pushed
 		elseif icon then
 			if icon:IsObjectType("Texture") then
@@ -179,6 +182,7 @@ local function HandleMinimapButton(button, cascade)
 				icon:ClearAllPoints()
 				icon:SetPoint("TOPLEFT", offset, -offset)
 				icon:SetPoint("BOTTOMRIGHT", -offset, offset)
+				icon:AddMaskTexture(mask)
 			else
 				icon:SetFrameLevel(4)
 				icon:ClearAllPoints()
@@ -203,13 +207,11 @@ local function HandleMinimapButton(button, cascade)
 			bg = button:CreateTexture()
 		end
 
-		bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-		bg:SetVertexColor(M.COLORS.BLACK:GetRGBA(0.8))
+		bg:SetColorTexture(M.COLORS.BLACK:GetRGB())
 		bg:SetDrawLayer("BACKGROUND", 0)
-		bg:ClearAllPoints()
-		bg:SetPoint("TOPLEFT", 6, -6)
-		bg:SetPoint("BOTTOMRIGHT", -6, 6)
-		bg:SetAlpha(1)
+		bg:SetAllPoints()
+		bg:SetAlpha(0.8)
+		bg:AddMaskTexture(mask)
 		button.Background = bg
 
 		return button
@@ -237,7 +239,7 @@ local function ScrollTexture(t, delay, offset)
 
 	t:SetTexCoord(t.l, t.r, 0 / 128, 128 / 128)
 
-	C_Timer_After(delay, function() ScrollTexture(t, DELAY, STEP) end)
+	C_Timer.After(delay, function() ScrollTexture(t, DELAY, STEP) end)
 end
 
 local function Minimap_OnEnter(self)
@@ -303,7 +305,7 @@ local function Calendar_OnEvent(self, event, ...)
 		end
 	elseif event == "CALENDAR_EVENT_ALARM" then
 		local title = ...
-		local info = CHAT_TYPE_INFO["SYSTEM"]
+		local info = ChatTypeInfo["SYSTEM"]
 
 		DEFAULT_CHAT_FRAME:AddMessage(L["CALENDAR_EVENT_ALARM_MESSAGE"]:format(title), info.r, info.g, info.b, info.id)
 	end
@@ -375,17 +377,10 @@ function MODULE.Init()
 			E:ForceHide(_G[name])
 		end
 
-		-- Garrison
-		HandleMinimapButton(GarrisonLandingPageMinimapButton)
-
-		-- Mail
-		local mail = HandleMinimapButton(MiniMapMailFrame)
-		mail.Icon:SetPoint("TOPLEFT", 8, -8)
-		mail.Icon:SetPoint("BOTTOMRIGHT", -8, 8)
-
 		-- Queue
 		local queue = HandleMinimapButton(QueueStatusMinimapButton)
-		queue.Background:SetTexture("")
+		queue.Background:SetAlpha(0)
+		queue.Icon:SetAllPoints()
 		QueueStatusFrame:ClearAllPoints()
 		QueueStatusFrame:SetPoint("BOTTOMRIGHT", queue, "TOPLEFT", 8, -8)
 
@@ -402,14 +397,9 @@ function MODULE.Init()
 		calendar:SetScript("OnClick", Calendar_OnClick)
 		calendar:SetScript("OnUpdate", Calendar_OnUpdate)
 
-		local mask = calendar:CreateMaskTexture()
-		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-		mask:SetPoint("TOPLEFT", 6, -6)
-		mask:SetPoint("BOTTOMRIGHT", -6, 6)
-
 		local indicator = calendar:CreateTexture(nil, "BACKGROUND", nil, 1)
 		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
-		indicator:AddMaskTexture(mask)
+		indicator:AddMaskTexture(calendar.MaskTexture)
 		indicator:SetPoint("TOPLEFT", 6, -6)
 		indicator:SetPoint("BOTTOMRIGHT", -6, 6)
 		calendar.DayTimeIndicator = indicator
@@ -477,28 +467,29 @@ function MODULE.Init()
 		MinimapCompassTexture:ClearAllPoints()
 		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 
-		-- Queue
-		QueueStatusMinimapButton.Icon:SetAllPoints()
-
 		-- Misc
+		HandleMinimapButton(GarrisonLandingPageMinimapButton)
+		HandleMinimapButton(MiniMapMailFrame)
 		HandleMinimapButton(MiniMapTracking)
 		HandleMinimapButton(MiniMapVoiceChatFrame)
 
 		for _, child in next, {Minimap:GetChildren()} do
 			child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 
-			if child:IsObjectType("Button") and not WIDGETS[child:GetName()] then
-				if not child:IsShown() then
-					child:Show()
+			if child:IsObjectType("Button") and not (handledButtons[child] or ignoredButtons[child] or WIDGETS[child] or not child:GetName()) then
+				HandleMinimapButton(child)
+			end
+		end
 
-					HandleMinimapButton(child)
+		C_Timer.NewTicker(5, function()
+			for _, child in next, {Minimap:GetChildren()} do
+				if child:IsObjectType("Button") and not (handledButtons[child] or ignoredButtons[child] or WIDGETS[child] or not child:GetName()) then
+					child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 
-					child:Hide()
-				else
 					HandleMinimapButton(child)
 				end
 			end
-		end
+		end)
 
 		local h, m = GetGameTime()
 		local s = (h * 60 + m) * 60
