@@ -150,6 +150,7 @@ local function HandleMinimapButton(button, recursive)
 
 		button:SetSize(unpack(TEXTURES[t].size))
 		button:SetHitRectInsets(0, 0, 0, 0)
+		button:SetFlattensRenderLayers(true)
 
 		local mask = button:CreateMaskTexture()
 		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
