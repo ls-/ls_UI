@@ -4,7 +4,7 @@
 
 - Added currency options for backpack tooltip. See /lsui > Action Bars > Bags panel;
 - Added [nl] tag for breaking lines;
-- Reworked minimap button handling, it should be compatible with addons that various buttons or indicators to minimap;
+- Reworked minimap button handling, it should be compatible with addons that add various buttons or indicators to minimap;
 - Updated embedded oUF;
 
 ## Version 70300.02
