@@ -7,7 +7,7 @@ Yet another UI, but this one is a bit special.
 ## Download
 
 - [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
-- [Curse](http://mods.curse.com/addons/wow/ls-ui)
+- [Curse](https://www.curseforge.com/wow/addons/ls-ui)
 
 ## Features
 
@@ -19,7 +19,7 @@ Yet another UI, but this one is a bit special.
 
 ## Feedback and Feature Requests
 
-If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or use [Curse Ticket Tracker](https://wow.curseforge.com/addons/ls-ui/tickets/), or post a comment on [WoWInterface](https://www.wowinterface.com/downloads/info22662.html#comments) or [Curse](https://mods.curse.com/addons/wow/ls-ui#comments).
+If you found a bug or want to share an idea on how to improve my UI, either report to [Issue Tracker](https://github.com/ls-/ls_UI/issues?state=open) on my GitHub page, or use [Curse Ticket Tracker](https://wow.curseforge.com/addons/ls-ui/tickets/), or post a comment on [WoWInterface](https://www.wowinterface.com/downloads/info22662.html#comments) or [Curse](https://www.curseforge.com/wow/addons/ls-ui#comments).
 
 Feel free to write feedback on how to improve some class-specific features.
 
