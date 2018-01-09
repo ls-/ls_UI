@@ -78,37 +78,6 @@ do
 end
 
 do
-	local function UpdateBar(self, value, orientation, appendTexture)
-		if orientation == "HORIZONTAL" then
-			self:SetPoint("LEFT", appendTexture, "RIGHT")
-		else
-			self:SetPoint("BOTTOM", appendTexture, "TOP")
-		end
-
-		if self.Overlay then
-			self.Overlay:SetShown(value ~= 0)
-		end
-
-		return self:GetStatusBarTexture()
-	end
-
-	local function PostUpdate(self, _, myIncomingHeal, otherIncomingHeal, absorb)
-		local appendTexture = self.__owner.Health:GetStatusBarTexture()
-		local orientation = self.__owner.Health:GetOrientation()
-
-		if self.myBar and myIncomingHeal > 0 then
-			appendTexture = UpdateBar(self.myBar, myIncomingHeal, orientation, appendTexture)
-		end
-
-		if self.otherBar and otherIncomingHeal > 0 then
-			appendTexture = UpdateBar(self.otherBar, otherIncomingHeal, orientation, appendTexture)
-		end
-
-		if self.absorbBar then
-			UpdateBar(self.absorbBar, absorb, orientation, appendTexture)
-		end
-	end
-
 	function UF:CreateHealthPrediction(parent, text, textFontObject, textParent)
 		local level = parent:GetFrameLevel()
 
@@ -172,7 +141,6 @@ do
 			absorbBar = absorbBar,
 			healAbsorbBar = healAbsorbBar,
 			maxOverflow = 1,
-			PostUpdate = PostUpdate
 		}
 	end
 
@@ -196,16 +164,19 @@ do
 			myBar:ClearAllPoints()
 			myBar:SetPoint("TOP")
 			myBar:SetPoint("BOTTOM")
+			myBar:SetPoint("LEFT", frame.Health:GetStatusBarTexture(), "RIGHT")
 			myBar:SetWidth(width)
 
 			otherBar:ClearAllPoints()
 			otherBar:SetPoint("TOP")
 			otherBar:SetPoint("BOTTOM")
+			otherBar:SetPoint("LEFT", myBar:GetStatusBarTexture(), "RIGHT")
 			otherBar:SetWidth(width)
 
 			absorbBar:ClearAllPoints()
 			absorbBar:SetPoint("TOP")
 			absorbBar:SetPoint("BOTTOM")
+			absorbBar:SetPoint("LEFT", otherBar:GetStatusBarTexture(), "RIGHT")
 			absorbBar:SetWidth(width)
 
 			healAbsorbBar:ClearAllPoints()
@@ -220,16 +191,19 @@ do
 			myBar:ClearAllPoints()
 			myBar:SetPoint("LEFT")
 			myBar:SetPoint("RIGHT")
+			myBar:SetPoint("BOTTOM", frame.Health:GetStatusBarTexture(), "TOP")
 			myBar:SetHeight(height)
 
 			otherBar:ClearAllPoints()
 			otherBar:SetPoint("LEFT")
 			otherBar:SetPoint("RIGHT")
+			otherBar:SetPoint("BOTTOM", myBar:GetStatusBarTexture(), "TOP")
 			otherBar:SetHeight(height)
 
 			absorbBar:ClearAllPoints()
 			absorbBar:SetPoint("LEFT")
 			absorbBar:SetPoint("RIGHT")
+			healAbsorbBar:SetPoint("BOTTOM", otherBar:GetStatusBarTexture(), "TOP")
 			absorbBar:SetHeight(height)
 
 			healAbsorbBar:ClearAllPoints()
