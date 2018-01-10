@@ -203,7 +203,7 @@ do
 			absorbBar:ClearAllPoints()
 			absorbBar:SetPoint("LEFT")
 			absorbBar:SetPoint("RIGHT")
-			healAbsorbBar:SetPoint("BOTTOM", otherBar:GetStatusBarTexture(), "TOP")
+			absorbBar:SetPoint("BOTTOM", otherBar:GetStatusBarTexture(), "TOP")
 			absorbBar:SetHeight(height)
 
 			healAbsorbBar:ClearAllPoints()
