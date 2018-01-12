@@ -50,106 +50,106 @@ local actionButtons = {} -- action bar buttons
 local activeButtons = {} -- active action buttons
 local handledButtons = {} -- all buttons
 
-local function Button_HasAction(self)
-	if self:IsShown() then
-		if self.__type == "action" or self.__type == "extra" then
-			return self.action and HasAction(self.action)
-		elseif self.__type == "zone" then
-			return GetZoneAbilitySpellInfo() ~= 0
-		elseif self.__type == "flyout" then
-			return not not self.spellID
-		elseif self.__type == "stance" then
-			return not not GetShapeshiftFormInfo(self:GetID())
-		elseif self.__type == "petaction" then
-			return not not GetPetActionInfo(self:GetID())
-		end
-	else
-		return false
-	end
-end
+-- local function Button_HasAction(self)
+-- 	if self:IsShown() then
+-- 		if self.__type == "action" or self.__type == "extra" then
+-- 			return self.action and HasAction(self.action)
+-- 		elseif self.__type == "zone" then
+-- 			return GetZoneAbilitySpellInfo() ~= 0
+-- 		elseif self.__type == "flyout" then
+-- 			return not not self.spellID
+-- 		elseif self.__type == "stance" then
+-- 			return not not GetShapeshiftFormInfo(self:GetID())
+-- 		elseif self.__type == "petaction" then
+-- 			return not not GetPetActionInfo(self:GetID())
+-- 		end
+-- 	else
+-- 		return false
+-- 	end
+-- end
 
-local function Button_GetActionInfo(self)
-	local isUsable, notEnoughMana, isEquipped, isInRange, _ = false, false, false
+-- local function Button_GetActionInfo(self)
+-- 	local isUsable, notEnoughMana, isEquipped, isInRange, _ = false, false, false
 
-	if self.__type == "action" or self.__type == "extra" then
-		if self.action then
-			isUsable, notEnoughMana = IsUsableAction(self.action)
-			isEquipped = IsEquippedAction(self.action)
-			isInRange =	IsActionInRange(self.action)
-		end
-	elseif self.__type == "zone" then
-		if self.currentSpellID or self.spellID then
-			isUsable, notEnoughMana = IsUsableSpell(self.currentSpellID or self.spellID)
-			isInRange = IsSpellInRange(self.currentSpellID or self.spellID)
-		end
-	elseif self.__type == "flyout" then
-		if self.spellID then
-			isUsable, notEnoughMana = IsUsableSpell(self.spellID)
-		end
-	elseif self.__type == "stance" then
-		_, _, _, isUsable = GetShapeshiftFormInfo(self:GetID())
-	elseif self.__type == "petaction" then
-		isUsable = not not GetPetActionInfo(self:GetID())
-	end
+-- 	if self.__type == "action" or self.__type == "extra" then
+-- 		if self.action then
+-- 			isUsable, notEnoughMana = IsUsableAction(self.action)
+-- 			isEquipped = IsEquippedAction(self.action)
+-- 			isInRange =	IsActionInRange(self.action)
+-- 		end
+-- 	elseif self.__type == "zone" then
+-- 		if self.currentSpellID or self.spellID then
+-- 			isUsable, notEnoughMana = IsUsableSpell(self.currentSpellID or self.spellID)
+-- 			isInRange = IsSpellInRange(self.currentSpellID or self.spellID)
+-- 		end
+-- 	elseif self.__type == "flyout" then
+-- 		if self.spellID then
+-- 			isUsable, notEnoughMana = IsUsableSpell(self.spellID)
+-- 		end
+-- 	elseif self.__type == "stance" then
+-- 		_, _, _, isUsable = GetShapeshiftFormInfo(self:GetID())
+-- 	elseif self.__type == "petaction" then
+-- 		isUsable = not not GetPetActionInfo(self:GetID())
+-- 	end
 
-	return isUsable, notEnoughMana, isEquipped, isInRange == nil and true or isInRange
-end
+-- 	return isUsable, notEnoughMana, isEquipped, isInRange == nil and true or isInRange
+-- end
 
-local function Button_UpdateState(self)
-	local icon = self.icon or self.Icon
-	local hotKey = self.HotKey
-	local isUsable, notEnoughMana, isEquipped, isInRange = self:GetActionInfo()
+-- local function Button_UpdateState(self)
+-- 	local icon = self.icon or self.Icon
+-- 	local hotKey = self.HotKey
+-- 	local isUsable, notEnoughMana, isEquipped, isInRange = self:GetActionInfo()
 
-	if C.db.profile.bars.icon_indicator then
-		if not isUsable and not notEnoughMana then
-			icon:SetDesaturated(true)
-			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-		elseif not isInRange then
-			icon:SetDesaturated(true)
-			icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-		elseif notEnoughMana then
-			icon:SetDesaturated(true)
-			icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
-		else
-			icon:SetDesaturated(false)
-			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-		end
+-- 	if C.db.profile.bars.icon_indicator then
+-- 		if not isUsable and not notEnoughMana then
+-- 			icon:SetDesaturated(true)
+-- 			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+-- 		elseif not isInRange then
+-- 			icon:SetDesaturated(true)
+-- 			icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
+-- 		elseif notEnoughMana then
+-- 			icon:SetDesaturated(true)
+-- 			icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(0.65))
+-- 		else
+-- 			icon:SetDesaturated(false)
+-- 			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+-- 		end
 
-		if hotKey then
-			if not isUsable and not notEnoughMana then
-				hotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-			else
-				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-			end
-		end
-	else
-		if not isUsable and not notEnoughMana then
-			icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-			icon:SetDesaturated(false)
-		else
-			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-			icon:SetDesaturated(false)
-		end
+-- 		if hotKey then
+-- 			if not isUsable and not notEnoughMana then
+-- 				hotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+-- 			else
+-- 				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+-- 			end
+-- 		end
+-- 	else
+-- 		if not isUsable and not notEnoughMana then
+-- 			icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+-- 			icon:SetDesaturated(false)
+-- 		else
+-- 			icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+-- 			icon:SetDesaturated(false)
+-- 		end
 
-		if hotKey then
-			if not isUsable and not notEnoughMana then
-				hotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-			elseif not isInRange then
-				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
-			elseif notEnoughMana then
-				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
-			else
-				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-			end
-		end
-	end
+-- 		if hotKey then
+-- 			if not isUsable and not notEnoughMana then
+-- 				hotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
+-- 			elseif not isInRange then
+-- 				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+-- 			elseif notEnoughMana then
+-- 				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOM:GetRGBA(1))
+-- 			else
+-- 				hotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+-- 			end
+-- 		end
+-- 	end
 
-	if isEquipped then
-		self:SetBorderColor(M.COLORS.GREEN:GetRGB())
-	else
-		self:SetBorderColor(1, 1, 1)
-	end
-end
+-- 	if isEquipped then
+-- 		self:SetBorderColor(M.COLORS.GREEN:GetRGB())
+-- 	else
+-- 		self:SetBorderColor(1, 1, 1)
+-- 	end
+-- end
 
 local function SetNormalTextureHook(self, texture)
 	if texture then
@@ -183,22 +183,7 @@ end
 
 local function SetHotKeyTextHook(self)
 	local button = self:GetParent()
-	local name = button:GetName()
-	local bType = button.buttonType
-
-	if not bType then
-		if name and not s_match(name, "Stance") then
-			if s_match(name, "PetAction") then
-				bType = "BONUSACTIONBUTTON"
-			else
-				bType = "ACTIONBUTTON"
-			end
-		elseif not name then
-			bType = "ACTIONBUTTON"
-		end
-	end
-
-	local text = bType and _G.GetBindingKey(bType..button:GetID()) or ""
+	local text = button._command and GetBindingKey(button._command) or ""
 
 	if text and text ~= "" then
 		text = s_gsub(text, "SHIFT%-", "S")
@@ -323,30 +308,26 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetFontObject("LS10Font_Outline")
+		-- BUG: SetFont prevents SetFontObject from working
+		E:ForceHide(bHotKey)
+
+		bHotKey = button:CreateFontString("$parentHotKey", "OVERLAY", "LS10Font_Outline")
 		bHotKey:SetJustifyH("RIGHT")
-		bHotKey:SetDrawLayer("OVERLAY")
-		bHotKey:ClearAllPoints()
-		bHotKey:SetWidth(0, 0)
-		bHotKey:SetPoint("TOPRIGHT", 2, 0)
+		bHotKey:SetPoint("TOPRIGHT", 2, -2)
+		button.HotKey = bHotKey
 
 		SetHotKeyTextHook(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
-
-		bHotKey:SetVertexColor(M.COLORS.LIGHT_GRAY:GetRGB())
-
-		if not C.db.profile.bars.hotkey then
-			bHotKey:Hide()
-		end
 	end
 
 	if bCount then
-		bCount:SetFontObject("LS10Font_Outline")
+		-- BUG: SetFont prevents SetFontObject from working
+		E:ForceHide(bCount)
+
+		bCount = button:CreateFontString("$parentCount", "OVERLAY", "LS10Font_Outline")
 		bCount:SetJustifyH("RIGHT")
-		bCount:SetDrawLayer("OVERLAY")
-		bCount:ClearAllPoints()
-		bCount:SetSize(0, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
+		button.Count = bCount
 	end
 
 	if bName then
@@ -359,10 +340,6 @@ local function SkinButton(button)
 
 		SetMacroTextHook(bName)
 		hooksecurefunc(bName, "SetText", SetMacroTextHook)
-
-		if not C.db.profile.bars.macro then
-			bName:Hide()
-		end
 	end
 
 	if bBorder then
@@ -385,6 +362,7 @@ local function SkinButton(button)
 
 	if bNormalTexture then
 		bNormalTexture:SetTexture(nil)
+		hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
 
 		E:CreateBorder(button)
 	end
@@ -400,9 +378,6 @@ local function SkinButton(button)
 	if bCheckedTexture then
 		SetCheckedTexture(button)
 	end
-
-	button:SetScript("OnUpdate", nil)
-	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 
 	handledButtons[button] = true
 end
@@ -428,22 +403,15 @@ function E:SkinActionButton(button)
 		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
 	end
 
-	button.__type = "action"
 	button.__styled = true
-	button.HasAction = Button_HasAction
-	button.GetActionInfo = Button_GetActionInfo
 
 	actionButtons[button] = true
-
-	button:HookScript("OnEnter", Button_UpdateState)
 end
 
 function E:SkinFlyoutButton(button)
-	if not button or button.__styled then return end
-
-	self:SkinActionButton(button)
-
-	button.__type = "flyout"
+	if button or not button.__styled then
+		self:SkinActionButton(button)
+	end
 end
 
 function E:SkinAuraButton(button)
@@ -493,7 +461,6 @@ function E:SkinAuraButton(button)
 		hooksecurefunc(bDuration, "SetFormattedText", SetFormattedTextHook)
 	end
 
-	button.__type = "aura"
 	button.__styled = true
 end
 
@@ -536,13 +503,8 @@ function E:SkinExtraActionButton(button)
 	end
 
 	button.__styled = true
-	button.__type = "extra"
-	button.HasAction = Button_HasAction
-	button.GetActionInfo = Button_GetActionInfo
 
 	actionButtons[button] = true
-
-	button:HookScript("OnEnter", Button_UpdateState)
 end
 
 function E:SkinZoneAbilityButton(button)
@@ -589,16 +551,9 @@ function E:SkinPetActionButton(button)
 		end
 	end
 
-	hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
-
 	button.__styled = true
-	button.__type = "petaction"
-	button.HasAction = Button_HasAction
-	button.GetActionInfo = Button_GetActionInfo
 
 	actionButtons[button] = true
-
-	button:HookScript("OnEnter", Button_UpdateState)
 end
 
 function E:SkinPetBattleButton(button)
@@ -669,13 +624,8 @@ function E:SkinStanceButton(button)
 	end
 
 	button.__styled = true
-	button.__type = "stance"
-	button.HasAction = Button_HasAction
-	button.GetActionInfo = Button_GetActionInfo
 
 	actionButtons[button] = true
-
-	button:HookScript("OnEnter", Button_UpdateState)
 end
 
 function E:SkinSquareButton(button)
@@ -770,27 +720,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 end
 
 function E:UpdateButtonState(...)
-	Button_UpdateState(...)
-end
-
-do
-	local isHooked = false
-
-	function P:HookSpellFlyout()
-		if not isHooked then
-			hooksecurefunc(_G.SpellFlyout, "Toggle", function(self, ID, parent)
-				if not self:IsShown() or not handledButtons[parent]	then return end
-
-				local _, _, numSlots = _G.GetFlyoutInfo(ID)
-
-				for i = 1, numSlots do
-					E:SkinFlyoutButton(_G["SpellFlyoutButton"..i])
-				end
-			end)
-
-			isHooked = true
-		end
-	end
+	-- Button_UpdateState(...)
 end
 
 function P:GetHandledButtons()
@@ -809,61 +739,61 @@ end
 -- UPDATES --
 -------------
 
-do
-	local function UpdateActionButtonsTable()
-		for button in next, actionButtons do
-			if button:HasAction() then
-				activeButtons[button] = true
-			else
-				button:SetBorderColor(1, 1, 1)
+-- do
+-- 	local function UpdateActionButtonsTable()
+-- 		for button in next, actionButtons do
+-- 			if button:HasAction() then
+-- 				activeButtons[button] = true
+-- 			else
+-- 				button:SetBorderColor(1, 1, 1)
 
-				activeButtons[button] = nil
-			end
-		end
-	end
+-- 				activeButtons[button] = nil
+-- 			end
+-- 		end
+-- 	end
 
-	local function PLAYER_ENTERING_WORLD()
-		UpdateActionButtonsTable()
+-- 	local function PLAYER_ENTERING_WORLD()
+-- 		UpdateActionButtonsTable()
 
-		local flash_timer = 0
-		local state_timer = 0
+-- 		local flash_timer = 0
+-- 		local state_timer = 0
 
-		_G.CreateFrame("Frame"):SetScript("OnUpdate", function (_, elapsed)
-			flash_timer = flash_timer - elapsed
-			state_timer = state_timer - elapsed
+-- 		_G.CreateFrame("Frame"):SetScript("OnUpdate", function (_, elapsed)
+-- 			flash_timer = flash_timer - elapsed
+-- 			state_timer = state_timer - elapsed
 
-			if flash_timer <= 0 or state_timer <= 0 then
-				for button in next, activeButtons do
-					if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
-						if button.Flash:IsShown() then
-							button.Flash:Hide()
-						else
-							button.Flash:Show()
-						end
-					end
+-- 			if flash_timer <= 0 or state_timer <= 0 then
+-- 				for button in next, activeButtons do
+-- 					if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
+-- 						if button.Flash:IsShown() then
+-- 							button.Flash:Hide()
+-- 						else
+-- 							button.Flash:Show()
+-- 						end
+-- 					end
 
-					if state_timer <= 0 then
-						Button_UpdateState(button)
-					end
-				end
+-- 					if state_timer <= 0 then
+-- 						Button_UpdateState(button)
+-- 					end
+-- 				end
 
-				if flash_timer <= 0 then
-					flash_timer = ATTACK_BUTTON_FLASH_TIME
-				end
+-- 				if flash_timer <= 0 then
+-- 					flash_timer = ATTACK_BUTTON_FLASH_TIME
+-- 				end
 
-				if state_timer <= 0 then
-					state_timer = TOOLTIP_UPDATE_TIME
-				end
-			end
-		end)
+-- 				if state_timer <= 0 then
+-- 					state_timer = TOOLTIP_UPDATE_TIME
+-- 				end
+-- 			end
+-- 		end)
 
-		E:UnregisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
-	end
+-- 		E:UnregisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
+-- 	end
 
-	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
-	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
-	E:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED", UpdateActionButtonsTable)
-	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
-	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
-	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
-end
+-- 	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
+-- 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
+-- 	E:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED", UpdateActionButtonsTable)
+-- 	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
+-- 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
+-- 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
+-- end
