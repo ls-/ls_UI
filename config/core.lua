@@ -531,7 +531,7 @@ function MODULE.Init()
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
 	MODULE:CreateGeneralPanel(3)
-	MODULE:CreateActionBarsPanel(4)
+	-- MODULE:CreateActionBarsPanel(4)
 	MODULE:CreateAuraTrackerPanel(5)
 	MODULE:CreateBlizzardPanel(6)
 	MODULE:CreateAurasPanel(7)
