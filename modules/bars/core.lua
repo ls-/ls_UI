@@ -235,6 +235,7 @@ function MODULE.Init()
 	if not isInit and C.db.char.bars.enabled then
 		MODULE:SetupActionBarController()
 		MODULE:CreateActionBars()
+		MODULE:CreateStanceBar()
 		MODULE:CreatePetBattleBar()
 		MODULE:CreateExtraButton()
 		MODULE:CreateZoneButton()
