@@ -181,36 +181,47 @@ local function SetFormattedTextHook(self, pattern, text)
 	self:SetText(s_format(s_gsub(pattern, "[ .()]", ""), text))
 end
 
-local function SetHotKeyTextHook(self)
-	local button = self:GetParent()
-	local text = button._command and GetBindingKey(button._command) or ""
+local function getBindingKey(self)
+	local text = self._command and GetBindingKey(self._command) or ""
 
 	if text and text ~= "" then
-		text = s_gsub(text, "SHIFT%-", "S")
-		text = s_gsub(text, "CTRL%-", "C")
-		text = s_gsub(text, "ALT%-", "A")
-		text = s_gsub(text, "BUTTON1", "LM")
-		text = s_gsub(text, "BUTTON2", "RM")
-		text = s_gsub(text, "BUTTON3", "MM")
-		text = s_gsub(text, "BUTTON", "M")
-		text = s_gsub(text, "MOUSEWHEELDOWN", "WD")
-		text = s_gsub(text, "MOUSEWHEELUP", "WU")
-		text = s_gsub(text, "NUMPADDECIMAL", "N.")
-		text = s_gsub(text, "NUMPADDIVIDE", "N/")
-		text = s_gsub(text, "NUMPADMINUS", "N-")
-		text = s_gsub(text, "NUMPADMULTIPLY", "N*")
-		text = s_gsub(text, "NUMPADPLUS", "N+")
-		text = s_gsub(text, "NUMPAD", "N")
-		text = s_gsub(text, "PAGEDOWN", "PD")
-		text = s_gsub(text, "PAGEUP", "PU")
-		text = s_gsub(text, "SPACE", "Sp")
-		text = s_gsub(text, "DOWN", "Dn")
-		text = s_gsub(text, "LEFT", "Lt")
-		text = s_gsub(text, "RIGHT", "Rt")
-		text = s_gsub(text, "UP", "Up")
+		text = text:gsub("SHIFT%-", "S")
+		text = text:gsub("CTRL%-", "C")
+		text = text:gsub("ALT%-", "A")
+		text = text:gsub("BUTTON1", "LM")
+		text = text:gsub("BUTTON2", "RM")
+		text = text:gsub("BUTTON3", "MM")
+		text = text:gsub("BUTTON", "M")
+		text = text:gsub("MOUSEWHEELDOWN", "WD")
+		text = text:gsub("MOUSEWHEELUP", "WU")
+		text = text:gsub("NUMPADDECIMAL", "N.")
+		text = text:gsub("NUMPADDIVIDE", "N/")
+		text = text:gsub("NUMPADMINUS", "N-")
+		text = text:gsub("NUMPADMULTIPLY", "N*")
+		text = text:gsub("NUMPADPLUS", "N+")
+		text = text:gsub("NUMPAD", "N")
+		text = text:gsub("PAGEDOWN", "PD")
+		text = text:gsub("PAGEUP", "PU")
+		text = text:gsub("SPACE", "Sp")
+		text = text:gsub("DOWN", "Dn")
+		text = text:gsub("LEFT", "Lt")
+		text = text:gsub("RIGHT", "Rt")
+		text = text:gsub("UP", "Up")
 	end
 
-	self:SetFormattedText("%s", text or "")
+	return text
+end
+
+local function updateHotKey(self)
+	self:SetFormattedText("%s", getBindingKey(self:GetParent()))
+end
+
+local function button_UpdateHotKey(self, text)
+	if text and text == "" then
+		self.HotKey:SetFormattedText("")
+	else
+		updateHotKey(self.HotKey)
+	end
 end
 
 local function SetMacroTextHook(self, text)
@@ -316,8 +327,9 @@ local function SkinButton(button)
 		bHotKey:SetPoint("TOPRIGHT", 2, -2)
 		button.HotKey = bHotKey
 
-		SetHotKeyTextHook(bHotKey)
-		hooksecurefunc(bHotKey, "SetText", SetHotKeyTextHook)
+		updateHotKey(bHotKey)
+		hooksecurefunc(bHotKey, "SetText", updateHotKey)
+		button.UpdateHotKey = button_UpdateHotKey
 	end
 
 	if bCount then
