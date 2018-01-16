@@ -386,12 +386,28 @@ end
 -- METHODS --
 -------------
 
+local function updateBorderColor(self)
+	local button = self:GetParent()
+
+	if button:IsEquipped() then
+		button:SetBorderColor(M.COLORS.GREEN:GetRGB())
+	else
+		button:SetBorderColor(1, 1, 1)
+	end
+end
+
 function E:SkinActionButton(button)
 	if not button or button.__styled then return end
 
 	SkinButton(button)
 
+	local bBorder = button.Border
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
+
+	if bBorder then
+		hooksecurefunc(bBorder, "Show", updateBorderColor)
+		hooksecurefunc(bBorder, "Hide", updateBorderColor)
+	end
 
 	if bFloatingBG then
 		bFloatingBG:SetAlpha(1)
