@@ -2069,7 +2069,7 @@ D.profile = {
 			range = {0.8, 0.1, 0.1},
 			mana = {0.5, 0.5, 1.0}
 		},
-		lock = true,
+		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = true,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
@@ -2223,9 +2223,7 @@ D.profile = {
 		},
 		bar6 = { --PetAction
 			flyout_dir = "UP",
-			grid = true,
 			hotkey = true,
-			macro = true,
 			num = 10,
 			per_row = 10,
 			size = 24,

@@ -563,20 +563,18 @@ function E:SkinPetActionButton(button)
 		bAutoCast:ClearAllPoints()
 		bAutoCast:SetPoint("TOPLEFT", -12, 12)
 		bAutoCast:SetPoint("BOTTOMRIGHT", 12, -12)
+		button.AutoCastBorder = bAutoCast
 	end
 
 	if bShine then
 		bShine:ClearAllPoints()
 		bShine:SetPoint("TOPLEFT", 1, -1)
 		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
+		button.AutoCastShine = bShine
 	end
 
 	if bHotKey then
 		bHotKey:SetFontObject("LS8Font_Outline")
-
-		if not C.db.profile.bars.hotkey then
-			bHotKey:Hide()
-		end
 	end
 
 	button.__styled = true

@@ -57,7 +57,7 @@ local function fadeOut_OnFinished(self)
 	self:GetParent().faded = true
 end
 
-E:RegisterEvent("ACTIONBAR_SHOWGRID", function()
+local function pauseFading()
 	for id, bar in next, bars do
 		local config = C.db.profile.bars[id]
 
@@ -70,9 +70,12 @@ E:RegisterEvent("ACTIONBAR_SHOWGRID", function()
 			bar.faded = nil
 		end
 	end
-end)
+end
 
-E:RegisterEvent("ACTIONBAR_HIDEGRID", function()
+E:RegisterEvent("ACTIONBAR_SHOWGRID", pauseFading)
+E:RegisterEvent("PET_BAR_SHOWGRID", pauseFading)
+
+local function resumeFading()
 	for id, bar in next, bars do
 		local config = C.db.profile.bars[id]
 
@@ -80,7 +83,10 @@ E:RegisterEvent("ACTIONBAR_HIDEGRID", function()
 			bar:SetScript("OnUpdate", bar_OnUpdate)
 		end
 	end
-end)
+end
+
+E:RegisterEvent("ACTIONBAR_HIDEGRID", resumeFading)
+E:RegisterEvent("PET_BAR_HIDEGRID", resumeFading)
 
 function MODULE.UpdateBarVisibility(_, bar)
 	if bar._config.visibility then
@@ -236,6 +242,7 @@ function MODULE.Init()
 		MODULE:SetupActionBarController()
 		MODULE:CreateActionBars()
 		MODULE:CreateStanceBar()
+		MODULE:CreatePetActionBar()
 		MODULE:CreatePetBattleBar()
 		MODULE:CreateExtraButton()
 		MODULE:CreateZoneButton()
