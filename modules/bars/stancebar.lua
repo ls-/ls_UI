@@ -62,14 +62,7 @@ local function button_UpdateState(self)
 			self.cooldown:Hide()
 		end
 
-		local start, duration, enable = GetShapeshiftFormCooldown(id)
-		CooldownFrame_Set(self.cooldown, start, duration, enable)
-
-		if isActive then
-			self:SetChecked(true)
-		else
-			self:SetChecked(false)
-		end
+		self:SetChecked(isActive)
 
 		if C.db.profile.bars.icon_indicator then
 			if isCastable then
@@ -93,7 +86,8 @@ local function button_UpdateState(self)
 			end
 		end
 
-		self:UpdateHotKey(C.db.profile.bars.bar7.hotkey and nil or "")
+		self:UpdateHotKey(C.db.profile.bars.bar7.hotkey)
+		CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(id))
 	end
 end
 
@@ -102,6 +96,22 @@ function MODULE.CreateStanceBar()
 		local bar = CreateFrame("Frame", "LSStanceBar", UIParent, "SecureHandlerStateTemplate")
 		bar._id = "bar7"
 		bar._buttons = {}
+
+		for i = 1, #BUTTONS do
+			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "StanceButtonTemplate")
+			button:SetID(i)
+			button._parent = bar
+			button._command = "SHAPESHIFTBUTTON"..i
+			button.UpdateState = button_UpdateState
+
+			BUTTONS[i]:SetAllPoints(button)
+			E:ForceHide(BUTTONS[i])
+
+			E:SkinStanceButton(button)
+
+			bar._buttons[i] = button
+		end
+
 		bar.UpdateButtons = function(self)
 			local numStances = GetNumShapeshiftForms()
 
@@ -114,6 +124,7 @@ function MODULE.CreateStanceBar()
 				end
 			end
 		end
+
 		bar.UpdateButtonsStates = function(self)
 			for _, button in next, self._buttons do
 				button:UpdateState()
@@ -149,21 +160,6 @@ function MODULE.CreateStanceBar()
 		bar:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 		bar:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
 		bar:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-
-		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "parentButton"..i, bar, "StanceButtonTemplate")
-			button:SetID(i)
-			button._parent = bar
-			button._command = "SHAPESHIFTBUTTON"..i
-			button.UpdateState = button_UpdateState
-
-			BUTTONS[i]:SetAllPoints(button)
-			E:ForceHide(BUTTONS[i])
-
-			E:SkinStanceButton(button)
-
-			bar._buttons[i] = button
-		end
 
 		MODULE:AddBar("bar7", bar)
 
