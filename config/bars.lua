@@ -32,7 +32,7 @@ local CURRENCY_TABLE = {
 }
 
 local function UpdateCurrencyOptions()
-	local options = C.options and C.options.args.bars.args.bags.args.currency.args or CURRENCY_TABLE.args
+	local options = C.options and C.options.args.bars and C.options.args.bars.args.bags.args.currency.args or CURRENCY_TABLE.args
 	local name, isHeader, icon, link, _
 
 	t_wipe(options)
