@@ -644,11 +644,16 @@ function E:SkinStanceButton(button)
 	SkinButton(button)
 
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
+	local bHotKey = button.HotKey
 
 	if bFloatingBG then
 		bFloatingBG:SetAlpha(1)
 		bFloatingBG:SetAllPoints()
 		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
+	end
+
+	if bHotKey then
+		bHotKey:SetFontObject("LS8Font_Outline")
 	end
 
 	button.__styled = true
