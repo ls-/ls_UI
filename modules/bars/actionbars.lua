@@ -102,82 +102,6 @@ local ACTION_BARS = {
 	-- 	},
 	-- 	original_bar = "PetActionBarFrame",
 	-- },
-	-- bar7 = {
-	-- 	name = "LSStanceBar",
-	-- 	type = "SHAPESHIFTBUTTON%d",
-	-- 	b_buttons = {
-	-- 		StanceButton1, StanceButton2, StanceButton3, StanceButton4, StanceButton5,
-	-- 		StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10,
-	-- 	},
-	-- 	original_bar = "StanceBarFrame",
-	-- },
-}
-
-local TOP_POINT = {
-	p = "BOTTOM",
-	anchor = "UIParent",
-	rP = "BOTTOM",
-	x = 0,
-	y = 152,
-}
-
-local BOTTOM_POINT = {
-	p = "BOTTOM",
-	anchor = "UIParent",
-	rP = "BOTTOM",
-	x = 0,
-	y = 124,
-}
-
-local LAYOUT = {
-	WARRIOR = {
-		bar6 = TOP_POINT,
-		bar7 = BOTTOM_POINT
-	},
-	PALADIN = {
-		bar6 = TOP_POINT,
-		bar7 = BOTTOM_POINT
-	},
-	HUNTER = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	ROGUE = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	PRIEST = {
-		bar6 = TOP_POINT,
-		bar7 = BOTTOM_POINT
-	},
-	DEATHKNIGHT = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	SHAMAN = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	MAGE = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	WARLOCK = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
-	MONK = {
-		bar6 = TOP_POINT,
-		bar7 = BOTTOM_POINT
-	},
-	DRUID = {
-		bar6 = TOP_POINT,
-		bar7 = BOTTOM_POINT
-	},
-	DEMONHUNTER = {
-		bar6 = BOTTOM_POINT,
-		bar7 = TOP_POINT
-	},
 }
 
 local PAGES = {
@@ -199,10 +123,6 @@ local function GetBarPage()
 	return condition.." [form] 1; 1"
 end
 
-local function GetBarPoint(barID)
-	return LAYOUT[E.PLAYER_CLASS][barID]
-end
-
 function MODULE.CreateActionBars()
 	if not isInit then
 		local config = {
@@ -211,8 +131,6 @@ function MODULE.CreateActionBars()
 			bar3 = C.db.profile.bars.bar3,
 			bar4 = C.db.profile.bars.bar4,
 			bar5 = C.db.profile.bars.bar5,
-			bar6 = C.db.profile.bars.bar6,
-			bar7 = C.db.profile.bars.bar7,
 		}
 
 		for barID, data in next, ACTION_BARS do
@@ -267,8 +185,7 @@ function MODULE.CreateActionBars()
 			if barID == "bar1" and MODULE:IsRestricted() then
 				MODULE:ActionBarController_AddWidget(bar, "ACTION_BAR")
 			else
-				local point = config[barID].point or GetBarPoint(barID)
-
+				local point = config[barID].point
 				bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E:CreateMover(bar)
 			end
