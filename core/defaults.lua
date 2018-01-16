@@ -2062,6 +2062,7 @@ D.profile = {
 		},
 	},
 	bars = {
+		icon_indicator = true,
 		range_indicator = "button", -- hotkey
 		tooltip = "enabled", -- disabled, nocombat
 		colors = {
