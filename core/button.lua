@@ -216,8 +216,8 @@ local function updateHotKey(self)
 	self:SetFormattedText("%s", getBindingKey(self:GetParent()))
 end
 
-local function button_UpdateHotKey(self, text)
-	if text and text == "" then
+local function button_UpdateHotKey(self, show)
+	if not show then
 		self.HotKey:SetFormattedText("")
 	else
 		updateHotKey(self.HotKey)
