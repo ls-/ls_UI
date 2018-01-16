@@ -2244,7 +2244,7 @@ D.profile = {
 		},
 		bar7 = { -- Stance
 			flyout_dir = "UP",
-			hotkey = false,
+			hotkey = true,
 			num = 10,
 			per_row = 10,
 			size = 24,
