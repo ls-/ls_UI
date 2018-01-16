@@ -139,7 +139,7 @@ function MODULE.UpdateBarLABConfig(_, bar)
 			hideElements = {
 				macro = not bar._config.macro,
 				hotkey = not bar._config.hotkey,
-				equipped = true,
+				equipped = false,
 			},
 			clickOnDown = false,
 			flyoutDirection = bar._config.flyout_dir,
