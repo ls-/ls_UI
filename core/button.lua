@@ -319,13 +319,12 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
-		-- BUG: SetFont prevents SetFontObject from working
-		E:ForceHide(bHotKey)
-
-		bHotKey = button:CreateFontString("$parentHotKey", "OVERLAY", "LS10Font_Outline")
+		bHotKey:SetFontObject("LS10Font_Outline")
 		bHotKey:SetJustifyH("RIGHT")
-		bHotKey:SetPoint("TOPRIGHT", 2, -2)
-		button.HotKey = bHotKey
+		bHotKey:SetDrawLayer("OVERLAY")
+		bHotKey:ClearAllPoints()
+		bHotKey:SetWidth(0, 0)
+		bHotKey:SetPoint("TOPRIGHT", 2, 0)
 
 		updateHotKey(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", updateHotKey)
@@ -333,13 +332,12 @@ local function SkinButton(button)
 	end
 
 	if bCount then
-		-- BUG: SetFont prevents SetFontObject from working
-		E:ForceHide(bCount)
-
-		bCount = button:CreateFontString("$parentCount", "OVERLAY", "LS10Font_Outline")
+		bCount:SetFontObject("LS10Font_Outline")
 		bCount:SetJustifyH("RIGHT")
+		bCount:SetDrawLayer("OVERLAY")
+		bCount:ClearAllPoints()
+		bCount:SetSize(0, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
-		button.Count = bCount
 	end
 
 	if bName then
