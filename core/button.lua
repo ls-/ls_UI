@@ -331,6 +331,8 @@ function E:SkinFlyoutButton(button)
 	if not button or (button and button.__styled) then return end
 
 	self:SkinActionButton(button)
+
+	button.HotKey:Hide()
 end
 
 function E:SkinAuraButton(button)
