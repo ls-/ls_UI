@@ -432,8 +432,6 @@ function E:SkinZoneAbilityButton(button)
 	if not button or (button and button.__styled) then return end
 
 	self:SkinExtraActionButton(button)
-
-	button.__type = "zone"
 end
 
 function E:SkinPetActionButton(button)
@@ -522,9 +520,6 @@ function E:SkinPetBattleButton(button)
 	end
 
 	button.__styled = true
-	button.__type = "petbattle"
-	button.HasAction = Button_HasAction
-	button.GetActionInfo = Button_GetActionInfo
 
 	actionButtons[button] = true
 end
@@ -658,66 +653,3 @@ end
 function P:GetActionButtons()
 	return actionButtons
 end
-
--------------
--- UPDATES --
--------------
-
--- do
--- 	local function UpdateActionButtonsTable()
--- 		for button in next, actionButtons do
--- 			if button:HasAction() then
--- 				activeButtons[button] = true
--- 			else
--- 				button:SetBorderColor(1, 1, 1)
-
--- 				activeButtons[button] = nil
--- 			end
--- 		end
--- 	end
-
--- 	local function PLAYER_ENTERING_WORLD()
--- 		UpdateActionButtonsTable()
-
--- 		local flash_timer = 0
--- 		local state_timer = 0
-
--- 		_G.CreateFrame("Frame"):SetScript("OnUpdate", function (_, elapsed)
--- 			flash_timer = flash_timer - elapsed
--- 			state_timer = state_timer - elapsed
-
--- 			if flash_timer <= 0 or state_timer <= 0 then
--- 				for button in next, activeButtons do
--- 					if button.Flash and (button.flashing == true or button.flashing == 1) and flash_timer <= 0 then
--- 						if button.Flash:IsShown() then
--- 							button.Flash:Hide()
--- 						else
--- 							button.Flash:Show()
--- 						end
--- 					end
-
--- 					if state_timer <= 0 then
--- 						Button_UpdateState(button)
--- 					end
--- 				end
-
--- 				if flash_timer <= 0 then
--- 					flash_timer = ATTACK_BUTTON_FLASH_TIME
--- 				end
-
--- 				if state_timer <= 0 then
--- 					state_timer = TOOLTIP_UPDATE_TIME
--- 				end
--- 			end
--- 		end)
-
--- 		E:UnregisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
--- 	end
-
--- 	E:RegisterEvent("PLAYER_ENTERING_WORLD", PLAYER_ENTERING_WORLD)
--- 	E:RegisterEvent("ACTIONBAR_SLOT_CHANGED", UpdateActionButtonsTable)
--- 	E:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED", UpdateActionButtonsTable)
--- 	E:RegisterEvent("SPELL_UPDATE_ICON", UpdateActionButtonsTable)
--- 	E:RegisterEvent("UPDATE_SHAPESHIFT_FORM", UpdateActionButtonsTable)
--- 	E:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", UpdateActionButtonsTable)
--- end
