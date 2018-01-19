@@ -108,6 +108,10 @@ local function getBindingKey(self)
 		text = text:gsub("UP", "Up")
 	end
 
+	if not text or text == "" then
+		text = RANGE_INDICATOR
+	end
+
 	return text
 end
 
