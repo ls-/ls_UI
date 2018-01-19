@@ -185,8 +185,6 @@ local function SkinButton(button)
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
 	local bFOArrow = button.FlyoutArrow
-	local bFOBorder = button.FlyoutBorder
-	local bFOBorderShadow = button.FlyoutBorderShadow
 	local bHotKey = button.HotKey
 	local bCount = button.Count
 	local bName = button.Name
@@ -207,14 +205,6 @@ local function SkinButton(button)
 
 	if bFOArrow then
 		bFOArrow:SetDrawLayer("OVERLAY", 2)
-	end
-
-	if bFOBorder then
-		E:ForceHide(bFOBorder)
-	end
-
-	if bFOBorderShadow then
-		E:ForceHide(bFOBorderShadow)
 	end
 
 	if bHotKey then
