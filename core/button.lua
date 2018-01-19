@@ -300,7 +300,7 @@ local function updateBorderColor(self)
 end
 
 function E:SkinActionButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
@@ -328,13 +328,13 @@ function E:SkinActionButton(button)
 end
 
 function E:SkinFlyoutButton(button)
-	if button or not button.__styled then
-		self:SkinActionButton(button)
-	end
+	if not button or (button and button.__styled) then return end
+
+	self:SkinActionButton(button)
 end
 
 function E:SkinAuraButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	local name = button:GetName()
 	local bIcon = _G[name.."Icon"]
@@ -384,7 +384,7 @@ function E:SkinAuraButton(button)
 end
 
 function E:SkinBagButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
@@ -409,7 +409,7 @@ function E:SkinBagButton(button)
 end
 
 function E:SkinExtraActionButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
@@ -427,7 +427,7 @@ function E:SkinExtraActionButton(button)
 end
 
 function E:SkinZoneAbilityButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	self:SkinExtraActionButton(button)
 
@@ -435,7 +435,7 @@ function E:SkinZoneAbilityButton(button)
 end
 
 function E:SkinPetActionButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
@@ -474,7 +474,7 @@ function E:SkinPetActionButton(button)
 end
 
 function E:SkinPetBattleButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
@@ -528,7 +528,7 @@ function E:SkinPetBattleButton(button)
 end
 
 function E:SkinStanceButton(button)
-	if not button or button.__styled then return end
+	if not button or (button and button.__styled) then return end
 
 	SkinButton(button)
 
