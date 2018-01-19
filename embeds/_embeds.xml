@@ -8,6 +8,7 @@
 	<Include file="AceConfig-3.0\AceConfig-3.0.xml"/>
 	<Include file="oUF\oUF.xml"/>
 	<Script file="oUF_FloatingCombatFeedback\oUF_FloatingCombatFeedback.lua"/>
+	<Script file="LibActionButton-1.0\LibActionButton-1.0.lua"/>
 	<Script file="LibDualSpec-1.0\LibDualSpec-1.0.lua"/>
 	<Script file="UTF8\utf8data.lua"/>
 	<Script file="UTF8\utf8.lua"/>
