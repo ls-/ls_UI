@@ -131,16 +131,9 @@ function MODULE.UpdateBarLABConfig(_, bar)
 			tooltip = C.db.profile.bars.tooltip,
 			showGrid = bar._config.grid,
 			colors = {
-				range = {
-					[1] = C.db.profile.bars.colors.range[1],
-					[2] = C.db.profile.bars.colors.range[2],
-					[3] = C.db.profile.bars.colors.range[3],
-				},
-				mana = {
-					[1] = C.db.profile.bars.colors.mana[1],
-					[2] = C.db.profile.bars.colors.mana[2],
-					[3] = C.db.profile.bars.colors.mana[3],
-				},
+				normal = {M.COLORS.BUTTON_ICON.N:GetRGB()},
+				range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()},
+				mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()},
 			},
 			hideElements = {
 				macro = not bar._config.macro,

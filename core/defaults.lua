@@ -2065,10 +2065,6 @@ D.profile = {
 		icon_indicator = true,
 		range_indicator = "button", -- hotkey
 		tooltip = "enabled", -- disabled, nocombat
-		colors = {
-			range = {0.8, 0.1, 0.1},
-			mana = {0.5, 0.5, 1.0}
-		},
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = true,
 		bar1 = { -- MainMenuBar
