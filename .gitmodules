@@ -4,3 +4,6 @@
 [submodule "embeds/oUF_FloatingCombatFeedback"]
 	path = embeds/oUF_FloatingCombatFeedback
 	url = git@github.com:ls-/oUF_FloatingCombatFeedback.git
+[submodule "embeds/libactionbutton-1-0"]
+	path = embeds/libactionbutton-1-0
+	url = git@github.com:ls-/libactionbutton-1-0.git
