@@ -8,7 +8,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 -- Mine
-local LibActionButton = LibStub("LibActionButton-1.0")
+local LibActionButton = LibStub("LibActionButton-1.0-ls")
 local isInit = false
 
 local CFG = {
