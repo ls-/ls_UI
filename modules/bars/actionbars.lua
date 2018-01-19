@@ -41,7 +41,7 @@ local CFG = {
 local ACTION_BARS = {
 	bar1 = {
 		name = "LSActionBar1",
-		type = "ACTIONBUTTON%d",
+		type = "ACTIONBUTTON",
 		b_buttons = {
 			ActionButton1, ActionButton2, ActionButton3, ActionButton4,
 			ActionButton5, ActionButton6, ActionButton7, ActionButton8,
@@ -51,7 +51,7 @@ local ACTION_BARS = {
 	},
 	bar2 = {
 		name = "LSActionBar2",
-		type = "MULTIACTIONBAR1BUTTON%d",
+		type = "MULTIACTIONBAR1BUTTON",
 		b_buttons = {
 			MultiBarBottomLeftButton1, MultiBarBottomLeftButton2, MultiBarBottomLeftButton3, MultiBarBottomLeftButton4,
 			MultiBarBottomLeftButton5, MultiBarBottomLeftButton6, MultiBarBottomLeftButton7, MultiBarBottomLeftButton8,
@@ -62,7 +62,7 @@ local ACTION_BARS = {
 	},
 	bar3 = {
 		name = "LSActionBar3",
-		type = "MULTIACTIONBAR2BUTTON%d",
+		type = "MULTIACTIONBAR2BUTTON",
 		b_buttons = {
 			MultiBarBottomRightButton1, MultiBarBottomRightButton2, MultiBarBottomRightButton3, MultiBarBottomRightButton4,
 			MultiBarBottomRightButton5, MultiBarBottomRightButton6, MultiBarBottomRightButton7, MultiBarBottomRightButton8,
@@ -73,7 +73,7 @@ local ACTION_BARS = {
 	},
 	bar4 = {
 		name = "LSActionBar4",
-		type = "MULTIACTIONBAR4BUTTON%d",
+		type = "MULTIACTIONBAR4BUTTON",
 		b_buttons = {
 			MultiBarLeftButton1, MultiBarLeftButton2, MultiBarLeftButton3, MultiBarLeftButton4,
 			MultiBarLeftButton5, MultiBarLeftButton6, MultiBarLeftButton7, MultiBarLeftButton8,
@@ -84,7 +84,7 @@ local ACTION_BARS = {
 	},
 	bar5 = {
 		name = "LSActionBar5",
-		type = "MULTIACTIONBAR3BUTTON%d",
+		type = "MULTIACTIONBAR3BUTTON",
 		b_buttons = {
 			MultiBarRightButton1, MultiBarRightButton2, MultiBarRightButton3, MultiBarRightButton4,
 			MultiBarRightButton5, MultiBarRightButton6, MultiBarRightButton7, MultiBarRightButton8,
@@ -93,15 +93,6 @@ local ACTION_BARS = {
 		num_buttons = 12,
 		page = 3,
 	},
-	-- bar6 = {
-	-- 	name = "LSPetBar",
-	-- 	type = "BONUSACTIONBUTTON%d",
-	-- 	b_buttons = {
-	-- 		PetActionButton1, PetActionButton2, PetActionButton3, PetActionButton4, PetActionButton5,
-	-- 		PetActionButton6, PetActionButton7, PetActionButton8, PetActionButton9, PetActionButton10,
-	-- 	},
-	-- 	original_bar = "PetActionBarFrame",
-	-- },
 }
 
 local PAGES = {
@@ -142,7 +133,7 @@ function MODULE.CreateActionBars()
 				local button = LibActionButton:CreateButton(i, "$parentButton"..i, bar)
 				button:SetState(0, "action", i)
 				button._parent = bar
-				button._command = data.type:format(i)
+				button._command = data.type..i
 
 				for k = 1, 14 do
 					button:SetState(k, "action", (k - 1) * 12 + i)
@@ -150,7 +141,11 @@ function MODULE.CreateActionBars()
 
 				-- for IconIntroTracker
 				data.b_buttons[i]:SetAllPoints(button)
-				E:ForceHide(data.b_buttons[i])
+				data.b_buttons[i]:SetAttribute("statehidden", true)
+				data.b_buttons[i]:SetParent(E.HIDDEN_PARENT)
+				data.b_buttons[i]:SetScript("OnEvent", nil)
+				data.b_buttons[i]:SetScript("OnUpdate", nil)
+				data.b_buttons[i]:UnregisterAllEvents()
 
 				E:SkinActionButton(button)
 

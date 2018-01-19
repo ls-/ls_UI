@@ -57,15 +57,21 @@ function MODULE.CreatePetActionBar()
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "PetActionButtonTemplate")
 			button:SetID(i)
+			button:SetScript("OnEvent", nil)
+			button:SetScript("OnUpdate", nil)
+			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "BONUSACTIONBUTTON"..i
 			button._forcegrid = false
 			button.StartFlash = PetActionButton_StartFlash
 			button.StopFlash = PetActionButton_StopFlash
 
-			button:UnregisterAllEvents()
-			button:SetScript("OnEvent", nil)
-			button:SetScript("OnUpdate", nil)
+			BUTTONS[i]:SetAllPoints(button)
+			BUTTONS[i]:SetAttribute("statehidden", true)
+			BUTTONS[i]:SetParent(E.HIDDEN_PARENT)
+			BUTTONS[i]:SetScript("OnEvent", nil)
+			BUTTONS[i]:SetScript("OnUpdate", nil)
+			BUTTONS[i]:UnregisterAllEvents()
 
 			E:SkinPetActionButton(button)
 

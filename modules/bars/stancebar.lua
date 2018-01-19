@@ -100,12 +100,19 @@ function MODULE.CreateStanceBar()
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "StanceButtonTemplate")
 			button:SetID(i)
+			button:SetScript("OnEvent", nil)
+			button:SetScript("OnUpdate", nil)
+			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "SHAPESHIFTBUTTON"..i
 			button.UpdateState = button_UpdateState
 
 			BUTTONS[i]:SetAllPoints(button)
-			E:ForceHide(BUTTONS[i])
+			BUTTONS[i]:SetAttribute("statehidden", true)
+			BUTTONS[i]:SetParent(E.HIDDEN_PARENT)
+			BUTTONS[i]:SetScript("OnEvent", nil)
+			BUTTONS[i]:SetScript("OnUpdate", nil)
+			BUTTONS[i]:UnregisterAllEvents()
 
 			E:SkinStanceButton(button)
 
