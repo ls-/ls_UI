@@ -108,8 +108,8 @@ local function UpdateXPBar()
 					local name = C_PetBattles_GetName(1, i)
 					local rarity = C_PetBattles_GetBreedQuality(1, i)
 					local cur, max = C_PetBattles_GetXP(1, i)
-					local r, g, b = M.COLORS.XP:GetRGB()
-					local hex = M.COLORS.XP:GetHEX(0.2)
+					local r, g, b = M.COLORS.XP.NORMAL:GetRGB()
+					local hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
 
 					bar[index].tooltipInfo = {
 						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
@@ -123,6 +123,9 @@ local function UpdateXPBar()
 
 					bar[index]:SetMinMaxValues(0, max)
 					bar[index]:SetValue(cur)
+
+					bar[index].Extension:SetMinMaxValues(0, 1)
+					bar[index].Extension:SetValue(0)
 				end
 			end
 		end
@@ -151,6 +154,9 @@ local function UpdateXPBar()
 
 			bar[index]:SetMinMaxValues(0, max)
 			bar[index]:SetValue(cur)
+
+			bar[index].Extension:SetMinMaxValues(0, 1)
+			bar[index].Extension:SetValue(0)
 		end
 
 		-- XP / Honour
@@ -160,8 +166,15 @@ local function UpdateXPBar()
 
 				local cur, max = UnitXP("player"), UnitXPMax("player")
 				local bonus = GetXPExhaustion()
-				local r, g, b = M.COLORS.XP:GetRGB()
-				local hex = M.COLORS.XP:GetHEX(0.2)
+				local r, g, b, hex
+
+				if bonus and bonus > 0 then
+					r, g, b = M.COLORS.XP.RESTED:GetRGB()
+					hex = M.COLORS.XP.RESTED:GetHEX(0.2)
+				else
+					r, g, b = M.COLORS.XP.NORMAL:GetRGB()
+					hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
+				end
 
 				bar[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
@@ -183,6 +196,20 @@ local function UpdateXPBar()
 
 				bar[index]:SetMinMaxValues(0, max)
 				bar[index]:SetValue(cur)
+
+				if bonus and bonus > 0 then
+					if cur + bonus > max then
+						bonus = max - cur
+					end
+
+					bar[index].Extension:SetMinMaxValues(0, max)
+					bar[index].Extension:SetValue(bonus)
+				else
+					bar[index].Extension:SetMinMaxValues(0, 1)
+					bar[index].Extension:SetValue(0)
+				end
+
+				bar[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 			end
 		else
 			if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
@@ -216,6 +243,20 @@ local function UpdateXPBar()
 
 				bar[index]:SetMinMaxValues(0, max)
 				bar[index]:SetValue(cur)
+
+				if bonus and bonus > 0 then
+					if cur + bonus > max then
+						bonus = max - cur
+					end
+
+					bar[index].Extension:SetMinMaxValues(0, max)
+					bar[index].Extension:SetValue(bonus)
+				else
+					bar[index].Extension:SetMinMaxValues(0, 1)
+					bar[index].Extension:SetValue(0)
+				end
+
+				bar[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 			end
 		end
 
@@ -286,6 +327,9 @@ local function UpdateXPBar()
 
 			bar[index]:SetMinMaxValues(0, max)
 			bar[index]:SetValue(cur)
+
+			bar[index].Extension:SetMinMaxValues(0, 1)
+			bar[index].Extension:SetValue(0)
 		end
 	end
 
@@ -295,14 +339,15 @@ local function UpdateXPBar()
 			bar[i]:SetPoint(unpack(LAYOUT[index][i].point))
 			bar[i]:Show()
 
-			bar[i].Texture.ScrollAnim:Play()
+			bar[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
 		else
 			bar[i]:SetMinMaxValues(0, 1)
 			bar[i]:SetValue(0)
 			bar[i]:ClearAllPoints()
 			bar[i]:Hide()
 
-			bar[i].Texture.ScrollAnim:Stop()
+			bar[i].Extension:SetMinMaxValues(0, 1)
+			bar[i].Extension:SetValue(0)
 		end
 	end
 
@@ -323,12 +368,8 @@ local function UpdateXPBar()
 		bar[1]:SetValue(1)
 		bar[1]:Show()
 
-		bar[1].Spark:Hide()
 		bar[1].Text:SetText(nil)
 		E:SetSmoothedVertexColor(bar[1].Texture, r, g, b)
-		bar[1].Texture.ScrollAnim:Play()
-	else
-		bar[1].Spark:Show()
 	end
 end
 
@@ -359,6 +400,8 @@ local function SetXPBarStyle(width)
 	for i = 1, total do
 		bar[i]:SetSize(unpack(LAYOUT[total][i].size))
 		bar[i]:SetPoint(unpack(LAYOUT[total][i].point))
+		bar[i].Extension:SetSize(unpack(LAYOUT[total][i].size))
+		print("ext size:", bar[i].Extension:GetSize())
 	end
 
 	UpdateXPBar()
@@ -466,23 +509,22 @@ function BARS.CreateXPBar()
 			bar[i] = CreateFrame("StatusBar", "$parentSegment"..i, bar)
 			bar[i]:SetFrameLevel(bar:GetFrameLevel() + 1)
 			bar[i]:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-			bar[i]:SetStatusBarColor(0, 0, 0, 0)
 			bar[i]:SetHitRectInsets(0, 0, -4, -4)
+			bar[i]:SetClipsChildren(true)
 			bar[i]:SetScript("OnEnter", Segment_OnEnter)
 			bar[i]:SetScript("OnLeave", Segment_OnLeave)
-			E:SmoothBar(bar[i])
 			bar[i]:Hide()
+			E:SmoothBar(bar[i])
 
-			bar[i].Texture = E:CreateAnimatedLine(bar[i])
-			bar[i].Texture:SetFrameLevel(bar[i]:GetFrameLevel() + 1)
-			bar[i].Texture:SetAllPoints(bar[i]:GetStatusBarTexture())
+			bar[i].Texture = bar[i]:GetStatusBarTexture()
 
-			local spark = bar[i]:CreateTexture(nil, "ARTWORK", nil, 1)
-			spark:SetSize(16, 16)
-			spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-			spark:SetBlendMode("ADD")
-			spark:SetPoint("CENTER", bar[i]:GetStatusBarTexture(), "RIGHT", 0, 0)
-			bar[i].Spark = spark
+			local ext = CreateFrame("StatusBar", nil, bar[i])
+			ext:SetFrameLevel(bar[i]:GetFrameLevel())
+			ext:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+			ext:SetPoint("TOPLEFT", bar[i].Texture, "TOPRIGHT")
+			ext:SetPoint("BOTTOMLEFT", bar[i].Texture, "BOTTOMRIGHT")
+			E:SmoothBar(ext)
+			bar[i].Extension = ext
 
 			local text = text_parent:CreateFontString(nil, "OVERLAY", "LS10Font_Outline")
 			text:SetAllPoints(bar[i])

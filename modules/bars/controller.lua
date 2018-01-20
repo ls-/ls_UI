@@ -120,9 +120,7 @@ WIDGETS.BAG = {
 		texture:SetHorizTile(true)
 		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
 
-		bar.Texture = E:CreateAnimatedLine(bar)
-		bar.Texture:SetFrameLevel(bar:GetFrameLevel() + 1)
-		bar.Texture:SetAllPoints(bar:GetStatusBarTexture())
+		bar.Texture = bar:GetStatusBarTexture()
 
 		local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
 		spark:SetSize(16, 16)

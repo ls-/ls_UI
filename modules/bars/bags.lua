@@ -177,7 +177,7 @@ function MODULE.CreateBags()
 			local indicator = self:GetParent().Indicator
 
 			if indicator then
-				indicator.Texture:SetVertexColor(r, g, b)
+				E:SetSmoothedVertexColor(indicator.Texture, r, g, b)
 
 				indicator:SetMinMaxValues(0, total)
 				indicator:SetValue(total - free)

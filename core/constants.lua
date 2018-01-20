@@ -151,7 +151,10 @@ COLORS.TAPPED = COLORS.GRAY
 
 COLORS.ARTIFACT = E:CreateColor(230, 204, 128) -- Blizzard Artefact Colour (#e6cc80)
 COLORS.HONOR = COLORS.RED
-COLORS.XP = COLORS.BLUE
+COLORS.XP = {
+	NORMAL = E:CreateColor(0.58, 0, 0.55), -- Blizzard Normal XP Colour
+	RESTED = E:CreateColor(0, 0.39, 0.88), -- Blizzard Rested XP Colour
+}
 
 M.COLORS = COLORS
 

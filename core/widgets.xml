@@ -337,9 +337,4 @@
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
-
-	<AnimationGroup name="LSUILineAnimTemplate" looping="REPEAT" virtual="true">
-		<TextureCoordTranslation childKey="FillScroll1" duration="12" order="1" offsetU="1" offsetV="0"/>
-		<TextureCoordTranslation childKey="FillScroll2" duration="12" order="1" offsetU="-1" offsetV="0"/>
-	</AnimationGroup>
 </Ui>
