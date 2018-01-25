@@ -60,12 +60,12 @@ WIDGETS.ACTION_BAR = {
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
 	on_add = function ()
 		WIDGETS.ACTION_BAR.children = {
-			[1] = LSMultiBarBottomLeftBar,
-			[2] = LSMultiBarBottomRightBar,
-			[3] = LSMultiBarLeftBar,
-			[4] = LSMultiBarRightBar,
-			[5] = LSPetBar,
-			[6] = LSStanceBar,
+			[1] = _G["LSActionBar2"],
+			[2] = _G["LSActionBar3"],
+			[3] = _G["LSActionBar4"],
+			[4] = _G["LSActionBar5"],
+			[5] = _G["LSPetBar"],
+			[6] = _G["LSStanceBar"],
 		}
 	end,
 	attribute = {
@@ -77,10 +77,10 @@ WIDGETS.ACTION_BAR = {
 
 			for i = 7, 12 do
 				if message == 6 then
-					buttons[i]:SetAttribute("ls-hidden", true)
+					buttons[i]:SetAttribute("statehidden", true)
 					buttons[i]:Hide()
 				else
-					buttons[i]:SetAttribute("ls-hidden", false)
+					buttons[i]:SetAttribute("statehidden", nil)
 					buttons[i]:Show()
 				end
 			end
@@ -110,26 +110,16 @@ WIDGETS.BAG = {
 		bar:SetSize(100 / 2, 16 / 2)
 		bar:SetFrameLevel(anim_controller.Bag:GetFrameLevel() - 2)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		bar:SetStatusBarColor(0, 0, 0, 0)
 		E:SmoothBar(bar)
 		self.Indicator = bar
 
-		texture = bar:CreateTexture(nil, "ARTWORK")
+		texture = bar:CreateTexture(nil, "BACKGROUND")
 		texture:SetAllPoints()
 		texture:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
 		texture:SetHorizTile(true)
 		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
 
 		bar.Texture = bar:GetStatusBarTexture()
-
-		local spark = bar:CreateTexture(nil, "ARTWORK", nil, 1)
-		spark:SetSize(16, 16)
-		spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
-		spark:SetBlendMode("ADD")
-		spark:SetPoint("CENTER", bar:GetStatusBarTexture(), "RIGHT", 0, 0)
-		bar.Spark = spark
-
-		bar.Texture.ScrollAnim:Play()
 
 		WIDGETS.BAG.children = {
 			[1] = bar,
@@ -189,6 +179,34 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
 				and (C.db.char.bars.bags.enabled and WIDGETS["BAG"].frame or not C.db.char.bars.bags.enabled) then
+
+				-- _"childupdate-numbuttons" is executed in controller's environment
+				for i = 1, 12 do
+					controller:SetFrameRef("button"..i, _G["LSActionBar1Button"..i])
+				end
+
+				controller:Execute([[
+					top = self:GetFrameRef("top")
+					bottom = self:GetFrameRef("bottom")
+					bag = self:GetFrameRef("bag")
+					buttons = table.new()
+
+					for i = 1, 12 do
+						table.insert(buttons, self:GetFrameRef("button"..i))
+					end
+				]])
+
+				controller:SetAttribute("_onstate-mode", [[
+					if newstate ~= self:GetAttribute("numbuttons") then
+						self:SetAttribute("numbuttons", newstate)
+						self:ChildUpdate("numbuttons", newstate)
+						self:CallMethod("Update")
+
+						top:SetWidth(newstate == 6 and 0.001 or 216)
+						bottom:SetWidth(newstate == 6 and 0.001 or 216)
+					end
+				]])
+
 				RegisterStateDriver(controller, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
 
 				controller.isDriverRegistered = true
@@ -241,7 +259,7 @@ function MODULE.SetupActionBarController()
 		controller.Bag = bag
 		controller:SetFrameRef("bag", bag)
 
-		-- These frames are used as anchor/parents for textures
+		-- These frames are used as anchors/parents for textures
 		top = CreateFrame("Frame", "$parentTop", anim_controller)
 		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
 		top:SetPoint("BOTTOM", 0, 20 / 2)
@@ -387,33 +405,6 @@ function MODULE.SetupActionBarController()
 		anim:SetOrder(4)
 		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
-
-		-- _"childupdate-numbuttons" is executed in controller's environment
-		for i = 1, NUM_ACTIONBAR_BUTTONS do
-			controller:SetFrameRef("ActionButton"..i, _G["ActionButton"..i])
-		end
-
-		controller:Execute([[
-			top = self:GetFrameRef("top")
-			bottom = self:GetFrameRef("bottom")
-			bag = self:GetFrameRef("bag")
-			buttons = table.new()
-
-			for i = 1, 12 do
-				table.insert(buttons, self:GetFrameRef("ActionButton"..i))
-			end
-		]])
-
-		controller:SetAttribute("_onstate-mode", [[
-			if newstate ~= self:GetAttribute("numbuttons") then
-				self:SetAttribute("numbuttons", newstate)
-				self:ChildUpdate("numbuttons", newstate)
-				self:CallMethod("Update")
-
-				top:SetWidth(newstate == 6 and 0.001 or 216)
-				bottom:SetWidth(newstate == 6 and 0.001 or 216)
-			end
-		]])
 
 		isInit = true
 	end
