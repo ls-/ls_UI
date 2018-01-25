@@ -67,13 +67,7 @@ local CFG = {
 		y = 4
 	},
 	fade = {
-		enabled = true,
-		out_delay = 0.75,
-		out_duration = 0.15,
-		in_delay = 0,
-		in_duration = 0.15,
-		min_alpha = 0,
-		max_alpha = 1,
+		enabled = false,
 	},
 }
 
@@ -614,8 +608,9 @@ function BARS.CreateXPBar()
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
 			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
-			BARS:InitBarFading(bar)
 		end
+
+		BARS:InitBarFading(bar)
 
 		isInit = true
 
