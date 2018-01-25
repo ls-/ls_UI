@@ -5,18 +5,11 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local CanExitVehicle = _G.CanExitVehicle
-local CreateFrame = _G.CreateFrame
-local TaxiRequestEarlyLanding = _G.TaxiRequestEarlyLanding
-local UnitOnTaxi = _G.UnitOnTaxi
-local VehicleExit = _G.VehicleExit
-
 -- Mine
 local isInit = false
 local bar
 
-local function OnEvent(self)
+local function onEvent(self)
 	if UnitOnTaxi("player") or CanExitVehicle() then
 		self:Show()
 		self.Icon:SetDesaturated(false)
@@ -26,7 +19,7 @@ local function OnEvent(self)
 	end
 end
 
-local function OnClick(self)
+local function onClick(self)
 	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 
@@ -53,15 +46,17 @@ function MODULE.CreateVehicleExitButton()
 		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 		button:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR")
 		button:RegisterEvent("VEHICLE_UPDATE")
-		button:SetScript("OnEvent", OnEvent)
-		button:SetScript("OnClick", OnClick)
+		button:SetScript("OnEvent", onEvent)
+		button:SetScript("OnClick", onClick)
 		button:SetPoint("TOPLEFT", 2, -2)
 		button:SetPoint("BOTTOMRIGHT", -2, 2)
 
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 		button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 
-		OnEvent(button)
+		onEvent(button)
+
+		MODULE:InitBarFading(bar)
 
 		isInit = true
 
@@ -74,7 +69,10 @@ end
 
 function MODULE.UpdateVehicleExitButton()
 	if isInit then
-		bar:SetSize(C.db.profile.bars.vehicle.size + 4, C.db.profile.bars.vehicle.size + 4)
-		E:UpdateMoverSize(bar)
+		bar._config = C.db.profile.bars.vehicle
+
+		bar:SetSize(bar._config.size + 4, bar._config.size + 4)
+		bar:AdjustMoverSize()
+		MODULE:UpdateBarFading(bar)
 	end
 end
