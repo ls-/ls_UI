@@ -57,6 +57,7 @@ local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
 local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
 
 local CFG = {
+	visible = true,
 	width = 746,
 	point = {
 		p = "BOTTOM",
@@ -64,6 +65,15 @@ local CFG = {
 		rP = "BOTTOM",
 		x = 0,
 		y = 4
+	},
+	fade = {
+		enabled = true,
+		out_delay = 0.75,
+		out_duration = 0.15,
+		in_delay = 0,
+		in_duration = 0.15,
+		min_alpha = 0,
+		max_alpha = 1,
 	},
 }
 
@@ -466,6 +476,8 @@ function BARS.CreateXPBar()
 
 		bar = CreateFrame("Frame", "LSUIXPBar", UIParent)
 		bar:SetScript("OnEvent", XPBar_OnEvent)
+		bar._config = config
+
 		-- all
 		bar:RegisterEvent("PET_BATTLE_CLOSE")
 		bar:RegisterEvent("PET_BATTLE_OPENING_START")
@@ -594,8 +606,6 @@ function BARS.CreateXPBar()
 			UpdateXPBar()
 		end)
 
-		SetXPBarStyle(config.width)
-
 		if BARS:IsRestricted() then
 			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
 		else
@@ -604,17 +614,21 @@ function BARS.CreateXPBar()
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
 			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
+			BARS:InitBarFading(bar)
 		end
 
 		isInit = true
+
+		BARS:UpdateXPBar()
 	end
 end
 
 function BARS.UpdateXPBar()
 	if isInit then
-		local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
+		bar._config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
-		SetXPBarStyle(config.width)
-		E:UpdateMoverSize(bar)
+		SetXPBarStyle(bar._config.width)
+		bar:AdjustMoverSize()
+		BARS:UpdateBarFading(bar)
 	end
 end
