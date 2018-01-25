@@ -401,7 +401,6 @@ local function SetXPBarStyle(width)
 		bar[i]:SetSize(unpack(LAYOUT[total][i].size))
 		bar[i]:SetPoint(unpack(LAYOUT[total][i].point))
 		bar[i].Extension:SetSize(unpack(LAYOUT[total][i].size))
-		print("ext size:", bar[i].Extension:GetSize())
 	end
 
 	UpdateXPBar()
