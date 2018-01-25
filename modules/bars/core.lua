@@ -6,9 +6,6 @@ local MODULE = P:AddModule("Bars")
 local _G = getfenv(0)
 local next = _G.next
 
--- Blizz
-local MouseIsOver = _G.MouseIsOver
-
 -- Mine
 local isInit = false
 local bars = {}
@@ -21,9 +18,9 @@ function MODULE.GetBar(_, barID)
 	return bars[barID]
 end
 
--- Fading & visibility
+-- Fading
 local function isMouseOverBar(frame)
-	return MouseIsOver(frame) or (SpellFlyout:IsShown() and SpellFlyout:GetParent() and SpellFlyout:GetParent():GetParent() == frame and MouseIsOver(SpellFlyout))
+	return frame:IsMouseOver(4, -4, -4, 4) or (SpellFlyout:IsShown() and SpellFlyout:GetParent() and SpellFlyout:GetParent():GetParent() == frame and SpellFlyout:IsMouseOver(4, -4, -4, 4))
 end
 
 local function bar_OnUpdate(self, elapsed)
@@ -88,11 +85,25 @@ end
 E:RegisterEvent("ACTIONBAR_HIDEGRID", resumeFading)
 E:RegisterEvent("PET_BAR_HIDEGRID", resumeFading)
 
-function MODULE.UpdateBarVisibility(_, bar)
-	if bar._config.visibility then
-		E:SetFrameState(bar, "visibility", bar._config.visible and bar._config.visibility or "hide")
-	end
+function MODULE.InitBarFading(_, bar)
+	local ag = bar:CreateAnimationGroup()
+	ag:SetToFinalAlpha(true)
+	ag:SetScript("OnFinished", fadeIn_OnFinished)
+	bar.FadeIn = ag
 
+	local anim = ag:CreateAnimation("Alpha")
+	ag.Anim = anim
+
+	ag = bar:CreateAnimationGroup()
+	ag:SetToFinalAlpha(true)
+	ag:SetScript("OnFinished", fadeOut_OnFinished)
+	bar.FadeOut = ag
+
+	anim = ag:CreateAnimation("Alpha")
+	ag.Anim = anim
+end
+
+function MODULE.UpdateBarFading(_, bar)
 	if bar._config.visible and bar._config.fade and bar._config.fade.enabled then
 		bar.FadeIn.Anim:SetFromAlpha(bar._config.fade.min_alpha)
 		bar.FadeIn.Anim:SetToAlpha(bar._config.fade.max_alpha)
@@ -112,6 +123,13 @@ function MODULE.UpdateBarVisibility(_, bar)
 		bar:SetAlpha(1)
 
 		bar.faded = nil
+	end
+end
+
+-- Visibility
+function MODULE.UpdateBarVisibility(_, bar)
+	if bar._config.visibility then
+		E:SetFrameState(bar, "visibility", bar._config.visible and bar._config.visibility or "hide")
 	end
 end
 
@@ -157,24 +175,11 @@ function MODULE.UpdateBarLABConfig(_, bar)
 end
 
 function MODULE.AddBar(_, barID, bar)
-	local ag = bar:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	ag:SetScript("OnFinished", fadeIn_OnFinished)
-	bar.FadeIn = ag
-
-	local anim = ag:CreateAnimation("Alpha")
-	ag.Anim = anim
-
-	ag = bar:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	ag:SetScript("OnFinished", fadeOut_OnFinished)
-	bar.FadeOut = ag
-
-	anim = ag:CreateAnimation("Alpha")
-	ag.Anim = anim
+	MODULE:InitBarFading(bar)
 
 	bars[barID] = bar
 	bars[barID].Update = function(self)
+		MODULE:UpdateBarFading(self)
 		MODULE:UpdateBarVisibility(self)
 		MODULE:UpdateBarLABConfig(self)
 		E:UpdateBarLayout(self)
