@@ -191,6 +191,7 @@ function E.OnInitialize()
 			end
 		end
 	end
+
 	-- -> 70200.09
 	if not C.db.profile.version or C.db.profile.version < 7020009 then
 		C.db.profile.auras.ls.aura_gap = nil
@@ -204,6 +205,15 @@ function E.OnInitialize()
 		C.db.profile.auras.traditional.buff = nil
 		C.db.profile.auras.traditional.debuff = nil
 		C.db.profile.auras.traditional.tempench = nil
+	end
+
+	-- -> 70300.04
+	if not C.db.profile.version or C.db.profile.version < 7030004 then
+		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
+		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
+
+		C.db.profile.movers.traditional.ZoneAbilityFrameMover = nil
+		C.db.profile.movers.traditional.ZoneAbilityFrameMover = nil
 	end
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
