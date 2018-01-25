@@ -2297,13 +2297,24 @@ D.profile = {
 			},
 		},
 		zone = { -- ZoneAbility
+			visible = true,
 			size = 40,
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = -168,
 				y = 174
+			},
+			fade = {
+				enabled = true,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
 			},
 		},
 		vehicle = { -- LeaveVehicle
