@@ -1,101 +1,116 @@
 local _, ns = ...
 local E = ns.E
 
-local function SetAnimationGroup(object, type)
-	if type == "FadeIn" then
-		object[type] = object:CreateAnimationGroup()
-		object[type]:SetToFinalAlpha(true)
+local animGroups = {}
 
-		local anim = object[type]:CreateAnimation("Alpha")
+local function SetAnimationGroup(object, type)
+	if not animGroups[object] then
+		animGroups[object] = {}
+	end
+
+	local animGroup = animGroups[object]
+
+	if type == "FadeIn" then
+		animGroup[type] = object:CreateAnimationGroup()
+		animGroup[type]:SetToFinalAlpha(true)
+
+		local anim = animGroup[type]:CreateAnimation("Alpha")
 		anim:SetOrder(1)
 		anim:SetDuration(0.001)
 		anim:SetToAlpha(0)
 
-		anim = object[type]:CreateAnimation("Alpha")
+		anim = animGroup[type]:CreateAnimation("Alpha")
 		anim:SetOrder(2)
 		anim:SetDuration(0.1)
 		anim:SetFromAlpha(0)
 		anim:SetToAlpha(1)
-
-		object[type].anim = anim
+		animGroup[type].anim = anim
 	elseif type == "FadeOut" then
-		object[type] = object:CreateAnimationGroup()
-		object[type]:SetToFinalAlpha(true)
+		animGroup[type] = object:CreateAnimationGroup()
+		animGroup[type]:SetToFinalAlpha(true)
 
-		local anim = object[type]:CreateAnimation("Alpha")
+		local anim = animGroup[type]:CreateAnimation("Alpha")
 		anim:SetOrder(1)
 		anim:SetDuration(0.05)
 		anim:SetFromAlpha(1)
 		anim:SetToAlpha(0)
-
-		object[type].anim = anim
+		animGroup[type].anim = anim
 	elseif type == "Blink" then
-		object[type] = object:CreateAnimationGroup()
-		object[type]:SetLooping("BOUNCE")
+		animGroup[type] = object:CreateAnimationGroup()
+		animGroup[type]:SetLooping("BOUNCE")
 
-		local anim = object[type]:CreateAnimation("Alpha")
+		local anim = animGroup[type]:CreateAnimation("Alpha")
 		anim:SetDuration(1)
 		anim:SetFromAlpha(1)
 		anim:SetToAlpha(0)
-
-		object[type].anim = anim
+		animGroup[type].anim = anim
 	end
 end
 
 function E:FadeIn(object, duration, toAlpha)
-	if not object.FadeIn then
+	if not (animGroups[object] and animGroups[object].FadeIn) then
 		SetAnimationGroup(object, "FadeIn")
 	end
 
-	if not object.FadeIn:IsPlaying() then
-		if duration then object.FadeIn.anim:SetDuration(duration) end
-		if toAlpha then object.FadeIn.anim:SetToAlpha(toAlpha) end
+	local ag = animGroups[object].FadeIn
 
-		object.FadeIn:Play()
+	if not ag:IsPlaying() then
+		if duration then ag.anim:SetDuration(duration) end
+		if toAlpha then ag.anim:SetToAlpha(toAlpha) end
+
+		ag:Play()
 	end
 end
 
 function E:StopFadeIn(object)
-	if object.FadeIn then
+	if animGroups[object] and animGroups[object].FadeIn then
 		object.FadeIn:Stop()
 	end
 end
 
 function E:FadeOut(object, duration, toAlpha)
-	if not object.FadeOut then
+	if not (animGroups[object] and animGroups[object].FadeOut) then
 		SetAnimationGroup(object, "FadeOut")
 	end
 
-	if not object.FadeOut:IsPlaying() then
-		if duration then object.FadeOut.anim:SetDuration(duration) end
-		if toAlpha then object.FadeOut.anim:SetToAlpha(toAlpha) end
+	local ag = animGroups[object].FadeOut
 
-		object.FadeOut:Play()
+	if not ag:IsPlaying() then
+		if duration then ag.anim:SetDuration(duration) end
+		if toAlpha then ag.anim:SetToAlpha(toAlpha) end
+
+		ag:Play()
 	end
 end
 
 function E:StopFadeOut(object)
-	if object.FadeOut then
+	if animGroups[object] and animGroups[object].FadeOut then
 		object.FadeOut:Stop()
 	end
 end
 
 function E:Blink(object, duration, fromAlpha, toAlpha)
-	if not object.Blink then
+	if not (animGroups[object] and animGroups[object].Blink) then
 		SetAnimationGroup(object, "Blink")
 	end
 
-	if not object.Blink:IsPlaying() then
-		if duration then object.Blink.anim:SetDuration(duration) end
-		if fromAlpha then object.Blink.anim:SetFromAlpha(fromAlpha) end
-		if toAlpha then object.Blink.anim:SetToAlpha(toAlpha) end
+	local ag = animGroups[object].Blink
 
-		object.Blink:Play()
+	if not ag:IsPlaying() then
+		if duration then ag.anim:SetDuration(duration) end
+		if fromAlpha then ag.anim:SetFromAlpha(fromAlpha) end
+		if toAlpha then ag.anim:SetToAlpha(toAlpha) end
+
+		ag:Play()
 	end
 end
 
 function E:StopBlink(object, force)
-	if object.Blink then
-		if force then object.Blink:Stop() else object.Blink:Finish() end
+	if animGroups[object] and animGroups[object].Blink then
+		if force then
+			object.Blink:Stop()
+		else
+			object.Blink:Finish()
+		end
 	end
 end
