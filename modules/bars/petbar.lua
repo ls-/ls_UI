@@ -100,7 +100,7 @@ function MODULE.CreatePetActionBar()
 
 					if not isToken then
 						button.icon:SetTexture(texture)
-						button.tooltipName = name;
+						button.tooltipName = name
 					else
 						button.icon:SetTexture(_G[texture])
 						button.tooltipName = _G[name]
