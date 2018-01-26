@@ -608,9 +608,8 @@ function BARS.CreateXPBar()
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
 			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
+			BARS:InitBarFading(bar)
 		end
-
-		BARS:InitBarFading(bar)
 
 		isInit = true
 
@@ -623,7 +622,10 @@ function BARS.UpdateXPBar()
 		bar._config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
 		SetXPBarStyle(bar._config.width)
-		bar:AdjustMoverSize()
-		BARS:UpdateBarFading(bar)
+
+		if not BARS:IsRestricted() then
+			bar:AdjustMoverSize()
+			BARS:UpdateBarFading(bar)
+		end
 	end
 end
