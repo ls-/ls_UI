@@ -1,6 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
-local BARS = P:GetModule("Bars")
+local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
@@ -10,38 +10,6 @@ local select = _G.select
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local unpack = _G.unpack
-
--- Blizz
-local AddNewbieTip = _G.GameTooltip_AddNewbieTip
-local C_NewTicker = _G.C_Timer.NewTicker
-local CreateFrame = _G.CreateFrame
-local GetAddOnInfo = _G.GetAddOnInfo
-local GetAddOnMemoryUsage = _G.GetAddOnMemoryUsage
-local GetInventoryItemDurability = _G.GetInventoryItemDurability
-local GetLFGDungeonShortageRewardInfo = _G.GetLFGDungeonShortageRewardInfo
-local GetLFGRandomDungeonInfo = _G.GetLFGRandomDungeonInfo
-local GetLFGRoles = _G.GetLFGRoles
-local GetLFGRoleShortageRewards = _G.GetLFGRoleShortageRewards
-local GetNetStats = _G.GetNetStats
-local GetNumAddOns = _G.GetNumAddOns
-local GetNumRandomDungeons = _G.GetNumRandomDungeons
-local GetNumRFDungeons = _G.GetNumRFDungeons
-local GetNumSavedInstances = _G.GetNumSavedInstances
-local GetNumSavedWorldBosses = _G.GetNumSavedWorldBosses
-local GetQuestResetTime = _G.GetQuestResetTime
-local GetRFDungeonInfo = _G.GetRFDungeonInfo
-local GetSavedInstanceInfo = _G.GetSavedInstanceInfo
-local GetSavedWorldBossInfo = _G.GetSavedWorldBossInfo
-local GetTime = _G.GetTime
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local IsLFGDungeonJoinable = _G.IsLFGDungeonJoinable
-local IsShiftKeyDown = _G.IsShiftKeyDown
-local MicroButtonTooltipText = _G.MicroButtonTooltipText
-local RequestLFDPartyLockInfo = _G.RequestLFDPartyLockInfo
-local RequestLFDPlayerLockInfo = _G.RequestLFDPlayerLockInfo
-local RequestRaidInfo = _G.RequestRaidInfo
-local SecondsToTime = _G.SecondsToTime
-local UpdateAddOnMemoryUsage = _G.UpdateAddOnMemoryUsage
 
 -- Mine
 local isInit = false
@@ -59,16 +27,16 @@ local ROLE_NAMES = {
 }
 
 local DURABILITY_SLOTS = {
-	[ 1] = _G.HEADSLOT,
-	[ 3] = _G.SHOULDERSLOT,
-	[ 5] = _G.CHESTSLOT,
-	[ 6] = _G.WAISTSLOT,
-	[ 7] = _G.LEGSSLOT,
-	[ 8] = _G.FEETSLOT,
-	[ 9] = _G.WRISTSLOT,
-	[10] = _G.HANDSSLOT,
-	[16] = _G.MAINHANDSLOT,
-	[17] = _G.SECONDARYHANDSLOT,
+	[ 1] = _G["HEADSLOT"],
+	[ 3] = _G["SHOULDERSLOT"],
+	[ 5] = _G["CHESTSLOT"],
+	[ 6] = _G["WAISTSLOT"],
+	[ 7] = _G["LEGSSLOT"],
+	[ 8] = _G["FEETSLOT"],
+	[ 9] = _G["WRISTSLOT"],
+	[10] = _G["HANDSSLOT"],
+	[16] = _G["MAINHANDSLOT"],
+	[17] = _G["SECONDARYHANDSLOT"],
 }
 
 local BUTTONS = {
@@ -229,7 +197,7 @@ local function SetDisabledTexture(button)
 end
 
 local function Button_OnEnter(self)
-	AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
+	GameTooltip_AddNewbieTip(self, self.tooltipText, 1, 1, 1, self.newbieText)
 
 	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
 		local r, g, b = M.COLORS.RED:GetRGB()
@@ -636,7 +604,7 @@ local function UpdateButton(button)
 			button:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
 			button:SetScript("OnEnter", LFDButton_OnEnter)
 
-			ctaTicker = C_NewTicker(10, function()
+			ctaTicker = C_Timer.NewTicker(10, function()
 				RequestLFDPlayerLockInfo()
 				RequestLFDPartyLockInfo()
 			end)
@@ -683,7 +651,7 @@ local function UpdateButton(button)
 	end
 end
 
-function BARS:CreateMicroMenu()
+function MODULE:CreateMicroMenu()
 	if not isInit then
 		local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
 		holder1:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
@@ -780,7 +748,7 @@ function BARS:CreateMicroMenu()
 				CreateMicroButtonIndicator(button, {MainMenuBarPerformanceBar}, 2)
 				UpdatePerformanceIndicator(button)
 
-				C_NewTicker(30, function()
+				C_Timer.NewTicker(30, function()
 					UpdatePerformanceIndicator(MainMenuMicroButton)
 				end)
 
@@ -822,7 +790,7 @@ function BARS:CreateMicroMenu()
 	end
 end
 
-function BARS.UpdateMicroButtons()
+function MODULE.UpdateMicroButtons()
 	if isInit then
 		for button in next, BUTTONS do
 			UpdateButton(button)
@@ -830,7 +798,7 @@ function BARS.UpdateMicroButtons()
 	end
 end
 
-function BARS.UpdateMicroButton(_, ...)
+function MODULE.UpdateMicroButton(_, ...)
 	if isInit then
 		UpdateButton(...)
 	end
