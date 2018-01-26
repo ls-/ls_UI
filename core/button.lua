@@ -218,6 +218,7 @@ local function SkinButton(button)
 		bHotKey:ClearAllPoints()
 		bHotKey:SetWidth(0, 0)
 		bHotKey:SetPoint("TOPRIGHT", 2, 0)
+		bHotKey:Show()
 
 		updateHotKey(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", updateHotKey)
