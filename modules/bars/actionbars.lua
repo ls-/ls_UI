@@ -170,6 +170,7 @@ function MODULE.CreateActionBars()
 				bar.Update = function(self)
 					self._config = CFG.bar1
 
+					MODULE:UpdateBarVisibility(self)
 					MODULE:UpdateBarLABConfig(self)
 					E:UpdateBarLayout(self)
 				end
