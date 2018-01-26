@@ -69,9 +69,6 @@ local function pauseFading()
 	end
 end
 
-E:RegisterEvent("ACTIONBAR_SHOWGRID", pauseFading)
-E:RegisterEvent("PET_BAR_SHOWGRID", pauseFading)
-
 local function resumeFading()
 	for id, bar in next, bars do
 		local config = C.db.profile.bars[id]
@@ -81,9 +78,6 @@ local function resumeFading()
 		end
 	end
 end
-
-E:RegisterEvent("ACTIONBAR_HIDEGRID", resumeFading)
-E:RegisterEvent("PET_BAR_HIDEGRID", resumeFading)
 
 function MODULE.InitBarFading(_, bar)
 	local ag = bar:CreateAnimationGroup()
@@ -215,6 +209,8 @@ function MODULE.ReassignBindings()
 	if not InCombatLockdown() then
 		for barID, bar in next, bars do
 			if rebindable[barID] then
+				ClearOverrideBindings(bar)
+
 				for _, button in next, bar._buttons do
 					for _, key in next, {GetBindingKey(button._command)} do
 						if key and key ~= "" then
@@ -227,7 +223,15 @@ function MODULE.ReassignBindings()
 	end
 end
 
-E:RegisterEvent("UPDATE_BINDINGS", MODULE.ReassignBindings)
+function MODULE.ClearBindings()
+	if not InCombatLockdown() then
+		for barID, bar in next, bars do
+			if rebindable[barID] then
+				ClearOverrideBindings(bar)
+			end
+		end
+	end
+end
 
 -----
 
@@ -250,6 +254,20 @@ function MODULE.Init()
 		MODULE:CreateBags()
 		MODULE:ReassignBindings()
 		MODULE:CleanUp()
+
+		E:RegisterEvent("ACTIONBAR_HIDEGRID", resumeFading)
+		E:RegisterEvent("ACTIONBAR_SHOWGRID", pauseFading)
+		E:RegisterEvent("PET_BAR_HIDEGRID", resumeFading)
+		E:RegisterEvent("PET_BAR_SHOWGRID", pauseFading)
+		E:RegisterEvent("PET_BATTLE_CLOSE", MODULE.ReassignBindings)
+		E:RegisterEvent("PET_BATTLE_OPENING_DONE", MODULE.ClearBindings)
+		E:RegisterEvent("UPDATE_BINDINGS", MODULE.ReassignBindings)
+
+		if C_PetBattles.IsInBattle() then
+			MODULE:ClearBindings()
+		else
+			MODULE:ReassignBindings()
+		end
 
 		isInit = true
 	end
