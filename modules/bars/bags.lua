@@ -16,11 +16,15 @@ local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
 
 local CFG = {
 	num = 5,
+	per_row = 5,
 	size = 32,
 	spacing = 4,
+	visible = true,
 	x_growth = "RIGHT",
 	y_growth = "DOWN",
-	per_row = 5,
+	fade = {
+		enabled = false,
+	},
 	point = {
 		p = "BOTTOM",
 		anchor = "UIParent",
@@ -138,6 +142,7 @@ function MODULE.CreateBags()
 		bar.Update = function(self)
 			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
 
+			MODULE:UpdateBarFading(bar)
 			E:UpdateBarLayout(self)
 		end
 

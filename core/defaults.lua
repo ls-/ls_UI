@@ -2416,11 +2416,21 @@ D.profile = {
 		},
 		bags = {
 			num = 5,
+			per_row = 5,
 			size = 32,
 			spacing = 4,
+			visible = true,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
-			per_row = 5,
+			fade = {
+				enabled = true,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
