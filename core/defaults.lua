@@ -2286,16 +2286,9 @@ D.profile = {
 			},
 		},
 		extra = { -- ExtraAction
-			visible = true,
 			size = 40,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
-			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = -168,
-				y = 130
-			},
+			visible = true,
 			fade = {
 				enabled = true,
 				out_delay = 0.75,
@@ -2305,11 +2298,27 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = -168,
+				y = 130
+			},
 		},
 		zone = { -- ZoneAbility
-			visible = true,
 			size = 40,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			visible = true,
+			fade = {
+				enabled = true,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
@@ -2317,6 +2326,10 @@ D.profile = {
 				x = -168,
 				y = 174
 			},
+		},
+		vehicle = { -- LeaveVehicle
+			size = 40,
+			visible = true,
 			fade = {
 				enabled = true,
 				out_delay = 0.75,
@@ -2326,25 +2339,12 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-		},
-		vehicle = { -- LeaveVehicle
-			visible = true,
-			size = 40,
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 168,
 				y = 130
-			},
-			fade = {
-				enabled = true,
-				out_delay = 0.75,
-				out_duration = 0.15,
-				in_delay = 0,
-				in_duration = 0.15,
-				min_alpha = 0,
-				max_alpha = 1,
 			},
 		},
 		micromenu = {
