@@ -44,7 +44,7 @@ local LAYOUT = {
 	DEMONHUNTER = BOTTOM_POINT,
 }
 
-local function GetBarPoint()
+local function getBarPoint()
 	return LAYOUT[E.PLAYER_CLASS]
 end
 
@@ -188,7 +188,7 @@ function MODULE.CreatePetActionBar()
 
 		MODULE:AddBar("bar6", bar)
 
-		local point = GetBarPoint()
+		local point = getBarPoint()
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E:CreateMover(bar)
 
@@ -218,8 +218,8 @@ function MODULE.CreatePetActionBar()
 							local _, _, _, _, _, _, _, _, checksRange, inRange = GetPetActionInfo(button:GetID())
 							if checksRange ~= button._checksrange or inRange ~= button._inrange then
 								if checksRange then
-									if C.db.profile.bars.icon_indicator then
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+									if C.db.profile.bars.range_indicator == "button" then
+										button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
 
 										if inRange == false then
 											button.icon:SetDesaturated(true)
@@ -235,11 +235,11 @@ function MODULE.CreatePetActionBar()
 										if inRange == false then
 											button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
 										else
-											button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+											button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
 										end
 									end
 								else
-									button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+									button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
 									button.icon:SetDesaturated(false)
 									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 								end
