@@ -64,27 +64,15 @@ local function button_UpdateState(self)
 
 		self:SetChecked(isActive)
 
-		if C.db.profile.bars.icon_indicator then
-			if isCastable then
-				self.icon:SetDesaturated(false)
-				self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-				self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-			else
-				self.icon:SetDesaturated(true)
-				self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
-				self.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-			end
+		if isCastable then
+			self.icon:SetDesaturated(false)
+			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 		else
-			if isCastable then
-				self.icon:SetDesaturated(false)
-				self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-				self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
-			else
-				self.icon:SetDesaturated(false)
-				self.icon:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-				self.HotKey:SetVertexColor(M.COLORS.GRAY:GetRGBA(0.65))
-			end
+			self.icon:SetDesaturated(true)
+			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
 		end
+
+		self.HotKey:SetVertexColor(0.75, 0.75, 0.75)
 
 		self:UpdateHotKey(C.db.profile.bars.bar7.hotkey)
 		CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(id))
