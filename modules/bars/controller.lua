@@ -7,11 +7,6 @@ local _G = getfenv(0)
 local next = _G.next
 local unpack = _G.unpack
 
--- Blizz
-local C_Timer_After = _G.C_Timer.After
-local CreateFrame = _G.CreateFrame
-local RegisterStateDriver = _G.RegisterStateDriver
-
 -- Mine
 local isInit = false
 local controller
@@ -333,7 +328,7 @@ function MODULE.SetupActionBarController()
 				end
 			end
 
-			C_Timer_After(0.02, function()
+			C_Timer.After(0.02, function()
 				for _, widget in next, WIDGETS do
 					if widget.frame and widget.on_play then
 						widget.on_play(widget.frame, newstate)
@@ -341,7 +336,7 @@ function MODULE.SetupActionBarController()
 				end
 			end)
 
-			C_Timer_After(0.25, function()
+			C_Timer.After(0.25, function()
 				anim_controller.Top:SetWidth(newstate == 6 and 0.001 or 216)
 				anim_controller.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
 			end)
