@@ -36,6 +36,8 @@ function MODULE.CreatePetBattleBar()
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
 		local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerStateTemplate")
+		bar._id = "pet_battle"
+		bar._buttons = {}
 
 		MODULE:AddBar("pet_battle", bar)
 
@@ -45,10 +47,7 @@ function MODULE.CreatePetBattleBar()
 
 			MODULE:UpdateBarFading(self)
 			MODULE:UpdateBarVisibility(self)
-
-			if self._buttons then
-				E:UpdateBarLayout(self)
-			end
+			E:UpdateBarLayout(self)
 		end
 
 		if MODULE:IsRestricted() then
@@ -61,24 +60,20 @@ function MODULE.CreatePetBattleBar()
 		end
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
-			local buttons = {
-				PetBattleFrame.BottomFrame.abilityButtons[1],
-				PetBattleFrame.BottomFrame.abilityButtons[2],
-				PetBattleFrame.BottomFrame.abilityButtons[3],
-				PetBattleFrame.BottomFrame.SwitchPetButton,
-				PetBattleFrame.BottomFrame.CatchButton,
-				PetBattleFrame.BottomFrame.ForfeitButton
-			}
+			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]
+			bar._buttons[2] = PetBattleFrame.BottomFrame.abilityButtons[2]
+			bar._buttons[3] = PetBattleFrame.BottomFrame.abilityButtons[3]
+			bar._buttons[4] = PetBattleFrame.BottomFrame.SwitchPetButton
+			bar._buttons[5] = PetBattleFrame.BottomFrame.CatchButton
+			bar._buttons[6] = PetBattleFrame.BottomFrame.ForfeitButton
 
-			for id, button in next, buttons do
+			for id, button in next, bar._buttons do
 				button._parent = bar
 				button._command = "ACTIONBUTTON"..id
 				button:SetParent(bar)
 
 				E:SkinPetBattleButton(button)
 			end
-
-			bar._buttons = buttons
 
 			bar:Update()
 		end)
