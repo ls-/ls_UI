@@ -2349,6 +2349,16 @@ D.profile = {
 		},
 		micromenu = {
 			holder1 = {
+				visible = true,
+				fade = {
+					enabled = true,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
+				},
 				point = {
 					p = "BOTTOM",
 					anchor = "UIParent",
@@ -2358,6 +2368,16 @@ D.profile = {
 				},
 			},
 			holder2 = {
+				visible = true,
+				fade = {
+					enabled = true,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
+				},
 				point = {
 					p = "BOTTOM",
 					anchor = "UIParent",

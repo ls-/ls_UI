@@ -471,7 +471,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
 					CONFIG:CopySettings(D.profile.bars.micromenu.tooltip, C.db.profile.bars.micromenu.tooltip)
-					BARS:UpdateMicroButtons()
+					BARS:UpdateMicroMenu()
 				end,
 			},
 			spacer1 = {

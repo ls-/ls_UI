@@ -278,7 +278,7 @@ function MODULE.Update()
 		MODULE:UpdateBars()
 		MODULE:UpdateExtraButton()
 		MODULE:UpdateZoneButton()
-		MODULE:UpdateMicroButtons()
+		MODULE:UpdateMicroMenu()
 		MODULE:UpdateVehicleExitButton()
 		MODULE:UpdateXPBar()
 	end

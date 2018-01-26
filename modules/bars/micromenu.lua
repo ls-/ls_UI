@@ -14,6 +14,8 @@ local unpack = _G.unpack
 -- Mine
 local isInit = false
 local ctaTicker
+local holder1
+local holder2
 
 local LATENCY_TEMPLATE = "|cff%s%s|r ".._G.MILLISECONDS_ABBR
 local MEMORY_TEMPLATE = "%.2f MiB"
@@ -653,10 +655,10 @@ end
 
 function MODULE:CreateMicroMenu()
 	if not isInit then
-		local holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
+		holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
 		holder1:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
 
-		local holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
+		holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 		holder2:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
 
 		if self:IsRestricted() then
@@ -667,11 +669,13 @@ function MODULE:CreateMicroMenu()
 
 			holder1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(holder1)
+			MODULE:InitBarFading(holder1)
 
 			point = C.db.profile.bars.micromenu.holder2.point
 
 			holder2:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(holder2)
+			MODULE:InitBarFading(holder2)
 		end
 
 		for _, b in next, MICRO_BUTTONS do
@@ -787,13 +791,23 @@ function MODULE:CreateMicroMenu()
 		end)
 
 		isInit = true
+
+		self:UpdateMicroMenu()
 	end
 end
 
-function MODULE.UpdateMicroButtons()
+function MODULE:UpdateMicroMenu()
 	if isInit then
 		for button in next, BUTTONS do
 			UpdateButton(button)
+		end
+
+		if not self:IsRestricted() then
+			holder1._config = C.db.profile.bars.micromenu.holder1
+			holder2._config = C.db.profile.bars.micromenu.holder2
+
+			self:UpdateBarFading(holder1)
+			self:UpdateBarFading(holder2)
 		end
 	end
 end
