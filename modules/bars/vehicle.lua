@@ -61,9 +61,6 @@ function MODULE.CreateVehicleExitButton()
 		isInit = true
 
 		MODULE:UpdateVehicleExitButton()
-
-		-- Cleanup
-		E:ForceHide(MainMenuBarVehicleLeaveButton)
 	end
 end
 
