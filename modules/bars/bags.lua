@@ -7,35 +7,12 @@ local _G = getfenv(0)
 local next = _G.next
 local hooksecurefunc = _G.hooksecurefunc
 
--- Blizz
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-local C_Timer_After = _G.C_Timer.After
-local CreateFrame = _G.CreateFrame
-local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots
-local GetContainerNumSlots = _G.GetContainerNumSlots
-local GetCurrencyInfo = _G.GetCurrencyInfo
-local GetMoney = _G.GetMoney
-local GetMoneyString = _G.GetMoneyString
-local GetTime = _G.GetTime
-local InCombatLockdown = _G.InCombatLockdown
-local IsContainerFiltered = _G.IsContainerFiltered
-local ToggleAllBags = _G.ToggleAllBags
-local UpdateChecked = _G.BackpackButton_UpdateChecked
-
 -- Mine
 local isInit = false
 local bar
 
 local CURRENCY_TEMPLATE = "%s |T%s:0|t"
 local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
-
-local BAGS = {
-	_G.MainMenuBarBackpackButton,
-	_G.CharacterBag0Slot,
-	_G.CharacterBag1Slot,
-	_G.CharacterBag2Slot,
-	_G.CharacterBag3Slot
-}
 
 local CFG = {
 	num = 5,
@@ -105,10 +82,10 @@ local function BackpackButton_OnClick(self, button)
 			end
 		end
 
-		UpdateChecked(self)
+		BackpackButton_UpdateChecked(self)
 	else
 		ToggleAllBags()
-		UpdateChecked(self)
+		BackpackButton_UpdateChecked(self)
 	end
 end
 
@@ -121,7 +98,7 @@ local function BackpackButton_OnEvent(self, event, ...)
 			local t = GetTime()
 
 			if t - (self.recentUpdate or 0 ) >= 0.1 then
-				C_Timer_After(0.1, function()
+				C_Timer.After(0.1, function()
 					self:Update()
 				end)
 
@@ -146,6 +123,14 @@ function MODULE.CreateBags()
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
 
 		bar = CreateFrame("Frame", "LSBagBar", UIParent, "SecureHandlerBaseTemplate")
+		bar._id = "bags"
+		bar._buttons = {
+			_G["MainMenuBarBackpackButton"],
+			_G["CharacterBag0Slot"],
+			_G["CharacterBag1Slot"],
+			_G["CharacterBag2Slot"],
+			_G["CharacterBag3Slot"]
+		}
 
 		MODULE:AddBar("bags", bar)
 
@@ -160,7 +145,7 @@ function MODULE.CreateBags()
 		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 		MainMenuBarBackpackButton:SetScript("OnEvent", BackpackButton_OnEvent)
 
-		for _, bag in next, BAGS do
+		for _, bag in next, bar._buttons do
 			bag:UnregisterEvent("ITEM_PUSH")
 			bag._parent = bar
 			bag:SetParent(bar)
@@ -204,8 +189,6 @@ function MODULE.CreateBags()
 				end
 			end)
 		end
-
-		bar._buttons = BAGS
 
 		bar:Update()
 
