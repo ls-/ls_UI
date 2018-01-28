@@ -7,15 +7,26 @@ local _G = getfenv(0)
 
 -- Mine
 local isInit = false
-local bar
 
 function MODULE.CreateZoneButton()
 	if not isInit then
-		local point = C.db.profile.bars.zone.point
 
-		bar = CreateFrame("Frame", "LSZoneAbilityBar", UIParent, "SecureHandlerStateTemplate")
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		local bar = CreateFrame("Frame", "LSZoneAbilityBar", UIParent, "SecureHandlerStateTemplate")
+		bar._id = "zone"
+		bar._buttons = {}
+
+		MODULE:AddBar("zone", bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateVisibility()
+
+			ZoneAbilityFrame:SetAllPoints()
+
+			self:SetSize(self._config.size + 4, self._config.size + 4)
+			E:UpdateMoverSize(self)
+		end
 
 		ZoneAbilityFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
@@ -26,25 +37,16 @@ function MODULE.CreateZoneButton()
 
 		ZoneAbilityFrame.SpellButton:SetPoint("TOPLEFT", 2, -2)
 		ZoneAbilityFrame.SpellButton:SetPoint("BOTTOMRIGHT", -2, 2)
+		ZoneAbilityFrame.SpellButton._parent = bar
 		E:SkinZoneAbilityButton(ZoneAbilityFrame.SpellButton)
+		bar._buttons[1] = ZoneAbilityFrame.SpellButton
 
-		MODULE:InitBarFading(bar)
+		local point = C.db.profile.bars.zone.point
+		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E:CreateMover(bar)
+
+		bar:Update()
 
 		isInit = true
-
-		MODULE:UpdateZoneButton()
-	end
-end
-
-function MODULE.UpdateZoneButton()
-	if isInit then
-		bar._config = C.db.profile.bars.zone
-
-		ZoneAbilityFrame:SetAllPoints()
-
-		bar:SetSize(bar._config.size + 4, bar._config.size + 4)
-		bar:AdjustMoverSize()
-		MODULE:UpdateBarFading(bar)
-		MODULE:UpdateBarVisibility(bar)
 	end
 end

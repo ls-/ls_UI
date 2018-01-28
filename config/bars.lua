@@ -23,11 +23,24 @@ local growth_dirs = {
 	RIGHT_UP = L["RIGHT_UP"],
 }
 
+local flyout_dirs = {
+	UP = L["UP"],
+	DOWN = L["DOWN"],
+	LEFT = L["LEFT"],
+	RIGHT = L["RIGHT"],
+}
+
+local range_indicators = {
+	button = L["ICON"],
+	hotkey = L["KEYBIND_TEXT"],
+}
+
 local CURRENCY_TABLE = {
 	order = 20,
 	type = "group",
 	name = L["CURRENCY"],
 	guiInline = true,
+	disabled = function() return not BARS:HasBags() end,
 	args = {}
 }
 
@@ -74,7 +87,84 @@ end
 E:RegisterEvent("CURRENCY_DISPLAY_UPDATE", UpdateCurrencyOptions)
 hooksecurefunc("TokenFrame_Update", UpdateCurrencyOptions)
 
-local function GetOptionsTable_Bar(barID, order, name)
+local function getOptionsTable_Fading(barID, order)
+	local temp = {
+		order = order,
+		type = "group",
+		name = L["FADING"],
+		guiInline = true,
+		get = function(info)
+			return C.db.profile.bars[barID].fade[info[#info]]
+		end,
+		set = function(info, value)
+			C.db.profile.bars[barID].fade[info[#info]] = value
+			BARS:GetBar(barID):UpdateFading()
+		end,
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+			},
+			in_delay = {
+				order = 2,
+				type = "range",
+				name = L["FADE_IN_DELAY"],
+				min = 0, max = 1, step = 0.05,
+			},
+			in_duration = {
+				order = 3,
+				type = "range",
+				name = L["FADE_IN_DURATION"],
+				min = 0, max = 1, step = 0.05,
+			},
+			out_delay = {
+				order = 4,
+				type = "range",
+				name = L["FADE_OUT_DELAY"],
+				min = 0, max = 2, step = 0.05,
+			},
+			out_duration = {
+				order = 5,
+				type = "range",
+				name = L["FADE_OUT_DURATION"],
+				min = 0, max = 1, step = 0.05,
+			},
+			min_alpha = {
+				order = 6,
+				type = "range",
+				name = L["MIN_ALPHA"],
+				min = 0, max = 1, step = 0.05,
+			},
+			max_alpha = {
+				order = 7,
+				type = "range",
+				name = L["MIN_ALPHA"],
+				min = 0, max = 1, step = 0.05
+			},
+		},
+	}
+
+	if barID == "bar1" then
+		temp.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+	elseif barID == "pet_battle" then
+		temp.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+	elseif barID == "micromenu" then
+		temp.set = function(info, value)
+			C.db.profile.bars[barID].fade[info[#info]] = value
+			BARS:GetBar("menu1"):UpdateFading()
+			BARS:GetBar("menu2"):UpdateFading()
+		end
+	elseif barID == "bags" then
+		temp.disabled = function() return BARS:IsRestricted() or not BARS:HasBags() end
+	elseif barID == "xpbar" then
+		temp.disabled = function() return not BARS:HasXPBar() end
+	end
+
+	return temp
+end
+
+local function getOptionsTable_Bar(barID, order, name)
 	local temp = {
 		order = order,
 		type = "group",
@@ -91,7 +181,8 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].visible = value
-					BARS:ToggleBar(barID, value)
+					BARS:GetBar(barID):UpdateFading()
+					BARS:GetBar(barID):UpdateVisibility()
 				end
 			},
 			reset = {
@@ -100,16 +191,55 @@ local function GetOptionsTable_Bar(barID, order, name)
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
 			spacer1 = {
-				order = 9,
+				order = 10,
 				type = "description",
 				name = "",
 			},
+			grid = {
+				order = 11,
+				type = "toggle",
+				name = L["GRID"],
+				get = function()
+					return C.db.profile.bars[barID].grid
+				end,
+				set = function(_, value)
+					C.db.profile.bars[barID].grid = value
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateButtonConfig()
+				end,
+			},
+			hotkey = {
+				order = 12,
+				type = "toggle",
+				name = L["KEYBIND_TEXT"],
+				get = function()
+					return C.db.profile.bars[barID].hotkey
+				end,
+				set = function(_, value)
+					C.db.profile.bars[barID].hotkey = value
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateButtonConfig()
+				end,
+			},
+			macro = {
+				order = 13,
+				type = "toggle",
+				name = L["MACRO_TEXT"],
+				get = function()
+					return C.db.profile.bars[barID].macro
+				end,
+				set = function(_, value)
+					C.db.profile.bars[barID].macro = value
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateButtonConfig()
+				end,
+			},
 			num = {
-				order = 10,
+				order = 14,
 				type = "range",
 				name = L["NUM_BUTTONS"],
 				min = 1, max = 12, step = 1,
@@ -118,11 +248,11 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].num = value
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
 			per_row = {
-				order = 11,
+				order = 15,
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 12, step = 1,
@@ -131,11 +261,11 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].per_row = value
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
 			spacing = {
-				order = 12,
+				order = 16,
 				type = "range",
 				name = L["SPACING"],
 				min = 4, max = 24, step = 2,
@@ -144,11 +274,11 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].spacing = value
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
 			size = {
-				order = 13,
+				order = 17,
 				type = "range",
 				name = L["SIZE"],
 				min = 18, max = 64, step = 1,
@@ -157,11 +287,11 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].size = value
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
 			growth_dir = {
-				order = 14,
+				order = 18,
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = growth_dirs,
@@ -170,30 +300,111 @@ local function GetOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].x_growth, C.db.profile.bars[barID].y_growth = s_split("_", value)
-					BARS:UpdateBar(barID)
+					BARS:GetBar(barID):Update()
 				end,
 			},
+			flyout_dir = {
+				order = 19,
+				type = "select",
+				name = L["FLYOUT_DIR"],
+				values = flyout_dirs,
+				get = function()
+					return C.db.profile.bars[barID].flyout_dir
+				end,
+				set = function(_, value)
+					C.db.profile.bars[barID].flyout_dir = value
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateButtonConfig()
+				end,
+			},
+			fading = getOptionsTable_Fading(barID, 30),
 		},
 	}
 
 	if barID == "bar1" then
-		temp.disabled = function()
-			return BARS:IsRestricted() or not BARS:IsInit()
-		end
+		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.per_row.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.spacing.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.flyout_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 	elseif barID == "bar6" then
-		temp.args.num.max = 10
-		temp.args.per_row.max = 10
-	elseif barID == "bar7" then
-		temp.args.num.max = 10
-		temp.args.per_row.max = 10
-	elseif barID == "pet_battle" then
-		temp.disabled = function()
-			return BARS:IsRestricted() or not BARS:IsInit()
+		temp.args.grid.set = function(_, value)
+			C.db.profile.bars[barID].grid = value
+			BARS:GetBar(barID):UpdateButtons("UpdateGrid")
 		end
-
+		temp.args.hotkey.set = function(_, value)
+			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
+		end
+		temp.args.macro = nil
+		temp.args.num.max = 10
+		temp.args.per_row.max = 10
+		temp.args.flyout_dir = nil
+	elseif barID == "bar7" then
+		temp.args.grid = nil
+		temp.args.hotkey.set = function(_, value)
+			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
+		end
+		temp.args.macro = nil
+		temp.args.num.max = 10
+		temp.args.per_row.max = 10
+		temp.args.flyout_dir = nil
+	elseif barID == "pet_battle" then
 		temp.args.visible = nil
+		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.grid = nil
+		temp.args.hotkey.set = function(_, value)
+			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateConfig()
+			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
+		end
+		temp.args.macro = nil
 		temp.args.num.max = 6
+		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.per_row.max = 6
+		temp.args.per_row.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.spacing.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.flyout_dir = nil
+	elseif barID == "extra" then
+		temp.args.visible = nil
+		temp.args.grid = nil
+		temp.args.hotkey.set = function(_, value)
+			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateConfig()
+			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
+		end
+		temp.args.macro = nil
+		temp.args.num = nil
+		temp.args.per_row = nil
+		temp.args.spacing = nil
+		temp.args.growth_dir = nil
+		temp.args.flyout_dir = nil
+	elseif barID == "zone" then
+		temp.args.visible = nil
+		temp.args.grid = nil
+		temp.args.hotkey = nil
+		temp.args.macro = nil
+		temp.args.num = nil
+		temp.args.per_row = nil
+		temp.args.spacing = nil
+		temp.args.growth_dir = nil
+		temp.args.flyout_dir = nil
+	elseif barID == "vehicle" then
+		temp.args.visible = nil
+		temp.args.grid = nil
+		temp.args.hotkey = nil
+		temp.args.macro = nil
+		temp.args.num = nil
+		temp.args.per_row = nil
+		temp.args.spacing = nil
+		temp.args.growth_dir = nil
+		temp.args.flyout_dir = nil
 	elseif barID == "bags" then
 		temp.args.enabled = {
 			order = 1,
@@ -221,11 +432,15 @@ local function GetOptionsTable_Bar(barID, order, name)
 					end
 				end
 			end
+
 		}
+		temp.args.visible = nil
 		temp.args.reset.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
 		end
-		temp.args.visible = nil
+		temp.args.grid = nil
+		temp.args.hotkey = nil
+		temp.args.macro = nil
 		temp.args.num = nil
 		temp.args.per_row.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
@@ -240,6 +455,7 @@ local function GetOptionsTable_Bar(barID, order, name)
 		temp.args.growth_dir.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
 		end
+		temp.args.flyout_dir = nil
 		temp.args.currency = CURRENCY_TABLE
 	end
 
@@ -295,166 +511,64 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "description",
 				name = "",
 			},
-			macro = {
-				order = 4,
+			lock = {
+				order = 10,
 				type = "toggle",
-				name = L["MACRO_TEXT"],
+				name = L["LOCK_BUTTONS"],
+				desc = L["LOCK_BUTTONS_DESC"],
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
-					return C.db.profile.bars.macro
+					return C.db.profile.bars.lock
 				end,
 				set = function(_, value)
-					C.db.profile.bars.macro = value
-					BARS:ToggleMacroText(value)
+					C.db.profile.bars.lock = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
+
+					SetCVar("lockActionBars", value and 1 or 0)
 				end,
 			},
-			hotkey = {
-				order = 5,
+			rightclick_selfcast = {
+				order = 11,
 				type = "toggle",
-				name = L["KEYBIND_TEXT"],
+				name = L["RCLICK_SELFCAST"],
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
-					return C.db.profile.bars.hotkey
+					return C.db.profile.bars.rightclick_selfcast
 				end,
 				set = function(_, value)
-					C.db.profile.bars.hotkey = value
-					BARS:ToggleHotKeyText(value)
+					C.db.profile.bars.rightclick_selfcast = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
 				end,
 			},
-			icon_indicator = {
-				order = 6,
-				type = "toggle",
-				width = "double",
-				name = L["USE_ICON_AS_INDICATOR"],
-				desc = L["USE_ICON_AS_INDICATOR_DESC"],
+			range_indicator = {
+				order = 12,
+				type = "select",
+				name = L["RANGE_INDICATOR"],
+				values = range_indicators,
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
-					return C.db.profile.bars.icon_indicator
+					return C.db.profile.bars.range_indicator
 				end,
 				set = function(_, value)
-					C.db.profile.bars.icon_indicator = value
-					BARS:ToggleIconIndicators(value)
+					C.db.profile.bars.range_indicator = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
 				end,
 			},
-			action_bar_1 = GetOptionsTable_Bar("bar1", 1, L["BAR_1"]),
-			action_bar_2 = GetOptionsTable_Bar("bar2", 2, L["BAR_2"]),
-			action_bar_3 = GetOptionsTable_Bar("bar3", 3, L["BAR_3"]),
-			action_bar_4 = GetOptionsTable_Bar("bar4", 4, L["BAR_4"]),
-			action_bar_5 = GetOptionsTable_Bar("bar5", 5, L["BAR_5"]),
-			action_bar_6 = GetOptionsTable_Bar("bar6", 6, L["PET_BAR"]),
-			action_bar_7 = GetOptionsTable_Bar("bar7", 7, L["STANCE_BAR"]),
-			pet_battle = GetOptionsTable_Bar("pet_battle", 8, L["PET_BATTLE_BAR"]),
-		},
-	}
-
-	C.options.args.bars.args.extra = {
-		order = 9,
-		type = "group",
-		childGroups = "select",
-		name = L["EXTRA_ACTION_BUTTON"],
-		disabled = function() return not BARS:IsInit() end,
-		args = {
-			reset = {
-				type = "execute",
-				order = 1,
-				name = L["RESTORE_DEFAULTS"],
-				func = function()
-					CONFIG:CopySettings(D.profile.bars.extra, C.db.profile.bars.extra, {point = true})
-					BARS:UpdateExtraButton()
-				end,
-			},
-			spacer1 = {
-				order = 2,
-				type = "description",
-				name = "",
-			},
-			size = {
-				order = 3,
-				type = "range",
-				name = L["SIZE"],
-				min = 18, max = 64, step = 1,
-				get = function()
-					return C.db.profile.bars.extra.size
-				end,
-				set = function(_, value)
-					C.db.profile.bars.extra.size = value
-					BARS:UpdateExtraButton()
-				end,
-			},
-		},
-	}
-
-	C.options.args.bars.args.zone = {
-		order = 10,
-		type = "group",
-		childGroups = "select",
-		name = L["ZONE_ABILITY_BUTTON"],
-		disabled = function() return not BARS:IsInit() end,
-		args = {
-			reset = {
-				type = "execute",
-				order = 1,
-				name = L["RESTORE_DEFAULTS"],
-				func = function()
-					CONFIG:CopySettings(D.profile.bars.zone, C.db.profile.bars.zone, {point = true})
-					BARS:UpdateZoneButton()
-				end,
-			},
-			spacer1 = {
-				order = 2,
-				type = "description",
-				name = "",
-			},
-			size = {
-				order = 3,
-				type = "range",
-				name = L["SIZE"],
-				min = 18, max = 64, step = 1,
-				get = function()
-					return C.db.profile.bars.zone.size
-				end,
-				set = function(_, value)
-					C.db.profile.bars.zone.size = value
-					BARS:UpdateZoneButton()
-				end,
-			},
-		},
-	}
-
-	C.options.args.bars.args.vehicle = {
-		order = 11,
-		type = "group",
-		childGroups = "select",
-		name = L["VEHICLE_EXIT_BUTTON"],
-		disabled = function() return not BARS:IsInit() end,
-		args = {
-			reset = {
-				type = "execute",
-				order = 1,
-				name = L["RESTORE_DEFAULTS"],
-				func = function()
-					CONFIG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {point = true})
-					BARS:UpdateVehicleExitButton()
-				end,
-			},
-			spacer1 = {
-				order = 2,
-				type = "description",
-				name = "",
-			},
-			size = {
-				order = 3,
-				type = "range",
-				name = L["SIZE"],
-				min = 18, max = 64, step = 1,
-				get = function()
-					return C.db.profile.bars.vehicle.size
-				end,
-				set = function(_, value)
-					C.db.profile.bars.vehicle.size = value
-					BARS:UpdateVehicleExitButton()
-				end,
-			},
+			action_bar_1 = getOptionsTable_Bar("bar1", 1, L["BAR_1"]),
+			action_bar_2 = getOptionsTable_Bar("bar2", 2, L["BAR_2"]),
+			action_bar_3 = getOptionsTable_Bar("bar3", 3, L["BAR_3"]),
+			action_bar_4 = getOptionsTable_Bar("bar4", 4, L["BAR_4"]),
+			action_bar_5 = getOptionsTable_Bar("bar5", 5, L["BAR_5"]),
+			action_bar_6 = getOptionsTable_Bar("bar6", 6, L["PET_BAR"]),
+			action_bar_7 = getOptionsTable_Bar("bar7", 7, L["STANCE_BAR"]),
+			pet_battle = getOptionsTable_Bar("pet_battle", 8, L["PET_BATTLE_BAR"]),
+			extra = getOptionsTable_Bar("extra", 9, L["EXTRA_ACTION_BUTTON"]),
+			zone = getOptionsTable_Bar("zone", 10, L["ZONE_ABILITY_BUTTON"]),
+			vehicle = getOptionsTable_Bar("vehicle", 11, L["VEHICLE_EXIT_BUTTON"]),
+			bags = getOptionsTable_Bar("bags", 14, L["BAGS"])
 		},
 	}
 
@@ -469,9 +583,11 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end,
 				func = function()
-					CONFIG:CopySettings(D.profile.bars.micromenu.tooltip, C.db.profile.bars.micromenu.tooltip)
-					BARS:UpdateMicroMenu()
+					CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {menu1 = true, menu2 = true})
+					BARS:GetBar("menu1"):Update()
+					BARS:GetBar("menu2"):Update()
 				end,
 			},
 			spacer1 = {
@@ -484,79 +600,49 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "group",
 				name = L["ENHANCED_TOOLTIPS"],
 				guiInline = true,
+				get = function(info)
+					return C.db.profile.bars.micromenu.tooltip[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.bars.micromenu.tooltip[info[#info]] = value
+					BARS:GetBar("menu1"):UpdateButtons("Update")
+					BARS:GetBar("menu2"):UpdateButtons("Update")
+				end,
 				args = {
 					character = {
 						order = 1,
 						type = "toggle",
 						name = L["CHARACTER_BUTTON"],
 						desc = L["CHARACTER_BUTTON_DESC"],
-						get = function()
-							return C.db.profile.bars.micromenu.tooltip.character
-						end,
-						set = function(_, value)
-							C.db.profile.bars.micromenu.tooltip.character = value
 
-							BARS:UpdateMicroButton("CharacterMicroButton")
-						end,
 					},
 					quest = {
 						order = 2,
 						type = "toggle",
 						name = L["QUESTLOG_BUTTON"],
 						desc = L["QUESTLOG_BUTTON_DESC"],
-						get = function()
-							return C.db.profile.bars.micromenu.tooltip.quest
-						end,
-						set = function(_, value)
-							C.db.profile.bars.micromenu.tooltip.quest = value
-
-							BARS:UpdateMicroButton("QuestLogMicroButton")
-						end,
 					},
 					lfd = {
 						order = 3,
 						type = "toggle",
 						name = L["DUNGEONS_BUTTON"],
 						desc = L["DUNGEONS_BUTTON_DESC"],
-						get = function()
-							return C.db.profile.bars.micromenu.tooltip.lfd
-						end,
-						set = function(_, value)
-							C.db.profile.bars.micromenu.tooltip.lfd = value
-
-							BARS:UpdateMicroButton("LFDMicroButton")
-						end,
 					},
 					ej = {
 						order = 4,
 						type = "toggle",
 						name = L["ADVENTURE_JOURNAL"],
 						desc = L["ADVENTURE_JOURNAL_DESC"],
-						get = function()
-							return C.db.profile.bars.micromenu.tooltip.ej
-						end,
-						set = function(_, value)
-							C.db.profile.bars.micromenu.tooltip.ej = value
-
-							BARS:UpdateMicroButton("EJMicroButton")
-						end,
 					},
 					main = {
 						order = 5,
 						type = "toggle",
 						name = L["MAINMENU_BUTTON"],
 						desc = L["MAINMENU_BUTTON_DESC"],
-						get = function()
-							return C.db.profile.bars.micromenu.tooltip.main
-						end,
-						set = function(_, value)
-							C.db.profile.bars.micromenu.tooltip.main = value
-
-							BARS:UpdateMicroButton("MainMenuMicroButton")
-						end,
 					},
 				},
 			},
+			fading = getOptionsTable_Fading("micromenu", 20)
 		},
 	}
 
@@ -594,11 +680,11 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				disabled = function() return not BARS:HasXPBar() end,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
-					BARS:UpdateXPBar()
+					BARS:GetBar("xpbar"):Update()
 				end,
-				disabled = function() return not BARS:HasXPBar() end,
 			},
 			spacer1 = {
 				order = 9,
@@ -609,18 +695,17 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				order = 10,
 				type = "range",
 				name = L["WIDTH"],
+				disabled = function() return not BARS:HasXPBar() end,
 				min = 530, max = 1912, step = 2,
 				get = function()
 					return C.db.profile.bars.xpbar.width
 				end,
 				set = function(_, value)
 					C.db.profile.bars.xpbar.width = value
-					BARS:UpdateXPBar()
+					BARS:GetBar("xpbar"):Update()
 				end,
-				disabled = function() return not BARS:HasXPBar() end,
 			},
+			fading = getOptionsTable_Fading("xpbar", 20)
 		},
 	}
-
-	C.options.args.bars.args.bags = GetOptionsTable_Bar("bags", 14, L["BAGS"])
 end

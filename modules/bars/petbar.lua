@@ -48,11 +48,132 @@ local function getBarPoint()
 	return LAYOUT[E.PLAYER_CLASS]
 end
 
+local function button_UpdateGrid(self, state)
+	if state ~= nil then
+		self._parent._config.grid = state
+	end
+
+	self:ShowGrid()
+	self:HideGrid()
+end
+
+local function button_ShowGrid(self)
+	self.showgrid = self.showgrid + 1
+	self:SetAlpha(1)
+end
+
+local function button_HideGrid(self)
+	if self.showgrid > 0 then
+		self.showgrid = self.showgrid - 1
+	end
+
+	if self.showgrid == 0 and not GetPetActionInfo(self:GetID()) and not self._parent._config.grid then
+		self:SetAlpha(0)
+	end
+end
+
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey = state
+	end
+
+	if self._parent._config.hotkey then
+		self.HotKey:SetParent(self)
+		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+	else
+		self.HotKey:SetParent(E.HIDDEN_PARENT)
+	end
+end
+
+local function button_UpdateCooldown(self)
+	CooldownFrame_Set(self.cooldown, GetPetActionCooldown(self:GetID()))
+end
+
+local function button_Update(self)
+	local id = self:GetID()
+	local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(id)
+
+	if not isToken then
+		self.icon:SetTexture(texture)
+		self.tooltipName = name
+	else
+		self.icon:SetTexture(_G[texture])
+		self.tooltipName = _G[name]
+	end
+
+	self.isToken = isToken
+	self.tooltipSubtext = subtext
+
+	self:SetChecked(isActive)
+
+	if isActive then
+		if IsPetAttackAction(id) then
+			self:StartFlash()
+			self:GetCheckedTexture():SetAlpha(0.5)
+		else
+			self:StopFlash()
+			self:GetCheckedTexture():SetAlpha(1.0)
+		end
+	else
+		self:StopFlash()
+		self:GetCheckedTexture():SetAlpha(1.0)
+	end
+
+	if autoCastAllowed and not autoCastEnabled then
+		self.AutoCastBorder:Show()
+		AutoCastShine_AutoCastStop(self.AutoCastShine)
+	elseif autoCastAllowed then
+		self.AutoCastBorder:Hide()
+		AutoCastShine_AutoCastStart(self.AutoCastShine)
+	else
+		self.AutoCastBorder:Hide()
+		AutoCastShine_AutoCastStop(self.AutoCastShine)
+	end
+
+	if texture then
+		if GetPetActionSlotUsable(id) then
+			self.icon:SetDesaturated(false)
+		else
+			self.icon:SetDesaturated(true)
+		end
+
+		self.icon:Show()
+		self:SetAlpha(1)
+	else
+		self.icon:Hide()
+
+		if self.showgrid then
+			self:SetAlpha(1)
+		else
+			self:SetAlpha(0)
+		end
+	end
+
+	if not PetHasActionBar() then
+		self:SetChecked(false)
+		self:StopFlash()
+		self.icon:SetDesaturated(true)
+	end
+
+	self:UpdateHotKey()
+	self:UpdateCooldown()
+end
+
 function MODULE.CreatePetActionBar()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSPetBar", UIParent, "SecureHandlerStateTemplate")
 		bar._id = "bar6"
 		bar._buttons = {}
+
+		MODULE:AddBar(bar._id, bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateVisibility()
+			self:UpdateButtons("Update")
+			E:UpdateBarLayout(self)
+		end
 
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "PetActionButtonTemplate")
@@ -62,9 +183,16 @@ function MODULE.CreatePetActionBar()
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "BONUSACTIONBUTTON"..i
-			button._forcegrid = false
+			button.showgrid = 0
+
+			button.HideGrid = button_HideGrid
+			button.ShowGrid = button_ShowGrid
 			button.StartFlash = PetActionButton_StartFlash
 			button.StopFlash = PetActionButton_StopFlash
+			button.Update = button_Update
+			button.UpdateCooldown = button_UpdateCooldown
+			button.UpdateGrid = button_UpdateGrid
+			button.UpdateHotKey = button_UpdateHotKey
 
 			BUTTONS[i]:SetAllPoints(button)
 			BUTTONS[i]:SetAttribute("statehidden", true)
@@ -78,99 +206,18 @@ function MODULE.CreatePetActionBar()
 			bar._buttons[i] = button
 		end
 
-		function bar:ForceGrid(state)
-			for _, button in next, self._buttons do
-				button._forcegrid = state
-
-				if state then
-					button:SetAlpha(1)
-				elseif not state and not GetPetActionInfo(button:GetID()) then
-					button:SetAlpha(0)
-				end
-			end
-		end
-
 		bar:SetScript("OnEvent", function(self, event, arg1)
 			if event == "PET_BAR_UPDATE" or event == "PET_SPECIALIZATION_CHANGED" or
 				(event == "UNIT_PET" and arg1 == "player") or
 				((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet") or
 				event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED" or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
-				for i, button in next, self._buttons do
-					local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(i)
-
-					if not isToken then
-						button.icon:SetTexture(texture)
-						button.tooltipName = name
-					else
-						button.icon:SetTexture(_G[texture])
-						button.tooltipName = _G[name]
-					end
-
-					button.isToken = isToken
-					button.tooltipSubtext = subtext
-
-					button:SetChecked(isActive)
-
-					if isActive then
-						if IsPetAttackAction(i) then
-							button:StartFlash()
-							button:GetCheckedTexture():SetAlpha(0.5)
-						else
-							button:StopFlash()
-							button:GetCheckedTexture():SetAlpha(1.0)
-						end
-					else
-						button:StopFlash()
-						button:GetCheckedTexture():SetAlpha(1.0)
-					end
-
-					if autoCastAllowed and not autoCastEnabled then
-						button.AutoCastBorder:Show()
-						AutoCastShine_AutoCastStop(button.AutoCastShine)
-					elseif autoCastAllowed then
-						button.AutoCastBorder:Hide()
-						AutoCastShine_AutoCastStart(button.AutoCastShine)
-					else
-						button.AutoCastBorder:Hide()
-						AutoCastShine_AutoCastStop(button.AutoCastShine)
-					end
-
-					if texture then
-						if GetPetActionSlotUsable(i) then
-							button.icon:SetDesaturated(false)
-						else
-							button.icon:SetDesaturated(true)
-						end
-
-						button.icon:Show()
-						button:SetAlpha(1)
-					else
-						button.icon:Hide()
-
-						if button._forcegrid then
-							button:SetAlpha(1)
-						else
-							button:SetAlpha(0)
-						end
-					end
-
-					if not PetHasActionBar() then
-						button:SetChecked(false)
-						button:StopFlash()
-						button.icon:SetDesaturated(true)
-					end
-
-					button:UpdateHotKey(C.db.profile.bars.bar6.hotkey)
-					CooldownFrame_Set(button.cooldown, GetPetActionCooldown(i))
-				end
+				self:UpdateButtons("Update")
 			elseif event == "PET_BAR_UPDATE_COOLDOWN" then
-				for i, button in next, self._buttons do
-					CooldownFrame_Set(button.cooldown, GetPetActionCooldown(i))
-				end
+				self:UpdateButtons("UpdateCooldown")
 			elseif event == "PET_BAR_SHOWGRID" then
-				self:ForceGrid(true)
+				self:UpdateButtons("ShowGrid")
 			elseif event == "PET_BAR_HIDEGRID" then
-				self:ForceGrid(false)
+				self:UpdateButtons("HideGrid")
 			end
 		end)
 
@@ -186,13 +233,9 @@ function MODULE.CreatePetActionBar()
 		bar:RegisterEvent("UNIT_FLAGS")
 		bar:RegisterEvent("UNIT_PET")
 
-		MODULE:AddBar("bar6", bar)
-
 		local point = getBarPoint()
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E:CreateMover(bar)
-
-		bar._config = C.db.profile.bars.bar6
 
 		bar:Update()
 
@@ -219,7 +262,7 @@ function MODULE.CreatePetActionBar()
 							if checksRange ~= button._checksrange or inRange ~= button._inrange then
 								if checksRange then
 									if C.db.profile.bars.range_indicator == "button" then
-										button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
+										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
 
 										if inRange == false then
 											button.icon:SetDesaturated(true)
@@ -235,11 +278,11 @@ function MODULE.CreatePetActionBar()
 										if inRange == false then
 											button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
 										else
-											button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
+											button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
 										end
 									end
 								else
-									button.HotKey:SetVertexColor(0.75, 0.75, 0.75)
+									button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
 									button.icon:SetDesaturated(false)
 									button.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
 								end

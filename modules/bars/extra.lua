@@ -7,15 +7,39 @@ local _G = getfenv(0)
 
 -- Mine
 local isInit = false
-local bar
+
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey = state
+	end
+
+	if self._parent._config.hotkey then
+		self.HotKey:SetParent(self)
+		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+	else
+		self.HotKey:SetParent(E.HIDDEN_PARENT)
+	end
+end
 
 function MODULE.CreateExtraButton()
 	if not isInit then
-		local point = C.db.profile.bars.extra.point
+		local bar = CreateFrame("Frame", "LSExtraActionBar", UIParent, "SecureHandlerStateTemplate")
+		bar._id = "extra"
+		bar._buttons = {}
 
-		bar = CreateFrame("Frame", "LSExtraActionBar", UIParent, "SecureHandlerStateTemplate")
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		MODULE:AddBar("extra", bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateVisibility()
+			self:UpdateButtons("UpdateHotKey")
+
+			ExtraActionBarFrame:SetAllPoints()
+
+			self:SetSize(self._config.size + 4, self._config.size + 4)
+			E:UpdateMoverSize(self)
+		end
 
 		ExtraActionBarFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
@@ -26,25 +50,19 @@ function MODULE.CreateExtraButton()
 
 		ExtraActionButton1:SetPoint("TOPLEFT", 2, -2)
 		ExtraActionButton1:SetPoint("BOTTOMRIGHT", -2, 2)
+		ExtraActionButton1._parent = bar
+		ExtraActionButton1._command = "EXTRAACTIONBUTTON1"
 		E:SkinExtraActionButton(ExtraActionButton1)
+		bar._buttons[1] = ExtraActionButton1
 
-		MODULE:InitBarFading(bar)
+		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
+
+		local point = C.db.profile.bars.extra.point
+		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E:CreateMover(bar)
+
+		bar:Update()
 
 		isInit = true
-
-		MODULE:UpdateExtraButton()
-	end
-end
-
-function MODULE.UpdateExtraButton()
-	if isInit then
-		bar._config = C.db.profile.bars.extra
-
-		ExtraActionBarFrame:SetAllPoints()
-
-		bar:SetSize(bar._config.size + 4, bar._config.size + 4)
-		bar:AdjustMoverSize()
-		MODULE:UpdateBarFading(bar)
-		MODULE:UpdateBarVisibility(bar)
 	end
 end

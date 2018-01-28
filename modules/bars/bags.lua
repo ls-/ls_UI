@@ -136,19 +136,16 @@ function MODULE.CreateBags()
 			_G["CharacterBag3Slot"]
 		}
 
-		MODULE:AddBar("bags", bar)
+		MODULE:AddBar(bar._id, bar)
 
-		-- hacks
 		bar.Update = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
-
-			MODULE:UpdateBarFading(bar)
+			self:UpdateConfig()
+			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
-
-		MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
-		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
-		MainMenuBarBackpackButton:SetScript("OnEvent", BackpackButton_OnEvent)
+		bar.UpdateConfig = function(self)
+			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
+		end
 
 		for _, bag in next, bar._buttons do
 			bag:UnregisterEvent("ITEM_PUSH")
@@ -160,6 +157,9 @@ function MODULE.CreateBags()
 				bag:Hide()
 			end
 		end
+		MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
+		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
+		MainMenuBarBackpackButton:SetScript("OnEvent", BackpackButton_OnEvent)
 
 		MainMenuBarBackpackButton.Update = function(self)
 			local free, total = GetBagUsageInfo()
@@ -183,7 +183,6 @@ function MODULE.CreateBags()
 			MODULE:ActionBarController_AddWidget(bar, "BAG")
 		else
 			local point = config.point
-
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
 

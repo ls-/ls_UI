@@ -7,7 +7,6 @@ local _G = getfenv(0)
 
 -- Mine
 local isInit = false
-local bar
 
 local function onEvent(self)
 	if UnitOnTaxi("player") or CanExitVehicle() then
@@ -33,11 +32,19 @@ end
 
 function MODULE.CreateVehicleExitButton()
 	if not isInit then
-		local point = C.db.profile.bars.vehicle.point
+		local bar = CreateFrame("Frame", "LSVehicleExitFrame", UIParent)
+		bar._id = "vehicle"
+		bar._buttons = {}
 
-		bar = CreateFrame("Frame", "LSVehicleExitFrame", UIParent)
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		MODULE:AddBar(bar._id, bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+
+			self:SetSize(self._config.size + 4, self._config.size + 4)
+			E:UpdateMoverSize(self)
+		end
 
 		local button = E:CreateButton(bar)
 		button:SetBorderColor(1, 0.1, 0.15)
@@ -50,26 +57,19 @@ function MODULE.CreateVehicleExitButton()
 		button:SetScript("OnClick", onClick)
 		button:SetPoint("TOPLEFT", 2, -2)
 		button:SetPoint("BOTTOMRIGHT", -2, 2)
+		bar._buttons[1] = button
 
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 		button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 
 		onEvent(button)
 
-		MODULE:InitBarFading(bar)
+		local point = C.db.profile.bars.vehicle.point
+		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E:CreateMover(bar)
+
+		bar:Update()
 
 		isInit = true
-
-		MODULE:UpdateVehicleExitButton()
-	end
-end
-
-function MODULE.UpdateVehicleExitButton()
-	if isInit then
-		bar._config = C.db.profile.bars.vehicle
-
-		bar:SetSize(bar._config.size + 4, bar._config.size + 4)
-		bar:AdjustMoverSize()
-		MODULE:UpdateBarFading(bar)
 	end
 end

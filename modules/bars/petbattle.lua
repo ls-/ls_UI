@@ -31,6 +31,19 @@ local CFG = {
 	},
 }
 
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey = state
+	end
+
+	if self._parent._config.hotkey then
+		self.HotKey:SetParent(self)
+		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+	else
+		self.HotKey:SetParent(E.HIDDEN_PARENT)
+	end
+end
+
 function MODULE.CreatePetBattleBar()
 	if not isInit then
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
@@ -39,24 +52,21 @@ function MODULE.CreatePetBattleBar()
 		bar._id = "pet_battle"
 		bar._buttons = {}
 
-		MODULE:AddBar("pet_battle", bar)
+		MODULE:AddBar(bar._id, bar)
 
-		-- hacks
 		bar.Update = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
-
-			MODULE:UpdateBarFading(self)
-			MODULE:UpdateBarVisibility(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateVisibility()
+			self:UpdateButtons("UpdateHotKey")
 			E:UpdateBarLayout(self)
 		end
+		bar.UpdateConfig = function(self)
+			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
-		if MODULE:IsRestricted() then
-			MODULE:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
-		else
-			local point = config.point
-
-			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
+			if MODULE:IsRestricted() then
+				self._config.hotkey = C.db.profile.bars.pet_battle.hotkey
+			end
 		end
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
@@ -72,11 +82,21 @@ function MODULE.CreatePetBattleBar()
 				button._command = "ACTIONBUTTON"..id
 				button:SetParent(bar)
 
+				button.UpdateHotKey = button_UpdateHotKey
+
 				E:SkinPetBattleButton(button)
 			end
 
 			bar:Update()
 		end)
+
+		if MODULE:IsRestricted() then
+			MODULE:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
+		else
+			local point = config.point
+			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			E:CreateMover(bar)
+		end
 
 		bar:Update()
 

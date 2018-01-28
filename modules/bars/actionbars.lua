@@ -103,7 +103,7 @@ local PAGES = {
 	["DEFAULT"] = "[vehicleui][possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
-local function GetBarPage()
+local function getBarPage()
 	local condition = PAGES["DEFAULT"]
 	local page = PAGES[E.PLAYER_CLASS]
 
@@ -112,6 +112,80 @@ local function GetBarPage()
 	end
 
 	return condition.." [form] 1; 1"
+end
+
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateFading()
+	self:UpdateVisibility()
+	self:UpdateButtonConfig()
+	E:UpdateBarLayout(self)
+end
+
+local function bar_UpdateButtonConfig(self)
+	if not self.buttonConfig then
+		self.buttonConfig = {
+			tooltip = "enabled",
+			colors = {},
+			hideElements = {
+				equipped = false,
+			},
+			clickOnDown = false,
+		}
+	end
+
+	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
+	self.buttonConfig.showGrid = self._config.grid
+	self.buttonConfig.flyoutDirection = self._config.flyout_dir
+
+	self.buttonConfig.colors.normal = {M.COLORS.BUTTON_ICON.N:GetRGB()}
+	self.buttonConfig.colors.range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()}
+	self.buttonConfig.colors.mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()}
+
+	self.buttonConfig.hideElements.macro = not self._config.macro
+	self.buttonConfig.hideElements.hotkey = not self._config.hotkey
+
+	for _, button in next, self._buttons do
+		self.buttonConfig.keyBoundTarget = button._command
+
+		button:UpdateConfig(self.buttonConfig)
+		button:SetAttribute("buttonlock", C.db.profile.bars.lock)
+		button:SetAttribute("checkselfcast", true)
+		button:SetAttribute("checkfocuscast", true)
+		button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
+	end
+end
+
+local function button_UpdateMacroText(self, state)
+	if state ~= nil then
+		self._parent._config.macro = state
+	end
+
+	self._parent:UpdateButtonConfig()
+end
+
+local function button_UpdateGrid(self, state)
+	if state ~= nil then
+		self._parent._config.grid = state
+	end
+
+	self._parent:UpdateButtonConfig()
+end
+
+local function button_UpdateFlyoutDirection(self, state)
+	if state ~= nil then
+		self._parent._config.flyout_dir = state
+	end
+
+	self._parent:UpdateButtonConfig()
+end
+
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey = state
+	end
+
+	self._parent:UpdateButtonConfig()
 end
 
 function MODULE.CreateActionBars()
@@ -129,11 +203,33 @@ function MODULE.CreateActionBars()
 			bar._id = barID
 			bar._buttons = {}
 
+			MODULE:AddBar(bar._id, bar)
+
+			bar.Update = bar_Update
+			bar.UpdateButtonConfig = bar_UpdateButtonConfig
+
+			if barID == "bar1" then
+				bar.UpdateConfig = function(self)
+					self._config = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
+
+					if MODULE:IsRestricted() then
+						self._config.grid = C.db.profile.bars.bar1.grid
+						self._config.hotkey = C.db.profile.bars.bar1.hotkey
+						self._config.macro = C.db.profile.bars.bar1.macro
+					end
+				end
+			end
+
 			for i = 1, data.num_buttons do
 				local button = LibActionButton:CreateButton(i, "$parentButton"..i, bar)
 				button:SetState(0, "action", i)
 				button._parent = bar
 				button._command = data.type..i
+
+				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
+				button.UpdateGrid = button_UpdateGrid
+				button.UpdateHotKey = button_UpdateHotKey
+				button.UpdateMacroText = button_UpdateMacroText
 
 				for k = 1, 14 do
 					button:SetState(k, "action", (k - 1) * 12 + i)
@@ -161,20 +257,7 @@ function MODULE.CreateActionBars()
 				control:ChildUpdate("state", newstate)
 			]])
 
-			RegisterStateDriver(bar, "page", barID == "bar1" and GetBarPage() or data.page)
-
-			MODULE:AddBar(barID, bar)
-
-			-- hacks
-			if barID == "bar1" and MODULE:IsRestricted() then
-				bar.Update = function(self)
-					self._config = CFG.bar1
-
-					MODULE:UpdateBarVisibility(self)
-					MODULE:UpdateBarLABConfig(self)
-					E:UpdateBarLayout(self)
-				end
-			end
+			RegisterStateDriver(bar, "page", barID == "bar1" and getBarPage() or data.page)
 		end
 
 		for barID, bar in next, MODULE:GetBars() do
@@ -185,8 +268,6 @@ function MODULE.CreateActionBars()
 				bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E:CreateMover(bar)
 			end
-
-			bar._config = config[barID]
 
 			bar:Update()
 		end

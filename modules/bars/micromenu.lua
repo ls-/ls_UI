@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local select = _G.select
+local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local unpack = _G.unpack
@@ -21,6 +22,31 @@ local LATENCY_TEMPLATE = "|cff%s%s|r ".._G.MILLISECONDS_ABBR
 local MEMORY_TEMPLATE = "%.2f MiB"
 local MICRO_BUTTON_HEIGHT = 48 / 2
 local MICRO_BUTTON_WIDTH = 36 / 2
+
+local CFG = {
+	visible = true,
+	fade = {
+		enabled = false,
+	},
+	menu1 = {
+		point = {
+			p = "BOTTOM",
+			anchor = "UIParent",
+			rP = "BOTTOM",
+			x = -280,
+			y = 16
+		},
+	},
+	menu2 = {
+		point = {
+			p = "BOTTOM",
+			anchor = "UIParent",
+			rP = "BOTTOM",
+			x = 280,
+			y = 16
+		},
+	},
+}
 
 local ROLE_NAMES = {
 	tank = L["TANK_BLUE"],
@@ -577,136 +603,89 @@ local function MainMenuButton_OnEvent(self, event)
 	end
 end
 
-local function UpdateButton(button)
-	if button == "CharacterMicroButton" then
-		button = _G[button]
-
-		if C.db.profile.bars.micromenu.tooltip.character then
-			button:SetScript("OnEnter", CharacterButton_OnEnter)
-		else
-			button:SetScript("OnEnter", Button_OnEnter)
-
-			t_wipe(durability.slots)
-			durability.min = 100
-		end
-
-		CharacterButton_OnEvent(button, "FORCE_UPDATE")
-	elseif button == "QuestLogMicroButton" then
-		button = _G[button]
-
-		if C.db.profile.bars.micromenu.tooltip.quest then
-			button:SetScript("OnEnter", QuestLogButton_OnEnter)
-		else
-			button:SetScript("OnEnter", Button_OnEnter)
-		end
-	elseif button == "LFDMicroButton" then
-		button = _G[button]
-
-		if C.db.profile.bars.micromenu.tooltip.lfd then
-			button:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
-			button:SetScript("OnEnter", LFDButton_OnEnter)
-
-			ctaTicker = C_Timer.NewTicker(10, function()
-				RequestLFDPlayerLockInfo()
-				RequestLFDPartyLockInfo()
-			end)
-
-			LFDButton_OnEvent(button, "FORCE_UPDATE")
-		else
-			button:UnregisterEvent("LFG_LOCK_INFO_RECEIVED")
-			button:SetScript("OnEnter", Button_OnEnter)
-
-			t_wipe(cta_rewards.tank)
-			t_wipe(cta_rewards.healer)
-			t_wipe(cta_rewards.damager)
-			cta_rewards.count = 0
-
-			if ctaTicker then
-				ctaTicker:Cancel()
-			end
-
-			button.Flash:Hide()
-		end
-	elseif button == "EJMicroButton" then
-		button = _G[button]
-
-		if C.db.profile.bars.micromenu.tooltip.ej then
-			button:RegisterEvent("UPDATE_INSTANCE_INFO")
-			button:SetScript("OnEnter", EJButton_OnEnter)
-		else
-			button:UnregisterEvent("UPDATE_INSTANCE_INFO")
-			button:SetScript("OnEnter", Button_OnEnter)
-		end
-	elseif button == "MainMenuMicroButton" then
-		button = _G[button]
-
-		if C.db.profile.bars.micromenu.tooltip.main then
-			button:RegisterEvent("MODIFIER_STATE_CHANGED")
-			button:SetScript("OnEnter", MainMenuButton_OnEnter)
-		else
-			button:UnregisterEvent("MODIFIER_STATE_CHANGED")
-			button:SetScript("OnEnter", Button_OnEnter)
-
-			t_wipe(addons.list)
-			addons.mem_usage = 0
-		end
-	end
-end
-
-function MODULE:CreateMicroMenu()
+function MODULE.CreateMicroMenu()
 	if not isInit then
 		holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
 		holder1:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
+		holder1._id = "menu1"
+		holder1._buttons = {}
+
+		MODULE:AddBar(holder1._id, holder1)
+
+		holder1.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateButtons("Update")
+		end
+		holder1.UpdateConfig = function(self)
+			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
+		end
 
 		holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 		holder2:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
+		holder2._id = "menu2"
+		holder2._buttons = {}
 
-		if self:IsRestricted() then
-			self:ActionBarController_AddWidget(holder1, "MM_LEFT")
-			self:ActionBarController_AddWidget(holder2, "MM_RIGHT")
-		else
-			local point = C.db.profile.bars.micromenu.holder1.point
+		MODULE:AddBar(holder2._id, holder2)
 
-			holder1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(holder1)
-			MODULE:InitBarFading(holder1)
-
-			point = C.db.profile.bars.micromenu.holder2.point
-
-			holder2:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(holder2)
-			MODULE:InitBarFading(holder2)
+		holder2.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateButtons("Update")
+		end
+		holder2.UpdateConfig = function(self)
+			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
 		end
 
-		for _, b in next, MICRO_BUTTONS do
-			local button = _G[b]
+		for _, name in next, MICRO_BUTTONS do
+			local button = _G[name]
 
-			if BUTTONS[b] then
-				HandleMicroButton(button)
+			if BUTTONS[name] then
+				local parent = _G[BUTTONS[name].parent]
 
-				button:SetParent(BUTTONS[b].parent)
+				button._parent = parent
+				button:SetParent(parent)
 				button:ClearAllPoints()
-				button:SetPoint(unpack(BUTTONS[b].point))
+				button:SetPoint(unpack(BUTTONS[name].point))
+				HandleMicroButton(button)
+				t_insert(parent._buttons, button)
 
-				button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[BUTTONS[b].icon]))
+				button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[BUTTONS[name].icon]))
 			else
 				E:ForceHide(button)
 			end
 
-			if b == "CharacterMicroButton" then
+			if name == "CharacterMicroButton" then
 				E:ForceHide(MicroButtonPortrait)
 				CreateMicroButtonIndicator(button, {}, 1)
 
 				button:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
 				button:HookScript("OnEvent", CharacterButton_OnEvent)
 
-				UpdateButton(b)
-			elseif b == "SpellbookMicroButton" then
+				button.Update = function(self)
+					if C.db.profile.bars.micromenu.tooltip.character then
+						self:SetScript("OnEnter", CharacterButton_OnEnter)
+					else
+						self:SetScript("OnEnter", Button_OnEnter)
+
+						t_wipe(durability.slots)
+						durability.min = 100
+					end
+
+					CharacterButton_OnEvent(self, "FORCE_UPDATE")
+				end
+			elseif name == "SpellbookMicroButton" then
 				button.tooltipText = MicroButtonTooltipText(L["SPELLBOOK_ABILITIES"], "TOGGLESPELLBOOK")
 				button.newbieText = L["NEWBIE_TOOLTIP_SPELLBOOK"]
-			elseif b == "QuestLogMicroButton" then
-				UpdateButton(b)
-			elseif b == "GuildMicroButton" then
+			elseif name == "QuestLogMicroButton" then
+				button.Update = function(self)
+					if C.db.profile.bars.micromenu.tooltip.quest then
+						self:SetScript("OnEnter", QuestLogButton_OnEnter)
+					else
+						self:SetScript("OnEnter", Button_OnEnter)
+					end
+				end
+			elseif name == "GuildMicroButton" then
 				button.Tabard = GuildMicroButtonTabard
 
 				button.Tabard.background:SetParent(button)
@@ -736,18 +715,52 @@ function MODULE:CreateMicroMenu()
 					SetPushedTexture(button)
 					SetDisabledTexture(button)
 				end)
-			elseif b == "LFDMicroButton" then
+			elseif name == "LFDMicroButton" then
 				button:HookScript("OnEvent", LFDButton_OnEvent)
 
-				UpdateButton(b)
-			elseif b == "EJMicroButton" then
+				button.Update = function(self)
+					if C.db.profile.bars.micromenu.tooltip.lfd then
+						self:RegisterEvent("LFG_LOCK_INFO_RECEIVED")
+						self:SetScript("OnEnter", LFDButton_OnEnter)
+
+						ctaTicker = C_Timer.NewTicker(10, function()
+							RequestLFDPlayerLockInfo()
+							RequestLFDPartyLockInfo()
+						end)
+
+						LFDButton_OnEvent(self, "FORCE_UPDATE")
+					else
+						self:UnregisterEvent("LFG_LOCK_INFO_RECEIVED")
+						self:SetScript("OnEnter", Button_OnEnter)
+
+						t_wipe(cta_rewards.tank)
+						t_wipe(cta_rewards.healer)
+						t_wipe(cta_rewards.damager)
+						cta_rewards.count = 0
+
+						if ctaTicker then
+							ctaTicker:Cancel()
+						end
+
+						self.Flash:Hide()
+					end
+				end
+			elseif name == "EJMicroButton" then
 				button:HookScript("OnEvent", EJButton_OnEvent)
 
 				button.NewAdventureNotice:ClearAllPoints()
 				button.NewAdventureNotice:SetPoint("CENTER")
 
-				UpdateButton(b)
-			elseif b == "MainMenuMicroButton" then
+				button.Update = function(self)
+					if C.db.profile.bars.micromenu.tooltip.ej then
+						self:RegisterEvent("UPDATE_INSTANCE_INFO")
+						self:SetScript("OnEnter", EJButton_OnEnter)
+					else
+						self:UnregisterEvent("UPDATE_INSTANCE_INFO")
+						self:SetScript("OnEnter", Button_OnEnter)
+					end
+				end
+			elseif name == "MainMenuMicroButton" then
 				E:ForceHide(MainMenuBarDownload)
 				CreateMicroButtonIndicator(button, {MainMenuBarPerformanceBar}, 2)
 				UpdatePerformanceIndicator(button)
@@ -758,7 +771,18 @@ function MODULE:CreateMicroMenu()
 
 				button:HookScript("OnEvent", MainMenuButton_OnEvent)
 
-				UpdateButton(b)
+				button.Update = function(self)
+					if C.db.profile.bars.micromenu.tooltip.main then
+						self:RegisterEvent("MODIFIER_STATE_CHANGED")
+						self:SetScript("OnEnter", MainMenuButton_OnEnter)
+					else
+						self:UnregisterEvent("MODIFIER_STATE_CHANGED")
+						button:SetScript("OnEnter", Button_OnEnter)
+
+						t_wipe(addons.list)
+						addons.mem_usage = 0
+					end
+				end
 			end
 		end
 
@@ -768,52 +792,44 @@ function MODULE:CreateMicroMenu()
 		CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
 
 		hooksecurefunc("UpdateMicroButtonsParent", function()
-			for _, b in next, MICRO_BUTTONS do
-				local button = _G[b]
-
-				if BUTTONS[b] then
-					button:SetParent(BUTTONS[b].parent)
+			for _, name in next, MICRO_BUTTONS do
+				if BUTTONS[name] then
+					_G[name]:SetParent(BUTTONS[name].parent)
 				else
-					button:SetParent(E.HIDDEN_PARENT)
+					_G[name]:SetParent(E.HIDDEN_PARENT)
 				end
 			end
 		end)
 
 		hooksecurefunc("MoveMicroButtons", function()
-			for _, b in next, MICRO_BUTTONS do
-				local button = _G[b]
-
-				if BUTTONS[b] then
-					button:ClearAllPoints()
-					button:SetPoint(unpack(BUTTONS[b].point))
+			for _, name in next, MICRO_BUTTONS do
+				if BUTTONS[name] then
+					_G[name]:ClearAllPoints()
+					_G[name]:SetPoint(unpack(BUTTONS[name].point))
 				end
 			end
 		end)
 
+		if MODULE:IsRestricted() then
+			MODULE:ActionBarController_AddWidget(holder1, "MM_LEFT")
+			MODULE:ActionBarController_AddWidget(holder2, "MM_RIGHT")
+		else
+			local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
+			local point = config.menu1.point
+			holder1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			E:CreateMover(holder1)
+
+			point = config.menu2.point
+			holder2:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			E:CreateMover(holder2)
+		end
+
+		holder1:Update()
+		holder1:UpdateButtons("Update")
+
+		holder2:Update()
+		holder2:UpdateButtons("Update")
+
 		isInit = true
-
-		self:UpdateMicroMenu()
-	end
-end
-
-function MODULE:UpdateMicroMenu()
-	if isInit then
-		for button in next, BUTTONS do
-			UpdateButton(button)
-		end
-
-		if not self:IsRestricted() then
-			holder1._config = C.db.profile.bars.micromenu.holder1
-			holder2._config = C.db.profile.bars.micromenu.holder2
-
-			self:UpdateBarFading(holder1)
-			self:UpdateBarFading(holder2)
-		end
-	end
-end
-
-function MODULE.UpdateMicroButton(_, ...)
-	if isInit then
-		UpdateButton(...)
 	end
 end

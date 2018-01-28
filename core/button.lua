@@ -119,14 +119,6 @@ local function updateHotKey(self)
 	self:SetFormattedText("%s", getBindingKey(self:GetParent()))
 end
 
-local function button_UpdateHotKey(self, show)
-	if not show then
-		self.HotKey:SetFormattedText("")
-	else
-		updateHotKey(self.HotKey)
-	end
-end
-
 local function SetMacroTextHook(self, text)
 	local button = self:GetParent()
 	local bName = button.Name
@@ -222,7 +214,7 @@ local function SkinButton(button)
 
 		updateHotKey(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", updateHotKey)
-		button.UpdateHotKey = button_UpdateHotKey
+		button.GetBindingKey = getBindingKey
 	end
 
 	if bCount then
@@ -408,7 +400,6 @@ function E:SkinBagButton(button)
 	end
 
 	button.__styled = true
-	button.__type = "bag"
 end
 
 function E:SkinExtraActionButton(button)

@@ -469,32 +469,23 @@ function BARS.CreateXPBar()
 		local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 
 		bar = CreateFrame("Frame", "LSUIXPBar", UIParent)
-		bar:SetScript("OnEvent", XPBar_OnEvent)
-		bar._config = config
+		bar._id = "xpbar"
 
-		-- all
-		bar:RegisterEvent("PET_BATTLE_CLOSE")
-		bar:RegisterEvent("PET_BATTLE_OPENING_START")
-		bar:RegisterEvent("PLAYER_UPDATE_RESTING")
-		bar:RegisterEvent("UPDATE_EXHAUSTION")
-		-- honour
-		bar:RegisterEvent("HONOR_LEVEL_UPDATE")
-		bar:RegisterEvent("HONOR_XP_UPDATE")
-		bar:RegisterEvent("ZONE_CHANGED")
-		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		-- ap
-		bar:RegisterEvent("ARTIFACT_XP_UPDATE")
-		bar:RegisterEvent("UNIT_INVENTORY_CHANGED")
-		-- xp
-		bar:RegisterEvent("DISABLE_XP_GAIN")
-		bar:RegisterEvent("ENABLE_XP_GAIN")
-		bar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
-		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
-		bar:RegisterEvent("PLAYER_LEVEL_UP")
-		bar:RegisterEvent("PLAYER_XP_UPDATE")
-		bar:RegisterEvent("UPDATE_EXPANSION_LEVEL")
-		-- rep
-		bar:RegisterEvent("UPDATE_FACTION")
+		BARS:AddBar(bar._id, bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+
+			SetXPBarStyle(self._config.width)
+
+			if not BARS:IsRestricted() then
+				self:UpdateFading()
+				E:UpdateMoverSize(self)
+			end
+		end
+		bar.UpdateConfig = function(self)
+			self._config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
+		end
 
 		local cover = CreateFrame("Frame", nil, bar)
 		cover:SetAllPoints()
@@ -554,6 +545,42 @@ function BARS.CreateXPBar()
 		sep:Hide()
 		bar[2].Sep = sep
 
+		bar:SetScript("OnEvent", XPBar_OnEvent)
+		-- all
+		bar:RegisterEvent("PET_BATTLE_CLOSE")
+		bar:RegisterEvent("PET_BATTLE_OPENING_START")
+		bar:RegisterEvent("PLAYER_UPDATE_RESTING")
+		bar:RegisterEvent("UPDATE_EXHAUSTION")
+		-- honour
+		bar:RegisterEvent("HONOR_LEVEL_UPDATE")
+		bar:RegisterEvent("HONOR_XP_UPDATE")
+		bar:RegisterEvent("ZONE_CHANGED")
+		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+		-- ap
+		bar:RegisterEvent("ARTIFACT_XP_UPDATE")
+		bar:RegisterEvent("UNIT_INVENTORY_CHANGED")
+		-- xp
+		bar:RegisterEvent("DISABLE_XP_GAIN")
+		bar:RegisterEvent("ENABLE_XP_GAIN")
+		bar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
+		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
+		bar:RegisterEvent("PLAYER_LEVEL_UP")
+		bar:RegisterEvent("PLAYER_XP_UPDATE")
+		bar:RegisterEvent("UPDATE_EXPANSION_LEVEL")
+		-- rep
+		bar:RegisterEvent("UPDATE_FACTION")
+
+		if BARS:IsRestricted() then
+			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
+		else
+			local point = config.point
+			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			E:CreateMover(bar)
+			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
+		end
+
+		bar:Update()
+
 		-- Honour & Rep Hooks
 		-- This way I'm able to show honour and reputation bars simultaneously
 		local isHonorBarHooked = false
@@ -600,32 +627,6 @@ function BARS.CreateXPBar()
 			UpdateXPBar()
 		end)
 
-		if BARS:IsRestricted() then
-			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
-		else
-			local point = config.point
-
-			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
-			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
-			BARS:InitBarFading(bar)
-		end
-
 		isInit = true
-
-		BARS:UpdateXPBar()
-	end
-end
-
-function BARS.UpdateXPBar()
-	if isInit then
-		bar._config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
-
-		SetXPBarStyle(bar._config.width)
-
-		if not BARS:IsRestricted() then
-			bar:AdjustMoverSize()
-			BARS:UpdateBarFading(bar)
-		end
 	end
 end

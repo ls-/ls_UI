@@ -55,10 +55,8 @@ local function fadeOut_OnFinished(self)
 end
 
 local function pauseFading()
-	for id, bar in next, bars do
-		local config = C.db.profile.bars[id]
-
-		if config.visible and config.fade.enabled then
+	for _, bar in next, bars do
+		if bar._config.visible and bar._config.fade.enabled then
 			bar:SetScript("OnUpdate", nil)
 			bar.FadeIn:Stop()
 			bar.FadeOut:Stop()
@@ -70,12 +68,35 @@ local function pauseFading()
 end
 
 local function resumeFading()
-	for id, bar in next, bars do
-		local config = C.db.profile.bars[id]
-
-		if config.visible and config.fade.enabled then
+	for _, bar in next, bars do
+		if bar._config.visible and bar._config.fade.enabled then
 			bar:SetScript("OnUpdate", bar_OnUpdate)
 		end
+	end
+end
+
+local function bar_UpdateFading(self)
+	if self._config.visible and self._config.fade and self._config.fade.enabled then
+		self.FadeIn.Anim:SetFromAlpha(self._config.fade.min_alpha)
+		self.FadeIn.Anim:SetToAlpha(self._config.fade.max_alpha)
+		self.FadeIn.Anim:SetStartDelay(self._config.fade.in_delay)
+		self.FadeIn.Anim:SetDuration(self._config.fade.in_duration)
+
+		self.FadeOut.Anim:SetFromAlpha(self._config.fade.max_alpha)
+		self.FadeOut.Anim:SetToAlpha(self._config.fade.min_alpha)
+		self.FadeOut.Anim:SetStartDelay(self._config.fade.out_delay)
+		self.FadeOut.Anim:SetDuration(self._config.fade.out_duration)
+
+		self:SetScript("OnUpdate", bar_OnUpdate)
+		self.FadeOut:Finish()
+		self.FadeIn:Play()
+	else
+		self:SetScript("OnUpdate", nil)
+		self.FadeIn:Stop()
+		self.FadeOut:Stop()
+		self:SetAlpha(1)
+
+		self.faded = nil
 	end
 end
 
@@ -95,102 +116,47 @@ function MODULE.InitBarFading(_, bar)
 
 	anim = ag:CreateAnimation("Alpha")
 	ag.Anim = anim
+
+	bar.UpdateFading = bar_UpdateFading
 end
 
-function MODULE.UpdateBarFading(_, bar)
-	if bar._config.visible and bar._config.fade and bar._config.fade.enabled then
-		bar.FadeIn.Anim:SetFromAlpha(bar._config.fade.min_alpha)
-		bar.FadeIn.Anim:SetToAlpha(bar._config.fade.max_alpha)
-		bar.FadeIn.Anim:SetStartDelay(bar._config.fade.in_delay)
-		bar.FadeIn.Anim:SetDuration(bar._config.fade.in_duration)
-
-		bar.FadeOut.Anim:SetFromAlpha(bar._config.fade.max_alpha)
-		bar.FadeOut.Anim:SetToAlpha(bar._config.fade.min_alpha)
-		bar.FadeOut.Anim:SetStartDelay(bar._config.fade.out_delay)
-		bar.FadeOut.Anim:SetDuration(bar._config.fade.out_duration)
-
-		bar:SetScript("OnUpdate", bar_OnUpdate)
-	else
-		bar:SetScript("OnUpdate", nil)
-		bar.FadeIn:Stop()
-		bar.FadeOut:Stop()
-		bar:SetAlpha(1)
-
-		bar.faded = nil
-	end
-end
-
--- Visibility
-function MODULE.UpdateBarVisibility(_, bar)
-	if bar._config.visibility then
-		E:SetFrameState(bar, "visibility", bar._config.visible and bar._config.visibility or "hide")
-	end
-end
-
--- LAB config
-local LAB_bars = {
-	bar1 = true,
-	bar2 = true,
-	bar3 = true,
-	bar4 = true,
-	bar5 = true,
-}
-
-function MODULE.UpdateBarLABConfig(_, bar)
-	if LAB_bars[bar._id] then
-		local buttonConfig = {
-			outOfRangeColoring = C.db.profile.bars.range_indicator,
-			tooltip = C.db.profile.bars.tooltip,
-			showGrid = bar._config.grid,
-			colors = {
-				normal = {M.COLORS.BUTTON_ICON.N:GetRGB()},
-				range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()},
-				mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()},
-			},
-			hideElements = {
-				macro = not bar._config.macro,
-				hotkey = not bar._config.hotkey,
-				equipped = false,
-			},
-			clickOnDown = false,
-			flyoutDirection = bar._config.flyout_dir,
-		}
-
-		for _, button in next, bar._buttons do
-			buttonConfig.keyBoundTarget = button._command
-
-			button:UpdateConfig(buttonConfig)
-			button:SetAttribute("buttonlock", C.db.profile.bars.lock)
-			button:SetAttribute("checkselfcast", true)
-			button:SetAttribute("checkfocuscast", true)
-			button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
+local function bar_UpdateButtons(self, method, ...)
+	for _, button in next, self._buttons do
+		if button[method] then
+			button[method](button, ...)
 		end
 	end
 end
 
-function MODULE.AddBar(_, barID, bar)
-	MODULE:InitBarFading(bar)
+local function bar_UpdateConfig(self)
+	self._config = C.db.profile.bars[self._id]
+end
 
-	bars[barID] = bar
-	bars[barID].Update = function(self)
-		MODULE:UpdateBarFading(self)
-		MODULE:UpdateBarVisibility(self)
-		MODULE:UpdateBarLABConfig(self)
-		E:UpdateBarLayout(self)
+local function bar_UpdateVisibility(self)
+	if self._config.visible then
+		E:SetFrameState(self, "visibility", self._config.visibility or "show")
+	else
+		E:SetFrameState(self, "visibility", "hide")
 	end
 end
 
-function MODULE.UpdateBar(_, bar)
-	bar._config = C.db.profile.bars[bar._id]
+function MODULE.AddBar(self, barID, bar)
+	bars[barID] = bar
+	bar.UpdateConfig = bar_UpdateConfig
+	bar.UpdateVisibility = bar_UpdateVisibility
 
-	bar:Update()
+	if bar._buttons then
+		bar.UpdateButtons = bar_UpdateButtons
+	end
+
+	self:InitBarFading(bar)
 end
 
-function MODULE.UpdateBars()
-	for id, bar in next, bars do
-		bar._config = C.db.profile.bars[id]
-
-		bar:Update()
+function MODULE.UpdateBars(_, method, ...)
+	for _, bar in next, bars do
+		if bar[method] then
+			bar[method](bar, ...)
+		end
 	end
 end
 
@@ -275,11 +241,6 @@ end
 
 function MODULE.Update()
 	if isInit then
-		MODULE:UpdateBars()
-		MODULE:UpdateExtraButton()
-		MODULE:UpdateZoneButton()
-		MODULE:UpdateMicroMenu()
-		MODULE:UpdateVehicleExitButton()
-		MODULE:UpdateXPBar()
+		MODULE:UpdateBars("Update")
 	end
 end

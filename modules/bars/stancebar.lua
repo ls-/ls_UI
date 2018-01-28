@@ -45,11 +45,11 @@ local LAYOUT = {
 	DEMONHUNTER = TOP_POINT,
 }
 
-local function GetBarPoint()
+local function getBarPoint()
 	return LAYOUT[E.PLAYER_CLASS]
 end
 
-local function button_UpdateState(self)
+local function button_Update(self)
 	if self:IsShown() then
 		local id = self:GetID()
 		local texture, _, isActive, isCastable = GetShapeshiftFormInfo(id)
@@ -72,10 +72,23 @@ local function button_UpdateState(self)
 			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
 		end
 
-		self.HotKey:SetVertexColor(0.75, 0.75, 0.75)
+		self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
 
-		self:UpdateHotKey(C.db.profile.bars.bar7.hotkey)
+		self:UpdateHotKey()
 		CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(id))
+	end
+end
+
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey = state
+	end
+
+	if self._parent._config.hotkey then
+		self.HotKey:SetParent(self)
+		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+	else
+		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
@@ -85,6 +98,28 @@ function MODULE.CreateStanceBar()
 		bar._id = "bar7"
 		bar._buttons = {}
 
+		MODULE:AddBar(bar._id, bar)
+
+		bar.Update = function(self)
+			self:UpdateConfig()
+			self:UpdateFading()
+			self:UpdateVisibility()
+			self:UpdateButtons("Update")
+			E:UpdateBarLayout(self)
+		end
+		bar.UpdateForms = function(self)
+			local numStances = GetNumShapeshiftForms()
+
+			for i, button in next, self._buttons do
+				if i <= numStances then
+					button:Show()
+					button:Update()
+				else
+					button:Hide()
+				end
+			end
+		end
+
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "StanceButtonTemplate")
 			button:SetID(i)
@@ -93,7 +128,9 @@ function MODULE.CreateStanceBar()
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "SHAPESHIFTBUTTON"..i
-			button.UpdateState = button_UpdateState
+
+			button.Update = button_Update
+			button.UpdateHotKey = button_UpdateHotKey
 
 			BUTTONS[i]:SetAllPoints(button)
 			BUTTONS[i]:SetAttribute("statehidden", true)
@@ -107,39 +144,20 @@ function MODULE.CreateStanceBar()
 			bar._buttons[i] = button
 		end
 
-		bar.UpdateButtons = function(self)
-			local numStances = GetNumShapeshiftForms()
-
-			for i, button in next, self._buttons do
-				if i <= numStances then
-					button:Show()
-					button:UpdateState()
-				else
-					button:Hide()
-				end
-			end
-		end
-
-		bar.UpdateButtonsStates = function(self)
-			for _, button in next, self._buttons do
-				button:UpdateState()
-			end
-		end
-
 		bar:SetScript("OnEvent", function(self, event)
 			if event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-				self:UpdateButtonsStates()
+				self:UpdateButtons("Update")
 			elseif event == "PLAYER_REGEN_ENABLED" then
 				if self.needsUpdate and not InCombatLockdown() then
 					self.needsUpdate = nil
-					self:UpdateButtons()
+					self:UpdateForms()
 				end
 			else
 				if InCombatLockdown() then
 					self.needsUpdate = true
-					self:UpdateButtonsStates()
+					self:UpdateButtons("Update")
 				else
-					self:UpdateButtons()
+					self:UpdateForms()
 				end
 			end
 		end)
@@ -156,13 +174,9 @@ function MODULE.CreateStanceBar()
 		bar:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
 		bar:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 
-		MODULE:AddBar("bar7", bar)
-
-		local point = GetBarPoint()
+		local point = getBarPoint()
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E:CreateMover(bar)
-
-		bar._config = C.db.profile.bars.bar7
 
 		bar:Update()
 
