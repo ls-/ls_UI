@@ -289,17 +289,13 @@ do
 	end
 end
 
-local function adjustMoverSize(self, width, height)
-	local mover = E:GetMover(self)
+function E.UpdateMoverSize(_, object, width, height)
+	local mover = E:GetMover(object)
 
 	if mover then
-		mover:SetWidth(width or self:GetWidth())
-		mover:SetHeight(height or self:GetHeight())
+		mover:SetWidth(width or object:GetWidth())
+		mover:SetHeight(height or object:GetHeight())
 	end
-end
-
-function E:UpdateMoverSize(...)
-	adjustMoverSize(...)
 end
 
 function E.EnableMover(_, object)
@@ -407,8 +403,6 @@ function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
 	SetPosition(mover)
 
 	enabledMovers[name] = mover
-
-	object.AdjustMoverSize = adjustMoverSize
 
 	return mover
 end
