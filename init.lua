@@ -210,10 +210,17 @@ function E.OnInitialize()
 	-- -> 70300.04
 	if not C.db.profile.version or C.db.profile.version < 7030004 then
 		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
-		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
+		C.db.profile.movers.ls.ZoneAbilityFrameMover = nil
 
+		C.db.profile.movers.traditional.ExtraActionBarFrameMover = nil
 		C.db.profile.movers.traditional.ZoneAbilityFrameMover = nil
-		C.db.profile.movers.traditional.ZoneAbilityFrameMover = nil
+
+		C.db.profile.bars.hotkey = nil
+		C.db.profile.bars.icon_indicator = nil
+		C.db.profile.bars.macro = nil
+
+		C.db.profile.bars.micromenu.holder1 = nil
+		C.db.profile.bars.micromenu.holder2 = nil
 	end
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
