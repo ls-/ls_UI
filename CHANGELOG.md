@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 70300.04
+
+- Reworked action bars. Added numerous options: fading, grid, hotkey, name visibility. Each bar is configured individually;
+- Tweaked XP bars. Added rested XP bar. Removed idle animation from XP bars;
+- Added movers for pet battle pet selector and turn timer.
+- Updated embeds.
+
+NOTE: Bar module revamp was a big update code-wise, thus you will experience few bugs here and there, feel free to report them.
+
 ## Version 70300.03
 
 - Added currency options for backpack tooltip. See /lsui > Action Bars > Bags panel;
