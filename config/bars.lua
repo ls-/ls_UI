@@ -557,6 +557,20 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateBars("UpdateButtonConfig")
 				end,
 			},
+			desaturate_on_cd = {
+				order = 13,
+				type = "toggle",
+				name = L["DESATURATE_ON_COOLDOWN"],
+				disabled = function() return not BARS:IsInit() end,
+				get = function()
+					return C.db.profile.bars.desaturate_on_cd
+				end,
+				set = function(_, value)
+					C.db.profile.bars.desaturate_on_cd = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
+				end,
+			},
 			action_bar_1 = getOptionsTable_Bar("bar1", 1, L["BAR_1"]),
 			action_bar_2 = getOptionsTable_Bar("bar2", 2, L["BAR_2"]),
 			action_bar_3 = getOptionsTable_Bar("bar3", 3, L["BAR_3"]),

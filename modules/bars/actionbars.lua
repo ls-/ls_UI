@@ -134,6 +134,7 @@ local function bar_UpdateButtonConfig(self)
 		}
 	end
 
+	self.buttonConfig.desaturateOnCooldown = C.db.profile.bars.desaturate_on_cd
 	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir

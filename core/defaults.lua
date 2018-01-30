@@ -2065,6 +2065,7 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
+		desaturate_on_cd = false,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = true,

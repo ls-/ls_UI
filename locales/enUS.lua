@@ -130,6 +130,7 @@ Tags:
 Use '||r' to terminate colour tags.
 ]]
 L["DEBUFFS"] = "Debuffs"
+L["DESATURATE_ON_COOLDOWN"] = "Desaturate on Cooldown"
 L["DESCENDING"] = "Descending"
 L["DETACH_FROM_FRAME"] = "Detach From Frame"
 L["DIGSITE_BAR"] = "Digsite Progress Bar"
