@@ -86,6 +86,7 @@ local function button_UpdateHotKey(self, state)
 end
 
 local function button_UpdateCooldown(self)
+	self.cooldown:SetDrawBling(self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetPetActionCooldown(self:GetID()))
 end
 
