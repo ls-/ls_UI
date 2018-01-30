@@ -138,15 +138,8 @@ local function button_Update(self)
 		end
 
 		self.icon:Show()
-		self:SetAlpha(1)
 	else
 		self.icon:Hide()
-
-		if self.showgrid then
-			self:SetAlpha(1)
-		else
-			self:SetAlpha(0)
-		end
 	end
 
 	if not PetHasActionBar() then
@@ -155,6 +148,7 @@ local function button_Update(self)
 		self.icon:SetDesaturated(true)
 	end
 
+	self:UpdateGrid()
 	self:UpdateHotKey()
 	self:UpdateCooldown()
 end
