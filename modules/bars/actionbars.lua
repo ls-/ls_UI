@@ -135,16 +135,16 @@ local function bar_UpdateButtonConfig(self)
 	end
 
 	self.buttonConfig.desaturateOnCooldown = C.db.profile.bars.desaturate_on_cd
+	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
-	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 
+	self.buttonConfig.colors.mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()}
 	self.buttonConfig.colors.normal = {M.COLORS.BUTTON_ICON.N:GetRGB()}
 	self.buttonConfig.colors.range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()}
-	self.buttonConfig.colors.mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()}
 
-	self.buttonConfig.hideElements.macro = not self._config.macro
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey
+	self.buttonConfig.hideElements.macro = not self._config.macro
 
 	for _, button in next, self._buttons do
 		self.buttonConfig.keyBoundTarget = button._command
