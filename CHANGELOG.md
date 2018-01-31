@@ -1,10 +1,16 @@
 # CHANGELOG
 
+## Version 70300.05
+
+- Added "Desaturate on CD" option to action bar config;
+- Fixed issue with spell activation glow effect not being shown. Client restart is required;
+- Fixed issue which caused pet action button grid to not respect its settings.
+
 ## Version 70300.04
 
 - Reworked action bars. Added numerous options: fading, grid, hotkey, name visibility. Each bar is configured individually;
 - Tweaked XP bars. Added rested XP bar. Removed idle animation from XP bars;
-- Added movers for pet battle pet selector and turn timer.
+- Added movers for pet battle pet selector and turn timer;
 - Updated embeds.
 
 NOTE: Bar module revamp was a big update code-wise, thus you will experience few bugs here and there, feel free to report them.
