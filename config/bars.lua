@@ -545,8 +545,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			range_indicator = {
 				order = 12,
 				type = "select",
-				name = L["RANGE_INDICATOR"],
 				values = range_indicators,
+				name = L["OOR_INDICATOR"],
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
 					return C.db.profile.bars.range_indicator
