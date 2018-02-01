@@ -2062,6 +2062,7 @@ D.profile = {
 		},
 	},
 	bars = {
+		mana_indicator = "button", -- hotkey
 		range_indicator = "button", -- hotkey
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,

@@ -30,7 +30,7 @@ local flyout_dirs = {
 	RIGHT = L["RIGHT"],
 }
 
-local range_indicators = {
+local button_indicators = {
 	button = L["ICON"],
 	hotkey = L["KEYBIND_TEXT"],
 }
@@ -545,8 +545,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			range_indicator = {
 				order = 12,
 				type = "select",
-				values = range_indicators,
 				name = L["OOR_INDICATOR"],
+				values = button_indicators,
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
 					return C.db.profile.bars.range_indicator
@@ -557,8 +557,23 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateBars("UpdateButtonConfig")
 				end,
 			},
-			desaturate_on_cd = {
+			mana_indicator = {
 				order = 13,
+				type = "select",
+				name = L["OOM_INDICATOR"],
+				values = button_indicators,
+				disabled = function() return not BARS:IsInit() end,
+				get = function()
+					return C.db.profile.bars.mana_indicator
+				end,
+				set = function(_, value)
+					C.db.profile.bars.mana_indicator = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
+				end,
+			},
+			desaturate_on_cd = {
+				order = 14,
 				type = "toggle",
 				name = L["DESATURATE_ON_COOLDOWN"],
 				disabled = function() return not BARS:IsInit() end,
