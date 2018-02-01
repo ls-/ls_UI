@@ -2,7 +2,7 @@
 
 Yet another UI, but this one is a bit special.
 
-![image](http://i.imgur.com/hk2oCjJ.png)
+![image](https://i.imgur.com/gUp9u16.png)
 
 ## Download
 
