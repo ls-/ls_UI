@@ -119,6 +119,7 @@ local function bar_Update(self)
 	self:UpdateFading()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
+	self:UpdateButtons("UpdateFontObjects")
 	E:UpdateBarLayout(self)
 end
 
@@ -156,6 +157,13 @@ local function bar_UpdateButtonConfig(self)
 		button:SetAttribute("checkfocuscast", true)
 		button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
 	end
+end
+
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Name:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
 end
 
 local function button_UpdateMacroText(self, state)
@@ -215,6 +223,7 @@ function MODULE.CreateActionBars()
 					self._config = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
 
 					if MODULE:IsRestricted() then
+						self._config.font = C.db.profile.bars.bar1.font
 						self._config.grid = C.db.profile.bars.bar1.grid
 						self._config.hotkey = C.db.profile.bars.bar1.hotkey
 						self._config.macro = C.db.profile.bars.bar1.macro
@@ -229,6 +238,7 @@ function MODULE.CreateActionBars()
 				button._command = data.type..i
 
 				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
+				button.UpdateFontObjects = button_UpdateFontObjects
 				button.UpdateGrid = button_UpdateGrid
 				button.UpdateHotKey = button_UpdateHotKey
 				button.UpdateMacroText = button_UpdateMacroText

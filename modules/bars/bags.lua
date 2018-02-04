@@ -118,6 +118,11 @@ local function BackpackButton_OnEvent(self, event, ...)
 	end
 end
 
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+end
+
 function MODULE.HasBags()
 	return isInit
 end
@@ -141,10 +146,15 @@ function MODULE.CreateBags()
 		bar.Update = function(self)
 			self:UpdateConfig()
 			self:UpdateFading()
+			self:UpdateButtons("UpdateFontObjects")
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateConfig = function(self)
 			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
+
+			if MODULE:IsRestricted() then
+				self._config.font = C.db.profile.bars.bags.font
+			end
 		end
 
 		for _, bag in next, bar._buttons do
@@ -152,6 +162,8 @@ function MODULE.CreateBags()
 			bag._parent = bar
 			bag:SetParent(bar)
 			E:SkinBagButton(bag)
+
+			bag.UpdateFontObjects = button_UpdateFontObjects
 
 			if bag ~= MainMenuBarBackpackButton then
 				bag:Hide()

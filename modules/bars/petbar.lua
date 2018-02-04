@@ -85,6 +85,11 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+end
+
 local function button_UpdateCooldown(self)
 	self.cooldown:SetDrawBling(self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetPetActionCooldown(self:GetID()))
@@ -167,7 +172,17 @@ function MODULE.CreatePetActionBar()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("Update")
+			self:UpdateButtons("UpdateFontObjects")
 			E:UpdateBarLayout(self)
+		end
+		bar.UpdateButtonFontObjects = function(self)
+			local fontObject = "LSFont"..self._config.font.size..(self._config.font.flag ~= "" and "_"..self._config.font.flag or "")
+
+			for _, button in next, self._buttons do
+				if button.HotKey then
+					button.HotKey:SetFontObject(fontObject)
+				end
+			end
 		end
 
 		for i = 1, #BUTTONS do
@@ -186,6 +201,7 @@ function MODULE.CreatePetActionBar()
 			button.StopFlash = PetActionButton_StopFlash
 			button.Update = button_Update
 			button.UpdateCooldown = button_UpdateCooldown
+			button.UpdateFontObjects = button_UpdateFontObjects
 			button.UpdateGrid = button_UpdateGrid
 			button.UpdateHotKey = button_UpdateHotKey
 

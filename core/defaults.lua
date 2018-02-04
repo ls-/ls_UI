@@ -2089,6 +2089,10 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			font = {
+				size = 12,
+				flag = "Outline",
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
@@ -2118,6 +2122,10 @@ D.profile = {
 				in_duration = 0.15,
 				min_alpha = 0,
 				max_alpha = 1,
+			},
+			font = {
+				size = 12,
+				flag = "Outline",
 			},
 			point = {
 				p = "BOTTOM",
@@ -2149,6 +2157,10 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			font = {
+				size = 12,
+				flag = "Outline",
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
@@ -2178,6 +2190,10 @@ D.profile = {
 				in_duration = 0.15,
 				min_alpha = 0,
 				max_alpha = 1,
+			},
+			font = {
+				size = 12,
+				flag = "Outline",
 			},
 			point = {
 				p = "BOTTOMRIGHT",
@@ -2209,6 +2225,10 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			font = {
+				size = 12,
+				flag = "Outline",
+			},
 			point = {
 				p = "BOTTOMRIGHT",
 				anchor = "UIParent",
@@ -2237,6 +2257,10 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			font = {
+				size = 10,
+				flag = "Outline",
+			},
 		},
 		bar7 = { -- Stance
 			flyout_dir = "UP",
@@ -2258,6 +2282,10 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
+			font = {
+				size = 10,
+				flag = "Outline",
+			},
 		},
 		pet_battle = {
 			num = 6,
@@ -2277,6 +2305,10 @@ D.profile = {
 				in_duration = 0.15,
 				min_alpha = 0,
 				max_alpha = 1,
+			},
+			font = {
+				size = 12,
+				flag = "Outline",
 			},
 			point = {
 				p = "BOTTOM",
@@ -2299,6 +2331,10 @@ D.profile = {
 				in_duration = 0.15,
 				min_alpha = 0,
 				max_alpha = 1,
+			},
+			font = {
+				size = 12,
+				flag = "Outline",
 			},
 			point = {
 				p = "BOTTOM",
@@ -2414,6 +2450,10 @@ D.profile = {
 			visible = true,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
+			font = {
+				size = 12,
+				flag = "Outline",
+			},
 			fade = {
 				enabled = false,
 				out_delay = 0.75,

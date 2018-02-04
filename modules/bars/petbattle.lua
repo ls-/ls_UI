@@ -44,6 +44,11 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+end
+
 function MODULE.CreatePetBattleBar()
 	if not isInit then
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
@@ -59,12 +64,14 @@ function MODULE.CreatePetBattleBar()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
+			self:UpdateButtons("UpdateFontObjects")
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateConfig = function(self)
 			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
 			if MODULE:IsRestricted() then
+				self._config.font = C.db.profile.bars.pet_battle.font
 				self._config.hotkey = C.db.profile.bars.pet_battle.hotkey
 			end
 		end
@@ -82,6 +89,7 @@ function MODULE.CreatePetBattleBar()
 				button._command = "ACTIONBUTTON"..id
 				button:SetParent(bar)
 
+				button.UpdateFontObjects = button_UpdateFontObjects
 				button.UpdateHotKey = button_UpdateHotKey
 
 				E:SkinPetBattleButton(button)

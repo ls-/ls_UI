@@ -92,6 +92,11 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+end
+
 function MODULE.CreateStanceBar()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSStanceBar", UIParent, "SecureHandlerStateTemplate")
@@ -105,6 +110,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("Update")
+			self:UpdateButtons("UpdateFontObjects")
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateForms = function(self)
@@ -130,6 +136,7 @@ function MODULE.CreateStanceBar()
 			button._command = "SHAPESHIFTBUTTON"..i
 
 			button.Update = button_Update
+			button.UpdateFontObjects = button_UpdateFontObjects
 			button.UpdateHotKey = button_UpdateHotKey
 
 			BUTTONS[i]:SetAllPoints(button)

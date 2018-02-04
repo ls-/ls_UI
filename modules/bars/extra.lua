@@ -21,6 +21,11 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
+local function button_UpdateFontObjects(self)
+	local config = self._parent._config.font
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+end
+
 function MODULE.CreateExtraButton()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSExtraActionBar", UIParent, "SecureHandlerStateTemplate")
@@ -34,6 +39,7 @@ function MODULE.CreateExtraButton()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
+			self:UpdateButtons("UpdateFontObjects")
 
 			ExtraActionBarFrame:SetAllPoints()
 
@@ -55,6 +61,7 @@ function MODULE.CreateExtraButton()
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
 
+		ExtraActionButton1.UpdateFontObjects = button_UpdateFontObjects
 		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
 
 		local point = C.db.profile.bars.extra.point
