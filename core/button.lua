@@ -204,12 +204,13 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
+		bHotKey:ClearAllPoints()
+		bHotKey:SetDrawLayer("OVERLAY")
 		bHotKey:SetFontObject("LSFont10_Outline")
 		bHotKey:SetJustifyH("RIGHT")
-		bHotKey:SetDrawLayer("OVERLAY")
-		bHotKey:ClearAllPoints()
-		bHotKey:SetWidth(0, 0)
 		bHotKey:SetPoint("TOPRIGHT", 2, 0)
+		bHotKey:SetSize(0, 0)
+		bHotKey:SetVertexColor(1, 1, 1, 1)
 		bHotKey:Show()
 
 		updateHotKey(bHotKey)
@@ -218,21 +219,23 @@ local function SkinButton(button)
 	end
 
 	if bCount then
+		bCount:ClearAllPoints()
+		bCount:SetDrawLayer("OVERLAY")
 		bCount:SetFontObject("LSFont10_Outline")
 		bCount:SetJustifyH("RIGHT")
-		bCount:SetDrawLayer("OVERLAY")
-		bCount:ClearAllPoints()
-		bCount:SetSize(0, 0)
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
+		bCount:SetSize(0, 0)
+		bCount:SetVertexColor(1, 1, 1, 1)
 	end
 
 	if bName then
+		bName:ClearAllPoints()
+		bName:SetDrawLayer("OVERLAY")
 		bName:SetFontObject("LSFont10_Outline")
 		bName:SetJustifyH("CENTER")
-		bName:SetDrawLayer("OVERLAY")
-		bName:ClearAllPoints()
-		bName:SetSize(0, 0)
 		bName:SetPoint("BOTTOM", 0, 0)
+		bName:SetSize(0, 0)
+		bName:SetVertexColor(1, 1, 1, 1)
 
 		SetMacroTextHook(bName)
 		hooksecurefunc(bName, "SetText", SetMacroTextHook)
