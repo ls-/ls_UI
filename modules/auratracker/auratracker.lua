@@ -179,7 +179,7 @@ function MODULE.Init()
 				button.CD.Timer:SetJustifyV("BOTTOM")
 			end
 
-			button.Count:SetFontObject("LS12Font_Outline")
+			button.Count:SetFontObject("LSFont12_Outline")
 
 			local auraType = button.Cover:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetSize(16, 16)

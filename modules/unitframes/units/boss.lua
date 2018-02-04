@@ -43,7 +43,7 @@ function UF:CreateBossFrame(frame)
 
 	frame.Insets = self:CreateInsets(frame, fg_parent)
 
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -54,7 +54,7 @@ function UF:CreateBossFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -74,7 +74,7 @@ function UF:CreateBossFrame(frame)
 		end
 	end
 
-	local alt_power = self:CreateAlternativePower(frame, true, "LS12Font_Shadow", text_parent)
+	local alt_power = self:CreateAlternativePower(frame, true, "LSFont12_Shadow", text_parent)
 	alt_power:SetFrameLevel(level + 1)
 	alt_power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	alt_power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -97,7 +97,7 @@ function UF:CreateBossFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
-	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 

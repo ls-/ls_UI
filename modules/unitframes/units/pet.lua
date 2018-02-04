@@ -22,7 +22,7 @@ function UF:CreateVerticalPetFrame(frame)
 	fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 	fg:SetPoint("CENTER", 0, 0)
 
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", frame)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", frame)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(8, 112)
 	health:SetPoint("CENTER", -6, 0)
@@ -35,7 +35,7 @@ function UF:CreateVerticalPetFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow", frame)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
 	power:SetFrameLevel(level + 1)
 	power:SetSize(8, 102)
 	power:SetPoint("CENTER", 6, 0)
@@ -101,7 +101,7 @@ function UF:CreateHorizontalPetFrame(frame)
 
 	frame.Insets = self:CreateInsets(frame, fg_parent)
 
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -112,7 +112,7 @@ function UF:CreateHorizontalPetFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -135,7 +135,7 @@ function UF:CreateHorizontalPetFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 

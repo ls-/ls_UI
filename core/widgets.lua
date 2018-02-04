@@ -75,11 +75,11 @@ do
 			bar.Bg = bg
 
 			if not text then
-				text = bar:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+				text = bar:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 				text:SetWordWrap(false)
 				text:SetJustifyV("MIDDLE")
 			else
-				text:SetFontObject("LS12Font_Shadow")
+				text:SetFontObject("LSFont12_Shadow")
 				text:SetWordWrap(false)
 				text:SetJustifyV("MIDDLE")
 			end
@@ -111,7 +111,7 @@ do
 		bg:SetAllPoints()
 		bar.Bg = bg
 
-		local text = bar:CreateFontString("$parentText", "ARTWORK", "LS12Font_Shadow")
+		local text = bar:CreateFontString("$parentText", "ARTWORK", "LSFont12_Shadow")
 		text:SetWordWrap(false)
 		bar.Text = text
 
@@ -510,7 +510,7 @@ do
 	end
 
 	local function SetTimerTextHeight(self, height)
-		self.Timer:SetFontObject("LS"..height.."Font_Outline")
+		self.Timer:SetFontObject("LSFont"..height.."_Outline")
 	end
 
 	local function HandleCooldown(cooldown, textSize, textJustifyH, textJustifyV)
@@ -525,7 +525,7 @@ do
 		local text_parent = _G.CreateFrame("Frame", nil, cooldown)
 		text_parent:SetAllPoints()
 
-		local timer = text_parent:CreateFontString(nil, "ARTWORK", "LS"..textSize.."Font_Outline")
+		local timer = text_parent:CreateFontString(nil, "ARTWORK", "LSFont"..textSize.."_Outline")
 		timer:SetPoint("TOPLEFT", -4, 0)
 		timer:SetPoint("BOTTOMRIGHT", 4, 0)
 		timer:SetWordWrap(false)

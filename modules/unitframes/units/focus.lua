@@ -34,7 +34,7 @@ function UF:CreateFocusFrame(frame)
 
 	frame.Insets = self:CreateInsets(frame, fg_parent)
 
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -45,7 +45,7 @@ function UF:CreateFocusFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -67,7 +67,7 @@ function UF:CreateFocusFrame(frame)
 
 	frame.Castbar = self:CreateCastbar(frame)
 
-	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 

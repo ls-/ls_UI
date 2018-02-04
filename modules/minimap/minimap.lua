@@ -326,7 +326,7 @@ function MODULE.Init()
 
 		-- Calendar
 		local calendar = HandleMinimapButton(GameTimeFrame)
-		calendar:SetNormalFontObject("LS16Font_Outline")
+		calendar:SetNormalFontObject("LSFont16_Outline")
 		calendar:SetPushedTextOffset(1, -1)
 		calendar.NormalTexture:SetTexture("")
 		calendar.PushedTexture:SetTexture("")
@@ -417,7 +417,7 @@ function MODULE.Init()
 
 		-- Zone Text
 		local zoneText = MinimapZoneText
-		zoneText:SetFontObject("LS12Font_Shadow")
+		zoneText:SetFontObject("LSFont12_Shadow")
 		zoneText:SetParent(Minimap)
 		zoneText:SetWidth(0)
 		zoneText:ClearAllPoints()

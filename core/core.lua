@@ -122,7 +122,7 @@ end
 -----------
 
 function E:CreateFontString(parent, size, name, shadow, outline)
-	local object = parent:CreateFontString(name, "ARTWORK", "LS"..size..(shadow and "Font_Shadow" or (outline and "Font_Outline" or "Font")))
+	local object = parent:CreateFontString(name, "ARTWORK", "LSFont"..size..(shadow and "_Shadow" or (outline and "_Outline" or "")))
 	object:SetWordWrap(false)
 
 	return object

@@ -110,12 +110,12 @@ function UF:CreateCastbar(parent)
 	tex_parent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-L")
 
-	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	time:SetWordWrap(false)
 	time:SetPoint("RIGHT", element, "RIGHT", -2, 0)
 	element.Time = time
 
-	local text = tex_parent:CreateFontString(nil, "ARTWORK", "LS12Font_Shadow")
+	local text = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetPoint("LEFT", element, "LEFT", 2, 0)

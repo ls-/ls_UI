@@ -132,7 +132,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	mask:SetPoint("CENTER")
 
 	-- health
-	local health = self:CreateHealth(frame, true, "LS16Font_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont16_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetSize(180 / 2, 280 / 2)
 	health:SetPoint("CENTER")
@@ -140,7 +140,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	frame.Health = health
 
 	-- health prediction
-	local health_prediction = self:CreateHealthPrediction(health, true, "LS12Font_Shadow", text_parent)
+	local health_prediction = self:CreateHealthPrediction(health, true, "LSFont12_Shadow", text_parent)
 	frame.HealthPrediction = health_prediction
 
 	-- masking
@@ -151,7 +151,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	health_prediction.healAbsorbBar._texture:AddMaskTexture(mask)
 
 	-- power
-	local power = self:CreatePower(frame, true, "LS14Font_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont14_Shadow", text_parent)
 	power:SetFrameLevel(level + 4)
 	power:SetSize(12, 128)
 	power:SetPoint("RIGHT", -23, 0)
@@ -226,7 +226,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	-- pvp
 	frame.PvPIndicator = self:CreatePvPIndicator(fg_parent)
 
-	local pvp_timer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	local pvp_timer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	pvp_timer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 	pvp_timer:SetTextColor(1, 0.82, 0)
 	pvp_timer:SetJustifyH("RIGHT")
@@ -238,7 +238,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	-- castbar
 	frame.Castbar = self:CreateCastbar(frame)
 
-	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
 
 	-- status icons/texts
 	local status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
@@ -346,7 +346,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	end
 
 	-- health
-	local health = self:CreateHealth(frame, true, "LS12Font_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -355,10 +355,10 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health, true, "LS10Font_Shadow", text_parent)
+	frame.HealthPrediction = self:CreateHealthPrediction(health, true, "LSFont10_Shadow", text_parent)
 
 	-- -- damage absorb text
-	-- local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS10Font_Shadow")
+	-- local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LSFont10_Shadow")
 	-- damage_absorb:SetWordWrap(false)
 	-- damage_absorb:SetPoint("BOTTOMRIGHT", health, "RIGHT", -2, 1)
 
@@ -367,7 +367,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	-- frame:Tag(damage_absorb, "[ls:absorb:damage]")
 
 	-- -- heal absorb text
-	-- local heal_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LS10Font_Shadow")
+	-- local heal_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LSFont10_Shadow")
 	-- heal_absorb:SetPoint("TOPRIGHT", health, "RIGHT", -2, -1)
 
 	-- E:ResetFontStringHeight(heal_absorb)
@@ -375,7 +375,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	-- frame:Tag(heal_absorb, "[ls:absorb:heal]")
 
 	-- power
-	local power = self:CreatePower(frame, true, "LS12Font_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -464,7 +464,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	-- frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-	frame.Name = self:CreateName(text_parent, "LS12Font_Shadow")
+	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
 
@@ -484,7 +484,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 		end
 	end
 
-	local pvp_timer = pvp.Holder:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	local pvp_timer = pvp.Holder:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	pvp_timer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
 	pvp_timer:SetTextColor(1, 0.82, 0)
 	pvp_timer:SetJustifyH("RIGHT")

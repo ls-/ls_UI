@@ -471,7 +471,7 @@ function BARS.CreateXPBar()
 			E:SmoothBar(ext)
 			bar[i].Extension = ext
 
-			local text = text_parent:CreateFontString(nil, "OVERLAY", "LS10Font_Outline")
+			local text = text_parent:CreateFontString(nil, "OVERLAY", "LSFont10_Outline")
 			text:SetAllPoints(bar[i])
 			text:SetWordWrap(false)
 			text:Hide()

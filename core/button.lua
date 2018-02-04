@@ -204,7 +204,7 @@ local function SkinButton(button)
 	end
 
 	if bHotKey then
-		bHotKey:SetFontObject("LS10Font_Outline")
+		bHotKey:SetFontObject("LSFont10_Outline")
 		bHotKey:SetJustifyH("RIGHT")
 		bHotKey:SetDrawLayer("OVERLAY")
 		bHotKey:ClearAllPoints()
@@ -218,7 +218,7 @@ local function SkinButton(button)
 	end
 
 	if bCount then
-		bCount:SetFontObject("LS10Font_Outline")
+		bCount:SetFontObject("LSFont10_Outline")
 		bCount:SetJustifyH("RIGHT")
 		bCount:SetDrawLayer("OVERLAY")
 		bCount:ClearAllPoints()
@@ -227,7 +227,7 @@ local function SkinButton(button)
 	end
 
 	if bName then
-		bName:SetFontObject("LS10Font_Outline")
+		bName:SetFontObject("LSFont10_Outline")
 		bName:SetJustifyH("CENTER")
 		bName:SetDrawLayer("OVERLAY")
 		bName:ClearAllPoints()
@@ -354,7 +354,7 @@ function E:SkinAuraButton(button)
 	end
 
 	if bCount then
-		bCount:SetFontObject("LS10Font_Outline")
+		bCount:SetFontObject("LSFont10_Outline")
 		bCount:SetJustifyH("RIGHT")
 		bCount:SetDrawLayer("OVERLAY", 2)
 		bCount:ClearAllPoints()
@@ -364,7 +364,7 @@ function E:SkinAuraButton(button)
 	end
 
 	if bDuration then
-		bDuration:SetFontObject("LS10Font_Outline")
+		bDuration:SetFontObject("LSFont10_Outline")
 		bDuration:SetJustifyH("CENTER")
 		bDuration:SetDrawLayer("OVERLAY", 2)
 		bDuration:ClearAllPoints()
@@ -435,7 +435,6 @@ function E:SkinPetActionButton(button)
 	local bCD = button.cooldown
 	local bAutoCast = _G[name.."AutoCastable"]
 	local bShine = _G[name.."Shine"]
-	local bHotKey = button.HotKey
 
 	if bCD and bCD.SetTimerTextHeight then
 		bCD:SetTimerTextHeight(10)
@@ -454,10 +453,6 @@ function E:SkinPetActionButton(button)
 		bShine:SetPoint("TOPLEFT", 1, -1)
 		bShine:SetPoint("BOTTOMRIGHT", -1, 1)
 		button.AutoCastShine = bShine
-	end
-
-	if bHotKey then
-		bHotKey:SetFontObject("LS8Font_Outline")
 	end
 
 	button.__styled = true
@@ -486,7 +481,7 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bCD then
-		bCD:SetFontObject("LS16Font_Outline")
+		bCD:SetFontObject("LSFont16_Outline")
 		bCD:ClearAllPoints()
 		bCD:SetPoint("CENTER", 0, -2)
 	end
@@ -522,16 +517,11 @@ function E:SkinStanceButton(button)
 	SkinButton(button)
 
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
-	local bHotKey = button.HotKey
 
 	if bFloatingBG then
 		bFloatingBG:SetAlpha(1)
 		bFloatingBG:SetAllPoints()
 		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
-	end
-
-	if bHotKey then
-		bHotKey:SetFontObject("LS8Font_Outline")
 	end
 
 	button.__styled = true

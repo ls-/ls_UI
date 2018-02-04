@@ -163,14 +163,14 @@ local function HandleButton(button)
 
 	E:CreateBorder(button)
 
-	local duration = button:CreateFontString(nil, "ARTWORK", "LS12Font_Outline")
+	local duration = button:CreateFontString(nil, "ARTWORK", "LSFont12_Outline")
 	duration:SetJustifyV("CENTER")
 	duration:SetJustifyV("BOTTOM")
 	duration:SetPoint("TOPLEFT", -4, 0)
 	duration:SetPoint("BOTTOMRIGHT", 4, 0)
 	button.Duration = duration
 
-	local count = button:CreateFontString(nil, "ARTWORK", "LS10Font_Outline")
+	local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
