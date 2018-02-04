@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 70300.06
+
+- Added the option to use hotkey text as OOM indicator. By default button's icon is used as such;
+- Minor bug fixes and tweaks.
+
 ## Version 70300.05
 
 - Added "Desaturate on CD" option to action bar config;
