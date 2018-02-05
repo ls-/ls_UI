@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 70300.07
+
+- Fixed font scaling on HiDPI displays;
+- Updated embedded LibActionButton.
+
 ## Version 70300.06
 
 - Added the option to use hotkey text as OOM indicator. By default button's icon is used as such;
