@@ -39,217 +39,217 @@
 
 	<FontFamily name="LSFont10" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="10" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="10"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="10" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="10"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="10" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="10"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="10" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="10"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="10" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="10"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont12" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="12" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="12"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="12" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="12"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="12" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="12"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="12" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="12"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="12" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="12"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont14" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="14" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="14"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="14" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="14"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="14" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="14"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="14" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="14"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="14" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="14"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont16" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="16" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="16"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="16" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="16"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="16" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="16"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="16" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="16"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="16" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="16"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont18" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="18" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="18"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="18" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="18"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="18" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="18"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="18" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="18"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="18" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="18"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont20" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="20" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="20"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="20" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="20"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="20" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="20"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="20" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="20"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="20" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="20"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont10_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="10" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="10" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="10" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="10" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="10" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont12_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="12" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="12" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="12" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="12" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="12" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont14_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="14" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="14" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="14" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="14" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="14" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="14" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="14" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="14" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="14" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="14" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont16_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="16" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="16" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="16" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="16" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="16" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="16" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="16" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="16" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="16" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="16" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont18_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="18" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="18" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="18" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="18" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="18" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="18" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="18" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="18" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="18" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="18" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
 	<FontFamily name="LSFont20_Outline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Fonts\FRIZQT__.TTF" height="20" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT__.TTF" height="20" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="20" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\2002.TTF" height="20" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_T.ttf" height="20" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\ARKai_T.ttf" height="20" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\blei00d.TTF" height="20" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\blei00d.TTF" height="20" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\FRIZQT___CYR.TTF" height="20" outline="NORMAL" filter="false" fixedSize="true"/>
+			<Font font="Fonts\FRIZQT___CYR.TTF" height="20" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 
