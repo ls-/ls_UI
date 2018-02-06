@@ -542,8 +542,23 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateBars("UpdateButtonConfig")
 				end,
 			},
-			range_indicator = {
+			click_on_down = {
 				order = 12,
+				type = "toggle",
+				name = L["CAST_ON_KEY_DOWN"],
+				desc = L["CAST_ON_KEY_DOWN_DESC"],
+				disabled = function() return not BARS:IsInit() end,
+				get = function()
+					return C.db.profile.bars.click_on_down
+				end,
+				set = function(_, value)
+					C.db.profile.bars.click_on_down = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
+				end,
+			},
+			range_indicator = {
+				order = 13,
 				type = "select",
 				name = L["OOR_INDICATOR"],
 				values = button_indicators,
@@ -558,7 +573,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				end,
 			},
 			mana_indicator = {
-				order = 13,
+				order = 14,
 				type = "select",
 				name = L["OOM_INDICATOR"],
 				values = button_indicators,
@@ -573,7 +588,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				end,
 			},
 			desaturate_on_cd = {
-				order = 14,
+				order = 15,
 				type = "toggle",
 				name = L["DESATURATE_ON_COOLDOWN"],
 				disabled = function() return not BARS:IsInit() end,

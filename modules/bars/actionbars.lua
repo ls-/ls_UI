@@ -131,10 +131,10 @@ local function bar_UpdateButtonConfig(self)
 			hideElements = {
 				equipped = false,
 			},
-			clickOnDown = false,
 		}
 	end
 
+	self.buttonConfig.clickOnDown = C.db.profile.bars.click_on_down
 	self.buttonConfig.desaturateOnCooldown = C.db.profile.bars.desaturate_on_cd
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.outOfManaColoring = C.db.profile.bars.mana_indicator

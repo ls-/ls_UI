@@ -2067,6 +2067,7 @@ D.profile = {
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
 		desaturate_on_cd = false,
+		click_on_down = false,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = true,
