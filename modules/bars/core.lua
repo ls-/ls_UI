@@ -235,6 +235,8 @@ function MODULE.Init()
 			MODULE:ReassignBindings()
 		end
 
+		SetCVar("ActionButtonUseKeyDown", C.db.profile.bars.click_on_down and 1 or 0)
+
 		isInit = true
 	end
 end

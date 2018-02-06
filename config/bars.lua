@@ -556,6 +556,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateBars("UpdateConfig")
 					BARS:UpdateBars("UpdateButtonConfig")
 					BARS:UpdateBars("UpdateButtons", "Reset")
+
+					SetCVar("ActionButtonUseKeyDown", value and 1 or 0)
 				end,
 			},
 			range_indicator = {
