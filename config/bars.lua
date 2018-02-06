@@ -555,6 +555,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					C.db.profile.bars.click_on_down = value
 					BARS:UpdateBars("UpdateConfig")
 					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:UpdateBars("UpdateButtons", "Reset")
 				end,
 			},
 			range_indicator = {
@@ -570,6 +571,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					C.db.profile.bars.range_indicator = value
 					BARS:UpdateBars("UpdateConfig")
 					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:UpdateBars("UpdateButtons", "Reset")
 				end,
 			},
 			mana_indicator = {
@@ -599,6 +601,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					C.db.profile.bars.desaturate_on_cd = value
 					BARS:UpdateBars("UpdateConfig")
 					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:UpdateBars("UpdateButtons", "Reset")
 				end,
 			},
 			action_bar_1 = getOptionsTable_Bar("bar1", 1, L["BAR_1"]),
