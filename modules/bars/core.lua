@@ -236,6 +236,7 @@ function MODULE.Init()
 		end
 
 		SetCVar("ActionButtonUseKeyDown", C.db.profile.bars.click_on_down and 1 or 0)
+		SetCVar("lockActionBars", C.db.profile.bars.lock and 1 or 0)
 
 		isInit = true
 	end
