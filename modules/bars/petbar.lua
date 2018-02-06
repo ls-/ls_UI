@@ -139,7 +139,6 @@ local function button_Reset(self)
 	self.onCooldown = nil
 	self.outOfRange = nil
 
-	self:RegisterForClicks(C.db.profile.bars.click_on_down and "AnyDown" or "AnyUp")
 	self:Update()
 end
 
