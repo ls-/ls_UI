@@ -16,7 +16,7 @@ if (-Not (Test-Path (".\" + $name + ".toc"))) {
 	return Read-Host
 }
 
-if (Get-Content (".\" + $name + ".toc") | Where { $_ -match "(Version: +)([a-zA-Z0-9.-]+)" }) {
+if (Get-Content (".\" + $name + ".toc") | Where-Object { $_ -match "(Version: +)([a-zA-Z0-9.-]+)" }) {
 	$version = $matches[2]
 } else {
 	Write-Host "Bad version format"
