@@ -273,6 +273,7 @@ function MODULE.Init()
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+		Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 
 		Minimap:HookScript("OnEvent", function(_, event)
 			if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
