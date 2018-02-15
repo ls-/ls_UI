@@ -109,7 +109,7 @@ local function button_UpdateUsable(self)
 	end
 end
 
-local function OnCooldownDone(self)
+local function onCooldownDone(self)
 	self:SetScript("OnCooldownDone", nil)
 	self:GetParent():UpdateCooldown()
 end
@@ -125,7 +125,7 @@ local function button_UpdateCooldown(self)
 	if C.db.profile.bars.desaturate_on_cd and self.onCooldown ~= oldOnCooldown then
 		self:UpdateUsable()
 		if self.onCooldown then
-			self.cooldown:SetScript("OnCooldownDone", OnCooldownDone)
+			self.cooldown:SetScript("OnCooldownDone", onCooldownDone)
 		end
 	end
 end
