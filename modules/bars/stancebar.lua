@@ -109,7 +109,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateConfig()
 			self:UpdateFading()
 			self:UpdateVisibility()
-			self:UpdateButtons("Update")
+			self:UpdateForms()
 			self:UpdateButtons("UpdateFontObjects")
 			E:UpdateBarLayout(self)
 		end
