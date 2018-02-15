@@ -75,7 +75,7 @@ local function button_Update(self)
 		self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
 
 		self:UpdateHotKey()
-		CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(id))
+		self:UpdateCooldown()
 	end
 end
 
@@ -90,6 +90,11 @@ local function button_UpdateHotKey(self, state)
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
+end
+
+local function button_UpdateCooldown(self)
+	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
+	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
 end
 
 local function button_UpdateFontObjects(self)
@@ -136,6 +141,7 @@ function MODULE.CreateStanceBar()
 			button._command = "SHAPESHIFTBUTTON"..i
 
 			button.Update = button_Update
+			button.UpdateCooldown = button_UpdateCooldown
 			button.UpdateFontObjects = button_UpdateFontObjects
 			button.UpdateHotKey = button_UpdateHotKey
 
