@@ -606,6 +606,22 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateBars("UpdateButtons", "Reset")
 				end,
 			},
+			draw_bling = {
+				order = 15,
+				type = "toggle",
+				name = L["DRAW_COOLDOWN_BLING"],
+				desc = L["DRAW_COOLDOWN_BLING_DESC"],
+				disabled = function() return not BARS:IsInit() end,
+				get = function()
+					return C.db.profile.bars.draw_bling
+				end,
+				set = function(_, value)
+					C.db.profile.bars.draw_bling = value
+					BARS:UpdateBars("UpdateConfig")
+					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:UpdateBars("UpdateButtons", "Reset")
+				end,
+			},
 			action_bar_1 = getOptionsTable_Bar("bar1", 1, L["BAR_1"]),
 			action_bar_2 = getOptionsTable_Bar("bar2", 2, L["BAR_2"]),
 			action_bar_3 = getOptionsTable_Bar("bar3", 3, L["BAR_3"]),

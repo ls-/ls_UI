@@ -117,7 +117,7 @@ end
 local function button_UpdateCooldown(self)
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
-	self.cooldown:SetDrawBling(self.cooldown:GetEffectiveAlpha() > 0.5)
+	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
 
 	local oldOnCooldown = self.onCooldown

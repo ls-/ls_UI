@@ -2068,6 +2068,7 @@ D.profile = {
 		rightclick_selfcast = false,
 		desaturate_on_cd = false,
 		click_on_down = false,
+		draw_bling = true,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = true,
