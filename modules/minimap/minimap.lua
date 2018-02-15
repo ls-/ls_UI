@@ -153,7 +153,7 @@ local function HandleMinimapButton(button, recursive)
 		button:SetFlattensRenderLayers(true)
 
 		local mask = button:CreateMaskTexture()
-		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 		mask:SetPoint("TOPLEFT", 6, -6)
 		mask:SetPoint("BOTTOMRIGHT", -6, 6)
 		button.MaskTexture = mask
@@ -266,8 +266,8 @@ function MODULE.Init()
 		E:CreateMover(holder)
 
 		Minimap:EnableMouseWheel()
-		Minimap:SetParent(holder)
 		Minimap:ClearAllPoints()
+		Minimap:SetParent(holder)
 		Minimap:SetPoint("CENTER")
 		Minimap:SetSize(146, 146)
 		Minimap:RegisterEvent("ZONE_CHANGED")
