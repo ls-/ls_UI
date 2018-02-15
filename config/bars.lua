@@ -172,19 +172,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		name = name,
 		disabled = function() return not BARS:IsInit() end,
 		args = {
-			visible = {
-				order = 1,
-				type = "toggle",
-				name = L["SHOW"],
-				get = function()
-					return C.db.profile.bars[barID].visible
-				end,
-				set = function(_, value)
-					C.db.profile.bars[barID].visible = value
-					BARS:GetBar(barID):UpdateFading()
-					BARS:GetBar(barID):UpdateVisibility()
-				end
-			},
 			reset = {
 				type = "execute",
 				order = 2,
@@ -195,9 +182,22 @@ local function getOptionsTable_Bar(barID, order, name)
 				end,
 			},
 			spacer1 = {
-				order = 10,
+				order = 9,
 				type = "description",
 				name = "",
+			},
+			visible = {
+				order = 10,
+				type = "toggle",
+				name = L["SHOW"],
+				get = function()
+					return C.db.profile.bars[barID].visible
+				end,
+				set = function(_, value)
+					C.db.profile.bars[barID].visible = value
+					BARS:GetBar(barID):UpdateFading()
+					BARS:GetBar(barID):UpdateVisibility()
+				end
 			},
 			grid = {
 				order = 11,
@@ -322,8 +322,8 @@ local function getOptionsTable_Bar(barID, order, name)
 	}
 
 	if barID == "bar1" then
-		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.per_row.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.spacing.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
@@ -354,8 +354,8 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.per_row.max = 10
 		temp.args.flyout_dir = nil
 	elseif barID == "pet_battle" then
-		temp.args.visible = nil
 		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.grid = nil
 		temp.args.hotkey.set = function(_, value)
 			C.db.profile.bars[barID].hotkey = value
@@ -372,7 +372,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.flyout_dir = nil
 	elseif barID == "extra" then
-		temp.args.visible = nil
 		temp.args.grid = nil
 		temp.args.hotkey.set = function(_, value)
 			C.db.profile.bars[barID].hotkey = value
@@ -386,7 +385,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 	elseif barID == "zone" then
-		temp.args.visible = nil
 		temp.args.grid = nil
 		temp.args.hotkey = nil
 		temp.args.macro = nil
@@ -396,7 +394,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 	elseif barID == "vehicle" then
-		temp.args.visible = nil
 		temp.args.grid = nil
 		temp.args.hotkey = nil
 		temp.args.macro = nil
@@ -434,10 +431,10 @@ local function getOptionsTable_Bar(barID, order, name)
 			end
 
 		}
-		temp.args.visible = nil
 		temp.args.reset.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
 		end
+		temp.args.visible = nil
 		temp.args.grid = nil
 		temp.args.hotkey = nil
 		temp.args.macro = nil
