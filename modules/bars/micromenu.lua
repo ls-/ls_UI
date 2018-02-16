@@ -603,6 +603,20 @@ local function MainMenuButton_OnEvent(self, event)
 	end
 end
 
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateFading()
+	self:UpdateButtons("Update")
+end
+
+local function bar_UpdateConfig(self)
+	self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
+
+	if MODULE:IsRestricted() then
+		self._config.fade = C.db.profile.bars.micromenu.fade
+	end
+end
+
 function MODULE.CreateMicroMenu()
 	if not isInit then
 		holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
@@ -612,14 +626,8 @@ function MODULE.CreateMicroMenu()
 
 		MODULE:AddBar(holder1._id, holder1)
 
-		holder1.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateFading()
-			self:UpdateButtons("Update")
-		end
-		holder1.UpdateConfig = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
-		end
+		holder1.Update = bar_Update
+		holder1.UpdateConfig = bar_UpdateConfig
 
 		holder2 = CreateFrame("Frame", "LSMBHolderRight", UIParent)
 		holder2:SetSize(MICRO_BUTTON_WIDTH * 5 + 4 * 5, MICRO_BUTTON_HEIGHT + 4)
@@ -628,14 +636,8 @@ function MODULE.CreateMicroMenu()
 
 		MODULE:AddBar(holder2._id, holder2)
 
-		holder2.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateFading()
-			self:UpdateButtons("Update")
-		end
-		holder2.UpdateConfig = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.micromenu
-		end
+		holder2.Update = bar_Update
+		holder2.UpdateConfig = bar_UpdateConfig
 
 		for _, name in next, MICRO_BUTTONS do
 			local button = _G[name]
