@@ -3,7 +3,7 @@
 ## Version 70300.08
 
 - Added "Cast on Key Down" option to action bar config;
-- Added "Show Cooldown Bling" options to action bar config;
+- Added "Show Cooldown Bling" option to action bar config;
 - Added missing action bar visibility toggles;
 - Minimap module will now set round mask on enable;
 - Fixed stance bar issue which caused empty buttons to be shown;
