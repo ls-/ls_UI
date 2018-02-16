@@ -98,6 +98,7 @@ local function getOptionsTable_Fading(barID, order)
 		end,
 		set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
+			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateFading()
 		end,
 		args = {
@@ -152,7 +153,9 @@ local function getOptionsTable_Fading(barID, order)
 	elseif barID == "micromenu" then
 		temp.set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
+			BARS:GetBar("menu1"):UpdateConfig()
 			BARS:GetBar("menu1"):UpdateFading()
+			BARS:GetBar("menu2"):UpdateConfig()
 			BARS:GetBar("menu2"):UpdateFading()
 		end
 	elseif barID == "bags" then
@@ -195,6 +198,7 @@ local function getOptionsTable_Bar(barID, order, name)
 				end,
 				set = function(_, value)
 					C.db.profile.bars[barID].visible = value
+					BARS:GetBar(barID):UpdateConfig()
 					BARS:GetBar(barID):UpdateFading()
 					BARS:GetBar(barID):UpdateVisibility()
 				end
@@ -333,10 +337,12 @@ local function getOptionsTable_Bar(barID, order, name)
 	elseif barID == "bar6" then
 		temp.args.grid.set = function(_, value)
 			C.db.profile.bars[barID].grid = value
+			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateButtons("UpdateGrid")
 		end
 		temp.args.hotkey.set = function(_, value)
 			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
 		end
 		temp.args.macro = nil
@@ -347,6 +353,7 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.grid = nil
 		temp.args.hotkey.set = function(_, value)
 			C.db.profile.bars[barID].hotkey = value
+			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
 		end
 		temp.args.macro = nil
