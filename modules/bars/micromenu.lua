@@ -95,6 +95,7 @@ local BUTTONS = {
 	},
 	GuildMicroButton = {
 		point = {"LEFT", "LSMBHolderRight", "LEFT", 2, 0},
+		point_alt = {"LEFT", "QuestLogMicroButton", "RIGHT", 4, 0},
 		parent = "LSMBHolderRight",
 		icon = "Guild",
 	},
@@ -105,6 +106,7 @@ local BUTTONS = {
 	},
 	CollectionsMicroButton = {
 		point = {"LEFT", "LFDMicroButton", "RIGHT", 4, 0},
+		point_alt = {"TOPLEFT", "CharacterMicroButton", "BOTTOMLEFT", 0, -4},
 		parent = "LSMBHolderRight",
 		icon = "Collections",
 	},
@@ -617,6 +619,48 @@ local function bar_UpdateConfig(self)
 	end
 end
 
+function MODULE.UpdateMicroButtonsParent()
+	if isInit then
+		local parent
+		if not MODULE:IsRestricted() and (PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) then
+			parent = PetBattleFrame
+		end
+
+		for _, name in next, MICRO_BUTTONS do
+			if BUTTONS[name] then
+				_G[name]:SetParent(parent or BUTTONS[name].parent)
+			else
+				_G[name]:SetParent(E.HIDDEN_PARENT)
+			end
+		end
+	end
+end
+
+function MODULE.MoveMicroButtons(p, parent, rP, x, y)
+	if isInit then
+		if not MODULE:IsRestricted() and (PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) then
+			for _, name in next, MICRO_BUTTONS do
+				if BUTTONS[name] then
+					_G[name]:ClearAllPoints()
+
+					if name == "CharacterMicroButton" then
+						_G[name]:SetPoint(p, parent, rP, x, y - 26)
+					else
+						_G[name]:SetPoint(unpack(BUTTONS[name].point_alt or BUTTONS[name].point))
+					end
+				end
+			end
+		else
+			for _, name in next, MICRO_BUTTONS do
+				if BUTTONS[name] then
+					_G[name]:ClearAllPoints()
+					_G[name]:SetPoint(unpack(BUTTONS[name].point))
+				end
+			end
+		end
+	end
+end
+
 function MODULE.CreateMicroMenu()
 	if not isInit then
 		holder1 = CreateFrame("Frame", "LSMBHolderLeft", UIParent)
@@ -793,24 +837,22 @@ function MODULE.CreateMicroMenu()
 		EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
 		CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
 
-		hooksecurefunc("UpdateMicroButtonsParent", function()
-			for _, name in next, MICRO_BUTTONS do
-				if BUTTONS[name] then
-					_G[name]:SetParent(BUTTONS[name].parent)
-				else
-					_G[name]:SetParent(E.HIDDEN_PARENT)
-				end
-			end
-		end)
+		hooksecurefunc("UpdateMicroButtonsParent", MODULE.UpdateMicroButtonsParent)
+		hooksecurefunc("MoveMicroButtons", MODULE.MoveMicroButtons)
 
-		hooksecurefunc("MoveMicroButtons", function()
-			for _, name in next, MICRO_BUTTONS do
-				if BUTTONS[name] then
-					_G[name]:ClearAllPoints()
-					_G[name]:SetPoint(unpack(BUTTONS[name].point))
-				end
+		local controller = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+		controller.Update = function()
+			MODULE:UpdateMicroButtonsParent()
+			MODULE:MoveMicroButtons()
+		end
+
+		controller:SetAttribute("_onstate-petbattle", [[
+			if newstate == "false" then
+				self:CallMethod("Update")
 			end
-		end)
+		]])
+
+		RegisterStateDriver(controller, "petbattle", "[petbattle] true; false")
 
 		if MODULE:IsRestricted() then
 			MODULE:ActionBarController_AddWidget(holder1, "MM_LEFT")

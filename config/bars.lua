@@ -149,7 +149,7 @@ local function getOptionsTable_Fading(barID, order)
 	if barID == "bar1" then
 		temp.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 	elseif barID == "pet_battle" then
-		temp.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 	elseif barID == "micromenu" then
 		temp.set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
@@ -361,22 +361,51 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.per_row.max = 10
 		temp.args.flyout_dir = nil
 	elseif barID == "pet_battle" then
-		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
-		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.enabled = {
+			order = 1,
+			type = "toggle",
+			name = L["ENABLE"],
+			get = function()
+				return C.db.char.bars[barID].enabled
+			end,
+			set = function(_, value)
+				C.db.char.bars[barID].enabled = value
+
+				if BARS:IsInit() then
+					if BARS:HasPetBattleBar() then
+						if not value then
+							CONFIG:ShowStaticPopup("RELOAD_UI")
+						end
+					else
+						if BARS:IsRestricted() then
+							CONFIG:ShowStaticPopup("RELOAD_UI")
+						else
+							if value then
+								BARS:CreatePetBattleBar()
+							end
+						end
+					end
+				end
+			end,
+			disabled = function() return BARS:IsRestricted() end,
+		}
+		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
+		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.grid = nil
 		temp.args.hotkey.set = function(_, value)
 			C.db.profile.bars[barID].hotkey = value
 			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
 		end
+		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
 		temp.args.macro = nil
 		temp.args.num.max = 6
-		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.per_row.max = 6
-		temp.args.per_row.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
-		temp.args.spacing.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
-		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
-		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.per_row.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
+		temp.args.spacing.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
+		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
+		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.flyout_dir = nil
 	elseif barID == "extra" then
 		temp.args.grid = nil

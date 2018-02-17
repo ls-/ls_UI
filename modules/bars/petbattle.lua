@@ -49,8 +49,12 @@ local function button_UpdateFontObjects(self)
 	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
 end
 
+function MODULE.HasPetBattleBar()
+	return isInit
+end
+
 function MODULE.CreatePetBattleBar()
-	if not isInit then
+	if not isInit and (MODULE:IsRestricted() or C.db.char.bars.pet_battle.enabled) then
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
 		local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerStateTemplate")
@@ -140,5 +144,7 @@ function MODULE.CreatePetBattleBar()
 		PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(selector)
 		PetBattleFrame.BottomFrame.PetSelectionFrame:ClearAllPoints()
 		PetBattleFrame.BottomFrame.PetSelectionFrame:SetPoint("BOTTOM", selector, "BOTTOM", 0, 0)
+
+		isInit = true
 	end
 end

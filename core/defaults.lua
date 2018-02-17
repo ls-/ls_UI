@@ -2629,6 +2629,9 @@ D.char = {
 		bags = {
 			enabled = true,
 		},
+		pet_battle = {
+			enabled = false,
+		},
 		xpbar = {
 			enabled = true,
 		},
