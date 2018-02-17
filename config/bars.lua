@@ -465,7 +465,6 @@ local function getOptionsTable_Bar(barID, order, name)
 					end
 				end
 			end
-
 		}
 		temp.args.reset.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
