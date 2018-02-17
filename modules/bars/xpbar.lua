@@ -331,6 +331,8 @@ local function bar_UpdateSegments(self)
 
 		self[1].Text:SetText(nil)
 		E:SetSmoothedVertexColor(self[1].Texture, M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
+
+		self[1].tooltipInfo = nil
 	end
 end
 
