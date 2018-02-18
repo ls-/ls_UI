@@ -622,8 +622,12 @@ end
 function MODULE.UpdateMicroButtonsParent()
 	if isInit then
 		local parent
-		if not MODULE:IsRestricted() and (PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) then
-			parent = PetBattleFrame
+		if not MODULE:IsRestricted() then
+			if PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled then
+				parent = PetBattleFrame
+			elseif OverrideActionBar:IsShown() and C.db.char.bars.blizz_vehicle then
+				parent = OverrideActionBar
+			end
 		end
 
 		for _, name in next, MICRO_BUTTONS do
@@ -638,13 +642,15 @@ end
 
 function MODULE.MoveMicroButtons(p, parent, rP, x, y)
 	if isInit then
-		if not MODULE:IsRestricted() and (PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) then
+		if not MODULE:IsRestricted() and ((PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) or (OverrideActionBar:IsShown() and C.db.char.bars.blizz_vehicle)) then
 			for _, name in next, MICRO_BUTTONS do
 				if BUTTONS[name] then
 					_G[name]:ClearAllPoints()
 
 					if name == "CharacterMicroButton" then
-						_G[name]:SetPoint(p, parent, rP, x, y - 26)
+						local x_offset = (PetBattleFrame:IsShown() and 2) or (OverrideActionBar:IsShown() and 4) or 0
+						local y_offset = (PetBattleFrame:IsShown() and -30) or (OverrideActionBar:IsShown() and 4) or 0
+						_G[name]:SetPoint(p, parent, rP, x + x_offset, y + y_offset)
 					else
 						_G[name]:SetPoint(unpack(BUTTONS[name].point_alt or BUTTONS[name].point))
 					end

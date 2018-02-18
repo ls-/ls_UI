@@ -2626,6 +2626,7 @@ D.char = {
 	bars = {
 		enabled = true,
 		restricted = true,
+		blizz_vehicle = false,
 		bags = {
 			enabled = true,
 		},

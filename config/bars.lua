@@ -538,8 +538,24 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					end
 				end
 			},
-			spacer1 = {
+			blizz_vehicle = {
 				order = 3,
+				type = "toggle",
+				name = L["USE_BLIZZARD_VEHICLE_UI"],
+				disabled = function() return not BARS:IsInit() or BARS:IsRestricted() end,
+				get = function()
+					return C.db.char.bars.blizz_vehicle
+				end,
+				set = function(_, value)
+					C.db.char.bars.blizz_vehicle = value
+
+					if BARS:IsInit() then
+						BARS:UpdateBlizzVehicle()
+					end
+				end
+			},
+			spacer1 = {
+				order = 9,
 				type = "description",
 				name = "",
 			},

@@ -199,6 +199,52 @@ function MODULE.ClearBindings()
 	end
 end
 
+local vehicleController
+
+function MODULE:UpdateBlizzVehicle()
+	if isInit and not self:IsRestricted() then
+		if C.db.char.bars.blizz_vehicle then
+			MainMenuBar:SetParent(UIParent)
+			OverrideActionBar:SetParent(UIParent)
+
+			if not vehicleController then
+				vehicleController = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+				vehicleController:SetFrameRef("bar", OverrideActionBar)
+				vehicleController:SetAttribute("_onstate-vehicle", [[
+					if newstate == "override" then
+						if (self:GetFrameRef("bar"):GetAttribute("actionpage") or 0) > 10 then
+							newstate = "vehicle"
+						end
+					end
+
+					if newstate == "vehicle" then
+						local bar = self:GetFrameRef("bar")
+
+						for i = 1, 6 do
+							local button = ("ACTIONBUTTON%d"):format(i)
+
+							for k = 1, select("#", GetBindingKey(button)) do
+								bar:SetBindingClick(true, select(k, GetBindingKey(button)), ("OverrideActionBarButton%d"):format(i))
+							end
+						end
+					else
+						self:GetFrameRef("bar"):ClearBindings()
+					end
+				]])
+			end
+
+			RegisterStateDriver(vehicleController, "vehicle", "[overridebar] override; [vehicleui] vehicle; novehicle")
+		else
+			MainMenuBar:SetParent(E.HIDDEN_PARENT)
+			OverrideActionBar:SetParent(E.HIDDEN_PARENT)
+
+			if vehicleController then
+				UnregisterStateDriver(vehicleController, "vehicle")
+			end
+		end
+	end
+end
+
 -----
 
 function MODULE.IsInit()
@@ -239,6 +285,8 @@ function MODULE.Init()
 		SetCVar("lockActionBars", C.db.profile.bars.lock and 1 or 0)
 
 		isInit = true
+
+		MODULE:UpdateBlizzVehicle()
 	end
 end
 
