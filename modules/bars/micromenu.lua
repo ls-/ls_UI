@@ -619,7 +619,7 @@ local function bar_UpdateConfig(self)
 	end
 end
 
-function MODULE.UpdateMicroButtonsParent()
+local function updateMicroButtonsParent()
 	if isInit then
 		local parent
 		if not MODULE:IsRestricted() then
@@ -640,7 +640,7 @@ function MODULE.UpdateMicroButtonsParent()
 	end
 end
 
-function MODULE.MoveMicroButtons(p, parent, rP, x, y)
+local function moveMicroButtons(p, parent, rP, x, y)
 	if isInit then
 		if not MODULE:IsRestricted() and ((PetBattleFrame:IsShown() and not C.db.char.bars.pet_battle.enabled) or (OverrideActionBar:IsShown() and C.db.char.bars.blizz_vehicle)) then
 			for _, name in next, MICRO_BUTTONS do
@@ -843,13 +843,13 @@ function MODULE.CreateMicroMenu()
 		EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
 		CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
 
-		hooksecurefunc("UpdateMicroButtonsParent", MODULE.UpdateMicroButtonsParent)
-		hooksecurefunc("MoveMicroButtons", MODULE.MoveMicroButtons)
+		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
+		hooksecurefunc("MoveMicroButtons", moveMicroButtons)
 
 		local controller = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
 		controller.Update = function()
-			MODULE:UpdateMicroButtonsParent()
-			MODULE:MoveMicroButtons()
+			updateMicroButtonsParent()
+			moveMicroButtons()
 		end
 
 		controller:SetAttribute("_onstate-petbattle", [[
