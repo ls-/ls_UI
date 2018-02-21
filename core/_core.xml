@@ -8,4 +8,5 @@
 	<Script file="bar.lua"/>
 	<Script file="button.lua"/>
 	<Script file="mover.lua"/>
+	<Script file="statusbar.lua"/>
 </Ui>

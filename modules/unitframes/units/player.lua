@@ -74,7 +74,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	left_tube:SetPoint("LEFT", 23, 0)
 	frame.LeftTube = left_tube
 
-	E:SetStatusBarSkin(left_tube, "VERTICAL-L")
+	E:SetStatusBarSkin(left_tube, "VERTICAL-12")
 
 	local seps = {}
 
@@ -123,7 +123,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	right_tube:SetPoint("RIGHT", -23, 0)
 	frame.RightTube = right_tube
 
-	E:SetStatusBarSkin(right_tube, "VERTICAL-L")
+	E:SetStatusBarSkin(right_tube, "VERTICAL-12")
 
 	-- mask
 	local mask = fg_parent:CreateMaskTexture()

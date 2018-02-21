@@ -19,17 +19,17 @@ end
 function MODULE.SetUpMirrorTimer()
 	if not isInit and C.db.char.blizzard.timer.enabled then
 		E:HandleStatusBar(MirrorTimer1)
-		E:SetStatusBarSkin(MirrorTimer1, "HORIZONTAL-L")
+		E:SetStatusBarSkin(MirrorTimer1, "HORIZONTAL-12")
 
 		MirrorTimer2:ClearAllPoints()
 		MirrorTimer2:SetPoint("TOP", "MirrorTimer1", "BOTTOM", 0, -6)
 		E:HandleStatusBar(MirrorTimer2)
-		E:SetStatusBarSkin(MirrorTimer2, "HORIZONTAL-L")
+		E:SetStatusBarSkin(MirrorTimer2, "HORIZONTAL-12")
 
 		MirrorTimer3:ClearAllPoints()
 		MirrorTimer3:SetPoint("TOP", "MirrorTimer2", "BOTTOM", 0, -6)
 		E:HandleStatusBar(MirrorTimer3)
-		E:SetStatusBarSkin(MirrorTimer3, "HORIZONTAL-L")
+		E:SetStatusBarSkin(MirrorTimer3, "HORIZONTAL-12")
 
 		-- 3 should be enough
 		local indices = {}
@@ -45,7 +45,7 @@ function MODULE.SetUpMirrorTimer()
 			TimerTracker.timerList[i] = timer
 
 			E:HandleStatusBar(timer.bar)
-			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-L")
+			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-12")
 		end
 
 		isInit = true

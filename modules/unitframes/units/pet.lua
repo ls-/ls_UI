@@ -66,14 +66,14 @@ function UF:CreateVerticalPetFrame(frame)
 	left_tube:SetAllPoints(health)
 	frame.LeftTube = left_tube
 
-	E:SetStatusBarSkin(left_tube, "VERTICAL-M")
+	E:SetStatusBarSkin(left_tube, "VERTICAL-8")
 
 	local right_tube = _G.CreateFrame("Frame", nil, frame)
 	right_tube:SetFrameLevel(level + 3)
 	right_tube:SetAllPoints(power)
 	frame.RightTube = right_tube
 
-	E:SetStatusBarSkin(right_tube, "VERTICAL-M")
+	E:SetStatusBarSkin(right_tube, "VERTICAL-8")
 
 	-- frame.unit = "player"
 	-- E:ForceShow(frame)

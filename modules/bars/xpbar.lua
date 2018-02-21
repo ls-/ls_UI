@@ -528,7 +528,7 @@ function BARS.CreateXPBar()
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
-			E:SetStatusBarSkin(cover, "HORIZONTAL-M")
+			E:SetStatusBarSkin(cover, "HORIZONTAL-8")
 		end
 
 		bar:Update()

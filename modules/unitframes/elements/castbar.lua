@@ -108,7 +108,7 @@ function UF:CreateCastbar(parent)
 	local tex_parent = _G.CreateFrame("Frame", nil, element)
 	tex_parent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
 	tex_parent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
-	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-L")
+	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-12")
 
 	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	time:SetWordWrap(false)
