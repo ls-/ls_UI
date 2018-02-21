@@ -203,7 +203,7 @@ local vehicleController
 
 function MODULE:UpdateBlizzVehicle()
 	if not self:IsRestricted() then
-		if C.db.char.bars.blizz_vehicle then
+		if C.db.profile.bars.blizz_vehicle then
 			MainMenuBar:SetParent(UIParent)
 			OverrideActionBar:SetParent(UIParent)
 

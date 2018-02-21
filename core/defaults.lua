@@ -2069,6 +2069,7 @@ D.profile = {
 		desaturate_on_cd = false,
 		click_on_down = false,
 		draw_bling = true,
+		blizz_vehicle = false,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = true,
@@ -2626,7 +2627,6 @@ D.char = {
 	bars = {
 		enabled = true,
 		restricted = true,
-		blizz_vehicle = false,
 		bags = {
 			enabled = true,
 		},

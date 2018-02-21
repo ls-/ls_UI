@@ -544,10 +544,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				name = L["USE_BLIZZARD_VEHICLE_UI"],
 				disabled = function() return not BARS:IsInit() or BARS:IsRestricted() end,
 				get = function()
-					return C.db.char.bars.blizz_vehicle
+					return C.db.profile.bars.blizz_vehicle
 				end,
 				set = function(_, value)
-					C.db.char.bars.blizz_vehicle = value
+					C.db.profile.bars.blizz_vehicle = value
 
 					if BARS:IsInit() then
 						BARS:UpdateBlizzVehicle()
