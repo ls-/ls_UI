@@ -595,18 +595,20 @@ local function GetOptionsTable_Castbar(unit, order)
 		order = order,
 		type = "group",
 		name = L["UNIT_FRAME_CASTBAR"],
+		get = function(info)
+			return C.db.profile.units[E.UI_LAYOUT][unit].castbar[info[#info]]
+		end,
+		set = function(info, value)
+			if C.db.profile.units[E.UI_LAYOUT][unit].castbar[info[#info]] ~= value then
+				C.db.profile.units[E.UI_LAYOUT][unit].castbar[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit)
+			end
+		end,
 		args = {
 			enabled = {
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.enabled
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].castbar.enabled = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end
 			},
 			reset = {
 				type = "execute",
@@ -626,71 +628,51 @@ local function GetOptionsTable_Castbar(unit, order)
 				order = 10,
 				type = "toggle",
 				name = L["DETACH_FROM_FRAME"],
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end
 			},
-			width_override ={
+			width_override = {
 				order = 11,
 				type = "range",
 				name = L["WIDTH_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
-				min = 0, max = 384, step = 2,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.width_override
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].castbar.width_override = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
+				min = 0, max = 1024, step = 2,
 				disabled = function() return not C.db.profile.units[E.UI_LAYOUT][unit].castbar.detached end,
 			},
-			latency = {
+			height = {
 				order = 12,
+				type = "range",
+				name = L["HEIGHT"],
+				min = 8, max = 32, step = 4,
+			},
+			latency = {
+				order = 13,
 				type = "toggle",
 				name = L["UNIT_FRAME_CASTBAR_LATENCY"],
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.latency
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].castbar.latency = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end
 			},
 			icon = {
-				order = 13,
+				order = 20,
 				type = "group",
 				name = L["UNIT_FRAME_CASTBAR_ICON"],
 				guiInline = true,
+				get = function(info)
+					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon[info[#info]] ~= value then
+						C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit)
+					end
+				end,
 				args = {
 					enabled = {
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.enabled
-						end,
-						set = function(_, value)
-							C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.enabled = value
-							UNITFRAMES:UpdateUnitFrame(unit)
-						end
 					},
 					position = {
 						order = 2,
 						type = "select",
 						name = L["POSITION"],
 						values = castbar_icon_positions,
-						get = function()
-							return C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.position
-						end,
-						set = function(_, value)
-							C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon.position = value
-							UNITFRAMES:UpdateUnitFrame(unit)
-						end,
 					},
 				},
 			},

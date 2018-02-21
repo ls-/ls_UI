@@ -28,8 +28,6 @@ local function PostCastFailed(castbar)
 	castbar:SetValue(1)
 	castbar:SetStatusBarColor(M.COLORS.RED:GetRGB())
 
-	castbar.Spark:SetPoint("CENTER", castbar, "RIGHT")
-
 	castbar.Time:SetText("")
 end
 
@@ -58,10 +56,9 @@ local function CustomDelayText(castbar, duration)
 end
 
 function UF:CreateCastbar(parent)
-	local holder = _G.CreateFrame("Frame", "$parentCastbarHolder", parent)
-	holder:SetHeight(12)
+	local holder = CreateFrame("Frame", "$parentCastbarHolder", parent)
 
-	local element = _G.CreateFrame("StatusBar", nil, holder)
+	local element = CreateFrame("StatusBar", nil, holder)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
 
@@ -70,45 +67,34 @@ function UF:CreateCastbar(parent)
 	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
-	icon:SetSize(18, 12)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
 	element.LeftIcon = icon
 
+	local sep = element:CreateTexture(nil, "OVERLAY")
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetPoint("LEFT", icon, "RIGHT", -5, 0)
+	element.LeftSep = sep
+
 	icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
-	icon:SetSize(18, 12)
-	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -3, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
+	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -3, 0)
 	element.RightIcon = icon
+
+	sep = element:CreateTexture(nil, "OVERLAY")
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetPoint("RIGHT", icon, "LEFT", 5, 0)
+	element.RightSep = sep
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
 	safeZone:SetVertexColor(M.COLORS.RED:GetRGBA(0.6))
 	element.SafeZone_ = safeZone
 
-	local spark = element:CreateTexture(nil, "ARTWORK", nil, 2)
-	spark:SetSize(24, 24)
-	spark:SetBlendMode("ADD")
-	element.Spark = spark
-
-	local sep = element:CreateTexture(nil, "OVERLAY")
-	sep:SetSize(24 / 2, 24 / 2)
-	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
-	sep:SetPoint("RIGHT", element, "LEFT", 5, 0)
-	element.LeftSep = sep
-
-	sep = element:CreateTexture(nil, "OVERLAY")
-	sep:SetSize(24 / 2, 24 / 2)
-	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-	sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
-	sep:SetPoint("LEFT", element, "RIGHT", -5, 0)
-	element.RightSep = sep
-
-	local tex_parent = _G.CreateFrame("Frame", nil, element)
+	local tex_parent = CreateFrame("Frame", nil, element)
 	tex_parent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
 	tex_parent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
-	E:SetStatusBarSkin(tex_parent, "HORIZONTAL-12")
+	element.TexParent = tex_parent
 
 	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	time:SetWordWrap(false)
@@ -140,8 +126,9 @@ function UF:UpdateCastbar(frame)
 	local holder = element.Holder
 	local hasMover = E:HasMover(holder)
 	local width = (config.detached and config.width_override ~= 0) and config.width_override or frame._config.width
+	local height = config.height
 
-	holder:SetWidth(width)
+	holder:SetSize(width, height)
 	holder._width = width
 
 	local point1 = config.point1
@@ -153,7 +140,7 @@ function UF:UpdateCastbar(frame)
 				E:CreateMover(holder)
 			else
 				E:EnableMover(holder)
-				E:UpdateMoverSize(holder, width, 12)
+				E:UpdateMoverSize(holder, width, height)
 			end
 		else
 			holder:ClearAllPoints()
@@ -169,34 +156,36 @@ function UF:UpdateCastbar(frame)
 		if config.icon.position == "LEFT" then
 			element.Icon = element.LeftIcon
 
-			element.LeftIcon:Show()
-			element.RightIcon:Hide()
+			element.LeftIcon:SetSize(height * 1.5, height)
+			element.RightIcon:SetSize(0.0001, height)
 
-			element.LeftSep:Show()
-			element.RightSep:Hide()
+			element.LeftSep:SetSize(12, height)
+			element.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+			element.RightSep:SetSize(0.0001, height)
 
-			element:SetPoint("TOPLEFT", 23, 0)
+			element:SetPoint("TOPLEFT", 5 + height * 1.5, 0)
 			element:SetPoint("BOTTOMRIGHT", -3, 0)
 		elseif config.icon.position == "RIGHT" then
 			element.Icon = element.RightIcon
 
-			element.LeftIcon:Hide()
-			element.RightIcon:Show()
+			element.LeftIcon:SetSize(0.0001, height)
+			element.RightIcon:SetSize(height * 1.5, height)
 
-			element.LeftSep:Hide()
-			element.RightSep:Show()
+			element.LeftSep:SetSize(0.0001, height)
+			element.RightSep:SetSize(12, height)
+			element.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 
 			element:SetPoint("TOPLEFT", 3, 0)
-			element:SetPoint("BOTTOMRIGHT", -23, 0)
+			element:SetPoint("BOTTOMRIGHT", -5 - height * 1.5, 0)
 		end
 	else
 		element.Icon = nil
 
-		element.LeftIcon:Hide()
-		element.RightIcon:Hide()
+		element.LeftIcon:SetSize(0.0001, height)
+		element.RightIcon:SetSize(0.0001, height)
 
-		element.LeftSep:Hide()
-		element.RightSep:Hide()
+		element.LeftSep:SetSize(0.0001, height)
+		element.RightSep:SetSize(0.0001, height)
 
 		element:SetPoint("TOPLEFT", 3, 0)
 		element:SetPoint("BOTTOMRIGHT", -3, 0)
@@ -209,6 +198,8 @@ function UF:UpdateCastbar(frame)
 		element.SafeZone = nil
 		element.SafeZone_:Hide()
 	end
+
+	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-"..height)
 
 	if config.enabled and not frame:IsElementEnabled("Castbar") then
 		frame:EnableElement("Castbar")
