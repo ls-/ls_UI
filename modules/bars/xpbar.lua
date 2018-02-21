@@ -340,11 +340,11 @@ local function bar_UpdateSize(self, width)
 	width = width or self._config.width
 	LAYOUT[1][1].size = {width, 16 / 2}
 
-	local layout = E:CalcLayout(width, 2)
+	local layout = E:CalcSegmentsSizes(width, 2)
 	LAYOUT[2][1].size = {layout[1], 16 / 2}
 	LAYOUT[2][2].size = {layout[2], 16 / 2}
 
-	layout = E:CalcLayout(width, 3)
+	layout = E:CalcSegmentsSizes(width, 3)
 	LAYOUT[3][1].size = {layout[1], 16 / 2}
 	LAYOUT[3][2].size = {layout[2], 16 / 2}
 	LAYOUT[3][3].size = {layout[3], 16 / 2}
