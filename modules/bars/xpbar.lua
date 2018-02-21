@@ -18,6 +18,7 @@ local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
 local CFG = {
 	visible = true,
 	width = 746,
+	height = 8,
 	point = {
 		p = "BOTTOM",
 		anchor = "UIParent",
@@ -298,15 +299,15 @@ local function bar_UpdateSegments(self)
 		for i = 1, MAX_BARS do
 			if i <= index then
 				self[i]:SetSize(unpack(LAYOUT[index][i].size))
-			self[i]:SetPoint(unpack(LAYOUT[index][i].point))
-			self[i]:Show()
+				self[i]:SetPoint(unpack(LAYOUT[index][i].point))
+				self[i]:Show()
 
-			self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
-		else
-			self[i]:SetMinMaxValues(0, 1)
-			self[i]:SetValue(0)
-			self[i]:ClearAllPoints()
-			self[i]:Hide()
+				self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
+			else
+				self[i]:SetMinMaxValues(0, 1)
+				self[i]:SetValue(0)
+				self[i]:ClearAllPoints()
+				self[i]:Hide()
 
 				self[i].Extension:SetMinMaxValues(0, 1)
 				self[i].Extension:SetValue(0)
@@ -315,20 +316,20 @@ local function bar_UpdateSegments(self)
 			end
 		end
 
-	for i = 1, 2 do
-		if i <= index - 1 then
-			self[i].Sep:Show()
-		else
-			self[i].Sep:Hide()
+		for i = 1, 2 do
+			if i <= index - 1 then
+				self[i].Sep:Show()
+			else
+				self[i].Sep:Hide()
+			end
 		end
-	end
 
-	if index == 0 then
-		self[1]:SetPoint(unpack(LAYOUT[1][1].point))
-		self[1]:SetSize(unpack(LAYOUT[1][1].size))
-		self[1]:SetMinMaxValues(0, 1)
-		self[1]:SetValue(1)
-		self[1]:Show()
+		if index == 0 then
+			self[1]:SetPoint(unpack(LAYOUT[1][1].point))
+			self[1]:SetSize(unpack(LAYOUT[1][1].size))
+			self[1]:SetMinMaxValues(0, 1)
+			self[1]:SetValue(1)
+			self[1]:Show()
 
 			self[1].Text:SetText(nil)
 			E:SetSmoothedVertexColor(self[1].Texture, M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
@@ -338,32 +339,35 @@ local function bar_UpdateSegments(self)
 	end
 end
 
-local function bar_UpdateSize(self, width)
+local function bar_UpdateSize(self, width, height)
 	width = width or self._config.width
-	LAYOUT[1][1].size = {width, 16 / 2}
+	height = height or self._config.height
+	LAYOUT[1][1].size = {width, height}
 
 	local layout = E:CalcSegmentsSizes(width, 2)
-	LAYOUT[2][1].size = {layout[1], 16 / 2}
-	LAYOUT[2][2].size = {layout[2], 16 / 2}
+	LAYOUT[2][1].size = {layout[1], height}
+	LAYOUT[2][2].size = {layout[2], height}
 
 	layout = E:CalcSegmentsSizes(width, 3)
-	LAYOUT[3][1].size = {layout[1], 16 / 2}
-	LAYOUT[3][2].size = {layout[2], 16 / 2}
-	LAYOUT[3][3].size = {layout[3], 16 / 2}
+	LAYOUT[3][1].size = {layout[1], height}
+	LAYOUT[3][2].size = {layout[2], height}
+	LAYOUT[3][3].size = {layout[3], height}
 
-	self:SetSize(width, 16 / 2)
+	self:SetSize(width, height)
 
-	local total = 0
-	for i = 1, MAX_BARS do
-		if self[i]:IsShown() then
-			total = total + 1
+	for i = 1, self._total do
+		self[i]:SetSize(unpack(LAYOUT[self._total][i].size))
+		self[i]:SetPoint(unpack(LAYOUT[self._total][i].point))
+		self[i].Extension:SetSize(unpack(LAYOUT[self._total][i].size))
 	end
+
+	for i = 1, 2 do
+		self[i].Sep:SetSize(12, height)
+		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 	end
 
-	for i = 1, total do
-		self[i]:SetSize(unpack(LAYOUT[total][i].size))
-		self[i]:SetPoint(unpack(LAYOUT[total][i].point))
-		self[i].Extension:SetSize(unpack(LAYOUT[total][i].size))
+	if not BARS:IsRestricted() then
+		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-"..height)
 	end
 
 	self:UpdateSegments()
@@ -441,19 +445,18 @@ function BARS.CreateXPBar()
 		bar.UpdateSize = bar_UpdateSize
 		bar.UpdateSegments = bar_UpdateSegments
 
-		local cover = CreateFrame("Frame", nil, bar)
-		cover:SetAllPoints()
-		cover:SetFrameLevel(bar:GetFrameLevel() + 3)
+		local texParent = CreateFrame("Frame", nil, bar)
+		texParent:SetAllPoints()
+		texParent:SetFrameLevel(bar:GetFrameLevel() + 3)
+		bar.TexParent = texParent
 
-		local text_parent = CreateFrame("Frame", nil, bar)
-		text_parent:SetAllPoints()
-		text_parent:SetFrameLevel(bar:GetFrameLevel() + 5)
+		local textParent = CreateFrame("Frame", nil, bar)
+		textParent:SetAllPoints()
+		textParent:SetFrameLevel(bar:GetFrameLevel() + 5)
 
-		local t = bar:CreateTexture(nil, "ARTWORK")
-		t:SetAllPoints()
-		t:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
-		t:SetHorizTile(true)
-		t:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
+		local bg = bar:CreateTexture(nil, "ARTWORK")
+		bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		bg:SetAllPoints()
 
 		for i = 1, MAX_BARS do
 			bar[i] = CreateFrame("StatusBar", "$parentSegment"..i, bar)
@@ -476,26 +479,22 @@ function BARS.CreateXPBar()
 			E:SmoothBar(ext)
 			bar[i].Extension = ext
 
-			local text = text_parent:CreateFontString(nil, "OVERLAY", "LSFont10_Outline")
+			local text = textParent:CreateFontString(nil, "OVERLAY", "LSFont10_Outline")
 			text:SetAllPoints(bar[i])
 			text:SetWordWrap(false)
 			text:Hide()
 			bar[i].Text = text
 		end
 
-		local sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
+		local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("LEFT", bar[1], "RIGHT", -5, 0)
-		sep:SetSize(24 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
 		sep:Hide()
 		bar[1].Sep = sep
 
-		sep = cover:CreateTexture(nil, "ARTWORK", nil, -7)
+		sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("LEFT", bar[2], "RIGHT", -5, 0)
-		sep:SetSize(24 / 2, 16 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
 		sep:Hide()
 		bar[2].Sep = sep
 
@@ -531,7 +530,6 @@ function BARS.CreateXPBar()
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E:CreateMover(bar)
-			E:SetStatusBarSkin(cover, "HORIZONTAL-8")
 		end
 
 		bar:Update()

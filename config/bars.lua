@@ -764,6 +764,15 @@ function CONFIG.CreateActionBarsPanel(_, order)
 		type = "group",
 		childGroups = "select",
 		name = L["XP_BAR"],
+		get = function(info)
+			return C.db.profile.bars.xpbar[info[#info]]
+		end,
+		set = function(info, value)
+			if C.db.profile.bars.xpbar[info[#info]] ~= value then
+				C.db.profile.bars.xpbar[info[#info]] = value
+				BARS:GetBar("xpbar"):Update()
+			end
+		end,
 		disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end,
 		args = {
 			enabled = {
@@ -809,14 +818,14 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "range",
 				name = L["WIDTH"],
 				disabled = function() return not BARS:HasXPBar() end,
-				min = 530, max = 1912, step = 2,
-				get = function()
-					return C.db.profile.bars.xpbar.width
-				end,
-				set = function(_, value)
-					C.db.profile.bars.xpbar.width = value
-					BARS:GetBar("xpbar"):Update()
-				end,
+				min = 530, max = 1900, step = 2,
+			},
+			height = {
+				order = 11,
+				type = "range",
+				name = L["HEIGHT"],
+				disabled = function() return not BARS:HasXPBar() end,
+				min = 8, max = 32, step = 4,
 			},
 			fading = getOptionsTable_Fading("xpbar", 20)
 		},

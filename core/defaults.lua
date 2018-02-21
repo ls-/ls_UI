@@ -2438,6 +2438,7 @@ D.profile = {
 		xpbar = {
 			visible = true,
 			width = 746,
+			height = 8,
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
