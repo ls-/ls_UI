@@ -202,7 +202,7 @@ end
 local vehicleController
 
 function MODULE:UpdateBlizzVehicle()
-	if isInit and not self:IsRestricted() then
+	if not self:IsRestricted() then
 		if C.db.char.bars.blizz_vehicle then
 			MainMenuBar:SetParent(UIParent)
 			OverrideActionBar:SetParent(UIParent)
@@ -266,6 +266,7 @@ function MODULE.Init()
 		MODULE:CreateBags()
 		MODULE:ReassignBindings()
 		MODULE:CleanUp()
+		MODULE:UpdateBlizzVehicle()
 
 		E:RegisterEvent("ACTIONBAR_HIDEGRID", resumeFading)
 		E:RegisterEvent("ACTIONBAR_SHOWGRID", pauseFading)
@@ -285,8 +286,6 @@ function MODULE.Init()
 		SetCVar("lockActionBars", C.db.profile.bars.lock and 1 or 0)
 
 		isInit = true
-
-		MODULE:UpdateBlizzVehicle()
 	end
 end
 
