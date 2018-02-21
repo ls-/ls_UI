@@ -13,6 +13,7 @@ local function CollapseHoriz(self)
 	self.Mid:Hide()
 	self.Right:Hide()
 	self.Glass:Hide()
+	self.GlassShadow:Hide()
 
 	self._expanded = false
 
@@ -28,6 +29,7 @@ local function ExpandHoriz(self)
 	self.Mid:Show()
 	self.Right:Show()
 	self.Glass:Show()
+	self.GlassShadow:Show()
 
 	self._expanded = true
 
@@ -79,16 +81,20 @@ function UF:CreateInsets(parent, texParent)
 	texture3:SetPoint("BOTTOMRIGHT", texture2, "BOTTOMLEFT", 0, 0)
 
 	local texture4 = (texParent or parent):CreateTexture(nil, "OVERLAY", nil, 0)
-	texture4:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal", true)
-	texture4:SetTexCoord(0 / 128, 128 / 128, 1 / 256, 25 / 256)
-	texture4:SetHorizTile(true)
+	texture4:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
 	texture4:SetPoint("TOPLEFT", top_inset, "TOPLEFT", 0, 0)
 	texture4:SetPoint("BOTTOMRIGHT", top_inset, "BOTTOMRIGHT", 0, 2)
+
+	local texture5 = (texParent or parent):CreateTexture(nil, "OVERLAY", nil, -1)
+	texture5:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+	texture5:SetPoint("TOPLEFT", top_inset, "TOPLEFT", 0, 0)
+	texture5:SetPoint("BOTTOMRIGHT", top_inset, "BOTTOMRIGHT", 0, 2)
 
 	top_inset.Left = texture1
 	top_inset.Mid = texture3
 	top_inset.Right = texture2
 	top_inset.Glass = texture4
+	top_inset.GlassShadow = texture5
 	top_inset.Expand = ExpandHoriz
 	top_inset.Collapse = CollapseHoriz
 	top_inset.IsExpanded = IsExpanded
@@ -121,16 +127,20 @@ function UF:CreateInsets(parent, texParent)
 	texture3:SetPoint("BOTTOMRIGHT", texture2, "BOTTOMLEFT", 0, 0)
 
 	texture4 = (texParent or parent):CreateTexture(nil, "OVERLAY", nil, 0)
-	texture4:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-horizontal", true)
-	texture4:SetTexCoord(0 / 128, 128 / 128, 1 / 256, 25 / 256)
-	texture4:SetHorizTile(true)
+	texture4:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
 	texture4:SetPoint("TOPLEFT", bottom_inset, "TOPLEFT", 0, -2)
 	texture4:SetPoint("BOTTOMRIGHT", bottom_inset, "BOTTOMRIGHT", 0, 0)
+
+	texture5 = (texParent or parent):CreateTexture(nil, "OVERLAY", nil, -1)
+	texture5:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+	texture5:SetPoint("TOPLEFT", bottom_inset, "TOPLEFT", 0, -2)
+	texture5:SetPoint("BOTTOMRIGHT", bottom_inset, "BOTTOMRIGHT", 0, 0)
 
 	bottom_inset.Left = texture1
 	bottom_inset.Mid = texture3
 	bottom_inset.Right = texture2
 	bottom_inset.Glass = texture4
+	bottom_inset.GlassShadow = texture5
 	bottom_inset.Expand = ExpandHoriz
 	bottom_inset.Collapse = CollapseHoriz
 	bottom_inset.IsExpanded = IsExpanded

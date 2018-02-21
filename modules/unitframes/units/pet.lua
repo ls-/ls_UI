@@ -145,10 +145,13 @@ function UF:CreateHorizontalPetFrame(frame)
 
 	E:CreateBorder(fg_parent, true)
 
-	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
-	glass:SetHorizTile(true)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+
+	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
+	shadow:SetAllPoints(health)
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 end

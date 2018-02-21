@@ -80,9 +80,9 @@ function UF:CreateVerticalPlayerFrame(frame)
 
 	for i = 1, 9 do
 		local sep = left_tube:CreateTexture(nil, "ARTWORK", nil, 1)
-		sep:SetSize(24 / 2, 24 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		sep:SetTexCoord(26 / 64, 50 / 64, 26 / 64, 50 / 64)
+		sep:SetSize(12, 12)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
 		seps[i] = sep
 	end
 
@@ -299,9 +299,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	for i = 1, 9 do
 		local sep = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
-		sep:SetSize(24 / 2, 24 / 2)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-seps")
-		sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
 		seps[i] = sep
 	end
 
@@ -314,23 +312,15 @@ function UF:CreateHorizontalPlayerFrame(frame)
 		self._sender = sender
 
 		if visible then
-			local height = self._height
-
 			self:Expand()
 
 			for i = 1, 9 do
 				local sep = seps[i]
 
 				if i < slots then
-					sep:SetSize(24 / 2, height - 2)
-
-					if height == 14 then
-						sep:SetTexCoord(1 / 64, 25 / 64, 18 / 64, 42 / 64)
-					else
-						sep:SetTexCoord(1 / 64, 25 / 64, 1 / 64, 17 / 64)
-					end
-
+					sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, self._height - 2 / 4)
 					sep:SetPoint("LEFT", sender[i], "RIGHT", -5, 0)
+					sep:SetSize(24 / 2, self._height - 2)
 					sep:Show()
 				else
 					sep:Hide()
@@ -512,10 +502,13 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	E:CreateBorder(fg_parent, true)
 
-	local glass = fg_parent:CreateTexture(nil, "OVERLAY")
+	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-glass", true)
-	glass:SetHorizTile(true)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+
+	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
+	shadow:SetAllPoints(health)
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 
