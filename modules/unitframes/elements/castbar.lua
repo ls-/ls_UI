@@ -141,28 +141,22 @@ function UF:UpdateCastbar(frame)
 	local hasMover = E:HasMover(holder)
 	local width = (config.detached and config.width_override ~= 0) and config.width_override or frame._config.width
 
-	holder:ClearAllPoints()
 	holder:SetWidth(width)
 	holder._width = width
-
-	if hasMover then
-		E:UpdateMoverSize(holder, width, 12)
-	end
 
 	local point1 = config.point1
 
 	if point1 and point1.p then
 		if config.detached then
-			holder:SetPoint(point1.p,
-				E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and frame:GetName() or point1.detached_anchor),
-				point1.rP, point1.x, point1.y)
-
 			if not hasMover then
+				holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and frame:GetName() or point1.detached_anchor), point1.rP, point1.x, point1.y)
 				E:CreateMover(holder)
 			else
 				E:EnableMover(holder)
+				E:UpdateMoverSize(holder, width, 12)
 			end
 		else
+			holder:ClearAllPoints()
 			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 
 			if hasMover then
