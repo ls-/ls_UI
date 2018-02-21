@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 70300.09
+
+- Added "Use Blizzard Vehicle UI" option to action bar config. Unavailable in restricted mode;
+- Added disable/enable toggle to pet battle bar config. Unavailable in restricted mode.
+
 ## Version 70300.08
 
 - Added "Cast on Key Down" option to action bar config;
