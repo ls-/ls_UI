@@ -242,6 +242,9 @@ function MODULE:UpdateBlizzVehicle()
 				UnregisterStateDriver(vehicleController, "vehicle")
 			end
 		end
+	else
+		MainMenuBar:SetParent(E.HIDDEN_PARENT)
+		OverrideActionBar:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
