@@ -165,14 +165,13 @@ local function bar_UpdateSegments(self)
 						bonus = max - cur
 					end
 
+					self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 					self[index].Extension:SetMinMaxValues(0, max)
 					self[index].Extension:SetValue(bonus)
 				else
 					self[index].Extension:SetMinMaxValues(0, 1)
 					self[index].Extension:SetValue(0)
 				end
-
-				self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 			end
 		else
 			if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
@@ -212,14 +211,13 @@ local function bar_UpdateSegments(self)
 						bonus = max - cur
 					end
 
+					self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 					self[index].Extension:SetMinMaxValues(0, max)
 					self[index].Extension:SetValue(bonus)
 				else
 					self[index].Extension:SetMinMaxValues(0, 1)
 					self[index].Extension:SetValue(0)
 				end
-
-				self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
 			end
 		end
 
@@ -296,9 +294,10 @@ local function bar_UpdateSegments(self)
 		end
 	end
 
-	for i = 1, MAX_BARS do
-		if i <= index then
-			self[i]:SetSize(unpack(LAYOUT[index][i].size))
+	if self._total ~= index then
+		for i = 1, MAX_BARS do
+			if i <= index then
+				self[i]:SetSize(unpack(LAYOUT[index][i].size))
 			self[i]:SetPoint(unpack(LAYOUT[index][i].point))
 			self[i]:Show()
 
@@ -309,10 +308,12 @@ local function bar_UpdateSegments(self)
 			self[i]:ClearAllPoints()
 			self[i]:Hide()
 
-			self[i].Extension:SetMinMaxValues(0, 1)
-			self[i].Extension:SetValue(0)
+				self[i].Extension:SetMinMaxValues(0, 1)
+				self[i].Extension:SetValue(0)
+
+				self[i].tooltipInfo = nil
+			end
 		end
-	end
 
 	for i = 1, 2 do
 		if i <= index - 1 then
@@ -329,10 +330,11 @@ local function bar_UpdateSegments(self)
 		self[1]:SetValue(1)
 		self[1]:Show()
 
-		self[1].Text:SetText(nil)
-		E:SetSmoothedVertexColor(self[1].Texture, M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
+			self[1].Text:SetText(nil)
+			E:SetSmoothedVertexColor(self[1].Texture, M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
+		end
 
-		self[1].tooltipInfo = nil
+		self._total = index
 	end
 end
 
@@ -355,7 +357,7 @@ local function bar_UpdateSize(self, width)
 	for i = 1, MAX_BARS do
 		if self[i]:IsShown() then
 			total = total + 1
-		end
+	end
 	end
 
 	for i = 1, total do
@@ -420,6 +422,7 @@ function BARS.CreateXPBar()
 	if not isInit and (C.db.char.bars.xpbar.enabled or BARS:IsRestricted()) then
 		local bar = CreateFrame("Frame", "LSUIXPBar", UIParent)
 		bar._id = "xpbar"
+		bar._total = 0
 
 		BARS:AddBar(bar._id, bar)
 
