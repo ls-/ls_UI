@@ -132,7 +132,7 @@ local function createAuraIcon(element, index)
 	button.overlay.Hide = overlay_HideOverride
 	button.Border = nil
 
-	local stealable = button.Cover:CreateTexture(nil, "OVERLAY", nil, 2)
+	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
 	stealable:SetPoint("TOPLEFT", -1, 1)
@@ -140,7 +140,7 @@ local function createAuraIcon(element, index)
 	stealable:SetBlendMode("ADD")
 	button.stealable = stealable
 
-	local auraType = button.Cover:CreateTexture(nil, "OVERLAY", nil, 3)
+	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
 	auraType:SetSize(16, 16)
 	auraType:SetPoint("TOPLEFT", -2, 2)
 	button.AuraType = auraType

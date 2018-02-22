@@ -38,7 +38,7 @@ function MODULE.CreateZoneButton()
 		ZoneAbilityFrame.SpellButton:SetPoint("TOPLEFT", 2, -2)
 		ZoneAbilityFrame.SpellButton:SetPoint("BOTTOMRIGHT", -2, 2)
 		ZoneAbilityFrame.SpellButton._parent = bar
-		E:SkinZoneAbilityButton(ZoneAbilityFrame.SpellButton)
+		E:SkinExtraActionButton(ZoneAbilityFrame.SpellButton)
 		bar._buttons[1] = ZoneAbilityFrame.SpellButton
 
 		local point = C.db.profile.bars.zone.point

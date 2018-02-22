@@ -1,86 +1,14 @@
---[[
-ActionButtonTemplate Draw Layers:
-BACKGROUND:
-- Icon -- 0
-BORDER:
--
-ARTWORK:
-- NormalTexture -- 0
-- PushedTexture -- 0
-- Flash -- 1
-- FlyoutArrow -- 2 -> OVERLAY 2
-- HotKey -- 2 -> OVERLAY 2
-- Count -- 2 -> OVERLAY 2
-OVERLAY:
-- Name -- 0
-- Border -- 0
-- CheckedTexture -- 0
-- NewActionTexture -- 1
-HIGHLIGHT:
-- HighlightTexture -- 0
-]]
-
 local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local next = _G.next
-local s_format = _G.string.format
 local s_gsub = _G.string.gsub
-local s_match = _G.string.match
 local s_utf8sub = _G.string.utf8sub
 
--- Blizz
-local ATTACK_BUTTON_FLASH_TIME = _G.ATTACK_BUTTON_FLASH_TIME
-local TOOLTIP_UPDATE_TIME = _G.TOOLTIP_UPDATE_TIME
-local GetPetActionInfo = _G.GetPetActionInfo
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetZoneAbilitySpellInfo = _G.GetZoneAbilitySpellInfo
-local HasAction = _G.HasAction
-local IsActionInRange = _G.IsActionInRange
-local IsEquippedAction = _G.IsEquippedAction
-local IsSpellInRange = _G.IsSpellInRange
-local IsUsableAction = _G.IsUsableAction
-local IsUsableSpell = _G.IsUsableSpell
-
 -- Mine
-local actionButtons = {} -- action bar buttons
-local activeButtons = {} -- active action buttons
-local handledButtons = {} -- all buttons
-
-local function SetNormalTextureHook(self, texture)
-	if texture then
-		self:SetNormalTexture(nil)
-	end
-end
-
-local function SetItemButtonBorderColor(self)
-	local button = self:GetParent()
-
-	if self:IsShown() then
-		button.Border_:SetVertexColor(self:GetVertexColor())
-	end
-end
-
-local function SetVertexColorHook(self, r, g, b)
-	self:GetParent().Border_:SetVertexColor(r, g, b)
-end
-
-local function SetTextHook(self, text)
-	if not text then return end
-
-	self:SetFormattedText("%s", s_gsub(text, "[ .()]", ""))
-end
-
-local function SetFormattedTextHook(self, pattern, text)
-	if not pattern then return end
-
-	self:SetText(s_format(s_gsub(pattern, "[ .()]", ""), text))
-end
-
-local function getBindingKey(self)
+local function button_GetBindingKey(self)
 	local text = self._command and GetBindingKey(self._command) or ""
 
 	if text and text ~= "" then
@@ -115,11 +43,17 @@ local function getBindingKey(self)
 	return text
 end
 
-local function updateHotKey(self)
-	self:SetFormattedText("%s", getBindingKey(self:GetParent()))
+local function setNormalTextureHook(self, texture)
+	if texture then
+		self:SetNormalTexture(nil)
+	end
 end
 
-local function SetMacroTextHook(self, text)
+local function updateHotKey(self)
+	self:SetFormattedText("%s", self:GetParent():GetBindingKey())
+end
+
+local function updateMacroText(self, text)
 	local button = self:GetParent()
 	local bName = button.Name
 
@@ -132,27 +66,27 @@ local function SetMacroTextHook(self, text)
 	end
 end
 
-local function SetIcon(object, texture, l, r, t, b)
+local function setIcon(button, texture, l, r, t, b)
 	local icon
 
-	if object.CreateTexture then
-		icon = object:CreateTexture(nil, "BACKGROUND", nil, 0)
+	if button.CreateTexture then
+		icon = button:CreateTexture(nil, "BACKGROUND", nil, 0)
 	else
-		icon = object
+		icon = button
 		icon:SetDrawLayer("BACKGROUND", 0)
-	end
-
-	if texture then
-		icon:SetTexture(texture)
 	end
 
 	icon:SetAllPoints()
 	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
 
+	if texture then
+		icon:SetTexture(texture)
+	end
+
 	return icon
 end
 
-local function SetPushedTexture(button)
+local function setPushedTexture(button)
 	if not button.SetPushedTexture then return end
 
 	button:SetPushedTexture("Interface\\Buttons\\ButtonHilight-Square")
@@ -162,14 +96,14 @@ local function SetPushedTexture(button)
 	button:GetPushedTexture():SetAllPoints()
 end
 
-local function SetHighlightTexture(button)
+local function setHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
 	button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
 	button:GetHighlightTexture():SetAllPoints()
 end
 
-local function SetCheckedTexture(button)
+local function setCheckedTexture(button)
 	if not button.SetCheckedTexture then return end
 
 	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
@@ -177,7 +111,7 @@ local function SetCheckedTexture(button)
 	button:GetCheckedTexture():SetAllPoints()
 end
 
-local function SkinButton(button)
+local function skinButton(button)
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
 	local bFOArrow = button.FlyoutArrow
@@ -192,7 +126,7 @@ local function SkinButton(button)
 	local bHighlightTexture = button.GetHighlightTexture and button:GetHighlightTexture()
 	local bCheckedTexture = button.GetCheckedTexture and button:GetCheckedTexture()
 
-	SetIcon(bIcon)
+	setIcon(bIcon)
 
 	if bFlash then
 		bFlash:SetColorTexture(M.COLORS.RED:GetRGBA(0.65))
@@ -213,9 +147,10 @@ local function SkinButton(button)
 		bHotKey:SetVertexColor(1, 1, 1, 1)
 		bHotKey:Show()
 
+		button.GetBindingKey = button_GetBindingKey
+
 		updateHotKey(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", updateHotKey)
-		button.GetBindingKey = getBindingKey
 	end
 
 	if bCount then
@@ -237,8 +172,8 @@ local function SkinButton(button)
 		bName:SetSize(0, 0)
 		bName:SetVertexColor(1, 1, 1, 1)
 
-		SetMacroTextHook(bName)
-		hooksecurefunc(bName, "SetText", SetMacroTextHook)
+		updateMacroText(bName)
+		hooksecurefunc(bName, "SetText", updateMacroText)
 	end
 
 	if bBorder then
@@ -261,7 +196,7 @@ local function SkinButton(button)
 
 	if bNormalTexture then
 		bNormalTexture:SetTexture(nil)
-		hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
+		hooksecurefunc(button, "SetNormalTexture", setNormalTextureHook)
 
 		local border = E:CreateBorder(button)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
@@ -271,176 +206,129 @@ local function SkinButton(button)
 	end
 
 	if bPushedTexture then
-		SetPushedTexture(button)
+		setPushedTexture(button)
 	end
 
 	if bHighlightTexture then
-		SetHighlightTexture(button)
+		setHighlightTexture(button)
 	end
 
 	if bCheckedTexture then
-		SetCheckedTexture(button)
-	end
-
-	handledButtons[button] = true
-end
-
--------------
--- METHODS --
--------------
-
-local function updateBorderColor(self)
-	local button = self:GetParent()
-
-	if button:IsEquipped() then
-		button.Border_:SetVertexColor(M.COLORS.GREEN:GetRGB())
-	else
-		button.Border_:SetVertexColor(1, 1, 1)
+		setCheckedTexture(button)
 	end
 end
 
-function E:SkinActionButton(button)
-	if not button or (button and button.__styled) then return end
+-- E:SkinActionButton
+do
+	local function updateBorderColor(self)
+		local button = self:GetParent()
 
-	SkinButton(button)
-
-	local bBorder = button.Border
-	local bFloatingBG = _G[button:GetName().."FloatingBG"]
-
-	if bBorder then
-		hooksecurefunc(bBorder, "Show", updateBorderColor)
-		hooksecurefunc(bBorder, "Hide", updateBorderColor)
+		if button:IsEquipped() then
+			button.Border_:SetVertexColor(M.COLORS.GREEN:GetRGB())
+		else
+			button.Border_:SetVertexColor(1, 1, 1)
+		end
 	end
 
-	if bFloatingBG then
-		bFloatingBG:SetAlpha(1)
-		bFloatingBG:SetAllPoints()
-		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
-	else
-		bFloatingBG = button:CreateTexture("$parentFloatingBG", "BACKGROUND", nil, -1)
-		bFloatingBG:SetAllPoints()
-		bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
+	function E:SkinActionButton(button)
+		if not button or button.__styled then return end
+
+		skinButton(button)
+
+		local bBorder = button.Border
+		local bFloatingBG = _G[button:GetName().."FloatingBG"]
+
+		if bBorder then
+			hooksecurefunc(bBorder, "Show", updateBorderColor)
+			hooksecurefunc(bBorder, "Hide", updateBorderColor)
+		end
+
+		if bFloatingBG then
+			bFloatingBG:SetAlpha(1)
+			bFloatingBG:SetAllPoints()
+			bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
+		else
+			bFloatingBG = button:CreateTexture("$parentFloatingBG", "BACKGROUND", nil, -1)
+			bFloatingBG:SetAllPoints()
+			bFloatingBG:SetColorTexture(0, 0, 0, 0.25)
+		end
+
+		button.__styled = true
 	end
-
-	button.__styled = true
-
-	actionButtons[button] = true
 end
 
 function E:SkinFlyoutButton(button)
-	if not button or (button and button.__styled) then return end
+	if not button or button.__styled then return end
 
 	self:SkinActionButton(button)
 
 	button.HotKey:Hide()
 end
 
-function E:SkinAuraButton(button)
-	if not button or (button and button.__styled) then return end
+-- E:SkinBagButton
+do
+	local function updateCountText(self, text)
+		if not text then return end
 
-	local name = button:GetName()
-	local bIcon = _G[name.."Icon"]
-	local bBorder = _G[name.."Border"]
-	local bCount = _G[name.."Count"]
-	local bDuration = _G[name.."Duration"]
-
-	if bIcon then
-		SetIcon(bIcon)
+		self:SetFormattedText("%s", s_gsub(text, "[ .()]", ""))
 	end
 
-	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
-	border:SetSize(16)
-	border:SetOffset(-4)
-	button.Border_ = border
+	local function updateBorderColor(self)
+		local button = self:GetParent()
 
-	if bBorder then
-		bBorder:SetTexture(nil)
-
-		if s_gsub(name, "%d", "") == "TempEnchant" then
-			button.Border_:SetVertexColor(M.COLORS.PURPLE:GetRGB())
-		else
-			hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
+		if self:IsShown() then
+			button.Border_:SetVertexColor(self:GetVertexColor())
 		end
 	end
 
-	if bCount then
-		bCount:SetFontObject("LSFont10_Outline")
-		bCount:SetJustifyH("RIGHT")
-		bCount:SetDrawLayer("OVERLAY", 2)
-		bCount:ClearAllPoints()
-		bCount:SetPoint("TOPLEFT", -2, 0)
-		bCount:SetPoint("TOPRIGHT", 2, 0)
-		bCount:SetWidth(button:GetWidth())
+	function E:SkinBagButton(button)
+		if not button or button.__styled then return end
+
+		skinButton(button)
+
+		local bCount = button.Count
+		local bIconBorder = button.IconBorder
+
+		if bCount then
+			updateCountText(bCount, bCount:GetText())
+			hooksecurefunc(bCount, "SetText", updateCountText)
+		end
+
+		if bIconBorder then
+			bIconBorder:SetTexture(nil)
+
+			hooksecurefunc(bIconBorder, "Hide", updateBorderColor)
+			hooksecurefunc(bIconBorder, "Show", updateBorderColor)
+			hooksecurefunc(bIconBorder, "SetVertexColor", updateBorderColor)
+		end
+
+		button.__styled = true
 	end
-
-	if bDuration then
-		bDuration:SetFontObject("LSFont10_Outline")
-		bDuration:SetJustifyH("CENTER")
-		bDuration:SetDrawLayer("OVERLAY", 2)
-		bDuration:ClearAllPoints()
-		bDuration:SetPoint("BOTTOMLEFT", -4, 0)
-		bDuration:SetPoint("BOTTOMRIGHT", 4, 0)
-		bDuration:SetWidth(button:GetWidth())
-
-		hooksecurefunc(bDuration, "SetFormattedText", SetFormattedTextHook)
-	end
-
-	button.__styled = true
-end
-
-function E:SkinBagButton(button)
-	if not button or (button and button.__styled) then return end
-
-	SkinButton(button)
-
-	local bCount = button.Count
-	local bIconBorder = button.IconBorder
-
-	if bCount then
-		SetTextHook(bCount, bCount:GetText())
-		hooksecurefunc(bCount, "SetText", SetTextHook)
-	end
-
-	if bIconBorder then
-		bIconBorder:SetTexture(nil)
-
-		hooksecurefunc(bIconBorder, "Hide", SetItemButtonBorderColor)
-		hooksecurefunc(bIconBorder, "Show", SetItemButtonBorderColor)
-		hooksecurefunc(bIconBorder, "SetVertexColor", SetItemButtonBorderColor)
-	end
-
-	button.__styled = true
 end
 
 function E:SkinExtraActionButton(button)
-	if not button or (button and button.__styled) then return end
+	if not button or button.__styled then return end
 
-	SkinButton(button)
-
-	E:ForceHide(button.style or button.Style)
+	skinButton(button)
 
 	local CD = button.cooldown or button.Cooldown
+	local bStyle = button.style or button.Style
 
 	if CD.SetTimerTextHeight then
 		CD:SetTimerTextHeight(14)
 	end
 
+	if bStyle then
+		E:ForceHide(bStyle)
+	end
+
 	button.__styled = true
-
-	actionButtons[button] = true
-end
-
-function E:SkinZoneAbilityButton(button)
-	if not button or (button and button.__styled) then return end
-
-	self:SkinExtraActionButton(button)
 end
 
 function E:SkinPetActionButton(button)
-	if not button or (button and button.__styled) then return end
+	if not button or button.__styled then return end
 
-	SkinButton(button)
+	skinButton(button)
 
 	local name = button:GetName()
 	local bCD = button.cooldown
@@ -467,14 +355,12 @@ function E:SkinPetActionButton(button)
 	end
 
 	button.__styled = true
-
-	actionButtons[button] = true
 end
 
 function E:SkinPetBattleButton(button)
-	if not button or (button and button.__styled) then return end
+	if not button or button.__styled then return end
 
-	SkinButton(button)
+	skinButton(button)
 
 	local bCDShadow = button.CooldownShadow
 	local bCDFlash = button.CooldownFlash
@@ -518,14 +404,12 @@ function E:SkinPetBattleButton(button)
 	end
 
 	button.__styled = true
-
-	actionButtons[button] = true
 end
 
 function E:SkinStanceButton(button)
-	if not button or (button and button.__styled) then return end
+	if not button or button.__styled then return end
 
-	SkinButton(button)
+	skinButton(button)
 
 	local bFloatingBG = _G[button:GetName().."FloatingBG"]
 
@@ -536,8 +420,6 @@ function E:SkinStanceButton(button)
 	end
 
 	button.__styled = true
-
-	actionButtons[button] = true
 end
 
 function E:SkinSquareButton(button)
@@ -558,23 +440,14 @@ function E:SkinSquareButton(button)
 end
 
 function E:SetIcon(...)
-	return SetIcon(...)
-end
-function E:SetPushedTexture(...)
-	SetPushedTexture(...)
-end
-function E:SetHighlightTexture(...)
-	SetHighlightTexture(...)
-end
-function E:SetCheckedTexture(...)
-	SetCheckedTexture(...)
+	return setIcon(...)
 end
 
 function E:CreateButton(parent, name, isSandwich, isSecure)
-	local button = _G.CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
+	local button = CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
-	button.Icon = SetIcon(button)
+	button.Icon = setIcon(button)
 
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
@@ -589,26 +462,26 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 
 	button.CD = E:CreateCooldown(button, 12)
 
-	SetPushedTexture(button)
-	SetHighlightTexture(button)
+	setHighlightTexture(button)
+	setPushedTexture(button)
 
 	if isSandwich then
-		local cover = _G.CreateFrame("Frame", nil, button)
-		cover:SetFrameLevel(button:GetFrameLevel() + 2)
-		cover:SetAllPoints()
-		button.Cover = cover
+		local fgParent = CreateFrame("Frame", nil, button)
+		fgParent:SetFrameLevel(button:GetFrameLevel() + 2)
+		fgParent:SetAllPoints()
+		button.FGParent = fgParent
 
-		count:SetParent(cover)
+		count:SetParent(fgParent)
 	end
 
 	return button
 end
 
 function E:CreateCheckButton(parent, name, isSandwich, isSecure)
-	local button = _G.CreateFrame("CheckButton", name, parent, isSecure and "SecureActionButtonTemplate")
+	local button = CreateFrame("CheckButton", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 
-	button.Icon = SetIcon(button)
+	button.Icon = setIcon(button)
 
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
@@ -623,34 +496,18 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 
 	button.CD = E:CreateCooldown(button, 12)
 
-	SetPushedTexture(button)
-	SetHighlightTexture(button)
-	SetCheckedTexture(button)
+	setCheckedTexture(button)
+	setHighlightTexture(button)
+	setPushedTexture(button)
 
 	if isSandwich then
-		local cover = _G.CreateFrame("Frame", nil, button)
-		cover:SetFrameLevel(button:GetFrameLevel() + 2)
-		cover:SetAllPoints()
-		button.Cover = cover
+		local fgParent = CreateFrame("Frame", nil, button)
+		fgParent:SetFrameLevel(button:GetFrameLevel() + 2)
+		fgParent:SetAllPoints()
+		button.FGParent = fgParent
 
-		count:SetParent(cover)
+		count:SetParent(fgParent)
 	end
 
 	return button
-end
-
-function E:UpdateButtonState(...)
-	-- Button_UpdateState(...)
-end
-
-function P:GetHandledButtons()
-	return handledButtons
-end
-
-function P:GetActiveButtons()
-	return activeButtons
-end
-
-function P:GetActionButtons()
-	return actionButtons
 end

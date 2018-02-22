@@ -181,7 +181,7 @@ function MODULE.Init()
 
 			button.Count:SetFontObject("LSFont12_Outline")
 
-			local auraType = button.Cover:CreateTexture(nil, "OVERLAY", nil, 3)
+			local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetSize(16, 16)
 			auraType:SetPoint("TOPLEFT", -2, 2)
 			button.AuraType = auraType
