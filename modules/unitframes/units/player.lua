@@ -347,23 +347,6 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health, true, "LSFont10_Shadow", text_parent)
 
-	-- -- damage absorb text
-	-- local damage_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LSFont10_Shadow")
-	-- damage_absorb:SetWordWrap(false)
-	-- damage_absorb:SetPoint("BOTTOMRIGHT", health, "RIGHT", -2, 1)
-
-	-- E:ResetFontStringHeight(damage_absorb)
-
-	-- frame:Tag(damage_absorb, "[ls:absorb:damage]")
-
-	-- -- heal absorb text
-	-- local heal_absorb = text_parent:CreateFontString(nil, "ARTWORK", "LSFont10_Shadow")
-	-- heal_absorb:SetPoint("TOPRIGHT", health, "RIGHT", -2, -1)
-
-	-- E:ResetFontStringHeight(heal_absorb)
-
-	-- frame:Tag(heal_absorb, "[ls:absorb:heal]")
-
 	-- power
 	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)

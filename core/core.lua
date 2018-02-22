@@ -24,6 +24,7 @@ _G[addonName] = {
 ------------
 -- EVENTS --
 ------------
+
 do
 	local oneTimeEvents = {ADDON_LOADED = false, PLAYER_LOGIN = false}
 	local registeredEvents = {}
