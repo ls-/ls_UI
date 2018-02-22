@@ -158,10 +158,7 @@ local function mover_OnDragStop(self)
 
 	self:StopMovingOrSizing()
 	self:SetScript("OnUpdate", nil)
-
-	mover_UpdatePosition(self)
-
-	self:SetUserPlaced(false)
+	self:UpdatePosition()
 end
 
 local function mover_OnClick(self)
@@ -210,7 +207,7 @@ local MOVER_BUTTONS = {
 local function button_OnClick(self)
 	local mover = self:GetParent()
 
-	mover_UpdatePosition(mover, self.offset_x, self.offset_y)
+	mover:UpdatePosition(self.offset_x, self.offset_y)
 
 	if GameTooltip:IsOwned(mover) then
 		mover_OnEnter(mover)
@@ -307,7 +304,7 @@ function E.EnableMover(_, object)
 	enabledMovers[name] = disabledMovers[name]
 	disabledMovers[name] = nil
 
-	mover_UpdatePosition(enabledMovers[name])
+	enabledMovers[name]:UpdatePosition()
 end
 
 function E.DisableMover(_, object)
