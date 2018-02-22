@@ -1,5 +1,4 @@
-local an, ns = ...
-local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
+local addonName, ns = ...
 
 -- Lua
 local _G = getfenv(0)
@@ -13,6 +12,15 @@ local type = _G.type
 local assert = _G.assert
 
 -- Mine
+local E, C, D, M, L, P = {}, {}, {}, {}, {}, {} -- engine, config, defaults, media, locales, private
+ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
+
+_G[addonName] = {
+	[1] = ns.E,
+	[2] = ns.M,
+	[3] = ns.C,
+}
+
 -----------
 -- DEBUG --
 -----------
@@ -32,7 +40,7 @@ local function argcheck(varNum, varValue, ...)
 
 	local varTypes = string.join("', '", ...)
 	local funcName = debugstack(2, 2, 0):match(": in function [`'<](.-)[`'>]")
-	funcName = funcName:match("("..an..".+)") or funcName
+	funcName = funcName:match("("..addonName..".+)") or funcName
 
 	error(string.format("Bad argument #%d to '%s' ('%s' expected, got '%s')", varNum, funcName, varTypes, type(varValue)), 4)
 end
@@ -250,11 +258,11 @@ end
 
 local onLoadTasks = {}
 
-_G.hooksecurefunc("LoadAddOn", function(addonName)
-	local tasks = onLoadTasks[addonName]
+_G.hooksecurefunc("LoadAddOn", function(name)
+	local tasks = onLoadTasks[name]
 
 	if tasks then
-		if not _G.IsAddOnLoaded(addonName) then return end
+		if not _G.IsAddOnLoaded(name) then return end
 
 		for i = 1, #tasks do
 			tasks[i]()
@@ -262,10 +270,10 @@ _G.hooksecurefunc("LoadAddOn", function(addonName)
 	end
 end)
 
-function E:AddOnLoadTask(addonName, func)
-	onLoadTasks[addonName] = onLoadTasks[addonName] or {}
+function E:AddOnLoadTask(name, func)
+	onLoadTasks[name] = onLoadTasks[name] or {}
 
-	table.insert(onLoadTasks[addonName], func)
+	table.insert(onLoadTasks[name], func)
 end
 
 -----------------

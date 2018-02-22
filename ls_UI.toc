@@ -7,9 +7,9 @@
 ## SavedVariables: LS_UI_GLOBAL_CONFIG
 
 embeds\_embeds.xml
-init.lua
 core\_core.xml
 locales\_locales.xml
+init.lua
 modules\_modules.xml
 config\_config.xml
 core\dev.xml

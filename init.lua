@@ -1,4 +1,5 @@
-local name, ns = ...
+local addonName, ns = ...
+local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
@@ -6,18 +7,6 @@ local type = _G.type
 local next = _G.next
 
 -- Mine
-local LibStub = _G.LibStub
-
-local E = LibStub("AceAddon-3.0"):NewAddon(name) -- engine
-local C, D, M, L, P = {}, {}, {}, {}, {} -- config, defaults, media, locales, private
-ns.E, ns.C, ns.D, ns.M, ns.L, ns.P = E, C, D, M, L, P
-
-_G[name] = {
-	[1] = ns.E,
-	[2] = ns.M,
-	[3] = ns.C,
-}
-
 local function cleanUpProfile()
 	if not C.db.profile.version or C.db.profile.version < 7030004 then
 		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
@@ -68,9 +57,9 @@ local function UpdateAll()
 	P:UpdateMoverConfig()
 end
 
+E:RegisterEvent("ADDON_LOADED", function(arg1)
+	if arg1 ~= addonName then return end
 
-
-function E.OnInitialize()
 	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
 	LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
 
@@ -104,4 +93,4 @@ function E.OnInitialize()
 
 	-- No one needs to see these
 	ns.C, ns.D, ns.L, ns.P = nil, nil, nil, nil
-end
+end)
