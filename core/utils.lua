@@ -49,18 +49,26 @@ function E:NumberToPerc(v1, v2)
 	return (v1 and v2) and v1 / v2 * 100 or nil
 end
 
-function E:NumberFormat(v, mod)
-	v = m_abs(v)
+do
+	local BreakUpLargeNumbers = BreakUpLargeNumbers
+	local SECOND_NUMBER_CAP_NO_SPACE = SECOND_NUMBER_CAP_NO_SPACE
+	local FIRST_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE
 
-	if v >= 1E6 then
-		return s_format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP_NO_SPACE, v / 1E6)
-	elseif v >= 1E4 then
-		return s_format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP_NO_SPACE, v / 1E3)
+function E:NumberFormat(v, mod)
+		if v >= 1E4 then
+			local i, f = m_modf(v / (v >= 1E6 and 1E6 or 1E4))
+
+			if mod and mod > 0 then
+				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+			else
+				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+			end
 	elseif v >= 0 then
 		return v
 	else
 		return 0
 	end
+end
 end
 
 do

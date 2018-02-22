@@ -7,22 +7,28 @@ local _G = getfenv(0)
 if _G.GetLocale() ~= "koKR" then return end
 
 -- Lua
-local math = _G.math
-local string = _G.string
-
--- Blizz
-local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
-local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
+local m_modf = _G.math.modf
+local s_format = _G.string.format
 
 -- Mine
-function E:NumberFormat(v, mod)
-	v = math.abs(v)
+do
+	local BreakUpLargeNumbers = BreakUpLargeNumbers
+	local SECOND_NUMBER_CAP_NO_SPACE = SECOND_NUMBER_CAP_NO_SPACE
+	local FIRST_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE
 
-	if v >= 1E8 then
-		return string.format("%."..(mod or 0).."f"..SECOND_NUMBER_CAP_NO_SPACE, v / 1E8)
-	elseif v >= 1E4 then
-		return string.format("%."..(mod or 0).."f"..FIRST_NUMBER_CAP_NO_SPACE, v / 1E4)
-	else
-		return v
+	function E:NumberFormat(v, mod)
+		if v >= 1E4 then
+			local i, f = m_modf(v / (v >= 1E8 and 1E8 or 1E4))
+
+			if mod and mod > 0 then
+				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+			else
+				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+			end
+		elseif v >= 0 then
+			return v
+		else
+			return 0
+		end
 	end
 end
