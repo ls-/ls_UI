@@ -57,6 +57,7 @@ end
 
 function UF:CreateCastbar(parent)
 	local holder = CreateFrame("Frame", "$parentCastbarHolder", parent)
+	holder._width = 0
 
 	local element = CreateFrame("StatusBar", nil, holder)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
