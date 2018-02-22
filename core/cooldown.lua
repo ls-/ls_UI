@@ -17,16 +17,13 @@ local function cooldown_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
-		local timer = self.Timer
-		local time, color, abbr = E:TimeFormat(timer.expire - GetTime())
+		local duration = self.Timer.expire - GetTime()
 
-		if time >= 0.1 then
-			timer:SetFormattedText("%s"..abbr.."|r", color, time)
+		if duration >= 0.1 then
+			local time, color = E:TimeFormat(duration)
+			self.Timer:SetFormattedText("|cff%s%s|r", color, time)
 		else
-			timer.expire = nil
-			timer:SetText("")
-			timer:Hide()
-
+			self.Timer:SetText("")
 			self:SetScript("OnUpdate", nil)
 		end
 
@@ -39,12 +36,11 @@ local function setCooldownHook(self, start, duration)
 
 	if start > 0 and duration > 1.5 then
 		timer.expire = start + duration
-		timer:Show()
 
 		self:SetScript("OnUpdate", cooldown_OnUpdate)
 	else
 		timer.expire = nil
-		timer:Hide()
+		timer:SetText("")
 
 		self:SetScript("OnUpdate", nil)
 	end

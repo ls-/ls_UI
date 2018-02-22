@@ -28,10 +28,9 @@ local function Button_OnUpdate(self, elapsed)
 	self.timeLeft = self.timeLeft - elapsed
 
 	if self.elapsed >= 0.1 then
-		local time, color, abbr = E:TimeFormat(self.timeLeft, true)
-
-		if time >= 0.1 then
-			self.Duration:SetFormattedText("%s"..abbr.."|r", color, time)
+		if self.timeLeft >= 0.1 then
+			local time, color = E:TimeFormat(self.timeLeft)
+			self.Duration:SetFormattedText("|cff%s%s|r", color, time)
 		else
 			self.Duration:SetText("")
 			self:SetScript("OnUpdate", nil)

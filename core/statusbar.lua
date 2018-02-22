@@ -4,10 +4,15 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 -- Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
+local m_max = _G.math.max
+local m_min = _G.math.min
 local next = _G.next
 local s_match = _G.string.match
 local s_split = _G.string.split
 local unpack = _G.unpack
+
+-- Blizz
+local FrameDeltaLerp = _G.FrameDeltaLerp
 
 -- Mine
 function E:HandleStatusBar(bar, isRecursive)
@@ -579,5 +584,76 @@ do
 			object.Loss:SetPoint("BOTTOMLEFT", object:GetStatusBarTexture(), "TOPLEFT", 0, 0)
 			object.Loss:SetPoint("BOTTOMRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 		end
+	end
+end
+
+do
+	local objects = {}
+
+	local function clamp(v, min, max)
+		return m_min(max or 1, m_max(min or 0, v))
+	end
+
+	local function isCloseEnough(new, target, range)
+		if range > 0 then
+			return m_abs((new - target) / range) <= 0.001
+		end
+
+		return true
+	end
+
+	C_Timer.NewTicker(0, function()
+		for object, target in next, objects do
+			local new = FrameDeltaLerp(object._value, target, 0.25)
+
+			if isCloseEnough(new, target, object._max - object._min) then
+				new = target
+				objects[object] = nil
+			end
+
+			object:SetValue_(new)
+			object._value = new
+		end
+	end)
+
+	local function bar_SetSmoothedValue(self, value)
+		self._value = self:GetValue()
+		objects[self] = clamp(value, self._min, self._max)
+	end
+
+	local function bar_SetSmoothedMinMaxValues(self, min, max)
+		self:SetMinMaxValues_(min, max)
+
+		if self._max and self._max ~= max then
+			local target = objects[self]
+			local cur = self._value
+			local ratio = 1
+
+			if max ~= 0 and self._max and self._max ~= 0 then
+				ratio = max / (self._max or max)
+			end
+
+			if target then
+				objects[self] = target * ratio
+			end
+
+			if cur then
+				self:SetValue_(cur * ratio)
+			end
+		end
+
+		self._min = min
+		self._max = max
+	end
+
+	function E:SmoothBar(bar)
+		-- reset the bar
+		bar:SetMinMaxValues(0, 1)
+		bar:SetValue(0)
+
+		bar.SetValue_ = bar.SetValue
+		bar.SetMinMaxValues_ = bar.SetMinMaxValues
+		bar.SetValue = bar_SetSmoothedValue
+		bar.SetMinMaxValues = bar_SetSmoothedMinMaxValues
 	end
 end
