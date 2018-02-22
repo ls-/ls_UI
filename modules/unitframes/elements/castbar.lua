@@ -7,51 +7,51 @@ local _G = getfenv(0)
 local m_abs = _G.math.abs
 
 -- Mine
-local function PostCastStart(castbar)
-	if castbar.notInterruptible then
-		castbar:SetStatusBarColor(M.COLORS.GRAY:GetRGB())
+local function element_PostCastStart(self)
+	if self.notInterruptible then
+		self:SetStatusBarColor(M.COLORS.GRAY:GetRGB())
 
-		if castbar.Icon then
-			castbar.Icon:SetDesaturated(true)
+		if self.Icon then
+			self.Icon:SetDesaturated(true)
 		end
 	else
-		castbar:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
+		self:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
 
-		if castbar.Icon then
-			castbar.Icon:SetDesaturated(false)
+		if self.Icon then
+			self.Icon:SetDesaturated(false)
 		end
 	end
 end
 
-local function PostCastFailed(castbar)
-	castbar:SetMinMaxValues(0, 1)
-	castbar:SetValue(1)
-	castbar:SetStatusBarColor(M.COLORS.RED:GetRGB())
+local function element_PostCastFailed(self)
+	self:SetMinMaxValues(0, 1)
+	self:SetValue(1)
+	self:SetStatusBarColor(M.COLORS.RED:GetRGB())
 
-	castbar.Time:SetText("")
+	self.Time:SetText("")
 end
 
-local function CustomTimeText(castbar, duration)
-	if castbar.max > 600 then
-		return castbar.Time:SetText("")
+local function element_CustomTimeText(self, duration)
+	if self.max > 600 then
+		return self.Time:SetText("")
 	end
 
-	if castbar.casting then
-		duration = castbar.max - duration
+	if self.casting then
+		duration = self.max - duration
 	end
 
-	castbar.Time:SetFormattedText("%.1f ", duration)
+	self.Time:SetFormattedText("%.1f ", duration)
 end
 
-local function CustomDelayText(castbar, duration)
-	if castbar.casting then
-		duration = castbar.max - duration
+local function element_CustomDelayText(self, duration)
+	if self.casting then
+		duration = self.max - duration
 	end
 
-	if castbar.casting then
-		castbar.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, m_abs(castbar.delay))
-	elseif castbar.channeling then
-		castbar.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, m_abs(castbar.delay))
+	if self.casting then
+		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, m_abs(self.delay))
+	elseif self.channeling then
+		self.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, m_abs(self.delay))
 	end
 end
 
@@ -110,12 +110,12 @@ function UF:CreateCastbar(parent)
 	element.Text = text
 
 	element.Holder = holder
-	element.PostCastStart = PostCastStart
-	element.PostChannelStart = PostCastStart
-	element.PostCastFailed = PostCastFailed
-	element.PostCastInterrupted = PostCastFailed
-	element.CustomTimeText = CustomTimeText
-	element.CustomDelayText = CustomDelayText
+	element.PostCastStart = element_PostCastStart
+	element.PostChannelStart = element_PostCastStart
+	element.PostCastFailed = element_PostCastFailed
+	element.PostCastInterrupted = element_PostCastFailed
+	element.CustomTimeText = element_CustomTimeText
+	element.CustomDelayText = element_CustomDelayText
 	element.timeToHold = 0.4
 
 	return element
