@@ -160,10 +160,17 @@ local filterFunctions = {
 		end
 
 		local isFriend = UnitIsFriend("player", unit)
-		local config = isFriend and element._config.filter.friendly or element._config.filter.enemy
-		config = aura.isDebuff and config.debuff or config.buff
+		local config = element._config and element._config.filter or nil
 
-		if not config then
+		if config then
+			config = isFriend and config.friendly or config.enemy
+
+			if config then
+				config = aura.isDebuff and config.debuff or config.buff
+			else
+				return
+			end
+		else
 			return
 		end
 
@@ -221,10 +228,17 @@ local filterFunctions = {
 	end,
 	boss = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
-		local config = isFriend and element._config.filter.friendly or element._config.filter.enemy
-		config = aura.isDebuff and config.debuff or config.buff
+		local config = element._config and element._config.filter or nil
 
-		if not config then
+		if config then
+			config = isFriend and config.friendly or config.enemy
+
+			if config then
+				config = aura.isDebuff and config.debuff or config.buff
+			else
+				return
+			end
+		else
 			return
 		end
 
