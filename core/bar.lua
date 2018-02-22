@@ -3,9 +3,10 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local m_min = _G.math.min
 local m_ceil = _G.math.ceil
 local m_floor = _G.math.floor
+local m_min = _G.math.min
+local next = _G.next
 
 -- Mine
 function E:UpdateBarLayout(bar)
