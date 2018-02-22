@@ -438,9 +438,10 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	border:SetOffset(-4)
 	button.Border = border
 
-	local count = E:CreateFontString(button, 10, nil, nil, true)
+	local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
+	count:SetWordWrap(false)
 	button.Count = count
 
 	button.CD = E:CreateCooldown(button, 12)
@@ -472,9 +473,10 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	border:SetOffset(-4)
 	button.Border = border
 
-	local count = E:CreateFontString(button, 10, nil, nil, true)
+	local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
+	count:SetWordWrap(false)
 	button.Count = count
 
 	button.CD = E:CreateCooldown(button, 12)

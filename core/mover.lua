@@ -3,8 +3,10 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
+local assert = _G.assert
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
+local s_format = _G.string.format
 local s_upper = _G.string.upper
 local type = _G.type
 local unpack = _G.unpack
@@ -295,11 +297,7 @@ function E.EnableMover(_, object)
 
 	local name = object.."Mover"
 
-	if enabledMovers[name] then return end
-
-	if not disabledMovers[name] then
-		P.print(name, "doesn't exist!")
-	end
+	if enabledMovers[name] or not disabledMovers[name] then return end
 
 	enabledMovers[name] = disabledMovers[name]
 	disabledMovers[name] = nil
@@ -314,11 +312,7 @@ function E.DisableMover(_, object)
 
 	local name = object.."Mover"
 
-	if disabledMovers[name] then return end
-
-	if not enabledMovers[name] then
-		P.print(name, "doesn't exist!")
-	end
+	if disabledMovers[name] or not enabledMovers[name] then return end
 
 	enabledMovers[name]:Hide()
 
@@ -338,7 +332,7 @@ function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
 
 	local objectName = object:GetName()
 
-	if not objectName then return P.print(object:GetDebugName()) end
+	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
 
 	local name = objectName.."Mover"
 	local iL, iR, iT, iB = ...

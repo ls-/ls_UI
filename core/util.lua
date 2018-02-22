@@ -37,7 +37,6 @@ local HOUR_ONELETTER_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
 local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
 local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
 local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-local argcheck = P.argcheck
 
 ------------
 -- TABLES --
@@ -453,10 +452,6 @@ function E:CreateColorTable(...)
 		end
 
 		params = temp
-	end
-
-	for i = 1, 9 do
-		argcheck(i, params[i], "number")
 	end
 
 	params.GetHEX = GetGradientHEX

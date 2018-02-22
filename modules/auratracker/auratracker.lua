@@ -142,9 +142,10 @@ function MODULE.Init()
 		local header = CreateFrame("Frame", "LSAuraTrackerHeader", UIParent)
 		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-		local label = E:CreateFontString(header, 12, nil, true)
-		label:SetPoint("LEFT", 2, 0)
+		local label = header:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 		label:SetAlpha(0.4)
+		label:SetPoint("LEFT", 2, 0)
+		label:SetWordWrap(false)
 		label:SetText(M.COLORS.BLIZZ_YELLOW:WrapText(L["AURA_TRACKER"]))
 		header.Text = label
 

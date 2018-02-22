@@ -134,9 +134,9 @@ end
 
 local function bar_UpdateVisibility(self)
 	if self._config.visible then
-		E:SetFrameState(self, "visibility", self._config.visibility or "show")
+		RegisterStateDriver(self, "visibility", self._config.visibility or "show")
 	else
-		E:SetFrameState(self, "visibility", "hide")
+		RegisterStateDriver(self, "visibility", "hide")
 	end
 end
 
