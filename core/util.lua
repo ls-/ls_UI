@@ -38,122 +38,6 @@ local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
 local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
 local INSPECT_ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 
-------------
--- TABLES --
-------------
-
-local function CopyTable(src, dest)
-	if type(dest) ~= "table" then
-		dest = {}
-	end
-
-	for k, v in next, src do
-		if type(v) == "table" then
-			dest[k] = CopyTable(v, dest[k])
-		else
-			dest[k] = v
-		end
-	end
-
-	return dest
-end
-
-local function UpdateTable(src, dest)
-	if type(dest) ~= "table" then
-		dest = {}
-	end
-
-	for k, v in next, src do
-		if type(v) == "table" then
-			dest[k] = UpdateTable(v, dest[k])
-		else
-			if dest[k] == nil then
-				dest[k] = v
-			end
-		end
-	end
-
-	return dest
-end
-
-local function DiffTable(src , dest)
-	if type(dest) ~= "table" then
-		return {}
-	end
-
-	if type(src) ~= "table" then
-		return dest
-	end
-
-	for k, v in next, dest do
-		if type(v) == "table" then
-			if not next(DiffTable(src[k], v)) then
-				dest[k] = nil
-			end
-		elseif v == src[k] then
-			dest[k] = nil
-		end
-	end
-
-	return dest
-end
-
-local function IsEqualTable(a, b)
-	for k, v in next, a do
-		if type(v) == "table" and type(b[k]) == "table" then
-			if not IsEqualTable(v, b[k]) then
-				return false
-			end
-		else
-			if v ~= b[k] then
-				return false
-			end
-		end
-	end
-
-	for k, v in next, b do
-		if type(v) == "table" and type(a[k]) == "table" then
-			if not IsEqualTable(v, a[k]) then
-				return false
-			end
-		else
-			if v ~= a[k] then
-				return false
-			end
-		end
-	end
-
-	return true
-end
-
-local function IsEqual(a, b)
-	if type(a) ~= type(b) then
-		return false
-	end
-
-	if type(a) == "table" then
-		return IsEqualTable(a, b)
-	else
-		return a == b
-	end
-end
-
-function E:CopyTable(...)
-	return CopyTable(...)
-end
-
-function E:UpdateTable(...)
-	return UpdateTable(...)
-end
-
-function E:DiffTable(...)
-	return DiffTable(...)
-end
-
-function E:IsEqualTable(...)
-	return IsEqual(...)
-end
-
 -----------
 -- MATHS --
 -----------
@@ -998,4 +882,79 @@ function E:CalcSegmentsSizes(size, num)
 	end
 
 	return result
+end
+
+function E:ForceShow(object)
+	if not object then return end
+
+	object:Show()
+
+	object.Hide = object.Show
+end
+
+function E:ForceHide(object, skipEvents, doNotHide)
+	if not object then return end
+
+	if not skipEvents and object.UnregisterAllEvents then
+		object:UnregisterAllEvents()
+
+		if object:GetName() then
+			UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
+		end
+	end
+
+	if not doNotHide then
+		object:Hide()
+	end
+
+	object:SetParent(self.HIDDEN_PARENT)
+end
+
+function E:GetCoords(object)
+	local p, anchor, rP, x, y = object:GetPoint()
+
+	if not x then
+		return p, anchor, rP, x, y
+	else
+		return p, anchor and anchor:GetName() or "UIParent", rP, self:Round(x), self:Round(y)
+	end
+end
+
+function E:GetScreenQuadrant(frame)
+	local x, y = frame:GetCenter()
+
+	if not (x and y) then
+		return "UNKNOWN"
+	end
+
+	local screenWidth = UIParent:GetRight()
+	local screenHeight = UIParent:GetTop()
+	local screenLeft = screenWidth / 3
+	local screenRight = screenWidth * 2 / 3
+
+	if y >= screenHeight * 2 / 3 then
+		if x <= screenLeft then
+			return "TOPLEFT"
+		elseif x >= screenRight then
+			return "TOPRIGHT"
+		else
+			return "TOP"
+		end
+	elseif y <= screenHeight / 3 then
+		if x <= screenLeft then
+			return "BOTTOMLEFT"
+		elseif x >= screenRight then
+			return "BOTTOMRIGHT"
+		else
+			return "BOTTOM"
+		end
+	else
+		if x <= screenLeft then
+			return "LEFT"
+		elseif x >= screenRight then
+			return "RIGHT"
+		else
+			return "CENTER"
+		end
+	end
 end
