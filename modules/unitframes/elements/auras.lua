@@ -288,7 +288,7 @@ local function updateAuraType(_, _, aura)
 end
 
 function UF:CreateAuras(parent, unit)
-	local element = _G.CreateFrame("Frame", nil, parent)
+	local element = CreateFrame("Frame", nil, parent)
 
 	element.spacing = 4
 	element.showDebuffType = true
