@@ -70,7 +70,11 @@ function UF:CreateTargetTargetFrame(frame)
 	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
-	E:CreateBorder(fg_parent, true)
+	local border = E:CreateBorder_new(fg_parent)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
+	border:SetSize(16)
+	border:SetOffset(-6)
+	frame.Border = border
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)

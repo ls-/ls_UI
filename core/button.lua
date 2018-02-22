@@ -60,12 +60,12 @@ local function SetItemButtonBorderColor(self)
 	local button = self:GetParent()
 
 	if self:IsShown() then
-		button:SetBorderColor(self:GetVertexColor())
+		button.Border_:SetVertexColor(self:GetVertexColor())
 	end
 end
 
 local function SetVertexColorHook(self, r, g, b)
-	self:GetParent():SetBorderColor(r, g, b)
+	self:GetParent().Border_:SetVertexColor(r, g, b)
 end
 
 local function SetTextHook(self, text)
@@ -263,7 +263,11 @@ local function SkinButton(button)
 		bNormalTexture:SetTexture(nil)
 		hooksecurefunc(button, "SetNormalTexture", SetNormalTextureHook)
 
-		E:CreateBorder(button)
+		local border = E:CreateBorder_new(button)
+		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+		border:SetSize(16)
+		border:SetOffset(-4)
+		button.Border_ = border
 	end
 
 	if bPushedTexture then
@@ -289,9 +293,9 @@ local function updateBorderColor(self)
 	local button = self:GetParent()
 
 	if button:IsEquipped() then
-		button:SetBorderColor(M.COLORS.GREEN:GetRGB())
+		button.Border_:SetVertexColor(M.COLORS.GREEN:GetRGB())
 	else
-		button:SetBorderColor(1, 1, 1)
+		button.Border_:SetVertexColor(1, 1, 1)
 	end
 end
 
@@ -344,13 +348,17 @@ function E:SkinAuraButton(button)
 		SetIcon(bIcon)
 	end
 
-	self:CreateBorder(button)
+	local border = E:CreateBorder_new(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	button.Border_ = border
 
 	if bBorder then
 		bBorder:SetTexture(nil)
 
 		if s_gsub(name, "%d", "") == "TempEnchant" then
-			button:SetBorderColor(M.COLORS.PURPLE:GetRGB())
+			button.Border_:SetVertexColor(M.COLORS.PURPLE:GetRGB())
 		else
 			hooksecurefunc(bBorder, "SetVertexColor", SetVertexColorHook)
 		end
@@ -568,7 +576,11 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 
 	button.Icon = SetIcon(button)
 
-	E:CreateBorder(button)
+	local border = E:CreateBorder_new(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	button.Border = border
 
 	local count = E:CreateFontString(button, 10, nil, nil, true)
 	count:SetJustifyH("RIGHT")
@@ -598,7 +610,11 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 
 	button.Icon = SetIcon(button)
 
-	E:CreateBorder(button)
+	local border = E:CreateBorder_new(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	button.Border = border
 
 	local count = E:CreateFontString(button, 10, nil, nil, true)
 	count:SetJustifyH("RIGHT")

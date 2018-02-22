@@ -76,9 +76,9 @@ local function UpdateAura(button, index)
 		if filter == "HARMFUL" then
 			local color = DEBUFF_TYPE_COLORS[debuffType] or DEBUFF_TYPE_COLORS.none
 
-			button:SetBorderColor(color.r, color.g, color.b)
+			button.Border:SetVertexColor(color.r, color.g, color.b)
 		else
-			button:SetBorderColor(1, 1, 1)
+			button.Border:SetVertexColor(1, 1, 1)
 		end
 	end
 end
@@ -112,7 +112,7 @@ local function UpdateTempEnchant(button, index)
 			button.Duration:SetText("")
 		end
 
-		button:SetBorderColor(M.COLORS.PURPLE:GetRGB())
+		button.Border:SetVertexColor(M.COLORS.PURPLE:GetRGB())
 	end
 end
 
@@ -161,7 +161,11 @@ local function HandleButton(button)
 
 	button.Icon = E:SetIcon(button, [[Interface\ICONS\INV_Misc_QuestionMark]])
 
-	E:CreateBorder(button)
+	local border = E:CreateBorder_new(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	button.Border = border
 
 	local duration = button:CreateFontString(nil, "ARTWORK", "LSFont12_Outline")
 	duration:SetJustifyV("CENTER")
@@ -290,7 +294,11 @@ local function CreateHeader(filter)
 
 			totem.Icon = E:SetIcon(icon)
 
-			E:CreateBorder(totem)
+			border = E:CreateBorder_new(totem)
+			border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+			border:SetSize(16)
+			border:SetOffset(-4)
+			totem.Border = border
 
 			cd:SetParent(totem)
 			cd:SetReverse(false)

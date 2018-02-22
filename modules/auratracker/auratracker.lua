@@ -108,11 +108,11 @@ local function Update(self)
 				if button.filter == "HARMFUL" then
 					local color = DEBUFF_TYPE_COLORS[aura.debuffType] or DEBUFF_TYPE_COLORS.none
 
-					button:SetBorderColor(color.r, color.g, color.b)
+					button.Border:SetVertexColor(color.r, color.g, color.b)
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 
 				else
-					button:SetBorderColor(1, 1, 1)
+					button.Border:SetVertexColor(1, 1, 1)
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
 				end
 

@@ -250,11 +250,16 @@ local function HandleMicroButton(button)
 
 	button:SetSize(MICRO_BUTTON_WIDTH, MICRO_BUTTON_HEIGHT)
 	button:SetHitRectInsets(0, 0, 0, 0)
-	E:CreateBorder(button)
 
 	SetNormalTexture(button)
 	SetPushedTexture(button)
 	SetDisabledTexture(button)
+
+	local border = E:CreateBorder_new(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	button.Border = border
 
 	if highlight then
 		highlight:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")

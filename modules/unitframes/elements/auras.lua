@@ -4,7 +4,6 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local b_lshift = _G.bit.lshift
 local next = _G.next
 
 -- Blizz
@@ -90,32 +89,26 @@ local BLACKLIST = {
 	[240989] = true, -- Heavily Augmented
 }
 
-local function SetVertexColorOverride(self, r, g, b)
-	local button = self:GetParent()
-
-	if not r then
-		button:SetBorderColor(1, 1, 1)
-	else
-		button:SetBorderColor(r, g, b)
-	end
+local function overlay_HideOverride(self)
+	self:SetVertexColor(1, 1, 1)
 end
 
-local function UpdateTooltip(self)
+local function button_UpdateTooltip(self)
 	_G.GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
-local function AuraButton_OnEnter(self)
+local function button_OnEnter(self)
 	if not self:IsVisible() then return end
 
 	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	self:UpdateTooltip()
 end
 
-local function AuraButton_OnLeave()
+local function button_OnLeave()
 	_G.GameTooltip:Hide()
 end
 
-local function CreateAuraIcon(element, index)
+local function createAuraIcon(element, index)
 	local button = E:CreateButton(element, "$parentAura"..index, true)
 
 	button.icon = button.Icon
@@ -135,12 +128,9 @@ local function CreateAuraIcon(element, index)
 	button:SetPushedTexture("")
 	button:SetHighlightTexture("")
 
-	local overlay = button:CreateTexture(nil, "OVERLAY")
-	overlay:Hide()
-	overlay.Hide = SetVertexColorOverride
-	overlay.SetVertexColor = SetVertexColorOverride
-	overlay.Show = function() return end
-	button.overlay = overlay
+	button.overlay = button.Border
+	button.overlay.Hide = overlay_HideOverride
+	button.Border = nil
 
 	local stealable = button.Cover:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
@@ -155,9 +145,9 @@ local function CreateAuraIcon(element, index)
 	auraType:SetPoint("TOPLEFT", -2, 2)
 	button.AuraType = auraType
 
-	button.UpdateTooltip = UpdateTooltip
-	button:SetScript("OnEnter", AuraButton_OnEnter)
-	button:SetScript("OnLeave", AuraButton_OnLeave)
+	button.UpdateTooltip = button_UpdateTooltip
+	button:SetScript("OnEnter", button_OnEnter)
+	button:SetScript("OnLeave", button_OnLeave)
 
 	return button
 end
@@ -289,7 +279,7 @@ function UF:CreateAuras(parent, unit)
 	element.spacing = 4
 	element.showDebuffType = true
 	element.showStealableBuffs = true
-	element.CreateIcon = CreateAuraIcon
+	element.CreateIcon = createAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = UpdateAuraType
 	element._config = C.db.profile.units[E.UI_LAYOUT][unit].auras
