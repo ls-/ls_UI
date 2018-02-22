@@ -422,23 +422,6 @@ function E:SkinStanceButton(button)
 	button.__styled = true
 end
 
-function E:SkinSquareButton(button)
-	local icon = button.icon
-	local texture = icon:GetTexture()
-	local highlight = button:GetHighlightTexture()
-
-	icon:SetSize(10, 10)
-
-	highlight:SetTexture(texture)
-	highlight:SetTexCoord(icon:GetTexCoord())
-	highlight:ClearAllPoints()
-	highlight:SetPoint("CENTER", 0, 0)
-	highlight:SetSize(10, 10)
-
-	button:SetNormalTexture("")
-	button:SetPushedTexture("")
-end
-
 function E:SetIcon(...)
 	return setIcon(...)
 end

@@ -145,7 +145,7 @@ function UF:UpdateCastbar(frame)
 			end
 		else
 			holder:ClearAllPoints()
-			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
 
 			if hasMover then
 				E:DisableMover(holder)

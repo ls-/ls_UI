@@ -19,21 +19,6 @@ function MODULE.SetUpVehicleSeatFrame()
 		VehicleSeatIndicator:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
 		E:CreateMover(VehicleSeatIndicator)
 
-		hooksecurefunc(VehicleSeatIndicator, "SetPoint", function(self, ...)
-			local _, parent = ...
-
-			if parent == "MinimapCluster" or parent == MinimapCluster then
-				local mover = E:GetMover(self)
-
-				if mover then
-					self:ClearAllPoints()
-					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", 0, 0)
-				end
-			end
-		end)
-
-		VehicleSeatIndicator:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", 0, 0)
-
 		isInit = true
 	end
 end

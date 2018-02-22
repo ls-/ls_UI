@@ -19,21 +19,6 @@ function MODULE.SetUpDurabilityFrame()
 		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
 		E:CreateMover(DurabilityFrame)
 
-		hooksecurefunc(DurabilityFrame, "SetPoint", function(self, ...)
-			local _, parent = ...
-
-			if parent == "MinimapCluster" or parent == MinimapCluster then
-				local mover = E:GetMover(self)
-
-				if mover then
-					self:ClearAllPoints()
-					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", 0, 0)
-				end
-			end
-		end)
-
-		DurabilityFrame:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", 0, 0)
-
 		isInit = true
 	end
 end
