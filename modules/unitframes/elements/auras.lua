@@ -153,14 +153,14 @@ local function createAuraIcon(element, index)
 end
 
 local filterFunctions = {
-	default = function(frame, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
 		if BLACKLIST[spellID] then
 			return false
 		end
 
 		local isFriend = UnitIsFriend("player", unit)
-		local config = isFriend and frame._config.filter.friendly or frame._config.filter.enemy
+		local config = isFriend and element._config.filter.friendly or element._config.filter.enemy
 		config = aura.isDebuff and config.debuff or config.buff
 
 		if not config then
@@ -219,9 +219,9 @@ local filterFunctions = {
 
 		return false
 	end,
-	boss = function(frame, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
+	boss = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
-		local config = isFriend and frame._config.filter.friendly or frame._config.filter.enemy
+		local config = isFriend and element._config.filter.friendly or element._config.filter.enemy
 		config = aura.isDebuff and config.debuff or config.buff
 
 		if not config then
@@ -265,7 +265,7 @@ local filterFunctions = {
 	end,
 }
 
-local function UpdateAuraType(_, _, aura)
+local function updateAuraType(_, _, aura)
 	if aura.isDebuff then
 		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 	else
@@ -281,7 +281,7 @@ function UF:CreateAuras(parent, unit)
 	element.showStealableBuffs = true
 	element.CreateIcon = createAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = UpdateAuraType
+	element.PostUpdateIcon = updateAuraType
 
 	return element
 end
