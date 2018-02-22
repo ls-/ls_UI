@@ -41,7 +41,7 @@ function MODULE.SetUpMirrorTimer()
 		end
 
 		for i in next, indices do
-			local timer = CreateFrame("Frame", "TimerTrackerTimer"..i, UIParent, "StartTimerBar")
+			local timer = CreateFrame("Frame", "TimerTrackerTimer"..i, TimerTracker, "StartTimerBar")
 			TimerTracker.timerList[i] = timer
 
 			E:HandleStatusBar(timer.bar)
