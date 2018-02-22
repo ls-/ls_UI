@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Include file="templates.xml"/>
 	<Script file="core.lua"/>
-	<Script file="util.lua"/>
+	<Script file="utils.lua"/>
 	<Script file="defaults.lua"/>
 	<Script file="constants.lua"/>
 	<Script file="animation.lua"/>
