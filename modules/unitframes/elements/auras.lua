@@ -282,7 +282,6 @@ function UF:CreateAuras(parent, unit)
 	element.CreateIcon = createAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = UpdateAuraType
-	element._config = C.db.profile.units[E.UI_LAYOUT][unit].auras
 
 	return element
 end
@@ -299,6 +298,7 @@ function UF:UpdateAuras(frame)
 	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
 	element["growth-y"] = config.y_growth
+	element._config = config
 
 	if config.y_growth == "UP" then
 		if config.x_growth == "RIGHT" then
