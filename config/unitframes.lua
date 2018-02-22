@@ -27,8 +27,8 @@ local points = {
 }
 
 local insets = {
-	[10] = "8",
-	[14] = "12",
+	[8] = "8",
+	[12] = "12",
 }
 
 local h_alignment = {

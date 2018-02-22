@@ -223,6 +223,34 @@ function E.OnInitialize()
 		C.db.profile.bars.micromenu.holder2 = nil
 	end
 
+	-- -> 70300.10
+	if not C.db.profile.version or C.db.profile.version < 7030010 then
+		for _, v in next, C.db.profile.units.ls do
+			if v.insets then
+				if v.insets.t_height == 14 or v.insets.t_height == 10 then
+					v.insets.t_height = v.insets.t_height - 2
+				end
+
+				if v.insets.b_height == 14 or v.insets.b_height == 10 then
+					v.insets.b_height = v.insets.b_height - 2
+				end
+			end
+		end
+
+		for _, v in next, C.db.profile.units.traditional do
+			if v.insets then
+				if v.insets.t_height == 14 or v.insets.t_height == 10 then
+					v.insets.t_height = v.insets.t_height - 2
+				end
+
+				if v.insets.b_height == 14 or v.insets.b_height == 10 then
+					v.insets.b_height = v.insets.b_height - 2
+				end
+			end
+		end
+	end
+end
+
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number

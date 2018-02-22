@@ -318,9 +318,9 @@ function UF:CreateHorizontalPlayerFrame(frame)
 				local sep = seps[i]
 
 				if i < slots then
-					sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, self._height - 2 / 4)
+					sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, (self:GetHeight() - 2) / 4)
 					sep:SetPoint("LEFT", sender[i], "RIGHT", -5, 0)
-					sep:SetSize(24 / 2, self._height - 2)
+					sep:SetSize(24 / 2, self:GetHeight() - 2)
 					sep:Show()
 				else
 					sep:Hide()

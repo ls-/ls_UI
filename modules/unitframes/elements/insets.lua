@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local function CollapseHoriz(self)
+local function inset_Collapse(self)
 	self:SetHeight(0.001)
 
 	self.Left:Hide()
@@ -22,7 +22,7 @@ local function CollapseHoriz(self)
 	end
 end
 
-local function ExpandHoriz(self)
+local function inset_Expand(self)
 	self:SetHeight(self._height)
 
 	self.Left:Show()
@@ -38,11 +38,11 @@ local function ExpandHoriz(self)
 	end
 end
 
-local function IsExpanded(self)
+local function inset_IsExpanded(self)
 	return self._expanded
 end
 
-local function SetVertexColor(self, r, g, b, a)
+local function inset_SetVertexColor(self, r, g, b, a)
 	self.Top.Left:SetVertexColor(r, g, b, a)
 	self.Top.Mid:SetVertexColor(r, g, b, a)
 	self.Top.Right:SetVertexColor(r, g, b, a)
@@ -95,9 +95,9 @@ function UF:CreateInsets(parent, texParent)
 	top_inset.Right = texture2
 	top_inset.Glass = texture4
 	top_inset.GlassShadow = texture5
-	top_inset.Expand = ExpandHoriz
-	top_inset.Collapse = CollapseHoriz
-	top_inset.IsExpanded = IsExpanded
+	top_inset.Expand = inset_Expand
+	top_inset.Collapse = inset_Collapse
+	top_inset.IsExpanded = inset_IsExpanded
 
 	top_inset:Collapse()
 
@@ -141,16 +141,16 @@ function UF:CreateInsets(parent, texParent)
 	bottom_inset.Right = texture2
 	bottom_inset.Glass = texture4
 	bottom_inset.GlassShadow = texture5
-	bottom_inset.Expand = ExpandHoriz
-	bottom_inset.Collapse = CollapseHoriz
-	bottom_inset.IsExpanded = IsExpanded
+	bottom_inset.Expand = inset_Expand
+	bottom_inset.Collapse = inset_Collapse
+	bottom_inset.IsExpanded = inset_IsExpanded
 
 	bottom_inset:Collapse()
 
 	return {
 		Top = top_inset,
 		Bottom = bottom_inset,
-		SetVertexColor = SetVertexColor
+		SetVertexColor = inset_SetVertexColor
 	}
 end
 
@@ -159,14 +159,14 @@ function UF:UpdateInsets(frame)
 	local top = frame.Insets.Top
 	local bottom = frame.Insets.Bottom
 
-	top._height = config.t_height
-	bottom._height = config.b_height
+	top._height = config.t_height + 2
+	bottom._height = config.b_height + 2
 
 	if top:IsExpanded() then
-		top:SetHeight(config.t_height)
+		top:SetHeight(top._height)
 	end
 
 	if bottom:IsExpanded() then
-		bottom:SetHeight(config.b_height)
+		bottom:SetHeight(bottom._height)
 	end
 end
