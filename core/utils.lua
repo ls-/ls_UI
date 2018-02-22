@@ -54,7 +54,7 @@ do
 	local SECOND_NUMBER_CAP_NO_SPACE = SECOND_NUMBER_CAP_NO_SPACE
 	local FIRST_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE
 
-function E:NumberFormat(v, mod)
+	function E:NumberFormat(v, mod)
 		if v >= 1E4 then
 			local i, f = m_modf(v / (v >= 1E6 and 1E6 or 1E4))
 
@@ -63,12 +63,12 @@ function E:NumberFormat(v, mod)
 			else
 				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
 			end
-	elseif v >= 0 then
-		return v
-	else
-		return 0
+		elseif v >= 0 then
+			return v
+		else
+			return 0
+		end
 	end
-end
 end
 
 do
@@ -78,8 +78,6 @@ do
 	local SECOND_ONELETTER_ABBR = SECOND_ONELETTER_ABBR:gsub("[ .]", "")
 
 	function E:TimeFormat(v)
-		v = m_abs(v)
-
 		if v >= 86400 then
 			return s_format(DAY_ONELETTER_ABBR, round(v / 86400)), "e5e5e5"
 		elseif v >= 3600 then
