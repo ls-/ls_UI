@@ -16,7 +16,7 @@ function UF:CreateThreatIndicator(parent, isTexture)
 	if isTexture then
 		element = parent:CreateTexture(nil, "BACKGROUND", nil, -7)
 	else
-		element = E:CreateBorder_new(parent)
+		element = E:CreateBorder(parent)
 		element:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick-glow", "BACKGROUND", -7)
 		element:SetSize(16)
 		element:SetOffset(-6)

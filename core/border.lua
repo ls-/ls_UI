@@ -84,7 +84,7 @@ local function border_IsObjectType()
 	return false
 end
 
-function E:CreateBorder_new(parent, drawLayer, drawSubLevel)
+function E:CreateBorder(parent, drawLayer, drawSubLevel)
 	local border = {
 		calcTile = true,
 		offset = 0,

@@ -97,7 +97,7 @@ function UF:CreateTargetFrame(frame)
 	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
-	local border = E:CreateBorder_new(fg_parent)
+	local border = E:CreateBorder(fg_parent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)

@@ -255,7 +255,7 @@ local function HandleMicroButton(button)
 	SetPushedTexture(button)
 	SetDisabledTexture(button)
 
-	local border = E:CreateBorder_new(button)
+	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
 	border:SetSize(16)
 	border:SetOffset(-4)

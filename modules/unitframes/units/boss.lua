@@ -107,7 +107,7 @@ function UF:CreateBossFrame(frame)
 
 	frame.Auras = self:CreateAuras(frame, "boss")
 
-	local border = E:CreateBorder_new(fg_parent)
+	local border = E:CreateBorder(fg_parent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
