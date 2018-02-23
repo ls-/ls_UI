@@ -7,10 +7,15 @@ local MINIMAP = P:GetModule("Minimap")
 local _G = getfenv(0)
 
 -- Mine
-local ZONE_TEXT_MODES = {
+local MODES = {
 	[0] = L["HIDE"],
 	[1] = L["MOUSEOVER_SHOW"],
 	[2] = L["ALWAYS_SHOW"],
+}
+
+local POSITIONS = {
+	[0] = L["TOP"],
+	[1] = L["BOTTOM"],
 }
 
 function CONFIG.CreateMinimapPanel(_, order)
@@ -38,7 +43,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			spacer_1 = {
 				order = 9,
@@ -46,19 +51,67 @@ function CONFIG.CreateMinimapPanel(_, order)
 				name = "",
 				width = "full",
 			},
-			zone_text = {
+			clock = {
 				order = 10,
-				type = "select",
-				name = L["ZONE_TEXT"],
-				disabled = function() return not MINIMAP:IsInit() end,
-				values = ZONE_TEXT_MODES,
-				get = function()
-					return C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode
+				type = "group",
+				name = L["CLOCK"],
+				guiInline = true,
+				get = function(info)
+					return C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]]
 				end,
-				set = function(_, value)
-					C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode = value
+				set = function(info, value)
+					C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]] = value
 					MINIMAP:Update()
 				end,
+				disabled = function() return not MINIMAP:IsInit() end,
+				args = {
+					mode = {
+						order = 1,
+						type = "select",
+						name = L["VISIBILITY"],
+						values = MODES,
+					},
+					position = {
+						order = 2,
+						type = "select",
+						name = L["POSITION"],
+						values = POSITIONS,
+					},
+				},
+			},
+			zone_text = {
+				order = 11,
+				type = "group",
+				name = L["ZONE_TEXT"],
+				guiInline = true,
+				get = function(info)
+					return C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]] = value
+					MINIMAP:Update()
+				end,
+				disabled = function() return not MINIMAP:IsInit() end,
+				args = {
+					mode = {
+						order = 1,
+						type = "select",
+						name = L["VISIBILITY"],
+						values = MODES,
+					},
+					position = {
+						order = 2,
+						type = "select",
+						name = L["POSITION"],
+						values = POSITIONS,
+					},
+					border = {
+						order = 3,
+						type = "toggle",
+						name = L["UNIT_FRAME_BORDER"],
+						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
+					},
+				},
 			},
 		},
 	}

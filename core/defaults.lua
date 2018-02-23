@@ -2061,15 +2061,28 @@ D.profile = {
 		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
+				position = 0, -- 0 - top, 1 - bottom
+				border = false,
+			},
+			clock = {
+				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				position = 0, -- 0 - top, 1 - bottom
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
 		traditional = {
 			zone_text = {
 				mode = 2,
+				position = 0, -- 0 - top, 1 - bottom
+				border = true,
+			},
+			clock = {
+				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				position = 1, -- 0 - top, 1 - bottom
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
+		buttons = {},
 	},
 	bars = {
 		mana_indicator = "button", -- hotkey
