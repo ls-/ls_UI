@@ -83,20 +83,6 @@ end)()
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
 L["ADVENTURE_JOURNAL_DESC"] = "Show raid lockout information."
-L["ALT_POWER_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:altpower:cur]|r - current value;
-- |cffffd200[ls:altpower:max]|r - maximum value;
-- |cffffd200[ls:altpower:perc]|r - percentage;
-- |cffffd200[ls:altpower:cur-max]|r - current value followed by maximum value, will display only current value if it's equal to max;
-- |cffffd200[ls:altpower:cur-color-max]|r - current value followed by coloured maximum value, will display only coloured current value if it's equal to max;
-- |cffffd200[ls:altpower:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
-- |cffffd200[ls:altpower:cur-color-perc]|r - current value followed by coloured percentage, will display only coloured current value if it's equal to max;
-- |cffffd200[ls:color:altpower]|r - colour.
-
-Use '||r' to terminate colour tags.
-]]
 L["ALWAYS_SHOW"] = "Always Show"
 L["ANCHOR"] = "Attach To"
 L["ASCENDING"] = "Ascending"
@@ -123,14 +109,6 @@ L["COMMAND_BAR"] = "Command Bar"
 L["COPY_FROM"] = "Copy From"
 L["COPY_FROM_DESC"] = "Select a unit to copy settings from."
 L["DAILY_QUEST_RESET_TIME"] = "Daily Quest Reset Time: |cffffffff%s|r"
-L["DAMAGE_ABSORB_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:damage]|r - current value;
-- |cffffd200[ls:color:absorb-damage]|r - colour.
-
-Use '||r' to terminate colour tags.
-]]
 L["DEBUFFS"] = "Debuffs"
 L["DESATURATE_ON_COOLDOWN"] = "Desaturate on Cooldown"
 L["DESCENDING"] = "Descending"
@@ -165,22 +143,6 @@ L["GM_FRAME"] = "Ticket Status Frame"
 L["GOLD"] = "Gold"
 L["GRID"] = "Button Grid"
 L["GROWTH_DIR"] = "Growth Direction"
-L["HEAL_ABSORB_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:heal]|r - current value;
-- |cffffd200[ls:color:absorb-heal]|r - colour.
-
-Use '||r' to terminate colour tags.
-]]
-L["HEALTH_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:health:cur]|r - current value;
-- |cffffd200[ls:health:perc]|r - percentage;
-- |cffffd200[ls:health:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
-- |cffffd200[ls:health:deficit]|r - deficit value.
-]]
 L["HEIGHT"] = "Height"
 L["HORIZ_GROWTH_DIR"] = "Horizontal Growth Direction"
 L["ICON"] = "Icon"
@@ -209,24 +171,9 @@ L["MEMORY_COLON"] = "Memory:"
 L["MICRO_BUTTONS"] = "Micro Buttons"
 L["MIN_ALPHA"] = "Min Alpha"
 L["MIRROR_TIMER"] = "Mirror Timers"
-L["MOUSEOVER_SHOW"] = "Show On Mouseover"
+L["MOUSEOVER_SHOW"] = "Show on Mouseover"
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset position."
 L["NAME"] = "Name"
-L["NAME_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:name]|r - full name;
-- |cffffd200[ls:name:5]|r - name shortened to 5 characters;
-- |cffffd200[ls:name:10]|r - name shortened to 10 characters;
-- |cffffd200[ls:name:15]|r - name shortened to 15 characters;
-- |cffffd200[ls:name:20]|r - name shortened to 20 characters;
-- |cffffd200[ls:server]|r - (*) sever tag for players from foreign realms;
-- |cffffd200[ls:color:class]|r - difficulty colour;
-- |cffffd200[ls:color:reaction]|r - reaction colour;
-- |cffffd200[ls:color:difficulty]|r - difficulty colour.
-
-Use '||r' to terminate colour tags.
-]]
 L["NO_SEPARATION"] = "No Separation"
 L["NPE_FRAME"] = "NPE Tutorial Frame"
 L["NUM_BUTTONS"] = "Number of Buttons"
@@ -246,21 +193,6 @@ L["PLAYER_TITLE"] = "Player Title"
 L["POINT"] = "Point"
 L["POINT_DESC"] = "Point of the object."
 L["POSITION"] = "Position"
-L["POWER_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:power:cur]|r - current value;
-- |cffffd200[ls:power:max]|r - maximum value;
-- |cffffd200[ls:power:perc]|r - percentage;
-- |cffffd200[ls:power:cur-max]|r - current value followed by maximum value, will display only current value if it's equal to max;
-- |cffffd200[ls:power:cur-color-max]|r - current value followed by coloured maximum value, will display only coloured current value if it's equal to max;
-- |cffffd200[ls:power:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
-- |cffffd200[ls:power:cur-color-perc]|r - current value followed by coloured percentage, will display only coloured current value if it's equal to max;
-- |cffffd200[ls:power:deficit]|r - deficit value;
-- |cffffd200[ls:color:power]|r - colour.
-
-Use '||r' to terminate colour tags.
-]]
 L["PREVIEW"] = "Preview"
 L["QUESTLOG_BUTTON_DESC"] = "Show daily quest reset timer."
 L["RCLICK_SELFCAST"] = "Right-Click Self-Cast"
@@ -270,9 +202,6 @@ L["RELOAD_NOW"] = "Reload Now"
 L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"] = "You've just changed a setting for this character only. Character only settings aren't unaffected by the changing of profiles. For the changes to take effect, you must reload UI."
 L["RELOAD_UI_WARNING"] = "Reload UI after you're done setting up the addon."
 L["RESTORE_DEFAULTS"] = "Restore Defaults"
-L["RESTRICTED_MODE_DESC"] = [[Enables artwork, animations and dynamic resizing for main action bar.
-
-|cffdc4436You WILL NOT be able to move micro menu, bags and main action bar in this mode!|r]]
 L["RESTRICTED_MODE"] = "Restricted Mode"
 L["RIGHT"] = "Right"
 L["RIGHT_DOWN"] = "Right and Down"
@@ -299,9 +228,6 @@ L["TOGGLE_ANCHORS"] = "Toggle Anchors"
 L["TOOLTIP_IDS"] = "Spell and Item IDs"
 L["TOOLTIPS"] = "Tooltips"
 L["TOTEMS"] = "Totems"
-L["UI_LAYOUT_DESC"] = [[Orbs: Player frame is an orb, pet and player frames use vertical bars, player frame and minimap are in the bottom section of the screen.
-
-Classic: All unit frames are rectangular and use horizontal bars, minimap is in the top right corner.]]
 L["UI_LAYOUT"] = "UI Layout"
 L["UNIT_BOSS"] = "Boss"
 L["UNIT_FOCUS_TOF"] = "Focus & ToF"
@@ -390,6 +316,82 @@ L["Y_OFFSET"] = "yOffset"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+-- Multi-lines
+L["ALT_POWER_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:altpower:cur]|r - current value;
+- |cffffd200[ls:altpower:max]|r - maximum value;
+- |cffffd200[ls:altpower:perc]|r - percentage;
+- |cffffd200[ls:altpower:cur-max]|r - current value followed by maximum value, will display only current value if it's equal to max;
+- |cffffd200[ls:altpower:cur-color-max]|r - current value followed by coloured maximum value, will display only coloured current value if it's equal to max;
+- |cffffd200[ls:altpower:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
+- |cffffd200[ls:altpower:cur-color-perc]|r - current value followed by coloured percentage, will display only coloured current value if it's equal to max;
+- |cffffd200[ls:color:altpower]|r - colour.
+
+Use '||r' to terminate colour tags.
+]]
+L["DAMAGE_ABSORB_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:absorb:damage]|r - current value;
+- |cffffd200[ls:color:absorb-damage]|r - colour.
+
+Use '||r' to terminate colour tags.
+]]
+L["HEAL_ABSORB_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:absorb:heal]|r - current value;
+- |cffffd200[ls:color:absorb-heal]|r - colour.
+
+Use '||r' to terminate colour tags.
+]]
+L["HEALTH_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:health:cur]|r - current value;
+- |cffffd200[ls:health:perc]|r - percentage;
+- |cffffd200[ls:health:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
+- |cffffd200[ls:health:deficit]|r - deficit value.
+]]
+L["NAME_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:name]|r - full name;
+- |cffffd200[ls:name:5]|r - name shortened to 5 characters;
+- |cffffd200[ls:name:10]|r - name shortened to 10 characters;
+- |cffffd200[ls:name:15]|r - name shortened to 15 characters;
+- |cffffd200[ls:name:20]|r - name shortened to 20 characters;
+- |cffffd200[ls:server]|r - (*) sever tag for players from foreign realms;
+- |cffffd200[ls:color:class]|r - difficulty colour;
+- |cffffd200[ls:color:reaction]|r - reaction colour;
+- |cffffd200[ls:color:difficulty]|r - difficulty colour.
+
+Use '||r' to terminate colour tags.
+]]
+L["POWER_TEXT_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
+
+Tags:
+- |cffffd200[ls:power:cur]|r - current value;
+- |cffffd200[ls:power:max]|r - maximum value;
+- |cffffd200[ls:power:perc]|r - percentage;
+- |cffffd200[ls:power:cur-max]|r - current value followed by maximum value, will display only current value if it's equal to max;
+- |cffffd200[ls:power:cur-color-max]|r - current value followed by coloured maximum value, will display only coloured current value if it's equal to max;
+- |cffffd200[ls:power:cur-perc]|r - current value followed by percentage, will display only current value if it's equal to max;
+- |cffffd200[ls:power:cur-color-perc]|r - current value followed by coloured percentage, will display only coloured current value if it's equal to max;
+- |cffffd200[ls:power:deficit]|r - deficit value;
+- |cffffd200[ls:color:power]|r - colour.
+
+Use '||r' to terminate colour tags.
+]]
+L["RESTRICTED_MODE_DESC"] = [[Enables artwork, animations and dynamic resizing for main action bar.
+
+|cffdc4436You WILL NOT be able to move micro menu, bags and main action bar in this mode!|r]]
+L["UI_LAYOUT_DESC"] = [[Orbs: Player frame is an orb, pet and player frames use vertical bars, player frame and minimap are in the bottom section of the screen.
+
+Classic: All unit frames are rectangular and use horizontal bars, minimap is in the top right corner.]]
 
 -- These rely on custom strings
 L["COLOR_CLASSIFICATION_DESC"] = (function()
