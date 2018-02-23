@@ -206,7 +206,7 @@ local function getOptionsTable_Bar(barID, order, name)
 			grid = {
 				order = 11,
 				type = "toggle",
-				name = L["GRID"],
+				name = L["BUTTON_GRID"],
 				get = function()
 					return C.db.profile.bars[barID].grid
 				end,

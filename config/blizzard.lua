@@ -174,7 +174,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 			player_alt_power_bar = {
 				order = 15,
 				type = "toggle",
-				name = L["PLAYER_ALT_POWER_BAR"],
+				name = L["ALT_POWER_BAR"],
 				disabled = function() return not BLIZZARD:IsInit() end,
 				get = function()
 					return C.db.char.blizzard.player_alt_power_bar.enabled

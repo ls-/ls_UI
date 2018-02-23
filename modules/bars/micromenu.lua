@@ -348,7 +348,7 @@ local function QuestLogButton_OnEnter(self)
 	Button_OnEnter(self)
 
 	if self:IsEnabled() then
-		GameTooltip:AddLine(L["DAILY_QUEST_RESET_TIME"]:format(SecondsToTime(GetQuestResetTime())))
+		GameTooltip:AddLine(L["DAILY_QUEST_RESET_TIME_TOOLTIP"]:format(SecondsToTime(GetQuestResetTime())))
 		GameTooltip:Show()
 	end
 end
@@ -414,7 +414,7 @@ local function AddCTARewardsToTooltip(role)
 		if v then
 			if not hasTitle then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(L["LFG_CALL_TO_ARMS"]:format(ROLE_NAMES[role]))
+				GameTooltip:AddLine(L["CALL_TO_ARMS_TOOLTIP"]:format(ROLE_NAMES[role]))
 
 				hasTitle = true
 			end
@@ -519,7 +519,7 @@ local function EJButton_OnEnter(self)
 					end
 
 					GameTooltip:AddDoubleLine(instanceName, "1 / 1", 1, 1, 1, M.COLORS.RED:GetRGB())
-					GameTooltip:AddDoubleLine(L["RAID_INFO_WORLD_BOSS"], SecondsToTime(instanceReset, true, nil, 3), r, g, b, r, g, b)
+					GameTooltip:AddDoubleLine(L["WORLD_BOSS"], SecondsToTime(instanceReset, true, nil, 3), r, g, b, r, g, b)
 				end
 			end
 		end
@@ -591,7 +591,7 @@ local function MainMenuButton_OnEnter(self)
 			GameTooltip:AddDoubleLine(L["TOTAL"], MEMORY_TEMPLATE:format(addons.mem_usage / 1024))
 		else
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(L["MAIN_MICRO_BUTTON_HOLD_TEXT"])
+			GameTooltip:AddLine(L["MAINMENU_BUTTON_HOLD_TOOLTIP"])
 		end
 
 		UpdatePerformanceIndicator(self)

@@ -521,7 +521,7 @@ function MODULE.Init()
 			reload_ui = {
 				order = 2,
 				type = "execute",
-				name = L["RELOADUI"],
+				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
 			},
 		},

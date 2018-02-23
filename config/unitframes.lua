@@ -65,10 +65,10 @@ end
 local function GetRegionAnchors(removeAnchors, addAnchors)
 	local temp = {
 		[""] = L["FRAME"],
-		["Health"] = L["UNIT_FRAME_HEALTH"],
-		["Health.Text"] = L["UNIT_FRAME_HEALTH_TEXT"],
-		["Power"] = L["UNIT_FRAME_POWER"],
-		["Power.Text"] = L["UNIT_FRAME_POWER_TEXT"],
+		["Health"] = L["HEALTH"],
+		["Health.Text"] = L["HEALTH_TEXT"],
+		["Power"] = L["POWER"],
+		["Power.Text"] = L["POWER_TEXT"],
 	}
 
 	if removeAnchors then
@@ -90,7 +90,7 @@ local function GetOptionsTable_Health(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_HEALTH"],
+		name = L["HEALTH"],
 		args = {
 			reset = {
 				type = "execute",
@@ -115,7 +115,7 @@ local function GetOptionsTable_Health(unit, order)
 					class = {
 						order = 1,
 						type = "toggle",
-						name = L["COLOR_CLASS"],
+						name = L["PLAYER_CLASS"],
 						desc = L["COLOR_CLASS_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].health.color.class
@@ -128,7 +128,7 @@ local function GetOptionsTable_Health(unit, order)
 					reaction = {
 						order = 2,
 						type = "toggle",
-						name = L["COLOR_REACTION"],
+						name = L["REACTION"],
 						desc = L["COLOR_REACTION_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].health.color.reaction
@@ -217,8 +217,8 @@ local function GetOptionsTable_Health(unit, order)
 						order = 10,
 						type = "input",
 						width = "full",
-						name = L["TEXT_FORMAT"],
-						desc = L["HEALTH_TEXT_FORMAT_DESC"],
+						name = L["FORMAT"],
+						desc = L["HEALTH_FORMAT_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].health.text.tag:gsub("\124", "\124\124")
 						end,
@@ -232,7 +232,7 @@ local function GetOptionsTable_Health(unit, order)
 			prediction = {
 				order = 12,
 				type = "group",
-				name = L["UNIT_FRAME_HEAL_PREDICTION"],
+				name = L["HEAL_PREDICTION"],
 				guiInline = true,
 				args = {
 					enabled = {
@@ -250,7 +250,7 @@ local function GetOptionsTable_Health(unit, order)
 					absorb_text = {
 						order = 2,
 						type = "group",
-						name = L["UNIT_FRAME_DAMAGE_ABSORB_TEXT"],
+						name = L["DAMAGE_ABSORB_TEXT"],
 						guiInline = true,
 						args = {
 							p = {
@@ -324,8 +324,8 @@ local function GetOptionsTable_Health(unit, order)
 								order = 9,
 								type = "input",
 								width = "full",
-								name = L["TEXT_FORMAT"],
-								desc = L["DAMAGE_ABSORB_TEXT_FORMAT_DESC"],
+								name = L["FORMAT"],
+								desc = L["DAMAGE_ABSORB_FORMAT_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
 								end,
@@ -339,7 +339,7 @@ local function GetOptionsTable_Health(unit, order)
 					heal_absorb_text = {
 						order = 2,
 						type = "group",
-						name = L["UNIT_FRAME_HEAL_ABSORB_TEXT"],
+						name = L["HEAL_ABSORB_TEXT"],
 						guiInline = true,
 						args = {
 							p = {
@@ -413,8 +413,8 @@ local function GetOptionsTable_Health(unit, order)
 								order = 9,
 								type = "input",
 								width = "full",
-								name = L["TEXT_FORMAT"],
-								desc = L["HEAL_ABSORB_TEXT_FORMAT_DESC"],
+								name = L["FORMAT"],
+								desc = L["HEAL_ABSORB_FORMAT_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].health.prediction.heal_abosrb_text.tag:gsub("\124", "\124\124")
 								end,
@@ -450,7 +450,7 @@ local function GetOptionsTable_Power(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_POWER"],
+		name = L["POWER"],
 		args = {
 			enabled = {
 				order = 1,
@@ -481,8 +481,8 @@ local function GetOptionsTable_Power(unit, order)
 			prediction = {
 				order = 10,
 				type = "toggle",
-				name = L["UNIT_FRAME_COST_PREDICTION"],
-				desc = L["UNIT_FRAME_COST_PREDICTION_DESC"],
+				name = L["COST_PREDICTION"],
+				desc = L["COST_PREDICTION_DESC"],
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].power.prediction.enabled
 				end,
@@ -568,8 +568,8 @@ local function GetOptionsTable_Power(unit, order)
 						order = 10,
 						type = "input",
 						width = "full",
-						name = L["TEXT_FORMAT"],
-						desc = L["POWER_TEXT_FORMAT_DESC"],
+						name = L["FORMAT"],
+						desc = L["POWER_FORMAT_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].power.text.tag:gsub("\124", "\124\124")
 						end,
@@ -594,7 +594,7 @@ local function GetOptionsTable_Castbar(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_CASTBAR"],
+		name = L["CASTBAR"],
 		get = function(info)
 			return C.db.profile.units[E.UI_LAYOUT][unit].castbar[info[#info]]
 		end,
@@ -646,12 +646,12 @@ local function GetOptionsTable_Castbar(unit, order)
 			latency = {
 				order = 13,
 				type = "toggle",
-				name = L["UNIT_FRAME_CASTBAR_LATENCY"],
+				name = L["LATENCY"],
 			},
 			icon = {
 				order = 20,
 				type = "group",
-				name = L["UNIT_FRAME_CASTBAR_ICON"],
+				name = L["ICON"],
 				guiInline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].castbar.icon[info[#info]]
@@ -698,7 +698,7 @@ local function GetOptionsTable_Name(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_NAME"],
+		name = L["NAME"],
 		args = {
 			reset = {
 				type = "execute",
@@ -892,8 +892,8 @@ local function GetOptionsTable_Name(unit, order)
 				order = 16,
 				type = "input",
 				width = "full",
-				name = L["TEXT_FORMAT"],
-				desc = L["NAME_TEXT_FORMAT_DESC"],
+				name = L["FORMAT"],
+				desc = L["NAME_FORMAT_DESC"],
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].name.tag:gsub("\124", "\124\124")
 				end,
@@ -924,7 +924,7 @@ local function GetOptionsTable_RaidIcon(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_RAID_ICON"],
+		name = L["RAID_ICON"],
 		args = {
 			enabled = {
 				order = 1,
@@ -1029,7 +1029,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_DISPELLABLE_DEBUFF_ICONS"],
+		name = L["DISPELLABLE_DEBUFF_ICONS"],
 		args = {
 			enabled = {
 				order = 1,
@@ -1142,7 +1142,7 @@ local function GetOptionsTable_Auras(unit, order)
 	local temp = {
 		order = order,
 		type = "group",
-		name = L["UNIT_FRAME_AURAS"],
+		name = L["AURAS"],
 		args = {
 			enabled = {
 				order = 1,
@@ -1311,8 +1311,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_boss = {
 								order = 1,
 								type = "toggle",
-								name = L["UNIT_FRAME_BOSS_BUFFS"],
-								desc = L["UNIT_FRAME_BOSS_BUFFS_DESC"],
+								name = L["BOSS_BUFFS"],
+								desc = L["BOSS_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.boss
 								end,
@@ -1324,8 +1324,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_mount = {
 								order = 2,
 								type = "toggle",
-								name = L["UNIT_FRAME_MOUNT_AURAS"],
-								desc = L["UNIT_FRAME_MOUNT_AURAS_DESC"],
+								name = L["MOUNT_AURAS"],
+								desc = L["MOUNT_AURAS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.mount
 								end,
@@ -1337,8 +1337,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_selfcast = {
 								order = 3,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_BUFFS"],
-								desc = L["UNIT_FRAME_SELF_BUFFS_DESC"],
+								name = L["SELF_BUFFS"],
+								desc = L["SELF_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast
 								end,
@@ -1350,8 +1350,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_selfcast_permanent = {
 								order = 4,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_BUFFS_PERMA"],
-								desc = L["UNIT_FRAME_SELF_BUFFS_PERMA_DESC"],
+								name = L["SELF_BUFFS_PERMA"],
+								desc = L["SELF_BUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast_permanent
 								end,
@@ -1366,8 +1366,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_player = {
 								order = 5,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_BUFFS"],
-								desc = L["UNIT_FRAME_CASTABLE_BUFFS_DESC"],
+								name = L["CASTABLE_BUFFS"],
+								desc = L["CASTABLE_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player
 								end,
@@ -1379,8 +1379,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_player_permanent = {
 								order = 6,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_BUFFS_PERMA"],
-								desc = L["UNIT_FRAME_CASTABLE_BUFFS_PERMA_DESC"],
+								name = L["CASTABLE_BUFFS_PERMA"],
+								desc = L["CASTABLE_BUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player_permanent
 								end,
@@ -1401,8 +1401,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_boss = {
 								order = 11,
 								type = "toggle",
-								name = L["UNIT_FRAME_BOSS_DEBUFFS"],
-								desc = L["UNIT_FRAME_BOSS_DEBUFFS_DESC"],
+								name = L["BOSS_DEBUFFS"],
+								desc = L["BOSS_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.boss
 								end,
@@ -1414,8 +1414,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_selfcast = {
 								order = 12,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_DEBUFFS"],
-								desc = L["UNIT_FRAME_SELF_DEBUFFS_DESC"],
+								name = L["SELF_DEBUFFS"],
+								desc = L["SELF_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast
 								end,
@@ -1427,8 +1427,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_selfcast_permanent = {
 								order = 13,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_DEBUFFS_PERMA"],
-								desc = L["UNIT_FRAME_SELF_DEBUFFS_PERMA_DESC"],
+								name = L["SELF_DEBUFFS_PERMA"],
+								desc = L["SELF_DEBUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast_permanent
 								end,
@@ -1443,8 +1443,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_player = {
 								order = 14,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_DEBUFFS"],
-								desc = L["UNIT_FRAME_CASTABLE_DEBUFFS_DESC"],
+								name = L["CASTABLE_DEBUFFS"],
+								desc = L["CASTABLE_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player
 								end,
@@ -1456,8 +1456,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_player_permanent = {
 								order = 15,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_DEBUFFS_PERMA"],
-								desc = L["UNIT_FRAME_CASTABLE_DEBUFFS_PERMA_DESC"],
+								name = L["CASTABLE_DEBUFFS_PERMA"],
+								desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player_permanent
 								end,
@@ -1472,8 +1472,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_dispellable = {
 								order = 16,
 								type = "toggle",
-								name = L["UNIT_FRAME_DISPELLABLE_DEBUFFS"],
-								desc = L["UNIT_FRAME_DISPELLABLE_DEBUFFS_DESC"],
+								name = L["DISPELLABLE_DEBUFFS"],
+								desc = L["DISPELLABLE_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.dispellable
 								end,
@@ -1493,8 +1493,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_boss = {
 								order = 1,
 								type = "toggle",
-								name = L["UNIT_FRAME_BOSS_BUFFS"],
-								desc = L["UNIT_FRAME_BOSS_BUFFS_DESC"],
+								name = L["BOSS_BUFFS"],
+								desc = L["BOSS_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.boss
 								end,
@@ -1506,8 +1506,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_mount = {
 								order = 2,
 								type = "toggle",
-								name = L["UNIT_FRAME_MOUNT_AURAS"],
-								desc = L["UNIT_FRAME_MOUNT_AURAS_DESC"],
+								name = L["MOUNT_AURAS"],
+								desc = L["MOUNT_AURAS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.mount
 								end,
@@ -1519,8 +1519,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_selfcast = {
 								order = 3,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_BUFFS"],
-								desc = L["UNIT_FRAME_SELF_BUFFS_DESC"],
+								name = L["SELF_BUFFS"],
+								desc = L["SELF_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast
 								end,
@@ -1532,8 +1532,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_selfcast_permanent = {
 								order = 4,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_BUFFS_PERMA"],
-								desc = L["UNIT_FRAME_SELF_BUFFS_PERMA_DESC"],
+								name = L["SELF_BUFFS_PERMA"],
+								desc = L["SELF_BUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast_permanent
 								end,
@@ -1548,8 +1548,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_player = {
 								order = 5,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_BUFFS"],
-								desc = L["UNIT_FRAME_CASTABLE_BUFFS_DESC"],
+								name = L["CASTABLE_BUFFS"],
+								desc = L["CASTABLE_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player
 								end,
@@ -1561,8 +1561,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_player_permanent = {
 								order = 6,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_BUFFS_PERMA"],
-								desc = L["UNIT_FRAME_CASTABLE_BUFFS_PERMA_DESC"],
+								name = L["CASTABLE_BUFFS_PERMA"],
+								desc = L["CASTABLE_BUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player_permanent
 								end,
@@ -1577,8 +1577,8 @@ local function GetOptionsTable_Auras(unit, order)
 							buff_dispellable = {
 								order = 7,
 								type = "toggle",
-								name = L["UNIT_FRAME_DISPELLABLE_BUFFS"],
-								desc = L["UNIT_FRAME_DISPELLABLE_BUFFS_DESC"],
+								name = L["DISPELLABLE_BUFFS"],
+								desc = L["DISPELLABLE_BUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.dispellable
 								end,
@@ -1596,8 +1596,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_boss = {
 								order = 11,
 								type = "toggle",
-								name = L["UNIT_FRAME_BOSS_DEBUFFS"],
-								desc = L["UNIT_FRAME_BOSS_DEBUFFS_DESC"],
+								name = L["BOSS_DEBUFFS"],
+								desc = L["BOSS_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.boss
 								end,
@@ -1609,8 +1609,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_selfcast = {
 								order = 12,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_DEBUFFS"],
-								desc = L["UNIT_FRAME_SELF_DEBUFFS_DESC"],
+								name = L["SELF_DEBUFFS"],
+								desc = L["SELF_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast
 								end,
@@ -1622,8 +1622,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_selfcast_permanent = {
 								order = 13,
 								type = "toggle",
-								name = L["UNIT_FRAME_SELF_DEBUFFS_PERMA"],
-								desc = L["UNIT_FRAME_SELF_DEBUFFS_PERMA_DESC"],
+								name = L["SELF_DEBUFFS_PERMA"],
+								desc = L["SELF_DEBUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast_permanent
 								end,
@@ -1638,8 +1638,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_player = {
 								order = 14,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_DEBUFFS"],
-								desc = L["UNIT_FRAME_CASTABLE_DEBUFFS_DESC"],
+								name = L["CASTABLE_DEBUFFS"],
+								desc = L["CASTABLE_DEBUFFS_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player
 								end,
@@ -1651,8 +1651,8 @@ local function GetOptionsTable_Auras(unit, order)
 							debuff_player_permanent = {
 								order = 15,
 								type = "toggle",
-								name = L["UNIT_FRAME_CASTABLE_DEBUFFS_PERMA"],
-								desc = L["UNIT_FRAME_CASTABLE_DEBUFFS_PERMA_DESC"],
+								name = L["CASTABLE_DEBUFFS_PERMA"],
+								desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
 								get = function()
 									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player_permanent
 								end,
@@ -1761,8 +1761,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			top_inset = {
 				order = 13,
 				type = "select",
-				name = L["UNIT_FRAME_TOP_INSET_SIZE"],
-				desc = L["UNIT_FRAME_TOP_INSET_SIZE_DESC"],
+				name = L["TOP_INSET_SIZE"],
+				desc = L["TOP_INSET_SIZE_DESC"],
 				values = insets,
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].insets.t_height
@@ -1775,8 +1775,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			bottom_inset = {
 				order = 14,
 				type = "select",
-				name = L["UNIT_FRAME_BOTTOM_INSET_SIZE"],
-				desc = L["UNIT_FRAME_BOTTOM_INSET_SIZE_DESC"],
+				name = L["BOTTOM_INSET_SIZE"],
+				desc = L["BOTTOM_INSET_SIZE_DESC"],
 				values = insets,
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].insets.b_height
@@ -1789,7 +1789,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			threat = {
 				order = 15,
 				type = "toggle",
-				name = L["UNIT_FRAME_THREAT_GLOW"],
+				name = L["THREAT_GLOW"],
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].threat.enabled
 				end,
@@ -1801,7 +1801,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			pvp = {
 				order = 16,
 				type = "toggle",
-				name = L["UNIT_FRAME_CASTBAR_PVP_ICON"],
+				name = L["PVP_ICON"],
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].pvp.enabled
 				end,
@@ -1813,13 +1813,13 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			border = {
 				order = 17,
 				type = "group",
-				name = L["UNIT_FRAME_BORDER_COLOR"],
+				name = L["BORDER_COLOR"],
 				guiInline = true,
 				args = {
 					player = {
 						order = 1,
 						type = "toggle",
-						name = L["COLOR_CLASS"],
+						name = L["PLAYER_CLASS"],
 						desc = L["COLOR_CLASS_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].class.player
@@ -1832,7 +1832,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					npc = {
 						order = 2,
 						type = "toggle",
-						name = L["COLOR_CLASSIFICATION"],
+						name = L["NPC_CLASSIFICATION"],
 						desc = L["COLOR_CLASSIFICATION_DESC"],
 						get = function()
 							return C.db.profile.units[E.UI_LAYOUT][unit].class.npc
@@ -1869,7 +1869,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		temp.args.class_power = {
 			order = 300,
 			type = "group",
-			name = L["UNIT_FRAME_CLASS_POWER"],
+			name = L["CLASS_POWER"],
 			args = {
 				enabled = {
 					order = 1,
@@ -1886,8 +1886,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				prediction = {
 					order = 2,
 					type = "toggle",
-					name = L["UNIT_FRAME_COST_PREDICTION"],
-					desc = L["UNIT_FRAME_COST_PREDICTION_DESC"],
+					name = L["COST_PREDICTION"],
+					desc = L["COST_PREDICTION_DESC"],
 					get = function()
 						return C.db.profile.units[E.UI_LAYOUT][unit].class_power.prediction.enabled
 					end,
@@ -1902,7 +1902,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		temp.args.combat_feedback = {
 			order = 900,
 			type = "group",
-			name = L["UNIT_FRAME_FCF"],
+			name = L["FCF"],
 			get = function(info)
 				return C.db.profile.units[E.UI_LAYOUT][unit].combat_feedback[info[#info]]
 			end,
@@ -1945,7 +1945,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				mode = {
 					order = 13,
 					type = "select",
-					name = L["UNIT_FRAME_FCF_MODE"],
+					name = L["MODE"],
 					values = fcf_modes,
 				},
 			},
@@ -2015,7 +2015,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		temp.args.alt_power = {
 			order = 300,
 			type = "group",
-			name = L["UNIT_FRAME_ALT_POWER"],
+			name = L["ALTERNATIVE_POWER"],
 			args = {
 				enabled = {
 					order = 1,
@@ -2067,7 +2067,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							order = 5,
 							type = "select",
 							name = L["ANCHOR"],
-							values = GetRegionAnchors(nil, {["AlternativePower"] = L["UNIT_FRAME_ALT_POWER"]}),
+							values = GetRegionAnchors(nil, {["AlternativePower"] = L["ALTERNATIVE_POWER"]}),
 							get = function()
 								return C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.point1.anchor
 							end,
@@ -2120,8 +2120,8 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 							order = 10,
 							type = "input",
 							width = "full",
-							name = L["TEXT_FORMAT"],
-							desc = L["ALT_POWER_TEXT_FORMAT_DESC"],
+							name = L["FORMAT"],
+							desc = L["ALT_POWER_FORMAT_DESC"],
 							get = function()
 								return C.db.profile.units[E.UI_LAYOUT][unit].alt_power.text.tag:gsub("\124", "\124\124")
 							end,
@@ -2208,32 +2208,32 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 					player = {
 						order = 1,
 						type = "toggle",
-						name = L["UNIT_PLAYER_PET"],
+						name = L["PLAYER_PET"],
 					},
 					target = {
 						order = 2,
 						type = "toggle",
-						name = L["UNIT_TARGET_TOT"],
+						name = L["TARGET_TOT"],
 					},
 					focus = {
 						order = 3,
 						type = "toggle",
-						name = L["UNIT_FOCUS_TOF"],
+						name = L["FOCUS_TOF"],
 					},
 					boss = {
 						order = 4,
 						type = "toggle",
-						name = L["UNIT_BOSS"],
+						name = L["BOSS"],
 					},
 				},
 			},
-			player = GetOptionsTable_UnitFrame("player", 3, L["UNIT_FRAME_PLAYER"]),
-			pet = GetOptionsTable_UnitFrame("pet", 4, L["UNIT_FRAME_PET"]),
-			target = GetOptionsTable_UnitFrame("target", 5, L["UNIT_FRAME_TARGET"]),
-			targettarget = GetOptionsTable_UnitFrame("targettarget", 6, L["UNIT_FRAME_TOT"]),
-			focus = GetOptionsTable_UnitFrame("focus", 7, L["UNIT_FRAME_FOCUS"]),
-			focustarget = GetOptionsTable_UnitFrame("focustarget", 8, L["UNIT_FRAME_TOF"]),
-			boss = GetOptionsTable_UnitFrame("boss", 9, L["UNIT_FRAME_BOSS"]),
+			player = GetOptionsTable_UnitFrame("player", 3, L["PLAYER_FRAME"]),
+			pet = GetOptionsTable_UnitFrame("pet", 4, L["PET_FRAME"]),
+			target = GetOptionsTable_UnitFrame("target", 5, L["TARGET_FRAME"]),
+			targettarget = GetOptionsTable_UnitFrame("targettarget", 6, L["TOT_FRAME"]),
+			focus = GetOptionsTable_UnitFrame("focus", 7, L["FOCUS_FRAME"]),
+			focustarget = GetOptionsTable_UnitFrame("focustarget", 8, L["TOF_FRAME"]),
+			boss = GetOptionsTable_UnitFrame("boss", 9, L["BOSS_FRAMES"]),
 		},
 	}
 end

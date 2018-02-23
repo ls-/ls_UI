@@ -12,9 +12,9 @@ local s_format = _G.string.format
 
 -- Mine
 do
-	local BreakUpLargeNumbers = BreakUpLargeNumbers
-	local SECOND_NUMBER_CAP_NO_SPACE = SECOND_NUMBER_CAP_NO_SPACE
-	local FIRST_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE
+	local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
+	local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
+	local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 
 	function E:NumberFormat(v, mod)
 		if v >= 1E4 then

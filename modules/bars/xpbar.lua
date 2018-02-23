@@ -78,7 +78,7 @@ local function bar_UpdateSegments(self)
 					self[index].tooltipInfo = {
 						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
 						line1 = {
-							text = L["XP_BAR_LEVEL_TOOLTIP"]:format(level)
+							text = L["LEVEL_TOOLTIP"]:format(level)
 						},
 					}
 
@@ -106,10 +106,10 @@ local function bar_UpdateSegments(self)
 			self[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
 				line1 = {
-					text = L["XP_BAR_ARTIFACT_NUM_UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points)
+					text = L["UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points)
 				},
 				line2 = {
-					text = L["XP_BAR_ARTIFACT_NUM_PURCHASED_RANKS_TOOLTIP"]:format(pointsSpent)
+					text = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent)
 				},
 			}
 
@@ -143,13 +143,13 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
 					line1 = {
-						text = L["XP_BAR_LEVEL_TOOLTIP"]:format(UnitLevel("player"))
+						text = L["LEVEL_TOOLTIP"]:format(UnitLevel("player"))
 					},
 				}
 
 				if bonus and bonus > 0 then
 					self[index].tooltipInfo.line2 = {
-						text = L["XP_BAR_XP_BONUS_TOOLTIP"]:format(bonus)
+						text = L["BONUS_XP_TOOLTIP"]:format(bonus)
 					}
 				else
 					self[index].tooltipInfo.line2 = nil
@@ -186,16 +186,16 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo = {
 					header = L["HONOR"],
 					line1 = {
-						text = L["XP_BAR_HONOR_TOOLTIP"]:format(UnitHonorLevel("player")),
+						text = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 					},
 					line2 = {
-						text = L["XP_BAR_PRESTIGE_LEVEL_TOOLTIP"]:format(UnitPrestige("player"))
+						text = L["PRESTIGE_LEVEL_TOOLTIP"]:format(UnitPrestige("player"))
 					},
 				}
 
 				if bonus and bonus > 0 then
 					self[index].tooltipInfo.line3 = {
-						text = L["XP_BAR_HONOR_BONUS_TOOLTIP"]:format(bonus)
+						text = L["BONUS_HONOR_TOOLTIP"]:format(bonus)
 					}
 				else
 					self[index].tooltipInfo.line3 = nil

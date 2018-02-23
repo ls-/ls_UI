@@ -108,7 +108,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 					border = {
 						order = 3,
 						type = "toggle",
-						name = L["UNIT_FRAME_BORDER"],
+						name = L["BORDER"],
 						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
 					},
 				},
