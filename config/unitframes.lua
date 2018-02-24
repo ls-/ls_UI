@@ -1524,8 +1524,7 @@ local function GetOptionsTable_Auras(unit, order)
 
 	if unit == "player" then
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff, {player = true, player_permanent = true})
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff, {player = true, player_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly, {player = true, player_permanent = true})
 			UNITFRAMES:UpdateUnitFrame(unit)
 		end
 		temp.args.filter.args.friendly.args.buff.args.player = nil
@@ -1537,10 +1536,8 @@ local function GetOptionsTable_Auras(unit, order)
 		temp.args.filter.args.enemy = nil
 	elseif unit == "boss" then
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff, {mount = true, selfcast = true, selfcast_permanent = true})
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff, {selfcast = true, selfcast_permanent = true})
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff, {mount = true, selfcast = true, selfcast_permanent = true})
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff, {selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly, {mount = true, selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy, {mount = true, selfcast = true, selfcast_permanent = true})
 			UNITFRAMES:UpdateUnitFrame(unit)
 		end
 		temp.args.filter.args.friendly.args.buff.args.mount = nil
