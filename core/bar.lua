@@ -15,6 +15,10 @@ function E:UpdateBarLayout(bar)
 	local yDir = config.y_growth == "UP" and 1 or -1
 	local level = bar:GetFrameLevel() + 1
 	local num = m_min(config.num, #bar._buttons)
+	local width = config.width or config.size
+	local height = config.height or config.size
+	local wMult = m_min(num, config.per_row)
+	local hMult = m_ceil(num / config.per_row)
 	local initialAnchor
 
 	if config.y_growth == "UP" then
@@ -31,7 +35,7 @@ function E:UpdateBarLayout(bar)
 		end
 	end
 
-	bar:SetSize(m_min(num, config.per_row) * (config.size + config.spacing), m_ceil(num / config.per_row) * (config.size + config.spacing))
+	bar:SetSize(wMult * width + (wMult - 1) * config.spacing + 4, hMult * height + (hMult - 1) * config.spacing + 4)
 
 	if bar:GetName() and E:HasMover(bar) then
 		E:UpdateMoverSize(bar)
@@ -46,8 +50,8 @@ function E:UpdateBarLayout(bar)
 
 			button:SetParent(button._parent)
 			button:SetFrameLevel(level)
-			button:SetSize(config.size, config.size)
-			button:SetPoint(initialAnchor, bar, initialAnchor, xDir * ((0.5 + col) * config.spacing + col * config.size), yDir * ((0.5 + row) * config.spacing + row * config.size))
+			button:SetSize(width, height)
+			button:SetPoint(initialAnchor, bar, initialAnchor, xDir * (2 + col * (config.spacing + width)), yDir * (2 + row * (config.spacing + height)))
 		else
 			button:SetParent(E.HIDDEN_PARENT)
 		end
