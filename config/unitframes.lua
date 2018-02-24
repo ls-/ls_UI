@@ -1143,25 +1143,38 @@ local function GetOptionsTable_Auras(unit, order)
 		order = order,
 		type = "group",
 		name = L["AURAS"],
+		get = function(info)
+			return C.db.profile.units[E.UI_LAYOUT][unit].auras[info[#info]]
+		end,
+		set = function(info, value)
+			if C.db.profile.units[E.UI_LAYOUT][unit].auras[info[#info]] ~= value then
+				C.db.profile.units[E.UI_LAYOUT][unit].auras[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit)
+			end
+		end,
 		args = {
 			enabled = {
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.enabled
-				end,
+			},
+			copy = {
+				order = 2,
+				type = "select",
+				name = L["COPY_FROM"],
+				desc = L["COPY_FROM_DESC"],
+				get = function() end,
 				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.enabled = value
+					CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {filter = true})
 					UNITFRAMES:UpdateUnitFrame(unit)
-				end
+				end,
 			},
 			reset = {
 				type = "execute",
-				order = 2,
+				order = 3,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {point = true})
+					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras, C.db.profile.units[E.UI_LAYOUT][unit].auras, {point = true, filter = true})
 					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
@@ -1170,31 +1183,17 @@ local function GetOptionsTable_Auras(unit, order)
 				type = "description",
 				name = "",
 			},
-			num_rows = {
+			rows = {
 				order = 10,
 				type = "range",
 				name = L["NUM_ROWS"],
 				min = 1, max = 4, step = 1,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.rows
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.rows = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
 			},
 			per_row = {
 				order = 11,
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 10, step = 1,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.per_row
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.per_row = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
 			},
 			size_override = {
 				order = 12,
@@ -1202,13 +1201,6 @@ local function GetOptionsTable_Auras(unit, order)
 				name = L["SIZE_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
 				min = 0, max = 48, step = 1,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.size_override
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.size_override = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
 			},
 			growth_dir = {
 				order = 13,
@@ -1228,441 +1220,292 @@ local function GetOptionsTable_Auras(unit, order)
 				type = "toggle",
 				name = L["DISABLE_MOUSE"],
 				desc = L["DISABLE_MOUSE_DESC"],
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.disable_mouse
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.disable_mouse = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end
 			},
-			spacer_2 = {
+			point = {
 				order = 20,
-				type = "description",
+				type = "group",
 				name = "",
-				width = "full",
-			},
-			p = {
-				order = 21,
-				type = "select",
-				name = L["POINT"],
-				desc = L["POINT_DESC"],
-				values = GetPoints(),
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.p
+				inline  = true,
+				get = function(info)
+					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1[info[#info]]
 				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.p = value
-					UNITFRAMES:UpdateUnitFrame(unit)
+				set = function(info, value)
+					if C.db.profile.units[E.UI_LAYOUT][unit].auras.point1[info[#info]] ~= value then
+						C.db.profile.units[E.UI_LAYOUT][unit].auras.point1[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit)
+					end
 				end,
-			},
-			rP = {
-				order = 22,
-				type = "select",
-				name = L["RELATIVE_POINT"],
-				desc = L["RELATIVE_POINT_DESC"],
-				values = GetPoints(),
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.rP
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.rP = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
-			},
-			x = {
-				order = 23,
-				type = "range",
-				name = L["X_OFFSET"],
-				min = -128, max = 128, step = 1,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.x
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.x = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
-			},
-			y = {
-				order = 24,
-				type = "range",
-				name = L["Y_OFFSET"],
-				min = -128, max = 128, step = 1,
-				get = function()
-					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.y
-				end,
-				set = function(_, value)
-					C.db.profile.units[E.UI_LAYOUT][unit].auras.point1.y = value
-					UNITFRAMES:UpdateUnitFrame(unit)
-				end,
+				args = {
+					p = {
+						order = 1,
+						type = "select",
+						name = L["POINT"],
+						desc = L["POINT_DESC"],
+						values = GetPoints(),
+					},
+					rP = {
+						order = 2,
+						type = "select",
+						name = L["RELATIVE_POINT"],
+						desc = L["RELATIVE_POINT_DESC"],
+						values = GetPoints(),
+					},
+					x = {
+						order = 3,
+						type = "range",
+						name = L["X_OFFSET"],
+						min = -128, max = 128, step = 1,
+					},
+					y = {
+						order = 4,
+						type = "range",
+						name = L["Y_OFFSET"],
+						min = -128, max = 128, step = 1,
+					},
+				},
 			},
 			filter = {
 				order = 30,
 				type = "group",
 				name = L["FILTERS"],
-				guiInline = true,
+				inline  = true,
+				get = function(info)
+					return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.units[E.UI_LAYOUT][unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit)
+				end,
 				args = {
-					friendly_units = {
+					copy = {
 						order = 1,
+						type = "select",
+						name = L["COPY_FROM"],
+						desc = L["COPY_FROM_DESC"],
+						get = function() end,
+					},
+					reset = {
+						type = "execute",
+						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit].auras.filter, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter)
+							UNITFRAMES:UpdateUnitFrame(unit)
+						end,
+					},
+					friendly = {
+						order = 2,
 						type = "group",
+						inline  = true,
 						name = M.COLORS.GREEN:WrapText(L["FRIENDLY_UNITS"]),
-						guiInline = true,
 						args = {
-							buff_boss = {
+							buff = {
 								order = 1,
-								type = "toggle",
-								name = L["BOSS_BUFFS"],
-								desc = L["BOSS_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.boss
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.boss = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_mount = {
-								order = 2,
-								type = "toggle",
-								name = L["MOUNT_AURAS"],
-								desc = L["MOUNT_AURAS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.mount
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.mount = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_selfcast = {
-								order = 3,
-								type = "toggle",
-								name = L["SELF_BUFFS"],
-								desc = L["SELF_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_selfcast_permanent = {
-								order = 4,
-								type = "toggle",
-								name = L["SELF_BUFFS_PERMA"],
-								desc = L["SELF_BUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast
-								end,
-							},
-							buff_player = {
-								order = 5,
-								type = "toggle",
-								name = L["CASTABLE_BUFFS"],
-								desc = L["CASTABLE_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_player_permanent = {
-								order = 6,
-								type = "toggle",
-								name = L["CASTABLE_BUFFS_PERMA"],
-								desc = L["CASTABLE_BUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player
-								end,
-							},
-							spacer_1 = {
-								order = 10,
-								type = "description",
+								type = "group",
 								name = "",
-								width = "full",
+								inline = true,
+								args = {
+									boss = {
+										order = 1,
+										type = "toggle",
+										name = L["BOSS_BUFFS"],
+										desc = L["BOSS_BUFFS_DESC"],
+									},
+									mount = {
+										order = 2,
+										type = "toggle",
+										name = L["MOUNT_AURAS"],
+										desc = L["MOUNT_AURAS_DESC"],
+									},
+									selfcast = {
+										order = 3,
+										type = "toggle",
+										name = L["SELF_BUFFS"],
+										desc = L["SELF_BUFFS_DESC"],
+									},
+									selfcast_permanent = {
+										order = 4,
+										type = "toggle",
+										name = L["SELF_BUFFS_PERMA"],
+										desc = L["SELF_BUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.selfcast
+										end,
+									},
+									player = {
+										order = 5,
+										type = "toggle",
+										name = L["CASTABLE_BUFFS"],
+										desc = L["CASTABLE_BUFFS_DESC"],
+									},
+									player_permanent = {
+										order = 6,
+										type = "toggle",
+										name = L["CASTABLE_BUFFS_PERMA"],
+										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff.player
+										end,
+									},
+								},
 							},
-							debuff_boss = {
-								order = 11,
-								type = "toggle",
-								name = L["BOSS_DEBUFFS"],
-								desc = L["BOSS_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.boss
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.boss = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_selfcast = {
-								order = 12,
-								type = "toggle",
-								name = L["SELF_DEBUFFS"],
-								desc = L["SELF_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_selfcast_permanent = {
-								order = 13,
-								type = "toggle",
-								name = L["SELF_DEBUFFS_PERMA"],
-								desc = L["SELF_DEBUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast
-								end,
-							},
-							debuff_player = {
-								order = 14,
-								type = "toggle",
-								name = L["CASTABLE_DEBUFFS"],
-								desc = L["CASTABLE_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_player_permanent = {
-								order = 15,
-								type = "toggle",
-								name = L["CASTABLE_DEBUFFS_PERMA"],
-								desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player
-								end,
-							},
-							debuff_dispellable = {
-								order = 16,
-								type = "toggle",
-								name = L["DISPELLABLE_DEBUFFS"],
-								desc = L["DISPELLABLE_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.dispellable
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.dispellable = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
+							debuff = {
+								order = 2,
+								type = "group",
+								name = "",
+								inline = true,
+								args = {
+									boss = {
+										order = 1,
+										type = "toggle",
+										name = L["BOSS_DEBUFFS"],
+										desc = L["BOSS_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 2,
+										type = "toggle",
+										name = L["SELF_DEBUFFS"],
+										desc = L["SELF_DEBUFFS_DESC"],
+									},
+									selfcast_permanent = {
+										order = 3,
+										type = "toggle",
+										name = L["SELF_DEBUFFS_PERMA"],
+										desc = L["SELF_DEBUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.selfcast
+										end,
+									},
+									player = {
+										order = 4,
+										type = "toggle",
+										name = L["CASTABLE_DEBUFFS"],
+										desc = L["CASTABLE_DEBUFFS_DESC"],
+									},
+									player_permanent = {
+										order = 5,
+										type = "toggle",
+										name = L["CASTABLE_DEBUFFS_PERMA"],
+										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff.player
+										end,
+									},
+									dispellable = {
+										order = 6,
+										type = "toggle",
+										name = L["DISPELLABLE_DEBUFFS"],
+										desc = L["DISPELLABLE_DEBUFFS_DESC"],
+									},
+								},
 							},
 						},
 					},
-					enemy_units = {
-						order = 2,
+					enemy = {
+						order = 3,
 						type = "group",
+						inline  = true,
 						name = M.COLORS.RED:WrapText(L["ENEMY_UNITS"]),
-						guiInline = true,
 						args = {
-							buff_boss = {
+							buff = {
 								order = 1,
-								type = "toggle",
-								name = L["BOSS_BUFFS"],
-								desc = L["BOSS_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.boss
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.boss = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_mount = {
-								order = 2,
-								type = "toggle",
-								name = L["MOUNT_AURAS"],
-								desc = L["MOUNT_AURAS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.mount
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.mount = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_selfcast = {
-								order = 3,
-								type = "toggle",
-								name = L["SELF_BUFFS"],
-								desc = L["SELF_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_selfcast_permanent = {
-								order = 4,
-								type = "toggle",
-								name = L["SELF_BUFFS_PERMA"],
-								desc = L["SELF_BUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast
-								end,
-							},
-							buff_player = {
-								order = 5,
-								type = "toggle",
-								name = L["CASTABLE_BUFFS"],
-								desc = L["CASTABLE_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							buff_player_permanent = {
-								order = 6,
-								type = "toggle",
-								name = L["CASTABLE_BUFFS_PERMA"],
-								desc = L["CASTABLE_BUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player
-								end,
-							},
-							buff_dispellable = {
-								order = 7,
-								type = "toggle",
-								name = L["DISPELLABLE_BUFFS"],
-								desc = L["DISPELLABLE_BUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.dispellable
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.dispellable = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							spacer_1 = {
-								order = 10,
-								type = "description",
+								type = "group",
 								name = "",
-								width = "full",
+								inline = true,
+								args = {
+									boss = {
+										order = 1,
+										type = "toggle",
+										name = L["BOSS_BUFFS"],
+										desc = L["BOSS_BUFFS_DESC"],
+									},
+									mount = {
+										order = 2,
+										type = "toggle",
+										name = L["MOUNT_AURAS"],
+										desc = L["MOUNT_AURAS_DESC"],
+									},
+									selfcast = {
+										order = 3,
+										type = "toggle",
+										name = L["SELF_BUFFS"],
+										desc = L["SELF_BUFFS_DESC"],
+									},
+									selfcast_permanent = {
+										order = 4,
+										type = "toggle",
+										name = L["SELF_BUFFS_PERMA"],
+										desc = L["SELF_BUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.selfcast
+										end,
+									},
+									player = {
+										order = 5,
+										type = "toggle",
+										name = L["CASTABLE_BUFFS"],
+										desc = L["CASTABLE_BUFFS_DESC"],
+									},
+									player_permanent = {
+										order = 6,
+										type = "toggle",
+										name = L["CASTABLE_BUFFS_PERMA"],
+										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff.player
+										end,
+									},
+									dispellable = {
+										order = 7,
+										type = "toggle",
+										name = L["DISPELLABLE_BUFFS"],
+										desc = L["DISPELLABLE_BUFFS_DESC"],
+									},
+								},
 							},
-							debuff_boss = {
-								order = 11,
-								type = "toggle",
-								name = L["BOSS_DEBUFFS"],
-								desc = L["BOSS_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.boss
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.boss = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_selfcast = {
-								order = 12,
-								type = "toggle",
-								name = L["SELF_DEBUFFS"],
-								desc = L["SELF_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_selfcast_permanent = {
-								order = 13,
-								type = "toggle",
-								name = L["SELF_DEBUFFS_PERMA"],
-								desc = L["SELF_DEBUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast
-								end,
-							},
-							debuff_player = {
-								order = 14,
-								type = "toggle",
-								name = L["CASTABLE_DEBUFFS"],
-								desc = L["CASTABLE_DEBUFFS_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-							},
-							debuff_player_permanent = {
-								order = 15,
-								type = "toggle",
-								name = L["CASTABLE_DEBUFFS_PERMA"],
-								desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
-								get = function()
-									return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player_permanent
-								end,
-								set = function(_, value)
-									C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player_permanent = value
-									UNITFRAMES:UpdateUnitFrame(unit)
-								end,
-								disabled = function()
-									return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player
-								end,
+							debuff = {
+								order = 2,
+								type = "group",
+								name = "",
+								inline = true,
+								args = {
+									boss = {
+										order = 1,
+										type = "toggle",
+										name = L["BOSS_DEBUFFS"],
+										desc = L["BOSS_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 2,
+										type = "toggle",
+										name = L["SELF_DEBUFFS"],
+										desc = L["SELF_DEBUFFS_DESC"],
+									},
+									selfcast_permanent = {
+										order = 3,
+										type = "toggle",
+										name = L["SELF_DEBUFFS_PERMA"],
+										desc = L["SELF_DEBUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.selfcast
+										end,
+									},
+									player = {
+										order = 4,
+										type = "toggle",
+										name = L["CASTABLE_DEBUFFS"],
+										desc = L["CASTABLE_DEBUFFS_DESC"],
+									},
+									player_permanent = {
+										order = 5,
+										type = "toggle",
+										name = L["CASTABLE_DEBUFFS_PERMA"],
+										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
+										disabled = function()
+											return not C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff.player
+										end,
+									},
+								},
 							},
 						},
 					},
@@ -1671,28 +1514,50 @@ local function GetOptionsTable_Auras(unit, order)
 		},
 	}
 
+	if E.UI_LAYOUT then
+		temp.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, player = true, pet = true, targettarget = true, focustarget = true})
+		temp.args.filter.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, player = true, pet = true, targettarget = true, focustarget = true})
+	else
+		temp.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, pet = true, targettarget = true, focustarget = true})
+		temp.args.filter.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, pet = true, targettarget = true, focustarget = true})
+	end
+
 	if unit == "player" then
-		temp.args.filter.args.friendly_units.args.buff_player = nil
-		temp.args.filter.args.friendly_units.args.buff_player_permanent = nil
+		temp.args.filter.args.copy.set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff, {player = true, player_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff, {player = true, player_permanent = true})
+			UNITFRAMES:UpdateUnitFrame(unit)
+		end
+		temp.args.filter.args.friendly.args.buff.args.player = nil
+		temp.args.filter.args.friendly.args.buff.args.player_permanent = nil
 
-		temp.args.filter.args.friendly_units.args.debuff_player = nil
-		temp.args.filter.args.friendly_units.args.debuff_player_permanent = nil
+		temp.args.filter.args.friendly.args.debuff.args.player = nil
+		temp.args.filter.args.friendly.args.debuff.args.player_permanent = nil
 
-		temp.args.filter.args.enemy_units = nil
+		temp.args.filter.args.enemy = nil
 	elseif unit == "boss" then
-		temp.args.filter.args.friendly_units.args.buff_mount = nil
-		temp.args.filter.args.friendly_units.args.buff_selfcast = nil
-		temp.args.filter.args.friendly_units.args.buff_selfcast_permanent = nil
-
-		temp.args.filter.args.friendly_units.args.debuff_selfcast = nil
-		temp.args.filter.args.friendly_units.args.debuff_selfcast_permanent = nil
-
-		temp.args.filter.args.enemy_units.args.buff_mount = nil
-		temp.args.filter.args.enemy_units.args.buff_selfcast = nil
-		temp.args.filter.args.enemy_units.args.buff_selfcast_permanent = nil
-
-		temp.args.filter.args.enemy_units.args.debuff_selfcast = nil
-		temp.args.filter.args.enemy_units.args.debuff_selfcast_permanent = nil
+		temp.args.filter.args.copy.set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.buff, {mount = true, selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.friendly.debuff, {selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy.buff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.buff, {mount = true, selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy.debuff, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter.enemy.debuff, {selfcast = true, selfcast_permanent = true})
+			UNITFRAMES:UpdateUnitFrame(unit)
+		end
+		temp.args.filter.args.friendly.args.buff.args.mount = nil
+		temp.args.filter.args.friendly.args.buff.args.selfcast = nil
+		temp.args.filter.args.friendly.args.buff.args.selfcast_permanent = nil
+		temp.args.filter.args.friendly.args.debuff.args.selfcast = nil
+		temp.args.filter.args.friendly.args.debuff.args.selfcast_permanent = nil
+		temp.args.filter.args.enemy.args.buff.args.mount = nil
+		temp.args.filter.args.enemy.args.buff.args.selfcast = nil
+		temp.args.filter.args.enemy.args.buff.args.selfcast_permanent = nil
+		temp.args.filter.args.enemy.args.debuff.args.selfcast = nil
+		temp.args.filter.args.enemy.args.debuff.args.selfcast_permanent = nil
+	else
+		temp.args.filter.args.copy.set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter, C.db.profile.units[E.UI_LAYOUT][unit].auras.filter)
+			UNITFRAMES:UpdateUnitFrame(unit)
+		end
 	end
 
 	return temp
@@ -2004,7 +1869,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			func = function()
 				for i = 1, 5 do
 					UNITFRAMES:GetUnitFrameForUnit(unit..i):Preview()
-		end
+				end
 			end,
 		}
 		temp.args.pvp = nil
