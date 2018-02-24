@@ -141,9 +141,6 @@ function UF:CreateBossFrame(frame)
 
 	self:CreateClassIndicator(frame)
 
-	frame.unit = "player"
-	E:ForceShow(frame)
-
 	isInit = true
 end
 

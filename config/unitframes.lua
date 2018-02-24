@@ -1726,6 +1726,14 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 					UNITFRAMES:UpdateUnitFrame(unit)
 				end,
 			},
+			preview = {
+				order = 3,
+				type = "execute",
+				name = L["PREVIEW"],
+				func = function()
+						UNITFRAMES:GetUnitFrameForUnit(unit):Preview()
+				end,
+			},
 			spacer_1 = {
 				order = 10,
 				type = "description",
@@ -1848,24 +1856,16 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 	}
 
 	temp.args.health = GetOptionsTable_Health(unit, 100)
-
 	temp.args.power = GetOptionsTable_Power(unit, 200)
-
 	temp.args.castbar = GetOptionsTable_Castbar(unit, 400)
-
 	temp.args.name = GetOptionsTable_Name(unit, 500)
-
 	temp.args.raid_target = GetOptionsTable_RaidIcon(unit, 600)
-
 	temp.args.debuff = GetOptionsTable_DebuffIcons(unit, 700)
-
 	temp.args.auras = GetOptionsTable_Auras(unit, 800)
 
 	if unit == "player" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasPlayerFrame()
-		end
-
+		temp.disabled = function() return not UNITFRAMES:HasPlayerFrame() end
+		temp.args.preview = nil
 		temp.args.class_power = {
 			order = 300,
 			type = "group",
@@ -1898,7 +1898,6 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				},
 			},
 		}
-
 		temp.args.combat_feedback = {
 			order = 900,
 			type = "group",
@@ -1963,10 +1962,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			temp.args.border.args.npc = nil
 		end
 	elseif unit == "pet" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasPlayerFrame()
-		end
-
+		temp.disabled = function() return not UNITFRAMES:HasPlayerFrame() end
 		temp.args.pvp = nil
 		temp.args.auras = nil
 
@@ -1980,35 +1976,37 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			temp.args.border = nil
 		end
 	elseif unit == "target" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasTargetFrame()
-		end
+		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
+		temp.args.preview = nil
 	elseif unit == "targettarget" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasTargetFrame()
-		end
-
+		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
+		temp.args.preview = nil
 		temp.args.pvp = nil
 		temp.args.castbar = nil
 		temp.args.debuff = nil
 		temp.args.auras = nil
 	elseif unit == "focus" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasFocusFrame()
-		end
+		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
+		temp.args.preview = nil
 	elseif unit == "focustarget" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasFocusFrame()
-		end
+		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
+		temp.args.preview = nil
 		temp.args.pvp = nil
 		temp.args.castbar = nil
 		temp.args.debuff = nil
 		temp.args.auras = nil
 	elseif unit == "boss" then
-		temp.disabled = function()
-			return not UNITFRAMES:HasBossFrame()
+		temp.disabled = function() return not UNITFRAMES:HasBossFrame() end
+		temp.args.preview = {
+			order = 3,
+			type = "execute",
+			name = L["PREVIEW"],
+			func = function()
+				for i = 1, 5 do
+					UNITFRAMES:GetUnitFrameForUnit(unit..i):Preview()
 		end
-
+			end,
+		}
 		temp.args.pvp = nil
 		temp.args.debuff = nil
 		temp.args.per_row = {

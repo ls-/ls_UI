@@ -104,12 +104,49 @@ local function MainConstructor()
 	end
 end
 
+local function frame_Preview(self, state)
+	if not self.isPreviewed or state == true then
+		if not self.isPreviewed then
+			self.oldUnit = self.unit
+			self.unit = "player"
+			self.oldOnUpdate = self:GetScript("OnUpdate")
+			self.isPreviewed = true
+		end
+
+		UnregisterUnitWatch(self)
+		RegisterUnitWatch(self, true)
+
+		self:SetScript("OnUpdate", nil)
+		self:Show()
+
+		if self:IsVisible() and self.Update then
+			self:Update()
+		end
+	elseif self.isPreviewed or state == false then
+		self.unit = self.oldUnit or self.unit
+		self.isPreviewed = nil
+
+		UnregisterUnitWatch(self)
+		RegisterUnitWatch(self)
+
+		if self.oldOnUpdate then
+			self:SetScript("OnUpdate", self.oldOnUpdate)
+			self.oldOnUpdate = nil
+		end
+
+		if self:IsVisible() and self.Update then
+			self:Update()
+		end
+	end
+end
+
 function UF:CreateUnitFrame(unit)
 	if unit == "player" and not objects["player"] then
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
 		objects["player"].Update = function(self)
 			UF:UpdatePlayerFrame(self)
 		end
+		objects["player"].Preview = frame_Preview
 
 		objects["player"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].player.point))
 		E:CreateMover(objects["player"])
@@ -118,6 +155,7 @@ function UF:CreateUnitFrame(unit)
 		objects["pet"].Update = function(self)
 			UF:UpdatePetFrame(self)
 		end
+		objects["pet"].Preview = frame_Preview
 
 		objects["pet"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].pet.point))
 		E:CreateMover(objects["pet"])
@@ -131,6 +169,7 @@ function UF:CreateUnitFrame(unit)
 		objects["target"].Update = function(self)
 			UF:UpdateTargetFrame(self)
 		end
+		objects["target"].Preview = frame_Preview
 
 		objects["target"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].target.point))
 		E:CreateMover(objects["target"])
@@ -139,6 +178,7 @@ function UF:CreateUnitFrame(unit)
 		objects["targettarget"].Update = function(self)
 			UF:UpdateTargetTargetFrame(self)
 		end
+		objects["targettarget"].Preview = frame_Preview
 
 		objects["targettarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].targettarget.point))
 		E:CreateMover(objects["targettarget"])
@@ -152,6 +192,7 @@ function UF:CreateUnitFrame(unit)
 		objects["focus"].Update = function(self)
 			UF:UpdateFocusFrame(self)
 		end
+		objects["focus"].Preview = frame_Preview
 
 		objects["focus"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focus.point))
 		E:CreateMover(objects["focus"])
@@ -160,6 +201,7 @@ function UF:CreateUnitFrame(unit)
 		objects["focustarget"].Update = function(self)
 			UF:UpdateFocusTargetFrame(self)
 		end
+		objects["focustarget"].Preview = frame_Preview
 
 		objects["focustarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focustarget.point))
 		E:CreateMover(objects["focustarget"])
@@ -176,6 +218,7 @@ function UF:CreateUnitFrame(unit)
 			objects["boss"..i].Update = function(self)
 				UF:UpdateBossFrame(self)
 			end
+			objects["boss"..i].Preview = frame_Preview
 			objects["boss"..i]._parent = holder
 
 			holder._buttons[i] = objects["boss"..i]
