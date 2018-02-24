@@ -42,4 +42,3 @@ function UF:PreviewDebuffIndicator(frame)
 		element._preview = true
 	end
 end
-
