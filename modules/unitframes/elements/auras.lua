@@ -305,8 +305,6 @@ function UF:UpdateAuras(frame)
 	local element = frame.Auras
 	local size = config.size_override ~= 0 and config.size_override or E:Round((frame._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
 
-	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
-
 	element.size = size
 	element.numTotal = config.per_row * config.rows
 	element.disableMouse = config.disable_mouse
@@ -328,10 +326,12 @@ function UF:UpdateAuras(frame)
 		end
 	end
 
+	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
+	element:ClearAllPoints()
+
 	local point1 = config.point1
 
 	if point1 and point1.p then
-		element:ClearAllPoints()
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
