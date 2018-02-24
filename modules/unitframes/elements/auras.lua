@@ -331,6 +331,7 @@ function UF:UpdateAuras(frame)
 	local point1 = config.point1
 
 	if point1 and point1.p then
+		element:ClearAllPoints()
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
