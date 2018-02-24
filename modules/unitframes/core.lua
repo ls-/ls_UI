@@ -176,10 +176,9 @@ function UF:CreateUnitFrame(unit)
 			objects["boss"..i].Update = function(self)
 				UF:UpdateBossFrame(self)
 			end
+			objects["boss"..i]._parent = holder
 
-			if i == 1 then
-				objects["boss"..i]:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 0, 0)
-			end
+			holder._buttons[i] = objects["boss"..i]
 		end
 
 		units["boss"] = true
@@ -190,17 +189,11 @@ end
 
 function UF:UpdateUnitFrame(unit)
 	if unit == "boss" and objects["boss1"] then
-		local y_offset = C.db.profile.units[E.UI_LAYOUT].boss.y_offset
-
 		for i = 1, 5 do
 			objects["boss"..i]:Update()
-
-			if i > 1 then
-				objects["boss"..i]:SetPoint("TOP", objects["boss"..(i - 1)], "BOTTOM", 0, -y_offset)
-			end
 		end
 
-		E:UpdateMoverSize(_G.LSBossHolder)
+		UF:UpdateBossHolder()
 
 		return true
 	elseif objects[unit] then

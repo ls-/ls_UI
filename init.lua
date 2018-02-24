@@ -48,6 +48,9 @@ local function cleanUpProfile()
 				end
 			end
 		end
+
+		C.db.profile.units.ls.boss.y_offset = nil
+		C.db.profile.units.traditional.y_offset = nil
 	end
 end
 

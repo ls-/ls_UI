@@ -7,18 +7,36 @@ local _G = getfenv(0)
 
 -- Mine
 local isInit = false
+local holder
+
+function UF:CreateBossHolder()
+	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
+	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
+	E:CreateMover(holder)
+	holder._buttons = {}
+
+	return holder
+end
+
+function UF:UpdateBossHolder()
+	if not holder._config then
+		holder._config = {
+			num = 5
+		}
+	end
+
+	holder._config.width = C.db.profile.units[E.UI_LAYOUT].boss.width
+	holder._config.height = C.db.profile.units[E.UI_LAYOUT].boss.height
+	holder._config.per_row = C.db.profile.units[E.UI_LAYOUT].boss.per_row
+	holder._config.spacing = C.db.profile.units[E.UI_LAYOUT].boss.spacing
+	holder._config.x_growth = C.db.profile.units[E.UI_LAYOUT].boss.x_growth
+	holder._config.y_growth = C.db.profile.units[E.UI_LAYOUT].boss.y_growth
+
+	E:UpdateBarLayout(holder)
+end
 
 function UF:HasBossFrame()
 	return isInit
-end
-
-function UF:CreateBossHolder()
-	local holder = _G.CreateFrame("Frame", "LSBossHolder", UIParent)
-	holder:SetSize(110 + 124 + 2, 36 * 5 + 36 * 5)
-	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
-	E:CreateMover(holder)
-
-	return holder
 end
 
 function UF:CreateBossFrame(frame)
@@ -31,19 +49,19 @@ function UF:CreateBossFrame(frame)
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
-	local fg_parent = _G.CreateFrame("Frame", nil, frame)
-	fg_parent:SetFrameLevel(level + 7)
-	fg_parent:SetAllPoints()
-	frame.FGParent = fg_parent
+	local fgParent = CreateFrame("Frame", nil, frame)
+	fgParent:SetFrameLevel(level + 7)
+	fgParent:SetAllPoints()
+	frame.FGParent = fgParent
 
-	local text_parent = _G.CreateFrame("Frame", nil, frame)
-	text_parent:SetFrameLevel(level + 9)
-	text_parent:SetAllPoints()
-	frame.TextParent = text_parent
+	local textParent = CreateFrame("Frame", nil, frame)
+	textParent:SetFrameLevel(level + 9)
+	textParent:SetAllPoints()
+	frame.TextParent = textParent
 
-	frame.Insets = self:CreateInsets(frame, fg_parent)
+	frame.Insets = self:CreateInsets(frame, fgParent)
 
-	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
+	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -54,7 +72,7 @@ function UF:CreateBossFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(health)
 
-	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
+	local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -74,15 +92,15 @@ function UF:CreateBossFrame(frame)
 		end
 	end
 
-	local alt_power = self:CreateAlternativePower(frame, true, "LSFont12_Shadow", text_parent)
-	alt_power:SetFrameLevel(level + 1)
-	alt_power:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	alt_power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-	alt_power:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-	alt_power:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
-	frame.AlternativePower = alt_power
+	local altPower = self:CreateAlternativePower(frame, true, "LSFont12_Shadow", textParent)
+	altPower:SetFrameLevel(level + 1)
+	altPower:SetPoint("LEFT", frame, "LEFT", 0, 0)
+	altPower:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	altPower:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
+	altPower:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
+	frame.AlternativePower = altPower
 
-	alt_power.UpdateContainer = function(_, shouldShow)
+	altPower.UpdateContainer = function(_, shouldShow)
 		if shouldShow then
 			if not frame.Insets.Top:IsExpanded() then
 				frame.Insets.Top:Expand()
@@ -97,34 +115,34 @@ function UF:CreateBossFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
-	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
+	frame.Name = self:CreateName(textParent, "LSFont12_Shadow")
 
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(textParent)
 
-	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(textParent)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
 	frame.Auras = self:CreateAuras(frame, "boss")
 
-	local border = E:CreateBorder(fg_parent)
+	local border = E:CreateBorder(fgParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
-	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
+	local glass = fgParent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
 
-	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
+	local shadow = fgParent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
 	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 
-	-- frame.unit = "player"
-	-- E:ForceShow(frame)
+	frame.unit = "player"
+	E:ForceShow(frame)
 
 	isInit = true
 end

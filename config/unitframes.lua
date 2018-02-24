@@ -1759,7 +1759,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			top_inset = {
-				order = 13,
+				order = 16,
 				type = "select",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
@@ -1773,7 +1773,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			bottom_inset = {
-				order = 14,
+				order = 17,
 				type = "select",
 				name = L["BOTTOM_INSET_SIZE"],
 				desc = L["BOTTOM_INSET_SIZE_DESC"],
@@ -1787,7 +1787,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			threat = {
-				order = 15,
+				order = 18,
 				type = "toggle",
 				name = L["THREAT_GLOW"],
 				get = function()
@@ -1799,7 +1799,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			pvp = {
-				order = 16,
+				order = 19,
 				type = "toggle",
 				name = L["PVP_ICON"],
 				get = function()
@@ -1811,7 +1811,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			border = {
-				order = 17,
+				order = 30,
 				type = "group",
 				name = L["BORDER_COLOR"],
 				guiInline = true,
@@ -2011,7 +2011,49 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 
 		temp.args.pvp = nil
 		temp.args.debuff = nil
-
+		temp.args.per_row = {
+			order = 13,
+			type = "range",
+			name = L["PER_ROW"],
+			min = 1, max = 5, step = 1,
+			get = function()
+				return C.db.profile.units[E.UI_LAYOUT][unit].per_row
+			end,
+			set = function(_, value)
+				if C.db.profile.units[E.UI_LAYOUT][unit].per_row ~= value then
+					C.db.profile.units[E.UI_LAYOUT][unit].per_row = value
+					UNITFRAMES:UpdateBossHolder()
+				end
+			end,
+		}
+		temp.args.spacing = {
+			order = 14,
+			type = "range",
+			name = L["SPACING"],
+			min = 8, max = 64, step = 2,
+			get = function()
+				return C.db.profile.units[E.UI_LAYOUT][unit].spacing
+			end,
+			set = function(_, value)
+				if C.db.profile.units[E.UI_LAYOUT][unit].spacing ~= value then
+					C.db.profile.units[E.UI_LAYOUT][unit].spacing = value
+					UNITFRAMES:UpdateBossHolder()
+				end
+			end,
+		}
+		temp.args.growth_dir = {
+			order = 15,
+			type = "select",
+			name = L["GROWTH_DIR"],
+			values = growth_dirs,
+			get = function()
+				return C.db.profile.units[E.UI_LAYOUT][unit].x_growth.."_"..C.db.profile.units[E.UI_LAYOUT][unit].y_growth
+			end,
+			set = function(_, value)
+				C.db.profile.units[E.UI_LAYOUT][unit].x_growth, C.db.profile.units[E.UI_LAYOUT][unit].y_growth = s_split("_", value)
+				UNITFRAMES:UpdateBossHolder()
+			end,
+		}
 		temp.args.alt_power = {
 			order = 300,
 			type = "group",
