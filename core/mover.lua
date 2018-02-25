@@ -8,13 +8,83 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local s_format = _G.string.format
 local s_upper = _G.string.upper
+local t_insert = _G.table.insert
+local t_wipe = _G.table.wipe
 local type = _G.type
 local unpack = _G.unpack
+
+-- Blizz
+local IsAltKeyDown = _G.IsAltKeyDown
+
+--[[ luacheck: globals
+	CreateFrame GameTooltip InCombatLockdown IsShiftKeyDown SquareButton_SetIcon
+	UIParent
+]]
 
 -- Mine
 local defaults = {}
 local disabledMovers = {}
 local enabledMovers = {}
+local trackedMovers = {}
+local highlightIndex = 0
+local isDragging = false
+
+local function trakcer_OnUpdate(self, elapsed)
+	if not isDragging then
+		local isAltKeyDown = IsAltKeyDown()
+
+		if self.isAltKeyDown ~= isAltKeyDown then
+			if isAltKeyDown and #trackedMovers > 0 then
+				highlightIndex = highlightIndex + 1
+			end
+
+			self.isAltKeyDown = isAltKeyDown
+		end
+
+		self.elapsed = (self.elapsed or 0) + elapsed
+
+		if self.elapsed > 0.1 then
+			t_wipe(trackedMovers)
+
+			for _, mover in next, enabledMovers do
+				if not mover.isSimple then
+					if mover:IsMouseOver(4, -4, -4, 4) then
+						t_insert(trackedMovers, mover)
+					end
+
+					mover:EnableMouse(true)
+				end
+			end
+
+			if #trackedMovers > 0 then
+				if highlightIndex > #trackedMovers or #trackedMovers == 1 then
+					highlightIndex = 1
+				end
+
+				for i = 1, #trackedMovers do
+					if i == highlightIndex then
+						local mover = trackedMovers[highlightIndex]
+
+						if self.mover ~= mover then
+							mover:Raise()
+							mover:GetScript("OnEnter")(mover)
+
+							self.mover = mover
+						end
+					else
+						trackedMovers[i]:EnableMouse(false)
+					end
+				end
+			end
+
+			self.elapsed = 0
+		end
+	else
+		self.elapsed = 0
+	end
+end
+
+local tracker = CreateFrame("Frame", nil, UIParent)
 
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
@@ -123,7 +193,10 @@ local function mover_OnEnter(self)
 	GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
+	GameTooltip:AddLine(" ")
+	GameTooltip:AddLine(L["MOVER_BUTTONS_DESC"])
 	GameTooltip:AddLine(L["MOVER_RESET_DESC"])
+	GameTooltip:AddLine(L["MOVER_CYCLE_DESC"])
 	GameTooltip:Show()
 end
 
@@ -152,6 +225,8 @@ local function mover_OnDragStart(self)
 		if not self.isSimple then
 			self:SetScript("OnUpdate", mover_OnUpdate)
 		end
+
+		isDragging = true
 	end
 end
 
@@ -161,6 +236,8 @@ local function mover_OnDragStop(self)
 	self:StopMovingOrSizing()
 	self:SetScript("OnUpdate", nil)
 	self:UpdatePosition()
+
+	isDragging = false
 end
 
 local function mover_OnClick(self)
@@ -277,6 +354,12 @@ do
 			if not mover.isSimple then
 				mover:SetShown(state)
 			end
+		end
+
+		if state then
+			tracker:SetScript("OnUpdate", trakcer_OnUpdate)
+		else
+			tracker:SetScript("OnUpdate", nil)
 		end
 	end
 end
@@ -436,6 +519,8 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 			mover:Hide()
 		end
 	end
+
+	tracker:SetScript("OnUpdate", nil)
 end)
 
 P:AddCommand("movers", function()
