@@ -488,13 +488,13 @@ function BARS.CreateXPBar()
 
 		local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("LEFT", bar[1], "RIGHT", -5, 0)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 		sep:Hide()
 		bar[1].Sep = sep
 
 		sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
 		sep:SetPoint("LEFT", bar[2], "RIGHT", -5, 0)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 		sep:Hide()
 		bar[2].Sep = sep
 

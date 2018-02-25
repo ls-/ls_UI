@@ -28,11 +28,11 @@ $includedItems = @(
 	".\init.lua",
 	".\LICENSE.txt",
 	".\ls_UI.toc",
+	".\assets\",
 	".\config\",
 	".\core\",
 	".\embeds\",
 	".\locales\",
-	".\media\",
 	".\modules\"
 )
 

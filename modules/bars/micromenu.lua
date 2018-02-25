@@ -210,7 +210,7 @@ local function SetPushedTexture(button)
 	local pushed = button:GetPushedTexture()
 
 	if pushed then
-		pushed:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
+		pushed:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 		pushed:SetTexCoord(unpack(TEXTURE_COORDS.pushed))
 		pushed:ClearAllPoints()
 		pushed:SetPoint("TOPLEFT", 1, -1)
@@ -256,13 +256,13 @@ local function HandleMicroButton(button)
 	SetDisabledTexture(button)
 
 	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
 	border:SetOffset(-4)
 	button.Border = border
 
 	if highlight then
-		highlight:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
+		highlight:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 		highlight:SetTexCoord(unpack(TEXTURE_COORDS.highlight))
 		highlight:ClearAllPoints()
 		highlight:SetPoint("TOPLEFT", 1, -1)
@@ -282,7 +282,7 @@ local function HandleMicroButton(button)
 	bg:SetAllPoints()
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-	icon:SetTexture("Interface\\AddOns\\ls_UI\\media\\micromenu")
+	icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	icon:SetPoint("TOPLEFT", 1, -1)
 	icon:SetPoint("BOTTOMRIGHT", -1, 1)
 	button.Icon = icon

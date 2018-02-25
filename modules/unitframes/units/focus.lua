@@ -19,7 +19,7 @@ function UF:CreateFocusFrame(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
@@ -98,18 +98,18 @@ function UF:CreateFocusFrame(frame)
 	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
 
 	local border = E:CreateBorder(fg_parent)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
 	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
-	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 

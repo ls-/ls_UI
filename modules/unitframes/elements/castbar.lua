@@ -73,7 +73,7 @@ function UF:CreateCastbar(parent)
 	element.LeftIcon = icon
 
 	local sep = element:CreateTexture(nil, "OVERLAY")
-	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetPoint("LEFT", icon, "RIGHT", -5, 0)
 	element.LeftSep = sep
 
@@ -83,7 +83,7 @@ function UF:CreateCastbar(parent)
 	element.RightIcon = icon
 
 	sep = element:CreateTexture(nil, "OVERLAY")
-	sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetPoint("RIGHT", icon, "LEFT", 5, 0)
 	element.RightSep = sep
 

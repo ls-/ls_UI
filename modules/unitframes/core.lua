@@ -4,80 +4,77 @@ local UF = P:AddModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
 local unpack = _G.unpack
+
+--[[ luacheck: globals
+UnitFrame_OnEnter
+PartyMemberBuffTooltip
+PartyMemberBuffTooltip_Update
+UnitFrame_OnLeave
+]]
 
 -- Mine
 local isInit = false
 local objects = {}
 local units = {}
 
-local function LSUnitFrame_OnEnter(self)
-	if self.__owner then
-		self = self.__owner
-	end
+local function frame_OnEnter(self)
+	self = self.__owner or self
 
-	_G.UnitFrame_OnEnter(self)
+	UnitFrame_OnEnter(self)
 
-	if string.match(self:GetName(), "LSPetFrame") then
-		_G.PartyMemberBuffTooltip:ClearAllPoints()
-		_G.PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
-		_G.PartyMemberBuffTooltip_Update(self)
+	if self:GetName() == "LSPetFrame" then
+		PartyMemberBuffTooltip:ClearAllPoints()
+		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
+		PartyMemberBuffTooltip_Update(self)
 	end
 end
 
-local function LSUnitFrame_OnLeave(self)
-	if self.__owner then
-		self = self.__owner
-	end
+local function frame_OnLeave(self)
+	self = self.__owner or self
 
-	_G.UnitFrame_OnLeave(self)
-
-	if string.match(self:GetName(), "LSPetFrame") then
-		_G.PartyMemberBuffTooltip:Hide()
-	end
+	UnitFrame_OnLeave(self)
+	PartyMemberBuffTooltip:Hide()
 end
 
-local function Style(frame, unit)
-	frame:RegisterForClicks("AnyUp")
-	frame:SetScript("OnEnter", LSUnitFrame_OnEnter)
-	frame:SetScript("OnLeave", LSUnitFrame_OnLeave)
+local function constructor()
+	oUF:RegisterStyle("LS", function(frame, unit)
+		frame:RegisterForClicks("AnyUp")
+		frame:SetScript("OnEnter", frame_OnEnter)
+		frame:SetScript("OnLeave", frame_OnLeave)
 
-	if unit == "player" then
-		if E.UI_LAYOUT == "ls" then
-			UF:CreateVerticalPlayerFrame(frame)
-		else
-			UF:CreateHorizontalPlayerFrame(frame)
+		if unit == "player" then
+			if E.UI_LAYOUT == "ls" then
+				UF:CreateVerticalPlayerFrame(frame)
+			else
+				UF:CreateHorizontalPlayerFrame(frame)
+			end
+		elseif unit == "pet" then
+			if E.UI_LAYOUT == "ls" then
+				UF:CreateVerticalPetFrame(frame)
+			else
+				UF:CreateHorizontalPetFrame(frame)
+			end
+		elseif unit == "target" then
+			UF:CreateTargetFrame(frame)
+		elseif unit == "targettarget" then
+			UF:CreateTargetTargetFrame(frame)
+		elseif unit == "focus" then
+			UF:CreateFocusFrame(frame)
+		elseif unit == "focustarget" then
+			UF:CreateFocusTargetFrame(frame)
+		elseif unit == "boss1" then
+			UF:CreateBossFrame(frame)
+		elseif unit == "boss2" then
+			UF:CreateBossFrame(frame)
+		elseif unit == "boss3" then
+			UF:CreateBossFrame(frame)
+		elseif unit == "boss4" then
+			UF:CreateBossFrame(frame)
+		elseif unit == "boss5" then
+			UF:CreateBossFrame(frame)
 		end
-	elseif unit == "pet" then
-		if E.UI_LAYOUT == "ls" then
-			UF:CreateVerticalPetFrame(frame)
-		else
-			UF:CreateHorizontalPetFrame(frame)
-		end
-	elseif unit == "target" then
-		UF:CreateTargetFrame(frame)
-	elseif unit == "targettarget" then
-		UF:CreateTargetTargetFrame(frame)
-	elseif unit == "focus" then
-		UF:CreateFocusFrame(frame)
-	elseif unit == "focustarget" then
-		UF:CreateFocusTargetFrame(frame)
-	elseif unit == "boss1" then
-		UF:CreateBossFrame(frame)
-	elseif unit == "boss2" then
-		UF:CreateBossFrame(frame)
-	elseif unit == "boss3" then
-		UF:CreateBossFrame(frame)
-	elseif unit == "boss4" then
-		UF:CreateBossFrame(frame)
-	elseif unit == "boss5" then
-		UF:CreateBossFrame(frame)
-	end
-end
-
-local function MainConstructor()
-	oUF:RegisterStyle("LS", Style)
+	end)
 	oUF:SetActiveStyle("LS")
 
 	if C.db.profile.units[E.UI_LAYOUT].player.enabled then
@@ -273,7 +270,7 @@ end
 
 function UF:Init()
 	if not isInit and C.db.char.units.enabled then
-		oUF:Factory(MainConstructor)
+		oUF:Factory(constructor)
 
 		isInit = true
 	end

@@ -24,7 +24,7 @@ do
 
 	function UF:CreateHealth(parent, text, textFontObject, textParent)
 		local element = _G.CreateFrame("StatusBar", nil, parent)
-		element:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		element:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 
 		E:SmoothBar(element)
 
@@ -83,7 +83,7 @@ do
 
 		local myBar = _G.CreateFrame("StatusBar", nil, parent)
 		myBar:SetFrameLevel(level)
-		myBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		myBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 		parent.MyHeal = myBar
 
@@ -93,7 +93,7 @@ do
 
 		local otherBar = _G.CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
-		otherBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		otherBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 		parent.OtherHeal = otherBar
 
 		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
@@ -102,11 +102,11 @@ do
 
 		local absorbBar = _G.CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
-		absorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		absorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 		parent.DamageAbsorb = absorbBar
 
 		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
-		overlay:SetTexture("Interface\\AddOns\\ls_UI\\media\\absorb", true)
+		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", true)
 		overlay:SetHorizTile(true)
 		overlay:SetVertTile(true)
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
@@ -115,7 +115,7 @@ do
 		local healAbsorbBar = _G.CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
-		healAbsorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\media\\transparent")
+		healAbsorbBar:SetStatusBarTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 		parent.HealAbsorb = healAbsorbBar
 

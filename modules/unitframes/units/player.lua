@@ -36,7 +36,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	-- bg
 	local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 	texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 
 	-- border
@@ -47,7 +47,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 
 	texture = border_parent:CreateTexture(nil, "BACKGROUND")
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 	texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 
 	-- fg
@@ -58,7 +58,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 
 	texture = fg_parent:CreateTexture(nil, "ARTWORK", nil, 2)
 	texture:SetAllPoints()
-	texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame")
+	texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 	texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
 
 	-- text
@@ -81,7 +81,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 	for i = 1, 9 do
 		local sep = left_tube:CreateTexture(nil, "ARTWORK", nil, 1)
 		sep:SetSize(12, 12)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 		sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
 		seps[i] = sep
 	end
@@ -264,7 +264,7 @@ function UF:CreateVerticalPlayerFrame(frame)
 
 	-- threat
 	local threat = self:CreateThreatIndicator(border_parent, true)
-	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\player-frame-glow")
+	threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame-glow")
 	threat:SetTexCoord(1 / 512, 337 / 512, 1 / 512, 337 / 512)
 	threat:SetSize(336 / 2, 336 / 2)
 	threat:SetPoint("CENTER", 0, 0)
@@ -280,7 +280,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
@@ -299,7 +299,7 @@ function UF:CreateHorizontalPlayerFrame(frame)
 
 	for i = 1, 9 do
 		local sep = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 		seps[i] = sep
 	end
 
@@ -484,18 +484,18 @@ function UF:CreateHorizontalPlayerFrame(frame)
 	frame:Tag(status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")
 
 	local border = E:CreateBorder(fg_parent)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
 	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
-	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 

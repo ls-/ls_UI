@@ -18,7 +18,7 @@ function UF:CreateVerticalPetFrame(frame)
 
 	local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
 	fg:SetSize(80 / 2, 148 / 2)
-	fg:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame")
+	fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
 	fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 	fg:SetPoint("CENTER", 0, 0)
 
@@ -55,7 +55,7 @@ function UF:CreateVerticalPetFrame(frame)
 	frame.DebuffIndicator:SetWidth(14)
 
 	local threat = self:CreateThreatIndicator(frame, true)
-	threat:SetTexture("Interface\\AddOns\\ls_UI\\media\\pet-frame-glow")
+	threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame-glow")
 	threat:SetTexCoord(1 / 128, 85 / 128, 1 / 128, 97 / 128)
 	threat:SetSize(84 / 2, 96 / 2)
 	threat:SetPoint("CENTER", 0, 0)
@@ -86,7 +86,7 @@ function UF:CreateHorizontalPetFrame(frame)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\unit-frame-bg", true)
+	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
 	local fg_parent = _G.CreateFrame("Frame", nil, frame)
@@ -144,18 +144,18 @@ function UF:CreateHorizontalPetFrame(frame)
 	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
 
 	local border = E:CreateBorder(fg_parent)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
 	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
 	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
-	shadow:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
 end

@@ -46,11 +46,11 @@ local function Override(self, _, unit)
 			pvp:SetTexture(GetPrestigeInfo(level))
 			pvp:SetTexCoord(0, 1, 0, 1)
 		else
-			pvp:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
+			pvp:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
 			pvp:SetTexCoord(102 / 256, 162 / 256, 22 / 128, 82 / 128)
 		end
 
-		pvp.Prestige:SetTexture("Interface\\AddOns\\ls_UI\\media\\pvp-banner-"..status)
+		pvp.Prestige:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
 		pvp.Prestige:SetTexCoord(1 / 256, 101 / 256, 1 / 128, 109 / 128)
 
 		pvp:Show()

@@ -95,7 +95,7 @@ WIDGETS.BAG = {
 	point = {"BOTTOMLEFT", "LSActionBarControllerBag", "BOTTOMLEFT", 17, 11},
 	on_add = function(self)
 		local texture = anim_controller.Bag:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.bottom.bag.coords))
 		texture:SetAllPoints()
 		texture:SetSize(unpack(elements.bottom.bag.size))
@@ -262,20 +262,20 @@ function MODULE.SetupActionBarController()
 		anim_controller.Top = top
 
 		local texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.top.left.coords))
 		texture:SetPoint("BOTTOMRIGHT", top, "BOTTOMLEFT", 0, 0)
 		texture:SetSize(unpack(elements.top.left.size))
 		top.Left = texture
 
 		texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.top.mid.coords))
 		texture:SetAllPoints()
 		top.Mid = texture
 
 		texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.top.right.coords))
 		texture:SetPoint("BOTTOMLEFT", top, "BOTTOMRIGHT", 0, 0)
 		texture:SetSize(unpack(elements.top.right.size))
@@ -288,20 +288,20 @@ function MODULE.SetupActionBarController()
 		anim_controller.Bottom = bottom
 
 		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.bottom.left.coords))
 		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", 0, 0)
 		texture:SetSize(unpack(elements.bottom.left.size))
 		bottom.Left = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.bottom.mid.coords))
 		texture:SetAllPoints()
 		bottom.Mid = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\media\\console")
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
 		texture:SetTexCoord(unpack(elements.bottom.right.coords))
 		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 0, 0)
 		texture:SetSize(unpack(elements.bottom.right.size))

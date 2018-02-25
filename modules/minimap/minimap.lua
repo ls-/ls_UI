@@ -211,7 +211,7 @@ local function handleMinimapButton(button, recursive)
 			border = button:CreateTexture()
 		end
 
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 		border:SetTexCoord(unpack(TEXTURES[t].coords))
 		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
@@ -335,7 +335,7 @@ function MODULE.Init()
 		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
 		local border = Minimap:CreateTexture(nil, "BORDER")
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
 		border:SetTexCoord(1 / 512, 333 / 512, 1 / 512, 333 / 512)
 		border:SetSize(332 / 2, 332 / 2)
 		border:SetPoint("CENTER", 0, 0)
@@ -518,7 +518,7 @@ function MODULE.Init()
 			frame.BG = bg
 
 			local border = E:CreateBorder(frame)
-			border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thick")
+			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 			border:SetSize(16)
 			border:SetOffset(-6)
 			border:Hide()
@@ -547,9 +547,9 @@ function MODULE.Init()
 			button:SetHitRectInsets(0, 0, 0, 0)
 			button:SetScript("OnMouseUp", nil)
 			button:SetScript("OnMouseDown", nil)
-			button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons", "ADD")
+			button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons", "ADD")
 			button:GetHighlightTexture():SetTexCoord(106 / 256, 210 / 256, 90 / 256, 146 / 256)
-			button:SetPushedTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+			button:SetPushedTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 			button:GetPushedTexture():SetBlendMode("ADD")
 			button:GetPushedTexture():SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
 			Minimap.Clock = button
@@ -566,7 +566,7 @@ function MODULE.Init()
 
 			local bg, ticker, glow = button:GetRegions()
 
-			bg:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+			bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 			bg:SetTexCoord(1 / 256, 105 / 256, 90 / 256, 146 / 256)
 
 			ticker:ClearAllPoints()
@@ -576,7 +576,7 @@ function MODULE.Init()
 			ticker:SetJustifyV("MIDDLE")
 			button.Ticker = ticker
 
-			glow:SetTexture("Interface\\AddOns\\ls_UI\\media\\minimap-buttons")
+			glow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 			glow:SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
 		end
 

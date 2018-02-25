@@ -409,16 +409,16 @@ do
 					object.Tube[i]:SetTexture(nil)
 					object.Tube[i]:ClearAllPoints()
 				else
-					object.Tube[i]:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar")
+					object.Tube[i]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar")
 					object.Tube[i]:SetTexCoord(unpack(LAYOUT[s][v][i].coords))
 					object.Tube[i]:ClearAllPoints()
 					object.Tube[i]:SetSize(unpack(LAYOUT[s][v][i].size))
 				end
 			end
 
-			object.Tube[5]:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass")
+			object.Tube[5]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 			object.Tube[5]:SetAllPoints()
-			object.Tube[6]:SetTexture("Interface\\AddOns\\ls_UI\\media\\statusbar-glass-shadow")
+			object.Tube[6]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 			object.Tube[6]:SetAllPoints()
 
 			if s == "HORIZONTAL" then

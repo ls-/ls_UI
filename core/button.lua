@@ -199,7 +199,7 @@ local function skinButton(button)
 		hooksecurefunc(button, "SetNormalTexture", setNormalTextureHook)
 
 		local border = E:CreateBorder(button)
-		border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 		border:SetSize(16)
 		border:SetOffset(-4)
 		button.Border_ = border
@@ -433,7 +433,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	button.Icon = setIcon(button)
 
 	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
 	border:SetOffset(-4)
 	button.Border = border
@@ -468,7 +468,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	button.Icon = setIcon(button)
 
 	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\media\\border-thin")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
 	border:SetOffset(-4)
 	button.Border = border
