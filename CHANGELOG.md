@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## Version 70300.10
+
+- Added options to adjust minimap clock and zone text position and visibility;
+- Added optional minimap zone text border;
+- Blizzard minimap buttons are now movable;
+- Added options to adjust boss frames growth direction and spacing;
+- Added the option to preview boss and pet frames;
+- Added the option to cycle through movers under the cursor by pressing Alt key;
+- Added the option to adjust castbar height;
+- Added the option to adjust XP bar height. Unavailable in restricted mode;
+- Added the option to copy unit frame aura filter settings from another unit frame;
+- Fixed the issue which caused unit frame auras settings to not be applied correctly after being changed in the config;
+- Fixed the issue where castbar position wasn't set correctly;
+- Tweaked formulas that are used to calculate action bar size, you may or may not need to adjust their positions;
+- Various bug fixes, code reworks and tweaks.
+
+NOTE: You'll have to restart WoW client to make things work after the update.
+
 ## Version 70300.09
 
 - Added "Use Blizzard Vehicle UI" option to action bar config. Unavailable in restricted mode;
