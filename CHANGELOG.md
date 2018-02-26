@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 70300.11
+
+- Fixed number formatting.
+
 ## Version 70300.10
 
 - Added options to adjust minimap clock and zone text position and visibility;
