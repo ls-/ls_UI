@@ -50,18 +50,18 @@ function E:NumberToPerc(v1, v2)
 end
 
 do
-	local BreakUpLargeNumbers = BreakUpLargeNumbers
-	local SECOND_NUMBER_CAP_NO_SPACE = SECOND_NUMBER_CAP_NO_SPACE
-	local FIRST_NUMBER_CAP_NO_SPACE = FIRST_NUMBER_CAP_NO_SPACE
+	local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
+	local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
+	local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 
 	function E:NumberFormat(v, mod)
 		if v >= 1E4 then
 			local i, f = m_modf(v / (v >= 1E6 and 1E6 or 1E4))
 
 			if mod and mod > 0 then
-				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+				return s_format("%s.%d"..(v >= 1E6 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i), f * 10 ^ mod)
 			else
-				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+				return s_format("%s"..(v >= 1E6 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i))
 			end
 		elseif v >= 0 then
 			return v
@@ -72,10 +72,10 @@ do
 end
 
 do
-	local DAY_ONELETTER_ABBR = DAY_ONELETTER_ABBR:gsub("[ .]", "")
-	local HOUR_ONELETTER_ABBR = HOUR_ONELETTER_ABBR:gsub("[ .]", "")
-	local MINUTE_ONELETTER_ABBR = MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
-	local SECOND_ONELETTER_ABBR = SECOND_ONELETTER_ABBR:gsub("[ .]", "")
+	local DAY_ONELETTER_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
+	local HOUR_ONELETTER_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
+	local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
+	local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
 
 	function E:TimeFormat(v)
 		if v >= 86400 then

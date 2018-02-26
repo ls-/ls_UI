@@ -21,9 +21,9 @@ do
 			local i, f = m_modf(v / (v >= 1E8 and 1E8 or 1E4))
 
 			if mod and mod > 0 then
-				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+				return s_format("%s.%d"..(v >= 1E8 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i), f * 10 ^ mod)
 			else
-				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+				return s_format("%s"..(v >= 1E8 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i))
 			end
 		elseif v >= 0 then
 			return v
