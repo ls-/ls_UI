@@ -5,185 +5,195 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	CreateFrame
+]]
+
 -- Mine
-function UF:CreateVerticalPetFrame(frame)
-	local level = frame:GetFrameLevel()
+do
+	local function frame_Update(self)
+		self:UpdateConfig()
+		self:UpdateSize()
+		self:UpdateHealth()
+		self:UpdateHealthPrediction()
+		self:UpdatePower()
+		self:UpdateCastbar()
+		self:UpdateRaidTargetIndicator()
+		self:UpdateDebuffIndicator()
+		self:UpdateThreatIndicator()
+		-- frame:UpdateAllElements("LSUI_PetFrameUpdate")
+	end
 
-	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
+	function UF:CreateVerticalPetFrame(frame)
+		local level = frame:GetFrameLevel()
 
-	local fg_parent = _G.CreateFrame("Frame", nil, frame)
-	fg_parent:SetFrameLevel(level + 4)
-	fg_parent:SetAllPoints()
-	frame.FGParent = fg_parent
+		frame._config = C.db.profile.units[E.UI_LAYOUT].pet
+		frame._unit = "pet"
 
-	local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
-	fg:SetSize(80 / 2, 148 / 2)
-	fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
-	fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
-	fg:SetPoint("CENTER", 0, 0)
+		local fg_parent = CreateFrame("Frame", nil, frame)
+		fg_parent:SetFrameLevel(level + 4)
+		fg_parent:SetAllPoints()
+		frame.FGParent = fg_parent
 
-	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", frame)
-	health:SetFrameLevel(level + 1)
-	health:SetSize(8, 112)
-	health:SetPoint("CENTER", -6, 0)
-	health:SetClipsChildren(true)
-	frame.Health = health
+		local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
+		fg:SetSize(80 / 2, 148 / 2)
+		fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
+		fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
+		fg:SetPoint("CENTER", 0, 0)
 
-	local health_bg = health:CreateTexture(nil, "BACKGROUND")
-	health_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
-	health_bg:SetAllPoints()
+		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", frame)
+		health:SetFrameLevel(level + 1)
+		health:SetSize(8, 112)
+		health:SetPoint("CENTER", -6, 0)
+		health:SetClipsChildren(true)
+		frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+		local health_bg = health:CreateTexture(nil, "BACKGROUND")
+		health_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		health_bg:SetAllPoints()
 
-	local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
-	power:SetFrameLevel(level + 1)
-	power:SetSize(8, 102)
-	power:SetPoint("CENTER", 6, 0)
-	frame.Power = power
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
-	local power_bg = power:CreateTexture(nil, "BACKGROUND")
-	power_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
-	power_bg:SetAllPoints()
+		local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
+		power:SetFrameLevel(level + 1)
+		power:SetSize(8, 102)
+		power:SetPoint("CENTER", 6, 0)
+		frame.Power = power
 
-	frame.Castbar = self:CreateCastbar(frame)
-	-- frame.Castbar.Holder:SetPoint("BOTTOM", "LSPlayerFrameCastbarHolder", "TOP", 0, 6)
-	-- _G.RegisterStateDriver(frame.Castbar.Holder, "visibility", "[possessbar] show; hide")
+		local power_bg = power:CreateTexture(nil, "BACKGROUND")
+		power_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		power_bg:SetAllPoints()
 
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(fg_parent)
+		frame.Castbar = self:CreateCastbar(frame)
 
-	frame.DebuffIndicator = self:CreateDebuffIndicator(fg_parent)
-	frame.DebuffIndicator:SetWidth(14)
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, fg_parent)
 
-	local threat = self:CreateThreatIndicator(frame, true)
-	threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame-glow")
-	threat:SetTexCoord(1 / 128, 85 / 128, 1 / 128, 97 / 128)
-	threat:SetSize(84 / 2, 96 / 2)
-	threat:SetPoint("CENTER", 0, 0)
-	frame.ThreatIndicator = threat
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, fg_parent)
+		frame.DebuffIndicator:SetWidth(14)
 
-	local left_tube = _G.CreateFrame("Frame", nil, frame)
-	left_tube:SetFrameLevel(level + 3)
-	left_tube:SetAllPoints(health)
-	frame.LeftTube = left_tube
+		local threat = self:CreateThreatIndicator(frame, nil, true)
+		threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame-glow")
+		threat:SetTexCoord(1 / 128, 85 / 128, 1 / 128, 97 / 128)
+		threat:SetSize(84 / 2, 96 / 2)
+		threat:SetPoint("CENTER", 0, 0)
+		frame.ThreatIndicator = threat
 
-	E:SetStatusBarSkin(left_tube, "VERTICAL-8")
+		local left_tube = CreateFrame("Frame", nil, frame)
+		left_tube:SetFrameLevel(level + 3)
+		left_tube:SetAllPoints(health)
+		frame.LeftTube = left_tube
 
-	local right_tube = _G.CreateFrame("Frame", nil, frame)
-	right_tube:SetFrameLevel(level + 3)
-	right_tube:SetAllPoints(power)
-	frame.RightTube = right_tube
+		E:SetStatusBarSkin(left_tube, "VERTICAL-8")
 
-	E:SetStatusBarSkin(right_tube, "VERTICAL-8")
+		local right_tube = CreateFrame("Frame", nil, frame)
+		right_tube:SetFrameLevel(level + 3)
+		right_tube:SetAllPoints(power)
+		frame.RightTube = right_tube
 
-	-- frame.unit = "player"
-	-- E:ForceShow(frame)
+		E:SetStatusBarSkin(right_tube, "VERTICAL-8")
+
+		frame.Update = frame_Update
+	end
 end
 
-function UF:CreateHorizontalPetFrame(frame)
-	local level = frame:GetFrameLevel()
+do
+	local function frame_Update(self)
+		self:UpdateConfig()
+		self:UpdateSize()
+		self:UpdateInsets()
+		self:UpdateHealth()
+		self:UpdateHealthPrediction()
+		self:UpdatePower()
+		self:UpdateCastbar()
+		self:UpdateRaidTargetIndicator()
+		self:UpdateDebuffIndicator()
+		self:UpdateThreatIndicator()
+		self:UpdateName()
+		self:UpdateClassIndicator()
+		-- frame:UpdateAllElements("LSUI_PetFrameUpdate")
+	end
 
-	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
+	function UF:CreateHorizontalPetFrame(frame)
+		local level = frame:GetFrameLevel()
 
-	local bg = frame:CreateTexture(nil, "BACKGROUND")
-	bg:SetAllPoints()
-	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
-	bg:SetHorizTile(true)
+		frame._config = C.db.profile.units[E.UI_LAYOUT].pet
+		frame._unit = "pet"
 
-	local fg_parent = _G.CreateFrame("Frame", nil, frame)
-	fg_parent:SetFrameLevel(level + 7)
-	fg_parent:SetAllPoints()
-	frame.FGParent = fg_parent
+		local bg = frame:CreateTexture(nil, "BACKGROUND")
+		bg:SetAllPoints()
+		bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
+		bg:SetHorizTile(true)
 
-	local text_parent = _G.CreateFrame("Frame", nil, frame)
-	text_parent:SetFrameLevel(level + 9)
-	text_parent:SetAllPoints()
-	frame.TextParent = text_parent
+		local fg_parent = CreateFrame("Frame", nil, frame)
+		fg_parent:SetFrameLevel(level + 7)
+		fg_parent:SetAllPoints()
+		frame.FGParent = fg_parent
 
-	frame.Insets = self:CreateInsets(frame, fg_parent)
+		local text_parent = CreateFrame("Frame", nil, frame)
+		text_parent:SetFrameLevel(level + 9)
+		text_parent:SetAllPoints()
+		frame.TextParent = text_parent
 
-	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
-	health:SetFrameLevel(level + 1)
-	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
-	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
-	health:SetClipsChildren(true)
-	frame.Health = health
+		frame.Insets = self:CreateInsets(frame, fg_parent)
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
+		health:SetFrameLevel(level + 1)
+		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
+		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+		health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+		health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
+		health:SetClipsChildren(true)
+		frame.Health = health
 
-	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
-	power:SetFrameLevel(level + 1)
-	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
-	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
-	frame.Power = power
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
-	power.UpdateContainer = function(_, shouldShow)
-		if shouldShow then
-			if not frame.Insets.Bottom:IsExpanded() then
-				frame.Insets.Bottom:Expand()
-			end
-		else
-			if frame.Insets.Bottom:IsExpanded() then
-				frame.Insets.Bottom:Collapse()
+		local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
+		power:SetFrameLevel(level + 1)
+		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
+		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+		power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
+		power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
+		frame.Power = power
+
+		power.UpdateContainer = function(_, shouldShow)
+			if shouldShow then
+				if not frame.Insets.Bottom:IsExpanded() then
+					frame.Insets.Bottom:Expand()
+				end
+			else
+				if frame.Insets.Bottom:IsExpanded() then
+					frame.Insets.Bottom:Collapse()
+				end
 			end
 		end
+
+		frame.Castbar = self:CreateCastbar(frame)
+		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
+
+		frame.Name = self:CreateName(frame, "LSFont12_Shadow", text_parent)
+
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, text_parent)
+
+		frame.ThreatIndicator = self:CreateThreatIndicator(frame)
+
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, text_parent)
+
+		local border = E:CreateBorder(fg_parent)
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
+		border:SetSize(16)
+		border:SetOffset(-6)
+		frame.Border = border
+
+		local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
+		glass:SetAllPoints(health)
+		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
+
+		local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
+		shadow:SetAllPoints(health)
+		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+
+		self:CreateClassIndicator(frame)
+
+		frame.Update = frame_Update
 	end
-
-	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
-
-	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
-
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
-
-	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
-
-	frame.DebuffIndicator = self:CreateDebuffIndicator(text_parent)
-
-	local border = E:CreateBorder(fg_parent)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-	border:SetSize(16)
-	border:SetOffset(-6)
-	frame.Border = border
-
-	local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
-	glass:SetAllPoints(health)
-	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-
-	local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
-	shadow:SetAllPoints(health)
-	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-
-	self:CreateClassIndicator(frame)
-end
-
-function UF:UpdatePetFrame(frame)
-	frame._config = C.db.profile.units[E.UI_LAYOUT].pet
-
-	frame:SetSize(frame._config.width, frame._config.height)
-
-	if frame.Insets then
-		self:UpdateInsets(frame)
-	end
-
-	self:UpdateHealth(frame)
-	self:UpdateHealthPrediction(frame)
-	self:UpdatePower(frame)
-	self:UpdateCastbar(frame)
-	self:UpdateRaidTargetIndicator(frame)
-	self:UpdateDebuffIndicator(frame)
-	self:UpdateThreatIndicator(frame)
-
-	if frame.Name then
-		self:UpdateName(frame)
-	end
-
-	if frame.ClassIndicator then
-		self:UpdateClassIndicator(frame)
-	end
-
-	frame:UpdateAllElements("LSUI_PetFrameUpdate")
 end

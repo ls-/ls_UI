@@ -11,6 +11,10 @@ local C_MountJournal = _G.C_MountJournal
 local UnitIsFriend = _G.UnitIsFriend
 local UnitIsUnit = _G.UnitIsUnit
 
+--[[ luacheck: globals
+	CreateFrame GameTooltip UIParent
+]]
+
 -- Mine
 local MOUNTS = {}
 
@@ -94,18 +98,18 @@ local function overlay_HideOverride(self)
 end
 
 local function button_UpdateTooltip(self)
-	_G.GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
 local function button_OnEnter(self)
 	if not self:IsVisible() then return end
 
-	_G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
 	self:UpdateTooltip()
 end
 
 local function button_OnLeave()
-	_G.GameTooltip:Hide()
+	GameTooltip:Hide()
 end
 
 local function createAuraIcon(element, index)
@@ -287,23 +291,10 @@ local function updateAuraType(_, _, aura)
 	end
 end
 
-function UF:CreateAuras(parent, unit)
-	local element = CreateFrame("Frame", nil, parent)
-
-	element.spacing = 4
-	element.showDebuffType = true
-	element.showStealableBuffs = true
-	element.CreateIcon = createAuraIcon
-	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = updateAuraType
-
-	return element
-end
-
-function UF:UpdateAuras(frame)
-	local config = frame._config.auras
-	local element = frame.Auras
-	local size = config.size_override ~= 0 and config.size_override or E:Round((frame._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
+local function frame_UpdateAuras(self)
+	local config = self._config.auras
+	local element = self.Auras
+	local size = config.size_override ~= 0 and config.size_override or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
 
 	element.size = size
 	element.numTotal = config.per_row * config.rows
@@ -332,16 +323,31 @@ function UF:UpdateAuras(frame)
 	local point1 = config.point1
 
 	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
-	if config.enabled and not frame:IsElementEnabled("Auras") then
-		frame:EnableElement("Auras")
-	elseif not config.enabled and frame:IsElementEnabled("Auras") then
-		frame:DisableElement("Auras")
+	if config.enabled and not self:IsElementEnabled("Auras") then
+		self:EnableElement("Auras")
+	elseif not config.enabled and self:IsElementEnabled("Auras") then
+		self:DisableElement("Auras")
 	end
 
-	if frame:IsElementEnabled("Auras") then
+	if self:IsElementEnabled("Auras") then
 		element:ForceUpdate()
 	end
+end
+
+function UF:CreateAuras(frame, unit)
+	local element = CreateFrame("Frame", nil, frame)
+
+	element.spacing = 4
+	element.showDebuffType = true
+	element.showStealableBuffs = true
+	element.CreateIcon = createAuraIcon
+	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	element.PostUpdateIcon = updateAuraType
+
+	frame.UpdateAuras = frame_UpdateAuras
+
+	return element
 end

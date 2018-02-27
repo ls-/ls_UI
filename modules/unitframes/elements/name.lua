@@ -6,15 +6,9 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:CreateName(parent, textFontObject)
-	local element = parent:CreateFontString(nil, "OVERLAY", textFontObject)
-
-	return element
-end
-
-function UF:UpdateName(frame)
-	local config = frame._config.name
-	local element = frame.Name
+local function frame_UpdateName(self)
+	local config = self._config.name
+	local element = self.Name
 
 	element:SetJustifyV(config.v_alignment or "MIDDLE")
 	element:SetJustifyH(config.h_alignment or "CENTER")
@@ -24,14 +18,22 @@ function UF:UpdateName(frame)
 	local point1 = config.point1
 
 	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
 	local point2 = config.point2
 
 	if point2 and point2.p ~= "" then
-		element:SetPoint(point2.p, E:ResolveAnchorPoint(frame, point2.anchor), point2.rP, point2.x, point2.y)
+		element:SetPoint(point2.p, E:ResolveAnchorPoint(self, point2.anchor), point2.rP, point2.x, point2.y)
 	end
 
-	frame:Tag(element, config.tag)
+	self:Tag(element, config.tag)
+end
+
+function UF:CreateName(frame, textFontObject, textParent)
+	local element = (textParent or frame):CreateFontString(nil, "OVERLAY", textFontObject)
+
+	frame.UpdateName = frame_UpdateName
+
+	return element
 end

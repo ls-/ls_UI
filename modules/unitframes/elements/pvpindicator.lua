@@ -15,7 +15,7 @@ local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
 local UnitPrestige = _G.UnitPrestige
 
 -- Mine
-local function Override(self, _, unit)
+local function element_Override(self, _, unit)
 	if unit ~= self.unit then return end
 
 	local pvp = self.PvPIndicator
@@ -69,7 +69,7 @@ local function Override(self, _, unit)
 	end
 end
 
-local function Expand(self)
+local function holder_Expand(self)
 	self:Show()
 
 	if self.PostExpand then
@@ -79,7 +79,7 @@ local function Expand(self)
 	self._expanded = true
 end
 
-local function Collapse(self)
+local function holder_Collapse(self)
 	self:Hide()
 
 	if self.PostCollapse then
@@ -89,17 +89,54 @@ local function Collapse(self)
 	self._expanded = false
 end
 
-local function IsExpanded(self)
+local function holder_IsExpanded(self)
 	return self._expanded
 end
 
-function UF:CreatePvPIndicator(parent)
+local function frame_UpdatePvPIndicator(self)
+	local config = self._config.pvp
+	local element = self.PvPIndicator
+
+	element:ClearAllPoints()
+
+	local point1 = config.point1
+
+	if point1 and point1.p then
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
+	end
+
+	if element.Holder:IsExpanded() and element.Holder.PostExpand then
+		element.Holder:PostExpand()
+	end
+
+	if config.enabled and not self:IsElementEnabled("PvPIndicator") then
+		self:EnableElement("PvPIndicator")
+	elseif not config.enabled and self:IsElementEnabled("PvPIndicator") then
+		self:DisableElement("PvPIndicator")
+	end
+
+	local timer = element.Timer
+
+	if timer then
+		timer.frequentUpdates = config.enabled and 0.1 or nil
+		self:Tag(timer, config.enabled and "[ls:pvptimer]" or "")
+		timer:UpdateTag()
+	end
+
+	if self:IsElementEnabled("PvPIndicator") then
+		element:ForceUpdate()
+	else
+		element.Holder:Collapse()
+	end
+end
+
+function UF:CreatePvPIndicator(frame, parent)
 	local holder = CreateFrame("Frame", nil, parent)
 	holder:SetSize(50, 54)
 
-	holder.Expand = Expand
-	holder.Collapse = Collapse
-	holder.IsExpanded = IsExpanded
+	holder.Expand = holder_Expand
+	holder.Collapse = holder_Collapse
+	holder.IsExpanded = holder_IsExpanded
 
 	local pvp = holder:CreateTexture(nil, "ARTWORK", nil, 0)
 	pvp:SetSize(30, 30)
@@ -110,44 +147,9 @@ function UF:CreatePvPIndicator(parent)
 
 	pvp.Holder = holder
 	pvp.Prestige = banner
-	pvp.Override = Override
+	pvp.Override = element_Override
+
+	frame.UpdatePvPIndicator = frame_UpdatePvPIndicator
 
 	return pvp
-end
-
-function UF:UpdatePvPIndicator(frame)
-	local config = frame._config.pvp
-	local element = frame.PvPIndicator
-
-	element:ClearAllPoints()
-
-	local point1 = config.point1
-
-	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
-	end
-
-	if element.Holder:IsExpanded() and element.Holder.PostExpand then
-		element.Holder:PostExpand()
-	end
-
-	if config.enabled and not frame:IsElementEnabled("PvPIndicator") then
-		frame:EnableElement("PvPIndicator")
-	elseif not config.enabled and frame:IsElementEnabled("PvPIndicator") then
-		frame:DisableElement("PvPIndicator")
-	end
-
-	local timer = element.Timer
-
-	if timer then
-		timer.frequentUpdates = config.enabled and 0.1 or nil
-		frame:Tag(timer, config.enabled and "[ls:pvptimer]" or "")
-		timer:UpdateTag()
-	end
-
-	if frame:IsElementEnabled("PvPIndicator") then
-		element:ForceUpdate()
-	else
-		element.Holder:Collapse()
-	end
 end

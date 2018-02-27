@@ -5,23 +5,42 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	CreateFrame
+]]
+
 -- Mine
+local function frame_Update(self)
+	self:UpdateConfig()
+	self:UpdateSize()
+	self:UpdateInsets()
+	self:UpdateHealth()
+	self:UpdateHealthPrediction()
+	self:UpdatePower()
+	self:UpdateName()
+	self:UpdateRaidTargetIndicator()
+	self:UpdateThreatIndicator()
+	self:UpdateClassIndicator()
+	-- self:UpdateAllElements("LSUI_ToFFrameUpdate")
+end
+
 function UF:CreateFocusTargetFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].focustarget
+	frame._unit = "focustarget"
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
-	local fg_parent = _G.CreateFrame("Frame", nil, frame)
+	local fg_parent = CreateFrame("Frame", nil, frame)
 	fg_parent:SetFrameLevel(level + 7)
 	fg_parent:SetAllPoints()
 	frame.FGParent = fg_parent
 
-	local text_parent = _G.CreateFrame("Frame", nil, frame)
+	local text_parent = CreateFrame("Frame", nil, frame)
 	text_parent:SetFrameLevel(level + 9)
 	text_parent:SetAllPoints()
 	frame.TextParent = text_parent
@@ -37,7 +56,7 @@ function UF:CreateFocusTargetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
 	local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
 	power:SetFrameLevel(level + 1)
@@ -59,9 +78,9 @@ function UF:CreateFocusTargetFrame(frame)
 		end
 	end
 
-	frame.Name = self:CreateName(text_parent, "LSFont12_Shadow")
+	frame.Name = self:CreateName(frame, "LSFont12_Shadow", text_parent)
 
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(text_parent)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, text_parent)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
@@ -85,21 +104,6 @@ function UF:CreateFocusTargetFrame(frame)
 	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 	self:CreateClassIndicator(frame)
-end
 
-function UF:UpdateFocusTargetFrame(frame)
-	frame._config = C.db.profile.units[E.UI_LAYOUT].focustarget
-
-	frame:SetSize(frame._config.width, frame._config.height)
-
-	self:UpdateInsets(frame)
-	self:UpdateHealth(frame)
-	self:UpdateHealthPrediction(frame)
-	self:UpdatePower(frame)
-	self:UpdateName(frame)
-	self:UpdateRaidTargetIndicator(frame)
-	self:UpdateThreatIndicator(frame)
-	self:UpdateClassIndicator(frame)
-
-	frame:UpdateAllElements("LSUI_ToFFrameUpdate")
+	frame.Update = frame_Update
 end

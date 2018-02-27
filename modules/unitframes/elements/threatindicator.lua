@@ -10,13 +10,30 @@ local function element_PostUpdate(self, _, status)
 	end
 end
 
-function UF:CreateThreatIndicator(parent, isTexture)
+local function frame_UpdateThreatIndicator(self)
+	local config = self._config.threat
+	local element = self.ThreatIndicator
+
+	element.feedbackUnit = config.feedback_unit
+
+	if config.enabled and not self:IsElementEnabled("ThreatIndicator") then
+		self:EnableElement("ThreatIndicator")
+	elseif not config.enabled and self:IsElementEnabled("ThreatIndicator") then
+		self:DisableElement("ThreatIndicator")
+	end
+
+	if self:IsElementEnabled("ThreatIndicator") then
+		element:ForceUpdate()
+	end
+end
+
+function UF:CreateThreatIndicator(frame, parent, isTexture)
 	local element
 
 	if isTexture then
-		element = parent:CreateTexture(nil, "BACKGROUND", nil, -7)
+		element = (parent or frame):CreateTexture(nil, "BACKGROUND", nil, -7)
 	else
-		element = E:CreateBorder(parent)
+		element = E:CreateBorder(parent or frame)
 		element:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-glow", "BACKGROUND", -7)
 		element:SetSize(16)
 		element:SetOffset(-6)
@@ -24,22 +41,7 @@ function UF:CreateThreatIndicator(parent, isTexture)
 
 	element.PostUpdate = element_PostUpdate
 
+	frame.UpdateThreatIndicator = frame_UpdateThreatIndicator
+
 	return element
-end
-
-function UF:UpdateThreatIndicator(frame)
-	local config = frame._config.threat
-	local element = frame.ThreatIndicator
-
-	element.feedbackUnit = config.feedback_unit
-
-	if config.enabled and not frame:IsElementEnabled("ThreatIndicator") then
-		frame:EnableElement("ThreatIndicator")
-	elseif not config.enabled and frame:IsElementEnabled("ThreatIndicator") then
-		frame:DisableElement("ThreatIndicator")
-	end
-
-	if frame:IsElementEnabled("ThreatIndicator") then
-		element:ForceUpdate()
-	end
 end

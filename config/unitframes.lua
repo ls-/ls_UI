@@ -1062,7 +1062,7 @@ local function GetOptionsTable_DebuffIcons(unit, order)
 				order = 10,
 				name = L["PREVIEW"],
 				func = function()
-					UNITFRAMES:PreviewDebuffIndicator(UNITFRAMES:GetUnitFrameForUnit(unit))
+					UNITFRAMES:GetUnitFrameForUnit(unit):PreviewDebuffIndicator()
 				end,
 			},
 			p = {

@@ -6,15 +6,9 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-function UF:CreateRaidTargetIndicator(parent)
-	local element = parent:CreateTexture(nil, "ARTWORK", nil, 3)
-
-	return element
-end
-
-function UF:UpdateRaidTargetIndicator(frame)
-	local config = frame._config.raid_target
-	local element = frame.RaidTargetIndicator
+local function frame_UpdateRaidTargetIndicator(self)
+	local config = self._config.raid_target
+	local element = self.RaidTargetIndicator
 
 	element:SetSize(config.size, config.size)
 	element:ClearAllPoints()
@@ -22,16 +16,24 @@ function UF:UpdateRaidTargetIndicator(frame)
 	local point1 = config.point1
 
 	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y)
+		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 	end
 
-	if config.enabled and not frame:IsElementEnabled("RaidTargetIndicator") then
-		frame:EnableElement("RaidTargetIndicator")
-	elseif not config.enabled and frame:IsElementEnabled("RaidTargetIndicator") then
-		frame:DisableElement("RaidTargetIndicator")
+	if config.enabled and not self:IsElementEnabled("RaidTargetIndicator") then
+		self:EnableElement("RaidTargetIndicator")
+	elseif not config.enabled and self:IsElementEnabled("RaidTargetIndicator") then
+		self:DisableElement("RaidTargetIndicator")
 	end
 
-	if frame:IsElementEnabled("RaidTargetIndicator") then
+	if self:IsElementEnabled("RaidTargetIndicator") then
 		element:ForceUpdate()
 	end
+end
+
+function UF:CreateRaidTargetIndicator(frame, parent)
+	local element = (parent or frame):CreateTexture(nil, "ARTWORK", nil, 3)
+
+	frame.UpdateRaidTargetIndicator = frame_UpdateRaidTargetIndicator
+
+	return element
 end

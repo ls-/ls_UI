@@ -5,9 +5,32 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	CreateFrame
+]]
+
 -- Mine
-function UF:CreateCombatFeedback(parent)
-	local element = _G.CreateFrame("Frame", nil, parent)
+local function frame_UpdateCombatFeedback(self)
+	local config = self._config.combat_feedback
+	local element = self.FloatingCombatFeedback
+
+	element.mode = config.mode
+	element.xOffset = config.x_offset
+	element.yOffset = config.y_offset
+
+	if config.enabled and not self:IsElementEnabled("FloatingCombatFeedback") then
+		self:EnableElement("FloatingCombatFeedback")
+	elseif not config.enabled and self:IsElementEnabled("FloatingCombatFeedback") then
+		self:DisableElement("FloatingCombatFeedback")
+	end
+
+	if self:IsElementEnabled("FloatingCombatFeedback") then
+		element:ForceUpdate()
+	end
+end
+
+function UF:CreateCombatFeedback(frame)
+	local element = CreateFrame("Frame", nil, frame)
 	element:SetSize(32, 32)
 
 	for i = 1, 6 do
@@ -16,24 +39,7 @@ function UF:CreateCombatFeedback(parent)
 
 	element.abbreviateNumbers = true
 
+	frame.UpdateCombatFeedback = frame_UpdateCombatFeedback
+
 	return element
-end
-
-function UF:UpdateCombatFeedback(frame)
-	local config = frame._config.combat_feedback
-	local element = frame.FloatingCombatFeedback
-
-	element.mode = config.mode
-	element.xOffset = config.x_offset
-	element.yOffset = config.y_offset
-
-	if config.enabled and not frame:IsElementEnabled("FloatingCombatFeedback") then
-		frame:EnableElement("FloatingCombatFeedback")
-	elseif not config.enabled and frame:IsElementEnabled("FloatingCombatFeedback") then
-		frame:DisableElement("FloatingCombatFeedback")
-	end
-
-	if frame:IsElementEnabled("FloatingCombatFeedback") then
-		element:ForceUpdate()
-	end
 end

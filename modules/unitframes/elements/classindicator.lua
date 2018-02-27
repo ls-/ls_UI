@@ -6,13 +6,12 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
--- Blizz
-local UnitIsPlayer = _G.UnitIsPlayer
-local UnitClass = _G.UnitClass
-local UnitClassification = _G.UnitClassification
+--[[ luacheck: globals
+	UnitClass UnitClassification UnitIsPlayer
+]]
 
 -- Mine
-local function CheckUnitClass(frame)
+local function checkUnitClass(frame)
 	local class, _
 
 	if UnitIsPlayer(frame.unit) then
@@ -55,14 +54,15 @@ local function CheckUnitClass(frame)
 	end
 end
 
+local function frame_UpdateClassIndicator(self)
+	checkUnitClass(self)
+end
+
 function UF:CreateClassIndicator(frame)
 	frame._skin = "none"
 
-	hooksecurefunc(frame, "Show", CheckUnitClass)
+	hooksecurefunc(frame, "Show", checkUnitClass)
 
 	frame.ClassIndicator = true
-end
-
-function UF:UpdateClassIndicator(frame)
-	CheckUnitClass(frame)
+	frame.UpdateClassIndicator = frame_UpdateClassIndicator
 end

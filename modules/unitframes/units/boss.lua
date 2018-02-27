@@ -4,6 +4,12 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
+
+--[[ luacheck: globals
+	CreateFrame
+	UIParent
+]]
 
 -- Mine
 local isInit = false
@@ -35,6 +41,24 @@ function UF:UpdateBossHolder()
 	E:UpdateBarLayout(holder)
 end
 
+local function frame_Update(self)
+	self:UpdateConfig()
+	self:UpdateSize()
+	self:UpdateInsets()
+	self:UpdateHealth()
+	self:UpdateHealthPrediction()
+	self:UpdatePower()
+	self:UpdateAlternativePower()
+	self:UpdateCastbar()
+	self:UpdateName()
+	self:UpdateRaidTargetIndicator()
+	self:UpdateDebuffIndicator()
+	self:UpdateThreatIndicator()
+	self:UpdateAuras()
+	self:UpdateClassIndicator()
+	-- self:UpdateAllElements("LSUI_BossFrameUpdate")
+end
+
 function UF:HasBossFrame()
 	return isInit
 end
@@ -43,6 +67,7 @@ function UF:CreateBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
 	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
+	frame._unit = "boss"
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
@@ -70,7 +95,7 @@ function UF:CreateBossFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(health)
+	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
 	local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
 	power:SetFrameLevel(level + 1)
@@ -115,11 +140,11 @@ function UF:CreateBossFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
-	frame.Name = self:CreateName(textParent, "LSFont12_Shadow")
+	frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
 
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(textParent)
+	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
-	frame.DebuffIndicator = self:CreateDebuffIndicator(textParent)
+	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
@@ -141,26 +166,7 @@ function UF:CreateBossFrame(frame)
 
 	self:CreateClassIndicator(frame)
 
+	frame.Update = frame_Update
+
 	isInit = true
-end
-
-function UF:UpdateBossFrame(frame)
-	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
-
-	frame:SetSize(frame._config.width, frame._config.height)
-
-	self:UpdateInsets(frame)
-	self:UpdateHealth(frame)
-	self:UpdateHealthPrediction(frame)
-	self:UpdatePower(frame)
-	self:UpdateAlternativePower(frame)
-	self:UpdateCastbar(frame)
-	self:UpdateName(frame)
-	self:UpdateRaidTargetIndicator(frame)
-	self:UpdateDebuffIndicator(frame)
-	self:UpdateThreatIndicator(frame)
-	self:UpdateAuras(frame)
-	self:UpdateClassIndicator(frame)
-
-	frame:UpdateAllElements("LSUI_BossFrameUpdate")
 end

@@ -7,10 +7,10 @@ local _G = getfenv(0)
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-UnitFrame_OnEnter
-PartyMemberBuffTooltip
-PartyMemberBuffTooltip_Update
-UnitFrame_OnLeave
+	UnitFrame_OnEnter
+	PartyMemberBuffTooltip
+	PartyMemberBuffTooltip_Update
+	UnitFrame_OnLeave
 ]]
 
 -- Mine
@@ -116,7 +116,7 @@ local function frame_Preview(self, state)
 		self:SetScript("OnUpdate", nil)
 		self:Show()
 
-		if self:IsVisible() and self.Update then
+		if self:IsVisible() then
 			self:Update()
 		end
 	elseif self.isPreviewed or state == false then
@@ -131,27 +131,33 @@ local function frame_Preview(self, state)
 			self.oldOnUpdate = nil
 		end
 
-		if self:IsVisible() and self.Update then
+		if self:IsVisible() then
 			self:Update()
 		end
 	end
 end
 
+local function frame_UpdateConfig(self)
+	self._config = C.db.profile.units[E.UI_LAYOUT][self._unit]
+end
+
+local function frame_UpdateSize(self)
+	self:SetSize(self._config.width, self._config.height)
+end
+
 function UF:CreateUnitFrame(unit)
 	if unit == "player" and not objects["player"] then
 		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
-		objects["player"].Update = function(self)
-			UF:UpdatePlayerFrame(self)
-		end
+		objects["player"].UpdateConfig = frame_UpdateConfig
+		objects["player"].UpdateSize = frame_UpdateSize
 		objects["player"].Preview = frame_Preview
 
 		objects["player"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].player.point))
 		E:CreateMover(objects["player"])
 
 		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
-		objects["pet"].Update = function(self)
-			UF:UpdatePetFrame(self)
-		end
+		objects["pet"].UpdateConfig = frame_UpdateConfig
+		objects["pet"].UpdateSize = frame_UpdateSize
 		objects["pet"].Preview = frame_Preview
 
 		objects["pet"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].pet.point))
@@ -163,18 +169,16 @@ function UF:CreateUnitFrame(unit)
 		return true
 	elseif unit == "target" and not objects["target"] then
 		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
-		objects["target"].Update = function(self)
-			UF:UpdateTargetFrame(self)
-		end
+		objects["target"].UpdateConfig = frame_UpdateConfig
+		objects["target"].UpdateSize = frame_UpdateSize
 		objects["target"].Preview = frame_Preview
 
 		objects["target"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].target.point))
 		E:CreateMover(objects["target"])
 
 		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
-		objects["targettarget"].Update = function(self)
-			UF:UpdateTargetTargetFrame(self)
-		end
+		objects["targettarget"].UpdateConfig = frame_UpdateConfig
+		objects["targettarget"].UpdateSize = frame_UpdateSize
 		objects["targettarget"].Preview = frame_Preview
 
 		objects["targettarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].targettarget.point))
@@ -186,18 +190,16 @@ function UF:CreateUnitFrame(unit)
 		return true
 	elseif unit == "focus" and not objects["focus"] then
 		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
-		objects["focus"].Update = function(self)
-			UF:UpdateFocusFrame(self)
-		end
+		objects["focus"].UpdateConfig = frame_UpdateConfig
+		objects["focus"].UpdateSize = frame_UpdateSize
 		objects["focus"].Preview = frame_Preview
 
 		objects["focus"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focus.point))
 		E:CreateMover(objects["focus"])
 
 		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
-		objects["focustarget"].Update = function(self)
-			UF:UpdateFocusTargetFrame(self)
-		end
+		objects["focustarget"].UpdateConfig = frame_UpdateConfig
+		objects["focustarget"].UpdateSize = frame_UpdateSize
 		objects["focustarget"].Preview = frame_Preview
 
 		objects["focustarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focustarget.point))
@@ -212,9 +214,8 @@ function UF:CreateUnitFrame(unit)
 
 		for i = 1, 5 do
 			objects["boss"..i] = oUF:Spawn("boss"..i, "LSBoss"..i.."Frame")
-			objects["boss"..i].Update = function(self)
-				UF:UpdateBossFrame(self)
-			end
+			objects["boss"..i].UpdateConfig = frame_UpdateConfig
+			objects["boss"..i].UpdateSize = frame_UpdateSize
 			objects["boss"..i].Preview = frame_Preview
 			objects["boss"..i]._parent = holder
 

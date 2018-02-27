@@ -6,6 +6,10 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local m_abs = _G.math.abs
 
+--[[ luacheck: globals
+	CreateFrame
+]]
+
 -- Mine
 local function element_PostCastStart(self)
 	if self.notInterruptible then
@@ -55,8 +59,100 @@ local function element_CustomDelayText(self, duration)
 	end
 end
 
-function UF:CreateCastbar(parent)
-	local holder = CreateFrame("Frame", "$parentCastbarHolder", parent)
+local function frame_UpdateCastbar(self)
+	local config = self._config.castbar
+	local element = self.Castbar
+	local holder = element.Holder
+	local hasMover = E:HasMover(holder)
+	local width = (config.detached and config.width_override ~= 0) and config.width_override or self._config.width
+	local height = config.height
+
+	holder:SetSize(width, height)
+	holder._width = width
+
+	local point1 = config.point1
+
+	if point1 and point1.p then
+		if config.detached then
+			if not hasMover then
+				holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and self:GetName() or point1.detached_anchor), point1.rP, point1.x, point1.y)
+				E:CreateMover(holder)
+			else
+				E:EnableMover(holder)
+				E:UpdateMoverSize(holder, width, height)
+			end
+		else
+			holder:ClearAllPoints()
+			holder:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y, true)
+
+			if hasMover then
+				E:DisableMover(holder)
+			end
+		end
+	end
+
+	if config.icon.enabled then
+		if config.icon.position == "LEFT" then
+			element.Icon = element.LeftIcon
+
+			element.LeftIcon:SetSize(height * 1.5, height)
+			element.RightIcon:SetSize(0.0001, height)
+
+			element.LeftSep:SetSize(12, height)
+			element.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+			element.RightSep:SetSize(0.0001, height)
+
+			element:SetPoint("TOPLEFT", 5 + height * 1.5, 0)
+			element:SetPoint("BOTTOMRIGHT", -3, 0)
+		elseif config.icon.position == "RIGHT" then
+			element.Icon = element.RightIcon
+
+			element.LeftIcon:SetSize(0.0001, height)
+			element.RightIcon:SetSize(height * 1.5, height)
+
+			element.LeftSep:SetSize(0.0001, height)
+			element.RightSep:SetSize(12, height)
+			element.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+
+			element:SetPoint("TOPLEFT", 3, 0)
+			element:SetPoint("BOTTOMRIGHT", -5 - height * 1.5, 0)
+		end
+	else
+		element.Icon = nil
+
+		element.LeftIcon:SetSize(0.0001, height)
+		element.RightIcon:SetSize(0.0001, height)
+
+		element.LeftSep:SetSize(0.0001, height)
+		element.RightSep:SetSize(0.0001, height)
+
+		element:SetPoint("TOPLEFT", 3, 0)
+		element:SetPoint("BOTTOMRIGHT", -3, 0)
+	end
+
+	if config.latency then
+		element.SafeZone = element.SafeZone_
+		element.SafeZone_:Show()
+	else
+		element.SafeZone = nil
+		element.SafeZone_:Hide()
+	end
+
+	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-"..height)
+
+	if config.enabled and not self:IsElementEnabled("Castbar") then
+		self:EnableElement("Castbar")
+	elseif not config.enabled and self:IsElementEnabled("Castbar") then
+		self:DisableElement("Castbar")
+	end
+
+	if self:IsElementEnabled("Castbar") then
+		element:ForceUpdate()
+	end
+end
+
+function UF:CreateCastbar(frame)
+	local holder = CreateFrame("Frame", "$parentCastbarHolder", frame)
 	holder._width = 0
 
 	local element = CreateFrame("StatusBar", nil, holder)
@@ -118,97 +214,7 @@ function UF:CreateCastbar(parent)
 	element.CustomDelayText = element_CustomDelayText
 	element.timeToHold = 0.4
 
+	frame.UpdateCastbar = frame_UpdateCastbar
+
 	return element
-end
-
-function UF:UpdateCastbar(frame)
-	local config = frame._config.castbar
-	local element = frame.Castbar
-	local holder = element.Holder
-	local hasMover = E:HasMover(holder)
-	local width = (config.detached and config.width_override ~= 0) and config.width_override or frame._config.width
-	local height = config.height
-
-	holder:SetSize(width, height)
-	holder._width = width
-
-	local point1 = config.point1
-
-	if point1 and point1.p then
-		if config.detached then
-			if not hasMover then
-				holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and frame:GetName() or point1.detached_anchor), point1.rP, point1.x, point1.y)
-				E:CreateMover(holder)
-			else
-				E:EnableMover(holder)
-				E:UpdateMoverSize(holder, width, height)
-			end
-		else
-			holder:ClearAllPoints()
-			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
-
-			if hasMover then
-				E:DisableMover(holder)
-			end
-		end
-	end
-
-	if config.icon.enabled then
-		if config.icon.position == "LEFT" then
-			element.Icon = element.LeftIcon
-
-			element.LeftIcon:SetSize(height * 1.5, height)
-			element.RightIcon:SetSize(0.0001, height)
-
-			element.LeftSep:SetSize(12, height)
-			element.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
-			element.RightSep:SetSize(0.0001, height)
-
-			element:SetPoint("TOPLEFT", 5 + height * 1.5, 0)
-			element:SetPoint("BOTTOMRIGHT", -3, 0)
-		elseif config.icon.position == "RIGHT" then
-			element.Icon = element.RightIcon
-
-			element.LeftIcon:SetSize(0.0001, height)
-			element.RightIcon:SetSize(height * 1.5, height)
-
-			element.LeftSep:SetSize(0.0001, height)
-			element.RightSep:SetSize(12, height)
-			element.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
-
-			element:SetPoint("TOPLEFT", 3, 0)
-			element:SetPoint("BOTTOMRIGHT", -5 - height * 1.5, 0)
-		end
-	else
-		element.Icon = nil
-
-		element.LeftIcon:SetSize(0.0001, height)
-		element.RightIcon:SetSize(0.0001, height)
-
-		element.LeftSep:SetSize(0.0001, height)
-		element.RightSep:SetSize(0.0001, height)
-
-		element:SetPoint("TOPLEFT", 3, 0)
-		element:SetPoint("BOTTOMRIGHT", -3, 0)
-	end
-
-	if config.latency then
-		element.SafeZone = element.SafeZone_
-		element.SafeZone_:Show()
-	else
-		element.SafeZone = nil
-		element.SafeZone_:Hide()
-	end
-
-	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-"..height)
-
-	if config.enabled and not frame:IsElementEnabled("Castbar") then
-		frame:EnableElement("Castbar")
-	elseif not config.enabled and frame:IsElementEnabled("Castbar") then
-		frame:DisableElement("Castbar")
-	end
-
-	if frame:IsElementEnabled("Castbar") then
-		element:ForceUpdate()
-	end
 end

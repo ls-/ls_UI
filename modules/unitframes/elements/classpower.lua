@@ -5,8 +5,16 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
+-- Blizz
+local UnitHealthMax = _G.UnitHealthMax
+local UnitStagger = _G.UnitStagger
+
+--[[ luacheck:globals
+	CreateFrame UnitHasVehicleUI
+]]
+
 -- Mine
-local function OnValueChanged(self, value)
+local function bar_OnValueChanged(self, value)
 	local _, max = self:GetMinMaxValues()
 
 	if value == max then
@@ -30,15 +38,15 @@ local function OnValueChanged(self, value)
 	end
 end
 
-local function CreateElement(parent, num, name)
-	local element = _G.CreateFrame("Frame", nil, parent)
+local function createElement(parent, num, name)
+	local element = CreateFrame("Frame", nil, parent)
 	local level = element:GetFrameLevel()
 
 	for i = 1, num do
-		local bar = _G.CreateFrame("StatusBar", "$parent"..name..i, element)
+		local bar = CreateFrame("StatusBar", "$parent"..name..i, element)
 		bar:SetFrameLevel(level)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		bar:SetScript("OnValueChanged", OnValueChanged)
+		bar:SetScript("OnValueChanged", bar_OnValueChanged)
 		element[i] = bar
 
 		local glow = bar:CreateTexture(nil, "ARTWORK", nil, 7)
@@ -68,14 +76,15 @@ local function CreateElement(parent, num, name)
 	return element
 end
 
+-- .Runes
 do
-	local function PostUpdate(self)
+	local function element_PostUpdate(self)
 		if not self.isEnabled then
 			self:Hide()
 
 			self._active = false
 		else
-			local hasVehicle = _G.UnitHasVehicleUI("player")
+			local hasVehicle = UnitHasVehicleUI("player")
 
 			if hasVehicle and self._active then
 				self:Hide()
@@ -89,20 +98,9 @@ do
 		end
 	end
 
-	function UF:CreateRunes(parent)
-		local element = CreateElement(parent, 6, "Rune")
-		element:Hide()
-
-		element.isEnabled = true
-		element.colorSpec = true
-		element.PostUpdate = PostUpdate
-
-		return element
-	end
-
-	function UF:UpdateRunes(frame)
-		local config = frame._config.class_power
-		local element = frame.Runes
+	local function frame_UpdateRunes(self)
+		local config = self._config.class_power
+		local element = self.Runes
 		local width, height = element:GetSize()
 		local layout
 
@@ -141,22 +139,35 @@ do
 			end
 		end
 
-		if config.enabled and not frame:IsElementEnabled("Runes") then
-			frame:EnableElement("Runes")
+		if config.enabled and not self:IsElementEnabled("Runes") then
+			self:EnableElement("Runes")
 
 			element.isEnabled = true
-		elseif not config.enabled and frame:IsElementEnabled("Runes") then
-			frame:DisableElement("Runes")
+		elseif not config.enabled and self:IsElementEnabled("Runes") then
+			self:DisableElement("Runes")
 
 			element.isEnabled = false
 		end
 
 		element:ForceUpdate()
 	end
+
+	function UF:CreateRunes(frame)
+		local element = createElement(frame, 6, "Rune")
+		element:Hide()
+
+		element.isEnabled = true
+		element.colorSpec = true
+		element.PostUpdate = element_PostUpdate
+
+		frame.UpdateRunes = frame_UpdateRunes
+
+		return element
+	end
 end
 
 do
-	local function PostUpdate(self, _, max, maxChanged, powerType)
+	local function element_PostUpdate(self, _, max, maxChanged, powerType)
 		if self._state ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.isEnabled then
 				self:Hide()
@@ -198,18 +209,9 @@ do
 		end
 	end
 
-	function UF:CreateClassPower(parent)
-		local element = CreateElement(parent, 10, "ClassPower")
-		element:Hide()
-
-		element.PostUpdate = PostUpdate
-
-		return element
-	end
-
-	function UF:UpdateClassPower(frame)
-		local config = frame._config.class_power
-		local element = frame.ClassPower
+	local function frame_UpdateClassPower(self)
+		local config = self._config.class_power
+		local element = self.ClassPower
 		local width, height = element:GetSize()
 
 		for i = 1, 10 do
@@ -241,27 +243,40 @@ do
 			end
 		end
 
-		if config.enabled and not frame:IsElementEnabled("ClassPower") then
-			frame:EnableElement("ClassPower")
-		elseif not config.enabled and frame:IsElementEnabled("ClassPower") then
-			frame:DisableElement("ClassPower")
+		if config.enabled and not self:IsElementEnabled("ClassPower") then
+			self:EnableElement("ClassPower")
+		elseif not config.enabled and self:IsElementEnabled("ClassPower") then
+			self:DisableElement("ClassPower")
 		end
 
 		if element.isEnabled then
 			element._state = nil
+			element._powerID = nil
 			element:ForceUpdate()
 		end
 	end
+
+	function UF:CreateClassPower(frame)
+		local element = createElement(frame, 10, "ClassPower")
+		element:Hide()
+
+		element.PostUpdate = element_PostUpdate
+
+		frame.UpdateClassPower = frame_UpdateClassPower
+
+		return element
+	end
 end
 
+-- .Stagger
 do
-	local function Override(self, _, unit)
+	local function element_Override(self, _, unit)
 		if unit and unit ~= self.unit then return end
 
 		local element = self.Stagger
 
-		local max = _G.UnitHealthMax("player")
-		local cur = _G.UnitStagger("player")
+		local max = UnitHealthMax("player")
+		local cur = UnitStagger("player")
 		local r, g, b = M.COLORS.POWER.STAGGER:GetRGB(cur / max)
 
 		element:SetMinMaxValues(0, max)
@@ -273,33 +288,20 @@ do
 		end
 	end
 
-	function UF:CreateStagger(parent)
-		local element = _G.CreateFrame("StatusBar", "$parentStagger", parent)
-		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:Hide()
-
-		E:SmoothBar(element)
-		E:CreateGainLossIndicators(element)
-
-		element.Override = Override
-
-		return element
-	end
-
-	function UF:UpdateStagger(frame)
-		local config = frame._config.class_power
-		local element = frame.Stagger
+	local function frame_UpdateStagger(self)
+		local config = self._config.class_power
+		local element = self.Stagger
 
 		element:SetOrientation(config.orientation)
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
 
-		if config.enabled and not frame:IsElementEnabled("Stagger") then
-			frame:EnableElement("Stagger")
+		if config.enabled and not self:IsElementEnabled("Stagger") then
+			self:EnableElement("Stagger")
 
 			element.isEnabled = true
-		elseif not config.enabled and frame:IsElementEnabled("Stagger") then
-			frame:DisableElement("Stagger")
+		elseif not config.enabled and self:IsElementEnabled("Stagger") then
+			self:DisableElement("Stagger")
 
 			element.isEnabled = false
 		end
@@ -307,5 +309,20 @@ do
 		if element.isEnabled then
 			element:ForceUpdate()
 		end
+	end
+
+	function UF:CreateStagger(frame)
+		local element = CreateFrame("StatusBar", nil, frame)
+		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:Hide()
+
+		E:SmoothBar(element)
+		E:CreateGainLossIndicators(element)
+
+		element.element_Override = element_Override
+
+		frame.UpdateStagger = frame_UpdateStagger
+
+		return element
 	end
 end
