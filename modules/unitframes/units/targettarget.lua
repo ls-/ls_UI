@@ -11,17 +11,25 @@ local _G = getfenv(0)
 
 -- Mine
 local function frame_Update(self)
-	self:UpdateConfig()
-	self:UpdateSize()
-	self:UpdateInsets()
-	self:UpdateHealth()
-	self:UpdateHealthPrediction()
-	self:UpdatePower()
-	self:UpdateName()
-	self:UpdateRaidTargetIndicator()
-	self:UpdateThreatIndicator()
-	self:UpdateClassIndicator()
-	-- self:UpdateAllElements("LSUI_ToTFrameUpdate")
+	if self._config.enabled then
+		if not self:IsEnabled() then
+			self:Enable()
+		end
+
+		self:UpdateConfig()
+		self:UpdateSize()
+		self:UpdateInsets()
+		self:UpdateHealth()
+		self:UpdateHealthPrediction()
+		self:UpdatePower()
+		self:UpdateName()
+		self:UpdateRaidTargetIndicator()
+		self:UpdateThreatIndicator()
+		self:UpdateClassIndicator()
+		E:UpdateMoverSize(self)
+	else
+		self:Disable()
+	end
 end
 
 function UF:CreateTargetTargetFrame(frame)

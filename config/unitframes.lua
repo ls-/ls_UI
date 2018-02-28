@@ -1567,8 +1567,20 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 		childGroups = "tab",
 		name = name,
 		args = {
-			copy = {
+			enabled = {
 				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.profile.units[E.UI_LAYOUT][unit].enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[E.UI_LAYOUT][unit].enabled = value
+					UNITFRAMES:UpdateUnitFrame(unit)
+				end,
+			},
+			copy = {
+				order = 2,
 				type = "select",
 				name = L["COPY_FROM"],
 				desc = L["COPY_FROM_DESC"],
@@ -1581,7 +1593,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 			},
 			reset = {
 				type = "execute",
-				order = 2,
+				order = 3,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
 					CONFIG:CopySettings(D.profile.units[E.UI_LAYOUT][unit], C.db.profile.units[E.UI_LAYOUT][unit], {point = true})
@@ -1589,7 +1601,7 @@ local function GetOptionsTable_UnitFrame(unit, order, name)
 				end,
 			},
 			preview = {
-				order = 3,
+				order = 9,
 				type = "execute",
 				name = L["PREVIEW"],
 				func = function()
@@ -2078,12 +2090,12 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 					return not UNITFRAMES:IsInit()
 				end,
 				get = function(info)
-					return C.db.profile.units[E.UI_LAYOUT][info[#info]].enabled
+					return C.db.char.units[info[#info]].enabled
 				end,
 				set = function(info, value)
 					local unit = info[#info]
 
-					C.db.profile.units[E.UI_LAYOUT][unit].enabled = value
+					C.db.char.units[unit].enabled = value
 
 					if UNITFRAMES:IsInit() then
 						if value then

@@ -13,21 +13,29 @@ local _G = getfenv(0)
 local isInit = false
 
 local function frame_Update(self)
-	self:UpdateConfig()
-	self:UpdateSize()
-	self:UpdateInsets()
-	self:UpdateHealth()
-	self:UpdateHealthPrediction()
-	self:UpdatePower()
-	self:UpdateCastbar()
-	self:UpdateName()
-	self:UpdateRaidTargetIndicator()
-	self:UpdatePvPIndicator()
-	self:UpdateDebuffIndicator()
-	self:UpdateThreatIndicator()
-	self:UpdateAuras()
-	self:UpdateClassIndicator()
-	-- self:UpdateAllElements("LSUI_FocusFrameUpdate")
+	if self._config.enabled then
+		if not self:IsEnabled() then
+			self:Enable()
+		end
+
+		self:UpdateConfig()
+		self:UpdateSize()
+		self:UpdateInsets()
+		self:UpdateHealth()
+		self:UpdateHealthPrediction()
+		self:UpdatePower()
+		self:UpdateCastbar()
+		self:UpdateName()
+		self:UpdateRaidTargetIndicator()
+		self:UpdatePvPIndicator()
+		self:UpdateDebuffIndicator()
+		self:UpdateThreatIndicator()
+		self:UpdateAuras()
+		self:UpdateClassIndicator()
+		E:UpdateMoverSize(self)
+	else
+		self:Disable()
+	end
 end
 
 function UF:HasFocusFrame()

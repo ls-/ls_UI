@@ -156,6 +156,7 @@ D.profile = {
 				},
 			},
 			pet = {
+				enabled = true,
 				width = 42,
 				height = 134,
 				point = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
@@ -439,6 +440,7 @@ D.profile = {
 				},
 			},
 			targettarget = {
+				enabled = true,
 				width = 112,
 				height = 28,
 				point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
@@ -719,6 +721,7 @@ D.profile = {
 				},
 			},
 			focustarget = {
+				enabled = true,
 				width = 112,
 				height = 28,
 				point = { "BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
@@ -1193,6 +1196,7 @@ D.profile = {
 				},
 			},
 			pet = {
+				enabled = true,
 				width = 112,
 				height = 28,
 				point = { "BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
@@ -1502,6 +1506,7 @@ D.profile = {
 				},
 			},
 			targettarget = {
+				enabled = true,
 				width = 112,
 				height = 28,
 				point = { "BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
@@ -1783,6 +1788,7 @@ D.profile = {
 				},
 			},
 			focustarget = {
+				enabled = true,
 				width = 112,
 				height = 28,
 				point = { "BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
@@ -2708,5 +2714,17 @@ D.char = {
 	},
 	units = {
 		enabled = true,
+		player = {
+			enabled = true,
+		},
+		target = {
+			enabled = true,
+		},
+		focus = {
+			enabled = true,
+		},
+		boss = {
+			enabled = true,
+		},
 	},
 }

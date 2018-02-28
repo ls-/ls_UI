@@ -12,16 +12,24 @@ local _G = getfenv(0)
 -- Mine
 do
 	local function frame_Update(self)
-		self:UpdateConfig()
-		self:UpdateSize()
-		self:UpdateHealth()
-		self:UpdateHealthPrediction()
-		self:UpdatePower()
-		self:UpdateCastbar()
-		self:UpdateRaidTargetIndicator()
-		self:UpdateDebuffIndicator()
-		self:UpdateThreatIndicator()
-		-- frame:UpdateAllElements("LSUI_PetFrameUpdate")
+		if self._config.enabled then
+			if not self:IsEnabled() then
+				self:Enable()
+			end
+
+			self:UpdateConfig()
+			self:UpdateSize()
+			self:UpdateHealth()
+			self:UpdateHealthPrediction()
+			self:UpdatePower()
+			self:UpdateCastbar()
+			self:UpdateRaidTargetIndicator()
+			self:UpdateDebuffIndicator()
+			self:UpdateThreatIndicator()
+			E:UpdateMoverSize(self)
+		else
+			self:Disable()
+		end
 	end
 
 	function UF:CreateVerticalPetFrame(frame)
@@ -98,19 +106,28 @@ end
 
 do
 	local function frame_Update(self)
-		self:UpdateConfig()
-		self:UpdateSize()
-		self:UpdateInsets()
-		self:UpdateHealth()
-		self:UpdateHealthPrediction()
-		self:UpdatePower()
-		self:UpdateCastbar()
-		self:UpdateRaidTargetIndicator()
-		self:UpdateDebuffIndicator()
-		self:UpdateThreatIndicator()
-		self:UpdateName()
-		self:UpdateClassIndicator()
-		-- frame:UpdateAllElements("LSUI_PetFrameUpdate")
+
+		if self._config.enabled then
+			if not self:IsEnabled() then
+				self:Enable()
+			end
+
+			self:UpdateConfig()
+			self:UpdateSize()
+			self:UpdateInsets()
+			self:UpdateHealth()
+			self:UpdateHealthPrediction()
+			self:UpdatePower()
+			self:UpdateCastbar()
+			self:UpdateRaidTargetIndicator()
+			self:UpdateDebuffIndicator()
+			self:UpdateThreatIndicator()
+			self:UpdateName()
+			self:UpdateClassIndicator()
+			E:UpdateMoverSize(self)
+		else
+			self:Disable()
+		end
 	end
 
 	function UF:CreateHorizontalPetFrame(frame)

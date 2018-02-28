@@ -4,13 +4,16 @@ local UF = P:AddModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	UnitFrame_OnEnter
 	PartyMemberBuffTooltip
 	PartyMemberBuffTooltip_Update
+	RegisterUnitWatch
+	UnitFrame_OnEnter
 	UnitFrame_OnLeave
+	UnregisterUnitWatch
 ]]
 
 -- Mine
@@ -37,68 +40,12 @@ local function frame_OnLeave(self)
 	PartyMemberBuffTooltip:Hide()
 end
 
-local function constructor()
-	oUF:RegisterStyle("LS", function(frame, unit)
-		frame:RegisterForClicks("AnyUp")
-		frame:SetScript("OnEnter", frame_OnEnter)
-		frame:SetScript("OnLeave", frame_OnLeave)
+local function frame_UpdateConfig(self)
+	self._config = C.db.profile.units[E.UI_LAYOUT][self._unit]
+end
 
-		if unit == "player" then
-			if E.UI_LAYOUT == "ls" then
-				UF:CreateVerticalPlayerFrame(frame)
-			else
-				UF:CreateHorizontalPlayerFrame(frame)
-			end
-		elseif unit == "pet" then
-			if E.UI_LAYOUT == "ls" then
-				UF:CreateVerticalPetFrame(frame)
-			else
-				UF:CreateHorizontalPetFrame(frame)
-			end
-		elseif unit == "target" then
-			UF:CreateTargetFrame(frame)
-		elseif unit == "targettarget" then
-			UF:CreateTargetTargetFrame(frame)
-		elseif unit == "focus" then
-			UF:CreateFocusFrame(frame)
-		elseif unit == "focustarget" then
-			UF:CreateFocusTargetFrame(frame)
-		elseif unit == "boss1" then
-			UF:CreateBossFrame(frame)
-		elseif unit == "boss2" then
-			UF:CreateBossFrame(frame)
-		elseif unit == "boss3" then
-			UF:CreateBossFrame(frame)
-		elseif unit == "boss4" then
-			UF:CreateBossFrame(frame)
-		elseif unit == "boss5" then
-			UF:CreateBossFrame(frame)
-		end
-	end)
-	oUF:SetActiveStyle("LS")
-
-	if C.db.profile.units[E.UI_LAYOUT].player.enabled then
-		UF:CreateUnitFrame("player")
-		UF:UpdateUnitFrame("player")
-		UF:UpdateUnitFrame("pet")
-	end
-
-	if C.db.profile.units[E.UI_LAYOUT].target.enabled then
-		UF:CreateUnitFrame("target")
-		UF:UpdateUnitFrame("target")
-		UF:UpdateUnitFrame("targettarget")
-	end
-
-	if C.db.profile.units[E.UI_LAYOUT].focus.enabled then
-		UF:CreateUnitFrame("focus")
-		UF:UpdateUnitFrame("focus")
-		UF:UpdateUnitFrame("focustarget")
-	end
-
-	if C.db.profile.units[E.UI_LAYOUT].boss.enabled then
-		UF:CreateUnitFrame("boss")
-		UF:UpdateUnitFrame("boss")
-	end
+local function frame_UpdateSize(self)
+	self:SetSize(self._config.width, self._config.height)
 end
 
 local function frame_Preview(self, state)
@@ -137,119 +84,69 @@ local function frame_Preview(self, state)
 	end
 end
 
-local function frame_UpdateConfig(self)
-	self._config = C.db.profile.units[E.UI_LAYOUT][self._unit]
-end
+function UF:CreateUnitFrame(unit, name)
+	if not units[unit] then
+		if unit == "boss" then
+			local holder = self:CreateBossHolder()
 
-local function frame_UpdateSize(self)
-	self:SetSize(self._config.width, self._config.height)
-end
+			for i = 1, 5 do
+				local object = oUF:Spawn(unit..i, name..i.."Frame")
+				object.UpdateConfig = frame_UpdateConfig
+				object.UpdateSize = frame_UpdateSize
+				object.Preview = frame_Preview
+				objects[unit..i] = object
 
-function UF:CreateUnitFrame(unit)
-	if unit == "player" and not objects["player"] then
-		objects["player"] = oUF:Spawn("player", "LSPlayerFrame")
-		objects["player"].UpdateConfig = frame_UpdateConfig
-		objects["player"].UpdateSize = frame_UpdateSize
-		objects["player"].Preview = frame_Preview
+				object._parent = holder
+				holder._buttons[i] = object
+			end
+		else
+			local object = oUF:Spawn(unit, name.."Frame")
+			object.UpdateConfig = frame_UpdateConfig
+			object.UpdateSize = frame_UpdateSize
+			object.Preview = frame_Preview
+			objects[unit] = object
 
-		objects["player"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].player.point))
-		E:CreateMover(objects["player"])
-
-		objects["pet"] = oUF:Spawn("pet", "LSPetFrame")
-		objects["pet"].UpdateConfig = frame_UpdateConfig
-		objects["pet"].UpdateSize = frame_UpdateSize
-		objects["pet"].Preview = frame_Preview
-
-		objects["pet"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].pet.point))
-		E:CreateMover(objects["pet"])
-
-		units["player"] = true
-		units["pet"] = true
-
-		return true
-	elseif unit == "target" and not objects["target"] then
-		objects["target"] = oUF:Spawn("target", "LSTargetFrame")
-		objects["target"].UpdateConfig = frame_UpdateConfig
-		objects["target"].UpdateSize = frame_UpdateSize
-		objects["target"].Preview = frame_Preview
-
-		objects["target"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].target.point))
-		E:CreateMover(objects["target"])
-
-		objects["targettarget"] = oUF:Spawn("targettarget", "LSTargetTargetFrame")
-		objects["targettarget"].UpdateConfig = frame_UpdateConfig
-		objects["targettarget"].UpdateSize = frame_UpdateSize
-		objects["targettarget"].Preview = frame_Preview
-
-		objects["targettarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].targettarget.point))
-		E:CreateMover(objects["targettarget"])
-
-		units["target"] = true
-		units["targettarget"] = true
-
-		return true
-	elseif unit == "focus" and not objects["focus"] then
-		objects["focus"] = oUF:Spawn("focus", "LSFocusFrame")
-		objects["focus"].UpdateConfig = frame_UpdateConfig
-		objects["focus"].UpdateSize = frame_UpdateSize
-		objects["focus"].Preview = frame_Preview
-
-		objects["focus"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focus.point))
-		E:CreateMover(objects["focus"])
-
-		objects["focustarget"] = oUF:Spawn("focustarget", "LSFocusTargetFrame")
-		objects["focustarget"].UpdateConfig = frame_UpdateConfig
-		objects["focustarget"].UpdateSize = frame_UpdateSize
-		objects["focustarget"].Preview = frame_Preview
-
-		objects["focustarget"]:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].focustarget.point))
-		E:CreateMover(objects["focustarget"])
-
-		units["focus"] = true
-		units["focustarget"] = true
-
-		return true
-	elseif unit == "boss" and not objects["boss1"] then
-		local holder = self:CreateBossHolder()
-
-		for i = 1, 5 do
-			objects["boss"..i] = oUF:Spawn("boss"..i, "LSBoss"..i.."Frame")
-			objects["boss"..i].UpdateConfig = frame_UpdateConfig
-			objects["boss"..i].UpdateSize = frame_UpdateSize
-			objects["boss"..i].Preview = frame_Preview
-			objects["boss"..i]._parent = holder
-
-			holder._buttons[i] = objects["boss"..i]
+			object:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT][unit].point))
+			E:CreateMover(object)
 		end
 
-		units["boss"] = true
-
-		return true
+		units[unit] = true
 	end
 end
 
-function UF:UpdateUnitFrame(unit)
-	if unit == "boss" and objects["boss1"] then
-		for i = 1, 5 do
-			objects["boss"..i]:Update()
+function UF:UpdateUnitFrame(unit, method)
+	if units[unit] then
+		if unit == "boss" then
+			if method then
+				for i = 1, 5 do
+					if objects[unit..i][method] then
+						objects[unit..i][method](objects[unit..i])
+					end
+				end
+			else
+				for i = 1, 5 do
+					objects["boss"..i]:Update()
+				end
+
+				UF:UpdateBossHolder()
+			end
+		elseif objects[unit] then
+			if method then
+				if objects[unit][method] then
+					objects[unit][method](objects[unit])
+				end
+			else
+				objects[unit]:Update()
+			end
 		end
-
-		UF:UpdateBossHolder()
-
-		return true
-	elseif objects[unit] then
-		objects[unit]:Update()
-		E:UpdateMoverSize(objects[unit])
-
-		return true
 	end
 end
 
-function UF:GetUnits(removeUnits)
+function UF:GetUnits(ignoredUnits)
 	local temp = {}
 
 	for unit in next, units do
-		if not removeUnits or not removeUnits[unit] then
+		if not ignoredUnits or not ignoredUnits[unit] then
 			temp[unit] = unit
 		end
 	end
@@ -271,7 +168,72 @@ end
 
 function UF:Init()
 	if not isInit and C.db.char.units.enabled then
-		oUF:Factory(constructor)
+		oUF:Factory(function()
+			oUF:RegisterStyle("LS", function(frame, unit)
+				frame:RegisterForClicks("AnyUp")
+				frame:SetScript("OnEnter", frame_OnEnter)
+				frame:SetScript("OnLeave", frame_OnLeave)
+
+				if unit == "player" then
+					if E.UI_LAYOUT == "ls" then
+						UF:CreateVerticalPlayerFrame(frame)
+					else
+						UF:CreateHorizontalPlayerFrame(frame)
+					end
+				elseif unit == "pet" then
+					if E.UI_LAYOUT == "ls" then
+						UF:CreateVerticalPetFrame(frame)
+					else
+						UF:CreateHorizontalPetFrame(frame)
+					end
+				elseif unit == "target" then
+					UF:CreateTargetFrame(frame)
+				elseif unit == "targettarget" then
+					UF:CreateTargetTargetFrame(frame)
+				elseif unit == "focus" then
+					UF:CreateFocusFrame(frame)
+				elseif unit == "focustarget" then
+					UF:CreateFocusTargetFrame(frame)
+				elseif unit == "boss1" then
+					UF:CreateBossFrame(frame)
+				elseif unit == "boss2" then
+					UF:CreateBossFrame(frame)
+				elseif unit == "boss3" then
+					UF:CreateBossFrame(frame)
+				elseif unit == "boss4" then
+					UF:CreateBossFrame(frame)
+				elseif unit == "boss5" then
+					UF:CreateBossFrame(frame)
+				end
+			end)
+			oUF:SetActiveStyle("LS")
+
+			if C.db.char.units.player.enabled then
+				UF:CreateUnitFrame("player", "LSPlayer")
+				UF:UpdateUnitFrame("player")
+				UF:CreateUnitFrame("pet", "LSPet")
+				UF:UpdateUnitFrame("pet")
+			end
+
+			if C.db.char.units.target.enabled then
+				UF:CreateUnitFrame("target", "LSTarget")
+				UF:UpdateUnitFrame("target")
+				UF:CreateUnitFrame("targettarget", "LSTargetTarget")
+				UF:UpdateUnitFrame("targettarget")
+			end
+
+			if C.db.char.units.focus.enabled then
+				UF:CreateUnitFrame("focus", "LSFocus")
+				UF:UpdateUnitFrame("focus")
+				UF:CreateUnitFrame("focustarget", "LSFocusTarget")
+				UF:UpdateUnitFrame("focustarget")
+			end
+
+			if C.db.char.units.boss.enabled then
+				UF:CreateUnitFrame("boss", "LSBoss")
+				UF:UpdateUnitFrame("boss")
+			end
+		end)
 
 		isInit = true
 	end

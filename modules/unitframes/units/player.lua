@@ -18,31 +18,39 @@ end
 
 do
 	local function frame_Update(self)
-		self:UpdateConfig()
-		self:UpdateSize()
-		self:UpdateHealth()
-		self:UpdateHealthPrediction()
-		self:UpdatePower()
-		self:UpdateAdditionalPower()
-		self:UpdatePowerPrediction()
-		self:UpdateClassPower()
+		if self._config.enabled then
+			if not self:IsEnabled() then
+				self:Enable()
+			end
 
-		if self.Runes then
-			self:UpdateRunes()
+			self:UpdateConfig()
+			self:UpdateSize()
+			self:UpdateHealth()
+			self:UpdateHealthPrediction()
+			self:UpdatePower()
+			self:UpdateAdditionalPower()
+			self:UpdatePowerPrediction()
+			self:UpdateClassPower()
+
+			if self.Runes then
+				self:UpdateRunes()
+			end
+
+			if self.Stagger then
+				self:UpdateStagger()
+			end
+
+			self:UpdateCastbar()
+			self:UpdateName()
+			self:UpdateRaidTargetIndicator()
+			self:UpdatePvPIndicator()
+			self:UpdateDebuffIndicator()
+			self:UpdateCombatFeedback()
+			self:UpdateThreatIndicator()
+			E:UpdateMoverSize(self)
+		else
+			self:Disable()
 		end
-
-		if self.Stagger then
-			self:UpdateStagger()
-		end
-
-		self:UpdateCastbar()
-		self:UpdateName()
-		self:UpdateRaidTargetIndicator()
-		self:UpdatePvPIndicator()
-		self:UpdateDebuffIndicator()
-		self:UpdateCombatFeedback()
-		self:UpdateThreatIndicator()
-		-- self:UpdateAllElements("LSUI_PlayerFrameUpdate")
 	end
 
 	function UF:CreateVerticalPlayerFrame(frame)
@@ -311,42 +319,50 @@ end
 
 do
 	local function frame_Update(self)
-		self:UpdateConfig()
-		self:UpdateSize()
-		self:UpdateInsets()
-		self:UpdateHealth()
-		self:UpdateHealthPrediction()
+		if self._config.enabled then
+			if not self:IsEnabled() then
+				self:Enable()
+			end
 
-		self.Power:SetWidth(self._config.width)
-		self:UpdatePower()
+			self:UpdateConfig()
+			self:UpdateSize()
+			self:UpdateInsets()
+			self:UpdateHealth()
+			self:UpdateHealthPrediction()
 
-		self.AdditionalPower:SetWidth(self._config.width)
-		self:UpdateAdditionalPower()
-		self:UpdatePowerPrediction()
+			self.Power:SetWidth(self._config.width)
+			self:UpdatePower()
 
-		self.ClassPower:SetWidth(self._config.width)
-		self:UpdateClassPower()
+			self.AdditionalPower:SetWidth(self._config.width)
+			self:UpdateAdditionalPower()
+			self:UpdatePowerPrediction()
 
-		if self.Runes then
-			self.Runes:SetWidth(self._config.width)
-			self:UpdateRunes()
+			self.ClassPower:SetWidth(self._config.width)
+			self:UpdateClassPower()
+
+			if self.Runes then
+				self.Runes:SetWidth(self._config.width)
+				self:UpdateRunes()
+			end
+
+			if self.Stagger then
+				self.Stagger:SetWidth(self._config.width)
+				self:UpdateStagger()
+			end
+
+			self:UpdateCastbar()
+			self:UpdateName()
+			self:UpdateRaidTargetIndicator()
+			self:UpdatePvPIndicator()
+			self:UpdateDebuffIndicator()
+			self:UpdateCombatFeedback()
+			self:UpdateThreatIndicator()
+			self:UpdateAuras()
+			self:UpdateClassIndicator()
+			E:UpdateMoverSize(self)
+		else
+			self:Disable()
 		end
-
-		if self.Stagger then
-			self.Stagger:SetWidth(self._config.width)
-			self:UpdateStagger()
-		end
-
-		self:UpdateCastbar()
-		self:UpdateName()
-		self:UpdateRaidTargetIndicator()
-		self:UpdatePvPIndicator()
-		self:UpdateDebuffIndicator()
-		self:UpdateCombatFeedback()
-		self:UpdateThreatIndicator()
-		self:UpdateAuras()
-		self:UpdateClassIndicator()
-		-- self:UpdateAllElements("LSUI_PlayerFrameUpdate")
 	end
 
 	function UF:CreateHorizontalPlayerFrame(frame)
