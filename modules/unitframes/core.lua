@@ -114,29 +114,23 @@ function UF:CreateUnitFrame(unit, name)
 	end
 end
 
-function UF:UpdateUnitFrame(unit, method)
+function UF:UpdateUnitFrame(unit, method, ...)
 	if units[unit] then
-		if unit == "boss" then
-			if method then
-				for i = 1, 5 do
-					if objects[unit..i][method] then
-						objects[unit..i][method](objects[unit..i])
-					end
-				end
-			else
-				for i = 1, 5 do
-					objects["boss"..i]:Update()
-				end
+		method = method or "Update"
 
+		if unit == "boss" then
+			for i = 1, 5 do
+				if objects[unit..i][method] then
+					objects[unit..i][method](objects[unit..i], ...)
+				end
+			end
+
+			if method == "Update" then
 				UF:UpdateBossHolder()
 			end
 		elseif objects[unit] then
-			if method then
-				if objects[unit][method] then
-					objects[unit][method](objects[unit])
-				end
-			else
-				objects[unit]:Update()
+			if objects[unit][method] then
+				objects[unit][method](objects[unit], ...)
 			end
 		end
 	end
