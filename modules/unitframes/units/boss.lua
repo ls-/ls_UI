@@ -61,7 +61,6 @@ local function frame_Update(self)
 		self:UpdateThreatIndicator()
 		self:UpdateAuras()
 		self:UpdateClassIndicator()
-		E:UpdateMoverSize(self)
 	else
 		if self:IsEnabled() then
 			self:Disable()

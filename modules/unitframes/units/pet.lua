@@ -26,7 +26,6 @@ do
 			self:UpdateRaidTargetIndicator()
 			self:UpdateDebuffIndicator()
 			self:UpdateThreatIndicator()
-			E:UpdateMoverSize(self)
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -126,7 +125,6 @@ do
 			self:UpdateThreatIndicator()
 			self:UpdateName()
 			self:UpdateClassIndicator()
-			E:UpdateMoverSize(self)
 		else
 			if self:IsEnabled() then
 				self:Disable()

@@ -47,7 +47,6 @@ do
 			self:UpdateDebuffIndicator()
 			self:UpdateCombatFeedback()
 			self:UpdateThreatIndicator()
-			E:UpdateMoverSize(self)
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -361,7 +360,6 @@ do
 			self:UpdateThreatIndicator()
 			self:UpdateAuras()
 			self:UpdateClassIndicator()
-			E:UpdateMoverSize(self)
 		else
 			if self:IsEnabled() then
 				self:Disable()

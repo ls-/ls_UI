@@ -39,7 +39,7 @@ D.profile = {
 								y = 2,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							point1 = {
 								p = "BOTTOM",
@@ -278,7 +278,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",
@@ -560,7 +560,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",
@@ -845,7 +845,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",
@@ -1041,7 +1041,7 @@ D.profile = {
 								y = 1,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							h_alignment = "RIGHT",
 							point1 = {
@@ -1344,7 +1344,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",
@@ -1626,7 +1626,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",
@@ -1912,7 +1912,7 @@ D.profile = {
 								y = 0,
 							},
 						},
-						heal_abosrb_text = {
+						heal_absorb_text = {
 							tag = "",
 							point1 = {
 								p = "CENTER",

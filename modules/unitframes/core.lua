@@ -46,6 +46,7 @@ end
 
 local function frame_UpdateSize(self)
 	self:SetSize(self._config.width, self._config.height)
+	E:UpdateMoverSize(self)
 end
 
 local function frame_Preview(self, state)
@@ -146,14 +147,6 @@ function UF:GetUnits(ignoredUnits)
 	end
 
 	return temp
-end
-
-function UF:GetUnitFrameForUnit(unit)
-	if unit == "boss" then
-		return objects["boss1"]
-	else
-		return objects[unit]
-	end
 end
 
 function UF:IsInit()

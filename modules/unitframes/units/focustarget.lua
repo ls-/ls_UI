@@ -26,7 +26,6 @@ local function frame_Update(self)
 		self:UpdateRaidTargetIndicator()
 		self:UpdateThreatIndicator()
 		self:UpdateClassIndicator()
-		E:UpdateMoverSize(self)
 	else
 		if self:IsEnabled() then
 			self:Disable()

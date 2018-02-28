@@ -172,17 +172,17 @@ do
 		end
 
 		if healAbsorbBar.Text then
-			healAbsorbBar.Text:SetJustifyV(config.prediction.heal_abosrb_text.v_alignment or "MIDDLE")
-			healAbsorbBar.Text:SetJustifyH(config.prediction.heal_abosrb_text.h_alignment or "CENTER")
+			healAbsorbBar.Text:SetJustifyV(config.prediction.heal_absorb_text.v_alignment or "MIDDLE")
+			healAbsorbBar.Text:SetJustifyH(config.prediction.heal_absorb_text.h_alignment or "CENTER")
 			healAbsorbBar.Text:ClearAllPoints()
 
-			local point1 = config.prediction.heal_abosrb_text.point1
+			local point1 = config.prediction.heal_absorb_text.point1
 
 			if point1 and point1.p then
 				healAbsorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			self:Tag(healAbsorbBar.Text, config.prediction.enabled and config.prediction.heal_abosrb_text.tag or "")
+			self:Tag(healAbsorbBar.Text, config.prediction.enabled and config.prediction.heal_absorb_text.tag or "")
 		end
 
 		if config.prediction.enabled and not self:IsElementEnabled("HealthPrediction") then
