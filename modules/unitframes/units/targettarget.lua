@@ -28,7 +28,9 @@ local function frame_Update(self)
 		self:UpdateClassIndicator()
 		E:UpdateMoverSize(self)
 	else
-		self:Disable()
+		if self:IsEnabled() then
+			self:Disable()
+		end
 	end
 end
 

@@ -28,7 +28,9 @@ do
 			self:UpdateThreatIndicator()
 			E:UpdateMoverSize(self)
 		else
-			self:Disable()
+			if self:IsEnabled() then
+				self:Disable()
+			end
 		end
 	end
 
@@ -126,7 +128,9 @@ do
 			self:UpdateClassIndicator()
 			E:UpdateMoverSize(self)
 		else
-			self:Disable()
+			if self:IsEnabled() then
+				self:Disable()
+			end
 		end
 	end
 
