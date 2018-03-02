@@ -503,7 +503,7 @@ function MODULE.Init()
 			local frame = MinimapZoneTextButton
 			frame:SetParent(Minimap)
 			frame:SetFrameLevel(Minimap:GetFrameLevel())
-			frame:SetSize(152, 16)
+			frame:SetSize(160, 16)
 			frame:EnableMouse(false)
 			Minimap.Zone = frame
 
@@ -512,7 +512,7 @@ function MODULE.Init()
 			end
 
 			local bg = frame:CreateTexture(nil, "BACKGROUND")
-			bg:SetColorTexture(M.COLORS.BLACK:GetRGBA(0.4))
+			bg:SetColorTexture(M.COLORS.BLACK:GetRGBA(0.6))
 			bg:SetAllPoints()
 			bg:Hide()
 			frame.BG = bg
