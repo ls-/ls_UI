@@ -543,7 +543,9 @@ function MODULE.Init()
 		-- .Clock
 		do
 			local button = TimeManagerClockButton
-			button:SetSize(104/ 2, 56 / 2)
+			button:SetFlattensRenderLayers(true)
+			button:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+			button:SetSize(52, 28)
 			button:SetHitRectInsets(0, 0, 0, 0)
 			button:SetScript("OnMouseUp", nil)
 			button:SetScript("OnMouseDown", nil)
@@ -578,6 +580,8 @@ function MODULE.Init()
 
 			glow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 			glow:SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
+
+			ignoredChildren[button] = true
 		end
 
 		-- .Garrison
