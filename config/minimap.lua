@@ -18,6 +18,12 @@ local POSITIONS = {
 	[1] = L["BOTTOM"],
 }
 
+local FLAG_POSITIONS = {
+	[0] = L["ZONE_TEXT"],
+	[1] = L["CLOCK"],
+	[2] = L["BOTTOM"],
+}
+
 function CONFIG.CreateMinimapPanel(_, order)
 	C.options.args.minimap = {
 		order = order,
@@ -110,6 +116,34 @@ function CONFIG.CreateMinimapPanel(_, order)
 						type = "toggle",
 						name = L["BORDER"],
 						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
+					},
+				},
+			},
+			flag = {
+				order = 12,
+				type = "group",
+				name = L["DIFFICULTY_FLAG"],
+				guiInline = true,
+				get = function(info)
+					return C.db.profile.minimap[E.UI_LAYOUT].flag[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap[E.UI_LAYOUT].flag[info[#info]] = value
+					MINIMAP:Update()
+				end,
+				disabled = function() return not MINIMAP:IsInit() end,
+				args = {
+					mode = {
+						order = 1,
+						type = "select",
+						name = L["VISIBILITY"],
+						values = MODES,
+					},
+					position = {
+						order = 2,
+						type = "select",
+						name = L["POSITION"],
+						values = FLAG_POSITIONS,
 					},
 				},
 			},

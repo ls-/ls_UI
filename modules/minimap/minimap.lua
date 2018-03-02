@@ -282,6 +282,12 @@ local function minimap_OnEnter(self)
 	if self._config.clock.mode == 1 then
 		self.Clock:Show()
 	end
+
+	if self._config.flag.mode == 1 then
+		GuildInstanceDifficulty:SetParent(Minimap)
+		MiniMapChallengeMode:SetParent(Minimap)
+		MiniMapInstanceDifficulty:SetParent(Minimap)
+	end
 end
 
 local function minimap_OnLeave(self)
@@ -291,6 +297,12 @@ local function minimap_OnLeave(self)
 
 	if self._config.clock.mode ~= 2 then
 		self.Clock:Hide()
+	end
+
+	if self._config.flag.mode ~= 2 then
+		GuildInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
+		MiniMapChallengeMode:SetParent(E.HIDDEN_PARENT)
+		MiniMapInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
@@ -667,17 +679,7 @@ function MODULE.Init()
 		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 
 		-- Difficulty flags
-		GuildInstanceDifficulty:SetParent(Minimap)
-		GuildInstanceDifficulty:ClearAllPoints()
-		GuildInstanceDifficulty:SetPoint("TOP", Minimap, "BOTTOM", -2, 8)
-
-		MiniMapChallengeMode:SetParent(Minimap)
-		MiniMapChallengeMode:ClearAllPoints()
-		MiniMapChallengeMode:SetPoint("TOP", "Minimap", "BOTTOM", 0, 2)
-
-		MiniMapInstanceDifficulty:SetParent(Minimap)
-		MiniMapInstanceDifficulty:ClearAllPoints()
-		MiniMapInstanceDifficulty:SetPoint("TOP", "Minimap", "BOTTOM", 0, 7)
+		MiniMapChallengeMode:SetSize(38, 46)
 
 		-- Misc
 		for _, name in next, {
@@ -750,10 +752,10 @@ function MODULE.Update()
 
 			if config.zone_text.position == 0 then
 				Minimap.Zone:ClearAllPoints()
-				Minimap.Zone:SetPoint("BOTTOM", "Minimap", "TOP", 0, 12)
+				Minimap.Zone:SetPoint("BOTTOM", Minimap, "TOP", 0, 12)
 			else
 				Minimap.Zone:ClearAllPoints()
-				Minimap.Zone:SetPoint("TOP", "Minimap", "BOTTOM", 0, -12)
+				Minimap.Zone:SetPoint("TOP", Minimap, "BOTTOM", 0, -12)
 			end
 		end
 
@@ -769,14 +771,64 @@ function MODULE.Update()
 
 			if config.clock.position == 0 then
 				Minimap.Clock:ClearAllPoints()
-				Minimap.Clock:SetPoint("BOTTOM", "Minimap", "TOP", 0, -14)
+				Minimap.Clock:SetPoint("BOTTOM", Minimap, "TOP", 0, -14)
 			else
 				Minimap.Clock:ClearAllPoints()
-				Minimap.Clock:SetPoint("TOP", "Minimap", "BOTTOM", 0, 14)
+				Minimap.Clock:SetPoint("TOP", Minimap, "BOTTOM", 0, 14)
 			end
 		end
 
-		if config.zone_text.mode == 1 or config.clock.mode == 1 then
+		if config.flag.mode == 0 then
+			GuildInstanceDifficulty:ClearAllPoints()
+			GuildInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
+
+			MiniMapChallengeMode:ClearAllPoints()
+			MiniMapChallengeMode:SetParent(E.HIDDEN_PARENT)
+
+			MiniMapInstanceDifficulty:ClearAllPoints()
+			MiniMapInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
+		elseif config.flag.mode == 1 or config.flag.mode == 2 then
+			if config.flag.mode == 1 then
+				GuildInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
+				MiniMapChallengeMode:SetParent(E.HIDDEN_PARENT)
+				MiniMapInstanceDifficulty:SetParent(E.HIDDEN_PARENT)
+			else
+				GuildInstanceDifficulty:SetParent(Minimap)
+				MiniMapChallengeMode:SetParent(Minimap)
+				MiniMapInstanceDifficulty:SetParent(Minimap)
+			end
+
+			if config.flag.position == 0 then
+				GuildInstanceDifficulty:ClearAllPoints()
+				GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 5)
+
+				MiniMapChallengeMode:ClearAllPoints()
+				MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 4)
+
+				MiniMapInstanceDifficulty:ClearAllPoints()
+				MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 4)
+			elseif config.flag.position == 1 then
+				GuildInstanceDifficulty:ClearAllPoints()
+				GuildInstanceDifficulty:SetPoint("TOP", Minimap.Clock, "BOTTOM", -2, 12)
+
+				MiniMapChallengeMode:ClearAllPoints()
+				MiniMapChallengeMode:SetPoint("TOP", Minimap.Clock, "BOTTOM", 0, 11)
+
+				MiniMapInstanceDifficulty:ClearAllPoints()
+				MiniMapInstanceDifficulty:SetPoint("TOP", Minimap.Clock, "BOTTOM", 0, 11)
+			else
+				GuildInstanceDifficulty:ClearAllPoints()
+				GuildInstanceDifficulty:SetPoint("TOP", Minimap, "BOTTOM", -2, 8)
+
+				MiniMapChallengeMode:ClearAllPoints()
+				MiniMapChallengeMode:SetPoint("TOP", Minimap, "BOTTOM", 0, 7)
+
+				MiniMapInstanceDifficulty:ClearAllPoints()
+				MiniMapInstanceDifficulty:SetPoint("TOP", Minimap, "BOTTOM", 0, 7)
+			end
+		end
+
+		if config.zone_text.mode == 1 or config.clock.mode == 1 or config.flag.mode == 1 then
 			Minimap:SetScript("OnEnter", minimap_OnEnter)
 			Minimap:SetScript("OnLeave", minimap_OnLeave)
 		else

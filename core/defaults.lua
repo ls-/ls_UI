@@ -2080,17 +2080,25 @@ D.profile = {
 				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
 				position = 0, -- 0 - top, 1 - bottom
 			},
+			flag = {
+				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				position = 0, -- 0 - zone text, 1 - clock, 2 - bottom
+			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
 		traditional = {
 			zone_text = {
 				mode = 2,
-				position = 0, -- 0 - top, 1 - bottom
+				position = 0,
 				border = true,
 			},
 			clock = {
-				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 1, -- 0 - top, 1 - bottom
+				mode = 2,
+				position = 1,
+			},
+			flag = {
+				mode = 2,
+				position = 0,
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
