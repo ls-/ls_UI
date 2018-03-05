@@ -14,9 +14,6 @@ local isInit = false
 local CFG = {
 	bar1 = {
 		flyout_dir = "UP",
-		grid = true,
-		hotkey = true,
-		macro = true,
 		num = 12,
 		per_row = 12,
 		size = 32,
@@ -119,7 +116,9 @@ local function bar_Update(self)
 	self:UpdateFading()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
-	self:UpdateButtons("UpdateFontObjects")
+	self:UpdateButtons("UpdateCountFont")
+	self:UpdateButtons("UpdateHotKeyFont")
+	self:UpdateButtons("UpdateMacroFont")
 	E:UpdateBarLayout(self)
 end
 
@@ -146,8 +145,8 @@ local function bar_UpdateButtonConfig(self)
 	self.buttonConfig.colors.normal = {M.COLORS.BUTTON_ICON.N:GetRGB()}
 	self.buttonConfig.colors.range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()}
 
-	self.buttonConfig.hideElements.hotkey = not self._config.hotkey
-	self.buttonConfig.hideElements.macro = not self._config.macro
+	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
+	self.buttonConfig.hideElements.macro = not self._config.macro.enabled
 
 	for _, button in next, self._buttons do
 		self.buttonConfig.keyBoundTarget = button._command
@@ -158,21 +157,6 @@ local function bar_UpdateButtonConfig(self)
 		button:SetAttribute("checkfocuscast", true)
 		button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
 	end
-end
-
-local function button_UpdateFontObjects(self)
-	local config = self._parent._config.font
-	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
-	self.Name:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
-end
-
-local function button_UpdateMacroText(self, state)
-	if state ~= nil then
-		self._parent._config.macro = state
-	end
-
-	self._parent:UpdateButtonConfig()
 end
 
 local function button_UpdateGrid(self, state)
@@ -191,12 +175,38 @@ local function button_UpdateFlyoutDirection(self, state)
 	self._parent:UpdateButtonConfig()
 end
 
-local function button_UpdateHotKey(self, state)
+local function button_UpdateMacro(self, state)
 	if state ~= nil then
-		self._parent._config.hotkey = state
+		self._parent._config.macro.enabled = state
 	end
 
 	self._parent:UpdateButtonConfig()
+end
+
+local function button_UpdateMacroFont(self)
+	local config = self._parent._config.macro
+	self.Name:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Name:SetWordWrap(false)
+end
+
+local function button_UpdateHotKey(self, state)
+	if state ~= nil then
+		self._parent._config.hotkey.enabled = state
+	end
+
+	self._parent:UpdateButtonConfig()
+end
+
+local function button_UpdateHotKeyFont(self)
+	local config = self._parent._config.hotkey
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetWordWrap(false)
+end
+
+local function button_UpdateCountFont(self)
+	local config = self._parent._config.count
+	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Count:SetWordWrap(false)
 end
 
 function MODULE.CreateActionBars()
@@ -224,7 +234,7 @@ function MODULE.CreateActionBars()
 					self._config = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
 
 					if MODULE:IsRestricted() then
-						self._config.font = C.db.profile.bars.bar1.font
+						self._config.count = C.db.profile.bars.bar1.count
 						self._config.grid = C.db.profile.bars.bar1.grid
 						self._config.hotkey = C.db.profile.bars.bar1.hotkey
 						self._config.macro = C.db.profile.bars.bar1.macro
@@ -238,11 +248,13 @@ function MODULE.CreateActionBars()
 				button._parent = bar
 				button._command = data.type..i
 
+				button.UpdateCountFont = button_UpdateCountFont
 				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
-				button.UpdateFontObjects = button_UpdateFontObjects
 				button.UpdateGrid = button_UpdateGrid
 				button.UpdateHotKey = button_UpdateHotKey
-				button.UpdateMacroText = button_UpdateMacroText
+				button.UpdateHotKeyFont = button_UpdateHotKeyFont
+				button.UpdateMacro = button_UpdateMacro
+				button.UpdateMacroFont = button_UpdateMacroFont
 
 				for k = 1, 14 do
 					button:SetState(k, "action", (k - 1) * 12 + i)

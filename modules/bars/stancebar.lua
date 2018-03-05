@@ -81,25 +81,27 @@ end
 
 local function button_UpdateHotKey(self, state)
 	if state ~= nil then
-		self._parent._config.hotkey = state
+		self._parent._config.hotkey.enabled = state
 	end
 
-	if self._parent._config.hotkey then
+	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
 		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
+local function button_UpdateHotKeyFont(self)
+	local config = self._parent._config.hotkey
+	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetWordWrap(false)
+end
+
 local function button_UpdateCooldown(self)
 	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
-end
-
-local function button_UpdateFontObjects(self)
-	local config = self._parent._config.font
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
 end
 
 function MODULE.CreateStanceBar()
@@ -115,7 +117,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateForms()
-			self:UpdateButtons("UpdateFontObjects")
+			self:UpdateButtons("UpdateHotKeyFont")
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateForms = function(self)
@@ -142,8 +144,8 @@ function MODULE.CreateStanceBar()
 
 			button.Update = button_Update
 			button.UpdateCooldown = button_UpdateCooldown
-			button.UpdateFontObjects = button_UpdateFontObjects
 			button.UpdateHotKey = button_UpdateHotKey
+			button.UpdateHotKeyFont = button_UpdateHotKeyFont
 
 			BUTTONS[i]:SetAllPoints(button)
 			BUTTONS[i]:SetAttribute("statehidden", true)

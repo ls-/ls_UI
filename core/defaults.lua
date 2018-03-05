@@ -2116,8 +2116,6 @@ D.profile = {
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = true,
-			hotkey = true,
-			macro = true,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2135,7 +2133,18 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2150,8 +2159,6 @@ D.profile = {
 		bar2 = { -- MultiBarBottomLeft
 			flyout_dir = "UP",
 			grid = true,
-			hotkey = true,
-			macro = true,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2169,7 +2176,18 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2184,8 +2202,6 @@ D.profile = {
 		bar3 = { -- MultiBarBottomRight
 			flyout_dir = "UP",
 			grid = true,
-			hotkey = true,
-			macro = true,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2203,7 +2219,18 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2218,8 +2245,6 @@ D.profile = {
 		bar4 = { -- MultiBarLeft
 			flyout_dir = "LEFT",
 			grid = true,
-			hotkey = true,
-			macro = true,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2237,7 +2262,18 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2252,8 +2288,6 @@ D.profile = {
 		bar5 = { -- MultiBarRight
 			flyout_dir = "LEFT",
 			grid = true,
-			hotkey = true,
-			macro = true,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2271,7 +2305,18 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+				flag = "Outline",
+			},
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2285,7 +2330,6 @@ D.profile = {
 		},
 		bar6 = { --PetAction
 			flyout_dir = "UP",
-			hotkey = true,
 			num = 10,
 			per_row = 10,
 			size = 24,
@@ -2303,14 +2347,14 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
-				size = 10,
+			hotkey = {
+				enabled = true,
+				size = 12,
 				flag = "Outline",
 			},
 		},
 		bar7 = { -- Stance
 			flyout_dir = "UP",
-			hotkey = true,
 			num = 10,
 			per_row = 10,
 			size = 24,
@@ -2328,8 +2372,9 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
-				size = 10,
+			hotkey = {
+				enabled = true,
+				size = 12,
 				flag = "Outline",
 			},
 		},
@@ -2342,7 +2387,6 @@ D.profile = {
 			visible = true,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
-			hotkey = true,
 			fade = {
 				enabled = false,
 				out_delay = 0.75,
@@ -2352,7 +2396,8 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2368,7 +2413,6 @@ D.profile = {
 			size = 40,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
-			hotkey = true,
 			fade = {
 				enabled = false,
 				out_delay = 0.75,
@@ -2378,7 +2422,8 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			font = {
+			hotkey = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},
@@ -2497,7 +2542,8 @@ D.profile = {
 			visible = true,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
-			font = {
+			count = {
+				enabled = true,
 				size = 12,
 				flag = "Outline",
 			},

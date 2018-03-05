@@ -74,20 +74,22 @@ end
 
 local function button_UpdateHotKey(self, state)
 	if state ~= nil then
-		self._parent._config.hotkey = state
+		self._parent._config.hotkey.enabled = state
 	end
 
-	if self._parent._config.hotkey then
+	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
 		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
-local function button_UpdateFontObjects(self)
-	local config = self._parent._config.font
+local function button_UpdateHotKeyFont(self)
+	local config = self._parent._config.hotkey
 	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetWordWrap(false)
 end
 
 local function button_UpdateUsable(self)
@@ -206,20 +208,11 @@ function MODULE.CreatePetActionBar()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("Reset")
-			self:UpdateButtons("UpdateFontObjects")
+			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateFading()
 			E:UpdateBarLayout(self)
-		end
-		bar.UpdateButtonFontObjects = function(self)
-			local fontObject = "LSFont"..self._config.font.size..(self._config.font.flag ~= "" and "_"..self._config.font.flag or "")
-
-			for _, button in next, self._buttons do
-				if button.HotKey then
-					button.HotKey:SetFontObject(fontObject)
-				end
-			end
 		end
 
 		for i = 1, #BUTTONS do
@@ -239,9 +232,9 @@ function MODULE.CreatePetActionBar()
 			button.StopFlash = PetActionButton_StopFlash
 			button.Update = button_Update
 			button.UpdateCooldown = button_UpdateCooldown
-			button.UpdateFontObjects = button_UpdateFontObjects
 			button.UpdateGrid = button_UpdateGrid
 			button.UpdateHotKey = button_UpdateHotKey
+			button.UpdateHotKeyFont = button_UpdateHotKeyFont
 			button.UpdateUsable = button_UpdateUsable
 
 			BUTTONS[i]:SetAllPoints(button)

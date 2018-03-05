@@ -10,20 +10,22 @@ local isInit = false
 
 local function button_UpdateHotKey(self, state)
 	if state ~= nil then
-		self._parent._config.hotkey = state
+		self._parent._config.hotkey.enabled = state
 	end
 
-	if self._parent._config.hotkey then
+	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
 		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
 end
 
-local function button_UpdateFontObjects(self)
-	local config = self._parent._config.font
+local function button_UpdateHotKeyFont(self)
+	local config = self._parent._config.hotkey
 	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetWordWrap(false)
 end
 
 function MODULE.CreateExtraButton()
@@ -39,7 +41,7 @@ function MODULE.CreateExtraButton()
 			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
-			self:UpdateButtons("UpdateFontObjects")
+			self:UpdateButtons("UpdateHotKeyFont")
 
 			ExtraActionBarFrame:SetAllPoints()
 
@@ -61,8 +63,8 @@ function MODULE.CreateExtraButton()
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
 
-		ExtraActionButton1.UpdateFontObjects = button_UpdateFontObjects
 		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
+		ExtraActionButton1.UpdateHotKeyFont = button_UpdateHotKeyFont
 
 		local point = C.db.profile.bars.extra.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)

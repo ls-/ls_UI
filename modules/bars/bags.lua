@@ -118,9 +118,27 @@ local function BackpackButton_OnEvent(self, event, ...)
 	end
 end
 
-local function button_UpdateFontObjects(self)
-	local config = self._parent._config.font
+local function button_UpdateCount(self, state)
+	if state ~= nil then
+		self._parent._config.count.enabled = state
+	end
+
+	if self._parent._config.count.enabled then
+		self.Count:SetParent(self)
+		self.Count:Show()
+
+		if self.Update then
+			self:Update()
+		end
+	else
+		self.Count:SetParent(E.HIDDEN_PARENT)
+	end
+end
+
+local function button_UpdateCountFont(self)
+	local config = self._parent._config.count
 	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Count:SetWordWrap(false)
 end
 
 function MODULE.HasBags()
@@ -147,14 +165,15 @@ function MODULE.CreateBags()
 			self:UpdateConfig()
 			self:UpdateFading()
 			self:UpdateVisibility()
-			self:UpdateButtons("UpdateFontObjects")
+			self:UpdateButtons("UpdateCount")
+			self:UpdateButtons("UpdateCountFont")
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateConfig = function(self)
 			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.bags
 
 			if MODULE:IsRestricted() then
-				self._config.font = C.db.profile.bars.bags.font
+				self._config.count = C.db.profile.bars.bags.count
 			end
 		end
 
@@ -164,12 +183,14 @@ function MODULE.CreateBags()
 			bag:SetParent(bar)
 			E:SkinBagButton(bag)
 
-			bag.UpdateFontObjects = button_UpdateFontObjects
+			bag.UpdateCount = button_UpdateCount
+			bag.UpdateCountFont = button_UpdateCountFont
 
 			if bag ~= MainMenuBarBackpackButton then
 				bag:Hide()
 			end
 		end
+
 		MainMenuBarBackpackButton:HookScript("OnEnter", BackpackButton_OnEnter)
 		MainMenuBarBackpackButton:SetScript("OnClick", BackpackButton_OnClick)
 		MainMenuBarBackpackButton:SetScript("OnEvent", BackpackButton_OnEvent)
@@ -209,7 +230,6 @@ function MODULE.CreateBags()
 
 		bar:Update()
 
-		MainMenuBarBackpackButton.Count:Show()
 		MainMenuBarBackpackButton:Update()
 
 		isInit = true

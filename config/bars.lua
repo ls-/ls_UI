@@ -39,7 +39,7 @@ local CURRENCY_TABLE = {
 	order = 20,
 	type = "group",
 	name = L["CURRENCY"],
-	guiInline = true,
+	inline = true,
 	disabled = function() return not BARS:HasBags() end,
 	args = {}
 }
@@ -92,7 +92,7 @@ local function getOptionsTable_Fading(barID, order)
 		order = order,
 		type = "group",
 		name = L["FADING"],
-		guiInline = true,
+		inline = true,
 		get = function(info)
 			return C.db.profile.bars[barID].fade[info[#info]]
 		end,
@@ -216,32 +216,6 @@ local function getOptionsTable_Bar(barID, order, name)
 					BARS:GetBar(barID):UpdateButtonConfig()
 				end,
 			},
-			hotkey = {
-				order = 12,
-				type = "toggle",
-				name = L["KEYBIND_TEXT"],
-				get = function()
-					return C.db.profile.bars[barID].hotkey
-				end,
-				set = function(_, value)
-					C.db.profile.bars[barID].hotkey = value
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateButtonConfig()
-				end,
-			},
-			macro = {
-				order = 13,
-				type = "toggle",
-				name = L["MACRO_TEXT"],
-				get = function()
-					return C.db.profile.bars[barID].macro
-				end,
-				set = function(_, value)
-					C.db.profile.bars[barID].macro = value
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateButtonConfig()
-				end,
-			},
 			num = {
 				order = 14,
 				type = "range",
@@ -321,7 +295,105 @@ local function getOptionsTable_Bar(barID, order, name)
 					BARS:GetBar(barID):UpdateButtonConfig()
 				end,
 			},
-			fading = getOptionsTable_Fading(barID, 30),
+			hotkey = {
+				order = 20,
+				type = "group",
+				name = L["KEYBIND_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.bars[barID].hotkey[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.bars[barID].hotkey[info[#info]] ~= value then
+						C.db.profile.bars[barID].hotkey[info[#info]] = value
+						BARS:GetBar(barID):UpdateConfig()
+						BARS:GetBar(barID):UpdateButtons("UpdateHotKeyFont")
+					end
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.profile.bars[barID].hotkey.enabled
+						end,
+						set = function(_, value)
+							C.db.profile.bars[barID].hotkey.enabled = value
+							BARS:GetBar(barID):UpdateConfig()
+							BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
+						end,
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+				},
+			},
+			macro = {
+				order = 30,
+				type = "group",
+				name = L["MACRO_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.bars[barID].macro[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.bars[barID].macro[info[#info]] ~= value then
+						C.db.profile.bars[barID].macro[info[#info]] = value
+						BARS:GetBar(barID):UpdateConfig()
+						BARS:GetBar(barID):UpdateButtons("UpdateMacroFont")
+					end
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.profile.bars[barID].macro.enabled
+						end,
+						set = function(_, value)
+							C.db.profile.bars[barID].macro.enabled = value
+							BARS:GetBar(barID):UpdateConfig()
+							BARS:GetBar(barID):UpdateButtonConfig()
+						end,
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+				},
+			},
+			count = {
+				order = 40,
+				type = "group",
+				name = L["COUNT_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.bars[barID].count[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.bars[barID].count[info[#info]] ~= value then
+						C.db.profile.bars[barID].count[info[#info]] = value
+						BARS:GetBar(barID):UpdateConfig()
+						BARS:GetBar(barID):UpdateButtons("UpdateCountFont")
+					end
+				end,
+				args = {
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+				},
+			},
+			fading = getOptionsTable_Fading(barID, 50),
 		},
 	}
 
@@ -334,32 +406,29 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
 		temp.args.flyout_dir.disabled = function() return BARS:IsRestricted() or not BARS:IsInit() end
+		temp.args.hotkey.args.enabled.set = function(_, value)
+			C.db.profile.bars[barID].hotkey.enabled = value
+			BARS:GetBar(barID):UpdateConfig()
+			BARS:GetBar(barID):UpdateButtonConfig()
+		end
 	elseif barID == "bar6" then
 		temp.args.grid.set = function(_, value)
 			C.db.profile.bars[barID].grid = value
 			BARS:GetBar(barID):UpdateConfig()
 			BARS:GetBar(barID):UpdateButtons("UpdateGrid")
 		end
-		temp.args.hotkey.set = function(_, value)
-			C.db.profile.bars[barID].hotkey = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
-		end
-		temp.args.macro = nil
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10
 		temp.args.flyout_dir = nil
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "bar7" then
 		temp.args.grid = nil
-		temp.args.hotkey.set = function(_, value)
-			C.db.profile.bars[barID].hotkey = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
-		end
-		temp.args.macro = nil
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10
 		temp.args.flyout_dir = nil
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "pet_battle" then
 		temp.args.enabled = {
 			order = 1,
@@ -392,13 +461,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.reset.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.visible.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.grid = nil
-		temp.args.hotkey.set = function(_, value)
-			C.db.profile.bars[barID].hotkey = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
-		end
-		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
-		temp.args.macro = nil
 		temp.args.num.max = 6
 		temp.args.num.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.per_row.max = 6
@@ -407,37 +469,38 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.size.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.growth_dir.disabled = function() return BARS:IsRestricted() or not BARS:HasPetBattleBar() end
 		temp.args.flyout_dir = nil
+		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "extra" then
 		temp.args.grid = nil
-		temp.args.hotkey.set = function(_, value)
-			C.db.profile.bars[barID].hotkey = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateHotKey")
-		end
-		temp.args.macro = nil
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "zone" then
 		temp.args.grid = nil
-		temp.args.hotkey = nil
-		temp.args.macro = nil
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
+		temp.args.hotkey = nil
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "vehicle" then
 		temp.args.grid = nil
-		temp.args.hotkey = nil
-		temp.args.macro = nil
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
+		temp.args.hotkey = nil
+		temp.args.macro = nil
+		temp.args.count = nil
 	elseif barID == "bags" then
 		temp.args.enabled = {
 			order = 1,
@@ -471,8 +534,6 @@ local function getOptionsTable_Bar(barID, order, name)
 		end
 		temp.args.visible = nil
 		temp.args.grid = nil
-		temp.args.hotkey = nil
-		temp.args.macro = nil
 		temp.args.num = nil
 		temp.args.per_row.disabled = function()
 			return BARS:IsRestricted() or not BARS:HasBags()
@@ -489,6 +550,21 @@ local function getOptionsTable_Bar(barID, order, name)
 		end
 		temp.args.flyout_dir = nil
 		temp.args.currency = CURRENCY_TABLE
+		temp.args.hotkey = nil
+		temp.args.macro = nil
+		temp.args.count.args.enabled = {
+			order = 1,
+			type = "toggle",
+			name = L["ENABLE"],
+			get = function()
+				return C.db.profile.bars[barID].count.enabled
+			end,
+			set = function(_, value)
+				C.db.profile.bars[barID].count.enabled = value
+				BARS:GetBar(barID):UpdateConfig()
+				BARS:GetBar(barID):UpdateButtons("UpdateCount")
+			end,
+		}
 	end
 
 	return temp
@@ -712,7 +788,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				order = 10,
 				type = "group",
 				name = L["ENHANCED_TOOLTIPS"],
-				guiInline = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.bars.micromenu.tooltip[info[#info]]
 				end,
