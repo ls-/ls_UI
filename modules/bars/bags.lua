@@ -163,10 +163,10 @@ function MODULE.CreateBags()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateCount")
 			self:UpdateButtons("UpdateCountFont")
+			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateConfig = function(self)

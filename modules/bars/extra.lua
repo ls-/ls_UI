@@ -38,10 +38,10 @@ function MODULE.CreateExtraButton()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateFading()
 
 			ExtraActionBarFrame:SetAllPoints()
 

@@ -19,8 +19,8 @@ function MODULE.CreateZoneButton()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
+			self:UpdateFading()
 
 			ZoneAbilityFrame:SetAllPoints()
 

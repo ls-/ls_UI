@@ -114,10 +114,10 @@ function MODULE.CreateStanceBar()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateForms()
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateForms = function(self)

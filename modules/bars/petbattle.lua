@@ -67,10 +67,10 @@ function MODULE.CreatePetBattleBar()
 
 		bar.Update = function(self)
 			self:UpdateConfig()
-			self:UpdateFading()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
 		bar.UpdateConfig = function(self)

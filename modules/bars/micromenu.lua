@@ -612,8 +612,8 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateFading()
 	self:UpdateButtons("Update")
+	self:UpdateFading()
 end
 
 local function bar_UpdateConfig(self)

@@ -113,12 +113,12 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateFading()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
 	self:UpdateButtons("UpdateCountFont")
 	self:UpdateButtons("UpdateHotKeyFont")
 	self:UpdateButtons("UpdateMacroFont")
+	self:UpdateFading()
 	E:UpdateBarLayout(self)
 end
 
