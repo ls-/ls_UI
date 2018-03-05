@@ -355,12 +355,6 @@ local function bar_UpdateSize(self, width, height)
 
 	self:SetSize(width, height)
 
-	for i = 1, self._total do
-		self[i]:SetSize(unpack(LAYOUT[self._total][i].size))
-		self[i]:SetPoint(unpack(LAYOUT[self._total][i].point))
-		self[i].Extension:SetSize(unpack(LAYOUT[self._total][i].size))
-	end
-
 	for i = 1, 2 do
 		self[i].Sep:SetSize(12, height)
 		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
@@ -369,6 +363,8 @@ local function bar_UpdateSize(self, width, height)
 	if not BARS:IsRestricted() then
 		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-"..height)
 	end
+
+	self._total = nil
 
 	self:UpdateSegments()
 end
@@ -426,7 +422,6 @@ function BARS.CreateXPBar()
 	if not isInit and (C.db.char.bars.xpbar.enabled or BARS:IsRestricted()) then
 		local bar = CreateFrame("Frame", "LSUIXPBar", UIParent)
 		bar._id = "xpbar"
-		bar._total = 0
 
 		BARS:AddBar(bar._id, bar)
 
