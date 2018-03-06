@@ -35,6 +35,12 @@ local BUTTON_INDICATORS = {
 	hotkey = L["KEYBIND_TEXT"],
 }
 
+local FONT_FLAGS = {
+	[""] = L["NONE"],
+	["Outline"] = L["OUTLINE"],
+	["Shadow"] = L["SHADOW"],
+}
+
 local CURRENCY_TABLE = {
 	order = 20,
 	type = "group",
@@ -330,6 +336,12 @@ local function getOptionsTable_Bar(barID, order, name)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
+					-- flag = {
+					-- 	order = 3,
+					-- 	type = "select",
+					-- 	name = L["FLAG"],
+					-- 	values = FONT_FLAGS,
+					-- },
 				},
 			},
 			macro = {
@@ -367,6 +379,12 @@ local function getOptionsTable_Bar(barID, order, name)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
+					-- flag = {
+					-- 	order = 3,
+					-- 	type = "select",
+					-- 	name = L["FLAG"],
+					-- 	values = FONT_FLAGS,
+					-- },
 				},
 			},
 			count = {
@@ -391,6 +409,12 @@ local function getOptionsTable_Bar(barID, order, name)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
+					-- flag = {
+					-- 	order = 3,
+					-- 	type = "select",
+					-- 	name = L["FLAG"],
+					-- 	values = FONT_FLAGS,
+					-- },
 				},
 			},
 			fading = getOptionsTable_Fading(barID, 50),
