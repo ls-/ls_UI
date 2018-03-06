@@ -9,12 +9,12 @@ local next = _G.next
 local s_split = _G.string.split
 
 -- Mine
-local fcf_modes = {
+local FCF_MODES = {
 	Fountain = "Fountain",
 	Standard = "Standard",
 }
 
-local points = {
+local POINTS = {
 	BOTTOM = "BOTTOM",
 	BOTTOMLEFT = "BOTTOMLEFT",
 	BOTTOMRIGHT = "BOTTOMRIGHT",
@@ -26,28 +26,28 @@ local points = {
 	TOPRIGHT = "TOPRIGHT",
 }
 
-local insets = {
+local INSETS = {
 	[8] = "8",
 	[12] = "12",
 }
 
-local h_alignment = {
+local H_ALIGNMENT = {
 	CENTER = "CENTER",
 	LEFT = "LEFT",
 	RIGHT = "RIGHT",
 }
-local v_alignment = {
+local V_ALIGNMENT = {
 	BOTTOM = "BOTTOM",
 	MIDDLE = "MIDDLE",
 	TOP = "TOP",
 }
 
-local castbar_icon_positions = {
+local CASTBAR_ICON_POSITIONS = {
 	LEFT = L["LEFT"],
 	RIGHT = L["RIGHT"],
 }
 
-local growth_dirs = {
+local GROWTH_DIRS = {
 	LEFT_DOWN = L["LEFT_DOWN"],
 	LEFT_UP = L["LEFT_UP"],
 	RIGHT_DOWN = L["RIGHT_DOWN"],
@@ -56,9 +56,9 @@ local growth_dirs = {
 
 local function getPoints(addNone)
 	if addNone then
-		return E:CopyTable(points, {[""] = "NONE"})
+		return E:CopyTable(POINTS, {[""] = "NONE"})
 	else
-		return E:CopyTable(points, {})
+		return E:CopyTable(POINTS, {})
 	end
 end
 
@@ -575,7 +575,7 @@ local function getOptionsTable_Castbar(unit, order)
 						order = 2,
 						type = "select",
 						name = L["POSITION"],
-						values = castbar_icon_positions,
+						values = CASTBAR_ICON_POSITIONS,
 					},
 				},
 			},
@@ -731,14 +731,14 @@ local function getOptionsTable_Name(unit, order)
 				order = 21,
 				type = "select",
 				name = L["TEXT_HORIZ_ALIGNMENT"],
-				values = h_alignment,
+				values = H_ALIGNMENT,
 				disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 			},
 			v_alignment = {
 				order = 22,
 				type = "select",
 				name = L["TEXT_VERT_ALIGNMENT"],
-				values = v_alignment,
+				values = V_ALIGNMENT,
 				disabled = function() return C.db.profile.units[E.UI_LAYOUT][unit].name.point2.p == "" end,
 			},
 			word_wrap = {
@@ -1040,7 +1040,7 @@ local function getOptionsTable_Auras(unit, order)
 				order = 13,
 				type = "select",
 				name = L["GROWTH_DIR"],
-				values = growth_dirs,
+				values = GROWTH_DIRS,
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].auras.x_growth.."_"..C.db.profile.units[E.UI_LAYOUT][unit].auras.y_growth
 				end,
@@ -1485,7 +1485,7 @@ local function getOptionsTable_UnitFrame(unit, order, name)
 				type = "select",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
-				values = insets,
+				values = INSETS,
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].insets.t_height
 				end,
@@ -1501,7 +1501,7 @@ local function getOptionsTable_UnitFrame(unit, order, name)
 				type = "select",
 				name = L["BOTTOM_INSET_SIZE"],
 				desc = L["BOTTOM_INSET_SIZE_DESC"],
-				values = insets,
+				values = INSETS,
 				get = function()
 					return C.db.profile.units[E.UI_LAYOUT][unit].insets.b_height
 				end,
@@ -1667,7 +1667,7 @@ local function getOptionsTable_UnitFrame(unit, order, name)
 					order = 13,
 					type = "select",
 					name = L["MODE"],
-					values = fcf_modes,
+					values = FCF_MODES,
 				},
 			},
 		}
@@ -1755,7 +1755,7 @@ local function getOptionsTable_UnitFrame(unit, order, name)
 			order = 15,
 			type = "select",
 			name = L["GROWTH_DIR"],
-			values = growth_dirs,
+			values = GROWTH_DIRS,
 			get = function()
 				return C.db.profile.units[E.UI_LAYOUT][unit].x_growth.."_"..C.db.profile.units[E.UI_LAYOUT][unit].y_growth
 			end,

@@ -16,21 +16,21 @@ local GetCurrencyListLink = _G.GetCurrencyListLink
 local GetCurrencyListSize = _G.GetCurrencyListSize
 
 -- Mine
-local growth_dirs = {
+local GROWTH_DIRS = {
 	LEFT_DOWN = L["LEFT_DOWN"],
 	LEFT_UP = L["LEFT_UP"],
 	RIGHT_DOWN = L["RIGHT_DOWN"],
 	RIGHT_UP = L["RIGHT_UP"],
 }
 
-local flyout_dirs = {
+local FLYOUT_DIRS = {
 	UP = L["UP"],
 	DOWN = L["DOWN"],
 	LEFT = L["LEFT"],
 	RIGHT = L["RIGHT"],
 }
 
-local button_indicators = {
+local BUTTON_INDICATORS = {
 	button = L["ICON"],
 	hotkey = L["KEYBIND_TEXT"],
 }
@@ -272,7 +272,7 @@ local function getOptionsTable_Bar(barID, order, name)
 				order = 18,
 				type = "select",
 				name = L["GROWTH_DIR"],
-				values = growth_dirs,
+				values = GROWTH_DIRS,
 				get = function()
 					return C.db.profile.bars[barID].x_growth.."_"..C.db.profile.bars[barID].y_growth
 				end,
@@ -285,7 +285,7 @@ local function getOptionsTable_Bar(barID, order, name)
 				order = 19,
 				type = "select",
 				name = L["FLYOUT_DIR"],
-				values = flyout_dirs,
+				values = FLYOUT_DIRS,
 				get = function()
 					return C.db.profile.bars[barID].flyout_dir
 				end,
@@ -688,7 +688,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				order = 13,
 				type = "select",
 				name = L["OOR_INDICATOR"],
-				values = button_indicators,
+				values = BUTTON_INDICATORS,
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
 					return C.db.profile.bars.range_indicator
@@ -704,7 +704,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				order = 14,
 				type = "select",
 				name = L["OOM_INDICATOR"],
-				values = button_indicators,
+				values = BUTTON_INDICATORS,
 				disabled = function() return not BARS:IsInit() end,
 				get = function()
 					return C.db.profile.bars.mana_indicator
