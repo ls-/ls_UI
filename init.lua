@@ -63,6 +63,25 @@ end
 E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if arg1 ~= addonName then return end
 
+	-- -> 70300.12
+	if LS_UI_GLOBAL_CONFIG and LS_UI_GLOBAL_CONFIG.profiles then
+		for _, profile in next, LS_UI_GLOBAL_CONFIG.profiles do
+			if profile.bars then
+				for _, bar in next, profile.bars do
+					if type(bar) == "table" then
+						if bar.hotkey ~= nil and type(bar.hotkey) == "boolean" then
+							bar.hotkey = nil
+						end
+
+						if bar.macro ~= nil and type(bar.macro) == "boolean" then
+							bar.macro = nil
+						end
+					end
+				end
+			end
+		end
+	end
+
 	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
 	LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
 
