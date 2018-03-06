@@ -7,6 +7,13 @@ local _G = getfenv(0)
 local next = _G.next
 local unpack = _G.unpack
 
+-- Blizz
+local C_Timer = _G.C_Timer
+
+--[[ luacheck: globals
+	CreateFrame RegisterStateDriver UIParent
+]]
+
 -- Mine
 local isInit = false
 local controller

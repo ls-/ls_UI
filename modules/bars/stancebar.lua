@@ -6,6 +6,11 @@ local MODULE = P:GetModule("Bars")
 local _G = getfenv(0)
 local next = _G.next
 
+--[[ luacheck: globals
+	CooldownFrame_Set CreateFrame GetNumShapeshiftForms GetShapeshiftFormCooldown GetShapeshiftFormInfo InCombatLockdown
+	UIParent
+]]
+
 -- Mine
 local isInit = false
 

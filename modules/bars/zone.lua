@@ -5,6 +5,10 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	CreateFrame UIParent UIPARENT_MANAGED_FRAME_POSITIONS ZoneAbilityFrame
+]]
+
 -- Mine
 local isInit = false
 

@@ -5,6 +5,10 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	CanExitVehicle CreateFrame TaxiRequestEarlyLanding UIParent UnitOnTaxi VehicleExit
+]]
+
 -- Mine
 local isInit = false
 

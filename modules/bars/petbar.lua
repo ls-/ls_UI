@@ -5,6 +5,12 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame GetPetActionCooldown
+	GetPetActionInfo GetPetActionSlotUsable IsPetAttackAction PetActionButton_StartFlash PetActionButton_StopFlash
+	PetHasActionBar UIParent
+]]
+
 -- Mine
 local isInit = false
 

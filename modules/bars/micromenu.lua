@@ -12,6 +12,21 @@ local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
+-- Blizz
+local C_Timer = _G.C_Timer
+
+--[[ luacheck: globals
+	CollectionsMicroButtonAlert CreateFrame EJMicroButtonAlert GameTooltip GameTooltip_AddNewbieTip GetAddOnInfo
+	GetAddOnMemoryUsage GetInventoryItemDurability GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles
+	GetLFGRoleShortageRewards GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons GetNumSavedInstances
+	GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo GetSavedWorldBossInfo GetTime
+	GuildMicroButtonTabard IsAddOnLoaded IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButtonAlert
+	LFG_ROLE_NUM_SHORTAGE_TYPES MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton MICRO_BUTTONS
+	MicroButtonPortrait MicroButtonTooltipText OverrideActionBar PERFORMANCEBAR_MEDIUM_LATENCY PetBattleFrame
+	RegisterStateDriver RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime
+	TalentMicroButtonAlert UIParent UpdateAddOnMemoryUsage
+]]
+
 -- Mine
 local isInit = false
 local ctaTicker

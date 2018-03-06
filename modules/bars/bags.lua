@@ -7,6 +7,15 @@ local _G = getfenv(0)
 local next = _G.next
 local hooksecurefunc = _G.hooksecurefunc
 
+-- Blizz
+local C_Timer = _G.C_Timer
+
+--[[ luacheck: globals
+	BACKPACK_CONTAINER BackpackButton_UpdateChecked BreakUpLargeNumbers CharacterBag0Slot CreateFrame GameTooltip
+	GetContainerNumFreeSlots GetContainerNumSlots GetCurrencyInfo GetMoney GetMoneyString GetTime InCombatLockdown
+	IsContainerFiltered MainMenuBarBackpackButton NUM_BAG_SLOTS ToggleAllBags UIParent
+]]
+
 -- Mine
 local isInit = false
 local bar

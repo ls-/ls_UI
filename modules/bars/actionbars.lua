@@ -7,6 +7,10 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
+--[[ luacheck: globals
+	CreateFrame LibStub UIParent
+]]
+
 -- Mine
 local LibActionButton = LibStub("LibActionButton-1.0-ls")
 local isInit = false

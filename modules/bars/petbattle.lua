@@ -7,6 +7,10 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
+--[[ luacheck: globals
+	CreateFrame FlowContainer_PauseUpdates PetBattleFrame PetBattleFrameXPBar RegisterStateDriver UIParent
+]]
+
 -- Mine
 local isInit = false
 

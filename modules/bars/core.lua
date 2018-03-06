@@ -6,6 +6,14 @@ local MODULE = P:AddModule("Bars")
 local _G = getfenv(0)
 local next = _G.next
 
+-- Blizz
+local C_PetBattles = _G.C_PetBattles
+
+--[[ luacheck: globals
+	ClearOverrideBindings CreateFrame GetBindingKey InCombatLockdown MainMenuBar OverrideActionBar RegisterStateDriver
+	SetCVar SetOverrideBindingClick SpellFlyout UIParent UnregisterStateDriver
+]]
+
 -- Mine
 local isInit = false
 local bars = {}

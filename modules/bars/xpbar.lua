@@ -7,6 +7,20 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local unpack = _G.unpack
 
+-- Blizz
+local C_ArtifactUI = _G.C_ArtifactUI
+local C_PetBattles = _G.C_PetBattles
+local C_Reputation = _G.C_Reputation
+
+--[[ luacheck: globals
+	BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation GetHonorExhaustion GetQuestLogCompletionText
+	GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo GetXPExhaustion HasArtifactEquipped
+	InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP IsXPUserDisabled
+	MainMenuBar_GetNumArtifactTraitsPurchasableFromXP MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION
+	PlayerTalentFramePVPTalents PlaySound ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP
+	UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
+]]
+
 -- Mine
 local isInit = false
 
