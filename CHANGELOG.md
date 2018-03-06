@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 70300.12
+
+- Added "Enable" toggle for each unit frame;
+- Added hotkey, macro, and count text size controls to action bar config;
+- Added minimap difficulty flag visibility and position controls;
+- Fixed issue which caused XP bar to not update its size;
+- Updated embeds.
+
 ## Version 70300.11
 
 - Fixed number formatting.
