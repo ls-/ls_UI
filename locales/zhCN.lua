@@ -33,7 +33,6 @@ do
 	end
 end
 
-
 -- Require translation
 L["ACTION_BARS"] = "动作条"
 L["ADVENTURE_JOURNAL_DESC"] = "显示团队副本锁定信息"
