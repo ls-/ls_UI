@@ -60,6 +60,7 @@ do
 			end
 
 			self:Tag(element.Text, config.enabled and config.text.tag or "")
+			element.Text:UpdateTag()
 		end
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
@@ -189,7 +190,8 @@ do
 				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 			end
 
-			self:Tag(element.Text, config.text.tag)
+			self:Tag(element.Text, config.enabled and config.text.tag or "")
+			element.Text:UpdateTag()
 		end
 
 		E:ReanchorGainLossIndicators(element, config.orientation)
