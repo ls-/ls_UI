@@ -338,21 +338,25 @@ Tags:
 - |cffffd200[ls:color:altpower]|r - colour.
 
 If the current value is equal to the max value, only the max value will be displayed.
-Use |cffffd200||r|r to close colour tags.]]
+
+Use |cffffd200||r|r to close colour tags.
+Use |cffffd200[nl]|r for line breaking.]]
 L["DAMAGE_ABSORB_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
 - |cffffd200[ls:absorb:damage]|r - the current value;
 - |cffffd200[ls:color:absorb-damage]|r - the colour.
 
-Use |cffffd200||r|r to close colour tags.]]
+Use |cffffd200||r|r to close colour tags.
+Use |cffffd200[nl]|r for line breaking.]]
 L["HEAL_ABSORB_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
 - |cffffd200[ls:absorb:heal]|r - the current value;
 - |cffffd200[ls:color:absorb-heal]|r - the colour.
 
-Use |cffffd200||r|r to close colour tags.]]
+Use |cffffd200||r|r to close colour tags.
+Use |cffffd200[nl]|r for line breaking.]]
 L["HEALTH_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -361,7 +365,9 @@ Tags:
 - |cffffd200[ls:health:cur-perc]|r - the current value followed by the percentage;
 - |cffffd200[ls:health:deficit]|r - the deficit value.
 
-If the current value is equal to the max value, only the max value will be displayed.]]
+If the current value is equal to the max value, only the max value will be displayed.
+
+Use |cffffd200[nl]|r for line breaking.]]
 L["NAME_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -375,7 +381,8 @@ Tags:
 - |cffffd200[ls:color:reaction]|r - the reaction colour;
 - |cffffd200[ls:color:difficulty]|r - the difficulty colour.
 
-Use |cffffd200||r|r to close colour tags.]]
+Use |cffffd200||r|r to close colour tags.
+Use |cffffd200[nl]|r for line breaking.]]
 L["POWER_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -390,7 +397,9 @@ Tags:
 - |cffffd200[ls:color:power]|r - the colour.
 
 If the current value is equal to the max value, only the max value will be displayed.
-Use |cffffd200||r|r to close colour tags.]]
+
+Use |cffffd200||r|r to close colour tags.
+Use |cffffd200[nl]|r for line breaking.]]
 L["RESTRICTED_MODE_DESC"] = [[Enables artwork, animations and dynamic resizing for the main action bar.
 
 |cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]]
