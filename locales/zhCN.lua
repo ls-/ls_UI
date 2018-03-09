@@ -1,4 +1,6 @@
-﻿local _, ns = ...
+﻿-- Contributors: aenerv7@GitHub
+
+local _, ns = ...
 local E, L = ns.E, ns.L
 
 -- Lua
@@ -281,74 +283,3 @@ L["Y_OFFSET"] = "Y 轴便宜"
 L["YOURS_FIRST"] = "你的优先"
 L["ZONE_ABILITY_BUTTON"] = "区域特殊能力按钮"
 L["ZONE_TEXT"] = "区域文字"
-
--- Multi-liners
-L["ALT_POWER_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:altpower:cur]|r - the current value;
-- |cffffd200[ls:altpower:max]|r - the max value;
-- |cffffd200[ls:altpower:perc]|r - the percentage;
-- |cffffd200[ls:altpower:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:altpower:cur-color-max]|r - the current value followed by the coloured max value;
-- |cffffd200[ls:altpower:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:altpower:cur-color-perc]|r - the current value followed by the coloured percentage;
-- |cffffd200[ls:color:altpower]|r - colour.
-
-If the current value is equal to the max value, only the max value will be displayed.
-Use |cffffd200||r|r to close colour tags.]]
-L["DAMAGE_ABSORB_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:damage]|r - the current value;
-- |cffffd200[ls:color:absorb-damage]|r - the colour.
-
-Use |cffffd200||r|r to close colour tags.]]
-L["HEAL_ABSORB_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:heal]|r - the current value;
-- |cffffd200[ls:color:absorb-heal]|r - the colour.
-
-Use |cffffd200||r|r to close colour tags.]]
-L["HEALTH_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:health:cur]|r - the current value;
-- |cffffd200[ls:health:perc]|r - the percentage;
-- |cffffd200[ls:health:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:health:deficit]|r - the deficit value.
-
-If the current value is equal to the max value, only the max value will be displayed.]]
-L["NAME_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:name]|r - the name;
-- |cffffd200[ls:name:5]|r - the name shortened to 5 characters;
-- |cffffd200[ls:name:10]|r - the name shortened to 10 characters;
-- |cffffd200[ls:name:15]|r - the name shortened to 15 characters;
-- |cffffd200[ls:name:20]|r - the name shortened to 20 characters;
-- |cffffd200[ls:server]|r - the (*) tag for players from foreign realms;
-- |cffffd200[ls:color:class]|r - the class colour;
-- |cffffd200[ls:color:reaction]|r - the reaction colour;
-- |cffffd200[ls:color:difficulty]|r - the difficulty colour.
-
-Use |cffffd200||r|r to close colour tags.]]
-L["POWER_FORMAT_DESC"] = [[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:power:cur]|r - the current value;
-- |cffffd200[ls:power:max]|r - the max value;
-- |cffffd200[ls:power:perc]|r - the percentage;
-- |cffffd200[ls:power:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:power:cur-color-max]|r - the current value followed by the coloured max value;
-- |cffffd200[ls:power:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:power:cur-color-perc]|r - the current value followed by the coloured percentage;
-- |cffffd200[ls:power:deficit]|r - the deficit value;
-- |cffffd200[ls:color:power]|r - the colour.
-
-If the current value is equal to the max value, only the max value will be displayed.
-Use |cffffd200||r|r to close colour tags.]]
-L["RESTRICTED_MODE_DESC"] = [[Enables artwork, animations and dynamic resizing for the main action bar.
-
-|cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]]

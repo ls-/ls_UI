@@ -28,6 +28,7 @@ local function frame_UpdateName(self)
 	end
 
 	self:Tag(element, config.tag)
+	element:UpdateTag()
 end
 
 function UF:CreateName(frame, textFontObject, textParent)

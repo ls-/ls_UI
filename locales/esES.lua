@@ -1,7 +1,58 @@
-﻿local _, ns = ...
+﻿-- Contributors: Gotxiko@GitHub
+
+local _, ns = ...
 local E, L = ns.E, ns.L
 
 -- Lua
 local _G = getfenv(0)
 
 if _G.GetLocale() ~= "esES" then return end
+
+L["ACTION_BARS"] = "Barras de acción"
+L["ANCHOR"] = "Adjuntar a"
+L["AURA_TRACKER"] = "Seguidor de auras"
+L["BAGS"] = "Bolsas"
+L["BAR_1"] = "Barra 1"
+L["BAR_2"] = "Barra 2"
+L["BAR_3"] = "Barra 3"
+L["BAR_4"] = "Barra 4"
+L["BAR_5"] = "Barra 5"
+L["BLIZZARD"] = "Blizzard"
+L["BLIZZARD_MIRROR_TIMER"] = "Mirror Timers"
+L["BOSS"] = "Jefe"
+L["BOSS_FRAMES"] = "Marco de jefe"
+L["BUFFS"] = "Beneficios"
+L["COMMAND_BAR"] = "Barra de comando"
+L["DAILY_QUEST_RESET_TIME"] = "Tiempo de reinicio de misión diaria: |cffffffff%s|r"
+L["DEBUFFS"] = "Perjuicios"
+L["DIGSITE_BAR"] = "Barra de rogreso de excavaciones"
+L["DURABILITY_FRAME"] = "Indicador de durabilidad"
+L["EXPERIENCE"] = "Experiencia"
+L["FILTERS"] = "Filtros"
+L["FOCUS_FRAME"] = "Marco de foco"
+L["FOCUS_TOF"] = "Foco & OdF"
+L["GM_FRAME"] = "Indicador del estado del tícket."
+L["GOLD"] = "Oro"
+L["LATENCY"] = "Latencia"
+L["LATENCY_HOME"] = "Casa"
+L["LATENCY_WORLD"] = "Mundo"
+L["MACRO_TEXT"] = "Texto de macro"
+L["MEMORY"] = "Memoria"
+L["NPE_FRAME"] = "Tutorial marco NPE"
+L["OBJECTIVE_TRACKER"] = "Seguimiento de objetivos"
+L["PER_ROW"] = "Por fila"
+L["PET_BAR"] = "Barra de mascota"
+L["PLAYER_FRAME"] = "Marco de jugador"
+L["PLAYER_PET"] = "Jugador & mascota"
+L["RESTRICTED_MODE"] = "Modo restringido"
+L["SIZE"] = "Tamaño"
+L["SPACING"] = "Espaciado"
+L["STANCE_BAR"] = "Barra de actitudes"
+L["TALKING_HEAD_FRAME"] = "Marco de cabeza flotante"
+L["TARGET_TOT"] = "Objetivo & OdO"
+L["TOGGLE_ANCHORS"] = "Mostrar/ocultar fijadores"
+L["UNIT_FRAME_TARGET"] = "Marco de objetivo"
+L["UNITS"] = "Unidades"
+L["USE_ICON_AS_INDICATOR"] = "Usar icono como indicador"
+L["VEHICLE_SEAT_INDICATOR"] = "Indicador de asiento de vehículo"
+L["XP_BAR"] = "Barra de experiencia"

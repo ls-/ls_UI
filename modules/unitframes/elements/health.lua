@@ -51,6 +51,7 @@ do
 			end
 
 			self:Tag(element.Text, config.text.tag)
+			element.Text:UpdateTag()
 		end
 
 		if element.ForceUpdate then
@@ -169,6 +170,7 @@ do
 			end
 
 			self:Tag(absorbBar.Text, config.prediction.enabled and config.prediction.absorb_text.tag or "")
+			absorbBar.Text:UpdateTag()
 		end
 
 		if healAbsorbBar.Text then
@@ -183,6 +185,7 @@ do
 			end
 
 			self:Tag(healAbsorbBar.Text, config.prediction.enabled and config.prediction.heal_absorb_text.tag or "")
+			healAbsorbBar.Text:UpdateTag()
 		end
 
 		if config.prediction.enabled and not self:IsElementEnabled("HealthPrediction") then
