@@ -38,22 +38,7 @@ end
 L["ACTION_BARS"] = "动作条"
 L["ADVENTURE_JOURNAL_DESC"] = "显示团队副本锁定信息"
 L["ALT_POWER_BAR"] = "第二资源条"
---[[ L["ALT_POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:altpower:cur]|r - the current value;
-- |cffffd200[ls:altpower:max]|r - the max value;
-- |cffffd200[ls:altpower:perc]|r - the percentage;
-- |cffffd200[ls:altpower:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:altpower:cur-color-max]|r - the current value followed by the coloured max value;
-- |cffffd200[ls:altpower:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:altpower:cur-color-perc]|r - the current value followed by the coloured percentage;
-- |cffffd200[ls:color:altpower]|r - colour.
-
-If the current value is equal to the max value, only the max value will be displayed.
-
-Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["ALT_POWER_FORMAT_DESC"] = ""
 L["ALTERNATIVE_POWER"] = "第二资源"
 L["ALWAYS_SHOW"] = "总是显示"
 L["ANCHOR"] = "依附于"
@@ -109,14 +94,7 @@ L["COST_PREDICTION"] = "花费预测"
 L["COST_PREDICTION_DESC"] = "显示法术将要花费的资源，对瞬发法术不生效"
 L["COUNT_TEXT"] = "数量文字"
 L["DAILY_QUEST_RESET_TIME_TOOLTIP"] = "日常任务重置时间：|cffffffff%s|r"
---[[ L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:damage]|r - the current value;
-- |cffffd200[ls:color:absorb-damage]|r - the colour.
-
-Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["DAMAGE_ABSORB_FORMAT_DESC"] = ""
 L["DAMAGE_ABSORB_TEXT"] = "伤害吸收文字"
 L["DEAD"] = "死亡"
 L["DEBUFFS"] = "减益效果"
@@ -162,28 +140,11 @@ L["FRIENDLY_UNITS"] = "友好单位"
 L["GM_FRAME"] = "申请状态框架"
 L["GOLD"] = "金币"
 L["GROWTH_DIR"] = "增长方向"
---[[ L["HEAL_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:absorb:heal]|r - the current value;
-- |cffffd200[ls:color:absorb-heal]|r - the colour.
-
-Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["HEAL_ABSORB_FORMAT_DESC"] = ""
 L["HEAL_ABSORB_TEXT"] = "治疗吸收文本"
 L["HEAL_PREDICTION"] = "治疗预测"
 L["HEALTH"] = "生命值"
---[[ L["HEALTH_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:health:cur]|r - the current value;
-- |cffffd200[ls:health:perc]|r - the percentage;
-- |cffffd200[ls:health:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:health:deficit]|r - the deficit value.
-
-If the current value is equal to the max value, only the max value will be displayed.
-
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["HEALTH_FORMAT_DESC"] = ""
 L["HEALTH_TEXT"] = "生命值文本"
 L["HEIGHT"] = "高度"
 L["HONOR"] = "荣誉"
@@ -223,21 +184,7 @@ L["MOVER_BUTTONS_DESC"] = "|cffffffff点击|r 激活按钮"
 L["MOVER_CYCLE_DESC"] = "按 |cffffffffAlt|r 键切换位于鼠标位置的不同组件"
 L["MOVER_RESET_DESC"] = "|cffffffffShift 加点击|r 来重置位置"
 L["NAME"] = "名称"
---[[ L["NAME_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:name]|r - the name;
-- |cffffd200[ls:name:5]|r - the name shortened to 5 characters;
-- |cffffd200[ls:name:10]|r - the name shortened to 10 characters;
-- |cffffd200[ls:name:15]|r - the name shortened to 15 characters;
-- |cffffd200[ls:name:20]|r - the name shortened to 20 characters;
-- |cffffd200[ls:server]|r - the (*) tag for players from foreign realms;
-- |cffffd200[ls:color:class]|r - the class colour;
-- |cffffd200[ls:color:reaction]|r - the reaction colour;
-- |cffffd200[ls:color:difficulty]|r - the difficulty colour.
-
-Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["NAME_FORMAT_DESC"] = ""
 L["NO_SEPARATION"] = "不分隔"
 L["NPC_CLASSIFICATION"] = "NPC 类型"
 L["NPE_FRAME"] = "新手引导框架"
@@ -263,23 +210,7 @@ L["POINT"] = "锚点"
 L["POINT_DESC"] = "对象的锚点"
 L["POSITION"] = "位置"
 L["POWER"] = "资源"
---[[ L["POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
-
-Tags:
-- |cffffd200[ls:power:cur]|r - the current value;
-- |cffffd200[ls:power:max]|r - the max value;
-- |cffffd200[ls:power:perc]|r - the percentage;
-- |cffffd200[ls:power:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:power:cur-color-max]|r - the current value followed by the coloured max value;
-- |cffffd200[ls:power:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:power:cur-color-perc]|r - the current value followed by the coloured percentage;
-- |cffffd200[ls:power:deficit]|r - the deficit value;
-- |cffffd200[ls:color:power]|r - the colour.
-
-If the current value is equal to the max value, only the max value will be displayed.
-
-Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=] ]]
+-- L["POWER_FORMAT_DESC"] = ""
 L["POWER_TEXT"] = "资源文字"
 L["PRESTIGE_LEVEL_TOOLTIP"] = "威望等级：|cffffffff%s|r"
 L["PREVIEW"] = "预览"
@@ -295,9 +226,7 @@ L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"] = "你刚刚修改了特定角色的
 L["RELOAD_UI_WARNING"] = "设置完插件后重载 UI"
 L["RESTORE_DEFAULTS"] = "恢复默认"
 L["RESTRICTED_MODE"] = "受限模式"
---[[ L["RESTRICTED_MODE_DESC"] = [=[Enables artwork, animations and dynamic resizing for the main action bar.
-
-|cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]=] ]]
+-- L["RESTRICTED_MODE_DESC"] = ""
 L["RIGHT"] = "右"
 L["RIGHT_DOWN"] = "右下"
 L["RIGHT_UP"] = "右上"
