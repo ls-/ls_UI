@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 70300.13
+
+- Added Simplified Chinese translation. Translated by aenerv7@GitHub;
+- Added Spanish translation. Translated by Gotxiko@GitHub a.k.a. Gotzon@Curse;
+- Fixed issues which caused some tags to not update right away.
+
 ## Version 70300.12
 
 - Added "Enable" toggle for each unit frame;
