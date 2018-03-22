@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 70300.14
+
+- Added French translation. Translated by Daniel8513@Curse;
+- Updated Spanish translation. Translated by Gotzon@Curse;
+- Added Latin American Spanish translation. Copied from Spanish.
+
 ## Version 70300.13
 
 - Added Simplified Chinese translation. Translated by aenerv7@GitHub;
