@@ -1,4 +1,6 @@
-﻿local _, ns = ...
+﻿-- Contributors:
+
+local _, ns = ...
 local E, L = ns.E, ns.L
 
 -- Lua
