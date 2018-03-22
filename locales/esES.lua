@@ -10,9 +10,24 @@ if _G.GetLocale() ~= "esES" then return end
 
 L["ACTION_BARS"] = "Barras de acción"
 L["ADVENTURE_JOURNAL_DESC"] = "Mostrar información de registros de banda."
-L["ALT_POWER_BAR"] = "Barra de recursos"
--- L["ALT_POWER_FORMAT_DESC"] = ""
-L["ALTERNATIVE_POWER"] = "Recurso alternativo"
+L["ALT_POWER_BAR"] = "Barra de poder alternativo"
+L["ALT_POWER_FORMAT_DESC"] = [=[Escribe un "String" para cambiar el texto. Para desactivarlo, deja el campo en blanco.
+
+Etiquetas:
+- |cffffd200[ls:altpower:cur]|r - el valor actual;
+- |cffffd200[ls:altpower:max]|r - el valor máximo;
+- |cffffd200[ls:altpower:perc]|r - el porcentaje;
+- |cffffd200[ls:altpower:cur-max]|r - el valor actual seguido del valor máximo;
+- |cffffd200[ls:altpower:cur-color-max]|r - el valor actual seguido por el valor máximo con color;
+- |cffffd200[ls:altpower:cur-perc]|r - el valor actual seguido del porcentaje;
+- |cffffd200[ls:altpower:cur-color-perc]|r - el valor actual seguido del porcentaje con color;
+- |cffffd200[ls:color:altpower]|r - color.
+
+Si el valor actual es igual al valor máximo, solo se mostrará el valor máximo.
+
+Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
+Utiliza |cffffd200[nl]|r para saltos de línea.]=]
+L["ALTERNATIVE_POWER"] = "Poder alternativo"
 L["ALWAYS_SHOW"] = "Mostrar siempre"
 L["ANCHOR"] = "Adjuntar a"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "Nivel de artefacto: |cffffffff%s|r"
@@ -57,7 +72,7 @@ L["CASTABLE_DEBUFFS_PERMA"] = "Perjuicios permanentes lanzables"
 L["CASTABLE_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados por ti."
 L["CASTBAR"] = "Barra de lanzamiento"
 L["CHARACTER_BUTTON_DESC"] = "Muestra la durabilidad del equipo."
-L["CLASS_POWER"] = "Recurso de clase"
+L["CLASS_POWER"] = "Poder de clase"
 L["CLASSIC"] = "Clásico"
 L["CLOCK"] = "Reloj"
 L["COMMAND_BAR"] = "Barra de comandos"
@@ -121,11 +136,28 @@ L["FRIENDLY_UNITS"] = "Unidades amistosas"
 L["GM_FRAME"] = "Indicador del estado del tíquet."
 L["GOLD"] = "Oro"
 L["GROWTH_DIR"] = "Dirección de crecimiento"
--- L["HEAL_ABSORB_FORMAT_DESC"] = ""
+L["HEAL_ABSORB_FORMAT_DESC"] = [=[Escribe un "string" para cambiar el texto. Para desactivarlo, deja el campo en blanco.
+
+Etiquetas:
+- |cffffd200[ls:absorb:heal]|r - el valor máximo;
+- |cffffd200[ls:color:absorb-heal]|r - el color.
+
+Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
+Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["HEAL_ABSORB_TEXT"] = "Texto de absorción de sanación"
 L["HEAL_PREDICTION"] = "Predicción de sanaciones"
 L["HEALTH"] = "Salud"
--- L["HEALTH_FORMAT_DESC"] = ""
+L["HEALTH_FORMAT_DESC"] = [=[Escribe un "string" para cambiar el texto. Para desactivarlo, deja el campo en blanco.
+
+Etiquetas:
+- |cffffd200[ls:health:cur]|r - el valor máximo;
+- |cffffd200[ls:health:perc]|r - el porcentaje;
+- |cffffd200[ls:health:cur-perc]|r - el valora actual seguido del porcentaje;
+- |cffffd200[ls:health:deficit]|r - el valor de déficit.
+
+Si el valor actual es igual al máximo, sólo se mostrará el valor máximo.
+
+Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["HEALTH_TEXT"] = "Texto de salud"
 L["HEIGHT"] = "Altura"
 L["HONOR"] = "Honor"
@@ -156,117 +188,150 @@ L["MAX_ALPHA"] = "Alpha máx."
 L["MEMORY"] = "Memoria"
 L["MICRO_BUTTONS"] = "Micromenú"
 L["MIN_ALPHA"] = "Alpha mín."
--- L["MIRROR_TIMER"] = ""
+L["MIRROR_TIMER"] = "Mirror Timers"
 L["MODE"] = "Modo"
 L["MOUNT_AURAS"] = "Auras de montura"
--- L["MOUNT_AURAS_DESC"] = ""
--- L["MOUSEOVER_SHOW"] = ""
--- L["MOVER_BUTTONS_DESC"] = ""
--- L["MOVER_CYCLE_DESC"] = ""
--- L["MOVER_RESET_DESC"] = ""
--- L["NAME"] = ""
--- L["NAME_FORMAT_DESC"] = ""
--- L["NO_SEPARATION"] = ""
--- L["NPC_CLASSIFICATION"] = ""
+L["MOUNT_AURAS_DESC"] = "Mostrar auras de montura."
+L["MOUSEOVER_SHOW"] = "Mostrar al pasar el ratón."
+L["MOVER_BUTTONS_DESC"] = "|cffffffffClick|r para alternar botones."
+L["MOVER_CYCLE_DESC"] = "Presiona |cffffffffAlt|r para alternar entre los marcos bajo el cursor."
+L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r para reiniciar la posición."
+L["NAME"] = "Nombre"
+L["NAME_FORMAT_DESC"] = [=[Escribe un 'String' para cambiar el texto. Para desactivarlo, deja el campo en blanco.
+
+Etiquetas:
+- |cffffd200[ls:name]|r - el nombre;
+- |cffffd200[ls:name:5]|r - el nombre (máx. 5 caracteres);
+- |cffffd200[ls:name:10]|r - el nombre (máx. 10 caracteres);
+- |cffffd200[ls:name:15]|r - el nombre (máx. 15 caracteres);
+- |cffffd200[ls:name:20]|r - el nombre (máx. 20 caracteres);
+- |cffffd200[ls:server]|r - la etiqueta (*) para jugadores de otros reinos;
+- |cffffd200[ls:color:class]|r - el color de clase;
+- |cffffd200[ls:color:reaction]|r - color de reacción;
+- |cffffd200[ls:color:difficulty]|r - color de dificultad.
+
+Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
+Utiliza |cffffd200[nl]|r para saltos de línea.]=]
+L["NO_SEPARATION"] = "Sin separación"
+L["NPC_CLASSIFICATION"] = "Tipo de PNJ"
 L["NPE_FRAME"] = "Tutorial marco NPE"
--- L["NUM_BUTTONS"] = ""
--- L["NUM_ROWS"] = ""
+L["NUM_BUTTONS"] = "Número de botones"
+L["NUM_ROWS"] = "Número de filas"
 L["OBJECTIVE_TRACKER"] = "Seguimiento de objetivos"
--- L["OOM_INDICATOR"] = ""
--- L["OOR_INDICATOR"] = ""
--- L["OPEN_CONFIG"] = ""
--- L["ORBS"] = ""
--- L["OTHER"] = ""
--- L["OTHERS_FIRST"] = ""
--- L["OUTLINE"] = ""
+L["OOM_INDICATOR"] = "Indicador \"Sin maná\""
+L["OOR_INDICATOR"] = "Indicador \"Fuera de rango\""
+L["OPEN_CONFIG"] = "Abrir config."
+L["ORBS"] = "Orbes"
+L["OTHER"] = "Otro"
+L["OTHERS_FIRST"] = "Otros primero"
+L["OUTLINE"] = "Contorno"
 L["PER_ROW"] = "Por fila"
 L["PET_BAR"] = "Barra de mascota"
--- L["PET_BATTLE_BAR"] = ""
--- L["PET_FRAME"] = ""
--- L["PLAYER_CLASS"] = ""
+L["PET_BATTLE_BAR"] = "Barra de batalla de mascotas"
+L["PET_FRAME"] = "Marco de mascota"
+L["PLAYER_CLASS"] = "Clase de Jugador"
 L["PLAYER_FRAME"] = "Marco de jugador"
 L["PLAYER_PET"] = "Jugador & mascota"
--- L["PLAYER_TITLE"] = ""
--- L["POINT"] = ""
--- L["POINT_DESC"] = ""
--- L["POSITION"] = ""
--- L["POWER"] = ""
--- L["POWER_FORMAT_DESC"] = ""
--- L["POWER_TEXT"] = ""
--- L["PRESTIGE_LEVEL_TOOLTIP"] = ""
--- L["PREVIEW"] = ""
--- L["PVP_ICON"] = ""
--- L["QUESTLOG_BUTTON_DESC"] = ""
--- L["RAID_ICON"] = ""
--- L["RCLICK_SELFCAST"] = ""
--- L["REACTION"] = ""
--- L["RELATIVE_POINT"] = ""
--- L["RELATIVE_POINT_DESC"] = ""
--- L["RELOAD_NOW"] = ""
--- L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"] = ""
--- L["RELOAD_UI_WARNING"] = ""
--- L["RESTORE_DEFAULTS"] = ""
+L["PLAYER_TITLE"] = "Título de Jugador"
+L["POINT"] = "Apuntar"
+L["POINT_DESC"] = "Apunta al objeto."
+L["POSITION"] = "Posición"
+L["POWER"] = "Poder alternativo"
+L["POWER_FORMAT_DESC"] = [=[Escribe un 'String' para cambiar el texto. Para desactivarlo, deja el campo en blanco.
+
+Etiquetas:
+- |cffffd200[ls:power:cur]|r - valor actual;
+- |cffffd200[ls:power:max]|r - valor máximo;
+- |cffffd200[ls:power:perc]|r - porcentaje;
+- |cffffd200[ls:power:cur-max]|r - el valor actual seguido del valor máximo;
+- |cffffd200[ls:power:cur-color-max]|r - el valor actual seguido del valor máximo con color;
+- |cffffd200[ls:power:cur-perc]|r - el valor actual seguido por el porcentaje;
+- |cffffd200[ls:power:cur-color-perc]|r - el valor actual seguido por el porcentaje con color;
+- |cffffd200[ls:power:deficit]|r - valor de déficit;
+- |cffffd200[ls:color:power]|r - el color.
+
+If the current value is equal to the max value, only the max value will be displayed.
+
+
+Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
+Utiliza |cffffd200[nl]|r para saltos de línea.]=]
+L["POWER_TEXT"] = "Texto de Poder alternativo"
+L["PRESTIGE_LEVEL_TOOLTIP"] = "Nivel de prestigio: |cffffffff%s|r"
+L["PREVIEW"] = "Previsualizar"
+L["PVP_ICON"] = "Icono JcJ"
+L["QUESTLOG_BUTTON_DESC"] = "Muestra el tiempo de reinicio de misiones diarias."
+L["RAID_ICON"] = "Icono de Banda"
+L["RCLICK_SELFCAST"] = "Lanzar sobre uno mismo con Clic Derecho"
+L["REACTION"] = "Reacción"
+L["RELATIVE_POINT"] = "Punto relativo"
+L["RELATIVE_POINT_DESC"] = "Punto de la zona a la que anclar el objeto."
+L["RELOAD_NOW"] = "Reiniciar interfaz ahora"
+L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"] = "Has cambiado una opción de \"sólo personaje\". Éstas opciones son independientes entre tus perfiles. Para que los cambios surtan efecto, debes reiniciar la interfaz."
+L["RELOAD_UI_WARNING"] = "Reinicia la interfaz cuando acabes de configurar el addon."
+L["RESTORE_DEFAULTS"] = "Restaurar predeterminados"
 L["RESTRICTED_MODE"] = "Modo restringido"
--- L["RESTRICTED_MODE_DESC"] = ""
--- L["RIGHT"] = ""
--- L["RIGHT_DOWN"] = ""
--- L["RIGHT_UP"] = ""
--- L["ROWS"] = ""
--- L["SECOND_ANCHOR"] = ""
--- L["SELF_BUFFS"] = ""
--- L["SELF_BUFFS_DESC"] = ""
--- L["SELF_BUFFS_PERMA"] = ""
--- L["SELF_BUFFS_PERMA_DESC"] = ""
--- L["SELF_DEBUFFS"] = ""
--- L["SELF_DEBUFFS_DESC"] = ""
--- L["SELF_DEBUFFS_PERMA"] = ""
--- L["SELF_DEBUFFS_PERMA_DESC"] = ""
--- L["SEPARATION"] = ""
--- L["SHADOW"] = ""
--- L["SHIFT_CLICK_TO_SHOW_AS_XP"] = ""
+L["RESTRICTED_MODE_DESC"] = [=[Activa las ilustraciones, animaciones y tamaño dinámico de la barra principal.
+
+|cffdc4436¡Cuidado!|r Muchas opciones de personalización de las barras no estarán disponibles en este modo.|r]=]
+L["RIGHT"] = "Derecha"
+L["RIGHT_DOWN"] = "Derecha y abajo"
+L["RIGHT_UP"] = "Derecha y arriba"
+L["ROWS"] = "Filas"
+L["SECOND_ANCHOR"] = "Segundo anclaje"
+L["SELF_BUFFS"] = "Beneficios propios"
+L["SELF_BUFFS_DESC"] = "Muestra los beneficios lanzados por la unidad."
+L["SELF_BUFFS_PERMA"] = "Beneficios permanentes propios"
+L["SELF_BUFFS_PERMA_DESC"] = "Muestra los beneficios permanentes lanzados por la unidad."
+L["SELF_DEBUFFS"] = "Perjuicios propios."
+L["SELF_DEBUFFS_DESC"] = "Muestra los perjuicios lanzados por la unidad."
+L["SELF_DEBUFFS_PERMA"] = "Perjuicios permanentes propios."
+L["SELF_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados por la unidad."
+L["SEPARATION"] = "Separación"
+L["SHADOW"] = "Sombra"
+L["SHIFT_CLICK_TO_SHOW_AS_XP"] = "|cffffffffShift-Click|r para mostrar como Barra de Experiencia"
 L["SIZE"] = "Tamaño"
--- L["SIZE_OVERRIDE"] = ""
--- L["SIZE_OVERRIDE_DESC"] = ""
--- L["SORT_DIR"] = ""
--- L["SORT_METHOD"] = ""
+L["SIZE_OVERRIDE"] = "Ignorar tamaño"
+L["SIZE_OVERRIDE_DESC"] = "Si es 0, el tamaño del elemento se calculará automáticamente."
+L["SORT_DIR"] = "Orden"
+L["SORT_METHOD"] = "Método de ordenado"
 L["SPACING"] = "Espaciado"
 L["STANCE_BAR"] = "Barra de actitudes"
 L["TALKING_HEAD_FRAME"] = "Marco de cabeza flotante"
 L["TARGET_FRAME"] = "Marco de objetivo"
--- L["TARGET_INFO"] = ""
--- L["TARGET_INFO_DESC"] = ""
+L["TARGET_INFO"] = "Información de objetivo"
+L["TARGET_INFO_DESC"] = "Muestra la descripción emergente del objetivo."
 L["TARGET_TOT"] = "Objetivo & OdO"
--- L["TEXT_HORIZ_ALIGNMENT"] = ""
--- L["TEXT_VERT_ALIGNMENT"] = ""
--- L["THREAT_GLOW"] = ""
--- L["TIME"] = ""
--- L["TOF_FRAME"] = ""
-L["TOGGLE_ANCHORS"] = "Mostrar/ocultar fijadores"
--- L["TOOLTIP_IDS"] = ""
--- L["TOOLTIPS"] = ""
--- L["TOP"] = ""
--- L["TOP_INSET_SIZE"] = ""
--- L["TOP_INSET_SIZE_DESC"] = ""
--- L["TOT_FRAME"] = ""
--- L["TOTEMS"] = ""
--- L["UI_LAYOUT"] = ""
--- L["UI_LAYOUT_DESC"] = ""
+L["TEXT_HORIZ_ALIGNMENT"] = "Alineamiento horizontal"
+L["TEXT_VERT_ALIGNMENT"] = "Alineamiento vertical"
+L["THREAT_GLOW"] = "Brillo de Amenaza"
+L["TIME"] = "Tiempo"
+L["TOF_FRAME"] = "Marco de Objetivo de Foco"
+L["TOGGLE_ANCHORS"] = "Mostrar/ocultar anclajes"
+L["TOOLTIP_IDS"] = "ID de hechizos y objetos"
+L["TOOLTIPS"] = "Descripciones emergentes"
+L["TOP"] = "Parte superior"
+L["TOP_INSET_SIZE"] = "Tamaño inset superior"
+L["TOP_INSET_SIZE_DESC"] = "Utilizado por las barras de clase, recursos y poder alternativos."
+L["TOT_FRAME"] = "Marco de Objetivo de Objetivo"
+L["TOTEMS"] = "Tótems"
+L["UI_LAYOUT"] = "Diseño de interfaz"
+L["UI_LAYOUT_DESC"] = "Cambia la apariencia de los marcos de jugador y mascotas. Ésto también cambiará el diseño de la interfaz."
 L["UNITS"] = "Unidades"
--- L["UNSPENT_TRAIT_POINTS_TOOLTIP"] = ""
--- L["UP"] = ""
--- L["USE_BLIZZARD_VEHICLE_UI"] = ""
+L["UNSPENT_TRAIT_POINTS_TOOLTIP"] = "Puntos de rasgo sin gastar: |cffffffff%s|r"
+L["UP"] = "Arriba"
+L["USE_BLIZZARD_VEHICLE_UI"] = "Utilizar la interfaz de Blizzard de vehículos"
 L["USE_ICON_AS_INDICATOR"] = "Usar icono como indicador"
--- L["USE_ICON_AS_INDICATOR_DESC"] = ""
--- L["VEHICLE_EXIT_BUTTON"] = ""
+L["USE_ICON_AS_INDICATOR_DESC"] = "El color y transparencia de los iconos cambiará dependiendo del estado de la habilidad."
+L["VEHICLE_EXIT_BUTTON"] = "Botón para salir de vehículo"
 L["VEHICLE_SEAT_INDICATOR"] = "Indicador de asiento de vehículo"
--- L["VERT_GROWTH_DIR"] = ""
--- L["VISIBILITY"] = ""
--- L["WIDTH"] = ""
--- L["WIDTH_OVERRIDE"] = ""
--- L["WORD_WRAP"] = ""
--- L["X_OFFSET"] = ""
+L["VERT_GROWTH_DIR"] = "Dirección de crecimiento vertical"
+L["VISIBILITY"] = "Visibilidad"
+L["WIDTH"] = "Ancho"
+L["WIDTH_OVERRIDE"] = "Ignorar ancho"
+L["WORD_WRAP"] = "Ajuste de línea"
+L["X_OFFSET"] = "xOffset"
 L["XP_BAR"] = "Barra de experiencia"
--- L["Y_OFFSET"] = ""
--- L["YOURS_FIRST"] = ""
--- L["ZONE_ABILITY_BUTTON"] = ""
--- L["ZONE_TEXT"] = ""
+L["Y_OFFSET"] = "yOffset"
+L["YOURS_FIRST"] = "El tuyo primero"
+L["ZONE_ABILITY_BUTTON"] = "Botón de habilidad de zona"
+L["ZONE_TEXT"] = "Texto de zona"
