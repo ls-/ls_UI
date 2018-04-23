@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 70300.15
+
+- Added Russian translation. Translated by Biowoolf@WoWInterface and me;
+- Updated Simplified Chinese translation. Translated by aenerv7@GitHub;
+- Updated embeds.
+
 ## Version 70300.14
 
 - Added French translation. Translated by Daniel8513@Curse;
