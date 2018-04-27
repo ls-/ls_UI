@@ -339,6 +339,7 @@ end
 
 function UF:CreateAuras(frame, unit)
 	local element = CreateFrame("Frame", nil, frame)
+	element:SetSize(48, 48)
 
 	element.spacing = 4
 	element.showDebuffType = true
