@@ -343,7 +343,7 @@ end
 -- ALT POWER --
 ---------------
 
-oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPower(unit, ALTERNATE_POWER_INDEX), 1)
@@ -352,7 +352,7 @@ oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPowerMax(unit, ALTERNATE_POWER_INDEX), 1)
@@ -361,7 +361,7 @@ oUF.Tags.Methods["ls:altpower:max"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return s_format("%.1f%%", E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))
@@ -370,7 +370,7 @@ oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -385,7 +385,7 @@ oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -400,7 +400,7 @@ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -415,7 +415,7 @@ oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
