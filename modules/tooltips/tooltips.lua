@@ -642,18 +642,6 @@ function MODULE:Init()
 		hooksecurefunc(GameTooltip, "SetLootCurrency", Tooltip_SetLoot)
 
 		-- Quests
-		local hookedQuestTitleButtons = {}
-
-		hooksecurefunc("QuestLogQuests_GetTitleButton", function(index)
-			local button = _G.QuestMapFrame.QuestsFrame.Contents.Titles[index]
-
-			if not hookedQuestTitleButtons[button] then
-				button:HookScript("OnEnter", Tooltip_SetQuest)
-
-				hookedQuestTitleButtons[button] = true
-			end
-		end)
-
 		hooksecurefunc("QuestMapLogTitleButton_OnEnter", Tooltip_SetQuest)
 
 		-- Units
