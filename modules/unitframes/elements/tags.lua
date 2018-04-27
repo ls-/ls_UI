@@ -586,7 +586,7 @@ oUF.Tags.Methods["ls:debuffs"] = function(unit)
 	local status = ""
 
 	for i = 1, 40 do
-		local name, _, _, _, type = UnitDebuff(unit, i, "RAID")
+		local name, _, _, type = UnitDebuff(unit, i, "RAID")
 
 		if name then
 			if types[type] and not hasDebuff[type] then

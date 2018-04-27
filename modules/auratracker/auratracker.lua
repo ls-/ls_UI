@@ -35,7 +35,7 @@ local function VerifyList(filter)
 end
 
 local function GetActiveAuras(index, filter)
-	local name, _, texture, count, dType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
+	local name, texture, count, dType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
 
 	if name	and C.db.char.auratracker.filter[filter][spellID] then
 		t_insert(activeAuras, {

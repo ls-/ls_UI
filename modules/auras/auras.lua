@@ -54,7 +54,7 @@ local function UpdateAura(button, index)
 	end
 
 	local unit = button:GetParent():GetAttribute("unit")
-	local name, _, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter)
+	local name, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter)
 
 	if name then
 		button.Icon:SetTexture(texture)

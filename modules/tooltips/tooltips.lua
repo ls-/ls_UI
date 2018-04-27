@@ -391,7 +391,7 @@ local function Tooltip_SetSpellOrItem(self)
 end
 
 local function Tooltip_SetUnitAura(self, unit, index, filter)
-	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
+	local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
 
 	AddSpellInfo(self, id, caster)
 end
