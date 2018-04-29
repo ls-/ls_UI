@@ -9,16 +9,17 @@ local unpack = _G.unpack
 
 -- Blizz
 local C_ArtifactUI = _G.C_ArtifactUI
+local C_AzeriteItem = _G.C_AzeriteItem
 local C_PetBattles = _G.C_PetBattles
 local C_Reputation = _G.C_Reputation
 
 --[[ luacheck: globals
-	BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation GetHonorExhaustion GetQuestLogCompletionText
-	GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo GetXPExhaustion HasArtifactEquipped
-	InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP IsXPUserDisabled
-	MainMenuBar_GetNumArtifactTraitsPurchasableFromXP MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION
-	PlayerTalentFramePVPTalents PlaySound ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP
-	UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
+	ArtifactBarGetNumArtifactTraitsPurchasableFromXP BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation
+	GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo
+	GetXPExhaustion HasArtifactEquipped HonorFrame InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown
+	IsWatchingHonorAsXP IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound
+	ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor
+	UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
 ]]
 
 -- Mine
@@ -109,11 +110,11 @@ local function bar_UpdateSegments(self)
 		end
 	else
 		-- Artefact
-		if HasArtifactEquipped() then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			index = index + 1
 
 			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI.GetEquippedArtifactInfo()
-			local points, cur, max = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
+			local points, cur, max = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
 			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
 			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
 
@@ -124,6 +125,34 @@ local function bar_UpdateSegments(self)
 				},
 				line2 = {
 					text = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent)
+				},
+			}
+
+			self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
+			E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
+
+			self[index]:SetMinMaxValues(0, max)
+			self[index]:SetValue(cur)
+
+			self[index].Extension:SetMinMaxValues(0, 1)
+			self[index].Extension:SetValue(0)
+		end
+
+		-- Azerite
+		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+
+		if azeriteItemLocation then
+			index = index + 1
+
+			local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+			local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
+			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
+
+			self[index].tooltipInfo = {
+				header = L["ARTIFACT_POWER"],
+				line1 = {
+					text = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level)
 				},
 			}
 
@@ -547,33 +576,35 @@ function BARS.CreateXPBar()
 		-- This way I'm able to show honour and reputation bars simultaneously
 		local isHonorBarHooked = false
 
-		hooksecurefunc("TalentFrame_LoadUI", function()
-			if not isHonorBarHooked then
-				PlayerTalentFramePVPTalents.XPBar:SetScript("OnMouseUp", function()
-					if IsShiftKeyDown() then
-						if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
-							PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
-							SetWatchingHonorAsXP(false)
-						else
-							PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
-							SetWatchingHonorAsXP(true)
+		hooksecurefunc("UIParentLoadAddOn", function(addOnName)
+			if addOnName == "Blizzard_PVPUI" then
+				if not isHonorBarHooked then
+					HonorFrame.XPBar:SetScript("OnMouseUp", function()
+						if IsShiftKeyDown() then
+							if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
+								PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+								SetWatchingHonorAsXP(false)
+							else
+								PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+								SetWatchingHonorAsXP(true)
+							end
+
+							bar:UpdateSegments()
 						end
+					end)
 
-						bar:UpdateSegments()
-					end
-				end)
+					HonorFrame.XPBar:HookScript("OnEnter", function(self)
+						GameTooltip:SetOwner(self, "ANCHOR_TOP")
+						GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
+						GameTooltip:Show()
+					end)
 
-				PlayerTalentFramePVPTalents.XPBar:HookScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_TOP")
-					GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
-					GameTooltip:Show()
-				end)
+					HonorFrame.XPBar:HookScript("OnLeave", function()
+						GameTooltip:Hide()
+					end)
 
-				PlayerTalentFramePVPTalents.XPBar:HookScript("OnLeave", function()
-					GameTooltip:Hide()
-				end)
-
-				isHonorBarHooked = true
+					isHonorBarHooked = true
+				end
 			end
 		end)
 
