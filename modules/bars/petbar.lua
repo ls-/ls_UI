@@ -152,7 +152,7 @@ end
 
 local function button_Update(self)
 	local id = self:GetID()
-	local name, subtext, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(id)
+	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(id)
 
 	if not isToken then
 		self.icon:SetTexture(texture)
@@ -163,7 +163,6 @@ local function button_Update(self)
 	end
 
 	self.isToken = isToken
-	self.tooltipSubtext = subtext
 
 	self:SetChecked(PetHasActionBar() and isActive or false)
 

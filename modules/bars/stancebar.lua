@@ -57,7 +57,7 @@ end
 local function button_Update(self)
 	if self:IsShown() then
 		local id = self:GetID()
-		local texture, _, isActive, isCastable = GetShapeshiftFormInfo(id)
+		local texture, isActive, isCastable = GetShapeshiftFormInfo(id)
 
 		self.icon:SetTexture(texture)
 

@@ -212,7 +212,7 @@ local vehicleController
 function MODULE:UpdateBlizzVehicle()
 	if not self:IsRestricted() then
 		if C.db.profile.bars.blizz_vehicle then
-			MainMenuBar:SetParent(UIParent)
+			-- MainMenuBar:SetParent(UIParent)
 			OverrideActionBar:SetParent(UIParent)
 
 			if not vehicleController then
@@ -243,7 +243,7 @@ function MODULE:UpdateBlizzVehicle()
 
 			RegisterStateDriver(vehicleController, "vehicle", "[overridebar] override; [vehicleui] vehicle; novehicle")
 		else
-			MainMenuBar:SetParent(E.HIDDEN_PARENT)
+			-- MainMenuBar:SetParent(E.HIDDEN_PARENT)
 			OverrideActionBar:SetParent(E.HIDDEN_PARENT)
 
 			if vehicleController then
@@ -251,7 +251,7 @@ function MODULE:UpdateBlizzVehicle()
 			end
 		end
 	else
-		MainMenuBar:SetParent(E.HIDDEN_PARENT)
+		-- MainMenuBar:SetParent(E.HIDDEN_PARENT)
 		OverrideActionBar:SetParent(E.HIDDEN_PARENT)
 	end
 end
@@ -272,9 +272,9 @@ function MODULE.Init()
 		MODULE:CreateExtraButton()
 		MODULE:CreateZoneButton()
 		MODULE:CreateVehicleExitButton()
-		MODULE:CreateMicroMenu()
+		-- MODULE:CreateMicroMenu()
 		MODULE:CreateXPBar()
-		MODULE:CreateBags()
+		-- MODULE:CreateBags()
 		MODULE:ReassignBindings()
 		MODULE:CleanUp()
 		MODULE:UpdateBlizzVehicle()

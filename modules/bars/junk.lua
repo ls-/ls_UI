@@ -6,33 +6,39 @@ local MODULE = P:GetModule("Bars")
 local _G = getfenv(0)
 
 function MODULE.CleanUp()
-	E:ForceHide(ActionBarDownButton)
-	E:ForceHide(ActionBarUpButton)
-	E:ForceHide(ArtifactWatchBar)
-	E:ForceHide(HonorWatchBar)
 	E:ForceHide(MainMenuBarArtFrame, true)
-	E:ForceHide(MainMenuBarLeftEndCap)
-	E:ForceHide(MainMenuBarPageNumber)
-	E:ForceHide(MainMenuBarRightEndCap)
-	E:ForceHide(MainMenuBarTexture0)
-	E:ForceHide(MainMenuBarTexture1)
-	E:ForceHide(MainMenuBarTexture2)
-	E:ForceHide(MainMenuBarTexture3)
-	E:ForceHide(MainMenuBarVehicleLeaveButton)
-	E:ForceHide(MainMenuExpBar)
 	E:ForceHide(MultiBarBottomLeft)
 	E:ForceHide(MultiBarBottomRight)
 	E:ForceHide(MultiBarLeft)
 	E:ForceHide(MultiBarRight)
-	E:ForceHide(MultiCastActionBarFrame)
+
 	E:ForceHide(PetActionBarFrame)
 	E:ForceHide(PossessBarFrame)
+	E:ForceHide(StanceBarFrame)
+
+	E:ForceHide(MainMenuExpBar)
+	E:ForceHide(MainMenuBarMaxLevelBar)
 	E:ForceHide(ReputationWatchBar)
-	E:ForceHide(SlidingActionBarTexture0)
-	E:ForceHide(SlidingActionBarTexture1)
+	E:ForceHide(ArtifactWatchBar)
+	E:ForceHide(HonorWatchBar)
+
+	StatusTrackingBarManager:Hide()
+
+	MainMenuBar:EnableMouse(false)
+	MainMenuBar:SetSize(0.001, 0.001)
+
 	E:ForceHide(SpellFlyoutBackgroundEnd)
 	E:ForceHide(SpellFlyoutHorizontalBackground)
 	E:ForceHide(SpellFlyoutVerticalBackground)
-	E:ForceHide(StanceBarFrame)
-	MainMenuBar:SetSize(0.001, 0.001)
+
+	-- temp hacks
+	for _, name in next, MICRO_BUTTONS do
+		_G[name]:SetParent(MicroButtonAndBagsBar)
+
+		hooksecurefunc(_G[name], "SetParent", function(self, parent)
+			if parent ~= MicroButtonAndBagsBar then
+				_G[name]:SetParent(MicroButtonAndBagsBar)
+			end
+		end)
+	end
 end
