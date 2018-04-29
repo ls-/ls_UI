@@ -157,7 +157,7 @@ local function createAuraIcon(element, index)
 end
 
 local filterFunctions = {
-	default = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
 		if BLACKLIST[spellID] then
 			return false
@@ -230,7 +230,7 @@ local filterFunctions = {
 
 		return false
 	end,
-	boss = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
+	boss = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
 		local config = element._config and element._config.filter or nil
 
