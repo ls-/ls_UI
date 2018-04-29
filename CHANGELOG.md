@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 70300.16
+
+- Fixed number formatting for non-Asian locales.
+
 ## Version 70300.15
 
 - Added Russian translation. Translated by Biowoolf@WoWInterface and me;
