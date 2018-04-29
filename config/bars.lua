@@ -50,48 +50,48 @@ local CURRENCY_TABLE = {
 	args = {}
 }
 
-local function UpdateCurrencyOptions()
-	local options = C.options and C.options.args.bars and C.options.args.bars.args.bags.args.currency.args or CURRENCY_TABLE.args
-	local name, isHeader, icon, link, _
+-- local function UpdateCurrencyOptions()
+-- 	local options = C.options and C.options.args.bars and C.options.args.bars.args.bags.args.currency.args or CURRENCY_TABLE.args
+-- 	local name, isHeader, icon, link, _
 
-	t_wipe(options)
+-- 	t_wipe(options)
 
-	for i = 1, GetCurrencyListSize() do
-		name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
+-- 	for i = 1, GetCurrencyListSize() do
+-- 		name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
 
-		if isHeader then
-			options["currency_"..i] = {
-				order = i,
-				type = "header",
-				name = name,
-			}
-		else
-			link = GetCurrencyListLink(i)
+-- 		if isHeader then
+-- 			options["currency_"..i] = {
+-- 				order = i,
+-- 				type = "header",
+-- 				name = name,
+-- 			}
+-- 		else
+-- 			link = GetCurrencyListLink(i)
 
-			if link then
-				local id = tonumber(link:match("currency:(%d+)") or "", nil)
+-- 			if link then
+-- 				local id = tonumber(link:match("currency:(%d+)") or "", nil)
 
-				if id then
-					options["currency_"..i] = {
-						order = i,
-						type = "toggle",
-						name = name,
-						image = icon,
-						get = function()
-							return C.db.profile.bars.bags.currency[id]
-						end,
-						set = function(_, value)
-							C.db.profile.bars.bags.currency[id] = value and value or nil
-						end,
-					}
-				end
-			end
-		end
-	end
-end
+-- 				if id then
+-- 					options["currency_"..i] = {
+-- 						order = i,
+-- 						type = "toggle",
+-- 						name = name,
+-- 						image = icon,
+-- 						get = function()
+-- 							return C.db.profile.bars.bags.currency[id]
+-- 						end,
+-- 						set = function(_, value)
+-- 							C.db.profile.bars.bags.currency[id] = value and value or nil
+-- 						end,
+-- 					}
+-- 				end
+-- 			end
+-- 		end
+-- 	end
+-- end
 
-E:RegisterEvent("CURRENCY_DISPLAY_UPDATE", UpdateCurrencyOptions)
-hooksecurefunc("TokenFrame_Update", UpdateCurrencyOptions)
+-- E:RegisterEvent("CURRENCY_DISPLAY_UPDATE", UpdateCurrencyOptions)
+-- hooksecurefunc("TokenFrame_Update", UpdateCurrencyOptions)
 
 local function getOptionsTable_Fading(barID, order)
 	local temp = {
@@ -525,70 +525,70 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.hotkey = nil
 		temp.args.macro = nil
 		temp.args.count = nil
-	elseif barID == "bags" then
-		temp.args.enabled = {
-			order = 1,
-			type = "toggle",
-			name = L["ENABLE"],
-			get = function()
-				return C.db.char.bars[barID].enabled
-			end,
-			set = function(_, value)
-				C.db.char.bars[barID].enabled = value
+	-- elseif barID == "bags" then
+	-- 	temp.args.enabled = {
+	-- 		order = 1,
+	-- 		type = "toggle",
+	-- 		name = L["ENABLE"],
+	-- 		get = function()
+	-- 			return C.db.char.bars[barID].enabled
+	-- 		end,
+	-- 		set = function(_, value)
+	-- 			C.db.char.bars[barID].enabled = value
 
-				if BARS:IsInit() then
-					if BARS:HasBags() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					else
-						if BARS:IsRestricted() then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						else
-							if value then
-								BARS:CreateBags()
-							end
-						end
-					end
-				end
-			end
-		}
-		temp.args.reset.disabled = function()
-			return BARS:IsRestricted() or not BARS:HasBags()
-		end
-		temp.args.visible = nil
-		temp.args.grid = nil
-		temp.args.num = nil
-		temp.args.per_row.disabled = function()
-			return BARS:IsRestricted() or not BARS:HasBags()
-		end
-		temp.args.per_row.max = 5
-		temp.args.spacing.disabled = function()
-			return BARS:IsRestricted() or not BARS:HasBags()
-		end
-		temp.args.size.disabled = function()
-			return BARS:IsRestricted() or not BARS:HasBags()
-		end
-		temp.args.growth_dir.disabled = function()
-			return BARS:IsRestricted() or not BARS:HasBags()
-		end
-		temp.args.flyout_dir = nil
-		temp.args.currency = CURRENCY_TABLE
-		temp.args.hotkey = nil
-		temp.args.macro = nil
-		temp.args.count.args.enabled = {
-			order = 1,
-			type = "toggle",
-			name = L["ENABLE"],
-			get = function()
-				return C.db.profile.bars[barID].count.enabled
-			end,
-			set = function(_, value)
-				C.db.profile.bars[barID].count.enabled = value
-				BARS:GetBar(barID):UpdateConfig()
-				BARS:GetBar(barID):UpdateButtons("UpdateCount")
-			end,
-		}
+	-- 			if BARS:IsInit() then
+	-- 				if BARS:HasBags() then
+	-- 					if not value then
+	-- 						CONFIG:ShowStaticPopup("RELOAD_UI")
+	-- 					end
+	-- 				else
+	-- 					if BARS:IsRestricted() then
+	-- 						CONFIG:ShowStaticPopup("RELOAD_UI")
+	-- 					else
+	-- 						if value then
+	-- 							BARS:CreateBags()
+	-- 						end
+	-- 					end
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 	}
+	-- 	temp.args.reset.disabled = function()
+	-- 		return BARS:IsRestricted() or not BARS:HasBags()
+	-- 	end
+	-- 	temp.args.visible = nil
+	-- 	temp.args.grid = nil
+	-- 	temp.args.num = nil
+	-- 	temp.args.per_row.disabled = function()
+	-- 		return BARS:IsRestricted() or not BARS:HasBags()
+	-- 	end
+	-- 	temp.args.per_row.max = 5
+	-- 	temp.args.spacing.disabled = function()
+	-- 		return BARS:IsRestricted() or not BARS:HasBags()
+	-- 	end
+	-- 	temp.args.size.disabled = function()
+	-- 		return BARS:IsRestricted() or not BARS:HasBags()
+	-- 	end
+	-- 	temp.args.growth_dir.disabled = function()
+	-- 		return BARS:IsRestricted() or not BARS:HasBags()
+	-- 	end
+	-- 	temp.args.flyout_dir = nil
+	-- 	temp.args.currency = CURRENCY_TABLE
+	-- 	temp.args.hotkey = nil
+	-- 	temp.args.macro = nil
+	-- 	temp.args.count.args.enabled = {
+	-- 		order = 1,
+	-- 		type = "toggle",
+	-- 		name = L["ENABLE"],
+	-- 		get = function()
+	-- 			return C.db.profile.bars[barID].count.enabled
+	-- 		end,
+	-- 		set = function(_, value)
+	-- 			C.db.profile.bars[barID].count.enabled = value
+	-- 			BARS:GetBar(barID):UpdateConfig()
+	-- 			BARS:GetBar(barID):UpdateButtons("UpdateCount")
+	-- 		end,
+	-- 	}
 	end
 
 	return temp
