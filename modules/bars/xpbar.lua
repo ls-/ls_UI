@@ -97,14 +97,7 @@ local function bar_UpdateSegments(self)
 						},
 					}
 
-					self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
-					E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-					self[index]:SetMinMaxValues(0, max)
-					self[index]:SetValue(cur)
-
-					self[index].Extension:SetMinMaxValues(0, 1)
-					self[index].Extension:SetValue(0)
+					self[index]:Update(cur, max, 0, r, g, b, hex)
 				end
 			end
 		end
@@ -128,14 +121,7 @@ local function bar_UpdateSegments(self)
 				},
 			}
 
-			self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
-			E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-			self[index]:SetMinMaxValues(0, max)
-			self[index]:SetValue(cur)
-
-			self[index].Extension:SetMinMaxValues(0, 1)
-			self[index].Extension:SetValue(0)
+			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 
 		-- Azerite
@@ -156,14 +142,7 @@ local function bar_UpdateSegments(self)
 				},
 			}
 
-			self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
-			E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-			self[index]:SetMinMaxValues(0, max)
-			self[index]:SetValue(cur)
-
-			self[index].Extension:SetMinMaxValues(0, 1)
-			self[index].Extension:SetValue(0)
+			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 
 		-- XP / Honour
@@ -198,24 +177,7 @@ local function bar_UpdateSegments(self)
 					self[index].tooltipInfo.line2 = nil
 				end
 
-				self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
-				E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-				self[index]:SetMinMaxValues(0, max)
-				self[index]:SetValue(cur)
-
-				if bonus and bonus > 0 then
-					if cur + bonus > max then
-						bonus = max - cur
-					end
-
-					self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
-					self[index].Extension:SetMinMaxValues(0, max)
-					self[index].Extension:SetValue(bonus)
-				else
-					self[index].Extension:SetMinMaxValues(0, 1)
-					self[index].Extension:SetValue(0)
-				end
+				self[index]:Update(cur, max, bonus, r, g, b, hex)
 			end
 		else
 			if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
@@ -244,24 +206,7 @@ local function bar_UpdateSegments(self)
 					self[index].tooltipInfo.line3 = nil
 				end
 
-				self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
-				E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-				self[index]:SetMinMaxValues(0, max)
-				self[index]:SetValue(cur)
-
-				if bonus and bonus > 0 then
-					if cur + bonus > max then
-						bonus = max - cur
-					end
-
-					self[index].Extension:SetStatusBarColor(r, g, b, 0.45)
-					self[index].Extension:SetMinMaxValues(0, max)
-					self[index].Extension:SetValue(bonus)
-				else
-					self[index].Extension:SetMinMaxValues(0, 1)
-					self[index].Extension:SetValue(0)
-				end
+				self[index]:Update(cur, max, bonus, r, g, b, hex)
 			end
 		end
 
@@ -327,14 +272,7 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo.line3 = nil
 			end
 
-			self[index].Text:SetFormattedText(BAR_VALUE_TEMPLATE, BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), hex)
-			E:SetSmoothedVertexColor(self[index].Texture, r, g, b)
-
-			self[index]:SetMinMaxValues(0, max)
-			self[index]:SetValue(cur)
-
-			self[index].Extension:SetMinMaxValues(0, 1)
-			self[index].Extension:SetValue(0)
+			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 	end
 
@@ -457,6 +395,36 @@ local function segment_OnLeave(self)
 	self.Text:Hide()
 end
 
+local function segment_Update(self, cur, max, bonus, r, g, b, hex)
+	if self._cur ~= cur or self._max ~= max then
+		self.Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
+		E:SetSmoothedVertexColor(self.Texture, r, g, b)
+
+		self:SetMinMaxValues(0, max)
+		self:SetValue(cur)
+
+		self._cur = cur
+		self._max = max
+	end
+
+	if self._bonus ~= bonus then
+		if bonus and bonus > 0 then
+			if cur + bonus > max then
+				bonus = max - cur
+			end
+
+			self.Extension:SetStatusBarColor(r, g, b, 0.45)
+			self.Extension:SetMinMaxValues(0, max)
+			self.Extension:SetValue(bonus)
+		else
+			self.Extension:SetMinMaxValues(0, 1)
+			self.Extension:SetValue(0)
+		end
+
+		self._bonus = bonus
+	end
+end
+
 function BARS.HasXPBar()
 	return isInit
 end
@@ -522,6 +490,8 @@ function BARS.CreateXPBar()
 			text:SetWordWrap(false)
 			text:Hide()
 			bar[i].Text = text
+
+			bar[i].Update = segment_Update
 		end
 
 		local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
@@ -547,9 +517,12 @@ function BARS.CreateXPBar()
 		bar:RegisterEvent("HONOR_XP_UPDATE")
 		bar:RegisterEvent("ZONE_CHANGED")
 		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		-- ap
+		-- artefact
 		bar:RegisterEvent("ARTIFACT_XP_UPDATE")
 		bar:RegisterEvent("UNIT_INVENTORY_CHANGED")
+		bar:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+		-- azerite
+		bar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
 		-- xp
 		bar:RegisterEvent("DISABLE_XP_GAIN")
 		bar:RegisterEvent("ENABLE_XP_GAIN")
