@@ -2487,30 +2487,41 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			menu1 = {
-				point = {
-					p = "BOTTOM",
-					anchor = "UIParent",
-					rP = "BOTTOM",
-					x = -280,
-					y = 16
-				},
-			},
-			menu2 = {
-				point = {
-					p = "BOTTOM",
-					anchor = "UIParent",
-					rP = "BOTTOM",
-					x = 280,
-					y = 16
-				},
+			point = {
+				p = "BOTTOM",
+				anchor = "UIParent",
+				rP = "BOTTOM",
+				x = 280,
+				y = 16
 			},
 			tooltip = {
-				character = false,
-				quest = true,
-				lfd = true,
-				ej = true,
-				main = true,
+				character = {
+					enabled = true,
+				},
+				inventory = {
+					enabled = true,
+					currency = {
+						-- [ 824] = true,
+						-- [1220] = true,
+						-- [1226] = true,
+						-- [1273] = true,
+						-- [1508] = true,
+						-- [1533] = true,
+						[1560] = true,
+					},
+				},
+				quest = {
+					enabled = true,
+				},
+				lfd = {
+					enabled = true,
+				},
+				ej = {
+					enabled = true,
+				},
+				main = {
+					enabled = true,
+				},
 			},
 		},
 		xpbar = {

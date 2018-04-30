@@ -30,15 +30,4 @@ function MODULE.CleanUp()
 	E:ForceHide(SpellFlyoutBackgroundEnd)
 	E:ForceHide(SpellFlyoutHorizontalBackground)
 	E:ForceHide(SpellFlyoutVerticalBackground)
-
-	-- temp hacks
-	for _, name in next, MICRO_BUTTONS do
-		_G[name]:SetParent(MicroButtonAndBagsBar)
-
-		hooksecurefunc(_G[name], "SetParent", function(self, parent)
-			if parent ~= MicroButtonAndBagsBar then
-				_G[name]:SetParent(MicroButtonAndBagsBar)
-			end
-		end)
-	end
 end

@@ -129,18 +129,6 @@ WIDGETS.BAG = {
 	end
 }
 
-WIDGETS.MM_LEFT = {
-	frame = false,
-	children = false,
-	point = {"BOTTOMRIGHT", "LSActionBarControllerBottom", "BOTTOMLEFT", -148, 11},
-}
-
-WIDGETS.MM_RIGHT = {
-	frame = false,
-	children = false,
-	point = {"BOTTOMLEFT", "LSActionBarControllerBottom", "BOTTOMRIGHT", 148, 11},
-}
-
 WIDGETS.XP_BAR = {
 	frame = false,
 	children = false,
@@ -159,7 +147,7 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 			frame:ClearAllPoints()
 			frame:SetPoint(unpack(WIDGETS[slot].point))
 
-			if slot == "ACTION_BAR" or slot == "MM_LEFT" or slot == "MM_RIGHT" or slot == "BAG" then
+			if slot == "ACTION_BAR" or slot == "BAG" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 2)
 			elseif slot == "XP_BAR" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 3)
@@ -177,8 +165,6 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 			if not controller.isDriverRegistered
 				and WIDGETS["ACTION_BAR"].frame
 				and WIDGETS["PET_BATTLE_BAR"].frame
-				and WIDGETS["MM_LEFT"].frame
-				and WIDGETS["MM_RIGHT"].frame
 				and WIDGETS["XP_BAR"].frame
 				and (C.db.char.bars.bags.enabled and WIDGETS["BAG"].frame or not C.db.char.bars.bags.enabled) then
 
