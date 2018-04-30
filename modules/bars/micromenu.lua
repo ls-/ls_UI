@@ -16,24 +16,22 @@ local unpack = _G.unpack
 local C_Timer = _G.C_Timer
 
 --[[ luacheck: globals
-	CollectionsMicroButtonAlert CreateFrame EJMicroButtonAlert GameTooltip GameTooltip_AddNewbieTip GetAddOnInfo
-	GetAddOnMemoryUsage GetInventoryItemDurability GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles
-	GetLFGRoleShortageRewards GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons GetNumSavedInstances
-	GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo GetSavedWorldBossInfo GetTime
-	GuildMicroButtonTabard IsAddOnLoaded IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButtonAlert
-	LFG_ROLE_NUM_SHORTAGE_TYPES MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton MICRO_BUTTONS
-	MicroButtonPortrait MicroButtonTooltipText OverrideActionBar PERFORMANCEBAR_MEDIUM_LATENCY PetBattleFrame
-	RegisterStateDriver RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime
-	TalentMicroButtonAlert UIParent UpdateAddOnMemoryUsage
-	BACKPACK_CONTAINER
-	BreakUpLargeNumbers
-	GetContainerNumFreeSlots
-	GetContainerNumSlots
-	GetCurrencyInfo
-	GetMoney
-	GetMoneyString
-	NUM_BAG_SLOTS
-	ToggleAllBags
+	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_IGNORE BAG_FILTER_LABELS
+	BreakUpLargeNumbers CollectionsMicroButtonAlert ContainerIDToInventoryID CreateFrame CursorCanGoInSlot CursorHasItem
+	EJMicroButtonAlert EQUIP_CONTAINER GameTooltip GameTooltip_AddNewbieTip GetAddOnInfo GetAddOnMemoryUsage
+	GetBagSlotFlag GetContainerNumFreeSlots GetContainerNumSlots GetCurrencyInfo GetInventoryItemDurability
+	GetInventoryItemTexture GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles
+	GetLFGRoleShortageRewards GetMoney GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons
+	GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
+	GetSavedWorldBossInfo GetTime GuildMicroButtonTabard IsAddOnLoaded IsInventoryItemLocked
+	IsInventoryItemProfessionBag IsLFGDungeonJoinable IsShiftKeyDown LE_BAG_FILTER_FLAG_EQUIPMENT
+	LE_BAG_FILTER_FLAG_IGNORE_CLEANUP LE_BAG_FILTER_FLAG_JUNK LFDMicroButtonAlert LFG_ROLE_NUM_SHORTAGE_TYPES
+	MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton MICRO_BUTTONS MicroButtonPortrait
+	MicroButtonTooltipText NUM_BAG_SLOTS NUM_LE_BAG_FILTER_FLAGS OverrideActionBar PERFORMANCEBAR_MEDIUM_LATENCY
+	PetBattleFrame PickupBagFromSlot PlaySound PutItemInBag RegisterStateDriver RequestLFDPartyLockInfo
+	RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag TalentMicroButtonAlert ToggleAllBags
+	ToggleDropDownMenu UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_Initialize UIParent
+	UpdateAddOnMemoryUsage
 ]]
 
 -- Mine
@@ -430,12 +428,204 @@ do
 		end
 	end
 
-	function inventoryButton_OnClick(_, button)
+	function inventoryButton_OnClick(self, button)
 		if button == "RightButton" then
-			-- WIP
+			if self.Bags:IsShown() then
+				self.Bags:Hide()
+			else
+				self.Bags:Show()
+			end
 		else
 			ToggleAllBags()
 		end
+	end
+end
+
+-- Bag slots
+local createBag
+
+do
+	local idOffset = ContainerIDToInventoryID(1) - 1
+
+	local function bag_OnClick(self, button)
+		if button == "RightButton" then
+			PlaySound(856) -- IG_MAINMENU_OPTION_CHECKBOX_ON
+			ToggleDropDownMenu(1, nil, self.FilterDropDown, self, 0, 0)
+		else
+			if CursorHasItem() then
+				PutItemInBag(self:GetID())
+			else
+				PickupBagFromSlot(self:GetID())
+			end
+		end
+	end
+
+	local function bag_OnDragStart(self)
+		PickupBagFromSlot(self:GetID())
+	end
+
+	local function bag_OnShow(self)
+		self:Update()
+	end
+
+	local function bag_OnEvent(self, event)
+		if event == "ITEM_LOCK_CHANGED" then
+			self:UpdateLock()
+		elseif event == "CURSOR_UPDATE" then
+			self:UpdateCursor()
+		elseif event == "BAG_UPDATE" then
+			self:Update()
+		elseif event == "BAG_SLOT_FLAGS_UPDATED" then
+			self:Update()
+		end
+	end
+
+	local function bag_OnEnter(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+
+		if not GameTooltip:SetInventoryItem("player", self:GetID()) then
+			GameTooltip:SetText(EQUIP_CONTAINER, 1, 1, 1)
+		end
+	end
+
+	local function bag_OnLeave()
+		GameTooltip:Hide()
+	end
+
+	local function bag_UpdateCursor(self)
+		if CursorCanGoInSlot(self:GetID()) then
+			self:LockHighlight()
+		else
+			self:UnlockHighlight()
+		end
+	end
+
+	local function bag_UpdateFilterIcon(self)
+		if self:IsVisible() then
+			self.FilterIcon:Hide()
+
+			if not IsInventoryItemProfessionBag("player", self:GetID()) then
+				for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
+					if GetBagSlotFlag(self:GetID() - idOffset, i) then
+						self.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
+						self.FilterIcon:Show()
+
+						break
+					end
+				end
+			end
+		end
+	end
+
+	local function bag_UpdateIcon(self)
+		if self:IsVisible() then
+			self.Icon:SetTexture(GetInventoryItemTexture("player", self:GetID()))
+		end
+	end
+
+	local function bag_UpdateLock(self)
+		if self:IsVisible() then
+			self.Icon:SetDesaturated(IsInventoryItemLocked(self:GetID()))
+		end
+	end
+
+	local function bag_Update(self)
+		if self:IsVisible() then
+			self:UpdateCursor()
+			self:UpdateFilterIcon()
+			self:UpdateIcon()
+			self:UpdateLock()
+		end
+	end
+
+	local function dropDown_Initialize(self)
+		local bag = self:GetParent()
+		local containerID = bag:GetID() - idOffset
+		local info = UIDropDownMenu_CreateInfo()
+
+		if not IsInventoryItemProfessionBag("player", bag:GetID()) then -- The actual bank has ID -1, backpack has ID 0, we want to make sure we're looking at a regular or bank bag
+			info.text = BAG_FILTER_ASSIGN_TO
+			info.isTitle = 1
+			info.notCheckable = 1
+			UIDropDownMenu_AddButton(info)
+
+			info.isTitle = nil
+			info.notCheckable = nil
+			info.disabled = nil
+			info.tooltipOnButton = 1
+			info.tooltipTitle = nil
+			info.tooltipWhileDisabled = 1
+
+			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
+				if i ~= LE_BAG_FILTER_FLAG_JUNK then
+					info.text = BAG_FILTER_LABELS[i]
+					info.func = function(_, _, _, value)
+						value = not value
+
+						SetBagSlotFlag(containerID, i, value)
+
+						if value then
+							bag.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
+							bag.FilterIcon:Show()
+						else
+							bag.FilterIcon:Hide()
+						end
+					end
+					info.checked = GetBagSlotFlag(containerID, i)
+					UIDropDownMenu_AddButton(info)
+				end
+			end
+		end
+
+		info.text = BAG_FILTER_CLEANUP
+		info.isTitle = 1
+		info.notCheckable = 1
+		UIDropDownMenu_AddButton(info)
+
+		info.text = BAG_FILTER_IGNORE
+		info.isTitle = nil
+		info.notCheckable = nil
+		info.disabled = nil
+		info.isNotRadio = true
+		info.func = function(_, _, _, value)
+			SetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not value)
+		end
+		info.checked = GetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+		UIDropDownMenu_AddButton(info)
+	end
+
+	function createBag(parent, containerID)
+		local bag = E:CreateButton(parent, "LSBagSlot"..containerID, true)
+		bag:SetID(ContainerIDToInventoryID(containerID))
+		bag:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+		bag:RegisterForDrag("LeftButton")
+		bag:SetScript("OnClick", bag_OnClick)
+		bag:SetScript("OnDragStart", bag_OnDragStart)
+		bag:SetScript("OnEnter", bag_OnEnter)
+		bag:SetScript("OnEvent", bag_OnEvent)
+		bag:SetScript("OnLeave", bag_OnLeave)
+		bag:SetScript("OnShow", bag_OnShow)
+		bag:RegisterEvent("ITEM_LOCK_CHANGED")
+		bag:RegisterEvent("CURSOR_UPDATE")
+		bag:RegisterEvent("BAG_UPDATE")
+		bag:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
+
+		bag.Update = bag_Update
+		bag.UpdateCursor = bag_UpdateCursor
+		bag.UpdateFilterIcon = bag_UpdateFilterIcon
+		bag.UpdateIcon = bag_UpdateIcon
+		bag.UpdateLock = bag_UpdateLock
+
+		bag.FilterDropDown = CreateFrame("Frame", "$parentFilterDropDown", bag, "UIDropDownMenuTemplate")
+		UIDropDownMenu_Initialize(bag.FilterDropDown, dropDown_Initialize, "MENU")
+
+		local filterIcon = bag.FGParent:CreateTexture(nil, "OVERLAY")
+		filterIcon:SetAtlas("bags-icon-consumables")
+		filterIcon:SetSize(20, 20)
+		filterIcon:SetPoint("BOTTOMRIGHT", (28-20) / 2, -(28-20) / 2)
+		bag.FilterIcon = filterIcon
+
+		return bag
 	end
 end
 
@@ -853,6 +1043,24 @@ function MODULE.CreateMicroMenu()
 					self:UpdateIndicator()
 				end
 				button.UpdateIndicator = inventoryButton_UpdateIndicator
+
+				local bags = CreateFrame("Frame", "$parentBagBar", button)
+				bags:SetSize(30, 30)
+				bags:SetPoint("BOTTOMLEFT", button, "TOPLEFT", 0, 4)
+				bags:Hide()
+				bags._buttons = {}
+				button.Bags = bags
+
+				for i = 1, 4 do
+					local bag = createBag(bags, i)
+					t_insert(bags._buttons, bag)
+
+					if i == 1 then
+						bag:SetPoint("TOPLEFT", 0, -2)
+					else
+						bag:SetPoint("LEFT", bags._buttons[i - 1], "RIGHT", 4, 0)
+					end
+				end
 			elseif name == "SpellbookMicroButton" then
 				button:SetScript("OnEnter", Button_OnEnter)
 				button:SetScript("OnEvent", spellbookMicroButton_OnEvent)
