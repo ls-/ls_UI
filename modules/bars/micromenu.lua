@@ -102,6 +102,14 @@ local BUTTONS = {
 	},
 }
 
+local ALERTS = {
+	"TalentMicroButtonAlert",
+	"CollectionsMicroButtonAlert",
+	"LFDMicroButtonAlert",
+	"EJMicroButtonAlert",
+	"StoreMicroButtonAlert",
+}
+
 local TEXTURE_COORDS = {
 	-- line #1
 	WARRIOR = {1 / 256, 33 / 256, 1 / 256, 45 / 256},
@@ -997,8 +1005,48 @@ local function updateMicroButtons()
 	end
 end
 
-local function positionAlerts()
-	-- MainMenuMicroButton_PositionAlert hook
+local function repositionAlert(alert)
+	local quadrant = E:GetScreenQuadrant(bar)
+	local isTopQuadrant = quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT"
+
+	alert:ClearAllPoints()
+	alert.Arrow:ClearAllPoints()
+	alert.Arrow.Glow:ClearAllPoints()
+
+	SetClampedTextureRotation(alert.Arrow.Arrow, isTopQuadrant and 180 or 0)
+	SetClampedTextureRotation(alert.Arrow.Glow, isTopQuadrant and 180 or 0)
+
+	if alert:GetRight() and (alert:GetRight() + alert:GetWidth() / 2) > UIParent:GetRight() then
+		if isTopQuadrant then
+			alert:SetPoint("TOPRIGHT", alert.MicroButton, "BOTTOMRIGHT", 20, -20)
+			alert.Arrow:SetPoint("BOTTOMRIGHT", alert, "TOPRIGHT", -4, -4)
+			alert.Arrow.Glow:SetPoint("BOTTOM")
+		else
+			alert:SetPoint("BOTTOMRIGHT", alert.MicroButton, "TOPRIGHT", 20, 20)
+			alert.Arrow:SetPoint("TOPRIGHT", alert, "BOTTOMRIGHT", -4, 4)
+			alert.Arrow.Glow:SetPoint("TOP")
+		end
+	elseif alert:GetLeft() and (alert:GetLeft() - alert:GetWidth() / 2) < UIParent:GetLeft() then
+		if isTopQuadrant then
+			alert:SetPoint("TOPLEFT", alert.MicroButton, "BOTTOMLEFT", -20, -20)
+			alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
+			alert.Arrow.Glow:SetPoint("BOTTOM")
+		else
+			alert:SetPoint("BOTTOMLEFT", alert.MicroButton, "TOPLEFT", -20, 20)
+			alert.Arrow:SetPoint("TOPLEFT", alert, "BOTTOMLEFT", 4, 4)
+			alert.Arrow.Glow:SetPoint("TOP")
+		end
+	else
+		if isTopQuadrant then
+			alert:SetPoint("TOP", alert.MicroButton, "BOTTOM", 0, -20)
+			alert.Arrow:SetPoint("BOTTOM", alert, "TOP", 0, -4)
+			alert.Arrow.Glow:SetPoint("BOTTOM")
+		else
+			alert:SetPoint("BOTTOM", alert.MicroButton, "TOP", 0, 20)
+			alert.Arrow:SetPoint("TOP", alert, "BOTTOM", 0, 4)
+			alert.Arrow.Glow:SetPoint("TOP")
+		end
+	end
 end
 
 function MODULE.CreateMicroMenu()
@@ -1240,21 +1288,23 @@ function MODULE.CreateMicroMenu()
 			end
 		end
 
-		TalentMicroButtonAlert:SetPoint("BOTTOM", "TalentMicroButton", "TOP", 0, 12)
-		LFDMicroButtonAlert:SetPoint("BOTTOM", "LFDMicroButton", "TOP", 0, 12)
-		EJMicroButtonAlert:SetPoint("BOTTOM", "EJMicroButton", "TOP", 0, 12)
-		CollectionsMicroButtonAlert:SetPoint("BOTTOM", "CollectionsMicroButton", "TOP", 0, 12)
-
 		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
 		hooksecurefunc("MoveMicroButtons", moveMicroButtons)
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
-		hooksecurefunc("MainMenuMicroButton_PositionAlert", positionAlerts)
+		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
 
 		local point = C.db.profile.bars.micromenu.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E:CreateMover(bar)
 
 		bar:Update()
+
+		-- hack
+		C_Timer.After(0.1, function()
+			for _, name in next, ALERTS do
+				repositionAlert(_G[name])
+			end
+		end)
 
 		isInit = true
 	end
