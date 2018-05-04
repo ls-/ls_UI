@@ -25,9 +25,16 @@ function MODULE.CleanUp()
 	StatusTrackingBarManager:Hide()
 
 	MainMenuBar:EnableMouse(false)
-	MainMenuBar:SetSize(0.001, 0.001)
+	MainMenuBar:SetScript("OnShow", function()
+		UpdateMicroButtonsParent(MicroButtonAndBagsBar)
+		MoveMicroButtons("BOTTOMLEFT", MicroButtonAndBagsBar, "BOTTOMLEFT", 6, 3, false)
+	end)
+
+	UpdateMicroButtonsParent(MicroButtonAndBagsBar)
 
 	E:ForceHide(SpellFlyoutBackgroundEnd)
 	E:ForceHide(SpellFlyoutHorizontalBackground)
 	E:ForceHide(SpellFlyoutVerticalBackground)
+
+	E:ForceHide(MainMenuBarVehicleLeaveButton)
 end

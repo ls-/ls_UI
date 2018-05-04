@@ -2478,6 +2478,13 @@ D.profile = {
 		},
 		micromenu = {
 			visible = true,
+			num = 13,
+			per_row = 13,
+			width = 18,
+			height = 24,
+			spacing = 4,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
 			fade = {
 				enabled = false,
 				out_delay = 0.75,
@@ -2494,12 +2501,14 @@ D.profile = {
 				x = 280,
 				y = 16
 			},
-			tooltip = {
+			buttons = {
 				character = {
 					enabled = true,
+					tooltip = true,
 				},
 				inventory = {
 					enabled = true,
+					tooltip = true,
 					currency = {
 						-- [ 824] = true,
 						-- [1220] = true,
@@ -2510,17 +2519,43 @@ D.profile = {
 						[1560] = true,
 					},
 				},
+				spellbook = {
+					enabled = true,
+				},
+				talent = {
+					enabled = true,
+				},
+				achievement = {
+					enabled = true,
+				},
 				quest = {
+					enabled = true,
+					tooltip = true,
+				},
+				guild = {
 					enabled = true,
 				},
 				lfd = {
 					enabled = true,
+					tooltip = true,
+				},
+				collection = {
+					enabled = true,
 				},
 				ej = {
+					enabled = true,
+					tooltip = true,
+				},
+				store = {
 					enabled = true,
 				},
 				main = {
 					enabled = true,
+					tooltip = true,
+				},
+				help = {
+					enabled = true,
+					tooltip = true,
 				},
 			},
 		},
