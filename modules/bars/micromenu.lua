@@ -990,7 +990,9 @@ end
 local function updateMicroButtons()
 	if isInit then
 		for _, button in next, bar._buttons do
-			button:Show()
+			if button:ShouldShow() then
+				button:Show()
+			end
 		end
 	end
 end
