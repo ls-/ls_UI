@@ -2580,37 +2580,6 @@ D.profile = {
 				max_alpha = 1,
 			},
 		},
-		bags = {
-			num = 5,
-			per_row = 5,
-			size = 32,
-			spacing = 4,
-			visible = true,
-			x_growth = "RIGHT",
-			y_growth = "DOWN",
-			count = {
-				enabled = true,
-				size = 12,
-				flag = "Outline",
-			},
-			fade = {
-				enabled = false,
-				out_delay = 0.75,
-				out_duration = 0.15,
-				in_delay = 0,
-				in_duration = 0.15,
-				min_alpha = 0,
-				max_alpha = 1,
-			},
-			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 434,
-				y = 16
-			},
-			currency = {},
-		},
 	},
 	auras = {
 		ls = {
@@ -2763,9 +2732,6 @@ D.char = {
 	bars = {
 		enabled = true,
 		restricted = true,
-		bags = {
-			enabled = true,
-		},
 		pet_battle = {
 			enabled = false,
 		},

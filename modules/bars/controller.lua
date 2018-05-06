@@ -47,10 +47,6 @@ local elements = {
 			size = {550 / 2, 38 / 2},
 			coords = {983 / 2048, 1533 / 2048, 92 / 256, 130 / 256},
 		},
-		bag = {
-			size = {140 / 2, 38 / 2},
-			coords = {898 / 2048, 1038 / 2048, 53 / 256, 91 / 256 }
-		},
 	},
 }
 
@@ -96,39 +92,6 @@ WIDGETS.PET_BATTLE_BAR = {
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
 }
 
-WIDGETS.BAG = {
-	frame = false,
-	children = false,
-	point = {"BOTTOMLEFT", "LSActionBarControllerBag", "BOTTOMLEFT", 17, 11},
-	on_add = function(self)
-		local texture = anim_controller.Bag:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(unpack(elements.bottom.bag.coords))
-		texture:SetAllPoints()
-		texture:SetSize(unpack(elements.bottom.bag.size))
-
-		local bar = CreateFrame("StatusBar", nil, anim_controller.Bag)
-		bar:SetPoint("BOTTOM", 0, 0)
-		bar:SetSize(100 / 2, 16 / 2)
-		bar:SetFrameLevel(anim_controller.Bag:GetFrameLevel() - 2)
-		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(bar)
-		self.Indicator = bar
-
-		texture = bar:CreateTexture(nil, "BACKGROUND")
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\Artifacts\\_Artifacts-DependencyBar-BG", true)
-		texture:SetHorizTile(true)
-		texture:SetTexCoord(0 / 128, 128 / 128, 4 / 16, 12 / 16)
-
-		bar.Texture = bar:GetStatusBarTexture()
-
-		WIDGETS.BAG.children = {
-			[1] = bar,
-		}
-	end
-}
-
 WIDGETS.XP_BAR = {
 	frame = false,
 	children = false,
@@ -147,7 +110,7 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 			frame:ClearAllPoints()
 			frame:SetPoint(unpack(WIDGETS[slot].point))
 
-			if slot == "ACTION_BAR" or slot == "BAG" then
+			if slot == "ACTION_BAR" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 2)
 			elseif slot == "XP_BAR" then
 				frame:SetFrameLevel(controller:GetFrameLevel() + 3)
@@ -165,8 +128,7 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 			if not controller.isDriverRegistered
 				and WIDGETS["ACTION_BAR"].frame
 				and WIDGETS["PET_BATTLE_BAR"].frame
-				and WIDGETS["XP_BAR"].frame
-				and (C.db.char.bars.bags.enabled and WIDGETS["BAG"].frame or not C.db.char.bars.bags.enabled) then
+				and WIDGETS["XP_BAR"].frame then
 
 				-- _"childupdate-numbuttons" is executed in controller's environment
 				for i = 1, 12 do
@@ -176,7 +138,6 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 				controller:Execute([[
 					top = self:GetFrameRef("top")
 					bottom = self:GetFrameRef("bottom")
-					bag = self:GetFrameRef("bag")
 					buttons = table.new()
 
 					for i = 1, 12 do
@@ -241,12 +202,6 @@ function MODULE.SetupActionBarController()
 		controller.Bottom = bottom
 		controller:SetFrameRef("bottom", bottom)
 
-		local bag = CreateFrame("Frame", "$parentBag", controller, "SecureHandlerBaseTemplate")
-		bag:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 290 , 0)
-		bag:SetSize(unpack(elements.bottom.bag.size))
-		controller.Bag = bag
-		controller:SetFrameRef("bag", bag)
-
 		-- These frames are used as anchors/parents for textures
 		top = CreateFrame("Frame", "$parentTop", anim_controller)
 		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
@@ -299,11 +254,6 @@ function MODULE.SetupActionBarController()
 		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 0, 0)
 		texture:SetSize(unpack(elements.bottom.right.size))
 		bottom.Right = texture
-
-		bag = CreateFrame("Frame", "$parentBag", anim_controller)
-		bag:SetPoint("BOTTOMLEFT", anim_controller.Bottom, "BOTTOMRIGHT", 290 , 0)
-		bag:SetSize(unpack(elements.bottom.bag.size))
-		anim_controller.Bag = bag
 
 		local ag = anim_controller:CreateAnimationGroup()
 		ag:SetScript("OnPlay", function()

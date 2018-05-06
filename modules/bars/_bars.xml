@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
 	<Script file="actionbars.lua"/>
-	<!-- <Script file="bags.lua"/> -->
 	<Script file="controller.lua"/>
 	<Script file="extra.lua"/>
 	<Script file="junk.lua"/>
