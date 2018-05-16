@@ -15,16 +15,17 @@ local s_match = _G.string.match
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	CalendarFrame CalendarGetDate CalendarGetNumPendingInvites ChatTypeInfo CreateFrame DEFAULT_CHAT_FRAME DropDownList1
-	GameTimeFrame GameTooltip GarrisonLandingPageMinimapButton GetGameTime GetMinimapZoneText GetZonePVPInfo
-	GuildInstanceDifficulty IsAddOnLoaded LoadAddOn Minimap Minimap_ZoomIn Minimap_ZoomOut MiniMapChallengeMode
-	MinimapCompassTexture MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking MiniMapTrackingBackground
-	MiniMapTrackingButton MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText MinimapZoneTextButton
-	QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton ToggleCalendar
-	UIDropDownMenu_GetCurrentDropDown UIParent
+	CalendarFrame ChatTypeInfo CreateFrame DEFAULT_CHAT_FRAME DropDownList1 GameTimeFrame GameTooltip
+	GarrisonLandingPageMinimapButton GetGameTime GetMinimapZoneText GetZonePVPInfo GuildInstanceDifficulty IsAddOnLoaded
+	LoadAddOn Minimap Minimap_ZoomIn Minimap_ZoomOut MiniMapChallengeMode MinimapCompassTexture
+	MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking MiniMapTrackingBackground MiniMapTrackingButton
+	MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText MinimapZoneTextButton QueueStatusFrame
+	QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton ToggleCalendar UIDropDownMenu_GetCurrentDropDown
+	UIParent
 ]]
 
 -- Blizz
+local C_Calendar = _G.C_Calendar
 local C_Timer = _G.C_Timer
 local GetCursorPosition = _G.GetCursorPosition
 
@@ -433,7 +434,7 @@ function MODULE.Init()
 			end)
 			button:SetScript("OnEvent", function(self, event, ...)
 				if event == "CALENDAR_UPDATE_PENDING_INVITES" or event == "PLAYER_ENTERING_WORLD" then
-					local pendingCalendarInvites = CalendarGetNumPendingInvites()
+					local pendingCalendarInvites = C_Calendar.GetNumPendingInvites()
 
 					if pendingCalendarInvites > self.pendingCalendarInvites then
 						if not CalendarFrame or (CalendarFrame and not CalendarFrame:IsShown()) then
@@ -464,8 +465,9 @@ function MODULE.Init()
 				self.elapsed = (self.elapsed or 0) + elapsed
 
 				if self.elapsed > 1 then
-					local _, _, day = CalendarGetDate()
-					self:SetText(day)
+					local date = C_Calendar.GetDate()
+
+					self:SetText(date.monthDay)
 
 					self.elapsed = 0
 				end
