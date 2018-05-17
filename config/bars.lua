@@ -161,7 +161,7 @@ local function getOptionsTable_Fading(barID, order)
 			max_alpha = {
 				order = 7,
 				type = "range",
-				name = L["MIN_ALPHA"],
+				name = L["MAX_ALPHA"],
 				min = 0, max = 1, step = 0.05
 			},
 		},
