@@ -2495,29 +2495,21 @@ D.profile = {
 				max_alpha = 1,
 			},
 			point = {
-				p = "BOTTOM",
+				p = "BOTTOMRIGHT",
 				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 280,
-				y = 16
+				rP = "BOTTOMRIGHT",
+				x = -4,
+				y = 4,
 			},
 			buttons = {
 				character = {
 					enabled = true,
-					tooltip = true,
+					tooltip = false,
 				},
 				inventory = {
 					enabled = true,
 					tooltip = true,
-					currency = {
-						-- [ 824] = true,
-						-- [1220] = true,
-						-- [1226] = true,
-						-- [1273] = true,
-						-- [1508] = true,
-						-- [1533] = true,
-						[1560] = true,
-					},
+					currency = {},
 				},
 				spellbook = {
 					enabled = true,
@@ -2547,15 +2539,30 @@ D.profile = {
 					tooltip = true,
 				},
 				store = {
-					enabled = true,
+					enabled = false,
 				},
 				main = {
 					enabled = true,
 					tooltip = true,
 				},
 				help = {
-					enabled = true,
-					tooltip = true,
+					enabled = false,
+				},
+			},
+			bags = {
+				enabled = true,
+				num = 4,
+				per_row = 4,
+				x_growth = "RIGHT",
+				y_growth = "DOWN",
+				size = 32,
+				spacing = 4,
+				point = {
+					p = "BOTTOMRIGHT",
+					anchor = "UIParent",
+					rP = "BOTTOMRIGHT",
+					x = -4,
+					y = 32,
 				},
 			},
 		},
