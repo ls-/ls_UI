@@ -82,7 +82,6 @@ local BUTTONS = {
 		icon = "Talent",
 		events = {
 			HONOR_LEVEL_UPDATE = true,
-			HONOR_PRESTIGE_UPDATE = true,
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			PLAYER_LEVEL_UP = true,
 			PLAYER_PVP_TALENT_UPDATE = true,
@@ -1452,7 +1451,7 @@ function MODULE.CreateMicroMenu()
 		bar:Update()
 
 		-- hack
-		C_Timer.After(0.1, function()
+		E:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 			for _, name in next, ALERTS do
 				repositionAlert(_G[name])
 			end
