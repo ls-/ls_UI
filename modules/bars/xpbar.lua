@@ -184,7 +184,6 @@ local function bar_UpdateSegments(self)
 				index = index + 1
 
 				local cur, max = UnitHonor("player"), UnitHonorMax("player")
-				local bonus = GetHonorExhaustion()
 				local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
 				local hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetHEX(0.2)
 
@@ -193,20 +192,9 @@ local function bar_UpdateSegments(self)
 					line1 = {
 						text = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 					},
-					line2 = {
-						text = L["PRESTIGE_LEVEL_TOOLTIP"]:format(UnitPrestige("player"))
-					},
 				}
 
-				if bonus and bonus > 0 then
-					self[index].tooltipInfo.line3 = {
-						text = L["BONUS_HONOR_TOOLTIP"]:format(bonus)
-					}
-				else
-					self[index].tooltipInfo.line3 = nil
-				end
-
-				self[index]:Update(cur, max, bonus, r, g, b, hex)
+				self[index]:Update(cur, max, 0, r, g, b, hex)
 			end
 		end
 
