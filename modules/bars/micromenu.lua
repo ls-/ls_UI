@@ -1212,6 +1212,7 @@ local function bar_UpdateButtonList(self)
 	for name in next, BUTTONS do
 		if _G[name]:ShouldShow() then
 			t_insert(self._buttons, _G[name])
+			_G[name]:Show()
 		else
 			_G[name]:SetParent(E.HIDDEN_PARENT)
 		end
@@ -1258,10 +1259,24 @@ local function repositionAlert(alert)
 	alert.Arrow:ClearAllPoints()
 	alert.Arrow.Glow:ClearAllPoints()
 
+	if isTopQuadrant then
+		alert:SetPoint("TOP", alert.MicroButton, "BOTTOM", 0, -20)
+		alert.Arrow:SetPoint("BOTTOM", alert, "TOP", 0, -4)
+		alert.Arrow.Glow:SetPoint("BOTTOM")
+	else
+		alert:SetPoint("BOTTOM", alert.MicroButton, "TOP", 0, 20)
+		alert.Arrow:SetPoint("TOP", alert, "BOTTOM", 0, 4)
+		alert.Arrow.Glow:SetPoint("TOP")
+	end
+
 	SetClampedTextureRotation(alert.Arrow.Arrow, isTopQuadrant and 180 or 0)
 	SetClampedTextureRotation(alert.Arrow.Glow, isTopQuadrant and 180 or 0)
 
-	if alert:GetRight() and (alert:GetRight() + alert:GetWidth() / 2) > UIParent:GetRight() then
+	if alert:GetRight() and (alert:GetRight() + alert:GetWidth() / 4) > UIParent:GetRight() then
+		alert:ClearAllPoints()
+		alert.Arrow:ClearAllPoints()
+		alert.Arrow.Glow:ClearAllPoints()
+
 		if isTopQuadrant then
 			alert:SetPoint("TOPRIGHT", alert.MicroButton, "BOTTOMRIGHT", 20, -20)
 			alert.Arrow:SetPoint("BOTTOMRIGHT", alert, "TOPRIGHT", -4, -4)
@@ -1271,7 +1286,11 @@ local function repositionAlert(alert)
 			alert.Arrow:SetPoint("TOPRIGHT", alert, "BOTTOMRIGHT", -4, 4)
 			alert.Arrow.Glow:SetPoint("TOP")
 		end
-	elseif alert:GetLeft() and (alert:GetLeft() - alert:GetWidth() / 2) < UIParent:GetLeft() then
+	elseif alert:GetLeft() and (alert:GetLeft() - alert:GetWidth() / 4) < UIParent:GetLeft() then
+		alert:ClearAllPoints()
+		alert.Arrow:ClearAllPoints()
+		alert.Arrow.Glow:ClearAllPoints()
+
 		if isTopQuadrant then
 			alert:SetPoint("TOPLEFT", alert.MicroButton, "BOTTOMLEFT", -20, -20)
 			alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
@@ -1279,16 +1298,6 @@ local function repositionAlert(alert)
 		else
 			alert:SetPoint("BOTTOMLEFT", alert.MicroButton, "TOPLEFT", -20, 20)
 			alert.Arrow:SetPoint("TOPLEFT", alert, "BOTTOMLEFT", 4, 4)
-			alert.Arrow.Glow:SetPoint("TOP")
-		end
-	else
-		if isTopQuadrant then
-			alert:SetPoint("TOP", alert.MicroButton, "BOTTOM", 0, -20)
-			alert.Arrow:SetPoint("BOTTOM", alert, "TOP", 0, -4)
-			alert.Arrow.Glow:SetPoint("BOTTOM")
-		else
-			alert:SetPoint("BOTTOM", alert.MicroButton, "TOP", 0, 20)
-			alert.Arrow:SetPoint("TOP", alert, "BOTTOM", 0, 4)
 			alert.Arrow.Glow:SetPoint("TOP")
 		end
 	end
