@@ -1085,6 +1085,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						order = 1,
 						type = "toggle",
 						name = L["SHOW"],
+						set = function(info, value)
+							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+							BARS:GetBar("micromenu"):Update()
+						end,
 					},
 				},
 			},
