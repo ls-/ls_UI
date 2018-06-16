@@ -16,10 +16,10 @@ local C_Reputation = _G.C_Reputation
 --[[ luacheck: globals
 	ArtifactBarGetNumArtifactTraitsPurchasableFromXP BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation
 	GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo
-	GetXPExhaustion HasArtifactEquipped HonorFrame InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown
-	IsWatchingHonorAsXP IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound
-	ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor
-	UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
+	GetXPExhaustion HasArtifactEquipped InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP
+	IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound PVPQueueFrame ReputationDetailMainScreenCheckBox
+	SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax
+	UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
 ]]
 
 -- Mine
@@ -171,7 +171,7 @@ local function bar_UpdateSegments(self)
 
 				if bonus and bonus > 0 then
 					self[index].tooltipInfo.line2 = {
-						text = L["BONUS_XP_TOOLTIP"]:format(bonus)
+						text = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
 					}
 				else
 					self[index].tooltipInfo.line2 = nil
@@ -540,9 +540,9 @@ function BARS.CreateXPBar()
 		hooksecurefunc("UIParentLoadAddOn", function(addOnName)
 			if addOnName == "Blizzard_PVPUI" then
 				if not isHonorBarHooked then
-					HonorFrame.XPBar:SetScript("OnMouseUp", function()
+					PVPQueueFrame.HonorInset.HonorLevelDisplay:SetScript("OnMouseUp", function()
 						if IsShiftKeyDown() then
-							if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
+							if IsWatchingHonorAsXP() then
 								PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
 								SetWatchingHonorAsXP(false)
 							else
@@ -554,13 +554,15 @@ function BARS.CreateXPBar()
 						end
 					end)
 
-					HonorFrame.XPBar:HookScript("OnEnter", function(self)
-						GameTooltip:SetOwner(self, "ANCHOR_TOP")
-						GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
-						GameTooltip:Show()
+					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnEnter", function(self)
+						if UnitLevel("player") >= MAX_PLAYER_LEVEL then
+							GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+							GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
+							GameTooltip:Show()
+						end
 					end)
 
-					HonorFrame.XPBar:HookScript("OnLeave", function()
+					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnLeave", function()
 						GameTooltip:Hide()
 					end)
 
