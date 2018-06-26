@@ -401,7 +401,7 @@ local function segment_Update(self, cur, max, bonus, r, g, b, hex)
 				bonus = max - cur
 			end
 
-			self.Extension:SetStatusBarColor(r, g, b, 0.45)
+			self.Extension:SetStatusBarColor(r, g, b, 0.3)
 			self.Extension:SetMinMaxValues(0, max)
 			self.Extension:SetValue(bonus)
 		else
