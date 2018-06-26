@@ -16,10 +16,10 @@ local C_Reputation = _G.C_Reputation
 --[[ luacheck: globals
 	ArtifactBarGetNumArtifactTraitsPurchasableFromXP BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation
 	GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo
-	GetXPExhaustion HasArtifactEquipped InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP
-	IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound PVPQueueFrame ReputationDetailMainScreenCheckBox
-	SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax
-	UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
+	GetXPExhaustion HasArtifactEquipped PVPQueueFrame InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown
+	IsWatchingHonorAsXP IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound
+	ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor
+	UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
 ]]
 
 -- Mine
@@ -103,7 +103,7 @@ local function bar_UpdateSegments(self)
 		end
 	else
 		-- Artefact
-		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() and not C_ArtifactUI.IsEquippedArtifactDisabled() then
 			index = index + 1
 
 			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI.GetEquippedArtifactInfo()
