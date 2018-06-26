@@ -64,6 +64,17 @@ local ZONE_COLORS = {
 local handledChildren = {}
 local ignoredChildren = {}
 
+local function setSizeHook(self)
+	if not self.hookingSize then
+		local t = self == GameTimeFrame and "BIG" or "SMALL"
+
+		self.hookingSize = true
+		self:SetSize(unpack(TEXTURES[t].size))
+	else
+		self.hookingSize = nil
+	end
+end
+
 local function handleMinimapButton(button, recursive)
 	local regions = {button:GetRegions()}
 	local children = {button:GetChildren()}
@@ -228,6 +239,8 @@ local function handleMinimapButton(button, recursive)
 		bg:SetAlpha(0.8)
 		bg:AddMaskTexture(mask)
 		button.Background = bg
+
+		hooksecurefunc(button, "SetSize", setSizeHook)
 
 		return button
 	else
