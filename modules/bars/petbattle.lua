@@ -48,7 +48,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)

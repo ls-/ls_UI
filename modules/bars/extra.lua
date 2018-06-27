@@ -6,10 +6,13 @@ local MODULE = P:GetModule("Bars")
 local _G = getfenv(0)
 
 --[[ luacheck: globals
-	CreateFrame ExtraActionBarFrame ExtraActionButton1 UIParent UIPARENT_MANAGED_FRAME_POSITIONS
+	CreateFrame ExtraActionBarFrame ExtraActionButton1 LibStub UIParent
+
+	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
 
 -- Mine
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 local isInit = false
 
 local function button_UpdateHotKey(self, state)
@@ -19,7 +22,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -30,6 +33,12 @@ local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
 	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
 	self.HotKey:SetWordWrap(false)
+end
+
+local function button_OnEnter(self)
+	if LibKeyBound then
+		LibKeyBound:Set(self)
+	end
 end
 
 function MODULE.CreateExtraButton()
@@ -62,6 +71,7 @@ function MODULE.CreateExtraButton()
 
 		ExtraActionButton1:SetPoint("TOPLEFT", 2, -2)
 		ExtraActionButton1:SetPoint("BOTTOMRIGHT", -2, 2)
+		ExtraActionButton1:HookScript("OnEnter", button_OnEnter)
 		ExtraActionButton1._parent = bar
 		ExtraActionButton1._command = "EXTRAACTIONBUTTON1"
 		E:SkinExtraActionButton(ExtraActionButton1)

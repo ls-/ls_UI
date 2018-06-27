@@ -8,10 +8,11 @@ local next = _G.next
 
 --[[ luacheck: globals
 	CooldownFrame_Set CreateFrame GetNumShapeshiftForms GetShapeshiftFormCooldown GetShapeshiftFormInfo InCombatLockdown
-	UIParent
+	LibStub UIParent
 ]]
 
 -- Mine
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 local isInit = false
 
 local BUTTONS = {
@@ -91,7 +92,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -107,6 +108,12 @@ end
 local function button_UpdateCooldown(self)
 	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
+end
+
+local function button_OnEnter(self)
+	if LibKeyBound then
+		LibKeyBound:Set(self)
+	end
 end
 
 function MODULE.CreateStanceBar()
@@ -143,6 +150,7 @@ function MODULE.CreateStanceBar()
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
+			button:HookScript("OnEnter", button_OnEnter)
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "SHAPESHIFTBUTTON"..i

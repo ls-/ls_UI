@@ -4,14 +4,18 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 
 --[[ luacheck: globals
 	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame GetPetActionCooldown
-	GetPetActionInfo GetPetActionSlotUsable IsPetAttackAction PetActionButton_StartFlash PetActionButton_StopFlash
-	PetHasActionBar UIParent
+	GetPetActionInfo GetPetActionSlotUsable IsPetAttackAction LibStub PetActionButton_StartFlash
+	PetActionButton_StopFlash PetHasActionBar UIParent
+
+	ATTACK_BUTTON_FLASH_TIME RANGE_INDICATOR TOOLTIP_UPDATE_TIME
 ]]
 
 -- Mine
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 local isInit = false
 
 local BUTTONS = {
@@ -85,7 +89,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -203,6 +207,12 @@ local function button_Update(self)
 	self:UpdateCooldown()
 end
 
+local function button_OnEnter(self)
+	if LibKeyBound then
+		LibKeyBound:Set(self)
+	end
+end
+
 function MODULE.CreatePetActionBar()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSPetBar", UIParent, "SecureHandlerStateTemplate")
@@ -225,6 +235,7 @@ function MODULE.CreatePetActionBar()
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
+			button:HookScript("OnEnter", button_OnEnter)
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "BONUSACTIONBUTTON"..i
