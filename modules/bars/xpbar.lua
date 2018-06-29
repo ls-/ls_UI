@@ -25,7 +25,7 @@ local C_Reputation = _G.C_Reputation
 -- Mine
 local isInit = false
 
-local MAX_BARS = 3
+local MAX_SEGMENTS = 4
 local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
 local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
@@ -47,30 +47,10 @@ local CFG = {
 }
 
 local LAYOUT = {
-	[1] = {
-		[1] = {
-			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
-		},
-	},
-	[2] = {
-		[1] = {
-			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
-		},
-		[2] = {
-			point = {"TOPLEFT", "LSUIXPBarSegment1", "TOPRIGHT", 0, 0},
-		},
-	},
-	[3] = {
-		[1] = {
-			point = {"TOPLEFT", "LSUIXPBar", "TOPLEFT", 0, 0},
-		},
-		[2] = {
-			point = {"TOPLEFT", "LSUIXPBarSegment1", "TOPRIGHT", 0, 0},
-		},
-		[3] = {
-			point = {"TOPLEFT", "LSUIXPBarSegment2", "TOPRIGHT", 0, 0},
-		},
-	},
+	[1] = {[1] = {},},
+	[2] = {[1] = {}, [2] = {},},
+	[3] = {[1] = {}, [2] = {}, [3] = {},},
+	[4] = {[1] = {}, [2] = {}, [3] = {}, [4] = {}},
 }
 
 local function bar_UpdateSegments(self)
@@ -145,7 +125,7 @@ local function bar_UpdateSegments(self)
 			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 
-		-- XP / Honour
+		-- XP
 		if UnitLevel("player") < MAX_PLAYER_LEVEL then
 			if not IsXPUserDisabled() then
 				index = index + 1
@@ -179,23 +159,24 @@ local function bar_UpdateSegments(self)
 
 				self[index]:Update(cur, max, bonus, r, g, b, hex)
 			end
-		else
-			if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
-				index = index + 1
+		end
 
-				local cur, max = UnitHonor("player"), UnitHonorMax("player")
-				local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
-				local hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetHEX(0.2)
+		-- Honour
+		if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
+			index = index + 1
 
-				self[index].tooltipInfo = {
-					header = L["HONOR"],
-					line1 = {
-						text = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
-					},
-				}
+			local cur, max = UnitHonor("player"), UnitHonorMax("player")
+			local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
+			local hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetHEX(0.2)
 
-				self[index]:Update(cur, max, 0, r, g, b, hex)
-			end
+			self[index].tooltipInfo = {
+				header = L["HONOR"],
+				line1 = {
+					text = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
+				},
+			}
+
+			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 
 		-- Reputation
@@ -265,11 +246,16 @@ local function bar_UpdateSegments(self)
 	end
 
 	if self._total ~= index then
-		for i = 1, MAX_BARS do
+		for i = 1, MAX_SEGMENTS do
 			if i <= index then
 				self[i]:SetSize(unpack(LAYOUT[index][i].size))
-				self[i]:SetPoint(unpack(LAYOUT[index][i].point))
 				self[i]:Show()
+
+				if i == 1 then
+					self[i]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+				else
+					self[i]:SetPoint("TOPLEFT", self[i - 1], "TOPRIGHT", 2, 0)
+				end
 
 				self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
 			else
@@ -285,7 +271,7 @@ local function bar_UpdateSegments(self)
 			end
 		end
 
-		for i = 1, 2 do
+		for i = 1, MAX_SEGMENTS - 1 do
 			if i <= index - 1 then
 				self[i].Sep:Show()
 			else
@@ -312,7 +298,7 @@ local function bar_UpdateSize(self, width, height)
 	width = width or self._config.width
 	height = height or self._config.height
 
-	for i = 1, MAX_BARS do
+	for i = 1, MAX_SEGMENTS do
 		local layout = E:CalcSegmentsSizes(width, 2, i)
 
 		for j = 1, i do
@@ -322,7 +308,7 @@ local function bar_UpdateSize(self, width, height)
 
 	self:SetSize(width, height)
 
-	for i = 1, 2 do
+	for i = 1, MAX_SEGMENTS - 1 do
 		self[i].Sep:SetSize(12, height)
 		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 	end
@@ -399,7 +385,7 @@ local function segment_Update(self, cur, max, bonus, r, g, b, hex)
 				bonus = max - cur
 			end
 
-			self.Extension:SetStatusBarColor(r, g, b, 0.3)
+			self.Extension:SetStatusBarColor(r, g, b, 0.4)
 			self.Extension:SetMinMaxValues(0, max)
 			self.Extension:SetValue(bonus)
 		else
@@ -450,47 +436,44 @@ function BARS.CreateXPBar()
 		bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 		bg:SetAllPoints()
 
-		for i = 1, MAX_BARS do
-			bar[i] = CreateFrame("StatusBar", "$parentSegment"..i, bar)
-			bar[i]:SetFrameLevel(bar:GetFrameLevel() + 1)
-			bar[i]:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-			bar[i]:SetHitRectInsets(0, 0, -4, -4)
-			bar[i]:SetClipsChildren(true)
-			bar[i]:SetScript("OnEnter", segment_OnEnter)
-			bar[i]:SetScript("OnLeave", segment_OnLeave)
-			bar[i]:Hide()
-			E:SmoothBar(bar[i])
+		for i = 1, MAX_SEGMENTS do
+			local segment = CreateFrame("StatusBar", "$parentSegment"..i, bar)
+			segment:SetFrameLevel(bar:GetFrameLevel() + 1)
+			segment:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+			segment:SetHitRectInsets(0, 0, -4, -4)
+			segment:SetClipsChildren(true)
+			segment:SetScript("OnEnter", segment_OnEnter)
+			segment:SetScript("OnLeave", segment_OnLeave)
+			segment:Hide()
+			E:SmoothBar(segment)
+			bar[i] = segment
 
-			bar[i].Texture = bar[i]:GetStatusBarTexture()
+			segment.Texture = segment:GetStatusBarTexture()
 
-			local ext = CreateFrame("StatusBar", nil, bar[i])
-			ext:SetFrameLevel(bar[i]:GetFrameLevel())
+			local ext = CreateFrame("StatusBar", nil, segment)
+			ext:SetFrameLevel(segment:GetFrameLevel())
 			ext:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-			ext:SetPoint("TOPLEFT", bar[i].Texture, "TOPRIGHT")
-			ext:SetPoint("BOTTOMLEFT", bar[i].Texture, "BOTTOMRIGHT")
+			ext:SetPoint("TOPLEFT", segment.Texture, "TOPRIGHT")
+			ext:SetPoint("BOTTOMLEFT", segment.Texture, "BOTTOMRIGHT")
 			E:SmoothBar(ext)
-			bar[i].Extension = ext
+			segment.Extension = ext
 
 			local text = textParent:CreateFontString(nil, "OVERLAY", "LSFont10_Outline")
-			text:SetAllPoints(bar[i])
+			text:SetAllPoints(segment)
 			text:SetWordWrap(false)
 			text:Hide()
-			bar[i].Text = text
+			segment.Text = text
 
-			bar[i].Update = segment_Update
+			segment.Update = segment_Update
 		end
 
-		local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
-		sep:SetPoint("LEFT", bar[1], "RIGHT", -5, 0)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-		sep:Hide()
-		bar[1].Sep = sep
-
-		sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
-		sep:SetPoint("LEFT", bar[2], "RIGHT", -5, 0)
-		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-		sep:Hide()
-		bar[2].Sep = sep
+		for i = 1, MAX_SEGMENTS - 1 do
+			local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
+			sep:SetPoint("LEFT", bar[i], "RIGHT", -5, 0)
+			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+			sep:Hide()
+			bar[i].Sep = sep
+		end
 
 		bar:SetScript("OnEvent", bar_OnEvent)
 		-- all
@@ -499,7 +482,6 @@ function BARS.CreateXPBar()
 		bar:RegisterEvent("PLAYER_UPDATE_RESTING")
 		bar:RegisterEvent("UPDATE_EXHAUSTION")
 		-- honour
-		bar:RegisterEvent("HONOR_LEVEL_UPDATE")
 		bar:RegisterEvent("HONOR_XP_UPDATE")
 		bar:RegisterEvent("ZONE_CHANGED")
 		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -512,11 +494,12 @@ function BARS.CreateXPBar()
 		-- xp
 		bar:RegisterEvent("DISABLE_XP_GAIN")
 		bar:RegisterEvent("ENABLE_XP_GAIN")
-		bar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
-		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
 		bar:RegisterEvent("PLAYER_LEVEL_UP")
 		bar:RegisterEvent("PLAYER_XP_UPDATE")
 		bar:RegisterEvent("UPDATE_EXPANSION_LEVEL")
+		-- pet xp
+		bar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
+		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
 		-- rep
 		bar:RegisterEvent("UPDATE_FACTION")
 
@@ -552,12 +535,10 @@ function BARS.CreateXPBar()
 						end
 					end)
 
-					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnEnter", function(self)
-						if UnitLevel("player") >= MAX_PLAYER_LEVEL then
-							GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-							GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
-							GameTooltip:Show()
-						end
+					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnEnter", function()
+						GameTooltip:AddLine(" ")
+						GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
+						GameTooltip:Show()
 					end)
 
 					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnLeave", function()
