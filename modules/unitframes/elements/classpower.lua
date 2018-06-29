@@ -105,9 +105,9 @@ do
 		local layout
 
 		if config.orientation == "HORIZONTAL" then
-			layout = E:CalcSegmentsSizes(width, 6)
+			layout = E:CalcSegmentsSizes(width, 2, 6)
 		else
-			layout = E:CalcSegmentsSizes(height, 6)
+			layout = E:CalcSegmentsSizes(height, 2, 6)
 		end
 
 		for i = 1, 6 do
@@ -182,9 +182,9 @@ do
 				local layout
 
 				if orientation == "HORIZONTAL" then
-					layout = E:CalcSegmentsSizes(self:GetWidth(), max)
+					layout = E:CalcSegmentsSizes(self:GetWidth(), 2, max)
 				else
-					layout = E:CalcSegmentsSizes(self:GetHeight(), max)
+					layout = E:CalcSegmentsSizes(self:GetHeight(), 2, max)
 				end
 
 				for i = 1, max do

@@ -311,16 +311,14 @@ end
 local function bar_UpdateSize(self, width, height)
 	width = width or self._config.width
 	height = height or self._config.height
-	LAYOUT[1][1].size = {width, height}
 
-	local layout = E:CalcSegmentsSizes(width, 2)
-	LAYOUT[2][1].size = {layout[1], height}
-	LAYOUT[2][2].size = {layout[2], height}
+	for i = 1, MAX_BARS do
+		local layout = E:CalcSegmentsSizes(width, 2, i)
 
-	layout = E:CalcSegmentsSizes(width, 3)
-	LAYOUT[3][1].size = {layout[1], height}
-	LAYOUT[3][2].size = {layout[2], height}
-	LAYOUT[3][3].size = {layout[3], height}
+		for j = 1, i do
+			LAYOUT[i][j].size = {layout[j], height}
+		end
+	end
 
 	self:SetSize(width, height)
 

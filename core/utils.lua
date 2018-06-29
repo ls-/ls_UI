@@ -747,46 +747,32 @@ function E:ResolveAnchorPoint(frame, children)
 	end
 end
 
-function E:CalcSegmentsSizes(size, num)
-	local size_wo_gaps = size - 2 * (num - 1)
-	local seg_size = size_wo_gaps / num
-	local mod = seg_size % 1
+function E:CalcSegmentsSizes(totalSize, spacing, numSegs)
+	local totalSizeWoGaps = totalSize - spacing * (numSegs - 1)
+	local segSize = totalSizeWoGaps / numSegs
 	local result = {}
 
-	if mod == 0 then
-		for k = 1, num do
-			result[k] = seg_size
+	if segSize % 1 == 0 then
+		for i = 1, numSegs do
+			result[i] = segSize
 		end
 	else
-		seg_size = round(seg_size)
+		local numOddSegs = numSegs % 2 == 0 and 2 or 1
+		local numNormalSegs = numSegs - numOddSegs
+		segSize = round(segSize)
 
-		if num % 2 == 0 then
-			local range = (num - 2) / 2
+		for i = 1, numNormalSegs / 2 do
+			result[i] = segSize
+		end
 
-			for k = 1, range do
-				result[k] = seg_size
-			end
+		for i = numSegs - numNormalSegs / 2 + 1, numSegs do
+			result[i] = segSize
+		end
 
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
+		segSize = (totalSizeWoGaps - segSize * numNormalSegs) / numOddSegs
 
-			seg_size = (size_wo_gaps - seg_size * range * 2) / 2
-			result[range + 1] = seg_size
-			result[range + 2] = seg_size
-		else
-			local range = (num - 1) / 2
-
-			for k = 1, range do
-				result[k] = seg_size
-			end
-
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
-
-			seg_size = size_wo_gaps - seg_size * range * 2
-			result[range + 1] = seg_size
+		for i = 1, numOddSegs do
+			result[numNormalSegs / 2 + i] = segSize
 		end
 	end
 
