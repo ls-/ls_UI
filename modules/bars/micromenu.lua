@@ -33,10 +33,11 @@ local C_Timer = _G.C_Timer
 	MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot PlaySound PutItemInBag
 	QuestLogMicroButton RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
 	SetClampedTextureRotation SpellbookMicroButton StoreMicroButton TalentMicroButton ToggleAllBags ToggleDropDownMenu
-	UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_Initialize UIParent UpdateAddOnMemoryUsage
+	UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_Initialize UIParent UpdateAddOnMemoryUsage LibStub
 ]]
 
 -- Mine
+local LibDropDown = LibStub("LibDropDown")
 local isInit = false
 
 local LATENCY_TEMPLATE = "|cff%s%s|r ".._G.MILLISECONDS_ABBR
@@ -584,17 +585,73 @@ local bagBar_OnEvent, bagBar_OnShow, bagBar_Update, bagBar_UpdateConfig, bagBar_
 do
 	local invIDOffset = ContainerIDToInventoryID(1) - 1
 
+	local function generateMenuLinesForBag(bag)
+		local invID = bag:GetID()
+		local containerID = invID - invIDOffset
+		local lines = {}
+
+		if not IsInventoryItemProfessionBag("player", invID) then
+			lines[1] = {
+				text = BAG_FILTER_ASSIGN_TO,
+				isTitle = true,
+			}
+
+			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
+				if i ~= LE_BAG_FILTER_FLAG_JUNK then
+					t_insert(lines, {
+						text = BAG_FILTER_LABELS[i],
+						isRadio = true,
+						func = function(self)
+							local value = not self:GetRadioState()
+
+							SetBagSlotFlag(containerID, i, value)
+
+							if value then
+								bag.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
+								bag.FilterIcon:Show()
+							else
+								bag.FilterIcon:Hide()
+							end
+						end,
+						checked = function()
+							return GetBagSlotFlag(containerID, i)
+						end,
+					})
+				end
+			end
+		end
+
+		t_insert(lines, {
+			text = BAG_FILTER_CLEANUP,
+			isTitle = true,
+		})
+
+		t_insert(lines, {
+			text = BAG_FILTER_IGNORE,
+			func = function(self)
+				SetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not self:GetCheckedState())
+			end,
+			checked = function()
+				return GetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+			end,
+		})
+
+		return unpack(lines)
+	end
+
 	local function bag_OnClick(self, button)
 		if button == "RightButton" then
 			GameTooltip:Hide()
+			LibDropDown:CloseAll()
 
-			self.FilterDropDown.point,
-			self.FilterDropDown.relativePoint,
-			self.FilterDropDown.xOffset,
-			self.FilterDropDown.yOffset = getTooltipPoint(LSBagBar)
+			local p, rP, x, y = getTooltipPoint(LSBagBar)
+
+			LSBagBar.FilterMenu:SetAnchor(p, self, rP, x * 5, y * 5)
+			LSBagBar.FilterMenu:ClearLines()
+			LSBagBar.FilterMenu:AddLines(generateMenuLinesForBag(self))
+			LSBagBar.FilterMenu:Toggle()
 
 			PlaySound(856) -- IG_MAINMENU_OPTION_CHECKBOX_ON
-			ToggleDropDownMenu(1, nil, self.FilterDropDown, self, 0, 0)
 		else
 			if not InCombatLockdown() then
 				if CursorHasItem() then
@@ -665,63 +722,6 @@ do
 		self:UpdateLock()
 	end
 
-	local function dropDown_Initialize(self)
-		local bag = self:GetParent()
-		local invID = bag:GetID()
-		local containerID = invID - invIDOffset
-		local info = UIDropDownMenu_CreateInfo()
-
-		if not IsInventoryItemProfessionBag("player", invID) then
-			info.text = BAG_FILTER_ASSIGN_TO
-			info.isTitle = 1
-			info.notCheckable = 1
-			UIDropDownMenu_AddButton(info)
-
-			info.isTitle = nil
-			info.notCheckable = nil
-			info.disabled = nil
-			info.tooltipOnButton = 1
-			info.tooltipTitle = nil
-			info.tooltipWhileDisabled = 1
-
-			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-				if i ~= LE_BAG_FILTER_FLAG_JUNK then
-					info.text = BAG_FILTER_LABELS[i]
-					info.func = function(_, _, _, value)
-						value = not value
-
-						SetBagSlotFlag(containerID, i, value)
-
-						if value then
-							bag.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
-							bag.FilterIcon:Show()
-						else
-							bag.FilterIcon:Hide()
-						end
-					end
-					info.checked = GetBagSlotFlag(containerID, i)
-					UIDropDownMenu_AddButton(info)
-				end
-			end
-		end
-
-		info.text = BAG_FILTER_CLEANUP
-		info.isTitle = 1
-		info.notCheckable = 1
-		UIDropDownMenu_AddButton(info)
-
-		info.text = BAG_FILTER_IGNORE
-		info.isTitle = nil
-		info.notCheckable = nil
-		info.disabled = nil
-		info.isNotRadio = true
-		info.func = function(_, _, _, value)
-			SetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not value)
-		end
-		info.checked = GetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
-		UIDropDownMenu_AddButton(info)
-	end
-
 	function createBag(parent, containerID)
 		local bag = E:CreateButton(parent, "$parentBag"..containerID, true)
 		bag:SetID(ContainerIDToInventoryID(containerID))
@@ -737,9 +737,6 @@ do
 		bag.UpdateFilterIcon = bag_UpdateFilterIcon
 		bag.UpdateIcon = bag_UpdateIcon
 		bag.UpdateLock = bag_UpdateLock
-
-		bag.FilterDropDown = CreateFrame("Frame", "$parentFilterDropDown", bag, "UIDropDownMenuTemplate")
-		UIDropDownMenu_Initialize(bag.FilterDropDown, dropDown_Initialize, "MENU")
 
 		local filterIcon = bag.FGParent:CreateTexture(nil, "OVERLAY")
 		filterIcon:SetAtlas("bags-icon-consumables")
@@ -778,6 +775,7 @@ do
 				end
 			elseif event == "PLAYER_REGEN_DISABLED" then
 				self:Hide()
+				LibDropDown:CloseAll()
 			end
 		end
 	end
@@ -1437,11 +1435,15 @@ function MODULE.CreateMicroMenu()
 		bagBar._buttons = {}
 		bar.BagBar = bagBar
 
-		for i = 1, 4 do
+		for i = 4, 1, -1 do
 			local bag = createBag(bagBar, i)
 			bag._parent = bagBar
 			t_insert(bagBar._buttons, bag)
 		end
+
+		local menu = LibDropDown:NewMenu(bagBar, "LSBagFilterMenu")
+		menu:SetStyle("MENU")
+		bagBar.FilterMenu = menu
 
 		bagBar.Update = bagBar_Update
 		bagBar.UpdateConfig = bagBar_UpdateConfig
