@@ -13,4 +13,5 @@
 	<Script file="LibDualSpec-1.0\LibDualSpec-1.0.lua"/>
 	<Script file="UTF8\utf8data.lua"/>
 	<Script file="UTF8\utf8.lua"/>
+	<Include file="LibDropDown\embed.xml"/>
 </Ui>
