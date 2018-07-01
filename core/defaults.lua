@@ -2153,7 +2153,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 16
+				y = 20
 			},
 		},
 		bar2 = { -- MultiBarBottomLeft
@@ -2196,7 +2196,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 52
+				y = 56
 			},
 		},
 		bar3 = { -- MultiBarBottomRight
@@ -2239,7 +2239,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 88
+				y = 92
 			},
 		},
 		bar4 = { -- MultiBarLeft
@@ -2432,7 +2432,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = -168,
-				y = 130
+				y = 134
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2453,7 +2453,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = -168,
-				y = 174
+				y = 178
 			},
 		},
 		vehicle = { -- LeaveVehicle
@@ -2473,7 +2473,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 168,
-				y = 130
+				y = 134
 			},
 		},
 		micromenu = {
@@ -2568,8 +2568,8 @@ D.profile = {
 		},
 		xpbar = {
 			visible = true,
-			width = 746,
-			height = 8,
+			width = 752,
+			height = 12,
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",

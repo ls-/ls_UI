@@ -25,7 +25,7 @@ local TOP_POINT = {
 	anchor = "UIParent",
 	rP = "BOTTOM",
 	x = 0,
-	y = 152,
+	y = 156,
 }
 
 local BOTTOM_POINT = {
@@ -33,7 +33,7 @@ local BOTTOM_POINT = {
 	anchor = "UIParent",
 	rP = "BOTTOM",
 	x = 0,
-	y = 124,
+	y = 128,
 }
 
 local LAYOUT = {

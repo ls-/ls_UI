@@ -32,8 +32,8 @@ local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
 
 local CFG = {
 	visible = true,
-	width = 746,
-	height = 8,
+	width = 752,
+	height = 12,
 	point = {
 		p = "BOTTOM",
 		anchor = "UIParent",

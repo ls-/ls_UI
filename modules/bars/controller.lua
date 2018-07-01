@@ -36,16 +36,16 @@ local elements = {
 	},
 	bottom = {
 		left = {
-			size = {550 / 2, 38 / 2},
-			coords = {1 / 2048, 551 / 2048, 92 / 256, 130 / 256},
+			size = {568 / 2, 46 / 2},
+			coords = {1 / 2048, 569 / 2048, 92 / 256, 138 / 256},
 		},
 		mid = {
-			size = {432 / 2, 38 / 2},
-			coords = {551 / 2048, 983 / 2048, 92 / 256, 130 / 256},
+			size = {432 / 2, 46 / 2},
+			coords = {569 / 2048, 1001 / 2048, 92 / 256, 138 / 256},
 		},
 		right = {
-			size = {550 / 2, 38 / 2},
-			coords = {983 / 2048, 1533 / 2048, 92 / 256, 130 / 256},
+			size = {568 / 2, 46 / 2},
+			coords = {1001 / 2048, 1569 / 2048, 92 / 256, 138 / 256},
 		},
 	},
 }
@@ -55,7 +55,7 @@ local WIDGETS = {}
 WIDGETS.ACTION_BAR = {
 	frame = false,
 	children = false,
-	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
+	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 15},
 	on_add = function ()
 		WIDGETS.ACTION_BAR.children = {
 			[1] = _G["LSActionBar2"],
@@ -89,7 +89,7 @@ WIDGETS.ACTION_BAR = {
 WIDGETS.PET_BATTLE_BAR = {
 	frame = false,
 	children = false,
-	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 11},
+	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 15},
 }
 
 WIDGETS.XP_BAR = {
@@ -97,7 +97,7 @@ WIDGETS.XP_BAR = {
 	children = false,
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 	on_play = function(_, newstate)
-		MODULE:GetBar("xpbar"):UpdateSize(newstate == 6 and 1060 / 2 or 1492 / 2)
+		MODULE:GetBar("xpbar"):UpdateSize(newstate == 6 and 1072 / 2 or 1504 / 2, 12)
 	end
 }
 
@@ -190,7 +190,7 @@ function MODULE.SetupActionBarController()
 		-- which are protected, so make these secure too
 		local top = CreateFrame("Frame", "$parentTop", controller, "SecureHandlerBaseTemplate")
 		top:SetFrameLevel(controller:GetFrameLevel() + 1)
-		top:SetPoint("BOTTOM", 0, 20 / 2)
+		top:SetPoint("BOTTOM", 0, 28 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
 		controller.Top = top
 		controller:SetFrameRef("top", top)
@@ -205,7 +205,7 @@ function MODULE.SetupActionBarController()
 		-- These frames are used as anchors/parents for textures
 		top = CreateFrame("Frame", "$parentTop", anim_controller)
 		top:SetFrameLevel(anim_controller:GetFrameLevel() + 1)
-		top:SetPoint("BOTTOM", 0, 20 / 2)
+		top:SetPoint("BOTTOM", 0, 28 / 2)
 		top:SetSize(unpack(elements.top.mid.size))
 		anim_controller.Top = top
 
@@ -317,25 +317,25 @@ function MODULE.SetupActionBarController()
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -19)
+		anim:SetOffset(0, -23)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bag")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -19)
+		anim:SetOffset(0, -23)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(3)
-		anim:SetOffset(0, 19)
+		anim:SetOffset(0, 23)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bag")
 		anim:SetOrder(3)
-		anim:SetOffset(0, 19)
+		anim:SetOffset(0, 23)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
