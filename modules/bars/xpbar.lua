@@ -280,7 +280,7 @@ local function bar_UpdateSegments(self)
 		end
 
 		if index == 0 then
-			self[1]:SetPoint(unpack(LAYOUT[1][1].point))
+			self[1]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
 			self[1]:SetSize(unpack(LAYOUT[1][1].size))
 			self[1]:SetMinMaxValues(0, 1)
 			self[1]:SetValue(1)
