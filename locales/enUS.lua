@@ -98,6 +98,7 @@ Use |cffffd200[nl]|r for line breaking.]=]
 L["ALTERNATIVE_POWER"] = "Alternative Power"
 L["ALWAYS_SHOW"] = "Always Show"
 L["ANCHOR"] = "Attach To"
+L["ANCHOR_TO_CURSOR"] = "Attach to Cursor"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "Artefact Level: |cffffffff%s|r"
 L["ARTIFACT_POWER"] = "Artefact Power"
 L["ASCENDING"] = "Ascending"

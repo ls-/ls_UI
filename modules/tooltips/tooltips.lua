@@ -53,6 +53,10 @@ local UnitPVPName = _G.UnitPVPName
 local UnitRace = _G.UnitRace
 local UnitRealmRelationship = _G.UnitRealmRelationship
 
+--[[ luacheck: globals
+	CreateFrame GameTooltip GameTooltipStatusBar LSTooltipAnchor UIParent
+]]
+
 -- Mine
 local inspectGUIDCache = {}
 local isInit = false
@@ -576,6 +580,37 @@ local function MODIFIER_STATE_CHANGED(key)
 	end
 end
 
+local function setDefaultAnchor(self, parent)
+	if self:IsForbidden() then return end
+	if self:GetAnchorType() ~= "ANCHOR_NONE" then return end
+
+	if parent then
+		if C.db.profile.tooltips.anchor_cursor then
+			self:SetOwner(parent, "ANCHOR_CURSOR")
+			return
+		else
+			self:SetOwner(parent, "ANCHOR_NONE")
+		end
+	end
+
+	local _, anchor = self:GetPoint()
+	if not anchor or anchor == UIParent or anchor == LSTooltipAnchor then
+		local quadrant = E:GetScreenQuadrant(LSTooltipAnchor)
+		local p = "BOTTOMRIGHT"
+
+		if quadrant == "TOPRIGHT" or quadrant == "TOP" then
+			p = "TOPRIGHT"
+		elseif quadrant == "BOTTOMLEFT" or quadrant == "LEFT" then
+			p = "BOTTOMLEFT"
+		elseif quadrant == "TOPLEFT"  then
+			p = "TOPLEFT"
+		end
+
+		self:ClearAllPoints()
+		self:SetPoint(p, "LSTooltipAnchor", p, 0, 0)
+	end
+end
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -655,10 +690,20 @@ function MODULE:Init()
 		hooksecurefunc(GameTooltip, "SetLFGDungeonReward", Tooltip_SetLFGDungeonReward)
 		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", Tooltip_SetLFGDungeonShortageReward)
 
+		-- Anchor
+		local point = C.db.profile.tooltips.point
+
+		local anchor = CreateFrame("Frame", "LSTooltipAnchor", UIParent)
+		anchor:SetSize(64, 64)
+		anchor:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E:CreateMover(anchor)
+
+		hooksecurefunc("GameTooltip_SetDefaultAnchor", setDefaultAnchor)
+
+		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
 		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
 
-		-- Status Bars
 		GameTooltipStatusBar:SetHeight(10)
 		GameTooltipStatusBar:SetScript("OnShow", function(bar)
 			local tooltip = bar:GetParent()

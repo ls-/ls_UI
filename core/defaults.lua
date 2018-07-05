@@ -2703,6 +2703,14 @@ D.profile = {
 		title = true,
 		target = true,
 		inspect = true,
+		anchor_cursor = false,
+		point = {
+			p = "BOTTOMRIGHT",
+			anchor = "UIParent",
+			rP = "BOTTOMRIGHT",
+			x = -76,
+			y = 126,
+		},
 	},
 	blizzard = {
 		objective_tracker = { -- ObjectiveTrackerFrame
