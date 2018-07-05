@@ -2115,7 +2115,7 @@ D.profile = {
 		blizz_vehicle = false,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2158,7 +2158,7 @@ D.profile = {
 		},
 		bar2 = { -- MultiBarBottomLeft
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2201,7 +2201,7 @@ D.profile = {
 		},
 		bar3 = { -- MultiBarBottomRight
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2244,7 +2244,7 @@ D.profile = {
 		},
 		bar4 = { -- MultiBarLeft
 			flyout_dir = "LEFT",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2287,7 +2287,7 @@ D.profile = {
 		},
 		bar5 = { -- MultiBarRight
 			flyout_dir = "LEFT",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2330,6 +2330,7 @@ D.profile = {
 		},
 		bar6 = { --PetAction
 			flyout_dir = "UP",
+			grid = false,
 			num = 10,
 			per_row = 10,
 			size = 24,
