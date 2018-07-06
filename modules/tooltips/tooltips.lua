@@ -301,88 +301,118 @@ local function AddInspectInfo(tooltip, unit, classColorHEX, numTries)
 end
 
 local function Tooltip_SetArtifactPowerByID(self, powerID)
-	local info = C_ArtifactUI_GetPowerInfo(powerID)
+	if self:IsForbidden() then return end
+
+	local info = C_ArtifactUI.GetPowerInfo(powerID)
 
 	AddSpellInfo(self, info.spellID)
 end
 
 local function Tooltip_SetAuctionItem(self, aucType, index)
+	if self:IsForbidden() then return end
+
 	local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, id = GetAuctionItemInfo(aucType, index)
 
 	AddItemInfo(self, id, true)
 end
 
 local function Tooltip_SetBackpackToken(self, index)
+	if self:IsForbidden() then return end
+
 	local _, _, _, id = GetBackpackCurrencyInfo(index)
 
 	AddGenericInfo(self, id)
 end
 
 local function Tooltip_SetCurrencyToken(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetCurrencyListLink(index)
 
 	HandleLink(self, link)
 end
 
 local function Tooltip_SetHyperlink(self, link)
+	if self:IsForbidden() then return end
+
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetItem(self)
+	if self:IsForbidden() then return end
+
 	local _, link = self:GetItem()
 
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetLFGDungeonReward(self, dungeonID, rewardID)
+	if self:IsForbidden() then return end
+
 	local link = GetLFGDungeonRewardLink(dungeonID, rewardID)
 
 	HandleLink(self, link)
 end
 
 local function Tooltip_SetLFGDungeonShortageReward(self, dungeonID, rewardArg, rewardID)
+	if self:IsForbidden() then return end
+
 	local link = GetLFGDungeonShortageRewardLink(dungeonID, rewardArg, rewardID)
 
 	HandleLink(self, link)
 end
 
 local function Tooltip_SetLoot(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetLootSlotLink(index)
 
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetLootRollItem(self, rollID)
+	if self:IsForbidden() then return end
+
 	local link = GetLootRollItemLink(rollID)
 
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetMerchantItem(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetMerchantItemLink(index)
 
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetQuest(self)
+	if self:IsForbidden() then return end
+
 	if not (self.questID and GameTooltip:IsOwned(self)) then return end
 
 	AddGenericInfo(GameTooltip, self.questID)
 end
 
 local function Tooltip_SetRecipeReagentItem(self, recipeID, reagentIndex)
-	local link = C_TradeSkillUI_GetRecipeReagentItemLink(recipeID, reagentIndex)
+	if self:IsForbidden() then return end
+
+	local link = C_TradeSkillUI.GetRecipeReagentItemLink(recipeID, reagentIndex)
 
 	HandleLink(self, link, true)
 end
 
 local function Tooltip_SetSpell(self)
+	if self:IsForbidden() then return end
+
 	local _, _, id = self:GetSpell()
 
 	AddSpellInfo(self, id)
 end
 
 local function Tooltip_SetSpellOrItem(self)
+	if self:IsForbidden() then return end
+
 	local _, _, id = self:GetSpell()
 
 	if id then
@@ -395,14 +425,17 @@ local function Tooltip_SetSpellOrItem(self)
 end
 
 local function Tooltip_SetUnitAura(self, unit, index, filter)
+	if self:IsForbidden() then return end
+
 	local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
 
 	AddSpellInfo(self, id, caster)
 end
 
 local function Tooltip_SetUnit(self)
-	local unit = GetTooltipUnit(self)
+	if self:IsForbidden() then return end
 
+	local unit = getTooltipUnit(self)
 	if not (unit and UnitExists(unit)) then return end
 
 	local config = C.db.profile.tooltips
