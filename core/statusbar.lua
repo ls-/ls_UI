@@ -16,6 +16,8 @@ local FrameDeltaLerp = _G.FrameDeltaLerp
 
 -- Mine
 function E:HandleStatusBar(bar, isRecursive)
+	if bar.handled then return end
+
 	local children = {bar:GetChildren()}
 	local regions = {bar:GetRegions()}
 	local sbt = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
