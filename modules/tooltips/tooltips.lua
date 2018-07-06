@@ -611,6 +611,56 @@ local function setDefaultAnchor(self, parent)
 	end
 end
 
+local function tooltip_AddStatusBar(self, _, max, value)
+	for _, child in next, {self:GetChildren()} do
+		if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
+			if not child.handled then
+				E:HandleStatusBar(child)
+				E:SetStatusBarSkin(child, "HORIZONTAL-GLASS")
+				child:SetHeight(10)
+			end
+
+			-- theoretically, there should be only 1 bar visible
+			if value < max then
+				child:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
+			else
+				child:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+			end
+		end
+	end
+end
+
+local function tooltipBar_OnShow(self)
+	local tooltip = self:GetParent()
+
+	if tooltip:NumLines() == 0 or getLineByText(tooltip, "%-%-", 2) then return end
+
+	tooltip:SetMinimumWidth(128)
+	tooltip:AddLine("--")
+
+	cleanUp(tooltip)
+
+	self:ClearAllPoints()
+	self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
+	self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
+	self:SetStatusBarColor(E:GetUnitReactionColor(getTooltipUnit(tooltip)):GetRGB())
+
+	tooltip:Show()
+end
+
+local function tooltipBar_OnValueChanged(self, value)
+	if not value then return end
+
+	local _, max = self:GetMinMaxValues()
+
+	if max == 1 then
+		self.Text:Hide()
+	else
+		self.Text:Show()
+		self.Text:SetFormattedText("%s / %s", E:NumberFormat(value, 1), E:NumberFormat(max, 1))
+	end
+end
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -703,49 +753,11 @@ function MODULE:Init()
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
 		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
-
 		GameTooltipStatusBar:SetHeight(10)
-		GameTooltipStatusBar:SetScript("OnShow", function(bar)
-			local tooltip = bar:GetParent()
+		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
+		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 
-			if tooltip:NumLines() == 0 or GetLineByText(tooltip, "%-%-", 2) then return end
-
-			tooltip:SetMinimumWidth(128)
-			tooltip:AddLine("--")
-
-			CleanUp(tooltip)
-
-			local line = GetLineByText(tooltip, "%-%-", 2)
-
-			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", line, "TOPLEFT", 0, -2)
-			bar:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
-			bar:SetStatusBarColor(E:GetUnitReactionColor(GetTooltipUnit(tooltip)):GetRGB())
-		end)
-		GameTooltipStatusBar:SetScript("OnValueChanged", function(bar, value)
-			if not value then return end
-
-			local _, max = bar:GetMinMaxValues()
-
-			if max == 1 then
-				bar.Text:Hide()
-			else
-				bar.Text:Show()
-				bar.Text:SetFormattedText("%s / %s", E:NumberFormat(value, 1), E:NumberFormat(max, 1))
-			end
-		end)
-
-		for i = 1, 6 do
-			local bar = E:CreateStatusBar(GameTooltip, "GameTooltipStatusBar"..i, "HORIZONTAL")
-			bar:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
-			bar:SetHeight(10)
-
-			E:SetStatusBarSkin(bar, "HORIZONTAL-GLASS")
-
-			bar.Text:SetPoint("CENTER", 0, 0)
-
-			GameTooltip.numStatusBars = i
-		end
+		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
 
 		isInit = true
 
