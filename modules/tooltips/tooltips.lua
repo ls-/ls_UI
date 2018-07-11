@@ -411,7 +411,7 @@ end
 local function tooltip_SetSpell(self)
 	if self:IsForbidden() then return end
 
-	local _, _, id = self:GetSpell()
+	local _, id = self:GetSpell()
 
 	addSpellInfo(self, id)
 end
@@ -419,14 +419,14 @@ end
 local function tooltip_SetSpellOrItem(self)
 	if self:IsForbidden() then return end
 
-	local _, _, id = self:GetSpell()
+	local _, linkOrId = self:GetSpell()
 
-	if id then
-		addSpellInfo(self, id)
+	if linkOrId then
+		addSpellInfo(self, linkOrId)
 	else
-		local _, link = self:GetItem()
+		_, linkOrId = self:GetItem()
 
-		handleLink(self, link, true)
+		handleLink(self, linkOrId, true)
 	end
 end
 
