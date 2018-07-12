@@ -59,7 +59,7 @@ function MODULE.CreateExtraButton()
 			ExtraActionBarFrame:SetAllPoints()
 
 			self:SetSize(self._config.size + 4, self._config.size + 4)
-			E:UpdateMoverSize(self)
+			E.Movers:Get(self):UpdateSize()
 		end
 
 		ExtraActionBarFrame.ignoreFramePositionManager = true
@@ -82,7 +82,7 @@ function MODULE.CreateExtraButton()
 
 		local point = C.db.profile.bars.extra.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		E.Movers:Create(bar)
 
 		bar:Update()
 

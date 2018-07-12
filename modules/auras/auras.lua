@@ -202,8 +202,8 @@ local function UpdateHeader(filter)
 	if filter == "TOTEM" then
 		header._config = C.db.profile.auras[E.UI_LAYOUT][filter]
 
-		if not E:HasMover(header) then
-			E:CreateMover(header)
+		if not E.Movers:Get(header, true) then
+			E.Movers:Create(header)
 		end
 
 		E:UpdateBarLayout(header)
@@ -250,10 +250,12 @@ local function UpdateHeader(filter)
 		header:SetAttribute("yOffset", 0)
 		header:Show()
 
-		if E:HasMover(header) then
-			E:UpdateMoverSize(header)
+		local mover = E.Movers:Get(header, true)
+		if mover then
+			mover:UpdateSize()
 		else
-			E:CreateMover(header, false, nil, -6, 6, 6, -6)
+			mover = E.Movers:Create(header)
+			mover:SetClampRectInsets(-6, 6, 6, -6)
 		end
 	end
 end

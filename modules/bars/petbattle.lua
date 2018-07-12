@@ -118,7 +118,7 @@ function MODULE.CreatePetBattleBar()
 		else
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
+			E.Movers:Create(bar)
 		end
 
 		bar:Update()
@@ -139,7 +139,7 @@ function MODULE.CreatePetBattleBar()
 		local timer = CreateFrame("Frame", "LSPetBattleTurnTimer", UIParent, "SecureHandlerStateTemplate")
 		timer:SetSize(474, 28)
 		timer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
-		E:CreateMover(timer)
+		E.Movers:Create(timer)
 		RegisterStateDriver(timer, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.TurnTimer:SetParent(timer)
@@ -149,7 +149,7 @@ function MODULE.CreatePetBattleBar()
 		local selector = CreateFrame("Frame", "LSPetBattlePetSelector", UIParent, "SecureHandlerStateTemplate")
 		selector:SetSize(636, 200)
 		selector:SetPoint("TOP", "UIParent", "TOP", 0, -194)
-		E:CreateMover(selector)
+		E.Movers:Create(selector)
 		RegisterStateDriver(selector, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(selector)

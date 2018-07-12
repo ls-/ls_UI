@@ -520,7 +520,7 @@ function MODULE.Init()
 				order = 1,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
-				func = function() E:ToggleAllMovers() end,
+				func = function() E.Movers:ToggleAll() end,
 			},
 			keybind_mode = {
 				order = 2,

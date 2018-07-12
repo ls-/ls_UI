@@ -1453,11 +1453,11 @@ function MODULE.CreateMicroMenu()
 
 		local point = C.db.profile.bars.micromenu.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		E.Movers:Create(bar)
 
 		point = C.db.profile.bars.micromenu.bags.point
 		bagBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bagBar)
+		E.Movers:Create(bagBar)
 
 		bar:Update()
 

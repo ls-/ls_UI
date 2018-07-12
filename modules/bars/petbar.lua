@@ -294,7 +294,7 @@ function MODULE.CreatePetActionBar()
 
 		local point = getBarPoint()
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		E.Movers:Create(bar)
 
 		bar:Update()
 

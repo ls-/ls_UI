@@ -150,10 +150,12 @@ function MODULE.Init()
 		header.Text = label
 
 		header:SetSize(label:GetWidth() + 10, 22)
-		E:CreateMover(header, true, function()
+
+		local mover = E.Movers:Create(header, true)
+		mover.IsDragKeyDown = function()
 			return C.db.char.auratracker.drag_key == "NONE"
 				or C.db.char.auratracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
-		end)
+		end
 
 		bar = CreateFrame("Frame", nil, UIParent)
 		bar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
@@ -204,14 +206,12 @@ function MODULE.Update()
 
 		bar:Update()
 
-		local locked = C.db.char.auratracker.locked
+		bar.Header:SetShown(not bar._config.locked)
 
-		bar.Header:SetShown(not locked)
-
-		if not locked then
-			E:EnableMover(bar.Header)
+		if not bar._config.locked then
+			E.Movers:Get(bar.Header):Enable()
 		else
-			E:DisableMover(bar.Header)
+			E.Movers:Get(bar.Header):Disable()
 		end
 	end
 end

@@ -301,7 +301,7 @@ function MODULE.CreateActionBars()
 			else
 				local point = config[barID].point
 				bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-				E:CreateMover(bar)
+				E.Movers:Create(bar)
 			end
 
 			bar:Update()

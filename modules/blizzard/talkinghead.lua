@@ -38,7 +38,7 @@ function MODULE.SetUpTalkingHead()
 
 			TalkingHeadFrame:ClearAllPoints()
 			TalkingHeadFrame:SetPoint("TOP", "UIParent", "TOP", 0, -188)
-			E:CreateMover(TalkingHeadFrame)
+			E.Movers:Create(TalkingHeadFrame)
 
 			isInit = true
 		end

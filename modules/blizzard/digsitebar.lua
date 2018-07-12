@@ -32,7 +32,7 @@ function MODULE.SetUpDigsiteBar()
 			ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 250)
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 			E:SetStatusBarSkin(ArcheologyDigsiteProgressBar, "HORIZONTAL-12")
-			E:CreateMover(ArcheologyDigsiteProgressBar)
+			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(M.COLORS.ORANGE:GetRGB())
 

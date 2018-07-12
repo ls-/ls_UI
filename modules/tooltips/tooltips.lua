@@ -798,7 +798,7 @@ function MODULE:Init()
 		local anchor = CreateFrame("Frame", "LSTooltipAnchor", UIParent)
 		anchor:SetSize(64, 64)
 		anchor:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(anchor)
+		E.Movers:Create(anchor)
 
 		hooksecurefunc("GameTooltip_SetDefaultAnchor", tooltip_SetDefaultAnchor)
 

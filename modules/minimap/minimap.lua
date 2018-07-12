@@ -339,7 +339,7 @@ function MODULE.Init()
 		local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
 		holder:SetSize(332 / 2, 332 / 2)
 		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
-		E:CreateMover(holder)
+		E.Movers:Create(holder)
 
 		Minimap:EnableMouseWheel()
 		Minimap:ClearAllPoints()

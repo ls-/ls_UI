@@ -414,7 +414,7 @@ function BARS.CreateXPBar()
 
 			if not BARS:IsRestricted() then
 				self:UpdateFading()
-				E:UpdateMoverSize(self)
+				E.Movers:Get(self):UpdateSize()
 			end
 		end
 		bar.UpdateConfig = function(self)
@@ -509,7 +509,7 @@ function BARS.CreateXPBar()
 			local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
+			E.Movers:Create(bar)
 		end
 
 		bar:Update()
