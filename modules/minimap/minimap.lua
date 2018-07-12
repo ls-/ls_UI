@@ -64,14 +64,18 @@ local ZONE_COLORS = {
 local handledChildren = {}
 local ignoredChildren = {}
 
-local function setSizeHook(self)
-	if not self.hookingSize then
-		local t = self == GameTimeFrame and "BIG" or "SMALL"
-
-		self.hookingSize = true
-		self:SetSize(unpack(TEXTURES[t].size))
+local function updateGarrisonButton(self)
+	if C_Garrison.GetLandingPageGarrisonType() == LE_GARRISON_TYPE_8_0 then
+		self.NormalTexture:RemoveMaskTexture(self.MaskTexture)
+		self.PushedTexture:RemoveMaskTexture(self.MaskTexture)
+		self.Border:Hide()
+		self.Background:Hide()
 	else
-		self.hookingSize = nil
+		self:SetSize(unpack(TEXTURES.SMALL.size))
+		self.NormalTexture:RemoveMaskTexture(self.MaskTexture)
+		self.PushedTexture:RemoveMaskTexture(self.MaskTexture)
+		self.Border:Show()
+		self.Background:Show()
 	end
 end
 
@@ -240,7 +244,9 @@ local function handleMinimapButton(button, recursive)
 		bg:AddMaskTexture(mask)
 		button.Background = bg
 
-		hooksecurefunc(button, "SetSize", setSizeHook)
+		if button == GarrisonLandingPageMinimapButton then
+			hooksecurefunc(button, "SetSize", updateGarrisonButton)
+		end
 
 		return button
 	else
