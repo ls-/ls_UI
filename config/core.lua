@@ -579,6 +579,12 @@ function MODULE.Init()
 		end
 	end)
 
+	P:AddCommand("kb", function()
+		if not InCombatLockdown() then
+			LibKeyBound:Toggle()
+		end
+	end)
+
 	E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 		AceConfigDialog:Close(addonName)
 	end)
