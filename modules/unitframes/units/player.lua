@@ -284,19 +284,21 @@ do
 
 		-- status icons/texts
 		local status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
-		status:SetWidth(18)
-		status:SetPoint("LEFT", frame, "LEFT", 5, 0)
+		status:SetWidth(24)
+		status:SetPoint("LEFT", frame, "LEFT", 2, 0)
+		status:SetNonSpaceWrap(true)
 
 		frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
 
 		status = text_parent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
-		status:SetWidth(18)
-		status:SetPoint("RIGHT", frame, "RIGHT", -5, 0)
+		status:SetWidth(24)
+		status:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
+		status:SetNonSpaceWrap(true)
 
 		frame:Tag(status, "[ls:combatresticon]")
 
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, text_parent)
-		frame.DebuffIndicator:SetWidth(14)
+		frame.DebuffIndicator:SetWidth(18)
 
 		-- floating combat text
 		local feeback = self:CreateCombatFeedback(frame)

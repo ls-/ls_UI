@@ -41,6 +41,7 @@ end
 
 function UF:CreateDebuffIndicator(frame, textParent)
 	local element = (textParent or frame):CreateFontString(nil, "ARTWORK", "LSStatusIcon12Font")
+	element:SetNonSpaceWrap(true)
 
 	frame.PreviewDebuffIndicator = frame_PreviewDebuffIndicator
 	frame.UpdateDebuffIndicator = frame_UpdateDebuffIndicator
