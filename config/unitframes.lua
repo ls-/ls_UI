@@ -1612,6 +1612,36 @@ local function getOptionsTable_UnitFrame(unit, order, name)
 
 					end,
 				},
+				runes = {
+					order = 10,
+					type = "group",
+					name = L["RUNES"],
+					inline = true,
+					get = function(info)
+						return C.db.profile.units[E.UI_LAYOUT][unit].class_power.runes[info[#info]]
+					end,
+					set = function(info, value)
+						C.db.profile.units[E.UI_LAYOUT][unit].class_power.runes[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+					end,
+					args = {
+						color_by_spec = {
+							order = 1,
+							type = "toggle",
+							name = L["COLOR_BY_SPEC"],
+						},
+						sort_order = {
+							order = 2,
+							type = "select",
+							name = L["SORT_DIR"],
+							values = {
+								["none"] = L["NONE"],
+								["asc"] = L["ASCENDING"],
+								["desc"] = L["DESCENDING"],
+							},
+						},
+					},
+				},
 			},
 		}
 		temp.args.combat_feedback = {

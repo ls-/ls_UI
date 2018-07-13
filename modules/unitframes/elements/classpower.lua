@@ -110,9 +110,11 @@ do
 			layout = E:CalcSegmentsSizes(height, 2, 6)
 		end
 
+		element.colorSpec = config.runes.color_by_spec
+		element.sortOrder = config.runes.sort_order
+
 		for i = 1, 6 do
 			local bar = element[i]
-
 			bar:SetOrientation(config.orientation)
 			bar:ClearAllPoints()
 
