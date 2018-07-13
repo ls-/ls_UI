@@ -30,6 +30,7 @@ local GetTime = _G.GetTime
 local IsShiftKeyDown = _G.IsShiftKeyDown
 local ItemRefTooltip = _G.ItemRefTooltip
 local NotifyInspect = _G.NotifyInspect
+local ShowBossFrameWhenUninteractable = _G.ShowBossFrameWhenUninteractable
 local UnitAura = _G.UnitAura
 local UnitBattlePetLevel = _G.UnitBattlePetLevel
 local UnitBattlePetType = _G.UnitBattlePetType
@@ -243,6 +244,10 @@ local function getTooltipUnit(tooltip)
 		if frameID and frameID.GetAttribute then
 			unit = frameID:GetAttribute("unit")
 		end
+
+		if unit and not (UnitExists(unit) or ShowBossFrameWhenUninteractable(unit)) then
+			unit = nil
+		end
 	end
 
 	return unit
@@ -270,7 +275,7 @@ local function INSPECT_READY(unitGUID)
 end
 
 local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
-	if not CanInspect(unit) or numTries > 2 then	return end
+	if not CanInspect(unit) or numTries > 2 then return end
 
 	local unitGUID = UnitGUID(unit)
 
@@ -442,8 +447,7 @@ local function tooltip_SetUnit(self)
 	if self:IsForbidden() then return end
 
 	local unit = getTooltipUnit(self)
-
-	if not (unit and UnitExists(unit)) then return end
+	if not unit then return end
 
 	local config = C.db.profile.tooltips
 	local nameColor = E:GetUnitColor(unit, true)
@@ -585,7 +589,7 @@ local function tooltip_SetUnit(self)
 				difficultyColor:GetHEX(),
 				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
 				E:GetUnitClassification(unit),
-				UnitCreatureType(unit)
+				UnitCreatureType(unit) or ""
 			)
 		end
 	end
@@ -685,7 +689,22 @@ end
 local function tooltipBar_OnShow(self)
 	local tooltip = self:GetParent()
 
-	if tooltip:NumLines() == 0 or getLineByText(tooltip, "%-%-", 2) then return end
+	if tooltip:IsForbidden() then return end
+	if tooltip:NumLines() == 0 then
+		self.numTries = (self.numTries or 0) + 1
+
+		if self.numTries < 3 then
+			C_Timer.After(0.1, function() tooltipBar_OnShow(self) end)
+		else
+			self.numTries = 0
+		end
+
+		return
+	end
+
+	self.numTries = 0
+
+	if getLineByText(tooltip, "%-%-", 2) then return end
 
 	tooltip:SetMinimumWidth(140)
 	tooltip:AddLine("--")
@@ -695,7 +714,13 @@ local function tooltipBar_OnShow(self)
 	self:ClearAllPoints()
 	self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
 	self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
-	self:SetStatusBarColor(E:GetUnitReactionColor(getTooltipUnit(tooltip)):GetRGB())
+
+	local unit = getTooltipUnit(tooltip)
+	if unit then
+		self:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
+	else
+		self:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+	end
 
 	tooltip:Show()
 end
@@ -704,7 +729,6 @@ local function tooltipBar_OnValueChanged(self, value)
 	if not value then return end
 
 	local _, max = self:GetMinMaxValues()
-
 	if max == 1 then
 		self.Text:Hide()
 	else
