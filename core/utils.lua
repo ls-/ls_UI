@@ -816,7 +816,15 @@ function E:GetCoords(object)
 end
 
 function E:GetScreenQuadrant(frame)
-	local x, y = frame:GetCenter()
+	local x, y
+
+	if frame == "cursor" then
+		x, y = GetCursorPosition()
+		x = x / UIParent:GetEffectiveScale()
+		y = y / UIParent:GetEffectiveScale()
+	else
+		x, y = frame:GetCenter()
+	end
 
 	if not (x and y) then
 		return "UNKNOWN"
