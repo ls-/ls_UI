@@ -2813,4 +2813,7 @@ D.char = {
 			enabled = true,
 		},
 	},
+	loot = {
+		enabled = true,
+	},
 }
