@@ -20,6 +20,7 @@ local function element_Override(self, _, unit)
 
 	local status
 	local factionGroup = UnitFactionGroup(unit)
+	local honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
 
 	if UnitIsPVPFreeForAll(unit) then
 		status = "FFA"
@@ -38,11 +39,17 @@ local function element_Override(self, _, unit)
 	-- local status = "FFA"
 
 	if status then
-		pvp:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
-		pvp:SetTexCoord(102 / 256, 162 / 256, 22 / 128, 82 / 128)
+		if honorRewardInfo then
+			pvp:SetTexture(honorRewardInfo.badgeFileDataID)
+			pvp:SetTexCoord(0, 1, 0, 1)
+		else
+			pvp:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-" .. status)
+			pvp:SetTexCoord(102 / 256, 162 / 256, 22 / 128, 82 / 128)
+		end
+
 		pvp:Show()
 
-		pvp.Banner:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
+		pvp.Banner:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-" .. status)
 		pvp.Banner:SetTexCoord(1 / 256, 101 / 256, 1 / 128, 109 / 128)
 		pvp.Banner:Show()
 
