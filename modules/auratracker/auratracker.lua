@@ -209,9 +209,12 @@ function MODULE.Update()
 		bar.Header:SetShown(not bar._config.locked)
 
 		if not bar._config.locked then
-			E.Movers:Get(bar.Header):Enable()
+			E.Movers:Get(bar.Header, true):Enable()
 		else
-			E.Movers:Get(bar.Header):Disable()
+			local mover = E.Movers:Get(bar.Header)
+			if mover then
+				mover:Disable()
+			end
 		end
 	end
 end
