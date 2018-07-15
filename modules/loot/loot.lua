@@ -19,7 +19,7 @@ local GetLootSlotType = _G.GetLootSlotType
 	HandleModifiedItemClick IsFishingLoot IsModifiedClick LootFrame LootSlot PlaySound ResetCursor StaticPopup_Hide
 	UIParent UISpecialFrames
 
-	ITEM_QUALITY_COLORS LOOT LOOT_SLOT_CURRENCY LOOT_SLOT_ITEM TEXTURE_ITEM_QUEST_BANG TEXTURE_ITEM_QUEST_BORDER
+	ITEM_QUALITY_COLORS LOOT_SLOT_CURRENCY LOOT_SLOT_ITEM TEXTURE_ITEM_QUEST_BANG TEXTURE_ITEM_QUEST_BORDER
 ]]
 
 -- Mine
@@ -337,7 +337,7 @@ function MODULE:Init()
 		frame:SetSize(192, 230 + 40 * (MAX_BUTTONS - MIN_BUTTONS))
 		frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 16, -256)
 		frame:SetClampedToScreen(true)
-		frame:SetClampRectInsets(-4, 4, 4, -4)
+		frame:SetClampRectInsets(-16, 4, 16, -4)
 		frame:SetScript("OnEvent", frame_OnEvent)
 		frame:SetScript("OnHide", frame_OnHide)
 		frame:RegisterEvent("LOOT_OPENED")
@@ -346,14 +346,16 @@ function MODULE:Init()
 		frame:RegisterEvent("LOOT_CLOSED")
 		-- frame:RegisterEvent("OPEN_MASTER_LOOT_LIST")
 		-- frame:RegisterEvent("UPDATE_MASTER_LOOT_LIST")
-		E.Movers:Create(frame)
+
+		local mover = E.Movers:Create(frame)
+		mover:SetClampRectInsets(-16, 4, 16, -4)
 
 		frame.onCloseCallback = function() CloseLoot() end
 
 		frame.portrait:SetMask("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 
 		frame.TitleText:SetPoint("RIGHT", -30, 0)
-		frame.TitleText:SetText(LOOT)
+		frame.TitleText:SetText(L["LOOT"])
 
 		local inset = CreateFrame("Frame", nil, frame, "InsetFrameTemplate")
 		inset:SetPoint("TOPLEFT", 3, -60)
@@ -379,7 +381,7 @@ function MODULE:Init()
 		LootFrame:UnregisterAllEvents()
 		t_insert(UISpecialFrames, "LSLootFrame")
 
-		scrollFrame:Reset()
+		frame:Hide()
 
 		isInit = true
 	end
