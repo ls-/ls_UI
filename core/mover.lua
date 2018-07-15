@@ -256,6 +256,10 @@ local function mover_OnClick(self)
 	end
 end
 
+local function mover_IsEnabled(self)
+	return not not enabledMovers[self:GetName()]
+end
+
 local function mover_IsDragKeyDown()
 	return true
 end
@@ -435,6 +439,7 @@ function E.Movers:Create(object, isSimple)
 	mover.Disable = mover_Disable
 	mover.Enable = mover_Enable
 	mover.IsDragKeyDown = mover_IsDragKeyDown
+	mover.IsEnabled = mover_IsEnabled
 	mover.PostSaveUpdatePosition = E.NOOP
 	mover.ResetPosition = mover_ResetPosition
 	mover.SavePosition = mover_SavePosition
