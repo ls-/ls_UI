@@ -16,3 +16,6 @@
 [submodule "embeds/LibDropDown"]
 	path = embeds/LibDropDown
 	url = git@github.com:ls-/LibDropDown.git
+[submodule "embeds/LibDualSpec-1.0"]
+	path = embeds/LibDualSpec-1.0
+	url = https://repos.wowace.com/wow/libdualspec-1-0
