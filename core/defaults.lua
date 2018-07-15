@@ -2086,7 +2086,7 @@ D.profile = {
 			},
 			flag = {
 				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 0, -- 0 - zone text, 1 - clock, 2 - bottom
+				position = 2, -- 0 - zone text, 1 - clock, 2 - bottom
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
