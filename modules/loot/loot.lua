@@ -41,6 +41,17 @@ local function getNum(t)
 	return num
 end
 
+local function getTooltipPoint(self)
+	local quadrant = E:GetScreenQuadrant(self)
+	local p, rP = "BOTTOMRIGHT", "TOPLEFT"
+
+	if quadrant == "TOPLEFT" or quadrant == "LEFT" or quadrant == "BOTTOMLEFT" then
+		p, rP = "BOTTOMLEFT", "TOPRIGHT"
+	end
+
+	return p, rP
+end
+
 local function buildSlotInfo(slot)
 	local texture, item, quantity, currencyID, quality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(slot)
 	local link = GetLootSlotLink(slot)
@@ -231,12 +242,18 @@ end
 
 local function showTooltip(self)
 	if self.type == LOOT_SLOT_ITEM then
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		local p, rP = getTooltipPoint(self)
+
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(p, self, rP, 0, 0)
 		GameTooltip:SetLootItem(self.slot)
 
 		CursorUpdate(self)
 	elseif self.type == LOOT_SLOT_CURRENCY then
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		local p, rP = getTooltipPoint(self)
+
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(p, self, rP, 0, 0)
 		GameTooltip:SetLootCurrency(self.slot)
 
 		CursorUpdate(self)
