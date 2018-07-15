@@ -344,6 +344,25 @@ local function createButton(parent, index)
 	button.BG = bg
 end
 
+local function takeAll_OnClick()
+	for i = 1, #lootTable do
+		LootSlot(i)
+	end
+end
+
+local function takeAll_OnEnter(self)
+	local p, rP = getTooltipPoint(self)
+
+	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+	GameTooltip:SetPoint(p, self, rP, 0, 0)
+	GameTooltip:AddLine(L["LOOT_ALL"], 1, 1, 1)
+	GameTooltip:Show()
+end
+
+local function takeAll_OnLeave()
+	GameTooltip:Hide()
+end
+
 function MODULE:IsInit()
 	return isInit
 end
@@ -373,6 +392,30 @@ function MODULE:Init()
 
 		frame.TitleText:SetPoint("RIGHT", -30, 0)
 		frame.TitleText:SetText(L["LOOT"])
+
+		local takeAll = CreateFrame("Button", "$parentTakeAllButton", frame)
+		takeAll:SetSize(32, 32)
+		takeAll:SetPoint("TOPRIGHT", -7, -25)
+		takeAll:SetScript("OnClick", takeAll_OnClick)
+		takeAll:SetScript("OnEnter", takeAll_OnEnter)
+		takeAll:SetScript("OnLeave", takeAll_OnLeave)
+
+		takeAll:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+		takeAll:GetHighlightTexture():SetAllPoints()
+
+		takeAll:SetPushedTexture("Interface\\Buttons\\ButtonHilight-Square")
+		takeAll:GetPushedTexture():SetBlendMode("ADD")
+		takeAll:GetPushedTexture():SetDesaturated(true)
+		takeAll:GetPushedTexture():SetVertexColor(1.0, 0.82, 0.0)
+		takeAll:GetPushedTexture():SetAllPoints()
+
+		takeAll.Icon = E:SetIcon(takeAll, "Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")
+
+		local border = E:CreateBorder(takeAll)
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
+		border:SetSize(16)
+		border:SetOffset(-4)
+		takeAll.Border = border
 
 		local inset = CreateFrame("Frame", nil, frame, "InsetFrameTemplate")
 		inset:SetPoint("TOPLEFT", 3, -60)
