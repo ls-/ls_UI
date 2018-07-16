@@ -76,7 +76,24 @@ local function buildSlotInfo(slot)
 end
 
 local function frame_OnEvent(self, event, ...)
+	-- if event == "LOOT_READY" then
+		-- local autoLoot = ...
+		-- if autoLoot or (autoLoot == nil and GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE")) then
+		-- 	if IsFishingLoot() then
+		-- 		for i = 1, GetNumLootItems() do
+		-- 			LootSlot(i)
+		-- 		end
+		-- 	else
+		-- 		CloseLoot()
+		-- 	end
+		-- end
+	-- elseif event == "LOOT_OPENED" then
 	if event == "LOOT_OPENED" then
+		-- local autoLoot = ...
+		-- if autoLoot or (autoLoot == nil and GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE")) then
+		-- 	return
+		-- end
+
 		self:Show()
 
 		-- couldn't open for some reason
@@ -376,6 +393,7 @@ function MODULE:Init()
 		frame:SetClampRectInsets(-16, 4, 16, -4)
 		frame:SetScript("OnEvent", frame_OnEvent)
 		frame:SetScript("OnHide", frame_OnHide)
+		-- frame:RegisterEvent("LOOT_READY")
 		frame:RegisterEvent("LOOT_OPENED")
 		frame:RegisterEvent("LOOT_SLOT_CHANGED")
 		frame:RegisterEvent("LOOT_SLOT_CLEARED")
