@@ -163,6 +163,7 @@ local function frame_OnEvent(self, event, ...)
 			self.ItemList:Update()
 		end
 	elseif event == "LOOT_CLOSED" then
+		StaticPopup_Hide("CONFIRM_LOOT_DISTRIBUTION")
 		StaticPopup_Hide("LOOT_BIND")
 
 		t_wipe(lootTable)
@@ -194,10 +195,10 @@ local function itemList_Update(self)
 		if loot then
 			color = ITEM_QUALITY_COLORS[loot.quality] or ITEM_QUALITY_COLORS[1]
 
+			button.hasItem = loot.type == LOOT_SLOT_ITEM
 			button.link = loot.link
 			button.slot = i + offset
 			button.type = loot.type
-			button.hasItem = loot.type == LOOT_SLOT_ITEM
 
 			button.Icon:SetTexture(loot.texture)
 			button.Icon:SetDesaturated(not not loot.isLocked)
@@ -223,8 +224,10 @@ local function itemList_Update(self)
 	end
 
 	for i = index, #buttons do
+		buttons[i].hasItem = nil
 		buttons[i].link = nil
 		buttons[i].slot = nil
+		buttons[i].type = nil
 		buttons[i]:SetScript("OnUpdate", nil)
 		buttons[i]:Hide()
 	end
@@ -236,8 +239,10 @@ local function itemList_Reset(self)
 	FauxScrollFrame_SetOffset(self, 0)
 
 	for i = 1, #self.buttons do
+		self.buttons[i].hasItem = nil
 		self.buttons[i].link = nil
 		self.buttons[i].slot = nil
+		self.buttons[i].type = nil
 		self.buttons[i]:SetScript("OnUpdate", nil)
 		self.buttons[i]:Hide()
 	end
