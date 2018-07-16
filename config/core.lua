@@ -545,9 +545,10 @@ function MODULE.Init()
 	MODULE:CreateAuraTrackerPanel(5)
 	MODULE:CreateBlizzardPanel(6)
 	MODULE:CreateAurasPanel(7)
-	MODULE:CreateMinimapPanel(8)
-	MODULE:CreateTooltipsPanel(9)
-	MODULE:CreateUnitFramesPanel(10)
+	MODULE:CreateLootPanel(8)
+	MODULE:CreateMinimapPanel(9)
+	MODULE:CreateTooltipsPanel(10)
+	MODULE:CreateUnitFramesPanel(11)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
