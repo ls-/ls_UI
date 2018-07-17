@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## Version 80000.01
+
 - Added 8.0.1 support;
 - Added custom loot frame;
 - Added mouseover key binding. Use "/lsui kb" command or "Binding Mode" button in the config;
