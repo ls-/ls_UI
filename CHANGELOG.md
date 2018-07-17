@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Version 80000.01
+- Added 8.0.1 support;
+- Added custom loot frame;
+- Added mouseover key binding. Use "/lsui kb" command or "Binding Mode" button in the config;
+- Added options to enable DK runes' sorting and colouring by spec;
+- Reworked action bar hub. Retired bag bar;
+- Reworked micro menu and its config. Added "Inventory" micro button;
+- Reworked tooltips. Added tooltip mover and the option to attach it to the mouse cursor;
+- Numerous bug fixes and tweaks;
+- Updated embeds.
+
 ## Version 70300.16
 
 - Fixed number formatting for non-Asian locales.
