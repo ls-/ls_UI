@@ -2,7 +2,7 @@
 
 Yet another UI, but this one is a bit special.
 
-[![Imgur](https://i.imgur.com/j1mij5u.png)](https://i.imgur.com/jhZsFSJ.png "4K Glory")
+[![Imgur](https://i.imgur.com/W2wkLBk.png)](https://i.imgur.com/jW7qnJs.png "4K Glory")
 
 ## Download
 
