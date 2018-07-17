@@ -7,12 +7,10 @@ local _G = getfenv(0)
 
 -- Blizz
 local CreateFrame = _G.CreateFrame
-local GetPrestigeInfo = _G.GetPrestigeInfo
 local UnitFactionGroup = _G.UnitFactionGroup
 local UnitIsMercenary = _G.UnitIsMercenary
 local UnitIsPVP = _G.UnitIsPVP
 local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
-local UnitPrestige = _G.UnitPrestige
 
 -- Mine
 local function element_Override(self, _, unit)
@@ -21,8 +19,8 @@ local function element_Override(self, _, unit)
 	local pvp = self.PvPIndicator
 
 	local status
-	local level = UnitPrestige(unit)
 	local factionGroup = UnitFactionGroup(unit)
+	local honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
 
 	if UnitIsPVPFreeForAll(unit) then
 		status = "FFA"
@@ -39,29 +37,28 @@ local function element_Override(self, _, unit)
 	end
 
 	-- local status = "FFA"
-	-- local level = 0
 
 	if status then
-		if level > 0 and pvp.Prestige then
-			pvp:SetTexture(GetPrestigeInfo(level))
+		if honorRewardInfo then
+			pvp:SetTexture(honorRewardInfo.badgeFileDataID)
 			pvp:SetTexCoord(0, 1, 0, 1)
 		else
-			pvp:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
+			pvp:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-" .. status)
 			pvp:SetTexCoord(102 / 256, 162 / 256, 22 / 128, 82 / 128)
 		end
 
-		pvp.Prestige:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-"..status)
-		pvp.Prestige:SetTexCoord(1 / 256, 101 / 256, 1 / 128, 109 / 128)
-
 		pvp:Show()
-		pvp.Prestige:Show()
+
+		pvp.Banner:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pvp-banner-" .. status)
+		pvp.Banner:SetTexCoord(1 / 256, 101 / 256, 1 / 128, 109 / 128)
+		pvp.Banner:Show()
 
 		if not pvp.Holder:IsExpanded() then
 			pvp.Holder:Expand()
 		end
 	else
 		pvp:Hide()
-		pvp.Prestige:Hide()
+		pvp.Banner:Hide()
 
 		if pvp.Holder:IsExpanded() then
 			pvp.Holder:Collapse()
@@ -146,7 +143,7 @@ function UF:CreatePvPIndicator(frame, parent)
 	banner:SetPoint("TOP", pvp, "TOP", 0, 11)
 
 	pvp.Holder = holder
-	pvp.Prestige = banner
+	pvp.Banner = banner
 	pvp.Override = element_Override
 
 	frame.UpdatePvPIndicator = frame_UpdatePvPIndicator

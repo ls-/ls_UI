@@ -6,41 +6,62 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local s_gsub = _G.string.gsub
 local s_utf8sub = _G.string.utf8sub
+local select = _G.select
+
+--[[ luacheck: globals
+	CreateFrame GetBindingKey GetBindingText LibStub SetBinding
+
+	RANGE_INDICATOR
+]]
 
 -- Mine
-local function button_GetBindingKey(self)
-	local text = self._command and GetBindingKey(self._command) or ""
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
-	if text and text ~= "" then
-		text = text:gsub("SHIFT%-", "S")
-		text = text:gsub("CTRL%-", "C")
-		text = text:gsub("ALT%-", "A")
-		text = text:gsub("BUTTON1", "LM")
-		text = text:gsub("BUTTON2", "RM")
-		text = text:gsub("BUTTON3", "MM")
-		text = text:gsub("BUTTON", "M")
-		text = text:gsub("MOUSEWHEELDOWN", "WD")
-		text = text:gsub("MOUSEWHEELUP", "WU")
-		text = text:gsub("NUMPADDECIMAL", "N.")
-		text = text:gsub("NUMPADDIVIDE", "N/")
-		text = text:gsub("NUMPADMINUS", "N-")
-		text = text:gsub("NUMPADMULTIPLY", "N*")
-		text = text:gsub("NUMPADPLUS", "N+")
-		text = text:gsub("NUMPAD", "N")
-		text = text:gsub("PAGEDOWN", "PD")
-		text = text:gsub("PAGEUP", "PU")
-		text = text:gsub("SPACE", "Sp")
-		text = text:gsub("DOWN", "Dn")
-		text = text:gsub("LEFT", "Lt")
-		text = text:gsub("RIGHT", "Rt")
-		text = text:gsub("UP", "Up")
+local function button_GetHotkey(self)
+	return LibKeyBound:ToShortKey(self._command and GetBindingKey(self._command) or GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton")) or ""
+end
+
+local function button_SetKey(self, key)
+	SetBinding(key, self._command)
+end
+
+local function button_GetBindings(self)
+	local binding = self._command
+	local keys = ""
+
+	for i = 1, select("#", GetBindingKey(binding)) do
+		if keys ~= "" then
+			keys = keys .. ", "
+		end
+
+		keys = keys .. GetBindingText(select(i, GetBindingKey(binding)), nil)
 	end
 
-	if not text or text == "" then
-		text = RANGE_INDICATOR
+	binding = "CLICK " .. self:GetName() .. ":LeftButton"
+
+	for i = 1, select("#", GetBindingKey(binding)) do
+		if keys ~= "" then
+			keys = keys .. ", "
+		end
+
+		keys = keys.. GetBindingText(select(i, GetBindingKey(binding)), nil)
 	end
 
-	return text
+	return keys
+end
+
+local function button_ClearBindings(self)
+	local binding = self._command
+
+	while GetBindingKey(binding) do
+		SetBinding(GetBindingKey(binding), nil)
+	end
+
+	binding = "CLICK " .. self:GetName() .. ":LeftButton"
+
+	while GetBindingKey(binding) do
+		SetBinding(GetBindingKey(binding), nil)
+	end
 end
 
 local function setNormalTextureHook(self, texture)
@@ -49,8 +70,10 @@ local function setNormalTextureHook(self, texture)
 	end
 end
 
-local function updateHotKey(self)
-	self:SetFormattedText("%s", self:GetParent():GetBindingKey())
+local function updateHotKey(self, text)
+	if text ~= RANGE_INDICATOR then
+		self:SetFormattedText("%s", self:GetParent():GetHotkey() or "")
+	end
 end
 
 local function updateMacroText(self, text)
@@ -147,7 +170,21 @@ local function skinButton(button)
 		bHotKey:SetVertexColor(1, 1, 1, 1)
 		bHotKey:Show()
 
-		button.GetBindingKey = button_GetBindingKey
+		if not button.GetHotkey then
+			button.GetHotkey = button_GetHotkey
+		end
+
+		if not button.SetKey then
+			button.SetKey = button_SetKey
+		end
+
+		if not button.GetBindings then
+			button.GetBindings = button_GetBindings
+		end
+
+		if not button.ClearBindings then
+			button.ClearBindings = button_ClearBindings
+		end
 
 		updateHotKey(bHotKey)
 		hooksecurefunc(bHotKey, "SetText", updateHotKey)

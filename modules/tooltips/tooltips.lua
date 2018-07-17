@@ -5,14 +5,15 @@ local MODULE = P:AddModule("Tooltips")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local type = _G.type
+local next = _G.next
 local s_format = _G.string.format
+local type = _G.type
 
 -- Blizz
-local C_ArtifactUI_GetPowerInfo = _G.C_ArtifactUI.GetPowerInfo
-local C_PetJournal_GetPetTeamAverageLevel = _G.C_PetJournal.GetPetTeamAverageLevel
-local C_Timer_After = _G.C_Timer.After
-local C_TradeSkillUI_GetRecipeReagentItemLink = _G.C_TradeSkillUI.GetRecipeReagentItemLink
+local C_ArtifactUI = _G.C_ArtifactUI
+local C_PetJournal = _G.C_PetJournal
+local C_Timer = _G.C_Timer
+local C_TradeSkillUI = _G.C_TradeSkillUI
 local CanInspect = _G.CanInspect
 local GetAuctionItemInfo = _G.GetAuctionItemInfo
 local GetBackpackCurrencyInfo = _G.GetBackpackCurrencyInfo
@@ -29,6 +30,7 @@ local GetTime = _G.GetTime
 local IsShiftKeyDown = _G.IsShiftKeyDown
 local ItemRefTooltip = _G.ItemRefTooltip
 local NotifyInspect = _G.NotifyInspect
+local ShowBossFrameWhenUninteractable = _G.ShowBossFrameWhenUninteractable
 local UnitAura = _G.UnitAura
 local UnitBattlePetLevel = _G.UnitBattlePetLevel
 local UnitBattlePetType = _G.UnitBattlePetType
@@ -53,6 +55,13 @@ local UnitPVPName = _G.UnitPVPName
 local UnitRace = _G.UnitRace
 local UnitRealmRelationship = _G.UnitRealmRelationship
 
+--[[ luacheck: globals
+	CreateFrame GameTooltip GameTooltipStatusBar GameTooltipTextLeft1
+	GameTooltipTextLeft2 GameTooltipTextRight1 LSTooltipAnchor UIParent
+
+	LE_REALM_RELATION_VIRTUAL
+]]
+
 -- Mine
 local inspectGUIDCache = {}
 local isInit = false
@@ -74,7 +83,7 @@ local TEXTS_TO_REMOVE = {
 	[_G.PVP] = true,
 }
 
-local function AddGenericInfo(tooltip, id)
+local function addGenericInfo(tooltip, id)
 	if not (id and C.db.profile.tooltips.id) then return end
 
 	local name = tooltip:GetName()
@@ -93,7 +102,7 @@ local function AddGenericInfo(tooltip, id)
 	tooltip:Show()
 end
 
-local function AddSpellInfo(tooltip, id, caster)
+local function addSpellInfo(tooltip, id, caster)
 	if not (id and C.db.profile.tooltips.id) then return end
 
 	local name = tooltip:GetName()
@@ -124,7 +133,7 @@ local function AddSpellInfo(tooltip, id, caster)
 	tooltip:Show()
 end
 
-local function AddItemInfo(tooltip, id, showQuantity)
+local function addItemInfo(tooltip, id, showQuantity)
 	if not id then return end
 
 	local name = tooltip:GetName()
@@ -161,7 +170,7 @@ local function AddItemInfo(tooltip, id, showQuantity)
 	end
 end
 
-local function ValidateLink(link)
+local function validateLink(link)
 	if not link then return end
 
 	link = link:match("|H(.+)|h.+|h") or link
@@ -173,22 +182,22 @@ local function ValidateLink(link)
 	return
 end
 
-local function HandleLink(tooltip, link, showExtraInfo)
-	link = ValidateLink(link)
+local function handleLink(tooltip, link, showExtraInfo)
+	link = validateLink(link)
 
 	if not link then return end
 
 	local linkType, id = link:match("^(%w+):(%d+)")
 
 	if linkType == "item" then
-		AddItemInfo(tooltip, id, showExtraInfo)
+		addItemInfo(tooltip, id, showExtraInfo)
 	else
-		AddGenericInfo(tooltip, id)
+		addGenericInfo(tooltip, id)
 	end
 end
 
 -- Moves trash lines to the bottom
-local function CleanUp(tooltip)
+local function cleanUp(tooltip)
 	local num = tooltip:NumLines()
 
 	if not num or num <= 1 then return end
@@ -213,7 +222,7 @@ local function CleanUp(tooltip)
 	end
 end
 
-local function GetLineByText(tooltip, text, offset)
+local function getLineByText(tooltip, text, offset)
 	for i = offset, tooltip:NumLines() do
 		local line = _G["GameTooltipTextLeft"..i]
 		local lineText = line:GetText()
@@ -226,7 +235,7 @@ local function GetLineByText(tooltip, text, offset)
 	return nil
 end
 
-local function GetTooltipUnit(tooltip)
+local function getTooltipUnit(tooltip)
 	local _, unit = tooltip:GetUnit()
 
 	if not unit then
@@ -234,6 +243,10 @@ local function GetTooltipUnit(tooltip)
 
 		if frameID and frameID.GetAttribute then
 			unit = frameID:GetAttribute("unit")
+		end
+
+		if unit and not (UnitExists(unit) or ShowBossFrameWhenUninteractable(unit)) then
+			unit = nil
 		end
 	end
 
@@ -261,8 +274,8 @@ local function INSPECT_READY(unitGUID)
 	E:UnregisterEvent("INSPECT_READY", INSPECT_READY)
 end
 
-local function AddInspectInfo(tooltip, unit, classColorHEX, numTries)
-	if not CanInspect(unit) or numTries > 2 then	return end
+local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
+	if not CanInspect(unit) or numTries > 2 then return end
 
 	local unitGUID = UnitGUID(unit)
 
@@ -277,7 +290,9 @@ local function AddInspectInfo(tooltip, unit, classColorHEX, numTries)
 		if not (specName and itemLevel) or GetTime() - inspectGUIDCache[unitGUID].time > 120 then
 			inspectGUIDCache[unitGUID] = nil
 
-			return C_Timer_After(0.25, function() AddInspectInfo(tooltip, unit, classColorHEX, numTries + 1) end)
+			return C_Timer.After(0.25, function()
+				addInspectInfo(tooltip, unit, classColorHEX, numTries + 1)
+			end)
 		end
 
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
@@ -296,124 +311,154 @@ local function AddInspectInfo(tooltip, unit, classColorHEX, numTries)
 	end
 end
 
-local function Tooltip_SetArtifactPowerByID(self, powerID)
-	local info = C_ArtifactUI_GetPowerInfo(powerID)
+local function tooltip_SetArtifactPowerByID(self, powerID)
+	if self:IsForbidden() then return end
 
-	AddSpellInfo(self, info.spellID)
+	local info = C_ArtifactUI.GetPowerInfo(powerID)
+
+	addSpellInfo(self, info.spellID)
 end
 
-local function Tooltip_SetAuctionItem(self, aucType, index)
+local function tooltip_SetAuctionItem(self, aucType, index)
+	if self:IsForbidden() then return end
+
 	local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, id = GetAuctionItemInfo(aucType, index)
 
-	AddItemInfo(self, id, true)
+	addItemInfo(self, id, true)
 end
 
-local function Tooltip_SetBackpackToken(self, index)
+local function tooltip_SetBackpackToken(self, index)
+	if self:IsForbidden() then return end
+
 	local _, _, _, id = GetBackpackCurrencyInfo(index)
 
-	AddGenericInfo(self, id)
+	addGenericInfo(self, id)
 end
 
-local function Tooltip_SetCurrencyToken(self, index)
+local function tooltip_SetCurrencyToken(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetCurrencyListLink(index)
 
-	HandleLink(self, link)
+	handleLink(self, link)
 end
 
-local function Tooltip_SetHyperlink(self, link)
-	HandleLink(self, link, true)
+local function tooltip_SetHyperlink(self, link)
+	if self:IsForbidden() then return end
+
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetItem(self)
+local function tooltip_SetItem(self)
+	if self:IsForbidden() then return end
+
 	local _, link = self:GetItem()
 
-	HandleLink(self, link, true)
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetLFGDungeonReward(self, dungeonID, rewardID)
+local function tooltip_SetLFGDungeonReward(self, dungeonID, rewardID)
+	if self:IsForbidden() then return end
+
 	local link = GetLFGDungeonRewardLink(dungeonID, rewardID)
 
-	HandleLink(self, link)
+	handleLink(self, link)
 end
 
-local function Tooltip_SetLFGDungeonShortageReward(self, dungeonID, rewardArg, rewardID)
+local function tooltip_SetLFGDungeonShortageReward(self, dungeonID, rewardArg, rewardID)
+	if self:IsForbidden() then return end
+
 	local link = GetLFGDungeonShortageRewardLink(dungeonID, rewardArg, rewardID)
 
-	HandleLink(self, link)
+	handleLink(self, link)
 end
 
-local function Tooltip_SetLoot(self, index)
+local function tooltip_SetLoot(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetLootSlotLink(index)
 
-	HandleLink(self, link, true)
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetLootRollItem(self, rollID)
+local function tooltip_SetLootRollItem(self, rollID)
+	if self:IsForbidden() then return end
+
 	local link = GetLootRollItemLink(rollID)
 
-	HandleLink(self, link, true)
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetMerchantItem(self, index)
+local function tooltip_SetMerchantItem(self, index)
+	if self:IsForbidden() then return end
+
 	local link = GetMerchantItemLink(index)
 
-	HandleLink(self, link, true)
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetQuest(self)
+local function tooltip_SetQuest(self)
+	if self:IsForbidden() then return end
+
 	if not (self.questID and GameTooltip:IsOwned(self)) then return end
 
-	AddGenericInfo(GameTooltip, self.questID)
+	addGenericInfo(GameTooltip, self.questID)
 end
 
-local function Tooltip_SetRecipeReagentItem(self, recipeID, reagentIndex)
-	local link = C_TradeSkillUI_GetRecipeReagentItemLink(recipeID, reagentIndex)
+local function tooltip_SetRecipeReagentItem(self, recipeID, reagentIndex)
+	if self:IsForbidden() then return end
 
-	HandleLink(self, link, true)
+	local link = C_TradeSkillUI.GetRecipeReagentItemLink(recipeID, reagentIndex)
+
+	handleLink(self, link, true)
 end
 
-local function Tooltip_SetSpell(self)
-	local _, _, id = self:GetSpell()
+local function tooltip_SetSpell(self)
+	if self:IsForbidden() then return end
 
-	AddSpellInfo(self, id)
+	local _, id = self:GetSpell()
+
+	addSpellInfo(self, id)
 end
 
-local function Tooltip_SetSpellOrItem(self)
-	local _, _, id = self:GetSpell()
+local function tooltip_SetSpellOrItem(self)
+	if self:IsForbidden() then return end
 
-	if id then
-		AddSpellInfo(self, id)
+	local _, linkOrId = self:GetSpell()
+
+	if linkOrId then
+		addSpellInfo(self, linkOrId)
 	else
-		local _, link = self:GetItem()
+		_, linkOrId = self:GetItem()
 
-		HandleLink(self, link, true)
+		handleLink(self, linkOrId, true)
 	end
 end
 
-local function Tooltip_SetUnitAura(self, unit, index, filter)
-	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
+local function tooltip_SetUnitAura(self, unit, index, filter)
+	if self:IsForbidden() then return end
 
-	AddSpellInfo(self, id, caster)
+	local _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
+
+	addSpellInfo(self, id, caster)
 end
 
-local function Tooltip_SetUnit(self)
-	local unit = GetTooltipUnit(self)
+local function tooltip_SetUnit(self)
+	if self:IsForbidden() then return end
 
-	if not (unit and UnitExists(unit)) then return end
+	local unit = getTooltipUnit(self)
+	if not unit then return end
 
 	local config = C.db.profile.tooltips
 	local nameColor = E:GetUnitColor(unit, true)
 	local scaledLevel = UnitEffectiveLevel(unit)
 	local difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
-	local isShiftKeyDown = config.inspect and IsShiftKeyDown() or false
+	local isShiftKeyDown = IsShiftKeyDown()
 
 	if UnitIsPlayer(unit) then
 		local name, realm = UnitName(unit)
 		name = config.title and UnitPVPName(unit) or name
-		local guildName, guildRankName , _, guildRealm = GetGuildInfo(unit)
-		local class = UnitClass(unit)
-		local afkFlag = ""
 		local status = ""
 		local offset = 2
 
@@ -427,13 +472,13 @@ local function Tooltip_SetUnit(self)
 			end
 		end
 
-		if UnitIsAFK(unit) then
-			afkFlag = AFK
-		elseif UnitIsDND(unit) then
-			afkFlag = DND
-		end
-
-		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r|cff%s%s|r", M.COLORS.GRAY:GetHEX(), afkFlag, nameColor:GetHEX(), name)
+		GameTooltipTextLeft1:SetFormattedText(
+			"|cff%s%s|r|cff%s%s|r",
+			M.COLORS.GRAY:GetHEX(),
+			UnitIsAFK(unit) and AFK or UnitIsDND(unit) and DND or "",
+			nameColor:GetHEX(),
+			name
+		)
 
 		if UnitInParty(unit) or UnitInRaid(unit) then
 			local role = UnitGroupRolesAssigned(unit)
@@ -456,53 +501,78 @@ local function Tooltip_SetUnit(self)
 			GameTooltipTextRight1:Show()
 		end
 
+		local guildName, guildRankName , _, guildRealm = GetGuildInfo(unit)
 		if guildName then
 			offset = 3
 
 			if isShiftKeyDown then
-				local hex = M.COLORS.GRAY:GetHEX()
-
 				if guildRealm then
-					guildName = s_format("%s|cff%s-%s|r", guildName, hex, guildRealm)
+					guildName = s_format("%s|cff%s-%s|r", guildName, M.COLORS.GRAY:GetHEX(), guildRealm)
 				end
 
 				if guildRankName then
-					guildName = GUILD_TEMPLATE:format(hex, guildRankName, guildName)
+					guildName = GUILD_TEMPLATE:format(M.COLORS.GRAY:GetHEX(), guildRankName, guildName)
 				end
 			end
 
 			GameTooltipTextLeft2:SetText(guildName)
 		end
 
-		local levelLine = GetLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", offset)
-
+		local levelLine = getLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", offset)
 		if levelLine then
 			local level = UnitLevel(unit)
-			local race = UnitRace(unit)
 			local classColor = E:GetUnitClassColor(unit)
 
-			level = scaledLevel > 0 and (scaledLevel ~= level and scaledLevel.." ("..level..")" or scaledLevel) or "??"
+			levelLine:SetFormattedText(
+				"|cff%s%s|r %s |cff%s%s|r",
+				difficultyColor:GetHEX(),
+				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
+				UnitRace(unit),
+				classColor:GetHEX(),
+				UnitClass(unit)
+			)
 
-			levelLine:SetFormattedText("|cff%s%s|r %s |cff%s%s|r", difficultyColor:GetHEX(), level, race, classColor:GetHEX(), class)
-
-			if isShiftKeyDown and type(level) == "number" and level > 10 then
-				AddInspectInfo(self, unit, classColor:GetHEX(), 0)
+			if config.inspect and isShiftKeyDown and type(level) == "number" and level > 10 then
+				addInspectInfo(self, unit, classColor:GetHEX(), 0)
 			end
+		end
+	elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
+		local name = UnitName(unit) or L["UNKNOWN"]
+		scaledLevel = UnitBattlePetLevel(unit)
+
+		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor:GetHEX(), name)
+
+		local levelLine = getLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", 2)
+		if levelLine then
+			local level = UnitLevel(unit)
+			local petType = _G["BATTLE_PET_NAME_"..UnitBattlePetType(unit)]
+
+			local teamLevel = C_PetJournal.GetPetTeamAverageLevel()
+			if teamLevel then
+				difficultyColor = E:GetRelativeDifficultyColor(teamLevel, scaledLevel)
+			else
+				difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
+			end
+
+			levelLine:SetFormattedText(
+				"|cff%s%s|r %s",
+				difficultyColor:GetHEX(),
+				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
+				(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
+			)
 		end
 	else
 		local name = UnitName(unit) or L["UNKNOWN"]
-		local isPet = UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)
 		local status = ""
-		scaledLevel = isPet and UnitBattlePetLevel(unit) or scaledLevel
 
 		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor:GetHEX(), name)
 
 		if UnitIsQuestBoss(unit) then
-			status = status..s_format(M.textures.inlineicons["QUEST"], 13, 13)
+			status = status .. s_format(M.textures.inlineicons["QUEST"], 13, 13)
 		end
 
 		if isPVPReady then
-			status = status..s_format(M.textures.inlineicons[pvpFaction], 13, 13)
+			status = status .. s_format(M.textures.inlineicons[pvpFaction], 13, 13)
 		end
 
 		if status ~= "" then
@@ -510,61 +580,51 @@ local function Tooltip_SetUnit(self)
 			GameTooltipTextRight1:Show()
 		end
 
-		local line = GetLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", 2)
-
-		if line then
+		local levelLine = getLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", 2)
+		if levelLine then
 			local level = UnitLevel(unit)
-			local classification = E:GetUnitClassification(unit)
-			local creatureType = UnitCreatureType(unit)
 
-			level = scaledLevel > 0 and (scaledLevel ~= level and scaledLevel.." ("..level..")" or scaledLevel) or "??"
-
-			if isPet then
-				local teamLevel = C_PetJournal_GetPetTeamAverageLevel()
-				local petType = _G["BATTLE_PET_NAME_"..UnitBattlePetType(unit)]
-
-				if teamLevel then
-					difficultyColor = E:GetRelativeDifficultyColor(teamLevel, scaledLevel)
-				else
-					difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
-				end
-
-				creatureType = (creatureType or L["PET"])..(petType and ", "..petType or "")
-			end
-
-			line:SetFormattedText("|cff%s%s%s|r %s", difficultyColor:GetHEX(), level, classification, creatureType or "")
+			levelLine:SetFormattedText(
+				"|cff%s%s%s|r %s",
+				difficultyColor:GetHEX(),
+				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
+				E:GetUnitClassification(unit),
+				UnitCreatureType(unit) or ""
+			)
 		end
 	end
 
-	local unitTarget = unit.."target"
+	if config.target then
+		local unitTarget = unit.."target"
+		if UnitExists(unitTarget) then
+			local name = UnitName(unitTarget)
 
-	if config.target and UnitExists(unitTarget) then
-		local name = UnitName(unitTarget)
+			if UnitIsPlayer(unitTarget) then
+				name = PLAYER_TEMPLATE:format(
+					E:GetUnitClassColor(unitTarget):GetHEX(),
+					name,
+					E:GetUnitColor(unitTarget, true):GetHEX()
+				)
+			else
+				name = s_format("|cff%s%s|r", E:GetUnitColor(unitTarget):GetHEX(), name)
+			end
 
-		if UnitIsPlayer(unitTarget) then
-			name = PLAYER_TEMPLATE:format(E:GetUnitClassColor(unitTarget):GetHEX(), name, E:GetUnitColor(unitTarget, true):GetHEX())
-		else
-			name = s_format("|cff%s%s|r", E:GetUnitColor(unitTarget):GetHEX(), name)
+			self:AddLine(TARGET:format(name), 1, 1, 1)
 		end
-
-		self:AddLine(TARGET:format(name), 1, 1, 1)
 	end
 
 	if GameTooltipStatusBar:IsShown() then
-		self:SetMinimumWidth(128)
+		self:SetMinimumWidth(140)
 		self:AddLine("--")
 
-		CleanUp(self)
-
-		local line = GetLineByText(self, "%-%-", 2)
+		cleanUp(self)
 
 		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("TOPLEFT", line, "TOPLEFT", 0, -2)
+		GameTooltipStatusBar:SetPoint("TOPLEFT", getLineByText(self, "%-%-", 2), "TOPLEFT", 0, -2)
 		GameTooltipStatusBar:SetPoint("RIGHT", self, "RIGHT", -10, 0)
 		GameTooltipStatusBar:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
-
 	else
-		CleanUp(self)
+		cleanUp(self)
 	end
 
 	self:Show()
@@ -576,6 +636,107 @@ local function MODIFIER_STATE_CHANGED(key)
 	end
 end
 
+local function tooltip_SetDefaultAnchor(self, parent)
+	if self:IsForbidden() then return end
+	if self:GetAnchorType() ~= "ANCHOR_NONE" then return end
+
+	if parent then
+		if C.db.profile.tooltips.anchor_cursor then
+			self:SetOwner(parent, "ANCHOR_CURSOR")
+			return
+		else
+			self:SetOwner(parent, "ANCHOR_NONE")
+		end
+	end
+
+	local _, anchor = self:GetPoint()
+	if not anchor or anchor == UIParent or anchor == LSTooltipAnchor then
+		local quadrant = E:GetScreenQuadrant(LSTooltipAnchor)
+		local p = "BOTTOMRIGHT"
+
+		if quadrant == "TOPRIGHT" or quadrant == "TOP" then
+			p = "TOPRIGHT"
+		elseif quadrant == "BOTTOMLEFT" or quadrant == "LEFT" then
+			p = "BOTTOMLEFT"
+		elseif quadrant == "TOPLEFT"  then
+			p = "TOPLEFT"
+		end
+
+		self:ClearAllPoints()
+		self:SetPoint(p, "LSTooltipAnchor", p, 0, 0)
+	end
+end
+
+local function tooltip_AddStatusBar(self, _, max, value)
+	for _, child in next, {self:GetChildren()} do
+		if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
+			if not child.handled then
+				E:HandleStatusBar(child)
+				E:SetStatusBarSkin(child, "HORIZONTAL-GLASS")
+				child:SetHeight(10)
+			end
+
+			-- theoretically, there should be only 1 bar visible
+			if value < max then
+				child:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
+			else
+				child:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+			end
+		end
+	end
+end
+
+local function tooltipBar_OnShow(self)
+	local tooltip = self:GetParent()
+
+	if tooltip:IsForbidden() then return end
+	if tooltip:NumLines() == 0 then
+		self.numTries = (self.numTries or 0) + 1
+
+		if self.numTries < 3 then
+			C_Timer.After(0.1, function() tooltipBar_OnShow(self) end)
+		else
+			self.numTries = 0
+		end
+
+		return
+	end
+
+	self.numTries = 0
+
+	if getLineByText(tooltip, "%-%-", 2) then return end
+
+	tooltip:SetMinimumWidth(140)
+	tooltip:AddLine("--")
+
+	cleanUp(tooltip)
+
+	self:ClearAllPoints()
+	self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
+	self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
+
+	local unit = getTooltipUnit(tooltip)
+	if unit then
+		self:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
+	else
+		self:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+	end
+
+	tooltip:Show()
+end
+
+local function tooltipBar_OnValueChanged(self, value)
+	if not value then return end
+
+	local _, max = self:GetMinMaxValues()
+	if max == 1 then
+		self.Text:Hide()
+	else
+		self.Text:Show()
+		self.Text:SetFormattedText("%s / %s", E:NumberFormat(value, 1), E:NumberFormat(max, 1))
+	end
+end
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -583,136 +744,98 @@ end
 function MODULE:Init()
 	if not isInit and C.db.char.tooltips.enabled then
 		-- Spells
-		GameTooltip:HookScript("OnTooltipSetSpell", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetMountBySpellID", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetPetAction", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetPvpTalent", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetQuestLogRewardSpell", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetQuestRewardSpell", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetShapeshift", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetSpellBookItem", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetSpellByID", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetTalent", Tooltip_SetSpell)
-		-- hooksecurefunc(GameTooltip, "SetTrainerService", Tooltip_SetSpell)
+		GameTooltip:HookScript("OnTooltipSetSpell", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetMountBySpellID", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetPetAction", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetPvpTalent", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetQuestLogRewardSpell", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetQuestRewardSpell", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetShapeshift", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetSpellBookItem", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetSpellByID", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetTalent", tooltip_SetSpell)
+		-- hooksecurefunc(GameTooltip, "SetTrainerService", tooltip_SetSpell)
 
-		hooksecurefunc(GameTooltip, "SetUnitAura", Tooltip_SetUnitAura)
-		hooksecurefunc(GameTooltip, "SetUnitBuff", Tooltip_SetUnitAura)
-		hooksecurefunc(GameTooltip, "SetUnitDebuff", Tooltip_SetUnitAura)
-		hooksecurefunc(GameTooltip, "SetArtifactPowerByID", Tooltip_SetArtifactPowerByID)
+		hooksecurefunc(GameTooltip, "SetUnitAura", tooltip_SetUnitAura)
+		hooksecurefunc(GameTooltip, "SetUnitBuff", tooltip_SetUnitAura)
+		hooksecurefunc(GameTooltip, "SetUnitDebuff", tooltip_SetUnitAura)
+		hooksecurefunc(GameTooltip, "SetArtifactPowerByID", tooltip_SetArtifactPowerByID)
 
 		-- Items
-		GameTooltip:HookScript("OnTooltipSetItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetAuctionSellItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetBagItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetBuybackItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetExistingSocketGem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetGuildBankItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetHeirloomByItemID", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetInboxItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetInventoryItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetInventoryItemByID", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetItemByID", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetMerchantCostItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetQuestItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetQuestLogItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetQuestLogSpecialItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetSendMailItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetSocketedItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetSocketGem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetTradePlayerItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetTradeTargetItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetTransmogrifyItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetUpgradeItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetVoidDepositItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetVoidItem", Tooltip_SetItem)
-		-- hooksecurefunc(GameTooltip, "SetVoidWithdrawalItem", Tooltip_SetItem)
+		GameTooltip:HookScript("OnTooltipSetItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetAuctionSellItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetBagItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetBuybackItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetExistingSocketGem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetGuildBankItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetHeirloomByItemID", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetInboxItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetInventoryItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetInventoryItemByID", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetItemByID", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetMerchantCostItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetQuestItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetQuestLogItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetQuestLogSpecialItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetSendMailItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetSocketedItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetSocketGem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetTradePlayerItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetTradeTargetItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetTransmogrifyItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetUpgradeItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetVoidDepositItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetVoidItem", tooltip_SetItem)
+		-- hooksecurefunc(GameTooltip, "SetVoidWithdrawalItem", tooltip_SetItem)
 
-		hooksecurefunc(GameTooltip, "SetAuctionItem", Tooltip_SetAuctionItem)
-		hooksecurefunc(GameTooltip, "SetLootItem", Tooltip_SetLoot)
-		hooksecurefunc(GameTooltip, "SetLootRollItem", Tooltip_SetLootRollItem)
-		hooksecurefunc(GameTooltip, "SetMerchantItem", Tooltip_SetMerchantItem)
-		hooksecurefunc(GameTooltip, "SetRecipeReagentItem", Tooltip_SetRecipeReagentItem)
-		hooksecurefunc(GameTooltip, "SetToyByItemID", AddItemInfo)
+		hooksecurefunc(GameTooltip, "SetAuctionItem", tooltip_SetAuctionItem)
+		hooksecurefunc(GameTooltip, "SetLootItem", tooltip_SetLoot)
+		hooksecurefunc(GameTooltip, "SetLootRollItem", tooltip_SetLootRollItem)
+		hooksecurefunc(GameTooltip, "SetMerchantItem", tooltip_SetMerchantItem)
+		hooksecurefunc(GameTooltip, "SetRecipeReagentItem", tooltip_SetRecipeReagentItem)
+		hooksecurefunc(GameTooltip, "SetToyByItemID", addItemInfo)
 
 		-- Currencies
-		hooksecurefunc(GameTooltip, "SetBackpackToken", Tooltip_SetBackpackToken)
-		hooksecurefunc(GameTooltip, "SetCurrencyToken", Tooltip_SetCurrencyToken)
-		hooksecurefunc(GameTooltip, "SetCurrencyByID", AddGenericInfo)
-		hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", AddGenericInfo)
-		hooksecurefunc(GameTooltip, "SetLootCurrency", Tooltip_SetLoot)
+		hooksecurefunc(GameTooltip, "SetBackpackToken", tooltip_SetBackpackToken)
+		hooksecurefunc(GameTooltip, "SetCurrencyToken", tooltip_SetCurrencyToken)
+		hooksecurefunc(GameTooltip, "SetCurrencyByID", addGenericInfo)
+		hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", addGenericInfo)
+		hooksecurefunc(GameTooltip, "SetLootCurrency", tooltip_SetLoot)
 
 		-- Quests
-		local hookedQuestTitleButtons = {}
-
-		hooksecurefunc("QuestLogQuests_GetTitleButton", function(index)
-			local button = _G.QuestMapFrame.QuestsFrame.Contents.Titles[index]
-
-			if not hookedQuestTitleButtons[button] then
-				button:HookScript("OnEnter", Tooltip_SetQuest)
-
-				hookedQuestTitleButtons[button] = true
-			end
-		end)
-
-		hooksecurefunc("QuestMapLogTitleButton_OnEnter", Tooltip_SetQuest)
+		hooksecurefunc("QuestMapLogTitleButton_OnEnter", tooltip_SetQuest)
 
 		-- Units
-		GameTooltip:HookScript("OnTooltipSetUnit", Tooltip_SetUnit)
+		GameTooltip:HookScript("OnTooltipSetUnit", tooltip_SetUnit)
 
 		-- Other
-		hooksecurefunc(GameTooltip, "SetHyperlink", Tooltip_SetHyperlink)
-		hooksecurefunc(ItemRefTooltip, "SetHyperlink", Tooltip_SetHyperlink)
-		hooksecurefunc(GameTooltip, "SetAction", Tooltip_SetSpellOrItem)
-		hooksecurefunc(GameTooltip, "SetRecipeResultItem", Tooltip_SetSpellOrItem)
-		hooksecurefunc(GameTooltip, "SetLFGDungeonReward", Tooltip_SetLFGDungeonReward)
-		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", Tooltip_SetLFGDungeonShortageReward)
+		hooksecurefunc(GameTooltip, "SetHyperlink", tooltip_SetHyperlink)
+		hooksecurefunc(ItemRefTooltip, "SetHyperlink", tooltip_SetHyperlink)
+		hooksecurefunc(GameTooltip, "SetAction", tooltip_SetSpellOrItem)
+		hooksecurefunc(GameTooltip, "SetRecipeResultItem", tooltip_SetSpellOrItem)
+		hooksecurefunc(GameTooltip, "SetLFGDungeonReward", tooltip_SetLFGDungeonReward)
+		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", tooltip_SetLFGDungeonShortageReward)
 
-		E:HandleStatusBar(GameTooltipStatusBar)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
+		-- Anchor
+		local point = C.db.profile.tooltips.point
+
+		local anchor = CreateFrame("Frame", "LSTooltipAnchor", UIParent)
+		anchor:SetSize(64, 64)
+		anchor:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E.Movers:Create(anchor)
+
+		hooksecurefunc("GameTooltip_SetDefaultAnchor", tooltip_SetDefaultAnchor)
 
 		-- Status Bars
+		E:HandleStatusBar(GameTooltipStatusBar)
+		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
 		GameTooltipStatusBar:SetHeight(10)
-		GameTooltipStatusBar:SetScript("OnShow", function(bar)
-			local tooltip = bar:GetParent()
+		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
+		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 
-			if tooltip:NumLines() == 0 or GetLineByText(tooltip, "%-%-", 2) then return end
+		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
 
-			tooltip:SetMinimumWidth(128)
-			tooltip:AddLine("--")
-
-			CleanUp(tooltip)
-
-			local line = GetLineByText(tooltip, "%-%-", 2)
-
-			bar:ClearAllPoints()
-			bar:SetPoint("TOPLEFT", line, "TOPLEFT", 0, -2)
-			bar:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
-			bar:SetStatusBarColor(E:GetUnitReactionColor(GetTooltipUnit(tooltip)):GetRGB())
-		end)
-		GameTooltipStatusBar:SetScript("OnValueChanged", function(bar, value)
-			if not value then return end
-
-			local _, max = bar:GetMinMaxValues()
-
-			if max == 1 then
-				bar.Text:Hide()
-			else
-				bar.Text:Show()
-				bar.Text:SetFormattedText("%s / %s", E:NumberFormat(value, 1), E:NumberFormat(max, 1))
-			end
-		end)
-
-		for i = 1, 6 do
-			local bar = E:CreateStatusBar(GameTooltip, "GameTooltipStatusBar"..i, "HORIZONTAL")
-			bar:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
-			bar:SetHeight(10)
-
-			E:SetStatusBarSkin(bar, "HORIZONTAL-GLASS")
-
-			bar.Text:SetPoint("CENTER", 0, 0)
-
-			GameTooltip.numStatusBars = i
-		end
+		E:RegisterEvent("MODIFIER_STATE_CHANGED", MODIFIER_STATE_CHANGED)
 
 		isInit = true
 
@@ -722,12 +845,6 @@ end
 
 function MODULE.Update()
 	if isInit then
-		local config = C.db.profile.tooltips
-
-		if config.inspect then
-			E:RegisterEvent("MODIFIER_STATE_CHANGED", MODIFIER_STATE_CHANGED)
-		else
-			E:UnregisterEvent("MODIFIER_STATE_CHANGED", MODIFIER_STATE_CHANGED)
-		end
+		-- local config = C.db.profile.tooltips
 	end
 end

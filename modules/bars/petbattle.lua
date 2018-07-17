@@ -32,6 +32,12 @@ local CFG = {
 	},
 	fade = {
 		enabled = false,
+		out_delay = 0.75,
+		out_duration = 0.15,
+		in_delay = 0,
+		in_duration = 0.15,
+		min_alpha = 0,
+		max_alpha = 1,
 	},
 }
 
@@ -42,7 +48,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -112,7 +118,7 @@ function MODULE.CreatePetBattleBar()
 		else
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
+			E.Movers:Create(bar)
 		end
 
 		bar:Update()
@@ -133,7 +139,7 @@ function MODULE.CreatePetBattleBar()
 		local timer = CreateFrame("Frame", "LSPetBattleTurnTimer", UIParent, "SecureHandlerStateTemplate")
 		timer:SetSize(474, 28)
 		timer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
-		E:CreateMover(timer)
+		E.Movers:Create(timer)
 		RegisterStateDriver(timer, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.TurnTimer:SetParent(timer)
@@ -143,7 +149,7 @@ function MODULE.CreatePetBattleBar()
 		local selector = CreateFrame("Frame", "LSPetBattlePetSelector", UIParent, "SecureHandlerStateTemplate")
 		selector:SetSize(636, 200)
 		selector:SetPoint("TOP", "UIParent", "TOP", 0, -194)
-		E:CreateMover(selector)
+		E.Movers:Create(selector)
 		RegisterStateDriver(selector, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(selector)

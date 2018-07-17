@@ -18,7 +18,7 @@ local holder
 function UF:CreateBossHolder()
 	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
 	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
-	E:CreateMover(holder)
+	E.Movers:Create(holder)
 	holder._buttons = {}
 
 	return holder

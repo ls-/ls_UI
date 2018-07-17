@@ -57,7 +57,7 @@ end
 local function UpdateAll()
 	cleanUpProfile()
 	P:UpdateModules()
-	P:UpdateMoverConfig()
+	P.Movers:UpdateConfig()
 end
 
 E:RegisterEvent("ADDON_LOADED", function(arg1)
@@ -94,13 +94,13 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
 
-		P:CleanUpMoverConfig()
+		P.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
 
-		P:CleanUpMoverConfig()
+		P.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", UpdateAll)

@@ -19,7 +19,7 @@ function BLIZZARD:SetUpNPE()
 			holder:SetFrameLevel(_G.NPE_TutorialInterfaceHelp:GetFrameLevel() + 1)
 			holder:SetSize(156, 50)
 			holder:SetPoint("BOTTOM", UIParent, "BOTTOM", -34, 336)
-			E:CreateMover(holder, true)
+			E.Movers:Create(holder, true)
 
 			_G.NPE_TutorialInterfaceHelp:ClearAllPoints()
 			_G.NPE_TutorialInterfaceHelp:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)

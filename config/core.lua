@@ -30,10 +30,14 @@ local PanelTemplates_SetTab = _G.PanelTemplates_SetTab
 local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
 local ReloadUI = _G.ReloadUI
 
+--[[ luacheck: globals
+	LibStub
+]]
+
 -- Mine
-local LibStub = _G.LibStub
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
 do
 	-- Mine
@@ -516,10 +520,16 @@ function MODULE.Init()
 				order = 1,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
-				func = function() E:ToggleAllMovers() end,
+				func = function() E.Movers:ToggleAll() end,
+			},
+			keybind_mode = {
+				order = 2,
+				type = "execute",
+				name = LibKeyBound.L.BindingMode,
+				func = function() LibKeyBound:Toggle() end,
 			},
 			reload_ui = {
-				order = 2,
+				order = 3,
 				type = "execute",
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
@@ -535,9 +545,10 @@ function MODULE.Init()
 	MODULE:CreateAuraTrackerPanel(5)
 	MODULE:CreateBlizzardPanel(6)
 	MODULE:CreateAurasPanel(7)
-	MODULE:CreateMinimapPanel(8)
-	MODULE:CreateTooltipsPanel(9)
-	MODULE:CreateUnitFramesPanel(10)
+	MODULE:CreateLootPanel(8)
+	MODULE:CreateMinimapPanel(9)
+	MODULE:CreateTooltipsPanel(10)
+	MODULE:CreateUnitFramesPanel(11)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
@@ -566,6 +577,12 @@ function MODULE.Init()
 	P:AddCommand("", function()
 		if not InCombatLockdown() then
 			AceConfigDialog:Open(addonName)
+		end
+	end)
+
+	P:AddCommand("kb", function()
+		if not InCombatLockdown() then
+			LibKeyBound:Toggle()
 		end
 	end)
 

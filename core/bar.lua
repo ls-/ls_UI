@@ -37,8 +37,9 @@ function E:UpdateBarLayout(bar)
 
 	bar:SetSize(wMult * width + (wMult - 1) * config.spacing + 4, hMult * height + (hMult - 1) * config.spacing + 4)
 
-	if bar:GetName() and E:HasMover(bar) then
-		E:UpdateMoverSize(bar)
+	local mover = E.Movers:Get(bar, true)
+	if mover then
+		mover:UpdateSize()
 	end
 
 	for i, button in next, bar._buttons do

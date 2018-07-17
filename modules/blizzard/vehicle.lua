@@ -17,7 +17,7 @@ function MODULE.SetUpVehicleSeatFrame()
 	if not isInit and C.db.char.blizzard.vehicle.enabled then
 		VehicleSeatIndicator:ClearAllPoints()
 		VehicleSeatIndicator:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
-		E:CreateMover(VehicleSeatIndicator)
+		E.Movers:Create(VehicleSeatIndicator)
 
 		isInit = true
 	end

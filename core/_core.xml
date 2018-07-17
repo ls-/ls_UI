@@ -9,6 +9,7 @@
 	<Script file="border.lua"/>
 	<Script file="button.lua"/>
 	<Script file="cooldown.lua"/>
+	<Script file="fading.lua"/>
 	<Script file="mover.lua"/>
 	<Script file="statusbar.lua"/>
 </Ui>

@@ -37,6 +37,7 @@ $includedItems = @(
 )
 
 $filesToRemove = @(
+	"*.doc*"
 	"*.git*",
 	"*.pkg*",
 	"*.ps1",

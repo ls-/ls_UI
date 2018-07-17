@@ -29,7 +29,7 @@ function MODULE.CreateZoneButton()
 			ZoneAbilityFrame:SetAllPoints()
 
 			self:SetSize(self._config.size + 4, self._config.size + 4)
-			E:UpdateMoverSize(self)
+			E.Movers:Get(self):UpdateSize()
 		end
 
 		ZoneAbilityFrame.ignoreFramePositionManager = true
@@ -47,7 +47,7 @@ function MODULE.CreateZoneButton()
 
 		local point = C.db.profile.bars.zone.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		E.Movers:Create(bar)
 
 		bar:Update()
 

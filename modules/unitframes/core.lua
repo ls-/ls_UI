@@ -46,7 +46,10 @@ end
 
 local function frame_UpdateSize(self)
 	self:SetSize(self._config.width, self._config.height)
-	E:UpdateMoverSize(self)
+
+	if E.Movers:Get(self) then
+		E.Movers:Get(self):UpdateSize()
+	end
 end
 
 local function frame_Preview(self, state)
@@ -108,7 +111,7 @@ function UF:CreateUnitFrame(unit, name)
 			objects[unit] = object
 
 			object:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT][unit].point))
-			E:CreateMover(object)
+			E.Movers:Create(object)
 		end
 
 		units[unit] = true

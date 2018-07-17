@@ -26,10 +26,13 @@ function MODULE.SetUpObjectiveTracker()
 		header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
 		header:SetSize(229, 25)
 		header:SetPoint("TOPRIGHT", -192, -192)
-		E:CreateMover(header, true, function()
+
+		local mover = E.Movers:Create(header, true)
+		mover:SetClampRectInsets(-4, 18, 4, -4)
+		mover.IsDragKeyDown = function()
 			return C.db.profile.blizzard.objective_tracker.drag_key == "NONE"
 				or C.db.profile.blizzard.objective_tracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
-		end, -4, 18, 4, -4)
+		end
 
 		ObjectiveTrackerFrame:SetMovable(true)
 		ObjectiveTrackerFrame:SetUserPlaced(true)
@@ -37,25 +40,13 @@ function MODULE.SetUpObjectiveTracker()
 		ObjectiveTrackerFrame:ClearAllPoints()
 		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
-			if ObjectiveTrackerFrame.collapsed then
-				E:UpdateMoverSize(header, 84)
-			else
-				E:UpdateMoverSize(header)
-			end
+			E.Movers:Get(header):UpdateSize(ObjectiveTrackerFrame.collapsed and 84 or nil)
 		end)
 		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
-			local mover = E:GetMover(header)
-
-			if mover then
-				mover:Show()
-			end
+			E.Movers:Get(header):Show()
 		end)
 		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", function()
-			local mover = E:GetMover(header)
-
-			if mover then
-				mover:Hide()
-			end
+			E.Movers:Get(header):Hide()
 		end)
 
 		isInit = true

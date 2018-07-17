@@ -63,7 +63,6 @@ local function frame_UpdateCastbar(self)
 	local config = self._config.castbar
 	local element = self.Castbar
 	local holder = element.Holder
-	local hasMover = E:HasMover(holder)
 	local width = (config.detached and config.width_override ~= 0) and config.width_override or self._config.width
 	local height = config.height
 
@@ -74,19 +73,21 @@ local function frame_UpdateCastbar(self)
 
 	if point1 and point1.p then
 		if config.detached then
-			if not hasMover then
+			local mover = E.Movers:Get(holder, true)
+			if not mover then
 				holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and self:GetName() or point1.detached_anchor), point1.rP, point1.x, point1.y)
-				E:CreateMover(holder)
+				E.Movers:Create(holder)
 			else
-				E:EnableMover(holder)
-				E:UpdateMoverSize(holder, width, height)
+				mover:Enable()
+				mover:UpdateSize(width, height)
 			end
 		else
 			holder:ClearAllPoints()
 			holder:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y, true)
 
-			if hasMover then
-				E:DisableMover(holder)
+			local mover = E.Movers:Get(holder)
+			if mover then
+				mover:Disable()
 			end
 		end
 	end

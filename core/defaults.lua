@@ -74,6 +74,10 @@ D.profile = {
 					prediction = {
 						enabled = true,
 					},
+					runes = {
+						color_by_spec = true,
+						sort_order = "none",
+					}
 				},
 				castbar = {
 					enabled = true,
@@ -2082,7 +2086,7 @@ D.profile = {
 			},
 			flag = {
 				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 0, -- 0 - zone text, 1 - clock, 2 - bottom
+				position = 2, -- 0 - zone text, 1 - clock, 2 - bottom
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
 		},
@@ -2115,7 +2119,7 @@ D.profile = {
 		blizz_vehicle = false,
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2153,12 +2157,12 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 16
+				y = 20
 			},
 		},
 		bar2 = { -- MultiBarBottomLeft
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2196,12 +2200,12 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 52
+				y = 56
 			},
 		},
 		bar3 = { -- MultiBarBottomRight
 			flyout_dir = "UP",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 12,
 			size = 32,
@@ -2239,12 +2243,12 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 0,
-				y = 88
+				y = 92
 			},
 		},
 		bar4 = { -- MultiBarLeft
 			flyout_dir = "LEFT",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2287,7 +2291,7 @@ D.profile = {
 		},
 		bar5 = { -- MultiBarRight
 			flyout_dir = "LEFT",
-			grid = true,
+			grid = false,
 			num = 12,
 			per_row = 1,
 			size = 32,
@@ -2330,6 +2334,7 @@ D.profile = {
 		},
 		bar6 = { --PetAction
 			flyout_dir = "UP",
+			grid = false,
 			num = 10,
 			per_row = 10,
 			size = 24,
@@ -2432,7 +2437,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = -168,
-				y = 130
+				y = 134
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2453,7 +2458,7 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = -168,
-				y = 174
+				y = 178
 			},
 		},
 		vehicle = { -- LeaveVehicle
@@ -2473,11 +2478,18 @@ D.profile = {
 				anchor = "UIParent",
 				rP = "BOTTOM",
 				x = 168,
-				y = 130
+				y = 134
 			},
 		},
 		micromenu = {
 			visible = true,
+			num = 13,
+			per_row = 13,
+			width = 18,
+			height = 24,
+			spacing = 4,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
 			fade = {
 				enabled = false,
 				out_delay = 0.75,
@@ -2487,36 +2499,82 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-			menu1 = {
-				point = {
-					p = "BOTTOM",
-					anchor = "UIParent",
-					rP = "BOTTOM",
-					x = -280,
-					y = 16
+			point = {
+				p = "BOTTOMRIGHT",
+				anchor = "UIParent",
+				rP = "BOTTOMRIGHT",
+				x = -4,
+				y = 4,
+			},
+			buttons = {
+				character = {
+					enabled = true,
+					tooltip = false,
+				},
+				inventory = {
+					enabled = true,
+					tooltip = true,
+					currency = {},
+				},
+				spellbook = {
+					enabled = true,
+				},
+				talent = {
+					enabled = true,
+				},
+				achievement = {
+					enabled = true,
+				},
+				quest = {
+					enabled = true,
+					tooltip = true,
+				},
+				guild = {
+					enabled = true,
+				},
+				lfd = {
+					enabled = true,
+					tooltip = true,
+				},
+				collection = {
+					enabled = true,
+				},
+				ej = {
+					enabled = true,
+					tooltip = true,
+				},
+				store = {
+					enabled = false,
+				},
+				main = {
+					enabled = true,
+					tooltip = true,
+				},
+				help = {
+					enabled = false,
 				},
 			},
-			menu2 = {
+			bags = {
+				enabled = true,
+				num = 4,
+				per_row = 4,
+				x_growth = "RIGHT",
+				y_growth = "DOWN",
+				size = 32,
+				spacing = 4,
 				point = {
-					p = "BOTTOM",
+					p = "BOTTOMRIGHT",
 					anchor = "UIParent",
-					rP = "BOTTOM",
-					x = 280,
-					y = 16
+					rP = "BOTTOMRIGHT",
+					x = -4,
+					y = 32,
 				},
-			},
-			tooltip = {
-				character = false,
-				quest = true,
-				lfd = true,
-				ej = true,
-				main = true,
 			},
 		},
 		xpbar = {
 			visible = true,
-			width = 746,
-			height = 8,
+			width = 752,
+			height = 12,
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",
@@ -2533,37 +2591,6 @@ D.profile = {
 				min_alpha = 0,
 				max_alpha = 1,
 			},
-		},
-		bags = {
-			num = 5,
-			per_row = 5,
-			size = 32,
-			spacing = 4,
-			visible = true,
-			x_growth = "RIGHT",
-			y_growth = "DOWN",
-			count = {
-				enabled = true,
-				size = 12,
-				flag = "Outline",
-			},
-			fade = {
-				enabled = false,
-				out_delay = 0.75,
-				out_duration = 0.15,
-				in_delay = 0,
-				in_duration = 0.15,
-				min_alpha = 0,
-				max_alpha = 1,
-			},
-			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 434,
-				y = 16
-			},
-			currency = {},
 		},
 	},
 	auras = {
@@ -2680,6 +2707,14 @@ D.profile = {
 		title = true,
 		target = true,
 		inspect = true,
+		anchor_cursor = false,
+		point = {
+			p = "BOTTOMRIGHT",
+			anchor = "UIParent",
+			rP = "BOTTOMRIGHT",
+			x = -76,
+			y = 126,
+		},
 	},
 	blizzard = {
 		objective_tracker = { -- ObjectiveTrackerFrame
@@ -2717,9 +2752,6 @@ D.char = {
 	bars = {
 		enabled = true,
 		restricted = true,
-		bags = {
-			enabled = true,
-		},
 		pet_battle = {
 			enabled = false,
 		},
@@ -2780,5 +2812,8 @@ D.char = {
 		boss = {
 			enabled = true,
 		},
+	},
+	loot = {
+		enabled = true,
 	},
 }

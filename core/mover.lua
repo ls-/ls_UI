@@ -29,7 +29,7 @@ local trackedMovers = {}
 local highlightIndex = 0
 local isDragging = false
 
-local function trakcer_OnUpdate(self, elapsed)
+local function tracker_OnUpdate(self, elapsed)
 	if not isDragging then
 		local isAltKeyDown = IsAltKeyDown()
 
@@ -158,6 +158,8 @@ local function mover_ResetPosition(self)
 	if not self.isSimple then
 		self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
 	end
+
+	self:PostSaveUpdatePosition()
 end
 
 local function mover_UpdatePosition(self, xOffset, yOffset)
@@ -173,12 +175,14 @@ local function mover_UpdatePosition(self, xOffset, yOffset)
 	if self.isSimple then
 		self:Show()
 	else
-		if E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()]) then
+		if self:WasMoved() then
 			self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
 		else
 			self.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
 		end
 	end
+
+	self:PostSaveUpdatePosition()
 end
 
 local function mover_OnEnter(self)
@@ -219,7 +223,7 @@ end
 local function mover_OnDragStart(self)
 	if not self.isSimple and InCombatLockdown() then return end
 
-	if not self.IsDragKeyDown or self:IsDragKeyDown() then
+	if self:IsDragKeyDown() then
 		self:StartMoving()
 
 		if not self.isSimple then
@@ -250,6 +254,45 @@ local function mover_OnClick(self)
 			self.buttons[i]:SetShown(not isShown)
 		end
 	end
+end
+
+local function mover_IsEnabled(self)
+	return not not enabledMovers[self:GetName()]
+end
+
+local function mover_IsDragKeyDown()
+	return true
+end
+
+local function mover_WasMoved(self)
+	return E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()])
+end
+
+local function mover_Enable(self)
+	local name = self:GetName()
+
+	if enabledMovers[name] or not disabledMovers[name] then return end
+
+	enabledMovers[name] = disabledMovers[name]
+	disabledMovers[name] = nil
+
+	enabledMovers[name]:UpdatePosition()
+end
+
+local function mover_Disable(self)
+	local name = self:GetName()
+
+	if disabledMovers[name] or not enabledMovers[name] then return end
+
+	enabledMovers[name]:Hide()
+
+	disabledMovers[name] = enabledMovers[name]
+	enabledMovers[name] = nil
+end
+
+local function mover_UpdateSize(self, width, height)
+	self:SetWidth(width or self.object:GetWidth())
+	self:SetHeight(height or self.object:GetHeight())
 end
 
 local MOVER_BUTTONS = {
@@ -325,114 +368,36 @@ local function createMoverButton(mover, dir)
 	return button
 end
 
-function E.HasMover(_, object)
-	if type(object) == "table" then
-		object = object:GetName()
-	end
-
-	local name = object.."Mover"
-
-	return enabledMovers[name] or disabledMovers[name]
-end
-
-function E.GetMover(_, object)
-	if type(object) == "table" then
-		object = object:GetName()
-	end
-
-	return enabledMovers[object.."Mover"]
-end
-
-do
-	local state = false
-
-	function E.ToggleAllMovers()
-		if InCombatLockdown() then return end
-		state = not state
-
-		for _, mover in next, enabledMovers do
-			if not mover.isSimple then
-				mover:SetShown(state)
-			end
-		end
-
-		if state then
-			tracker:SetScript("OnUpdate", trakcer_OnUpdate)
-		else
-			tracker:SetScript("OnUpdate", nil)
-		end
-	end
-end
-
-function E.UpdateMoverSize(_, object, width, height)
-	local mover = E:GetMover(object)
-
-	if mover then
-		mover:SetWidth(width or object:GetWidth())
-		mover:SetHeight(height or object:GetHeight())
-	end
-end
-
-function E.EnableMover(_, object)
-	if type(object) == "table" then
-		object = object:GetName()
-	end
-
-	local name = object.."Mover"
-
-	if enabledMovers[name] or not disabledMovers[name] then return end
-
-	enabledMovers[name] = disabledMovers[name]
-	disabledMovers[name] = nil
-
-	enabledMovers[name]:UpdatePosition()
-end
-
-function E.DisableMover(_, object)
-	if type(object) == "table" then
-		object = object:GetName()
-	end
-
-	local name = object.."Mover"
-
-	if disabledMovers[name] or not enabledMovers[name] then return end
-
-	enabledMovers[name]:Hide()
-
-	disabledMovers[name] = enabledMovers[name]
-	enabledMovers[name] = nil
-end
-
 local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
-	if not shouldIgnore and E:GetMover(self) then
+	if not shouldIgnore and E.Movers:Get(self) then
 		self:ClearAllPoints()
-		self:SetPoint("TOPRIGHT", E:GetMover(self), "TOPRIGHT", 0, 0, true)
+		self:SetPoint("TOPRIGHT", E.Movers:Get(self), "TOPRIGHT", 0, 0, true)
 	end
 end
 
-function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
+E.Movers = {}
+
+function E.Movers:Create(object, isSimple)
 	if not object then return end
 
 	local objectName = object:GetName()
 
 	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
 
-	local name = objectName.."Mover"
-	local iL, iR, iT, iB = ...
+	local name = objectName .. "Mover"
 
 	local mover = CreateFrame("Button", name, UIParent)
 	mover:SetFrameLevel(object:GetFrameLevel() + 1)
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
 	mover:SetClampedToScreen(true)
-	mover:SetClampRectInsets(iL or -4, iR or 4, iT or 4, iB or -4)
+	mover:SetClampRectInsets(-4, 4, 4, -4)
 	mover:SetMovable(true)
 	mover:SetToplevel(true)
 	mover:RegisterForDrag("LeftButton")
 	mover:SetScript("OnDragStart", mover_OnDragStart)
 	mover:SetScript("OnDragStop", mover_OnDragStop)
 
-	mover.IsDragKeyDown = isDragKeyDownFunc
 	mover.object = object
 
 	if isSimple then
@@ -458,24 +423,29 @@ function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
 
 	if not C.db.profile.movers[E.UI_LAYOUT][name] then
 		C.db.profile.movers[E.UI_LAYOUT][name] = {}
-	else
-		if C.db.profile.movers[E.UI_LAYOUT][name].current then
-			C.db.profile.movers[E.UI_LAYOUT][name].point = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].current)}
-			C.db.profile.movers[E.UI_LAYOUT][name].current = nil
-		end
+	elseif C.db.profile.movers[E.UI_LAYOUT][name].current then
+		C.db.profile.movers[E.UI_LAYOUT][name].point = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].current)}
+		C.db.profile.movers[E.UI_LAYOUT][name].current = nil
 	end
 
 	if not defaults[name] then
 		defaults[name] = {}
 	end
 
-	defaults[name].point = {self:GetCoords(object)}
+	defaults[name].point = {E:GetCoords(object)}
 
-	self:UpdateTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name])
+	E:UpdateTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name])
 
+	mover.Disable = mover_Disable
+	mover.Enable = mover_Enable
+	mover.IsDragKeyDown = mover_IsDragKeyDown
+	mover.IsEnabled = mover_IsEnabled
+	mover.PostSaveUpdatePosition = E.NOOP
 	mover.ResetPosition = mover_ResetPosition
 	mover.SavePosition = mover_SavePosition
 	mover.UpdatePosition = mover_UpdatePosition
+	mover.UpdateSize = mover_UpdateSize
+	mover.WasMoved = mover_WasMoved
 
 	mover:UpdatePosition()
 
@@ -487,11 +457,48 @@ function E:CreateMover(object, isSimple, isDragKeyDownFunc, ...)
 	return mover
 end
 
-function P.CleanUpMoverConfig()
+function E.Movers:Get(object, inclDisabled)
+	if type(object) == "table" then
+		object = object:GetName()
+	end
+
+	if not object then return end
+
+	if inclDisabled and disabledMovers[object .. "Mover"] then
+		return disabledMovers[object .. "Mover"], true
+	end
+
+	return enabledMovers[object .. "Mover"], false
+end
+
+do
+	local state = false
+
+	function E.Movers:ToggleAll()
+		if InCombatLockdown() then return end
+		state = not state
+
+		for _, mover in next, enabledMovers do
+			if not mover.isSimple then
+				mover:SetShown(state)
+			end
+		end
+
+		if state then
+			tracker:SetScript("OnUpdate", tracker_OnUpdate)
+		else
+			tracker:SetScript("OnUpdate", nil)
+		end
+	end
+end
+
+P.Movers = {}
+
+function P.Movers:CleanUpConfig()
 	C.db.profile.movers[E.UI_LAYOUT] = E:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 end
 
-function P.UpdateMoverConfig()
+function P.Movers:UpdateConfig()
 	E:UpdateTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 
 	for _, mover in next, enabledMovers do
@@ -500,7 +507,7 @@ function P.UpdateMoverConfig()
 		if mover.isSimple then
 			mover:Show()
 		else
-			if E:IsEqualTable(defaults[mover:GetName()], C.db.profile.movers[E.UI_LAYOUT][mover:GetName()]) then
+			if mover:WasMoved() then
 				mover.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
 			else
 				mover.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
@@ -508,6 +515,10 @@ function P.UpdateMoverConfig()
 		end
 	end
 end
+
+P:AddCommand("movers", function()
+	E.Movers:ToggleAll()
+end)
 
 E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	for _, mover in next, enabledMovers do
@@ -521,8 +532,4 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	end
 
 	tracker:SetScript("OnUpdate", nil)
-end)
-
-P:AddCommand("movers", function()
-	E:ToggleAllMovers()
 end)
