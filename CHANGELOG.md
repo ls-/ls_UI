@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 80000.02
+
+- Fixed "Classic" layout.
+
 ## Version 80000.01
 
 - Added 8.0.1 support;
