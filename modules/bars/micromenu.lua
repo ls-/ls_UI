@@ -29,7 +29,7 @@ local C_Timer = _G.C_Timer
 	GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
 	GetSavedWorldBossInfo GetTime GuildMicroButton GuildMicroButtonTabard HelpMicroButton InCombatLockdown
 	IsAddOnLoaded IsInventoryItemLocked IsInventoryItemProfessionBag IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton
-	LSBagBar LSInventoryMicroButton LSMicroMenu MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton
+	LSBagBar LSInventoryMicroButton MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton
 	MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot PlaySound PutItemInBag
 	QuestLogMicroButton RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
 	SetClampedTextureRotation SpellbookMicroButton StoreMicroButton TalentMicroButton ToggleAllBags ToggleDropDownMenu
@@ -303,7 +303,7 @@ local function updateHighlightTexture(button)
 end
 
 local function button_OnEnter(self)
-	local p, rP, x, y = getTooltipPoint(LSMicroMenu)
+	local p, rP, x, y = getTooltipPoint(self._parent)
 
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
 	GameTooltip:SetPoint(p, self, rP, x, y)
@@ -330,6 +330,10 @@ end
 
 local function button_ShouldShow(self)
 	return self._config.enabled
+end
+
+local function button_GetAnchor(self)
+	return MODULE:GetBar(self._config.parent) or MODULE:GetBar("micromenu1")
 end
 
 local function button_UpdateConfig(self)
@@ -383,6 +387,7 @@ local function handleMicroButton(button)
 	button:SetScript("OnEnter", button_OnEnter)
 	button:SetScript("OnUpdate", nil)
 
+	button.GetAnchor = button_GetAnchor
 	button.ShouldShow = button_ShouldShow
 	button.UpdateConfig = button_UpdateConfig
 	button.UpdateEvents = button_UpdateEvents
@@ -527,7 +532,7 @@ do
 
 			GameTooltip:AddDoubleLine(L["GOLD"], GetMoneyString(GetMoney(), true), 1, 1, 1, 1, 1, 1)
 
-			if C.db.profile.bars.micromenu.bags.enabled then
+			if C.db.profile.bars.micromenu.bars.bags.enabled then
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["INVENTORY_BUTTON_RCLICK_TOOLTIP"])
 			end
@@ -538,7 +543,7 @@ do
 
 	function inventoryButton_OnClick(_, button)
 		if button == "RightButton" then
-			if C.db.profile.bars.micromenu.bags.enabled then
+			if C.db.profile.bars.micromenu.bars.bags.enabled then
 				if not InCombatLockdown() then
 					if LSBagBar:IsShown() then
 						LSBagBar:Hide()
@@ -580,7 +585,7 @@ do
 end
 
 -- Bags
-local bagBar_OnEvent, bagBar_OnShow, bagBar_Update, bagBar_UpdateConfig, bagBar_UpdateEvents, createBag
+local bagBar_OnEvent, bagBar_OnShow, bagBar_Update, bagBar_UpdateEvents, createBag
 
 do
 	local invIDOffset = ContainerIDToInventoryID(1) - 1
@@ -806,10 +811,6 @@ do
 		else
 			self:UnregisterAllEvents()
 		end
-	end
-
-	function bagBar_UpdateConfig(self)
-		self._config = C.db.profile.bars.micromenu.bags
 	end
 end
 
@@ -1189,34 +1190,47 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateButtons("UpdateConfig")
+	self:UpdateButtonList()
 	self:UpdateButtons("Update")
 	self:UpdateButtons("UpdateEvents")
 	self:UpdateFading()
-	self:UpdateButtonList()
+	self:UpdateButtonVisibility()
 	E:UpdateBarLayout(self)
 	self:UpdateButtons("ResizeIndicators")
 
-	self.BagBar:Update()
+	if self.BagBar then
+		self.BagBar:Update()
+	end
 end
 
 local function bar_UpdateConfig(self)
-	self._config = C.db.profile.bars.micromenu
+	self._config = C.db.profile.bars.micromenu.bars[self._id]
+	self._config.fade = C.db.profile.bars.micromenu.fade
+	self._config.visible = C.db.profile.bars.micromenu.visible
 end
 
 local function bar_UpdateButtonList(self)
 	t_wipe(self._buttons)
 
 	for name in next, BUTTONS do
-		if _G[name]:ShouldShow() then
-			t_insert(self._buttons, _G[name])
-			_G[name]:Show()
-		else
-			_G[name]:SetParent(E.HIDDEN_PARENT)
+		local button = _G[name]
+		if button:ShouldShow() and button:GetAnchor() == self then
+			button._parent = self
+			t_insert(self._buttons, button)
 		end
 	end
 
 	t_sort(self._buttons, buttonSort)
+end
+
+local function bar_UpdateButtonVisibility(self)
+	for _, button in next, self._buttons do
+		button:SetShown(button:ShouldShow())
+
+		if not button:ShouldShow() then
+			button:SetParent(E.HIDDEN_PARENT)
+		end
+	end
 end
 
 local function updateMicroButtonsParent()
@@ -1233,14 +1247,27 @@ end
 
 local function moveMicroButtons()
 	if isInit then
-		LSMicroMenu:UpdateButtonList()
-		E:UpdateBarLayout(LSMicroMenu)
+		local bar = MODULE:GetBar("micromenu1")
+		bar:UpdateButtonList()
+		bar:UpdateButtonVisibility()
+		E:UpdateBarLayout(bar)
+
+		bar = MODULE:GetBar("micromenu2")
+		bar:UpdateButtonList()
+		bar:UpdateButtonVisibility()
+		E:UpdateBarLayout(bar)
 	end
 end
 
 local function updateMicroButtons()
 	if isInit then
-		for _, button in next, LSMicroMenu._buttons do
+		for _, button in next, MODULE:GetBar("micromenu1")._buttons do
+			if button:ShouldShow() then
+				button:Show()
+			end
+		end
+
+		for _, button in next, MODULE:GetBar("micromenu2")._buttons do
 			if button:ShouldShow() then
 				button:Show()
 			end
@@ -1249,7 +1276,7 @@ local function updateMicroButtons()
 end
 
 local function repositionAlert(alert)
-	local quadrant = E:GetScreenQuadrant(LSMicroMenu)
+	local quadrant = E:GetScreenQuadrant(alert.MicroButton)
 	local isTopQuadrant = quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT"
 
 	alert:SetParent(alert.MicroButton)
@@ -1301,23 +1328,33 @@ local function repositionAlert(alert)
 	end
 end
 
-function MODULE.CreateMicroMenu()
+function MODULE:CreateMicroMenu()
 	if not isInit then
-		local bar = CreateFrame("Frame", "LSMicroMenu", UIParent)
-		bar._id = "micromenu"
-		bar._buttons = {}
+		local bar1 = CreateFrame("Frame", "LSMicroMenu1", UIParent)
+		bar1._id = "micromenu1"
+		bar1._buttons = {}
 
-		MODULE:AddBar(bar._id, bar)
+		MODULE:AddBar(bar1._id, bar1)
 
-		bar.Update = bar_Update
-		bar.UpdateButtonList = bar_UpdateButtonList
-		bar.UpdateConfig = bar_UpdateConfig
+		bar1.Update = bar_Update
+		bar1.UpdateButtonList = bar_UpdateButtonList
+		bar1.UpdateButtonVisibility = bar_UpdateButtonVisibility
+		bar1.UpdateConfig = bar_UpdateConfig
+
+		local bar2 = CreateFrame("Frame", "LSMicroMenu2", UIParent)
+		bar2._id = "micromenu2"
+		bar2._buttons = {}
+
+		MODULE:AddBar(bar2._id, bar2)
+
+		bar2.Update = bar_Update
+		bar2.UpdateButtonList = bar_UpdateButtonList
+		bar2.UpdateButtonVisibility = bar_UpdateButtonVisibility
+		bar2.UpdateConfig = bar_UpdateConfig
 
 		for name, data in next, BUTTONS do
 			local button = _G[name] or createMicroButton(name)
 			button:SetID(data.id)
-			button._parent = bar
-			t_insert(bar._buttons, button)
 
 			handleMicroButton(button)
 
@@ -1432,8 +1469,9 @@ function MODULE.CreateMicroMenu()
 		bagBar:Hide()
 		bagBar:SetScript("OnEvent", bagBar_OnEvent)
 		bagBar:SetScript("OnShow", bagBar_OnShow)
+		bagBar._id = "bags"
 		bagBar._buttons = {}
-		bar.BagBar = bagBar
+		bar1.BagBar = bagBar
 
 		for i = 4, 1, -1 do
 			local bag = createBag(bagBar, i)
@@ -1446,20 +1484,23 @@ function MODULE.CreateMicroMenu()
 		bagBar.FilterMenu = menu
 
 		bagBar.Update = bagBar_Update
-		bagBar.UpdateConfig = bagBar_UpdateConfig
+		bagBar.UpdateConfig = bar_UpdateConfig
 		bagBar.UpdateEvents = bagBar_UpdateEvents
 
 		E:ForceHide(MicroButtonAndBagsBar)
 
-		local point = C.db.profile.bars.micromenu.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E.Movers:Create(bar)
+		local point = C.db.profile.bars.micromenu.bars.micromenu1.point
+		bar1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		E.Movers:Create(bar1)
 
-		point = C.db.profile.bars.micromenu.bags.point
+		point = C.db.profile.bars.micromenu.bars.bags.point
 		bagBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bagBar)
 
-		bar:Update()
+		bar2:SetPoint("TOPRIGHT", bar1, "TOPLEFT", 0, 0)
+		E.Movers:Create(bar2)
+
+		self:UpdateMicroMenu()
 
 		-- hack
 		E:RegisterEvent("PLAYER_ENTERING_WORLD", function()
@@ -1470,4 +1511,13 @@ function MODULE.CreateMicroMenu()
 
 		isInit = true
 	end
+end
+
+function MODULE:UpdateMicroMenu()
+	for name in next, BUTTONS do
+		_G[name]:UpdateConfig()
+	end
+
+	self:GetBar("micromenu1"):Update()
+	self:GetBar("micromenu2"):Update()
 end
