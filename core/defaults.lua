@@ -1082,6 +1082,10 @@ D.profile = {
 					prediction = {
 						enabled = true,
 					},
+					runes = {
+						color_by_spec = true,
+						sort_order = "none",
+					}
 				},
 				castbar = {
 					enabled = true,
