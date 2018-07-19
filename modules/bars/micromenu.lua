@@ -226,37 +226,14 @@ local TEXTURE_COORDS = {
 	pushed = {33 / 256, 65 / 256, 177 / 256, 221 / 256},
 }
 
-local function button_ResizeIndicators(self)
-	for i, indicator in next, self.Indicators do
-		indicator:SetSize(self:GetWidth() / #self.Indicators, 4)
-		indicator:ClearAllPoints()
+local function createButtonIndicator(button, indicator)
+	indicator = indicator or button:CreateTexture()
+	indicator:SetDrawLayer("BACKGROUND", 3)
+	indicator:SetColorTexture(1, 1, 1, 1)
+	indicator:SetPoint("BOTTOMLEFT", 0, 0)
+	indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", 0, 4)
 
-		if i == 1 then
-			indicator:SetPoint("BOTTOMLEFT", 0, 0)
-		else
-			indicator:SetPoint("BOTTOMLEFT", self.Indicators[i - 1], "BOTTOMRIGHT", 0, 0)
-		end
-	end
-end
-
-local function createButtonIndicators(button, indicators, num)
-	indicators = indicators or {}
-	num = num or #indicators
-
-	for i = 1, num do
-		local indicator = indicators[i]
-
-		if not indicator then
-			indicator = button:CreateTexture()
-			indicators[i] = indicator
-		end
-
-		indicator:SetDrawLayer("BACKGROUND", 3)
-		indicator:SetColorTexture(1, 1, 1, 1)
-	end
-
-	button.Indicators = indicators
-	button.ResizeIndicators = button_ResizeIndicators
+	return indicator
 end
 
 local function getTooltipPoint(self)
@@ -398,7 +375,7 @@ local function createMicroButton(name)
 end
 
 -- Character
-local characterButton_OnEvent, characterButton_Update, characterButton_UpdateIndicators
+local characterButton_OnEvent, characterButton_Update, characterButton_UpdateIndicator
 
 do
 	local slots = {
@@ -441,7 +418,7 @@ do
 
 			if t - (self.recentUpdate or 0 ) >= 0.1 then
 				C_Timer.After(0.1, function()
-					self:UpdateIndicators()
+					self:UpdateIndicator()
 				end)
 
 				self.recentUpdate = t
@@ -458,10 +435,10 @@ do
 			self:SetScript("OnEnter", button_OnEnter)
 		end
 
-		self:UpdateIndicators()
+		self:UpdateIndicator()
 	end
 
-	function characterButton_UpdateIndicators(self)
+	function characterButton_UpdateIndicator(self)
 		t_wipe(durabilities)
 		minDurability = 100
 
@@ -481,12 +458,12 @@ do
 			end
 		end
 
-		self.Indicators[1]:SetVertexColor(M.COLORS.RYG:GetRGB(minDurability / 100))
+		self.Indicator:SetVertexColor(M.COLORS.RYG:GetRGB(minDurability / 100))
 	end
 end
 
 -- Inventory
-local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateIndicators
+local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateIndicator
 
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
@@ -561,7 +538,7 @@ do
 
 	function inventoryButton_OnEvent(self, event)
 		if event == "BAG_UPDATE_DELAYED" then
-			self:UpdateIndicators()
+			self:UpdateIndicator()
 		elseif event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
 		end
@@ -574,13 +551,13 @@ do
 			self:SetScript("OnEnter", button_OnEnter)
 		end
 
-		self:UpdateIndicators()
+		self:UpdateIndicator()
 	end
 
-	function inventoryButton_UpdateIndicators(self)
+	function inventoryButton_UpdateIndicator(self)
 		updateBagUsageInfo()
 
-		self.Indicators[1]:SetVertexColor(M.COLORS.RYG:GetRGB(freeSlots / totalSlots))
+		self.Indicator:SetVertexColor(M.COLORS.RYG:GetRGB(freeSlots / totalSlots))
 	end
 end
 
@@ -861,7 +838,7 @@ local function guildButton_Update(self)
 end
 
 -- LFD
-local lfdButton_OnEvent, lfdButton_Update, lfdButton_UpdateIndicators
+local lfdButton_OnEvent, lfdButton_Update, lfdButton_UpdateIndicator
 
 do
 	local cta = {
@@ -949,7 +926,7 @@ do
 
 	function lfdButton_OnEvent(self, event)
 		if event == "LFG_LOCK_INFO_RECEIVED" then
-			self:UpdateIndicators()
+			self:UpdateIndicator()
 		end
 	end
 
@@ -970,10 +947,10 @@ do
 			end
 		end
 
-		self:UpdateIndicators()
+		self:UpdateIndicator()
 	end
 
-	function lfdButton_UpdateIndicators(self)
+	function lfdButton_UpdateIndicator(self)
 		t_wipe(cta.tank)
 		t_wipe(cta.healer)
 		t_wipe(cta.damager)
@@ -1085,7 +1062,7 @@ do
 end
 
 -- Main
-local mainMenuButton_OnEvent, mainMenuButton_Update, mainMenuButton_UpdateIndicators
+local mainMenuButton_OnEvent, mainMenuButton_Update, mainMenuButton_UpdateIndicator
 
 do
 	local addOns = {}
@@ -1162,7 +1139,7 @@ do
 			self:SetScript("OnEnter", mainMenuButton_OnEnter)
 
 			self.Ticker = C_Timer.NewTicker(30, function()
-				MainMenuMicroButton:UpdateIndicators()
+				MainMenuMicroButton:UpdateIndicator()
 			end)
 		else
 			self:SetScript("OnEnter", button_OnEnter)
@@ -1173,14 +1150,13 @@ do
 			end
 		end
 
-		self:UpdateIndicators()
+		self:UpdateIndicator()
 	end
 
-	function mainMenuButton_UpdateIndicators(self)
+	function mainMenuButton_UpdateIndicator(self)
 		_, _, latencyHome, latencyWorld = GetNetStats()
 
-		self.Indicators[1]:SetVertexColor(M.COLORS.GYR:GetRGB(latencyHome / PERFORMANCEBAR_MEDIUM_LATENCY))
-		self.Indicators[2]:SetVertexColor(M.COLORS.GYR:GetRGB(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY))
+		self.Indicator:SetVertexColor(M.COLORS.GYR:GetRGB(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY))
 	end
 end
 
@@ -1196,7 +1172,6 @@ local function bar_Update(self)
 	self:UpdateFading()
 	self:UpdateButtonVisibility()
 	E:UpdateBarLayout(self)
-	self:UpdateButtons("ResizeIndicators")
 
 	if self.BagBar then
 		self.BagBar:Update()
@@ -1363,26 +1338,25 @@ function MODULE:CreateMicroMenu()
 			if name == "CharacterMicroButton" then
 				button._id = "character"
 				E:ForceHide(MicroButtonPortrait)
-				createButtonIndicators(button, {}, 1)
 
 				button:SetScript("OnEvent", characterButton_OnEvent)
 
+				button.Indicator = createButtonIndicator(button)
 				button.tooltipText = MicroButtonTooltipText(L["CHARACTER_BUTTON"], "TOGGLECHARACTER0")
 
 				button.Update = characterButton_Update
-				button.UpdateIndicators = characterButton_UpdateIndicators
+				button.UpdateIndicator = characterButton_UpdateIndicator
 			elseif name == "LSInventoryMicroButton" then
 				button._id = "inventory"
-
-				createButtonIndicators(button, {}, 1)
 
 				button:SetScript("OnClick", inventoryButton_OnClick)
 				button:SetScript("OnEvent", inventoryButton_OnEvent)
 
+				button.Indicator = createButtonIndicator(button)
 				button.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
 
 				button.Update = inventoryButton_Update
-				button.UpdateIndicators = inventoryButton_UpdateIndicators
+				button.UpdateIndicator = inventoryButton_UpdateIndicator
 			elseif name == "SpellbookMicroButton" then
 				button._id = "spellbook"
 
@@ -1427,7 +1401,7 @@ function MODULE:CreateMicroMenu()
 				button:HookScript("OnEvent", lfdButton_OnEvent)
 
 				button.Update = lfdButton_Update
-				button.UpdateIndicators = lfdButton_UpdateIndicators
+				button.UpdateIndicator = lfdButton_UpdateIndicator
 			elseif name == "CollectionsMicroButton" then
 				button._id = "collection"
 
@@ -1447,14 +1421,14 @@ function MODULE:CreateMicroMenu()
 				button._id = "store"
 			elseif name == "MainMenuMicroButton" then
 				button._id = "main"
-
 				E:ForceHide(MainMenuBarDownload)
-				createButtonIndicators(button, {MainMenuBarPerformanceBar}, 2)
 
 				button:SetScript("OnEvent", mainMenuButton_OnEvent)
 
+				button.Indicator = createButtonIndicator(button, MainMenuBarPerformanceBar)
+
 				button.Update = mainMenuButton_Update
-				button.UpdateIndicators = mainMenuButton_UpdateIndicators
+				button.UpdateIndicator = mainMenuButton_UpdateIndicator
 			elseif name == "HelpMicroButton" then
 				button._id = "help"
 			end
