@@ -181,11 +181,12 @@ local BUTTONS = {
 }
 
 local ALERTS = {
-	"TalentMicroButtonAlert",
+	"CharacterMicroButtonAlert",
 	"CollectionsMicroButtonAlert",
-	"LFDMicroButtonAlert",
 	"EJMicroButtonAlert",
+	"LFDMicroButtonAlert",
 	"StoreMicroButtonAlert",
+	"TalentMicroButtonAlert",
 }
 
 local TEXTURE_COORDS = {
