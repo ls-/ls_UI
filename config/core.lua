@@ -534,21 +534,40 @@ function MODULE.Init()
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
 			},
+			layout = {
+				order = 4,
+				type = "select",
+				name = L["UI_LAYOUT"],
+				desc = L["UI_LAYOUT_DESC"],
+				values = {
+					ls = L["ORBS"],
+					traditional = L["CLASSIC"]
+				},
+				get = function()
+					return C.db.char.layout
+				end,
+				set = function(_, value)
+					C.db.char.layout = value
+
+					if E.UI_LAYOUT ~= value then
+						MODULE:ShowStaticPopup("RELOAD_UI")
+					end
+				end,
+			},
 		},
 	}
 
 	AceConfig:RegisterOptionsTable(addonName, C.options)
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
-	MODULE:CreateGeneralPanel(3)
-	MODULE:CreateActionBarsPanel(4)
-	MODULE:CreateAuraTrackerPanel(5)
-	MODULE:CreateBlizzardPanel(6)
-	MODULE:CreateAurasPanel(7)
-	MODULE:CreateLootPanel(8)
-	MODULE:CreateMinimapPanel(9)
-	MODULE:CreateTooltipsPanel(10)
-	MODULE:CreateUnitFramesPanel(11)
+	MODULE:CreateActionBarsPanel(5)
+	MODULE:CreateAuraTrackerPanel(6)
+	MODULE:CreateBlizzardPanel(7)
+	MODULE:CreateAurasPanel(8)
+	MODULE:CreateLootPanel(9)
+	MODULE:CreateMinimapPanel(10)
+	MODULE:CreateTooltipsPanel(11)
+	MODULE:CreateUnitFramesPanel(12)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
