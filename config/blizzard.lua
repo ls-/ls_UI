@@ -28,11 +28,23 @@ local DRAG_KEY_INDICES = {
 	NONE = 4,
 }
 
+local CASTBAR_ICON_POSITIONS = {
+	LEFT = L["LEFT"],
+	RIGHT = L["RIGHT"],
+}
+
+local SHOW_PET_OPTIONS = {
+	[-1] = L["AUTO"],
+	[ 0] = L["HIDE"],
+	[ 1] = L["SHOW"],
+}
+
 function CONFIG.CreateBlizzardPanel(_, order)
 	C.options.args.blizzard = {
 		order = order,
 		type = "group",
 		name = L["BLIZZARD"],
+		childGroups = "tab",
 		args = {
 			enabled = {
 				order = 1,
@@ -83,30 +95,8 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
-			digsite_bar = {
-				order = 11,
-				type = "toggle",
-				name = L["DIGSITE_BAR"],
-				disabled = function() return not BLIZZARD:IsInit() end,
-				get = function()
-					return C.db.char.blizzard.digsite_bar.enabled
-				end,
-				set = function(_, value)
-					C.db.char.blizzard.digsite_bar.enabled = value
-
-					if not BLIZZARD:HasDigsiteBar() then
-						if value then
-							BLIZZARD:SetUpDigsiteBar()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end
-			},
 			durability = {
-				order = 12,
+				order = 11,
 				type = "toggle",
 				name = L["DURABILITY_FRAME"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -128,7 +118,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			gm = {
-				order = 13,
+				order = 12,
 				type = "toggle",
 				name = L["GM_FRAME"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -150,7 +140,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			npe = {
-				order = 14,
+				order = 13,
 				type = "toggle",
 				name = L["NPE_FRAME"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -172,7 +162,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			player_alt_power_bar = {
-				order = 15,
+				order = 14,
 				type = "toggle",
 				name = L["ALT_POWER_BAR"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -194,7 +184,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			talking_head = {
-				order = 16,
+				order = 15,
 				type = "toggle",
 				name = L["TALKING_HEAD_FRAME"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -215,30 +205,8 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
-			timer = {
-				order = 17,
-				type = "toggle",
-				name = L["MIRROR_TIMER"],
-				disabled = function() return not BLIZZARD:IsInit() end,
-				get = function()
-					return C.db.char.blizzard.timer.enabled
-				end,
-				set = function(_, value)
-					C.db.char.blizzard.timer.enabled = value
-
-					if not BLIZZARD:HasMirrorTimer() then
-						if value then
-							BLIZZARD:SetUpMirrorTimer()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end
-			},
 			vehicle = {
-				order = 18,
+				order = 16,
 				type = "toggle",
 				name = L["VEHICLE_SEAT_INDICATOR"],
 				disabled = function() return not BLIZZARD:IsInit() end,
@@ -259,10 +227,269 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
+			castbar = {
+				order = 17,
+				type = "group",
+				name = L["CASTBAR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function(info)
+					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
+						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+						BLIZZARD:UpdateCastBars()
+					end
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.castbar.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.castbar.enabled = value
+
+							if not BLIZZARD:HasCastBars() then
+								if value then
+									BLIZZARD:SetUpCastBars()
+								end
+							else
+								if not value then
+									CONFIG:ShowStaticPopup("RELOAD_UI")
+								end
+							end
+						end
+					},
+					show_pet = {
+						order = 2,
+						type = "select",
+						name = L["PET_CAST_BAR"],
+						values = SHOW_PET_OPTIONS,
+					},
+					reset = {
+						type = "execute",
+						order = 3,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.castbar, C.db.profile.blizzard.castbar)
+							BLIZZARD:UpdateCastBars()
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = "",
+					},
+					width = {
+						order = 11,
+						type = "range",
+						name = L["WIDTH"],
+						min = 128, max = 1024, step = 2,
+					},
+					height = {
+						order = 12,
+						type = "range",
+						name = L["HEIGHT"],
+						min = 8, max = 32, step = 4,
+					},
+					text_height = {
+						order = 13,
+						type = "range",
+						name = L["TEXT_HEIGHT"],
+						min = 10, max = 20, step = 2,
+						get = function()
+							return C.db.profile.blizzard.castbar.text.height
+						end,
+						set = function(_, value)
+							C.db.profile.blizzard.castbar.text.height = value
+							BLIZZARD:UpdateCastBars()
+						end,
+					},
+					latency = {
+						order = 14,
+						type = "toggle",
+						name = L["LATENCY"],
+					},
+					icon = {
+						order = 20,
+						type = "group",
+						name = L["ICON"],
+						inline = true,
+						get = function(info)
+							return C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]]
+						end,
+						set = function(info, value)
+							C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]] = value
+							BLIZZARD:UpdateCastBars()
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["ENABLE"],
+							},
+							position = {
+								order = 2,
+								type = "select",
+								name = L["POSITION"],
+								values = CASTBAR_ICON_POSITIONS,
+							},
+						},
+					},
+				},
+			},
+			digsite_bar = {
+				order = 18,
+				type = "group",
+				name = L["DIGSITE_BAR"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				get = function(info)
+					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
+						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+						BLIZZARD:UpdateDigsiteBar()
+					end
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.digsite_bar.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.digsite_bar.enabled = value
+
+							if not BLIZZARD:HasDigsiteBar() then
+								if value then
+									BLIZZARD:SetUpDigsiteBar()
+								end
+							else
+								if not value then
+									CONFIG:ShowStaticPopup("RELOAD_UI")
+								end
+							end
+						end
+					},
+					reset = {
+						type = "execute",
+						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.digsite_bar, C.db.profile.blizzard.digsite_bar)
+							BLIZZARD:UpdateDigsiteBar()
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = "",
+					},
+					width = {
+						order = 11,
+						type = "range",
+						name = L["WIDTH"],
+						min = 128, max = 1024, step = 2,
+					},
+					height = {
+						order = 12,
+						type = "range",
+						name = L["HEIGHT"],
+						min = 8, max = 32, step = 4,
+					},
+					text_height = {
+						order = 13,
+						type = "range",
+						name = L["TEXT_HEIGHT"],
+						min = 10, max = 20, step = 2,
+						get = function()
+							return C.db.profile.blizzard.digsite_bar.text.height
+						end,
+						set = function(_, value)
+							C.db.profile.blizzard.digsite_bar.text.height = value
+							BLIZZARD:UpdateDigsiteBar()
+						end,
+					},
+				},
+			},
+			timer = {
+				order = 19,
+				type = "group",
+				name = L["MIRROR_TIMER"],
+				disabled = function() return not BLIZZARD:IsInit() end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.timer.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.timer.enabled = value
+
+							if not BLIZZARD:HasMirrorTimer() then
+								if value then
+									BLIZZARD:SetUpMirrorTimers()
+								end
+							else
+								if not value then
+									CONFIG:ShowStaticPopup("RELOAD_UI")
+								end
+							end
+						end
+					},
+					reset = {
+						type = "execute",
+						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.timer, C.db.profile.blizzard.timer)
+							BLIZZARD:UpdateMirrorTimers()
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = "",
+					},
+					width = {
+						order = 11,
+						type = "range",
+						name = L["WIDTH"],
+						min = 128, max = 1024, step = 2,
+					},
+					height = {
+						order = 12,
+						type = "range",
+						name = L["HEIGHT"],
+						min = 8, max = 32, step = 4,
+					},
+					text_height = {
+						order = 13,
+						type = "range",
+						name = L["TEXT_HEIGHT"],
+						min = 10, max = 20, step = 2,
+						get = function()
+							return C.db.profile.blizzard.timer.text.height
+						end,
+						set = function(_, value)
+							C.db.profile.blizzard.timer.text.height = value
+							BLIZZARD:UpdateMirrorTimers()
+						end,
+					},
+				},
+			},
 			objective_tracker = {
+				order = 20,
 				type = "group",
 				name = L["OBJECTIVE_TRACKER"],
-				guiInline = true,
 				disabled = function() return not BLIZZARD:IsInit() end,
 				args = {
 					enabled = {
@@ -286,8 +513,22 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							end
 						end
 					},
-					height = {
+					reset = {
+						type = "execute",
 						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.objective_tracker, C.db.profile.blizzard.objective_tracker)
+							BLIZZARD:UpdateObjectiveTracker()
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = "",
+					},
+					height = {
+						order = 10,
 						type = "range",
 						name = L["HEIGHT"],
 						disabled = function() return not BLIZZARD:HasObjectiveTracker() end,
@@ -301,7 +542,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					drag_key = {
-						order = 3,
+						order = 11,
 						type = "select",
 						name = L["DRAG_KEY"],
 						values = DRAG_KEYS,
