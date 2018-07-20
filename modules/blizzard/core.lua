@@ -20,7 +20,7 @@ function BLIZZARD:Init()
 		self:SetUpObjectiveTracker()
 		self:SetUpAltPowerBar()
 		self:SetUpTalkingHead()
-		self:SetUpMirrorTimer()
+		self:SetUpMirrorTimers()
 		self:SetUpVehicleSeatFrame()
 
 		isInit = true

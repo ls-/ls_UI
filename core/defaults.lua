@@ -2762,6 +2762,13 @@ D.profile = {
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
 		},
+		timer = { -- MirrorTimer*, TimerTrackerTimer*
+			width = 200,
+			height = 12,
+			text = {
+				height = 12,
+			},
+		},
 		objective_tracker = { -- ObjectiveTrackerFrame
 			height = 600,
 			drag_key = "NONE"
