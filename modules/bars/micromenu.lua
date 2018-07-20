@@ -306,6 +306,10 @@ local function button_OnEnter(self)
 	GameTooltip:Show()
 end
 
+local function button_Release(self)
+	self:SetParent(E.HIDDEN_PARENT)
+end
+
 local function button_ShouldShow(self)
 	return self._config.enabled
 end
@@ -366,6 +370,7 @@ local function handleMicroButton(button)
 	button:SetScript("OnUpdate", nil)
 
 	button.GetAnchor = button_GetAnchor
+	button.Release = button_Release
 	button.ShouldShow = button_ShouldShow
 	button.UpdateConfig = button_UpdateConfig
 	button.UpdateEvents = button_UpdateEvents
@@ -1490,6 +1495,7 @@ end
 
 function MODULE:UpdateMicroMenu()
 	for name in next, BUTTONS do
+		_G[name]:Release()
 		_G[name]:UpdateConfig()
 	end
 
