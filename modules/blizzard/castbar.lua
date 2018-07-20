@@ -6,21 +6,10 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 local m_min = _G.math.min
 
--- Blizz
-
 --[[ luacheck: globals
-	CastingBarFrame
-	CastingBarFrame_OnEvent
-	CreateFrame
-	GetNetStats
-	PetCastingBarFrame
-	UIParent
-	UnitIsPossessed
-	CastingBarFrame_SetStartCastColor
-	CastingBarFrame_SetStartChannelColor
-	CastingBarFrame_SetFinishedCastColor
-	CastingBarFrame_SetNonInterruptibleCastColor
-	CastingBarFrame_SetFailedCastColor
+	CastingBarFrame CastingBarFrame_OnEvent CreateFrame GetNetStats PetCastingBarFrame UIParent UnitIsPossessed
+	CastingBarFrame_SetStartCastColor CastingBarFrame_SetStartChannelColor CastingBarFrame_SetFinishedCastColor
+	CastingBarFrame_SetNonInterruptibleCastColor CastingBarFrame_SetFailedCastColor
 
 	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
