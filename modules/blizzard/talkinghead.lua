@@ -7,9 +7,11 @@ local _G = getfenv(0)
 local next = _G.next
 local t_remove = _G.table.remove
 
--- Blizz
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local LoadAddOn = _G.LoadAddOn
+--[[ luacheck: globals
+	AlertFrame CreateFrame IsAddOnLoaded LoadAddOn TalkingHeadFrame UIParent
+
+	UIPARENT_MANAGED_FRAME_POSITIONS
+]]
 
 -- Mine
 local isInit = false

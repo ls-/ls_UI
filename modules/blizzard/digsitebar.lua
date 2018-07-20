@@ -6,12 +6,8 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
--- Blizz
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local LoadAddOn = _G.LoadAddOn
-
 --[[ luacheck: globals
-	ArcheologyDigsiteProgressBar ArcheologyDigsiteProgressBar_OnUpdate
+	ArcheologyDigsiteProgressBar ArcheologyDigsiteProgressBar_OnUpdate IsAddOnLoaded LoadAddOn
 
 	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]

@@ -6,14 +6,16 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 
 -- Blizz
-local CreateFrame = _G.CreateFrame
 local IsAltKeyDown = _G.IsAltKeyDown
 local IsControlKeyDown = _G.IsControlKeyDown
 local IsShiftKeyDown = _G.IsShiftKeyDown
 
+--[[ luacheck: globals
+	CreateFrame ObjectiveTrackerFrame UIParent
+]]
+
 -- Mine
 local isInit = false
-local header
 
 function MODULE.HasObjectiveTracker()
 	return isInit
@@ -21,13 +23,13 @@ end
 
 function MODULE.SetUpObjectiveTracker()
 	if not isInit and C.db.char.blizzard.objective_tracker.enabled then
-		header = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
-		header:SetFrameStrata("LOW")
-		header:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
-		header:SetSize(229, 25)
-		header:SetPoint("TOPRIGHT", -192, -192)
+		local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
+		holder:SetFrameStrata("LOW")
+		holder:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
+		holder:SetSize(229, 25)
+		holder:SetPoint("TOPRIGHT", -192, -192)
 
-		local mover = E.Movers:Create(header, true)
+		local mover = E.Movers:Create(holder, true)
 		mover:SetClampRectInsets(-4, 18, 4, -4)
 		mover.IsDragKeyDown = function()
 			return C.db.profile.blizzard.objective_tracker.drag_key == "NONE"
@@ -36,17 +38,17 @@ function MODULE.SetUpObjectiveTracker()
 
 		ObjectiveTrackerFrame:SetMovable(true)
 		ObjectiveTrackerFrame:SetUserPlaced(true)
-		ObjectiveTrackerFrame:SetParent(header)
+		ObjectiveTrackerFrame:SetParent(holder)
 		ObjectiveTrackerFrame:ClearAllPoints()
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", header, "TOPRIGHT", 16, 0)
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 16, 0)
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
-			E.Movers:Get(header):UpdateSize(ObjectiveTrackerFrame.collapsed and 84 or nil)
+			E.Movers:Get(holder):UpdateSize(ObjectiveTrackerFrame.collapsed and 84 or nil)
 		end)
 		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
-			E.Movers:Get(header):Show()
+			E.Movers:Get(holder):Show()
 		end)
 		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnHide", function()
-			E.Movers:Get(header):Hide()
+			E.Movers:Get(holder):Hide()
 		end)
 
 		isInit = true

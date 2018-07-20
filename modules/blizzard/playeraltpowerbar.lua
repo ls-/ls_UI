@@ -5,8 +5,11 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local CreateFrame = _G.CreateFrame
+--[[ luacheck: globals
+	CreateFrame PlayerPowerBarAlt UIParent
+
+	UIPARENT_ALTERNATE_FRAME_POSITIONS 	UIPARENT_MANAGED_FRAME_POSITIONS
+]]
 
 -- Mine
 local isInit = false

@@ -5,9 +5,9 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local IsAddOnLoaded = _G.IsAddOnLoaded
-local LoadAddOn = _G.LoadAddOn
+--[[ luacheck: globals
+	IsAddOnLoaded LoadAddOn OrderHallCommandBar
+]]
 
 -- Mine
 local isInit = false
