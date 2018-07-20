@@ -63,6 +63,7 @@ function E:HandleStatusBar(bar, isRecursive)
 
 		if rbar ~= bar then
 			rbar:SetAllPoints()
+			bar.RealBar = rbar
 		end
 
 		if not bg then
