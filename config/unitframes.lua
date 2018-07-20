@@ -1944,18 +1944,24 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 
 					if UNITFRAMES:IsInit() then
 						if value then
-							UNITFRAMES:CreateUnitFrame(unit)
 
 							if unit == "player" then
+								UNITFRAMES:CreateUnitFrame(unit,"LSPlayer")
 								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:CreateUnitFrame("pet", "LSPet")
 								UNITFRAMES:UpdateUnitFrame("pet")
 							elseif unit == "target" then
+								UNITFRAMES:CreateUnitFrame(unit, "LSTarget")
 								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:CreateUnitFrame("targettarget", "LSTargetTarget")
 								UNITFRAMES:UpdateUnitFrame("targettarget")
 							elseif unit == "focus" then
+								UNITFRAMES:CreateUnitFrame(unit, "LSFocus")
 								UNITFRAMES:UpdateUnitFrame(unit)
+								UNITFRAMES:CreateUnitFrame("focustarget", "LSFocusTarget")
 								UNITFRAMES:UpdateUnitFrame("focustarget")
 							else
+								UNITFRAMES:CreateUnitFrame(unit, "LSBoss")
 								UNITFRAMES:UpdateUnitFrame(unit)
 							end
 						else
