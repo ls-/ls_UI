@@ -422,6 +422,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				order = 19,
 				type = "group",
 				name = L["MIRROR_TIMER"],
+				desc = L["MIRROR_TIMER_DESC"],
 				disabled = function() return not BLIZZARD:IsInit() end,
 				args = {
 					enabled = {
