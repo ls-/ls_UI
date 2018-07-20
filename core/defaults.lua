@@ -2762,6 +2762,13 @@ D.profile = {
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
 		},
+		digsite_bar = { -- ArcheologyDigsiteProgressBar
+			width = 200,
+			height = 12,
+			text = {
+				height = 12,
+			},
+		},
 		timer = { -- MirrorTimer*, TimerTrackerTimer*
 			width = 200,
 			height = 12,
