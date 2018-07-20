@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 80000.03
+
+- Reworked micro menu. Again. Added options to split micro menu into two bars and to assign each  
+  button to either bar individually;
+- Fixed loot frame error that occurred for people who like to spam-click things;
+- Updated both Spanish translations. Translated by Gotzon@Curse.
+
 ## Version 80000.02
 
 - Fixed "Classic" layout.
