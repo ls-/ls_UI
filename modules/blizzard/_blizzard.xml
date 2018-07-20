@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
+	<Script file="castbar.lua"/>
 	<Script file="commandbar.lua"/>
 	<Script file="digsitebar.lua"/>
 	<Script file="durability.lua"/>

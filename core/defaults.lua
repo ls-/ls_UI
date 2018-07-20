@@ -2749,6 +2749,19 @@ D.profile = {
 		},
 	},
 	blizzard = {
+		castbar = { -- CastingBarFrame, PetCastingBarFrame
+			width = 200,
+			height = 12,
+			icon = {
+				enabled = true,
+				position = "LEFT",
+			},
+			text = {
+				height = 12,
+			},
+			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
+			latency = true,
+		},
 		objective_tracker = { -- ObjectiveTrackerFrame
 			height = 600,
 			drag_key = "NONE"
@@ -2793,6 +2806,9 @@ D.char = {
 	},
 	blizzard = {
 		enabled = true,
+		castbar = { -- CastingBarFrame
+			enabled = true
+		},
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
 		},
