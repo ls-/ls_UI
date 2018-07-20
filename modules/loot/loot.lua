@@ -16,8 +16,8 @@ local GetLootSlotType = _G.GetLootSlotType
 --[[ luacheck: globals
 	CloseLoot CreateFrame CursorUpdate FauxScrollFrame_GetOffset FauxScrollFrame_OnVerticalScroll
 	FauxScrollFrame_SetOffset FauxScrollFrame_Update GameTooltip GetCursorPosition GetCVarBool GetNumLootItems
-	HandleModifiedItemClick IsFishingLoot IsModifiedClick LootFrame LootSlot PlaySound ResetCursor StaticPopup_Hide
-	UIParent UISpecialFrames
+	HandleModifiedItemClick IsFishingLoot IsModifiedClick LootFrame LootSlot LootSlotHasItem PlaySound ResetCursor
+	StaticPopup_Hide UIParent UISpecialFrames
 
 	ITEM_QUALITY_COLORS LOOT_SLOT_CURRENCY LOOT_SLOT_ITEM TEXTURE_ITEM_QUEST_BANG TEXTURE_ITEM_QUEST_BORDER
 ]]
@@ -60,6 +60,8 @@ local function buildSlotInfo(slot)
 	if currencyID then
 		item, texture, quantity, quality = GetCurrencyContainerInfo(currencyID, quantity, item, texture, quality)
 	end
+
+	if not texture then return false end
 
 	return {
 		type = type,
@@ -143,14 +145,21 @@ local function frame_OnEvent(self, event, ...)
 		t_wipe(lootTable)
 
 		for slot = 1, GetNumLootItems() do
-			lootTable[slot] = buildSlotInfo(slot)
+			if LootSlotHasItem(slot) then
+				lootTable[slot] = buildSlotInfo(slot)
+			else
+				lootTable[slot] = false
+			end
 		end
 
 		self.ItemList:Update()
 	elseif event == "LOOT_SLOT_CHANGED" then
 		local slot = ...
-
-		lootTable[slot] = buildSlotInfo(slot)
+		if LootSlotHasItem(slot) then
+			lootTable[slot] = buildSlotInfo(slot)
+		else
+			lootTable[slot] = false
+		end
 
 		self.ItemList:Update()
 	elseif event == "LOOT_SLOT_CLEARED" then
@@ -409,7 +418,7 @@ function MODULE:Init()
 		local mover = E.Movers:Create(frame)
 		mover:SetClampRectInsets(-16, 4, 16, -4)
 
-		frame.onCloseCallback = function() CloseLoot() end
+		frame.onCloseCallback = self.Hide
 
 		frame.portrait:SetMask("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 

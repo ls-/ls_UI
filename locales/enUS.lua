@@ -78,6 +78,7 @@ end)()
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
+L["ADDITIONAL_BAR"] = "Additional Bar"
 L["ADVENTURE_JOURNAL_DESC"] = "Show raid lockout information."
 L["ALT_POWER_BAR"] = "Alt Power Bar"
 L["ALT_POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
@@ -106,6 +107,7 @@ L["ASCENDING"] = "Ascending"
 L["AURA_TRACKER"] = "Aura Tracker"
 L["AURAS"] = "Auras"
 L["BAG_SLOTS"] = "Bag Slots"
+L["BAR"] = "Bar"
 L["BAR_1"] = "Bar 1"
 L["BAR_2"] = "Bar 2"
 L["BAR_3"] = "Bar 3"
@@ -257,6 +259,7 @@ L["LOCK_BUTTONS"] = "Lock Buttons"
 L["LOCK_BUTTONS_DESC"] = "Prevents you from picking up and dragging spells off the action bar."
 L["LOOT_ALL"] = "Loot All"
 L["MACRO_TEXT"] = "Macro Text"
+L["MAIN_BAR"] = "Main Bar"
 L["MAINMENU_BUTTON_DESC"] = "Show performance information."
 L["MAINMENU_BUTTON_HOLD_TOOLTIP"] = "|cffffffffHold Shift|r to show memory usage."
 L["MAX_ALPHA"] = "Max Alpha"
