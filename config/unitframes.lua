@@ -631,7 +631,7 @@ local function getOptionsTable_Name(unit, order)
 				order = 10,
 				type = "group",
 				name = "",
-				inline  = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].name.point1[info[#info]]
 				end,
@@ -818,7 +818,7 @@ local function getOptionsTable_RaidIcon(unit, order)
 				order = 20,
 				type = "group",
 				name = "",
-				inline  = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].raid_target.point1[info[#info]]
 				end,
@@ -911,7 +911,7 @@ local function getOptionsTable_DebuffIcons(unit, order)
 				order = 20,
 				type = "group",
 				name = "",
-				inline  = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].debuff.point1[info[#info]]
 				end,
@@ -1059,7 +1059,7 @@ local function getOptionsTable_Auras(unit, order)
 				order = 20,
 				type = "group",
 				name = "",
-				inline  = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].auras.point1[info[#info]]
 				end,
@@ -1102,7 +1102,7 @@ local function getOptionsTable_Auras(unit, order)
 				order = 30,
 				type = "group",
 				name = L["FILTERS"],
-				inline  = true,
+				inline = true,
 				get = function(info)
 					return C.db.profile.units[E.UI_LAYOUT][unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]]
 				end,
@@ -1131,7 +1131,7 @@ local function getOptionsTable_Auras(unit, order)
 					friendly = {
 						order = 2,
 						type = "group",
-						inline  = true,
+						inline = true,
 						name = M.COLORS.GREEN:WrapText(L["FRIENDLY_UNITS"]),
 						args = {
 							buff = {
@@ -1239,7 +1239,7 @@ local function getOptionsTable_Auras(unit, order)
 					enemy = {
 						order = 3,
 						type = "group",
-						inline  = true,
+						inline = true,
 						name = M.COLORS.RED:WrapText(L["ENEMY_UNITS"]),
 						args = {
 							buff = {
@@ -1946,7 +1946,7 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						if value then
 
 							if unit == "player" then
-								UNITFRAMES:CreateUnitFrame(unit,"LSPlayer")
+								UNITFRAMES:CreateUnitFrame(unit, "LSPlayer")
 								UNITFRAMES:UpdateUnitFrame(unit)
 								UNITFRAMES:CreateUnitFrame("pet", "LSPet")
 								UNITFRAMES:UpdateUnitFrame("pet")
