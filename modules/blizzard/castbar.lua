@@ -71,20 +71,10 @@ local function petBar_OnEvent(self, event, ...)
 end
 
 local function handleCastBar(self)
-	local border = self.Border
-	if border then
-		border:SetTexture(nil)
-	end
-
-	local flash = self.Flash
-	if flash then
-		flash:SetTexture(nil)
-	end
-
-	local spark = self.Spark
-	if spark then
-		spark:SetTexture(nil)
-	end
+	self.Border:SetTexture(nil)
+	self.Flash:SetTexture(nil)
+	self.Icon:Hide()
+	self.Spark:SetTexture(nil)
 
 	local holder = CreateFrame("Frame", self:GetName() .. "Holder", UIParent)
 	self.Holder = holder
@@ -97,8 +87,6 @@ local function handleCastBar(self)
 	local bg = self:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
 	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
-
-	self.Icon:Hide()
 
 	local icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
