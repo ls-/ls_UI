@@ -300,7 +300,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					text_height = {
 						order = 13,
 						type = "range",
-						name = L["TEXT_HEIGHT"],
+						name = L["FONT_SIZE"],
 						min = 10, max = 20, step = 2,
 						get = function()
 							return C.db.profile.blizzard.castbar.text.height
@@ -408,7 +408,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					text_height = {
 						order = 13,
 						type = "range",
-						name = L["TEXT_HEIGHT"],
+						name = L["FONT_SIZE"],
 						min = 10, max = 20, step = 2,
 						get = function()
 							return C.db.profile.blizzard.digsite_bar.text.height
@@ -477,7 +477,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					text_height = {
 						order = 13,
 						type = "range",
-						name = L["TEXT_HEIGHT"],
+						name = L["FONT_SIZE"],
 						min = 10, max = 20, step = 2,
 						get = function()
 							return C.db.profile.blizzard.timer.text.height
