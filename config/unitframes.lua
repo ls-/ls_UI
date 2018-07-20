@@ -1950,6 +1950,10 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								UNITFRAMES:UpdateUnitFrame(unit)
 								UNITFRAMES:CreateUnitFrame("pet", "LSPet")
 								UNITFRAMES:UpdateUnitFrame("pet")
+
+								if P:GetModule("Blizzard"):HasCastBars() then
+									P:GetModule("Blizzard"):UpdateCastBars()
+								end
 							elseif unit == "target" then
 								UNITFRAMES:CreateUnitFrame(unit, "LSTarget")
 								UNITFRAMES:UpdateUnitFrame(unit)

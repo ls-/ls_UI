@@ -231,7 +231,9 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				order = 17,
 				type = "group",
 				name = L["CASTBAR"],
-				disabled = function() return not BLIZZARD:IsInit() end,
+				disabled = function()
+					return not BLIZZARD:IsInit() or P:GetModule("UnitFrames"):HasPlayerFrame()
+				end,
 				get = function(info)
 					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
 				end,

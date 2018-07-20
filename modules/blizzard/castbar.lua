@@ -226,7 +226,7 @@ function MODULE:HasCastBars()
 end
 
 function MODULE:SetUpCastBars()
-	if P:GetModule("UnitFrames"):HasPlayerFrame() then
+	if P:GetModule("UnitFrames"):HasPlayerFrame() or C.db.char.units.player.enabled then
 		C.db.char.blizzard.castbar.enabled = false
 	end
 
@@ -260,7 +260,7 @@ function MODULE:SetUpCastBars()
 end
 
 function MODULE:UpdateCastBars()
-	if P:GetModule("UnitFrames"):HasPlayerFrame() then
+	if P:GetModule("UnitFrames"):HasPlayerFrame() or C.db.char.units.player.enabled then
 		C.db.char.blizzard.castbar.enabled = false
 	end
 
