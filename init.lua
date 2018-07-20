@@ -8,49 +8,26 @@ local next = _G.next
 
 -- Mine
 local function cleanUpProfile()
-	if not C.db.profile.version or C.db.profile.version < 7030004 then
-		C.db.profile.movers.ls.ExtraActionBarFrameMover = nil
-		C.db.profile.movers.ls.ZoneAbilityFrameMover = nil
+	-- -> 80000.03
+	if not C.db.profile.version or C.db.profile.version < 8000003 then
+		C.db.profile.movers.ls.LSMicroMenu = nil
+		C.db.profile.movers.traditional.LSMicroMenu = nil
 
-		C.db.profile.movers.traditional.ExtraActionBarFrameMover = nil
-		C.db.profile.movers.traditional.ZoneAbilityFrameMover = nil
+		C.db.profile.bars.micromenu.bags = nil
+		C.db.profile.bars.micromenu.height = nil
+		C.db.profile.bars.micromenu.menu1 = nil
+		C.db.profile.bars.micromenu.menu2 = nil
+		C.db.profile.bars.micromenu.num = nil
+		C.db.profile.bars.micromenu.per_row = nil
+		C.db.profile.bars.micromenu.point = nil
+		C.db.profile.bars.micromenu.spacing = nil
+		C.db.profile.bars.micromenu.tooltip = nil
+		C.db.profile.bars.micromenu.width = nil
+		C.db.profile.bars.micromenu.x_growth = nil
+		C.db.profile.bars.micromenu.y_growth = nil
 
-		C.db.profile.bars.hotkey = nil
-		C.db.profile.bars.icon_indicator = nil
-		C.db.profile.bars.macro = nil
-
-		C.db.profile.bars.micromenu.holder1 = nil
-		C.db.profile.bars.micromenu.holder2 = nil
-	end
-
-	-- -> 70300.10
-	if not C.db.profile.version or C.db.profile.version < 7030010 then
-		for _, v in next, C.db.profile.units.ls do
-			if v.insets then
-				if v.insets.t_height == 14 or v.insets.t_height == 10 then
-					v.insets.t_height = v.insets.t_height - 2
-				end
-
-				if v.insets.b_height == 14 or v.insets.b_height == 10 then
-					v.insets.b_height = v.insets.b_height - 2
-				end
-			end
-		end
-
-		for _, v in next, C.db.profile.units.traditional do
-			if v.insets then
-				if v.insets.t_height == 14 or v.insets.t_height == 10 then
-					v.insets.t_height = v.insets.t_height - 2
-				end
-
-				if v.insets.b_height == 14 or v.insets.b_height == 10 then
-					v.insets.b_height = v.insets.b_height - 2
-				end
-			end
-		end
-
-		C.db.profile.units.ls.boss.y_offset = nil
-		C.db.profile.units.traditional.y_offset = nil
+		C.db.char.bars.bags = nil
+		C.db.profile.bars.bags = nil
 	end
 end
 
