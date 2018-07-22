@@ -256,11 +256,9 @@ local function header_UpdateButtons(self, method, ...)
 end
 
 local function header_UpdateConfig(self)
-	self._config = t_wipe(self._config or {})
-	E:CopyTable(C.db.profile.auras[E.UI_LAYOUT][self._filter], self._config)
-
-	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown)
-	self._config.count = E:CopyTable(C.db.profile.auras.count)
+	self._config = E:CopyTable(C.db.profile.auras[E.UI_LAYOUT][self._filter], self._config)
+	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
+	self._config.count = E:CopyTable(C.db.profile.auras.count, self._config.count)
 end
 
 local function header_UpdateCooldownConfig(self)
