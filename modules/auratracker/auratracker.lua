@@ -146,8 +146,7 @@ local function bar_UpdateButtons(self, method, ...)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = t_wipe(self._config or {})
-	E:CopyTable(C.db.char.auratracker, self._config)
+	self._config = E:CopyTable(C.db.char.auratracker, self._config)
 end
 
 local function bar_UpdateCooldownConfig(self)
