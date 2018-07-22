@@ -127,6 +127,12 @@ local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
+local function button_UpdateCountFont(self)
+	local config = self._parent._config.count
+	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
+	self.Count:SetWordWrap(false)
+end
+
 local function handleButton(button, header)
 	button:HookScript("OnAttributeChanged", button_OnAttributeChanged)
 	button:SetScript("OnEnter", button_OnEnter)
@@ -154,12 +160,15 @@ local function handleButton(button, header)
 	textParent:SetAllPoints()
 	button.TextParent = textParent
 
-	local count = textParent:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+	local count = textParent:CreateFontString(nil, "ARTWORK")
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
 
 	button._parent = header
+	button.UpdateCountFont = button_UpdateCountFont
+
+	button:UpdateCountFont()
 end
 
 local function header_OnAttributeChanged(self, attr, value)
@@ -203,13 +212,10 @@ local function header_Update(self)
 			end
 		end
 
-		self:UpdateCooldownConfig()
-
-		for _, button in next, {self:GetChildren()} do
-			button:SetSize(config.size, config.size)
-		end
-
 		self:Hide()
+		self:UpdateButtons("UpdateCountFont")
+		self:UpdateButtons("SetSize", config.size, config.size)
+		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)
 		self:SetAttribute("initialConfigFunction", ([[
 			self:SetAttribute("type2", "cancelaura")
@@ -240,11 +246,21 @@ local function header_Update(self)
 	end
 end
 
+local function header_UpdateButtons(self, method, ...)
+	local buttons = self._buttons or {self:GetChildren()}
+	for _, button in next, buttons do
+		if button[method] then
+			button[method](button, ...)
+		end
+	end
+end
+
 local function header_UpdateConfig(self)
 	self._config = t_wipe(self._config or {})
 	E:CopyTable(C.db.profile.auras[E.UI_LAYOUT][self._filter], self._config)
 
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown)
+	self._config.count = E:CopyTable(C.db.profile.auras.count)
 end
 
 local function header_UpdateCooldownConfig(self)
@@ -324,10 +340,10 @@ local function createHeader(filter)
 			totem.Border = border
 
 			cd:SetParent(totem)
-			cd:SetReverse(false)
 			cd:ClearAllPoints()
-			cd:SetPoint("TOPLEFT", 1, -1)
 			cd:SetPoint("BOTTOMRIGHT", -1, 1)
+			cd:SetPoint("TOPLEFT", 1, -1)
+			cd:SetDrawSwipe(false)
 			totem.Cooldown = E:HandleCooldown(cd)
 		end
 	else
@@ -347,6 +363,7 @@ local function createHeader(filter)
 
 	header._filter = filter
 	header.Update = header_Update
+	header.UpdateButtons = header_UpdateButtons
 	header.UpdateConfig = header_UpdateConfig
 	header.UpdateCooldownConfig = header_UpdateCooldownConfig
 

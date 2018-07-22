@@ -2794,6 +2794,11 @@ D.profile = {
 		},
 	},
 	auras = {
+		count = {
+			enabled = true,
+			size = 12,
+			flag = "_Outline", -- "_Shadow", ""
+		},
 		cooldown = {
 			expire_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
