@@ -8,7 +8,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 --[[ luacheck: globals
-	CreateFrame LibStub UIParent
+	CreateFrame GetFlyoutInfo LibStub RegisterStateDriver SpellFlyout UIParent ActionButton
 ]]
 
 -- Mine
@@ -115,10 +115,10 @@ local function getBarPage()
 	local page = PAGES[E.PLAYER_CLASS]
 
 	if page then
-		condition = condition.." "..page
+		condition = condition .. " " .. page
 	end
 
-	return condition.." [form] 1; 1"
+	return condition .. " [form] 1; 1"
 end
 
 local function bar_Update(self)
@@ -258,7 +258,7 @@ function MODULE.CreateActionBars()
 				local button = LibActionButton:CreateButton(i, "$parentButton"..i, bar)
 				button:SetState(0, "action", i)
 				button._parent = bar
-				button._command = data.type..i
+				button._command = data.type .. i
 
 				button.UpdateCountFont = button_UpdateCountFont
 				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
@@ -314,7 +314,7 @@ function MODULE.CreateActionBars()
 				local _, _, numSlots = GetFlyoutInfo(ID)
 
 				for i = 1, numSlots do
-					E:SkinFlyoutButton(_G["SpellFlyoutButton"..i])
+					E:SkinFlyoutButton(_G["SpellFlyoutButton" .. i])
 				end
 			end
 		end)
