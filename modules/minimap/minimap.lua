@@ -694,10 +694,12 @@ function MODULE.Init()
 			button:SetScript("OnDragStop", button_OnDragStop)
 		end
 
-		-- Compass
+		-- .Compass
 		MinimapCompassTexture:SetParent(Minimap)
 		MinimapCompassTexture:ClearAllPoints()
 		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
+		MinimapCompassTexture:SetSize(272, 272)
+		Minimap.Compass = MinimapCompassTexture
 
 		-- Difficulty flags
 		MiniMapChallengeMode:SetSize(38, 46)
