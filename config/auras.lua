@@ -13,76 +13,54 @@ local function GetOptionsTable_Aura(filter, order, name)
 		order = order,
 		type = "group",
 		name = name,
+		disabled = function() return not AURAS:IsInit() end,
+		get = function(info)
+			return C.db.profile.auras[filter][info[#info]]
+		end,
+		set = function(info, value)
+			if C.db.profile.auras[filter][info[#info]] ~= value then
+				C.db.profile.auras[filter][info[#info]] = value
+				AURAS:UpdateHeader(filter)
+			end
+		end,
 		args = {
 			reset = {
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT][filter], C.db.profile.auras[E.UI_LAYOUT][filter], {point = true})
+					CONFIG:CopySettings(D.profile.auras[filter], C.db.profile.auras[filter], {point = true})
 					AURAS:UpdateHeader(filter)
 				end,
 			},
-			spacer1 = {
+			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = "",
 			},
-			rows = {
+			num_rows = {
 				order = 10,
 				type = "range",
 				name = L["ROWS"],
 				min = 1, max = 40, step = 1,
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].num_rows
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].num_rows = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			per_row = {
 				order = 11,
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 40, step = 1,
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].per_row
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].per_row = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			spacing = {
 				order = 12,
 				type = "range",
 				name = L["SPACING"],
 				min = 4, max = 24, step = 2,
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].spacing
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].spacing = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			size = {
 				order = 13,
 				type = "range",
 				name = L["SIZE"],
 				min = 24, max = 64, step = 1,
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].size
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].size = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			growth_dir = {
 				order = 14,
@@ -96,10 +74,10 @@ local function GetOptionsTable_Aura(filter, order, name)
 				},
 				disabled = function() return not AURAS:IsInit() end,
 				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].x_growth.."_"..C.db.profile.auras[E.UI_LAYOUT][filter].y_growth
+					return C.db.profile.auras[filter].x_growth .. "_" .. C.db.profile.auras[filter].y_growth
 				end,
 				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].x_growth, C.db.profile.auras[E.UI_LAYOUT][filter].y_growth = s_split("_", value)
+					C.db.profile.auras[filter].x_growth, C.db.profile.auras[filter].y_growth = s_split("_", value)
 					AURAS:UpdateHeader(filter)
 				end,
 			},
@@ -112,14 +90,6 @@ local function GetOptionsTable_Aura(filter, order, name)
 					NAME = L["NAME"],
 					TIME = L["TIME"],
 				},
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].sort_method
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].sort_method = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			sort_dir = {
 				order = 16,
@@ -129,14 +99,6 @@ local function GetOptionsTable_Aura(filter, order, name)
 					["+"] = L["ASCENDING"],
 					["-"] = L["DESCENDING"],
 				},
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].sort_dir
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].sort_dir = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 			sep_own = {
 				order = 17,
@@ -147,17 +109,23 @@ local function GetOptionsTable_Aura(filter, order, name)
 					[0] = L["NO_SEPARATION"],
 					[1] = L["YOURS_FIRST"],
 				},
-				disabled = function() return not AURAS:IsInit() end,
-				get = function()
-					return C.db.profile.auras[E.UI_LAYOUT][filter].sep_own
-				end,
-				set = function(_, value)
-					C.db.profile.auras[E.UI_LAYOUT][filter].sep_own = value
-					AURAS:UpdateHeader(filter)
-				end,
 			},
 		},
 	}
+
+	if filter == "TOTEM" then
+		temp.args.num_rows = nil
+		temp.args.sep_own = nil
+		temp.args.sort_dir = nil
+		temp.args.sort_method = nil
+
+		temp.args.num = {
+			order = 10,
+			type = "range",
+			name = L["NUM_BUTTONS"],
+			min = 1, max = 4, step = 1,
+		}
+	end
 
 	return temp
 end
@@ -195,108 +163,13 @@ function CONFIG.CreateAurasPanel(_, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT], C.db.profile.auras[E.UI_LAYOUT], {point = true})
+					CONFIG:CopySettings(D.profile.auras, C.db.profile.auras, {point = true})
 					AURAS:Update()
 				end,
 			},
 			buffs = GetOptionsTable_Aura("HELPFUL", 10, L["BUFFS"]),
 			debuffs = GetOptionsTable_Aura("HARMFUL", 11, L["DEBUFFS"]),
-			totems = {
-				order = 12,
-				type = "group",
-				name = L["TOTEMS"],
-				args = {
-					reset = {
-						type = "execute",
-						order = 1,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras[E.UI_LAYOUT].TOTEM, {point = true})
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-					spacer1 = {
-						order = 9,
-						type = "description",
-						name = "",
-					},
-					num = {
-						order = 10,
-						type = "range",
-						name = L["NUM_BUTTONS"],
-						min = 1, max = 4, step = 1,
-						disabled = function() return not AURAS:IsInit() end,
-						get = function()
-							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.num
-						end,
-						set = function(_, value)
-							C.db.profile.auras[E.UI_LAYOUT].TOTEM.num = value
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-					per_row = {
-						order = 11,
-						type = "range",
-						name = L["PER_ROW"],
-						min = 1, max = 4, step = 1,
-						disabled = function() return not AURAS:IsInit() end,
-						get = function()
-							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.per_row
-						end,
-						set = function(_, value)
-							C.db.profile.auras[E.UI_LAYOUT].TOTEM.per_row = value
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-					spacing = {
-						order = 12,
-						type = "range",
-						name = L["SPACING"],
-						min = 4, max = 24, step = 2,
-						disabled = function() return not AURAS:IsInit() end,
-						get = function()
-							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.spacing
-						end,
-						set = function(_, value)
-							C.db.profile.auras[E.UI_LAYOUT].TOTEM.spacing = value
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-					size = {
-						order = 13,
-						type = "range",
-						name = L["SIZE"],
-						min = 24, max = 64, step = 1,
-						disabled = function() return not AURAS:IsInit() end,
-						get = function()
-							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.size
-						end,
-						set = function(_, value)
-							C.db.profile.auras[E.UI_LAYOUT].TOTEM.size = value
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-					growth_dir = {
-						order = 14,
-						type = "select",
-						name = L["GROWTH_DIR"],
-						values = {
-							LEFT_DOWN = L["LEFT_DOWN"],
-							LEFT_UP = L["LEFT_UP"],
-							RIGHT_DOWN = L["RIGHT_DOWN"],
-							RIGHT_UP = L["RIGHT_UP"],
-						},
-						disabled = function() return not AURAS:IsInit() end,
-						get = function()
-							return C.db.profile.auras[E.UI_LAYOUT].TOTEM.x_growth.."_"..C.db.profile.auras[E.UI_LAYOUT].TOTEM.y_growth
-						end,
-						set = function(_, value)
-							C.db.profile.auras[E.UI_LAYOUT].TOTEM.x_growth, C.db.profile.auras[E.UI_LAYOUT].TOTEM.y_growth = s_split("_", value)
-							AURAS:UpdateHeader("TOTEM")
-						end,
-					},
-				},
-			},
+			totems = GetOptionsTable_Aura("TOTEM", 12, L["TOTEMS"]),
 		},
 	}
 end
