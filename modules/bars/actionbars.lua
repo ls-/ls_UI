@@ -128,6 +128,7 @@ local function bar_Update(self)
 	self:UpdateButtons("UpdateCountFont")
 	self:UpdateButtons("UpdateHotKeyFont")
 	self:UpdateButtons("UpdateMacroFont")
+	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E:UpdateBarLayout(self)
 end
@@ -241,13 +242,14 @@ function MODULE.CreateActionBars()
 
 			if barID == "bar1" then
 				bar.UpdateConfig = function(self)
-					self._config = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
+					self._config = MODULE:IsRestricted() and CFG.bar1 or E:CopyTable(C.db.profile.bars.bar1)
 
 					if MODULE:IsRestricted() then
-						self._config.count = C.db.profile.bars.bar1.count
 						self._config.grid = C.db.profile.bars.bar1.grid
-						self._config.hotkey = C.db.profile.bars.bar1.hotkey
-						self._config.macro = C.db.profile.bars.bar1.macro
+						self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown)
+						self._config.count = E:CopyTable(C.db.profile.bars.bar1.count)
+						self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey)
+						self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro)
 					end
 				end
 			end

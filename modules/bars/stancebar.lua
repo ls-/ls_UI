@@ -129,6 +129,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateVisibility()
 			self:UpdateForms()
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateCooldownConfig()
 			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
