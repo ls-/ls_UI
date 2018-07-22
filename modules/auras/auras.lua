@@ -309,12 +309,12 @@ local function createHeader(filter)
 		header._buttons = {}
 
 		for i = 1, MAX_TOTEMS do
-			local totem = _G["TotemFrameTotem"..i]
+			local totem = _G["TotemFrameTotem" .. i]
 			local iconFrame, border = totem:GetChildren()
-			local background = _G["TotemFrameTotem"..i.."Background"]
-			local duration = _G["TotemFrameTotem"..i.."Duration"]
-			local icon = _G["TotemFrameTotem"..i.."IconTexture"]
-			local cd = _G["TotemFrameTotem"..i.."IconCooldown"]
+			local background = _G["TotemFrameTotem" .. i .. "Background"]
+			local duration = _G["TotemFrameTotem" .. i .. "Duration"]
+			local icon = _G["TotemFrameTotem" .. i .. "IconTexture"]
+			local cd = _G["TotemFrameTotem" .. i .. "IconCooldown"]
 
 			E:ForceHide(background)
 			E:ForceHide(border)
