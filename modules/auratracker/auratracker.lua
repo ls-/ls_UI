@@ -157,15 +157,15 @@ local function bar_UpdateCooldownConfig(self)
 		}
 	end
 
-	self.cooldownConfig.expire_threshold = self._config.cooldown.expire_threshold
+	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
 
 	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
-	self.cooldownConfig.colors.expire = self._config.cooldown.colors.expire
-	self.cooldownConfig.colors.second = self._config.cooldown.colors.second
-	self.cooldownConfig.colors.minute = self._config.cooldown.colors.minute
-	self.cooldownConfig.colors.hour = self._config.cooldown.colors.hour
-	self.cooldownConfig.colors.day = self._config.cooldown.colors.day
+	self.cooldownConfig.colors.expiration = E:CopyTable(self._config.cooldown.colors.expiration, self.cooldownConfig.colors.expiration)
+	self.cooldownConfig.colors.second = E:CopyTable(self._config.cooldown.colors.second, self.cooldownConfig.colors.second)
+	self.cooldownConfig.colors.minute = E:CopyTable(self._config.cooldown.colors.minute, self.cooldownConfig.colors.minute)
+	self.cooldownConfig.colors.hour = E:CopyTable(self._config.cooldown.colors.hour, self.cooldownConfig.colors.hour)
+	self.cooldownConfig.colors.day = E:CopyTable(self._config.cooldown.colors.day, self.cooldownConfig.colors.day)
 
 	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
 	self.cooldownConfig.text.size = self._config.cooldown.text.size

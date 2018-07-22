@@ -16,11 +16,11 @@ local GetTime = _G.GetTime
 -- Mine
 local handled = {}
 local defaults = {
-	expire_threshold = 5, -- [1; 10]
+	exp_threshold = 5, -- [1; 10]
 	m_ss_threshold = 0, -- [91; 3599]
 	colors = {
 		enabled = true,
-		expire = {229 / 255, 25 / 255, 25 / 255},
+		expiration = {229 / 255, 25 / 255, 25 / 255},
 		second = {255 / 255, 191 / 255, 25 / 255},
 		minute = {255 / 255, 255 / 255, 255 / 255},
 		hour = {255 / 255, 255 / 255, 255 / 255},
@@ -41,8 +41,9 @@ local function cooldown_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
-		local duration = self.Timer.expire - GetTime()
-		local color, time, _
+		local duration = self.Timer.expiration - GetTime()
+		local color = {1, 1, 1}
+		local time, _
 
 		if duration >= 86400 then
 			time = E:SecondsToTime(duration, true)
@@ -69,7 +70,7 @@ local function cooldown_OnUpdate(self, elapsed)
 				color = self.config.colors.minute
 			end
 		elseif duration >= 1 then
-			if duration >= self.config.expire_threshold then
+			if duration >= self.config.exp_threshold then
 				_, _, _, time = E:SecondsToTime(duration, true)
 			else
 				local s, ms
@@ -89,16 +90,13 @@ local function cooldown_OnUpdate(self, elapsed)
 			end
 		end
 
-		if self.config.colors.enabled and duration < self.config.expire_threshold then
-			color = self.config.colors.expire
+		if self.config.colors.enabled and duration < self.config.exp_threshold then
+			color = self.config.colors.expiration
 		end
 
 		if time then
 			self.Timer:SetFormattedText(time)
-
-			if color then
-				self.Timer:SetVertexColor(color[1], color[2], color[3])
-			end
+			self.Timer:SetVertexColor(color[1], color[2], color[3])
 		else
 			self.Timer:SetText("")
 			self:SetScript("OnUpdate", nil)
@@ -111,11 +109,11 @@ end
 local function cooldown_SetCooldown(self, start, duration)
 	if self.config.text.enabled then
 		if start > 0 and duration > 1.5 then
-			self.Timer.expire = start + duration
+			self.Timer.expiration = start + duration
 
 			self:SetScript("OnUpdate", cooldown_OnUpdate)
 		else
-			self.Timer.expire = nil
+			self.Timer.expiration = nil
 			self.Timer:SetText("")
 
 			self:SetScript("OnUpdate", nil)

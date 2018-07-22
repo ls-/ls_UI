@@ -6,11 +6,11 @@ D.global = {}
 D.profile = {
 	units = {
 		cooldown = {
-			expire_threshold = 5, -- [1; 10]
+			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expire = {229 / 255, 25 / 255, 25 / 255},
+				expiration = {229 / 255, 25 / 255, 25 / 255},
 				second = {255 / 255, 191 / 255, 25 / 255},
 				minute = {255 / 255, 255 / 255, 255 / 255},
 				hour = {255 / 255, 255 / 255, 255 / 255},
@@ -2197,11 +2197,11 @@ D.profile = {
 		draw_bling = true,
 		blizz_vehicle = false,
 		cooldown = {
-			expire_threshold = 5,
+			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expire = {229 / 255, 25 / 255, 25 / 255},
+				expiration = {229 / 255, 25 / 255, 25 / 255},
 				second = {255 / 255, 191 / 255, 25 / 255},
 				minute = {255 / 255, 255 / 255, 255 / 255},
 				hour = {255 / 255, 255 / 255, 255 / 255},
@@ -2794,29 +2794,17 @@ D.profile = {
 		},
 	},
 	auras = {
-		count = {
-			enabled = true,
-			size = 12,
-			flag = "_Outline", -- "_Shadow", ""
-		},
 		cooldown = {
-			expire_threshold = 5, -- [1; 10]
-			m_ss_threshold = 600, -- [91; 3599]
+			exp_threshold = 5, -- [1; 10]
+			m_ss_threshold = 0, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expire = {229 / 255, 25 / 255, 25 / 255},
+				expiration = {229 / 255, 25 / 255, 25 / 255},
 				second = {255 / 255, 191 / 255, 25 / 255},
 				minute = {255 / 255, 255 / 255, 255 / 255},
 				hour = {255 / 255, 255 / 255, 255 / 255},
 				day = {255 / 255, 255 / 255, 255 / 255},
 			},
-			text = {
-				enabled = true,
-				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
-				h_alignment = "CENTER",
-				v_alignment = "BOTTOM",
-			}
 		},
 		HELPFUL = {
 			size = 32,
@@ -2828,6 +2816,20 @@ D.profile = {
 			sep_own = 0,
 			sort_method = "INDEX",
 			sort_dir = "+",
+			count = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
 			point = {
 				ls = {
 					p = "TOPRIGHT",
@@ -2855,6 +2857,20 @@ D.profile = {
 			sep_own = 0,
 			sort_method = "INDEX",
 			sort_dir = "+",
+			count = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
 			point = {
 				ls = {
 					p = "TOPRIGHT",
@@ -2879,6 +2895,15 @@ D.profile = {
 			x_growth = "LEFT",
 			y_growth = "DOWN",
 			per_row = 4,
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
 			point = {
 				ls = {
 					p = "TOPRIGHT",
@@ -2972,11 +2997,11 @@ D.char = {
 			flag = "_Outline", -- "_Shadow", ""
 		},
 		cooldown = {
-			expire_threshold = 5, -- [1; 10]
+			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expire = {229 / 255, 25 / 255, 25 / 255},
+				expiration = {229 / 255, 25 / 255, 25 / 255},
 				second = {255 / 255, 191 / 255, 25 / 255},
 				minute = {255 / 255, 255 / 255, 255 / 255},
 				hour = {255 / 255, 255 / 255, 255 / 255},

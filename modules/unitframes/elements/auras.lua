@@ -300,11 +300,11 @@ local function element_UpdateCooldownConfig(self)
 		}
 	end
 
-	self.cooldownConfig.expire_threshold = C.db.profile.units.cooldown.expire_threshold
+	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
 
 	self.cooldownConfig.colors.enabled = C.db.profile.units.cooldown.colors.enabled
-	self.cooldownConfig.colors.expire = C.db.profile.units.cooldown.colors.expire
+	self.cooldownConfig.colors.expiration = C.db.profile.units.cooldown.colors.expiration
 	self.cooldownConfig.colors.second = C.db.profile.units.cooldown.colors.second
 	self.cooldownConfig.colors.minute = C.db.profile.units.cooldown.colors.minute
 	self.cooldownConfig.colors.hour = C.db.profile.units.cooldown.colors.hour

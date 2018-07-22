@@ -136,6 +136,8 @@ end
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
+	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
 	self._config.draw_bling = C.db.profile.bars.draw_bling
 	self._config.lock = C.db.profile.bars.lock
@@ -144,14 +146,11 @@ local function bar_UpdateConfig(self)
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
 
 	if MODULE:IsRestricted() then
-		self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
 		self._config.grid = C.db.profile.bars.bar1.grid
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 	end
-
-	E:UpdateTable(C.db.profile.bars.cooldown, self._config.cooldown)
 end
 
 local function bar_UpdateButtonConfig(self)
