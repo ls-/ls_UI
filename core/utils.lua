@@ -80,24 +80,66 @@ do
 end
 
 do
-	local DAY_ONELETTER_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
-	local HOUR_ONELETTER_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
-	local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
-	local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
+	local H_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
+	local M_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
+	local S_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
+	local MS_ABBR = "%d".._G.MILLISECONDS_ABBR
 
 	function E:TimeFormat(v)
 		if v >= 86400 then
-			return s_format(DAY_ONELETTER_ABBR, round(v / 86400)), "e5e5e5"
+			return s_format(D_ABBR, round(v / 86400)), "e5e5e5"
 		elseif v >= 3600 then
-			return s_format(HOUR_ONELETTER_ABBR, round(v / 3600)), "e5e5e5"
+			return s_format(H_ABBR, round(v / 3600)), "e5e5e5"
 		elseif v >= 60 then
-			return s_format(MINUTE_ONELETTER_ABBR, round(v / 60)), "e5e5e5"
+			return s_format(M_ABBR, round(v / 60)), "e5e5e5"
 		elseif v >= 5 then
-			return s_format(SECOND_ONELETTER_ABBR, round(v)), v >= 30 and "e5e5e5" or v >= 10 and "ffbf19" or "e51919"
+			return s_format(S_ABBR, round(v)), v >= 30 and "e5e5e5" or v >= 10 and "ffbf19" or "e51919"
 		elseif v >= 0 then
 			return s_format("%.1f", v), "e51919"
 		else
 			return 0
+		end
+	end
+
+	function E:SecondsToTime(v, abbr)
+		if v >= 86400 then
+			return
+				s_format(abbr and D_ABBR or "%d", v / 86400),
+				s_format(abbr and H_ABBR or "%d", v % 86400 / 3600),
+				s_format(abbr and M_ABBR or "%d", v % 86400 % 3600 / 60),
+				s_format(abbr and S_ABBR or "%d", v % 86400 % 3600 % 60 / 1),
+				s_format(abbr and MS_ABBR or "%d", v % 86400 % 3600 % 60 % 1 / 0.001)
+		elseif v >= 3600 then
+			return
+				0,
+				s_format(abbr and H_ABBR or "%d", v / 3600),
+				s_format(abbr and M_ABBR or "%d", v % 3600 / 60),
+				s_format(abbr and S_ABBR or "%d", v % 3600 % 60 / 1),
+				s_format(abbr and MS_ABBR or "%d", v % 3600 % 60 % 1 / 0.001)
+		elseif v >= 60 then
+			return
+				0,
+				0,
+				s_format(abbr and M_ABBR or "%d", v / 60),
+				s_format(abbr and S_ABBR or "%d", v % 60 / 1),
+				s_format(abbr and MS_ABBR or "%d", v % 60 % 1 / 0.001)
+		elseif v >= 1 then
+			return
+				0,
+				0,
+				0,
+				s_format(abbr and S_ABBR or "%d", v / 1),
+				s_format(abbr and MS_ABBR or "%d", v % 1 / 0.001)
+		elseif v >= 0.001 then
+			return
+				0,
+				0,
+				0,
+				0,
+				s_format(abbr and MS_ABBR or "%d", v / 0.001)
+		else
+			return 0, 0, 0, 0, 0
 		end
 	end
 end
