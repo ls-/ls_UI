@@ -256,7 +256,7 @@ local function header_UpdateButtons(self, method, ...)
 end
 
 local function header_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.auras[E.UI_LAYOUT][self._filter], self._config)
+	self._config = E:CopyTable(C.db.profile.auras[self._filter], self._config)
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
 	self._config.count = E:CopyTable(C.db.profile.auras.count, self._config.count)
 end
@@ -297,7 +297,7 @@ local function header_UpdateCooldownConfig(self)
 end
 
 local function createHeader(filter)
-	local point = C.db.profile.auras[E.UI_LAYOUT][filter].point
+	local point = C.db.profile.auras[filter].point[E.UI_LAYOUT]
 	local header
 
 	if filter == "TOTEM" then
