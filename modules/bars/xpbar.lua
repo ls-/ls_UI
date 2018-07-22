@@ -53,6 +53,48 @@ local LAYOUT = {
 	[4] = {[1] = {}, [2] = {}, [3] = {}, [4] = {}},
 }
 
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateSize()
+
+	if not BARS:IsRestricted() then
+		self:UpdateFading()
+		E.Movers:Get(self):UpdateSize()
+	end
+end
+
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar, self._config)
+end
+
+local function bar_UpdateSize(self, width, height)
+	width = width or self._config.width
+	height = height or self._config.height
+
+	for i = 1, MAX_SEGMENTS do
+		local layout = E:CalcSegmentsSizes(width, 2, i)
+
+		for j = 1, i do
+			LAYOUT[i][j].size = {layout[j], height}
+		end
+	end
+
+	self:SetSize(width, height)
+
+	for i = 1, MAX_SEGMENTS - 1 do
+		self[i].Sep:SetSize(12, height)
+		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+	end
+
+	if not BARS:IsRestricted() then
+		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-"..height)
+	end
+
+	self._total = nil
+
+	self:UpdateSegments()
+end
+
 local function bar_UpdateSegments(self)
 	local index = 0
 
@@ -294,34 +336,6 @@ local function bar_UpdateSegments(self)
 	end
 end
 
-local function bar_UpdateSize(self, width, height)
-	width = width or self._config.width
-	height = height or self._config.height
-
-	for i = 1, MAX_SEGMENTS do
-		local layout = E:CalcSegmentsSizes(width, 2, i)
-
-		for j = 1, i do
-			LAYOUT[i][j].size = {layout[j], height}
-		end
-	end
-
-	self:SetSize(width, height)
-
-	for i = 1, MAX_SEGMENTS - 1 do
-		self[i].Sep:SetSize(12, height)
-		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
-	end
-
-	if not BARS:IsRestricted() then
-		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-"..height)
-	end
-
-	self._total = nil
-
-	self:UpdateSegments()
-end
-
 local function bar_OnEvent(self, event, ...)
 	if event == "UNIT_INVENTORY_CHANGED" then
 		local unit = ...
@@ -408,20 +422,10 @@ function BARS.CreateXPBar()
 
 		BARS:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateSize()
-
-			if not BARS:IsRestricted() then
-				self:UpdateFading()
-				E.Movers:Get(self):UpdateSize()
-			end
-		end
-		bar.UpdateConfig = function(self)
-			self._config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
-		end
-		bar.UpdateSize = bar_UpdateSize
+		bar.Update = bar_Update
+		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateSegments = bar_UpdateSegments
+		bar.UpdateSize = bar_UpdateSize
 
 		local texParent = CreateFrame("Frame", nil, bar)
 		texParent:SetAllPoints()

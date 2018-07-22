@@ -133,6 +133,27 @@ local function bar_Update(self)
 	E:UpdateBarLayout(self)
 end
 
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
+	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.draw_bling = C.db.profile.bars.draw_bling
+	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.range_indicator = C.db.profile.bars.range_indicator
+	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
+
+	if MODULE:IsRestricted() then
+		self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
+		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
+		self._config.grid = C.db.profile.bars.bar1.grid
+		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
+		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
+	end
+
+	E:UpdateTable(C.db.profile.bars.cooldown, self._config.cooldown)
+end
+
 local function bar_UpdateButtonConfig(self)
 	if not self.buttonConfig then
 		self.buttonConfig = {
@@ -144,11 +165,11 @@ local function bar_UpdateButtonConfig(self)
 		}
 	end
 
-	self.buttonConfig.clickOnDown = C.db.profile.bars.click_on_down
-	self.buttonConfig.desaturateOnCooldown = C.db.profile.bars.desaturate_on_cd
-	self.buttonConfig.drawBling = C.db.profile.bars.draw_bling
+	self.buttonConfig.clickOnDown = self._config.click_on_down
+	self.buttonConfig.desaturateOnCooldown = self._config.desaturate_on_cd
+	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
-	self.buttonConfig.outOfManaColoring = C.db.profile.bars.mana_indicator
+	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
 	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
 
@@ -163,10 +184,10 @@ local function bar_UpdateButtonConfig(self)
 		self.buttonConfig.keyBoundTarget = button._command
 
 		button:UpdateConfig(self.buttonConfig)
-		button:SetAttribute("buttonlock", C.db.profile.bars.lock)
+		button:SetAttribute("buttonlock", self._config.lock)
 		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("checkfocuscast", true)
-		button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
+		button:SetAttribute("*unit2", self._config.rightclick_selfcast and "player" or nil)
 	end
 end
 
@@ -241,17 +262,7 @@ function MODULE.CreateActionBars()
 			bar.UpdateButtonConfig = bar_UpdateButtonConfig
 
 			if barID == "bar1" then
-				bar.UpdateConfig = function(self)
-					self._config = MODULE:IsRestricted() and CFG.bar1 or E:CopyTable(C.db.profile.bars.bar1)
-
-					if MODULE:IsRestricted() then
-						self._config.grid = C.db.profile.bars.bar1.grid
-						self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown)
-						self._config.count = E:CopyTable(C.db.profile.bars.bar1.count)
-						self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey)
-						self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro)
-					end
-				end
+				bar.UpdateConfig = bar_UpdateConfig
 			end
 
 			for i = 1, data.num_buttons do

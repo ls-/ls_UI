@@ -319,7 +319,7 @@ local function button_GetAnchor(self)
 end
 
 local function button_UpdateConfig(self)
-	self._config = C.db.profile.bars.micromenu.buttons[self._id]
+	self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
 end
 
 local function button_UpdateEvents(self)
@@ -1185,8 +1185,8 @@ local function bar_Update(self)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = C.db.profile.bars.micromenu.bars[self._id]
-	self._config.fade = C.db.profile.bars.micromenu.fade
+	self._config = E:CopyTable(C.db.profile.bars.micromenu.bars[self._id], self._config)
+	self._config.fade = E:CopyTable(C.db.profile.bars.micromenu.fade, self._config.fade)
 	self._config.visible = C.db.profile.bars.micromenu.visible
 end
 

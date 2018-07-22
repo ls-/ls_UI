@@ -57,7 +57,16 @@ local function bar_UpdateButtons(self, method, ...)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.bars[self._id])
+	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
+	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.draw_bling = C.db.profile.bars.draw_bling
+	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.range_indicator = C.db.profile.bars.range_indicator
+	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
+
+	E:UpdateTable(C.db.profile.bars.cooldown, self._config.cooldown)
 end
 
 local function bar_UpdateCooldownConfig(self)
@@ -68,15 +77,15 @@ local function bar_UpdateCooldownConfig(self)
 		}
 	end
 
-	self.cooldownConfig.expire_threshold = C.db.profile.bars.cooldown.expire_threshold
-	self.cooldownConfig.m_ss_threshold = C.db.profile.bars.cooldown.m_ss_threshold
+	self.cooldownConfig.expire_threshold = self._config.cooldown.expire_threshold
+	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
 
-	self.cooldownConfig.colors.enabled = C.db.profile.bars.cooldown.colors.enabled
-	self.cooldownConfig.colors.expire = C.db.profile.bars.cooldown.colors.expire
-	self.cooldownConfig.colors.second = C.db.profile.bars.cooldown.colors.second
-	self.cooldownConfig.colors.minute = C.db.profile.bars.cooldown.colors.minute
-	self.cooldownConfig.colors.hour = C.db.profile.bars.cooldown.colors.hour
-	self.cooldownConfig.colors.day = C.db.profile.bars.cooldown.colors.day
+	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
+	self.cooldownConfig.colors.expire = self._config.cooldown.colors.expire
+	self.cooldownConfig.colors.second = self._config.cooldown.colors.second
+	self.cooldownConfig.colors.minute = self._config.cooldown.colors.minute
+	self.cooldownConfig.colors.hour = self._config.cooldown.colors.hour
+	self.cooldownConfig.colors.day = self._config.cooldown.colors.day
 
 	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
 	self.cooldownConfig.text.size = self._config.cooldown.text.size

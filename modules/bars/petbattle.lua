@@ -23,13 +23,6 @@ local CFG = {
 	y_growth = "DOWN",
 	per_row = 6,
 	visibility = "[petbattle] show; hide",
-	point = {
-		p = "BOTTOM",
-		anchor = "UIParent",
-		rP = "BOTTOM",
-		x = 0,
-		y = 16
-	},
 	fade = {
 		enabled = false,
 		out_delay = 0.75,
@@ -39,7 +32,31 @@ local CFG = {
 		min_alpha = 0,
 		max_alpha = 1,
 	},
+	point = {
+		p = "BOTTOM",
+		anchor = "UIParent",
+		rP = "BOTTOM",
+		x = 0,
+		y = 16
+	},
 }
+
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateButtons("UpdateHotKey")
+	self:UpdateButtons("UpdateHotKeyFont")
+	self:UpdateFading()
+	E:UpdateBarLayout(self)
+end
+
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle, self._config)
+
+	if MODULE:IsRestricted() then
+		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
+	end
+end
 
 local function button_UpdateHotKey(self, state)
 	if state ~= nil then
@@ -75,21 +92,8 @@ function MODULE.CreatePetBattleBar()
 
 		MODULE:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateVisibility()
-			self:UpdateButtons("UpdateHotKey")
-			self:UpdateButtons("UpdateHotKeyFont")
-			self:UpdateFading()
-			E:UpdateBarLayout(self)
-		end
-		bar.UpdateConfig = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
-
-			if MODULE:IsRestricted() then
-				self._config.hotkey = C.db.profile.bars.pet_battle.hotkey
-			end
-		end
+		bar.Update = bar_Update
+		bar.UpdateConfig = bar_UpdateConfig
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
 			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]
@@ -101,11 +105,11 @@ function MODULE.CreatePetBattleBar()
 
 			for id, button in next, bar._buttons do
 				button._parent = bar
-				button._command = "ACTIONBUTTON"..id
+				button._command = "ACTIONBUTTON" .. id
 				button:SetParent(bar)
 
-				button.UpdateHotKeyFont = button_UpdateHotKeyFont
 				button.UpdateHotKey = button_UpdateHotKey
+				button.UpdateHotKeyFont = button_UpdateHotKeyFont
 
 				E:SkinPetBattleButton(button)
 			end

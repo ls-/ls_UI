@@ -58,6 +58,16 @@ local function getBarPoint()
 	return LAYOUT[E.PLAYER_CLASS]
 end
 
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateButtons("Reset")
+	self:UpdateButtons("UpdateHotKeyFont")
+	self:UpdateCooldownConfig()
+	self:UpdateFading()
+	E:UpdateBarLayout(self)
+end
+
 local function button_UpdateGrid(self, state)
 	if state ~= nil then
 		self._parent._config.grid = state
@@ -221,15 +231,7 @@ function MODULE.CreatePetActionBar()
 
 		MODULE:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateVisibility()
-			self:UpdateButtons("Reset")
-			self:UpdateButtons("UpdateHotKeyFont")
-			self:UpdateCooldownConfig()
-			self:UpdateFading()
-			E:UpdateBarLayout(self)
-		end
+		bar.Update = bar_Update
 
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "PetActionButtonTemplate")
