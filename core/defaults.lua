@@ -2144,17 +2144,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",
@@ -2187,17 +2187,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",
@@ -2230,17 +2230,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",
@@ -2273,17 +2273,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOMRIGHT",
@@ -2316,17 +2316,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOMRIGHT",
@@ -2359,7 +2359,7 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 		},
 		bar7 = { -- Stance
@@ -2384,7 +2384,7 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 		},
 		pet_battle = {
@@ -2408,7 +2408,7 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",
@@ -2434,7 +2434,7 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",

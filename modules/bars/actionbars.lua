@@ -195,7 +195,7 @@ end
 
 local function button_UpdateMacroFont(self)
 	local config = self._parent._config.macro
-	self.Name:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Name:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.Name:SetWordWrap(false)
 end
 
@@ -209,13 +209,13 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.HotKey:SetWordWrap(false)
 end
 
 local function button_UpdateCountFont(self)
 	local config = self._parent._config.count
-	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.Count:SetWordWrap(false)
 end
 
