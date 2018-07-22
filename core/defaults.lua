@@ -2794,6 +2794,25 @@ D.profile = {
 		},
 	},
 	auras = {
+		cooldown = {
+			expire_threshold = 5, -- [1; 10]
+			m_ss_threshold = 600, -- [91; 3599]
+			colors = {
+				enabled = true,
+				expire = {229 / 255, 25 / 255, 25 / 255},
+				second = {255 / 255, 191 / 255, 25 / 255},
+				minute = {255 / 255, 255 / 255, 255 / 255},
+				hour = {255 / 255, 255 / 255, 255 / 255},
+				day = {255 / 255, 255 / 255, 255 / 255},
+			},
+			text = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "CENTER",
+				v_alignment = "BOTTOM",
+			}
+		},
 		ls = {
 			HELPFUL = {
 				size = 32,

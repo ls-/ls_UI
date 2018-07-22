@@ -5,17 +5,21 @@ local MODULE = P:AddModule("Auras")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_wipe = _G.table.wipe
 
 -- Blizz
-local CreateFrame = _G.CreateFrame
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
 local GetTime = _G.GetTime
 local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
-local RegisterAttributeDriver = _G.RegisterAttributeDriver
-local TemporaryEnchantFrame = _G.TemporaryEnchantFrame
 local UnitAura = _G.UnitAura
 
 local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
+
+--[[ luacheck: globals
+BuffFrame CreateFrame GameTooltip RegisterAttributeDriver TemporaryEnchantFrame UIParent
+
+MAX_TOTEMS
+]]
 
 -- Mine
 local isInit = false
@@ -23,26 +27,8 @@ local buffs = {}
 local debuffs = {}
 local headers = {}
 
-local function Button_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-	self.timeLeft = self.timeLeft - elapsed
-
-	if self.elapsed >= 0.1 then
-		if self.timeLeft >= 0.1 then
-			local time, color = E:TimeFormat(self.timeLeft)
-			self.Duration:SetFormattedText("|cff%s%s|r", color, time)
-		else
-			self.Duration:SetText("")
-			self:SetScript("OnUpdate", nil)
-		end
-
-		self.elapsed = 0
-	end
-end
-
-local function UpdateAura(button, index)
+local function updateAura(button, index)
 	local filter = button:GetParent():GetAttribute("filter")
-
 	if filter == "HELPFUL" then
 		if not buffs[button] then
 			return
@@ -55,26 +41,19 @@ local function UpdateAura(button, index)
 
 	local unit = button:GetParent():GetAttribute("unit")
 	local name, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter)
-
 	if name then
 		button.Icon:SetTexture(texture)
 		button.Count:SetText(count > 1 and count)
 
-		if duration > 0 and expirationTime then
-			button.elapsed = 0.1
-			button.timeLeft = expirationTime - GetTime()
-			button:SetScript("OnUpdate", Button_OnUpdate)
+		if(duration and duration > 0 and expirationTime) then
+			button.Cooldown:SetCooldown(expirationTime - duration, duration)
+			button.Cooldown:Show()
 		else
-			button.elapsed = 0
-			button.timeLeft = nil
-			button:SetScript("OnUpdate", nil)
-
-			button.Duration:SetText("")
+			button.Cooldown:Hide()
 		end
 
 		if filter == "HARMFUL" then
 			local color = DEBUFF_TYPE_COLORS[debuffType] or DEBUFF_TYPE_COLORS.none
-
 			button.Border:SetVertexColor(color.r, color.g, color.b)
 		else
 			button.Border:SetVertexColor(1, 1, 1)
@@ -82,7 +61,7 @@ local function UpdateAura(button, index)
 	end
 end
 
-local function UpdateTempEnchant(button, index)
+local function updateTempEnchant(button, index)
 	if not buffs[button] then
 		return
 	end
@@ -99,31 +78,27 @@ local function UpdateTempEnchant(button, index)
 		button.Icon:SetTexture(GetInventoryItemTexture("player", index))
 		button.Count:SetText(count > 1 and count)
 
-		if duration > 0 then
-			button.elapsed = 0.1
-			button.timeLeft = duration / 1000
-			button:SetScript("OnUpdate", Button_OnUpdate)
+		if duration and duration > 0 then
+			duration = duration / 1000
+			button.Cooldown:SetCooldown(GetTime(), duration)
+			button.Cooldown:Show()
 		else
-			button.elapsed = 0
-			button.timeLeft = nil
-			button:SetScript("OnUpdate", nil)
-
-			button.Duration:SetText("")
+			button.Cooldown:Hide()
 		end
 
 		button.Border:SetVertexColor(M.COLORS.PURPLE:GetRGB())
 	end
 end
 
-local function Button_OnAttributeChanged(self, attr, value)
+local function button_OnAttributeChanged(self, attr, value)
 	if attr == "index" then
-		UpdateAura(self, value)
+		updateAura(self, value)
 	elseif attr == "target-slot" then
-		UpdateTempEnchant(self, value)
+		updateTempEnchant(self, value)
 	end
 end
 
-local function Button_OnEnter(self)
+local function button_OnEnter(self)
 	local quadrant = E:GetScreenQuadrant(self)
 	local p, rP = "TOPRIGHT", "BOTTOMLEFT"
 
@@ -148,14 +123,14 @@ local function Button_OnEnter(self)
 	end
 end
 
-local function Button_OnLeave()
+local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
-local function HandleButton(button)
-	button:HookScript("OnAttributeChanged", Button_OnAttributeChanged)
-	button:SetScript("OnEnter", Button_OnEnter)
-	button:SetScript("OnLeave", Button_OnLeave)
+local function handleButton(button, header)
+	button:HookScript("OnAttributeChanged", button_OnAttributeChanged)
+	button:SetScript("OnEnter", button_OnEnter)
+	button:SetScript("OnLeave", button_OnLeave)
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
 	button.Icon = E:SetIcon(button, [[Interface\ICONS\INV_Misc_QuestionMark]])
@@ -166,23 +141,31 @@ local function HandleButton(button)
 	border:SetOffset(-4)
 	button.Border = border
 
-	local duration = button:CreateFontString(nil, "ARTWORK", "LSFont12_Outline")
-	duration:SetJustifyV("CENTER")
-	duration:SetJustifyV("BOTTOM")
-	duration:SetPoint("TOPLEFT", -4, 0)
-	duration:SetPoint("BOTTOMRIGHT", 4, 0)
-	button.Duration = duration
+	button.Cooldown = E:CreateCooldown(button)
+	button.Cooldown:SetDrawSwipe(false)
 
-	local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+	if button.Cooldown.UpdateConfig then
+		button.Cooldown:UpdateConfig(header.cooldownConfig or {})
+		button.Cooldown:UpdateFontObject()
+	end
+
+	local textParent = CreateFrame("Frame", nil, button)
+	textParent:SetFrameLevel(button:GetFrameLevel() + 2)
+	textParent:SetAllPoints()
+	button.TextParent = textParent
+
+	local count = textParent:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
 	count:SetJustifyH("RIGHT")
 	count:SetPoint("TOPRIGHT", 2, 0)
 	button.Count = count
+
+	button._parent = header
 end
 
-local function Header_OnAttributeChanged(self, attr, value)
+local function header_OnAttributeChanged(self, attr, value)
 	-- Gotta catch 'em all!
 	if (attr:match("^child") or attr:match("^temp[Ee]nchant")) and not (buffs[value] or debuffs[value])then
-		HandleButton(value)
+		handleButton(value, self)
 
 		if self:GetAttribute("filter") == "HELPFUL" then
 			buffs[value] = true
@@ -192,23 +175,18 @@ local function Header_OnAttributeChanged(self, attr, value)
 	end
 end
 
-local function UpdateHeader(filter)
-	local header = headers[filter]
+local function header_Update(self)
+	self:UpdateConfig()
 
-	if not header then
-		return
-	end
-
-	if filter == "TOTEM" then
-		header._config = C.db.profile.auras[E.UI_LAYOUT][filter]
-
-		if not E.Movers:Get(header, true) then
-			E.Movers:Create(header)
+	if self._filter == "TOTEM" then
+		if not E.Movers:Get(self, true) then
+			E.Movers:Create(self)
 		end
 
-		E:UpdateBarLayout(header)
+		self:UpdateCooldownConfig()
+		E:UpdateBarLayout(self)
 	else
-		local config = C.db.profile.auras[E.UI_LAYOUT][filter]
+		local config = self._config
 		local initialAnchor
 
 		if config.y_growth == "UP" then
@@ -225,42 +203,86 @@ local function UpdateHeader(filter)
 			end
 		end
 
-		for _, button in next, {header:GetChildren()} do
+		self:UpdateCooldownConfig()
+
+		for _, button in next, {self:GetChildren()} do
 			button:SetSize(config.size, config.size)
 		end
 
-		header:Hide()
-		header:SetAttribute("filter", filter)
-		header:SetAttribute("initialConfigFunction", ([[
+		self:Hide()
+		self:SetAttribute("filter", self._filter)
+		self:SetAttribute("initialConfigFunction", ([[
 			self:SetAttribute("type2", "cancelaura")
 			self:SetWidth(%1$d)
 			self:SetHeight(%1$d)
 		]]):format(config.size))
-		header:SetAttribute("maxWraps", config.num_rows)
-		header:SetAttribute("minHeight", config.num_rows * config.size + (config.num_rows - 1) * config.spacing)
-		header:SetAttribute("minWidth", config.per_row * config.size + (config.per_row - 1) * config.spacing)
-		header:SetAttribute("point", initialAnchor)
-		header:SetAttribute("separateOwn", config.sep_own)
-		header:SetAttribute("sortDirection", config.sort_dir)
-		header:SetAttribute("sortMethod", config.sort_method)
-		header:SetAttribute("wrapAfter", config.per_row)
-		header:SetAttribute("wrapXOffset", 0)
-		header:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.size + config.spacing))
-		header:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.size + config.spacing))
-		header:SetAttribute("yOffset", 0)
-		header:Show()
+		self:SetAttribute("maxWraps", config.num_rows)
+		self:SetAttribute("minHeight", config.num_rows * config.size + (config.num_rows - 1) * config.spacing)
+		self:SetAttribute("minWidth", config.per_row * config.size + (config.per_row - 1) * config.spacing)
+		self:SetAttribute("point", initialAnchor)
+		self:SetAttribute("separateOwn", config.sep_own)
+		self:SetAttribute("sortDirection", config.sort_dir)
+		self:SetAttribute("sortMethod", config.sort_method)
+		self:SetAttribute("wrapAfter", config.per_row)
+		self:SetAttribute("wrapXOffset", 0)
+		self:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.size + config.spacing))
+		self:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.size + config.spacing))
+		self:SetAttribute("yOffset", 0)
+		self:Show()
 
-		local mover = E.Movers:Get(header, true)
+		local mover = E.Movers:Get(self, true)
 		if mover then
 			mover:UpdateSize()
 		else
-			mover = E.Movers:Create(header)
+			mover = E.Movers:Create(self)
 			mover:SetClampRectInsets(-6, 6, 6, -6)
 		end
 	end
 end
 
-local function CreateHeader(filter)
+local function header_UpdateConfig(self)
+	self._config = t_wipe(self._config or {})
+	E:CopyTable(C.db.profile.auras[E.UI_LAYOUT][self._filter], self._config)
+
+	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown)
+end
+
+local function header_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	self.cooldownConfig.expire_threshold = self._config.cooldown.expire_threshold
+	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
+
+	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
+	self.cooldownConfig.colors.expire = self._config.cooldown.colors.expire
+	self.cooldownConfig.colors.second = self._config.cooldown.colors.second
+	self.cooldownConfig.colors.minute = self._config.cooldown.colors.minute
+	self.cooldownConfig.colors.hour = self._config.cooldown.colors.hour
+	self.cooldownConfig.colors.day = self._config.cooldown.colors.day
+
+	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
+	self.cooldownConfig.text.size = self._config.cooldown.text.size
+	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
+	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
+	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+
+	local buttons = self._buttons or {self:GetChildren()}
+	for _, button in next, buttons do
+		if not button.Cooldown.UpdateConfig then
+			break
+		end
+
+		button.Cooldown:UpdateConfig(self.cooldownConfig)
+		button.Cooldown:UpdateFontObject()
+	end
+end
+
+local function createHeader(filter)
 	local point = C.db.profile.auras[E.UI_LAYOUT][filter].point
 	local header
 
@@ -284,7 +306,7 @@ local function CreateHeader(filter)
 			E:ForceHide(iconFrame)
 
 			totem:ClearAllPoints()
-			totem:SetScript("OnEnter", Button_OnEnter)
+			totem:SetScript("OnEnter", button_OnEnter)
 			totem:SetAttribute("totem-slot", i)
 			totem:SetID(i)
 			totem._parent = header
@@ -306,13 +328,12 @@ local function CreateHeader(filter)
 			cd:ClearAllPoints()
 			cd:SetPoint("TOPLEFT", 1, -1)
 			cd:SetPoint("BOTTOMRIGHT", -1, 1)
-
-			totem.CD = E:HandleCooldown(cd, 12, nil, "BOTTOM")
+			totem.Cooldown = E:HandleCooldown(cd)
 		end
 	else
 		header = CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate")
 		header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		header:HookScript("OnAttributeChanged", Header_OnAttributeChanged)
+		header:HookScript("OnAttributeChanged", header_OnAttributeChanged)
 		header:SetAttribute("unit", "player")
 		header:SetAttribute("template", "SecureActionButtonTemplate")
 
@@ -324,9 +345,14 @@ local function CreateHeader(filter)
 		RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")
 	end
 
+	header._filter = filter
+	header.Update = header_Update
+	header.UpdateConfig = header_UpdateConfig
+	header.UpdateCooldownConfig = header_UpdateCooldownConfig
+
 	headers[filter] = header
 
-	UpdateHeader(filter)
+	header:Update()
 end
 
 function MODULE.IsInit()
@@ -335,23 +361,32 @@ end
 
 function MODULE.Init()
 	if not isInit and C.db.char.auras.enabled then
-		CreateHeader("HELPFUL")
-		CreateHeader("HARMFUL")
-		CreateHeader("TOTEM")
+		createHeader("HELPFUL")
+		createHeader("HARMFUL")
+		createHeader("TOTEM")
 
 		E:ForceHide(BuffFrame)
 		E:ForceHide(TemporaryEnchantFrame)
 
 		isInit = true
+
+		MODULE:Update()
 	end
 end
 
 function MODULE.Update()
-	UpdateHeader("HELPFUL")
-	UpdateHeader("HARMFUL")
-	UpdateHeader("TOTEM")
+	if isInit then
+		for _, header in next, headers do
+			header:Update()
+		end
+	end
 end
 
 function MODULE.UpdateHeader(_, ...)
-	UpdateHeader(...)
+	if isInit then
+		local header = headers[...]
+		if header then
+			header:Update()
+		end
+	end
 end
