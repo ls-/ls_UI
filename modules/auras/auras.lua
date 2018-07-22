@@ -303,7 +303,6 @@ local function createHeader(filter)
 	if filter == "TOTEM" then
 		header = CreateFrame("Frame", "LSTotemHeader", UIParent)
 		header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-
 		header._buttons = {}
 
 		for i = 1, MAX_TOTEMS do
@@ -397,7 +396,7 @@ function MODULE.Update()
 	end
 end
 
-function MODULE.UpdateHeader(_, ...)
+function MODULE:UpdateHeader(...)
 	if isInit then
 		local header = headers[...]
 		if header then
