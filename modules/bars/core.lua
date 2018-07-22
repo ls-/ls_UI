@@ -57,7 +57,43 @@ local function bar_UpdateButtons(self, method, ...)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = C.db.profile.bars[self._id]
+	self._config = E:CopyTable(C.db.profile.bars[self._id])
+end
+
+local function bar_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	self.cooldownConfig.expire_threshold = C.db.profile.bars.cooldown.expire_threshold
+	self.cooldownConfig.m_ss_threshold = C.db.profile.bars.cooldown.m_ss_threshold
+
+	self.cooldownConfig.colors.enabled = C.db.profile.bars.cooldown.colors.enabled
+	self.cooldownConfig.colors.expire = C.db.profile.bars.cooldown.colors.expire
+	self.cooldownConfig.colors.second = C.db.profile.bars.cooldown.colors.second
+	self.cooldownConfig.colors.minute = C.db.profile.bars.cooldown.colors.minute
+	self.cooldownConfig.colors.hour = C.db.profile.bars.cooldown.colors.hour
+	self.cooldownConfig.colors.day = C.db.profile.bars.cooldown.colors.day
+
+	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
+	self.cooldownConfig.text.size = self._config.cooldown.text.size
+	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
+	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
+	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+
+	local cooldown
+	for _, button in next, self._buttons do
+		cooldown = button.cooldown or button.Cooldown
+		if not cooldown.UpdateConfig then
+			break
+		end
+
+		cooldown:UpdateConfig(self.cooldownConfig)
+		cooldown:UpdateFontObject()
+	end
 end
 
 local function bar_UpdateVisibility(self)
@@ -71,6 +107,7 @@ end
 function MODULE.AddBar(_, barID, bar)
 	bars[barID] = bar
 	bar.UpdateConfig = bar_UpdateConfig
+	bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then

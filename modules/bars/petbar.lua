@@ -226,6 +226,7 @@ function MODULE.CreatePetActionBar()
 			self:UpdateVisibility()
 			self:UpdateButtons("Reset")
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateCooldownConfig()
 			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end

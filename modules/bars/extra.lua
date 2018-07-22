@@ -54,6 +54,7 @@ function MODULE.CreateExtraButton()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
 			ExtraActionBarFrame:SetAllPoints()
