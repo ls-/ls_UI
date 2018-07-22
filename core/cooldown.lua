@@ -123,9 +123,6 @@ local function cooldown_SetCooldown(self, start, duration)
 	end
 end
 
-local function cooldown_SetTimerTextHeight()
-end
-
 local function cooldown_UpdateFontObject(self, fontObject)
 	local config = self.config.text
 
@@ -164,7 +161,6 @@ function E:HandleCooldown(cooldown)
 
 	hooksecurefunc(cooldown, "SetCooldown", cooldown_SetCooldown)
 
-	cooldown.SetTimerTextHeight = cooldown_SetTimerTextHeight
 	cooldown.UpdateConfig = cooldown_UpdateConfig
 	cooldown.UpdateFontObject = cooldown_UpdateFontObject
 
@@ -176,12 +172,12 @@ function E:HandleCooldown(cooldown)
 	return cooldown
 end
 
-function E:CreateCooldown(parent, textSize, textJustifyH, textJustifyV)
+function E:CreateCooldown(parent)
 	local cooldown = CreateFrame("Cooldown", nil, parent, "CooldownFrameTemplate")
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	self:HandleCooldown(cooldown, textSize, textJustifyH, textJustifyV)
+	self:HandleCooldown(cooldown)
 
 	return cooldown
 end
