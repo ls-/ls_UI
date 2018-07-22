@@ -208,7 +208,7 @@ local function getOptionsTable_Bar(barID, order, name)
 					BARS:GetBar(barID):Update()
 				end,
 			},
-			spacer1 = {
+			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = "",
@@ -608,7 +608,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					end
 				end
 			},
-			spacer1 = {
+			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = "",
@@ -753,7 +753,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:UpdateMicroMenu()
 				end,
 			},
-			spacer1 = {
+			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = "",
@@ -1253,7 +1253,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:GetBar("xpbar"):Update()
 				end,
 			},
-			spacer1 = {
+			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = "",
