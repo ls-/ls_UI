@@ -234,14 +234,14 @@ function MODULE.CreatePetActionBar()
 		bar.Update = bar_Update
 
 		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "PetActionButtonTemplate")
+			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "PetActionButtonTemplate")
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
 			button:HookScript("OnEnter", button_OnEnter)
 			button:UnregisterAllEvents()
 			button._parent = bar
-			button._command = "BONUSACTIONBUTTON"..i
+			button._command = "BONUSACTIONBUTTON" .. i
 			button.showgrid = 0
 
 			button.HideGrid = button_HideGrid

@@ -147,14 +147,14 @@ function MODULE.CreateStanceBar()
 		end
 
 		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "StanceButtonTemplate")
+			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "StanceButtonTemplate")
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
 			button:HookScript("OnEnter", button_OnEnter)
 			button:UnregisterAllEvents()
 			button._parent = bar
-			button._command = "SHAPESHIFTBUTTON"..i
+			button._command = "SHAPESHIFTBUTTON" .. i
 
 			button.Update = button_Update
 			button.UpdateCooldown = button_UpdateCooldown

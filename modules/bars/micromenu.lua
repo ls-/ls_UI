@@ -40,7 +40,7 @@ local C_Timer = _G.C_Timer
 local LibDropDown = LibStub("LibDropDown")
 local isInit = false
 
-local LATENCY_TEMPLATE = "|cff%s%s|r ".._G.MILLISECONDS_ABBR
+local LATENCY_TEMPLATE = "|cff%s%s|r " .. _G.MILLISECONDS_ABBR
 local MEMORY_TEMPLATE = "%.2f MiB"
 
 local ROLE_NAMES = {
@@ -51,7 +51,7 @@ local ROLE_NAMES = {
 
 local BUTTONS = {
 	CharacterMicroButton = {
-		id =  1,
+		id = 1,
 		icon = E.PLAYER_CLASS,
 		events = {
 			AZERITE_EMPOWERED_ITEM_SELECTION_UPDATED = true,
@@ -63,7 +63,7 @@ local BUTTONS = {
 		},
 	},
 	LSInventoryMicroButton = {
-		id =  2,
+		id = 2,
 		icon = "Inventory",
 		events = {
 			BAG_UPDATE_DELAYED = true,
@@ -71,7 +71,7 @@ local BUTTONS = {
 		},
 	},
 	SpellbookMicroButton = {
-		id =  3,
+		id = 3,
 		icon = "Spellbook",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -79,7 +79,7 @@ local BUTTONS = {
 		},
 	},
 	TalentMicroButton = {
-		id =  4,
+		id = 4,
 		icon = "Talent",
 		events = {
 			HONOR_LEVEL_UPDATE = true,
@@ -92,7 +92,7 @@ local BUTTONS = {
 		},
 	},
 	AchievementMicroButton = {
-		id =  5,
+		id = 5,
 		icon = "Achievement",
 		events = {
 			ACHIEVEMENT_EARNED = true,
@@ -102,7 +102,7 @@ local BUTTONS = {
 		},
 	},
 	QuestLogMicroButton = {
-		id =  6,
+		id = 6,
 		icon = "Quest",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -110,7 +110,7 @@ local BUTTONS = {
 		},
 	},
 	GuildMicroButton = {
-		id =  7,
+		id = 7,
 		icon = "Guild",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -119,7 +119,7 @@ local BUTTONS = {
 		},
 	},
 	LFDMicroButton = {
-		id =  8,
+		id = 8,
 		icon = "LFD",
 		events = {
 			LFG_LOCK_INFO_RECEIVED = true,
@@ -128,7 +128,7 @@ local BUTTONS = {
 		},
 	},
 	CollectionsMicroButton = {
-		id =  9,
+		id = 9,
 		icon = "Collection",
 		events = {
 			COMPANION_LEARNED = true,
@@ -711,7 +711,7 @@ do
 	end
 
 	function createBag(parent, containerID)
-		local bag = E:CreateButton(parent, "$parentBag"..containerID, true)
+		local bag = E:CreateButton(parent, "$parentBag" .. containerID, true)
 		bag:SetID(ContainerIDToInventoryID(containerID))
 		bag:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		bag:RegisterForDrag("LeftButton")
@@ -869,7 +869,7 @@ do
 
 			cta[shortageRole][dungeonID][rewardIndex] = {
 				name = name,
-				texture = "|T"..texture..":0|t",
+				texture = "|T" .. texture .. ":0|t",
 				quantity = quantity or 1
 			}
 
@@ -920,7 +920,7 @@ do
 						GameTooltip:AddLine(v.name, 1, 1, 1)
 
 						for i = 1, #v do
-							GameTooltip:AddDoubleLine(v[i].name, v[i].quantity..v[i].texture, r, g, b, r, g, b)
+							GameTooltip:AddDoubleLine(v[i].name, v[i].quantity .. v[i].texture, r, g, b, r, g, b)
 						end
 					end
 				end
@@ -1024,7 +1024,7 @@ do
 
 						local color = encounterProgress == numEncounters and M.COLORS.RED or M.COLORS.GREEN
 
-						GameTooltip:AddDoubleLine(instanceName, encounterProgress.." / "..numEncounters, 1, 1, 1, color:GetRGB())
+						GameTooltip:AddDoubleLine(instanceName, encounterProgress .. " / " .. numEncounters, 1, 1, 1, color:GetRGB())
 						GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), r, g, b, r, g, b)
 					end
 				else

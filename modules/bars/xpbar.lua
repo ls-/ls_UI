@@ -87,7 +87,7 @@ local function bar_UpdateSize(self, width, height)
 	end
 
 	if not BARS:IsRestricted() then
-		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-"..height)
+		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 	end
 
 	self._total = nil
@@ -228,7 +228,7 @@ local function bar_UpdateSegments(self)
 			index = index + 1
 
 			local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
-			local repTextLevel = GetText("FACTION_STANDING_LABEL"..standing, UnitSex("player"))
+			local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
 			local isParagon, rewardQuestID, hasRewardPending
 			local cur, max
 
@@ -250,7 +250,7 @@ local function bar_UpdateSegments(self)
 					if isParagon then
 						cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
 						cur = cur % max
-						repTextLevel = repTextLevel.."+"
+						repTextLevel = repTextLevel .. "+"
 
 						if hasRewardPending then
 							cur = cur + max
@@ -441,7 +441,7 @@ function BARS.CreateXPBar()
 		bg:SetAllPoints()
 
 		for i = 1, MAX_SEGMENTS do
-			local segment = CreateFrame("StatusBar", "$parentSegment"..i, bar)
+			local segment = CreateFrame("StatusBar", "$parentSegment" .. i, bar)
 			segment:SetFrameLevel(bar:GetFrameLevel() + 1)
 			segment:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 			segment:SetHitRectInsets(0, 0, -4, -4)

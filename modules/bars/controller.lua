@@ -132,7 +132,7 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 
 				-- _"childupdate-numbuttons" is executed in controller's environment
 				for i = 1, 12 do
-					controller:SetFrameRef("button"..i, _G["LSActionBar1Button"..i])
+					controller:SetFrameRef("button" .. i, _G["LSActionBar1Button" .. i])
 				end
 
 				controller:Execute([[
@@ -141,7 +141,7 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 					buttons = table.new()
 
 					for i = 1, 12 do
-						table.insert(buttons, self:GetFrameRef("button"..i))
+						table.insert(buttons, self:GetFrameRef("button" .. i))
 					end
 				]])
 

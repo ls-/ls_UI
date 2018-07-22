@@ -266,7 +266,7 @@ function MODULE.CreateActionBars()
 			end
 
 			for i = 1, data.num_buttons do
-				local button = LibActionButton:CreateButton(i, "$parentButton"..i, bar)
+				local button = LibActionButton:CreateButton(i, "$parentButton" .. i, bar)
 				button:SetState(0, "action", i)
 				button._parent = bar
 				button._command = data.type .. i
