@@ -80,6 +80,12 @@ local function button_OnLeave(self)
 	self:SetScript("OnUpdate", nil)
 end
 
+local function button_UpdateCountFont(self)
+	local config = self._parent._config.count
+	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
+	self.Count:SetWordWrap(false)
+end
+
 local function bar_OnEvent(self)
 	t_wipe(activeAuras)
 
@@ -127,6 +133,14 @@ local function bar_OnEvent(self)
 				button:SetScript("OnUpdate", nil)
 				button:Hide()
 			end
+		end
+	end
+end
+
+local function bar_UpdateButtons(self, method, ...)
+	for _, button in next, self._buttons do
+		if button[method] then
+			button[method](button, ...)
 		end
 	end
 end
@@ -205,6 +219,7 @@ function MODULE.Init()
 		bar:SetScript("OnEvent", bar_OnEvent)
 
 		bar.Update = bar_OnEvent
+		bar.UpdateButtons = bar_UpdateButtons
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
 
@@ -219,8 +234,6 @@ function MODULE.Init()
 			button:SetScript("OnLeave", button_OnLeave)
 			button:Hide()
 			bar._buttons[i] = button
-
-			button.Count:SetFontObject("LSFont12_Outline")
 
 			local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetSize(16, 16)
@@ -240,6 +253,7 @@ end
 function MODULE.Update()
 	if isInit then
 		bar:UpdateConfig()
+		bar:UpdateButtons("UpdateCountFont")
 		bar:UpdateCooldownConfig()
 		E:UpdateBarLayout(bar)
 		bar:Update()

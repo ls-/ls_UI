@@ -2989,6 +2989,11 @@ D.char = {
 		x_growth = "RIGHT",
 		y_growth = "DOWN",
 		drag_key = "NONE",
+		count = {
+			enabled = true,
+			size = 12,
+			flag = "_Outline", -- "_Shadow", ""
+		},
 		cooldown = {
 			expire_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
