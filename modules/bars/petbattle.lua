@@ -94,6 +94,7 @@ function MODULE.CreatePetBattleBar()
 
 		bar.Update = bar_Update
 		bar.UpdateConfig = bar_UpdateConfig
+		bar.UpdateCooldownConfig = nil
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
 			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]

@@ -424,6 +424,7 @@ function BARS.CreateXPBar()
 
 		bar.Update = bar_Update
 		bar.UpdateConfig = bar_UpdateConfig
+		bar.UpdateCooldownConfig = nil
 		bar.UpdateSegments = bar_UpdateSegments
 		bar.UpdateSize = bar_UpdateSize
 

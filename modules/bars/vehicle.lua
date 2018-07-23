@@ -34,6 +34,14 @@ local function onClick(self)
 	end
 end
 
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateFading()
+
+	self:SetSize(self._config.size + 4, self._config.size + 4)
+	E.Movers:Get(self):UpdateSize()
+end
+
 function MODULE.CreateVehicleExitButton()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSVehicleExitFrame", UIParent)
@@ -42,13 +50,8 @@ function MODULE.CreateVehicleExitButton()
 
 		MODULE:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateFading()
-
-			self:SetSize(self._config.size + 4, self._config.size + 4)
-			E.Movers:Get(self):UpdateSize()
-		end
+		bar.Update = bar_Update
+		bar.UpdateCooldownConfig = nil
 
 		local button = E:CreateButton(bar)
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")

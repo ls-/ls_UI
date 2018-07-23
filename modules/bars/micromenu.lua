@@ -1321,6 +1321,7 @@ function MODULE:CreateMicroMenu()
 		bar1.UpdateButtonList = bar_UpdateButtonList
 		bar1.UpdateButtonVisibility = bar_UpdateButtonVisibility
 		bar1.UpdateConfig = bar_UpdateConfig
+		bar1.UpdateCooldownConfig = nil
 
 		local bar2 = CreateFrame("Frame", "LSMicroMenu2", UIParent)
 		bar2._id = "micromenu2"
@@ -1332,6 +1333,7 @@ function MODULE:CreateMicroMenu()
 		bar2.UpdateButtonList = bar_UpdateButtonList
 		bar2.UpdateButtonVisibility = bar_UpdateButtonVisibility
 		bar2.UpdateConfig = bar_UpdateConfig
+		bar2.UpdateCooldownConfig = nil
 
 		for name, data in next, BUTTONS do
 			local button = _G[name] or createMicroButton(name)
