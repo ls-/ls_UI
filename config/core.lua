@@ -516,26 +516,8 @@ function MODULE.Init()
 		name = L["LS_UI"],
 		disabled = function() return InCombatLockdown() end,
 		args = {
-			toggle_anchors = {
-				order = 1,
-				type = "execute",
-				name = L["TOGGLE_ANCHORS"],
-				func = function() E.Movers:ToggleAll() end,
-			},
-			keybind_mode = {
-				order = 2,
-				type = "execute",
-				name = LibKeyBound.L.BindingMode,
-				func = function() LibKeyBound:Toggle() end,
-			},
-			reload_ui = {
-				order = 3,
-				type = "execute",
-				name = L["RELOAD_UI"],
-				func = function() ReloadUI() end,
-			},
 			layout = {
-				order = 4,
+				order = 1,
 				type = "select",
 				name = L["UI_LAYOUT"],
 				desc = L["UI_LAYOUT_DESC"],
@@ -553,6 +535,24 @@ function MODULE.Init()
 						MODULE:ShowStaticPopup("RELOAD_UI")
 					end
 				end,
+			},
+			toggle_anchors = {
+				order = 2,
+				type = "execute",
+				name = L["TOGGLE_ANCHORS"],
+				func = function() E.Movers:ToggleAll() end,
+			},
+			keybind_mode = {
+				order = 3,
+				type = "execute",
+				name = LibKeyBound.L.BindingMode,
+				func = function() LibKeyBound:Toggle() end,
+			},
+			reload_ui = {
+				order = 4,
+				type = "execute",
+				name = L["RELOAD_UI"],
+				func = function() ReloadUI() end,
 			},
 		},
 	}
