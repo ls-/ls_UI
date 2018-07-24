@@ -39,6 +39,7 @@ local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
+-- MODULE.OpenAuraConfig
 do
 	-- Mine
 	local frame
@@ -426,6 +427,7 @@ do
 	end
 end
 
+-- MODULE.ShowStaticPopup
 do
 	-- Blizz
 	local StaticPopupDialogs = _G.StaticPopupDialogs
