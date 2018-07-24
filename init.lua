@@ -37,8 +37,11 @@ local function cleanUpProfile()
 	-- -> 80000.04
 	if not C.db.profile.version or C.db.profile.version < 8000004 then
 		C.db.profile.bars.micromenu.bars.micromenu1.fade = nil
+		C.db.profile.bars.micromenu.bars.micromenu1.visible = nil
 		C.db.profile.bars.micromenu.bars.micromenu2.fade = nil
+		C.db.profile.bars.micromenu.bars.micromenu2.visible = nil
 		C.db.profile.bars.micromenu.bars.bags.fade = nil
+		C.db.profile.bars.micromenu.bars.bags.visible = nil
 
 		if C.db.profile.auras[E.UI_LAYOUT] then
 			if C.db.profile.auras[E.UI_LAYOUT].HELPFUL then
