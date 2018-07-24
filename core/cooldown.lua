@@ -4,17 +4,21 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local s_format = _G.string.format
+local next = _G.next
+local unpack = _G.unpack
 
 -- Blizz
 local GetTime = _G.GetTime
 
 --[[ luacheck: globals
-	CreateFrame
+	CreateFrame UIParent
 ]]
 
 -- Mine
-local handled = {}
+E.Cooldowns = {}
+local handledCooldowns = {}
+local activeCooldowns = {}
+
 local defaults = {
 	exp_threshold = 5, -- [1; 10]
 	m_ss_threshold = 0, -- [91; 3599]
@@ -32,93 +36,95 @@ local defaults = {
 		flag = "_Outline", -- "_Shadow", ""
 		h_alignment = "CENTER",
 		v_alignment = "MIDDLE",
-	}
+	},
 }
 
-local function cooldown_OnUpdate(self, elapsed)
-	if not self.Timer:IsShown() then return end
+local updateTime = 0
+local time1, time2, format, color
+E.Cooldowns.Updater = CreateFrame("Frame")
+E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
+	updateTime = updateTime + elapsed
+	if updateTime >= 0.1 then
+		for cooldown, expiration in next, activeCooldowns do
+			if cooldown:IsVisible() and cooldown.Timer:IsVisible() then
+				local remain = expiration - GetTime()
+				if remain <= 0 then
+					cooldown.Timer:SetText("")
+					activeCooldowns[cooldown] = nil
+				end
 
-	self.elapsed = (self.elapsed or 0) + elapsed
+				color = nil
 
-	if self.elapsed > 0.1 then
-		local duration = self.Timer.expiration - GetTime()
-		local color = {1, 1, 1}
-		local time, _
+				if remain >= 86400 then
+					time1, time2, format = E:SecondsToTime(remain, "abbr")
 
-		if duration >= 86400 then
-			time = E:SecondsToTime(duration, true)
+					if cooldown.config.colors.enabled then
+						color = cooldown.config.colors.day
+					end
+				elseif remain >= 3600 then
+					time1, time2, format = E:SecondsToTime(remain, "abbr")
 
-			if self.config.colors.enabled then
-				color = self.config.colors.day
-			end
-		elseif duration >= 3600 then
-			_, time = E:SecondsToTime(duration, true)
+					if cooldown.config.colors.enabled then
+						color = cooldown.config.colors.hour
+					end
+				elseif remain >= 60 then
+					if cooldown.config.m_ss_threshold == 0 or remain > cooldown.config.m_ss_threshold then
+						time1, time2, format = E:SecondsToTime(remain, "abbr")
+					else
+						time1, time2, format = E:SecondsToTime(remain, "x:xx")
+					end
 
-			if self.config.colors.enabled then
-				color = self.config.colors.hour
-			end
-		elseif duration >= 60 then
-			if self.config.m_ss_threshold == 0 or duration >= self.config.m_ss_threshold then
-				_, _, time = E:SecondsToTime(duration, true)
-			else
-				local m, s
-				_, _, m, s = E:SecondsToTime(duration)
-				time = s_format("%d:%02d", m, s)
-			end
+					if cooldown.config.colors.enabled then
+						color = cooldown.config.colors.minute
+					end
+				elseif remain >= 1 then
+					if remain > cooldown.config.exp_threshold then
+						time1, time2, format = E:SecondsToTime(remain, "abbr")
+					else
+						time1, time2, format = E:SecondsToTime(remain, "frac")
+					end
 
-			if self.config.colors.enabled then
-				color = self.config.colors.minute
-			end
-		elseif duration >= 1 then
-			if duration >= self.config.exp_threshold then
-				_, _, _, time = E:SecondsToTime(duration, true)
-			else
-				local s, ms
-				_, _, _, s, ms = E:SecondsToTime(duration)
-				time = s_format("%d.%d", s, ms / 100)
-			end
+					if cooldown.config.colors.enabled then
+						color = cooldown.config.colors.second
+					end
+				elseif remain >= 0.001 then
+					time1, time2, format = E:SecondsToTime(remain)
 
-			if self.config.colors.enabled then
-				color = self.config.colors.second
-			end
-		elseif duration >= 0.001 then
-			_, _, _, _, time = E:SecondsToTime(duration)
-			time = s_format("%.1f", time / 1000)
+					if cooldown.config.colors.enabled then
+						color = cooldown.config.colors.second
+					end
+				end
 
-			if self.config.colors.enabled then
-				color = self.config.colors.second
+				if cooldown.config.colors.enabled and remain <= cooldown.config.exp_threshold then
+					color = cooldown.config.colors.expiration
+				end
+
+				if time1 then
+					cooldown.Timer:SetFormattedText(format, time1, time2)
+
+					if color then
+						cooldown.Timer:SetVertexColor(unpack(color))
+					else
+						cooldown.Timer:SetVertexColor(1, 1, 1)
+					end
+				end
 			end
 		end
 
-		if self.config.colors.enabled and duration < self.config.exp_threshold then
-			color = self.config.colors.expiration
-		end
-
-		if time then
-			self.Timer:SetFormattedText(time)
-			self.Timer:SetVertexColor(color[1], color[2], color[3])
-		else
-			self.Timer:SetText("")
-			self:SetScript("OnUpdate", nil)
-		end
-
-		self.elapsed = 0
+		updateTime = 0
 	end
-end
+end)
 
 local function cooldown_SetCooldown(self, start, duration)
 	if self.config.text.enabled then
 		if start > 0 and duration > 1.5 then
-			self.Timer.expiration = start + duration
-
-			self:SetScript("OnUpdate", cooldown_OnUpdate)
-		else
-			self.Timer.expiration = nil
-			self.Timer:SetText("")
-
-			self:SetScript("OnUpdate", nil)
+			activeCooldowns[self] = start + duration
+			return
 		end
 	end
+
+	self.Timer:SetText("")
+	activeCooldowns[self] = nil
 end
 
 local function cooldown_UpdateFontObject(self, fontObject)
@@ -132,8 +138,8 @@ local function cooldown_UpdateFontObject(self, fontObject)
 end
 
 local function cooldown_UpdateConfig(self, config)
-	self.config = E:CopyTable(config)
-	self.config = E:UpdateTable(defaults, self.config)
+	self.config = E:CopyTable(defaults, self.config)
+	self.config = E:CopyTable(config, self.config)
 
 	if self.config.m_ss_threshold ~= 0 and self.config.m_ss_threshold < 91 then
 		self.config.m_ss_threshold = 0
@@ -141,8 +147,8 @@ local function cooldown_UpdateConfig(self, config)
 end
 
 function E:HandleCooldown(cooldown)
-	if E.OMNICC or handled[cooldown] then
-		return
+	if E.OMNICC or handledCooldowns[cooldown] then
+		return cooldown
 	end
 
 	cooldown:SetDrawEdge(false)
@@ -153,8 +159,8 @@ function E:HandleCooldown(cooldown)
 	textParent:SetAllPoints()
 
 	local timer = textParent:CreateFontString(nil, "ARTWORK")
-	timer:SetPoint("TOPLEFT", -4, 0)
-	timer:SetPoint("BOTTOMRIGHT", 4, 0)
+	timer:SetPoint("TOPLEFT", -8, 0)
+	timer:SetPoint("BOTTOMRIGHT", 8, 0)
 	cooldown.Timer = timer
 
 	hooksecurefunc(cooldown, "SetCooldown", cooldown_SetCooldown)
@@ -165,7 +171,7 @@ function E:HandleCooldown(cooldown)
 	cooldown:UpdateConfig(defaults)
 	cooldown:UpdateFontObject()
 
-	handled[cooldown] = true
+	handledCooldowns[cooldown] = true
 
 	return cooldown
 end
