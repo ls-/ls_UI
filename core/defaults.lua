@@ -2192,7 +2192,8 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
-		desaturate_on_cd = false,
+		desaturate_on_cd = true,
+		desaturate_when_unusable = true,
 		click_on_down = false,
 		draw_bling = true,
 		blizz_vehicle = false,
@@ -2207,6 +2208,12 @@ D.profile = {
 				hour = {255 / 255, 255 / 255, 255 / 255},
 				day = {255 / 255, 255 / 255, 255 / 255},
 			},
+		},
+		colors = {
+			normal = {255 / 255, 255 / 255, 255 / 255},
+			unusable = {102 / 255, 102 / 255, 102 / 255},
+			mana = {38 / 255, 97 / 255, 172 / 255},
+			range = {141 / 255, 28 / 255, 33 / 255},
 		},
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
@@ -2490,13 +2497,13 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
+				size = 10,
 				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
-					size = 12,
+					size = 10,
 					flag = "_Outline", -- "_Shadow", ""
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
@@ -2524,13 +2531,13 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
+				size = 10,
 				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
-					size = 12,
+					size = 10,
 					flag = "_Outline", -- "_Shadow", ""
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
@@ -2583,13 +2590,13 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
+				size = 14,
 				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
-					size = 12,
+					size = 14,
 					flag = "_Outline", -- "_Shadow", ""
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
@@ -2619,7 +2626,7 @@ D.profile = {
 			cooldown = {
 				text = {
 					enabled = true,
-					size = 12,
+					size = 14,
 					flag = "_Outline", -- "_Shadow", ""
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
@@ -2796,7 +2803,7 @@ D.profile = {
 	auras = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
-			m_ss_threshold = 0, -- [91; 3599]
+			m_ss_threshold = 600, -- [91; 3599]
 			colors = {
 				enabled = true,
 				expiration = {229 / 255, 25 / 255, 25 / 255},
@@ -2977,7 +2984,7 @@ D.profile = {
 }
 
 D.char = {
-	layout = "ls", -- or traditional
+	layout = "ls", -- or "traditional"
 	auras = {
 		enabled = true,
 	},
