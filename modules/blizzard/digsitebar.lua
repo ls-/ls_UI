@@ -67,6 +67,6 @@ function MODULE:UpdateDigsiteBar()
 
 		E:SetStatusBarSkin(ArcheologyDigsiteProgressBar, "HORIZONTAL-" .. config.height)
 
-		ArcheologyDigsiteProgressBar.Text:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
+		ArcheologyDigsiteProgressBar.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 	end
 end

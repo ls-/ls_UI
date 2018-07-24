@@ -2953,7 +2953,8 @@ D.profile = {
 				position = "LEFT",
 			},
 			text = {
-				height = 12,
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
@@ -2962,14 +2963,16 @@ D.profile = {
 			width = 200,
 			height = 12,
 			text = {
-				height = 12,
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		timer = { -- MirrorTimer*, TimerTrackerTimer*
 			width = 200,
 			height = 12,
 			text = {
-				height = 12,
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		objective_tracker = { -- ObjectiveTrackerFrame

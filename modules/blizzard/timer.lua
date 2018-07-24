@@ -40,7 +40,7 @@ local function START_TIMER()
 		E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
 		local time = timer.bar.Text
-		time:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
+		time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 		time:SetJustifyV("MIDDLE")
 		time:SetJustifyH("RIGHT")
 		time:ClearAllPoints()
@@ -63,7 +63,7 @@ function MODULE:SetUpMirrorTimers()
 			timer:SetPoint("TOP", UIParent, "TOP", 0, -96 - (config.height + 8) * (i - 1))
 			E.Movers:Create(timer)
 
-			local time = timer:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
+			local time = timer:CreateFontString(nil, "ARTWORK")
 			time:SetWordWrap(false)
 			time:SetJustifyV("MIDDLE")
 			time:SetJustifyH("RIGHT")
@@ -102,8 +102,8 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer, "HORIZONTAL-" .. config.height)
 
-			timer.Text:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
-			timer.Time:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
+			timer.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			timer.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 		end
 
 		for _, timer in next, TimerTracker.timerList do
@@ -111,7 +111,7 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
-			timer.bar.Text:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
+			timer.bar.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 		end
 	end
 end

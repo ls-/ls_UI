@@ -130,8 +130,8 @@ local function handleCastBar(self)
 	text:SetJustifyH("LEFT")
 	text:SetSize(0, 0)
 	text:ClearAllPoints()
-	text:SetPoint("TOPLEFT", self, "TOPLEFT", 2, 0)
-	text:SetPoint("BOTTOMRIGHT", time, "BOTTOMLEFT", -2, 0)
+	text:SetPoint("LEFT", self, "LEFT", 2, 0)
+	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
 
 	CastingBarFrame_SetStartCastColor(self, M.COLORS.YELLOW:GetRGB())
 	CastingBarFrame_SetStartChannelColor(self, M.COLORS.YELLOW:GetRGB())
@@ -205,8 +205,8 @@ local function updateCastBar(self)
 
 	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 
-	self.Text:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
-	self.Time:SetFontObject("LSFont" .. config.text.height .. "_Shadow")
+	self.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	self.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 end
 
 function MODULE:HasCastBars()
@@ -214,7 +214,7 @@ function MODULE:HasCastBars()
 end
 
 function MODULE:SetUpCastBars()
-	if P:GetModule("UnitFrames"):HasPlayerFrame() or C.db.char.units.player.enabled then
+	if P:GetModule("UnitFrames"):HasPlayerFrame() then
 		C.db.char.blizzard.castbar.enabled = false
 	end
 
@@ -248,7 +248,7 @@ function MODULE:SetUpCastBars()
 end
 
 function MODULE:UpdateCastBars()
-	if P:GetModule("UnitFrames"):HasPlayerFrame() or C.db.char.units.player.enabled then
+	if P:GetModule("UnitFrames"):HasPlayerFrame() then
 		C.db.char.blizzard.castbar.enabled = false
 	end
 

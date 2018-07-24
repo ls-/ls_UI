@@ -50,7 +50,7 @@ local V_ALIGNMENTS = {
 }
 
 local FLAGS = {
-	[""] = L["NONE"],
+	-- [""] = L["NONE"],
 	["_Outline"] = L["OUTLINE"],
 	["_Shadow"] = L["SHADOW"],
 }
