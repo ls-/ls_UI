@@ -320,7 +320,7 @@ function MODULE.CreatePetActionBar()
 						end
 
 						if rangeTimer <= 0 then
-							local _, _, _, _, _, _, _, _, checksRange, inRange = GetPetActionInfo(button:GetID())
+							local _, _, _, _, _, _, _, checksRange, inRange = GetPetActionInfo(button:GetID())
 							local oldRange = button.outOfRange
 							button.outOfRange = (checksRange and inRange == false or false)
 
