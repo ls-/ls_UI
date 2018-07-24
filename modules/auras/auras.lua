@@ -270,19 +270,8 @@ local function header_UpdateCooldownConfig(self)
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-
-	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
-	self.cooldownConfig.colors.expiration = E:CopyTable(self._config.cooldown.colors.expiration, self.cooldownConfig.colors.expiration)
-	self.cooldownConfig.colors.second = E:CopyTable(self._config.cooldown.colors.second, self.cooldownConfig.colors.second)
-	self.cooldownConfig.colors.minute = E:CopyTable(self._config.cooldown.colors.minute, self.cooldownConfig.colors.minute)
-	self.cooldownConfig.colors.hour = E:CopyTable(self._config.cooldown.colors.hour, self.cooldownConfig.colors.hour)
-	self.cooldownConfig.colors.day = E:CopyTable(self._config.cooldown.colors.day, self.cooldownConfig.colors.day)
-
-	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
-	self.cooldownConfig.text.size = self._config.cooldown.text.size
-	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
-	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
-	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local buttons = self._buttons or {self:GetChildren()}
 	for _, button in next, buttons do
@@ -383,23 +372,18 @@ function MODULE.Init()
 
 		isInit = true
 
-		MODULE:Update()
+		MODULE:UpdateHeaders("Update")
 	end
 end
 
-function MODULE.Update()
-	if isInit then
-		for _, header in next, headers do
-			header:Update()
+function MODULE:UpdateHeaders(method, ...)
+	for _, header in next, headers do
+		if header[method] then
+			header[method](header, ...)
 		end
 	end
 end
 
-function MODULE:UpdateHeader(...)
-	if isInit then
-		local header = headers[...]
-		if header then
-			header:Update()
-		end
-	end
+function MODULE:GetHeader(...)
+	return headers[...]
 end
