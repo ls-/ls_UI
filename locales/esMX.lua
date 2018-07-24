@@ -9,6 +9,7 @@ local _G = getfenv(0)
 
 if _G.GetLocale() ~= "esMX" then return end
 
+
 L["ACTION_BARS"] = "Barras de acción"
 --[[ L["ADDITIONAL_BAR"] = "Additional Bar" ]]
 L["ADVENTURE_JOURNAL_DESC"] = "Mostrar información de registros de banda."
@@ -144,7 +145,7 @@ L["FLAG"] = "Bandera"
 L["FLYOUT_DIR"] = "Dirección"
 L["FOCUS_FRAME"] = "Marco de foco"
 L["FOCUS_TOF"] = "Foco & OdF"
---[[ L["FONT_SIZE"] = "Font Size" ]]
+--[[ L["FONT"] = "Font" ]]
 L["FORMAT"] = "Formato"
 L["FRAME"] = "Marco"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Huecos de bolsa libres: |cffffffff%s|r"
@@ -333,6 +334,7 @@ L["TARGET_FRAME"] = "Marco de objetivo"
 L["TARGET_INFO"] = "Información de objetivo"
 L["TARGET_INFO_DESC"] = "Muestra la descripción emergente del objetivo."
 L["TARGET_TOT"] = "Objetivo & OdO"
+--[[ L["TEXT"] = "Text" ]]
 L["TEXT_HORIZ_ALIGNMENT"] = "Alineamiento horizontal"
 L["TEXT_VERT_ALIGNMENT"] = "Alineamiento vertical"
 L["THREAT_GLOW"] = "Brillo de Amenaza"
