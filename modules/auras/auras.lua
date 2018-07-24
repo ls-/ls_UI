@@ -147,7 +147,7 @@ local function handleButton(button, header)
 	border:SetOffset(-4)
 	button.Border = border
 
-	button.Cooldown = E:CreateCooldown(button)
+	button.Cooldown = E.Cooldowns.Create(button)
 	button.Cooldown:SetDrawSwipe(false)
 
 	if button.Cooldown.UpdateConfig then
@@ -329,7 +329,7 @@ local function createHeader(filter)
 			cd:SetPoint("BOTTOMRIGHT", -1, 1)
 			cd:SetPoint("TOPLEFT", 1, -1)
 			cd:SetDrawSwipe(false)
-			totem.Cooldown = E:HandleCooldown(cd)
+			totem.Cooldown = E.Cooldowns.Handle(cd)
 		end
 	else
 		header = CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate")

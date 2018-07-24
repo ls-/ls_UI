@@ -227,7 +227,7 @@ local function skinButton(button)
 		bCD:SetPoint("BOTTOMRIGHT", -1, 1)
 
 		if bCD:IsObjectType("Frame") then
-			E:HandleCooldown(bCD, 12)
+			E.Cooldowns.Handle(bCD)
 		end
 	end
 
@@ -481,7 +481,7 @@ function E:CreateButton(parent, name, isSandwich, isSecure)
 	count:SetWordWrap(false)
 	button.Count = count
 
-	button.CD = E:CreateCooldown(button, 12)
+	button.CD = E.Cooldowns.Create(button)
 
 	setHighlightTexture(button)
 	setPushedTexture(button)
@@ -516,7 +516,7 @@ function E:CreateCheckButton(parent, name, isSandwich, isSecure)
 	count:SetWordWrap(false)
 	button.Count = count
 
-	button.CD = E:CreateCooldown(button, 12)
+	button.CD = E.Cooldowns.Create(button)
 
 	setCheckedTexture(button)
 	setHighlightTexture(button)

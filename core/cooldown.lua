@@ -146,7 +146,7 @@ local function cooldown_UpdateConfig(self, config)
 	end
 end
 
-function E:HandleCooldown(cooldown)
+function E.Cooldowns.Handle(cooldown)
 	if E.OMNICC or handledCooldowns[cooldown] then
 		return cooldown
 	end
@@ -176,12 +176,12 @@ function E:HandleCooldown(cooldown)
 	return cooldown
 end
 
-function E:CreateCooldown(parent)
+function E.Cooldowns.Create(parent)
 	local cooldown = CreateFrame("Cooldown", nil, parent, "CooldownFrameTemplate")
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 
-	self:HandleCooldown(cooldown)
+	E.Cooldowns.Handle(cooldown)
 
 	return cooldown
 end
