@@ -6,6 +6,10 @@ local _G = getfenv(0)
 local type = _G.type
 local next = _G.next
 
+--[[ luacheck: globals
+	LibStub
+]]
+
 -- Mine
 local function cleanUpProfile()
 	-- -> 80000.03
@@ -29,9 +33,36 @@ local function cleanUpProfile()
 		C.db.char.bars.bags = nil
 		C.db.profile.bars.bags = nil
 	end
+
+	-- -> 80000.04
+	if not C.db.profile.version or C.db.profile.version < 8000004 then
+		C.db.profile.bars.micromenu.bars.micromenu1.fade = nil
+		C.db.profile.bars.micromenu.bars.micromenu1.visible = nil
+		C.db.profile.bars.micromenu.bars.micromenu2.fade = nil
+		C.db.profile.bars.micromenu.bars.micromenu2.visible = nil
+		C.db.profile.bars.micromenu.bars.bags.fade = nil
+		C.db.profile.bars.micromenu.bars.bags.visible = nil
+
+		if C.db.profile.auras[E.UI_LAYOUT] then
+			if C.db.profile.auras[E.UI_LAYOUT].HELPFUL then
+				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].HELPFUL, C.db.profile.auras.HELPFUL)
+			end
+
+			if C.db.profile.auras[E.UI_LAYOUT].HARMFUL then
+				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].HARMFUL, C.db.profile.auras.HARMFUL)
+			end
+
+			if C.db.profile.auras[E.UI_LAYOUT].TOTEM then
+				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras.TOTEM)
+			end
+		end
+
+		C.db.profile.auras.ls = nil
+		C.db.profile.auras.traditional = nil
+	end
 end
 
-local function UpdateAll()
+local function updateAll()
 	cleanUpProfile()
 	P:UpdateModules()
 	P.Movers:UpdateConfig()
@@ -39,25 +70,6 @@ end
 
 E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if arg1 ~= addonName then return end
-
-	-- -> 70300.12
-	if LS_UI_GLOBAL_CONFIG and LS_UI_GLOBAL_CONFIG.profiles then
-		for _, profile in next, LS_UI_GLOBAL_CONFIG.profiles do
-			if profile.bars then
-				for _, bar in next, profile.bars do
-					if type(bar) == "table" then
-						if bar.hotkey ~= nil and type(bar.hotkey) == "boolean" then
-							bar.hotkey = nil
-						end
-
-						if bar.macro ~= nil and type(bar.macro) == "boolean" then
-							bar.macro = nil
-						end
-					end
-				end
-			end
-		end
-	end
 
 	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
 	LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
@@ -80,9 +92,9 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		P.Movers:CleanUpConfig()
 	end)
 
-	C.db:RegisterCallback("OnProfileChanged", UpdateAll)
-	C.db:RegisterCallback("OnProfileCopied", UpdateAll)
-	C.db:RegisterCallback("OnProfileReset", UpdateAll)
+	C.db:RegisterCallback("OnProfileChanged", updateAll)
+	C.db:RegisterCallback("OnProfileCopied", updateAll)
+	C.db:RegisterCallback("OnProfileReset", updateAll)
 
 	E:RegisterEvent("PLAYER_LOGIN", function()
 		E:UpdateConstants()

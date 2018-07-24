@@ -12,7 +12,7 @@ local _G = getfenv(0)
 -- Mine
 local isInit = false
 
-local function onEvent(self)
+local function button_onEvent(self)
 	if UnitOnTaxi("player") or CanExitVehicle() then
 		self:Show()
 		self.Icon:SetDesaturated(false)
@@ -22,7 +22,7 @@ local function onEvent(self)
 	end
 end
 
-local function onClick(self)
+local function button_onClick(self)
 	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 
@@ -34,6 +34,14 @@ local function onClick(self)
 	end
 end
 
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateFading()
+
+	self:SetSize(self._config.size + 4, self._config.size + 4)
+	E.Movers:Get(self):UpdateSize()
+end
+
 function MODULE.CreateVehicleExitButton()
 	if not isInit then
 		local bar = CreateFrame("Frame", "LSVehicleExitFrame", UIParent)
@@ -42,24 +50,19 @@ function MODULE.CreateVehicleExitButton()
 
 		MODULE:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateFading()
-
-			self:SetSize(self._config.size + 4, self._config.size + 4)
-			E.Movers:Get(self):UpdateSize()
-		end
+		bar.Update = bar_Update
+		bar.UpdateCooldownConfig = nil
 
 		local button = E:CreateButton(bar)
+		button:SetPoint("TOPLEFT", 2, -2)
+		button:SetPoint("BOTTOMRIGHT", -2, 2)
+		button:SetScript("OnClick", button_onClick)
+		button:SetScript("OnEvent", button_onEvent)
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
 		button:RegisterEvent("UNIT_EXITED_VEHICLE")
 		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 		button:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR")
 		button:RegisterEvent("VEHICLE_UPDATE")
-		button:SetScript("OnEvent", onEvent)
-		button:SetScript("OnClick", onClick)
-		button:SetPoint("TOPLEFT", 2, -2)
-		button:SetPoint("BOTTOMRIGHT", -2, 2)
 		bar._buttons[1] = button
 
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
@@ -67,7 +70,7 @@ function MODULE.CreateVehicleExitButton()
 
 		button.Border:SetVertexColor(1, 0.1, 0.15)
 
-		onEvent(button)
+		button_onEvent(button)
 
 		local point = C.db.profile.bars.vehicle.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)

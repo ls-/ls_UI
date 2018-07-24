@@ -5,6 +5,7 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_wipe = _G.table.wipe
 
 -- Blizz
 local C_MountJournal = _G.C_MountJournal
@@ -92,69 +93,6 @@ local BLACKLIST = {
 	[240987] = true, -- Well Prepared
 	[240989] = true, -- Heavily Augmented
 }
-
-local function overlay_HideOverride(self)
-	self:SetVertexColor(1, 1, 1)
-end
-
-local function button_UpdateTooltip(self)
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
-end
-
-local function button_OnEnter(self)
-	if not self:IsVisible() then return end
-
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	self:UpdateTooltip()
-end
-
-local function button_OnLeave()
-	GameTooltip:Hide()
-end
-
-local function createAuraIcon(element, index)
-	local button = E:CreateButton(element, "$parentAura"..index, true)
-
-	button.icon = button.Icon
-	button.Icon = nil
-
-	button.count = button.Count
-	button.Count = nil
-
-	button.cd = button.CD
-	button.CD = nil
-
-	if button.cd.SetTimerTextHeight then
-		button.cd:SetTimerTextHeight(10)
-		button.cd.Timer:SetJustifyV("BOTTOM")
-	end
-
-	button:SetPushedTexture("")
-	button:SetHighlightTexture("")
-
-	button.overlay = button.Border
-	button.overlay.Hide = overlay_HideOverride
-	button.Border = nil
-
-	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
-	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
-	stealable:SetPoint("TOPLEFT", -1, 1)
-	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
-	stealable:SetBlendMode("ADD")
-	button.stealable = stealable
-
-	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
-	auraType:SetSize(16, 16)
-	auraType:SetPoint("TOPLEFT", -2, 2)
-	button.AuraType = auraType
-
-	button.UpdateTooltip = button_UpdateTooltip
-	button:SetScript("OnEnter", button_OnEnter)
-	button:SetScript("OnLeave", button_OnLeave)
-
-	return button
-end
 
 local filterFunctions = {
 	default = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
@@ -283,11 +221,108 @@ local filterFunctions = {
 	end,
 }
 
-local function updateAuraType(_, _, aura)
+local function overlay_HideOverride(self)
+	self:SetVertexColor(1, 1, 1)
+end
+
+local function button_UpdateTooltip(self)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+end
+
+local function button_OnEnter(self)
+	if not self:IsVisible() then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	self:UpdateTooltip()
+end
+
+local function button_OnLeave()
+	GameTooltip:Hide()
+end
+
+local function element_CreateAuraIcon(element, index)
+	local button = E:CreateButton(element, "$parentAura" .. index, true)
+
+	button.icon = button.Icon
+	button.Icon = nil
+
+	button.count = button.Count
+	button.Count = nil
+
+	button.cd = button.CD
+	button.CD = nil
+
+	if button.cd.UpdateConfig then
+		button.cd:UpdateConfig(element.cooldownConfig or {})
+		button.cd:UpdateFontObject()
+	end
+
+	button:SetPushedTexture("")
+	button:SetHighlightTexture("")
+
+	button.overlay = button.Border
+	button.overlay.Hide = overlay_HideOverride
+	button.Border = nil
+
+	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
+	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
+	stealable:SetPoint("TOPLEFT", -1, 1)
+	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
+	stealable:SetBlendMode("ADD")
+	button.stealable = stealable
+
+	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
+	auraType:SetSize(16, 16)
+	auraType:SetPoint("TOPLEFT", -2, 2)
+	button.AuraType = auraType
+
+	button.UpdateTooltip = button_UpdateTooltip
+	button:SetScript("OnEnter", button_OnEnter)
+	button:SetScript("OnLeave", button_OnLeave)
+
+	return button
+end
+
+local function element_UpdateAuraType(_, _, aura)
 	if aura.isDebuff then
 		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 	else
 		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+	end
+end
+
+local function element_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
+	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+
+	self.cooldownConfig.colors.enabled = C.db.profile.units.cooldown.colors.enabled
+	self.cooldownConfig.colors.expiration = C.db.profile.units.cooldown.colors.expiration
+	self.cooldownConfig.colors.second = C.db.profile.units.cooldown.colors.second
+	self.cooldownConfig.colors.minute = C.db.profile.units.cooldown.colors.minute
+	self.cooldownConfig.colors.hour = C.db.profile.units.cooldown.colors.hour
+	self.cooldownConfig.colors.day = C.db.profile.units.cooldown.colors.day
+
+	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
+	self.cooldownConfig.text.size = self._config.cooldown.text.size
+	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
+	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
+	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+
+	for i = 1, #self do
+		if not self[i].cd.UpdateConfig then
+			break
+		end
+
+		self[i].cd:UpdateConfig(self.cooldownConfig)
+		self[i].cd:UpdateFontObject()
 	end
 end
 
@@ -301,7 +336,11 @@ local function frame_UpdateAuras(self)
 	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
 	element["growth-y"] = config.y_growth
-	element._config = config
+
+	element._config = t_wipe(element._config or {})
+	E:CopyTable(config, element._config)
+
+	element:UpdateCooldownConfig()
 
 	if config.y_growth == "UP" then
 		if config.x_growth == "RIGHT" then
@@ -344,9 +383,10 @@ function UF:CreateAuras(frame, unit)
 	element.spacing = 4
 	element.showDebuffType = true
 	element.showStealableBuffs = true
-	element.CreateIcon = createAuraIcon
+	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = updateAuraType
+	element.PostUpdateIcon = element_UpdateAuraType
+	element.UpdateCooldownConfig = element_UpdateCooldownConfig
 
 	frame.UpdateAuras = frame_UpdateAuras
 

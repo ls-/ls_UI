@@ -11,6 +11,7 @@ end
 
 function BLIZZARD:Init()
 	if not isInit and C.db.char.blizzard.enabled then
+		self:SetUpCastBars()
 		self:SetUpCommandBar()
 		self:SetUpDigsiteBar()
 		self:SetUpDurabilityFrame()
@@ -19,7 +20,7 @@ function BLIZZARD:Init()
 		self:SetUpObjectiveTracker()
 		self:SetUpAltPowerBar()
 		self:SetUpTalkingHead()
-		self:SetUpMirrorTimer()
+		self:SetUpMirrorTimers()
 		self:SetUpVehicleSeatFrame()
 
 		isInit = true

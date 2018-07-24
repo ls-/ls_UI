@@ -31,7 +31,7 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.HotKey:SetWordWrap(false)
 end
 
@@ -54,6 +54,7 @@ function MODULE.CreateExtraButton()
 			self:UpdateVisibility()
 			self:UpdateButtons("UpdateHotKey")
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
 			ExtraActionBarFrame:SetAllPoints()

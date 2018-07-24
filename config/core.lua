@@ -39,6 +39,7 @@ local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
+-- MODULE.OpenAuraConfig
 do
 	-- Mine
 	local frame
@@ -426,6 +427,7 @@ do
 	end
 end
 
+-- MODULE.ShowStaticPopup
 do
 	-- Blizz
 	local StaticPopupDialogs = _G.StaticPopupDialogs
@@ -516,20 +518,40 @@ function MODULE.Init()
 		name = L["LS_UI"],
 		disabled = function() return InCombatLockdown() end,
 		args = {
-			toggle_anchors = {
+			layout = {
 				order = 1,
+				type = "select",
+				name = L["UI_LAYOUT"],
+				desc = L["UI_LAYOUT_DESC"],
+				values = {
+					ls = L["ORBS"],
+					traditional = L["CLASSIC"]
+				},
+				get = function()
+					return C.db.char.layout
+				end,
+				set = function(_, value)
+					C.db.char.layout = value
+
+					if E.UI_LAYOUT ~= value then
+						MODULE:ShowStaticPopup("RELOAD_UI")
+					end
+				end,
+			},
+			toggle_anchors = {
+				order = 2,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
 				func = function() E.Movers:ToggleAll() end,
 			},
 			keybind_mode = {
-				order = 2,
+				order = 3,
 				type = "execute",
 				name = LibKeyBound.L.BindingMode,
 				func = function() LibKeyBound:Toggle() end,
 			},
 			reload_ui = {
-				order = 3,
+				order = 4,
 				type = "execute",
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
@@ -540,15 +562,14 @@ function MODULE.Init()
 	AceConfig:RegisterOptionsTable(addonName, C.options)
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
-	MODULE:CreateGeneralPanel(3)
-	MODULE:CreateActionBarsPanel(4)
-	MODULE:CreateAuraTrackerPanel(5)
-	MODULE:CreateBlizzardPanel(6)
-	MODULE:CreateAurasPanel(7)
-	MODULE:CreateLootPanel(8)
-	MODULE:CreateMinimapPanel(9)
-	MODULE:CreateTooltipsPanel(10)
-	MODULE:CreateUnitFramesPanel(11)
+	MODULE:CreateActionBarsPanel(5)
+	MODULE:CreateAuraTrackerPanel(6)
+	MODULE:CreateBlizzardPanel(7)
+	MODULE:CreateAurasPanel(8)
+	MODULE:CreateLootPanel(9)
+	MODULE:CreateMinimapPanel(10)
+	MODULE:CreateTooltipsPanel(11)
+	MODULE:CreateUnitFramesPanel(12)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100

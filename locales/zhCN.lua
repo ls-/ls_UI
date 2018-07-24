@@ -43,8 +43,8 @@ do
 	end
 end
 
-L = L or {}
 L["ACTION_BARS"] = "动作条"
+--[[ L["ADDITIONAL_BAR"] = "Additional Bar" ]]
 L["ADVENTURE_JOURNAL_DESC"] = "显示团队副本锁定信息"
 L["ALT_POWER_BAR"] = "第二资源条"
 --[[ L["ALT_POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
@@ -62,17 +62,19 @@ Tags:
 If the current value is equal to the max value, only the max value will be displayed.
 
 Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["ALTERNATIVE_POWER"] = "第二资源"
 L["ALWAYS_SHOW"] = "总是显示"
 L["ANCHOR"] = "依附于"
--- L["ANCHOR_TO_CURSOR"] = "Attach to Cursor"
+--[[ L["ANCHOR_TO_CURSOR"] = "Attach to Cursor" ]]
 L["ARTIFACT_LEVEL_TOOLTIP"] = "神器等级：|cffffffff%s|r"
 L["ARTIFACT_POWER"] = "神器能量"
 L["ASCENDING"] = "升序"
 L["AURA_TRACKER"] = "光环追踪器"
 L["AURAS"] = "光环"
--- L["BAG_SLOTS"] = "Bag Slots"
+--[[ L["AUTO"] = "Auto" ]]
+--[[ L["BAG_SLOTS"] = "Bag Slots" ]]
+--[[ L["BAR"] = "Bar" ]]
 L["BAR_1"] = "动作条 1"
 L["BAR_2"] = "动作条 2"
 L["BAR_3"] = "动作条 3"
@@ -112,8 +114,11 @@ L["CHARACTER_BUTTON_DESC"] = "显示装备耐久度信息"
 L["CLASS_POWER"] = "职业能量"
 L["CLASSIC"] = "经典"
 L["CLOCK"] = "时钟"
--- L["COLOR_BY_SPEC"] = "Colour by Spec"
+--[[ L["COLOR_BY_SPEC"] = "Colour by Spec" ]]
+--[[ L["COLORS"] = "Colours" ]]
 L["COMMAND_BAR"] = "命令条"
+--[[ L["COOLDOWN"] = "Cooldown" ]]
+--[[ L["COOLDOWN_TEXT"] = "Cooldown Text" ]]
 L["COPY_FROM"] = "复制自"
 L["COPY_FROM_DESC"] = "选择一份配置文件复制"
 L["COST_PREDICTION"] = "花费预测"
@@ -127,11 +132,13 @@ Tags:
 - |cffffd200[ls:color:absorb-damage]|r - the colour.
 
 Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["DAMAGE_ABSORB_TEXT"] = "伤害吸收文字"
+--[[ L["DAYS"] = "Days" ]]
 L["DEAD"] = "死亡"
 L["DEBUFFS"] = "减益效果"
 L["DESATURATE_ON_COOLDOWN"] = "冷却时褪色"
+--[[ L["DESATURATE_WHEN_UNUSABLE"] = "Desaturate when Not Usable" ]]
 L["DESCENDING"] = "降序"
 L["DETACH_FROM_FRAME"] = "从框架脱离"
 L["DIFFICULTY_FLAG"] = "难度标记"
@@ -153,7 +160,10 @@ L["ELITE"] = "精英"
 L["ENEMY_UNITS"] = "敌对单位"
 L["ENHANCED_TOOLTIPS"] = "鼠标提示增强"
 L["ENTER_SPELL_ID"] = "输入法术 ID"
+--[[ L["EXP_THRESHOLD"] = "Expiration Threshold" ]]
+--[[ L["EXP_THRESHOLD_DESC"] = "The threshold (in seconds) below which the remaining time will be shown as a decimal number." ]]
 L["EXPERIENCE"] = "经验值"
+--[[ L["EXPIRATION"] = "Expiration" ]]
 L["EXTRA_ACTION_BUTTON"] = "额外动作按钮"
 L["FADE_IN_DELAY"] = "延迟淡入"
 L["FADE_IN_DURATION"] = "淡入时长"
@@ -167,9 +177,10 @@ L["FLAG"] = "标记"
 L["FLYOUT_DIR"] = "弹出方向"
 L["FOCUS_FRAME"] = "焦点目标框架"
 L["FOCUS_TOF"] = "焦点目标 & 焦点目标的目标"
+--[[ L["FONT"] = "Font" ]]
 L["FORMAT"] = "格式"
 L["FRAME"] = "框架"
--- L["FREE_BAG_SLOTS_TOOLTIP"] = "Free Bag Slots: |cffffffff%s|r"
+--[[ L["FREE_BAG_SLOTS_TOOLTIP"] = "Free Bag Slots: |cffffffff%s|r" ]]
 L["FRIENDLY_UNITS"] = "友好单位"
 L["GM_FRAME"] = "申请状态框架"
 L["GOLD"] = "金币"
@@ -181,7 +192,7 @@ Tags:
 - |cffffd200[ls:color:absorb-heal]|r - the colour.
 
 Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["HEAL_ABSORB_TEXT"] = "治疗吸收文本"
 L["HEAL_PREDICTION"] = "治疗预测"
 L["HEALTH"] = "生命值"
@@ -195,19 +206,20 @@ Tags:
 
 If the current value is equal to the max value, only the max value will be displayed.
 
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["HEALTH_TEXT"] = "生命值文本"
 L["HEIGHT"] = "高度"
 L["HONOR"] = "荣誉"
 L["HONOR_LEVEL_TOOLTIP"] = "荣誉等级：|cffffffff%d|r"
 L["HORIZ_GROWTH_DIR"] = "水平增长"
+--[[ L["HOURS"] = "Hours" ]]
 L["ICON"] = "图标"
 L["INDEX"] = "索引"
 L["INSPECT_INFO"] = "玩家信息"
 L["INSPECT_INFO_DESC"] = "显示当前单位的专精和装备等级，这些数据可能不是马上就能显示"
--- L["INVENTORY_BUTTON"] = "Inventory"
--- L["INVENTORY_BUTTON_DESC"] = "Show currency information."
--- L["INVENTORY_BUTTON_RCLICK_TOOLTIP"] = "|cffffffffRight-Click|r to toggle bag slots."
+--[[ L["INVENTORY_BUTTON"] = "Inventory" ]]
+--[[ L["INVENTORY_BUTTON_DESC"] = "Show currency information." ]]
+--[[ L["INVENTORY_BUTTON_RCLICK_TOOLTIP"] = "|cffffffffRight-Click|r to toggle bag slots." ]]
 L["ITEM_COUNT"] = "物品计数"
 L["ITEM_COUNT_DESC"] = "显示银行和背包中该物品的总数"
 L["KEYBIND_TEXT"] = "快捷键绑定文字"
@@ -222,15 +234,20 @@ L["LEVEL_TOOLTIP"] = "等级：|cffffffff%d|r"
 L["LOCK"] = "锁定"
 L["LOCK_BUTTONS"] = "锁定按钮"
 L["LOCK_BUTTONS_DESC"] = "防止图标被拖离动作条"
--- L["LOOT_ALL"] = "Loot All"
+--[[ L["LOOT_ALL"] = "Loot All" ]]
+--[[ L["M_SS_THRESHOLD"] = "M:SS Threshold" ]]
+--[[ L["M_SS_THRESHOLD_DESC"] = "The threshold (in seconds) below which the remaining time will be shown in the M:SS format. Set to 0 to disable." ]]
 L["MACRO_TEXT"] = "宏文字"
+--[[ L["MAIN_BAR"] = "Main Bar" ]]
 L["MAINMENU_BUTTON_DESC"] = "显示性能信息"
 L["MAINMENU_BUTTON_HOLD_TOOLTIP"] = "|cffffffff按住 Shift|r 来显示内存占用"
 L["MAX_ALPHA"] = "最大透明度"
 L["MEMORY"] = "内存"
 L["MICRO_BUTTONS"] = "微型菜单按钮"
 L["MIN_ALPHA"] = "最小透明度"
+--[[ L["MINUTES"] = "Minutes" ]]
 L["MIRROR_TIMER"] = "镜像计时器"
+--[[ L["MIRROR_TIMER_DESC"] = "Breath, fatigue and other indicators." ]]
 L["MODE"] = "模式"
 L["MOUNT_AURAS"] = "坐骑光环"
 L["MOUNT_AURAS_DESC"] = "显示坐骑光环"
@@ -253,15 +270,17 @@ Tags:
 - |cffffd200[ls:color:difficulty]|r - the difficulty colour.
 
 Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["NO_SEPARATION"] = "不分隔"
--- L["NOTHING_TO_SHOW"] = "Nothing to show."
+--[[ L["NOTHING_TO_SHOW"] = "Nothing to show." ]]
 L["NPC_CLASSIFICATION"] = "NPC 类型"
 L["NPE_FRAME"] = "新手引导框架"
 L["NUM_BUTTONS"] = "按钮数量"
 L["NUM_ROWS"] = "行数量"
 L["OBJECTIVE_TRACKER"] = "目标追踪器"
-L["OOM_INDICATOR"] = "法力不足指示器"
+--[[ L["OOM"] = "Out of Power" ]]
+--[[ L["OOM_INDICATOR"] = "Out-of-Power Indicator" ]]
+--[[ L["OOR"] = "Out of Range" ]]
 L["OOR_INDICATOR"] = "超出距离指示器"
 L["OPEN_CONFIG"] = "打开设置"
 L["ORBS"] = "球形"
@@ -271,6 +290,7 @@ L["OUTLINE"] = "大纲"
 L["PER_ROW"] = "每行"
 L["PET_BAR"] = "宠物条"
 L["PET_BATTLE_BAR"] = "宠物对战条"
+--[[ L["PET_CAST_BAR"] = "Pet Casting Bar" ]]
 L["PET_FRAME"] = "宠物框架"
 L["PLAYER_CLASS"] = "玩家职业"
 L["PLAYER_FRAME"] = "玩家框架"
@@ -296,7 +316,7 @@ Tags:
 If the current value is equal to the max value, only the max value will be displayed.
 
 Use |cffffd200||r|r to close colour tags.
-Use |cffffd200[nl]|r for line breaking.]=]--]]
+Use |cffffd200[nl]|r for line breaking.]=] ]]
 L["POWER_TEXT"] = "资源文字"
 L["PRESTIGE_LEVEL_TOOLTIP"] = "威望等级：|cffffffff%s|r"
 L["PREVIEW"] = "预览"
@@ -314,13 +334,14 @@ L["RESTORE_DEFAULTS"] = "恢复默认"
 L["RESTRICTED_MODE"] = "受限模式"
 --[[ L["RESTRICTED_MODE_DESC"] = [=[Enables artwork, animations and dynamic resizing for the main action bar.
 
-|cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]=]--]]
+|cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]=] ]]
 L["RIGHT"] = "右"
 L["RIGHT_DOWN"] = "右下"
 L["RIGHT_UP"] = "右上"
 L["ROWS"] = "行"
--- L["RUNES"] = "Runes"
+--[[ L["RUNES"] = "Runes" ]]
 L["SECOND_ANCHOR"] = "第二锚点"
+--[[ L["SECONDS"] = "Seconds" ]]
 L["SELF_BUFFS"] = "自我增益"
 L["SELF_BUFFS_DESC"] = "显示单位施放的增益效果"
 L["SELF_BUFFS_PERMA"] = "永久自我增益"
@@ -344,6 +365,7 @@ L["TARGET_FRAME"] = "目标框架"
 L["TARGET_INFO"] = "目标信息"
 L["TARGET_INFO_DESC"] = "显示单位的目标"
 L["TARGET_TOT"] = "目标 & 目标的目标"
+--[[ L["TEXT"] = "Text" ]]
 L["TEXT_HORIZ_ALIGNMENT"] = "水平对齐"
 L["TEXT_VERT_ALIGNMENT"] = "垂直对齐"
 L["THREAT_GLOW"] = "仇恨目标边框"
@@ -361,10 +383,10 @@ L["UI_LAYOUT"] = "UI 布局"
 L["UI_LAYOUT_DESC"] = "修改玩家和宠物框架外观，与此同时也会修改 UI 布局"
 L["UNITS"] = "单位"
 L["UNSPENT_TRAIT_POINTS_TOOLTIP"] = "未使用的神器点数：|cffffffff%s|r"
+--[[ L["UNUSABLE"] = "Not Usable" ]]
 L["UP"] = "上"
+--[[ L["USABLE"] = "Usable" ]]
 L["USE_BLIZZARD_VEHICLE_UI"] = "使用暴雪载具 UI"
-L["USE_ICON_AS_INDICATOR"] = "图标作为指示器"
-L["USE_ICON_AS_INDICATOR_DESC"] = "图标的颜色和透明度将会法术状态来显示"
 L["VEHICLE_EXIT_BUTTON"] = "离开载具按钮"
 L["VEHICLE_SEAT_INDICATOR"] = "载具座位指示器"
 L["VERT_GROWTH_DIR"] = "垂直增长"

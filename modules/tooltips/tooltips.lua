@@ -235,6 +235,27 @@ local function getLineByText(tooltip, text, offset)
 	return nil
 end
 
+local function removeLineByText(tooltip, offset, text)
+	local num = tooltip:NumLines()
+	if not num or num <= 1 then return end
+
+	for i = num, offset, -1 do
+		if _G["GameTooltipTextLeft" .. i]:GetText() == text then
+			for j = i, num do
+				local curLine = _G["GameTooltipTextLeft" .. j]
+				local nextLine = _G["GameTooltipTextLeft" .. (j + 1)]
+
+				if nextLine:IsShown() then
+					curLine:SetText(nextLine:GetText())
+					curLine:SetTextColor(nextLine:GetTextColor())
+				else
+					curLine:Hide()
+				end
+			end
+		end
+	end
+end
+
 local function getTooltipUnit(tooltip)
 	local _, unit = tooltip:GetUnit()
 
@@ -658,7 +679,7 @@ local function tooltip_SetDefaultAnchor(self, parent)
 			p = "TOPRIGHT"
 		elseif quadrant == "BOTTOMLEFT" or quadrant == "LEFT" then
 			p = "BOTTOMLEFT"
-		elseif quadrant == "TOPLEFT"  then
+		elseif quadrant == "TOPLEFT" then
 			p = "TOPLEFT"
 		end
 
@@ -668,6 +689,8 @@ local function tooltip_SetDefaultAnchor(self, parent)
 end
 
 local function tooltip_AddStatusBar(self, _, max, value)
+	if self:IsForbidden() then return end
+
 	for _, child in next, {self:GetChildren()} do
 		if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
 			if not child.handled then
@@ -687,8 +710,9 @@ local function tooltip_AddStatusBar(self, _, max, value)
 end
 
 local function tooltipBar_OnShow(self)
-	local tooltip = self:GetParent()
+	if self:IsForbidden() then return end
 
+	local tooltip = self:GetParent()
 	if tooltip:IsForbidden() then return end
 	if tooltip:NumLines() == 0 then
 		self.numTries = (self.numTries or 0) + 1
@@ -725,8 +749,19 @@ local function tooltipBar_OnShow(self)
 	tooltip:Show()
 end
 
+local function tooltipBar_OnHide(self)
+	if self:IsForbidden() then return end
+
+	local tooltip = self:GetParent()
+	if tooltip:IsForbidden() or not tooltip:IsShown() then return end
+
+	removeLineByText(tooltip, 2, "--")
+
+	tooltip:SetMinimumWidth(0)
+end
+
 local function tooltipBar_OnValueChanged(self, value)
-	if not value then return end
+	if self:IsForbidden() or not value then return end
 
 	local _, max = self:GetMinMaxValues()
 	if max == 1 then
@@ -831,6 +866,7 @@ function MODULE:Init()
 		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
 		GameTooltipStatusBar:SetHeight(10)
 		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
+		GameTooltipStatusBar:SetScript("OnHide", tooltipBar_OnHide)
 		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 
 		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)

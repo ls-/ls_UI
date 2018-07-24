@@ -4,7 +4,10 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
+
+--[[ luacheck: globals
+	DurabilityFrame UIParent
+]]
 
 -- Mine
 local isInit = false

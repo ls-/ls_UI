@@ -57,7 +57,46 @@ local function bar_UpdateButtons(self, method, ...)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = C.db.profile.bars[self._id]
+	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
+	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
+	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.desaturate_when_unusable = C.db.profile.bars.desaturate_when_unusable
+	self._config.draw_bling = C.db.profile.bars.draw_bling
+	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.range_indicator = C.db.profile.bars.range_indicator
+	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
+
+	if C.db.profile.bars[self._id].cooldown then
+		self._config.cooldown = E:CopyTable(C.db.profile.bars[self._id].cooldown, self._config.cooldown)
+		self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
+	end
+end
+
+local function bar_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
+	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
+	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
+
+	local cooldown
+	for _, button in next, self._buttons do
+		cooldown = button.cooldown or button.Cooldown
+		if not cooldown.UpdateConfig then
+			break
+		end
+
+		cooldown:UpdateConfig(self.cooldownConfig)
+		cooldown:UpdateFontObject()
+	end
 end
 
 local function bar_UpdateVisibility(self)
@@ -71,6 +110,7 @@ end
 function MODULE.AddBar(_, barID, bar)
 	bars[barID] = bar
 	bar.UpdateConfig = bar_UpdateConfig
+	bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then

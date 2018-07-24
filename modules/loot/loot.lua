@@ -130,8 +130,6 @@ local function frame_OnEvent(self, event, ...)
 
 			self:ClearAllPoints()
 			self:SetPoint("TOPLEFT", nil, "BOTTOMLEFT", x, y)
-			self:GetCenter()
-			self:Raise()
 		else
 			local mover = E.Movers:Get(self, true)
 			if not mover:IsEnabled() then
@@ -141,6 +139,9 @@ local function frame_OnEvent(self, event, ...)
 				self:SetPoint("TOPLEFT")
 			end
 		end
+
+		self:GetCenter()
+		self:Raise()
 
 		t_wipe(lootTable)
 
@@ -401,8 +402,10 @@ end
 function MODULE:Init()
 	if not isInit and C.db.char.loot.enabled then
 		local frame = CreateFrame("Frame", "LSLootFrame", UIParent, "PortraitFrameTemplate")
+		frame:EnableMouse(true)
 		frame:SetSize(192, 230 + 40 * (MAX_BUTTONS - MIN_BUTTONS))
 		frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 16, -256)
+		frame:SetToplevel(true)
 		frame:SetClampedToScreen(true)
 		frame:SetClampRectInsets(-16, 4, 16, -4)
 		frame:SetScript("OnEvent", frame_OnEvent)

@@ -8,7 +8,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 --[[ luacheck: globals
-	CreateFrame LibStub UIParent
+	CreateFrame GetFlyoutInfo LibStub RegisterStateDriver SpellFlyout UIParent ActionButton
 ]]
 
 -- Mine
@@ -115,10 +115,10 @@ local function getBarPage()
 	local page = PAGES[E.PLAYER_CLASS]
 
 	if page then
-		condition = condition.." "..page
+		condition = condition .. " " .. page
 	end
 
-	return condition.." [form] 1; 1"
+	return condition .. " [form] 1; 1"
 end
 
 local function bar_Update(self)
@@ -128,8 +128,31 @@ local function bar_Update(self)
 	self:UpdateButtons("UpdateCountFont")
 	self:UpdateButtons("UpdateHotKeyFont")
 	self:UpdateButtons("UpdateMacroFont")
+	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E:UpdateBarLayout(self)
+end
+
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
+	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
+	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
+	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
+	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.desaturate_when_unusable = C.db.profile.bars.desaturate_when_unusable
+	self._config.draw_bling = C.db.profile.bars.draw_bling
+	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.range_indicator = C.db.profile.bars.range_indicator
+	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
+
+	if MODULE:IsRestricted() then
+		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
+		self._config.grid = C.db.profile.bars.bar1.grid
+		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
+		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
+	end
 end
 
 local function bar_UpdateButtonConfig(self)
@@ -143,29 +166,26 @@ local function bar_UpdateButtonConfig(self)
 		}
 	end
 
-	self.buttonConfig.clickOnDown = C.db.profile.bars.click_on_down
-	self.buttonConfig.desaturateOnCooldown = C.db.profile.bars.desaturate_on_cd
-	self.buttonConfig.drawBling = C.db.profile.bars.draw_bling
+	self.buttonConfig.clickOnDown = self._config.click_on_down
+	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
+	self.buttonConfig.desaturateOnCooldown = self._config.desaturate_on_cd
+	self.buttonConfig.desaturateWhenUnusable = self._config.desaturate_when_unusable
+	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
-	self.buttonConfig.outOfManaColoring = C.db.profile.bars.mana_indicator
-	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
-	self.buttonConfig.showGrid = self._config.grid
-
-	self.buttonConfig.colors.mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()}
-	self.buttonConfig.colors.normal = {M.COLORS.BUTTON_ICON.N:GetRGB()}
-	self.buttonConfig.colors.range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()}
-
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
 	self.buttonConfig.hideElements.macro = not self._config.macro.enabled
+	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
+	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
+	self.buttonConfig.showGrid = self._config.grid
 
 	for _, button in next, self._buttons do
 		self.buttonConfig.keyBoundTarget = button._command
 
 		button:UpdateConfig(self.buttonConfig)
-		button:SetAttribute("buttonlock", C.db.profile.bars.lock)
+		button:SetAttribute("buttonlock", self._config.lock)
 		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("checkfocuscast", true)
-		button:SetAttribute("*unit2", C.db.profile.bars.rightclick_selfcast and "player" or nil)
+		button:SetAttribute("*unit2", self._config.rightclick_selfcast and "player" or nil)
 	end
 end
 
@@ -195,7 +215,7 @@ end
 
 local function button_UpdateMacroFont(self)
 	local config = self._parent._config.macro
-	self.Name:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Name:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.Name:SetWordWrap(false)
 end
 
@@ -209,13 +229,13 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.HotKey:SetWordWrap(false)
 end
 
 local function button_UpdateCountFont(self)
 	local config = self._parent._config.count
-	self.Count:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.Count:SetWordWrap(false)
 end
 
@@ -240,23 +260,14 @@ function MODULE.CreateActionBars()
 			bar.UpdateButtonConfig = bar_UpdateButtonConfig
 
 			if barID == "bar1" then
-				bar.UpdateConfig = function(self)
-					self._config = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1
-
-					if MODULE:IsRestricted() then
-						self._config.count = C.db.profile.bars.bar1.count
-						self._config.grid = C.db.profile.bars.bar1.grid
-						self._config.hotkey = C.db.profile.bars.bar1.hotkey
-						self._config.macro = C.db.profile.bars.bar1.macro
-					end
-				end
+				bar.UpdateConfig = bar_UpdateConfig
 			end
 
 			for i = 1, data.num_buttons do
-				local button = LibActionButton:CreateButton(i, "$parentButton"..i, bar)
+				local button = LibActionButton:CreateButton(i, "$parentButton" .. i, bar)
 				button:SetState(0, "action", i)
 				button._parent = bar
-				button._command = data.type..i
+				button._command = data.type .. i
 
 				button.UpdateCountFont = button_UpdateCountFont
 				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
@@ -312,7 +323,7 @@ function MODULE.CreateActionBars()
 				local _, _, numSlots = GetFlyoutInfo(ID)
 
 				for i = 1, numSlots do
-					E:SkinFlyoutButton(_G["SpellFlyoutButton"..i])
+					E:SkinFlyoutButton(_G["SpellFlyoutButton" .. i])
 				end
 			end
 		end)

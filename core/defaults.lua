@@ -5,6 +5,18 @@ D.global = {}
 
 D.profile = {
 	units = {
+		cooldown = {
+			exp_threshold = 5, -- [1; 10]
+			m_ss_threshold = 0, -- [91; 3599]
+			colors = {
+				enabled = true,
+				expiration = {229 / 255, 25 / 255, 25 / 255},
+				second = {255 / 255, 191 / 255, 25 / 255},
+				minute = {255 / 255, 255 / 255, 255 / 255},
+				hour = {255 / 255, 255 / 255, 255 / 255},
+				day = {255 / 255, 255 / 255, 255 / 255},
+			},
+		},
 		ls = {
 			player = {
 				enabled = true,
@@ -392,6 +404,15 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -673,6 +694,15 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -963,6 +993,15 @@ D.profile = {
 					x_growth = "LEFT",
 					y_growth = "DOWN",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -1168,6 +1207,15 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -1462,6 +1510,15 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -1744,6 +1801,15 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -2034,6 +2100,15 @@ D.profile = {
 					x_growth = "LEFT",
 					y_growth = "DOWN",
 					disable_mouse = false,
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							flag = "_Outline", -- "_Shadow", ""
+							h_alignment = "CENTER",
+							v_alignment = "BOTTOM",
+						},
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -2117,10 +2192,29 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
-		desaturate_on_cd = false,
+		desaturate_on_cd = true,
+		desaturate_when_unusable = true,
 		click_on_down = false,
 		draw_bling = true,
 		blizz_vehicle = false,
+		cooldown = {
+			exp_threshold = 5,
+			m_ss_threshold = 120, -- [91; 3599]
+			colors = {
+				enabled = true,
+				expiration = {229 / 255, 25 / 255, 25 / 255},
+				second = {255 / 255, 191 / 255, 25 / 255},
+				minute = {255 / 255, 255 / 255, 255 / 255},
+				hour = {255 / 255, 255 / 255, 255 / 255},
+				day = {255 / 255, 255 / 255, 255 / 255},
+			},
+		},
+		colors = {
+			normal = {255 / 255, 255 / 255, 255 / 255},
+			unusable = {102 / 255, 102 / 255, 102 / 255},
+			mana = {38 / 255, 97 / 255, 172 / 255},
+			range = {141 / 255, 28 / 255, 33 / 255},
+		},
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
 			grid = false,
@@ -2144,17 +2238,26 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOM",
@@ -2187,17 +2290,26 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOM",
@@ -2230,17 +2342,26 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOM",
@@ -2273,17 +2394,26 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOMRIGHT",
@@ -2316,17 +2446,26 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOMRIGHT",
@@ -2358,8 +2497,17 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
-				flag = "Outline",
+				size = 10,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 10,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 		},
 		bar7 = { -- Stance
@@ -2383,8 +2531,17 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
-				flag = "Outline",
+				size = 10,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 10,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 		},
 		pet_battle = {
@@ -2408,7 +2565,7 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "Outline",
+				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				p = "BOTTOM",
@@ -2433,8 +2590,17 @@ D.profile = {
 			},
 			hotkey = {
 				enabled = true,
-				size = 12,
-				flag = "Outline",
+				size = 14,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 14,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOM",
@@ -2456,6 +2622,15 @@ D.profile = {
 				in_duration = 0.15,
 				min_alpha = 0,
 				max_alpha = 1,
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 14,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+				},
 			},
 			point = {
 				p = "BOTTOM",
@@ -2626,104 +2801,125 @@ D.profile = {
 		},
 	},
 	auras = {
-		ls = {
-			HELPFUL = {
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 16,
-				num_rows = 2,
-				sep_own = 0,
-				sort_method = "INDEX",
-				sort_dir = "+",
-				point = {
+		cooldown = {
+			exp_threshold = 5, -- [1; 10]
+			m_ss_threshold = 600, -- [91; 3599]
+			colors = {
+				enabled = true,
+				expiration = {229 / 255, 25 / 255, 25 / 255},
+				second = {255 / 255, 191 / 255, 25 / 255},
+				minute = {255 / 255, 255 / 255, 255 / 255},
+				hour = {255 / 255, 255 / 255, 255 / 255},
+				day = {255 / 255, 255 / 255, 255 / 255},
+			},
+		},
+		HELPFUL = {
+			size = 32,
+			spacing = 4,
+			x_growth = "LEFT",
+			y_growth = "DOWN",
+			per_row = 16,
+			num_rows = 2,
+			sep_own = 0,
+			sort_method = "INDEX",
+			sort_dir = "+",
+			count = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
+			point = {
+				ls = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
 					x = -6,
 					y = -6,
 				},
+				traditional = {
+					p = "TOPRIGHT",
+					anchor = "UIParent",
+					rP = "TOPRIGHT",
+					x = -184,
+					y = -6,
+				},
 			},
-			HARMFUL = {
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 16,
-				num_rows = 1,
-				sep_own = 0,
-				sort_method = "INDEX",
-				sort_dir = "+",
-				point = {
+		},
+		HARMFUL = {
+			size = 32,
+			spacing = 4,
+			x_growth = "LEFT",
+			y_growth = "DOWN",
+			per_row = 16,
+			num_rows = 1,
+			sep_own = 0,
+			sort_method = "INDEX",
+			sort_dir = "+",
+			count = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
+			point = {
+				ls = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
 					x = -6,
 					y = -114,
 				},
+				traditional = {
+					p = "TOPRIGHT",
+					anchor = "UIParent",
+					rP = "TOPRIGHT",
+					x = -184,
+					y = -114,
+				},
 			},
-			TOTEM = {
-				num = 4,
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 4,
-				point = {
+		},
+		TOTEM = {
+			num = 4,
+			size = 32,
+			spacing = 4,
+			x_growth = "LEFT",
+			y_growth = "DOWN",
+			per_row = 4,
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "CENTER",
+					v_alignment = "BOTTOM",
+				},
+			},
+			point = {
+				ls = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
 					x = -4,
 					y = -148,
 				},
-			},
-		},
-		traditional = {
-			HELPFUL = {
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 16,
-				num_rows = 2,
-				sep_own = 0,
-				sort_method = "INDEX",
-				sort_dir = "+",
-				point = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -184,
-					y = -6,
-				},
-			},
-			HARMFUL = {
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 16,
-				num_rows = 1,
-				sep_own = 0,
-				sort_method = "INDEX",
-				sort_dir = "+",
-				point = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -184,
-					y = -114,
-				},
-			},
-			TOTEM = {
-				num = 4,
-				size = 32,
-				spacing = 4,
-				x_growth = "LEFT",
-				y_growth = "DOWN",
-				per_row = 4,
-				point = {
+				traditional = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
@@ -2749,6 +2945,36 @@ D.profile = {
 		},
 	},
 	blizzard = {
+		castbar = { -- CastingBarFrame, PetCastingBarFrame
+			width = 200,
+			height = 12,
+			icon = {
+				enabled = true,
+				position = "LEFT",
+			},
+			text = {
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
+			},
+			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
+			latency = true,
+		},
+		digsite_bar = { -- ArcheologyDigsiteProgressBar
+			width = 200,
+			height = 12,
+			text = {
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
+			},
+		},
+		timer = { -- MirrorTimer*, TimerTrackerTimer*
+			width = 200,
+			height = 12,
+			text = {
+				size = 12,
+				flag = "_Shadow", -- "_Outline", ""
+			},
+		},
 		objective_tracker = { -- ObjectiveTrackerFrame
 			height = 600,
 			drag_key = "NONE"
@@ -2761,7 +2987,7 @@ D.profile = {
 }
 
 D.char = {
-	layout = "ls", -- or traditional
+	layout = "ls", -- or "traditional"
 	auras = {
 		enabled = true,
 	},
@@ -2775,6 +3001,30 @@ D.char = {
 		x_growth = "RIGHT",
 		y_growth = "DOWN",
 		drag_key = "NONE",
+		count = {
+			enabled = true,
+			size = 12,
+			flag = "_Outline", -- "_Shadow", ""
+		},
+		cooldown = {
+			exp_threshold = 5, -- [1; 10]
+			m_ss_threshold = 0, -- [91; 3599]
+			colors = {
+				enabled = true,
+				expiration = {229 / 255, 25 / 255, 25 / 255},
+				second = {255 / 255, 191 / 255, 25 / 255},
+				minute = {255 / 255, 255 / 255, 255 / 255},
+				hour = {255 / 255, 255 / 255, 255 / 255},
+				day = {255 / 255, 255 / 255, 255 / 255},
+			},
+			text = {
+				enabled = true,
+				size = 12,
+				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "CENTER",
+				v_alignment = "BOTTOM",
+			}
+		},
 		filter = {
 			HELPFUL = {},
 			HARMFUL = {},
@@ -2793,6 +3043,9 @@ D.char = {
 	},
 	blizzard = {
 		enabled = true,
+		castbar = { -- CastingBarFrame
+			enabled = true
+		},
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
 		},
