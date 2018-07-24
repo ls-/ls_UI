@@ -2,23 +2,24 @@
 
 ## Version 80000.04
 
-- Reworked cooldowns' handling. Action bars, auras, and aura tracker received a set of options to
+- Reworked cooldowns' handling. Action bars, auras, and aura tracker received a set of options to  
   customise cooldowns' appearance. Unit frames will get a similar update a bit later;
 - Reworked mirror timers, e.g., fatigue, breath, etc. They now show the remaining time in the M:SS  
   format;
 - Added the default cast bars' skin for people who don't use my unit frames;
 - Updated "Blizzard" config section. Added options to customise mirror timers, digsite bar;
-- Updated "Action Bars" config section. In addition to aforementioned cooldown changes, I also added
-  options to customise action buttons' colours and to desaturate icons when buttons are unusable;
+- Updated "Action Bars" config section. In addition to aforementioned cooldown changes, I also  
+  added options to customise action buttons' colours and to desaturate icons when buttons are  
+  unusable;
 - Updated the loot frame, so it's impossible to click through it;
 - Numerous bug fixes and tweaks;
 - Updated embeds.
 
 NOTE #1: You'll have to restart WoW client to make things work after the update.
 
-NOTE #2: Aura module's config is now cross-layout, which means that it'll use the same settings for
-both "Orbs" and "Classic" layouts. Although almost everything should be copied, some data loss may
-occur.
+NOTE #2: Aura module's config is now cross-layout, which means that it'll use the same settings  
+for both "Orbs" and "Classic" layouts. Although almost everything should be copied, some data loss  
+may occur.
 
 ## Version 80000.03
 
