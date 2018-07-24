@@ -136,9 +136,11 @@ end
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.desaturate_when_unusable = C.db.profile.bars.desaturate_when_unusable
 	self._config.draw_bling = C.db.profile.bars.draw_bling
 	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
@@ -165,19 +167,16 @@ local function bar_UpdateButtonConfig(self)
 	end
 
 	self.buttonConfig.clickOnDown = self._config.click_on_down
+	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
 	self.buttonConfig.desaturateOnCooldown = self._config.desaturate_on_cd
+	self.buttonConfig.desaturateWhenUnusable = self._config.desaturate_when_unusable
 	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
-	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
-	self.buttonConfig.outOfRangeColoring = C.db.profile.bars.range_indicator
-	self.buttonConfig.showGrid = self._config.grid
-
-	self.buttonConfig.colors.mana = {M.COLORS.BUTTON_ICON.OOM:GetRGB()}
-	self.buttonConfig.colors.normal = {M.COLORS.BUTTON_ICON.N:GetRGB()}
-	self.buttonConfig.colors.range = {M.COLORS.BUTTON_ICON.OOR:GetRGB()}
-
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
 	self.buttonConfig.hideElements.macro = not self._config.macro.enabled
+	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
+	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
+	self.buttonConfig.showGrid = self._config.grid
 
 	for _, button in next, self._buttons do
 		self.buttonConfig.keyBoundTarget = button._command
