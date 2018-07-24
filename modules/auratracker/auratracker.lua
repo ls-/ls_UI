@@ -159,19 +159,8 @@ local function bar_UpdateCooldownConfig(self)
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-
-	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
-	self.cooldownConfig.colors.expiration = E:CopyTable(self._config.cooldown.colors.expiration, self.cooldownConfig.colors.expiration)
-	self.cooldownConfig.colors.second = E:CopyTable(self._config.cooldown.colors.second, self.cooldownConfig.colors.second)
-	self.cooldownConfig.colors.minute = E:CopyTable(self._config.cooldown.colors.minute, self.cooldownConfig.colors.minute)
-	self.cooldownConfig.colors.hour = E:CopyTable(self._config.cooldown.colors.hour, self.cooldownConfig.colors.hour)
-	self.cooldownConfig.colors.day = E:CopyTable(self._config.cooldown.colors.day, self.cooldownConfig.colors.day)
-
-	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
-	self.cooldownConfig.text.size = self._config.cooldown.text.size
-	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
-	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
-	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	for _, button in next, self._buttons do
 		if not button.CD.UpdateConfig then
@@ -180,6 +169,19 @@ local function bar_UpdateCooldownConfig(self)
 
 		button.CD:UpdateConfig(self.cooldownConfig)
 		button.CD:UpdateFontObject()
+	end
+end
+
+local function bar_UpdateLock(self)
+	self.Header:SetShown(not self._config.locked)
+
+	if not self._config.locked then
+		E.Movers:Get(self.Header, true):Enable()
+	else
+		local mover = E.Movers:Get(self.Header)
+		if mover then
+			mover:Disable()
+		end
 	end
 end
 
@@ -221,6 +223,7 @@ function MODULE.Init()
 		bar.UpdateButtons = bar_UpdateButtons
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
+		bar.UpdateLock = bar_UpdateLock
 
 		bar.Header = header
 		bar._buttons = {}
@@ -255,17 +258,11 @@ function MODULE.Update()
 		bar:UpdateButtons("UpdateCountFont")
 		bar:UpdateCooldownConfig()
 		E:UpdateBarLayout(bar)
+		bar:UpdateLock()
 		bar:Update()
-
-		bar.Header:SetShown(not bar._config.locked)
-
-		if not bar._config.locked then
-			E.Movers:Get(bar.Header, true):Enable()
-		else
-			local mover = E.Movers:Get(bar.Header)
-			if mover then
-				mover:Disable()
-			end
-		end
 	end
+end
+
+function MODULE:GetTracker()
+	return bar
 end
