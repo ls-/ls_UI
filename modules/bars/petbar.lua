@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local unpack = _G.unpack
 
 --[[ luacheck: globals
 	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame GetPetActionCooldown
@@ -61,11 +62,32 @@ end
 local function bar_Update(self)
 	self:UpdateConfig()
 	self:UpdateVisibility()
-	self:UpdateButtons("Reset")
+	self:UpdateButtonConfig()
 	self:UpdateButtons("UpdateHotKeyFont")
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E:UpdateBarLayout(self)
+end
+
+local function bar_UpdateButtonConfig(self)
+	if not self.buttonConfig then
+		self.buttonConfig = {
+			tooltip = "enabled",
+			colors = {},
+		}
+	end
+
+	self.buttonConfig.clickOnDown = self._config.click_on_down
+	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
+	self.buttonConfig.desaturateOnCooldown = self._config.desaturate_on_cd
+	self.buttonConfig.desaturateWhenUnusable = self._config.desaturate_when_unusable
+	self.buttonConfig.drawBling = self._config.draw_bling
+	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
+	self.buttonConfig.showGrid = self._config.grid
+
+	for _, button in next, self._buttons do
+		button:UpdateConfig(self.buttonConfig)
+	end
 end
 
 local function button_UpdateGrid(self, state)
@@ -87,7 +109,7 @@ local function button_HideGrid(self)
 		self.showgrid = self.showgrid - 1
 	end
 
-	if self.showgrid == 0 and not GetPetActionInfo(self:GetID()) and not self._parent._config.grid then
+	if self.showgrid == 0 and not GetPetActionInfo(self:GetID()) and not self.config.showGrid then
 		self:SetAlpha(0)
 	end
 end
@@ -113,20 +135,20 @@ local function button_UpdateHotKeyFont(self)
 end
 
 local function button_UpdateUsable(self)
-	if C.db.profile.bars.range_indicator == "button" and self.outOfRange then
+	if self.config.outOfRangeColoring == "button" and self.outOfRange then
 		self.icon:SetDesaturated(true)
-		self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(0.65))
-	elseif C.db.profile.bars.desaturate_on_cd and self.onCooldown then
+		self.icon:SetVertexColor(unpack(self.config.colors.range))
+	elseif self.config.desaturateOnCooldown and self.onCooldown then
 		self.icon:SetDesaturated(true)
-		self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+		self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 	else
 		local isUsable = PetHasActionBar() and GetPetActionSlotUsable(self:GetID()) or false
 		if isUsable then
 			self.icon:SetDesaturated(false)
-			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			self.icon:SetVertexColor(unpack(self.config.colors.normal))
 		else
-			self.icon:SetDesaturated(true)
-			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+			self.icon:SetDesaturated(self.config.desaturateWhenUnusable == true)
+			self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 		end
 	end
 end
@@ -139,12 +161,12 @@ end
 local function button_UpdateCooldown(self)
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
-	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
+	self.cooldown:SetDrawBling(self.config.drawBling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
 
 	local oldOnCooldown = self.onCooldown
 	self.onCooldown = enable and enable ~= 0 and start > 0 and duration > 1.5
-	if C.db.profile.bars.desaturate_on_cd and self.onCooldown ~= oldOnCooldown then
+	if self.config.desaturateOnCooldown and self.onCooldown ~= oldOnCooldown then
 		self:UpdateUsable()
 		if self.onCooldown then
 			self.cooldown:SetScript("OnCooldownDone", onCooldownDone)
@@ -152,10 +174,12 @@ local function button_UpdateCooldown(self)
 	end
 end
 
-local function button_Reset(self)
-	self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
-	self.icon:SetDesaturated(false)
-	self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+local function button_UpdateConfig(self, config)
+	self.config = E:CopyTable(config, self.config)
+
+	if self.config.outOfRangeColoring == "button" and self.config.outOfManaColoring == "button" then
+		self.HotKey:SetVertexColor(unpack(self.config.colors.normal))
+	end
 
 	self.checksRange = nil
 	self.onCooldown = nil
@@ -232,6 +256,7 @@ function MODULE.CreatePetActionBar()
 		MODULE:AddBar(bar._id, bar)
 
 		bar.Update = bar_Update
+		bar.UpdateButtonConfig = bar_UpdateButtonConfig
 
 		for i = 1, #BUTTONS do
 			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "PetActionButtonTemplate")
@@ -245,11 +270,11 @@ function MODULE.CreatePetActionBar()
 			button.showgrid = 0
 
 			button.HideGrid = button_HideGrid
-			button.Reset = button_Reset
 			button.ShowGrid = button_ShowGrid
 			button.StartFlash = PetActionButton_StartFlash
 			button.StopFlash = PetActionButton_StopFlash
 			button.Update = button_Update
+			button.UpdateConfig = button_UpdateConfig
 			button.UpdateCooldown = button_UpdateCooldown
 			button.UpdateGrid = button_UpdateGrid
 			button.UpdateHotKey = button_UpdateHotKey
@@ -328,11 +353,11 @@ function MODULE.CreatePetActionBar()
 							button.checksRange = checksRange
 
 							if oldCheck ~= button.checksRange or oldRange ~= button.outOfRange then
-								if C.db.profile.bars.range_indicator == "button" then
+								if button.config.outOfRangeColoring == "button" then
 									button:UpdateUsable()
 								end
 
-								if C.db.profile.bars.range_indicator == "hotkey" then
+								if button.config.outOfRangeColoring == "hotkey" then
 									if checksRange then
 										local hotkey = button.HotKey
 
@@ -340,15 +365,15 @@ function MODULE.CreatePetActionBar()
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Show()
 											end
-											hotkey:SetVertexColor(M.COLORS.BUTTON_ICON.OOR:GetRGBA(1))
+											hotkey:SetVertexColor(unpack(button.config.colors.range))
 										else
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Hide()
 											end
-											hotkey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
+											hotkey:SetVertexColor(unpack(button.config.colors.normal))
 										end
 									else
-										button.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
+										button.HotKey:SetVertexColor(unpack(button.config.colors.normal))
 									end
 								end
 							end
