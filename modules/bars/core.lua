@@ -59,7 +59,9 @@ end
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
 	self._config.desaturate_on_cd = C.db.profile.bars.desaturate_on_cd
+	self._config.desaturate_when_unusable = C.db.profile.bars.desaturate_when_unusable
 	self._config.draw_bling = C.db.profile.bars.draw_bling
 	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
@@ -82,19 +84,8 @@ local function bar_UpdateCooldownConfig(self)
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-
-	self.cooldownConfig.colors.enabled = self._config.cooldown.colors.enabled
-	self.cooldownConfig.colors.expiration = E:CopyTable(self._config.cooldown.colors.expiration, self.cooldownConfig.colors.expiration)
-	self.cooldownConfig.colors.second = E:CopyTable(self._config.cooldown.colors.second, self.cooldownConfig.colors.second)
-	self.cooldownConfig.colors.minute = E:CopyTable(self._config.cooldown.colors.minute, self.cooldownConfig.colors.minute)
-	self.cooldownConfig.colors.hour = E:CopyTable(self._config.cooldown.colors.hour, self.cooldownConfig.colors.hour)
-	self.cooldownConfig.colors.day = E:CopyTable(self._config.cooldown.colors.day, self.cooldownConfig.colors.day)
-
-	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
-	self.cooldownConfig.text.size = self._config.cooldown.text.size
-	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
-	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
-	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
+	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local cooldown
 	for _, button in next, self._buttons do
