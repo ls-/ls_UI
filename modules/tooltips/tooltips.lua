@@ -240,9 +240,7 @@ local function removeLineByText(tooltip, offset, text)
 	if not num or num <= 1 then return end
 
 	for i = num, offset, -1 do
-		local line = _G["GameTooltipTextLeft" .. i]
-		if line:GetText() == text then
-			print("REMOVING:", i)
+		if _G["GameTooltipTextLeft" .. i]:GetText() == text then
 			for j = i, num do
 				local curLine = _G["GameTooltipTextLeft" .. j]
 				local nextLine = _G["GameTooltipTextLeft" .. (j + 1)]
