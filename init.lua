@@ -66,6 +66,63 @@ local function cleanUpProfile()
 		C.db.profile.bars.desaturate_on_cd = nil
 		C.db.profile.bars.desaturate_when_unusable = nil
 	end
+
+	-- -> 80000.07
+	if not C.db.profile.version or C.db.profile.version < 8000007 then
+		if C.db.profile.units.ls then
+			if C.db.profile.units.ls.player then
+				C.db.profile.units.ls.player.point = nil
+				E:CopyTable(C.db.profile.units.ls.player, C.db.profile.units.player.ls)
+			end
+
+			if C.db.profile.units.ls.pet then
+				C.db.profile.units.ls.pet.point = nil
+				E:CopyTable(C.db.profile.units.ls.pet, C.db.profile.units.pet.ls)
+			end
+		end
+
+		if C.db.profile.units.traditional then
+			if C.db.profile.units.traditional.player then
+				C.db.profile.units.traditional.player.point = nil
+				E:CopyTable(C.db.profile.units.traditional.player, C.db.profile.units.player.traditional)
+			end
+
+			if C.db.profile.units.traditional.pet then
+				C.db.profile.units.traditional.pet.point = nil
+				E:CopyTable(C.db.profile.units.traditional.pet, C.db.profile.units.pet.traditional)
+			end
+		end
+
+		if C.db.profile.units[E.UI_LAYOUT] then
+			if C.db.profile.units[E.UI_LAYOUT].target then
+				C.db.profile.units[E.UI_LAYOUT].target.point = nil
+				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].target, C.db.profile.units.target)
+			end
+
+			if C.db.profile.units[E.UI_LAYOUT].targettarget then
+				C.db.profile.units[E.UI_LAYOUT].targettarget.point = nil
+				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].targettarget, C.db.profile.units.targettarget)
+			end
+
+			if C.db.profile.units[E.UI_LAYOUT].focus then
+				C.db.profile.units[E.UI_LAYOUT].focus.point = nil
+				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].focus, C.db.profile.units.focus)
+			end
+
+			if C.db.profile.units[E.UI_LAYOUT].focustarget then
+				C.db.profile.units[E.UI_LAYOUT].focustarget.point = nil
+				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].focustarget, C.db.profile.units.focustarget)
+			end
+
+			if C.db.profile.units[E.UI_LAYOUT].boss then
+				C.db.profile.units[E.UI_LAYOUT].boss.point = nil
+				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].boss, C.db.profile.units.boss)
+			end
+		end
+
+		C.db.profile.units.ls = nil
+		C.db.profile.units.traditional = nil
+	end
 end
 
 local function updateAll()
