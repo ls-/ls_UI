@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local m_min = _G.math.min
 
 --[[ luacheck: globals
@@ -70,11 +71,47 @@ local function petBar_OnEvent(self, event, ...)
 	CastingBarFrame_OnEvent(self, event, ...)
 end
 
+local function bar_SetAttribute(self, attr, value)
+	if attr == "ignoreFramePositionManager" and value then
+		self.ignoreFramePositionManager = nil
+		self:SetAttribute("ignoreFramePositionManager", false)
+	end
+end
+
+local function bar_SetPoint(self, _, anchor)
+	if anchor ~= self.Holder then
+		local config = C.db.profile.blizzard.castbar
+
+		self:SetSize(0, 0)
+		self:ClearAllPoints()
+
+		if config.icon.enabled then
+			self.Icon:Show()
+
+			if config.icon.position == "LEFT" then
+				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 5 + config.height * 1.5, 0)
+				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
+			elseif config.icon.position == "RIGHT" then
+				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
+				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -5 - config.height * 1.5, 0)
+			end
+		else
+			self.Icon:Hide()
+
+			self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
+			self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
+		end
+	end
+end
+
 local function handleCastBar(self)
 	self.Border:SetTexture(nil)
+	self.BorderShield:SetTexture(nil)
 	self.Flash:SetTexture(nil)
-	self.Icon:Hide()
 	self.Spark:SetTexture(nil)
+
+	self.Icon_ = self.Icon
+	self.Icon_:Hide()
 
 	local holder = CreateFrame("Frame", self:GetName() .. "Holder", UIParent)
 	self.Holder = holder
@@ -83,6 +120,8 @@ local function handleCastBar(self)
 	self:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	self:SetFrameLevel(holder:GetFrameLevel())
 	self:HookScript("OnUpdate", bar_OnUpdate)
+	hooksecurefunc(self, "SetPoint", bar_SetPoint)
+	hooksecurefunc(self, "SetAttribute", bar_SetAttribute)
 
 	local bg = self:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
@@ -125,7 +164,6 @@ local function handleCastBar(self)
 
 	local text = self.Text
 	text:SetParent(texParent)
-	text:SetFontObject("LSFont12_Shadow")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetSize(0, 0)
@@ -159,7 +197,9 @@ local function updateCastBar(self)
 	if config.icon.enabled then
 		if config.icon.position == "LEFT" then
 			self.Icon = self.LeftIcon
+			self.Icon:Show()
 
+			self.Icon_:Hide()
 			self.LeftIcon:SetSize(height * 1.5, height)
 			self.RightIcon:SetSize(0.0001, height)
 
@@ -167,11 +207,15 @@ local function updateCastBar(self)
 			self.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 			self.RightSep:SetSize(0.0001, height)
 
-			self:SetPoint("TOPLEFT", 5 + height * 1.5, 0)
-			self:SetPoint("BOTTOMRIGHT", -3, 0)
+			self:SetSize(0, 0)
+			self:ClearAllPoints()
+			self:SetPoint("TOPLEFT", holder, "TOPLEFT", 5 + height * 1.5, 0)
+			self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 		elseif config.icon.position == "RIGHT" then
 			self.Icon = self.RightIcon
+			self.Icon:Show()
 
+			self.Icon_:Hide()
 			self.LeftIcon:SetSize(0.0001, height)
 			self.RightIcon:SetSize(height * 1.5, height)
 
@@ -179,11 +223,14 @@ local function updateCastBar(self)
 			self.RightSep:SetSize(12, height)
 			self.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 
-			self:SetPoint("TOPLEFT", 3, 0)
-			self:SetPoint("BOTTOMRIGHT", -5 - height * 1.5, 0)
+			self:SetSize(0, 0)
+			self:ClearAllPoints()
+			self:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+			self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -5 - height * 1.5, 0)
 		end
 	else
-		self.Icon = nil
+		self.Icon = self.Icon_
+		self.Icon:Hide()
 
 		self.LeftIcon:SetSize(0.0001, height)
 		self.RightIcon:SetSize(0.0001, height)
@@ -191,8 +238,10 @@ local function updateCastBar(self)
 		self.LeftSep:SetSize(0.0001, height)
 		self.RightSep:SetSize(0.0001, height)
 
-		self:SetPoint("TOPLEFT", 3, 0)
-		self:SetPoint("BOTTOMRIGHT", -3, 0)
+		self:SetSize(0, 0)
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+		self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	end
 
 	if config.latency then
@@ -209,6 +258,27 @@ local function updateCastBar(self)
 	self.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
 end
 
+local function bar_SetLook(self)
+	if self == CastingBarFrame or self == PetCastingBarFrame then
+		self.Border:SetTexture(nil)
+		self.BorderShield:SetTexture(nil)
+		self.Flash:SetTexture(nil)
+		self.Icon_:Hide()
+		self.Spark:SetTexture(nil)
+
+		local text = self.Text
+		text:SetSize(0, 0)
+		text:ClearAllPoints()
+		text:SetPoint("LEFT", self, "LEFT", 2, 0)
+		text:SetPoint("RIGHT", self.Time, "LEFT", -2, 0)
+	end
+end
+
+local function bar_AttachDetach()
+	updateCastBar(CastingBarFrame)
+	updateCastBar(PetCastingBarFrame)
+end
+
 function MODULE:HasCastBars()
 	return isInit
 end
@@ -222,24 +292,28 @@ function MODULE:SetUpCastBars()
 		local config = C.db.profile.blizzard.castbar
 
 		CastingBarFrame.ignoreFramePositionManager = true
+		CastingBarFrame:SetAttribute("ignoreFramePositionManager", true)
 		UIPARENT_MANAGED_FRAME_POSITIONS["CastingBarFrame"] = nil
 
 		handleCastBar(CastingBarFrame)
-		CastingBarFrame:ClearAllPoints()
 		CastingBarFrame:SetScript("OnShow", playerBar_OnShow)
 
 		CastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
 		E.Movers:Create(CastingBarFrame.Holder)
 
 		PetCastingBarFrame.ignoreFramePositionManager = true
+		PetCastingBarFrame:SetAttribute("ignoreFramePositionManager", true)
 		UIPARENT_MANAGED_FRAME_POSITIONS["PetCastingBarFrame"] = nil
 
 		handleCastBar(PetCastingBarFrame)
-		PetCastingBarFrame:ClearAllPoints()
 		PetCastingBarFrame:SetScript("OnEvent", petBar_OnEvent)
 
 		PetCastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190 + config.height + 8)
 		E.Movers:Create(PetCastingBarFrame.Holder)
+
+		hooksecurefunc("CastingBarFrame_SetLook", bar_SetLook)
+		hooksecurefunc("PlayerFrame_AttachCastBar", bar_AttachDetach)
+		hooksecurefunc("PlayerFrame_DetachCastBar", bar_AttachDetach)
 
 		isInit = true
 
