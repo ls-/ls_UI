@@ -434,3 +434,6 @@ L["Y_OFFSET"] = "yOffset"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+L["ON_COOLDOWN"] = "On Cooldown"
+L["DESATURATION"] = "Desaturation"

@@ -60,6 +60,12 @@ local function cleanUpProfile()
 		C.db.profile.auras.ls = nil
 		C.db.profile.auras.traditional = nil
 	end
+
+	-- -> 80000.05
+	if not C.db.profile.version or C.db.profile.version < 8000005 then
+		C.db.profile.bars.desaturate_on_cd = nil
+		C.db.profile.bars.desaturate_when_unusable = nil
+	end
 end
 
 local function updateAll()
