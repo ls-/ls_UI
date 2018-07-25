@@ -479,6 +479,15 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["MIRROR_TIMER"],
 				desc = L["MIRROR_TIMER_DESC"],
 				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
+						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+						BLIZZARD:UpdateMirrorTimers()
+					end
+				end,
 				args = {
 					enabled = {
 						order = 1,
