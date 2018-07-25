@@ -43,7 +43,7 @@ local function createElement(parent, num, name)
 	local level = element:GetFrameLevel()
 
 	for i = 1, num do
-		local bar = CreateFrame("StatusBar", "$parent"..name..i, element)
+		local bar = CreateFrame("StatusBar", "$parent" .. name .. i, element)
 		bar:SetFrameLevel(level)
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		bar:SetScript("OnValueChanged", bar_OnValueChanged)

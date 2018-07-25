@@ -139,7 +139,7 @@ local function frame_UpdateCastbar(self)
 		element.SafeZone_:Hide()
 	end
 
-	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-"..height)
+	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-" .. height)
 
 	if config.enabled and not self:IsElementEnabled("Castbar") then
 		self:EnableElement("Castbar")

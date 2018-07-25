@@ -42,13 +42,12 @@ do
 	function UF:CreateVerticalPetFrame(frame)
 		local level = frame:GetFrameLevel()
 
+		local textureParent = CreateFrame("Frame", nil, frame)
+		textureParent:SetFrameLevel(level + 4)
+		textureParent:SetAllPoints()
+		frame.TextureParent = textureParent
 
-		local fg_parent = CreateFrame("Frame", nil, frame)
-		fg_parent:SetFrameLevel(level + 4)
-		fg_parent:SetAllPoints()
-		frame.FGParent = fg_parent
-
-		local fg = fg_parent:CreateTexture(nil, "ARTWORK", nil, 1)
+		local fg = textureParent:CreateTexture(nil, "ARTWORK", nil, 1)
 		fg:SetSize(80 / 2, 148 / 2)
 		fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
 		fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
@@ -61,9 +60,9 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		local health_bg = health:CreateTexture(nil, "BACKGROUND")
-		health_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
-		health_bg:SetAllPoints()
+		local healthBG = health:CreateTexture(nil, "BACKGROUND")
+		healthBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		healthBG:SetAllPoints()
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
@@ -73,15 +72,15 @@ do
 		power:SetPoint("CENTER", 6, 0)
 		frame.Power = power
 
-		local power_bg = power:CreateTexture(nil, "BACKGROUND")
-		power_bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
-		power_bg:SetAllPoints()
+		local powerBG = power:CreateTexture(nil, "BACKGROUND")
+		powerBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		powerBG:SetAllPoints()
 
 		frame.Castbar = self:CreateCastbar(frame)
 
-		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, fg_parent)
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textureParent)
 
-		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, fg_parent)
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textureParent)
 		frame.DebuffIndicator:SetWidth(14)
 
 		local threat = self:CreateThreatIndicator(frame, nil, true)
@@ -91,19 +90,19 @@ do
 		threat:SetPoint("CENTER", 0, 0)
 		frame.ThreatIndicator = threat
 
-		local left_tube = CreateFrame("Frame", nil, frame)
-		left_tube:SetFrameLevel(level + 3)
-		left_tube:SetAllPoints(health)
-		frame.LeftTube = left_tube
+		local leftTube = CreateFrame("Frame", nil, frame)
+		leftTube:SetFrameLevel(level + 3)
+		leftTube:SetAllPoints(health)
+		frame.LeftTube = leftTube
 
-		E:SetStatusBarSkin(left_tube, "VERTICAL-8")
+		E:SetStatusBarSkin(leftTube, "VERTICAL-8")
 
-		local right_tube = CreateFrame("Frame", nil, frame)
-		right_tube:SetFrameLevel(level + 3)
-		right_tube:SetAllPoints(power)
-		frame.RightTube = right_tube
+		local rightTube = CreateFrame("Frame", nil, frame)
+		rightTube:SetFrameLevel(level + 3)
+		rightTube:SetAllPoints(power)
+		frame.RightTube = rightTube
 
-		E:SetStatusBarSkin(right_tube, "VERTICAL-8")
+		E:SetStatusBarSkin(rightTube, "VERTICAL-8")
 
 		frame.Update = frame_Update
 		frame.UpdateConfig = frame_UpdateConfig
@@ -145,19 +144,19 @@ do
 		bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 		bg:SetHorizTile(true)
 
-		local fg_parent = CreateFrame("Frame", nil, frame)
-		fg_parent:SetFrameLevel(level + 7)
-		fg_parent:SetAllPoints()
-		frame.FGParent = fg_parent
+		local textureParent = CreateFrame("Frame", nil, frame)
+		textureParent:SetFrameLevel(level + 7)
+		textureParent:SetAllPoints()
+		frame.TextureParent = textureParent
 
-		local text_parent = CreateFrame("Frame", nil, frame)
-		text_parent:SetFrameLevel(level + 9)
-		text_parent:SetAllPoints()
-		frame.TextParent = text_parent
+		local textParent = CreateFrame("Frame", nil, frame)
+		textParent:SetFrameLevel(level + 9)
+		textParent:SetAllPoints()
+		frame.TextParent = textParent
 
-		frame.Insets = self:CreateInsets(frame, fg_parent)
+		frame.Insets = self:CreateInsets(frame, textureParent)
 
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", text_parent)
+		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -168,7 +167,7 @@ do
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", text_parent)
+		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -191,25 +190,25 @@ do
 		frame.Castbar = self:CreateCastbar(frame)
 		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-		frame.Name = self:CreateName(frame, "LSFont12_Shadow", text_parent)
+		frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
 
-		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, text_parent)
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
 		frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, text_parent)
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
 
-		local border = E:CreateBorder(fg_parent)
+		local border = E:CreateBorder(textureParent)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 		border:SetSize(16)
 		border:SetOffset(-6)
 		frame.Border = border
 
-		local glass = fg_parent:CreateTexture(nil, "OVERLAY", nil, 0)
+		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)
 		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
-		local shadow = fg_parent:CreateTexture(nil, "OVERLAY", nil, -1)
+		local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 

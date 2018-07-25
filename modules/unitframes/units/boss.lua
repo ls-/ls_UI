@@ -81,17 +81,17 @@ function UF:CreateBossFrame(frame)
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
-	local fgParent = CreateFrame("Frame", nil, frame)
-	fgParent:SetFrameLevel(level + 7)
-	fgParent:SetAllPoints()
-	frame.FGParent = fgParent
+	local textureParent = CreateFrame("Frame", nil, frame)
+	textureParent:SetFrameLevel(level + 7)
+	textureParent:SetAllPoints()
+	frame.TextureParent = textureParent
 
 	local textParent = CreateFrame("Frame", nil, frame)
 	textParent:SetFrameLevel(level + 9)
 	textParent:SetAllPoints()
 	frame.TextParent = textParent
 
-	frame.Insets = self:CreateInsets(frame, fgParent)
+	frame.Insets = self:CreateInsets(frame, textureParent)
 
 	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
 	health:SetFrameLevel(level + 1)
@@ -157,17 +157,17 @@ function UF:CreateBossFrame(frame)
 
 	frame.Auras = self:CreateAuras(frame, "boss")
 
-	local border = E:CreateBorder(fgParent)
+	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
-	local glass = fgParent:CreateTexture(nil, "OVERLAY", nil, 0)
+	local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
-	local shadow = fgParent:CreateTexture(nil, "OVERLAY", nil, -1)
+	local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
 	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 

@@ -77,7 +77,7 @@ oUF.Tags.Methods["ls:color:class"] = function(unit)
 		local _, class = UnitClass(unit)
 
 		if class then
-			return "|cff"..M.COLORS.CLASS[class]:GetHEX()
+			return "|cff" .. M.COLORS.CLASS[class]:GetHEX()
 		end
 	end
 
@@ -89,7 +89,7 @@ oUF.Tags.Methods["ls:color:reaction"] = function(unit)
 	local reaction = UnitReaction(unit, 'player')
 
 	if reaction then
-		return "|cff"..M.COLORS.REACTION[reaction]:GetHEX()
+		return "|cff" .. M.COLORS.REACTION[reaction]:GetHEX()
 	end
 
 	return "|cffffffff"
@@ -97,7 +97,7 @@ end
 
 oUF.Tags.Events["ls:color:difficulty"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
 oUF.Tags.Methods["ls:color:difficulty"] = function(unit)
-	return "|cff"..E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
+	return "|cff" .. E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
 end
 
 oUF.Tags.Methods["ls:color:power"] = function(unit)
@@ -110,19 +110,19 @@ oUF.Tags.Methods["ls:color:power"] = function(unit)
 		hex = M.COLORS.POWER[type]:GetHEX(0.3)
 	end
 
-	return "|cff"..hex
+	return "|cff" .. hex
 end
 
 oUF.Tags.Methods["ls:color:altpower"] = function()
-	return "|cff"..M.COLORS.INDIGO:GetHEX(0.3)
+	return "|cff" .. M.COLORS.INDIGO:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-damage"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.3)
+	return "|cff" .. M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-heal"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.3)
+	return "|cff" .. M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.3)
 end
 
 ------------
@@ -590,7 +590,7 @@ oUF.Tags.Methods["ls:debuffs"] = function(unit)
 
 		if name then
 			if types[type] and not hasDebuff[type] then
-				status = status..DEBUFF_ICON_TEMPLATE:format(type)
+				status = status .. DEBUFF_ICON_TEMPLATE:format(type)
 				hasDebuff[type] = true
 			end
 		else
