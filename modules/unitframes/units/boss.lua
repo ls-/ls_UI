@@ -17,7 +17,7 @@ local holder
 
 function UF:CreateBossHolder()
 	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
-	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
+	holder:SetPoint(unpack(C.db.profile.units.boss.point[E.UI_LAYOUT]))
 	E.Movers:Create(holder)
 	holder._buttons = {}
 
@@ -27,27 +27,28 @@ end
 function UF:UpdateBossHolder()
 	if not holder._config then
 		holder._config = {
-			num = 5
+			num = 5,
 		}
 	end
 
-	holder._config.width = C.db.profile.units[E.UI_LAYOUT].boss.width
-	holder._config.height = C.db.profile.units[E.UI_LAYOUT].boss.height
-	holder._config.per_row = C.db.profile.units[E.UI_LAYOUT].boss.per_row
-	holder._config.spacing = C.db.profile.units[E.UI_LAYOUT].boss.spacing
-	holder._config.x_growth = C.db.profile.units[E.UI_LAYOUT].boss.x_growth
-	holder._config.y_growth = C.db.profile.units[E.UI_LAYOUT].boss.y_growth
+	holder._config.width = C.db.profile.units.boss.width
+	holder._config.height = C.db.profile.units.boss.height
+	holder._config.per_row = C.db.profile.units.boss.per_row
+	holder._config.spacing = C.db.profile.units.boss.spacing
+	holder._config.x_growth = C.db.profile.units.boss.x_growth
+	holder._config.y_growth = C.db.profile.units.boss.y_growth
 
 	E:UpdateBarLayout(holder)
 end
 
 local function frame_Update(self)
+	self:UpdateConfig()
+
 	if self._config.enabled then
 		if not self:IsEnabled() then
 			self:Enable()
 		end
 
-		self:UpdateConfig()
 		self:UpdateSize()
 		self:UpdateInsets()
 		self:UpdateHealth()
@@ -74,9 +75,6 @@ end
 
 function UF:CreateBossFrame(frame)
 	local level = frame:GetFrameLevel()
-
-	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
-	frame._unit = "boss"
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

@@ -13,12 +13,13 @@ local _G = getfenv(0)
 local isInit = false
 
 local function frame_Update(self)
+	self:UpdateConfig()
+
 	if self._config.enabled then
 		if not self:IsEnabled() then
 			self:Enable()
 		end
 
-		self:UpdateConfig()
 		self:UpdateSize()
 		self:UpdateInsets()
 		self:UpdateHealth()
@@ -45,9 +46,6 @@ end
 
 function UF:CreateTargetFrame(frame)
 	local level = frame:GetFrameLevel()
-
-	frame._config = C.db.profile.units[E.UI_LAYOUT].target
-	frame._unit = "target"
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()

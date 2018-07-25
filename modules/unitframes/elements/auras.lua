@@ -292,55 +292,47 @@ local function element_UpdateAuraType(_, _, aura)
 	end
 end
 
-local function element_UpdateCooldownConfig(self)
-	if not self.cooldownConfig then
-		self.cooldownConfig = {
+local function element_UpdateConfig(element)
+	element._config = E:CopyTable(element.__owner._config.auras, element._config)
+end
+
+local function element_UpdateCooldownConfig(element)
+	if not element.cooldownConfig then
+		element.cooldownConfig = {
 			colors = {},
 			text = {},
 		}
 	end
 
-	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
-	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+	element.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
+	element.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+	element.cooldownConfig.colors = E:CopyTable(C.db.profile.units.cooldown.colors, element.cooldownConfig.colors)
+	element.cooldownConfig.text = E:CopyTable(element._config.cooldown.text, element.cooldownConfig.text)
 
-	self.cooldownConfig.colors.enabled = C.db.profile.units.cooldown.colors.enabled
-	self.cooldownConfig.colors.expiration = C.db.profile.units.cooldown.colors.expiration
-	self.cooldownConfig.colors.second = C.db.profile.units.cooldown.colors.second
-	self.cooldownConfig.colors.minute = C.db.profile.units.cooldown.colors.minute
-	self.cooldownConfig.colors.hour = C.db.profile.units.cooldown.colors.hour
-	self.cooldownConfig.colors.day = C.db.profile.units.cooldown.colors.day
-
-	self.cooldownConfig.text.enabled = self._config.cooldown.text.enabled
-	self.cooldownConfig.text.size = self._config.cooldown.text.size
-	self.cooldownConfig.text.flag = self._config.cooldown.text.flag
-	self.cooldownConfig.text.h_alignment = self._config.cooldown.text.h_alignment
-	self.cooldownConfig.text.v_alignment = self._config.cooldown.text.v_alignment
-
-	for i = 1, #self do
-		if not self[i].cd.UpdateConfig then
+	for i = 1, #element do
+		if not element[i].cd.UpdateConfig then
 			break
 		end
 
-		self[i].cd:UpdateConfig(self.cooldownConfig)
-		self[i].cd:UpdateFontObject()
+		element[i].cd:UpdateConfig(element.cooldownConfig)
+		element[i].cd:UpdateFontObject()
 	end
 end
 
 local function frame_UpdateAuras(self)
-	local config = self._config.auras
 	local element = self.Auras
-	local size = config.size_override ~= 0 and config.size_override or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
+	element:UpdateConfig()
+	element:UpdateCooldownConfig()
+
+	local config = element._config
+	local size = config.size_override ~= 0 and config.size_override
+		or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
 
 	element.size = size
 	element.numTotal = config.per_row * config.rows
 	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
 	element["growth-y"] = config.y_growth
-
-	element._config = t_wipe(element._config or {})
-	E:CopyTable(config, element._config)
-
-	element:UpdateCooldownConfig()
 
 	if config.y_growth == "UP" then
 		if config.x_growth == "RIGHT" then
@@ -386,6 +378,7 @@ function UF:CreateAuras(frame, unit)
 	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
 	element.PostUpdateIcon = element_UpdateAuraType
+	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
 
 	frame.UpdateAuras = frame_UpdateAuras

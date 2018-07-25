@@ -16,14 +16,20 @@ function UF:HasPlayerFrame()
 	return isInit
 end
 
+local function frame_UpdateConfig(self)
+	self._config = E:CopyTable(C.db.profile.units[self._unit][E.UI_LAYOUT], self._config)
+	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
+end
+
 do
 	local function frame_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled then
 			if not self:IsEnabled() then
 				self:Enable()
 			end
 
-			self:UpdateConfig()
 			self:UpdateSize()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
@@ -56,9 +62,6 @@ do
 
 	function UF:CreateVerticalPlayerFrame(frame)
 		local level = frame:GetFrameLevel()
-
-		frame._config = C.db.profile.units[E.UI_LAYOUT].player
-		frame._unit = "player"
 
 		-- Note: can't touch this
 		-- 1: frame
@@ -315,6 +318,7 @@ do
 		frame.ThreatIndicator = threat
 
 		frame.Update = frame_Update
+		frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end
@@ -322,12 +326,13 @@ end
 
 do
 	local function frame_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled then
 			if not self:IsEnabled() then
 				self:Enable()
 			end
 
-			self:UpdateConfig()
 			self:UpdateSize()
 			self:UpdateInsets()
 			self:UpdateHealth()
@@ -371,9 +376,6 @@ do
 
 	function UF:CreateHorizontalPlayerFrame(frame)
 		local level = frame:GetFrameLevel()
-
-		frame._config = C.db.profile.units[E.UI_LAYOUT].player
-		frame._unit = "player"
 
 		local bg = frame:CreateTexture(nil, "BACKGROUND")
 		bg:SetAllPoints()
@@ -597,6 +599,7 @@ do
 		self:CreateClassIndicator(frame)
 
 		frame.Update = frame_Update
+		frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end

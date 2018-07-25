@@ -10,14 +10,20 @@ local _G = getfenv(0)
 ]]
 
 -- Mine
+local function frame_UpdateConfig(self)
+	self._config = E:CopyTable(C.db.profile.units[self._unit][E.UI_LAYOUT], self._config)
+	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
+end
+
 do
 	local function frame_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled then
 			if not self:IsEnabled() then
 				self:Enable()
 			end
 
-			self:UpdateConfig()
 			self:UpdateSize()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
@@ -36,8 +42,6 @@ do
 	function UF:CreateVerticalPetFrame(frame)
 		local level = frame:GetFrameLevel()
 
-		frame._config = C.db.profile.units[E.UI_LAYOUT].pet
-		frame._unit = "pet"
 
 		local fg_parent = CreateFrame("Frame", nil, frame)
 		fg_parent:SetFrameLevel(level + 4)
@@ -102,18 +106,19 @@ do
 		E:SetStatusBarSkin(right_tube, "VERTICAL-8")
 
 		frame.Update = frame_Update
+		frame.UpdateConfig = frame_UpdateConfig
 	end
 end
 
 do
 	local function frame_Update(self)
+		self:UpdateConfig()
 
 		if self._config.enabled then
 			if not self:IsEnabled() then
 				self:Enable()
 			end
 
-			self:UpdateConfig()
 			self:UpdateSize()
 			self:UpdateInsets()
 			self:UpdateHealth()
@@ -134,9 +139,6 @@ do
 
 	function UF:CreateHorizontalPetFrame(frame)
 		local level = frame:GetFrameLevel()
-
-		frame._config = C.db.profile.units[E.UI_LAYOUT].pet
-		frame._unit = "pet"
 
 		local bg = frame:CreateTexture(nil, "BACKGROUND")
 		bg:SetAllPoints()
@@ -214,5 +216,6 @@ do
 		self:CreateClassIndicator(frame)
 
 		frame.Update = frame_Update
+		frame.UpdateConfig = frame_UpdateConfig
 	end
 end
