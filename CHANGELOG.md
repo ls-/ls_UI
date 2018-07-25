@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 80000.06
+
+- Fixed action buttons' icons' colouring.
+
 ## Version 80000.05
 
 - Added "Desaturation" section to "Action Bars" config. Replaces "Desaturate on Cooldown" and  
