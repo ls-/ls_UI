@@ -9,7 +9,6 @@ local _G = getfenv(0)
 
 if _G.GetLocale() ~= "esMX" then return end
 
-
 L["ACTION_BARS"] = "Barras de acción"
 --[[ L["ADDITIONAL_BAR"] = "Additional Bar" ]]
 L["ADVENTURE_JOURNAL_DESC"] = "Mostrar información de registros de banda."
@@ -105,8 +104,7 @@ L["DAMAGE_ABSORB_TEXT"] = "Texto de absorción de daño"
 --[[ L["DAYS"] = "Days" ]]
 L["DEAD"] = "Muerto"
 L["DEBUFFS"] = "Perjuicios"
-L["DESATURATE_ON_COOLDOWN"] = "Desaturar en enfriamiento."
---[[ L["DESATURATE_WHEN_UNUSABLE"] = "Desaturate when Not Usable" ]]
+--[[ L["DESATURATION"] = "Desaturation" ]]
 L["DESCENDING"] = "Descendiente"
 L["DETACH_FROM_FRAME"] = "Despegar del cuadro."
 L["DIFFICULTY_FLAG"] = "Bandera de dificultad"
@@ -246,6 +244,7 @@ L["NPE_FRAME"] = "Tutorial marco NPE"
 L["NUM_BUTTONS"] = "Número de botones"
 L["NUM_ROWS"] = "Número de filas"
 L["OBJECTIVE_TRACKER"] = "Seguimiento de objetivos"
+--[[ L["ON_COOLDOWN"] = "On Cooldown" ]]
 --[[ L["OOM"] = "Out of Power" ]]
 --[[ L["OOM_INDICATOR"] = "Out-of-Power Indicator" ]]
 --[[ L["OOR"] = "Out of Range" ]]
