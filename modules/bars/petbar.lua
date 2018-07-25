@@ -74,13 +74,13 @@ local function bar_UpdateButtonConfig(self)
 		self.buttonConfig = {
 			tooltip = "enabled",
 			colors = {},
+			desaturation = {},
 		}
 	end
 
 	self.buttonConfig.clickOnDown = self._config.click_on_down
 	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
-	self.buttonConfig.desaturateOnCooldown = self._config.desaturate_on_cd
-	self.buttonConfig.desaturateWhenUnusable = self._config.desaturate_when_unusable
+	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
@@ -136,10 +136,10 @@ end
 
 local function button_UpdateUsable(self)
 	if self.config.outOfRangeColoring == "button" and self.outOfRange then
-		self.icon:SetDesaturated(true)
+		self.icon:SetDesaturated(self.config.desaturation.range == true)
 		self.icon:SetVertexColor(unpack(self.config.colors.range))
-	elseif self.config.desaturateOnCooldown and self.onCooldown then
-		self.icon:SetDesaturated(true)
+	elseif self.onCooldown then
+		self.icon:SetDesaturated(self.config.desaturation.cooldown == true)
 		self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 	else
 		local isUsable = PetHasActionBar() and GetPetActionSlotUsable(self:GetID()) or false
@@ -147,7 +147,7 @@ local function button_UpdateUsable(self)
 			self.icon:SetDesaturated(false)
 			self.icon:SetVertexColor(unpack(self.config.colors.normal))
 		else
-			self.icon:SetDesaturated(self.config.desaturateWhenUnusable == true)
+			self.icon:SetDesaturated(self.config.desaturation.unusable == true)
 			self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 		end
 	end
@@ -166,7 +166,7 @@ local function button_UpdateCooldown(self)
 
 	local oldOnCooldown = self.onCooldown
 	self.onCooldown = enable and enable ~= 0 and start > 0 and duration > 1.5
-	if self.config.desaturateOnCooldown and self.onCooldown ~= oldOnCooldown then
+	if self.config.desaturation.cooldown and self.onCooldown ~= oldOnCooldown then
 		self:UpdateUsable()
 		if self.onCooldown then
 			self.cooldown:SetScript("OnCooldownDone", onCooldownDone)

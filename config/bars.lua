@@ -759,20 +759,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
-			desaturate_on_cd = {
-				order = 15,
-				type = "toggle",
-				name = L["DESATURATE_ON_COOLDOWN"],
-				disabled = isModuleDisabled,
-			},
-			desaturate_when_unusable = {
-				order = 16,
-				type = "toggle",
-				name = L["DESATURATE_WHEN_UNUSABLE"],
-				disabled = isModuleDisabled,
-			},
 			draw_bling = {
-				order = 17,
+				order = 15,
 				type = "toggle",
 				name = L["DRAW_COOLDOWN_BLING"],
 				desc = L["DRAW_COOLDOWN_BLING_DESC"],
@@ -783,8 +771,52 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "description",
 				name = " ",
 			},
-			colors = {
+			desaturation = {
 				order = 20,
+				type = "group",
+				name = L["DESATURATION"],
+				inline = true,
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.bars.desaturation[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.bars.desaturation[info[#info]] ~= value then
+						C.db.profile.bars.desaturation[info[#info]] = value
+						BARS:UpdateBars("UpdateConfig")
+						BARS:UpdateBars("UpdateButtonConfig")
+					end
+				end,
+				args = {
+					cooldown = {
+						order = 1,
+						type = "toggle",
+						name = L["ON_COOLDOWN"],
+					},
+					unusable = {
+						order = 2,
+						type = "toggle",
+						name = L["UNUSABLE"],
+					},
+					mana = {
+						order = 3,
+						type = "toggle",
+						name = L["OOM"],
+					},
+					range = {
+						order = 4,
+						type = "toggle",
+						name = L["OOR"],
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			colors = {
+				order = 30,
 				type = "group",
 				name = L["COLORS"],
 				inline = true,
@@ -840,13 +872,13 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					},
 				},
 			},
-			spacer_3 = {
-				order = 29,
+			spacer_4 = {
+				order = 39,
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -969,19 +1001,19 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					},
 				},
 			},
-			action_bar_1 = getOptionsTable_Bar("bar1", 40, L["BAR_1"]),
-			action_bar_2 = getOptionsTable_Bar("bar2", 50, L["BAR_2"]),
-			action_bar_3 = getOptionsTable_Bar("bar3", 60, L["BAR_3"]),
-			action_bar_4 = getOptionsTable_Bar("bar4", 70, L["BAR_4"]),
-			action_bar_5 = getOptionsTable_Bar("bar5", 80, L["BAR_5"]),
-			action_bar_6 = getOptionsTable_Bar("bar6", 90, L["PET_BAR"]),
-			action_bar_7 = getOptionsTable_Bar("bar7", 100, L["STANCE_BAR"]),
-			pet_battle = getOptionsTable_Bar("pet_battle", 110, L["PET_BATTLE_BAR"]),
-			extra = getOptionsTable_Bar("extra", 120, L["EXTRA_ACTION_BUTTON"]),
-			zone = getOptionsTable_Bar("zone", 130, L["ZONE_ABILITY_BUTTON"]),
-			vehicle = getOptionsTable_Bar("vehicle", 140, L["VEHICLE_EXIT_BUTTON"]),
+			action_bar_1 = getOptionsTable_Bar("bar1", 50, L["BAR_1"]),
+			action_bar_2 = getOptionsTable_Bar("bar2", 60, L["BAR_2"]),
+			action_bar_3 = getOptionsTable_Bar("bar3", 70, L["BAR_3"]),
+			action_bar_4 = getOptionsTable_Bar("bar4", 80, L["BAR_4"]),
+			action_bar_5 = getOptionsTable_Bar("bar5", 90, L["BAR_5"]),
+			action_bar_6 = getOptionsTable_Bar("bar6", 100, L["PET_BAR"]),
+			action_bar_7 = getOptionsTable_Bar("bar7", 110, L["STANCE_BAR"]),
+			pet_battle = getOptionsTable_Bar("pet_battle", 120, L["PET_BATTLE_BAR"]),
+			extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
+			zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
+			vehicle = getOptionsTable_Bar("vehicle", 150, L["VEHICLE_EXIT_BUTTON"]),
 			micromenu = {
-				order = 150,
+				order = 160,
 				type = "group",
 				name = L["MICRO_BUTTONS"],
 				disabled = isModuleDisabled,
@@ -1456,7 +1488,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				},
 			},
 			xpbar = {
-				order = 160,
+				order = 170,
 				type = "group",
 				childGroups = "select",
 				name = L["XP_BAR"],
@@ -1530,7 +1562,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					},
 					fading = getOptionsTable_Fading(20, "xpbar")
 				},
-			}
+			},
 		},
 	}
 end

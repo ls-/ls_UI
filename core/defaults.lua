@@ -2192,8 +2192,6 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
-		desaturate_on_cd = true,
-		desaturate_when_unusable = true,
 		click_on_down = false,
 		draw_bling = true,
 		blizz_vehicle = false,
@@ -2214,6 +2212,12 @@ D.profile = {
 			unusable = {102 / 255, 102 / 255, 102 / 255},
 			mana = {38 / 255, 97 / 255, 172 / 255},
 			range = {141 / 255, 28 / 255, 33 / 255},
+		},
+		desaturation = {
+			cooldown = true,
+			unusable = true,
+			mana = true,
+			range = true,
 		},
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",

@@ -29,18 +29,6 @@ local MAX_BUTTONS = 6
 
 local lootTable = {}
 
-local function getNum(t)
-	local num = 0
-
-	for i = 1, #t do
-		if t[i] then
-			num = num + 1
-		end
-	end
-
-	return num
-end
-
 local function getTooltipPoint(self)
 	local quadrant = E:GetScreenQuadrant(self)
 	local p, rP = "BOTTOMRIGHT", "TOPLEFT"
@@ -242,7 +230,7 @@ local function itemList_Update(self)
 		buttons[i]:Hide()
 	end
 
-	FauxScrollFrame_Update(self, getNum(lootTable), index - 1, 40, nil, nil, nil, nil, nil, nil, true)
+	FauxScrollFrame_Update(self, #lootTable, index - 1, 40, nil, nil, nil, nil, nil, nil, true)
 end
 
 local function itemList_Reset(self)

@@ -115,6 +115,11 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 	end
 end)
 
+local function cooldown_Clear(self)
+	self.Timer:SetText("")
+	activeCooldowns[self] = nil
+end
+
 local function cooldown_SetCooldown(self, start, duration)
 	if self.config.text.enabled then
 		if start > 0 and duration > 1.5 then
@@ -163,6 +168,7 @@ function E.Cooldowns.Handle(cooldown)
 	timer:SetPoint("BOTTOMRIGHT", 8, 0)
 	cooldown.Timer = timer
 
+	hooksecurefunc(cooldown, "Clear", cooldown_Clear)
 	hooksecurefunc(cooldown, "SetCooldown", cooldown_SetCooldown)
 
 	cooldown.UpdateConfig = cooldown_UpdateConfig

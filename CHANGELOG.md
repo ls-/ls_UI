@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 80000.05
+
+- Added "Desaturation" section to "Action Bars" config. Replaces "Desaturate on Cooldown" and  
+  "Desaturate when Not Usable" options;
+- Fixed the default castbars' skin.
+
 ## Version 80000.04
 
 - Reworked cooldowns' handling. Action bars, auras, and aura tracker received a set of options to  

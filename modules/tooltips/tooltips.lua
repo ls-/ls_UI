@@ -235,27 +235,6 @@ local function getLineByText(tooltip, text, offset)
 	return nil
 end
 
-local function removeLineByText(tooltip, offset, text)
-	local num = tooltip:NumLines()
-	if not num or num <= 1 then return end
-
-	for i = num, offset, -1 do
-		if _G["GameTooltipTextLeft" .. i]:GetText() == text then
-			for j = i, num do
-				local curLine = _G["GameTooltipTextLeft" .. j]
-				local nextLine = _G["GameTooltipTextLeft" .. (j + 1)]
-
-				if nextLine:IsShown() then
-					curLine:SetText(nextLine:GetText())
-					curLine:SetTextColor(nextLine:GetTextColor())
-				else
-					curLine:Hide()
-				end
-			end
-		end
-	end
-end
-
 local function getTooltipUnit(tooltip)
 	local _, unit = tooltip:GetUnit()
 
@@ -714,6 +693,7 @@ local function tooltipBar_OnShow(self)
 
 	local tooltip = self:GetParent()
 	if tooltip:IsForbidden() then return end
+
 	if tooltip:NumLines() == 0 then
 		self.numTries = (self.numTries or 0) + 1
 
@@ -730,34 +710,27 @@ local function tooltipBar_OnShow(self)
 
 	if getLineByText(tooltip, "%-%-", 2) then return end
 
-	tooltip:SetMinimumWidth(140)
-	tooltip:AddLine("--")
-
-	cleanUp(tooltip)
-
-	self:ClearAllPoints()
-	self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
-	self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
-
 	local unit = getTooltipUnit(tooltip)
 	if unit then
+		tooltip:SetMinimumWidth(140)
+		tooltip:AddLine("--")
+
+		cleanUp(tooltip)
+
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
+		self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
 		self:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
 	else
+		cleanUp(tooltip)
+
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", tooltip, "BOTTOMLEFT", 2, -2)
+		self:SetPoint("TOPRIGHT", tooltip, "BOTTOMRIGHT", -2, -2)
 		self:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
 	end
 
 	tooltip:Show()
-end
-
-local function tooltipBar_OnHide(self)
-	if self:IsForbidden() then return end
-
-	local tooltip = self:GetParent()
-	if tooltip:IsForbidden() or not tooltip:IsShown() then return end
-
-	removeLineByText(tooltip, 2, "--")
-
-	tooltip:SetMinimumWidth(0)
 end
 
 local function tooltipBar_OnValueChanged(self, value)
@@ -866,7 +839,6 @@ function MODULE:Init()
 		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
 		GameTooltipStatusBar:SetHeight(10)
 		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
-		GameTooltipStatusBar:SetScript("OnHide", tooltipBar_OnHide)
 		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 
 		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
