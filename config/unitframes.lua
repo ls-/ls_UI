@@ -1929,7 +1929,9 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			UNITFRAMES:UpdateUnitFrame(unit, "Update")
 		end
 
-		temp.args.preview = nil
+		if unit == "player" then
+			temp.args.preview = nil
+		end
 
 		temp.args.width.get = function()
 			return C.db.profile.units[unit][E.UI_LAYOUT].width
