@@ -4,8 +4,9 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local m_max = _G.math.max
+local m_min = _G.math.min
 local next = _G.next
-local t_wipe = _G.table.wipe
 
 -- Blizz
 local C_MountJournal = _G.C_MountJournal
@@ -327,6 +328,7 @@ local function frame_UpdateAuras(self)
 	local config = element._config
 	local size = config.size_override ~= 0 and config.size_override
 		or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
+	size = m_min(m_max(size, 24), 64)
 
 	element.size = size
 	element.numTotal = config.per_row * config.rows
