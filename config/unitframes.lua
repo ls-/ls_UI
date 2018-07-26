@@ -45,26 +45,26 @@ local INSETS = {
 }
 
 local H_ALIGNMENT = {
-	CENTER = "CENTER",
-	LEFT = "LEFT",
-	RIGHT = "RIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
 }
 local V_ALIGNMENT = {
-	BOTTOM = "BOTTOM",
-	MIDDLE = "MIDDLE",
-	TOP = "TOP",
+	["BOTTOM"] = "BOTTOM",
+	["MIDDLE"] = "MIDDLE",
+	["TOP"] = "TOP",
 }
 
 local CASTBAR_ICON_POSITIONS = {
-	LEFT = L["LEFT"],
-	RIGHT = L["RIGHT"],
+	["LEFT"] = L["LEFT"],
+	["RIGHT"] = L["RIGHT"],
 }
 
 local GROWTH_DIRS = {
-	LEFT_DOWN = L["LEFT_DOWN"],
-	LEFT_UP = L["LEFT_UP"],
-	RIGHT_DOWN = L["RIGHT_DOWN"],
-	RIGHT_UP = L["RIGHT_UP"],
+	["LEFT_DOWN"] = L["LEFT_DOWN"],
+	["LEFT_UP"] = L["LEFT_UP"],
+	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
+	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
 local function getRegionAnchors(anchorsToRemove, anchorsToAdd)
