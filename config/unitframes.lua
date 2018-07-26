@@ -1952,7 +1952,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end,
 			},
 			top_inset = {
-				order = 12,
+				order = 15,
 				type = "select",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
@@ -1969,7 +1969,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end,
 			},
 			bottom_inset = {
-				order = 13,
+				order = 16,
 				type = "select",
 				name = L["BOTTOM_INSET_SIZE"],
 				desc = L["BOTTOM_INSET_SIZE_DESC"],
@@ -1986,7 +1986,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end,
 			},
 			threat = {
-				order = 14,
+				order = 17,
 				type = "toggle",
 				name = L["THREAT_GLOW"],
 				get = function()
@@ -1999,7 +1999,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end,
 			},
 			pvp = {
-				order = 15,
+				order = 18,
 				type = "toggle",
 				name = L["PVP_ICON"],
 				get = function()
@@ -2329,148 +2329,153 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.disabled = function() return not UNITFRAMES:HasBossFrame() end
 		temp.args.pvp = nil
 		temp.args.debuff = nil
-	-- 	temp.args.per_row = {
-	-- 		order = 13,
-	-- 		type = "range",
-	-- 		name = L["PER_ROW"],
-	-- 		min = 1, max = 5, step = 1,
-	-- 		get = function()
-	-- 			return C.db.profile.units[unit].per_row
-	-- 		end,
-	-- 		set = function(_, value)
-	-- 			if C.db.profile.units[unit].per_row ~= value then
-	-- 				C.db.profile.units[unit].per_row = value
-	-- 				UNITFRAMES:UpdateBossHolder()
-	-- 			end
-	-- 		end,
-	-- 	}
-	-- 	temp.args.spacing = {
-	-- 		order = 14,
-	-- 		type = "range",
-	-- 		name = L["SPACING"],
-	-- 		min = 8, max = 64, step = 2,
-	-- 		get = function()
-	-- 			return C.db.profile.units[unit].spacing
-	-- 		end,
-	-- 		set = function(_, value)
-	-- 			if C.db.profile.units[unit].spacing ~= value then
-	-- 				C.db.profile.units[unit].spacing = value
-	-- 				UNITFRAMES:UpdateBossHolder()
-	-- 			end
-	-- 		end,
-	-- 	}
-	-- 	temp.args.growth_dir = {
-	-- 		order = 15,
-	-- 		type = "select",
-	-- 		name = L["GROWTH_DIR"],
-	-- 		values = GROWTH_DIRS,
-	-- 		get = function()
-	-- 			return C.db.profile.units[unit].x_growth.."_"..C.db.profile.units[unit].y_growth
-	-- 		end,
-	-- 		set = function(_, value)
-	-- 			C.db.profile.units[unit].x_growth, C.db.profile.units[unit].y_growth = s_split("_", value)
-	-- 			UNITFRAMES:UpdateBossHolder()
-	-- 		end,
-	-- 	}
-	-- 	temp.args.alt_power = {
-	-- 		order = 300,
-	-- 		type = "group",
-	-- 		name = L["ALTERNATIVE_POWER"],
-	-- 		args = {
-	-- 			enabled = {
-	-- 				order = 1,
-	-- 				type = "toggle",
-	-- 				name = L["ENABLE"],
-	-- 				get = function()
-	-- 					return C.db.profile.units[unit].alt_power.enabled
-	-- 				end,
-	-- 				set = function(_, value)
-	-- 					C.db.profile.units[unit].alt_power.enabled = value
-	-- 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-	-- 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-	-- 				end,
-	-- 			},
-	-- 			reset = {
-	-- 				type = "execute",
-	-- 				order = 2,
-	-- 				name = L["RESTORE_DEFAULTS"],
-	-- 				func = function()
-	-- 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, {["point"] = true})
-	-- 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-	-- 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-	-- 				end,
-	-- 			},
-	-- 			spacer_1 = {
-	-- 				order = 9,
-	-- 				type = "description",
-	-- 				name = "",
-	-- 			},
-	-- 			text = {
-	-- 				order = 10,
-	-- 				type = "group",
-	-- 				name = L["BAR_TEXT"],
-	-- 				inline = true,
-	-- 				get = function(info)
-	-- 					return C.db.profile.units[unit].alt_power.text.point1[info[#info]]
-	-- 				end,
-	-- 				set = function(info, value)
-	-- 					if C.db.profile.units[unit].alt_power.text.point1[info[#info]] ~= value then
-	-- 						C.db.profile.units[unit].alt_power.text.point1[info[#info]] = value
-	-- 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-	-- 					end
-	-- 				end,
-	-- 				args = {
-	-- 					p = {
-	-- 						order = 4,
-	-- 						type = "select",
-	-- 						name = L["POINT"],
-	-- 						desc = L["POINT_DESC"],
-	-- 						values = POINTS,
-	-- 					},
-	-- 					anchor = {
-	-- 						order = 5,
-	-- 						type = "select",
-	-- 						name = L["ANCHOR"],
-	-- 						values = getRegionAnchors(nil, {["AlternativePower"] = L["ALTERNATIVE_POWER"]}),
-	-- 					},
-	-- 					rP = {
-	-- 						order = 6,
-	-- 						type = "select",
-	-- 						name = L["RELATIVE_POINT"],
-	-- 						desc = L["RELATIVE_POINT_DESC"],
-	-- 						values = POINTS,
-	-- 					},
-	-- 					x = {
-	-- 						order = 7,
-	-- 						type = "range",
-	-- 						name = L["X_OFFSET"],
-	-- 						min = -128, max = 128, step = 1,
-	-- 					},
-	-- 					y = {
-	-- 						order = 8,
-	-- 						type = "range",
-	-- 						name = L["Y_OFFSET"],
-	-- 						min = -128, max = 128, step = 1,
-	-- 					},
-	-- 					tag = {
-	-- 						order = 10,
-	-- 						type = "input",
-	-- 						width = "full",
-	-- 						name = L["FORMAT"],
-	-- 						desc = L["ALT_POWER_FORMAT_DESC"],
-	-- 						get = function()
-	-- 							return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
-	-- 						end,
-	-- 						set = function(_, value)
-	-- 							C.db.profile.units[unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
-	-- 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-	-- 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-	-- 						end,
-	-- 					},
-	-- 				},
-	-- 			},
-	-- 		},
-	-- 	}
+
+		temp.args.per_row = {
+			order = 12,
+			type = "range",
+			name = L["PER_ROW"],
+			min = 1, max = 5, step = 1,
+			get = function()
+				return C.db.profile.units[unit].per_row
+			end,
+			set = function(_, value)
+				if C.db.profile.units[unit].per_row ~= value then
+					C.db.profile.units[unit].per_row = value
+					UNITFRAMES:UpdateBossHolder()
+				end
+			end,
+		}
+
+		temp.args.spacing = {
+			order = 13,
+			type = "range",
+			name = L["SPACING"],
+			min = 8, max = 64, step = 2,
+			get = function()
+				return C.db.profile.units[unit].spacing
+			end,
+			set = function(_, value)
+				if C.db.profile.units[unit].spacing ~= value then
+					C.db.profile.units[unit].spacing = value
+					UNITFRAMES:UpdateBossHolder()
+				end
+			end,
+		}
+
+		temp.args.growth_dir = {
+			order = 14,
+			type = "select",
+			name = L["GROWTH_DIR"],
+			values = GROWTH_DIRS,
+			get = function()
+				return C.db.profile.units[unit].x_growth .. "_" .. C.db.profile.units[unit].y_growth
+			end,
+			set = function(_, value)
+				C.db.profile.units[unit].x_growth, C.db.profile.units[unit].y_growth = s_split("_", value)
+				UNITFRAMES:UpdateBossHolder()
+			end,
+		}
+
+		temp.args.alt_power = {
+			order = 300,
+			type = "group",
+			name = L["ALTERNATIVE_POWER"],
+			args = {
+				enabled = {
+					order = 1,
+					type = "toggle",
+					name = L["ENABLE"],
+					get = function()
+						return C.db.profile.units[unit].alt_power.enabled
+					end,
+					set = function(_, value)
+						C.db.profile.units[unit].alt_power.enabled = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+					end,
+				},
+				reset = {
+					type = "execute",
+					order = 2,
+					name = L["RESTORE_DEFAULTS"],
+					func = function()
+						CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, {["point"] = true})
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+					end,
+				},
+				spacer_1 = {
+					order = 9,
+					type = "description",
+					name = " ",
+				},
+				text = {
+					order = 10,
+					type = "group",
+					name = L["BAR_TEXT"],
+					inline = true,
+					get = function(info)
+						return C.db.profile.units[unit].alt_power.text.point1[info[#info]]
+					end,
+					set = function(info, value)
+						if C.db.profile.units[unit].alt_power.text.point1[info[#info]] ~= value then
+							C.db.profile.units[unit].alt_power.text.point1[info[#info]] = value
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+						end
+					end,
+					args = {
+						p = {
+							order = 4,
+							type = "select",
+							name = L["POINT"],
+							desc = L["POINT_DESC"],
+							values = POINTS,
+						},
+						anchor = {
+							order = 5,
+							type = "select",
+							name = L["ANCHOR"],
+							values = getRegionAnchors(nil, {["AlternativePower"] = L["ALTERNATIVE_POWER"]}),
+						},
+						rP = {
+							order = 6,
+							type = "select",
+							name = L["RELATIVE_POINT"],
+							desc = L["RELATIVE_POINT_DESC"],
+							values = POINTS,
+						},
+						x = {
+							order = 7,
+							type = "range",
+							name = L["X_OFFSET"],
+							min = -128, max = 128, step = 1,
+						},
+						y = {
+							order = 8,
+							type = "range",
+							name = L["Y_OFFSET"],
+							min = -128, max = 128, step = 1,
+						},
+						tag = {
+							order = 10,
+							type = "input",
+							width = "full",
+							name = L["FORMAT"],
+							desc = L["ALT_POWER_FORMAT_DESC"],
+							get = function()
+								return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
+							end,
+							set = function(_, value)
+								C.db.profile.units[unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
+								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+							end,
+						},
+					},
+				},
+			},
+		}
 	end
 
 	return temp
