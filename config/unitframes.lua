@@ -2135,6 +2135,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			temp.args.border.args.npc = nil
 
 			if unit == "pet" then
+				temp.args.pvp = nil
 				temp.args.auras = nil
 			end
 		end
