@@ -2187,8 +2187,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.args.preview = nil
 		temp.args.pvp = nil
 		temp.args.castbar = nil
-		-- temp.args.debuff = nil
-		-- temp.args.auras = nil
+		temp.args.debuff = nil
 	elseif unit == "focus" then
 		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
 		temp.args.preview = nil
@@ -2197,12 +2196,11 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.args.preview = nil
 		temp.args.pvp = nil
 		temp.args.castbar = nil
-	-- 	temp.args.debuff = nil
-	-- 	temp.args.auras = nil
+		temp.args.debuff = nil
 	elseif unit == "boss" then
 		temp.disabled = function() return not UNITFRAMES:HasBossFrame() end
 		temp.args.pvp = nil
-	-- 	temp.args.debuff = nil
+		temp.args.debuff = nil
 	-- 	temp.args.per_row = {
 	-- 		order = 13,
 	-- 		type = "range",
