@@ -91,7 +91,7 @@ local function getRegionAnchors(anchorsToRemove, anchorsToAdd)
 	return temp
 end
 
-local function getOptionsTable_Health(unit, order)
+local function getOptionsTable_Health(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -487,7 +487,7 @@ local function getOptionsTable_Health(unit, order)
 	return temp
 end
 
-local function getOptionsTable_Power(unit, order)
+local function getOptionsTable_Power(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -1747,10 +1747,10 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		},
 	}
 
-	temp.args.health = getOptionsTable_Health(unit, 100)
-	temp.args.power = getOptionsTable_Power(unit, 200)
 	-- temp.args.castbar = getOptionsTable_Castbar(unit, 400)
 	-- temp.args.name = getOptionsTable_Name(unit, 500)
+	temp.args.health = getOptionsTable_Health(100, unit)
+	temp.args.power = getOptionsTable_Power(200, unit)
 	-- temp.args.raid_target = getOptionsTable_RaidIcon(unit, 600)
 	-- temp.args.debuff = getOptionsTable_DebuffIcons(unit, 700)
 	-- temp.args.auras = getOptionsTable_Auras(unit, 800)
