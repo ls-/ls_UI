@@ -1009,8 +1009,8 @@ local function getOptionsTable_Name(order, unit)
 		end
 
 		temp.args.point1.get = function(info)
-					return C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]]
-				end
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]]
+		end
 		temp.args.point1.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] = value
@@ -2077,6 +2077,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 
 			if unit == "pet" then
 				temp.args.pvp = nil
+				temp.args.name = nil
 			end
 		else
 			temp.args.top_inset.get = function()
@@ -2107,20 +2108,6 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				temp.args.auras = nil
 			end
 		end
-	-- elseif unit == "pet" then
-	-- 	temp.disabled = function() return not UNITFRAMES:HasPlayerFrame() end
-	-- 	temp.args.pvp = nil
-	-- -- 	temp.args.auras = nil
-
-	-- 	if E.UI_LAYOUT == "ls" then
-	-- 		temp.args.copy = nil
-	-- 		temp.args.name = nil
-	-- 		temp.args.width = nil
-	-- 		temp.args.height = nil
-	-- 		temp.args.top_inset = nil
-	-- 		temp.args.bottom_inset = nil
-	-- 		temp.args.border = nil
-	-- 	end
 	elseif unit == "target" then
 		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
 		temp.args.preview = nil
