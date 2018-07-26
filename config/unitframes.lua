@@ -656,7 +656,7 @@ local function getOptionsTable_Power(order, unit)
 	return temp
 end
 
-local function getOptionsTable_Castbar(unit, order)
+local function getOptionsTable_Castbar(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -667,7 +667,9 @@ local function getOptionsTable_Castbar(unit, order)
 		set = function(info, value)
 			if C.db.profile.units[unit].castbar[info[#info]] ~= value then
 				C.db.profile.units[unit].castbar[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 			end
 		end,
 		args = {
@@ -675,13 +677,6 @@ local function getOptionsTable_Castbar(unit, order)
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
-				set = function(_, value)
-					if C.db.profile.units[unit].castbar.enabled ~= value then
-						C.db.profile.units[unit].castbar.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-					end
-				end,
 			},
 			reset = {
 				type = "execute",
@@ -691,12 +686,13 @@ local function getOptionsTable_Castbar(unit, order)
 					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar, {["point"] = true})
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 				end,
 			},
 			spacer_1 = {
 				order = 9,
 				type = "description",
-				name = "",
+				name = " ",
 			},
 			detached = {
 				order = 10,
@@ -709,8 +705,10 @@ local function getOptionsTable_Castbar(unit, order)
 				name = L["WIDTH_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
 				min = 0, max = 1024, step = 2,
-				softMin = 128,
-				disabled = function() return not C.db.profile.units[unit].castbar.detached end,
+				softMin = 96,
+				disabled = function()
+					return not C.db.profile.units[unit].castbar.detached
+				end,
 			},
 			height = {
 				order = 12,
@@ -723,6 +721,11 @@ local function getOptionsTable_Castbar(unit, order)
 				type = "toggle",
 				name = L["LATENCY"],
 			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
 			icon = {
 				order = 20,
 				type = "group",
@@ -734,6 +737,7 @@ local function getOptionsTable_Castbar(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].castbar.icon[info[#info]] ~= value then
 						C.db.profile.units[unit].castbar.icon[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
 					end
 				end,
@@ -754,13 +758,44 @@ local function getOptionsTable_Castbar(unit, order)
 		},
 	}
 
-	if unit == "player" then
-		if E.UI_LAYOUT == "ls" then
-			temp.args.detached = nil
+	if unit == "player" or unit == "pet" then
+		temp.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]]
 		end
-	elseif unit == "pet" then
+		temp.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
+			end
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].castbar, C.db.profile.units[unit][E.UI_LAYOUT].castbar, {["point"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
+		end
+
+		temp.args.width_override.disabled = function()
+			return not C.db.profile.units[unit][E.UI_LAYOUT].castbar.detached
+		end
+
+		temp.args.icon.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]]
+		end
+		temp.args.icon.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+			end
+		end
+
 		if E.UI_LAYOUT == "ls" then
 			temp.args.detached = nil
+			temp.args.width_override.name = L["WIDTH"]
 		end
 	else
 		temp.args.latency = nil
@@ -769,7 +804,7 @@ local function getOptionsTable_Castbar(unit, order)
 	return temp
 end
 
-local function getOptionsTable_Name(unit, order)
+local function getOptionsTable_Name(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -780,6 +815,7 @@ local function getOptionsTable_Name(unit, order)
 		set = function(info, value)
 			if C.db.profile.units[unit].name[info[#info]] ~= value then
 				C.db.profile.units[unit].name[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
 			end
 		end,
@@ -797,7 +833,7 @@ local function getOptionsTable_Name(unit, order)
 			spacer_1 = {
 				order = 9,
 				type = "description",
-				name = "",
+				name = " ",
 			},
 			point1 = {
 				order = 10,
@@ -810,43 +846,49 @@ local function getOptionsTable_Name(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].name.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].name.point1[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
 					end
 				end,
 				args = {
 					p = {
-						order = 10,
+						order = 1,
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
 						values = POINTS,
 					},
 					anchor = {
-						order = 11,
+						order = 2,
 						type = "select",
 						name = L["ANCHOR"],
 						values = getRegionAnchors(),
 					},
 					rP = {
-						order = 12,
+						order = 3,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
 						values = POINTS,
 					},
 					x = {
-						order = 13,
+						order = 4,
 						type = "range",
 						name = L["X_OFFSET"],
 						min = -128, max = 128, step = 1,
 					},
 					y = {
-						order = 14,
+						order = 5,
 						type = "range",
 						name = L["Y_OFFSET"],
 						min = -128, max = 128, step = 1,
 					},
 				},
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
 			},
 			point2 = {
 				order = 20,
@@ -859,10 +901,13 @@ local function getOptionsTable_Name(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].name.point2[info[#info]] ~= value then
 						C.db.profile.units[unit].name.point2[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
 					end
 				end,
-				disabled = function() return C.db.profile.units[unit].name.point2.p == "" end,
+				disabled = function()
+					return C.db.profile.units[unit].name.point2.p == ""
+				end,
 				args = {
 					p = {
 						order = 1,
@@ -899,27 +944,36 @@ local function getOptionsTable_Name(unit, order)
 					},
 				},
 			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
 			h_alignment = {
-				order = 21,
+				order = 30,
 				type = "select",
 				name = L["TEXT_HORIZ_ALIGNMENT"],
 				values = H_ALIGNMENT,
-				disabled = function() return C.db.profile.units[unit].name.point2.p == "" end,
+				disabled = function()
+					return C.db.profile.units[unit].name.point2.p == ""
+				end,
 			},
 			v_alignment = {
-				order = 22,
+				order = 31,
 				type = "select",
 				name = L["TEXT_VERT_ALIGNMENT"],
 				values = V_ALIGNMENT,
-				disabled = function() return C.db.profile.units[unit].name.point2.p == "" end,
+				disabled = function()
+					return C.db.profile.units[unit].name.point2.p == ""
+				end,
 			},
 			word_wrap = {
-				order = 23,
+				order = 32,
 				type = "toggle",
 				name = L["WORD_WRAP"],
 			},
 			tag = {
-				order = 24,
+				order = 34,
 				type = "input",
 				width = "full",
 				name = L["FORMAT"],
@@ -929,11 +983,73 @@ local function getOptionsTable_Name(unit, order)
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].name.tag = value:gsub("\124\124+", "\124")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
 				end,
 			},
 		},
 	}
+
+	if unit == "player" or unit == "pet" then
+		temp.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]]
+		end
+		temp.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+			end
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].name, C.db.profile.units[unit][E.UI_LAYOUT].name, {["point"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+		end
+
+		temp.args.point1.get = function(info)
+					return C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]]
+				end
+		temp.args.point1.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+			end
+		end
+
+		temp.args.point2.get = function(info)
+					return C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]]
+				end
+		temp.args.point2.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+			end
+		end
+		temp.args.point2.disabled = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
+		end
+
+		temp.args.h_alignment.disabled = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
+		end
+
+		temp.args.v_alignment.disabled = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
+		end
+
+		temp.args.tag.get = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.tag:gsub("\124", "\124\124")
+		end
+		temp.args.tag.set = function(_, value)
+			C.db.profile.units[unit][E.UI_LAYOUT].name.tag = value:gsub("\124\124+", "\124")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+		end
+	end
 
 	return temp
 end
@@ -1747,10 +1863,10 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		},
 	}
 
-	-- temp.args.castbar = getOptionsTable_Castbar(unit, 400)
-	-- temp.args.name = getOptionsTable_Name(unit, 500)
 	temp.args.health = getOptionsTable_Health(100, unit)
 	temp.args.power = getOptionsTable_Power(200, unit)
+	temp.args.castbar = getOptionsTable_Castbar(400, unit)
+	temp.args.name = getOptionsTable_Name(500, unit)
 	-- temp.args.raid_target = getOptionsTable_RaidIcon(unit, 600)
 	-- temp.args.debuff = getOptionsTable_DebuffIcons(unit, 700)
 	-- temp.args.auras = getOptionsTable_Auras(unit, 800)
@@ -2012,7 +2128,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
 		temp.args.preview = nil
 		temp.args.pvp = nil
-		-- temp.args.castbar = nil
+		temp.args.castbar = nil
 		-- temp.args.debuff = nil
 		-- temp.args.auras = nil
 	elseif unit == "focus" then
@@ -2022,7 +2138,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
 		temp.args.preview = nil
 		temp.args.pvp = nil
-	-- 	temp.args.castbar = nil
+		temp.args.castbar = nil
 	-- 	temp.args.debuff = nil
 	-- 	temp.args.auras = nil
 	elseif unit == "boss" then
