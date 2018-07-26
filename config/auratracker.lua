@@ -154,7 +154,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				order = 13,
 				type = "range",
 				name = L["SIZE"],
-				min = 18, max = 64, step = 1,
+				min = 24, max = 64, step = 1,
 				disabled = isModuleDisabled,
 			},
 			growth_dir = {
