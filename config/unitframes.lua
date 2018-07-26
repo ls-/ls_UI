@@ -971,6 +971,9 @@ local function getOptionsTable_Name(order, unit)
 				order = 32,
 				type = "toggle",
 				name = L["WORD_WRAP"],
+				disabled = function()
+					return C.db.profile.units[unit].name.point2.p == ""
+				end,
 			},
 			tag = {
 				order = 34,
@@ -1038,6 +1041,10 @@ local function getOptionsTable_Name(order, unit)
 		end
 
 		temp.args.v_alignment.disabled = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
+		end
+
+		temp.args.word_wrap.disabled = function()
 			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
 		end
 
