@@ -1318,7 +1318,7 @@ local function getOptionsTable_DebuffIcons(order, unit)
 	return temp
 end
 
-local function getOptionsTable_Auras(unit, order)
+local function getOptionsTable_Auras(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -1338,22 +1338,16 @@ local function getOptionsTable_Auras(unit, order)
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
-				set = function(_, value)
-					if C.db.profile.units[unit].auras.enabled ~= value then
-						C.db.profile.units[unit].auras.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-					end
-				end,
 			},
 			copy = {
 				order = 2,
 				type = "select",
 				name = L["COPY_FROM"],
 				desc = L["COPY_FROM_DESC"],
+				values = function() return UNITFRAMES:GetUnits({[unit] = true, ["player"] = true, ["pet"] = true, ["targettarget"] = true, ["focustarget"] = true}) end,
 				get = function() end,
 				set = function(_, value)
-					CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras, C.db.profile.units[unit].auras, {filter = true})
+					CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit].auras, {["filter"] = true})
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
@@ -1363,7 +1357,7 @@ local function getOptionsTable_Auras(unit, order)
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, {["point"] = true, filter = true})
+					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, {["point"] = true, ["filter"] = true})
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
@@ -1371,7 +1365,7 @@ local function getOptionsTable_Auras(unit, order)
 			spacer_1 = {
 				order = 9,
 				type = "description",
-				name = "",
+				name = " ",
 			},
 			rows = {
 				order = 10,
@@ -1390,7 +1384,19 @@ local function getOptionsTable_Auras(unit, order)
 				type = "range",
 				name = L["SIZE_OVERRIDE"],
 				desc = L["SIZE_OVERRIDE_DESC"],
-				min = 0, max = 48, step = 1,
+				min = 0, max = 64, step = 1,
+				softMin = 24,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras[info[#info]] ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+
+						C.db.profile.units[unit].auras[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
 			},
 			growth_dir = {
 				order = 13,
@@ -1398,10 +1404,11 @@ local function getOptionsTable_Auras(unit, order)
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
 				get = function()
-					return C.db.profile.units[unit].auras.x_growth.."_"..C.db.profile.units[unit].auras.y_growth
+					return C.db.profile.units[unit].auras.x_growth .. "_" .. C.db.profile.units[unit].auras.y_growth
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].auras.x_growth, C.db.profile.units[unit].auras.y_growth = s_split("_", value)
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
 			},
@@ -1410,6 +1417,11 @@ local function getOptionsTable_Auras(unit, order)
 				type = "toggle",
 				name = L["DISABLE_MOUSE"],
 				desc = L["DISABLE_MOUSE_DESC"],
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
 			},
 			point = {
 				order = 20,
@@ -1422,6 +1434,7 @@ local function getOptionsTable_Auras(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.point1[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 					end
 				end,
@@ -1454,6 +1467,11 @@ local function getOptionsTable_Auras(unit, order)
 					},
 				},
 			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
 			filter = {
 				order = 30,
 				type = "group",
@@ -1464,6 +1482,7 @@ local function getOptionsTable_Auras(unit, order)
 				end,
 				set = function(info, value)
 					C.db.profile.units[unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
 				args = {
@@ -1472,6 +1491,7 @@ local function getOptionsTable_Auras(unit, order)
 						type = "select",
 						name = L["COPY_FROM"],
 						desc = L["COPY_FROM_DESC"],
+						values = function() return UNITFRAMES:GetUnits({[unit] = true, ["player"] = true, ["pet"] = true, ["targettarget"] = true, ["focustarget"] = true}) end,
 						get = function() end,
 					},
 					reset = {
@@ -1705,45 +1725,116 @@ local function getOptionsTable_Auras(unit, order)
 		},
 	}
 
-	if E.UI_LAYOUT then
-		temp.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, player = true, pet = true, targettarget = true, focustarget = true})
-		temp.args.filter.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, player = true, pet = true, targettarget = true, focustarget = true})
-	else
-		temp.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, pet = true, targettarget = true, focustarget = true})
-		temp.args.filter.args.copy.values = UNITFRAMES:GetUnits({[unit] = true, pet = true, targettarget = true, focustarget = true})
-	end
-
 	if unit == "player" then
-		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, {player = true, player_permanent = true})
+		temp.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]]
+		end
+		temp.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].auras, C.db.profile.units[unit][E.UI_LAYOUT].auras, {["point"] = true, ["filter"] = true})
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 		end
+
+		temp.args.size_override.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] ~= value then
+				if value < info.option.softMin then
+					value = info.option.min
+				end
+
+				C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.growth_dir.get = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.x_growth .. "_" .. C.db.profile.units[unit][E.UI_LAYOUT].auras.y_growth
+		end
+		temp.args.growth_dir.set = function(_, value)
+			C.db.profile.units[unit][E.UI_LAYOUT].auras.x_growth, C.db.profile.units[unit][E.UI_LAYOUT].auras.y_growth = s_split("_", value)
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+		end
+
+		temp.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]]
+		end
+		temp.args.point.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.filter.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]]
+		end
+		temp.args.filter.set = function(info, value)
+			C.db.profile.units[unit][E.UI_LAYOUT].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]] = value
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+		end
+
+		temp.args.filter.args.copy.set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly, {["player"] = true, ["player_permanent"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+		end
+
+		temp.args.filter.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].auras.filter, C.db.profile.units[unit][E.UI_LAYOUT].auras.filter)
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+		end
+
+		temp.args.filter.args.friendly.args.buff.args.selfcast_permanent.disabled = function()
+			return not C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly.buff.selfcast
+		end
+
+		temp.args.filter.args.friendly.args.debuff.args.selfcast_permanent.disabled = function()
+			return not C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly.debuff.selfcast
+		end
+
 		temp.args.filter.args.friendly.args.buff.args.player = nil
 		temp.args.filter.args.friendly.args.buff.args.player_permanent = nil
+
 		temp.args.filter.args.friendly.args.debuff.args.player = nil
 		temp.args.filter.args.friendly.args.debuff.args.player_permanent = nil
+
 		temp.args.filter.args.enemy = nil
 	elseif unit == "boss" then
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, {mount = true, selfcast = true, selfcast_permanent = true})
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter.enemy, C.db.profile.units[unit].auras.filter.enemy, {mount = true, selfcast = true, selfcast_permanent = true})
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, {["mount"] = true, ["selfcast"] = true, ["selfcast_permanent"] = true})
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.enemy, C.db.profile.units[unit].auras.filter.enemy, {["mount"] = true, ["selfcast"] = true, ["selfcast_permanent"] = true})
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 		end
+
 		temp.args.filter.args.friendly.args.buff.args.mount = nil
 		temp.args.filter.args.friendly.args.buff.args.selfcast = nil
 		temp.args.filter.args.friendly.args.buff.args.selfcast_permanent = nil
+
 		temp.args.filter.args.friendly.args.debuff.args.selfcast = nil
 		temp.args.filter.args.friendly.args.debuff.args.selfcast_permanent = nil
+
 		temp.args.filter.args.enemy.args.buff.args.mount = nil
 		temp.args.filter.args.enemy.args.buff.args.selfcast = nil
 		temp.args.filter.args.enemy.args.buff.args.selfcast_permanent = nil
+
 		temp.args.filter.args.enemy.args.debuff.args.selfcast = nil
 		temp.args.filter.args.enemy.args.debuff.args.selfcast_permanent = nil
 	else
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[E.UI_LAYOUT][value].auras.filter, C.db.profile.units[unit].auras.filter)
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter, C.db.profile.units[unit].auras.filter)
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 		end
@@ -1937,7 +2028,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 	temp.args.name = getOptionsTable_Name(500, unit)
 	temp.args.raid_target = getOptionsTable_RaidIcon(600, unit)
 	temp.args.debuff = getOptionsTable_DebuffIcons(700, unit)
-	-- temp.args.auras = getOptionsTable_Auras(unit, 800)
+	temp.args.auras = getOptionsTable_Auras(800, unit)
 
 	if unit == "player" or unit == "pet" then
 		temp.disabled = function() return not UNITFRAMES:HasPlayerFrame() end
@@ -2188,6 +2279,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.args.pvp = nil
 		temp.args.castbar = nil
 		temp.args.debuff = nil
+		temp.args.auras = nil
 	elseif unit == "focus" then
 		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
 		temp.args.preview = nil
@@ -2197,6 +2289,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		temp.args.pvp = nil
 		temp.args.castbar = nil
 		temp.args.debuff = nil
+		temp.args.auras = nil
 	elseif unit == "boss" then
 		temp.disabled = function() return not UNITFRAMES:HasBossFrame() end
 		temp.args.pvp = nil
