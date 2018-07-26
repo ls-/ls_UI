@@ -1963,6 +1963,28 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				temp.args.pvp = nil
 			end
 		else
+			temp.args.top_inset.get = function()
+				return C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height
+			end
+			temp.args.top_inset.set = function(_, value)
+				if C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height ~= value then
+					C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
+				end
+			end
+
+			temp.args.bottom_inset.get = function()
+				return C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height
+			end
+			temp.args.bottom_inset.set = function(_, value)
+				if C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height ~= value then
+					C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
+				end
+			end
+
 			temp.args.border.args.npc = nil
 
 			if unit == "pet" then
