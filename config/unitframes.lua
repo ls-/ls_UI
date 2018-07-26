@@ -709,6 +709,18 @@ local function getOptionsTable_Castbar(order, unit)
 				disabled = function()
 					return not C.db.profile.units[unit].castbar.detached
 				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].castbar[info[#info]] ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+
+						C.db.profile.units[unit].castbar[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
+					end
+				end,
 			},
 			height = {
 				order = 12,
@@ -780,6 +792,19 @@ local function getOptionsTable_Castbar(order, unit)
 
 		temp.args.width_override.disabled = function()
 			return not C.db.profile.units[unit][E.UI_LAYOUT].castbar.detached
+		end
+
+		temp.args.width_override.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] ~= value then
+				if value < info.option.softMin then
+					value = info.option.min
+				end
+
+				C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
+			end
 		end
 
 		temp.args.icon.get = function(info)
