@@ -1188,7 +1188,7 @@ local function getOptionsTable_RaidIcon(order, unit)
 	return temp
 end
 
-local function getOptionsTable_DebuffIcons(unit, order)
+local function getOptionsTable_DebuffIcons(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -1228,12 +1228,12 @@ local function getOptionsTable_DebuffIcons(unit, order)
 				end,
 			},
 			spacer_1 = {
-				order = 10,
+				order = 9,
 				type = "description",
-				name = "",
+				name = " ",
 			},
 			point = {
-				order = 20,
+				order = 10,
 				type = "group",
 				name = "",
 				inline = true,
@@ -1243,7 +1243,8 @@ local function getOptionsTable_DebuffIcons(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].debuff.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].debuff.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "PreviewDebuffIndicator")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
 					end
 				end,
 				args = {
@@ -1281,8 +1282,38 @@ local function getOptionsTable_DebuffIcons(unit, order)
 					},
 				},
 			},
-		}
+		},
 	}
+
+	if unit == "player" or unit == "pet" then
+		temp.args.enabled.get = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled
+		end
+		temp.args.enabled.set = function(_, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
+			end
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].debuff, C.db.profile.units[unit][E.UI_LAYOUT].debuff, {["point"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
+		end
+
+		temp.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]]
+		end
+		temp.args.point.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
+			end
+		end
+	end
 
 	return temp
 end
@@ -1905,7 +1936,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 	temp.args.castbar = getOptionsTable_Castbar(400, unit)
 	temp.args.name = getOptionsTable_Name(500, unit)
 	temp.args.raid_target = getOptionsTable_RaidIcon(600, unit)
-	-- temp.args.debuff = getOptionsTable_DebuffIcons(unit, 700)
+	temp.args.debuff = getOptionsTable_DebuffIcons(700, unit)
 	-- temp.args.auras = getOptionsTable_Auras(unit, 800)
 
 	if unit == "player" or unit == "pet" then
