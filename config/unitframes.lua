@@ -1054,7 +1054,7 @@ local function getOptionsTable_Name(order, unit)
 	return temp
 end
 
-local function getOptionsTable_RaidIcon(unit, order)
+local function getOptionsTable_RaidIcon(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -1065,6 +1065,7 @@ local function getOptionsTable_RaidIcon(unit, order)
 		set = function(info, value)
 			if C.db.profile.units[unit].raid_target[info[#info]] ~= value then
 				C.db.profile.units[unit].raid_target[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
 			end
 		end,
@@ -1073,13 +1074,6 @@ local function getOptionsTable_RaidIcon(unit, order)
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
-				set = function(_, value)
-					if C.db.profile.units[unit].raid_target.enabled ~= value then
-						C.db.profile.units[unit].raid_target.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
-					end
-				end,
 			},
 			reset = {
 				type = "execute",
@@ -1094,13 +1088,18 @@ local function getOptionsTable_RaidIcon(unit, order)
 			spacer_1 = {
 				order = 9,
 				type = "description",
-				name = "",
+				name = " ",
 			},
 			size = {
 				order = 10,
 				type = "range",
 				name = L["SIZE"],
 				min = 8, max = 64, step = 1,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
 			},
 			point = {
 				order = 20,
@@ -1113,32 +1112,33 @@ local function getOptionsTable_RaidIcon(unit, order)
 				set = function(info, value)
 					if C.db.profile.units[unit].raid_target.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].raid_target.point1[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
 					end
 				end,
 				args = {
 					p = {
-						order = 11,
+						order = 1,
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
 						values = POINTS,
 					},
 					rP = {
-						order = 12,
+						order = 2,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
 						values = POINTS,
 					},
 					x = {
-						order = 13,
+						order = 3,
 						type = "range",
 						name = L["X_OFFSET"],
 						min = -128, max = 128, step = 1,
 					},
 					y = {
-						order = 14,
+						order = 4,
 						type = "range",
 						name = L["Y_OFFSET"],
 						min = -128, max = 128, step = 1,
@@ -1147,6 +1147,36 @@ local function getOptionsTable_RaidIcon(unit, order)
 			},
 		},
 	}
+
+	if unit == "player" or unit == "pet" then
+		temp.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]]
+		end
+		temp.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
+			end
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].raid_target, C.db.profile.units[unit][E.UI_LAYOUT].raid_target, {["point"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
+		end
+
+		temp.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]]
+		end
+		temp.args.point.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
+			end
+		end
+	end
 
 	return temp
 end
@@ -1867,7 +1897,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 	temp.args.power = getOptionsTable_Power(200, unit)
 	temp.args.castbar = getOptionsTable_Castbar(400, unit)
 	temp.args.name = getOptionsTable_Name(500, unit)
-	-- temp.args.raid_target = getOptionsTable_RaidIcon(unit, 600)
+	temp.args.raid_target = getOptionsTable_RaidIcon(600, unit)
 	-- temp.args.debuff = getOptionsTable_DebuffIcons(unit, 700)
 	-- temp.args.auras = getOptionsTable_Auras(unit, 800)
 
