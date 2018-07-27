@@ -299,7 +299,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						order = 11,
 						type = "range",
 						name = L["WIDTH"],
-						min = 128, max = 1024, step = 2,
+						min = 96, max = 1024, step = 2,
 					},
 					height = {
 						order = 12,
