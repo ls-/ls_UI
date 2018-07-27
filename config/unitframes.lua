@@ -1762,6 +1762,12 @@ local function getOptionsTable_Auras(order, unit)
 			end
 		end
 
+		temp.args.copy.set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit][E.UI_LAYOUT].auras, {["filter"] = true})
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+		end
+
 		temp.args.reset.func = function()
 			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].auras, C.db.profile.units[unit][E.UI_LAYOUT].auras, {["point"] = true, ["filter"] = true})
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
@@ -2067,7 +2073,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 		end
 
 		temp.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[value][E.UI_LAYOUT], C.db.profile.units[unit][E.UI_LAYOUT], {["point"] = true})
+			CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit][E.UI_LAYOUT], {["point"] = true})
 			UNITFRAMES:UpdateUnitFrame(unit, "Update")
 		end
 
@@ -2127,140 +2133,142 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassIndicator")
 		end
 
-		temp.args.class_power = {
-			order = 300,
-			type = "group",
-			name = L["CLASS_POWER"],
-			args = {
-				enabled = {
-					order = 1,
-					type = "toggle",
-					name = L["ENABLE"],
-					get = function()
-						return C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled
-					end,
-					set = function(_, value)
-						C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateStagger")
-					end,
-				},
-				spacer_1 = {
-					order = 9,
-					type = "description",
-					name = " ",
-				},
-				prediction = {
-					order = 10,
-					type = "toggle",
-					name = L["COST_PREDICTION"],
-					desc = L["COST_PREDICTION_DESC"],
-					get = function()
-						return C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled
-					end,
-					set = function(_, value)
-						C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+		if unit == "player" then
+			temp.args.class_power = {
+				order = 300,
+				type = "group",
+				name = L["CLASS_POWER"],
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled
+						end,
+						set = function(_, value)
+							C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled = value
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateStagger")
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					prediction = {
+						order = 10,
+						type = "toggle",
+						name = L["COST_PREDICTION"],
+						desc = L["COST_PREDICTION_DESC"],
+						get = function()
+							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled
+						end,
+						set = function(_, value)
+							C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled = value
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
 
-					end,
-				},
-				spacer_2 = {
-					order = 19,
-					type = "description",
-					name = " ",
-				},
-				runes = {
-					order = 20,
-					type = "group",
-					name = L["RUNES"],
-					inline = true,
-					get = function(info)
-						return C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]]
-					end,
-					set = function(info, value)
-						C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
-					end,
-					args = {
-						color_by_spec = {
-							order = 1,
-							type = "toggle",
-							name = L["COLOR_BY_SPEC"],
-						},
-						sort_order = {
-							order = 2,
-							type = "select",
-							name = L["SORT_DIR"],
-							values = {
-								["none"] = L["NONE"],
-								["asc"] = L["ASCENDING"],
-								["desc"] = L["DESCENDING"],
+						end,
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					runes = {
+						order = 20,
+						type = "group",
+						name = L["RUNES"],
+						inline = true,
+						get = function(info)
+							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]]
+						end,
+						set = function(info, value)
+							C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]] = value
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+						end,
+						args = {
+							color_by_spec = {
+								order = 1,
+								type = "toggle",
+								name = L["COLOR_BY_SPEC"],
+							},
+							sort_order = {
+								order = 2,
+								type = "select",
+								name = L["SORT_DIR"],
+								values = {
+									["none"] = L["NONE"],
+									["asc"] = L["ASCENDING"],
+									["desc"] = L["DESCENDING"],
+								},
 							},
 						},
 					},
 				},
-			},
-		}
+			}
 
-		temp.args.combat_feedback = {
-			order = 900,
-			type = "group",
-			name = L["FCF"],
-			get = function(info)
-				return C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]]
-			end,
-			set = function(info, value)
-				C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-			end,
-			args = {
-				enabled = {
-					order = 1,
-					type = "toggle",
-					name = L["ENABLE"],
+			temp.args.combat_feedback = {
+				order = 900,
+				type = "group",
+				name = L["FCF"],
+				get = function(info)
+					return C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+					},
+					reset = {
+						type = "execute",
+						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].combat_feedback, C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback, {["point"] = true})
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					x_offset = {
+						order = 10,
+						type = "range",
+						name = L["X_OFFSET"],
+						min = 0, max = 128, step = 1,
+					},
+					y_offset = {
+						order = 12,
+						type = "range",
+						name = L["Y_OFFSET"],
+						min = 0, max = 128, step = 1,
+					},
+					mode = {
+						order = 13,
+						type = "select",
+						name = L["MODE"],
+						values = FCF_MODES,
+					},
 				},
-				reset = {
-					type = "execute",
-					order = 2,
-					name = L["RESTORE_DEFAULTS"],
-					func = function()
-						CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].combat_feedback, C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback, {["point"] = true})
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-					end,
-				},
-				spacer_1 = {
-					order = 9,
-					type = "description",
-					name = " ",
-				},
-				x_offset = {
-					order = 10,
-					type = "range",
-					name = L["X_OFFSET"],
-					min = 0, max = 128, step = 1,
-				},
-				y_offset = {
-					order = 12,
-					type = "range",
-					name = L["Y_OFFSET"],
-					min = 0, max = 128, step = 1,
-				},
-				mode = {
-					order = 13,
-					type = "select",
-					name = L["MODE"],
-					values = FCF_MODES,
-				},
-			},
-		}
+			}
+		end
 
 		if E.UI_LAYOUT == "ls" then
 			temp.args.copy = nil
