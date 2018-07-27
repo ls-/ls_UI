@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## Version 80000.07
+
+- Reworked UF config tables' structure. Target, target of target, focus, target of focus, and boss  
+  frames' settings are cross-layout, so their settings are shared between "Orbs" and "Classic" UI  
+  layouts. Player and pet frames' settings will stay tied to UI layouts because those frames are  
+  unique. Unit frame settings of the currently active UI layout will be copied, but some settings  
+  may be lost. This will also help people with copying profiles from one char to another, even if  
+  different UI layouts are used on those chars;
+- Fixed numerous bugs in the "Unit Frames" config. Copying settings between unit frame, incl. aura  
+  filters, should work as intended now;
+- Unit frame auras' min and max sizes are set to 24px and 64px respectively. These will also be  
+  applied to automatic size calculations;
+- Reduced the xp bar's width and updated the artwork;
+- Updated embeds.
+
 ## Version 80000.06
 
 - Fixed action buttons' icons' colouring.
