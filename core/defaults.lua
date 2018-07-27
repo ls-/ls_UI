@@ -2023,7 +2023,7 @@ D.profile = {
 		},
 		xpbar = {
 			visible = true,
-			width = 752,
+			width = 594,
 			height = 12,
 			point = {
 				p = "BOTTOM",
