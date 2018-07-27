@@ -153,7 +153,7 @@ function MODULE.CreatePetBattleBar()
 
 		local selector = CreateFrame("Frame", "LSPetBattlePetSelector", UIParent, "SecureHandlerStateTemplate")
 		selector:SetSize(636, 200)
-		selector:SetPoint("TOP", "UIParent", "TOP", 0, -194)
+		selector:SetPoint("TOP", "UIParent", "TOP", 0, -256)
 		E.Movers:Create(selector)
 		RegisterStateDriver(selector, "visibility", "[petbattle] show; hide")
 

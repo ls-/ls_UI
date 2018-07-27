@@ -97,7 +97,7 @@ WIDGETS.XP_BAR = {
 	children = false,
 	point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 	on_play = function(_, newstate)
-		MODULE:GetBar("xpbar"):UpdateSize(newstate == 6 and 1072 / 2 or 1504 / 2, 12)
+		MODULE:GetBar("xpbar"):UpdateSize(newstate == 6 and 756 / 2 or 1188 / 2, 12)
 	end
 }
 

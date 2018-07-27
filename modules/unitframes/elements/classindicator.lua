@@ -15,7 +15,7 @@ local function checkUnitClass(frame)
 	local class, _
 
 	if UnitIsPlayer(frame.unit) then
-		if frame._config.class.player then
+		if frame._config and frame._config.class.player then
 			_, class = UnitClass(frame.unit)
 
 			if class and frame._skin ~= class then
@@ -28,7 +28,7 @@ local function checkUnitClass(frame)
 			end
 		end
 	else
-		if frame._config.class.npc then
+		if frame._config and frame._config.class.npc then
 			class = UnitClassification(frame.unit)
 
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then

@@ -17,7 +17,7 @@ local holder
 
 function UF:CreateBossHolder()
 	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
-	holder:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT].boss.point))
+	holder:SetPoint(unpack(C.db.profile.units.boss.point[E.UI_LAYOUT]))
 	E.Movers:Create(holder)
 	holder._buttons = {}
 
@@ -27,27 +27,28 @@ end
 function UF:UpdateBossHolder()
 	if not holder._config then
 		holder._config = {
-			num = 5
+			num = 5,
 		}
 	end
 
-	holder._config.width = C.db.profile.units[E.UI_LAYOUT].boss.width
-	holder._config.height = C.db.profile.units[E.UI_LAYOUT].boss.height
-	holder._config.per_row = C.db.profile.units[E.UI_LAYOUT].boss.per_row
-	holder._config.spacing = C.db.profile.units[E.UI_LAYOUT].boss.spacing
-	holder._config.x_growth = C.db.profile.units[E.UI_LAYOUT].boss.x_growth
-	holder._config.y_growth = C.db.profile.units[E.UI_LAYOUT].boss.y_growth
+	holder._config.width = C.db.profile.units.boss.width
+	holder._config.height = C.db.profile.units.boss.height
+	holder._config.per_row = C.db.profile.units.boss.per_row
+	holder._config.spacing = C.db.profile.units.boss.spacing
+	holder._config.x_growth = C.db.profile.units.boss.x_growth
+	holder._config.y_growth = C.db.profile.units.boss.y_growth
 
 	E:UpdateBarLayout(holder)
 end
 
 local function frame_Update(self)
+	self:UpdateConfig()
+
 	if self._config.enabled then
 		if not self:IsEnabled() then
 			self:Enable()
 		end
 
-		self:UpdateConfig()
 		self:UpdateSize()
 		self:UpdateInsets()
 		self:UpdateHealth()
@@ -75,25 +76,22 @@ end
 function UF:CreateBossFrame(frame)
 	local level = frame:GetFrameLevel()
 
-	frame._config = C.db.profile.units[E.UI_LAYOUT].boss
-	frame._unit = "boss"
-
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints()
 	bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
 	bg:SetHorizTile(true)
 
-	local fgParent = CreateFrame("Frame", nil, frame)
-	fgParent:SetFrameLevel(level + 7)
-	fgParent:SetAllPoints()
-	frame.FGParent = fgParent
+	local textureParent = CreateFrame("Frame", nil, frame)
+	textureParent:SetFrameLevel(level + 7)
+	textureParent:SetAllPoints()
+	frame.TextureParent = textureParent
 
 	local textParent = CreateFrame("Frame", nil, frame)
 	textParent:SetFrameLevel(level + 9)
 	textParent:SetAllPoints()
 	frame.TextParent = textParent
 
-	frame.Insets = self:CreateInsets(frame, fgParent)
+	frame.Insets = self:CreateInsets(frame, textureParent)
 
 	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
 	health:SetFrameLevel(level + 1)
@@ -159,17 +157,17 @@ function UF:CreateBossFrame(frame)
 
 	frame.Auras = self:CreateAuras(frame, "boss")
 
-	local border = E:CreateBorder(fgParent)
+	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 
-	local glass = fgParent:CreateTexture(nil, "OVERLAY", nil, 0)
+	local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 
-	local shadow = fgParent:CreateTexture(nil, "OVERLAY", nil, -1)
+	local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
 	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 

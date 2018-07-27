@@ -8,11 +8,7 @@ local next = _G.next
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	PartyMemberBuffTooltip
-	PartyMemberBuffTooltip_Update
-	RegisterUnitWatch
-	UnitFrame_OnEnter
-	UnitFrame_OnLeave
+	PartyMemberBuffTooltip PartyMemberBuffTooltip_Update RegisterUnitWatch UnitFrame_OnEnter UnitFrame_OnLeave
 	UnregisterUnitWatch
 ]]
 
@@ -41,14 +37,16 @@ local function frame_OnLeave(self)
 end
 
 local function frame_UpdateConfig(self)
-	self._config = C.db.profile.units[E.UI_LAYOUT][self._unit]
+	self._config = E:CopyTable(C.db.profile.units[self._unit], self._config)
+	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
 end
 
 local function frame_UpdateSize(self)
 	self:SetSize(self._config.width, self._config.height)
 
-	if E.Movers:Get(self) then
-		E.Movers:Get(self):UpdateSize()
+	local mover = E.Movers:Get(self, true)
+	if mover then
+		mover:UpdateSize()
 	end
 end
 
@@ -94,24 +92,18 @@ function UF:CreateUnitFrame(unit, name)
 			local holder = self:CreateBossHolder()
 
 			for i = 1, 5 do
-				local object = oUF:Spawn(unit..i, name..i.."Frame")
-				object.UpdateConfig = frame_UpdateConfig
-				object.UpdateSize = frame_UpdateSize
-				object.Preview = frame_Preview
-				objects[unit..i] = object
+				local object = oUF:Spawn(unit .. i, name .. i .. "Frame")
+				objects[unit .. i] = object
 
 				object._parent = holder
 				holder._buttons[i] = object
 			end
 		else
-			local object = oUF:Spawn(unit, name.."Frame")
-			object.UpdateConfig = frame_UpdateConfig
-			object.UpdateSize = frame_UpdateSize
-			object.Preview = frame_Preview
-			objects[unit] = object
-
-			object:SetPoint(unpack(C.db.profile.units[E.UI_LAYOUT][unit].point))
+			local object = oUF:Spawn(unit, name .. "Frame")
+			object:UpdateConfig()
+			object:SetPoint(unpack(object._config.point[E.UI_LAYOUT]))
 			E.Movers:Create(object)
+			objects[unit] = object
 		end
 
 		units[unit] = true
@@ -120,12 +112,10 @@ end
 
 function UF:UpdateUnitFrame(unit, method, ...)
 	if units[unit] then
-		method = method or "Update"
-
-		if unit == "boss" then
+		if unit == "boss"then
 			for i = 1, 5 do
-				if objects[unit..i][method] then
-					objects[unit..i][method](objects[unit..i], ...)
+				if objects[unit .. i][method] then
+					objects[unit .. i][method](objects[unit .. i], ...)
 				end
 			end
 
@@ -163,6 +153,11 @@ function UF:Init()
 				frame:RegisterForClicks("AnyUp")
 				frame:SetScript("OnEnter", frame_OnEnter)
 				frame:SetScript("OnLeave", frame_OnLeave)
+				frame._unit = unit:gsub("%d+", "")
+
+				frame.UpdateConfig = frame_UpdateConfig
+				frame.UpdateSize = frame_UpdateSize
+				frame.Preview = frame_Preview
 
 				if unit == "player" then
 					if E.UI_LAYOUT == "ls" then
@@ -184,15 +179,7 @@ function UF:Init()
 					UF:CreateFocusFrame(frame)
 				elseif unit == "focustarget" then
 					UF:CreateFocusTargetFrame(frame)
-				elseif unit == "boss1" then
-					UF:CreateBossFrame(frame)
-				elseif unit == "boss2" then
-					UF:CreateBossFrame(frame)
-				elseif unit == "boss3" then
-					UF:CreateBossFrame(frame)
-				elseif unit == "boss4" then
-					UF:CreateBossFrame(frame)
-				elseif unit == "boss5" then
+				elseif unit:match("^boss%d") then
 					UF:CreateBossFrame(frame)
 				end
 			end)
@@ -200,28 +187,28 @@ function UF:Init()
 
 			if C.db.char.units.player.enabled then
 				UF:CreateUnitFrame("player", "LSPlayer")
-				UF:UpdateUnitFrame("player")
+				UF:UpdateUnitFrame("player", "Update")
 				UF:CreateUnitFrame("pet", "LSPet")
-				UF:UpdateUnitFrame("pet")
+				UF:UpdateUnitFrame("pet", "Update")
 			end
 
 			if C.db.char.units.target.enabled then
 				UF:CreateUnitFrame("target", "LSTarget")
-				UF:UpdateUnitFrame("target")
+				UF:UpdateUnitFrame("target", "Update")
 				UF:CreateUnitFrame("targettarget", "LSTargetTarget")
-				UF:UpdateUnitFrame("targettarget")
+				UF:UpdateUnitFrame("targettarget", "Update")
 			end
 
 			if C.db.char.units.focus.enabled then
 				UF:CreateUnitFrame("focus", "LSFocus")
-				UF:UpdateUnitFrame("focus")
+				UF:UpdateUnitFrame("focus", "Update")
 				UF:CreateUnitFrame("focustarget", "LSFocusTarget")
-				UF:UpdateUnitFrame("focustarget")
+				UF:UpdateUnitFrame("focustarget", "Update")
 			end
 
 			if C.db.char.units.boss.enabled then
 				UF:CreateUnitFrame("boss", "LSBoss")
-				UF:UpdateUnitFrame("boss")
+				UF:UpdateUnitFrame("boss", "Update")
 			end
 		end)
 
@@ -232,7 +219,7 @@ end
 function UF:Update()
 	if isInit then
 		for unit in next, units do
-			self:UpdateUnitFrame(unit)
+			self:UpdateUnitFrame(unit, "Update")
 		end
 	end
 end

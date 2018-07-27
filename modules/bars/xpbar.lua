@@ -16,10 +16,12 @@ local C_Reputation = _G.C_Reputation
 --[[ luacheck: globals
 	ArtifactBarGetNumArtifactTraitsPurchasableFromXP BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation
 	GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo
-	GetXPExhaustion HasArtifactEquipped PVPQueueFrame InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown
-	IsWatchingHonorAsXP IsXPUserDisabled MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION PlaySound
-	ReputationDetailMainScreenCheckBox SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor
-	UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
+	GetXPExhaustion HasArtifactEquipped InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP
+	IsXPUserDisabled PlaySound PVPQueueFrame ReputationDetailMainScreenCheckBox SetWatchedFactionIndex
+	SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex
+	UnitXP UnitXPMax
+
+	LE_BATTLE_PET_ALLY MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION
 ]]
 
 -- Mine
@@ -32,7 +34,7 @@ local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
 
 local CFG = {
 	visible = true,
-	width = 752,
+	width = 594,
 	height = 12,
 	point = {
 		p = "BOTTOM",
@@ -99,29 +101,26 @@ local function bar_UpdateSegments(self)
 	local index = 0
 
 	if C_PetBattles.IsInBattle() then
-		for i = 1, 3 do
-			if i < C_PetBattles.GetNumPets(1) then
-				local level = C_PetBattles.GetLevel(1, i)
+		local i = C_PetBattles.GetActivePet(LE_BATTLE_PET_ALLY)
+		local level = C_PetBattles.GetLevel(LE_BATTLE_PET_ALLY, i)
 
-				if level and level < 25 then
-					index = index + 1
+		if level and level < 25 then
+			index = index + 1
 
-					local name = C_PetBattles.GetName(1, i)
-					local rarity = C_PetBattles.GetBreedQuality(1, i)
-					local cur, max = C_PetBattles.GetXP(1, i)
-					local r, g, b = M.COLORS.XP.NORMAL:GetRGB()
-					local hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
+			local name = C_PetBattles.GetName(1, i)
+			local rarity = C_PetBattles.GetBreedQuality(1, i)
+			local cur, max = C_PetBattles.GetXP(1, i)
+			local r, g, b = M.COLORS.XP.NORMAL:GetRGB()
+			local hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
 
-					self[index].tooltipInfo = {
-						header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
-						line1 = {
-							text = L["LEVEL_TOOLTIP"]:format(level)
-						},
-					}
+			self[index].tooltipInfo = {
+				header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
+				line1 = {
+					text = L["LEVEL_TOOLTIP"]:format(level)
+				},
+			}
 
-					self[index]:Update(cur, max, 0, r, g, b, hex)
-				end
-			end
+			self[index]:Update(cur, max, 0, r, g, b, hex)
 		end
 	else
 		-- Artefact
@@ -504,6 +503,7 @@ function BARS.CreateXPBar()
 		bar:RegisterEvent("UPDATE_EXPANSION_LEVEL")
 		-- pet xp
 		bar:RegisterEvent("PET_BATTLE_LEVEL_CHANGED")
+		bar:RegisterEvent("PET_BATTLE_PET_CHANGED")
 		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
 		-- rep
 		bar:RegisterEvent("UPDATE_FACTION")
