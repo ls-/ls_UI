@@ -173,6 +173,10 @@ D.profile = {
 					x_offset = 15,
 					y_offset = 20,
 				},
+				class = {
+					player = false,
+					npc = false,
+				},
 			},
 			traditional = {
 				enabled = true,
@@ -584,7 +588,7 @@ D.profile = {
 				},
 				class = {
 					player = true,
-					npc = true,
+					npc = false,
 				},
 			},
 		},

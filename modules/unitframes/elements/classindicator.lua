@@ -20,7 +20,10 @@ local function checkUnitClass(frame)
 
 			if class and frame._skin ~= class then
 				frame.Border:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
-				frame.Insets:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
+
+				if frame.Insets then
+					frame.Insets:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
+				end
 
 				frame._skin = class
 
@@ -34,7 +37,10 @@ local function checkUnitClass(frame)
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then
 				if frame._skin ~= "elite" then
 					frame.Border:SetVertexColor(M.COLORS.YELLOW:GetRGB())
-					frame.Insets:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+
+					if frame.Insets then
+						frame.Insets:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+					end
 
 					frame._skin = "elite"
 
@@ -48,7 +54,10 @@ local function checkUnitClass(frame)
 
 	if not class and frame._skin ~= "none" then
 		frame.Border:SetVertexColor(1, 1, 1)
-		frame.Insets:SetVertexColor(1, 1, 1)
+
+		if frame.Insets then
+			frame.Insets:SetVertexColor(1, 1, 1)
+		end
 
 		frame._skin = "none"
 	end
