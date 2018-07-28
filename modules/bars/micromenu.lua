@@ -38,6 +38,7 @@ local C_Timer = _G.C_Timer
 
 -- Mine
 local LibDropDown = LibStub("LibDropDown")
+local handledButtons = {}
 local isInit = false
 
 local LATENCY_TEMPLATE = "|cff%s%s|r " .. _G.MILLISECONDS_ABBR
@@ -435,6 +436,8 @@ do
 	end
 
 	function characterButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", characterButton_OnEnter)
 		else
@@ -551,6 +554,8 @@ do
 	end
 
 	function inventoryButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", inventoryButton_OnEnter)
 		else
@@ -826,6 +831,8 @@ do
 	end
 
 	function questLogButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", questLogButton_OnEnter)
 		else
@@ -836,6 +843,8 @@ end
 
 -- Guild
 local function guildButton_Update(self)
+	self:UpdateConfig()
+
 	if self.Tabard:IsShown() then
 		self.Tabard.background:Show()
 		self.Tabard.emblem:Show()
@@ -945,6 +954,8 @@ do
 	end
 
 	function lfdButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", lfdButton_OnEnter)
 
@@ -1067,6 +1078,8 @@ do
 	end
 
 	function ejButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", ejButton_OnEnter)
 		else
@@ -1149,6 +1162,8 @@ do
 	end
 
 	function mainMenuButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", mainMenuButton_OnEnter)
 
@@ -1449,6 +1464,8 @@ function MODULE:CreateMicroMenu()
 			elseif name == "HelpMicroButton" then
 				button._id = "help"
 			end
+
+			handledButtons[button._id] = button
 		end
 
 		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
@@ -1512,4 +1529,11 @@ function MODULE:UpdateMicroMenu()
 
 	self:GetBar("micromenu1"):Update()
 	self:GetBar("micromenu2"):Update()
+end
+
+function MODULE:UpdateButton(id, method, ...)
+	local button = handledButtons[id]
+	if button and button[method] then
+		button[method](button, ...)
+	end
 end
