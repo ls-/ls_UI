@@ -85,7 +85,7 @@ local function updateCurrencyOptions()
 		for i = 1, GetCurrencyListSize() do
 			name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
 			if isHeader then
-				options["currency_"..i] = {
+				options["currency_" .. i] = {
 					order = i,
 					type = "header",
 					name = name,
@@ -95,7 +95,7 @@ local function updateCurrencyOptions()
 				if link then
 					local id = tonumber(link:match("currency:(%d+)") or "", nil)
 					if id then
-						options["currency_"..i] = {
+						options["currency_" .. i] = {
 							order = i,
 							type = "toggle",
 							name = name,
@@ -105,6 +105,7 @@ local function updateCurrencyOptions()
 							end,
 							set = function(_, value)
 								C.db.profile.bars.micromenu.buttons.inventory.currency[id] = value and value or nil
+								BARS:UpdateButton("inventory", "Update")
 							end,
 						}
 					end
@@ -1120,7 +1121,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1139,6 +1140,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1151,7 +1156,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1182,6 +1187,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 							currency = CURRENCY_TABLE,
 						},
@@ -1195,7 +1204,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1208,6 +1217,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1220,7 +1233,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1233,6 +1246,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1245,7 +1262,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1258,6 +1275,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1270,7 +1291,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1289,6 +1310,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1301,7 +1326,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1314,6 +1339,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1326,7 +1355,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1345,6 +1374,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1357,7 +1390,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1370,6 +1403,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1382,7 +1419,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1401,6 +1438,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1413,7 +1454,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1426,6 +1467,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1438,7 +1483,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1457,6 +1502,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},
@@ -1469,7 +1518,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end,
 						set = function(info, value)
 							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateMicroMenu()
+							BARS:UpdateButton(info[#info - 1], "Update")
 						end,
 						args = {
 							enabled = {
@@ -1482,6 +1531,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["BAR"],
 								values = MICRO_BARS,
+								set = function(info, value)
+									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+									BARS:UpdateMicroMenu()
+								end,
 							},
 						},
 					},

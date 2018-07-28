@@ -28,6 +28,7 @@ local enabledMovers = {}
 local trackedMovers = {}
 local highlightIndex = 0
 local isDragging = false
+local areToggledOn = false
 
 local function tracker_OnUpdate(self, elapsed)
 	if not isDragging then
@@ -277,6 +278,10 @@ local function mover_Enable(self)
 	disabledMovers[name] = nil
 
 	enabledMovers[name]:UpdatePosition()
+
+	if areToggledOn then
+		enabledMovers[name]:Show()
+	end
 end
 
 local function mover_Disable(self)
@@ -471,24 +476,20 @@ function E.Movers:Get(object, inclDisabled)
 	return enabledMovers[object .. "Mover"], false
 end
 
-do
-	local state = false
+function E.Movers:ToggleAll()
+	if InCombatLockdown() then return end
+	areToggledOn = not areToggledOn
 
-	function E.Movers:ToggleAll()
-		if InCombatLockdown() then return end
-		state = not state
-
-		for _, mover in next, enabledMovers do
-			if not mover.isSimple then
-				mover:SetShown(state)
-			end
+	for _, mover in next, enabledMovers do
+		if not mover.isSimple then
+			mover:SetShown(areToggledOn)
 		end
+	end
 
-		if state then
-			tracker:SetScript("OnUpdate", tracker_OnUpdate)
-		else
-			tracker:SetScript("OnUpdate", nil)
-		end
+	if areToggledOn then
+		tracker:SetScript("OnUpdate", tracker_OnUpdate)
+	else
+		tracker:SetScript("OnUpdate", nil)
 	end
 end
 

@@ -38,6 +38,7 @@ local C_Timer = _G.C_Timer
 
 -- Mine
 local LibDropDown = LibStub("LibDropDown")
+local handledButtons = {}
 local isInit = false
 
 local LATENCY_TEMPLATE = "|cff%s%s|r " .. _G.MILLISECONDS_ABBR
@@ -435,6 +436,8 @@ do
 	end
 
 	function characterButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", characterButton_OnEnter)
 		else
@@ -469,7 +472,7 @@ do
 end
 
 -- Inventory
-local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateIndicator
+local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateConfig, inventoryButton_UpdateIndicator
 
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
@@ -551,6 +554,8 @@ do
 	end
 
 	function inventoryButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", inventoryButton_OnEnter)
 		else
@@ -558,6 +563,14 @@ do
 		end
 
 		self:UpdateIndicator()
+	end
+
+	function inventoryButton_UpdateConfig(self)
+		if self._config and self._config.currency then
+			t_wipe(self._config.currency)
+		end
+
+		self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
 	end
 
 	function inventoryButton_UpdateIndicator(self)
@@ -781,6 +794,16 @@ do
 
 		if not (self._config.enabled and C.db.profile.bars.micromenu.buttons.inventory.enabled) then
 			self:Hide()
+
+			local mover = E.Movers:Get(self)
+			if mover then
+				mover:Disable()
+			end
+		else
+			local mover = E.Movers:Get(self, true)
+			if mover then
+				mover:Enable()
+			end
 		end
 	end
 
@@ -818,6 +841,8 @@ do
 	end
 
 	function questLogButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", questLogButton_OnEnter)
 		else
@@ -828,6 +853,8 @@ end
 
 -- Guild
 local function guildButton_Update(self)
+	self:UpdateConfig()
+
 	if self.Tabard:IsShown() then
 		self.Tabard.background:Show()
 		self.Tabard.emblem:Show()
@@ -937,6 +964,8 @@ do
 	end
 
 	function lfdButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", lfdButton_OnEnter)
 
@@ -1059,6 +1088,8 @@ do
 	end
 
 	function ejButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.tooltip then
 			self:SetScript("OnEnter", ejButton_OnEnter)
 		else
@@ -1141,6 +1172,8 @@ do
 	end
 
 	function mainMenuButton_Update(self)
+		self:UpdateConfig()
+
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", mainMenuButton_OnEnter)
 
@@ -1181,6 +1214,18 @@ local function bar_Update(self)
 
 	if self.BagBar then
 		self.BagBar:Update()
+	end
+
+	if #self._buttons == 0 then
+		local mover = E.Movers:Get(self)
+		if mover then
+			mover:Disable()
+		end
+	else
+		local mover = E.Movers:Get(self, true)
+		if mover then
+			mover:Enable()
+		end
 	end
 end
 
@@ -1364,6 +1409,7 @@ function MODULE:CreateMicroMenu()
 				button.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
 
 				button.Update = inventoryButton_Update
+				button.UpdateConfig = inventoryButton_UpdateConfig
 				button.UpdateIndicator = inventoryButton_UpdateIndicator
 			elseif name == "SpellbookMicroButton" then
 				button._id = "spellbook"
@@ -1440,6 +1486,8 @@ function MODULE:CreateMicroMenu()
 			elseif name == "HelpMicroButton" then
 				button._id = "help"
 			end
+
+			handledButtons[button._id] = button
 		end
 
 		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
@@ -1503,4 +1551,11 @@ function MODULE:UpdateMicroMenu()
 
 	self:GetBar("micromenu1"):Update()
 	self:GetBar("micromenu2"):Update()
+end
+
+function MODULE:UpdateButton(id, method, ...)
+	local button = handledButtons[id]
+	if button and button[method] then
+		button[method](button, ...)
+	end
 end

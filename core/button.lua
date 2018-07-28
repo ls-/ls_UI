@@ -18,7 +18,11 @@ local select = _G.select
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
 local function button_GetHotkey(self)
-	return LibKeyBound:ToShortKey(self._command and GetBindingKey(self._command) or GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton")) or ""
+	return LibKeyBound:ToShortKey(
+		(self._command and GetBindingKey(self._command))
+		or (self:GetName() and GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton"))
+		or ""
+	)
 end
 
 local function button_SetKey(self, key)
@@ -37,14 +41,16 @@ local function button_GetBindings(self)
 		keys = keys .. GetBindingText(select(i, GetBindingKey(binding)), nil)
 	end
 
-	binding = "CLICK " .. self:GetName() .. ":LeftButton"
+	if self:GetName() then
+		binding = "CLICK " .. self:GetName() .. ":LeftButton"
 
-	for i = 1, select("#", GetBindingKey(binding)) do
-		if keys ~= "" then
-			keys = keys .. ", "
+		for i = 1, select("#", GetBindingKey(binding)) do
+			if keys ~= "" then
+				keys = keys .. ", "
+			end
+
+			keys = keys .. GetBindingText(select(i, GetBindingKey(binding)), nil)
 		end
-
-		keys = keys.. GetBindingText(select(i, GetBindingKey(binding)), nil)
 	end
 
 	return keys
@@ -57,10 +63,12 @@ local function button_ClearBindings(self)
 		SetBinding(GetBindingKey(binding), nil)
 	end
 
-	binding = "CLICK " .. self:GetName() .. ":LeftButton"
+	if self:GetName() then
+		binding = "CLICK " .. self:GetName() .. ":LeftButton"
 
-	while GetBindingKey(binding) do
-		SetBinding(GetBindingKey(binding), nil)
+		while GetBindingKey(binding) do
+			SetBinding(GetBindingKey(binding), nil)
+		end
 	end
 end
 

@@ -299,7 +299,11 @@ function MODULE:SetUpCastBars()
 		CastingBarFrame:SetScript("OnShow", playerBar_OnShow)
 
 		CastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
-		E.Movers:Create(CastingBarFrame.Holder)
+		local mover = E.Movers:Create(CastingBarFrame.Holder)
+
+		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+			mover:Disable()
+		end
 
 		PetCastingBarFrame.ignoreFramePositionManager = true
 		PetCastingBarFrame:SetAttribute("ignoreFramePositionManager", true)
@@ -309,7 +313,11 @@ function MODULE:SetUpCastBars()
 		PetCastingBarFrame:SetScript("OnEvent", petBar_OnEvent)
 
 		PetCastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190 + config.height + 8)
-		E.Movers:Create(PetCastingBarFrame.Holder)
+		mover = E.Movers:Create(PetCastingBarFrame.Holder)
+
+		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+			mover:Disable()
+		end
 
 		hooksecurefunc("CastingBarFrame_SetLook", bar_SetLook)
 		hooksecurefunc("PlayerFrame_AttachCastBar", bar_AttachDetach)
