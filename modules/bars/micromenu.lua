@@ -1205,6 +1205,18 @@ local function bar_Update(self)
 	if self.BagBar then
 		self.BagBar:Update()
 	end
+
+	if #self._buttons == 0 then
+		local mover = E.Movers:Get(self)
+		if mover then
+			mover:Disable()
+		end
+	else
+		local mover = E.Movers:Get(self, true)
+		if mover then
+			mover:Enable()
+		end
+	end
 end
 
 local function bar_UpdateConfig(self)
