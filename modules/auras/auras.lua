@@ -5,7 +5,6 @@ local MODULE = P:AddModule("Auras")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
-local t_wipe = _G.table.wipe
 
 -- Blizz
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
@@ -16,9 +15,10 @@ local UnitAura = _G.UnitAura
 local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
 
 --[[ luacheck: globals
-BuffFrame CreateFrame GameTooltip RegisterAttributeDriver TemporaryEnchantFrame UIParent
+	BuffFrame CreateFrame GameTooltip RegisterAttributeDriver RegisterStateDriver
+	TemporaryEnchantFrame UIParent
 
-MAX_TOTEMS
+	MAX_TOTEMS
 ]]
 
 -- Mine
@@ -355,6 +355,8 @@ local function createHeader(filter)
 	headers[filter] = header
 
 	header:Update()
+
+	RegisterStateDriver(header, "visibility", "[petbattle] hide; show")
 end
 
 function MODULE.IsInit()
