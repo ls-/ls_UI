@@ -319,6 +319,11 @@ do
 		threat:SetPoint("CENTER", 0, 0)
 		frame.ThreatIndicator = threat
 
+		local shadow = borderParent:CreateTexture(nil, "BACKGROUND", nil, -1)
+		shadow:SetAllPoints(health)
+		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+		shadow:AddMaskTexture(mask)
+
 		self:CreateClassIndicator(frame)
 
 		frame.Update = frame_Update
