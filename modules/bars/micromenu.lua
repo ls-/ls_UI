@@ -469,7 +469,7 @@ do
 end
 
 -- Inventory
-local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateIndicator
+local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateConfig, inventoryButton_UpdateIndicator
 
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
@@ -558,6 +558,14 @@ do
 		end
 
 		self:UpdateIndicator()
+	end
+
+	function inventoryButton_UpdateConfig(self)
+		if self._config and self._config.currency then
+			t_wipe(self._config.currency)
+		end
+
+		self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
 	end
 
 	function inventoryButton_UpdateIndicator(self)
@@ -1364,6 +1372,7 @@ function MODULE:CreateMicroMenu()
 				button.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
 
 				button.Update = inventoryButton_Update
+				button.UpdateConfig = inventoryButton_UpdateConfig
 				button.UpdateIndicator = inventoryButton_UpdateIndicator
 			elseif name == "SpellbookMicroButton" then
 				button._id = "spellbook"

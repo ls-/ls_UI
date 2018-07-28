@@ -105,6 +105,7 @@ local function updateCurrencyOptions()
 							end,
 							set = function(_, value)
 								C.db.profile.bars.micromenu.buttons.inventory.currency[id] = value and value or nil
+								BARS:UpdateMicroMenu()
 							end,
 						}
 					end
