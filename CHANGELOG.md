@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 80000.08
+
+- Fixed the "Inventory" micro button's currency tracker;
+- Fixed an issue where getting and/or setting a key binding text for a button with no name would  
+  result in an error. This issue mainly affected the Pet Battle UI;
+- Blizz castbar's movers are now properly disabled when the default castbars aren't actually  
+  used;
+- Player's buffs, debuffs, and totems are now hidden while doing pet battles.
+
 ## Version 80000.07
 
 - Reworked UF config tables' structure. Target, target of target, focus, target of focus, and boss  
