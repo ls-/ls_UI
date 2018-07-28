@@ -484,16 +484,32 @@ do
 					objects[object] = nil
 				end
 
-				object:SetVertexColor(r, g, b)
+				object:SetVertexColor_(r, g, b, target._a)
 				object._r, object._g, object._b = r, g, b
 			end
 		end)
 
-		function E:SetSmoothedVertexColor(object, r, g, b)
+		local function object_SetSmoothedVertexColor(self, r, g, b, a)
+			self._r, self._g, self._b = self:GetVertexColor()
+			objects[self] = {r = r, g = g, b = b, a = a or 1}
+		end
+
+		function E:SetSmoothedVertexColor(object, r, g, b, a)
 			if not object.GetVertexColor then return end
 
-			object._r, object._g, object._b = object:GetVertexColor()
-			objects[object] = {r = r, g = g, b = b}
+			if not object.SetVertexColor_ then
+				object.SetVertexColor_ = object.SetVertexColor
+				object.SetVertexColor = object_SetSmoothedVertexColor
+			end
+
+			object:SetVertexColor(r, g, b, a)
+		end
+
+		function E:SmoothColor(object)
+			if not object.GetVertexColor then return end
+
+			object.SetVertexColor_ = object.SetVertexColor
+			object.SetVertexColor = object_SetSmoothedVertexColor
 		end
 	end
 end
