@@ -23,7 +23,6 @@ local unpack = _G.unpack
 
 -- Blizz
 local GetTickTime = _G.GetTickTime
-local Saturate = _G.Saturate
 
 -- Mine
 -----------
@@ -286,19 +285,36 @@ do
 	end
 
 	-- http://wow.gamepedia.com/ColorGradient
-	local function calcGradient(colorTable, perc)
-		local num = #colorTable
+	local function calcGradient(perc, ...)
+		local num = select("#", ...)
 
-		if perc >= 1 then
-			return colorTable[num - 2], colorTable[num - 1], colorTable[num]
-		elseif perc <= 0 then
-			return colorTable[1], colorTable[2], colorTable[3]
+		if num == 1 then
+			local colorTable = ...
+			num = #colorTable
+
+			if perc >= 1 then
+				return colorTable[num - 2], colorTable[num - 1], colorTable[num]
+			elseif perc <= 0 then
+				return colorTable[1], colorTable[2], colorTable[3]
+			end
+
+			local i, relperc = m_modf(perc * (num / 3 - 1))
+			local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
+
+			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
+		else
+			if perc >= 1 then
+				return select(num - 2, ...)
+			elseif perc <= 0 then
+				local r, g, b = ...
+				return r, g, b
+			end
+
+			local i, relperc = m_modf(perc * (num / 3- 1))
+			local r1, g1, b1, r2, g2, b2 = select((i * 3) + 1, ...)
+
+			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 		end
-
-		local i, relperc = m_modf(perc * (num / 3 - 1))
-		local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
-
-		return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, 1
 	end
 
 	function E:RGBToHEX(r, g, b)
@@ -402,16 +418,16 @@ do
 	do
 		local function getHEX(self, perc, adjustment)
 			if adjustment and adjustment ~= 0 then
-				local r, g, b = calcGradient(self, perc)
+				local r, g, b = calcGradient(perc, self)
 
 				return RGBToHEX(adjustColor(r, g, b, adjustment))
 			else
-				return RGBToHEX(calcGradient(self, perc))
+				return RGBToHEX(calcGradient(perc, self))
 			end
 		end
 
 		local function getRGB(self, perc, adjustment)
-			local r, g, b = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
@@ -421,17 +437,17 @@ do
 		end
 
 		local function getRGBA(self, perc, alpha, adjustment)
-			local r, g, b, a = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
 			end
 
-			return r, g, b, alpha or a
+			return r, g, b, alpha or 1
 		end
 
 		local function getRGBHEX(self, perc, adjustment)
-			local r, g, b = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
@@ -475,11 +491,15 @@ do
 	do
 		local objects = {}
 
+		local function isCloseEnough(r, g, b, tR, tG, tB)
+			return m_abs(r - tR) <= 0.05 and m_abs(g - tG) <= 0.05 and m_abs(b - tB) <= 0.05
+		end
+
 		C_Timer.NewTicker(0, function()
 			for object, target in next, objects do
-				local r, g, b = calcGradient({object._r, object._g, object._b, target.r, target.g, target.b}, Saturate(0.1 * GetTickTime() * 60.0))
+				local r, g, b = calcGradient(clamp(0.25 * GetTickTime() * 60.0), object._r, object._g, object._b, target.r, target.g, target.b)
 
-				if m_abs(r - target.r) <= 0.05 and m_abs(g - target.g) <= 0.05 and m_abs(b - target.b) <= 0.05 then
+				if isCloseEnough(object._r, object._g, object._b, target.r, target.g, target.b) then
 					r, g, b = target.r, target.g, target.b
 					objects[object] = nil
 				end
@@ -491,7 +511,12 @@ do
 
 		local function object_SetSmoothedVertexColor(self, r, g, b, a)
 			self._r, self._g, self._b = self:GetVertexColor()
-			objects[self] = {r = r, g = g, b = b, a = a or 1}
+
+			if isCloseEnough(self._r, self._g, self._b, r, g, b) then
+				self:SetVertexColor_(r, g, b, a)
+			else
+				objects[self] = {r = r, g = g, b = b, a = a}
+			end
 		end
 
 		function E:SetSmoothedVertexColor(object, r, g, b, a)
