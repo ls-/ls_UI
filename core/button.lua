@@ -18,7 +18,11 @@ local select = _G.select
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
 local function button_GetHotkey(self)
-	return LibKeyBound:ToShortKey((self._command and GetBindingKey(self._command)) or (self:GetName() and GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton")) or "")
+	return LibKeyBound:ToShortKey(
+		(self._command and GetBindingKey(self._command))
+		or (self:GetName() and GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton"))
+		or ""
+	)
 end
 
 local function button_SetKey(self, key)
