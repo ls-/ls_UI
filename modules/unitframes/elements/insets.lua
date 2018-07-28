@@ -46,6 +46,10 @@ local function inset_IsExpanded(self)
 	return self._expanded
 end
 
+local function inset_GetVertexColor(self)
+	return self.Top.Left:GetVertexColor()
+end
+
 local function inset_SetVertexColor(self, r, g, b, a)
 	self.Top.Left:SetVertexColor(r, g, b, a)
 	self.Top.Mid:SetVertexColor(r, g, b, a)
@@ -170,8 +174,9 @@ function UF:CreateInsets(frame, texParent)
 	frame.UpdateInsets = frame_UpdateInsets
 
 	return {
-		Top = topInset,
 		Bottom = bottomInset,
-		SetVertexColor = inset_SetVertexColor
+		GetVertexColor = inset_GetVertexColor,
+		SetVertexColor = inset_SetVertexColor,
+		Top = topInset,
 	}
 end

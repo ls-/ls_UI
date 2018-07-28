@@ -74,6 +74,10 @@ local function border_Show(self)
 	end
 end
 
+local function border_GetVertexColor(self)
+	return self.TOPLEFT:GetVertexColor()
+end
+
 local function border_SetVertexColor(self, r, g, b, a)
 	for _, v in next, sections do
 		self[v]:SetVertexColor(r, g, b, a)
@@ -113,6 +117,7 @@ function E:CreateBorder(parent, drawLayer, drawSubLevel)
 	border.RIGHT:SetPoint("TOPRIGHT", border.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
 	border.RIGHT:SetPoint("BOTTOMRIGHT", border.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
 
+	border.GetVertexColor = border_GetVertexColor
 	border.Hide = border_Hide
 	border.IsObjectType = border_IsObjectType
 	border.SetOffset = border_SetOffset
