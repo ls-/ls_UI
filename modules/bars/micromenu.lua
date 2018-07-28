@@ -794,6 +794,16 @@ do
 
 		if not (self._config.enabled and C.db.profile.bars.micromenu.buttons.inventory.enabled) then
 			self:Hide()
+
+			local mover = E.Movers:Get(self)
+			if mover then
+				mover:Disable()
+			end
+		else
+			local mover = E.Movers:Get(self, true)
+			if mover then
+				mover:Enable()
+			end
 		end
 	end
 
