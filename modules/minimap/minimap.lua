@@ -366,11 +366,23 @@ function MODULE.Init()
 
 		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
-		local border = Minimap:CreateTexture(nil, "BORDER")
+		local border = Minimap:CreateTexture(nil, "BORDER", nil, 1)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
-		border:SetTexCoord(1 / 512, 333 / 512, 1 / 512, 333 / 512)
+		border:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 		border:SetSize(332 / 2, 332 / 2)
 		border:SetPoint("CENTER", 0, 0)
+
+		local foreground = Minimap:CreateTexture(nil, "BORDER", nil, 3)
+		foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
+		foreground:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
+		foreground:SetSize(332 / 2, 332 / 2)
+		foreground:SetPoint("CENTER", 0, 0)
+
+		local glass = Minimap:CreateTexture(nil, "BORDER", nil, 2)
+		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
+		glass:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+		glass:SetSize(332 / 2, 332 / 2)
+		glass:SetPoint("CENTER", 0, 0)
 
 		-- .Queue
 		do
