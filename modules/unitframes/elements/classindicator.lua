@@ -72,6 +72,14 @@ function UF:CreateClassIndicator(frame)
 
 	hooksecurefunc(frame, "Show", checkUnitClass)
 
+	if frame.Border then
+		E:SmoothColor(frame.Border)
+	end
+
+	if frame.Insets then
+		E:SmoothColor(frame.Insets)
+	end
+
 	frame.ClassIndicator = true
 	frame.UpdateClassIndicator = frame_UpdateClassIndicator
 end
