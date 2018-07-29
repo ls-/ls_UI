@@ -2278,7 +2278,10 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			temp.args.bottom_inset = nil
 			temp.args.auras = nil
 
+			temp.args.border.args.npc = nil
+
 			if unit == "pet" then
+				temp.args.border = nil
 				temp.args.pvp = nil
 				temp.args.name = nil
 			end
@@ -2305,13 +2308,13 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end
 			end
 
+			temp.args.border.args.npc = nil
+
 			if unit == "pet" then
 				temp.args.pvp = nil
 				temp.args.auras = nil
 			end
 		end
-
-		temp.args.border.args.npc = nil
 	elseif unit == "target" then
 		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
 		temp.args.preview = nil
