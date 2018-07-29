@@ -9,6 +9,7 @@ local hooksecurefunc = _G.hooksecurefunc
 local s_split = _G.string.split
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
+local tostring = _G.tostring
 local unpack = _G.unpack
 
 --[[ luacheck: globals
@@ -71,21 +72,28 @@ local CURRENCY_TABLE = {
 	type = "group",
 	name = L["CURRENCY"],
 	inline = true,
+	get = function(info)
+		return C.db.profile.bars.micromenu.buttons.inventory.currency[tonumber(info[#info])]
+	end,
+	set = function(info, value)
+		C.db.profile.bars.micromenu.buttons.inventory.currency[tonumber(info[#info])] = value and value or nil
+		BARS:UpdateButton("inventory", "Update")
+	end,
 	args = {}
 }
 
 local function updateCurrencyOptions()
 	local options = C.options and C.options.args.bars and C.options.args.bars.args.micromenu.args.inventory.args.currency.args or CURRENCY_TABLE.args
 	local listSize = GetCurrencyListSize()
-	local name, isHeader, icon, link, _
+	local name, isHeader, icon, link, id, _
 
 	t_wipe(options)
 
 	if listSize > 0 then
-		for i = 1, GetCurrencyListSize() do
+		for i = 1, listSize do
 			name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
 			if isHeader then
-				options["currency_" .. i] = {
+				options["header" .. i] = {
 					order = i,
 					type = "header",
 					name = name,
@@ -93,20 +101,13 @@ local function updateCurrencyOptions()
 			else
 				link = GetCurrencyListLink(i)
 				if link then
-					local id = tonumber(link:match("currency:(%d+)") or "", nil)
+					id = tonumber(link:match("currency:(%d+)") or "", nil)
 					if id then
-						options["currency_" .. i] = {
+						options[tostring(id)] = {
 							order = i,
 							type = "toggle",
 							name = name,
 							image = icon,
-							get = function()
-								return C.db.profile.bars.micromenu.buttons.inventory.currency[id]
-							end,
-							set = function(_, value)
-								C.db.profile.bars.micromenu.buttons.inventory.currency[id] = value and value or nil
-								BARS:UpdateButton("inventory", "Update")
-							end,
 						}
 					end
 				end
