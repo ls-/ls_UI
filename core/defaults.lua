@@ -1429,6 +1429,16 @@ D.profile = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
 		buttons = {},
+		colors = {
+			contested = {250 / 255, 193 / 255, 74 / 255},
+			friendly = {60 / 255, 170 / 255, 59 / 255},
+			hostile = {222 / 255, 67 / 255, 58 / 255},
+			sanctuary = {105 / 255, 204 / 255, 240 / 255},
+		},
+		color = {
+			border = false,
+			zone_text = true,
+		},
 	},
 	bars = {
 		mana_indicator = "button", -- hotkey
