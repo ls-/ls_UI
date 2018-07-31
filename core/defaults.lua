@@ -2039,6 +2039,10 @@ D.profile = {
 			visible = true,
 			width = 594,
 			height = 12,
+			text = {
+				size = 10,
+				flag = "_Outline", -- "_Shadow", ""
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",

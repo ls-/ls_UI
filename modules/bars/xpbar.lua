@@ -30,7 +30,7 @@ local isInit = false
 local MAX_SEGMENTS = 4
 local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
-local BAR_VALUE_TEMPLATE = "%1$s / |cff%3$s%2$s|r"
+local BAR_VALUE_TEMPLATE = "%s / %s"
 
 local CFG = {
 	visible = true,
@@ -57,6 +57,7 @@ local LAYOUT = {
 
 local function bar_Update(self)
 	self:UpdateConfig()
+	self:UpdateFont()
 	self:UpdateSize()
 
 	if not BARS:IsRestricted() then
@@ -67,6 +68,25 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar, self._config)
+
+	if BARS:IsRestricted() then
+		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
+	end
+end
+
+local function bar_UpdateFont(self)
+	local config = self._config.text
+	local fontObject = "LSFont" .. config.size .. config.flag
+
+	for i = 1, MAX_SEGMENTS do
+		self[i].Text:SetFontObject(fontObject)
+
+		if config.flag ~= "_Shadow" then
+			self[i].Text:SetShadowOffset(0, 0)
+		else
+			self[i].Text:SetShadowOffset(1, -1)
+		end
+	end
 end
 
 local function bar_UpdateSize(self, width, height)
@@ -111,16 +131,13 @@ local function bar_UpdateSegments(self)
 			local rarity = C_PetBattles.GetBreedQuality(1, i)
 			local cur, max = C_PetBattles.GetXP(1, i)
 			local r, g, b = M.COLORS.XP.NORMAL:GetRGB()
-			local hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
 
 			self[index].tooltipInfo = {
 				header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
-				line1 = {
-					text = L["LEVEL_TOOLTIP"]:format(level)
-				},
+				line1 = L["LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b, hex)
+			self[index]:Update(cur, max, 0, r, g, b)
 		end
 	else
 		-- Artefact
@@ -129,20 +146,15 @@ local function bar_UpdateSegments(self)
 
 			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI.GetEquippedArtifactInfo()
 			local points, cur, max = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
-			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
+			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
 
 			self[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
-				line1 = {
-					text = L["UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points)
-				},
-				line2 = {
-					text = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent)
-				},
+				line1 = L["UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points),
+				line2 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b, hex)
+			self[index]:Update(cur, max, 0, r, g, b)
 		end
 
 		-- Azerite
@@ -153,17 +165,14 @@ local function bar_UpdateSegments(self)
 
 			local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
 			local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGBHEX()
-			local hex = M.COLORS.ARTIFACT:GetHEX(0.2)
+			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
 
 			self[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
-				line1 = {
-					text = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level)
-				},
+				line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b, hex)
+			self[index]:Update(cur, max, 0, r, g, b)
 		end
 
 		-- XP
@@ -173,32 +182,26 @@ local function bar_UpdateSegments(self)
 
 				local cur, max = UnitXP("player"), UnitXPMax("player")
 				local bonus = GetXPExhaustion()
-				local r, g, b, hex
+				local r, g, b
 
 				if bonus and bonus > 0 then
 					r, g, b = M.COLORS.XP.RESTED:GetRGB()
-					hex = M.COLORS.XP.RESTED:GetHEX(0.2)
 				else
 					r, g, b = M.COLORS.XP.NORMAL:GetRGB()
-					hex = M.COLORS.XP.NORMAL:GetHEX(0.2)
 				end
 
 				self[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
-					line1 = {
-						text = L["LEVEL_TOOLTIP"]:format(UnitLevel("player"))
-					},
+					line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
 				}
 
 				if bonus and bonus > 0 then
-					self[index].tooltipInfo.line2 = {
-						text = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
-					}
+					self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
 				else
 					self[index].tooltipInfo.line2 = nil
 				end
 
-				self[index]:Update(cur, max, bonus, r, g, b, hex)
+				self[index]:Update(cur, max, bonus, r, g, b)
 			end
 		end
 
@@ -208,16 +211,13 @@ local function bar_UpdateSegments(self)
 
 			local cur, max = UnitHonor("player"), UnitHonorMax("player")
 			local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
-			local hex = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetHEX(0.2)
 
 			self[index].tooltipInfo = {
 				header = L["HONOR"],
-				line1 = {
-					text = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
-				},
+				line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b, hex)
+			self[index]:Update(cur, max, 0, r, g, b)
 		end
 
 		-- Reputation
@@ -265,24 +265,20 @@ local function bar_UpdateSegments(self)
 
 			self[index].tooltipInfo = {
 				header = L["REPUTATION"],
-				line1 = {
-					text = REPUTATION_TEMPLATE:format(name, hex, repTextLevel)
-				},
+				line1 = REPUTATION_TEMPLATE:format(name, hex, repTextLevel),
 			}
 
 			if isParagon and hasRewardPending then
 				local text = GetQuestLogCompletionText(GetQuestLogIndexByID(rewardQuestID))
 
 				if text and text ~= "" then
-					self[index].tooltipInfo.line3 = {
-						text = text
-					}
+					self[index].tooltipInfo.line3 = text
 				end
 			else
 				self[index].tooltipInfo.line3 = nil
 			end
 
-			self[index]:Update(cur, max, 0, r, g, b, hex)
+			self[index]:Update(cur, max, 0, r, g, b)
 		end
 	end
 
@@ -328,7 +324,7 @@ local function bar_UpdateSegments(self)
 			self[1]:Show()
 
 			self[1].Text:SetText(nil)
-			E:SetSmoothedVertexColor(self[1].Texture, M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
+			self[1].Texture:SetVertexColor(M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
 		end
 
 		self._total = index
@@ -358,14 +354,14 @@ local function segment_OnEnter(self)
 		GameTooltip:SetOwner(self, "ANCHOR_NONE")
 		GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
 		GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
-		GameTooltip:AddLine(self.tooltipInfo.line1.text)
+		GameTooltip:AddLine(self.tooltipInfo.line1)
 
 		if self.tooltipInfo.line2 then
-			GameTooltip:AddLine(self.tooltipInfo.line2.text)
+			GameTooltip:AddLine(self.tooltipInfo.line2)
 		end
 
 		if self.tooltipInfo.line3 then
-			GameTooltip:AddLine(self.tooltipInfo.line3.text)
+			GameTooltip:AddLine(self.tooltipInfo.line3)
 		end
 
 		GameTooltip:Show()
@@ -380,16 +376,13 @@ local function segment_OnLeave(self)
 	self.Text:Hide()
 end
 
-local function segment_Update(self, cur, max, bonus, r, g, b, hex)
-	if self._cur ~= cur or self._max ~= max then
-		self.Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), hex)
-		E:SetSmoothedVertexColor(self.Texture, r, g, b)
+local function segment_Update(self, cur, max, bonus, r, g, b)
+	if self._value ~= cur or self._max ~= max then
+		self.Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
+		self.Texture:SetVertexColor(r, g, b)
 
 		self:SetMinMaxValues(0, max)
 		self:SetValue(cur)
-
-		self._cur = cur
-		self._max = max
 	end
 
 	if self._bonus ~= bonus then
@@ -398,7 +391,8 @@ local function segment_Update(self, cur, max, bonus, r, g, b, hex)
 				bonus = max - cur
 			end
 
-			self.Extension:SetStatusBarColor(r, g, b, 0.4)
+			self.Extension.Texture:SetVertexColor(r, g, b, 0.4)
+
 			self.Extension:SetMinMaxValues(0, max)
 			self.Extension:SetValue(bonus)
 		else
@@ -424,6 +418,7 @@ function BARS.CreateXPBar()
 		bar.Update = bar_Update
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = nil
+		bar.UpdateFont = bar_UpdateFont
 		bar.UpdateSegments = bar_UpdateSegments
 		bar.UpdateSize = bar_UpdateSize
 
@@ -453,6 +448,7 @@ function BARS.CreateXPBar()
 			bar[i] = segment
 
 			segment.Texture = segment:GetStatusBarTexture()
+			E:SmoothColor(segment.Texture)
 
 			local ext = CreateFrame("StatusBar", nil, segment)
 			ext:SetFrameLevel(segment:GetFrameLevel())
@@ -462,7 +458,10 @@ function BARS.CreateXPBar()
 			E:SmoothBar(ext)
 			segment.Extension = ext
 
-			local text = textParent:CreateFontString(nil, "OVERLAY", "LSFont10_Outline")
+			ext.Texture = ext:GetStatusBarTexture()
+			E:SmoothColor(ext.Texture)
+
+			local text = textParent:CreateFontString(nil, "OVERLAY")
 			text:SetAllPoints(segment)
 			text:SetWordWrap(false)
 			text:Hide()

@@ -133,6 +133,10 @@ local function isXPBarDisabled()
 	return not BARS:HasXPBar()
 end
 
+local function isXPBarDisabledOrRestricted()
+	return BARS:IsRestricted() or not BARS:HasXPBar()
+end
+
 local function isModuleDisabledOrRestricted()
 	return BARS:IsRestricted() or not BARS:IsInit()
 end
@@ -213,7 +217,7 @@ local function getOptionsTable_Fading(order, barID)
 			BARS:GetBar("micromenu2"):UpdateFading()
 		end
 	elseif barID == "xpbar" then
-		temp.disabled = isXPBarDisabled
+		temp.disabled = isXPBarDisabledOrRestricted
 	end
 
 	return temp
@@ -1546,7 +1550,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "group",
 				childGroups = "select",
 				name = L["XP_BAR"],
-				disabled = isModuleDisabledOrRestricted,
 				get = function(info)
 					return C.db.profile.bars.xpbar[info[#info]]
 				end,
@@ -1561,6 +1564,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
+						disabled = isModuleDisabledOrRestricted,
 						get = function()
 							return C.db.char.bars.xpbar.enabled
 						end,
@@ -1584,7 +1588,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
-						disabled = isXPBarDisabled,
+						disabled = isXPBarDisabledOrRestricted,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
 							BARS:GetBar("xpbar"):Update()
@@ -1600,21 +1604,57 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						type = "range",
 						name = L["WIDTH"],
 						min = 530, max = 1900, step = 2,
-						disabled = isXPBarDisabled,
+						disabled = isXPBarDisabledOrRestricted,
 					},
 					height = {
 						order = 11,
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
-						disabled = isXPBarDisabled,
+						disabled = isXPBarDisabledOrRestricted,
 					},
 					spacer_2 = {
 						order = 19,
 						type = "description",
 						name = " ",
 					},
-					fading = getOptionsTable_Fading(20, "xpbar")
+					text = {
+						order = 20,
+						type = "group",
+						name = L["TEXT"],
+						inline = true,
+						disabled = isXPBarDisabled,
+						get = function(info)
+							return C.db.profile.bars.xpbar.text[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
+								C.db.profile.bars.xpbar.text[info[#info]] = value
+								BARS:GetBar("xpbar"):UpdateConfig()
+								BARS:GetBar("xpbar"):UpdateFont()
+							end
+						end,
+						args = {
+							size = {
+								order = 1,
+								type = "range",
+								name = L["SIZE"],
+								min = 10, max = 20, step = 2,
+							},
+							flag = {
+								order = 2,
+								type = "select",
+								name = L["FLAG"],
+								values = FLAGS,
+							},
+						},
+					},
+					spacer_3 = {
+						order = 29,
+						type = "description",
+						name = " ",
+					},
+					fading = getOptionsTable_Fading(30, "xpbar")
 				},
 			},
 		},
