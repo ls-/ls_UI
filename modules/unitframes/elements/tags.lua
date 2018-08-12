@@ -636,8 +636,12 @@ end
 
 oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
 oUF.Tags.Methods["ls:phaseicon"] = function(unit)
-	if not UnitInPhase(unit) then
-		return M.textures.inlineicons["PHASE"]:format(0, 0)
+	if not UnitInPhase(unit) or UnitIsWarModePhased(unit) then
+		if UnitIsWarModePhased(unit) then
+			return M.textures.inlineicons["PHASE_WM"]:format(0, 0)
+		else
+			return M.textures.inlineicons["PHASE"]:format(0, 0)
+		end
 	else
 		return ""
 	end
