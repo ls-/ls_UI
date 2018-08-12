@@ -495,7 +495,7 @@ function MODULE.SetStatusText(_, text)
 	end
 end
 
--- MODULE.ValidateTagString
+-- MODULE.IsTagStringValid
 do
 	local badTags = {}
 	local badTag = "|cffffffff%s|r"
@@ -508,7 +508,7 @@ do
 		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
 	end
 
-	function MODULE:ValidateTagString(tagString)
+	function MODULE:IsTagStringValid(tagString)
 		t_wipe(badTags)
 
 		for bracket in tagString:gmatch("%[..-%]+") do
