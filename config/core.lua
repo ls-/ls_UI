@@ -1,10 +1,11 @@
 local addonName, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF or oUF
 local MODULE = P:AddModule("Config")
 
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_concat = _G.table.concat
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
@@ -491,6 +492,40 @@ function MODULE.SetStatusText(_, text)
 
 	if frame then
 		frame:SetStatusText(text)
+	end
+end
+
+-- MODULE.ValidateTagString
+do
+	local badTags = {}
+	local badTag = "|cffffffff%s|r"
+
+	local function getTagName(tag)
+		local tagStart = (tag:match('>+()') or 2)
+		local tagEnd = tag:match('.*()<+')
+		tagEnd = (tagEnd and tagEnd - 1) or -2
+
+		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+	end
+
+	function MODULE:ValidateTagString(tagString)
+		t_wipe(badTags)
+
+		for bracket in tagString:gmatch("%[..-%]+") do
+			if not oUF.Tags.Methods[getTagName(bracket)] then
+				t_insert(badTags, badTag:format(bracket))
+			end
+		end
+
+		if #badTags > 0 then
+			self:SetStatusText(L["INVALID_TAGS_ERR"]:format(t_concat(badTags, ", ")))
+
+			return false
+		else
+			self:SetStatusText("")
+
+			return true
+		end
 	end
 end
 

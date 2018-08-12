@@ -204,6 +204,8 @@ local function getOptionsTable_Health(order, unit)
 							return C.db.profile.units[unit].health.text.tag:gsub("\124", "\124\124")
 						end,
 						set = function(_, value)
+							if not CONFIG:ValidateTagString(value) then return end
+
 							C.db.profile.units[unit].health.text.tag = value:gsub("\124\124+", "\124")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
@@ -298,6 +300,8 @@ local function getOptionsTable_Health(order, unit)
 									return C.db.profile.units[unit].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
 								end,
 								set = function(_, value)
+									if not CONFIG:ValidateTagString(value) then return end
+
 									C.db.profile.units[unit].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
@@ -368,6 +372,8 @@ local function getOptionsTable_Health(order, unit)
 									return C.db.profile.units[unit].health.prediction.heal_absorb_text.tag:gsub("\124", "\124\124")
 								end,
 								set = function(_, value)
+									if not CONFIG:ValidateTagString(value) then return end
+
 									C.db.profile.units[unit].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
@@ -412,6 +418,8 @@ local function getOptionsTable_Health(order, unit)
 			return C.db.profile.units[unit][E.UI_LAYOUT].health.text.tag:gsub("\124", "\124\124")
 		end
 		temp.args.text.args.tag.set = function(_, value)
+			if not CONFIG:ValidateTagString(value) then return end
+
 			C.db.profile.units[unit][E.UI_LAYOUT].health.text.tag = value:gsub("\124\124+", "\124")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
@@ -442,6 +450,8 @@ local function getOptionsTable_Health(order, unit)
 				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
 			end
 			temp.args.prediction.args.absorb_text.args.tag.set = function(_, value)
+				if not CONFIG:ValidateTagString(value) then return end
+
 				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
@@ -462,6 +472,8 @@ local function getOptionsTable_Health(order, unit)
 				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag:gsub("\124", "\124\124")
 			end
 			temp.args.prediction.args.heal_absorb_text.args.tag.set = function(_, value)
+				if not CONFIG:ValidateTagString(value) then return end
+
 				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
@@ -581,6 +593,8 @@ local function getOptionsTable_Power(order, unit)
 							return C.db.profile.units[unit].power.text.tag:gsub("\124", "\124\124")
 						end,
 						set = function(_, value)
+							if not CONFIG:ValidateTagString(value) then return end
+
 							C.db.profile.units[unit].power.text.tag = value:gsub("\124\124+", "\124")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
@@ -615,7 +629,7 @@ local function getOptionsTable_Power(order, unit)
 		temp.args.text.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].power.text.point1[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].power.text.point1[info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
 			end
 		end
@@ -624,6 +638,8 @@ local function getOptionsTable_Power(order, unit)
 			return C.db.profile.units[unit][E.UI_LAYOUT].power.text.tag:gsub("\124", "\124\124")
 		end
 		temp.args.text.args.tag.set = function(_, value)
+			if not CONFIG:ValidateTagString(value) then return end
+
 			C.db.profile.units[unit][E.UI_LAYOUT].power.text.tag = value:gsub("\124\124+", "\124")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
@@ -1010,6 +1026,8 @@ local function getOptionsTable_Name(order, unit)
 					return C.db.profile.units[unit].name.tag:gsub("\124", "\124\124")
 				end,
 				set = function(_, value)
+					if not CONFIG:ValidateTagString(value) then return end
+
 					C.db.profile.units[unit].name.tag = value:gsub("\124\124+", "\124")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
@@ -1077,6 +1095,8 @@ local function getOptionsTable_Name(order, unit)
 			return C.db.profile.units[unit][E.UI_LAYOUT].name.tag:gsub("\124", "\124\124")
 		end
 		temp.args.tag.set = function(_, value)
+			if not CONFIG:ValidateTagString(value) then return end
+
 			C.db.profile.units[unit][E.UI_LAYOUT].name.tag = value:gsub("\124\124+", "\124")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
@@ -2477,6 +2497,8 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 								return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
 							end,
 							set = function(_, value)
+								if not CONFIG:ValidateTagString(value) then return end
+
 								C.db.profile.units[unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
 								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 								UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
