@@ -261,11 +261,11 @@ function MODULE.SetupActionBarController()
 
 			for _, widget in next, WIDGETS do
 				if widget.frame then
-					widget.frame:SetAlpha(0)
+					E:FadeOut(widget.frame)
 
 					if widget.children then
 						for _, child in next, widget.children do
-							child:SetAlpha(0)
+							E:FadeOut(child)
 						end
 					end
 				end
