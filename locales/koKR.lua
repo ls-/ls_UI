@@ -6,7 +6,11 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
-if _G.GetLocale() ~= "koKR" then return end
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "koKR" then return end
 
 -- Lua
 local m_modf = _G.math.modf
