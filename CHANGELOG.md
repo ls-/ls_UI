@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## Version 80000.09
+
+- Reworked fade in and out animations. Previously, their performance was degrading over time, and  
+  after long gaming sessions they could cause micro stuttering and/or big freezes when being played;
+- Added unit frame tag validation to avoid issues caused by invalid tags;
+- Added options to colour minimap border and to adjust border's and text's colours;
+- Added options to adjust xp bar's text;
+- Added the option to colour player orb's border;
+- Normal and war mode phase indicators now use different icons, blue and red respectively;
+- Updated both Spanish translations. Translated by Gotzon@Curse;
+- Updated embeds.
+
 ## Version 80000.08
 
 - Fixed the "Inventory" micro button's currency tracker;

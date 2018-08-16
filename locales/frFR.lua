@@ -6,7 +6,11 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
-if _G.GetLocale() ~= "frFR" then return end
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "frFR" then return end
 
 L["ACTION_BARS"] = "Barres d'action"
 --[[ L["ADDITIONAL_BAR"] = "Additional Bar" ]]

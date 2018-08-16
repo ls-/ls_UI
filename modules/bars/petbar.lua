@@ -166,7 +166,7 @@ local function button_UpdateCooldown(self)
 
 	local oldOnCooldown = self.onCooldown
 	self.onCooldown = enable and enable ~= 0 and start > 0 and duration > 1.5
-	if self.config.desaturation.cooldown and self.onCooldown ~= oldOnCooldown then
+	if self.onCooldown ~= oldOnCooldown then
 		self:UpdateUsable()
 		if self.onCooldown then
 			self.cooldown:SetScript("OnCooldownDone", onCooldownDone)

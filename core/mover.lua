@@ -411,7 +411,7 @@ function E.Movers:Create(object, isSimple)
 		mover:SetScript("OnClick", mover_OnClick)
 		mover:SetScript("OnEnter", mover_OnEnter)
 		mover:SetScript("OnLeave", Mover_OnLeave)
-		mover:Hide()
+		mover:SetShown(areToggledOn)
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
 		bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))

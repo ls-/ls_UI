@@ -173,6 +173,10 @@ D.profile = {
 					x_offset = 15,
 					y_offset = 20,
 				},
+				class = {
+					player = false,
+					npc = false,
+				},
 			},
 			traditional = {
 				enabled = true,
@@ -584,7 +588,7 @@ D.profile = {
 				},
 				class = {
 					player = true,
-					npc = true,
+					npc = false,
 				},
 			},
 		},
@@ -1425,6 +1429,16 @@ D.profile = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
 		},
 		buttons = {},
+		colors = {
+			contested = {250 / 255, 193 / 255, 74 / 255},
+			friendly = {85 / 255, 240 / 255, 83 / 255},
+			hostile = {240 / 255, 72 / 255, 63 / 255},
+			sanctuary = {105 / 255, 204 / 255, 240 / 255},
+		},
+		color = {
+			border = false,
+			zone_text = true,
+		},
 	},
 	bars = {
 		mana_indicator = "button", -- hotkey
@@ -2025,6 +2039,10 @@ D.profile = {
 			visible = true,
 			width = 594,
 			height = 12,
+			text = {
+				size = 10,
+				flag = "_Outline", -- "_Shadow", ""
+			},
 			point = {
 				p = "BOTTOM",
 				anchor = "UIParent",

@@ -53,6 +53,7 @@ do
 			self:UpdateDebuffIndicator()
 			self:UpdateCombatFeedback()
 			self:UpdateThreatIndicator()
+			self:UpdateClassIndicator()
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -94,6 +95,7 @@ do
 		texture:SetAllPoints()
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 		texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
+		frame.Border = texture
 
 		-- fg
 		local textureParent = CreateFrame("Frame", nil, frame)
@@ -316,6 +318,13 @@ do
 		threat:SetSize(336 / 2, 336 / 2)
 		threat:SetPoint("CENTER", 0, 0)
 		frame.ThreatIndicator = threat
+
+		local shadow = borderParent:CreateTexture(nil, "BACKGROUND", nil, -1)
+		shadow:SetAllPoints(health)
+		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+		shadow:AddMaskTexture(mask)
+
+		self:CreateClassIndicator(frame)
 
 		frame.Update = frame_Update
 		frame.UpdateConfig = frame_UpdateConfig

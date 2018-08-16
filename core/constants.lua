@@ -230,9 +230,9 @@ local textures = {
 		["ALLIANCE"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:1:33:34:66|t",
 		["FFA"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:34:66:34:66|t",
 		["PHASE"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:67:99:34:66|t",
-		["QUEST"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:100:132:34:66|t",
-		["SHEEP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:133:165:34:66|t",
-		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:166:198:34:66|t",
+		["PHASE_WM"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:100:132:34:66|t",
+		["QUEST"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:133:165:34:66|t",
+		["SHEEP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:166:198:34:66|t",
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:199:231:34:66|t",
 		-- third line
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%d:%d:0:0:256:256:1:33:67:99|t",

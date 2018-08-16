@@ -6,7 +6,11 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
-if _G.GetLocale() ~= "ruRU" then return end
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "ruRU" then return end
 
 L["ACTION_BARS"] = "Панели команд"
 L["ADDITIONAL_BAR"] = "Дополнительная панель"
@@ -145,6 +149,7 @@ L["FONT"] = "Шрифт"
 L["FORMAT"] = "Формат"
 L["FRAME"] = "Рамка"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Свободные ячейки: |cffffffff%s|r"
+L["FRIENDLY_TERRITORY"] = "Дружелюбная территория"
 L["FRIENDLY_UNITS"] = "Дружественные юниты"
 L["GM_FRAME"] = "Панель статуса запроса к ГМ"
 L["GOLD"] = "Золото"
@@ -176,11 +181,13 @@ L["HEIGHT"] = "Высота"
 L["HONOR"] = "Честь"
 L["HONOR_LEVEL_TOOLTIP"] = "Уровень чести: |cffffffff%d|r"
 L["HORIZ_GROWTH_DIR"] = "Горизонтальное направление роста"
+L["HOSTILE_TERRITORY"] = "Враждебная территория"
 L["HOURS"] = "Часы"
 L["ICON"] = "Иконка"
 L["INDEX"] = "Индекс"
 L["INSPECT_INFO"] = "Информация осмотра"
 L["INSPECT_INFO_DESC"] = "Отображение специализации и уровня предметов игрока. Эти данные могут быть доступны не сразу."
+L["INVALID_TAGS_ERR"] = "Попытка использовать недопустимые теги: %s."
 L["INVENTORY_BUTTON"] = "Инвентарь"
 L["INVENTORY_BUTTON_DESC"] = "Показывать информацию о валютах."
 L["INVENTORY_BUTTON_RCLICK_TOOLTIP"] = "|cffffffffЩелкните ПКМ|r, чтобы отобразить ячейки сумок."

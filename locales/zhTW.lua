@@ -5,12 +5,14 @@ local E, L = ns.E, ns.L
 
 -- Lua
 local _G = getfenv(0)
-
-if _G.GetLocale() ~= "zhTW" then return end
-
--- Lua
 local m_modf = _G.math.modf
 local s_format = _G.string.format
+
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "zhTW" then return end
 
 -- Mine
 do
