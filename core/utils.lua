@@ -504,7 +504,7 @@ do
 					objects[object] = nil
 				end
 
-				object:SetVertexColor_(r, g, b, target._a)
+				object:SetVertexColor_(r, g, b, target.a)
 				object._r, object._g, object._b = r, g, b
 			end
 		end)
