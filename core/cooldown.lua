@@ -51,6 +51,7 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 				if remain <= 0 then
 					cooldown.Timer:SetText("")
 					activeCooldowns[cooldown] = nil
+					return
 				end
 
 				color = nil
