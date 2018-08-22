@@ -5,8 +5,11 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local CreateFrame = _G.CreateFrame
+--[[ luacheck: globals
+	CreateFrame PlayerPowerBarAlt UIParent
+
+	UIPARENT_ALTERNATE_FRAME_POSITIONS 	UIPARENT_MANAGED_FRAME_POSITIONS
+]]
 
 -- Mine
 local isInit = false
@@ -25,7 +28,7 @@ function MODULE.SetUpAltPowerBar()
 		local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
 		holder:SetSize(64, 64)
 		holder:SetPoint("BOTTOM", 0, 230)
-		E:CreateMover(holder)
+		E.Movers:Create(holder)
 
 		PlayerPowerBarAlt:SetMovable(true)
 		PlayerPowerBarAlt:SetUserPlaced(true)

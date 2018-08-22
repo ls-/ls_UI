@@ -27,50 +27,14 @@ function MODULE.GetBar(_, barID)
 end
 
 -- Fading
-local function isMouseOverBar(frame)
-	return frame:IsMouseOver(4, -4, -4, 4) or (SpellFlyout:IsShown() and SpellFlyout:GetParent() and SpellFlyout:GetParent():GetParent() == frame and SpellFlyout:IsMouseOver(4, -4, -4, 4))
-end
-
-local function bar_OnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	-- keep it as responsive as possible, 1s / 60fps = 0.016
-	if self.elapsed > 0.016 then
-		if self.faded and isMouseOverBar(self) then
-			self.FadeOut:Finish()
-			self.FadeIn:Play()
-		elseif not self.faded then
-			if not isMouseOverBar(self) then
-				self.FadeIn:Finish()
-				self.FadeOut:Play()
-			elseif isMouseOverBar(self) then
-				if self.FadeOut:IsPlaying() then
-					self.FadeOut:Stop()
-				end
-			end
-		end
-
-		self.elapsed = 0
-	end
-end
-
-local function fadeIn_OnFinished(self)
-	self:GetParent().faded = nil
-end
-
-local function fadeOut_OnFinished(self)
-	self:GetParent().faded = true
-end
-
 local function pauseFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:SetScript("OnUpdate", nil)
-			bar.FadeIn:Stop()
-			bar.FadeOut:Stop()
-			bar:SetAlpha(1)
+			bar:PauseFading()
 
-			bar.faded = nil
+			if bar.UpdateButtons then
+				bar:UpdateButtons("SetAlpha", 1)
+			end
 		end
 	end
 end
@@ -78,56 +42,12 @@ end
 local function resumeFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:SetScript("OnUpdate", bar_OnUpdate)
+			bar:ResumeFading()
 		end
 	end
 end
 
-local function bar_UpdateFading(self)
-	if self._config.visible and self._config.fade and self._config.fade.enabled then
-		self.FadeIn.Anim:SetFromAlpha(self._config.fade.min_alpha)
-		self.FadeIn.Anim:SetToAlpha(self._config.fade.max_alpha)
-		self.FadeIn.Anim:SetStartDelay(self._config.fade.in_delay)
-		self.FadeIn.Anim:SetDuration(self._config.fade.in_duration)
-
-		self.FadeOut.Anim:SetFromAlpha(self._config.fade.max_alpha)
-		self.FadeOut.Anim:SetToAlpha(self._config.fade.min_alpha)
-		self.FadeOut.Anim:SetStartDelay(self._config.fade.out_delay)
-		self.FadeOut.Anim:SetDuration(self._config.fade.out_duration)
-
-		self:SetScript("OnUpdate", bar_OnUpdate)
-		self.FadeOut:Finish()
-		self.FadeIn:Play()
-	else
-		self:SetScript("OnUpdate", nil)
-		self.FadeIn:Stop()
-		self.FadeOut:Stop()
-		self:SetAlpha(1)
-
-		self.faded = nil
-	end
-end
-
-function MODULE.InitBarFading(_, bar)
-	local ag = bar:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	ag:SetScript("OnFinished", fadeIn_OnFinished)
-	bar.FadeIn = ag
-
-	local anim = ag:CreateAnimation("Alpha")
-	ag.Anim = anim
-
-	ag = bar:CreateAnimationGroup()
-	ag:SetToFinalAlpha(true)
-	ag:SetScript("OnFinished", fadeOut_OnFinished)
-	bar.FadeOut = ag
-
-	anim = ag:CreateAnimation("Alpha")
-	ag.Anim = anim
-
-	bar.UpdateFading = bar_UpdateFading
-end
-
+-- Updates
 local function bar_UpdateButtons(self, method, ...)
 	for _, button in next, self._buttons do
 		if button[method] then
@@ -137,7 +57,45 @@ local function bar_UpdateButtons(self, method, ...)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = C.db.profile.bars[self._id]
+	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
+	self._config.click_on_down = C.db.profile.bars.click_on_down
+	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
+	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
+	self._config.draw_bling = C.db.profile.bars.draw_bling
+	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.range_indicator = C.db.profile.bars.range_indicator
+	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
+
+	if C.db.profile.bars[self._id].cooldown then
+		self._config.cooldown = E:CopyTable(C.db.profile.bars[self._id].cooldown, self._config.cooldown)
+		self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
+	end
+end
+
+local function bar_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
+	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
+	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
+
+	local cooldown
+	for _, button in next, self._buttons do
+		cooldown = button.cooldown or button.Cooldown
+		if not cooldown.UpdateConfig then
+			break
+		end
+
+		cooldown:UpdateConfig(self.cooldownConfig)
+		cooldown:UpdateFontObject()
+	end
 end
 
 local function bar_UpdateVisibility(self)
@@ -148,16 +106,17 @@ local function bar_UpdateVisibility(self)
 	end
 end
 
-function MODULE.AddBar(self, barID, bar)
+function MODULE.AddBar(_, barID, bar)
 	bars[barID] = bar
 	bar.UpdateConfig = bar_UpdateConfig
+	bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then
 		bar.UpdateButtons = bar_UpdateButtons
 	end
 
-	self:InitBarFading(bar)
+	E:SetUpFading(bar)
 end
 
 function MODULE.UpdateBars(_, method, ...)
@@ -212,7 +171,7 @@ local vehicleController
 function MODULE:UpdateBlizzVehicle()
 	if not self:IsRestricted() then
 		if C.db.profile.bars.blizz_vehicle then
-			MainMenuBar:SetParent(UIParent)
+			-- MainMenuBar:SetParent(UIParent)
 			OverrideActionBar:SetParent(UIParent)
 
 			if not vehicleController then
@@ -243,7 +202,7 @@ function MODULE:UpdateBlizzVehicle()
 
 			RegisterStateDriver(vehicleController, "vehicle", "[overridebar] override; [vehicleui] vehicle; novehicle")
 		else
-			MainMenuBar:SetParent(E.HIDDEN_PARENT)
+			-- MainMenuBar:SetParent(E.HIDDEN_PARENT)
 			OverrideActionBar:SetParent(E.HIDDEN_PARENT)
 
 			if vehicleController then
@@ -251,7 +210,7 @@ function MODULE:UpdateBlizzVehicle()
 			end
 		end
 	else
-		MainMenuBar:SetParent(E.HIDDEN_PARENT)
+		-- MainMenuBar:SetParent(E.HIDDEN_PARENT)
 		OverrideActionBar:SetParent(E.HIDDEN_PARENT)
 	end
 end
@@ -274,7 +233,6 @@ function MODULE.Init()
 		MODULE:CreateVehicleExitButton()
 		MODULE:CreateMicroMenu()
 		MODULE:CreateXPBar()
-		MODULE:CreateBags()
 		MODULE:ReassignBindings()
 		MODULE:CleanUp()
 		MODULE:UpdateBlizzVehicle()

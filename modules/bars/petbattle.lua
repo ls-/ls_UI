@@ -23,6 +23,15 @@ local CFG = {
 	y_growth = "DOWN",
 	per_row = 6,
 	visibility = "[petbattle] show; hide",
+	fade = {
+		enabled = false,
+		out_delay = 0.75,
+		out_duration = 0.15,
+		in_delay = 0,
+		in_duration = 0.15,
+		min_alpha = 0,
+		max_alpha = 1,
+	},
 	point = {
 		p = "BOTTOM",
 		anchor = "UIParent",
@@ -30,10 +39,24 @@ local CFG = {
 		x = 0,
 		y = 16
 	},
-	fade = {
-		enabled = false,
-	},
 }
+
+local function bar_Update(self)
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateButtons("UpdateHotKey")
+	self:UpdateButtons("UpdateHotKeyFont")
+	self:UpdateFading()
+	E:UpdateBarLayout(self)
+end
+
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle, self._config)
+
+	if MODULE:IsRestricted() then
+		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
+	end
+end
 
 local function button_UpdateHotKey(self, state)
 	if state ~= nil then
@@ -42,7 +65,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -51,7 +74,7 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.HotKey:SetWordWrap(false)
 end
 
@@ -69,21 +92,9 @@ function MODULE.CreatePetBattleBar()
 
 		MODULE:AddBar(bar._id, bar)
 
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateVisibility()
-			self:UpdateButtons("UpdateHotKey")
-			self:UpdateButtons("UpdateHotKeyFont")
-			self:UpdateFading()
-			E:UpdateBarLayout(self)
-		end
-		bar.UpdateConfig = function(self)
-			self._config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
-
-			if MODULE:IsRestricted() then
-				self._config.hotkey = C.db.profile.bars.pet_battle.hotkey
-			end
-		end
+		bar.Update = bar_Update
+		bar.UpdateConfig = bar_UpdateConfig
+		bar.UpdateCooldownConfig = nil
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
 			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]
@@ -95,11 +106,11 @@ function MODULE.CreatePetBattleBar()
 
 			for id, button in next, bar._buttons do
 				button._parent = bar
-				button._command = "ACTIONBUTTON"..id
+				button._command = "ACTIONBUTTON" .. id
 				button:SetParent(bar)
 
-				button.UpdateHotKeyFont = button_UpdateHotKeyFont
 				button.UpdateHotKey = button_UpdateHotKey
+				button.UpdateHotKeyFont = button_UpdateHotKeyFont
 
 				E:SkinPetBattleButton(button)
 			end
@@ -112,7 +123,7 @@ function MODULE.CreatePetBattleBar()
 		else
 			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-			E:CreateMover(bar)
+			E.Movers:Create(bar)
 		end
 
 		bar:Update()
@@ -133,7 +144,7 @@ function MODULE.CreatePetBattleBar()
 		local timer = CreateFrame("Frame", "LSPetBattleTurnTimer", UIParent, "SecureHandlerStateTemplate")
 		timer:SetSize(474, 28)
 		timer:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 60)
-		E:CreateMover(timer)
+		E.Movers:Create(timer)
 		RegisterStateDriver(timer, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.TurnTimer:SetParent(timer)
@@ -142,8 +153,8 @@ function MODULE.CreatePetBattleBar()
 
 		local selector = CreateFrame("Frame", "LSPetBattlePetSelector", UIParent, "SecureHandlerStateTemplate")
 		selector:SetSize(636, 200)
-		selector:SetPoint("TOP", "UIParent", "TOP", 0, -194)
-		E:CreateMover(selector)
+		selector:SetPoint("TOP", "UIParent", "TOP", 0, -256)
+		E.Movers:Create(selector)
 		RegisterStateDriver(selector, "visibility", "[petbattle] show; hide")
 
 		PetBattleFrame.BottomFrame.PetSelectionFrame:SetParent(selector)

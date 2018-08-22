@@ -1,10 +1,11 @@
 local addonName, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF or oUF
 local MODULE = P:AddModule("Config")
 
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_concat = _G.table.concat
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
@@ -30,11 +31,16 @@ local PanelTemplates_SetTab = _G.PanelTemplates_SetTab
 local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
 local ReloadUI = _G.ReloadUI
 
+--[[ luacheck: globals
+	LibStub
+]]
+
 -- Mine
-local LibStub = _G.LibStub
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
+-- MODULE.OpenAuraConfig
 do
 	-- Mine
 	local frame
@@ -422,6 +428,7 @@ do
 	end
 end
 
+-- MODULE.ShowStaticPopup
 do
 	-- Blizz
 	local StaticPopupDialogs = _G.StaticPopupDialogs
@@ -488,6 +495,40 @@ function MODULE.SetStatusText(_, text)
 	end
 end
 
+-- MODULE.IsTagStringValid
+do
+	local badTags = {}
+	local badTag = "|cffffffff%s|r"
+
+	local function getTagName(tag)
+		local tagStart = (tag:match('>+()') or 2)
+		local tagEnd = tag:match('.*()<+')
+		tagEnd = (tagEnd and tagEnd - 1) or -2
+
+		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+	end
+
+	function MODULE:IsTagStringValid(tagString)
+		t_wipe(badTags)
+
+		for bracket in tagString:gmatch("%[..-%]+") do
+			if not oUF.Tags.Methods[getTagName(bracket)] then
+				t_insert(badTags, badTag:format(bracket))
+			end
+		end
+
+		if #badTags > 0 then
+			self:SetStatusText(L["INVALID_TAGS_ERR"]:format(t_concat(badTags, ", ")))
+
+			return false
+		else
+			self:SetStatusText("")
+
+			return true
+		end
+	end
+end
+
 function MODULE:CopySettings(src, dest, ignoredKeys)
 	for k, v in next, dest do
 		if not ignoredKeys or not ignoredKeys[k] then
@@ -512,14 +553,40 @@ function MODULE.Init()
 		name = L["LS_UI"],
 		disabled = function() return InCombatLockdown() end,
 		args = {
-			toggle_anchors = {
+			layout = {
 				order = 1,
+				type = "select",
+				name = L["UI_LAYOUT"],
+				desc = L["UI_LAYOUT_DESC"],
+				values = {
+					ls = L["ORBS"],
+					traditional = L["CLASSIC"]
+				},
+				get = function()
+					return C.db.char.layout
+				end,
+				set = function(_, value)
+					C.db.char.layout = value
+
+					if E.UI_LAYOUT ~= value then
+						MODULE:ShowStaticPopup("RELOAD_UI")
+					end
+				end,
+			},
+			toggle_anchors = {
+				order = 2,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
-				func = function() E:ToggleAllMovers() end,
+				func = function() E.Movers:ToggleAll() end,
+			},
+			keybind_mode = {
+				order = 3,
+				type = "execute",
+				name = LibKeyBound.L.BindingMode,
+				func = function() LibKeyBound:Toggle() end,
 			},
 			reload_ui = {
-				order = 2,
+				order = 4,
 				type = "execute",
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
@@ -530,14 +597,14 @@ function MODULE.Init()
 	AceConfig:RegisterOptionsTable(addonName, C.options)
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
-	MODULE:CreateGeneralPanel(3)
-	MODULE:CreateActionBarsPanel(4)
-	MODULE:CreateAuraTrackerPanel(5)
-	MODULE:CreateBlizzardPanel(6)
-	MODULE:CreateAurasPanel(7)
-	MODULE:CreateMinimapPanel(8)
-	MODULE:CreateTooltipsPanel(9)
-	MODULE:CreateUnitFramesPanel(10)
+	MODULE:CreateActionBarsPanel(5)
+	MODULE:CreateAuraTrackerPanel(6)
+	MODULE:CreateBlizzardPanel(7)
+	MODULE:CreateAurasPanel(8)
+	MODULE:CreateLootPanel(9)
+	MODULE:CreateMinimapPanel(10)
+	MODULE:CreateTooltipsPanel(11)
+	MODULE:CreateUnitFramesPanel(12)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
@@ -566,6 +633,12 @@ function MODULE.Init()
 	P:AddCommand("", function()
 		if not InCombatLockdown() then
 			AceConfigDialog:Open(addonName)
+		end
+	end)
+
+	P:AddCommand("kb", function()
+		if not InCombatLockdown() then
+			LibKeyBound:Toggle()
 		end
 	end)
 

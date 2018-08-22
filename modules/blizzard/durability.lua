@@ -4,7 +4,10 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
+
+--[[ luacheck: globals
+	DurabilityFrame UIParent
+]]
 
 -- Mine
 local isInit = false
@@ -17,7 +20,7 @@ function MODULE.SetUpDurabilityFrame()
 	if not isInit and C.db.char.blizzard.durability.enabled then
 		DurabilityFrame:ClearAllPoints()
 		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
-		E:CreateMover(DurabilityFrame)
+		E.Movers:Create(DurabilityFrame)
 
 		isInit = true
 	end

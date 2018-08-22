@@ -5,6 +5,7 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local _G = getfenv(0)
 local assert = _G.assert
 local m_abs = _G.math.abs
+local m_ceil = _G.math.ceil
 local m_floor = _G.math.floor
 local m_max = _G.math.max
 local m_min = _G.math.min
@@ -22,7 +23,6 @@ local unpack = _G.unpack
 
 -- Blizz
 local GetTickTime = _G.GetTickTime
-local Saturate = _G.Saturate
 
 -- Mine
 -----------
@@ -55,16 +55,24 @@ do
 	local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 
 	function E:NumberFormat(v, mod)
-		if v >= 1E4 then
-			local i, f = m_modf(v / (v >= 1E6 and 1E6 or 1E4))
+		if v >= 1E6 then
+			local i, f = m_modf(v / 1E6)
 
 			if mod and mod > 0 then
-				return s_format("%s.%d"..(v >= 1E6 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i), f * 10 ^ mod)
+				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
 			else
-				return s_format("%s"..(v >= 1E6 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i))
+				return s_format("%s"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+			end
+		elseif v >= 1E4 then
+			local i, f = m_modf(v / 1E3)
+
+			if mod and mod > 0 then
+				return s_format("%s.%d"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+			else
+				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
 			end
 		elseif v >= 0 then
-			return v
+			return BreakUpLargeNumbers(v)
 		else
 			return 0
 		end
@@ -72,24 +80,97 @@ do
 end
 
 do
-	local DAY_ONELETTER_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
-	local HOUR_ONELETTER_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
-	local MINUTE_ONELETTER_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
-	local SECOND_ONELETTER_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_D_ABBR = _G.DAY_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_H_ABBR = _G.HOUR_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_M_ABBR = _G.MINUTE_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_S_ABBR = _G.SECOND_ONELETTER_ABBR:gsub("[ .]", "")
+	local D_MS_ABBR = "%d" .. _G.MILLISECONDS_ABBR
+
+	local F_D_ABBR = D_D_ABBR:gsub("%%d", "%%.1f")
+	local F_H_ABBR = D_H_ABBR:gsub("%%d", "%%.1f")
+	local F_M_ABBR = D_M_ABBR:gsub("%%d", "%%.1f")
+	local F_S_ABBR = D_S_ABBR:gsub("%%d", "%%.1f")
+	local F_MS_ABBR = "%.1f" .. _G.MILLISECONDS_ABBR
+
+	local X_XX_FORMAT = "%d:%02d"
+	local D = "%d"
+	local F = "%.1f"
 
 	function E:TimeFormat(v)
 		if v >= 86400 then
-			return s_format(DAY_ONELETTER_ABBR, round(v / 86400)), "e5e5e5"
+			return s_format(D_D_ABBR, round(v / 86400)), "e5e5e5"
 		elseif v >= 3600 then
-			return s_format(HOUR_ONELETTER_ABBR, round(v / 3600)), "e5e5e5"
+			return s_format(D_H_ABBR, round(v / 3600)), "e5e5e5"
 		elseif v >= 60 then
-			return s_format(MINUTE_ONELETTER_ABBR, round(v / 60)), "e5e5e5"
+			return s_format(D_M_ABBR, round(v / 60)), "e5e5e5"
 		elseif v >= 5 then
-			return s_format(SECOND_ONELETTER_ABBR, round(v)), v >= 30 and "e5e5e5" or v >= 10 and "ffbf19" or "e51919"
+			return s_format(D_S_ABBR, round(v)), v >= 30 and "e5e5e5" or v >= 10 and "ffbf19" or "e51919"
 		elseif v >= 0 then
 			return s_format("%.1f", v), "e51919"
 		else
 			return 0
+		end
+	end
+
+	function E:SecondsToTime(v, format)
+		if format == "abbr" then
+			if v >= 86400 then
+				return m_ceil(v / 86400), nil, D_D_ABBR
+			elseif v >= 3600 then
+				return m_ceil(v / 3600), nil, D_H_ABBR
+			elseif v >= 60 then
+				return m_ceil(v / 60), nil, D_M_ABBR
+			elseif v >= 1 then
+				return m_ceil(v / 1), nil, D_S_ABBR
+			else
+				return m_ceil(v / 0.001), nil, D_MS_ABBR
+			end
+		elseif format == "x:xx" then
+			if v >= 86400 then
+				return m_floor(v / 86400), m_floor(v % 86400 / 3600), X_XX_FORMAT
+			elseif v >= 3600 then
+				return m_floor(v / 3600), m_floor(v % 3600 / 60), X_XX_FORMAT
+			elseif v >= 60 then
+				return m_floor(v / 60), m_floor(v % 60 / 1), X_XX_FORMAT
+			elseif v >= 1 then
+				return m_floor(v / 1), m_floor(v % 1 / 0.001), X_XX_FORMAT
+			else
+				return 0, m_floor(v / 0.001), X_XX_FORMAT
+			end
+		elseif format == "frac" then
+			if v >= 86400 then
+				return v / 86400, nil, F
+			elseif v >= 3600 then
+				return v / 3600, nil, F
+			elseif v >= 60 then
+				return v / 60, nil, F
+			else
+				return v, nil, F
+			end
+		elseif format == "frac-abbr" then
+			if v >= 86400 then
+				return v / 86400, nil, F_D_ABBR
+			elseif v >= 3600 then
+				return v / 3600, nil, F_H_ABBR
+			elseif v >= 60 then
+				return v / 60, nil, F_M_ABBR
+			elseif v >= 1 then
+				return v, nil, F_S_ABBR
+			else
+				return v, nil, F_MS_ABBR
+			end
+		else
+			if v >= 86400 then
+				return m_ceil(v / 86400), nil, D
+			elseif v >= 3600 then
+				return m_ceil(v / 3600), nil, D
+			elseif v >= 60 then
+				return m_ceil(v / 60), nil, D
+			elseif v >= 1 then
+				return m_ceil(v), nil, D
+			else
+				return v, nil, F
+			end
 		end
 	end
 end
@@ -204,19 +285,36 @@ do
 	end
 
 	-- http://wow.gamepedia.com/ColorGradient
-	local function calcGradient(colorTable, perc)
-		local num = #colorTable
+	local function calcGradient(perc, ...)
+		local num = select("#", ...)
 
-		if perc >= 1 then
-			return colorTable[num - 2], colorTable[num - 1], colorTable[num]
-		elseif perc <= 0 then
-			return colorTable[1], colorTable[2], colorTable[3]
+		if num == 1 then
+			local colorTable = ...
+			num = #colorTable
+
+			if perc >= 1 then
+				return colorTable[num - 2], colorTable[num - 1], colorTable[num]
+			elseif perc <= 0 then
+				return colorTable[1], colorTable[2], colorTable[3]
+			end
+
+			local i, relperc = m_modf(perc * (num / 3 - 1))
+			local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
+
+			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
+		else
+			if perc >= 1 then
+				return select(num - 2, ...)
+			elseif perc <= 0 then
+				local r, g, b = ...
+				return r, g, b
+			end
+
+			local i, relperc = m_modf(perc * (num / 3- 1))
+			local r1, g1, b1, r2, g2, b2 = select((i * 3) + 1, ...)
+
+			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 		end
-
-		local i, relperc = m_modf(perc * (num / 3 - 1))
-		local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
-
-		return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, 1
 	end
 
 	function E:RGBToHEX(r, g, b)
@@ -320,16 +418,16 @@ do
 	do
 		local function getHEX(self, perc, adjustment)
 			if adjustment and adjustment ~= 0 then
-				local r, g, b = calcGradient(self, perc)
+				local r, g, b = calcGradient(perc, self)
 
 				return RGBToHEX(adjustColor(r, g, b, adjustment))
 			else
-				return RGBToHEX(calcGradient(self, perc))
+				return RGBToHEX(calcGradient(perc, self))
 			end
 		end
 
 		local function getRGB(self, perc, adjustment)
-			local r, g, b = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
@@ -339,17 +437,17 @@ do
 		end
 
 		local function getRGBA(self, perc, alpha, adjustment)
-			local r, g, b, a = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
 			end
 
-			return r, g, b, alpha or a
+			return r, g, b, alpha or 1
 		end
 
 		local function getRGBHEX(self, perc, adjustment)
-			local r, g, b = calcGradient(self, perc)
+			local r, g, b = calcGradient(perc, self)
 
 			if adjustment and adjustment ~= 0 then
 				r, g, b = adjustColor(r, g, b, adjustment)
@@ -393,25 +491,50 @@ do
 	do
 		local objects = {}
 
+		local function isCloseEnough(r, g, b, tR, tG, tB)
+			return m_abs(r - tR) <= 0.05 and m_abs(g - tG) <= 0.05 and m_abs(b - tB) <= 0.05
+		end
+
 		C_Timer.NewTicker(0, function()
 			for object, target in next, objects do
-				local r, g, b = calcGradient({object._r, object._g, object._b, target.r, target.g, target.b}, Saturate(0.1 * GetTickTime() * 60.0))
+				local r, g, b = calcGradient(clamp(0.25 * GetTickTime() * 60.0), object._r, object._g, object._b, target.r, target.g, target.b)
 
-				if m_abs(r - target.r) <= 0.05 and m_abs(g - target.g) <= 0.05 and m_abs(b - target.b) <= 0.05 then
+				if isCloseEnough(object._r, object._g, object._b, target.r, target.g, target.b) then
 					r, g, b = target.r, target.g, target.b
 					objects[object] = nil
 				end
 
-				object:SetVertexColor(r, g, b)
+				object:SetVertexColor_(r, g, b, target._a)
 				object._r, object._g, object._b = r, g, b
 			end
 		end)
 
-		function E:SetSmoothedVertexColor(object, r, g, b)
+		local function object_SetSmoothedVertexColor(self, r, g, b, a)
+			self._r, self._g, self._b = self:GetVertexColor()
+
+			if isCloseEnough(self._r, self._g, self._b, r, g, b) then
+				self:SetVertexColor_(r, g, b, a)
+			else
+				objects[self] = {r = r, g = g, b = b, a = a}
+			end
+		end
+
+		function E:SetSmoothedVertexColor(object, r, g, b, a)
 			if not object.GetVertexColor then return end
 
-			object._r, object._g, object._b = object:GetVertexColor()
-			objects[object] = {r = r, g = g, b = b}
+			if not object.SetVertexColor_ then
+				object.SetVertexColor_ = object.SetVertexColor
+				object.SetVertexColor = object_SetSmoothedVertexColor
+			end
+
+			object:SetVertexColor(r, g, b, a)
+		end
+
+		function E:SmoothColor(object)
+			if not object.GetVertexColor then return end
+
+			object.SetVertexColor_ = object.SetVertexColor
+			object.SetVertexColor = object_SetSmoothedVertexColor
 		end
 	end
 end
@@ -739,46 +862,32 @@ function E:ResolveAnchorPoint(frame, children)
 	end
 end
 
-function E:CalcSegmentsSizes(size, num)
-	local size_wo_gaps = size - 2 * (num - 1)
-	local seg_size = size_wo_gaps / num
-	local mod = seg_size % 1
+function E:CalcSegmentsSizes(totalSize, spacing, numSegs)
+	local totalSizeWoGaps = totalSize - spacing * (numSegs - 1)
+	local segSize = totalSizeWoGaps / numSegs
 	local result = {}
 
-	if mod == 0 then
-		for k = 1, num do
-			result[k] = seg_size
+	if segSize % 1 == 0 then
+		for i = 1, numSegs do
+			result[i] = segSize
 		end
 	else
-		seg_size = round(seg_size)
+		local numOddSegs = numSegs % 2 == 0 and 2 or 1
+		local numNormalSegs = numSegs - numOddSegs
+		segSize = round(segSize)
 
-		if num % 2 == 0 then
-			local range = (num - 2) / 2
+		for i = 1, numNormalSegs / 2 do
+			result[i] = segSize
+		end
 
-			for k = 1, range do
-				result[k] = seg_size
-			end
+		for i = numSegs - numNormalSegs / 2 + 1, numSegs do
+			result[i] = segSize
+		end
 
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
+		segSize = (totalSizeWoGaps - segSize * numNormalSegs) / numOddSegs
 
-			seg_size = (size_wo_gaps - seg_size * range * 2) / 2
-			result[range + 1] = seg_size
-			result[range + 2] = seg_size
-		else
-			local range = (num - 1) / 2
-
-			for k = 1, range do
-				result[k] = seg_size
-			end
-
-			for k = num - range + 1, num do
-				result[k] = seg_size
-			end
-
-			seg_size = size_wo_gaps - seg_size * range * 2
-			result[range + 1] = seg_size
+		for i = 1, numOddSegs do
+			result[numNormalSegs / 2 + i] = segSize
 		end
 	end
 
@@ -822,7 +931,15 @@ function E:GetCoords(object)
 end
 
 function E:GetScreenQuadrant(frame)
-	local x, y = frame:GetCenter()
+	local x, y
+
+	if frame == "cursor" then
+		x, y = GetCursorPosition()
+		x = x / UIParent:GetEffectiveScale()
+		y = y / UIParent:GetEffectiveScale()
+	else
+		x, y = frame:GetCenter()
+	end
 
 	if not (x and y) then
 		return "UNKNOWN"

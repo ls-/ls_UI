@@ -4,6 +4,8 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local m_max = _G.math.max
+local m_min = _G.math.min
 local next = _G.next
 
 -- Blizz
@@ -93,71 +95,8 @@ local BLACKLIST = {
 	[240989] = true, -- Heavily Augmented
 }
 
-local function overlay_HideOverride(self)
-	self:SetVertexColor(1, 1, 1)
-end
-
-local function button_UpdateTooltip(self)
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
-end
-
-local function button_OnEnter(self)
-	if not self:IsVisible() then return end
-
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	self:UpdateTooltip()
-end
-
-local function button_OnLeave()
-	GameTooltip:Hide()
-end
-
-local function createAuraIcon(element, index)
-	local button = E:CreateButton(element, "$parentAura"..index, true)
-
-	button.icon = button.Icon
-	button.Icon = nil
-
-	button.count = button.Count
-	button.Count = nil
-
-	button.cd = button.CD
-	button.CD = nil
-
-	if button.cd.SetTimerTextHeight then
-		button.cd:SetTimerTextHeight(10)
-		button.cd.Timer:SetJustifyV("BOTTOM")
-	end
-
-	button:SetPushedTexture("")
-	button:SetHighlightTexture("")
-
-	button.overlay = button.Border
-	button.overlay.Hide = overlay_HideOverride
-	button.Border = nil
-
-	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
-	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
-	stealable:SetPoint("TOPLEFT", -1, 1)
-	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
-	stealable:SetBlendMode("ADD")
-	button.stealable = stealable
-
-	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
-	auraType:SetSize(16, 16)
-	auraType:SetPoint("TOPLEFT", -2, 2)
-	button.AuraType = auraType
-
-	button.UpdateTooltip = button_UpdateTooltip
-	button:SetScript("OnEnter", button_OnEnter)
-	button:SetScript("OnLeave", button_OnLeave)
-
-	return button
-end
-
 local filterFunctions = {
-	default = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
 		if BLACKLIST[spellID] then
 			return false
@@ -230,7 +169,7 @@ local filterFunctions = {
 
 		return false
 	end,
-	boss = function(element, unit, aura, _, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
+	boss = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
 		local config = element._config and element._config.filter or nil
 
@@ -283,7 +222,70 @@ local filterFunctions = {
 	end,
 }
 
-local function updateAuraType(_, _, aura)
+local function overlay_HideOverride(self)
+	self:SetVertexColor(1, 1, 1)
+end
+
+local function button_UpdateTooltip(self)
+	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+end
+
+local function button_OnEnter(self)
+	if not self:IsVisible() then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	self:UpdateTooltip()
+end
+
+local function button_OnLeave()
+	GameTooltip:Hide()
+end
+
+local function element_CreateAuraIcon(element, index)
+	local button = E:CreateButton(element, "$parentAura" .. index, true)
+
+	button.icon = button.Icon
+	button.Icon = nil
+
+	button.count = button.Count
+	button.Count = nil
+
+	button.cd = button.CD
+	button.CD = nil
+
+	if button.cd.UpdateConfig then
+		button.cd:UpdateConfig(element.cooldownConfig or {})
+		button.cd:UpdateFontObject()
+	end
+
+	button:SetPushedTexture("")
+	button:SetHighlightTexture("")
+
+	button.overlay = button.Border
+	button.overlay.Hide = overlay_HideOverride
+	button.Border = nil
+
+	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
+	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
+	stealable:SetPoint("TOPLEFT", -1, 1)
+	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
+	stealable:SetBlendMode("ADD")
+	button.stealable = stealable
+
+	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
+	auraType:SetSize(16, 16)
+	auraType:SetPoint("TOPLEFT", -2, 2)
+	button.AuraType = auraType
+
+	button.UpdateTooltip = button_UpdateTooltip
+	button:SetScript("OnEnter", button_OnEnter)
+	button:SetScript("OnLeave", button_OnLeave)
+
+	return button
+end
+
+local function element_UpdateAuraType(_, _, aura)
 	if aura.isDebuff then
 		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 	else
@@ -291,17 +293,48 @@ local function updateAuraType(_, _, aura)
 	end
 end
 
+local function element_UpdateConfig(element)
+	element._config = E:CopyTable(element.__owner._config.auras, element._config)
+end
+
+local function element_UpdateCooldownConfig(element)
+	if not element.cooldownConfig then
+		element.cooldownConfig = {
+			colors = {},
+			text = {},
+		}
+	end
+
+	element.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
+	element.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+	element.cooldownConfig.colors = E:CopyTable(C.db.profile.units.cooldown.colors, element.cooldownConfig.colors)
+	element.cooldownConfig.text = E:CopyTable(element._config.cooldown.text, element.cooldownConfig.text)
+
+	for i = 1, #element do
+		if not element[i].cd.UpdateConfig then
+			break
+		end
+
+		element[i].cd:UpdateConfig(element.cooldownConfig)
+		element[i].cd:UpdateFontObject()
+	end
+end
+
 local function frame_UpdateAuras(self)
-	local config = self._config.auras
 	local element = self.Auras
-	local size = config.size_override ~= 0 and config.size_override or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
+	element:UpdateConfig()
+	element:UpdateCooldownConfig()
+
+	local config = element._config
+	local size = config.size_override ~= 0 and config.size_override
+		or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
+	size = m_min(m_max(size, 24), 64)
 
 	element.size = size
 	element.numTotal = config.per_row * config.rows
 	element.disableMouse = config.disable_mouse
 	element["growth-x"] = config.x_growth
 	element["growth-y"] = config.y_growth
-	element._config = config
 
 	if config.y_growth == "UP" then
 		if config.x_growth == "RIGHT" then
@@ -339,13 +372,16 @@ end
 
 function UF:CreateAuras(frame, unit)
 	local element = CreateFrame("Frame", nil, frame)
+	element:SetSize(48, 48)
 
 	element.spacing = 4
 	element.showDebuffType = true
 	element.showStealableBuffs = true
-	element.CreateIcon = createAuraIcon
+	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = updateAuraType
+	element.PostUpdateIcon = element_UpdateAuraType
+	element.UpdateConfig = element_UpdateConfig
+	element.UpdateCooldownConfig = element_UpdateCooldownConfig
 
 	frame.UpdateAuras = frame_UpdateAuras
 

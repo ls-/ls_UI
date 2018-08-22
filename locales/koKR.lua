@@ -6,7 +6,11 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
-if _G.GetLocale() ~= "koKR" then return end
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "koKR" then return end
 
 -- Lua
 local m_modf = _G.math.modf
@@ -19,16 +23,24 @@ do
 	local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
 
 	function E:NumberFormat(v, mod)
-		if v >= 1E4 then
-			local i, f = m_modf(v / (v >= 1E8 and 1E8 or 1E4))
+		if v >= 1E8 then
+			local i, f = m_modf(v / 1E8)
 
 			if mod and mod > 0 then
-				return s_format("%s.%d"..(v >= 1E8 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i), f * 10 ^ mod)
+				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
 			else
-				return s_format("%s"..(v >= 1E8 and SECOND_NUMBER_CAP_NO_SPACE or FIRST_NUMBER_CAP_NO_SPACE), BreakUpLargeNumbers(i))
+				return s_format("%s"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
+			end
+		elseif v >= 1E4 then
+			local i, f = m_modf(v / 1E4)
+
+			if mod and mod > 0 then
+				return s_format("%s.%d"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
+			else
+				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
 			end
 		elseif v >= 0 then
-			return v
+			return BreakUpLargeNumbers(v)
 		else
 			return 0
 		end

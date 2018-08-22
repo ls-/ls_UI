@@ -4,6 +4,11 @@ local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
+
+--[[ luacheck: globals
+	CreateFrame NPE_TutorialInterfaceHelp UIParent
+]]
 
 -- Mine
 local isInit = false
@@ -15,16 +20,16 @@ end
 function BLIZZARD:SetUpNPE()
 	if not isInit and C.db.char.blizzard.npe.enabled then
 		E:AddOnLoadTask("Blizzard_Tutorial", function()
-			local holder = _G.CreateFrame("Frame", "NPE_TutorialInterfaceHelpHolder", UIParent)
-			holder:SetFrameLevel(_G.NPE_TutorialInterfaceHelp:GetFrameLevel() + 1)
+			local holder = CreateFrame("Frame", "NPE_TutorialInterfaceHelpHolder", UIParent)
+			holder:SetFrameLevel(NPE_TutorialInterfaceHelp:GetFrameLevel() + 1)
 			holder:SetSize(156, 50)
 			holder:SetPoint("BOTTOM", UIParent, "BOTTOM", -34, 336)
-			E:CreateMover(holder, true)
+			E.Movers:Create(holder, true)
 
-			_G.NPE_TutorialInterfaceHelp:ClearAllPoints()
-			_G.NPE_TutorialInterfaceHelp:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
+			NPE_TutorialInterfaceHelp:ClearAllPoints()
+			NPE_TutorialInterfaceHelp:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
 
-			_G.hooksecurefunc(_G.NPE_TutorialInterfaceHelp, "SetPoint", function(self, ...)
+			hooksecurefunc(NPE_TutorialInterfaceHelp, "SetPoint", function(self, ...)
 				local _, parent = ...
 
 				if parent ~= holder then
@@ -35,7 +40,5 @@ function BLIZZARD:SetUpNPE()
 		end)
 
 		isInit = true
-
-		self.SetUpNPE = E.NOOP
 	end
 end

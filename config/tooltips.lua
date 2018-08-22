@@ -98,6 +98,23 @@ function CONFIG.CreateTooltipsPanel(_, order)
 					C.db.profile.tooltips.count = value
 				end
 			},
+			spacer_2 = {
+				order = 20,
+				type = "description",
+				name = "",
+				width = "full",
+			},
+			anchor_cursor = {
+				order = 21,
+				type = "toggle",
+				name = L["ANCHOR_TO_CURSOR"],
+				get = function()
+					return C.db.profile.tooltips.anchor_cursor
+				end,
+				set = function(_, value)
+					C.db.profile.tooltips.anchor_cursor = value
+				end
+			},
 		},
 	}
 end

@@ -8,10 +8,11 @@ local next = _G.next
 
 --[[ luacheck: globals
 	CooldownFrame_Set CreateFrame GetNumShapeshiftForms GetShapeshiftFormCooldown GetShapeshiftFormInfo InCombatLockdown
-	UIParent
+	LibStub UIParent
 ]]
 
 -- Mine
+local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 local isInit = false
 
 local BUTTONS = {
@@ -24,7 +25,7 @@ local TOP_POINT = {
 	anchor = "UIParent",
 	rP = "BOTTOM",
 	x = 0,
-	y = 152,
+	y = 156,
 }
 
 local BOTTOM_POINT = {
@@ -32,7 +33,7 @@ local BOTTOM_POINT = {
 	anchor = "UIParent",
 	rP = "BOTTOM",
 	x = 0,
-	y = 124,
+	y = 128,
 }
 
 local LAYOUT = {
@@ -57,7 +58,7 @@ end
 local function button_Update(self)
 	if self:IsShown() then
 		local id = self:GetID()
-		local texture, _, isActive, isCastable = GetShapeshiftFormInfo(id)
+		local texture, isActive, isCastable = GetShapeshiftFormInfo(id)
 
 		self.icon:SetTexture(texture)
 
@@ -91,7 +92,7 @@ local function button_UpdateHotKey(self, state)
 
 	if self._parent._config.hotkey.enabled then
 		self.HotKey:SetParent(self)
-		self.HotKey:SetFormattedText("%s", self:GetBindingKey())
+		self.HotKey:SetFormattedText("%s", self:GetHotkey())
 		self.HotKey:Show()
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
@@ -100,13 +101,19 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont"..config.size..(config.flag ~= "" and "_"..config.flag or ""))
+	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
 	self.HotKey:SetWordWrap(false)
 end
 
 local function button_UpdateCooldown(self)
 	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
+end
+
+local function button_OnEnter(self)
+	if LibKeyBound then
+		LibKeyBound:Set(self)
+	end
 end
 
 function MODULE.CreateStanceBar()
@@ -122,6 +129,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateVisibility()
 			self:UpdateForms()
 			self:UpdateButtons("UpdateHotKeyFont")
+			self:UpdateCooldownConfig()
 			self:UpdateFading()
 			E:UpdateBarLayout(self)
 		end
@@ -139,13 +147,14 @@ function MODULE.CreateStanceBar()
 		end
 
 		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "$parentButton"..i, bar, "StanceButtonTemplate")
+			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "StanceButtonTemplate")
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
+			button:HookScript("OnEnter", button_OnEnter)
 			button:UnregisterAllEvents()
 			button._parent = bar
-			button._command = "SHAPESHIFTBUTTON"..i
+			button._command = "SHAPESHIFTBUTTON" .. i
 
 			button.Update = button_Update
 			button.UpdateCooldown = button_UpdateCooldown
@@ -196,7 +205,7 @@ function MODULE.CreateStanceBar()
 
 		local point = getBarPoint()
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E:CreateMover(bar)
+		E.Movers:Create(bar)
 
 		bar:Update()
 

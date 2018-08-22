@@ -77,7 +77,7 @@ oUF.Tags.Methods["ls:color:class"] = function(unit)
 		local _, class = UnitClass(unit)
 
 		if class then
-			return "|cff"..M.COLORS.CLASS[class]:GetHEX()
+			return "|cff" .. M.COLORS.CLASS[class]:GetHEX()
 		end
 	end
 
@@ -89,7 +89,7 @@ oUF.Tags.Methods["ls:color:reaction"] = function(unit)
 	local reaction = UnitReaction(unit, 'player')
 
 	if reaction then
-		return "|cff"..M.COLORS.REACTION[reaction]:GetHEX()
+		return "|cff" .. M.COLORS.REACTION[reaction]:GetHEX()
 	end
 
 	return "|cffffffff"
@@ -97,7 +97,7 @@ end
 
 oUF.Tags.Events["ls:color:difficulty"] = "UNIT_LEVEL PLAYER_LEVEL_UP"
 oUF.Tags.Methods["ls:color:difficulty"] = function(unit)
-	return "|cff"..E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
+	return "|cff" .. E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)):GetHEX()
 end
 
 oUF.Tags.Methods["ls:color:power"] = function(unit)
@@ -110,19 +110,19 @@ oUF.Tags.Methods["ls:color:power"] = function(unit)
 		hex = M.COLORS.POWER[type]:GetHEX(0.3)
 	end
 
-	return "|cff"..hex
+	return "|cff" .. hex
 end
 
 oUF.Tags.Methods["ls:color:altpower"] = function()
-	return "|cff"..M.COLORS.INDIGO:GetHEX(0.3)
+	return "|cff" .. M.COLORS.INDIGO:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-damage"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.3)
+	return "|cff" .. M.COLORS.HEALPREDICTION.DAMAGE_ABSORB:GetHEX(0.3)
 end
 
 oUF.Tags.Methods["ls:color:absorb-heal"] = function()
-	return "|cff"..M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.3)
+	return "|cff" .. M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetHEX(0.3)
 end
 
 ------------
@@ -343,7 +343,7 @@ end
 -- ALT POWER --
 ---------------
 
-oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPower(unit, ALTERNATE_POWER_INDEX), 1)
@@ -352,7 +352,7 @@ oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return E:NumberFormat(UnitPowerMax(unit, ALTERNATE_POWER_INDEX), 1)
@@ -361,7 +361,7 @@ oUF.Tags.Methods["ls:altpower:max"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		return s_format("%.1f%%", E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))
@@ -370,7 +370,7 @@ oUF.Tags.Methods["ls:altpower:perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -385,7 +385,7 @@ oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-color-perc"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -400,7 +400,7 @@ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -415,7 +415,7 @@ oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
 	end
 end
 
-oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER UNIT_MAXPOWER'
+oUF.Tags.Events["ls:altpower:cur-color-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
@@ -586,11 +586,11 @@ oUF.Tags.Methods["ls:debuffs"] = function(unit)
 	local status = ""
 
 	for i = 1, 40 do
-		local name, _, _, _, type = UnitDebuff(unit, i, "RAID")
+		local name, _, _, type = UnitDebuff(unit, i, "RAID")
 
 		if name then
 			if types[type] and not hasDebuff[type] then
-				status = status..DEBUFF_ICON_TEMPLATE:format(type)
+				status = status .. DEBUFF_ICON_TEMPLATE:format(type)
 				hasDebuff[type] = true
 			end
 		else
@@ -636,8 +636,12 @@ end
 
 oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
 oUF.Tags.Methods["ls:phaseicon"] = function(unit)
-	if not UnitInPhase(unit) then
-		return M.textures.inlineicons["PHASE"]:format(0, 0)
+	if not UnitInPhase(unit) or UnitIsWarModePhased(unit) then
+		if UnitIsWarModePhased(unit) then
+			return M.textures.inlineicons["PHASE_WM"]:format(0, 0)
+		else
+			return M.textures.inlineicons["PHASE"]:format(0, 0)
+		end
 	else
 		return ""
 	end

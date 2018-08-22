@@ -6,4 +6,8 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
-if _G.GetLocale() ~= "deDE" then return end
+--[[ luacheck: globals
+	GetLocale
+]]
+
+if GetLocale() ~= "deDE" then return end

@@ -1,5 +1,105 @@
 # CHANGELOG
 
+## Version 80000.09
+
+- Reworked fade in and out animations. Previously, their performance was degrading over time, and  
+  after long gaming sessions they could cause micro stuttering and/or big freezes when being played;
+- Added unit frame tag validation to avoid issues caused by invalid tags;
+- Added options to colour minimap border and to adjust border's and text's colours;
+- Added options to adjust xp bar's text;
+- Added the option to colour player orb's border;
+- Normal and war mode phase indicators now use different icons, blue and red respectively;
+- Updated both Spanish translations. Translated by Gotzon@Curse;
+- Updated embeds.
+
+## Version 80000.08
+
+- Fixed the "Inventory" micro button's currency tracker;
+- Fixed an issue where getting and/or setting a key binding text for a button with no name would  
+  result in an error. This issue mainly affected the Pet Battle UI;
+- Blizz castbar's movers are now properly disabled when the default castbars aren't actually  
+  used;
+- Player's buffs, debuffs, and totems are now hidden while doing pet battles.
+
+## Version 80000.07
+
+- Reworked UF config tables' structure. Target, target of target, focus, target of focus, and boss  
+  frames' settings are cross-layout, so their settings are shared between "Orbs" and "Classic" UI  
+  layouts. Player and pet frames' settings will stay tied to UI layouts because those frames are  
+  unique. Unit frame settings of the currently active UI layout will be copied, but some settings  
+  may be lost. This will also help people with copying profiles from one char to another, even if  
+  different UI layouts are used on those chars;
+- Fixed numerous bugs in the "Unit Frames" config. Copying settings between unit frame, incl. aura  
+  filters, should work as intended now;
+- Unit frame auras' min and max sizes are set to 24px and 64px respectively. These will also be  
+  applied to automatic size calculations;
+- Reduced the xp bar's width and updated the artwork;
+- Updated embeds.
+
+## Version 80000.06
+
+- Fixed action buttons' icons' colouring.
+
+## Version 80000.05
+
+- Added "Desaturation" section to "Action Bars" config. Replaces "Desaturate on Cooldown" and  
+  "Desaturate when Not Usable" options;
+- Fixed the default castbars' skin.
+
+## Version 80000.04
+
+- Reworked cooldowns' handling. Action bars, auras, and aura tracker received a set of options to  
+  customise cooldowns' appearance. Unit frames will get a similar update a bit later;
+- Reworked mirror timers, e.g., fatigue, breath, etc. They now show the remaining time in the M:SS  
+  format;
+- Added the default cast bars' skin for people who don't use my unit frames;
+- Updated "Blizzard" config section. Added options to customise mirror timers, digsite bar;
+- Updated "Action Bars" config section. In addition to aforementioned cooldown changes, I also  
+  added options to customise action buttons' colours and to desaturate icons when buttons are  
+  unusable;
+- Updated the loot frame, so it's impossible to click through it;
+- Numerous bug fixes and tweaks;
+- Updated embeds.
+
+NOTE #1: You'll have to restart WoW client to make things work after the update.
+
+NOTE #2: Aura module's config is now cross-layout, which means that it'll use the same settings  
+for both "Orbs" and "Classic" layouts. Although almost everything should be copied, some data loss  
+may occur.
+
+## Version 80000.03
+
+- Reworked micro menu. Again. Added options to split micro menu into two bars and to assign each  
+  button to either bar individually;
+- Fixed loot frame error that occurred for people who like to spam-click things;
+- Updated both Spanish translations. Translated by Gotzon@Curse.
+
+## Version 80000.02
+
+- Fixed "Classic" layout.
+
+## Version 80000.01
+
+- Added 8.0.1 support;
+- Added custom loot frame;
+- Added mouseover key binding. Use "/lsui kb" command or "Binding Mode" button in the config;
+- Added options to enable DK runes' sorting and colouring by spec;
+- Reworked action bar hub. Retired bag bar;
+- Reworked micro menu and its config. Added "Inventory" micro button;
+- Reworked tooltips. Added tooltip mover and the option to attach it to the mouse cursor;
+- Numerous bug fixes and tweaks;
+- Updated embeds.
+
+## Version 70300.16
+
+- Fixed number formatting for non-Asian locales.
+
+## Version 70300.15
+
+- Added Russian translation. Translated by Biowoolf@WoWInterface and me;
+- Updated Simplified Chinese translation. Translated by aenerv7@GitHub;
+- Updated embeds.
+
 ## Version 70300.14
 
 - Added French translation. Translated by Daniel8513@Curse;
