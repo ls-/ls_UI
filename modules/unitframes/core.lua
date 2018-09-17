@@ -38,7 +38,7 @@ end
 
 local function frame_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.units[self._unit], self._config)
-	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
+	-- self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
 end
 
 local function frame_UpdateSize(self)
