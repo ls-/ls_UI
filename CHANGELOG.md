@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 80000.10
+
+- Added cooldown options to the "Unit Frames" and unit frames' "Auras" configs;
+- Removed "Show Cooldown Bling" option. The bling is disabled on all handled cooldowns now  
+  because the animation is bugged anyway;
+- Updated Simplified Chinese translation. Translated by aenerv7@GitHub;
+- Updated embeds.
+
 ## Version 80000.09
 
 - Reworked fade in and out animations. Previously, their performance was degrading over time, and  
