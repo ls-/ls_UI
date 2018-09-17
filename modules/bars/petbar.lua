@@ -81,7 +81,6 @@ local function bar_UpdateButtonConfig(self)
 	self.buttonConfig.clickOnDown = self._config.click_on_down
 	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
-	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
 
@@ -161,7 +160,6 @@ end
 local function button_UpdateCooldown(self)
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
-	self.cooldown:SetDrawBling(self.config.drawBling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
 
 	local oldOnCooldown = self.onCooldown

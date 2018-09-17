@@ -157,6 +157,7 @@ function E.Cooldowns.Handle(cooldown)
 		return cooldown
 	end
 
+	cooldown:SetDrawBling(false)
 	cooldown:SetDrawEdge(false)
 	cooldown:SetHideCountdownNumbers(true)
 	cooldown:GetRegions():SetAlpha(0) -- Default CD timer is region #1

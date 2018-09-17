@@ -140,7 +140,6 @@ local function bar_UpdateConfig(self)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
-	self._config.draw_bling = C.db.profile.bars.draw_bling
 	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
 	self._config.range_indicator = C.db.profile.bars.range_indicator
@@ -169,7 +168,6 @@ local function bar_UpdateButtonConfig(self)
 	self.buttonConfig.clickOnDown = self._config.click_on_down
 	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
-	self.buttonConfig.drawBling = self._config.draw_bling
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
 	self.buttonConfig.hideElements.macro = not self._config.macro.enabled

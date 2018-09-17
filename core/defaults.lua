@@ -1446,7 +1446,6 @@ D.profile = {
 		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
 		click_on_down = false,
-		draw_bling = true,
 		blizz_vehicle = false,
 		cooldown = {
 			exp_threshold = 5,

@@ -765,13 +765,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
-			draw_bling = {
-				order = 15,
-				type = "toggle",
-				name = L["DRAW_COOLDOWN_BLING"],
-				desc = L["DRAW_COOLDOWN_BLING_DESC"],
-				disabled = isModuleDisabled,
-			},
 			spacer_2 = {
 				order = 19,
 				type = "description",

@@ -106,7 +106,6 @@ local function button_UpdateHotKeyFont(self)
 end
 
 local function button_UpdateCooldown(self)
-	self.cooldown:SetDrawBling(C.db.profile.bars.draw_bling and self.cooldown:GetEffectiveAlpha() > 0.5)
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
 end
 
