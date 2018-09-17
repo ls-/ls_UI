@@ -36,6 +36,7 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 local UnitIsGroupLeader = _G.UnitIsGroupLeader
 local UnitIsPlayer = _G.UnitIsPlayer
 local UnitIsQuestBoss = _G.UnitIsQuestBoss
+local UnitIsWarModePhased = _G.UnitIsWarModePhased
 local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
@@ -636,7 +637,7 @@ end
 
 oUF.Tags.Events["ls:phaseicon"] = "UNIT_PHASE"
 oUF.Tags.Methods["ls:phaseicon"] = function(unit)
-	if not UnitInPhase(unit) or UnitIsWarModePhased(unit) then
+	if (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) and UnitIsPlayer(unit) and UnitIsConnected(unit) then
 		if UnitIsWarModePhased(unit) then
 			return M.textures.inlineicons["PHASE_WM"]:format(0, 0)
 		else
@@ -684,10 +685,17 @@ oUF.Tags.SharedEvents["PLAYER_REGEN_DISABLED"] = true
 oUF.Tags.SharedEvents["PLAYER_REGEN_ENABLED"] = true
 oUF.Tags.Methods["ls:pvptimer"] = function()
 	if IsPVPTimerRunning() then
-		local pattern, time = SecondsToTimeAbbrev(GetPVPTimer() / 1000)
+		local remain = GetPVPTimer() / 1000
+		if remain >= 1 then
+			local time1, time2, format
 
-		if time >= 1 then
-			return pattern:gsub(" ", ""):format(time)
+			if remain >= 60 then
+				time1, time2, format = E:SecondsToTime(remain, "x:xx")
+			else
+				time1, time2, format = E:SecondsToTime(remain)
+			end
+
+			return format:format(time1, time2)
 		end
 	end
 end

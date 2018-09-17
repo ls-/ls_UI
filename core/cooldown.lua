@@ -51,6 +51,7 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 				if remain <= 0 then
 					cooldown.Timer:SetText("")
 					activeCooldowns[cooldown] = nil
+					return
 				end
 
 				color = nil
@@ -156,6 +157,7 @@ function E.Cooldowns.Handle(cooldown)
 		return cooldown
 	end
 
+	cooldown:SetDrawBling(false)
 	cooldown:SetDrawEdge(false)
 	cooldown:SetHideCountdownNumbers(true)
 	cooldown:GetRegions():SetAlpha(0) -- Default CD timer is region #1

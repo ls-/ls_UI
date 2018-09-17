@@ -61,7 +61,6 @@ local function bar_UpdateConfig(self)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
 	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
-	self._config.draw_bling = C.db.profile.bars.draw_bling
 	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
 	self._config.range_indicator = C.db.profile.bars.range_indicator
