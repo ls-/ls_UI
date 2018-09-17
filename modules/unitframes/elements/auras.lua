@@ -98,6 +98,10 @@ local BLACKLIST = {
 	[269083] = true, -- Enlisted
 }
 
+local function isUnitBoss(unit)
+	return unit and (UnitIsUnit(unit, "boss1") or UnitIsUnit(unit, "boss2") or UnitIsUnit(unit, "boss3") or UnitIsUnit(unit, "boss4") or UnitIsUnit(unit, "boss5"))
+end
+
 local filterFunctions = {
 	default = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
@@ -120,7 +124,7 @@ local filterFunctions = {
 			return
 		end
 
-		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
+		isBossAura = isBossAura or isUnitBoss(caster)
 
 		-- boss
 		if isBossAura then
@@ -188,7 +192,7 @@ local filterFunctions = {
 			return
 		end
 
-		isBossAura = isBossAura or caster and (UnitIsUnit(caster, "boss1") or UnitIsUnit(caster, "boss2") or UnitIsUnit(caster, "boss3") or UnitIsUnit(caster, "boss4") or UnitIsUnit(caster, "boss5"))
+		isBossAura = isBossAura or isUnitBoss(caster)
 
 		-- boss
 		if isBossAura then
