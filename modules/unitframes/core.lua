@@ -130,6 +130,12 @@ function UF:UpdateUnitFrame(unit, method, ...)
 	end
 end
 
+function UF:UpdateUnitFrames(method, ...)
+	for unit in next, units do
+		self:UpdateUnitFrame(unit, method, ...)
+	end
+end
+
 function UF:GetUnits(ignoredUnits)
 	local temp = {}
 

@@ -44,15 +44,21 @@ local INSETS = {
 	[12] = "12",
 }
 
-local H_ALIGNMENT = {
+local H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
 	["LEFT"] = "LEFT",
 	["RIGHT"] = "RIGHT",
 }
-local V_ALIGNMENT = {
+local V_ALIGNMENTS = {
 	["BOTTOM"] = "BOTTOM",
 	["MIDDLE"] = "MIDDLE",
 	["TOP"] = "TOP",
+}
+
+local FLAGS = {
+	-- [""] = L["NONE"],
+	["_Outline"] = L["OUTLINE"],
+	["_Shadow"] = L["SHADOW"],
 }
 
 local CASTBAR_ICON_POSITIONS = {
@@ -66,6 +72,10 @@ local GROWTH_DIRS = {
 	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
+
+local function isModuleDisabled()
+	return not UNITFRAMES:IsInit()
+end
 
 local function getRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
@@ -994,7 +1004,7 @@ local function getOptionsTable_Name(order, unit)
 				order = 30,
 				type = "select",
 				name = L["TEXT_HORIZ_ALIGNMENT"],
-				values = H_ALIGNMENT,
+				values = H_ALIGNMENTS,
 				disabled = function()
 					return C.db.profile.units[unit].name.point2.p == ""
 				end,
@@ -1003,7 +1013,7 @@ local function getOptionsTable_Name(order, unit)
 				order = 31,
 				type = "select",
 				name = L["TEXT_VERT_ALIGNMENT"],
-				values = V_ALIGNMENT,
+				values = V_ALIGNMENTS,
 				disabled = function()
 					return C.db.profile.units[unit].name.point2.p == ""
 				end,
@@ -1517,8 +1527,55 @@ local function getOptionsTable_Auras(order, unit)
 				type = "description",
 				name = " ",
 			},
-			filter = {
+			cooldown = {
 				order = 30,
+				type = "group",
+				name = L["COOLDOWN_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].auras.cooldown.text[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.cooldown.text[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.cooldown.text[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["SHOW"],
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					flag = {
+						order = 3,
+						type = "select",
+						name = L["FLAG"],
+						values = FLAGS,
+					},
+					h_alignment = {
+						order = 4,
+						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 5,
+						type = "select",
+						name = L["TEXT_VERT_ALIGNMENT"],
+						values = V_ALIGNMENTS,
+					},
+				},
+			},
+			filter = {
+				order = 40,
 				type = "group",
 				name = L["FILTERS"],
 				inline = true,
@@ -1821,6 +1878,17 @@ local function getOptionsTable_Auras(order, unit)
 		temp.args.point.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.cooldown.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]]
+		end
+		temp.args.cooldown.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 			end
@@ -2541,14 +2609,17 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 					end
 				end
 			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = " ",
+			},
 			units = {
-				order = 2,
+				order = 10,
 				type = "group",
 				name = L["UNITS"],
 				inline = true,
-				disabled = function()
-					return not UNITFRAMES:IsInit()
-				end,
+				disabled = isModuleDisabled,
 				get = function(info)
 					return C.db.char.units[info[#info]].enabled
 				end,
@@ -2605,6 +2676,135 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						order = 4,
 						type = "toggle",
 						name = L["BOSS"],
+					},
+				},
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
+			cooldown = {
+				order = 20,
+				type = "group",
+				name = L["COOLDOWN_TEXT"],
+				inline = true,
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.units.cooldown[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units.cooldown[info[#info]] ~= value then
+						C.db.profile.units.cooldown[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+						UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+					end
+				end,
+				args = {
+					reset = {
+						type = "execute",
+						order = 1,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
+							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					exp_threshold = {
+						order = 10,
+						type = "range",
+						name = L["EXP_THRESHOLD"],
+						desc = L["EXP_THRESHOLD_DESC"],
+						min = 1, max = 10, step = 1,
+					},
+					m_ss_threshold = {
+						order = 11,
+						type = "range",
+						name = L["M_SS_THRESHOLD"],
+						desc = L["M_SS_THRESHOLD_DESC"],
+						min = 0, max = 3599, step = 1,
+						softMin = 91,
+						set = function(info, value)
+							if C.db.profile.units.cooldown[info[#info]] ~= value then
+								if value < info.option.softMin then
+									value = info.option.min
+								end
+
+								C.db.profile.units.cooldown[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+								UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+							end
+						end,
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					colors = {
+						order = 20,
+						type = "group",
+						name = L["COLORS"],
+						inline = true,
+						get = function(info)
+							return unpack(C.db.profile.units.cooldown.colors[info[#info]])
+						end,
+						set = function(info, r, g, b)
+							if r ~= nil then
+								local color = C.db.profile.units.cooldown.colors[info[#info]]
+								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
+									color[1], color[2], color[3] = r, g, b
+									UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+									UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+								end
+							end
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["ENABLE"],
+								get = function()
+									return C.db.profile.units.cooldown.colors.enabled
+								end,
+								set = function(_, value)
+									C.db.profile.units.cooldown.colors.enabled = value
+									UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+									UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+								end,
+							},
+							expiration = {
+								order = 2,
+								type = "color",
+								name = L["EXPIRATION"],
+							},
+							second = {
+								order = 3,
+								type = "color",
+								name = L["SECONDS"],
+							},
+							minute = {
+								order = 4,
+								type = "color",
+								name = L["MINUTES"],
+							},
+							hour = {
+								order = 5,
+								type = "color",
+								name = L["HOURS"],
+							},
+							day = {
+								order = 6,
+								type = "color",
+								name = L["DAYS"],
+							},
+						},
 					},
 				},
 			},
