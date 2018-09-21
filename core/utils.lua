@@ -54,7 +54,7 @@ do
 	local SECOND_NUMBER_CAP = "%s.%d" .. _G.SECOND_NUMBER_CAP_NO_SPACE
 	local FIRST_NUMBER_CAP = "%s.%d" .. _G.FIRST_NUMBER_CAP_NO_SPACE
 
-	function E:NumberFormat(v)
+	function E:FormatNumber(v)
 		if v >= 1E6 then
 			local i, f = m_modf(v / 1E6)
 			return s_format(SECOND_NUMBER_CAP, BreakUpLargeNumbers(i), f * 10)

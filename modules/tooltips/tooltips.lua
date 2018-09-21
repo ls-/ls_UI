@@ -741,7 +741,7 @@ local function tooltipBar_OnValueChanged(self, value)
 		self.Text:Hide()
 	else
 		self.Text:Show()
-		self.Text:SetFormattedText("%s / %s", E:NumberFormat(value), E:NumberFormat(max))
+		self.Text:SetFormattedText("%s / %s", E:FormatNumber(value), E:FormatNumber(max))
 	end
 end
 

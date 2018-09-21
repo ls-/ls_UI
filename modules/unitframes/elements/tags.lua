@@ -137,7 +137,7 @@ oUF.Tags.Methods["ls:health:cur"] = function(unit)
 	elseif UnitIsDeadOrGhost(unit) then
 		return L["DEAD"]
 	else
-		return E:NumberFormat(UnitHealth(unit))
+		return E:FormatNumber(UnitHealth(unit))
 	end
 end
 
@@ -162,9 +162,9 @@ oUF.Tags.Methods["ls:health:cur-perc"] = function(unit)
 		local cur, max = UnitHealth(unit), UnitHealthMax(unit)
 
 		if cur == max then
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		else
-			return s_format("%s - %.1f%%", E:NumberFormat(cur), E:NumberToPerc(cur, max))
+			return s_format("%s - %.1f%%", E:FormatNumber(cur), E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -181,7 +181,7 @@ oUF.Tags.Methods["ls:health:deficit"] = function(unit)
 		if cur == max then
 			return ""
 		else
-			return s_format("-%s", E:NumberFormat(max - cur))
+			return s_format("-%s", E:FormatNumber(max - cur))
 		end
 	end
 end
@@ -201,7 +201,7 @@ oUF.Tags.Methods["ls:power:cur"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		else
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		end
 	end
 end
@@ -217,7 +217,7 @@ oUF.Tags.Methods["ls:power:max"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		else
-			return E:NumberFormat(max)
+			return E:FormatNumber(max)
 		end
 	end
 end
@@ -249,9 +249,9 @@ oUF.Tags.Methods["ls:power:cur-perc"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == max then
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		else
-			return s_format("%s - %.1f%%", E:NumberFormat(cur), E:NumberToPerc(cur, max))
+			return s_format("%s - %.1f%%", E:FormatNumber(cur), E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -274,9 +274,9 @@ oUF.Tags.Methods["ls:power:cur-color-perc"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", hex, E:NumberFormat(cur))
+			return s_format("|cff%s%s|r", hex, E:FormatNumber(cur))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur), hex, E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:FormatNumber(cur), hex, E:NumberToPerc(cur, max))
 		end
 	end
 end
@@ -292,9 +292,9 @@ oUF.Tags.Methods["ls:power:cur-max"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == max then
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		else
-			return s_format("%s - %s", E:NumberFormat(cur), E:NumberFormat(max))
+			return s_format("%s - %s", E:FormatNumber(cur), E:FormatNumber(max))
 		end
 	end
 end
@@ -317,9 +317,9 @@ oUF.Tags.Methods["ls:power:cur-color-max"] = function(unit)
 		if not max or max == 0 then
 			return ""
 		elseif cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", hex, E:NumberFormat(cur))
+			return s_format("|cff%s%s|r", hex, E:FormatNumber(cur))
 		else
-			return s_format("%s - |cff%s%s|r", E:NumberFormat(cur), hex, E:NumberFormat(max))
+			return s_format("%s - |cff%s%s|r", E:FormatNumber(cur), hex, E:FormatNumber(max))
 		end
 	end
 end
@@ -335,7 +335,7 @@ oUF.Tags.Methods["ls:power:deficit"] = function(unit)
 		if not max or max == 0 or cur == max then
 			return ""
 		else
-			return s_format("-%s", E:NumberFormat(max - cur))
+			return s_format("-%s", E:FormatNumber(max - cur))
 		end
 	end
 end
@@ -347,7 +347,7 @@ end
 oUF.Tags.Events["ls:altpower:cur"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
-		return E:NumberFormat(UnitPower(unit, ALTERNATE_POWER_INDEX))
+		return E:FormatNumber(UnitPower(unit, ALTERNATE_POWER_INDEX))
 	else
 		return ""
 	end
@@ -356,7 +356,7 @@ end
 oUF.Tags.Events["ls:altpower:max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:max"] = function(unit)
 	if UnitAlternatePowerInfo(unit) then
-		return E:NumberFormat(UnitPowerMax(unit, ALTERNATE_POWER_INDEX))
+		return E:FormatNumber(UnitPowerMax(unit, ALTERNATE_POWER_INDEX))
 	else
 		return ""
 	end
@@ -377,9 +377,9 @@ oUF.Tags.Methods["ls:altpower:cur-perc"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == max then
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		else
-			return s_format("%s - %.1f%%", E:NumberFormat(cur), E:NumberToPerc(cur, max))
+			return s_format("%s - %.1f%%", E:FormatNumber(cur), E:NumberToPerc(cur, max))
 		end
 	else
 		return ""
@@ -392,9 +392,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:FormatNumber(cur))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur), M.COLORS.INDIGO:GetHEX(0.3), E:NumberToPerc(cur, max))
+			return s_format("%s - |cff%s%.1f%%|r", E:FormatNumber(cur), M.COLORS.INDIGO:GetHEX(0.3), E:NumberToPerc(cur, max))
 		end
 	else
 		return ""
@@ -407,9 +407,9 @@ oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == max then
-			return E:NumberFormat(cur)
+			return E:FormatNumber(cur)
 		else
-			return s_format("%s - %s", E:NumberFormat(cur), E:NumberFormat(max))
+			return s_format("%s - %s", E:FormatNumber(cur), E:FormatNumber(max))
 		end
 	else
 		return ""
@@ -422,9 +422,9 @@ oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
 		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
 
 		if cur == 0 or cur == max then
-			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(cur))
+			return s_format("|cff%s%s|r", M.COLORS.INDIGO:GetHEX(0.3), E:FormatNumber(cur))
 		else
-			return s_format("%s - |cff%s%.1f%%|r", E:NumberFormat(cur), M.COLORS.INDIGO:GetHEX(0.3), E:NumberFormat(max))
+			return s_format("%s - |cff%s%.1f%%|r", E:FormatNumber(cur), M.COLORS.INDIGO:GetHEX(0.3), E:FormatNumber(max))
 		end
 	else
 		return ""
@@ -527,14 +527,14 @@ oUF.Tags.Events["ls:absorb:heal"] = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:heal"] = function(unit)
 	local absorb = UnitGetTotalHealAbsorbs(unit) or 0
 
-	return absorb > 0 and E:NumberFormat(absorb) or " "
+	return absorb > 0 and E:FormatNumber(absorb) or " "
 end
 
 oUF.Tags.Events["ls:absorb:damage"] = "UNIT_ABSORB_AMOUNT_CHANGED"
 oUF.Tags.Methods["ls:absorb:damage"] = function(unit)
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
 
-	return absorb > 0 and E:NumberFormat(absorb) or " "
+	return absorb > 0 and E:FormatNumber(absorb) or " "
 end
 
 -----------
