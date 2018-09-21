@@ -439,7 +439,7 @@ local function segment_UpdateText(self, cur, max)
 	if cur == 1 and max == 1 then
 		self.Text:SetText(nil)
 	else
-		self.Text:SetFormattedText(barValueTemplate, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), E:NumberToPerc(cur, max))
+		self.Text:SetFormattedText(barValueTemplate, E:NumberFormat(cur), E:NumberFormat(max), E:NumberToPerc(cur, max))
 	end
 end
 
