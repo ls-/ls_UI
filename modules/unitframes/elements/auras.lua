@@ -93,6 +93,7 @@ local BLACKLIST = {
 	[240986] = true, -- Worthy Champions
 	[240987] = true, -- Well Prepared
 	[240989] = true, -- Heavily Augmented
+	[245686] = true, -- Fashionable!
 	[264408] = true, -- Soldier of the Horde
 	[264420] = true, -- Soldier of the Alliance
 	[269083] = true, -- Enlisted
