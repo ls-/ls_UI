@@ -26,11 +26,13 @@ local C_Reputation = _G.C_Reputation
 
 -- Mine
 local isInit = false
+local barValueTemplate
 
 local MAX_SEGMENTS = 4
 local NAME_TEMPLATE = "|cff%s%s|r"
 local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
-local BAR_VALUE_TEMPLATE = "%s / %s"
+local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
+local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 
 local CFG = {
 	visible = true,
@@ -55,14 +57,27 @@ local LAYOUT = {
 	[4] = {[1] = {}, [2] = {}, [3] = {}, [4] = {}},
 }
 
+local function bar_ForEach(self, method, ...)
+	for i = 1, MAX_SEGMENTS do
+		if self[i][method] then
+			self[i][method](self[i], ...)
+		end
+	end
+end
+
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateFont()
-	self:UpdateSize()
+
+	for i = 1, MAX_SEGMENTS do
+		self[i]:UpdateFont(self._config.text.size, self._config.text.flag)
+		self[i]:LockText(self._config.text.visibility == 1)
+	end
+
+	self:UpdateTextFormat(self._config.text.format)
+	self:UpdateSize(self._config.width, self._config.height)
 
 	if not BARS:IsRestricted() then
 		self:UpdateFading()
-		E.Movers:Get(self):UpdateSize()
 	end
 end
 
@@ -74,18 +89,13 @@ local function bar_UpdateConfig(self)
 	end
 end
 
-local function bar_UpdateFont(self)
-	local config = self._config.text
-	local fontObject = "LSFont" .. config.size .. config.flag
+local function bar_UpdateTextFormat(self, format)
+	format = format or self._config.text.format
 
-	for i = 1, MAX_SEGMENTS do
-		self[i].Text:SetFontObject(fontObject)
-
-		if config.flag ~= "_Shadow" then
-			self[i].Text:SetShadowOffset(0, 0)
-		else
-			self[i].Text:SetShadowOffset(1, -1)
-		end
+	if format == "NUM" then
+		barValueTemplate = CUR_MAX_VALUE_TEMPLATE
+	elseif format == "NUM_PERC" then
+		barValueTemplate = CUR_MAX_PERC_VALUE_TEMPLATE
 	end
 end
 
@@ -102,6 +112,10 @@ local function bar_UpdateSize(self, width, height)
 	end
 
 	self:SetSize(width, height)
+
+	if not BARS:IsRestricted() then
+		E.Movers:Get(self):UpdateSize(width, height)
+	end
 
 	for i = 1, MAX_SEGMENTS - 1 do
 		self[i].Sep:SetSize(12, height)
@@ -323,7 +337,7 @@ local function bar_UpdateSegments(self)
 			self[1]:SetValue(1)
 			self[1]:Show()
 
-			self[1].Text:SetText(nil)
+			self[1]:UpdateText(1, 1)
 			self[1].Texture:SetVertexColor(M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
 		end
 
@@ -367,22 +381,26 @@ local function segment_OnEnter(self)
 		GameTooltip:Show()
 	end
 
-	self.Text:Show()
+	if not self:IsTextLocked() then
+		self.Text:Show()
+	end
 end
 
 local function segment_OnLeave(self)
 	GameTooltip:Hide()
 
-	self.Text:Hide()
+	if not self:IsTextLocked() then
+		self.Text:Hide()
+	end
 end
 
 local function segment_Update(self, cur, max, bonus, r, g, b)
 	if self._value ~= cur or self._max ~= max then
-		self.Text:SetFormattedText(BAR_VALUE_TEMPLATE, E:NumberFormat(cur, 1), E:NumberFormat(max, 1))
 		self.Texture:SetVertexColor(r, g, b)
 
 		self:SetMinMaxValues(0, max)
 		self:SetValue(cur)
+		self:UpdateText(cur, max)
 	end
 
 	if self._bonus ~= bonus then
@@ -404,6 +422,38 @@ local function segment_Update(self, cur, max, bonus, r, g, b)
 	end
 end
 
+local function segment_UpdateFont(self, size, flag)
+	self.Text:SetFontObject("LSFont" .. size .. flag)
+
+	if flag ~= "_Shadow" then
+		self.Text:SetShadowOffset(0, 0)
+	else
+		self.Text:SetShadowOffset(1, -1)
+	end
+end
+
+local function segment_UpdateText(self, cur, max)
+	cur = cur or self._value or 1
+	max = max or self._max or 1
+
+	if cur == 1 and max == 1 then
+		self.Text:SetText(nil)
+	else
+		self.Text:SetFormattedText(barValueTemplate, E:NumberFormat(cur, 1), E:NumberFormat(max, 1), E:NumberToPerc(cur, max))
+	end
+end
+
+local function segment_LockText(self, isLocked)
+	if self.textLocked ~= isLocked then
+		self.textLocked = isLocked
+		self.Text:SetShown(isLocked)
+	end
+end
+
+local function segment_IsTextLocked(self)
+	return self.textLocked
+end
+
 function BARS.HasXPBar()
 	return isInit
 end
@@ -415,12 +465,13 @@ function BARS.CreateXPBar()
 
 		BARS:AddBar(bar._id, bar)
 
+		bar.ForEach = bar_ForEach
 		bar.Update = bar_Update
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = nil
-		bar.UpdateFont = bar_UpdateFont
 		bar.UpdateSegments = bar_UpdateSegments
 		bar.UpdateSize = bar_UpdateSize
+		bar.UpdateTextFormat = bar_UpdateTextFormat
 
 		local texParent = CreateFrame("Frame", nil, bar)
 		texParent:SetAllPoints()
@@ -467,7 +518,11 @@ function BARS.CreateXPBar()
 			text:Hide()
 			segment.Text = text
 
+			segment.IsTextLocked = segment_IsTextLocked
+			segment.LockText = segment_LockText
 			segment.Update = segment_Update
+			segment.UpdateFont = segment_UpdateFont
+			segment.UpdateText = segment_UpdateText
 		end
 
 		for i = 1, MAX_SEGMENTS - 1 do
