@@ -2852,22 +2852,22 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 					casting = {
 						order = 10,
 						type = "color",
-						name = "Casting",
+						name = L["SPELL_CAST"],
 					},
 					channeling = {
 						order = 11,
 						type = "color",
-						name = "Channeling",
+						name = L["SPELL_CHANNELED"],
 					},
 					failed = {
 						order = 12,
 						type = "color",
-						name = "Failed",
+						name = L["SPELL_FAILED"],
 					},
 					notinterruptible = {
 						order = 13,
 						type = "color",
-						name = "Uninterruptible",
+						name = L["SPELL_UNINTERRUPTIBLE"],
 					},
 				},
 			},
