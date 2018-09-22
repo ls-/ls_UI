@@ -46,7 +46,7 @@ local function updateAura(button, index)
 		button.Count:SetText(count > 1 and count)
 
 		if(duration and duration > 0 and expirationTime) then
-			button.Cooldown:SetCooldown(expirationTime - duration, duration)
+			button.Cooldown:SetCooldown(1, expirationTime - 1)
 			button.Cooldown:Show()
 		else
 			button.Cooldown:Hide()

@@ -110,7 +110,7 @@ local function bar_OnEvent(self)
 				button.Count:SetText(aura.count > 1 and aura.count)
 				button.filter = aura.filter
 
-				CooldownFrame_Set(button.CD, aura.expiration - aura.duration, aura.duration, true)
+				CooldownFrame_Set(button.CD, 1, aura.expiration - 1, true)
 
 				if button.filter == "HARMFUL" then
 					local color = DEBUFF_TYPE_COLORS[aura.debuffType] or DEBUFF_TYPE_COLORS.none
