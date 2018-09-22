@@ -5,6 +5,7 @@ local UF = P:GetModule("UnitFrames")
 --Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
+local unpack = _G.unpack
 
 --[[ luacheck: globals
 	CreateFrame
@@ -13,13 +14,17 @@ local m_abs = _G.math.abs
 -- Mine
 local function element_PostCastStart(self)
 	if self.notInterruptible then
-		self:SetStatusBarColor(M.COLORS.GRAY:GetRGB())
+		self:SetStatusBarColor(unpack(self._config.colors.notinterruptible))
 
 		if self.Icon then
 			self.Icon:SetDesaturated(true)
 		end
 	else
-		self:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
+		if self.casting then
+			self:SetStatusBarColor(unpack(self._config.colors.casting))
+		elseif self.channeling then
+			self:SetStatusBarColor(unpack(self._config.colors.channeling))
+		end
 
 		if self.Icon then
 			self.Icon:SetDesaturated(false)
@@ -30,7 +35,7 @@ end
 local function element_PostCastFailed(self)
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
-	self:SetStatusBarColor(M.COLORS.RED:GetRGB())
+	self:SetStatusBarColor(unpack(self._config.colors.failed))
 
 	self.Time:SetText("")
 end
@@ -59,9 +64,16 @@ local function element_CustomDelayText(self, duration)
 	end
 end
 
+local function element_UpdateConfig(self)
+	self._config = E:CopyTable(self.__owner._config.castbar, self._config)
+	self._config.colors = E:CopyTable(C.db.profile.units.castbar.colors, self._config.colors)
+end
+
 local function frame_UpdateCastbar(self)
-	local config = self._config.castbar
 	local element = self.Castbar
+	element:UpdateConfig()
+
+	local config = element._config
 	local holder = element.Holder
 	local width = (config.detached and config.width_override ~= 0) and config.width_override or self._config.width
 	local height = config.height
@@ -70,7 +82,6 @@ local function frame_UpdateCastbar(self)
 	holder._width = width
 
 	local point1 = config.point1
-
 	if point1 and point1.p then
 		if config.detached then
 			local mover = E.Movers:Get(holder, true)
@@ -189,17 +200,17 @@ function UF:CreateCastbar(frame)
 	safeZone:SetVertexColor(M.COLORS.RED:GetRGBA(0.6))
 	element.SafeZone_ = safeZone
 
-	local tex_parent = CreateFrame("Frame", nil, element)
-	tex_parent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
-	tex_parent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
-	element.TexParent = tex_parent
+	local texParent = CreateFrame("Frame", nil, element)
+	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
+	element.TexParent = texParent
 
-	local time = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
+	local time = texParent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	time:SetWordWrap(false)
-	time:SetPoint("RIGHT", element, "RIGHT", -2, 0)
+	time:SetPoint("RIGHT", element, "RIGHT", 0, 0)
 	element.Time = time
 
-	local text = tex_parent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
+	local text = texParent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetPoint("LEFT", element, "LEFT", 2, 0)
@@ -207,12 +218,13 @@ function UF:CreateCastbar(frame)
 	element.Text = text
 
 	element.Holder = holder
-	element.PostCastStart = element_PostCastStart
-	element.PostChannelStart = element_PostCastStart
+	element.CustomDelayText = element_CustomDelayText
+	element.CustomTimeText = element_CustomTimeText
 	element.PostCastFailed = element_PostCastFailed
 	element.PostCastInterrupted = element_PostCastFailed
-	element.CustomTimeText = element_CustomTimeText
-	element.CustomDelayText = element_CustomDelayText
+	element.PostCastStart = element_PostCastStart
+	element.PostChannelStart = element_PostCastStart
+	element.UpdateConfig = element_UpdateConfig
 	element.timeToHold = 0.4
 
 	frame.UpdateCastbar = frame_UpdateCastbar

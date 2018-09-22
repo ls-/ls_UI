@@ -7,6 +7,7 @@ local UNITFRAMES = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local next = _G.next
 local s_split = _G.string.split
+local unpack = _G.unpack
 
 -- Mine
 local FCF_MODES = {
@@ -2805,6 +2806,68 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								name = L["DAYS"],
 							},
 						},
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			castbar = {
+				order = 30,
+				type = "group",
+				name = L["CASTBAR"],
+				inline = true,
+				disabled = isModuleDisabled,
+				get = function(info)
+					return unpack(C.db.profile.units.castbar.colors[info[#info]])
+				end,
+				set = function(info, r, g, b)
+					if r ~= nil then
+						local color = C.db.profile.units.castbar.colors[info[#info]]
+						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
+							color[1], color[2], color[3] = r, g, b
+							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
+						end
+					end
+				end,
+				args = {
+					reset = {
+						type = "execute",
+						order = 1,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.units.castbar.colors, C.db.profile.units.castbar.colors)
+							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					casting = {
+						order = 10,
+						type = "color",
+						name = "Casting",
+					},
+					channeling = {
+						order = 11,
+						type = "color",
+						name = "Channeling",
+					},
+					failed = {
+						order = 12,
+						type = "color",
+						name = "Failed",
+					},
+					notinterruptible = {
+						order = 13,
+						type = "color",
+						name = "Uninterruptible",
 					},
 				},
 			},

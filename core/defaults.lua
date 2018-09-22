@@ -17,6 +17,14 @@ D.profile = {
 				day = {255 / 255, 255 / 255, 255 / 255},
 			},
 		},
+		castbar = {
+			colors = {
+				casting = {250 / 255, 193 / 255, 74 / 255},
+				channeling = {60 / 255, 170 / 255, 59 / 255},
+				failed = {222 / 255, 67 / 255, 58 / 255},
+				notinterruptible = {52 / 255, 48 / 255, 51 / 255},
+			},
+		},
 		player = {
 			ls = {
 				enabled = true,
