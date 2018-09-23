@@ -2153,6 +2153,11 @@ D.profile = {
 					v_alignment = "BOTTOM",
 				},
 			},
+			type = {
+				size = 12,
+				position = "TOPLEFT",
+				debuff_type = false,
+			},
 			point = {
 				ls = {
 					p = "TOPRIGHT",
@@ -2195,6 +2200,11 @@ D.profile = {
 					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
+			},
+			type = {
+				size = 12,
+				position = "TOPLEFT",
+				debuff_type = false,
 			},
 			point = {
 				ls = {

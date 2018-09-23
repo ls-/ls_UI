@@ -1,10 +1,11 @@
-local _, ns = ...
+﻿local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Auras")
 
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local unpack = _G.unpack
 
 -- Blizz
 local GetInventoryItemTexture = _G.GetInventoryItemTexture
@@ -26,6 +27,15 @@ local isInit = false
 local buffs = {}
 local debuffs = {}
 local headers = {}
+
+local ICONS = {
+	["Buff"] = {1 / 128, 33 / 128, 1 / 128, 33 / 128},
+	["Debuff"] = {34 / 128, 66 / 128, 1 / 128, 33 / 128},
+	["Curse"] = {67 / 128, 99 / 128, 1 / 128, 33 / 128},
+	["Disease"] = {1 / 128, 33 / 128, 34 / 128, 66 / 128},
+	["Magic"] = {34 / 128, 66 / 128, 34 / 128, 66 / 128},
+	["Poison"] = {67 / 128, 99 / 128, 34 / 128, 66 / 128},
+}
 
 local function updateAura(button, index)
 	local filter = button:GetParent():GetAttribute("filter")
@@ -55,8 +65,16 @@ local function updateAura(button, index)
 		if filter == "HARMFUL" then
 			local color = DEBUFF_TYPE_COLORS[debuffType] or DEBUFF_TYPE_COLORS.none
 			button.Border:SetVertexColor(color.r, color.g, color.b)
+
+			if debuffType and debuffType ~= "" and button.showDebuffType then
+				button.AuraType:SetTexCoord(unpack(ICONS[debuffType]))
+				button.AuraType:Show()
+			else
+				button.AuraType:Hide()
+			end
 		else
 			button.Border:SetVertexColor(1, 1, 1)
+			button.AuraType:Hide()
 		end
 	end
 end
@@ -127,6 +145,16 @@ local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
+local function button_UpdateAuraTypeIcon(self)
+	local config = self._parent._config.type
+
+	self.AuraType:ClearAllPoints()
+	self.AuraType:SetPoint(config.position, 0, 0)
+	self.AuraType:SetSize(config.size, config.size)
+
+	self.showDebuffType = self._parent._config.type.debuff_type
+end
+
 local function button_UpdateCountText(self)
 	local config = self._parent._config.count
 
@@ -169,13 +197,20 @@ local function handleButton(button, header)
 	textParent:SetAllPoints()
 	button.TextParent = textParent
 
+	local auraType = textParent:CreateTexture(nil, "ARTWORK", nil, 3)
+	auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
+	auraType:Hide()
+	button.AuraType = auraType
+	
 	local count = textParent:CreateFontString(nil, "ARTWORK")
 	count:SetAllPoints()
 	button.Count = count
 
 	button._parent = header
+	button.UpdateAuraTypeIcon = button_UpdateAuraTypeIcon
 	button.UpdateCountText = button_UpdateCountText
 
+	button:UpdateAuraTypeIcon()
 	button:UpdateCountText()
 end
 
@@ -221,8 +256,9 @@ local function header_Update(self)
 		end
 
 		self:Hide()
-		self:UpdateButtons("UpdateCountText")
-		self:UpdateButtons("SetSize", config.size, config.size)
+		self:ForEachButton("UpdateAuraTypeIcon")
+		self:ForEachButton("UpdateCountText")
+		self:ForEachButton("SetSize", config.size, config.size)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)
 		self:SetAttribute("initialConfigFunction", ([[
@@ -254,7 +290,7 @@ local function header_Update(self)
 	end
 end
 
-local function header_UpdateButtons(self, method, ...)
+local function header_ForEachButton(self, method, ...)
 	local buttons = self._buttons or {self:GetChildren()}
 	for _, button in next, buttons do
 		if button[method] then
@@ -355,8 +391,8 @@ local function createHeader(filter)
 	end
 
 	header._filter = filter
+	header.ForEachButton = header_ForEachButton
 	header.Update = header_Update
-	header.UpdateButtons = header_UpdateButtons
 	header.UpdateConfig = header_UpdateConfig
 	header.UpdateCooldownConfig = header_UpdateCooldownConfig
 
@@ -382,11 +418,11 @@ function MODULE.Init()
 
 		isInit = true
 
-		MODULE:UpdateHeaders("Update")
+		MODULE:ForEachHeader("Update")
 	end
 end
 
-function MODULE:UpdateHeaders(method, ...)
+function MODULE:ForEachHeader(method, ...)
 	for _, header in next, headers do
 		if header[method] then
 			header[method](header, ...)
@@ -394,6 +430,8 @@ function MODULE:UpdateHeaders(method, ...)
 	end
 end
 
-function MODULE:GetHeader(...)
-	return headers[...]
+function MODULE:ForHeader(header, method, ...)
+	if headers[header] and headers[header][method] then
+		headers[header][method](headers[header], ...)
+	end
 end
