@@ -1,4 +1,4 @@
-﻿local _, ns = ...
+local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Auras")
 
@@ -127,10 +127,19 @@ local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
-local function button_UpdateCountFont(self)
+local function button_UpdateCountText(self)
 	local config = self._parent._config.count
+
 	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
+	self.Count:SetJustifyH(config.h_alignment)
+	self.Count:SetJustifyV(config.v_alignment)
 	self.Count:SetWordWrap(false)
+
+	if config.flag == "_Shadow" then
+		self.Count:SetShadowOffset(1, -1)
+	else
+		self.Count:SetShadowOffset(0, 0)
+	end
 end
 
 local function handleButton(button, header)
@@ -161,14 +170,13 @@ local function handleButton(button, header)
 	button.TextParent = textParent
 
 	local count = textParent:CreateFontString(nil, "ARTWORK")
-	count:SetJustifyH("RIGHT")
-	count:SetPoint("TOPRIGHT", 2, 0)
+	count:SetAllPoints()
 	button.Count = count
 
 	button._parent = header
-	button.UpdateCountFont = button_UpdateCountFont
+	button.UpdateCountText = button_UpdateCountText
 
-	button:UpdateCountFont()
+	button:UpdateCountText()
 end
 
 local function header_OnAttributeChanged(self, attr, value)
@@ -213,7 +221,7 @@ local function header_Update(self)
 		end
 
 		self:Hide()
-		self:UpdateButtons("UpdateCountFont")
+		self:UpdateButtons("UpdateCountText")
 		self:UpdateButtons("SetSize", config.size, config.size)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)

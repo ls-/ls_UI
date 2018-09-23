@@ -2141,6 +2141,8 @@ D.profile = {
 				enabled = true,
 				size = 12,
 				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "RIGHT",
+				v_alignment = "TOP",
 			},
 			cooldown = {
 				text = {
@@ -2182,6 +2184,8 @@ D.profile = {
 				enabled = true,
 				size = 12,
 				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "RIGHT",
+				v_alignment = "TOP",
 			},
 			cooldown = {
 				text = {
