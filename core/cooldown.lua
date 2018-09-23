@@ -142,6 +142,12 @@ local function cooldown_UpdateFontObject(self, fontObject)
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
 	self.Timer:SetWordWrap(false)
+
+	if config.flag == "_Shadow" then
+		self.Timer:SetShadowOffset(1, -1)
+	else
+		self.Timer:SetShadowOffset(0, 0)
+	end
 end
 
 local function cooldown_UpdateConfig(self, config)
