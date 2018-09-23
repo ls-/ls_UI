@@ -266,7 +266,20 @@ local function element_CreateAuraIcon(element, index)
 	button.icon = button.Icon
 	button.Icon = nil
 
-	button.count = button.Count
+	local count = button.Count
+	count:SetAllPoints()
+	count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
+	count:SetJustifyH(config.count.h_alignment)
+	count:SetJustifyV(config.count.v_alignment)
+	count:SetWordWrap(false)
+
+	if config.count.flag == "_Shadow" then
+		count:SetShadowOffset(1, -1)
+	else
+		count:SetShadowOffset(0, 0)
+	end
+
+	button.count = count
 	button.Count = nil
 
 	button.cd = button.CD
@@ -377,12 +390,24 @@ local function frame_UpdateAuras(self)
 	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
 	element:ClearAllPoints()
 
-	local auraType
+	local auraType, count
 	for i = 1, element.createdIcons do
 		auraType = element[i].AuraType
 		auraType:ClearAllPoints()
 		auraType:SetPoint(config.type.position, 0, 0)
 		auraType:SetSize(config.type.size, config.type.size)
+
+		count = element[i].count
+		count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
+		count:SetJustifyH(config.count.h_alignment)
+		count:SetJustifyV(config.count.v_alignment)
+		count:SetWordWrap(false)
+
+		if config.count.flag == "_Shadow" then
+			count:SetShadowOffset(1, -1)
+		else
+			count:SetShadowOffset(0, 0)
+		end
 	end
 
 	local point1 = config.point1

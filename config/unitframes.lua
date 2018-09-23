@@ -1568,6 +1568,53 @@ local function getOptionsTable_Auras(order, unit)
 				type = "description",
 				name = " ",
 			},
+			count = {
+				order = 40,
+				type = "group",
+				name = L["COUNT_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].auras.count[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.count[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
+				args = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					flag = {
+						order = 2,
+						type = "select",
+						name = L["FLAG"],
+						values = FLAGS,
+					},
+					h_alignment = {
+						order = 3,
+						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 4,
+						type = "select",
+						name = L["TEXT_VERT_ALIGNMENT"],
+						values = V_ALIGNMENTS,
+					},
+				},
+			},
+			spacer_5 = {
+				order = 49,
+				type = "description",
+				name = " ",
+			},
 			cooldown = {
 				order = 50,
 				type = "group",
