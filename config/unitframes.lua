@@ -1528,8 +1528,48 @@ local function getOptionsTable_Auras(order, unit)
 				type = "description",
 				name = " ",
 			},
-			cooldown = {
+			type = {
 				order = 30,
+				type = "group",
+				name = "Aura Type",
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].auras.type[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.type[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.type[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
+				args = {
+					debuff_type = {
+						order = 1,
+						type = "toggle",
+						name = "Debuff Type",
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 32, step = 1,
+					},
+					position = {
+						order = 3,
+						type = "select",
+						name = L["POINT"],
+						values = POINTS,
+					},
+				},
+			},
+			spacer_4 = {
+				order = 39,
+				type = "description",
+				name = " ",
+			},
+			cooldown = {
+				order = 50,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -1575,8 +1615,13 @@ local function getOptionsTable_Auras(order, unit)
 					},
 				},
 			},
+			spacer_6 = {
+				order = 59,
+				type = "description",
+				name = " ",
+			},
 			filter = {
-				order = 40,
+				order = 60,
 				type = "group",
 				name = L["FILTERS"],
 				inline = true,

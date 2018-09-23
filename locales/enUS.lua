@@ -172,6 +172,7 @@ Use |cffffd200[nl]|r for line breaking.]=]
 L["DAMAGE_ABSORB_TEXT"] = "Damage Absorb Text"
 L["DAYS"] = "Days"
 L["DEAD"] = "Dead"
+L["DEBUFF_TYPE"] = "Debuff Type"
 L["DEBUFFS"] = "Debuffs"
 L["DESATURATION"] = "Desaturation"
 L["DESCENDING"] = "Descending"

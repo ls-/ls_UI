@@ -1,4 +1,4 @@
-﻿-- Contributors: Biowoolf@WoWInterface
+-- Contributors: Biowoolf@WoWInterface
 
 local _, ns = ...
 local E, L = ns.E, ns.L
@@ -105,6 +105,7 @@ L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[Введите строку для изме�
 L["DAMAGE_ABSORB_TEXT"] = "Текст поглощения урона"
 L["DAYS"] = "Days"
 L["DEAD"] = "Мертвый"
+L["DEBUFF_TYPE"] = "Тип дебаффа"
 L["DEBUFFS"] = "Дебаффы"
 L["DESATURATION"] = "Обесцвечивание"
 L["DESCENDING"] = "По убыванию"

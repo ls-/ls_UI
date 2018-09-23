@@ -360,6 +360,11 @@ D.profile = {
 							v_alignment = "BOTTOM",
 						},
 					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
+					},
 					filter = {
 						friendly = {
 							buff = {
@@ -760,6 +765,11 @@ D.profile = {
 						v_alignment = "BOTTOM",
 					},
 				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
+				},
 				filter = {
 					friendly = {
 						buff = {
@@ -1055,6 +1065,11 @@ D.profile = {
 						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
+				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
 				},
 				filter = {
 					friendly = {
@@ -1360,6 +1375,11 @@ D.profile = {
 						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
+				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
 				},
 				filter = {
 					friendly = {
