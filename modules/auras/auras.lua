@@ -201,7 +201,7 @@ local function handleButton(button, header)
 	auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
 	auraType:Hide()
 	button.AuraType = auraType
-	
+
 	local count = textParent:CreateFontString(nil, "ARTWORK")
 	count:SetAllPoints()
 	button.Count = count
