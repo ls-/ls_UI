@@ -112,6 +112,10 @@ D.profile = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
 					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
+					},
 					point1 = {
 						p = "BOTTOM",
 						anchor = "",
@@ -279,6 +283,10 @@ D.profile = {
 					icon = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
+					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
 					},
 					point1 = {
 						p = "TOPRIGHT",
@@ -462,6 +470,10 @@ D.profile = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
 					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
+					},
 					point1 = {
 						p = "BOTTOM",
 						anchor = "LSPlayerFrameCastbarHolder",
@@ -553,6 +565,10 @@ D.profile = {
 					icon = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
+					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
 					},
 					point1 = {
 						p = "TOPLEFT",
@@ -688,6 +704,10 @@ D.profile = {
 				icon = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
+				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -996,6 +1016,10 @@ D.profile = {
 				icon = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
+				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -1322,6 +1346,10 @@ D.profile = {
 				icon = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
+				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
 				},
 				point1 = {
 					p = "TOPLEFT",

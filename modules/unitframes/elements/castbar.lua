@@ -152,6 +152,26 @@ local function frame_UpdateCastbar(self)
 
 	E:SetStatusBarSkin(element.TexParent, "HORIZONTAL-" .. height)
 
+	element.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	element.Text:SetJustifyH("LEFT")
+	element.Text:SetWordWrap(false)
+
+	if config.text.flag == "_Shadow" then
+		element.Text:SetShadowOffset(1, -1)
+	else
+		element.Text:SetShadowOffset(0, 0)
+	end
+
+	element.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	element.Time:SetJustifyH("RIGHT")
+	element.Time:SetWordWrap(false)
+
+	if config.text.flag == "_Shadow" then
+		element.Time:SetShadowOffset(1, -1)
+	else
+		element.Time:SetShadowOffset(0, 0)
+	end
+
 	if config.enabled and not self:IsElementEnabled("Castbar") then
 		self:EnableElement("Castbar")
 	elseif not config.enabled and self:IsElementEnabled("Castbar") then

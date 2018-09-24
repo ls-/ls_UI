@@ -794,6 +794,39 @@ local function getOptionsTable_Castbar(order, unit)
 					},
 				},
 			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			text = {
+				order = 30,
+				type = "group",
+				name = L["TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+				end,
+				args = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					flag = {
+						order = 2,
+						type = "select",
+						name = L["FLAG"],
+						values = FLAGS,
+					},
+				},
+			},
 		},
 	}
 
@@ -840,6 +873,17 @@ local function getOptionsTable_Castbar(order, unit)
 		temp.args.icon.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+			end
+		end
+
+		temp.args.text.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]]
+		end
+		temp.args.text.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
 			end
