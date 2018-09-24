@@ -182,7 +182,7 @@ local function getOptionsTable_Aura(order, name, filter)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 32, step = 1,
+						min = 10, max = 32, step = 2,
 					},
 					position = {
 						order = 3,

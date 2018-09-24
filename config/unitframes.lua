@@ -1553,7 +1553,7 @@ local function getOptionsTable_Auras(order, unit)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 32, step = 1,
+						min = 10, max = 32, step = 2,
 					},
 					position = {
 						order = 3,
@@ -1971,6 +1971,28 @@ local function getOptionsTable_Auras(order, unit)
 		temp.args.point.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.type.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]]
+		end
+		temp.args.type.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.count.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]]
+		end
+		temp.args.count.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 			end
