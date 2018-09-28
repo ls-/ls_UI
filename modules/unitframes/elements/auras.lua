@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local m_max = _G.math.max
 local m_min = _G.math.min
 local next = _G.next
+local unpack = _G.unpack
 
 -- Blizz
 local C_MountJournal = _G.C_MountJournal
@@ -93,9 +94,19 @@ local BLACKLIST = {
 	[240986] = true, -- Worthy Champions
 	[240987] = true, -- Well Prepared
 	[240989] = true, -- Heavily Augmented
+	[245686] = true, -- Fashionable!
 	[264408] = true, -- Soldier of the Horde
 	[264420] = true, -- Soldier of the Alliance
 	[269083] = true, -- Enlisted
+}
+
+local ICONS = {
+	["Buff"] = {1 / 128, 33 / 128, 1 / 128, 33 / 128},
+	["Debuff"] = {34 / 128, 66 / 128, 1 / 128, 33 / 128},
+	["Curse"] = {67 / 128, 99 / 128, 1 / 128, 33 / 128},
+	["Disease"] = {1 / 128, 33 / 128, 34 / 128, 66 / 128},
+	["Magic"] = {34 / 128, 66 / 128, 34 / 128, 66 / 128},
+	["Poison"] = {67 / 128, 99 / 128, 34 / 128, 66 / 128},
 }
 
 local function isUnitBoss(unit)
@@ -249,12 +260,26 @@ local function button_OnLeave()
 end
 
 local function element_CreateAuraIcon(element, index)
+	local config = element._config
 	local button = E:CreateButton(element, "$parentAura" .. index, true)
 
 	button.icon = button.Icon
 	button.Icon = nil
 
-	button.count = button.Count
+	local count = button.Count
+	count:SetAllPoints()
+	count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
+	count:SetJustifyH(config.count.h_alignment)
+	count:SetJustifyV(config.count.v_alignment)
+	count:SetWordWrap(false)
+
+	if config.count.flag == "_Shadow" then
+		count:SetShadowOffset(1, -1)
+	else
+		count:SetShadowOffset(0, 0)
+	end
+
+	button.count = count
 	button.Count = nil
 
 	button.cd = button.CD
@@ -281,8 +306,9 @@ local function element_CreateAuraIcon(element, index)
 	button.stealable = stealable
 
 	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
-	auraType:SetSize(16, 16)
-	auraType:SetPoint("TOPLEFT", -2, 2)
+	auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
+	auraType:SetPoint(config.type.position, 0, 0)
+	auraType:SetSize(config.type.size, config.type.size)
 	button.AuraType = auraType
 
 	button.UpdateTooltip = button_UpdateTooltip
@@ -292,11 +318,15 @@ local function element_CreateAuraIcon(element, index)
 	return button
 end
 
-local function element_UpdateAuraType(_, _, aura)
+local function element_UpdateAuraType(self, _, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
-		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
+		if self._config.type.debuff_type then
+			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))
+		else
+			aura.AuraType:SetTexCoord(unpack(ICONS["Debuff"]))
+		end
 	else
-		aura.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+		aura.AuraType:SetTexCoord(unpack(ICONS["Buff"]))
 	end
 end
 
@@ -360,8 +390,27 @@ local function frame_UpdateAuras(self)
 	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
 	element:ClearAllPoints()
 
-	local point1 = config.point1
+	local auraType, count
+	for i = 1, element.createdIcons do
+		auraType = element[i].AuraType
+		auraType:ClearAllPoints()
+		auraType:SetPoint(config.type.position, 0, 0)
+		auraType:SetSize(config.type.size, config.type.size)
 
+		count = element[i].count
+		count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
+		count:SetJustifyH(config.count.h_alignment)
+		count:SetJustifyV(config.count.v_alignment)
+		count:SetWordWrap(false)
+
+		if config.count.flag == "_Shadow" then
+			count:SetShadowOffset(1, -1)
+		else
+			count:SetShadowOffset(0, 0)
+		end
+	end
+
+	local point1 = config.point1
 	if point1 and point1.p then
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 	end

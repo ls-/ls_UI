@@ -7,6 +7,7 @@ local UNITFRAMES = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local next = _G.next
 local s_split = _G.string.split
+local unpack = _G.unpack
 
 -- Mine
 local FCF_MODES = {
@@ -793,6 +794,39 @@ local function getOptionsTable_Castbar(order, unit)
 					},
 				},
 			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			text = {
+				order = 30,
+				type = "group",
+				name = L["TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+				end,
+				args = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					flag = {
+						order = 2,
+						type = "select",
+						name = L["FLAG"],
+						values = FLAGS,
+					},
+				},
+			},
 		},
 	}
 
@@ -839,6 +873,17 @@ local function getOptionsTable_Castbar(order, unit)
 		temp.args.icon.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+			end
+		end
+
+		temp.args.text.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]]
+		end
+		temp.args.text.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
 			end
@@ -1527,8 +1572,95 @@ local function getOptionsTable_Auras(order, unit)
 				type = "description",
 				name = " ",
 			},
-			cooldown = {
+			type = {
 				order = 30,
+				type = "group",
+				name = "Aura Type",
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].auras.type[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.type[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.type[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
+				args = {
+					debuff_type = {
+						order = 1,
+						type = "toggle",
+						name = "Debuff Type",
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 32, step = 2,
+					},
+					position = {
+						order = 3,
+						type = "select",
+						name = L["POINT"],
+						values = POINTS,
+					},
+				},
+			},
+			spacer_4 = {
+				order = 39,
+				type = "description",
+				name = " ",
+			},
+			count = {
+				order = 40,
+				type = "group",
+				name = L["COUNT_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].auras.count[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.count[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					end
+				end,
+				args = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					flag = {
+						order = 2,
+						type = "select",
+						name = L["FLAG"],
+						values = FLAGS,
+					},
+					h_alignment = {
+						order = 3,
+						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 4,
+						type = "select",
+						name = L["TEXT_VERT_ALIGNMENT"],
+						values = V_ALIGNMENTS,
+					},
+				},
+			},
+			spacer_5 = {
+				order = 49,
+				type = "description",
+				name = " ",
+			},
+			cooldown = {
+				order = 50,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -1574,8 +1706,13 @@ local function getOptionsTable_Auras(order, unit)
 					},
 				},
 			},
+			spacer_6 = {
+				order = 59,
+				type = "description",
+				name = " ",
+			},
 			filter = {
-				order = 40,
+				order = 60,
 				type = "group",
 				name = L["FILTERS"],
 				inline = true,
@@ -1878,6 +2015,28 @@ local function getOptionsTable_Auras(order, unit)
 		temp.args.point.set = function(info, value)
 			if C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] ~= value then
 				C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.type.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]]
+		end
+		temp.args.type.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			end
+		end
+
+		temp.args.count.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]]
+		end
+		temp.args.count.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 			end
@@ -2805,6 +2964,68 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								name = L["DAYS"],
 							},
 						},
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			castbar = {
+				order = 30,
+				type = "group",
+				name = L["CASTBAR"],
+				inline = true,
+				disabled = isModuleDisabled,
+				get = function(info)
+					return unpack(C.db.profile.units.castbar.colors[info[#info]])
+				end,
+				set = function(info, r, g, b)
+					if r ~= nil then
+						local color = C.db.profile.units.castbar.colors[info[#info]]
+						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
+							color[1], color[2], color[3] = r, g, b
+							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
+						end
+					end
+				end,
+				args = {
+					reset = {
+						type = "execute",
+						order = 1,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.units.castbar.colors, C.db.profile.units.castbar.colors)
+							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					casting = {
+						order = 10,
+						type = "color",
+						name = L["SPELL_CAST"],
+					},
+					channeling = {
+						order = 11,
+						type = "color",
+						name = L["SPELL_CHANNELED"],
+					},
+					failed = {
+						order = 12,
+						type = "color",
+						name = L["SPELL_FAILED"],
+					},
+					notinterruptible = {
+						order = 13,
+						type = "color",
+						name = L["SPELL_UNINTERRUPTIBLE"],
 					},
 				},
 			},

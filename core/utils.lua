@@ -51,26 +51,16 @@ end
 
 do
 	local BreakUpLargeNumbers = _G.BreakUpLargeNumbers
-	local SECOND_NUMBER_CAP_NO_SPACE = _G.SECOND_NUMBER_CAP_NO_SPACE
-	local FIRST_NUMBER_CAP_NO_SPACE = _G.FIRST_NUMBER_CAP_NO_SPACE
+	local SECOND_NUMBER_CAP = "%s.%d" .. _G.SECOND_NUMBER_CAP_NO_SPACE
+	local FIRST_NUMBER_CAP = "%s.%d" .. _G.FIRST_NUMBER_CAP_NO_SPACE
 
-	function E:NumberFormat(v, mod)
+	function E:FormatNumber(v)
 		if v >= 1E6 then
 			local i, f = m_modf(v / 1E6)
-
-			if mod and mod > 0 then
-				return s_format("%s.%d"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
-			else
-				return s_format("%s"..SECOND_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
-			end
+			return s_format(SECOND_NUMBER_CAP, BreakUpLargeNumbers(i), f * 10)
 		elseif v >= 1E4 then
 			local i, f = m_modf(v / 1E3)
-
-			if mod and mod > 0 then
-				return s_format("%s.%d"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i), f * 10 ^ mod)
-			else
-				return s_format("%s"..FIRST_NUMBER_CAP_NO_SPACE, BreakUpLargeNumbers(i))
-			end
+			return s_format(FIRST_NUMBER_CAP, BreakUpLargeNumbers(i), f * 10)
 		elseif v >= 0 then
 			return BreakUpLargeNumbers(v)
 		else

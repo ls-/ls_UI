@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Version 80000.11
+
+- Added options to adjust auras' count text and aura type icon. It's also possible to display  
+  actual debuff types instead of generic down arrows;
+- Added options to adjust xp bar's text's format and visiblity;
+- Added options to adjust castbars' colours;
+- Added a hack for cooldown numbers. Cooldown spirals are still bugged, but that's a Blizz bug;
+- Updated minimap button handling. This should greatly improve compatibility w/ addons that add  
+  various markers, for instance, TomTom, ZygorGuides;
+- Updated embeds.
+
 ## Version 80000.10
 
 - Added cooldown options to the "Unit Frames" and unit frames' "Auras" configs;

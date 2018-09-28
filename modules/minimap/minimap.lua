@@ -13,16 +13,17 @@ local m_rad = _G.math.rad
 local m_sin = _G.math.sin
 local next = _G.next
 local s_match = _G.string.match
+local select = _G.select
 local unpack = _G.unpack
 
 --[[ luacheck: globals
 	CalendarFrame ChatTypeInfo CreateFrame DEFAULT_CHAT_FRAME DropDownList1 GameTimeFrame GameTooltip
-	GarrisonLandingPageMinimapButton GetGameTime GetMinimapZoneText GetZonePVPInfo GuildInstanceDifficulty IsAddOnLoaded
-	LoadAddOn Minimap Minimap_ZoomIn Minimap_ZoomOut MiniMapChallengeMode MinimapCompassTexture
-	MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking MiniMapTrackingBackground MiniMapTrackingButton
-	MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText MinimapZoneTextButton QueueStatusFrame
-	QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton ToggleCalendar UIDropDownMenu_GetCurrentDropDown
-	UIParent
+	GarrisonLandingPageMinimapButton GarrisonLandingPageMinimapButton_UpdateIcon GetGameTime GetMinimapZoneText
+	GetZonePVPInfo GuildInstanceDifficulty IsAddOnLoaded LoadAddOn Minimap Minimap_ZoomIn Minimap_ZoomOut
+	MiniMapChallengeMode MinimapCompassTexture MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking
+	MiniMapTrackingBackground MiniMapTrackingButton MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText
+	MinimapZoneTextButton QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton
+	ToggleCalendar UIDropDownMenu_GetCurrentDropDown UIParent
 
 	LE_GARRISON_TYPE_8_0
 ]]
@@ -67,6 +68,35 @@ local PVP_COLOR_MAP = {
 local handledChildren = {}
 local ignoredChildren = {}
 
+local function hasTrackingBorderRegion(self)
+	for i = 1, select("#", self:GetRegions()) do
+		local region = select(i, self:GetRegions())
+
+		if region:IsObjectType("Texture") then
+			local texture = region:GetTexture()
+			if texture and (texture == 136430 or s_match(texture, "[tT][rR][aA][cC][kK][iI][nN][gG][bB][oO][rR][dD][eE][rR]")) then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+local function isMinimapButton(self)
+	if hasTrackingBorderRegion(self) then
+		return true
+	end
+
+	for i = 1, select("#", self:GetChildren()) do
+		if hasTrackingBorderRegion(select(i, self:GetChildren())) then
+			return true
+		end
+	end
+
+	return false
+end
+
 local function updateGarrisonButton(self)
 	if C_Garrison.GetLandingPageGarrisonType() == LE_GARRISON_TYPE_8_0 then
 		self.NormalTexture:RemoveMaskTexture(self.MaskTexture)
@@ -83,15 +113,13 @@ local function updateGarrisonButton(self)
 end
 
 local function handleMinimapButton(button, recursive)
-	local regions = {button:GetRegions()}
-	local children = {button:GetChildren()}
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	local pushed = button.GetPushedTexture and button:GetPushedTexture()
 	local hl, icon, border, bg, thl, ticon, tborder, tbg, tnormal, tpushed
-
 	-- print("====|cffff0000", button:GetDebugName(), "|r:", #children, #regions,"====")
 
-	for _, region in next, regions do
+	for i = 1, select("#", button:GetRegions()) do
+		local region = select(i, button:GetRegions())
 		if region:IsObjectType("Texture") then
 			local name = region:GetDebugName()
 			local texture = region:GetTexture()
@@ -134,10 +162,7 @@ local function handleMinimapButton(button, recursive)
 				elseif s_match(name, "[bB][oO][rR][dD][eE][rR]") then
 					-- print("|cffffff00", name, "|ris |cff00ff00border|r")
 					border = region
-				elseif texture and texture == 136430 then
-					-- print("|cffffff00", name, "|ris |cff00ff00#136430|r")
-					border = region
-				elseif texture and s_match(texture, "[bB][oO][rR][dD][eE][rR]") then
+				elseif texture and (texture == 136430 or s_match(texture, "[tT][rR][aA][cC][kK][iI][nN][gG][bB][oO][rR][dD][eE][rR]")) then
 					-- print("|cffffff00", name, "|ris |cff00ff00-TrackingBorder|r")
 					border = region
 				end
@@ -145,7 +170,8 @@ local function handleMinimapButton(button, recursive)
 		end
 	end
 
-	for _, child in next, children do
+	for i = 1, select("#", button:GetChildren()) do
+		local child = select(i, button:GetChildren())
 		local name = child:GetDebugName()
 		local oType = child:GetObjectType()
 		-- print("|cffffff00", name, "|r:", oType)
@@ -249,6 +275,7 @@ local function handleMinimapButton(button, recursive)
 
 		if button == GarrisonLandingPageMinimapButton then
 			hooksecurefunc(button, "SetSize", updateGarrisonButton)
+			GarrisonLandingPageMinimapButton_UpdateIcon(button)
 		end
 
 		return button
@@ -904,22 +931,30 @@ function MODULE.Init()
 			E:ForceHide(_G[name])
 		end
 
-		for _, child in next, {Minimap:GetChildren()} do
+		for i = 1, select("#", Minimap:GetChildren()) do
+			local child = select(i, Minimap:GetChildren())
+
 			if not ignoredChildren[child] then
 				child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 			end
 
-			if child:IsObjectType("Button") and not (handledChildren[child] or ignoredChildren[child] or BUTTONS[child] or not child:GetName()) then
+			if not (ignoredChildren[child] or handledChildren[child] or BUTTONS[child]) and isMinimapButton(child) then
 				handleMinimapButton(child)
+			else
+				ignoredChildren[child] = true
 			end
 		end
 
 		C_Timer.NewTicker(5, function()
-			for _, child in next, {Minimap:GetChildren()} do
-				if child:IsObjectType("Button") and not (handledChildren[child] or ignoredChildren[child] or BUTTONS[child] or not child:GetName()) then
+			for i = 1, select("#", Minimap:GetChildren()) do
+				local child = select(i, Minimap:GetChildren())
+
+				if not (ignoredChildren[child] or handledChildren[child] or BUTTONS[child]) and isMinimapButton(child) then
 					child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
 
 					handleMinimapButton(child)
+				else
+					ignoredChildren[child] = true
 				end
 			end
 		end)

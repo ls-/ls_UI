@@ -5,6 +5,7 @@ local CONFIG = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local DRAG_KEYS = {
@@ -372,6 +373,65 @@ function CONFIG.CreateBlizzardPanel(_, order)
 								type = "select",
 								name = L["FLAG"],
 								values = FLAGS,
+							},
+						},
+					},
+					spacer_4 = {
+						order = 39,
+						type = "description",
+						name = " ",
+					},
+					colors = {
+						order = 40,
+						type = "group",
+						name = L["COLORS"],
+						inline = true,
+						get = function(info)
+							return unpack(C.db.profile.blizzard.castbar.colors[info[#info]])
+						end,
+						set = function(info, r, g, b)
+							if r ~= nil then
+								local color = C.db.profile.blizzard.castbar.colors[info[#info]]
+								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
+									color[1], color[2], color[3] = r, g, b
+									BLIZZARD:UpdateCastBars()
+								end
+							end
+						end,
+						args = {
+							reset = {
+								type = "execute",
+								order = 1,
+								name = L["RESTORE_DEFAULTS"],
+								func = function()
+									CONFIG:CopySettings(D.profile.blizzard.castbar.colors, C.db.profile.blizzard.castbar.colors)
+									BLIZZARD:UpdateCastBars()
+								end,
+							},
+							spacer_1 = {
+								order = 9,
+								type = "description",
+								name = " ",
+							},
+							casting = {
+								order = 10,
+								type = "color",
+								name = L["SPELL_CAST"],
+							},
+							channeling = {
+								order = 11,
+								type = "color",
+								name = L["SPELL_CHANNELED"],
+							},
+							failed = {
+								order = 12,
+								type = "color",
+								name = L["SPELL_FAILED"],
+							},
+							notinterruptible = {
+								order = 13,
+								type = "color",
+								name = L["SPELL_UNINTERRUPTIBLE"],
 							},
 						},
 					},

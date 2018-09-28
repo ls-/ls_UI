@@ -51,6 +51,18 @@ local SEP_TYPES = {
 	[1] = L["YOURS_FIRST"],
 }
 
+local POINTS = {
+	["BOTTOM"] = "BOTTOM",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+	["TOP"] = "TOP",
+	["TOPLEFT"] = "TOPLEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+}
+
 local function isModuleDisabled()
 	return not AURAS:IsInit()
 end
@@ -67,7 +79,7 @@ local function getOptionsTable_Aura(order, name, filter)
 		set = function(info, value)
 			if C.db.profile.auras[filter][info[#info]] ~= value then
 				C.db.profile.auras[filter][info[#info]] = value
-				AURAS:GetHeader(filter):Update()
+				AURAS:ForHeader(filter, "Update")
 			end
 		end,
 		args = {
@@ -77,7 +89,7 @@ local function getOptionsTable_Aura(order, name, filter)
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
 					CONFIG:CopySettings(D.profile.auras[filter], C.db.profile.auras[filter], {point = true})
-					AURAS:GetHeader(filter):Update()
+					AURAS:ForHeader(filter, "Update")
 				end,
 			},
 			spacer_1 = {
@@ -119,7 +131,7 @@ local function getOptionsTable_Aura(order, name, filter)
 				end,
 				set = function(_, value)
 					C.db.profile.auras[filter].x_growth, C.db.profile.auras[filter].y_growth = s_split("_", value)
-					AURAS:GetHeader(filter):Update()
+					AURAS:ForHeader(filter, "Update")
 				end,
 			},
 			sort_method = {
@@ -145,8 +157,48 @@ local function getOptionsTable_Aura(order, name, filter)
 				type = "description",
 				name = " ",
 			},
-			count = {
+			type = {
 				order = 20,
+				type = "group",
+				name = "Aura Type",
+				inline = true,
+				get = function(info)
+					return C.db.profile.auras[filter].type[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.auras[filter].type[info[#info]] ~= value then
+						C.db.profile.auras[filter].type[info[#info]] = value
+						AURAS:ForHeader(filter, "UpdateConfig")
+						AURAS:ForHeader(filter, "ForEachButton", "UpdateAuraTypeIcon")
+					end
+				end,
+				args = {
+					debuff_type = {
+						order = 1,
+						type = "toggle",
+						name = "Debuff Type",
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 32, step = 2,
+					},
+					position = {
+						order = 3,
+						type = "select",
+						name = L["POINT"],
+						values = POINTS,
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			count = {
+				order = 30,
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
@@ -156,8 +208,8 @@ local function getOptionsTable_Aura(order, name, filter)
 				set = function(info, value)
 					if C.db.profile.auras[filter].count[info[#info]] ~= value then
 						C.db.profile.auras[filter].count[info[#info]] = value
-						AURAS:GetHeader(filter):UpdateConfig()
-						AURAS:GetHeader(filter):UpdateButtons("UpdateCountFont")
+						AURAS:ForHeader(filter, "UpdateConfig")
+						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountText")
 					end
 				end,
 				args = {
@@ -173,15 +225,27 @@ local function getOptionsTable_Aura(order, name, filter)
 						name = L["FLAG"],
 						values = FLAGS,
 					},
+					h_alignment = {
+						order = 3,
+						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 4,
+						type = "select",
+						name = L["TEXT_VERT_ALIGNMENT"],
+						values = V_ALIGNMENTS,
+					},
 				},
 			},
-			spacer_3 = {
-				order = 29,
+			spacer_4 = {
+				order = 39,
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -191,8 +255,8 @@ local function getOptionsTable_Aura(order, name, filter)
 				set = function(info, value)
 					if C.db.profile.auras[filter].cooldown.text[info[#info]] ~= value then
 						C.db.profile.auras[filter].cooldown.text[info[#info]] = value
-						AURAS:GetHeader(filter):UpdateConfig()
-						AURAS:GetHeader(filter):UpdateCooldownConfig()
+						AURAS:ForHeader(filter, "UpdateConfig")
+						AURAS:ForHeader(filter, "UpdateCooldownConfig")
 					end
 				end,
 				args = {
@@ -236,6 +300,9 @@ local function getOptionsTable_Aura(order, name, filter)
 		temp.args.sort_dir = nil
 		temp.args.sort_method = nil
 		temp.args.count = nil
+		temp.args.type = nil
+		temp.args.spacer_3 = nil
+		temp.args.spacer_4 = nil
 
 		temp.args.num = {
 			order = 10,
@@ -243,6 +310,9 @@ local function getOptionsTable_Aura(order, name, filter)
 			name = L["NUM_BUTTONS"],
 			min = 1, max = 4, step = 1,
 		}
+	elseif filter == "HELPFUL" then
+		temp.args.type = nil
+		temp.args.spacer_3 = nil
 	end
 
 	return temp
@@ -283,7 +353,7 @@ function CONFIG.CreateAurasPanel(_, order)
 				disabled = isModuleDisabled,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras, C.db.profile.auras, {point = true})
-					AURAS:UpdateHeaders("Update")
+					AURAS:ForEachHeader("Update")
 				end,
 			},
 			spacer_1 = {

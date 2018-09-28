@@ -62,6 +62,16 @@ local FLAGS = {
 	["_Shadow"] = L["SHADOW"],
 }
 
+local FORMATS = {
+	["NUM"] = L["NUMERIC"],
+	["NUM_PERC"] = L["NUMERIC_PERCENTAGE"]
+}
+
+local VISIBILITY = {
+	[1] = L["ALWAYS_SHOW"],
+	[2] = L["MOUSEOVER_SHOW"],
+}
+
 local MICRO_BARS = {
 	["micromenu1"] = L["MAIN_BAR"],
 	["micromenu2"] = L["ADDITIONAL_BAR"],
@@ -1546,12 +1556,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				get = function(info)
 					return C.db.profile.bars.xpbar[info[#info]]
 				end,
-				set = function(info, value)
-					if C.db.profile.bars.xpbar[info[#info]] ~= value then
-						C.db.profile.bars.xpbar[info[#info]] = value
-						BARS:GetBar("xpbar"):Update()
-					end
-				end,
 				args = {
 					enabled = {
 						order = 1,
@@ -1598,6 +1602,13 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						name = L["WIDTH"],
 						min = 530, max = 1900, step = 2,
 						disabled = isXPBarDisabledOrRestricted,
+						set = function(info, value)
+							if C.db.profile.bars.xpbar[info[#info]] ~= value then
+								C.db.profile.bars.xpbar[info[#info]] = value
+								BARS:GetBar("xpbar"):UpdateConfig()
+								BARS:GetBar("xpbar"):UpdateSize(value, C.db.profile.bars.xpbar.height)
+							end
+						end,
 					},
 					height = {
 						order = 11,
@@ -1605,6 +1616,13 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
 						disabled = isXPBarDisabledOrRestricted,
+						set = function(info, value)
+							if C.db.profile.bars.xpbar[info[#info]] ~= value then
+								C.db.profile.bars.xpbar[info[#info]] = value
+								BARS:GetBar("xpbar"):UpdateConfig()
+								BARS:GetBar("xpbar"):UpdateSize(C.db.profile.bars.xpbar.width, value)
+							end
+						end,
 					},
 					spacer_2 = {
 						order = 19,
@@ -1624,7 +1642,11 @@ function CONFIG.CreateActionBarsPanel(_, order)
 							if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 								C.db.profile.bars.xpbar.text[info[#info]] = value
 								BARS:GetBar("xpbar"):UpdateConfig()
-								BARS:GetBar("xpbar"):UpdateFont()
+								BARS:GetBar("xpbar"):ForEach(
+									"UpdateFont",
+									C.db.profile.bars.xpbar.text.size,
+									C.db.profile.bars.xpbar.text.flag)
+								BARS:GetBar("xpbar"):ForEach("UpdateText")
 							end
 						end,
 						args = {
@@ -1639,6 +1661,33 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								type = "select",
 								name = L["FLAG"],
 								values = FLAGS,
+							},
+							format = {
+								order = 3,
+								type = "select",
+								name = L["FORMAT"],
+								values = FORMATS,
+								set = function(info, value)
+									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
+										C.db.profile.bars.xpbar.text[info[#info]] = value
+										BARS:GetBar("xpbar"):UpdateConfig()
+										BARS:GetBar("xpbar"):UpdateTextFormat(value)
+										BARS:GetBar("xpbar"):ForEach("UpdateText")
+									end
+								end,
+							},
+							visibility = {
+								order = 4,
+								type = "select",
+								name = L["VISIBILITY"],
+								values = VISIBILITY,
+								set = function(info, value)
+									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
+										C.db.profile.bars.xpbar.text[info[#info]] = value
+										BARS:GetBar("xpbar"):UpdateConfig()
+										BARS:GetBar("xpbar"):ForEach("LockText", value == 1)
+									end
+								end,
 							},
 						},
 					},

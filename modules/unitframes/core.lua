@@ -50,6 +50,12 @@ local function frame_UpdateSize(self)
 	end
 end
 
+local function frame_ForElement(self, element, method, ...)
+	if self[element] and self[element][method] then
+		self[element][method](self[element], ...)
+	end
+end
+
 local function frame_Preview(self, state)
 	if not self.isPreviewed or state == true then
 		if not self.isPreviewed then
@@ -161,9 +167,10 @@ function UF:Init()
 				frame:SetScript("OnLeave", frame_OnLeave)
 				frame._unit = unit:gsub("%d+", "")
 
+				frame.ForElement = frame_ForElement
+				frame.Preview = frame_Preview
 				frame.UpdateConfig = frame_UpdateConfig
 				frame.UpdateSize = frame_UpdateSize
-				frame.Preview = frame_Preview
 
 				if unit == "player" then
 					if E.UI_LAYOUT == "ls" then

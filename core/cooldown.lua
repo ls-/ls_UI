@@ -4,6 +4,7 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local m_abs = _G.math.abs
 local next = _G.next
 local unpack = _G.unpack
 
@@ -123,7 +124,7 @@ end
 
 local function cooldown_SetCooldown(self, start, duration)
 	if self.config.text.enabled then
-		if start > 0 and duration > 1.5 then
+		if duration > 1.5 then
 			activeCooldowns[self] = start + duration
 			return
 		end
@@ -141,6 +142,12 @@ local function cooldown_UpdateFontObject(self, fontObject)
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
 	self.Timer:SetWordWrap(false)
+
+	if config.flag == "_Shadow" then
+		self.Timer:SetShadowOffset(1, -1)
+	else
+		self.Timer:SetShadowOffset(0, 0)
+	end
 end
 
 local function cooldown_UpdateConfig(self, config)

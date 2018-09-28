@@ -6,11 +6,14 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local m_min = _G.math.min
+local unpack = _G.unpack
 
 --[[ luacheck: globals
-	CastingBarFrame CastingBarFrame_OnEvent CreateFrame GetNetStats PetCastingBarFrame UIParent UnitIsPossessed
-	CastingBarFrame_SetStartCastColor CastingBarFrame_SetStartChannelColor CastingBarFrame_SetFinishedCastColor
-	CastingBarFrame_SetNonInterruptibleCastColor CastingBarFrame_SetFailedCastColor
+	CastingBarFrame CastingBarFrame_OnEvent CastingBarFrame_SetFailedCastColor
+	CastingBarFrame_SetFinishedCastColor CastingBarFrame_SetNonInterruptibleCastColor
+	CastingBarFrame_SetStartCastColor CastingBarFrame_SetStartChannelColor
+	CastingBarFrame_SetUseStartColorForFinished CreateFrame GetNetStats PetCastingBarFrame UIParent
+	UnitIsPossessed
 
 	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
@@ -157,25 +160,16 @@ local function handleCastBar(self)
 	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	self.TexParent = texParent
 
-	local time = texParent:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
-	time:SetWordWrap(false)
+	local time = texParent:CreateFontString(nil, "ARTWORK")
 	time:SetPoint("RIGHT", self, "RIGHT", 0, 0)
 	self.Time = time
 
 	local text = self.Text
 	text:SetParent(texParent)
-	text:SetWordWrap(false)
-	text:SetJustifyH("LEFT")
 	text:SetSize(0, 0)
 	text:ClearAllPoints()
 	text:SetPoint("LEFT", self, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
-
-	CastingBarFrame_SetStartCastColor(self, M.COLORS.YELLOW:GetRGB())
-	CastingBarFrame_SetStartChannelColor(self, M.COLORS.YELLOW:GetRGB())
-	CastingBarFrame_SetFinishedCastColor(self, M.COLORS.YELLOW:GetRGB())
-	CastingBarFrame_SetNonInterruptibleCastColor(self, M.COLORS.GRAY:GetRGB())
-	CastingBarFrame_SetFailedCastColor(self, M.COLORS.RED:GetRGB())
 end
 
 local function updateCastBar(self)
@@ -254,8 +248,32 @@ local function updateCastBar(self)
 
 	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 
+	CastingBarFrame_SetStartCastColor(self, unpack(config.colors.casting))
+	CastingBarFrame_SetStartChannelColor(self, unpack(config.colors.channeling))
+	CastingBarFrame_SetFinishedCastColor(self, unpack(config.colors.casting))
+	CastingBarFrame_SetNonInterruptibleCastColor(self, unpack(config.colors.notinterruptible))
+	CastingBarFrame_SetFailedCastColor(self, unpack(config.colors.failed))
+	CastingBarFrame_SetUseStartColorForFinished(self, true)
+
 	self.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	self.Text:SetJustifyH("LEFT")
+	self.Text:SetWordWrap(false)
+
+	if config.text.flag == "_Shadow" then
+		self.Text:SetShadowOffset(1, -1)
+	else
+		self.Text:SetShadowOffset(0, 0)
+	end
+
 	self.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	self.Time:SetJustifyH("RIGHT")
+	self.Time:SetWordWrap(false)
+
+	if config.text.flag == "_Shadow" then
+		self.Time:SetShadowOffset(1, -1)
+	else
+		self.Time:SetShadowOffset(0, 0)
+	end
 end
 
 local function bar_SetLook(self)

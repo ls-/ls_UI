@@ -119,20 +119,20 @@ local methods = {
 		end
 	end,
 
-	["SetValue"] = function(self,value)
+	["SetValue"] = function(self, value)
 		local check = self.check
 		self.checked = value
 		if value then
-			SetDesaturation(self.check, false)
-			self.check:Show()
+			SetDesaturation(check, false)
+			check:Show()
 		else
 			--Nil is the unknown tristate value
 			if self.tristate and value == nil then
-				SetDesaturation(self.check, true)
-				self.check:Show()
+				SetDesaturation(check, true)
+				check:Show()
 			else
-				SetDesaturation(self.check, false)
-				self.check:Hide()
+				SetDesaturation(check, false)
+				check:Hide()
 			end
 		end
 		self:SetDisabled(self.disabled)
@@ -155,21 +155,21 @@ local methods = {
 		local size
 		if type == "radio" then
 			size = 16
-			checkbg:SetTexture("Interface\\Buttons\\UI-RadioButton")
+			checkbg:SetTexture(130843) -- Interface\\Buttons\\UI-RadioButton
 			checkbg:SetTexCoord(0, 0.25, 0, 1)
-			check:SetTexture("Interface\\Buttons\\UI-RadioButton")
+			check:SetTexture(130843) -- Interface\\Buttons\\UI-RadioButton
 			check:SetTexCoord(0.25, 0.5, 0, 1)
 			check:SetBlendMode("ADD")
-			highlight:SetTexture("Interface\\Buttons\\UI-RadioButton")
+			highlight:SetTexture(130843) -- Interface\\Buttons\\UI-RadioButton
 			highlight:SetTexCoord(0.5, 0.75, 0, 1)
 		else
 			size = 24
-			checkbg:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
+			checkbg:SetTexture(130755) -- Interface\\Buttons\\UI-CheckBox-Up
 			checkbg:SetTexCoord(0, 1, 0, 1)
-			check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+			check:SetTexture(130751) -- Interface\\Buttons\\UI-CheckBox-Check
 			check:SetTexCoord(0, 1, 0, 1)
 			check:SetBlendMode("BLEND")
-			highlight:SetTexture("Interface\\Buttons\\UI-CheckBox-Highlight")
+			highlight:SetTexture(130753) -- Interface\\Buttons\\UI-CheckBox-Highlight
 			highlight:SetTexCoord(0, 1, 0, 1)
 		end
 		checkbg:SetHeight(size)
@@ -255,11 +255,11 @@ local function Constructor()
 	checkbg:SetWidth(24)
 	checkbg:SetHeight(24)
 	checkbg:SetPoint("TOPLEFT")
-	checkbg:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
+	checkbg:SetTexture(130755) -- Interface\\Buttons\\UI-CheckBox-Up
 
 	local check = frame:CreateTexture(nil, "OVERLAY")
 	check:SetAllPoints(checkbg)
-	check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+	check:SetTexture(130751) -- Interface\\Buttons\\UI-CheckBox-Check
 
 	local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	text:SetJustifyH("LEFT")
@@ -268,7 +268,7 @@ local function Constructor()
 	text:SetPoint("RIGHT")
 
 	local highlight = frame:CreateTexture(nil, "HIGHLIGHT")
-	highlight:SetTexture("Interface\\Buttons\\UI-CheckBox-Highlight")
+	highlight:SetTexture(130753) -- Interface\\Buttons\\UI-CheckBox-Highlight
 	highlight:SetBlendMode("ADD")
 	highlight:SetAllPoints(checkbg)
 

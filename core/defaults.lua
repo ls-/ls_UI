@@ -17,6 +17,14 @@ D.profile = {
 				day = {255 / 255, 255 / 255, 255 / 255},
 			},
 		},
+		castbar = {
+			colors = {
+				casting = {250 / 255, 193 / 255, 74 / 255},
+				channeling = {60 / 255, 170 / 255, 59 / 255},
+				failed = {222 / 255, 67 / 255, 58 / 255},
+				notinterruptible = {125 / 255, 122 / 255, 125 / 255},
+			},
+		},
 		player = {
 			ls = {
 				enabled = true,
@@ -103,6 +111,10 @@ D.profile = {
 					icon = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
+					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -272,6 +284,10 @@ D.profile = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
 					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
+					},
 					point1 = {
 						p = "TOPRIGHT",
 						anchor = "",
@@ -343,6 +359,12 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
+					count = {
+						size = 10,
+						flag = "_Outline", -- "_Shadow", ""
+						h_alignment = "RIGHT",
+						v_alignment = "TOP",
+					},
 					cooldown = {
 						text = {
 							enabled = true,
@@ -351,6 +373,11 @@ D.profile = {
 							h_alignment = "CENTER",
 							v_alignment = "BOTTOM",
 						},
+					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
 					},
 					filter = {
 						friendly = {
@@ -443,6 +470,10 @@ D.profile = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
 					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
+					},
 					point1 = {
 						p = "BOTTOM",
 						anchor = "LSPlayerFrameCastbarHolder",
@@ -534,6 +565,10 @@ D.profile = {
 					icon = {
 						enabled = true,
 						position = "LEFT", -- or "RIGHT"
+					},
+					text = {
+						size = 12,
+						flag = "_Shadow", -- "_Outline", ""
 					},
 					point1 = {
 						p = "TOPLEFT",
@@ -670,6 +705,10 @@ D.profile = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
 				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
+				},
 				point1 = {
 					p = "TOPLEFT",
 					anchor = "",
@@ -743,6 +782,12 @@ D.profile = {
 				x_growth = "RIGHT",
 				y_growth = "UP",
 				disable_mouse = false,
+				count = {
+					size = 10,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "RIGHT",
+					v_alignment = "TOP",
+				},
 				cooldown = {
 					text = {
 						enabled = true,
@@ -751,6 +796,11 @@ D.profile = {
 						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
+				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
 				},
 				filter = {
 					friendly = {
@@ -967,6 +1017,10 @@ D.profile = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
 				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
+				},
 				point1 = {
 					p = "TOPRIGHT",
 					anchor = "",
@@ -1039,6 +1093,12 @@ D.profile = {
 				x_growth = "RIGHT",
 				y_growth = "UP",
 				disable_mouse = false,
+				count = {
+					size = 10,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "RIGHT",
+					v_alignment = "TOP",
+				},
 				cooldown = {
 					text = {
 						enabled = true,
@@ -1047,6 +1107,11 @@ D.profile = {
 						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
+				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
 				},
 				filter = {
 					friendly = {
@@ -1282,6 +1347,10 @@ D.profile = {
 					enabled = true,
 					position = "LEFT", -- or "RIGHT"
 				},
+				text = {
+					size = 12,
+					flag = "_Shadow", -- "_Outline", ""
+				},
 				point1 = {
 					p = "TOPLEFT",
 					anchor = "",
@@ -1344,6 +1413,12 @@ D.profile = {
 				x_growth = "LEFT",
 				y_growth = "DOWN",
 				disable_mouse = false,
+				count = {
+					size = 10,
+					flag = "_Outline", -- "_Shadow", ""
+					h_alignment = "RIGHT",
+					v_alignment = "TOP",
+				},
 				cooldown = {
 					text = {
 						enabled = true,
@@ -1352,6 +1427,11 @@ D.profile = {
 						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
+				},
+				type = {
+					size = 12,
+					position = "TOPLEFT",
+					debuff_type = false,
 				},
 				filter = {
 					friendly = {
@@ -2041,6 +2121,8 @@ D.profile = {
 			text = {
 				size = 10,
 				flag = "_Outline", -- "_Shadow", ""
+				format = "NUM", -- "NUM_PERC"
+				visibility = 2, -- 1 - always, 2 - mouseover
 			},
 			point = {
 				p = "BOTTOM",
@@ -2087,6 +2169,8 @@ D.profile = {
 				enabled = true,
 				size = 12,
 				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "RIGHT",
+				v_alignment = "TOP",
 			},
 			cooldown = {
 				text = {
@@ -2096,6 +2180,11 @@ D.profile = {
 					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
+			},
+			type = {
+				size = 12,
+				position = "TOPLEFT",
+				debuff_type = false,
 			},
 			point = {
 				ls = {
@@ -2128,6 +2217,8 @@ D.profile = {
 				enabled = true,
 				size = 12,
 				flag = "_Outline", -- "_Shadow", ""
+				h_alignment = "RIGHT",
+				v_alignment = "TOP",
 			},
 			cooldown = {
 				text = {
@@ -2137,6 +2228,11 @@ D.profile = {
 					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
+			},
+			type = {
+				size = 12,
+				position = "TOPLEFT",
+				debuff_type = false,
 			},
 			point = {
 				ls = {
@@ -2218,6 +2314,12 @@ D.profile = {
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
+			colors = {
+				casting = {250 / 255, 193 / 255, 74 / 255},
+				channeling = {60 / 255, 170 / 255, 59 / 255},
+				failed = {222 / 255, 67 / 255, 58 / 255},
+				notinterruptible = {125 / 255, 122 / 255, 125 / 255},
+			},
 		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			width = 200,
