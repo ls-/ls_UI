@@ -35,7 +35,6 @@ local defaults = {
 		enabled = true,
 		size = 12,
 		flag = "_Outline", -- "_Shadow", ""
-		h_alignment = "CENTER",
 		v_alignment = "MIDDLE",
 	},
 }
@@ -138,7 +137,7 @@ local function cooldown_UpdateFontObject(self, fontObject)
 	local config = self.config.text
 
 	self.Timer:SetFontObject(fontObject or "LSFont" .. config.size .. config.flag)
-	self.Timer:SetJustifyH(config.h_alignment)
+	self.Timer:SetJustifyH("CENTER")
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
 	self.Timer:SetWordWrap(false)

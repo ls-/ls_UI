@@ -370,7 +370,6 @@ D.profile = {
 							enabled = true,
 							size = 10,
 							flag = "_Outline", -- "_Shadow", ""
-							h_alignment = "CENTER",
 							v_alignment = "BOTTOM",
 						},
 					},
@@ -793,7 +792,6 @@ D.profile = {
 						enabled = true,
 						size = 10,
 						flag = "_Outline", -- "_Shadow", ""
-						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1104,7 +1102,6 @@ D.profile = {
 						enabled = true,
 						size = 10,
 						flag = "_Outline", -- "_Shadow", ""
-						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1424,7 +1421,6 @@ D.profile = {
 						enabled = true,
 						size = 10,
 						flag = "_Outline", -- "_Shadow", ""
-						h_alignment = "CENTER",
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1591,7 +1587,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1643,7 +1638,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1695,7 +1689,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1747,7 +1740,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1799,7 +1791,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1841,7 +1832,6 @@ D.profile = {
 					enabled = true,
 					size = 10,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1875,7 +1865,6 @@ D.profile = {
 					enabled = true,
 					size = 10,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1934,7 +1923,6 @@ D.profile = {
 					enabled = true,
 					size = 14,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -1964,7 +1952,6 @@ D.profile = {
 					enabled = true,
 					size = 14,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2177,7 +2164,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2225,7 +2211,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2263,7 +2248,6 @@ D.profile = {
 					enabled = true,
 					size = 12,
 					flag = "_Outline", -- "_Shadow", ""
-					h_alignment = "CENTER",
 					v_alignment = "BOTTOM",
 				},
 			},
