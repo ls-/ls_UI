@@ -14,7 +14,6 @@ local isInit = false
 
 function MODULE.CreateZoneButton()
 	if not isInit then
-
 		local bar = CreateFrame("Frame", "LSZoneAbilityBar", UIParent, "SecureHandlerStateTemplate")
 		bar._id = "zone"
 		bar._buttons = {}
