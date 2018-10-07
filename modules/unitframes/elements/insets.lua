@@ -64,8 +64,8 @@ local function frame_UpdateInsets(self)
 	local top = self.Insets.Top
 	local bottom = self.Insets.Bottom
 
-	top._height = self._config.insets.t_height + 2
-	bottom._height = self._config.insets.b_height + 2
+	top._height = self._config.insets.t_height
+	bottom._height = self._config.insets.b_height
 
 	if top:IsExpanded() then
 		top:SetHeight(top._height)
@@ -85,40 +85,40 @@ function UF:CreateInsets(frame, texParent)
 	topInset:SetPoint("TOPLEFT", 0, 0)
 	topInset:SetPoint("TOPRIGHT", 0, 0)
 
-	local texture1 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture1:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-	texture1:SetTexCoord(1 / 64, 15 / 64, 11 / 32, 23 / 32)
-	texture1:SetSize(14 / 2, 12 / 2)
-	texture1:SetPoint("BOTTOMLEFT", topInset, "BOTTOMLEFT", -1, -2)
+	local left = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
+	left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
+	left:SetSize(16 / 2, 12 / 2)
+	left:SetPoint("BOTTOMLEFT", topInset, "BOTTOMLEFT", 0, -2)
 
-	local texture2 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture2:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
-	texture2:SetTexCoord(16 / 64, 30 / 64, 11 / 32, 23 / 32)
-	texture2:SetSize(14 / 2, 12 / 2)
-	texture2:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 1, -2)
+	local right = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
+	right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
+	right:SetSize(16 / 2, 12 / 2)
+	right:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, -2)
 
-	local texture3 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture3:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
-	texture3:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
-	texture3:SetHorizTile(true)
-	texture3:SetPoint("TOPLEFT", texture1, "TOPRIGHT", 0, 0)
-	texture3:SetPoint("BOTTOMRIGHT", texture2, "BOTTOMLEFT", 0, 0)
+	local mid = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
+	mid:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
+	mid:SetHorizTile(true)
+	mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
+	mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 
-	local texture4 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 0)
-	texture4:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-	texture4:SetPoint("TOPLEFT", topInset, "TOPLEFT", 0, 0)
-	texture4:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, 2)
+	local glass = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 0)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
+	glass:SetPoint("TOPLEFT", topInset, "TOPLEFT", 0, 0)
+	glass:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, 2)
 
-	local texture5 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, -1)
-	texture5:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-	texture5:SetPoint("TOPLEFT", topInset, "TOPLEFT", 0, 0)
-	texture5:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, 2)
+	local shadow = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, -1)
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+	shadow:SetPoint("TOPLEFT", topInset, "TOPLEFT", 0, 0)
+	shadow:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, 2)
 
-	topInset.Left = texture1
-	topInset.Mid = texture3
-	topInset.Right = texture2
-	topInset.Glass = texture4
-	topInset.GlassShadow = texture5
+	topInset.Left = left
+	topInset.Mid = mid
+	topInset.Right = right
+	topInset.Glass = glass
+	topInset.GlassShadow = shadow
 	topInset.Expand = inset_Expand
 	topInset.Collapse = inset_Collapse
 	topInset.IsExpanded = inset_IsExpanded
@@ -131,40 +131,40 @@ function UF:CreateInsets(frame, texParent)
 	bottomInset:SetPoint("BOTTOMLEFT", 0, 0)
 	bottomInset:SetPoint("BOTTOMRIGHT", 0, 0)
 
-	texture1 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture1:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-	texture1:SetTexCoord(1 / 64, 15 / 64, 11 / 32, 23 / 32)
-	texture1:SetSize(14 / 2, 12 / 2)
-	texture1:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", -1, 2)
+	left = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
+	left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
+	left:SetSize(16 / 2, 12 / 2)
+	left:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, 2)
 
-	texture2 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture2:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
-	texture2:SetTexCoord(16 / 64, 30 / 64, 11 / 32, 23 / 32)
-	texture2:SetSize(14 / 2, 12 / 2)
-	texture2:SetPoint("TOPRIGHT", bottomInset, "TOPRIGHT", 1, 2)
+	right = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
+	right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
+	right:SetSize(16 / 2, 12 / 2)
+	right:SetPoint("TOPRIGHT", bottomInset, "TOPRIGHT", 0, 2)
 
-	texture3 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
-	texture3:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
-	texture3:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
-	texture3:SetHorizTile(true)
-	texture3:SetPoint("TOPLEFT", texture1, "TOPRIGHT", 0, 0)
-	texture3:SetPoint("BOTTOMRIGHT", texture2, "BOTTOMLEFT", 0, 0)
+	mid = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 4)
+	mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", true)
+	mid:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
+	mid:SetHorizTile(true)
+	mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
+	mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 
-	texture4 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 0)
-	texture4:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-	texture4:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, -2)
-	texture4:SetPoint("BOTTOMRIGHT", bottomInset, "BOTTOMRIGHT", 0, 0)
+	glass = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, 0)
+	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
+	glass:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, -2)
+	glass:SetPoint("BOTTOMRIGHT", bottomInset, "BOTTOMRIGHT", 0, 0)
 
-	texture5 = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, -1)
-	texture5:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-	texture5:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, -2)
-	texture5:SetPoint("BOTTOMRIGHT", bottomInset, "BOTTOMRIGHT", 0, 0)
+	shadow = (texParent or frame):CreateTexture(nil, "OVERLAY", nil, -1)
+	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+	shadow:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, -2)
+	shadow:SetPoint("BOTTOMRIGHT", bottomInset, "BOTTOMRIGHT", 0, 0)
 
-	bottomInset.Left = texture1
-	bottomInset.Mid = texture3
-	bottomInset.Right = texture2
-	bottomInset.Glass = texture4
-	bottomInset.GlassShadow = texture5
+	bottomInset.Left = left
+	bottomInset.Mid = mid
+	bottomInset.Right = right
+	bottomInset.Glass = glass
+	bottomInset.GlassShadow = shadow
 	bottomInset.Expand = inset_Expand
 	bottomInset.Collapse = inset_Collapse
 	bottomInset.IsExpanded = inset_IsExpanded

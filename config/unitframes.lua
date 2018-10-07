@@ -40,11 +40,6 @@ local POINTS_EXT = {
 	["TOPRIGHT"] = "TOPRIGHT",
 }
 
-local INSETS = {
-	[8] = "8",
-	[12] = "12",
-}
-
 local H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
 	["LEFT"] = "LEFT",
@@ -2200,10 +2195,10 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			},
 			top_inset = {
 				order = 15,
-				type = "select",
+				type = "range",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
-				values = INSETS,
+				min = 8, max = 32, step = 2,
 				get = function()
 					return C.db.profile.units[unit].insets.t_height
 				end,
@@ -2217,10 +2212,10 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			},
 			bottom_inset = {
 				order = 16,
-				type = "select",
+				type = "range",
 				name = L["BOTTOM_INSET_SIZE"],
 				desc = L["BOTTOM_INSET_SIZE_DESC"],
-				values = INSETS,
+				min = 8, max = 32, step = 2,
 				get = function()
 					return C.db.profile.units[unit].insets.b_height
 				end,
