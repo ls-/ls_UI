@@ -268,12 +268,12 @@ local function element_CreateAuraIcon(element, index)
 
 	local count = button.Count
 	count:SetAllPoints()
-	count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
-	count:SetJustifyH(config.count.h_alignment)
-	count:SetJustifyV(config.count.v_alignment)
+	count:SetFontObject("LSFont" .. config.text.size .. (config.text.outline and "_Outline" or ""))
+	count:SetJustifyH(config.text.h_alignment)
+	count:SetJustifyV(config.text.v_alignment)
 	count:SetWordWrap(false)
 
-	if config.count.flag == "_Shadow" then
+	if config.text.shadow then
 		count:SetShadowOffset(1, -1)
 	else
 		count:SetShadowOffset(0, 0)
@@ -318,7 +318,7 @@ local function element_CreateAuraIcon(element, index)
 	return button
 end
 
-local function element_UpdateAuraType(self, _, aura, _, _, _, _, debuffType)
+local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
 		if self._config.type.debuff_type then
 			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))
@@ -357,6 +357,38 @@ local function element_UpdateCooldownConfig(element)
 	end
 end
 
+local function element_UpdateFonts(element)
+	local config = element._config.text
+	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
+	local count
+
+	for i = 1, element.createdIcons do
+		count = element[i].count
+		count:SetFontObject(fontObj)
+		count:SetJustifyH(config.h_alignment)
+		count:SetJustifyV(config.v_alignment)
+		count:SetWordWrap(false)
+
+		if config.shadow then
+			count:SetShadowOffset(1, -1)
+		else
+			count:SetShadowOffset(0, 0)
+		end
+	end
+end
+
+local function element_UpdateAuraTypeIcon(element)
+	local config = element._config.type
+	local auraType
+
+	for i = 1, element.createdIcons do
+		auraType = element[i].AuraType
+		auraType:ClearAllPoints()
+		auraType:SetPoint(config.position, 0, 0)
+		auraType:SetSize(config.size, config.size)
+	end
+end
+
 local function frame_UpdateAuras(self)
 	local element = self.Auras
 	element:UpdateConfig()
@@ -390,30 +422,13 @@ local function frame_UpdateAuras(self)
 	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
 	element:ClearAllPoints()
 
-	local auraType, count
-	for i = 1, element.createdIcons do
-		auraType = element[i].AuraType
-		auraType:ClearAllPoints()
-		auraType:SetPoint(config.type.position, 0, 0)
-		auraType:SetSize(config.type.size, config.type.size)
-
-		count = element[i].count
-		count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
-		count:SetJustifyH(config.count.h_alignment)
-		count:SetJustifyV(config.count.v_alignment)
-		count:SetWordWrap(false)
-
-		if config.count.flag == "_Shadow" then
-			count:SetShadowOffset(1, -1)
-		else
-			count:SetShadowOffset(0, 0)
-		end
-	end
-
 	local point1 = config.point1
 	if point1 and point1.p then
 		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
 	end
+
+	element:UpdateAuraTypeIcon()
+	element:UpdateFonts()
 
 	if config.enabled and not self:IsElementEnabled("Auras") then
 		self:EnableElement("Auras")
@@ -430,14 +445,16 @@ function UF:CreateAuras(frame, unit)
 	local element = CreateFrame("Frame", nil, frame)
 	element:SetSize(48, 48)
 
-	element.spacing = 4
 	element.showDebuffType = true
 	element.showStealableBuffs = true
+	element.spacing = 4
 	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = element_UpdateAuraType
+	element.PostUpdateIcon = element_PostUpdateIcon
+	element.UpdateAuraTypeIcon = element_UpdateAuraTypeIcon
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
+	element.UpdateFonts = element_UpdateFonts
 
 	frame.UpdateAuras = frame_UpdateAuras
 

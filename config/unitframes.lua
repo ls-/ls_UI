@@ -1607,19 +1607,20 @@ local function getOptionsTable_Auras(order, unit)
 				type = "description",
 				name = " ",
 			},
-			count = {
+			text = {
 				order = 40,
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
 				get = function(info)
-					return C.db.profile.units[unit].auras.count[info[#info]]
+					return C.db.profile.units[unit].auras.text[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
-						C.db.profile.units[unit].auras.count[info[#info]] = value
+					if C.db.profile.units[unit].auras.text[info[#info]] ~= value then
+						C.db.profile.units[unit].auras.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -1629,20 +1630,24 @@ local function getOptionsTable_Auras(order, unit)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
-					flag = {
+					outline = {
 						order = 2,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
 					},
 					h_alignment = {
-						order = 3,
+						order = 4,
 						type = "select",
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = H_ALIGNMENTS,
 					},
 					v_alignment = {
-						order = 4,
+						order = 5,
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,
@@ -2020,14 +2025,15 @@ local function getOptionsTable_Auras(order, unit)
 			end
 		end
 
-		temp.args.count.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]]
+		temp.args.text.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].auras.text[info[#info]]
 		end
-		temp.args.count.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] = value
+		temp.args.text.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].auras.text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].auras.text[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFonts")
 			end
 		end
 
