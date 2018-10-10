@@ -54,7 +54,7 @@ function UF:CreateTargetTargetFrame(frame)
 
 	frame.Insets = self:CreateInsets(frame, textureParent)
 
-	local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
+	local health = self:CreateHealth(frame, textParent)
 	health:SetFrameLevel(level + 1)
 	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -63,7 +63,7 @@ function UF:CreateTargetTargetFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
+	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
 	local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
 	power:SetFrameLevel(level + 1)

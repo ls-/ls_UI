@@ -47,13 +47,18 @@ do
 		textureParent:SetAllPoints()
 		frame.TextureParent = textureParent
 
+		local textParent = CreateFrame("Frame", nil, frame)
+		textParent:SetFrameLevel(level + 6)
+		textParent:SetAllPoints()
+		frame.TextParent = textParent
+
 		local fg = textureParent:CreateTexture(nil, "ARTWORK", nil, 1)
 		fg:SetSize(80 / 2, 148 / 2)
 		fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
 		fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 		fg:SetPoint("CENTER", 0, 0)
 
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", frame)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(8, 112)
 		health:SetPoint("CENTER", -6, 0)
@@ -64,7 +69,7 @@ do
 		healthBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 		healthBG:SetAllPoints()
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
 		local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
 		power:SetFrameLevel(level + 1)
@@ -156,7 +161,7 @@ do
 
 		frame.Insets = self:CreateInsets(frame, textureParent)
 
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -165,7 +170,7 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
 		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
 		power:SetFrameLevel(level + 1)

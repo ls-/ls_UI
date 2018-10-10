@@ -130,7 +130,8 @@ local function getOptionsTable_Health(order, unit)
 				set = function(info, value)
 					C.db.profile.units[unit].health.color[info[#info]] = value
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateColorSettings")
 				end,
 				args = {
 					class = {
@@ -158,50 +159,102 @@ local function getOptionsTable_Health(order, unit)
 				name = L["BAR_TEXT"],
 				inline = true,
 				get = function(info)
-					return C.db.profile.units[unit].health.text.point1[info[#info]]
+					return C.db.profile.units[unit].health.text[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.profile.units[unit].health.text.point1[info[#info]] ~= value then
-						C.db.profile.units[unit].health.text.point1[info[#info]] = value
+					if C.db.profile.units[unit].health.text[info[#info]] ~= value then
+						C.db.profile.units[unit].health.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFontObjects")
 					end
 				end,
 				args = {
-					p = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					outline = {
+						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+					h_alignment = {
 						order = 4,
 						type = "select",
-						name = L["POINT"],
-						desc = L["POINT_DESC"],
-						values = POINTS,
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = H_ALIGNMENTS,
 					},
-					anchor = {
-						order = 5,
-						type = "select",
-						name = L["ANCHOR"],
-						values = getRegionAnchors({["Health.Text"] = true}),
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
 					},
-					rP = {
-						order = 6,
-						type = "select",
-						name = L["RELATIVE_POINT"],
-						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+					point = {
+						order = 10,
+						type = "group",
+						name = "",
+						inline = true,
+						get = function(info)
+							return C.db.profile.units[unit].health.text.point1[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.units[unit].health.text.point1[info[#info]] ~= value then
+								C.db.profile.units[unit].health.text.point1[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTextPoints")
+							end
+						end,
+						args = {
+							p = {
+								order = 4,
+								type = "select",
+								name = L["POINT"],
+								desc = L["POINT_DESC"],
+								values = POINTS,
+							},
+							anchor = {
+								order = 5,
+								type = "select",
+								name = L["ANCHOR"],
+								values = getRegionAnchors({["Health.Text"] = true}),
+							},
+							rP = {
+								order = 6,
+								type = "select",
+								name = L["RELATIVE_POINT"],
+								desc = L["RELATIVE_POINT_DESC"],
+								values = POINTS,
+							},
+							x = {
+								order = 7,
+								type = "range",
+								name = L["X_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+							y = {
+								order = 8,
+								type = "range",
+								name = L["Y_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+						},
 					},
-					x = {
-						order = 7,
-						type = "range",
-						name = L["X_OFFSET"],
-						min = -128, max = 128, step = 1,
-					},
-					y = {
-						order = 8,
-						type = "range",
-						name = L["Y_OFFSET"],
-						min = -128, max = 128, step = 1,
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
 					},
 					tag = {
-						order = 10,
+						order = 20,
 						type = "input",
 						width = "full",
 						name = L["FORMAT"],
@@ -214,7 +267,8 @@ local function getOptionsTable_Health(order, unit)
 
 							C.db.profile.units[unit].health.text.tag = value:gsub("\124\124+", "\124")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTags")
 						end,
 					},
 				},
@@ -254,50 +308,102 @@ local function getOptionsTable_Health(order, unit)
 						name = L["DAMAGE_ABSORB_TEXT"],
 						inline = true,
 						get = function(info)
-							return C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]]
+							return C.db.profile.units[unit].health.prediction.absorb_text[info[#info]]
 						end,
 						set = function(info, value)
-							if C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] ~= value then
-								C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] = value
+							if C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] ~= value then
+								C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
 							end
 						end,
 						args = {
-							p = {
+							size = {
 								order = 1,
-								type = "select",
-								name = L["POINT"],
-								desc = L["POINT_DESC"],
-								values = POINTS,
+								type = "range",
+								name = L["SIZE"],
+								min = 10, max = 20, step = 2,
 							},
-							anchor = {
+							outline = {
 								order = 2,
-								type = "select",
-								name = L["ANCHOR"],
-								values = getRegionAnchors(),
+								type = "toggle",
+								name = L["OUTLINE"],
 							},
-							rP = {
+							shadow = {
 								order = 3,
-								type = "select",
-								name = L["RELATIVE_POINT"],
-								desc = L["RELATIVE_POINT_DESC"],
-								values = POINTS,
+								type = "toggle",
+								name = L["SHADOW"],
 							},
-							x = {
+							h_alignment = {
 								order = 4,
-								type = "range",
-								name = L["X_OFFSET"],
-								min = -128, max = 128, step = 1,
+								type = "select",
+								name = L["TEXT_HORIZ_ALIGNMENT"],
+								values = H_ALIGNMENTS,
 							},
-							y = {
-								order = 5,
-								type = "range",
-								name = L["Y_OFFSET"],
-								min = -128, max = 128, step = 1,
+							spacer_1 = {
+								order = 9,
+								type = "description",
+								name = " ",
+							},
+							point = {
+								order = 10,
+								type = "group",
+								name = "",
+								inline = true,
+								get = function(info)
+									return C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]]
+								end,
+								set = function(info, value)
+									if C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] ~= value then
+										C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] = value
+										UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+									end
+								end,
+								args = {
+									p = {
+										order = 1,
+										type = "select",
+										name = L["POINT"],
+										desc = L["POINT_DESC"],
+										values = POINTS,
+									},
+									anchor = {
+										order = 2,
+										type = "select",
+										name = L["ANCHOR"],
+										values = getRegionAnchors(),
+									},
+									rP = {
+										order = 3,
+										type = "select",
+										name = L["RELATIVE_POINT"],
+										desc = L["RELATIVE_POINT_DESC"],
+										values = POINTS,
+									},
+									x = {
+										order = 4,
+										type = "range",
+										name = L["X_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+									y = {
+										order = 5,
+										type = "range",
+										name = L["Y_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+								},
+							},
+							spacer_2 = {
+								order = 19,
+								type = "description",
+								name = " ",
 							},
 							tag = {
-								order = 9,
+								order = 20,
 								type = "input",
 								width = "full",
 								name = L["FORMAT"],
@@ -310,7 +416,8 @@ local function getOptionsTable_Health(order, unit)
 
 									C.db.profile.units[unit].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
 								end,
 							},
 						},
@@ -326,50 +433,102 @@ local function getOptionsTable_Health(order, unit)
 						name = L["HEAL_ABSORB_TEXT"],
 						inline = true,
 						get = function(info)
-							return C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]]
+							return C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]]
 						end,
 						set = function(info, value)
-							if C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
-								C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] = value
+							if C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] ~= value then
+								C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
 							end
 						end,
 						args = {
-							p = {
+							size = {
 								order = 1,
-								type = "select",
-								name = L["POINT"],
-								desc = L["POINT_DESC"],
-								values = POINTS,
+								type = "range",
+								name = L["SIZE"],
+								min = 10, max = 20, step = 2,
 							},
-							anchor = {
+							outline = {
 								order = 2,
-								type = "select",
-								name = L["ANCHOR"],
-								values = getRegionAnchors(),
+								type = "toggle",
+								name = L["OUTLINE"],
 							},
-							rP = {
+							shadow = {
 								order = 3,
-								type = "select",
-								name = L["RELATIVE_POINT"],
-								desc = L["RELATIVE_POINT_DESC"],
-								values = POINTS,
+								type = "toggle",
+								name = L["SHADOW"],
 							},
-							x = {
+							h_alignment = {
 								order = 4,
-								type = "range",
-								name = L["X_OFFSET"],
-								min = -128, max = 128, step = 1,
+								type = "select",
+								name = L["TEXT_HORIZ_ALIGNMENT"],
+								values = H_ALIGNMENTS,
 							},
-							y = {
-								order = 5,
-								type = "range",
-								name = L["Y_OFFSET"],
-								min = -128, max = 128, step = 1,
+							spacer_1 = {
+								order = 9,
+								type = "description",
+								name = " ",
+							},
+							point = {
+								order = 10,
+								type = "group",
+								name = "",
+								inline = true,
+								get = function(info)
+									return C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]]
+								end,
+								set = function(info, value)
+									if C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
+										C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] = value
+										UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+									end
+								end,
+								args = {
+									p = {
+										order = 1,
+										type = "select",
+										name = L["POINT"],
+										desc = L["POINT_DESC"],
+										values = POINTS,
+									},
+									anchor = {
+										order = 2,
+										type = "select",
+										name = L["ANCHOR"],
+										values = getRegionAnchors(),
+									},
+									rP = {
+										order = 3,
+										type = "select",
+										name = L["RELATIVE_POINT"],
+										desc = L["RELATIVE_POINT_DESC"],
+										values = POINTS,
+									},
+									x = {
+										order = 4,
+										type = "range",
+										name = L["X_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+									y = {
+										order = 5,
+										type = "range",
+										name = L["Y_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+								},
+							},
+							spacer_2 = {
+								order = 19,
+								type = "description",
+								name = " ",
 							},
 							tag = {
-								order = 9,
+								order = 20,
 								type = "input",
 								width = "full",
 								name = L["FORMAT"],
@@ -382,7 +541,8 @@ local function getOptionsTable_Health(order, unit)
 
 									C.db.profile.units[unit].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
 									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
 								end,
 							},
 						},
@@ -406,18 +566,30 @@ local function getOptionsTable_Health(order, unit)
 		temp.args.color.set = function(info, value)
 			C.db.profile.units[unit][E.UI_LAYOUT].health.color[info[#info]] = value
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateColorSettings")
 		end
 
 		temp.args.color.args.reaction = nil
 
 		temp.args.text.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].health.text.point1[info[#info]]
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.text[info[#info]]
 		end
 		temp.args.text.set = function(info, value)
+			C.db.profile.units[unit][E.UI_LAYOUT].health.text[info[#info]] = value
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFontObjects")
+		end
+
+		temp.args.text.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.text.point1[info[#info]]
+		end
+		temp.args.text.args.point.set = function(info, value)
 			C.db.profile.units[unit][E.UI_LAYOUT].health.text.point1[info[#info]] = value
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTextPoints")
 		end
 
 		temp.args.text.args.tag.get = function()
@@ -427,8 +599,9 @@ local function getOptionsTable_Health(order, unit)
 			if not CONFIG:IsTagStringValid(value) then return end
 
 			C.db.profile.units[unit][E.UI_LAYOUT].health.text.tag = value:gsub("\124\124+", "\124")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTags")
 		end
 
 		temp.args.prediction.args.enabled.get = function()
@@ -440,66 +613,77 @@ local function getOptionsTable_Health(order, unit)
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
 		end
 
-		if unit == "player" then
-			temp.args.prediction.args.absorb_text.get = function(info)
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]]
-			end
-			temp.args.prediction.args.absorb_text.set = function(info, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-				end
-			end
-
-			temp.args.prediction.args.absorb_text.args.tag.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
-			end
-			temp.args.prediction.args.absorb_text.args.tag.set = function(_, value)
-				if not CONFIG:IsTagStringValid(value) then return end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-			end
-
-			temp.args.prediction.args.heal_absorb_text.get = function(info)
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]]
-			end
-			temp.args.prediction.args.heal_absorb_text.set = function(info, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-				end
-			end
-
-			temp.args.prediction.args.heal_absorb_text.args.tag.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag:gsub("\124", "\124\124")
-			end
-			temp.args.prediction.args.heal_absorb_text.args.tag.set = function(_, value)
-				if not CONFIG:IsTagStringValid(value) then return end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-			end
-		else
-			temp.args.prediction.args.spacer_1 = nil
-			temp.args.prediction.args.absorb_text = nil
-			temp.args.prediction.args.spacer_2 = nil
-			temp.args.prediction.args.heal_absorb_text = nil
+		temp.args.prediction.args.absorb_text.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text[info[#info]]
 		end
-	elseif unit == "targettarget" then
-		temp.args.prediction.args.spacer_1 = nil
-		temp.args.prediction.args.absorb_text = nil
-		temp.args.prediction.args.spacer_2 = nil
-		temp.args.prediction.args.heal_absorb_text = nil
-	elseif unit == "focustarget" then
-		temp.args.prediction.args.spacer_1 = nil
-		temp.args.prediction.args.absorb_text = nil
-		temp.args.prediction.args.spacer_2 = nil
-		temp.args.prediction.args.heal_absorb_text = nil
+		temp.args.prediction.args.absorb_text.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+			end
+		end
+
+		temp.args.prediction.args.absorb_text.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]]
+		end
+		temp.args.prediction.args.absorb_text.args.point.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+			end
+		end
+
+		temp.args.prediction.args.absorb_text.args.tag.get = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
+		end
+		temp.args.prediction.args.absorb_text.args.tag.set = function(_, value)
+			if not CONFIG:IsTagStringValid(value) then return end
+
+			C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
+		end
+
+		temp.args.prediction.args.heal_absorb_text.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text[info[#info]]
+		end
+		temp.args.prediction.args.heal_absorb_text.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+			end
+		end
+
+		temp.args.prediction.args.heal_absorb_text.args.point.get = function(info)
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]]
+		end
+		temp.args.prediction.args.heal_absorb_text.args.point.set = function(info, value)
+			if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
+				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+			end
+		end
+
+		temp.args.prediction.args.heal_absorb_text.args.tag.get = function()
+			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag:gsub("\124", "\124\124")
+		end
+		temp.args.prediction.args.heal_absorb_text.args.tag.set = function(_, value)
+			if not CONFIG:IsTagStringValid(value) then return end
+
+			C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
+		end
 	end
 
 	return temp

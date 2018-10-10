@@ -35,6 +35,7 @@ D.profile = {
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
 				},
 				health = {
+					enabled = true,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -42,6 +43,11 @@ D.profile = {
 					},
 					text = {
 						tag = "[ls:health:cur]",
+						size = 16,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "BOTTOM",
 							anchor = "", -- frame[anchor] or "" if anchor is frame itself
@@ -54,6 +60,11 @@ D.profile = {
 						enabled = true,
 						absorb_text = {
 							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
+							size = 12,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
 							point1 = {
 								p = "BOTTOM",
 								anchor = "Health.Text",
@@ -64,6 +75,11 @@ D.profile = {
 						},
 						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
+							size = 12,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
 							point1 = {
 								p = "BOTTOM",
 								anchor = "Health.Text",
@@ -203,6 +219,7 @@ D.profile = {
 					b_height = 12,
 				},
 				health = {
+					enabled = true,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
@@ -210,7 +227,11 @@ D.profile = {
 					},
 					text = {
 						tag = "[ls:health:cur]",
+						size = 12,
+						outline = false,
+						shadow = true,
 						h_alignment = "LEFT",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "LEFT",
 							anchor = "Health",
@@ -223,7 +244,11 @@ D.profile = {
 						enabled = true,
 						absorb_text = {
 							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
+							size = 10,
+							outline = false,
+							shadow = true,
 							h_alignment = "RIGHT",
+							v_alignment = "MIDDLE",
 							point1 = {
 								p = "BOTTOMRIGHT",
 								anchor = "Health",
@@ -234,7 +259,11 @@ D.profile = {
 						},
 						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
+							size = 10,
+							outline = false,
+							shadow = true,
 							h_alignment = "RIGHT",
+							v_alignment = "MIDDLE",
 							point1 = {
 								p = "TOPRIGHT",
 								anchor = "Health",
@@ -425,6 +454,7 @@ D.profile = {
 					traditional = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
 				},
 				health = {
+					enabled = true,
 					orientation = "VERTICAL",
 					color = {
 						class = true,
@@ -432,7 +462,11 @@ D.profile = {
 					},
 					text = {
 						tag = "[ls:health:cur]",
+						size = 12,
+						outline = false,
+						shadow = true,
 						h_alignment = "RIGHT",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "BOTTOMRIGHT",
 							anchor = "",
@@ -443,6 +477,36 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
+						absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
 					},
 				},
 				power = {
@@ -521,6 +585,7 @@ D.profile = {
 					b_height = 12,
 				},
 				health = {
+					enabled = true,
 					orientation = "HORIZONTAL",
 					color = {
 						class = true,
@@ -528,7 +593,11 @@ D.profile = {
 					},
 					text = {
 						tag = "[ls:health:cur]",
+						size = 12,
+						outline = false,
+						shadow = true,
 						h_alignment = "LEFT",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "LEFT",
 							anchor = "Health",
@@ -539,6 +608,36 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
+						absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
 					},
 				},
 				power = {
@@ -640,6 +739,7 @@ D.profile = {
 				b_height = 12,
 			},
 			health = {
+				enabled = true,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -647,7 +747,11 @@ D.profile = {
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -660,9 +764,14 @@ D.profile = {
 					enabled = true,
 					absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,
@@ -670,9 +779,14 @@ D.profile = {
 					},
 					heal_absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,
@@ -866,6 +980,7 @@ D.profile = {
 				b_height = 12,
 			},
 			health = {
+				enabled = true,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -873,6 +988,11 @@ D.profile = {
 				},
 				text = {
 					tag = "",
+					size = 12,
+					outline = false,
+					shadow = true,
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -883,6 +1003,36 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
+					absorb_text = {
+						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "CENTER",
+							anchor = "Health",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					heal_absorb_text = {
+						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "CENTER",
+							anchor = "Health",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
 				},
 			},
 			power = {
@@ -952,6 +1102,7 @@ D.profile = {
 				b_height = 12,
 			},
 			health = {
+				enabled = true,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -959,7 +1110,11 @@ D.profile = {
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -972,9 +1127,14 @@ D.profile = {
 					enabled = true,
 					absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,
@@ -982,9 +1142,14 @@ D.profile = {
 					},
 					heal_absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,
@@ -1177,6 +1342,7 @@ D.profile = {
 				b_height = 12,
 			},
 			health = {
+				enabled = true,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1184,6 +1350,11 @@ D.profile = {
 				},
 				text = {
 					tag = "",
+					size = 12,
+					outline = false,
+					shadow = true,
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1194,6 +1365,36 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
+					absorb_text = {
+						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "CENTER",
+							anchor = "Health",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
+					heal_absorb_text = {
+						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "CENTER",
+							anchor = "Health",
+							rP = "CENTER",
+							x = 0,
+							y = 0,
+						},
+					},
 				},
 			},
 			power = {
@@ -1267,6 +1468,7 @@ D.profile = {
 				b_height = 12,
 			},
 			health = {
+				enabled = true,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1274,7 +1476,11 @@ D.profile = {
 				},
 				text = {
 					tag = "[ls:health:perc]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -1287,9 +1493,14 @@ D.profile = {
 					enabled = true,
 					absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,
@@ -1297,9 +1508,14 @@ D.profile = {
 					},
 					heal_absorb_text = {
 						tag = "",
+						size = 10,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "CENTER",
-							anchor = "",
+							anchor = "Health",
 							rP = "CENTER",
 							x = 0,
 							y = 0,

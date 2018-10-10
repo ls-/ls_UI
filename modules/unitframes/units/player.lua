@@ -179,7 +179,7 @@ do
 		mask:SetPoint("CENTER")
 
 		-- health
-		local health = self:CreateHealth(frame, true, "LSFont16_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(180 / 2, 280 / 2)
 		health:SetPoint("CENTER")
@@ -187,7 +187,7 @@ do
 		frame.Health = health
 
 		-- health prediction
-		local healthPrediction = self:CreateHealthPrediction(frame, health, true, "LSFont12_Shadow", textParent)
+		local healthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 		frame.HealthPrediction = healthPrediction
 
 		-- masking
@@ -444,7 +444,7 @@ do
 		end
 
 		-- health
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -453,7 +453,7 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, true, "LSFont10_Shadow", textParent)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
 		-- power
 		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
