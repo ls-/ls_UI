@@ -166,16 +166,18 @@ end
 -- TABLES --
 ------------
 
-function E:CopyTable(src, dest)
+function E:CopyTable(src, dest, ignore)
 	if type(dest) ~= "table" then
 		dest = {}
 	end
 
 	for k, v in next, src do
-		if type(v) == "table" then
-			dest[k] = self:CopyTable(v, dest[k])
-		else
-			dest[k] = v
+		if not ignore or not ignore[k] then
+			if type(v) == "table" then
+				dest[k] = self:CopyTable(v, dest[k])
+			else
+				dest[k] = v
+			end
 		end
 	end
 
