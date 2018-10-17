@@ -61,7 +61,6 @@ function UF:CreateName(frame, textParent)
 	local element = (textParent or frame):CreateFontString(nil, "OVERLAY", "LSFont12")
 
 	element.__owner = frame
-
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateFontObjects = element_UpdateFontObjects
 	element.UpdatePoints = element_UpdatePoints

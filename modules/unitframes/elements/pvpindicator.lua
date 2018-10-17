@@ -159,15 +159,14 @@ function UF:CreatePvPIndicator(frame, parent)
 
 	local element = holder:CreateTexture(nil, "ARTWORK", nil, 0)
 	element:SetSize(30, 30)
+	element.Holder = holder
 
 	local banner = holder:CreateTexture(nil, "ARTWORK", nil, -1)
 	banner:SetSize(50, 54)
 	banner:SetPoint("TOP", element, "TOP", 0, 11)
-
-	element.Holder = holder
 	element.Banner = banner
-	element.Override = element_Override
 
+	element.Override = element_Override
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdatePoints = element_UpdatePoints
 	element.UpdateTags = element_UpdateTags

@@ -63,7 +63,6 @@ function UF:CreateDebuffIndicator(frame, textParent)
 	element:SetNonSpaceWrap(true)
 
 	element.__owner = frame
-
 	element.Preview = element_Preview
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdatePoints = element_UpdatePoints

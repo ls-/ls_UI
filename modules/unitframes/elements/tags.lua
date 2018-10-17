@@ -11,7 +11,6 @@ local LE_REALM_RELATION_VIRTUAL = _G.LE_REALM_RELATION_VIRTUAL
 local GetPVPTimer = _G.GetPVPTimer
 local IsPVPTimerRunning = _G.IsPVPTimerRunning
 local IsResting = _G.IsResting
-local SecondsToTimeAbbrev = _G.SecondsToTimeAbbrev
 local UnitAffectingCombat = _G.UnitAffectingCombat
 local UnitAlternatePowerInfo = _G.UnitAlternatePowerInfo
 local UnitBattlePetLevel = _G.UnitBattlePetLevel

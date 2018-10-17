@@ -34,7 +34,6 @@ end
 
 function UF:CreateThreatIndicator(frame, parent, isTexture)
 	local element
-
 	if isTexture then
 		element = (parent or frame):CreateTexture(nil, "BACKGROUND", nil, -7)
 	else
