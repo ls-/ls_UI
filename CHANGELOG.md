@@ -16,7 +16,7 @@
 
 - Added options to adjust auras' count text and aura type icon. It's also possible to display  
   actual debuff types instead of generic down arrows;
-- Added options to adjust xp bar's text's format and visiblity;
+- Added options to adjust xp bar's text's format and visibility;
 - Added options to adjust castbars' colours;
 - Added a hack for cooldown numbers. Cooldown spirals are still bugged, but that's a Blizz bug;
 - Updated minimap button handling. This should greatly improve compatibility w/ addons that add  
@@ -48,7 +48,7 @@
 - Fixed the "Inventory" micro button's currency tracker;
 - Fixed an issue where getting and/or setting a key binding text for a button with no name would  
   result in an error. This issue mainly affected the Pet Battle UI;
-- Blizz castbar's movers are now properly disabled when the default castbars aren't actually  
+- Blizz castbars' movers are now properly disabled when the default castbars aren't actually  
   used;
 - Player's buffs, debuffs, and totems are now hidden while doing pet battles.
 
