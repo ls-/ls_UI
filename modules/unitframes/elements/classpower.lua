@@ -330,8 +330,7 @@ do
 		element:SetValue(cur)
 		element:SetStatusBarColor(r, g, b)
 
-		element:UpdateGainLoss(cur, max)
-		-- element.GainLossIndicators:Update(cur, max)
+		element.GainLossIndicators:Update(cur, max)
 	end
 
 	local function element_UpdateConfig(self)
@@ -348,9 +347,8 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 
-		E:ReanchorGainLossIndicators(element, element._config.orientation)
-		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
-		-- element:UpdateGainLossThreshold()
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Stagger") then
 			self:EnableElement("Stagger")
@@ -371,8 +369,7 @@ do
 		E:SmoothBar(element)
 		element:Hide()
 
-		E:CreateGainLossIndicators(element)
-		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.Override = element_Override
 		element.UpdateConfig = element_UpdateConfig

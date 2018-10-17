@@ -252,25 +252,25 @@ local function getUFOption_Health(order, unit)
 				type = "description",
 				name = " ",
 			},
-			-- change_threshold = {
-			-- 	order = 20,
-			-- 	type = "input",
-			-- 	name = L["GAIN_LOSS_THRESHOLD"],
-			-- 	desc = L["GAIN_LOSS_THRESHOLD_DESC"],
-			-- 	get = function()
-			-- 		return tostring(C.db.profile.units[unit].health.change_threshold * 100)
-			-- 	end,
-			-- 	set = function(_, value)
-			-- 		C.db.profile.units[unit].health.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateGainLossThreshold")
-			-- 	end,
-			-- },
-			-- spacer_3 = {
-			-- 	order = 29,
-			-- 	type = "description",
-			-- 	name = " ",
-			-- },
+			change_threshold = {
+				order = 20,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].health.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].health.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
 			text = {
 				order = 30,
 				type = "group",
@@ -710,25 +710,25 @@ local function getUFOption_Power(order, unit)
 				type = "description",
 				name = " ",
 			},
-			-- change_threshold = {
-			-- 	order = 10,
-			-- 	type = "input",
-			-- 	name = L["GAIN_LOSS_THRESHOLD"],
-			-- 	desc = L["GAIN_LOSS_THRESHOLD_DESC"],
-			-- 	get = function()
-			-- 		return tostring(C.db.profile.units[unit].power.change_threshold * 100)
-			-- 	end,
-			-- 	set = function(_, value)
-			-- 		C.db.profile.units[unit].power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateGainLossThreshold")
-			-- 	end,
-			-- },
-			-- spacer_2 = {
-			-- 	order = 19,
-			-- 	type = "description",
-			-- 	name = " ",
-			-- },
+			change_threshold = {
+				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
 			text = {
 				order = 20,
 				type = "group",
@@ -910,25 +910,25 @@ local function getUFOption_AlternativePower(order, unit)
 				type = "description",
 				name = " ",
 			},
-			-- change_threshold = {
-			-- 	order = 10,
-			-- 	type = "input",
-			-- 	name = L["GAIN_LOSS_THRESHOLD"],
-			-- 	desc = L["GAIN_LOSS_THRESHOLD_DESC"],
-			-- 	get = function()
-			-- 		return tostring(C.db.profile.units[unit].alt_power.change_threshold * 100)
-			-- 	end,
-			-- 	set = function(_, value)
-			-- 		C.db.profile.units[unit].alt_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateGainLossThreshold")
-			-- 	end,
-			-- },
-			-- spacer_2 = {
-			-- 	order = 19,
-			-- 	type = "description",
-			-- 	name = " ",
-			-- },
+			change_threshold = {
+				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].alt_power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].alt_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
 			text = {
 				order = 20,
 				type = "group",
@@ -1092,27 +1092,27 @@ local function getUFOption_ClassPower(order, unit)
 				type = "description",
 				name = " ",
 			},
-			-- change_threshold = {
-			-- 	order = 10,
-			-- 	type = "input",
-			-- 	name = L["GAIN_LOSS_THRESHOLD"],
-			-- 	desc = L["GAIN_LOSS_THRESHOLD_DESC"],
-			-- 	get = function()
-			-- 		return tostring(C.db.profile.units[unit].class_power.change_threshold * 100)
-			-- 	end,
-			-- 	set = function(_, value)
-			-- 		C.db.profile.units[unit].class_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateConfig")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateGainLossThreshold")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateConfig")
-			-- 		UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateGainLossThreshold")
-			-- 	end,
-			-- },
-			-- spacer_2 = {
-			-- 	order = 19,
-			-- 	type = "description",
-			-- 	name = " ",
-			-- },
+			change_threshold = {
+				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].class_power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].class_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateGainLossThreshold")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
 			prediction = {
 				order = 20,
 				type = "toggle",

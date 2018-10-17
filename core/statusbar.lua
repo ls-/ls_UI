@@ -457,136 +457,168 @@ do
 end
 
 do
-	local function attachGainToVerticalBar(object, prev, max)
-		local offset = object:GetHeight() * (1 - E:Clamp(prev / max))
-
-		object.Gain:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 0, -offset)
-		object.Gain:SetPoint("BOTTOMRIGHT", object, "TOPRIGHT", 0, -offset)
+	local function clamp(v, min, max)
+		return m_min(max or 1, m_max(min or 0, v))
 	end
 
-	local function attachLossToVerticalBar(object, prev, max)
-		local offset = object:GetHeight() * (1 - E:Clamp(prev / max))
+	local function attachGainToVerticalBar(self, object, prev, max)
+		local offset = object:GetHeight() * (1 - clamp(prev / max))
 
-		object.Loss:SetPoint("TOPLEFT", object, "TOPLEFT", 0, -offset)
-		object.Loss:SetPoint("TOPRIGHT", object, "TOPRIGHT", 0, -offset)
+		self:SetPoint("BOTTOMLEFT", object, "TOPLEFT", 0, -offset)
+		self:SetPoint("BOTTOMRIGHT", object, "TOPRIGHT", 0, -offset)
 	end
 
-	local function attachGainToHorizontalBar(object, prev, max)
-		local offset = object:GetWidth() * (1 - E:Clamp(prev / max))
+	local function attachLossToVerticalBar(self, object, prev, max)
+		local offset = object:GetHeight() * (1 - clamp(prev / max))
 
-		object.Gain:SetPoint("TOPLEFT", object, "TOPRIGHT", -offset, 0)
-		object.Gain:SetPoint("BOTTOMLEFT", object, "BOTTOMRIGHT", -offset, 0)
+		self:SetPoint("TOPLEFT", object, "TOPLEFT", 0, -offset)
+		self:SetPoint("TOPRIGHT", object, "TOPRIGHT", 0, -offset)
 	end
 
-	local function attachLossToHorizontalBar(object, prev, max)
-		local offset = object:GetWidth() * (1 - E:Clamp(prev / max))
+	local function attachGainToHorizontalBar(self, object, prev, max)
+		local offset = object:GetWidth() * (1 - clamp(prev / max))
 
-		object.Loss:SetPoint("TOPRIGHT", object, "TOPRIGHT", -offset, 0)
-		object.Loss:SetPoint("BOTTOMRIGHT", object, "BOTTOMRIGHT", -offset, 0)
+		self:SetPoint("TOPLEFT", object, "TOPRIGHT", -offset, 0)
+		self:SetPoint("BOTTOMLEFT", object, "BOTTOMRIGHT", -offset, 0)
 	end
 
-	local function object_UpdateGainLoss(object, cur, max, condition)
-		if max ~= 0 and (condition == nil or condition) then
-			local prev = object._prev or 0
+	local function attachLossToHorizontalBar(self, object, prev, max)
+		local offset = object:GetWidth() * (1 - clamp(prev / max))
+
+		self:SetPoint("TOPRIGHT", object, "TOPRIGHT", -offset, 0)
+		self:SetPoint("BOTTOMRIGHT", object, "BOTTOMRIGHT", -offset, 0)
+	end
+
+	local function update(self, cur, max, condition)
+		if max and max ~= 0 and (condition == nil or condition) then
+			local prev = (self._prev or cur) * max / (self._max or max)
 			local diff = cur - prev
 
-			if m_abs(diff) / max < 0.1 then
+			if m_abs(diff) / max < self.threshold then
 				diff = 0
 			end
 
 			if diff > 0 then
-				if object.Gain:GetAlpha() == 0 then
-					object.Gain:SetAlpha(1)
+				if self.Gain and self.Gain:GetAlpha() == 0 then
+					self.Gain:SetAlpha(1)
 
-					if object:GetOrientation() == "VERTICAL" then
-						attachGainToVerticalBar(object, prev, max)
+					if self.orientation == "VERTICAL" then
+						attachGainToVerticalBar(self.Gain, self.__owner, prev, max)
 					else
-						attachGainToHorizontalBar(object, prev, max)
+						attachGainToHorizontalBar(self.Gain, self.__owner, prev, max)
 					end
 
-					object.Gain.FadeOut:Play()
+					self.Gain.FadeOut:Play()
 				end
 			elseif diff < 0 then
-				object.Gain.FadeOut:Stop()
-				object.Gain:SetAlpha(0)
+				if self.Gain then
+					self.Gain.FadeOut:Stop()
+					self.Gain:SetAlpha(0)
+				end
 
-				if object.Loss:GetAlpha() == 0 then
-					object.Loss:SetAlpha(1)
+				if self.Loss then
+					if self.Loss:GetAlpha() <= 0.33 then
+						self.Loss:SetAlpha(1)
 
-					if object:GetOrientation() == "VERTICAL" then
-						attachLossToVerticalBar(object, prev, max)
-					else
-						attachLossToHorizontalBar(object, prev, max)
+						if self.orientation == "VERTICAL" then
+							attachLossToVerticalBar(self.Loss, self.__owner, prev, max)
+						else
+							attachLossToHorizontalBar(self.Loss, self.__owner, prev, max)
+						end
+
+						self.Loss.FadeOut:Restart()
+					elseif self.Loss.FadeOut.Alpha:IsDelaying() or self.Loss:GetAlpha() >= 0.66 then
+						self.Loss.FadeOut:Restart()
 					end
-
-					object.Loss.FadeOut:Play()
 				end
 			end
 		else
-			object.Gain.FadeOut:Stop()
-			object.Gain:SetAlpha(0)
+			if self.Gain then
+				self.Gain.FadeOut:Stop()
+				self.Gain:SetAlpha(0)
+			end
 
-			object.Loss.FadeOut:Stop()
-			object.Loss:SetAlpha(0)
+			if self.Loss then
+				self.Loss.FadeOut:Stop()
+				self.Loss:SetAlpha(0)
+			end
 		end
 
-		object._prev = cur
+		if max and max ~= 0 then
+			self._prev = cur
+			self._max = max
+		else
+			self._prev = nil
+			self._max = nil
+		end
 	end
 
-	function E.CreateGainLossIndicators(_, object)
-		local gainTexture = object:CreateTexture(nil, "ARTWORK", nil, 1)
-		gainTexture:SetColorTexture(M.COLORS.LIGHT_GREEN:GetRGB())
-		gainTexture:SetAlpha(0)
-		object.Gain = gainTexture
+	local function updatePoints(self, orientation)
+		orientation = orientation or "HORIZONTAL"
+		if orientation == "HORIZONTAL" then
+			self.Gain_:ClearAllPoints()
+			self.Gain_:SetPoint("TOPRIGHT", self.__owner:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+			self.Gain_:SetPoint("BOTTOMRIGHT", self.__owner:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
 
-		local lossTexture = object:CreateTexture(nil, "BACKGROUND")
-		lossTexture:SetColorTexture(M.COLORS.DARK_RED:GetRGB())
-		lossTexture:SetAlpha(0)
-		object.Loss = lossTexture
+			self.Loss_:ClearAllPoints()
+			self.Loss_:SetPoint("TOPLEFT", self.__owner:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+			self.Loss_:SetPoint("BOTTOMLEFT", self.__owner:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
+		else
+			self.Gain_:ClearAllPoints()
+			self.Gain_:SetPoint("TOPLEFT", self.__owner:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+			self.Gain_:SetPoint("TOPRIGHT", self.__owner:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+
+			self.Loss_:ClearAllPoints()
+			self.Loss_:SetPoint("BOTTOMLEFT", self.__owner:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+			self.Loss_:SetPoint("BOTTOMRIGHT", self.__owner:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
+		end
+
+		self.orientation = orientation
+	end
+
+	function E:CreateGainLossIndicators(object)
+		local gainTexture = object:CreateTexture(nil, "ARTWORK", nil, 1)
+		gainTexture:SetColorTexture(0.47, 0.88, 0.42)
+		gainTexture:SetAlpha(0)
 
 		local ag = gainTexture:CreateAnimationGroup()
 		ag:SetToFinalAlpha(true)
 		gainTexture.FadeOut = ag
 
-		local anim1 = ag:CreateAnimation("Alpha")
-		anim1:SetOrder(1)
-		anim1:SetFromAlpha(1)
-		anim1:SetToAlpha(0)
-		anim1:SetStartDelay(0.6)
-		anim1:SetDuration(0.2)
+		local anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+		anim:SetStartDelay(0.25)
+		anim:SetDuration(0.1)
+		ag.Alpha = anim
+
+		local lossTexture = object:CreateTexture(nil, "BACKGROUND")
+		lossTexture:SetColorTexture(0.55, 0.11, 0.13)
+		lossTexture:SetAlpha(0)
 
 		ag = lossTexture:CreateAnimationGroup()
 		ag:SetToFinalAlpha(true)
 		lossTexture.FadeOut = ag
 
-		anim1 = ag:CreateAnimation("Alpha")
-		anim1:SetOrder(1)
-		anim1:SetFromAlpha(1)
-		anim1:SetToAlpha(0)
-		anim1:SetStartDelay(0.6)
-		anim1:SetDuration(0.2)
+		anim = ag:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+		anim:SetStartDelay(0.25)
+		anim:SetDuration(0.1)
+		ag.Alpha = anim
 
-		object.UpdateGainLoss = object_UpdateGainLoss
-	end
-
-	function E.ReanchorGainLossIndicators(_, object, orientation)
-		if orientation == "HORIZONTAL" then
-			object.Gain:ClearAllPoints()
-			object.Gain:SetPoint("TOPRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-			object.Gain:SetPoint("BOTTOMRIGHT", object:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-
-			object.Loss:ClearAllPoints()
-			object.Loss:SetPoint("TOPLEFT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-			object.Loss:SetPoint("BOTTOMLEFT", object:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-		else
-			object.Gain:ClearAllPoints()
-			object.Gain:SetPoint("TOPLEFT", object:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-			object.Gain:SetPoint("TOPRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-
-			object.Loss:ClearAllPoints()
-			object.Loss:SetPoint("BOTTOMLEFT", object:GetStatusBarTexture(), "TOPLEFT", 0, 0)
-			object.Loss:SetPoint("BOTTOMRIGHT", object:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
-		end
+		return {
+			__owner = object,
+			threshold = 0.01,
+			Gain = gainTexture,
+			Gain_ = gainTexture,
+			Loss = lossTexture,
+			Loss_ = lossTexture,
+			Update = update,
+			UpdatePoints = updatePoints,
+		}
 	end
 end
 

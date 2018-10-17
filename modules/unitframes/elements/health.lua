@@ -58,9 +58,9 @@ do
 	end
 
 	local function element_PostUpdate(self, unit, cur, max)
-		-- local unitGUID = UnitGUID(unit)
-		-- self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		-- self.GainLossIndicators._UnitGUID = unitGUID
+		local unitGUID = UnitGUID(unit)
+		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
+		self.GainLossIndicators._UnitGUID = unitGUID
 
 		if not (self:IsShown() and max and max ~= 0) or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
 			self:SetMinMaxValues(0, 1)
@@ -104,8 +104,8 @@ do
 		element:UpdateTextPoints()
 		element:UpdateTags()
 
-		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
-		-- element:UpdateGainLossThreshold()
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
 		element:ForceUpdate()
 	end
@@ -122,8 +122,8 @@ do
 
 		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
 
-		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
-		-- element.GainLossIndicators.Gain = nil
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators.Gain = nil
 
 		element.colorHealth = true
 		element.colorTapping = true

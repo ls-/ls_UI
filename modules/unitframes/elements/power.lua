@@ -77,10 +77,8 @@ do
 		end
 
 		local unitGUID = UnitGUID(unit)
-		self:UpdateGainLoss(cur, max, unitGUID == self._UnitGUID)
-		self._UnitGUID = unitGUID
-		-- self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		-- self.GainLossIndicators._UnitGUID = unitGUID
+		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
+		self.GainLossIndicators._UnitGUID = unitGUID
 
 		if shouldShown then
 			self.Text:Show()
@@ -107,9 +105,8 @@ do
 		element:UpdateTextPoints()
 		element:UpdateTags()
 
-		E:ReanchorGainLossIndicators(element, element._config.orientation)
-		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
-		-- element:UpdateGainLossThreshold()
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Power") then
 			self:EnableElement("Power")
@@ -131,8 +128,7 @@ do
 
 		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
 
-		E:CreateGainLossIndicators(element)
-		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.colorDisconnected = true
 		element.colorPower = true
@@ -154,8 +150,7 @@ end
 do
 	local function element_PostUpdate(self, unit, cur, max)
 		if self:IsShown() and max and max ~= 0 then
-			self:UpdateGainLoss(cur, max)
-			-- self.GainLossIndicators:Update(cur, max)
+			self.GainLossIndicators:Update(cur, max)
 		end
 
 		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
@@ -174,9 +169,8 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 
-		E:ReanchorGainLossIndicators(element, element._config.orientation)
-		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
-		-- element:UpdateGainLossThreshold()
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not frame:IsElementEnabled("AdditionalPower") then
 			frame:EnableElement("AdditionalPower")
@@ -193,8 +187,7 @@ do
 		E:SmoothBar(element)
 		element:Hide()
 
-		E:CreateGainLossIndicators(element)
-		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.colorPower = true
 		element.PostUpdate = element_PostUpdate
@@ -217,10 +210,8 @@ do
 		end
 
 		local unitGUID = UnitGUID(unit)
-		self:UpdateGainLoss(cur, max, unitGUID == self._UnitGUID)
-		self._UnitGUID = unitGUID
-		-- self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		-- self.GainLossIndicators._UnitGUID = unitGUID
+		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
+		self.GainLossIndicators._UnitGUID = unitGUID
 
 		if shouldShown then
 			self.Text:Show()
@@ -247,9 +238,8 @@ do
 		element:UpdateTextPoints()
 		element:UpdateTags()
 
-		E:ReanchorGainLossIndicators(element, element._config.orientation)
-		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
-		-- element:UpdateGainLossThreshold()
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("AlternativePower") then
 			self:EnableElement("AlternativePower")
@@ -272,8 +262,7 @@ do
 
 		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
 
-		E:CreateGainLossIndicators(element)
-		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.PostUpdate = element_PostUpdate
 		element.UpdateConfig = element_UpdateConfig
