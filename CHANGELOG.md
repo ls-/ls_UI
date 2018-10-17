@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## Version 80000.12
+
+- Added options to adjust text size, outline, and shadow of various unit frame elements, e.g.,  
+  health, power, etc;
+- Reworked resource gain/loss animations. Added health loss animations, and options to adjust  
+  health, power, class power, and alternative power gain/loss thresholds;
+- Tweaked unit frame border textures;
+- Fixed compatibility issues with Masque;
+- Updated embeds.
+
+![Imgur](https://i.imgur.com/3qWfxxS.gif)
+
 ## Version 80000.11
 
 - Added options to adjust auras' count text and aura type icon. It's also possible to display  
