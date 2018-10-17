@@ -344,6 +344,21 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							},
 						},
 					},
+					icon = {
+						order = 20,
+						type = "select",
+						name = L["ICON"],
+						values = CONFIG.CASTBAR_ICON_POSITIONS,
+						get = function()
+							return C.db.profile.blizzard.castbar.icon.position
+						end,
+						set = function(_, value)
+							if C.db.profile.blizzard.castbar.icon.position ~= value then
+								C.db.profile.blizzard.castbar.icon.position = value
+								BLIZZARD:UpdateCastBars()
+							end
+						end,
+					},
 					spacer_3 = {
 						order = 29,
 						type = "description",
@@ -368,11 +383,15 @@ function CONFIG.CreateBlizzardPanel(_, order)
 								name = L["SIZE"],
 								min = 10, max = 20, step = 2,
 							},
-							flag = {
+							outline = {
 								order = 2,
-								type = "select",
-								name = L["FLAG"],
-								values = FLAGS,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
 							},
 						},
 					},

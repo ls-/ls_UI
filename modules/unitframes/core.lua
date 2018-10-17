@@ -36,9 +36,25 @@ local function frame_OnLeave(self)
 	PartyMemberBuffTooltip:Hide()
 end
 
+local configIgnoredKeys = {
+	alt_power = true,
+	auras = true,
+	castbar = true,
+	class = true,
+	class_power = true,
+	combat_feedback = true,
+	debuff = true,
+	health = true,
+	insets = true,
+	name = true,
+	power = true,
+	pvp = true,
+	raid_target = true,
+	threat = true,
+}
+
 local function frame_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.units[self._unit], self._config)
-	-- self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
+	self._config = E:CopyTable(C.db.profile.units[self._unit], self._config, configIgnoredKeys)
 end
 
 local function frame_UpdateSize(self)

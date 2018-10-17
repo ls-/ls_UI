@@ -47,7 +47,12 @@ local UnitReaction = _G.UnitReaction
 local UnitRealmRelationship = _G.UnitRealmRelationship
 
 -- Mine
-local DEBUFF_ICON_TEMPLATE = "|TInterface\\RaidFrame\\Raid-Icon-Debuff%s:0:0:0:0:16:16:2:14:2:14|t"
+local DEBUFF_ICONS = {
+	["Curse"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t",
+	["Disease"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t",
+	["Magic"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t",
+	["Poison"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t",
+}
 local SHEEPABLE_TYPES = {
 	["Beast"] = true,
 	["Bestia"] = true,
@@ -591,7 +596,7 @@ oUF.Tags.Methods["ls:debuffs"] = function(unit)
 
 		if name then
 			if types[type] and not hasDebuff[type] then
-				status = status .. DEBUFF_ICON_TEMPLATE:format(type)
+				status = status .. DEBUFF_ICONS[type]
 				hasDebuff[type] = true
 			end
 		else

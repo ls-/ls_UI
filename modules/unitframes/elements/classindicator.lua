@@ -11,38 +11,37 @@ local hooksecurefunc = _G.hooksecurefunc
 ]]
 
 -- Mine
-local function checkUnitClass(frame)
+local function update(self)
+	local element = self.ClassIndicator
 	local class, _
 
-	if UnitIsPlayer(frame.unit) then
-		if frame._config and frame._config.class.player then
-			_, class = UnitClass(frame.unit)
+	if UnitIsPlayer(self.unit) then
+		if element._config and element._config.player then
+			_, class = UnitClass(self.unit)
+			if class and self._skin ~= class then
+				self.Border:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
 
-			if class and frame._skin ~= class then
-				frame.Border:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
-
-				if frame.Insets then
-					frame.Insets:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
+				if self.Insets then
+					self.Insets:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
 				end
 
-				frame._skin = class
+				self._skin = class
 
 				return
 			end
 		end
 	else
-		if frame._config and frame._config.class.npc then
-			class = UnitClassification(frame.unit)
-
+		if element._config and element._config.npc then
+			class = UnitClassification(self.unit)
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then
-				if frame._skin ~= "elite" then
-					frame.Border:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+				if self._skin ~= "elite" then
+					self.Border:SetVertexColor(M.COLORS.YELLOW:GetRGB())
 
-					if frame.Insets then
-						frame.Insets:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+					if self.Insets then
+						self.Insets:SetVertexColor(M.COLORS.YELLOW:GetRGB())
 					end
 
-					frame._skin = "elite"
+					self._skin = "elite"
 
 					return
 				end
@@ -52,25 +51,31 @@ local function checkUnitClass(frame)
 		end
 	end
 
-	if not class and frame._skin ~= "none" then
-		frame.Border:SetVertexColor(1, 1, 1)
+	if not class and self._skin ~= "none" then
+		self.Border:SetVertexColor(1, 1, 1)
 
-		if frame.Insets then
-			frame.Insets:SetVertexColor(1, 1, 1)
+		if self.Insets then
+			self.Insets:SetVertexColor(1, 1, 1)
 		end
 
-		frame._skin = "none"
+		self._skin = "none"
 	end
 end
 
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].class, self._config)
+end
+
 local function frame_UpdateClassIndicator(self)
-	checkUnitClass(self)
+	self.ClassIndicator:UpdateConfig()
+	update(self)
 end
 
 function UF:CreateClassIndicator(frame)
 	frame._skin = "none"
 
-	hooksecurefunc(frame, "Show", checkUnitClass)
+	hooksecurefunc(frame, "Show", update)
 
 	if frame.Border then
 		E:SmoothColor(frame.Border)
@@ -80,6 +85,10 @@ function UF:CreateClassIndicator(frame)
 		E:SmoothColor(frame.Insets)
 	end
 
-	frame.ClassIndicator = true
 	frame.UpdateClassIndicator = frame_UpdateClassIndicator
+
+	return {
+		__owner = frame,
+		UpdateConfig = element_UpdateConfig,
+	}
 end

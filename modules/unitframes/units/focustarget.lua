@@ -65,7 +65,7 @@ function UF:CreateFocusTargetFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
-	local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
+	local power = self:CreatePower(frame, textParent)
 	power:SetFrameLevel(level + 1)
 	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -85,7 +85,7 @@ function UF:CreateFocusTargetFrame(frame)
 		end
 	end
 
-	frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
+	frame.Name = self:CreateName(frame, textParent)
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
@@ -102,6 +102,8 @@ function UF:CreateFocusTargetFrame(frame)
 	border:SetOffset(-6)
 	frame.Border = border
 
+	frame.ClassIndicator = self:CreateClassIndicator(frame)
+
 	local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)
 	glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
@@ -109,8 +111,6 @@ function UF:CreateFocusTargetFrame(frame)
 	local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
 	shadow:SetAllPoints(health)
 	shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-
-	self:CreateClassIndicator(frame)
 
 	frame.Update = frame_Update
 end

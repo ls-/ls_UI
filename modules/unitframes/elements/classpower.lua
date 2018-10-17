@@ -78,14 +78,28 @@ end
 
 -- .Runes
 do
+	local ignoredKeys = {
+		prediction = true,
+	}
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+	end
+
+	local function element_UpdateColors(self)
+		self.colorSpec = self._config.runes.color_by_spec
+		self:ForceUpdate()
+	end
+
+	local function element_UpdateSortOrder(self)
+		self.sortOrder = self._config.runes.sort_order
+		self:ForceUpdate()
+	end
+
 	local function element_PostUpdate(self)
-		if not self.isEnabled then
-			self:Hide()
-
-			self._active = false
-		else
+		if self.isEnabled then
 			local hasVehicle = UnitHasVehicleUI("player")
-
 			if hasVehicle and self._active then
 				self:Hide()
 
@@ -99,26 +113,26 @@ do
 	end
 
 	local function frame_UpdateRunes(self)
-		local config = self._config.class_power
 		local element = self.Runes
-		local width, height = element:GetSize()
+		element:UpdateConfig()
+		element:UpdateColors()
+		element:UpdateSortOrder()
+
+		local orientation = element._config.orientation
 		local layout
 
-		if config.orientation == "HORIZONTAL" then
-			layout = E:CalcSegmentsSizes(width, 2, 6)
+		if orientation == "HORIZONTAL" then
+			layout = E:CalcSegmentsSizes(element:GetWidth(), 2, 6)
 		else
-			layout = E:CalcSegmentsSizes(height, 2, 6)
+			layout = E:CalcSegmentsSizes(element:GetHeight(), 2, 6)
 		end
-
-		element.colorSpec = config.runes.color_by_spec
-		element.sortOrder = config.runes.sort_order
 
 		for i = 1, 6 do
 			local bar = element[i]
-			bar:SetOrientation(config.orientation)
+			bar:SetOrientation(orientation)
 			bar:ClearAllPoints()
 
-			if config.orientation == "HORIZONTAL" then
+			if orientation == "HORIZONTAL" then
 				bar:SetWidth(layout[i])
 				bar:SetPoint("TOP", 0, 0)
 				bar:SetPoint("BOTTOM", 0, 0)
@@ -141,26 +155,32 @@ do
 			end
 		end
 
-		if config.enabled and not self:IsElementEnabled("Runes") then
+		if element._config.enabled and not self:IsElementEnabled("Runes") then
 			self:EnableElement("Runes")
-
-			element.isEnabled = true
-		elseif not config.enabled and self:IsElementEnabled("Runes") then
+		elseif not element._config.enabled and self:IsElementEnabled("Runes") then
 			self:DisableElement("Runes")
-
-			element.isEnabled = false
 		end
 
-		element:ForceUpdate()
+		if self:IsElementEnabled("Runes") then
+			element.isEnabled = true
+
+			element:ForceUpdate()
+		else
+			element.isEnabled = false
+			element._active = nil
+
+			element:Hide()
+		end
 	end
 
 	function UF:CreateRunes(frame)
 		local element = createElement(frame, 6, "Rune")
 		element:Hide()
 
-		element.isEnabled = true
-		element.colorSpec = true
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
+		element.UpdateConfig = element_UpdateConfig
+		element.UpdateSortOrder = element_UpdateSortOrder
 
 		frame.UpdateRunes = frame_UpdateRunes
 
@@ -168,16 +188,23 @@ do
 	end
 end
 
+-- .ClassPower
 do
+	local ignoredKeys = {
+		prediction = true,
+		runes = true,
+	}
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+	end
+
 	local function element_PostUpdate(self, _, max, maxChanged, powerType)
-		if self._state ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
+		if self._active ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.isEnabled then
 				self:Hide()
-
-				if self.UpdateContainer then
-					self:UpdateContainer(false, 0)
-				end
-			elseif self.isEnabled or self._powerID ~= powerType or maxChanged then
+			else
 				self:Show()
 
 				local orientation = self[1]:GetOrientation()
@@ -190,40 +217,47 @@ do
 				end
 
 				for i = 1, max do
-					local bar = self[i]
-
 					if orientation == "HORIZONTAL" then
-						bar:SetWidth(layout[i])
+						self[i]:SetWidth(layout[i])
 					else
-						bar:SetHeight(layout[i])
+						self[i]:SetHeight(layout[i])
 					end
 
-					bar:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
-				end
-
-				if self.UpdateContainer then
-					self:UpdateContainer(true, max)
+					self[i]:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
 				end
 			end
 
-			self._state = self.isEnabled
+			self._active = self.isEnabled
 			self._powerID = powerType
 		end
 	end
 
 	local function frame_UpdateClassPower(self)
-		local config = self._config.class_power
 		local element = self.ClassPower
-		local width, height = element:GetSize()
+		element:UpdateConfig()
+
+		local orientation = element._config.orientation
+		local max = element.__max
+		local layout
+
+		if max then
+			if orientation == "HORIZONTAL" then
+				layout = E:CalcSegmentsSizes(element:GetWidth(), 2, max)
+			else
+				layout = E:CalcSegmentsSizes(element:GetHeight(), 2, max)
+			end
+		end
 
 		for i = 1, 10 do
 			local bar = element[i]
-
-			bar:SetOrientation(config.orientation)
+			bar:SetOrientation(orientation)
 			bar:ClearAllPoints()
 
-			if config.orientation == "HORIZONTAL" then
-				bar:SetHeight(height)
+			if orientation == "HORIZONTAL" then
+				if layout and i <= max then
+					bar:SetWidth(layout[i])
+				end
+
 				bar:SetPoint("TOP", 0, 0)
 				bar:SetPoint("BOTTOM", 0, 0)
 
@@ -233,28 +267,34 @@ do
 					bar:SetPoint("LEFT", element[i - 1], "RIGHT", 2, 0)
 				end
 			else
-				bar:SetWidth(width)
+				if layout and i <= max then
+					bar:SetHeight(layout[i])
+				end
+
 				bar:SetPoint("LEFT", 0, 0)
 				bar:SetPoint("RIGHT", 0, 0)
 
 				if i == 1 then
-					element[i]:SetPoint("BOTTOM", 0, 0)
+					bar:SetPoint("BOTTOM", 0, 0)
 				else
-					element[i]:SetPoint("BOTTOM", element[i - 1], "TOP", 0, 2)
+					bar:SetPoint("BOTTOM", element[i - 1], "TOP", 0, 2)
 				end
 			end
 		end
 
-		if config.enabled and not self:IsElementEnabled("ClassPower") then
+		if element._config.enabled and not self:IsElementEnabled("ClassPower") then
 			self:EnableElement("ClassPower")
-		elseif not config.enabled and self:IsElementEnabled("ClassPower") then
+		elseif not element._config.enabled and self:IsElementEnabled("ClassPower") then
 			self:DisableElement("ClassPower")
 		end
 
-		if element.isEnabled then
-			element._state = nil
-			element._powerID = nil
+		if self:IsElementEnabled("ClassPower") then
 			element:ForceUpdate()
+		else
+			element._active = nil
+			element._powerID = nil
+
+			element:Hide()
 		end
 	end
 
@@ -263,6 +303,7 @@ do
 		element:Hide()
 
 		element.PostUpdate = element_PostUpdate
+		element.UpdateConfig = element_UpdateConfig
 
 		frame.UpdateClassPower = frame_UpdateClassPower
 
@@ -272,6 +313,10 @@ end
 
 -- .Stagger
 do
+	local ignoredKeys = {
+		runes = true,
+	}
+
 	local function element_Override(self, _, unit)
 		if unit and unit ~= self.unit then return end
 
@@ -285,43 +330,53 @@ do
 		element:SetValue(cur)
 		element:SetStatusBarColor(r, g, b)
 
-		if element:IsShown() then
-			element:UpdateGainLoss(cur, max)
-		end
+		element:UpdateGainLoss(cur, max)
+		-- element.GainLossIndicators:Update(cur, max)
+	end
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+	end
+
+	local function element_UpdateGainLossThreshold(self)
+		self.GainLossIndicators.threshold = self._config.change_threshold
 	end
 
 	local function frame_UpdateStagger(self)
-		local config = self._config.class_power
 		local element = self.Stagger
+		element:UpdateConfig()
+		element:SetOrientation(element._config.orientation)
 
-		element:SetOrientation(config.orientation)
+		E:ReanchorGainLossIndicators(element, element._config.orientation)
+		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		-- element:UpdateGainLossThreshold()
 
-		E:ReanchorGainLossIndicators(element, config.orientation)
-
-		if config.enabled and not self:IsElementEnabled("Stagger") then
+		if element._config.enabled and not self:IsElementEnabled("Stagger") then
 			self:EnableElement("Stagger")
-
-			element.isEnabled = true
-		elseif not config.enabled and self:IsElementEnabled("Stagger") then
+		elseif not element._config.enabled and self:IsElementEnabled("Stagger") then
 			self:DisableElement("Stagger")
-
-			element.isEnabled = false
 		end
 
-		if element.isEnabled then
+		if self:IsElementEnabled("Stagger") then
 			element:ForceUpdate()
+		else
+			element:Hide()
 		end
 	end
 
 	function UF:CreateStagger(frame)
 		local element = CreateFrame("StatusBar", nil, frame)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E:SmoothBar(element)
 		element:Hide()
 
-		E:SmoothBar(element)
 		E:CreateGainLossIndicators(element)
+		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
-		element.element_Override = element_Override
+		element.Override = element_Override
+		element.UpdateConfig = element_UpdateConfig
+		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 
 		frame.UpdateStagger = frame_UpdateStagger
 

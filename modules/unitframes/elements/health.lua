@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
 -- Blizz
+local UnitGUID = _G.UnitGUID
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
@@ -56,47 +57,57 @@ do
 		self._texture:SetColorTexture(r, g, b)
 	end
 
-	local function element_PostUpdate(element, unit)
-		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
-			element:SetMinMaxValues(0, 1)
-			element:SetValue(0)
+	local function element_PostUpdate(self, unit, cur, max)
+		-- local unitGUID = UnitGUID(unit)
+		-- self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
+		-- self.GainLossIndicators._UnitGUID = unitGUID
+
+		if not (self:IsShown() and max and max ~= 0) or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			self:SetMinMaxValues(0, 1)
+			self:SetValue(0)
 		end
 	end
 
-	local function element_UpdateConfig(element)
-		element._config = E:CopyTable(element.__owner._config.health, element._config, ignoredKeys)
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
 	end
 
-	local function element_UpdateColorSettings(element)
-		element.colorClass = element._config.color.class
-		element.colorReaction = element._config.color.reaction
-		element:ForceUpdate()
+	local function element_UpdateColors(self)
+		self.colorClass = self._config.color.class
+		self.colorReaction = self._config.color.reaction
+		self:ForceUpdate()
 	end
 
-	local function element_UpdateFontObjects(element)
-		updateFontObject(element.__owner, element.Text, element._config.text)
+	local function element_UpdateFontObjects(self)
+		updateFontObject(self.__owner, self.Text, self._config.text)
 	end
 
-	local function element_UpdateTextPoints(element)
-		updateTextPoint(element.__owner, element.Text, element._config.text.point1)
+	local function element_UpdateTextPoints(self)
+		updateTextPoint(self.__owner, self.Text, self._config.text.point1)
 	end
 
-	local function element_UpdateTags(element)
-		updateTag(element.__owner, element.Text, element._config.enabled and element._config.text.tag or "")
+	local function element_UpdateTags(self)
+		updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
+	end
+
+	local function element_UpdateGainLossThreshold(self)
+		self.GainLossIndicators.threshold = self._config.change_threshold
 	end
 
 	local function frame_UpdateHealth(self)
 		local element = self.Health
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
-		element:UpdateColorSettings()
+		element:UpdateColors()
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 
-		if element.ForceUpdate then
-			element:ForceUpdate()
-		end
+		-- element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		-- element:UpdateGainLossThreshold()
+
+		element:ForceUpdate()
 	end
 
 	function UF:CreateHealth(frame, textParent)
@@ -111,13 +122,17 @@ do
 
 		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
 
+		-- element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		-- element.GainLossIndicators.Gain = nil
+
 		element.colorHealth = true
 		element.colorTapping = true
 		element.colorDisconnected = true
 		element.PostUpdate = element_PostUpdate
-		element.UpdateColorSettings = element_UpdateColorSettings
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 		element.UpdateTags = element_UpdateTags
 		element.UpdateTextPoints = element_UpdateTextPoints
 
@@ -129,24 +144,25 @@ end
 
 -- .HealthPrediction
 do
-	local function element_UpdateConfig(element)
-		element._config = E:CopyTable(element.__owner._config.health.prediction, element._config)
-		element._config.orientation = element.__owner._config.health.orientation
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
+		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
-	local function element_UpdateFontObjects(element)
-		updateFontObject(element.__owner, element.absorbBar.Text, element._config.absorb_text)
-		updateFontObject(element.__owner, element.healAbsorbBar.Text, element._config.heal_absorb_text)
+	local function element_UpdateFontObjects(self)
+		updateFontObject(self.__owner, self.absorbBar.Text, self._config.absorb_text)
+		updateFontObject(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text)
 	end
 
-	local function element_UpdateTextPoints(element)
-		updateTextPoint(element.__owner, element.absorbBar.Text, element._config.absorb_text.point1)
-		updateTextPoint(element.__owner, element.healAbsorbBar.Text, element._config.heal_absorb_text.point1)
+	local function element_UpdateTextPoints(self)
+		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
+		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
 	end
 
-	local function element_UpdateTags(element)
-		updateTag(element.__owner, element.absorbBar.Text, element._config.enabled and element._config.absorb_text.tag or "")
-		updateTag(element.__owner, element.healAbsorbBar.Text, element._config.enabled and element._config.heal_absorb_text.tag or "")
+	local function element_UpdateTags(self)
+		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
+		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
 	end
 
 	local function frame_UpdateHealthPrediction(self)

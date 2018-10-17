@@ -3,6 +3,11 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 -- Mine
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].threat, self._config)
+end
+
 local function element_PostUpdate(self, _, status)
 	if status and status == 0 then
 		self:SetVertexColor(M.COLORS.THREAT[1]:GetRGB())
@@ -11,14 +16,14 @@ local function element_PostUpdate(self, _, status)
 end
 
 local function frame_UpdateThreatIndicator(self)
-	local config = self._config.threat
 	local element = self.ThreatIndicator
+	element:UpdateConfig()
 
-	element.feedbackUnit = config.feedback_unit
+	element.feedbackUnit = element._config.feedback_unit
 
-	if config.enabled and not self:IsElementEnabled("ThreatIndicator") then
+	if element._config.enabled and not self:IsElementEnabled("ThreatIndicator") then
 		self:EnableElement("ThreatIndicator")
-	elseif not config.enabled and self:IsElementEnabled("ThreatIndicator") then
+	elseif not element._config.enabled and self:IsElementEnabled("ThreatIndicator") then
 		self:DisableElement("ThreatIndicator")
 	end
 
@@ -40,6 +45,7 @@ function UF:CreateThreatIndicator(frame, parent, isTexture)
 	end
 
 	element.PostUpdate = element_PostUpdate
+	element.UpdateConfig = element_UpdateConfig
 
 	frame.UpdateThreatIndicator = frame_UpdateThreatIndicator
 

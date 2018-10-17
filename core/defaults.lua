@@ -1,32 +1,95 @@
 local _, ns = ...
 local D = ns.D
 
+-- local function rbga(r, g, b, a)
+-- 	return {r / 255, g / 255, b / 255, a}
+-- end
+
+local function rgb(r, g, b)
+	return {r / 255, g / 255, b / 255}
+end
+
 D.global = {}
 
 D.profile = {
+	-- colors = {
+	-- 	castbar = {
+	-- 		casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
+	-- 		channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 		failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
+	-- 		notinterruptible = rgb(136, 137, 135), -- #888987 (N 5);
+	-- 	},
+	-- 	cooldown = {
+	-- 		expiration = rgb(240, 32, 30), -- #F0201E (7.5R 5/18);
+	-- 		second = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
+	-- 		minute = rgb(255, 255, 255), -- #FFFFFF
+	-- 		hour = rgb(255, 255, 255), -- #FFFFFF
+	-- 		day = rgb(255, 255, 255), -- #FFFFFF
+	-- 	},
+	-- 	disconnected = rgb(136, 137, 135), -- #888987 (N 5);
+	-- 	gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12);
+	-- 	health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 	loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10);
+	-- 	power = {
+	-- 		MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10);
+	-- 		RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
+	-- 		FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
+	-- 		ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
+	-- 		COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14);
+	-- 		RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8);
+	-- 		RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8);
+	-- 		SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14);
+	-- 		LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12);
+	-- 		HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6);
+	-- 		MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12);
+	-- 		INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14);
+	-- 		CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6);
+	-- 		ARCANE_CHARGES = rgb(28, 129, 191), -- #1C81BF (2.5PB 5/10);
+	-- 		FURY = rgb(187, 57, 231), -- #BB39E7 (5P 5/22);
+	-- 		PAIN = rgb(243, 157, 28), -- #F39D1C (7.5YR 7/12);
+	-- 		AMMOSLOT = rgb(217, 169, 35), -- #D9A923 (2.5Y 7/10);
+	-- 		FUEL = rgb(42, 137, 122), -- #2A897A (2.5BG 5/6);
+	-- 		STAGGER = {
+	-- 			rgb(111, 255, 99), -- #6FFF63 (10GY 9/14);
+	-- 			rgb(229, 237, 142), -- #E5ED8E (2.5GY 9/6);
+	-- 			rgb(211, 77, 81), -- #D34D51 (5R 5/12);
+	-- 		},
+	-- 	},
+	-- 	reaction = {
+	-- 		[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
+	-- 		[2] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
+	-- 		[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
+	-- 		[4] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
+	-- 		[5] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 		[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 		[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 		[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
+	-- 	},
+	-- 	tapped = rgb(163, 162, 162), -- #A3A2A2 (N 6);
+	-- },
 	units = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expiration = {229 / 255, 25 / 255, 25 / 255},
-				second = {255 / 255, 191 / 255, 25 / 255},
-				minute = {255 / 255, 255 / 255, 255 / 255},
-				hour = {255 / 255, 255 / 255, 255 / 255},
-				day = {255 / 255, 255 / 255, 255 / 255},
+				expiration = rgb(229, 25, 25),
+				second = rgb(255, 191, 25),
+				minute = rgb(255, 255, 255),
+				hour = rgb(255, 255, 255),
+				day = rgb(255, 255, 255),
 			},
 		},
 		castbar = {
 			colors = {
-				casting = {250 / 255, 193 / 255, 74 / 255},
-				channeling = {60 / 255, 170 / 255, 59 / 255},
-				failed = {222 / 255, 67 / 255, 58 / 255},
-				notinterruptible = {125 / 255, 122 / 255, 125 / 255},
+				casting = rgb(250, 193, 74),
+				channeling = rgb(46, 172, 52),
+				failed = rgb(220, 68, 54),
+				notinterruptible = rgb(136, 137, 135),
 			},
 		},
-		player = {
-			ls = {
+		ls = {
+			player = {
 				enabled = true,
 				width = 166,
 				height = 166,
@@ -36,6 +99,7 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
+					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -92,9 +156,15 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
+					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
+						size = 14,
+						outline = false,
+						shadow = true,
+						h_alignment = "CENTER",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "TOP",
 							anchor = "Health",
@@ -109,6 +179,7 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
+					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					prediction = {
 						enabled = true,
@@ -125,12 +196,12 @@ D.profile = {
 					width_override = 200,
 					height = 12,
 					icon = {
-						enabled = true,
-						position = "LEFT", -- or "RIGHT"
+						position = "LEFT", -- "RIGHT", "NONE"
 					},
 					text = {
 						size = 12,
-						flag = "_Shadow", -- "_Outline", ""
+						outline = false,
+						shadow = true,
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -142,7 +213,10 @@ D.profile = {
 					},
 				},
 				name = {
+					size = 12,
 					tag = "",
+					outline = false,
+					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					word_wrap = false,
@@ -206,7 +280,142 @@ D.profile = {
 					npc = false,
 				},
 			},
-			traditional = {
+			pet = {
+				enabled = true,
+				width = 42,
+				height = 134,
+				point = {
+					ls = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+					traditional = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+				},
+				health = {
+					enabled = true,
+					change_threshold = 0.001,
+					orientation = "VERTICAL",
+					color = {
+						class = true,
+						reaction = true,
+					},
+					text = {
+						tag = "[ls:health:cur]",
+						size = 12,
+						outline = false,
+						shadow = true,
+						h_alignment = "RIGHT",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "BOTTOMRIGHT",
+							anchor = "",
+							rP = "BOTTOMLEFT",
+							x = 8,
+							y = 26,
+						},
+					},
+					prediction = {
+						enabled = true,
+						absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+						heal_absorb_text = {
+							tag = "",
+							size = 10,
+							outline = false,
+							shadow = true,
+							h_alignment = "CENTER",
+							v_alignment = "MIDDLE",
+							point1 = {
+								p = "CENTER",
+								anchor = "Health",
+								rP = "CENTER",
+								x = 0,
+								y = 0,
+							},
+						},
+					},
+				},
+				power = {
+					enabled = true,
+					change_threshold = 0.01,
+					orientation = "VERTICAL",
+					text = {
+						tag = "[ls:color:power][ls:power:cur]|r",
+						size = 12,
+						outline = false,
+						shadow = true,
+						h_alignment = "RIGHT",
+						v_alignment = "MIDDLE",
+						point1 = {
+							p = "BOTTOMRIGHT",
+							anchor = "",
+							rP = "BOTTOMLEFT",
+							x = 8,
+							y = 14,
+						},
+					},
+				},
+				castbar = {
+					enabled = true,
+					latency = true,
+					detached = true,
+					width_override = 200,
+					height = 12,
+					icon = {
+						position = "LEFT", -- "RIGHT", "NONE"
+					},
+					text = {
+						size = 12,
+						outline = false,
+						shadow = true,
+					},
+					point1 = {
+						p = "BOTTOM",
+						anchor = "LSPlayerFrameCastbarHolder",
+						detached_anchor = "LSPlayerFrameCastbarHolder",
+						rP = "TOP",
+						x = 0,
+						y = 6,
+					},
+				},
+				raid_target = {
+					enabled = true,
+					size = 24,
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "TOP",
+						x = 0,
+						y = 6,
+					},
+				},
+				debuff = {
+					enabled = true,
+					point1 = {
+						p = "CENTER",
+						anchor = "",
+						rP = "CENTER",
+						x = 0,
+						y = 0,
+					},
+				},
+				threat = {
+					enabled = true,
+				},
+			},
+		},
+		traditional = {
+			player = {
 				enabled = true,
 				width = 250,
 				height = 52,
@@ -220,6 +429,7 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
+					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
@@ -276,10 +486,15 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
+					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
+						size = 12,
+						outline = false,
+						shadow = true,
 						h_alignment = "LEFT",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "LEFT",
 							anchor = "Power",
@@ -294,6 +509,7 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
+					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					prediction = {
 						enabled = true,
@@ -310,12 +526,12 @@ D.profile = {
 					width_override = 0,
 					height = 12,
 					icon = {
-						enabled = true,
-						position = "LEFT", -- or "RIGHT"
+						position = "LEFT", -- "RIGHT", "NONE"
 					},
 					text = {
 						size = 12,
-						flag = "_Shadow", -- "_Outline", ""
+						outline = false,
+						shadow = true,
 					},
 					point1 = {
 						p = "TOPRIGHT",
@@ -327,7 +543,10 @@ D.profile = {
 					},
 				},
 				name = {
+					size = 12,
 					tag = "",
+					outline = false,
+					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					word_wrap = false,
@@ -388,7 +607,7 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "UP",
 					disable_mouse = false,
-					text = {
+					count = {
 						size = 10,
 						outline = true,
 						shadow = false,
@@ -443,136 +662,7 @@ D.profile = {
 					npc = true,
 				},
 			},
-		},
-		pet = {
-			ls = {
-				enabled = true,
-				width = 42,
-				height = 134,
-				point = {
-					ls = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
-					traditional = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
-				},
-				health = {
-					enabled = true,
-					orientation = "VERTICAL",
-					color = {
-						class = true,
-						reaction = true,
-					},
-					text = {
-						tag = "[ls:health:cur]",
-						size = 12,
-						outline = false,
-						shadow = true,
-						h_alignment = "RIGHT",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "BOTTOMRIGHT",
-							anchor = "",
-							rP = "BOTTOMLEFT",
-							x = 8,
-							y = 26,
-						},
-					},
-					prediction = {
-						enabled = true,
-						absorb_text = {
-							tag = "",
-							size = 10,
-							outline = false,
-							shadow = true,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-						heal_absorb_text = {
-							tag = "",
-							size = 10,
-							outline = false,
-							shadow = true,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-					},
-				},
-				power = {
-					enabled = true,
-					orientation = "VERTICAL",
-					text = {
-						tag = "[ls:color:power][ls:power:cur]|r",
-						h_alignment = "RIGHT",
-						point1 = {
-							p = "BOTTOMRIGHT",
-							anchor = "",
-							rP = "BOTTOMLEFT",
-							x = 8,
-							y = 14,
-						},
-					},
-				},
-				castbar = {
-					enabled = true,
-					latency = true,
-					detached = true,
-					width_override = 200,
-					height = 12,
-					icon = {
-						enabled = true,
-						position = "LEFT", -- or "RIGHT"
-					},
-					text = {
-						size = 12,
-						flag = "_Shadow", -- "_Outline", ""
-					},
-					point1 = {
-						p = "BOTTOM",
-						anchor = "LSPlayerFrameCastbarHolder",
-						detached_anchor = "LSPlayerFrameCastbarHolder",
-						rP = "TOP",
-						x = 0,
-						y = 6,
-					},
-				},
-				raid_target = {
-					enabled = true,
-					size = 24,
-					point1 = {
-						p = "CENTER",
-						anchor = "",
-						rP = "TOP",
-						x = 0,
-						y = 6,
-					},
-				},
-				debuff = {
-					enabled = true,
-					point1 = {
-						p = "CENTER",
-						anchor = "",
-						rP = "CENTER",
-						x = 0,
-						y = 0,
-					},
-				},
-				threat = {
-					enabled = true,
-				},
-			},
-			traditional = {
+			pet = {
 				enabled = true,
 				width = 112,
 				height = 28,
@@ -586,6 +676,7 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
+					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = true,
@@ -642,10 +733,15 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
+					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
+						size = 12,
+						outline = false,
+						shadow = true,
 						h_alignment = "LEFT",
+						v_alignment = "MIDDLE",
 						point1 = {
 							p = "LEFT",
 							anchor = "Power",
@@ -662,12 +758,12 @@ D.profile = {
 					width_override = 0,
 					height = 12,
 					icon = {
-						enabled = true,
-						position = "LEFT", -- or "RIGHT"
+						position = "LEFT", -- "RIGHT", "NONE"
 					},
 					text = {
 						size = 12,
-						flag = "_Shadow", -- "_Outline", ""
+						outline = false,
+						shadow = true,
 					},
 					point1 = {
 						p = "TOPLEFT",
@@ -679,8 +775,13 @@ D.profile = {
 					},
 				},
 				name = {
+					size = 12,
 					tag = "",
+					outline = false,
+					shadow = true,
 					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "CENTER",
 						anchor = "Health",
@@ -740,6 +841,7 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
+				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -796,10 +898,15 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-color-max]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
@@ -816,12 +923,12 @@ D.profile = {
 				width_override = 0,
 				height = 12,
 				icon = {
-					enabled = true,
-					position = "LEFT", -- or "RIGHT"
+					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
 					size = 12,
-					flag = "_Shadow", -- "_Outline", ""
+					outline = false,
+					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -833,7 +940,10 @@ D.profile = {
 				},
 			},
 			name = {
+				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+				outline = false,
+				shadow = true,
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -875,7 +985,6 @@ D.profile = {
 			},
 			debuff = {
 				enabled = true,
-				h_alignment = "RIGHT",
 				point1 = {
 					p = "TOPRIGHT",
 					anchor = "Health",
@@ -896,7 +1005,7 @@ D.profile = {
 				x_growth = "RIGHT",
 				y_growth = "UP",
 				disable_mouse = false,
-				text = {
+				count = {
 					size = 10,
 					outline = true,
 					shadow = false,
@@ -981,6 +1090,7 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
+				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1037,9 +1147,15 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
+					size = 12,
+					outline = false,
+					shadow = true,
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1050,7 +1166,10 @@ D.profile = {
 				},
 			},
 			name = {
+				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+				outline = false,
+				shadow = true,
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1103,6 +1222,7 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
+				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1159,10 +1279,15 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-color-max]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "LEFT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Power",
@@ -1179,12 +1304,12 @@ D.profile = {
 				width_override = 0,
 				height = 12,
 				icon = {
-					enabled = true,
-					position = "LEFT", -- or "RIGHT"
+					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
 					size = 12,
-					flag = "_Shadow", -- "_Outline", ""
+					outline = false,
+					shadow = true,
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -1196,7 +1321,10 @@ D.profile = {
 				},
 			},
 			name = {
+				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+				outline = false,
+				shadow = true,
 				h_alignment = "RIGHT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1258,7 +1386,7 @@ D.profile = {
 				x_growth = "RIGHT",
 				y_growth = "UP",
 				disable_mouse = false,
-				text = {
+				count = {
 					size = 10,
 					outline = true,
 					shadow = false,
@@ -1335,7 +1463,7 @@ D.profile = {
 			height = 28,
 			point = {
 				ls = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
-				traditional = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
+				traditional = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			insets = {
 				t_height = 12,
@@ -1343,6 +1471,7 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
+				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1399,9 +1528,15 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
+					size = 12,
+					outline = false,
+					shadow = true,
+					h_alignment = "CENTER",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1412,7 +1547,10 @@ D.profile = {
 				},
 			},
 			name = {
+				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
+				outline = false,
+				shadow = true,
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1469,6 +1607,7 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
+				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1525,10 +1664,15 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-color-perc]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
@@ -1540,10 +1684,15 @@ D.profile = {
 			},
 			alt_power = {
 				enabled = true,
+				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:altpower:cur-color-perc]",
+					size = 12,
+					outline = false,
+					shadow = true,
 					h_alignment = "RIGHT",
+					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "AlternativePower",
@@ -1560,12 +1709,12 @@ D.profile = {
 				width_override = 0,
 				height = 12,
 				icon = {
-					enabled = true,
-					position = "LEFT", -- or "RIGHT"
+					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
 					size = 12,
-					flag = "_Shadow", -- "_Outline", ""
+					outline = false,
+					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -1577,7 +1726,10 @@ D.profile = {
 				},
 			},
 			name = {
+				size = 12,
 				tag = "[ls:name]",
+				outline = false,
+				shadow = true,
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1629,7 +1781,7 @@ D.profile = {
 				x_growth = "LEFT",
 				y_growth = "DOWN",
 				disable_mouse = false,
-				text = {
+				count = {
 					size = 10,
 					outline = true,
 					shadow = false,
@@ -1726,10 +1878,10 @@ D.profile = {
 		},
 		buttons = {},
 		colors = {
-			contested = {250 / 255, 193 / 255, 74 / 255},
-			friendly = {85 / 255, 240 / 255, 83 / 255},
-			hostile = {240 / 255, 72 / 255, 63 / 255},
-			sanctuary = {105 / 255, 204 / 255, 240 / 255},
+			contested = rgb(250, 193, 74),
+			friendly = rgb(85, 240, 83),
+			hostile = rgb(240, 72, 63),
+			sanctuary = rgb(105, 204, 240),
 		},
 		color = {
 			border = false,
@@ -1748,18 +1900,18 @@ D.profile = {
 			m_ss_threshold = 120, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expiration = {229 / 255, 25 / 255, 25 / 255},
-				second = {255 / 255, 191 / 255, 25 / 255},
-				minute = {255 / 255, 255 / 255, 255 / 255},
-				hour = {255 / 255, 255 / 255, 255 / 255},
-				day = {255 / 255, 255 / 255, 255 / 255},
+				expiration = rgb(229, 25, 25),
+				second = rgb(255, 191, 25),
+				minute = rgb(255, 255, 255),
+				hour = rgb(255, 255, 255),
+				day = rgb(255, 255, 255),
 			},
 		},
 		colors = {
-			normal = {255 / 255, 255 / 255, 255 / 255},
-			unusable = {102 / 255, 102 / 255, 102 / 255},
-			mana = {38 / 255, 97 / 255, 172 / 255},
-			range = {141 / 255, 28 / 255, 33 / 255},
+			normal = rgb(255, 255, 255),
+			unusable = rgb(102, 102, 102),
+			mana = rgb(38, 97, 172),
+			range = rgb(140, 29, 30),
 		},
 		desaturation = {
 			cooldown = true,
@@ -2355,11 +2507,11 @@ D.profile = {
 			m_ss_threshold = 600, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expiration = {229 / 255, 25 / 255, 25 / 255},
-				second = {255 / 255, 191 / 255, 25 / 255},
-				minute = {255 / 255, 255 / 255, 255 / 255},
-				hour = {255 / 255, 255 / 255, 255 / 255},
-				day = {255 / 255, 255 / 255, 255 / 255},
+				expiration = rgb(229, 25, 25),
+				second = rgb(255, 191, 25),
+				minute = rgb(255, 255, 255),
+				hour = rgb(255, 255, 255),
+				day = rgb(255, 255, 255),
 			},
 		},
 		HELPFUL = {
@@ -2509,20 +2661,20 @@ D.profile = {
 			width = 200,
 			height = 12,
 			icon = {
-				enabled = true,
-				position = "LEFT",
+				position = "LEFT", -- "RIGHT", "NONE"
 			},
 			text = {
 				size = 12,
-				flag = "_Shadow", -- "_Outline", ""
+				outline = false,
+				shadow = true,
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
 			colors = {
-				casting = {250 / 255, 193 / 255, 74 / 255},
-				channeling = {60 / 255, 170 / 255, 59 / 255},
-				failed = {222 / 255, 67 / 255, 58 / 255},
-				notinterruptible = {125 / 255, 122 / 255, 125 / 255},
+				casting = rgb(250, 193, 74),
+				channeling = rgb(46, 172, 52),
+				failed = rgb(220, 68, 54),
+				notinterruptible = rgb(136, 137, 135),
 			},
 		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
@@ -2577,11 +2729,11 @@ D.char = {
 			m_ss_threshold = 0, -- [91; 3599]
 			colors = {
 				enabled = true,
-				expiration = {229 / 255, 25 / 255, 25 / 255},
-				second = {255 / 255, 191 / 255, 25 / 255},
-				minute = {255 / 255, 255 / 255, 255 / 255},
-				hour = {255 / 255, 255 / 255, 255 / 255},
-				day = {255 / 255, 255 / 255, 255 / 255},
+				expiration = rgb(229, 25, 25),
+				second = rgb(255, 191, 25),
+				minute = rgb(255, 255, 255),
+				hour = rgb(255, 255, 255),
+				day = rgb(255, 255, 255),
 			},
 			text = {
 				enabled = true,

@@ -10,17 +10,22 @@ local _G = getfenv(0)
 ]]
 
 -- Mine
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].combat_feedback, self._config)
+end
+
 local function frame_UpdateCombatFeedback(self)
-	local config = self._config.combat_feedback
 	local element = self.FloatingCombatFeedback
+	element:UpdateConfig()
 
-	element.mode = config.mode
-	element.xOffset = config.x_offset
-	element.yOffset = config.y_offset
+	element.mode = element._config.mode
+	element.xOffset = element._config.x_offset
+	element.yOffset = element._config.y_offset
 
-	if config.enabled and not self:IsElementEnabled("FloatingCombatFeedback") then
+	if element._config.enabled and not self:IsElementEnabled("FloatingCombatFeedback") then
 		self:EnableElement("FloatingCombatFeedback")
-	elseif not config.enabled and self:IsElementEnabled("FloatingCombatFeedback") then
+	elseif not element._config.enabled and self:IsElementEnabled("FloatingCombatFeedback") then
 		self:DisableElement("FloatingCombatFeedback")
 	end
 
@@ -38,6 +43,7 @@ function UF:CreateCombatFeedback(frame)
 	end
 
 	element.abbreviateNumbers = true
+	element.UpdateConfig = element_UpdateConfig
 
 	frame.UpdateCombatFeedback = frame_UpdateCombatFeedback
 

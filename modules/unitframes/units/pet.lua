@@ -71,7 +71,7 @@ do
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetSize(8, 102)
 		power:SetPoint("CENTER", 6, 0)
@@ -110,7 +110,7 @@ do
 		E:SetStatusBarSkin(rightTube, "VERTICAL-8")
 
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end
 
@@ -172,7 +172,7 @@ do
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -195,7 +195,7 @@ do
 		frame.Castbar = self:CreateCastbar(frame)
 		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-		frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
+		frame.Name = self:CreateName(frame, textParent)
 
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
@@ -209,6 +209,8 @@ do
 		border:SetOffset(-6)
 		frame.Border = border
 
+		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
 		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)
 		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
@@ -217,9 +219,7 @@ do
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
-		self:CreateClassIndicator(frame)
-
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end

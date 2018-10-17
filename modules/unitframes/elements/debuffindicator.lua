@@ -6,44 +6,69 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local function frame_PreviewDebuffIndicator(self)
-	local element = self.DebuffIndicator
+local ALL_ICONS = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t"
+	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t"
+	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t"
+	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t"
 
-	if element._preview then
-		self:Tag(element, self._config.debuff.enabled and "[ls:debuffs]" or "")
-		element:UpdateTag()
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].debuff, self._config)
+end
 
-		element._preview = false
+local function element_UpdatePoints(self)
+	self:ClearAllPoints()
+
+	local config = self._config.point1
+	if config and config.p and config.p ~= "" then
+		self:SetPoint(config.p, E:ResolveAnchorPoint(self.__owner, config.anchor), config.rP, config.x, config.y)
+	end
+end
+
+local function element_UpdateTags(self)
+	local tag = self._config.enabled and "[ls:debuffs]" or ""
+	if tag ~= "" then
+		self.__owner:Tag(self, tag)
+		self:UpdateTag()
 	else
-		self:Tag(element, "|TInterface\\RaidFrame\\Raid-Icon-DebuffCurse:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffDisease:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffMagic:0:0:0:0:16:16:2:14:2:14|t|TInterface\\RaidFrame\\Raid-Icon-DebuffPoison:0:0:0:0:16:16:2:14:2:14|t")
-		element:UpdateTag()
+		self.__owner:Untag(self)
+		self:SetText("")
+	end
 
-		element._preview = true
+	self._preview = nil
+end
+
+local function element_Preview(self)
+	if self._preview then
+		self:UpdateTags()
+	else
+		self.__owner:Tag(self, ALL_ICONS)
+		self:UpdateTag()
+
+		self._preview = true
 	end
 end
 
 local function frame_UpdateDebuffIndicator(self)
-	local config = self._config.debuff
 	local element = self.DebuffIndicator
-
-	element:SetJustifyV(config.v_alignment or "MIDDLE")
-	element:SetJustifyH(config.h_alignment or "CENTER")
-	element:ClearAllPoints()
-
-	local point1 = config.point1
-
-	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
-	end
-
-	self:Tag(element, config.enabled and "[ls:debuffs]" or "")
+	element:UpdateConfig()
+	element:UpdatePoints()
+	element:UpdateTags()
 end
 
 function UF:CreateDebuffIndicator(frame, textParent)
 	local element = (textParent or frame):CreateFontString(nil, "ARTWORK", "LSStatusIcon12Font")
+	element:SetJustifyH("CENTER")
+	element:SetJustifyV("MIDDLE")
 	element:SetNonSpaceWrap(true)
 
-	frame.PreviewDebuffIndicator = frame_PreviewDebuffIndicator
+	element.__owner = frame
+
+	element.Preview = element_Preview
+	element.UpdateConfig = element_UpdateConfig
+	element.UpdatePoints = element_UpdatePoints
+	element.UpdateTags = element_UpdateTags
+
 	frame.UpdateDebuffIndicator = frame_UpdateDebuffIndicator
 
 	return element

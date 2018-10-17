@@ -4,6 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 
 --[[ luacheck: globals
 	CreateFrame
@@ -18,6 +19,10 @@ local function inset_Collapse(self)
 	self.Right:Hide()
 	self.Glass:Hide()
 	self.GlassShadow:Hide()
+
+	for _, sep in next, self.Seps do
+		sep:Hide()
+	end
 
 	self._expanded = false
 
@@ -34,6 +39,11 @@ local function inset_Expand(self)
 	self.Right:Show()
 	self.Glass:Show()
 	self.GlassShadow:Show()
+
+	for _, sep in next, self.Seps do
+		sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, self._height / 4)
+		sep:SetSize(12, self._height)
+	end
 
 	self._expanded = true
 
@@ -60,20 +70,37 @@ local function inset_SetVertexColor(self, r, g, b, a)
 	self.Bottom.Right:SetVertexColor(r, g, b, a)
 end
 
+local function updateInset(inset, height)
+	inset._height = height
+
+	if inset:IsExpanded() then
+		inset:SetHeight(height)
+
+		for _, sep in next, inset.Seps do
+			sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+			sep:SetSize(12, height)
+		end
+	end
+end
+
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].insets, self._config)
+end
+
+local function element_UpdateTopInset(self)
+	updateInset(self.Top, self._config.t_height)
+end
+
+local function element_UpdateBottomInset(self)
+	updateInset(self.Bottom, self._config.b_height)
+end
+
 local function frame_UpdateInsets(self)
-	local top = self.Insets.Top
-	local bottom = self.Insets.Bottom
-
-	top._height = self._config.insets.t_height
-	bottom._height = self._config.insets.b_height
-
-	if top:IsExpanded() then
-		top:SetHeight(top._height)
-	end
-
-	if bottom:IsExpanded() then
-		bottom:SetHeight(bottom._height)
-	end
+	local element = self.Insets
+	element:UpdateConfig()
+	element:UpdateBottomInset()
+	element:UpdateTopInset()
 end
 
 function UF:CreateInsets(frame, texParent)
@@ -114,11 +141,20 @@ function UF:CreateInsets(frame, texParent)
 	shadow:SetPoint("TOPLEFT", topInset, "TOPLEFT", 0, 0)
 	shadow:SetPoint("BOTTOMRIGHT", topInset, "BOTTOMRIGHT", 0, 2)
 
+	local seps, sep = {}
+	for i = 1, 9 do
+		sep = (texParent or frame):CreateTexture(nil, "ARTWORK", nil, 1)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:Hide()
+		seps[i] = sep
+	end
+
 	topInset.Left = left
 	topInset.Mid = mid
 	topInset.Right = right
 	topInset.Glass = glass
 	topInset.GlassShadow = shadow
+	topInset.Seps = seps
 	topInset.Expand = inset_Expand
 	topInset.Collapse = inset_Collapse
 	topInset.IsExpanded = inset_IsExpanded
@@ -160,11 +196,20 @@ function UF:CreateInsets(frame, texParent)
 	shadow:SetPoint("TOPLEFT", bottomInset, "TOPLEFT", 0, -2)
 	shadow:SetPoint("BOTTOMRIGHT", bottomInset, "BOTTOMRIGHT", 0, 0)
 
+	seps = {}
+	for i = 1, 9 do
+		sep = (texParent or frame):CreateTexture(nil, "ARTWORK", nil, 1)
+		sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+		sep:Hide()
+		seps[i] = sep
+	end
+
 	bottomInset.Left = left
 	bottomInset.Mid = mid
 	bottomInset.Right = right
 	bottomInset.Glass = glass
 	bottomInset.GlassShadow = shadow
+	bottomInset.Seps = seps
 	bottomInset.Expand = inset_Expand
 	bottomInset.Collapse = inset_Collapse
 	bottomInset.IsExpanded = inset_IsExpanded
@@ -174,9 +219,13 @@ function UF:CreateInsets(frame, texParent)
 	frame.UpdateInsets = frame_UpdateInsets
 
 	return {
+		__owner = frame,
 		Bottom = bottomInset,
 		GetVertexColor = inset_GetVertexColor,
 		SetVertexColor = inset_SetVertexColor,
 		Top = topInset,
+		UpdateBottomInset = element_UpdateBottomInset,
+		UpdateConfig = element_UpdateConfig,
+		UpdateTopInset = element_UpdateTopInset,
 	}
 end
