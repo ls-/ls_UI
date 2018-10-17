@@ -652,13 +652,13 @@ function MODULE.Init()
 
 				GameTooltip:SetOwner(self, "ANCHOR_NONE")
 				GameTooltip:SetPoint(p, self, rP, x, y)
+				GameTooltip:AddLine(L["CALENDAR"], 1, 1, 1)
+				GameTooltip:AddLine(L["CALENDAR_TOGGLE_TOOLTIP"])
 
 				if self.pendingCalendarInvites > 0 then
 					GameTooltip:AddLine(L["CALENDAR_PENDING_INVITES_TOOLTIP"])
 				end
 
-				GameTooltip:AddLine(L["CALENDAR"], 1, 1, 1)
-				GameTooltip:AddLine(L["CALENDAR_TOGGLE_TOOLTIP"])
 				GameTooltip:Show()
 			end)
 			button:SetScript("OnLeave", function()

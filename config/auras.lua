@@ -277,14 +277,8 @@ local function getOptionsTable_Aura(order, name, filter)
 						name = L["FLAG"],
 						values = FLAGS,
 					},
-					h_alignment = {
-						order = 4,
-						type = "select",
-						name = L["TEXT_HORIZ_ALIGNMENT"],
-						values = H_ALIGNMENTS,
-					},
 					v_alignment = {
-						order = 5,
+						order = 4,
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,

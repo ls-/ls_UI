@@ -114,14 +114,14 @@ local function isUnitBoss(unit)
 end
 
 local filterFunctions = {
-	default = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		-- blacklist
 		if BLACKLIST[spellID] then
 			return false
 		end
 
 		local isFriend = UnitIsFriend("player", unit)
-		local config = element._config and element._config.filter or nil
+		local config = self._config and self._config.filter or nil
 
 		if config then
 			config = isFriend and config.friendly or config.enemy
@@ -187,9 +187,9 @@ local filterFunctions = {
 
 		return false
 	end,
-	boss = function(element, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
+	boss = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, _, _, isBossAura)
 		local isFriend = UnitIsFriend("player", unit)
-		local config = element._config and element._config.filter or nil
+		local config = self._config and self._config.filter or nil
 
 		if config then
 			config = isFriend and config.friendly or config.enemy
@@ -259,21 +259,26 @@ local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
-local function element_CreateAuraIcon(element, index)
-	local config = element._config
-	local button = E:CreateButton(element, "$parentAura" .. index, true)
+local function element_CreateAuraIcon(self, index)
+	local config = self._config
+	if not config then
+		self:UpdateConfig()
+		config = self._config
+	end
+
+	local button = E:CreateButton(self, "$parentAura" .. index, true)
 
 	button.icon = button.Icon
 	button.Icon = nil
 
 	local count = button.Count
 	count:SetAllPoints()
-	count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
+	count:SetFontObject("LSFont" .. config.count.size .. (config.count.outline and "_Outline" or ""))
 	count:SetJustifyH(config.count.h_alignment)
 	count:SetJustifyV(config.count.v_alignment)
 	count:SetWordWrap(false)
 
-	if config.count.flag == "_Shadow" then
+	if config.count.shadow then
 		count:SetShadowOffset(1, -1)
 	else
 		count:SetShadowOffset(0, 0)
@@ -286,7 +291,7 @@ local function element_CreateAuraIcon(element, index)
 	button.CD = nil
 
 	if button.cd.UpdateConfig then
-		button.cd:UpdateConfig(element.cooldownConfig or {})
+		button.cd:UpdateConfig(self.cooldownConfig or {})
 		button.cd:UpdateFontObject()
 	end
 
@@ -318,7 +323,7 @@ local function element_CreateAuraIcon(element, index)
 	return button
 end
 
-local function element_UpdateAuraType(self, _, aura, _, _, _, _, debuffType)
+local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
 		if self._config.type.debuff_type then
 			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))
@@ -330,94 +335,128 @@ local function element_UpdateAuraType(self, _, aura, _, _, _, _, debuffType)
 	end
 end
 
-local function element_UpdateConfig(element)
-	element._config = E:CopyTable(element.__owner._config.auras, element._config)
+local function element_UpdateConfig(self)
+	local unit = self.__owner._unit
+	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
+
+	local size = self._config.size_override ~= 0 and self._config.size_override
+		or E:Round((C.db.profile.units[unit].width - (self.spacing * (self._config.per_row - 1)) + 2) / self._config.per_row)
+	self._config.size = m_min(m_max(size, 24), 64)
 end
 
-local function element_UpdateCooldownConfig(element)
-	if not element.cooldownConfig then
-		element.cooldownConfig = {
+local function element_UpdateCooldownConfig(self)
+	if not self.cooldownConfig then
+		self.cooldownConfig = {
 			colors = {},
 			text = {},
 		}
 	end
 
-	element.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
-	element.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
-	element.cooldownConfig.colors = E:CopyTable(C.db.profile.units.cooldown.colors, element.cooldownConfig.colors)
-	element.cooldownConfig.text = E:CopyTable(element._config.cooldown.text, element.cooldownConfig.text)
+	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
+	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+	self.cooldownConfig.colors = E:CopyTable(C.db.profile.units.cooldown.colors, self.cooldownConfig.colors)
+	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
-	for i = 1, #element do
-		if not element[i].cd.UpdateConfig then
+	for i = 1, self.createdIcons do
+		if not self[i].cd.UpdateConfig then
 			break
 		end
 
-		element[i].cd:UpdateConfig(element.cooldownConfig)
-		element[i].cd:UpdateFontObject()
+		self[i].cd:UpdateConfig(self.cooldownConfig)
+		self[i].cd:UpdateFontObject()
 	end
+end
+
+local function element_UpdateFontObjects(self)
+	local config = self._config.count
+	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
+	local count
+
+	for i = 1, self.createdIcons do
+		count = self[i].count
+		count:SetFontObject(fontObj)
+		count:SetJustifyH(config.h_alignment)
+		count:SetJustifyV(config.v_alignment)
+		count:SetWordWrap(false)
+
+		if config.shadow then
+			count:SetShadowOffset(1, -1)
+		else
+			count:SetShadowOffset(0, 0)
+		end
+	end
+end
+
+local function element_UpdateAuraTypeIcon(self)
+	local config = self._config.type
+	local auraType
+
+	for i = 1, self.createdIcons do
+		auraType = self[i].AuraType
+		auraType:ClearAllPoints()
+		auraType:SetPoint(config.position, 0, 0)
+		auraType:SetSize(config.size, config.size)
+	end
+end
+
+local function element_UpdateSize(self)
+	local config = self._config
+
+	self.size = config.size
+	self.numTotal = config.per_row * config.rows
+
+	self:SetSize(config.size * config.per_row + self.spacing * (config.per_row - 1), config.size * config.rows + self.spacing * (config.rows - 1))
+end
+
+local function element_UpdatePoints(self)
+	local config = self._config.point1
+
+	self:ClearAllPoints()
+
+	if config.p and config.p ~= "" then
+		self:SetPoint(config.p, E:ResolveAnchorPoint(self.__owner, config.anchor), config.rP, config.x, config.y)
+	end
+end
+
+local function element_UpdateGrowthDirection(self)
+	local config = self._config
+
+	self["growth-x"] = config.x_growth
+	self["growth-y"] = config.y_growth
+
+	if config.y_growth == "UP" then
+		if config.x_growth == "RIGHT" then
+			self.initialAnchor = "BOTTOMLEFT"
+		else
+			self.initialAnchor = "BOTTOMRIGHT"
+		end
+	else
+		if config.x_growth == "RIGHT" then
+			self.initialAnchor = "TOPLEFT"
+		else
+			self.initialAnchor = "TOPRIGHT"
+		end
+	end
+end
+
+local function element_UpdateMouse(self)
+	self.disableMouse = self._config.disable_mouse
 end
 
 local function frame_UpdateAuras(self)
 	local element = self.Auras
 	element:UpdateConfig()
 	element:UpdateCooldownConfig()
+	element:UpdateSize()
+	element:UpdatePoints()
+	element:UpdateGrowthDirection()
+	element:UpdateAuraTypeIcon()
+	element:UpdateFontObjects()
+	element:UpdateMouse()
 
-	local config = element._config
-	local size = config.size_override ~= 0 and config.size_override
-		or E:Round((self._config.width - (element.spacing * (config.per_row - 1)) + 2) / config.per_row)
-	size = m_min(m_max(size, 24), 64)
-
-	element.size = size
-	element.numTotal = config.per_row * config.rows
-	element.disableMouse = config.disable_mouse
-	element["growth-x"] = config.x_growth
-	element["growth-y"] = config.y_growth
-
-	if config.y_growth == "UP" then
-		if config.x_growth == "RIGHT" then
-			element.initialAnchor = "BOTTOMLEFT"
-		else
-			element.initialAnchor = "BOTTOMRIGHT"
-		end
-	else
-		if config.x_growth == "RIGHT" then
-			element.initialAnchor = "TOPLEFT"
-		else
-			element.initialAnchor = "TOPRIGHT"
-		end
-	end
-
-	element:SetSize((size * config.per_row + element.spacing * (config.per_row - 1)), size * config.rows + element.spacing * (config.rows - 1))
-	element:ClearAllPoints()
-
-	local auraType, count
-	for i = 1, element.createdIcons do
-		auraType = element[i].AuraType
-		auraType:ClearAllPoints()
-		auraType:SetPoint(config.type.position, 0, 0)
-		auraType:SetSize(config.type.size, config.type.size)
-
-		count = element[i].count
-		count:SetFontObject("LSFont" .. config.count.size .. config.count.flag)
-		count:SetJustifyH(config.count.h_alignment)
-		count:SetJustifyV(config.count.v_alignment)
-		count:SetWordWrap(false)
-
-		if config.count.flag == "_Shadow" then
-			count:SetShadowOffset(1, -1)
-		else
-			count:SetShadowOffset(0, 0)
-		end
-	end
-
-	local point1 = config.point1
-	if point1 and point1.p then
-		element:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
-	end
-
-	if config.enabled and not self:IsElementEnabled("Auras") then
+	if element._config.enabled and not self:IsElementEnabled("Auras") then
 		self:EnableElement("Auras")
-	elseif not config.enabled and self:IsElementEnabled("Auras") then
+	elseif not element._config.enabled and self:IsElementEnabled("Auras") then
 		self:DisableElement("Auras")
 	end
 
@@ -430,14 +469,21 @@ function UF:CreateAuras(frame, unit)
 	local element = CreateFrame("Frame", nil, frame)
 	element:SetSize(48, 48)
 
-	element.spacing = 4
-	element.showDebuffType = true
-	element.showStealableBuffs = true
 	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = element_UpdateAuraType
+	element.PostUpdateIcon = element_PostUpdateIcon
+	element.showDebuffType = true
+	element.showStealableBuffs = true
+	element.spacing = 4
+
+	element.UpdateAuraTypeIcon = element_UpdateAuraTypeIcon
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
+	element.UpdateFontObjects = element_UpdateFontObjects
+	element.UpdateGrowthDirection = element_UpdateGrowthDirection
+	element.UpdateMouse = element_UpdateMouse
+	element.UpdatePoints = element_UpdatePoints
+	element.UpdateSize = element_UpdateSize
 
 	frame.UpdateAuras = frame_UpdateAuras
 

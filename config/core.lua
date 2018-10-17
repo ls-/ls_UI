@@ -40,6 +40,90 @@ local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
 
+MODULE.H_ALIGNMENTS = {
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+}
+
+MODULE.V_ALIGNMENTS = {
+	["BOTTOM"] = "BOTTOM",
+	["MIDDLE"] = "MIDDLE",
+	["TOP"] = "TOP",
+}
+
+MODULE.POINTS = {
+	["BOTTOM"] = "BOTTOM",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+	["TOP"] = "TOP",
+	["TOPLEFT"] = "TOPLEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+}
+
+MODULE.POINTS_EXT = {
+	[""] = "NONE",
+	["BOTTOM"] = "BOTTOM",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+	["TOP"] = "TOP",
+	["TOPLEFT"] = "TOPLEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+}
+
+MODULE.CASTBAR_ICON_POSITIONS = {
+	["NONE"] = L["NONE"],
+	["LEFT"] = L["LEFT"],
+	["RIGHT"] = L["RIGHT"],
+}
+
+MODULE.FLAGS = {
+	-- [""] = L["NONE"],
+	["_Outline"] = L["OUTLINE"],
+	["_Shadow"] = L["SHADOW"],
+}
+MODULE.GROWTH_DIRS = {
+	["LEFT_DOWN"] = L["LEFT_DOWN"],
+	["LEFT_UP"] = L["LEFT_UP"],
+	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
+	["RIGHT_UP"] = L["RIGHT_UP"],
+}
+
+MODULE.FCF_MODES = {
+	["Fountain"] = "Fountain",
+	["Standard"] = "Straight",
+}
+
+function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
+	local temp = {
+		[""] = L["FRAME"],
+		["Health"] = L["HEALTH"],
+		["Health.Text"] = L["HEALTH_TEXT"],
+		["Power"] = L["POWER"],
+		["Power.Text"] = L["POWER_TEXT"],
+	}
+
+	if anchorsToRemove then
+		for anchor in next, anchorsToRemove do
+			temp[anchor] = nil
+		end
+	end
+
+	if anchorsToAdd then
+		for anchor, name in next, anchorsToAdd do
+			temp[anchor] = name
+		end
+	end
+
+	return temp
+end
+
 -- MODULE.OpenAuraConfig
 do
 	-- Mine

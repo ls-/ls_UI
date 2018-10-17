@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
 -- Blizz
+local UnitGUID = _G.UnitGUID
 local UnitIsConnected = _G.UnitIsConnected
 local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
@@ -15,71 +16,125 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 ]]
 
 -- Mine
+local function updateFontObject(_, fontString, config)
+	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+	fontString:SetJustifyH(config.h_alignment)
+	fontString:SetJustifyV(config.v_alignment)
+	fontString:SetWordWrap(false)
+
+	if config.shadow then
+		fontString:SetShadowOffset(1, -1)
+	else
+		fontString:SetShadowOffset(0, 0)
+	end
+end
+
+local function updateTextPoint(frame, fontString, config)
+	fontString:ClearAllPoints()
+
+	if config and config.p then
+		fontString:SetPoint(config.p, E:ResolveAnchorPoint(frame, config.anchor), config.rP, config.x, config.y)
+	end
+end
+
+local function updateTag(frame, fontString, tag)
+	if tag ~= "" then
+		frame:Tag(fontString, tag)
+		fontString:UpdateTag()
+	else
+		frame:Untag(fontString)
+		fontString:SetText("")
+	end
+end
+
 -- .Health
 do
+	local ignoredKeys = {
+		prediction = true,
+	}
+
 	local function setStatusBarColorHook(self, r, g, b)
 		self._texture:SetColorTexture(r, g, b)
 	end
 
-	local function element_PostUpdate(element, unit)
-		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
-			element:SetMinMaxValues(0, 1)
-			element:SetValue(0)
+	local function element_PostUpdate(self, unit, cur, max)
+		local unitGUID = UnitGUID(unit)
+		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
+		self.GainLossIndicators._UnitGUID = unitGUID
+
+		if not (self:IsShown() and max and max ~= 0) or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+			self:SetMinMaxValues(0, 1)
+			self:SetValue(0)
 		end
+	end
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
+	end
+
+	local function element_UpdateColors(self)
+		self.colorClass = self._config.color.class
+		self.colorReaction = self._config.color.reaction
+		self:ForceUpdate()
+	end
+
+	local function element_UpdateFontObjects(self)
+		updateFontObject(self.__owner, self.Text, self._config.text)
+	end
+
+	local function element_UpdateTextPoints(self)
+		updateTextPoint(self.__owner, self.Text, self._config.text.point1)
+	end
+
+	local function element_UpdateTags(self)
+		updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
+	end
+
+	local function element_UpdateGainLossThreshold(self)
+		self.GainLossIndicators.threshold = self._config.change_threshold
 	end
 
 	local function frame_UpdateHealth(self)
-		local config = self._config.health
 		local element = self.Health
+		element:UpdateConfig()
+		element:SetOrientation(element._config.orientation)
+		element:UpdateColors()
+		element:UpdateFontObjects()
+		element:UpdateTextPoints()
+		element:UpdateTags()
 
-		element:SetOrientation(config.orientation)
+		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossThreshold()
 
-		if config.color then
-			element.colorClass = config.color.class
-			element.colorReaction = config.color.reaction
-		end
-
-		if element.Text then
-			element.Text:SetJustifyV(config.text.v_alignment or "MIDDLE")
-			element.Text:SetJustifyH(config.text.h_alignment or "CENTER")
-			element.Text:ClearAllPoints()
-
-			local point1 = config.text.point1
-
-			if point1 and point1.p then
-				element.Text:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
-			end
-
-			self:Tag(element.Text, config.text.tag)
-			element.Text:UpdateTag()
-		end
-
-		if element.ForceUpdate then
-			element:ForceUpdate()
-		end
+		element:ForceUpdate()
 	end
 
-	function UF:CreateHealth(frame, text, textFontObject, textParent)
+	function UF:CreateHealth(frame, textParent)
 		local element = CreateFrame("StatusBar", nil, frame)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-
 		E:SmoothBar(element)
 
 		element._texture = element:CreateTexture(nil, "ARTWORK")
 		element._texture:SetAllPoints(element:GetStatusBarTexture())
-
 		hooksecurefunc(element, "SetStatusBarColor", setStatusBarColorHook)
 
-		if text then
-			text = (textParent or element):CreateFontString(nil, "ARTWORK", textFontObject)
-			element.Text = text
-		end
+		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
+
+		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators.Gain = nil
 
 		element.colorHealth = true
 		element.colorTapping = true
 		element.colorDisconnected = true
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
+		element.UpdateConfig = element_UpdateConfig
+		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
+		element.UpdateTags = element_UpdateTags
+		element.UpdateTextPoints = element_UpdateTextPoints
 
 		frame.UpdateHealth = frame_UpdateHealth
 
@@ -89,9 +144,32 @@ end
 
 -- .HealthPrediction
 do
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
+		self._config.orientation = C.db.profile.units[unit].health.orientation
+	end
+
+	local function element_UpdateFontObjects(self)
+		updateFontObject(self.__owner, self.absorbBar.Text, self._config.absorb_text)
+		updateFontObject(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text)
+	end
+
+	local function element_UpdateTextPoints(self)
+		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
+		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
+	end
+
+	local function element_UpdateTags(self)
+		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
+		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
+	end
+
 	local function frame_UpdateHealthPrediction(self)
-		local config = self._config.health
 		local element = self.HealthPrediction
+		element:UpdateConfig()
+
+		local config = element._config
 		local myBar = element.myBar
 		local otherBar = element.otherBar
 		local absorbBar = element.absorbBar
@@ -158,39 +236,13 @@ do
 			healAbsorbBar:SetHeight(height)
 		end
 
-		if absorbBar.Text then
-			absorbBar.Text:SetJustifyV(config.prediction.absorb_text.v_alignment or "MIDDLE")
-			absorbBar.Text:SetJustifyH(config.prediction.absorb_text.h_alignment or "CENTER")
-			absorbBar.Text:ClearAllPoints()
+		element:UpdateFontObjects()
+		element:UpdateTextPoints()
+		element:UpdateTags()
 
-			local point1 = config.prediction.absorb_text.point1
-
-			if point1 and point1.p then
-				absorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
-			end
-
-			self:Tag(absorbBar.Text, config.prediction.enabled and config.prediction.absorb_text.tag or "")
-			absorbBar.Text:UpdateTag()
-		end
-
-		if healAbsorbBar.Text then
-			healAbsorbBar.Text:SetJustifyV(config.prediction.heal_absorb_text.v_alignment or "MIDDLE")
-			healAbsorbBar.Text:SetJustifyH(config.prediction.heal_absorb_text.h_alignment or "CENTER")
-			healAbsorbBar.Text:ClearAllPoints()
-
-			local point1 = config.prediction.heal_absorb_text.point1
-
-			if point1 and point1.p then
-				healAbsorbBar.Text:SetPoint(point1.p, E:ResolveAnchorPoint(self, point1.anchor), point1.rP, point1.x, point1.y)
-			end
-
-			self:Tag(healAbsorbBar.Text, config.prediction.enabled and config.prediction.heal_absorb_text.tag or "")
-			healAbsorbBar.Text:UpdateTag()
-		end
-
-		if config.prediction.enabled and not self:IsElementEnabled("HealthPrediction") then
+		if config.enabled and not self:IsElementEnabled("HealthPrediction") then
 			self:EnableElement("HealthPrediction")
-		elseif not config.prediction.enabled and self:IsElementEnabled("HealthPrediction") then
+		elseif not config.enabled and self:IsElementEnabled("HealthPrediction") then
 			self:DisableElement("HealthPrediction")
 		end
 
@@ -199,7 +251,7 @@ do
 		end
 	end
 
-	function UF:CreateHealthPrediction(frame, parent, text, textFontObject, textParent)
+	function UF:CreateHealthPrediction(frame, parent, textParent)
 		local level = parent:GetFrameLevel()
 
 		local myBar = CreateFrame("StatusBar", nil, parent)
@@ -207,6 +259,7 @@ do
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		myBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
 		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
+		E:SmoothBar(myBar)
 		parent.MyHeal = myBar
 
 		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
@@ -217,6 +270,7 @@ do
 		otherBar:SetFrameLevel(level)
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		otherBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
+		E:SmoothBar(otherBar)
 		parent.OtherHeal = otherBar
 
 		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
@@ -227,6 +281,7 @@ do
 		absorbBar:SetFrameLevel(level + 1)
 		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		absorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
+		E:SmoothBar(absorbBar)
 		parent.DamageAbsorb = absorbBar
 
 		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
@@ -236,29 +291,22 @@ do
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
 		absorbBar.Overlay = overlay
 
+		absorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
+
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
 		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
+		E:SmoothBar(healAbsorbBar)
 		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
 		healAbsorbBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 
-		E:SmoothBar(myBar)
-		E:SmoothBar(otherBar)
-		E:SmoothBar(healAbsorbBar)
-
-		if text then
-			text = (textParent or parent):CreateFontString(nil, "ARTWORK", textFontObject)
-			absorbBar.Text = text
-
-			text = (textParent or parent):CreateFontString(nil, "ARTWORK", textFontObject)
-			healAbsorbBar.Text = text
-		end
+		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
 
 		frame.UpdateHealthPrediction = frame_UpdateHealthPrediction
 
@@ -268,6 +316,10 @@ do
 			absorbBar = absorbBar,
 			healAbsorbBar = healAbsorbBar,
 			maxOverflow = 1,
+			UpdateConfig = element_UpdateConfig,
+			UpdateFontObjects = element_UpdateFontObjects,
+			UpdateTags = element_UpdateTags,
+			UpdateTextPoints = element_UpdateTextPoints,
 		}
 	end
 end

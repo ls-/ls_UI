@@ -179,7 +179,7 @@ do
 		mask:SetPoint("CENTER")
 
 		-- health
-		local health = self:CreateHealth(frame, true, "LSFont16_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(180 / 2, 280 / 2)
 		health:SetPoint("CENTER")
@@ -187,7 +187,7 @@ do
 		frame.Health = health
 
 		-- health prediction
-		local healthPrediction = self:CreateHealthPrediction(frame, health, true, "LSFont12_Shadow", textParent)
+		local healthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 		frame.HealthPrediction = healthPrediction
 
 		-- masking
@@ -196,9 +196,10 @@ do
 		healthPrediction.otherBar._texture:AddMaskTexture(mask)
 		healthPrediction.absorbBar.Overlay:AddMaskTexture(mask)
 		healthPrediction.healAbsorbBar._texture:AddMaskTexture(mask)
+		health.GainLossIndicators.Loss:AddMaskTexture(mask)
 
 		-- power
-		local power = self:CreatePower(frame, true, "LSFont14_Shadow", textParent)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 4)
 		power:SetSize(12, 128)
 		power:SetPoint("RIGHT", -23, 0)
@@ -266,9 +267,12 @@ do
 		classPower:SetSize(12, 128)
 		frame.ClassPower = classPower
 
-		classPower.UpdateContainer = function(self, isVisible, slots)
-			leftTube:Refresh(self, isVisible, slots)
-		end
+		classPower:HookScript("OnHide", function(self)
+			leftTube:Refresh(self, false, 0)
+		end)
+		classPower:HookScript("OnShow", function(self)
+			leftTube:Refresh(self, true, self.__max)
+		end)
 
 		-- pvp
 		frame.PvPIndicator = self:CreatePvPIndicator(frame, textureParent)
@@ -285,7 +289,7 @@ do
 		-- castbar
 		frame.Castbar = self:CreateCastbar(frame)
 
-		frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
+		frame.Name = self:CreateName(frame, textParent)
 
 		-- status icons/texts
 		local status = textParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
@@ -319,15 +323,15 @@ do
 		threat:SetPoint("CENTER", 0, 0)
 		frame.ThreatIndicator = threat
 
+		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
 		local shadow = borderParent:CreateTexture(nil, "BACKGROUND", nil, -1)
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 		shadow:AddMaskTexture(mask)
 
-		self:CreateClassIndicator(frame)
-
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end
@@ -403,14 +407,6 @@ do
 
 		frame.Insets = self:CreateInsets(frame, textureParent)
 
-		local seps = {}
-
-		for i = 1, 9 do
-			local sep = textureParent:CreateTexture(nil, "ARTWORK", nil, 1)
-			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-			seps[i] = sep
-		end
-
 		function frame.Insets.Top:Refresh(sender, visible, slots)
 			if (slots == self._slots and visible == self._visible)
 				or (not visible and sender ~= self._sender) then return end
@@ -423,28 +419,22 @@ do
 				self:Expand()
 
 				for i = 1, 9 do
-					local sep = seps[i]
-
 					if i < slots then
-						sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, (self:GetHeight() - 2) / 4)
-						sep:SetPoint("LEFT", sender[i], "RIGHT", -5, 0)
-						sep:SetSize(24 / 2, self:GetHeight() - 2)
-						sep:Show()
+						self.Seps[i]:SetPoint("LEFT", sender[i], "RIGHT", -5, 0)
+						self.Seps[i]:Show()
 					else
-						sep:Hide()
+						self.Seps[i]:Hide()
 					end
 				end
 			else
 				self:Collapse()
-
-				for i = 1, 9 do
-					seps[i]:Hide()
-				end
 			end
 		end
 
+		frame.Insets.Top:Refresh(nil, false, 0)
+
 		-- health
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -453,10 +443,10 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, true, "LSFont10_Shadow", textParent)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
 		-- power
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -488,7 +478,6 @@ do
 		addPower:HookScript("OnHide", function(self)
 			frame.Insets.Top:Refresh(self, false, 0)
 		end)
-
 		addPower:HookScript("OnShow", function(self)
 			frame.Insets.Top:Refresh(self, true, 1)
 		end)
@@ -537,15 +526,18 @@ do
 		classPower:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 		frame.ClassPower = classPower
 
-		classPower.UpdateContainer = function(self, isVisible, slots)
-			frame.Insets.Top:Refresh(self, isVisible, slots)
-		end
+		classPower:HookScript("OnHide", function(self)
+			frame.Insets.Top:Refresh(self, false, 0)
+		end)
+		classPower:HookScript("OnShow", function(self)
+			frame.Insets.Top:Refresh(self, true, self.__max)
+		end)
 
 		-- castbar
 		frame.Castbar = self:CreateCastbar(frame)
 		-- frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-		frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
+		frame.Name = self:CreateName(frame, textParent)
 
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
@@ -554,13 +546,13 @@ do
 		frame.PvPIndicator = pvp
 
 		pvp.Holder.PostExpand = function()
-			if not frame._config.castbar.detached then
+			if not frame.Castbar._config.detached then
 				frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 52)
 			end
 		end
 
 		pvp.Holder.PostCollapse = function()
-			if not frame._config.castbar.detached then
+			if not frame.Castbar._config.detached then
 				frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
 			end
 		end
@@ -597,6 +589,8 @@ do
 		border:SetOffset(-6)
 		frame.Border = border
 
+		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
 		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)
 		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
@@ -605,10 +599,8 @@ do
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
-		self:CreateClassIndicator(frame)
-
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end

@@ -161,6 +161,8 @@ local function handleCastBar(self)
 	self.TexParent = texParent
 
 	local time = texParent:CreateFontString(nil, "ARTWORK")
+	time:SetPoint("TOP", self, "TOP", 0, 0)
+	time:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 	time:SetPoint("RIGHT", self, "RIGHT", 0, 0)
 	self.Time = time
 
@@ -168,8 +170,21 @@ local function handleCastBar(self)
 	text:SetParent(texParent)
 	text:SetSize(0, 0)
 	text:ClearAllPoints()
+	text:SetPoint("TOP", self, "TOP", 0, 0)
+	text:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 	text:SetPoint("LEFT", self, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
+end
+
+local function updateFontObject(fontString, config)
+	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+	fontString:SetWordWrap(false)
+
+	if config.shadow then
+		fontString:SetShadowOffset(1, -1)
+	else
+		fontString:SetShadowOffset(0, 0)
+	end
 end
 
 local function updateCastBar(self)
@@ -188,40 +203,38 @@ local function updateCastBar(self)
 		end
 	end
 
-	if config.icon.enabled then
-		if config.icon.position == "LEFT" then
-			self.Icon = self.LeftIcon
-			self.Icon:Show()
+	if config.icon.position == "LEFT" then
+		self.Icon = self.LeftIcon
+		self.Icon:Show()
 
-			self.Icon_:Hide()
-			self.LeftIcon:SetSize(height * 1.5, height)
-			self.RightIcon:SetSize(0.0001, height)
+		self.Icon_:Hide()
+		self.LeftIcon:SetSize(height * 1.5, height)
+		self.RightIcon:SetSize(0.0001, height)
 
-			self.LeftSep:SetSize(12, height)
-			self.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
-			self.RightSep:SetSize(0.0001, height)
+		self.LeftSep:SetSize(12, height)
+		self.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+		self.RightSep:SetSize(0.0001, height)
 
-			self:SetSize(0, 0)
-			self:ClearAllPoints()
-			self:SetPoint("TOPLEFT", holder, "TOPLEFT", 5 + height * 1.5, 0)
-			self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
-		elseif config.icon.position == "RIGHT" then
-			self.Icon = self.RightIcon
-			self.Icon:Show()
+		self:SetSize(0, 0)
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", holder, "TOPLEFT", 5 + height * 1.5, 0)
+		self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
+	elseif config.icon.position == "RIGHT" then
+		self.Icon = self.RightIcon
+		self.Icon:Show()
 
-			self.Icon_:Hide()
-			self.LeftIcon:SetSize(0.0001, height)
-			self.RightIcon:SetSize(height * 1.5, height)
+		self.Icon_:Hide()
+		self.LeftIcon:SetSize(0.0001, height)
+		self.RightIcon:SetSize(height * 1.5, height)
 
-			self.LeftSep:SetSize(0.0001, height)
-			self.RightSep:SetSize(12, height)
-			self.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+		self.LeftSep:SetSize(0.0001, height)
+		self.RightSep:SetSize(12, height)
+		self.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 
-			self:SetSize(0, 0)
-			self:ClearAllPoints()
-			self:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
-			self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -5 - height * 1.5, 0)
-		end
+		self:SetSize(0, 0)
+		self:ClearAllPoints()
+		self:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+		self:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -5 - height * 1.5, 0)
 	else
 		self.Icon = self.Icon_
 		self.Icon:Hide()
@@ -255,25 +268,11 @@ local function updateCastBar(self)
 	CastingBarFrame_SetFailedCastColor(self, unpack(config.colors.failed))
 	CastingBarFrame_SetUseStartColorForFinished(self, true)
 
-	self.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	updateFontObject(self.Text, config.text)
 	self.Text:SetJustifyH("LEFT")
-	self.Text:SetWordWrap(false)
 
-	if config.text.flag == "_Shadow" then
-		self.Text:SetShadowOffset(1, -1)
-	else
-		self.Text:SetShadowOffset(0, 0)
-	end
-
-	self.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+	updateFontObject(self.Time, config.text)
 	self.Time:SetJustifyH("RIGHT")
-	self.Time:SetWordWrap(false)
-
-	if config.text.flag == "_Shadow" then
-		self.Time:SetShadowOffset(1, -1)
-	else
-		self.Time:SetShadowOffset(0, 0)
-	end
 end
 
 local function bar_SetLook(self)
@@ -287,6 +286,8 @@ local function bar_SetLook(self)
 		local text = self.Text
 		text:SetSize(0, 0)
 		text:ClearAllPoints()
+		text:SetPoint("TOP", self, "TOP", 0, 0)
+		text:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 		text:SetPoint("LEFT", self, "LEFT", 2, 0)
 		text:SetPoint("RIGHT", self.Time, "LEFT", -2, 0)
 	end

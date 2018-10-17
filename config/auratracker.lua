@@ -314,14 +314,8 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["FLAG"],
 						values = FLAGS,
 					},
-					h_alignment = {
-						order = 15,
-						type = "select",
-						name = L["TEXT_HORIZ_ALIGNMENT"],
-						values = H_ALIGNMENTS,
-					},
 					v_alignment = {
-						order = 16,
+						order = 15,
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,

@@ -11,122 +11,84 @@ local next = _G.next
 ]]
 
 -- Mine
-local function cleanUpProfile()
-	-- -> 80000.03
-	if not C.db.profile.version or C.db.profile.version < 8000003 then
-		C.db.profile.movers.ls.LSMicroMenu = nil
-		C.db.profile.movers.traditional.LSMicroMenu = nil
+local function cleanUpStep1()
+	-- -> 80000.12
+	if not C.db.profile.version or C.db.profile.version < 8000012 then
+		if C.db.profile.units.player and C.db.profile.units.player.ls then
+			E:CopyTable(C.db.profile.units.player.ls, C.db.profile.units.ls.player)
 
-		C.db.profile.bars.micromenu.bags = nil
-		C.db.profile.bars.micromenu.height = nil
-		C.db.profile.bars.micromenu.menu1 = nil
-		C.db.profile.bars.micromenu.menu2 = nil
-		C.db.profile.bars.micromenu.num = nil
-		C.db.profile.bars.micromenu.per_row = nil
-		C.db.profile.bars.micromenu.point = nil
-		C.db.profile.bars.micromenu.spacing = nil
-		C.db.profile.bars.micromenu.tooltip = nil
-		C.db.profile.bars.micromenu.width = nil
-		C.db.profile.bars.micromenu.x_growth = nil
-		C.db.profile.bars.micromenu.y_growth = nil
+			C.db.profile.units.player.ls = nil
+		end
 
-		C.db.char.bars.bags = nil
-		C.db.profile.bars.bags = nil
+		if C.db.profile.units.player and C.db.profile.units.player.traditional then
+			E:CopyTable(C.db.profile.units.player.traditional, C.db.profile.units.traditional.player)
+
+			C.db.profile.units.player.traditional = nil
+		end
+
+		if C.db.profile.units.pet and C.db.profile.units.pet.ls then
+			E:CopyTable(C.db.profile.units.pet.ls, C.db.profile.units.ls.pet)
+
+			C.db.profile.units.pet.ls = nil
+		end
+
+		if C.db.profile.units.pet and C.db.profile.units.pet.traditional then
+			E:CopyTable(C.db.profile.units.pet.traditional, C.db.profile.units.traditional.pet)
+
+			C.db.profile.units.pet.traditional = nil
+		end
+
+		local bars = {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra",
+		"zone"}
+
+		for _, bar in next, bars do
+			if C.db.profile.bars[bar] then
+				if C.db.profile.bars[bar].cooldown then
+					C.db.profile.bars[bar].cooldown.text.h_alignment = nil
+				end
+			end
+		end
+
+		C.db.profile.auras.HELPFUL.cooldown.text.h_alignment = nil
+		C.db.profile.auras.HARMFUL.cooldown.text.h_alignment = nil
+		C.db.profile.auras.TOTEM.cooldown.text.h_alignment = nil
+
+		C.db.profile.blizzard.castbar.icon.enabled = nil
+		C.db.profile.blizzard.castbar.text.flag = nil
 	end
+end
 
-	-- -> 80000.04
-	if not C.db.profile.version or C.db.profile.version < 8000004 then
-		C.db.profile.bars.micromenu.bars.micromenu1.fade = nil
-		C.db.profile.bars.micromenu.bars.micromenu1.visible = nil
-		C.db.profile.bars.micromenu.bars.micromenu2.fade = nil
-		C.db.profile.bars.micromenu.bars.micromenu2.visible = nil
-		C.db.profile.bars.micromenu.bars.bags.fade = nil
-		C.db.profile.bars.micromenu.bars.bags.visible = nil
+local function cleanUpStep2()
+	if not C.db.profile.version or C.db.profile.version < 8000012 then
+		local units = {"player", "pet", "target", "targettarget", "focustarget", "boss"}
 
-		if C.db.profile.auras[E.UI_LAYOUT] then
-			if C.db.profile.auras[E.UI_LAYOUT].HELPFUL then
-				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].HELPFUL, C.db.profile.auras.HELPFUL)
-			end
+		for _, unit in next, units do
+			if C.db.profile.units[unit] then
+				if C.db.profile.units[unit].castbar then
+					C.db.profile.units[unit].castbar.icon.enabled = nil
+					C.db.profile.units[unit].castbar.text.flag = nil
+				end
 
-			if C.db.profile.auras[E.UI_LAYOUT].HARMFUL then
-				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].HARMFUL, C.db.profile.auras.HARMFUL)
-			end
+				if C.db.profile.units[unit].debuff then
+					C.db.profile.units[unit].debuff.h_alignment = nil
+				end
 
-			if C.db.profile.auras[E.UI_LAYOUT].TOTEM then
-				E:CopyTable(C.db.profile.auras[E.UI_LAYOUT].TOTEM, C.db.profile.auras.TOTEM)
-			end
-		end
-
-		C.db.profile.auras.ls = nil
-		C.db.profile.auras.traditional = nil
-	end
-
-	-- -> 80000.05
-	if not C.db.profile.version or C.db.profile.version < 8000005 then
-		C.db.profile.bars.desaturate_on_cd = nil
-		C.db.profile.bars.desaturate_when_unusable = nil
-	end
-
-	-- -> 80000.07
-	if not C.db.profile.version or C.db.profile.version < 8000007 then
-		if C.db.profile.units.ls then
-			if C.db.profile.units.ls.player then
-				C.db.profile.units.ls.player.point = nil
-				E:CopyTable(C.db.profile.units.ls.player, C.db.profile.units.player.ls)
-			end
-
-			if C.db.profile.units.ls.pet then
-				C.db.profile.units.ls.pet.point = nil
-				E:CopyTable(C.db.profile.units.ls.pet, C.db.profile.units.pet.ls)
+				if C.db.profile.units[unit].auras then
+					C.db.profile.units[unit].auras.cooldown.text.h_alignment = nil
+				end
 			end
 		end
-
-		if C.db.profile.units.traditional then
-			if C.db.profile.units.traditional.player then
-				C.db.profile.units.traditional.player.point = nil
-				E:CopyTable(C.db.profile.units.traditional.player, C.db.profile.units.player.traditional)
-			end
-
-			if C.db.profile.units.traditional.pet then
-				C.db.profile.units.traditional.pet.point = nil
-				E:CopyTable(C.db.profile.units.traditional.pet, C.db.profile.units.pet.traditional)
-			end
-		end
-
-		if C.db.profile.units[E.UI_LAYOUT] then
-			if C.db.profile.units[E.UI_LAYOUT].target then
-				C.db.profile.units[E.UI_LAYOUT].target.point = nil
-				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].target, C.db.profile.units.target)
-			end
-
-			if C.db.profile.units[E.UI_LAYOUT].targettarget then
-				C.db.profile.units[E.UI_LAYOUT].targettarget.point = nil
-				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].targettarget, C.db.profile.units.targettarget)
-			end
-
-			if C.db.profile.units[E.UI_LAYOUT].focus then
-				C.db.profile.units[E.UI_LAYOUT].focus.point = nil
-				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].focus, C.db.profile.units.focus)
-			end
-
-			if C.db.profile.units[E.UI_LAYOUT].focustarget then
-				C.db.profile.units[E.UI_LAYOUT].focustarget.point = nil
-				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].focustarget, C.db.profile.units.focustarget)
-			end
-
-			if C.db.profile.units[E.UI_LAYOUT].boss then
-				C.db.profile.units[E.UI_LAYOUT].boss.point = nil
-				E:CopyTable(C.db.profile.units[E.UI_LAYOUT].boss, C.db.profile.units.boss)
-			end
-		end
-
-		C.db.profile.units.ls = nil
-		C.db.profile.units.traditional = nil
 	end
 end
 
 local function updateAll()
-	cleanUpProfile()
+	cleanUpStep1()
+
+	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
+	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
+
+	cleanUpStep2()
+
 	P:UpdateModules()
 	P.Movers:UpdateConfig()
 end
@@ -140,17 +102,29 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	-- layout type change shouldn't affect anything after SVs are loaded
 	E.UI_LAYOUT = C.db.char.layout
 
-	cleanUpProfile()
+	D.profile.units.player = D.profile.units[E.UI_LAYOUT].player
+	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
+
+	cleanUpStep1()
+
+	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
+	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
+
+	cleanUpStep2()
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
+		C.db.profile.units.player = nil
+		C.db.profile.units.pet = nil
 
 		P.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
+		C.db.profile.units.player = nil
+		C.db.profile.units.pet = nil
 
 		P.Movers:CleanUpConfig()
 	end)

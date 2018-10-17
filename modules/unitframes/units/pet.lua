@@ -47,13 +47,18 @@ do
 		textureParent:SetAllPoints()
 		frame.TextureParent = textureParent
 
+		local textParent = CreateFrame("Frame", nil, frame)
+		textParent:SetFrameLevel(level + 6)
+		textParent:SetAllPoints()
+		frame.TextParent = textParent
+
 		local fg = textureParent:CreateTexture(nil, "ARTWORK", nil, 1)
 		fg:SetSize(80 / 2, 148 / 2)
 		fg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\pet-frame")
 		fg:SetTexCoord(1 / 128, 81 / 128, 1 / 256, 149 / 256)
 		fg:SetPoint("CENTER", 0, 0)
 
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", frame)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(8, 112)
 		health:SetPoint("CENTER", -6, 0)
@@ -64,9 +69,9 @@ do
 		healthBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
 		healthBG:SetAllPoints()
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", frame)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetSize(8, 102)
 		power:SetPoint("CENTER", 6, 0)
@@ -105,7 +110,7 @@ do
 		E:SetStatusBarSkin(rightTube, "VERTICAL-8")
 
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end
 
@@ -156,7 +161,7 @@ do
 
 		frame.Insets = self:CreateInsets(frame, textureParent)
 
-		local health = self:CreateHealth(frame, true, "LSFont12_Shadow", textParent)
+		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -165,9 +170,9 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
-		local power = self:CreatePower(frame, true, "LSFont12_Shadow", textParent)
+		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
 		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
 		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
@@ -190,7 +195,7 @@ do
 		frame.Castbar = self:CreateCastbar(frame)
 		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-		frame.Name = self:CreateName(frame, "LSFont12_Shadow", textParent)
+		frame.Name = self:CreateName(frame, textParent)
 
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
@@ -204,6 +209,8 @@ do
 		border:SetOffset(-6)
 		frame.Border = border
 
+		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
 		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)
 		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
@@ -212,9 +219,7 @@ do
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
-		self:CreateClassIndicator(frame)
-
 		frame.Update = frame_Update
-		frame.UpdateConfig = frame_UpdateConfig
+		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end

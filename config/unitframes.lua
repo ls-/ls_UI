@@ -5,104 +5,206 @@ local UNITFRAMES = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local next = _G.next
 local s_split = _G.string.split
+local tonumber = _G.tonumber
+local tostring = _G.tostring
 local unpack = _G.unpack
 
 -- Mine
-local FCF_MODES = {
-	["Fountain"] = "Fountain",
-	["Standard"] = "Straight",
-}
-
-local POINTS = {
-	["BOTTOM"] = "BOTTOM",
-	["BOTTOMLEFT"] = "BOTTOMLEFT",
-	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-	["TOP"] = "TOP",
-	["TOPLEFT"] = "TOPLEFT",
-	["TOPRIGHT"] = "TOPRIGHT",
-}
-
-local POINTS_EXT = {
-	[""] = "NONE",
-	["BOTTOM"] = "BOTTOM",
-	["BOTTOMLEFT"] = "BOTTOMLEFT",
-	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-	["TOP"] = "TOP",
-	["TOPLEFT"] = "TOPLEFT",
-	["TOPRIGHT"] = "TOPRIGHT",
-}
-
-local INSETS = {
-	[8] = "8",
-	[12] = "12",
-}
-
-local H_ALIGNMENTS = {
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-}
-local V_ALIGNMENTS = {
-	["BOTTOM"] = "BOTTOM",
-	["MIDDLE"] = "MIDDLE",
-	["TOP"] = "TOP",
-}
-
-local FLAGS = {
-	-- [""] = L["NONE"],
-	["_Outline"] = L["OUTLINE"],
-	["_Shadow"] = L["SHADOW"],
-}
-
-local CASTBAR_ICON_POSITIONS = {
-	["LEFT"] = L["LEFT"],
-	["RIGHT"] = L["RIGHT"],
-}
-
-local GROWTH_DIRS = {
-	["LEFT_DOWN"] = L["LEFT_DOWN"],
-	["LEFT_UP"] = L["LEFT_UP"],
-	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
-	["RIGHT_UP"] = L["RIGHT_UP"],
-}
-
 local function isModuleDisabled()
 	return not UNITFRAMES:IsInit()
 end
 
-local function getRegionAnchors(anchorsToRemove, anchorsToAdd)
-	local temp = {
-		[""] = L["FRAME"],
-		["Health"] = L["HEALTH"],
-		["Health.Text"] = L["HEALTH_TEXT"],
-		["Power"] = L["POWER"],
-		["Power.Text"] = L["POWER_TEXT"],
+local function isPlayerFrameDisabled()
+	return not UNITFRAMES:HasPlayerFrame()
+end
+
+local function isTargetFrameDisabled()
+	return not UNITFRAMES:HasTargetFrame()
+end
+
+local function isFocusFrameDisabled()
+	return not UNITFRAMES:HasFocusFrame()
+end
+
+local function isBossFrameDisabled()
+	return not UNITFRAMES:HasBossFrame()
+end
+
+local resetIgnoredKeys = {
+	["point"] = true,
+}
+
+local aurasResetIgnoredKeys = {
+	["point"] = true,
+	["filter"] = true,
+}
+
+local function getUFOption_Copy(order, unit)
+	local ignoredUnits = {
+		[unit] = true,
+		["pet"] = true,
+		["player"] = true,
 	}
 
-	if anchorsToRemove then
-		for anchor in next, anchorsToRemove do
-			temp[anchor] = nil
-		end
-	end
+	return {
+		order = order,
+		type = "select",
+		name = L["COPY_FROM"],
+		desc = L["COPY_FROM_DESC"],
+		values = function()
+			return UNITFRAMES:GetUnits(ignoredUnits)
+		end,
+		get = function() end,
+		set = function(_, value)
+			CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit], resetIgnoredKeys)
+			UNITFRAMES:UpdateUnitFrame(unit, "Update")
+		end,
+	}
+end
 
-	if anchorsToAdd then
-		for anchor, name in next, anchorsToAdd do
-			temp[anchor] = name
-		end
+local function getUFOption_Preview(order, unit)
+	return {
+		order = order,
+		type = "execute",
+		name = L["PREVIEW"],
+		func = function()
+			UNITFRAMES:UpdateUnitFrame(unit, "Preview")
+		end,
+	}
+end
+
+local function getUFOption_PvPIndicator(order, unit)
+	return {
+		order = order,
+		type = "toggle",
+		name = L["PVP_ICON"],
+		get = function()
+			return C.db.profile.units[unit].pvp.enabled
+		end,
+		set = function(_, value)
+			C.db.profile.units[unit].pvp.enabled = value
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
+		end,
+	}
+end
+
+local function getUFOption_Border(order, unit)
+	local temp = {
+		order = order,
+		type = "group",
+		name = L["BORDER_COLOR"],
+		inline = true,
+		get = function(info)
+			return C.db.profile.units[unit].class[info[#info]]
+		end,
+		set = function(info, value)
+			C.db.profile.units[unit].class[info[#info]] = value
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassIndicator")
+		end,
+		args = {
+			player = {
+				order = 1,
+				type = "toggle",
+				name = L["PLAYER_CLASS"],
+				desc = L["COLOR_CLASS_DESC"],
+			},
+		},
+	}
+
+	if unit ~= "player" and unit ~= "pet" then
+		temp.args.npc = {
+			order = 2,
+			type = "toggle",
+			name = L["NPC_CLASSIFICATION"],
+			desc = L["COLOR_CLASSIFICATION_DESC"],
+		}
 	end
 
 	return temp
 end
 
-local function getOptionsTable_Health(order, unit)
+local function getUFOption_Width(order, unit)
+	return {
+		order = order,
+		type = "range",
+		name = L["WIDTH"],
+		min = 96, max = 512, step = 2,
+		get = function()
+			return C.db.profile.units[unit].width
+		end,
+		set = function(_, value)
+			if C.db.profile.units[unit].width ~= value then
+				C.db.profile.units[unit].width = value
+				UNITFRAMES:UpdateUnitFrame(unit, "Update")
+			end
+		end,
+	}
+end
+
+local function getUFOption_Height(order, unit)
+	return {
+		order = order,
+		type = "range",
+		name = L["HEIGHT"],
+		min = 28, max = 256, step = 2,
+		get = function()
+			return C.db.profile.units[unit].height
+		end,
+		set = function(_, value)
+			if C.db.profile.units[unit].height ~= value then
+				C.db.profile.units[unit].height = value
+				UNITFRAMES:UpdateUnitFrame(unit, "Update")
+			end
+		end,
+	}
+end
+
+local function getUFOption_TopInset(order, unit)
+	return {
+		order = order,
+		type = "range",
+		name = L["TOP_INSET_SIZE"],
+		desc = L["TOP_INSET_SIZE_DESC"],
+		min = 8, max = 32, step = 2,
+		get = function()
+			return C.db.profile.units[unit].insets.t_height
+		end,
+		set = function(_, value)
+			if C.db.profile.units[unit].insets.t_height ~= value then
+				C.db.profile.units[unit].insets.t_height = value
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Insets", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Insets", "UpdateTopInset")
+			end
+		end,
+	}
+end
+
+local function getUFOption_BottomInset(order, unit)
+	return {
+		order = order,
+		type = "range",
+		name = L["BOTTOM_INSET_SIZE"],
+		desc = L["BOTTOM_INSET_SIZE_DESC"],
+		min = 8, max = 32, step = 2,
+		get = function()
+			return C.db.profile.units[unit].insets.b_height
+		end,
+		set = function(_, value)
+			if C.db.profile.units[unit].insets.b_height ~= value then
+				C.db.profile.units[unit].insets.b_height = value
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Insets", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Insets", "UpdateBottomInset")
+			end
+		end,
+	}
+end
+
+local function getUFOption_Health(order, unit)
+	local ignoredAnchors = {
+		["Health.Text"] = true
+	}
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -113,8 +215,7 @@ local function getOptionsTable_Health(order, unit)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].health, C.db.profile.units[unit].health, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].health, C.db.profile.units[unit].health, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
 				end,
@@ -134,8 +235,8 @@ local function getOptionsTable_Health(order, unit)
 				end,
 				set = function(info, value)
 					C.db.profile.units[unit].health.color[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateColors")
 				end,
 				args = {
 					class = {
@@ -144,12 +245,6 @@ local function getOptionsTable_Health(order, unit)
 						name = L["PLAYER_CLASS"],
 						desc = L["COLOR_CLASS_DESC"],
 					},
-					reaction = {
-						order = 2,
-						type = "toggle",
-						name = L["REACTION"],
-						desc = L["COLOR_REACTION_DESC"],
-					},
 				},
 			},
 			spacer_2 = {
@@ -157,56 +252,125 @@ local function getOptionsTable_Health(order, unit)
 				type = "description",
 				name = " ",
 			},
-			text = {
+			change_threshold = {
 				order = 20,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].health.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].health.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			text = {
+				order = 30,
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
 				get = function(info)
-					return C.db.profile.units[unit].health.text.point1[info[#info]]
+					return C.db.profile.units[unit].health.text[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.profile.units[unit].health.text.point1[info[#info]] ~= value then
-						C.db.profile.units[unit].health.text.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+					if C.db.profile.units[unit].health.text[info[#info]] ~= value then
+						C.db.profile.units[unit].health.text[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFontObjects")
 					end
 				end,
 				args = {
-					p = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					outline = {
+						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+					h_alignment = {
 						order = 4,
 						type = "select",
-						name = L["POINT"],
-						desc = L["POINT_DESC"],
-						values = POINTS,
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = CONFIG.H_ALIGNMENTS,
 					},
-					anchor = {
-						order = 5,
-						type = "select",
-						name = L["ANCHOR"],
-						values = getRegionAnchors({["Health.Text"] = true}),
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
 					},
-					rP = {
-						order = 6,
-						type = "select",
-						name = L["RELATIVE_POINT"],
-						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+					point = {
+						order = 10,
+						type = "group",
+						name = "",
+						inline = true,
+						get = function(info)
+							return C.db.profile.units[unit].health.text.point1[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.units[unit].health.text.point1[info[#info]] ~= value then
+								C.db.profile.units[unit].health.text.point1[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTextPoints")
+							end
+						end,
+						args = {
+							p = {
+								order = 4,
+								type = "select",
+								name = L["POINT"],
+								desc = L["POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							anchor = {
+								order = 5,
+								type = "select",
+								name = L["ANCHOR"],
+								values = CONFIG:GetRegionAnchors(ignoredAnchors),
+							},
+							rP = {
+								order = 6,
+								type = "select",
+								name = L["RELATIVE_POINT"],
+								desc = L["RELATIVE_POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							x = {
+								order = 7,
+								type = "range",
+								name = L["X_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+							y = {
+								order = 8,
+								type = "range",
+								name = L["Y_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+						},
 					},
-					x = {
-						order = 7,
-						type = "range",
-						name = L["X_OFFSET"],
-						min = -128, max = 128, step = 1,
-					},
-					y = {
-						order = 8,
-						type = "range",
-						name = L["Y_OFFSET"],
-						min = -128, max = 128, step = 1,
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
 					},
 					tag = {
-						order = 10,
+						order = 20,
 						type = "input",
 						width = "full",
 						name = L["FORMAT"],
@@ -218,19 +382,19 @@ local function getOptionsTable_Health(order, unit)
 							if not CONFIG:IsTagStringValid(value) then return end
 
 							C.db.profile.units[unit].health.text.tag = value:gsub("\124\124+", "\124")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateTags")
 						end,
 					},
 				},
 			},
-			spacer_3 = {
-				order = 29,
+			spacer_4 = {
+				order = 39,
 				type = "description",
 				name = " ",
 			},
 			prediction = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["HEAL_PREDICTION"],
 				inline = true,
@@ -244,7 +408,6 @@ local function getOptionsTable_Health(order, unit)
 						end,
 						set = function(_, value)
 							C.db.profile.units[unit].health.prediction.enabled = value
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 							UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
 						end,
 					},
@@ -259,50 +422,100 @@ local function getOptionsTable_Health(order, unit)
 						name = L["DAMAGE_ABSORB_TEXT"],
 						inline = true,
 						get = function(info)
-							return C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]]
+							return C.db.profile.units[unit].health.prediction.absorb_text[info[#info]]
 						end,
 						set = function(info, value)
-							if C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] ~= value then
-								C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] = value
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+							if C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] ~= value then
+								C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
 							end
 						end,
 						args = {
-							p = {
+							size = {
 								order = 1,
-								type = "select",
-								name = L["POINT"],
-								desc = L["POINT_DESC"],
-								values = POINTS,
+								type = "range",
+								name = L["SIZE"],
+								min = 10, max = 20, step = 2,
 							},
-							anchor = {
+							outline = {
 								order = 2,
-								type = "select",
-								name = L["ANCHOR"],
-								values = getRegionAnchors(),
+								type = "toggle",
+								name = L["OUTLINE"],
 							},
-							rP = {
+							shadow = {
 								order = 3,
-								type = "select",
-								name = L["RELATIVE_POINT"],
-								desc = L["RELATIVE_POINT_DESC"],
-								values = POINTS,
+								type = "toggle",
+								name = L["SHADOW"],
 							},
-							x = {
+							h_alignment = {
 								order = 4,
-								type = "range",
-								name = L["X_OFFSET"],
-								min = -128, max = 128, step = 1,
+								type = "select",
+								name = L["TEXT_HORIZ_ALIGNMENT"],
+								values = CONFIG.H_ALIGNMENTS,
 							},
-							y = {
-								order = 5,
-								type = "range",
-								name = L["Y_OFFSET"],
-								min = -128, max = 128, step = 1,
+							spacer_1 = {
+								order = 9,
+								type = "description",
+								name = " ",
+							},
+							point = {
+								order = 10,
+								type = "group",
+								name = "",
+								inline = true,
+								get = function(info)
+									return C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]]
+								end,
+								set = function(info, value)
+									if C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] ~= value then
+										C.db.profile.units[unit].health.prediction.absorb_text.point1[info[#info]] = value
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+									end
+								end,
+								args = {
+									p = {
+										order = 1,
+										type = "select",
+										name = L["POINT"],
+										desc = L["POINT_DESC"],
+										values = CONFIG.POINTS,
+									},
+									anchor = {
+										order = 2,
+										type = "select",
+										name = L["ANCHOR"],
+										values = CONFIG:GetRegionAnchors(),
+									},
+									rP = {
+										order = 3,
+										type = "select",
+										name = L["RELATIVE_POINT"],
+										desc = L["RELATIVE_POINT_DESC"],
+										values = CONFIG.POINTS,
+									},
+									x = {
+										order = 4,
+										type = "range",
+										name = L["X_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+									y = {
+										order = 5,
+										type = "range",
+										name = L["Y_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+								},
+							},
+							spacer_2 = {
+								order = 19,
+								type = "description",
+								name = " ",
 							},
 							tag = {
-								order = 9,
+								order = 20,
 								type = "input",
 								width = "full",
 								name = L["FORMAT"],
@@ -314,8 +527,8 @@ local function getOptionsTable_Health(order, unit)
 									if not CONFIG:IsTagStringValid(value) then return end
 
 									C.db.profile.units[unit].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
 								end,
 							},
 						},
@@ -331,50 +544,100 @@ local function getOptionsTable_Health(order, unit)
 						name = L["HEAL_ABSORB_TEXT"],
 						inline = true,
 						get = function(info)
-							return C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]]
+							return C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]]
 						end,
 						set = function(info, value)
-							if C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
-								C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] = value
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+							if C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] ~= value then
+								C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
 							end
 						end,
 						args = {
-							p = {
+							size = {
 								order = 1,
-								type = "select",
-								name = L["POINT"],
-								desc = L["POINT_DESC"],
-								values = POINTS,
+								type = "range",
+								name = L["SIZE"],
+								min = 10, max = 20, step = 2,
 							},
-							anchor = {
+							outline = {
 								order = 2,
-								type = "select",
-								name = L["ANCHOR"],
-								values = getRegionAnchors(),
+								type = "toggle",
+								name = L["OUTLINE"],
 							},
-							rP = {
+							shadow = {
 								order = 3,
-								type = "select",
-								name = L["RELATIVE_POINT"],
-								desc = L["RELATIVE_POINT_DESC"],
-								values = POINTS,
+								type = "toggle",
+								name = L["SHADOW"],
 							},
-							x = {
+							h_alignment = {
 								order = 4,
-								type = "range",
-								name = L["X_OFFSET"],
-								min = -128, max = 128, step = 1,
+								type = "select",
+								name = L["TEXT_HORIZ_ALIGNMENT"],
+								values = CONFIG.H_ALIGNMENTS,
 							},
-							y = {
-								order = 5,
-								type = "range",
-								name = L["Y_OFFSET"],
-								min = -128, max = 128, step = 1,
+							spacer_1 = {
+								order = 9,
+								type = "description",
+								name = " ",
+							},
+							point = {
+								order = 10,
+								type = "group",
+								name = "",
+								inline = true,
+								get = function(info)
+									return C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]]
+								end,
+								set = function(info, value)
+									if C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
+										C.db.profile.units[unit].health.prediction.heal_absorb_text.point1[info[#info]] = value
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+										UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTextPoints")
+									end
+								end,
+								args = {
+									p = {
+										order = 1,
+										type = "select",
+										name = L["POINT"],
+										desc = L["POINT_DESC"],
+										values = CONFIG.POINTS,
+									},
+									anchor = {
+										order = 2,
+										type = "select",
+										name = L["ANCHOR"],
+										values = CONFIG:GetRegionAnchors(),
+									},
+									rP = {
+										order = 3,
+										type = "select",
+										name = L["RELATIVE_POINT"],
+										desc = L["RELATIVE_POINT_DESC"],
+										values = CONFIG.POINTS,
+									},
+									x = {
+										order = 4,
+										type = "range",
+										name = L["X_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+									y = {
+										order = 5,
+										type = "range",
+										name = L["Y_OFFSET"],
+										min = -128, max = 128, step = 1,
+									},
+								},
+							},
+							spacer_2 = {
+								order = 19,
+								type = "description",
+								name = " ",
 							},
 							tag = {
-								order = 9,
+								order = 20,
 								type = "input",
 								width = "full",
 								name = L["FORMAT"],
@@ -386,8 +649,8 @@ local function getOptionsTable_Health(order, unit)
 									if not CONFIG:IsTagStringValid(value) then return end
 
 									C.db.profile.units[unit].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateTags")
 								end,
 							},
 						},
@@ -397,120 +660,23 @@ local function getOptionsTable_Health(order, unit)
 		},
 	}
 
-	if unit == "player" or unit == "pet" then
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].health, C.db.profile.units[unit][E.UI_LAYOUT].health, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-		end
-
-		temp.args.color.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].health.color[info[#info]]
-		end
-		temp.args.color.set = function(info, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].health.color[info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
-		end
-
-		temp.args.color.args.reaction = nil
-
-		temp.args.text.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].health.text.point1[info[#info]]
-		end
-		temp.args.text.set = function(info, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].health.text.point1[info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
-		end
-
-		temp.args.text.args.tag.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].health.text.tag:gsub("\124", "\124\124")
-		end
-		temp.args.text.args.tag.set = function(_, value)
-			if not CONFIG:IsTagStringValid(value) then return end
-
-			C.db.profile.units[unit][E.UI_LAYOUT].health.text.tag = value:gsub("\124\124+", "\124")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
-		end
-
-		temp.args.prediction.args.enabled.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.enabled
-		end
-		temp.args.prediction.args.enabled.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.enabled = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-		end
-
-		if unit == "player" then
-			temp.args.prediction.args.absorb_text.get = function(info)
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]]
-			end
-			temp.args.prediction.args.absorb_text.set = function(info, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.point1[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-				end
-			end
-
-			temp.args.prediction.args.absorb_text.args.tag.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag:gsub("\124", "\124\124")
-			end
-			temp.args.prediction.args.absorb_text.args.tag.set = function(_, value)
-				if not CONFIG:IsTagStringValid(value) then return end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.absorb_text.tag = value:gsub("\124\124+", "\124")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-			end
-
-			temp.args.prediction.args.heal_absorb_text.get = function(info)
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]]
-			end
-			temp.args.prediction.args.heal_absorb_text.set = function(info, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.point1[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-				end
-			end
-
-			temp.args.prediction.args.heal_absorb_text.args.tag.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag:gsub("\124", "\124\124")
-			end
-			temp.args.prediction.args.heal_absorb_text.args.tag.set = function(_, value)
-				if not CONFIG:IsTagStringValid(value) then return end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].health.prediction.heal_absorb_text.tag = value:gsub("\124\124+", "\124")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealthPrediction")
-			end
-		else
-			temp.args.prediction.args.spacer_1 = nil
-			temp.args.prediction.args.absorb_text = nil
-			temp.args.prediction.args.spacer_2 = nil
-			temp.args.prediction.args.heal_absorb_text = nil
-		end
-	elseif unit == "targettarget" then
-		temp.args.prediction.args.spacer_1 = nil
-		temp.args.prediction.args.absorb_text = nil
-		temp.args.prediction.args.spacer_2 = nil
-		temp.args.prediction.args.heal_absorb_text = nil
-	elseif unit == "focustarget" then
-		temp.args.prediction.args.spacer_1 = nil
-		temp.args.prediction.args.absorb_text = nil
-		temp.args.prediction.args.spacer_2 = nil
-		temp.args.prediction.args.heal_absorb_text = nil
+	if unit ~= "player" and unit ~= "pet" then
+		temp.args.color.args.reaction = {
+			order = 2,
+			type = "toggle",
+			name = L["REACTION"],
+			desc = L["COLOR_REACTION_DESC"],
+		}
 	end
 
 	return temp
 end
 
-local function getOptionsTable_Power(order, unit)
+local function getUFOption_Power(order, unit)
+	local ignoredAnchors = {
+		["Power.Text"] = true
+	}
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -525,7 +691,6 @@ local function getOptionsTable_Power(order, unit)
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].power.enabled = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
 				end,
@@ -535,8 +700,7 @@ local function getOptionsTable_Power(order, unit)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
 				end,
@@ -546,144 +710,469 @@ local function getOptionsTable_Power(order, unit)
 				type = "description",
 				name = " ",
 			},
-			text = {
+			change_threshold = {
 				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
+			text = {
+				order = 20,
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
 				get = function(info)
-					return C.db.profile.units[unit].power.text.point1[info[#info]]
+					return C.db.profile.units[unit].power.text[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.profile.units[unit].power.text.point1[info[#info]] ~= value then
-						C.db.profile.units[unit].power.text.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
+					if C.db.profile.units[unit].power.text[info[#info]] ~= value then
+						C.db.profile.units[unit].power.text[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateFontObjects")
 					end
 				end,
 				args = {
-					p = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					outline = {
+						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+					h_alignment = {
 						order = 4,
 						type = "select",
-						name = L["POINT"],
-						desc = L["POINT_DESC"],
-						values = POINTS,
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = CONFIG.H_ALIGNMENTS,
 					},
-					anchor = {
-						order = 5,
-						type = "select",
-						name = L["ANCHOR"],
-						values = getRegionAnchors({["Power.Text"] = true}),
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
 					},
-					rP = {
-						order = 6,
-						type = "select",
-						name = L["RELATIVE_POINT"],
-						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
-					},
-					x = {
-						order = 7,
-						type = "range",
-						name = L["X_OFFSET"],
-						min = -128, max = 128, step = 1,
-					},
-					y = {
-						order = 8,
-						type = "range",
-						name = L["Y_OFFSET"],
-						min = -128, max = 128, step = 1,
-					},
-					tag = {
+					point = {
 						order = 10,
-						type = "input",
-						width = "full",
-						name = L["FORMAT"],
-						desc = L["POWER_FORMAT_DESC"],
-						get = function()
-							return C.db.profile.units[unit].power.text.tag:gsub("\124", "\124\124")
+						type = "group",
+						name = "",
+						inline = true,
+						get = function(info)
+							return C.db.profile.units[unit].power.text.point1[info[#info]]
 						end,
-						set = function(_, value)
-							if not CONFIG:IsTagStringValid(value) then return end
+						set = function(info, value)
+							if C.db.profile.units[unit].power.text.point1[info[#info]] ~= value then
+								C.db.profile.units[unit].power.text.point1[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateTextPoints")
+							end
+						end,
+						args = {
+							p = {
+								order = 4,
+								type = "select",
+								name = L["POINT"],
+								desc = L["POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							anchor = {
+								order = 5,
+								type = "select",
+								name = L["ANCHOR"],
+								values = CONFIG:GetRegionAnchors(ignoredAnchors),
+							},
+							rP = {
+								order = 6,
+								type = "select",
+								name = L["RELATIVE_POINT"],
+								desc = L["RELATIVE_POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							x = {
+								order = 7,
+								type = "range",
+								name = L["X_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+							y = {
+								order = 8,
+								type = "range",
+								name = L["Y_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+						},
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			tag = {
+				order = 30,
+				type = "input",
+				width = "full",
+				name = L["FORMAT"],
+				desc = L["POWER_FORMAT_DESC"],
+				get = function()
+					return C.db.profile.units[unit].power.text.tag:gsub("\124", "\124\124")
+				end,
+				set = function(_, value)
+					if not CONFIG:IsTagStringValid(value) then return end
 
-							C.db.profile.units[unit].power.text.tag = value:gsub("\124\124+", "\124")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
+					C.db.profile.units[unit].power.text.tag = value:gsub("\124\124+", "\124")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateTags")
+				end,
+			},
+		},
+	}
+
+	if unit == "player" then
+		temp.args.spacer_3 = {
+			order = 29,
+			type = "description",
+			name = " ",
+		}
+
+		temp.args.prediction = {
+			order = 30,
+			type = "toggle",
+			name = L["COST_PREDICTION"],
+			desc = L["COST_PREDICTION_DESC"],
+			get = function()
+				return C.db.profile.units[unit].power.prediction.enabled
+			end,
+			set = function(_, value)
+				C.db.profile.units[unit].power.prediction.enabled = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+			end,
+		}
+	end
+
+	return temp
+end
+
+local function getUFOption_AlternativePower(order, unit)
+	local additonalAnchors = {
+		["AlternativePower"] = L["ALTERNATIVE_POWER"]
+	}
+
+	local temp = {
+		order = order,
+		type = "group",
+		name = L["ALTERNATIVE_POWER"],
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.profile.units[unit].alt_power.enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].alt_power.enabled = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+				end,
+			},
+			reset = {
+				type = "execute",
+				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, resetIgnoredKeys)
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = " ",
+			},
+			change_threshold = {
+				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].alt_power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].alt_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
+			text = {
+				order = 20,
+				type = "group",
+				name = L["BAR_TEXT"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].alt_power.text[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.units[unit].alt_power.text[info[#info]] ~= value then
+						C.db.profile.units[unit].alt_power.text[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateFontObjects")
+					end
+				end,
+				args = {
+					size = {
+						order = 1,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 20, step = 2,
+					},
+					outline = {
+						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+					h_alignment = {
+						order = 4,
+						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = CONFIG.H_ALIGNMENTS,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					point = {
+						order = 10,
+						type = "group",
+						name = "",
+						inline = true,
+						get = function(info)
+							return C.db.profile.units[unit].alt_power.text.point1[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.units[unit].alt_power.text.point1[info[#info]] ~= value then
+								C.db.profile.units[unit].alt_power.text.point1[info[#info]] = value
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateTextPoints")
+							end
+						end,
+						args = {
+							p = {
+								order = 4,
+								type = "select",
+								name = L["POINT"],
+								desc = L["POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							anchor = {
+								order = 5,
+								type = "select",
+								name = L["ANCHOR"],
+								values = CONFIG:GetRegionAnchors(nil, additonalAnchors),
+							},
+							rP = {
+								order = 6,
+								type = "select",
+								name = L["RELATIVE_POINT"],
+								desc = L["RELATIVE_POINT_DESC"],
+								values = CONFIG.POINTS,
+							},
+							x = {
+								order = 7,
+								type = "range",
+								name = L["X_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+							y = {
+								order = 8,
+								type = "range",
+								name = L["Y_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+						},
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			tag = {
+				order = 30,
+				type = "input",
+				width = "full",
+				name = L["FORMAT"],
+				desc = L["ALT_POWER_FORMAT_DESC"],
+				get = function()
+					return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
+				end,
+				set = function(_, value)
+					if not CONFIG:IsTagStringValid(value) then return end
+
+					C.db.profile.units[unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateTags")
+				end,
+			},
+		},
+	}
+
+	return temp
+end
+
+local function getUFOption_ClassPower(order, unit)
+	return {
+		order = order,
+		type = "group",
+		name = L["CLASS_POWER"],
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.profile.units[unit].class_power.enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].class_power.enabled = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateStagger")
+				end,
+			},
+			reset = {
+				type = "execute",
+				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power, resetIgnoredKeys)
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateStagger")
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = " ",
+			},
+			change_threshold = {
+				order = 10,
+				type = "input",
+				name = L["GAIN_LOSS_THRESHOLD"],
+				desc = L["GAIN_LOSS_THRESHOLD_DESC"],
+				get = function()
+					return tostring(C.db.profile.units[unit].class_power.change_threshold * 100)
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].class_power.change_threshold = E:Clamp((tonumber(value) or 0.1) / 100, 0.001, 1)
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Stagger", "UpdateGainLossThreshold")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AdditionalPower", "UpdateGainLossThreshold")
+				end,
+			},
+			spacer_2 = {
+				order = 19,
+				type = "description",
+				name = " ",
+			},
+			prediction = {
+				order = 20,
+				type = "toggle",
+				name = L["COST_PREDICTION"],
+				desc = L["COST_PREDICTION_DESC"],
+				get = function()
+					return C.db.profile.units[unit].class_power.prediction.enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].class_power.prediction.enabled = value
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
+
+				end,
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			runes = {
+				order = 30,
+				type = "group",
+				name = L["RUNES"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.units[unit].class_power.runes[info[#info]]
+				end,
+				args = {
+					color_by_spec = {
+						order = 1,
+						type = "toggle",
+						name = L["COLOR_BY_SPEC"],
+						set = function(_, value)
+							C.db.profile.units[unit].class_power.runes.color_by_spec = value
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateColors")
+						end,
+					},
+					sort_order = {
+						order = 2,
+						type = "select",
+						name = L["SORT_DIR"],
+						values = {
+							["none"] = L["NONE"],
+							["asc"] = L["ASCENDING"],
+							["desc"] = L["DESCENDING"],
+						},
+						set = function(_, value)
+							C.db.profile.units[unit].class_power.runes.color_by_spec = value
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateSortOrder")
 						end,
 					},
 				},
 			},
 		},
 	}
-
-	if unit == "player" or unit == "pet" then
-		temp.args.enabled.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].power.enabled
-		end
-		temp.args.enabled.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].power.enabled = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].power, C.db.profile.units[unit][E.UI_LAYOUT].power, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-		end
-
-		temp.args.text.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].power.text.point1[info[#info]]
-		end
-		temp.args.text.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].power.text.point1[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].power.text.point1[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
-			end
-		end
-
-		temp.args.text.args.tag.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].power.text.tag:gsub("\124", "\124\124")
-		end
-		temp.args.text.args.tag.set = function(_, value)
-			if not CONFIG:IsTagStringValid(value) then return end
-
-			C.db.profile.units[unit][E.UI_LAYOUT].power.text.tag = value:gsub("\124\124+", "\124")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
-		end
-
-		if unit == "player" then
-			temp.args.spacer_2 = {
-				order = 19,
-				type = "description",
-				name = " ",
-			}
-
-			temp.args.prediction = {
-				order = 20,
-				type = "toggle",
-				name = L["COST_PREDICTION"],
-				desc = L["COST_PREDICTION_DESC"],
-				get = function()
-					return C.db.profile.units[unit][E.UI_LAYOUT].power.prediction.enabled
-				end,
-				set = function(_, value)
-					C.db.profile.units[unit][E.UI_LAYOUT].power.prediction.enabled = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-				end,
-			}
-		end
-	end
-
-	return temp
 end
 
-local function getOptionsTable_Castbar(order, unit)
+local function getUFOption_Castbar(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -694,7 +1183,6 @@ local function getOptionsTable_Castbar(order, unit)
 		set = function(info, value)
 			if C.db.profile.units[unit].castbar[info[#info]] ~= value then
 				C.db.profile.units[unit].castbar[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 			end
@@ -710,8 +1198,7 @@ local function getOptionsTable_Castbar(order, unit)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 				end,
@@ -737,14 +1224,14 @@ local function getOptionsTable_Castbar(order, unit)
 					return not C.db.profile.units[unit].castbar.detached
 				end,
 				set = function(info, value)
-					if C.db.profile.units[unit].castbar[info[#info]] ~= value then
+					if C.db.profile.units[unit].castbar.width_override ~= value then
 						if value < info.option.softMin then
 							value = info.option.min
 						end
 
-						C.db.profile.units[unit].castbar[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+						C.db.profile.units[unit].castbar.width_override = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateSize")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 					end
 				end,
@@ -754,63 +1241,48 @@ local function getOptionsTable_Castbar(order, unit)
 				type = "range",
 				name = L["HEIGHT"],
 				min = 8, max = 32, step = 4,
+				set = function(_, value)
+					if C.db.profile.units[unit].castbar.height ~= value then
+						C.db.profile.units[unit].castbar.height = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateIcon")
+					end
+				end,
 			},
-			latency = {
-				order = 13,
-				type = "toggle",
-				name = L["LATENCY"],
+			icon = {
+				order = 14,
+				type = "select",
+				name = L["ICON"],
+				values = CONFIG.CASTBAR_ICON_POSITIONS,
+				get = function()
+					return C.db.profile.units[unit].castbar.icon.position
+				end,
+				set = function(_, value)
+					if C.db.profile.units[unit].castbar.icon.position ~= value then
+						C.db.profile.units[unit].castbar.icon.position = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateIcon")
+					end
+				end,
 			},
 			spacer_2 = {
 				order = 19,
 				type = "description",
 				name = " ",
 			},
-			icon = {
-				order = 20,
-				type = "group",
-				name = L["ICON"],
-				inline = true,
-				get = function(info)
-					return C.db.profile.units[unit].castbar.icon[info[#info]]
-				end,
-				set = function(info, value)
-					if C.db.profile.units[unit].castbar.icon[info[#info]] ~= value then
-						C.db.profile.units[unit].castbar.icon[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-					end
-				end,
-				args = {
-					enabled = {
-						order = 1,
-						type = "toggle",
-						name = L["ENABLE"],
-					},
-					position = {
-						order = 2,
-						type = "select",
-						name = L["POSITION"],
-						values = CASTBAR_ICON_POSITIONS,
-					},
-				},
-			},
-			spacer_3 = {
-				order = 29,
-				type = "description",
-				name = " ",
-			},
 			text = {
-				order = 30,
+				order = 20,
 				type = "group",
 				name = L["TEXT"],
 				inline = true,
 				get = function(info)
-					return C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]]
+					return C.db.profile.units[unit].castbar.text[info[#info]]
 				end,
 				set = function(info, value)
-					C.db.profile.units[unit].castbar[info[#info - 1]][info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
+					C.db.profile.units[unit].castbar.text[info[#info]] = value
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateFontObjects")
 				end,
 				args = {
 					size = {
@@ -819,11 +1291,15 @@ local function getOptionsTable_Castbar(order, unit)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
-					flag = {
+					outline = {
 						order = 2,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
 					},
 				},
 			},
@@ -831,76 +1307,33 @@ local function getOptionsTable_Castbar(order, unit)
 	}
 
 	if unit == "player" or unit == "pet" then
-		temp.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]]
-		end
-		temp.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
-			end
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].castbar, C.db.profile.units[unit][E.UI_LAYOUT].castbar, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
-		end
-
-		temp.args.width_override.disabled = function()
-			return not C.db.profile.units[unit][E.UI_LAYOUT].castbar.detached
-		end
-
-		temp.args.width_override.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] ~= value then
-				if value < info.option.softMin then
-					value = info.option.min
-				end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].castbar[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
-			end
-		end
-
-		temp.args.icon.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]]
-		end
-		temp.args.icon.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].castbar.icon[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-			end
-		end
-
-		temp.args.text.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]]
-		end
-		temp.args.text.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].castbar.text[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
-			end
-		end
-
 		if E.UI_LAYOUT == "ls" then
 			temp.args.detached = nil
 			temp.args.width_override.name = L["WIDTH"]
 		end
-	else
-		temp.args.latency = nil
+
+		temp.args.latency = {
+			order = 13,
+			type = "toggle",
+			name = L["LATENCY"],
+			set = function(_, value)
+				if C.db.profile.units[unit].castbar.latency ~= value then
+					C.db.profile.units[unit].castbar.latency = value
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateLatency")
+				end
+			end,
+		}
 	end
 
 	return temp
 end
 
-local function getOptionsTable_Name(order, unit)
+local function getUFOption_Name(order, unit)
+	local function isSecondaryAnchorDisabled()
+		return C.db.profile.units[unit].name.point2.p == ""
+	end
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -911,8 +1344,8 @@ local function getOptionsTable_Name(order, unit)
 		set = function(info, value)
 			if C.db.profile.units[unit].name[info[#info]] ~= value then
 				C.db.profile.units[unit].name[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateFontObjects")
 			end
 		end,
 		args = {
@@ -921,8 +1354,7 @@ local function getOptionsTable_Name(order, unit)
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
 				end,
 			},
@@ -942,8 +1374,8 @@ local function getOptionsTable_Name(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].name.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].name.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdatePoints")
 					end
 				end,
 				args = {
@@ -952,20 +1384,20 @@ local function getOptionsTable_Name(order, unit)
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					anchor = {
 						order = 2,
 						type = "select",
 						name = L["ANCHOR"],
-						values = getRegionAnchors(),
+						values = CONFIG:GetRegionAnchors(),
 					},
 					rP = {
 						order = 3,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					x = {
 						order = 4,
@@ -997,12 +1429,9 @@ local function getOptionsTable_Name(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].name.point2[info[#info]] ~= value then
 						C.db.profile.units[unit].name.point2[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdatePoints")
 					end
-				end,
-				disabled = function()
-					return C.db.profile.units[unit].name.point2.p == ""
 				end,
 				args = {
 					p = {
@@ -1010,33 +1439,36 @@ local function getOptionsTable_Name(order, unit)
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
-						values = POINTS_EXT,
-						disabled = false,
+						values = CONFIG.POINTS_EXT,
 					},
 					anchor = {
 						order = 2,
 						type = "select",
 						name = L["ANCHOR"],
-						values = getRegionAnchors(),
+						values = CONFIG:GetRegionAnchors(),
+						disabled = isSecondaryAnchorDisabled,
 					},
 					rP = {
 						order = 3,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
+						disabled = isSecondaryAnchorDisabled,
 					},
 					x = {
 						order = 4,
 						type = "range",
 						name = L["X_OFFSET"],
 						min = -128, max = 128, step = 1,
+						disabled = isSecondaryAnchorDisabled,
 					},
 					y = {
 						order = 5,
 						type = "range",
 						name = L["Y_OFFSET"],
 						min = -128, max = 128, step = 1,
+						disabled = isSecondaryAnchorDisabled,
 					},
 				},
 			},
@@ -1045,34 +1477,48 @@ local function getOptionsTable_Name(order, unit)
 				type = "description",
 				name = " ",
 			},
-			h_alignment = {
+			size = {
 				order = 30,
-				type = "select",
-				name = L["TEXT_HORIZ_ALIGNMENT"],
-				values = H_ALIGNMENTS,
-				disabled = function()
-					return C.db.profile.units[unit].name.point2.p == ""
-				end,
+				type = "range",
+				name = L["SIZE"],
+				min = 10, max = 20, step = 2,
 			},
-			v_alignment = {
+			outline = {
 				order = 31,
-				type = "select",
-				name = L["TEXT_VERT_ALIGNMENT"],
-				values = V_ALIGNMENTS,
-				disabled = function()
-					return C.db.profile.units[unit].name.point2.p == ""
-				end,
+				type = "toggle",
+				name = L["OUTLINE"],
 			},
-			word_wrap = {
+			shadow = {
 				order = 32,
 				type = "toggle",
+				name = L["SHADOW"],
+			},
+			h_alignment = {
+				order = 33,
+				type = "select",
+				name = L["TEXT_HORIZ_ALIGNMENT"],
+				values = CONFIG.H_ALIGNMENTS,
+			},
+			v_alignment = {
+				order = 34,
+				type = "select",
+				name = L["TEXT_VERT_ALIGNMENT"],
+				values = CONFIG.V_ALIGNMENTS,
+				disabled = isSecondaryAnchorDisabled,
+			},
+			word_wrap = {
+				order = 35,
+				type = "toggle",
 				name = L["WORD_WRAP"],
-				disabled = function()
-					return C.db.profile.units[unit].name.point2.p == ""
-				end,
+				disabled = isSecondaryAnchorDisabled,
+			},
+			spacer_4 = {
+				order = 39,
+				type = "description",
+				name = " ",
 			},
 			tag = {
-				order = 34,
+				order = 40,
 				type = "input",
 				width = "full",
 				name = L["FORMAT"],
@@ -1084,84 +1530,17 @@ local function getOptionsTable_Name(order, unit)
 					if not CONFIG:IsTagStringValid(value) then return end
 
 					C.db.profile.units[unit].name.tag = value:gsub("\124\124+", "\124")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateTags")
 				end,
 			},
 		},
 	}
 
-	if unit == "player" or unit == "pet" then
-		temp.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]]
-		end
-		temp.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].name[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
-			end
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].name, C.db.profile.units[unit][E.UI_LAYOUT].name, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
-		end
-
-		temp.args.point1.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]]
-		end
-		temp.args.point1.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].name.point1[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
-			end
-		end
-
-		temp.args.point2.get = function(info)
-					return C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]]
-				end
-		temp.args.point2.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].name.point2[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
-			end
-		end
-		temp.args.point2.disabled = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
-		end
-
-		temp.args.h_alignment.disabled = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
-		end
-
-		temp.args.v_alignment.disabled = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
-		end
-
-		temp.args.word_wrap.disabled = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.point2.p == ""
-		end
-
-		temp.args.tag.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].name.tag:gsub("\124", "\124\124")
-		end
-		temp.args.tag.set = function(_, value)
-			if not CONFIG:IsTagStringValid(value) then return end
-
-			C.db.profile.units[unit][E.UI_LAYOUT].name.tag = value:gsub("\124\124+", "\124")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
-		end
-	end
-
 	return temp
 end
 
-local function getOptionsTable_RaidIcon(order, unit)
+local function getUFOption_RaidTargetIndicator(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -1172,7 +1551,6 @@ local function getOptionsTable_RaidIcon(order, unit)
 		set = function(info, value)
 			if C.db.profile.units[unit].raid_target[info[#info]] ~= value then
 				C.db.profile.units[unit].raid_target[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
 			end
 		end,
@@ -1187,8 +1565,7 @@ local function getOptionsTable_RaidIcon(order, unit)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
 				end,
 			},
@@ -1202,6 +1579,13 @@ local function getOptionsTable_RaidIcon(order, unit)
 				type = "range",
 				name = L["SIZE"],
 				min = 8, max = 64, step = 1,
+				set = function(info, value)
+					if C.db.profile.units[unit].raid_target[info[#info]] ~= value then
+						C.db.profile.units[unit].raid_target[info[#info]] = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "RaidTargetIndicator", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "RaidTargetIndicator", "UpdateSize")
+					end
+				end,
 			},
 			spacer_2 = {
 				order = 19,
@@ -1219,8 +1603,8 @@ local function getOptionsTable_RaidIcon(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].raid_target.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].raid_target.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "RaidTargetIndicator", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "RaidTargetIndicator", "UpdatePoints")
 					end
 				end,
 				args = {
@@ -1229,14 +1613,14 @@ local function getOptionsTable_RaidIcon(order, unit)
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					rP = {
 						order = 2,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					x = {
 						order = 3,
@@ -1255,40 +1639,16 @@ local function getOptionsTable_RaidIcon(order, unit)
 		},
 	}
 
-	if unit == "player" or unit == "pet" then
-		temp.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]]
-		end
-		temp.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].raid_target[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
-			end
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].raid_target, C.db.profile.units[unit][E.UI_LAYOUT].raid_target, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
-		end
-
-		temp.args.point.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]]
-		end
-		temp.args.point.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].raid_target.point1[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
-			end
-		end
-	end
-
 	return temp
 end
 
-local function getOptionsTable_DebuffIcons(order, unit)
+local function getUFOption_DebuffIcons(order, unit)
+	local ignoredAnchors = {
+		["Health.Text"] = true,
+		["Power"] = true,
+		["Power.Text"] = true,
+	}
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -1304,7 +1664,6 @@ local function getOptionsTable_DebuffIcons(order, unit)
 				set = function(_, value)
 					if C.db.profile.units[unit].debuff.enabled ~= value then
 						C.db.profile.units[unit].debuff.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
 					end
 				end,
@@ -1314,8 +1673,7 @@ local function getOptionsTable_DebuffIcons(order, unit)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff, {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
 				end,
 			},
@@ -1324,7 +1682,7 @@ local function getOptionsTable_DebuffIcons(order, unit)
 				order = 3,
 				name = L["PREVIEW"],
 				func = function()
-					UNITFRAMES:UpdateUnitFrame(unit, "PreviewDebuffIndicator")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "DebuffIndicator", "Preview")
 				end,
 			},
 			spacer_1 = {
@@ -1343,8 +1701,8 @@ local function getOptionsTable_DebuffIcons(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].debuff.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].debuff.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "DebuffIndicator", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "DebuffIndicator", "UpdatePoints")
 					end
 				end,
 				args = {
@@ -1353,20 +1711,20 @@ local function getOptionsTable_DebuffIcons(order, unit)
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					anchor = {
 						order = 2,
 						type = "select",
 						name = L["ANCHOR"],
-						values = getRegionAnchors({["Health.Text"] = true, ["Power"] = true, ["Power.Text"] = true}),
+						values = CONFIG:GetRegionAnchors(ignoredAnchors),
 					},
 					rP = {
 						order = 3,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					x = {
 						order = 4,
@@ -1385,40 +1743,22 @@ local function getOptionsTable_DebuffIcons(order, unit)
 		},
 	}
 
-	if unit == "player" or unit == "pet" then
-		temp.args.enabled.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled
-		end
-		temp.args.enabled.set = function(_, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].debuff.enabled = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
-			end
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].debuff, C.db.profile.units[unit][E.UI_LAYOUT].debuff, {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
-		end
-
-		temp.args.point.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]]
-		end
-		temp.args.point.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].debuff.point1[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
-			end
-		end
-	end
-
 	return temp
 end
 
-local function getOptionsTable_Auras(order, unit)
+local function getUFOption_Auras(order, unit)
+	local copyIgnoredKeys = {
+		["filter"] = true,
+	}
+
+	local ignoredUnits = {
+		[unit] = true,
+		["player"] = true,
+		["pet"] = true,
+		["targettarget"] = true,
+		["focustarget"] = true
+	}
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -1429,7 +1769,6 @@ local function getOptionsTable_Auras(order, unit)
 		set = function(info, value)
 			if C.db.profile.units[unit].auras[info[#info]] ~= value then
 				C.db.profile.units[unit].auras[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 			end
 		end,
@@ -1444,11 +1783,12 @@ local function getOptionsTable_Auras(order, unit)
 				type = "select",
 				name = L["COPY_FROM"],
 				desc = L["COPY_FROM_DESC"],
-				values = function() return UNITFRAMES:GetUnits({[unit] = true, ["player"] = true, ["pet"] = true, ["targettarget"] = true, ["focustarget"] = true}) end,
+				values = function()
+					return UNITFRAMES:GetUnits(ignoredUnits)
+				end,
 				get = function() end,
 				set = function(_, value)
-					CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit].auras, {["filter"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit].auras, copyIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
 			},
@@ -1457,8 +1797,7 @@ local function getOptionsTable_Auras(order, unit)
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, {["point"] = true, ["filter"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, aurasResetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
 				end,
 			},
@@ -1472,12 +1811,26 @@ local function getOptionsTable_Auras(order, unit)
 				type = "range",
 				name = L["NUM_ROWS"],
 				min = 1, max = 4, step = 1,
+				set = function(_, value)
+					if C.db.profile.units[unit].auras.rows ~= value then
+						C.db.profile.units[unit].auras.rows = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+					end
+				end,
 			},
 			per_row = {
 				order = 11,
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 10, step = 1,
+				set = function(_, value)
+					if C.db.profile.units[unit].auras.per_row ~= value then
+						C.db.profile.units[unit].auras.per_row = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+					end
+				end,
 			},
 			size_override = {
 				order = 12,
@@ -1487,14 +1840,14 @@ local function getOptionsTable_Auras(order, unit)
 				min = 0, max = 64, step = 1,
 				softMin = 24,
 				set = function(info, value)
-					if C.db.profile.units[unit].auras[info[#info]] ~= value then
+					if C.db.profile.units[unit].auras.size_override ~= value then
 						if value < info.option.softMin then
 							value = info.option.min
 						end
 
-						C.db.profile.units[unit].auras[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						C.db.profile.units[unit].auras.size_override = value
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
 					end
 				end,
 			},
@@ -1502,14 +1855,14 @@ local function getOptionsTable_Auras(order, unit)
 				order = 13,
 				type = "select",
 				name = L["GROWTH_DIR"],
-				values = GROWTH_DIRS,
+				values = CONFIG.GROWTH_DIRS,
 				get = function()
 					return C.db.profile.units[unit].auras.x_growth .. "_" .. C.db.profile.units[unit].auras.y_growth
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].auras.x_growth, C.db.profile.units[unit].auras.y_growth = s_split("_", value)
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateGrowthDirection")
 				end,
 			},
 			disable_mouse = {
@@ -1534,8 +1887,8 @@ local function getOptionsTable_Auras(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.point1[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.point1[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdatePoints")
 					end
 				end,
 				args = {
@@ -1544,14 +1897,14 @@ local function getOptionsTable_Auras(order, unit)
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					rP = {
 						order = 2,
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 					x = {
 						order = 3,
@@ -1575,7 +1928,7 @@ local function getOptionsTable_Auras(order, unit)
 			type = {
 				order = 30,
 				type = "group",
-				name = "Aura Type",
+				name = L["AURA_TYPE"],
 				inline = true,
 				get = function(info)
 					return C.db.profile.units[unit].auras.type[info[#info]]
@@ -1583,15 +1936,15 @@ local function getOptionsTable_Auras(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.type[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.type[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateAuraTypeIcon")
 					end
 				end,
 				args = {
 					debuff_type = {
 						order = 1,
 						type = "toggle",
-						name = "Debuff Type",
+						name = L["DEBUFF_TYPE"],
 					},
 					size = {
 						order = 2,
@@ -1603,7 +1956,7 @@ local function getOptionsTable_Auras(order, unit)
 						order = 3,
 						type = "select",
 						name = L["POINT"],
-						values = POINTS,
+						values = CONFIG.POINTS,
 					},
 				},
 			},
@@ -1623,8 +1976,8 @@ local function getOptionsTable_Auras(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.count[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFontObjects")
 					end
 				end,
 				args = {
@@ -1634,23 +1987,27 @@ local function getOptionsTable_Auras(order, unit)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
-					flag = {
+					outline = {
 						order = 2,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
 					},
 					h_alignment = {
-						order = 3,
-						type = "select",
-						name = L["TEXT_HORIZ_ALIGNMENT"],
-						values = H_ALIGNMENTS,
-					},
-					v_alignment = {
 						order = 4,
 						type = "select",
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = CONFIG.H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 5,
+						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
-						values = V_ALIGNMENTS,
+						values = CONFIG.V_ALIGNMENTS,
 					},
 				},
 			},
@@ -1670,8 +2027,8 @@ local function getOptionsTable_Auras(order, unit)
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.cooldown.text[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.cooldown.text[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateCooldownConfig")
 					end
 				end,
 				args = {
@@ -1690,19 +2047,13 @@ local function getOptionsTable_Auras(order, unit)
 						order = 3,
 						type = "select",
 						name = L["FLAG"],
-						values = FLAGS,
-					},
-					h_alignment = {
-						order = 4,
-						type = "select",
-						name = L["TEXT_HORIZ_ALIGNMENT"],
-						values = H_ALIGNMENTS,
+						values = CONFIG.FLAGS,
 					},
 					v_alignment = {
-						order = 5,
+						order = 4,
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
-						values = V_ALIGNMENTS,
+						values = CONFIG.V_ALIGNMENTS,
 					},
 				},
 			},
@@ -1721,8 +2072,8 @@ local function getOptionsTable_Auras(order, unit)
 				end,
 				set = function(info, value)
 					C.db.profile.units[unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 				end,
 				args = {
 					copy = {
@@ -1730,7 +2081,9 @@ local function getOptionsTable_Auras(order, unit)
 						type = "select",
 						name = L["COPY_FROM"],
 						desc = L["COPY_FROM_DESC"],
-						values = function() return UNITFRAMES:GetUnits({[unit] = true, ["player"] = true, ["pet"] = true, ["targettarget"] = true, ["focustarget"] = true}) end,
+						values = function()
+							return UNITFRAMES:GetUnits(ignoredUnits)
+						end,
 						get = function() end,
 					},
 					reset = {
@@ -1739,8 +2092,8 @@ local function getOptionsTable_Auras(order, unit)
 						name = L["RESTORE_DEFAULTS"],
 						func = function()
 							CONFIG:CopySettings(D.profile.units[unit].auras.filter, C.db.profile.units[unit].auras.filter)
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 						end,
 					},
 					friendly = {
@@ -1965,121 +2318,15 @@ local function getOptionsTable_Auras(order, unit)
 	}
 
 	if unit == "player" then
-		temp.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]]
-		end
-		temp.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit][E.UI_LAYOUT].auras, {["filter"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].auras, C.db.profile.units[unit][E.UI_LAYOUT].auras, {["point"] = true, ["filter"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
-
-		temp.args.size_override.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] ~= value then
-				if value < info.option.softMin then
-					value = info.option.min
-				end
-
-				C.db.profile.units[unit][E.UI_LAYOUT].auras[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.growth_dir.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.x_growth .. "_" .. C.db.profile.units[unit][E.UI_LAYOUT].auras.y_growth
-		end
-		temp.args.growth_dir.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].auras.x_growth, C.db.profile.units[unit][E.UI_LAYOUT].auras.y_growth = s_split("_", value)
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
-
-		temp.args.point.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]]
-		end
-		temp.args.point.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras.point1[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.type.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]]
-		end
-		temp.args.type.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras.type[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.count.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]]
-		end
-		temp.args.count.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras.count[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.cooldown.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]]
-		end
-		temp.args.cooldown.set = function(info, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]] ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].auras.cooldown.text[info[#info]] = value
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-			end
-		end
-
-		temp.args.filter.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]]
-		end
-		temp.args.filter.set = function(info, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
+		local ignoredFilters = {
+			["player"] = true,
+			["player_permanent"] = true,
+		}
 
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly, {["player"] = true, ["player_permanent"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
-
-		temp.args.filter.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].auras.filter, C.db.profile.units[unit][E.UI_LAYOUT].auras.filter)
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
-		end
-
-		temp.args.filter.args.friendly.args.buff.args.selfcast_permanent.disabled = function()
-			return not C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly.buff.selfcast
-		end
-
-		temp.args.filter.args.friendly.args.debuff.args.selfcast_permanent.disabled = function()
-			return not C.db.profile.units[unit][E.UI_LAYOUT].auras.filter.friendly.debuff.selfcast
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, ignoredFilters)
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 		end
 
 		temp.args.filter.args.friendly.args.buff.args.player = nil
@@ -2090,11 +2337,17 @@ local function getOptionsTable_Auras(order, unit)
 
 		temp.args.filter.args.enemy = nil
 	elseif unit == "boss" then
+		local ignoredFilters = {
+			["mount"] = true,
+			["selfcast"] = true,
+			["selfcast_permanent"] = true,
+		}
+
 		temp.args.filter.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, {["mount"] = true, ["selfcast"] = true, ["selfcast_permanent"] = true})
-			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.enemy, C.db.profile.units[unit].auras.filter.enemy, {["mount"] = true, ["selfcast"] = true, ["selfcast_permanent"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.friendly, C.db.profile.units[unit].auras.filter.friendly, ignoredFilters)
+			CONFIG:CopySettings(C.db.profile.units[value].auras.filter.enemy, C.db.profile.units[unit].auras.filter.enemy, ignoredFilters)
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 		end
 
 		temp.args.filter.args.friendly.args.buff.args.mount = nil
@@ -2113,15 +2366,71 @@ local function getOptionsTable_Auras(order, unit)
 	else
 		temp.args.filter.args.copy.set = function(_, value)
 			CONFIG:CopySettings(C.db.profile.units[value].auras.filter, C.db.profile.units[unit].auras.filter)
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 		end
 	end
 
 	return temp
 end
 
-local function getOptionsTable_UnitFrame(order, unit, name)
+local function getUFOption_CombatFeedback(order, unit)
+	return {
+		order = order,
+		type = "group",
+		name = L["FCF"],
+		get = function(info)
+			return C.db.profile.units[unit].combat_feedback[info[#info]]
+		end,
+		set = function(info, value)
+			C.db.profile.units[unit].combat_feedback[info[#info]] = value
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
+		end,
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+			},
+			reset = {
+				type = "execute",
+				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				func = function()
+					CONFIG:CopySettings(D.profile.units[unit].combat_feedback, C.db.profile.units[unit].combat_feedback, resetIgnoredKeys)
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = " ",
+			},
+			x_offset = {
+				order = 10,
+				type = "range",
+				name = L["X_OFFSET"],
+				min = 0, max = 128, step = 1,
+			},
+			y_offset = {
+				order = 12,
+				type = "range",
+				name = L["Y_OFFSET"],
+				min = 0, max = 128, step = 1,
+			},
+			mode = {
+				order = 13,
+				type = "select",
+				name = L["MODE"],
+				values = CONFIG.FCF_MODES,
+			},
+		},
+	}
+end
+
+local function getUFOptions(order, unit, name)
 	local temp = {
 		order = order,
 		type = "group",
@@ -2140,103 +2449,19 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 					UNITFRAMES:UpdateUnitFrame(unit, "Update")
 				end,
 			},
-			copy = {
-				order = 2,
-				type = "select",
-				name = L["COPY_FROM"],
-				desc = L["COPY_FROM_DESC"],
-				values = function() return UNITFRAMES:GetUnits({[unit] = true, ["player"] = true, ["pet"] = true}) end,
-				get = function() end,
-				set = function(_, value)
-					CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit], {["point"] = true})
-					UNITFRAMES:UpdateUnitFrame(unit, "Update")
-				end,
-			},
 			reset = {
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
 				func = function()
-					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit], {["point"] = true})
+					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit], resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "Update")
-				end,
-			},
-			preview = {
-				order = 4,
-				type = "execute",
-				name = L["PREVIEW"],
-				func = function()
-					UNITFRAMES:UpdateUnitFrame(unit, "Preview")
 				end,
 			},
 			spacer_1 = {
 				order = 9,
 				type = "description",
 				name = " ",
-			},
-			width = {
-				order = 10,
-				type = "range",
-				name = L["WIDTH"],
-				min = 96, max = 512, step = 2,
-				get = function()
-					return C.db.profile.units[unit].width
-				end,
-				set = function(_, value)
-					if C.db.profile.units[unit].width ~= value then
-						C.db.profile.units[unit].width = value
-						UNITFRAMES:UpdateUnitFrame(unit, "Update")
-					end
-				end,
-			},
-			height = {
-				order = 11,
-				type = "range",
-				name = L["HEIGHT"],
-				min = 28, max = 256, step = 2,
-				get = function()
-					return C.db.profile.units[unit].height
-				end,
-				set = function(_, value)
-					if C.db.profile.units[unit].height ~= value then
-						C.db.profile.units[unit].height = value
-						UNITFRAMES:UpdateUnitFrame(unit, "Update")
-					end
-				end,
-			},
-			top_inset = {
-				order = 15,
-				type = "select",
-				name = L["TOP_INSET_SIZE"],
-				desc = L["TOP_INSET_SIZE_DESC"],
-				values = INSETS,
-				get = function()
-					return C.db.profile.units[unit].insets.t_height
-				end,
-				set = function(_, value)
-					if C.db.profile.units[unit].insets.t_height ~= value then
-						C.db.profile.units[unit].insets.t_height = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
-					end
-				end,
-			},
-			bottom_inset = {
-				order = 16,
-				type = "select",
-				name = L["BOTTOM_INSET_SIZE"],
-				desc = L["BOTTOM_INSET_SIZE_DESC"],
-				values = INSETS,
-				get = function()
-					return C.db.profile.units[unit].insets.b_height
-				end,
-				set = function(_, value)
-					if C.db.profile.units[unit].insets.b_height ~= value then
-						C.db.profile.units[unit].insets.b_height = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
-					end
-				end,
 			},
 			threat = {
 				order = 17,
@@ -2247,21 +2472,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].threat.enabled = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateThreatIndicator")
-				end,
-			},
-			pvp = {
-				order = 18,
-				type = "toggle",
-				name = L["PVP_ICON"],
-				get = function()
-					return C.db.profile.units[unit].pvp.enabled
-				end,
-				set = function(_, value)
-					C.db.profile.units[unit].pvp.enabled = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
 				end,
 			},
 			spacer_2 = {
@@ -2269,323 +2480,121 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				type = "description",
 				name = " ",
 			},
-			border = {
-				order = 20,
-				type = "group",
-				name = L["BORDER_COLOR"],
-				inline = true,
-				get = function(info)
-					return C.db.profile.units[unit].class[info[#info]]
-				end,
-				set = function(info, value)
-					C.db.profile.units[unit].class[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassIndicator")
-				end,
-				args = {
-					player = {
-						order = 1,
-						type = "toggle",
-						name = L["PLAYER_CLASS"],
-						desc = L["COLOR_CLASS_DESC"],
-					},
-					npc = {
-						order = 2,
-						type = "toggle",
-						name = L["NPC_CLASSIFICATION"],
-						desc = L["COLOR_CLASSIFICATION_DESC"],
-					},
-				},
-			},
 		},
 	}
 
-	temp.args.health = getOptionsTable_Health(100, unit)
-	temp.args.power = getOptionsTable_Power(200, unit)
-	temp.args.castbar = getOptionsTable_Castbar(400, unit)
-	temp.args.name = getOptionsTable_Name(500, unit)
-	temp.args.raid_target = getOptionsTable_RaidIcon(600, unit)
-	temp.args.debuff = getOptionsTable_DebuffIcons(700, unit)
-	temp.args.auras = getOptionsTable_Auras(800, unit)
+	if unit == "player" then
+		temp.disabled = isPlayerFrameDisabled
+		temp.args.pvp = getUFOption_PvPIndicator(18, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.class_power = getUFOption_ClassPower(300, unit)
+		temp.args.castbar = getUFOption_Castbar(400, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.combat_feedback = getUFOption_CombatFeedback(900, unit)
 
-	if unit == "player" or unit == "pet" then
-		temp.disabled = function() return not UNITFRAMES:HasPlayerFrame() end
-
-		temp.args.enabled.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].enabled
+		if E.UI_LAYOUT == "traditional" then
+			temp.args.copy = getUFOption_Copy(2, unit)
+			temp.args.width = getUFOption_Width(10, unit)
+			temp.args.height = getUFOption_Height(11, unit)
+			temp.args.top_inset = getUFOption_TopInset(15, unit)
+			temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+			temp.args.auras = getUFOption_Auras(800, unit)
 		end
-		temp.args.enabled.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].enabled = value
-			UNITFRAMES:UpdateUnitFrame(unit, "Update")
-		end
+	elseif unit == "pet" then
+		temp.disabled = isPlayerFrameDisabled
+		temp.args.preview = getUFOption_Preview(4, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.castbar = getUFOption_Castbar(400, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
 
-		temp.args.copy.set = function(_, value)
-			CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit][E.UI_LAYOUT], {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "Update")
-		end
-
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT], C.db.profile.units[unit][E.UI_LAYOUT], {["point"] = true})
-			UNITFRAMES:UpdateUnitFrame(unit, "Update")
-		end
-
-		if unit == "player" then
-			temp.args.preview = nil
-		end
-
-		temp.args.width.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].width
-		end
-		temp.args.width.set = function(_, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].width ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].width = value
-				UNITFRAMES:UpdateUnitFrame(unit, "Update")
-			end
-		end
-
-		temp.args.height.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].height
-		end
-		temp.args.height.set = function(_, value)
-			if C.db.profile.units[unit][E.UI_LAYOUT].height ~= value then
-				C.db.profile.units[unit][E.UI_LAYOUT].height = value
-				UNITFRAMES:UpdateUnitFrame(unit, "Update")
-			end
-		end
-
-		temp.args.threat.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].threat.enabled
-		end
-		temp.args.threat.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].threat.enabled = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateThreatIndicator")
-		end
-
-		temp.args.pvp.get = function()
-			return C.db.profile.units[unit][E.UI_LAYOUT].pvp.enabled
-		end
-		temp.args.pvp.set = function(_, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].pvp.enabled = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdatePvPIndicator")
-		end
-
-		temp.args.border.get = function(info)
-			return C.db.profile.units[unit][E.UI_LAYOUT].class[info[#info]]
-		end
-		temp.args.border.set = function(info, value)
-			C.db.profile.units[unit][E.UI_LAYOUT].class[info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassIndicator")
-		end
-
-		if unit == "player" then
-			temp.args.class_power = {
-				order = 300,
-				type = "group",
-				name = L["CLASS_POWER"],
-				args = {
-					enabled = {
-						order = 1,
-						type = "toggle",
-						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled
-						end,
-						set = function(_, value)
-							C.db.profile.units[unit][E.UI_LAYOUT].class_power.enabled = value
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateStagger")
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
-					prediction = {
-						order = 10,
-						type = "toggle",
-						name = L["COST_PREDICTION"],
-						desc = L["COST_PREDICTION_DESC"],
-						get = function()
-							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled
-						end,
-						set = function(_, value)
-							C.db.profile.units[unit][E.UI_LAYOUT].class_power.prediction.enabled = value
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdatePowerPrediction")
-
-						end,
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					runes = {
-						order = 20,
-						type = "group",
-						name = L["RUNES"],
-						inline = true,
-						get = function(info)
-							return C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.units[unit][E.UI_LAYOUT].class_power.runes[info[#info]] = value
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
-						end,
-						args = {
-							color_by_spec = {
-								order = 1,
-								type = "toggle",
-								name = L["COLOR_BY_SPEC"],
-							},
-							sort_order = {
-								order = 2,
-								type = "select",
-								name = L["SORT_DIR"],
-								values = {
-									["none"] = L["NONE"],
-									["asc"] = L["ASCENDING"],
-									["desc"] = L["DESCENDING"],
-								},
-							},
-						},
-					},
-				},
-			}
-
-			temp.args.combat_feedback = {
-				order = 900,
-				type = "group",
-				name = L["FCF"],
-				get = function(info)
-					return C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]]
-				end,
-				set = function(info, value)
-					C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback[info[#info]] = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-				end,
-				args = {
-					enabled = {
-						order = 1,
-						type = "toggle",
-						name = L["ENABLE"],
-					},
-					reset = {
-						type = "execute",
-						order = 2,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.units[unit][E.UI_LAYOUT].combat_feedback, C.db.profile.units[unit][E.UI_LAYOUT].combat_feedback, {["point"] = true})
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
-					x_offset = {
-						order = 10,
-						type = "range",
-						name = L["X_OFFSET"],
-						min = 0, max = 128, step = 1,
-					},
-					y_offset = {
-						order = 12,
-						type = "range",
-						name = L["Y_OFFSET"],
-						min = 0, max = 128, step = 1,
-					},
-					mode = {
-						order = 13,
-						type = "select",
-						name = L["MODE"],
-						values = FCF_MODES,
-					},
-				},
-			}
-		end
-
-		if E.UI_LAYOUT == "ls" then
-			temp.args.copy = nil
-			temp.args.width = nil
-			temp.args.height = nil
-			temp.args.top_inset = nil
-			temp.args.bottom_inset = nil
-			temp.args.auras = nil
-
-			temp.args.border.args.npc = nil
-
-			if unit == "pet" then
-				temp.args.border = nil
-				temp.args.pvp = nil
-				temp.args.name = nil
-			end
-		else
-			temp.args.top_inset.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height
-			end
-			temp.args.top_inset.set = function(_, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].insets.t_height = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
-				end
-			end
-
-			temp.args.bottom_inset.get = function()
-				return C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height
-			end
-			temp.args.bottom_inset.set = function(_, value)
-				if C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height ~= value then
-					C.db.profile.units[unit][E.UI_LAYOUT].insets.b_height = value
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateInsets")
-				end
-			end
-
-			temp.args.border.args.npc = nil
-
-			if unit == "pet" then
-				temp.args.pvp = nil
-				temp.args.auras = nil
-			end
+		if E.UI_LAYOUT == "traditional" then
+			temp.args.copy = getUFOption_Copy(2, unit)
+			temp.args.width = getUFOption_Width(10, unit)
+			temp.args.height = getUFOption_Height(11, unit)
+			temp.args.top_inset = getUFOption_TopInset(15, unit)
+			temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+			temp.args.border = getUFOption_Border(20, unit)
+			temp.args.name = getUFOption_Name(500, unit)
 		end
 	elseif unit == "target" then
-		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
-		temp.args.preview = nil
+		temp.disabled = isTargetFrameDisabled
+		temp.args.copy = getUFOption_Copy(2, unit)
+		temp.args.width = getUFOption_Width(10, unit)
+		temp.args.height = getUFOption_Height(11, unit)
+		temp.args.top_inset = getUFOption_TopInset(15, unit)
+		temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+		temp.args.pvp = getUFOption_PvPIndicator(18, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.castbar = getUFOption_Castbar(400, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.auras = getUFOption_Auras(800, unit)
 	elseif unit == "targettarget" then
-		temp.disabled = function() return not UNITFRAMES:HasTargetFrame() end
-		temp.args.preview = nil
-		temp.args.pvp = nil
-		temp.args.castbar = nil
-		temp.args.debuff = nil
-		temp.args.auras = nil
+		temp.disabled = isTargetFrameDisabled
+		temp.args.copy = getUFOption_Copy(2, unit)
+		temp.args.width = getUFOption_Width(10, unit)
+		temp.args.height = getUFOption_Height(11, unit)
+		temp.args.top_inset = getUFOption_TopInset(15, unit)
+		temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
 	elseif unit == "focus" then
-		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
-		temp.args.preview = nil
+		temp.disabled = isFocusFrameDisabled
+		temp.args.copy = getUFOption_Copy(2, unit)
+		temp.args.width = getUFOption_Width(10, unit)
+		temp.args.height = getUFOption_Height(11, unit)
+		temp.args.top_inset = getUFOption_TopInset(15, unit)
+		temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+		temp.args.pvp = getUFOption_PvPIndicator(18, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.castbar = getUFOption_Castbar(400, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.auras = getUFOption_Auras(800, unit)
 	elseif unit == "focustarget" then
-		temp.disabled = function() return not UNITFRAMES:HasFocusFrame() end
-		temp.args.preview = nil
-		temp.args.pvp = nil
-		temp.args.castbar = nil
-		temp.args.debuff = nil
-		temp.args.auras = nil
+		temp.disabled = isFocusFrameDisabled
+		temp.args.copy = getUFOption_Copy(2, unit)
+		temp.args.width = getUFOption_Width(10, unit)
+		temp.args.height = getUFOption_Height(11, unit)
+		temp.args.top_inset = getUFOption_TopInset(15, unit)
+		temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
 	elseif unit == "boss" then
-		temp.disabled = function() return not UNITFRAMES:HasBossFrame() end
-		temp.args.pvp = nil
-		temp.args.debuff = nil
+		temp.disabled = isBossFrameDisabled
+		temp.args.copy = getUFOption_Copy(2, unit)
+		temp.args.preview = getUFOption_Preview(4, unit)
+		temp.args.width = getUFOption_Width(10, unit)
+		temp.args.height = getUFOption_Height(11, unit)
+		temp.args.top_inset = getUFOption_TopInset(15, unit)
+		temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
+		temp.args.border = getUFOption_Border(20, unit)
+		temp.args.health = getUFOption_Health(100, unit)
+		temp.args.power = getUFOption_Power(200, unit)
+		temp.args.alt_power = getUFOption_AlternativePower(300, unit)
+		temp.args.castbar = getUFOption_Castbar(400, unit)
+		temp.args.name = getUFOption_Name(500, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.auras = getUFOption_Auras(800, unit)
 
 		temp.args.per_row = {
 			order = 12,
@@ -2623,7 +2632,7 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 			order = 14,
 			type = "select",
 			name = L["GROWTH_DIR"],
-			values = GROWTH_DIRS,
+			values = CONFIG.GROWTH_DIRS,
 			get = function()
 				return C.db.profile.units[unit].x_growth .. "_" .. C.db.profile.units[unit].y_growth
 			end,
@@ -2631,109 +2640,6 @@ local function getOptionsTable_UnitFrame(order, unit, name)
 				C.db.profile.units[unit].x_growth, C.db.profile.units[unit].y_growth = s_split("_", value)
 				UNITFRAMES:UpdateBossHolder()
 			end,
-		}
-
-		temp.args.alt_power = {
-			order = 300,
-			type = "group",
-			name = L["ALTERNATIVE_POWER"],
-			args = {
-				enabled = {
-					order = 1,
-					type = "toggle",
-					name = L["ENABLE"],
-					get = function()
-						return C.db.profile.units[unit].alt_power.enabled
-					end,
-					set = function(_, value)
-						C.db.profile.units[unit].alt_power.enabled = value
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-					end,
-				},
-				reset = {
-					type = "execute",
-					order = 2,
-					name = L["RESTORE_DEFAULTS"],
-					func = function()
-						CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, {["point"] = true})
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-					end,
-				},
-				spacer_1 = {
-					order = 9,
-					type = "description",
-					name = " ",
-				},
-				text = {
-					order = 10,
-					type = "group",
-					name = L["BAR_TEXT"],
-					inline = true,
-					get = function(info)
-						return C.db.profile.units[unit].alt_power.text.point1[info[#info]]
-					end,
-					set = function(info, value)
-						if C.db.profile.units[unit].alt_power.text.point1[info[#info]] ~= value then
-							C.db.profile.units[unit].alt_power.text.point1[info[#info]] = value
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-							UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-						end
-					end,
-					args = {
-						p = {
-							order = 4,
-							type = "select",
-							name = L["POINT"],
-							desc = L["POINT_DESC"],
-							values = POINTS,
-						},
-						anchor = {
-							order = 5,
-							type = "select",
-							name = L["ANCHOR"],
-							values = getRegionAnchors(nil, {["AlternativePower"] = L["ALTERNATIVE_POWER"]}),
-						},
-						rP = {
-							order = 6,
-							type = "select",
-							name = L["RELATIVE_POINT"],
-							desc = L["RELATIVE_POINT_DESC"],
-							values = POINTS,
-						},
-						x = {
-							order = 7,
-							type = "range",
-							name = L["X_OFFSET"],
-							min = -128, max = 128, step = 1,
-						},
-						y = {
-							order = 8,
-							type = "range",
-							name = L["Y_OFFSET"],
-							min = -128, max = 128, step = 1,
-						},
-						tag = {
-							order = 10,
-							type = "input",
-							width = "full",
-							name = L["FORMAT"],
-							desc = L["ALT_POWER_FORMAT_DESC"],
-							get = function()
-								return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
-							end,
-							set = function(_, value)
-								if not CONFIG:IsTagStringValid(value) then return end
-
-								C.db.profile.units[unit].alt_power.text.tag = value:gsub("\124\124+", "\124")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
-							end,
-						},
-					},
-				},
-			},
 		}
 	end
 
@@ -2855,8 +2761,8 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.units.cooldown[info[#info]] ~= value then
 						C.db.profile.units.cooldown[info[#info]] = value
-						UNITFRAMES:UpdateUnitFrames("UpdateConfig")
-						UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+						UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
+						UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 					end
 				end,
 				args = {
@@ -2866,8 +2772,8 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						name = L["RESTORE_DEFAULTS"],
 						func = function()
 							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
-							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
-							UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 						end,
 					},
 					spacer_1 = {
@@ -2896,8 +2802,8 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								end
 
 								C.db.profile.units.cooldown[info[#info]] = value
-								UNITFRAMES:UpdateUnitFrames("UpdateConfig")
-								UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+								UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
+								UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 							end
 						end,
 					},
@@ -2919,8 +2825,8 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								local color = C.db.profile.units.cooldown.colors[info[#info]]
 								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
 									color[1], color[2], color[3] = r, g, b
-									UNITFRAMES:UpdateUnitFrames("UpdateConfig")
-									UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 								end
 							end
 						end,
@@ -2934,8 +2840,8 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								end,
 								set = function(_, value)
 									C.db.profile.units.cooldown.colors.enabled = value
-									UNITFRAMES:UpdateUnitFrames("UpdateConfig")
-									UNITFRAMES:UpdateUnitFrames("UpdateAuras")
+									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
+									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 								end,
 							},
 							expiration = {
@@ -2986,7 +2892,6 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						local color = C.db.profile.units.castbar.colors[info[#info]]
 						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
 							color[1], color[2], color[3] = r, g, b
-							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
 							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
 						end
 					end
@@ -2998,7 +2903,6 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						name = L["RESTORE_DEFAULTS"],
 						func = function()
 							CONFIG:CopySettings(D.profile.units.castbar.colors, C.db.profile.units.castbar.colors)
-							UNITFRAMES:UpdateUnitFrames("UpdateConfig")
 							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
 						end,
 					},
@@ -3029,13 +2933,13 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 					},
 				},
 			},
-			player = getOptionsTable_UnitFrame(3, "player", L["PLAYER_FRAME"]),
-			pet = getOptionsTable_UnitFrame(4, "pet", L["PET_FRAME"]),
-			target = getOptionsTable_UnitFrame(5, "target", L["TARGET_FRAME"]),
-			targettarget = getOptionsTable_UnitFrame(6, "targettarget", L["TOT_FRAME"]),
-			focus = getOptionsTable_UnitFrame(7, "focus", L["FOCUS_FRAME"]),
-			focustarget = getOptionsTable_UnitFrame(8, "focustarget", L["TOF_FRAME"]),
-			boss = getOptionsTable_UnitFrame(9, "boss", L["BOSS_FRAMES"]),
+			player = getUFOptions(3, "player", L["PLAYER_FRAME"]),
+			pet = getUFOptions(4, "pet", L["PET_FRAME"]),
+			target = getUFOptions(5, "target", L["TARGET_FRAME"]),
+			targettarget = getUFOptions(6, "targettarget", L["TOT_FRAME"]),
+			focus = getUFOptions(7, "focus", L["FOCUS_FRAME"]),
+			focustarget = getUFOptions(8, "focustarget", L["TOF_FRAME"]),
+			boss = getUFOptions(9, "boss", L["BOSS_FRAMES"]),
 		},
 	}
 end
