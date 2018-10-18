@@ -285,7 +285,7 @@ do
 		parent.DamageAbsorb = absorbBar
 
 		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
-		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", true)
+		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
 		overlay:SetHorizTile(true)
 		overlay:SetVertTile(true)
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
