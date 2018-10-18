@@ -1,72 +1,129 @@
 local _, ns = ...
 local D = ns.D
 
--- local function rbga(r, g, b, a)
--- 	return {r / 255, g / 255, b / 255, a}
--- end
-
 local function rgb(r, g, b)
-	return {r / 255, g / 255, b / 255}
+	return {r / 255, g / 255, b / 255, 1}
 end
 
 D.global = {}
 
 D.profile = {
-	-- colors = {
-	-- 	castbar = {
-	-- 		casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		notinterruptible = rgb(136, 137, 135), -- #888987 (N 5);
-	-- 	},
-	-- 	cooldown = {
-	-- 		expiration = rgb(240, 32, 30), -- #F0201E (7.5R 5/18);
-	-- 		second = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		minute = rgb(255, 255, 255), -- #FFFFFF
-	-- 		hour = rgb(255, 255, 255), -- #FFFFFF
-	-- 		day = rgb(255, 255, 255), -- #FFFFFF
-	-- 	},
-	-- 	disconnected = rgb(136, 137, 135), -- #888987 (N 5);
-	-- 	gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12);
-	-- 	health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 	loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10);
-	-- 	power = {
-	-- 		MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10);
-	-- 		RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
-	-- 		ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14);
-	-- 		RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8);
-	-- 		RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8);
-	-- 		SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14);
-	-- 		LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12);
-	-- 		HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6);
-	-- 		MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12);
-	-- 		INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14);
-	-- 		CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6);
-	-- 		ARCANE_CHARGES = rgb(28, 129, 191), -- #1C81BF (2.5PB 5/10);
-	-- 		FURY = rgb(187, 57, 231), -- #BB39E7 (5P 5/22);
-	-- 		PAIN = rgb(243, 157, 28), -- #F39D1C (7.5YR 7/12);
-	-- 		AMMOSLOT = rgb(217, 169, 35), -- #D9A923 (2.5Y 7/10);
-	-- 		FUEL = rgb(42, 137, 122), -- #2A897A (2.5BG 5/6);
-	-- 		STAGGER = {
-	-- 			rgb(111, 255, 99), -- #6FFF63 (10GY 9/14);
-	-- 			rgb(229, 237, 142), -- #E5ED8E (2.5GY 9/6);
-	-- 			rgb(211, 77, 81), -- #D34D51 (5R 5/12);
-	-- 		},
-	-- 	},
-	-- 	reaction = {
-	-- 		[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		[2] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
-	-- 		[4] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		[5] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 	},
-	-- 	tapped = rgb(163, 162, 162), -- #A3A2A2 (N 6);
-	-- },
+	colors = {
+		castbar = {
+			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			notinterruptible = rgb(136, 137, 135), -- #888987 (N5)
+		},
+		cooldown = {
+			expiration = rgb(240, 32, 30), -- #F0201E (7.5R 5/18)
+			second = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			minute = rgb(255, 255, 255), -- #FFFFFF
+			hour = rgb(255, 255, 255), -- #FFFFFF
+			day = rgb(255, 255, 255), -- #FFFFFF
+		},
+		disconnected = rgb(136, 137, 135), -- #888987 (N5)
+		tapped = rgb(163, 162, 162), -- #A3A2A2 (N6)
+		gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12)
+		health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+		power = {
+			MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10)
+			RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14)
+			RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8)
+			RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8)
+			SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14)
+			LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12)
+			HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6)
+			MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+			INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14)
+			CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6)
+			ARCANE_CHARGES = rgb(28, 129, 191), -- #1C81BF (2.5PB 5/10)
+			FURY = rgb(187, 57, 231), -- #BB39E7 (5P 5/22)
+			PAIN = rgb(243, 157, 28), -- #F39D1C (7.5YR 7/12)
+			AMMOSLOT = rgb(217, 169, 35), -- #D9A923 (2.5Y 7/10)
+			FUEL = rgb(42, 137, 122), -- #2A897A (2.5BG 5/6)
+			STAGGER = {
+				-- low
+				[1] = rgb(111, 255, 99), -- #6FFF63 (10GY 9/14)
+				-- medium
+				[2] = rgb(229, 237, 142), -- #E5ED8E (2.5GY 9/6)
+				-- high
+				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
+			},
+		},
+		reaction = {
+			-- hated
+			[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- hostile
+			[2] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- unfriendly
+			[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			-- neutral
+			[4] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			-- friendly
+			[5] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- honored
+			[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- revered
+			[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- exalted
+			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		},
+		faction = {
+			-- Alliance = rgb(74, 84, 232), -- #4A54E8 (Blizzard Colour)
+			Alliance = rgb(64, 84, 202), -- #4054CA (7.5PB 4/16)
+			-- Horde = rgb(230, 13, 18), -- #E60D12 (Blizzard Colour)
+			Horde = rgb(231, 53, 42), -- #E7352A (7.5R 5/16)
+			Neutral = rgb(233, 232, 231) -- #E9E8E7 (N9)
+		},
+		artifact = rgb(217, 202, 146), -- #D9CA92 (5Y 8/4)
+		-- artifact = rgb(230, 204, 153), -- #E6CC99 (Blizzard Colour)
+		honor = rgb(255, 77, 35), -- #FF4D23 (Blizzard Colour)
+		xp = {
+			-- rested
+			[1] = rgb(0, 99, 224), -- #0063E0 (Blizzard Colour)
+			-- normal
+			[2] = rgb(148, 0, 140), -- #94008C (Blizzard Colour)
+		},
+		prediction = {
+			my_heal = rgb(20, 228, 187), -- #14E4BB (10G 8/10)
+			other_heal = rgb(11, 169, 139), -- #0BA98B (10G 6/8)
+			-- damage_absorb = rgb(),
+			heal_absorb = rgb(178, 50, 43), -- #B2322B (7.5R 4/12)
+			power_cost = rgb(120, 181, 231), -- #78B5E7 (2.5PB 7/8)
+		},
+		zone = {
+			contested = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			friendly = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			hostile = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			sanctuary = rgb(128, 215, 235) -- #80D7EB (5B 8/6)
+		},
+		button = {
+			normal = rgb(255, 255, 255), -- #FFFFFF
+			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
+			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
+			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+		},
+		debuff = {
+			None = rgb(204, 0, 0), -- #cc0000 (Blizzard Colour)
+			Magic = rgb(51, 153, 255), -- #3399ff (Blizzard Colour)
+			Curse = rgb(153, 0, 255), -- #9900ff (Blizzard Colour)
+			Disease = rgb(153, 102, 0), -- #996600 (Blizzard Colour)
+			Poison = rgb(0, 153, 0), -- #009900 (Blizzard Colour)
+		},
+		rune = {
+			-- blood
+			[1] = rgb(247, 65, 57), -- #F74139 (Blizzard Colour)
+			-- frost
+			[2] = rgb(148, 203, 247), -- #94CBF7 (Blizzard Colour)
+			-- unholy
+			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
+		},
+	},
 	units = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
