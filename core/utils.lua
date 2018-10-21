@@ -700,6 +700,11 @@ do
 
 	do
 		local ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+		local X2_WEAPON_SLOTS = {
+			INVTYPE_2HWEAPON = true,
+			INVTYPE_RANGEDRIGHT = true,
+			INVTYPE_RANGED = true,
+		}
 
 		function E:GetUnitAverageItemLevel(unit)
 			if UnitIsUnit(unit, "player") then
@@ -711,51 +716,52 @@ do
 				-- Armour
 				for _, id in next, ARMOR_SLOTS do
 					local link = GetInventoryItemLink(unit, id)
-					local texture = GetInventoryItemTexture(unit, id)
+					local cur
 
 					if link then
-						local cur = GetDetailedItemLevelInfo(link)
-
+						cur = GetDetailedItemLevelInfo(link)
 						if cur and cur > 0 then
 							total = total + cur
 						end
-					elseif texture then
+					elseif GetInventoryItemTexture(unit, id) then
 						isInspectSuccessful = false
 					end
 				end
 
 				-- Main hand
 				local link = GetInventoryItemLink(unit, 16)
-				local texture = GetInventoryItemTexture(unit, 16)
-				local mainItemLevel, mainQuality, mainEquipLoc, _ = 0
+				local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass, _ = 0
 
 				if link then
 					mainItemLevel = GetDetailedItemLevelInfo(link)
-					_, _, mainQuality, _, _, _, _, _, mainEquipLoc = GetItemInfo(link)
-				elseif texture then
+					_, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = GetItemInfo(link)
+				elseif GetInventoryItemTexture(unit, 16) then
 					isInspectSuccessful = false
 				end
 
 				-- Off hand
 				link = GetInventoryItemLink(unit, 17)
-				texture = GetInventoryItemTexture(unit, 17)
 				local offItemLevel, offEquipLoc = 0
 
 				if link then
 					offItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, _, _, _, _, _, _, offEquipLoc = GetItemInfo(link)
-				elseif texture then
+				elseif GetInventoryItemTexture(unit, 17) then
 					isInspectSuccessful = false
 				end
 
-				if mainQuality == 6 or (mainEquipLoc == "INVTYPE_2HWEAPON" and not offEquipLoc and GetInspectSpecialization(unit) ~= 72) then
+				if mainQuality == 6 or (not offEquipLoc and X2_WEAPON_SLOTS[mainEquipLoc] and mainItemClass ~= 2 and mainItemSubClass ~= 19 and GetInspectSpecialization(unit) ~= 72) then
 					mainItemLevel = m_max(mainItemLevel, offItemLevel)
 					total = total + mainItemLevel * 2
 				else
 					total = total + mainItemLevel + offItemLevel
 				end
 
-				-- print("total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
+				if total == 0 then
+					isInspectSuccessful = false
+				end
+
+				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
 				return isInspectSuccessful and m_floor(total / 16) or nil
 			end
 		end
