@@ -898,21 +898,22 @@ function E:ForceShow(object)
 	object.Hide = object.Show
 end
 
-function E:ForceHide(object, skipEvents, doNotHide)
+function E:ForceHide(object, skipEvents)
 	if not object then return end
 
-	if not skipEvents and object.UnregisterAllEvents then
-		object:UnregisterAllEvents()
+	if object.UnregisterAllEvents then
+		if not skipEvents then
+			object:UnregisterAllEvents()
+		end
 
 		if object:GetName() then
+			object.ignoreFramePositionManager = true
+			object:SetAttribute("ignoreFramePositionManager", true)
 			UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
 		end
 	end
 
-	if not doNotHide then
-		object:Hide()
-	end
-
+	object:Hide()
 	object:SetParent(self.HIDDEN_PARENT)
 end
 
