@@ -88,16 +88,16 @@ local function bar_SetPoint(self, _, anchor)
 		self:SetSize(0, 0)
 		self:ClearAllPoints()
 
-		if config.icon.enabled then
+		if config.icon.position == "LEFT" then
 			self.Icon:Show()
 
-			if config.icon.position == "LEFT" then
-				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 5 + config.height * 1.5, 0)
-				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
-			elseif config.icon.position == "RIGHT" then
-				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
-				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -5 - config.height * 1.5, 0)
-			end
+			self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 5 + config.height * 1.5, 0)
+			self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
+		elseif config.icon.position == "RIGHT" then
+			self.Icon:Show()
+
+			self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
+			self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -5 - config.height * 1.5, 0)
 		else
 			self.Icon:Hide()
 
