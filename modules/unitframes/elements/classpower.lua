@@ -82,21 +82,6 @@ do
 		prediction = true,
 	}
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
-		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
-	end
-
-	local function element_UpdateColors(self)
-		self.colorSpec = self._config.runes.color_by_spec
-		self:ForceUpdate()
-	end
-
-	local function element_UpdateSortOrder(self)
-		self.sortOrder = self._config.runes.sort_order
-		self:ForceUpdate()
-	end
-
 	local function element_PostUpdate(self)
 		if self.isEnabled then
 			local hasVehicle = UnitHasVehicleUI("player")
@@ -110,6 +95,21 @@ do
 				self._active = true
 			end
 		end
+	end
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+	end
+
+	local function element_UpdateColors(self)
+		self.colorSpec = self._config.runes.color_by_spec
+		self:ForceUpdate()
+	end
+
+	local function element_UpdateSortOrder(self)
+		self.sortOrder = self._config.runes.sort_order
+		self:ForceUpdate()
 	end
 
 	local function frame_UpdateRunes(self)
@@ -195,11 +195,6 @@ do
 		runes = true,
 	}
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
-		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
-	end
-
 	local function element_PostUpdate(self, _, max, maxChanged, powerType)
 		if self._active ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.isEnabled then
@@ -223,12 +218,25 @@ do
 						self[i]:SetHeight(layout[i])
 					end
 
-					self[i]:SetStatusBarColor(M.COLORS.POWER[powerType]:GetRGB())
+					self[i]:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power[powerType]))
 				end
 			end
 
 			self._active = self.isEnabled
 			self._powerID = powerType
+		end
+	end
+
+	local function element_UpdateConfig(self)
+		local unit = self.__owner._unit
+		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+	end
+
+	local function element_UpdateColors(self)
+		if self._powerID then
+			for i = 1, 10 do
+				self[i]:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power[self._powerID]))
+			end
 		end
 	end
 
@@ -282,6 +290,8 @@ do
 			end
 		end
 
+		element:UpdateColors()
+
 		if element._config.enabled and not self:IsElementEnabled("ClassPower") then
 			self:EnableElement("ClassPower")
 		elseif not element._config.enabled and self:IsElementEnabled("ClassPower") then
@@ -303,6 +313,7 @@ do
 		element:Hide()
 
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 
 		frame.UpdateClassPower = frame_UpdateClassPower
@@ -324,11 +335,10 @@ do
 
 		local max = UnitHealthMax("player")
 		local cur = UnitStagger("player")
-		local r, g, b = M.COLORS.POWER.STAGGER:GetRGB(cur / max)
 
 		element:SetMinMaxValues(0, max)
 		element:SetValue(cur)
-		element:SetStatusBarColor(r, g, b)
+		element:SetStatusBarColor(E:GetGradientAsRGB(cur / max, C.db.profile.colors.power.STAGGER))
 
 		element.GainLossIndicators:Update(cur, max)
 	end

@@ -123,7 +123,7 @@ local function setPushedTexture(button)
 	button:SetPushedTexture("Interface\\Buttons\\ButtonHilight-Square")
 	button:GetPushedTexture():SetBlendMode("ADD")
 	button:GetPushedTexture():SetDesaturated(true)
-	button:GetPushedTexture():SetVertexColor(1.0, 0.82, 0.0)
+	button:GetPushedTexture():SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
 	button:GetPushedTexture():SetAllPoints()
 end
 
@@ -160,7 +160,7 @@ local function skinButton(button)
 	setIcon(bIcon)
 
 	if bFlash then
-		bFlash:SetColorTexture(M.COLORS.RED:GetRGBA(0.65))
+		bFlash:SetColorTexture(E:GetRGBA(C.db.global.colors.red, 0.65))
 		bFlash:SetAllPoints()
 	end
 
@@ -269,7 +269,7 @@ do
 		local button = self:GetParent()
 
 		if button:IsEquipped() then
-			button.Border_:SetVertexColor(M.COLORS.GREEN:GetRGB())
+			button.Border_:SetVertexColor(E:GetRGB(C.db.global.colors.green))
 		else
 			button.Border_:SetVertexColor(1, 1, 1)
 		end

@@ -5,6 +5,7 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local next = _G.next
 
 -- Blizz
 local UnitGUID = _G.UnitGUID
@@ -76,6 +77,7 @@ do
 	local function element_UpdateColors(self)
 		self.colorClass = self._config.color.class
 		self.colorReaction = self._config.color.reaction
+		self.colorSelection = self.__owner._unit ~= "player"
 		self:ForceUpdate()
 	end
 
@@ -165,6 +167,12 @@ do
 		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
 	end
 
+	local function element_UpdateColors(self)
+		self.myBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.my_heal))
+		self.otherBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.other_heal))
+		self.healAbsorbBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.heal_absorb))
+	end
+
 	local function frame_UpdateHealthPrediction(self)
 		local element = self.HealthPrediction
 		element:UpdateConfig()
@@ -236,6 +244,7 @@ do
 			healAbsorbBar:SetHeight(height)
 		end
 
+		element:UpdateColors()
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -258,13 +267,11 @@ do
 		myBar:SetFrameLevel(level)
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		myBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 		E:SmoothBar(myBar)
 		parent.MyHeal = myBar
 
 		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
 		myBar._texture:SetAllPoints(myBar:GetStatusBarTexture())
-		myBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
@@ -275,7 +282,6 @@ do
 
 		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
 		otherBar._texture:SetAllPoints(otherBar:GetStatusBarTexture())
-		otherBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.OTHER_HEAL:GetRGB())
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
@@ -298,13 +304,11 @@ do
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 		E:SmoothBar(healAbsorbBar)
 		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
-		healAbsorbBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 
 		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
 
@@ -316,6 +320,7 @@ do
 			absorbBar = absorbBar,
 			healAbsorbBar = healAbsorbBar,
 			maxOverflow = 1,
+			UpdateColors = element_UpdateColors,
 			UpdateConfig = element_UpdateConfig,
 			UpdateFontObjects = element_UpdateFontObjects,
 			UpdateTags = element_UpdateTags,

@@ -73,13 +73,21 @@ local function bar_UpdateButtonConfig(self)
 	if not self.buttonConfig then
 		self.buttonConfig = {
 			tooltip = "enabled",
-			colors = {},
+			colors = {
+				normal = {},
+				unusable = {},
+				mana = {},
+				range = {},
+			},
 			desaturation = {},
 		}
 	end
 
+	for k, v in next, C.db.profile.colors.button do
+		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = E:GetRGB(v)
+	end
+
 	self.buttonConfig.clickOnDown = self._config.click_on_down
-	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
@@ -136,18 +144,18 @@ end
 local function button_UpdateUsable(self)
 	if self.config.outOfRangeColoring == "button" and self.outOfRange then
 		self.icon:SetDesaturated(self.config.desaturation.range == true)
-		self.icon:SetVertexColor(unpack(self.config.colors.range))
+		self.icon:SetVertexColor(E:GetRGB(self.config.colors.range))
 	elseif self.onCooldown then
 		self.icon:SetDesaturated(self.config.desaturation.cooldown == true)
-		self.icon:SetVertexColor(unpack(self.config.colors.unusable))
+		self.icon:SetVertexColor(E:GetRGB(self.config.colors.unusable))
 	else
 		local isUsable = PetHasActionBar() and GetPetActionSlotUsable(self:GetID()) or false
 		if isUsable then
 			self.icon:SetDesaturated(false)
-			self.icon:SetVertexColor(unpack(self.config.colors.normal))
+			self.icon:SetVertexColor(E:GetRGB(self.config.colors.normal))
 		else
 			self.icon:SetDesaturated(self.config.desaturation.unusable == true)
-			self.icon:SetVertexColor(unpack(self.config.colors.unusable))
+			self.icon:SetVertexColor(E:GetRGB(self.config.colors.unusable))
 		end
 	end
 end
@@ -176,7 +184,7 @@ local function button_UpdateConfig(self, config)
 	self.config = E:CopyTable(config, self.config)
 
 	if self.config.outOfRangeColoring == "button" and self.config.outOfManaColoring == "button" then
-		self.HotKey:SetVertexColor(unpack(self.config.colors.normal))
+		self.HotKey:SetVertexColor(E:GetRGB(self.config.colors.normal))
 	end
 
 	self.checksRange = nil
@@ -363,15 +371,15 @@ function MODULE.CreatePetActionBar()
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Show()
 											end
-											hotkey:SetVertexColor(unpack(button.config.colors.range))
+											hotkey:SetVertexColor(E:GetRGB(button.config.colors.range))
 										else
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Hide()
 											end
-											hotkey:SetVertexColor(unpack(button.config.colors.normal))
+											hotkey:SetVertexColor(E:GetRGB(button.config.colors.normal))
 										end
 									else
-										button.HotKey:SetVertexColor(unpack(button.config.colors.normal))
+										button.HotKey:SetVertexColor(E:GetRGB(button.config.colors.normal))
 									end
 								end
 							end

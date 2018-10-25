@@ -70,7 +70,7 @@ function E:HandleStatusBar(bar, isRecursive)
 			bg = bar:CreateTexture(nil, "BACKGROUND")
 		end
 
-		bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		bg:SetAllPoints()
 		bar.Bg = bg
 
@@ -107,7 +107,7 @@ function E:CreateStatusBar(parent, name, orientation)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 	bg:SetAllPoints()
 	bar.Bg = bg
 

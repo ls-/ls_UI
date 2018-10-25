@@ -347,14 +347,12 @@ end
 local function element_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
-			colors = {},
 			text = {},
 		}
 	end
 
 	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
-	self.cooldownConfig.colors = E:CopyTable(C.db.profile.units.cooldown.colors, self.cooldownConfig.colors)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	for i = 1, self.createdIcons do

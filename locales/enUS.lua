@@ -51,32 +51,34 @@ L["TOTAL"] = _G.TOTAL
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
-L["COLOR_CLASS_DESC"] = (function()
-	local temp = ""
+L["COLOR_CLASS_DESC"] = ""
+-- L["COLOR_CLASS_DESC"] = (function()
+-- 	local temp = ""
 
-	for k, class in next, _G.CLASS_SORT_ORDER do
-		temp = temp..M.COLORS.CLASS[class]:WrapText(_G.LOCALIZED_CLASS_NAMES_MALE[class])
+-- 	for k, class in next, _G.CLASS_SORT_ORDER do
+-- 		temp = temp .. "|c" .. C.db.global.colors.class[class].hex .. _G.LOCALIZED_CLASS_NAMES_MALE[class] .. "|r"
 
-		if k ~= #_G.CLASS_SORT_ORDER then
-			temp = temp.."\n"
-		end
-	end
+-- 		if k ~= #_G.CLASS_SORT_ORDER then
+-- 			temp = temp.."\n"
+-- 		end
+-- 	end
 
-	return temp
-end)()
-L["COLOR_REACTION_DESC"] = (function()
-	local temp = ""
+-- 	return temp
+-- end)()
+L["COLOR_REACTION_DESC"] = ""
+-- L["COLOR_REACTION_DESC"] = (function()
+-- 	local temp = ""
 
-	for i = 1, 8 do
-		temp = temp..M.COLORS.REACTION[i]:WrapText(_G["FACTION_STANDING_LABEL"..i])
+-- 	for i = 1, 8 do
+-- 		temp = temp .. "|c" .. C.db.profile.colors.reaction[i].hex .. _G["FACTION_STANDING_LABEL" .. i] .. "|r"
 
-		if i ~= 8 then
-			temp = temp.."\n"
-		end
-	end
+-- 		if i ~= 8 then
+-- 			temp = temp.."\n"
+-- 		end
+-- 	end
 
-	return temp
-end)()
+-- 	return temp
+-- end)()
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -447,3 +449,70 @@ L["Y_OFFSET"] = "yOffset"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+L["DISCONNECTED"] = "Disconnected"
+L["TAPPED"] = "Tapped"
+L["RESOURCE_GAIN"] = "Resource Gain"
+L["RESOURCE_LOSS"] = "Resource Loss"
+
+L["MANA"] = _G.MANA
+L["RAGE"] = _G.RAGE
+L["FOCUS"] = _G.FOCUS
+L["ENERGY"] = _G.ENERGY
+L["COMBO_POINTS"] = _G.COMBO_POINTS
+L["RUNES"] = _G.RUNES
+L["RUNIC_POWER"] = _G.RUNIC_POWER
+L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
+L["LUNAR_POWER"] = _G.LUNAR_POWER
+L["HOLY_POWER"] = _G.HOLY_POWER
+L["MAELSTROM"] = _G.MAELSTROM
+L["INSANITY"] = _G.INSANITY
+L["CHI"] = _G.CHI
+L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
+L["FURY"] = _G.FURY
+L["PAIN"] = _G.PAIN
+
+L["STAGGER_LOW"] = "Low Stagger"
+L["STAGGER_MEDIUM"] = "Medium Stagger"
+L["STAGGER_HIGH"] = "High Stargger"
+
+L["RUNES_BLOOD"] = "Blood Runes"
+L["RUNES_FROST"] = "Frost Runes"
+L["RUNES_UNHOLY"] = "Unholy Runes"
+
+L["FACTION"] = _G.FACTION
+L["FACTION_HORDE"] = _G.FACTION_HORDE
+L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
+L["FACTION_NEUTRAL"] = "Neutral"
+
+L["EXPERIENCE_RESTED"] = "Rested"
+L["EXPERIENCE_NORMAL"] = "Normal"
+
+L["PREDICTION"] = "Prediction"
+L["PERSONAL"] = "Personal"
+L["OTHERS"] = "Others"
+L["DAMAGE_ABSORB"] = "Damage Absorb"
+L["HEAL_ABSORB"] = "Heal Absorb"
+L["POWER_COST"] = "Power Cost"
+
+L["AURA"] = "Aura"
+L["DEBUFF"] = "Debuff"
+L["CURSE"] = "Curse"
+L["DISEASE"] = "Disease"
+L["MAGIC"] = "Magic"
+L["POISON"] = "Poison"
+
+L["TEMP_ENCHANT"] = "Temporary Enchant"
+
+L["DIFFICULTY"] = "Difficulty"
+L["TRIVIAL"] = "Trivial"
+L["STANDARD"] = "Standard"
+L["DIFFICULT"] = "Difficult"
+L["VERY_DIFFICULT"] = "Very Difficult"
+L["IMPOSSIBLE"] = "Impossible"
+
+L["BUTTON"] = "Button"
+
+L["ZONE"] = _G.ZONE
+
+L["SELECTION"] = "Selection"

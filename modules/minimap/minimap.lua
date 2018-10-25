@@ -266,10 +266,10 @@ local function handleMinimapButton(button, recursive)
 			bg = button:CreateTexture()
 		end
 
-		bg:SetColorTexture(M.COLORS.BLACK:GetRGB())
+		bg:SetAlpha(1)
+		bg:SetColorTexture(0, 0, 0, 0.6)
 		bg:SetDrawLayer("BACKGROUND", 0)
 		bg:SetAllPoints()
-		bg:SetAlpha(0.8)
 		bg:AddMaskTexture(mask)
 		button.Background = bg
 
@@ -360,12 +360,12 @@ end
 local function minimap_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.minimap[E.UI_LAYOUT], self._config)
 	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
-	self._config.colors = E:CopyTable(C.db.profile.minimap.colors, self._config.colors)
 end
 
 local function minimap_UpdateBorder(self)
 	if self._config.color.border then
-		self.Border:SetVertexColor(unpack(self._config.colors[PVP_COLOR_MAP[GetZonePVPInfo()]] or self._config.colors.contested))
+		local color = C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested
+		self.Border:SetVertexColor(color.r, color.g, color.b)
 	else
 		self.Border:SetVertexColor(1, 1, 1)
 	end
@@ -421,7 +421,8 @@ local function minimap_UpdateZoneText(self)
 	self.Zone.Text:SetText(GetMinimapZoneText() or L["UNKNOWN"])
 
 	if self._config.color.zone_text then
-		self.Zone.Text:SetVertexColor(unpack(self._config.colors[PVP_COLOR_MAP[GetZonePVPInfo()]] or self._config.colors.contested))
+		local color = C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested
+		self.Zone.Text:SetVertexColor(color.r, color.g, color.b)
 	else
 		self.Zone.Text:SetVertexColor(1, 1, 1)
 	end
@@ -732,7 +733,7 @@ function MODULE.Init()
 			date:ClearAllPoints()
 			date:SetPoint("TOPLEFT", 9, -8)
 			date:SetPoint("BOTTOMRIGHT", -8, 9)
-			date:SetVertexColor(M.COLORS.WHITE:GetRGB())
+			date:SetVertexColor(1, 1, 1)
 			date:SetDrawLayer("BACKGROUND")
 			date:SetJustifyH("CENTER")
 			date:SetJustifyV("MIDDLE")
@@ -754,7 +755,7 @@ function MODULE.Init()
 			Minimap.Zone = frame
 
 			local bg = frame:CreateTexture(nil, "BACKGROUND")
-			bg:SetColorTexture(M.COLORS.BLACK:GetRGBA(0.6))
+			bg:SetColorTexture(0, 0, 0, 0.6)
 			bg:SetAllPoints()
 			bg:Hide()
 			frame.BG = bg

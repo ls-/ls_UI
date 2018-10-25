@@ -23,14 +23,6 @@ local activeCooldowns = {}
 local defaults = {
 	exp_threshold = 5, -- [1; 10]
 	m_ss_threshold = 0, -- [91; 3599]
-	colors = {
-		enabled = true,
-		expiration = {229 / 255, 25 / 255, 25 / 255},
-		second = {255 / 255, 191 / 255, 25 / 255},
-		minute = {255 / 255, 255 / 255, 255 / 255},
-		hour = {255 / 255, 255 / 255, 255 / 255},
-		day = {255 / 255, 255 / 255, 255 / 255},
-	},
 	text = {
 		enabled = true,
 		size = 12,
@@ -54,20 +46,14 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 					return
 				end
 
-				color = nil
+				color = C.db.global.colors.white
 
 				if remain >= 86400 then
 					time1, time2, format = E:SecondsToTime(remain, "abbr")
-
-					if cooldown.config.colors.enabled then
-						color = cooldown.config.colors.day
-					end
+					color = C.db.profile.colors.cooldown.day
 				elseif remain >= 3600 then
 					time1, time2, format = E:SecondsToTime(remain, "abbr")
-
-					if cooldown.config.colors.enabled then
-						color = cooldown.config.colors.hour
-					end
+					color = C.db.profile.colors.cooldown.hour
 				elseif remain >= 60 then
 					if cooldown.config.m_ss_threshold == 0 or remain > cooldown.config.m_ss_threshold then
 						time1, time2, format = E:SecondsToTime(remain, "abbr")
@@ -75,9 +61,7 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 						time1, time2, format = E:SecondsToTime(remain, "x:xx")
 					end
 
-					if cooldown.config.colors.enabled then
-						color = cooldown.config.colors.minute
-					end
+					color = C.db.profile.colors.cooldown.minute
 				elseif remain >= 1 then
 					if remain > cooldown.config.exp_threshold then
 						time1, time2, format = E:SecondsToTime(remain, "abbr")
@@ -85,29 +69,19 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 						time1, time2, format = E:SecondsToTime(remain, "frac")
 					end
 
-					if cooldown.config.colors.enabled then
-						color = cooldown.config.colors.second
-					end
+					color = C.db.profile.colors.cooldown.second
 				elseif remain >= 0.001 then
 					time1, time2, format = E:SecondsToTime(remain)
-
-					if cooldown.config.colors.enabled then
-						color = cooldown.config.colors.second
-					end
+					color = C.db.profile.colors.cooldown.second
 				end
 
-				if cooldown.config.colors.enabled and remain <= cooldown.config.exp_threshold then
-					color = cooldown.config.colors.expiration
+				if remain <= cooldown.config.exp_threshold then
+					color = C.db.profile.colors.cooldown.expiration
 				end
 
 				if time1 then
 					cooldown.Timer:SetFormattedText(format, time1, time2)
-
-					if color then
-						cooldown.Timer:SetVertexColor(unpack(color))
-					else
-						cooldown.Timer:SetVertexColor(1, 1, 1)
-					end
+					cooldown.Timer:SetVertexColor(E:GetRGB(color))
 				end
 			end
 		end

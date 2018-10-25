@@ -10,11 +10,6 @@ local _G = getfenv(0)
 ]]
 
 -- Mine
-local function frame_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.units[self._unit][E.UI_LAYOUT], self._config)
-	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
-end
-
 do
 	local function frame_Update(self)
 		self:UpdateConfig()
@@ -66,7 +61,7 @@ do
 		frame.Health = health
 
 		local healthBG = health:CreateTexture(nil, "BACKGROUND")
-		healthBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		healthBG:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		healthBG:SetAllPoints()
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
@@ -78,7 +73,7 @@ do
 		frame.Power = power
 
 		local powerBG = power:CreateTexture(nil, "BACKGROUND")
-		powerBG:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		powerBG:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		powerBG:SetAllPoints()
 
 		frame.Castbar = self:CreateCastbar(frame)
@@ -110,7 +105,6 @@ do
 		E:SetStatusBarSkin(rightTube, "VERTICAL-8")
 
 		frame.Update = frame_Update
-		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end
 
@@ -220,6 +214,5 @@ do
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 		frame.Update = frame_Update
-		-- frame.UpdateConfig = frame_UpdateConfig
 	end
 end

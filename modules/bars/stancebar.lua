@@ -72,13 +72,13 @@ local function button_Update(self)
 
 		if isCastable then
 			self.icon:SetDesaturated(false)
-			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(1))
+			self.icon:SetVertexColor(E:GetRGB(C.db.profile.colors.button.normal))
 		else
 			self.icon:SetDesaturated(true)
-			self.icon:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGBA(0.65))
+			self.icon:SetVertexColor(E:GetRGB(C.db.profile.colors.button.unusable))
 		end
 
-		self.HotKey:SetVertexColor(M.COLORS.BUTTON_ICON.N:GetRGB())
+		self.HotKey:SetVertexColor(E:GetRGB(C.db.profile.colors.button.normal))
 
 		self:UpdateHotKey()
 		self:UpdateCooldown()

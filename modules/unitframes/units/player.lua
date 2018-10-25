@@ -16,11 +16,6 @@ function UF:HasPlayerFrame()
 	return isInit
 end
 
-local function frame_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.units[self._unit][E.UI_LAYOUT], self._config)
-	self._config.cooldown = E:CopyTable(C.db.profile.units.cooldown, self._config.cooldown)
-end
-
 do
 	local function frame_Update(self)
 		self:UpdateConfig()
@@ -331,7 +326,6 @@ do
 		shadow:AddMaskTexture(mask)
 
 		frame.Update = frame_Update
-		-- frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end
@@ -600,7 +594,6 @@ do
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
 
 		frame.Update = frame_Update
-		-- frame.UpdateConfig = frame_UpdateConfig
 
 		isInit = true
 	end

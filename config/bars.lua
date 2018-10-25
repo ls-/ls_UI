@@ -10,7 +10,6 @@ local s_split = _G.string.split
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local tostring = _G.tostring
-local unpack = _G.unpack
 
 --[[ luacheck: globals
 	ACHIEVEMENT_BUTTON ADVENTURE_JOURNAL BLIZZARD_STORE CHARACTER_BUTTON COLLECTIONS DUNGEONS_BUTTON
@@ -818,70 +817,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "description",
 				name = " ",
 			},
-			colors = {
-				order = 30,
-				type = "group",
-				name = L["COLORS"],
-				inline = true,
-				disabled = isModuleDisabled,
-				get = function(info)
-					return unpack(C.db.profile.bars.colors[info[#info]])
-				end,
-				set = function(info, r, g, b)
-					if r ~= nil then
-						local color = C.db.profile.bars.colors[info[#info]]
-						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-							color[1], color[2], color[3] = r, g, b
-							BARS:UpdateBars("UpdateConfig")
-							BARS:UpdateBars("UpdateButtonConfig")
-						end
-					end
-				end,
-				args = {
-					reset = {
-						type = "execute",
-						order = 1,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.bars.colors, C.db.profile.bars.colors)
-							BARS:UpdateBars("UpdateConfig")
-							BARS:UpdateBars("UpdateButtonConfig")
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
-					normal = {
-						order = 10,
-						type = "color",
-						name = L["USABLE"],
-					},
-					unusable = {
-						order = 11,
-						type = "color",
-						name = L["UNUSABLE"],
-					},
-					mana = {
-						order = 12,
-						type = "color",
-						name = L["OOM"],
-					},
-					range = {
-						order = 13,
-						type = "color",
-						name = L["OOR"],
-					},
-				},
-			},
-			spacer_4 = {
-				order = 39,
-				type = "description",
-				name = " ",
-			},
 			cooldown = {
-				order = 40,
+				order = 30,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -937,70 +874,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								BARS:UpdateBars("UpdateCooldownConfig")
 							end
 						end,
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					colors = {
-						order = 20,
-						type = "group",
-						name = L["COLORS"],
-						inline = true,
-						get = function(info)
-							return unpack(C.db.profile.bars.cooldown.colors[info[#info]])
-						end,
-						set = function(info, r, g, b)
-							if r ~= nil then
-								local color = C.db.profile.bars.cooldown.colors[info[#info]]
-								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-									color[1], color[2], color[3] = r, g, b
-									BARS:UpdateBars("UpdateConfig")
-									BARS:UpdateBars("UpdateCooldownConfig")
-								end
-							end
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["ENABLE"],
-								get = function()
-									return C.db.profile.bars.cooldown.colors.enabled
-								end,
-								set = function(_, value)
-									C.db.profile.bars.cooldown.colors.enabled = value
-									BARS:UpdateBars("UpdateConfig")
-									BARS:UpdateBars("UpdateCooldownConfig")
-								end,
-							},
-							expiration = {
-								order = 2,
-								type = "color",
-								name = L["EXPIRATION"],
-							},
-							second = {
-								order = 3,
-								type = "color",
-								name = L["SECONDS"],
-							},
-							minute = {
-								order = 4,
-								type = "color",
-								name = L["MINUTES"],
-							},
-							hour = {
-								order = 5,
-								type = "color",
-								name = L["HOURS"],
-							},
-							day = {
-								order = 6,
-								type = "color",
-								name = L["DAYS"],
-							},
-						},
 					},
 				},
 			},

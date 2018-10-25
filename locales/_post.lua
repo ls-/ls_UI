@@ -10,6 +10,7 @@ L["LATENCY_COLON"] = L["LATENCY"]..":"
 L["MEMORY_COLON"] = L["MEMORY"]..":"
 
 -- Multi-liners
-L["COLOR_CLASSIFICATION_DESC"] = (function()
-	return M.COLORS.YELLOW:WrapText(L["ELITE"]).."\n"..M.COLORS.WHITE:WrapText(L["OTHER"])
-end)()
+L["COLOR_CLASSIFICATION_DESC"] = ""
+-- L["COLOR_CLASSIFICATION_DESC"] = (function()
+-- 	return "|c" .. C.db.global.colors.yellow.hex .. L["ELITE"] .."|r\n|c" .. C.db.global.colors.white.hex .. L["OTHER"] .. "|r"
+-- end)()

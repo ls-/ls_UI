@@ -5,7 +5,6 @@ local UF = P:GetModule("UnitFrames")
 --Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
-local unpack = _G.unpack
 
 --[[ luacheck: globals
 	CreateFrame
@@ -25,16 +24,16 @@ end
 
 local function element_PostCastStart(self)
 	if self.notInterruptible then
-		self:SetStatusBarColor(unpack(self._config.colors.notinterruptible))
+		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
 
 		if self.Icon then
 			self.Icon:SetDesaturated(true)
 		end
 	else
 		if self.casting then
-			self:SetStatusBarColor(unpack(self._config.colors.casting))
+			self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.casting))
 		elseif self.channeling then
-			self:SetStatusBarColor(unpack(self._config.colors.channeling))
+			self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.channeling))
 		end
 
 		if self.Icon then
@@ -46,7 +45,7 @@ end
 local function element_PostCastFailed(self)
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
-	self:SetStatusBarColor(unpack(self._config.colors.failed))
+	self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.failed))
 
 	self.Time:SetText("")
 end
@@ -78,7 +77,6 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
-	self._config.colors = E:CopyTable(C.db.profile.units.castbar.colors, self._config.colors)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
 end
@@ -206,7 +204,7 @@ function UF:CreateCastbar(frame)
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
-	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
@@ -230,7 +228,7 @@ function UF:CreateCastbar(frame)
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	safeZone:SetVertexColor(M.COLORS.RED:GetRGBA(0.6))
+	safeZone:SetVertexColor(E:GetRGBA(C.db.global.colors.red, 0.6))
 	element.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, element)

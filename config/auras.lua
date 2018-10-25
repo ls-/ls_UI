@@ -6,7 +6,6 @@ local CONFIG = P:GetModule("Config")
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
-local unpack = _G.unpack
 
 -- Mine
 local H_ALIGNMENTS = {
@@ -412,70 +411,6 @@ function CONFIG.CreateAurasPanel(_, order)
 								AURAS:UpdateHeaders("UpdateCooldownConfig")
 							end
 						end,
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					colors = {
-						order = 20,
-						type = "group",
-						name = L["COLORS"],
-						inline = true,
-						get = function(info)
-							return unpack(C.db.profile.auras.cooldown.colors[info[#info]])
-						end,
-						set = function(info, r, g, b)
-							if r ~= nil then
-								local color = C.db.profile.auras.cooldown.colors[info[#info]]
-								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-									color[1], color[2], color[3] = r, g, b
-									AURAS:UpdateHeaders("UpdateConfig")
-									AURAS:UpdateHeaders("UpdateCooldownConfig")
-								end
-							end
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["ENABLE"],
-								get = function()
-									return C.db.profile.auras.cooldown.colors.enabled
-								end,
-								set = function(_, value)
-									C.db.profile.auras.cooldown.colors.enabled = value
-									AURAS:UpdateHeaders("UpdateConfig")
-									AURAS:UpdateHeaders("UpdateCooldownConfig")
-								end,
-							},
-							expiration = {
-								order = 2,
-								type = "color",
-								name = L["EXPIRATION"],
-							},
-							second = {
-								order = 3,
-								type = "color",
-								name = L["SECONDS"],
-							},
-							minute = {
-								order = 4,
-								type = "color",
-								name = L["MINUTES"],
-							},
-							hour = {
-								order = 5,
-								type = "color",
-								name = L["HOURS"],
-							},
-							day = {
-								order = 6,
-								type = "color",
-								name = L["DAYS"],
-							},
-						},
 					},
 				},
 			},

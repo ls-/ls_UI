@@ -68,7 +68,7 @@ function MODULE.CreateVehicleExitButton()
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 		button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
 
-		button.Border:SetVertexColor(1, 0.1, 0.15)
+		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.red))
 
 		button_onEvent(button)
 

@@ -5,6 +5,7 @@ local UF = P:AddModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local type = _G.type
 local unpack = _G.unpack
 
 --[[ luacheck: globals
@@ -108,6 +109,67 @@ local function frame_Preview(self, state)
 	end
 end
 
+function UF:UpdateHealthColor()
+	local color = oUF.colors.health
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.health)
+end
+
+function UF:UpdateTappedColor()
+	local color = oUF.colors.tapped
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.tapped)
+end
+
+function UF:UpdateDisconnectedColor()
+	local color = oUF.colors.disconnected
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.disconnected)
+end
+
+function UF:UpdateReactionColors()
+	local color = oUF.colors.reaction
+	for k, v in next, C.db.profile.colors.reaction do
+		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+	end
+end
+
+function UF:UpdateSelectionColors()
+	local color = oUF.colors.selection
+	for k, v in next, C.db.profile.colors.selection do
+		if k <= 7 then
+			color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+		end
+	end
+end
+
+function UF:UpdatePowerColors()
+	local color = oUF.colors.power
+	for k, myColor in next, C.db.profile.colors.power do
+		if type(k) == "string" then
+			if not color[k] then
+				color[k] = {}
+			end
+
+			if type(myColor[1]) == "table" then
+				for i, myColor_ in next, myColor do
+					color[k][i][1], color[k][i][2], color[k][i][3] = E:GetRGB(myColor_)
+				end
+			else
+				color[k][1], color[k][2], color[k][3] = E:GetRGB(myColor)
+			end
+		end
+	end
+end
+
+function UF:UpdateRuneColors()
+	local color = oUF.colors.runes
+	for k, v in next, C.db.profile.colors.rune do
+		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+	end
+
+	color = oUF.colors.power.RUNES
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.power.RUNES)
+end
+
+
 function UF:CreateUnitFrame(unit, name)
 	if not units[unit] then
 		if unit == "boss" then
@@ -176,6 +238,14 @@ end
 
 function UF:Init()
 	if not isInit and C.db.char.units.enabled then
+		self:UpdateHealthColor()
+		self:UpdateTappedColor()
+		self:UpdateDisconnectedColor()
+		self:UpdateReactionColors()
+		self:UpdateSelectionColors()
+		self:UpdatePowerColors()
+		self:UpdateRuneColors()
+
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)
 				frame:RegisterForClicks("AnyUp")

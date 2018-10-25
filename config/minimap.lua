@@ -5,7 +5,6 @@ local MINIMAP = P:GetModule("Minimap")
 
 -- Lua
 local _G = getfenv(0)
-local unpack = _G.unpack
 
 -- Mine
 local MODES = {
@@ -59,7 +58,6 @@ function CONFIG.CreateMinimapPanel(_, order)
 				func = function()
 					CONFIG:CopySettings(D.profile.minimap[E.UI_LAYOUT], C.db.profile.minimap[E.UI_LAYOUT], {["point"] = true})
 					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
-					CONFIG:CopySettings(D.profile.minimap.colors, C.db.profile.minimap.colors)
 					MINIMAP:Update()
 				end,
 			},
@@ -181,40 +179,9 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "group",
 				name = L["COLORS"],
 				inline = true,
-				get = function(info)
-					return unpack(C.db.profile.minimap.colors[info[#info]])
-				end,
-				set = function(info, r, g, b)
-					if r ~= nil then
-						local color = C.db.profile.minimap.colors[info[#info]]
-						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-							color[1], color[2], color[3] = r, g, b
-							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateBorder()
-							MINIMAP:GetMinimap():UpdateZoneText()
-						end
-					end
-				end,
 				args = {
-					reset = {
-						type = "execute",
-						order = 1,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
-							CONFIG:CopySettings(D.profile.minimap.colors, C.db.profile.minimap.colors)
-							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateBorder()
-							MINIMAP:GetMinimap():UpdateZoneText()
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
 					border = {
-						order = 10,
+						order = 1,
 						type = "toggle",
 						name = L["BORDER"],
 						get = function()
@@ -227,7 +194,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 						end,
 					},
 					zone_text = {
-						order = 11,
+						order = 2,
 						type = "toggle",
 						name = L["ZONE_TEXT"],
 						get = function()
@@ -238,31 +205,6 @@ function CONFIG.CreateMinimapPanel(_, order)
 							MINIMAP:GetMinimap():UpdateConfig()
 							MINIMAP:GetMinimap():UpdateZoneText()
 						end,
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					sanctuary = {
-						order = 20,
-						type = "color",
-						name = L["SANCTUARY"],
-					},
-					friendly = {
-						order = 21,
-						type = "color",
-						name = L["FRIENDLY_TERRITORY"],
-					},
-					contested = {
-						order = 22,
-						type = "color",
-						name = L["CONTESTED_TERRITORY"],
-					},
-					hostile = {
-						order = 23,
-						type = "color",
-						name = L["HOSTILE_TERRITORY"],
 					},
 				},
 			},

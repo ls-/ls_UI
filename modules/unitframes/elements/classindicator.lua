@@ -19,10 +19,10 @@ local function update(self)
 		if element._config and element._config.player then
 			_, class = UnitClass(self.unit)
 			if class and self._skin ~= class then
-				self.Border:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
+				self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.class[class]))
 
 				if self.Insets then
-					self.Insets:SetVertexColor(M.COLORS.CLASS[class]:GetRGB())
+					self.Insets:SetVertexColor(E:GetRGB(C.db.global.colors.class[class]))
 				end
 
 				self._skin = class
@@ -35,10 +35,10 @@ local function update(self)
 			class = UnitClassification(self.unit)
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then
 				if self._skin ~= "elite" then
-					self.Border:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+					self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
 
 					if self.Insets then
-						self.Insets:SetVertexColor(M.COLORS.YELLOW:GetRGB())
+						self.Insets:SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
 					end
 
 					self._skin = "elite"

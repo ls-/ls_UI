@@ -29,8 +29,8 @@ local isInit = false
 local barValueTemplate
 
 local MAX_SEGMENTS = 4
-local NAME_TEMPLATE = "|cff%s%s|r"
-local REPUTATION_TEMPLATE = "%s: |cff%s%s|r"
+local NAME_TEMPLATE = "|c%s%s|r"
+local REPUTATION_TEMPLATE = "%s: |c%s%s|r"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 
@@ -144,14 +144,13 @@ local function bar_UpdateSegments(self)
 			local name = C_PetBattles.GetName(1, i)
 			local rarity = C_PetBattles.GetBreedQuality(1, i)
 			local cur, max = C_PetBattles.GetXP(1, i)
-			local r, g, b = M.COLORS.XP.NORMAL:GetRGB()
 
 			self[index].tooltipInfo = {
-				header = NAME_TEMPLATE:format(M.COLORS.ITEM_QUALITY[rarity]:GetHEX(), name),
+				header = NAME_TEMPLATE:format(C.db.global.colors.quality[rarity - 1].hex, name),
 				line1 = L["LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b)
+			self[index]:Update(cur, max, 0, C.db.profile.colors.xp[2])
 		end
 	else
 		-- Artefact
@@ -160,7 +159,6 @@ local function bar_UpdateSegments(self)
 
 			local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI.GetEquippedArtifactInfo()
 			local points, cur, max = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
 
 			self[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
@@ -168,7 +166,7 @@ local function bar_UpdateSegments(self)
 				line2 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b)
+			self[index]:Update(cur, max, 0, C.db.profile.colors.artifact)
 		end
 
 		-- Azerite
@@ -179,14 +177,13 @@ local function bar_UpdateSegments(self)
 
 			local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
 			local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-			local r, g, b = M.COLORS.ARTIFACT:GetRGB()
 
 			self[index].tooltipInfo = {
 				header = L["ARTIFACT_POWER"],
 				line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b)
+			self[index]:Update(cur, max, 0, C.db.profile.colors.artifact)
 		end
 
 		-- XP
@@ -196,13 +193,6 @@ local function bar_UpdateSegments(self)
 
 				local cur, max = UnitXP("player"), UnitXPMax("player")
 				local bonus = GetXPExhaustion()
-				local r, g, b
-
-				if bonus and bonus > 0 then
-					r, g, b = M.COLORS.XP.RESTED:GetRGB()
-				else
-					r, g, b = M.COLORS.XP.NORMAL:GetRGB()
-				end
 
 				self[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
@@ -215,7 +205,7 @@ local function bar_UpdateSegments(self)
 					self[index].tooltipInfo.line2 = nil
 				end
 
-				self[index]:Update(cur, max, bonus, r, g, b)
+				self[index]:Update(cur, max, bonus, bonus and bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
 			end
 		end
 
@@ -224,19 +214,17 @@ local function bar_UpdateSegments(self)
 			index = index + 1
 
 			local cur, max = UnitHonor("player"), UnitHonorMax("player")
-			local r, g, b = M.COLORS.FACTION[UnitFactionGroup("player"):upper()]:GetRGB()
 
 			self[index].tooltipInfo = {
 				header = L["HONOR"],
 				line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 			}
 
-			self[index]:Update(cur, max, 0, r, g, b)
+			self[index]:Update(cur, max, 0, C.db.profile.colors.faction[UnitFactionGroup("player")])
 		end
 
 		-- Reputation
 		local name, standing, repMin, repMax, repCur, factionID = GetWatchedFactionInfo()
-
 		if name then
 			index = index + 1
 
@@ -274,12 +262,9 @@ local function bar_UpdateSegments(self)
 				end
 			end
 
-			local r, g, b = M.COLORS.REACTION[standing]:GetRGB()
-			local hex = M.COLORS.REACTION[standing]:GetHEX(0.2)
-
 			self[index].tooltipInfo = {
 				header = L["REPUTATION"],
-				line1 = REPUTATION_TEMPLATE:format(name, hex, repTextLevel),
+				line1 = REPUTATION_TEMPLATE:format(name, C.db.profile.colors.reaction[standing].hex, repTextLevel),
 			}
 
 			if isParagon and hasRewardPending then
@@ -292,7 +277,7 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo.line3 = nil
 			end
 
-			self[index]:Update(cur, max, 0, r, g, b)
+			self[index]:Update(cur, max, 0, C.db.profile.colors.reaction[standing])
 		end
 	end
 
@@ -338,7 +323,7 @@ local function bar_UpdateSegments(self)
 			self[1]:Show()
 
 			self[1]:UpdateText(1, 1)
-			self[1].Texture:SetVertexColor(M.COLORS.CLASS[E.PLAYER_CLASS]:GetRGB())
+			self[1].Texture:SetVertexColor(E:GetRGB(C.db.global.class[E.PLAYER_CLASS]))
 		end
 
 		self._total = index
@@ -394,9 +379,9 @@ local function segment_OnLeave(self)
 	end
 end
 
-local function segment_Update(self, cur, max, bonus, r, g, b)
+local function segment_Update(self, cur, max, bonus, color)
 	if self._value ~= cur or self._max ~= max then
-		self.Texture:SetVertexColor(r, g, b)
+		self.Texture:SetVertexColor(E:GetRGBA(color, 1))
 
 		self:SetMinMaxValues(0, max)
 		self:SetValue(cur)
@@ -409,7 +394,7 @@ local function segment_Update(self, cur, max, bonus, r, g, b)
 				bonus = max - cur
 			end
 
-			self.Extension.Texture:SetVertexColor(r, g, b, 0.4)
+			self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
 
 			self.Extension:SetMinMaxValues(0, max)
 			self.Extension:SetValue(bonus)
@@ -483,7 +468,7 @@ function BARS.CreateXPBar()
 		textParent:SetFrameLevel(bar:GetFrameLevel() + 5)
 
 		local bg = bar:CreateTexture(nil, "ARTWORK")
-		bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		bg:SetAllPoints()
 
 		for i = 1, MAX_SEGMENTS do

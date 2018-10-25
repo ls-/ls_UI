@@ -2100,7 +2100,7 @@ local function getUFOption_Auras(order, unit)
 						order = 2,
 						type = "group",
 						inline = true,
-						name = M.COLORS.GREEN:WrapText(L["FRIENDLY_UNITS"]),
+						name = "|c" .. C.db.global.colors.green.hex .. L["FRIENDLY_UNITS"] .. "|r",
 						args = {
 							buff = {
 								order = 1,
@@ -2208,7 +2208,7 @@ local function getUFOption_Auras(order, unit)
 						order = 3,
 						type = "group",
 						inline = true,
-						name = M.COLORS.RED:WrapText(L["ENEMY_UNITS"]),
+						name = "|c" .. C.db.global.colors.red.hex .. L["ENEMY_UNITS"] .. "|r",
 						args = {
 							buff = {
 								order = 1,
@@ -2806,130 +2806,6 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 								UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
 							end
 						end,
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					colors = {
-						order = 20,
-						type = "group",
-						name = L["COLORS"],
-						inline = true,
-						get = function(info)
-							return unpack(C.db.profile.units.cooldown.colors[info[#info]])
-						end,
-						set = function(info, r, g, b)
-							if r ~= nil then
-								local color = C.db.profile.units.cooldown.colors[info[#info]]
-								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-									color[1], color[2], color[3] = r, g, b
-									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
-								end
-							end
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["ENABLE"],
-								get = function()
-									return C.db.profile.units.cooldown.colors.enabled
-								end,
-								set = function(_, value)
-									C.db.profile.units.cooldown.colors.enabled = value
-									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
-									UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateCooldownConfig")
-								end,
-							},
-							expiration = {
-								order = 2,
-								type = "color",
-								name = L["EXPIRATION"],
-							},
-							second = {
-								order = 3,
-								type = "color",
-								name = L["SECONDS"],
-							},
-							minute = {
-								order = 4,
-								type = "color",
-								name = L["MINUTES"],
-							},
-							hour = {
-								order = 5,
-								type = "color",
-								name = L["HOURS"],
-							},
-							day = {
-								order = 6,
-								type = "color",
-								name = L["DAYS"],
-							},
-						},
-					},
-				},
-			},
-			spacer_3 = {
-				order = 29,
-				type = "description",
-				name = " ",
-			},
-			castbar = {
-				order = 30,
-				type = "group",
-				name = L["CASTBAR"],
-				inline = true,
-				disabled = isModuleDisabled,
-				get = function(info)
-					return unpack(C.db.profile.units.castbar.colors[info[#info]])
-				end,
-				set = function(info, r, g, b)
-					if r ~= nil then
-						local color = C.db.profile.units.castbar.colors[info[#info]]
-						if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-							color[1], color[2], color[3] = r, g, b
-							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
-						end
-					end
-				end,
-				args = {
-					reset = {
-						type = "execute",
-						order = 1,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.units.castbar.colors, C.db.profile.units.castbar.colors)
-							UNITFRAMES:UpdateUnitFrames("ForElement", "Castbar", "UpdateConfig")
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
-					casting = {
-						order = 10,
-						type = "color",
-						name = L["SPELL_CAST"],
-					},
-					channeling = {
-						order = 11,
-						type = "color",
-						name = L["SPELL_CHANNELED"],
-					},
-					failed = {
-						order = 12,
-						type = "color",
-						name = L["SPELL_FAILED"],
-					},
-					notinterruptible = {
-						order = 13,
-						type = "color",
-						name = L["SPELL_UNINTERRUPTIBLE"],
 					},
 				},
 			},

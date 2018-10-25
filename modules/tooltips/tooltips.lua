@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local s_format = _G.string.format
+local s_upper = _G.string.upper
 local type = _G.type
 
 -- Blizz
@@ -69,13 +70,13 @@ local lastGUID
 
 local AFK = "[".._G.AFK.."] "
 local DND = "[".._G.DND.."] "
-local GUILD_TEMPLATE = _G.GUILD_TEMPLATE:format("|cff%s%s", "|r%s")
+local GUILD_TEMPLATE = _G.GUILD_TEMPLATE:format("|c%s%s", "|r%s")
 local ID = "|cffffd100".._G.ID..":|r %d"
-local ITEM_LEVEL = "|cffffd100".._G.ITEM_LEVEL_ABBR..":|r |cff%s%s|r"
-local SPECIALIZATION = "|cffffd100".._G.SPECIALIZATION..":|r |cff%s%s|r"
+local ITEM_LEVEL = "|cffffd100".._G.ITEM_LEVEL_ABBR..":|r |c%s%s|r"
+local SPECIALIZATION = "|cffffd100".._G.SPECIALIZATION..":|r |c%s%s|r"
 local TARGET = "|cffffd100".._G.TARGET..":|r %s"
 local TOTAL = "|cffffd100".._G.TOTAL..":|r %d"
-local PLAYER_TEMPLATE = "|cff%s%s|r (|cff%s".._G.PLAYER.."|r)"
+local PLAYER_TEMPLATE = "|c%s%s|r (|c%s".._G.PLAYER.."|r)"
 
 local TEXTS_TO_REMOVE = {
 	[_G.FACTION_ALLIANCE] = true,
@@ -119,13 +120,15 @@ local function addSpellInfo(tooltip, id, caster)
 	tooltip:AddLine(" ")
 
 	if caster and type(caster) == "string" then
-		local color = E:GetUnitReactionColor(caster)
+		local color
 
 		if UnitIsPlayer(caster) then
 			color = E:GetUnitClassColor(caster)
+		else
+			color = E:GetUnitSelectionColor(caster)
 		end
 
-		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, color:GetRGB())
+		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, E:GetRGB(color))
 	else
 		tooltip:AddLine(textLeft, 1, 1, 1)
 	end
@@ -279,7 +282,7 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(M.COLORS.WHITE:GetHEX(), E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.white.hex, E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
 	elseif inspectGUIDCache[unitGUID] and inspectGUIDCache[unitGUID].time then
 		local specName = inspectGUIDCache[unitGUID].specName
 		local itemLevel = inspectGUIDCache[unitGUID].itemLevel
@@ -295,7 +298,7 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 		end
 
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(M.COLORS.WHITE:GetHEX(), itemLevel), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.white.hex, itemLevel), 1, 1, 1)
 	elseif unitGUID ~= lastGUID then
 		lastGUID = unitGUID
 
@@ -304,8 +307,8 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
 
 		if numTries == 0 then
-			tooltip:AddLine(SPECIALIZATION:format(M.COLORS.RED:GetHEX(), L["RETRIEVING_DATA"]), 1, 1, 1)
-			tooltip:AddLine(ITEM_LEVEL:format(M.COLORS.RED:GetHEX(), L["RETRIEVING_DATA"]), 1, 1, 1)
+			tooltip:AddLine(SPECIALIZATION:format(C.db.global.colors.red.hex, L["RETRIEVING_DATA"]), 1, 1, 1)
+			tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.red.hex, L["RETRIEVING_DATA"]), 1, 1, 1)
 		end
 	end
 end
@@ -449,7 +452,7 @@ local function tooltip_SetUnit(self)
 	if not unit then return end
 
 	local config = C.db.profile.tooltips
-	local nameColor = E:GetUnitColor(unit, true)
+	local nameColor = E:GetUnitSelectionColor(unit)
 	local scaledLevel = UnitEffectiveLevel(unit)
 	local difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
@@ -463,7 +466,7 @@ local function tooltip_SetUnit(self)
 
 		if realm and realm ~= "" then
 			if isShiftKeyDown then
-				name = s_format("%s|cff%s-%s|r", name, M.COLORS.GRAY:GetHEX(), realm)
+				name = s_format("%s|c%s-%s|r", name, C.db.global.colors.gray.hex, realm)
 			else
 				if UnitRealmRelationship(unit) ~= LE_REALM_RELATION_VIRTUAL then
 					name = name..L["FOREIGN_SERVER_LABEL"]
@@ -472,10 +475,10 @@ local function tooltip_SetUnit(self)
 		end
 
 		GameTooltipTextLeft1:SetFormattedText(
-			"|cff%s%s|r|cff%s%s|r",
-			M.COLORS.GRAY:GetHEX(),
+			"|c%s%s|r|c%s%s|r",
+			C.db.global.colors.gray.hex,
 			UnitIsAFK(unit) and AFK or UnitIsDND(unit) and DND or "",
-			nameColor:GetHEX(),
+			nameColor.hex,
 			name
 		)
 
@@ -492,7 +495,7 @@ local function tooltip_SetUnit(self)
 		end
 
 		if isPVPReady then
-			status = status..M.textures.inlineicons[pvpFaction]:format(13, 13)
+			status = status..M.textures.inlineicons[s_upper(pvpFaction)]:format(13, 13)
 		end
 
 		if status ~= "" then
@@ -506,11 +509,11 @@ local function tooltip_SetUnit(self)
 
 			if isShiftKeyDown then
 				if guildRealm then
-					guildName = s_format("%s|cff%s-%s|r", guildName, M.COLORS.GRAY:GetHEX(), guildRealm)
+					guildName = s_format("%s|c%s-%s|r", guildName, C.db.global.colors.gray.hex, guildRealm)
 				end
 
 				if guildRankName then
-					guildName = GUILD_TEMPLATE:format(M.COLORS.GRAY:GetHEX(), guildRankName, guildName)
+					guildName = GUILD_TEMPLATE:format(C.db.global.colors.gray.hex, guildRankName, guildName)
 				end
 			end
 
@@ -523,23 +526,23 @@ local function tooltip_SetUnit(self)
 			local classColor = E:GetUnitClassColor(unit)
 
 			levelLine:SetFormattedText(
-				"|cff%s%s|r %s |cff%s%s|r",
-				difficultyColor:GetHEX(),
+				"|c%s%s|r %s |c%s%s|r",
+				difficultyColor.hex,
 				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
 				UnitRace(unit),
-				classColor:GetHEX(),
+				classColor.hex,
 				UnitClass(unit)
 			)
 
 			if config.inspect and isShiftKeyDown and type(level) == "number" and level > 10 then
-				addInspectInfo(self, unit, classColor:GetHEX(), 0)
+				addInspectInfo(self, unit, classColor.hex, 0)
 			end
 		end
 	elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
 		local name = UnitName(unit) or L["UNKNOWN"]
 		scaledLevel = UnitBattlePetLevel(unit)
 
-		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor:GetHEX(), name)
+		GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.hex, name)
 
 		local levelLine = getLineByText(self, scaledLevel > 0 and scaledLevel or "%?%?", 2)
 		if levelLine then
@@ -554,8 +557,8 @@ local function tooltip_SetUnit(self)
 			end
 
 			levelLine:SetFormattedText(
-				"|cff%s%s|r %s",
-				difficultyColor:GetHEX(),
+				"|c%s%s|r %s",
+				difficultyColor.hex,
 				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
 				(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
 			)
@@ -564,14 +567,14 @@ local function tooltip_SetUnit(self)
 		local name = UnitName(unit) or L["UNKNOWN"]
 		local status = ""
 
-		GameTooltipTextLeft1:SetFormattedText("|cff%s%s|r", nameColor:GetHEX(), name)
+		GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.hex, name)
 
 		if UnitIsQuestBoss(unit) then
 			status = status .. s_format(M.textures.inlineicons["QUEST"], 13, 13)
 		end
 
 		if isPVPReady then
-			status = status .. s_format(M.textures.inlineicons[pvpFaction], 13, 13)
+			status = status .. s_format(M.textures.inlineicons[s_upper(pvpFaction)], 13, 13)
 		end
 
 		if status ~= "" then
@@ -584,8 +587,8 @@ local function tooltip_SetUnit(self)
 			local level = UnitLevel(unit)
 
 			levelLine:SetFormattedText(
-				"|cff%s%s%s|r %s",
-				difficultyColor:GetHEX(),
+				"|c%s%s%s|r %s",
+				difficultyColor.hex,
 				scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
 				E:GetUnitClassification(unit),
 				UnitCreatureType(unit) or ""
@@ -600,30 +603,24 @@ local function tooltip_SetUnit(self)
 
 			if UnitIsPlayer(unitTarget) then
 				name = PLAYER_TEMPLATE:format(
-					E:GetUnitClassColor(unitTarget):GetHEX(),
+					E:GetUnitClassColor(unitTarget).hex,
 					name,
-					E:GetUnitColor(unitTarget, true):GetHEX()
+					E:GetUnitSelectionColor(unitTarget).hex
 				)
 			else
-				name = s_format("|cff%s%s|r", E:GetUnitColor(unitTarget):GetHEX(), name)
+				name = s_format("|c%s%s|r", E:GetUnitSelectionColor(unitTarget).hex, name)
 			end
 
 			self:AddLine(TARGET:format(name), 1, 1, 1)
 		end
 	end
 
+	cleanUp(self)
+
 	if GameTooltipStatusBar:IsShown() then
 		self:SetMinimumWidth(140)
-		self:AddLine("--")
 
-		cleanUp(self)
-
-		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("TOPLEFT", getLineByText(self, "%-%-", 2), "TOPLEFT", 0, -2)
-		GameTooltipStatusBar:SetPoint("RIGHT", self, "RIGHT", -10, 0)
-		GameTooltipStatusBar:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
-	else
-		cleanUp(self)
+		GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
 	end
 
 	self:Show()
@@ -679,9 +676,9 @@ local function tooltip_AddStatusBar(self, _, max, value)
 
 			-- theoretically, there should be only 1 bar visible
 			if value < max then
-				child:SetStatusBarColor(M.COLORS.YELLOW:GetRGB())
+				child:SetStatusBarColor(E:GetRGB(C.db.global.colors.yellow))
 			else
-				child:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+				child:SetStatusBarColor(E:GetRGB(C.db.global.colors.green))
 			end
 		end
 	end
@@ -693,43 +690,14 @@ local function tooltipBar_OnShow(self)
 	local tooltip = self:GetParent()
 	if tooltip:IsForbidden() then return end
 
-	if tooltip:NumLines() == 0 then
-		self.numTries = (self.numTries or 0) + 1
-
-		if self.numTries < 3 then
-			C_Timer.After(0.1, function() tooltipBar_OnShow(self) end)
-		else
-			self.numTries = 0
-		end
-
-		return
-	end
-
-	self.numTries = 0
-
-	if getLineByText(tooltip, "%-%-", 2) then return end
-
 	local unit = getTooltipUnit(tooltip)
 	if unit then
 		tooltip:SetMinimumWidth(140)
-		tooltip:AddLine("--")
 
-		cleanUp(tooltip)
-
-		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", getLineByText(tooltip, "%-%-", 2), "TOPLEFT", 0, -2)
-		self:SetPoint("RIGHT", tooltip, "RIGHT", -10, 0)
-		self:SetStatusBarColor(E:GetUnitReactionColor(unit):GetRGB())
+		self:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
 	else
-		cleanUp(tooltip)
-
-		self:ClearAllPoints()
-		self:SetPoint("TOPLEFT", tooltip, "BOTTOMLEFT", 2, -2)
-		self:SetPoint("TOPRIGHT", tooltip, "BOTTOMRIGHT", -2, -2)
-		self:SetStatusBarColor(M.COLORS.GREEN:GetRGB())
+		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.green))
 	end
-
-	tooltip:Show()
 end
 
 local function tooltipBar_OnValueChanged(self, value)
@@ -835,8 +803,10 @@ function MODULE:Init()
 
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-GLASS")
-		GameTooltipStatusBar:SetHeight(10)
+		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-12")
+		GameTooltipStatusBar:ClearAllPoints()
+		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
+		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
 		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
 		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 

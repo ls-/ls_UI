@@ -403,7 +403,7 @@ do
 				local deleteButtonIcon = deleteButton:CreateTexture(nil, "ARTWORK")
 				deleteButtonIcon:SetTexture("Interface\\Buttons\\UI-StopButton")
 				deleteButtonIcon:SetDesaturated(true)
-				deleteButtonIcon:SetVertexColor(M.COLORS.RED:GetRGB())
+				deleteButtonIcon:SetVertexColor(E:GetRGB(C.db.global.colors.red))
 				deleteButtonIcon:SetAlpha(0.5)
 				deleteButtonIcon:SetPoint("TOPLEFT", 1, -1)
 				deleteButtonIcon:SetPoint("BOTTOMRIGHT", -1, 1)
@@ -411,7 +411,7 @@ do
 
 				local bg = button:CreateTexture(nil, "BACKGROUND", nil, -8)
 				bg:SetAllPoints()
-				bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGBA(0.65))
+				bg:SetColorTexture(E:GetRGBA(C.db.global.colors.dark_gray, 0.65))
 				button.BG = bg
 
 				if i == 1 then
@@ -681,14 +681,15 @@ function MODULE.Init()
 	AceConfig:RegisterOptionsTable(addonName, C.options)
 	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
 
-	MODULE:CreateActionBarsPanel(5)
-	MODULE:CreateAuraTrackerPanel(6)
-	MODULE:CreateBlizzardPanel(7)
-	MODULE:CreateAurasPanel(8)
-	MODULE:CreateLootPanel(9)
-	MODULE:CreateMinimapPanel(10)
-	MODULE:CreateTooltipsPanel(11)
-	MODULE:CreateUnitFramesPanel(12)
+	MODULE:CreateGeneralPanel(5)
+	MODULE:CreateActionBarsPanel(6)
+	MODULE:CreateAuraTrackerPanel(7)
+	MODULE:CreateBlizzardPanel(8)
+	MODULE:CreateAurasPanel(9)
+	MODULE:CreateLootPanel(10)
+	MODULE:CreateMinimapPanel(11)
+	MODULE:CreateTooltipsPanel(12)
+	MODULE:CreateUnitFramesPanel(13)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100

@@ -1,14 +1,77 @@
 local _, ns = ...
-local D = ns.D
+local E, D = ns.E, ns.D
 
+-- Lua
+local _G = getfenv(0)
+
+-- Mine
 local function rgb(r, g, b)
-	return {r / 255, g / 255, b / 255, 1}
+	return E:SetRGB({}, r, g, b)
 end
 
-D.global = {}
+D.global = {
+	colors = {
+		red = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+		green = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		blue = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+		yellow = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+		gray = rgb(136, 137, 135), -- #888987 (N5)
+		dark_gray = rgb(59, 58, 58), -- #3B3A3A (N2)
+		black = rgb(0, 0, 0), -- #000000
+		white = rgb(255, 255, 255), -- #FFFFFF
+		orange = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+		class = {
+			HUNTER = rgb(170, 211, 114), -- #AAD372 (Blizzard Colour)
+			WARLOCK = rgb(135, 135, 237), -- #8787ED (Blizzard Colour)
+			PRIEST = rgb(255, 255, 255), -- #FFFFFF (Blizzard Colour)
+			PALADIN = rgb(244, 140, 186), -- #F48CBA (Blizzard Colour)
+			MAGE = rgb(63, 198, 234), -- #3FC6EA (Blizzard Colour)
+			ROGUE = rgb(255, 244, 104), -- #FFF468 (Blizzard Colour)
+			DRUID = rgb(255, 124, 10), -- #FF7C0A (Blizzard Colour)
+			SHAMAN = rgb(0, 112, 221), -- #0070DD (Blizzard Colour)
+			WARRIOR = rgb(198, 155, 109), -- #C69B6D (Blizzard Colour)
+			DEATHKNIGHT = rgb(196, 30, 58), -- #C41E3A (Blizzard Colour)
+			MONK = rgb(0, 255, 150), -- #00FF96 (Blizzard Colour)
+			DEMONHUNTER = rgb(163, 48, 201), -- #A330C9 (Blizzard Colour)
+		},
+		threat = {
+			[1] = rgb(175, 175, 175), -- #AFAFAF (Blizzard Colour)
+			[2] = rgb(254, 254, 118), -- #FEFE76 (Blizzard Colour)
+			[3] = rgb(254, 152, 0), -- #FE9800 (Blizzard Colour)
+			[4] = rgb(254, 0, 0), -- #FE0000 (Blizzard Colour)
+		},
+		quality = {
+			[0] = rgb(157, 157, 157), -- #9D9D9D (Blizzard Colour)
+			[1] = rgb(255, 255, 255), -- #FFFFFF (Blizzard Colour)
+			[2] = rgb(30, 255, 0), -- #1EFF00 (Blizzard Colour)
+			[3] = rgb(0, 112, 221), -- #0070DD (Blizzard Colour)
+			[4] = rgb(163, 53, 238), -- #A334EE (Blizzard Colour)
+			[5] = rgb(255, 128, 0), -- #FF8000 (Blizzard Colour)
+			[6] = rgb(230, 204, 128), -- #E6CC80 (Blizzard Colour)
+			[7] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
+			[8] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
+		},
+		gyr = {
+			[1] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			[3] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+		},
+		ryg = {
+			[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			[3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		},
+	},
+}
 
 D.profile = {
 	colors = {
+		button = {
+			normal = rgb(255, 255, 255), -- #FFFFFF
+			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
+			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
+			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+		},
 		castbar = {
 			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
@@ -24,8 +87,8 @@ D.profile = {
 		},
 		disconnected = rgb(136, 137, 135), -- #888987 (N5)
 		tapped = rgb(163, 162, 162), -- #A3A2A2 (N6)
-		gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12)
 		health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12)
 		loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
 		power = {
 			MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10)
@@ -54,6 +117,7 @@ D.profile = {
 				-- high
 				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
 			},
+			ALT_POWER = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
 		},
 		reaction = {
 			-- hated
@@ -73,6 +137,29 @@ D.profile = {
 			-- exalted
 			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
+		selection = {
+			-- player's character while in combat
+			[1] = rgb(244, 232, 140), -- #F4E88C (7.5Y 9/6)
+			-- neutral
+			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			-- unfriendly
+			[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			-- hostile
+			[4] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- dead
+			[5] = rgb(136, 137, 135), -- #888987 (N5)
+			-- friendly
+			[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- default
+			[7] = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+		},
+		difficulty = {
+			impossible = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			very_difficult = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			difficult = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			standard = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			trivial = rgb(136, 137, 135), -- #888987 (N5)
+		},
 		faction = {
 			-- Alliance = rgb(74, 84, 232), -- #4A54E8 (Blizzard Colour)
 			Alliance = rgb(64, 84, 202), -- #4054CA (7.5PB 4/16)
@@ -87,12 +174,12 @@ D.profile = {
 			-- rested
 			[1] = rgb(0, 99, 224), -- #0063E0 (Blizzard Colour)
 			-- normal
-			[2] = rgb(148, 0, 140), -- #94008C (Blizzard Colour)
+			[2] = rgb(147.9, 0.0, 140.25), -- #94008C (Blizzard Colour)
 		},
 		prediction = {
 			my_heal = rgb(20, 228, 187), -- #14E4BB (10G 8/10)
 			other_heal = rgb(11, 169, 139), -- #0BA98B (10G 6/8)
-			-- damage_absorb = rgb(),
+			damage_absorb = rgb(53, 187, 244), -- #35BBF4 (10B 7/10)
 			heal_absorb = rgb(178, 50, 43), -- #B2322B (7.5R 4/12)
 			power_cost = rgb(120, 181, 231), -- #78B5E7 (2.5PB 7/8)
 		},
@@ -100,20 +187,18 @@ D.profile = {
 			contested = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			friendly = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 			hostile = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
-			sanctuary = rgb(128, 215, 235) -- #80D7EB (5B 8/6)
-		},
-		button = {
-			normal = rgb(255, 255, 255), -- #FFFFFF
-			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
-			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
-			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+			sanctuary = rgb(80, 219, 249), -- #50DBF9 (5B 8/8)
+			-- sanctuary = rgb(104, 204, 239) -- #68CCEF (Blizzard Colour)
 		},
 		debuff = {
-			None = rgb(204, 0, 0), -- #cc0000 (Blizzard Colour)
-			Magic = rgb(51, 153, 255), -- #3399ff (Blizzard Colour)
-			Curse = rgb(153, 0, 255), -- #9900ff (Blizzard Colour)
+			None = rgb(204, 0, 0), -- #CC0000 (Blizzard Colour)
+			Magic = rgb(51, 153, 255), -- #3399FF (Blizzard Colour)
+			Curse = rgb(153, 0, 255), -- #9900FF (Blizzard Colour)
 			Disease = rgb(153, 102, 0), -- #996600 (Blizzard Colour)
 			Poison = rgb(0, 153, 0), -- #009900 (Blizzard Colour)
+		},
+		buff = {
+			Enchant = rgb(123, 44, 181), -- #7B2CB5 (Blizzard Colour)
 		},
 		rune = {
 			-- blood
@@ -128,22 +213,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
-		},
-		castbar = {
-			colors = {
-				casting = rgb(250, 193, 74),
-				channeling = rgb(46, 172, 52),
-				failed = rgb(220, 68, 54),
-				notinterruptible = rgb(136, 137, 135),
-			},
 		},
 		ls = {
 			player = {
@@ -151,8 +220,8 @@ D.profile = {
 				width = 166,
 				height = 166,
 				point = {
-					ls = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
+					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
+					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 				},
 				health = {
 					enabled = true,
@@ -342,8 +411,8 @@ D.profile = {
 				width = 42,
 				height = 134,
 				point = {
-					ls = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
-					traditional = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+					ls = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
+					traditional = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
 				},
 				health = {
 					enabled = true,
@@ -1915,7 +1984,7 @@ D.profile = {
 				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
 				position = 2, -- 0 - zone text, 1 - clock, 2 - bottom
 			},
-			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
 		traditional = {
 			zone_text = {
@@ -1931,15 +2000,9 @@ D.profile = {
 				mode = 2,
 				position = 0,
 			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8, -24},
 		},
 		buttons = {},
-		colors = {
-			contested = rgb(250, 193, 74),
-			friendly = rgb(85, 240, 83),
-			hostile = rgb(240, 72, 63),
-			sanctuary = rgb(105, 204, 240),
-		},
 		color = {
 			border = false,
 			zone_text = true,
@@ -1955,20 +2018,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
-		},
-		colors = {
-			normal = rgb(255, 255, 255),
-			unusable = rgb(102, 102, 102),
-			mana = rgb(38, 97, 172),
-			range = rgb(140, 29, 30),
 		},
 		desaturation = {
 			cooldown = true,
@@ -2562,14 +2611,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
 		},
 		HELPFUL = {
 			size = 32,
@@ -2727,12 +2768,6 @@ D.profile = {
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
-			colors = {
-				casting = rgb(250, 193, 74),
-				channeling = rgb(46, 172, 52),
-				failed = rgb(220, 68, 54),
-				notinterruptible = rgb(136, 137, 135),
-			},
 		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			width = 200,
@@ -2761,6 +2796,29 @@ D.profile = {
 	},
 }
 
+D.profile.colors.power[ 0] = D.profile.colors.power.MANA
+D.profile.colors.power[ 1] = D.profile.colors.power.RAGE
+D.profile.colors.power[ 2] = D.profile.colors.power.FOCUS
+D.profile.colors.power[ 3] = D.profile.colors.power.ENERGY
+D.profile.colors.power[ 4] = D.profile.colors.power.CHI
+D.profile.colors.power[ 5] = D.profile.colors.power.RUNES
+D.profile.colors.power[ 6] = D.profile.colors.power.RUNIC_POWER
+D.profile.colors.power[ 7] = D.profile.colors.power.SOUL_SHARDS
+D.profile.colors.power[ 8] = D.profile.colors.power.LUNAR_POWER
+D.profile.colors.power[ 9] = D.profile.colors.power.HOLY_POWER
+D.profile.colors.power[11] = D.profile.colors.power.MAELSTROM
+D.profile.colors.power[13] = D.profile.colors.power.INSANITY
+D.profile.colors.power[17] = D.profile.colors.power.FURY
+D.profile.colors.power[18] = D.profile.colors.power.PAIN
+
+D.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = D.profile.colors.selection[1]
+D.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = D.profile.colors.selection[2]
+D.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = D.profile.colors.selection[3]
+D.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = D.profile.colors.selection[4]
+D.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = D.profile.colors.selection[5]
+D.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = D.profile.colors.selection[6]
+D.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = D.profile.colors.selection[7]
+
 D.char = {
 	layout = "ls", -- or "traditional"
 	auras = {
@@ -2784,14 +2842,6 @@ D.char = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
 			text = {
 				enabled = true,
 				size = 12,

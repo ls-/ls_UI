@@ -59,7 +59,6 @@ end
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
-	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
 	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
@@ -75,14 +74,12 @@ end
 local function bar_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
-			colors = {},
 			text = {},
 		}
 	end
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local cooldown

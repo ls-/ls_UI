@@ -97,10 +97,15 @@ do
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
 	end
 
+	local function element_UpdateColors(self)
+		self:ForceUpdate()
+	end
+
 	local function frame_UpdatePower(self)
 		local element = self.Power
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
+		element:UpdateColors()
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -134,6 +139,7 @@ do
 		element.colorPower = true
 		element.frequentUpdates = true
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateFontObjects = element_UpdateFontObjects
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
@@ -164,10 +170,15 @@ do
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 
+	local function element_UpdateColors(self)
+		self:ForceUpdate()
+	end
+
 	local function frame_UpdateAdditionalPower(frame)
 		local element = frame.AdditionalPower
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
+		element:UpdateColors()
 
 		element.GainLossIndicators:UpdatePoints(element._config.orientation)
 		element:UpdateGainLossThreshold()
@@ -191,6 +202,7 @@ do
 
 		element.colorPower = true
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 
@@ -230,10 +242,15 @@ do
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
 	end
 
+	local function element_UpdateColors(self)
+		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power.ALT_POWER))
+	end
+
 	local function frame_UpdateAlternativePower(self)
 		local element = self.AlternativePower
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
+		element:UpdateColors()
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -257,7 +274,6 @@ do
 	function UF:CreateAlternativePower(frame, textParent)
 		local element = CreateFrame("StatusBar", nil, frame)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:SetStatusBarColor(M.COLORS.INDIGO:GetRGB())
 		E:SmoothBar(element)
 
 		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
@@ -265,6 +281,7 @@ do
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.PostUpdate = element_PostUpdate
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateFontObjects = element_UpdateFontObjects
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
@@ -292,6 +309,11 @@ do
 		self._config.power.orientation = C.db.profile.units[unit].power.orientation
 		self._config.class_power.enabled = C.db.profile.units[unit].class_power.prediction.enabled
 		self._config.class_power.orientation = C.db.profile.units[unit].class_power.orientation
+	end
+
+	local function element_UpdateColors(self)
+		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.profile.colors.prediction.power_cost))
+		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.profile.colors.prediction.power_cost))
 	end
 
 	local function frame_UpdatePowerPrediction(frame)
@@ -362,6 +384,8 @@ do
 			element.altBar_:ClearAllPoints()
 		end
 
+		element:UpdateColors()
+
 		local isEnabled = config1.enabled or config2.enabled
 		if isEnabled and not frame:IsElementEnabled("PowerPrediction") then
 			frame:EnableElement("PowerPrediction")
@@ -377,14 +401,12 @@ do
 	function UF:CreatePowerPrediction(frame, parent1, parent2)
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		mainBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
 		mainBar:SetReverseFill(true)
 		E:SmoothBar(mainBar)
 		parent1.CostPrediction = mainBar
 
 		local altBar = CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		altBar:SetStatusBarColor(0.55, 0.75, 0.95) -- MOVE TO CONSTANTS!
 		altBar:SetReverseFill(true)
 		E:SmoothBar(altBar)
 		parent2.CostPrediction = altBar
@@ -394,6 +416,7 @@ do
 		return {
 			mainBar_ = mainBar,
 			altBar_ = altBar,
+			UpdateColors = element_UpdateColors,
 			UpdateConfig = element_UpdateConfig,
 		}
 	end

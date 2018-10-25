@@ -41,7 +41,7 @@ local LibDropDown = LibStub("LibDropDown")
 local handledButtons = {}
 local isInit = false
 
-local LATENCY_TEMPLATE = "|cff%s%s|r " .. _G.MILLISECONDS_ABBR
+local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
 local MEMORY_TEMPLATE = "%.2f MiB"
 
 local ROLE_NAMES = {
@@ -293,7 +293,7 @@ local function button_OnEnter(self)
 	end
 
 	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
-		local r, g, b = M.COLORS.RED:GetRGB()
+		local r, g, b = E:GetRGB(C.db.global.colors.red)
 
 		if self.factionGroup == "Neutral" then
 			GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
@@ -409,9 +409,8 @@ do
 
 			for i = 1, 17 do
 				local cur = durabilities[i]
-
 				if cur then
-					GameTooltip:AddDoubleLine(slots[i], ("%d%%"):format(cur), 1, 1, 1, M.COLORS.RYG:GetRGB(cur / 100))
+					GameTooltip:AddDoubleLine(slots[i], ("%d%%"):format(cur), 1, 1, 1, E:GetGradientAsRGB(cur / 100, C.db.global.colors.ryg))
 				end
 			end
 
@@ -467,7 +466,7 @@ do
 			end
 		end
 
-		self.Indicator:SetVertexColor(M.COLORS.RYG:GetRGB(minDurability / 100))
+		self.Indicator:SetVertexColor(E:GetGradientAsRGB(minDurability / 100, C.db.global.colors.ryg))
 	end
 end
 
@@ -506,9 +505,9 @@ do
 				if name and icon then
 					if max and max > 0 then
 						if cur == max then
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, M.COLORS.RED:GetRGB())
+							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, E:GetRGB(C.db.global.colors.red))
 						else
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, M.COLORS.GREEN:GetRGB())
+							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, E:GetRGB(C.db.global.colors.green))
 						end
 					else
 						GameTooltip:AddDoubleLine(name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(cur), icon), 1, 1, 1, 1, 1, 1)
@@ -576,7 +575,7 @@ do
 	function inventoryButton_UpdateIndicator(self)
 		updateBagUsageInfo()
 
-		self.Indicator:SetVertexColor(M.COLORS.RYG:GetRGB(freeSlots / totalSlots))
+		self.Indicator:SetVertexColor(E:GetGradientAsRGB(freeSlots / totalSlots, C.db.global.colors.ryg))
 	end
 end
 
@@ -931,9 +930,10 @@ do
 		button_OnEnter(self)
 
 		if self:IsEnabled() then
+			local gray = C.db.global.colors.gray
+
 			for _, role in next, roles do
 				local hasTitle = false
-				local r, g, b = M.COLORS.GRAY:GetRGB()
 
 				for _, v in next, cta[role] do
 					if v then
@@ -947,7 +947,7 @@ do
 						GameTooltip:AddLine(v.name, 1, 1, 1)
 
 						for i = 1, #v do
-							GameTooltip:AddDoubleLine(v[i].name, v[i].quantity .. v[i].texture, r, g, b, r, g, b)
+							GameTooltip:AddDoubleLine(v[i].name, v[i].quantity .. v[i].texture, gray.r, gray.g, gray.b, gray.r, gray.g, gray.b)
 						end
 					end
 				end
@@ -1036,7 +1036,9 @@ do
 			if savedInstances + savedWorldBosses == 0 then return end
 
 			local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
-			local r, g, b = M.COLORS.GRAY:GetRGB()
+			local gray = C.db.global.colors.gray
+			local red = C.db.global.colors.red
+			local color
 			local hasTitle
 
 			for i = 1, savedInstances + savedWorldBosses do
@@ -1051,10 +1053,10 @@ do
 							hasTitle = true
 						end
 
-						local color = encounterProgress == numEncounters and M.COLORS.RED or M.COLORS.GREEN
+						color = encounterProgress == numEncounters and red or C.db.global.colors.green
 
-						GameTooltip:AddDoubleLine(instanceName, encounterProgress .. " / " .. numEncounters, 1, 1, 1, color:GetRGB())
-						GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), r, g, b, r, g, b)
+						GameTooltip:AddDoubleLine(instanceName, encounterProgress .. " / " .. numEncounters, 1, 1, 1, color.r, color.g, color.b)
+						GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), gray.r, gray.g, gray.b, gray.r, gray.g, gray.b)
 					end
 				else
 					instanceName, _, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
@@ -1067,8 +1069,8 @@ do
 							hasTitle = true
 						end
 
-						GameTooltip:AddDoubleLine(instanceName, "1 / 1", 1, 1, 1, M.COLORS.RED:GetRGB())
-						GameTooltip:AddDoubleLine(L["WORLD_BOSS"], SecondsToTime(instanceReset, true, nil, 3), r, g, b, r, g, b)
+						GameTooltip:AddDoubleLine(instanceName, "1 / 1", 1, 1, 1, red.r, red.g, red.b)
+						GameTooltip:AddDoubleLine(L["WORLD_BOSS"], SecondsToTime(instanceReset, true, nil, 3), gray.r, gray.g, gray.b, gray.r, gray.g, gray.b)
 					end
 				end
 			end
@@ -1116,8 +1118,8 @@ do
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["LATENCY_COLON"])
-			GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(M.COLORS.GYR:GetHEX(latencyHome / PERFORMANCEBAR_MEDIUM_LATENCY), latencyHome), 1, 1, 1)
-			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(M.COLORS.GYR:GetHEX(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY), latencyWorld), 1, 1, 1)
+			GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyHome / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr), latencyHome), 1, 1, 1)
+			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr), latencyWorld), 1, 1, 1)
 
 			if IsShiftKeyDown() then
 				GameTooltip:AddLine(" ")
@@ -1144,8 +1146,7 @@ do
 					if addOns[i][3] then
 						local m = addOns[i][2]
 
-						GameTooltip:AddDoubleLine(addOns[i][1], MEMORY_TEMPLATE:format(m / 1024),
-							1, 1, 1, M.COLORS.GYR:GetRGB(m / (memUsage == m and 1 or (memUsage - m))))
+						GameTooltip:AddDoubleLine(addOns[i][1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
 					end
 				end
 
@@ -1194,8 +1195,7 @@ do
 
 	function mainMenuButton_UpdateIndicator(self)
 		_, _, latencyHome, latencyWorld = GetNetStats()
-
-		self.Indicator:SetVertexColor(M.COLORS.GYR:GetRGB(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY))
+		self.Indicator:SetVertexColor(E:GetGradientAsRGB(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr))
 	end
 end
 

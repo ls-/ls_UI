@@ -13,8 +13,6 @@ local GetTime = _G.GetTime
 local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
 local UnitAura = _G.UnitAura
 
-local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
-
 --[[ luacheck: globals
 	BuffFrame CreateFrame GameTooltip RegisterAttributeDriver RegisterStateDriver
 	TemporaryEnchantFrame UIParent
@@ -63,7 +61,7 @@ local function updateAura(button, index)
 		end
 
 		if filter == "HARMFUL" then
-			local color = DEBUFF_TYPE_COLORS[debuffType] or DEBUFF_TYPE_COLORS.none
+			local color = C.db.profile.colors.debuff[debuffType] or C.db.profile.colors.debuff.None
 			button.Border:SetVertexColor(color.r, color.g, color.b)
 
 			if debuffType and debuffType ~= "" and button.showDebuffType then
@@ -104,7 +102,7 @@ local function updateTempEnchant(button, index)
 			button.Cooldown:Hide()
 		end
 
-		button.Border:SetVertexColor(M.COLORS.PURPLE:GetRGB())
+		button.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.buff.Enchant))
 	end
 end
 
@@ -307,14 +305,12 @@ end
 local function header_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
-			colors = {},
 			text = {},
 		}
 	end
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local buttons = self._buttons or {self:GetChildren()}

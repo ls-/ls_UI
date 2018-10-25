@@ -9,11 +9,8 @@ local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
 
 -- Blizz
-local CooldownFrame_Set = _G.CooldownFrame_Set
 local GetSpellInfo = _G.GetSpellInfo
 local UnitAura = _G.UnitAura
-
-local DEBUFF_TYPE_COLORS = _G.DebuffTypeColor
 
 --[[ luacheck: globals
 	CreateFrame GameTooltip IsAltKeyDown IsControlKeyDown IsShiftKeyDown UIParent
@@ -117,11 +114,9 @@ local function bar_OnEvent(self)
 				end
 
 				if button.filter == "HARMFUL" then
-					local color = DEBUFF_TYPE_COLORS[aura.debuffType] or DEBUFF_TYPE_COLORS.none
-
+					local color = C.db.profile.colors.debuff[aura.debuffType] or C.db.profile.colors.debuff.None
 					button.Border:SetVertexColor(color.r, color.g, color.b)
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
-
 				else
 					button.Border:SetVertexColor(1, 1, 1)
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
@@ -156,14 +151,12 @@ end
 local function bar_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
-			colors = {},
 			text = {},
 		}
 	end
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-	self.cooldownConfig.colors = E:CopyTable(self._config.cooldown.colors, self.cooldownConfig.colors)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	for _, button in next, self._buttons do
@@ -205,7 +198,7 @@ function MODULE.Init()
 		label:SetAlpha(0.4)
 		label:SetPoint("LEFT", 2, 0)
 		label:SetWordWrap(false)
-		label:SetText(M.COLORS.BLIZZ_YELLOW:WrapText(L["AURA_TRACKER"]))
+		label:SetFormattedText("|cffffd200%s|r", L["AURA_TRACKER"])
 		header.Text = label
 
 		header:SetSize(label:GetWidth() + 10, 22)
