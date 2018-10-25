@@ -2020,7 +2020,6 @@ D.profile = {
 			m_ss_threshold = 120, -- [91; 3599]
 		},
 		desaturation = {
-			cooldown = true,
 			unusable = true,
 			mana = true,
 			range = true,

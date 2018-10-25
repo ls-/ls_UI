@@ -790,23 +790,18 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					end
 				end,
 				args = {
-					cooldown = {
-						order = 1,
-						type = "toggle",
-						name = L["ON_COOLDOWN"],
-					},
 					unusable = {
-						order = 2,
+						order = 1,
 						type = "toggle",
 						name = L["UNUSABLE"],
 					},
 					mana = {
-						order = 3,
+						order = 2,
 						type = "toggle",
 						name = L["OOM"],
 					},
 					range = {
-						order = 4,
+						order = 3,
 						type = "toggle",
 						name = L["OOR"],
 					},
