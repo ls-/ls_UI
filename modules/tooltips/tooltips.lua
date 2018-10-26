@@ -72,7 +72,7 @@ local AFK = "[".._G.AFK.."] "
 local DND = "[".._G.DND.."] "
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE:format("|c%s%s", "|r%s")
 local ID = "|cffffd100".._G.ID..":|r %d"
-local ITEM_LEVEL = "|cffffd100".._G.ITEM_LEVEL_ABBR..":|r |c%s%s|r"
+local ITEM_LEVEL = "|cffffd100".._G.ITEM_LEVEL_ABBR..":|r |cffffffff%s|r"
 local SPECIALIZATION = "|cffffd100".._G.SPECIALIZATION..":|r |c%s%s|r"
 local TARGET = "|cffffd100".._G.TARGET..":|r %s"
 local TOTAL = "|cffffd100".._G.TOTAL..":|r %d"
@@ -282,7 +282,7 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.white.hex, E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
 	elseif inspectGUIDCache[unitGUID] and inspectGUIDCache[unitGUID].time then
 		local specName = inspectGUIDCache[unitGUID].specName
 		local itemLevel = inspectGUIDCache[unitGUID].itemLevel
@@ -298,18 +298,13 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 		end
 
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.white.hex, itemLevel), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(itemLevel), 1, 1, 1)
 	elseif unitGUID ~= lastGUID then
 		lastGUID = unitGUID
 
 		NotifyInspect(unit)
 
 		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
-
-		if numTries == 0 then
-			tooltip:AddLine(SPECIALIZATION:format(C.db.global.colors.red.hex, L["RETRIEVING_DATA"]), 1, 1, 1)
-			tooltip:AddLine(ITEM_LEVEL:format(C.db.global.colors.red.hex, L["RETRIEVING_DATA"]), 1, 1, 1)
-		end
 	end
 end
 

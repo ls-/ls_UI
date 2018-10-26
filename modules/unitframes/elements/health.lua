@@ -93,8 +93,16 @@ do
 		updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
 	end
 
+	local function element_UpdateGainLossPoints(self)
+		self.GainLossIndicators:UpdatePoints(self._config.orientation)
+	end
+
 	local function element_UpdateGainLossThreshold(self)
-		self.GainLossIndicators.threshold = self._config.change_threshold
+		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
+	end
+
+	local function element_UpdateGainLossColors(self)
+		self.GainLossIndicators:UpdateColors()
 	end
 
 	local function frame_UpdateHealth(self)
@@ -105,10 +113,9 @@ do
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
-
-		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossColors()
+		element:UpdateGainLossPoints()
 		element:UpdateGainLossThreshold()
-
 		element:ForceUpdate()
 	end
 
@@ -134,6 +141,8 @@ do
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateGainLossColors = element_UpdateGainLossColors
+		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 		element.UpdateTags = element_UpdateTags
 		element.UpdateTextPoints = element_UpdateTextPoints

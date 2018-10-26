@@ -186,6 +186,15 @@ local function updateFontObject(fontString, config)
 	end
 end
 
+local function updateColors(self)
+	CastingBarFrame_SetStartCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
+	CastingBarFrame_SetStartChannelColor(self, E:GetRGB(C.db.profile.colors.castbar.channeling))
+	CastingBarFrame_SetFinishedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
+	CastingBarFrame_SetNonInterruptibleCastColor(self, E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
+	CastingBarFrame_SetFailedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.failed))
+	CastingBarFrame_SetUseStartColorForFinished(self, true)
+end
+
 local function updateCastBar(self)
 	local config = C.db.profile.blizzard.castbar
 	local holder = self.Holder
@@ -260,12 +269,7 @@ local function updateCastBar(self)
 
 	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 
-	CastingBarFrame_SetStartCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
-	CastingBarFrame_SetStartChannelColor(self, E:GetRGB(C.db.profile.colors.castbar.channeling))
-	CastingBarFrame_SetFinishedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
-	CastingBarFrame_SetNonInterruptibleCastColor(self, E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
-	CastingBarFrame_SetFailedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.failed))
-	CastingBarFrame_SetUseStartColorForFinished(self, true)
+	updateColors(self)
 
 	updateFontObject(self.Text, config.text)
 	self.Text:SetJustifyH("LEFT")
@@ -355,5 +359,12 @@ function MODULE:UpdateCastBars()
 	if isInit then
 		updateCastBar(CastingBarFrame)
 		updateCastBar(PetCastingBarFrame)
+	end
+end
+
+function MODULE:UpdateCastBarColors()
+	if isInit then
+		updateColors(CastingBarFrame)
+		updateColors(PetCastingBarFrame)
 	end
 end

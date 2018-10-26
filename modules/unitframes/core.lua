@@ -109,18 +109,14 @@ local function frame_Preview(self, state)
 	end
 end
 
-function UF:UpdateHealthColor()
+function UF:UpdateHealthColors()
 	local color = oUF.colors.health
 	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.health)
-end
 
-function UF:UpdateTappedColor()
-	local color = oUF.colors.tapped
+	color = oUF.colors.tapped
 	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.tapped)
-end
 
-function UF:UpdateDisconnectedColor()
-	local color = oUF.colors.disconnected
+	color = oUF.colors.disconnected
 	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.disconnected)
 end
 
@@ -157,18 +153,12 @@ function UF:UpdatePowerColors()
 			end
 		end
 	end
-end
 
-function UF:UpdateRuneColors()
-	local color = oUF.colors.runes
+	color = oUF.colors.runes
 	for k, v in next, C.db.profile.colors.rune do
 		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
 	end
-
-	color = oUF.colors.power.RUNES
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.power.RUNES)
 end
-
 
 function UF:CreateUnitFrame(unit, name)
 	if not units[unit] then
@@ -220,6 +210,12 @@ function UF:UpdateUnitFrames(method, ...)
 	end
 end
 
+function UF:ForEach(method, ...)
+	for unit in next, units do
+		self:UpdateUnitFrame(unit, method, ...)
+	end
+end
+
 function UF:GetUnits(ignoredUnits)
 	local temp = {}
 
@@ -238,13 +234,10 @@ end
 
 function UF:Init()
 	if not isInit and C.db.char.units.enabled then
-		self:UpdateHealthColor()
-		self:UpdateTappedColor()
-		self:UpdateDisconnectedColor()
+		self:UpdateHealthColors()
 		self:UpdateReactionColors()
 		self:UpdateSelectionColors()
 		self:UpdatePowerColors()
-		self:UpdateRuneColors()
 
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)

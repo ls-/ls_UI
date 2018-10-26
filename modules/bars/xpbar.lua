@@ -380,9 +380,12 @@ local function segment_OnLeave(self)
 end
 
 local function segment_Update(self, cur, max, bonus, color)
-	if self._value ~= cur or self._max ~= max then
+	if color then
 		self.Texture:SetVertexColor(E:GetRGBA(color, 1))
+		self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
+	end
 
+	if self._value ~= cur or self._max ~= max then
 		self:SetMinMaxValues(0, max)
 		self:SetValue(cur)
 		self:UpdateText(cur, max)
@@ -393,9 +396,6 @@ local function segment_Update(self, cur, max, bonus, color)
 			if cur + bonus > max then
 				bonus = max - cur
 			end
-
-			self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
-
 			self.Extension:SetMinMaxValues(0, max)
 			self.Extension:SetValue(bonus)
 		else

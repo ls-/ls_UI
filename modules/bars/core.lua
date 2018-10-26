@@ -123,6 +123,14 @@ function MODULE.UpdateBars(_, method, ...)
 	end
 end
 
+function MODULE:ForEach(method, ...)
+	for _, bar in next, bars do
+		if bar[method] then
+			bar[method](bar, ...)
+		end
+	end
+end
+
 -- Bindings
 local rebindable = {
 	bar1 = true,

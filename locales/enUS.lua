@@ -450,69 +450,61 @@ L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
-L["DISCONNECTED"] = "Disconnected"
-L["TAPPED"] = "Tapped"
-L["RESOURCE_GAIN"] = "Resource Gain"
-L["RESOURCE_LOSS"] = "Resource Loss"
-
-L["MANA"] = _G.MANA
-L["RAGE"] = _G.RAGE
-L["FOCUS"] = _G.FOCUS
-L["ENERGY"] = _G.ENERGY
+-- WIP
+L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
+L["CHI"] = _G.CHI
 L["COMBO_POINTS"] = _G.COMBO_POINTS
+L["ENERGY"] = _G.ENERGY
+L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
+L["FACTION_HORDE"] = _G.FACTION_HORDE
+L["FACTION"] = _G.FACTION
+L["FOCUS"] = _G.FOCUS
+L["FURY"] = _G.FURY
+L["HOLY_POWER"] = _G.HOLY_POWER
+L["INSANITY"] = _G.INSANITY
+L["LUNAR_POWER"] = _G.LUNAR_POWER
+L["MAELSTROM"] = _G.MAELSTROM
+L["MANA"] = _G.MANA
+L["PAIN"] = _G.PAIN
+L["RAGE"] = _G.RAGE
 L["RUNES"] = _G.RUNES
 L["RUNIC_POWER"] = _G.RUNIC_POWER
 L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
-L["LUNAR_POWER"] = _G.LUNAR_POWER
-L["HOLY_POWER"] = _G.HOLY_POWER
-L["MAELSTROM"] = _G.MAELSTROM
-L["INSANITY"] = _G.INSANITY
-L["CHI"] = _G.CHI
-L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
-L["FURY"] = _G.FURY
-L["PAIN"] = _G.PAIN
+L["ZONE"] = _G.ZONE
 
-L["STAGGER_LOW"] = "Low Stagger"
-L["STAGGER_MEDIUM"] = "Medium Stagger"
-L["STAGGER_HIGH"] = "High Stargger"
-
+L["AURA"] = "Aura"
+L["BUTTON"] = "Button"
+L["CHANGE"] = "Change"
+L["CURSE"] = "Curse"
+L["DAMAGE_ABSORB"] = "Damage Absorb"
+L["DEBUFF"] = "Debuff"
+L["DIFFICULT"] = "Difficult"
+L["DIFFICULTY"] = "Difficulty"
+L["DISCONNECTED"] = "Disconnected"
+L["DISEASE"] = "Disease"
+L["EXPERIENCE_NORMAL"] = "Normal"
+L["EXPERIENCE_RESTED"] = "Rested"
+L["FACTION_NEUTRAL"] = "Neutral"
+L["GAIN"] = "Gain"
+L["HEAL_ABSORB"] = "Heal Absorb"
+L["IMPOSSIBLE"] = "Impossible"
+L["LOSS"] = "Loss"
+L["MAGIC"] = "Magic"
+L["OTHERS"] = "Others"
+L["PERSONAL"] = "Personal"
+L["POISON"] = "Poison"
+L["POWER_COST"] = "Power Cost"
+L["PREDICTION"] = "Prediction"
 L["RUNES_BLOOD"] = "Blood Runes"
 L["RUNES_FROST"] = "Frost Runes"
 L["RUNES_UNHOLY"] = "Unholy Runes"
-
-L["FACTION"] = _G.FACTION
-L["FACTION_HORDE"] = _G.FACTION_HORDE
-L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
-L["FACTION_NEUTRAL"] = "Neutral"
-
-L["EXPERIENCE_RESTED"] = "Rested"
-L["EXPERIENCE_NORMAL"] = "Normal"
-
-L["PREDICTION"] = "Prediction"
-L["PERSONAL"] = "Personal"
-L["OTHERS"] = "Others"
-L["DAMAGE_ABSORB"] = "Damage Absorb"
-L["HEAL_ABSORB"] = "Heal Absorb"
-L["POWER_COST"] = "Power Cost"
-
-L["AURA"] = "Aura"
-L["DEBUFF"] = "Debuff"
-L["CURSE"] = "Curse"
-L["DISEASE"] = "Disease"
-L["MAGIC"] = "Magic"
-L["POISON"] = "Poison"
-
-L["TEMP_ENCHANT"] = "Temporary Enchant"
-
-L["DIFFICULTY"] = "Difficulty"
-L["TRIVIAL"] = "Trivial"
-L["STANDARD"] = "Standard"
-L["DIFFICULT"] = "Difficult"
-L["VERY_DIFFICULT"] = "Very Difficult"
-L["IMPOSSIBLE"] = "Impossible"
-
-L["BUTTON"] = "Button"
-
-L["ZONE"] = _G.ZONE
-
 L["SELECTION"] = "Selection"
+L["STAGGER_HIGH"] = "High Stargger"
+L["STAGGER_LOW"] = "Low Stagger"
+L["STAGGER_MEDIUM"] = "Medium Stagger"
+L["STANDARD"] = "Standard"
+L["TAPPED"] = "Tapped"
+L["TEMP_ENCHANT"] = "Temporary Enchant"
+L["TRIVIAL"] = "Trivial"
+L["UNATTACKABLE"] = "Unattackable"
+L["VERY_DIFFICULT"] = "Very Difficult"

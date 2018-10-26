@@ -348,16 +348,28 @@ do
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 
+	local function element_UpdateColors(self)
+		self:ForceUpdate()
+	end
+
+	local function element_UpdateGainLossPoints(self)
+		self.GainLossIndicators:UpdatePoints(self._config.orientation)
+	end
+
 	local function element_UpdateGainLossThreshold(self)
-		self.GainLossIndicators.threshold = self._config.change_threshold
+		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
+	end
+
+	local function element_UpdateGainLossColors(self)
+		self.GainLossIndicators:UpdateColors()
 	end
 
 	local function frame_UpdateStagger(self)
 		local element = self.Stagger
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
-
-		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossColors()
+		element:UpdateGainLossPoints()
 		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Stagger") then
@@ -382,7 +394,10 @@ do
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.Override = element_Override
+		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
+		element.UpdateGainLossColors = element_UpdateGainLossColors
+		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 
 		frame.UpdateStagger = frame_UpdateStagger

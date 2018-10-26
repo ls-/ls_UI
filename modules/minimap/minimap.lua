@@ -362,10 +362,9 @@ local function minimap_UpdateConfig(self)
 	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
 end
 
-local function minimap_UpdateBorder(self)
+local function minimap_UpdateBorderColor(self)
 	if self._config.color.border then
-		local color = C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested
-		self.Border:SetVertexColor(color.r, color.g, color.b)
+		self.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested))
 	else
 		self.Border:SetVertexColor(1, 1, 1)
 	end
@@ -414,15 +413,12 @@ local function minimap_UpdateZone(self)
 		Minimap:SetScript("OnLeave", nil)
 	end
 
-	self:UpdateZoneText()
+	self:UpdateZoneColor()
 end
 
-local function minimap_UpdateZoneText(self)
-	self.Zone.Text:SetText(GetMinimapZoneText() or L["UNKNOWN"])
-
+local function minimap_UpdateZoneColor(self)
 	if self._config.color.zone_text then
-		local color = C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested
-		self.Zone.Text:SetVertexColor(color.r, color.g, color.b)
+		self.Zone.Text:SetVertexColor(E:GetRGB(C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested))
 	else
 		self.Zone.Text:SetVertexColor(1, 1, 1)
 	end
@@ -552,8 +548,8 @@ function MODULE.Init()
 
 		Minimap:HookScript("OnEvent", function(self, event)
 			if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-				self:UpdateBorder()
-				self:UpdateZoneText()
+				self:UpdateBorderColor()
+				self:UpdateZoneColor()
 			end
 		end)
 		Minimap:SetScript("OnMouseWheel", function(_, direction)
@@ -960,12 +956,12 @@ function MODULE.Init()
 			end
 		end)
 
-		Minimap.UpdateBorder = minimap_UpdateBorder
+		Minimap.UpdateBorderColor = minimap_UpdateBorderColor
 		Minimap.UpdateClock = minimap_UpdateClock
 		Minimap.UpdateConfig = minimap_UpdateConfig
 		Minimap.UpdateFlag = minimap_UpdateFlag
 		Minimap.UpdateZone = minimap_UpdateZone
-		Minimap.UpdateZoneText = minimap_UpdateZoneText
+		Minimap.UpdateZoneColor = minimap_UpdateZoneColor
 
 		isInit = true
 
@@ -976,7 +972,7 @@ end
 function MODULE.Update()
 	if isInit then
 		Minimap:UpdateConfig()
-		Minimap:UpdateBorder()
+		Minimap:UpdateBorderColor()
 		Minimap:UpdateClock()
 		Minimap:UpdateFlag()
 		Minimap:UpdateZone()

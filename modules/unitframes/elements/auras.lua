@@ -240,10 +240,6 @@ local filterFunctions = {
 	end,
 }
 
-local function overlay_HideOverride(self)
-	self:SetVertexColor(1, 1, 1)
-end
-
 local function button_UpdateTooltip(self)
 	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
@@ -298,10 +294,6 @@ local function element_CreateAuraIcon(self, index)
 	button:SetPushedTexture("")
 	button:SetHighlightTexture("")
 
-	button.overlay = button.Border
-	button.overlay.Hide = overlay_HideOverride
-	button.Border = nil
-
 	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
@@ -325,12 +317,15 @@ end
 
 local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
+		aura.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.debuff[debuffType] or C.db.profile.colors.debuff.None))
+
 		if self._config.type.debuff_type then
 			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))
 		else
 			aura.AuraType:SetTexCoord(unpack(ICONS["Debuff"]))
 		end
 	else
+		aura.Border:SetVertexColor(1, 1, 1)
 		aura.AuraType:SetTexCoord(unpack(ICONS["Buff"]))
 	end
 end
@@ -441,6 +436,10 @@ local function element_UpdateMouse(self)
 	self.disableMouse = self._config.disable_mouse
 end
 
+local function element_UpdateColors(self)
+	self:ForceUpdate()
+end
+
 local function frame_UpdateAuras(self)
 	local element = self.Auras
 	element:UpdateConfig()
@@ -473,8 +472,8 @@ function UF:CreateAuras(frame, unit)
 	element.showDebuffType = true
 	element.showStealableBuffs = true
 	element.spacing = 4
-
 	element.UpdateAuraTypeIcon = element_UpdateAuraTypeIcon
+	element.UpdateColors = element_UpdateColors
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
 	element.UpdateFontObjects = element_UpdateFontObjects

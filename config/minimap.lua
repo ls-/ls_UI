@@ -190,7 +190,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 						set = function(_, value)
 							C.db.profile.minimap.color.border = value
 							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateBorder()
+							MINIMAP:GetMinimap():UpdateBorderColor()
 						end,
 					},
 					zone_text = {
@@ -203,7 +203,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 						set = function(_, value)
 							C.db.profile.minimap.color.zone_text = value
 							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateZoneText()
+							MINIMAP:GetMinimap():UpdateZoneColor()
 						end,
 					},
 				},

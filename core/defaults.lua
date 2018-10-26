@@ -2795,29 +2795,6 @@ D.profile = {
 	},
 }
 
-D.profile.colors.power[ 0] = D.profile.colors.power.MANA
-D.profile.colors.power[ 1] = D.profile.colors.power.RAGE
-D.profile.colors.power[ 2] = D.profile.colors.power.FOCUS
-D.profile.colors.power[ 3] = D.profile.colors.power.ENERGY
-D.profile.colors.power[ 4] = D.profile.colors.power.CHI
-D.profile.colors.power[ 5] = D.profile.colors.power.RUNES
-D.profile.colors.power[ 6] = D.profile.colors.power.RUNIC_POWER
-D.profile.colors.power[ 7] = D.profile.colors.power.SOUL_SHARDS
-D.profile.colors.power[ 8] = D.profile.colors.power.LUNAR_POWER
-D.profile.colors.power[ 9] = D.profile.colors.power.HOLY_POWER
-D.profile.colors.power[11] = D.profile.colors.power.MAELSTROM
-D.profile.colors.power[13] = D.profile.colors.power.INSANITY
-D.profile.colors.power[17] = D.profile.colors.power.FURY
-D.profile.colors.power[18] = D.profile.colors.power.PAIN
-
-D.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = D.profile.colors.selection[1]
-D.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = D.profile.colors.selection[2]
-D.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = D.profile.colors.selection[3]
-D.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = D.profile.colors.selection[4]
-D.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = D.profile.colors.selection[5]
-D.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = D.profile.colors.selection[6]
-D.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = D.profile.colors.selection[7]
-
 D.char = {
 	layout = "ls", -- or "traditional"
 	auras = {

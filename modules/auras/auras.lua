@@ -61,8 +61,7 @@ local function updateAura(button, index)
 		end
 
 		if filter == "HARMFUL" then
-			local color = C.db.profile.colors.debuff[debuffType] or C.db.profile.colors.debuff.None
-			button.Border:SetVertexColor(color.r, color.g, color.b)
+			button.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.debuff[debuffType] or C.db.profile.colors.debuff.None))
 
 			if debuffType and debuffType ~= "" and button.showDebuffType then
 				button.AuraType:SetTexCoord(unpack(ICONS[debuffType]))
