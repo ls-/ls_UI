@@ -1,4 +1,4 @@
-local _, ns = ...
+﻿local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
@@ -51,34 +51,32 @@ L["TOTAL"] = _G.TOTAL
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
-L["COLOR_CLASS_DESC"] = ""
--- L["COLOR_CLASS_DESC"] = (function()
--- 	local temp = ""
+L["COLOR_CLASS_DESC"] = function()
+	local temp = ""
 
--- 	for k, class in next, _G.CLASS_SORT_ORDER do
--- 		temp = temp .. "|c" .. C.db.global.colors.class[class].hex .. _G.LOCALIZED_CLASS_NAMES_MALE[class] .. "|r"
+	for k, class in next, _G.CLASS_SORT_ORDER do
+		temp = temp .. E:WrapText(C.db.global.colors.class[class], _G.LOCALIZED_CLASS_NAMES_MALE[class])
 
--- 		if k ~= #_G.CLASS_SORT_ORDER then
--- 			temp = temp.."\n"
--- 		end
--- 	end
+		if k ~= #_G.CLASS_SORT_ORDER then
+			temp = temp .. "\n"
+		end
+	end
 
--- 	return temp
--- end)()
-L["COLOR_REACTION_DESC"] = ""
--- L["COLOR_REACTION_DESC"] = (function()
--- 	local temp = ""
+	return temp
+end
+L["COLOR_REACTION_DESC"] = function()
+	local temp = ""
 
--- 	for i = 1, 8 do
--- 		temp = temp .. "|c" .. C.db.profile.colors.reaction[i].hex .. _G["FACTION_STANDING_LABEL" .. i] .. "|r"
+	for i = 1, 8 do
+		temp = temp .. E:WrapText(C.db.profile.colors.reaction[i], _G["FACTION_STANDING_LABEL" .. i])
 
--- 		if i ~= 8 then
--- 			temp = temp.."\n"
--- 		end
--- 	end
+		if i ~= 8 then
+			temp = temp .. "\n"
+		end
+	end
 
--- 	return temp
--- end)()
+	return temp
+end
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -470,10 +468,10 @@ L["ZONE"] = _G.ZONE
 
 L["AURA"] = "Aura"
 L["BUTTON"] = "Button"
-L["CHANGE"] = "Change"
 L["CURSE"] = "Curse"
 L["DAMAGE_ABSORB"] = "Damage Absorb"
 L["DEBUFF"] = "Debuff"
+L["DEFAULT"] = "Default"
 L["DIFFICULT"] = "Difficult"
 L["DIFFICULTY"] = "Difficulty"
 L["DISCONNECTED"] = "Disconnected"
@@ -481,12 +479,14 @@ L["DISEASE"] = "Disease"
 L["EXPERIENCE_NORMAL"] = "Normal"
 L["EXPERIENCE_RESTED"] = "Rested"
 L["FACTION_NEUTRAL"] = "Neutral"
+L["GAIN_LOSS"] = "Gain/Loss"
 L["GAIN"] = "Gain"
 L["HEAL_ABSORB"] = "Heal Absorb"
 L["IMPOSSIBLE"] = "Impossible"
 L["LOSS"] = "Loss"
 L["MAGIC"] = "Magic"
 L["OTHERS"] = "Others"
+L["PERSONAL_DESC"] = "Used for your character while in combat."
 L["PERSONAL"] = "Personal"
 L["POISON"] = "Poison"
 L["POWER_COST"] = "Power Cost"
@@ -494,6 +494,7 @@ L["PREDICTION"] = "Prediction"
 L["RUNES_BLOOD"] = "Blood Runes"
 L["RUNES_FROST"] = "Frost Runes"
 L["RUNES_UNHOLY"] = "Unholy Runes"
+L["SELECTION_DEFAULT_DESC"] = "The default colour. Mainly used for players in dungeons, raids, and sanctuaries."
 L["SELECTION"] = "Selection"
 L["STAGGER_HIGH"] = "High Stargger"
 L["STAGGER_LOW"] = "Low Stagger"
@@ -502,5 +503,4 @@ L["STANDARD"] = "Standard"
 L["TAPPED"] = "Tapped"
 L["TEMP_ENCHANT"] = "Temporary Enchant"
 L["TRIVIAL"] = "Trivial"
-L["UNATTACKABLE"] = "Unattackable"
 L["VERY_DIFFICULT"] = "Very Difficult"

@@ -307,8 +307,7 @@ function CONFIG:CreateGeneralPanel(order)
 					change = {
 						order = 3,
 						type = "group",
-						name = L["CHANGE"],
-						desc = [["WIP"]],
+						name = L["GAIN_LOSS"],
 						set = function(info, r, g, b)
 							if r ~= nil then
 								local color = C.db.profile.colors[info[#info]]
@@ -429,7 +428,6 @@ function CONFIG:CreateGeneralPanel(order)
 						order = 5,
 						type = "group",
 						name = L["SELECTION"],
-						desc =[["WIP"]],
 						get = function(info)
 							return E:GetRGB(C.db.profile.colors.selection[tonumber(info[#info])])
 						end,
@@ -467,38 +465,38 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 10,
 								type = "color",
 								name = L["PERSONAL"],
-								desc = [["WIP" Used for your character while in combat.]],
-							},
-							["7"] = {
-								order = 11,
-								type = "color",
-								name = L["UNATTACKABLE"],
-								desc = [["WIP" Used for unattackable players and NPCs in dungeons, raids, sanctuaries.]],
+								desc = L["PERSONAL_DESC"],
 							},
 							["4"] = {
-								order = 12,
+								order = 11,
 								type = "color",
 								name = GetText("FACTION_STANDING_LABEL2", 2),
 							},
 							["3"] = {
-								order = 13,
+								order = 12,
 								type = "color",
 								name = GetText("FACTION_STANDING_LABEL3", 2),
 							},
 							["2"] = {
-								order = 14,
+								order = 13,
 								type = "color",
 								name = GetText("FACTION_STANDING_LABEL4", 2),
 							},
 							["6"] = {
-								order = 15,
+								order = 14,
 								type = "color",
 								name = GetText("FACTION_STANDING_LABEL5", 2),
 							},
 							["5"] = {
-								order = 16,
+								order = 15,
 								type = "color",
 								name = L["DEAD"],
+							},
+							["7"] = {
+								order = 16,
+								type = "color",
+								name = L["DEFAULT"],
+								desc = L["SELECTION_DEFAULT_DESC"],
 							},
 						},
 					},

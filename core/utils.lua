@@ -245,6 +245,10 @@ do
 		return self:SetRGBA(color, r, g, b, 1)
 	end
 
+	function E:WrapText(color, text)
+		return "|c" .. color.hex .. text .. "|r"
+	end
+
 	do
 		local updater = CreateFrame("Frame")
 		local objects = {}
@@ -336,7 +340,7 @@ do
 	end
 
 	function E:GetUnitClassColor(unit)
-		if UnitExists(unit) and UnitPlayerControlled(unit) then
+		if UnitPlayerControlled(unit) then
 			local class = select(2, UnitClass(unit))
 			if class then
 				return C.db.global.colors.class[class]
