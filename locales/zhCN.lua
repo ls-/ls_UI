@@ -46,9 +46,7 @@ L["ALT_POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，
 - |cffffd200[ls:altpower:max]|r - 最大值
 - |cffffd200[ls:altpower:perc]|r - 百分比
 - |cffffd200[ls:altpower:cur-max]|r - 当前值和最大值
-- |cffffd200[ls:altpower:cur-color-max]|r - 当前值和着色后的最大值
 - |cffffd200[ls:altpower:cur-perc]|r - 当前值和百分比
-- |cffffd200[ls:altpower:cur-color-perc]|r - 当前值和着色后的百分比
 - |cffffd200[ls:color:altpower]|r - 着色
 
 如果当前值和最大值一样，那么只会显示最大值
@@ -300,9 +298,7 @@ L["POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 - |cffffd200[ls:power:max]|r - 最大值
 - |cffffd200[ls:power:perc]|r - 百分比
 - |cffffd200[ls:power:cur-max]|r - 当前值和最大值
-- |cffffd200[ls:power:cur-color-max]|r - 当前值和着色后的最大值
 - |cffffd200[ls:power:cur-perc]|r - 当前值和百分比
-- |cffffd200[ls:power:cur-color-perc]|r - 当前值和着色后的百分比
 - |cffffd200[ls:power:deficit]|r - 剩余值
 - |cffffd200[ls:color:power]|r - 着色
 

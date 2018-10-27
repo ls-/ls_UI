@@ -23,9 +23,7 @@ Etiquetas:
 - |cffffd200[ls:altpower:max]|r - el valor máximo;
 - |cffffd200[ls:altpower:perc]|r - el porcentaje;
 - |cffffd200[ls:altpower:cur-max]|r - el valor actual seguido del valor máximo;
-- |cffffd200[ls:altpower:cur-color-max]|r - el valor actual seguido por el valor máximo con color;
 - |cffffd200[ls:altpower:cur-perc]|r - el valor actual seguido del porcentaje;
-- |cffffd200[ls:altpower:cur-color-perc]|r - el valor actual seguido del porcentaje con color;
 - |cffffd200[ls:color:altpower]|r - color.
 
 Si el valor actual es igual al valor máximo, solo se mostrará el valor máximo.
@@ -278,9 +276,7 @@ Etiquetas:
 - |cffffd200[ls:power:max]|r - valor máximo;
 - |cffffd200[ls:power:perc]|r - porcentaje;
 - |cffffd200[ls:power:cur-max]|r - el valor actual seguido del valor máximo;
-- |cffffd200[ls:power:cur-color-max]|r - el valor actual seguido del valor máximo con color;
 - |cffffd200[ls:power:cur-perc]|r - el valor actual seguido por el porcentaje;
-- |cffffd200[ls:power:cur-color-perc]|r - el valor actual seguido por el porcentaje con color;
 - |cffffd200[ls:power:deficit]|r - valor de déficit;
 - |cffffd200[ls:color:power]|r - el color.
 

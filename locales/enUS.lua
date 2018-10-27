@@ -1,4 +1,4 @@
-﻿local _, ns = ...
+local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 
 -- Lua
@@ -92,9 +92,7 @@ Tags:
 - |cffffd200[ls:altpower:max]|r - the max value;
 - |cffffd200[ls:altpower:perc]|r - the percentage;
 - |cffffd200[ls:altpower:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:altpower:cur-color-max]|r - the current value followed by the coloured max value;
 - |cffffd200[ls:altpower:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:altpower:cur-color-perc]|r - the current value followed by the coloured percentage;
 - |cffffd200[ls:color:altpower]|r - colour.
 
 If the current value is equal to the max value, only the max value will be displayed.
@@ -352,9 +350,7 @@ Tags:
 - |cffffd200[ls:power:max]|r - the max value;
 - |cffffd200[ls:power:perc]|r - the percentage;
 - |cffffd200[ls:power:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:power:cur-color-max]|r - the current value followed by the coloured max value;
 - |cffffd200[ls:power:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:power:cur-color-perc]|r - the current value followed by the coloured percentage;
 - |cffffd200[ls:power:deficit]|r - the deficit value;
 - |cffffd200[ls:color:power]|r - the colour.
 

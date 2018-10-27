@@ -255,34 +255,6 @@ end
 
 oUF.Tags.Events["ls:power:cur-color-perc"] = oUF.Tags.Events["ls:power:cur-perc"]
 oUF.Tags.Methods["ls:power:cur-color-perc"] = oUF.Tags.Methods["ls:power:cur-perc"]
---[[ oUF.Tags.Methods["ls:power:cur-color-perc"] = function(unit)
-	if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then
-		local type, _, r, g, b = UnitPowerType(unit)
-		local max = UnitPowerMax(unit, type)
-		if max and max ~= 0 then
-			local hex
-
-			if not r then
-				hex = C.db.profile.colors.power[type].hex
-			else
-				if r > 1 or g > 1 or b > 1 then
-					r, g, b = r / 255, g / 255, b / 255
-				end
-
-				hex = Hex(r, g, b)
-			end
-
-			local cur = UnitPower(unit, type)
-			if cur == 0 or cur == max then
-				return s_format("|c%s%s|r", hex, E:FormatNumber(cur))
-			else
-				return s_format("%s - |c%s%.1f%%|r", E:FormatNumber(cur), hex, E:NumberToPerc(cur, max))
-			end
-		end
-	end
-
-	return ""
-end ]]
 
 oUF.Tags.Events["ls:power:cur-max"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
 oUF.Tags.Methods["ls:power:cur-max"] = function(unit)
@@ -304,34 +276,6 @@ end
 
 oUF.Tags.Events["ls:power:cur-color-max"] = oUF.Tags.Events["ls:power:cur-max"]
 oUF.Tags.Methods["ls:power:cur-color-max"] = oUF.Tags.Methods["ls:power:cur-max"]
---[[ oUF.Tags.Methods["ls:power:cur-color-max"] = function(unit)
-	if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then
-		local type, _, r, g, b = UnitPowerType(unit)
-		local max = UnitPowerMax(unit, type)
-		if max and max ~= 0 then
-			local hex
-
-			if not r then
-				hex = C.db.profile.colors.power[type].hex
-			else
-				if r > 1 or g > 1 or b > 1 then
-					r, g, b = r / 255, g / 255, b / 255
-				end
-
-				hex = Hex(r, g, b)
-			end
-
-			local cur = UnitPower(unit, type)
-			if cur == 0 or cur == max then
-				return s_format("|c%s%s|r", hex, E:FormatNumber(cur))
-			else
-				return s_format("%s - |c%s%s|r", E:FormatNumber(cur), hex, E:FormatNumber(max))
-			end
-		end
-	end
-
-	return ""
-end ]]
 
 oUF.Tags.Events["ls:power:deficit"] = 'UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER'
 oUF.Tags.Methods["ls:power:deficit"] = function(unit)
@@ -393,18 +337,6 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-color-perc"] = oUF.Tags.Events["ls:altpower:cur-perc"]
 oUF.Tags.Methods["ls:altpower:cur-color-perc"] = oUF.Tags.Methods["ls:altpower:cur-perc"]
---[[ oUF.Tags.Methods["ls:altpower:cur-color-perc"] = function(unit)
-	if UnitAlternatePowerInfo(unit) then
-		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-		if cur == 0 or cur == max then
-			return s_format("|c%s%s|r", C.db.profile.colors.power.ALT_POWER.hex, E:FormatNumber(cur))
-		else
-			return s_format("%s - |c%s%.1f%%|r", E:FormatNumber(cur), C.db.profile.colors.power.ALT_POWER.hex, E:NumberToPerc(cur, max))
-		end
-	end
-
-	return ""
-end ]]
 
 oUF.Tags.Events["ls:altpower:cur-max"] = 'UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER'
 oUF.Tags.Methods["ls:altpower:cur-max"] = function(unit)
@@ -422,18 +354,6 @@ end
 
 oUF.Tags.Events["ls:altpower:cur-color-max"] = oUF.Tags.Events["ls:altpower:cur-max"]
 oUF.Tags.Methods["ls:altpower:cur-color-max"] = oUF.Tags.Methods["ls:altpower:cur-max"]
---[[ oUF.Tags.Methods["ls:altpower:cur-color-max"] = function(unit)
-	if UnitAlternatePowerInfo(unit) then
-		local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-		if cur == 0 or cur == max then
-			return s_format("|c%s%s|r", C.db.profile.colors.power.ALT_POWER.hex, E:FormatNumber(cur))
-		else
-			return s_format("%s - |c%s%.1f%%|r", E:FormatNumber(cur), C.db.profile.colors.power.ALT_POWER.hex, E:FormatNumber(max))
-		end
-	end
-
-	return ""
-end ]]
 
 ----------
 -- NAME --
