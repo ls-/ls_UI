@@ -615,7 +615,12 @@ local function tooltip_SetUnit(self)
 	if GameTooltipStatusBar:IsShown() then
 		self:SetMinimumWidth(140)
 
-		GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
+		GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
+		-- if UnitIsPlayer(unit) then
+		-- 	GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitClassColor(unit)))
+		-- else
+		-- 	GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
+		-- end
 	end
 
 	self:Show()
@@ -689,9 +694,14 @@ local function tooltipBar_OnShow(self)
 	if unit then
 		tooltip:SetMinimumWidth(140)
 
-		self:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
+		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
+		-- if UnitIsPlayer(unit) then
+		-- 	self:SetStatusBarColor(E:GetRGB(E:GetUnitClassColor(unit)))
+		-- else
+		-- 	self:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
+		-- end
 	else
-		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.green))
+		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
 	end
 end
 
