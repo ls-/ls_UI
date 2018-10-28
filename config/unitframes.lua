@@ -246,8 +246,7 @@ local function getUFOption_Health(order, unit)
 					class = {
 						order = 1,
 						type = "toggle",
-						name = L["PLAYER_CLASS"],
-						desc = L["COLOR_CLASS_DESC"],
+						name = L["CLASS"],
 					},
 				},
 			},
@@ -669,7 +668,6 @@ local function getUFOption_Health(order, unit)
 			order = 2,
 			type = "toggle",
 			name = L["REACTION"],
-			desc = L["COLOR_REACTION_DESC"],
 		}
 	end
 

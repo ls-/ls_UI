@@ -1,5 +1,5 @@
-local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+﻿local _, ns = ...
+local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
@@ -10,6 +10,7 @@ L["LS_UI"] = "ls: |cff1a9fc0UI|r"
 
 -- These rely on Blizz strings
 L["ADVENTURE_JOURNAL"] = _G.ADVENTURE_JOURNAL
+L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
 L["CALENDAR_EVENT_ALARM_MESSAGE"] = _G.CALENDAR_EVENT_ALARM_MESSAGE
 L["CALENDAR_PENDING_INVITES_TOOLTIP"] = _G.GAMETIME_TOOLTIP_CALENDAR_INVITES
 L["CALENDAR_TOGGLE_TOOLTIP"] = _G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR
@@ -17,67 +18,60 @@ L["CALL_TO_ARMS_TOOLTIP"] = _G.LFG_CALL_TO_ARMS
 L["CANCEL"] = _G.CANCEL
 L["CAST_ON_KEY_DOWN_DESC"] = _G.OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN
 L["CHARACTER_BUTTON"] = _G.CHARACTER_BUTTON
+L["CHI"] = _G.CHI
 L["CLASS"] = _G.CLASS
 L["COLLECTIONS"] = _G.COLLECTIONS
+L["COMBO_POINTS"] = _G.COMBO_POINTS
 L["CONTESTED_TERRITORY"] = _G.CONTESTED_TERRITORY:gsub("[()]", "")
 L["CURRENCY"] = _G.CURRENCY
 L["CURRENCY_COLON"] = _G.CURRENCY..":"
-L["DAMAGER_RED"] = "|cffdc4436".._G.DAMAGER.."|r"
+L["DAMAGER_RED"] = E:WrapText(D.global.colors.red, _G.DAMAGER)
 L["DUNGEONS_BUTTON"] = _G.DUNGEONS_BUTTON
 L["DURABILITY_COLON"] = _G.DURABILITY..":"
 L["ENABLE"] = _G.ENABLE
+L["ENERGY"] = _G.ENERGY
+L["FACTION"] = _G.FACTION
+L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
+L["FACTION_HORDE"] = _G.FACTION_HORDE
 L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"] = _G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL
 L["FEATURE_NOT_AVAILBLE_NEUTRAL"] = _G.FEATURE_NOT_AVAILBLE_PANDAREN
+L["FOCUS"] = _G.FOCUS
 L["FOREIGN_SERVER_LABEL"] = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
+L["FURY"] = _G.FURY
 L["GENERAL"] = _G.GENERAL_LABEL
-L["HEALER_GREEN"] = "|cff2eac34".._G.HEALER.."|r"
+L["HEALER_GREEN"] = E:WrapText(D.global.colors.green, _G.HEALER)
 L["HIDE"] = _G.HIDE
+L["HOLY_POWER"] = _G.HOLY_POWER
+L["INSANITY"] = _G.INSANITY
 L["LOOT"] = _G.LOOT_NOUN
+L["LUNAR_POWER"] = _G.LUNAR_POWER
+L["MAELSTROM"] = _G.MAELSTROM
 L["MAINMENU_BUTTON"] = _G.MAINMENU_BUTTON
+L["MANA"] = _G.MANA
 L["MINIMAP"] = _G.MINIMAP_LABEL
 L["NONE"] = _G.NONE
 L["OFFLINE"] = _G.PLAYER_OFFLINE
+L["PAIN"] = _G.PAIN
 L["PET"] = _G.PET
 L["QUESTLOG_BUTTON"] = _G.QUESTLOG_BUTTON
+L["RAGE"] = _G.RAGE
 L["RAID_INFO_COLON"] = _G.RAID_INFO..":"
 L["RELOAD_UI"] = _G.RELOADUI
 L["REPUTATION"] = _G.REPUTATION
 L["RETRIEVING_DATA"] = _G.RETRIEVING_DATA
+L["RUNES"] = _G.RUNES
+L["RUNIC_POWER"] = _G.RUNIC_POWER
 L["SANCTUARY"] = _G.SANCTUARY_TERRITORY:gsub("[()]", "")
 L["SHOW"] = _G.SHOW
 L["SHOW_AS_XP_BAR"] = _G.SHOW_FACTION_ON_MAINSCREEN
+L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
 L["SPELLBOOK_ABILITIES_BUTTON"] = _G.SPELLBOOK_ABILITIES_BUTTON
-L["TANK_BLUE"] = "|cff1798fb".._G.TANK.."|r"
+L["TANK_BLUE"] = E:WrapText(D.global.colors.blue, _G.TANK)
 L["TOTAL"] = _G.TOTAL
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
-L["COLOR_CLASS_DESC"] = function()
-	local temp = ""
-
-	for k, class in next, _G.CLASS_SORT_ORDER do
-		temp = temp .. E:WrapText(C.db.global.colors.class[class], _G.LOCALIZED_CLASS_NAMES_MALE[class])
-
-		if k ~= #_G.CLASS_SORT_ORDER then
-			temp = temp .. "\n"
-		end
-	end
-
-	return temp
-end
-L["COLOR_REACTION_DESC"] = function()
-	local temp = ""
-
-	for i = 1, 8 do
-		temp = temp .. E:WrapText(C.db.profile.colors.reaction[i], _G["FACTION_STANDING_LABEL" .. i])
-
-		if i ~= 8 then
-			temp = temp .. "\n"
-		end
-	end
-
-	return temp
-end
+L["ZONE"] = _G.ZONE
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -446,29 +440,9 @@ L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
 -- WIP
-L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
-L["CHI"] = _G.CHI
-L["COMBO_POINTS"] = _G.COMBO_POINTS
-L["ENERGY"] = _G.ENERGY
-L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
-L["FACTION_HORDE"] = _G.FACTION_HORDE
-L["FACTION"] = _G.FACTION
-L["FOCUS"] = _G.FOCUS
-L["FURY"] = _G.FURY
-L["HOLY_POWER"] = _G.HOLY_POWER
-L["INSANITY"] = _G.INSANITY
-L["LUNAR_POWER"] = _G.LUNAR_POWER
-L["MAELSTROM"] = _G.MAELSTROM
-L["MANA"] = _G.MANA
-L["PAIN"] = _G.PAIN
-L["RAGE"] = _G.RAGE
-L["RUNES"] = _G.RUNES
-L["RUNIC_POWER"] = _G.RUNIC_POWER
-L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
-L["ZONE"] = _G.ZONE
-
 L["AURA"] = "Aura"
 L["BUTTON"] = "Button"
+L["CHANGE"] = "Change"
 L["CURSE"] = "Curse"
 L["DAMAGE_ABSORB"] = "Damage Absorb"
 L["DEBUFF"] = "Debuff"
@@ -480,24 +454,24 @@ L["DISEASE"] = "Disease"
 L["EXPERIENCE_NORMAL"] = "Normal"
 L["EXPERIENCE_RESTED"] = "Rested"
 L["FACTION_NEUTRAL"] = "Neutral"
-L["GAIN_LOSS"] = "Gain/Loss"
 L["GAIN"] = "Gain"
 L["HEAL_ABSORB"] = "Heal Absorb"
 L["IMPOSSIBLE"] = "Impossible"
 L["LOSS"] = "Loss"
 L["MAGIC"] = "Magic"
 L["OTHERS"] = "Others"
-L["PERSONAL_DESC"] = "Used for your character while in combat."
 L["PERSONAL"] = "Personal"
+L["PERSONAL_DESC"] = "Used for your character while in combat."
 L["POISON"] = "Poison"
 L["POWER_COST"] = "Power Cost"
 L["PREDICTION"] = "Prediction"
 L["RUNES_BLOOD"] = "Blood Runes"
 L["RUNES_FROST"] = "Frost Runes"
 L["RUNES_UNHOLY"] = "Unholy Runes"
-L["SELECTION_DEFAULT_DESC"] = "The default colour. Mainly used for players in dungeons, raids, and sanctuaries."
 L["SELECTION"] = "Selection"
-L["STAGGER_HIGH"] = "High Stargger"
+L["SELECTION_DEFAULT_DESC"] = "The default colour. Mainly used for players in dungeons, raids, and sanctuaries."
+L["SELECTION_DESC"] = "Selection is the outline around and the circle underneath a unit."
+L["STAGGER_HIGH"] = "High Stagger"
 L["STAGGER_LOW"] = "Low Stagger"
 L["STAGGER_MEDIUM"] = "Medium Stagger"
 L["STANDARD"] = "Standard"

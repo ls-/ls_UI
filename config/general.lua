@@ -307,7 +307,7 @@ function CONFIG:CreateGeneralPanel(order)
 					change = {
 						order = 3,
 						type = "group",
-						name = L["GAIN_LOSS"],
+						name = L["CHANGE"],
 						set = function(info, r, g, b)
 							if r ~= nil then
 								local color = C.db.profile.colors[info[#info]]
