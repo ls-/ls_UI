@@ -34,17 +34,19 @@ local function START_TIMER()
 	local config = C.db.profile.blizzard.timer
 
 	for _, timer in next, TimerTracker.timerList do
-		E:HandleStatusBar(timer.bar)
-		timer.bar:SetSize(config.width, config.height)
+		if not timer.bar.handled then
+			E:HandleStatusBar(timer.bar)
+			timer.bar:SetSize(config.width, config.height)
 
-		E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
+			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
-		local time = timer.bar.Text
-		time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
-		time:SetJustifyV("MIDDLE")
-		time:SetJustifyH("RIGHT")
-		time:ClearAllPoints()
-		time:SetPoint("RIGHT", timer.bar, "RIGHT", -2, 0)
+			local time = timer.bar.Text
+			time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			time:SetJustifyV("MIDDLE")
+			time:SetJustifyH("RIGHT")
+			time:ClearAllPoints()
+			time:SetPoint("RIGHT", timer.bar, "RIGHT", -2, 0)
+		end
 	end
 end
 
@@ -75,6 +77,16 @@ function MODULE:SetUpMirrorTimers()
 			text:ClearAllPoints()
 			text:SetPoint("LEFT", timer, "LEFT", 2, 0)
 			text:SetPoint("RIGHT", time, "LEFT", -2, 0)
+		end
+
+		for _, timer in next, TimerTracker.timerList do
+			E:HandleStatusBar(timer.bar)
+
+			local time = timer.bar.Text
+			time:SetJustifyV("MIDDLE")
+			time:SetJustifyH("RIGHT")
+			time:ClearAllPoints()
+			time:SetPoint("RIGHT", timer.bar, "RIGHT", -2, 0)
 		end
 
 		hooksecurefunc("MirrorTimerFrame_OnUpdate", mirrorTimer_OnUpdate)
