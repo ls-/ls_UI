@@ -14,6 +14,9 @@ local type = _G.type
 
 --[[ luacheck: globals
 	GetText UnitSex
+
+	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
+	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
 ]]
 
 -- Mine
@@ -472,22 +475,22 @@ function CONFIG:CreateGeneralPanel(order)
 							["4"] = {
 								order = 11,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL2", 2),
+								name = FACTION_STANDING_LABEL2,
 							},
 							["3"] = {
 								order = 12,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL3", 2),
+								name = FACTION_STANDING_LABEL3,
 							},
 							["2"] = {
 								order = 13,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL4", 2),
+								name = FACTION_STANDING_LABEL4,
 							},
 							["6"] = {
 								order = 14,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL5", 2),
+								name = FACTION_STANDING_LABEL5,
 							},
 							["5"] = {
 								order = 15,
@@ -544,42 +547,42 @@ function CONFIG:CreateGeneralPanel(order)
 							["1"] = {
 								order = 10,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL1", 2),
+								name = FACTION_STANDING_LABEL1,
 							},
 							["2"] = {
 								order = 11,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL2", 2),
+								name = FACTION_STANDING_LABEL2,
 							},
 							["3"] = {
 								order = 12,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL3", 2),
+								name = FACTION_STANDING_LABEL3,
 							},
 							["4"] = {
 								order = 13,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL4", 2),
+								name = FACTION_STANDING_LABEL4,
 							},
 							["5"] = {
 								order = 14,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL5", 2),
+								name = FACTION_STANDING_LABEL5,
 							},
 							["6"] = {
 								order = 15,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL6", 2),
+								name = FACTION_STANDING_LABEL6,
 							},
 							["7"] = {
 								order = 16,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL7", 2),
+								name = FACTION_STANDING_LABEL7,
 							},
 							["8"] = {
 								order = 17,
 								type = "color",
-								name = GetText("FACTION_STANDING_LABEL8", 2),
+								name = FACTION_STANDING_LABEL8,
 							},
 						},
 					},
