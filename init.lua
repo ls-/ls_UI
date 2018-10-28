@@ -81,9 +81,7 @@ local function cleanUpStep2()
 	end
 end
 
-local function updateAll()
-	cleanUpStep1()
-
+local function addRefs()
 	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
 	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
 
@@ -109,7 +107,39 @@ local function updateAll()
 	C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = C.db.profile.colors.selection[5]
 	C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = C.db.profile.colors.selection[6]
 	C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = C.db.profile.colors.selection[7]
+end
 
+local function removeRefs()
+	C.db.profile.units.player = nil
+	C.db.profile.units.pet = nil
+
+	C.db.profile.colors.power[ 0] = nil
+	C.db.profile.colors.power[ 1] = nil
+	C.db.profile.colors.power[ 2] = nil
+	C.db.profile.colors.power[ 3] = nil
+	C.db.profile.colors.power[ 4] = nil
+	C.db.profile.colors.power[ 5] = nil
+	C.db.profile.colors.power[ 6] = nil
+	C.db.profile.colors.power[ 7] = nil
+	C.db.profile.colors.power[ 8] = nil
+	C.db.profile.colors.power[ 9] = nil
+	C.db.profile.colors.power[11] = nil
+	C.db.profile.colors.power[13] = nil
+	C.db.profile.colors.power[17] = nil
+	C.db.profile.colors.power[18] = nil
+
+	C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = nil
+	C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = nil
+	C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = nil
+	C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = nil
+	C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = nil
+	C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = nil
+	C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = nil
+end
+
+local function updateAll()
+	cleanUpStep1()
+	addRefs()
 	cleanUpStep2()
 
 	P:UpdateModules()
@@ -129,90 +159,22 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
 
 	cleanUpStep1()
-
-	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
-	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
-
-	C.db.profile.colors.power[ 0] = C.db.profile.colors.power.MANA
-	C.db.profile.colors.power[ 1] = C.db.profile.colors.power.RAGE
-	C.db.profile.colors.power[ 2] = C.db.profile.colors.power.FOCUS
-	C.db.profile.colors.power[ 3] = C.db.profile.colors.power.ENERGY
-	C.db.profile.colors.power[ 4] = C.db.profile.colors.power.CHI
-	C.db.profile.colors.power[ 5] = C.db.profile.colors.power.RUNES
-	C.db.profile.colors.power[ 6] = C.db.profile.colors.power.RUNIC_POWER
-	C.db.profile.colors.power[ 7] = C.db.profile.colors.power.SOUL_SHARDS
-	C.db.profile.colors.power[ 8] = C.db.profile.colors.power.LUNAR_POWER
-	C.db.profile.colors.power[ 9] = C.db.profile.colors.power.HOLY_POWER
-	C.db.profile.colors.power[11] = C.db.profile.colors.power.MAELSTROM
-	C.db.profile.colors.power[13] = C.db.profile.colors.power.INSANITY
-	C.db.profile.colors.power[17] = C.db.profile.colors.power.FURY
-	C.db.profile.colors.power[18] = C.db.profile.colors.power.PAIN
-
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = C.db.profile.colors.selection[1]
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = C.db.profile.colors.selection[2]
-	C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = C.db.profile.colors.selection[3]
-	C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = C.db.profile.colors.selection[4]
-	C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = C.db.profile.colors.selection[5]
-	C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = C.db.profile.colors.selection[6]
-	C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = C.db.profile.colors.selection[7]
-
+	addRefs()
 	cleanUpStep2()
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
-		C.db.profile.units.player = nil
-		C.db.profile.units.pet = nil
-		C.db.profile.colors.power[ 0] = nil
-		C.db.profile.colors.power[ 1] = nil
-		C.db.profile.colors.power[ 2] = nil
-		C.db.profile.colors.power[ 3] = nil
-		C.db.profile.colors.power[ 4] = nil
-		C.db.profile.colors.power[ 5] = nil
-		C.db.profile.colors.power[ 6] = nil
-		C.db.profile.colors.power[ 7] = nil
-		C.db.profile.colors.power[ 8] = nil
-		C.db.profile.colors.power[ 9] = nil
-		C.db.profile.colors.power[11] = nil
-		C.db.profile.colors.power[13] = nil
-		C.db.profile.colors.power[17] = nil
-		C.db.profile.colors.power[18] = nil
-		C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = nil
-		C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = nil
-		C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = nil
-		C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = nil
-		C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = nil
-		C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = nil
-		C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = nil
+
+		removeRefs()
 
 		P.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
-		C.db.profile.units.player = nil
-		C.db.profile.units.pet = nil
-		C.db.profile.colors.power[ 0] = nil
-		C.db.profile.colors.power[ 1] = nil
-		C.db.profile.colors.power[ 2] = nil
-		C.db.profile.colors.power[ 3] = nil
-		C.db.profile.colors.power[ 4] = nil
-		C.db.profile.colors.power[ 5] = nil
-		C.db.profile.colors.power[ 6] = nil
-		C.db.profile.colors.power[ 7] = nil
-		C.db.profile.colors.power[ 8] = nil
-		C.db.profile.colors.power[ 9] = nil
-		C.db.profile.colors.power[11] = nil
-		C.db.profile.colors.power[13] = nil
-		C.db.profile.colors.power[17] = nil
-		C.db.profile.colors.power[18] = nil
-		C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = nil
-		C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = nil
-		C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = nil
-		C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = nil
-		C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = nil
-		C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = nil
-		C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = nil
+
+		removeRefs()
 
 		P.Movers:CleanUpConfig()
 	end)
