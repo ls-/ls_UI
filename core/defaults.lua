@@ -401,9 +401,12 @@ D.profile = {
 					x_offset = 15,
 					y_offset = 20,
 				},
-				class = {
-					player = false,
-					npc = false,
+				border = {
+					color = {
+						class = false,
+						selection = false,
+						reaction = false,
+					},
 				},
 			},
 			pet = {
@@ -783,9 +786,12 @@ D.profile = {
 					x_offset = 64,
 					y_offset = 32,
 				},
-				class = {
-					player = true,
-					npc = true,
+				border = {
+					color = {
+						class = false,
+						selection = false,
+						reaction = false,
+					},
 				},
 			},
 			pet = {
@@ -947,9 +953,12 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
-				class = {
-					player = true,
-					npc = false,
+				border = {
+					color = {
+						class = false,
+						selection = false,
+						reaction = false,
+					},
 				},
 			},
 		},
@@ -1197,9 +1206,12 @@ D.profile = {
 					y = 7,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					selection = false,
+					reaction = false,
+				},
 			},
 		},
 		targettarget = {
@@ -1329,9 +1341,12 @@ D.profile = {
 				enabled = false,
 				feedback_unit = "target",
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					selection = false,
+					reaction = false,
+				},
 			},
 		},
 		focus = {
@@ -1578,9 +1593,12 @@ D.profile = {
 					y = 7,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					selection = false,
+					reaction = false,
+				},
 			},
 		},
 		focustarget = {
@@ -1710,9 +1728,12 @@ D.profile = {
 				enabled = false,
 				feedback_unit = "focus",
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					selection = false,
+					reaction = false,
+				},
 			},
 		},
 		boss = {
@@ -1963,9 +1984,12 @@ D.profile = {
 					y = 1,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					selection = false,
+					reaction = false,
+				},
 			},
 		},
 	},

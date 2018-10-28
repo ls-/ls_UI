@@ -96,28 +96,32 @@ local function getUFOption_Border(order, unit)
 		name = L["BORDER_COLOR"],
 		inline = true,
 		get = function(info)
-			return C.db.profile.units[unit].class[info[#info]]
+			return C.db.profile.units[unit].border.color[info[#info]]
 		end,
 		set = function(info, value)
-			C.db.profile.units[unit].class[info[#info]] = value
+			C.db.profile.units[unit].border.color[info[#info]] = value
 			UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassIndicator")
 		end,
 		args = {
-			player = {
+			class = {
 				order = 1,
 				type = "toggle",
-				name = L["PLAYER_CLASS"],
-				desc = L["COLOR_CLASS_DESC"],
+				name = L["CLASS"],
 			},
 		},
 	}
 
 	if unit ~= "player" and unit ~= "pet" then
-		temp.args.npc = {
+		temp.args.selection = {
 			order = 2,
 			type = "toggle",
-			name = L["NPC_CLASSIFICATION"],
-			desc = L["COLOR_CLASSIFICATION_DESC"],
+			name = L["SELECTION"],
+			desc = L["SELECTION_DESC"],
+		}
+		temp.args.reaction = {
+			order = 3,
+			type = "toggle",
+			name = L["REACTION"],
 		}
 	end
 

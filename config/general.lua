@@ -439,6 +439,7 @@ function CONFIG:CreateGeneralPanel(order)
 
 									UNITFRAMES:UpdateSelectionColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
+									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
 								end
 							end
 						end,
@@ -454,6 +455,7 @@ function CONFIG:CreateGeneralPanel(order)
 
 									UNITFRAMES:UpdateSelectionColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
+									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
 								end,
 							},
 							spacer_1 = {
@@ -515,6 +517,7 @@ function CONFIG:CreateGeneralPanel(order)
 
 									UNITFRAMES:UpdateReactionColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
+									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
 								end
 							end
 						end,
@@ -530,6 +533,7 @@ function CONFIG:CreateGeneralPanel(order)
 
 									UNITFRAMES:UpdateSelectionColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
+									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
 								end,
 							},
 							spacer_1 = {

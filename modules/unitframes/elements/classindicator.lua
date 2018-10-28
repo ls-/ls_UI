@@ -7,64 +7,52 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
 --[[ luacheck: globals
-	UnitClass UnitClassification UnitIsPlayer
+	UnitClass UnitClassification UnitIsPlayer UnitReaction
 ]]
 
 -- Mine
 local function update(self)
+	if not (self.unit and self:IsShown()) then return end
+
 	local element = self.ClassIndicator
-	local class, _
+	local color = C.db.global.colors.white
 
-	if UnitIsPlayer(self.unit) then
-		if element._config and element._config.player then
-			_, class = UnitClass(self.unit)
-			if class and self._skin ~= class then
-				self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.class[class]))
-
-				if self.Insets then
-					self.Insets:SetVertexColor(E:GetRGB(C.db.global.colors.class[class]))
-				end
-
-				self._skin = class
-
-				return
-			end
-		end
-	else
-		if element._config and element._config.npc then
-			class = UnitClassification(self.unit)
+	if element._config then
+		if element._config.color.class and UnitIsPlayer(self.unit) and UnitClass(self.unit) then
+			local _, class = UnitClass(self.unit)
+			color = C.db.global.colors.class[class]
+		elseif element._config.color.selection then
+			color = E:GetUnitSelectionColor(self.unit)
+		elseif element._config.color.reaction and UnitReaction(self.unit, "player") then
+			local reaction = UnitReaction(self.unit, "player")
+			color = C.db.profile.colors.reaction[reaction]
+		else
+			local class = UnitClassification(self.unit)
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then
-				if self._skin ~= "elite" then
-					self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
-
-					if self.Insets then
-						self.Insets:SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
-					end
-
-					self._skin = "elite"
-
-					return
-				end
-			else
-				class = nil
+				color = C.db.global.colors.yellow
 			end
 		end
 	end
 
-	if not class and self._skin ~= "none" then
-		self.Border:SetVertexColor(1, 1, 1)
+	if not self._color or not E:AreColorsEqual(self._color, color) then
+		self.Border:SetVertexColor(E:GetRGB(color))
 
 		if self.Insets then
-			self.Insets:SetVertexColor(1, 1, 1)
+			self.Insets:SetVertexColor(E:GetRGB(color))
 		end
 
-		self._skin = "none"
+		self._color = self._color or {}
+		E:SetRGB(self._color, E:GetRGB(color))
 	end
 end
 
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
-	self._config = E:CopyTable(C.db.profile.units[unit].class, self._config)
+	self._config = E:CopyTable(C.db.profile.units[unit].border, self._config)
+end
+
+local function element_ForceUpdate(self)
+	update(self.__owner)
 end
 
 local function frame_UpdateClassIndicator(self)
@@ -73,8 +61,6 @@ local function frame_UpdateClassIndicator(self)
 end
 
 function UF:CreateClassIndicator(frame)
-	frame._skin = "none"
-
 	hooksecurefunc(frame, "Show", update)
 
 	if frame.Border then
@@ -89,6 +75,8 @@ function UF:CreateClassIndicator(frame)
 
 	return {
 		__owner = frame,
+		_color = {},
+		ForceUpdate = element_ForceUpdate,
 		UpdateConfig = element_UpdateConfig,
 	}
 end
