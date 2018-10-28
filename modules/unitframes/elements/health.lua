@@ -77,7 +77,7 @@ do
 	local function element_UpdateColors(self)
 		self.colorClass = self._config.color.class
 		self.colorReaction = self._config.color.reaction
-		self.colorSelection = self.__owner._unit ~= "player"
+		self.colorSelection = self._config.color.selection
 		self:ForceUpdate()
 	end
 

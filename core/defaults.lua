@@ -229,6 +229,7 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
+						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -422,8 +423,9 @@ D.profile = {
 					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
-						class = true,
-						reaction = true,
+						class = false,
+						selection = false,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -562,6 +564,7 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
+						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -811,8 +814,9 @@ D.profile = {
 					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
-						class = true,
-						reaction = true,
+						class = false,
+						selection = false,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -980,7 +984,8 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					selection = false,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -1232,7 +1237,8 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					selection = false,
+					reaction = false,
 				},
 				text = {
 					tag = "",
@@ -1367,7 +1373,8 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					selection = false,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -1619,7 +1626,8 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					selection = false,
+					reaction = false,
 				},
 				text = {
 					tag = "",
@@ -1758,7 +1766,8 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					selection = false,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:perc]",
