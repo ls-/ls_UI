@@ -249,6 +249,12 @@ do
 		return "|c" .. color.hex .. text .. "|r"
 	end
 
+	function E:AreColorsEqual(color1, color2)
+		if not color1 or not color2 then return end
+
+		return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b
+	end
+
 	do
 		local updater = CreateFrame("Frame")
 		local objects = {}

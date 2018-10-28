@@ -380,9 +380,12 @@ local function segment_OnLeave(self)
 end
 
 local function segment_Update(self, cur, max, bonus, color)
-	if color then
+	if not self._color or not E:AreColorsEqual(self._color, color) then
 		self.Texture:SetVertexColor(E:GetRGBA(color, 1))
 		self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
+
+		self._color = self._color or {}
+		E:SetRGB(self._color, E:GetRGB(color))
 	end
 
 	if self._value ~= cur or self._max ~= max then
