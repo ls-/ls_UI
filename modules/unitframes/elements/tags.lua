@@ -96,7 +96,6 @@ end
 oUF.Tags.Events["ls:color:reaction"] = "UNIT_FACTION UNIT_NAME_UPDATE"
 oUF.Tags.Methods["ls:color:reaction"] = function(unit)
 	local reaction = UnitReaction(unit, 'player')
-
 	if reaction then
 		return "|c" .. C.db.profile.colors.reaction[reaction].hex
 	end
