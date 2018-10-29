@@ -9,7 +9,7 @@ local _G = getfenv(0)
 -- Mine
 local MODES = {
 	[0] = L["HIDE"],
-	[1] = L["MOUSEOVER_SHOW"],
+	[1] = L["SHOW_ON_MOUSEOVER"],
 	[2] = L["ALWAYS_SHOW"],
 }
 

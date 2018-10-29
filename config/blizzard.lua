@@ -273,7 +273,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					show_pet = {
 						order = 2,
 						type = "select",
-						name = L["PET_CAST_BAR"],
+						name = L["PET_CASTBAR"],
 						values = SHOW_PET_OPTIONS,
 					},
 					reset = {

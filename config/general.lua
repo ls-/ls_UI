@@ -82,7 +82,7 @@ function CONFIG:CreateGeneralPanel(order)
 							disconnected = {
 								order = 11,
 								type = "color",
-								name = L["DISCONNECTED"],
+								name = L["OFFLINE"],
 							},
 							tapped = {
 								order = 12,
@@ -398,13 +398,13 @@ function CONFIG:CreateGeneralPanel(order)
 							my_heal = {
 								order = 10,
 								type = "color",
-								name = L["PERSONAL"],
+								name = L["YOUR_HEALING"],
 								hasAlpha = true,
 							},
 							other_heal = {
 								order = 11,
 								type = "color",
-								name = L["OTHERS"],
+								name = L["OTHERS_HEALING"],
 								hasAlpha = true,
 							},
 							damage_absorb = {

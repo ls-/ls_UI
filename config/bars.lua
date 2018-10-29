@@ -68,7 +68,7 @@ local FORMATS = {
 
 local VISIBILITY = {
 	[1] = L["ALWAYS_SHOW"],
-	[2] = L["MOUSEOVER_SHOW"],
+	[2] = L["SHOW_ON_MOUSEOVER"],
 }
 
 local MICRO_BARS = {
