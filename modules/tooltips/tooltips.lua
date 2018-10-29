@@ -49,11 +49,13 @@ local UnitIsDND = _G.UnitIsDND
 local UnitIsGroupLeader = _G.UnitIsGroupLeader
 local UnitIsPlayer = _G.UnitIsPlayer
 local UnitIsQuestBoss = _G.UnitIsQuestBoss
+local UnitIsTapDenied = _G.UnitIsTapDenied
 local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
 local UnitPVPName = _G.UnitPVPName
 local UnitRace = _G.UnitRace
+local UnitReaction = _G.UnitReaction
 local UnitRealmRelationship = _G.UnitRealmRelationship
 
 --[[ luacheck: globals
@@ -84,6 +86,17 @@ local TEXTS_TO_REMOVE = {
 	[_G.PVP] = true,
 }
 
+local function getUnitColor(unit)
+	if UnitIsPlayer(unit) then
+		return E:GetUnitClassColor(unit)
+	elseif UnitIsTapDenied(unit) then
+		return C.db.profile.colors.tapped
+	elseif UnitReaction(unit, "player") then
+		return E:GetUnitReactionColor(unit)
+	end
+
+	return C.db.profile.colors.health
+end
 local function addGenericInfo(tooltip, id)
 	if not (id and C.db.profile.tooltips.id) then return end
 
@@ -120,15 +133,7 @@ local function addSpellInfo(tooltip, id, caster)
 	tooltip:AddLine(" ")
 
 	if caster and type(caster) == "string" then
-		local color
-
-		if UnitIsPlayer(caster) then
-			color = E:GetUnitClassColor(caster)
-		else
-			color = E:GetUnitSelectionColor(caster)
-		end
-
-		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, E:GetRGB(color))
+		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, E:GetRGB(getUnitColor(caster)))
 	else
 		tooltip:AddLine(textLeft, 1, 1, 1)
 	end
@@ -447,7 +452,7 @@ local function tooltip_SetUnit(self)
 	if not unit then return end
 
 	local config = C.db.profile.tooltips
-	local nameColor = E:GetUnitSelectionColor(unit)
+	local nameColor = getUnitColor(unit)
 	local scaledLevel = UnitEffectiveLevel(unit)
 	local difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
@@ -600,10 +605,10 @@ local function tooltip_SetUnit(self)
 				name = PLAYER_TEMPLATE:format(
 					E:GetUnitClassColor(unitTarget).hex,
 					name,
-					E:GetUnitSelectionColor(unitTarget).hex
+					getUnitColor(unitTarget).hex
 				)
 			else
-				name = s_format("|c%s%s|r", E:GetUnitSelectionColor(unitTarget).hex, name)
+				name = s_format("|c%s%s|r", getUnitColor(unitTarget).hex, name)
 			end
 
 			self:AddLine(TARGET:format(name), 1, 1, 1)
@@ -616,11 +621,6 @@ local function tooltip_SetUnit(self)
 		self:SetMinimumWidth(140)
 
 		GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
-		-- if UnitIsPlayer(unit) then
-		-- 	GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitClassColor(unit)))
-		-- else
-		-- 	GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
-		-- end
 	end
 
 	self:Show()
@@ -695,11 +695,6 @@ local function tooltipBar_OnShow(self)
 		tooltip:SetMinimumWidth(140)
 
 		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
-		-- if UnitIsPlayer(unit) then
-		-- 	self:SetStatusBarColor(E:GetRGB(E:GetUnitClassColor(unit)))
-		-- else
-		-- 	self:SetStatusBarColor(E:GetRGB(E:GetUnitSelectionColor(unit)))
-		-- end
 	else
 		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
 	end
