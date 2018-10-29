@@ -346,14 +346,21 @@ do
 	end
 
 	function E:GetUnitClassColor(unit)
-		if UnitPlayerControlled(unit) then
-			local class = select(2, UnitClass(unit))
-			if class then
-				return C.db.global.colors.class[class]
-			end
+		local class = select(2, UnitClass(unit))
+		if class then
+			return C.db.global.colors.class[class]
 		end
 
-		return C.db.profile.colors.disconnected
+		return C.db.global.colors.white
+	end
+
+	function E:GetUnitReactionColor(unit)
+		local reaction = UnitReaction(unit, "player")
+		if reaction then
+			return C.db.profile.colors.reaction[reaction]
+		end
+
+		return C.db.profile.colors.reaction[4]
 	end
 
 	function E:GetUnitClassification(unit)
