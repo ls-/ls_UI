@@ -112,14 +112,8 @@ local function getUFOption_Border(order, unit)
 	}
 
 	if unit ~= "player" and unit ~= "pet" then
-		temp.args.selection = {
-			order = 2,
-			type = "toggle",
-			name = L["SELECTION"],
-			desc = L["SELECTION_DESC"],
-		}
 		temp.args.reaction = {
-			order = 3,
+			order = 2,
 			type = "toggle",
 			name = L["REACTION"],
 		}
@@ -664,14 +658,8 @@ local function getUFOption_Health(order, unit)
 	}
 
 	if unit ~= "player" and unit ~= "pet" then
-		temp.args.color.args.selection = {
-			order = 2,
-			type = "toggle",
-			name = L["SELECTION"],
-			desc = L["SELECTION_DESC"],
-		}
 		temp.args.color.args.reaction = {
-			order = 3,
+			order = 2,
 			type = "toggle",
 			name = L["REACTION"],
 		}

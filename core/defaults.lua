@@ -137,22 +137,6 @@ D.profile = {
 			-- exalted
 			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
-		selection = {
-			-- player's character while in combat
-			[1] = rgb(244, 232, 140), -- #F4E88C (7.5Y 9/6)
-			-- neutral
-			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
-			-- unfriendly
-			[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
-			-- hostile
-			[4] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
-			-- dead
-			[5] = rgb(136, 137, 135), -- #888987 (N5)
-			-- friendly
-			[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
-			-- default
-			[7] = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
-		},
 		difficulty = {
 			impossible = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
 			very_difficult = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
@@ -229,7 +213,6 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -405,7 +388,6 @@ D.profile = {
 				border = {
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 				},
@@ -424,7 +406,6 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -564,7 +545,6 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -792,7 +772,6 @@ D.profile = {
 				border = {
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 				},
@@ -815,7 +794,6 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 					text = {
@@ -960,7 +938,6 @@ D.profile = {
 				border = {
 					color = {
 						class = false,
-						selection = false,
 						reaction = false,
 					},
 				},
@@ -984,7 +961,6 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 				text = {
@@ -1214,7 +1190,6 @@ D.profile = {
 			border = {
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 			},
@@ -1237,7 +1212,6 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 				text = {
@@ -1350,7 +1324,6 @@ D.profile = {
 			border = {
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 			},
@@ -1373,7 +1346,6 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 				text = {
@@ -1603,7 +1575,6 @@ D.profile = {
 			border = {
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 			},
@@ -1626,7 +1597,6 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 				text = {
@@ -1739,7 +1709,6 @@ D.profile = {
 			border = {
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 			},
@@ -1766,7 +1735,6 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 				text = {
@@ -1996,7 +1964,6 @@ D.profile = {
 			border = {
 				color = {
 					class = false,
-					selection = false,
 					reaction = false,
 				},
 			},

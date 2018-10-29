@@ -99,14 +99,6 @@ local function addRefs()
 	C.db.profile.colors.power[13] = C.db.profile.colors.power.INSANITY
 	C.db.profile.colors.power[17] = C.db.profile.colors.power.FURY
 	C.db.profile.colors.power[18] = C.db.profile.colors.power.PAIN
-
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = C.db.profile.colors.selection[1]
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = C.db.profile.colors.selection[2]
-	C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = C.db.profile.colors.selection[3]
-	C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = C.db.profile.colors.selection[4]
-	C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = C.db.profile.colors.selection[5]
-	C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = C.db.profile.colors.selection[6]
-	C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = C.db.profile.colors.selection[7]
 end
 
 local function removeRefs()
@@ -127,14 +119,6 @@ local function removeRefs()
 	C.db.profile.colors.power[13] = nil
 	C.db.profile.colors.power[17] = nil
 	C.db.profile.colors.power[18] = nil
-
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 + 139] = nil
-	C.db.profile.colors.selection[255 * 65536 + 255 * 256 +   0] = nil
-	C.db.profile.colors.selection[255 * 65536 + 129 * 256 +   0] = nil
-	C.db.profile.colors.selection[255 * 65536 +   0 * 256 +   0] = nil
-	C.db.profile.colors.selection[128 * 65536 + 128 * 256 + 128] = nil
-	C.db.profile.colors.selection[  0 * 65536 + 255 * 256 +   0] = nil
-	C.db.profile.colors.selection[  0 * 65536 +   0 * 256 + 255] = nil
 end
 
 local function updateAll()

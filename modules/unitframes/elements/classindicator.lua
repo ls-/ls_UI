@@ -21,8 +21,6 @@ local function update(self)
 		if element._config.color.class and UnitIsPlayer(self.unit) and UnitClass(self.unit) then
 			local _, class = UnitClass(self.unit)
 			color = C.db.global.colors.class[class]
-		elseif element._config.color.selection then
-			color = E:GetUnitSelectionColor(self.unit)
 		elseif element._config.color.reaction and UnitReaction(self.unit, "player") then
 			local reaction = UnitReaction(self.unit, "player")
 			color = C.db.profile.colors.reaction[reaction]

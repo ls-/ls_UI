@@ -323,28 +323,6 @@ end
 -----------
 
 do
-	function E:GetUnitSelectionColor(unit)
-		-- if UnitExists(unit) then
-			if not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
-				return C.db.profile.colors.tapped
-			else
-				local r, g, b = UnitSelectionColor(unit)
-				r = m_ceil(r * 255) * 65536 + m_ceil(g * 255) * 256 + m_ceil(b * 255)
-
-				r = C.db.profile.colors.selection[r]
-				if r then
-					return r
-				else
-					r, g, b = UnitSelectionColor(unit)
-					print("|cffff0000WARNING! |cffffd200UNKNOWN COLOUR:|r", r, g, b,
-						"|c" .. hex(r / 255, g / 255, b / 255), UnitName(unit), "|r")
-				end
-			end
-		-- end
-
-		return C.db.profile.colors.selection[7]
-	end
-
 	function E:GetUnitClassColor(unit)
 		local class = select(2, UnitClass(unit))
 		if class then

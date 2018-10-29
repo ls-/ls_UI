@@ -427,86 +427,8 @@ function CONFIG:CreateGeneralPanel(order)
 							},
 						},
 					},
-					selection = {
-						order = 5,
-						type = "group",
-						name = L["SELECTION"],
-						get = function(info)
-							return E:GetRGB(C.db.profile.colors.selection[tonumber(info[#info])])
-						end,
-						set = function(info, r, g, b)
-							if r ~= nil then
-								local color = C.db.profile.colors.selection[tonumber(info[#info])]
-								if color.r ~= r or color.g ~= g or color.g ~= b then
-									E:SetRGB(color, r, g, b)
-
-									UNITFRAMES:UpdateSelectionColors()
-									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
-								end
-							end
-						end,
-						args = {
-							reset = {
-								type = "execute",
-								order = 1,
-								name = L["RESTORE_DEFAULTS"],
-								func = function()
-									for k, v in next, D.profile.colors.selection do
-										E:SetRGB(C.db.profile.colors.selection[k], E:GetRGB(v))
-									end
-
-									UNITFRAMES:UpdateSelectionColors()
-									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
-								end,
-							},
-							spacer_1 = {
-								order = 9,
-								type = "description",
-								name = " ",
-							},
-							["1"] = {
-								order = 10,
-								type = "color",
-								name = L["PERSONAL"],
-								desc = L["PERSONAL_DESC"],
-							},
-							["4"] = {
-								order = 11,
-								type = "color",
-								name = FACTION_STANDING_LABEL2,
-							},
-							["3"] = {
-								order = 12,
-								type = "color",
-								name = FACTION_STANDING_LABEL3,
-							},
-							["2"] = {
-								order = 13,
-								type = "color",
-								name = FACTION_STANDING_LABEL4,
-							},
-							["6"] = {
-								order = 14,
-								type = "color",
-								name = FACTION_STANDING_LABEL5,
-							},
-							["5"] = {
-								order = 15,
-								type = "color",
-								name = L["DEAD"],
-							},
-							["7"] = {
-								order = 16,
-								type = "color",
-								name = L["DEFAULT"],
-								desc = L["SELECTION_DEFAULT_DESC"],
-							},
-						},
-					},
 					reaction = {
-						order = 6,
+						order = 5,
 						type = "group",
 						name = L["REACTION"],
 						get = function(info)
@@ -534,7 +456,7 @@ function CONFIG:CreateGeneralPanel(order)
 										E:SetRGB(C.db.profile.colors.reaction[k], E:GetRGB(v))
 									end
 
-									UNITFRAMES:UpdateSelectionColors()
+									UNITFRAMES:UpdateReactionColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
 									UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
 								end,
@@ -587,7 +509,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					faction = {
-						order = 7,
+						order = 6,
 						type = "group",
 						name = L["FACTION"],
 						get = function(info)
@@ -643,7 +565,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					xp = {
-						order = 8,
+						order = 7,
 						type = "group",
 						name = L["EXPERIENCE"],
 						get = function(info)
@@ -737,7 +659,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					difficulty = {
-						order = 9,
+						order = 8,
 						type = "group",
 						name = L["DIFFICULTY"],
 						get = function(info)
@@ -799,7 +721,7 @@ function CONFIG:CreateGeneralPanel(order)
 						}
 					},
 					castbar = {
-						order = 10,
+						order = 9,
 						type = "group",
 						name = L["CASTBAR"],
 						get = function(info)
@@ -856,7 +778,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					aura = {
-						order = 11,
+						order = 10,
 						type = "group",
 						name = L["AURA"],
 						get = function(info)
@@ -938,7 +860,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					button = {
-						order = 12,
+						order = 11,
 						type = "group",
 						name = L["BUTTON"],
 						get = function(info)
@@ -995,7 +917,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					cooldown = {
-						order = 13,
+						order = 12,
 						type = "group",
 						name = L["COOLDOWN"],
 						get = function(info)
@@ -1053,7 +975,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					zone = {
-						order = 14,
+						order = 13,
 						type = "group",
 						name = L["ZONE"],
 						get = function(info)

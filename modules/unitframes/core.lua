@@ -127,15 +127,6 @@ function UF:UpdateReactionColors()
 	end
 end
 
-function UF:UpdateSelectionColors()
-	local color = oUF.colors.selection
-	for k, v in next, C.db.profile.colors.selection do
-		if k <= 7 then
-			color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
-		end
-	end
-end
-
 function UF:UpdatePowerColors()
 	local color = oUF.colors.power
 	for k, myColor in next, C.db.profile.colors.power do
@@ -236,7 +227,6 @@ function UF:Init()
 	if not isInit and C.db.char.units.enabled then
 		self:UpdateHealthColors()
 		self:UpdateReactionColors()
-		self:UpdateSelectionColors()
 		self:UpdatePowerColors()
 
 		oUF:Factory(function()
