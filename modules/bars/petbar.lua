@@ -8,9 +8,9 @@ local next = _G.next
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame GetPetActionCooldown
-	GetPetActionInfo GetPetActionSlotUsable IsPetAttackAction LibStub PetActionButton_StartFlash
-	PetActionButton_StopFlash PetHasActionBar UIParent
+	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame
+	GetPetActionCooldown GetPetActionInfo GetPetActionSlotUsable GetSpellSubtext IsPetAttackAction
+	LibStub PetActionButton_StartFlash PetActionButton_StopFlash PetHasActionBar UIParent
 
 	ATTACK_BUTTON_FLASH_TIME RANGE_INDICATOR TOOLTIP_UPDATE_TIME
 ]]
@@ -144,51 +144,32 @@ end
 local function button_UpdateUsable(self)
 	if self.config.outOfRangeColoring == "button" and self.outOfRange then
 		self.icon:SetDesaturated(self.config.desaturation.range == true)
-		self.icon:SetVertexColor(E:GetRGB(self.config.colors.range))
-	elseif self.onCooldown then
-		self.icon:SetDesaturated(self.config.desaturation.cooldown == true)
-		self.icon:SetVertexColor(E:GetRGB(self.config.colors.unusable))
+		self.icon:SetVertexColor(unpack(self.config.colors.range))
 	else
-		local isUsable = PetHasActionBar() and GetPetActionSlotUsable(self:GetID()) or false
-		if isUsable then
+		if PetHasActionBar() and GetPetActionSlotUsable(self:GetID()) then
 			self.icon:SetDesaturated(false)
-			self.icon:SetVertexColor(E:GetRGB(self.config.colors.normal))
+			self.icon:SetVertexColor(unpack(self.config.colors.normal))
 		else
 			self.icon:SetDesaturated(self.config.desaturation.unusable == true)
-			self.icon:SetVertexColor(E:GetRGB(self.config.colors.unusable))
+			self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 		end
 	end
-end
-
-local function onCooldownDone(self)
-	self:SetScript("OnCooldownDone", nil)
-	self:GetParent():UpdateCooldown()
 end
 
 local function button_UpdateCooldown(self)
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
-
-	local oldOnCooldown = self.onCooldown
-	self.onCooldown = enable and enable ~= 0 and start > 0 and duration > 1.5
-	if self.onCooldown ~= oldOnCooldown then
-		self:UpdateUsable()
-		if self.onCooldown then
-			self.cooldown:SetScript("OnCooldownDone", onCooldownDone)
-		end
-	end
 end
 
 local function button_UpdateConfig(self, config)
 	self.config = E:CopyTable(config, self.config)
 
 	if self.config.outOfRangeColoring == "button" and self.config.outOfManaColoring == "button" then
-		self.HotKey:SetVertexColor(E:GetRGB(self.config.colors.normal))
+		self.HotKey:SetVertexColor(unpack(self.config.colors.normal))
 	end
 
 	self.checksRange = nil
-	self.onCooldown = nil
 	self.outOfRange = nil
 
 	self:Update()
@@ -196,7 +177,7 @@ end
 
 local function button_Update(self)
 	local id = self:GetID()
-	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(id)
+	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(id)
 
 	if not isToken then
 		self.icon:SetTexture(texture)
@@ -208,7 +189,9 @@ local function button_Update(self)
 
 	self.isToken = isToken
 
-	self:SetChecked(PetHasActionBar() and isActive or false)
+	if spellID then
+		self.tooltipSubtext = GetSpellSubtext(spellID)
+	end
 
 	if PetHasActionBar() and isActive then
 		if IsPetAttackAction(id) then
@@ -218,9 +201,12 @@ local function button_Update(self)
 			self:StopFlash()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
+
+		self:SetChecked(true)
 	else
 		self:StopFlash()
 		self:GetCheckedTexture():SetAlpha(1.0)
+		self:SetChecked(false)
 	end
 
 	if autoCastAllowed and not autoCastEnabled then
@@ -371,15 +357,15 @@ function MODULE.CreatePetActionBar()
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Show()
 											end
-											hotkey:SetVertexColor(E:GetRGB(button.config.colors.range))
+											hotkey:SetVertexColor(unpack(button.config.colors.range))
 										else
 											if hotkey:GetText() == RANGE_INDICATOR then
 												hotkey:Hide()
 											end
-											hotkey:SetVertexColor(E:GetRGB(button.config.colors.normal))
+											hotkey:SetVertexColor(unpack(button.config.colors.normal))
 										end
 									else
-										button.HotKey:SetVertexColor(E:GetRGB(button.config.colors.normal))
+										button.HotKey:SetVertexColor(unpack(button.config.colors.normal))
 									end
 								end
 							end

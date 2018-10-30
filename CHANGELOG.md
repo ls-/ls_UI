@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 80000.14
+
+- Fixed an issue which made pet action buttons turn black;
+- Fixed minimap zone text updates.
+
 ## Version 80000.13
 
 - Added options to adjust practically every colour ls: UI uses. Can be found at /LSUI > General >  
