@@ -605,7 +605,7 @@ local function tooltip_SetUnit(self)
 				name = PLAYER_TEMPLATE:format(
 					E:GetUnitClassColor(unitTarget).hex,
 					name,
-					getUnitColor(unitTarget).hex
+					E:GetUnitReactionColor(unitTarget).hex
 				)
 			else
 				name = s_format("|c%s%s|r", getUnitColor(unitTarget).hex, name)
