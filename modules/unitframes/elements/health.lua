@@ -5,6 +5,7 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local next = _G.next
 
 -- Blizz
 local UnitGUID = _G.UnitGUID
@@ -91,8 +92,16 @@ do
 		updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
 	end
 
+	local function element_UpdateGainLossPoints(self)
+		self.GainLossIndicators:UpdatePoints(self._config.orientation)
+	end
+
 	local function element_UpdateGainLossThreshold(self)
-		self.GainLossIndicators.threshold = self._config.change_threshold
+		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
+	end
+
+	local function element_UpdateGainLossColors(self)
+		self.GainLossIndicators:UpdateColors()
 	end
 
 	local function frame_UpdateHealth(self)
@@ -103,10 +112,9 @@ do
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
-
-		element.GainLossIndicators:UpdatePoints(element._config.orientation)
+		element:UpdateGainLossColors()
+		element:UpdateGainLossPoints()
 		element:UpdateGainLossThreshold()
-
 		element:ForceUpdate()
 	end
 
@@ -132,6 +140,8 @@ do
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateGainLossColors = element_UpdateGainLossColors
+		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
 		element.UpdateTags = element_UpdateTags
 		element.UpdateTextPoints = element_UpdateTextPoints
@@ -163,6 +173,12 @@ do
 	local function element_UpdateTags(self)
 		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
 		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
+	end
+
+	local function element_UpdateColors(self)
+		self.myBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.my_heal))
+		self.otherBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.other_heal))
+		self.healAbsorbBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.heal_absorb))
 	end
 
 	local function frame_UpdateHealthPrediction(self)
@@ -236,6 +252,7 @@ do
 			healAbsorbBar:SetHeight(height)
 		end
 
+		element:UpdateColors()
 		element:UpdateFontObjects()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -258,13 +275,11 @@ do
 		myBar:SetFrameLevel(level)
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		myBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		myBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 		E:SmoothBar(myBar)
 		parent.MyHeal = myBar
 
 		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
 		myBar._texture:SetAllPoints(myBar:GetStatusBarTexture())
-		myBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.MY_HEAL:GetRGB())
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
@@ -275,7 +290,6 @@ do
 
 		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
 		otherBar._texture:SetAllPoints(otherBar:GetStatusBarTexture())
-		otherBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.OTHER_HEAL:GetRGB())
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
@@ -285,7 +299,7 @@ do
 		parent.DamageAbsorb = absorbBar
 
 		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
-		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", true)
+		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
 		overlay:SetHorizTile(true)
 		overlay:SetVertTile(true)
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
@@ -298,13 +312,11 @@ do
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		healAbsorbBar:SetStatusBarColor(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 		E:SmoothBar(healAbsorbBar)
 		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
-		healAbsorbBar._texture:SetColorTexture(M.COLORS.HEALPREDICTION.HEAL_ABSORB:GetRGB())
 
 		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
 
@@ -316,6 +328,7 @@ do
 			absorbBar = absorbBar,
 			healAbsorbBar = healAbsorbBar,
 			maxOverflow = 1,
+			UpdateColors = element_UpdateColors,
 			UpdateConfig = element_UpdateConfig,
 			UpdateFontObjects = element_UpdateFontObjects,
 			UpdateTags = element_UpdateTags,

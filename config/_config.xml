@@ -4,6 +4,7 @@
 	<Script file="auratracker.lua"/>
 	<Script file="bars.lua"/>
 	<Script file="blizzard.lua"/>
+	<Script file="general.lua"/>
 	<Script file="loot.lua"/>
 	<Script file="minimap.lua"/>
 	<Script file="tooltips.lua"/>

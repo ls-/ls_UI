@@ -10,7 +10,7 @@ end
 
 local function element_PostUpdate(self, _, status)
 	if status and status == 0 then
-		self:SetVertexColor(M.COLORS.THREAT[1]:GetRGB())
+		self:SetVertexColor(E:GetRGB(C.db.global.colors.threat[1]))
 		self:Show()
 	end
 end

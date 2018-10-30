@@ -136,7 +136,6 @@ end
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
-	self._config.colors = E:CopyTable(C.db.profile.bars.colors, self._config.colors)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
@@ -157,7 +156,12 @@ local function bar_UpdateButtonConfig(self)
 	if not self.buttonConfig then
 		self.buttonConfig = {
 			tooltip = "enabled",
-			colors = {},
+			colors = {
+				normal = {},
+				unusable = {},
+				mana = {},
+				range = {},
+			},
 			desaturation = {},
 			hideElements = {
 				equipped = false,
@@ -165,8 +169,11 @@ local function bar_UpdateButtonConfig(self)
 		}
 	end
 
+	for k, v in next, C.db.profile.colors.button do
+		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = E:GetRGB(v)
+	end
+
 	self.buttonConfig.clickOnDown = self._config.click_on_down
-	self.buttonConfig.colors = E:CopyTable(self._config.colors, self.buttonConfig.colors)
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled

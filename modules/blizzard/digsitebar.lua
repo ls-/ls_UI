@@ -43,7 +43,7 @@ function MODULE:SetUpDigsiteBar()
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")
-			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(M.COLORS.ORANGE:GetRGB())
+			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(E:GetRGB(C.db.global.colors.orange))
 
 			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", bar_OnEvent)
 

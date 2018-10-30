@@ -1,82 +1,70 @@
 ﻿local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local next = _G.next
 
 -- Mine
 L["LS_UI"] = "ls: |cff1a9fc0UI|r"
 
 -- These rely on Blizz strings
-L["ADVENTURE_JOURNAL"] = _G.ADVENTURE_JOURNAL
+L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
 L["CALENDAR_EVENT_ALARM_MESSAGE"] = _G.CALENDAR_EVENT_ALARM_MESSAGE
 L["CALENDAR_PENDING_INVITES_TOOLTIP"] = _G.GAMETIME_TOOLTIP_CALENDAR_INVITES
 L["CALENDAR_TOGGLE_TOOLTIP"] = _G.GAMETIME_TOOLTIP_TOGGLE_CALENDAR
 L["CALL_TO_ARMS_TOOLTIP"] = _G.LFG_CALL_TO_ARMS
-L["CANCEL"] = _G.CANCEL
 L["CAST_ON_KEY_DOWN_DESC"] = _G.OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN
 L["CHARACTER_BUTTON"] = _G.CHARACTER_BUTTON
+L["CHI"] = _G.CHI
+L["CLASS"] = _G.CLASS
 L["COLLECTIONS"] = _G.COLLECTIONS
+L["COMBO_POINTS"] = _G.COMBO_POINTS
 L["CONTESTED_TERRITORY"] = _G.CONTESTED_TERRITORY:gsub("[()]", "")
 L["CURRENCY"] = _G.CURRENCY
 L["CURRENCY_COLON"] = _G.CURRENCY..":"
-L["DAMAGER_RED"] = "|cffdc4436".._G.DAMAGER.."|r"
-L["DUNGEONS_BUTTON"] = _G.DUNGEONS_BUTTON
+L["DAMAGER_RED"] = E:WrapText(D.global.colors.red, _G.DAMAGER)
 L["DURABILITY_COLON"] = _G.DURABILITY..":"
 L["ENABLE"] = _G.ENABLE
+L["ENERGY"] = _G.ENERGY
+L["FACTION"] = _G.FACTION
+L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
+L["FACTION_HORDE"] = _G.FACTION_HORDE
 L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"] = _G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL
 L["FEATURE_NOT_AVAILBLE_NEUTRAL"] = _G.FEATURE_NOT_AVAILBLE_PANDAREN
+L["FOCUS"] = _G.FOCUS
 L["FOREIGN_SERVER_LABEL"] = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
+L["FURY"] = _G.FURY
 L["GENERAL"] = _G.GENERAL_LABEL
-L["HEALER_GREEN"] = "|cff2eac34".._G.HEALER.."|r"
+L["HEALER_GREEN"] = E:WrapText(D.global.colors.green, _G.HEALER)
 L["HIDE"] = _G.HIDE
+L["HOLY_POWER"] = _G.HOLY_POWER
+L["INSANITY"] = _G.INSANITY
 L["LOOT"] = _G.LOOT_NOUN
+L["LUNAR_POWER"] = _G.LUNAR_POWER
+L["MAELSTROM"] = _G.MAELSTROM
 L["MAINMENU_BUTTON"] = _G.MAINMENU_BUTTON
+L["MANA"] = _G.MANA
 L["MINIMAP"] = _G.MINIMAP_LABEL
 L["NONE"] = _G.NONE
 L["OFFLINE"] = _G.PLAYER_OFFLINE
+L["PAIN"] = _G.PAIN
 L["PET"] = _G.PET
-L["QUESTLOG_BUTTON"] = _G.QUESTLOG_BUTTON
+L["RAGE"] = _G.RAGE
 L["RAID_INFO_COLON"] = _G.RAID_INFO..":"
 L["RELOAD_UI"] = _G.RELOADUI
 L["REPUTATION"] = _G.REPUTATION
-L["RETRIEVING_DATA"] = _G.RETRIEVING_DATA
+L["RUNES"] = _G.RUNES
+L["RUNIC_POWER"] = _G.RUNIC_POWER
 L["SANCTUARY"] = _G.SANCTUARY_TERRITORY:gsub("[()]", "")
 L["SHOW"] = _G.SHOW
-L["SHOW_AS_XP_BAR"] = _G.SHOW_FACTION_ON_MAINSCREEN
+L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
 L["SPELLBOOK_ABILITIES_BUTTON"] = _G.SPELLBOOK_ABILITIES_BUTTON
-L["TANK_BLUE"] = "|cff1798fb".._G.TANK.."|r"
+L["TANK_BLUE"] = E:WrapText(D.global.colors.blue, _G.TANK)
 L["TOTAL"] = _G.TOTAL
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
-L["COLOR_CLASS_DESC"] = (function()
-	local temp = ""
-
-	for k, class in next, _G.CLASS_SORT_ORDER do
-		temp = temp..M.COLORS.CLASS[class]:WrapText(_G.LOCALIZED_CLASS_NAMES_MALE[class])
-
-		if k ~= #_G.CLASS_SORT_ORDER then
-			temp = temp.."\n"
-		end
-	end
-
-	return temp
-end)()
-L["COLOR_REACTION_DESC"] = (function()
-	local temp = ""
-
-	for i = 1, 8 do
-		temp = temp..M.COLORS.REACTION[i]:WrapText(_G["FACTION_STANDING_LABEL"..i])
-
-		if i ~= 8 then
-			temp = temp.."\n"
-		end
-	end
-
-	return temp
-end)()
+L["ZONE"] = _G.ZONE
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -90,9 +78,7 @@ Tags:
 - |cffffd200[ls:altpower:max]|r - the max value;
 - |cffffd200[ls:altpower:perc]|r - the percentage;
 - |cffffd200[ls:altpower:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:altpower:cur-color-max]|r - the current value followed by the coloured max value;
 - |cffffd200[ls:altpower:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:altpower:cur-color-perc]|r - the current value followed by the coloured percentage;
 - |cffffd200[ls:color:altpower]|r - colour.
 
 If the current value is equal to the max value, only the max value will be displayed.
@@ -106,6 +92,7 @@ L["ANCHOR_TO_CURSOR"] = "Attach to Cursor"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "Artefact Level: |cffffffff%s|r"
 L["ARTIFACT_POWER"] = "Artefact Power"
 L["ASCENDING"] = "Ascending"
+L["AURA"] = "Aura"
 L["AURA_TRACKER"] = "Aura Tracker"
 L["AURA_TYPE"] = "Aura Type"
 L["AURAS"] = "Auras"
@@ -120,7 +107,6 @@ L["BAR_5"] = "Bar 5"
 L["BAR_COLOR"] = "Bar Colour"
 L["BAR_TEXT"] = "Bar Text"
 L["BLIZZARD"] = "Blizzard"
-L["BONUS_HONOR_TOOLTIP"] = "Bonus Honour: |cffffffff%s|r"
 L["BONUS_XP_TOOLTIP"] = "Bonus XP: |cffffffff%s|r"
 L["BORDER"] = "Border"
 L["BORDER_COLOR"] = "Border Colour"
@@ -135,6 +121,7 @@ L["BOTTOM_INSET_SIZE"] = "Bottom Inset Size"
 L["BOTTOM_INSET_SIZE_DESC"] = "Used by the power bar."
 L["BUFFS"] = "Buffs"
 L["BUFFS_AND_DEBUFFS"] = "Buffs and Debuffs"
+L["BUTTON"] = "Button"
 L["BUTTON_GRID"] = "Button Grid"
 L["CALENDAR"] = "Calendar"
 L["CAST_ON_KEY_DOWN"] = "Cast on Key Down"
@@ -147,6 +134,7 @@ L["CASTABLE_DEBUFFS_DESC"] = "Show debuffs cast by you."
 L["CASTABLE_DEBUFFS_PERMA"] = "Castable Perma Debuffs"
 L["CASTABLE_DEBUFFS_PERMA_DESC"] = "Show permanent debuffs cast by you."
 L["CASTBAR"] = "Castbar"
+L["CHANGE"] = "Change"
 L["CHARACTER_BUTTON_DESC"] = "Show equipment durability information."
 L["CLASS_POWER"] = "Class Power"
 L["CLASSIC"] = "Classic"
@@ -161,7 +149,9 @@ L["COPY_FROM_DESC"] = "Select a unit to copy settings from."
 L["COST_PREDICTION"] = "Cost Prediction"
 L["COST_PREDICTION_DESC"] = "Show a bar that represents power cost of a spell. Doesn't work with instant cast abilities."
 L["COUNT_TEXT"] = "Count Text"
+L["CURSE"] = "Curse"
 L["DAILY_QUEST_RESET_TIME_TOOLTIP"] = "Daily Quest Reset Time: |cffffffff%s|r"
+L["DAMAGE_ABSORB"] = "Damage Absorb"
 L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -173,15 +163,19 @@ Use |cffffd200[nl]|r for line breaking.]=]
 L["DAMAGE_ABSORB_TEXT"] = "Damage Absorb Text"
 L["DAYS"] = "Days"
 L["DEAD"] = "Dead"
+L["DEBUFF"] = "Debuff"
 L["DEBUFF_TYPE"] = "Debuff Type"
 L["DEBUFFS"] = "Debuffs"
 L["DESATURATION"] = "Desaturation"
 L["DESCENDING"] = "Descending"
 L["DETACH_FROM_FRAME"] = "Detach from Frame"
+L["DIFFICULT"] = "Difficult"
+L["DIFFICULTY"] = "Difficulty"
 L["DIFFICULTY_FLAG"] = "Difficulty Flag"
 L["DIGSITE_BAR"] = "Digsite Progress Bar"
 L["DISABLE_MOUSE"] = "Disable Mouse"
 L["DISABLE_MOUSE_DESC"] = "Ignore mouse events."
+L["DISEASE"] = "Disease"
 L["DISPELLABLE_BUFFS"] = "Dispellable Buffs"
 L["DISPELLABLE_BUFFS_DESC"] = "Show buffs you can spellsteal or purge from your target."
 L["DISPELLABLE_DEBUFF_ICONS"] = "Dispellable Debuff Icons"
@@ -191,15 +185,17 @@ L["DOWN"] = "Down"
 L["DRAG_KEY"] = "Drag Key"
 L["DUNGEONS_BUTTON_DESC"] = "Show 'Call to Arms' information."
 L["DURABILITY_FRAME"] = "Durability Frame"
-L["ELITE"] = "Elite"
 L["ENEMY_UNITS"] = "Enemy Units"
 L["ENHANCED_TOOLTIPS"] = "Enhanced Tooltips"
 L["ENTER_SPELL_ID"] = "Enter Spell ID"
 L["EXP_THRESHOLD"] = "Expiration Threshold"
 L["EXP_THRESHOLD_DESC"] = "The threshold (in seconds) below which the remaining time will be shown as a decimal number."
 L["EXPERIENCE"] = "Experience"
+L["EXPERIENCE_NORMAL"] = "Normal"
+L["EXPERIENCE_RESTED"] = "Rested"
 L["EXPIRATION"] = "Expiration"
 L["EXTRA_ACTION_BUTTON"] = "Extra Action Button"
+L["FACTION_NEUTRAL"] = "Neutral"
 L["FADE_IN_DELAY"] = "Fade In Delay"
 L["FADE_IN_DURATION"] = "Fade In Duration"
 L["FADE_OUT_DELAY"] = "Fade Out Delay"
@@ -212,17 +208,18 @@ L["FLAG"] = "Flag"
 L["FLYOUT_DIR"] = "Flyout Direction"
 L["FOCUS_FRAME"] = "Focus Frame"
 L["FOCUS_TOF"] = "Focus & ToF"
-L["FONT"] = "Font"
 L["FORMAT"] = "Format"
 L["FRAME"] = "Frame"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Free Bag Slots: |cffffffff%s|r"
 L["FRIENDLY_TERRITORY"] = "Friendly Territory"
 L["FRIENDLY_UNITS"] = "Friendly Units"
+L["GAIN"] = "Gain"
 L["GAIN_LOSS_THRESHOLD"] = "Gain/Loss Threshold"
 L["GAIN_LOSS_THRESHOLD_DESC"] = "The threshold (in percentages) above which resource gain and loss will be animated. Set to 100 to disable."
 L["GM_FRAME"] = "Ticket Status Frame"
 L["GOLD"] = "Gold"
 L["GROWTH_DIR"] = "Growth Direction"
+L["HEAL_ABSORB"] = "Heal Absorb"
 L["HEAL_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -249,10 +246,10 @@ L["HEALTH_TEXT"] = "Health Text"
 L["HEIGHT"] = "Height"
 L["HONOR"] = "Honour"
 L["HONOR_LEVEL_TOOLTIP"] = "Honour Level: |cffffffff%d|r"
-L["HORIZ_GROWTH_DIR"] = "Horizontal Growth Direction"
 L["HOSTILE_TERRITORY"] = "Hostile Territory"
 L["HOURS"] = "Hours"
 L["ICON"] = "Icon"
+L["IMPOSSIBLE"] = "Impossible"
 L["INDEX"] = "Index"
 L["INSPECT_INFO"] = "Inspect Info"
 L["INSPECT_INFO_DESC"] = "Show the current tooltip unit's specialisation and item level. This data may not be available right away."
@@ -275,9 +272,11 @@ L["LOCK"] = "Lock"
 L["LOCK_BUTTONS"] = "Lock Buttons"
 L["LOCK_BUTTONS_DESC"] = "Prevents you from picking up and dragging spells off the action bar."
 L["LOOT_ALL"] = "Loot All"
+L["LOSS"] = "Loss"
 L["M_SS_THRESHOLD"] = "M:SS Threshold"
 L["M_SS_THRESHOLD_DESC"] = "The threshold (in seconds) below which the remaining time will be shown in the M:SS format. Set to 0 to disable."
 L["MACRO_TEXT"] = "Macro Text"
+L["MAGIC"] = "Magic"
 L["MAIN_BAR"] = "Main Bar"
 L["MAINMENU_BUTTON_DESC"] = "Show performance information."
 L["MAINMENU_BUTTON_HOLD_TOOLTIP"] = "|cffffffffHold Shift|r to show memory usage."
@@ -291,7 +290,6 @@ L["MIRROR_TIMER_DESC"] = "Breath, fatigue and other indicators."
 L["MODE"] = "Mode"
 L["MOUNT_AURAS"] = "Mount Auras"
 L["MOUNT_AURAS_DESC"] = "Show mount auras."
-L["MOUSEOVER_SHOW"] = "Show on Mouseover"
 L["MOVER_BUTTONS_DESC"] = "|cffffffffClick|r to toggle buttons."
 L["MOVER_CYCLE_DESC"] = "Press the |cffffffffAlt|r key to cycle through frames under the cursor."
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset the position."
@@ -313,14 +311,12 @@ Use |cffffd200||r|r to close colour tags.
 Use |cffffd200[nl]|r for line breaking.]=]
 L["NO_SEPARATION"] = "No Separation"
 L["NOTHING_TO_SHOW"] = "Nothing to show."
-L["NPC_CLASSIFICATION"] = "NPC Type"
 L["NPE_FRAME"] = "NPE Tutorial Frame"
 L["NUM_BUTTONS"] = "Number of Buttons"
 L["NUM_ROWS"] = "Number of Rows"
 L["NUMERIC"] = "Numeric"
 L["NUMERIC_PERCENTAGE"] = "Numeric & Percentage"
 L["OBJECTIVE_TRACKER"] = "Objective Tracker"
-L["ON_COOLDOWN"] = "On Cooldown"
 L["OOM"] = "Out of Power"
 L["OOM_INDICATOR"] = "Out-of-Power Indicator"
 L["OOR"] = "Out of Range"
@@ -329,20 +325,22 @@ L["OPEN_CONFIG"] = "Open Config"
 L["ORBS"] = "Orbs"
 L["OTHER"] = "Other"
 L["OTHERS_FIRST"] = "Others First"
+L["OTHERS_HEALING"] = "Others' Healing"
 L["OUTLINE"] = "Outline"
 L["PER_ROW"] = "Per Row"
 L["PET_BAR"] = "Pet Bar"
 L["PET_BATTLE_BAR"] = "Pet Battle Bar"
-L["PET_CAST_BAR"] = "Pet Casting Bar"
+L["PET_CASTBAR"] = "Pet Casting Bar"
 L["PET_FRAME"] = "Pet Frame"
-L["PLAYER_CLASS"] = "Player Class"
 L["PLAYER_FRAME"] = "Player Frame"
 L["PLAYER_PET"] = "Player & Pet"
 L["PLAYER_TITLE"] = "Player Title"
 L["POINT"] = "Point"
 L["POINT_DESC"] = "Point of the object."
+L["POISON"] = "Poison"
 L["POSITION"] = "Position"
 L["POWER"] = "Power"
+L["POWER_COST"] = "Power Cost"
 L["POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
 
 Tags:
@@ -350,9 +348,7 @@ Tags:
 - |cffffd200[ls:power:max]|r - the max value;
 - |cffffd200[ls:power:perc]|r - the percentage;
 - |cffffd200[ls:power:cur-max]|r - the current value followed by the max value;
-- |cffffd200[ls:power:cur-color-max]|r - the current value followed by the coloured max value;
 - |cffffd200[ls:power:cur-perc]|r - the current value followed by the percentage;
-- |cffffd200[ls:power:cur-color-perc]|r - the current value followed by the coloured percentage;
 - |cffffd200[ls:power:deficit]|r - the deficit value;
 - |cffffd200[ls:color:power]|r - the colour.
 
@@ -361,7 +357,7 @@ If the current value is equal to the max value, only the max value will be displ
 Use |cffffd200||r|r to close colour tags.
 Use |cffffd200[nl]|r for line breaking.]=]
 L["POWER_TEXT"] = "Power Text"
-L["PRESTIGE_LEVEL_TOOLTIP"] = "Prestige Level: |cffffffff%s|r"
+L["PREDICTION"] = "Prediction"
 L["PREVIEW"] = "Preview"
 L["PVP_ICON"] = "PvP Icon"
 L["QUESTLOG_BUTTON_DESC"] = "Show daily quest reset timer."
@@ -383,6 +379,9 @@ L["RIGHT_DOWN"] = "Right and Down"
 L["RIGHT_UP"] = "Right and Up"
 L["ROWS"] = "Rows"
 L["RUNES"] = "Runes"
+L["RUNES_BLOOD"] = "Blood Runes"
+L["RUNES_FROST"] = "Frost Runes"
+L["RUNES_UNHOLY"] = "Unholy Runes"
 L["SECOND_ANCHOR"] = "Second Anchor"
 L["SECONDS"] = "Seconds"
 L["SELF_BUFFS"] = "Self Buffs"
@@ -396,6 +395,7 @@ L["SELF_DEBUFFS_PERMA_DESC"] = "Show permanent debuffs cast by the unit itself."
 L["SEPARATION"] = "Separation"
 L["SHADOW"] = "Shadow"
 L["SHIFT_CLICK_TO_SHOW_AS_XP"] = "|cffffffffShift-Click|r to show as experience bar."
+L["SHOW_ON_MOUSEOVER"] = "Show on Mouseover"
 L["SIZE"] = "Size"
 L["SIZE_OVERRIDE"] = "Size Override"
 L["SIZE_OVERRIDE_DESC"] = "If set to 0, element's size will be calculated automatically."
@@ -406,12 +406,18 @@ L["SPELL_CAST"] = "Cast"
 L["SPELL_CHANNELED"] = "Channelled"
 L["SPELL_FAILED"] = "Failed"
 L["SPELL_UNINTERRUPTIBLE"] = "Uninterruptible"
+L["STAGGER_HIGH"] = "High Stagger"
+L["STAGGER_LOW"] = "Low Stagger"
+L["STAGGER_MEDIUM"] = "Medium Stagger"
 L["STANCE_BAR"] = "Stance Bar"
+L["STANDARD"] = "Standard"
 L["TALKING_HEAD_FRAME"] = "Talking Head Frame"
+L["TAPPED"] = "Tapped"
 L["TARGET_FRAME"] = "Target Frame"
 L["TARGET_INFO"] = "Target Info"
 L["TARGET_INFO_DESC"] = "Show the current tooltip unit's target."
 L["TARGET_TOT"] = "Target & ToT"
+L["TEMP_ENCHANT"] = "Temporary Enchant"
 L["TEXT"] = "Text"
 L["TEXT_HORIZ_ALIGNMENT"] = "Horizontal Alignment"
 L["TEXT_VERT_ALIGNMENT"] = "Vertical Alignment"
@@ -426,6 +432,7 @@ L["TOP_INSET_SIZE"] = "Top Inset Size"
 L["TOP_INSET_SIZE_DESC"] = "Used by the class, alternative and additional power bars."
 L["TOT_FRAME"] = "Target of Target Frame"
 L["TOTEMS"] = "Totems"
+L["TRIVIAL"] = "Trivial"
 L["UI_LAYOUT"] = "UI Layout"
 L["UI_LAYOUT_DESC"] = "Changes the appearance of the player and pet frames. This will also change the layout of the UI."
 L["UNITS"] = "Units"
@@ -436,7 +443,7 @@ L["USABLE"] = "Usable"
 L["USE_BLIZZARD_VEHICLE_UI"] = "Use Blizzard Vehicle UI"
 L["VEHICLE_EXIT_BUTTON"] = "Vehicle Exit Button"
 L["VEHICLE_SEAT_INDICATOR"] = "Vehicle Seat Indicator"
-L["VERT_GROWTH_DIR"] = "Vertical Growth Direction"
+L["VERY_DIFFICULT"] = "Very Difficult"
 L["VISIBILITY"] = "Visibility"
 L["WIDTH"] = "Width"
 L["WIDTH_OVERRIDE"] = "Width Override"
@@ -444,6 +451,7 @@ L["WORD_WRAP"] = "Word Wrap"
 L["X_OFFSET"] = "xOffset"
 L["XP_BAR"] = "XP Bar"
 L["Y_OFFSET"] = "yOffset"
+L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"

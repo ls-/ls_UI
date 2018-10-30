@@ -1,92 +1,202 @@
 local _, ns = ...
-local D = ns.D
+local E, D = ns.E, ns.D
 
--- local function rbga(r, g, b, a)
--- 	return {r / 255, g / 255, b / 255, a}
--- end
+-- Lua
+local _G = getfenv(0)
 
+-- Mine
 local function rgb(r, g, b)
-	return {r / 255, g / 255, b / 255}
+	return E:SetRGB({}, r, g, b)
 end
 
-D.global = {}
+D.global = {
+	colors = {
+		red = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+		green = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		blue = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+		yellow = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+		gray = rgb(136, 137, 135), -- #888987 (N5)
+		dark_gray = rgb(59, 58, 58), -- #3B3A3A (N2)
+		black = rgb(0, 0, 0), -- #000000
+		white = rgb(255, 255, 255), -- #FFFFFF
+		orange = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+		class = {
+			HUNTER = rgb(170, 211, 114), -- #AAD372 (Blizzard Colour)
+			WARLOCK = rgb(135, 135, 237), -- #8787ED (Blizzard Colour)
+			PRIEST = rgb(255, 255, 255), -- #FFFFFF (Blizzard Colour)
+			PALADIN = rgb(244, 140, 186), -- #F48CBA (Blizzard Colour)
+			MAGE = rgb(63, 198, 234), -- #3FC6EA (Blizzard Colour)
+			ROGUE = rgb(255, 244, 104), -- #FFF468 (Blizzard Colour)
+			DRUID = rgb(255, 124, 10), -- #FF7C0A (Blizzard Colour)
+			SHAMAN = rgb(0, 112, 221), -- #0070DD (Blizzard Colour)
+			WARRIOR = rgb(198, 155, 109), -- #C69B6D (Blizzard Colour)
+			DEATHKNIGHT = rgb(196, 30, 58), -- #C41E3A (Blizzard Colour)
+			MONK = rgb(0, 255, 150), -- #00FF96 (Blizzard Colour)
+			DEMONHUNTER = rgb(163, 48, 201), -- #A330C9 (Blizzard Colour)
+		},
+		threat = {
+			[1] = rgb(175, 175, 175), -- #AFAFAF (Blizzard Colour)
+			[2] = rgb(254, 254, 118), -- #FEFE76 (Blizzard Colour)
+			[3] = rgb(254, 152, 0), -- #FE9800 (Blizzard Colour)
+			[4] = rgb(254, 0, 0), -- #FE0000 (Blizzard Colour)
+		},
+		quality = {
+			[0] = rgb(157, 157, 157), -- #9D9D9D (Blizzard Colour)
+			[1] = rgb(255, 255, 255), -- #FFFFFF (Blizzard Colour)
+			[2] = rgb(30, 255, 0), -- #1EFF00 (Blizzard Colour)
+			[3] = rgb(0, 112, 221), -- #0070DD (Blizzard Colour)
+			[4] = rgb(163, 53, 238), -- #A334EE (Blizzard Colour)
+			[5] = rgb(255, 128, 0), -- #FF8000 (Blizzard Colour)
+			[6] = rgb(230, 204, 128), -- #E6CC80 (Blizzard Colour)
+			[7] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
+			[8] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
+		},
+		gyr = {
+			[1] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			[3] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+		},
+		ryg = {
+			[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			[3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		},
+	},
+}
 
 D.profile = {
-	-- colors = {
-	-- 	castbar = {
-	-- 		casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		notinterruptible = rgb(136, 137, 135), -- #888987 (N 5);
-	-- 	},
-	-- 	cooldown = {
-	-- 		expiration = rgb(240, 32, 30), -- #F0201E (7.5R 5/18);
-	-- 		second = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		minute = rgb(255, 255, 255), -- #FFFFFF
-	-- 		hour = rgb(255, 255, 255), -- #FFFFFF
-	-- 		day = rgb(255, 255, 255), -- #FFFFFF
-	-- 	},
-	-- 	disconnected = rgb(136, 137, 135), -- #888987 (N 5);
-	-- 	gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12);
-	-- 	health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 	loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10);
-	-- 	power = {
-	-- 		MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10);
-	-- 		RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
-	-- 		ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14);
-	-- 		RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8);
-	-- 		RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8);
-	-- 		SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14);
-	-- 		LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12);
-	-- 		HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6);
-	-- 		MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12);
-	-- 		INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14);
-	-- 		CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6);
-	-- 		ARCANE_CHARGES = rgb(28, 129, 191), -- #1C81BF (2.5PB 5/10);
-	-- 		FURY = rgb(187, 57, 231), -- #BB39E7 (5P 5/22);
-	-- 		PAIN = rgb(243, 157, 28), -- #F39D1C (7.5YR 7/12);
-	-- 		AMMOSLOT = rgb(217, 169, 35), -- #D9A923 (2.5Y 7/10);
-	-- 		FUEL = rgb(42, 137, 122), -- #2A897A (2.5BG 5/6);
-	-- 		STAGGER = {
-	-- 			rgb(111, 255, 99), -- #6FFF63 (10GY 9/14);
-	-- 			rgb(229, 237, 142), -- #E5ED8E (2.5GY 9/6);
-	-- 			rgb(211, 77, 81), -- #D34D51 (5R 5/12);
-	-- 		},
-	-- 	},
-	-- 	reaction = {
-	-- 		[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		[2] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14);
-	-- 		[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12);
-	-- 		[4] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10);
-	-- 		[5] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 		[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12);
-	-- 	},
-	-- 	tapped = rgb(163, 162, 162), -- #A3A2A2 (N 6);
-	-- },
+	colors = {
+		button = {
+			normal = rgb(255, 255, 255), -- #FFFFFF
+			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
+			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
+			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+		},
+		castbar = {
+			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			notinterruptible = rgb(136, 137, 135), -- #888987 (N5)
+		},
+		cooldown = {
+			expiration = rgb(240, 32, 30), -- #F0201E (7.5R 5/18)
+			second = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			minute = rgb(255, 255, 255), -- #FFFFFF
+			hour = rgb(255, 255, 255), -- #FFFFFF
+			day = rgb(255, 255, 255), -- #FFFFFF
+		},
+		disconnected = rgb(136, 137, 135), -- #888987 (N5)
+		tapped = rgb(163, 162, 162), -- #A3A2A2 (N6)
+		health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12)
+		loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+		power = {
+			MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10)
+			RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14)
+			RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8)
+			RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8)
+			SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14)
+			LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12)
+			HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6)
+			MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+			INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14)
+			CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6)
+			ARCANE_CHARGES = rgb(28, 129, 191), -- #1C81BF (2.5PB 5/10)
+			FURY = rgb(187, 57, 231), -- #BB39E7 (5P 5/22)
+			PAIN = rgb(243, 157, 28), -- #F39D1C (7.5YR 7/12)
+			AMMOSLOT = rgb(217, 169, 35), -- #D9A923 (2.5Y 7/10)
+			FUEL = rgb(42, 137, 122), -- #2A897A (2.5BG 5/6)
+			STAGGER = {
+				-- low
+				[1] = rgb(111, 255, 99), -- #6FFF63 (10GY 9/14)
+				-- medium
+				[2] = rgb(229, 237, 142), -- #E5ED8E (2.5GY 9/6)
+				-- high
+				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
+			},
+			ALT_POWER = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
+		},
+		reaction = {
+			-- hated
+			[1] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- hostile
+			[2] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- unfriendly
+			[3] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			-- neutral
+			[4] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			-- friendly
+			[5] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- honored
+			[6] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- revered
+			[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- exalted
+			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+		},
+		difficulty = {
+			impossible = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			very_difficult = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			difficult = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			standard = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			trivial = rgb(136, 137, 135), -- #888987 (N5)
+		},
+		faction = {
+			-- Alliance = rgb(74, 84, 232), -- #4A54E8 (Blizzard Colour)
+			Alliance = rgb(64, 84, 202), -- #4054CA (7.5PB 4/16)
+			-- Horde = rgb(230, 13, 18), -- #E60D12 (Blizzard Colour)
+			Horde = rgb(231, 53, 42), -- #E7352A (7.5R 5/16)
+			Neutral = rgb(233, 232, 231) -- #E9E8E7 (N9)
+		},
+		artifact = rgb(217, 202, 146), -- #D9CA92 (5Y 8/4)
+		-- artifact = rgb(230, 204, 153), -- #E6CC99 (Blizzard Colour)
+		honor = rgb(255, 77, 35), -- #FF4D23 (Blizzard Colour)
+		xp = {
+			-- rested
+			[1] = rgb(0, 99, 224), -- #0063E0 (Blizzard Colour)
+			-- normal
+			[2] = rgb(147.9, 0.0, 140.25), -- #94008C (Blizzard Colour)
+		},
+		prediction = {
+			my_heal = rgb(20, 228, 187), -- #14E4BB (10G 8/10)
+			other_heal = rgb(11, 169, 139), -- #0BA98B (10G 6/8)
+			damage_absorb = rgb(53, 187, 244), -- #35BBF4 (10B 7/10)
+			heal_absorb = rgb(178, 50, 43), -- #B2322B (7.5R 4/12)
+			power_cost = rgb(120, 181, 231), -- #78B5E7 (2.5PB 7/8)
+		},
+		zone = {
+			contested = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			friendly = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			hostile = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			sanctuary = rgb(80, 219, 249), -- #50DBF9 (5B 8/8)
+			-- sanctuary = rgb(104, 204, 239) -- #68CCEF (Blizzard Colour)
+		},
+		debuff = {
+			None = rgb(204, 0, 0), -- #CC0000 (Blizzard Colour)
+			Magic = rgb(51, 153, 255), -- #3399FF (Blizzard Colour)
+			Curse = rgb(153, 0, 255), -- #9900FF (Blizzard Colour)
+			Disease = rgb(153, 102, 0), -- #996600 (Blizzard Colour)
+			Poison = rgb(0, 153, 0), -- #009900 (Blizzard Colour)
+		},
+		buff = {
+			Enchant = rgb(123, 44, 181), -- #7B2CB5 (Blizzard Colour)
+		},
+		rune = {
+			-- blood
+			[1] = rgb(247, 65, 57), -- #F74139 (Blizzard Colour)
+			-- frost
+			[2] = rgb(148, 203, 247), -- #94CBF7 (Blizzard Colour)
+			-- unholy
+			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
+		},
+	},
 	units = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
-		},
-		castbar = {
-			colors = {
-				casting = rgb(250, 193, 74),
-				channeling = rgb(46, 172, 52),
-				failed = rgb(220, 68, 54),
-				notinterruptible = rgb(136, 137, 135),
-			},
 		},
 		ls = {
 			player = {
@@ -94,8 +204,8 @@ D.profile = {
 				width = 166,
 				height = 166,
 				point = {
-					ls = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312 , 74},
+					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
+					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 				},
 				health = {
 					enabled = true,
@@ -275,9 +385,11 @@ D.profile = {
 					x_offset = 15,
 					y_offset = 20,
 				},
-				class = {
-					player = false,
-					npc = false,
+				border = {
+					color = {
+						class = false,
+						reaction = false,
+					},
 				},
 			},
 			pet = {
@@ -285,16 +397,16 @@ D.profile = {
 				width = 42,
 				height = 134,
 				point = {
-					ls = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
-					traditional = {"RIGHT", "LSPlayerFrame" , "LEFT", -2, 0},
+					ls = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
+					traditional = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
 				},
 				health = {
 					enabled = true,
 					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
-						class = true,
-						reaction = true,
+						class = false,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -489,7 +601,7 @@ D.profile = {
 					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
-						tag = "[ls:color:power][ls:power:cur]|r",
+						tag = "[ls:power:cur-max]",
 						size = 12,
 						outline = false,
 						shadow = true,
@@ -657,9 +769,11 @@ D.profile = {
 					x_offset = 64,
 					y_offset = 32,
 				},
-				class = {
-					player = true,
-					npc = true,
+				border = {
+					color = {
+						class = false,
+						reaction = false,
+					},
 				},
 			},
 			pet = {
@@ -679,8 +793,8 @@ D.profile = {
 					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
-						class = true,
-						reaction = true,
+						class = false,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -821,9 +935,11 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
-				class = {
-					player = true,
-					npc = false,
+				border = {
+					color = {
+						class = false,
+						reaction = false,
+					},
 				},
 			},
 		},
@@ -845,7 +961,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -901,7 +1017,7 @@ D.profile = {
 				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-color-max]",
+					tag = "[ls:power:cur-max]",
 					size = 12,
 					outline = false,
 					shadow = true,
@@ -1071,9 +1187,11 @@ D.profile = {
 					y = 7,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					reaction = false,
+				},
 			},
 		},
 		targettarget = {
@@ -1094,7 +1212,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					reaction = false,
 				},
 				text = {
 					tag = "",
@@ -1203,9 +1321,11 @@ D.profile = {
 				enabled = false,
 				feedback_unit = "target",
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					reaction = false,
+				},
 			},
 		},
 		focus = {
@@ -1226,7 +1346,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -1282,7 +1402,7 @@ D.profile = {
 				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-color-max]",
+					tag = "[ls:power:cur-max]",
 					size = 12,
 					outline = false,
 					shadow = true,
@@ -1452,9 +1572,11 @@ D.profile = {
 					y = 7,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					reaction = false,
+				},
 			},
 		},
 		focustarget = {
@@ -1475,7 +1597,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					reaction = false,
 				},
 				text = {
 					tag = "",
@@ -1584,9 +1706,11 @@ D.profile = {
 				enabled = false,
 				feedback_unit = "focus",
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					reaction = false,
+				},
 			},
 		},
 		boss = {
@@ -1611,7 +1735,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = true,
+					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:perc]",
@@ -1667,7 +1791,7 @@ D.profile = {
 				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-color-perc]",
+					tag = "[ls:power:cur-perc]",
 					size = 12,
 					outline = false,
 					shadow = true,
@@ -1687,7 +1811,7 @@ D.profile = {
 				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:altpower:cur-color-perc]",
+					tag = "[ls:altpower:cur-perc]",
 					size = 12,
 					outline = false,
 					shadow = true,
@@ -1837,9 +1961,11 @@ D.profile = {
 					y = 1,
 				},
 			},
-			class = {
-				player = true,
-				npc = true,
+			border = {
+				color = {
+					class = false,
+					reaction = false,
+				},
 			},
 		},
 	},
@@ -1858,7 +1984,7 @@ D.profile = {
 				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
 				position = 2, -- 0 - zone text, 1 - clock, 2 - bottom
 			},
-			point = {"BOTTOM", "UIParent", "BOTTOM", 312 , 74},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
 		traditional = {
 			zone_text = {
@@ -1874,15 +2000,9 @@ D.profile = {
 				mode = 2,
 				position = 0,
 			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8 , -24},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8, -24},
 		},
 		buttons = {},
-		colors = {
-			contested = rgb(250, 193, 74),
-			friendly = rgb(85, 240, 83),
-			hostile = rgb(240, 72, 63),
-			sanctuary = rgb(105, 204, 240),
-		},
 		color = {
 			border = false,
 			zone_text = true,
@@ -1898,23 +2018,8 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
-		},
-		colors = {
-			normal = rgb(255, 255, 255),
-			unusable = rgb(102, 102, 102),
-			mana = rgb(38, 97, 172),
-			range = rgb(140, 29, 30),
 		},
 		desaturation = {
-			cooldown = true,
 			unusable = true,
 			mana = true,
 			range = true,
@@ -2505,14 +2610,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
 		},
 		HELPFUL = {
 			size = 32,
@@ -2670,12 +2767,6 @@ D.profile = {
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
-			colors = {
-				casting = rgb(250, 193, 74),
-				channeling = rgb(46, 172, 52),
-				failed = rgb(220, 68, 54),
-				notinterruptible = rgb(136, 137, 135),
-			},
 		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			width = 200,
@@ -2727,14 +2818,6 @@ D.char = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
-			colors = {
-				enabled = true,
-				expiration = rgb(229, 25, 25),
-				second = rgb(255, 191, 25),
-				minute = rgb(255, 255, 255),
-				hour = rgb(255, 255, 255),
-				day = rgb(255, 255, 255),
-			},
 			text = {
 				enabled = true,
 				size = 12,

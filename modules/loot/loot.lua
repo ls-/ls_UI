@@ -19,7 +19,7 @@ local GetLootSlotType = _G.GetLootSlotType
 	HandleModifiedItemClick IsFishingLoot IsModifiedClick LootFrame LootSlot LootSlotHasItem PlaySound ResetCursor
 	StaticPopup_Hide UIParent UISpecialFrames
 
-	ITEM_QUALITY_COLORS LOOT_SLOT_CURRENCY LOOT_SLOT_ITEM TEXTURE_ITEM_QUEST_BANG TEXTURE_ITEM_QUEST_BORDER
+	LOOT_SLOT_CURRENCY LOOT_SLOT_ITEM TEXTURE_ITEM_QUEST_BANG TEXTURE_ITEM_QUEST_BORDER
 ]]
 
 -- Mine
@@ -191,7 +191,7 @@ local function itemList_Update(self)
 
 		loot = lootTable[i + offset]
 		if loot then
-			color = ITEM_QUALITY_COLORS[loot.quality] or ITEM_QUALITY_COLORS[1]
+			color = C.db.global.colors.quality[loot.quality] or C.db.global.colors.quality[1]
 
 			button.hasItem = loot.type == LOOT_SLOT_ITEM
 			button.link = loot.link
@@ -429,7 +429,7 @@ function MODULE:Init()
 		takeAll:SetPushedTexture("Interface\\Buttons\\ButtonHilight-Square")
 		takeAll:GetPushedTexture():SetBlendMode("ADD")
 		takeAll:GetPushedTexture():SetDesaturated(true)
-		takeAll:GetPushedTexture():SetVertexColor(1.0, 0.82, 0.0)
+		takeAll:GetPushedTexture():SetVertexColor(E:GetRGB(C.db.global.colors.yellow))
 		takeAll:GetPushedTexture():SetAllPoints()
 
 		takeAll.Icon = E:SetIcon(takeAll, "Interface\\PaperDollInfoFrame\\UI-GearManager-ItemIntoBag")

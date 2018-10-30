@@ -169,335 +169,120 @@ end
 -- COLOURS --
 -------------
 
+local hex
 do
-	local adjustment_cache = {}
 	local rgb_hex_cache = {}
-	local hex_rgb_cache = {}
 
-	-- http://marcocorvi.altervista.org/games/imgpr/rgb-hsl.htm
-	local function RGBToHSL(r, g, b)
-		local max = m_max(r, g, b)
-		local min = m_min(r, g, b)
-		local l = (max + min) / 2
-		local h, s
-
-		if max == min then
-			h, s = 0, 0
-		else
-			local d = max - min
-
-			if max == r then
-				h = 60 * (g - b) / d
-			elseif max == g then
-				h = 60 * (b - r) / d + 120
-			else
-				h = 60 * (r - g) / d + 240
-			end
-
-			s = l < 0.5 and d / (2 * l) or d / (2 - 2 * l)
-		end
-
-		return h % 360, s, l
-	end
-
-	local function HueToRGB(v1, v2, v3)
-		if v3 < 0 then
-			v3 = v3 + 1
-		elseif v3 > 1 then
-			v3 = v3 - 1
-		end
-
-		if v3 < 1 / 6 then
-			return v1 + (v2 - v1) * 6 * v3
-		elseif v3< 1 / 2 then
-			return v2
-		elseif v3 < 2 / 3 then
-			return v1 + (v2 - v1) * (2 / 3 - v3) * 6
-		end
-
-		return v1
-	end
-
-	local function HSLToRGB(h, s, l)
-		if s == 0 then
-			return l, l, l
-		else
-			local v2 = l < 0.5 and l * (1 + s) or l + s - l * s
-			local v1 = 2 * l - v2
-			h = h / 360
-
-			return clamp(HueToRGB(v1, v2, h + 1 / 3)), clamp(HueToRGB(v1, v2, h)), clamp(HueToRGB(v1, v2, h - 1 / 3))
-		end
-	end
-
-	local function RGBToHEX(r, g, b)
-		local key = r.."-"..g.."-"..b
-
+	function hex(r, g, b)
+		local key = r .. "-" .. g .. "-" .. b
 		if rgb_hex_cache[key] then
 			return rgb_hex_cache[key]
 		end
 
-		rgb_hex_cache[key] = s_format("%02x%02x%02x", clamp(r) * 255, clamp(g) * 255, clamp(b) * 255)
+		rgb_hex_cache[key] = s_format("ff%.2x%.2x%.2x", clamp(r) * 255, clamp(g) * 255, clamp(b) * 255)
 
 		return rgb_hex_cache[key]
-	end
-
-	local function HEXToRGB(hex)
-		if hex_rgb_cache[hex] then
-			return unpack(hex_rgb_cache[hex])
-		end
-
-		local r, g, b = tonumber(s_sub(hex, 1, 2), 16), tonumber(s_sub(hex, 3, 4), 16), tonumber(s_sub(hex, 5, 6), 16)
-		r, g, b = tonumber(s_format("%.3f", r / 255)), tonumber(s_format("%.3f", g / 255)), tonumber(s_format("%.3f", b / 255))
-
-		hex_rgb_cache[hex] = {r, g, b}
-
-		return r, g, b
-	end
-
-	local function adjustColor(r, g, b, perc)
-		local key = r.."-"..g.."-"..b
-
-		if not adjustment_cache[perc] then
-			adjustment_cache[perc] = {}
-		else
-			if adjustment_cache[perc][key] then
-				return unpack(adjustment_cache[perc][key])
-			end
-		end
-
-		local h, s, l = RGBToHSL(r, g, b)
-		r, g, b = HSLToRGB(h, s, clamp(l + perc))
-
-		adjustment_cache[perc][key] = {r, g, b}
-
-		return r, g, b
 	end
 
 	-- http://wow.gamepedia.com/ColorGradient
 	local function calcGradient(perc, ...)
 		local num = select("#", ...)
 
-		if num == 1 then
-			local colorTable = ...
-			num = #colorTable
-
-			if perc >= 1 then
-				return colorTable[num - 2], colorTable[num - 1], colorTable[num]
-			elseif perc <= 0 then
-				return colorTable[1], colorTable[2], colorTable[3]
-			end
-
-			local i, relperc = m_modf(perc * (num / 3 - 1))
-			local r1, g1, b1, r2, g2, b2 = colorTable[i * 3 + 1], colorTable[i * 3 + 2], colorTable[i * 3 + 3], colorTable[i * 3 + 4], colorTable[i * 3 + 5],colorTable[i * 3 + 6]
-
-			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
-		else
-			if perc >= 1 then
-				return select(num - 2, ...)
-			elseif perc <= 0 then
-				local r, g, b = ...
-				return r, g, b
-			end
-
-			local i, relperc = m_modf(perc * (num / 3- 1))
-			local r1, g1, b1, r2, g2, b2 = select((i * 3) + 1, ...)
-
-			return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
-		end
-	end
-
-	function E:RGBToHEX(r, g, b)
-		if type(r) == "table" then
-			if r.r then
-				r, g, b = r.r, r.g, r.b
-			else
-				r, g, b = unpack(r)
-			end
+		if perc >= 1 then
+			return select(-3, ...)
+		elseif perc <= 0 then
+			local r, g, b = ...
+			return r, g, b
 		end
 
-		return RGBToHEX(r, g, b)
+		local i, relperc = m_modf(perc * (num / 3 - 1))
+		local r1, g1, b1, r2, g2, b2 = select((i * 3) + 1, ...)
+
+		return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 	end
 
-	function E:HEXToRGB(hex)
-		return HEXToRGB(hex)
+	function E:GetGradientAsRGB(perc, color)
+		return calcGradient(
+			perc,
+			color[1].r, color[1].g, color[1].b,
+			color[2].r, color[2].g, color[2].b,
+			color[3].r, color[3].g, color[3].b
+		)
 	end
 
-	function E:AdjustColor(r, g, b, perc)
-		if type(r) == "table" then
-			if r.r then
-				r, g, b = r.r, r.g, r.b
-			else
-				r, g, b = unpack(r)
-			end
-		end
+	function E:GetGradientAsHex(perc, color)
+		return hex(calcGradient(
+			perc,
+			color[1].r, color[1].g, color[1].b,
+			color[2].r, color[2].g, color[2].b,
+			color[3].r, color[3].g, color[3].b
+		))
+	end
 
+	function E:GetRGB(color)
+		return color.r, color.g, color.b
+	end
+
+	function E:GetRGBA(color, a)
+		return color.r, color.g, color.b, a or color.a
+	end
+
+	function E:SetRGBA(color, r, g, b, a)
 		if r > 1 or g > 1 or b > 1 then
 			r, g, b = r / 255, g / 255, b / 255
 		end
 
-		if perc and perc ~= 0 then
-			return adjustColor(r, g, b, perc)
-		else
-			return r, g, b
-		end
+		color.r = r
+		color.g = g
+		color.b = b
+		color.a = a
+		color.hex = hex(r, g, b)
+
+		return color
 	end
 
-	-- E:CreateColor
-	do
-		local function getHEX(self, adjustment)
-			if adjustment and adjustment ~= 0 then
-				return RGBToHEX(adjustColor(self.r, self.g, self.b, adjustment))
-			else
-				return self.hex
-			end
-		end
-
-		local function getRGB(self, adjustment)
-			if adjustment and adjustment ~= 0 then
-				return adjustColor(self.r, self.g, self.b, adjustment)
-			else
-				return self.r, self.g, self.b
-			end
-		end
-
-		local function getRGBA(self, alpha, adjustment)
-			if adjustment and adjustment ~= 0 then
-				local r, g, b = adjustColor(self.r, self.g, self.b, adjustment)
-
-				return r, g, b, alpha or self.a
-			else
-				return self.r, self.g, self.b, alpha or self.a
-			end
-		end
-
-		local function getRGBHEX(self, adjustment)
-			if adjustment and adjustment ~= 0 then
-				local r, g, b = adjustColor(self.r, self.g, self.b, adjustment)
-
-				return r, g, b, RGBToHEX(r, g, b)
-			else
-				return self.r, self.g, self.b, self.hex
-			end
-		end
-
-		local function wrapText(self, text, adjustment)
-			return s_format("|cff%s%s|r", getHEX(self, adjustment), text)
-		end
-
-		function E:CreateColor(r, g, b, a)
-			r, g, b, a = r or 1, g or 1, b or 1, a or 1
-
-			if r > 1 or g > 1 or b > 1 then
-				r, g, b = r / 255, g / 255, b / 255
-			end
-
-			local color = {r = r, g = g, b = b, a = a, hex = RGBToHEX(r, g, b)}
-
-			color.GetHEX = getHEX
-			color.GetRGB = getRGB
-			color.GetRGBA = getRGBA
-			color.GetRGBHEX = getRGBHEX
-			color.WrapText = wrapText
-
-			return color
-		end
+	function E:SetRGB(color, r, g, b)
+		return self:SetRGBA(color, r, g, b, 1)
 	end
 
-	-- E:CreateColorTable
-	do
-		local function getHEX(self, perc, adjustment)
-			if adjustment and adjustment ~= 0 then
-				local r, g, b = calcGradient(perc, self)
+	function E:WrapText(color, text)
+		return "|c" .. color.hex .. text .. "|r"
+	end
 
-				return RGBToHEX(adjustColor(r, g, b, adjustment))
-			else
-				return RGBToHEX(calcGradient(perc, self))
-			end
-		end
+	function E:AreColorsEqual(color1, color2)
+		if not color1 or not color2 then return end
 
-		local function getRGB(self, perc, adjustment)
-			local r, g, b = calcGradient(perc, self)
-
-			if adjustment and adjustment ~= 0 then
-				r, g, b = adjustColor(r, g, b, adjustment)
-			end
-
-			return r, g, b
-		end
-
-		local function getRGBA(self, perc, alpha, adjustment)
-			local r, g, b = calcGradient(perc, self)
-
-			if adjustment and adjustment ~= 0 then
-				r, g, b = adjustColor(r, g, b, adjustment)
-			end
-
-			return r, g, b, alpha or 1
-		end
-
-		local function getRGBHEX(self, perc, adjustment)
-			local r, g, b = calcGradient(perc, self)
-
-			if adjustment and adjustment ~= 0 then
-				r, g, b = adjustColor(r, g, b, adjustment)
-			end
-
-			return r, g, b, RGBToHEX(r, g, b)
-		end
-
-		local function wrapText(self, perc, text, adjustment)
-			return s_format("|cff%s%s|r", getHEX(self, perc, adjustment), text)
-		end
-
-		function E:CreateColorTable(...)
-			local params = {...}
-			local num = #params
-
-			assert((num == 9 or num == 3), s_format("Invalid number of arguments to 'E:CreateColorTable' method, expected '3' or '9', got '%s'", num))
-
-			if num == 3 then
-				local temp = {}
-
-				for i = 1, #params do
-					for k = 1, #params[i] do
-						temp[3 * (i - 1) + k] = params[i][k]
-					end
-				end
-
-				params = temp
-			end
-
-			params.GetHEX = getHEX
-			params.GetRGB = getRGB
-			params.GetRGBA = getRGBA
-			params.GetRGBHEX = getRGBHEX
-			params.WrapText = wrapText
-
-			return params
-		end
+		return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b
 	end
 
 	do
+		local updater = CreateFrame("Frame")
 		local objects = {}
 
 		local function isCloseEnough(r, g, b, tR, tG, tB)
 			return m_abs(r - tR) <= 0.05 and m_abs(g - tG) <= 0.05 and m_abs(b - tB) <= 0.05
 		end
 
-		C_Timer.NewTicker(0, function()
+		local function onUpdate(self, elapsed)
 			for object, target in next, objects do
-				local r, g, b = calcGradient(clamp(0.25 * GetTickTime() * 60.0), object._r, object._g, object._b, target.r, target.g, target.b)
+				local r, g, b
 
 				if isCloseEnough(object._r, object._g, object._b, target.r, target.g, target.b) then
 					r, g, b = target.r, target.g, target.b
 					objects[object] = nil
+
+					if not next(object) then
+						self:SetScript("OnUpdate", nil)
+					end
+				else
+					-- 15 = 0.25 * 60
+					r, g, b = calcGradient(15 * elapsed, object._r, object._g, object._b, target.r, target.g, target.b)
 				end
 
 				object:SetVertexColor_(r, g, b, target.a)
 				object._r, object._g, object._b = r, g, b
 			end
-		end)
+		end
 
 		local function object_SetSmoothedVertexColor(self, r, g, b, a)
 			self._r, self._g, self._b = self:GetVertexColor()
@@ -506,6 +291,10 @@ do
 				self:SetVertexColor_(r, g, b, a)
 			else
 				objects[self] = {r = r, g = g, b = b, a = a}
+
+				if not updater:GetScript("OnUpdate") then
+					updater:SetScript("OnUpdate", onUpdate)
+				end
 			end
 		end
 
@@ -534,97 +323,36 @@ end
 -----------
 
 do
-	local function getUnitPVPHostilityColor(unit)
-		if UnitExists(unit) then
-			if UnitPlayerControlled(unit) then
-				if UnitIsPVP(unit) then
-					if UnitCanAttack(unit, "player") then
-						-- Hostile
-						return M.COLORS.REACTION[2]
-					elseif UnitCanAttack("player", unit) then
-						-- Not hostile, but can be attacked
-						return M.COLORS.REACTION[4]
-					elseif UnitCanAssist("player", unit) then
-						-- Friendly
-						return M.COLORS.REACTION[6]
-					end
-				else
-					-- Unattackable
-					return M.COLORS.BLUE
-				end
-			end
-		end
-	end
-
-	local function getUnitClassColor(unit)
-		if UnitExists(unit) and UnitIsPlayer(unit) then
-			return M.COLORS.CLASS[select(2, UnitClass(unit))]
-		end
-	end
-
-	local function getUnitReactionColor(unit)
-		if UnitExists(unit) then
-			return M.COLORS.REACTION[UnitReaction(unit, "player")]
-		end
-	end
-
-	local function getUnitTappedColor(unit)
-		if UnitExists(unit) and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
-			return M.COLORS.TAPPED
-		end
-	end
-
-	local function getUnitDisconnectedColor(unit)
-		if UnitExists(unit) and not UnitIsConnected(unit) then
-			return M.COLORS.DISCONNECTED
-		end
-	end
-
 	function E:GetUnitClassColor(unit)
-		return getUnitClassColor(unit) or M.COLORS.DISCONNECTED
+		local class = select(2, UnitClass(unit))
+		if class then
+			return C.db.global.colors.class[class]
+		end
+
+		return C.db.global.colors.white
 	end
 
 	function E:GetUnitReactionColor(unit)
-		return getUnitReactionColor(unit) or M.COLORS.REACTION[4]
-	end
-
-	function E:GetUnitColor(unit, checkPvPHostility, checkClass)
-		local color
-
-		color = getUnitDisconnectedColor(unit)
-
-		if not color and checkPvPHostility then
-			color = getUnitPVPHostilityColor(unit)
+		local reaction = UnitReaction(unit, "player")
+		if reaction then
+			return C.db.profile.colors.reaction[reaction]
 		end
 
-		if not color and checkClass then
-			color = getUnitClassColor(unit)
-		end
-
-		if not color then
-			color = getUnitTappedColor(unit)
-		end
-
-		if not color then
-			color = getUnitReactionColor(unit)
-		end
-
-		return color or M.COLORS.REACTION[4]
+		return C.db.profile.colors.reaction[4]
 	end
 
 	function E:GetUnitClassification(unit)
 		if UnitExists(unit) then
-			local c = UnitClassification(unit)
-
-			if c == "rare" then
+			local classification = UnitClassification(unit)
+			if classification == "rare" then
 				return "R"
-			elseif c == "rareelite" then
+			elseif classification == "rareelite" then
 				return "R+"
-			elseif c == "elite" then
+			elseif classification == "elite" then
 				return "+"
-			elseif c == "worldboss" then
+			elseif classification == "worldboss" then
 				return "B"
-			elseif c == "minus" then
+			elseif classification == "minus" then
 				return "-"
 			end
 		end
@@ -633,7 +361,7 @@ do
 	end
 
 	function E:GetUnitPVPStatus(unit)
-		local faction
+		local faction = "Neutral"
 
 		if UnitExists(unit) then
 			faction = UnitFactionGroup(unit)
@@ -649,11 +377,11 @@ do
 					end
 				end
 
-				return true, s_upper(faction or "NEUTRAL")
+				return true, faction
 			end
 		end
 
-		return false, s_upper(faction or "NEUTRAL")
+		return false, faction
 	end
 
 	function E:GetUnitSpecializationInfo(unit)
@@ -677,20 +405,19 @@ do
 		return L["UNKNOWN"]
 	end
 
-	-- XXX: GetRelativeDifficultyColor function in UIParent.lua
+	-- GetRelativeDifficultyColor function in UIParent.lua
 	function E:GetRelativeDifficultyColor(unitLevel, challengeLevel)
 		local diff = challengeLevel - unitLevel
-
 		if diff >= 5 then
-			return M.COLORS.DIFFICULTY.IMPOSSIBLE
+			return C.db.profile.colors.difficulty.impossible
 		elseif diff >= 3 then
-			return M.COLORS.DIFFICULTY.VERYDIFFICULT
+			return C.db.profile.colors.difficulty.very_difficult
 		elseif diff >= -4 then
-			return M.COLORS.DIFFICULTY.DIFFICULT
+			return C.db.profile.colors.difficulty.difficult
 		elseif -diff <= GetQuestGreenRange() then
-			return M.COLORS.DIFFICULTY.STANDARD
+			return C.db.profile.colors.difficulty.standard
 		else
-			return M.COLORS.DIFFICULTY.TRIVIAL
+			return C.db.profile.colors.difficulty.trivial
 		end
 	end
 
@@ -700,6 +427,11 @@ do
 
 	do
 		local ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+		local X2_WEAPON_SLOTS = {
+			INVTYPE_2HWEAPON = true,
+			INVTYPE_RANGEDRIGHT = true,
+			INVTYPE_RANGED = true,
+		}
 
 		function E:GetUnitAverageItemLevel(unit)
 			if UnitIsUnit(unit, "player") then
@@ -711,51 +443,52 @@ do
 				-- Armour
 				for _, id in next, ARMOR_SLOTS do
 					local link = GetInventoryItemLink(unit, id)
-					local texture = GetInventoryItemTexture(unit, id)
+					local cur
 
 					if link then
-						local cur = GetDetailedItemLevelInfo(link)
-
+						cur = GetDetailedItemLevelInfo(link)
 						if cur and cur > 0 then
 							total = total + cur
 						end
-					elseif texture then
+					elseif GetInventoryItemTexture(unit, id) then
 						isInspectSuccessful = false
 					end
 				end
 
 				-- Main hand
 				local link = GetInventoryItemLink(unit, 16)
-				local texture = GetInventoryItemTexture(unit, 16)
-				local mainItemLevel, mainQuality, mainEquipLoc, _ = 0
+				local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass, _ = 0
 
 				if link then
 					mainItemLevel = GetDetailedItemLevelInfo(link)
-					_, _, mainQuality, _, _, _, _, _, mainEquipLoc = GetItemInfo(link)
-				elseif texture then
+					_, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = GetItemInfo(link)
+				elseif GetInventoryItemTexture(unit, 16) then
 					isInspectSuccessful = false
 				end
 
 				-- Off hand
 				link = GetInventoryItemLink(unit, 17)
-				texture = GetInventoryItemTexture(unit, 17)
 				local offItemLevel, offEquipLoc = 0
 
 				if link then
 					offItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, _, _, _, _, _, _, offEquipLoc = GetItemInfo(link)
-				elseif texture then
+				elseif GetInventoryItemTexture(unit, 17) then
 					isInspectSuccessful = false
 				end
 
-				if mainQuality == 6 or (mainEquipLoc == "INVTYPE_2HWEAPON" and not offEquipLoc and GetInspectSpecialization(unit) ~= 72) then
+				if mainQuality == 6 or (not offEquipLoc and X2_WEAPON_SLOTS[mainEquipLoc] and mainItemClass ~= 2 and mainItemSubClass ~= 19 and GetInspectSpecialization(unit) ~= 72) then
 					mainItemLevel = m_max(mainItemLevel, offItemLevel)
 					total = total + mainItemLevel * 2
 				else
 					total = total + mainItemLevel + offItemLevel
 				end
 
-				-- print("total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
+				if total == 0 then
+					isInspectSuccessful = false
+				end
+
+				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
 				return isInspectSuccessful and m_floor(total / 16) or nil
 			end
 		end
@@ -892,21 +625,22 @@ function E:ForceShow(object)
 	object.Hide = object.Show
 end
 
-function E:ForceHide(object, skipEvents, doNotHide)
+function E:ForceHide(object, skipEvents)
 	if not object then return end
 
-	if not skipEvents and object.UnregisterAllEvents then
-		object:UnregisterAllEvents()
+	if object.UnregisterAllEvents then
+		if not skipEvents then
+			object:UnregisterAllEvents()
+		end
 
 		if object:GetName() then
+			object.ignoreFramePositionManager = true
+			object:SetAttribute("ignoreFramePositionManager", true)
 			UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
 		end
 	end
 
-	if not doNotHide then
-		object:Hide()
-	end
-
+	object:Hide()
 	object:SetParent(self.HIDDEN_PARENT)
 end
 

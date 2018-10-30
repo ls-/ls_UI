@@ -5,6 +5,7 @@ local UF = P:AddModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local type = _G.type
 local unpack = _G.unpack
 
 --[[ luacheck: globals
@@ -108,6 +109,48 @@ local function frame_Preview(self, state)
 	end
 end
 
+function UF:UpdateHealthColors()
+	local color = oUF.colors.health
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.health)
+
+	color = oUF.colors.tapped
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.tapped)
+
+	color = oUF.colors.disconnected
+	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.disconnected)
+end
+
+function UF:UpdateReactionColors()
+	local color = oUF.colors.reaction
+	for k, v in next, C.db.profile.colors.reaction do
+		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+	end
+end
+
+function UF:UpdatePowerColors()
+	local color = oUF.colors.power
+	for k, myColor in next, C.db.profile.colors.power do
+		if type(k) == "string" then
+			if not color[k] then
+				color[k] = {}
+			end
+
+			if type(myColor[1]) == "table" then
+				for i, myColor_ in next, myColor do
+					color[k][i][1], color[k][i][2], color[k][i][3] = E:GetRGB(myColor_)
+				end
+			else
+				color[k][1], color[k][2], color[k][3] = E:GetRGB(myColor)
+			end
+		end
+	end
+
+	color = oUF.colors.runes
+	for k, v in next, C.db.profile.colors.rune do
+		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+	end
+end
+
 function UF:CreateUnitFrame(unit, name)
 	if not units[unit] then
 		if unit == "boss" then
@@ -158,6 +201,12 @@ function UF:UpdateUnitFrames(method, ...)
 	end
 end
 
+function UF:ForEach(method, ...)
+	for unit in next, units do
+		self:UpdateUnitFrame(unit, method, ...)
+	end
+end
+
 function UF:GetUnits(ignoredUnits)
 	local temp = {}
 
@@ -176,6 +225,10 @@ end
 
 function UF:Init()
 	if not isInit and C.db.char.units.enabled then
+		self:UpdateHealthColors()
+		self:UpdateReactionColors()
+		self:UpdatePowerColors()
+
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)
 				frame:RegisterForClicks("AnyUp")

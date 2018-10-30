@@ -6,7 +6,6 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local m_min = _G.math.min
-local unpack = _G.unpack
 
 --[[ luacheck: globals
 	CastingBarFrame CastingBarFrame_OnEvent CastingBarFrame_SetFailedCastColor
@@ -88,16 +87,16 @@ local function bar_SetPoint(self, _, anchor)
 		self:SetSize(0, 0)
 		self:ClearAllPoints()
 
-		if config.icon.enabled then
+		if config.icon.position == "LEFT" then
 			self.Icon:Show()
 
-			if config.icon.position == "LEFT" then
-				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 5 + config.height * 1.5, 0)
-				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
-			elseif config.icon.position == "RIGHT" then
-				self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
-				self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -5 - config.height * 1.5, 0)
-			end
+			self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 5 + config.height * 1.5, 0)
+			self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -3, 0)
+		elseif config.icon.position == "RIGHT" then
+			self.Icon:Show()
+
+			self:SetPoint("TOPLEFT", self.Holder, "TOPLEFT", 3, 0)
+			self:SetPoint("BOTTOMRIGHT", self.Holder, "BOTTOMRIGHT", -5 - config.height * 1.5, 0)
 		else
 			self.Icon:Hide()
 
@@ -128,7 +127,7 @@ local function handleCastBar(self)
 
 	local bg = self:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
-	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 
 	local icon = self:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
@@ -152,7 +151,7 @@ local function handleCastBar(self)
 
 	local safeZone = self:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	safeZone:SetVertexColor(M.COLORS.RED:GetRGBA(0.6))
+	safeZone:SetVertexColor(E:GetRGBA(C.db.global.colors.red, 0.6))
 	self.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, self)
@@ -185,6 +184,15 @@ local function updateFontObject(fontString, config)
 	else
 		fontString:SetShadowOffset(0, 0)
 	end
+end
+
+local function updateColors(self)
+	CastingBarFrame_SetStartCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
+	CastingBarFrame_SetStartChannelColor(self, E:GetRGB(C.db.profile.colors.castbar.channeling))
+	CastingBarFrame_SetFinishedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
+	CastingBarFrame_SetNonInterruptibleCastColor(self, E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
+	CastingBarFrame_SetFailedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.failed))
+	CastingBarFrame_SetUseStartColorForFinished(self, true)
 end
 
 local function updateCastBar(self)
@@ -261,12 +269,7 @@ local function updateCastBar(self)
 
 	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 
-	CastingBarFrame_SetStartCastColor(self, unpack(config.colors.casting))
-	CastingBarFrame_SetStartChannelColor(self, unpack(config.colors.channeling))
-	CastingBarFrame_SetFinishedCastColor(self, unpack(config.colors.casting))
-	CastingBarFrame_SetNonInterruptibleCastColor(self, unpack(config.colors.notinterruptible))
-	CastingBarFrame_SetFailedCastColor(self, unpack(config.colors.failed))
-	CastingBarFrame_SetUseStartColorForFinished(self, true)
+	updateColors(self)
 
 	updateFontObject(self.Text, config.text)
 	self.Text:SetJustifyH("LEFT")
@@ -356,5 +359,12 @@ function MODULE:UpdateCastBars()
 	if isInit then
 		updateCastBar(CastingBarFrame)
 		updateCastBar(PetCastingBarFrame)
+	end
+end
+
+function MODULE:UpdateCastBarColors()
+	if isInit then
+		updateColors(CastingBarFrame)
+		updateColors(PetCastingBarFrame)
 	end
 end

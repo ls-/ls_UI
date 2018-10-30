@@ -56,11 +56,30 @@ local function cleanUpStep1()
 		C.db.profile.blizzard.castbar.icon.enabled = nil
 		C.db.profile.blizzard.castbar.text.flag = nil
 	end
+
+	-- -> 80000.13
+	if not C.db.profile.version or C.db.profile.version < 8000013 then
+		C.db.char.auratracker.cooldown.colors = nil
+
+		C.db.profile.auras.cooldown.colors = nil
+
+		C.db.profile.bars.colors = nil
+		C.db.profile.bars.cooldown.colors = nil
+		C.db.profile.bars.desaturation.cooldown = nil
+
+		C.db.profile.blizzard.castbar.colors = nil
+
+		C.db.profile.minimap.colors = nil
+
+		C.db.profile.units.castbar = nil
+		C.db.profile.units.colors = nil
+	end
 end
 
 local function cleanUpStep2()
-	if not C.db.profile.version or C.db.profile.version < 8000012 then
-		local units = {"player", "pet", "target", "targettarget", "focustarget", "boss"}
+	-- -> 80000.13
+	if not C.db.profile.version or C.db.profile.version < 8000013 then
+		local units = {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"}
 
 		for _, unit in next, units do
 			if C.db.profile.units[unit] then
@@ -76,17 +95,56 @@ local function cleanUpStep2()
 				if C.db.profile.units[unit].auras then
 					C.db.profile.units[unit].auras.cooldown.text.h_alignment = nil
 				end
+
+				C.db.profile.units[unit].class = nil
 			end
 		end
 	end
 end
 
-local function updateAll()
-	cleanUpStep1()
-
+local function addRefs()
 	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
 	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
 
+	C.db.profile.colors.power[ 0] = C.db.profile.colors.power.MANA
+	C.db.profile.colors.power[ 1] = C.db.profile.colors.power.RAGE
+	C.db.profile.colors.power[ 2] = C.db.profile.colors.power.FOCUS
+	C.db.profile.colors.power[ 3] = C.db.profile.colors.power.ENERGY
+	C.db.profile.colors.power[ 4] = C.db.profile.colors.power.CHI
+	C.db.profile.colors.power[ 5] = C.db.profile.colors.power.RUNES
+	C.db.profile.colors.power[ 6] = C.db.profile.colors.power.RUNIC_POWER
+	C.db.profile.colors.power[ 7] = C.db.profile.colors.power.SOUL_SHARDS
+	C.db.profile.colors.power[ 8] = C.db.profile.colors.power.LUNAR_POWER
+	C.db.profile.colors.power[ 9] = C.db.profile.colors.power.HOLY_POWER
+	C.db.profile.colors.power[11] = C.db.profile.colors.power.MAELSTROM
+	C.db.profile.colors.power[13] = C.db.profile.colors.power.INSANITY
+	C.db.profile.colors.power[17] = C.db.profile.colors.power.FURY
+	C.db.profile.colors.power[18] = C.db.profile.colors.power.PAIN
+end
+
+local function removeRefs()
+	C.db.profile.units.player = nil
+	C.db.profile.units.pet = nil
+
+	C.db.profile.colors.power[ 0] = nil
+	C.db.profile.colors.power[ 1] = nil
+	C.db.profile.colors.power[ 2] = nil
+	C.db.profile.colors.power[ 3] = nil
+	C.db.profile.colors.power[ 4] = nil
+	C.db.profile.colors.power[ 5] = nil
+	C.db.profile.colors.power[ 6] = nil
+	C.db.profile.colors.power[ 7] = nil
+	C.db.profile.colors.power[ 8] = nil
+	C.db.profile.colors.power[ 9] = nil
+	C.db.profile.colors.power[11] = nil
+	C.db.profile.colors.power[13] = nil
+	C.db.profile.colors.power[17] = nil
+	C.db.profile.colors.power[18] = nil
+end
+
+local function updateAll()
+	cleanUpStep1()
+	addRefs()
 	cleanUpStep2()
 
 	P:UpdateModules()
@@ -106,25 +164,22 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
 
 	cleanUpStep1()
-
-	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
-	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
-
+	addRefs()
 	cleanUpStep2()
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
-		C.db.profile.units.player = nil
-		C.db.profile.units.pet = nil
+
+		removeRefs()
 
 		P.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
-		C.db.profile.units.player = nil
-		C.db.profile.units.pet = nil
+
+		removeRefs()
 
 		P.Movers:CleanUpConfig()
 	end)

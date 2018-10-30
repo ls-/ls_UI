@@ -1,4 +1,4 @@
-﻿-- Contributors: aenerv7@GitHub
+﻿-- Contributors: aenerv7@GitHub a.k.a. aenerv7@Curse
 
 local _, ns = ...
 local E, L = ns.E, ns.L
@@ -46,9 +46,7 @@ L["ALT_POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，
 - |cffffd200[ls:altpower:max]|r - 最大值
 - |cffffd200[ls:altpower:perc]|r - 百分比
 - |cffffd200[ls:altpower:cur-max]|r - 当前值和最大值
-- |cffffd200[ls:altpower:cur-color-max]|r - 当前值和着色后的最大值
 - |cffffd200[ls:altpower:cur-perc]|r - 当前值和百分比
-- |cffffd200[ls:altpower:cur-color-perc]|r - 当前值和着色后的百分比
 - |cffffd200[ls:color:altpower]|r - 着色
 
 如果当前值和最大值一样，那么只会显示最大值
@@ -62,7 +60,9 @@ L["ANCHOR_TO_CURSOR"] = "依附于鼠标"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "神器等级：|cffffffff%s|r"
 L["ARTIFACT_POWER"] = "神器能量"
 L["ASCENDING"] = "升序"
+--[[ L["AURA"] = "Aura" ]]
 L["AURA_TRACKER"] = "光环追踪器"
+L["AURA_TYPE"] = "光环类型"
 L["AURAS"] = "光环"
 L["AUTO"] = "自动"
 L["BAG_SLOTS"] = "背包栏位"
@@ -75,7 +75,6 @@ L["BAR_5"] = "动作条 5"
 L["BAR_COLOR"] = "生命条颜色"
 L["BAR_TEXT"] = "动作条文字"
 L["BLIZZARD"] = "暴雪默认 UI"
-L["BONUS_HONOR_TOOLTIP"] = "奖励荣誉：|cffffffff%s|r"
 L["BONUS_XP_TOOLTIP"] = "奖励经验：|cffffffff%s|r"
 L["BORDER"] = "边框"
 L["BORDER_COLOR"] = "边框颜色"
@@ -90,6 +89,7 @@ L["BOTTOM_INSET_SIZE"] = "底部插页尺寸"
 L["BOTTOM_INSET_SIZE_DESC"] = "被资源条使用"
 L["BUFFS"] = "增益效果"
 L["BUFFS_AND_DEBUFFS"] = "增益和减益"
+--[[ L["BUTTON"] = "Button" ]]
 L["BUTTON_GRID"] = "按钮边框"
 L["CALENDAR"] = "日历"
 L["CAST_ON_KEY_DOWN"] = "按下时施法"
@@ -102,6 +102,7 @@ L["CASTABLE_DEBUFFS_DESC"] = "显示你施放的减益效果"
 L["CASTABLE_DEBUFFS_PERMA"] = "可施放的永久减益效果"
 L["CASTABLE_DEBUFFS_PERMA_DESC"] = "显示你施放的永久减益效果"
 L["CASTBAR"] = "施法条"
+--[[ L["CHANGE"] = "Change" ]]
 L["CHARACTER_BUTTON_DESC"] = "显示装备耐久度信息"
 L["CLASS_POWER"] = "职业能量"
 L["CLASSIC"] = "经典"
@@ -116,7 +117,9 @@ L["COPY_FROM_DESC"] = "选择一份配置文件复制"
 L["COST_PREDICTION"] = "花费预测"
 L["COST_PREDICTION_DESC"] = "显示法术将要花费的资源，对瞬发法术不生效"
 L["COUNT_TEXT"] = "数量文字"
+--[[ L["CURSE"] = "Curse" ]]
 L["DAILY_QUEST_RESET_TIME_TOOLTIP"] = "日常任务重置时间：|cffffffff%s|r"
+--[[ L["DAMAGE_ABSORB"] = "Damage Absorb" ]]
 L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留空表示禁用此功能
 
 格式化文本
@@ -128,14 +131,19 @@ L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显�
 L["DAMAGE_ABSORB_TEXT"] = "伤害吸收文字"
 L["DAYS"] = "天"
 L["DEAD"] = "死亡"
+--[[ L["DEBUFF"] = "Debuff" ]]
+L["DEBUFF_TYPE"] = "减益类型"
 L["DEBUFFS"] = "减益效果"
 L["DESATURATION"] = "褪色"
 L["DESCENDING"] = "降序"
 L["DETACH_FROM_FRAME"] = "从框架脱离"
+--[[ L["DIFFICULT"] = "Difficult" ]]
+--[[ L["DIFFICULTY"] = "Difficulty" ]]
 L["DIFFICULTY_FLAG"] = "难度标记"
 L["DIGSITE_BAR"] = "考古进度条"
 L["DISABLE_MOUSE"] = "禁用鼠标"
 L["DISABLE_MOUSE_DESC"] = "忽略鼠标事件"
+--[[ L["DISEASE"] = "Disease" ]]
 L["DISPELLABLE_BUFFS"] = "可驱散的增益效果"
 L["DISPELLABLE_BUFFS_DESC"] = "显示目标身上你可以偷取或是驱散的增益效果"
 L["DISPELLABLE_DEBUFF_ICONS"] = "可驱散的减益效果图标"
@@ -145,15 +153,17 @@ L["DOWN"] = "下"
 L["DRAG_KEY"] = "拖动键"
 L["DUNGEONS_BUTTON_DESC"] = "显示随机稀缺职业奖励信息"
 L["DURABILITY_FRAME"] = "耐久度框架"
-L["ELITE"] = "精英"
 L["ENEMY_UNITS"] = "敌对单位"
 L["ENHANCED_TOOLTIPS"] = "鼠标提示增强"
 L["ENTER_SPELL_ID"] = "输入法术 ID"
 L["EXP_THRESHOLD"] = "小数显示阈值"
 L["EXP_THRESHOLD_DESC"] = "小于这个阈值的秒数将以小数点后两位的小数显示"
 L["EXPERIENCE"] = "经验值"
+--[[ L["EXPERIENCE_NORMAL"] = "Normal" ]]
+--[[ L["EXPERIENCE_RESTED"] = "Rested" ]]
 L["EXPIRATION"] = "即将结束"
 L["EXTRA_ACTION_BUTTON"] = "额外动作按钮"
+--[[ L["FACTION_NEUTRAL"] = "Neutral" ]]
 L["FADE_IN_DELAY"] = "延迟淡入"
 L["FADE_IN_DURATION"] = "淡入时长"
 L["FADE_OUT_DELAY"] = "延迟淡出"
@@ -166,15 +176,18 @@ L["FLAG"] = "字体样式"
 L["FLYOUT_DIR"] = "弹出方向"
 L["FOCUS_FRAME"] = "焦点目标框架"
 L["FOCUS_TOF"] = "焦点目标 & 焦点目标的目标"
-L["FONT"] = "字体"
 L["FORMAT"] = "格式"
 L["FRAME"] = "框架"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "剩余背包空间：|cffffffff%s|r"
---[[ L["FRIENDLY_TERRITORY"] = "Friendly Territory"]]
+L["FRIENDLY_TERRITORY"] = "友方区域"
 L["FRIENDLY_UNITS"] = "友好单位"
+--[[ L["GAIN"] = "Gain" ]]
+L["GAIN_LOSS_THRESHOLD"] = "百分比阈值"
+L["GAIN_LOSS_THRESHOLD_DESC"] = "在资源高于此百分比时，将会动画化表现获取或失去资源，设置为 100 来禁用动画化表现。"
 L["GM_FRAME"] = "申请状态框架"
 L["GOLD"] = "金币"
 L["GROWTH_DIR"] = "增长方向"
+--[[ L["HEAL_ABSORB"] = "Heal Absorb" ]]
 L["HEAL_ABSORB_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留空表示禁用此功能
 
 格式化文本
@@ -201,14 +214,14 @@ L["HEALTH_TEXT"] = "生命值文本"
 L["HEIGHT"] = "高度"
 L["HONOR"] = "荣誉"
 L["HONOR_LEVEL_TOOLTIP"] = "荣誉等级：|cffffffff%d|r"
-L["HORIZ_GROWTH_DIR"] = "水平增长"
---[[ L["HOSTILE_TERRITORY"] = "Hostile Territory"]]
+L["HOSTILE_TERRITORY"] = "敌方区域"
 L["HOURS"] = "小时"
 L["ICON"] = "图标"
+--[[ L["IMPOSSIBLE"] = "Impossible" ]]
 L["INDEX"] = "索引"
 L["INSPECT_INFO"] = "玩家信息"
 L["INSPECT_INFO_DESC"] = "显示当前单位的专精和装备等级，这些数据可能不是马上就能显示"
---[[ L["INVALID_TAGS_ERR"] = "Attempted to use invalid tags: %s."]]
+L["INVALID_TAGS_ERR"] = "尝试使用无效的格式化标签：%s"
 L["INVENTORY_BUTTON"] = "背包"
 L["INVENTORY_BUTTON_DESC"] = "显示货币信息"
 L["INVENTORY_BUTTON_RCLICK_TOOLTIP"] = "|cffffffff右键点击|r 来显示背包栏位"
@@ -227,9 +240,11 @@ L["LOCK"] = "锁定"
 L["LOCK_BUTTONS"] = "锁定按钮"
 L["LOCK_BUTTONS_DESC"] = "防止图标被拖离动作条"
 L["LOOT_ALL"] = "全部拾取"
+--[[ L["LOSS"] = "Loss" ]]
 L["M_SS_THRESHOLD"] = "M:SS 显示阈值"
 L["M_SS_THRESHOLD_DESC"] = "低于此秒数的时间将会以 4:01 的格式显示，设置成 0 表示禁用此格式"
 L["MACRO_TEXT"] = "宏文字"
+--[[ L["MAGIC"] = "Magic" ]]
 L["MAIN_BAR"] = "主菜单"
 L["MAINMENU_BUTTON_DESC"] = "显示性能信息"
 L["MAINMENU_BUTTON_HOLD_TOOLTIP"] = "|cffffffff按住 Shift|r 来显示内存占用"
@@ -243,7 +258,6 @@ L["MIRROR_TIMER_DESC"] = "呼吸和疲劳以及其他进度条"
 L["MODE"] = "模式"
 L["MOUNT_AURAS"] = "坐骑光环"
 L["MOUNT_AURAS_DESC"] = "显示坐骑光环"
-L["MOUSEOVER_SHOW"] = "鼠标经过时显示"
 L["MOVER_BUTTONS_DESC"] = "|cffffffff点击|r 激活按钮"
 L["MOVER_CYCLE_DESC"] = "按 |cffffffffAlt|r 键切换位于鼠标位置的不同组件"
 L["MOVER_RESET_DESC"] = "|cffffffffShift 加点击|r 来重置位置"
@@ -265,12 +279,12 @@ L["NAME_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 使用 |cffffd200[nl]|r 来换行]=]
 L["NO_SEPARATION"] = "不分隔"
 L["NOTHING_TO_SHOW"] = "不展示"
-L["NPC_CLASSIFICATION"] = "NPC 类型"
 L["NPE_FRAME"] = "新手引导框架"
 L["NUM_BUTTONS"] = "按钮数量"
 L["NUM_ROWS"] = "行数量"
+L["NUMERIC"] = "数值"
+L["NUMERIC_PERCENTAGE"] = "数值和百分比"
 L["OBJECTIVE_TRACKER"] = "目标追踪器"
-L["ON_COOLDOWN"] = "冷却中"
 L["OOM"] = "法力不足"
 L["OOM_INDICATOR"] = "法力不足指示器"
 L["OOR"] = "超出距离"
@@ -279,20 +293,22 @@ L["OPEN_CONFIG"] = "打开设置"
 L["ORBS"] = "球形"
 L["OTHER"] = "其他"
 L["OTHERS_FIRST"] = "他人优先"
+--[[ L["OTHERS_HEALING"] = "Others' Healing" ]]
 L["OUTLINE"] = "轮廓"
 L["PER_ROW"] = "每行"
 L["PET_BAR"] = "宠物条"
 L["PET_BATTLE_BAR"] = "宠物对战条"
-L["PET_CAST_BAR"] = "宠物施法条"
+L["PET_CASTBAR"] = "宠物施法条"
 L["PET_FRAME"] = "宠物框架"
-L["PLAYER_CLASS"] = "玩家职业"
 L["PLAYER_FRAME"] = "玩家框架"
 L["PLAYER_PET"] = "玩家 & 宠物"
 L["PLAYER_TITLE"] = "玩家头衔"
 L["POINT"] = "锚点"
 L["POINT_DESC"] = "对象的锚点"
+--[[ L["POISON"] = "Poison" ]]
 L["POSITION"] = "位置"
 L["POWER"] = "资源"
+--[[ L["POWER_COST"] = "Power Cost" ]]
 L["POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留空表示禁用此功能
 
 格式化文本
@@ -300,9 +316,7 @@ L["POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 - |cffffd200[ls:power:max]|r - 最大值
 - |cffffd200[ls:power:perc]|r - 百分比
 - |cffffd200[ls:power:cur-max]|r - 当前值和最大值
-- |cffffd200[ls:power:cur-color-max]|r - 当前值和着色后的最大值
 - |cffffd200[ls:power:cur-perc]|r - 当前值和百分比
-- |cffffd200[ls:power:cur-color-perc]|r - 当前值和着色后的百分比
 - |cffffd200[ls:power:deficit]|r - 剩余值
 - |cffffd200[ls:color:power]|r - 着色
 
@@ -311,7 +325,7 @@ L["POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 使用 |cffffd200||r|r 来表示着色格式化文本结束
 使用 |cffffd200[nl]|r 来换行]=]
 L["POWER_TEXT"] = "资源文字"
-L["PRESTIGE_LEVEL_TOOLTIP"] = "威望等级：|cffffffff%s|r"
+--[[ L["PREDICTION"] = "Prediction" ]]
 L["PREVIEW"] = "预览"
 L["PVP_ICON"] = "PvP 图标"
 L["QUESTLOG_BUTTON_DESC"] = "显示每日任务重置计时器"
@@ -333,6 +347,9 @@ L["RIGHT_DOWN"] = "右下"
 L["RIGHT_UP"] = "右上"
 L["ROWS"] = "行"
 L["RUNES"] = "符文"
+--[[ L["RUNES_BLOOD"] = "Blood Runes" ]]
+--[[ L["RUNES_FROST"] = "Frost Runes" ]]
+--[[ L["RUNES_UNHOLY"] = "Unholy Runes" ]]
 L["SECOND_ANCHOR"] = "第二锚点"
 L["SECONDS"] = "秒"
 L["SELF_BUFFS"] = "自我增益"
@@ -346,18 +363,29 @@ L["SELF_DEBUFFS_PERMA_DESC"] = "显示单位施放的永久性减益效果"
 L["SEPARATION"] = "分隔"
 L["SHADOW"] = "阴影"
 L["SHIFT_CLICK_TO_SHOW_AS_XP"] = "|cffffffffShift 加点击|r 来显示经验条"
+L["SHOW_ON_MOUSEOVER"] = "鼠标经过时显示"
 L["SIZE"] = "尺寸"
 L["SIZE_OVERRIDE"] = "覆盖原有尺寸"
 L["SIZE_OVERRIDE_DESC"] = "如果设置为 0 的话，UI 元素的尺寸将会被自动计算"
 L["SORT_DIR"] = "排序方向"
 L["SORT_METHOD"] = "排序方法"
 L["SPACING"] = "间距"
+L["SPELL_CAST"] = "释放法术"
+L["SPELL_CHANNELED"] = "引导法术"
+L["SPELL_FAILED"] = "释放法术失败"
+L["SPELL_UNINTERRUPTIBLE"] = "不可打断"
+--[[ L["STAGGER_HIGH"] = "High Stagger" ]]
+--[[ L["STAGGER_LOW"] = "Low Stagger" ]]
+--[[ L["STAGGER_MEDIUM"] = "Medium Stagger" ]]
 L["STANCE_BAR"] = "姿态条"
+--[[ L["STANDARD"] = "Standard" ]]
 L["TALKING_HEAD_FRAME"] = "剧情动画框架"
+--[[ L["TAPPED"] = "Tapped" ]]
 L["TARGET_FRAME"] = "目标框架"
 L["TARGET_INFO"] = "目标信息"
 L["TARGET_INFO_DESC"] = "显示单位的目标"
 L["TARGET_TOT"] = "目标 & 目标的目标"
+--[[ L["TEMP_ENCHANT"] = "Temporary Enchant" ]]
 L["TEXT"] = "文本"
 L["TEXT_HORIZ_ALIGNMENT"] = "水平对齐"
 L["TEXT_VERT_ALIGNMENT"] = "垂直对齐"
@@ -372,6 +400,7 @@ L["TOP_INSET_SIZE"] = "额外资源尺寸"
 L["TOP_INSET_SIZE_DESC"] = "职业资源，职业第二资源以及职业其他资源尺寸"
 L["TOT_FRAME"] = "目标的目标框架"
 L["TOTEMS"] = "图腾"
+--[[ L["TRIVIAL"] = "Trivial" ]]
 L["UI_LAYOUT"] = "UI 布局"
 L["UI_LAYOUT_DESC"] = "修改玩家和宠物框架外观，与此同时也会修改 UI 布局"
 L["UNITS"] = "单位"
@@ -382,7 +411,7 @@ L["USABLE"] = "可用"
 L["USE_BLIZZARD_VEHICLE_UI"] = "使用暴雪载具 UI"
 L["VEHICLE_EXIT_BUTTON"] = "离开载具按钮"
 L["VEHICLE_SEAT_INDICATOR"] = "载具座位指示器"
-L["VERT_GROWTH_DIR"] = "垂直增长"
+--[[ L["VERY_DIFFICULT"] = "Very Difficult" ]]
 L["VISIBILITY"] = "可见性"
 L["WIDTH"] = "宽度"
 L["WIDTH_OVERRIDE"] = "覆盖原有宽度"
@@ -390,6 +419,7 @@ L["WORD_WRAP"] = "文字换行"
 L["X_OFFSET"] = "X 轴偏移"
 L["XP_BAR"] = "经验条"
 L["Y_OFFSET"] = "Y 轴偏移"
+--[[ L["YOUR_HEALING"] = "Your Healing" ]]
 L["YOURS_FIRST"] = "玩家优先"
 L["ZONE_ABILITY_BUTTON"] = "区域特殊能力按钮"
 L["ZONE_TEXT"] = "区域文字"

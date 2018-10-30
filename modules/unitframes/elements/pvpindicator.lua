@@ -129,7 +129,6 @@ local function frame_UpdatePvPIndicator(self)
 	local element = self.PvPIndicator
 	element:UpdateConfig()
 	element:UpdatePoints()
-
 	element:UpdateTags()
 
 	if element._config.enabled and not self:IsElementEnabled("PvPIndicator") then

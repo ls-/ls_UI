@@ -142,6 +142,13 @@ local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 	return p, anchor, rP, x, y
 end
 
+local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
+	if not shouldIgnore and E.Movers:Get(self) then
+		self:ClearAllPoints()
+		self:SetPoint("TOPRIGHT", E.Movers:Get(self), "TOPRIGHT", 0, 0, true)
+	end
+end
+
 local function mover_SavePosition(self, p, anchor, rP, x, y)
 	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = {p, anchor, rP, x, y}
 end
@@ -157,7 +164,7 @@ local function mover_ResetPosition(self)
 	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = nil
 
 	if not self.isSimple then
-		self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 	end
 
 	self:PostSaveUpdatePosition()
@@ -177,9 +184,9 @@ local function mover_UpdatePosition(self, xOffset, yOffset)
 		self:Show()
 	else
 		if self:WasMoved() then
-			self.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		else
-			self.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
+			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
 		end
 	end
 
@@ -278,6 +285,7 @@ local function mover_Enable(self)
 	disabledMovers[name] = nil
 
 	enabledMovers[name]:UpdatePosition()
+	resetObjectPoint(self.object)
 
 	if areToggledOn then
 		enabledMovers[name]:Show()
@@ -373,13 +381,6 @@ local function createMoverButton(mover, dir)
 	return button
 end
 
-local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
-	if not shouldIgnore and E.Movers:Get(self) then
-		self:ClearAllPoints()
-		self:SetPoint("TOPRIGHT", E.Movers:Get(self), "TOPRIGHT", 0, 0, true)
-	end
-end
-
 E.Movers = {}
 
 function E.Movers:Create(object, isSimple)
@@ -414,7 +415,7 @@ function E.Movers:Create(object, isSimple)
 		mover:SetShown(areToggledOn)
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
-		bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		bg:SetAllPoints()
 		mover.Bg = bg
 
@@ -509,9 +510,9 @@ function P.Movers:UpdateConfig()
 			mover:Show()
 		else
 			if mover:WasMoved() then
-				mover.Bg:SetColorTexture(M.COLORS.BLUE:GetRGBA(0.6))
+				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 			else
-				mover.Bg:SetColorTexture(M.COLORS.ORANGE:GetRGBA(0.6))
+				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
 			end
 		end
 	end

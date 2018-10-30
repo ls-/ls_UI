@@ -5,7 +5,6 @@ local CONFIG = P:GetModule("Config")
 
 -- Lua
 local _G = getfenv(0)
-local unpack = _G.unpack
 
 -- Mine
 local DRAG_KEYS = {
@@ -27,11 +26,6 @@ local DRAG_KEY_INDICES = {
 	["CTRL"] = 2,
 	["SHIFT"] = 3,
 	["NONE"] = 4,
-}
-
-local CASTBAR_ICON_POSITIONS = {
-	["LEFT"] = L["LEFT"],
-	["RIGHT"] = L["RIGHT"],
 }
 
 local SHOW_PET_OPTIONS = {
@@ -279,7 +273,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					show_pet = {
 						order = 2,
 						type = "select",
-						name = L["PET_CAST_BAR"],
+						name = L["PET_CASTBAR"],
 						values = SHOW_PET_OPTIONS,
 					},
 					reset = {
@@ -317,32 +311,6 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						order = 19,
 						type = "description",
 						name = " ",
-					},
-					icon = {
-						order = 20,
-						type = "group",
-						name = L["ICON"],
-						inline = true,
-						get = function(info)
-							return C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]] = value
-							BLIZZARD:UpdateCastBars()
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["ENABLE"],
-							},
-							position = {
-								order = 2,
-								type = "select",
-								name = L["POSITION"],
-								values = CASTBAR_ICON_POSITIONS,
-							},
-						},
 					},
 					icon = {
 						order = 20,
@@ -392,65 +360,6 @@ function CONFIG.CreateBlizzardPanel(_, order)
 								order = 3,
 								type = "toggle",
 								name = L["SHADOW"],
-							},
-						},
-					},
-					spacer_4 = {
-						order = 39,
-						type = "description",
-						name = " ",
-					},
-					colors = {
-						order = 40,
-						type = "group",
-						name = L["COLORS"],
-						inline = true,
-						get = function(info)
-							return unpack(C.db.profile.blizzard.castbar.colors[info[#info]])
-						end,
-						set = function(info, r, g, b)
-							if r ~= nil then
-								local color = C.db.profile.blizzard.castbar.colors[info[#info]]
-								if color[1] ~= r or color[2] ~= g or color[3] ~= b then
-									color[1], color[2], color[3] = r, g, b
-									BLIZZARD:UpdateCastBars()
-								end
-							end
-						end,
-						args = {
-							reset = {
-								type = "execute",
-								order = 1,
-								name = L["RESTORE_DEFAULTS"],
-								func = function()
-									CONFIG:CopySettings(D.profile.blizzard.castbar.colors, C.db.profile.blizzard.castbar.colors)
-									BLIZZARD:UpdateCastBars()
-								end,
-							},
-							spacer_1 = {
-								order = 9,
-								type = "description",
-								name = " ",
-							},
-							casting = {
-								order = 10,
-								type = "color",
-								name = L["SPELL_CAST"],
-							},
-							channeling = {
-								order = 11,
-								type = "color",
-								name = L["SPELL_CHANNELED"],
-							},
-							failed = {
-								order = 12,
-								type = "color",
-								name = L["SPELL_FAILED"],
-							},
-							notinterruptible = {
-								order = 13,
-								type = "color",
-								name = L["SPELL_UNINTERRUPTIBLE"],
 							},
 						},
 					},

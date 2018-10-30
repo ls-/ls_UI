@@ -24,9 +24,7 @@ Etiquetas:
 - |cffffd200[ls:altpower:max]|r - el valor máximo;
 - |cffffd200[ls:altpower:perc]|r - el porcentaje;
 - |cffffd200[ls:altpower:cur-max]|r - el valor actual seguido del valor máximo;
-- |cffffd200[ls:altpower:cur-color-max]|r - el valor actual seguido por el valor máximo con color;
 - |cffffd200[ls:altpower:cur-perc]|r - el valor actual seguido del porcentaje;
-- |cffffd200[ls:altpower:cur-color-perc]|r - el valor actual seguido del porcentaje con color;
 - |cffffd200[ls:color:altpower]|r - color.
 
 Si el valor actual es igual al valor máximo, solo se mostrará el valor máximo.
@@ -40,7 +38,9 @@ L["ANCHOR_TO_CURSOR"] = "Anclar al cursor"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "Nivel de artefacto: |cffffffff%s|r"
 L["ARTIFACT_POWER"] = "Poder de artefacto"
 L["ASCENDING"] = "Ascendente"
+--[[ L["AURA"] = "Aura" ]]
 L["AURA_TRACKER"] = "Seguidor de auras"
+--[[ L["AURA_TYPE"] = "Aura Type" ]]
 L["AURAS"] = "Auras"
 L["AUTO"] = "Auto"
 L["BAG_SLOTS"] = "Huecos de bolsas"
@@ -53,7 +53,6 @@ L["BAR_5"] = "Barra 5"
 L["BAR_COLOR"] = "Color de la barra"
 L["BAR_TEXT"] = "Texto de la barra"
 L["BLIZZARD"] = "Blizzard"
-L["BONUS_HONOR_TOOLTIP"] = "Bonus de Honor: |cffffffff%s|r"
 L["BONUS_XP_TOOLTIP"] = "Bonus de EXP: |cffffffff%s|r"
 L["BORDER"] = "Borde"
 L["BORDER_COLOR"] = "Color del borde"
@@ -68,6 +67,7 @@ L["BOTTOM_INSET_SIZE"] = "Tamaño del inset inferior"
 L["BOTTOM_INSET_SIZE_DESC"] = "Utilizado por la barra de recursos."
 L["BUFFS"] = "Beneficios"
 L["BUFFS_AND_DEBUFFS"] = "Beneficios y perjuicios"
+--[[ L["BUTTON"] = "Button" ]]
 L["BUTTON_GRID"] = "Cuadrícula de botones"
 L["CALENDAR"] = "Calendario"
 L["CAST_ON_KEY_DOWN"] = "Lanzar al presionar tecla"
@@ -80,6 +80,7 @@ L["CASTABLE_DEBUFFS_DESC"] = "Muestra los perjuicios lanzados por ti."
 L["CASTABLE_DEBUFFS_PERMA"] = "Perjuicios permanentes lanzables"
 L["CASTABLE_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados por ti."
 L["CASTBAR"] = "Barra de lanzamiento"
+--[[ L["CHANGE"] = "Change" ]]
 L["CHARACTER_BUTTON_DESC"] = "Muestra la durabilidad del equipo."
 L["CLASS_POWER"] = "Poder de clase"
 L["CLASSIC"] = "Clásico"
@@ -94,7 +95,9 @@ L["COPY_FROM_DESC"] = "Selecciona una unidad de la que copiar la configuración.
 L["COST_PREDICTION"] = "Predicción de coste"
 L["COST_PREDICTION_DESC"] = "Muestra una barra que representa el coste de un hechizo. No funciona con hechizos de lanzamiento instantáneo."
 L["COUNT_TEXT"] = "Texto de conteo"
+--[[ L["CURSE"] = "Curse" ]]
 L["DAILY_QUEST_RESET_TIME_TOOLTIP"] = "Reinicio de misión diaria: |cffffffff%s|r"
+--[[ L["DAMAGE_ABSORB"] = "Damage Absorb" ]]
 L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
 Escribe un 'String' para cambiar el texto. Para desactivarlo, deja el campo vacío.
 
@@ -107,14 +110,19 @@ Utiliza |cffffd200[nl]|r para insertar un salto de línea.]=]
 L["DAMAGE_ABSORB_TEXT"] = "Texto de absorción de daño"
 L["DAYS"] = "Días"
 L["DEAD"] = "Muerto"
+--[[ L["DEBUFF"] = "Debuff" ]]
+--[[ L["DEBUFF_TYPE"] = "Debuff Type" ]]
 L["DEBUFFS"] = "Perjuicios"
 L["DESATURATION"] = "Desaturación"
 L["DESCENDING"] = "Descendiente"
 L["DETACH_FROM_FRAME"] = "Despegar del cuadro."
+--[[ L["DIFFICULT"] = "Difficult" ]]
+--[[ L["DIFFICULTY"] = "Difficulty" ]]
 L["DIFFICULTY_FLAG"] = "Bandera de dificultad"
 L["DIGSITE_BAR"] = "Barra de progreso de excavaciones"
 L["DISABLE_MOUSE"] = "Desactivar ratón"
 L["DISABLE_MOUSE_DESC"] = "Ignorar eventos de ratón."
+--[[ L["DISEASE"] = "Disease" ]]
 L["DISPELLABLE_BUFFS"] = "Beneficios disipables"
 L["DISPELLABLE_BUFFS_DESC"] = "Muestra los beneficios que puedes robar o purgar del objetivo."
 L["DISPELLABLE_DEBUFF_ICONS"] = "Iconos de perjucios disipables."
@@ -124,15 +132,17 @@ L["DOWN"] = "Abajo"
 L["DRAG_KEY"] = "Tecla de arrastre"
 L["DUNGEONS_BUTTON_DESC"] = "Mostrar información de \"Llamada a las armas\""
 L["DURABILITY_FRAME"] = "Marco de durabilidad"
-L["ELITE"] = "Élite"
 L["ENEMY_UNITS"] = "Unidades enemigas"
 L["ENHANCED_TOOLTIPS"] = "Descripciones emergentes mejoradas"
 L["ENTER_SPELL_ID"] = "Introduce ID de hechizo"
 L["EXP_THRESHOLD"] = "Límite de expiración"
 L["EXP_THRESHOLD_DESC"] = "El límite (en segundos) bajo el que el tiempo mínimo será mostrado como número decimal."
 L["EXPERIENCE"] = "Experiencia"
+--[[ L["EXPERIENCE_NORMAL"] = "Normal" ]]
+--[[ L["EXPERIENCE_RESTED"] = "Rested" ]]
 L["EXPIRATION"] = "Expiración"
 L["EXTRA_ACTION_BUTTON"] = "Botón de acción extra"
+--[[ L["FACTION_NEUTRAL"] = "Neutral" ]]
 L["FADE_IN_DELAY"] = "Retraso de aparición"
 L["FADE_IN_DURATION"] = "Duración de aparición"
 L["FADE_OUT_DELAY"] = "Retraso de desvanecimiento"
@@ -145,15 +155,18 @@ L["FLAG"] = "Bandera"
 L["FLYOUT_DIR"] = "Dirección"
 L["FOCUS_FRAME"] = "Marco de foco"
 L["FOCUS_TOF"] = "Foco & OdF"
-L["FONT"] = "Fuente"
 L["FORMAT"] = "Formato"
 L["FRAME"] = "Marco"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Huecos de bolsa libres: |cffffffff%s|r"
 L["FRIENDLY_TERRITORY"] = "Territorio amistoso"
 L["FRIENDLY_UNITS"] = "Unidades amistosas"
+--[[ L["GAIN"] = "Gain" ]]
+--[[ L["GAIN_LOSS_THRESHOLD"] = "Gain/Loss Threshold" ]]
+--[[ L["GAIN_LOSS_THRESHOLD_DESC"] = "The threshold (in percentages) above which resource gain and loss will be animated. Set to 100 to disable." ]]
 L["GM_FRAME"] = "Indicador del estado del tíquet."
 L["GOLD"] = "Oro"
 L["GROWTH_DIR"] = "Dirección de crecimiento"
+--[[ L["HEAL_ABSORB"] = "Heal Absorb" ]]
 L["HEAL_ABSORB_FORMAT_DESC"] = [=[Escribe un "string" para cambiar el texto. Para desactivarlo, deja el campo en blanco.
 
 Etiquetas:
@@ -180,10 +193,10 @@ L["HEALTH_TEXT"] = "Texto de salud"
 L["HEIGHT"] = "Altura"
 L["HONOR"] = "Honor"
 L["HONOR_LEVEL_TOOLTIP"] = "Nivel de Honor: |cffffffff%d|r"
-L["HORIZ_GROWTH_DIR"] = "Crecimiento Horizontal"
 L["HOSTILE_TERRITORY"] = "Territorio hostil"
 L["HOURS"] = "Horas"
 L["ICON"] = "Icono"
+--[[ L["IMPOSSIBLE"] = "Impossible" ]]
 L["INDEX"] = "Índice"
 L["INSPECT_INFO"] = "Información de inspección"
 L["INSPECT_INFO_DESC"] = "Muestra la especialización y nivel de objeto del objetivo actual en la descripción emergente. La información puede tardar."
@@ -206,9 +219,11 @@ L["LOCK"] = "Bloquear"
 L["LOCK_BUTTONS"] = "Bloquear botones"
 L["LOCK_BUTTONS_DESC"] = "Impide el movimiento de hechizos y habilidades de las barras de acción."
 L["LOOT_ALL"] = "Despojar todo"
+--[[ L["LOSS"] = "Loss" ]]
 L["M_SS_THRESHOLD"] = "M:SS Límite"
 L["M_SS_THRESHOLD_DESC"] = "El límite (en segundos) bajo el que el tiempo restante se mostrará en formato M:SS. Establecer en 0 para desactivar."
 L["MACRO_TEXT"] = "Texto de macro"
+--[[ L["MAGIC"] = "Magic" ]]
 L["MAIN_BAR"] = "Barra principal"
 L["MAINMENU_BUTTON_DESC"] = "Mostrar información de rendimiento."
 L["MAINMENU_BUTTON_HOLD_TOOLTIP"] = "|cffffffffMantén Shift|r para mostrar uso de memoria."
@@ -222,7 +237,6 @@ L["MIRROR_TIMER_DESC"] = "Respiración, fatiga y otros indicadores."
 L["MODE"] = "Modo"
 L["MOUNT_AURAS"] = "Auras de montura"
 L["MOUNT_AURAS_DESC"] = "Mostrar auras de montura."
-L["MOUSEOVER_SHOW"] = "Mostrar al pasar el ratón."
 L["MOVER_BUTTONS_DESC"] = "|cffffffffClick|r para alternar botones."
 L["MOVER_CYCLE_DESC"] = "Presiona |cffffffffAlt|r para alternar entre los marcos bajo el cursor."
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r para reiniciar la posición."
@@ -244,12 +258,12 @@ Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
 Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["NO_SEPARATION"] = "Sin separación"
 L["NOTHING_TO_SHOW"] = "Nada que mostrar."
-L["NPC_CLASSIFICATION"] = "Tipo de PNJ"
 L["NPE_FRAME"] = "Tutorial marco NPE"
 L["NUM_BUTTONS"] = "Número de botones"
 L["NUM_ROWS"] = "Número de filas"
+--[[ L["NUMERIC"] = "Numeric" ]]
+--[[ L["NUMERIC_PERCENTAGE"] = "Numeric & Percentage" ]]
 L["OBJECTIVE_TRACKER"] = "Seguimiento de objetivos"
-L["ON_COOLDOWN"] = "En enfriamiento"
 L["OOM"] = "Sin Poder"
 L["OOM_INDICATOR"] = "Indicador de poder"
 L["OOR"] = "Fuera de rango"
@@ -258,20 +272,22 @@ L["OPEN_CONFIG"] = "Abrir config."
 L["ORBS"] = "Orbes"
 L["OTHER"] = "Otro"
 L["OTHERS_FIRST"] = "Otros primero"
+--[[ L["OTHERS_HEALING"] = "Others' Healing" ]]
 L["OUTLINE"] = "Contorno"
 L["PER_ROW"] = "Por fila"
 L["PET_BAR"] = "Barra de mascota"
 L["PET_BATTLE_BAR"] = "Barra de batalla de mascotas"
-L["PET_CAST_BAR"] = "Barra de lanzamiento de mascota"
+L["PET_CASTBAR"] = "Barra de lanzamiento de mascota"
 L["PET_FRAME"] = "Marco de mascota"
-L["PLAYER_CLASS"] = "Clase de Jugador"
 L["PLAYER_FRAME"] = "Marco de jugador"
 L["PLAYER_PET"] = "Jugador & mascota"
 L["PLAYER_TITLE"] = "Título de Jugador"
 L["POINT"] = "Apuntar"
 L["POINT_DESC"] = "Apunta al objeto."
+--[[ L["POISON"] = "Poison" ]]
 L["POSITION"] = "Posición"
 L["POWER"] = "Poder alternativo"
+--[[ L["POWER_COST"] = "Power Cost" ]]
 L["POWER_FORMAT_DESC"] = [=[Escribe un 'String' para cambiar el texto. Para desactivarlo, deja el campo en blanco.
 
 Etiquetas:
@@ -279,9 +295,7 @@ Etiquetas:
 - |cffffd200[ls:power:max]|r - valor máximo;
 - |cffffd200[ls:power:perc]|r - porcentaje;
 - |cffffd200[ls:power:cur-max]|r - el valor actual seguido del valor máximo;
-- |cffffd200[ls:power:cur-color-max]|r - el valor actual seguido del valor máximo con color;
 - |cffffd200[ls:power:cur-perc]|r - el valor actual seguido por el porcentaje;
-- |cffffd200[ls:power:cur-color-perc]|r - el valor actual seguido por el porcentaje con color;
 - |cffffd200[ls:power:deficit]|r - valor de déficit;
 - |cffffd200[ls:color:power]|r - el color.
 
@@ -291,7 +305,7 @@ If the current value is equal to the max value, only the max value will be displ
 Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
 Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["POWER_TEXT"] = "Texto de Poder alternativo"
-L["PRESTIGE_LEVEL_TOOLTIP"] = "Nivel de prestigio: |cffffffff%s|r"
+--[[ L["PREDICTION"] = "Prediction" ]]
 L["PREVIEW"] = "Previsualizar"
 L["PVP_ICON"] = "Icono JcJ"
 L["QUESTLOG_BUTTON_DESC"] = "Muestra el tiempo de reinicio de misiones diarias."
@@ -313,6 +327,9 @@ L["RIGHT_DOWN"] = "Derecha y abajo"
 L["RIGHT_UP"] = "Derecha y arriba"
 L["ROWS"] = "Filas"
 L["RUNES"] = "Runas"
+--[[ L["RUNES_BLOOD"] = "Blood Runes" ]]
+--[[ L["RUNES_FROST"] = "Frost Runes" ]]
+--[[ L["RUNES_UNHOLY"] = "Unholy Runes" ]]
 L["SECOND_ANCHOR"] = "Segundo anclaje"
 L["SECONDS"] = "Segundos"
 L["SELF_BUFFS"] = "Beneficios propios"
@@ -326,18 +343,29 @@ L["SELF_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados por 
 L["SEPARATION"] = "Separación"
 L["SHADOW"] = "Sombra"
 L["SHIFT_CLICK_TO_SHOW_AS_XP"] = "|cffffffffShift-Click|r para mostrar como Barra de Experiencia"
+L["SHOW_ON_MOUSEOVER"] = "Mostrar al pasar el ratón."
 L["SIZE"] = "Tamaño"
 L["SIZE_OVERRIDE"] = "Ignorar tamaño"
 L["SIZE_OVERRIDE_DESC"] = "Si es 0, el tamaño del elemento se calculará automáticamente."
 L["SORT_DIR"] = "Orden"
 L["SORT_METHOD"] = "Método de ordenado"
 L["SPACING"] = "Espaciado"
+--[[ L["SPELL_CAST"] = "Cast" ]]
+--[[ L["SPELL_CHANNELED"] = "Channelled" ]]
+--[[ L["SPELL_FAILED"] = "Failed" ]]
+--[[ L["SPELL_UNINTERRUPTIBLE"] = "Uninterruptible" ]]
+--[[ L["STAGGER_HIGH"] = "High Stagger" ]]
+--[[ L["STAGGER_LOW"] = "Low Stagger" ]]
+--[[ L["STAGGER_MEDIUM"] = "Medium Stagger" ]]
 L["STANCE_BAR"] = "Barra de actitudes"
+--[[ L["STANDARD"] = "Standard" ]]
 L["TALKING_HEAD_FRAME"] = "Marco de cabeza flotante"
+--[[ L["TAPPED"] = "Tapped" ]]
 L["TARGET_FRAME"] = "Marco de objetivo"
 L["TARGET_INFO"] = "Información de objetivo"
 L["TARGET_INFO_DESC"] = "Muestra la descripción emergente del objetivo."
 L["TARGET_TOT"] = "Objetivo & OdO"
+--[[ L["TEMP_ENCHANT"] = "Temporary Enchant" ]]
 L["TEXT"] = "Texto"
 L["TEXT_HORIZ_ALIGNMENT"] = "Alineamiento horizontal"
 L["TEXT_VERT_ALIGNMENT"] = "Alineamiento vertical"
@@ -352,6 +380,7 @@ L["TOP_INSET_SIZE"] = "Tamaño inset superior"
 L["TOP_INSET_SIZE_DESC"] = "Utilizado por las barras de clase, recursos y poder alternativos."
 L["TOT_FRAME"] = "Marco de Objetivo de Objetivo"
 L["TOTEMS"] = "Tótems"
+--[[ L["TRIVIAL"] = "Trivial" ]]
 L["UI_LAYOUT"] = "Diseño de interfaz"
 L["UI_LAYOUT_DESC"] = "Cambia la apariencia de los marcos de jugador y mascotas. Ésto también cambiará el diseño de la interfaz."
 L["UNITS"] = "Unidades"
@@ -362,7 +391,7 @@ L["USABLE"] = "Utilizable"
 L["USE_BLIZZARD_VEHICLE_UI"] = "Utilizar la interfaz de Blizzard de vehículos"
 L["VEHICLE_EXIT_BUTTON"] = "Botón para salir de vehículo"
 L["VEHICLE_SEAT_INDICATOR"] = "Indicador de asiento de vehículo"
-L["VERT_GROWTH_DIR"] = "Dirección de crecimiento vertical"
+--[[ L["VERY_DIFFICULT"] = "Very Difficult" ]]
 L["VISIBILITY"] = "Visibilidad"
 L["WIDTH"] = "Ancho"
 L["WIDTH_OVERRIDE"] = "Ignorar ancho"
@@ -370,6 +399,7 @@ L["WORD_WRAP"] = "Ajuste de línea"
 L["X_OFFSET"] = "xOffset"
 L["XP_BAR"] = "Barra de experiencia"
 L["Y_OFFSET"] = "yOffset"
+--[[ L["YOUR_HEALING"] = "Your Healing" ]]
 L["YOURS_FIRST"] = "El tuyo primero"
 L["ZONE_ABILITY_BUTTON"] = "Botón de habilidad de zona"
 L["ZONE_TEXT"] = "Texto de zona"

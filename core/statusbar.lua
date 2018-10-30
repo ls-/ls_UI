@@ -70,7 +70,7 @@ function E:HandleStatusBar(bar, isRecursive)
 			bg = bar:CreateTexture(nil, "BACKGROUND")
 		end
 
-		bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+		bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		bg:SetAllPoints()
 		bar.Bg = bg
 
@@ -107,7 +107,7 @@ function E:CreateStatusBar(parent, name, orientation)
 	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 
 	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetColorTexture(M.COLORS.DARK_GRAY:GetRGB())
+	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 	bg:SetAllPoints()
 	bar.Bg = bg
 
@@ -553,6 +553,11 @@ do
 		end
 	end
 
+	local function updateColors(self)
+		self.Gain_:SetColorTexture(E:GetRGB(C.db.profile.colors.gain))
+		self.Loss_:SetColorTexture(E:GetRGB(C.db.profile.colors.loss))
+	end
+
 	local function updatePoints(self, orientation)
 		orientation = orientation or "HORIZONTAL"
 		if orientation == "HORIZONTAL" then
@@ -576,9 +581,12 @@ do
 		self.orientation = orientation
 	end
 
+	local function updateThreshold(self, value)
+		self.threshold = value or 0.01
+	end
+
 	function E:CreateGainLossIndicators(object)
 		local gainTexture = object:CreateTexture(nil, "ARTWORK", nil, 1)
-		gainTexture:SetColorTexture(0.47, 0.88, 0.42)
 		gainTexture:SetAlpha(0)
 
 		local ag = gainTexture:CreateAnimationGroup()
@@ -594,7 +602,6 @@ do
 		ag.Alpha = anim
 
 		local lossTexture = object:CreateTexture(nil, "BACKGROUND")
-		lossTexture:SetColorTexture(0.55, 0.11, 0.13)
 		lossTexture:SetAlpha(0)
 
 		ag = lossTexture:CreateAnimationGroup()
@@ -617,7 +624,9 @@ do
 			Loss = lossTexture,
 			Loss_ = lossTexture,
 			Update = update,
+			UpdateColors = updateColors,
 			UpdatePoints = updatePoints,
+			UpdateThreshold = updateThreshold,
 		}
 	end
 end
