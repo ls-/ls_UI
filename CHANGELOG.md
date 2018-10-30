@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## Version 80000.13
+
+- Added options to adjust practically every colour ls: UI uses. Can be found at /LSUI > General >  
+  Colours;
+- Removed action button desaturation and colouring on cooldown. It's too buggy;
+- Removed [ls:altpower:cur-color-max], [ls:altpower:cur-color-perc], [ls:power:cur-color-max], and  
+  [ls:power:cur-color-perc] tags. Their uncoloured counterparts will be used instead;
+- Fixed castbar's detachment from and reattachment to its unit frame;
+- Added partial German Translation. Translated by NicoCaine90@Curse, Terijaki@Curse;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Updated embeds.
+
+![Imgur](https://i.imgur.com/ctrDyrI.png)
+
+NOTE: You'll have to restart WoW client to make things work after the update.
+
 ## Version 80000.12
 
 - Added options to adjust text size, outline, and shadow of various unit frame elements, e.g.,  
