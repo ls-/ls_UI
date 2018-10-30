@@ -8,9 +8,9 @@ local next = _G.next
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame GetPetActionCooldown
-	GetPetActionInfo GetPetActionSlotUsable IsPetAttackAction LibStub PetActionButton_StartFlash
-	PetActionButton_StopFlash PetHasActionBar UIParent
+	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame
+	GetPetActionCooldown GetPetActionInfo GetPetActionSlotUsable GetSpellSubtext IsPetAttackAction
+	LibStub PetActionButton_StartFlash PetActionButton_StopFlash PetHasActionBar UIParent
 
 	ATTACK_BUTTON_FLASH_TIME RANGE_INDICATOR TOOLTIP_UPDATE_TIME
 ]]
@@ -177,7 +177,7 @@ end
 
 local function button_Update(self)
 	local id = self:GetID()
-	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(id)
+	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(id)
 
 	if not isToken then
 		self.icon:SetTexture(texture)
@@ -189,7 +189,9 @@ local function button_Update(self)
 
 	self.isToken = isToken
 
-	self:SetChecked(PetHasActionBar() and isActive or false)
+	if spellID then
+		self.tooltipSubtext = GetSpellSubtext(spellID)
+	end
 
 	if PetHasActionBar() and isActive then
 		if IsPetAttackAction(id) then
@@ -199,9 +201,12 @@ local function button_Update(self)
 			self:StopFlash()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
+
+		self:SetChecked(true)
 	else
 		self:StopFlash()
 		self:GetCheckedTexture():SetAlpha(1.0)
+		self:SetChecked(false)
 	end
 
 	if autoCastAllowed and not autoCastEnabled then
