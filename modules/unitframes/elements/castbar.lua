@@ -155,7 +155,9 @@ local function element_UpdateSize(self)
 		if self._config.detached then
 			local mover = E.Movers:Get(holder, true)
 			if not mover then
+				holder:ClearAllPoints()
 				holder:SetPoint(point1.p, E:ResolveAnchorPoint(nil, point1.detached_anchor == "FRAME" and frame:GetName() or point1.detached_anchor), point1.rP, point1.x, point1.y)
+
 				E.Movers:Create(holder)
 			else
 				mover:Enable()

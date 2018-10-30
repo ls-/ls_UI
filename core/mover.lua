@@ -142,6 +142,13 @@ local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 	return p, anchor, rP, x, y
 end
 
+local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
+	if not shouldIgnore and E.Movers:Get(self) then
+		self:ClearAllPoints()
+		self:SetPoint("TOPRIGHT", E.Movers:Get(self), "TOPRIGHT", 0, 0, true)
+	end
+end
+
 local function mover_SavePosition(self, p, anchor, rP, x, y)
 	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = {p, anchor, rP, x, y}
 end
@@ -278,6 +285,7 @@ local function mover_Enable(self)
 	disabledMovers[name] = nil
 
 	enabledMovers[name]:UpdatePosition()
+	resetObjectPoint(self.object)
 
 	if areToggledOn then
 		enabledMovers[name]:Show()
@@ -371,13 +379,6 @@ local function createMoverButton(mover, dir)
 	SquareButton_SetIcon(button, s_upper(dir))
 
 	return button
-end
-
-local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
-	if not shouldIgnore and E.Movers:Get(self) then
-		self:ClearAllPoints()
-		self:SetPoint("TOPRIGHT", E.Movers:Get(self), "TOPRIGHT", 0, 0, true)
-	end
 end
 
 E.Movers = {}
