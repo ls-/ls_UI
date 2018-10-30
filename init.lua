@@ -56,11 +56,30 @@ local function cleanUpStep1()
 		C.db.profile.blizzard.castbar.icon.enabled = nil
 		C.db.profile.blizzard.castbar.text.flag = nil
 	end
+
+	-- -> 80000.13
+	if not C.db.profile.version or C.db.profile.version < 8000013 then
+		C.db.char.auratracker.cooldown.colors = nil
+
+		C.db.profile.auras.cooldown.colors = nil
+
+		C.db.profile.bars.colors = nil
+		C.db.profile.bars.cooldown.colors = nil
+		C.db.profile.bars.desaturation.cooldown = nil
+
+		C.db.profile.blizzard.castbar.colors = nil
+
+		C.db.profile.minimap.colors = nil
+
+		C.db.profile.units.castbar = nil
+		C.db.profile.units.colors = nil
+	end
 end
 
 local function cleanUpStep2()
-	if not C.db.profile.version or C.db.profile.version < 8000012 then
-		local units = {"player", "pet", "target", "targettarget", "focustarget", "boss"}
+	-- -> 80000.13
+	if not C.db.profile.version or C.db.profile.version < 8000013 then
+		local units = {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"}
 
 		for _, unit in next, units do
 			if C.db.profile.units[unit] then
@@ -76,6 +95,8 @@ local function cleanUpStep2()
 				if C.db.profile.units[unit].auras then
 					C.db.profile.units[unit].auras.cooldown.text.h_alignment = nil
 				end
+
+				C.db.profile.units[unit].class = nil
 			end
 		end
 	end
