@@ -424,6 +424,10 @@ local function minimap_UpdateZoneColor(self)
 	end
 end
 
+local function minimap_UpdateZoneText(self)
+	self.Zone.Text:SetText(GetMinimapZoneText())
+end
+
 local function minimap_UpdateClock(self)
 	local config = self._config
 	local clock = Minimap.Clock
@@ -550,6 +554,7 @@ function MODULE.Init()
 			if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
 				self:UpdateBorderColor()
 				self:UpdateZoneColor()
+				self:UpdateZoneText()
 			end
 		end)
 		Minimap:SetScript("OnMouseWheel", function(_, direction)
@@ -962,6 +967,7 @@ function MODULE.Init()
 		Minimap.UpdateFlag = minimap_UpdateFlag
 		Minimap.UpdateZone = minimap_UpdateZone
 		Minimap.UpdateZoneColor = minimap_UpdateZoneColor
+		Minimap.UpdateZoneText = minimap_UpdateZoneText
 
 		isInit = true
 
