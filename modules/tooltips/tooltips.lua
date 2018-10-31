@@ -606,12 +606,6 @@ local function tooltip_SetUnit(self)
 
 	cleanUp(self)
 
-	if GameTooltipStatusBar:IsShown() then
-		self:SetMinimumWidth(140)
-
-		GameTooltipStatusBar:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
-	end
-
 	self:Show()
 end
 
@@ -673,24 +667,8 @@ local function tooltip_AddStatusBar(self, _, max, value)
 	end
 end
 
-local function tooltipBar_OnShow(self)
-	if self:IsForbidden() then return end
-
-	local tooltip = self:GetParent()
-	if tooltip:IsForbidden() then return end
-
-	local unit = getTooltipUnit(tooltip)
-	if unit then
-		tooltip:SetMinimumWidth(140)
-
-		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
-	else
-		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
-	end
-end
-
 local function tooltipBar_OnValueChanged(self, value)
-	if self:IsForbidden() or not value then return end
+	if self:IsForbidden() or self:GetParent():IsForbidden() or not value then return end
 
 	local _, max = self:GetMinMaxValues()
 	if max == 1 then
@@ -698,7 +676,11 @@ local function tooltipBar_OnValueChanged(self, value)
 	else
 		self.Text:Show()
 		self.Text:SetFormattedText("%s / %s", E:FormatNumber(value), E:FormatNumber(max))
+
+		self:GetParent():SetMinimumWidth(self.Text:GetStringWidth() + 32)
 	end
+
+	self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
 end
 
 function MODULE.IsInit()
@@ -796,7 +778,6 @@ function MODULE:Init()
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
-		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_OnShow)
 		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
 
 		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
