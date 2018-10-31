@@ -324,21 +324,15 @@ end
 
 do
 	function E:GetUnitClassColor(unit)
-		local class = select(2, UnitClass(unit))
-		if class then
-			return C.db.global.colors.class[class]
-		end
-
-		return C.db.global.colors.white
+		return C.db.global.colors.class[select(2, UnitClass(unit))] or C.db.global.colors.white
 	end
 
 	function E:GetUnitReactionColor(unit)
-		local reaction = UnitReaction(unit, "player")
-		if reaction then
-			return C.db.profile.colors.reaction[reaction]
+		if select(2, UnitDetailedThreatSituation("player", unit)) ~= nil then
+			return C.db.profile.colors.reaction[2]
 		end
 
-		return C.db.profile.colors.reaction[4]
+		return C.db.profile.colors.reaction[UnitReaction(unit, "player")]
 	end
 
 	function E:GetUnitClassification(unit)
