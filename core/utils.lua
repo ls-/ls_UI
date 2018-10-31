@@ -350,19 +350,17 @@ do
 	end
 
 	function E:GetUnitClassification(unit)
-		if UnitExists(unit) then
-			local classification = UnitClassification(unit)
-			if classification == "rare" then
-				return "R"
-			elseif classification == "rareelite" then
-				return "R+"
-			elseif classification == "elite" then
-				return "+"
-			elseif classification == "worldboss" then
-				return "B"
-			elseif classification == "minus" then
-				return "-"
-			end
+		local classification = UnitClassification(unit)
+		if classification == "rare" then
+			return "R"
+		elseif classification == "rareelite" then
+			return "R+"
+		elseif classification == "elite" then
+			return "+"
+		elseif classification == "worldboss" then
+			return "B"
+		elseif classification == "minus" then
+			return "-"
 		end
 
 		return ""
