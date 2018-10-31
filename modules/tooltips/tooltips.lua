@@ -86,17 +86,6 @@ local TEXTS_TO_REMOVE = {
 	[_G.PVP] = true,
 }
 
-local function getUnitColor(unit)
-	if UnitIsPlayer(unit) then
-		return E:GetUnitClassColor(unit)
-	elseif UnitIsTapDenied(unit) then
-		return C.db.profile.colors.tapped
-	elseif UnitReaction(unit, "player") then
-		return E:GetUnitReactionColor(unit)
-	end
-
-	return C.db.profile.colors.health
-end
 local function addGenericInfo(tooltip, id)
 	if not (id and C.db.profile.tooltips.id) then return end
 
@@ -133,7 +122,7 @@ local function addSpellInfo(tooltip, id, caster)
 	tooltip:AddLine(" ")
 
 	if caster and type(caster) == "string" then
-		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, E:GetRGB(getUnitColor(caster)))
+		tooltip:AddDoubleLine(textLeft, UnitName(caster), 1, 1, 1, E:GetRGB(E:GetUnitColor(caster, true, true)))
 	else
 		tooltip:AddLine(textLeft, 1, 1, 1)
 	end
@@ -452,7 +441,7 @@ local function tooltip_SetUnit(self)
 	if not unit then return end
 
 	local config = C.db.profile.tooltips
-	local nameColor = getUnitColor(unit)
+	local nameColor = E:GetUnitColor(unit, nil, true)
 	local scaledLevel = UnitEffectiveLevel(unit)
 	local difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
 	local isPVPReady, pvpFaction = E:GetUnitPVPStatus(unit)
@@ -608,7 +597,7 @@ local function tooltip_SetUnit(self)
 					E:GetUnitReactionColor(unitTarget).hex
 				)
 			else
-				name = s_format("|c%s%s|r", getUnitColor(unitTarget).hex, name)
+				name = s_format("|c%s%s|r", E:GetUnitColor(unitTarget, nil, true).hex, name)
 			end
 
 			self:AddLine(TARGET:format(name), 1, 1, 1)
