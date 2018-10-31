@@ -323,6 +323,20 @@ end
 -----------
 
 do
+	function E:GetUnitColor(unit, colorByClass, colorByReaction)
+		if not UnitIsConnected(unit) then
+			return C.db.profile.colors.disconnected
+		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+			return C.db.profile.colors.tapped
+		elseif colorByClass and UnitIsPlayer(unit) then
+			return self:GetUnitClassColor(unit)
+		elseif colorByReaction then
+			return self:GetUnitReactionColor(unit)
+		end
+
+		return C.db.profile.colors.health
+	end
+
 	function E:GetUnitClassColor(unit)
 		return C.db.global.colors.class[select(2, UnitClass(unit))] or C.db.global.colors.white
 	end
