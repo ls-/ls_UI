@@ -334,7 +334,7 @@ do
 			return self:GetUnitReactionColor(unit)
 		end
 
-		return C.db.profile.colors.health
+		return C.db.profile.colors.reaction[4]
 	end
 
 	function E:GetUnitClassColor(unit)
@@ -346,7 +346,7 @@ do
 			return C.db.profile.colors.reaction[2]
 		end
 
-		return C.db.profile.colors.reaction[UnitReaction(unit, "player")]
+		return C.db.profile.colors.reaction[UnitReaction(unit, "player")] or C.db.profile.colors.reaction[4]
 	end
 
 	function E:GetUnitClassification(unit)
