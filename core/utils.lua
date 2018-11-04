@@ -323,38 +323,44 @@ end
 -----------
 
 do
-	function E:GetUnitClassColor(unit)
-		local class = select(2, UnitClass(unit))
-		if class then
-			return C.db.global.colors.class[class]
-		end
-
-		return C.db.global.colors.white
-	end
-
-	function E:GetUnitReactionColor(unit)
-		local reaction = UnitReaction(unit, "player")
-		if reaction then
-			return C.db.profile.colors.reaction[reaction]
+	function E:GetUnitColor(unit, colorByClass, colorByReaction)
+		if not UnitIsConnected(unit) then
+			return C.db.profile.colors.disconnected
+		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+			return C.db.profile.colors.tapped
+		elseif colorByClass and UnitIsPlayer(unit) then
+			return self:GetUnitClassColor(unit)
+		elseif colorByReaction then
+			return self:GetUnitReactionColor(unit)
 		end
 
 		return C.db.profile.colors.reaction[4]
 	end
 
+	function E:GetUnitClassColor(unit)
+		return C.db.global.colors.class[select(2, UnitClass(unit))] or C.db.global.colors.white
+	end
+
+	function E:GetUnitReactionColor(unit)
+		if select(2, UnitDetailedThreatSituation("player", unit)) ~= nil then
+			return C.db.profile.colors.reaction[2]
+		end
+
+		return C.db.profile.colors.reaction[UnitReaction(unit, "player")] or C.db.profile.colors.reaction[4]
+	end
+
 	function E:GetUnitClassification(unit)
-		if UnitExists(unit) then
-			local classification = UnitClassification(unit)
-			if classification == "rare" then
-				return "R"
-			elseif classification == "rareelite" then
-				return "R+"
-			elseif classification == "elite" then
-				return "+"
-			elseif classification == "worldboss" then
-				return "B"
-			elseif classification == "minus" then
-				return "-"
-			end
+		local classification = UnitClassification(unit)
+		if classification == "rare" then
+			return "R"
+		elseif classification == "rareelite" then
+			return "R+"
+		elseif classification == "elite" then
+			return "+"
+		elseif classification == "worldboss" then
+			return "B"
+		elseif classification == "minus" then
+			return "-"
 		end
 
 		return ""

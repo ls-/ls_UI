@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 80000.15
+
+- Fixed an issue where xp bar was causing errors when there's no bars to show;
+- Fixed unit name colouring in tooltips;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse.
+
 ## Version 80000.14
 
 - Fixed an issue which made pet action buttons turn black;

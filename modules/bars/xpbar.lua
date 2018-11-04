@@ -323,7 +323,7 @@ local function bar_UpdateSegments(self)
 			self[1]:Show()
 
 			self[1]:UpdateText(1, 1)
-			self[1].Texture:SetVertexColor(E:GetRGB(C.db.global.class[E.PLAYER_CLASS]))
+			self[1].Texture:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
 		end
 
 		self._total = index
