@@ -213,7 +213,7 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						reaction = false,
+						reaction = true,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -406,7 +406,7 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						reaction = false,
+						reaction = true,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -545,7 +545,7 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						reaction = false,
+						reaction = true,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -794,7 +794,7 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						reaction = false,
+						reaction = true,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -961,7 +961,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = false,
+					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -1212,7 +1212,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = false,
+					reaction = true,
 				},
 				text = {
 					tag = "",
@@ -1346,7 +1346,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = false,
+					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
@@ -1597,7 +1597,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = false,
+					reaction = true,
 				},
 				text = {
 					tag = "",
@@ -1735,7 +1735,7 @@ D.profile = {
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
-					reaction = false,
+					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:perc]",
