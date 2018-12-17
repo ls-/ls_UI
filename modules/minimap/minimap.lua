@@ -30,6 +30,7 @@ local unpack = _G.unpack
 
 -- Blizz
 local C_Calendar = _G.C_Calendar
+local C_DateAndTime = _G.C_DateAndTime
 local C_Garrison = _G.C_Garrison
 local C_Timer = _G.C_Timer
 local GetCursorPosition = _G.GetCursorPosition
@@ -699,7 +700,7 @@ function MODULE.Init()
 				self.elapsed = (self.elapsed or 0) + elapsed
 
 				if self.elapsed > 1 then
-					local date = C_Calendar.GetDate()
+					local date = C_DateAndTime.GetCurrentCalendarTime()
 
 					self:SetText(date.monthDay)
 
