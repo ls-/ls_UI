@@ -568,7 +568,7 @@ function BARS.CreateXPBar()
 		hooksecurefunc("UIParentLoadAddOn", function(addOnName)
 			if addOnName == "Blizzard_PVPUI" then
 				if not isHonorBarHooked then
-					PVPQueueFrame.HonorInset.HonorLevelDisplay:SetScript("OnMouseUp", function()
+					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:SetScript("OnMouseUp", function()
 						if IsShiftKeyDown() then
 							if IsWatchingHonorAsXP() then
 								PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
@@ -582,13 +582,13 @@ function BARS.CreateXPBar()
 						end
 					end)
 
-					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnEnter", function()
+					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnEnter", function()
 						GameTooltip:AddLine(" ")
 						GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
 						GameTooltip:Show()
 					end)
 
-					PVPQueueFrame.HonorInset.HonorLevelDisplay:HookScript("OnLeave", function()
+					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnLeave", function()
 						GameTooltip:Hide()
 					end)
 
