@@ -167,7 +167,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	addRefs()
 	cleanUpStep2()
 
-	if AdiButtonAuras then
+	if AdiButtonAuras and AdiButtonAuras.RegisterLAB then
 		AdiButtonAuras:RegisterLAB("LibActionButton-1.0-ls")
 	end
 
