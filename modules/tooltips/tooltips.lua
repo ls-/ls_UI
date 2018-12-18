@@ -685,13 +685,15 @@ local function tooltip_AddStatusBar(self, _, max, value)
 	end
 end
 
-local function tooltipBar_OnValueChanged(self, value)
-	if self:IsForbidden() or self:GetParent():IsForbidden() or not value then return end
+local function tooltipBar_Hook(self)
+	if self:IsForbidden() or self:GetParent():IsForbidden() then return end
 
 	local _, max = self:GetMinMaxValues()
 	if max == 1 then
 		self.Text:Hide()
 	else
+		local value = self:GetValue()
+
 		self.Text:Show()
 		self.Text:SetFormattedText("%s / %s", E:FormatNumber(value), E:FormatNumber(max))
 
@@ -796,7 +798,8 @@ function MODULE:Init()
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
-		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_OnValueChanged)
+		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_Hook)
+		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_Hook)
 
 		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
 
