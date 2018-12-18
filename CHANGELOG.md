@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 80000.16
+
+- Added 8.1.0 support;
+- Added AdiButtonAuras support. Requires AdiButtonAuras alpha release; 
+- Fixed an issue where opening PvP panel was causing errors;
+- Updated embeds.
+
 ## Version 80000.15
 
 - Fixed an issue where xp bar was causing errors when there's no bars to show;
