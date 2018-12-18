@@ -167,6 +167,10 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	addRefs()
 	cleanUpStep2()
 
+	if AdiButtonAuras and AdiButtonAuras.RegisterLAB then
+		AdiButtonAuras:RegisterLAB("LibActionButton-1.0-ls")
+	end
+
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.profile.version = E.VER.number
