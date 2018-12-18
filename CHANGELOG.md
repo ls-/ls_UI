@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Version 80000.16
+## Version 80100.01
 
 - Added 8.1.0 support;
 - Added AdiButtonAuras support. Requires AdiButtonAuras alpha release; 
