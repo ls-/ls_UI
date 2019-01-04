@@ -69,7 +69,7 @@ do
 			-- 5: frame.Power
 				-- 6: frame.PowerPrediction.mainBar
 			-- 5: frame.Stagger, frame.Runes, frame.ClassIcons
-			-- 7: frame.LeftTube, frame.RightTube
+			-- 7: frame.LeftSlot, frame.RightSlot
 			-- 8: frame.TextureParent
 			-- 9: frame.TextParent
 			-- 10: frame.FloatingCombatFeedback
@@ -110,25 +110,25 @@ do
 		frame.TextParent = textParent
 
 		-- class power tube
-		local leftTube = CreateFrame("Frame", nil, frame)
-		leftTube:SetFrameLevel(level + 6)
-		leftTube:SetSize(12, 128)
-		leftTube:SetPoint("LEFT", 23, 0)
-		frame.LeftTube = leftTube
+		local leftSlot = CreateFrame("Frame", nil, frame)
+		leftSlot:SetFrameLevel(level + 6)
+		leftSlot:SetSize(12, 128)
+		leftSlot:SetPoint("LEFT", 23, 0)
+		frame.LeftSlot = leftSlot
 
-		E:SetStatusBarSkin(leftTube, "VERTICAL-12")
+		E:SetStatusBarSkin(leftSlot, "VERTICAL-12")
 
 		local seps = {}
 
 		for i = 1, 9 do
-			local sep = leftTube:CreateTexture(nil, "ARTWORK", nil, 1)
+			local sep = leftSlot:CreateTexture(nil, "ARTWORK", nil, 1)
 			sep:SetSize(12, 12)
 			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 			sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
 			seps[i] = sep
 		end
 
-		leftTube.Refresh = function(self, sender, visible, slots)
+		leftSlot.Refresh = function(self, sender, visible, slots)
 			if (slots == self._slots and visible == self._visible)
 				or (not visible and sender ~= self._sender) then return end
 
@@ -156,16 +156,16 @@ do
 			end
 		end
 
-		leftTube:Refresh(nil, false, 0)
+		leftSlot:Refresh(nil, false, 0)
 
 		-- power tube
-		local rightTube = CreateFrame("Frame", nil, frame)
-		rightTube:SetFrameLevel(level + 6)
-		rightTube:SetSize(12, 128)
-		rightTube:SetPoint("RIGHT", -23, 0)
-		frame.RightTube = rightTube
+		local rightSlot = CreateFrame("Frame", nil, frame)
+		rightSlot:SetFrameLevel(level + 6)
+		rightSlot:SetSize(12, 128)
+		rightSlot:SetPoint("RIGHT", -23, 0)
+		frame.RightSlot = rightSlot
 
-		E:SetStatusBarSkin(rightTube, "VERTICAL-12")
+		E:SetStatusBarSkin(rightSlot, "VERTICAL-12")
 
 		-- mask
 		local mask = textureParent:CreateMaskTexture()
@@ -201,11 +201,11 @@ do
 		power:Hide()
 		frame.Power = power
 
-		power:HookScript("OnHide", function()
-			rightTube:Hide()
+		hooksecurefunc(power, "Hide", function()
+			rightSlot:Hide()
 		end)
-		power:HookScript("OnShow", function()
-			rightTube:Show()
+		hooksecurefunc(power, "Show", function()
+			rightSlot:Show()
 		end)
 
 		-- additional power
@@ -216,12 +216,11 @@ do
 		addPower:Hide()
 		frame.AdditionalPower = addPower
 
-		addPower:HookScript("OnHide", function(self)
-			leftTube:Refresh(self, false, 0)
+		hooksecurefunc(addPower, "Hide", function(self)
+			leftSlot:Refresh(self, false, 0)
 		end)
-
-		addPower:HookScript("OnShow", function(self)
-			leftTube:Refresh(self, true, 1)
+		hooksecurefunc(addPower, "Show", function(self)
+			leftSlot:Refresh(self, true, 1)
 		end)
 
 		-- power cost prediction
@@ -235,11 +234,11 @@ do
 			stagger:SetSize(12, 128)
 			frame.Stagger = stagger
 
-			stagger:HookScript("OnHide", function(self)
-				leftTube:Refresh(self, false, 0)
+			hooksecurefunc(stagger, "Hide", function(self)
+				leftSlot:Refresh(self, false, 0)
 			end)
-			stagger:HookScript("OnShow", function(self)
-				leftTube:Refresh(self, true, 1)
+			hooksecurefunc(stagger, "Show", function(self)
+				leftSlot:Refresh(self, true, 1)
 			end)
 		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 			local runes = self:CreateRunes(frame)
@@ -248,11 +247,11 @@ do
 			runes:SetSize(12, 128)
 			frame.Runes = runes
 
-			runes:HookScript("OnHide", function(self)
-				leftTube:Refresh(self, false, 0)
+			hooksecurefunc(runes, "Hide", function(self)
+				leftSlot:Refresh(self, false, 0)
 			end)
-			runes:HookScript("OnShow", function(self)
-				leftTube:Refresh(self, true, 6)
+			hooksecurefunc(runes, "Show", function(self)
+				leftSlot:Refresh(self, true, 6)
 			end)
 		end
 
@@ -262,11 +261,11 @@ do
 		classPower:SetSize(12, 128)
 		frame.ClassPower = classPower
 
-		classPower:HookScript("OnHide", function(self)
-			leftTube:Refresh(self, false, 0)
+		hooksecurefunc(classPower, "Hide", function(self)
+			leftSlot:Refresh(self, false, 0)
 		end)
-		classPower:HookScript("OnShow", function(self)
-			leftTube:Refresh(self, true, self.__max)
+		hooksecurefunc(classPower, "Show", function(self)
+			leftSlot:Refresh(self, true, self.__max)
 		end)
 
 		-- pvp
