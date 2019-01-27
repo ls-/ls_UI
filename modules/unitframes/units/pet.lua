@@ -93,14 +93,14 @@ do
 		local leftTube = CreateFrame("Frame", nil, frame)
 		leftTube:SetFrameLevel(level + 3)
 		leftTube:SetAllPoints(health)
-		frame.LeftTube = leftTube
+		frame.LeftSlot = leftTube
 
 		E:SetStatusBarSkin(leftTube, "VERTICAL-8")
 
 		local rightTube = CreateFrame("Frame", nil, frame)
 		rightTube:SetFrameLevel(level + 3)
 		rightTube:SetAllPoints(power)
-		frame.RightTube = rightTube
+		frame.RightSlot = rightTube
 
 		E:SetStatusBarSkin(rightTube, "VERTICAL-8")
 

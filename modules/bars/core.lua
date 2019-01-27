@@ -94,6 +94,10 @@ local function bar_UpdateCooldownConfig(self)
 	end
 end
 
+local function bar_UpdateLayout(self)
+	E:UpdateBarLayout(self)
+end
+
 local function bar_UpdateVisibility(self)
 	if self._config.visible then
 		RegisterStateDriver(self, "visibility", self._config.visibility or "show")
@@ -106,6 +110,7 @@ function MODULE.AddBar(_, barID, bar)
 	bars[barID] = bar
 	bar.UpdateConfig = bar_UpdateConfig
 	bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
+	bar.UpdateLayout = bar_UpdateLayout
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then
@@ -128,6 +133,12 @@ function MODULE:ForEach(method, ...)
 		if bar[method] then
 			bar[method](bar, ...)
 		end
+	end
+end
+
+function MODULE:ForBar(id, method, ...)
+	if bars[id] and bars[id][method] then
+		bars[id][method](bars[id], ...)
 	end
 end
 

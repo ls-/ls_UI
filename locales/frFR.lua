@@ -1,4 +1,4 @@
-﻿-- Contributors: Daniel8513@Curse
+﻿-- Contributors: Daniel8513@Curse, edward9mm@Curse
 
 local _, ns = ...
 local E, L = ns.E, ns.L
@@ -13,7 +13,7 @@ local _G = getfenv(0)
 if GetLocale() ~= "frFR" then return end
 
 L["ACTION_BARS"] = "Barres d'action"
---[[ L["ADDITIONAL_BAR"] = "Additional Bar" ]]
+L["ADDITIONAL_BAR"] = "Barre Additionnelle"
 L["ADVENTURE_JOURNAL_DESC"] = "Afficher les informations de verrouillage du raid"
 L["ALT_POWER_BAR"] = "Barre de puissance alternative"
 L["ALT_POWER_FORMAT_DESC"] = [=[Fournissez une chaîne de caractères pour changer le texte. Pour désactiver, laissez le champ vide.
@@ -33,17 +33,17 @@ Utilisez |cffffd200[nl]|r pour un saut de ligne.]=]
 L["ALTERNATIVE_POWER"] = "Puissance alternative"
 L["ALWAYS_SHOW"] = "Toujours afficher"
 L["ANCHOR"] = "Attacher à"
---[[ L["ANCHOR_TO_CURSOR"] = "Attach to Cursor" ]]
+L["ANCHOR_TO_CURSOR"] = "Attacher au Curseur"
 L["ARTIFACT_LEVEL_TOOLTIP"] = "Niveau d'artéfact : |cffffffff%s|r"
 L["ARTIFACT_POWER"] = "Puissance d'artéfact"
 L["ASCENDING"] = "Ascendant"
---[[ L["AURA"] = "Aura" ]]
+L["AURA"] = "Aura"
 L["AURA_TRACKER"] = "Suivi d'auras"
---[[ L["AURA_TYPE"] = "Aura Type" ]]
+L["AURA_TYPE"] = "Type d'auras"
 L["AURAS"] = "Auras"
 --[[ L["AUTO"] = "Auto" ]]
 --[[ L["BAG_SLOTS"] = "Bag Slots" ]]
---[[ L["BAR"] = "Bar" ]]
+L["BAR"] = "Barres"
 L["BAR_1"] = "Barre 1"
 L["BAR_2"] = "Barre 2"
 L["BAR_3"] = "Barre 3"
@@ -106,7 +106,7 @@ Tags:
 Utilisez |cffffd200||r|r pour fermer les balises de couleur.
 Utilisez |cffffd200[nl]|r pour un saut de ligne.]=]
 L["DAMAGE_ABSORB_TEXT"] = "Texte d'absorption des dommages"
---[[ L["DAYS"] = "Days" ]]
+L["DAYS"] = "Jours"
 L["DEAD"] = "Mort"
 --[[ L["DEBUFF"] = "Debuff" ]]
 --[[ L["DEBUFF_TYPE"] = "Debuff Type" ]]
@@ -115,7 +115,7 @@ L["DEBUFFS"] = "Debuffs"
 L["DESCENDING"] = "Descendant"
 L["DETACH_FROM_FRAME"] = "Détacher du cadre"
 --[[ L["DIFFICULT"] = "Difficult" ]]
---[[ L["DIFFICULTY"] = "Difficulty" ]]
+L["DIFFICULTY"] = "Difficulté"
 L["DIFFICULTY_FLAG"] = "Drapeau de difficulté"
 L["DIGSITE_BAR"] = "Barre de progression de la fouille"
 L["DISABLE_MOUSE"] = "Désactiver la souris"

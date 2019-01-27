@@ -17,7 +17,6 @@ local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
 	CreateFrame
 ]]
 
-
 -- Mine
 local function element_Override(self, _, unit)
 	if unit ~= self.unit then return end
