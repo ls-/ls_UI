@@ -909,6 +909,7 @@ function MODULE.Init()
 		MinimapCompassTexture:ClearAllPoints()
 		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 		MinimapCompassTexture:SetSize(272, 272)
+		MinimapCompassTexture:SetScale(1)
 		Minimap.Compass = MinimapCompassTexture
 
 		-- .ChallengeModeFlag, .DifficultyFlag, .GuildDifficultyFlag
