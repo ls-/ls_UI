@@ -38,7 +38,8 @@ local C_Timer = _G.C_Timer
 
 -- Mine
 local LibDropDown = LibStub("LibDropDown")
-local handledButtons = {}
+local buttons = {}
+local activeButtons = {}
 local isInit = false
 
 local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
@@ -51,8 +52,8 @@ local ROLE_NAMES = {
 }
 
 local BUTTONS = {
-	CharacterMicroButton = {
-		id = 1,
+	character = {
+		name = "CharacterMicroButton",
 		icon = E.PLAYER_CLASS,
 		events = {
 			AZERITE_EMPOWERED_ITEM_SELECTION_UPDATED = true,
@@ -63,25 +64,25 @@ local BUTTONS = {
 			UPDATE_INVENTORY_DURABILITY = true,
 		},
 	},
-	LSInventoryMicroButton = {
-		id = 2,
-		icon = "Inventory",
+	inventory = {
+		name = "LSInventoryMicroButton",
+		icon = "INVENTORY",
 		events = {
 			BAG_UPDATE_DELAYED = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	SpellbookMicroButton = {
-		id = 3,
-		icon = "Spellbook",
+	spellbook = {
+		name = "SpellbookMicroButton",
+		icon = "SPELLBOOK",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	TalentMicroButton = {
-		id = 4,
-		icon = "Talent",
+	talent = {
+		name = "TalentMicroButton",
+		icon = "TALENT",
 		events = {
 			HONOR_LEVEL_UPDATE = true,
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -92,9 +93,9 @@ local BUTTONS = {
 			UPDATE_BINDINGS = true,
 		},
 	},
-	AchievementMicroButton = {
-		id = 5,
-		icon = "Achievement",
+	achievement = {
+		name = "AchievementMicroButton",
+		icon = "ACHIEVEMENT",
 		events = {
 			ACHIEVEMENT_EARNED = true,
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -102,25 +103,25 @@ local BUTTONS = {
 			UPDATE_BINDINGS = true,
 		},
 	},
-	QuestLogMicroButton = {
-		id = 6,
-		icon = "Quest",
+	quest = {
+		name = "QuestLogMicroButton",
+		icon = "QUEST",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	GuildMicroButton = {
-		id = 7,
-		icon = "Guild",
+	guild = {
+		name = "GuildMicroButton",
+		icon = "GUILD",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			PLAYER_GUILD_UPDATE = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	LFDMicroButton = {
-		id = 8,
+	lfd = {
+		name = "LFDMicroButton",
 		icon = "LFD",
 		events = {
 			LFG_LOCK_INFO_RECEIVED = true,
@@ -128,9 +129,9 @@ local BUTTONS = {
 			UPDATE_BINDINGS = true,
 		},
 	},
-	CollectionsMicroButton = {
-		id = 9,
-		icon = "Collection",
+	collection = {
+		name = "CollectionsMicroButton",
+		icon = "COLLECTION",
 		events = {
 			COMPANION_LEARNED = true,
 			HEIRLOOMS_UPDATED = true,
@@ -142,8 +143,8 @@ local BUTTONS = {
 			UPDATE_BINDINGS = true,
 		},
 	},
-	EJMicroButton = {
-		id = 10,
+	ej = {
+		name = "EJMicroButton",
 		icon = "EJ",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
@@ -154,26 +155,26 @@ local BUTTONS = {
 			ZONE_CHANGED_NEW_AREA = true,
 		},
 	},
-	StoreMicroButton = {
-		id = 11,
-		icon = "Store",
+	store = {
+		name = "StoreMicroButton",
+		icon = "STORE",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	MainMenuMicroButton = {
-		id = 12,
-		icon = "MainMenu",
+	main = {
+		name = "MainMenuMicroButton",
+		icon = "MAINMENU",
 		events = {
 			MODIFIER_STATE_CHANGED = true,
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			UPDATE_BINDINGS = true,
 		},
 	},
-	HelpMicroButton = {
-		id = 13,
-		icon = "Help",
+	help = {
+		name = "HelpMicroButton",
+		icon = "HELP",
 		events = {
 			NEUTRAL_FACTION_SELECT_RESULT = true,
 			UPDATE_BINDINGS = true,
@@ -192,40 +193,56 @@ local ALERTS = {
 
 local TEXTURE_COORDS = {
 	-- line #1
-	WARRIOR = {1 / 256, 33 / 256, 1 / 256, 45 / 256},
-	DEATHKNIGHT = {33 / 256, 65 / 256, 1 / 256, 45 / 256},
-	PALADIN = {65 / 256, 97 / 256, 1 / 256, 45 / 256},
-	MONK = {97 / 256, 129 / 256, 1 / 256, 45 / 256},
-	PRIEST = {129 / 256, 161 / 256, 1 / 256, 45 / 256},
-	SHAMAN = {161 / 256, 193 / 256, 1 / 256, 45 / 256},
-	DRUID = {193 / 256, 225 / 256, 1 / 256, 45 / 256},
+	["WARRIOR"] = {1 / 256, 33 / 256, 1 / 256, 45 / 256},
+	["DEATHKNIGHT"] = {33 / 256, 65 / 256, 1 / 256, 45 / 256},
+	["PALADIN"] = {65 / 256, 97 / 256, 1 / 256, 45 / 256},
+	["MONK"] = {97 / 256, 129 / 256, 1 / 256, 45 / 256},
+	["PRIEST"] = {129 / 256, 161 / 256, 1 / 256, 45 / 256},
+	["SHAMAN"] = {161 / 256, 193 / 256, 1 / 256, 45 / 256},
+	["DRUID"] = {193 / 256, 225 / 256, 1 / 256, 45 / 256},
 	-- line #2
-	ROGUE = {1 / 256, 33 / 256, 45 / 256, 89 / 256},
-	MAGE = {33 / 256, 65 / 256, 45 / 256, 89 / 256},
-	WARLOCK = {65 / 256, 97 / 256, 45 / 256, 89 / 256},
-	HUNTER = {97 / 256, 129 / 256, 45 / 256, 89 / 256},
-	DEMONHUNTER = {129 / 256, 161 / 256, 45 / 256, 89 / 256},
-	Spellbook = {161 / 256, 193 / 256, 45 / 256, 89 / 256},
-	Talent = {193 / 256, 225 / 256, 45 / 256, 89 / 256},
+	["ROGUE"] = {1 / 256, 33 / 256, 45 / 256, 89 / 256},
+	["MAGE"] = {33 / 256, 65 / 256, 45 / 256, 89 / 256},
+	["WARLOCK"] = {65 / 256, 97 / 256, 45 / 256, 89 / 256},
+	["HUNTER"] = {97 / 256, 129 / 256, 45 / 256, 89 / 256},
+	["DEMONHUNTER"] = {129 / 256, 161 / 256, 45 / 256, 89 / 256},
+	["SPELLBOOK"] = {161 / 256, 193 / 256, 45 / 256, 89 / 256},
+	["TALENT"] = {193 / 256, 225 / 256, 45 / 256, 89 / 256},
 	-- line #3
-	Achievement = {1 / 256, 33 / 256, 89 / 256, 133 / 256},
-	Quest = {33 / 256, 65 / 256, 89 / 256, 133 / 256},
-	Guild = {65 / 256, 97 / 256, 89 / 256, 133 / 256},
-	LFD = {97 / 256, 129 / 256, 89 / 256, 133 / 256},
-	Collection = {129 / 256, 161 / 256, 89 / 256, 133 / 256},
-	EJ = {161 / 256, 193 / 256, 89 / 256, 133 / 256},
-	MainMenu = {193 / 256, 225 / 256, 89 / 256, 133 / 256},
+	["ACHIEVEMENT"] = {1 / 256, 33 / 256, 89 / 256, 133 / 256},
+	["QUEST"] = {33 / 256, 65 / 256, 89 / 256, 133 / 256},
+	["GUILD"] = {65 / 256, 97 / 256, 89 / 256, 133 / 256},
+	["LFD"] = {97 / 256, 129 / 256, 89 / 256, 133 / 256},
+	["COLLECTION"] = {129 / 256, 161 / 256, 89 / 256, 133 / 256},
+	["EJ"] = {161 / 256, 193 / 256, 89 / 256, 133 / 256},
+	["MAINMENU"] = {193 / 256, 225 / 256, 89 / 256, 133 / 256},
 	-- line #4
-	Inventory = {1 / 256, 33 / 256, 133 / 256, 177 / 256},
-	Store = {33 / 256, 65 / 256, 133 / 256, 177 / 256},
-	Help = {65 / 256, 97 / 256, 133 / 256, 177 / 256},
-	-- temp = {97 / 256, 129 / 256, 133 / 256, 177 / 256},
-	-- temp = {129 / 256, 161 / 256, 133 / 256, 177 / 256},
-	-- temp = {161 / 256, 193 / 256, 133 / 256, 177 / 256},
-	-- temp = {193 / 256, 225 / 256, 133 / 256, 177 / 256},
+	["INVENTORY"] = {1 / 256, 33 / 256, 133 / 256, 177 / 256},
+	["STORE"] = {33 / 256, 65 / 256, 133 / 256, 177 / 256},
+	["HELP"] = {65 / 256, 97 / 256, 133 / 256, 177 / 256},
+	-- ["TEMP"] = {97 / 256, 129 / 256, 133 / 256, 177 / 256},
+	-- ["TEMP"] = {129 / 256, 161 / 256, 133 / 256, 177 / 256},
+	-- ["TEMP"] = {161 / 256, 193 / 256, 133 / 256, 177 / 256},
+	-- ["TEMP"] = {193 / 256, 225 / 256, 133 / 256, 177 / 256},
 	-- line #5
-	highlight = {1 / 256, 33 / 256, 177 / 256, 221 / 256},
-	pushed = {33 / 256, 65 / 256, 177 / 256, 221 / 256},
+	["HIGHLIGHT"] = {1 / 256, 33 / 256, 177 / 256, 221 / 256},
+	["PUSHED"] = {33 / 256, 65 / 256, 177 / 256, 221 / 256},
+}
+
+local idToIndex = {
+	["character"] = 1,
+	["inventory"] = 2,
+	["spellbook"] = 3,
+	["talent"] = 4,
+	["achievement"] = 5,
+	["quest"] = 6,
+	["guild"] = 7,
+	["lfd"] = 8,
+	["collection"] = 9,
+	["ej"] = 10,
+	["store"] = 11,
+	["main"] = 12,
+	["help"] = 13,
 }
 
 local function createButtonIndicator(button, indicator)
@@ -261,7 +278,7 @@ local function updatePushedTexture(button)
 	button:SetPushedTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 
 	local pushed = button:GetPushedTexture()
-	pushed:SetTexCoord(unpack(TEXTURE_COORDS.pushed))
+	pushed:SetTexCoord(unpack(TEXTURE_COORDS.PUSHED))
 	pushed:ClearAllPoints()
 	pushed:SetPoint("TOPLEFT", 1, -1)
 	pushed:SetPoint("BOTTOMRIGHT", -1, 1)
@@ -275,7 +292,7 @@ local function updateHighlightTexture(button)
 	button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu", "ADD")
 
 	local highlight = button:GetHighlightTexture()
-	highlight:SetTexCoord(unpack(TEXTURE_COORDS.highlight))
+	highlight:SetTexCoord(unpack(TEXTURE_COORDS.HIGHLIGHT))
 	highlight:ClearAllPoints()
 	highlight:SetPoint("TOPLEFT", 1, -1)
 	highlight:SetPoint("BOTTOMRIGHT", -1, 1)
@@ -307,14 +324,6 @@ local function button_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function button_Release(self)
-	self:SetParent(E.HIDDEN_PARENT)
-end
-
-local function button_ShouldShow(self)
-	return self._config.enabled
-end
-
 local function button_GetAnchor(self)
 	return MODULE:GetBar(self._config.parent) or MODULE:GetBar("micromenu1")
 end
@@ -323,14 +332,34 @@ local function button_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
 end
 
+local function button_UpdateVisibility(self)
+	if self._config.enabled then
+		self:Show()
+		self:SetParent(self:GetAnchor())
+
+		activeButtons[self:GetID()] = self
+	else
+		self:Hide()
+		self:SetParent(E.HIDDEN_PARENT)
+
+		activeButtons[self:GetID()] = nil
+	end
+end
+
 local function button_UpdateEvents(self)
 	if self._config.enabled then
-		for event in next, BUTTONS[self:GetName()].events do
+		for event in next, BUTTONS[self._id].events do
 			self:RegisterEvent(event)
 		end
 	else
 		self:UnregisterAllEvents()
 	end
+end
+
+local function button_Update(self)
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateEvents()
 end
 
 local function handleMicroButton(button)
@@ -371,14 +400,10 @@ local function handleMicroButton(button)
 	button:SetScript("OnUpdate", nil)
 
 	button.GetAnchor = button_GetAnchor
-	button.Release = button_Release
-	button.ShouldShow = button_ShouldShow
+	button.Update = button_Update
 	button.UpdateConfig = button_UpdateConfig
 	button.UpdateEvents = button_UpdateEvents
-end
-
-local function createMicroButton(name)
-	return CreateFrame("Button", name, UIParent, "MainMenuBarMicroButton")
+	button.UpdateVisibility = button_UpdateVisibility
 end
 
 -- Character
@@ -435,7 +460,7 @@ do
 	end
 
 	function characterButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", characterButton_OnEnter)
@@ -471,7 +496,7 @@ do
 end
 
 -- Inventory
-local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateConfig, inventoryButton_UpdateIndicator
+local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateConfig, inventoryButton_UpdateIndicator, inventoryButton_UpdateSlots
 
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
@@ -553,7 +578,7 @@ do
 	end
 
 	function inventoryButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", inventoryButton_OnEnter)
@@ -562,6 +587,7 @@ do
 		end
 
 		self:UpdateIndicator()
+		self:UpdateSlots()
 	end
 
 	function inventoryButton_UpdateConfig(self)
@@ -577,10 +603,14 @@ do
 
 		self.Indicator:SetVertexColor(E:GetGradientAsRGB(freeSlots / totalSlots, C.db.global.colors.ryg))
 	end
+
+	function inventoryButton_UpdateSlots(self)
+		self.Slots:Update()
+	end
 end
 
 -- Bags
-local bagBar_OnEvent, bagBar_OnShow, bagBar_Update, bagBar_UpdateEvents, createBag
+local bagSlots_OnEvent, bagSlots_OnShow, bagSlots_Update, bagSlots_UpdateEvents, bagSlots_UpdateLayout, createBag
 
 do
 	local invIDOffset = ContainerIDToInventoryID(1) - 1
@@ -698,8 +728,8 @@ do
 		if not IsInventoryItemProfessionBag("player", self:GetID()) then
 			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
 				if GetBagSlotFlag(self:GetID() - invIDOffset, i) then
-					self.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
 					self.FilterIcon:Show()
+					self.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
 
 					break
 				end
@@ -747,7 +777,7 @@ do
 		return bag
 	end
 
-	function bagBar_OnEvent(self, event, ...)
+	function bagSlots_OnEvent(self, event, ...)
 		if self:IsShown() then
 			if event == "ITEM_LOCK_CHANGED" then
 				local bagID, slotID = ...
@@ -769,9 +799,8 @@ do
 				end
 			elseif event == "BAG_SLOT_FLAGS_UPDATED" then
 				local bagID = ...
-
 				if bagID >= 1 and bagID <= 4 then
-					self._buttons[bagID]:Update()
+					self._buttons[5 - bagID]:UpdateFilterIcon()
 				end
 			elseif event == "PLAYER_REGEN_DISABLED" then
 				self:Hide()
@@ -780,16 +809,16 @@ do
 		end
 	end
 
-	function bagBar_OnShow(self)
+	function bagSlots_OnShow(self)
 		for _, button in next, self._buttons do
 			button:Update()
 		end
 	end
 
-	function bagBar_Update(self)
+	function bagSlots_Update(self)
 		self:UpdateConfig()
 		self:UpdateEvents()
-		E:UpdateBarLayout(self)
+		self:UpdateLayout()
 
 		if not (self._config.enabled and C.db.profile.bars.micromenu.buttons.inventory.enabled) then
 			self:Hide()
@@ -806,7 +835,7 @@ do
 		end
 	end
 
-	function bagBar_UpdateEvents(self)
+	function bagSlots_UpdateEvents(self)
 		if self._config.enabled then
 			self:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
 			self:RegisterEvent("BAG_UPDATE_DELAYED")
@@ -816,6 +845,10 @@ do
 		else
 			self:UnregisterAllEvents()
 		end
+	end
+
+	function bagSlots_UpdateLayout(self)
+		E:UpdateBarLayout(self)
 	end
 end
 
@@ -840,7 +873,7 @@ do
 	end
 
 	function questLogButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", questLogButton_OnEnter)
@@ -852,7 +885,7 @@ end
 
 -- Guild
 local function guildButton_Update(self)
-	self:UpdateConfig()
+	button_Update(self)
 
 	if self.Tabard:IsShown() then
 		self.Tabard.background:Show()
@@ -964,7 +997,7 @@ do
 	end
 
 	function lfdButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", lfdButton_OnEnter)
@@ -1090,7 +1123,7 @@ do
 	end
 
 	function ejButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", ejButton_OnEnter)
@@ -1173,7 +1206,7 @@ do
 	end
 
 	function mainMenuButton_Update(self)
-		self:UpdateConfig()
+		button_Update(self)
 
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", mainMenuButton_OnEnter)
@@ -1205,16 +1238,30 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateButtonList()
 	self:UpdateButtons("Update")
 	self:UpdateButtons("UpdateEvents")
+	self:UpdateButtonList()
 	self:UpdateFading()
-	self:UpdateButtonVisibility()
-	E:UpdateBarLayout(self)
+	self:UpdateLayout()
+end
 
-	if self.BagBar then
-		self.BagBar:Update()
+local function bar_UpdateConfig(self)
+	self._config = E:CopyTable(C.db.profile.bars.micromenu.bars[self._id], self._config)
+	self._config.fade = E:CopyTable(C.db.profile.bars.micromenu.fade, self._config.fade)
+	self._config.visible = C.db.profile.bars.micromenu.visible
+end
+
+local function bar_UpdateButtonList(self)
+	t_wipe(self._buttons)
+
+	for _, button in next, activeButtons do
+		if button._config.enabled and button:GetAnchor() == self then
+			button._parent = self
+			t_insert(self._buttons, button)
+		end
 	end
+
+	t_sort(self._buttons, buttonSort)
 
 	if #self._buttons == 0 then
 		local mover = E.Movers:Get(self)
@@ -1229,72 +1276,40 @@ local function bar_Update(self)
 	end
 end
 
-local function bar_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.bars.micromenu.bars[self._id], self._config)
-	self._config.fade = E:CopyTable(C.db.profile.bars.micromenu.fade, self._config.fade)
-	self._config.visible = C.db.profile.bars.micromenu.visible
-end
-
-local function bar_UpdateButtonList(self)
-	t_wipe(self._buttons)
-
-	for name in next, BUTTONS do
-		local button = _G[name]
-		if button:ShouldShow() and button:GetAnchor() == self then
-			button._parent = self
-			t_insert(self._buttons, button)
-		end
-	end
-
-	t_sort(self._buttons, buttonSort)
-end
-
-local function bar_UpdateButtonVisibility(self)
-	for _, button in next, self._buttons do
-		button:SetShown(button:ShouldShow())
-
-		if not button:ShouldShow() then
-			button:SetParent(E.HIDDEN_PARENT)
-		end
-	end
-end
-
 local function updateMicroButtonsParent()
 	if isInit then
-		for name in next, BUTTONS do
-			if _G[name]:ShouldShow() then
-				_G[name]:SetParent(_G[name]._parent)
-			else
-				_G[name]:SetParent(E.HIDDEN_PARENT)
-			end
+		for _, button in next, buttons do
+			button:UpdateVisibility()
 		end
 	end
 end
 
 local function moveMicroButtons()
 	if isInit then
+		for _, button in next, buttons do
+			button:UpdateVisibility()
+		end
+
 		local bar = MODULE:GetBar("micromenu1")
 		bar:UpdateButtonList()
-		bar:UpdateButtonVisibility()
-		E:UpdateBarLayout(bar)
+		bar:UpdateLayout()
 
 		bar = MODULE:GetBar("micromenu2")
 		bar:UpdateButtonList()
-		bar:UpdateButtonVisibility()
-		E:UpdateBarLayout(bar)
+		bar:UpdateLayout()
 	end
 end
 
 local function updateMicroButtons()
 	if isInit then
 		for _, button in next, MODULE:GetBar("micromenu1")._buttons do
-			if button:ShouldShow() then
+			if button._config.enabled then
 				button:Show()
 			end
 		end
 
 		for _, button in next, MODULE:GetBar("micromenu2")._buttons do
-			if button:ShouldShow() then
+			if button._config.enabled then
 				button:Show()
 			end
 		end
@@ -1364,7 +1379,6 @@ function MODULE:CreateMicroMenu()
 
 		bar1.Update = bar_Update
 		bar1.UpdateButtonList = bar_UpdateButtonList
-		bar1.UpdateButtonVisibility = bar_UpdateButtonVisibility
 		bar1.UpdateConfig = bar_UpdateConfig
 		bar1.UpdateCooldownConfig = nil
 
@@ -1376,20 +1390,19 @@ function MODULE:CreateMicroMenu()
 
 		bar2.Update = bar_Update
 		bar2.UpdateButtonList = bar_UpdateButtonList
-		bar2.UpdateButtonVisibility = bar_UpdateButtonVisibility
 		bar2.UpdateConfig = bar_UpdateConfig
 		bar2.UpdateCooldownConfig = nil
 
-		for name, data in next, BUTTONS do
-			local button = _G[name] or createMicroButton(name)
-			button:SetID(data.id)
+		for id, data in next, BUTTONS do
+			local button = _G[data.name] or CreateFrame("Button", data.name, UIParent, "MainMenuBarMicroButton")
+			button:SetID(idToIndex[id])
+			button._id = id
 
 			handleMicroButton(button)
 
 			button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[data.icon]))
 
-			if name == "CharacterMicroButton" then
-				button._id = "character"
+			if data.name == "CharacterMicroButton" then
 				E:ForceHide(MicroButtonPortrait)
 
 				button:SetScript("OnEvent", characterButton_OnEvent)
@@ -1399,9 +1412,7 @@ function MODULE:CreateMicroMenu()
 
 				button.Update = characterButton_Update
 				button.UpdateIndicator = characterButton_UpdateIndicator
-			elseif name == "LSInventoryMicroButton" then
-				button._id = "inventory"
-
+			elseif data.name == "LSInventoryMicroButton" then
 				button:SetScript("OnClick", inventoryButton_OnClick)
 				button:SetScript("OnEvent", inventoryButton_OnEvent)
 
@@ -1411,25 +1422,45 @@ function MODULE:CreateMicroMenu()
 				button.Update = inventoryButton_Update
 				button.UpdateConfig = inventoryButton_UpdateConfig
 				button.UpdateIndicator = inventoryButton_UpdateIndicator
-			elseif name == "SpellbookMicroButton" then
-				button._id = "spellbook"
+				button.UpdateSlots = inventoryButton_UpdateSlots
 
+				local slots = CreateFrame("Frame", "LSBagBar", UIParent)
+				slots:Hide()
+				slots:SetScript("OnEvent", bagSlots_OnEvent)
+				slots:SetScript("OnShow", bagSlots_OnShow)
+				slots._id = "bags"
+				slots._buttons = {}
+				button.Slots = slots
+
+				for i = 1, 4 do
+					local bag = createBag(slots, i)
+					bag._parent = slots
+					slots._buttons[5 - i] = bag
+				end
+
+				local menu = LibDropDown:NewMenu(slots, "LSBagFilterMenu")
+				menu:SetStyle("MENU")
+				slots.FilterMenu = menu
+
+				slots.Update = bagSlots_Update
+				slots.UpdateConfig = bar_UpdateConfig
+				slots.UpdateEvents = bagSlots_UpdateEvents
+				slots.UpdateLayout = bagSlots_UpdateLayout
+
+				local point = C.db.profile.bars.micromenu.bars.bags.point
+				slots:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+				E.Movers:Create(slots)
+			elseif data.name == "SpellbookMicroButton" then
 				button:SetScript("OnEnter", button_OnEnter)
 				button:SetScript("OnEvent", spellbookButton_OnEvent)
 
 				button.tooltipText = MicroButtonTooltipText(L["SPELLBOOK_ABILITIES_BUTTON"], "TOGGLESPELLBOOK")
 				button.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
-			elseif name == "TalentMicroButton" then
-				button._id = "talent"
-			elseif name == "AchievementMicroButton" then
-				button._id = "achievement"
-			elseif name == "QuestLogMicroButton" then
-				button._id = "quest"
-
+			-- elseif data.name == "TalentMicroButton" then
+			-- elseif data.name == "AchievementMicroButton" then
+			elseif data.name == "QuestLogMicroButton" then
 				button.Update = questLogButton_Update
-			elseif name == "GuildMicroButton" then
-				button._id = "guild"
-
+			elseif data.name == "GuildMicroButton" then
 				button.Tabard = GuildMicroButtonTabard
 
 				button.Tabard.background:SetParent(button)
@@ -1449,32 +1480,24 @@ function MODULE:CreateMicroMenu()
 				end)
 
 				button.Update = guildButton_Update
-			elseif name == "LFDMicroButton" then
-				button._id = "lfd"
-
+			elseif data.name == "LFDMicroButton" then
 				button:HookScript("OnEvent", lfdButton_OnEvent)
 
 				button.Update = lfdButton_Update
 				button.UpdateIndicator = lfdButton_UpdateIndicator
-			elseif name == "CollectionsMicroButton" then
-				button._id = "collection"
-
+			elseif data.name == "CollectionsMicroButton" then
 				button:HookScript("OnEvent", collectionsButton_OnEvent)
 
 				button.tooltipText = MicroButtonTooltipText(L["COLLECTIONS"], "TOGGLECOLLECTIONS")
-			elseif name == "EJMicroButton" then
-				button._id = "ej"
-
+			elseif data.name == "EJMicroButton" then
 				button:HookScript("OnEvent", ejButton_OnEvent)
 
 				button.NewAdventureNotice:ClearAllPoints()
 				button.NewAdventureNotice:SetPoint("CENTER")
 
 				button.Update = ejButton_Update
-			elseif name == "StoreMicroButton" then
-				button._id = "store"
-			elseif name == "MainMenuMicroButton" then
-				button._id = "main"
+			-- elseif data.name == "StoreMicroButton" then
+			elseif data.name == "MainMenuMicroButton" then
 				E:ForceHide(MainMenuBarDownload)
 
 				button:SetScript("OnEvent", mainMenuButton_OnEvent)
@@ -1483,11 +1506,10 @@ function MODULE:CreateMicroMenu()
 
 				button.Update = mainMenuButton_Update
 				button.UpdateIndicator = mainMenuButton_UpdateIndicator
-			elseif name == "HelpMicroButton" then
-				button._id = "help"
+			-- elseif data.name == "HelpMicroButton" then
 			end
 
-			handledButtons[button._id] = button
+			buttons[idToIndex[id]] = button
 		end
 
 		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
@@ -1495,37 +1517,11 @@ function MODULE:CreateMicroMenu()
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
 
-		local bagBar = CreateFrame("Frame", "LSBagBar", UIParent)
-		bagBar:Hide()
-		bagBar:SetScript("OnEvent", bagBar_OnEvent)
-		bagBar:SetScript("OnShow", bagBar_OnShow)
-		bagBar._id = "bags"
-		bagBar._buttons = {}
-		bar1.BagBar = bagBar
-
-		for i = 4, 1, -1 do
-			local bag = createBag(bagBar, i)
-			bag._parent = bagBar
-			t_insert(bagBar._buttons, bag)
-		end
-
-		local menu = LibDropDown:NewMenu(bagBar, "LSBagFilterMenu")
-		menu:SetStyle("MENU")
-		bagBar.FilterMenu = menu
-
-		bagBar.Update = bagBar_Update
-		bagBar.UpdateConfig = bar_UpdateConfig
-		bagBar.UpdateEvents = bagBar_UpdateEvents
-
 		E:ForceHide(MicroButtonAndBagsBar)
 
 		local point = C.db.profile.bars.micromenu.bars.micromenu1.point
 		bar1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar1)
-
-		point = C.db.profile.bars.micromenu.bars.bags.point
-		bagBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E.Movers:Create(bagBar)
 
 		bar2:SetPoint("TOPRIGHT", bar1, "TOPLEFT", 0, 0)
 		E.Movers:Create(bar2)
@@ -1544,17 +1540,16 @@ function MODULE:CreateMicroMenu()
 end
 
 function MODULE:UpdateMicroMenu()
-	for name in next, BUTTONS do
-		_G[name]:Release()
-		_G[name]:UpdateConfig()
+	for _, button in next, buttons do
+		button:Update()
 	end
 
 	self:GetBar("micromenu1"):Update()
 	self:GetBar("micromenu2"):Update()
 end
 
-function MODULE:UpdateButton(id, method, ...)
-	local button = handledButtons[id]
+function MODULE:ForMicroButton(id, method, ...)
+	local button = buttons[idToIndex[id]]
 	if button and button[method] then
 		button[method](button, ...)
 	end
