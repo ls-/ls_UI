@@ -16,24 +16,21 @@ local unpack = _G.unpack
 local C_Timer = _G.C_Timer
 
 --[[ luacheck: globals
-	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_ICONS BAG_FILTER_IGNORE
-	BAG_FILTER_LABELS EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP
-	LE_BAG_FILTER_FLAG_JUNK LFG_ROLE_NUM_SHORTAGE_TYPES NEWBIE_TOOLTIP_SPELLBOOK NUM_BAG_SLOTS NUM_LE_BAG_FILTER_FLAGS
-	PERFORMANCEBAR_MEDIUM_LATENCY SHOW_NEWBIE_TIPS
+	BreakUpLargeNumbers ContainerIDToInventoryID CreateFrame CursorCanGoInSlot CursorHasItem GameTooltip GetAddOnInfo
+	GetAddOnMemoryUsage GetBagSlotFlag GetContainerNumFreeSlots GetContainerNumSlots GetCurrencyInfo
+	GetInventoryItemDurability GetInventoryItemTexture GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo
+	GetLFGRoles GetLFGRoleShortageRewards GetMoney GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons
+	GetNumRFDungeons GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
+	GetSavedWorldBossInfo GetTime GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked
+	IsInventoryItemProfessionBag IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
+	MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot
+	PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
+	SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
 
-	AchievementMicroButton BreakUpLargeNumbers CharacterMicroButton CollectionsMicroButton ContainerIDToInventoryID
-	CreateFrame CursorCanGoInSlot CursorHasItem EJMicroButton GameTooltip GetAddOnInfo GetAddOnMemoryUsage
-	GetBagSlotFlag GetContainerNumFreeSlots GetContainerNumSlots GetCurrencyInfo GetInventoryItemDurability
-	GetInventoryItemTexture GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles
-	GetLFGRoleShortageRewards GetMoney GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons
-	GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
-	GetSavedWorldBossInfo GetTime GuildMicroButton GuildMicroButtonTabard HelpMicroButton InCombatLockdown
-	IsAddOnLoaded IsInventoryItemLocked IsInventoryItemProfessionBag IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton
-	LSBagBar LSInventoryMicroButton MainMenuBarDownload MainMenuBarPerformanceBar MainMenuMicroButton
-	MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot PlaySound PutItemInBag
-	QuestLogMicroButton RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
-	SetClampedTextureRotation SpellbookMicroButton StoreMicroButton TalentMicroButton ToggleAllBags ToggleDropDownMenu
-	UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_Initialize UIParent UpdateAddOnMemoryUsage LibStub
+	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_IGNORE BAG_FILTER_LABELS
+	EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP LE_BAG_FILTER_FLAG_JUNK
+	LFG_ROLE_NUM_SHORTAGE_TYPES NEWBIE_TOOLTIP_SPELLBOOK NUM_BAG_SLOTS NUM_LE_BAG_FILTER_FLAGS
+	PERFORMANCEBAR_MEDIUM_LATENCY SHOW_NEWBIE_TIPS
 ]]
 
 -- Mine
@@ -1212,7 +1209,7 @@ do
 			self:SetScript("OnEnter", mainMenuButton_OnEnter)
 
 			self.Ticker = C_Timer.NewTicker(30, function()
-				MainMenuMicroButton:UpdateIndicator()
+				self:UpdateIndicator()
 			end)
 		else
 			self:SetScript("OnEnter", button_OnEnter)
@@ -1402,7 +1399,7 @@ function MODULE:CreateMicroMenu()
 
 			button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[data.icon]))
 
-			if data.name == "CharacterMicroButton" then
+			if id == "character" then
 				E:ForceHide(MicroButtonPortrait)
 
 				button:SetScript("OnEvent", characterButton_OnEvent)
@@ -1412,7 +1409,7 @@ function MODULE:CreateMicroMenu()
 
 				button.Update = characterButton_Update
 				button.UpdateIndicator = characterButton_UpdateIndicator
-			elseif data.name == "LSInventoryMicroButton" then
+			elseif id == "inventory" then
 				button:SetScript("OnClick", inventoryButton_OnClick)
 				button:SetScript("OnEvent", inventoryButton_OnEvent)
 
@@ -1450,17 +1447,17 @@ function MODULE:CreateMicroMenu()
 				local point = C.db.profile.bars.micromenu.bars.bags.point
 				slots:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E.Movers:Create(slots)
-			elseif data.name == "SpellbookMicroButton" then
+			elseif id == "spellbook" then
 				button:SetScript("OnEnter", button_OnEnter)
 				button:SetScript("OnEvent", spellbookButton_OnEvent)
 
 				button.tooltipText = MicroButtonTooltipText(L["SPELLBOOK_ABILITIES_BUTTON"], "TOGGLESPELLBOOK")
 				button.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
-			-- elseif data.name == "TalentMicroButton" then
-			-- elseif data.name == "AchievementMicroButton" then
-			elseif data.name == "QuestLogMicroButton" then
+			-- elseif id == "talent" then
+			-- elseif id == "achievement" then
+			elseif id == "quest" then
 				button.Update = questLogButton_Update
-			elseif data.name == "GuildMicroButton" then
+			elseif id == "guild" then
 				button.Tabard = GuildMicroButtonTabard
 
 				button.Tabard.background:SetParent(button)
@@ -1480,24 +1477,24 @@ function MODULE:CreateMicroMenu()
 				end)
 
 				button.Update = guildButton_Update
-			elseif data.name == "LFDMicroButton" then
+			elseif id == "lfd" then
 				button:HookScript("OnEvent", lfdButton_OnEvent)
 
 				button.Update = lfdButton_Update
 				button.UpdateIndicator = lfdButton_UpdateIndicator
-			elseif data.name == "CollectionsMicroButton" then
+			elseif id == "collection" then
 				button:HookScript("OnEvent", collectionsButton_OnEvent)
 
 				button.tooltipText = MicroButtonTooltipText(L["COLLECTIONS"], "TOGGLECOLLECTIONS")
-			elseif data.name == "EJMicroButton" then
+			elseif id == "ej" then
 				button:HookScript("OnEvent", ejButton_OnEvent)
 
 				button.NewAdventureNotice:ClearAllPoints()
 				button.NewAdventureNotice:SetPoint("CENTER")
 
 				button.Update = ejButton_Update
-			-- elseif data.name == "StoreMicroButton" then
-			elseif data.name == "MainMenuMicroButton" then
+			-- elseif id == "store" then
+			elseif id == "main" then
 				E:ForceHide(MainMenuBarDownload)
 
 				button:SetScript("OnEvent", mainMenuButton_OnEvent)
@@ -1506,7 +1503,7 @@ function MODULE:CreateMicroMenu()
 
 				button.Update = mainMenuButton_Update
 				button.UpdateIndicator = mainMenuButton_UpdateIndicator
-			-- elseif data.name == "HelpMicroButton" then
+			-- elseif id == "help" then
 			end
 
 			buttons[idToIndex[id]] = button
