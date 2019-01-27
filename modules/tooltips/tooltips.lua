@@ -798,8 +798,8 @@ function MODULE:Init()
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
-		GameTooltipStatusBar:SetScript("OnShow", tooltipBar_Hook)
-		GameTooltipStatusBar:SetScript("OnValueChanged", tooltipBar_Hook)
+		GameTooltipStatusBar:HookScript("OnShow", tooltipBar_Hook)
+		GameTooltipStatusBar:HookScript("OnValueChanged", tooltipBar_Hook)
 
 		hooksecurefunc("GameTooltip_AddStatusBar", tooltip_AddStatusBar)
 
