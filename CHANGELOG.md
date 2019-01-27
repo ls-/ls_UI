@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 80100.02
+
+- Reworked the micro menu module and its config;
+- Fixed an issue where class power bar would sometimes disappear from the player orb;
+- Updated French Translation. Translated by edward9mm@Curse;
+- Updated German Translation. Translated by NicoCaine90@Curse;
+- Updated both Spanish translations. Translated by Gotzon@Curse;
+- Updated embeds.
+
 ## Version 80100.01
 
 - Added 8.1.0 support;
