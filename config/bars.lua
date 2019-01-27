@@ -883,533 +883,533 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
 			zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
 			vehicle = getOptionsTable_Bar("vehicle", 150, L["VEHICLE_EXIT_BUTTON"]),
-			micromenu = {
-				order = 160,
-				type = "group",
-				name = L["MICRO_BUTTONS"],
-				disabled = isModuleDisabled,
-				args = {
-					reset = {
-						type = "execute",
-						order = 1,
-						name = L["RESTORE_DEFAULTS"],
-						func = function()
-							CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {currency = true, point = true})
-							BARS:UpdateMicroMenu()
-						end,
-					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
-					micromenu1 = {
-						order = 10,
-						type = "group",
-						name = L["MAIN_BAR"],
-						inline = true,
-						args = {
-							per_row = {
-								order = 1,
-								type = "range",
-								name = L["PER_ROW"],
-								min = 1, max = 13, step = 1,
-								get = function()
-									return C.db.profile.bars.micromenu.bars.micromenu1.per_row
-								end,
-								set = function(_, value)
-									C.db.profile.bars.micromenu.bars.micromenu1.per_row = value
-									BARS:GetBar("micromenu1"):Update()
-								end,
-							},
-							growth_dir = {
-								order = 2,
-								type = "select",
-								name = L["GROWTH_DIR"],
-								values = GROWTH_DIRS,
-								get = function()
-									return C.db.profile.bars.micromenu.bars.micromenu1.x_growth .. "_" .. C.db.profile.bars.micromenu.bars.micromenu1.y_growth
-								end,
-								set = function(_, value)
-									C.db.profile.bars.micromenu.bars.micromenu1.x_growth, C.db.profile.bars.micromenu.bars.micromenu1.y_growth = s_split("_", value)
-									BARS:GetBar("micromenu1"):Update()
-								end,
-							},
-						},
-					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
-					micromenu2 = {
-						order = 20,
-						type = "group",
-						name = L["ADDITIONAL_BAR"],
-						inline = true,
-						args = {
-							per_row = {
-								order = 1,
-								type = "range",
-								name = L["PER_ROW"],
-								min = 1, max = 13, step = 1,
-								get = function()
-									return C.db.profile.bars.micromenu.bars.micromenu2.per_row
-								end,
-								set = function(_, value)
-									C.db.profile.bars.micromenu.bars.micromenu2.per_row = value
-									BARS:GetBar("micromenu2"):Update()
-								end,
-							},
-							growth_dir = {
-								order = 2,
-								type = "select",
-								name = L["GROWTH_DIR"],
-								values = GROWTH_DIRS,
-								get = function()
-									return C.db.profile.bars.micromenu.bars.micromenu2.x_growth .. "_" .. C.db.profile.bars.micromenu.bars.micromenu2.y_growth
-								end,
-								set = function(_, value)
-									C.db.profile.bars.micromenu.bars.micromenu2.x_growth, C.db.profile.bars.micromenu.bars.micromenu2.y_growth = s_split("_", value)
-									BARS:GetBar("micromenu2"):Update()
-								end,
-							},
-						},
-					},
-					spacer_3 = {
-						order = 29,
-						type = "description",
-						name = " ",
-					},
-					fading = getOptionsTable_Fading(30, "micromenu"),
-					character = {
-						order = 40,
-						type = "group",
-						name = CHARACTER_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["CHARACTER_BUTTON_DESC"],
-							},
-							parent = {
-								order = 3,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					inventory = {
-						order = 50,
-						type = "group",
-						name = L["INVENTORY_BUTTON"],
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["INVENTORY_BUTTON_DESC"],
-							},
-							bags = {
-								order = 3,
-								type = "toggle",
-								name = L["BAG_SLOTS"],
-								get = function()
-									return C.db.profile.bars.micromenu.bars.bags.enabled
-								end,
-								set = function(_, value)
-									C.db.profile.bars.micromenu.bars.bags.enabled = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-							currency = CURRENCY_TABLE,
-						},
-					},
-					spellbook = {
-						order = 60,
-						type = "group",
-						name = SPELLBOOK_ABILITIES_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					talent = {
-						order = 70,
-						type = "group",
-						name = TALENTS_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					achievement = {
-						order = 80,
-						type = "group",
-						name = ACHIEVEMENT_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					quest = {
-						order = 90,
-						type = "group",
-						name = QUESTLOG_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["QUESTLOG_BUTTON_DESC"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					guild = {
-						order = 100,
-						type = "group",
-						name = GUILD_AND_COMMUNITIES,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					lfd = {
-						order = 110,
-						type = "group",
-						name = DUNGEONS_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["DUNGEONS_BUTTON_DESC"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					collection = {
-						order = 120,
-						type = "group",
-						name = COLLECTIONS,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					ej = {
-						order = 130,
-						type = "group",
-						name = ADVENTURE_JOURNAL,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["ADVENTURE_JOURNAL_DESC"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					store = {
-						order = 140,
-						type = "group",
-						name = BLIZZARD_STORE,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					main = {
-						order = 150,
-						type = "group",
-						name = MAINMENU_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							tooltip = {
-								order = 2,
-								type = "toggle",
-								name = L["ENHANCED_TOOLTIPS"],
-								desc = L["MAINMENU_BUTTON_DESC"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-					help = {
-						order = 160,
-						type = "group",
-						name = HELP_BUTTON,
-						get = function(info)
-							return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-							BARS:UpdateButton(info[#info - 1], "Update")
-						end,
-						args = {
-							enabled = {
-								order = 1,
-								type = "toggle",
-								name = L["SHOW"],
-							},
-							parent = {
-								order = 4,
-								type = "select",
-								name = L["BAR"],
-								values = MICRO_BARS,
-								set = function(info, value)
-									C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
-									BARS:UpdateMicroMenu()
-								end,
-							},
-						},
-					},
-				},
-			},
+			-- micromenu = {
+			-- 	order = 160,
+			-- 	type = "group",
+			-- 	name = L["MICRO_BUTTONS"],
+			-- 	disabled = isModuleDisabled,
+			-- 	args = {
+			-- 		reset = {
+			-- 			type = "execute",
+			-- 			order = 1,
+			-- 			name = L["RESTORE_DEFAULTS"],
+			-- 			func = function()
+			-- 				CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {currency = true, point = true})
+			-- 				BARS:UpdateMicroMenu()
+			-- 			end,
+			-- 		},
+			-- 		spacer_1 = {
+			-- 			order = 9,
+			-- 			type = "description",
+			-- 			name = " ",
+			-- 		},
+			-- 		micromenu1 = {
+			-- 			order = 10,
+			-- 			type = "group",
+			-- 			name = L["MAIN_BAR"],
+			-- 			inline = true,
+			-- 			args = {
+			-- 				per_row = {
+			-- 					order = 1,
+			-- 					type = "range",
+			-- 					name = L["PER_ROW"],
+			-- 					min = 1, max = 13, step = 1,
+			-- 					get = function()
+			-- 						return C.db.profile.bars.micromenu.bars.micromenu1.per_row
+			-- 					end,
+			-- 					set = function(_, value)
+			-- 						C.db.profile.bars.micromenu.bars.micromenu1.per_row = value
+			-- 						BARS:GetBar("micromenu1"):Update()
+			-- 					end,
+			-- 				},
+			-- 				growth_dir = {
+			-- 					order = 2,
+			-- 					type = "select",
+			-- 					name = L["GROWTH_DIR"],
+			-- 					values = GROWTH_DIRS,
+			-- 					get = function()
+			-- 						return C.db.profile.bars.micromenu.bars.micromenu1.x_growth .. "_" .. C.db.profile.bars.micromenu.bars.micromenu1.y_growth
+			-- 					end,
+			-- 					set = function(_, value)
+			-- 						C.db.profile.bars.micromenu.bars.micromenu1.x_growth, C.db.profile.bars.micromenu.bars.micromenu1.y_growth = s_split("_", value)
+			-- 						BARS:GetBar("micromenu1"):Update()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		spacer_2 = {
+			-- 			order = 19,
+			-- 			type = "description",
+			-- 			name = " ",
+			-- 		},
+			-- 		micromenu2 = {
+			-- 			order = 20,
+			-- 			type = "group",
+			-- 			name = L["ADDITIONAL_BAR"],
+			-- 			inline = true,
+			-- 			args = {
+			-- 				per_row = {
+			-- 					order = 1,
+			-- 					type = "range",
+			-- 					name = L["PER_ROW"],
+			-- 					min = 1, max = 13, step = 1,
+			-- 					get = function()
+			-- 						return C.db.profile.bars.micromenu.bars.micromenu2.per_row
+			-- 					end,
+			-- 					set = function(_, value)
+			-- 						C.db.profile.bars.micromenu.bars.micromenu2.per_row = value
+			-- 						BARS:GetBar("micromenu2"):Update()
+			-- 					end,
+			-- 				},
+			-- 				growth_dir = {
+			-- 					order = 2,
+			-- 					type = "select",
+			-- 					name = L["GROWTH_DIR"],
+			-- 					values = GROWTH_DIRS,
+			-- 					get = function()
+			-- 						return C.db.profile.bars.micromenu.bars.micromenu2.x_growth .. "_" .. C.db.profile.bars.micromenu.bars.micromenu2.y_growth
+			-- 					end,
+			-- 					set = function(_, value)
+			-- 						C.db.profile.bars.micromenu.bars.micromenu2.x_growth, C.db.profile.bars.micromenu.bars.micromenu2.y_growth = s_split("_", value)
+			-- 						BARS:GetBar("micromenu2"):Update()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		spacer_3 = {
+			-- 			order = 29,
+			-- 			type = "description",
+			-- 			name = " ",
+			-- 		},
+			-- 		fading = getOptionsTable_Fading(30, "micromenu"),
+			-- 		character = {
+			-- 			order = 40,
+			-- 			type = "group",
+			-- 			name = CHARACTER_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["CHARACTER_BUTTON_DESC"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 3,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		inventory = {
+			-- 			order = 50,
+			-- 			type = "group",
+			-- 			name = L["INVENTORY_BUTTON"],
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["INVENTORY_BUTTON_DESC"],
+			-- 				},
+			-- 				bags = {
+			-- 					order = 3,
+			-- 					type = "toggle",
+			-- 					name = L["BAG_SLOTS"],
+			-- 					get = function()
+			-- 						return C.db.profile.bars.micromenu.bars.bags.enabled
+			-- 					end,
+			-- 					set = function(_, value)
+			-- 						C.db.profile.bars.micromenu.bars.bags.enabled = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 				currency = CURRENCY_TABLE,
+			-- 			},
+			-- 		},
+			-- 		spellbook = {
+			-- 			order = 60,
+			-- 			type = "group",
+			-- 			name = SPELLBOOK_ABILITIES_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		talent = {
+			-- 			order = 70,
+			-- 			type = "group",
+			-- 			name = TALENTS_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		achievement = {
+			-- 			order = 80,
+			-- 			type = "group",
+			-- 			name = ACHIEVEMENT_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		quest = {
+			-- 			order = 90,
+			-- 			type = "group",
+			-- 			name = QUESTLOG_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["QUESTLOG_BUTTON_DESC"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		guild = {
+			-- 			order = 100,
+			-- 			type = "group",
+			-- 			name = GUILD_AND_COMMUNITIES,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		lfd = {
+			-- 			order = 110,
+			-- 			type = "group",
+			-- 			name = DUNGEONS_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["DUNGEONS_BUTTON_DESC"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		collection = {
+			-- 			order = 120,
+			-- 			type = "group",
+			-- 			name = COLLECTIONS,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		ej = {
+			-- 			order = 130,
+			-- 			type = "group",
+			-- 			name = ADVENTURE_JOURNAL,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["ADVENTURE_JOURNAL_DESC"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		store = {
+			-- 			order = 140,
+			-- 			type = "group",
+			-- 			name = BLIZZARD_STORE,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		main = {
+			-- 			order = 150,
+			-- 			type = "group",
+			-- 			name = MAINMENU_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				tooltip = {
+			-- 					order = 2,
+			-- 					type = "toggle",
+			-- 					name = L["ENHANCED_TOOLTIPS"],
+			-- 					desc = L["MAINMENU_BUTTON_DESC"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 		help = {
+			-- 			order = 160,
+			-- 			type = "group",
+			-- 			name = HELP_BUTTON,
+			-- 			get = function(info)
+			-- 				return C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]]
+			-- 			end,
+			-- 			set = function(info, value)
+			-- 				C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 				BARS:UpdateButton(info[#info - 1], "Update")
+			-- 			end,
+			-- 			args = {
+			-- 				enabled = {
+			-- 					order = 1,
+			-- 					type = "toggle",
+			-- 					name = L["SHOW"],
+			-- 				},
+			-- 				parent = {
+			-- 					order = 4,
+			-- 					type = "select",
+			-- 					name = L["BAR"],
+			-- 					values = MICRO_BARS,
+			-- 					set = function(info, value)
+			-- 						C.db.profile.bars.micromenu.buttons[info[#info - 1]][info[#info]] = value
+			-- 						BARS:UpdateMicroMenu()
+			-- 					end,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 	},
+			-- },
 			xpbar = {
 				order = 170,
 				type = "group",
