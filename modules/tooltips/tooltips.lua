@@ -69,7 +69,6 @@ local UnitRealmRelationship = _G.UnitRealmRelationship
 -- Mine
 local inspectGUIDCache = {}
 local isInit = false
-local lastGUID
 
 local AFK = "[" .. _G.AFK .. "] "
 local DND = "[" .. _G.DND .. "] "
@@ -252,9 +251,7 @@ local function getTooltipUnit(tooltip)
 end
 
 local function INSPECT_READY(unitGUID)
-	if lastGUID ~= unitGUID then return end
-
-	if UnitExists("mouseover") then
+	if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
 		if not inspectGUIDCache[unitGUID] then
 			inspectGUIDCache[unitGUID] = {}
 		end
@@ -266,13 +263,11 @@ local function INSPECT_READY(unitGUID)
 		GameTooltip:SetUnit("mouseover")
 	end
 
-	lastGUID = nil
-
 	E:UnregisterEvent("INSPECT_READY", INSPECT_READY)
 end
 
 local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
-	if not CanInspect(unit) or numTries > 2 then return end
+	if not CanInspect(unit, true) or numTries > 3 then return end
 
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
@@ -294,9 +289,7 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
 		tooltip:AddLine(ITEM_LEVEL:format(itemLevel), 1, 1, 1)
-	elseif unitGUID ~= lastGUID then
-		lastGUID = unitGUID
-
+	else
 		NotifyInspect(unit)
 
 		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
