@@ -42,7 +42,7 @@ local function element_PostCastStart(self)
 	end
 end
 
-local function element_PostCastFailed(self)
+local function element_PostCastFail(self)
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
 	self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.failed))
@@ -257,10 +257,8 @@ function UF:CreateCastbar(frame)
 	element.Holder = holder
 	element.CustomDelayText = element_CustomDelayText
 	element.CustomTimeText = element_CustomTimeText
-	element.PostCastFailed = element_PostCastFailed
-	element.PostCastInterrupted = element_PostCastFailed
+	element.PostCastFail = element_PostCastFail
 	element.PostCastStart = element_PostCastStart
-	element.PostChannelStart = element_PostCastStart
 	element.timeToHold = 0.4
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateFontObjects = element_UpdateFontObjects
