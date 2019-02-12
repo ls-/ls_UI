@@ -500,14 +500,13 @@ do
 
 			if diff > 0 then
 				if self.Gain and self.Gain:GetAlpha() == 0 then
-					self.Gain:SetAlpha(1)
-
 					if self.orientation == "VERTICAL" then
 						attachGainToVerticalBar(self.Gain, self.__owner, prev, max)
 					else
 						attachGainToHorizontalBar(self.Gain, self.__owner, prev, max)
 					end
 
+					self.Gain:SetAlpha(1)
 					self.Gain.FadeOut:Play()
 				end
 			elseif diff < 0 then
@@ -518,14 +517,13 @@ do
 
 				if self.Loss then
 					if self.Loss:GetAlpha() <= 0.33 then
-						self.Loss:SetAlpha(1)
-
 						if self.orientation == "VERTICAL" then
 							attachLossToVerticalBar(self.Loss, self.__owner, prev, max)
 						else
 							attachLossToHorizontalBar(self.Loss, self.__owner, prev, max)
 						end
 
+						self.Loss:SetAlpha(1)
 						self.Loss.FadeOut:Restart()
 					elseif self.Loss.FadeOut.Alpha:IsDelaying() or self.Loss:GetAlpha() >= 0.66 then
 						self.Loss.FadeOut:Restart()
