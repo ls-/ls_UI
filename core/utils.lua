@@ -433,69 +433,63 @@ do
 
 	do
 		local ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-		local X2_WEAPON_SLOTS = {
+		local X2_INVTYPES = {
 			INVTYPE_2HWEAPON = true,
 			INVTYPE_RANGEDRIGHT = true,
 			INVTYPE_RANGED = true,
+		}
+		local X2_EXCEPTIONS = {
+			[2] = 19, -- wands, use INVTYPE_RANGEDRIGHT, but are 1H
 		}
 
 		function E:GetUnitAverageItemLevel(unit)
 			if UnitIsUnit(unit, "player") then
 				return m_floor(select(2, GetAverageItemLevel()))
 			else
-				local isInspectSuccessful = true
-				local total = 0
+				local isOK, total, link = true, 0
 
 				-- Armour
 				for _, id in next, ARMOR_SLOTS do
-					local link = GetInventoryItemLink(unit, id)
-					local cur
-
+					link = GetInventoryItemLink(unit, id)
 					if link then
-						cur = GetDetailedItemLevelInfo(link)
+						local cur = GetDetailedItemLevelInfo(link)
 						if cur and cur > 0 then
 							total = total + cur
 						end
 					elseif GetInventoryItemTexture(unit, id) then
-						isInspectSuccessful = false
+						isOK = false
 					end
 				end
 
 				-- Main hand
-				local link = GetInventoryItemLink(unit, 16)
 				local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass, _ = 0
-
+				link = GetInventoryItemLink(unit, 16)
 				if link then
 					mainItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = GetItemInfo(link)
 				elseif GetInventoryItemTexture(unit, 16) then
-					isInspectSuccessful = false
+					isOK = false
 				end
 
 				-- Off hand
-				link = GetInventoryItemLink(unit, 17)
 				local offItemLevel, offEquipLoc = 0
-
+				link = GetInventoryItemLink(unit, 17)
 				if link then
 					offItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, _, _, _, _, _, _, offEquipLoc = GetItemInfo(link)
 				elseif GetInventoryItemTexture(unit, 17) then
-					isInspectSuccessful = false
+					isOK = false
 				end
 
-				if mainQuality == 6 or (not offEquipLoc and X2_WEAPON_SLOTS[mainEquipLoc] and mainItemClass ~= 2 and mainItemSubClass ~= 19 and GetInspectSpecialization(unit) ~= 72) then
+				if mainQuality == 6 or (not offEquipLoc and X2_INVTYPES[mainEquipLoc] and X2_EXCEPTIONS[mainItemClass] ~= mainItemSubClass and GetInspectSpecialization(unit) ~= 72) then
 					mainItemLevel = m_max(mainItemLevel, offItemLevel)
 					total = total + mainItemLevel * 2
 				else
 					total = total + mainItemLevel + offItemLevel
 				end
 
-				if total == 0 then
-					isInspectSuccessful = false
-				end
-
-				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
-				return isInspectSuccessful and m_floor(total / 16) or nil
+				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isOK and "|cff11ff11SUCCESS!|r" or "|cffff1111FAIL!|r")
+				return isOK and m_floor(total / 16)
 			end
 		end
 	end
