@@ -67,7 +67,6 @@ local UnitRealmRelationship = _G.UnitRealmRelationship
 ]]
 
 -- Mine
-local inspectGUIDCache = {}
 local isInit = false
 
 local AFK = "[" .. _G.AFK .. "] "
@@ -250,6 +249,9 @@ local function getTooltipUnit(tooltip)
 	return unit
 end
 
+local inspectGUIDCache = {}
+local lastGUID
+
 local function INSPECT_READY(unitGUID)
 	if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
 		if not inspectGUIDCache[unitGUID] then
@@ -290,7 +292,11 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
 		tooltip:AddLine(ITEM_LEVEL:format(itemLevel), 1, 1, 1)
 	else
-		NotifyInspect(unit)
+		if lastGUID ~= unitGUID then
+			NotifyInspect(unit)
+
+			lastGUID = unitGUID
+		end
 
 		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
 	end
