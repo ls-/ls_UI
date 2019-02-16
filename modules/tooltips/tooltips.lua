@@ -288,13 +288,10 @@ local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
 
 		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, inspectGUIDCache[unitGUID].specName), 1, 1, 1)
 		tooltip:AddLine(ITEM_LEVEL:format(inspectGUIDCache[unitGUID].itemLevel), 1, 1, 1)
-	else
-		if lastGUID ~= unitGUID then
-			NotifyInspect(unit)
-
-			lastGUID = unitGUID
-		end
-
+	elseif lastGUID ~= unitGUID then
+		lastGUID = unitGUID
+		
+		NotifyInspect(unit)
 		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
 	end
 end
