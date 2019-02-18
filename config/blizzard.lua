@@ -188,30 +188,8 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
-			talking_head = {
-				order = 15,
-				type = "toggle",
-				name = L["TALKING_HEAD_FRAME"],
-				disabled = isModuleDisabled,
-				get = function()
-					return C.db.char.blizzard.talking_head.enabled
-				end,
-				set = function(_, value)
-					C.db.char.blizzard.talking_head.enabled = value
-
-					if not BLIZZARD:HasTalkingHead() then
-						if value then
-							BLIZZARD:SetUpTalkingHead()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end
-			},
 			vehicle = {
-				order = 16,
+				order = 15,
 				type = "toggle",
 				name = L["VEHICLE_SEAT_INDICATOR"],
 				disabled = isModuleDisabled,
@@ -233,7 +211,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			castbar = {
-				order = 17,
+				order = 16,
 				type = "group",
 				name = L["CASTBAR"],
 				disabled = function()
@@ -366,7 +344,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			digsite_bar = {
-				order = 18,
+				order = 17,
 				type = "group",
 				name = L["DIGSITE_BAR"],
 				disabled = isModuleDisabled,
@@ -462,7 +440,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			timer = {
-				order = 19,
+				order = 18,
 				type = "group",
 				name = L["MIRROR_TIMER"],
 				desc = L["MIRROR_TIMER_DESC"],
@@ -559,7 +537,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			objective_tracker = {
-				order = 20,
+				order = 19,
 				type = "group",
 				name = L["OBJECTIVE_TRACKER"],
 				disabled = isModuleDisabled,
@@ -624,6 +602,59 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						set = function(_, value)
 							C.db.profile.blizzard.objective_tracker.drag_key = DRAG_KEY_VALUES[value]
 						end,
+					},
+				},
+			},
+			talking_head = {
+				order = 20,
+				type = "group",
+				name = L["TALKING_HEAD_FRAME"],
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.blizzard.talking_head[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.blizzard.talking_head[info[#info]] = value
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.talking_head.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.talking_head.enabled = value
+
+							if not BLIZZARD:HasTalkingHead() then
+								if value then
+									BLIZZARD:SetUpTalkingHead()
+								end
+							else
+								if not value then
+									CONFIG:ShowStaticPopup("RELOAD_UI")
+								end
+							end
+						end
+					},
+					reset = {
+						type = "execute",
+						order = 2,
+						name = L["RESTORE_DEFAULTS"],
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.talking_head, C.db.profile.blizzard.talking_head)
+						end,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+					},
+					hide = {
+						order = 10,
+						type = "toggle",
+						name = L["HIDE"],
 					},
 				},
 			},

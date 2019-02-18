@@ -2788,6 +2788,9 @@ D.profile = {
 			height = 600,
 			drag_key = "NONE"
 		},
+		talking_head = {
+			hide = false,
+		},
 	},
 	movers = {
 		ls = {},
