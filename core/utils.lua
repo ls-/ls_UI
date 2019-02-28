@@ -488,6 +488,12 @@ do
 					total = total + mainItemLevel + offItemLevel
 				end
 
+				-- at the beginning of an arena match no info might be available,
+				-- so despite having equipped gear a person may appear naked
+				if total == 0 then
+					isOK = false
+				end
+
 				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isOK and "|cff11ff11SUCCESS!|r" or "|cffff1111FAIL!|r")
 				return isOK and m_floor(total / 16)
 			end
