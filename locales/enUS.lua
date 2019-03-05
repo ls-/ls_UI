@@ -42,6 +42,7 @@ L["INSANITY"] = _G.INSANITY
 L["LOOT"] = _G.LOOT_NOUN
 L["LUNAR_POWER"] = _G.LUNAR_POWER
 L["MAELSTROM"] = _G.MAELSTROM
+L["MAIL"] = _G.MAIL_LABEL
 L["MAINMENU_BUTTON"] = _G.MAINMENU_BUTTON
 L["MANA"] = _G.MANA
 L["MINIMAP"] = _G.MINIMAP_LABEL
@@ -455,3 +456,7 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+-- wip
+L["CLEAN_UP"] = "Clean Up"
+L["CLEAN_UP_MAIL_DESC"] = "Removes all empty messages."

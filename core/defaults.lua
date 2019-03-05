@@ -2862,6 +2862,9 @@ D.char = {
 		gm = { -- TicketStatusFrame
 			enabled = true
 		},
+		mail = {
+			enabled = false,
+		},
 		npe = { -- NPE_TutorialInterfaceHelp
 			enabled = true
 		},

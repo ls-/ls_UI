@@ -144,8 +144,30 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
-			npe = {
+			mail = {
 				order = 13,
+				type = "toggle",
+				name = L["MAIL"],
+				disabled = isModuleDisabled,
+				get = function()
+					return C.db.char.blizzard.mail.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.mail.enabled = value
+
+					if not BLIZZARD:HasMail() then
+						if value then
+							BLIZZARD:SetUpMail()
+						end
+					else
+						if not value then
+							CONFIG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end
+			},
+			npe = {
+				order = 14,
 				type = "toggle",
 				name = L["NPE_FRAME"],
 				disabled = isModuleDisabled,
@@ -167,7 +189,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			player_alt_power_bar = {
-				order = 14,
+				order = 15,
 				type = "toggle",
 				name = L["ALT_POWER_BAR"],
 				disabled = isModuleDisabled,
@@ -189,7 +211,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			vehicle = {
-				order = 15,
+				order = 16,
 				type = "toggle",
 				name = L["VEHICLE_SEAT_INDICATOR"],
 				disabled = isModuleDisabled,
@@ -211,7 +233,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				end
 			},
 			castbar = {
-				order = 16,
+				order = 17,
 				type = "group",
 				name = L["CASTBAR"],
 				disabled = function()
@@ -344,7 +366,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			digsite_bar = {
-				order = 17,
+				order = 18,
 				type = "group",
 				name = L["DIGSITE_BAR"],
 				disabled = isModuleDisabled,
@@ -440,7 +462,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			timer = {
-				order = 18,
+				order = 19,
 				type = "group",
 				name = L["MIRROR_TIMER"],
 				desc = L["MIRROR_TIMER_DESC"],
@@ -537,7 +559,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			objective_tracker = {
-				order = 19,
+				order = 20,
 				type = "group",
 				name = L["OBJECTIVE_TRACKER"],
 				disabled = isModuleDisabled,
@@ -606,7 +628,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			talking_head = {
-				order = 20,
+				order = 21,
 				type = "group",
 				name = L["TALKING_HEAD_FRAME"],
 				disabled = isModuleDisabled,
