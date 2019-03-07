@@ -310,6 +310,53 @@ function E:SkinFlyoutButton(button)
 	button.HotKey:Hide()
 end
 
+-- E:SkinInvSlotButton
+do
+	local function azeriteSetDrawLayerHook(self, layer)
+		if layer ~= "BACKGROUND" then
+			self:SetDrawLayer("BACKGROUND", -1)
+		end
+	end
+
+	local function updateBorderColor(self)
+		if self:IsShown() then
+			self:GetParent().Border_:SetVertexColor(self:GetVertexColor())
+		else
+			self:GetParent().Border_:SetVertexColor(0.6, 0.6, 0.6)
+		end
+	end
+
+	local function setTextureHook(self, texture)
+		if texture then
+			self:SetTexture(nil)
+		end
+	end
+
+	function E:SkinInvSlotButton(button)
+		if not button or button.__styled then return end
+
+		skinButton(button)
+
+		local azeriteTexture = button.AzeriteTexture
+		if azeriteTexture then
+			azeriteTexture:SetDrawLayer("BACKGROUND", -1)
+			hooksecurefunc(azeriteTexture, "SetDrawLayer", azeriteSetDrawLayerHook)
+		end
+
+		local bIconBorder = button.IconBorder
+		if bIconBorder then
+			bIconBorder:SetTexture(nil)
+
+			hooksecurefunc(bIconBorder, "Hide", updateBorderColor)
+			hooksecurefunc(bIconBorder, "Show", updateBorderColor)
+			hooksecurefunc(bIconBorder, "SetVertexColor", updateBorderColor)
+			hooksecurefunc(bIconBorder, "SetTexture", setTextureHook)
+		end
+
+		button.__styled = true
+	end
+end
+
 -- E:SkinBagButton
 do
 	local function updateCountText(self, text)
