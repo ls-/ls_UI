@@ -737,7 +737,7 @@ do
 	local itemCache = {}
 
 	local scanTip = CreateFrame("GameTooltip", "LSScanTip", nil, "GameTooltipTemplate")
-	scanTip:SetOwner(UIParent, 'ANCHOR_NONE')
+	scanTip:SetOwner(UIParent, "ANCHOR_NONE")
 
 	local function wipeScanTip()
 		scanTip:ClearLines()

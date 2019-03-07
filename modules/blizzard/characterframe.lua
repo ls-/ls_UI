@@ -66,6 +66,7 @@ local function updateSlot(slotID)
 	end
 end
 
+local function updateAllSlots()
 	local scanComplete, isOk, enchant, gem1, gem2, gem3 = true
 	for slotID, slotName in next, EQUIP_SLOTS do
 		isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
@@ -77,7 +78,7 @@ end
 	end
 
 	if not scanComplete then
-		C_Timer.After(0.33, scanAllSlots)
+		C_Timer.After(0.33, updateAllSlots)
 	end
 end
 
@@ -216,7 +217,7 @@ function MODULE:SetUpCharacterFrame()
 			CharacterFrame.Inset.Bg:SetHorizTile(false)
 			CharacterFrame.Inset.Bg:SetVertTile(false)
 
-			scanAllSlots()
+			updateAllSlots()
 		end)
 
 		hooksecurefunc("CharacterFrame_Collapse", function()
