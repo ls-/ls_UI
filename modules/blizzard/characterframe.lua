@@ -56,7 +56,16 @@ local function scanSlot(slotID)
 	return true, "", "", "", ""
 end
 
-local function scanAllSlots()
+local function updateSlot(slotID)
+	local isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	if isOk then
+		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
+		_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+	else
+		C_Timer.After(0.33, function() updateSlot(slotID) end)
+	end
+end
+
 	local scanComplete, isOk, enchant, gem1, gem2, gem3 = true
 	for slotID, slotName in next, EQUIP_SLOTS do
 		isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
@@ -218,6 +227,18 @@ function MODULE:SetUpCharacterFrame()
 			CharacterFrame.Inset.Bg:SetTexCoord(0, 1, 0, 1)
 			CharacterFrame.Inset.Bg:SetHorizTile(true)
 			CharacterFrame.Inset.Bg:SetVertTile(true)
+		end)
+
+		E:RegisterEvent("ITEM_LOCK_CHANGED", function(bagOrSlotID, slotID)
+			if CharacterFrame:IsShown() and bagOrSlotID and not slotID and EQUIP_SLOTS[bagOrSlotID] then
+				updateSlot(bagOrSlotID)
+			end
+		end)
+
+		E:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(slotID)
+			if CharacterFrame:IsShown() then
+				updateSlot(slotID)
+			end
 		end)
 
 		isInit = true
