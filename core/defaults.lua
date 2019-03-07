@@ -2788,6 +2788,9 @@ D.profile = {
 			height = 600,
 			drag_key = "NONE"
 		},
+		talking_head = {
+			hide = false,
+		},
 	},
 	movers = {
 		ls = {},
@@ -2847,6 +2850,9 @@ D.char = {
 		castbar = { -- CastingBarFrame
 			enabled = true
 		},
+		character_frame = { -- CharacterFrame
+			enabled = true,
+		},
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
 		},
@@ -2858,6 +2864,9 @@ D.char = {
 		},
 		gm = { -- TicketStatusFrame
 			enabled = true
+		},
+		mail = {
+			enabled = false,
 		},
 		npe = { -- NPE_TutorialInterfaceHelp
 			enabled = true

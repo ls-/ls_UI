@@ -4,17 +4,25 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local t_remove = _G.table.remove
 
 --[[ luacheck: globals
-	AlertFrame CreateFrame IsAddOnLoaded LoadAddOn TalkingHeadFrame UIParent
+	AlertFrame CreateFrame IsAddOnLoaded LoadAddOn TalkingHeadFrame
+	TalkingHeadFrame_CloseImmediately UIParent
 
 	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
 
 -- Mine
 local isInit = false
+
+local function closeTalkingHead()
+	if C.db.profile.blizzard.talking_head.hide then
+		TalkingHeadFrame_CloseImmediately()
+	end
+end
 
 function MODULE.HasTalkingHead()
 	return isInit
@@ -41,6 +49,8 @@ function MODULE.SetUpTalkingHead()
 			TalkingHeadFrame:ClearAllPoints()
 			TalkingHeadFrame:SetPoint("TOP", "UIParent", "TOP", 0, -188)
 			E.Movers:Create(TalkingHeadFrame)
+
+			hooksecurefunc("TalkingHeadFrame_PlayCurrent", closeTalkingHead)
 
 			isInit = true
 		end

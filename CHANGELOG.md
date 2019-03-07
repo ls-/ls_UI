@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 80100.03
+
+- Reworked the character frame. It now shows info on gems and enchants. Enabled by default, can be  
+  toggled at /LSUI > Blizzard > Character Frame;
+- Added the "Clean Up" button to the mail frame. Removes all empty messages that are left after  
+  using Blizz's "Open All" button. Disabled by default, can be toggled at /LS > Blizzard > Mail;
+- Updated French Translation. Translated by edward9mm@Curse;
+- Misc bug fixes and tweaks;
+- Updated embeds.
+
 ## Version 80100.02
 
 - Reworked the micro menu module and its config;

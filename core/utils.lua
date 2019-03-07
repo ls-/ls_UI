@@ -13,16 +13,15 @@ local m_modf = _G.math.modf
 local next = _G.next
 local s_format = _G.string.format
 local s_split = _G.string.split
-local s_sub = _G.string.sub
 local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
-local tonumber = _G.tonumber
-local type = _G.type
-local unpack = _G.unpack
 
--- Blizz
-local GetTickTime = _G.GetTickTime
+--[[ luacheck: globals
+	CreateFrame GetItemGem GetItemInfoInstant UIParent
+
+	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS
+]]
 
 -- Mine
 -----------
@@ -433,69 +432,69 @@ do
 
 	do
 		local ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-		local X2_WEAPON_SLOTS = {
+		local X2_INVTYPES = {
 			INVTYPE_2HWEAPON = true,
 			INVTYPE_RANGEDRIGHT = true,
 			INVTYPE_RANGED = true,
+		}
+		local X2_EXCEPTIONS = {
+			[2] = 19, -- wands, use INVTYPE_RANGEDRIGHT, but are 1H
 		}
 
 		function E:GetUnitAverageItemLevel(unit)
 			if UnitIsUnit(unit, "player") then
 				return m_floor(select(2, GetAverageItemLevel()))
 			else
-				local isInspectSuccessful = true
-				local total = 0
+				local isOK, total, link = true, 0
 
 				-- Armour
 				for _, id in next, ARMOR_SLOTS do
-					local link = GetInventoryItemLink(unit, id)
-					local cur
-
+					link = GetInventoryItemLink(unit, id)
 					if link then
-						cur = GetDetailedItemLevelInfo(link)
+						local cur = GetDetailedItemLevelInfo(link)
 						if cur and cur > 0 then
 							total = total + cur
 						end
 					elseif GetInventoryItemTexture(unit, id) then
-						isInspectSuccessful = false
+						isOK = false
 					end
 				end
 
 				-- Main hand
-				local link = GetInventoryItemLink(unit, 16)
 				local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass, _ = 0
-
+				link = GetInventoryItemLink(unit, 16)
 				if link then
 					mainItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, mainQuality, _, _, _, _, _, mainEquipLoc, _, _, mainItemClass, mainItemSubClass = GetItemInfo(link)
 				elseif GetInventoryItemTexture(unit, 16) then
-					isInspectSuccessful = false
+					isOK = false
 				end
 
 				-- Off hand
-				link = GetInventoryItemLink(unit, 17)
 				local offItemLevel, offEquipLoc = 0
-
+				link = GetInventoryItemLink(unit, 17)
 				if link then
 					offItemLevel = GetDetailedItemLevelInfo(link)
 					_, _, _, _, _, _, _, _, offEquipLoc = GetItemInfo(link)
 				elseif GetInventoryItemTexture(unit, 17) then
-					isInspectSuccessful = false
+					isOK = false
 				end
 
-				if mainQuality == 6 or (not offEquipLoc and X2_WEAPON_SLOTS[mainEquipLoc] and mainItemClass ~= 2 and mainItemSubClass ~= 19 and GetInspectSpecialization(unit) ~= 72) then
+				if mainQuality == 6 or (not offEquipLoc and X2_INVTYPES[mainEquipLoc] and X2_EXCEPTIONS[mainItemClass] ~= mainItemSubClass and GetInspectSpecialization(unit) ~= 72) then
 					mainItemLevel = m_max(mainItemLevel, offItemLevel)
 					total = total + mainItemLevel * 2
 				else
 					total = total + mainItemLevel + offItemLevel
 				end
 
+				-- at the beginning of an arena match no info might be available,
+				-- so despite having equipped gear a person may appear naked
 				if total == 0 then
-					isInspectSuccessful = false
+					isOK = false
 				end
 
-				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isInspectSuccessful and "SUCCESS!" or "FAIL!")
-				return isInspectSuccessful and m_floor(total / 16) or nil
+				-- print("|cffffd200" .. UnitName(unit) .. "|r", "total:", total, "cur:", m_floor(total / 16), isOK and "|cff11ff11SUCCESS!|r" or "|cffff1111FAIL!|r")
+				return isOK and m_floor(total / 16)
 			end
 		end
 	end
@@ -704,5 +703,107 @@ function E:GetScreenQuadrant(frame)
 		else
 			return "CENTER"
 		end
+	end
+end
+
+-----------
+-- ITEMS --
+-----------
+
+do
+	local EMPTY_SOCKET = 136260
+	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.+)')
+	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
+
+	local EMPTY_SOCKET_TEXTURES = {
+		["136256"] = true,
+		["136257"] = true,
+		["136258"] = true,
+		["136259"] = true,
+		["136260"] = true,
+		["407324"] = true,
+		["407325"] = true,
+		["458977"] = true,
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET"] = true, -- 136260
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-BLUE"] = true, -- 136256
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"] = true, -- 136257
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PRISMATIC"] = true, -- 458977
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-RED"] = true, -- 136258
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-YELLOW"] = true, -- 136259
+	}
+
+	local itemCache = {}
+
+	local scanTip = CreateFrame("GameTooltip", "LSScanTip", nil, "GameTooltipTemplate")
+	scanTip:SetOwner(UIParent, "ANCHOR_NONE")
+
+	local function wipeScanTip()
+		scanTip:ClearLines()
+
+		for i = 1, 10 do
+			_G["LSScanTipTexture" .. i]:SetTexture(nil)
+		end
+	end
+
+	function E:GetItemEnchantGemInfo(itemLink)
+		if itemCache[itemLink] then
+			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
+		else
+			itemCache[itemLink] = {}
+		end
+
+		wipeScanTip(scanTip)
+		scanTip:SetHyperlink(itemLink)
+
+		local enchant, text = ""
+		for i = 2, scanTip:NumLines() do
+			text = _G["LSScanTipTextLeft" .. i]:GetText()
+			if text and text ~= "" then
+				text = text:match(ENCHANT_PATTERN)
+				if text then
+					enchant = text
+
+					break
+				end
+			end
+		end
+
+		local gem1, gem2, gem3, texture, gemLink, _ = "", "", ""
+		for i = 1, MAX_NUM_SOCKETS do
+			texture = _G["LSScanTipTexture" .. i]:GetTexture()
+			if texture then
+				if EMPTY_SOCKET_TEXTURES[s_upper(texture)] then
+					if i == 1 then
+						gem1 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					elseif i == 2 then
+						gem2 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					else
+						gem3 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					end
+				else
+					_, gemLink = GetItemGem(itemLink, i)
+					if gemLink then
+						_, _, _, _, texture = GetItemInfoInstant(gemLink)
+
+						if i == 1 then
+							gem1 = GEM_TEMPLATE:format(texture)
+						elseif i == 2 then
+							gem2 = GEM_TEMPLATE:format(texture)
+						else
+							gem3 = GEM_TEMPLATE:format(texture)
+						end
+					end
+				end
+			end
+		end
+
+		itemCache[itemLink].enchant = enchant
+		itemCache[itemLink].gem1 = gem1
+		itemCache[itemLink].gem2 = gem2
+		itemCache[itemLink].gem3 = gem3
+
+		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 	end
 end

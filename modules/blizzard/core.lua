@@ -12,10 +12,12 @@ end
 function BLIZZARD:Init()
 	if not isInit and C.db.char.blizzard.enabled then
 		self:SetUpCastBars()
+		self:SetUpCharacterFrame()
 		self:SetUpCommandBar()
 		self:SetUpDigsiteBar()
 		self:SetUpDurabilityFrame()
 		self:SetUpGMFrame()
+		self:SetUpMail()
 		self:SetUpNPE()
 		self:SetUpObjectiveTracker()
 		self:SetUpAltPowerBar()

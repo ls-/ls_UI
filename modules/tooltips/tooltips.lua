@@ -67,16 +67,14 @@ local UnitRealmRelationship = _G.UnitRealmRelationship
 ]]
 
 -- Mine
-local inspectGUIDCache = {}
 local isInit = false
-local lastGUID
 
 local AFK = "[" .. _G.AFK .. "] "
 local DND = "[" .. _G.DND .. "] "
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE:format("|c%s%s", "|r%s")
 local ID = "|cffffd100" .. _G.ID .. ":|r %d"
 local ITEM_LEVEL = "|cffffd100" .. _G.ITEM_LEVEL_ABBR .. ":|r |cffffffff%s|r"
-local SPECIALIZATION = "|cffffd100" .. _G.SPECIALIZATION .. ":|r |c%s%s|r"
+local SPECIALIZATION = "|cffffd100" .. _G.SPECIALIZATION .. ":|r |cffffffff%s|r"
 local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
 local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
 local PLAYER_TEMPLATE = "|c%s%s|r (|c%s" .. _G.PLAYER .. "|r)"
@@ -251,10 +249,11 @@ local function getTooltipUnit(tooltip)
 	return unit
 end
 
-local function INSPECT_READY(unitGUID)
-	if lastGUID ~= unitGUID then return end
+local inspectGUIDCache = {}
+local lastGUID
 
-	if UnitExists("mouseover") then
+local function INSPECT_READY(unitGUID)
+	if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
 		if not inspectGUIDCache[unitGUID] then
 			inspectGUIDCache[unitGUID] = {}
 		end
@@ -266,40 +265,41 @@ local function INSPECT_READY(unitGUID)
 		GameTooltip:SetUnit("mouseover")
 	end
 
-	lastGUID = nil
-
 	E:UnregisterEvent("INSPECT_READY", INSPECT_READY)
 end
 
-local function addInspectInfo(tooltip, unit, classColorHEX, numTries)
-	if not CanInspect(unit) or numTries > 2 then return end
+local function addInspectInfo(tooltip, unit, numTries)
+	if not CanInspect(unit, true) or numTries > 3 then return end
 
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
-		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
+		tooltip:AddLine(SPECIALIZATION:format(E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
 		tooltip:AddLine(ITEM_LEVEL:format(E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
 	elseif inspectGUIDCache[unitGUID] and inspectGUIDCache[unitGUID].time then
-		local specName = inspectGUIDCache[unitGUID].specName
-		local itemLevel = inspectGUIDCache[unitGUID].itemLevel
-
-		if not (specName and itemLevel) or GetTime() - inspectGUIDCache[unitGUID].time > 120 then
+		if not (inspectGUIDCache[unitGUID].specName and inspectGUIDCache[unitGUID].itemLevel) or GetTime() - inspectGUIDCache[unitGUID].time > 120 then
 			inspectGUIDCache[unitGUID].time = nil
 			inspectGUIDCache[unitGUID].specName = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
 
 			return C_Timer.After(0.33, function()
-				addInspectInfo(tooltip, unit, classColorHEX, numTries + 1)
+				addInspectInfo(tooltip, unit, numTries + 1)
 			end)
 		end
 
-		tooltip:AddLine(SPECIALIZATION:format(classColorHEX, specName), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(itemLevel), 1, 1, 1)
-	elseif unitGUID ~= lastGUID then
-		lastGUID = unitGUID
+		tooltip:AddLine(SPECIALIZATION:format(inspectGUIDCache[unitGUID].specName), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(inspectGUIDCache[unitGUID].itemLevel), 1, 1, 1)
+	else
+		if lastGUID ~= unitGUID then
+			lastGUID = unitGUID
 
-		NotifyInspect(unit)
+			NotifyInspect(unit)
+			E:RegisterEvent("INSPECT_READY", INSPECT_READY)
+		else
+			lastGUID = nil
 
-		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
+			INSPECT_READY(unitGUID)
+		end
+
 	end
 end
 
@@ -538,7 +538,7 @@ local function tooltip_SetUnit(self)
 			)
 
 			if C.db.profile.tooltips.inspect and isShiftKeyDown and level > 10 then
-				addInspectInfo(self, unit, classColor.hex, 0)
+				addInspectInfo(self, unit, 0)
 			end
 		end
 	elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
