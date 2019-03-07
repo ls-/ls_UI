@@ -286,14 +286,14 @@ do
 		frame.Name = self:CreateName(frame, textParent)
 
 		-- status icons/texts
-		local status = textParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+		local status = textParent:CreateFontString(nil, "OVERLAY", "LSIcon16Font")
 		status:SetWidth(24)
 		status:SetPoint("LEFT", frame, "LEFT", 2, 0)
 		status:SetNonSpaceWrap(true)
 
 		frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
 
-		status = textParent:CreateFontString(nil, "OVERLAY", "LSStatusIcon16Font")
+		status = textParent:CreateFontString(nil, "OVERLAY", "LSIcon16Font")
 		status:SetWidth(24)
 		status:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 		status:SetNonSpaceWrap(true)
@@ -571,7 +571,7 @@ do
 		feeback:SetPoint("CENTER", 0, 0)
 		frame.FloatingCombatFeedback = feeback
 
-		local status = textParent:CreateFontString(nil, "ARTWORK", "LSStatusIcon16Font")
+		local status = textParent:CreateFontString(nil, "ARTWORK", "LSIcon16Font")
 		status:SetJustifyH("RIGHT")
 		status:SetPoint("RIGHT", frame, "BOTTOMRIGHT", -4, -1)
 		frame:Tag(status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")
