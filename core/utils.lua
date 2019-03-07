@@ -13,6 +13,7 @@ local m_modf = _G.math.modf
 local next = _G.next
 local s_format = _G.string.format
 local s_split = _G.string.split
+local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 
@@ -715,22 +716,22 @@ do
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
 
 	local EMPTY_SOCKET_TEXTURES = {
-		[136256] = true,
-		[136257] = true,
-		[136258] = true,
-		[136259] = true,
-		[136260] = true,
-		[407324] = true,
-		[407325] = true,
-		[458977] = true,
-		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET"] = true, -- 136260
-		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Blue"] = true, -- 136256
-		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
-		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
-		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-META"] = true, -- 136257
-		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Prismatic"] = true, -- 458977
-		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Red"] = true, -- 136258
-		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Yellow"] = true, -- 136259
+		["136256"] = true,
+		["136257"] = true,
+		["136258"] = true,
+		["136259"] = true,
+		["136260"] = true,
+		["407324"] = true,
+		["407325"] = true,
+		["458977"] = true,
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET"] = true, -- 136260
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-BLUE"] = true, -- 136256
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"] = true, -- 136257
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PRISMATIC"] = true, -- 458977
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-RED"] = true, -- 136258
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-YELLOW"] = true, -- 136259
 	}
 
 	local itemCache = {}
@@ -773,7 +774,7 @@ do
 		for i = 1, MAX_NUM_SOCKETS do
 			texture = _G["LSScanTipTexture" .. i]:GetTexture()
 			if texture then
-				if EMPTY_SOCKET_TEXTURES[texture] then
+				if EMPTY_SOCKET_TEXTURES[s_upper(texture)] then
 					if i == 1 then
 						gem1 = GEM_TEMPLATE:format(EMPTY_SOCKET)
 					elseif i == 2 then
