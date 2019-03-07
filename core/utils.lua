@@ -13,16 +13,14 @@ local m_modf = _G.math.modf
 local next = _G.next
 local s_format = _G.string.format
 local s_split = _G.string.split
-local s_sub = _G.string.sub
-local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
-local tonumber = _G.tonumber
-local type = _G.type
-local unpack = _G.unpack
 
--- Blizz
-local GetTickTime = _G.GetTickTime
+--[[ luacheck: globals
+	CreateFrame GetItemGem GetItemInfoInstant UIParent
+
+	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS
+]]
 
 -- Mine
 -----------
@@ -704,5 +702,107 @@ function E:GetScreenQuadrant(frame)
 		else
 			return "CENTER"
 		end
+	end
+end
+
+-----------
+-- ITEMS --
+-----------
+
+do
+	local EMPTY_SOCKET = 136260
+	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.+)')
+	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
+
+	local EMPTY_SOCKET_TEXTURES = {
+		[136256] = true,
+		[136257] = true,
+		[136258] = true,
+		[136259] = true,
+		[136260] = true,
+		[407324] = true,
+		[407325] = true,
+		[458977] = true,
+		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET"] = true, -- 136260
+		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Blue"] = true, -- 136256
+		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
+		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
+		["Interface\\ItemsocketingFrame\\UI-EMPTYSOCKET-META"] = true, -- 136257
+		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Prismatic"] = true, -- 458977
+		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Red"] = true, -- 136258
+		["Interface\\ItemsocketingFrame\\UI-EmptySocket-Yellow"] = true, -- 136259
+	}
+
+	local itemCache = {}
+
+	local scanTip = CreateFrame("GameTooltip", "LSScanTip", nil, "GameTooltipTemplate")
+	scanTip:SetOwner(UIParent, 'ANCHOR_NONE')
+
+	local function wipeScanTip()
+		scanTip:ClearLines()
+
+		for i = 1, 10 do
+			_G["LSScanTipTexture" .. i]:SetTexture(nil)
+		end
+	end
+
+	function E:GetItemEnchantGemInfo(itemLink)
+		if itemCache[itemLink] then
+			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
+		else
+			itemCache[itemLink] = {}
+		end
+
+		wipeScanTip(scanTip)
+		scanTip:SetHyperlink(itemLink)
+
+		local enchant, text = ""
+		for i = 2, scanTip:NumLines() do
+			text = _G["LSScanTipTextLeft" .. i]:GetText()
+			if text and text ~= "" then
+				text = text:match(ENCHANT_PATTERN)
+				if text then
+					enchant = text
+
+					break
+				end
+			end
+		end
+
+		local gem1, gem2, gem3, texture, gemLink, _ = "", "", ""
+		for i = 1, MAX_NUM_SOCKETS do
+			texture = _G["LSScanTipTexture" .. i]:GetTexture()
+			if texture then
+				if EMPTY_SOCKET_TEXTURES[texture] then
+					if i == 1 then
+						gem1 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					elseif i == 2 then
+						gem2 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					else
+						gem3 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+					end
+				else
+					_, gemLink = GetItemGem(itemLink, i)
+					if gemLink then
+						_, _, _, _, texture = GetItemInfoInstant(gemLink)
+
+						if i == 1 then
+							gem1 = GEM_TEMPLATE:format(texture)
+						elseif i == 2 then
+							gem2 = GEM_TEMPLATE:format(texture)
+						else
+							gem3 = GEM_TEMPLATE:format(texture)
+						end
+					end
+				end
+			end
+		end
+
+		itemCache[itemLink].enchant = enchant
+		itemCache[itemLink].gem1 = gem1
+		itemCache[itemLink].gem2 = gem2
+		itemCache[itemLink].gem3 = gem3
+
+		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 	end
 end
