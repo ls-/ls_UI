@@ -460,3 +460,4 @@ L["ZONE_TEXT"] = "Zone Text"
 -- wip
 L["CLEAN_UP"] = "Clean Up"
 L["CLEAN_UP_MAIL_DESC"] = "Removes all empty messages."
+L["CHARACTER_FRAME"] = "Character Frame"

@@ -2850,6 +2850,9 @@ D.char = {
 		castbar = { -- CastingBarFrame
 			enabled = true
 		},
+		character_frame = { -- CharacterFrame
+			enabled = false,
+		},
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
 		},
