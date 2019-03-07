@@ -2851,7 +2851,7 @@ D.char = {
 			enabled = true
 		},
 		character_frame = { -- CharacterFrame
-			enabled = false,
+			enabled = true,
 		},
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
