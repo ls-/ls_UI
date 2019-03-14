@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 80100.04
+
+- Added 8.1.5 support;
+- Adjusted custom character frame so it doesn't interfere with Pawn's and DejaCharacterStats'  
+  buttons;
+- Updated embedded oUF.
+
 ## Version 80100.03
 
 - Reworked the character frame. It now shows info on gems and enchants. Enabled by default, can be  

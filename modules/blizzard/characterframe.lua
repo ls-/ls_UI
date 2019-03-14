@@ -181,7 +181,9 @@ function MODULE:SetUpCharacterFrame()
 		CharacterSecondaryHandSlot:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", -176, 5)
 
 		CharacterModelFrame:SetSize(0, 0)
-		CharacterModelFrame:SetAllPoints(CharacterFrame.Inset)
+		CharacterModelFrame:ClearAllPoints()
+		CharacterModelFrame:SetPoint("TOPLEFT", CharacterFrame.Inset, 0, 0)
+		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, 0, 44)
 
 		for _, texture in next, TEXTURES_TO_REMOVE do
 			texture:SetTexture(nil)
