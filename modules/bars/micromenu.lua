@@ -22,15 +22,15 @@ local C_Timer = _G.C_Timer
 	GetLFGRoles GetLFGRoleShortageRewards GetMoney GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons
 	GetNumRFDungeons GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
 	GetSavedWorldBossInfo GetTime GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked
-	IsInventoryItemProfessionBag IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
-	MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot
-	PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
-	SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
+	IsInventoryItemProfessionBag IsKioskModeEnabled IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar
+	MainMenuBarDownload MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText
+	PickupBagFromSlot PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo
+	SecondsToTime SetBagSlotFlag SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
 
 	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_IGNORE BAG_FILTER_LABELS
-	EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP LE_BAG_FILTER_FLAG_JUNK
-	LFG_ROLE_NUM_SHORTAGE_TYPES NEWBIE_TOOLTIP_SPELLBOOK NUM_BAG_SLOTS NUM_LE_BAG_FILTER_FLAGS
-	PERFORMANCEBAR_MEDIUM_LATENCY SHOW_NEWBIE_TIPS
+	DUNGEONS_BUTTON EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP
+	LE_BAG_FILTER_FLAG_JUNK LFG_ROLE_NUM_SHORTAGE_TYPES NEWBIE_TOOLTIP_LFGPARENT NEWBIE_TOOLTIP_SPELLBOOK NUM_BAG_SLOTS
+	NUM_LE_BAG_FILTER_FLAGS PERFORMANCEBAR_MEDIUM_LATENCY SHOW_NEWBIE_TIPS
 ]]
 
 -- Mine
@@ -989,7 +989,17 @@ do
 
 	function lfdButton_OnEvent(self, event)
 		if event == "LFG_LOCK_INFO_RECEIVED" then
-			self:UpdateIndicator()
+			if GetTime() - (self.lastUpdate or 0) > 9 then
+				self:UpdateIndicator()
+				self.lastUpdate = GetTime()
+			end
+		else
+			if IsKioskModeEnabled() then
+				return
+			end
+
+			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+			self.newbieText = NEWBIE_TOOLTIP_LFGPARENT
 		end
 	end
 
@@ -1478,7 +1488,10 @@ function MODULE:CreateMicroMenu()
 
 				button.Update = guildButton_Update
 			elseif id == "lfd" then
-				button:HookScript("OnEvent", lfdButton_OnEvent)
+				button:SetScript("OnEvent", lfdButton_OnEvent)
+
+				button.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+				button.newbieText = NEWBIE_TOOLTIP_LFGPARENT
 
 				button.Update = lfdButton_Update
 				button.UpdateIndicator = lfdButton_UpdateIndicator
