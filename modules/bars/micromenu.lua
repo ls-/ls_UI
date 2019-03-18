@@ -1009,7 +1009,7 @@ do
 		if self._config.enabled and self._config.tooltip then
 			self:SetScript("OnEnter", lfdButton_OnEnter)
 
-			self.Ticker = C_Timer.NewTicker(10, function()
+			self.Ticker = C_Timer.NewTicker(15, function()
 				RequestLFDPlayerLockInfo()
 				RequestLFDPartyLockInfo()
 			end)
