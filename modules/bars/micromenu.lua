@@ -16,16 +16,17 @@ local unpack = _G.unpack
 local C_Timer = _G.C_Timer
 
 --[[ luacheck: globals
-	BreakUpLargeNumbers ContainerIDToInventoryID CreateFrame CursorCanGoInSlot CursorHasItem GameTooltip GetAddOnInfo
-	GetAddOnMemoryUsage GetBagSlotFlag GetContainerNumFreeSlots GetContainerNumSlots GetCurrencyInfo
-	GetInventoryItemDurability GetInventoryItemTexture GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo
-	GetLFGRoles GetLFGRoleShortageRewards GetMoney GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons
-	GetNumRFDungeons GetNumSavedInstances GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo
-	GetSavedWorldBossInfo GetTime GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked
-	IsInventoryItemProfessionBag IsKioskModeEnabled IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar
-	MainMenuBarDownload MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText
-	PickupBagFromSlot PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo
-	SecondsToTime SetBagSlotFlag SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
+	AchievementMicroButton_Update BreakUpLargeNumbers ContainerIDToInventoryID CreateFrame CursorCanGoInSlot
+	CursorHasItem GameTooltip GetAddOnInfo GetAddOnMemoryUsage GetBagSlotFlag GetContainerNumFreeSlots
+	GetContainerNumSlots GetCurrencyInfo GetInventoryItemDurability GetInventoryItemTexture
+	GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles GetLFGRoleShortageRewards GetMoney
+	GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons GetNumSavedInstances
+	GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo GetSavedWorldBossInfo GetTime
+	GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked IsInventoryItemProfessionBag
+	IsKioskModeEnabled IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
+	MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot
+	PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
+	SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
 
 	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_IGNORE BAG_FILTER_LABELS
 	DUNGEONS_BUTTON EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP
@@ -1544,6 +1545,9 @@ function MODULE:CreateMicroMenu()
 				repositionAlert(_G[name])
 			end
 		end)
+
+		-- this method was removed, but is still called by the Blizz UI
+		AchievementMicroButton_Update = E.NOOP
 
 		isInit = true
 	end
