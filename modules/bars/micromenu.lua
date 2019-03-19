@@ -1547,7 +1547,9 @@ function MODULE:CreateMicroMenu()
 		end)
 
 		-- this method was removed, but is still called by the Blizz UI
-		AchievementMicroButton_Update = E.NOOP
+		if not AchievementMicroButton_Update then
+			AchievementMicroButton_Update = E.NOOP
+		end
 
 		isInit = true
 	end
