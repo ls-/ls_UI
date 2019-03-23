@@ -136,6 +136,7 @@ do
 		element.colorHealth = true
 		element.colorTapping = true
 		element.colorDisconnected = true
+		element.frequentUpdates = frame.unit == "player"
 		element.PostUpdate = element_PostUpdate
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig

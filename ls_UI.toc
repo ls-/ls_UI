@@ -1,6 +1,6 @@
 ## Interface: 80100
 ## Author: lightspark
-## Version: 80100.04
+## Version: 80100.05
 ## Title: ls: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CHAR_CONFIG

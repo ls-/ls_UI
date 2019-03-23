@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 80100.05
+
+- Added a workaround for a Blizz's bug where the default UI tries to call missing  
+  AchievementMicroButton_Update function;
+- Added a workaround for a Blizz's bug where vehicle's health bar on the player frame wasn't  
+  updating correctly;
+- Fixed an issue where the main action bar's page wasn't updated correctly while doing "The Cycle  
+  of Life" world quest.
+- Updated embedded oUF;
+
 ## Version 80100.04
 
 - Added 8.1.5 support;
