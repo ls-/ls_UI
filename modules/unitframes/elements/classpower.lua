@@ -328,19 +328,15 @@ do
 		runes = true,
 	}
 
-	local function element_Override(self, _, unit)
-		if unit and unit ~= self.unit then return end
+	local function element_PostUpdate(element, cur, max)
+		element.GainLossIndicators:Update(cur, max)
+	end
 
+	local function element_UpdateColor(self, _, unit)
+		if unit and unit ~= self.unit then return end
 		local element = self.Stagger
 
-		local max = UnitHealthMax("player")
-		local cur = UnitStagger("player")
-
-		element:SetMinMaxValues(0, max)
-		element:SetValue(cur)
-		element:SetStatusBarColor(E:GetGradientAsRGB(cur / max, C.db.profile.colors.power.STAGGER))
-
-		element.GainLossIndicators:Update(cur, max)
+		element:SetStatusBarColor(E:GetGradientAsRGB((element.cur or 0) / (element.max or 1), C.db.profile.colors.power.STAGGER))
 	end
 
 	local function element_UpdateConfig(self)
@@ -393,7 +389,8 @@ do
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
-		element.Override = element_Override
+		element.PostUpdate = element_PostUpdate
+		element.UpdateColor = element_UpdateColor
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
 		element.UpdateGainLossColors = element_UpdateGainLossColors
