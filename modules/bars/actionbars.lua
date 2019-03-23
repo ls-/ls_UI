@@ -107,7 +107,7 @@ local PAGES = {
 	["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 	-- Stealth, shadow dance
 	["ROGUE"] = "[bonusbar:1] 7;",
-	["DEFAULT"] = "[vehicleui][possessbar] 12; [shapeshift] 13; [overridebar] 14; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
+	["DEFAULT"] = "[overridebar] 14; [shapeshift] 13; [vehicleui][possessbar] 12; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
 local function getBarPage()
@@ -299,10 +299,6 @@ function MODULE.CreateActionBars()
 			end
 
 			bar:SetAttribute("_onstate-page", [[
-				if HasTempShapeshiftActionBar() then
-					newstate = GetTempShapeshiftBarIndex() or newstate
-				end
-
 				self:SetAttribute("state", newstate)
 				control:ChildUpdate("state", newstate)
 			]])
