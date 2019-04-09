@@ -1157,7 +1157,7 @@ local function getUFOption_ClassPower(order, unit)
 							["desc"] = L["DESCENDING"],
 						},
 						set = function(_, value)
-							C.db.profile.units[unit].class_power.runes.color_by_spec = value
+							C.db.profile.units[unit].class_power.runes.sort_order = value
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateConfig")
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Runes", "UpdateSortOrder")
 						end,
