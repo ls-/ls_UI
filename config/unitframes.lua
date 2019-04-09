@@ -2370,62 +2370,6 @@ local function getUFOption_Auras(order, unit)
 	return temp
 end
 
-local function getUFOption_CombatFeedback(order, unit)
-	return {
-		order = order,
-		type = "group",
-		name = L["FCF"],
-		get = function(info)
-			return C.db.profile.units[unit].combat_feedback[info[#info]]
-		end,
-		set = function(info, value)
-			C.db.profile.units[unit].combat_feedback[info[#info]] = value
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-		end,
-		args = {
-			enabled = {
-				order = 1,
-				type = "toggle",
-				name = L["ENABLE"],
-			},
-			reset = {
-				type = "execute",
-				order = 2,
-				name = L["RESTORE_DEFAULTS"],
-				func = function()
-					CONFIG:CopySettings(D.profile.units[unit].combat_feedback, C.db.profile.units[unit].combat_feedback, resetIgnoredKeys)
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCombatFeedback")
-				end,
-			},
-			spacer_1 = {
-				order = 9,
-				type = "description",
-				name = " ",
-			},
-			x_offset = {
-				order = 10,
-				type = "range",
-				name = L["X_OFFSET"],
-				min = 0, max = 128, step = 1,
-			},
-			y_offset = {
-				order = 12,
-				type = "range",
-				name = L["Y_OFFSET"],
-				min = 0, max = 128, step = 1,
-			},
-			mode = {
-				order = 13,
-				type = "select",
-				name = L["MODE"],
-				values = CONFIG.FCF_MODES,
-			},
-		},
-	}
-end
-
 local function getUFOptions(order, unit, name)
 	local temp = {
 		order = order,
@@ -2490,7 +2434,6 @@ local function getUFOptions(order, unit, name)
 		temp.args.name = getUFOption_Name(500, unit)
 		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
 		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
-		temp.args.combat_feedback = getUFOption_CombatFeedback(900, unit)
 
 		if E.UI_LAYOUT == "traditional" then
 			temp.args.copy = getUFOption_Copy(2, unit)

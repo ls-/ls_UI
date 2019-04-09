@@ -46,7 +46,6 @@ do
 			self:UpdateRaidTargetIndicator()
 			self:UpdatePvPIndicator()
 			self:UpdateDebuffIndicator()
-			self:UpdateCombatFeedback()
 			self:UpdateThreatIndicator()
 			self:UpdateClassIndicator()
 		else
@@ -303,12 +302,6 @@ do
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
 		frame.DebuffIndicator:SetWidth(18)
 
-		-- floating combat text
-		local feeback = self:CreateCombatFeedback(frame)
-		feeback:SetFrameLevel(level + 9)
-		feeback:SetPoint("CENTER", 0, 0)
-		frame.FloatingCombatFeedback = feeback
-
 		-- threat
 		local threat = self:CreateThreatIndicator(frame, borderParent, true)
 		threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame-glow")
@@ -369,7 +362,6 @@ do
 			self:UpdateRaidTargetIndicator()
 			self:UpdatePvPIndicator()
 			self:UpdateDebuffIndicator()
-			self:UpdateCombatFeedback()
 			self:UpdateThreatIndicator()
 			self:UpdateAuras()
 			self:UpdateClassIndicator()
@@ -564,12 +556,6 @@ do
 
 		-- auras
 		frame.Auras = self:CreateAuras(frame, "player")
-
-		-- floating combat text
-		local feeback = self:CreateCombatFeedback(frame)
-		feeback:SetFrameLevel(level + 9)
-		feeback:SetPoint("CENTER", 0, 0)
-		frame.FloatingCombatFeedback = feeback
 
 		local status = textParent:CreateFontString(nil, "ARTWORK", "LSIcon16Font")
 		status:SetJustifyH("RIGHT")
