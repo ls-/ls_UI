@@ -171,7 +171,6 @@ local function bar_UpdateSegments(self)
 
 		-- Azerite
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-
 		if azeriteItemLocation then
 			index = index + 1
 
@@ -183,7 +182,7 @@ local function bar_UpdateSegments(self)
 				line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.artifact)
+			self[index]:Update(cur, max, 0, C.db.global.colors.white, "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill")
 		end
 
 		-- XP
@@ -192,20 +191,20 @@ local function bar_UpdateSegments(self)
 				index = index + 1
 
 				local cur, max = UnitXP("player"), UnitXPMax("player")
-				local bonus = GetXPExhaustion()
+				local bonus = GetXPExhaustion() or 0
 
 				self[index].tooltipInfo = {
 					header = L["EXPERIENCE"],
 					line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
 				}
 
-				if bonus and bonus > 0 then
+				if bonus > 0 then
 					self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
 				else
 					self[index].tooltipInfo.line2 = nil
 				end
 
-				self[index]:Update(cur, max, bonus, bonus and bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
+				self[index]:Update(cur, max, bonus, bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
 			end
 		end
 
@@ -379,13 +378,21 @@ local function segment_OnLeave(self)
 	end
 end
 
-local function segment_Update(self, cur, max, bonus, color)
+local function segment_Update(self, cur, max, bonus, color, texture)
 	if not self._color or not E:AreColorsEqual(self._color, color) then
 		self.Texture:SetVertexColor(E:GetRGBA(color, 1))
 		self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
 
 		self._color = self._color or {}
 		E:SetRGB(self._color, E:GetRGB(color))
+	end
+
+	texture = texture or "Interface\\BUTTONS\\WHITE8X8"
+	if not self._texture or self._texture ~= texture then
+		self:SetStatusBarTexture(texture)
+		self.Extension:SetStatusBarTexture(texture)
+
+		self._texture = texture
 	end
 
 	if self._value ~= cur or self._max ~= max then

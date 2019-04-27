@@ -13,6 +13,7 @@ local unpack = _G.unpack
 
 -- Blizz
 local FrameDeltaLerp = _G.FrameDeltaLerp
+local Lerp = _G.Lerp
 
 -- Mine
 function E:HandleStatusBar(bar, isRecursive)
@@ -630,10 +631,23 @@ do
 end
 
 do
-	local objects = {}
+	local activeObjects = {}
+	local handledObjects = {}
+
+	local TARGET_FPS = 60
+	local AMOUNT = 0.33
 
 	local function clamp(v, min, max)
-		return m_min(max or 1, m_max(min or 0, v))
+		min = min or 0
+		max = max or 1
+
+		if v > max then
+			return max
+		elseif v < min then
+			return min
+		end
+
+		return v
 	end
 
 	local function isCloseEnough(new, target, range)
@@ -644,43 +658,44 @@ do
 		return true
 	end
 
-	C_Timer.NewTicker(0, function()
-		for object, target in next, objects do
-			local new = FrameDeltaLerp(object._value, target, 0.25)
+	local frame = CreateFrame("Frame", "LSBarSmoother")
 
+	local function onUpdate(_, elapsed)
+		for object, target in next, activeObjects do
+			local new = Lerp(object._value, target, clamp(AMOUNT * elapsed * TARGET_FPS))
 			if isCloseEnough(new, target, object._max - object._min) then
 				new = target
-				objects[object] = nil
+				activeObjects[object] = nil
 			end
 
 			object:SetValue_(new)
 			object._value = new
 		end
-	end)
+	end
 
 	local function bar_SetSmoothedValue(self, value)
 		self._value = self:GetValue()
-		objects[self] = clamp(value, self._min, self._max)
+		activeObjects[self] = clamp(value, self._min, self._max)
 	end
 
 	local function bar_SetSmoothedMinMaxValues(self, min, max)
 		self:SetMinMaxValues_(min, max)
 
 		if self._max and self._max ~= max then
-			local target = objects[self]
-			local cur = self._value
 			local ratio = 1
-
 			if max ~= 0 and self._max and self._max ~= 0 then
 				ratio = max / (self._max or max)
 			end
 
+			local target = activeObjects[self]
 			if target then
-				objects[self] = target * ratio
+				activeObjects[self] = target * ratio
 			end
 
+			local cur = self._value
 			if cur then
 				self:SetValue_(cur * ratio)
+				self._value = cur * ratio
 			end
 		end
 
@@ -689,13 +704,45 @@ do
 	end
 
 	function E:SmoothBar(bar)
-		-- reset the bar
-		bar:SetMinMaxValues(0, 1)
-		bar:SetValue(0)
+		bar._min, bar._max = bar:GetMinMaxValues()
+		bar._value = bar:GetValue()
 
 		bar.SetValue_ = bar.SetValue
 		bar.SetMinMaxValues_ = bar.SetMinMaxValues
 		bar.SetValue = bar_SetSmoothedValue
 		bar.SetMinMaxValues = bar_SetSmoothedMinMaxValues
+
+		handledObjects[bar] = true
+
+		if not frame:GetScript("OnUpdate") then
+			frame:SetScript("OnUpdate", onUpdate)
+		end
+	end
+
+	function E:DesmoothBar(bar)
+		if activeObjects[bar] then
+			bar:SetValue_(activeObjects[bar])
+			activeObjects[bar] = nil
+		end
+
+		if bar.SetValue_ then
+			bar.SetValue = bar.SetValue_
+			bar.SetValue_ = nil
+		end
+
+		if bar.SetMinMaxValues_ then
+			bar.SetMinMaxValues = bar.SetMinMaxValues_
+			bar.SetMinMaxValues_ = nil
+		end
+
+		handledObjects[bar] = nil
+
+		if not next(handledObjects) then
+			frame:SetScript("OnUpdate", nil)
+		end
+	end
+
+	function E:SetSmoothingAmount(amount)
+		AMOUNT = clamp(amount, 0.3, 0.6)
 	end
 end

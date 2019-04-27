@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 80100.06
+
+- Removed floating combat feedback from the player frame;
+- Fixed xp bonus bar updates;
+- Fixed rune bar sorting;
+- Updated azerite bar to use a custom texture. Suggested by Heybarbaruiva@WoWInterface;
+- Updated embedded oUF.
+
 ## Version 80100.05
 
 - Added a workaround for a Blizz's bug where the default UI tries to call missing  
@@ -7,8 +15,8 @@
 - Added a workaround for a Blizz's bug where vehicle's health bar on the player frame wasn't  
   updating correctly;
 - Fixed an issue where the main action bar's page wasn't updated correctly while doing "The Cycle  
-  of Life" world quest.
-- Updated embedded oUF;
+  of Life" world quest;
+- Updated embedded oUF.
 
 ## Version 80100.04
 

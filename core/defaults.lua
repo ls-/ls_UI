@@ -379,12 +379,6 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
-				combat_feedback = {
-					enabled = false,
-					mode = "Fountain",
-					x_offset = 15,
-					y_offset = 20,
-				},
 				border = {
 					color = {
 						class = false,
@@ -762,12 +756,6 @@ D.profile = {
 						x = -1,
 						y = 7,
 					},
-				},
-				combat_feedback = {
-					enabled = false,
-					mode = "Standard",
-					x_offset = 64,
-					y_offset = 32,
 				},
 				border = {
 					color = {
