@@ -1,9 +1,6 @@
 [submodule "embeds/oUF"]
 	path = embeds/oUF
 	url = git@github.com:ls-/oUF.git
-[submodule "embeds/oUF_FloatingCombatFeedback"]
-	path = embeds/oUF_FloatingCombatFeedback
-	url = git@github.com:ls-/oUF_FloatingCombatFeedback.git
 [submodule "embeds/LibActionButton-1.0"]
 	path = embeds/LibActionButton-1.0
 	url = git@github.com:ls-/LibActionButton-1.0.git
