@@ -188,26 +188,24 @@ local function bar_UpdateSegments(self)
 		end
 
 		-- XP
-		if UnitLevel("player") < MAX_PLAYER_LEVEL then
-			if not IsXPUserDisabled() then
-				index = index + 1
+		if not IsXPUserDisabled() and UnitLevel("player") < MAX_PLAYER_LEVEL then
+			index = index + 1
 
-				local cur, max = UnitXP("player"), UnitXPMax("player")
-				local bonus = GetXPExhaustion() or 0
+			local cur, max = UnitXP("player"), UnitXPMax("player")
+			local bonus = GetXPExhaustion() or 0
 
-				self[index].tooltipInfo = {
-					header = L["EXPERIENCE"],
-					line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
-				}
+			self[index].tooltipInfo = {
+				header = L["EXPERIENCE"],
+				line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
+			}
 
-				if bonus > 0 then
-					self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
-				else
-					self[index].tooltipInfo.line2 = nil
-				end
-
-				self[index]:Update(cur, max, bonus, bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
+			if bonus > 0 then
+				self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
+			else
+				self[index].tooltipInfo.line2 = nil
 			end
+
+			self[index]:Update(cur, max, bonus, bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
 		end
 
 		-- Honour
