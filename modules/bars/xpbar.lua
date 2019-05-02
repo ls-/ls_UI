@@ -170,19 +170,21 @@ local function bar_UpdateSegments(self)
 		end
 
 		-- Azerite
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		if azeriteItemLocation then
-			index = index + 1
+		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+			if azeriteItemLocation then
+				index = index + 1
 
-			local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+				local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+				local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 
-			self[index].tooltipInfo = {
-				header = L["ARTIFACT_POWER"],
-				line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
-			}
+				self[index].tooltipInfo = {
+					header = L["ARTIFACT_POWER"],
+					line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
+				}
 
-			self[index]:Update(cur, max, 0, C.db.global.colors.white, "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill")
+				self[index]:Update(cur, max, 0, C.db.global.colors.white, "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill")
+			end
 		end
 
 		-- XP
