@@ -292,7 +292,7 @@ end
 local updateTagVarsOptions
 do
 	local function isDefaultTag(info)
-		return D.global.tags[info[#info - 1]]
+		return D.global.tag_vars[info[#info - 1]]
 	end
 
 	local function validateTagVars(_, value)
