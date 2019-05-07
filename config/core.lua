@@ -573,9 +573,8 @@ do
 	end
 end
 
-function MODULE.SetStatusText(_, text)
+function MODULE:SetStatusText(text)
 	local frame = AceConfigDialog.OpenFrames[addonName]
-
 	if frame then
 		frame:SetStatusText(text)
 	end
@@ -584,7 +583,6 @@ end
 -- MODULE.IsTagStringValid
 do
 	local badTags = {}
-	local badTag = "|cffffffff%s|r"
 
 	local function getTagName(tag)
 		local tagStart = (tag:match('>+()') or 2)
@@ -599,7 +597,7 @@ do
 
 		for bracket in tagString:gmatch("%[..-%]+") do
 			if not oUF.Tags.Methods[getTagName(bracket)] then
-				t_insert(badTags, badTag:format(bracket))
+				t_insert(badTags, "|cffffffff" .. bracket .. "|r")
 			end
 		end
 
