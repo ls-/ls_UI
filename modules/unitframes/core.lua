@@ -5,6 +5,8 @@ local UF = P:AddModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local rawset = _G.rawset
+local tonumber = _G.tonumber
 local type = _G.type
 local unpack = _G.unpack
 
@@ -151,6 +153,23 @@ function UF:UpdatePowerColors()
 	end
 end
 
+function UF:UpdateTags()
+	for name, data in next, C.db.global.tags do
+		oUF.Tags.Events[name] = data.events
+
+		rawset(oUF.Tags.Methods, name, nil)
+		oUF.Tags.Methods[name] = data.func
+
+		rawset(oUF.Tags.Vars, name, nil)
+		oUF.Tags.Vars[name] = tonumber(data.vars) or data.vars
+	end
+
+	for name, vars in next, C.db.global.tag_vars do
+		rawset(oUF.Tags.Vars, name, nil)
+		oUF.Tags.Vars[name] = tonumber(vars) or vars
+	end
+end
+
 function UF:CreateUnitFrame(unit, name)
 	if not units[unit] then
 		if unit == "boss" then
@@ -228,6 +247,7 @@ function UF:Init()
 		self:UpdateHealthColors()
 		self:UpdateReactionColors()
 		self:UpdatePowerColors()
+		self:UpdateTags()
 
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)

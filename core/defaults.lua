@@ -62,6 +62,8 @@ D.global = {
 			[3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
 	},
+	tags = {},
+	tag_vars = {},
 }
 
 D.profile = {

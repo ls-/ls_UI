@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
 local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
 local MINIMAP = P:GetModule("Minimap")
@@ -8,18 +8,467 @@ local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local tonumber = _G.tonumber
 local next = _G.next
+local rawset = _G.rawset
+local s_trim = _G.string.trim
+local t_insert = _G.table.insert
+local t_sort = _G.table.sort
+local t_wipe = _G.table.wipe
+local tonumber = _G.tonumber
+local tostring = _G.tostring
 local type = _G.type
 
 --[[ luacheck: globals
-	GetText UnitSex
+	GetText LibStub UnitSex
 
 	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
 	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
 ]]
 
 -- Mine
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+local updateTagOptions
+do
+	local function isDefaultTag(info)
+		return D.global.tags[info[#info - 1]]
+	end
+
+	local function validateTagEvents(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsEventStringValid(value)
+	end
+
+	local function validateTagVars(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsVarStringValid(value)
+	end
+
+	local function validateTagFunc(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsFuncStringValid(value)
+	end
+
+	local curTagInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			disabled = isDefaultTag,
+			validate = function(info, value)
+				value = s_trim(value)
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and oUF.Tags.Methods[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value)
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.tags[value] then
+						C.db.global.tags[value] = C.db.global.tags[info[#info - 1]]
+						C.db.global.tags[info[#info - 1]] = nil
+
+						oUF.Tags.Events[value] = C.db.global.tags[value].events
+						oUF.Tags.Events[info[#info - 1]] = nil
+
+						rawset(oUF.Tags.Vars, info[#info - 1], nil)
+						oUF.Tags.Vars[value] = C.db.global.tags[value].vars
+
+						rawset(oUF.Tags.Methods, info[#info - 1], nil)
+						oUF.Tags.Methods[value] = C.db.global.tags[value].func
+
+						updateTagOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "tags", value)
+					end
+				end
+			end,
+		},
+		events = {
+			order = 2,
+			type = "input",
+			width = "full",
+			name = L["EVENTS"],
+			validate = validateTagEvents,
+			set = function(info, value)
+				value = s_trim(value)
+				if value ~= "" and C.db.global.tags[info[#info - 1]].events ~= value then
+					C.db.global.tags[info[#info - 1]].events = value
+
+					oUF.Tags.Events[info[#info - 1]] = value
+
+					oUF.Tags:RefreshEvents(info[#info - 1])
+				end
+			end,
+		},
+		vars = {
+			order = 3,
+			type = "input",
+			width = "full",
+			name = L["VAR"],
+			multiline = 8,
+			disabled = isDefaultTag,
+			validate = validateTagVars,
+			set = function(info, value)
+				value = tonumber(value) or s_trim(value)
+				if value ~= "" and C.db.global.tags[info[#info - 1]].vars ~= value then
+					C.db.global.tags[info[#info - 1]].vars = value
+
+					rawset(oUF.Tags.Vars, info[#info - 1], nil)
+					oUF.Tags.Vars[info[#info - 1]] = value
+				end
+			end,
+		},
+		func = {
+			order = 4,
+			type = "input",
+			width = "full",
+			name = L["FUNC"],
+			multiline = 16,
+			validate = validateTagFunc,
+			set = function(info, value)
+				value = s_trim(value)
+				if C.db.global.tags[info[#info - 1]].func ~= value then
+					C.db.global.tags[info[#info - 1]].func = value
+
+					rawset(oUF.Tags.Methods, info[#info - 1], nil)
+					oUF.Tags.Methods[info[#info - 1]] = value
+
+					oUF.Tags:RefreshMethods(info[#info - 1])
+				end
+			end,
+		},
+		delete = {
+			order = 5,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			disabled = isDefaultTag,
+			func = function(info)
+				C.db.global.tags[info[#info - 1]] = nil
+				oUF.Tags.Events[info[#info - 1]] = nil
+				rawset(oUF.Tags.Vars, info[#info - 1], nil)
+				rawset(oUF.Tags.Methods, info[#info - 1], nil)
+
+				updateTagOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "tags")
+			end,
+		},
+	}
+
+	local newTagInfo = {
+		name = "",
+		events = "",
+		vars = "",
+		func = "",
+	}
+
+	local tagOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW_TAG"],
+			get = function(info)
+				return tostring(newTagInfo[info[#info]])
+			end,
+			set = function(info, value)
+				newTagInfo[info[#info]] = s_trim(value)
+			end,
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value)
+
+						CONFIG:SetStatusText("")
+						return oUF.Tags.Methods[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+				},
+				events = {
+					order = 2,
+					type = "input",
+					width = "full",
+					name = L["EVENTS"],
+					validate = validateTagEvents,
+				},
+				vars = {
+					order = 3,
+					type = "input",
+					width = "full",
+					name = L["VAR"],
+					multiline = 8,
+					validate = validateTagVars,
+					set = function(_, value)
+						newTagInfo.vars = tonumber(value) or s_trim(value)
+					end,
+				},
+				func = {
+					order = 4,
+					type = "input",
+					width = "full",
+					name = L["FUNC"],
+					multiline = 16,
+					validate = validateTagFunc,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newTagInfo.name ~= "" and newTagInfo.func ~= "" then
+							C.db.global.tags[newTagInfo.name] = {}
+
+							if newTagInfo.events ~= "" then
+								C.db.global.tags[newTagInfo.name].events = newTagInfo.events
+								oUF.Tags.Events[newTagInfo.name] = newTagInfo.events
+							end
+
+							if newTagInfo.vars ~= "" then
+								C.db.global.tags[newTagInfo.name].vars = newTagInfo.vars
+								oUF.Tags.Vars[newTagInfo.name] = newTagInfo.vars
+							end
+
+							C.db.global.tags[newTagInfo.name].func = newTagInfo.func
+							oUF.Tags.Methods[newTagInfo.name] = newTagInfo.func
+
+							updateTagOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "tags", newTagInfo.name)
+
+							newTagInfo.name = ""
+							newTagInfo.events = ""
+							newTagInfo.vars = ""
+							newTagInfo.func = ""
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateTagOptions()
+		local options = C.options.args.general.args.tags.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = tagOptionTables.new
+
+		for tag in next, C.db.global.tags do
+			if not tagOptionTables[tag] then
+				tagOptionTables[tag] = {
+					type = "group",
+					name = tag,
+					args = curTagInfo,
+				}
+			end
+
+			options[tag] = tagOptionTables[tag]
+
+			t_insert(order, tag)
+		end
+
+		t_sort(order)
+
+		for i, tag in next, order do
+			if options[tag] then
+				options[tag].order = i + 10
+			end
+		end
+	end
+end
+
+local updateTagVarsOptions
+do
+	local function isDefaultTag(info)
+		return D.global.tags[info[#info - 1]]
+	end
+
+	local function validateTagVars(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsVarStringValid(value)
+	end
+
+	local curVarInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			disabled = isDefaultTag,
+			validate = function(info, value)
+				value = s_trim(value)
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and oUF.Tags.Vars[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value)
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.tag_vars[value] then
+						C.db.global.tag_vars[value] = C.db.global.tag_vars[info[#info - 1]]
+						C.db.global.tag_vars[info[#info - 1]] = nil
+
+						oUF.Tags.Vars[value] = C.db.global.tag_vars[value].vars
+						rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+						updateTagVarsOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars", value)
+					end
+				end
+			end,
+		},
+		value = {
+			order = 2,
+			type = "input",
+			width = "full",
+			name = L["VALUE"],
+			multiline = 16,
+			disabled = isDefaultTag,
+			validate = validateTagVars,
+			get = function(info)
+				return tostring(C.db.global.tag_vars[info[#info - 1]])
+			end,
+			set = function(info, value)
+				value = tonumber(value) or s_trim(value)
+				if value ~= "" and C.db.global.tag_vars[info[#info - 1]] ~= value then
+					C.db.global.tag_vars[info[#info - 1]] = value
+
+					rawset(oUF.Tags.Vars, info[#info - 1], nil)
+					oUF.Tags.Vars[info[#info - 1]] = value
+				end
+			end,
+		},
+		delete = {
+			order = 3,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			disabled = isDefaultTag,
+			func = function(info)
+				C.db.global.tag_vars[info[#info - 1]] = nil
+				rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+				updateTagVarsOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars")
+			end,
+		},
+	}
+
+	local newVarInfo = {
+		name = "",
+		value = "",
+	}
+
+	local varOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW_VAR"],
+			get = function(info)
+				return tostring(newVarInfo[info[#info]])
+			end,
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value)
+
+						CONFIG:SetStatusText("")
+						return oUF.Tags.Vars[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+					set = function(_, value)
+						newVarInfo.name = s_trim(value)
+					end,
+				},
+				value = {
+					order = 3,
+					type = "input",
+					width = "full",
+					name = L["VALUE"],
+					multiline = 16,
+					validate = validateTagVars,
+					set = function(_, value)
+						newVarInfo.value = tonumber(value) or s_trim(value)
+					end,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newVarInfo.name ~= "" then
+							C.db.global.tag_vars[newVarInfo.name] = newVarInfo.value
+
+							oUF.Tags.Vars[newVarInfo.name] = newVarInfo.value
+
+							updateTagVarsOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars", newVarInfo.name)
+
+							newVarInfo.name = ""
+							newVarInfo.value = ""
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateTagVarsOptions()
+		local options = C.options.args.general.args.tag_vars.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = varOptionTables.new
+
+		for var in next, C.db.global.tag_vars do
+			if not varOptionTables[var] then
+				varOptionTables[var] = {
+					type = "group",
+					name = var,
+					args = curVarInfo,
+				}
+			end
+
+			options[var] = varOptionTables[var]
+
+			t_insert(order, var)
+		end
+
+		t_sort(order)
+
+		for i, var in next, order do
+			if options[var] then
+				options[var].order = i + 10
+			end
+		end
+	end
+end
+
 function CONFIG:CreateGeneralPanel(order)
 	C.options.args.general = {
 		order = order,
@@ -1039,6 +1488,26 @@ function CONFIG:CreateGeneralPanel(order)
 					},
 				},
 			},
+			tags = {
+				order = 2,
+				type = "group",
+				childGroups = "tree",
+				name = L["TAGS"],
+				get = function(info)
+					return tostring(C.db.global.tags[info[#info - 1]][info[#info]] or "")
+				end,
+				args = {},
+			},
+			tag_vars = {
+				order = 3,
+				type = "group",
+				childGroups = "tree",
+				name = L["TAG_VARS"],
+				args = {},
+			},
 		},
 	}
+
+	updateTagOptions()
+	updateTagVarsOptions()
 end
