@@ -78,6 +78,11 @@ local function cleanUpStep1()
 	-- -> 80100.07
 	if not C.db.profile.version or C.db.profile.version < 8010007 then
 		if C.db.profile.colors then
+			if C.db.profile.colors.power and C.db.profiles.colors.power.ALT_POWER then
+				C.db.profiles.colors.power.ALTERNATE = C.db.profiles.colors.power.ALT_POWER
+				C.db.profiles.colors.power.ALT_POWER = nil
+			end
+
 			E:CopyTable(C.db.profile.colors, C.db.global.colors)
 
 			C.db.profile.colors = nil
