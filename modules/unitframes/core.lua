@@ -6,7 +6,6 @@ local UF = P:AddModule("UnitFrames")
 local _G = getfenv(0)
 local next = _G.next
 local rawset = _G.rawset
-local tonumber = _G.tonumber
 local type = _G.type
 local unpack = _G.unpack
 
@@ -161,12 +160,12 @@ function UF:UpdateTags()
 		oUF.Tags.Methods[name] = data.func
 
 		rawset(oUF.Tags.Vars, name, nil)
-		oUF.Tags.Vars[name] = tonumber(data.vars) or data.vars
+		oUF.Tags.Vars[name] = data.vars
 	end
 
 	for name, vars in next, C.db.global.tag_vars do
 		rawset(oUF.Tags.Vars, name, nil)
-		oUF.Tags.Vars[name] = tonumber(vars) or vars
+		oUF.Tags.Vars[name] = vars
 	end
 end
 
