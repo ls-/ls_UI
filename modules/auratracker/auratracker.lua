@@ -114,7 +114,7 @@ local function bar_OnEvent(self)
 				end
 
 				if button.filter == "HARMFUL" then
-					button.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.debuff[aura.debuffType] or C.db.profile.colors.debuff.None))
+					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[aura.debuffType] or C.db.global.colors.debuff.None))
 					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
 				else
 					button.Border:SetVertexColor(1, 1, 1)

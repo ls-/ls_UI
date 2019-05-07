@@ -23,7 +23,7 @@ local function update(self)
 			color = C.db.global.colors.class[class]
 		elseif element._config.color.reaction and UnitReaction(self.unit, "player") then
 			local reaction = UnitReaction(self.unit, "player")
-			color = C.db.profile.colors.reaction[reaction]
+			color = C.db.global.colors.reaction[reaction]
 		else
 			local class = UnitClassification(self.unit)
 			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then

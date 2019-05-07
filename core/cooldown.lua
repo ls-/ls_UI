@@ -50,10 +50,10 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 
 				if remain >= 86400 then
 					time1, time2, format = E:SecondsToTime(remain, "abbr")
-					color = C.db.profile.colors.cooldown.day
+					color = C.db.global.colors.cooldown.day
 				elseif remain >= 3600 then
 					time1, time2, format = E:SecondsToTime(remain, "abbr")
-					color = C.db.profile.colors.cooldown.hour
+					color = C.db.global.colors.cooldown.hour
 				elseif remain >= 60 then
 					if cooldown.config.m_ss_threshold == 0 or remain > cooldown.config.m_ss_threshold then
 						time1, time2, format = E:SecondsToTime(remain, "abbr")
@@ -61,7 +61,7 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 						time1, time2, format = E:SecondsToTime(remain, "x:xx")
 					end
 
-					color = C.db.profile.colors.cooldown.minute
+					color = C.db.global.colors.cooldown.minute
 				elseif remain >= 1 then
 					if remain > cooldown.config.exp_threshold then
 						time1, time2, format = E:SecondsToTime(remain, "abbr")
@@ -69,14 +69,14 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 						time1, time2, format = E:SecondsToTime(remain, "frac")
 					end
 
-					color = C.db.profile.colors.cooldown.second
+					color = C.db.global.colors.cooldown.second
 				elseif remain >= 0.001 then
 					time1, time2, format = E:SecondsToTime(remain)
-					color = C.db.profile.colors.cooldown.second
+					color = C.db.global.colors.cooldown.second
 				end
 
 				if remain <= cooldown.config.exp_threshold then
-					color = C.db.profile.colors.cooldown.expiration
+					color = C.db.global.colors.cooldown.expiration
 				end
 
 				if time1 then

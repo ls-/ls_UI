@@ -150,7 +150,7 @@ local function bar_UpdateSegments(self)
 				line1 = L["LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.xp[2])
+			self[index]:Update(cur, max, 0, C.db.global.colors.xp[2])
 		end
 	else
 		-- Artefact
@@ -166,7 +166,7 @@ local function bar_UpdateSegments(self)
 				line2 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.artifact)
+			self[index]:Update(cur, max, 0, C.db.global.colors.artifact)
 		end
 
 		-- Azerite
@@ -205,7 +205,7 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo.line2 = nil
 			end
 
-			self[index]:Update(cur, max, bonus, bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
+			self[index]:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
 		end
 
 		-- Honour
@@ -219,7 +219,7 @@ local function bar_UpdateSegments(self)
 				line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.faction[UnitFactionGroup("player")])
+			self[index]:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
 		end
 
 		-- Reputation
@@ -263,7 +263,7 @@ local function bar_UpdateSegments(self)
 
 			self[index].tooltipInfo = {
 				header = L["REPUTATION"],
-				line1 = REPUTATION_TEMPLATE:format(name, C.db.profile.colors.reaction[standing].hex, repTextLevel),
+				line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing].hex, repTextLevel),
 			}
 
 			if isParagon and hasRewardPending then
@@ -276,7 +276,7 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo.line3 = nil
 			end
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.reaction[standing])
+			self[index]:Update(cur, max, 0, C.db.global.colors.reaction[standing])
 		end
 	end
 

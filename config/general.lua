@@ -482,7 +482,7 @@ function CONFIG:CreateGeneralPanel(order)
 				childGroups = "tree",
 				name = L["COLORS"],
 				get = function(info)
-					return E:GetRGB(C.db.profile.colors[info[#info]])
+					return E:GetRGB(C.db.global.colors[info[#info]])
 				end,
 				args = {
 					health = {
@@ -493,7 +493,7 @@ function CONFIG:CreateGeneralPanel(order)
 							if r ~= nil then
 								info = info[#info]
 
-								local color = C.db.profile.colors[info]
+								local color = C.db.global.colors[info]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -509,9 +509,9 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									E:SetRGB(C.db.profile.colors.health, E:GetRGB(D.profile.colors.health))
-									E:SetRGB(C.db.profile.colors.disconnected, E:GetRGB(D.profile.colors.disconnected))
-									E:SetRGB(C.db.profile.colors.tapped, E:GetRGB(D.profile.colors.tapped))
+									E:SetRGB(C.db.global.colors.health, E:GetRGB(D.profile.colors.health))
+									E:SetRGB(C.db.global.colors.disconnected, E:GetRGB(D.profile.colors.disconnected))
+									E:SetRGB(C.db.global.colors.tapped, E:GetRGB(D.profile.colors.tapped))
 
 									UNITFRAMES:UpdateHealthColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
@@ -545,7 +545,7 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["POWER"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.power[info[#info]])
+							return E:GetRGB(C.db.global.colors.power[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
@@ -553,19 +553,19 @@ function CONFIG:CreateGeneralPanel(order)
 
 								local color
 								if info == "RUNES_BLOOD" then
-									color = C.db.profile.colors.rune[1]
+									color = C.db.global.colors.rune[1]
 								elseif info == "RUNES_FROST" then
-									color = C.db.profile.colors.rune[2]
+									color = C.db.global.colors.rune[2]
 								elseif info == "RUNES_UNHOLY" then
-									color = C.db.profile.colors.rune[3]
+									color = C.db.global.colors.rune[3]
 								elseif info == "STAGGER_LOW" then
-									color = C.db.profile.colors.power.STAGGER[1]
+									color = C.db.global.colors.power.STAGGER[1]
 								elseif info == "STAGGER_MEDIUM" then
-									color = C.db.profile.colors.power.STAGGER[2]
+									color = C.db.global.colors.power.STAGGER[2]
 								elseif info == "STAGGER_HIGH" then
-									color = C.db.profile.colors.power.STAGGER[3]
+									color = C.db.global.colors.power.STAGGER[3]
 								else
-									color = C.db.profile.colors.power[info]
+									color = C.db.global.colors.power[info]
 								end
 
 								if color.r ~= r or color.g ~= g or color.g ~= b then
@@ -593,16 +593,16 @@ function CONFIG:CreateGeneralPanel(order)
 										if type(k) == "string" then
 											if type(v[1]) == "table" then
 												for i, v_ in next, v do
-													E:SetRGB(C.db.profile.colors.power[k][i], E:GetRGB(v_))
+													E:SetRGB(C.db.global.colors.power[k][i], E:GetRGB(v_))
 												end
 											else
-												E:SetRGB(C.db.profile.colors.power[k], E:GetRGB(v))
+												E:SetRGB(C.db.global.colors.power[k], E:GetRGB(v))
 											end
 										end
 									end
 
 									for k, v in next, D.profile.colors.rune do
-										E:SetRGB(C.db.profile.colors.rune[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.rune[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:UpdatePowerColors()
@@ -656,7 +656,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_BLOOD"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[1])
+									return E:GetRGB(C.db.global.colors.rune[1])
 								end,
 							},
 							RUNES_FROST = {
@@ -664,7 +664,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_FROST"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[2])
+									return E:GetRGB(C.db.global.colors.rune[2])
 								end,
 							},
 							RUNES_UNHOLY = {
@@ -672,7 +672,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_UNHOLY"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[3])
+									return E:GetRGB(C.db.global.colors.rune[3])
 								end,
 							},
 							RUNIC_POWER = {
@@ -695,64 +695,64 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["HOLY_POWER"],
 							},
-							MAELSTROM = {
+							ALTERNATE = {
 								order = 23,
+								type = "color",
+								name = L["ALTERNATIVE_POWER"],
+							},
+							MAELSTROM = {
+								order = 24,
 								type = "color",
 								name = L["MAELSTROM"],
 							},
 							INSANITY = {
-								order = 24,
+								order = 25,
 								type = "color",
 								name = L["INSANITY"],
 							},
 							CHI = {
-								order = 25,
+								order = 26,
 								type = "color",
 								name = L["CHI"],
 							},
 							ARCANE_CHARGES = {
-								order = 26,
+								order = 27,
 								type = "color",
 								name = L["ARCANE_CHARGES"],
 							},
 							FURY = {
-								order = 27,
+								order = 28,
 								type = "color",
 								name = L["FURY"],
 							},
 							PAIN = {
-								order = 28,
+								order = 29,
 								type = "color",
 								name = L["PAIN"],
 							},
 							STAGGER_LOW = {
-								order = 29,
+								order = 30,
 								type = "color",
 								name = L["STAGGER_LOW"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[1])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[1])
 								end,
 							},
 							STAGGER_MEDIUM = {
-								order = 30,
+								order = 31,
 								type = "color",
 								name = L["STAGGER_MEDIUM"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[2])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[2])
 								end,
 							},
 							STAGGER_HIGH = {
-								order = 31,
+								order = 32,
 								type = "color",
 								name = L["STAGGER_HIGH"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[3])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[3])
 								end,
-							},
-							ALT_POWER = {
-								order = 32,
-								type = "color",
-								name = L["ALTERNATIVE_POWER"],
 							},
 						},
 					},
@@ -762,7 +762,7 @@ function CONFIG:CreateGeneralPanel(order)
 						name = L["CHANGE"],
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors[info[#info]]
+								local color = C.db.global.colors[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -780,8 +780,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									E:SetRGB(C.db.profile.colors.gain, E:GetRGB(D.profile.colors.gain))
-									E:SetRGB(C.db.profile.colors.loss, E:GetRGB(D.profile.colors.loss))
+									E:SetRGB(C.db.global.colors.gain, E:GetRGB(D.profile.colors.gain))
+									E:SetRGB(C.db.global.colors.loss, E:GetRGB(D.profile.colors.loss))
 
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateGainLossColors")
 									UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateGainLossColors")
@@ -812,11 +812,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["PREDICTION"],
 						get = function(info)
-							return E:GetRGBA(C.db.profile.colors.prediction[info[#info]])
+							return E:GetRGBA(C.db.global.colors.prediction[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.prediction[info[#info]]
+								local color = C.db.global.colors.prediction[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -832,7 +832,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.prediction do
-										E:SetRGB(C.db.profile.colors.prediction[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.prediction[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateColors")
@@ -881,11 +881,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["REACTION"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.reaction[tonumber(info[#info])])
+							return E:GetRGB(C.db.global.colors.reaction[tonumber(info[#info])])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.reaction[tonumber(info[#info])]
+								local color = C.db.global.colors.reaction[tonumber(info[#info])]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -902,7 +902,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.reaction do
-										E:SetRGB(C.db.profile.colors.reaction[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.reaction[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:UpdateReactionColors()
@@ -962,11 +962,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["FACTION"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.faction[info[#info]])
+							return E:GetRGB(C.db.global.colors.faction[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.faction[info[#info]]
+								local color = C.db.global.colors.faction[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -983,7 +983,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.faction do
-										E:SetRGB(C.db.profile.colors.faction[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.faction[k], E:GetRGB(v))
 									end
 
 									if BARS:HasXPBar() then
@@ -1018,11 +1018,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["EXPERIENCE"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.xp[tonumber(info[#info])])
+							return E:GetRGB(C.db.global.colors.xp[tonumber(info[#info])])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.xp[tonumber(info[#info])]
+								local color = C.db.global.colors.xp[tonumber(info[#info])]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -1039,11 +1039,11 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.xp do
-										E:SetRGB(C.db.profile.colors.xp[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.xp[k], E:GetRGB(v))
 									end
 
-									E:SetRGB(C.db.profile.colors.artifact, E:GetRGB(D.profile.colors.artifact))
-									E:SetRGB(C.db.profile.colors.honor, E:GetRGB(D.profile.colors.honor))
+									E:SetRGB(C.db.global.colors.artifact, E:GetRGB(D.profile.colors.artifact))
+									E:SetRGB(C.db.global.colors.honor, E:GetRGB(D.profile.colors.honor))
 
 									if BARS:HasXPBar() then
 										BARS:GetBar("xpbar"):UpdateSegments()
@@ -1070,11 +1070,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["ARTIFACT_POWER"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.artifact)
+									return E:GetRGB(C.db.global.colors.artifact)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.artifact
+										local color = C.db.global.colors.artifact
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 
@@ -1090,11 +1090,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["HONOR"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.honor)
+									return E:GetRGB(C.db.global.colors.honor)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.honor
+										local color = C.db.global.colors.honor
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 
@@ -1112,11 +1112,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["DIFFICULTY"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.difficulty[info[#info]])
+							return E:GetRGB(C.db.global.colors.difficulty[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.difficulty[info[#info]]
+								local color = C.db.global.colors.difficulty[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -1131,7 +1131,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.difficulty do
-										E:SetRGB(C.db.profile.colors.difficulty[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.difficulty[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "Name", "UpdateTags")
@@ -1174,11 +1174,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["CASTBAR"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.castbar[info[#info]])
+							return E:GetRGB(C.db.global.colors.castbar[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.castbar[info[#info]]
+								local color = C.db.global.colors.castbar[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -1193,7 +1193,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.castbar do
-										E:SetRGB(C.db.profile.colors.castbar[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.castbar[k], E:GetRGB(v))
 									end
 
 									BLIZZARD:UpdateCastBarColors()
@@ -1231,11 +1231,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["AURA"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.debuff[info[#info]])
+							return E:GetRGB(C.db.global.colors.debuff[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.debuff[info[#info]]
+								local color = C.db.global.colors.debuff[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -1250,11 +1250,11 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.debuff do
-										E:SetRGB(C.db.profile.colors.debuff[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.debuff[k], E:GetRGB(v))
 									end
 
 									for k, v in next, D.profile.colors.buff do
-										E:SetRGB(C.db.profile.colors.buff[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.buff[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "Auras", "UpdateColors")
@@ -1295,11 +1295,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["TEMP_ENCHANT"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.buff.Enchant)
+									return E:GetRGB(C.db.global.colors.buff.Enchant)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.buff.Enchant
+										local color = C.db.global.colors.buff.Enchant
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 										end
@@ -1313,11 +1313,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["BUTTON"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.button[info[#info]])
+							return E:GetRGB(C.db.global.colors.button[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.button[info[#info]]
+								local color = C.db.global.colors.button[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -1332,7 +1332,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.button do
-										E:SetRGB(C.db.profile.colors.button[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.button[k], E:GetRGB(v))
 									end
 
 									BARS:ForEach("UpdateButtonConfig")
@@ -1370,11 +1370,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["COOLDOWN"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.cooldown[info[#info]])
+							return E:GetRGB(C.db.global.colors.cooldown[info[#info]])
 						end,
 						set = function(info, r,g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.cooldown[info[#info]]
+								local color = C.db.global.colors.cooldown[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -1387,7 +1387,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.cooldown do
-										E:SetRGB(C.db.profile.colors.cooldown[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.cooldown[k], E:GetRGB(v))
 									end
 								end,
 							},
@@ -1428,11 +1428,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["ZONE"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.zone[info[#info]])
+							return E:GetRGB(C.db.global.colors.zone[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.zone[info[#info]]
+								local color = C.db.global.colors.zone[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -1450,7 +1450,7 @@ function CONFIG:CreateGeneralPanel(order)
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
 									for k, v in next, D.profile.colors.zone do
-										E:SetRGB(C.db.profile.colors.zone[k], E:GetRGB(v))
+										E:SetRGB(C.db.global.colors.zone[k], E:GetRGB(v))
 									end
 
 									if MINIMAP:IsInit() then

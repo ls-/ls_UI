@@ -61,13 +61,6 @@ D.global = {
 			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			[3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
-	},
-	tags = {},
-	tag_vars = {},
-}
-
-D.profile = {
-	colors = {
 		button = {
 			normal = rgb(255, 255, 255), -- #FFFFFF
 			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
@@ -103,6 +96,7 @@ D.profile = {
 			SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14)
 			LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12)
 			HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6)
+			ALTERNATE = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
 			MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
 			INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14)
 			CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6)
@@ -119,7 +113,6 @@ D.profile = {
 				-- high
 				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
 			},
-			ALT_POWER = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
 		},
 		reaction = {
 			-- hated
@@ -195,6 +188,9 @@ D.profile = {
 			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
 		},
 	},
+}
+
+D.profile = {
 	units = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]

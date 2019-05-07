@@ -112,25 +112,25 @@ end
 
 function UF:UpdateHealthColors()
 	local color = oUF.colors.health
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.health)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.health)
 
 	color = oUF.colors.tapped
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.tapped)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.tapped)
 
 	color = oUF.colors.disconnected
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.disconnected)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.disconnected)
 end
 
 function UF:UpdateReactionColors()
 	local color = oUF.colors.reaction
-	for k, v in next, C.db.profile.colors.reaction do
+	for k, v in next, C.db.global.colors.reaction do
 		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
 	end
 end
 
 function UF:UpdatePowerColors()
 	local color = oUF.colors.power
-	for k, myColor in next, C.db.profile.colors.power do
+	for k, myColor in next, C.db.global.colors.power do
 		if type(k) == "string" then
 			if not color[k] then
 				color[k] = {}
@@ -147,7 +147,7 @@ function UF:UpdatePowerColors()
 	end
 
 	color = oUF.colors.runes
-	for k, v in next, C.db.profile.colors.rune do
+	for k, v in next, C.db.global.colors.rune do
 		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
 	end
 end

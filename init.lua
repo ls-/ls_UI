@@ -74,6 +74,15 @@ local function cleanUpStep1()
 		C.db.profile.units.castbar = nil
 		C.db.profile.units.colors = nil
 	end
+
+	-- -> 80100.07
+	if not C.db.profile.version or C.db.profile.version < 8010007 then
+		if C.db.profile.colors then
+			E:CopyTable(C.db.profile.colors, C.db.global.colors)
+
+			C.db.profile.colors = nil
+		end
+	end
 end
 
 local function cleanUpStep2()
@@ -106,40 +115,42 @@ local function addRefs()
 	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
 	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
 
-	C.db.profile.colors.power[ 0] = C.db.profile.colors.power.MANA
-	C.db.profile.colors.power[ 1] = C.db.profile.colors.power.RAGE
-	C.db.profile.colors.power[ 2] = C.db.profile.colors.power.FOCUS
-	C.db.profile.colors.power[ 3] = C.db.profile.colors.power.ENERGY
-	C.db.profile.colors.power[ 4] = C.db.profile.colors.power.CHI
-	C.db.profile.colors.power[ 5] = C.db.profile.colors.power.RUNES
-	C.db.profile.colors.power[ 6] = C.db.profile.colors.power.RUNIC_POWER
-	C.db.profile.colors.power[ 7] = C.db.profile.colors.power.SOUL_SHARDS
-	C.db.profile.colors.power[ 8] = C.db.profile.colors.power.LUNAR_POWER
-	C.db.profile.colors.power[ 9] = C.db.profile.colors.power.HOLY_POWER
-	C.db.profile.colors.power[11] = C.db.profile.colors.power.MAELSTROM
-	C.db.profile.colors.power[13] = C.db.profile.colors.power.INSANITY
-	C.db.profile.colors.power[17] = C.db.profile.colors.power.FURY
-	C.db.profile.colors.power[18] = C.db.profile.colors.power.PAIN
+	C.db.global.colors.power[ 0] = C.db.global.colors.power.MANA
+	C.db.global.colors.power[ 1] = C.db.global.colors.power.RAGE
+	C.db.global.colors.power[ 2] = C.db.global.colors.power.FOCUS
+	C.db.global.colors.power[ 3] = C.db.global.colors.power.ENERGY
+	C.db.global.colors.power[ 4] = C.db.global.colors.power.CHI
+	C.db.global.colors.power[ 5] = C.db.global.colors.power.RUNES
+	C.db.global.colors.power[ 6] = C.db.global.colors.power.RUNIC_POWER
+	C.db.global.colors.power[ 7] = C.db.global.colors.power.SOUL_SHARDS
+	C.db.global.colors.power[ 8] = C.db.global.colors.power.LUNAR_POWER
+	C.db.global.colors.power[ 9] = C.db.global.colors.power.HOLY_POWER
+	C.db.global.colors.power[10] = C.db.global.colors.power.ALTERNATE
+	C.db.global.colors.power[11] = C.db.global.colors.power.MAELSTROM
+	C.db.global.colors.power[13] = C.db.global.colors.power.INSANITY
+	C.db.global.colors.power[17] = C.db.global.colors.power.FURY
+	C.db.global.colors.power[18] = C.db.global.colors.power.PAIN
 end
 
 local function removeRefs()
 	C.db.profile.units.player = nil
 	C.db.profile.units.pet = nil
 
-	C.db.profile.colors.power[ 0] = nil
-	C.db.profile.colors.power[ 1] = nil
-	C.db.profile.colors.power[ 2] = nil
-	C.db.profile.colors.power[ 3] = nil
-	C.db.profile.colors.power[ 4] = nil
-	C.db.profile.colors.power[ 5] = nil
-	C.db.profile.colors.power[ 6] = nil
-	C.db.profile.colors.power[ 7] = nil
-	C.db.profile.colors.power[ 8] = nil
-	C.db.profile.colors.power[ 9] = nil
-	C.db.profile.colors.power[11] = nil
-	C.db.profile.colors.power[13] = nil
-	C.db.profile.colors.power[17] = nil
-	C.db.profile.colors.power[18] = nil
+	C.db.global.colors.power[ 0] = nil
+	C.db.global.colors.power[ 1] = nil
+	C.db.global.colors.power[ 2] = nil
+	C.db.global.colors.power[ 3] = nil
+	C.db.global.colors.power[ 4] = nil
+	C.db.global.colors.power[ 5] = nil
+	C.db.global.colors.power[ 6] = nil
+	C.db.global.colors.power[ 7] = nil
+	C.db.global.colors.power[ 8] = nil
+	C.db.global.colors.power[ 9] = nil
+	C.db.global.colors.power[10] = nil
+	C.db.global.colors.power[11] = nil
+	C.db.global.colors.power[13] = nil
+	C.db.global.colors.power[17] = nil
+	C.db.global.colors.power[18] = nil
 end
 
 local function updateAll()

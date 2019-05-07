@@ -700,7 +700,7 @@ local function tooltipBar_Hook(self)
 		self:GetParent():SetMinimumWidth(self.Text:GetStringWidth() + 32)
 	end
 
-	self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.health))
+	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.health))
 end
 
 function MODULE.IsInit()

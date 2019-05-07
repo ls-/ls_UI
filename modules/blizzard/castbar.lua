@@ -187,11 +187,11 @@ local function updateFontObject(fontString, config)
 end
 
 local function updateColors(self)
-	CastingBarFrame_SetStartCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
-	CastingBarFrame_SetStartChannelColor(self, E:GetRGB(C.db.profile.colors.castbar.channeling))
-	CastingBarFrame_SetFinishedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.casting))
-	CastingBarFrame_SetNonInterruptibleCastColor(self, E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
-	CastingBarFrame_SetFailedCastColor(self, E:GetRGB(C.db.profile.colors.castbar.failed))
+	CastingBarFrame_SetStartCastColor(self, E:GetRGB(C.db.global.colors.castbar.casting))
+	CastingBarFrame_SetStartChannelColor(self, E:GetRGB(C.db.global.colors.castbar.channeling))
+	CastingBarFrame_SetFinishedCastColor(self, E:GetRGB(C.db.global.colors.castbar.casting))
+	CastingBarFrame_SetNonInterruptibleCastColor(self, E:GetRGB(C.db.global.colors.castbar.notinterruptible))
+	CastingBarFrame_SetFailedCastColor(self, E:GetRGB(C.db.global.colors.castbar.failed))
 	CastingBarFrame_SetUseStartColorForFinished(self, true)
 end
 

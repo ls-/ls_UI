@@ -97,7 +97,7 @@ oUF.Tags.Events["ls:color:reaction"] = "UNIT_FACTION UNIT_NAME_UPDATE"
 oUF.Tags.Methods["ls:color:reaction"] = function(unit)
 	local reaction = UnitReaction(unit, 'player')
 	if reaction then
-		return "|c" .. C.db.profile.colors.reaction[reaction].hex
+		return "|c" .. C.db.global.colors.reaction[reaction].hex
 	end
 
 	return "|cffffffff"
@@ -111,7 +111,7 @@ end
 oUF.Tags.Methods["ls:color:power"] = function(unit)
 	local type, _, r, g, b = UnitPowerType(unit)
 	if not r then
-		return "|c" .. C.db.profile.colors.power[type].hex
+		return "|c" .. C.db.global.colors.power[type].hex
 	else
 		if r > 1 or g > 1 or b > 1 then
 			r, g, b = r / 255, g / 255, b / 255
@@ -122,15 +122,15 @@ oUF.Tags.Methods["ls:color:power"] = function(unit)
 end
 
 oUF.Tags.Methods["ls:color:altpower"] = function()
-	return "|c" .. C.db.profile.colors.power.ALT_POWER.hex
+	return "|c" .. C.db.global.colors.power.ALTERNATE.hex
 end
 
 oUF.Tags.Methods["ls:color:absorb-damage"] = function()
-	return "|c" .. C.db.profile.colors.prediction.damage_absorb.hex
+	return "|c" .. C.db.global.colors.prediction.damage_absorb.hex
 end
 
 oUF.Tags.Methods["ls:color:absorb-heal"] = function()
-	return "|c" .. C.db.profile.colors.prediction.heal_absorb.hex
+	return "|c" .. C.db.global.colors.prediction.heal_absorb.hex
 end
 
 ------------
