@@ -719,7 +719,7 @@ function MODULE.Init()
 	}
 
 	AceConfig:RegisterOptionsTable(addonName, C.options)
-	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
+	AceConfigDialog:SetDefaultSize(addonName, 1228, 768)
 
 	MODULE:CreateGeneralPanel(5)
 	MODULE:CreateActionBarsPanel(6)
