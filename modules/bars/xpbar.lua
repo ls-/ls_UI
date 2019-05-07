@@ -170,7 +170,7 @@ local function bar_UpdateSegments(self)
 		end
 
 		-- Azerite
-		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel or not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
 			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 			if azeriteItemLocation then
 				index = index + 1
