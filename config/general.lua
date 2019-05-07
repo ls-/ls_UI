@@ -57,7 +57,7 @@ do
 			name = L["NAME"],
 			disabled = isDefaultTag,
 			validate = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 
 				CONFIG:SetStatusText("")
 				return (value ~= info[#info - 1] and oUF.Tags.Methods[value]) and L["NAME_TAKEN_ERR"] or true
@@ -66,7 +66,7 @@ do
 				return info[#info - 1]
 			end,
 			set = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 				if value ~= "" and value ~= info[#info - 1] then
 					if not C.db.global.tags[value] then
 						C.db.global.tags[value] = C.db.global.tags[info[#info - 1]]
@@ -95,7 +95,7 @@ do
 			name = L["EVENTS"],
 			validate = validateTagEvents,
 			set = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 				if C.db.global.tags[info[#info - 1]].events ~= value then
 					if value ~= "" then
 						C.db.global.tags[info[#info - 1]].events = value
@@ -118,7 +118,7 @@ do
 			disabled = isDefaultTag,
 			validate = validateTagVars,
 			set = function(info, value)
-				value = tonumber(value) or s_trim(value)
+				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
 				if C.db.global.tags[info[#info - 1]].vars ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
 
@@ -139,7 +139,7 @@ do
 			multiline = 16,
 			validate = validateTagFunc,
 			set = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 				if C.db.global.tags[info[#info - 1]].func ~= value then
 					C.db.global.tags[info[#info - 1]].func = value
 
@@ -182,10 +182,10 @@ do
 			type = "group",
 			name = L["NEW_TAG"],
 			get = function(info)
-				return tostring(newTagInfo[info[#info]])
+				return tostring(newTagInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
 			set = function(info, value)
-				newTagInfo[info[#info]] = s_trim(value)
+				newTagInfo[info[#info]] = s_trim(value):gsub("\124\124+", "\124")
 			end,
 			args = {
 				name = {
@@ -194,7 +194,7 @@ do
 					width = "full",
 					name = L["NAME"],
 					validate = function(_, value)
-						value = s_trim(value)
+						value = s_trim(value):gsub("\124\124+", "\124")
 
 						CONFIG:SetStatusText("")
 						return oUF.Tags.Methods[value] and L["NAME_TAKEN_ERR"] or true
@@ -215,7 +215,7 @@ do
 					multiline = 8,
 					validate = validateTagVars,
 					set = function(_, value)
-						newTagInfo.vars = tonumber(value) or s_trim(value)
+						newTagInfo.vars = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
 					end,
 				},
 				func = {
@@ -316,7 +316,7 @@ do
 			name = L["NAME"],
 			disabled = isDefaultTag,
 			validate = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 
 				CONFIG:SetStatusText("")
 				return (value ~= info[#info - 1] and oUF.Tags.Vars[value]) and L["NAME_TAKEN_ERR"] or true
@@ -325,7 +325,7 @@ do
 				return info[#info - 1]
 			end,
 			set = function(info, value)
-				value = s_trim(value)
+				value = s_trim(value):gsub("\124\124+", "\124")
 				if value ~= "" and value ~= info[#info - 1] then
 					if not C.db.global.tag_vars[value] then
 						C.db.global.tag_vars[value] = C.db.global.tag_vars[info[#info - 1]]
@@ -350,10 +350,10 @@ do
 			disabled = isDefaultTag,
 			validate = validateTagVars,
 			get = function(info)
-				return tostring(C.db.global.tag_vars[info[#info - 1]])
+				return tostring(C.db.global.tag_vars[info[#info - 1]]):gsub("\124", "\124\124")
 			end,
 			set = function(info, value)
-				value = tonumber(value) or s_trim(value)
+				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
 				if C.db.global.tag_vars[info[#info - 1]] ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
 
@@ -394,7 +394,7 @@ do
 			type = "group",
 			name = L["NEW_VAR"],
 			get = function(info)
-				return tostring(newVarInfo[info[#info]])
+				return tostring(newVarInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
 			args = {
 				name = {
@@ -403,13 +403,13 @@ do
 					width = "full",
 					name = L["NAME"],
 					validate = function(_, value)
-						value = s_trim(value)
+						value = s_trim(value):gsub("\124\124+", "\124")
 
 						CONFIG:SetStatusText("")
 						return oUF.Tags.Vars[value] and L["NAME_TAKEN_ERR"] or true
 					end,
 					set = function(_, value)
-						newVarInfo.name = s_trim(value)
+						newVarInfo.name = s_trim(value):gsub("\124\124+", "\124")
 					end,
 				},
 				value = {
@@ -420,7 +420,7 @@ do
 					multiline = 16,
 					validate = validateTagVars,
 					set = function(_, value)
-						newVarInfo.value = tonumber(value) or s_trim(value)
+						newVarInfo.value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
 					end,
 				},
 				add = {
@@ -1506,7 +1506,7 @@ function CONFIG:CreateGeneralPanel(order)
 				childGroups = "tree",
 				name = L["TAGS"],
 				get = function(info)
-					return tostring(C.db.global.tags[info[#info - 1]][info[#info]] or "")
+					return tostring(C.db.global.tags[info[#info - 1]][info[#info]] or ""):gsub("\124", "\124\124")
 				end,
 				args = {},
 			},
