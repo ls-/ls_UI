@@ -96,10 +96,14 @@ do
 			validate = validateTagEvents,
 			set = function(info, value)
 				value = s_trim(value)
-				if value ~= "" and C.db.global.tags[info[#info - 1]].events ~= value then
-					C.db.global.tags[info[#info - 1]].events = value
-
-					oUF.Tags.Events[info[#info - 1]] = value
+				if C.db.global.tags[info[#info - 1]].events ~= value then
+					if value ~= "" then
+						C.db.global.tags[info[#info - 1]].events = value
+						oUF.Tags.Events[info[#info - 1]] = value
+					else
+						C.db.global.tags[info[#info - 1]].events = nil
+						oUF.Tags.Events[info[#info - 1]] = nil
+					end
 
 					oUF.Tags:RefreshEvents(info[#info - 1])
 				end
@@ -115,11 +119,15 @@ do
 			validate = validateTagVars,
 			set = function(info, value)
 				value = tonumber(value) or s_trim(value)
-				if value ~= "" and C.db.global.tags[info[#info - 1]].vars ~= value then
-					C.db.global.tags[info[#info - 1]].vars = value
-
+				if C.db.global.tags[info[#info - 1]].vars ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
-					oUF.Tags.Vars[info[#info - 1]] = value
+
+					if value ~= "" then
+						C.db.global.tags[info[#info - 1]].vars = value
+						oUF.Tags.Vars[info[#info - 1]] = value
+					else
+						C.db.global.tags[info[#info - 1]].vars = nil
+					end
 				end
 			end,
 		},
@@ -346,11 +354,15 @@ do
 			end,
 			set = function(info, value)
 				value = tonumber(value) or s_trim(value)
-				if value ~= "" and C.db.global.tag_vars[info[#info - 1]] ~= value then
-					C.db.global.tag_vars[info[#info - 1]] = value
-
+				if C.db.global.tag_vars[info[#info - 1]] ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
-					oUF.Tags.Vars[info[#info - 1]] = value
+
+					if value ~= "" then
+						C.db.global.tag_vars[info[#info - 1]] = value
+						oUF.Tags.Vars[info[#info - 1]] = value
+					else
+						C.db.global.tag_vars[info[#info - 1]] = nil
+					end
 				end
 			end,
 		},
