@@ -203,6 +203,22 @@ function E:UpdateTable(src, dest)
 	return dest
 end
 
+function E:ReplaceTable(src, dest)
+	if type(dest) ~= "table" then
+		dest = {}
+	end
+
+	for k, v in next, dest do
+		if type(src[k]) == "table" then
+			dest[k] = self:ReplaceTable(src[k], v)
+		else
+			dest[k] = src[k]
+		end
+	end
+
+	return dest
+end
+
 function E:DiffTable(src , dest)
 	if type(dest) ~= "table" then
 		return {}

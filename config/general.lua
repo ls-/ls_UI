@@ -155,7 +155,7 @@ do
 			type = "execute",
 			name = L["DELETE"],
 			width = "full",
-			disabled = isDefaultTag,
+			hidden = isDefaultTag,
 			func = function(info)
 				C.db.global.tags[info[#info - 1]] = nil
 				oUF.Tags.Events[info[#info - 1]] = nil
@@ -165,6 +165,31 @@ do
 				updateTagOptions()
 
 				AceConfigDialog:SelectGroup("ls_UI", "general", "tags")
+			end,
+		},
+		reset = {
+			type = "execute",
+			order = 6,
+			name = L["RESTORE_DEFAULTS"],
+			width = "full",
+			hidden = function(info)
+				return not D.global.tags[info[#info - 1]]
+			end,
+			func = function(info)
+				local tag = info[#info - 1]
+
+				E:ReplaceTable(D.global.tags[tag], C.db.global.tags[tag])
+
+				oUF.Tags.Events[tag] = nil
+				rawset(oUF.Tags.Methods, tag, nil)
+
+				if C.db.global.tags[tag].events then
+					oUF.Tags.Events[tag] = C.db.global.tags[tag].events
+					oUF.Tags:RefreshEvents(tag)
+				end
+
+				oUF.Tags.Methods[tag] = C.db.global.tags[tag].func
+				oUF.Tags:RefreshMethods(tag)
 			end,
 		},
 	}
