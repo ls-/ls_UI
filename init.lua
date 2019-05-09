@@ -189,6 +189,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
+		C.db.global.version = E.VER.number
 		C.db.profile.version = E.VER.number
 
 		removeRefs()
