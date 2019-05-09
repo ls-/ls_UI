@@ -10,6 +10,5 @@
 	<Script file="power.lua"/>
 	<Script file="pvpindicator.lua"/>
 	<Script file="raidtargetindicator.lua"/>
-	<Script file="tags.lua"/>
 	<Script file="threatindicator.lua"/>
 </Ui>

@@ -153,6 +153,9 @@ function UF:UpdatePowerColors()
 end
 
 function UF:UpdateTags()
+	oUF.Tags.SharedEvents["PLAYER_REGEN_DISABLED"] = true
+	oUF.Tags.SharedEvents["PLAYER_REGEN_ENABLED"] = true
+
 	for name, data in next, C.db.global.tags do
 		oUF.Tags.Events[name] = data.events
 
