@@ -8,9 +8,7 @@ local _G = getfenv(0)
 local s_split = _G.string.split
 local tonumber = _G.tonumber
 local tostring = _G.tostring
-local unpack = _G.unpack
 
--- Mine
 local function isModuleDisabled()
 	return not UNITFRAMES:IsInit()
 end
@@ -108,16 +106,13 @@ local function getUFOption_Border(order, unit)
 				type = "toggle",
 				name = L["CLASS"],
 			},
+			reaction = {
+				order = 2,
+				type = "toggle",
+				name = L["REACTION"],
+			},
 		},
 	}
-
-	if unit ~= "player" and unit ~= "pet" then
-		temp.args.reaction = {
-			order = 2,
-			type = "toggle",
-			name = L["REACTION"],
-		}
-	end
 
 	return temp
 end
