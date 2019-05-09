@@ -218,7 +218,7 @@ do
 						self[i]:SetHeight(layout[i])
 					end
 
-					self[i]:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power[powerType]))
+					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
 				end
 			end
 
@@ -235,7 +235,7 @@ do
 	local function element_UpdateColors(self)
 		if self._powerID then
 			for i = 1, 10 do
-				self[i]:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power[self._powerID]))
+				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[self._powerID]))
 			end
 		end
 	end
@@ -336,7 +336,7 @@ do
 		if unit and unit ~= self.unit then return end
 		local element = self.Stagger
 
-		element:SetStatusBarColor(E:GetGradientAsRGB((element.cur or 0) / (element.max or 1), C.db.profile.colors.power.STAGGER))
+		element:SetStatusBarColor(E:GetGradientAsRGB((element.cur or 0) / (element.max or 1), C.db.global.colors.power.STAGGER))
 	end
 
 	local function element_UpdateConfig(self)

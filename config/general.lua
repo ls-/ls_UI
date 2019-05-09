@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
 local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
 local MINIMAP = P:GetModule("Minimap")
@@ -8,18 +8,504 @@ local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-local tonumber = _G.tonumber
 local next = _G.next
+local rawset = _G.rawset
+local s_trim = _G.string.trim
+local t_insert = _G.table.insert
+local t_sort = _G.table.sort
+local t_wipe = _G.table.wipe
+local tonumber = _G.tonumber
+local tostring = _G.tostring
 local type = _G.type
 
 --[[ luacheck: globals
-	GetText UnitSex
+	GetText LibStub UnitSex
 
 	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
 	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
 ]]
 
 -- Mine
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+local updateTagOptions
+do
+	local function isDefaultTag(info)
+		return D.global.tags[info[#info - 1]]
+	end
+
+	local function validateTagEvents(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsEventStringValid(value)
+	end
+
+	local function validateTagVars(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsVarStringValid(value)
+	end
+
+	local function validateTagFunc(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsFuncStringValid(value)
+	end
+
+	local curTagInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			disabled = isDefaultTag,
+			validate = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and oUF.Tags.Methods[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.tags[value] then
+						C.db.global.tags[value] = C.db.global.tags[info[#info - 1]]
+						C.db.global.tags[info[#info - 1]] = nil
+
+						oUF.Tags.Events[value] = C.db.global.tags[value].events
+						oUF.Tags.Events[info[#info - 1]] = nil
+
+						rawset(oUF.Tags.Vars, info[#info - 1], nil)
+						oUF.Tags.Vars[value] = C.db.global.tags[value].vars
+
+						rawset(oUF.Tags.Methods, info[#info - 1], nil)
+						oUF.Tags.Methods[value] = C.db.global.tags[value].func
+
+						updateTagOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "tags", value)
+					end
+				end
+			end,
+		},
+		events = {
+			order = 2,
+			type = "input",
+			width = "full",
+			name = L["EVENTS"],
+			validate = validateTagEvents,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if C.db.global.tags[info[#info - 1]].events ~= value then
+					if value ~= "" then
+						C.db.global.tags[info[#info - 1]].events = value
+						oUF.Tags.Events[info[#info - 1]] = value
+					else
+						C.db.global.tags[info[#info - 1]].events = nil
+						oUF.Tags.Events[info[#info - 1]] = nil
+					end
+
+					oUF.Tags:RefreshEvents(info[#info - 1])
+				end
+			end,
+		},
+		vars = {
+			order = 3,
+			type = "input",
+			width = "full",
+			name = L["VAR"],
+			multiline = 8,
+			disabled = isDefaultTag,
+			validate = validateTagVars,
+			set = function(info, value)
+				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+				if C.db.global.tags[info[#info - 1]].vars ~= value then
+					rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+					if value ~= "" then
+						C.db.global.tags[info[#info - 1]].vars = value
+						oUF.Tags.Vars[info[#info - 1]] = value
+					else
+						C.db.global.tags[info[#info - 1]].vars = nil
+					end
+				end
+			end,
+		},
+		func = {
+			order = 4,
+			type = "input",
+			width = "full",
+			name = L["FUNC"],
+			multiline = 16,
+			validate = validateTagFunc,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if C.db.global.tags[info[#info - 1]].func ~= value then
+					C.db.global.tags[info[#info - 1]].func = value
+
+					rawset(oUF.Tags.Methods, info[#info - 1], nil)
+					oUF.Tags.Methods[info[#info - 1]] = value
+
+					oUF.Tags:RefreshMethods(info[#info - 1])
+				end
+			end,
+		},
+		delete = {
+			order = 5,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			hidden = isDefaultTag,
+			func = function(info)
+				C.db.global.tags[info[#info - 1]] = nil
+				oUF.Tags.Events[info[#info - 1]] = nil
+				rawset(oUF.Tags.Vars, info[#info - 1], nil)
+				rawset(oUF.Tags.Methods, info[#info - 1], nil)
+
+				updateTagOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "tags")
+			end,
+		},
+		reset = {
+			type = "execute",
+			order = 6,
+			name = L["RESTORE_DEFAULTS"],
+			width = "full",
+			hidden = function(info)
+				return not D.global.tags[info[#info - 1]]
+			end,
+			func = function(info)
+				local tag = info[#info - 1]
+
+				E:ReplaceTable(D.global.tags[tag], C.db.global.tags[tag])
+
+				oUF.Tags.Events[tag] = nil
+				rawset(oUF.Tags.Methods, tag, nil)
+
+				if C.db.global.tags[tag].events then
+					oUF.Tags.Events[tag] = C.db.global.tags[tag].events
+					oUF.Tags:RefreshEvents(tag)
+				end
+
+				oUF.Tags.Methods[tag] = C.db.global.tags[tag].func
+				oUF.Tags:RefreshMethods(tag)
+			end,
+		},
+	}
+
+	local newTagInfo = {
+		name = "",
+		events = "",
+		vars = "",
+		func = "",
+	}
+
+	local tagOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW_TAG"],
+			get = function(info)
+				return tostring(newTagInfo[info[#info]]):gsub("\124", "\124\124")
+			end,
+			set = function(info, value)
+				newTagInfo[info[#info]] = s_trim(value):gsub("\124\124+", "\124")
+			end,
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value):gsub("\124\124+", "\124")
+
+						CONFIG:SetStatusText("")
+						return oUF.Tags.Methods[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+				},
+				events = {
+					order = 2,
+					type = "input",
+					width = "full",
+					name = L["EVENTS"],
+					validate = validateTagEvents,
+				},
+				vars = {
+					order = 3,
+					type = "input",
+					width = "full",
+					name = L["VAR"],
+					multiline = 8,
+					validate = validateTagVars,
+					set = function(_, value)
+						newTagInfo.vars = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+					end,
+				},
+				func = {
+					order = 4,
+					type = "input",
+					width = "full",
+					name = L["FUNC"],
+					multiline = 16,
+					validate = validateTagFunc,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newTagInfo.name ~= "" and newTagInfo.func ~= "" then
+							C.db.global.tags[newTagInfo.name] = {}
+
+							if newTagInfo.events ~= "" then
+								C.db.global.tags[newTagInfo.name].events = newTagInfo.events
+								oUF.Tags.Events[newTagInfo.name] = newTagInfo.events
+							end
+
+							if newTagInfo.vars ~= "" then
+								C.db.global.tags[newTagInfo.name].vars = newTagInfo.vars
+								oUF.Tags.Vars[newTagInfo.name] = newTagInfo.vars
+							end
+
+							C.db.global.tags[newTagInfo.name].func = newTagInfo.func
+							oUF.Tags.Methods[newTagInfo.name] = newTagInfo.func
+
+							updateTagOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "tags", newTagInfo.name)
+
+							newTagInfo.name = ""
+							newTagInfo.events = ""
+							newTagInfo.vars = ""
+							newTagInfo.func = ""
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateTagOptions()
+		local options = C.options.args.general.args.tags.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = tagOptionTables.new
+
+		for tag in next, C.db.global.tags do
+			if not tagOptionTables[tag] then
+				tagOptionTables[tag] = {
+					type = "group",
+					name = tag,
+					args = curTagInfo,
+				}
+			end
+
+			options[tag] = tagOptionTables[tag]
+
+			t_insert(order, tag)
+		end
+
+		t_sort(order)
+
+		for i, tag in next, order do
+			if options[tag] then
+				options[tag].order = i + 10
+			end
+		end
+	end
+end
+
+local updateTagVarsOptions
+do
+	local function isDefaultTag(info)
+		return D.global.tag_vars[info[#info - 1]]
+	end
+
+	local function validateTagVars(_, value)
+		CONFIG:SetStatusText("")
+		return CONFIG:IsVarStringValid(value)
+	end
+
+	local curVarInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			disabled = isDefaultTag,
+			validate = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and oUF.Tags.Vars[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.tag_vars[value] then
+						C.db.global.tag_vars[value] = C.db.global.tag_vars[info[#info - 1]]
+						C.db.global.tag_vars[info[#info - 1]] = nil
+
+						oUF.Tags.Vars[value] = C.db.global.tag_vars[value].vars
+						rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+						updateTagVarsOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars", value)
+					end
+				end
+			end,
+		},
+		value = {
+			order = 2,
+			type = "input",
+			width = "full",
+			name = L["VALUE"],
+			multiline = 16,
+			disabled = isDefaultTag,
+			validate = validateTagVars,
+			get = function(info)
+				return tostring(C.db.global.tag_vars[info[#info - 1]]):gsub("\124", "\124\124")
+			end,
+			set = function(info, value)
+				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+				if C.db.global.tag_vars[info[#info - 1]] ~= value then
+					rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+					if value ~= "" then
+						C.db.global.tag_vars[info[#info - 1]] = value
+						oUF.Tags.Vars[info[#info - 1]] = value
+					else
+						C.db.global.tag_vars[info[#info - 1]] = nil
+					end
+				end
+			end,
+		},
+		delete = {
+			order = 3,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			disabled = isDefaultTag,
+			func = function(info)
+				C.db.global.tag_vars[info[#info - 1]] = nil
+				rawset(oUF.Tags.Vars, info[#info - 1], nil)
+
+				updateTagVarsOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars")
+			end,
+		},
+	}
+
+	local newVarInfo = {
+		name = "",
+		value = "",
+	}
+
+	local varOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW_VAR"],
+			get = function(info)
+				return tostring(newVarInfo[info[#info]]):gsub("\124", "\124\124")
+			end,
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value):gsub("\124\124+", "\124")
+
+						CONFIG:SetStatusText("")
+						return oUF.Tags.Vars[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+					set = function(_, value)
+						newVarInfo.name = s_trim(value):gsub("\124\124+", "\124")
+					end,
+				},
+				value = {
+					order = 3,
+					type = "input",
+					width = "full",
+					name = L["VALUE"],
+					multiline = 16,
+					validate = validateTagVars,
+					set = function(_, value)
+						newVarInfo.value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+					end,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newVarInfo.name ~= "" then
+							C.db.global.tag_vars[newVarInfo.name] = newVarInfo.value
+
+							oUF.Tags.Vars[newVarInfo.name] = newVarInfo.value
+
+							updateTagVarsOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "tag_vars", newVarInfo.name)
+
+							newVarInfo.name = ""
+							newVarInfo.value = ""
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateTagVarsOptions()
+		local options = C.options.args.general.args.tag_vars.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = varOptionTables.new
+
+		for var in next, C.db.global.tag_vars do
+			if not varOptionTables[var] then
+				varOptionTables[var] = {
+					type = "group",
+					name = var,
+					args = curVarInfo,
+				}
+			end
+
+			options[var] = varOptionTables[var]
+
+			t_insert(order, var)
+		end
+
+		t_sort(order)
+
+		for i, var in next, order do
+			if options[var] then
+				options[var].order = i + 10
+			end
+		end
+	end
+end
+
 function CONFIG:CreateGeneralPanel(order)
 	C.options.args.general = {
 		order = order,
@@ -33,7 +519,7 @@ function CONFIG:CreateGeneralPanel(order)
 				childGroups = "tree",
 				name = L["COLORS"],
 				get = function(info)
-					return E:GetRGB(C.db.profile.colors[info[#info]])
+					return E:GetRGB(C.db.global.colors[info[#info]])
 				end,
 				args = {
 					health = {
@@ -44,7 +530,7 @@ function CONFIG:CreateGeneralPanel(order)
 							if r ~= nil then
 								info = info[#info]
 
-								local color = C.db.profile.colors[info]
+								local color = C.db.global.colors[info]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -60,9 +546,9 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									E:SetRGB(C.db.profile.colors.health, E:GetRGB(D.profile.colors.health))
-									E:SetRGB(C.db.profile.colors.disconnected, E:GetRGB(D.profile.colors.disconnected))
-									E:SetRGB(C.db.profile.colors.tapped, E:GetRGB(D.profile.colors.tapped))
+									E:SetRGB(C.db.global.colors.health, E:GetRGB(D.global.colors.health))
+									E:SetRGB(C.db.global.colors.disconnected, E:GetRGB(D.global.colors.disconnected))
+									E:SetRGB(C.db.global.colors.tapped, E:GetRGB(D.global.colors.tapped))
 
 									UNITFRAMES:UpdateHealthColors()
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
@@ -96,7 +582,7 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["POWER"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.power[info[#info]])
+							return E:GetRGB(C.db.global.colors.power[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
@@ -104,19 +590,19 @@ function CONFIG:CreateGeneralPanel(order)
 
 								local color
 								if info == "RUNES_BLOOD" then
-									color = C.db.profile.colors.rune[1]
+									color = C.db.global.colors.rune[1]
 								elseif info == "RUNES_FROST" then
-									color = C.db.profile.colors.rune[2]
+									color = C.db.global.colors.rune[2]
 								elseif info == "RUNES_UNHOLY" then
-									color = C.db.profile.colors.rune[3]
+									color = C.db.global.colors.rune[3]
 								elseif info == "STAGGER_LOW" then
-									color = C.db.profile.colors.power.STAGGER[1]
+									color = C.db.global.colors.power.STAGGER[1]
 								elseif info == "STAGGER_MEDIUM" then
-									color = C.db.profile.colors.power.STAGGER[2]
+									color = C.db.global.colors.power.STAGGER[2]
 								elseif info == "STAGGER_HIGH" then
-									color = C.db.profile.colors.power.STAGGER[3]
+									color = C.db.global.colors.power.STAGGER[3]
 								else
-									color = C.db.profile.colors.power[info]
+									color = C.db.global.colors.power[info]
 								end
 
 								if color.r ~= r or color.g ~= g or color.g ~= b then
@@ -140,20 +626,20 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.power do
+									for k, v in next, D.global.colors.power do
 										if type(k) == "string" then
 											if type(v[1]) == "table" then
 												for i, v_ in next, v do
-													E:SetRGB(C.db.profile.colors.power[k][i], E:GetRGB(v_))
+													E:SetRGB(C.db.global.colors.power[k][i], E:GetRGB(v_))
 												end
 											else
-												E:SetRGB(C.db.profile.colors.power[k], E:GetRGB(v))
+												E:SetRGB(C.db.global.colors.power[k], E:GetRGB(v))
 											end
 										end
 									end
 
-									for k, v in next, D.profile.colors.rune do
-										E:SetRGB(C.db.profile.colors.rune[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.rune do
+										E:SetRGB(C.db.global.colors.rune[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:UpdatePowerColors()
@@ -207,7 +693,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_BLOOD"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[1])
+									return E:GetRGB(C.db.global.colors.rune[1])
 								end,
 							},
 							RUNES_FROST = {
@@ -215,7 +701,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_FROST"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[2])
+									return E:GetRGB(C.db.global.colors.rune[2])
 								end,
 							},
 							RUNES_UNHOLY = {
@@ -223,7 +709,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["RUNES_UNHOLY"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.rune[3])
+									return E:GetRGB(C.db.global.colors.rune[3])
 								end,
 							},
 							RUNIC_POWER = {
@@ -246,64 +732,64 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["HOLY_POWER"],
 							},
-							MAELSTROM = {
+							ALTERNATE = {
 								order = 23,
+								type = "color",
+								name = L["ALTERNATIVE_POWER"],
+							},
+							MAELSTROM = {
+								order = 24,
 								type = "color",
 								name = L["MAELSTROM"],
 							},
 							INSANITY = {
-								order = 24,
+								order = 25,
 								type = "color",
 								name = L["INSANITY"],
 							},
 							CHI = {
-								order = 25,
+								order = 26,
 								type = "color",
 								name = L["CHI"],
 							},
 							ARCANE_CHARGES = {
-								order = 26,
+								order = 27,
 								type = "color",
 								name = L["ARCANE_CHARGES"],
 							},
 							FURY = {
-								order = 27,
+								order = 28,
 								type = "color",
 								name = L["FURY"],
 							},
 							PAIN = {
-								order = 28,
+								order = 29,
 								type = "color",
 								name = L["PAIN"],
 							},
 							STAGGER_LOW = {
-								order = 29,
+								order = 30,
 								type = "color",
 								name = L["STAGGER_LOW"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[1])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[1])
 								end,
 							},
 							STAGGER_MEDIUM = {
-								order = 30,
+								order = 31,
 								type = "color",
 								name = L["STAGGER_MEDIUM"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[2])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[2])
 								end,
 							},
 							STAGGER_HIGH = {
-								order = 31,
+								order = 32,
 								type = "color",
 								name = L["STAGGER_HIGH"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.power.STAGGER[3])
+									return E:GetRGB(C.db.global.colors.power.STAGGER[3])
 								end,
-							},
-							ALT_POWER = {
-								order = 32,
-								type = "color",
-								name = L["ALTERNATIVE_POWER"],
 							},
 						},
 					},
@@ -313,7 +799,7 @@ function CONFIG:CreateGeneralPanel(order)
 						name = L["CHANGE"],
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors[info[#info]]
+								local color = C.db.global.colors[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -331,8 +817,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									E:SetRGB(C.db.profile.colors.gain, E:GetRGB(D.profile.colors.gain))
-									E:SetRGB(C.db.profile.colors.loss, E:GetRGB(D.profile.colors.loss))
+									E:SetRGB(C.db.global.colors.gain, E:GetRGB(D.global.colors.gain))
+									E:SetRGB(C.db.global.colors.loss, E:GetRGB(D.global.colors.loss))
 
 									UNITFRAMES:ForEach("ForElement", "Health", "UpdateGainLossColors")
 									UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateGainLossColors")
@@ -363,11 +849,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["PREDICTION"],
 						get = function(info)
-							return E:GetRGBA(C.db.profile.colors.prediction[info[#info]])
+							return E:GetRGBA(C.db.global.colors.prediction[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.prediction[info[#info]]
+								local color = C.db.global.colors.prediction[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -382,8 +868,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.prediction do
-										E:SetRGB(C.db.profile.colors.prediction[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.prediction do
+										E:SetRGB(C.db.global.colors.prediction[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateColors")
@@ -432,11 +918,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["REACTION"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.reaction[tonumber(info[#info])])
+							return E:GetRGB(C.db.global.colors.reaction[tonumber(info[#info])])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.reaction[tonumber(info[#info])]
+								local color = C.db.global.colors.reaction[tonumber(info[#info])]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -452,8 +938,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.reaction do
-										E:SetRGB(C.db.profile.colors.reaction[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.reaction do
+										E:SetRGB(C.db.global.colors.reaction[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:UpdateReactionColors()
@@ -513,11 +999,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["FACTION"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.faction[info[#info]])
+							return E:GetRGB(C.db.global.colors.faction[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.faction[info[#info]]
+								local color = C.db.global.colors.faction[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -533,8 +1019,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.faction do
-										E:SetRGB(C.db.profile.colors.faction[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.faction do
+										E:SetRGB(C.db.global.colors.faction[k], E:GetRGB(v))
 									end
 
 									if BARS:HasXPBar() then
@@ -569,11 +1055,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["EXPERIENCE"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.xp[tonumber(info[#info])])
+							return E:GetRGB(C.db.global.colors.xp[tonumber(info[#info])])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.xp[tonumber(info[#info])]
+								local color = C.db.global.colors.xp[tonumber(info[#info])]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -589,12 +1075,12 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.xp do
-										E:SetRGB(C.db.profile.colors.xp[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.xp do
+										E:SetRGB(C.db.global.colors.xp[k], E:GetRGB(v))
 									end
 
-									E:SetRGB(C.db.profile.colors.artifact, E:GetRGB(D.profile.colors.artifact))
-									E:SetRGB(C.db.profile.colors.honor, E:GetRGB(D.profile.colors.honor))
+									E:SetRGB(C.db.global.colors.artifact, E:GetRGB(D.global.colors.artifact))
+									E:SetRGB(C.db.global.colors.honor, E:GetRGB(D.global.colors.honor))
 
 									if BARS:HasXPBar() then
 										BARS:GetBar("xpbar"):UpdateSegments()
@@ -621,11 +1107,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["ARTIFACT_POWER"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.artifact)
+									return E:GetRGB(C.db.global.colors.artifact)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.artifact
+										local color = C.db.global.colors.artifact
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 
@@ -641,11 +1127,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["HONOR"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.honor)
+									return E:GetRGB(C.db.global.colors.honor)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.honor
+										local color = C.db.global.colors.honor
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 
@@ -663,11 +1149,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["DIFFICULTY"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.difficulty[info[#info]])
+							return E:GetRGB(C.db.global.colors.difficulty[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.difficulty[info[#info]]
+								local color = C.db.global.colors.difficulty[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -681,8 +1167,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.difficulty do
-										E:SetRGB(C.db.profile.colors.difficulty[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.difficulty do
+										E:SetRGB(C.db.global.colors.difficulty[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "Name", "UpdateTags")
@@ -725,11 +1211,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["CASTBAR"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.castbar[info[#info]])
+							return E:GetRGB(C.db.global.colors.castbar[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.castbar[info[#info]]
+								local color = C.db.global.colors.castbar[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -743,8 +1229,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.castbar do
-										E:SetRGB(C.db.profile.colors.castbar[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.castbar do
+										E:SetRGB(C.db.global.colors.castbar[k], E:GetRGB(v))
 									end
 
 									BLIZZARD:UpdateCastBarColors()
@@ -782,11 +1268,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["AURA"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.debuff[info[#info]])
+							return E:GetRGB(C.db.global.colors.debuff[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.debuff[info[#info]]
+								local color = C.db.global.colors.debuff[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -800,12 +1286,12 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.debuff do
-										E:SetRGB(C.db.profile.colors.debuff[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.debuff do
+										E:SetRGB(C.db.global.colors.debuff[k], E:GetRGB(v))
 									end
 
-									for k, v in next, D.profile.colors.buff do
-										E:SetRGB(C.db.profile.colors.buff[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.buff do
+										E:SetRGB(C.db.global.colors.buff[k], E:GetRGB(v))
 									end
 
 									UNITFRAMES:ForEach("ForElement", "Auras", "UpdateColors")
@@ -846,11 +1332,11 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "color",
 								name = L["TEMP_ENCHANT"],
 								get = function()
-									return E:GetRGB(C.db.profile.colors.buff.Enchant)
+									return E:GetRGB(C.db.global.colors.buff.Enchant)
 								end,
 								set = function(_, r, g, b)
 									if r ~= nil then
-										local color = C.db.profile.colors.buff.Enchant
+										local color = C.db.global.colors.buff.Enchant
 										if color.r ~= r or color.g ~= g or color.g ~= b then
 											E:SetRGB(color, r, g, b)
 										end
@@ -864,11 +1350,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["BUTTON"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.button[info[#info]])
+							return E:GetRGB(C.db.global.colors.button[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.button[info[#info]]
+								local color = C.db.global.colors.button[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -882,8 +1368,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.button do
-										E:SetRGB(C.db.profile.colors.button[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.button do
+										E:SetRGB(C.db.global.colors.button[k], E:GetRGB(v))
 									end
 
 									BARS:ForEach("UpdateButtonConfig")
@@ -921,11 +1407,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["COOLDOWN"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.cooldown[info[#info]])
+							return E:GetRGB(C.db.global.colors.cooldown[info[#info]])
 						end,
 						set = function(info, r,g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.cooldown[info[#info]]
+								local color = C.db.global.colors.cooldown[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 								end
@@ -937,8 +1423,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.cooldown do
-										E:SetRGB(C.db.profile.colors.cooldown[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.cooldown do
+										E:SetRGB(C.db.global.colors.cooldown[k], E:GetRGB(v))
 									end
 								end,
 							},
@@ -979,11 +1465,11 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["ZONE"],
 						get = function(info)
-							return E:GetRGB(C.db.profile.colors.zone[info[#info]])
+							return E:GetRGB(C.db.global.colors.zone[info[#info]])
 						end,
 						set = function(info, r, g, b)
 							if r ~= nil then
-								local color = C.db.profile.colors.zone[info[#info]]
+								local color = C.db.global.colors.zone[info[#info]]
 								if color.r ~= r or color.g ~= g or color.g ~= b then
 									E:SetRGB(color, r, g, b)
 
@@ -1000,8 +1486,8 @@ function CONFIG:CreateGeneralPanel(order)
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
 								func = function()
-									for k, v in next, D.profile.colors.zone do
-										E:SetRGB(C.db.profile.colors.zone[k], E:GetRGB(v))
+									for k, v in next, D.global.colors.zone do
+										E:SetRGB(C.db.global.colors.zone[k], E:GetRGB(v))
 									end
 
 									if MINIMAP:IsInit() then
@@ -1039,6 +1525,26 @@ function CONFIG:CreateGeneralPanel(order)
 					},
 				},
 			},
+			tags = {
+				order = 2,
+				type = "group",
+				childGroups = "tree",
+				name = L["TAGS"],
+				get = function(info)
+					return tostring(C.db.global.tags[info[#info - 1]][info[#info]] or ""):gsub("\124", "\124\124")
+				end,
+				args = {},
+			},
+			tag_vars = {
+				order = 3,
+				type = "group",
+				childGroups = "tree",
+				name = L["TAG_VARS"],
+				args = {},
+			},
 		},
 	}
+
+	updateTagOptions()
+	updateTagVarsOptions()
 end

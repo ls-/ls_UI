@@ -169,7 +169,7 @@ local function bar_UpdateButtonConfig(self)
 		}
 	end
 
-	for k, v in next, C.db.profile.colors.button do
+	for k, v in next, C.db.global.colors.button do
 		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = E:GetRGB(v)
 	end
 

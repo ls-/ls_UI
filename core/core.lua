@@ -19,6 +19,7 @@ _G[addonName] = {
 	[1] = ns.E,
 	[2] = ns.M,
 	[3] = ns.C,
+	[4] = ns.L
 }
 
 ------------
@@ -196,6 +197,22 @@ function E:UpdateTable(src, dest)
 			if dest[k] == nil then
 				dest[k] = v
 			end
+		end
+	end
+
+	return dest
+end
+
+function E:ReplaceTable(src, dest)
+	if type(dest) ~= "table" then
+		dest = {}
+	end
+
+	for k, v in next, dest do
+		if type(src[k]) == "table" then
+			dest[k] = self:ReplaceTable(src[k], v)
+		else
+			dest[k] = src[k]
 		end
 	end
 

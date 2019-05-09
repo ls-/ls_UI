@@ -317,7 +317,7 @@ end
 
 local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
-		aura.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.debuff[debuffType] or C.db.profile.colors.debuff.None))
+		aura.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
 
 		if self._config.type.debuff_type then
 			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))

@@ -255,7 +255,7 @@ do
 	end
 
 	local function element_UpdateColors(self)
-		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.power.ALT_POWER))
+		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.ALTERNATE))
 	end
 
 	local function frame_UpdateAlternativePower(self)
@@ -326,8 +326,8 @@ do
 	end
 
 	local function element_UpdateColors(self)
-		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.profile.colors.prediction.power_cost))
-		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.profile.colors.prediction.power_cost))
+		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
+		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
 	end
 
 	local function frame_UpdatePowerPrediction(frame)

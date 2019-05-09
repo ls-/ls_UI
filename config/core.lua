@@ -4,7 +4,9 @@ local MODULE = P:AddModule("Config")
 
 -- Lua
 local _G = getfenv(0)
+local loadstring = _G.loadstring
 local next = _G.next
+local pcall = _G.pcall
 local t_concat = _G.table.concat
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
@@ -571,9 +573,8 @@ do
 	end
 end
 
-function MODULE.SetStatusText(_, text)
+function MODULE:SetStatusText(text)
 	local frame = AceConfigDialog.OpenFrames[addonName]
-
 	if frame then
 		frame:SetStatusText(text)
 	end
@@ -582,7 +583,6 @@ end
 -- MODULE.IsTagStringValid
 do
 	local badTags = {}
-	local badTag = "|cffffffff%s|r"
 
 	local function getTagName(tag)
 		local tagStart = (tag:match('>+()') or 2)
@@ -597,7 +597,7 @@ do
 
 		for bracket in tagString:gmatch("%[..-%]+") do
 			if not oUF.Tags.Methods[getTagName(bracket)] then
-				t_insert(badTags, badTag:format(bracket))
+				t_insert(badTags, "|cffffffff" .. bracket .. "|r")
 			end
 		end
 
@@ -610,6 +610,44 @@ do
 
 			return true
 		end
+	end
+end
+
+-- MODULE.IsEventStringValid
+do
+	local badEvents = {}
+	local validator = CreateFrame("Frame")
+
+	function MODULE:IsEventStringValid(eventString)
+		t_wipe(badEvents)
+
+		for event in eventString:gmatch('%S+') do
+			if not pcall(validator.RegisterEvent, validator, event) then
+				t_insert(badEvents, "|cffffffff" .. event .. "|r")
+			end
+		end
+
+		return #badEvents > 0 and L["INVALID_EVENTS_ERR"]:format(t_concat(badEvents, ", ")) or true
+	end
+end
+
+-- MODULE.IsVarStringValid
+do
+	function MODULE:IsVarStringValid(varString)
+		if tonumber(varString) then
+			return true
+		else
+			local _, err = loadstring("return " .. varString)
+			return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
+		end
+	end
+end
+
+-- MODULE.IsFuncStringValid
+do
+	function MODULE:IsFuncStringValid(funcString)
+		local _, err = loadstring("return " .. funcString)
+		return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
 	end
 end
 
@@ -679,7 +717,7 @@ function MODULE.Init()
 	}
 
 	AceConfig:RegisterOptionsTable(addonName, C.options)
-	AceConfigDialog:SetDefaultSize(addonName, 1024, 768)
+	AceConfigDialog:SetDefaultSize(addonName, 1228, 768)
 
 	MODULE:CreateGeneralPanel(5)
 	MODULE:CreateActionBarsPanel(6)

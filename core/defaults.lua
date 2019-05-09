@@ -61,11 +61,6 @@ D.global = {
 			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			[3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
-	},
-}
-
-D.profile = {
-	colors = {
 		button = {
 			normal = rgb(255, 255, 255), -- #FFFFFF
 			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
@@ -101,6 +96,7 @@ D.profile = {
 			SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14)
 			LUNAR_POWER = rgb(72, 152, 235), -- #4898EB (5PB 6/12)
 			HOLY_POWER = rgb(238, 234, 140), -- #EEEA8C (10Y 9/6)
+			ALTERNATE = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
 			MAELSTROM = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
 			INSANITY = rgb(125, 70, 174), -- #7D46AE (2.5P 4/14)
 			CHI = rgb(108, 254, 214), -- #6CFED6 (10G 9/6)
@@ -117,7 +113,6 @@ D.profile = {
 				-- high
 				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
 			},
-			ALT_POWER = rgb(149, 134, 242), -- #9586F2 (10PB 6/14)
 		},
 		reaction = {
 			-- hated
@@ -193,6 +188,193 @@ D.profile = {
 			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
 		},
 	},
+	tags = {
+		["ls:absorb:damage"] = {
+			events = "UNIT_ABSORB_AMOUNT_CHANGED",
+			func = "function(unit)\n  local absorb = UnitGetTotalAbsorbs(unit) or 0\n  return absorb > 0 and _VARS.E:FormatNumber(absorb) or \" \"\nend",
+		},
+		["ls:absorb:heal"] = {
+			events = "UNIT_HEAL_ABSORB_AMOUNT_CHANGED",
+			func = "function(unit)\n  local absorb = UnitGetTotalHealAbsorbs(unit) or 0\n  return absorb > 0 and _VARS.E:FormatNumber(absorb) or \" \"\nend",
+		},
+		["ls:altpower:cur"] = {
+			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
+			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPower(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
+		},
+		["ls:altpower:cur-max"] = {
+			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
+			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %s\", _VARS.E:FormatNumber(cur), _VARS.E:FormatNumber(max))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:altpower:cur-perc"] = {
+			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
+			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:altpower:max"] = {
+			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
+			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPowerMax(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
+		},
+		["ls:altpower:perc"] = {
+			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
+			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))\n  end\n\n  return \"\"\nend",
+		},
+		["ls:classicon"] = {
+			events = "UNIT_CLASSIFICATION_CHANGED",
+			func = "function(unit)\n  if UnitIsPlayer(unit) then\n    local _, class = UnitClass(unit)\n    if class then\n      return _VARS.INLINE_ICONS[class]:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:color:absorb-damage"] = {
+			func = "function()\n  return \"|c\" .. _VARS.COLORS.prediction.damage_absorb.hex\nend",
+		},
+		["ls:color:absorb-heal"] = {
+			func = "function()\n  return \"|c\" .. _VARS.COLORS.prediction.heal_absorb.hex\nend",
+		},
+		["ls:color:altpower"] = {
+			func = "function()\n  return \"|c\" .. _VARS.POWER_COLORS.ALTERNATE.hex\nend",
+		},
+		["ls:color:class"] = {
+			func = "function(unit)\n  if UnitIsPlayer(unit) then\n    local _, class = UnitClass(unit)\n    if class then\n      return \"|c\" .. _VARS.CLASS_COLORS[class].hex\n    end\n  end\n\n  return \"|cffffffff\"\nend", events = "UNIT_CLASSIFICATION_CHANGED UNIT_NAME_UPDATE",
+		},
+		["ls:color:difficulty"] = {
+			events = "UNIT_LEVEL PLAYER_LEVEL_UP",
+			func = "function(unit)\n  return \"|c\" .. _VARS.E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)).hex\nend",
+		},
+		["ls:color:power"] = {
+			func = "function(unit)\n  local type, _, r, g, b = UnitPowerType(unit)\n  if not r then\n    return \"|c\" .. _VARS.POWER_COLORS[type].hex\n  else\n    if r > 1 or g > 1 or b > 1 then\n      r, g, b = r / 255, g / 255, b / 255\n    end\n\n    return Hex(r, g, b)\n  end\nend",
+		},
+		["ls:color:reaction"] = {
+			events = "UNIT_FACTION UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local reaction = UnitReaction(unit, 'player')\n  if reaction then\n    return \"|c\" .. _VARS.REACTION_COLORS[reaction].hex\n  end\n\n  return \"|cffffffff\"\nend",
+		},
+		["ls:combatresticon"] = {
+			events = "PLAYER_UPDATE_RESTING PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED",
+			func = "function()\n  if UnitAffectingCombat(\"player\") then\n    return _VARS.INLINE_ICONS[\"COMBAT\"]:format(0, 0)\n  elseif IsResting() then\n    return _VARS.INLINE_ICONS[\"RESTING\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
+		},
+		["ls:debuffs"] = {
+			events = "UNIT_AURA",
+			vars = "{\n  [\"Curse\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t\",\n  [\"Disease\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t\",\n  [\"Magic\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t\",\n  [\"Poison\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t\",\n}",
+			func = "function(unit)\n  local types = _VARS.E:GetDispelTypes()\n  if not types or not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if types[type] and not hasDebuff[type] then\n      status = status .. _VARS[\"ls:debuffs\"][type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
+		},
+		["ls:health:cur"] = {
+			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
+		},
+		["ls:health:cur-perc"] = {
+			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
+		},
+		["ls:health:deficit"] = {
+			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:health:perc"] = {
+			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
+		},
+		["ls:leadericon"] = {
+			events = "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE",
+			func = "function(unit)\n  if (UnitInParty(unit) or UnitInRaid(unit)) and UnitIsGroupLeader(unit) then\n    return _VARS.INLINE_ICONS[\"LEADER\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
+		},
+		["ls:level"] = {
+			events = "UNIT_LEVEL PLAYER_LEVEL_UP",
+			func = "function(unit)\n  local level\n\n  if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then\n    level = UnitBattlePetLevel(unit)\n  else\n    level = UnitLevel(unit)\n  end\n\n  return level > 0 and level or \"??\"\nend",
+		},
+		["ls:level:effective"] = {
+			events = "UNIT_LEVEL PLAYER_LEVEL_UP",
+			func = "function(unit)\n  local level\n\n  if UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then\n    level = UnitBattlePetLevel(unit)\n  else\n    level = UnitEffectiveLevel(unit)\n  end\n\n  return level > 0 and level or \"??\"\nend",
+		},
+		["ls:lfdroleicon"] = {
+			events = "GROUP_ROSTER_UPDATE",
+			func = "function(unit)\n  local role = UnitGroupRolesAssigned(unit)\n  if role and role ~= \"NONE\" then\n    return _VARS.INLINE_ICONS[role]:format(0, 0)\n  end\n\n  return \"\"\nend",
+		},
+		["ls:name"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  return UnitName(unit) or \"\"\nend",
+		},
+		["ls:name:10"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 10) or name\nend",
+		},
+		["ls:name:15"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 15) or name\nend",
+		},
+		["ls:name:20"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 20) or name\nend",
+		},
+		["ls:name:5"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 5) or name\nend",
+		},
+		["ls:npc:type"] = {
+			events = "UNIT_CLASSIFICATION_CHANGED UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local classification = UnitClassification(unit)\n  if classification == \"rare\" then\n    return \"R\"\n  elseif classification == \"rareelite\" then\n    return \"R+\"\n  elseif classification == \"elite\" then\n    return \"+\"\n  elseif classification == \"worldboss\" then\n    return \"B\"\n  elseif classification == \"minus\" then\n    return \"-\"\n  end\n\n  return \"\"\nend",
+		},
+		["ls:phaseicon"] = {
+			events = "UNIT_PHASE",
+			func = "function(unit)\n  if (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) and UnitIsPlayer(unit) and UnitIsConnected(unit) then\n    if UnitIsWarModePhased(unit) then\n      return _VARS.INLINE_ICONS[\"PHASE_WM\"]:format(0, 0)\n    else\n      return _VARS.INLINE_ICONS[\"PHASE\"]:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:player:class"] = {
+			events = "UNIT_CLASSIFICATION_CHANGED",
+			func = "function(unit)\n  if UnitIsPlayer(unit) then\n    local class = UnitClass(unit)\n    if class then\n      return class\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:cur"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local max = UnitPowerMax(unit, type)\n    if max and max ~= 0 then\n      return _VARS.E:FormatNumber(UnitPower(unit, type))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:cur-max"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local max = UnitPowerMax(unit, type)\n    if max and max ~= 0 then\n      local cur = UnitPower(unit, type)\n      if cur == max or cur == 0 then\n        return _VARS.E:FormatNumber(cur)\n      else\n        return string.format(\"%s - %s\", _VARS.E:FormatNumber(cur), _VARS.E:FormatNumber(max))\n      end\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:cur-perc"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local max = UnitPowerMax(unit, type)\n    if max and max ~= 0 then\n      local cur = UnitPower(unit, type)\n      if cur == 0 or cur == max then\n        return _VARS.E:FormatNumber(cur)\n      else\n        return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n      end\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:deficit"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local cur, max = UnitPower(unit, type), UnitPowerMax(unit, type)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:max"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local max = UnitPowerMax(unit, type)\n    if max and max ~= 0 then\n      return _VARS.E:FormatNumber(max)\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:power:perc"] = {
+			events = "UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION PLAYER_FLAGS_CHANGED UNIT_DISPLAYPOWER",
+			func = "function(unit)\n  if UnitIsConnected(unit) and not UnitIsDeadOrGhost(unit) then\n    local type = UnitPowerType(unit)\n    local max = UnitPowerMax(unit, type)\n    if max and max ~= 0 then\n      return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitPower(unit, type), max))\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:pvptimer"] = {
+			func = "function()\n  if IsPVPTimerRunning() then\n    local remain = GetPVPTimer() / 1000\n    if remain >= 1 then\n      local time1, time2, format\n\n      if remain >= 60 then\n        time1, time2, format = _VARS.E:SecondsToTime(remain, \"x:xx\")\n      else\n        time1, time2, format = _VARS.E:SecondsToTime(remain)\n      end\n\n      return format:format(time1, time2)\n    end\n  end\nend",
+		},
+		["ls:questicon"] = {
+			events = "UNIT_CLASSIFICATION_CHANGED",
+			func = "function(unit)\n  if UnitIsQuestBoss(unit) then\n    return _VARS.INLINE_ICONS[\"QUEST\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
+		},
+		["ls:server"] = {
+			events = "UNIT_NAME_UPDATE",
+			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return _VARS.L[\"FOREIGN_SERVER_LABEL\"]\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:sheepicon"] = {
+			events = "UNIT_CLASSIFICATION_CHANGED",
+			vars = "{\n  [\"Beast\"] = true,\n  [\"Bestia\"] = true,\n  [\"Bête\"] = true,\n  [\"Fera\"] = true,\n  [\"Humanoid\"] = true,\n  [\"Humanoide\"] = true,\n  [\"Humanoïde\"] = true,\n  [\"Umanoide\"] = true,\n  [\"Wildtier\"] = true,\n  [\"Гуманоид\"] = true,\n  [\"Животное\"] = true,\n  [\"야수\"] = true,\n  [\"인간형\"] = true,\n  [\"人型生物\"] = true,\n  [\"人形生物\"] = true,\n  [\"野兽\"] = true,\n  [\"野獸\"] = true,\n}",
+			func = "function(unit)\n  if (_VARS.E.PLAYER_CLASS == \"MAGE\" or _VARS.E.PLAYER_CLASS == \"SHAMAN\")\n    and UnitCanAttack(\"player\", unit) and (UnitIsPlayer(unit) or _VARS[\"ls:sheepicon\"][UnitCreatureType(unit)]) then\n    return _VARS.INLINE_ICONS[\"SHEEP\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
+		},
+		["nl"] = {
+			func = "function()\n  return \"\\n\"\nend",
+		},
+	},
+	tag_vars = {
+		["E"] = "ls_UI[1]",
+		["M"] = "ls_UI[2]",
+		["C"] = "ls_UI[3]",
+		["L"] = "ls_UI[4]",
+		["INLINE_ICONS"] = "ls_UI[2].textures.inlineicons",
+		["COLORS"] = "ls_UI[3].db.global.colors",
+		["CLASS_COLORS"] = "ls_UI[3].db.global.colors.class",
+		["POWER_COLORS"] = "ls_UI[3].db.global.colors.power",
+		["REACTION_COLORS"] = "ls_UI[3].db.global.colors.reaction",
+	},
+}
+
+D.profile = {
 	units = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]

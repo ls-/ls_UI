@@ -177,9 +177,9 @@ do
 	end
 
 	local function element_UpdateColors(self)
-		self.myBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.my_heal))
-		self.otherBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.other_heal))
-		self.healAbsorbBar._texture:SetColorTexture(E:GetRGBA(C.db.profile.colors.prediction.heal_absorb))
+		self.myBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.my_heal))
+		self.otherBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.other_heal))
+		self.healAbsorbBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
 	end
 
 	local function frame_UpdateHealthPrediction(self)

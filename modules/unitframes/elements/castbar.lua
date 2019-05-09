@@ -24,16 +24,16 @@ end
 
 local function element_PostCastStart(self)
 	if self.notInterruptible then
-		self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.notinterruptible))
+		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.notinterruptible))
 
 		if self.Icon then
 			self.Icon:SetDesaturated(true)
 		end
 	else
 		if self.casting then
-			self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.casting))
+			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.casting))
 		elseif self.channeling then
-			self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.channeling))
+			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.channeling))
 		end
 
 		if self.Icon then
@@ -45,7 +45,7 @@ end
 local function element_PostCastFail(self)
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
-	self:SetStatusBarColor(E:GetRGB(C.db.profile.colors.castbar.failed))
+	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.failed))
 
 	self.Time:SetText("")
 end

@@ -150,7 +150,7 @@ local function bar_UpdateSegments(self)
 				line1 = L["LEVEL_TOOLTIP"]:format(level),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.xp[2])
+			self[index]:Update(cur, max, 0, C.db.global.colors.xp[2])
 		end
 	else
 		-- Artefact
@@ -166,46 +166,46 @@ local function bar_UpdateSegments(self)
 				line2 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.artifact)
+			self[index]:Update(cur, max, 0, C.db.global.colors.artifact)
 		end
 
 		-- Azerite
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		if azeriteItemLocation then
-			index = index + 1
+		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel or not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+			if azeriteItemLocation then
+				index = index + 1
 
-			local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+				local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+				local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 
-			self[index].tooltipInfo = {
-				header = L["ARTIFACT_POWER"],
-				line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
-			}
+				self[index].tooltipInfo = {
+					header = L["ARTIFACT_POWER"],
+					line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
+				}
 
-			self[index]:Update(cur, max, 0, C.db.global.colors.white, "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill")
+				self[index]:Update(cur, max, 0, C.db.global.colors.white, "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill")
+			end
 		end
 
 		-- XP
-		if UnitLevel("player") < MAX_PLAYER_LEVEL then
-			if not IsXPUserDisabled() then
-				index = index + 1
+		if not IsXPUserDisabled() and UnitLevel("player") < MAX_PLAYER_LEVEL then
+			index = index + 1
 
-				local cur, max = UnitXP("player"), UnitXPMax("player")
-				local bonus = GetXPExhaustion() or 0
+			local cur, max = UnitXP("player"), UnitXPMax("player")
+			local bonus = GetXPExhaustion() or 0
 
-				self[index].tooltipInfo = {
-					header = L["EXPERIENCE"],
-					line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
-				}
+			self[index].tooltipInfo = {
+				header = L["EXPERIENCE"],
+				line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
+			}
 
-				if bonus > 0 then
-					self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
-				else
-					self[index].tooltipInfo.line2 = nil
-				end
-
-				self[index]:Update(cur, max, bonus, bonus > 0 and C.db.profile.colors.xp[1] or C.db.profile.colors.xp[2])
+			if bonus > 0 then
+				self[index].tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
+			else
+				self[index].tooltipInfo.line2 = nil
 			end
+
+			self[index]:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
 		end
 
 		-- Honour
@@ -219,7 +219,7 @@ local function bar_UpdateSegments(self)
 				line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
 			}
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.faction[UnitFactionGroup("player")])
+			self[index]:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
 		end
 
 		-- Reputation
@@ -263,7 +263,7 @@ local function bar_UpdateSegments(self)
 
 			self[index].tooltipInfo = {
 				header = L["REPUTATION"],
-				line1 = REPUTATION_TEMPLATE:format(name, C.db.profile.colors.reaction[standing].hex, repTextLevel),
+				line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing].hex, repTextLevel),
 			}
 
 			if isParagon and hasRewardPending then
@@ -276,7 +276,7 @@ local function bar_UpdateSegments(self)
 				self[index].tooltipInfo.line3 = nil
 			end
 
-			self[index]:Update(cur, max, 0, C.db.profile.colors.reaction[standing])
+			self[index]:Update(cur, max, 0, C.db.global.colors.reaction[standing])
 		end
 	end
 

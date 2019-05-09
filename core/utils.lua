@@ -324,16 +324,16 @@ end
 do
 	function E:GetUnitColor(unit, colorByClass, colorByReaction)
 		if not UnitIsConnected(unit) then
-			return C.db.profile.colors.disconnected
+			return C.db.global.colors.disconnected
 		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
-			return C.db.profile.colors.tapped
+			return C.db.global.colors.tapped
 		elseif colorByClass and UnitIsPlayer(unit) then
 			return self:GetUnitClassColor(unit)
 		elseif colorByReaction then
 			return self:GetUnitReactionColor(unit)
 		end
 
-		return C.db.profile.colors.reaction[4]
+		return C.db.global.colors.reaction[4]
 	end
 
 	function E:GetUnitClassColor(unit)
@@ -342,10 +342,10 @@ do
 
 	function E:GetUnitReactionColor(unit)
 		if select(2, UnitDetailedThreatSituation("player", unit)) ~= nil then
-			return C.db.profile.colors.reaction[2]
+			return C.db.global.colors.reaction[2]
 		end
 
-		return C.db.profile.colors.reaction[UnitReaction(unit, "player")] or C.db.profile.colors.reaction[4]
+		return C.db.global.colors.reaction[UnitReaction(unit, "player")] or C.db.global.colors.reaction[4]
 	end
 
 	function E:GetUnitClassification(unit)
@@ -414,15 +414,15 @@ do
 	function E:GetRelativeDifficultyColor(unitLevel, challengeLevel)
 		local diff = challengeLevel - unitLevel
 		if diff >= 5 then
-			return C.db.profile.colors.difficulty.impossible
+			return C.db.global.colors.difficulty.impossible
 		elseif diff >= 3 then
-			return C.db.profile.colors.difficulty.very_difficult
+			return C.db.global.colors.difficulty.very_difficult
 		elseif diff >= -4 then
-			return C.db.profile.colors.difficulty.difficult
+			return C.db.global.colors.difficulty.difficult
 		elseif -diff <= GetQuestGreenRange() then
-			return C.db.profile.colors.difficulty.standard
+			return C.db.global.colors.difficulty.standard
 		else
-			return C.db.profile.colors.difficulty.trivial
+			return C.db.global.colors.difficulty.trivial
 		end
 	end
 

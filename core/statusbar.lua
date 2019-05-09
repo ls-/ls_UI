@@ -553,8 +553,8 @@ do
 	end
 
 	local function updateColors(self)
-		self.Gain_:SetColorTexture(E:GetRGB(C.db.profile.colors.gain))
-		self.Loss_:SetColorTexture(E:GetRGB(C.db.profile.colors.loss))
+		self.Gain_:SetColorTexture(E:GetRGB(C.db.global.colors.gain))
+		self.Loss_:SetColorTexture(E:GetRGB(C.db.global.colors.loss))
 	end
 
 	local function updatePoints(self, orientation)

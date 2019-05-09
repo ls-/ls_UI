@@ -365,7 +365,7 @@ end
 
 local function minimap_UpdateBorderColor(self)
 	if self._config.color.border then
-		self.Border:SetVertexColor(E:GetRGB(C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested))
+		self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested))
 	else
 		self.Border:SetVertexColor(1, 1, 1)
 	end
@@ -419,7 +419,7 @@ end
 
 local function minimap_UpdateZoneColor(self)
 	if self._config.color.zone_text then
-		self.Zone.Text:SetVertexColor(E:GetRGB(C.db.profile.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.profile.colors.zone.contested))
+		self.Zone.Text:SetVertexColor(E:GetRGB(C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested))
 	else
 		self.Zone.Text:SetVertexColor(1, 1, 1)
 	end

@@ -5,6 +5,7 @@ local UF = P:AddModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local rawset = _G.rawset
 local type = _G.type
 local unpack = _G.unpack
 
@@ -111,25 +112,25 @@ end
 
 function UF:UpdateHealthColors()
 	local color = oUF.colors.health
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.health)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.health)
 
 	color = oUF.colors.tapped
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.tapped)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.tapped)
 
 	color = oUF.colors.disconnected
-	color[1], color[2], color[3] = E:GetRGB(C.db.profile.colors.disconnected)
+	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.disconnected)
 end
 
 function UF:UpdateReactionColors()
 	local color = oUF.colors.reaction
-	for k, v in next, C.db.profile.colors.reaction do
+	for k, v in next, C.db.global.colors.reaction do
 		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
 	end
 end
 
 function UF:UpdatePowerColors()
 	local color = oUF.colors.power
-	for k, myColor in next, C.db.profile.colors.power do
+	for k, myColor in next, C.db.global.colors.power do
 		if type(k) == "string" then
 			if not color[k] then
 				color[k] = {}
@@ -146,8 +147,28 @@ function UF:UpdatePowerColors()
 	end
 
 	color = oUF.colors.runes
-	for k, v in next, C.db.profile.colors.rune do
+	for k, v in next, C.db.global.colors.rune do
 		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+	end
+end
+
+function UF:UpdateTags()
+	oUF.Tags.SharedEvents["PLAYER_REGEN_DISABLED"] = true
+	oUF.Tags.SharedEvents["PLAYER_REGEN_ENABLED"] = true
+
+	for name, data in next, C.db.global.tags do
+		oUF.Tags.Events[name] = data.events
+
+		rawset(oUF.Tags.Methods, name, nil)
+		oUF.Tags.Methods[name] = data.func
+
+		rawset(oUF.Tags.Vars, name, nil)
+		oUF.Tags.Vars[name] = data.vars
+	end
+
+	for name, vars in next, C.db.global.tag_vars do
+		rawset(oUF.Tags.Vars, name, nil)
+		oUF.Tags.Vars[name] = vars
 	end
 end
 
@@ -228,6 +249,7 @@ function UF:Init()
 		self:UpdateHealthColors()
 		self:UpdateReactionColors()
 		self:UpdatePowerColors()
+		self:UpdateTags()
 
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)

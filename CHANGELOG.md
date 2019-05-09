@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 80100.07
+
+- Added tag editor. Can be found at /LSUI > General > Tags. Moved all of my tags to the config, if  
+  you know Lua, you can try editing mine or creating your own. If you find any tags that stopped  
+  working, please, report them;
+- Moved colours from the profile table to the global one;
+- Updated embedded oUF.
+
 ## Version 80100.06
 
 - Removed floating combat feedback from the player frame;

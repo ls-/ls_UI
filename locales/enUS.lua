@@ -8,6 +8,7 @@ local _G = getfenv(0)
 L["LS_UI"] = "ls: |cff1a9fc0UI|r"
 
 -- These rely on Blizz strings
+L["ADD"] = _G.ADD
 L["ARCANE_CHARGES"] = _G.POWER_TYPE_ARCANE_CHARGES
 L["CALENDAR_EVENT_ALARM_MESSAGE"] = _G.CALENDAR_EVENT_ALARM_MESSAGE
 L["CALENDAR_PENDING_INVITES_TOOLTIP"] = _G.GAMETIME_TOOLTIP_CALENDAR_INVITES
@@ -23,6 +24,7 @@ L["CONTESTED_TERRITORY"] = _G.CONTESTED_TERRITORY:gsub("[()]", "")
 L["CURRENCY"] = _G.CURRENCY
 L["CURRENCY_COLON"] = _G.CURRENCY..":"
 L["DAMAGER_RED"] = E:WrapText(D.global.colors.red, _G.DAMAGER)
+L["DELETE"] = _G.DELETE
 L["DURABILITY_COLON"] = _G.DURABILITY..":"
 L["ENABLE"] = _G.ENABLE
 L["ENERGY"] = _G.ENERGY
@@ -40,6 +42,7 @@ L["HIDE"] = _G.HIDE
 L["HOLY_POWER"] = _G.HOLY_POWER
 L["INSANITY"] = _G.INSANITY
 L["LOOT"] = _G.LOOT_NOUN
+L["LUA_ERROR"] = _G.LUA_ERROR ..": %s"
 L["LUNAR_POWER"] = _G.LUNAR_POWER
 L["MAELSTROM"] = _G.MAELSTROM
 L["MAIL"] = _G.MAIL_LABEL
@@ -459,3 +462,15 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+-- new
+L["EVENTS"] = "Events"
+L["FUNC"] = "Function"
+L["INVALID_EVENTS_ERR"] = "Attempted to use invalid events: %s."
+L["NAME_TAKEN_ERR"] = "The name is taken."
+L["NEW_TAG"] = "New Tag"
+L["NEW_VAR"] = "New Variable"
+L["TAG_VARS"] = "Tag Variables"
+L["TAGS"] = "Tags"
+L["VALUE"] = "Value"
+L["VAR"] = "Variable"
