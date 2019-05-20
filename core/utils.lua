@@ -16,6 +16,7 @@ local s_split = _G.string.split
 local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
+local t_wipe = _G.table.wipe
 
 --[[ luacheck: globals
 	CreateFrame GetItemGem GetItemInfoInstant UIParent
@@ -497,6 +498,59 @@ do
 				return isOK and m_floor(total / 16)
 			end
 		end
+	end
+
+	do
+		local rosterInfo = {}
+
+		local function updateUnitInfo(unit)
+			rosterInfo[UnitGUID(unit)] = UnitGroupRolesAssigned(unit)
+		end
+
+		for i = 1, 40 do
+			E:RegisterEvent("UNIT_NAME_UPDATE", updateUnitInfo, "raid" .. i)
+		end
+
+		E:RegisterEvent("GROUP_ROSTER_UPDATE", function()
+			t_wipe(rosterInfo)
+
+			local prefix, num
+			if IsInRaid() then
+				prefix, num = "raid", GetNumGroupMembers()
+			elseif IsInGroup() then
+				prefix, num = "party", GetNumSubgroupMembers()
+			end
+
+			if prefix then
+				for i = 1, num do
+					updateUnitInfo(prefix .. i)
+				end
+			end
+		end)
+
+		E:RegisterEvent("GROUP_LEFT", function()
+			t_wipe(rosterInfo)
+		end)
+
+		function E:GetRosterInfo()
+			return rosterInfo
+		end
+
+		function E:IsUnitTank(unit)
+			return rosterInfo[UnitGUID(unit)] == "TANK"
+		end
+
+		function E:IsUnitHealer(unit)
+			return rosterInfo[UnitGUID(unit)] == "HEALER"
+		end
+
+		function E:IsUnitDamager(unit)
+			return rosterInfo[UnitGUID(unit)] == "DAMAGER"
+		end
+	end
+
+	function E:IsUnitBoss(unit)
+		return unit and (UnitIsUnit(unit, "boss1") or UnitIsUnit(unit, "boss2") or UnitIsUnit(unit, "boss3") or UnitIsUnit(unit, "boss4") or UnitIsUnit(unit, "boss5"))
 	end
 end
 
