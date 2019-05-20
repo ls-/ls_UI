@@ -19,9 +19,10 @@ local select = _G.select
 local t_wipe = _G.table.wipe
 
 --[[ luacheck: globals
-	CreateFrame GetItemGem GetItemInfoInstant UIParent
+	CreateFrame GetItemGem GetItemInfoInstant GetNumGroupMembers GetNumSubgroupMembers IsInGroup IsInRaid IsSpellKnown
+	UIParent UnitExists UnitGroupRolesAssigned UnitGUID UnitIsUnit
 
-	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS
+	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
 
 -- Mine
