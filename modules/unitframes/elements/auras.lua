@@ -62,6 +62,16 @@ local filterFunctions = {
 			return config.boss
 		end
 
+		-- applied by tank
+		if caster and E:IsUnitTank(caster) then
+			return config.tank
+		end
+
+		-- applied by healer
+		if caster and E:IsUnitTank(caster) then
+			return config.healer
+		end
+
 		-- mounts
 		if MOUNTS[spellID] then
 			return config.mount
@@ -99,7 +109,7 @@ local filterFunctions = {
 			end
 		end
 
-		return false
+		return config.misc
 	end,
 	boss = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		local config = self._config and self._config.filter or nil
@@ -127,6 +137,16 @@ local filterFunctions = {
 			return config.boss
 		end
 
+		-- applied by tank
+		if caster and E:IsUnitTank(caster) then
+			return config.tank
+		end
+
+		-- applied by healer
+		if caster and E:IsUnitTank(caster) then
+			return config.healer
+		end
+
 		-- applied by player
 		if aura.isPlayer or (caster and UnitIsUnit(caster, "pet")) then
 			if duration and duration ~= 0 then
@@ -150,7 +170,7 @@ local filterFunctions = {
 			end
 		end
 
-		return false
+		return config.misc
 	end,
 }
 
