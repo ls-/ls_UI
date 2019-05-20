@@ -12,11 +12,9 @@ local unpack = _G.unpack
 
 -- Blizz
 local C_MountJournal = _G.C_MountJournal
-local UnitIsFriend = _G.UnitIsFriend
-local UnitIsUnit = _G.UnitIsUnit
 
 --[[ luacheck: globals
-	CreateFrame GameTooltip UIParent
+	CreateFrame GameTooltip UIParent UnitIsFriend UnitIsUnit
 ]]
 
 -- Mine
