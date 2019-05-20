@@ -692,25 +692,30 @@ end
 -----------
 
 do
-	local EMPTY_SOCKET = 136260
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.+)')
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
 
 	local EMPTY_SOCKET_TEXTURES = {
-		["136256"] = true,
-		["136257"] = true,
-		["136258"] = true,
-		["136259"] = true,
-		["136260"] = true,
-		["407324"] = true,
-		["407325"] = true,
-		["458977"] = true,
+		[ "136256"] = true,
+		[ "136257"] = true,
+		[ "136258"] = true,
+		[ "136259"] = true,
+		[ "136260"] = true,
+		[ "407324"] = true,
+		[ "407325"] = true,
+		[ "458977"] = true,
+		["2958629"] = true,
+		["2958630"] = true,
+		["2958631"] = true,
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET"] = true, -- 136260
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-BLUE"] = true, -- 136256
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"] = true, -- 136257
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PRISMATIC"] = true, -- 458977
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDBLUE"] = true, -- 2958629
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDRED"] = true, -- 2958630
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDYELLOW"] = true, -- 2958631
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-RED"] = true, -- 136258
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-YELLOW"] = true, -- 136259
 	}
@@ -757,11 +762,11 @@ do
 			if texture then
 				if EMPTY_SOCKET_TEXTURES[s_upper(texture)] then
 					if i == 1 then
-						gem1 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem1 = GEM_TEMPLATE:format(texture)
 					elseif i == 2 then
-						gem2 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem2 = GEM_TEMPLATE:format(texture)
 					else
-						gem3 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem3 = GEM_TEMPLATE:format(texture)
 					end
 				else
 					_, gemLink = GetItemGem(itemLink, i)
