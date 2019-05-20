@@ -251,7 +251,7 @@ D.global = {
 		["ls:debuffs"] = {
 			events = "UNIT_AURA",
 			vars = "{\n  [\"Curse\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t\",\n  [\"Disease\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t\",\n  [\"Magic\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t\",\n  [\"Poison\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t\",\n}",
-			func = "function(unit)\n  local types = _VARS.E:GetDispelTypes()\n  if not types or not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if types[type] and not hasDebuff[type] then\n      status = status .. _VARS[\"ls:debuffs\"][type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
+			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if _VARS.E:IsDispellable(type) and not hasDebuff[type] then\n      status = status .. _VARS[\"ls:debuffs\"][type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
 		},
 		["ls:health:cur"] = {
 			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",

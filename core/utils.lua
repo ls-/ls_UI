@@ -505,46 +505,27 @@ end
 ---------------------
 
 do
-	local dispelTypesByClass = {
-		PALADIN = {},
-		SHAMAN = {},
-		DRUID = {},
-		PRIEST = {},
-		MONK = {},
-	}
+	local dispelTypes = {}
 
 	E:RegisterEvent("SPELLS_CHANGED", function()
-		local dispelTypes = dispelTypesByClass[E.PLAYER_CLASS]
+		-- Soothe (Druid)
+		dispelTypes[""] = IsSpellKnown(2908) -- Enrage
 
-		if dispelTypes then
-			if E.PLAYER_CLASS == "PALADIN" then
-				dispelTypes.Disease = IsPlayerSpell(4987) or IsPlayerSpell(213644) or nil -- Cleanse or Cleanse Toxins
-				dispelTypes.Magic = IsPlayerSpell(4987) or nil -- Cleanse
-				dispelTypes.Poison = dispelTypes.Disease
-			elseif E.PLAYER_CLASS == "SHAMAN" then
-				dispelTypes.Curse = IsPlayerSpell(51886) or IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
-				dispelTypes.Magic = IsPlayerSpell(77130) or nil -- Purify Spirit
-			elseif E.PLAYER_CLASS == "DRUID" then
-				dispelTypes.Curse = IsPlayerSpell(2782) or IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
-				dispelTypes.Magic = IsPlayerSpell(88423) or nil -- Nature's Cure
-				dispelTypes.Poison = dispelTypes.Curse
-			elseif E.PLAYER_CLASS == "PRIEST"then
-				dispelTypes.Disease = IsPlayerSpell(527) or nil -- Purify
-				dispelTypes.Magic = IsPlayerSpell(527) or IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
-			elseif E.PLAYER_CLASS == "MONK" then
-				dispelTypes.Disease = IsPlayerSpell(115450) or nil -- Detox
-				dispelTypes.Magic = dispelTypes.Disease
-				dispelTypes.Poison = dispelTypes.Disease
-			end
-		end
+		-- Cleanse Spirit (Shaman), Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
+		dispelTypes["Curse"] = IsSpellKnown(51886) or IsSpellKnown(88423) or IsSpellKnown(77130) or IsSpellKnown(2782) or IsSpellKnown(475)
+
+		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Purify (Priest), Purify Disease (Priest)
+		dispelTypes["Disease"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(527) or IsSpellKnown(213634)
+
+		-- Cleanse (Paladin), Detox (Monk), Mass Dispel (Priest), Nature's Cure (Druid), Purify (Priest), Purify Spirit (Shaman)
+		dispelTypes["Magic"] = IsSpellKnown(4987) or IsSpellKnown(115450) or IsSpellKnown(32375) or IsSpellKnown(88423) or IsSpellKnown(527) or IsSpellKnown(77130)
+
+		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Nature's Cure (Druid), Remove Corruption (Druid)
+		dispelTypes["Poison"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(88423) or IsSpellKnown(2782)
 	end)
 
-	function E:GetDispelTypes()
-		return dispelTypesByClass[E.PLAYER_CLASS]
-	end
-
 	function E:IsDispellable(debuffType)
-		return dispelTypesByClass[E.PLAYER_CLASS] and dispelTypesByClass[E.PLAYER_CLASS][debuffType] or nil
+		return dispelTypes[debuffType]
 	end
 end
 
