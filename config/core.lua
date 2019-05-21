@@ -97,11 +97,6 @@ MODULE.GROWTH_DIRS = {
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
-MODULE.FCF_MODES = {
-	["Fountain"] = "Fountain",
-	["Standard"] = "Straight",
-}
-
 function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
 		[""] = L["FRAME"],
@@ -669,7 +664,7 @@ function MODULE:CopySettings(src, dest, ignoredKeys)
 	end
 end
 
-function MODULE.Init()
+function MODULE:Init()
 	C.options = {
 		type = "group",
 		name = L["LS_UI"],
