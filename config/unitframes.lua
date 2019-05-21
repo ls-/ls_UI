@@ -2105,20 +2105,32 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_BUFFS"],
 										desc = L["BOSS_BUFFS_DESC"],
 									},
-									mount = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_BUFFS"],
+										desc = L["TANK_BUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_BUFFS"],
+										desc = L["HEALER_BUFFS_DESC"],
+									},
+									mount = {
+										order = 4,
 										type = "toggle",
 										name = L["MOUNT_AURAS"],
 										desc = L["MOUNT_AURAS_DESC"],
 									},
 									selfcast = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_BUFFS"],
 										desc = L["SELF_BUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["SELF_BUFFS_PERMA"],
 										desc = L["SELF_BUFFS_PERMA_DESC"],
@@ -2127,13 +2139,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS"],
 										desc = L["CASTABLE_BUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS_PERMA"],
 										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
@@ -2141,10 +2153,20 @@ local function getUFOption_Auras(order, unit)
 											return not C.db.profile.units[unit].auras.filter.friendly.buff.player
 										end,
 									},
+									misc = {
+										order = 9,
+										type = "toggle",
+										name = L["MISC"],
+									},
 								},
 							},
-							debuff = {
+							spacer_1 = {
 								order = 2,
+								type = "description",
+								name = " ",
+							},
+							debuff = {
+								order = 3,
 								type = "group",
 								name = "",
 								inline = true,
@@ -2155,14 +2177,26 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_DEBUFFS"],
 										desc = L["BOSS_DEBUFFS_DESC"],
 									},
-									selfcast = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_DEBUFFS"],
+										desc = L["TANK_DEBUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_DEBUFFS"],
+										desc = L["HEALER_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 4,
 										type = "toggle",
 										name = L["SELF_DEBUFFS"],
 										desc = L["SELF_DEBUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_DEBUFFS_PERMA"],
 										desc = L["SELF_DEBUFFS_PERMA_DESC"],
@@ -2171,13 +2205,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS"],
 										desc = L["CASTABLE_DEBUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS_PERMA"],
 										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
@@ -2186,10 +2220,15 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									dispellable = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["DISPELLABLE_DEBUFFS"],
 										desc = L["DISPELLABLE_DEBUFFS_DESC"],
+									},
+									misc = {
+										order = 9,
+										type = "toggle",
+										name = L["MISC"],
 									},
 								},
 							},
@@ -2213,20 +2252,32 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_BUFFS"],
 										desc = L["BOSS_BUFFS_DESC"],
 									},
-									mount = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_BUFFS"],
+										desc = L["TANK_BUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_BUFFS"],
+										desc = L["HEALER_BUFFS_DESC"],
+									},
+									mount = {
+										order = 4,
 										type = "toggle",
 										name = L["MOUNT_AURAS"],
 										desc = L["MOUNT_AURAS_DESC"],
 									},
 									selfcast = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_BUFFS"],
 										desc = L["SELF_BUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["SELF_BUFFS_PERMA"],
 										desc = L["SELF_BUFFS_PERMA_DESC"],
@@ -2235,13 +2286,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS"],
 										desc = L["CASTABLE_BUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS_PERMA"],
 										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
@@ -2250,15 +2301,25 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									dispellable = {
-										order = 7,
+										order = 9,
 										type = "toggle",
 										name = L["DISPELLABLE_BUFFS"],
 										desc = L["DISPELLABLE_BUFFS_DESC"],
 									},
+									misc = {
+										order = 10,
+										type = "toggle",
+										name = L["MISC"],
+									},
 								},
 							},
-							debuff = {
+							spacer_1 = {
 								order = 2,
+								type = "description",
+								name = " ",
+							},
+							debuff = {
+								order = 3,
 								type = "group",
 								name = "",
 								inline = true,
@@ -2269,14 +2330,26 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_DEBUFFS"],
 										desc = L["BOSS_DEBUFFS_DESC"],
 									},
-									selfcast = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_DEBUFFS"],
+										desc = L["TANK_DEBUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_DEBUFFS"],
+										desc = L["HEALER_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 4,
 										type = "toggle",
 										name = L["SELF_DEBUFFS"],
 										desc = L["SELF_DEBUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_DEBUFFS_PERMA"],
 										desc = L["SELF_DEBUFFS_PERMA_DESC"],
@@ -2285,19 +2358,24 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS"],
 										desc = L["CASTABLE_DEBUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS_PERMA"],
 										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
 										disabled = function()
 											return not C.db.profile.units[unit].auras.filter.enemy.debuff.player
 										end,
+									},
+									misc = {
+										order = 8,
+										type = "toggle",
+										name = L["MISC"],
 									},
 								},
 							},
