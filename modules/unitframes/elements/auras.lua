@@ -39,10 +39,12 @@ local filterFunctions = {
 		if not config then return end
 
 		-- black- and whitelists
-		for filter in next, config.custom do
-			filter = C.db.global.aura_filters[filter]
-			if filter and filter[spellID] then
-				return filter.state
+		for filter, enabled in next, config.custom do
+			if enabled then
+				filter = C.db.global.aura_filters[filter]
+				if filter and filter[spellID] then
+					return filter.state
+				end
 			end
 		end
 
@@ -114,10 +116,12 @@ local filterFunctions = {
 		if not config then return end
 
 		-- black- and whitelists
-		for filter in next, config.custom do
-			filter = C.db.global.aura_filters[filter]
-			if filter and filter[spellID] then
-				return filter.state
+		for filter, enabled in next, config.custom do
+			if enabled then
+				filter = C.db.global.aura_filters[filter]
+				if filter and filter[spellID] then
+					return filter.state
+				end
 			end
 		end
 

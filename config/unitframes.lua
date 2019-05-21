@@ -5,7 +5,9 @@ local UNITFRAMES = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 local s_split = _G.string.split
+local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local tostring = _G.tostring
 
@@ -1737,6 +1739,31 @@ local function getUFOption_DebuffIcons(order, unit)
 	return temp
 end
 
+local customAuraFilters = {}
+do
+	local filterCache = {}
+
+	function CONFIG:UpdateUFAuraFilters()
+		t_wipe(customAuraFilters)
+
+		local index = 1
+		for filter in next, C.db.global.aura_filters do
+			if not filterCache[filter] then
+				filterCache[filter] = {
+					type = "toggle",
+					name = filter,
+				}
+			end
+
+			filterCache[filter].order = index
+
+			customAuraFilters[filter] = filterCache[filter]
+
+			index = index + 1
+		end
+	end
+end
+
 local function getUFOption_Auras(order, unit)
 	local copyIgnoredKeys = {
 		["filter"] = true,
@@ -2087,8 +2114,23 @@ local function getUFOption_Auras(order, unit)
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 						end,
 					},
-					friendly = {
+					custom = {
 						order = 2,
+						type = "group",
+						inline = true,
+						name = L["USER_CREATED"],
+						get = function(info)
+							return C.db.profile.units[unit].auras.filter[info[#info - 1]][info[#info]]
+						end,
+						set = function(info, value)
+							C.db.profile.units[unit].auras.filter[info[#info - 1]][info[#info]] = value
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+						end,
+						args = customAuraFilters,
+					},
+					friendly = {
+						order = 3,
 						type = "group",
 						inline = true,
 						name = "|c" .. C.db.global.colors.green.hex .. L["FRIENDLY_UNITS"] .. "|r",
@@ -2235,7 +2277,7 @@ local function getUFOption_Auras(order, unit)
 						},
 					},
 					enemy = {
-						order = 3,
+						order = 4,
 						type = "group",
 						inline = true,
 						name = "|c" .. C.db.global.colors.red.hex .. L["ENEMY_UNITS"] .. "|r",
@@ -2658,7 +2700,7 @@ local function getUFOptions(order, unit, name)
 	return temp
 end
 
-function CONFIG.CreateUnitFramesPanel(_, order)
+function CONFIG:CreateUnitFramesPanel(order)
 	C.options.args.unitframes = {
 		order = order,
 		type = "group",
@@ -2830,4 +2872,6 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 			boss = getUFOptions(9, "boss", L["BOSS_FRAMES"]),
 		},
 	}
+
+	self:UpdateUFAuraFilters()
 end
