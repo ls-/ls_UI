@@ -156,6 +156,9 @@ do
 			name = L["DELETE"],
 			width = "full",
 			hidden = isDefaultTag,
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
 			func = function(info)
 				C.db.global.tags[info[#info - 1]] = nil
 				oUF.Tags.Events[info[#info - 1]] = nil
@@ -397,6 +400,9 @@ do
 			name = L["DELETE"],
 			width = "full",
 			disabled = isDefaultTag,
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
 			func = function(info)
 				C.db.global.tag_vars[info[#info - 1]] = nil
 				rawset(oUF.Tags.Vars, info[#info - 1], nil)
