@@ -506,6 +506,195 @@ do
 	end
 end
 
+local updateAuraFiltersOptions
+do
+	local units = {"player", "target", "focus", "boss"}
+
+	local curFilterInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			validate = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and C.db.global.aura_filters[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.aura_filters[value] then
+						C.db.global.aura_filters[value] = C.db.global.aura_filters[info[#info - 1]]
+						C.db.global.aura_filters[info[#info - 1]] = nil
+
+						for _, unit in next, units do
+							if C.db.profile.units[unit].auras then
+								if C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] then
+									C.db.profile.units[unit].auras.filter.custom[value] = C.db.profile.units[unit].auras.filter.custom[info[#info - 1]]
+									C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] = nil
+								end
+							end
+						end
+
+						CONFIG:UpdateUFAuraFilters()
+						updateTagVarsOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", value)
+					end
+				end
+			end,
+		},
+		state = {
+			order = 2,
+			type = "toggle",
+			name = L["BLACKLIST"],
+			get = function(info)
+				return not C.db.global.aura_filters[info[#info - 1]].state
+			end,
+			set = function(info, value)
+				C.db.global.aura_filters[info[#info - 1]].state = not value
+			end,
+		},
+		settings = {
+			type = "execute",
+			order = 3,
+			name = L["FILTER_SETTINGS"],
+			width = "full",
+			func = function()
+				-- TODO: Implement me
+			end,
+		},
+		delete = {
+			order = 4,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
+			func = function(info)
+				C.db.global.aura_filters[info[#info - 1]] = nil
+
+				for _, unit in next, units do
+					if C.db.profile.units[unit].auras then
+						C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] = nil
+					end
+				end
+
+				CONFIG:UpdateUFAuraFilters()
+				updateAuraFiltersOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters")
+			end,
+		},
+	}
+
+	local newFilterInfo = {
+		name = "",
+		state = false,
+	}
+
+	local filterOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW_VAR"],
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value):gsub("\124\124+", "\124")
+
+						CONFIG:SetStatusText("")
+						return C.db.global.aura_filters[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+					get = function(info)
+						return tostring(newFilterInfo[info[#info]]):gsub("\124", "\124\124")
+					end,
+					set = function(_, value)
+						newFilterInfo.name = s_trim(value):gsub("\124\124+", "\124")
+					end,
+				},
+				state = {
+					order = 2,
+					type = "toggle",
+					name = L["BLACKLIST"],
+					get = function()
+						return not newFilterInfo.state
+					end,
+					set = function(_, value)
+						newFilterInfo.state = not value
+					end,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newFilterInfo.name ~= "" then
+							C.db.global.aura_filters[newFilterInfo.name] = {
+								state = newFilterInfo.state
+							}
+
+							CONFIG:UpdateUFAuraFilters()
+							updateAuraFiltersOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", newFilterInfo.name)
+
+							newFilterInfo.name = ""
+							newFilterInfo.state = false
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateAuraFiltersOptions()
+		local options = C.options.args.general.args.aura_filters.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = filterOptionTables.new
+
+		for filter in next, C.db.global.aura_filters do
+			if not D.global.aura_filters[filter] then
+				if not filterOptionTables[filter] then
+					filterOptionTables[filter] = {
+						type = "group",
+						name = filter,
+						args = curFilterInfo,
+					}
+				end
+
+				options[filter] = filterOptionTables[filter]
+
+				t_insert(order, filter)
+			end
+		end
+
+		t_sort(order)
+
+		for i, filter in next, order do
+			if options[filter] then
+				options[filter].order = i + 10
+			end
+		end
+	end
+end
+
 function CONFIG:CreateGeneralPanel(order)
 	C.options.args.general = {
 		order = order,
@@ -1542,9 +1731,17 @@ function CONFIG:CreateGeneralPanel(order)
 				name = L["TAG_VARS"],
 				args = {},
 			},
+			aura_filters = {
+				order = 4,
+				type = "group",
+				childGroups = "tree",
+				name = L["AURA_FILTERS"],
+				args = {},
+			},
 		},
 	}
 
 	updateTagOptions()
 	updateTagVarsOptions()
+	updateAuraFiltersOptions()
 end
