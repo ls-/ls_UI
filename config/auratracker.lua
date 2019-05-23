@@ -7,7 +7,13 @@ local CONFIG = P:GetModule("Config")
 local _G = getfenv(0)
 local s_split = _G.string.split
 
+--[[ luacheck: globals
+	GameTooltip InCombatLockdown LibStub
+]]
+
 -- Mine
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
 local GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
@@ -36,12 +42,6 @@ local DRAG_KEY_INDICES = {
 	["NONE"] = 4,
 }
 
-local H_ALIGNMENTS = {
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-}
-
 local V_ALIGNMENTS = {
 	["BOTTOM"] = "BOTTOM",
 	["MIDDLE"] = "MIDDLE",
@@ -58,9 +58,14 @@ local function isModuleDisabled()
 	return not AURATRACKER:IsInit()
 end
 
-local function updateCallback()
+local function callback()
 	AURATRACKER:GetTracker():UpdateConfig()
 	AURATRACKER:GetTracker():Update()
+
+	if not InCombatLockdown() then
+		AceConfigDialog:Open("ls_UI")
+		AceConfigDialog:SelectGroup("ls_UI", "auratracker")
+	end
 end
 
 function CONFIG.CreateAuraTrackerPanel(_, order)
@@ -332,7 +337,10 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				name = L["FILTER_SETTINGS"],
 				disabled = isModuleDisabled,
 				func = function()
-					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], C.db.char.auratracker.filter, {1, 2}, {3}, updateCallback)
+					AceConfigDialog:Close("ls_UI")
+					GameTooltip:Hide()
+
+					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], nil, C.db.char.auratracker.filter.HELPFUL, C.db.char.auratracker.filter.HARMFUL, callback)
 				end,
 			},
 		},

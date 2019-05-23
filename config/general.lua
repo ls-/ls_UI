@@ -19,7 +19,7 @@ local tostring = _G.tostring
 local type = _G.type
 
 --[[ luacheck: globals
-	GetText LibStub UnitSex
+	GameTooltip GetText InCombatLockdown LibStub UnitSex
 
 	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
 	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
@@ -515,6 +515,21 @@ end
 local updateAuraFiltersOptions
 do
 	local units = {"player", "target", "focus", "boss"}
+	local curFilter
+
+	local function callback()
+		for _, unit in next, units do
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+		end
+
+		if not InCombatLockdown() then
+			AceConfigDialog:Open("ls_UI")
+			AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", curFilter)
+		end
+
+		curFilter = nil
+	end
 
 	local curFilterInfo = {
 		name = {
@@ -571,8 +586,13 @@ do
 			order = 3,
 			name = L["FILTER_SETTINGS"],
 			width = "full",
-			func = function()
-				-- TODO: Implement me
+			func = function(info)
+				curFilter = info[#info - 1]
+
+				AceConfigDialog:Close("ls_UI")
+				GameTooltip:Hide()
+
+				CONFIG:OpenAuraConfig(info[#info - 1], C.db.global.aura_filters[info[#info - 1]], nil, nil, callback)
 			end,
 		},
 		delete = {
@@ -590,6 +610,11 @@ do
 					if C.db.profile.units[unit].auras then
 						C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] = nil
 					end
+				end
+
+				for _, unit in next, units do
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 				end
 
 				CONFIG:UpdateUFAuraFilters()

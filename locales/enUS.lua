@@ -1,4 +1,4 @@
-local _, ns = ...
+﻿local _, ns = ...
 local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
@@ -28,6 +28,7 @@ L["DELETE"] = _G.DELETE
 L["DURABILITY_COLON"] = _G.DURABILITY..":"
 L["ENABLE"] = _G.ENABLE
 L["ENERGY"] = _G.ENERGY
+L["ERROR_RED"] = E:WrapText(D.global.colors.red, _G.ERROR_CAPS)
 L["FACTION"] = _G.FACTION
 L["FACTION_ALLIANCE"] = _G.FACTION_ALLIANCE
 L["FACTION_HORDE"] = _G.FACTION_HORDE
