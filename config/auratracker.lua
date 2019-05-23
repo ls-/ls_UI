@@ -122,6 +122,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
 					CONFIG:CopySettings(D.char.auratracker, C.db.char.auratracker, {enabled = true, filter = true})
@@ -307,6 +308,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.char.auratracker.cooldown, C.db.char.auratracker.cooldown)
 							AURATRACKER:GetTracker():UpdateConfig()
