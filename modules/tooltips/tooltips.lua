@@ -471,31 +471,31 @@ local function tooltip_SetUnit(self)
 		-- status
 		local status = ""
 
-		GameTooltipTextRight1:SetText(M.textures.inlineicons["SHEEP"]:format(16, 16))
+		GameTooltipTextRight1:SetText(M.textures.icons_inline["SHEEP"]:format(16, 16))
 		local size = GameTooltipTextRight1:GetStringHeight()
 		size = 16 * 16 / size
 
 		if UnitInParty(unit) or UnitInRaid(unit) then
 			if UnitIsGroupLeader(unit) then
-				status = status .. M.textures.inlineicons["LEADER"]:format(size, size)
+				status = status .. M.textures.icons_inline["LEADER"]:format(size, size)
 			end
 
 			local role = UnitGroupRolesAssigned(unit)
 			if role and role ~= "NONE" then
-				status = status .. M.textures.inlineicons[role]:format(size, size)
+				status = status .. M.textures.icons_inline[role]:format(size, size)
 			end
 		end
 
 		if (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) and UnitIsConnected(unit) then
 			if UnitIsWarModePhased(unit) then
-				status = status .. M.textures.inlineicons["PHASE_WM"]:format(size, size)
+				status = status .. M.textures.icons_inline["PHASE_WM"]:format(size, size)
 			else
-				status = status .. M.textures.inlineicons["PHASE"]:format(size, size)
+				status = status .. M.textures.icons_inline["PHASE"]:format(size, size)
 			end
 		end
 
 		if isPVPReady then
-			status = status .. M.textures.inlineicons[s_upper(pvpFaction)]:format(size, size)
+			status = status .. M.textures.icons_inline[s_upper(pvpFaction)]:format(size, size)
 		end
 
 		if status ~= "" then
@@ -570,16 +570,16 @@ local function tooltip_SetUnit(self)
 		-- status
 		local status = ""
 
-		GameTooltipTextRight1:SetText(M.textures.inlineicons["SHEEP"]:format(16, 16))
+		GameTooltipTextRight1:SetText(M.textures.icons_inline["SHEEP"]:format(16, 16))
 		local size = GameTooltipTextRight1:GetStringHeight()
 		size = 16 * 16 / size
 
 		if UnitIsQuestBoss(unit) then
-			status = status .. s_format(M.textures.inlineicons["QUEST"], size, size)
+			status = status .. s_format(M.textures.icons_inline["QUEST"], size, size)
 		end
 
 		if isPVPReady then
-			status = status .. s_format(M.textures.inlineicons[s_upper(pvpFaction)], size, size)
+			status = status .. s_format(M.textures.icons_inline[s_upper(pvpFaction)], size, size)
 		end
 
 		if status ~= "" then

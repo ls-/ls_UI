@@ -91,10 +91,10 @@ local function cleanUpStep1()
 end
 
 local function cleanUpStep2()
+	local units = {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"}
+
 	-- -> 80000.13
 	if not C.db.profile.version or C.db.profile.version < 8000013 then
-		local units = {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"}
-
 		for _, unit in next, units do
 			if C.db.profile.units[unit] then
 				if C.db.profile.units[unit].castbar then
@@ -111,6 +111,19 @@ local function cleanUpStep2()
 				end
 
 				C.db.profile.units[unit].class = nil
+			end
+		end
+	end
+
+	-- other
+	for _, unit in next, units do
+		if C.db.profile.units[unit] then
+			if C.db.profile.units[unit].auras then
+				for filter in next, C.db.profile.units[unit].auras.filter.custom do
+					if not C.db.global.aura_filters[filter] then
+						C.db.profile.units[unit].auras.filter.custom[filter] = nil
+					end
+				end
 			end
 		end
 	end

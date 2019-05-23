@@ -7,7 +7,13 @@ local CONFIG = P:GetModule("Config")
 local _G = getfenv(0)
 local s_split = _G.string.split
 
+--[[ luacheck: globals
+	GameTooltip InCombatLockdown LibStub
+]]
+
 -- Mine
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
 local GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
@@ -36,12 +42,6 @@ local DRAG_KEY_INDICES = {
 	["NONE"] = 4,
 }
 
-local H_ALIGNMENTS = {
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-}
-
 local V_ALIGNMENTS = {
 	["BOTTOM"] = "BOTTOM",
 	["MIDDLE"] = "MIDDLE",
@@ -58,9 +58,14 @@ local function isModuleDisabled()
 	return not AURATRACKER:IsInit()
 end
 
-local function updateCallback()
+local function callback()
 	AURATRACKER:GetTracker():UpdateConfig()
 	AURATRACKER:GetTracker():Update()
+
+	if not InCombatLockdown() then
+		AceConfigDialog:Open("ls_UI")
+		AceConfigDialog:SelectGroup("ls_UI", "auratracker")
+	end
 end
 
 function CONFIG.CreateAuraTrackerPanel(_, order)
@@ -117,6 +122,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
 					CONFIG:CopySettings(D.char.auratracker, C.db.char.auratracker, {enabled = true, filter = true})
@@ -189,8 +195,48 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				type = "description",
 				name = " ",
 			},
-			count = {
+			type = {
 				order = 20,
+				type = "group",
+				name = L["AURA_TYPE"],
+				inline = true,
+				get = function(info)
+					return C.db.char.auratracker.type[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.char.auratracker.type[info[#info]] ~= value then
+						C.db.char.auratracker.type[info[#info]] = value
+						AURATRACKER:GetTracker():UpdateConfig()
+						AURATRACKER:GetTracker():UpdateAuraTypeIcons()
+					end
+				end,
+				args = {
+					debuff_type = {
+						order = 1,
+						type = "toggle",
+						name = L["DEBUFF_TYPE"],
+					},
+					size = {
+						order = 2,
+						type = "range",
+						name = L["SIZE"],
+						min = 10, max = 32, step = 2,
+					},
+					position = {
+						order = 3,
+						type = "select",
+						name = L["POINT"],
+						values = CONFIG.POINTS,
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			count = {
+				order = 30,
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
@@ -202,7 +248,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 					if C.db.char.auratracker.count[info[#info]] ~= value then
 						C.db.char.auratracker.count[info[#info]] = value
 						AURATRACKER:GetTracker():UpdateConfig()
-						AURATRACKER:GetTracker():UpdateButtons("UpdateCountFont")
+						AURATRACKER:GetTracker():UpdateFontObjects()
 					end
 				end,
 				args = {
@@ -212,21 +258,37 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
-					flag = {
+					outline = {
 						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+					h_alignment = {
+						order = 4,
 						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						name = L["TEXT_HORIZ_ALIGNMENT"],
+						values = CONFIG.H_ALIGNMENTS,
+					},
+					v_alignment = {
+						order = 5,
+						type = "select",
+						name = L["TEXT_VERT_ALIGNMENT"],
+						values = CONFIG.V_ALIGNMENTS,
 					},
 				},
 			},
-			spacer_3 = {
-				order = 29,
+			spacer_4 = {
+				order = 39,
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -246,6 +308,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.char.auratracker.cooldown, C.db.char.auratracker.cooldown)
 							AURATRACKER:GetTracker():UpdateConfig()
@@ -321,18 +384,21 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = 39,
+			spacer_5 = {
+				order = 49,
 				type = "description",
 				name = " ",
 			},
 			settings = {
 				type = "execute",
-				order = 40,
+				order = 50,
 				name = L["FILTER_SETTINGS"],
 				disabled = isModuleDisabled,
 				func = function()
-					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], C.db.char.auratracker.filter, {1, 2}, {3}, updateCallback)
+					AceConfigDialog:Close("ls_UI")
+					GameTooltip:Hide()
+
+					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], nil, C.db.char.auratracker.filter.HELPFUL, C.db.char.auratracker.filter.HARMFUL, callback)
 				end,
 			},
 		},

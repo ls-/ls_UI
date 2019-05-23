@@ -76,7 +76,7 @@ local textures = {
 		-- ["TEMP"] = {166 / 256, 198 / 256, 199 / 256, 231 / 256},
 		-- ["TEMP"] = {199 / 256, 231 / 256, 199 / 256, 231 / 256},
 	},
-	inlineicons = {
+	icons_inline = {
 		-- first line
 		["LEADER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:1:33:1:33|t",
 		["DAMAGER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:34:66:1:33|t",
@@ -134,6 +134,35 @@ local textures = {
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:166:198:199:231|t",
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:199:231:199:231|t",
 	},
+	aura_icons = {
+		-- line #1
+		["Buff"] = {1 / 128, 33 / 128, 1 / 128, 33 / 128},
+		["Debuff"] = {34 / 128, 66 / 128, 1 / 128, 33 / 128},
+		["Curse"] = {67 / 128, 99 / 128, 1 / 128, 33 / 128},
+		-- line #2
+		["Disease"] = {1 / 128, 33 / 128, 34 / 128, 66 / 128},
+		["Magic"] = {34 / 128, 66 / 128, 34 / 128, 66 / 128},
+		["Poison"] = {67 / 128, 99 / 128, 34 / 128, 66 / 128},
+		-- line #3
+		[""] = {1 / 128, 33 / 128, 67 / 128, 99 / 128}, -- Enrage
+		-- ["TEMP"] = {34 / 128, 66 / 128, 67 / 128, 99 / 128},
+		-- ["TEMP"] = {67 / 128, 99 / 128, 67 / 128, 99 / 128},
+	},
+	aura_icons_inline = {
+		-- line #1
+		["Buff"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:1:33|t",
+		["Debuff"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:1:33|t",
+		["Curse"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t",
+		-- line #2
+		["Disease"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t",
+		["Magic"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t",
+		["Poison"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t",
+		-- line #3
+		[""] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:67:99|t",
+		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:67:99|t",
+		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:67:99|t",
+
+	}
 }
 
 M.textures = textures

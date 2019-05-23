@@ -6,10 +6,9 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local ALL_ICONS = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t"
-	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t"
-	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t"
-	.. "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t"
+local ALL_ICONS = M.textures.aura_icons_inline["Curse"] .. M.textures.aura_icons_inline["Disease"]
+	.. M.textures.aura_icons_inline["Magic"] .. M.textures.aura_icons_inline["Poison"]
+	.. M.textures.aura_icons_inline[""]
 
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit

@@ -86,6 +86,7 @@ local function getOptionsTable_Aura(order, name, filter)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras[filter], C.db.profile.auras[filter], {point = true})
 					AURAS:ForHeader(filter, "Update")
@@ -344,6 +345,7 @@ function CONFIG.CreateAurasPanel(_, order)
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
 				disabled = isModuleDisabled,
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras, C.db.profile.auras, {point = true})
 					AURAS:ForEachHeader("Update")
@@ -375,6 +377,7 @@ function CONFIG.CreateAurasPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.auras.cooldown, C.db.profile.auras.cooldown)
 							AURAS:UpdateHeaders("UpdateConfig")

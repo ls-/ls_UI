@@ -71,7 +71,6 @@ do
 			-- 7: frame.LeftSlot, frame.RightSlot
 			-- 8: frame.TextureParent
 			-- 9: frame.TextParent
-			-- 10: frame.FloatingCombatFeedback
 
 		-- bg
 		local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)

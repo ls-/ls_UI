@@ -7,8 +7,10 @@ local _G = getfenv(0)
 local loadstring = _G.loadstring
 local next = _G.next
 local pcall = _G.pcall
+local s_trim = _G.string.trim
 local t_concat = _G.table.concat
 local t_insert = _G.table.insert
+local t_remove = _G.table.remove
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
@@ -34,13 +36,15 @@ local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
 local ReloadUI = _G.ReloadUI
 
 --[[ luacheck: globals
-	LibStub
+	LibStub InterfaceOptionsFramePanelContainer UIParent
 ]]
 
 -- Mine
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
+
+local INT_LIMIT = 2 ^ 32 / 2 - 1
 
 MODULE.H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
@@ -97,10 +101,15 @@ MODULE.GROWTH_DIRS = {
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
-MODULE.FCF_MODES = {
-	["Fountain"] = "Fountain",
-	["Standard"] = "Straight",
-}
+function MODULE.ConfirmReset(info)
+	local option = C.options
+
+	for i = 1, #info - 1 do
+		option = option.args[info[i]]
+	end
+
+	return L["CONFIRM_RESET"]:format(option.name)
+end
 
 function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
@@ -128,106 +137,77 @@ end
 
 -- MODULE.OpenAuraConfig
 do
-	-- Mine
+	local NUM_BUTTONS = 13
+
 	local frame
-	local scrollFrame
-	local auraList
-	local auraLists
-	local UpdateWidget
-	local sortedAuraList = {}
-	local NUM_BUTTONS = 12
+	local data = {}
+	local activeData
+	local sortedData = {}
+	local history = {{}, {}, {}}
+	local activeHistory
 
-	local FILTERS = {
-		[1] = "HELPFUL",
-		[2] = "HARMFUL",
-		[3] = "ALL"
-	}
-
-	local function SortAurasByName(a, b)
+	local function sortFunc(a, b)
 		return a.name < b.name or (a.name == b.name and a.id < b.id)
 	end
 
-	local function PrepareSortedAuraList(list)
-		t_wipe(sortedAuraList)
+	local function prepAuraList(list)
+		t_wipe(sortedData)
 
+		local name, icon, _
 		for id in next, list do
-			local name, _, icon = GetSpellInfo(id)
-
-			if name then
-				t_insert(sortedAuraList, {
-					id = id,
-					name = name,
-					icon = icon,
-				})
+			if type(id) == "number" then
+				name, _, icon = GetSpellInfo(id)
+				if name then
+					t_insert(sortedData, {
+						id = id,
+						name = name,
+						icon = icon,
+					})
+				end
 			end
 		end
 
-		t_sort(sortedAuraList, SortAurasByName)
+		t_sort(sortedData, sortFunc)
 	end
 
-	local function AddAura(spellID)
-		local name = GetSpellInfo(spellID)
+	local function tab_OnClick(self)
+		PanelTemplates_SetTab(frame.AuraList, self:GetID())
+		FauxScrollFrame_SetOffset(frame.AuraList, 0)
 
-		if name and not auraList[spellID] then
-			auraList[spellID] = true
+		activeData = data[self:GetID()]
+		prepAuraList(activeData)
 
-			scrollFrame:Update()
+		activeHistory = history[self:GetID()]
 
-			UpdateWidget()
-
-			return true
-		else
-			return false
-		end
+		frame.AuraList:Update()
 	end
 
-	local function RemoveAura(spellID)
-		auraList[spellID] = nil
-
-		scrollFrame:Update()
-
-		UpdateWidget()
-	end
-
-	local function Tab_OnClick(self)
-		PanelTemplates_SetTab(scrollFrame, self:GetID())
-		FauxScrollFrame_SetOffset(scrollFrame, 0)
-
-		auraList = auraLists[FILTERS[self:GetID()]]
-
-		scrollFrame:Update()
-	end
-
-	local function UpdateTooltip(self, elapsed)
+	local function auraButtonUpdateTooltip(self, elapsed)
 		self.elapsed = (self.elapsed or 0) + elapsed
 
 		if self.elapsed > 0.1 then
-			if GameTooltip:IsOwned(self) then
-				if self.spellID then
-					GameTooltip:SetSpellByID(self.spellID)
-				elseif self.link then
-					GameTooltip:SetHyperlink(self.link)
-				end
+			if GameTooltip:IsOwned(self) and self.spellID then
+				GameTooltip:SetSpellByID(self.spellID)
 			end
 
 			self.elapsed = 0
 		end
 	end
 
-	local function AuraButton_OnEnter(self)
+	local function auraButton_OnEnter(self)
 		self.Text:SetFontObject("GameFontHighlight")
 
 		if not self.spellID then return end
 
 		GameTooltip:SetOwner(self, "ANCHOR_NONE")
-		GameTooltip:SetPoint("TOPLEFT", frame, "TOPRIGHT", -2, -24)
+		GameTooltip:SetPoint("TOPRIGHT", frame, "TOPLEFT", 2, -24)
 		GameTooltip:SetSpellByID(self.spellID)
 		GameTooltip:Show()
 
-		self:SetScript("OnUpdate", UpdateTooltip)
+		self:SetScript("OnUpdate", auraButtonUpdateTooltip)
 	end
 
-	local function AuraButton_OnLeave(self)
+	local function auraButton_OnLeave(self)
 		self.Text:SetFontObject("GameFontNormal")
 
 		GameTooltip:Hide()
@@ -235,38 +215,53 @@ do
 		self:SetScript("OnUpdate", nil)
 	end
 
-	local function DeleteButton_OnEnter(self)
-		self.Icon:SetAlpha(1)
-	end
-
-	local function DeleteButton_OnLeave(self)
-		self.Icon:SetAlpha(0.5)
-	end
-
-	local function DeleteButton_OnClick(self)
+	local function deleteButton_OnClick(self)
 		local spellID = self:GetParent().spellID
-
 		if spellID then
-			RemoveAura(spellID)
+			activeData[spellID] = nil
+			prepAuraList(activeData)
+
+			t_insert(activeHistory, spellID)
+
+			frame.AuraList:Update()
 		end
 	end
 
-	function MODULE.OpenAuraConfig(_, name, data, activeTabs, inactiveTabs, updateFunc)
+	local function deleteButton_OnEnter(self)
+		self.Icon:SetAlpha(1)
+	end
+
+	local function deleteButton_OnLeave(self)
+		self.Icon:SetAlpha(0.5)
+	end
+
+	local function undoButtonUpdateTooltip(self, elapsed)
+		self.elapsed = (self.elapsed or 0) + elapsed
+
+		if self.elapsed > 0.1 then
+			if GameTooltip:IsOwned(self) then
+				if activeHistory[#activeHistory] then
+					GameTooltip:SetSpellByID(activeHistory[#activeHistory])
+				else
+					GameTooltip:Hide()
+				end
+			end
+
+			self.elapsed = 0
+		end
+	end
+
+	function MODULE:OpenAuraConfig(name, auras, buffs, debuffs, hideCallback)
 		if not frame then
-			frame = CreateFrame("Frame", "LSAuraConfig", UIParent, "UIPanelDialogTemplate")
+			frame = CreateFrame("Frame", "LSAuraFilterConfig", UIParent, "UIPanelDialogTemplate")
 			frame:EnableMouse(true)
-			frame:SetFrameStrata("TOOLTIP")
+			frame:SetFrameStrata("DIALOG")
 			frame:SetMovable(true)
 			frame:SetToplevel(true)
-			frame:SetSize(288, 522)
-			frame:SetPoint("CENTER")
-			frame:SetScript("OnHide", function()
-				auraLists = nil
-				UpdateWidget = nil
-			end)
-			frame:Hide()
+			frame:SetSize(320, 629)
+			frame:SetPoint("TOP", 0, -64)
 
-			local bg = _G[frame:GetName().."DialogBG"]
+			local bg = _G[frame:GetName() .. "DialogBG"]
 			bg:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 			bg:SetVertexColor(0, 0, 0, 0.75)
 
@@ -275,7 +270,7 @@ do
 			frame.Title = nil
 			frame.title = nil
 
-			frame.Close = _G[frame:GetName().."Close"]
+			frame.Close = _G[frame:GetName() .. "Close"]
 			frame.Close:SetScript("OnClick", function()
 				frame:Hide()
 			end)
@@ -291,28 +286,102 @@ do
 				self:GetParent():StopMovingOrSizing()
 			end)
 
-			scrollFrame = CreateFrame("ScrollFrame", "LSAuraList", frame, "FauxScrollFrameTemplate")
-			scrollFrame:SetBackdrop({
+			local previewFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+			previewFrame:SetPoint("TOPLEFT", frame, "TOPRIGHT", 5, -8)
+			previewFrame:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", 5, 10)
+			previewFrame:SetWidth(320)
+			previewFrame:SetFrameLevel(frame:GetFrameLevel() + 1)
+			frame.Preview = previewFrame
+
+			previewFrame.ScrollBar:ClearAllPoints()
+			previewFrame.ScrollBar:SetPoint("TOPRIGHT", previewFrame,"TOPRIGHT", 0, -16)
+			previewFrame.ScrollBar:SetPoint("BOTTOMRIGHT", previewFrame,"BOTTOMRIGHT", 0, 16)
+
+			local previewFrameBG = CreateFrame("Frame", nil, previewFrame)
+			previewFrameBG:SetPoint("TOPLEFT", -6, 6)
+			previewFrameBG:SetPoint("BOTTOMRIGHT", 6, -6)
+			previewFrameBG:SetFrameLevel(frame:GetFrameLevel())
+			previewFrameBG:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 				tile = true, tileSize = 16, edgeSize = 16,
 				insets = { left = 4, right = 4, top = 4, bottom = 4 }
 			})
-			scrollFrame:SetBackdropBorderColor(0.6, 0.6, 0.6)
-			scrollFrame:SetPoint("TOPLEFT", 10, -60)
-			scrollFrame:SetPoint("BOTTOMRIGHT", -7, 68)
-			scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
+			previewFrameBG:SetBackdropBorderColor(0.6, 0.6, 0.6)
+
+			local previewScrollChild = CreateFrame("SimpleHTML", nil, previewFrame)
+			previewScrollChild:SetSize(296, 636)
+			previewScrollChild:SetFontObject("GameFontHighlight")
+			previewScrollChild:SetJustifyH("LEFT")
+			previewScrollChild:SetScript("OnHyperlinkEnter", function(self, _, link)
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:SetHyperlink(link)
+				GameTooltip:Show()
+			end)
+			previewScrollChild:SetScript("OnHyperlinkLeave", function()
+				GameTooltip:Hide()
+			end)
+			previewFrame.ScrollChild = previewScrollChild
+
+			previewFrame:SetScrollChild(previewScrollChild)
+
+			local undoButton = E:CreateButton(frame)
+			undoButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -30)
+			undoButton:SetScript("OnClick", function()
+				local spellID = t_remove(activeHistory, #activeHistory)
+				if not spellID then return end
+
+				activeData[spellID] = true
+				prepAuraList(activeData)
+
+				frame.AuraList:Update()
+			end)
+			undoButton:SetScript("OnEnter", function(self)
+				local spellID = activeHistory[#activeHistory]
+				if not spellID then return end
+
+				GameTooltip:SetOwner(self, "ANCHOR_NONE")
+				GameTooltip:SetPoint("TOPRIGHT", frame, "TOPLEFT", 2, -24)
+				GameTooltip:SetSpellByID(spellID)
+				GameTooltip:Show()
+
+				self:SetScript("OnUpdate", undoButtonUpdateTooltip)
+			end)
+			undoButton:SetScript("OnLeave", function(self)
+				GameTooltip:Hide()
+
+				self:SetScript("OnUpdate", nil)
+			end)
+			frame.UndoButton = undoButton
+
+			undoButton.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-Undo")
+
+			local auraListFrame = CreateFrame("ScrollFrame", nil, frame, "FauxScrollFrameTemplate")
+			auraListFrame:SetFrameLevel(frame:GetFrameLevel() + 2)
+			auraListFrame:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+				tile = true, tileSize = 16, edgeSize = 16,
+				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+			})
+			auraListFrame:SetBackdropBorderColor(0.6, 0.6, 0.6)
+			auraListFrame:SetHeight(426)
+			auraListFrame:SetPoint("TOP", 0, -60)
+			auraListFrame:SetPoint("LEFT", 10, 0)
+			auraListFrame:SetPoint("RIGHT", -7, 0)
+			auraListFrame:SetScript("OnVerticalScroll", function(self, offset)
 				FauxScrollFrame_OnVerticalScroll(self, offset, 30, self.Update)
 			end)
-			scrollFrame.Update = function(self)
-				PrepareSortedAuraList(auraList)
+			frame.AuraList = auraListFrame
 
+			auraListFrame.Update = function(self)
 				local offset = FauxScrollFrame_GetOffset(self)
 				local total = 0
+				local aura, button
 
 				for i = 1, NUM_BUTTONS do
-					local aura = sortedAuraList[i + offset]
-					local button = self._buttons[i]
+					aura = sortedData[i + offset]
+					button = self.Buttons[i]
 
 					if aura then
 						button:Show()
@@ -336,56 +405,49 @@ do
 					end
 				end
 
-				FauxScrollFrame_Update(self, #sortedAuraList, total, 30, nil, nil, nil, nil, nil, nil, true)
+				FauxScrollFrame_Update(self, #sortedData, total, 30, nil, nil, nil, nil, nil, nil, true)
 			end
 
-			scrollFrame.ScrollBar:ClearAllPoints()
-			scrollFrame.ScrollBar:SetPoint("TOPRIGHT", scrollFrame,"TOPRIGHT", -6, -22)
-			scrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", scrollFrame,"BOTTOMRIGHT", -6, 22)
+			auraListFrame.ScrollBar:ClearAllPoints()
+			auraListFrame.ScrollBar:SetPoint("TOPRIGHT", auraListFrame,"TOPRIGHT", -6, -22)
+			auraListFrame.ScrollBar:SetPoint("BOTTOMRIGHT", auraListFrame,"BOTTOMRIGHT", -6, 21)
 
-			scrollFrame.Tabs = {}
+			auraListFrame.Tabs = {}
 
-			local buffTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
-			buffTab:SetID(1)
-			buffTab:SetText(L["BUFFS"])
-			buffTab:SetPoint("BOTTOMLEFT", scrollFrame, "TOPLEFT", 8, -2)
-			buffTab:SetScript("OnClick", Tab_OnClick)
-			scrollFrame.Tabs[1] = buffTab
-			PanelTemplates_TabResize(buffTab, 0)
+			for i = 1, 3 do
+				local tab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
+				tab:SetID(i)
+				tab:SetText(i == 1 and L["AURAS"] or i == 2 and L["BUFFS"] or L["DEBUFFS"])
+				tab:SetPoint("BOTTOMLEFT", auraListFrame, "TOPLEFT", 8, -2)
+				tab:SetScript("OnClick", tab_OnClick)
+				auraListFrame.Tabs[i] = tab
+				PanelTemplates_TabResize(tab, 0, 86)
 
-			local debuffTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
-			debuffTab:SetID(2)
-			debuffTab:SetText(L["DEBUFFS"])
-			debuffTab:SetPoint("LEFT", buffTab, "RIGHT", 0, 0)
-			debuffTab:SetScript("OnClick", Tab_OnClick)
-			scrollFrame.Tabs[2] = debuffTab
-			PanelTemplates_TabResize(debuffTab, 0)
+				if i == 1 then
+					tab:SetPoint("BOTTOMLEFT", auraListFrame, "TOPLEFT", 8, -2)
+				else
+					tab:SetPoint("LEFT", auraListFrame.Tabs[i - 1], "RIGHT", 0, 0)
+				end
+			end
 
-			local auraTab = CreateFrame("Button", nil, frame, "TabButtonTemplate")
-			auraTab:SetID(3)
-			auraTab:SetText(L["AURAS"])
-			auraTab:SetPoint("LEFT", debuffTab, "RIGHT", 0, 0)
-			auraTab:SetScript("OnClick", Tab_OnClick)
-			scrollFrame.Tabs[3] = auraTab
-			PanelTemplates_TabResize(auraTab, 0)
+			PanelTemplates_SetNumTabs(auraListFrame, 3)
 
-			PanelTemplates_SetNumTabs(scrollFrame, 3)
-
-			scrollFrame._buttons = {}
+			auraListFrame.Buttons = {}
 
 			for i = 1, NUM_BUTTONS do
-				local button = CreateFrame("Button", nil, scrollFrame)
+				local button = CreateFrame("Button", nil, auraListFrame)
 				button:SetHeight(30)
 				button:EnableMouse(true)
 				button:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar-Blue", "ADD")
-				button:SetScript("OnEnter", AuraButton_OnEnter)
-				button:SetScript("OnLeave", AuraButton_OnLeave)
+				button:SetScript("OnEnter", auraButton_OnEnter)
+				button:SetScript("OnLeave", auraButton_OnLeave)
 				button:Show()
-				scrollFrame._buttons[i] = button
+				auraListFrame.Buttons[i] = button
 
 				local icon = button:CreateTexture(nil, "BACKGROUND")
 				icon:SetSize(26, 26)
 				icon:SetPoint("LEFT", 2, 0)
+				icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 				button.Icon = icon
 
 				local text = button:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -398,9 +460,9 @@ do
 				local deleteButton = CreateFrame("Button", nil, button)
 				deleteButton:SetSize(16, 16)
 				deleteButton:SetPoint("BOTTOMRIGHT", 0, 0)
-				deleteButton:SetScript("OnClick", DeleteButton_OnClick)
-				deleteButton:SetScript("OnEnter", DeleteButton_OnEnter)
-				deleteButton:SetScript("OnLeave", DeleteButton_OnLeave)
+				deleteButton:SetScript("OnClick", deleteButton_OnClick)
+				deleteButton:SetScript("OnEnter", deleteButton_OnEnter)
+				deleteButton:SetScript("OnLeave", deleteButton_OnLeave)
 
 				local deleteButtonIcon = deleteButton:CreateTexture(nil, "ARTWORK")
 				deleteButtonIcon:SetTexture("Interface\\Buttons\\UI-StopButton")
@@ -419,97 +481,140 @@ do
 				if i == 1 then
 					button:SetPoint("TOPLEFT", 6, -6)
 				else
-					button:SetPoint("TOPLEFT", scrollFrame._buttons[i - 1], "BOTTOMLEFT", 0, -2)
+					button:SetPoint("TOPLEFT", auraListFrame.Buttons[i - 1], "BOTTOMLEFT", 0, -2)
 				end
 
-				button:SetPoint("RIGHT", scrollFrame.ScrollBar, "LEFT", -2, -6)
+				button:SetPoint("RIGHT", auraListFrame.ScrollBar, "LEFT", -2, -6)
 			end
 
-			local result = CreateFrame("SimpleHTML", nil, frame)
-			result:SetHeight(32)
-			result:SetFontObject("GameFontHighlight")
-			result:SetJustifyV("TOP")
-			result:SetJustifyH("LEFT")
-			result:SetScript("OnHyperlinkEnter", function(self, _, link)
-				GameTooltip:SetOwner(self, "ANCHOR_NONE")
-				GameTooltip:SetPoint("TOPLEFT", frame, "TOPRIGHT", -2, -24)
-				GameTooltip:SetHyperlink(link)
-				GameTooltip:Show()
-			end)
-			result:SetScript("OnHyperlinkLeave", function()
-				GameTooltip:Hide()
-			end)
+			local idInputFrame = CreateFrame("ScrollFrame", nil, frame, "InputScrollFrameTemplate")
+			idInputFrame:SetFrameLevel(frame:GetFrameLevel() + 2)
+			idInputFrame:SetHeight(96)
+			idInputFrame:SetPoint("TOP", auraListFrame, "BOTTOM", 0, -6)
+			idInputFrame:SetPoint("LEFT", frame, "LEFT", 16, 0)
+			idInputFrame:SetPoint("RIGHT", frame, "RIGHT", -16, 0)
+			frame.IDInput = idInputFrame
 
-			local editBox = CreateFrame("EditBox", nil, frame, "InputBoxInstructionsTemplate")
-			editBox:SetHeight(22)
-			editBox:SetAutoFocus(false)
-			editBox:SetNumeric(true)
-			editBox.Instructions:SetText(L["ENTER_SPELL_ID"])
-			editBox:SetPoint("TOPLEFT", scrollFrame, "BOTTOMLEFT", 7, 0)
-			editBox:SetPoint("TOPRIGHT", scrollFrame, "BOTTOMRIGHT", -2, 0)
-			editBox:SetScript("OnEnterPressed", function(self)
-				local spellID = tonumber(self:GetText())
+			idInputFrame.CharCount:Hide()
 
-				if not spellID then return end
+			idInputFrame.ScrollBar:ClearAllPoints()
+			idInputFrame.ScrollBar:SetPoint("TOPRIGHT", idInputFrame,"TOPRIGHT", 3, -12)
+			idInputFrame.ScrollBar:SetPoint("BOTTOMRIGHT", idInputFrame,"BOTTOMRIGHT", 3, 11)
 
-				if AddAura(spellID) then
-					self:SetText("")
-					result:SetText("")
-				end
-			end)
-			editBox:HookScript("OnTextChanged", function(self, isUserInput)
+			idInputFrame.BottomLeftTex:SetTexture()
+			idInputFrame.BottomRightTex:SetTexture()
+			idInputFrame.BottomTex:SetTexture()
+			idInputFrame.LeftTex:SetTexture()
+			idInputFrame.MiddleTex:SetTexture()
+			idInputFrame.RightTex:SetTexture()
+			idInputFrame.TopLeftTex:SetTexture()
+			idInputFrame.TopRightTex:SetTexture()
+			idInputFrame.TopTex:SetTexture()
+
+			local idInputFrameBG = CreateFrame("Frame", nil, idInputFrame)
+			idInputFrameBG:SetFrameLevel(frame:GetFrameLevel() + 1)
+			idInputFrameBG:SetPoint("TOPLEFT", -6, 6)
+			idInputFrameBG:SetPoint("BOTTOMRIGHT", 9, -6)
+			idInputFrameBG:SetBackdrop({
+				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+				tile = true, tileSize = 16, edgeSize = 16,
+				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+			})
+			idInputFrameBG:SetBackdropBorderColor(0.6, 0.6, 0.6)
+
+			local idInputEditBox= idInputFrame.EditBox
+			idInputEditBox.Instructions:SetText("ID #1, ID #2, ID #3...")
+			idInputEditBox:SetWidth(idInputFrame:GetWidth() - 18)
+			idInputEditBox:HookScript("OnTextChanged", function(self, isUserInput)
 				if isUserInput then
-					local spellID = tonumber(self:GetText())
+					local output = ""
 
-					if not spellID or spellID > 2147483647 then
-						return self:SetText("")
+					for spellID in self:GetText():gmatch("%d+") do
+						spellID = tonumber(spellID)
+						if spellID > INT_LIMIT then
+							output = output .. spellID .. " > " .. L["ERROR_RED"] .. "\n"
+						else
+							local link = GetSpellLink(spellID)
+							if link then
+								output = output .. spellID .. " > " .. link .. "\n"
+							else
+								output = output .. spellID .. " > " .. L["ERROR_RED"] .. "\n"
+							end
+						end
 					end
 
-					local link = GetSpellLink(spellID)
-
-					if link then
-						result:SetText(link)
-					else
-						result:SetText("...")
-					end
+					previewScrollChild:SetText(output)
 				end
 			end)
 
-			result:SetPoint("TOP", editBox, "BOTTOM", 0, -2)
-			result:SetPoint("LEFT", scrollFrame, "LEFT", 2, 0)
-			result:SetPoint("RIGHT", scrollFrame, "RIGHT", -2, 0)
+			local addButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+			addButton:SetPoint("TOP", idInputFrameBG, "BOTTOM", 0, 0)
+			addButton:SetPoint("LEFT", 10, 0)
+			addButton:SetPoint("RIGHT", -7, 0)
+			addButton:SetHeight(24)
+			addButton:SetScript("OnClick", function()
+				local text = s_trim(idInputEditBox:GetText())
+				if text ~= "" then
+					for spellID in text:gmatch("%d+") do
+						spellID = tonumber(spellID)
+						if spellID <= INT_LIMIT and not activeData[spellID] and GetSpellLink(spellID) then
+							activeData[spellID] = true
+						end
+					end
+
+					prepAuraList(activeData)
+
+					auraListFrame:Update()
+
+					idInputEditBox:SetText("")
+					idInputEditBox:ClearFocus()
+					previewScrollChild:SetText("")
+				end
+			end)
+
+			local text = addButton:GetFontString()
+			text:ClearAllPoints()
+			text:SetPoint("TOPLEFT", 15, -1)
+			text:SetPoint("BOTTOMRIGHT", -15, 1)
+			text:SetJustifyV("MIDDLE")
+			text:SetText(L["ADD"])
 		end
 
-		if frame:IsShown() then
-			frame:Hide()
-		end
+		data[1], data[2], data[3] = auras, buffs, debuffs
 
-		data.HELPFUL = data.HELPFUL or {}
-		data.HARMFUL = data.HARMFUL or {}
-		data.ALL = data.ALL or {}
+		t_wipe(history[1])
+		t_wipe(history[2])
+		t_wipe(history[3])
 
-		auraLists = data
+		local firstTab = 1
 
-		if activeTabs then
-			for _, i in next, activeTabs do
-				PanelTemplates_EnableTab(scrollFrame, i)
+		for i = 3, 1, -1 do
+			if data[i] then
+				PanelTemplates_EnableTab(frame.AuraList, i)
+
+				firstTab = i
+			else
+				PanelTemplates_DisableTab(frame.AuraList, i)
 			end
-
-			PanelTemplates_SetTab(scrollFrame, activeTabs[1])
-			auraList = auraLists[FILTERS[activeTabs[1]]]
 		end
 
-		if inactiveTabs then
-			for _, i in next, inactiveTabs do
-				PanelTemplates_DisableTab(scrollFrame, i)
-			end
+		PanelTemplates_SetTab(frame.AuraList, firstTab)
 
-		end
+		activeData = data[firstTab]
+		prepAuraList(activeData)
 
-		UpdateWidget = updateFunc or E.NOOP
+		activeHistory = history[firstTab]
+
+		frame.AuraList:Update()
 
 		frame.TitleText:SetText(name)
-		scrollFrame:Update()
+		frame.IDInput.EditBox:SetText("")
+		frame.Preview.ScrollChild:SetText("")
+
+		frame:SetScript("OnHide", nil)
+		frame:Hide()
+		frame:SetScript("OnHide", hideCallback)
 		frame:Show()
 	end
 end
@@ -669,7 +774,7 @@ function MODULE:CopySettings(src, dest, ignoredKeys)
 	end
 end
 
-function MODULE.Init()
+function MODULE:Init()
 	C.options = {
 		type = "group",
 		name = L["LS_UI"],

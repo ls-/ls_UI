@@ -751,7 +751,7 @@ do
 	end
 
 	function createBag(parent, containerID)
-		local bag = E:CreateButton(parent, "$parentBag" .. containerID, true)
+		local bag = E:CreateButton(parent, "$parentBag" .. containerID, true, nil, true)
 		bag:SetID(ContainerIDToInventoryID(containerID))
 		bag:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 		bag:RegisterForDrag("LeftButton")

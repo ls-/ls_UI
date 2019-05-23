@@ -250,8 +250,7 @@ D.global = {
 		},
 		["ls:debuffs"] = {
 			events = "UNIT_AURA",
-			vars = "{\n  [\"Curse\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:1:33|t\",\n  [\"Disease\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:1:33:34:66|t\",\n  [\"Magic\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:34:66:34:66|t\",\n  [\"Poison\"] = \"|TInterface\\\\AddOns\\\\ls_UI\\\\assets\\\\unit-frame-aura-icons:0:0:0:0:128:128:67:99:34:66|t\",\n}",
-			func = "function(unit)\n  local types = _VARS.E:GetDispelTypes()\n  if not types or not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if types[type] and not hasDebuff[type] then\n      status = status .. _VARS[\"ls:debuffs\"][type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
+			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if _VARS.E:IsDispellable(type) and not hasDebuff[type] then\n      status = status .. _VARS.INLINE_AURA_ICONS[type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
 		},
 		["ls:health:cur"] = {
 			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
@@ -366,11 +365,20 @@ D.global = {
 		["M"] = "ls_UI[2]",
 		["C"] = "ls_UI[3]",
 		["L"] = "ls_UI[4]",
-		["INLINE_ICONS"] = "ls_UI[2].textures.inlineicons",
+		["INLINE_ICONS"] = "ls_UI[2].textures.icons_inline",
+		["INLINE_AURA_ICONS"] = "ls_UI[2].textures.aura_icons_inline",
 		["COLORS"] = "ls_UI[3].db.global.colors",
 		["CLASS_COLORS"] = "ls_UI[3].db.global.colors.class",
 		["POWER_COLORS"] = "ls_UI[3].db.global.colors.power",
 		["REACTION_COLORS"] = "ls_UI[3].db.global.colors.reaction",
+	},
+	aura_filters = {
+		["Blacklist"] = {
+			is_init = false,
+		},
+		["M+ Affixes"] = {
+			is_init = false,
+		},
 	},
 }
 
@@ -916,18 +924,28 @@ D.profile = {
 						debuff_type = false,
 					},
 					filter = {
+						custom = {
+							["Blacklist"] = true,
+							["M+ Affixes"] = true,
+						},
 						friendly = {
 							buff = {
 								boss = true,
+								tank = true,
+								healer = true,
 								mount = true,
 								selfcast = true,
 								selfcast_permanent = true,
+								misc = false,
 							},
 							debuff = {
 								boss = true,
+								tank = true,
+								healer = true,
 								selfcast = true,
 								selfcast_permanent = true,
 								dispellable = true,
+								misc = false,
 							},
 						},
 					},
@@ -1312,40 +1330,56 @@ D.profile = {
 					debuff_type = false,
 				},
 				filter = {
+					custom = {
+						["Blacklist"] = true,
+						["M+ Affixes"] = true,
+					},
 					friendly = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							mount = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
 							dispellable = true,
+							misc = false,
 						},
 					},
 					enemy = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							mount = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
 							dispellable = true,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
+							misc = false,
 						},
 					},
 				},
@@ -1697,40 +1731,56 @@ D.profile = {
 					debuff_type = false,
 				},
 				filter = {
+					custom = {
+						["Blacklist"] = true,
+						["M+ Affixes"] = true,
+					},
 					friendly = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							mount = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
 							dispellable = true,
+							misc = false,
 						},
 					},
 					enemy = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							mount = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
 							dispellable = true,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							selfcast = true,
 							selfcast_permanent = true,
 							player = true,
 							player_permanent = true,
+							misc = false,
 						},
 					},
 				},
@@ -2096,30 +2146,46 @@ D.profile = {
 					debuff_type = false,
 				},
 				filter = {
+					custom = {
+						["Blacklist"] = true,
+						["M+ Affixes"] = true,
+					},
 					friendly = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							player = false,
 							player_permanent = false,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							player = false,
 							player_permanent = false,
 							dispellable = false,
+							misc = false,
 						},
 					},
 					enemy = {
 						buff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							player = false,
 							player_permanent = false,
 							dispellable = false,
+							misc = false,
 						},
 						debuff = {
 							boss = true,
+							tank = true,
+							healer = true,
 							player = false,
 							player_permanent = false,
+							misc = false,
 						},
 					},
 				},
@@ -2986,7 +3052,11 @@ D.char = {
 		count = {
 			enabled = true,
 			size = 12,
+			outline = true,
+			shadow = false,
 			flag = "_Outline", -- "_Shadow", ""
+			h_alignment = "RIGHT",
+			v_alignment = "TOP",
 		},
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
@@ -2997,7 +3067,12 @@ D.char = {
 				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "CENTER",
 				v_alignment = "BOTTOM",
-			}
+			},
+		},
+		type = {
+			size = 12,
+			position = "TOPLEFT",
+			debuff_type = false,
 		},
 		filter = {
 			HELPFUL = {},

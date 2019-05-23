@@ -5,7 +5,9 @@ local UNITFRAMES = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 local s_split = _G.string.split
+local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local tostring = _G.tostring
 
@@ -207,6 +209,7 @@ local function getUFOption_Health(order, unit)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].health, C.db.profile.units[unit].health, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
@@ -690,6 +693,7 @@ local function getUFOption_Power(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
@@ -891,6 +895,7 @@ local function getUFOption_AlternativePower(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
@@ -1069,6 +1074,7 @@ local function getUFOption_ClassPower(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
@@ -1188,6 +1194,7 @@ local function getUFOption_Castbar(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
@@ -1344,6 +1351,7 @@ local function getUFOption_Name(order, unit)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
@@ -1555,6 +1563,7 @@ local function getUFOption_RaidTargetIndicator(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
@@ -1663,6 +1672,7 @@ local function getUFOption_DebuffIcons(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
@@ -1737,6 +1747,31 @@ local function getUFOption_DebuffIcons(order, unit)
 	return temp
 end
 
+local customAuraFilters = {}
+do
+	local filterCache = {}
+
+	function CONFIG:UpdateUFAuraFilters()
+		t_wipe(customAuraFilters)
+
+		local index = 1
+		for filter in next, C.db.global.aura_filters do
+			if not filterCache[filter] then
+				filterCache[filter] = {
+					type = "toggle",
+					name = filter,
+				}
+			end
+
+			filterCache[filter].order = index
+
+			customAuraFilters[filter] = filterCache[filter]
+
+			index = index + 1
+		end
+	end
+end
+
 local function getUFOption_Auras(order, unit)
 	local copyIgnoredKeys = {
 		["filter"] = true,
@@ -1787,6 +1822,7 @@ local function getUFOption_Auras(order, unit)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, aurasResetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
@@ -2081,14 +2117,30 @@ local function getUFOption_Auras(order, unit)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units[unit].auras.filter, C.db.profile.units[unit].auras.filter)
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 						end,
 					},
-					friendly = {
+					custom = {
 						order = 2,
+						type = "group",
+						inline = true,
+						name = L["USER_CREATED"],
+						get = function(info)
+							return C.db.profile.units[unit].auras.filter[info[#info - 1]][info[#info]]
+						end,
+						set = function(info, value)
+							C.db.profile.units[unit].auras.filter[info[#info - 1]][info[#info]] = value
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+						end,
+						args = customAuraFilters,
+					},
+					friendly = {
+						order = 3,
 						type = "group",
 						inline = true,
 						name = "|c" .. C.db.global.colors.green.hex .. L["FRIENDLY_UNITS"] .. "|r",
@@ -2105,20 +2157,32 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_BUFFS"],
 										desc = L["BOSS_BUFFS_DESC"],
 									},
-									mount = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_BUFFS"],
+										desc = L["TANK_BUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_BUFFS"],
+										desc = L["HEALER_BUFFS_DESC"],
+									},
+									mount = {
+										order = 4,
 										type = "toggle",
 										name = L["MOUNT_AURAS"],
 										desc = L["MOUNT_AURAS_DESC"],
 									},
 									selfcast = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_BUFFS"],
 										desc = L["SELF_BUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["SELF_BUFFS_PERMA"],
 										desc = L["SELF_BUFFS_PERMA_DESC"],
@@ -2127,13 +2191,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS"],
 										desc = L["CASTABLE_BUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS_PERMA"],
 										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
@@ -2141,10 +2205,20 @@ local function getUFOption_Auras(order, unit)
 											return not C.db.profile.units[unit].auras.filter.friendly.buff.player
 										end,
 									},
+									misc = {
+										order = 9,
+										type = "toggle",
+										name = L["MISC"],
+									},
 								},
 							},
-							debuff = {
+							spacer_1 = {
 								order = 2,
+								type = "description",
+								name = " ",
+							},
+							debuff = {
+								order = 3,
 								type = "group",
 								name = "",
 								inline = true,
@@ -2155,14 +2229,26 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_DEBUFFS"],
 										desc = L["BOSS_DEBUFFS_DESC"],
 									},
-									selfcast = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_DEBUFFS"],
+										desc = L["TANK_DEBUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_DEBUFFS"],
+										desc = L["HEALER_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 4,
 										type = "toggle",
 										name = L["SELF_DEBUFFS"],
 										desc = L["SELF_DEBUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_DEBUFFS_PERMA"],
 										desc = L["SELF_DEBUFFS_PERMA_DESC"],
@@ -2171,13 +2257,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS"],
 										desc = L["CASTABLE_DEBUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS_PERMA"],
 										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
@@ -2186,17 +2272,22 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									dispellable = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["DISPELLABLE_DEBUFFS"],
 										desc = L["DISPELLABLE_DEBUFFS_DESC"],
+									},
+									misc = {
+										order = 9,
+										type = "toggle",
+										name = L["MISC"],
 									},
 								},
 							},
 						},
 					},
 					enemy = {
-						order = 3,
+						order = 4,
 						type = "group",
 						inline = true,
 						name = "|c" .. C.db.global.colors.red.hex .. L["ENEMY_UNITS"] .. "|r",
@@ -2213,20 +2304,32 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_BUFFS"],
 										desc = L["BOSS_BUFFS_DESC"],
 									},
-									mount = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_BUFFS"],
+										desc = L["TANK_BUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_BUFFS"],
+										desc = L["HEALER_BUFFS_DESC"],
+									},
+									mount = {
+										order = 4,
 										type = "toggle",
 										name = L["MOUNT_AURAS"],
 										desc = L["MOUNT_AURAS_DESC"],
 									},
 									selfcast = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_BUFFS"],
 										desc = L["SELF_BUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["SELF_BUFFS_PERMA"],
 										desc = L["SELF_BUFFS_PERMA_DESC"],
@@ -2235,13 +2338,13 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS"],
 										desc = L["CASTABLE_BUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 6,
+										order = 8,
 										type = "toggle",
 										name = L["CASTABLE_BUFFS_PERMA"],
 										desc = L["CASTABLE_BUFFS_PERMA_DESC"],
@@ -2250,15 +2353,25 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									dispellable = {
-										order = 7,
+										order = 9,
 										type = "toggle",
 										name = L["DISPELLABLE_BUFFS"],
 										desc = L["DISPELLABLE_BUFFS_DESC"],
 									},
+									misc = {
+										order = 10,
+										type = "toggle",
+										name = L["MISC"],
+									},
 								},
 							},
-							debuff = {
+							spacer_1 = {
 								order = 2,
+								type = "description",
+								name = " ",
+							},
+							debuff = {
+								order = 3,
 								type = "group",
 								name = "",
 								inline = true,
@@ -2269,14 +2382,26 @@ local function getUFOption_Auras(order, unit)
 										name = L["BOSS_DEBUFFS"],
 										desc = L["BOSS_DEBUFFS_DESC"],
 									},
-									selfcast = {
+									tank = {
 										order = 2,
+										type = "toggle",
+										name = L["TANK_DEBUFFS"],
+										desc = L["TANK_DEBUFFS_DESC"],
+									},
+									healer = {
+										order = 3,
+										type = "toggle",
+										name = L["HEALER_DEBUFFS"],
+										desc = L["HEALER_DEBUFFS_DESC"],
+									},
+									selfcast = {
+										order = 4,
 										type = "toggle",
 										name = L["SELF_DEBUFFS"],
 										desc = L["SELF_DEBUFFS_DESC"],
 									},
 									selfcast_permanent = {
-										order = 3,
+										order = 5,
 										type = "toggle",
 										name = L["SELF_DEBUFFS_PERMA"],
 										desc = L["SELF_DEBUFFS_PERMA_DESC"],
@@ -2285,19 +2410,24 @@ local function getUFOption_Auras(order, unit)
 										end,
 									},
 									player = {
-										order = 4,
+										order = 6,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS"],
 										desc = L["CASTABLE_DEBUFFS_DESC"],
 									},
 									player_permanent = {
-										order = 5,
+										order = 7,
 										type = "toggle",
 										name = L["CASTABLE_DEBUFFS_PERMA"],
 										desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
 										disabled = function()
 											return not C.db.profile.units[unit].auras.filter.enemy.debuff.player
 										end,
+									},
+									misc = {
+										order = 8,
+										type = "toggle",
+										name = L["MISC"],
 									},
 								},
 							},
@@ -2388,6 +2518,7 @@ local function getUFOptions(order, unit, name)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit], resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "Update")
@@ -2580,7 +2711,7 @@ local function getUFOptions(order, unit, name)
 	return temp
 end
 
-function CONFIG.CreateUnitFramesPanel(_, order)
+function CONFIG:CreateUnitFramesPanel(order)
 	C.options.args.unitframes = {
 		order = order,
 		type = "group",
@@ -2704,6 +2835,7 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
 							UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
@@ -2752,4 +2884,6 @@ function CONFIG.CreateUnitFramesPanel(_, order)
 			boss = getUFOptions(9, "boss", L["BOSS_FRAMES"]),
 		},
 	}
+
+	self:UpdateUFAuraFilters()
 end

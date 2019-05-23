@@ -16,11 +16,13 @@ local s_split = _G.string.split
 local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
+local t_wipe = _G.table.wipe
 
 --[[ luacheck: globals
-	CreateFrame GetItemGem GetItemInfoInstant UIParent
+	CreateFrame GetItemGem GetItemInfoInstant GetNumGroupMembers GetNumSubgroupMembers IsInGroup IsInRaid IsSpellKnown
+	UIParent UnitExists UnitGroupRolesAssigned UnitGUID UnitIsUnit
 
-	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS
+	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
 
 -- Mine
@@ -498,6 +500,59 @@ do
 			end
 		end
 	end
+
+	do
+		local rosterInfo = {}
+
+		local function updateUnitInfo(unit)
+			rosterInfo[UnitGUID(unit)] = UnitGroupRolesAssigned(unit)
+		end
+
+		for i = 1, 40 do
+			E:RegisterEvent("UNIT_NAME_UPDATE", updateUnitInfo, "raid" .. i)
+		end
+
+		E:RegisterEvent("GROUP_ROSTER_UPDATE", function()
+			t_wipe(rosterInfo)
+
+			local prefix, num
+			if IsInRaid() then
+				prefix, num = "raid", GetNumGroupMembers()
+			elseif IsInGroup() then
+				prefix, num = "party", GetNumSubgroupMembers()
+			end
+
+			if prefix then
+				for i = 1, num do
+					updateUnitInfo(prefix .. i)
+				end
+			end
+		end)
+
+		E:RegisterEvent("GROUP_LEFT", function()
+			t_wipe(rosterInfo)
+		end)
+
+		function E:GetRosterInfo()
+			return rosterInfo
+		end
+
+		function E:IsUnitTank(unit)
+			return rosterInfo[UnitGUID(unit)] == "TANK"
+		end
+
+		function E:IsUnitHealer(unit)
+			return rosterInfo[UnitGUID(unit)] == "HEALER"
+		end
+
+		function E:IsUnitDamager(unit)
+			return rosterInfo[UnitGUID(unit)] == "DAMAGER"
+		end
+	end
+
+	function E:IsUnitBoss(unit)
+		return unit and (UnitIsUnit(unit, "boss1") or UnitIsUnit(unit, "boss2") or UnitIsUnit(unit, "boss3") or UnitIsUnit(unit, "boss4") or UnitIsUnit(unit, "boss5"))
+	end
 end
 
 ---------------------
@@ -505,46 +560,27 @@ end
 ---------------------
 
 do
-	local dispelTypesByClass = {
-		PALADIN = {},
-		SHAMAN = {},
-		DRUID = {},
-		PRIEST = {},
-		MONK = {},
-	}
+	local dispelTypes = {}
 
 	E:RegisterEvent("SPELLS_CHANGED", function()
-		local dispelTypes = dispelTypesByClass[E.PLAYER_CLASS]
+		-- Soothe (Druid)
+		dispelTypes[""] = IsSpellKnown(2908) -- Enrage
 
-		if dispelTypes then
-			if E.PLAYER_CLASS == "PALADIN" then
-				dispelTypes.Disease = IsPlayerSpell(4987) or IsPlayerSpell(213644) or nil -- Cleanse or Cleanse Toxins
-				dispelTypes.Magic = IsPlayerSpell(4987) or nil -- Cleanse
-				dispelTypes.Poison = dispelTypes.Disease
-			elseif E.PLAYER_CLASS == "SHAMAN" then
-				dispelTypes.Curse = IsPlayerSpell(51886) or IsPlayerSpell(77130) or nil -- Cleanse Spirit or Purify Spirit
-				dispelTypes.Magic = IsPlayerSpell(77130) or nil -- Purify Spirit
-			elseif E.PLAYER_CLASS == "DRUID" then
-				dispelTypes.Curse = IsPlayerSpell(2782) or IsPlayerSpell(88423) or nil -- Remove Corruption or Nature's Cure
-				dispelTypes.Magic = IsPlayerSpell(88423) or nil -- Nature's Cure
-				dispelTypes.Poison = dispelTypes.Curse
-			elseif E.PLAYER_CLASS == "PRIEST"then
-				dispelTypes.Disease = IsPlayerSpell(527) or nil -- Purify
-				dispelTypes.Magic = IsPlayerSpell(527) or IsPlayerSpell(32375) or nil -- Purify or Mass Dispel
-			elseif E.PLAYER_CLASS == "MONK" then
-				dispelTypes.Disease = IsPlayerSpell(115450) or nil -- Detox
-				dispelTypes.Magic = dispelTypes.Disease
-				dispelTypes.Poison = dispelTypes.Disease
-			end
-		end
+		-- Cleanse Spirit (Shaman), Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
+		dispelTypes["Curse"] = IsSpellKnown(51886) or IsSpellKnown(88423) or IsSpellKnown(77130) or IsSpellKnown(2782) or IsSpellKnown(475)
+
+		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Purify (Priest), Purify Disease (Priest)
+		dispelTypes["Disease"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(527) or IsSpellKnown(213634)
+
+		-- Cleanse (Paladin), Detox (Monk), Mass Dispel (Priest), Nature's Cure (Druid), Purify (Priest), Purify Spirit (Shaman)
+		dispelTypes["Magic"] = IsSpellKnown(4987) or IsSpellKnown(115450) or IsSpellKnown(32375) or IsSpellKnown(88423) or IsSpellKnown(527) or IsSpellKnown(77130)
+
+		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Nature's Cure (Druid), Remove Corruption (Druid)
+		dispelTypes["Poison"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(88423) or IsSpellKnown(2782)
 	end)
 
-	function E:GetDispelTypes()
-		return dispelTypesByClass[E.PLAYER_CLASS]
-	end
-
 	function E:IsDispellable(debuffType)
-		return dispelTypesByClass[E.PLAYER_CLASS] and dispelTypesByClass[E.PLAYER_CLASS][debuffType] or nil
+		return dispelTypes[debuffType]
 	end
 end
 
@@ -711,25 +747,30 @@ end
 -----------
 
 do
-	local EMPTY_SOCKET = 136260
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.+)')
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
 
 	local EMPTY_SOCKET_TEXTURES = {
-		["136256"] = true,
-		["136257"] = true,
-		["136258"] = true,
-		["136259"] = true,
-		["136260"] = true,
-		["407324"] = true,
-		["407325"] = true,
-		["458977"] = true,
+		[ "136256"] = true,
+		[ "136257"] = true,
+		[ "136258"] = true,
+		[ "136259"] = true,
+		[ "136260"] = true,
+		[ "407324"] = true,
+		[ "407325"] = true,
+		[ "458977"] = true,
+		["2958629"] = true,
+		["2958630"] = true,
+		["2958631"] = true,
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET"] = true, -- 136260
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-BLUE"] = true, -- 136256
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"] = true, -- 136257
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PRISMATIC"] = true, -- 458977
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDBLUE"] = true, -- 2958629
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDRED"] = true, -- 2958630
+		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDYELLOW"] = true, -- 2958631
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-RED"] = true, -- 136258
 		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-YELLOW"] = true, -- 136259
 	}
@@ -776,11 +817,11 @@ do
 			if texture then
 				if EMPTY_SOCKET_TEXTURES[s_upper(texture)] then
 					if i == 1 then
-						gem1 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem1 = GEM_TEMPLATE:format(texture)
 					elseif i == 2 then
-						gem2 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem2 = GEM_TEMPLATE:format(texture)
 					else
-						gem3 = GEM_TEMPLATE:format(EMPTY_SOCKET)
+						gem3 = GEM_TEMPLATE:format(texture)
 					end
 				else
 					_, gemLink = GetItemGem(itemLink, i)

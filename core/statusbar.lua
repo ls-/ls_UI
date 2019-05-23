@@ -12,7 +12,6 @@ local s_split = _G.string.split
 local unpack = _G.unpack
 
 -- Blizz
-local FrameDeltaLerp = _G.FrameDeltaLerp
 local Lerp = _G.Lerp
 
 -- Mine

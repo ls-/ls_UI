@@ -1,10 +1,11 @@
 local _, ns = ...
 local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
-local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
+local BLIZZARD = P:GetModule("Blizzard")
+local CONFIG = P:GetModule("Config")
+local FILTERS = P:GetModule("Filters")
 local MINIMAP = P:GetModule("Minimap")
 local UNITFRAMES = P:GetModule("UnitFrames")
-local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
@@ -19,7 +20,7 @@ local tostring = _G.tostring
 local type = _G.type
 
 --[[ luacheck: globals
-	GetText LibStub UnitSex
+	GameTooltip GetText InCombatLockdown LibStub UnitSex
 
 	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
 	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
@@ -156,6 +157,9 @@ do
 			name = L["DELETE"],
 			width = "full",
 			hidden = isDefaultTag,
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
 			func = function(info)
 				C.db.global.tags[info[#info - 1]] = nil
 				oUF.Tags.Events[info[#info - 1]] = nil
@@ -172,6 +176,7 @@ do
 			order = 6,
 			name = L["RESTORE_DEFAULTS"],
 			width = "full",
+			confirm = CONFIG.ConfirmReset,
 			hidden = function(info)
 				return not D.global.tags[info[#info - 1]]
 			end,
@@ -205,7 +210,7 @@ do
 		new = {
 			order = 1,
 			type = "group",
-			name = L["NEW_TAG"],
+			name = L["NEW"],
 			get = function(info)
 				return tostring(newTagInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
@@ -397,6 +402,9 @@ do
 			name = L["DELETE"],
 			width = "full",
 			disabled = isDefaultTag,
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
 			func = function(info)
 				C.db.global.tag_vars[info[#info - 1]] = nil
 				rawset(oUF.Tags.Vars, info[#info - 1], nil)
@@ -417,7 +425,7 @@ do
 		new = {
 			order = 1,
 			type = "group",
-			name = L["NEW_VAR"],
+			name = L["NEW"],
 			get = function(info)
 				return tostring(newVarInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
@@ -506,6 +514,243 @@ do
 	end
 end
 
+local updateAuraFiltersOptions
+do
+	local units = {"player", "target", "focus", "boss"}
+	local curFilter
+
+	local function isDefaultFilter(info)
+		return D.global.aura_filters[info[#info - 1]]
+	end
+
+	local function callback()
+		for _, unit in next, units do
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+		end
+
+		if not InCombatLockdown() then
+			AceConfigDialog:Open("ls_UI")
+			AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", curFilter)
+		end
+
+		curFilter = nil
+	end
+
+	local curFilterInfo = {
+		name = {
+			order = 1,
+			type = "input",
+			width = "full",
+			name = L["NAME"],
+			disabled = isDefaultFilter,
+			validate = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+
+				CONFIG:SetStatusText("")
+				return (value ~= info[#info - 1] and C.db.global.aura_filters[value]) and L["NAME_TAKEN_ERR"] or true
+			end,
+			get = function(info)
+				return info[#info - 1]
+			end,
+			set = function(info, value)
+				value = s_trim(value):gsub("\124\124+", "\124")
+				if value ~= "" and value ~= info[#info - 1] then
+					if not C.db.global.aura_filters[value] then
+						C.db.global.aura_filters[value] = C.db.global.aura_filters[info[#info - 1]]
+						C.db.global.aura_filters[info[#info - 1]] = nil
+
+						for _, unit in next, units do
+							if C.db.profile.units[unit].auras then
+								if C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] then
+									C.db.profile.units[unit].auras.filter.custom[value] = C.db.profile.units[unit].auras.filter.custom[info[#info - 1]]
+									C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] = nil
+								end
+							end
+						end
+
+						CONFIG:UpdateUFAuraFilters()
+						updateTagVarsOptions()
+
+						AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", value)
+					end
+				end
+			end,
+		},
+		state = {
+			order = 2,
+			type = "toggle",
+			name = L["BLACKLIST"],
+			disabled = isDefaultFilter,
+			get = function(info)
+				return not C.db.global.aura_filters[info[#info - 1]].state
+			end,
+			set = function(info, value)
+				C.db.global.aura_filters[info[#info - 1]].state = not value
+			end,
+		},
+		settings = {
+			type = "execute",
+			order = 3,
+			name = L["FILTER_SETTINGS"],
+			width = "full",
+			func = function(info)
+				curFilter = info[#info - 1]
+
+				AceConfigDialog:Close("ls_UI")
+				GameTooltip:Hide()
+
+				CONFIG:OpenAuraConfig(info[#info - 1], C.db.global.aura_filters[info[#info - 1]], nil, nil, callback)
+			end,
+		},
+		delete = {
+			order = 4,
+			type = "execute",
+			name = L["DELETE"],
+			width = "full",
+			hidden = isDefaultFilter,
+			confirm = function(info)
+				return L["CONFIRM_DELETE"]:format(info[#info - 1])
+			end,
+			func = function(info)
+				C.db.global.aura_filters[info[#info - 1]] = nil
+
+				for _, unit in next, units do
+					if C.db.profile.units[unit].auras then
+						C.db.profile.units[unit].auras.filter.custom[info[#info - 1]] = nil
+					end
+				end
+
+				for _, unit in next, units do
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+				end
+
+				CONFIG:UpdateUFAuraFilters()
+				updateAuraFiltersOptions()
+
+				AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters")
+			end,
+		},
+		reset = {
+			type = "execute",
+			order = 5,
+			name = L["RESTORE_DEFAULTS"],
+			width = "full",
+			hidden = function(info)
+				return not D.global.aura_filters[info[#info - 1]]
+			end,
+			confirm = CONFIG.ConfirmReset,
+			func = function(info)
+				FILTERS:Reset(info[#info - 1])
+
+				for _, unit in next, units do
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+				end
+			end,
+		},
+	}
+
+	local newFilterInfo = {
+		name = "",
+		state = false,
+	}
+
+	local filterOptionTables = {
+		new = {
+			order = 1,
+			type = "group",
+			name = L["NEW"],
+			args = {
+				name = {
+					order = 1,
+					type = "input",
+					width = "full",
+					name = L["NAME"],
+					validate = function(_, value)
+						value = s_trim(value):gsub("\124\124+", "\124")
+
+						CONFIG:SetStatusText("")
+						return C.db.global.aura_filters[value] and L["NAME_TAKEN_ERR"] or true
+					end,
+					get = function(info)
+						return tostring(newFilterInfo[info[#info]]):gsub("\124", "\124\124")
+					end,
+					set = function(_, value)
+						newFilterInfo.name = s_trim(value):gsub("\124\124+", "\124")
+					end,
+				},
+				state = {
+					order = 2,
+					type = "toggle",
+					name = L["BLACKLIST"],
+					get = function()
+						return not newFilterInfo.state
+					end,
+					set = function(_, value)
+						newFilterInfo.state = not value
+					end,
+				},
+				add = {
+					order = 5,
+					type = "execute",
+					name = L["ADD"],
+					width = "full",
+					func = function()
+						if newFilterInfo.name ~= "" then
+							C.db.global.aura_filters[newFilterInfo.name] = {
+								state = newFilterInfo.state
+							}
+
+							CONFIG:UpdateUFAuraFilters()
+							updateAuraFiltersOptions()
+
+							AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", newFilterInfo.name)
+
+							newFilterInfo.name = ""
+							newFilterInfo.state = false
+						end
+					end,
+				},
+			},
+		},
+	}
+
+	local order = {}
+
+	function updateAuraFiltersOptions()
+		local options = C.options.args.general.args.aura_filters.args
+
+		t_wipe(options)
+		t_wipe(order)
+
+		options.new = filterOptionTables.new
+
+		for filter in next, C.db.global.aura_filters do
+			if not filterOptionTables[filter] then
+				filterOptionTables[filter] = {
+					type = "group",
+					name = filter,
+					args = curFilterInfo,
+				}
+			end
+
+			options[filter] = filterOptionTables[filter]
+
+			t_insert(order, filter)
+		end
+
+		t_sort(order)
+
+		for i, filter in next, order do
+			if options[filter] then
+				options[filter].order = i + 10
+			end
+		end
+	end
+end
+
 function CONFIG:CreateGeneralPanel(order)
 	C.options.args.general = {
 		order = order,
@@ -545,6 +790,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									E:SetRGB(C.db.global.colors.health, E:GetRGB(D.global.colors.health))
 									E:SetRGB(C.db.global.colors.disconnected, E:GetRGB(D.global.colors.disconnected))
@@ -625,6 +871,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.power do
 										if type(k) == "string" then
@@ -816,6 +1063,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									E:SetRGB(C.db.global.colors.gain, E:GetRGB(D.global.colors.gain))
 									E:SetRGB(C.db.global.colors.loss, E:GetRGB(D.global.colors.loss))
@@ -867,6 +1115,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.prediction do
 										E:SetRGB(C.db.global.colors.prediction[k], E:GetRGB(v))
@@ -937,6 +1186,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.reaction do
 										E:SetRGB(C.db.global.colors.reaction[k], E:GetRGB(v))
@@ -1018,6 +1268,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.faction do
 										E:SetRGB(C.db.global.colors.faction[k], E:GetRGB(v))
@@ -1074,6 +1325,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.xp do
 										E:SetRGB(C.db.global.colors.xp[k], E:GetRGB(v))
@@ -1166,6 +1418,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.difficulty do
 										E:SetRGB(C.db.global.colors.difficulty[k], E:GetRGB(v))
@@ -1228,6 +1481,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.castbar do
 										E:SetRGB(C.db.global.colors.castbar[k], E:GetRGB(v))
@@ -1285,6 +1539,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.debuff do
 										E:SetRGB(C.db.global.colors.debuff[k], E:GetRGB(v))
@@ -1367,6 +1622,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.button do
 										E:SetRGB(C.db.global.colors.button[k], E:GetRGB(v))
@@ -1422,6 +1678,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.cooldown do
 										E:SetRGB(C.db.global.colors.cooldown[k], E:GetRGB(v))
@@ -1485,6 +1742,7 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = CONFIG.ConfirmReset,
 								func = function()
 									for k, v in next, D.global.colors.zone do
 										E:SetRGB(C.db.global.colors.zone[k], E:GetRGB(v))
@@ -1542,9 +1800,17 @@ function CONFIG:CreateGeneralPanel(order)
 				name = L["TAG_VARS"],
 				args = {},
 			},
+			aura_filters = {
+				order = 4,
+				type = "group",
+				childGroups = "tree",
+				name = L["AURA_FILTERS"],
+				args = {},
+			},
 		},
 	}
 
 	updateTagOptions()
 	updateTagVarsOptions()
+	updateAuraFiltersOptions()
 end

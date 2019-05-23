@@ -1,4 +1,4 @@
-﻿local _, ns = ...
+local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Auras")
 
@@ -25,15 +25,6 @@ local isInit = false
 local buffs = {}
 local debuffs = {}
 local headers = {}
-
-local ICONS = {
-	["Buff"] = {1 / 128, 33 / 128, 1 / 128, 33 / 128},
-	["Debuff"] = {34 / 128, 66 / 128, 1 / 128, 33 / 128},
-	["Curse"] = {67 / 128, 99 / 128, 1 / 128, 33 / 128},
-	["Disease"] = {1 / 128, 33 / 128, 34 / 128, 66 / 128},
-	["Magic"] = {34 / 128, 66 / 128, 34 / 128, 66 / 128},
-	["Poison"] = {67 / 128, 99 / 128, 34 / 128, 66 / 128},
-}
 
 local function updateAura(button, index)
 	local filter = button:GetParent():GetAttribute("filter")
@@ -63,8 +54,8 @@ local function updateAura(button, index)
 		if filter == "HARMFUL" then
 			button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
 
-			if debuffType and debuffType ~= "" and button.showDebuffType then
-				button.AuraType:SetTexCoord(unpack(ICONS[debuffType]))
+			if debuffType and button.showDebuffType then
+				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons["Debuff"]))
 				button.AuraType:Show()
 			else
 				button.AuraType:Hide()
