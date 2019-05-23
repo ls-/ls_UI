@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local next = _G.next
 local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
+local unpack = _G.unpack
 
 -- Blizz
 local GetSpellInfo = _G.GetSpellInfo
@@ -77,12 +78,6 @@ local function button_OnLeave(self)
 	self:SetScript("OnUpdate", nil)
 end
 
-local function button_UpdateCountFont(self)
-	local config = self._parent._config.count
-	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
-	self.Count:SetWordWrap(false)
-end
-
 local function bar_OnEvent(self)
 	t_wipe(activeAuras)
 
@@ -115,15 +110,19 @@ local function bar_OnEvent(self)
 
 				if button.filter == "HARMFUL" then
 					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[aura.debuffType] or C.db.global.colors.debuff.None))
-					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Weak")
+
+					if self._config.type.debuff_type then
+						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[aura.debuffType] or M.textures.aura_icons["Debuff"]))
+					else
+						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Debuff"]))
+					end
 				else
 					button.Border:SetVertexColor(1, 1, 1)
-					button.AuraType:SetTexture("Interface\\PETBATTLES\\BattleBar-AbilityBadge-Strong")
+					button.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Buff"]))
 				end
 
 				button:Show()
 			else
-				button.AuraType:SetTexture("")
 				button.Count:SetText("")
 				button.filter = nil
 				button.Icon:SetTexture("")
@@ -131,14 +130,6 @@ local function bar_OnEvent(self)
 				button:SetScript("OnUpdate", nil)
 				button:Hide()
 			end
-		end
-	end
-end
-
-local function bar_UpdateButtons(self, method, ...)
-	for _, button in next, self._buttons do
-		if button[method] then
-			button[method](button, ...)
 		end
 	end
 end
@@ -181,6 +172,39 @@ local function bar_UpdateLock(self)
 	end
 end
 
+local function bar_UpdateFontObjects(self)
+	local config = self._config.count
+	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
+	local count
+
+	for _, button in next, self._buttons do
+		count = button.Count
+		count:SetFontObject(fontObj)
+		count:SetJustifyH(config.h_alignment)
+		count:SetJustifyV(config.v_alignment)
+		count:SetWordWrap(false)
+
+		if config.shadow then
+			count:SetShadowOffset(1, -1)
+		else
+			count:SetShadowOffset(0, 0)
+		end
+	end
+end
+
+
+local function bar_UpdateAuraTypeIcons(self)
+	local config = self._config.type
+	local auraType
+
+	for _, button in next, self._buttons do
+		auraType = button.AuraType
+		auraType:ClearAllPoints()
+		auraType:SetPoint(config.position, 0, 0)
+		auraType:SetSize(config.size, config.size)
+	end
+end
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -216,16 +240,17 @@ function MODULE.Init()
 		bar:SetScript("OnEvent", bar_OnEvent)
 
 		bar.Update = bar_OnEvent
-		bar.UpdateButtons = bar_UpdateButtons
+		bar.UpdateAuraTypeIcons = bar_UpdateAuraTypeIcons
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
+		bar.UpdateFontObjects = bar_UpdateFontObjects
 		bar.UpdateLock = bar_UpdateLock
 
 		bar.Header = header
 		bar._buttons = {}
 
 		for i = 1, 12 do
-			local button = E:CreateButton(bar, nil, true, true, true)
+			local button = E:CreateButton(bar, "$parentButton" .. i, true, true, true)
 			button:SetPushedTexture("")
 			button:SetHighlightTexture("")
 			button:SetScript("OnEnter", button_OnEnter)
@@ -234,12 +259,12 @@ function MODULE.Init()
 			bar._buttons[i] = button
 
 			local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
-			auraType:SetSize(16, 16)
-			auraType:SetPoint("TOPLEFT", -2, 2)
+			auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
+			auraType:SetSize(C.db.char.auratracker.type.size, C.db.char.auratracker.type.size)
+			auraType:SetPoint(C.db.char.auratracker.type.position, 0, 0)
 			button.AuraType = auraType
 
 			button._parent = bar
-			button.UpdateCountFont = button_UpdateCountFont
 		end
 
 		isInit = true
@@ -251,8 +276,9 @@ end
 function MODULE.Update()
 	if isInit then
 		bar:UpdateConfig()
-		bar:UpdateButtons("UpdateCountFont")
 		bar:UpdateCooldownConfig()
+		bar:UpdateAuraTypeIcons()
+		bar:UpdateFontObjects()
 		E:UpdateBarLayout(bar)
 		bar:UpdateLock()
 		bar:Update()

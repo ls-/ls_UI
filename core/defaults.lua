@@ -3115,7 +3115,11 @@ D.char = {
 		count = {
 			enabled = true,
 			size = 12,
+			outline = true,
+			shadow = false,
 			flag = "_Outline", -- "_Shadow", ""
+			h_alignment = "RIGHT",
+			v_alignment = "TOP",
 		},
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
@@ -3126,7 +3130,12 @@ D.char = {
 				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "CENTER",
 				v_alignment = "BOTTOM",
-			}
+			},
+		},
+		type = {
+			size = 12,
+			position = "TOPLEFT",
+			debuff_type = false,
 		},
 		filter = {
 			HELPFUL = {},
