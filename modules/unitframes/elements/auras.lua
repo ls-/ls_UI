@@ -24,15 +24,6 @@ for _, id in next, C_MountJournal.GetMountIDs() do
 	MOUNTS[select(2, C_MountJournal.GetMountInfoByID(id))] = true
 end
 
-local ICONS = {
-	["Buff"] = {1 / 128, 33 / 128, 1 / 128, 33 / 128},
-	["Debuff"] = {34 / 128, 66 / 128, 1 / 128, 33 / 128},
-	["Curse"] = {67 / 128, 99 / 128, 1 / 128, 33 / 128},
-	["Disease"] = {1 / 128, 33 / 128, 34 / 128, 66 / 128},
-	["Magic"] = {34 / 128, 66 / 128, 34 / 128, 66 / 128},
-	["Poison"] = {67 / 128, 99 / 128, 34 / 128, 66 / 128},
-}
-
 local filterFunctions = {
 	default = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
 		local config = self._config and self._config.filter or nil
@@ -256,13 +247,13 @@ local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 		aura.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
 
 		if self._config.type.debuff_type then
-			aura.AuraType:SetTexCoord(unpack(ICONS[debuffType] or ICONS["Debuff"]))
+			aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons["Debuff"]))
 		else
-			aura.AuraType:SetTexCoord(unpack(ICONS["Debuff"]))
+			aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Debuff"]))
 		end
 	else
 		aura.Border:SetVertexColor(1, 1, 1)
-		aura.AuraType:SetTexCoord(unpack(ICONS["Buff"]))
+		aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Buff"]))
 	end
 end
 
