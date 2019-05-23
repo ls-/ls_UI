@@ -292,6 +292,7 @@ local function getOptionsTable_Bar(barID, order, name)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
 					BARS:GetBar(barID):Update()
@@ -872,6 +873,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.cooldown, C.db.profile.bars.cooldown)
 							BARS:UpdateBars("UpdateConfig")
@@ -932,6 +934,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {currency = true, point = true})
 							BARS:UpdateMicroMenu()
@@ -1319,6 +1322,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
 						disabled = isXPBarDisabledOrRestricted,
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
 							BARS:GetBar("xpbar"):Update()
