@@ -1,10 +1,11 @@
 local _, ns = ...
 local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
-local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
+local BLIZZARD = P:GetModule("Blizzard")
+local CONFIG = P:GetModule("Config")
+local FILTERS = P:GetModule("Filters")
 local MINIMAP = P:GetModule("Minimap")
 local UNITFRAMES = P:GetModule("UnitFrames")
-local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
@@ -517,6 +518,10 @@ do
 	local units = {"player", "target", "focus", "boss"}
 	local curFilter
 
+	local function isDefaultFilter(info)
+		return D.global.aura_filters[info[#info - 1]]
+	end
+
 	local function callback()
 		for _, unit in next, units do
 			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
@@ -537,6 +542,7 @@ do
 			type = "input",
 			width = "full",
 			name = L["NAME"],
+			disabled = isDefaultFilter,
 			validate = function(info, value)
 				value = s_trim(value):gsub("\124\124+", "\124")
 
@@ -574,6 +580,7 @@ do
 			order = 2,
 			type = "toggle",
 			name = L["BLACKLIST"],
+			disabled = isDefaultFilter,
 			get = function(info)
 				return not C.db.global.aura_filters[info[#info - 1]].state
 			end,
@@ -600,6 +607,7 @@ do
 			type = "execute",
 			name = L["DELETE"],
 			width = "full",
+			hidden = isDefaultFilter,
 			confirm = function(info)
 				return L["CONFIRM_DELETE"]:format(info[#info - 1])
 			end,
@@ -621,6 +629,23 @@ do
 				updateAuraFiltersOptions()
 
 				AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters")
+			end,
+		},
+		reset = {
+			type = "execute",
+			order = 5,
+			name = L["RESTORE_DEFAULTS"],
+			width = "full",
+			hidden = function(info)
+				return not D.global.aura_filters[info[#info - 1]]
+			end,
+			func = function(info)
+				FILTERS:Reset(info[#info - 1])
+
+				for _, unit in next, units do
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+				end
 			end,
 		},
 	}
@@ -701,19 +726,17 @@ do
 		options.new = filterOptionTables.new
 
 		for filter in next, C.db.global.aura_filters do
-			if not D.global.aura_filters[filter] then
-				if not filterOptionTables[filter] then
-					filterOptionTables[filter] = {
-						type = "group",
-						name = filter,
-						args = curFilterInfo,
-					}
-				end
-
-				options[filter] = filterOptionTables[filter]
-
-				t_insert(order, filter)
+			if not filterOptionTables[filter] then
+				filterOptionTables[filter] = {
+					type = "group",
+					name = filter,
+					args = curFilterInfo,
+				}
 			end
+
+			options[filter] = filterOptionTables[filter]
+
+			t_insert(order, filter)
 		end
 
 		t_sort(order)
