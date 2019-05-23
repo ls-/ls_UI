@@ -558,6 +558,7 @@ do
 					auraListFrame:Update()
 
 					idInputEditBox:SetText("")
+					idInputEditBox:ClearFocus()
 					previewScrollChild:SetText("")
 				end
 			end)
@@ -598,6 +599,9 @@ do
 		frame.AuraList:Update()
 
 		frame.TitleText:SetText(name)
+		frame.IDInput.EditBox:SetText("")
+		frame.Preview.ScrollChild:SetText("")
+
 		frame:SetScript("OnHide", nil)
 		frame:Hide()
 		frame:SetScript("OnHide", hideCallback)
