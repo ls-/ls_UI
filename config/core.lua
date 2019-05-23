@@ -101,6 +101,16 @@ MODULE.GROWTH_DIRS = {
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
+function MODULE.ConfirmReset(info)
+	local option = C.options
+
+	for i = 1, #info - 1 do
+		option = option.args[info[i]]
+	end
+
+	return L["CONFIRM_RESET"]:format(option.name)
+end
+
 function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
 		[""] = L["FRAME"],
