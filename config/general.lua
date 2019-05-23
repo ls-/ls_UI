@@ -176,6 +176,9 @@ do
 			order = 6,
 			name = L["RESTORE_DEFAULTS"],
 			width = "full",
+			confirm = function(info)
+				return L["CONFIRM_RESET"]:format(info[#info - 1])
+			end,
 			hidden = function(info)
 				return not D.global.tags[info[#info - 1]]
 			end,
@@ -639,6 +642,9 @@ do
 			hidden = function(info)
 				return not D.global.aura_filters[info[#info - 1]]
 			end,
+			confirm = function(info)
+				return L["CONFIRM_RESET"]:format(info[#info - 1])
+			end,
 			func = function(info)
 				FILTERS:Reset(info[#info - 1])
 
@@ -788,6 +794,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["HEALTH"])
+								end,
 								func = function()
 									E:SetRGB(C.db.global.colors.health, E:GetRGB(D.global.colors.health))
 									E:SetRGB(C.db.global.colors.disconnected, E:GetRGB(D.global.colors.disconnected))
@@ -868,6 +877,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["POWER"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.power do
 										if type(k) == "string" then
@@ -1059,6 +1071,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["CHANGE"])
+								end,
 								func = function()
 									E:SetRGB(C.db.global.colors.gain, E:GetRGB(D.global.colors.gain))
 									E:SetRGB(C.db.global.colors.loss, E:GetRGB(D.global.colors.loss))
@@ -1110,6 +1125,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["PREDICTION"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.prediction do
 										E:SetRGB(C.db.global.colors.prediction[k], E:GetRGB(v))
@@ -1180,6 +1198,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["REACTION"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.reaction do
 										E:SetRGB(C.db.global.colors.reaction[k], E:GetRGB(v))
@@ -1261,6 +1282,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["FACTION"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.faction do
 										E:SetRGB(C.db.global.colors.faction[k], E:GetRGB(v))
@@ -1317,6 +1341,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["EXPERIENCE"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.xp do
 										E:SetRGB(C.db.global.colors.xp[k], E:GetRGB(v))
@@ -1409,6 +1436,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["DIFFICULTY"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.difficulty do
 										E:SetRGB(C.db.global.colors.difficulty[k], E:GetRGB(v))
@@ -1471,6 +1501,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["CASTBAR"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.castbar do
 										E:SetRGB(C.db.global.colors.castbar[k], E:GetRGB(v))
@@ -1528,6 +1561,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["AURA"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.debuff do
 										E:SetRGB(C.db.global.colors.debuff[k], E:GetRGB(v))
@@ -1610,6 +1646,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["BUTTON"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.button do
 										E:SetRGB(C.db.global.colors.button[k], E:GetRGB(v))
@@ -1665,6 +1704,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["COOLDOWN"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.cooldown do
 										E:SetRGB(C.db.global.colors.cooldown[k], E:GetRGB(v))
@@ -1728,6 +1770,9 @@ function CONFIG:CreateGeneralPanel(order)
 								type = "execute",
 								order = 1,
 								name = L["RESTORE_DEFAULTS"],
+								confirm = function()
+									return L["CONFIRM_RESET"]:format(L["ZONE"])
+								end,
 								func = function()
 									for k, v in next, D.global.colors.zone do
 										E:SetRGB(C.db.global.colors.zone[k], E:GetRGB(v))
