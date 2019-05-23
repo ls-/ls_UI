@@ -1,4 +1,4 @@
-﻿local _, ns = ...
+local _, ns = ...
 local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
@@ -50,6 +50,7 @@ L["MAINMENU_BUTTON"] = _G.MAINMENU_BUTTON
 L["MANA"] = _G.MANA
 L["MINIMAP"] = _G.MINIMAP_LABEL
 L["MISC"] = _G.MISCELLANEOUS
+L["NEW"] = _G.NEW
 L["NONE"] = _G.NONE
 L["OFFLINE"] = _G.PLAYER_OFFLINE
 L["PAIN"] = _G.PAIN
@@ -444,8 +445,6 @@ L["EVENTS"] = "Events"
 L["FUNC"] = "Function"
 L["INVALID_EVENTS_ERR"] = "Attempted to use invalid events: %s."
 L["NAME_TAKEN_ERR"] = "The name is taken."
-L["NEW_TAG"] = "New Tag"
-L["NEW_VAR"] = "New Variable"
 L["TAG_VARS"] = "Tag Variables"
 L["TAGS"] = "Tags"
 L["VALUE"] = "Value"

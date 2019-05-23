@@ -208,7 +208,7 @@ do
 		new = {
 			order = 1,
 			type = "group",
-			name = L["NEW_TAG"],
+			name = L["NEW"],
 			get = function(info)
 				return tostring(newTagInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
@@ -423,7 +423,7 @@ do
 		new = {
 			order = 1,
 			type = "group",
-			name = L["NEW_VAR"],
+			name = L["NEW"],
 			get = function(info)
 				return tostring(newVarInfo[info[#info]]):gsub("\124", "\124\124")
 			end,
@@ -609,7 +609,7 @@ do
 		new = {
 			order = 1,
 			type = "group",
-			name = L["NEW_VAR"],
+			name = L["NEW"],
 			args = {
 				name = {
 					order = 1,
