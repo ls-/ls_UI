@@ -302,6 +302,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "execute",
 						order = 3,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.castbar, C.db.profile.blizzard.castbar)
 							BLIZZARD:UpdateCastBars()
@@ -427,6 +428,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.digsite_bar, C.db.profile.blizzard.digsite_bar)
 							BLIZZARD:UpdateDigsiteBar()
@@ -524,6 +526,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.timer, C.db.profile.blizzard.timer)
 							BLIZZARD:UpdateMirrorTimers()
@@ -611,6 +614,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.objective_tracker, C.db.profile.blizzard.objective_tracker)
 							BLIZZARD:UpdateObjectiveTracker()
@@ -686,6 +690,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.talking_head, C.db.profile.blizzard.talking_head)
 						end,
