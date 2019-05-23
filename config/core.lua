@@ -514,7 +514,7 @@ do
 			idInputFrameBG:SetBackdropBorderColor(0.6, 0.6, 0.6)
 
 			local idInputEditBox= idInputFrame.EditBox
-			idInputEditBox.Instructions:SetText("[WIP] SpellID1 spellID2 ...")
+			idInputEditBox.Instructions:SetText("ID #1, ID #2, ID #3...")
 			idInputEditBox:SetWidth(idInputFrame:GetWidth() - 18)
 			idInputEditBox:HookScript("OnTextChanged", function(self, isUserInput)
 				if isUserInput then
