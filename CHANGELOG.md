@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## Version 80100.08
+- Reworked unit frame aura filters:
+  - Added an option to create custom aura filters. Can be found at /LSUI > General > Aura Filters.  
+    You can create both black- and whitelist, after you create your aura filter, you'll need to  
+    enable it for a unit frame. There's a new "User-created" section in UF Auras that contains all  
+    custom filters. Please note that all custom filters are global and shared across all chars  
+    and profiles;
+  - Added tanks', healers', and misc buffs and debuffs. Misc or miscellaneous is everything that  
+    wasn't filtered out by other filters.
+- Added reset confirmation popups to all "Restore Defaults" buttons;
+- Updated aura types' icons. Added support for enrage auras.
+
+NOTE: You'll have to restart WoW client to make things work after the update.
+
 ## Version 80100.07
 
 - Added tag editor. Can be found at /LSUI > General > Tags. Moved all of my tags to the config, if  
