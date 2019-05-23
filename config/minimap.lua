@@ -55,6 +55,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.minimap[E.UI_LAYOUT], C.db.profile.minimap[E.UI_LAYOUT], {["point"] = true})
 					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
