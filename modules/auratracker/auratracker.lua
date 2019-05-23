@@ -225,7 +225,7 @@ function MODULE.Init()
 		bar._buttons = {}
 
 		for i = 1, 12 do
-			local button = E:CreateButton(bar, nil, true)
+			local button = E:CreateButton(bar, nil, true, true, true)
 			button:SetPushedTexture("")
 			button:SetHighlightTexture("")
 			button:SetScript("OnEnter", button_OnEnter)

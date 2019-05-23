@@ -198,7 +198,7 @@ local function element_CreateAuraIcon(self, index)
 		config = self._config
 	end
 
-	local button = E:CreateButton(self, "$parentAura" .. index, true)
+	local button = E:CreateButton(self, "$parentAura" .. index, true, true, true)
 
 	button.icon = button.Icon
 	button.Icon = nil
