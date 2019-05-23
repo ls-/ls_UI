@@ -76,7 +76,7 @@ local textures = {
 		-- ["TEMP"] = {166 / 256, 198 / 256, 199 / 256, 231 / 256},
 		-- ["TEMP"] = {199 / 256, 231 / 256, 199 / 256, 231 / 256},
 	},
-	inlineicons = {
+	icons_inline = {
 		-- first line
 		["LEADER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:1:33:1:33|t",
 		["DAMAGER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:34:66:1:33|t",
