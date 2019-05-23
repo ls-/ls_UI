@@ -209,6 +209,7 @@ local function getUFOption_Health(order, unit)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].health, C.db.profile.units[unit].health, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateHealth")
@@ -692,6 +693,7 @@ local function getUFOption_Power(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePower")
@@ -893,6 +895,7 @@ local function getUFOption_AlternativePower(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAlternativePower")
@@ -1071,6 +1074,7 @@ local function getUFOption_ClassPower(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAdditionalPower")
@@ -1190,6 +1194,7 @@ local function getUFOption_Castbar(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateCastbar")
@@ -1346,6 +1351,7 @@ local function getUFOption_Name(order, unit)
 				type = "execute",
 				order = 1,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateName")
@@ -1557,6 +1563,7 @@ local function getUFOption_RaidTargetIndicator(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRaidTargetIndicator")
@@ -1665,6 +1672,7 @@ local function getUFOption_DebuffIcons(order, unit)
 				type = "execute",
 				order = 2,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff, resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateDebuffIndicator")
@@ -1814,6 +1822,7 @@ local function getUFOption_Auras(order, unit)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, aurasResetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "UpdateAuras")
@@ -2108,6 +2117,7 @@ local function getUFOption_Auras(order, unit)
 						type = "execute",
 						order = 2,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units[unit].auras.filter, C.db.profile.units[unit].auras.filter)
 							UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
@@ -2508,6 +2518,7 @@ local function getUFOptions(order, unit, name)
 				type = "execute",
 				order = 3,
 				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit], resetIgnoredKeys)
 					UNITFRAMES:UpdateUnitFrame(unit, "Update")
@@ -2824,6 +2835,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 						type = "execute",
 						order = 1,
 						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
 							UNITFRAMES:UpdateUnitFrames("ForElement", "Auras", "UpdateConfig")
