@@ -335,6 +335,7 @@ do
 			self:UpdateInsets()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
+			self:UpdatePortrait()
 
 			self.Power:SetWidth(self._config.width)
 			self:UpdatePower()
@@ -428,6 +429,8 @@ do
 		frame.Health = health
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+
+		frame.Portrait = self:CreatePortrait(frame)
 
 		-- power
 		local power = self:CreatePower(frame, textParent)
