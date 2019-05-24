@@ -839,7 +839,7 @@ D.profile = {
 					},
 				},
 				portrait = {
-					enabled = true,
+					enabled = false,
 					style = "2D", -- "3D"
 					position = "Left", -- "Right"
 				},
@@ -1249,7 +1249,7 @@ D.profile = {
 				},
 			},
 			portrait = {
-				enabled = true,
+				enabled = false,
 				style = "2D", -- "3D"
 				position = "Left", -- "Right"
 			},
@@ -1655,7 +1655,7 @@ D.profile = {
 				},
 			},
 			portrait = {
-				enabled = true,
+				enabled = false,
 				style = "2D", -- "3D"
 				position = "Left", -- "Right"
 			},
@@ -2085,7 +2085,7 @@ D.profile = {
 				},
 			},
 			portrait = {
-				enabled = true,
+				enabled = false,
 				style = "2D", -- "3D"
 				position = "Left", -- "Right"
 			},
