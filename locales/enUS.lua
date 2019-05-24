@@ -486,3 +486,7 @@ L["AURA_FILTERS"] = "Aura Filters"
 L["BLACKLIST"] = "Blacklist"
 L["CONFIRM_DELETE"] = "Do you wish to delete \"%s\"?"
 L["CONFIRM_RESET"] = "Do you wish to reset \"%s\"?"
+
+-- new
+L["PORTRAIT"] = "Portrait"
+L["STYLE"] = "Style"

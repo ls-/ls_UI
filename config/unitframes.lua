@@ -2499,7 +2499,7 @@ local function getUFOption_Portrait(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
-		name = "[WIP] Portrait",
+		name = L["PORTRAIT"],
 		get = function(info)
 			return C.db.profile.units[unit].portrait[info[#info]]
 		end,
@@ -2535,9 +2535,9 @@ local function getUFOption_Portrait(order, unit)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].portrait, C.db.profile.units[unit].portrait, resetIgnoredKeys)
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePortrait")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
-						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePortrait")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
 				end,
 			},
 			spacer_1 = {
@@ -2548,13 +2548,13 @@ local function getUFOption_Portrait(order, unit)
 			style = {
 				order = 10,
 				type = "select",
-				name = "[WIP] Style",
+				name = L["STYLE"],
 				values = CONFIG.PORTRAIT_STYLES,
 			},
 			position = {
 				order = 11,
 				type = "select",
-				name = "[WIP] Position",
+				name = L["POSITION"],
 				values = CONFIG.PORTRAIT_POSITIONS,
 			},
 		},
