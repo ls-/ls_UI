@@ -60,7 +60,25 @@ local function frame_UpdateConfig(self)
 end
 
 local function frame_UpdateSize(self)
-	self:SetSize(self._config.width, self._config.height)
+	local width, height = self._config.width, self._config.height
+
+	self:SetSize(width, height)
+
+	if self.BorderParent then
+		self.BorderParent:SetSize(width, height)
+	end
+
+	if self.TextureParent then
+		self.TextureParent:SetSize(width, height)
+	end
+
+	if self.TextParent then
+		self.TextParent:SetSize(width, height)
+	end
+
+	if self.Border and self.Border:IsObjectType("Border") then
+		self.Border:SetSize(16)
+	end
 
 	local mover = E.Movers:Get(self, true)
 	if mover then
