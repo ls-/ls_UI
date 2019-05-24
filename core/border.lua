@@ -54,9 +54,11 @@ local function border_SetSize(self, size)
 	self.RIGHT:SetWidth(size)
 
 	if self.calcTile then
-		local tile = (self.parent:GetWidth() + 2 * self.offset) / size
+		local tile = (self.parent:GetWidth() + 2 * self.offset) / 16
 		self.TOP:SetTexCoord(0.25, tile, 0.375, tile, 0.25, 0, 0.375, 0)
 		self.BOTTOM:SetTexCoord(0.375, tile, 0.5, tile, 0.375, 0, 0.5, 0)
+
+		tile = (self.parent:GetHeight() + 2 * self.offset) / 16
 		self.LEFT:SetTexCoord(0, 0.125, 0, tile)
 		self.RIGHT:SetTexCoord(0.125, 0.25, 0, tile)
 	end
@@ -84,8 +86,8 @@ local function border_SetVertexColor(self, r, g, b, a)
 	end
 end
 
-local function border_IsObjectType()
-	return false
+local function border_IsObjectType(_, t)
+	return t == "Border"
 end
 
 function E:CreateBorder(parent, drawLayer, drawSubLevel)
