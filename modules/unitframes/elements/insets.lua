@@ -119,16 +119,6 @@ local function inset_Capture(self, object, l, r, t, b)
 	object:SetPoint("RIGHT", self, "RIGHT", r or 0, 0)
 	object:SetPoint("TOP", self, "TOP", 0, t or 0)
 	object:SetPoint("BOTTOM", self, "BOTTOM", 0, b or 0)
-
-	self._object = object
-end
-
-local function inset_Release(self)
-	if self._object then
-		self._object:ClearAllPoints()
-
-		self._object = nil
-	end
 end
 
 local function inset_IsExpanded(self)
@@ -236,7 +226,6 @@ function UF:CreateInsets(frame, texParent)
 	leftInset.Expand = vertInset_Expand
 	leftInset.IsExpanded = inset_IsExpanded
 	leftInset.Capture = inset_Capture
-	leftInset.Release = inset_Release
 
 	leftInset:Collapse()
 
@@ -282,7 +271,6 @@ function UF:CreateInsets(frame, texParent)
 	rightInset.Expand = vertInset_Expand
 	rightInset.IsExpanded = inset_IsExpanded
 	rightInset.Capture = inset_Capture
-	rightInset.Release = inset_Release
 
 	-- rightInset._expanded = true
 	rightInset:Collapse()
@@ -341,7 +329,6 @@ function UF:CreateInsets(frame, texParent)
 	topInset.Collapse = horizInset_Collapse
 	topInset.IsExpanded = inset_IsExpanded
 	topInset.Capture = inset_Capture
-	topInset.Release = inset_Release
 
 	topInset:Collapse()
 
@@ -399,7 +386,6 @@ function UF:CreateInsets(frame, texParent)
 	bottomInset.Collapse = horizInset_Collapse
 	bottomInset.IsExpanded = inset_IsExpanded
 	bottomInset.Capture = inset_Capture
-	bottomInset.Release = inset_Release
 
 	bottomInset:Collapse()
 
