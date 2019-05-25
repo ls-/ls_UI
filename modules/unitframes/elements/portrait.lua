@@ -28,7 +28,7 @@ local function frame_UpdatePortrait(self)
 
 	local element = self.Portrait
 	element:UpdateConfig()
-	element:Show()
+	element:Hide()
 
 	self.Insets.Left:Collapse()
 	self.Insets.Right:Collapse()
@@ -43,6 +43,7 @@ local function frame_UpdatePortrait(self)
 		self.Insets[element._config.position]:Capture(element)
 		self.Insets[element._config.position]:Expand()
 
+		element:Show()
 		element:ForceUpdate()
 	end
 end
