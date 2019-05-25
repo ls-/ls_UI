@@ -395,7 +395,7 @@ D.profile = {
 				height = 166,
 				point = {
 					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
+					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				health = {
 					enabled = true,
@@ -716,8 +716,8 @@ D.profile = {
 				width = 250,
 				height = 52,
 				point = {
-					ls = {"BOTTOM", "UIParent", "BOTTOM", -286, 256},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 256},
+					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
+					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				insets = {
 					t_height = 12,
@@ -1142,7 +1142,7 @@ D.profile = {
 			height = 52,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
-				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 256},
+				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
 			},
 			insets = {
 				t_height = 12,
@@ -2324,11 +2324,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 0,
-				y = 20
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
 			},
 		},
 		bar2 = { -- MultiBarBottomLeft
@@ -2375,11 +2372,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 0,
-				y = 56
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
 			},
 		},
 		bar3 = { -- MultiBarBottomRight
@@ -2426,11 +2420,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 0,
-				y = 92
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
 			},
 		},
 		bar4 = { -- MultiBarLeft
@@ -2477,11 +2468,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOMRIGHT",
-				anchor = "UIParent",
-				rP = "BOTTOMRIGHT",
-				x = -40,
-				y = 240
+				ls = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
+				traditional = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
 			},
 		},
 		bar5 = { -- MultiBarRight
@@ -2528,11 +2516,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOMRIGHT",
-				anchor = "UIParent",
-				rP = "BOTTOMRIGHT",
-				x = -4,
-				y = 240,
+				ls = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
+				traditional = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
 			},
 		},
 		bar6 = { --PetAction
@@ -2626,11 +2611,8 @@ D.profile = {
 				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 0,
-				y = 16
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
 			},
 		},
 		extra = { -- ExtraAction
@@ -2660,11 +2642,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = -168,
-				y = 134
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2689,11 +2668,8 @@ D.profile = {
 				},
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = -168,
-				y = 178
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
 			},
 		},
 		vehicle = { -- LeaveVehicle
@@ -2709,11 +2685,8 @@ D.profile = {
 				max_alpha = 1,
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 168,
-				y = 134
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
 			},
 		},
 		micromenu = {
@@ -2738,11 +2711,8 @@ D.profile = {
 					x_growth = "RIGHT",
 					y_growth = "DOWN",
 					point = {
-						p = "BOTTOMRIGHT",
-						anchor = "UIParent",
-						rP = "BOTTOMRIGHT",
-						x = -4,
-						y = 4,
+						ls = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
+						traditional = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
 					},
 				},
 				micromenu2 = {
@@ -2764,11 +2734,8 @@ D.profile = {
 					size = 32,
 					spacing = 4,
 					point = {
-						p = "BOTTOMRIGHT",
-						anchor = "UIParent",
-						rP = "BOTTOMRIGHT",
-						x = -4,
-						y = 32,
+						ls = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
+						traditional = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
 					},
 				},
 			},
@@ -2845,11 +2812,8 @@ D.profile = {
 				visibility = 2, -- 1 - always, 2 - mouseover
 			},
 			point = {
-				p = "BOTTOM",
-				anchor = "UIParent",
-				rP = "BOTTOM",
-				x = 0,
-				y = 4
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
 			},
 			fade = {
 				enabled = false,

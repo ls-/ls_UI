@@ -39,11 +39,8 @@ local CFG = {
 	width = 594,
 	height = 12,
 	point = {
-		p = "BOTTOM",
-		anchor = "UIParent",
-		rP = "BOTTOM",
-		x = 0,
-		y = 4
+		ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
+		traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
 	},
 	fade = {
 		enabled = false,
@@ -561,7 +558,7 @@ function BARS.CreateXPBar()
 			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
 		else
 			local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
-			local point = config.point
+			local point = config.point[E.UI_LAYOUT]
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(bar)
 		end

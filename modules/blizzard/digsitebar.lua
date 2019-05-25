@@ -39,7 +39,7 @@ function MODULE:SetUpDigsiteBar()
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 			ArcheologyDigsiteProgressBar:ClearAllPoints()
-			ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 250)
+			ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 226)
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")

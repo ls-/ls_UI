@@ -1455,7 +1455,7 @@ function MODULE:CreateMicroMenu()
 				slots.UpdateEvents = bagSlots_UpdateEvents
 				slots.UpdateLayout = bagSlots_UpdateLayout
 
-				local point = C.db.profile.bars.micromenu.bars.bags.point
+				local point = C.db.profile.bars.micromenu.bars.bags.point[E.UI_LAYOUT]
 				slots:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E.Movers:Create(slots)
 			elseif id == "spellbook" then
@@ -1530,7 +1530,7 @@ function MODULE:CreateMicroMenu()
 
 		E:ForceHide(MicroButtonAndBagsBar)
 
-		local point = C.db.profile.bars.micromenu.bars.micromenu1.point
+		local point = C.db.profile.bars.micromenu.bars.micromenu1.point[E.UI_LAYOUT]
 		bar1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar1)
 
