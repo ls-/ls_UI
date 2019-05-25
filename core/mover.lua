@@ -214,10 +214,10 @@ local function calculatePosition(self)
 		end
 
 		if moverCenterX >= screenRight then
-			p = p.."RIGHT"
+			p = p .. "RIGHT"
 			x = self:GetRight() - screenWidth
 		elseif moverCenterX <= screenLeft then
-			p = p.."LEFT"
+			p = p .. "LEFT"
 			x = self:GetLeft()
 		else
 			x = moverCenterX - screenCenterX
@@ -291,9 +291,9 @@ local function mover_UpdatePosition(self, xOffset, yOffset)
 		self:Show()
 	else
 		if self:WasMoved() then
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
-		else
 			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+		else
+			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		end
 	end
 
@@ -303,15 +303,15 @@ end
 local function mover_OnEnter(self)
 	local p, anchor, rP, x, y = E:GetCoords(self)
 
-	if anchor == "UIParent" then
+	if isDragging or self:WasMoved() then
 		p, rP, x, y = calculatePosition(self)
 	end
 
 	GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 	GameTooltip:AddLine(self:GetName())
-	GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
-	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
-	GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Point:|r " .. p, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Attached to:|r " .. rP .. " |cffffd100of|r " .. anchor, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100X:|r " .. x .. ", |cffffd100Y:|r " .. y, 1, 1, 1)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["MOVER_BUTTONS_DESC"])
 	GameTooltip:AddLine(L["MOVER_RESET_DESC"])
@@ -362,6 +362,10 @@ end
 local function mover_OnClick(self)
 	if IsShiftKeyDown() then
 		self:ResetPosition()
+
+		if GameTooltip:IsOwned(self) then
+			mover_OnEnter(self)
+		end
 	else
 		local isShown = self.buttons[1]:IsShown()
 
@@ -380,7 +384,12 @@ local function mover_IsDragKeyDown()
 end
 
 local function mover_WasMoved(self)
-	return E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()])
+	local dest = C.db.profile.movers[E.UI_LAYOUT][self:GetName()]
+	if not (dest and next(dest)) then
+		return false
+	end
+
+	return not E:IsEqualTable(defaults[self:GetName()], dest)
 end
 
 local function mover_Enable(self)
@@ -521,6 +530,9 @@ function E.Movers:Create(object, isSimple)
 		mover:SetScript("OnLeave", Mover_OnLeave)
 		mover:SetShown(areToggledOn)
 
+		mover:SetHighlightTexture("Interface\\BUTTONS\\WHITE8X8")
+		mover:GetHighlightTexture():SetAlpha(0.1)
+
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
 		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		bg:SetAllPoints()
@@ -621,9 +633,9 @@ function P.Movers:UpdateConfig()
 			mover:Show()
 		else
 			if mover:WasMoved() then
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
-			else
 				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+			else
+				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 			end
 		end
 	end
