@@ -15,9 +15,11 @@ end
 local function frame_UpdatePortrait(self)
 	if C.db.profile.units[self._unit].portrait.style == "2D" then
 		self.Portrait = self.Portrait2D
+		self.Portrait3D:ClearAllPoints()
 		self.Portrait3D:Hide()
 	else
 		self.Portrait = self.Portrait3D
+		self.Portrait2D:ClearAllPoints()
 		self.Portrait2D:Hide()
 	end
 
@@ -26,11 +28,9 @@ local function frame_UpdatePortrait(self)
 
 	local element = self.Portrait
 	element:UpdateConfig()
+	element:Show()
 
-	self.Insets.Left:Release()
 	self.Insets.Left:Collapse()
-
-	self.Insets.Right:Release()
 	self.Insets.Right:Collapse()
 
 	if element._config.enabled and not self:IsElementEnabled("Portrait") then
@@ -43,7 +43,6 @@ local function frame_UpdatePortrait(self)
 		self.Insets[element._config.position]:Capture(element)
 		self.Insets[element._config.position]:Expand()
 
-		element:Show()
 		element:ForceUpdate()
 	end
 end
