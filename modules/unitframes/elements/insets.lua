@@ -126,10 +126,30 @@ local function inset_IsExpanded(self)
 end
 
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
-	self._config = E:CopyTable(C.db.profile.units[unit].insets, self._config)
-	self._config.l_width = C.db.profile.units[unit].height
-	self._config.r_width = C.db.profile.units[unit].height
+	local uf = C.db.profile.units[self.__owner._unit]
+	local limit = E:Round(uf.height * 0.35)
+
+	self._config = E:CopyTable(uf.insets, self._config)
+
+	if self._config.t_height > limit then
+		self._config.t_height = limit
+	end
+
+	if self._config.b_height > limit then
+		self._config.b_height = limit
+	end
+
+	limit = E:Round(uf.width * 0.35)
+
+	self._config.l_width = uf.height
+	if self._config.l_width > limit then
+		self._config.l_width = limit
+	end
+
+	self._config.r_width = uf.height
+	if self._config.r_width > limit then
+		self._config.r_width = limit
+	end
 end
 
 local function element_UpdateLeftInset(self)
