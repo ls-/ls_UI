@@ -272,7 +272,6 @@ function UF:CreateInsets(frame, texParent)
 	rightInset.IsExpanded = inset_IsExpanded
 	rightInset.Capture = inset_Capture
 
-	-- rightInset._expanded = true
 	rightInset:Collapse()
 
 	-- Top
