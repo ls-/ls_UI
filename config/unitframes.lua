@@ -161,7 +161,7 @@ local function getUFOption_TopInset(order, unit)
 		type = "range",
 		name = L["TOP_INSET_SIZE"],
 		desc = L["TOP_INSET_SIZE_DESC"],
-		min = 8, max = 32, step = 2,
+		min = 8, max = 88, step = 2,
 		get = function()
 			return C.db.profile.units[unit].insets.t_height
 		end,
@@ -181,7 +181,7 @@ local function getUFOption_BottomInset(order, unit)
 		type = "range",
 		name = L["BOTTOM_INSET_SIZE"],
 		desc = L["BOTTOM_INSET_SIZE_DESC"],
-		min = 8, max = 32, step = 2,
+		min = 8, max = 88, step = 2,
 		get = function()
 			return C.db.profile.units[unit].insets.b_height
 		end,
