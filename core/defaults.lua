@@ -1548,7 +1548,7 @@ D.profile = {
 			height = 52,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
-				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 480},
+				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
 			},
 			insets = {
 				t_height = 12,
