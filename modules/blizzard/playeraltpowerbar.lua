@@ -27,7 +27,7 @@ function MODULE.SetUpAltPowerBar()
 
 		local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
 		holder:SetSize(64, 64)
-		holder:SetPoint("BOTTOM", 0, 230)
+		holder:SetPoint("TOP", 0, -188)
 		E.Movers:Create(holder)
 
 		PlayerPowerBarAlt:SetMovable(true)

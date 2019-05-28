@@ -25,19 +25,13 @@ local BUTTONS = {
 }
 
 local TOP_POINT = {
-	p = "BOTTOM",
-	anchor = "UIParent",
-	rP = "BOTTOM",
-	x = 0,
-	y = 156,
+	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
+	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
 }
 
 local BOTTOM_POINT = {
-	p = "BOTTOM",
-	anchor = "UIParent",
-	rP = "BOTTOM",
-	x = 0,
-	y = 128,
+	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
+	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
 }
 
 local LAYOUT = {
@@ -56,7 +50,7 @@ local LAYOUT = {
 }
 
 local function getBarPoint()
-	return LAYOUT[E.PLAYER_CLASS]
+	return LAYOUT[E.PLAYER_CLASS][E.UI_LAYOUT]
 end
 
 local function bar_Update(self)

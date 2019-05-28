@@ -94,11 +94,22 @@ MODULE.FLAGS = {
 	["_Outline"] = L["OUTLINE"],
 	["_Shadow"] = L["SHADOW"],
 }
+
 MODULE.GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
 	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
 	["RIGHT_UP"] = L["RIGHT_UP"],
+}
+
+MODULE.PORTRAIT_STYLES = {
+	["2D"] = "2D",
+	["3D"] = "3D",
+}
+
+MODULE.PORTRAIT_POSITIONS = {
+	["Left"] = L["LEFT"],
+	["Right"] = L["RIGHT"],
 }
 
 function MODULE.ConfirmReset(info)

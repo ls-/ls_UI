@@ -72,7 +72,7 @@ function MODULE.CreateVehicleExitButton()
 
 		button_onEvent(button)
 
-		local point = C.db.profile.bars.vehicle.point
+		local point = C.db.profile.bars.vehicle.point[E.UI_LAYOUT]
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar)
 

@@ -1,6 +1,19 @@
 # CHANGELOG
 
+## Version 80100.09
+
+- Added portraits to target, focus, boss, and "classic" player frames. Available in 2D and 3D.  
+  Disabled by default;
+- Slightly reworked movers. Added highlight textures, grid and axes;
+- Updated "Classic" layout. Moved unit frames closer to the bottom of the screen;
+- Moved action buttons' count/stack text above the cooldown spiral.
+
+![Imgur](https://i.imgur.com/yMKaGiW.gif)
+
+NOTE: You'll have to restart WoW client to make things work after the update.
+
 ## Version 80100.08
+
 - Reworked unit frame aura filters:
   - Added an option to create custom aura filters. Can be found at /LSUI > General > Aura Filters.  
     You can create both black- and whitelist, after you create your aura filter, you'll need to  
@@ -71,7 +84,7 @@ NOTE: You'll have to restart WoW client to make things work after the update.
 ## Version 80100.01
 
 - Added 8.1.0 support;
-- Added AdiButtonAuras support. Requires AdiButtonAuras alpha release; 
+- Added AdiButtonAuras support. Requires AdiButtonAuras alpha release;
 - Fixed an issue where opening PvP panel was causing errors;
 - Updated embeds.
 

@@ -5,10 +5,12 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local _G = getfenv(0)
 local assert = _G.assert
 local hooksecurefunc = _G.hooksecurefunc
+local m_floor = _G.math.floor
 local next = _G.next
 local s_format = _G.string.format
 local s_upper = _G.string.upper
 local t_insert = _G.table.insert
+local t_remove = _G.table.remove
 local t_wipe = _G.table.wipe
 local type = _G.type
 local unpack = _G.unpack
@@ -22,6 +24,111 @@ local IsAltKeyDown = _G.IsAltKeyDown
 ]]
 
 -- Mine
+-- Grid
+local grid = CreateFrame("Frame", nil, UIParent)
+grid:SetFrameStrata("BACKGROUND")
+grid:Hide()
+
+local linePool = {}
+local activeLines = {}
+local gridSize = 32
+
+local function getGridLine()
+	if not next(linePool) then
+		t_insert(linePool, grid:CreateTexture())
+	end
+
+	local line = t_remove(linePool, 1)
+	line:ClearAllPoints()
+	line:Show()
+
+	t_insert(activeLines, line)
+
+	return line
+end
+
+local function releaseGridLines()
+	while next(activeLines) do
+		local line = t_remove(activeLines, 1)
+		line:ClearAllPoints()
+		line:Hide()
+
+		t_insert(linePool, line)
+	end
+end
+
+local function hideGrid()
+	grid:Hide()
+end
+
+local function showGrid()
+	releaseGridLines()
+
+	local screenWidth, screenHeight = UIParent:GetRight(), UIParent:GetTop()
+	local screenCenterX, screenCenterY = UIParent:GetCenter()
+
+	grid:SetSize(screenWidth, screenHeight)
+	grid:SetPoint("CENTER")
+	grid:Show()
+
+	local yAxis = getGridLine()
+	yAxis:SetDrawLayer("BACKGROUND", 1)
+	yAxis:SetColorTexture(0.9, 0.1, 0.1, 0.6)
+	yAxis:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1, 0)
+	yAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1, 0)
+
+	local xAxis = getGridLine()
+	xAxis:SetDrawLayer("BACKGROUND", 1)
+	xAxis:SetColorTexture(0.9, 0.1, 0.1, 0.6)
+	xAxis:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1)
+	xAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1)
+
+	local l = getGridLine()
+	l:SetDrawLayer("BACKGROUND", 2)
+	l:SetColorTexture(0.8, 0.8, 0.1, 0.6)
+	l:SetPoint("TOPLEFT", grid, "TOPLEFT", screenWidth / 3 - 1, 0)
+	l:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
+
+	local r = getGridLine()
+	r:SetDrawLayer("BACKGROUND", 2)
+	r:SetColorTexture(0.8, 0.8, 0.1, 0.6)
+	r:SetPoint("TOPRIGHT", grid, "TOPRIGHT", - screenWidth / 3 + 1, 0)
+	r:SetPoint("BOTTOMLEFT", grid, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
+
+	-- horiz lines
+	local tex
+	for i = 1, m_floor(screenHeight / 2 / gridSize) do
+		tex = getGridLine()
+		tex:SetDrawLayer("BACKGROUND", 0)
+		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1 + gridSize * i)
+		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1 + gridSize * i)
+
+		tex = getGridLine()
+		tex:SetDrawLayer("BACKGROUND", 0)
+		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", 0, screenCenterY - 1 - gridSize * i)
+		tex:SetPoint("TOPRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY + 1 - gridSize * i)
+	end
+
+	-- vert lines
+	for i = 1, m_floor(screenWidth / 2 / gridSize) do
+		tex = getGridLine()
+		tex:SetDrawLayer("BACKGROUND", 0)
+		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1 - gridSize * i, 0)
+		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1 - gridSize * i, 0)
+
+		tex = getGridLine()
+		tex:SetDrawLayer("BACKGROUND", 0)
+		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetPoint("TOPRIGHT", grid, "TOPLEFT", screenCenterX + 1 + gridSize * i, 0)
+		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", screenCenterX - 1 + gridSize * i, 0)
+	end
+end
+
+
+-- Movers
 local defaults = {}
 local disabledMovers = {}
 local enabledMovers = {}
@@ -107,10 +214,10 @@ local function calculatePosition(self)
 		end
 
 		if moverCenterX >= screenRight then
-			p = p.."RIGHT"
+			p = p .. "RIGHT"
 			x = self:GetRight() - screenWidth
 		elseif moverCenterX <= screenLeft then
-			p = p.."LEFT"
+			p = p .. "LEFT"
 			x = self:GetLeft()
 		else
 			x = moverCenterX - screenCenterX
@@ -184,9 +291,9 @@ local function mover_UpdatePosition(self, xOffset, yOffset)
 		self:Show()
 	else
 		if self:WasMoved() then
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
-		else
 			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+		else
+			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		end
 	end
 
@@ -196,15 +303,15 @@ end
 local function mover_OnEnter(self)
 	local p, anchor, rP, x, y = E:GetCoords(self)
 
-	if anchor == "UIParent" then
+	if isDragging or self:WasMoved() then
 		p, rP, x, y = calculatePosition(self)
 	end
 
 	GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
 	GameTooltip:AddLine(self:GetName())
-	GameTooltip:AddLine("|cffffd100Point:|r "..p, 1, 1, 1)
-	GameTooltip:AddLine("|cffffd100Attached to:|r "..rP.." |cffffd100of|r "..anchor, 1, 1, 1)
-	GameTooltip:AddLine("|cffffd100X:|r "..x..", |cffffd100Y:|r "..y, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Point:|r " .. p, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100Attached to:|r " .. rP .. " |cffffd100of|r " .. anchor, 1, 1, 1)
+	GameTooltip:AddLine("|cffffd100X:|r " .. x .. ", |cffffd100Y:|r " .. y, 1, 1, 1)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["MOVER_BUTTONS_DESC"])
 	GameTooltip:AddLine(L["MOVER_RESET_DESC"])
@@ -255,6 +362,10 @@ end
 local function mover_OnClick(self)
 	if IsShiftKeyDown() then
 		self:ResetPosition()
+
+		if GameTooltip:IsOwned(self) then
+			mover_OnEnter(self)
+		end
 	else
 		local isShown = self.buttons[1]:IsShown()
 
@@ -273,7 +384,12 @@ local function mover_IsDragKeyDown()
 end
 
 local function mover_WasMoved(self)
-	return E:IsEqualTable(defaults[self:GetName()], C.db.profile.movers[E.UI_LAYOUT][self:GetName()])
+	local dest = C.db.profile.movers[E.UI_LAYOUT][self:GetName()]
+	if not (dest and next(dest)) then
+		return false
+	end
+
+	return not E:IsEqualTable(defaults[self:GetName()], dest)
 end
 
 local function mover_Enable(self)
@@ -414,6 +530,9 @@ function E.Movers:Create(object, isSimple)
 		mover:SetScript("OnLeave", Mover_OnLeave)
 		mover:SetShown(areToggledOn)
 
+		mover:SetHighlightTexture("Interface\\BUTTONS\\WHITE8X8")
+		mover:GetHighlightTexture():SetAlpha(0.1)
+
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
 		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 		bg:SetAllPoints()
@@ -488,8 +607,12 @@ function E.Movers:ToggleAll()
 	end
 
 	if areToggledOn then
+		showGrid()
+
 		tracker:SetScript("OnUpdate", tracker_OnUpdate)
 	else
+		hideGrid()
+
 		tracker:SetScript("OnUpdate", nil)
 	end
 end
@@ -510,9 +633,9 @@ function P.Movers:UpdateConfig()
 			mover:Show()
 		else
 			if mover:WasMoved() then
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
-			else
 				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+			else
+				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.blue, 0.6))
 			end
 		end
 	end
@@ -534,4 +657,6 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	end
 
 	tracker:SetScript("OnUpdate", nil)
+
+	hideGrid()
 end)

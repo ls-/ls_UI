@@ -33,11 +33,8 @@ local CFG = {
 		max_alpha = 1,
 	},
 	point = {
-		p = "BOTTOM",
-		anchor = "UIParent",
-		rP = "BOTTOM",
-		x = 0,
-		y = 16
+		ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
+		traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 	},
 }
 
@@ -121,7 +118,7 @@ function MODULE.CreatePetBattleBar()
 		if MODULE:IsRestricted() then
 			MODULE:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
 		else
-			local point = config.point
+			local point = config.point[E.UI_LAYOUT]
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(bar)
 		end

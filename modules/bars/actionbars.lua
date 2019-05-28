@@ -36,11 +36,8 @@ local CFG = {
 			max_alpha = 1,
 		},
 		point = {
-			p = "BOTTOM",
-			anchor = "UIParent",
-			rP = "BOTTOM",
-			x = 0,
-			y = 16
+			ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
+			traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 		},
 	},
 }
@@ -310,7 +307,7 @@ function MODULE.CreateActionBars()
 			if barID == "bar1" and MODULE:IsRestricted() then
 				MODULE:ActionBarController_AddWidget(bar, "ACTION_BAR")
 			else
-				local point = config[barID].point
+				local point = config[barID].point[E.UI_LAYOUT]
 				bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E.Movers:Create(bar)
 			end

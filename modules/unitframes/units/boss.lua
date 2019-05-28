@@ -53,6 +53,7 @@ local function frame_Update(self)
 		self:UpdateInsets()
 		self:UpdateHealth()
 		self:UpdateHealthPrediction()
+		self:UpdatePortrait()
 		self:UpdatePower()
 		self:UpdateAlternativePower()
 		self:UpdateCastbar()
@@ -95,8 +96,8 @@ function UF:CreateBossFrame(frame)
 
 	local health = self:CreateHealth(frame, textParent)
 	health:SetFrameLevel(level + 1)
-	health:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+	health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
+	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
 	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 	health:SetClipsChildren(true)
@@ -104,12 +105,10 @@ function UF:CreateBossFrame(frame)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
+	frame.Portrait = self:CreatePortrait(frame)
+
 	local power = self:CreatePower(frame, textParent)
 	power:SetFrameLevel(level + 1)
-	power:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-	power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
-	power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
 	frame.Power = power
 
 	power.UpdateContainer = function(_, shouldShow)
@@ -124,12 +123,10 @@ function UF:CreateBossFrame(frame)
 		end
 	end
 
+	frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
+
 	local altPower = self:CreateAlternativePower(frame, textParent)
 	altPower:SetFrameLevel(level + 1)
-	altPower:SetPoint("LEFT", frame, "LEFT", 0, 0)
-	altPower:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-	altPower:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-	altPower:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 	frame.AlternativePower = altPower
 
 	altPower.UpdateContainer = function(_, shouldShow)
@@ -143,6 +140,8 @@ function UF:CreateBossFrame(frame)
 			end
 		end
 	end
+
+	frame.Insets.Top:Capture(altPower, 0, 0, 0, 2)
 
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
@@ -159,7 +158,6 @@ function UF:CreateBossFrame(frame)
 
 	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-	border:SetSize(16)
 	border:SetOffset(-6)
 	frame.Border = border
 

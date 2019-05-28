@@ -335,6 +335,7 @@ do
 			self:UpdateInsets()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
+			self:UpdatePortrait()
 
 			self.Power:SetWidth(self._config.width)
 			self:UpdatePower()
@@ -420,8 +421,8 @@ do
 		-- health
 		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
-		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+		health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
+		health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 		health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
 		health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 		health:SetClipsChildren(true)
@@ -429,13 +430,11 @@ do
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 
+		frame.Portrait = self:CreatePortrait(frame)
+
 		-- power
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
-		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-		power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
-		power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
 		frame.Power = power
 
 		power.UpdateContainer = function(_, shouldShow)
@@ -450,13 +449,11 @@ do
 			end
 		end
 
+		frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
+
 		-- additional power
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(level + 1)
-		addPower:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		addPower:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-		addPower:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-		addPower:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 		frame.AdditionalPower = addPower
 
 		addPower:HookScript("OnHide", function(self)
@@ -466,6 +463,8 @@ do
 			frame.Insets.Top:Refresh(self, true, 1)
 		end)
 
+		frame.Insets.Top:Capture(addPower, 0, 0, 0, 2)
+
 		-- power cost prediction
 		frame.PowerPrediction = self:CreatePowerPrediction(frame, power, addPower)
 
@@ -473,10 +472,6 @@ do
 		if E.PLAYER_CLASS == "MONK" then
 			local stagger = self:CreateStagger(frame)
 			stagger:SetFrameLevel(level + 1)
-			stagger:SetPoint("LEFT", frame, "LEFT", 0, 0)
-			stagger:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-			stagger:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-			stagger:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 			frame.Stagger = stagger
 
 			stagger:HookScript("OnHide", function(self)
@@ -485,13 +480,11 @@ do
 			stagger:HookScript("OnShow", function(self)
 				frame.Insets.Top:Refresh(self, true, 1)
 			end)
+
+			frame.Insets.Top:Capture(stagger, 0, 0, 0, 2)
 		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 			local runes = self:CreateRunes(frame)
 			runes:SetFrameLevel(level + 1)
-			runes:SetPoint("LEFT", frame, "LEFT", 0, 0)
-			runes:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-			runes:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-			runes:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 			frame.Runes = runes
 
 			runes:HookScript("OnHide", function(self)
@@ -500,14 +493,12 @@ do
 			runes:HookScript("OnShow", function(self)
 				frame.Insets.Top:Refresh(self, true, 6)
 			end)
+
+			frame.Insets.Top:Capture(runes, 0, 0, 0, 2)
 		end
 
 		local classPower = self:CreateClassPower(frame)
 		classPower:SetFrameLevel(level + 1)
-		classPower:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		classPower:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-		classPower:SetPoint("TOP", frame.Insets.Top, "TOP", 0, 0)
-		classPower:SetPoint("BOTTOM", frame.Insets.Top, "BOTTOM", 0, 2)
 		frame.ClassPower = classPower
 
 		classPower:HookScript("OnHide", function(self)
@@ -517,9 +508,10 @@ do
 			frame.Insets.Top:Refresh(self, true, self.__max)
 		end)
 
+		frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
+
 		-- castbar
 		frame.Castbar = self:CreateCastbar(frame)
-		-- frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
 		frame.Name = self:CreateName(frame, textParent)
 
@@ -563,7 +555,6 @@ do
 
 		local border = E:CreateBorder(textureParent)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-		border:SetSize(16)
 		border:SetOffset(-6)
 		frame.Border = border
 

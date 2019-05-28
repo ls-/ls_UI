@@ -161,7 +161,7 @@ local function getUFOption_TopInset(order, unit)
 		type = "range",
 		name = L["TOP_INSET_SIZE"],
 		desc = L["TOP_INSET_SIZE_DESC"],
-		min = 8, max = 32, step = 2,
+		min = 8, max = 88, step = 2,
 		get = function()
 			return C.db.profile.units[unit].insets.t_height
 		end,
@@ -181,7 +181,7 @@ local function getUFOption_BottomInset(order, unit)
 		type = "range",
 		name = L["BOTTOM_INSET_SIZE"],
 		desc = L["BOTTOM_INSET_SIZE_DESC"],
-		min = 8, max = 32, step = 2,
+		min = 8, max = 88, step = 2,
 		get = function()
 			return C.db.profile.units[unit].insets.b_height
 		end,
@@ -2495,6 +2495,74 @@ local function getUFOption_Auras(order, unit)
 	return temp
 end
 
+local function getUFOption_Portrait(order, unit)
+	local temp = {
+		order = order,
+		type = "group",
+		name = L["PORTRAIT"],
+		get = function(info)
+			return C.db.profile.units[unit].portrait[info[#info]]
+		end,
+		set = function(info, value)
+			if C.db.profile.units[unit].portrait[info[#info]] ~= value then
+				C.db.profile.units[unit].portrait[info[#info]] = value
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdatePortrait")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+				UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+			end
+		end,
+		args = {
+			enabled = {
+				order = 1,
+				type = "toggle",
+				name = L["ENABLE"],
+				get = function()
+					return C.db.profile.units[unit].portrait.enabled
+				end,
+				set = function(_, value)
+					if C.db.profile.units[unit].portrait.enabled ~= value then
+						C.db.profile.units[unit].portrait.enabled = value
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdatePortrait")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+						UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+					end
+				end,
+			},
+			reset = {
+				type = "execute",
+				order = 2,
+				name = L["RESTORE_DEFAULTS"],
+				confirm = CONFIG.ConfirmReset,
+				func = function()
+					CONFIG:CopySettings(D.profile.units[unit].portrait, C.db.profile.units[unit].portrait, resetIgnoredKeys)
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdatePortrait")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateClassPower")
+					UNITFRAMES:UpdateUnitFrame(unit, "UpdateRunes")
+				end,
+			},
+			spacer_1 = {
+				order = 9,
+				type = "description",
+				name = " ",
+			},
+			style = {
+				order = 10,
+				type = "select",
+				name = L["STYLE"],
+				values = CONFIG.PORTRAIT_STYLES,
+			},
+			position = {
+				order = 11,
+				type = "select",
+				name = L["POSITION"],
+				values = CONFIG.PORTRAIT_POSITIONS,
+			},
+		},
+	}
+
+	return temp
+end
+
 local function getUFOptions(order, unit, name)
 	local temp = {
 		order = order,
@@ -2557,9 +2625,9 @@ local function getUFOptions(order, unit, name)
 		temp.args.power = getUFOption_Power(200, unit)
 		temp.args.class_power = getUFOption_ClassPower(300, unit)
 		temp.args.castbar = getUFOption_Castbar(400, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
-		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(800, unit)
 
 		if E.UI_LAYOUT == "traditional" then
 			temp.args.copy = getUFOption_Copy(2, unit)
@@ -2567,7 +2635,8 @@ local function getUFOptions(order, unit, name)
 			temp.args.height = getUFOption_Height(11, unit)
 			temp.args.top_inset = getUFOption_TopInset(15, unit)
 			temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
-			temp.args.auras = getUFOption_Auras(800, unit)
+			temp.args.portrait = getUFOption_Portrait(500, unit)
+			temp.args.auras = getUFOption_Auras(900, unit)
 		end
 	elseif unit == "pet" then
 		temp.disabled = isPlayerFrameDisabled
@@ -2575,8 +2644,8 @@ local function getUFOptions(order, unit, name)
 		temp.args.health = getUFOption_Health(100, unit)
 		temp.args.power = getUFOption_Power(200, unit)
 		temp.args.castbar = getUFOption_Castbar(400, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
-		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(800, unit)
 
 		if E.UI_LAYOUT == "traditional" then
 			temp.args.copy = getUFOption_Copy(2, unit)
@@ -2585,7 +2654,8 @@ local function getUFOptions(order, unit, name)
 			temp.args.top_inset = getUFOption_TopInset(15, unit)
 			temp.args.bottom_inset = getUFOption_BottomInset(16, unit)
 			temp.args.border = getUFOption_Border(20, unit)
-			temp.args.name = getUFOption_Name(500, unit)
+			temp.args.portrait = getUFOption_Portrait(500, unit)
+			temp.args.name = getUFOption_Name(600, unit)
 		end
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
@@ -2599,10 +2669,11 @@ local function getUFOptions(order, unit, name)
 		temp.args.health = getUFOption_Health(100, unit)
 		temp.args.power = getUFOption_Power(200, unit)
 		temp.args.castbar = getUFOption_Castbar(400, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
-		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
-		temp.args.auras = getUFOption_Auras(800, unit)
+		temp.args.portrait = getUFOption_Portrait(500, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(800, unit)
+		temp.args.auras = getUFOption_Auras(900, unit)
 	elseif unit == "targettarget" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.copy = getUFOption_Copy(2, unit)
@@ -2613,8 +2684,9 @@ local function getUFOptions(order, unit, name)
 		temp.args.border = getUFOption_Border(20, unit)
 		temp.args.health = getUFOption_Health(100, unit)
 		temp.args.power = getUFOption_Power(200, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.portrait = getUFOption_Portrait(500, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.copy = getUFOption_Copy(2, unit)
@@ -2627,10 +2699,11 @@ local function getUFOptions(order, unit, name)
 		temp.args.health = getUFOption_Health(100, unit)
 		temp.args.power = getUFOption_Power(200, unit)
 		temp.args.castbar = getUFOption_Castbar(400, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
-		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
-		temp.args.auras = getUFOption_Auras(800, unit)
+		temp.args.portrait = getUFOption_Portrait(500, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(800, unit)
+		temp.args.auras = getUFOption_Auras(900, unit)
 	elseif unit == "focustarget" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.copy = getUFOption_Copy(2, unit)
@@ -2641,8 +2714,9 @@ local function getUFOptions(order, unit, name)
 		temp.args.border = getUFOption_Border(20, unit)
 		temp.args.health = getUFOption_Health(100, unit)
 		temp.args.power = getUFOption_Power(200, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
+		temp.args.portrait = getUFOption_Portrait(500, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
 		temp.args.copy = getUFOption_Copy(2, unit)
@@ -2656,10 +2730,11 @@ local function getUFOptions(order, unit, name)
 		temp.args.power = getUFOption_Power(200, unit)
 		temp.args.alt_power = getUFOption_AlternativePower(300, unit)
 		temp.args.castbar = getUFOption_Castbar(400, unit)
-		temp.args.name = getUFOption_Name(500, unit)
-		temp.args.raid_target = getUFOption_RaidTargetIndicator(600, unit)
-		temp.args.debuff = getUFOption_DebuffIcons(700, unit)
-		temp.args.auras = getUFOption_Auras(800, unit)
+		temp.args.portrait = getUFOption_Portrait(500, unit)
+		temp.args.name = getUFOption_Name(600, unit)
+		temp.args.raid_target = getUFOption_RaidTargetIndicator(700, unit)
+		temp.args.debuff = getUFOption_DebuffIcons(800, unit)
+		temp.args.auras = getUFOption_Auras(900, unit)
 
 		temp.args.per_row = {
 			order = 12,

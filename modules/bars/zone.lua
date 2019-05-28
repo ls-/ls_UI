@@ -45,7 +45,7 @@ function MODULE.CreateZoneButton()
 		E:SkinExtraActionButton(ZoneAbilityFrame.SpellButton)
 		bar._buttons[1] = ZoneAbilityFrame.SpellButton
 
-		local point = C.db.profile.bars.zone.point
+		local point = C.db.profile.bars.zone.point[E.UI_LAYOUT]
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar)
 

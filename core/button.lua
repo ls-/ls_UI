@@ -157,6 +157,11 @@ local function skinButton(button)
 	local bHighlightTexture = button.GetHighlightTexture and button:GetHighlightTexture()
 	local bCheckedTexture = button.GetCheckedTexture and button:GetCheckedTexture()
 
+	local fgParent = CreateFrame("Frame", nil, button)
+	fgParent:SetFrameLevel((bCD and bCD.GetFrameLevel) and bCD:GetFrameLevel() + 1 or button:GetFrameLevel() + 2)
+	fgParent:SetAllPoints()
+	button.FGParent = fgParent
+
 	setIcon(bIcon)
 
 	if bFlash then
@@ -200,6 +205,7 @@ local function skinButton(button)
 
 	if bCount then
 		bCount:ClearAllPoints()
+		bCount:SetParent(fgParent)
 		bCount:SetDrawLayer("OVERLAY")
 		bCount:SetFontObject("LSFont10_Outline")
 		bCount:SetJustifyH("RIGHT")

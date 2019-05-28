@@ -157,8 +157,8 @@ do
 
 		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
-		health:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		health:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
+		health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
+		health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 		health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
 		health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 		health:SetClipsChildren(true)
@@ -168,10 +168,6 @@ do
 
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
-		power:SetPoint("LEFT", frame, "LEFT", 0, 0)
-		power:SetPoint("RIGHT", frame, "RIGHT", 0, 0)
-		power:SetPoint("TOP", frame.Insets.Bottom, "TOP", 0, -2)
-		power:SetPoint("BOTTOM", frame.Insets.Bottom, "BOTTOM", 0, 0)
 		frame.Power = power
 
 		power.UpdateContainer = function(_, shouldShow)
@@ -186,6 +182,8 @@ do
 			end
 		end
 
+		frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
+
 		frame.Castbar = self:CreateCastbar(frame)
 		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
@@ -199,7 +197,6 @@ do
 
 		local border = E:CreateBorder(textureParent)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-		border:SetSize(16)
 		border:SetOffset(-6)
 		frame.Border = border
 
