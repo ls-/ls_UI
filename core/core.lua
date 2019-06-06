@@ -41,17 +41,13 @@ do
 		end
 	end)
 
-	function E:RegisterEvent(event, func, unit1, unit2)
+	function E:RegisterEvent(event, func)
 		assert(not oneTimeEvents[event], s_format("Failed to register for '%s' event, already fired!", event))
 
 		if not registeredEvents[event] then
 			registeredEvents[event] = {}
 
-			if unit1 then
-				dispatcher:RegisterUnitEvent(event, unit1, unit2)
-			else
-				dispatcher:RegisterEvent(event)
-			end
+			dispatcher:RegisterEvent(event)
 		end
 
 		registeredEvents[event][func] = true

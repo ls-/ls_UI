@@ -508,9 +508,7 @@ do
 			rosterInfo[UnitGUID(unit)] = UnitGroupRolesAssigned(unit)
 		end
 
-		for i = 1, 40 do
-			E:RegisterEvent("UNIT_NAME_UPDATE", updateUnitInfo, "raid" .. i)
-		end
+		E:RegisterEvent("UNIT_NAME_UPDATE", updateUnitInfo)
 
 		E:RegisterEvent("GROUP_ROSTER_UPDATE", function()
 			t_wipe(rosterInfo)
