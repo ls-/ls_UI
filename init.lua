@@ -200,6 +200,24 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		AdiButtonAuras:RegisterLAB("LibActionButton-1.0-ls")
 	end
 
+	if MaxDps then
+		local LAB = LibStub:GetLibrary("LibActionButton-1.0-ls")
+
+		hooksecurefunc(MaxDps, "FetchLibActionButton", function(self)
+			for button in next, LAB:GetAllButtons() do
+				self:AddButton(button:GetSpellId(), button)
+			end
+		end)
+
+		hooksecurefunc(MaxDps, "UpdateButtonGlow", function(self)
+			if self.db.global.disableButtonGlow then
+				LAB.eventFrame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+			else
+				LAB.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+			end
+		end)
+	end
+
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
 		C.db.char.version = E.VER.number
 		C.db.global.version = E.VER.number
