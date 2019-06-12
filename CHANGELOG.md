@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 80100.10
+
+- Added MaxDps Rotation Helper support;
+- Fixed an issue where player's buffs and debuffs weren't updating correctly when changing their  
+  settings;
+- Updated both Spanish translations. Translated by Gotxiko@Curse;
+- Updated embedded oUF.
+
+NOTE: You'll have to restart WoW client to make things work after the update.
+
 ## Version 80100.09
 
 - Added portraits to target, focus, boss, and "classic" player frames. Available in 2D and 3D.  

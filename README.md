@@ -2,11 +2,11 @@
 
 Yet another UI, but this one is a bit special.
 
-"Orbs" Layout:
-[![](https://i.imgur.com/PkQXt5v.png)](https://i.imgur.com/HgdaDa4.png "4K Glory")
+"Orbs" Layout:  
+[![Imgur](https://i.imgur.com/PkQXt5v.png)](https://i.imgur.com/HgdaDa4.png "4K Glory")
 
-"Classic" Layout:
-[![](https://i.imgur.com/tNosWct.png)](https://i.imgur.com/nww6H8B.png "4K Glory")
+"Classic" Layout:  
+[![Imgur](https://i.imgur.com/tNosWct.png)](https://i.imgur.com/nww6H8B.png "4K Glory")
 
 ## Download
 

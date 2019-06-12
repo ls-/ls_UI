@@ -244,6 +244,7 @@ local function header_Update(self)
 		end
 
 		self:Hide()
+		self:ForEachButton("Hide")
 		self:ForEachButton("UpdateAuraTypeIcon")
 		self:ForEachButton("UpdateCountText")
 		self:ForEachButton("SetSize", config.size, config.size)
