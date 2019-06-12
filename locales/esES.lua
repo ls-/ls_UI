@@ -1,4 +1,4 @@
-﻿-- Contributors: Gotxiko@GitHub a.k.a. Gotzon@Curse
+﻿-- Contributors: Gotxiko@GitHub/Curse
 
 local _, ns = ...
 local E, L = ns.E, ns.L
@@ -10,7 +10,7 @@ local _G = getfenv(0)
 	GetLocale
 ]]
 
-if GetLocale() ~= "esES" then return end
+if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then return end
 
 L["ACTION_BARS"] = "Barras de acción"
 L["ADDITIONAL_BAR"] = "Barra adicional"
@@ -38,7 +38,7 @@ L["ARTIFACT_LEVEL_TOOLTIP"] = "Nivel de artefacto: |cffffffff%s|r"
 L["ARTIFACT_POWER"] = "Poder de artefacto"
 L["ASCENDING"] = "Ascendente"
 L["AURA"] = "Aura"
---[[ L["AURA_FILTERS"] = "Aura Filters" ]]
+L["AURA_FILTERS"] = "Filtros de Auras"
 L["AURA_TRACKER"] = "Seguidor de auras"
 L["AURA_TYPE"] = "Tipo de Aura"
 L["AURAS"] = "Auras"
@@ -52,7 +52,7 @@ L["BAR_4"] = "Barra 4"
 L["BAR_5"] = "Barra 5"
 L["BAR_COLOR"] = "Color de la barra"
 L["BAR_TEXT"] = "Texto de la barra"
---[[ L["BLACKLIST"] = "Blacklist" ]]
+L["BLACKLIST"] = "Lista negra"
 L["BLIZZARD"] = "Blizzard"
 L["BONUS_XP_TOOLTIP"] = "Bonus de EXP: |cffffffff%s|r"
 L["BORDER"] = "Borde"
@@ -83,17 +83,17 @@ L["CASTABLE_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados 
 L["CASTBAR"] = "Barra de lanzamiento"
 L["CHANGE"] = "Cambio"
 L["CHARACTER_BUTTON_DESC"] = "Muestra la durabilidad del equipo."
---[[ L["CHARACTER_FRAME"] = "Character Frame" ]]
+L["CHARACTER_FRAME"] = "Panel de personaje"
 L["CLASS_POWER"] = "Poder de clase"
 L["CLASSIC"] = "Clásico"
---[[ L["CLEAN_UP"] = "Clean Up" ]]
---[[ L["CLEAN_UP_MAIL_DESC"] = "Removes all empty messages." ]]
+L["CLEAN_UP"] = "Limpiar"
+L["CLEAN_UP_MAIL_DESC"] = "Elimina todos los mensajes vacíos."
 L["CLOCK"] = "Reloj"
 L["COLOR_BY_SPEC"] = "Color por Especialización"
 L["COLORS"] = "Colores"
 L["COMMAND_BAR"] = "Barra de comandos"
---[[ L["CONFIRM_DELETE"] = "Do you wish to delete \"%s\"?" ]]
---[[ L["CONFIRM_RESET"] = "Do you wish to reset \"%s\"?" ]]
+L["CONFIRM_DELETE"] = "¿Quieres eliminar \"%s\"?"
+L["CONFIRM_RESET"] = "¿Quieres reiniciar \"%s\"?"
 L["COOLDOWN"] = "Enfriamiento"
 L["COOLDOWN_TEXT"] = "Texto de enfriamiento"
 L["COPY_FROM"] = "Copiar de"
@@ -140,7 +140,7 @@ L["DUNGEONS_BUTTON_DESC"] = "Mostrar información de \"Llamada a las armas\""
 L["DURABILITY_FRAME"] = "Marco de durabilidad"
 L["ENEMY_UNITS"] = "Unidades enemigas"
 L["ENHANCED_TOOLTIPS"] = "Descripciones emergentes mejoradas"
---[[ L["EVENTS"] = "Events" ]]
+L["EVENTS"] = "Eventos"
 L["EXP_THRESHOLD"] = "Límite de expiración"
 L["EXP_THRESHOLD_DESC"] = "El límite (en segundos) bajo el que el tiempo mínimo será mostrado como número decimal."
 L["EXPERIENCE"] = "Experiencia"
@@ -165,7 +165,7 @@ L["FRAME"] = "Marco"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Huecos de bolsa libres: |cffffffff%s|r"
 L["FRIENDLY_TERRITORY"] = "Territorio amistoso"
 L["FRIENDLY_UNITS"] = "Unidades amistosas"
---[[ L["FUNC"] = "Function" ]]
+L["FUNC"] = "Función"
 L["GAIN"] = "Ganancia"
 L["GAIN_LOSS_THRESHOLD"] = "Umbral de ganancia/pérdida"
 L["GAIN_LOSS_THRESHOLD_DESC"] = "El umbral (en porcentaje) sobre el que la ganancia o pérdida de recursos contará con animación. Establecer en 100 para desactivar."
@@ -183,10 +183,10 @@ Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
 Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["HEAL_ABSORB_TEXT"] = "Texto de absorción de sanación"
 L["HEAL_PREDICTION"] = "Predicción de sanaciones"
---[[ L["HEALER_BUFFS"] = "Healer Buffs" ]]
---[[ L["HEALER_BUFFS_DESC"] = "Show buffs applied by healers." ]]
---[[ L["HEALER_DEBUFFS"] = "Healer Debuffs" ]]
---[[ L["HEALER_DEBUFFS_DESC"] = "Show debuffs applied by healers." ]]
+L["HEALER_BUFFS"] = "Beneficios de sanador"
+L["HEALER_BUFFS_DESC"] = "Muestra los beneficios aplicados por sanadores."
+L["HEALER_DEBUFFS"] = "Perjuicios de sanador"
+L["HEALER_DEBUFFS_DESC"] = "Muestra los perjuicios aplicados por sanadores."
 L["HEALTH"] = "Salud"
 L["HEALTH_FORMAT_DESC"] = [=[Escribe un "string" para cambiar el texto. Para desactivarlo, deja el campo en blanco.
 
@@ -210,7 +210,7 @@ L["IMPOSSIBLE"] = "Imposible"
 L["INDEX"] = "Índice"
 L["INSPECT_INFO"] = "Información de inspección"
 L["INSPECT_INFO_DESC"] = "Muestra la especialización y nivel de objeto del objetivo actual en la descripción emergente. La información puede tardar."
---[[ L["INVALID_EVENTS_ERR"] = "Attempted to use invalid events: %s." ]]
+L["INVALID_EVENTS_ERR"] = "Se intentó usar eventos no válidos: %s."
 L["INVALID_TAGS_ERR"] = "Intento de uso de etiquetas no válidas: %s."
 L["INVENTORY_BUTTON"] = "Inventario"
 L["INVENTORY_BUTTON_DESC"] = "Mostrar información de monedas."
@@ -267,7 +267,7 @@ Etiquetas:
 
 Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
 Utiliza |cffffd200[nl]|r para saltos de línea.]=]
---[[ L["NAME_TAKEN_ERR"] = "The name is taken." ]]
+L["NAME_TAKEN_ERR"] = "El nombre está ocupado."
 L["NO_SEPARATION"] = "Sin separación"
 L["NOTHING_TO_SHOW"] = "Nada que mostrar."
 L["NPE_FRAME"] = "Tutorial marco NPE"
@@ -297,7 +297,7 @@ L["PLAYER_TITLE"] = "Título de Jugador"
 L["POINT"] = "Apuntar"
 L["POINT_DESC"] = "Apunta al objeto."
 L["POISON"] = "Veneno"
---[[ L["PORTRAIT"] = "Portrait" ]]
+L["PORTRAIT"] = "Retrato"
 L["POSITION"] = "Posición"
 L["POWER"] = "Poder alternativo"
 L["POWER_COST"] = "Coste de Poder"
@@ -372,14 +372,14 @@ L["STAGGER_LOW"] = "Escalonado Bajo"
 L["STAGGER_MEDIUM"] = "Escalonado Medio"
 L["STANCE_BAR"] = "Barra de actitudes"
 L["STANDARD"] = "Estándar"
---[[ L["STYLE"] = "Style" ]]
---[[ L["TAG_VARS"] = "Tag Variables" ]]
---[[ L["TAGS"] = "Tags" ]]
+L["STYLE"] = "Estilo"
+L["TAG_VARS"] = "Variables de etiquetas"
+L["TAGS"] = "Etiquetas"
 L["TALKING_HEAD_FRAME"] = "Marco de cabeza flotante"
---[[ L["TANK_BUFFS"] = "Tank Buffs" ]]
---[[ L["TANK_BUFFS_DESC"] = "Show buffs applied by tanks." ]]
---[[ L["TANK_DEBUFFS"] = "Tank Debuffs" ]]
---[[ L["TANK_DEBUFFS_DESC"] = "Show debuffs applied by tanks." ]]
+L["TANK_BUFFS"] = "Beneficios de tanque"
+L["TANK_BUFFS_DESC"] = "Muestra los beneficios aplicados por tanques"
+L["TANK_DEBUFFS"] = "Perjuicios de tanque"
+L["TANK_DEBUFFS_DESC"] = "Muestra los perjuicios aplicados por tanques."
 L["TAPPED"] = "Golpeado"
 L["TARGET_FRAME"] = "Marco de objetivo"
 L["TARGET_INFO"] = "Información de objetivo"
@@ -409,9 +409,9 @@ L["UNUSABLE"] = "No utilizable"
 L["UP"] = "Arriba"
 L["USABLE"] = "Utilizable"
 L["USE_BLIZZARD_VEHICLE_UI"] = "Utilizar la interfaz de Blizzard de vehículos"
---[[ L["USER_CREATED"] = "User-created" ]]
---[[ L["VALUE"] = "Value" ]]
---[[ L["VAR"] = "Variable" ]]
+L["USER_CREATED"] = "Creado por usuario"
+L["VALUE"] = "Valor"
+L["VAR"] = "Variable"
 L["VEHICLE_EXIT_BUTTON"] = "Botón para salir de vehículo"
 L["VEHICLE_SEAT_INDICATOR"] = "Indicador de asiento de vehículo"
 L["VERY_DIFFICULT"] = "Muy difícil"
