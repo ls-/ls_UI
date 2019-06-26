@@ -38,7 +38,9 @@ $includedItems = @(
 
 $filesToRemove = @(
 	"*.doc*"
+	"*.editorconfig",
 	"*.git*",
+	"*.luacheck*",
 	"*.pkg*",
 	"*.ps1",
 	"*.yml",
