@@ -97,6 +97,12 @@ local filters = {
 		[277242] = true, -- Symbiote of G'huun (Infested)
 		[288388] = true, -- Reap Soul
 		[288694] = true, -- Shadow Smash
+		[290026] = true, -- Queen's Decree: Blowback
+		[290027] = true, -- Queen's Decree: Blowback
+		[302417] = true, -- Queen's Decree: Unstoppable
+		[302419] = true, -- Void Sight
+		[302421] = true, -- Queen's Decree: Hide
+		[303632] = true, -- Enchanted
 	}
 }
 

@@ -88,6 +88,11 @@ local function cleanUpStep1()
 			C.db.profile.colors = nil
 		end
 	end
+
+	-- -> 80200.01
+	if not C.db.profile.version or C.db.profile.version < 8020001 then
+		C.db.global.aura_filters["M+ Affixes"].is_init = false
+	end
 end
 
 local function cleanUpStep2()
