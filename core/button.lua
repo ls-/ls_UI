@@ -15,7 +15,7 @@ local select = _G.select
 ]]
 
 -- Mine
-local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
+local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local function button_GetHotkey(self)
 	return LibKeyBound:ToShortKey(
