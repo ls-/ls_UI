@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 80200.01
+
+- Added 8.2.0 support;
+- Added new M+ affix's auras to the aura filter;
+- Updated embeds.
+
 ## Version 80100.10
 
 - Added MaxDps Rotation Helper support;
