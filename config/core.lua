@@ -42,7 +42,7 @@ local ReloadUI = _G.ReloadUI
 -- Mine
 local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
+local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local INT_LIMIT = 2 ^ 32 / 2 - 1
 

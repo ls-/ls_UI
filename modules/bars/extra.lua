@@ -12,7 +12,7 @@ local _G = getfenv(0)
 ]]
 
 -- Mine
-local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
+local LibKeyBound = LibStub("LibKeyBound-1.0")
 local isInit = false
 
 local function button_UpdateHotKey(self, state)

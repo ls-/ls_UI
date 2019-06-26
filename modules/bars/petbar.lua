@@ -16,7 +16,7 @@ local unpack = _G.unpack
 ]]
 
 -- Mine
-local LibKeyBound = LibStub("LibKeyBound-1.0-ls")
+local LibKeyBound = LibStub("LibKeyBound-1.0")
 local isInit = false
 
 local BUTTONS = {
