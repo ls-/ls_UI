@@ -200,6 +200,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				type = "group",
 				name = L["AURA_TYPE"],
 				inline = true,
+				disabled = isModuleDisabled,
 				get = function(info)
 					return C.db.char.auratracker.type[info[#info]]
 				end,
