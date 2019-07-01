@@ -1081,6 +1081,11 @@ D.profile = {
 						y = -6,
 					},
 				},
+				portrait = {
+					enabled = false,
+					style = "2D", -- "3D"
+					position = "Left", -- "Right"
+				},
 				name = {
 					size = 12,
 					tag = "",
@@ -1497,6 +1502,11 @@ D.profile = {
 					},
 				},
 			},
+			portrait = {
+				enabled = false,
+				style = "2D", -- "3D"
+				position = "Left", -- "Right"
+			},
 			name = {
 				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
@@ -1902,6 +1912,11 @@ D.profile = {
 						y = 0,
 					},
 				},
+			},
+			portrait = {
+				enabled = false,
+				style = "2D", -- "3D"
+				position = "Left", -- "Right"
 			},
 			name = {
 				size = 12,

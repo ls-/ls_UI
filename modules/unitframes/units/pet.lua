@@ -121,6 +121,7 @@ do
 			self:UpdateInsets()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
+			self:UpdatePortrait()
 			self:UpdatePower()
 			self:UpdateCastbar()
 			self:UpdateRaidTargetIndicator()
@@ -165,6 +166,8 @@ do
 		frame.Health = health
 
 		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+
+		frame.Portrait = self:CreatePortrait(frame)
 
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)
