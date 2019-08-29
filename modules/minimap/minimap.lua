@@ -14,18 +14,21 @@ local m_sin = _G.math.sin
 local next = _G.next
 local s_match = _G.string.match
 local select = _G.select
+local t_insert = _G.table.insert
+local t_sort = _G.table.sort
+local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	CalendarFrame ChatTypeInfo CreateFrame DEFAULT_CHAT_FRAME DropDownList1 GameTimeFrame GameTooltip
-	GarrisonLandingPageMinimapButton GarrisonLandingPageMinimapButton_UpdateIcon GetGameTime GetMinimapZoneText
-	GetZonePVPInfo GuildInstanceDifficulty IsAddOnLoaded LoadAddOn Minimap Minimap_ZoomIn Minimap_ZoomOut
+	CalendarFrame ChatTypeInfo CreateFrame DropDownList1 GameTimeFrame GameTooltip GarrisonLandingPageMinimapButton
+	GarrisonLandingPageMinimapButton_UpdateIcon GetGameTime GetMinimapShape GetMinimapZoneText GetZonePVPInfo
+	GuildInstanceDifficulty IsAddOnLoaded LoadAddOn LSMinimapButtonCollection Minimap Minimap_ZoomIn Minimap_ZoomOut
 	MiniMapChallengeMode MinimapCompassTexture MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking
 	MiniMapTrackingBackground MiniMapTrackingButton MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText
-	MinimapZoneTextButton QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton
+	MinimapZoneTextButton nop QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton
 	ToggleCalendar UIDropDownMenu_GetCurrentDropDown UIParent
 
-	LE_GARRISON_TYPE_8_0
+	DEFAULT_CHAT_FRAME LE_GARRISON_TYPE_8_0
 ]]
 
 -- Blizz
@@ -49,12 +52,12 @@ local TEXTURES = {
 	},
 }
 
-local BUTTONS = {
-	MiniMapTrackingButton = 22.5,
-	GameTimeFrame = 45,
-	MiniMapMailFrame = 135,
-	GarrisonLandingPageMinimapButton = 210,
-	QueueStatusMinimapButton = 320,
+local BLIZZ_BUTTONS = {
+	["MiniMapTracking"] = true,
+	["QueueStatusMinimapButton"] = true,
+	["MiniMapMailFrame"] = true,
+	["GameTimeFrame"] = true,
+	["GarrisonLandingPageMinimapButton"] = true,
 }
 
 local PVP_COLOR_MAP = {
@@ -65,9 +68,6 @@ local PVP_COLOR_MAP = {
 	["hostile"] = "hostile",
 	["sanctuary"] = "sanctuary",
 }
-
-local handledChildren = {}
-local ignoredChildren = {}
 
 local function hasTrackingBorderRegion(self)
 	for i = 1, select("#", self:GetRegions()) do
@@ -85,6 +85,10 @@ local function hasTrackingBorderRegion(self)
 end
 
 local function isMinimapButton(self)
+	if BLIZZ_BUTTONS[self] then
+		return true
+	end
+
 	if hasTrackingBorderRegion(self) then
 		return true
 	end
@@ -113,7 +117,10 @@ local function updateGarrisonButton(self)
 	end
 end
 
-local function handleMinimapButton(button, recursive)
+local handledChildren = {}
+local ignoredChildren = {}
+
+local function handleButton(button, recursive)
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	local pushed = button.GetPushedTexture and button:GetPushedTexture()
 	local hl, icon, border, bg, thl, ticon, tborder, tbg, tnormal, tpushed
@@ -127,7 +134,7 @@ local function handleMinimapButton(button, recursive)
 			local layer = region:GetDrawLayer()
 			-- print("|cffffff00", name, "|r:", texture, layer)
 
-			if not normal and not pushed then
+			if not normal then
 				if layer == "ARTWORK" or layer == "BACKGROUND" then
 					if button.icon and region == button.icon then
 						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r", region, button.icon)
@@ -182,7 +189,7 @@ local function handleMinimapButton(button, recursive)
 				icon = child
 			end
 		elseif oType == "Button" then
-			thl, ticon, tborder, tbg, tnormal, tpushed = handleMinimapButton(child, true)
+			thl, ticon, tborder, tbg, tnormal, tpushed = handleButton(child, true)
 			button.Button = child
 		end
 	end
@@ -220,22 +227,26 @@ local function handleMinimapButton(button, recursive)
 		if hl then
 			hl:ClearAllPoints()
 			hl:SetAllPoints(button)
+			hl:AddMaskTexture(mask)
+			button.HighlightTexture = hl
 		end
 
-		if normal and pushed then
-			normal:SetDrawLayer("ARTWORK", 0)
-			normal:ClearAllPoints()
-			normal:SetPoint("TOPLEFT", offset, -offset)
-			normal:SetPoint("BOTTOMRIGHT", -offset, offset)
-			normal:AddMaskTexture(mask)
-			button.NormalTexture = normal
-
+		if pushed then
 			pushed:SetDrawLayer("ARTWORK", 0)
 			pushed:ClearAllPoints()
 			pushed:SetPoint("TOPLEFT", offset, -offset)
 			pushed:SetPoint("BOTTOMRIGHT", -offset, offset)
 			pushed:AddMaskTexture(mask)
 			button.PushedTexture = pushed
+		end
+
+		if normal then
+			normal:SetDrawLayer("ARTWORK", 0)
+			normal:ClearAllPoints()
+			normal:SetPoint("TOPLEFT", offset, -offset)
+			normal:SetPoint("BOTTOMRIGHT", -offset, offset)
+			normal:AddMaskTexture(mask)
+			button.NormalTexture = normal
 		elseif icon then
 			if icon:IsObjectType("Texture") then
 				icon:SetDrawLayer("ARTWORK", 0)
@@ -283,6 +294,161 @@ local function handleMinimapButton(button, recursive)
 	else
 		return hl, icon, border, bg, normal, pushed
 	end
+end
+
+local buttonData = {}
+local collectedButtons = {}
+local consolidatedButtons = {}
+local hiddenButtons = {}
+
+local buttonOrder = {
+	["GameTimeFrame"] = 1,
+	["GarrisonLandingPageMinimapButton"] = 2,
+	["MiniMapTrackingButton"] = 3,
+	["MiniMapMailFrame"] = 4,
+	["QueueStatusMinimapButton"] = 5,
+}
+
+local function sortFunc(a, b)
+	local aName, bName = a:GetDebugName(), b:GetDebugName()
+	if buttonOrder[aName] and buttonOrder[bName] then
+		return buttonOrder[aName] < buttonOrder[bName]
+	elseif buttonOrder[aName] and not buttonOrder[bName] then
+		return true
+	elseif not buttonOrder[aName] and buttonOrder[bName] then
+		return false
+	else
+		return aName > bName
+	end
+end
+
+local function consolidateButtons()
+	t_wipe(consolidatedButtons)
+
+	for collectedButton in next, collectedButtons do
+		if not hiddenButtons[collectedButton] then
+			t_insert(consolidatedButtons, collectedButton)
+		end
+	end
+
+	t_sort(consolidatedButtons, sortFunc)
+
+	for i, button in next, consolidatedButtons do
+		local row = m_floor(i / 8 + 0.9)
+		local angle = m_rad(-45 * ((i - 3) % 8) + (30 * (row - 1))) -- 45 = 360 / 8
+
+		button.AlphaIn:SetStartDelay(0.02 * (i - 1))
+		button.AlphaOut:SetStartDelay(0.02 * (i - 1))
+		-- button.AlphaOut:SetStartDelay(0.02 * (#consolidatedButtons- i))
+
+		button:ClearAllPoints_()
+		button:SetPoint_("CENTER", LSMinimapButtonCollection, "CENTER",
+		m_cos(angle) * (16 + 32 * row),
+		m_sin(angle) * (16 + 32 * row))
+
+		if not LSMinimapButtonCollection.isShown then
+			button:Hide_()
+		end
+	end
+end
+
+local function collectButton(button)
+	if collectedButtons[button] or button == LSMinimapButtonCollection	then
+		return
+	end
+
+	button:SetFrameLevel(Minimap:GetFrameLevel() + 4)
+
+	buttonData[button] = {
+		OnDragStart = button:GetScript("OnDragStart"),
+		OnDragStop = button:GetScript("OnDragStop"),
+	}
+
+	button:SetScript("OnDragStart", nil)
+	button:SetScript("OnDragStop", nil)
+	button:RegisterForDrag(false)
+
+	-- some addon devs use strong voodoo to implement dragging/moving
+	button.ClearAllPoints_ = button.ClearAllPoints
+	button.SetPoint_ = button.SetPoint
+	button.Hide_ = button.Hide
+	button.Show_ = button.Show
+
+	if not button:GetAttribute("ls-hooked") then
+		hooksecurefunc(button, "Hide", function(self)
+			hiddenButtons[self] = true
+
+			consolidateButtons()
+		end)
+		hooksecurefunc(button, "Show", function(self)
+			hiddenButtons[self] = false
+
+			consolidateButtons()
+		end)
+		hooksecurefunc(button, "SetShown", function(self, state)
+			hiddenButtons[self] = state
+
+			consolidateButtons()
+		end)
+
+		button:SetAttribute("ls-hooked", true)
+	end
+
+	if not BLIZZ_BUTTONS[button:GetName()] then
+		button.ClearAllPoints = nop
+		button.SetPoint = nop
+	end
+
+	local anim = LSMinimapButtonCollection.AGIn:CreateAnimation("Alpha")
+	anim:SetOrder(1)
+	anim:SetTarget(button)
+	anim:SetFromAlpha(0)
+	anim:SetToAlpha(1)
+	anim:SetDuration(0.08)
+	button.AlphaIn = anim
+
+	anim = LSMinimapButtonCollection.AGOut:CreateAnimation("Alpha")
+	anim:SetOrder(1)
+	anim:SetTarget(button)
+	anim:SetFromAlpha(1)
+	anim:SetToAlpha(0)
+	anim:SetDuration(0.08)
+	button.AlphaOut = anim
+
+	collectedButtons[button] = true
+
+	consolidateButtons()
+end
+
+local function releaseButton(button)
+	if not collectedButtons[button] or button == LSMinimapButtonCollection then
+		return
+	end
+
+	button:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+
+	if buttonData[button].OnDragStart then
+		button:SetScript("OnDragStart", buttonData[button].OnDragStart)
+		button:SetScript("OnDragStop", buttonData[button].OnDragStop)
+		button:RegisterForDrag("LeftButton")
+	end
+
+	buttonData[button] = nil
+
+	if button.ClearAllPoints == nop then
+		button.ClearAllPoints = button.ClearAllPoints_
+		button.SetPoint = button.SetPoint_
+	end
+
+	button.ClearAllPoints_ = nil
+	button.SetPoint_ = nil
+	button.Hide_ = nil
+	button.Show_ = nil
+
+	collectedButtons[button] = nil
+	hiddenButtons[button] = nil
+
+	consolidateButtons()
 end
 
 local function updatePosition(button, degrees)
@@ -360,7 +526,9 @@ end
 
 local function minimap_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.minimap[E.UI_LAYOUT], self._config)
+	self._config.buttons = E:CopyTable(C.db.profile.minimap.buttons, self._config.buttons)
 	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
+	self._config.collect = E:CopyTable(C.db.profile.minimap.collect, self._config.collect)
 end
 
 local function minimap_UpdateBorderColor(self)
@@ -526,6 +694,47 @@ local function minimap_UpdateFlag(self)
 	end
 end
 
+local function minimap_UpdateButtons(self)
+	local config = self._config
+
+	updatePosition(LSMinimapButtonCollection, config.buttons["LSMinimapButtonCollection"])
+
+	if config.collect.calendar then
+		collectButton(GameTimeFrame)
+	else
+		releaseButton(GameTimeFrame)
+		updatePosition(GameTimeFrame, config.buttons["GameTimeFrame"])
+	end
+
+	if config.collect.garrison then
+		collectButton(GarrisonLandingPageMinimapButton)
+	else
+		releaseButton(GarrisonLandingPageMinimapButton)
+		updatePosition(GarrisonLandingPageMinimapButton, config.buttons["GarrisonLandingPageMinimapButton"])
+	end
+
+	if config.collect.mail then
+		collectButton(MiniMapMailFrame)
+	else
+		releaseButton(MiniMapMailFrame)
+		updatePosition(MiniMapMailFrame, config.buttons["MiniMapMailFrame"])
+	end
+
+	if config.collect.queue then
+		collectButton(QueueStatusMinimapButton)
+	else
+		releaseButton(QueueStatusMinimapButton)
+		updatePosition(QueueStatusMinimapButton, config.buttons["QueueStatusMinimapButton"])
+	end
+
+	if config.collect.tracking then
+		collectButton(MiniMapTrackingButton)
+	else
+		releaseButton(MiniMapTrackingButton)
+		updatePosition(MiniMapTrackingButton, config.buttons["MiniMapTrackingButton"])
+	end
+end
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -535,6 +744,8 @@ function MODULE.Init()
 		if not IsAddOnLoaded("Blizzard_TimeManager") then
 			LoadAddOn("Blizzard_TimeManager")
 		end
+
+		local level = Minimap:GetFrameLevel()
 
 		local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
 		holder:SetSize(332 / 2, 332 / 2)
@@ -568,7 +779,15 @@ function MODULE.Init()
 
 		RegisterStateDriver(Minimap, "visibility", "[petbattle] hide; show")
 
-		local border = Minimap:CreateTexture(nil, "BORDER", nil, 1)
+		local textureParent = CreateFrame("Frame", nil, Minimap)
+		textureParent:SetFrameLevel(level + 1)
+		textureParent:SetPoint("TOPLEFT", 0, 0)
+		textureParent:SetPoint("BOTTOMRIGHT", 0, 0)
+		Minimap.TextureParent = textureParent
+
+		ignoredChildren[textureParent] = true
+
+		local border = textureParent:CreateTexture(nil, "BORDER", nil, 1)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
 		border:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 		border:SetSize(332 / 2, 332 / 2)
@@ -576,21 +795,100 @@ function MODULE.Init()
 		E:SmoothColor(border)
 		Minimap.Border = border
 
-		local foreground = Minimap:CreateTexture(nil, "BORDER", nil, 3)
+		local foreground = textureParent:CreateTexture(nil, "BORDER", nil, 3)
 		foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
 		foreground:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
 		foreground:SetSize(332 / 2, 332 / 2)
 		foreground:SetPoint("CENTER", 0, 0)
 
-		local glass = Minimap:CreateTexture(nil, "BORDER", nil, 2)
+		local glass = textureParent:CreateTexture(nil, "BORDER", nil, 2)
 		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
 		glass:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
 		glass:SetSize(332 / 2, 332 / 2)
 		glass:SetPoint("CENTER", 0, 0)
 
+		-- .Collection
+		do
+			local button = CreateFrame("Button", "LSMinimapButtonCollection", Minimap)
+			button:SetFrameLevel(level + 4)
+			button:RegisterForDrag("LeftButton")
+			button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+			button:SetScript("OnDragStart", button_OnDragStart)
+			button:SetScript("OnDragStop", button_OnDragStop)
+			Minimap.Collection = button
+
+			local border = button:CreateTexture(nil, "OVERLAY")
+			border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+
+			local background = button:CreateTexture(nil, "BACKGROUND")
+			background:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+
+			local icon = button:CreateTexture(nil, "ARTWORK")
+			icon:SetTexture("Interface\\LFGFRAME\\WaitAnim")
+			icon:SetTexCoord(64 / 128, 128 / 128, 64 / 128, 128 / 128)
+			button.Icon = icon
+
+			handleButton(button)
+
+			local agIn = button:CreateAnimationGroup()
+			button.AGIn = agIn
+
+			agIn:SetScript("OnPlay", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(0)
+					consolidatedButtons[i]:Show_()
+				end
+			end)
+			agIn:SetScript("OnFinished", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(1)
+				end
+			end)
+			agIn:SetScript("OnStop", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(1)
+				end
+			end)
+
+			local agOut = button:CreateAnimationGroup()
+			button.AGOut = agOut
+
+			agOut:SetScript("OnPlay", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(1)
+				end
+			end)
+			agOut:SetScript("OnStop", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(0)
+					consolidatedButtons[i]:Hide_()
+				end
+			end)
+			agOut:SetScript("OnFinished", function()
+				for i = 1, #consolidatedButtons do
+					consolidatedButtons[i]:SetAlpha(0)
+					consolidatedButtons[i]:Hide_()
+				end
+			end)
+
+			button:SetScript("OnClick", function(self)
+				if not self.isShown then
+					agOut:Stop()
+					agIn:Play()
+
+					self.isShown = true
+				else
+					agIn:Stop()
+					agOut:Play()
+
+					self.isShown = false
+				end
+			end)
+		end
+
 		-- .Queue
 		do
-			local button = handleMinimapButton(QueueStatusMinimapButton)
+			local button = handleButton(QueueStatusMinimapButton)
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
@@ -642,7 +940,7 @@ function MODULE.Init()
 				C_Timer.After(delay, function() scrollTexture(t, DELAY, STEP) end)
 			end
 
-			local button = handleMinimapButton(GameTimeFrame)
+			local button = handleButton(GameTimeFrame)
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
@@ -751,9 +1049,10 @@ function MODULE.Init()
 		do
 			local frame = MinimapZoneTextButton
 			frame:SetParent(Minimap)
-			frame:SetFrameLevel(Minimap:GetFrameLevel())
-			frame:SetSize(160, 16)
+			frame:SetFrameLevel(level)
 			frame:EnableMouse(false)
+			frame:ClearAllPoints()
+			frame:SetSize(160, 16)
 			Minimap.Zone = frame
 
 			local bg = frame:CreateTexture(nil, "BACKGROUND")
@@ -787,7 +1086,7 @@ function MODULE.Init()
 		do
 			local button = TimeManagerClockButton
 			button:SetFlattensRenderLayers(true)
-			button:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+			button:SetFrameLevel(level + 2)
 			button:SetSize(52, 28)
 			button:SetHitRectInsets(0, 0, 0, 0)
 			button:SetScript("OnMouseUp", nil)
@@ -829,7 +1128,7 @@ function MODULE.Init()
 
 		-- .Garrison
 		do
-			local button = handleMinimapButton(GarrisonLandingPageMinimapButton)
+			local button = handleButton(GarrisonLandingPageMinimapButton)
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
@@ -849,7 +1148,7 @@ function MODULE.Init()
 
 		-- .Mail
 		do
-			local button = handleMinimapButton(MiniMapMailFrame)
+			local button = handleButton(MiniMapMailFrame)
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
@@ -877,7 +1176,7 @@ function MODULE.Init()
 			MiniMapTrackingIcon:SetParent(MiniMapTrackingButton)
 			MiniMapTrackingBackground:SetParent(MiniMapTrackingButton)
 
-			local button = handleMinimapButton(MiniMapTrackingButton)
+			local button = handleButton(MiniMapTrackingButton)
 			button:RegisterForDrag("LeftButton")
 			Minimap.Tracking = button
 
@@ -905,7 +1204,7 @@ function MODULE.Init()
 		end
 
 		-- .Compass
-		MinimapCompassTexture:SetParent(Minimap)
+		MinimapCompassTexture:SetParent(textureParent)
 		MinimapCompassTexture:ClearAllPoints()
 		MinimapCompassTexture:SetPoint("CENTER", 0, 0)
 		MinimapCompassTexture:SetSize(272, 272)
@@ -935,35 +1234,27 @@ function MODULE.Init()
 			E:ForceHide(_G[name])
 		end
 
-		for i = 1, select("#", Minimap:GetChildren()) do
-			local child = select(i, Minimap:GetChildren())
-
-			if not ignoredChildren[child] then
-				child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
-			end
-
-			if not (ignoredChildren[child] or handledChildren[child] or BUTTONS[child]) and isMinimapButton(child) then
-				handleMinimapButton(child)
-			else
-				ignoredChildren[child] = true
-			end
-		end
-
-		C_Timer.NewTicker(5, function()
+		local function handleChildren()
 			for i = 1, select("#", Minimap:GetChildren()) do
 				local child = select(i, Minimap:GetChildren())
+				if not ignoredChildren[child] then
+					child:SetFrameLevel(level + 2)
 
-				if not (ignoredChildren[child] or handledChildren[child] or BUTTONS[child]) and isMinimapButton(child) then
-					child:SetFrameLevel(Minimap:GetFrameLevel() + 1)
+					if not handledChildren[child] and isMinimapButton(child) then
+						handleButton(child)
+						collectButton(child)
+					end
 
-					handleMinimapButton(child)
-				else
 					ignoredChildren[child] = true
 				end
 			end
-		end)
+		end
+
+		handleChildren()
+		C_Timer.NewTicker(5, handleChildren)
 
 		Minimap.UpdateBorderColor = minimap_UpdateBorderColor
+		Minimap.UpdateButtons = minimap_UpdateButtons
 		Minimap.UpdateClock = minimap_UpdateClock
 		Minimap.UpdateConfig = minimap_UpdateConfig
 		Minimap.UpdateFlag = minimap_UpdateFlag
@@ -981,13 +1272,10 @@ function MODULE.Update()
 	if isInit then
 		Minimap:UpdateConfig()
 		Minimap:UpdateBorderColor()
+		Minimap:UpdateButtons()
 		Minimap:UpdateClock()
 		Minimap:UpdateFlag()
 		Minimap:UpdateZone()
-
-		for name, degrees in next, BUTTONS do
-			updatePosition(_G[name], C.db.profile.minimap.buttons[name] or degrees)
-		end
 	end
 end
 

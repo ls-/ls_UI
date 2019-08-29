@@ -2241,6 +2241,13 @@ D.profile = {
 		},
 	},
 	minimap = {
+		collect = {
+			calendar = false,
+			garrison = false,
+			mail = false,
+			queue = false,
+			tracking = false,
+		},
 		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
@@ -2273,7 +2280,14 @@ D.profile = {
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8, -24},
 		},
-		buttons = {},
+		buttons = {
+			LSMinimapButtonCollection = 0,
+			MiniMapTrackingButton = 22.5,
+			GameTimeFrame = 45,
+			MiniMapMailFrame = 135,
+			GarrisonLandingPageMinimapButton = 210,
+			QueueStatusMinimapButton = 320,
+		},
 		color = {
 			border = false,
 			zone_text = true,
