@@ -7,7 +7,7 @@ local _G = getfenv(0)
 local m_abs = _G.math.abs
 
 --[[ luacheck: globals
-	CreateFrame
+	CreateFrame CastingBarFrame_SetUnit CastingBarFrame PetCastingBarFrame
 ]]
 
 -- Mine
@@ -189,6 +189,11 @@ local function frame_UpdateCastbar(self)
 		self:EnableElement("Castbar")
 	elseif not element._config.enabled and self:IsElementEnabled("Castbar") then
 		self:DisableElement("Castbar")
+
+		if self._unit == "player" then
+			CastingBarFrame_SetUnit(CastingBarFrame, nil)
+			CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
+		end
 	end
 
 	if self:IsElementEnabled("Castbar") then
