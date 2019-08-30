@@ -209,6 +209,32 @@ function CONFIG.CreateMinimapPanel(_, order)
 					},
 				},
 			},
+			spacer_5 = {
+				order = 49,
+				type = "description",
+				name = " ",
+			},
+			collect = {
+				order = 50,
+				type = "group",
+				name = "[WIP] Collect Buttons",
+				inline = true,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.profile.minimap.collect.enabled
+						end,
+						set = function(_, value)
+							C.db.profile.minimap.collect.enabled = value
+							MINIMAP:GetMinimap():UpdateConfig()
+							MINIMAP:GetMinimap():UpdateButtons()
+						end,
+					},
+				},
+			},
 		},
 	}
 end
