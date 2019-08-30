@@ -300,6 +300,7 @@ local buttonData = {}
 local collectedButtons = {}
 local consolidatedButtons = {}
 local hiddenButtons = {}
+local watchedButtons = {}
 
 local buttonOrder = {
 	["GameTimeFrame"] = 1,
@@ -356,6 +357,17 @@ local function consolidateButtons()
 	end
 end
 
+local function getPosition(scale, px, py)
+	if not (px or py) then
+		return 225
+	end
+
+	local mx, my = Minimap:GetCenter()
+	scale = scale or Minimap:GetEffectiveScale()
+
+	return m_deg(m_atan2( py / scale - my, px / scale - mx)) % 360
+end
+
 local function collectButton(button)
 	if collectedButtons[button] or button == LSMinimapButtonCollection	then
 		return
@@ -366,6 +378,7 @@ local function collectButton(button)
 	buttonData[button] = {
 		OnDragStart = button:GetScript("OnDragStart"),
 		OnDragStop = button:GetScript("OnDragStop"),
+		position = getPosition(1, button:GetCenter()),
 	}
 
 	button:SetScript("OnDragStart", nil)
@@ -375,24 +388,31 @@ local function collectButton(button)
 	-- some addon devs use strong voodoo to implement dragging/moving
 	button.ClearAllPoints_ = button.ClearAllPoints
 	button.SetPoint_ = button.SetPoint
-	button.Hide_ = button.Hide
-	button.Show_ = button.Show
 
 	if not button:GetAttribute("ls-hooked") then
-		hooksecurefunc(button, "Hide", function(self)
-			hiddenButtons[self] = true
+		button.Hide_ = button.Hide
+		button.Show_ = button.Show
 
-			consolidateButtons()
+		hooksecurefunc(button, "Hide", function(self)
+			if collectedButtons[self] then
+				hiddenButtons[self] = true
+
+				consolidateButtons()
+			end
 		end)
 		hooksecurefunc(button, "Show", function(self)
-			hiddenButtons[self] = false
+			if collectedButtons[self] then
+				hiddenButtons[self] = false
 
-			consolidateButtons()
+				consolidateButtons()
+			end
 		end)
 		hooksecurefunc(button, "SetShown", function(self, state)
-			hiddenButtons[self] = state
+			if collectedButtons[self] then
+				hiddenButtons[self] = state
 
-			consolidateButtons()
+				consolidateButtons()
+			end
 		end)
 
 		button:SetAttribute("ls-hooked", true)
@@ -439,6 +459,7 @@ local function releaseButton(button)
 		return
 	end
 
+	button:SetAlpha(1)
 	button:SetFrameLevel(Minimap:GetFrameLevel() + 2)
 
 	if buttonData[button].OnDragStart then
@@ -447,20 +468,22 @@ local function releaseButton(button)
 		button:RegisterForDrag("LeftButton")
 	end
 
-	buttonData[button] = nil
-
 	if button.ClearAllPoints == nop then
 		button.ClearAllPoints = button.ClearAllPoints_
 		button.SetPoint = button.SetPoint_
 	end
 
+	button.AlphaIn:SetParent(LSMinimapButtonCollection.AGDisabled)
+	button.AlphaOut:SetParent(LSMinimapButtonCollection.AGDisabled)
+
+	if not hiddenButtons[button] then
+		button:Show_()
+	end
+
 	button.ClearAllPoints_ = nil
 	button.SetPoint_ = nil
-	button.Hide_ = nil
-	button.Show_ = nil
 
 	collectedButtons[button] = nil
-	hiddenButtons[button] = nil
 
 	consolidateButtons()
 end
@@ -471,10 +494,7 @@ local function updatePosition(button, degrees)
 end
 
 local function button_OnUpdate(self)
-	local mx, my = Minimap:GetCenter()
-	local px, py = GetCursorPosition()
-	local scale = Minimap:GetEffectiveScale()
-	local degrees = m_deg(m_atan2( py / scale - my, px / scale - mx)) % 360
+	local degrees = getPosition(nil, GetCursorPosition())
 
 	C.db.profile.minimap.buttons[self:GetName()] = degrees
 
@@ -753,6 +773,21 @@ local function minimap_UpdateButtons(self)
 	else
 		releaseButton(MiniMapTrackingButton)
 		updatePosition(MiniMapTrackingButton, config.buttons["MiniMapTrackingButton"])
+	end
+
+	if config.collect.enabled then
+		for button in next, watchedButtons do
+			if not collectedButtons[button] then
+				collectButton(button)
+			end
+		end
+	else
+		for button in next, watchedButtons do
+			if collectedButtons[button] then
+				releaseButton(button)
+				updatePosition(button, buttonData[button].position)
+			end
+		end
 	end
 end
 
@@ -1305,6 +1340,8 @@ function MODULE.Init()
 
 					if not handledChildren[child] and isMinimapButton(child) then
 						handleButton(child)
+
+						watchedButtons[child] = true
 
 						if shouldCollect then
 							collectButton(child)
