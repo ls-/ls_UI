@@ -333,6 +333,10 @@ local function consolidateButtons()
 
 	t_sort(consolidatedButtons, sortFunc)
 
+	local maxRows = m_floor(#consolidatedButtons / 8 + 0.9)
+
+	LSMinimapButtonCollection.Shadow:SetSize(64 + 64 * maxRows, 64 + 64 * maxRows)
+
 	for i, button in next, consolidatedButtons do
 		local row = m_floor(i / 8 + 0.9)
 		local angle = m_rad(-45 * ((i - 3) % 8) + (30 * (row - 1))) -- 45 = 360 / 8
@@ -399,21 +403,31 @@ local function collectButton(button)
 		button.SetPoint = nop
 	end
 
-	local anim = LSMinimapButtonCollection.AGIn:CreateAnimation("Alpha")
-	anim:SetOrder(1)
-	anim:SetTarget(button)
-	anim:SetFromAlpha(0)
-	anim:SetToAlpha(1)
-	anim:SetDuration(0.08)
-	button.AlphaIn = anim
+	if not button.AlphaIn then
+		local anim = LSMinimapButtonCollection.AGIn:CreateAnimation("Alpha")
+		anim:SetOrder(2)
+		anim:SetTarget(button)
+		anim:SetFromAlpha(0)
+		anim:SetToAlpha(1)
+		anim:SetDuration(0.08)
+		button.AlphaIn = anim
+	else
+		button.AlphaIn:SetParent(LSMinimapButtonCollection.AGIn)
+		button.AlphaIn:SetOrder(2)
+	end
 
-	anim = LSMinimapButtonCollection.AGOut:CreateAnimation("Alpha")
-	anim:SetOrder(1)
-	anim:SetTarget(button)
-	anim:SetFromAlpha(1)
-	anim:SetToAlpha(0)
-	anim:SetDuration(0.08)
-	button.AlphaOut = anim
+	if not button.AlphaOut then
+		local anim = LSMinimapButtonCollection.AGOut:CreateAnimation("Alpha")
+		anim:SetOrder(1)
+		anim:SetTarget(button)
+		anim:SetFromAlpha(1)
+		anim:SetToAlpha(0)
+		anim:SetDuration(0.08)
+		button.AlphaOut = anim
+	else
+		button.AlphaOut:SetParent(LSMinimapButtonCollection.AGOut)
+		button.AlphaOut:SetOrder(1)
+	end
 
 	collectedButtons[button] = true
 
@@ -697,37 +711,44 @@ end
 local function minimap_UpdateButtons(self)
 	local config = self._config
 
-	updatePosition(LSMinimapButtonCollection, config.buttons["LSMinimapButtonCollection"])
+	if config.collect.enabled then
+		LSMinimapButtonCollection:Show()
+		updatePosition(LSMinimapButtonCollection, config.buttons["LSMinimapButtonCollection"])
+	else
+		LSMinimapButtonCollection.isShown = false
+		LSMinimapButtonCollection:Hide()
+		LSMinimapButtonCollection.Shadow:SetScale(0.001)
+	end
 
-	if config.collect.calendar then
+	if config.collect.enabled and config.collect.calendar then
 		collectButton(GameTimeFrame)
 	else
 		releaseButton(GameTimeFrame)
 		updatePosition(GameTimeFrame, config.buttons["GameTimeFrame"])
 	end
 
-	if config.collect.garrison then
+	if config.collect.enabled and config.collect.garrison then
 		collectButton(GarrisonLandingPageMinimapButton)
 	else
 		releaseButton(GarrisonLandingPageMinimapButton)
 		updatePosition(GarrisonLandingPageMinimapButton, config.buttons["GarrisonLandingPageMinimapButton"])
 	end
 
-	if config.collect.mail then
+	if config.collect.enabled and config.collect.mail then
 		collectButton(MiniMapMailFrame)
 	else
 		releaseButton(MiniMapMailFrame)
 		updatePosition(MiniMapMailFrame, config.buttons["MiniMapMailFrame"])
 	end
 
-	if config.collect.queue then
+	if config.collect.enabled and config.collect.queue then
 		collectButton(QueueStatusMinimapButton)
 	else
 		releaseButton(QueueStatusMinimapButton)
 		updatePosition(QueueStatusMinimapButton, config.buttons["QueueStatusMinimapButton"])
 	end
 
-	if config.collect.tracking then
+	if config.collect.enabled and config.collect.tracking then
 		collectButton(MiniMapTrackingButton)
 	else
 		releaseButton(MiniMapTrackingButton)
@@ -810,7 +831,7 @@ function MODULE.Init()
 		-- .Collection
 		do
 			local button = CreateFrame("Button", "LSMinimapButtonCollection", Minimap)
-			button:SetFrameLevel(level + 4)
+			button:SetFrameLevel(level + 3)
 			button:RegisterForDrag("LeftButton")
 			button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 			button:SetScript("OnDragStart", button_OnDragStart)
@@ -830,21 +851,35 @@ function MODULE.Init()
 
 			handleButton(button)
 
+			local shadow = button:CreateTexture(nil, "BACKGROUND")
+			shadow:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+			shadow:SetVertexColor(0, 0, 0)
+			shadow:SetPoint("CENTER")
+			shadow:SetAlpha(0.6)
+			shadow:SetScale(0.001)
+			button.Shadow = shadow
+
 			local agIn = button:CreateAnimationGroup()
 			button.AGIn = agIn
 
 			agIn:SetScript("OnPlay", function()
+				shadow:SetScale(1)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(0)
 					consolidatedButtons[i]:Show_()
 				end
 			end)
-			agIn:SetScript("OnFinished", function()
+			agIn:SetScript("OnStop", function()
+				shadow:SetScale(1)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(1)
 				end
 			end)
-			agIn:SetScript("OnStop", function()
+			agIn:SetScript("OnFinished", function()
+				shadow:SetScale(1)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(1)
 				end
@@ -854,22 +889,46 @@ function MODULE.Init()
 			button.AGOut = agOut
 
 			agOut:SetScript("OnPlay", function()
+				shadow:SetScale(1)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(1)
 				end
 			end)
 			agOut:SetScript("OnStop", function()
+				shadow:SetScale(0.001)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(0)
 					consolidatedButtons[i]:Hide_()
 				end
 			end)
 			agOut:SetScript("OnFinished", function()
+				shadow:SetScale(0.001)
+
 				for i = 1, #consolidatedButtons do
 					consolidatedButtons[i]:SetAlpha(0)
 					consolidatedButtons[i]:Hide_()
 				end
 			end)
+
+			local anim = agIn:CreateAnimation("Scale")
+			anim:SetTarget(shadow)
+			anim:SetOrder(1)
+			anim:SetFromScale(0.001, 0.001)
+			anim:SetToScale(1, 1)
+			anim:SetDuration(0.08)
+			button.ScaleIn = anim
+
+			anim = agOut:CreateAnimation("Scale")
+			anim:SetTarget(shadow)
+			anim:SetOrder(2)
+			anim:SetToScale(0.001, 0.001)
+			anim:SetFromScale(1, 1)
+			anim:SetDuration(0.08)
+			button.ScaleOut = anim
+
+			button.AGDisabled = button:CreateAnimationGroup()
 
 			button:SetScript("OnClick", function(self)
 				if not self.isShown then
@@ -884,6 +943,8 @@ function MODULE.Init()
 					self.isShown = false
 				end
 			end)
+
+			ignoredChildren[button] = true
 		end
 
 		-- .Queue
@@ -1235,6 +1296,8 @@ function MODULE.Init()
 		end
 
 		local function handleChildren()
+			local shouldCollect = C.db.profile.minimap.collect.enabled
+
 			for i = 1, select("#", Minimap:GetChildren()) do
 				local child = select(i, Minimap:GetChildren())
 				if not ignoredChildren[child] then
@@ -1242,7 +1305,10 @@ function MODULE.Init()
 
 					if not handledChildren[child] and isMinimapButton(child) then
 						handleButton(child)
-						collectButton(child)
+
+						if shouldCollect then
+							collectButton(child)
+						end
 					end
 
 					ignoredChildren[child] = true

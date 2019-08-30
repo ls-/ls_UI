@@ -2242,6 +2242,7 @@ D.profile = {
 	},
 	minimap = {
 		collect = {
+			enabled = true,
 			calendar = false,
 			garrison = false,
 			mail = false,
