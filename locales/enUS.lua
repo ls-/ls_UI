@@ -38,6 +38,7 @@ L["FOCUS"] = _G.FOCUS
 L["FOREIGN_SERVER_LABEL"] = _G.FOREIGN_SERVER_LABEL:gsub("%s", "")
 L["FURY"] = _G.FURY
 L["GENERAL"] = _G.GENERAL_LABEL
+L["GARRISON"] = _G.GARRISON_LOCATION_TOOLTIP
 L["HEALER_GREEN"] = E:WrapText(D.global.colors.green, _G.HEALER)
 L["HIDE"] = _G.HIDE
 L["HOLY_POWER"] = _G.HOLY_POWER
@@ -68,6 +69,7 @@ L["SOUL_SHARDS"] = _G.SOUL_SHARDS_POWER
 L["SPELLBOOK_ABILITIES_BUTTON"] = _G.SPELLBOOK_ABILITIES_BUTTON
 L["TANK_BLUE"] = E:WrapText(D.global.colors.blue, _G.TANK)
 L["TOTAL"] = _G.TOTAL
+L["TRACKING"] = _G.TRACKING
 L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
@@ -486,3 +488,9 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+-- new
+L["QUEUE"] = "Queue"
+L["COLLECT_BUTTONS"] = "Collect Buttons"
+L["MINIMAP_BUTTONS"] = "Minimap Buttons"
+L["MINIMAP_BUTTONS_TOOLTIP"] = "Click to show minimap buttons."
