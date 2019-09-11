@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 80200.02
+
+- Added minimap button collection. Can be found at /LSUI > Minimap > Collect Buttons. It can  
+  collect both Blizz and addon minimap buttons, however, by default, it only collects addon  
+  buttons. If Minimap Button Frame is detected, the feature will be disabled;
+- Added portraits to pet, target of target, and target of focus frames;
+- Fixed an issue where disabling player/pet castbars would re-enable Blizz player/pet castbars.  
+  Quartz users rejoice!
+- Misc bug fixes and tweaks;
+- Updated embeds.
+
+![Imgur](https://i.imgur.com/WSm2tdk.gif)
+
 ## Version 80200.01
 
 - Added 8.2.0 support;
