@@ -701,9 +701,8 @@ do
 	local badTags = {}
 
 	local function getTagName(tag)
-		local tagStart = (tag:match('>+()') or 2)
-		local tagEnd = tag:match('.*()<+')
-		tagEnd = (tagEnd and tagEnd - 1) or -2
+		local tagStart = tag:match('>+()') or 2
+		local tagEnd = (tag:match('.-()<') or -1) - 1
 
 		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
 	end
