@@ -239,7 +239,7 @@ function MODULE:SetUpCharacterFrame()
 		end)
 
 		E:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(slotID)
-			if CharacterFrame:IsShown() then
+			if CharacterFrame:IsShown() and EQUIP_SLOTS[slotID] then
 				updateSlot(slotID)
 			end
 		end)
