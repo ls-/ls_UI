@@ -22,6 +22,7 @@ local function frame_Update(self)
 		self:UpdateInsets()
 		self:UpdateHealth()
 		self:UpdateHealthPrediction()
+		self:UpdatePortrait()
 		self:UpdatePower()
 		self:UpdateName()
 		self:UpdateRaidTargetIndicator()
@@ -64,6 +65,8 @@ function UF:CreateTargetTargetFrame(frame)
 	frame.Health = health
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+
+	frame.Portrait = self:CreatePortrait(frame)
 
 	local power = self:CreatePower(frame, textParent)
 	power:SetFrameLevel(level + 1)

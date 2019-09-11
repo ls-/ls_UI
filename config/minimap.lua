@@ -24,6 +24,14 @@ local FLAG_POSITIONS = {
 	[2] = L["BOTTOM"],
 }
 
+local function isModuleDisabled()
+	return not MINIMAP:IsInit()
+end
+
+local function isButtonCollectionDisabled()
+	return not (MINIMAP:IsInit() and C.db.profile.minimap.collect.enabled)
+end
+
 function CONFIG.CreateMinimapPanel(_, order)
 	C.options.args.minimap = {
 		order = order,
@@ -59,6 +67,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				func = function()
 					CONFIG:CopySettings(D.profile.minimap[E.UI_LAYOUT], C.db.profile.minimap[E.UI_LAYOUT], {["point"] = true})
 					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
+					CONFIG:CopySettings(D.profile.minimap.collect, C.db.profile.minimap.collect)
 					MINIMAP:Update()
 				end,
 			},
@@ -80,7 +89,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 					MINIMAP:GetMinimap():UpdateConfig()
 					MINIMAP:GetMinimap():UpdateClock()
 				end,
-				disabled = function() return not MINIMAP:IsInit() end,
+				disabled = isModuleDisabled,
 				args = {
 					mode = {
 						order = 1,
@@ -114,7 +123,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 					MINIMAP:GetMinimap():UpdateConfig()
 					MINIMAP:GetMinimap():UpdateZone()
 				end,
-				disabled = function() return not MINIMAP:IsInit() end,
+				disabled = isModuleDisabled,
 				args = {
 					mode = {
 						order = 1,
@@ -154,7 +163,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 					MINIMAP:GetMinimap():UpdateConfig()
 					MINIMAP:GetMinimap():UpdateFlag()
 				end,
-				disabled = function() return not MINIMAP:IsInit() end,
+				disabled = isModuleDisabled,
 				args = {
 					mode = {
 						order = 1,
@@ -180,6 +189,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "group",
 				name = L["COLORS"],
 				inline = true,
+				disabled = isModuleDisabled,
 				args = {
 					border = {
 						order = 1,
@@ -206,6 +216,69 @@ function CONFIG.CreateMinimapPanel(_, order)
 							MINIMAP:GetMinimap():UpdateConfig()
 							MINIMAP:GetMinimap():UpdateZoneColor()
 						end,
+					},
+				},
+			},
+			spacer_5 = {
+				order = 49,
+				type = "description",
+				name = " ",
+			},
+			collect = {
+				order = 50,
+				type = "group",
+				name = L["COLLECT_BUTTONS"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.minimap.collect[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap.collect[info[#info]] = value
+					MINIMAP:GetMinimap():UpdateConfig()
+					MINIMAP:GetMinimap():UpdateButtons()
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						disabled = isModuleDisabled,
+					},
+					spacer_1 = {
+						order = 9,
+						type = "description",
+						name = " ",
+						disabled = isButtonCollectionDisabled,
+					},
+					calendar = {
+						order = 10,
+						type = "toggle",
+						name = L["CALENDAR"],
+						disabled = isButtonCollectionDisabled,
+					},
+					garrison = {
+						order = 11,
+						type = "toggle",
+						name = L["GARRISON"],
+						disabled = isButtonCollectionDisabled,
+					},
+					mail = {
+						order = 12,
+						type = "toggle",
+						name = L["MAIL"],
+						disabled = isButtonCollectionDisabled,
+					},
+					queue = {
+						order = 13,
+						type = "toggle",
+						name = L["QUEUE"],
+						disabled = isButtonCollectionDisabled,
+					},
+					tracking = {
+						order = 14,
+						type = "toggle",
+						name = L["TRACKING"],
+						disabled = isButtonCollectionDisabled,
 					},
 				},
 			},

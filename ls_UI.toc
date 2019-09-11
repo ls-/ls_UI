@@ -1,11 +1,11 @@
 ## Interface: 80200
 ## Author: lightspark
-## Version: 80200.01
+## Version: 80200.02
 ## Title: ls: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CHAR_CONFIG
 ## SavedVariables: LS_UI_GLOBAL_CONFIG
-## OptionalDeps: AdiButtonAuras, Masque, MaxDps
+## OptionalDeps: AdiButtonAuras, Masque, MaxDps, MinimapButtonFrame
 
 embeds\_embeds.xml
 core\_core.xml

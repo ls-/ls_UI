@@ -27,7 +27,7 @@ However, keep in mind that I'm not going to implement any features as a replacem
 
 ## Localisation
 
-Feel free to add and/or review translations on [Curse](https://wow.curseforge.com/projects/ls-ui/localization), alternatively, you may create a PR on [project's GitHub page](https://github.com/ls-/ls_UI/pulls).
+Feel free to add and/or review translations on [Curse](https://www.curseforge.com/wow/addons/ls-ui/localization), alternatively, you may create a PR on [project's GitHub page](https://github.com/ls-/ls_UI/pulls).
 
 ## License
 

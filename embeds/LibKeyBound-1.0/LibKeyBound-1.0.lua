@@ -1,6 +1,6 @@
 --[[
 Name: LibKeyBound-1.0
-Revision: $Rev: 114 $
+Revision: $Rev: 115 $
 Author(s): Gello, Maul, Toadkiller, Tuller
 Website: http://www.wowace.com/wiki/LibKeyBound-1.0
 Documentation: http://www.wowace.com/wiki/LibKeyBound-1.0
@@ -10,7 +10,7 @@ Dependencies: CallbackHandler-1.0
 --]]
 
 local MAJOR = 'LibKeyBound-1.0'
-local MINOR = tonumber(("$Revision: 114 $"):match("(%d+)")) + 90000
+local MINOR = 100000 + 1
 
 --[[
 	LibKeyBound-1.0
@@ -41,6 +41,8 @@ local L = LibKeyBoundLocale10
 LibKeyBound.L = L
 -- ToDo delete global LibKeyBoundLocale10 at some point
 LibKeyBound.Binder = LibKeyBound.Binder or {}
+
+local SaveBindings = SaveBindings or AttemptToSaveBindings
 
 -- #NODOC
 function LibKeyBound:Initialize()
