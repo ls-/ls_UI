@@ -882,6 +882,18 @@ function MODULE.Init()
 			button:SetScript("OnDragStop", button_OnDragStop)
 			Minimap.Collection = button
 
+			button:SetScript("OnEnter", function(self)
+				local p, rP, x, y = getTooltipPoint(self)
+
+				GameTooltip:SetOwner(self, "ANCHOR_NONE")
+				GameTooltip:SetPoint(p, self, rP, x, y)
+				GameTooltip:AddLine("[WIP] Minimap Buttons", 1, 1, 1)
+				GameTooltip:Show()
+			end)
+			button:SetScript("OnLeave", function()
+				GameTooltip:Hide()
+			end)
+
 			local border = button:CreateTexture(nil, "OVERLAY")
 			border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 
