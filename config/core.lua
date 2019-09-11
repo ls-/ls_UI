@@ -632,60 +632,44 @@ end
 
 -- MODULE.ShowStaticPopup
 do
-	-- Blizz
-	local StaticPopupDialogs = _G.StaticPopupDialogs
-	local StaticPopup_Show = _G.StaticPopup_Show
-
-	-- Mine
-	local pendingPopups = {}
-	local oldStrata
-
 	local POPUPS = {
 		["RELOAD_UI"] = {
 			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
-			button1 = L["RELOAD_NOW"],
-			button2 = L["LATER"],
+			accept = L["RELOAD_NOW"],
+			cancel = L["LATER"],
 			OnAccept = function() ReloadUI() end,
 			OnCancel = function(self)
-				pendingPopups[self.data] = true
+				AceConfigDialog.popup:Hide()
+
+				AceConfigDialog.popup.accept:SetScript("OnClick", nil)
+				AceConfigDialog.popup.accept:SetText(ACCEPT)
+
+				self:SetScript("OnClick", nil)
+				self:SetText(CANCEL)
 
 				MODULE:SetStatusText(L["RELOAD_UI_WARNING"])
-
-				if oldStrata then
-					self:SetFrameStrata(oldStrata)
-					oldStrata = nil
-				end
 			end,
-			timeout = 0,
-			whileDead = 1,
-			hideOnEscape = 1,
 		},
 	}
 
-	function MODULE.ShowStaticPopup(_, which)
-		if not StaticPopupDialogs["LS_UI_POPUP"] then
-			StaticPopupDialogs["LS_UI_POPUP"] = {}
+	function MODULE:ShowStaticPopup(which)
+		if not POPUPS[which] then
+			return
 		end
 
-		if pendingPopups[which] or not POPUPS[which] then return end
+		local frame = AceConfigDialog.popup
+		frame:Show()
+		frame.text:SetText(POPUPS[which].text)
+		frame:SetHeight(61 + frame.text:GetHeight())
 
-		local t = StaticPopupDialogs["LS_UI_POPUP"]
-		t_wipe(t)
+		frame.accept:ClearAllPoints()
+		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
+		frame.accept:SetScript("OnClick", POPUPS[which].OnAccept)
+		frame.accept:SetText(POPUPS[which].accept)
 
-		t.exclusive = 1
-
-		for k, v in next, POPUPS[which] do
-			t[k] = v
-		end
-
-		local dialog = StaticPopup_Show("LS_UI_POPUP")
-
-		if dialog then
-			dialog.data = which
-			oldStrata = dialog:GetFrameStrata()
-
-			dialog:SetFrameStrata("TOOLTIP")
-		end
+		frame.cancel:Show()
+		frame.cancel:SetScript("OnClick", POPUPS[which].OnCancel)
+		frame.cancel:SetText(POPUPS[which].cancel)
 	end
 end
 
