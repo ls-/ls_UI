@@ -174,7 +174,7 @@ end
 local function button_OnEnter(self)
 	if not self:IsVisible() then return end
 
-	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	GameTooltip:SetOwner(self, self:GetParent().tooltipAnchor)
 	self:UpdateTooltip()
 end
 
