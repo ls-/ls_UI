@@ -332,27 +332,28 @@ local function consolidateButtons()
 		end
 	end
 
-	t_sort(consolidatedButtons, sortFunc)
+	if #consolidatedButtons > 0 then
+		t_sort(consolidatedButtons, sortFunc)
 
-	local maxRows = m_floor(#consolidatedButtons / 8 + 0.9)
+		local maxRows = m_floor(#consolidatedButtons / 8 + 0.9)
 
-	LSMinimapButtonCollection.Shadow:SetSize(64 + 64 * maxRows, 64 + 64 * maxRows)
+		LSMinimapButtonCollection.Shadow:SetSize(64 + 64 * maxRows, 64 + 64 * maxRows)
 
-	for i, button in next, consolidatedButtons do
-		local row = m_floor(i / 8 + 0.9)
-		local angle = m_rad(-45 * ((i - 3) % 8) + (30 * (row - 1))) -- 45 = 360 / 8
+		for i, button in next, consolidatedButtons do
+			local row = m_floor(i / 8 + 0.9)
+			local angle = m_rad(90 - 45 * ((i - 1) % 8) + (30 * (row - 1))) -- 45 = 360 / 8
 
-		button.AlphaIn:SetStartDelay(0.02 * (i - 1))
-		button.AlphaOut:SetStartDelay(0.02 * (i - 1))
-		-- button.AlphaOut:SetStartDelay(0.02 * (#consolidatedButtons- i))
+			button.AlphaIn:SetStartDelay(0.02 * (i - 1))
+			button.AlphaOut:SetStartDelay(0.02 * (i - 1))
 
-		button:ClearAllPoints_()
-		button:SetPoint_("CENTER", LSMinimapButtonCollection, "CENTER",
-		m_cos(angle) * (16 + 32 * row),
-		m_sin(angle) * (16 + 32 * row))
+			button:ClearAllPoints_()
+			button:SetPoint_("CENTER", LSMinimapButtonCollection, "CENTER",
+			m_cos(angle) * (16 + 32 * row),
+			m_sin(angle) * (16 + 32 * row))
 
-		if not LSMinimapButtonCollection.isShown then
-			button:Hide_()
+			if not LSMinimapButtonCollection.isShown then
+				button:Hide_()
+			end
 		end
 	end
 end
@@ -368,8 +369,32 @@ local function getPosition(scale, px, py)
 	return m_deg(m_atan2( py / scale - my, px / scale - mx)) % 360
 end
 
+local function hookHide(self)
+	if collectedButtons[self] then
+		hiddenButtons[self] = true
+
+		consolidateButtons()
+	end
+end
+
+local function hookShow(self)
+	if collectedButtons[self] then
+		hiddenButtons[self] = false
+
+		consolidateButtons()
+	end
+end
+
+local function hookSetShown(self, state)
+	if collectedButtons[self] then
+		hiddenButtons[self] = state
+
+		consolidateButtons()
+	end
+end
+
 local function collectButton(button)
-	if collectedButtons[button] or button == LSMinimapButtonCollection	then
+	if collectedButtons[button] or button == LSMinimapButtonCollection then
 		return
 	end
 
@@ -393,30 +418,14 @@ local function collectButton(button)
 		button.Hide_ = button.Hide
 		button.Show_ = button.Show
 
-		hooksecurefunc(button, "Hide", function(self)
-			if collectedButtons[self] then
-				hiddenButtons[self] = true
-
-				consolidateButtons()
-			end
-		end)
-		hooksecurefunc(button, "Show", function(self)
-			if collectedButtons[self] then
-				hiddenButtons[self] = false
-
-				consolidateButtons()
-			end
-		end)
-		hooksecurefunc(button, "SetShown", function(self, state)
-			if collectedButtons[self] then
-				hiddenButtons[self] = state
-
-				consolidateButtons()
-			end
-		end)
+		hooksecurefunc(button, "Hide", hookHide)
+		hooksecurefunc(button, "Show", hookShow)
+		hooksecurefunc(button, "SetShown", hookSetShown)
 
 		button:SetAttribute("ls-hooked", true)
 	end
+
+	hiddenButtons[button] = not button:IsShown()
 
 	if not BLIZZ_BUTTONS[button:GetName()] then
 		button.ClearAllPoints = nop
