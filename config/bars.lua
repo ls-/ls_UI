@@ -721,7 +721,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						end
 					else
 						if value then
-							BARS:Init()
+							P:Call(BARS.Init, BARS)
 						end
 					end
 				end,

@@ -2809,7 +2809,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 						end
 					else
 						if value then
-							UNITFRAMES:Init()
+							P:Call(UNITFRAMES.Init, UNITFRAMES)
 						end
 					end
 				end

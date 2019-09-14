@@ -50,7 +50,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 
 					if not MINIMAP:IsInit() then
 						if value then
-							MINIMAP:Init()
+							P:Call(MINIMAP.Init, MINIMAP)
 						end
 					else
 						if not value then

@@ -24,7 +24,7 @@ function CONFIG.CreateTooltipsPanel(_, order)
 
 					if not TOOLTIPS:IsInit() then
 						if value then
-							TOOLTIPS:Init()
+							P:Call(TOOLTIPS.Init, TOOLTIPS)
 						end
 					else
 						if not value then
