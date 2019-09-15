@@ -206,24 +206,28 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end
 
 	if MaxDps then
-		local LAB = LibStub:GetLibrary("LibActionButton-1.0-ls")
+		if MaxDps.RegisterLibActionButton then
+			MaxDps:RegisterLibActionButton("LibActionButton-1.0-ls")
+		else
+			local LAB = LibStub("LibActionButton-1.0-ls")
 
-		if MaxDps.FetchLibActionButton then
-			hooksecurefunc(MaxDps, "FetchLibActionButton", function(self)
-				for button in next, LAB:GetAllButtons() do
-					self:AddButton(button:GetSpellId(), button)
-				end
-			end)
-		end
+			if MaxDps.FetchLibActionButton then
+				hooksecurefunc(MaxDps, "FetchLibActionButton", function(self)
+					for button in next, LAB:GetAllButtons() do
+						self:AddButton(button:GetSpellId(), button)
+					end
+				end)
+			end
 
-		if MaxDps.UpdateButtonGlow then
-			hooksecurefunc(MaxDps, "UpdateButtonGlow", function(self)
-				if self.db.global.disableButtonGlow then
-					LAB.eventFrame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-				else
-					LAB.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-				end
-			end)
+			if MaxDps.UpdateButtonGlow then
+				hooksecurefunc(MaxDps, "UpdateButtonGlow", function(self)
+					if self.db.global.disableButtonGlow then
+						LAB.eventFrame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+					else
+						LAB.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+					end
+				end)
+			end
 		end
 	end
 
