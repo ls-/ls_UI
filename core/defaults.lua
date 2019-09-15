@@ -2241,6 +2241,7 @@ D.profile = {
 		},
 	},
 	minimap = {
+		size = 146,
 		collect = {
 			enabled = true,
 			calendar = false,
@@ -3148,6 +3149,7 @@ D.char = {
 	},
 	minimap = {
 		enabled = true,
+		square = true,
 	},
 	tooltips = {
 		enabled = true,

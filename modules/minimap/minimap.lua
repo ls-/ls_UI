@@ -9,6 +9,8 @@ local m_atan2 = _G.math.atan2
 local m_cos = _G.math.cos
 local m_deg = _G.math.deg
 local m_floor = _G.math.floor
+local m_max = _G.math.max
+local m_min = _G.math.min
 local m_rad = _G.math.rad
 local m_sin = _G.math.sin
 local next = _G.next
@@ -40,6 +42,7 @@ local GetCursorPosition = _G.GetCursorPosition
 
 -- Mine
 local isInit = false
+local isSquare = false
 
 local TEXTURES = {
 	BIG = {
@@ -499,7 +502,20 @@ end
 
 local function updatePosition(button, degrees)
 	local angle = m_rad(degrees)
-	button:SetPoint("CENTER", Minimap, "CENTER", m_cos(angle) * 80, m_sin(angle) * 80)
+	local w = Minimap:GetWidth() / 2 + 5
+	local h = Minimap:GetHeight() / 2 + 5
+
+	if isSquare then
+		button:SetPoint("CENTER", Minimap, "CENTER",
+			m_max(-w, m_min(m_cos(angle) * (1.4142135623731 * w - 10), w)), -- m_sqrt(2 * w ^ 2) = m_sqrt(2) * w = 1.4142135623731 * w
+			m_max(-h, m_min(m_sin(angle) * (1.4142135623731 * h - 10), h))
+		)
+	else
+		button:SetPoint("CENTER", Minimap, "CENTER",
+			m_cos(angle) * w,
+			m_sin(angle) * h
+		)
+	end
 end
 
 local function button_OnUpdate(self)
@@ -536,7 +552,7 @@ local function getTooltipPoint(self)
 end
 
 local function minimap_OnEnter(self)
-	if self._config.zone_text.mode == 1 then
+	if not isSquare and self._config.zone_text.mode == 1 then
 		self.Zone.Text:Show()
 	end
 
@@ -552,7 +568,7 @@ local function minimap_OnEnter(self)
 end
 
 local function minimap_OnLeave(self)
-	if self._config.zone_text.mode ~= 2 then
+	if not isSquare and self._config.zone_text.mode ~= 2 then
 		self.Zone.Text:Hide()
 	end
 
@@ -586,43 +602,50 @@ local function minimap_UpdateZone(self)
 	local config = self._config
 	local zone = self.Zone
 
-	if config.zone_text.mode == 0 then
-		zone:ClearAllPoints()
-		zone:Hide()
-	elseif config.zone_text.mode == 1 or config.zone_text.mode == 2 then
-		zone:Show()
+	Minimap:SetScript("OnEnter", nil)
+	Minimap:SetScript("OnLeave", nil)
 
-		if config.zone_text.mode == 1 then
-			zone.BG:Hide()
-			zone.Border:Hide()
-			zone.Text:Hide()
-		else
-			if config.zone_text.border then
-				zone.BG:Show()
-				zone.Border:Show()
-			else
+	if not isSquare then
+		if config.zone_text.mode == 0 then
+			zone:ClearAllPoints()
+			zone:Hide()
+		elseif config.zone_text.mode == 1 or config.zone_text.mode == 2 then
+			zone:Show()
+
+			if config.zone_text.mode == 1 then
 				zone.BG:Hide()
 				zone.Border:Hide()
+				zone.Glass:Hide()
+				zone.Text:Hide()
+			else
+				if config.zone_text.border then
+					zone.BG:Show()
+					zone.Border:Show()
+					zone.Glass:Show()
+				else
+					zone.BG:Hide()
+					zone.Border:Hide()
+					zone.Glass:Hide()
+				end
+
+				zone.Text:Show()
 			end
 
-			zone.Text:Show()
+			if config.zone_text.position == 0 then
+				zone:ClearAllPoints()
+				zone:SetPoint("BOTTOM", self, "TOP", 0, 12)
+			else
+				zone:ClearAllPoints()
+				zone:SetPoint("TOP", self, "BOTTOM", 0, -12)
+			end
 		end
 
-		if config.zone_text.position == 0 then
-			zone:ClearAllPoints()
-			zone:SetPoint("BOTTOM", self, "TOP", 0, 12)
-		else
-			zone:ClearAllPoints()
-			zone:SetPoint("TOP", self, "BOTTOM", 0, -12)
+		if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
+			Minimap:SetScript("OnEnter", minimap_OnEnter)
+			Minimap:SetScript("OnLeave", minimap_OnLeave)
 		end
-	end
-
-	if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
-		Minimap:SetScript("OnEnter", minimap_OnEnter)
-		Minimap:SetScript("OnLeave", minimap_OnLeave)
 	else
-		Minimap:SetScript("OnEnter", nil)
-		Minimap:SetScript("OnLeave", nil)
+		zone.Glass:Show()
 	end
 
 	self:UpdateZoneColor()
@@ -644,31 +667,33 @@ local function minimap_UpdateClock(self)
 	local config = self._config
 	local clock = Minimap.Clock
 
-	if config.clock.mode == 0 then
-		clock:ClearAllPoints()
-		clock:Hide()
-	elseif config.clock.mode == 1 or config.clock.mode == 2 then
-		if config.clock.mode == 1 then
+	Minimap:SetScript("OnEnter", nil)
+	Minimap:SetScript("OnLeave", nil)
+
+	if not isSquare then
+		if config.clock.mode == 0 then
+			clock:ClearAllPoints()
 			clock:Hide()
-		else
-			clock:Show()
+		elseif config.clock.mode == 1 or config.clock.mode == 2 then
+			if config.clock.mode == 1 then
+				clock:Hide()
+			else
+				clock:Show()
+			end
+
+			if config.clock.position == 0 then
+				clock:ClearAllPoints()
+				clock:SetPoint("BOTTOM", Minimap, "TOP", 0, -14)
+			else
+				clock:ClearAllPoints()
+				clock:SetPoint("TOP", Minimap, "BOTTOM", 0, 14)
+			end
 		end
 
-		if config.clock.position == 0 then
-			clock:ClearAllPoints()
-			clock:SetPoint("BOTTOM", Minimap, "TOP", 0, -14)
-		else
-			clock:ClearAllPoints()
-			clock:SetPoint("TOP", Minimap, "BOTTOM", 0, 14)
+		if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
+			Minimap:SetScript("OnEnter", minimap_OnEnter)
+			Minimap:SetScript("OnLeave", minimap_OnLeave)
 		end
-	end
-
-	if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
-		Minimap:SetScript("OnEnter", minimap_OnEnter)
-		Minimap:SetScript("OnLeave", minimap_OnLeave)
-	else
-		Minimap:SetScript("OnEnter", nil)
-		Minimap:SetScript("OnLeave", nil)
 	end
 end
 
@@ -800,32 +825,41 @@ local function minimap_UpdateButtons(self)
 	end
 end
 
-function MODULE.IsInit()
+function MODULE:IsInit()
 	return isInit
 end
 
-function MODULE.Init()
+function MODULE:IsSquare()
+	return isSquare
+end
+
+function MODULE:Init()
 	if not isInit and C.db.char.minimap.enabled then
 		if not IsAddOnLoaded("Blizzard_TimeManager") then
 			LoadAddOn("Blizzard_TimeManager")
 		end
 
+		isSquare = C.db.char.minimap.square
+
+		-- for LDBIcon-1.0
+		function GetMinimapShape()
+			return isSquare and "SQUARE" or "ROUND"
+		end
+
 		local level = Minimap:GetFrameLevel()
 
 		local holder = CreateFrame("Frame", "LSMinimapHolder", UIParent)
-		holder:SetSize(332 / 2, 332 / 2)
+		holder:SetSize(1, 1)
 		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
 		E.Movers:Create(holder)
 
 		Minimap:EnableMouseWheel()
 		Minimap:ClearAllPoints()
 		Minimap:SetParent(holder)
-		Minimap:SetPoint("CENTER")
-		Minimap:SetSize(146, 146)
+		Minimap:SetPoint("BOTTOM")
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 
 		Minimap:HookScript("OnEvent", function(self, event)
 			if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
@@ -846,31 +880,78 @@ function MODULE.Init()
 
 		local textureParent = CreateFrame("Frame", nil, Minimap)
 		textureParent:SetFrameLevel(level + 1)
-		textureParent:SetPoint("TOPLEFT", 0, 0)
 		textureParent:SetPoint("BOTTOMRIGHT", 0, 0)
 		Minimap.TextureParent = textureParent
 
 		ignoredChildren[textureParent] = true
 
-		local border = textureParent:CreateTexture(nil, "BORDER", nil, 1)
-		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
-		border:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
-		border:SetSize(332 / 2, 332 / 2)
-		border:SetPoint("CENTER", 0, 0)
-		E:SmoothColor(border)
-		Minimap.Border = border
+		if isSquare then
+			Minimap:SetSize(C.db.profile.minimap.size, C.db.profile.minimap.size)
+			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
 
-		local foreground = textureParent:CreateTexture(nil, "BORDER", nil, 3)
-		foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
-		foreground:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
-		foreground:SetSize(332 / 2, 332 / 2)
-		foreground:SetPoint("CENTER", 0, 0)
+			textureParent:SetPoint("TOPLEFT", 0, 20)
 
-		local glass = textureParent:CreateTexture(nil, "BORDER", nil, 2)
-		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
-		glass:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
-		glass:SetSize(332 / 2, 332 / 2)
-		glass:SetPoint("CENTER", 0, 0)
+			holder:SetSize(C.db.profile.minimap.size, C.db.profile.minimap.size + 20)
+			E.Movers:Get(holder):UpdateSize()
+
+			local bg = Minimap:CreateTexture(nil, "BACKGROUND")
+			bg:SetColorTexture(0.1, 0.1, 0.1)
+			bg:SetPoint("TOPLEFT", 0, 20)
+			bg:SetPoint("BOTTOMRIGHT", 0, 0)
+
+			local border = E:CreateBorder(textureParent)
+			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
+			border:SetOffset(-6)
+			border:SetSize(16)
+			Minimap.Border = border
+
+			local left = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
+			left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
+			left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
+			left:SetSize(16 / 2, 12 / 2)
+			left:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 0, -2)
+
+			local right = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
+			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
+			right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
+			right:SetSize(16 / 2, 12 / 2)
+			right:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, -2)
+
+			local mid = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
+			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", "REPEAT", "REPEAT")
+			mid:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
+			mid:SetHorizTile(true)
+			mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
+			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
+		else
+			Minimap:SetSize(146, 146)
+			Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+
+			textureParent:SetPoint("TOPLEFT", 0, 0)
+
+			holder:SetSize(146, 146)
+			E.Movers:Get(holder):UpdateSize()
+
+			local border = textureParent:CreateTexture(nil, "BORDER", nil, 1)
+			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
+			border:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
+			border:SetSize(332 / 2, 332 / 2)
+			border:SetPoint("CENTER", 0, 0)
+			E:SmoothColor(border)
+			Minimap.Border = border
+
+			local foreground = textureParent:CreateTexture(nil, "BORDER", nil, 3)
+			foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
+			foreground:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
+			foreground:SetSize(332 / 2, 332 / 2)
+			foreground:SetPoint("CENTER", 0, 0)
+
+			local glass = textureParent:CreateTexture(nil, "BORDER", nil, 2)
+			glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
+			glass:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+			glass:SetSize(332 / 2, 332 / 2)
+			glass:SetPoint("CENTER", 0, 0)
+		end
 
 		-- .Collection
 		do
@@ -1170,32 +1251,46 @@ function MODULE.Init()
 			frame:SetFrameLevel(level)
 			frame:EnableMouse(false)
 			frame:ClearAllPoints()
-			frame:SetSize(160, 16)
 			Minimap.Zone = frame
-
-			local bg = frame:CreateTexture(nil, "BACKGROUND")
-			bg:SetColorTexture(0, 0, 0, 0.6)
-			bg:SetAllPoints()
-			bg:Hide()
-			frame.BG = bg
-
-			local border = E:CreateBorder(frame)
-			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-			border:SetSize(16)
-			border:SetOffset(-6)
-			border:Hide()
-			frame.Border = border
 
 			local text = MinimapZoneText
 			text:SetFontObject("LSFont12_Shadow")
+			text:SetDrawLayer("OVERLAY")
 			text:SetSize(0, 0)
 			text:ClearAllPoints()
 			text:SetPoint("TOPLEFT", 2, 0)
-			text:SetPoint("BOTTOMRIGHT", -2, 0)
+			text:SetPoint("BOTTOMRIGHT", -2, 1)
 			text:SetJustifyH("CENTER")
 			text:SetJustifyV("MIDDLE")
-			text:Hide()
 			frame.Text = text
+
+			local glass = frame:CreateTexture(nil, "OVERLAY", nil, 0)
+			glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
+			glass:SetAllPoints()
+			glass:Hide()
+			frame.Glass = glass
+
+			if isSquare then
+				frame:SetPoint("TOPLEFT", textureParent, "TOPLEFT", 0, 0)
+				frame:SetPoint("BOTTOMRIGHT", textureParent, "TOPRIGHT", 0, -18)
+			else
+				frame:SetSize(160, 16)
+
+				local border = E:CreateBorder(frame)
+				border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
+				border:SetSize(16)
+				border:SetOffset(-6)
+				border:Hide()
+				frame.Border = border
+
+				local bg = frame:CreateTexture(nil, "BACKGROUND")
+				bg:SetColorTexture(0, 0, 0, 0.66)
+				bg:SetAllPoints()
+				bg:Hide()
+				frame.BG = bg
+
+				text:Hide()
+			end
 
 			ignoredChildren[frame] = true
 		end
@@ -1240,6 +1335,11 @@ function MODULE.Init()
 
 			glow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
 			glow:SetTexCoord(1 / 256, 105 / 256, 147 / 256, 203 / 256)
+
+			if isSquare then
+				button:ClearAllPoints()
+				button:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", -4, 14)
+			end
 
 			ignoredChildren[button] = true
 		end
@@ -1389,11 +1489,11 @@ function MODULE.Init()
 
 		isInit = true
 
-		MODULE:Update()
+		self:Update()
 	end
 end
 
-function MODULE.Update()
+function MODULE:Update()
 	if isInit then
 		Minimap:UpdateConfig()
 		Minimap:UpdateBorderColor()
