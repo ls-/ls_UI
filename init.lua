@@ -3,11 +3,10 @@ local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local type = _G.type
 local next = _G.next
 
 --[[ luacheck: globals
-	LibStub
+	AdiButtonAuras hooksecurefunc LibStub MaxDps MinimapButtonFrame
 ]]
 
 -- Mine
