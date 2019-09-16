@@ -2253,7 +2253,6 @@ D.profile = {
 		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 0, -- 0 - top, 1 - bottom
 				border = false,
 			},
 			clock = {
@@ -2269,7 +2268,6 @@ D.profile = {
 		traditional = {
 			zone_text = {
 				mode = 2,
-				position = 0,
 				border = true,
 			},
 			clock = {

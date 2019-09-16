@@ -131,14 +131,8 @@ function CONFIG.CreateMinimapPanel(_, order)
 						name = L["VISIBILITY"],
 						values = MODES,
 					},
-					position = {
-						order = 2,
-						type = "select",
-						name = L["POSITION"],
-						values = POSITIONS,
-					},
 					border = {
-						order = 3,
+						order = 2,
 						type = "toggle",
 						name = L["BORDER"],
 						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,

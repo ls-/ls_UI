@@ -630,14 +630,6 @@ local function minimap_UpdateZone(self)
 
 				zone.Text:Show()
 			end
-
-			if config.zone_text.position == 0 then
-				zone:ClearAllPoints()
-				zone:SetPoint("BOTTOM", self, "TOP", 0, 12)
-			else
-				zone:ClearAllPoints()
-				zone:SetPoint("TOP", self, "BOTTOM", 0, -12)
-			end
 		end
 
 		if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
@@ -1274,7 +1266,8 @@ function MODULE:Init()
 				frame:SetPoint("TOPLEFT", textureParent, "TOPLEFT", 0, 0)
 				frame:SetPoint("BOTTOMRIGHT", textureParent, "TOPRIGHT", 0, -18)
 			else
-				frame:SetSize(160, 16)
+				frame:SetPoint("TOPLEFT", textureParent, "TOPLEFT", -8, 30)
+				frame:SetPoint("BOTTOMRIGHT", textureParent, "TOPRIGHT", 8, 12)
 
 				local border = E:CreateBorder(frame)
 				border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
