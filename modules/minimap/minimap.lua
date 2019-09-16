@@ -592,9 +592,23 @@ end
 
 local function minimap_UpdateBorderColor(self)
 	if self._config.color.border then
-		self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested))
+		local color = C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested
+
+		self.Border:SetVertexColor(E:GetRGB(color))
+
+		if self.SepLeft then
+			self.SepLeft:SetVertexColor(E:GetRGB(color))
+			self.SepRight:SetVertexColor(E:GetRGB(color))
+			self.SepMiddle:SetVertexColor(E:GetRGB(color))
+		end
 	else
 		self.Border:SetVertexColor(1, 1, 1)
+
+		if self.SepLeft then
+			self.SepLeft:SetVertexColor(1, 1, 1)
+			self.SepRight:SetVertexColor(1, 1, 1)
+			self.SepMiddle:SetVertexColor(1, 1, 1)
+		end
 	end
 end
 
@@ -902,12 +916,14 @@ function MODULE:Init()
 			left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
 			left:SetSize(16 / 2, 12 / 2)
 			left:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 0, -2)
+			Minimap.SepLeft = left
 
 			local right = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
 			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
 			right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
 			right:SetSize(16 / 2, 12 / 2)
 			right:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, -2)
+			Minimap.SepRight = right
 
 			local mid = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
 			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", "REPEAT", "REPEAT")
@@ -915,6 +931,7 @@ function MODULE:Init()
 			mid:SetHorizTile(true)
 			mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
 			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
+			Minimap.SepMiddle = mid
 		else
 			Minimap:SetSize(146, 146)
 			Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
