@@ -3147,7 +3147,12 @@ D.char = {
 	},
 	minimap = {
 		enabled = true,
-		square = true,
+		ls = {
+			square = false,
+		},
+		traditional = {
+			square = true,
+		},
 	},
 	tooltips = {
 		enabled = true,

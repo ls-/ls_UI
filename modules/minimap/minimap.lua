@@ -848,7 +848,7 @@ function MODULE:Init()
 			LoadAddOn("Blizzard_TimeManager")
 		end
 
-		isSquare = C.db.char.minimap.square
+		isSquare = C.db.char.minimap[E.UI_LAYOUT].square
 
 		-- for LDBIcon-1.0
 		function GetMinimapShape()
