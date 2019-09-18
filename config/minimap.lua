@@ -149,11 +149,10 @@ function CONFIG.CreateMinimapPanel(_, order)
 					Minimap:UpdateClock()
 				end,
 				args = {
-					mode = {
+					enabled = {
 						order = 1,
-						type = "select",
-						name = L["VISIBILITY"],
-						values = MODES,
+						type = "toggle",
+						name = L["SHOW"],
 					},
 					position = {
 						order = 2,

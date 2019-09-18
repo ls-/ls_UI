@@ -2256,7 +2256,7 @@ D.profile = {
 				border = false,
 			},
 			clock = {
-				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				enabled = true,
 				position = 0, -- 0 - top, 1 - bottom
 			},
 			flag = {
@@ -2271,7 +2271,7 @@ D.profile = {
 				border = true,
 			},
 			clock = {
-				mode = 2,
+				enabled = true,
 				position = 1,
 			},
 			flag = {

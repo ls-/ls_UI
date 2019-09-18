@@ -556,10 +556,6 @@ local function minimap_OnEnter(self)
 		self.Zone.Text:Show()
 	end
 
-	if self._config.clock.mode == 1 then
-		self.Clock:Show()
-	end
-
 	if self._config.flag.mode == 1 then
 		self.ChallengeModeFlag:SetParent(self)
 		self.DifficultyFlag:SetParent(self)
@@ -570,10 +566,6 @@ end
 local function minimap_OnLeave(self)
 	if self._config.zone_text.mode ~= 2 then
 		self.Zone.Text:Hide()
-	end
-
-	if self._config.clock.mode ~= 2 then
-		self.Clock:Hide()
 	end
 
 	if self._config.flag.mode ~= 2 then
@@ -667,16 +659,7 @@ local function minimap_UpdateClock(self)
 		local config = self._config
 		local clock = self.Clock
 
-		if config.clock.mode == 0 then
-			clock:ClearAllPoints()
-			clock:Hide()
-		elseif config.clock.mode == 1 or config.clock.mode == 2 then
-			if config.clock.mode == 1 then
-				clock:Hide()
-			else
-				clock:Show()
-			end
-
+		if config.clock.enabled then
 			if config.clock.position == 0 then
 				clock:ClearAllPoints()
 				clock:SetPoint("BOTTOM", self, "TOP", 0, -14)
@@ -684,6 +667,11 @@ local function minimap_UpdateClock(self)
 				clock:ClearAllPoints()
 				clock:SetPoint("TOP", self, "BOTTOM", 0, 14)
 			end
+
+			clock:Show()
+		else
+			clock:ClearAllPoints()
+			clock:Hide()
 		end
 	end
 end
@@ -748,7 +736,7 @@ local function minimap_UpdateFlag(self)
 end
 
 local function minimap_UpdateScripts(self)
-	if not isSquare and	(self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1) then
+	if not isSquare and	(self._config.zone_text.mode == 1 or self._config.flag.mode == 1) then
 		self:SetScript("OnEnter", minimap_OnEnter)
 		self:SetScript("OnLeave", minimap_OnLeave)
 	else
