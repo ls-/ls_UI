@@ -2278,7 +2278,7 @@ D.profile = {
 				mode = 2,
 				position = 0,
 			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -18, -6},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -18, -7},
 		},
 		buttons = {
 			LSMinimapButtonCollection = 0,

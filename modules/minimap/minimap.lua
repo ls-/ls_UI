@@ -754,7 +754,7 @@ local function minimap_UpdateSize(self)
 	else
 		Minimap:SetSize(146, 146)
 
-		LSMinimapHolder:SetSize(146, 146)
+		LSMinimapHolder:SetSize(146, 146 + 30)
 		E.Movers:Get("LSMinimapHolder"):UpdateSize()
 	end
 end
