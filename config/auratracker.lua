@@ -100,7 +100,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						end
 					else
 						if value then
-							AURATRACKER:Init()
+							P:Call(AURATRACKER.Init, AURATRACKER)
 						end
 					end
 				end,

@@ -306,43 +306,37 @@
 	</FontFamily>
 
 	<Font name="LSFont10_Shadow" inherits="LSFont10" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LSFont12_Shadow" inherits="LSFont12" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LSFont14_Shadow" inherits="LSFont14" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LSFont16_Shadow" inherits="LSFont16" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LSFont18_Shadow" inherits="LSFont18" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>
 
 	<Font name="LSFont20_Shadow" inherits="LSFont20" virtual="true">
-		<Shadow>
-			<Offset x="1" y="-1"/>
+		<Shadow x="1" y="-1">
 			<Color r="0" g="0" b="0"/>
 		</Shadow>
 	</Font>

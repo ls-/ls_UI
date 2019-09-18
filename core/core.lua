@@ -3,6 +3,7 @@ local addonName, ns = ...
 -- Lua
 local _G = getfenv(0)
 local assert = _G.assert
+local geterrorhandler = _G.geterrorhandler
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local pairs = _G.pairs
@@ -10,6 +11,7 @@ local s_format = _G.string.format
 local s_split = _G.string.split
 local t_insert = _G.table.insert
 local type = _G.type
+local xpcall = _G.xpcall
 
 -- Mine
 local E, C, D, M, L, P = {}, {}, {}, {}, {}, {} -- engine, config, defaults, media, locales, private
@@ -68,6 +70,20 @@ do
 	end
 end
 
+------------
+-- ERRORS --
+------------
+
+do
+	local function errorHandler(err)
+		return geterrorhandler()(err)
+	end
+
+	function P:Call(func, ...)
+		return xpcall(func, errorHandler, ...)
+	end
+end
+
 -------------
 -- MODULES --
 -------------
@@ -82,28 +98,18 @@ do
 	end
 
 	function P:GetModule(name)
-		if not modules[name] then
-			self:Print("Module "..name.." doesn't exist!")
-		else
-			return modules[name]
-		end
+		return modules[name]
 	end
 
 	function P:InitModules()
-		for name, module in next, modules do
-			if not module.Init then
-				self:Print("Module "..name.." doesn\'t have initialiser.")
-			else
-				module:Init()
-			end
+		for _, module in next, modules do
+			P:Call(module.Init, module)
 		end
 	end
 
 	function P:UpdateModules()
 		for _, module in next, modules do
-			if module.Update then
-				module:Update()
-			end
+			P:Call(module.Update, module)
 		end
 	end
 end

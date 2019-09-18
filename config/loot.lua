@@ -24,7 +24,7 @@ function CONFIG.CreateLootPanel(_, order)
 
 					if not LOOT:IsInit() then
 						if value then
-							LOOT:Init()
+							P:Call(LOOT.Init, LOOT)
 						end
 					else
 						if not value then

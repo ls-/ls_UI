@@ -2241,8 +2241,10 @@ D.profile = {
 		},
 	},
 	minimap = {
+		size = 146,
 		collect = {
 			enabled = true,
+			tooltip = true,
 			calendar = false,
 			garrison = false,
 			mail = false,
@@ -2252,11 +2254,10 @@ D.profile = {
 		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 0, -- 0 - top, 1 - bottom
 				border = false,
 			},
 			clock = {
-				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
+				enabled = true,
 				position = 0, -- 0 - top, 1 - bottom
 			},
 			flag = {
@@ -2268,18 +2269,17 @@ D.profile = {
 		traditional = {
 			zone_text = {
 				mode = 2,
-				position = 0,
 				border = true,
 			},
 			clock = {
-				mode = 2,
+				enabled = true,
 				position = 1,
 			},
 			flag = {
 				mode = 2,
 				position = 0,
 			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -8, -24},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -18, -7},
 		},
 		buttons = {
 			LSMinimapButtonCollection = 0,
@@ -3148,6 +3148,12 @@ D.char = {
 	},
 	minimap = {
 		enabled = true,
+		ls = {
+			square = false,
+		},
+		traditional = {
+			square = true,
+		},
 	},
 	tooltips = {
 		enabled = true,

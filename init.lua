@@ -3,11 +3,10 @@ local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 
 -- Lua
 local _G = getfenv(0)
-local type = _G.type
 local next = _G.next
 
 --[[ luacheck: globals
-	LibStub
+	AdiButtonAuras hooksecurefunc LibStub MaxDps MinimapButtonFrame
 ]]
 
 -- Mine
@@ -92,6 +91,15 @@ local function cleanUpStep1()
 	-- -> 80200.01
 	if not C.db.profile.version or C.db.profile.version < 8020001 then
 		C.db.global.aura_filters["M+ Affixes"].is_init = false
+	end
+
+	-- -> 80200.03
+	if not C.db.profile.version or C.db.profile.version < 8020003 then
+		C.db.profile.minimap.ls.clock.mode = nil
+		C.db.profile.minimap.traditional.clock.mode = nil
+
+		C.db.profile.minimap.ls.zone_text.position = nil
+		C.db.profile.minimap.traditional.zone_text.position = nil
 	end
 end
 
@@ -206,21 +214,29 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end
 
 	if MaxDps then
-		local LAB = LibStub:GetLibrary("LibActionButton-1.0-ls")
+		if MaxDps.RegisterLibActionButton then
+			MaxDps:RegisterLibActionButton("LibActionButton-1.0-ls")
+		else
+			local LAB = LibStub("LibActionButton-1.0-ls")
 
-		hooksecurefunc(MaxDps, "FetchLibActionButton", function(self)
-			for button in next, LAB:GetAllButtons() do
-				self:AddButton(button:GetSpellId(), button)
+			if MaxDps.FetchLibActionButton then
+				hooksecurefunc(MaxDps, "FetchLibActionButton", function(self)
+					for button in next, LAB:GetAllButtons() do
+						self:AddButton(button:GetSpellId(), button)
+					end
+				end)
 			end
-		end)
 
-		hooksecurefunc(MaxDps, "UpdateButtonGlow", function(self)
-			if self.db.global.disableButtonGlow then
-				LAB.eventFrame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-			else
-				LAB.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+			if MaxDps.UpdateButtonGlow then
+				hooksecurefunc(MaxDps, "UpdateButtonGlow", function(self)
+					if self.db.global.disableButtonGlow then
+						LAB.eventFrame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+					else
+						LAB.eventFrame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+					end
+				end)
 			end
-		end)
+		end
 	end
 
 	if MinimapButtonFrame then

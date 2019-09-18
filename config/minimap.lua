@@ -6,6 +6,10 @@ local MINIMAP = P:GetModule("Minimap")
 -- Lua
 local _G = getfenv(0)
 
+--[[ luacheck: globals
+	Minimap
+]]
+
 -- Mine
 local MODES = {
 	[0] = L["HIDE"],
@@ -26,6 +30,14 @@ local FLAG_POSITIONS = {
 
 local function isModuleDisabled()
 	return not MINIMAP:IsInit()
+end
+
+local function isMinimapSquare()
+	return MINIMAP:IsInit() and MINIMAP:IsSquare()
+end
+
+local function isMinimapRound()
+	return MINIMAP:IsInit() and not MINIMAP:IsSquare()
 end
 
 local function isButtonCollectionDisabled()
@@ -50,7 +62,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 
 					if not MINIMAP:IsInit() then
 						if value then
-							MINIMAP:Init()
+							P:Call(MINIMAP.Init, MINIMAP)
 						end
 					else
 						if not value then
@@ -59,15 +71,34 @@ function CONFIG.CreateMinimapPanel(_, order)
 					end
 				end,
 			},
+			square = {
+				order = 2,
+				type = "toggle",
+				name = L["SQUARE_MINIMAP"],
+				get = function()
+					return C.db.char.minimap[E.UI_LAYOUT].square
+				end,
+				set = function(_, value)
+					C.db.char.minimap[E.UI_LAYOUT].square = value
+
+					if MINIMAP:IsInit() then
+						CONFIG:ShowStaticPopup("RELOAD_UI")
+					end
+				end,
+			},
 			reset = {
 				type = "execute",
-				order = 2,
+				order = 8,
 				name = L["RESTORE_DEFAULTS"],
 				confirm = CONFIG.ConfirmReset,
+				disabled = isModuleDisabled,
 				func = function()
 					CONFIG:CopySettings(D.profile.minimap[E.UI_LAYOUT], C.db.profile.minimap[E.UI_LAYOUT], {["point"] = true})
-					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
+					CONFIG:CopySettings(D.profile.minimap.buttons, C.db.profile.minimap.buttons)
 					CONFIG:CopySettings(D.profile.minimap.collect, C.db.profile.minimap.collect)
+					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
+					C.db.profile.minimap.size = D.profile.minimap.size
+
 					MINIMAP:Update()
 				end,
 			},
@@ -75,73 +106,59 @@ function CONFIG.CreateMinimapPanel(_, order)
 				order = 9,
 				type = "description",
 				name = " ",
+				hidden = isMinimapRound,
 			},
-			clock = {
+			size = {
 				order = 10,
-				type = "group",
-				name = L["CLOCK"],
-				guiInline = true,
-				get = function(info)
-					return C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]]
+				type = "range",
+				name = L["SIZE"],
+				hidden = isMinimapRound,
+				disabled = isModuleDisabled,
+				min = 146, max = 292, step = 2,
+				get = function()
+					return C.db.profile.minimap.size
 				end,
 				set = function(info, value)
-					C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]] = value
-					MINIMAP:GetMinimap():UpdateConfig()
-					MINIMAP:GetMinimap():UpdateClock()
+					if C.db.profile.minimap.size ~= value then
+						C.db.profile.minimap.size = value
+
+						Minimap:UpdateConfig()
+						Minimap:UpdateSize()
+						Minimap:UpdateButtons()
+					end
 				end,
-				disabled = isModuleDisabled,
-				args = {
-					mode = {
-						order = 1,
-						type = "select",
-						name = L["VISIBILITY"],
-						values = MODES,
-					},
-					position = {
-						order = 2,
-						type = "select",
-						name = L["POSITION"],
-						values = POSITIONS,
-					},
-				},
 			},
 			spacer_2 = {
 				order = 19,
 				type = "description",
 				name = " ",
 			},
-			zone_text = {
+			clock = {
 				order = 20,
 				type = "group",
-				name = L["ZONE_TEXT"],
+				name = L["CLOCK"],
 				guiInline = true,
+				hidden = isMinimapSquare,
+				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]]
+					return C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]]
 				end,
 				set = function(info, value)
-					C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]] = value
-					MINIMAP:GetMinimap():UpdateConfig()
-					MINIMAP:GetMinimap():UpdateZone()
+					C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]] = value
+					Minimap:UpdateConfig()
+					Minimap:UpdateClock()
 				end,
-				disabled = isModuleDisabled,
 				args = {
-					mode = {
+					enabled = {
 						order = 1,
-						type = "select",
-						name = L["VISIBILITY"],
-						values = MODES,
+						type = "toggle",
+						name = L["SHOW"],
 					},
 					position = {
 						order = 2,
 						type = "select",
 						name = L["POSITION"],
 						values = POSITIONS,
-					},
-					border = {
-						order = 3,
-						type = "toggle",
-						name = L["BORDER"],
-						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
 					},
 				},
 			},
@@ -149,21 +166,59 @@ function CONFIG.CreateMinimapPanel(_, order)
 				order = 29,
 				type = "description",
 				name = " ",
+				hidden = isMinimapSquare,
+			},
+			zone_text = {
+				order = 30,
+				type = "group",
+				name = L["ZONE_TEXT"],
+				guiInline = true,
+				hidden = isMinimapSquare,
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]] = value
+					Minimap:UpdateConfig()
+					Minimap:UpdateZone()
+				end,
+				args = {
+					mode = {
+						order = 1,
+						type = "select",
+						name = L["VISIBILITY"],
+						values = MODES,
+					},
+					border = {
+						order = 2,
+						type = "toggle",
+						name = L["BORDER"],
+						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
+					},
+				},
+			},
+			spacer_4 = {
+				order = 39,
+				type = "description",
+				name = " ",
+				hidden = isMinimapSquare,
 			},
 			flag = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["DIFFICULTY_FLAG"],
 				guiInline = true,
+				hidden = isMinimapSquare,
+				disabled = isModuleDisabled,
 				get = function(info)
 					return C.db.profile.minimap[E.UI_LAYOUT].flag[info[#info]]
 				end,
 				set = function(info, value)
 					C.db.profile.minimap[E.UI_LAYOUT].flag[info[#info]] = value
-					MINIMAP:GetMinimap():UpdateConfig()
-					MINIMAP:GetMinimap():UpdateFlag()
+					Minimap:UpdateConfig()
+					Minimap:UpdateFlag()
 				end,
-				disabled = isModuleDisabled,
 				args = {
 					mode = {
 						order = 1,
@@ -179,13 +234,14 @@ function CONFIG.CreateMinimapPanel(_, order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = 39,
+			spacer_5 = {
+				order = 49,
 				type = "description",
 				name = " ",
+				hidden = isMinimapSquare,
 			},
 			colors = {
-				order = 40,
+				order = 50,
 				type = "group",
 				name = L["COLORS"],
 				inline = true,
@@ -200,8 +256,8 @@ function CONFIG.CreateMinimapPanel(_, order)
 						end,
 						set = function(_, value)
 							C.db.profile.minimap.color.border = value
-							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateBorderColor()
+							Minimap:UpdateConfig()
+							Minimap:UpdateBorderColor()
 						end,
 					},
 					zone_text = {
@@ -213,19 +269,19 @@ function CONFIG.CreateMinimapPanel(_, order)
 						end,
 						set = function(_, value)
 							C.db.profile.minimap.color.zone_text = value
-							MINIMAP:GetMinimap():UpdateConfig()
-							MINIMAP:GetMinimap():UpdateZoneColor()
+							Minimap:UpdateConfig()
+							Minimap:UpdateZoneColor()
 						end,
 					},
 				},
 			},
-			spacer_5 = {
-				order = 49,
+			spacer_6 = {
+				order = 59,
 				type = "description",
 				name = " ",
 			},
 			collect = {
-				order = 50,
+				order = 60,
 				type = "group",
 				name = L["COLLECT_BUTTONS"],
 				inline = true,
@@ -234,8 +290,8 @@ function CONFIG.CreateMinimapPanel(_, order)
 				end,
 				set = function(info, value)
 					C.db.profile.minimap.collect[info[#info]] = value
-					MINIMAP:GetMinimap():UpdateConfig()
-					MINIMAP:GetMinimap():UpdateButtons()
+					Minimap:UpdateConfig()
+					Minimap:UpdateButtons()
 				end,
 				args = {
 					enabled = {
@@ -243,6 +299,12 @@ function CONFIG.CreateMinimapPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						disabled = isModuleDisabled,
+					},
+					tooltip = {
+						order = 2,
+						type = "toggle",
+						name = L["SHOW_TOOLTIP"],
+						disabled = isButtonCollectionDisabled,
 					},
 					spacer_1 = {
 						order = 9,

@@ -335,7 +335,7 @@ function CONFIG.CreateAurasPanel(_, order)
 						end
 					else
 						if value then
-							AURAS:Init()
+							P:Call(AURAS.Init, AURAS)
 						end
 					end
 				end,

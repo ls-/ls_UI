@@ -63,7 +63,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 
 					if not BLIZZARD:IsInit() then
 						if value then
-							BLIZZARD:Init()
+							P:Call(BLIZZARD.Init, BLIZZARD)
 						end
 					else
 						if not value then
