@@ -552,7 +552,7 @@ local function getTooltipPoint(self)
 end
 
 local function minimap_OnEnter(self)
-	if not isSquare and self._config.zone_text.mode == 1 then
+	if self._config.zone_text.mode == 1 then
 		self.Zone.Text:Show()
 	end
 
@@ -568,7 +568,7 @@ local function minimap_OnEnter(self)
 end
 
 local function minimap_OnLeave(self)
-	if not isSquare and self._config.zone_text.mode ~= 2 then
+	if self._config.zone_text.mode ~= 2 then
 		self.Zone.Text:Hide()
 	end
 
@@ -612,14 +612,23 @@ local function minimap_UpdateBorderColor(self)
 	end
 end
 
+local function minimap_UpdateZoneColor(self)
+	if self._config.color.zone_text then
+		self.Zone.Text:SetVertexColor(E:GetRGB(C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested))
+	else
+		self.Zone.Text:SetVertexColor(1, 1, 1)
+	end
+end
+
+local function minimap_UpdateZoneText(self)
+	self.Zone.Text:SetText(GetMinimapZoneText())
+end
+
 local function minimap_UpdateZone(self)
-	local config = self._config
-	local zone = self.Zone
-
-	Minimap:SetScript("OnEnter", nil)
-	Minimap:SetScript("OnLeave", nil)
-
 	if not isSquare then
+		local config = self._config
+		local zone = self.Zone
+
 		if config.zone_text.mode == 0 then
 			zone:ClearAllPoints()
 			zone:Hide()
@@ -645,38 +654,18 @@ local function minimap_UpdateZone(self)
 				zone.Text:Show()
 			end
 		end
-
-		if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
-			Minimap:SetScript("OnEnter", minimap_OnEnter)
-			Minimap:SetScript("OnLeave", minimap_OnLeave)
-		end
 	else
-		zone.Glass:Show()
+		self.Zone.Glass:Show()
 	end
 
 	self:UpdateZoneColor()
 end
 
-local function minimap_UpdateZoneColor(self)
-	if self._config.color.zone_text then
-		self.Zone.Text:SetVertexColor(E:GetRGB(C.db.global.colors.zone[PVP_COLOR_MAP[GetZonePVPInfo()]] or C.db.global.colors.zone.contested))
-	else
-		self.Zone.Text:SetVertexColor(1, 1, 1)
-	end
-end
-
-local function minimap_UpdateZoneText(self)
-	self.Zone.Text:SetText(GetMinimapZoneText())
-end
-
 local function minimap_UpdateClock(self)
-	local config = self._config
-	local clock = Minimap.Clock
-
-	Minimap:SetScript("OnEnter", nil)
-	Minimap:SetScript("OnLeave", nil)
-
 	if not isSquare then
+		local config = self._config
+		local clock = self.Clock
+
 		if config.clock.mode == 0 then
 			clock:ClearAllPoints()
 			clock:Hide()
@@ -689,82 +678,81 @@ local function minimap_UpdateClock(self)
 
 			if config.clock.position == 0 then
 				clock:ClearAllPoints()
-				clock:SetPoint("BOTTOM", Minimap, "TOP", 0, -14)
+				clock:SetPoint("BOTTOM", self, "TOP", 0, -14)
 			else
 				clock:ClearAllPoints()
-				clock:SetPoint("TOP", Minimap, "BOTTOM", 0, 14)
+				clock:SetPoint("TOP", self, "BOTTOM", 0, 14)
 			end
-		end
-
-		if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
-			Minimap:SetScript("OnEnter", minimap_OnEnter)
-			Minimap:SetScript("OnLeave", minimap_OnLeave)
 		end
 	end
 end
 
 local function minimap_UpdateFlag(self)
-	local config = self._config
-	local challengeModeFlag = self.ChallengeModeFlag
-	local difficultyFlag = self.DifficultyFlag
-	local guildDifficultyFlag = self.GuildDifficultyFlag
+	if not isSquare then
+		local config = self._config
+		local challengeModeFlag = self.ChallengeModeFlag
+		local difficultyFlag = self.DifficultyFlag
+		local guildDifficultyFlag = self.GuildDifficultyFlag
 
-	if config.flag.mode == 0 then
-		challengeModeFlag:ClearAllPoints()
-		challengeModeFlag:SetParent(E.HIDDEN_PARENT)
-
-		difficultyFlag:ClearAllPoints()
-		difficultyFlag:SetParent(E.HIDDEN_PARENT)
-
-		guildDifficultyFlag:ClearAllPoints()
-		guildDifficultyFlag:SetParent(E.HIDDEN_PARENT)
-	elseif config.flag.mode == 1 or config.flag.mode == 2 then
-		if config.flag.mode == 1 then
+		if config.flag.mode == 0 then
+			challengeModeFlag:ClearAllPoints()
 			challengeModeFlag:SetParent(E.HIDDEN_PARENT)
+
+			difficultyFlag:ClearAllPoints()
 			difficultyFlag:SetParent(E.HIDDEN_PARENT)
+
+			guildDifficultyFlag:ClearAllPoints()
 			guildDifficultyFlag:SetParent(E.HIDDEN_PARENT)
-		else
-			challengeModeFlag:SetParent(Minimap)
-			difficultyFlag:SetParent(Minimap)
-			guildDifficultyFlag:SetParent(Minimap)
-		end
+		elseif config.flag.mode == 1 or config.flag.mode == 2 then
+			if config.flag.mode == 1 then
+				challengeModeFlag:SetParent(E.HIDDEN_PARENT)
+				difficultyFlag:SetParent(E.HIDDEN_PARENT)
+				guildDifficultyFlag:SetParent(E.HIDDEN_PARENT)
+			else
+				challengeModeFlag:SetParent(self)
+				difficultyFlag:SetParent(self)
+				guildDifficultyFlag:SetParent(self)
+			end
 
-		if config.flag.position == 0 then
-			challengeModeFlag:ClearAllPoints()
-			challengeModeFlag:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 4)
+			if config.flag.position == 0 then
+				challengeModeFlag:ClearAllPoints()
+				challengeModeFlag:SetPoint("TOPLEFT", self.Zone, "BOTTOMLEFT", 3, 4)
 
-			difficultyFlag:ClearAllPoints()
-			difficultyFlag:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 4)
+				difficultyFlag:ClearAllPoints()
+				difficultyFlag:SetPoint("TOPLEFT", self.Zone, "BOTTOMLEFT", 3, 4)
 
-			guildDifficultyFlag:ClearAllPoints()
-			guildDifficultyFlag:SetPoint("TOPLEFT", Minimap.Zone, "BOTTOMLEFT", 3, 5)
-		elseif config.flag.position == 1 then
-			challengeModeFlag:ClearAllPoints()
-			challengeModeFlag:SetPoint("TOP", Minimap.Clock, "BOTTOM", 0, 11)
+				guildDifficultyFlag:ClearAllPoints()
+				guildDifficultyFlag:SetPoint("TOPLEFT", self.Zone, "BOTTOMLEFT", 3, 5)
+			elseif config.flag.position == 1 then
+				challengeModeFlag:ClearAllPoints()
+				challengeModeFlag:SetPoint("TOP", self.Clock, "BOTTOM", 0, 11)
 
-			difficultyFlag:ClearAllPoints()
-			difficultyFlag:SetPoint("TOP", Minimap.Clock, "BOTTOM", 0, 11)
+				difficultyFlag:ClearAllPoints()
+				difficultyFlag:SetPoint("TOP", self.Clock, "BOTTOM", 0, 11)
 
-			guildDifficultyFlag:ClearAllPoints()
-			guildDifficultyFlag:SetPoint("TOP", Minimap.Clock, "BOTTOM", -2, 12)
-		else
-			challengeModeFlag:ClearAllPoints()
-			challengeModeFlag:SetPoint("TOP", Minimap, "BOTTOM", 0, 7)
+				guildDifficultyFlag:ClearAllPoints()
+				guildDifficultyFlag:SetPoint("TOP", self.Clock, "BOTTOM", -2, 12)
+			else
+				challengeModeFlag:ClearAllPoints()
+				challengeModeFlag:SetPoint("TOP", self, "BOTTOM", 0, 7)
 
-			difficultyFlag:ClearAllPoints()
-			difficultyFlag:SetPoint("TOP", Minimap, "BOTTOM", 0, 7)
+				difficultyFlag:ClearAllPoints()
+				difficultyFlag:SetPoint("TOP", self, "BOTTOM", 0, 7)
 
-			guildDifficultyFlag:ClearAllPoints()
-			guildDifficultyFlag:SetPoint("TOP", Minimap, "BOTTOM", -2, 8)
+				guildDifficultyFlag:ClearAllPoints()
+				guildDifficultyFlag:SetPoint("TOP", self, "BOTTOM", -2, 8)
+			end
 		end
 	end
+end
 
-	if self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1 then
-		Minimap:SetScript("OnEnter", minimap_OnEnter)
-		Minimap:SetScript("OnLeave", minimap_OnLeave)
+local function minimap_UpdateScripts(self)
+	if not isSquare and	(self._config.zone_text.mode == 1 or self._config.clock.mode == 1 or self._config.flag.mode == 1) then
+		self:SetScript("OnEnter", minimap_OnEnter)
+		self:SetScript("OnLeave", minimap_OnLeave)
 	else
-		Minimap:SetScript("OnEnter", nil)
-		Minimap:SetScript("OnLeave", nil)
+		self:SetScript("OnEnter", nil)
+		self:SetScript("OnLeave", nil)
 	end
 end
 
@@ -1446,6 +1434,20 @@ function MODULE:Init()
 		Minimap.DifficultyFlag = MiniMapInstanceDifficulty
 		Minimap.GuildDifficultyFlag = GuildInstanceDifficulty
 
+		if isSquare then
+			MiniMapChallengeMode:SetParent(Minimap)
+			MiniMapChallengeMode:ClearAllPoints()
+			MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 7, 4)
+
+			MiniMapInstanceDifficulty:SetParent(Minimap)
+			MiniMapInstanceDifficulty:ClearAllPoints()
+			MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 7, 5)
+
+			GuildInstanceDifficulty:SetParent(Minimap)
+			GuildInstanceDifficulty:ClearAllPoints()
+			GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 7, 5)
+		end
+
 		-- Misc
 		for _, name in next, {
 			"MinimapBackdrop",
@@ -1493,6 +1495,7 @@ function MODULE:Init()
 		Minimap.UpdateClock = minimap_UpdateClock
 		Minimap.UpdateConfig = minimap_UpdateConfig
 		Minimap.UpdateFlag = minimap_UpdateFlag
+		Minimap.UpdateScripts = minimap_UpdateScripts
 		Minimap.UpdateZone = minimap_UpdateZone
 		Minimap.UpdateZoneColor = minimap_UpdateZoneColor
 		Minimap.UpdateZoneText = minimap_UpdateZoneText
@@ -1511,6 +1514,7 @@ function MODULE:Update()
 		Minimap:UpdateClock()
 		Minimap:UpdateFlag()
 		Minimap:UpdateZone()
+		Minimap:UpdateScripts()
 	end
 end
 
