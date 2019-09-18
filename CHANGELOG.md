@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 80200.03
+
+- Added resizeable square minimap. It's the new default style for the "Classic" UI layout;
+- Added an option to hide MBC tooltip;
+- Fixed an issue where some font strings didn't have a shadow;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Misc bug fixes and tweaks.
+
+![Imgur](https://i.imgur.com/nmPJzT1.png)
+
 ## Version 80200.02
 
 - Added minimap button collection. Can be found at /LSUI > Minimap > Collect Buttons. It can  
