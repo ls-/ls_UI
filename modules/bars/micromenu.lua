@@ -1483,9 +1483,11 @@ function MODULE:CreateMicroMenu()
 				button.Tabard.emblem:SetDrawLayer("BACKGROUND", 3)
 				button.Tabard.emblem:SetPoint("CENTER", 0, 0)
 
-				hooksecurefunc("GuildMicroButton_UpdateTabard", function()
-					button:Update()
-				end)
+				if GuildMicroButton_UpdateTabard then
+					hooksecurefunc("GuildMicroButton_UpdateTabard", function()
+						button:Update()
+					end)
+				end
 
 				button.Update = guildButton_Update
 			elseif id == "lfd" then
