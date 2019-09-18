@@ -92,6 +92,15 @@ local function cleanUpStep1()
 	if not C.db.profile.version or C.db.profile.version < 8020001 then
 		C.db.global.aura_filters["M+ Affixes"].is_init = false
 	end
+
+	-- -> 80200.03
+	if not C.db.profile.version or C.db.profile.version < 8020003 then
+		C.db.profile.minimap.ls.clock.mode = nil
+		C.db.profile.minimap.traditional.clock.mode = nil
+
+		C.db.profile.minimap.ls.zone_text.position = nil
+		C.db.profile.minimap.traditional.zone_text.position = nil
+	end
 end
 
 local function cleanUpStep2()
