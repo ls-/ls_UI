@@ -24,11 +24,11 @@ local unpack = _G.unpack
 --[[ luacheck: globals
 	CalendarFrame ChatTypeInfo CreateFrame DropDownList1 GameTimeFrame GameTooltip GarrisonLandingPageMinimapButton
 	GarrisonLandingPageMinimapButton_UpdateIcon GetGameTime GetMinimapShape GetMinimapZoneText GetZonePVPInfo
-	GuildInstanceDifficulty IsAddOnLoaded LoadAddOn LSMinimapButtonCollection Minimap Minimap_ZoomIn Minimap_ZoomOut
-	MiniMapChallengeMode MinimapCompassTexture MiniMapInstanceDifficulty MiniMapMailFrame MiniMapTracking
-	MiniMapTrackingBackground MiniMapTrackingButton MiniMapTrackingDropDown MiniMapTrackingIcon MinimapZoneText
-	MinimapZoneTextButton nop QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver TimeManagerClockButton
-	ToggleCalendar UIDropDownMenu_GetCurrentDropDown UIParent
+	GuildInstanceDifficulty IsAddOnLoaded LoadAddOn LSMinimapButtonCollection LSMinimapHolder Minimap Minimap_ZoomIn
+	Minimap_ZoomOut MiniMapChallengeMode MinimapCompassTexture MiniMapInstanceDifficulty MiniMapMailFrame
+	MiniMapTracking MiniMapTrackingBackground MiniMapTrackingButton MiniMapTrackingDropDown MiniMapTrackingIcon
+	MinimapZoneText MinimapZoneTextButton nop QueueStatusFrame QueueStatusMinimapButton RegisterStateDriver
+	TimeManagerClockButton ToggleCalendar UIDropDownMenu_GetCurrentDropDown UIParent
 
 	DEFAULT_CHAT_FRAME LE_GARRISON_TYPE_8_0
 ]]
@@ -586,8 +586,9 @@ end
 local function minimap_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.minimap[E.UI_LAYOUT], self._config)
 	self._config.buttons = E:CopyTable(C.db.profile.minimap.buttons, self._config.buttons)
-	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
 	self._config.collect = E:CopyTable(C.db.profile.minimap.collect, self._config.collect)
+	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
+	self._config.size = C.db.profile.minimap.size
 end
 
 local function minimap_UpdateBorderColor(self)
@@ -756,6 +757,20 @@ local function minimap_UpdateScripts(self)
 	end
 end
 
+local function minimap_UpdateSize(self)
+	if isSquare then
+		Minimap:SetSize(self._config.size, self._config.size)
+
+		LSMinimapHolder:SetSize(self._config.size, self._config.size + 20)
+		E.Movers:Get("LSMinimapHolder"):UpdateSize()
+	else
+		Minimap:SetSize(146, 146)
+
+		LSMinimapHolder:SetSize(146, 146)
+		E.Movers:Get("LSMinimapHolder"):UpdateSize()
+	end
+end
+
 local function minimap_UpdateButtons(self)
 	local config = self._config
 
@@ -880,13 +895,9 @@ function MODULE:Init()
 		ignoredChildren[textureParent] = true
 
 		if isSquare then
-			Minimap:SetSize(C.db.profile.minimap.size, C.db.profile.minimap.size)
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
 
 			textureParent:SetPoint("TOPLEFT", 0, 20)
-
-			holder:SetSize(C.db.profile.minimap.size, C.db.profile.minimap.size + 20)
-			E.Movers:Get(holder):UpdateSize()
 
 			local bg = Minimap:CreateTexture(nil, "BACKGROUND")
 			bg:SetColorTexture(0.1, 0.1, 0.1)
@@ -921,13 +932,9 @@ function MODULE:Init()
 			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 			Minimap.SepMiddle = mid
 		else
-			Minimap:SetSize(146, 146)
 			Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 
 			textureParent:SetPoint("TOPLEFT", 0, 0)
-
-			holder:SetSize(146, 146)
-			E.Movers:Get(holder):UpdateSize()
 
 			local border = textureParent:CreateTexture(nil, "BORDER", nil, 1)
 			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap")
@@ -1496,6 +1503,7 @@ function MODULE:Init()
 		Minimap.UpdateConfig = minimap_UpdateConfig
 		Minimap.UpdateFlag = minimap_UpdateFlag
 		Minimap.UpdateScripts = minimap_UpdateScripts
+		Minimap.UpdateSize = minimap_UpdateSize
 		Minimap.UpdateZone = minimap_UpdateZone
 		Minimap.UpdateZoneColor = minimap_UpdateZoneColor
 		Minimap.UpdateZoneText = minimap_UpdateZoneText
@@ -1509,6 +1517,7 @@ end
 function MODULE:Update()
 	if isInit then
 		Minimap:UpdateConfig()
+		Minimap:UpdateSize()
 		Minimap:UpdateBorderColor()
 		Minimap:UpdateButtons()
 		Minimap:UpdateClock()
