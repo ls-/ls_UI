@@ -494,3 +494,4 @@ L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
 L["SHOW_TOOLTIP"] = "Show Tooltip"
+L["SQUARE_MINIMAP"] = "Square Minimap"

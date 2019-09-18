@@ -74,7 +74,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 			square = {
 				order = 2,
 				type = "toggle",
-				name = "[WIP] Square",
+				name = L["SQUARE_MINIMAP"],
 				get = function()
 					return C.db.char.minimap[E.UI_LAYOUT].square
 				end,
