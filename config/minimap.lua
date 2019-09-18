@@ -300,6 +300,12 @@ function CONFIG.CreateMinimapPanel(_, order)
 						name = L["ENABLE"],
 						disabled = isModuleDisabled,
 					},
+					tooltip = {
+						order = 2,
+						type = "toggle",
+						name = L["SHOW_TOOLTIP"],
+						disabled = isButtonCollectionDisabled,
+					},
 					spacer_1 = {
 						order = 9,
 						type = "description",

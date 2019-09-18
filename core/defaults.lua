@@ -2244,6 +2244,7 @@ D.profile = {
 		size = 146,
 		collect = {
 			enabled = true,
+			tooltip = true,
 			calendar = false,
 			garrison = false,
 			mail = false,

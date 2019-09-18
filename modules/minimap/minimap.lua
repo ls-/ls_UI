@@ -956,13 +956,15 @@ function MODULE:Init()
 			Minimap.Collection = button
 
 			button:SetScript("OnEnter", function(self)
-				local p, rP, x, y = getTooltipPoint(self)
+				if C.db.profile.minimap.collect.tooltip then
+					local p, rP, x, y = getTooltipPoint(self)
 
-				GameTooltip:SetOwner(self, "ANCHOR_NONE")
-				GameTooltip:SetPoint(p, self, rP, x, y)
-				GameTooltip:AddLine(L["MINIMAP_BUTTONS"], 1, 1, 1)
-				GameTooltip:AddLine(L["MINIMAP_BUTTONS_TOOLTIP"])
-				GameTooltip:Show()
+					GameTooltip:SetOwner(self, "ANCHOR_NONE")
+					GameTooltip:SetPoint(p, self, rP, x, y)
+					GameTooltip:AddLine(L["MINIMAP_BUTTONS"], 1, 1, 1)
+					GameTooltip:AddLine(L["MINIMAP_BUTTONS_TOOLTIP"])
+					GameTooltip:Show()
+				end
 			end)
 			button:SetScript("OnLeave", function()
 				GameTooltip:Hide()
