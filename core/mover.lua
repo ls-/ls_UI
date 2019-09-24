@@ -300,7 +300,13 @@ local function mover_UpdatePosition(self, xOffset, yOffset)
 	self:PostSaveUpdatePosition()
 end
 
+local mover_OnUpdate
+
 local function mover_OnEnter(self)
+	if not self:GetScript("OnUpdate") then
+		self:SetScript("OnUpdate", mover_OnUpdate)
+	end
+
 	local p, anchor, rP, x, y = E:GetCoords(self)
 
 	if isDragging or self:WasMoved() then
@@ -319,16 +325,22 @@ local function mover_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function Mover_OnLeave()
+local function mover_OnLeave(self)
+	self:SetScript("OnUpdate", nil)
+
 	GameTooltip:Hide()
 end
 
-local function mover_OnUpdate(self, elapsed)
+function mover_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 
 	if self.elapsed > 0.1 then
 		if GameTooltip:IsOwned(self) then
-			mover_OnEnter(self)
+			if self:IsMouseOver() then
+				mover_OnEnter(self)
+			else
+				mover_OnLeave(self)
+			end
 		end
 
 		self.elapsed = 0
@@ -341,10 +353,6 @@ local function mover_OnDragStart(self)
 	if self:IsDragKeyDown() then
 		self:StartMoving()
 
-		if not self.isSimple then
-			self:SetScript("OnUpdate", mover_OnUpdate)
-		end
-
 		isDragging = true
 	end
 end
@@ -353,7 +361,6 @@ local function mover_OnDragStop(self)
 	if not self.isSimple and InCombatLockdown() then return end
 
 	self:StopMovingOrSizing()
-	self:SetScript("OnUpdate", nil)
 	self:UpdatePosition()
 
 	isDragging = false
@@ -527,7 +534,7 @@ function E.Movers:Create(object, isSimple)
 	else
 		mover:SetScript("OnClick", mover_OnClick)
 		mover:SetScript("OnEnter", mover_OnEnter)
-		mover:SetScript("OnLeave", Mover_OnLeave)
+		mover:SetScript("OnLeave", mover_OnLeave)
 		mover:SetShown(areToggledOn)
 
 		mover:SetHighlightTexture("Interface\\BUTTONS\\WHITE8X8")

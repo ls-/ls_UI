@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 80205.01
+
+- Added 8.2.5 support;
+- Fixed an issue where the round minimap's size and position would be set incorrectly;
+- Fixed an issue where movers' tootlips didn't disappear sometimes;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse.
+
 ## Version 80200.03
 
 - Added resizeable square minimap. It's the new default style for the "Classic" UI layout;
