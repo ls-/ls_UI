@@ -754,7 +754,7 @@ local function minimap_UpdateSize(self)
 	else
 		Minimap:SetSize(146, 146)
 
-		LSMinimapHolder:SetSize(146, 146 + 30)
+		LSMinimapHolder:SetSize(166, 166 + 20)
 		E.Movers:Get("LSMinimapHolder"):UpdateSize()
 	end
 end
@@ -853,7 +853,6 @@ function MODULE:Init()
 		Minimap:EnableMouseWheel()
 		Minimap:ClearAllPoints()
 		Minimap:SetParent(holder)
-		Minimap:SetPoint("BOTTOM")
 		Minimap:RegisterEvent("ZONE_CHANGED")
 		Minimap:RegisterEvent("ZONE_CHANGED_INDOORS")
 		Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -884,6 +883,7 @@ function MODULE:Init()
 
 		if isSquare then
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+			Minimap:SetPoint("BOTTOM", 0, 0)
 
 			textureParent:SetPoint("TOPLEFT", 0, 20)
 
@@ -921,6 +921,7 @@ function MODULE:Init()
 			Minimap.SepMiddle = mid
 		else
 			Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+			Minimap:SetPoint("BOTTOM", 0, 10)
 
 			textureParent:SetPoint("TOPLEFT", 0, 0)
 
