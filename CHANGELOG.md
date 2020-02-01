@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 80300.01
+
+- Added 8.3.0 support;
+- Fixed tooltip errors.
+
 ## Version 80205.01
 
 - Added 8.2.5 support;
