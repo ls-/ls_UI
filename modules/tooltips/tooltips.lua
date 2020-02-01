@@ -311,14 +311,6 @@ local function tooltip_SetArtifactPowerByID(self, powerID)
 	addSpellInfo(self, info.spellID)
 end
 
-local function tooltip_SetAuctionItem(self, aucType, index)
-	if self:IsForbidden() then return end
-
-	local _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, id = GetAuctionItemInfo(aucType, index)
-
-	addItemInfo(self, id, true)
-end
-
 local function tooltip_SetBackpackToken(self, index)
 	if self:IsForbidden() then return end
 
@@ -754,7 +746,6 @@ function MODULE:Init()
 		-- hooksecurefunc(GameTooltip, "SetVoidItem", tooltip_SetItem)
 		-- hooksecurefunc(GameTooltip, "SetVoidWithdrawalItem", tooltip_SetItem)
 
-		hooksecurefunc(GameTooltip, "SetAuctionItem", tooltip_SetAuctionItem)
 		hooksecurefunc(GameTooltip, "SetLootItem", tooltip_SetLoot)
 		hooksecurefunc(GameTooltip, "SetLootRollItem", tooltip_SetLootRollItem)
 		hooksecurefunc(GameTooltip, "SetMerchantItem", tooltip_SetMerchantItem)
