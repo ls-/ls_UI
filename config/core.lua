@@ -308,7 +308,7 @@ do
 			previewFrame.ScrollBar:SetPoint("TOPRIGHT", previewFrame,"TOPRIGHT", 0, -16)
 			previewFrame.ScrollBar:SetPoint("BOTTOMRIGHT", previewFrame,"BOTTOMRIGHT", 0, 16)
 
-			local previewFrameBG = CreateFrame("Frame", nil, previewFrame)
+			local previewFrameBG = CreateFrame("Frame", nil, previewFrame, "BackdropTemplate")
 			previewFrameBG:SetPoint("TOPLEFT", -6, 6)
 			previewFrameBG:SetPoint("BOTTOMRIGHT", 6, -6)
 			previewFrameBG:SetFrameLevel(frame:GetFrameLevel())
@@ -367,7 +367,7 @@ do
 
 			undoButton.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-Undo")
 
-			local auraListFrame = CreateFrame("ScrollFrame", nil, frame, "FauxScrollFrameTemplate")
+			local auraListFrame = CreateFrame("ScrollFrame", nil, frame, "FauxScrollFrameTemplate, BackdropTemplate")
 			auraListFrame:SetFrameLevel(frame:GetFrameLevel() + 2)
 			auraListFrame:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -522,7 +522,7 @@ do
 			idInputFrame.TopRightTex:SetTexture()
 			idInputFrame.TopTex:SetTexture()
 
-			local idInputFrameBG = CreateFrame("Frame", nil, idInputFrame)
+			local idInputFrameBG = CreateFrame("Frame", nil, idInputFrame, "BackdropTemplate")
 			idInputFrameBG:SetFrameLevel(frame:GetFrameLevel() + 1)
 			idInputFrameBG:SetPoint("TOPLEFT", -6, 6)
 			idInputFrameBG:SetPoint("BOTTOMRIGHT", 9, -6)
