@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<!-- <Include file="auratracker\_auratracker.xml"/> -->
 	<Include file="auras\_auras.xml"/>
+	<Include file="auratracker\_auratracker.xml"/>
 	<!-- <Include file="bars\_bars.xml"/> -->
 	<!-- <Include file="blizzard\_blizzard.xml"/> -->
 	<!-- <Include file="filters\_filters.xml"/> -->

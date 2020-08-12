@@ -820,7 +820,7 @@ function MODULE:Init()
 
 	-- MODULE:CreateGeneralPanel(5)
 	-- MODULE:CreateActionBarsPanel(6)
-	-- MODULE:CreateAuraTrackerPanel(7)
+	MODULE:CreateAuraTrackerPanel(7)
 	-- MODULE:CreateBlizzardPanel(8)
 	MODULE:CreateAurasPanel(9)
 	-- MODULE:CreateLootPanel(10)
