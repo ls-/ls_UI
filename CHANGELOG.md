@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 90001.01
+
+- Added 9.0.1 support.
+
+NOTE: Extra and zone buttons are currently disabled, I'll figure out what to do with them later.
+
 ## Version 80300.01
 
 - Added 8.3.0 support;

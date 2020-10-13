@@ -11,6 +11,7 @@ local unpack = _G.unpack
 local C_ArtifactUI = _G.C_ArtifactUI
 local C_AzeriteItem = _G.C_AzeriteItem
 local C_PetBattles = _G.C_PetBattles
+local C_PvP = _G.C_PvP
 local C_Reputation = _G.C_Reputation
 
 --[[ luacheck: globals
@@ -206,7 +207,7 @@ local function bar_UpdateSegments(self)
 		end
 
 		-- Honour
-		if IsWatchingHonorAsXP() or InActiveBattlefield() or IsInActiveWorldPVP() then
+		if IsWatchingHonorAsXP() or C_PvP.IsActiveBattlefield() or IsInActiveWorldPVP() then
 			index = index + 1
 
 			local cur, max = UnitHonor("player"), UnitHonorMax("player")

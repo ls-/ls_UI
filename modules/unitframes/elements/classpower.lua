@@ -196,8 +196,8 @@ do
 	}
 
 	local function element_PostUpdate(self, _, max, maxChanged, powerType)
-		if self._active ~= self.isEnabled or self._powerID ~= powerType or maxChanged then
-			if not self.isEnabled then
+		if self._active ~= self.__isEnabled or self._powerID ~= powerType or maxChanged then
+			if not self.__isEnabled then
 				self:Hide()
 			else
 				self:Show()
@@ -222,7 +222,7 @@ do
 				end
 			end
 
-			self._active = self.isEnabled
+			self._active = self.__isEnabled
 			self._powerID = powerType
 		end
 	end

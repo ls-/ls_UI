@@ -105,29 +105,18 @@ local function isMinimapButton(self)
 	return false
 end
 
-local function updateGarrisonButton(self)
-	if C_Garrison.GetLandingPageGarrisonType() == LE_GARRISON_TYPE_8_0 then
-		self.NormalTexture:RemoveMaskTexture(self.MaskTexture)
-		self.PushedTexture:RemoveMaskTexture(self.MaskTexture)
-		self.Border:Hide()
-		self.Background:Hide()
-	else
-		self:SetSize(unpack(TEXTURES.SMALL.size))
-		self.NormalTexture:RemoveMaskTexture(self.MaskTexture)
-		self.PushedTexture:RemoveMaskTexture(self.MaskTexture)
-		self.Border:Show()
-		self.Background:Show()
-	end
-end
-
 local handledChildren = {}
 local ignoredChildren = {}
 
-local function handleButton(button, recursive)
+local function handleButton(button, isRecursive)
+	if button == GarrisonLandingPageMinimapButton then
+		return button
+	end
+
+	-- print("====|cff00ccff", button:GetDebugName(), "|r:====")
 	local normal = button.GetNormalTexture and button:GetNormalTexture()
 	local pushed = button.GetPushedTexture and button:GetPushedTexture()
 	local hl, icon, border, bg, thl, ticon, tborder, tbg, tnormal, tpushed
-	-- print("====|cffff0000", button:GetDebugName(), "|r:", #children, #regions,"====")
 
 	for i = 1, select("#", button:GetRegions()) do
 		local region = select(i, button:GetRegions())
@@ -140,7 +129,7 @@ local function handleButton(button, recursive)
 			if not normal then
 				if layer == "ARTWORK" or layer == "BACKGROUND" then
 					if button.icon and region == button.icon then
-						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r", region, button.icon)
+						-- print("|cffffff00", name, "|ris |cff00ff00.icon|r")
 						icon = region
 					elseif button.Icon and region == button.Icon then
 						-- print("|cffffff00", name, "|ris |cff00ff00.Icon|r")
@@ -162,6 +151,7 @@ local function handleButton(button, recursive)
 			end
 
 			if layer == "HIGHLIGHT" then
+				-- print("|cffffff00", name, "|ris |cff00ff00HIGHLIGHT|r")
 				hl = region
 			else
 				if button.border and button.border == region then
@@ -194,6 +184,7 @@ local function handleButton(button, recursive)
 		elseif oType == "Button" then
 			thl, ticon, tborder, tbg, tnormal, tpushed = handleButton(child, true)
 			button.Button = child
+			button.Button:SetAllPoints(button)
 		end
 	end
 
@@ -204,20 +195,21 @@ local function handleButton(button, recursive)
 	border = border or tborder
 	bg = bg or tbg
 
-	if not recursive then
+	if isRecursive then
+		return hl, icon, border, bg, normal, pushed
+	else
 		-- These aren't the dro- buttons you're looking for
-		if not icon and not (normal and pushed) then
+		if not (icon or normal) then
+			-- print("  |cffff2222", "BAILING OUT!", "|r")
 			ignoredChildren[button] = true
 
 			return button
 		end
 
-		handledChildren[button] = true
+		-- local t = button == GameTimeFrame and "BIG" or "SMALL"
+		local offset = 8
 
-		local t = button == GameTimeFrame and "BIG" or "SMALL"
-		local offset = button == GarrisonLandingPageMinimapButton and 0 or 8
-
-		button:SetSize(unpack(TEXTURES[t].size))
+		button:SetSize(36, 36)
 		button:SetHitRectInsets(0, 0, 0, 0)
 		button:SetFlattensRenderLayers(true)
 
@@ -272,7 +264,9 @@ local function handleButton(button, recursive)
 		end
 
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-buttons")
-		border:SetTexCoord(unpack(TEXTURES[t].coords))
+		border:SetTexCoord(90 / 256, 162 / 256, 1 / 256, 73 / 256)
+		-- border:SetTexture(136430)
+		-- border:SetTexCoord(1 / 64, 37 / 64, 0 / 64, 36 / 64)
 		border:SetDrawLayer("ARTWORK", 1)
 		border:SetAllPoints(button)
 		button.Border = border
@@ -288,14 +282,7 @@ local function handleButton(button, recursive)
 		bg:AddMaskTexture(mask)
 		button.Background = bg
 
-		if button == GarrisonLandingPageMinimapButton then
-			hooksecurefunc(button, "SetSize", updateGarrisonButton)
-			GarrisonLandingPageMinimapButton_UpdateIcon(button)
-		end
-
 		return button
-	else
-		return hl, icon, border, bg, normal, pushed
 	end
 end
 
@@ -1135,6 +1122,7 @@ function MODULE:Init()
 			end
 
 			local button = handleButton(GameTimeFrame)
+			button:SetSize(44, 44)
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
@@ -1346,6 +1334,12 @@ function MODULE:Init()
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
+			hooksecurefunc(button, "SetPoint", function(self, _, parent)
+				if parent == "MinimapBackdrop" then
+					self:ClearAllPoints()
+					updatePosition(self, C.db.profile.minimap.buttons["GarrisonLandingPageMinimapButton"])
+				end
+			end)
 			Minimap.Garrison = button
 
 			button:HookScript("OnEnter", function(self)

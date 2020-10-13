@@ -308,7 +308,7 @@ do
 			previewFrame.ScrollBar:SetPoint("TOPRIGHT", previewFrame,"TOPRIGHT", 0, -16)
 			previewFrame.ScrollBar:SetPoint("BOTTOMRIGHT", previewFrame,"BOTTOMRIGHT", 0, 16)
 
-			local previewFrameBG = CreateFrame("Frame", nil, previewFrame)
+			local previewFrameBG = CreateFrame("Frame", nil, previewFrame, "BackdropTemplate")
 			previewFrameBG:SetPoint("TOPLEFT", -6, 6)
 			previewFrameBG:SetPoint("BOTTOMRIGHT", 6, -6)
 			previewFrameBG:SetFrameLevel(frame:GetFrameLevel())
@@ -367,7 +367,7 @@ do
 
 			undoButton.Icon:SetTexture("Interface\\PaperDollInfoFrame\\UI-GearManager-Undo")
 
-			local auraListFrame = CreateFrame("ScrollFrame", nil, frame, "FauxScrollFrameTemplate")
+			local auraListFrame = CreateFrame("ScrollFrame", nil, frame, "FauxScrollFrameTemplate, BackdropTemplate")
 			auraListFrame:SetFrameLevel(frame:GetFrameLevel() + 2)
 			auraListFrame:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -522,7 +522,7 @@ do
 			idInputFrame.TopRightTex:SetTexture()
 			idInputFrame.TopTex:SetTexture()
 
-			local idInputFrameBG = CreateFrame("Frame", nil, idInputFrame)
+			local idInputFrameBG = CreateFrame("Frame", nil, idInputFrame, "BackdropTemplate")
 			idInputFrameBG:SetFrameLevel(frame:GetFrameLevel() + 1)
 			idInputFrameBG:SetPoint("TOPLEFT", -6, 6)
 			idInputFrameBG:SetPoint("BOTTOMRIGHT", 9, -6)
@@ -685,10 +685,24 @@ do
 	local badTags = {}
 
 	local function getTagName(tag)
-		local tagStart = tag:match('>+()') or 2
-		local tagEnd = (tag:match('.-()<') or -1) - 1
+		local suffixEnd = (tag:match('()%(') or -1) - 1
 
-		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+		local prefixEnd, prefixOffset = tag:match('()%$>'), 1
+		if(not prefixEnd) then
+			prefixEnd = 1
+		else
+			prefixEnd = prefixEnd - 1
+			prefixOffset = 3
+		end
+
+		local suffixStart, suffixOffset = tag:match('%<$()', prefixEnd), 1
+		if(not suffixStart) then
+			suffixStart = suffixEnd + 1
+		else
+			suffixOffset = 3
+		end
+
+		return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset)
 	end
 
 	function MODULE:IsTagStringValid(tagString)
