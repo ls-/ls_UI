@@ -314,15 +314,15 @@ end
 local function tooltip_SetBackpackToken(self, index)
 	if self:IsForbidden() then return end
 
-	local _, _, _, id = GetBackpackCurrencyInfo(index)
+	local info = C_CurrencyInfo.GetBackpackCurrencyInfo(index)
 
-	addGenericInfo(self, id)
+	addGenericInfo(self, info.currencyTypesID)
 end
 
 local function tooltip_SetCurrencyToken(self, index)
 	if self:IsForbidden() then return end
 
-	local link = GetCurrencyListLink(index)
+	local link = C_CurrencyInfo.GetCurrencyListLink(index)
 
 	handleLink(self, link)
 end
