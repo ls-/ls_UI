@@ -10,7 +10,6 @@ local next = _G.next
 local s_split = _G.string.split
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
-local tostring = _G.tostring
 
 --[[ luacheck: globals
 	ACHIEVEMENT_BUTTON ADVENTURE_JOURNAL BLIZZARD_STORE CHARACTER_BUTTON COLLECTIONS DUNGEONS_BUTTON
@@ -20,9 +19,7 @@ local tostring = _G.tostring
 ]]
 
 -- Blizz
-local GetCurrencyListInfo = _G.GetCurrencyListInfo
-local GetCurrencyListLink = _G.GetCurrencyListLink
-local GetCurrencyListSize = _G.GetCurrencyListSize
+local C_CurrencyInfo = _G.C_CurrencyInfo
 
 -- Mine
 local GROWTH_DIRS = {
@@ -91,32 +88,32 @@ local currencyOptionTables = {}
 
 local function updateCurrencyOptions()
 	local options = C.options and C.options.args.bars and C.options.args.bars.args.micromenu.args.inventory.args.currency.args or CURRENCY_TABLE.args
-	local listSize = GetCurrencyListSize()
-	local name, isHeader, icon, link, id, _
+	local listSize = C_CurrencyInfo.GetCurrencyListSize()
+	local info, id, link
 
 	t_wipe(options)
 
 	if listSize > 0 then
 		for i = 1, listSize do
-			name, isHeader, _, _, _, _, icon = GetCurrencyListInfo(i)
-			if isHeader then
-				id = name:gsub("%s", ""):lower()
+			info = C_CurrencyInfo.GetCurrencyListInfo(i)
+			if info.isHeader then
+				id = info.name:gsub("%s", ""):lower()
 				if not currencyOptionTables[id] then
 					currencyOptionTables[id] = {
 						type = "header",
-						name = name,
+						name = info.name,
 					}
 				end
 			else
-				link = GetCurrencyListLink(i)
+				link = C_CurrencyInfo.GetCurrencyListLink(i)
 				if link then
 					id = link:match("currency:(%d+)")
 					if id then
 						if not currencyOptionTables[id] then
 							currencyOptionTables[id] = {
 								type = "toggle",
-								name = name,
-								image = icon,
+								name = info.name,
+								image = info.iconFileID,
 							}
 						end
 					end
