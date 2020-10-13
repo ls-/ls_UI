@@ -421,7 +421,7 @@ do
 			return C.db.global.colors.difficulty.very_difficult
 		elseif diff >= -4 then
 			return C.db.global.colors.difficulty.difficult
-		elseif -diff <= GetQuestGreenRange() then
+		elseif -diff <= UnitQuestTrivialLevelRange("player") then
 			return C.db.global.colors.difficulty.standard
 		else
 			return C.db.global.colors.difficulty.trivial
