@@ -918,8 +918,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			action_bar_6 = getOptionsTable_Bar("bar6", 100, L["PET_BAR"]),
 			action_bar_7 = getOptionsTable_Bar("bar7", 110, L["STANCE_BAR"]),
 			pet_battle = getOptionsTable_Bar("pet_battle", 120, L["PET_BATTLE_BAR"]),
-			extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
-			zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
+			-- extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
+			-- zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
 			vehicle = getOptionsTable_Bar("vehicle", 150, L["VEHICLE_EXIT_BUTTON"]),
 			micromenu = {
 				order = 160,
