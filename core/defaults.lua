@@ -199,23 +199,23 @@ D.global = {
 		},
 		["ls:altpower:cur"] = {
 			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
-			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPower(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if GetUnitPowerBarInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPower(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
 		},
 		["ls:altpower:cur-max"] = {
 			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
-			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %s\", _VARS.E:FormatNumber(cur), _VARS.E:FormatNumber(max))\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if GetUnitPowerBarInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %s\", _VARS.E:FormatNumber(cur), _VARS.E:FormatNumber(max))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:altpower:cur-perc"] = {
 			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
-			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if GetUnitPowerBarInfo(unit) then\n    local cur, max = UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:altpower:max"] = {
 			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
-			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPowerMax(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if GetUnitPowerBarInfo(unit) then\n    return _VARS.E:FormatNumber(UnitPowerMax(unit, ALTERNATE_POWER_INDEX))\n  end\n\n  return \"\"\nend",
 		},
 		["ls:altpower:perc"] = {
 			events = "UNIT_POWER_BAR_SHOW UNIT_POWER_BAR_HIDE UNIT_POWER_UPDATE UNIT_MAXPOWER",
-			func = "function(unit)\n  if UnitAlternatePowerInfo(unit) then\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if GetUnitPowerBarInfo(unit) then\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitPower(unit, ALTERNATE_POWER_INDEX), UnitPowerMax(unit, ALTERNATE_POWER_INDEX)))\n  end\n\n  return \"\"\nend",
 		},
 		["ls:classicon"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED",
@@ -253,19 +253,19 @@ D.global = {
 			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if _VARS.E:IsDispellable(type) and not hasDebuff[type] then\n      status = status .. _VARS.INLINE_AURA_ICONS[type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
 		},
 		["ls:health:cur"] = {
-			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
 		},
 		["ls:health:cur-perc"] = {
-			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
 		},
 		["ls:health:deficit"] = {
-			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:health:perc"] = {
-			events = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
 		},
 		["ls:leadericon"] = {
@@ -310,7 +310,7 @@ D.global = {
 		},
 		["ls:phaseicon"] = {
 			events = "UNIT_PHASE",
-			func = "function(unit)\n  if (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) and UnitIsPlayer(unit) and UnitIsConnected(unit) then\n    if UnitIsWarModePhased(unit) then\n      return _VARS.INLINE_ICONS[\"PHASE_WM\"]:format(0, 0)\n    else\n      return _VARS.INLINE_ICONS[\"PHASE\"]:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit) then\n    if UnitPhaseReason(unit) == Enum.PhaseReason.WarMode then\n      return _VARS.INLINE_ICONS[\"PHASE_WM\"]:format(0, 0)\n    else\n      return _VARS.INLINE_ICONS[\"PHASE\"]:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:player:class"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED",

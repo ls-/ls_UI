@@ -685,10 +685,24 @@ do
 	local badTags = {}
 
 	local function getTagName(tag)
-		local tagStart = tag:match('>+()') or 2
-		local tagEnd = (tag:match('.-()<') or -1) - 1
+		local suffixEnd = (tag:match('()%(') or -1) - 1
 
-		return tag:sub(tagStart, tagEnd), tagStart, tagEnd
+		local prefixEnd, prefixOffset = tag:match('()%$>'), 1
+		if(not prefixEnd) then
+			prefixEnd = 1
+		else
+			prefixEnd = prefixEnd - 1
+			prefixOffset = 3
+		end
+
+		local suffixStart, suffixOffset = tag:match('%<$()', prefixEnd), 1
+		if(not suffixStart) then
+			suffixStart = suffixEnd + 1
+		else
+			suffixOffset = 3
+		end
+
+		return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset)
 	end
 
 	function MODULE:IsTagStringValid(tagString)
