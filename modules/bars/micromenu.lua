@@ -13,6 +13,7 @@ local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
 -- Blizz
+local C_CurrencyInfo = _G.C_CurrencyInfo
 local C_Timer = _G.C_Timer
 local Kiosk = _G.Kiosk
 
@@ -523,17 +524,16 @@ do
 			GameTooltip:AddLine(L["CURRENCY_COLON"])
 
 			for id in next, self._config.currency do
-				local name, cur, icon, _, _, max = GetCurrencyInfo(id)
-
-				if name and icon then
-					if max and max > 0 then
-						if cur == max then
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, E:GetRGB(C.db.global.colors.red))
+				local info = C_CurrencyInfo.GetCurrencyInfo(id)
+				if info then
+					if info.maxQuantity and info.maxQuantity > 0 then
+						if info.quantity == info.maxQuantity then
+							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, E:GetRGB(C.db.global.colors.red))
 						else
-							GameTooltip:AddDoubleLine(name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(cur), BreakUpLargeNumbers(max), icon), 1, 1, 1, E:GetRGB(C.db.global.colors.green))
+							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, E:GetRGB(C.db.global.colors.green))
 						end
 					else
-						GameTooltip:AddDoubleLine(name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(cur), icon), 1, 1, 1, 1, 1, 1)
+						GameTooltip:AddDoubleLine(info.name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), info.iconFileID), 1, 1, 1, 1, 1, 1)
 					end
 				end
 			end
