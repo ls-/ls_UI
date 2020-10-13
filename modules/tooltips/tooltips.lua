@@ -478,8 +478,8 @@ local function tooltip_SetUnit(self)
 			end
 		end
 
-		if (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) and UnitIsConnected(unit) then
-			if UnitIsWarModePhased(unit) then
+		if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit) then
+			if UnitPhaseReason(unit) == Enum.PhaseReason.WarMode then
 				status = status .. M.textures.icons_inline["PHASE_WM"]:format(size, size)
 			else
 				status = status .. M.textures.icons_inline["PHASE"]:format(size, size)
