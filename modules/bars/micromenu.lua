@@ -14,6 +14,7 @@ local unpack = _G.unpack
 
 -- Blizz
 local C_Timer = _G.C_Timer
+local Kiosk = _G.Kiosk
 
 --[[ luacheck: globals
 	AchievementMicroButton_Update BreakUpLargeNumbers ContainerIDToInventoryID CreateFrame CursorCanGoInSlot
@@ -23,7 +24,7 @@ local C_Timer = _G.C_Timer
 	GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons GetNumSavedInstances
 	GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo GetSavedWorldBossInfo GetTime
 	GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked IsInventoryItemProfessionBag
-	IsKioskModeEnabled IsLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
+	sLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
 	MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot
 	PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
 	SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
@@ -181,12 +182,11 @@ local BUTTONS = {
 }
 
 local ALERTS = {
-	"CharacterMicroButtonAlert",
-	"CollectionsMicroButtonAlert",
-	"EJMicroButtonAlert",
-	"LFDMicroButtonAlert",
-	"StoreMicroButtonAlert",
-	"TalentMicroButtonAlert",
+	"CharacterMicroButton",
+	"CollectionsMicroButton",
+	"EJMicroButton",
+	"GuildMicroButton",
+	"TalentMicroButton",
 }
 
 local TEXTURE_COORDS = {
@@ -995,7 +995,7 @@ do
 				self.lastUpdate = GetTime()
 			end
 		else
-			if IsKioskModeEnabled() then
+			if Kiosk.IsEnabled() then
 				return
 			end
 
@@ -1324,55 +1324,16 @@ local function updateMicroButtons()
 	end
 end
 
-local function repositionAlert(alert)
-	local quadrant = E:GetScreenQuadrant(alert.MicroButton)
-	local isTopQuadrant = quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT"
+local function repositionAlert(button)
+	for alert in HelpTip.framePool:EnumerateActive() do
+		if button and alert.relativeRegion == button and alert:Matches(UIParent) then
+			alert.info.autoEdgeFlipping = true
+			alert.info.autoHorizontalSlide = true
+			alert.flippedTargetPoint = HelpTip.PointInfo[alert.info.targetPoint].oppositePoint
 
-	alert:SetParent(alert.MicroButton)
-	alert:ClearAllPoints()
-	alert.Arrow:ClearAllPoints()
-	alert.Arrow.Glow:ClearAllPoints()
-
-	if isTopQuadrant then
-		alert:SetPoint("TOP", alert.MicroButton, "BOTTOM", 0, -20)
-		alert.Arrow:SetPoint("BOTTOM", alert, "TOP", 0, -4)
-		alert.Arrow.Glow:SetPoint("BOTTOM")
-	else
-		alert:SetPoint("BOTTOM", alert.MicroButton, "TOP", 0, 20)
-		alert.Arrow:SetPoint("TOP", alert, "BOTTOM", 0, 4)
-		alert.Arrow.Glow:SetPoint("TOP")
-	end
-
-	SetClampedTextureRotation(alert.Arrow.Arrow, isTopQuadrant and 180 or 0)
-	SetClampedTextureRotation(alert.Arrow.Glow, isTopQuadrant and 180 or 0)
-
-	if alert:GetRight() and (alert:GetRight() + alert:GetWidth() / 4) > UIParent:GetRight() then
-		alert:ClearAllPoints()
-		alert.Arrow:ClearAllPoints()
-		alert.Arrow.Glow:ClearAllPoints()
-
-		if isTopQuadrant then
-			alert:SetPoint("TOPRIGHT", alert.MicroButton, "BOTTOMRIGHT", 20, -20)
-			alert.Arrow:SetPoint("BOTTOMRIGHT", alert, "TOPRIGHT", -4, -4)
-			alert.Arrow.Glow:SetPoint("BOTTOM")
-		else
-			alert:SetPoint("BOTTOMRIGHT", alert.MicroButton, "TOPRIGHT", 20, 20)
-			alert.Arrow:SetPoint("TOPRIGHT", alert, "BOTTOMRIGHT", -4, 4)
-			alert.Arrow.Glow:SetPoint("TOP")
-		end
-	elseif alert:GetLeft() and (alert:GetLeft() - alert:GetWidth() / 4) < UIParent:GetLeft() then
-		alert:ClearAllPoints()
-		alert.Arrow:ClearAllPoints()
-		alert.Arrow.Glow:ClearAllPoints()
-
-		if isTopQuadrant then
-			alert:SetPoint("TOPLEFT", alert.MicroButton, "BOTTOMLEFT", -20, -20)
-			alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
-			alert.Arrow.Glow:SetPoint("BOTTOM")
-		else
-			alert:SetPoint("BOTTOMLEFT", alert.MicroButton, "TOPLEFT", -20, 20)
-			alert.Arrow:SetPoint("TOPLEFT", alert, "BOTTOMLEFT", 4, 4)
-			alert.Arrow.Glow:SetPoint("TOP")
+			alert:SetScript("OnUpdate", function()
+				alert:OnUpdate()
+			end)
 		end
 	end
 end
