@@ -409,6 +409,10 @@ function MODULE.Init()
 	end
 end
 
+function MODULE:Update()
+	self:ForEachHeader("Update")
+end
+
 function MODULE:ForEachHeader(method, ...)
 	for _, header in next, headers do
 		if header[method] then
