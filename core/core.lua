@@ -109,7 +109,9 @@ do
 
 	function P:UpdateModules()
 		for _, module in next, modules do
-			P:Call(module.Update, module)
+			if module.Update then
+				P:Call(module.Update, module)
+			end
 		end
 	end
 end
