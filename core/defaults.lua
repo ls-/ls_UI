@@ -253,19 +253,19 @@ D.global = {
 			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if _VARS.E:IsDispellable(type) and not hasDebuff[type] then\n      status = status .. _VARS.INLINE_AURA_ICONS[type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
 		},
 		["ls:health:cur"] = {
-			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
 		},
 		["ls:health:cur-perc"] = {
-			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
 		},
 		["ls:health:deficit"] = {
-			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:health:perc"] = {
-			events = "UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
+			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
 			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
 		},
 		["ls:leadericon"] = {
