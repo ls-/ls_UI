@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90001.02
+
+- Fixed health tags;
+- Fixed hotkey font.
+
 ## Version 90001.01
 
 - Added 9.0.1 support.
