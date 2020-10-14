@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 90001.03
+
+- Fixed an "issue" where you'd see an error while managing profiles. Due to how the addon is  
+  written it's just an error message, but nothing was actually broken and everything was  
+  updating properly.
+
 ## Version 90001.02
 
 - Fixed health tags;
