@@ -164,12 +164,12 @@ end
 
 -- .AdditionalPower
 do
-	local function element_PostUpdate(self, unit, cur, max)
+	local function element_PostUpdate(self, cur, max)
 		if self:IsShown() and max and max ~= 0 then
 			self.GainLossIndicators:Update(cur, max)
 		end
 
-		if not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
+		if not UnitIsConnected("player") or UnitIsDeadOrGhost("player") then
 			self:SetMinMaxValues(0, 1)
 			self:SetValue(0)
 		end

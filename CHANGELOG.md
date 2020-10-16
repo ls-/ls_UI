@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90001.04
+
+- Fixed paragon reputation handling;
+- Fixed additional power bar visibility for priests, shamans, and druids.
+
 ## Version 90001.03
 
 - Fixed an "issue" where you'd see an error while managing profiles. Due to how the addon is  
