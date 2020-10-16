@@ -12,6 +12,7 @@ local C_ArtifactUI = _G.C_ArtifactUI
 local C_AzeriteItem = _G.C_AzeriteItem
 local C_PetBattles = _G.C_PetBattles
 local C_PvP = _G.C_PvP
+local C_QuestLog = _G.C_QuestLog
 local C_Reputation = _G.C_Reputation
 
 --[[ luacheck: globals
@@ -265,7 +266,7 @@ local function bar_UpdateSegments(self)
 			}
 
 			if isParagon and hasRewardPending then
-				local text = GetQuestLogCompletionText(GetQuestLogIndexByID(rewardQuestID))
+				local text = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(rewardQuestID))
 
 				if text and text ~= "" then
 					self[index].tooltipInfo.line3 = text
