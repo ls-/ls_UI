@@ -12,6 +12,7 @@ local type = _G.type
 
 -- Blizz
 local C_ArtifactUI = _G.C_ArtifactUI
+local C_CurrencyInfo = _G.C_CurrencyInfo
 local C_PetJournal = _G.C_PetJournal
 local C_Timer = _G.C_Timer
 local C_TradeSkillUI = _G.C_TradeSkillUI
@@ -50,10 +51,10 @@ local UnitIsQuestBoss = _G.UnitIsQuestBoss
 local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
+local UnitPhaseReason = _G.UnitPhaseReason
 local UnitPVPName = _G.UnitPVPName
 local UnitRace = _G.UnitRace
 local UnitRealmRelationship = _G.UnitRealmRelationship
-local UnitPhaseReason = _G.UnitPhaseReason
 
 --[[ luacheck: globals
 	CreateFrame Enum GameTooltip GameTooltipStatusBar GameTooltipTextLeft1
