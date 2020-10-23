@@ -16,9 +16,6 @@ local C_PetJournal = _G.C_PetJournal
 local C_Timer = _G.C_Timer
 local C_TradeSkillUI = _G.C_TradeSkillUI
 local CanInspect = _G.CanInspect
-local GetAuctionItemInfo = _G.GetAuctionItemInfo
-local GetBackpackCurrencyInfo = _G.GetBackpackCurrencyInfo
-local GetCurrencyListLink = _G.GetCurrencyListLink
 local GetGuildInfo = _G.GetGuildInfo
 local GetItemCount = _G.GetItemCount
 local GetLFGDungeonRewardLink = _G.GetLFGDungeonRewardLink
@@ -42,7 +39,6 @@ local UnitExists = _G.UnitExists
 local UnitGroupRolesAssigned = _G.UnitGroupRolesAssigned
 local UnitGUID = _G.UnitGUID
 local UnitInParty = _G.UnitInParty
-local UnitInPhase = _G.UnitInPhase
 local UnitInRaid = _G.UnitInRaid
 local UnitIsAFK = _G.UnitIsAFK
 local UnitIsBattlePetCompanion = _G.UnitIsBattlePetCompanion
@@ -51,16 +47,16 @@ local UnitIsDND = _G.UnitIsDND
 local UnitIsGroupLeader = _G.UnitIsGroupLeader
 local UnitIsPlayer = _G.UnitIsPlayer
 local UnitIsQuestBoss = _G.UnitIsQuestBoss
-local UnitIsWarModePhased = _G.UnitIsWarModePhased
 local UnitIsWildBattlePet = _G.UnitIsWildBattlePet
 local UnitLevel = _G.UnitLevel
 local UnitName = _G.UnitName
 local UnitPVPName = _G.UnitPVPName
 local UnitRace = _G.UnitRace
 local UnitRealmRelationship = _G.UnitRealmRelationship
+local UnitPhaseReason = _G.UnitPhaseReason
 
 --[[ luacheck: globals
-	CreateFrame GameTooltip GameTooltipStatusBar GameTooltipTextLeft1
+	CreateFrame Enum GameTooltip GameTooltipStatusBar GameTooltipTextLeft1
 	GameTooltipTextLeft2 GameTooltipTextRight1 LSTooltipAnchor UIParent
 
 	LE_REALM_RELATION_VIRTUAL
@@ -83,6 +79,13 @@ local TEXTS_TO_REMOVE = {
 	[_G.FACTION_ALLIANCE] = true,
 	[_G.FACTION_HORDE] = true,
 	[_G.PVP] = true,
+}
+
+local PHASE_ICONS = {
+	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
+	[Enum.PhaseReason.Sharding] = M.textures.icons_inline.SHARD,
+	[Enum.PhaseReason.WarMode] = M.textures.icons_inline.WM,
+	[Enum.PhaseReason.ChromieTime] = M.textures.icons_inline.CHROMIE,
 }
 
 local function addGenericInfo(tooltip, id)
@@ -479,11 +482,7 @@ local function tooltip_SetUnit(self)
 		end
 
 		if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit) then
-			if UnitPhaseReason(unit) == Enum.PhaseReason.WarMode then
-				status = status .. M.textures.icons_inline["PHASE_WM"]:format(size, size)
-			else
-				status = status .. M.textures.icons_inline["PHASE"]:format(size, size)
-			end
+			status = status .. PHASE_ICONS[UnitPhaseReason(unit)]:format(size, size)
 		end
 
 		if isPVPReady then
