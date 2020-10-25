@@ -65,11 +65,22 @@ function MODULE.CreateExtraButton()
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
-			ExtraActionBarFrame:SetAllPoints(bar)
+			ExtraActionBarFrame:ClearAllPoints()
+			ExtraActionBarFrame:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
+			ExtraActionBarFrame:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
 
-			self:SetSize(self._config.size + 4, self._config.size + 4)
+			local width, height = ExtraActionButton1:GetSize()
+			self:SetSize((width > 0 and width or 52) + 4, (height > 0 and height or 52) + 4)
 			E.Movers:Get(self):UpdateSize()
 		end
+
+		ExtraActionBarFrame.ignoreFramePositionManager = true
+		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
+		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraAbilityContainer"] = nil
+
+		ExtraActionBarFrame:EnableMouse(false)
+		ExtraActionBarFrame:SetParent(bar)
+		ExtraActionBarFrame.ignoreInLayout = true
 
 		ExtraActionBarFrame.SetParent_ = ExtraActionBarFrame.SetParent
 		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
@@ -78,17 +89,6 @@ function MODULE.CreateExtraButton()
 			end
 		end)
 
-		ExtraActionBarFrame.ignoreFramePositionManager = true
-		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
-		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraAbilityContainer"] = nil
-
-		ExtraActionBarFrame:EnableMouse(false)
-		ExtraActionBarFrame:SetParent(bar)
-		ExtraActionBarFrame:SetAllPoints(bar)
-		ExtraActionBarFrame.ignoreInLayout = true
-
-		ExtraActionButton1:SetPoint("TOPLEFT", 2, -2)
-		ExtraActionButton1:SetPoint("BOTTOMRIGHT", -2, 2)
 		ExtraActionButton1:HookScript("OnEnter", button_OnEnter)
 		ExtraActionButton1._parent = bar
 		ExtraActionButton1._command = "EXTRAACTIONBUTTON1"
