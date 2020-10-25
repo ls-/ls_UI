@@ -1283,7 +1283,7 @@ local function getUFOption_Name(order, unit)
 			if C.db.profile.units[unit].name[info[#info]] ~= value then
 				C.db.profile.units[unit].name[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateFontObjects")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateFonts")
 			end
 		end,
 		args = {
@@ -1421,16 +1421,6 @@ local function getUFOption_Name(order, unit)
 				type = "range",
 				name = L["SIZE"],
 				min = 10, max = 20, step = 2,
-			},
-			outline = {
-				order = 31,
-				type = "toggle",
-				name = L["OUTLINE"],
-			},
-			shadow = {
-				order = 32,
-				type = "toggle",
-				name = L["SHADOW"],
 			},
 			h_alignment = {
 				order = 33,
