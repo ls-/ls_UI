@@ -1230,7 +1230,7 @@ local function getUFOption_Castbar(order, unit)
 				set = function(info, value)
 					C.db.profile.units[unit].castbar.text[info[#info]] = value
 					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateFontObjects")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateFonts")
 				end,
 				args = {
 					size = {
@@ -1238,16 +1238,6 @@ local function getUFOption_Castbar(order, unit)
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
 					},
 				},
 			},

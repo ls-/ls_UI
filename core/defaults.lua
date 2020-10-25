@@ -499,8 +499,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -663,8 +661,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -809,8 +805,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "TOPRIGHT",
@@ -1044,8 +1038,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "TOPLEFT",
@@ -1208,8 +1200,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -1603,8 +1593,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -2020,8 +2008,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -2944,6 +2930,7 @@ D.profile = {
 				position = "LEFT", -- "RIGHT", "NONE"
 			},
 			text = {
+				font = defaultFont,
 				size = 12,
 				outline = false,
 				shadow = true,

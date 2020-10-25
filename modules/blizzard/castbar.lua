@@ -175,8 +175,8 @@ local function handleCastBar(self)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
 end
 
-local function updateFontObject(fontString, config)
-	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+local function updateFont(fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetWordWrap(false)
 
 	if config.shadow then
@@ -271,10 +271,10 @@ local function updateCastBar(self)
 
 	updateColors(self)
 
-	updateFontObject(self.Text, config.text)
+	updateFont(self.Text, config.text)
 	self.Text:SetJustifyH("LEFT")
 
-	updateFontObject(self.Time, config.text)
+	updateFont(self.Time, config.text)
 	self.Time:SetJustifyH("RIGHT")
 end
 
