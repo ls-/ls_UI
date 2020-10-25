@@ -269,8 +269,9 @@ do
 		-- pvp
 		frame.PvPIndicator = self:CreatePvPIndicator(frame, textureParent)
 
-		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
 		pvpTimer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
+		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
 		frame.PvPIndicator.Timer = pvpTimer
 
@@ -534,8 +535,9 @@ do
 			end
 		end
 
-		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
 		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
+		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
 		pvpTimer.frequentUpdates = 0.1
 
