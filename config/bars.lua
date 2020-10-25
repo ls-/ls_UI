@@ -382,25 +382,17 @@ local function getOptionsTable_Bar(barID, order, name)
 				get = function(info)
 					return C.db.profile.bars[barID].hotkey[info[#info]]
 				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].hotkey[info[#info]] ~= value then
-						C.db.profile.bars[barID].hotkey[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateHotKeyFont")
-					end
-				end,
 				args = {
 					enabled = {
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.bars[barID].hotkey.enabled
-						end,
 						set = function(_, value)
 							C.db.profile.bars[barID].hotkey.enabled = value
-							BARS:GetBar(barID):UpdateConfig()
-							BARS:GetBar(barID):UpdateButtonConfig()
+
+							BARS:ForBar(barID, "UpdateConfig")
+							BARS:ForBar(barID, "UpdateButtonConfig")
+							BARS:ForBar(barID, "ForEach", "UpdateHotKey")
 						end,
 					},
 					size = {
@@ -408,6 +400,14 @@ local function getOptionsTable_Bar(barID, order, name)
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
+						set = function(_, value)
+							if C.db.profile.bars[barID].hotkey.size ~= value then
+								C.db.profile.bars[barID].hotkey.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateHotKeyFont")
+							end
+						end,
 					},
 				},
 			},
@@ -424,25 +424,16 @@ local function getOptionsTable_Bar(barID, order, name)
 				get = function(info)
 					return C.db.profile.bars[barID].macro[info[#info]]
 				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].macro[info[#info]] ~= value then
-						C.db.profile.bars[barID].macro[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateMacroFont")
-					end
-				end,
 				args = {
 					enabled = {
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.bars[barID].macro.enabled
-						end,
 						set = function(_, value)
 							C.db.profile.bars[barID].macro.enabled = value
-							BARS:GetBar(barID):UpdateConfig()
-							BARS:GetBar(barID):UpdateButtonConfig()
+
+							BARS:ForBar(barID, "UpdateConfig")
+							BARS:ForBar(barID, "UpdateButtonConfig")
 						end,
 					},
 					size = {
@@ -450,6 +441,14 @@ local function getOptionsTable_Bar(barID, order, name)
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
+						set = function(_, value)
+							if C.db.profile.bars[barID].macro.size ~= value then
+								C.db.profile.bars[barID].macro.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateMacroFont")
+							end
+						end,
 					},
 				},
 			},
@@ -463,22 +462,23 @@ local function getOptionsTable_Bar(barID, order, name)
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
-				get = function(info)
-					return C.db.profile.bars[barID].count[info[#info]]
-				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].count[info[#info]] ~= value then
-						C.db.profile.bars[barID].count[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateCountFont")
-					end
-				end,
 				args = {
 					size = {
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
+						get = function()
+							return C.db.profile.bars[barID].count.size
+						end,
+						set = function(_, value)
+							if C.db.profile.bars[barID].count.size ~= value then
+								C.db.profile.bars[barID].count.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateCountFont")
+							end
+						end,
 					},
 				},
 			},
@@ -546,16 +546,13 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.size.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
 		temp.args.flyout_dir.disabled = isModuleDisabledOrRestricted
-		temp.args.hotkey.args.enabled.set = function(_, value)
-			C.db.profile.bars[barID].hotkey.enabled = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtonConfig()
-		end
 	elseif barID == "bar6" then
 		temp.args.grid.set = function(_, value)
 			C.db.profile.bars[barID].grid = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateGrid")
+
+			BARS:ForBar(barID, "UpdateConfig")
+			BARS:ForBar(barID, "UpdateButtonConfig")
+			BARS:ForBar(barID, "ForEach", "UpdateGrid")
 		end
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10

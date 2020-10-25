@@ -110,7 +110,7 @@ local function button_HideGrid(self)
 		self.showgrid = self.showgrid - 1
 	end
 
-	if self.showgrid == 0 and not GetPetActionInfo(self:GetID()) and not self.config.showGrid then
+	if not self.config.showGrid and self.showgrid == 0 and not GetPetActionInfo(self:GetID()) then
 		self:SetAlpha(0)
 	end
 end

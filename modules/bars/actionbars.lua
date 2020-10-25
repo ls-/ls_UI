@@ -194,38 +194,6 @@ local function bar_UpdateButtonConfig(self)
 	end
 end
 
-local function button_UpdateGrid(self, state)
-	if state ~= nil then
-		self._parent._config.grid = state
-	end
-
-	self._parent:UpdateButtonConfig()
-end
-
-local function button_UpdateFlyoutDirection(self, state)
-	if state ~= nil then
-		self._parent._config.flyout_dir = state
-	end
-
-	self._parent:UpdateButtonConfig()
-end
-
-local function button_UpdateMacro(self, state)
-	if state ~= nil then
-		self._parent._config.macro.enabled = state
-	end
-
-	self._parent:UpdateButtonConfig()
-end
-
-local function button_UpdateHotKey(self, state)
-	if state ~= nil then
-		self._parent._config.hotkey.enabled = state
-	end
-
-	self._parent:UpdateButtonConfig()
-end
-
 local function updateFont(fontString, config)
 	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetWordWrap(false)
@@ -280,11 +248,7 @@ function MODULE.CreateActionBars()
 				button._command = data.type .. i
 
 				button.UpdateCountFont = button_UpdateCountFont
-				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
-				button.UpdateGrid = button_UpdateGrid
-				button.UpdateHotKey = button_UpdateHotKey
 				button.UpdateHotKeyFont = button_UpdateHotKeyFont
-				button.UpdateMacro = button_UpdateMacro
 				button.UpdateMacroFont = button_UpdateMacroFont
 
 				for k = 1, 14 do
