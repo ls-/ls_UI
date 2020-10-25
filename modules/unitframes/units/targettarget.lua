@@ -92,7 +92,8 @@ function UF:CreateTargetTargetFrame(frame)
 
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-	local status = textParent:CreateFontString(nil, "ARTWORK", "LSIcon16Font")
+	local status = textParent:CreateFontString(nil, "ARTWORK")
+	status:SetFont(GameFontNormal:GetFont(), 16)
 	status:SetJustifyH("LEFT")
 	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
 	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
