@@ -286,7 +286,7 @@ local function getUFOption_Health(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -421,7 +421,7 @@ local function getUFOption_Health(order, unit)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
+								min = 8, max = 48, step = 1,
 							},
 							h_alignment = {
 								order = 4,
@@ -533,7 +533,7 @@ local function getUFOption_Health(order, unit)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
+								min = 8, max = 48, step = 1,
 							},
 							h_alignment = {
 								order = 4,
@@ -714,7 +714,7 @@ local function getUFOption_Power(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -905,7 +905,7 @@ local function getUFOption_AlternativePower(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -1237,7 +1237,7 @@ local function getUFOption_Castbar(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 				},
 			},
@@ -1420,7 +1420,7 @@ local function getUFOption_Name(order, unit)
 				order = 30,
 				type = "range",
 				name = L["SIZE"],
-				min = 10, max = 20, step = 2,
+				min = 8, max = 48, step = 1,
 			},
 			h_alignment = {
 				order = 33,
