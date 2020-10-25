@@ -56,7 +56,8 @@ local function frame_UpdateDebuffIndicator(self)
 end
 
 function UF:CreateDebuffIndicator(frame, textParent)
-	local element = (textParent or frame):CreateFontString(nil, "ARTWORK", "LSIcon12Font")
+	local element = (textParent or frame):CreateFontString(nil, "ARTWORK")
+	element:SetFont(GameFontNormal:GetFont(), 12)
 	element:SetJustifyH("CENTER")
 	element:SetJustifyV("MIDDLE")
 	element:SetNonSpaceWrap(true)
