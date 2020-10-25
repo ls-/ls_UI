@@ -41,6 +41,7 @@ end
 local configIgnoredKeys = {
 	alt_power = true,
 	auras = true,
+	border = true,
 	castbar = true,
 	class = true,
 	class_power = true,
@@ -49,6 +50,7 @@ local configIgnoredKeys = {
 	health = true,
 	insets = true,
 	name = true,
+	portrait = true,
 	power = true,
 	pvp = true,
 	raid_target = true,
