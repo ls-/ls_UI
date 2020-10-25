@@ -847,6 +847,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 					BARS:ForBar("bar6", "UpdateConfig")
 					BARS:ForBar("bar7", "UpdateConfig")
 					BARS:ForBar("pet_battle", "UpdateConfig")
+					BARS:ForBar("extra", "UpdateConfig")
 
 					BARS:ForEach("ForEach", "UpdateCountFont")
 					BARS:ForEach("ForEach", "UpdateHotKeyFont")
@@ -951,7 +952,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			action_bar_6 = getOptionsTable_Bar("bar6", 110, L["PET_BAR"]),
 			action_bar_7 = getOptionsTable_Bar("bar7", 120, L["STANCE_BAR"]),
 			pet_battle = getOptionsTable_Bar("pet_battle", 130, L["PET_BATTLE_BAR"]),
-			-- extra = getOptionsTable_Bar("extra", 140, L["EXTRA_ACTION_BUTTON"]),
+			extra = getOptionsTable_Bar("extra", 140, L["EXTRA_ACTION_BUTTON"]),
 			-- zone = getOptionsTable_Bar("zone", 150, L["ZONE_ABILITY_BUTTON"]),
 			vehicle = getOptionsTable_Bar("vehicle", 160, L["VEHICLE_EXIT_BUTTON"]),
 			micromenu = {

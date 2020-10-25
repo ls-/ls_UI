@@ -2,7 +2,7 @@
 	<Script file="core.lua"/>
 	<Script file="actionbars.lua"/>
 	<Script file="controller.lua"/>
-	<!-- <Script file="extra.lua"/> -->
+	<Script file="extra.lua"/>
 	<Script file="junk.lua"/>
 	<Script file="micromenu.lua"/>
 	<Script file="petbar.lua"/>
