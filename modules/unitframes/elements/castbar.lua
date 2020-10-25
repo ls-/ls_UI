@@ -244,14 +244,14 @@ function UF:CreateCastbar(frame)
 	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	element.TexParent = texParent
 
-	local time = texParent:CreateFontString(nil, "ARTWORK", "LSFont12")
+	local time = texParent:CreateFontString(nil, "ARTWORK")
 	time:SetWordWrap(false)
 	time:SetPoint("TOP", element, "TOP", 0, 0)
 	time:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
 	time:SetPoint("RIGHT", element, "RIGHT", 0, 0)
 	element.Time = time
 
-	local text = texParent:CreateFontString(nil, "ARTWORK", "LSFont12")
+	local text = texParent:CreateFontString(nil, "ARTWORK")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetPoint("TOP", element, "TOP", 0, 0)
