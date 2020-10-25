@@ -4,6 +4,9 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
+local t_insert = _G.table.insert
+local t_wipe = _G.table.wipe
 
 --[[ luacheck: globals
 	CreateFrame UIParent UIPARENT_MANAGED_FRAME_POSITIONS ZoneAbilityFrame
@@ -26,24 +29,56 @@ function MODULE.CreateZoneButton()
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
-			ZoneAbilityFrame:SetAllPoints()
+			ZoneAbilityFrame:ClearAllPoints()
+			ZoneAbilityFrame:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
+			ZoneAbilityFrame:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
 
-			self:SetSize(self._config.size + 4, self._config.size + 4)
+			local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
+			if width < 1 then
+				local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool.numActiveObjects
+				local spacing = ZoneAbilityFrame.SpellButtonContainer.spacing
+				width = height * num + spacing * (num - 1)
+			end
+
+			self:SetSize(width + 4, height + 4)
 			E.Movers:Get(self):UpdateSize()
 		end
 
 		ZoneAbilityFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
+		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraAbilityContainer"] = nil
 
 		ZoneAbilityFrame:EnableMouse(false)
 		ZoneAbilityFrame:SetParent(bar)
-		ZoneAbilityFrame:SetAllPoints()
+		ZoneAbilityFrame.ignoreInLayout = true
 
-		ZoneAbilityFrame.SpellButton:SetPoint("TOPLEFT", 2, -2)
-		ZoneAbilityFrame.SpellButton:SetPoint("BOTTOMRIGHT", -2, 2)
-		ZoneAbilityFrame.SpellButton._parent = bar
-		E:SkinExtraActionButton(ZoneAbilityFrame.SpellButton)
-		bar._buttons[1] = ZoneAbilityFrame.SpellButton
+		ZoneAbilityFrame.SetParent_ = ZoneAbilityFrame.SetParent
+		hooksecurefunc(ZoneAbilityFrame, "SetParent", function(self, parent)
+			if parent ~= bar then
+				self:SetParent_(bar)
+			end
+		end)
+
+		hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(self)
+			t_wipe(bar._buttons)
+
+			for button in self.SpellButtonContainer:EnumerateActive() do
+				E:SkinExtraActionButton(button)
+				button._parent = bar
+
+				t_insert(bar._buttons, button)
+			end
+		end)
+
+		hooksecurefunc(ZoneAbilityFrame.SpellButtonContainer, "SetSize", function(self)
+			if not InCombatLockdown() then
+				local width, height = self:GetSize()
+				bar:SetSize(width + 4, height + 4)
+				E.Movers:Get(bar):UpdateSize()
+			end
+		end)
+
+		E:ForceHide(ZoneAbilityFrame.Style)
 
 		local point = C.db.profile.bars.zone.point[E.UI_LAYOUT]
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)

@@ -10,5 +10,5 @@
 	<Script file="stancebar.lua"/>
 	<Script file="vehicle.lua"/>
 	<Script file="xpbar.lua"/>
-	<!-- <Script file="zone.lua"/> -->
+	<Script file="zone.lua"/>
 </Ui>
