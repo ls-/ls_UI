@@ -77,6 +77,18 @@ local function bar_UpdateConfig(self)
 		self._config.cooldown = E:CopyTable(C.db.profile.bars[self._id].cooldown, self._config.cooldown)
 		self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	end
+
+	if C.db.profile.bars[self._id].count then
+		self._config.count = E:CopyTable(C.db.profile.bars.text, self._config.count)
+	end
+
+	if C.db.profile.bars[self._id].hotkey then
+		self._config.hotkey = E:CopyTable(C.db.profile.bars.text, self._config.hotkey)
+	end
+
+	if C.db.profile.bars[self._id].macro then
+		self._config.macro = E:CopyTable(C.db.profile.bars.text, self._config.macro)
+	end
 end
 
 local function bar_UpdateCooldownConfig(self)

@@ -95,8 +95,15 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
+
+	self.HotKey:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self.HotKey:SetWordWrap(false)
+
+	if config.shadow then
+		self.HotKey:SetShadowOffset(1, -1)
+	else
+		self.HotKey:SetShadowOffset(0, 0)
+	end
 end
 
 local function button_UpdateCooldown(self)

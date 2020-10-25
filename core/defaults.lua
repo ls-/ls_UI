@@ -2208,6 +2208,11 @@ D.profile = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
 		},
+		text = {
+			font = defaultFont,
+			outline = true,
+			shadow = false,
+		},
 		desaturation = {
 			unusable = true,
 			mana = true,
@@ -2236,17 +2241,14 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2284,17 +2286,14 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2332,17 +2331,14 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2380,17 +2376,14 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2428,17 +2421,14 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2541,7 +2531,6 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
