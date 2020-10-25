@@ -17,8 +17,8 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 ]]
 
 -- Mine
-local function updateFontObject(_, fontString, config)
-	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+local function updateFonts(_, fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
 	fontString:SetWordWrap(false)
@@ -72,6 +72,7 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
+		self._config.text = E:CopyTable(C.db.profile.units.text, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -80,8 +81,8 @@ do
 		self:ForceUpdate()
 	end
 
-	local function element_UpdateFontObjects(self)
-		updateFontObject(self.__owner, self.Text, self._config.text)
+	local function element_UpdateFonts(self)
+		updateFonts(self.__owner, self.Text, self._config.text)
 	end
 
 	local function element_UpdateTextPoints(self)
@@ -109,7 +110,7 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
-		element:UpdateFontObjects()
+		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
@@ -128,7 +129,7 @@ do
 		element._texture:SetAllPoints(element:GetStatusBarTexture())
 		hooksecurefunc(element, "SetStatusBarColor", setStatusBarColorHook)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
+		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 		element.GainLossIndicators.Gain = nil
@@ -139,7 +140,7 @@ do
 		element.PostUpdate = element_PostUpdate
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateFonts = element_UpdateFonts
 		element.UpdateGainLossColors = element_UpdateGainLossColors
 		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
@@ -157,12 +158,14 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
+		self._config.absorb_text = E:CopyTable(C.db.profile.units.text, self._config.absorb_text)
+		self._config.heal_absorb_text = E:CopyTable(C.db.profile.units.text, self._config.heal_absorb_text)
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
-	local function element_UpdateFontObjects(self)
-		updateFontObject(self.__owner, self.absorbBar.Text, self._config.absorb_text)
-		updateFontObject(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text)
+	local function element_UpdateFonts(self)
+		updateFonts(self.__owner, self.absorbBar.Text, self._config.absorb_text)
+		updateFonts(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text)
 	end
 
 	local function element_UpdateTextPoints(self)
@@ -253,7 +256,7 @@ do
 		end
 
 		element:UpdateColors()
-		element:UpdateFontObjects()
+		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 
@@ -305,7 +308,7 @@ do
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
 		absorbBar.Overlay = overlay
 
-		absorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
+		absorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK")
 
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
@@ -318,7 +321,7 @@ do
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
 
-		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK", "LSFont10")
+		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK")
 
 		frame.UpdateHealthPrediction = frame_UpdateHealthPrediction
 
@@ -330,7 +333,7 @@ do
 			maxOverflow = 1,
 			UpdateColors = element_UpdateColors,
 			UpdateConfig = element_UpdateConfig,
-			UpdateFontObjects = element_UpdateFontObjects,
+			UpdateFonts = element_UpdateFonts,
 			UpdateTags = element_UpdateTags,
 			UpdateTextPoints = element_UpdateTextPoints,
 		}

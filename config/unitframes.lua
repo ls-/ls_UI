@@ -278,7 +278,7 @@ local function getUFOption_Health(order, unit)
 					if C.db.profile.units[unit].health.text[info[#info]] ~= value then
 						C.db.profile.units[unit].health.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -287,16 +287,6 @@ local function getUFOption_Health(order, unit)
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
 					},
 					h_alignment = {
 						order = 4,
@@ -423,7 +413,7 @@ local function getUFOption_Health(order, unit)
 							if C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] ~= value then
 								C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFonts")
 							end
 						end,
 						args = {
@@ -432,16 +422,6 @@ local function getUFOption_Health(order, unit)
 								type = "range",
 								name = L["SIZE"],
 								min = 10, max = 20, step = 2,
-							},
-							outline = {
-								order = 2,
-								type = "toggle",
-								name = L["OUTLINE"],
-							},
-							shadow = {
-								order = 3,
-								type = "toggle",
-								name = L["SHADOW"],
 							},
 							h_alignment = {
 								order = 4,
@@ -545,7 +525,7 @@ local function getUFOption_Health(order, unit)
 							if C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] ~= value then
 								C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFonts")
 							end
 						end,
 						args = {
@@ -554,16 +534,6 @@ local function getUFOption_Health(order, unit)
 								type = "range",
 								name = L["SIZE"],
 								min = 10, max = 20, step = 2,
-							},
-							outline = {
-								order = 2,
-								type = "toggle",
-								name = L["OUTLINE"],
-							},
-							shadow = {
-								order = 3,
-								type = "toggle",
-								name = L["SHADOW"],
 							},
 							h_alignment = {
 								order = 4,
