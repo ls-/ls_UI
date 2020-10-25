@@ -2819,8 +2819,62 @@ function CONFIG:CreateUnitFramesPanel(order)
 				type = "description",
 				name = " ",
 			},
-			cooldown = {
+			text = {
 				order = 20,
+				type = "group",
+				guiInline = true,
+				name = L["FONT"],
+				get = function(info)
+					return C.db.profile.units.text[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.units.text[info[#info]] = value
+
+					UNITFRAMES:ForEach("ForElement", "Health", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "Health", "UpdateFonts")
+					UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateFonts")
+					UNITFRAMES:ForEach("ForElement", "Power", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "Power", "UpdateFonts")
+					UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateFonts")
+					UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateFonts")
+					UNITFRAMES:ForEach("ForElement", "Name", "UpdateConfig")
+					UNITFRAMES:ForEach("ForElement", "Name", "UpdateFonts")
+				end,
+				args = {
+					font = {
+						order = 1,
+						type = "select",
+						name = L["NAME"],
+						dialogControl = "LSM30_Font",
+						values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+						get = function()
+							return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.profile.units.text.font)
+								and C.db.profile.units.text.font
+								or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+						end,
+					},
+					outline = {
+						order = 2,
+						type = "toggle",
+						name = L["OUTLINE"],
+					},
+					shadow = {
+						order = 3,
+						type = "toggle",
+						name = L["SHADOW"],
+					},
+				},
+			},
+			spacer_3 = {
+				order = 29,
+				type = "description",
+				name = " ",
+			},
+			cooldown = {
+				order = 30,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
