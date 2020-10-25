@@ -706,7 +706,7 @@ local function getUFOption_Power(order, unit)
 					if C.db.profile.units[unit].power.text[info[#info]] ~= value then
 						C.db.profile.units[unit].power.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -715,16 +715,6 @@ local function getUFOption_Power(order, unit)
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
 					},
 					h_alignment = {
 						order = 4,
@@ -907,7 +897,7 @@ local function getUFOption_AlternativePower(order, unit)
 					if C.db.profile.units[unit].alt_power.text[info[#info]] ~= value then
 						C.db.profile.units[unit].alt_power.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -916,16 +906,6 @@ local function getUFOption_AlternativePower(order, unit)
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
 					},
 					h_alignment = {
 						order = 4,
