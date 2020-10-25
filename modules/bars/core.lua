@@ -56,6 +56,14 @@ local function bar_UpdateButtons(self, method, ...)
 	end
 end
 
+local function bar_ForEach(self, method, ...)
+	for _, button in next, self._buttons do
+		if button[method] then
+			button[method](button, ...)
+		end
+	end
+end
+
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
@@ -114,6 +122,7 @@ function MODULE.AddBar(_, barID, bar)
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then
+		bar.ForEach = bar_ForEach
 		bar.UpdateButtons = bar_UpdateButtons
 	end
 
