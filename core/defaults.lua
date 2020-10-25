@@ -2466,7 +2466,6 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
@@ -2499,7 +2498,6 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
