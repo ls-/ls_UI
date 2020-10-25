@@ -17,7 +17,7 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 ]]
 
 -- Mine
-local function updateFonts(_, fontString, config)
+local function updateFont(fontString, config)
 	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
@@ -82,7 +82,7 @@ do
 	end
 
 	local function element_UpdateFonts(self)
-		updateFonts(self.__owner, self.Text, self._config.text)
+		updateFont(self.Text, self._config.text)
 	end
 
 	local function element_UpdateTextPoints(self)
@@ -164,8 +164,8 @@ do
 	end
 
 	local function element_UpdateFonts(self)
-		updateFonts(self.__owner, self.absorbBar.Text, self._config.absorb_text)
-		updateFonts(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text)
+		updateFont(self.absorbBar.Text, self._config.absorb_text)
+		updateFont(self.healAbsorbBar.Text, self._config.heal_absorb_text)
 	end
 
 	local function element_UpdateTextPoints(self)
