@@ -361,26 +361,38 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						name = L["TEXT"],
 						inline = true,
 						get = function(info)
-							return C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]]
+							return C.db.profile.blizzard.castbar.text[info[#info]]
 						end,
 						set = function(info, value)
-							C.db.profile.blizzard.castbar[info[#info - 1]][info[#info]] = value
+							C.db.profile.blizzard.castbar.text[info[#info]] = value
 							BLIZZARD:UpdateCastBars()
 						end,
 						args = {
-							size = {
+							font = {
 								order = 1,
+								type = "select",
+								name = L["FONT"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.profile.blizzard.castbar.text.font)
+										and C.db.profile.blizzard.castbar.text.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							size = {
+								order = 2,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
+								min = 8, max = 32, step = 1,
 							},
 							outline = {
-								order = 2,
+								order = 3,
 								type = "toggle",
 								name = L["OUTLINE"],
 							},
 							shadow = {
-								order = 3,
+								order = 4,
 								type = "toggle",
 								name = L["SHADOW"],
 							},
