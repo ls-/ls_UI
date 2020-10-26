@@ -54,7 +54,7 @@ local function bar_UpdateConfig(self)
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
 	end
 
-	self._config.hotkey = E:CopyTable(C.db.profile.bars.text, self._config.hotkey)
+	self._config.hotkey = E:CopyTable(C.db.global.fonts.bars, self._config.hotkey)
 end
 
 local function button_UpdateHotKey(self, state)

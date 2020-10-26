@@ -148,9 +148,9 @@ local function bar_UpdateConfig(self)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 	end
 
-	self._config.count = E:CopyTable(C.db.profile.bars.text, self._config.count)
-	self._config.hotkey = E:CopyTable(C.db.profile.bars.text, self._config.hotkey)
-	self._config.macro = E:CopyTable(C.db.profile.bars.text, self._config.macro)
+	self._config.count = E:CopyTable(C.db.global.fonts.bars, self._config.count)
+	self._config.hotkey = E:CopyTable(C.db.global.fonts.bars, self._config.hotkey)
+	self._config.macro = E:CopyTable(C.db.global.fonts.bars, self._config.macro)
 end
 
 local function bar_UpdateButtonConfig(self)

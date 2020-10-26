@@ -201,6 +201,11 @@ D.global = {
 			outline = false,
 			shadow = true,
 		},
+		bars = {
+			font = defaultFont,
+			outline = true,
+			shadow = false,
+		},
 	},
 	tags = {
 		["ls:absorb:damage"] = {
@@ -2210,11 +2215,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
-		},
-		text = {
-			font = defaultFont,
-			outline = true,
-			shadow = false,
 		},
 		desaturation = {
 			unusable = true,

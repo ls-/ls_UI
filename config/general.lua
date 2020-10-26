@@ -1827,8 +1827,54 @@ function CONFIG:CreateGeneralPanel(order)
 							},
 						},
 					},
+					bars = {
+						order = 2,
+						type = "group",
+						name = L["ACTION_BARS"],
+						set = function(info, value)
+							C.db.global.fonts.bars[info[#info]] = value
+
+							BARS:ForBar("bar1", "UpdateConfig")
+							BARS:ForBar("bar2", "UpdateConfig")
+							BARS:ForBar("bar3", "UpdateConfig")
+							BARS:ForBar("bar4", "UpdateConfig")
+							BARS:ForBar("bar5", "UpdateConfig")
+							BARS:ForBar("bar6", "UpdateConfig")
+							BARS:ForBar("bar7", "UpdateConfig")
+							BARS:ForBar("pet_battle", "UpdateConfig")
+							BARS:ForBar("extra", "UpdateConfig")
+
+							BARS:ForEach("ForEach", "UpdateCountFont")
+							BARS:ForEach("ForEach", "UpdateHotKeyFont")
+							BARS:ForEach("ForEach", "UpdateMacroFont")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.bars.font)
+										and C.db.global.fonts.bars.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
 					units = {
-						order = 1,
+						order = 3,
 						type = "group",
 						name = L["UNITS"],
 						set = function(info, value)
