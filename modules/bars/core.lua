@@ -110,7 +110,7 @@ local function bar_UpdateCooldownConfig(self)
 		end
 
 		cooldown:UpdateConfig(self.cooldownConfig)
-		cooldown:UpdateFontObject()
+		cooldown:UpdateFont()
 	end
 end
 

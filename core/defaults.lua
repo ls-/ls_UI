@@ -190,6 +190,13 @@ D.global = {
 			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
 		},
 	},
+	fonts = {
+		cooldown = {
+			font = defaultFont,
+			outline = true,
+			shadow = false,
+		},
+	},
 	tags = {
 		["ls:absorb:damage"] = {
 			events = "UNIT_ABSORB_AMOUNT_CHANGED",
@@ -892,7 +899,6 @@ D.profile = {
 						text = {
 							enabled = true,
 							size = 10,
-							flag = "_Outline", -- "_Shadow", ""
 							v_alignment = "BOTTOM",
 						},
 					},
@@ -1284,7 +1290,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1673,7 +1678,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -2074,7 +2078,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -2254,7 +2257,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2299,7 +2301,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2344,7 +2345,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2389,7 +2389,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2434,7 +2433,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2471,7 +2469,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 10,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2503,7 +2500,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 10,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2551,13 +2547,11 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 14,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 14,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2583,7 +2577,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 14,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2772,7 +2765,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2819,7 +2811,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2856,7 +2847,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2969,7 +2959,6 @@ D.char = {
 			text = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "CENTER",
 				v_alignment = "BOTTOM",
 			},

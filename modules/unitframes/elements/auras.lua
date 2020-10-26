@@ -215,7 +215,7 @@ local function element_CreateAuraIcon(self, index)
 
 	if button.cd.UpdateConfig then
 		button.cd:UpdateConfig(self.cooldownConfig or {})
-		button.cd:UpdateFontObject()
+		button.cd:UpdateFont()
 	end
 
 	button:SetPushedTexture("")
@@ -283,7 +283,7 @@ local function element_UpdateCooldownConfig(self)
 		end
 
 		self[i].cd:UpdateConfig(self.cooldownConfig)
-		self[i].cd:UpdateFontObject()
+		self[i].cd:UpdateFont()
 	end
 end
 

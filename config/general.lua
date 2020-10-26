@@ -1783,8 +1783,54 @@ function CONFIG:CreateGeneralPanel(order)
 					},
 				},
 			},
-			tags = {
+			fonts = {
 				order = 2,
+				type = "group",
+				childGroups = "tree",
+				name = L["FONTS"],
+				get = function(info)
+					return C.db.global.fonts[info[#info - 1]][info[#info]]
+				end,
+				set = function(info, value)
+					C.db.global.fonts[info[#info - 1]][info[#info]] = value
+
+					E.Cooldowns:ForEach("UpdateConfig")
+					E.Cooldowns:ForEach("UpdateFont")
+				end,
+				args = {
+					cooldown = {
+						order = 1,
+						type = "group",
+						name = L["COOLDOWN"],
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.cooldown.font)
+										and C.db.global.fonts.cooldown.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+				},
+			},
+			tags = {
+				order = 3,
 				type = "group",
 				childGroups = "tree",
 				name = L["TAGS"],
@@ -1794,14 +1840,14 @@ function CONFIG:CreateGeneralPanel(order)
 				args = {},
 			},
 			tag_vars = {
-				order = 3,
+				order = 4,
 				type = "group",
 				childGroups = "tree",
 				name = L["TAG_VARS"],
 				args = {},
 			},
 			aura_filters = {
-				order = 4,
+				order = 5,
 				type = "group",
 				childGroups = "tree",
 				name = L["AURA_FILTERS"],

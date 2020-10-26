@@ -496,3 +496,4 @@ L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
 L["FONT"] = "Font"
+L["FONTS"] = "Fonts"
