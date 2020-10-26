@@ -72,7 +72,7 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
-		self._config.text = E:CopyTable(C.db.profile.units.text, self._config.text)
+		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -158,8 +158,8 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
-		self._config.absorb_text = E:CopyTable(C.db.profile.units.text, self._config.absorb_text)
-		self._config.heal_absorb_text = E:CopyTable(C.db.profile.units.text, self._config.heal_absorb_text)
+		self._config.absorb_text = E:CopyTable(C.db.global.fonts.units, self._config.absorb_text)
+		self._config.heal_absorb_text = E:CopyTable(C.db.global.fonts.units, self._config.heal_absorb_text)
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 

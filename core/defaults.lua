@@ -196,6 +196,11 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
+		units = {
+			font = defaultFont,
+			outline = false,
+			shadow = true,
+		},
 	},
 	tags = {
 		["ls:absorb:damage"] = {
@@ -396,11 +401,6 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
-		},
-		text = {
-			font = defaultFont,
-			outline = false,
-			shadow = true,
 		},
 		ls = {
 			player = {

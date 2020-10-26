@@ -15,7 +15,7 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].name, self._config)
-	self._config = E:CopyTable(C.db.profile.units.text, self._config)
+	self._config = E:CopyTable(C.db.global.fonts.units, self._config)
 end
 
 local function element_UpdateFonts(self)

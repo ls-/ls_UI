@@ -79,7 +79,7 @@ local function element_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
-	self._config.text = E:CopyTable(C.db.profile.units.text, self._config.text)
+	self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 end
 
 local function element_UpdateFonts(self)

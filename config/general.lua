@@ -1791,17 +1791,17 @@ function CONFIG:CreateGeneralPanel(order)
 				get = function(info)
 					return C.db.global.fonts[info[#info - 1]][info[#info]]
 				end,
-				set = function(info, value)
-					C.db.global.fonts[info[#info - 1]][info[#info]] = value
-
-					E.Cooldowns:ForEach("UpdateConfig")
-					E.Cooldowns:ForEach("UpdateFont")
-				end,
 				args = {
 					cooldown = {
 						order = 1,
 						type = "group",
 						name = L["COOLDOWN"],
+						set = function(info, value)
+							C.db.global.fonts.cooldown[info[#info]] = value
+
+							E.Cooldowns:ForEach("UpdateConfig")
+							E.Cooldowns:ForEach("UpdateFont")
+						end,
 						args = {
 							font = {
 								order = 1,
@@ -1812,6 +1812,51 @@ function CONFIG:CreateGeneralPanel(order)
 								get = function()
 									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.cooldown.font)
 										and C.db.global.fonts.cooldown.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+					units = {
+						order = 1,
+						type = "group",
+						name = L["UNITS"],
+						set = function(info, value)
+							C.db.global.fonts.units[info[#info]] = value
+
+							UNITFRAMES:ForEach("ForElement", "Health", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Health", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Power", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Power", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Name", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Name", "UpdateFonts")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.units.font)
+										and C.db.global.fonts.units.font
 										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
 								end,
 							},
