@@ -95,6 +95,8 @@ function MODULE.CreateExtraButton()
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
 
+		E:ForceHide(ExtraActionButton1.style)
+
 		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
 		ExtraActionButton1.UpdateHotKeyFont = button_UpdateHotKeyFont
 

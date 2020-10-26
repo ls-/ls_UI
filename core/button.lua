@@ -410,14 +410,9 @@ function E:SkinExtraActionButton(button)
 	skinButton(button)
 
 	local CD = button.cooldown or button.Cooldown
-	local bStyle = button.style or button.Style
 
 	if CD.SetTimerTextHeight then
 		CD:SetTimerTextHeight(14)
-	end
-
-	if bStyle then
-		E:ForceHide(bStyle)
 	end
 
 	button.__styled = true
