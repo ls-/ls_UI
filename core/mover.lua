@@ -516,8 +516,7 @@ function E.Movers:Create(object, isSimple)
 	local name = objectName .. "Mover"
 
 	local mover = CreateFrame("Button", name, UIParent)
-	-- mover:SetFrameLevel(object:GetFrameLevel() + 1)
-	mover:SetFrameStrata("HIGH")
+	mover:SetFrameLevel(object:GetFrameLevel() + 4)
 	mover:SetWidth(object:GetWidth())
 	mover:SetHeight(object:GetHeight())
 	mover:SetClampedToScreen(true)
