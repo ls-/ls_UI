@@ -2562,8 +2562,8 @@ D.profile = {
 				},
 			},
 			point = {
-				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2588,8 +2588,8 @@ D.profile = {
 				},
 			},
 			point = {
-				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
 			},
 		},
 		vehicle = { -- LeaveVehicle

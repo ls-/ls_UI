@@ -36,6 +36,7 @@ function MODULE.CreateZoneButton()
 			local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
 			if width < 1 then
 				local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool.numActiveObjects
+				num = num > 0 and num or 1
 				local spacing = ZoneAbilityFrame.SpellButtonContainer.spacing
 				width = height * num + spacing * (num - 1)
 			end
