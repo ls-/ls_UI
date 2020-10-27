@@ -164,6 +164,11 @@ function E.Cooldowns.Handle(cooldown)
 
 	handledCooldowns[cooldown] = true
 
+	local start, duration = cooldown:GetCooldownTimes()
+	if start > 0 or duration > 0 then
+		cooldown_SetCooldown(cooldown, start / 1000, duration / 1000)
+	end
+
 	return cooldown
 end
 
