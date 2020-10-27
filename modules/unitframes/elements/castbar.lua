@@ -11,8 +11,8 @@ local m_abs = _G.math.abs
 ]]
 
 -- Mine
-local function updateFontObject(_, fontString, config)
-	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+local function updateFont(fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetWordWrap(false)
 
 	if config.shadow then
@@ -79,13 +79,14 @@ local function element_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
+	self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 end
 
-local function element_UpdateFontObjects(self)
-	updateFontObject(self.__owner, self.Text, self._config.text)
+local function element_UpdateFonts(self)
+	updateFont(self.Text, self._config.text)
 	self.Text:SetJustifyH("LEFT")
 
-	updateFontObject(self.__owner, self.Time, self._config.text)
+	updateFont(self.Time, self._config.text)
 	self.Time:SetJustifyH("RIGHT")
 end
 
@@ -183,7 +184,7 @@ local function frame_UpdateCastbar(self)
 	element:UpdateSize()
 	element:UpdateIcon()
 	element:UpdateLatency()
-	element:UpdateFontObjects()
+	element:UpdateFonts()
 
 	if element._config.enabled and not self:IsElementEnabled("Castbar") then
 		self:EnableElement("Castbar")
@@ -243,14 +244,14 @@ function UF:CreateCastbar(frame)
 	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
 	element.TexParent = texParent
 
-	local time = texParent:CreateFontString(nil, "ARTWORK", "LSFont12")
+	local time = texParent:CreateFontString(nil, "ARTWORK")
 	time:SetWordWrap(false)
 	time:SetPoint("TOP", element, "TOP", 0, 0)
 	time:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
 	time:SetPoint("RIGHT", element, "RIGHT", 0, 0)
 	element.Time = time
 
-	local text = texParent:CreateFontString(nil, "ARTWORK", "LSFont12")
+	local text = texParent:CreateFontString(nil, "ARTWORK")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetPoint("TOP", element, "TOP", 0, 0)
@@ -266,7 +267,7 @@ function UF:CreateCastbar(frame)
 	element.PostCastStart = element_PostCastStart
 	element.timeToHold = 0.4
 	element.UpdateConfig = element_UpdateConfig
-	element.UpdateFontObjects = element_UpdateFontObjects
+	element.UpdateFonts = element_UpdateFonts
 	element.UpdateIcon = element_UpdateIcon
 	element.UpdateLatency = element_UpdateLatency
 	element.UpdateSize = element_UpdateSize

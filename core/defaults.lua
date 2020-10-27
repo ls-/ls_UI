@@ -5,6 +5,8 @@ local E, D = ns.E, ns.D
 local _G = getfenv(0)
 
 -- Mine
+local defaultFont = LibStub("LibSharedMedia-3.0"):GetDefault("font")
+
 local function rgb(r, g, b)
 	return E:SetRGB({}, r, g, b)
 end
@@ -188,6 +190,23 @@ D.global = {
 			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
 		},
 	},
+	fonts = {
+		cooldown = {
+			font = defaultFont,
+			outline = true,
+			shadow = false,
+		},
+		units = {
+			font = defaultFont,
+			outline = false,
+			shadow = true,
+		},
+		bars = {
+			font = defaultFont,
+			outline = true,
+			shadow = false,
+		},
+	},
 	tags = {
 		["ls:absorb:damage"] = {
 			events = "UNIT_ABSORB_AMOUNT_CHANGED",
@@ -310,7 +329,7 @@ D.global = {
 		},
 		["ls:phaseicon"] = {
 			events = "UNIT_PHASE",
-			func = "function(unit)\n  if UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit) then\n    if UnitPhaseReason(unit) == Enum.PhaseReason.WarMode then\n      return _VARS.INLINE_ICONS[\"PHASE_WM\"]:format(0, 0)\n    else\n      return _VARS.INLINE_ICONS[\"PHASE\"]:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  local phaseReason = UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit)\n  if phaseReason then\n    if phaseReason == Enum.PhaseReason.Phasing then\n      return _VARS.INLINE_ICONS.PHASE:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.Sharding then\n      return _VARS.INLINE_ICONS.SHARD:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.WarMode then\n      return _VARS.INLINE_ICONS.WM:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.ChromieTime then\n      return _VARS.INLINE_ICONS.CHROMIE:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:player:class"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED",
@@ -408,8 +427,6 @@ D.profile = {
 					text = {
 						tag = "[ls:health:cur]",
 						size = 16,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -425,8 +442,6 @@ D.profile = {
 						absorb_text = {
 							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
 							size = 12,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -440,8 +455,6 @@ D.profile = {
 						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							size = 12,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -461,8 +474,6 @@ D.profile = {
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
 						size = 14,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -500,8 +511,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -515,8 +524,6 @@ D.profile = {
 				name = {
 					size = 12,
 					tag = "",
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					word_wrap = false,
@@ -595,8 +602,6 @@ D.profile = {
 					text = {
 						tag = "[ls:health:cur]",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "RIGHT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -612,8 +617,6 @@ D.profile = {
 						absorb_text = {
 							tag = "",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -627,8 +630,6 @@ D.profile = {
 						heal_absorb_text = {
 							tag = "",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -648,8 +649,6 @@ D.profile = {
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "RIGHT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -672,8 +671,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "BOTTOM",
@@ -734,8 +731,6 @@ D.profile = {
 					text = {
 						tag = "[ls:health:cur]",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "LEFT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -751,8 +746,6 @@ D.profile = {
 						absorb_text = {
 							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "RIGHT",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -766,8 +759,6 @@ D.profile = {
 						heal_absorb_text = {
 							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "RIGHT",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -787,8 +778,6 @@ D.profile = {
 					text = {
 						tag = "[ls:power:cur-max]",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "LEFT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -826,8 +815,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "TOPRIGHT",
@@ -846,8 +833,6 @@ D.profile = {
 				name = {
 					size = 12,
 					tag = "",
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					word_wrap = false,
@@ -919,7 +904,6 @@ D.profile = {
 						text = {
 							enabled = true,
 							size = 10,
-							flag = "_Outline", -- "_Shadow", ""
 							v_alignment = "BOTTOM",
 						},
 					},
@@ -992,8 +976,6 @@ D.profile = {
 					text = {
 						tag = "[ls:health:cur]",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "LEFT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1009,8 +991,6 @@ D.profile = {
 						absorb_text = {
 							tag = "",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -1024,8 +1004,6 @@ D.profile = {
 						heal_absorb_text = {
 							tag = "",
 							size = 10,
-							outline = false,
-							shadow = true,
 							h_alignment = "CENTER",
 							v_alignment = "MIDDLE",
 							point1 = {
@@ -1045,8 +1023,6 @@ D.profile = {
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
 						size = 12,
-						outline = false,
-						shadow = true,
 						h_alignment = "LEFT",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1069,8 +1045,6 @@ D.profile = {
 					},
 					text = {
 						size = 12,
-						outline = false,
-						shadow = true,
 					},
 					point1 = {
 						p = "TOPLEFT",
@@ -1089,8 +1063,6 @@ D.profile = {
 				name = {
 					size = 12,
 					tag = "",
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					word_wrap = false,
@@ -1164,8 +1136,6 @@ D.profile = {
 				text = {
 					tag = "[ls:health:cur-perc]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1181,8 +1151,6 @@ D.profile = {
 					absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1196,8 +1164,6 @@ D.profile = {
 					heal_absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1217,8 +1183,6 @@ D.profile = {
 				text = {
 					tag = "[ls:power:cur-max]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1241,8 +1205,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -1261,8 +1223,6 @@ D.profile = {
 			name = {
 				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
-				outline = false,
-				shadow = true,
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1335,7 +1295,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1436,8 +1395,6 @@ D.profile = {
 				text = {
 					tag = "",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1453,8 +1410,6 @@ D.profile = {
 					absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1468,8 +1423,6 @@ D.profile = {
 					heal_absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1489,8 +1442,6 @@ D.profile = {
 				text = {
 					tag = "",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1510,8 +1461,6 @@ D.profile = {
 			name = {
 				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
-				outline = false,
-				shadow = true,
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1575,8 +1524,6 @@ D.profile = {
 				text = {
 					tag = "[ls:health:cur-perc]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1592,8 +1539,6 @@ D.profile = {
 					absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1607,8 +1552,6 @@ D.profile = {
 					heal_absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1628,8 +1571,6 @@ D.profile = {
 				text = {
 					tag = "[ls:power:cur-max]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1652,8 +1593,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -1672,8 +1611,6 @@ D.profile = {
 			name = {
 				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
-				outline = false,
-				shadow = true,
 				h_alignment = "RIGHT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1746,7 +1683,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -1847,8 +1783,6 @@ D.profile = {
 				text = {
 					tag = "",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1864,8 +1798,6 @@ D.profile = {
 					absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1879,8 +1811,6 @@ D.profile = {
 					heal_absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -1900,8 +1830,6 @@ D.profile = {
 				text = {
 					tag = "",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1921,8 +1849,6 @@ D.profile = {
 			name = {
 				size = 12,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
-				outline = false,
-				shadow = true,
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -1990,8 +1916,6 @@ D.profile = {
 				text = {
 					tag = "[ls:health:perc]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -2007,8 +1931,6 @@ D.profile = {
 					absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -2022,8 +1944,6 @@ D.profile = {
 					heal_absorb_text = {
 						tag = "",
 						size = 10,
-						outline = false,
-						shadow = true,
 						h_alignment = "CENTER",
 						v_alignment = "MIDDLE",
 						point1 = {
@@ -2043,8 +1963,6 @@ D.profile = {
 				text = {
 					tag = "[ls:power:cur-perc]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -2063,8 +1981,6 @@ D.profile = {
 				text = {
 					tag = "[ls:altpower:cur-perc]",
 					size = 12,
-					outline = false,
-					shadow = true,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -2087,8 +2003,6 @@ D.profile = {
 				},
 				text = {
 					size = 12,
-					outline = false,
-					shadow = true,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -2107,8 +2021,6 @@ D.profile = {
 			name = {
 				size = 12,
 				tag = "[ls:name]",
-				outline = false,
-				shadow = true,
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
@@ -2171,7 +2083,6 @@ D.profile = {
 					text = {
 						enabled = true,
 						size = 10,
-						flag = "_Outline", -- "_Shadow", ""
 						v_alignment = "BOTTOM",
 					},
 				},
@@ -2333,23 +2244,19 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2381,23 +2288,19 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2429,23 +2332,19 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2477,23 +2376,19 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2525,23 +2420,19 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			macro = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2573,13 +2464,11 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 10,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2606,13 +2495,11 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 10,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
@@ -2638,7 +2525,6 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			point = {
 				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
@@ -2661,19 +2547,17 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 14,
-				flag = "_Outline", -- "_Shadow", ""
 			},
 			cooldown = {
 				text = {
 					enabled = true,
 					size = 14,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
 			point = {
-				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2693,13 +2577,12 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 14,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "MIDDLE",
 				},
 			},
 			point = {
-				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 270},
+				ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
+				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
 			},
 		},
 		vehicle = { -- LeaveVehicle
@@ -2837,7 +2720,6 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 				format = "NUM", -- "NUM_PERC"
 				visibility = 2, -- 1 - always, 2 - mouseover
 			},
@@ -2882,7 +2764,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2929,7 +2810,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -2966,7 +2846,6 @@ D.profile = {
 				text = {
 					enabled = true,
 					size = 12,
-					flag = "_Outline", -- "_Shadow", ""
 					v_alignment = "BOTTOM",
 				},
 			},
@@ -3011,6 +2890,7 @@ D.profile = {
 				position = "LEFT", -- "RIGHT", "NONE"
 			},
 			text = {
+				font = defaultFont,
 				size = 12,
 				outline = false,
 				shadow = true,
@@ -3078,7 +2958,6 @@ D.char = {
 			text = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "CENTER",
 				v_alignment = "BOTTOM",
 			},

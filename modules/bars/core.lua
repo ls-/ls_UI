@@ -56,6 +56,14 @@ local function bar_UpdateButtons(self, method, ...)
 	end
 end
 
+local function bar_ForEach(self, method, ...)
+	for _, button in next, self._buttons do
+		if button[method] then
+			button[method](button, ...)
+		end
+	end
+end
+
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.click_on_down = C.db.profile.bars.click_on_down
@@ -68,6 +76,18 @@ local function bar_UpdateConfig(self)
 	if C.db.profile.bars[self._id].cooldown then
 		self._config.cooldown = E:CopyTable(C.db.profile.bars[self._id].cooldown, self._config.cooldown)
 		self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
+	end
+
+	if C.db.profile.bars[self._id].count then
+		self._config.count = E:CopyTable(C.db.global.fonts.bars, self._config.count)
+	end
+
+	if C.db.profile.bars[self._id].hotkey then
+		self._config.hotkey = E:CopyTable(C.db.global.fonts.bars, self._config.hotkey)
+	end
+
+	if C.db.profile.bars[self._id].macro then
+		self._config.macro = E:CopyTable(C.db.global.fonts.bars, self._config.macro)
 	end
 end
 
@@ -90,7 +110,7 @@ local function bar_UpdateCooldownConfig(self)
 		end
 
 		cooldown:UpdateConfig(self.cooldownConfig)
-		cooldown:UpdateFontObject()
+		cooldown:UpdateFont()
 	end
 end
 
@@ -114,6 +134,7 @@ function MODULE.AddBar(_, barID, bar)
 	bar.UpdateVisibility = bar_UpdateVisibility
 
 	if bar._buttons then
+		bar.ForEach = bar_ForEach
 		bar.UpdateButtons = bar_UpdateButtons
 	end
 
@@ -243,8 +264,8 @@ function MODULE.Init()
 		MODULE:CreateStanceBar()
 		MODULE:CreatePetActionBar()
 		MODULE:CreatePetBattleBar()
-		-- MODULE:CreateExtraButton()
-		-- MODULE:CreateZoneButton()
+		MODULE:CreateExtraButton()
+		MODULE:CreateZoneButton()
 		MODULE:CreateVehicleExitButton()
 		MODULE:CreateMicroMenu()
 		MODULE:CreateXPBar()

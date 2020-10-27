@@ -278,7 +278,7 @@ local function getUFOption_Health(order, unit)
 					if C.db.profile.units[unit].health.text[info[#info]] ~= value then
 						C.db.profile.units[unit].health.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Health", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -286,17 +286,7 @@ local function getUFOption_Health(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -423,7 +413,7 @@ local function getUFOption_Health(order, unit)
 							if C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] ~= value then
 								C.db.profile.units[unit].health.prediction.absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFonts")
 							end
 						end,
 						args = {
@@ -431,17 +421,7 @@ local function getUFOption_Health(order, unit)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							outline = {
-								order = 2,
-								type = "toggle",
-								name = L["OUTLINE"],
-							},
-							shadow = {
-								order = 3,
-								type = "toggle",
-								name = L["SHADOW"],
+								min = 8, max = 48, step = 1,
 							},
 							h_alignment = {
 								order = 4,
@@ -545,7 +525,7 @@ local function getUFOption_Health(order, unit)
 							if C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] ~= value then
 								C.db.profile.units[unit].health.prediction.heal_absorb_text[info[#info]] = value
 								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateConfig")
-								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFontObjects")
+								UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "HealthPrediction", "UpdateFonts")
 							end
 						end,
 						args = {
@@ -553,17 +533,7 @@ local function getUFOption_Health(order, unit)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							outline = {
-								order = 2,
-								type = "toggle",
-								name = L["OUTLINE"],
-							},
-							shadow = {
-								order = 3,
-								type = "toggle",
-								name = L["SHADOW"],
+								min = 8, max = 48, step = 1,
 							},
 							h_alignment = {
 								order = 4,
@@ -736,7 +706,7 @@ local function getUFOption_Power(order, unit)
 					if C.db.profile.units[unit].power.text[info[#info]] ~= value then
 						C.db.profile.units[unit].power.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Power", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -744,17 +714,7 @@ local function getUFOption_Power(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -937,7 +897,7 @@ local function getUFOption_AlternativePower(order, unit)
 					if C.db.profile.units[unit].alt_power.text[info[#info]] ~= value then
 						C.db.profile.units[unit].alt_power.text[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "AlternativePower", "UpdateFonts")
 					end
 				end,
 				args = {
@@ -945,17 +905,7 @@ local function getUFOption_AlternativePower(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -1280,24 +1230,14 @@ local function getUFOption_Castbar(order, unit)
 				set = function(info, value)
 					C.db.profile.units[unit].castbar.text[info[#info]] = value
 					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateFontObjects")
+					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Castbar", "UpdateFonts")
 				end,
 				args = {
 					size = {
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
+						min = 8, max = 32, step = 1,
 					},
 				},
 			},
@@ -1343,7 +1283,7 @@ local function getUFOption_Name(order, unit)
 			if C.db.profile.units[unit].name[info[#info]] ~= value then
 				C.db.profile.units[unit].name[info[#info]] = value
 				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateConfig")
-				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateFontObjects")
+				UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Name", "UpdateFonts")
 			end
 		end,
 		args = {
@@ -1480,17 +1420,7 @@ local function getUFOption_Name(order, unit)
 				order = 30,
 				type = "range",
 				name = L["SIZE"],
-				min = 10, max = 20, step = 2,
-			},
-			outline = {
-				order = 31,
-				type = "toggle",
-				name = L["OUTLINE"],
-			},
-			shadow = {
-				order = 32,
-				type = "toggle",
-				name = L["SHADOW"],
+				min = 8, max = 48, step = 1,
 			},
 			h_alignment = {
 				order = 33,
@@ -1843,6 +1773,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.rows = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -1856,6 +1787,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.per_row = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -1875,6 +1807,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.size_override = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -2004,7 +1937,7 @@ local function getUFOption_Auras(order, unit)
 					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.count[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFont")
 					end
 				end,
 				args = {
@@ -2012,7 +1945,7 @@ local function getUFOption_Auras(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					outline = {
 						order = 2,
@@ -2068,13 +2001,7 @@ local function getUFOption_Auras(order, unit)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = CONFIG.FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 4,

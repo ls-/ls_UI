@@ -1783,8 +1783,147 @@ function CONFIG:CreateGeneralPanel(order)
 					},
 				},
 			},
-			tags = {
+			fonts = {
 				order = 2,
+				type = "group",
+				childGroups = "tree",
+				name = L["FONTS"],
+				get = function(info)
+					return C.db.global.fonts[info[#info - 1]][info[#info]]
+				end,
+				args = {
+					cooldown = {
+						order = 1,
+						type = "group",
+						name = L["COOLDOWN"],
+						set = function(info, value)
+							C.db.global.fonts.cooldown[info[#info]] = value
+
+							E.Cooldowns:ForEach("UpdateConfig")
+							E.Cooldowns:ForEach("UpdateFont")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.cooldown.font)
+										and C.db.global.fonts.cooldown.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+					bars = {
+						order = 2,
+						type = "group",
+						name = L["ACTION_BARS"],
+						set = function(info, value)
+							C.db.global.fonts.bars[info[#info]] = value
+
+							BARS:ForBar("bar1", "UpdateConfig")
+							BARS:ForBar("bar2", "UpdateConfig")
+							BARS:ForBar("bar3", "UpdateConfig")
+							BARS:ForBar("bar4", "UpdateConfig")
+							BARS:ForBar("bar5", "UpdateConfig")
+							BARS:ForBar("bar6", "UpdateConfig")
+							BARS:ForBar("bar7", "UpdateConfig")
+							BARS:ForBar("pet_battle", "UpdateConfig")
+							BARS:ForBar("extra", "UpdateConfig")
+							BARS:ForBar("xpbar", "UpdateConfig")
+
+							BARS:ForEach("ForEach", "UpdateCountFont")
+							BARS:ForEach("ForEach", "UpdateHotKeyFont")
+							BARS:ForEach("ForEach", "UpdateMacroFont")
+							BARS:ForBar("xpbar", "UpdateFont")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.bars.font)
+										and C.db.global.fonts.bars.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+					units = {
+						order = 3,
+						type = "group",
+						name = L["UNITS"],
+						set = function(info, value)
+							C.db.global.fonts.units[info[#info]] = value
+
+							UNITFRAMES:ForEach("ForElement", "Health", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Health", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Power", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Power", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateFonts")
+							UNITFRAMES:ForEach("ForElement", "Name", "UpdateConfig")
+							UNITFRAMES:ForEach("ForElement", "Name", "UpdateFonts")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.units.font)
+										and C.db.global.fonts.units.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+				},
+			},
+			tags = {
+				order = 3,
 				type = "group",
 				childGroups = "tree",
 				name = L["TAGS"],
@@ -1794,14 +1933,14 @@ function CONFIG:CreateGeneralPanel(order)
 				args = {},
 			},
 			tag_vars = {
-				order = 3,
+				order = 4,
 				type = "group",
 				childGroups = "tree",
 				name = L["TAG_VARS"],
 				args = {},
 			},
 			aura_filters = {
-				order = 4,
+				order = 5,
 				type = "group",
 				childGroups = "tree",
 				name = L["AURA_FILTERS"],

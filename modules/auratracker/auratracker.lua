@@ -155,7 +155,7 @@ local function bar_UpdateCooldownConfig(self)
 		end
 
 		button.CD:UpdateConfig(self.cooldownConfig)
-		button.CD:UpdateFontObject()
+		button.CD:UpdateFont()
 	end
 end
 

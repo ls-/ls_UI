@@ -382,38 +382,32 @@ local function getOptionsTable_Bar(barID, order, name)
 				get = function(info)
 					return C.db.profile.bars[barID].hotkey[info[#info]]
 				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].hotkey[info[#info]] ~= value then
-						C.db.profile.bars[barID].hotkey[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateHotKeyFont")
-					end
-				end,
 				args = {
 					enabled = {
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.bars[barID].hotkey.enabled
-						end,
 						set = function(_, value)
 							C.db.profile.bars[barID].hotkey.enabled = value
-							BARS:GetBar(barID):UpdateConfig()
-							BARS:GetBar(barID):UpdateButtonConfig()
+
+							BARS:ForBar(barID, "UpdateConfig")
+							BARS:ForBar(barID, "UpdateButtonConfig")
+							BARS:ForBar(barID, "ForEach", "UpdateHotKey")
 						end,
 					},
 					size = {
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
+						set = function(_, value)
+							if C.db.profile.bars[barID].hotkey.size ~= value then
+								C.db.profile.bars[barID].hotkey.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateHotKeyFont")
+							end
+						end,
 					},
 				},
 			},
@@ -430,38 +424,31 @@ local function getOptionsTable_Bar(barID, order, name)
 				get = function(info)
 					return C.db.profile.bars[barID].macro[info[#info]]
 				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].macro[info[#info]] ~= value then
-						C.db.profile.bars[barID].macro[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateMacroFont")
-					end
-				end,
 				args = {
 					enabled = {
 						order = 1,
 						type = "toggle",
 						name = L["ENABLE"],
-						get = function()
-							return C.db.profile.bars[barID].macro.enabled
-						end,
 						set = function(_, value)
 							C.db.profile.bars[barID].macro.enabled = value
-							BARS:GetBar(barID):UpdateConfig()
-							BARS:GetBar(barID):UpdateButtonConfig()
+
+							BARS:ForBar(barID, "UpdateConfig")
+							BARS:ForBar(barID, "UpdateButtonConfig")
 						end,
 					},
 					size = {
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
+						set = function(_, value)
+							if C.db.profile.bars[barID].macro.size ~= value then
+								C.db.profile.bars[barID].macro.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateMacroFont")
+							end
+						end,
 					},
 				},
 			},
@@ -475,28 +462,23 @@ local function getOptionsTable_Bar(barID, order, name)
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
-				get = function(info)
-					return C.db.profile.bars[barID].count[info[#info]]
-				end,
-				set = function(info, value)
-					if C.db.profile.bars[barID].count[info[#info]] ~= value then
-						C.db.profile.bars[barID].count[info[#info]] = value
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateButtons("UpdateCountFont")
-					end
-				end,
 				args = {
 					size = {
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
+						get = function()
+							return C.db.profile.bars[barID].count.size
+						end,
+						set = function(_, value)
+							if C.db.profile.bars[barID].count.size ~= value then
+								C.db.profile.bars[barID].count.size = value
+
+								BARS:ForBar(barID, "UpdateConfig")
+								BARS:ForBar(barID, "ForEach", "UpdateCountFont")
+							end
+						end,
 					},
 				},
 			},
@@ -530,13 +512,7 @@ local function getOptionsTable_Bar(barID, order, name)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 4,
@@ -564,16 +540,13 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.size.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
 		temp.args.flyout_dir.disabled = isModuleDisabledOrRestricted
-		temp.args.hotkey.args.enabled.set = function(_, value)
-			C.db.profile.bars[barID].hotkey.enabled = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtonConfig()
-		end
 	elseif barID == "bar6" then
 		temp.args.grid.set = function(_, value)
 			C.db.profile.bars[barID].grid = value
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateButtons("UpdateGrid")
+
+			BARS:ForBar(barID, "UpdateConfig")
+			BARS:ForBar(barID, "UpdateButtonConfig")
+			BARS:ForBar(barID, "ForEach", "UpdateGrid")
 		end
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10
@@ -643,6 +616,7 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
+		temp.args.size = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
@@ -655,6 +629,7 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
+		temp.args.size = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
@@ -918,8 +893,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			action_bar_6 = getOptionsTable_Bar("bar6", 100, L["PET_BAR"]),
 			action_bar_7 = getOptionsTable_Bar("bar7", 110, L["STANCE_BAR"]),
 			pet_battle = getOptionsTable_Bar("pet_battle", 120, L["PET_BATTLE_BAR"]),
-			-- extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
-			-- zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
+			extra = getOptionsTable_Bar("extra", 130, L["EXTRA_ACTION_BUTTON"]),
+			zone = getOptionsTable_Bar("zone", 140, L["ZONE_ABILITY_BUTTON"]),
 			vehicle = getOptionsTable_Bar("vehicle", 150, L["VEHICLE_EXIT_BUTTON"]),
 			micromenu = {
 				order = 160,
@@ -1375,12 +1350,9 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						set = function(info, value)
 							if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 								C.db.profile.bars.xpbar.text[info[#info]] = value
-								BARS:GetBar("xpbar"):UpdateConfig()
-								BARS:GetBar("xpbar"):ForEach(
-									"UpdateFont",
-									C.db.profile.bars.xpbar.text.size,
-									C.db.profile.bars.xpbar.text.flag)
-								BARS:GetBar("xpbar"):ForEach("UpdateText")
+
+								BARS:ForBar("xpbar", "UpdateConfig")
+								BARS:ForBar("xpbar", "UpdateFont")
 							end
 						end,
 						args = {
@@ -1388,13 +1360,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							flag = {
-								order = 2,
-								type = "select",
-								name = L["FLAG"],
-								values = FLAGS,
+								min = 8, max = 32, step = 1,
 							},
 							format = {
 								order = 3,
@@ -1404,9 +1370,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								set = function(info, value)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
-										BARS:GetBar("xpbar"):UpdateConfig()
-										BARS:GetBar("xpbar"):UpdateTextFormat(value)
-										BARS:GetBar("xpbar"):ForEach("UpdateText")
+
+										BARS:ForBar("xpbar", "UpdateConfig")
+										BARS:ForBar("xpbar", "UpdateTextFormat")
+										BARS:ForBar("xpbar", "ForEach", "UpdateText")
 									end
 								end,
 							},
@@ -1418,8 +1385,9 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								set = function(info, value)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
-										BARS:GetBar("xpbar"):UpdateConfig()
-										BARS:GetBar("xpbar"):ForEach("LockText", value == 1)
+
+										BARS:ForBar("xpbar", "UpdateConfig")
+										BARS:ForBar("xpbar", "UpdateTextVisibility")
 									end
 								end,
 							},

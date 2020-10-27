@@ -269,7 +269,7 @@ do
 		-- pvp
 		frame.PvPIndicator = self:CreatePvPIndicator(frame, textureParent)
 
-		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
 		pvpTimer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
@@ -284,14 +284,16 @@ do
 		frame.Name = self:CreateName(frame, textParent)
 
 		-- status icons/texts
-		local status = textParent:CreateFontString(nil, "OVERLAY", "LSIcon16Font")
+		local status = textParent:CreateFontString(nil, "OVERLAY")
+		status:SetFont(GameFontNormal:GetFont(), 16)
 		status:SetWidth(24)
 		status:SetPoint("LEFT", frame, "LEFT", 2, 0)
 		status:SetNonSpaceWrap(true)
 
 		frame:Tag(status, "[ls:leadericon][ls:lfdroleicon]")
 
-		status = textParent:CreateFontString(nil, "OVERLAY", "LSIcon16Font")
+		status = textParent:CreateFontString(nil, "OVERLAY")
+		status:SetFont(GameFontNormal:GetFont(), 16)
 		status:SetWidth(24)
 		status:SetPoint("RIGHT", frame, "RIGHT", -2, 0)
 		status:SetNonSpaceWrap(true)
@@ -533,7 +535,7 @@ do
 			end
 		end
 
-		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
 		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
@@ -548,7 +550,8 @@ do
 		-- auras
 		frame.Auras = self:CreateAuras(frame, "player")
 
-		local status = textParent:CreateFontString(nil, "ARTWORK", "LSIcon16Font")
+		local status = textParent:CreateFontString(nil, "ARTWORK")
+		status:SetFont(GameFontNormal:GetFont(), 16)
 		status:SetJustifyH("RIGHT")
 		status:SetPoint("RIGHT", frame, "BOTTOMRIGHT", -4, -1)
 		frame:Tag(status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")

@@ -147,6 +147,10 @@ local function bar_UpdateConfig(self)
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 	end
+
+	self._config.count = E:CopyTable(C.db.global.fonts.bars, self._config.count)
+	self._config.hotkey = E:CopyTable(C.db.global.fonts.bars, self._config.hotkey)
+	self._config.macro = E:CopyTable(C.db.global.fonts.bars, self._config.macro)
 end
 
 local function bar_UpdateButtonConfig(self)
@@ -190,54 +194,27 @@ local function bar_UpdateButtonConfig(self)
 	end
 end
 
-local function button_UpdateGrid(self, state)
-	if state ~= nil then
-		self._parent._config.grid = state
+local function updateFont(fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	fontString:SetWordWrap(false)
+
+	if config.shadow then
+		fontString:SetShadowOffset(1, -1)
+	else
+		fontString:SetShadowOffset(0, 0)
 	end
-
-	self._parent:UpdateButtonConfig()
-end
-
-local function button_UpdateFlyoutDirection(self, state)
-	if state ~= nil then
-		self._parent._config.flyout_dir = state
-	end
-
-	self._parent:UpdateButtonConfig()
-end
-
-local function button_UpdateMacro(self, state)
-	if state ~= nil then
-		self._parent._config.macro.enabled = state
-	end
-
-	self._parent:UpdateButtonConfig()
 end
 
 local function button_UpdateMacroFont(self)
-	local config = self._parent._config.macro
-	self.Name:SetFontObject("LSFont" .. config.size .. config.flag)
-	self.Name:SetWordWrap(false)
-end
-
-local function button_UpdateHotKey(self, state)
-	if state ~= nil then
-		self._parent._config.hotkey.enabled = state
-	end
-
-	self._parent:UpdateButtonConfig()
+	updateFont(self.Name, self._parent._config.macro)
 end
 
 local function button_UpdateHotKeyFont(self)
-	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
-	self.HotKey:SetWordWrap(false)
+	updateFont(self.HotKey, self._parent._config.hotkey)
 end
 
 local function button_UpdateCountFont(self)
-	local config = self._parent._config.count
-	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
-	self.Count:SetWordWrap(false)
+	updateFont(self.Count, self._parent._config.count)
 end
 
 function MODULE.CreateActionBars()
@@ -271,11 +248,7 @@ function MODULE.CreateActionBars()
 				button._command = data.type .. i
 
 				button.UpdateCountFont = button_UpdateCountFont
-				button.UpdateFlyoutDirection = button_UpdateFlyoutDirection
-				button.UpdateGrid = button_UpdateGrid
-				button.UpdateHotKey = button_UpdateHotKey
 				button.UpdateHotKeyFont = button_UpdateHotKeyFont
-				button.UpdateMacro = button_UpdateMacro
 				button.UpdateMacroFont = button_UpdateMacroFont
 
 				for k = 1, 14 do

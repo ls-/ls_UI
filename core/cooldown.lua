@@ -26,7 +26,6 @@ local defaults = {
 	text = {
 		enabled = true,
 		size = 12,
-		flag = "_Outline", -- "_Shadow", ""
 		v_alignment = "MIDDLE",
 	},
 }
@@ -107,16 +106,16 @@ local function cooldown_SetCooldown(self, start, duration)
 	activeCooldowns[self] = nil
 end
 
-local function cooldown_UpdateFontObject(self, fontObject)
+local function cooldown_UpdateFont(self)
 	local config = self.config.text
 
-	self.Timer:SetFontObject(fontObject or "LSFont" .. config.size .. config.flag)
+	self.Timer:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self.Timer:SetJustifyH("CENTER")
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
 	self.Timer:SetWordWrap(false)
 
-	if config.flag == "_Shadow" then
+	if config.shadow then
 		self.Timer:SetShadowOffset(1, -1)
 	else
 		self.Timer:SetShadowOffset(0, 0)
@@ -124,8 +123,12 @@ local function cooldown_UpdateFontObject(self, fontObject)
 end
 
 local function cooldown_UpdateConfig(self, config)
-	self.config = E:CopyTable(defaults, self.config)
-	self.config = E:CopyTable(config, self.config)
+	if config then
+		self.config = E:CopyTable(defaults, self.config)
+		self.config = E:CopyTable(config, self.config)
+	end
+
+	self.config.text = E:CopyTable(C.db.global.fonts.cooldown, self.config.text)
 
 	if self.config.m_ss_threshold ~= 0 and self.config.m_ss_threshold < 91 then
 		self.config.m_ss_threshold = 0
@@ -154,12 +157,17 @@ function E.Cooldowns.Handle(cooldown)
 	hooksecurefunc(cooldown, "SetCooldown", cooldown_SetCooldown)
 
 	cooldown.UpdateConfig = cooldown_UpdateConfig
-	cooldown.UpdateFontObject = cooldown_UpdateFontObject
+	cooldown.UpdateFont = cooldown_UpdateFont
 
 	cooldown:UpdateConfig(defaults)
-	cooldown:UpdateFontObject()
+	cooldown:UpdateFont()
 
 	handledCooldowns[cooldown] = true
+
+	local start, duration = cooldown:GetCooldownTimes()
+	if start > 0 or duration > 0 then
+		cooldown_SetCooldown(cooldown, start / 1000, duration / 1000)
+	end
 
 	return cooldown
 end
@@ -172,4 +180,12 @@ function E.Cooldowns.Create(parent)
 	E.Cooldowns.Handle(cooldown)
 
 	return cooldown
+end
+
+function E.Cooldowns:ForEach(method, ...)
+	for cooldown in next, handledCooldowns do
+		if cooldown[method] then
+			cooldown[method](cooldown, ...)
+		end
+	end
 end

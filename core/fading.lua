@@ -125,7 +125,9 @@ function E.SetUpFading(_, object)
 	fader.object = object
 	fader.threshold = 0.05
 
-	widgets[object] = {}
+	widgets[object] = {
+		config = {},
+	}
 
 	object.Fader = fader
 	object.PauseFading = object_PauseFading
@@ -134,71 +136,47 @@ function E.SetUpFading(_, object)
 end
 
 function E:FadeIn(object, inDelay, inDuration, minAlpha, maxAlpha)
-	if not miscWidgets[object] then
-		miscWidgets[object] = {
-			config = {
-				in_delay = 0,
-				in_duration = 0.15,
-				max_alpha = 1,
-				min_alpha = 0,
-				out_delay = 0,
-				out_duration = 0.05,
-			},
+	-- override the already existing entry for a widget
+	-- reset it via UpdateFading later
+	local tbl = widgets[object] and widgets or miscWidgets
+
+	if not tbl[object] then
+		tbl[object] = {
+			config = {},
 		}
 	end
 
-	if inDelay then
-		miscWidgets[object].config.in_delay = inDelay
-	end
+	tbl[object].config.in_delay = inDelay or 0
+	tbl[object].config.in_duration = inDuration or 0.15
+	tbl[object].config.min_alpha = minAlpha or 0
+	tbl[object].config.max_alpha = maxAlpha or 1
+	tbl[object].config.out_delay = 0
+	tbl[object].config.out_duration = 0.15
 
-	if inDuration then
-		miscWidgets[object].config.in_duration = inDuration
-	end
-
-	if minAlpha then
-		miscWidgets[object].config.min_alpha = minAlpha
-	end
-
-	if maxAlpha then
-		miscWidgets[object].config.max_alpha = maxAlpha
-	end
-
-	miscWidgets[object].mode = "IN"
-	miscWidgets[object].fadeTimer = 0
-	activeWidgets[object] = miscWidgets[object]
+	tbl[object].mode = "IN"
+	tbl[object].fadeTimer = 0
+	activeWidgets[object] = tbl[object]
 end
 
 function E:FadeOut(object, outDelay, outDuration, minAlpha, maxAlpha)
-	if not miscWidgets[object] then
-		miscWidgets[object] = {
-			config = {
-				in_delay = 0,
-				in_duration = 0.15,
-				max_alpha = 1,
-				min_alpha = 0,
-				out_delay = 0,
-				out_duration = 0.05,
-			},
+	-- override the already existing entry for a widget
+	-- reset it via UpdateFading later
+	local tbl = widgets[object] and widgets or miscWidgets
+
+	if not tbl[object] then
+		tbl[object] = {
+			config = {},
 		}
 	end
 
-	if outDelay then
-		miscWidgets[object].config.out_delay = outDelay
-	end
+	tbl[object].config.in_delay = 0
+	tbl[object].config.in_duration = 0.15
+	tbl[object].config.min_alpha = minAlpha or 0
+	tbl[object].config.max_alpha = maxAlpha or 1
+	tbl[object].config.out_delay = outDelay or 0
+	tbl[object].config.out_duration = outDuration or 0.15
 
-	if outDuration then
-		miscWidgets[object].config.out_duration = outDuration
-	end
-
-	if minAlpha then
-		miscWidgets[object].config.min_alpha = minAlpha
-	end
-
-	if maxAlpha then
-		miscWidgets[object].config.max_alpha = maxAlpha
-	end
-
-	miscWidgets[object].mode = "OUT"
-	miscWidgets[object].fadeTimer = 0
-	activeWidgets[object] = miscWidgets[object]
+	tbl[object].mode = "OUT"
+	tbl[object].fadeTimer = 0
+	activeWidgets[object] = tbl[object]
 end

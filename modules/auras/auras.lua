@@ -177,7 +177,7 @@ local function handleButton(button, header)
 
 	if button.Cooldown.UpdateConfig then
 		button.Cooldown:UpdateConfig(header.cooldownConfig or {})
-		button.Cooldown:UpdateFontObject()
+		button.Cooldown:UpdateFont()
 	end
 
 	local textParent = CreateFrame("Frame", nil, button)
@@ -311,7 +311,7 @@ local function header_UpdateCooldownConfig(self)
 		end
 
 		button.Cooldown:UpdateConfig(self.cooldownConfig)
-		button.Cooldown:UpdateFontObject()
+		button.Cooldown:UpdateFont()
 	end
 end
 

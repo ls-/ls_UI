@@ -15,12 +15,13 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].name, self._config)
+	self._config = E:CopyTable(C.db.global.fonts.units, self._config)
 end
 
-local function element_UpdateFontObjects(self)
+local function element_UpdateFonts(self)
 	local config = self._config
 
-	self:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+	self:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self:SetJustifyH(config.h_alignment)
 	self:SetJustifyV(config.v_alignment)
 	self:SetWordWrap(config.word_wrap)
@@ -52,17 +53,17 @@ end
 local function frame_UpdateName(self)
 	local element = self.Name
 	element:UpdateConfig()
-	element:UpdateFontObjects()
+	element:UpdateFonts()
 	element:UpdatePoints()
 	element:UpdateTags()
 end
 
 function UF:CreateName(frame, textParent)
-	local element = (textParent or frame):CreateFontString(nil, "OVERLAY", "LSFont12")
+	local element = (textParent or frame):CreateFontString(nil, "OVERLAY")
 
 	element.__owner = frame
 	element.UpdateConfig = element_UpdateConfig
-	element.UpdateFontObjects = element_UpdateFontObjects
+	element.UpdateFonts = element_UpdateFonts
 	element.UpdatePoints = element_UpdatePoints
 	element.UpdateTags = element_UpdateTags
 

@@ -196,7 +196,7 @@ local function element_CreateAuraIcon(self, index)
 
 	local count = button.Count
 	count:SetAllPoints()
-	count:SetFontObject("LSFont" .. config.count.size .. (config.count.outline and "_Outline" or ""))
+	count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.count.font), config.count.size, config.count.outline and "OUTLINE" or "")
 	count:SetJustifyH(config.count.h_alignment)
 	count:SetJustifyV(config.count.v_alignment)
 	count:SetWordWrap(false)
@@ -215,7 +215,7 @@ local function element_CreateAuraIcon(self, index)
 
 	if button.cd.UpdateConfig then
 		button.cd:UpdateConfig(self.cooldownConfig or {})
-		button.cd:UpdateFontObject()
+		button.cd:UpdateFont()
 	end
 
 	button:SetPushedTexture("")
@@ -260,6 +260,7 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
+	self._config.count.font = C.db.global.fonts.units.font
 
 	local size = self._config.size_override ~= 0 and self._config.size_override
 		or E:Round((C.db.profile.units[unit].width - (self.spacing * (self._config.per_row - 1)) + 2) / self._config.per_row)
@@ -283,18 +284,18 @@ local function element_UpdateCooldownConfig(self)
 		end
 
 		self[i].cd:UpdateConfig(self.cooldownConfig)
-		self[i].cd:UpdateFontObject()
+		self[i].cd:UpdateFont()
 	end
 end
 
-local function element_UpdateFontObjects(self)
+local function element_UpdateFont(self)
 	local config = self._config.count
-	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
+	local font = LibStub("LibSharedMedia-3.0"):Fetch("font", config.font)
 	local count
 
 	for i = 1, self.createdIcons do
 		count = self[i].count
-		count:SetFontObject(fontObj)
+		count:SetFont(font, config.size, config.outline and "OUTLINE" or "")
 		count:SetJustifyH(config.h_alignment)
 		count:SetJustifyV(config.v_alignment)
 		count:SetWordWrap(false)
@@ -375,7 +376,7 @@ local function frame_UpdateAuras(self)
 	element:UpdatePoints()
 	element:UpdateGrowthDirection()
 	element:UpdateAuraTypeIcon()
-	element:UpdateFontObjects()
+	element:UpdateFont()
 	element:UpdateMouse()
 
 	if element._config.enabled and not self:IsElementEnabled("Auras") then
@@ -403,7 +404,7 @@ function UF:CreateAuras(frame, unit)
 	element.UpdateColors = element_UpdateColors
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
-	element.UpdateFontObjects = element_UpdateFontObjects
+	element.UpdateFont = element_UpdateFont
 	element.UpdateGrowthDirection = element_UpdateGrowthDirection
 	element.UpdateMouse = element_UpdateMouse
 	element.UpdatePoints = element_UpdatePoints

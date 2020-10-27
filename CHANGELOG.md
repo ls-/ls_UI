@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## Version 90001.05
+
+- Added LibSharedMedia support. Can be found at /LSUI > General > Fonts. For now, only unit frames,
+  action bars, and cooldown spirals support font customisation. For the sake of consistency all
+  fonts of a given module will be updated at once, for example, if you change the unit frame font,
+  then health, heal prediction, power, alternative power, castbar, name, and aura fonts will be
+  changed. However, each element will retain individual size controls, and unit frame auras will
+  retain their shadow and outline controls on top of that. I'll be adding LSM support to missing
+  modules with the next update;
+- Reenabled extra and zone action buttons. Sadly, the size option is gone;
+- Fixed an issue where action bar fading won't resume after leaving a vehicle;
+- Updated French translation. Translated by cybern4ut@Curse and Brainc3ll@Curse;
+- Updated Spanish translation. Translated by justregular16@Curse.
+
+![Imgur](https://i.imgur.com/eCIxxqs.gif)
+
 ## Version 90001.04
 
 - Fixed paragon reputation handling;

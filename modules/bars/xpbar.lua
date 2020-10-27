@@ -67,12 +67,9 @@ end
 local function bar_Update(self)
 	self:UpdateConfig()
 
-	for i = 1, MAX_SEGMENTS do
-		self[i]:UpdateFont(self._config.text.size, self._config.text.flag)
-		self[i]:LockText(self._config.text.visibility == 1)
-	end
-
-	self:UpdateTextFormat(self._config.text.format)
+	self:UpdateFont()
+	self:UpdateTextFormat()
+	self:UpdateTextVisibility()
 	self:UpdateSize(self._config.width, self._config.height)
 
 	if not BARS:IsRestricted() then
@@ -86,15 +83,38 @@ local function bar_UpdateConfig(self)
 	if BARS:IsRestricted() then
 		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
 	end
+
+	self._config.text = E:CopyTable(C.db.global.fonts.bars, self._config.text)
 end
 
-local function bar_UpdateTextFormat(self, format)
-	format = format or self._config.text.format
+local function updateFont(fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
+	fontString:SetWordWrap(false)
 
-	if format == "NUM" then
+	if config.shadow then
+		fontString:SetShadowOffset(1, -1)
+	else
+		fontString:SetShadowOffset(0, 0)
+	end
+end
+
+local function bar_UpdateFont(self)
+	for i = 1, MAX_SEGMENTS do
+		updateFont(self[i].Text, self._config.text)
+	end
+end
+
+local function bar_UpdateTextFormat(self)
+	if self._config.text.format == "NUM" then
 		barValueTemplate = CUR_MAX_VALUE_TEMPLATE
-	elseif format == "NUM_PERC" then
+	elseif self._config.text.format == "NUM_PERC" then
 		barValueTemplate = CUR_MAX_PERC_VALUE_TEMPLATE
+	end
+end
+
+local function bar_UpdateTextVisibility(self)
+	for i = 1, MAX_SEGMENTS do
+		self[i]:LockText(self._config.text.visibility == 1)
 	end
 end
 
@@ -416,16 +436,6 @@ local function segment_Update(self, cur, max, bonus, color, texture)
 	end
 end
 
-local function segment_UpdateFont(self, size, flag)
-	self.Text:SetFontObject("LSFont" .. size .. flag)
-
-	if flag ~= "_Shadow" then
-		self.Text:SetShadowOffset(0, 0)
-	else
-		self.Text:SetShadowOffset(1, -1)
-	end
-end
-
 local function segment_UpdateText(self, cur, max)
 	cur = cur or self._value or 1
 	max = max or self._max or 1
@@ -463,9 +473,11 @@ function BARS.CreateXPBar()
 		bar.Update = bar_Update
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = nil
+		bar.UpdateFont = bar_UpdateFont
 		bar.UpdateSegments = bar_UpdateSegments
 		bar.UpdateSize = bar_UpdateSize
 		bar.UpdateTextFormat = bar_UpdateTextFormat
+		bar.UpdateTextVisibility = bar_UpdateTextVisibility
 
 		local texParent = CreateFrame("Frame", nil, bar)
 		texParent:SetAllPoints()
@@ -515,7 +527,6 @@ function BARS.CreateXPBar()
 			segment.IsTextLocked = segment_IsTextLocked
 			segment.LockText = segment_LockText
 			segment.Update = segment_Update
-			segment.UpdateFont = segment_UpdateFont
 			segment.UpdateText = segment_UpdateText
 		end
 

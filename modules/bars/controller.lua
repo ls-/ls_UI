@@ -216,7 +216,7 @@ function MODULE.SetupActionBarController()
 
 					if widget.children then
 						for _, child in next, widget.children do
-							E:FadeOut(_G[child])
+							E:FadeOut(_G[child], nil, nil, nil, _G[child]:GetAlpha())
 						end
 					end
 				end
@@ -246,10 +246,15 @@ function MODULE.SetupActionBarController()
 
 					if widget.children then
 						for _, child in next, widget.children do
-							if _G[child]:IsShown() then
-								E:FadeIn(_G[child])
+							child = _G[child]
+							if child:IsShown() then
+								E:FadeIn(child)
+
+								if child.UpdateFading then
+									C_Timer.After(0.15, function() child:UpdateFading() end)
+								end
 							else
-								_G[child]:SetAlpha(1)
+								child:SetAlpha(1)
 							end
 						end
 					end

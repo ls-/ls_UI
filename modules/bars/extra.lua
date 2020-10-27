@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 
 --[[ luacheck: globals
 	CreateFrame ExtraActionBarFrame ExtraActionButton1 LibStub UIParent
@@ -31,8 +32,15 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
+
+	self.HotKey:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self.HotKey:SetWordWrap(false)
+
+	if config.shadow then
+		self.HotKey:SetShadowOffset(1, -1)
+	else
+		self.HotKey:SetShadowOffset(0, 0)
+	end
 end
 
 local function button_OnEnter(self)
@@ -57,26 +65,39 @@ function MODULE.CreateExtraButton()
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
-			ExtraActionBarFrame:SetAllPoints()
+			ExtraActionBarFrame:ClearAllPoints()
+			ExtraActionBarFrame:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
+			ExtraActionBarFrame:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
 
-			self:SetSize(self._config.size + 4, self._config.size + 4)
+			local width, height = ExtraActionButton1:GetSize()
+			self:SetSize((width > 0 and width or 52) + 4, (height > 0 and height or 52) + 4)
 			E.Movers:Get(self):UpdateSize()
 		end
 
 		ExtraActionBarFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraActionBarFrame"] = nil
+		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraAbilityContainer"] = nil
 
 		ExtraActionBarFrame:EnableMouse(false)
 		ExtraActionBarFrame:SetParent(bar)
-		ExtraActionBarFrame:SetAllPoints()
+		ExtraActionBarFrame.ignoreInLayout = true
 
-		ExtraActionButton1:SetPoint("TOPLEFT", 2, -2)
-		ExtraActionButton1:SetPoint("BOTTOMRIGHT", -2, 2)
+		ExtraActionBarFrame.SetParent_ = ExtraActionBarFrame.SetParent
+		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
+			if not InCombatLockdown() then
+				if parent ~= bar then
+					self:SetParent_(bar)
+				end
+			end
+		end)
+
 		ExtraActionButton1:HookScript("OnEnter", button_OnEnter)
 		ExtraActionButton1._parent = bar
 		ExtraActionButton1._command = "EXTRAACTIONBUTTON1"
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
+
+		E:ForceHide(ExtraActionButton1.style)
 
 		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
 		ExtraActionButton1.UpdateHotKeyFont = button_UpdateHotKeyFont

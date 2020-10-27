@@ -20,8 +20,8 @@ local ignoredKeys = {
 	runes = true,
 }
 
-local function updateFontObject(_, fontString, config)
-	fontString:SetFontObject("LSFont" .. config.size .. (config.outline and "_Outline" or ""))
+local function updateFont(fontString, config)
+	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
 	fontString:SetWordWrap(false)
@@ -51,8 +51,8 @@ local function updateTag(frame, fontString, tag)
 	end
 end
 
-local function element_UpdateFontObjects(self)
-	updateFontObject(self.__owner, self.Text, self._config.text)
+local function element_UpdateFonts(self)
+	updateFont(self.Text, self._config.text)
 end
 
 local function element_UpdateTextPoints(self)
@@ -103,6 +103,7 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
+		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -114,7 +115,7 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
-		element:UpdateFontObjects()
+		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
@@ -139,7 +140,7 @@ do
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		E:SmoothBar(element)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
+		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
@@ -149,7 +150,7 @@ do
 		element.PostUpdate = element_PostUpdate
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateFonts = element_UpdateFonts
 		element.UpdateGainLossColors = element_UpdateGainLossColors
 		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
@@ -252,6 +253,7 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
+		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -263,7 +265,7 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
-		element:UpdateFontObjects()
+		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
@@ -288,14 +290,14 @@ do
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		E:SmoothBar(element)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK", "LSFont12")
+		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
 		element.PostUpdate = element_PostUpdate
 		element.UpdateColors = element_UpdateColors
 		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFontObjects = element_UpdateFontObjects
+		element.UpdateFonts = element_UpdateFonts
 		element.UpdateGainLossColors = element_UpdateGainLossColors
 		element.UpdateGainLossPoints = element_UpdateGainLossPoints
 		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold

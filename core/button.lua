@@ -176,7 +176,6 @@ local function skinButton(button)
 	if bHotKey then
 		bHotKey:ClearAllPoints()
 		bHotKey:SetDrawLayer("OVERLAY")
-		bHotKey:SetFontObject("LSFont10_Outline")
 		bHotKey:SetJustifyH("RIGHT")
 		bHotKey:SetPoint("TOPRIGHT", 2, 0)
 		bHotKey:SetSize(0, 0)
@@ -207,7 +206,6 @@ local function skinButton(button)
 		bCount:ClearAllPoints()
 		bCount:SetParent(fgParent)
 		bCount:SetDrawLayer("OVERLAY")
-		bCount:SetFontObject("LSFont10_Outline")
 		bCount:SetJustifyH("RIGHT")
 		bCount:SetPoint("BOTTOMRIGHT", 2, 0)
 		bCount:SetSize(0, 0)
@@ -217,7 +215,6 @@ local function skinButton(button)
 	if bName then
 		bName:ClearAllPoints()
 		bName:SetDrawLayer("OVERLAY")
-		bName:SetFontObject("LSFont10_Outline")
 		bName:SetJustifyH("CENTER")
 		bName:SetPoint("BOTTOM", 0, 0)
 		bName:SetSize(0, 0)
@@ -410,14 +407,9 @@ function E:SkinExtraActionButton(button)
 	skinButton(button)
 
 	local CD = button.cooldown or button.Cooldown
-	local bStyle = button.style or button.Style
 
 	if CD.SetTimerTextHeight then
 		CD:SetTimerTextHeight(14)
-	end
-
-	if bStyle then
-		E:ForceHide(bStyle)
 	end
 
 	button.__styled = true
@@ -476,7 +468,6 @@ function E:SkinPetBattleButton(button)
 	end
 
 	if bCD then
-		bCD:SetFontObject("LSFont16_Outline")
 		bCD:ClearAllPoints()
 		bCD:SetPoint("CENTER", 0, -2)
 	end
@@ -540,7 +531,7 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	setPushedTexture(button)
 
 	if hasCount then
-		local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+		local count = button:CreateFontString(nil, "ARTWORK", "NumberFontNormal")
 		count:SetJustifyH("RIGHT")
 		count:SetPoint("TOPRIGHT", 2, 0)
 		count:SetWordWrap(false)

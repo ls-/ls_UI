@@ -110,7 +110,7 @@ local function button_HideGrid(self)
 		self.showgrid = self.showgrid - 1
 	end
 
-	if self.showgrid == 0 and not GetPetActionInfo(self:GetID()) and not self.config.showGrid then
+	if not self.config.showGrid and self.showgrid == 0 and not GetPetActionInfo(self:GetID()) then
 		self:SetAlpha(0)
 	end
 end
@@ -131,8 +131,15 @@ end
 
 local function button_UpdateHotKeyFont(self)
 	local config = self._parent._config.hotkey
-	self.HotKey:SetFontObject("LSFont" .. config.size .. config.flag)
+
+	self.HotKey:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self.HotKey:SetWordWrap(false)
+
+	if config.shadow then
+		self.HotKey:SetShadowOffset(1, -1)
+	else
+		self.HotKey:SetShadowOffset(0, 0)
+	end
 end
 
 local function button_UpdateUsable(self)

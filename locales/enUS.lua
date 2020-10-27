@@ -5,7 +5,7 @@ local E, C, D, M, L, P = ns.E, ns.C, ns.D, ns.M, ns.L, ns.P
 local _G = getfenv(0)
 
 -- Mine
-L["LS_UI"] = "ls: |cff1a9fc0UI|r"
+L["LS_UI"] = "LS: |cff1a9fc0UI|r"
 
 -- These rely on Blizz strings
 L["ADD"] = _G.ADD
@@ -224,6 +224,8 @@ L["FLAG"] = "Flag"
 L["FLYOUT_DIR"] = "Flyout Direction"
 L["FOCUS_FRAME"] = "Focus Frame"
 L["FOCUS_TOF"] = "Focus & ToF"
+L["FONT"] = "Font"
+L["FONTS"] = "Fonts"
 L["FORMAT"] = "Format"
 L["FRAME"] = "Frame"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Free Bag Slots: |cffffffff%s|r"
