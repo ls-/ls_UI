@@ -1237,7 +1237,7 @@ local function getUFOption_Castbar(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 8, max = 48, step = 1,
+						min = 8, max = 32, step = 1,
 					},
 				},
 			},
