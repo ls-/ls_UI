@@ -514,12 +514,6 @@ local function getOptionsTable_Bar(barID, order, name)
 						name = L["SIZE"],
 						min = 10, max = 20, step = 2,
 					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
-					},
 					v_alignment = {
 						order = 4,
 						type = "select",
@@ -622,6 +616,7 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
+		temp.args.size = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
@@ -634,6 +629,7 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
+		temp.args.size = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
