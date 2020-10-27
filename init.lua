@@ -11,130 +11,85 @@ local next = _G.next
 
 -- Mine
 local function cleanUpStep1()
-	-- -> 80000.12
-	if not C.db.profile.version or C.db.profile.version < 8000012 then
-		if C.db.profile.units.player and C.db.profile.units.player.ls then
-			E:CopyTable(C.db.profile.units.player.ls, C.db.profile.units.ls.player)
+	local bars = {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone"}
 
-			C.db.profile.units.player.ls = nil
-		end
-
-		if C.db.profile.units.player and C.db.profile.units.player.traditional then
-			E:CopyTable(C.db.profile.units.player.traditional, C.db.profile.units.traditional.player)
-
-			C.db.profile.units.player.traditional = nil
-		end
-
-		if C.db.profile.units.pet and C.db.profile.units.pet.ls then
-			E:CopyTable(C.db.profile.units.pet.ls, C.db.profile.units.ls.pet)
-
-			C.db.profile.units.pet.ls = nil
-		end
-
-		if C.db.profile.units.pet and C.db.profile.units.pet.traditional then
-			E:CopyTable(C.db.profile.units.pet.traditional, C.db.profile.units.traditional.pet)
-
-			C.db.profile.units.pet.traditional = nil
-		end
-
-		local bars = {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra",
-		"zone"}
-
+	-- -> 90001.05
+	if C.db.profile.version and C.db.profile.version < 9000105 then
 		for _, bar in next, bars do
 			if C.db.profile.bars[bar] then
+				if C.db.profile.bars[bar].hotkey then
+					C.db.profile.bars[bar].hotkey.flag = nil
+				end
+
+				if C.db.profile.bars[bar].macro then
+					C.db.profile.bars[bar].macro.flag = nil
+				end
+
+				if C.db.profile.bars[bar].count then
+					C.db.profile.bars[bar].count.flag = nil
+				end
+
 				if C.db.profile.bars[bar].cooldown then
-					C.db.profile.bars[bar].cooldown.text.h_alignment = nil
+					C.db.profile.bars[bar].cooldown.text.flag = nil
 				end
 			end
 		end
 
-		C.db.profile.auras.HELPFUL.cooldown.text.h_alignment = nil
-		C.db.profile.auras.HARMFUL.cooldown.text.h_alignment = nil
-		C.db.profile.auras.TOTEM.cooldown.text.h_alignment = nil
+		C.db.profile.bars.xpbar.text.flag = nil
 
-		C.db.profile.blizzard.castbar.icon.enabled = nil
-		C.db.profile.blizzard.castbar.text.flag = nil
+		C.db.profile.auras.HELPFUL.cooldown.text.flag = nil
+		C.db.profile.auras.HARMFUL.cooldown.text.flag = nil
+		C.db.profile.auras.TOTEM.cooldown.text.flag = nil
 	end
 
-	-- -> 80000.13
-	if not C.db.profile.version or C.db.profile.version < 8000013 then
-		C.db.char.auratracker.cooldown.colors = nil
-
-		C.db.profile.auras.cooldown.colors = nil
-
-		C.db.profile.bars.colors = nil
-		C.db.profile.bars.cooldown.colors = nil
-		C.db.profile.bars.desaturation.cooldown = nil
-
-		C.db.profile.blizzard.castbar.colors = nil
-
-		C.db.profile.minimap.colors = nil
-
-		C.db.profile.units.castbar = nil
-		C.db.profile.units.colors = nil
-	end
-
-	-- -> 80100.07
-	if not C.db.profile.version or C.db.profile.version < 8010007 then
-		if C.db.profile.colors then
-			if C.db.profile.colors.power and C.db.profiles.colors.power.ALT_POWER then
-				C.db.profiles.colors.power.ALTERNATE = C.db.profiles.colors.power.ALT_POWER
-				C.db.profiles.colors.power.ALT_POWER = nil
-			end
-
-			E:CopyTable(C.db.profile.colors, C.db.global.colors)
-
-			C.db.profile.colors = nil
-		end
-	end
-
-	-- -> 80200.01
-	if not C.db.profile.version or C.db.profile.version < 8020001 then
-		C.db.global.aura_filters["M+ Affixes"].is_init = false
-	end
-
-	-- -> 80200.03
-	if not C.db.profile.version or C.db.profile.version < 8020003 then
-		C.db.profile.minimap.ls.clock.mode = nil
-		C.db.profile.minimap.traditional.clock.mode = nil
-
-		C.db.profile.minimap.ls.zone_text.position = nil
-		C.db.profile.minimap.traditional.zone_text.position = nil
+	if C.db.char.version and C.db.char.version < 9000105 then
+		C.db.char.auratracker.cooldown.text.flag = nil
 	end
 end
 
 local function cleanUpStep2()
 	local units = {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"}
 
-	-- -> 80000.13
-	if not C.db.profile.version or C.db.profile.version < 8000013 then
+	-- -> 90001.05
+	if C.db.profile.version and C.db.profile.version < 9000105 then
 		for _, unit in next, units do
 			if C.db.profile.units[unit] then
-				if C.db.profile.units[unit].castbar then
-					C.db.profile.units[unit].castbar.icon.enabled = nil
-					C.db.profile.units[unit].castbar.text.flag = nil
+				if C.db.profile.units[unit].health then
+					C.db.profile.units[unit].health.text.outline = nil
+					C.db.profile.units[unit].health.text.shadow = nil
+
+					if C.db.profile.units[unit].health.prediction then
+						if C.db.profile.units[unit].health.prediction.absorb_text then
+							C.db.profile.units[unit].health.prediction.absorb_text.outline = nil
+							C.db.profile.units[unit].health.prediction.absorb_text.shadow = nil
+						end
+
+						if C.db.profile.units[unit].health.prediction.heal_absorb_text then
+							C.db.profile.units[unit].health.prediction.heal_absorb_text.outline = nil
+							C.db.profile.units[unit].health.prediction.heal_absorb_text.shadow = nil
+						end
+					end
 				end
 
-				if C.db.profile.units[unit].debuff then
-					C.db.profile.units[unit].debuff.h_alignment = nil
+				if C.db.profile.units[unit].power then
+					C.db.profile.units[unit].power.text.outline = nil
+					C.db.profile.units[unit].power.text.shadow = nil
+				end
+
+				if C.db.profile.units[unit].castbar then
+					C.db.profile.units[unit].castbar.text.outline = nil
+					C.db.profile.units[unit].castbar.text.shadow = nil
+				end
+
+				if C.db.profile.units[unit].name then
+					C.db.profile.units[unit].name.outline = nil
+					C.db.profile.units[unit].name.shadow = nil
 				end
 
 				if C.db.profile.units[unit].auras then
-					C.db.profile.units[unit].auras.cooldown.text.h_alignment = nil
-				end
-
-				C.db.profile.units[unit].class = nil
-			end
-		end
-	end
-
-	-- other
-	for _, unit in next, units do
-		if C.db.profile.units[unit] then
-			if C.db.profile.units[unit].auras then
-				for filter in next, C.db.profile.units[unit].auras.filter.custom do
-					if not C.db.global.aura_filters[filter] then
-						C.db.profile.units[unit].auras.filter.custom[filter] = nil
+					if C.db.profile.units[unit].auras.cooldown then
+						C.db.profile.units[unit].auras.cooldown.text.outline = nil
+						C.db.profile.units[unit].auras.cooldown.text.shadow = nil
 					end
 				end
 			end
