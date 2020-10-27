@@ -1934,7 +1934,7 @@ local function getUFOption_Auras(order, unit)
 					if C.db.profile.units[unit].auras.count[info[#info]] ~= value then
 						C.db.profile.units[unit].auras.count[info[#info]] = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
-						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFontObjects")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateFont")
 					end
 				end,
 				args = {
@@ -1942,7 +1942,7 @@ local function getUFOption_Auras(order, unit)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					outline = {
 						order = 2,
