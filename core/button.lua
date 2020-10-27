@@ -531,7 +531,7 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	setPushedTexture(button)
 
 	if hasCount then
-		local count = button:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+		local count = button:CreateFontString(nil, "ARTWORK", "NumberFontNormal")
 		count:SetJustifyH("RIGHT")
 		count:SetPoint("TOPRIGHT", 2, 0)
 		count:SetWordWrap(false)
