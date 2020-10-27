@@ -60,14 +60,20 @@ function MODULE.CreateZoneButton()
 			end
 		end)
 
+		local num = 0
 		hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(self)
 			t_wipe(bar._buttons)
 
 			for button in self.SpellButtonContainer:EnumerateActive() do
 				E:SkinExtraActionButton(button)
-				button._parent = bar
 
+				button._parent = bar
 				t_insert(bar._buttons, button)
+			end
+
+			if #bar._buttons ~= num then
+				bar:UpdateCooldownConfig()
+				num = #bar._buttons
 			end
 		end)
 

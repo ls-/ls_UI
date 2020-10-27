@@ -512,7 +512,7 @@ local function getOptionsTable_Bar(barID, order, name)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 4,
