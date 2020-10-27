@@ -84,8 +84,10 @@ function MODULE.CreateExtraButton()
 
 		ExtraActionBarFrame.SetParent_ = ExtraActionBarFrame.SetParent
 		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
-			if parent ~= bar then
-				self:SetParent_(bar)
+			if not InCombatLockdown() then
+				if parent ~= bar then
+					self:SetParent_(bar)
+				end
 			end
 		end)
 
