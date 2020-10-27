@@ -1354,12 +1354,9 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						set = function(info, value)
 							if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 								C.db.profile.bars.xpbar.text[info[#info]] = value
-								BARS:GetBar("xpbar"):UpdateConfig()
-								BARS:GetBar("xpbar"):ForEach(
-									"UpdateFont",
-									C.db.profile.bars.xpbar.text.size,
-									C.db.profile.bars.xpbar.text.flag)
-								BARS:GetBar("xpbar"):ForEach("UpdateText")
+
+								BARS:ForBar("xpbar", "UpdateConfig")
+								BARS:ForBar("xpbar", "UpdateFont")
 							end
 						end,
 						args = {
@@ -1367,13 +1364,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								order = 1,
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							flag = {
-								order = 2,
-								type = "select",
-								name = L["FLAG"],
-								values = FLAGS,
+								min = 8, max = 32, step = 1,
 							},
 							format = {
 								order = 3,
@@ -1383,9 +1374,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								set = function(info, value)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
-										BARS:GetBar("xpbar"):UpdateConfig()
-										BARS:GetBar("xpbar"):UpdateTextFormat(value)
-										BARS:GetBar("xpbar"):ForEach("UpdateText")
+
+										BARS:ForBar("xpbar", "UpdateConfig")
+										BARS:ForBar("xpbar", "UpdateTextFormat")
+										BARS:ForBar("xpbar", "ForEach", "UpdateText")
 									end
 								end,
 							},
@@ -1397,8 +1389,9 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								set = function(info, value)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
-										BARS:GetBar("xpbar"):UpdateConfig()
-										BARS:GetBar("xpbar"):ForEach("LockText", value == 1)
+
+										BARS:ForBar("xpbar", "UpdateConfig")
+										BARS:ForBar("xpbar", "UpdateTextVisibility")
 									end
 								end,
 							},

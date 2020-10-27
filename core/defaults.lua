@@ -2720,7 +2720,6 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 10,
-				flag = "_Outline", -- "_Shadow", ""
 				format = "NUM", -- "NUM_PERC"
 				visibility = 2, -- 1 - always, 2 - mouseover
 			},

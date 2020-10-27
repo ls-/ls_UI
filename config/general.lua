@@ -1843,10 +1843,12 @@ function CONFIG:CreateGeneralPanel(order)
 							BARS:ForBar("bar7", "UpdateConfig")
 							BARS:ForBar("pet_battle", "UpdateConfig")
 							BARS:ForBar("extra", "UpdateConfig")
+							BARS:ForBar("xpbar", "UpdateConfig")
 
 							BARS:ForEach("ForEach", "UpdateCountFont")
 							BARS:ForEach("ForEach", "UpdateHotKeyFont")
 							BARS:ForEach("ForEach", "UpdateMacroFont")
+							BARS:ForBar("xpbar", "UpdateFont")
 						end,
 						args = {
 							font = {
