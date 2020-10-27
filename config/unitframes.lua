@@ -1773,6 +1773,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.rows = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -1786,6 +1787,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.per_row = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -1805,6 +1807,7 @@ local function getUFOption_Auras(order, unit)
 						C.db.profile.units[unit].auras.size_override = value
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
 						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateSize")
+						UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 					end
 				end,
 			},
@@ -1998,13 +2001,7 @@ local function getUFOption_Auras(order, unit)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = CONFIG.FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 4,
