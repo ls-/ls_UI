@@ -26,11 +26,11 @@ function MODULE.SetUpObjectiveTracker()
 		local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
 		holder:SetFrameStrata("LOW")
 		holder:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)
-		holder:SetSize(229, 25)
+		holder:SetSize(199, 25)
 		holder:SetPoint("TOPRIGHT", -192, -192)
 
 		local mover = E.Movers:Create(holder, true)
-		mover:SetClampRectInsets(-4, 18, 4, -4)
+		mover:SetClampRectInsets(-18, 40, 4, -4)
 		mover.IsDragKeyDown = function()
 			return C.db.profile.blizzard.objective_tracker.drag_key == "NONE"
 				or C.db.profile.blizzard.objective_tracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
@@ -40,9 +40,15 @@ function MODULE.SetUpObjectiveTracker()
 		ObjectiveTrackerFrame:SetUserPlaced(true)
 		ObjectiveTrackerFrame:SetParent(holder)
 		ObjectiveTrackerFrame:ClearAllPoints()
-		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 16, 0)
+		ObjectiveTrackerFrame:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 47, 0)
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:HookScript("OnClick", function()
-			E.Movers:Get(holder):UpdateSize(ObjectiveTrackerFrame.collapsed and 84 or nil)
+			if ObjectiveTrackerFrame.collapsed then
+				ObjectiveTrackerFrame:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 26, 0)
+			else
+				ObjectiveTrackerFrame:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 47, 0)
+			end
+
+			E.Movers:Get(holder):UpdateSize(ObjectiveTrackerFrame.collapsed and 74 or nil)
 		end)
 		ObjectiveTrackerFrame.HeaderMenu:HookScript("OnShow", function()
 			E.Movers:Get(holder):Show()
