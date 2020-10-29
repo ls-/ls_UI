@@ -227,7 +227,6 @@ L["NAME_FORMAT_DESC"] = [=[Fournissez une chaîne de caractères pour changer le
 Utilisez |cffffd200||r|r pour fermer les balises des couleurs.
 Utilisez |cffffd200[nl]|r pour faire un saut de ligne.]=]
 L["NO_SEPARATION"] = "Aucune séparation"
-L["NPE_FRAME"] = "Cadre de tutoriel des nouveaux joueurs"
 L["NUM_BUTTONS"] = "Nombre de boutons"
 L["NUM_ROWS"] = "Nombre de lignes"
 L["OBJECTIVE_TRACKER"] = "Suivi d'objectif"

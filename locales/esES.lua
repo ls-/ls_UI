@@ -273,7 +273,6 @@ Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["NAME_TAKEN_ERR"] = "El nombre está ocupado."
 L["NO_SEPARATION"] = "Sin separación"
 L["NOTHING_TO_SHOW"] = "Nada que mostrar."
-L["NPE_FRAME"] = "Tutorial marco NPE"
 L["NUM_BUTTONS"] = "Número de botones"
 L["NUM_ROWS"] = "Número de filas"
 L["NUMERIC"] = "Numérico"
