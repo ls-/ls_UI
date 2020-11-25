@@ -1167,14 +1167,10 @@ function MODULE:Init()
 					DEFAULT_CHAT_FRAME:AddMessage(L["CALENDAR_EVENT_ALARM_MESSAGE"]:format(title), info.r, info.g, info.b, info.id)
 				end
 			end)
-			button:SetScript("OnClick", function(self)
+			button:HookScript("OnClick", function(self)
 				if self.InvIndicator.Blink and self.InvIndicator.Blink:IsPlaying() then
 					E:StopBlink(self.InvIndicator, 1)
-
-					self.pendingCalendarInvites = 0
 				end
-
-				ToggleCalendar()
 			end)
 			button:SetScript("OnUpdate", function(self, elapsed)
 				self.elapsed = (self.elapsed or 0) + elapsed
