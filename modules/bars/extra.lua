@@ -7,7 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
 --[[ luacheck: globals
-	CreateFrame ExtraActionBarFrame ExtraActionButton1 LibStub UIParent
+	CreateFrame ExtraAbilityContainer ExtraActionBarFrame ExtraActionButton1 LibStub UIParent
 
 	UIPARENT_MANAGED_FRAME_POSITIONS
 ]]
@@ -81,15 +81,17 @@ function MODULE.CreateExtraButton()
 		ExtraActionBarFrame:EnableMouse(false)
 		ExtraActionBarFrame:SetParent(bar)
 		ExtraActionBarFrame.ignoreInLayout = true
+		ExtraAbilityContainer.SetSize = E.NOOP
 
-		ExtraActionBarFrame.SetParent_ = ExtraActionBarFrame.SetParent
-		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
-			if not InCombatLockdown() then
-				if parent ~= bar then
-					self:SetParent_(bar)
-				end
-			end
-		end)
+		-- ExtraActionBarFrame.SetParent_ = ExtraActionBarFrame.SetParent
+		-- hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
+		-- 	if not InCombatLockdown() then
+		-- 		if parent ~= bar then
+		-- 			print("here!")
+		-- 			self:SetParent_(bar)
+		-- 		end
+		-- 	end
+		-- end)
 
 		ExtraActionButton1:HookScript("OnEnter", button_OnEnter)
 		ExtraActionButton1._parent = bar
