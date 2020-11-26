@@ -7,7 +7,6 @@
 	<Script file="durability.lua"/>
 	<Script file="gm.lua"/>
 	<Script file="mail.lua"/>
-	<Script file="npe.lua"/>
 	<Script file="objectivetracker.lua"/>
 	<Script file="playeraltpowerbar.lua"/>
 	<Script file="talkinghead.lua"/>

@@ -188,28 +188,6 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end
 			},
-			npe = {
-				order = 15,
-				type = "toggle",
-				name = L["NPE_FRAME"],
-				disabled = isModuleDisabled,
-				get = function()
-					return C.db.char.blizzard.npe.enabled
-				end,
-				set = function(_, value)
-					C.db.char.blizzard.npe.enabled = value
-
-					if not BLIZZARD:HasGMFrame() then
-						if value then
-							BLIZZARD:SetUpGMFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end
-			},
 			player_alt_power_bar = {
 				order = 16,
 				type = "toggle",

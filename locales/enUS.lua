@@ -338,7 +338,6 @@ Use |cffffd200[nl]|r for line breaking.]=]
 L["NAME_TAKEN_ERR"] = "The name is taken."
 L["NO_SEPARATION"] = "No Separation"
 L["NOTHING_TO_SHOW"] = "Nothing to show."
-L["NPE_FRAME"] = "NPE Tutorial Frame"
 L["NUM_BUTTONS"] = "Number of Buttons"
 L["NUM_ROWS"] = "Number of Rows"
 L["NUMERIC"] = "Numeric"

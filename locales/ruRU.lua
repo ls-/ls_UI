@@ -274,7 +274,6 @@ L["NAME_FORMAT_DESC"] = [=[Введите строку для изменения
 L["NAME_TAKEN_ERR"] = "Имя занято."
 L["NO_SEPARATION"] = "Без разделения"
 L["NOTHING_TO_SHOW"] = "Нечего показать."
-L["NPE_FRAME"] = "Рамка советов для новичка"
 L["NUM_BUTTONS"] = "Количество кнопок"
 L["NUM_ROWS"] = "Количество строк"
 L["NUMERIC"] = "Цифры"

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 90002.01
+
+- Added 9.0.2 support;
+- Fixed azerite power bar visibility. Now it's disabled when HoA is unequipped;
+- Updated embeds;
+- Misc bug fixes and tweaks.
+
 ## Version 90001.05
 
 - Added LibSharedMedia support. Can be found at /LSUI > General > Fonts. For now, only unit frames,

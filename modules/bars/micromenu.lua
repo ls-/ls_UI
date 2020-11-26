@@ -56,11 +56,7 @@ local BUTTONS = {
 		name = "CharacterMicroButton",
 		icon = E.PLAYER_CLASS,
 		events = {
-			AZERITE_EMPOWERED_ITEM_SELECTION_UPDATED = true,
-			AZERITE_ITEM_POWER_LEVEL_CHANGED = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
 			PLAYER_ENTERING_WORLD = true,
-			UPDATE_BINDINGS = true,
 			UPDATE_INVENTORY_DURABILITY = true,
 		},
 	},
@@ -69,28 +65,22 @@ local BUTTONS = {
 		icon = "INVENTORY",
 		events = {
 			BAG_UPDATE_DELAYED = true,
-			UPDATE_BINDINGS = true,
 		},
 	},
 	spellbook = {
 		name = "SpellbookMicroButton",
 		icon = "SPELLBOOK",
-		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
-		},
+		events = {},
 	},
 	talent = {
 		name = "TalentMicroButton",
 		icon = "TALENT",
 		events = {
 			HONOR_LEVEL_UPDATE = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			PLAYER_LEVEL_UP = true,
+			PLAYER_LEVEL_CHANGED = true,
 			PLAYER_PVP_TALENT_UPDATE = true,
 			PLAYER_SPECIALIZATION_CHANGED = true,
 			PLAYER_TALENT_UPDATE = true,
-			UPDATE_BINDINGS = true,
 		},
 	},
 	achievement = {
@@ -98,26 +88,27 @@ local BUTTONS = {
 		icon = "ACHIEVEMENT",
 		events = {
 			ACHIEVEMENT_EARNED = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
 			RECEIVED_ACHIEVEMENT_LIST = true,
-			UPDATE_BINDINGS = true,
 		},
 	},
 	quest = {
 		name = "QuestLogMicroButton",
 		icon = "QUEST",
-		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
-		},
+		events = {},
 	},
 	guild = {
 		name = "GuildMicroButton",
 		icon = "GUILD",
 		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
+			BN_CONNECTED = true,
+			BN_DISCONNECTED = true,
+			CLUB_FINDER_COMMUNITY_OFFLINE_JOIN = true,
+			CLUB_INVITATION_ADDED_FOR_SELF = true,
+			CLUB_INVITATION_REMOVED_FOR_SELF = true,
+			INITIAL_CLUBS_LOADED = true,
+			PLAYER_ENTERING_WORLD = true,
 			PLAYER_GUILD_UPDATE = true,
-			UPDATE_BINDINGS = true,
+			STREAM_VIEW_MARKER_UPDATED = true,
 		},
 	},
 	lfd = {
@@ -125,8 +116,7 @@ local BUTTONS = {
 		icon = "LFD",
 		events = {
 			LFG_LOCK_INFO_RECEIVED = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
+			QUEST_LOG_UPDATE = true,
 		},
 	},
 	collection = {
@@ -135,21 +125,17 @@ local BUTTONS = {
 		events = {
 			COMPANION_LEARNED = true,
 			HEIRLOOMS_UPDATED = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
 			PET_JOURNAL_LIST_UPDATE = true,
 			PET_JOURNAL_NEW_BATTLE_SLOT = true,
 			PLAYER_ENTERING_WORLD = true,
 			TOYS_UPDATED = true,
-			UPDATE_BINDINGS = true,
 		},
 	},
 	ej = {
 		name = "EJMicroButton",
 		icon = "EJ",
 		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
 			PLAYER_ENTERING_WORLD = true,
-			UPDATE_BINDINGS = true,
 			UPDATE_INSTANCE_INFO = true,
 			VARIABLES_LOADED = true,
 			ZONE_CHANGED_NEW_AREA = true,
@@ -159,8 +145,7 @@ local BUTTONS = {
 		name = "StoreMicroButton",
 		icon = "STORE",
 		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
+			STORE_STATUS_CHANGED = true,
 		},
 	},
 	main = {
@@ -168,17 +153,12 @@ local BUTTONS = {
 		icon = "MAINMENU",
 		events = {
 			MODIFIER_STATE_CHANGED = true,
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
 		},
 	},
 	help = {
 		name = "HelpMicroButton",
 		icon = "HELP",
-		events = {
-			NEUTRAL_FACTION_SELECT_RESULT = true,
-			UPDATE_BINDINGS = true,
-		},
+		events = {},
 	},
 }
 
@@ -350,6 +330,9 @@ local function button_UpdateEvents(self)
 		for event in next, BUTTONS[self._id].events do
 			self:RegisterEvent(event)
 		end
+
+		self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+		self:RegisterEvent("UPDATE_BINDINGS")
 	else
 		self:UnregisterAllEvents()
 	end
@@ -1444,11 +1427,9 @@ function MODULE:CreateMicroMenu()
 				button.Tabard.emblem:SetDrawLayer("BACKGROUND", 3)
 				button.Tabard.emblem:SetPoint("CENTER", 0, 0)
 
-				if GuildMicroButton_UpdateTabard then
-					hooksecurefunc("GuildMicroButton_UpdateTabard", function()
-						button:Update()
-					end)
-				end
+				hooksecurefunc(GuildMicroButton, "UpdateTabard", function()
+					button:Update()
+				end)
 
 				button.Update = guildButton_Update
 			elseif id == "lfd" then

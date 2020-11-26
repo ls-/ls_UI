@@ -4,6 +4,7 @@ local MODULE = P:AddModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 -- Blizz
@@ -253,6 +254,23 @@ end
 
 -----
 
+local isNPEHooked = false
+
+local function disableNPE()
+	if NewPlayerExperience then
+		if NewPlayerExperience:GetIsActive() then
+			NewPlayerExperience:Shutdown()
+		end
+
+		if not isNPEHooked then
+			hooksecurefunc(NewPlayerExperience, "Begin", disableNPE)
+			isNPEHooked = true
+		end
+	end
+end
+
+-----
+
 function MODULE.IsInit()
 	return isInit
 end
@@ -289,6 +307,12 @@ function MODULE.Init()
 
 		SetCVar("ActionButtonUseKeyDown", C.db.profile.bars.click_on_down and 1 or 0)
 		SetCVar("lockActionBars", C.db.profile.bars.lock and 1 or 0)
+
+		if NewPlayerExperience then
+			disableNPE()
+		else
+			E:AddOnLoadTask("Blizzard_NewPlayerExperience", disableNPE)
+		end
 
 		isInit = true
 	end

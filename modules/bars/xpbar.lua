@@ -16,12 +16,12 @@ local C_QuestLog = _G.C_QuestLog
 local C_Reputation = _G.C_Reputation
 
 --[[ luacheck: globals
-	ArtifactBarGetNumArtifactTraitsPurchasableFromXP BreakUpLargeNumbers CreateFrame GameTooltip GetFriendshipReputation
-	GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText GetWatchedFactionInfo
-	GetXPExhaustion HasArtifactEquipped InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown IsWatchingHonorAsXP
-	IsXPUserDisabled PlaySound PVPQueueFrame ReputationDetailMainScreenCheckBox SetWatchedFactionIndex
-	SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax UnitLevel UnitPrestige UnitSex
-	UnitXP UnitXPMax
+	ArtifactBarGetNumArtifactTraitsPurchasableFromXP AzeriteUtil BreakUpLargeNumbers CreateFrame GameTooltip
+	GetFriendshipReputation GetHonorExhaustion GetQuestLogCompletionText GetQuestLogIndexByID GetSelectedFaction GetText
+	GetWatchedFactionInfo GetXPExhaustion HasArtifactEquipped InActiveBattlefield IsInActiveWorldPVP IsShiftKeyDown
+	IsWatchingHonorAsXP IsXPUserDisabled PlaySound PVPQueueFrame ReputationDetailMainScreenCheckBox
+	SetWatchedFactionIndex SetWatchingHonorAsXP UIParent UnitFactionGroup UnitHonor UnitHonorLevel UnitHonorMax
+	UnitLevel UnitPrestige UnitSex UnitXP UnitXPMax
 
 	LE_BATTLE_PET_ALLY MAX_PLAYER_LEVEL MAX_REPUTATION_REACTION
 ]]
@@ -190,12 +190,12 @@ local function bar_UpdateSegments(self)
 
 		-- Azerite
 		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel or not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
-			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if azeriteItemLocation then
+			local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+			if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
 				index = index + 1
 
-				local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-				local level = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+				local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItem)
+				local level = C_AzeriteItem.GetPowerLevel(azeriteItem)
 
 				self[index].tooltipInfo = {
 					header = L["ARTIFACT_POWER"],

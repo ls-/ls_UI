@@ -295,7 +295,6 @@ L["NAME_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 L["NAME_TAKEN_ERR"] = "名称已被使用。"
 L["NO_SEPARATION"] = "不分隔"
 L["NOTHING_TO_SHOW"] = "不展示"
-L["NPE_FRAME"] = "新手引导框架"
 L["NUM_BUTTONS"] = "按钮数量"
 L["NUM_ROWS"] = "行数量"
 L["NUMERIC"] = "数值"

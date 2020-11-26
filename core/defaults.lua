@@ -3006,9 +3006,6 @@ D.char = {
 		mail = {
 			enabled = false,
 		},
-		npe = { -- NPE_TutorialInterfaceHelp
-			enabled = true
-		},
 		objective_tracker = { -- ObjectiveTrackerFrame
 			enabled = true,
 		},
