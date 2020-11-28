@@ -49,6 +49,11 @@ local function createElement(parent, num, name)
 		bar:SetScript("OnValueChanged", bar_OnValueChanged)
 		element[i] = bar
 
+		local hl = element:CreateTexture(nil, "BACKGROUND", nil, -8)
+		hl:SetAllPoints(bar)
+		hl:SetColorTexture(0, 0, 0, 0)
+		bar.Highlight = hl
+
 		local glow = bar:CreateTexture(nil, "ARTWORK", nil, 7)
 		glow:SetAllPoints()
 		glow:SetColorTexture(1, 1, 1)
@@ -195,7 +200,7 @@ do
 		runes = true,
 	}
 
-	local function element_PostUpdate(self, _, max, maxChanged, powerType)
+	local function element_PostUpdate(self, _, max, maxChanged, powerType, chargedIdx)
 		if self._active ~= self.__isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.__isEnabled then
 				self:Hide()
@@ -218,12 +223,31 @@ do
 						self[i]:SetHeight(layout[i])
 					end
 
-					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
+					if i == chargedIdx then
+						self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.CHI))
+						self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.CHI, 0.4))
+					else
+						self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
+						self[i].Highlight:SetColorTexture(0, 0, 0, 0)
+					end
 				end
 			end
 
 			self._active = self.__isEnabled
+			self._chargedIdx = chargedIdx
 			self._powerID = powerType
+		elseif self._active and self._chargedIdx ~= chargedIdx then
+			for i = 1, max do
+				if i == chargedIdx then
+					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.CHI))
+					self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.CHI, 0.4))
+				else
+					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
+					self[i].Highlight:SetColorTexture(0, 0, 0, 0)
+				end
+			end
+
+			self._chargedIdx = chargedIdx
 		end
 	end
 
