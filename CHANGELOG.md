@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 90002.03
+
+- Fixed an issue that prevented square minimap from working in Torghast.
+
 ## Version 90002.02
 
 - Added support for charged combo points. For now it'll use Chi colour. I'll add a proper colour
