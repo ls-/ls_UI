@@ -1452,6 +1452,19 @@ function MODULE:Init()
 			E:ForceHide(_G[name])
 		end
 
+		local function handleHybridMinimap()
+			if isSquare then
+				HybridMinimap.MapCanvas:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+				HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+			end
+		end
+
+		if HybridMinimap then
+			handleHybridMinimap()
+		else
+			E:AddOnLoadTask("Blizzard_HybridMinimap", handleHybridMinimap)
+		end
+
 		local function handleChildren()
 			local shouldCollect = C.db.profile.minimap.collect.enabled
 
