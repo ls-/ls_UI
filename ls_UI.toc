@@ -1,6 +1,6 @@
 ## Interface: 90002
 ## Author: lightspark
-## Version: 90002.03
+## Version: 90002.04
 ## Title: LS: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CHAR_CONFIG
