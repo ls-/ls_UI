@@ -877,7 +877,7 @@ function MODULE:Init()
 			local bg = Minimap:CreateTexture(nil, "BACKGROUND")
 			bg:SetColorTexture(0.1, 0.1, 0.1)
 			bg:SetPoint("TOPLEFT", 0, 20)
-			bg:SetPoint("BOTTOMRIGHT", 0, 0)
+			bg:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, 2)
 
 			local border = E:CreateBorder(textureParent)
 			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
@@ -1450,6 +1450,19 @@ function MODULE:Init()
 			"MinimapZoomOut",
 		} do
 			E:ForceHide(_G[name])
+		end
+
+		local function handleHybridMinimap()
+			if isSquare then
+				HybridMinimap.MapCanvas:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+				HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+			end
+		end
+
+		if HybridMinimap then
+			handleHybridMinimap()
+		else
+			E:AddOnLoadTask("Blizzard_HybridMinimap", handleHybridMinimap)
 		end
 
 		local function handleChildren()
