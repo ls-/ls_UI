@@ -240,6 +240,11 @@ local function getUFOption_Health(order, unit)
 						type = "toggle",
 						name = L["CLASS"],
 					},
+					reaction = {
+						order = 2,
+						type = "toggle",
+						name = L["REACTION"],
+					},
 				},
 			},
 			spacer_2 = {
@@ -624,14 +629,6 @@ local function getUFOption_Health(order, unit)
 			},
 		},
 	}
-
-	if unit ~= "player" and unit ~= "pet" then
-		temp.args.color.args.reaction = {
-			order = 2,
-			type = "toggle",
-			name = L["REACTION"],
-		}
-	end
 
 	return temp
 end

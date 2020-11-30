@@ -422,7 +422,7 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						reaction = true,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
