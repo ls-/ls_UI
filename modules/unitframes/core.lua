@@ -216,8 +216,13 @@ function UF:CreateUnitFrame(unit, name)
 	end
 end
 
+local allowedMethodsIfDisabled = {
+	Update = true,
+	UpdateConfig = true,
+}
+
 function UF:UpdateUnitFrame(unit, method, ...)
-	if units[unit] then
+	if units[unit] and (C.db.profile.units[unit].enabled or allowedMethodsIfDisabled[method]) then
 		if unit == "boss"then
 			for i = 1, 5 do
 				if objects[unit .. i][method] then
