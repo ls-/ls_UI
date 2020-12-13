@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local m_floor = _G.math.floor
 local next = _G.next
 local s_trim = _G.string.trim
 local s_upper = _G.string.upper
@@ -45,20 +46,36 @@ local EQUIP_SLOTS = {
 	[17] = "CharacterSecondaryHandSlot",
 }
 
+local ILVL_COLORS = {}
+local ILVL_STEP = 13 -- the ilvl step between content difficulties
+
+local avgItemLevel = m_floor(GetAverageItemLevel())
+
+local function getItemLevelColor(itemLevel)
+	if itemLevel == "" then
+		itemLevel = 0
+	end
+
+	-- if an item is worse than the average ilvl by one full step, it's really bad
+	return E:GetGradientAsRGB((itemLevel - avgItemLevel + ILVL_STEP) / ILVL_STEP, ILVL_COLORS)
+end
+
 local function scanSlot(slotID)
 	local link = GetInventoryItemLink("player", slotID)
 	if link then
-		return true, E:GetItemEnchantGemInfo(link)
+		return true, GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture("player", slotID) then
-		return false, "", "", "", ""
+		return false, "", "", "", "", ""
 	end
 
-	return true, "", "", "", ""
+	return true, "", "", "", "", ""
 end
 
 local function updateSlot(slotID)
-	local isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	local isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
 	if isOk then
+		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText(iLvl)
+		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
 		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
 		_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
 	else
@@ -67,10 +84,12 @@ local function updateSlot(slotID)
 end
 
 local function updateAllSlots()
-	local scanComplete, isOk, enchant, gem1, gem2, gem3 = true
+	local scanComplete, isOk, iLvl, enchant, gem1, gem2, gem3 = true
 	for slotID, slotName in next, EQUIP_SLOTS do
-		isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+		isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
 
+		_G[slotName].ItemLevelText:SetText(iLvl)
+		_G[slotName].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
 		_G[slotName].EnchantText:SetText(enchant)
 		_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
 
@@ -142,6 +161,10 @@ function MODULE:SetUpCharacterFrame()
 			HideUIPanel(CharacterFrame)
 		end
 
+		ILVL_COLORS[1] = C.db.global.colors.red
+		ILVL_COLORS[2] = C.db.global.colors.yellow
+		ILVL_COLORS[3] = C.db.global.colors.white
+
 		for slot, textOnRight in next, INV_SLOTS do
 			for _, v in next, {slot:GetRegions()} do
 				if v:IsObjectType("Texture") and SLOT_TEXTURES_TO_REMOVE[s_upper(v:GetTexture() or "")] then
@@ -164,6 +187,13 @@ function MODULE:SetUpCharacterFrame()
 			gemText:SetSize(157, 14)
 			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			slot.GemText = gemText
+
+			local iLvlText = slot:CreateFontString(nil, "ARTWORK", "LSFont12_Outline")
+			iLvlText:SetPoint("TOPLEFT", -2, -1)
+			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
+			iLvlText:SetJustifyH("RIGHT")
+			iLvlText:SetJustifyV("BOTTOM")
+			slot.ItemLevelText = iLvlText
 
 			if textOnRight then
 				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 4, 0)
@@ -242,6 +272,10 @@ function MODULE:SetUpCharacterFrame()
 			if CharacterFrame:IsShown() and EQUIP_SLOTS[slotID] then
 				updateSlot(slotID)
 			end
+		end)
+
+		E:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE", function()
+			avgItemLevel = m_floor(GetAverageItemLevel())
 		end)
 
 		isInit = true
