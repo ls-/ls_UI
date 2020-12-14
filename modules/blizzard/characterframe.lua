@@ -49,7 +49,7 @@ local EQUIP_SLOTS = {
 local ILVL_COLORS = {}
 local ILVL_STEP = 13 -- the ilvl step between content difficulties
 
-local avgItemLevel = m_floor(GetAverageItemLevel())
+local avgItemLevel
 
 local function getItemLevelColor(itemLevel)
 	if itemLevel == "" then
@@ -160,6 +160,8 @@ function MODULE:SetUpCharacterFrame()
 		if CharacterFrame:IsShown() then
 			HideUIPanel(CharacterFrame)
 		end
+
+		avgItemLevel = m_floor(GetAverageItemLevel())
 
 		ILVL_COLORS[1] = C.db.global.colors.red
 		ILVL_COLORS[2] = C.db.global.colors.yellow
