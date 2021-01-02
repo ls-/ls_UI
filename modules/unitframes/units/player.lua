@@ -458,10 +458,10 @@ do
 		addPower:SetFrameLevel(level + 1)
 		frame.AdditionalPower = addPower
 
-		addPower:HookScript("OnHide", function(self)
+		hooksecurefunc(addPower, "Hide", function(self)
 			frame.Insets.Top:Refresh(self, false, 0)
 		end)
-		addPower:HookScript("OnShow", function(self)
+		hooksecurefunc(addPower, "Show", function(self)
 			frame.Insets.Top:Refresh(self, true, 1)
 		end)
 
@@ -476,10 +476,10 @@ do
 			stagger:SetFrameLevel(level + 1)
 			frame.Stagger = stagger
 
-			stagger:HookScript("OnHide", function(self)
+			hooksecurefunc(stagger, "Hide", function(self)
 				frame.Insets.Top:Refresh(self, false, 0)
 			end)
-			stagger:HookScript("OnShow", function(self)
+			hooksecurefunc(stagger, "Show", function(self)
 				frame.Insets.Top:Refresh(self, true, 1)
 			end)
 
@@ -489,10 +489,10 @@ do
 			runes:SetFrameLevel(level + 1)
 			frame.Runes = runes
 
-			runes:HookScript("OnHide", function(self)
+			hooksecurefunc(runes, "Hide", function(self)
 				frame.Insets.Top:Refresh(self, false, 0)
 			end)
-			runes:HookScript("OnShow", function(self)
+			hooksecurefunc(runes, "Show", function(self)
 				frame.Insets.Top:Refresh(self, true, 6)
 			end)
 
@@ -503,10 +503,10 @@ do
 		classPower:SetFrameLevel(level + 1)
 		frame.ClassPower = classPower
 
-		classPower:HookScript("OnHide", function(self)
+		hooksecurefunc(classPower, "Hide", function(self)
 			frame.Insets.Top:Refresh(self, false, 0)
 		end)
-		classPower:HookScript("OnShow", function(self)
+		hooksecurefunc(classPower, "Show", function(self)
 			frame.Insets.Top:Refresh(self, true, self.__max)
 		end)
 
