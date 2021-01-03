@@ -2942,11 +2942,7 @@ D.char = {
 		y_growth = "DOWN",
 		drag_key = "NONE",
 		count = {
-			enabled = true,
 			size = 12,
-			outline = true,
-			shadow = false,
-			flag = "_Outline", -- "_Shadow", ""
 			h_alignment = "RIGHT",
 			v_alignment = "TOP",
 		},

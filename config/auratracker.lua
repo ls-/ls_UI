@@ -221,7 +221,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 32, step = 2,
+						min = 8, max = 48, step = 1,
 					},
 					position = {
 						order = 3,
@@ -248,8 +248,9 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				set = function(info, value)
 					if C.db.char.auratracker.count[info[#info]] ~= value then
 						C.db.char.auratracker.count[info[#info]] = value
+
 						AURATRACKER:GetTracker():UpdateConfig()
-						AURATRACKER:GetTracker():UpdateFontObjects()
+						AURATRACKER:GetTracker():UpdateCountFont()
 					end
 				end,
 				args = {
@@ -257,17 +258,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					outline = {
-						order = 2,
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = 3,
-						type = "toggle",
-						name = L["SHADOW"],
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 4,
@@ -369,13 +360,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						order = 13,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 14,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 15,

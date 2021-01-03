@@ -7,6 +7,7 @@ local CONFIG = P:GetModule("Config")
 local FILTERS = P:GetModule("Filters")
 local MINIMAP = P:GetModule("Minimap")
 local UNITFRAMES = P:GetModule("UnitFrames")
+local AURATRACKER = P:GetModule("AuraTracker")
 
 -- Lua
 local _G = getfenv(0)
@@ -1853,6 +1854,9 @@ function CONFIG:CreateGeneralPanel(order)
 
 							AURAS:ForEach("UpdateConfig")
 							AURAS:ForEach("ForEach", "UpdateCountFont")
+
+							AURATRACKER:GetTracker():UpdateConfig()
+							AURATRACKER:GetTracker():UpdateCountFont()
 						end,
 						args = {
 							font = {

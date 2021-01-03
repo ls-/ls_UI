@@ -136,6 +136,7 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.char.auratracker, self._config)
+	self._config.count = E:CopyTable(C.db.global.fonts.buttons, self._config.count)
 end
 
 local function bar_UpdateCooldownConfig(self)
@@ -172,22 +173,17 @@ local function bar_UpdateLock(self)
 	end
 end
 
-local function bar_UpdateFontObjects(self)
+local function bar_UpdateCountFont(self)
 	local config = self._config.count
-	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
-	local count
 
 	for _, button in next, self._buttons do
-		count = button.Count
-		count:SetFontObject(fontObj)
-		count:SetJustifyH(config.h_alignment)
-		count:SetJustifyV(config.v_alignment)
-		count:SetWordWrap(false)
+		button.Count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+		button.Count:SetWordWrap(false)
 
 		if config.shadow then
-			count:SetShadowOffset(1, -1)
+			button.Count:SetShadowOffset(1, -1)
 		else
-			count:SetShadowOffset(0, 0)
+			button.Count:SetShadowOffset(0, 0)
 		end
 	end
 end
@@ -243,7 +239,7 @@ function MODULE.Init()
 		bar.UpdateAuraTypeIcons = bar_UpdateAuraTypeIcons
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
-		bar.UpdateFontObjects = bar_UpdateFontObjects
+		bar.UpdateCountFont = bar_UpdateCountFont
 		bar.UpdateLock = bar_UpdateLock
 
 		bar.Header = header
@@ -278,7 +274,7 @@ function MODULE.Update()
 		bar:UpdateConfig()
 		bar:UpdateCooldownConfig()
 		bar:UpdateAuraTypeIcons()
-		bar:UpdateFontObjects()
+		bar:UpdateCountFont()
 		E:UpdateBarLayout(bar)
 		bar:UpdateLock()
 		bar:Update()
