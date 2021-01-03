@@ -244,10 +244,10 @@ local function header_Update(self)
 		end
 
 		self:Hide()
-		self:ForEachButton("Hide")
-		self:ForEachButton("UpdateAuraTypeIcon")
-		self:ForEachButton("UpdateCountText")
-		self:ForEachButton("SetSize", config.size, config.size)
+		self:ForEach("Hide")
+		self:ForEach("UpdateAuraTypeIcon")
+		self:ForEach("UpdateCountText")
+		self:ForEach("SetSize", config.size, config.size)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)
 		self:SetAttribute("initialConfigFunction", ([[
@@ -279,7 +279,7 @@ local function header_Update(self)
 	end
 end
 
-local function header_ForEachButton(self, method, ...)
+local function header_ForEach(self, method, ...)
 	local buttons = self._buttons or {self:GetChildren()}
 	for _, button in next, buttons do
 		if button[method] then
@@ -379,7 +379,7 @@ local function createHeader(filter)
 	end
 
 	header._filter = filter
-	header.ForEachButton = header_ForEachButton
+	header.ForEach = header_ForEach
 	header.Update = header_Update
 	header.UpdateConfig = header_UpdateConfig
 	header.UpdateCooldownConfig = header_UpdateCooldownConfig
@@ -406,15 +406,15 @@ function MODULE.Init()
 
 		isInit = true
 
-		MODULE:ForEachHeader("Update")
+		MODULE:ForEach("Update")
 	end
 end
 
 function MODULE:Update()
-	self:ForEachHeader("Update")
+	self:ForEach("Update")
 end
 
-function MODULE:ForEachHeader(method, ...)
+function MODULE:ForEach(method, ...)
 	for _, header in next, headers do
 		if header[method] then
 			header[method](header, ...)

@@ -1883,8 +1883,8 @@ function CONFIG:CreateGeneralPanel(order)
 						set = function(info, value)
 							C.db.global.fonts.auras[info[#info]] = value
 
-							AURAS:ForEachHeader("UpdateConfig")
-							AURAS:ForEachHeader("ForEachButton", "UpdateCountText")
+							AURAS:ForEach("UpdateConfig")
+							AURAS:ForEach("ForEach", "UpdateCountText")
 						end,
 						args = {
 							font = {
