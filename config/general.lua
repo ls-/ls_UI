@@ -1,5 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
+local AURAS = P:GetModule("Auras")
 local BARS = P:GetModule("Bars")
 local BLIZZARD = P:GetModule("Blizzard")
 local CONFIG = P:GetModule("Config")
@@ -1875,8 +1876,43 @@ function CONFIG:CreateGeneralPanel(order)
 							},
 						},
 					},
-					units = {
+					auras = {
 						order = 3,
+						type = "group",
+						name = L["BUFFS_AND_DEBUFFS"],
+						set = function(info, value)
+							C.db.global.fonts.auras[info[#info]] = value
+
+							AURAS:ForEachHeader("UpdateConfig")
+							AURAS:ForEachHeader("ForEachButton", "UpdateCountText")
+						end,
+						args = {
+							font = {
+								order = 1,
+								type = "select",
+								name = L["NAME"],
+								dialogControl = "LSM30_Font",
+								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
+								get = function()
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.auras.font)
+										and C.db.global.fonts.auras.font
+										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
+								end,
+							},
+							outline = {
+								order = 2,
+								type = "toggle",
+								name = L["OUTLINE"],
+							},
+							shadow = {
+								order = 3,
+								type = "toggle",
+								name = L["SHADOW"],
+							},
+						},
+					},
+					units = {
+						order = 4,
 						type = "group",
 						name = L["UNITS"],
 						set = function(info, value)

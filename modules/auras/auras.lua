@@ -146,12 +146,12 @@ end
 local function button_UpdateCountText(self)
 	local config = self._parent._config.count
 
-	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
+	self.Count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
 	self.Count:SetJustifyH(config.h_alignment)
 	self.Count:SetJustifyV(config.v_alignment)
 	self.Count:SetWordWrap(false)
 
-	if config.flag == "_Shadow" then
+	if config.shadow then
 		self.Count:SetShadowOffset(1, -1)
 	else
 		self.Count:SetShadowOffset(0, 0)
@@ -291,6 +291,7 @@ end
 local function header_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.auras[self._filter], self._config)
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
+	self._config.count = E:CopyTable(C.db.global.fonts.auras, self._config.count)
 end
 
 local function header_UpdateCooldownConfig(self)

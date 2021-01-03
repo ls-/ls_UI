@@ -206,6 +206,11 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
+		auras = {
+			font = defaultFont,
+			outline =  true,
+			shadow = false,
+		}
 	},
 	tags = {
 		["ls:absorb:damage"] = {
@@ -895,8 +900,6 @@ D.profile = {
 					disable_mouse = false,
 					count = {
 						size = 10,
-						outline = true,
-						shadow = false,
 						h_alignment = "RIGHT",
 						v_alignment = "TOP",
 					},
