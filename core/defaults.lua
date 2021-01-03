@@ -201,16 +201,11 @@ D.global = {
 			outline = false,
 			shadow = true,
 		},
-		bars = {
+		buttons = {
 			font = defaultFont,
 			outline = true,
 			shadow = false,
 		},
-		auras = {
-			font = defaultFont,
-			outline =  true,
-			shadow = false,
-		}
 	},
 	tags = {
 		["ls:absorb:damage"] = {

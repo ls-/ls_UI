@@ -291,7 +291,7 @@ end
 local function header_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.auras[self._filter], self._config)
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
-	self._config.count = E:CopyTable(C.db.global.fonts.auras, self._config.count)
+	self._config.count = E:CopyTable(C.db.global.fonts.buttons, self._config.count)
 end
 
 local function header_UpdateCooldownConfig(self)

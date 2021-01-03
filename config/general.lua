@@ -1828,12 +1828,12 @@ function CONFIG:CreateGeneralPanel(order)
 							},
 						},
 					},
-					bars = {
+					buttons = {
 						order = 2,
 						type = "group",
-						name = L["ACTION_BARS"],
+						name = L["BUTTONS"],
 						set = function(info, value)
-							C.db.global.fonts.bars[info[#info]] = value
+							C.db.global.fonts.button[info[#info]] = value
 
 							BARS:ForBar("bar1", "UpdateConfig")
 							BARS:ForBar("bar2", "UpdateConfig")
@@ -1850,38 +1850,6 @@ function CONFIG:CreateGeneralPanel(order)
 							BARS:ForEach("ForEach", "UpdateHotKeyFont")
 							BARS:ForEach("ForEach", "UpdateMacroFont")
 							BARS:ForBar("xpbar", "UpdateFont")
-						end,
-						args = {
-							font = {
-								order = 1,
-								type = "select",
-								name = L["NAME"],
-								dialogControl = "LSM30_Font",
-								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
-								get = function()
-									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.bars.font)
-										and C.db.global.fonts.bars.font
-										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
-								end,
-							},
-							outline = {
-								order = 2,
-								type = "toggle",
-								name = L["OUTLINE"],
-							},
-							shadow = {
-								order = 3,
-								type = "toggle",
-								name = L["SHADOW"],
-							},
-						},
-					},
-					auras = {
-						order = 3,
-						type = "group",
-						name = L["BUFFS_AND_DEBUFFS"],
-						set = function(info, value)
-							C.db.global.fonts.auras[info[#info]] = value
 
 							AURAS:ForEach("UpdateConfig")
 							AURAS:ForEach("ForEach", "UpdateCountText")
@@ -1894,8 +1862,8 @@ function CONFIG:CreateGeneralPanel(order)
 								dialogControl = "LSM30_Font",
 								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
 								get = function()
-									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.auras.font)
-										and C.db.global.fonts.auras.font
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.button.font)
+										and C.db.global.fonts.button.font
 										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
 								end,
 							},
@@ -1912,7 +1880,7 @@ function CONFIG:CreateGeneralPanel(order)
 						},
 					},
 					units = {
-						order = 4,
+						order = 3,
 						type = "group",
 						name = L["UNITS"],
 						set = function(info, value)

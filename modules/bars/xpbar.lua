@@ -84,7 +84,8 @@ local function bar_UpdateConfig(self)
 		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
 	end
 
-	self._config.text = E:CopyTable(C.db.global.fonts.bars, self._config.text)
+	-- FIX ME! Should be controlled by a different font type which is NYI
+	self._config.text = E:CopyTable(C.db.global.fonts.buttons, self._config.text)
 end
 
 local function updateFont(fontString, config)
