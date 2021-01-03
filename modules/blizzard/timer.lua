@@ -41,7 +41,8 @@ local function START_TIMER()
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
 			local time = timer.bar.Text
-			time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			time:SetShadowOffset(1, -1)
 			time:SetJustifyV("MIDDLE")
 			time:SetJustifyH("RIGHT")
 			time:ClearAllPoints()
@@ -114,8 +115,11 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer, "HORIZONTAL-" .. config.height)
 
-			timer.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
-			timer.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			timer.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.Text:SetShadowOffset(1, -1)
+
+			timer.Time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.Time:SetShadowOffset(1, -1)
 		end
 
 		for _, timer in next, TimerTracker.timerList do
@@ -123,7 +127,8 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
-			timer.bar.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			timer.bar.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.bar.Text:SetShadowOffset(1, -1)
 		end
 	end
 end

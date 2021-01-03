@@ -75,19 +75,25 @@ function E:HandleStatusBar(bar, isRecursive)
 		bar.Bg = bg
 
 		if not text then
-			text = bar:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
-			text:SetWordWrap(false)
-			text:SetJustifyV("MIDDLE")
-		else
-			text:SetFontObject("LSFont12_Shadow")
-			text:SetWordWrap(false)
-			text:SetJustifyV("MIDDLE")
+			text = bar:CreateFontString(nil, "ARTWORK")
 		end
 
+		local config = C.db.global.fonts.font_2
+
+		text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
+		text:SetWordWrap(false)
+		text:SetJustifyV("MIDDLE")
 		text:SetDrawLayer("ARTWORK")
 		text:ClearAllPoints()
 		text:SetPoint("TOPLEFT", 1, 0)
 		text:SetPoint("BOTTOMRIGHT", -1, 0)
+
+		if config.shadow then
+			text:SetShadowOffset(1, -1)
+		else
+			text:SetShadowOffset(0, 0)
+		end
+
 		bar.Text = text
 
 		sbt:SetTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -111,8 +117,18 @@ function E:CreateStatusBar(parent, name, orientation)
 	bg:SetAllPoints()
 	bar.Bg = bg
 
-	local text = bar:CreateFontString("$parentText", "ARTWORK", "LSFont12_Shadow")
+	local config = C.db.global.fonts.font_2
+
+	local text = bar:CreateFontString("$parentText", "ARTWORK")
+	text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
 	text:SetWordWrap(false)
+
+	if config.shadow then
+		text:SetShadowOffset(1, -1)
+	else
+		text:SetShadowOffset(0, 0)
+	end
+
 	bar.Text = text
 
 	bar.handled = true

@@ -178,19 +178,23 @@ function MODULE:SetUpCharacterFrame()
 			E:SkinInvSlotButton(slot)
 			slot:SetSize(36, 36)
 
-			local enchText = slot:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+			local enchText = slot:CreateFontString(nil, "ARTWORK")
+			enchText:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), C.db.global.fonts.font_2.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			enchText:SetShadowOffset(1, -1)
 			enchText:SetSize(160, 22)
 			enchText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			enchText:SetJustifyV("TOP")
 			enchText:SetTextColor(0, 1, 0)
 			slot.EnchantText = enchText
 
-			local gemText = slot:CreateFontString(nil, "ARTWORK", "LSIcon14Font")
+			local gemText = slot:CreateFontString(nil, "ARTWORK")
+			gemText:SetFont(GameFontNormal:GetFont(), 14)
 			gemText:SetSize(157, 14)
 			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			slot.GemText = gemText
 
-			local iLvlText = slot:CreateFontString(nil, "ARTWORK", "LSFont12_Outline")
+			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
+			iLvlText:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_1.font), C.db.global.fonts.font_1.size, C.db.global.fonts.font_1.outline and "OUTLINE" or nil)
 			iLvlText:SetPoint("TOPLEFT", -2, -1)
 			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
 			iLvlText:SetJustifyH("RIGHT")

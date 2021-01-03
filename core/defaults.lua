@@ -206,6 +206,18 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
+		font_1 = { -- default outline font
+			font = defaultFont,
+			size = 12,
+			outline =  true,
+			shadow = false,
+		},
+		font_2 = { -- default shadow font
+			font = defaultFont,
+			size = 12,
+			outline =  false,
+			shadow = true,
+		},
 	},
 	tags = {
 		["ls:absorb:damage"] = {
@@ -2754,7 +2766,6 @@ D.profile = {
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "RIGHT",
 				v_alignment = "TOP",
 			},
@@ -2800,7 +2811,6 @@ D.profile = {
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "RIGHT",
 				v_alignment = "TOP",
 			},
@@ -2901,7 +2911,6 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 12,
-				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		timer = { -- MirrorTimer*, TimerTrackerTimer*
@@ -2909,7 +2918,6 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 12,
-				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		objective_tracker = { -- ObjectiveTrackerFrame

@@ -1126,7 +1126,7 @@ function MODULE:Init()
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
-			button:SetNormalFontObject("LSFont16_Outline")
+			button:GetNormalFontObject():SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_1.font), 16, C.db.global.fonts.font_1.outline and "OUTLINE" or nil)
 			button:SetPushedTextOffset(1, -1)
 			Minimap.Calendar = button
 
@@ -1233,7 +1233,8 @@ function MODULE:Init()
 			Minimap.Zone = frame
 
 			local text = MinimapZoneText
-			text:SetFontObject("LSFont12_Shadow")
+			text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), C.db.global.fonts.font_2.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			text:SetShadowOffset(1, -1)
 			text:SetDrawLayer("OVERLAY")
 			text:SetSize(0, 0)
 			text:ClearAllPoints()
