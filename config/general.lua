@@ -1833,7 +1833,7 @@ function CONFIG:CreateGeneralPanel(order)
 						type = "group",
 						name = L["BUTTONS"],
 						set = function(info, value)
-							C.db.global.fonts.button[info[#info]] = value
+							C.db.global.fonts.buttons[info[#info]] = value
 
 							BARS:ForBar("bar1", "UpdateConfig")
 							BARS:ForBar("bar2", "UpdateConfig")
@@ -1862,8 +1862,8 @@ function CONFIG:CreateGeneralPanel(order)
 								dialogControl = "LSM30_Font",
 								values = LibStub("LibSharedMedia-3.0"):HashTable("font"),
 								get = function()
-									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.button.font)
-										and C.db.global.fonts.button.font
+									return LibStub("LibSharedMedia-3.0"):IsValid("font", C.db.global.fonts.buttons.font)
+										and C.db.global.fonts.buttons.font
 										or LibStub("LibSharedMedia-3.0"):GetDefault("font")
 								end,
 							},
