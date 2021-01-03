@@ -143,7 +143,7 @@ local function button_UpdateAuraTypeIcon(self)
 	self.showDebuffType = self._parent._config.type.debuff_type
 end
 
-local function button_UpdateCountText(self)
+local function button_UpdateCountFont(self)
 	local config = self._parent._config.count
 
 	self.Count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
@@ -196,10 +196,10 @@ local function handleButton(button, header)
 
 	button._parent = header
 	button.UpdateAuraTypeIcon = button_UpdateAuraTypeIcon
-	button.UpdateCountText = button_UpdateCountText
+	button.UpdateCountFont = button_UpdateCountFont
 
 	button:UpdateAuraTypeIcon()
-	button:UpdateCountText()
+	button:UpdateCountFont()
 end
 
 local function header_OnAttributeChanged(self, attr, value)
@@ -246,7 +246,7 @@ local function header_Update(self)
 		self:Hide()
 		self:ForEach("Hide")
 		self:ForEach("UpdateAuraTypeIcon")
-		self:ForEach("UpdateCountText")
+		self:ForEach("UpdateCountFont")
 		self:ForEach("SetSize", config.size, config.size)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)

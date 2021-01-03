@@ -1852,7 +1852,7 @@ function CONFIG:CreateGeneralPanel(order)
 							BARS:ForBar("xpbar", "UpdateFont")
 
 							AURAS:ForEach("UpdateConfig")
-							AURAS:ForEach("ForEach", "UpdateCountText")
+							AURAS:ForEach("ForEach", "UpdateCountFont")
 						end,
 						args = {
 							font = {

@@ -209,7 +209,7 @@ local function getOptionsTable_Aura(order, name, filter)
 					if C.db.profile.auras[filter].count[info[#info]] ~= value then
 						C.db.profile.auras[filter].count[info[#info]] = value
 						AURAS:ForHeader(filter, "UpdateConfig")
-						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountText")
+						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountFont")
 					end
 				end,
 				args = {
