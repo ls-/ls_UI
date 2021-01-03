@@ -1126,7 +1126,7 @@ function MODULE:Init()
 			button:RegisterForDrag("LeftButton")
 			button:SetParent(Minimap)
 			button:ClearAllPoints()
-			button:GetNormalFontObject():SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_1.font), 16, C.db.global.fonts.font_1.outline and "OUTLINE" or nil)
+			button:GetFontString():SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_1.font), 16, C.db.global.fonts.font_1.outline and "OUTLINE" or nil)
 			button:SetPushedTextOffset(1, -1)
 			Minimap.Calendar = button
 
