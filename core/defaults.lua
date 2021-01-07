@@ -2906,6 +2906,10 @@ D.profile = {
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
 		},
+		character_frame = {
+			ilvl = true,
+			enhancements = true,
+		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			width = 200,
 			height = 12,

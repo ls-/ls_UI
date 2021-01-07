@@ -65,6 +65,8 @@ local function scanSlot(slotID)
 	if link then
 		return true, GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture("player", slotID) then
+		 -- if there's no link, but there's a texture, it means that there's
+		 -- an item we have no info for
 		return false, "", "", "", "", ""
 	end
 
@@ -72,26 +74,66 @@ local function scanSlot(slotID)
 end
 
 local function updateSlot(slotID)
+	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
+		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
+		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
+		_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+
+		return
+	end
+
 	local isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
 	if isOk then
-		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText(iLvl)
-		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
-		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
-		_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		if C.db.profile.blizzard.character_frame.ilvl then
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText(iLvl)
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
+		else
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
+		end
+
+		if C.db.profile.blizzard.character_frame.enhancements then
+			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
+			_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		else
+			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
+			_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+		end
 	else
 		C_Timer.After(0.33, function() updateSlot(slotID) end)
 	end
 end
 
 local function updateAllSlots()
-	local scanComplete, isOk, iLvl, enchant, gem1, gem2, gem3 = true
+	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
+		for _, slotName in next, EQUIP_SLOTS do
+			_G[slotName].ItemLevelText:SetText("")
+			_G[slotName].EnchantText:SetText("")
+			_G[slotName].GemText:SetText("")
+		end
+
+		return
+	end
+
+	local scanComplete = true
+	local showILvl, showEnchants = C.db.profile.blizzard.character_frame.ilvl, C.db.profile.blizzard.character_frame.enhancements
+	local isOk, iLvl, enchant, gem1, gem2, gem3
 	for slotID, slotName in next, EQUIP_SLOTS do
 		isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
 
-		_G[slotName].ItemLevelText:SetText(iLvl)
-		_G[slotName].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
-		_G[slotName].EnchantText:SetText(enchant)
-		_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		if showILvl then
+			_G[slotName].ItemLevelText:SetText(iLvl)
+			_G[slotName].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
+		else
+			_G[slotName].ItemLevelText:SetText("")
+		end
+
+		if showEnchants then
+			_G[slotName].EnchantText:SetText(enchant)
+			_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		else
+			_G[slotName].EnchantText:SetText("")
+			_G[slotName].GemText:SetText("")
+		end
 
 		scanComplete = scanComplete and isOk
 	end
@@ -286,4 +328,12 @@ function MODULE:SetUpCharacterFrame()
 
 		isInit = true
 	end
+end
+
+function MODULE:UpadteCharacterFrame()
+	if not isInit then
+		return
+	end
+
+	updateAllSlots()
 end
