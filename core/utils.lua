@@ -793,7 +793,7 @@ do
 			itemCache[itemLink] = {}
 		end
 
-		wipeScanTip(scanTip)
+		wipeScanTip()
 		scanTip:SetHyperlink(itemLink)
 
 		local enchant, text = ""
