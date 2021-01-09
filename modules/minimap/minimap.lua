@@ -869,6 +869,8 @@ function MODULE:Init()
 		ignoredChildren[textureParent] = true
 
 		if isSquare then
+			Minimap:SetArchBlobRingScalar(0)
+			Minimap:SetQuestBlobRingScalar(0)
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
 			Minimap:SetPoint("BOTTOM", 0, 0)
 
@@ -907,6 +909,8 @@ function MODULE:Init()
 			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 			Minimap.SepMiddle = mid
 		else
+			Minimap:SetArchBlobRingScalar(1)
+			Minimap:SetQuestBlobRingScalar(1)
 			Minimap:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
 			Minimap:SetPoint("BOTTOM", 0, 10)
 
