@@ -499,3 +499,4 @@ L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
 L["BUTTONS"] = "Buttons"
+L["STATUSBAR_BARS"] = "Progress Bars"

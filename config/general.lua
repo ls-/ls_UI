@@ -1812,6 +1812,8 @@ function CONFIG:CreateGeneralPanel(order)
 		},
 	}
 
+	self:CreateGeneralFontsPanel(2)
+
 	updateTagOptions()
 	updateTagVarsOptions()
 	updateAuraFiltersOptions()
