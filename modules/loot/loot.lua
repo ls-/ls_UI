@@ -345,15 +345,14 @@ local function createButton(parent, index)
 	button.Quest = quest
 
 	local count = iconParent:CreateFontString(nil, "OVERLAY")
-	count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_1.font), C.db.global.fonts.font_1.size, C.db.global.fonts.font_1.outline and "OUTLINE" or nil)
+	count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.buttons.font), 12, C.db.global.fonts.buttons.outline and "OUTLINE" or nil)
 	count:SetPoint("BOTTOMRIGHT", 0, 1)
 	count:SetJustifyH("RIGHT")
 	count:SetVertexColor(1, 1, 1)
 	button.Count = count
 
 	local name = button:CreateFontString(nil, "OVERLAY")
-	name:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), C.db.global.fonts.font_2.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
-	name:SetShadowOffset(1, -1)
+	name:SetFontObject("GameFontNormal")
 	name:SetWordWrap(true)
 	name:SetJustifyH("LEFT")
 	name:SetPoint("TOPLEFT", iconParent, "TOPRIGHT", 6, 0)
