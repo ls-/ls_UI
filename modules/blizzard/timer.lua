@@ -41,7 +41,7 @@ local function START_TIMER()
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
 			local time = timer.bar.Text
-			time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.statusbars.font), config.text.size, C.db.global.fonts.statusbars.outline and "OUTLINE" or nil)
 			time:SetShadowOffset(1, -1)
 			time:SetJustifyV("MIDDLE")
 			time:SetJustifyH("RIGHT")
@@ -115,10 +115,10 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer, "HORIZONTAL-" .. config.height)
 
-			timer.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.statusbars.font), config.text.size, C.db.global.fonts.statusbars.outline and "OUTLINE" or nil)
 			timer.Text:SetShadowOffset(1, -1)
 
-			timer.Time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.Time:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.statusbars.font), config.text.size, C.db.global.fonts.statusbars.outline and "OUTLINE" or nil)
 			timer.Time:SetShadowOffset(1, -1)
 		end
 
@@ -127,7 +127,7 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
-			timer.bar.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.font_2.font), config.text.size, C.db.global.fonts.font_2.outline and "OUTLINE" or nil)
+			timer.bar.Text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", C.db.global.fonts.statusbars.font), config.text.size, C.db.global.fonts.statusbars.outline and "OUTLINE" or nil)
 			timer.bar.Text:SetShadowOffset(1, -1)
 		end
 	end

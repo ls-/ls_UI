@@ -206,15 +206,8 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
-		font_1 = { -- default outline font
+		statusbars = {
 			font = defaultFont,
-			size = 12,
-			outline =  true,
-			shadow = false,
-		},
-		font_2 = { -- default shadow font
-			font = defaultFont,
-			size = 12,
 			outline =  false,
 			shadow = true,
 		},

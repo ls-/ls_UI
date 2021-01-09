@@ -78,9 +78,9 @@ function E:HandleStatusBar(bar, isRecursive)
 			text = bar:CreateFontString(nil, "ARTWORK")
 		end
 
-		local config = C.db.global.fonts.font_2
+		local config = C.db.global.fonts.statusbars
 
-		text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
+		text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), 12, config.outline and "OUTLINE" or "")
 		text:SetWordWrap(false)
 		text:SetJustifyV("MIDDLE")
 		text:SetDrawLayer("ARTWORK")
@@ -117,10 +117,10 @@ function E:CreateStatusBar(parent, name, orientation)
 	bg:SetAllPoints()
 	bar.Bg = bg
 
-	local config = C.db.global.fonts.font_2
+	local config = C.db.global.fonts.statusbars
 
 	local text = bar:CreateFontString("$parentText", "ARTWORK")
-	text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
+	text:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), 12, config.outline and "OUTLINE" or "")
 	text:SetWordWrap(false)
 
 	if config.shadow then
