@@ -260,7 +260,7 @@ function MODULE:SetUpCharacterFrame()
 		CharacterModelFrame:SetSize(0, 0)
 		CharacterModelFrame:ClearAllPoints()
 		CharacterModelFrame:SetPoint("TOPLEFT", CharacterFrame.Inset, 0, 0)
-		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, 0, 44)
+		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, 0, 0)
 
 		for _, texture in next, TEXTURES_TO_REMOVE do
 			texture:SetTexture(nil)
