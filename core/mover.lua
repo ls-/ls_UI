@@ -127,7 +127,6 @@ local function showGrid()
 	end
 end
 
-
 -- Movers
 local defaults = {}
 local disabledMovers = {}
