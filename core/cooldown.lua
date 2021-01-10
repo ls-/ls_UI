@@ -109,17 +109,10 @@ end
 local function cooldown_UpdateFont(self)
 	local config = self.config.text
 
-	self.Timer:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	self.Timer:UpdateFont(config.size)
 	self.Timer:SetJustifyH("CENTER")
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
-	self.Timer:SetWordWrap(false)
-
-	if config.shadow then
-		self.Timer:SetShadowOffset(1, -1)
-	else
-		self.Timer:SetShadowOffset(0, 0)
-	end
 end
 
 local function cooldown_UpdateConfig(self, config)
@@ -127,8 +120,6 @@ local function cooldown_UpdateConfig(self, config)
 		self.config = E:CopyTable(defaults, self.config)
 		self.config = E:CopyTable(config, self.config)
 	end
-
-	self.config.text = E:CopyTable(C.db.global.fonts.cooldown, self.config.text)
 
 	if self.config.m_ss_threshold ~= 0 and self.config.m_ss_threshold < 91 then
 		self.config.m_ss_threshold = 0
@@ -149,6 +140,8 @@ function E.Cooldowns.Handle(cooldown)
 	textParent:SetAllPoints()
 
 	local timer = textParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(timer, "cooldown")
+	timer:SetWordWrap(false)
 	timer:SetPoint("TOPLEFT", -8, 0)
 	timer:SetPoint("BOTTOMRIGHT", 8, 0)
 	cooldown.Timer = timer

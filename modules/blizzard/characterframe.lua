@@ -235,11 +235,12 @@ function MODULE:SetUpCharacterFrame()
 			slot.GemText = gemText
 
 			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
-			iLvlText:SetFontObject("Game12Font_o1")
-			iLvlText:SetPoint("TOPLEFT", -2, -1)
-			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
+			E.FontStrings:Capture(iLvlText, "button")
+			iLvlText:UpdateFont(12)
 			iLvlText:SetJustifyH("RIGHT")
 			iLvlText:SetJustifyV("BOTTOM")
+			iLvlText:SetPoint("TOPLEFT", -2, -1)
+			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
 			slot.ItemLevelText = iLvlText
 
 			if textOnRight then

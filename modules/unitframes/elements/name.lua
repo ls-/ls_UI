@@ -15,22 +15,15 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].name, self._config)
-	self._config = E:CopyTable(C.db.global.fonts.units, self._config)
 end
 
 local function element_UpdateFonts(self)
 	local config = self._config
 
-	self:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	self:UpdateFont(config.size)
 	self:SetJustifyH(config.h_alignment)
 	self:SetJustifyV(config.v_alignment)
 	self:SetWordWrap(config.word_wrap)
-
-	if config.shadow then
-		self:SetShadowOffset(1, -1)
-	else
-		self:SetShadowOffset(0, 0)
-	end
 end
 
 local function element_UpdatePoints(self)
@@ -60,6 +53,7 @@ end
 
 function UF:CreateName(frame, textParent)
 	local element = (textParent or frame):CreateFontString(nil, "OVERLAY")
+	E.FontStrings:Capture(element, "unit")
 
 	element.__owner = frame
 	element.UpdateConfig = element_UpdateConfig

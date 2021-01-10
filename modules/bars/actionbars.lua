@@ -147,10 +147,6 @@ local function bar_UpdateConfig(self)
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 	end
-
-	self._config.count = E:CopyTable(C.db.global.fonts.buttons, self._config.count)
-	self._config.hotkey = E:CopyTable(C.db.global.fonts.buttons, self._config.hotkey)
-	self._config.macro = E:CopyTable(C.db.global.fonts.buttons, self._config.macro)
 end
 
 local function bar_UpdateButtonConfig(self)
@@ -194,27 +190,16 @@ local function bar_UpdateButtonConfig(self)
 	end
 end
 
-local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
-end
-
 local function button_UpdateMacroFont(self)
-	updateFont(self.Name, self._parent._config.macro)
+	self.Name:UpdateFont(self._parent._config.macro.size)
 end
 
 local function button_UpdateHotKeyFont(self)
-	updateFont(self.HotKey, self._parent._config.hotkey)
+	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
 end
 
 local function button_UpdateCountFont(self)
-	updateFont(self.Count, self._parent._config.count)
+	self.Count:UpdateFont(self._parent._config.count.size)
 end
 
 function MODULE.CreateActionBars()

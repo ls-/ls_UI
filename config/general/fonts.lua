@@ -46,20 +46,19 @@ function CONFIG:CreateGeneralFontsPanel(order)
 		get = function(info)
 			return C.db.global.fonts[info[#info - 1]][info[#info]]
 		end,
+		set = function(info, value)
+			if C.db.global.fonts[info[#info - 1]][info[#info]] ~= value then
+				C.db.global.fonts[info[#info - 1]][info[#info]] = value
+
+				E.FontStrings:UpdateAll(info[#info - 1])
+			end
+		end,
 		args = {
 			cooldown = {
 				order = reset(1),
 				type = "group",
 				inline = true,
 				name = "",
-				set = function(info, value)
-					if C.db.global.fonts.cooldown[info[#info]] ~= value then
-						C.db.global.fonts.cooldown[info[#info]] = value
-
-						E.Cooldowns:ForEach("UpdateConfig")
-						E.Cooldowns:ForEach("UpdateFont")
-					end
-				end,
 				args = {
 					font = {
 						order = reset(2),
@@ -84,38 +83,11 @@ function CONFIG:CreateGeneralFontsPanel(order)
 					},
 				},
 			},
-			buttons = {
+			button = {
 				order = inc(1),
 				type = "group",
 				inline = true,
 				name = "",
-				set = function(info, value)
-					if C.db.global.fonts.buttons[info[#info]] ~= value then
-						C.db.global.fonts.buttons[info[#info]] = value
-
-						BARS:ForBar("bar1", "UpdateConfig")
-						BARS:ForBar("bar2", "UpdateConfig")
-						BARS:ForBar("bar3", "UpdateConfig")
-						BARS:ForBar("bar4", "UpdateConfig")
-						BARS:ForBar("bar5", "UpdateConfig")
-						BARS:ForBar("bar6", "UpdateConfig")
-						BARS:ForBar("bar7", "UpdateConfig")
-						BARS:ForBar("pet_battle", "UpdateConfig")
-						BARS:ForBar("extra", "UpdateConfig")
-						-- BARS:ForBar("xpbar", "UpdateConfig")
-
-						BARS:ForEach("ForEach", "UpdateCountFont")
-						BARS:ForEach("ForEach", "UpdateHotKeyFont")
-						BARS:ForEach("ForEach", "UpdateMacroFont")
-						-- BARS:ForBar("xpbar", "UpdateFont")
-
-						AURAS:ForEach("UpdateConfig")
-						AURAS:ForEach("ForEach", "UpdateCountFont")
-
-						AURATRACKER:GetTracker():UpdateConfig()
-						AURATRACKER:GetTracker():UpdateCountFont()
-					end
-				end,
 				args = {
 					font = {
 						order = reset(2),
@@ -124,8 +96,8 @@ function CONFIG:CreateGeneralFontsPanel(order)
 						dialogControl = "LSM30_Font",
 						values = LSM:HashTable("font"),
 						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.buttons.font)
-								and C.db.global.fonts.buttons.font or LSM:GetDefault("font")
+							return LSM:IsValid("font", C.db.global.fonts.button.font)
+								and C.db.global.fonts.button.font or LSM:GetDefault("font")
 						end,
 					},
 					outline = {
@@ -140,29 +112,11 @@ function CONFIG:CreateGeneralFontsPanel(order)
 					},
 				},
 			},
-			units = {
+			unit = {
 				order = inc(1),
 				type = "group",
 				inline = true,
 				name = "",
-				set = function(info, value)
-					if C.db.global.fonts.units[info[#info]] ~= value then
-						C.db.global.fonts.units[info[#info]] = value
-
-						UNITFRAMES:ForEach("ForElement", "Health", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "Health", "UpdateFonts")
-						UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateFonts")
-						UNITFRAMES:ForEach("ForElement", "Power", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "Power", "UpdateFonts")
-						UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateFonts")
-						UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "Castbar", "UpdateFonts")
-						UNITFRAMES:ForEach("ForElement", "Name", "UpdateConfig")
-						UNITFRAMES:ForEach("ForElement", "Name", "UpdateFonts")
-					end
-				end,
 				args = {
 					font = {
 						order = reset(2),
@@ -171,8 +125,8 @@ function CONFIG:CreateGeneralFontsPanel(order)
 						dialogControl = "LSM30_Font",
 						values = LSM:HashTable("font"),
 						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.units.font)
-								and C.db.global.fonts.units.font or LSM:GetDefault("font")
+							return LSM:IsValid("font", C.db.global.fonts.unit.font)
+								and C.db.global.fonts.unit.font or LSM:GetDefault("font")
 						end,
 					},
 					outline = {
@@ -187,16 +141,11 @@ function CONFIG:CreateGeneralFontsPanel(order)
 					},
 				},
 			},
-			statusbars = {
+			statusbar = {
 				order = inc(1),
 				type = "group",
 				inline = true,
 				name = "",
-				set = function(info, value)
-					if C.db.global.fonts.statusbars[info[#info]] ~= value then
-						C.db.global.fonts.statusbars[info[#info]] = value
-					end
-				end,
 				args = {
 					font = {
 						order = reset(2),
@@ -205,8 +154,8 @@ function CONFIG:CreateGeneralFontsPanel(order)
 						dialogControl = "LSM30_Font",
 						values = LSM:HashTable("font"),
 						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.statusbars.font)
-								and C.db.global.fonts.statusbars.font or LSM:GetDefault("font")
+							return LSM:IsValid("font", C.db.global.fonts.statusbar.font)
+								and C.db.global.fonts.statusbar.font or LSM:GetDefault("font")
 						end,
 					},
 					outline = {

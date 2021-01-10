@@ -18,16 +18,9 @@ local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
 
 -- Mine
 local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	fontString:UpdateFont(config.size)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
 end
 
 local function updateTextPoint(frame, fontString, config)
@@ -72,7 +65,6 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
-		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -129,7 +121,10 @@ do
 		element._texture:SetAllPoints(element:GetStatusBarTexture())
 		hooksecurefunc(element, "SetStatusBarColor", setStatusBarColorHook)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(text, "unit")
+		text:SetWordWrap(false)
+		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 		element.GainLossIndicators.Gain = nil
@@ -158,8 +153,6 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
-		self._config.absorb_text = E:CopyTable(C.db.global.fonts.units, self._config.absorb_text)
-		self._config.heal_absorb_text = E:CopyTable(C.db.global.fonts.units, self._config.heal_absorb_text)
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
@@ -308,7 +301,10 @@ do
 		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
 		absorbBar.Overlay = overlay
 
-		absorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK")
+		local text = (textParent or parent):CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(text, "unit")
+		text:SetWordWrap(false)
+		absorbBar.Text = text
 
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
@@ -321,7 +317,10 @@ do
 		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
 		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
 
-		healAbsorbBar.Text = (textParent or parent):CreateFontString(nil, "ARTWORK")
+		text = (textParent or parent):CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(text, "unit")
+		text:SetWordWrap(false)
+		healAbsorbBar.Text = text
 
 		frame.UpdateHealthPrediction = frame_UpdateHealthPrediction
 

@@ -53,8 +53,6 @@ local function bar_UpdateConfig(self)
 	if MODULE:IsRestricted() then
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
 	end
-
-	self._config.hotkey = E:CopyTable(C.db.global.fonts.buttons, self._config.hotkey)
 end
 
 local function button_UpdateHotKey(self, state)

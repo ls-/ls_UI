@@ -146,16 +146,9 @@ end
 local function button_UpdateCountFont(self)
 	local config = self._parent._config.count
 
-	self.Count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	self.Count:UpdateFont(config.size)
 	self.Count:SetJustifyH(config.h_alignment)
 	self.Count:SetJustifyV(config.v_alignment)
-	self.Count:SetWordWrap(false)
-
-	if config.shadow then
-		self.Count:SetShadowOffset(1, -1)
-	else
-		self.Count:SetShadowOffset(0, 0)
-	end
 end
 
 local function handleButton(button, header)
@@ -191,6 +184,8 @@ local function handleButton(button, header)
 	button.AuraType = auraType
 
 	local count = textParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(count, "button")
+	count:SetWordWrap(false)
 	count:SetAllPoints()
 	button.Count = count
 
@@ -291,7 +286,6 @@ end
 local function header_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.auras[self._filter], self._config)
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
-	self._config.count = E:CopyTable(C.db.global.fonts.buttons, self._config.count)
 end
 
 local function header_UpdateCooldownConfig(self)

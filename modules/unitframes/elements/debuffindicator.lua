@@ -58,9 +58,9 @@ end
 function UF:CreateDebuffIndicator(frame, textParent)
 	local element = (textParent or frame):CreateFontString(nil, "ARTWORK")
 	element:SetFont(GameFontNormal:GetFont(), 12)
+	element:SetNonSpaceWrap(true)
 	element:SetJustifyH("CENTER")
 	element:SetJustifyV("MIDDLE")
-	element:SetNonSpaceWrap(true)
 
 	element.__owner = frame
 	element.Preview = element_Preview

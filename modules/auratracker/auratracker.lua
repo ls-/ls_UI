@@ -136,7 +136,6 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.char.auratracker, self._config)
-	self._config.count = E:CopyTable(C.db.global.fonts.buttons, self._config.count)
 end
 
 local function bar_UpdateCooldownConfig(self)
@@ -177,17 +176,9 @@ local function bar_UpdateCountFont(self)
 	local config = self._config.count
 
 	for _, button in next, self._buttons do
-		button.Count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
-		button.Count:SetWordWrap(false)
-
-		if config.shadow then
-			button.Count:SetShadowOffset(1, -1)
-		else
-			button.Count:SetShadowOffset(0, 0)
-		end
+		button.Count:UpdateFont(config.size)
 	end
 end
-
 
 local function bar_UpdateAuraTypeIcons(self)
 	local config = self._config.type
@@ -215,9 +206,9 @@ function MODULE.Init()
 
 		local label = header:CreateFontString(nil, "ARTWORK")
 		label:SetFontObject("GameFontNormal")
+		label:SetWordWrap(false)
 		label:SetAlpha(0.4)
 		label:SetPoint("LEFT", 2, 0)
-		label:SetWordWrap(false)
 		label:SetFormattedText("|cffffd200%s|r", L["AURA_TRACKER"])
 		header.Text = label
 

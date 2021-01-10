@@ -196,21 +196,22 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
-		units = {
+		unit = {
 			font = defaultFont,
 			outline = false,
 			shadow = true,
 		},
-		buttons = {
+		button = {
 			font = defaultFont,
 			outline = true,
 			shadow = false,
 		},
-		statusbars = {
+		statusbar = {
 			font = defaultFont,
 			outline =  false,
 			shadow = true,
 		},
+		blizzard = {},
 	},
 	tags = {
 		["ls:absorb:damage"] = {

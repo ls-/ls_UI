@@ -83,24 +83,11 @@ local function bar_UpdateConfig(self)
 	if BARS:IsRestricted() then
 		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
 	end
-
-	self._config.text = E:CopyTable(C.db.global.fonts.statusbars, self._config.text)
-end
-
-local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or "")
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
 end
 
 local function bar_UpdateFont(self)
 	for i = 1, MAX_SEGMENTS do
-		updateFont(self[i].Text, self._config.text)
+		self[i].Text:UpdateFont(self._config.text.size)
 	end
 end
 
@@ -519,8 +506,9 @@ function BARS.CreateXPBar()
 			E:SmoothColor(ext.Texture)
 
 			local text = textParent:CreateFontString(nil, "OVERLAY")
-			text:SetAllPoints(segment)
+			E.FontStrings:Capture(text, "statusbar")
 			text:SetWordWrap(false)
+			text:SetAllPoints(segment)
 			text:Hide()
 			segment.Text = text
 
