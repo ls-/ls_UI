@@ -498,5 +498,6 @@ L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
 
+L["COOLDOWNS"] = "Cooldowns"
 L["BUTTONS"] = "Buttons"
 L["STATUSBAR_BARS"] = "Progress Bars"
