@@ -2876,6 +2876,12 @@ D.profile = {
 		target = true,
 		inspect = true,
 		anchor_cursor = false,
+		health = {
+			height = 12,
+			text = {
+				size = 12,
+			},
+		},
 		point = {
 			p = "BOTTOMRIGHT",
 			anchor = "UIParent",

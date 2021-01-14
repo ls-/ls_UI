@@ -794,7 +794,6 @@ function MODULE:Init()
 
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-12")
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
@@ -811,8 +810,11 @@ function MODULE:Init()
 	end
 end
 
-function MODULE.Update()
+function MODULE:Update()
 	if isInit then
-		-- local config = C.db.profile.tooltips
+		GameTooltipStatusBar:SetHeight(C.db.profile.tooltips.health.height)
+		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-" .. C.db.profile.tooltips.health.height)
+
+		GameTooltipStatusBar.Text:UpdateFont(C.db.profile.tooltips.health.text.size)
 	end
 end
