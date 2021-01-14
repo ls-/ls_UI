@@ -316,7 +316,6 @@ Etiquetas:
 
 If the current value is equal to the max value, only the max value will be displayed.
 
-
 Utiliza |cffffd200||r|r para cerrar las etiquetas de color.
 Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["POWER_TEXT"] = "Texto de Poder alternativo"
