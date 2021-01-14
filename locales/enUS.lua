@@ -500,4 +500,4 @@ L["ZONE_TEXT"] = "Zone Text"
 
 L["COOLDOWNS"] = "Cooldowns"
 L["BUTTONS"] = "Buttons"
-L["STATUSBAR_BARS"] = "Progress Bars"
+L["PROGRESS_BARS"] = "Progress Bars"

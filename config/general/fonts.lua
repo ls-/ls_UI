@@ -143,7 +143,7 @@ function CONFIG:CreateGeneralFontsPanel(order)
 					font = {
 						order = reset(2),
 						type = "select",
-						name = L["STATUSBAR_BARS"],
+						name = L["PROGRESS_BARS"],
 						dialogControl = "LSM30_Font",
 						values = LSM:HashTable("font"),
 						get = function()
