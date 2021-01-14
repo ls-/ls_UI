@@ -229,7 +229,7 @@ function MODULE:SetUpCharacterFrame()
 			slot.EnchantText = enchText
 
 			local gemText = slot:CreateFontString(nil, "ARTWORK")
-			gemText:SetFont("Fonts\\ARIALN.TTF", 14) -- it only displays icons
+			gemText:SetFont(GameFontNormal:GetFont(), 14) -- it only displays icons
 			gemText:SetSize(157, 14)
 			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			slot.GemText = gemText

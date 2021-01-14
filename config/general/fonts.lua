@@ -1,13 +1,6 @@
 local _, ns = ...
 local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
-local AURAS = P:GetModule("Auras")
-local BARS = P:GetModule("Bars")
-local BLIZZARD = P:GetModule("Blizzard")
 local CONFIG = P:GetModule("Config")
-local FILTERS = P:GetModule("Filters")
-local MINIMAP = P:GetModule("Minimap")
-local UNITFRAMES = P:GetModule("UnitFrames")
-local AURATRACKER = P:GetModule("AuraTracker")
 
 -- Lua
 local _G = getfenv(0)
