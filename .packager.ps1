@@ -28,6 +28,7 @@ $includedItems = @(
 	".\init.lua",
 	".\LICENSE.txt",
 	".\ls_UI.toc",
+	".\taintless.xml",
 	".\assets\",
 	".\config\",
 	".\core\",
