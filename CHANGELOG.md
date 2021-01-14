@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## Version 90002.04
+
+- Finished migrating fonts to LSM. Can be found at /LSUI > General > Fonts. Now there's 4
+  categories: cooldowns, unit frames, buttons, and progress bars. `"Cooldowns"` is self-explanatory,
+  `"Unit Frames"` controls fonts of all UF elements, but aura buttons and castbars, `"Buttons"`
+  controls fonts of all aura buttons, action buttons, item buttons on the character panel, and
+  `"Progress Bars"` controls fonts of castbars, the digsite bar, mirror timers, and the tooltip
+  healthbar. I haven't added support for Blizzard fonts yet, I'm still not sure how to do it better;
+- Added optional coloured ilvl text to the character frame. Can be found at /LSUI > Blizzard >
+  Character Frame > iLvl;
+- Added an option to disable enchant and gem text on equipped items. Can be found at /LSUI >
+  Blizzard > Character Frame > Item Enhancements;
+- Added an option to adjust the tooltip health bar and its text size. Can be found at /LSUI >
+  Tooltips > Health;
+- Improved compatibility with various addons that add text to the main tooltip;
+- Fixed an issue where class power separators wouldn't render properly;
+- Fixed an issue where the config tried to updated disabled unit frames;
+- Updated French translation. Translated by Brainc3ll@Curse;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Misc bug fixes and tweaks;
+- Updated embeds.
+
 ## Version 90002.03
 
 - Fixed an issue that prevented square minimap from working in Torghast.

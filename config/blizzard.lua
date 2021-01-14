@@ -7,6 +7,25 @@ local CONFIG = P:GetModule("Config")
 local _G = getfenv(0)
 
 -- Mine
+local offsets = {"", "   ", "      "}
+local function d(c, o, v)
+	print(offsets[o].."|cff"..c..v.."|r")
+end
+
+local orders = {0, 0, 0}
+
+local function reset(order)
+	orders[order] = 1
+	-- d("d20000", order, orders[order])
+	return orders[order]
+end
+
+local function inc(order)
+	orders[order] = orders[order] + 1
+	-- d("00d200", order, orders[order])
+	return orders[order]
+end
+
 local DRAG_KEYS = {
 	[1] = _G.ALT_KEY,
 	[2] = _G.CTRL_KEY,
@@ -34,12 +53,6 @@ local SHOW_PET_OPTIONS = {
 	[ 1] = L["SHOW"],
 }
 
-local FLAGS = {
-	-- [""] = L["NONE"],
-	["_Outline"] = L["OUTLINE"],
-	["_Shadow"] = L["SHADOW"],
-}
-
 local function isModuleDisabled()
 	return not BLIZZARD:IsInit()
 end
@@ -50,9 +63,12 @@ function CONFIG.CreateBlizzardPanel(_, order)
 		type = "group",
 		name = L["BLIZZARD"],
 		childGroups = "tab",
+		get = function(info)
+			return C.db.profile.blizzard[info[#info - 1]][info[#info]]
+		end,
 		args = {
 			enabled = {
-				order = 1,
+				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
@@ -70,38 +86,16 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			spacer_1 = {
-				order = 9,
+				order = inc(1),
 				type = "description",
 				name = " ",
 				width = "full",
 			},
-			character_frame = {
-				order = 10,
-				type = "toggle",
-				name = L["CHARACTER_FRAME"],
-				disabled = isModuleDisabled,
-				get = function()
-					return C.db.char.blizzard.character_frame.enabled
-				end,
-				set = function(_, value)
-					C.db.char.blizzard.character_frame.enabled = value
-
-					if not BLIZZARD:HasCharacterFrame() then
-						if value then
-							BLIZZARD:SetUpCharacterFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end
-			},
 			command_bar = {
-				order = 11,
+				order = inc(1),
 				type = "toggle",
 				name = L["COMMAND_BAR"],
 				disabled = isModuleDisabled,
@@ -120,10 +114,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			durability = {
-				order = 12,
+				order = inc(1),
 				type = "toggle",
 				name = L["DURABILITY_FRAME"],
 				disabled = isModuleDisabled,
@@ -142,10 +136,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			gm = {
-				order = 13,
+				order = inc(1),
 				type = "toggle",
 				name = L["GM_FRAME"],
 				disabled = isModuleDisabled,
@@ -164,10 +158,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			mail = {
-				order = 14,
+				order = inc(1),
 				type = "toggle",
 				name = L["MAIL"],
 				disabled = isModuleDisabled,
@@ -186,10 +180,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			player_alt_power_bar = {
-				order = 16,
+				order = inc(1),
 				type = "toggle",
 				name = L["ALT_POWER_BAR"],
 				disabled = isModuleDisabled,
@@ -208,10 +202,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			vehicle = {
-				order = 17,
+				order = inc(1),
 				type = "toggle",
 				name = L["VEHICLE_SEAT_INDICATOR"],
 				disabled = isModuleDisabled,
@@ -230,27 +224,24 @@ function CONFIG.CreateBlizzardPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 			castbar = {
-				order = 18,
+				order = inc(1),
 				type = "group",
 				name = L["CASTBAR"],
 				disabled = function()
 					return not BLIZZARD:IsInit() or P:GetModule("UnitFrames"):HasPlayerFrame()
 				end,
-				get = function(info)
-					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
-				end,
 				set = function(info, value)
-					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
-						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+					if C.db.profile.blizzard.castbar[info[#info]] ~= value then
+						C.db.profile.blizzard.castbar[info[#info]] = value
 						BLIZZARD:UpdateCastBars()
 					end
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
@@ -268,17 +259,17 @@ function CONFIG.CreateBlizzardPanel(_, order)
 									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
-						end
+						end,
 					},
 					show_pet = {
-						order = 2,
+						order = inc(2),
 						type = "select",
 						name = L["PET_CASTBAR"],
 						values = SHOW_PET_OPTIONS,
 					},
 					reset = {
 						type = "execute",
-						order = 3,
+						order = inc(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -287,34 +278,34 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					width = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
 						min = 96, max = 1024, step = 2,
 					},
 					height = {
-						order = 12,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
 					},
 					latency = {
-						order = 14,
+						order = inc(2),
 						type = "toggle",
 						name = L["LATENCY"],
 					},
 					spacer_2 = {
-						order = 19,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					icon = {
-						order = 20,
+						order = inc(2),
 						type = "select",
 						name = L["ICON"],
 						values = CONFIG.CASTBAR_ICON_POSITIONS,
@@ -329,12 +320,12 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_3 = {
-						order = 29,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					text = {
-						order = 30,
+						order = inc(2),
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
@@ -347,7 +338,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 						args = {
 							font = {
-								order = 1,
+								order = reset(3),
 								type = "select",
 								name = L["FONT"],
 								dialogControl = "LSM30_Font",
@@ -359,18 +350,18 @@ function CONFIG.CreateBlizzardPanel(_, order)
 								end,
 							},
 							size = {
-								order = 2,
+								order = inc(3),
 								type = "range",
 								name = L["SIZE"],
 								min = 8, max = 32, step = 1,
 							},
 							outline = {
-								order = 3,
+								order = inc(3),
 								type = "toggle",
 								name = L["OUTLINE"],
 							},
 							shadow = {
-								order = 4,
+								order = inc(3),
 								type = "toggle",
 								name = L["SHADOW"],
 							},
@@ -378,23 +369,80 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					},
 				},
 			},
+			character_frame = {
+				order = inc(1),
+				type = "group",
+				name = L["CHARACTER_FRAME"],
+				disabled = isModuleDisabled,
+				set = function(info, value)
+					if C.db.profile.blizzard.character_frame[info[#info]] ~= value then
+						C.db.profile.blizzard.character_frame[info[#info]] = value
+						BLIZZARD:UpadteCharacterFrame()
+					end
+				end,
+				args = {
+					enabled = {
+						order = reset(2),
+						type = "toggle",
+						name = L["ENABLE"],
+						get = function()
+							return C.db.char.blizzard.character_frame.enabled
+						end,
+						set = function(_, value)
+							C.db.char.blizzard.character_frame.enabled = value
+
+							if not BLIZZARD:HasCharacterFrame() then
+								if value then
+									BLIZZARD:SetUpCharacterFrame()
+								end
+							else
+								if not value then
+									CONFIG:ShowStaticPopup("RELOAD_UI")
+								end
+							end
+						end,
+					},
+					reset = {
+						type = "execute",
+						order = inc(2),
+						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.character_frame, C.db.profile.blizzard.character_frame)
+							BLIZZARD:UpadteCharacterFrame()
+						end,
+					},
+					spacer_1 = {
+						order = inc(2),
+						type = "description",
+						name = " ",
+					},
+					ilvl = {
+						order = inc(2),
+						type = "toggle",
+						name = L["ILVL"],
+					},
+					enhancements = {
+						order = inc(2),
+						type = "toggle",
+						name = L["ENCHANTS"],
+					},
+				},
+			},
 			digsite_bar = {
-				order = 19,
+				order = inc(1),
 				type = "group",
 				name = L["DIGSITE_BAR"],
 				disabled = isModuleDisabled,
-				get = function(info)
-					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
-				end,
 				set = function(info, value)
-					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
-						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+					if C.db.profile.blizzard.digsite_bar[info[#info]] ~= value then
+						C.db.profile.blizzard.digsite_bar[info[#info]] = value
 						BLIZZARD:UpdateDigsiteBar()
 					end
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
@@ -412,11 +460,11 @@ function CONFIG.CreateBlizzardPanel(_, order)
 									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
-						end
+						end,
 					},
 					reset = {
 						type = "execute",
-						order = 2,
+						order = inc(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -425,29 +473,29 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					width = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
 						min = 128, max = 1024, step = 2,
 					},
 					height = {
-						order = 12,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
 					},
 					spacer_2 = {
-						order = 19,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					text = {
-						order = 20,
+						order = inc(2),
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
@@ -460,39 +508,30 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 						args = {
 							size = {
-								order = 1,
+								order = reset(3),
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							flag = {
-								order = 2,
-								type = "select",
-								name = L["FLAG"],
-								values = FLAGS,
+								min = 8, max = 48, step = 1,
 							},
 						},
 					},
 				},
 			},
 			timer = {
-				order = 20,
+				order = inc(1),
 				type = "group",
 				name = L["MIRROR_TIMER"],
 				desc = L["MIRROR_TIMER_DESC"],
 				disabled = isModuleDisabled,
-				get = function(info)
-					return C.db.profile.blizzard[info[#info - 1]][info[#info]]
-				end,
 				set = function(info, value)
-					if C.db.profile.blizzard[info[#info - 1]][info[#info]] ~= value then
-						C.db.profile.blizzard[info[#info - 1]][info[#info]] = value
+					if C.db.profile.blizzard.timer[info[#info]] ~= value then
+						C.db.profile.blizzard.timer[info[#info]] = value
 						BLIZZARD:UpdateMirrorTimers()
 					end
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
@@ -510,11 +549,11 @@ function CONFIG.CreateBlizzardPanel(_, order)
 									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
-						end
+						end,
 					},
 					reset = {
+						order = inc(2),
 						type = "execute",
-						order = 2,
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -523,29 +562,29 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					width = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
 						min = 128, max = 1024, step = 2,
 					},
 					height = {
-						order = 12,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
 					},
 					spacer_2 = {
-						order = 19,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					text = {
-						order = 20,
+						order = inc(2),
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
@@ -558,29 +597,23 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 						args = {
 							size = {
-								order = 1,
+								order = reset(3),
 								type = "range",
 								name = L["SIZE"],
-								min = 10, max = 20, step = 2,
-							},
-							flag = {
-								order = 2,
-								type = "select",
-								name = L["FLAG"],
-								values = FLAGS,
+								min = 8, max = 48, step = 1,
 							},
 						},
 					},
 				},
 			},
 			objective_tracker = {
-				order = 21,
+				order = inc(1),
 				type = "group",
 				name = L["OBJECTIVE_TRACKER"],
 				disabled = isModuleDisabled,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
@@ -598,11 +631,11 @@ function CONFIG.CreateBlizzardPanel(_, order)
 									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
-						end
+						end,
 					},
 					reset = {
 						type = "execute",
-						order = 2,
+						order = inc(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -611,12 +644,12 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					height = {
-						order = 10,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						disabled = function() return not BLIZZARD:HasObjectiveTracker() end,
@@ -630,7 +663,7 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					drag_key = {
-						order = 11,
+						order = inc(2),
 						type = "select",
 						name = L["DRAG_KEY"],
 						values = DRAG_KEYS,
@@ -644,19 +677,16 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				},
 			},
 			talking_head = {
-				order = 22,
+				order = inc(1),
 				type = "group",
 				name = L["TALKING_HEAD_FRAME"],
 				disabled = isModuleDisabled,
-				get = function(info)
-					return C.db.profile.blizzard.talking_head[info[#info]]
-				end,
 				set = function(info, value)
 					C.db.profile.blizzard.talking_head[info[#info]] = value
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
@@ -674,11 +704,11 @@ function CONFIG.CreateBlizzardPanel(_, order)
 									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
-						end
+						end,
 					},
 					reset = {
 						type = "execute",
-						order = 2,
+						order = inc(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -686,12 +716,12 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					hide = {
-						order = 10,
+						order = inc(2),
 						type = "toggle",
 						name = L["HIDE"],
 					},

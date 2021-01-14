@@ -21,16 +21,9 @@ local ignoredKeys = {
 }
 
 local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
+	fontString:UpdateFont(config.size)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
 end
 
 local function updateTextPoint(frame, fontString, config)
@@ -103,7 +96,6 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
-		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -140,7 +132,10 @@ do
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		E:SmoothBar(element)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(text, "unit")
+		text:SetWordWrap(false)
+		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 
@@ -253,7 +248,6 @@ do
 	local function element_UpdateConfig(self)
 		local unit = self.__owner._unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
-		self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 	end
 
 	local function element_UpdateColors(self)
@@ -290,7 +284,10 @@ do
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		E:SmoothBar(element)
 
-		element.Text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(text, "unit")
+		text:SetWordWrap(false)
+		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 

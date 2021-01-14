@@ -45,6 +45,38 @@ local function cleanUpStep1()
 	if C.db.char.version and C.db.char.version < 9000105 then
 		C.db.char.auratracker.cooldown.text.flag = nil
 	end
+
+	-- -> 90002.04
+	if C.db.global.version and C.db.global.version < 9000204 then
+		if C.db.global.fonts.units then
+			E:CopyTable(C.db.global.fonts.units, C.db.global.fonts.unit)
+			C.db.global.fonts.units = nil
+		end
+
+		if C.db.global.fonts.bars then
+			E:CopyTable(C.db.global.fonts.bars, C.db.global.fonts.button)
+			C.db.global.fonts.bars = nil
+		end
+	end
+
+	if C.db.profile.version and C.db.profile.version < 9000204 then
+		C.db.profile.units.traditional.player.auras.count.outline = nil
+		C.db.profile.units.traditional.player.auras.count.shadow = nil
+
+		C.db.profile.auras.HELPFUL.count.flag = nil
+		C.db.profile.auras.HARMFUL.count.flag = nil
+
+		C.db.profile.blizzard.digsite_bar.text.flag = nil
+		C.db.profile.blizzard.timer.text.flag = nil
+	end
+
+	if C.db.char.version and C.db.char.version < 9000204 then
+		C.db.char.auratracker.count.enabled = nil
+		C.db.char.auratracker.count.outline = nil
+		C.db.char.auratracker.count.shadow = nil
+		C.db.char.auratracker.count.flag = nil
+	end
+
 end
 
 local function cleanUpStep2()
@@ -91,6 +123,18 @@ local function cleanUpStep2()
 						C.db.profile.units[unit].auras.cooldown.text.outline = nil
 						C.db.profile.units[unit].auras.cooldown.text.shadow = nil
 					end
+				end
+			end
+		end
+	end
+
+	-- -> 90002.04
+	if C.db.profile.version and C.db.profile.version < 9000204 then
+		for _, unit in next, units do
+			if C.db.profile.units[unit] then
+				if C.db.profile.units[unit].auras then
+					C.db.profile.units[unit].auras.count.outline = nil
+					C.db.profile.units[unit].auras.count.shadow = nil
 				end
 			end
 		end

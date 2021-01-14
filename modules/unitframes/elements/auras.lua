@@ -195,18 +195,11 @@ local function element_CreateAuraIcon(self, index)
 	button.Icon = nil
 
 	local count = button.Count
-	count:SetAllPoints()
-	count:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.count.font), config.count.size, config.count.outline and "OUTLINE" or "")
+	count:UpdateFont(config.count.size)
+	count:SetWordWrap(false)
 	count:SetJustifyH(config.count.h_alignment)
 	count:SetJustifyV(config.count.v_alignment)
-	count:SetWordWrap(false)
-
-	if config.count.shadow then
-		count:SetShadowOffset(1, -1)
-	else
-		count:SetShadowOffset(0, 0)
-	end
-
+	count:SetAllPoints()
 	button.count = count
 	button.Count = nil
 
@@ -260,7 +253,6 @@ end
 local function element_UpdateConfig(self)
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
-	self._config.count.font = C.db.global.fonts.units.font
 
 	local size = self._config.size_override ~= 0 and self._config.size_override
 		or E:Round((C.db.profile.units[unit].width - (self.spacing * (self._config.per_row - 1)) + 2) / self._config.per_row)
@@ -290,21 +282,14 @@ end
 
 local function element_UpdateFont(self)
 	local config = self._config.count
-	local font = LibStub("LibSharedMedia-3.0"):Fetch("font", config.font)
 	local count
 
 	for i = 1, self.createdIcons do
 		count = self[i].count
-		count:SetFont(font, config.size, config.outline and "OUTLINE" or "")
+		count:UpdateFont(config.size)
 		count:SetJustifyH(config.h_alignment)
 		count:SetJustifyV(config.v_alignment)
 		count:SetWordWrap(false)
-
-		if config.shadow then
-			count:SetShadowOffset(1, -1)
-		else
-			count:SetShadowOffset(0, 0)
-		end
 	end
 end
 

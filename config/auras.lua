@@ -209,7 +209,7 @@ local function getOptionsTable_Aura(order, name, filter)
 					if C.db.profile.auras[filter].count[info[#info]] ~= value then
 						C.db.profile.auras[filter].count[info[#info]] = value
 						AURAS:ForHeader(filter, "UpdateConfig")
-						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountText")
+						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountFont")
 					end
 				end,
 				args = {
@@ -217,13 +217,7 @@ local function getOptionsTable_Aura(order, name, filter)
 						order = 1,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 2,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
 						order = 3,
@@ -269,13 +263,7 @@ local function getOptionsTable_Aura(order, name, filter)
 						order = 2,
 						type = "range",
 						name = L["SIZE"],
-						min = 10, max = 20, step = 2,
-					},
-					flag = {
-						order = 3,
-						type = "select",
-						name = L["FLAG"],
-						values = FLAGS,
+						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
 						order = 4,

@@ -43,6 +43,7 @@ function MODULE:SetUpDigsiteBar()
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")
+
 			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(E:GetRGB(C.db.global.colors.orange))
 
 			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", bar_OnEvent)
@@ -67,6 +68,6 @@ function MODULE:UpdateDigsiteBar()
 
 		E:SetStatusBarSkin(ArcheologyDigsiteProgressBar, "HORIZONTAL-" .. config.height)
 
-		ArcheologyDigsiteProgressBar.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+		ArcheologyDigsiteProgressBar.Text:UpdateFont(config.text.size)
 	end
 end

@@ -41,7 +41,7 @@ local function START_TIMER()
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
 			local time = timer.bar.Text
-			time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			time:UpdateFont(config.text.size)
 			time:SetJustifyV("MIDDLE")
 			time:SetJustifyH("RIGHT")
 			time:ClearAllPoints()
@@ -66,6 +66,7 @@ function MODULE:SetUpMirrorTimers()
 			E.Movers:Create(timer)
 
 			local time = timer:CreateFontString(nil, "ARTWORK")
+			E.FontStrings:Capture(time, "statusbar")
 			time:SetWordWrap(false)
 			time:SetJustifyV("MIDDLE")
 			time:SetJustifyH("RIGHT")
@@ -114,8 +115,9 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer, "HORIZONTAL-" .. config.height)
 
-			timer.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
-			timer.Time:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			timer.Text:UpdateFont(config.text.size)
+
+			timer.Time:UpdateFont(config.text.size)
 		end
 
 		for _, timer in next, TimerTracker.timerList do
@@ -123,7 +125,7 @@ function MODULE:UpdateMirrorTimers()
 
 			E:SetStatusBarSkin(timer.bar, "HORIZONTAL-" .. config.height)
 
-			timer.bar.Text:SetFontObject("LSFont" .. config.text.size .. config.text.flag)
+			timer.bar.Text:UpdateFont(config.text.size)
 		end
 	end
 end

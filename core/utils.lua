@@ -793,7 +793,7 @@ do
 			itemCache[itemLink] = {}
 		end
 
-		wipeScanTip(scanTip)
+		wipeScanTip()
 		scanTip:SetHyperlink(itemLink)
 
 		local enchant, text = ""
@@ -845,4 +845,85 @@ do
 
 		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 	end
+end
+
+------------------
+-- FONT STRINGS --
+------------------
+
+do
+	local LSM = LibStub("LibSharedMedia-3.0")
+
+	local function update(obj, f, s)
+		s = s or select(2, obj:GetFont())
+		if s <= 0 then
+			s = 12 -- cooldowns' default font size is -1450 for some reason
+		end
+
+		obj:SetFont(LSM:Fetch("font", C.db.global.fonts[f].font), round(s), C.db.global.fonts[f].outline and "OUTLINE" or "")
+
+		if C.db.global.fonts[f].shadow then
+			obj:SetShadowOffset(1, -1)
+		else
+			obj:SetShadowOffset(0, 0)
+		end
+	end
+
+	local objects = {}
+
+	local proto = {}
+
+	function proto:UpdateFont(s)
+		local t = objects[self]
+		if not t then
+			return
+		end
+
+		update(self, t, s)
+	end
+
+	local module = {
+		cooldown = {},
+		unit = {},
+		button = {},
+		statusbar = {},
+	}
+
+	function module:Capture(obj, t)
+		if obj:GetObjectType() ~= "FontString" then
+			return
+		elseif not self[t] then
+			return
+		elseif objects[obj] or self[t][obj] then
+			return
+		end
+
+		for k, v in next, proto do
+			obj[k] = v
+		end
+
+		self[t][obj] = true
+		objects[obj] = t
+	end
+
+	function module:Release(obj)
+		for k in next, proto do
+			obj[k] = nil
+		end
+
+		self[objects[obj]] = true
+		objects[obj] = nil
+	end
+
+	function module:UpdateAll(t)
+		if not self[t] then
+			return
+		end
+
+		for obj in next, self[t] do
+			update(obj, t)
+		end
+	end
+
+	E.FontStrings = module
 end

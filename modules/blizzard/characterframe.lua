@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local m_floor = _G.math.floor
 local next = _G.next
 local s_trim = _G.string.trim
 local s_upper = _G.string.upper
@@ -45,34 +46,94 @@ local EQUIP_SLOTS = {
 	[17] = "CharacterSecondaryHandSlot",
 }
 
+local ILVL_COLORS = {}
+local ILVL_STEP = 13 -- the ilvl step between content difficulties
+
+local avgItemLevel
+
+local function getItemLevelColor(itemLevel)
+	if itemLevel == "" then
+		itemLevel = 0
+	end
+
+	-- if an item is worse than the average ilvl by one full step, it's really bad
+	return E:GetGradientAsRGB((itemLevel - avgItemLevel + ILVL_STEP) / ILVL_STEP, ILVL_COLORS)
+end
+
 local function scanSlot(slotID)
 	local link = GetInventoryItemLink("player", slotID)
 	if link then
-		return true, E:GetItemEnchantGemInfo(link)
+		return true, GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture("player", slotID) then
-		return false, "", "", "", ""
+		 -- if there's no link, but there's a texture, it means that there's
+		 -- an item we have no info for
+		return false, "", "", "", "", ""
 	end
 
-	return true, "", "", "", ""
+	return true, "", "", "", "", ""
 end
 
 local function updateSlot(slotID)
-	local isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
+		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
+		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
+		_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+
+		return
+	end
+
+	local isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
 	if isOk then
-		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
-		_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		if C.db.profile.blizzard.character_frame.ilvl then
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText(iLvl)
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
+		else
+			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
+		end
+
+		if C.db.profile.blizzard.character_frame.enhancements then
+			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
+			_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		else
+			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
+			_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+		end
 	else
 		C_Timer.After(0.33, function() updateSlot(slotID) end)
 	end
 end
 
 local function updateAllSlots()
-	local scanComplete, isOk, enchant, gem1, gem2, gem3 = true
-	for slotID, slotName in next, EQUIP_SLOTS do
-		isOk, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
+		for _, slotName in next, EQUIP_SLOTS do
+			_G[slotName].ItemLevelText:SetText("")
+			_G[slotName].EnchantText:SetText("")
+			_G[slotName].GemText:SetText("")
+		end
 
-		_G[slotName].EnchantText:SetText(enchant)
-		_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		return
+	end
+
+	local scanComplete = true
+	local showILvl, showEnchants = C.db.profile.blizzard.character_frame.ilvl, C.db.profile.blizzard.character_frame.enhancements
+	local isOk, iLvl, enchant, gem1, gem2, gem3
+	for slotID, slotName in next, EQUIP_SLOTS do
+		isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+
+		if showILvl then
+			_G[slotName].ItemLevelText:SetText(iLvl)
+			_G[slotName].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
+		else
+			_G[slotName].ItemLevelText:SetText("")
+		end
+
+		if showEnchants then
+			_G[slotName].EnchantText:SetText(enchant)
+			_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+		else
+			_G[slotName].EnchantText:SetText("")
+			_G[slotName].GemText:SetText("")
+		end
 
 		scanComplete = scanComplete and isOk
 	end
@@ -142,6 +203,12 @@ function MODULE:SetUpCharacterFrame()
 			HideUIPanel(CharacterFrame)
 		end
 
+		avgItemLevel = m_floor(GetAverageItemLevel())
+
+		ILVL_COLORS[1] = C.db.global.colors.red
+		ILVL_COLORS[2] = C.db.global.colors.yellow
+		ILVL_COLORS[3] = C.db.global.colors.white
+
 		for slot, textOnRight in next, INV_SLOTS do
 			for _, v in next, {slot:GetRegions()} do
 				if v:IsObjectType("Texture") and SLOT_TEXTURES_TO_REMOVE[s_upper(v:GetTexture() or "")] then
@@ -153,17 +220,28 @@ function MODULE:SetUpCharacterFrame()
 			E:SkinInvSlotButton(slot)
 			slot:SetSize(36, 36)
 
-			local enchText = slot:CreateFontString(nil, "ARTWORK", "LSFont10_Outline")
+			local enchText = slot:CreateFontString(nil, "ARTWORK")
+			enchText:SetFontObject("GameFontNormalSmall")
 			enchText:SetSize(160, 22)
 			enchText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			enchText:SetJustifyV("TOP")
 			enchText:SetTextColor(0, 1, 0)
 			slot.EnchantText = enchText
 
-			local gemText = slot:CreateFontString(nil, "ARTWORK", "LSIcon14Font")
+			local gemText = slot:CreateFontString(nil, "ARTWORK")
+			gemText:SetFont(GameFontNormal:GetFont(), 14) -- it only displays icons
 			gemText:SetSize(157, 14)
 			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			slot.GemText = gemText
+
+			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
+			E.FontStrings:Capture(iLvlText, "button")
+			iLvlText:UpdateFont(12)
+			iLvlText:SetJustifyH("RIGHT")
+			iLvlText:SetJustifyV("BOTTOM")
+			iLvlText:SetPoint("TOPLEFT", -2, -1)
+			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
+			slot.ItemLevelText = iLvlText
 
 			if textOnRight then
 				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 4, 0)
@@ -183,7 +261,7 @@ function MODULE:SetUpCharacterFrame()
 		CharacterModelFrame:SetSize(0, 0)
 		CharacterModelFrame:ClearAllPoints()
 		CharacterModelFrame:SetPoint("TOPLEFT", CharacterFrame.Inset, 0, 0)
-		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, 0, 44)
+		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, 0, 0)
 
 		for _, texture in next, TEXTURES_TO_REMOVE do
 			texture:SetTexture(nil)
@@ -244,6 +322,18 @@ function MODULE:SetUpCharacterFrame()
 			end
 		end)
 
+		E:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE", function()
+			avgItemLevel = m_floor(GetAverageItemLevel())
+		end)
+
 		isInit = true
 	end
+end
+
+function MODULE:UpadteCharacterFrame()
+	if not isInit then
+		return
+	end
+
+	updateAllSlots()
 end

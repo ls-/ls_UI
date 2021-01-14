@@ -344,13 +344,16 @@ local function createButton(parent, index)
 	quest:Hide()
 	button.Quest = quest
 
-	local count = iconParent:CreateFontString(nil, "OVERLAY", "LSFont12_Outline")
+	local count = iconParent:CreateFontString(nil, "OVERLAY")
+	E.FontStrings:Capture(count, "button")
+	count:UpdateFont(12)
 	count:SetPoint("BOTTOMRIGHT", 0, 1)
 	count:SetJustifyH("RIGHT")
 	count:SetVertexColor(1, 1, 1)
 	button.Count = count
 
-	local name = button:CreateFontString(nil, "OVERLAY", "LSFont12")
+	local name = button:CreateFontString(nil, "OVERLAY")
+	name:SetFontObject("GameFontNormal")
 	name:SetWordWrap(true)
 	name:SetJustifyH("LEFT")
 	name:SetPoint("TOPLEFT", iconParent, "TOPRIGHT", 6, 0)

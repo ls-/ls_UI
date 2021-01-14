@@ -143,19 +143,12 @@ local function button_UpdateAuraTypeIcon(self)
 	self.showDebuffType = self._parent._config.type.debuff_type
 end
 
-local function button_UpdateCountText(self)
+local function button_UpdateCountFont(self)
 	local config = self._parent._config.count
 
-	self.Count:SetFontObject("LSFont" .. config.size .. config.flag)
+	self.Count:UpdateFont(config.size)
 	self.Count:SetJustifyH(config.h_alignment)
 	self.Count:SetJustifyV(config.v_alignment)
-	self.Count:SetWordWrap(false)
-
-	if config.flag == "_Shadow" then
-		self.Count:SetShadowOffset(1, -1)
-	else
-		self.Count:SetShadowOffset(0, 0)
-	end
 end
 
 local function handleButton(button, header)
@@ -191,15 +184,17 @@ local function handleButton(button, header)
 	button.AuraType = auraType
 
 	local count = textParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(count, "button")
+	count:SetWordWrap(false)
 	count:SetAllPoints()
 	button.Count = count
 
 	button._parent = header
 	button.UpdateAuraTypeIcon = button_UpdateAuraTypeIcon
-	button.UpdateCountText = button_UpdateCountText
+	button.UpdateCountFont = button_UpdateCountFont
 
 	button:UpdateAuraTypeIcon()
-	button:UpdateCountText()
+	button:UpdateCountFont()
 end
 
 local function header_OnAttributeChanged(self, attr, value)
@@ -244,10 +239,10 @@ local function header_Update(self)
 		end
 
 		self:Hide()
-		self:ForEachButton("Hide")
-		self:ForEachButton("UpdateAuraTypeIcon")
-		self:ForEachButton("UpdateCountText")
-		self:ForEachButton("SetSize", config.size, config.size)
+		self:ForEach("Hide")
+		self:ForEach("UpdateAuraTypeIcon")
+		self:ForEach("UpdateCountFont")
+		self:ForEach("SetSize", config.size, config.size)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)
 		self:SetAttribute("initialConfigFunction", ([[
@@ -279,7 +274,7 @@ local function header_Update(self)
 	end
 end
 
-local function header_ForEachButton(self, method, ...)
+local function header_ForEach(self, method, ...)
 	local buttons = self._buttons or {self:GetChildren()}
 	for _, button in next, buttons do
 		if button[method] then
@@ -378,7 +373,7 @@ local function createHeader(filter)
 	end
 
 	header._filter = filter
-	header.ForEachButton = header_ForEachButton
+	header.ForEach = header_ForEach
 	header.Update = header_Update
 	header.UpdateConfig = header_UpdateConfig
 	header.UpdateCooldownConfig = header_UpdateCooldownConfig
@@ -405,15 +400,15 @@ function MODULE.Init()
 
 		isInit = true
 
-		MODULE:ForEachHeader("Update")
+		MODULE:ForEach("Update")
 	end
 end
 
 function MODULE:Update()
-	self:ForEachHeader("Update")
+	self:ForEach("Update")
 end
 
-function MODULE:ForEachHeader(method, ...)
+function MODULE:ForEach(method, ...)
 	for _, header in next, headers do
 		if header[method] then
 			header[method](header, ...)

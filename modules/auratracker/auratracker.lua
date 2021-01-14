@@ -172,26 +172,13 @@ local function bar_UpdateLock(self)
 	end
 end
 
-local function bar_UpdateFontObjects(self)
+local function bar_UpdateCountFont(self)
 	local config = self._config.count
-	local fontObj = "LSFont" .. config.size .. (config.outline and "_Outline" or "")
-	local count
 
 	for _, button in next, self._buttons do
-		count = button.Count
-		count:SetFontObject(fontObj)
-		count:SetJustifyH(config.h_alignment)
-		count:SetJustifyV(config.v_alignment)
-		count:SetWordWrap(false)
-
-		if config.shadow then
-			count:SetShadowOffset(1, -1)
-		else
-			count:SetShadowOffset(0, 0)
-		end
+		button.Count:UpdateFont(config.size)
 	end
 end
-
 
 local function bar_UpdateAuraTypeIcons(self)
 	local config = self._config.type
@@ -217,10 +204,11 @@ function MODULE.Init()
 		local header = CreateFrame("Frame", "LSAuraTrackerHeader", UIParent)
 		header:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-		local label = header:CreateFontString(nil, "ARTWORK", "LSFont12_Shadow")
+		local label = header:CreateFontString(nil, "ARTWORK")
+		label:SetFontObject("GameFontNormal")
+		label:SetWordWrap(false)
 		label:SetAlpha(0.4)
 		label:SetPoint("LEFT", 2, 0)
-		label:SetWordWrap(false)
 		label:SetFormattedText("|cffffd200%s|r", L["AURA_TRACKER"])
 		header.Text = label
 
@@ -243,7 +231,7 @@ function MODULE.Init()
 		bar.UpdateAuraTypeIcons = bar_UpdateAuraTypeIcons
 		bar.UpdateConfig = bar_UpdateConfig
 		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
-		bar.UpdateFontObjects = bar_UpdateFontObjects
+		bar.UpdateCountFont = bar_UpdateCountFont
 		bar.UpdateLock = bar_UpdateLock
 
 		bar.Header = header
@@ -278,7 +266,7 @@ function MODULE.Update()
 		bar:UpdateConfig()
 		bar:UpdateCooldownConfig()
 		bar:UpdateAuraTypeIcons()
-		bar:UpdateFontObjects()
+		bar:UpdateCountFont()
 		E:UpdateBarLayout(bar)
 		bar:UpdateLock()
 		bar:Update()

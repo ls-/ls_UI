@@ -208,14 +208,23 @@ local function cleanUp(tooltip)
 
 		if TEXTS_TO_REMOVE[text] then
 			for j = i, num do
-				local curLine = _G["GameTooltipTextLeft" .. j]
-				local nextLine = _G["GameTooltipTextLeft" .. (j + 1)]
+				local curLeft, curRight = _G["GameTooltipTextLeft" .. j], _G["GameTooltipTextRight" .. j]
+				local nextLeft, nextRight = _G["GameTooltipTextLeft" .. (j + 1)], _G["GameTooltipTextRight" .. (j + 1)]
 
-				if nextLine:IsShown() then
-					curLine:SetText(nextLine:GetText())
-					curLine:SetTextColor(nextLine:GetTextColor())
+				if (nextLeft:IsShown() or nextRight:IsShown()) then
+					curLeft:SetText(nextLeft:GetText())
+					curLeft:SetTextColor(nextLeft:GetTextColor())
+					curLeft:SetShown(nextLeft:IsShown())
+
+					curRight:SetText(nextRight:GetText())
+					curRight:SetTextColor(nextRight:GetTextColor())
+					curRight:SetShown(nextRight:IsShown())
 				else
-					curLine:Hide()
+					curLeft:SetText()
+					curLeft:Hide()
+
+					curRight:SetText()
+					curRight:Hide()
 				end
 			end
 		end
@@ -785,7 +794,6 @@ function MODULE:Init()
 
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-12")
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
 		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
@@ -802,8 +810,11 @@ function MODULE:Init()
 	end
 end
 
-function MODULE.Update()
+function MODULE:Update()
 	if isInit then
-		-- local config = C.db.profile.tooltips
+		GameTooltipStatusBar:SetHeight(C.db.profile.tooltips.health.height)
+		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-" .. C.db.profile.tooltips.health.height)
+
+		GameTooltipStatusBar.Text:UpdateFont(C.db.profile.tooltips.health.text.size)
 	end
 end

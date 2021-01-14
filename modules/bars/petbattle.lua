@@ -53,8 +53,6 @@ local function bar_UpdateConfig(self)
 	if MODULE:IsRestricted() then
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
 	end
-
-	self._config.hotkey = E:CopyTable(C.db.global.fonts.bars, self._config.hotkey)
 end
 
 local function button_UpdateHotKey(self, state)
@@ -72,16 +70,7 @@ local function button_UpdateHotKey(self, state)
 end
 
 local function button_UpdateHotKeyFont(self)
-	local config = self._parent._config.hotkey
-
-	self.HotKey:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
-	self.HotKey:SetWordWrap(false)
-
-	if config.shadow then
-		self.HotKey:SetShadowOffset(1, -1)
-	else
-		self.HotKey:SetShadowOffset(0, 0)
-	end
+	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
 end
 
 function MODULE.HasPetBattleBar()

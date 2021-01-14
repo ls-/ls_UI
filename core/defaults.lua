@@ -196,16 +196,22 @@ D.global = {
 			outline = true,
 			shadow = false,
 		},
-		units = {
+		unit = {
 			font = defaultFont,
 			outline = false,
 			shadow = true,
 		},
-		bars = {
+		button = {
 			font = defaultFont,
 			outline = true,
 			shadow = false,
 		},
+		statusbar = {
+			font = defaultFont,
+			outline =  false,
+			shadow = true,
+		},
+		blizzard = {},
 	},
 	tags = {
 		["ls:absorb:damage"] = {
@@ -422,7 +428,7 @@ D.profile = {
 					orientation = "VERTICAL",
 					color = {
 						class = false,
-						reaction = true,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -895,8 +901,6 @@ D.profile = {
 					disable_mouse = false,
 					count = {
 						size = 10,
-						outline = true,
-						shadow = false,
 						h_alignment = "RIGHT",
 						v_alignment = "TOP",
 					},
@@ -2756,7 +2760,6 @@ D.profile = {
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "RIGHT",
 				v_alignment = "TOP",
 			},
@@ -2802,7 +2805,6 @@ D.profile = {
 			count = {
 				enabled = true,
 				size = 12,
-				flag = "_Outline", -- "_Shadow", ""
 				h_alignment = "RIGHT",
 				v_alignment = "TOP",
 			},
@@ -2874,6 +2876,12 @@ D.profile = {
 		target = true,
 		inspect = true,
 		anchor_cursor = false,
+		health = {
+			height = 12,
+			text = {
+				size = 12,
+			},
+		},
 		point = {
 			p = "BOTTOMRIGHT",
 			anchor = "UIParent",
@@ -2898,12 +2906,15 @@ D.profile = {
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
 		},
+		character_frame = {
+			ilvl = true,
+			enhancements = true,
+		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			width = 200,
 			height = 12,
 			text = {
 				size = 12,
-				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		timer = { -- MirrorTimer*, TimerTrackerTimer*
@@ -2911,7 +2922,6 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 12,
-				flag = "_Shadow", -- "_Outline", ""
 			},
 		},
 		objective_tracker = { -- ObjectiveTrackerFrame
@@ -2944,11 +2954,7 @@ D.char = {
 		y_growth = "DOWN",
 		drag_key = "NONE",
 		count = {
-			enabled = true,
 			size = 12,
-			outline = true,
-			shadow = false,
-			flag = "_Outline", -- "_Shadow", ""
 			h_alignment = "RIGHT",
 			v_alignment = "TOP",
 		},

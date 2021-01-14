@@ -11,17 +11,6 @@ local m_abs = _G.math.abs
 ]]
 
 -- Mine
-local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
-end
-
 local function element_PostCastStart(self)
 	if self.notInterruptible then
 		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.notinterruptible))
@@ -79,14 +68,13 @@ local function element_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
-	self._config.text = E:CopyTable(C.db.global.fonts.units, self._config.text)
 end
 
 local function element_UpdateFonts(self)
-	updateFont(self.Text, self._config.text)
+	self.Text:UpdateFont(self._config.text.size)
 	self.Text:SetJustifyH("LEFT")
 
-	updateFont(self.Time, self._config.text)
+	self.Time:UpdateFont(self._config.text.size)
 	self.Time:SetJustifyH("RIGHT")
 end
 
@@ -245,6 +233,7 @@ function UF:CreateCastbar(frame)
 	element.TexParent = texParent
 
 	local time = texParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(time, "statusbar")
 	time:SetWordWrap(false)
 	time:SetPoint("TOP", element, "TOP", 0, 0)
 	time:SetPoint("BOTTOM", element, "BOTTOM", 0, 0)
@@ -252,6 +241,7 @@ function UF:CreateCastbar(frame)
 	element.Time = time
 
 	local text = texParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(text, "statusbar")
 	text:SetWordWrap(false)
 	text:SetJustifyH("LEFT")
 	text:SetPoint("TOP", element, "TOP", 0, 0)

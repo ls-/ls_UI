@@ -160,6 +160,8 @@ local function handleCastBar(self)
 	self.TexParent = texParent
 
 	local time = texParent:CreateFontString(nil, "ARTWORK")
+	E.FontStrings:Capture(time, "statusbar")
+	time:SetWordWrap(false)
 	time:SetPoint("TOP", self, "TOP", 0, 0)
 	time:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 	time:SetPoint("RIGHT", self, "RIGHT", 0, 0)
@@ -167,23 +169,14 @@ local function handleCastBar(self)
 
 	local text = self.Text
 	text:SetParent(texParent)
+	E.FontStrings:Capture(text, "statusbar")
+	text:SetWordWrap(false)
 	text:SetSize(0, 0)
 	text:ClearAllPoints()
 	text:SetPoint("TOP", self, "TOP", 0, 0)
 	text:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
 	text:SetPoint("LEFT", self, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
-end
-
-local function updateFont(fontString, config)
-	fontString:SetFont(LibStub("LibSharedMedia-3.0"):Fetch("font", config.font), config.size, config.outline and "OUTLINE" or nil)
-	fontString:SetWordWrap(false)
-
-	if config.shadow then
-		fontString:SetShadowOffset(1, -1)
-	else
-		fontString:SetShadowOffset(0, 0)
-	end
 end
 
 local function updateColors(self)
@@ -271,10 +264,10 @@ local function updateCastBar(self)
 
 	updateColors(self)
 
-	updateFont(self.Text, config.text)
+	self.Text:UpdateFont(config.text.size)
 	self.Text:SetJustifyH("LEFT")
 
-	updateFont(self.Time, config.text)
+	self.Time:UpdateFont(config.text.size)
 	self.Time:SetJustifyH("RIGHT")
 end
 

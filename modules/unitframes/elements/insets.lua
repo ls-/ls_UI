@@ -236,7 +236,6 @@ function UF:CreateInsets(frame, texParent)
 	shadow:SetPoint("TOPLEFT", leftInset, "TOPLEFT", 0, 0)
 	shadow:SetPoint("BOTTOMRIGHT", leftInset, "BOTTOMRIGHT", -2, 0)
 
-
 	leftInset.Top = top
 	leftInset.Mid = mid
 	leftInset.Bottom = bottom

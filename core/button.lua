@@ -174,6 +174,7 @@ local function skinButton(button)
 	end
 
 	if bHotKey then
+		E.FontStrings:Capture(bHotKey, "button")
 		bHotKey:ClearAllPoints()
 		bHotKey:SetDrawLayer("OVERLAY")
 		bHotKey:SetJustifyH("RIGHT")
@@ -203,6 +204,7 @@ local function skinButton(button)
 	end
 
 	if bCount then
+		E.FontStrings:Capture(bCount, "button")
 		bCount:ClearAllPoints()
 		bCount:SetParent(fgParent)
 		bCount:SetDrawLayer("OVERLAY")
@@ -213,6 +215,7 @@ local function skinButton(button)
 	end
 
 	if bName then
+		E.FontStrings:Capture(bName, "button")
 		bName:ClearAllPoints()
 		bName:SetDrawLayer("OVERLAY")
 		bName:SetJustifyH("CENTER")
@@ -531,10 +534,12 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	setPushedTexture(button)
 
 	if hasCount then
-		local count = button:CreateFontString(nil, "ARTWORK", "NumberFontNormal")
+		local count = button:CreateFontString(nil, "ARTWORK")
+		E.FontStrings:Capture(count, "button")
+		count:UpdateFont(14)
+		count:SetWordWrap(false)
 		count:SetJustifyH("RIGHT")
 		count:SetPoint("TOPRIGHT", 2, 0)
-		count:SetWordWrap(false)
 		button.Count = count
 	end
 
