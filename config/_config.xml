@@ -9,5 +9,5 @@
 	<Script file="loot.lua"/>
 	<Script file="minimap.lua"/>
 	<Script file="tooltips.lua"/>
-	<Script file="unitframes.lua"/>
+	<Include file="unitframes\_unitframes.xml"/>
 </Ui>
