@@ -63,6 +63,7 @@ local function frame_Update(self)
 		self:UpdateThreatIndicator()
 		self:UpdateAuras()
 		self:UpdateClassIndicator()
+		self:UpdateCustomTexts()
 	else
 		if self:IsEnabled() then
 			self:Disable()
@@ -162,6 +163,8 @@ function UF:CreateBossFrame(frame)
 	frame.Border = border
 
 	frame.ClassIndicator = self:CreateClassIndicator(frame)
+
+	frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
 
 	local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 	glass:SetAllPoints(health)

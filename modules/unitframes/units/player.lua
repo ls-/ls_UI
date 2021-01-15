@@ -4,6 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 
 --[[ luacheck: globals
 	CreateFrame
@@ -48,6 +49,7 @@ do
 			self:UpdateDebuffIndicator()
 			self:UpdateThreatIndicator()
 			self:UpdateClassIndicator()
+			self:UpdateCustomTexts()
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -313,6 +315,8 @@ do
 
 		frame.ClassIndicator = self:CreateClassIndicator(frame)
 
+		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
+
 		local shadow = borderParent:CreateTexture(nil, "BACKGROUND", nil, -1)
 		shadow:SetAllPoints(health)
 		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
@@ -367,6 +371,7 @@ do
 			self:UpdateThreatIndicator()
 			self:UpdateAuras()
 			self:UpdateClassIndicator()
+			self:UpdateCustomTexts()
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -562,6 +567,8 @@ do
 		frame.Border = border
 
 		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
+		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
 
 		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)

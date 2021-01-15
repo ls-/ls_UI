@@ -3,6 +3,7 @@
 	<Script file="castbar.lua"/>
 	<Script file="classindicator.lua"/>
 	<Script file="classpower.lua"/>
+	<Script file="customtexts.lua"/>
 	<Script file="debuffindicator.lua"/>
 	<Script file="health.lua"/>
 	<Script file="insets.lua"/>

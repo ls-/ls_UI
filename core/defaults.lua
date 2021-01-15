@@ -588,6 +588,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 			pet = {
 				enabled = true,
@@ -711,6 +712,7 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				custom_texts = {},
 			},
 		},
 		traditional = {
@@ -956,6 +958,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 			pet = {
 				enabled = true,
@@ -1115,6 +1118,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 		},
 		target = {
@@ -1375,6 +1379,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		targettarget = {
 			enabled = true,
@@ -1504,6 +1509,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		focus = {
 			enabled = true,
@@ -1763,6 +1769,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		focustarget = {
 			enabled = true,
@@ -1892,6 +1899,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		boss = {
 			enabled = true,
@@ -2153,6 +2161,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 	},
 	minimap = {

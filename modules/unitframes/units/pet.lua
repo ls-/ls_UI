@@ -27,6 +27,7 @@ do
 			self:UpdateRaidTargetIndicator()
 			self:UpdateDebuffIndicator()
 			self:UpdateThreatIndicator()
+			self:UpdateCustomTexts()
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -90,6 +91,8 @@ do
 		threat:SetPoint("CENTER", 0, 0)
 		frame.ThreatIndicator = threat
 
+		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
+
 		local leftTube = CreateFrame("Frame", nil, frame)
 		leftTube:SetFrameLevel(level + 3)
 		leftTube:SetAllPoints(health)
@@ -129,6 +132,7 @@ do
 			self:UpdateThreatIndicator()
 			self:UpdateName()
 			self:UpdateClassIndicator()
+			self:UpdateCustomTexts()
 		else
 			if self:IsEnabled() then
 				self:Disable()
@@ -204,6 +208,8 @@ do
 		frame.Border = border
 
 		frame.ClassIndicator = self:CreateClassIndicator(frame)
+
+		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
 
 		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
 		glass:SetAllPoints(health)
