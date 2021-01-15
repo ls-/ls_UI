@@ -69,7 +69,6 @@ function CONFIG:CreateGeneralFontsPanel(order)
 	C.options.args.general.args.fonts = {
 		order = order,
 		type = "group",
-		childGroups = "tree",
 		name = L["FONTS"],
 		get = function(info)
 			return C.db.global.fonts[info[#info - 1]][info[#info]]
