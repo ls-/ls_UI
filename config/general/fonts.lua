@@ -30,6 +30,41 @@ local function inc(order)
 	return orders[order]
 end
 
+local function getOptions(order, name)
+	local temp = {
+		order = order,
+		type = "group",
+		inline = true,
+		name = "",
+		args = {
+			font = {
+				order = reset(2),
+				type = "select",
+				name = name,
+				width = 1.5,
+				dialogControl = "LSM30_Font",
+				values = LSM:HashTable("font"),
+				get = function(info)
+					return LSM:IsValid("font", C.db.global.fonts[info[#info - 1]].font)
+						and C.db.global.fonts[info[#info - 1]].font or LSM:GetDefault("font")
+				end,
+			},
+			outline = {
+				order = inc(2),
+				type = "toggle",
+				name = L["OUTLINE"],
+			},
+			shadow = {
+				order = inc(2),
+				type = "toggle",
+				name = L["SHADOW"],
+			},
+		},
+	}
+
+	return temp
+end
+
 function CONFIG:CreateGeneralFontsPanel(order)
 	C.options.args.general.args.fonts = {
 		order = order,
@@ -47,122 +82,10 @@ function CONFIG:CreateGeneralFontsPanel(order)
 			end
 		end,
 		args = {
-			cooldown = {
-				order = reset(1),
-				type = "group",
-				inline = true,
-				name = "",
-				args = {
-					font = {
-						order = reset(2),
-						type = "select",
-						name = L["COOLDOWNS"],
-						dialogControl = "LSM30_Font",
-						values = LSM:HashTable("font"),
-						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.cooldown.font)
-								and C.db.global.fonts.cooldown.font or LSM:GetDefault("font")
-						end,
-					},
-					outline = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = inc(2),
-						type = "toggle",
-						name = L["SHADOW"],
-					},
-				},
-			},
-			button = {
-				order = inc(1),
-				type = "group",
-				inline = true,
-				name = "",
-				args = {
-					font = {
-						order = reset(2),
-						type = "select",
-						name = L["BUTTONS"],
-						dialogControl = "LSM30_Font",
-						values = LSM:HashTable("font"),
-						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.button.font)
-								and C.db.global.fonts.button.font or LSM:GetDefault("font")
-						end,
-					},
-					outline = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = inc(2),
-						type = "toggle",
-						name = L["SHADOW"],
-					},
-				},
-			},
-			unit = {
-				order = inc(1),
-				type = "group",
-				inline = true,
-				name = "",
-				args = {
-					font = {
-						order = reset(2),
-						type = "select",
-						name = L["UNIT_FRAME"],
-						dialogControl = "LSM30_Font",
-						values = LSM:HashTable("font"),
-						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.unit.font)
-								and C.db.global.fonts.unit.font or LSM:GetDefault("font")
-						end,
-					},
-					outline = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = inc(2),
-						type = "toggle",
-						name = L["SHADOW"],
-					},
-				},
-			},
-			statusbar = {
-				order = inc(1),
-				type = "group",
-				inline = true,
-				name = "",
-				args = {
-					font = {
-						order = reset(2),
-						type = "select",
-						name = L["PROGRESS_BARS"],
-						dialogControl = "LSM30_Font",
-						values = LSM:HashTable("font"),
-						get = function()
-							return LSM:IsValid("font", C.db.global.fonts.statusbar.font)
-								and C.db.global.fonts.statusbar.font or LSM:GetDefault("font")
-						end,
-					},
-					outline = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OUTLINE"],
-					},
-					shadow = {
-						order = inc(2),
-						type = "toggle",
-						name = L["SHADOW"],
-					},
-				},
-			},
+			cooldown = getOptions(reset(1), L["COOLDOWNS"]),
+			button = getOptions(inc(1), L["BUTTONS"]),
+			unit = getOptions(inc(1), L["UNIT_FRAME"]),
+			statusbar = getOptions(inc(1), L["PROGRESS_BARS"]),
 		},
 	}
 end
