@@ -41,7 +41,7 @@ local function getOptions(order, name)
 				order = reset(2),
 				type = "select",
 				name = name,
-				width = 1.5,
+				width = 1.25,
 				dialogControl = "LSM30_Font",
 				values = LSM:HashTable("font"),
 				get = function(info)
