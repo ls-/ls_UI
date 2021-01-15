@@ -782,6 +782,20 @@ function MODULE:CopySettings(src, dest, ignoredKeys)
 	end
 end
 
+do
+	local callbacks = {}
+
+	function MODULE:AddCallback(func)
+		t_insert(callbacks, func)
+	end
+
+	function MODULE:RunCallbacks()
+		while(#callbacks > 0) do
+			t_remove(callbacks)()
+		end
+	end
+end
+
 function MODULE:Init()
 	C.options = {
 		type = "group",
@@ -841,6 +855,7 @@ function MODULE:Init()
 	MODULE:CreateMinimapPanel(11)
 	MODULE:CreateTooltipsPanel(12)
 	MODULE:CreateUnitFramesPanel(13)
+	MODULE:RunCallbacks()
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
