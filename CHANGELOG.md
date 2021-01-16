@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 90002.05
+
+- Added new unit frame element, `Custom Texts`. Can be found at /LSUI > Unit Frames > Unit > Custom
+  Texts. It allows you to create taggable font strings anywhere on a unit frame. Added it because
+  some people asked for it;
+- Added two new tags `ls:threat` and `ls:color:threat`;
+- Updated embeds.
+
 ## Version 90002.04
 
 - Finished migrating fonts to LSM. Can be found at /LSUI > General > Fonts. Now there's 4
