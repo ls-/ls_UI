@@ -790,8 +790,8 @@ do
 	end
 
 	function MODULE:RunCallbacks()
-		while(#callbacks > 0) do
-			t_remove(callbacks)()
+		for i = #callbacks, 1, -1 do
+			callbacks[i]()
 		end
 	end
 end
