@@ -5,7 +5,6 @@
 	<Script file="bars.lua"/>
 	<Script file="blizzard.lua"/>
 	<Include file="general\_general.xml"/>
-	<Script file="general.lua"/>
 	<Script file="loot.lua"/>
 	<Script file="minimap.lua"/>
 	<Script file="tooltips.lua"/>
