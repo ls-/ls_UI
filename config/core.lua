@@ -687,7 +687,7 @@ do
 	local function getTagName(tag)
 		local suffixEnd = (tag:match('()%(') or -1) - 1
 
-		local prefixEnd, prefixOffset = tag:match('()%$>'), 1
+		local prefixEnd, prefixOffset = tag:match('()$>'), 1
 		if(not prefixEnd) then
 			prefixEnd = 1
 		else
@@ -695,7 +695,7 @@ do
 			prefixOffset = 3
 		end
 
-		local suffixStart, suffixOffset = tag:match('%<$()', prefixEnd), 1
+		local suffixStart, suffixOffset = tag:match('<$()', prefixEnd), 1
 		if(not suffixStart) then
 			suffixStart = suffixEnd + 1
 		else
