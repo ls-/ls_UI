@@ -171,6 +171,7 @@ L["COST_PREDICTION"] = "Cost Prediction"
 L["COST_PREDICTION_DESC"] = "Show a bar that represents power cost of a spell. Doesn't work with instant cast abilities."
 L["COUNT_TEXT"] = "Count Text"
 L["CURSE"] = "Curse"
+L["CUSTOM_TEXTS"] = "Custom Texts"
 L["DAILY_QUEST_RESET_TIME_TOOLTIP"] = "Daily Quest Reset Time: |cffffffff%s|r"
 L["DAMAGE_ABSORB"] = "Damage Absorb"
 L["DAMAGE_ABSORB_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
@@ -500,5 +501,3 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
-
-L["CUSTOM_TEXTS"] = "Custom Texts"
