@@ -269,6 +269,10 @@ D.global = {
 			events = "UNIT_FACTION UNIT_NAME_UPDATE",
 			func = "function(unit)\n  local reaction = UnitReaction(unit, 'player')\n  if reaction then\n    return \"|c\" .. _VARS.REACTION_COLORS[reaction].hex\n  end\n\n  return \"|cffffffff\"\nend",
 		},
+		["ls:color:threat"] = {
+			events = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
+			func = "function(unit, realUnit)\n  local status = UnitThreatSituation(\"player\", realUnit or unit)\n  if status then\n    return \"|c\" .. _VARS.COLORS.threat[status + 1].hex\n  end\nend",
+		},
 		["ls:combatresticon"] = {
 			events = "PLAYER_UPDATE_RESTING PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED",
 			func = "function()\n  if UnitAffectingCombat(\"player\") then\n    return _VARS.INLINE_ICONS[\"COMBAT\"]:format(0, 0)\n  elseif IsResting() then\n    return _VARS.INLINE_ICONS[\"RESTING\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
@@ -375,6 +379,10 @@ D.global = {
 		["ls:server"] = {
 			events = "UNIT_NAME_UPDATE",
 			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return _VARS.L[\"FOREIGN_SERVER_LABEL\"]\n    end\n  end\n\n  return \"\"\nend",
+		},
+		["ls:threat"] = {
+			events = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
+			func = "function(unit, realUnit, output)\n  local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(\"player\", realUnit or unit)\n  if status then\n    if output == \"raw\" then\n      return string.format(\"%d\", rawPercentage)\n    else\n      return string.format(\"%d\", scaledPercentage)\n    end\n  end\nend",
 		},
 		["ls:sheepicon"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED",
@@ -588,6 +596,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 			pet = {
 				enabled = true,
@@ -711,6 +720,7 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				custom_texts = {},
 			},
 		},
 		traditional = {
@@ -956,6 +966,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 			pet = {
 				enabled = true,
@@ -1115,6 +1126,7 @@ D.profile = {
 						reaction = false,
 					},
 				},
+				custom_texts = {},
 			},
 		},
 		target = {
@@ -1375,6 +1387,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		targettarget = {
 			enabled = true,
@@ -1504,6 +1517,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		focus = {
 			enabled = true,
@@ -1763,6 +1777,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		focustarget = {
 			enabled = true,
@@ -1892,6 +1907,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 		boss = {
 			enabled = true,
@@ -2153,6 +2169,7 @@ D.profile = {
 					reaction = false,
 				},
 			},
+			custom_texts = {},
 		},
 	},
 	minimap = {

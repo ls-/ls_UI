@@ -687,7 +687,7 @@ do
 	local function getTagName(tag)
 		local suffixEnd = (tag:match('()%(') or -1) - 1
 
-		local prefixEnd, prefixOffset = tag:match('()%$>'), 1
+		local prefixEnd, prefixOffset = tag:match('()$>'), 1
 		if(not prefixEnd) then
 			prefixEnd = 1
 		else
@@ -695,7 +695,7 @@ do
 			prefixOffset = 3
 		end
 
-		local suffixStart, suffixOffset = tag:match('%<$()', prefixEnd), 1
+		local suffixStart, suffixOffset = tag:match('<$()', prefixEnd), 1
 		if(not suffixStart) then
 			suffixStart = suffixEnd + 1
 		else
@@ -778,6 +778,20 @@ function MODULE:CopySettings(src, dest, ignoredKeys)
 					end
 				end
 			end
+		end
+	end
+end
+
+do
+	local callbacks = {}
+
+	function MODULE:AddCallback(func)
+		t_insert(callbacks, func)
+	end
+
+	function MODULE:RunCallbacks()
+		for i = #callbacks, 1, -1 do
+			callbacks[i]()
 		end
 	end
 end
@@ -881,4 +895,10 @@ function MODULE:Init()
 	E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 		AceConfigDialog:Close(addonName)
 	end)
+
+	self:Update()
+end
+
+function MODULE:Update()
+	MODULE:RunCallbacks()
 end

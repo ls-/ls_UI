@@ -2541,6 +2541,8 @@ local function getUFOptions(order, unit, name)
 		},
 	}
 
+	temp.args.custom_texts = CONFIG:CreateUFCustomTextsPanel(901, unit)
+
 	if unit == "player" then
 		temp.disabled = isPlayerFrameDisabled
 		temp.args.pvp = getUFOption_PvPIndicator(18, unit)
