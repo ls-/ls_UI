@@ -1387,6 +1387,8 @@ function MODULE:Init()
 			button:RegisterForDrag("LeftButton")
 			Minimap.Tracking = button
 
+			button:SetScript("OnMouseDown", nil)
+			button:SetScript("OnMouseUp", nil)
 			button:HookScript("OnEnter", function(self)
 				if GameTooltip:IsOwned(self) then
 					local p, rP, x, y = getTooltipPoint(self)
@@ -1395,7 +1397,9 @@ function MODULE:Init()
 					GameTooltip:SetPoint(p, self, rP, x, y)
 				end
 			end)
-			button:HookScript("OnClick", function(self)
+			button:SetScript("OnClick", function(self)
+				MiniMapTracking_OnMouseDown(self)
+
 				local menu = UIDropDownMenu_GetCurrentDropDown()
 				if menu and menu == MiniMapTrackingDropDown then
 					local p, rP, x, y = getTooltipPoint(self)
