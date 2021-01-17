@@ -93,9 +93,9 @@ end
 function E:CreateBorder(parent, drawLayer, drawSubLevel)
 	local border = {
 		calcTile = true,
-		offset = 0,
+		offset = -12,
 		parent = parent,
-		size = 1,
+		size = 16,
 	}
 
 	for _, v in next, sections do

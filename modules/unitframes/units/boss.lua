@@ -159,7 +159,7 @@ function UF:CreateBossFrame(frame)
 
 	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-	border:SetOffset(-6)
+	border:SetOffset(-8)
 	frame.Border = border
 
 	frame.ClassIndicator = self:CreateClassIndicator(frame)

@@ -162,7 +162,7 @@ local function handleButton(button, header)
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-4)
+	border:SetOffset(-8)
 	button.Border = border
 
 	button.Cooldown = E.Cooldowns.Create(button)
@@ -347,7 +347,7 @@ local function createHeader(filter)
 			border = E:CreateBorder(totem)
 			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 			border:SetSize(16)
-			border:SetOffset(-4)
+			border:SetOffset(-8)
 			totem.Border = border
 
 			cd:SetParent(totem)

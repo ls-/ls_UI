@@ -336,7 +336,7 @@ local function createButton(parent, index)
 	local border = E:CreateBorder(iconParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-4)
+	border:SetOffset(-8)
 	button.Border = border
 
 	local quest = iconParent:CreateTexture(nil, "BACKGROUND", nil, 1)
@@ -440,7 +440,7 @@ function MODULE:Init()
 		local border = E:CreateBorder(takeAll)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 		border:SetSize(16)
-		border:SetOffset(-4)
+		border:SetOffset(-8)
 		takeAll.Border = border
 
 		local inset = CreateFrame("Frame", nil, frame, "InsetFrameTemplate")

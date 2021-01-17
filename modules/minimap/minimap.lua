@@ -883,7 +883,7 @@ function MODULE:Init()
 
 			local border = E:CreateBorder(textureParent)
 			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-			border:SetOffset(-6)
+			border:SetOffset(-8)
 			border:SetSize(16)
 			Minimap.Border = border
 
@@ -1262,7 +1262,7 @@ function MODULE:Init()
 				local border = E:CreateBorder(frame)
 				border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 				border:SetSize(16)
-				border:SetOffset(-6)
+				border:SetOffset(-8)
 				border:Hide()
 				frame.Border = border
 
