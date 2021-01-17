@@ -23,20 +23,12 @@ local function frame_OnEnter(self)
 	self = self.__owner or self
 
 	UnitFrame_OnEnter(self)
-
-	if self:GetName() == "LSPetFrame" then
-		PartyMemberBuffTooltip:ClearAllPoints()
-		PartyMemberBuffTooltip:SetPoint("BOTTOMRIGHT", self, "TOPLEFT", 4, -4)
-		PartyMemberBuffTooltip_Update(self)
-	end
 end
 
 local function frame_OnLeave(self)
 	self = self.__owner or self
 
 	UnitFrame_OnLeave(self)
-	PartyMemberBuffTooltip:ClearAllPoints()
-	PartyMemberBuffTooltip:Hide()
 end
 
 local configIgnoredKeys = {
