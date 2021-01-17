@@ -35,6 +35,7 @@ local function frame_OnLeave(self)
 	self = self.__owner or self
 
 	UnitFrame_OnLeave(self)
+	PartyMemberBuffTooltip:ClearAllPoints()
 	PartyMemberBuffTooltip:Hide()
 end
 
