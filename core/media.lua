@@ -10,5 +10,7 @@ local _G = getfenv(0)
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
-LSM:Register("border", "LS Thick Border", "Interface\\AddOns\\ls_UI\\assets\\border-thick-tooltip")
-LSM:Register("border", "LS Thin Border", "Interface\\AddOns\\ls_UI\\assets\\border-thin-tooltip")
+LSM:Register("border", "LS Thick", "Interface\\AddOns\\ls_UI\\assets\\border-thick-tooltip")
+LSM:Register("border", "LS Thin", "Interface\\AddOns\\ls_UI\\assets\\border-thin-tooltip")
+
+LSM:Register("statusbar", "LS", "Interface\\AddOns\\ls_UI\\assets\\statusbar-texture")

@@ -413,6 +413,9 @@ D.global = {
 			is_init = false,
 		},
 	},
+	textures = {
+		statusbar = "LS",
+	},
 }
 
 D.profile = {
