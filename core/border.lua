@@ -100,6 +100,8 @@ function E:CreateBorder(parent, drawLayer, drawSubLevel)
 
 	for _, v in next, sections do
 		border[v] = parent:CreateTexture(nil, drawLayer or "OVERLAY", nil, drawSubLevel or 1)
+		border[v]:SetSnapToPixelGrid(false)
+		border[v]:SetTexelSnappingBias(0)
 	end
 
 	border.TOPLEFT:SetTexCoord(0.5, 0.625, 0, 1)

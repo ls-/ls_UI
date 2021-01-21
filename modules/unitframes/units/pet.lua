@@ -121,7 +121,7 @@ do
 			end
 
 			self:UpdateSize()
-			self:UpdateInsets()
+			self:UpdateLayout()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
 			self:UpdatePortrait()
@@ -143,24 +143,13 @@ do
 	function UF:CreateHorizontalPetFrame(frame)
 		local level = frame:GetFrameLevel()
 
-		local bg = frame:CreateTexture(nil, "BACKGROUND")
-		bg:SetAllPoints()
-		bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
-		bg:SetHorizTile(true)
+		-- .TextureParent
+		-- .TextParent
+		-- .Insets
+		-- .Border
+		self:CreateLayout(frame, level)
 
-		local textureParent = CreateFrame("Frame", nil, frame)
-		textureParent:SetFrameLevel(level + 7)
-		textureParent:SetAllPoints()
-		frame.TextureParent = textureParent
-
-		local textParent = CreateFrame("Frame", nil, frame)
-		textParent:SetFrameLevel(level + 9)
-		textParent:SetAllPoints()
-		frame.TextParent = textParent
-
-		frame.Insets = self:CreateInsets(frame, textureParent)
-
-		local health = self:CreateHealth(frame, textParent)
+		local health = self:CreateHealth(frame, frame.TextParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
 		health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
@@ -169,55 +158,30 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, frame.TextParent)
 
 		frame.Portrait = self:CreatePortrait(frame)
 
-		local power = self:CreatePower(frame, textParent)
+		local power = self:CreatePower(frame, frame.TextParent)
 		power:SetFrameLevel(level + 1)
 		frame.Power = power
-
-		power.UpdateContainer = function(_, shouldShow)
-			if shouldShow then
-				if not frame.Insets.Bottom:IsExpanded() then
-					frame.Insets.Bottom:Expand()
-				end
-			else
-				if frame.Insets.Bottom:IsExpanded() then
-					frame.Insets.Bottom:Collapse()
-				end
-			end
-		end
 
 		frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
 
 		frame.Castbar = self:CreateCastbar(frame)
 		frame.Castbar.Holder:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -3, -6)
 
-		frame.Name = self:CreateName(frame, textParent)
+		frame.Name = self:CreateName(frame, frame.TextParent)
 
-		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
 
 		frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
-		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
-
-		local border = E:CreateBorder(textureParent)
-		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-		border:SetOffset(-8)
-		frame.Border = border
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
 
 		frame.ClassIndicator = self:CreateClassIndicator(frame)
 
-		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
-
-		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
-		glass:SetAllPoints(health)
-		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-
-		local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
-		shadow:SetAllPoints(health)
-		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+		frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
 
 		frame.Update = frame_Update
 	end

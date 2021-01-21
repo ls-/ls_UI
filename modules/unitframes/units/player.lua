@@ -4,7 +4,6 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 
 --[[ luacheck: globals
 	CreateFrame
@@ -74,25 +73,23 @@ do
 			-- 8: frame.TextureParent
 			-- 9: frame.TextParent
 
-		-- bg
-		local texture = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
-		texture:SetAllPoints()
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
-		texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+		local bg = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
+		bg:SetAllPoints()
+		bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
+		bg:SetHorizTile(true)
+		bg:SetVertTile(true)
 
-		-- border
 		local borderParent = CreateFrame("Frame", nil, frame)
 		borderParent:SetFrameLevel(level + 3)
 		borderParent:SetAllPoints()
 		frame.BorderParent = borderParent
 
-		texture = borderParent:CreateTexture(nil, "BACKGROUND")
+		local texture = borderParent:CreateTexture(nil, "BACKGROUND")
 		texture:SetAllPoints()
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 		texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
 		frame.Border = texture
 
-		-- fg
 		local textureParent = CreateFrame("Frame", nil, frame)
 		textureParent:SetFrameLevel(level + 7)
 		textureParent:SetAllPoints()
@@ -103,77 +100,55 @@ do
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 		texture:SetTexCoord(334 / 1024, 666 / 1024, 1 / 512, 333 / 512)
 
-		-- text
 		local textParent = CreateFrame("Frame", nil, frame)
 		textParent:SetFrameLevel(level + 8)
 		textParent:SetAllPoints()
 		frame.TextParent = textParent
 
-		-- class power tube
-		local leftSlot = CreateFrame("Frame", nil, frame)
-		leftSlot:SetFrameLevel(level + 6)
-		leftSlot:SetSize(12, 128)
+		local leftSlot = UF:CreateSlot(frame, level)
 		leftSlot:SetPoint("LEFT", 23, 0)
 		frame.LeftSlot = leftSlot
 
-		E:SetStatusBarSkin(leftSlot, "VERTICAL-12")
-
-		local seps = {}
-
-		for i = 1, 9 do
-			local sep = leftSlot:CreateTexture(nil, "ARTWORK", nil, 1)
-			sep:SetSize(12, 12)
-			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-			sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
-			seps[i] = sep
-		end
-
-		leftSlot.Refresh = function(self, sender, visible, slots)
-			if (slots == self._slots and visible == self._visible)
-				or (not visible and sender ~= self._sender) then return end
-
-			self._slots = slots
-			self._visible = visible
-			self._sender = sender
-
-			if visible then
-				self:Show()
-
-				for i = 1, 9 do
-					if i < slots then
-						seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
-						seps[i]:Show()
-					else
-						seps[i]:Hide()
-					end
-				end
-			else
-				self:Hide()
-
-				for i = 1, 9 do
-					seps[i]:Hide()
-				end
-			end
-		end
-
-		leftSlot:Refresh(nil, false, 0)
-
-		-- power tube
-		local rightSlot = CreateFrame("Frame", nil, frame)
-		rightSlot:SetFrameLevel(level + 6)
-		rightSlot:SetSize(12, 128)
+		local rightSlot = UF:CreateSlot(frame, level)
 		rightSlot:SetPoint("RIGHT", -23, 0)
 		frame.RightSlot = rightSlot
 
-		E:SetStatusBarSkin(rightSlot, "VERTICAL-12")
+		-- for i = 1, 9 do
+		-- 	local sep = leftSlot:CreateTexture(nil, "ARTWORK", nil, 1)
+		-- 	sep:SetSize(12, 12)
+		-- 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+		-- 	sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
+		-- 	seps[i] = sep
+		-- end
 
-		-- mask
-		local mask = textureParent:CreateMaskTexture()
-		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-		mask:SetSize(312 / 2, 312 / 2)
-		mask:SetPoint("CENTER")
+		-- leftSlot.Refresh = function(self, sender, visible, slots)
+		-- 	if (slots == self._slots and visible == self._visible)
+		-- 		or (not visible and sender ~= self._sender) then return end
 
-		-- health
+		-- 	self._slots = slots
+		-- 	self._visible = visible
+		-- 	self._sender = sender
+
+		-- 	if visible then
+		-- 		self:Show()
+
+		-- 		for i = 1, 9 do
+		-- 			if i < slots then
+		-- 				seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
+		-- 				seps[i]:Show()
+		-- 			else
+		-- 				seps[i]:Hide()
+		-- 			end
+		-- 		end
+		-- 	else
+		-- 		self:Hide()
+
+		-- 		for i = 1, 9 do
+		-- 			seps[i]:Hide()
+		-- 		end
+		-- 	end
+		-- end
+
 		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(180 / 2, 280 / 2)
@@ -181,92 +156,44 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		-- health prediction
 		local healthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 		frame.HealthPrediction = healthPrediction
 
-		-- masking
-		health._texture:AddMaskTexture(mask)
-		healthPrediction.myBar._texture:AddMaskTexture(mask)
-		healthPrediction.otherBar._texture:AddMaskTexture(mask)
-		healthPrediction.absorbBar.Overlay:AddMaskTexture(mask)
-		healthPrediction.healAbsorbBar._texture:AddMaskTexture(mask)
-		health.GainLossIndicators.Loss:AddMaskTexture(mask)
-
-		-- power
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 4)
-		power:SetSize(12, 128)
-		power:SetPoint("RIGHT", -23, 0)
 		power:Hide()
 		frame.Power = power
 
-		hooksecurefunc(power, "Hide", function()
-			rightSlot:Hide()
-		end)
-		hooksecurefunc(power, "Show", function()
-			rightSlot:Show()
-		end)
+		rightSlot:Capture(power)
 
-		-- additional power
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(level + 4)
-		addPower:SetSize(12, 128)
-		addPower:SetPoint("LEFT", 23, 0)
 		addPower:Hide()
 		frame.AdditionalPower = addPower
 
-		hooksecurefunc(addPower, "Hide", function(self)
-			leftSlot:Refresh(self, false, 0)
-		end)
-		hooksecurefunc(addPower, "Show", function(self)
-			leftSlot:Refresh(self, true, 1)
-		end)
+		leftSlot:Capture(addPower)
 
-		-- power cost prediction
 		frame.PowerPrediction = self:CreatePowerPrediction(frame, power, addPower)
 
-		-- class power
 		if E.PLAYER_CLASS == "MONK" then
 			local stagger = self:CreateStagger(frame)
 			stagger:SetFrameLevel(level + 4)
-			stagger:SetPoint("LEFT", 23, 0)
-			stagger:SetSize(12, 128)
 			frame.Stagger = stagger
 
-			hooksecurefunc(stagger, "Hide", function(self)
-				leftSlot:Refresh(self, false, 0)
-			end)
-			hooksecurefunc(stagger, "Show", function(self)
-				leftSlot:Refresh(self, true, 1)
-			end)
+			leftSlot:Capture(stagger)
 		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 			local runes = self:CreateRunes(frame)
 			runes:SetFrameLevel(level + 4)
-			runes:SetPoint("LEFT", 23, 0)
-			runes:SetSize(12, 128)
 			frame.Runes = runes
 
-			hooksecurefunc(runes, "Hide", function(self)
-				leftSlot:Refresh(self, false, 0)
-			end)
-			hooksecurefunc(runes, "Show", function(self)
-				leftSlot:Refresh(self, true, 6)
-			end)
+			leftSlot:Capture(runes)
 		end
 
 		local classPower = self:CreateClassPower(frame)
 		classPower:SetFrameLevel(level + 4)
-		classPower:SetPoint("LEFT", 23, 0)
-		classPower:SetSize(12, 128)
 		frame.ClassPower = classPower
 
-		hooksecurefunc(classPower, "Hide", function(self)
-			leftSlot:Refresh(self, false, 0)
-		end)
-		hooksecurefunc(classPower, "Show", function(self)
-			leftSlot:Refresh(self, true, self.__max)
-		end)
+		leftSlot:Capture(classPower)
 
 		-- pvp
 		frame.PvPIndicator = self:CreatePvPIndicator(frame, textureParent)
@@ -317,10 +244,18 @@ do
 
 		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
 
-		local shadow = borderParent:CreateTexture(nil, "BACKGROUND", nil, -1)
-		shadow:SetAllPoints(health)
-		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-		shadow:AddMaskTexture(mask)
+		local mask = textureParent:CreateMaskTexture()
+		mask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		mask:SetSize(288 / 2, 288 / 2)
+		mask:SetPoint("CENTER")
+
+		bg:AddMaskTexture(mask)
+		health._texture:AddMaskTexture(mask)
+		healthPrediction.myBar._texture:AddMaskTexture(mask)
+		healthPrediction.otherBar._texture:AddMaskTexture(mask)
+		healthPrediction.absorbBar.Overlay:AddMaskTexture(mask)
+		healthPrediction.healAbsorbBar._texture:AddMaskTexture(mask)
+		health.GainLossIndicators.Loss:AddMaskTexture(mask)
 
 		frame.Update = frame_Update
 
@@ -338,7 +273,7 @@ do
 			end
 
 			self:UpdateSize()
-			self:UpdateInsets()
+			self:UpdateLayout()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
 			self:UpdatePortrait()
@@ -382,51 +317,14 @@ do
 	function UF:CreateHorizontalPlayerFrame(frame)
 		local level = frame:GetFrameLevel()
 
-		local bg = frame:CreateTexture(nil, "BACKGROUND")
-		bg:SetAllPoints()
-		bg:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-bg", true)
-		bg:SetHorizTile(true)
-
-		local textureParent = CreateFrame("Frame", nil, frame)
-		textureParent:SetFrameLevel(level + 7)
-		textureParent:SetAllPoints()
-		frame.TextureParent = textureParent
-
-		local textParent = CreateFrame("Frame", nil, frame)
-		textParent:SetFrameLevel(level + 9)
-		textParent:SetAllPoints()
-		frame.TextParent = textParent
-
-		frame.Insets = self:CreateInsets(frame, textureParent)
-
-		function frame.Insets.Top:Refresh(sender, visible, slots)
-			if (slots == self._slots and visible == self._visible)
-				or (not visible and sender ~= self._sender) then return end
-
-			self._slots = slots
-			self._visible = visible
-			self._sender = sender
-
-			if visible then
-				self:Expand()
-
-				for i = 1, 9 do
-					if i < slots then
-						self.Seps[i]:SetPoint("LEFT", sender[i], "RIGHT", -5, 0)
-						self.Seps[i]:Show()
-					else
-						self.Seps[i]:Hide()
-					end
-				end
-			else
-				self:Collapse()
-			end
-		end
-
-		frame.Insets.Top:Refresh(nil, false, 0)
+		-- .TextureParent
+		-- .TextParent
+		-- .Insets
+		-- .Border
+		self:CreateLayout(frame, level)
 
 		-- health
-		local health = self:CreateHealth(frame, textParent)
+		local health = self:CreateHealth(frame, frame.TextParent)
 		health:SetFrameLevel(level + 1)
 		health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
 		health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
@@ -435,26 +333,14 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, frame.TextParent)
 
 		frame.Portrait = self:CreatePortrait(frame)
 
 		-- power
-		local power = self:CreatePower(frame, textParent)
+		local power = self:CreatePower(frame, frame.TextParent)
 		power:SetFrameLevel(level + 1)
 		frame.Power = power
-
-		power.UpdateContainer = function(_, shouldShow)
-			if shouldShow then
-				if not frame.Insets.Bottom:IsExpanded() then
-					frame.Insets.Bottom:Expand()
-				end
-			else
-				if frame.Insets.Bottom:IsExpanded() then
-					frame.Insets.Bottom:Collapse()
-				end
-			end
-		end
 
 		frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
 
@@ -462,13 +348,6 @@ do
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(level + 1)
 		frame.AdditionalPower = addPower
-
-		hooksecurefunc(addPower, "Hide", function(self)
-			frame.Insets.Top:Refresh(self, false, 0)
-		end)
-		hooksecurefunc(addPower, "Show", function(self)
-			frame.Insets.Top:Refresh(self, true, 1)
-		end)
 
 		frame.Insets.Top:Capture(addPower, 0, 0, 0, 2)
 
@@ -481,25 +360,11 @@ do
 			stagger:SetFrameLevel(level + 1)
 			frame.Stagger = stagger
 
-			hooksecurefunc(stagger, "Hide", function(self)
-				frame.Insets.Top:Refresh(self, false, 0)
-			end)
-			hooksecurefunc(stagger, "Show", function(self)
-				frame.Insets.Top:Refresh(self, true, 1)
-			end)
-
 			frame.Insets.Top:Capture(stagger, 0, 0, 0, 2)
 		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 			local runes = self:CreateRunes(frame)
 			runes:SetFrameLevel(level + 1)
 			frame.Runes = runes
-
-			hooksecurefunc(runes, "Hide", function(self)
-				frame.Insets.Top:Refresh(self, false, 0)
-			end)
-			hooksecurefunc(runes, "Show", function(self)
-				frame.Insets.Top:Refresh(self, true, 6)
-			end)
 
 			frame.Insets.Top:Capture(runes, 0, 0, 0, 2)
 		end
@@ -508,24 +373,17 @@ do
 		classPower:SetFrameLevel(level + 1)
 		frame.ClassPower = classPower
 
-		hooksecurefunc(classPower, "Hide", function(self)
-			frame.Insets.Top:Refresh(self, false, 0)
-		end)
-		hooksecurefunc(classPower, "Show", function(self)
-			frame.Insets.Top:Refresh(self, true, self.__max)
-		end)
-
 		frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
 
 		-- castbar
 		frame.Castbar = self:CreateCastbar(frame)
 
-		frame.Name = self:CreateName(frame, textParent)
+		frame.Name = self:CreateName(frame, frame.TextParent)
 
-		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
+		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
 
 		-- pvp indicator
-		local pvp = self:CreatePvPIndicator(frame, textureParent)
+		local pvp = self:CreatePvPIndicator(frame, frame.TextureParent)
 		frame.PvPIndicator = pvp
 
 		pvp.Holder.PostExpand = function()
@@ -547,7 +405,7 @@ do
 		pvpTimer.frequentUpdates = 0.1
 
 		-- debuff indicator
-		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
+		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
 
 		-- threat
 		frame.ThreatIndicator = self:CreateThreatIndicator(frame)
@@ -555,28 +413,15 @@ do
 		-- auras
 		frame.Auras = self:CreateAuras(frame, "player")
 
-		local status = textParent:CreateFontString(nil, "ARTWORK")
+		local status = frame.TextParent:CreateFontString(nil, "ARTWORK")
 		status:SetFont(GameFontNormal:GetFont(), 16)
 		status:SetJustifyH("RIGHT")
 		status:SetPoint("RIGHT", frame, "BOTTOMRIGHT", -4, -1)
 		frame:Tag(status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")
 
-		local border = E:CreateBorder(textureParent)
-		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-		border:SetOffset(-8)
-		frame.Border = border
-
 		frame.ClassIndicator = self:CreateClassIndicator(frame)
 
-		frame.CustomTexts = self:CreateCustomTexts(frame, textParent)
-
-		local glass = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
-		glass:SetAllPoints(health)
-		glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-
-		local shadow = textureParent:CreateTexture(nil, "OVERLAY", nil, -1)
-		shadow:SetAllPoints(health)
-		shadow:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
+		frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
 
 		frame.Update = frame_Update
 
