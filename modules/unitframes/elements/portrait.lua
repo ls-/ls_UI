@@ -3,16 +3,20 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
 --[[ luacheck: globals
-	CreateFrame
+	CreateFrame Mixin
 ]]
 
 -- Mine
-local function element_UpdateConfig(self)
+local element_proto = {}
+
+function element_proto:UpdateConfig()
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].portrait, self._config)
 end
 
-local function frame_UpdatePortrait(self)
+local frame_proto = {}
+
+function frame_proto:UpdatePortrait()
 	if C.db.profile.units[self._unit].portrait.style == "2D" then
 		self.Portrait = self.Portrait2D
 		self.Portrait3D:ClearAllPoints()
@@ -30,8 +34,8 @@ local function frame_UpdatePortrait(self)
 	element:UpdateConfig()
 	element:Hide()
 
-	self.Insets.Left:Collapse()
-	self.Insets.Right:Collapse()
+	self.Insets.Left:Release(element)
+	self.Insets.Right:Release(element)
 
 	if element._config.enabled and not self:IsElementEnabled("Portrait") then
 		self:EnableElement("Portrait")
@@ -41,7 +45,6 @@ local function frame_UpdatePortrait(self)
 
 	if self:IsElementEnabled("Portrait") then
 		self.Insets[element._config.position]:Capture(element)
-		self.Insets[element._config.position]:Expand()
 
 		element:Show()
 		element:ForceUpdate()
@@ -49,13 +52,10 @@ local function frame_UpdatePortrait(self)
 end
 
 function UF:CreatePortrait(frame, parent)
-	frame.Portrait2D = (parent or frame):CreateTexture(nil, "ARTWORK")
-	frame.Portrait2D.UpdateConfig = element_UpdateConfig
+	Mixin(frame, frame_proto)
 
-	frame.Portrait3D = CreateFrame("PlayerModel", nil, parent or frame)
-	frame.Portrait3D.UpdateConfig = element_UpdateConfig
-
-	frame.UpdatePortrait = frame_UpdatePortrait
+	frame.Portrait2D = Mixin((parent or frame):CreateTexture(nil, "ARTWORK"), element_proto)
+	frame.Portrait3D = Mixin(CreateFrame("PlayerModel", nil, parent or frame), element_proto)
 
 	return frame.Portrait2D
 end
