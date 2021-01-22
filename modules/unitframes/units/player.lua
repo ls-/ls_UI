@@ -105,42 +105,6 @@ do
 		textParent:SetAllPoints()
 		frame.TextParent = textParent
 
-		-- for i = 1, 9 do
-		-- 	local sep = leftSlot:CreateTexture(nil, "ARTWORK", nil, 1)
-		-- 	sep:SetSize(12, 12)
-		-- 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-		-- 	sep:SetTexCoord(0.03125, 3, 0.78125, 3, 0.03125, 0, 0.78125, 0)
-		-- 	seps[i] = sep
-		-- end
-
-		-- leftSlot.Refresh = function(self, sender, visible, slots)
-		-- 	if (slots == self._slots and visible == self._visible)
-		-- 		or (not visible and sender ~= self._sender) then return end
-
-		-- 	self._slots = slots
-		-- 	self._visible = visible
-		-- 	self._sender = sender
-
-		-- 	if visible then
-		-- 		self:Show()
-
-		-- 		for i = 1, 9 do
-		-- 			if i < slots then
-		-- 				seps[i]:SetPoint("BOTTOM", sender[i], "TOP", 0, -5)
-		-- 				seps[i]:Show()
-		-- 			else
-		-- 				seps[i]:Hide()
-		-- 			end
-		-- 		end
-		-- 	else
-		-- 		self:Hide()
-
-		-- 		for i = 1, 9 do
-		-- 			seps[i]:Hide()
-		-- 		end
-		-- 	end
-		-- end
-
 		local health = self:CreateHealth(frame, textParent)
 		health:SetFrameLevel(level + 1)
 		health:SetSize(180 / 2, 280 / 2)
