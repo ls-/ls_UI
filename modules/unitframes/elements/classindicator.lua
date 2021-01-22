@@ -45,7 +45,7 @@ local function update(self)
 end
 
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].border, self._config)
 end
 

@@ -106,7 +106,7 @@ do
 	end
 
 	function power_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
 	end
 
@@ -166,7 +166,7 @@ do
 	end
 
 	function power_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 
@@ -222,7 +222,7 @@ do
 	end
 
 	function power_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
 	end
 
@@ -287,7 +287,7 @@ do
 			}
 		end
 
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config.power.enabled = C.db.profile.units[unit].power.prediction.enabled
 		self._config.power.orientation = C.db.profile.units[unit].power.orientation
 		self._config.class_power.enabled = C.db.profile.units[unit].class_power.prediction.enabled

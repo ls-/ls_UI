@@ -11,7 +11,7 @@ local ALL_ICONS = M.textures.aura_icons_inline["Curse"] .. M.textures.aura_icons
 	.. M.textures.aura_icons_inline[""]
 
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].debuff, self._config)
 end
 

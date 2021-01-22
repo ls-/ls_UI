@@ -75,7 +75,7 @@ do
 	end
 
 	function element_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
 	end
 
@@ -230,7 +230,7 @@ do
 	}
 
 	function element_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end

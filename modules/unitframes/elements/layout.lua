@@ -38,7 +38,7 @@ end
 local insets_proto = {}
 
 function insets_proto:UpdateConfig()
-	local uf = C.db.profile.units[self.__owner._unit]
+	local uf = C.db.profile.units[self.__owner.__unit]
 	local limit = E:Round(uf.height * 0.35)
 
 	self._config = E:CopyTable(uf.insets, self._config)

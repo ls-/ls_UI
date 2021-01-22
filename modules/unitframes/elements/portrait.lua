@@ -10,14 +10,14 @@ local UF = P:GetModule("UnitFrames")
 local element_proto = {}
 
 function element_proto:UpdateConfig()
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].portrait, self._config)
 end
 
 local frame_proto = {}
 
 function frame_proto:UpdatePortrait()
-	if C.db.profile.units[self._unit].portrait.style == "2D" then
+	if C.db.profile.units[self.__unit].portrait.style == "2D" then
 		self.Portrait = self.Portrait2D
 		self.Portrait3D:ClearAllPoints()
 		self.Portrait3D:Hide()

@@ -183,7 +183,7 @@ do
 	end
 
 	function runes_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 
@@ -301,7 +301,7 @@ do
 	end
 
 	function class_power_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 
@@ -365,7 +365,7 @@ do
 	end
 
 	function stagger_proto:UpdateConfig()
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
 	end
 

@@ -251,7 +251,7 @@ local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 end
 
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
 
 	local size = self._config.size_override ~= 0 and self._config.size_override

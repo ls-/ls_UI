@@ -68,7 +68,7 @@ function element_proto:Override(_, unit)
 end
 
 function element_proto:UpdateConfig()
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].pvp, self._config)
 end
 

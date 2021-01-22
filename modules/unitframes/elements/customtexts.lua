@@ -16,7 +16,7 @@ local t_wipe = _G.table.wipe
 local element_proto = {}
 
 function element_proto:UpdateConfig(k)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 
 	if k then
 		if not C.db.profile.units[unit].custom_texts[k] then

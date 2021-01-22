@@ -7,7 +7,7 @@ local _G = getfenv(0)
 
 -- Mine
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].raid_target, self._config)
 end
 

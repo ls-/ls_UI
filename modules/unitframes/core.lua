@@ -51,7 +51,7 @@ local configIgnoredKeys = {
 }
 
 local function frame_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.units[self._unit], self._config, configIgnoredKeys)
+	self._config = E:CopyTable(C.db.profile.units[self.__unit], self._config, configIgnoredKeys)
 end
 
 local function frame_UpdateSize(self)
@@ -274,7 +274,7 @@ function UF:Init()
 				frame:RegisterForClicks("AnyUp")
 				frame:SetScript("OnEnter", frame_OnEnter)
 				frame:SetScript("OnLeave", frame_OnLeave)
-				frame._unit = unit:gsub("%d+", "")
+				frame.__unit = unit:gsub("%d+", "")
 
 				frame.ForElement = frame_ForElement
 				frame.Preview = frame_Preview

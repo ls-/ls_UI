@@ -4,7 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Mine
 local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].threat, self._config)
 end
 
@@ -19,7 +19,7 @@ local function frame_UpdateThreatIndicator(self)
 	local element = self.ThreatIndicator
 	element:UpdateConfig()
 
-	element.feedbackUnit = element._config.feedback_unit
+	element.feedbackUnit = element._config.feedback__unit
 
 	if element._config.enabled and not self:IsElementEnabled("ThreatIndicator") then
 		self:EnableElement("ThreatIndicator")

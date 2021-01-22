@@ -98,7 +98,7 @@ function UF:CreateMediumUnitFrame(frame)
 
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
-	frame.Auras = self:CreateAuras(frame, frame._unit)
+	frame.Auras = self:CreateAuras(frame, frame.__unit)
 
 	return frame
 end

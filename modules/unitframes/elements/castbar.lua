@@ -70,7 +70,7 @@ function element_proto:CustomDelayText(duration)
 end
 
 function element_proto:UpdateConfig()
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
@@ -203,7 +203,7 @@ function frame_proto:UpdateCastbar()
 		self:DisableElement("Castbar")
 		element.Holder:Hide()
 
-		if self._unit == "player" then
+		if self.__unit == "player" then
 			CastingBarFrame_SetUnit(CastingBarFrame, nil)
 			CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
 		end
