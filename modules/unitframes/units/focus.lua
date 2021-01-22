@@ -74,8 +74,6 @@ function UF:CreateFocusFrame(frame)
 
 	frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
 
-	frame.Castbar = self:CreateCastbar(frame)
-
 	frame.Name = self:CreateName(frame, frame.TextParent)
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
@@ -88,6 +86,14 @@ function UF:CreateFocusFrame(frame)
 	frame.PvPIndicator = self:CreatePvPIndicator(frame, frame.TextureParent)
 
 	leftslot:Capture(frame.PvPIndicator.Holder)
+
+	local rightSlot = UF:CreateSlot(frame, level)
+	rightSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -6)
+	rightSlot:SetPoint("LEFT", leftslot, "RIGHT", 0, 0)
+	rightSlot:UpdateSize(0, 12) -- default castbar height
+	frame.CastbarSlot = rightSlot
+
+	frame.Castbar = self:CreateCastbar(frame)
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
 

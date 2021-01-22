@@ -376,9 +376,6 @@ do
 
 		frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
 
-		-- castbar
-		frame.Castbar = self:CreateCastbar(frame)
-
 		frame.Name = self:CreateName(frame, frame.TextParent)
 
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
@@ -398,6 +395,14 @@ do
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
 		pvp.Timer = pvpTimer
+
+		local rightSlot = UF:CreateSlot(frame, level)
+		rightSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -6)
+		rightSlot:SetPoint("LEFT", leftslot, "RIGHT", 0, 0)
+		rightSlot:UpdateSize(0, 12) -- default castbar height
+		frame.CastbarSlot = rightSlot
+
+		frame.Castbar = self:CreateCastbar(frame)
 
 		-- debuff indicator
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)

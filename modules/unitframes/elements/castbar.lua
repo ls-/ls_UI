@@ -7,11 +7,17 @@ local _G = getfenv(0)
 local m_abs = _G.math.abs
 
 --[[ luacheck: globals
-	CreateFrame CastingBarFrame_SetUnit CastingBarFrame PetCastingBarFrame
+	CreateFrame CastingBarFrame_SetUnit CastingBarFrame Mixin PetCastingBarFrame
 ]]
 
 -- Mine
-local function element_PostCastStart(self)
+local LSM = LibStub("LibSharedMedia-3.0")
+
+local element_proto = {
+	timeToHold = 0.4,
+}
+
+function element_proto:PostCastStart()
 	if self.notInterruptible then
 		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.notinterruptible))
 
@@ -31,7 +37,7 @@ local function element_PostCastStart(self)
 	end
 end
 
-local function element_PostCastFail(self)
+function element_proto:PostCastFail()
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
 	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.failed))
@@ -39,7 +45,7 @@ local function element_PostCastFail(self)
 	self.Time:SetText("")
 end
 
-local function element_CustomTimeText(self, duration)
+function element_proto:CustomTimeText(duration)
 	if self.max > 600 then
 		return self.Time:SetText("")
 	end
@@ -51,7 +57,7 @@ local function element_CustomTimeText(self, duration)
 	self.Time:SetFormattedText("%.1f ", duration)
 end
 
-local function element_CustomDelayText(self, duration)
+function element_proto:CustomDelayText(duration)
 	if self.casting then
 		duration = self.max - duration
 	end
@@ -63,14 +69,14 @@ local function element_CustomDelayText(self, duration)
 	end
 end
 
-local function element_UpdateConfig(self)
+function element_proto:UpdateConfig()
 	local unit = self.__owner._unit
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
 	self._config.width = (self._config.detached and self._config.width_override ~= 0)
 		and self._config.width_override or C.db.profile.units[unit].width
 end
 
-local function element_UpdateFonts(self)
+function element_proto:UpdateFonts()
 	self.Text:UpdateFont(self._config.text.size)
 	self.Text:SetJustifyH("LEFT")
 
@@ -78,7 +84,12 @@ local function element_UpdateFonts(self)
 	self.Time:SetJustifyH("RIGHT")
 end
 
-local function element_UpdateIcon(self)
+function element_proto:UpdateTextures()
+	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+end
+
+function element_proto:UpdateIcon()
 	local config = self._config
 	local height = config.height
 
@@ -92,8 +103,8 @@ local function element_UpdateIcon(self)
 		self.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 		self.RightSep:SetSize(0.0001, height)
 
-		self:SetPoint("TOPLEFT", 5 + height * 1.5, 0)
-		self:SetPoint("BOTTOMRIGHT", -3, 0)
+		self:SetPoint("TOPLEFT", 6 + height * 1.5, 0) -- 4 + 2, offset + sep width
+		self:SetPoint("BOTTOMRIGHT", -4, 0)
 	elseif config.icon.position == "RIGHT" then
 		self.Icon = self.RightIcon
 
@@ -104,8 +115,8 @@ local function element_UpdateIcon(self)
 		self.RightSep:SetSize(12, height)
 		self.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
 
-		self:SetPoint("TOPLEFT", 3, 0)
-		self:SetPoint("BOTTOMRIGHT", -5 - height * 1.5, 0)
+		self:SetPoint("TOPLEFT", 4, 0)
+		self:SetPoint("BOTTOMRIGHT", -6 - height * 1.5, 0) -- 4 + 2, offset + sep width
 	else
 		self.Icon = nil
 
@@ -115,12 +126,12 @@ local function element_UpdateIcon(self)
 		self.LeftSep:SetSize(0.0001, height)
 		self.RightSep:SetSize(0.0001, height)
 
-		self:SetPoint("TOPLEFT", 3, 0)
-		self:SetPoint("BOTTOMRIGHT", -3, 0)
+		self:SetPoint("TOPLEFT", 4, 0)
+		self:SetPoint("BOTTOMRIGHT", -4, 0)
 	end
 end
 
-local function element_UpdateLatency(self)
+function element_proto:UpdateLatency()
 	if self._config.latency then
 		self.SafeZone = self.SafeZone_
 		self.SafeZone_:Show()
@@ -130,18 +141,21 @@ local function element_UpdateLatency(self)
 	end
 end
 
-local function element_UpdateSize(self)
+function element_proto:UpdateSize()
 	local holder = self.Holder
 	local frame = self.__owner
 	local width = self._config.width
 	local height = self._config.height
 
 	holder:SetSize(width, height)
-	holder._width = width
 
 	local point1 = self._config.point1
 	if point1 and point1.p then
 		if self._config.detached then
+			if frame.CastbarSlot then
+				frame.CastbarSlot:Release(holder)
+			end
+
 			local mover = E.Movers:Get(holder, true)
 			if not mover then
 				holder:ClearAllPoints()
@@ -153,12 +167,17 @@ local function element_UpdateSize(self)
 				mover:UpdateSize(width, height)
 			end
 		else
-			holder:ClearAllPoints()
-			holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
-
 			local mover = E.Movers:Get(holder)
 			if mover then
 				mover:Disable()
+			end
+
+			if frame.CastbarSlot then
+				frame.CastbarSlot:UpdateSize(0, height)
+				frame.CastbarSlot:Capture(holder)
+			else
+				holder:ClearAllPoints()
+				holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
 			end
 		end
 	end
@@ -166,18 +185,23 @@ local function element_UpdateSize(self)
 	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 end
 
-local function frame_UpdateCastbar(self)
+local frame_proto = {}
+
+function frame_proto:UpdateCastbar()
 	local element = self.Castbar
 	element:UpdateConfig()
 	element:UpdateSize()
 	element:UpdateIcon()
 	element:UpdateLatency()
 	element:UpdateFonts()
+	element:UpdateTextures()
 
 	if element._config.enabled and not self:IsElementEnabled("Castbar") then
 		self:EnableElement("Castbar")
+		element.Holder:Show()
 	elseif not element._config.enabled and self:IsElementEnabled("Castbar") then
 		self:DisableElement("Castbar")
+		element.Holder:Hide()
 
 		if self._unit == "player" then
 			CastingBarFrame_SetUnit(CastingBarFrame, nil)
@@ -191,34 +215,38 @@ local function frame_UpdateCastbar(self)
 end
 
 function UF:CreateCastbar(frame)
-	local holder = CreateFrame("Frame", "$parentCastbarHolder", frame)
-	holder._width = 0
+	Mixin(frame, frame_proto)
 
-	local element = CreateFrame("StatusBar", nil, holder)
+	local holder = CreateFrame("Frame", "$parentCastbarHolder", frame)
+
+	local element = Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
+	element.Holder = holder
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
 	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
-	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
+	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
 	element.LeftIcon = icon
 
 	local sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetVertTile(true)
 	sep:SetPoint("LEFT", icon, "RIGHT", -5, 0)
 	element.LeftSep = sep
 
 	icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
-	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -3, 0)
+	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -4, 0)
 	element.RightIcon = icon
 
 	sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetVertTile(true)
 	sep:SetPoint("RIGHT", icon, "LEFT", 5, 0)
 	element.RightSep = sep
 
@@ -228,8 +256,8 @@ function UF:CreateCastbar(frame)
 	element.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, element)
-	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 3, 0)
-	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -3, 0)
+	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
+	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -4, 0)
 	element.TexParent = texParent
 
 	local time = texParent:CreateFontString(nil, "ARTWORK")
@@ -249,20 +277,6 @@ function UF:CreateCastbar(frame)
 	text:SetPoint("LEFT", element, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
 	element.Text = text
-
-	element.Holder = holder
-	element.CustomDelayText = element_CustomDelayText
-	element.CustomTimeText = element_CustomTimeText
-	element.PostCastFail = element_PostCastFail
-	element.PostCastStart = element_PostCastStart
-	element.timeToHold = 0.4
-	element.UpdateConfig = element_UpdateConfig
-	element.UpdateFonts = element_UpdateFonts
-	element.UpdateIcon = element_UpdateIcon
-	element.UpdateLatency = element_UpdateLatency
-	element.UpdateSize = element_UpdateSize
-
-	frame.UpdateCastbar = frame_UpdateCastbar
 
 	return element
 end

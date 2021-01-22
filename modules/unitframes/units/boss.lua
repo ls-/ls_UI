@@ -109,8 +109,13 @@ function UF:CreateBossFrame(frame)
 
 	frame.Insets.Top:Capture(altPower, 0, 0, 0, 2)
 
+	local bottomSlot = UF:CreateSlot(frame, level)
+	bottomSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -6)
+	bottomSlot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, -6)
+	bottomSlot:UpdateSize(0, 12) -- default castbar height
+	frame.CastbarSlot = bottomSlot
+
 	frame.Castbar = self:CreateCastbar(frame)
-	frame.Castbar.Holder:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 3, -6)
 
 	frame.Name = self:CreateName(frame, frame.TextParent)
 
