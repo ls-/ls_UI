@@ -109,6 +109,8 @@ function inset_proto:Capture(object, l, r, t, b)
 
 		hooked[object] = true
 	end
+
+	self:Refresh()
 end
 
 function inset_proto:Release(object)
@@ -117,6 +119,8 @@ function inset_proto:Release(object)
 
 		self.__children[object] = nil
 	end
+
+	self:Refresh()
 end
 
 function inset_proto:Refresh()
@@ -558,6 +562,8 @@ function slot_proto:Capture(object)
 
 		hooked[object] = true
 	end
+
+	self:Refresh()
 end
 
 function slot_proto:Expand()
