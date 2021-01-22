@@ -105,12 +105,16 @@ do
 		textParent:SetAllPoints()
 		frame.TextParent = textParent
 
-		local leftSlot = UF:CreateSlot(frame, level)
+		local leftSlot = UF:CreateSlot(frame, level + 6)
 		leftSlot:SetPoint("LEFT", 23, 0)
+		leftSlot:UpdateSize(12, 128)
+		E:SetStatusBarSkin(leftSlot, "VERTICAL-12")
 		frame.LeftSlot = leftSlot
 
-		local rightSlot = UF:CreateSlot(frame, level)
+		local rightSlot = UF:CreateSlot(frame, level + 6)
 		rightSlot:SetPoint("RIGHT", -23, 0)
+		rightSlot:UpdateSize(12, 128)
+		E:SetStatusBarSkin(rightSlot, "VERTICAL-12")
 		frame.RightSlot = rightSlot
 
 		-- for i = 1, 9 do

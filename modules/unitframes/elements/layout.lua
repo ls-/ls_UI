@@ -524,7 +524,11 @@ function UF:CreateLayout(frame, level)
 end
 
 local slot_proto = {
+	IsExpanded = inset_proto.IsExpanded,
+	Refresh = inset_proto.Refresh,
 	Release = inset_proto.Release,
+	_width = 1,
+	_height = 1,
 }
 
 function slot_proto:Capture(object)
@@ -556,25 +560,43 @@ function slot_proto:Capture(object)
 	end
 end
 
-function slot_proto:Refresh()
-	local shouldShow = 0
-	for child in next, self.__children do
-		if child:IsShown() then
-			shouldShow = shouldShow + 1
-		end
-	end
+function slot_proto:Expand()
+	self:SetSize(self._width, self._height)
+	self:Show()
 
-	self:SetShown(shouldShow > 0)
+	self.__expanded = true
+
+	if self.PostExpand then
+		self:PostExpand()
+	end
+end
+
+function slot_proto:Collapse()
+	self:SetSize(0.001, 0.001)
+	self:Hide()
+
+	self.__expanded = false
+
+	if self.PostCollapse then
+		self:PostCollapse()
+	end
+end
+
+function slot_proto:UpdateSize(w, h)
+	self._width = w or self._width
+	self._height = h or self._height
+
+	if self:IsExpanded() then
+		self:SetSize(self._width, self._height)
+	end
 end
 
 function UF:CreateSlot(frame, level)
 	local slot = Mixin(CreateFrame("Frame", nil, frame), slot_proto)
-	slot:SetFrameLevel(level + 6)
-	slot:SetSize(12, 128)
-	slot:Hide()
+	slot:SetFrameLevel(level)
 	slot.__children = {}
 
-	E:SetStatusBarSkin(slot, "VERTICAL-12")
+	slot:Collapse()
 
 	return slot
 end
