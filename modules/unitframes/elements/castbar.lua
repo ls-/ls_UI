@@ -99,8 +99,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(height * 1.5, height)
 		self.RightIcon:SetSize(0.0001, height)
 
-		self.LeftSep:SetSize(12, height)
-		self.LeftSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+		self.LeftSep:SetSize(12 / 2, height)
+		self.LeftSep:SetTexCoord(1 / 32, 13 / 32, 0 / 8, height / 4)
 		self.RightSep:SetSize(0.0001, height)
 
 		self:SetPoint("TOPLEFT", 6 + height * 1.5, 0) -- 4 + 2, offset + sep width
@@ -112,8 +112,8 @@ function element_proto:UpdateIcon()
 		self.RightIcon:SetSize(height * 1.5, height)
 
 		self.LeftSep:SetSize(0.0001, height)
-		self.RightSep:SetSize(12, height)
-		self.RightSep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
+		self.RightSep:SetHeight(12 / 2, height)
+		self.RightSep:SetTexCoord(1 / 32, 13 / 32, 0 / 8, height / 4)
 
 		self:SetPoint("TOPLEFT", 4, 0)
 		self:SetPoint("BOTTOMRIGHT", -6 - height * 1.5, 0) -- 4 + 2, offset + sep width
@@ -236,7 +236,7 @@ function UF:CreateCastbar(frame)
 	local sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
-	sep:SetPoint("LEFT", icon, "RIGHT", -5, 0)
+	sep:SetPoint("LEFT", icon, "RIGHT", -2, 0)
 	element.LeftSep = sep
 
 	icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -247,7 +247,7 @@ function UF:CreateCastbar(frame)
 	sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
-	sep:SetPoint("RIGHT", icon, "LEFT", 5, 0)
+	sep:SetPoint("RIGHT", icon, "LEFT", 2, 0)
 	element.RightSep = sep
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
