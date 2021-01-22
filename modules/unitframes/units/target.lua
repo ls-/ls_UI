@@ -80,20 +80,14 @@ function UF:CreateTargetFrame(frame)
 
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
 
-	local pvp = self:CreatePvPIndicator(frame, frame.TextureParent)
-	frame.PvPIndicator = pvp
+	local rightSlot = UF:CreateSlot(frame, level)
+	rightSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, 10)
+	rightSlot:UpdateSize(50, 54) -- pvp holder size
+	frame.PvPSlot = rightSlot
 
-	pvp.Holder.PostExpand = function()
-		if not frame.Castbar._config.detached then
-			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 52)
-		end
-	end
+	frame.PvPIndicator = self:CreatePvPIndicator(frame, frame.TextureParent)
 
-	pvp.Holder.PostCollapse = function()
-		if not frame.Castbar._config.detached then
-			frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
-		end
-	end
+	rightSlot:Capture(frame.PvPIndicator.Holder)
 
 	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
 

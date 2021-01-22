@@ -199,14 +199,15 @@ do
 
 		leftSlot:Capture(classPower)
 
-		-- pvp
-		frame.PvPIndicator = self:CreatePvPIndicator(frame, textureParent)
+		local pvp = self:CreatePvPIndicator(frame, textureParent)
+		pvp.Holder:SetPoint("TOP", frame, "BOTTOM", 0, 21)
+		frame.PvPIndicator = pvp
 
-		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
-		pvpTimer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
+		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
+		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
-		frame.PvPIndicator.Timer = pvpTimer
+		pvp.Timer = pvpTimer
 
 		-- raid target
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
@@ -386,27 +387,21 @@ do
 
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
 
-		-- pvp indicator
+		local leftslot = UF:CreateSlot(frame, level)
+		leftslot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 10)
+		leftslot:UpdateSize(50, 54) -- pvp holder size
+		frame.PvPSlot = leftslot
+
 		local pvp = self:CreatePvPIndicator(frame, frame.TextureParent)
 		frame.PvPIndicator = pvp
 
-		pvp.Holder.PostExpand = function()
-			if not frame.Castbar._config.detached then
-				frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width - 52)
-			end
-		end
-
-		pvp.Holder.PostCollapse = function()
-			if not frame.Castbar._config.detached then
-				frame.Castbar.Holder:SetWidth(frame.Castbar.Holder._width)
-			end
-		end
+		leftslot:Capture(pvp.Holder)
 
 		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
 		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
-		pvpTimer.frequentUpdates = 0.1
+		pvp.Timer = pvpTimer
 
 		-- debuff indicator
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)

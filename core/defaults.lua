@@ -572,13 +572,6 @@ D.profile = {
 				},
 				pvp = {
 					enabled = true,
-					point1 = {
-						p = "TOP",
-						anchor = "TextureParent",
-						rP = "BOTTOM",
-						x = 0,
-						y = 10,
-					},
 				},
 				debuff = {
 					enabled = true,
@@ -883,13 +876,6 @@ D.profile = {
 				},
 				pvp = {
 					enabled = true,
-					point1 = {
-						p = "TOPLEFT",
-						anchor = "TextureParent",
-						rP = "BOTTOMLEFT",
-						x = 8,
-						y = -2,
-					},
 				},
 				debuff = {
 					enabled = true,
@@ -1273,13 +1259,6 @@ D.profile = {
 			},
 			pvp = {
 				enabled = true,
-				point1 = {
-					p = "TOPRIGHT",
-					anchor = "TextureParent",
-					rP = "BOTTOMRIGHT",
-					x = -8,
-					y = -2,
-				},
 			},
 			debuff = {
 				enabled = true,
@@ -1663,13 +1642,6 @@ D.profile = {
 			},
 			pvp = {
 				enabled = true,
-				point1 = {
-					p = "TOPLEFT",
-					anchor = "TextureParent",
-					rP = "BOTTOMLEFT",
-					x = 8,
-					y = -2,
-				},
 			},
 			debuff = {
 				enabled = true,
