@@ -17,7 +17,9 @@ local hooked = {}
 local objectToSlot = {}
 
 local function hook(self)
-	objectToSlot[self]:Refresh()
+	if objectToSlot[self] then
+		objectToSlot[self]:Refresh()
+	end
 end
 
 local frame_proto = {}
