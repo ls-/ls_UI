@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 --[[ luacheck: globals
-	CreateFrame
+	CreateFrame Mixin
 ]]
 
 -- Mine
@@ -229,166 +229,61 @@ do
 end
 
 do
-	local function frame_Update(self)
-		self:UpdateConfig()
+	local player_proto = {}
 
-		if self._config.enabled then
-			if not self:IsEnabled() then
-				self:Enable()
-			end
+	function player_proto:Update()
+		UF.large_proto.Update(self)
 
-			self:UpdateSize()
-			self:UpdateLayout()
-			self:UpdateHealth()
-			self:UpdateHealthPrediction()
-			self:UpdatePortrait()
-
-			self.Power:SetWidth(self._config.width)
-			self:UpdatePower()
-
-			self.AdditionalPower:SetWidth(self._config.width)
+		if self:IsEnabled() then
 			self:UpdateAdditionalPower()
 			self:UpdatePowerPrediction()
-
-			self.ClassPower:SetWidth(self._config.width)
 			self:UpdateClassPower()
 
 			if self.Runes then
-				self.Runes:SetWidth(self._config.width)
 				self:UpdateRunes()
 			end
 
 			if self.Stagger then
-				self.Stagger:SetWidth(self._config.width)
 				self:UpdateStagger()
-			end
-
-			self:UpdateCastbar()
-			self:UpdateName()
-			self:UpdateRaidTargetIndicator()
-			self:UpdatePvPIndicator()
-			self:UpdateDebuffIndicator()
-			self:UpdateThreatIndicator()
-			self:UpdateAuras()
-			self:UpdateClassIndicator()
-			self:UpdateCustomTexts()
-		else
-			if self:IsEnabled() then
-				self:Disable()
 			end
 		end
 	end
 
 	function UF:CreateHorizontalPlayerFrame(frame)
-		local level = frame:GetFrameLevel()
+		Mixin(self:CreateLargeFrame(frame), player_proto)
 
-		-- .TextureParent
-		-- .TextParent
-		-- .Insets
-		-- .Border
-		self:CreateLayout(frame, level)
-
-		-- health
-		local health = self:CreateHealth(frame, frame.TextParent)
-		health:SetFrameLevel(level + 1)
-		health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
-		health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
-		health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
-		health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
-		health:SetClipsChildren(true)
-		frame.Health = health
-
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, frame.TextParent)
-
-		frame.Portrait = self:CreatePortrait(frame)
-
-		-- power
-		local power = self:CreatePower(frame, frame.TextParent)
-		power:SetFrameLevel(level + 1)
-		frame.Power = power
-
-		frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
-
-		-- additional power
 		local addPower = self:CreateAdditionalPower(frame)
-		addPower:SetFrameLevel(level + 1)
+		addPower:SetFrameLevel(frame:GetFrameLevel() + 1)
 		frame.AdditionalPower = addPower
-
 		frame.Insets.Top:Capture(addPower, 0, 0, 0, 2)
 
-		-- power cost prediction
-		frame.PowerPrediction = self:CreatePowerPrediction(frame, power, addPower)
+		frame.PowerPrediction = self:CreatePowerPrediction(frame, frame.Power, addPower)
 
-		-- class power
+		local classPower = self:CreateClassPower(frame)
+		classPower:SetFrameLevel(frame:GetFrameLevel() + 1)
+		frame.ClassPower = classPower
+		frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
+
 		if E.PLAYER_CLASS == "MONK" then
 			local stagger = self:CreateStagger(frame)
-			stagger:SetFrameLevel(level + 1)
+			stagger:SetFrameLevel(frame:GetFrameLevel() + 1)
 			frame.Stagger = stagger
-
 			frame.Insets.Top:Capture(stagger, 0, 0, 0, 2)
 		elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
 			local runes = self:CreateRunes(frame)
-			runes:SetFrameLevel(level + 1)
+			runes:SetFrameLevel(frame:GetFrameLevel() + 1)
 			frame.Runes = runes
-
 			frame.Insets.Top:Capture(runes, 0, 0, 0, 2)
 		end
 
-		local classPower = self:CreateClassPower(frame)
-		classPower:SetFrameLevel(level + 1)
-		frame.ClassPower = classPower
-
-		frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
-
-		frame.Name = self:CreateName(frame, frame.TextParent)
-
-		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
-
-		local leftslot = UF:CreateSlot(frame, level)
-		leftslot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 10)
-		leftslot:UpdateSize(50, 54) -- pvp holder size
-		frame.PvPSlot = leftslot
-
-		local pvp = self:CreatePvPIndicator(frame, frame.TextureParent)
-		frame.PvPIndicator = pvp
-
-		leftslot:Capture(pvp.Holder)
-
-		local pvpTimer = pvp.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
-		pvpTimer:SetPoint("TOPRIGHT", pvp, "TOPRIGHT", 0, 0)
+		local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")
+		pvpTimer:SetPoint("TOPRIGHT", frame.PvPIndicator, "TOPRIGHT", 0, 0)
 		pvpTimer:SetTextColor(1, 0.82, 0)
 		pvpTimer:SetJustifyH("RIGHT")
-		pvp.Timer = pvpTimer
-
-		local rightSlot = UF:CreateSlot(frame, level)
-		rightSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -6)
-		rightSlot:SetPoint("LEFT", leftslot, "RIGHT", 0, 0)
-		rightSlot:UpdateSize(0, 12) -- default castbar height
-		frame.CastbarSlot = rightSlot
-
-		frame.Castbar = self:CreateCastbar(frame)
-
-		-- debuff indicator
-		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
-
-		-- threat
-		frame.ThreatIndicator = self:CreateThreatIndicator(frame)
-
-		-- auras
-		frame.Auras = self:CreateAuras(frame, "player")
-
-		local status = frame.TextParent:CreateFontString(nil, "ARTWORK")
-		status:SetFont(GameFontNormal:GetFont(), 16)
-		status:SetJustifyH("RIGHT")
-		status:SetPoint("RIGHT", frame, "BOTTOMRIGHT", -4, -1)
-		frame:Tag(status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")
-
-		frame.ClassIndicator = self:CreateClassIndicator(frame)
-
-		frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
-
-		frame.Update = frame_Update
+		frame.PvPIndicator.Timer = pvpTimer
 
 		isInit = true
+
+		return frame
 	end
 end

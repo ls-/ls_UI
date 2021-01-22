@@ -7,8 +7,7 @@ local _G = getfenv(0)
 local unpack = _G.unpack
 
 --[[ luacheck: globals
-	CreateFrame
-	UIParent
+	CreateFrame Mixin UIParent
 ]]
 
 -- Mine
@@ -41,33 +40,13 @@ function UF:UpdateBossHolder()
 	E:UpdateBarLayout(holder)
 end
 
-local function frame_Update(self)
-	self:UpdateConfig()
+local boss_proto = {}
 
-	if self._config.enabled then
-		if not self:IsEnabled() then
-			self:Enable()
-		end
+function boss_proto:Update()
+	UF.medium_proto.Update(self)
 
-		self:UpdateSize()
-		self:UpdateLayout()
-		self:UpdateHealth()
-		self:UpdateHealthPrediction()
-		self:UpdatePortrait()
-		self:UpdatePower()
+	if self:IsEnabled() then
 		self:UpdateAlternativePower()
-		self:UpdateCastbar()
-		self:UpdateName()
-		self:UpdateRaidTargetIndicator()
-		self:UpdateDebuffIndicator()
-		self:UpdateThreatIndicator()
-		self:UpdateAuras()
-		self:UpdateClassIndicator()
-		self:UpdateCustomTexts()
-	else
-		if self:IsEnabled() then
-			self:Disable()
-		end
 	end
 end
 
@@ -76,62 +55,15 @@ function UF:HasBossFrame()
 end
 
 function UF:CreateBossFrame(frame)
-	local level = frame:GetFrameLevel()
-
-	-- .TextureParent
-	-- .TextParent
-	-- .Insets
-	-- .Border
-	self:CreateLayout(frame, level)
-
-	local health = self:CreateHealth(frame, frame.TextParent)
-	health:SetFrameLevel(level + 1)
-	health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
-	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
-	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
-	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
-	health:SetClipsChildren(true)
-	frame.Health = health
-
-	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, frame.TextParent)
-
-	frame.Portrait = self:CreatePortrait(frame)
-
-	local power = self:CreatePower(frame, frame.TextParent)
-	power:SetFrameLevel(level + 1)
-	frame.Power = power
-
-	frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
+	Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
 
 	local altPower = self:CreateAlternativePower(frame, frame.TextParent)
-	altPower:SetFrameLevel(level + 1)
+	altPower:SetFrameLevel(frame:GetFrameLevel() + 1)
 	frame.AlternativePower = altPower
 
 	frame.Insets.Top:Capture(altPower, 0, 0, 0, 2)
 
-	local bottomSlot = UF:CreateSlot(frame, level)
-	bottomSlot:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -6)
-	bottomSlot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, -6)
-	bottomSlot:UpdateSize(0, 12) -- default castbar height
-	frame.CastbarSlot = bottomSlot
-
-	frame.Castbar = self:CreateCastbar(frame)
-
-	frame.Name = self:CreateName(frame, frame.TextParent)
-
-	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
-
-	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
-
-	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
-
-	frame.Auras = self:CreateAuras(frame, "boss")
-
-	frame.ClassIndicator = self:CreateClassIndicator(frame)
-
-	frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
-
-	frame.Update = frame_Update
-
 	isInit = true
+
+	return frame
 end

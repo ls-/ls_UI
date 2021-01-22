@@ -724,6 +724,7 @@ D.profile = {
 				enabled = true,
 				width = 250,
 				height = 52,
+				mirror_indicators = true,
 				point = {
 					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
@@ -1109,6 +1110,66 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				auras = {
+					enabled = true,
+					rows = 1,
+					per_row = 4,
+					size_override = 0,
+					x_growth = "RIGHT",
+					y_growth = "UP",
+					disable_mouse = false,
+					count = {
+						size = 10,
+						outline = true,
+						shadow = false,
+						h_alignment = "RIGHT",
+						v_alignment = "TOP",
+					},
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							v_alignment = "BOTTOM",
+						},
+					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
+					},
+					filter = {
+						custom = {
+							["Blacklist"] = true,
+							["M+ Affixes"] = true,
+						},
+						friendly = {
+							buff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								misc = false,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+								misc = false,
+							},
+						},
+					},
+					point1 = {
+						p = "BOTTOMLEFT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = -1,
+						y = 7,
+					},
+				},
 				border = {
 					color = {
 						class = false,
@@ -1122,6 +1183,7 @@ D.profile = {
 			enabled = true,
 			width = 250,
 			height = 52,
+			mirror_indicators = false,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
@@ -1505,6 +1567,7 @@ D.profile = {
 			enabled = true,
 			width = 250,
 			height = 52,
+			mirror_indicators = false,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
