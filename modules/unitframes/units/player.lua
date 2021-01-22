@@ -105,18 +105,6 @@ do
 		textParent:SetAllPoints()
 		frame.TextParent = textParent
 
-		local leftSlot = UF:CreateSlot(frame, level + 6)
-		leftSlot:SetPoint("LEFT", 23, 0)
-		leftSlot:UpdateSize(12, 128)
-		E:SetStatusBarSkin(leftSlot, "VERTICAL-12")
-		frame.LeftSlot = leftSlot
-
-		local rightSlot = UF:CreateSlot(frame, level + 6)
-		rightSlot:SetPoint("RIGHT", -23, 0)
-		rightSlot:UpdateSize(12, 128)
-		E:SetStatusBarSkin(rightSlot, "VERTICAL-12")
-		frame.RightSlot = rightSlot
-
 		-- for i = 1, 9 do
 		-- 	local sep = leftSlot:CreateTexture(nil, "ARTWORK", nil, 1)
 		-- 	sep:SetSize(12, 12)
@@ -163,12 +151,24 @@ do
 		local healthPrediction = self:CreateHealthPrediction(frame, health, textParent)
 		frame.HealthPrediction = healthPrediction
 
+		local rightSlot = UF:CreateSlot(frame, level + 6)
+		rightSlot:SetPoint("RIGHT", -23, 0)
+		rightSlot:UpdateSize(12, 128)
+		E:SetStatusBarSkin(rightSlot, "VERTICAL-12")
+		frame.PowerSlot = rightSlot
+
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 4)
 		power:Hide()
 		frame.Power = power
 
 		rightSlot:Capture(power)
+
+		local leftSlot = UF:CreateSlot(frame, level + 6)
+		leftSlot:SetPoint("LEFT", 23, 0)
+		leftSlot:UpdateSize(12, 128)
+		E:SetStatusBarSkin(leftSlot, "VERTICAL-12")
+		frame.ClassPowerSlot = leftSlot
 
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(level + 4)
@@ -209,15 +209,12 @@ do
 		pvpTimer:SetJustifyH("RIGHT")
 		pvp.Timer = pvpTimer
 
-		-- raid target
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
-		-- castbar
 		frame.Castbar = self:CreateCastbar(frame)
 
 		frame.Name = self:CreateName(frame, textParent)
 
-		-- status icons/texts
 		local status = textParent:CreateFontString(nil, "OVERLAY")
 		status:SetFont(GameFontNormal:GetFont(), 16)
 		status:SetWidth(24)
@@ -237,7 +234,6 @@ do
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textParent)
 		frame.DebuffIndicator:SetWidth(18)
 
-		-- threat
 		local threat = self:CreateThreatIndicator(frame, borderParent, true)
 		threat:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame-glow")
 		threat:SetTexCoord(1 / 512, 337 / 512, 1 / 512, 337 / 512)
