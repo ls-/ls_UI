@@ -14,6 +14,11 @@ local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local hooked = {}
+local objectToSlot = {}
+
+local function hook(self)
+	objectToSlot[self]:Refresh()
+end
 
 local frame_proto = {}
 
@@ -72,7 +77,7 @@ function insets_proto:SetVertexColor(...)
 end
 
 local inset_proto = {
-	_size = 1, -- to avoid any errors on load
+	_size = 0, -- to avoid any errors on load
 }
 
 function inset_proto:IsExpanded()
@@ -81,31 +86,16 @@ end
 
 function inset_proto:Capture(object, l, r, t, b)
 	object:ClearAllPoints()
-	object:SetPoint("LEFT", self, "LEFT", l or 0, 0)
-	object:SetPoint("RIGHT", self, "RIGHT", r or 0, 0)
-	object:SetPoint("TOP", self, "TOP", 0, t or 0)
-	object:SetPoint("BOTTOM", self, "BOTTOM", 0, b or 0)
+	object:SetPoint("TOPLEFT", self, "TOPLEFT", l or 0, t or 0)
+	object:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", r or 0, b or 0)
 
 	self.__children[object] = true
+	objectToSlot[object] = self
 
 	if not hooked[object] then
-		hooksecurefunc(object, "Hide", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
-
-		hooksecurefunc(object, "Show", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
-
-		hooksecurefunc(object, "SetShown", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
+		hooksecurefunc(object, "Hide", hook)
+		hooksecurefunc(object, "Show", hook)
+		hooksecurefunc(object, "SetShown", hook)
 
 		hooked[object] = true
 	end
@@ -118,6 +108,7 @@ function inset_proto:Release(object)
 		object:ClearAllPoints()
 
 		self.__children[object] = nil
+		objectToSlot[object] = nil
 	end
 
 	self:Refresh()
@@ -530,41 +521,11 @@ end
 local slot_proto = {
 	IsExpanded = inset_proto.IsExpanded,
 	Refresh = inset_proto.Refresh,
+	Capture = inset_proto.Capture,
 	Release = inset_proto.Release,
-	_width = 1,
-	_height = 1,
+	_width = 0,
+	_height = 0,
 }
-
-function slot_proto:Capture(object)
-	object:ClearAllPoints()
-	object:SetAllPoints(self)
-
-	self.__children[object] = true
-
-	if not hooked[object] then
-		hooksecurefunc(object, "Hide", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
-
-		hooksecurefunc(object, "Show", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
-
-		hooksecurefunc(object, "SetShown", function()
-			if self.__children[object] then
-				self:Refresh()
-			end
-		end)
-
-		hooked[object] = true
-	end
-
-	self:Refresh()
-end
 
 function slot_proto:Expand()
 	self:SetSize(self._width, self._height)
