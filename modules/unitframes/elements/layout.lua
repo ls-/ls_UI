@@ -8,10 +8,6 @@ local next = _G.next
 local unpack = _G.unpack
 local hooksecurefunc = _G.hooksecurefunc
 
---[[ luacheck: globals
-	CreateFrame Mixin
-]]
-
 -- Mine
 local hooked = {}
 local objectToSlot = {}
@@ -61,7 +57,7 @@ function insets_proto:SetVertexColor(...)
 end
 
 local inset_proto = {
-	_size = 0, -- to avoid any errors on load
+	__size = 0, -- to avoid any errors on load
 }
 
 function inset_proto:IsExpanded()
@@ -139,7 +135,7 @@ function vert_inset_proto:Collapse()
 end
 
 function vert_inset_proto:Expand()
-	self:SetWidth(self._size)
+	self:SetWidth(self.__size)
 
 	self[1]:Show()
 	self[2]:Show()
@@ -153,10 +149,10 @@ function vert_inset_proto:Expand()
 end
 
 function vert_inset_proto:UpdateSize(size)
-	self._size = size or self._size
+	self.__size = size or self.__size
 
 	if self:IsExpanded() then
-		self:SetWidth(self._size)
+		self:SetWidth(self.__size)
 	end
 end
 
@@ -186,7 +182,7 @@ function horiz_inset_proto:Collapse()
 end
 
 function horiz_inset_proto:Expand()
-	self:SetHeight(self._size)
+	self:SetHeight(self.__size)
 
 	self[1]:Show()
 	self[2]:Show()
@@ -200,10 +196,10 @@ function horiz_inset_proto:Expand()
 end
 
 function horiz_inset_proto:UpdateSize(size)
-	self._size = size or self._size
+	self.__size = size or self.__size
 
 	if self:IsExpanded() then
-		self:SetHeight(self._size)
+		self:SetHeight(self.__size)
 	end
 end
 
@@ -507,12 +503,12 @@ local slot_proto = {
 	Refresh = inset_proto.Refresh,
 	Capture = inset_proto.Capture,
 	Release = inset_proto.Release,
-	_width = 0,
-	_height = 0,
+	__width = 0,
+	__height = 0,
 }
 
 function slot_proto:Expand()
-	self:SetSize(self._width, self._height)
+	self:SetSize(self.__width, self.__height)
 	self:Show()
 
 	self.__expanded = true
@@ -534,11 +530,11 @@ function slot_proto:Collapse()
 end
 
 function slot_proto:UpdateSize(w, h)
-	self._width = w or self._width
-	self._height = h or self._height
+	self.__width = w or self.__width
+	self.__height = h or self.__height
 
 	if self:IsExpanded() then
-		self:SetSize(self._width, self._height)
+		self:SetSize(self.__width, self.__height)
 	end
 end
 
