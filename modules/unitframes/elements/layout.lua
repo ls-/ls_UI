@@ -10,11 +10,11 @@ local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local hooked = {}
-local objectToSlot = {}
+local objectToWidget = {}
 
 local function hook(self)
-	if objectToSlot[self] then
-		objectToSlot[self]:Refresh()
+	if objectToWidget[self] then
+		objectToWidget[self]:Refresh()
 	end
 end
 
@@ -22,7 +22,6 @@ local frame_proto = {}
 
 function frame_proto:UpdateLayout()
 	local insets = self.Insets
-
 	insets:UpdateConfig()
 
 	insets.Left:UpdateSize(insets._config.l_size)
@@ -70,7 +69,7 @@ function inset_proto:Capture(object, l, r, t, b)
 	object:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", r or 0, b or 0)
 
 	self.__children[object] = true
-	objectToSlot[object] = self
+	objectToWidget[object] = self
 
 	if not hooked[object] then
 		hooksecurefunc(object, "Hide", hook)
@@ -88,7 +87,7 @@ function inset_proto:Release(object)
 		object:ClearAllPoints()
 
 		self.__children[object] = nil
-		objectToSlot[object] = nil
+		objectToWidget[object] = nil
 	end
 
 	self:Refresh()
