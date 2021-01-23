@@ -2,9 +2,8 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
---[[ luacheck: globals
-	CreateFrame Mixin
-]]
+-- Lua
+local _G = getfenv(0)
 
 -- Mine
 local element_proto = {}
