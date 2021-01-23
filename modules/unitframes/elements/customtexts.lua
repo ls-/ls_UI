@@ -48,7 +48,7 @@ function element_proto:UpdatePoint(k)
 	end
 end
 
-function element_proto:UpdateFont(k)
+function element_proto:UpdateFonts(k)
 	local text = self.active[k]
 	if text then
 		local config = self._config[k]
@@ -114,7 +114,7 @@ function frame_proto:UpdateCustomTexts()
 	local element = self.CustomTexts
 	element:UpdateConfig()
 	element:ForEach("UpdatePoint")
-	element:ForEach("UpdateFont")
+	element:ForEach("UpdateFonts")
 	element:ForEach("UpdateTags")
 end
 

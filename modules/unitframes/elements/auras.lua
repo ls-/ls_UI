@@ -280,7 +280,7 @@ local function element_UpdateCooldownConfig(self)
 	end
 end
 
-local function element_UpdateFont(self)
+local function element_UpdateFonts(self)
 	local config = self._config.count
 	local count
 
@@ -361,7 +361,7 @@ local function frame_UpdateAuras(self)
 	element:UpdatePoints()
 	element:UpdateGrowthDirection()
 	element:UpdateAuraTypeIcon()
-	element:UpdateFont()
+	element:UpdateFonts()
 	element:UpdateMouse()
 
 	if element._config.enabled and not self:IsElementEnabled("Auras") then
@@ -389,7 +389,7 @@ function UF:CreateAuras(frame, unit)
 	element.UpdateColors = element_UpdateColors
 	element.UpdateConfig = element_UpdateConfig
 	element.UpdateCooldownConfig = element_UpdateCooldownConfig
-	element.UpdateFont = element_UpdateFont
+	element.UpdateFonts = element_UpdateFonts
 	element.UpdateGrowthDirection = element_UpdateGrowthDirection
 	element.UpdateMouse = element_UpdateMouse
 	element.UpdatePoints = element_UpdatePoints
