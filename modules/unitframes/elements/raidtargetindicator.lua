@@ -6,16 +6,18 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local function element_UpdateConfig(self)
+local element_proto = {}
+
+function element_proto:UpdateConfig()
 	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].raid_target, self._config)
 end
 
-local function element_UpdateSize(self)
+function element_proto:UpdateSize()
 	self:SetSize(self._config.size, self._config.size)
 end
 
-local function element_UpdatePoints(self)
+function element_proto:UpdatePoints()
 	self:ClearAllPoints()
 
 	local config = self._config.point1
@@ -24,7 +26,9 @@ local function element_UpdatePoints(self)
 	end
 end
 
-local function frame_UpdateRaidTargetIndicator(self)
+local frame_proto = {}
+
+function frame_proto:UpdateRaidTargetIndicator()
 	local element = self.RaidTargetIndicator
 	element:UpdateConfig()
 	element:UpdateSize()
@@ -42,13 +46,7 @@ local function frame_UpdateRaidTargetIndicator(self)
 end
 
 function UF:CreateRaidTargetIndicator(frame, parent)
-	local element = (parent or frame):CreateTexture(nil, "ARTWORK", nil, 3)
+	Mixin(frame, frame_proto)
 
-	element.UpdateConfig = element_UpdateConfig
-	element.UpdatePoints = element_UpdatePoints
-	element.UpdateSize = element_UpdateSize
-
-	frame.UpdateRaidTargetIndicator = frame_UpdateRaidTargetIndicator
-
-	return element
+	return Mixin((parent or frame):CreateTexture(nil, "ARTWORK", nil, 3), element_proto)
 end
