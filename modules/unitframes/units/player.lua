@@ -282,6 +282,8 @@ do
 		pvpTimer:SetJustifyH("RIGHT")
 		frame.PvPIndicator.Timer = pvpTimer
 
+		frame:Tag(frame.Status, "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]")
+
 		isInit = true
 
 		return frame
