@@ -2,20 +2,27 @@ local _, ns = ...
 local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local UF = P:GetModule("UnitFrames")
 
+-- Lua
+local _G = getfenv(0)
+
 -- Mine
-local function element_UpdateConfig(self)
+local element_proto = {}
+
+function element_proto:UpdateConfig()
 	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].threat, self._config)
 end
 
-local function element_PostUpdate(self, _, status)
+function element_proto:PostUpdate(_, status)
 	if status and status == 0 then
 		self:SetVertexColor(E:GetRGB(C.db.global.colors.threat[1]))
 		self:Show()
 	end
 end
 
-local function frame_UpdateThreatIndicator(self)
+local frame_proto = {}
+
+function frame_proto:UpdateThreatIndicator()
 	local element = self.ThreatIndicator
 	element:UpdateConfig()
 
@@ -33,6 +40,8 @@ local function frame_UpdateThreatIndicator(self)
 end
 
 function UF:CreateThreatIndicator(frame, parent, isTexture)
+	Mixin(frame, frame_proto)
+
 	local element
 	if isTexture then
 		element = (parent or frame):CreateTexture(nil, "BACKGROUND", nil, -7)
@@ -43,10 +52,5 @@ function UF:CreateThreatIndicator(frame, parent, isTexture)
 		element:SetSize(16)
 	end
 
-	element.PostUpdate = element_PostUpdate
-	element.UpdateConfig = element_UpdateConfig
-
-	frame.UpdateThreatIndicator = frame_UpdateThreatIndicator
-
-	return element
+	return Mixin(element, element_proto)
 end
