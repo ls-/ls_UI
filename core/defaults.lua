@@ -425,7 +425,7 @@ D.profile = {
 			m_ss_threshold = 600, -- [91; 3599]
 		},
 		inlay = {
-			alpha = 1,
+			alpha = 0.8,
 		},
 		ls = {
 			player = {
