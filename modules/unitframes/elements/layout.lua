@@ -29,39 +29,21 @@ function frame_proto:UpdateLayout()
 
 	insets:UpdateConfig()
 
-	insets.Left:UpdateSize(insets._config.l_width)
-	insets.Right:UpdateSize(insets._config.r_width)
-	insets.Top:UpdateSize(insets._config.t_height)
-	insets.Bottom:UpdateSize(insets._config.b_height)
+	insets.Left:UpdateSize(insets._config.l_size)
+	insets.Right:UpdateSize(insets._config.r_size)
+	insets.Top:UpdateSize(insets._config.t_size)
+	insets.Bottom:UpdateSize(insets._config.b_size)
 end
 
 local insets_proto = {}
 
 function insets_proto:UpdateConfig()
-	local uf = C.db.profile.units[self.__owner.__unit]
-	local limit = E:Round(uf.height * 0.35)
-
-	self._config = E:CopyTable(uf.insets, self._config)
-
-	if self._config.t_height > limit then
-		self._config.t_height = limit
-	end
-
-	if self._config.b_height > limit then
-		self._config.b_height = limit
-	end
-
-	limit = E:Round(uf.width * 0.35)
-
-	self._config.l_width = uf.height
-	if self._config.l_width > limit then
-		self._config.l_width = limit
-	end
-
-	self._config.r_width = uf.height
-	if self._config.r_width > limit then
-		self._config.r_width = limit
-	end
+	local unit = self.__owner.__unit
+	self._config = E:CopyTable(C.db.profile.units[unit].insets, self._config)
+	self._config.l_size = C.db.profile.units[unit].height
+	self._config.r_size = self._config.l_size
+	self._config.t_size = E:Round(C.db.profile.units[unit].height * self._config.t_height)
+	self._config.b_size = E:Round(C.db.profile.units[unit].height * self._config.b_height)
 end
 
 function insets_proto:GetVertexColor()
