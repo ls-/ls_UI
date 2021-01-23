@@ -80,6 +80,8 @@ local function createElement(parent, num, name, ...)
 			local sep = element:CreateTexture(nil, "OVERLAY")
 			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 			sep:SetVertTile(true)
+			sep:SetSnapToPixelGrid(false)
+			sep:SetTexelSnappingBias(0)
 			sep:Hide()
 			bar.Sep = sep
 		end
