@@ -48,8 +48,6 @@ function UF:CreateThreatIndicator(frame, parent, isTexture)
 	else
 		element = E:CreateBorder(parent or frame)
 		element:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-glow", "BACKGROUND", -7)
-		element:SetOffset(-8)
-		element:SetSize(16)
 	end
 
 	return Mixin(element, element_proto)

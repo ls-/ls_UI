@@ -393,8 +393,6 @@ function UF:CreateLayout(frame, level)
 
 	local inlay = E:CreateBorder(inlayParent)
 	inlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-inlay-both")
-	inlay:SetSize(16)
-	inlay:SetOffset(-8)
 	frame.Inlay = inlay
 
 	local textureParent = CreateFrame("Frame", nil, frame)
@@ -497,8 +495,6 @@ function UF:CreateLayout(frame, level)
 
 	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-	border:SetSize(16)
-	border:SetOffset(-8)
 	frame.Border = border
 end
 
