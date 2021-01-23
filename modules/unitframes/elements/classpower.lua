@@ -123,7 +123,7 @@ function element_proto:Layout()
 				sep:SetPoint("BOTTOM", 0, 0)
 				sep:SetPoint("LEFT", bar, "RIGHT", -2, 0)
 				sep:SetWidth(12 / 2)
-				sep:SetTexCoord(0.03125, 0, 0.03125, 1, 0.40625, 0, 0.40625, 1)
+				sep:SetTexCoord(0.0625, 0, 0.0625, 1, 0.8125, 0, 0.8125, 1)
 				sep:Show()
 			end
 		else
@@ -144,7 +144,7 @@ function element_proto:Layout()
 				sep:SetPoint("RIGHT", 0, 0)
 				sep:SetPoint("BOTTOM", bar, "TOP", 0, -2)
 				sep:SetHeight(12 / 2)
-				sep:SetTexCoord(0.03125, 1, 0.40625, 1, 0.03125, 0, 0.40625, 0)
+				sep:SetTexCoord(0.8125, 0, 0.0625, 0, 0.8125, 1, 0.0625, 1)
 				sep:Show()
 			end
 		end
