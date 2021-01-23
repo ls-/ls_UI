@@ -29,12 +29,20 @@ read_globals = {
 	"CreateFrame",
 	"UnitClass",
 	"UnitClassification",
+	"UnitFactionGroup",
 	"UnitGUID",
 	"UnitHasVehicleUI",
+	"UnitHonorLevel",
 	"UnitIsFriend",
+	"UnitIsMercenary",
 	"UnitIsPlayer",
+	"UnitIsPVP",
+	"UnitIsPVPFreeForAll",
 	"UnitIsUnit",
 	"UnitReaction",
+
+	-- Namespaces
+	"C_PvP",
 
 	-- FrameXML functions
 	"CastingBarFrame_SetUnit",

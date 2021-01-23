@@ -5,18 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local C_PvP = _G.C_PvP
-local UnitFactionGroup = _G.UnitFactionGroup
-local UnitHonorLevel = _G.UnitHonorLevel
-local UnitIsMercenary = _G.UnitIsMercenary
-local UnitIsPVP = _G.UnitIsPVP
-local UnitIsPVPFreeForAll = _G.UnitIsPVPFreeForAll
-
---[[ luacheck: globals
-	CreateFrame Mixin
-]]
-
 -- Mine
 local element_proto = {}
 
