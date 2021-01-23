@@ -6,13 +6,11 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
---[[ luacheck: globals
-	UnitClass UnitClassification UnitIsPlayer UnitReaction
-]]
-
 -- Mine
 local function update(self)
-	if not (self.unit and self:IsShown()) then return end
+	if not (self.unit and self:IsShown()) then
+		return
+	end
 
 	local element = self.ClassIndicator
 	local color = C.db.global.colors.white
@@ -32,33 +30,39 @@ local function update(self)
 		end
 	end
 
-	if not self._color or not E:AreColorsEqual(self._color, color) then
+	if not self.__color or not E:AreColorsEqual(self.__color, color) then
 		self.Border:SetVertexColor(E:GetRGB(color))
 
 		if self.Insets then
 			self.Insets:SetVertexColor(E:GetRGB(color))
 		end
 
-		self._color = self._color or {}
-		E:SetRGB(self._color, E:GetRGB(color))
+		self.__color = self.__color or {}
+		E:SetRGB(self.__color, E:GetRGB(color))
 	end
 end
 
-local function element_UpdateConfig(self)
+local element_proto = {}
+
+function element_proto:UpdateConfig()
 	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].border, self._config)
 end
 
-local function element_ForceUpdate(self)
+function element_proto:ForceUpdate()
 	update(self.__owner)
 end
 
-local function frame_UpdateClassIndicator(self)
+local frame_proto = {}
+
+function frame_proto:UpdateClassIndicator()
 	self.ClassIndicator:UpdateConfig()
 	update(self)
 end
 
 function UF:CreateClassIndicator(frame)
+	Mixin(frame, frame_proto)
+
 	hooksecurefunc(frame, "Show", update)
 
 	if frame.Border then
@@ -69,12 +73,8 @@ function UF:CreateClassIndicator(frame)
 		E:SmoothColor(frame.Insets)
 	end
 
-	frame.UpdateClassIndicator = frame_UpdateClassIndicator
-
-	return {
+	return Mixin({
 		__owner = frame,
-		_color = {},
-		ForceUpdate = element_ForceUpdate,
-		UpdateConfig = element_UpdateConfig,
-	}
+		__color = {},
+	}, element_proto)
 end

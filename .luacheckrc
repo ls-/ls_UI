@@ -27,8 +27,12 @@ read_globals = {
 
 	-- API functions
 	"CreateFrame",
+	"UnitClass",
+	"UnitClassification",
 	"UnitIsFriend",
+	"UnitIsPlayer",
 	"UnitIsUnit",
+	"UnitReaction",
 
 	-- FrameXML functions
 	"CastingBarFrame_SetUnit",
