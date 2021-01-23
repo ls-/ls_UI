@@ -6,10 +6,6 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local m_abs = _G.math.abs
 
---[[ luacheck: globals
-	CreateFrame CastingBarFrame_SetUnit CastingBarFrame Mixin PetCastingBarFrame
-]]
-
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 

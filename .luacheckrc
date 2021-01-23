@@ -13,6 +13,7 @@ ignore = {
 	"211/D",  -- Unused local variable "D"
 	"211/E",  -- Unused local variable "E"
 	"211/L",  -- Unused local variable "L"
+	"211/M",  -- Unused local variable "M"
 	"211/P",  -- Unused local variable "P"
 }
 
@@ -30,10 +31,13 @@ read_globals = {
 	"UnitIsUnit",
 
 	-- FrameXML functions
+	"CastingBarFrame_SetUnit",
 	"Mixin",
 
 	-- FrameXML frames
+	"CastingBarFrame",
 	"GameTooltip",
+	"PetCastingBarFrame",
 
 	-- FrameXML Constants
 }
