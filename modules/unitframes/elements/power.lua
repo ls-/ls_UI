@@ -5,13 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local UnitGUID = _G.UnitGUID
-
---[[ luacheck: globals
-	CreateFrame Mixin
-]]
-
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
