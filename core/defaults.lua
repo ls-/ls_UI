@@ -424,6 +424,9 @@ D.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 		},
+		inlay = {
+			alpha = 1,
+		},
 		ls = {
 			player = {
 				enabled = true,

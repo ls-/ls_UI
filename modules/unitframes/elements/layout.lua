@@ -30,6 +30,10 @@ function frame_proto:UpdateLayout()
 	insets.Bottom:UpdateSize(insets._config.b_size)
 end
 
+function frame_proto:UpdateInlay()
+	self.Inlay:SetAlpha(C.db.profile.units.inlay.alpha)
+end
+
 local insets_proto = {}
 
 function insets_proto:UpdateConfig()
@@ -391,6 +395,7 @@ function UF:CreateLayout(frame, level)
 	inlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-inlay-both")
 	inlay:SetSize(16)
 	inlay:SetOffset(-8)
+	frame.Inlay = inlay
 
 	local textureParent = CreateFrame("Frame", nil, frame)
 	textureParent:SetFrameLevel(level + 8)

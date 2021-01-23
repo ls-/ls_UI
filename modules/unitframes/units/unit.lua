@@ -23,6 +23,7 @@ function small_proto:Update()
 
 		self:UpdateSize()
 		self:UpdateLayout()
+		self:UpdateInlay()
 		self:UpdateHealth()
 		self:UpdateHealthPrediction()
 		self:UpdatePower()
@@ -42,10 +43,11 @@ end
 function UF:CreateSmallUnitFrame(frame)
 	Mixin(frame, small_proto)
 
-	-- .TextureParent
-	-- .TextParent
-	-- .Insets
 	-- .Border
+	-- .Inlay
+	-- .Insets
+	-- .TextParent
+	-- .TextureParent
 	self:CreateLayout(frame, frame:GetFrameLevel())
 
 	local health = self:CreateHealth(frame, frame.TextParent)
