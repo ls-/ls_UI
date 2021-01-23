@@ -26,7 +26,7 @@ function frame_proto:UpdateThreatIndicator()
 	local element = self.ThreatIndicator
 	element:UpdateConfig()
 
-	element.feedbackUnit = element._config.feedback__unit
+	element.feedbackUnit = element._config.feedback_unit
 
 	if element._config.enabled and not self:IsElementEnabled("ThreatIndicator") then
 		self:EnableElement("ThreatIndicator")
