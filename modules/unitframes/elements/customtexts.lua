@@ -9,9 +9,6 @@ local t_insert = _G.table.insert
 local t_remove = _G.table.remove
 local t_wipe = _G.table.wipe
 
---[[ luacheck: globals
-]]
-
 -- Mine
 local element_proto = {}
 
