@@ -39,10 +39,11 @@ read_globals = {
 	"CastingBarFrame_SetUnit",
 	"Mixin",
 
-	-- FrameXML frames
+	-- FrameXML objects
 	"CastingBarFrame",
 	"GameTooltip",
 	"PetCastingBarFrame",
+	"GameFontNormal",
 
-	-- FrameXML Constants
+	-- FrameXML constants
 }
