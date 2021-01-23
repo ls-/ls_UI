@@ -163,17 +163,24 @@ local filterFunctions = {
 local button_proto = {}
 
 function button_proto:UpdateTooltip()
+	if GameTooltip:IsForbidden() then return end
+
 	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
 function button_proto:OnEnter()
-	if not self:IsVisible() then return end
+	if GameTooltip:IsForbidden() or not self:IsVisible() then return end
 
-	GameTooltip:SetOwner(self, self:GetParent().tooltipAnchor)
+	-- Avoid parenting GameTooltip to frames with anchoring restrictions,
+	-- otherwise it'll inherit said restrictions which will cause issues with
+	-- its further positioning, clamping, etc
+	GameTooltip:SetOwner(self, self:GetParent().__restricted and "ANCHOR_CURSOR" or self:GetParent().tooltipAnchor)
 	self:UpdateTooltip()
 end
 
 function button_proto:OnLeave()
+	if GameTooltip:IsForbidden() then return end
+
 	GameTooltip:Hide()
 end
 
