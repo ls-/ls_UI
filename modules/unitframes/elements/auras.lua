@@ -10,9 +10,6 @@ local next = _G.next
 local select = _G.select
 local unpack = _G.unpack
 
--- Blizz
-local C_MountJournal = _G.C_MountJournal
-
 -- Mine
 local MOUNTS = {}
 

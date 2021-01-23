@@ -42,6 +42,7 @@ read_globals = {
 	"UnitReaction",
 
 	-- Namespaces
+	"C_MountJournal",
 	"C_PvP",
 
 	-- FrameXML functions
