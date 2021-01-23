@@ -5,10 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck:globals
-	CreateFrame Mixin UnitHasVehicleUI
-]]
-
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 

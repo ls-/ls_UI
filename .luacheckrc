@@ -29,6 +29,7 @@ read_globals = {
 	"CreateFrame",
 	"UnitClass",
 	"UnitClassification",
+	"UnitHasVehicleUI",
 	"UnitIsFriend",
 	"UnitIsPlayer",
 	"UnitIsUnit",
