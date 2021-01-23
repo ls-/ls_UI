@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="core.lua"/>
+	<!-- <Script file="core.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="auratracker.lua"/>
 	<Script file="bars.lua"/>
@@ -8,5 +8,5 @@
 	<Script file="loot.lua"/>
 	<Script file="minimap.lua"/>
 	<Script file="tooltips.lua"/>
-	<Include file="unitframes\_unitframes.xml"/>
+	<Include file="unitframes\_unitframes.xml"/> -->
 </Ui>
