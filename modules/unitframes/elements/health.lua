@@ -5,13 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local UnitGUID = _G.UnitGUID
-
---[[ luacheck: globals
-	CreateFrame Mixin
-]]
-
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
@@ -44,23 +37,6 @@ do
 	local ignoredKeys = {
 		prediction = true,
 	}
-
-	local frame_proto = {}
-
-	function frame_proto:UpdateHealth()
-		local element = self.Health
-		element:UpdateConfig()
-		element:SetOrientation(element._config.orientation)
-		element:UpdateColors()
-		element:UpdateTextures()
-		element:UpdateFonts()
-		element:UpdateTextPoints()
-		element:UpdateTags()
-		element:UpdateGainLossColors()
-		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
-		element:ForceUpdate()
-	end
 
 	local element_proto = {
 		colorHealth = true,
@@ -113,6 +89,23 @@ do
 		self.GainLossIndicators:UpdateColors()
 	end
 
+	local frame_proto = {}
+
+	function frame_proto:UpdateHealth()
+		local element = self.Health
+		element:UpdateConfig()
+		element:SetOrientation(element._config.orientation)
+		element:UpdateColors()
+		element:UpdateTextures()
+		element:UpdateFonts()
+		element:UpdateTextPoints()
+		element:UpdateTags()
+		element:UpdateGainLossColors()
+		element:UpdateGainLossPoints()
+		element:UpdateGainLossThreshold()
+		element:ForceUpdate()
+	end
+
 	function UF:CreateHealth(frame, textParent)
 		Mixin(frame, frame_proto)
 
@@ -135,6 +128,43 @@ end
 
 -- .HealthPrediction
 do
+	local element_proto = {
+		maxOverflow = 1,
+	}
+
+	function element_proto:UpdateConfig()
+		local unit = self.__owner.__unit
+		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
+		self._config.orientation = C.db.profile.units[unit].health.orientation
+	end
+
+	function element_proto:UpdateFonts()
+		updateFont(self.absorbBar.Text, self._config.absorb_text)
+		updateFont(self.healAbsorbBar.Text, self._config.heal_absorb_text)
+	end
+
+	function element_proto:UpdateTextPoints()
+		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
+		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
+	end
+
+	function element_proto:UpdateTags()
+		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
+		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
+	end
+
+	function element_proto:UpdateColors()
+		self.myBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.my_heal))
+		self.otherBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.other_heal))
+		self.healAbsorbBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
+	end
+
+	function element_proto:UpdateTextures()
+		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	end
+
 	local frame_proto = {}
 
 	function frame_proto:UpdateHealthPrediction()
@@ -223,43 +253,6 @@ do
 		if self:IsElementEnabled("HealthPrediction") then
 			element:ForceUpdate()
 		end
-	end
-
-	local element_proto = {
-		maxOverflow = 1,
-	}
-
-	function element_proto:UpdateConfig()
-		local unit = self.__owner.__unit
-		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
-		self._config.orientation = C.db.profile.units[unit].health.orientation
-	end
-
-	function element_proto:UpdateFonts()
-		updateFont(self.absorbBar.Text, self._config.absorb_text)
-		updateFont(self.healAbsorbBar.Text, self._config.heal_absorb_text)
-	end
-
-	function element_proto:UpdateTextPoints()
-		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
-		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
-	end
-
-	function element_proto:UpdateTags()
-		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
-		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
-	end
-
-	function element_proto:UpdateColors()
-		self.myBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.my_heal))
-		self.otherBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.other_heal))
-		self.healAbsorbBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
-	end
-
-	function element_proto:UpdateTextures()
-		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
-		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
-		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 	end
 
 	function UF:CreateHealthPrediction(frame, parent, textParent)

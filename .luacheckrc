@@ -29,6 +29,7 @@ read_globals = {
 	"CreateFrame",
 	"UnitClass",
 	"UnitClassification",
+	"UnitGUID",
 	"UnitHasVehicleUI",
 	"UnitIsFriend",
 	"UnitIsPlayer",
@@ -41,9 +42,9 @@ read_globals = {
 
 	-- FrameXML objects
 	"CastingBarFrame",
+	"GameFontNormal",
 	"GameTooltip",
 	"PetCastingBarFrame",
-	"GameFontNormal",
 
 	-- FrameXML constants
 }
