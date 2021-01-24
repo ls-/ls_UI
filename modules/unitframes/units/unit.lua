@@ -118,7 +118,7 @@ function large_proto:Update()
 end
 
 function medium_proto:AlignWidgets()
-	if self._config.mirror_indicators then
+	if self._config.mirror_widgets then
 		self.PvPSlot:ClearAllPoints()
 		self.PvPSlot:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 10)
 
