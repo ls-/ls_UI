@@ -854,7 +854,7 @@ function MODULE:Init()
 	MODULE:CreateLootPanel(10)
 	MODULE:CreateMinimapPanel(11)
 	MODULE:CreateTooltipsPanel(12)
-	MODULE:CreateUnitFramesPanel(13)
+	-- MODULE:CreateUnitFramesPanel(13)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100
