@@ -36,16 +36,16 @@ local configIgnoredKeys = {
 
 local frame_proto = {}
 
+function frame_proto:UpdateConfig()
+	self._config = E:CopyTable(C.db.profile.units[self.__unit], self._config, configIgnoredKeys)
+end
+
 function frame_proto:OnEnter()
 	UnitFrame_OnEnter(self.__owner or self)
 end
 
 function frame_proto:OnLeave()
 	UnitFrame_OnLeave(self.__owner or self)
-end
-
-function frame_proto:UpdateConfig()
-	self._config = E:CopyTable(C.db.profile.units[self.__unit], self._config, configIgnoredKeys)
 end
 
 function frame_proto:UpdateSize()
@@ -57,7 +57,7 @@ function frame_proto:UpdateSize()
 	end
 end
 
-function frame_proto:ForElement(element, method, ...)
+function frame_proto:For(element, method, ...)
 	if self[element] and self[element][method] then
 		self[element][method](self[element], ...)
 	end
