@@ -65,7 +65,7 @@ do
 		healthBG:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
 		healthBG:SetAllPoints()
 
-		frame.HealthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+		frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 1)

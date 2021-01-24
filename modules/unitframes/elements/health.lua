@@ -145,21 +145,6 @@ do
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
-	function element_proto:UpdateFonts()
-		updateFont(self.absorbBar.Text, self._config.absorb_text)
-		updateFont(self.healAbsorbBar.Text, self._config.heal_absorb_text)
-	end
-
-	function element_proto:UpdateTextPoints()
-		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
-		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
-	end
-
-	function element_proto:UpdateTags()
-		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
-		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
-	end
-
 	function element_proto:UpdateColors()
 		self.myBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.my_heal))
 		self.otherBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.other_heal))
@@ -262,9 +247,6 @@ do
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateSmoothing()
-		element:UpdateFonts()
-		element:UpdateTextPoints()
-		element:UpdateTags()
 
 		if config.enabled and not self:IsElementEnabled("HealthPrediction") then
 			self:EnableElement("HealthPrediction")
@@ -277,7 +259,7 @@ do
 		end
 	end
 
-	function UF:CreateHealthPrediction(frame, parent, textParent)
+	function UF:CreateHealthPrediction(frame, parent)
 		Mixin(frame, frame_proto)
 
 		local level = parent:GetFrameLevel()
@@ -304,22 +286,12 @@ do
 		absorbBar._texture:SetHorizTile(true)
 		absorbBar._texture:SetVertTile(true)
 
-		local text = (textParent or parent):CreateFontString(nil, "ARTWORK")
-		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
-		absorbBar.Text = text
-
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
 		parent.HealAbsorb = healAbsorbBar
-
-		text = (textParent or parent):CreateFontString(nil, "ARTWORK")
-		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
-		healAbsorbBar.Text = text
 
 		return Mixin({
 			myBar = myBar,

@@ -462,32 +462,6 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
-							size = 12,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOM",
-								anchor = "Health.Text",
-								rP = "TOP",
-								x = 0,
-								y = 2,
-							},
-						},
-						heal_absorb_text = {
-							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
-							size = 12,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOM",
-								anchor = "Health.Text",
-								rP = "TOP",
-								x = 0,
-								y = 16,
-							},
-						},
 					},
 				},
 				power = {
@@ -628,32 +602,6 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-						heal_absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
 					},
 				},
 				power = {
@@ -757,32 +705,6 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
-							size = 10,
-							h_alignment = "RIGHT",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOMRIGHT",
-								anchor = "Health",
-								rP = "RIGHT",
-								x = -2,
-								y = 1,
-							},
-						},
-						heal_absorb_text = {
-							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
-							size = 10,
-							h_alignment = "RIGHT",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "TOPRIGHT",
-								anchor = "Health",
-								rP = "RIGHT",
-								x = -2,
-								y = -1,
-							},
-						},
 					},
 				},
 				power = {
@@ -991,32 +913,6 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-						heal_absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
 					},
 				},
 				power = {
@@ -1211,32 +1107,6 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
@@ -1462,32 +1332,6 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
@@ -1591,32 +1435,6 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
@@ -1842,32 +1660,6 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
@@ -1974,32 +1766,6 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {

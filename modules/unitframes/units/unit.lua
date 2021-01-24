@@ -59,7 +59,7 @@ function UF:CreateSmallUnitFrame(frame)
 	health:SetClipsChildren(true)
 	frame.Health = health
 
-	frame.HealthPrediction = self:CreateHealthPrediction(frame, health, frame.TextParent)
+	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 
 	local power = self:CreatePower(frame, frame.TextParent)
 	power:SetFrameLevel(frame:GetFrameLevel() + 1)

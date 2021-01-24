@@ -112,7 +112,7 @@ do
 		health:SetClipsChildren(true)
 		frame.Health = health
 
-		local healthPrediction = self:CreateHealthPrediction(frame, health, textParent)
+		local healthPrediction = self:CreateHealthPrediction(frame, health)
 		frame.HealthPrediction = healthPrediction
 
 		local rightSlot = UF:CreateSlot(frame, level + 6)
