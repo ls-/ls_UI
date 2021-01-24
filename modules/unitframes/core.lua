@@ -6,30 +6,14 @@ local UF = P:AddModule("UnitFrames")
 local _G = getfenv(0)
 local next = _G.next
 local rawset = _G.rawset
+local s_upper = _G.string.upper
 local type = _G.type
 local unpack = _G.unpack
-
---[[ luacheck: globals
-	PartyMemberBuffTooltip PartyMemberBuffTooltip_Update RegisterUnitWatch UnitFrame_OnEnter UnitFrame_OnLeave
-	UnregisterUnitWatch
-]]
 
 -- Mine
 local isInit = false
 local objects = {}
 local units = {}
-
-local function frame_OnEnter(self)
-	self = self.__owner or self
-
-	UnitFrame_OnEnter(self)
-end
-
-local function frame_OnLeave(self)
-	self = self.__owner or self
-
-	UnitFrame_OnLeave(self)
-end
 
 local configIgnoredKeys = {
 	alt_power = true,
@@ -38,7 +22,7 @@ local configIgnoredKeys = {
 	castbar = true,
 	class = true,
 	class_power = true,
-	combat_feedback = true,
+	custom_texts = true,
 	debuff = true,
 	health = true,
 	insets = true,
@@ -50,30 +34,22 @@ local configIgnoredKeys = {
 	threat = true,
 }
 
-local function frame_UpdateConfig(self)
+local frame_proto = {}
+
+function frame_proto:OnEnter()
+	UnitFrame_OnEnter(self.__owner or self)
+end
+
+function frame_proto:OnLeave()
+	UnitFrame_OnLeave(self.__owner or self)
+end
+
+function frame_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[self.__unit], self._config, configIgnoredKeys)
 end
 
-local function frame_UpdateSize(self)
-	local width, height = self._config.width, self._config.height
-
-	self:SetSize(width, height)
-
-	if self.BorderParent then
-		self.BorderParent:SetSize(width, height)
-	end
-
-	if self.TextureParent then
-		self.TextureParent:SetSize(width, height)
-	end
-
-	if self.TextParent then
-		self.TextParent:SetSize(width, height)
-	end
-
-	if self.Border and self.Border:IsObjectType("Border") then
-		self.Border:SetSize(16)
-	end
+function frame_proto:UpdateSize()
+	self:SetSize(self._config.width, self._config.height)
 
 	local mover = E.Movers:Get(self, true)
 	if mover then
@@ -81,45 +57,9 @@ local function frame_UpdateSize(self)
 	end
 end
 
-local function frame_ForElement(self, element, method, ...)
+function frame_proto:ForElement(element, method, ...)
 	if self[element] and self[element][method] then
 		self[element][method](self[element], ...)
-	end
-end
-
-local function frame_Preview(self, state)
-	if not self.isPreviewed or state == true then
-		if not self.isPreviewed then
-			self.oldUnit = self.unit
-			self.unit = "player"
-			self.oldOnUpdate = self:GetScript("OnUpdate")
-			self.isPreviewed = true
-		end
-
-		UnregisterUnitWatch(self)
-		RegisterUnitWatch(self, true)
-
-		self:SetScript("OnUpdate", nil)
-		self:Show()
-
-		if self:IsVisible() then
-			self:Update()
-		end
-	elseif self.isPreviewed or state == false then
-		self.unit = self.oldUnit or self.unit
-		self.isPreviewed = nil
-
-		UnregisterUnitWatch(self)
-		RegisterUnitWatch(self)
-
-		if self.oldOnUpdate then
-			self:SetScript("OnUpdate", self.oldOnUpdate)
-			self.oldOnUpdate = nil
-		end
-
-		if self:IsVisible() then
-			self:Update()
-		end
 	end
 end
 
@@ -185,8 +125,10 @@ function UF:UpdateTags()
 	end
 end
 
-function UF:CreateUnitFrame(unit, name)
+function UF:Create(unit)
 	if not units[unit] then
+		local name = "LS" .. unit:gsub("^%l", s_upper):gsub("t(arget)", "T%1")
+
 		if unit == "boss" then
 			local holder = self:CreateBossHolder()
 
@@ -199,8 +141,7 @@ function UF:CreateUnitFrame(unit, name)
 			end
 		else
 			local object = oUF:Spawn(unit, name .. "Frame")
-			object:UpdateConfig()
-			object:SetPoint(unpack(object._config.point[E.UI_LAYOUT]))
+			object:SetPoint(unpack(C.db.profile.units[unit].point[E.UI_LAYOUT]))
 			E.Movers:Create(object)
 			objects[unit] = object
 		end
@@ -214,7 +155,7 @@ local allowedMethodsIfDisabled = {
 	UpdateConfig = true,
 }
 
-function UF:UpdateUnitFrame(unit, method, ...)
+function UF:For(unit, method, ...)
 	if units[unit] and (C.db.profile.units[unit].enabled or allowedMethodsIfDisabled[method]) then
 		if unit == "boss"then
 			for i = 1, 5 do
@@ -234,15 +175,9 @@ function UF:UpdateUnitFrame(unit, method, ...)
 	end
 end
 
-function UF:UpdateUnitFrames(method, ...)
-	for unit in next, units do
-		self:UpdateUnitFrame(unit, method, ...)
-	end
-end
-
 function UF:ForEach(method, ...)
 	for unit in next, units do
-		self:UpdateUnitFrame(unit, method, ...)
+		self:For(unit, method, ...)
 	end
 end
 
@@ -271,15 +206,12 @@ function UF:Init()
 
 		oUF:Factory(function()
 			oUF:RegisterStyle("LS", function(frame, unit)
-				frame:RegisterForClicks("AnyUp")
-				frame:SetScript("OnEnter", frame_OnEnter)
-				frame:SetScript("OnLeave", frame_OnLeave)
+				Mixin(frame, frame_proto)
 				frame.__unit = unit:gsub("%d+", "")
 
-				frame.ForElement = frame_ForElement
-				frame.Preview = frame_Preview
-				frame.UpdateConfig = frame_UpdateConfig
-				frame.UpdateSize = frame_UpdateSize
+				frame:RegisterForClicks("AnyUp")
+				frame:SetScript("OnEnter", frame.OnEnter)
+				frame:SetScript("OnLeave", frame.OnLeave)
 
 				if unit == "player" then
 					if E.UI_LAYOUT == "ls" then
@@ -308,29 +240,29 @@ function UF:Init()
 			oUF:SetActiveStyle("LS")
 
 			if C.db.char.units.player.enabled then
-				UF:CreateUnitFrame("player", "LSPlayer")
-				UF:UpdateUnitFrame("player", "Update")
-				UF:CreateUnitFrame("pet", "LSPet")
-				UF:UpdateUnitFrame("pet", "Update")
+				UF:Create("player")
+				UF:For("player", "Update")
+				UF:Create("pet")
+				UF:For("pet", "Update")
 			end
 
 			if C.db.char.units.target.enabled then
-				UF:CreateUnitFrame("target", "LSTarget")
-				UF:UpdateUnitFrame("target", "Update")
-				UF:CreateUnitFrame("targettarget", "LSTargetTarget")
-				UF:UpdateUnitFrame("targettarget", "Update")
+				UF:Create("target")
+				UF:For("target", "Update")
+				UF:Create("targettarget")
+				UF:For("targettarget", "Update")
 			end
 
 			if C.db.char.units.focus.enabled then
-				UF:CreateUnitFrame("focus", "LSFocus")
-				UF:UpdateUnitFrame("focus", "Update")
-				UF:CreateUnitFrame("focustarget", "LSFocusTarget")
-				UF:UpdateUnitFrame("focustarget", "Update")
+				UF:Create("focus")
+				UF:For("focus", "Update")
+				UF:Create("focustarget")
+				UF:For("focustarget", "Update")
 			end
 
 			if C.db.char.units.boss.enabled then
-				UF:CreateUnitFrame("boss", "LSBoss")
-				UF:UpdateUnitFrame("boss", "Update")
+				UF:Create("boss")
+				UF:For("boss", "Update")
 			end
 		end)
 
@@ -340,8 +272,6 @@ end
 
 function UF:Update()
 	if isInit then
-		for unit in next, units do
-			self:UpdateUnitFrame(unit, "Update")
-		end
+		self:ForEach("Update")
 	end
 end

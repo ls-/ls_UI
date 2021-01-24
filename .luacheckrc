@@ -27,6 +27,7 @@ read_globals = {
 
 	-- API functions
 	"CreateFrame",
+	"RegisterUnitWatch",
 	"UnitClass",
 	"UnitClassification",
 	"UnitFactionGroup",
@@ -40,6 +41,7 @@ read_globals = {
 	"UnitIsPVPFreeForAll",
 	"UnitIsUnit",
 	"UnitReaction",
+	"UnregisterUnitWatch",
 
 	-- Namespaces
 	"C_MountJournal",
@@ -48,6 +50,8 @@ read_globals = {
 	-- FrameXML functions
 	"CastingBarFrame_SetUnit",
 	"Mixin",
+	"UnitFrame_OnEnter",
+	"UnitFrame_OnLeave",
 
 	-- FrameXML objects
 	"CastingBarFrame",
