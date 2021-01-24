@@ -352,7 +352,9 @@ do
 	local stagger_proto = {}
 
 	function stagger_proto:PostUpdate(...)
-		self.GainLossIndicators:Update(...)
+		if self._config.animated_change then
+			self.GainLossIndicators:Update(...)
+		end
 	end
 
 	function stagger_proto:UpdateColor(_, unit)
@@ -365,6 +367,7 @@ do
 	function stagger_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	function stagger_proto:UpdateColors()
@@ -377,10 +380,6 @@ do
 
 	function stagger_proto:UpdateGainLossPoints()
 		self.GainLossIndicators:UpdatePoints(self._config.orientation)
-	end
-
-	function stagger_proto:UpdateGainLossThreshold()
-		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
 	end
 
 	function stagger_proto:UpdateGainLossColors()
@@ -396,7 +395,6 @@ do
 		element:UpdateTextures()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Stagger") then
 			self:EnableElement("Stagger")
@@ -418,6 +416,7 @@ do
 		element:Hide()
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end

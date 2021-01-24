@@ -65,10 +65,6 @@ function element_proto:UpdateGainLossPoints()
 	self.GainLossIndicators:UpdatePoints(self._config.orientation)
 end
 
-function element_proto:UpdateGainLossThreshold()
-	self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
-end
-
 function element_proto:UpdateGainLossColors()
 	self.GainLossIndicators:UpdateColors()
 end
@@ -88,9 +84,11 @@ do
 		end
 
 		if shouldShow then
-			local unitGUID = UnitGUID(unit)
-			self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-			self._UnitGUID = unitGUID
+			if self._config.animated_change then
+				local unitGUID = UnitGUID(unit)
+				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+				self._UnitGUID = unitGUID
+			end
 
 			self.Text:Show()
 		else
@@ -101,6 +99,7 @@ do
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	local frame_proto = {}
@@ -116,7 +115,6 @@ do
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Power") then
 			self:EnableElement("Power")
@@ -143,6 +141,7 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
@@ -154,13 +153,16 @@ do
 
 	function power_proto:PostUpdate(cur, max)
 		if self:IsShown() and max and max ~= 0 then
-			self.GainLossIndicators:Update(cur, max)
+			if self._config.animated_change then
+				self.GainLossIndicators:Update(cur, max)
+			end
 		end
 	end
 
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	local frame_proto = {}
@@ -173,7 +175,6 @@ do
 		element:UpdateTextures()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("AdditionalPower") then
 			self:EnableElement("AdditionalPower")
@@ -193,6 +194,7 @@ do
 		E:SmoothBar(element)
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
@@ -204,9 +206,11 @@ do
 
 	function power_proto:PostUpdate(unit, cur, _, max)
 		if self:IsShown() and max and max ~= 0 then
-			local unitGUID = UnitGUID(unit)
-			self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-			self._UnitGUID = unitGUID
+			if self._config.animated_change then
+				local unitGUID = UnitGUID(unit)
+				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+				self._UnitGUID = unitGUID
+			end
 
 			self.Text:Show()
 		else
@@ -217,6 +221,7 @@ do
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	function power_proto:UpdateColors()
@@ -236,7 +241,6 @@ do
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("AlternativePower") then
 			self:EnableElement("AlternativePower")
@@ -263,6 +267,7 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end

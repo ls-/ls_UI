@@ -45,14 +45,17 @@ do
 	}
 
 	function element_proto:PostUpdate(unit, cur, max)
-		local unitGUID = UnitGUID(unit)
-		self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-		self._UnitGUID = unitGUID
+		if self._config.animated_change then
+			local unitGUID = UnitGUID(unit)
+			self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+			self._UnitGUID = unitGUID
+		end
 	end
 
 	function element_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	function element_proto:UpdateColors()
@@ -81,10 +84,6 @@ do
 		self.GainLossIndicators:UpdatePoints(self._config.orientation)
 	end
 
-	function element_proto:UpdateGainLossThreshold()
-		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
-	end
-
 	function element_proto:UpdateGainLossColors()
 		self.GainLossIndicators:UpdateColors()
 	end
@@ -102,7 +101,6 @@ do
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 		element:ForceUpdate()
 	end
 
@@ -120,6 +118,7 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.001)
 		element.GainLossIndicators.Gain = nil
 
 		return element

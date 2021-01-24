@@ -427,6 +427,9 @@ D.profile = {
 		inlay = {
 			alpha = 0.8,
 		},
+		change = {
+			animated = false,
+		},
 		ls = {
 			player = {
 				enabled = true,
@@ -438,7 +441,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -489,7 +491,6 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -510,7 +511,6 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					prediction = {
 						enabled = true,
@@ -607,7 +607,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -658,7 +657,6 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -738,7 +736,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
@@ -789,7 +786,6 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-max]",
@@ -810,7 +806,6 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					prediction = {
 						enabled = true,
@@ -975,7 +970,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
@@ -1026,7 +1020,6 @@ D.profile = {
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -1197,7 +1190,6 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1248,7 +1240,6 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-max]",
@@ -1450,7 +1441,6 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1501,7 +1491,6 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
@@ -1581,7 +1570,6 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1632,7 +1620,6 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-max]",
@@ -1834,7 +1821,6 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1885,7 +1871,6 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
@@ -1968,7 +1953,6 @@ D.profile = {
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -2019,7 +2003,6 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-perc]",
@@ -2037,7 +2020,6 @@ D.profile = {
 			},
 			alt_power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:altpower:cur-perc]",
