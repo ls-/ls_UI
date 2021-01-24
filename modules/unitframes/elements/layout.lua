@@ -4,9 +4,10 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
+local m_max = _G.math.max
 local next = _G.next
 local unpack = _G.unpack
-local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local hooked = {}
@@ -41,8 +42,8 @@ function insets_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[unit].insets, self._config)
 	self._config.l_size = C.db.profile.units[unit].height
 	self._config.r_size = self._config.l_size
-	self._config.t_size = E:Round(C.db.profile.units[unit].height * self._config.t_height)
-	self._config.b_size = E:Round(C.db.profile.units[unit].height * self._config.b_height)
+	self._config.t_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.t_height))
+	self._config.b_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.b_height))
 end
 
 function insets_proto:GetVertexColor()
