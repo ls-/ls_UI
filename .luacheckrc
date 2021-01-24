@@ -19,6 +19,7 @@ ignore = {
 
 globals = {
 	"getfenv",
+	"print",
 }
 
 read_globals = {
