@@ -378,6 +378,14 @@ do
 		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 	end
 
+	function stagger_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self)
+		else
+			E:DesmoothBar(self)
+		end
+	end
+
 	function stagger_proto:UpdateGainLossPoints()
 		self.GainLossIndicators:UpdatePoints(self._config.orientation)
 	end
@@ -393,6 +401,7 @@ do
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
 
@@ -412,7 +421,6 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), stagger_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(element)
 		element:Hide()
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)

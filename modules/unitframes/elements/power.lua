@@ -61,6 +61,14 @@ function element_proto:UpdateTextures()
 	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 end
 
+function element_proto:UpdateSmoothing()
+	if C.db.profile.units.change.smooth then
+		E:SmoothBar(self)
+	else
+		E:DesmoothBar(self)
+	end
+end
+
 function element_proto:UpdateGainLossPoints()
 	self.GainLossIndicators:UpdatePoints(self._config.orientation)
 end
@@ -110,6 +118,7 @@ do
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -133,7 +142,6 @@ do
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
-		E:SmoothBar(element)
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -173,6 +181,7 @@ do
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
 
@@ -191,7 +200,6 @@ do
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
-		E:SmoothBar(element)
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
 		element.GainLossIndicators:UpdateThreshold(0.01)
@@ -236,6 +244,7 @@ do
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -259,7 +268,6 @@ do
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
-		E:SmoothBar(element)
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -295,6 +303,16 @@ do
 	function power_proto:UpdateColors()
 		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
 		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
+	end
+
+	function power_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self.mainBar_)
+			E:SmoothBar(self.altBar_)
+		else
+			E:DesmoothBar(self.mainBar_)
+			E:DesmoothBar(self.altBar_)
+		end
 	end
 
 	local frame_proto = {}
@@ -387,13 +405,11 @@ do
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		mainBar:SetReverseFill(true)
-		E:SmoothBar(mainBar)
 		parent1.CostPrediction = mainBar
 
 		local altBar = CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		altBar:SetReverseFill(true)
-		E:SmoothBar(altBar)
 		parent2.CostPrediction = altBar
 
 		return Mixin({

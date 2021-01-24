@@ -429,6 +429,7 @@ D.profile = {
 		},
 		change = {
 			animated = false,
+			smooth = false,
 		},
 		ls = {
 			player = {

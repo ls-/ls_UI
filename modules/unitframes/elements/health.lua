@@ -80,6 +80,14 @@ do
 		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 	end
 
+	function element_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self)
+		else
+			E:DesmoothBar(self)
+		end
+	end
+
 	function element_proto:UpdateGainLossPoints()
 		self.GainLossIndicators:UpdatePoints(self._config.orientation)
 	end
@@ -98,6 +106,7 @@ do
 		element:UpdateTextures()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
+		element:UpdateSmoothing()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
@@ -110,7 +119,6 @@ do
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element._texture = element:GetStatusBarTexture()
-		E:SmoothBar(element)
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -162,6 +170,20 @@ do
 		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	end
+
+	function element_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self.myBar)
+			E:SmoothBar(self.otherBar)
+			E:SmoothBar(self.absorbBar)
+			E:SmoothBar(self.healAbsorbBar)
+		else
+			E:DesmoothBar(self.myBar)
+			E:DesmoothBar(self.otherBar)
+			E:DesmoothBar(self.absorbBar)
+			E:DesmoothBar(self.healAbsorbBar)
+		end
 	end
 
 	local frame_proto = {}
@@ -239,6 +261,7 @@ do
 
 		element:UpdateColors()
 		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
@@ -263,20 +286,17 @@ do
 		myBar:SetFrameLevel(level)
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		myBar._texture = myBar:GetStatusBarTexture()
-		E:SmoothBar(myBar)
 		parent.MyHeal = myBar
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		otherBar._texture = otherBar:GetStatusBarTexture()
-		E:SmoothBar(otherBar)
 		parent.OtherHeal = otherBar
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
 		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(absorbBar)
 		parent.DamageAbsorb = absorbBar
 
 		absorbBar._texture = absorbBar:GetStatusBarTexture()
@@ -294,7 +314,6 @@ do
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
-		E:SmoothBar(healAbsorbBar)
 		parent.HealAbsorb = healAbsorbBar
 
 		text = (textParent or parent):CreateFontString(nil, "ARTWORK")
