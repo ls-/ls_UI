@@ -17,7 +17,9 @@ function UF:HasPlayerFrame()
 end
 
 do
-	local function frame_Update(self)
+	local frame_proto = {}
+
+	function frame_proto:Update()
 		self:UpdateConfig()
 
 		if self._config.enabled then
@@ -26,6 +28,7 @@ do
 			end
 
 			self:UpdateSize()
+			self:UpdateInlay()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
 			self:UpdatePower()
@@ -55,7 +58,13 @@ do
 		end
 	end
 
+	function frame_proto:UpdateInlay()
+		self.Inlay:SetAlpha(C.db.profile.units.inlay.alpha)
+	end
+
 	function UF:CreateVerticalPlayerFrame(frame)
+		Mixin(frame, frame_proto)
+
 		local level = frame:GetFrameLevel()
 
 		-- Note: can't touch this
@@ -83,7 +92,13 @@ do
 		borderParent:SetAllPoints()
 		frame.BorderParent = borderParent
 
-		local texture = borderParent:CreateTexture(nil, "BACKGROUND")
+		local texture = borderParent:CreateTexture(nil, "BACKGROUND", nil, -7)
+		texture:SetAllPoints()
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
+		texture:SetTexCoord(667 / 1024, 999 / 1024, 1 / 512, 333 / 512)
+		frame.Inlay = texture
+
+		texture = borderParent:CreateTexture(nil, "BACKGROUND", nil, -6)
 		texture:SetAllPoints()
 		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\player-frame")
 		texture:SetTexCoord(1 / 1024, 333 / 1024, 1 / 512, 333 / 512)
@@ -216,8 +231,6 @@ do
 		healthPrediction.absorbBar._texture:AddMaskTexture(mask)
 		healthPrediction.healAbsorbBar._texture:AddMaskTexture(mask)
 		health.GainLossIndicators.Loss:AddMaskTexture(mask)
-
-		frame.Update = frame_Update
 
 		isInit = true
 	end
