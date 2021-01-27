@@ -569,7 +569,7 @@ do
 							end
 						end
 
-						CONFIG:UpdateUFAuraFilters()
+						CONFIG:CreateUnitFrameAuraFilters()
 						updateTagVarsOptions()
 
 						AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", value)
@@ -626,7 +626,7 @@ do
 					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
 				end
 
-				CONFIG:UpdateUFAuraFilters()
+				CONFIG:CreateUnitFrameAuraFilters()
 				updateAuraFiltersOptions()
 
 				AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters")
@@ -703,7 +703,7 @@ do
 								state = newFilterInfo.state
 							}
 
-							CONFIG:UpdateUFAuraFilters()
+							CONFIG:CreateUnitFrameAuraFilters()
 							updateAuraFiltersOptions()
 
 							AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters", newFilterInfo.name)

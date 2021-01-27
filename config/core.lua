@@ -764,13 +764,18 @@ do
 	end
 end
 
+local globalIgnoredKeys = {
+	-- enabled = true,
+	point = true,
+}
+
 function MODULE:CopySettings(src, dest, ignoredKeys)
 	for k, v in next, dest do
-		if not ignoredKeys or not ignoredKeys[k] then
+		if not globalIgnoredKeys[k] and not (ignoredKeys and ignoredKeys[k]) then
 			if src[k] ~= nil then
 				if type(v) == "table" then
 					if next(v) and type(src[k]) == "table" then
-						self:CopySettings(src[k], v)
+						self:CopySettings(src[k], v, ignoredKeys)
 					end
 				else
 					if type(v) == type(src[k]) then
@@ -854,7 +859,7 @@ function MODULE:Init()
 	MODULE:CreateLootPanel(10)
 	MODULE:CreateMinimapPanel(11)
 	MODULE:CreateTooltipsPanel(12)
-	-- MODULE:CreateUnitFramesPanel(13)
+	MODULE:CreateUnitFramesPanel(13)
 
 	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
 	C.options.args.profiles.order = 100

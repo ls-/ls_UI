@@ -11,11 +11,8 @@ local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 
---[[ luacheck: globals
-]]
-
 -- Mine
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local ACD = LibStub("AceConfigDialog-3.0")
 
 local offsets = {"", "   ", "      "}
 local function d(c, o, v)
@@ -53,10 +50,10 @@ do
 				if C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].enabled ~= value then
 					C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].enabled = value
 
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateConfig", info[#info - 1])
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdatePoint", info[#info - 1])
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateFont", info[#info - 1])
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateTags", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])
 				end
 			end,
 		},
@@ -94,8 +91,8 @@ do
 				if C.db.profile.units[info[#info - 4]].custom_texts[info[#info - 2]].point1[info[#info]] ~= value then
 					C.db.profile.units[info[#info - 4]].custom_texts[info[#info - 2]].point1[info[#info]] = value
 
-					UNITFRAMES:UpdateUnitFrame(info[#info - 4], "ForElement", "CustomTexts", "UpdateConfig", info[#info - 2])
-					UNITFRAMES:UpdateUnitFrame(info[#info - 4], "ForElement", "CustomTexts", "UpdatePoint", info[#info - 2])
+					UNITFRAMES:For(info[#info - 4], "For", "CustomTexts", "UpdateConfig", info[#info - 2])
+					UNITFRAMES:For(info[#info - 4], "For", "CustomTexts", "UpdatePoint", info[#info - 2])
 				end
 			end,
 			args = {
@@ -150,8 +147,8 @@ do
 				if CONFIG:IsTagStringValid(value) then
 					C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].tag = value:gsub("\124\124+", "\124")
 
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateConfig", info[#info - 1])
-					UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateTags", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])
 				end
 			end,
 		},
@@ -173,12 +170,12 @@ do
 
 				updateOptions(info[#info - 3])
 
-				UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateConfig", info[#info - 1])
-				UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdatePoint", info[#info - 1])
-				UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateFont", info[#info - 1])
-				UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateTags", info[#info - 1])
+				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
+				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", info[#info - 1])
+				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
+				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])
 
-				AceConfigDialog:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts")
+				ACD:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts")
 			end,
 		},
 	}
@@ -191,8 +188,8 @@ do
 		if C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]][info[#info]] ~= value then
 			C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]][info[#info]] = value
 
-			UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateConfig", info[#info - 1])
-			UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateFont", info[#info - 1])
+			UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
+			UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
 		end
 	end
 
@@ -224,7 +221,7 @@ do
 	end
 end
 
-function CONFIG:CreateUFCustomTextsPanel(order, unit)
+function CONFIG:CreateUnitFrameCustomTextsPanel(order, unit)
 	local temp = {
 		order = order,
 		type = "group",
@@ -271,12 +268,12 @@ function CONFIG:CreateUFCustomTextsPanel(order, unit)
 
 							updateOptions(info[#info - 3])
 
-							UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateConfig", value)
-							UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdatePoint", value)
-							UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateFont", value)
-							UNITFRAMES:UpdateUnitFrame(info[#info - 3], "ForElement", "CustomTexts", "UpdateTags", value)
+							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", value)
+							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", value)
+							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", value)
+							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", value)
 
-							AceConfigDialog:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts", value)
+							ACD:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts", value)
 						end,
 					},
 				},
