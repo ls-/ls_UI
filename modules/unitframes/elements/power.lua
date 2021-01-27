@@ -92,7 +92,7 @@ do
 		end
 
 		if shouldShow then
-			if self._config.animated_change then
+			if self._config and self._config.animated_change then
 				local unitGUID = UnitGUID(unit)
 				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
 				self._UnitGUID = unitGUID
@@ -161,7 +161,7 @@ do
 
 	function power_proto:PostUpdate(cur, max)
 		if self:IsShown() and max and max ~= 0 then
-			if self._config.animated_change then
+			if self._config and self._config.animated_change then
 				self.GainLossIndicators:Update(cur, max)
 			end
 		end
@@ -214,7 +214,7 @@ do
 
 	function power_proto:PostUpdate(unit, cur, _, max)
 		if self:IsShown() and max and max ~= 0 then
-			if self._config.animated_change then
+			if self._config and self._config.animated_change then
 				local unitGUID = UnitGUID(unit)
 				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
 				self._UnitGUID = unitGUID

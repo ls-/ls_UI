@@ -352,7 +352,7 @@ do
 	local stagger_proto = {}
 
 	function stagger_proto:PostUpdate(...)
-		if self._config.animated_change then
+		if self._config and self._config.animated_change then
 			self.GainLossIndicators:Update(...)
 		end
 	end
