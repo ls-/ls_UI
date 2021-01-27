@@ -32,7 +32,6 @@ function small_proto:Update()
 		self:UpdateRaidTargetIndicator()
 		self:UpdateThreatIndicator()
 		self:UpdateClassIndicator()
-		self:UpdateCustomTexts()
 	else
 		if self:IsEnabled() then
 			self:Disable()
@@ -69,7 +68,6 @@ function UF:CreateSmallUnitFrame(frame)
 	frame.Name = self:CreateName(frame, frame.TextParent)
 	frame.Portrait = self:CreatePortrait(frame)
 	frame.ClassIndicator = self:CreateClassIndicator(frame)
-	frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
 	frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, frame.TextParent)
 	frame.ThreatIndicator = self:CreateThreatIndicator(frame)
 
@@ -86,6 +84,7 @@ function medium_proto:Update()
 		self:UpdateCastbar()
 		self:UpdateDebuffIndicator()
 		self:UpdateAuras()
+		self:UpdateCustomTexts()
 	end
 end
 
@@ -101,6 +100,7 @@ function UF:CreateMediumUnitFrame(frame)
 	frame.Castbar = self:CreateCastbar(frame)
 	frame.DebuffIndicator = self:CreateDebuffIndicator(frame, frame.TextParent)
 	frame.Auras = self:CreateAuras(frame, frame.__unit)
+	frame.CustomTexts = self:CreateCustomTexts(frame, frame.TextParent)
 
 	return frame
 end

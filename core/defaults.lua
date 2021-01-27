@@ -1394,7 +1394,6 @@ D.profile = {
 					reaction = false,
 				},
 			},
-			custom_texts = {},
 		},
 		focus = {
 			enabled = true,
@@ -1720,7 +1719,6 @@ D.profile = {
 					reaction = false,
 				},
 			},
-			custom_texts = {},
 		},
 		boss = {
 			enabled = true,
