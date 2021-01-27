@@ -888,23 +888,23 @@ function MODULE:Init()
 			Minimap.Border = border
 
 			local left = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-			left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
+			left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep")
+			left:SetTexCoord(0.421875, 0.53125, 0.609375, 0.53125, 0.421875, 0.03125, 0.609375, 0.03125)
 			left:SetSize(16 / 2, 12 / 2)
 			left:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 0, -2)
 			Minimap.SepLeft = left
 
 			local right = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-			right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
+			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep")
+			right:SetTexCoord(0.21875, 0.53125, 0.40625, 0.53125, 0.21875, 0.03125, 0.40625, 0.03125)
 			right:SetSize(16 / 2, 12 / 2)
 			right:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, -2)
 			Minimap.SepRight = right
 
 			local mid = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", "REPEAT", "REPEAT")
-			mid:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
-			mid:SetHorizTile(true)
+			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep", "REPEAT", "REPEAT")
+			mid:SetTexCoord(0.015625, 1, 0.203125, 1, 0.015625, 0, 0.203125, 0)
+			mid:SetVertTile(true)
 			mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
 			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 			Minimap.SepMiddle = mid

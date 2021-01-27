@@ -210,7 +210,7 @@ end
 local DATA = {
 	Left = {
 		texture = {
-			path = "Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-vert",
+			path = "Interface\\AddOns\\ls_UI\\assets\\border-thick-sep",
 			coords = {
 				[1] = {14 / 64, 26 / 64, 1 / 32, 17 / 32},
 				-- [2] = {1 / 64, 13 / 64, 0 / 32, 32 / 32},
@@ -253,7 +253,7 @@ local DATA = {
 	},
 	Right = {
 		texture = {
-			path = "Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-vert",
+			path = "Interface\\AddOns\\ls_UI\\assets\\border-thick-sep",
 			coords = {
 				[1] = {14 / 64, 26 / 64, 1 / 32, 17 / 32},
 				-- [2] = {1 / 64, 13 / 64, 0 / 32, 32 / 32},
