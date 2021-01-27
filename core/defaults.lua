@@ -725,7 +725,7 @@ D.profile = {
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						reaction = true,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -918,7 +918,7 @@ D.profile = {
 			},
 			pet = {
 				enabled = true,
-				width = 112,
+				width = 114,
 				height = 28,
 				point = {
 					ls = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
@@ -1041,7 +1041,7 @@ D.profile = {
 					enabled = true,
 				},
 				auras = {
-					enabled = true,
+					enabled = false,
 					rows = 1,
 					per_row = 4,
 					size_override = 0,
@@ -1333,7 +1333,7 @@ D.profile = {
 		},
 		targettarget = {
 			enabled = true,
-			width = 112,
+			width = 114,
 			height = 28,
 			point = {
 				ls = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
@@ -1658,7 +1658,7 @@ D.profile = {
 		},
 		focustarget = {
 			enabled = true,
-			width = 112,
+			width = 114,
 			height = 28,
 			point = {
 				ls = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
