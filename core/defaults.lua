@@ -1013,8 +1013,6 @@ D.profile = {
 					disable_mouse = false,
 					count = {
 						size = 10,
-						outline = true,
-						shadow = false,
 						h_alignment = "RIGHT",
 						v_alignment = "TOP",
 					},
@@ -1211,8 +1209,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},
@@ -1539,8 +1535,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},
@@ -1884,8 +1878,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},
