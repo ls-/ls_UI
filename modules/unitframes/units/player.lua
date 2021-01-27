@@ -122,7 +122,6 @@ do
 
 		local power = self:CreatePower(frame, textParent)
 		power:SetFrameLevel(level + 4)
-		power:Hide()
 		frame.Power = power
 
 		rightSlot:Capture(power)
@@ -135,7 +134,6 @@ do
 
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(level + 4)
-		addPower:Hide()
 		frame.AdditionalPower = addPower
 
 		leftSlot:Capture(addPower)
