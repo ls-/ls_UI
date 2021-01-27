@@ -618,24 +618,19 @@ local function minimap_UpdateZone(self)
 			if config.zone_text.mode == 1 then
 				zone.BG:Hide()
 				zone.Border:Hide()
-				zone.Glass:Hide()
 				zone.Text:Hide()
 			else
 				if config.zone_text.border then
 					zone.BG:Show()
 					zone.Border:Show()
-					zone.Glass:Show()
 				else
 					zone.BG:Hide()
 					zone.Border:Hide()
-					zone.Glass:Hide()
 				end
 
 				zone.Text:Show()
 			end
 		end
-	else
-		self.Zone.Glass:Show()
 	end
 
 	self:UpdateZoneColor()
@@ -1245,12 +1240,6 @@ function MODULE:Init()
 			text:SetJustifyH("CENTER")
 			text:SetJustifyV("MIDDLE")
 			frame.Text = text
-
-			local glass = frame:CreateTexture(nil, "OVERLAY", nil, 0)
-			glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-			glass:SetAllPoints()
-			glass:Hide()
-			frame.Glass = glass
 
 			if isSquare then
 				frame:SetPoint("TOPLEFT", textureParent, "TOPLEFT", 0, 0)
