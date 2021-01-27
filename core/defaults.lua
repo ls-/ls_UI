@@ -666,6 +666,64 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				auras = {
+					enabled = false,
+					rows = 4,
+					per_row = 1,
+					size_override = 28,
+					x_growth = "LEFT",
+					y_growth = "DOWN",
+					disable_mouse = false,
+					count = {
+						size = 10,
+						h_alignment = "RIGHT",
+						v_alignment = "TOP",
+					},
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							v_alignment = "BOTTOM",
+						},
+					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
+					},
+					filter = {
+						custom = {
+							["Blacklist"] = true,
+							["M+ Affixes"] = true,
+						},
+						friendly = {
+							buff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								misc = false,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+								misc = false,
+							},
+						},
+					},
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = 1,
+						y = -4,
+					},
+				},
 				custom_texts = {},
 			},
 		},

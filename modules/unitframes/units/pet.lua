@@ -24,6 +24,7 @@ do
 			self:UpdateHealthPrediction()
 			self:UpdatePower()
 			self:UpdateCastbar()
+			self:UpdateAuras()
 			self:UpdateRaidTargetIndicator()
 			self:UpdateDebuffIndicator()
 			self:UpdateThreatIndicator()
@@ -78,7 +79,7 @@ do
 		powerBG:SetAllPoints()
 
 		frame.Castbar = self:CreateCastbar(frame)
-
+		frame.Auras = self:CreateAuras(frame, frame.__unit)
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textureParent)
 
 		frame.DebuffIndicator = self:CreateDebuffIndicator(frame, textureParent)
