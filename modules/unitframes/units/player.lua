@@ -42,7 +42,6 @@ do
 			end
 
 			self:UpdateCastbar()
-			self:UpdateName()
 			self:UpdateRaidTargetIndicator()
 			self:UpdatePvPIndicator()
 			self:UpdateDebuffIndicator()
@@ -176,8 +175,6 @@ do
 		frame.RaidTargetIndicator = self:CreateRaidTargetIndicator(frame, textParent)
 
 		frame.Castbar = self:CreateCastbar(frame)
-
-		frame.Name = self:CreateName(frame, textParent)
 
 		local status = textParent:CreateFontString(nil, "OVERLAY")
 		status:SetFont(GameFontNormal:GetFont(), 16)

@@ -516,27 +516,6 @@ D.profile = {
 						y = 190,
 					},
 				},
-				name = {
-					size = 12,
-					tag = "",
-					h_alignment = "CENTER",
-					v_alignment = "MIDDLE",
-					word_wrap = false,
-					point1 = {
-						p = "CENTER",
-						anchor = "",
-						rP = "CENTER",
-						x = 0,
-						y = 0,
-					},
-					point2 = {
-						p = "",
-						anchor = "",
-						rP = "CENTER",
-						x = 0,
-						y = 0,
-					},
-				},
 				raid_target = {
 					enabled = true,
 					size = 24,
