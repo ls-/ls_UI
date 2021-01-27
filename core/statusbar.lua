@@ -700,6 +700,8 @@ do
 	end
 
 	function E:SmoothBar(bar)
+		if handledObjects[bar] then return end
+
 		bar._min, bar._max = bar:GetMinMaxValues()
 		bar._value = bar:GetValue()
 
@@ -716,6 +718,8 @@ do
 	end
 
 	function E:DesmoothBar(bar)
+		if not handledObjects[bar] then return end
+
 		if activeObjects[bar] then
 			bar:SetValue_(activeObjects[bar])
 			activeObjects[bar] = nil
