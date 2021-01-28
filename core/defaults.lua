@@ -428,8 +428,8 @@ D.profile = {
 			alpha = 0.8,
 		},
 		change = {
-			animated = false,
-			smooth = false,
+			animated = true,
+			smooth = true,
 		},
 		ls = {
 			player = {
