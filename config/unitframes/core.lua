@@ -157,7 +157,6 @@ local function createUnitFramePanel(order, unit, name)
 			-- per_row = {}, -- 9
 			-- spacing = {}, -- 10
 			-- growth_dir = {}, -- 11
-			-- pvp = {}, -- 12
 			threat = {
 				order = 13,
 				type = "toggle",
@@ -167,6 +166,7 @@ local function createUnitFramePanel(order, unit, name)
 				end,
 				set = function(_, value)
 					C.db.profile.units[unit].threat.enabled = value
+
 					UNITFRAMES:For(unit, "UpdateThreatIndicator")
 				end,
 			}, -- 13
@@ -183,13 +183,28 @@ local function createUnitFramePanel(order, unit, name)
 					UNITFRAMES:For(unit, "UpdatePvPIndicator")
 				end,
 			}, -- 14
-			spacer_2 = {
+			mirror_widgets = {
 				order = 15,
+				type = "toggle",
+				name = L["MIRROR_WIDGETS"],
+				desc = L["MIRROR_WIDGETS_DESC"],
+				get = function()
+					return C.db.profile.units[unit].mirror_widgets
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].mirror_widgets = value
+
+					UNITFRAMES:For(unit, "UpdateConfig")
+					UNITFRAMES:For(unit, "AlignWidgets")
+				end,
+			}, -- 15
+			spacer_2 = {
+				order = 16,
 				type = "description",
 				name = " ",
-			}, -- 15
+			}, -- 16
 			border = {
-				order = 16,
+				order = 17,
 				type = "group",
 				name = L["BORDER_COLOR"],
 				inline = true,
@@ -213,48 +228,50 @@ local function createUnitFramePanel(order, unit, name)
 						name = L["REACTION"],
 					},
 				},
-			}, -- 16
+			}, -- 17
 			spacer_4 = {
-				order = 17,
+				order = 18,
 				type = "description",
 				name = " ",
-			}, -- 17
-			health = CONFIG:CreateUnitFrameHealthPanel(18, unit),
-			power = CONFIG:CreateUnitFramePowerPanel(19, unit),
-			-- alt_power = {}, -- 20
-			-- class_power = {}, -- 20
-			-- castbar = {}, -- 21
-			-- auras = {}, -- 22
-			portrait = CONFIG:CreateUnitFramePortraitPanel(23, unit),
-			raid_target = CONFIG:CreateUnitFrameRaidTargetPanel(24, unit),
-			name = CONFIG:CreateUnitFrameNamePanel(25, unit),
-			debuff = CONFIG:CreateUnitFrameDebuffIconsPanel(26, unit),
+			}, -- 18
+			health = CONFIG:CreateUnitFrameHealthPanel(19, unit),
+			power = CONFIG:CreateUnitFramePowerPanel(20, unit),
+			-- alt_power = {}, -- 21
+			-- class_power = {}, -- 21
+			-- castbar = {}, -- 22
+			-- auras = {}, -- 23
+			portrait = CONFIG:CreateUnitFramePortraitPanel(24, unit),
+			raid_target = CONFIG:CreateUnitFrameRaidTargetPanel(25, unit),
+			name = CONFIG:CreateUnitFrameNamePanel(26, unit),
+			debuff = CONFIG:CreateUnitFrameDebuffIconsPanel(27, unit),
 		},
 	}
 
 	if unit == "player" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerPanel(20, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(21, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(27, unit)
+		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerPanel(21, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 
 		if E.UI_LAYOUT == "traditional" then
-			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(22, unit)
+			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
 		else
 			temp.args.copy.hidden = isLSLayout
 			temp.args.width.hidden = isLSLayout
 			temp.args.height.hidden = isLSLayout
 			temp.args.top_inset = nil
 			temp.args.bottom_inset = nil
+			temp.args.mirror_widgets = nil
 			temp.args.portrait = nil
 			temp.args.name = nil
 		end
 	elseif unit == "pet" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(21, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(27, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 		temp.args.pvp = nil
+		temp.args.mirror_widgets = nil
 
 		if E.UI_LAYOUT == "ls" then
 			temp.args.copy.hidden = isLSLayout
@@ -268,32 +285,35 @@ local function createUnitFramePanel(order, unit, name)
 		end
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(21, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(27, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 	elseif unit == "targettarget" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.debuff = nil
 		temp.args.pvp = nil
+		temp.args.mirror_widgets = nil
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(21, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(27, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 	elseif unit == "focustarget" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.debuff = nil
 		temp.args.pvp = nil
+		temp.args.mirror_widgets = nil
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
-		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerPanel(20, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(21, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(27, unit)
+		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerPanel(21, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 		temp.args.pvp = nil
+		temp.args.mirror_widgets = nil
 
 		temp.args.per_row = {
-			order = 9,
+			order = 10,
 			type = "range",
 			name = L["PER_ROW"],
 			min = 1, max = 5, step = 1,
@@ -310,7 +330,7 @@ local function createUnitFramePanel(order, unit, name)
 		}
 
 		temp.args.spacing = {
-			order = 10,
+			order = 11,
 			type = "range",
 			name = L["SPACING"],
 			min = 8, max = 64, step = 2,
@@ -327,7 +347,7 @@ local function createUnitFramePanel(order, unit, name)
 		}
 
 		temp.args.growth_dir = {
-			order = 11,
+			order = 12,
 			type = "select",
 			name = L["GROWTH_DIR"],
 			values = CONFIG.GROWTH_DIRS,
