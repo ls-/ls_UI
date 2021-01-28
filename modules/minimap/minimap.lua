@@ -618,24 +618,19 @@ local function minimap_UpdateZone(self)
 			if config.zone_text.mode == 1 then
 				zone.BG:Hide()
 				zone.Border:Hide()
-				zone.Glass:Hide()
 				zone.Text:Hide()
 			else
 				if config.zone_text.border then
 					zone.BG:Show()
 					zone.Border:Show()
-					zone.Glass:Show()
 				else
 					zone.BG:Hide()
 					zone.Border:Hide()
-					zone.Glass:Hide()
 				end
 
 				zone.Text:Show()
 			end
 		end
-	else
-		self.Zone.Glass:Show()
 	end
 
 	self:UpdateZoneColor()
@@ -883,28 +878,28 @@ function MODULE:Init()
 
 			local border = E:CreateBorder(textureParent)
 			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
-			border:SetOffset(-6)
+			border:SetOffset(-8)
 			border:SetSize(16)
 			Minimap.Border = border
 
 			local left = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-			left:SetTexCoord(1 / 64, 17 / 64, 11 / 32, 23 / 32)
+			left:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep")
+			left:SetTexCoord(0.421875, 0.53125, 0.609375, 0.53125, 0.421875, 0.03125, 0.609375, 0.03125)
 			left:SetSize(16 / 2, 12 / 2)
 			left:SetPoint("BOTTOMLEFT", Minimap, "TOPLEFT", 0, -2)
 			Minimap.SepLeft = left
 
 			local right = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz")
-			right:SetTexCoord(18 / 64, 34 / 64, 11 / 32, 23 / 32)
+			right:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep")
+			right:SetTexCoord(0.21875, 0.53125, 0.40625, 0.53125, 0.21875, 0.03125, 0.40625, 0.03125)
 			right:SetSize(16 / 2, 12 / 2)
 			right:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, -2)
 			Minimap.SepRight = right
 
 			local mid = textureParent:CreateTexture(nil, "OVERLAY", nil, 2)
-			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-sep-horiz", "REPEAT", "REPEAT")
-			mid:SetTexCoord(0 / 64, 64 / 64, 0 / 32, 12 / 32)
-			mid:SetHorizTile(true)
+			mid:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-sep", "REPEAT", "REPEAT")
+			mid:SetTexCoord(0.015625, 1, 0.203125, 1, 0.015625, 0, 0.203125, 0)
+			mid:SetVertTile(true)
 			mid:SetPoint("TOPLEFT", left, "TOPRIGHT", 0, 0)
 			mid:SetPoint("BOTTOMRIGHT", right, "BOTTOMLEFT", 0, 0)
 			Minimap.SepMiddle = mid
@@ -1246,12 +1241,6 @@ function MODULE:Init()
 			text:SetJustifyV("MIDDLE")
 			frame.Text = text
 
-			local glass = frame:CreateTexture(nil, "OVERLAY", nil, 0)
-			glass:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-			glass:SetAllPoints()
-			glass:Hide()
-			frame.Glass = glass
-
 			if isSquare then
 				frame:SetPoint("TOPLEFT", textureParent, "TOPLEFT", 0, 0)
 				frame:SetPoint("BOTTOMRIGHT", textureParent, "TOPRIGHT", 0, -18)
@@ -1262,7 +1251,7 @@ function MODULE:Init()
 				local border = E:CreateBorder(frame)
 				border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 				border:SetSize(16)
-				border:SetOffset(-6)
+				border:SetOffset(-8)
 				border:Hide()
 				frame.Border = border
 
@@ -1387,6 +1376,8 @@ function MODULE:Init()
 			button:RegisterForDrag("LeftButton")
 			Minimap.Tracking = button
 
+			button:SetScript("OnMouseDown", nil)
+			button:SetScript("OnMouseUp", nil)
 			button:HookScript("OnEnter", function(self)
 				if GameTooltip:IsOwned(self) then
 					local p, rP, x, y = getTooltipPoint(self)
@@ -1395,7 +1386,9 @@ function MODULE:Init()
 					GameTooltip:SetPoint(p, self, rP, x, y)
 				end
 			end)
-			button:HookScript("OnClick", function(self)
+			button:SetScript("OnClick", function(self)
+				MiniMapTracking_OnMouseDown(self)
+
 				local menu = UIDropDownMenu_GetCurrentDropDown()
 				if menu and menu == MiniMapTrackingDropDown then
 					local p, rP, x, y = getTooltipPoint(self)

@@ -9,25 +9,36 @@ local unpack = _G.unpack
 
 -- Mine
 local sections = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", "TOP", "BOTTOM", "LEFT", "RIGHT"}
+local objectToWidget = {}
 
-local function border_SetOffset(self, offset)
-	self.offset = offset
-	self.TOPLEFT:SetPoint("BOTTOMRIGHT", self.parent, "TOPLEFT", -offset, offset)
-	self.TOPRIGHT:SetPoint("BOTTOMLEFT", self.parent, "TOPRIGHT", offset, offset)
-	self.BOTTOMLEFT:SetPoint("TOPRIGHT", self.parent, "BOTTOMLEFT", -offset, -offset)
-	self.BOTTOMRIGHT:SetPoint("TOPLEFT", self.parent, "BOTTOMRIGHT", offset, -offset)
+local function onSizeChanged(self, w, h)
+	local border = objectToWidget[self]
+
+	local tile = (w + 2 * border.__offset) / 16
+	border.TOP:SetTexCoord(0.25, tile, 0.375, tile, 0.25, 0, 0.375, 0)
+	border.BOTTOM:SetTexCoord(0.375, tile, 0.5, tile, 0.375, 0, 0.5, 0)
+
+	tile = (h + 2 * border.__offset) / 16
+	border.LEFT:SetTexCoord(0, 0.125, 0, tile)
+	border.RIGHT:SetTexCoord(0.125, 0.25, 0, tile)
 end
 
-local function border_SetTexture(self, texture)
-	if type(texture) == "table" then
-		self.calcTile = false
+local border_proto = {}
 
+function border_proto:SetOffset(offset)
+	self.__offset = offset
+	self.TOPLEFT:SetPoint("BOTTOMRIGHT", self.__parent, "TOPLEFT", -offset, offset)
+	self.TOPRIGHT:SetPoint("BOTTOMLEFT", self.__parent, "TOPRIGHT", offset, offset)
+	self.BOTTOMLEFT:SetPoint("TOPRIGHT", self.__parent, "BOTTOMLEFT", -offset, -offset)
+	self.BOTTOMRIGHT:SetPoint("TOPLEFT", self.__parent, "BOTTOMRIGHT", offset, -offset)
+end
+
+function border_proto:SetTexture(texture)
+	if type(texture) == "table" then
 		for _, v in next, sections do
 			self[v]:SetColorTexture(unpack(texture))
 		end
 	else
-		self.calcTile = true
-
 		for i, v in next, sections do
 			if i > 4 then
 				self[v]:SetTexture(texture, "REPEAT", "REPEAT")
@@ -38,12 +49,8 @@ local function border_SetTexture(self, texture)
 	end
 end
 
-local function border_SetSize(self, size)
-	if size < 1 then
-		size = 1
-	end
-
-	self.size = size
+function border_proto:SetSize(size)
+	self.__size = size
 	self.TOPLEFT:SetSize(size, size)
 	self.TOPRIGHT:SetSize(size, size)
 	self.BOTTOMLEFT:SetSize(size, size)
@@ -53,53 +60,54 @@ local function border_SetSize(self, size)
 	self.LEFT:SetWidth(size)
 	self.RIGHT:SetWidth(size)
 
-	if self.calcTile then
-		local tile = (self.parent:GetWidth() + 2 * self.offset) / 16
-		self.TOP:SetTexCoord(0.25, tile, 0.375, tile, 0.25, 0, 0.375, 0)
-		self.BOTTOM:SetTexCoord(0.375, tile, 0.5, tile, 0.375, 0, 0.5, 0)
-
-		tile = (self.parent:GetHeight() + 2 * self.offset) / 16
-		self.LEFT:SetTexCoord(0, 0.125, 0, tile)
-		self.RIGHT:SetTexCoord(0.125, 0.25, 0, tile)
-	end
+	onSizeChanged(self.__parent, self.__parent:GetWidth(), self.__parent:GetHeight())
 end
 
-local function border_Hide(self)
+function border_proto:Hide()
 	for _, v in next, sections do
 		self[v]:Hide()
 	end
 end
 
-local function border_Show(self)
+function border_proto:Show()
 	for _, v in next, sections do
 		self[v]:Show()
 	end
 end
 
-local function border_GetVertexColor(self)
+function border_proto:SetShown(isShown)
+	for _, v in next, sections do
+		self[v]:SetShown(isShown)
+	end
+end
+
+function border_proto:GetVertexColor()
 	return self.TOPLEFT:GetVertexColor()
 end
 
-local function border_SetVertexColor(self, r, g, b, a)
+function border_proto:SetVertexColor(r, g, b, a)
 	for _, v in next, sections do
 		self[v]:SetVertexColor(r, g, b, a)
 	end
 end
 
-local function border_IsObjectType(_, t)
+function border_proto:SetAlpha(a)
+	for _, v in next, sections do
+		self[v]:SetAlpha(a)
+	end
+end
+
+function border_proto:IsObjectType(_, t)
 	return t == "Border"
 end
 
 function E:CreateBorder(parent, drawLayer, drawSubLevel)
-	local border = {
-		calcTile = true,
-		offset = 0,
-		parent = parent,
-		size = 1,
-	}
+	local border = Mixin({__parent = parent}, border_proto)
 
 	for _, v in next, sections do
 		border[v] = parent:CreateTexture(nil, drawLayer or "OVERLAY", nil, drawSubLevel or 1)
+		border[v]:SetSnapToPixelGrid(false)
+		border[v]:SetTexelSnappingBias(0)
 	end
 
 	border.TOPLEFT:SetTexCoord(0.5, 0.625, 0, 1)
@@ -119,14 +127,11 @@ function E:CreateBorder(parent, drawLayer, drawSubLevel)
 	border.RIGHT:SetPoint("TOPRIGHT", border.TOPRIGHT, "BOTTOMRIGHT", 0, 0)
 	border.RIGHT:SetPoint("BOTTOMRIGHT", border.BOTTOMRIGHT, "TOPRIGHT", 0, 0)
 
-	border.GetVertexColor = border_GetVertexColor
-	border.Hide = border_Hide
-	border.IsObjectType = border_IsObjectType
-	border.SetOffset = border_SetOffset
-	border.SetSize = border_SetSize
-	border.SetTexture = border_SetTexture
-	border.SetVertexColor = border_SetVertexColor
-	border.Show = border_Show
+	parent:HookScript("OnSizeChanged", onSizeChanged)
+	objectToWidget[parent] = border
+
+	border:SetOffset(-8)
+	border:SetSize(16)
 
 	return border
 end

@@ -10,13 +10,6 @@ local next = _G.next
 local select = _G.select
 local unpack = _G.unpack
 
--- Blizz
-local C_MountJournal = _G.C_MountJournal
-
---[[ luacheck: globals
-	CreateFrame GameTooltip UIParent UnitIsFriend UnitIsUnit
-]]
-
 -- Mine
 local MOUNTS = {}
 
@@ -167,38 +160,55 @@ local filterFunctions = {
 	end,
 }
 
-local function button_UpdateTooltip(self)
+local button_proto = {}
+
+function button_proto:UpdateTooltip()
+	if GameTooltip:IsForbidden() then return end
+
 	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
 end
 
-local function button_OnEnter(self)
-	if not self:IsVisible() then return end
+function button_proto:OnEnter()
+	if GameTooltip:IsForbidden() or not self:IsVisible() then return end
 
-	GameTooltip:SetOwner(self, self:GetParent().tooltipAnchor)
+	-- Avoid parenting GameTooltip to frames with anchoring restrictions,
+	-- otherwise it'll inherit said restrictions which will cause issues with
+	-- its further positioning, clamping, etc
+	GameTooltip:SetOwner(self, self:GetParent().__restricted and "ANCHOR_CURSOR" or self:GetParent().tooltipAnchor)
 	self:UpdateTooltip()
 end
 
-local function button_OnLeave()
+function button_proto:OnLeave()
+	if GameTooltip:IsForbidden() then return end
+
 	GameTooltip:Hide()
 end
 
-local function element_CreateAuraIcon(self, index)
+local element_proto = {
+	showDebuffType = true,
+	showStealableBuffs = true,
+	spacing = 4,
+}
+
+function element_proto:CreateIcon(index)
 	local config = self._config
 	if not config then
 		self:UpdateConfig()
 		config = self._config
 	end
 
-	local button = E:CreateButton(self, "$parentAura" .. index, true, true, true)
+	local button = Mixin(E:CreateButton(self, "$parentAura" .. index, true, true, true), button_proto)
+	button:SetScript("OnEnter", button.OnEnter)
+	button:SetScript("OnLeave", button.OnLeave)
 
 	button.icon = button.Icon
 	button.Icon = nil
 
 	local count = button.Count
 	count:UpdateFont(config.count.size)
-	count:SetWordWrap(false)
 	count:SetJustifyH(config.count.h_alignment)
 	count:SetJustifyV(config.count.v_alignment)
+	count:SetWordWrap(false)
 	count:SetAllPoints()
 	button.count = count
 	button.Count = nil
@@ -228,14 +238,10 @@ local function element_CreateAuraIcon(self, index)
 	auraType:SetSize(config.type.size, config.type.size)
 	button.AuraType = auraType
 
-	button.UpdateTooltip = button_UpdateTooltip
-	button:SetScript("OnEnter", button_OnEnter)
-	button:SetScript("OnLeave", button_OnLeave)
-
 	return button
 end
 
-local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
+function element_proto:PostUpdateIcon(_, aura, _, _, _, _, debuffType)
 	if aura.isDebuff then
 		aura.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
 
@@ -250,8 +256,8 @@ local function element_PostUpdateIcon(self, _, aura, _, _, _, _, debuffType)
 	end
 end
 
-local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+function element_proto:UpdateConfig()
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
 
 	local size = self._config.size_override ~= 0 and self._config.size_override
@@ -259,7 +265,7 @@ local function element_UpdateConfig(self)
 	self._config.size = m_min(m_max(size, 24), 64)
 end
 
-local function element_UpdateCooldownConfig(self)
+function element_proto:UpdateCooldownConfig()
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
 			text = {},
@@ -280,7 +286,7 @@ local function element_UpdateCooldownConfig(self)
 	end
 end
 
-local function element_UpdateFont(self)
+function element_proto:UpdateFonts()
 	local config = self._config.count
 	local count
 
@@ -289,11 +295,10 @@ local function element_UpdateFont(self)
 		count:UpdateFont(config.size)
 		count:SetJustifyH(config.h_alignment)
 		count:SetJustifyV(config.v_alignment)
-		count:SetWordWrap(false)
 	end
 end
 
-local function element_UpdateAuraTypeIcon(self)
+function element_proto:UpdateAuraTypeIcon()
 	local config = self._config.type
 	local auraType
 
@@ -305,7 +310,7 @@ local function element_UpdateAuraTypeIcon(self)
 	end
 end
 
-local function element_UpdateSize(self)
+function element_proto:UpdateSize()
 	local config = self._config
 
 	self.size = config.size
@@ -314,7 +319,7 @@ local function element_UpdateSize(self)
 	self:SetSize(config.size * config.per_row + self.spacing * (config.per_row - 1), config.size * config.rows + self.spacing * (config.rows - 1))
 end
 
-local function element_UpdatePoints(self)
+function element_proto:UpdatePoints()
 	local config = self._config.point1
 
 	self:ClearAllPoints()
@@ -324,7 +329,7 @@ local function element_UpdatePoints(self)
 	end
 end
 
-local function element_UpdateGrowthDirection(self)
+function element_proto:UpdateGrowthDirection()
 	local config = self._config
 
 	self["growth-x"] = config.x_growth
@@ -345,15 +350,17 @@ local function element_UpdateGrowthDirection(self)
 	end
 end
 
-local function element_UpdateMouse(self)
+function element_proto:UpdateMouse()
 	self.disableMouse = self._config.disable_mouse
 end
 
-local function element_UpdateColors(self)
+function element_proto:UpdateColors()
 	self:ForceUpdate()
 end
 
-local function frame_UpdateAuras(self)
+local frame_proto = {}
+
+function frame_proto:UpdateAuras()
 	local element = self.Auras
 	element:UpdateConfig()
 	element:UpdateCooldownConfig()
@@ -361,7 +368,7 @@ local function frame_UpdateAuras(self)
 	element:UpdatePoints()
 	element:UpdateGrowthDirection()
 	element:UpdateAuraTypeIcon()
-	element:UpdateFont()
+	element:UpdateFonts()
 	element:UpdateMouse()
 
 	if element._config.enabled and not self:IsElementEnabled("Auras") then
@@ -376,26 +383,12 @@ local function frame_UpdateAuras(self)
 end
 
 function UF:CreateAuras(frame, unit)
-	local element = CreateFrame("Frame", nil, frame)
+	Mixin(frame, frame_proto)
+
+	local element = Mixin(CreateFrame("Frame", nil, frame), element_proto)
 	element:SetSize(48, 48)
 
-	element.CreateIcon = element_CreateAuraIcon
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
-	element.PostUpdateIcon = element_PostUpdateIcon
-	element.showDebuffType = true
-	element.showStealableBuffs = true
-	element.spacing = 4
-	element.UpdateAuraTypeIcon = element_UpdateAuraTypeIcon
-	element.UpdateColors = element_UpdateColors
-	element.UpdateConfig = element_UpdateConfig
-	element.UpdateCooldownConfig = element_UpdateCooldownConfig
-	element.UpdateFont = element_UpdateFont
-	element.UpdateGrowthDirection = element_UpdateGrowthDirection
-	element.UpdateMouse = element_UpdateMouse
-	element.UpdatePoints = element_UpdatePoints
-	element.UpdateSize = element_UpdateSize
-
-	frame.UpdateAuras = frame_UpdateAuras
 
 	return element
 end

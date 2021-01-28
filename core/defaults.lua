@@ -413,6 +413,9 @@ D.global = {
 			is_init = false,
 		},
 	},
+	textures = {
+		statusbar = "LS",
+	},
 }
 
 D.profile = {
@@ -420,6 +423,13 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
+		},
+		inlay = {
+			alpha = 0.8,
+		},
+		change = {
+			animated = true,
+			smooth = true,
 		},
 		ls = {
 			player = {
@@ -432,7 +442,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -453,37 +462,10 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
-							size = 12,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOM",
-								anchor = "Health.Text",
-								rP = "TOP",
-								x = 0,
-								y = 2,
-							},
-						},
-						heal_absorb_text = {
-							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
-							size = 12,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOM",
-								anchor = "Health.Text",
-								rP = "TOP",
-								x = 0,
-								y = 16,
-							},
-						},
 					},
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -504,7 +486,6 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					prediction = {
 						enabled = true,
@@ -535,27 +516,6 @@ D.profile = {
 						y = 190,
 					},
 				},
-				name = {
-					size = 12,
-					tag = "",
-					h_alignment = "CENTER",
-					v_alignment = "MIDDLE",
-					word_wrap = false,
-					point1 = {
-						p = "CENTER",
-						anchor = "",
-						rP = "CENTER",
-						x = 0,
-						y = 0,
-					},
-					point2 = {
-						p = "",
-						anchor = "",
-						rP = "CENTER",
-						x = 0,
-						y = 0,
-					},
-				},
 				raid_target = {
 					enabled = true,
 					size = 24,
@@ -569,13 +529,6 @@ D.profile = {
 				},
 				pvp = {
 					enabled = true,
-					point1 = {
-						p = "TOP",
-						anchor = "TextureParent",
-						rP = "BOTTOM",
-						x = 0,
-						y = 10,
-					},
 				},
 				debuff = {
 					enabled = true,
@@ -608,7 +561,6 @@ D.profile = {
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "VERTICAL",
 					color = {
 						class = false,
@@ -629,37 +581,10 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-						heal_absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
 					},
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "VERTICAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -720,6 +645,64 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				auras = {
+					enabled = false,
+					rows = 4,
+					per_row = 1,
+					size_override = 28,
+					x_growth = "LEFT",
+					y_growth = "DOWN",
+					disable_mouse = false,
+					count = {
+						size = 10,
+						h_alignment = "RIGHT",
+						v_alignment = "TOP",
+					},
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							v_alignment = "BOTTOM",
+						},
+					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
+					},
+					filter = {
+						custom = {
+							["Blacklist"] = true,
+							["M+ Affixes"] = true,
+						},
+						friendly = {
+							buff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								misc = false,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+								misc = false,
+							},
+						},
+					},
+					point1 = {
+						p = "TOPRIGHT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = 1,
+						y = -4,
+					},
+				},
 				custom_texts = {},
 			},
 		},
@@ -728,21 +711,21 @@ D.profile = {
 				enabled = true,
 				width = 250,
 				height = 52,
+				mirror_widgets = true,
 				point = {
 					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				insets = {
-					t_height = 12,
-					b_height = 12,
+					t_size = 0.23,
+					b_size = 0.23,
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
-						reaction = true,
+						reaction = false,
 					},
 					text = {
 						tag = "[ls:health:cur]",
@@ -759,37 +742,10 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "[ls:color:absorb-damage][ls:absorb:damage]|r",
-							size = 10,
-							h_alignment = "RIGHT",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "BOTTOMRIGHT",
-								anchor = "Health",
-								rP = "RIGHT",
-								x = -2,
-								y = 1,
-							},
-						},
-						heal_absorb_text = {
-							tag = "[ls:color:absorb-heal][ls:absorb:heal]|r",
-							size = 10,
-							h_alignment = "RIGHT",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "TOPRIGHT",
-								anchor = "Health",
-								rP = "RIGHT",
-								x = -2,
-								y = -1,
-							},
-						},
 					},
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:power:cur-max]",
@@ -810,7 +766,6 @@ D.profile = {
 				},
 				class_power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					prediction = {
 						enabled = true,
@@ -880,13 +835,6 @@ D.profile = {
 				},
 				pvp = {
 					enabled = true,
-					point1 = {
-						p = "TOPLEFT",
-						anchor = "TextureParent",
-						rP = "BOTTOMLEFT",
-						x = 8,
-						y = -2,
-					},
 				},
 				debuff = {
 					enabled = true,
@@ -970,19 +918,18 @@ D.profile = {
 			},
 			pet = {
 				enabled = true,
-				width = 112,
+				width = 114,
 				height = 28,
 				point = {
 					ls = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 					traditional = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 				},
 				insets = {
-					t_height = 12,
-					b_height = 12,
+					t_size = 0.23,
+					b_size = 0.33,
 				},
 				health = {
 					enabled = true,
-					change_threshold = 0.001,
 					orientation = "HORIZONTAL",
 					color = {
 						class = false,
@@ -1003,37 +950,10 @@ D.profile = {
 					},
 					prediction = {
 						enabled = true,
-						absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
-						heal_absorb_text = {
-							tag = "",
-							size = 10,
-							h_alignment = "CENTER",
-							v_alignment = "MIDDLE",
-							point1 = {
-								p = "CENTER",
-								anchor = "Health",
-								rP = "CENTER",
-								x = 0,
-								y = 0,
-							},
-						},
 					},
 				},
 				power = {
 					enabled = true,
-					change_threshold = 0.01,
 					orientation = "HORIZONTAL",
 					text = {
 						tag = "[ls:color:power][ls:power:cur]|r",
@@ -1120,6 +1040,64 @@ D.profile = {
 				threat = {
 					enabled = true,
 				},
+				auras = {
+					enabled = false,
+					rows = 1,
+					per_row = 4,
+					size_override = 0,
+					x_growth = "RIGHT",
+					y_growth = "UP",
+					disable_mouse = false,
+					count = {
+						size = 10,
+						h_alignment = "RIGHT",
+						v_alignment = "TOP",
+					},
+					cooldown = {
+						text = {
+							enabled = true,
+							size = 10,
+							v_alignment = "BOTTOM",
+						},
+					},
+					type = {
+						size = 12,
+						position = "TOPLEFT",
+						debuff_type = false,
+					},
+					filter = {
+						custom = {
+							["Blacklist"] = true,
+							["M+ Affixes"] = true,
+						},
+						friendly = {
+							buff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								misc = false,
+							},
+							debuff = {
+								boss = true,
+								selfcast = true,
+								selfcast_permanent = true,
+								player = true,
+								player_permanent = true,
+								dispellable = true,
+								misc = false,
+							},
+						},
+					},
+					point1 = {
+						p = "BOTTOMLEFT",
+						anchor = "",
+						rP = "TOPLEFT",
+						x = -1,
+						y = 7,
+					},
+				},
 				border = {
 					color = {
 						class = false,
@@ -1133,17 +1111,17 @@ D.profile = {
 			enabled = true,
 			width = 250,
 			height = 52,
+			mirror_widgets = false,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
 			},
 			insets = {
-				t_height = 12,
-				b_height = 12,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1164,37 +1142,10 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-max]",
@@ -1270,13 +1221,6 @@ D.profile = {
 			},
 			pvp = {
 				enabled = true,
-				point1 = {
-					p = "TOPRIGHT",
-					anchor = "TextureParent",
-					rP = "BOTTOMRIGHT",
-					x = -8,
-					y = -2,
-				},
 			},
 			debuff = {
 				enabled = true,
@@ -1302,8 +1246,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},
@@ -1391,19 +1333,18 @@ D.profile = {
 		},
 		targettarget = {
 			enabled = true,
-			width = 112,
+			width = 114,
 			height = 28,
 			point = {
 				ls = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 				traditional = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			insets = {
-				t_height = 12,
-				b_height = 12,
+				t_size = 0.23,
+				b_size = 0.33,
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1424,37 +1365,10 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
 				enabled = false,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
@@ -1517,23 +1431,22 @@ D.profile = {
 					reaction = false,
 				},
 			},
-			custom_texts = {},
 		},
 		focus = {
 			enabled = true,
 			width = 250,
 			height = 52,
+			mirror_widgets = false,
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
 			},
 			insets = {
-				t_height = 12,
-				b_height = 12,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1554,37 +1467,10 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-max]",
@@ -1660,13 +1546,6 @@ D.profile = {
 			},
 			pvp = {
 				enabled = true,
-				point1 = {
-					p = "TOPLEFT",
-					anchor = "TextureParent",
-					rP = "BOTTOMLEFT",
-					x = 8,
-					y = -2,
-				},
 			},
 			debuff = {
 				enabled = true,
@@ -1692,8 +1571,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},
@@ -1781,19 +1658,18 @@ D.profile = {
 		},
 		focustarget = {
 			enabled = true,
-			width = 112,
+			width = 114,
 			height = 28,
 			point = {
 				ls = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
 				traditional = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			insets = {
-				t_height = 12,
-				b_height = 12,
+				t_size = 0.23,
+				b_size = 0.33,
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1814,37 +1690,10 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
 				enabled = false,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
@@ -1907,7 +1756,6 @@ D.profile = {
 					reaction = false,
 				},
 			},
-			custom_texts = {},
 		},
 		boss = {
 			enabled = true,
@@ -1922,12 +1770,11 @@ D.profile = {
 				traditional = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
 			},
 			insets = {
-				t_height = 12,
-				b_height = 12,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,
-				change_threshold = 0.001,
 				orientation = "HORIZONTAL",
 				color = {
 					class = false,
@@ -1948,37 +1795,10 @@ D.profile = {
 				},
 				prediction = {
 					enabled = true,
-					absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
-					heal_absorb_text = {
-						tag = "",
-						size = 10,
-						h_alignment = "CENTER",
-						v_alignment = "MIDDLE",
-						point1 = {
-							p = "CENTER",
-							anchor = "Health",
-							rP = "CENTER",
-							x = 0,
-							y = 0,
-						},
-					},
 				},
 			},
 			power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:power:cur-perc]",
@@ -1996,7 +1816,6 @@ D.profile = {
 			},
 			alt_power = {
 				enabled = true,
-				change_threshold = 0.01,
 				orientation = "HORIZONTAL",
 				text = {
 					tag = "[ls:altpower:cur-perc]",
@@ -2094,8 +1913,6 @@ D.profile = {
 				disable_mouse = false,
 				count = {
 					size = 10,
-					outline = true,
-					shadow = false,
 					h_alignment = "RIGHT",
 					v_alignment = "TOP",
 				},

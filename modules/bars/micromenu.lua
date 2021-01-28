@@ -357,7 +357,7 @@ local function handleMicroButton(button)
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-4)
+	border:SetOffset(-8)
 	button.Border = border
 
 	local flash = button.Flash

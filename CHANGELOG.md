@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## Version 90002.06
+
+- Refactored a lot of UF-related code;
+- New horizontal UF textures;
+- Added an option to adjust UF gloss. Can be found at /LSUI > Unit Frames > Gloss slider. It affects
+  all UFs, including the player orb, for it to work better all textures were adjusted to be more or
+  less the same in terms of opacity and colours;
+- Added an option to toggle UF status bars' gain/loss animations and smoothing. Can be found at
+  /LSUI > Unit Frames > Smooth and Animated sliders;
+- Streamlined UF options. Some old options were removed, and few new options were added:
+  - Reworked how top and bottom insets are sized. Now they scale depending on the height of the UF.
+    The max size is 33% of the height, the minimum size is 1% or 4px, whichever is bigger;
+  - Removed Heal Prediction tags options. It's unnecessary clutter. Can be recreated via Custom
+    Texts, use `ls:absorb:heal` and `ls:absorb:damage` tags to do so;
+  - And more.
+- Added some of my textures to LSM. Border textures were added as `LS Thick` and `LS Thin`, and the
+  status bar texture as `LS`. This way they can be used in other addons that support LSM. I'm
+  planning to add LSM support to all status bars across the addon later, but I need to do a bit more
+  work for that to happen.
+
+![Imgur](https://i.imgur.com/Xo6IWFa.gif)
+
 ## Version 90002.05
 
 - Added new unit frame element, `Custom Texts`. Can be found at /LSUI > Unit Frames > Unit > Custom

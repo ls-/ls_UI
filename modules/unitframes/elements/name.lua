@@ -6,18 +6,20 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 -- Mine
-local function updateTextPoint(frame, fontString, config)
-	if config and config.p and config.p ~= "" then
-		fontString:SetPoint(config.p, E:ResolveAnchorPoint(frame, config.anchor), config.rP, config.x, config.y)
+local function updatePoint(frame, fontString, point)
+	if point and point.p and point.p ~= "" then
+		fontString:SetPoint(point.p, E:ResolveAnchorPoint(frame, point.anchor), point.rP, point.x, point.y)
 	end
 end
 
-local function element_UpdateConfig(self)
-	local unit = self.__owner._unit
+local element_proto = {}
+
+function element_proto:UpdateConfig()
+	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].name, self._config)
 end
 
-local function element_UpdateFonts(self)
+function element_proto:UpdateFonts()
 	local config = self._config
 
 	self:UpdateFont(config.size)
@@ -26,14 +28,14 @@ local function element_UpdateFonts(self)
 	self:SetWordWrap(config.word_wrap)
 end
 
-local function element_UpdatePoints(self)
+function element_proto:UpdatePoints()
 	self:ClearAllPoints()
 
-	updateTextPoint(self.__owner, self, self._config.point1)
-	updateTextPoint(self.__owner, self, self._config.point2)
+	updatePoint(self.__owner, self, self._config.point1)
+	updatePoint(self.__owner, self, self._config.point2)
 end
 
-local function element_UpdateTags(self)
+function element_proto:UpdateTags()
 	if self._config.tag ~= "" then
 		self.__owner:Tag(self, self._config.tag)
 		self:UpdateTag()
@@ -43,7 +45,9 @@ local function element_UpdateTags(self)
 	end
 end
 
-local function frame_UpdateName(self)
+local frame_proto = {}
+
+function frame_proto:UpdateName()
 	local element = self.Name
 	element:UpdateConfig()
 	element:UpdateFonts()
@@ -52,16 +56,11 @@ local function frame_UpdateName(self)
 end
 
 function UF:CreateName(frame, textParent)
-	local element = (textParent or frame):CreateFontString(nil, "OVERLAY")
-	E.FontStrings:Capture(element, "unit")
+	Mixin(frame, frame_proto)
 
+	local element = Mixin((textParent or frame):CreateFontString(nil, "OVERLAY"), element_proto)
 	element.__owner = frame
-	element.UpdateConfig = element_UpdateConfig
-	element.UpdateFonts = element_UpdateFonts
-	element.UpdatePoints = element_UpdatePoints
-	element.UpdateTags = element_UpdateTags
-
-	frame.UpdateName = frame_UpdateName
+	E.FontStrings:Capture(element, "unit")
 
 	return element
 end

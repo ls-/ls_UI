@@ -9,14 +9,11 @@ local t_insert = _G.table.insert
 local t_remove = _G.table.remove
 local t_wipe = _G.table.wipe
 
---[[ luacheck: globals
-]]
-
 -- Mine
 local element_proto = {}
 
 function element_proto:UpdateConfig(k)
-	local unit = self.__owner._unit
+	local unit = self.__owner.__unit
 
 	if k then
 		if not C.db.profile.units[unit].custom_texts[k] then
@@ -48,7 +45,7 @@ function element_proto:UpdatePoint(k)
 	end
 end
 
-function element_proto:UpdateFont(k)
+function element_proto:UpdateFonts(k)
 	local text = self.active[k]
 	if text then
 		local config = self._config[k]
@@ -88,6 +85,7 @@ function element_proto:Acquire(k)
 		text = self.__parent:CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
 		text:SetWordWrap(false)
+		text:UpdateFont()
 	end
 
 	self.active[k] = text
@@ -114,7 +112,7 @@ function frame_proto:UpdateCustomTexts()
 	local element = self.CustomTexts
 	element:UpdateConfig()
 	element:ForEach("UpdatePoint")
-	element:ForEach("UpdateFont")
+	element:ForEach("UpdateFonts")
 	element:ForEach("UpdateTags")
 end
 

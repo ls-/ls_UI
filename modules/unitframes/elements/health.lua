@@ -4,19 +4,10 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
-local next = _G.next
-
--- Blizz
-local UnitGUID = _G.UnitGUID
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-
---[[ luacheck: globals
-	CreateFrame
-]]
 
 -- Mine
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local function updateFont(fontString, config)
 	fontString:UpdateFont(config.size)
 	fontString:SetJustifyH(config.h_alignment)
@@ -47,79 +38,87 @@ do
 		prediction = true,
 	}
 
-	local function setStatusBarColorHook(self, r, g, b)
-		self._texture:SetColorTexture(r, g, b)
-	end
+	local element_proto = {
+		colorHealth = true,
+		colorTapping = true,
+		colorDisconnected = true,
+	}
 
-	local function element_PostUpdate(self, unit, cur, max)
-		local unitGUID = UnitGUID(unit)
-		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		self.GainLossIndicators._UnitGUID = unitGUID
-
-		if not (self:IsShown() and max and max ~= 0) or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
-			self:SetMinMaxValues(0, 1)
-			self:SetValue(0)
+	function element_proto:PostUpdate(unit, cur, max)
+		if self._config and self._config.animated_change then
+			local unitGUID = UnitGUID(unit)
+			self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+			self._UnitGUID = unitGUID
 		end
 	end
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
+	function element_proto:UpdateConfig()
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
-	local function element_UpdateColors(self)
+	function element_proto:UpdateColors()
 		self.colorClass = self._config.color.class
 		self.colorReaction = self._config.color.reaction
 		self:ForceUpdate()
 	end
 
-	local function element_UpdateFonts(self)
+	function element_proto:UpdateFonts()
 		updateFont(self.Text, self._config.text)
 	end
 
-	local function element_UpdateTextPoints(self)
+	function element_proto:UpdateTextPoints()
 		updateTextPoint(self.__owner, self.Text, self._config.text.point1)
 	end
 
-	local function element_UpdateTags(self)
+	function element_proto:UpdateTags()
 		updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
 	end
 
-	local function element_UpdateGainLossPoints(self)
+	function element_proto:UpdateTextures()
+		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	end
+
+	function element_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self)
+		else
+			E:DesmoothBar(self)
+		end
+	end
+
+	function element_proto:UpdateGainLossPoints()
 		self.GainLossIndicators:UpdatePoints(self._config.orientation)
 	end
 
-	local function element_UpdateGainLossThreshold(self)
-		self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
-	end
-
-	local function element_UpdateGainLossColors(self)
+	function element_proto:UpdateGainLossColors()
 		self.GainLossIndicators:UpdateColors()
 	end
 
-	local function frame_UpdateHealth(self)
+	local frame_proto = {}
+
+	function frame_proto:UpdateHealth()
 		local element = self.Health
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
+		element:UpdateTextures()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
+		element:UpdateSmoothing()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 		element:ForceUpdate()
 	end
 
 	function UF:CreateHealth(frame, textParent)
-		local element = CreateFrame("StatusBar", nil, frame)
-		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		element:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		E:SmoothBar(element)
+		Mixin(frame, frame_proto)
 
-		element._texture = element:CreateTexture(nil, "ARTWORK")
-		element._texture:SetAllPoints(element:GetStatusBarTexture())
-		hooksecurefunc(element, "SetStatusBarColor", setStatusBarColorHook)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
+		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element._texture = element:GetStatusBarTexture()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -127,22 +126,8 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
+		element.GainLossIndicators:UpdateThreshold(0.001)
 		element.GainLossIndicators.Gain = nil
-
-		element.colorHealth = true
-		element.colorTapping = true
-		element.colorDisconnected = true
-		element.PostUpdate = element_PostUpdate
-		element.UpdateColors = element_UpdateColors
-		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFonts = element_UpdateFonts
-		element.UpdateGainLossColors = element_UpdateGainLossColors
-		element.UpdateGainLossPoints = element_UpdateGainLossPoints
-		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
-		element.UpdateTags = element_UpdateTags
-		element.UpdateTextPoints = element_UpdateTextPoints
-
-		frame.UpdateHealth = frame_UpdateHealth
 
 		return element
 	end
@@ -150,34 +135,45 @@ end
 
 -- .HealthPrediction
 do
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
+	local element_proto = {
+		maxOverflow = 1,
+	}
+
+	function element_proto:UpdateConfig()
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
 		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
-	local function element_UpdateFonts(self)
-		updateFont(self.absorbBar.Text, self._config.absorb_text)
-		updateFont(self.healAbsorbBar.Text, self._config.heal_absorb_text)
+	function element_proto:UpdateColors()
+		self.myBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.my_heal))
+		self.otherBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.other_heal))
+		self.healAbsorbBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
 	end
 
-	local function element_UpdateTextPoints(self)
-		updateTextPoint(self.__owner, self.absorbBar.Text, self._config.absorb_text.point1)
-		updateTextPoint(self.__owner, self.healAbsorbBar.Text, self._config.heal_absorb_text.point1)
+	function element_proto:UpdateTextures()
+		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
 	end
 
-	local function element_UpdateTags(self)
-		updateTag(self.__owner, self.absorbBar.Text, self._config.enabled and self._config.absorb_text.tag or "")
-		updateTag(self.__owner, self.healAbsorbBar.Text, self._config.enabled and self._config.heal_absorb_text.tag or "")
+	function element_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self.myBar)
+			E:SmoothBar(self.otherBar)
+			E:SmoothBar(self.absorbBar)
+			E:SmoothBar(self.healAbsorbBar)
+		else
+			E:DesmoothBar(self.myBar)
+			E:DesmoothBar(self.otherBar)
+			E:DesmoothBar(self.absorbBar)
+			E:DesmoothBar(self.healAbsorbBar)
+		end
 	end
 
-	local function element_UpdateColors(self)
-		self.myBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.my_heal))
-		self.otherBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.other_heal))
-		self.healAbsorbBar._texture:SetColorTexture(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
-	end
+	local frame_proto = {}
 
-	local function frame_UpdateHealthPrediction(self)
+	function frame_proto:UpdateHealthPrediction()
 		local element = self.HealthPrediction
 		element:UpdateConfig()
 
@@ -249,9 +245,8 @@ do
 		end
 
 		element:UpdateColors()
-		element:UpdateFonts()
-		element:UpdateTextPoints()
-		element:UpdateTags()
+		element:UpdateTextures()
+		element:UpdateSmoothing()
 
 		if config.enabled and not self:IsElementEnabled("HealthPrediction") then
 			self:EnableElement("HealthPrediction")
@@ -264,77 +259,45 @@ do
 		end
 	end
 
-	function UF:CreateHealthPrediction(frame, parent, textParent)
+	function UF:CreateHealthPrediction(frame, parent)
+		Mixin(frame, frame_proto)
+
 		local level = parent:GetFrameLevel()
 
 		local myBar = CreateFrame("StatusBar", nil, parent)
 		myBar:SetFrameLevel(level)
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		myBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		E:SmoothBar(myBar)
+		myBar._texture = myBar:GetStatusBarTexture()
 		parent.MyHeal = myBar
-
-		myBar._texture = myBar:CreateTexture(nil, "ARTWORK")
-		myBar._texture:SetAllPoints(myBar:GetStatusBarTexture())
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		otherBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		E:SmoothBar(otherBar)
+		otherBar._texture = otherBar:GetStatusBarTexture()
 		parent.OtherHeal = otherBar
-
-		otherBar._texture = otherBar:CreateTexture(nil, "ARTWORK")
-		otherBar._texture:SetAllPoints(otherBar:GetStatusBarTexture())
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
 		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		absorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		E:SmoothBar(absorbBar)
 		parent.DamageAbsorb = absorbBar
 
-		local overlay = absorbBar:CreateTexture(nil, "ARTWORK", nil, 1)
-		overlay:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
-		overlay:SetHorizTile(true)
-		overlay:SetVertTile(true)
-		overlay:SetAllPoints(absorbBar:GetStatusBarTexture())
-		absorbBar.Overlay = overlay
-
-		local text = (textParent or parent):CreateFontString(nil, "ARTWORK")
-		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
-		absorbBar.Text = text
+		absorbBar._texture = absorbBar:GetStatusBarTexture()
+		absorbBar._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
+		absorbBar._texture:SetHorizTile(true)
+		absorbBar._texture:SetVertTile(true)
 
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		healAbsorbBar:GetStatusBarTexture():SetColorTexture(0, 0, 0, 0)
-		E:SmoothBar(healAbsorbBar)
+		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
 		parent.HealAbsorb = healAbsorbBar
 
-		healAbsorbBar._texture = healAbsorbBar:CreateTexture(nil, "ARTWORK")
-		healAbsorbBar._texture:SetAllPoints(healAbsorbBar:GetStatusBarTexture())
-
-		text = (textParent or parent):CreateFontString(nil, "ARTWORK")
-		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
-		healAbsorbBar.Text = text
-
-		frame.UpdateHealthPrediction = frame_UpdateHealthPrediction
-
-		return {
+		return Mixin({
 			myBar = myBar,
 			otherBar = otherBar,
 			absorbBar = absorbBar,
 			healAbsorbBar = healAbsorbBar,
-			maxOverflow = 1,
-			UpdateColors = element_UpdateColors,
-			UpdateConfig = element_UpdateConfig,
-			UpdateFonts = element_UpdateFonts,
-			UpdateTags = element_UpdateTags,
-			UpdateTextPoints = element_UpdateTextPoints,
-		}
+		}, element_proto)
 	end
 end

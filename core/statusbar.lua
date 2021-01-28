@@ -381,13 +381,13 @@ do
 	}
 
 	local function hide(self)
-		for i = 1, 6 do
+		for i = 1, 5 do
 			self[i]:Hide()
 		end
 	end
 
 	local function show(self)
-		for i = 1, 6 do
+		for i = 1, 5 do
 			self[i]:Show()
 		end
 	end
@@ -401,7 +401,6 @@ do
 			[3] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- top/right
 			[4] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- bottom/right
 			[5] = object:CreateTexture(nil, "ARTWORK", nil, 6), -- glass
-			[6] = object:CreateTexture(nil, "ARTWORK", nil, 5), -- glass shadow
 			Hide = hide,
 			Show = show,
 		}
@@ -421,8 +420,6 @@ do
 
 			object.Tube[5]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
 			object.Tube[5]:SetAllPoints()
-			object.Tube[6]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass-shadow")
-			object.Tube[6]:SetAllPoints()
 
 			if s == "HORIZONTAL" then
 				object.Tube[5]:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
@@ -448,7 +445,7 @@ do
 				end
 			end
 		elseif s == "NONE" then
-			for i = 1, 6 do
+			for i = 1, 5 do
 				object.Tube[i]:SetTexture(nil)
 				object.Tube[i]:ClearAllPoints()
 			end
@@ -703,6 +700,8 @@ do
 	end
 
 	function E:SmoothBar(bar)
+		if handledObjects[bar] then return end
+
 		bar._min, bar._max = bar:GetMinMaxValues()
 		bar._value = bar:GetValue()
 
@@ -719,6 +718,8 @@ do
 	end
 
 	function E:DesmoothBar(bar)
+		if not handledObjects[bar] then return end
+
 		if activeObjects[bar] then
 			bar:SetValue_(activeObjects[bar])
 			activeObjects[bar] = nil

@@ -5,16 +5,9 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local UnitGUID = _G.UnitGUID
-local UnitIsConnected = _G.UnitIsConnected
-local UnitIsDeadOrGhost = _G.UnitIsDeadOrGhost
-
---[[ luacheck: globals
-	CreateFrame
-]]
-
 -- Mine
+local LSM = LibStub("LibSharedMedia-3.0")
+
 local ignoredKeys = {
 	prediction = true,
 	runes = true,
@@ -44,75 +37,93 @@ local function updateTag(frame, fontString, tag)
 	end
 end
 
-local function element_UpdateFonts(self)
+local element_proto = {
+	colorPower = true,
+}
+
+function element_proto:UpdateFonts()
 	updateFont(self.Text, self._config.text)
 end
 
-local function element_UpdateTextPoints(self)
+function element_proto:UpdateTextPoints()
 	updateTextPoint(self.__owner, self.Text, self._config.text.point1)
 end
 
-local function element_UpdateTags(self)
+function element_proto:UpdateTags()
 	updateTag(self.__owner, self.Text, self._config.enabled and self._config.text.tag or "")
 end
 
-local function element_UpdateGainLossPoints(self)
+function element_proto:UpdateColors()
+	self:ForceUpdate()
+end
+
+function element_proto:UpdateTextures()
+	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+end
+
+function element_proto:UpdateSmoothing()
+	if C.db.profile.units.change.smooth then
+		E:SmoothBar(self)
+	else
+		E:DesmoothBar(self)
+	end
+end
+
+function element_proto:UpdateGainLossPoints()
 	self.GainLossIndicators:UpdatePoints(self._config.orientation)
 end
 
-local function element_UpdateGainLossThreshold(self)
-	self.GainLossIndicators:UpdateThreshold(self._config.change_threshold)
-end
-
-local function element_UpdateGainLossColors(self)
+function element_proto:UpdateGainLossColors()
 	self.GainLossIndicators:UpdateColors()
 end
 
 -- .Power
 do
-	local function element_PostUpdate(self, unit, cur, _, max)
-		local shouldShown = self:IsShown() and max and max ~= 0
+	local power_proto = {
+		colorDisconnected = true,
+		frequentUpdates = true,
+	}
 
-		if self.UpdateContainer then
-			self:UpdateContainer(shouldShown)
+	function power_proto:PostUpdate(unit, cur, _, max)
+		local shouldShow = max and max ~= 0
+		local isShown = self:IsShown()
+		if (shouldShow and not isShown) or (not shouldShow and isShown) then
+			self:SetShown(shouldShow)
 		end
 
-		local unitGUID = UnitGUID(unit)
-		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		self.GainLossIndicators._UnitGUID = unitGUID
+		if shouldShow then
+			if self._config and self._config.animated_change then
+				local unitGUID = UnitGUID(unit)
+				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+				self._UnitGUID = unitGUID
+			end
 
-		if shouldShown then
 			self.Text:Show()
 		else
 			self.Text:Hide()
 		end
-
-		if not shouldShown or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
-			self:SetMinMaxValues(0, 1)
-			self:SetValue(0)
-		end
 	end
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
+	function power_proto:UpdateConfig()
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
-	local function element_UpdateColors(self)
-		self:ForceUpdate()
-	end
+	local frame_proto = {}
 
-	local function frame_UpdatePower(self)
+	function frame_proto:UpdatePower()
 		local element = self.Power
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
+		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("Power") then
 			self:EnableElement("Power")
@@ -122,15 +133,15 @@ do
 
 		if self:IsElementEnabled("Power") then
 			element:ForceUpdate()
-		elseif element.UpdateContainer then
-			element:UpdateContainer(false)
 		end
 	end
 
 	function UF:CreatePower(frame, textParent)
-		local element = CreateFrame("StatusBar", nil, frame)
+		Mixin(frame, frame_proto)
+
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(element)
+		element:Hide()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -138,21 +149,7 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-
-		element.colorDisconnected = true
-		element.colorPower = true
-		element.frequentUpdates = true
-		element.PostUpdate = element_PostUpdate
-		element.UpdateColors = element_UpdateColors
-		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFonts = element_UpdateFonts
-		element.UpdateGainLossColors = element_UpdateGainLossColors
-		element.UpdateGainLossPoints = element_UpdateGainLossPoints
-		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
-		element.UpdateTags = element_UpdateTags
-		element.UpdateTextPoints = element_UpdateTextPoints
-
-		frame.UpdatePower = frame_UpdatePower
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
@@ -160,61 +157,52 @@ end
 
 -- .AdditionalPower
 do
-	local function element_PostUpdate(self, cur, max)
+	local power_proto = {}
+
+	function power_proto:PostUpdate(cur, max)
 		if self:IsShown() and max and max ~= 0 then
-			self.GainLossIndicators:Update(cur, max)
-		end
-
-		if not UnitIsConnected("player") or UnitIsDeadOrGhost("player") then
-			self:SetMinMaxValues(0, 1)
-			self:SetValue(0)
+			if self._config and self._config.animated_change then
+				self.GainLossIndicators:Update(cur, max)
+			end
 		end
 	end
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
+	function power_proto:UpdateConfig()
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
-	local function element_UpdateColors(self)
-		self:ForceUpdate()
-	end
+	local frame_proto = {}
 
-	local function frame_UpdateAdditionalPower(frame)
-		local element = frame.AdditionalPower
+	function frame_proto:UpdateAdditionalPower()
+		local element = self.AdditionalPower
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
+		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
-		if element._config.enabled and not frame:IsElementEnabled("AdditionalPower") then
-			frame:EnableElement("AdditionalPower")
-		elseif not element._config.enabled and frame:IsElementEnabled("AdditionalPower") then
-			frame:DisableElement("AdditionalPower")
+		if element._config.enabled and not self:IsElementEnabled("AdditionalPower") then
+			self:EnableElement("AdditionalPower")
+		elseif not element._config.enabled and self:IsElementEnabled("AdditionalPower") then
+			self:DisableElement("AdditionalPower")
 		end
 
 		element:ForceUpdate()
 	end
 
 	function UF:CreateAdditionalPower(frame)
-		local element = CreateFrame("StatusBar", nil, frame)
+		Mixin(frame, frame_proto)
+
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(element)
 		element:Hide()
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-
-		element.colorPower = true
-		element.PostUpdate = element_PostUpdate
-		element.UpdateColors = element_UpdateColors
-		element.UpdateConfig = element_UpdateConfig
-		element.UpdateGainLossColors = element_UpdateGainLossColors
-		element.UpdateGainLossPoints = element_UpdateGainLossPoints
-		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
-
-		frame.UpdateAdditionalPower = frame_UpdateAdditionalPower
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
@@ -222,49 +210,46 @@ end
 
 -- .AlternativePower
 do
-	local function element_PostUpdate(self, unit, cur, _, max)
-		local shouldShown = self:IsShown() and max and max ~= 0
+	local power_proto = {}
 
-		if self.UpdateContainer then
-			self:UpdateContainer(shouldShown)
-		end
+	function power_proto:PostUpdate(unit, cur, _, max)
+		if self:IsShown() and max and max ~= 0 then
+			if self._config and self._config.animated_change then
+				local unitGUID = UnitGUID(unit)
+				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
+				self._UnitGUID = unitGUID
+			end
 
-		local unitGUID = UnitGUID(unit)
-		self.GainLossIndicators:Update(cur, max, unitGUID == self.GainLossIndicators._UnitGUID)
-		self.GainLossIndicators._UnitGUID = unitGUID
-
-		if shouldShown then
 			self.Text:Show()
 		else
 			self.Text:Hide()
 		end
-
-		if not shouldShown or not UnitIsConnected(unit) or UnitIsDeadOrGhost(unit) then
-			self:SetMinMaxValues(0, 1)
-			self:SetValue(0)
-		end
 	end
 
-	local function element_UpdateConfig(self)
-		local unit = self.__owner._unit
+	function power_proto:UpdateConfig()
+		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
+		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
-	local function element_UpdateColors(self)
+	function power_proto:UpdateColors()
 		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.ALTERNATE))
 	end
 
-	local function frame_UpdateAlternativePower(self)
+	local frame_proto = {}
+
+	function frame_proto:UpdateAlternativePower()
 		local element = self.AlternativePower
 		element:UpdateConfig()
 		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
+		element:UpdateTextures()
+		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
 		element:UpdateGainLossColors()
 		element:UpdateGainLossPoints()
-		element:UpdateGainLossThreshold()
 
 		if element._config.enabled and not self:IsElementEnabled("AlternativePower") then
 			self:EnableElement("AlternativePower")
@@ -274,15 +259,15 @@ do
 
 		if self:IsElementEnabled("AlternativePower") then
 			element:ForceUpdate()
-		elseif element.UpdateContainer then
-			element:UpdateContainer(false)
 		end
 	end
 
 	function UF:CreateAlternativePower(frame, textParent)
-		local element = CreateFrame("StatusBar", nil, frame)
+		Mixin(frame, frame_proto)
+
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-		E:SmoothBar(element)
+		element:Hide()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
@@ -290,18 +275,7 @@ do
 		element.Text = text
 
 		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-
-		element.PostUpdate = element_PostUpdate
-		element.UpdateColors = element_UpdateColors
-		element.UpdateConfig = element_UpdateConfig
-		element.UpdateFonts = element_UpdateFonts
-		element.UpdateGainLossColors = element_UpdateGainLossColors
-		element.UpdateGainLossPoints = element_UpdateGainLossPoints
-		element.UpdateGainLossThreshold = element_UpdateGainLossThreshold
-		element.UpdateTags = element_UpdateTags
-		element.UpdateTextPoints = element_UpdateTextPoints
-
-		frame.UpdateAlternativePower = frame_UpdateAlternativePower
+		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
@@ -309,7 +283,9 @@ end
 
 -- .PowerPrediction
 do
-	local function element_UpdateConfig(self)
+	local power_proto = {}
+
+	function power_proto:UpdateConfig()
 		if not self._config then
 			self._config = {
 				power = {},
@@ -317,20 +293,32 @@ do
 			}
 		end
 
-		local unit = self.__owner._unit
+		local unit = self.__owner.__unit
 		self._config.power.enabled = C.db.profile.units[unit].power.prediction.enabled
 		self._config.power.orientation = C.db.profile.units[unit].power.orientation
 		self._config.class_power.enabled = C.db.profile.units[unit].class_power.prediction.enabled
 		self._config.class_power.orientation = C.db.profile.units[unit].class_power.orientation
 	end
 
-	local function element_UpdateColors(self)
+	function power_proto:UpdateColors()
 		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
 		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
 	end
 
-	local function frame_UpdatePowerPrediction(frame)
-		local element = frame.PowerPrediction
+	function power_proto:UpdateSmoothing()
+		if C.db.profile.units.change.smooth then
+			E:SmoothBar(self.mainBar_)
+			E:SmoothBar(self.altBar_)
+		else
+			E:DesmoothBar(self.mainBar_)
+			E:DesmoothBar(self.altBar_)
+		end
+	end
+
+	local frame_proto = {}
+
+	function frame_proto:UpdatePowerPrediction()
+		local element = self.PowerPrediction
 		element:UpdateConfig()
 
 		local config1 = element._config.power
@@ -340,20 +328,20 @@ do
 			mainBar_:ClearAllPoints()
 
 			if config1.orientation == "HORIZONTAL" then
-				local width = frame.Power:GetWidth()
-				width = width > 0 and width or frame:GetWidth()
+				local width = self.Power:GetWidth()
+				width = width > 0 and width or self:GetWidth()
 
 				mainBar_:SetPoint("TOP")
 				mainBar_:SetPoint("BOTTOM")
-				mainBar_:SetPoint("RIGHT", frame.Power:GetStatusBarTexture(), "RIGHT")
+				mainBar_:SetPoint("RIGHT", self.Power:GetStatusBarTexture(), "RIGHT")
 				mainBar_:SetWidth(width)
 			else
-				local height = frame.Power:GetHeight()
-				height = height > 0 and height or frame:GetHeight()
+				local height = self.Power:GetHeight()
+				height = height > 0 and height or self:GetHeight()
 
 				mainBar_:SetPoint("LEFT")
 				mainBar_:SetPoint("RIGHT")
-				mainBar_:SetPoint("TOP", frame.Power:GetStatusBarTexture(), "TOP")
+				mainBar_:SetPoint("TOP", self.Power:GetStatusBarTexture(), "TOP")
 				mainBar_:SetHeight(height)
 			end
 
@@ -372,20 +360,20 @@ do
 			altBar_:ClearAllPoints()
 
 			if config2.orientation == "HORIZONTAL" then
-				local width = frame.AdditionalPower:GetWidth()
-				width = width > 0 and width or frame:GetWidth()
+				local width = self.AdditionalPower:GetWidth()
+				width = width > 0 and width or self:GetWidth()
 
 				altBar_:SetPoint("TOP")
 				altBar_:SetPoint("BOTTOM")
-				altBar_:SetPoint("RIGHT", frame.AdditionalPower:GetStatusBarTexture(), "RIGHT")
+				altBar_:SetPoint("RIGHT", self.AdditionalPower:GetStatusBarTexture(), "RIGHT")
 				altBar_:SetWidth(width)
 			else
-				local height = frame.AdditionalPower:GetHeight()
-				height = height > 0 and height or frame:GetHeight()
+				local height = self.AdditionalPower:GetHeight()
+				height = height > 0 and height or self:GetHeight()
 
 				altBar_:SetPoint("LEFT")
 				altBar_:SetPoint("RIGHT")
-				altBar_:SetPoint("TOP", frame.AdditionalPower:GetStatusBarTexture(), "TOP")
+				altBar_:SetPoint("TOP", self.AdditionalPower:GetStatusBarTexture(), "TOP")
 				altBar_:SetHeight(height)
 			end
 
@@ -400,37 +388,33 @@ do
 		element:UpdateColors()
 
 		local isEnabled = config1.enabled or config2.enabled
-		if isEnabled and not frame:IsElementEnabled("PowerPrediction") then
-			frame:EnableElement("PowerPrediction")
-		elseif not isEnabled and frame:IsElementEnabled("PowerPrediction") then
-			frame:DisableElement("PowerPrediction")
+		if isEnabled and not self:IsElementEnabled("PowerPrediction") then
+			self:EnableElement("PowerPrediction")
+		elseif not isEnabled and self:IsElementEnabled("PowerPrediction") then
+			self:DisableElement("PowerPrediction")
 		end
 
-		if frame:IsElementEnabled("PowerPrediction") then
+		if self:IsElementEnabled("PowerPrediction") then
 			element:ForceUpdate()
 		end
 	end
 
 	function UF:CreatePowerPrediction(frame, parent1, parent2)
+		Mixin(frame, frame_proto)
+
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		mainBar:SetReverseFill(true)
-		E:SmoothBar(mainBar)
 		parent1.CostPrediction = mainBar
 
 		local altBar = CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		altBar:SetReverseFill(true)
-		E:SmoothBar(altBar)
 		parent2.CostPrediction = altBar
 
-		frame.UpdatePowerPrediction = frame_UpdatePowerPrediction
-
-		return {
+		return Mixin({
 			mainBar_ = mainBar,
 			altBar_ = altBar,
-			UpdateColors = element_UpdateColors,
-			UpdateConfig = element_UpdateConfig,
-		}
+		}, power_proto)
 	end
 end

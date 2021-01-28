@@ -764,13 +764,18 @@ do
 	end
 end
 
+local globalIgnoredKeys = {
+	-- enabled = true,
+	point = true,
+}
+
 function MODULE:CopySettings(src, dest, ignoredKeys)
 	for k, v in next, dest do
-		if not ignoredKeys or not ignoredKeys[k] then
+		if not globalIgnoredKeys[k] and not (ignoredKeys and ignoredKeys[k]) then
 			if src[k] ~= nil then
 				if type(v) == "table" then
 					if next(v) and type(src[k]) == "table" then
-						self:CopySettings(src[k], v)
+						self:CopySettings(src[k], v, ignoredKeys)
 					end
 				else
 					if type(v) == type(src[k]) then
