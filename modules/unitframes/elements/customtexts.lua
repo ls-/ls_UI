@@ -85,6 +85,7 @@ function element_proto:Acquire(k)
 		text = self.__parent:CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
 		text:SetWordWrap(false)
+		text:UpdateFont()
 	end
 
 	self.active[k] = text
