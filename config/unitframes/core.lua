@@ -487,6 +487,9 @@ function CONFIG:CreateUnitFramesPanel(order)
 						UNITFRAMES:ForEach("For", "Health", "UpdateConfig")
 						UNITFRAMES:ForEach("For", "Health", "UpdateSmoothing")
 
+						UNITFRAMES:ForEach("For", "HealthPrediction", "UpdateSmoothing")
+						UNITFRAMES:ForEach("For", "HealthPrediction", "UpdateSmoothing")
+
 						UNITFRAMES:ForEach("For", "Power", "UpdateConfig")
 						UNITFRAMES:ForEach("For", "Power", "UpdateSmoothing")
 
