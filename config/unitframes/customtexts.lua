@@ -52,7 +52,7 @@ do
 
 					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
 					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", info[#info - 1])
-					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
+					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFonts", info[#info - 1])
 					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])
 				end
 			end,
@@ -172,7 +172,7 @@ do
 
 				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
 				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", info[#info - 1])
-				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
+				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFonts", info[#info - 1])
 				UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])
 
 				ACD:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts")
@@ -189,7 +189,7 @@ do
 			C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]][info[#info]] = value
 
 			UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
-			UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", info[#info - 1])
+			UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFonts", info[#info - 1])
 		end
 	end
 
@@ -270,7 +270,7 @@ function CONFIG:CreateUnitFrameCustomTextsPanel(order, unit)
 
 							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", value)
 							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdatePoint", value)
-							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFont", value)
+							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateFonts", value)
 							UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", value)
 
 							ACD:SelectGroup("ls_UI", "unitframes", info[#info - 3], "custom_texts", value)

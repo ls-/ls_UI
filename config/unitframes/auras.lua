@@ -491,7 +491,7 @@ function CONFIG:CreateUnitFrameAurasPanel(order, unit)
 						C.db.profile.units[unit].auras.count[info[#info]] = value
 
 						UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
-						UNITFRAMES:For(unit, "For", "Auras", "UpdateFont")
+						UNITFRAMES:For(unit, "For", "Auras", "UpdateFonts")
 					end
 				end,
 				args = {
