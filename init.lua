@@ -77,6 +77,18 @@ local function cleanUpStep1()
 		C.db.char.auratracker.count.flag = nil
 	end
 
+	-- -> 90002.06
+	if C.db.profile.version and C.db.profile.version < 9000206 then
+		C.db.profile.units.ls.player.name = nil
+
+		C.db.profile.units.ls.player.health.prediction.absorb_text = nil
+		C.db.profile.units.ls.player.health.prediction.heal_absorb_text = nil
+		C.db.profile.units.traditional.player.health.prediction.absorb_text = nil
+		C.db.profile.units.traditional.player.health.prediction.heal_absorb_text = nil
+
+		C.db.profile.units.ls.player.class_power.change_threshold = nil
+		C.db.profile.units.traditional.player.class_power.change_threshold = nil
+	end
 end
 
 local function cleanUpStep2()
@@ -136,6 +148,40 @@ local function cleanUpStep2()
 					C.db.profile.units[unit].auras.count.outline = nil
 					C.db.profile.units[unit].auras.count.shadow = nil
 				end
+			end
+		end
+	end
+
+	-- -> 90002.06
+	if C.db.profile.version and C.db.profile.version < 9000206 then
+		C.db.profile.units.boss.alt_power.change_threshold = nil
+
+		C.db.profile.units.player.class_power.change_threshold = nil
+
+		C.db.profile.units.targettarget.custom_texts = nil
+		C.db.profile.units.focustarget.custom_texts = nil
+
+		for _, unit in next, units do
+			C.db.profile.units[unit].health.change_threshold = nil
+			C.db.profile.units[unit].power.change_threshold = nil
+
+			if C.db.profile.units[unit].prediction then
+				C.db.profile.units[unit].prediction.absorb_text = nil
+				C.db.profile.units[unit].prediction.heal_absorb_text = nil
+			end
+
+			if C.db.profile.units[unit].pvp then
+				C.db.profile.units[unit].pvp.point1 = nil
+			end
+
+			if C.db.profile.units[unit].insets then
+				C.db.profile.units[unit].insets.t_height = nil
+				C.db.profile.units[unit].insets.b_height = nil
+			end
+
+			if C.db.profile.units[unit].auras then
+				C.db.profile.units[unit].auras.count.outline = nil
+				C.db.profile.units[unit].auras.count.shadow = nil
 			end
 		end
 	end
