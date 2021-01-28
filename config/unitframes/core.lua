@@ -126,11 +126,11 @@ local function createUnitFramePanel(order, unit, name)
 				min = 0.01, max = 0.33, step = 0.01,
 				isPercent = true,
 				get = function()
-					return C.db.profile.units[unit].insets.t_height
+					return C.db.profile.units[unit].insets.t_size
 				end,
 				set = function(_, value)
-					if C.db.profile.units[unit].insets.t_height ~= value then
-						C.db.profile.units[unit].insets.t_height = value
+					if C.db.profile.units[unit].insets.t_size ~= value then
+						C.db.profile.units[unit].insets.t_size = value
 
 						UNITFRAMES:For(unit, "UpdateLayout")
 					end
@@ -144,11 +144,11 @@ local function createUnitFramePanel(order, unit, name)
 				min = 0.01, max = 0.33, step = 0.01,
 				isPercent = true,
 				get = function()
-					return C.db.profile.units[unit].insets.b_height
+					return C.db.profile.units[unit].insets.b_size
 				end,
 				set = function(_, value)
-					if C.db.profile.units[unit].insets.b_height ~= value then
-						C.db.profile.units[unit].insets.b_height = value
+					if C.db.profile.units[unit].insets.b_size ~= value then
+						C.db.profile.units[unit].insets.b_size = value
 
 						UNITFRAMES:For(unit, "UpdateLayout")
 					end

@@ -717,8 +717,8 @@ D.profile = {
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				insets = {
-					t_height = 0.23,
-					b_height = 0.23,
+					t_size = 0.23,
+					b_size = 0.23,
 				},
 				health = {
 					enabled = true,
@@ -925,8 +925,8 @@ D.profile = {
 					traditional = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 				},
 				insets = {
-					t_height = 0.23,
-					b_height = 0.33,
+					t_size = 0.23,
+					b_size = 0.33,
 				},
 				health = {
 					enabled = true,
@@ -1117,8 +1117,8 @@ D.profile = {
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
 			},
 			insets = {
-				t_height = 0.23,
-				b_height = 0.23,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,
@@ -1340,8 +1340,8 @@ D.profile = {
 				traditional = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			insets = {
-				t_height = 0.23,
-				b_height = 0.33,
+				t_size = 0.23,
+				b_size = 0.33,
 			},
 			health = {
 				enabled = true,
@@ -1442,8 +1442,8 @@ D.profile = {
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
 			},
 			insets = {
-				t_height = 0.23,
-				b_height = 0.23,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,
@@ -1665,8 +1665,8 @@ D.profile = {
 				traditional = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			insets = {
-				t_height = 0.23,
-				b_height = 0.33,
+				t_size = 0.23,
+				b_size = 0.33,
 			},
 			health = {
 				enabled = true,
@@ -1770,8 +1770,8 @@ D.profile = {
 				traditional = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
 			},
 			insets = {
-				t_height = 0.23,
-				b_height = 0.23,
+				t_size = 0.23,
+				b_size = 0.23,
 			},
 			health = {
 				enabled = true,

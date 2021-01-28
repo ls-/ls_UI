@@ -42,8 +42,8 @@ function insets_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[unit].insets, self._config)
 	self._config.l_size = C.db.profile.units[unit].height
 	self._config.r_size = self._config.l_size
-	self._config.t_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.t_height))
-	self._config.b_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.b_height))
+	self._config.t_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.t_size))
+	self._config.b_size = m_max(6, E:Round(C.db.profile.units[unit].height * self._config.b_size))
 end
 
 function insets_proto:GetVertexColor()
