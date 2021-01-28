@@ -451,7 +451,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 			gloss = {
 				order = 5,
 				type = "range",
-				name = "[WIP] GLOSS",
+				name = L["GLOSS"],
 				disabled = isModuleDisabled,
 				min = 0, max = 1, step = 0.05,
 				isPercent = true,
@@ -507,12 +507,12 @@ function CONFIG:CreateUnitFramesPanel(order)
 					animated = {
 						order = 1,
 						type = "toggle",
-						name = "[WIP] ANIMATED",
+						name = L["PROGRESS_BAR_ANIMATED"],
 					},
 					smooth = {
 						order = 2,
 						type = "toggle",
-						name = "[WIP] SMOOTH",
+						name = L["PROGRESS_BAR_SMOOTH"],
 					},
 				},
 			}, -- 7
