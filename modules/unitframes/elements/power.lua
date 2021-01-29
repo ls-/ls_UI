@@ -58,7 +58,11 @@ function element_proto:UpdateColors()
 end
 
 function element_proto:UpdateTextures()
-	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	if self._config.orientation == "HORIZONTAL" then
+		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+	else
+		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+	end
 end
 
 function element_proto:UpdateSmoothing()

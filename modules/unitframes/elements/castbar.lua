@@ -81,8 +81,8 @@ function element_proto:UpdateFonts()
 end
 
 function element_proto:UpdateTextures()
-	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
-	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 end
 
 function element_proto:UpdateIcon()

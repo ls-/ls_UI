@@ -153,7 +153,11 @@ end
 
 function element_proto:UpdateTextures()
 	for i = 1, #self do
-		self[i]:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		if self._config.orientation == "HORIZONTAL" then
+			self[i]:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		else
+			self[i]:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+		end
 	end
 end
 
@@ -375,7 +379,11 @@ do
 	end
 
 	function stagger_proto:UpdateTextures()
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		if self._config.orientation == "HORIZONTAL" then
+			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		else
+			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+		end
 	end
 
 	function stagger_proto:UpdateSmoothing()

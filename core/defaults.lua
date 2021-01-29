@@ -414,7 +414,10 @@ D.global = {
 		},
 	},
 	textures = {
-		statusbar = "LS",
+		statusbar = {
+			horiz = "LS",
+			vert = "LS",
+		},
 	},
 }
 
