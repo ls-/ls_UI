@@ -1994,9 +1994,10 @@ D.profile = {
 	},
 	minimap = {
 		size = 146,
+		scale = 100, -- 125, 150
 		collect = {
 			enabled = true,
-			tooltip = true,
+			tooltip = false,
 			calendar = false,
 			garrison = false,
 			mail = false,
