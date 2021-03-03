@@ -185,6 +185,17 @@ local function cleanUpStep2()
 			end
 		end
 	end
+
+	-- -> 90002.07
+	if C.db.profile.version and C.db.profile.version < 9000207 then
+		for _, unit in next, units do
+			if C.db.profile.units[unit].insets then
+				if C.db.profile.units[unit].insets.t_size > 0.25 then
+					C.db.profile.units[unit].insets.t_size = 0.25
+				end
+			end
+		end
+	end
 end
 
 local function addRefs()
