@@ -15,6 +15,8 @@ local unpack = _G.unpack
 local Lerp = _G.Lerp
 
 -- Mine
+local LSM = LibStub("LibSharedMedia-3.0")
+
 function E:HandleStatusBar(bar, isRecursive)
 	if bar.handled then return end
 
@@ -88,7 +90,7 @@ function E:HandleStatusBar(bar, isRecursive)
 		text:SetPoint("BOTTOMRIGHT", -1, 0)
 		bar.Text = text
 
-		sbt:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		sbt:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 		bar.Texture = sbt
 
 		bar.handled = true
