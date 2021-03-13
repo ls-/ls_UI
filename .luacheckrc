@@ -8,18 +8,29 @@ exclude_files = {
 }
 
 ignore = {
-	"211/_G", -- Unused local variable "_G"
-	"211/C",  -- Unused local variable "C"
-	"211/D",  -- Unused local variable "D"
-	"211/E",  -- Unused local variable "E"
-	"211/L",  -- Unused local variable "L"
-	"211/M",  -- Unused local variable "M"
-	"211/P",  -- Unused local variable "P"
+	"112/LS.*", -- Mutating an undefined global variable starting with LS
+	"113/LS.*", -- Accessing an undefined global variable starting with LS
+	"122", -- Setting a read-only field of a global variable
+	"211/_G", -- Unused local variable _G
+	"211/C",  -- Unused local variable C
+	"211/D",  -- Unused local variable D
+	"211/E",  -- Unused local variable E
+	"211/L",  -- Unused local variable L
+	"211/M",  -- Unused local variable M
+	"211/P",  -- Unused local variable P
+	"432", -- Shadowing an upvalue argument
 }
 
 globals = {
+	-- Lua
 	"getfenv",
 	"print",
+
+	-- AddOns
+	"GetMinimapShape",
+
+	-- FrameXML
+	"SlashCmdList",
 }
 
 read_globals = {
@@ -28,6 +39,12 @@ read_globals = {
 
 	-- API functions
 	"CreateFrame",
+	"GetCursorPosition",
+	"GetGameTime",
+	"GetMinimapZoneText",
+	"GetZonePVPInfo",
+	"IsAddOnLoaded",
+	"LoadAddOn",
 	"RegisterUnitWatch",
 	"UnitClass",
 	"UnitClassification",
@@ -45,20 +62,52 @@ read_globals = {
 	"UnregisterUnitWatch",
 
 	-- Namespaces
+	"C_Calendar",
+	"C_DateAndTime",
 	"C_MountJournal",
 	"C_PvP",
+	"C_Timer",
 
 	-- FrameXML functions
 	"CastingBarFrame_SetUnit",
+	"Minimap_ZoomIn",
+	"Minimap_ZoomOut",
+	"MiniMapTracking_OnMouseDown",
 	"Mixin",
+	"RegisterStateDriver",
+	"UIDropDownMenu_GetCurrentDropDown",
 	"UnitFrame_OnEnter",
 	"UnitFrame_OnLeave",
 
 	-- FrameXML objects
+	"CalendarFrame",
 	"CastingBarFrame",
+	"DropDownList1",
 	"GameFontNormal",
+	"GameTimeFrame",
 	"GameTooltip",
+	"GarrisonLandingPageMinimapButton",
+	"GuildInstanceDifficulty",
+	"HybridMinimap",
+	"Minimap",
+	"MiniMapChallengeMode",
+	"MinimapCompassTexture",
+	"MiniMapInstanceDifficulty",
+	"MiniMapMailFrame",
+	"MiniMapTracking",
+	"MiniMapTrackingBackground",
+	"MiniMapTrackingButton",
+	"MiniMapTrackingDropDown",
+	"MiniMapTrackingIcon",
+	"MinimapZoneText",
+	"MinimapZoneTextButton",
 	"PetCastingBarFrame",
+	"QueueStatusFrame",
+	"QueueStatusMinimapButton",
+	"TimeManagerClockButton",
+	"UIParent",
 
-	-- FrameXML constants
+	-- FrameXML vars
+	"ChatTypeInfo",
+	"DEFAULT_CHAT_FRAME",
 }

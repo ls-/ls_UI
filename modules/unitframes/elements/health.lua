@@ -77,7 +77,11 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		if self._config.orientation == "HORIZONTAL" then
+			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		else
+			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+		end
 	end
 
 	function element_proto:UpdateSmoothing()
@@ -152,9 +156,15 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
-		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
-		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar))
+		if self._config.orientation == "HORIZONTAL" then
+			self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+			self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+			self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		else
+			self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+			self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+			self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
+		end
 	end
 
 	function element_proto:UpdateSmoothing()

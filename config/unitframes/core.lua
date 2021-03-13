@@ -123,7 +123,7 @@ local function createUnitFramePanel(order, unit, name)
 				type = "range",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
-				min = 0.01, max = 0.33, step = 0.01,
+				min = 0.01, max = 0.25, step = 0.01,
 				isPercent = true,
 				get = function()
 					return C.db.profile.units[unit].insets.t_size
@@ -141,7 +141,7 @@ local function createUnitFramePanel(order, unit, name)
 				type = "range",
 				name = L["BOTTOM_INSET_SIZE"],
 				desc = L["BOTTOM_INSET_SIZE_DESC"],
-				min = 0.01, max = 0.33, step = 0.01,
+				min = 0.01, max = 0.5, step = 0.01,
 				isPercent = true,
 				get = function()
 					return C.db.profile.units[unit].insets.b_size

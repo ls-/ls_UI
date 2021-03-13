@@ -6,10 +6,6 @@ local MINIMAP = P:GetModule("Minimap")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	Minimap
-]]
-
 -- Mine
 local MODES = {
 	[0] = L["HIDE"],
@@ -106,7 +102,6 @@ function CONFIG.CreateMinimapPanel(_, order)
 				order = 9,
 				type = "description",
 				name = " ",
-				hidden = isMinimapRound,
 			},
 			size = {
 				order = 10,
@@ -121,6 +116,30 @@ function CONFIG.CreateMinimapPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.minimap.size ~= value then
 						C.db.profile.minimap.size = value
+
+						Minimap:UpdateConfig()
+						Minimap:UpdateSize()
+						Minimap:UpdateButtons()
+					end
+				end,
+			},
+			scale = {
+				order = 10,
+				type = "select",
+				name = L["SIZE"],
+				hidden = isMinimapSquare,
+				disabled = isModuleDisabled,
+				values = {
+					[100] = "100%",
+					[125] = "125%",
+					[150] = "150%",
+				},
+				get = function()
+					return C.db.profile.minimap.scale
+				end,
+				set = function(info, value)
+					if C.db.profile.minimap.scale ~= value then
+						C.db.profile.minimap.scale = value
 
 						Minimap:UpdateConfig()
 						Minimap:UpdateSize()
