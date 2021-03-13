@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 90005.01
+
+- Added 125% and 150% size options for the round minimap. Can be found at /LSUI > Minimap > Size
+  slider;
+- Rebalanced UF insets. Bottom insets can now be up to 50% of the UF size (up from 33%), whereas
+  top insets are now limited to 25% (down from 33%);
+- Misc bug fixes and tweaks.
+
+![Imgur](https://i.imgur.com/euV7Yhg.png)
+
 ## Version 90002.06
 
 - Refactored a lot of UF-related code;
