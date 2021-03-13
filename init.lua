@@ -186,8 +186,8 @@ local function cleanUpStep2()
 		end
 	end
 
-	-- -> 90002.07
-	if C.db.profile.version and C.db.profile.version < 9000207 then
+	-- -> 90005.01
+	if C.db.profile.version and C.db.profile.version < 9000501 then
 		for _, unit in next, units do
 			if C.db.profile.units[unit].insets then
 				if C.db.profile.units[unit].insets.t_size > 0.25 then
