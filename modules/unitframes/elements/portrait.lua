@@ -51,10 +51,10 @@ function frame_proto:UpdatePortrait()
 end
 
 function UF:CreatePortrait(frame, parent)
-	Mixin(frame, frame_proto)
+	P:Mixin(frame, frame_proto)
 
-	frame.Portrait2D = Mixin((parent or frame):CreateTexture(nil, "ARTWORK"), element_proto)
-	frame.Portrait3D = Mixin(CreateFrame("PlayerModel", nil, parent or frame), element_proto)
+	frame.Portrait2D = P:Mixin((parent or frame):CreateTexture(nil, "ARTWORK"), element_proto)
+	frame.Portrait3D = P:Mixin(CreateFrame("PlayerModel", nil, parent or frame), element_proto)
 
 	return frame.Portrait2D
 end

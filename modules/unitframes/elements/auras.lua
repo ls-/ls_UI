@@ -197,7 +197,7 @@ function element_proto:CreateIcon(index)
 		config = self._config
 	end
 
-	local button = Mixin(E:CreateButton(self, "$parentAura" .. index, true, true, true), button_proto)
+	local button = P:Mixin(E:CreateButton(self, "$parentAura" .. index, true, true, true), button_proto)
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnLeave", button.OnLeave)
 
@@ -383,9 +383,9 @@ function frame_proto:UpdateAuras()
 end
 
 function UF:CreateAuras(frame, unit)
-	Mixin(frame, frame_proto)
+	P:Mixin(frame, frame_proto)
 
-	local element = Mixin(CreateFrame("Frame", nil, frame), element_proto)
+	local element = P:Mixin(CreateFrame("Frame", nil, frame), element_proto)
 	element:SetSize(48, 48)
 
 	element.CustomFilter = filterFunctions[unit] or filterFunctions.default

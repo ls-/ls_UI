@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 --[[ luacheck: globals
-	Mixin
+	P:Mixin
 ]]
 
 -- Mine
@@ -40,7 +40,7 @@ function small_proto:Update()
 end
 
 function UF:CreateSmallUnitFrame(frame)
-	Mixin(frame, small_proto)
+	P:Mixin(frame, small_proto)
 
 	-- .Border
 	-- .Inlay
@@ -89,7 +89,7 @@ function medium_proto:Update()
 end
 
 function UF:CreateMediumUnitFrame(frame)
-	Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
+	P:Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
 
 	local castbarSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	castbarSlot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, -6)
@@ -142,7 +142,7 @@ function large_proto:AlignWidgets()
 end
 
 function UF:CreateLargeFrame(frame)
-	Mixin(self:CreateMediumUnitFrame(frame), large_proto)
+	P:Mixin(self:CreateMediumUnitFrame(frame), large_proto)
 
 	local pvpSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	pvpSlot:UpdateSize(50, 54) -- pvp holder size

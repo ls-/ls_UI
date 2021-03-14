@@ -875,7 +875,7 @@ function MODULE:Init()
 		holder:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
 		E.Movers:Create(holder)
 
-		Mixin(Minimap, minimap_proto)
+		P:Mixin(Minimap, minimap_proto)
 		Minimap:EnableMouseWheel()
 		Minimap:ClearAllPoints()
 		Minimap:SetParent(holder)
@@ -895,7 +895,7 @@ function MODULE:Init()
 		ignoredChildren[textureParent] = true
 
 		if isSquare then
-			Mixin(Minimap, square_minimap_proto)
+			P:Mixin(Minimap, square_minimap_proto)
 			Minimap:SetArchBlobRingScalar(0)
 			Minimap:SetQuestBlobRingScalar(0)
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")

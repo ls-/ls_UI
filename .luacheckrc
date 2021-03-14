@@ -73,7 +73,6 @@ read_globals = {
 	"Minimap_ZoomIn",
 	"Minimap_ZoomOut",
 	"MiniMapTracking_OnMouseDown",
-	"Mixin",
 	"RegisterStateDriver",
 	"UIDropDownMenu_GetCurrentDropDown",
 	"UnitFrame_OnEnter",

@@ -6,7 +6,7 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 
 --[[ luacheck: globals
-	CreateFrame Mixin
+	CreateFrame P:Mixin
 ]]
 
 -- Mine
@@ -63,7 +63,7 @@ do
 	end
 
 	function UF:CreateVerticalPlayerFrame(frame)
-		Mixin(frame, frame_proto)
+		P:Mixin(frame, frame_proto)
 
 		local level = frame:GetFrameLevel()
 
@@ -258,7 +258,7 @@ do
 	end
 
 	function UF:CreateHorizontalPlayerFrame(frame)
-		Mixin(self:CreateLargeFrame(frame), player_proto)
+		P:Mixin(self:CreateLargeFrame(frame), player_proto)
 
 		local addPower = self:CreateAdditionalPower(frame)
 		addPower:SetFrameLevel(frame:GetFrameLevel() + 1)
