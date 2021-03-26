@@ -280,7 +280,9 @@ do
 				end
 
 				for i = max, #self - 1 do
-					self[i].Sep:Hide()
+					if i > 0 then
+						self[i].Sep:Hide()
+					end
 				end
 			end
 
