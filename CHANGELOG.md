@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90005.02
+
+- Added WoW Token price to the "Inventory" micro button's tooltip;
+- Fixed misc class power bar issues.
+
 ## Version 90005.01
 
 - Added 125% and 150% size options for the round minimap. Can be found at /LSUI > Minimap > Size
