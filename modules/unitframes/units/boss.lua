@@ -6,10 +6,6 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local unpack = _G.unpack
 
---[[ luacheck: globals
-	CreateFrame Mixin UIParent
-]]
-
 -- Mine
 local isInit = false
 local holder
@@ -55,7 +51,7 @@ function UF:HasBossFrame()
 end
 
 function UF:CreateBossFrame(frame)
-	Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
+	P:Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
 
 	local altPower = self:CreateAlternativePower(frame, frame.TextParent)
 	altPower:SetFrameLevel(frame:GetFrameLevel() + 1)

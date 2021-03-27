@@ -40,7 +40,7 @@ function frame_proto:UpdateThreatIndicator()
 end
 
 function UF:CreateThreatIndicator(frame, parent, isTexture)
-	Mixin(frame, frame_proto)
+	P:Mixin(frame, frame_proto)
 
 	local element
 	if isTexture then
@@ -50,5 +50,5 @@ function UF:CreateThreatIndicator(frame, parent, isTexture)
 		element:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick-glow", "BACKGROUND", -7)
 	end
 
-	return Mixin(element, element_proto)
+	return P:Mixin(element, element_proto)
 end

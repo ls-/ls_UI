@@ -41,6 +41,7 @@ read_globals = {
 	"CreateFrame",
 	"GetCursorPosition",
 	"GetGameTime",
+	"GetItemInfo",
 	"GetMinimapZoneText",
 	"GetZonePVPInfo",
 	"IsAddOnLoaded",
@@ -67,13 +68,13 @@ read_globals = {
 	"C_MountJournal",
 	"C_PvP",
 	"C_Timer",
+	"C_WowTokenPublic",
 
 	-- FrameXML functions
 	"CastingBarFrame_SetUnit",
 	"Minimap_ZoomIn",
 	"Minimap_ZoomOut",
 	"MiniMapTracking_OnMouseDown",
-	"Mixin",
 	"RegisterStateDriver",
 	"UIDropDownMenu_GetCurrentDropDown",
 	"UnitFrame_OnEnter",
@@ -110,4 +111,6 @@ read_globals = {
 	-- FrameXML vars
 	"ChatTypeInfo",
 	"DEFAULT_CHAT_FRAME",
+	"ITEM_QUALITY_COLORS",
+	"WOW_TOKEN_ITEM_ID",
 }

@@ -102,7 +102,7 @@ function border_proto:IsObjectType(_, t)
 end
 
 function E:CreateBorder(parent, drawLayer, drawSubLevel)
-	local border = Mixin({__parent = parent}, border_proto)
+	local border = P:Mixin({__parent = parent}, border_proto)
 
 	for _, v in next, sections do
 		border[v] = parent:CreateTexture(nil, drawLayer or "OVERLAY", nil, drawSubLevel or 1)

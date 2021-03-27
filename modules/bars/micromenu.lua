@@ -65,6 +65,7 @@ local BUTTONS = {
 		icon = "INVENTORY",
 		events = {
 			BAG_UPDATE_DELAYED = true,
+			TOKEN_MARKET_PRICE_UPDATED = true,
 		},
 	},
 	spellbook = {
@@ -485,6 +486,7 @@ do
 	local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
 
 	local freeSlots, totalSlots = 0, 0
+	local lastTokenUpdate = 0
 
 	local function updateBagUsageInfo()
 		freeSlots, totalSlots = 0, 0
@@ -523,6 +525,15 @@ do
 
 			GameTooltip:AddDoubleLine(L["GOLD"], GetMoneyString(GetMoney(), true), 1, 1, 1, 1, 1, 1)
 
+			local tokenPrice = C_WowTokenPublic.GetCurrentMarketPrice()
+			if tokenPrice and tokenPrice > 0 then
+				local name, _, quality = GetItemInfo(WOW_TOKEN_ITEM_ID)
+				local color =  ITEM_QUALITY_COLORS[quality]
+				GameTooltip:AddDoubleLine(name, GetMoneyString(tokenPrice, true), color.r, color.g, color.b, 1, 1, 1)
+			elseif GetTime() - lastTokenUpdate > 300 then -- 300 is pollTimeSeconds = select(2, C_WowTokenPublic.GetCommerceSystemStatus())
+				C_WowTokenPublic.UpdateMarketPrice()
+			end
+
 			if C.db.profile.bars.micromenu.bars.bags.enabled then
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["INVENTORY_BUTTON_RCLICK_TOOLTIP"])
@@ -550,11 +561,23 @@ do
 		end
 	end
 
-	function inventoryButton_OnEvent(self, event)
+	function inventoryButton_OnEvent(self, event, ...)
 		if event == "BAG_UPDATE_DELAYED" then
 			self:UpdateIndicator()
 		elseif event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
+		elseif event == "TOKEN_MARKET_PRICE_UPDATED" then
+			lastTokenUpdate = GetTime()
+
+			if ... == LE_TOKEN_RESULT_ERROR_DISABLED then
+				return
+			end
+
+			if GameTooltip:IsOwned(self) then
+				GameTooltip:Hide()
+
+				inventoryButton_OnEnter(self)
+			end
 		end
 	end
 

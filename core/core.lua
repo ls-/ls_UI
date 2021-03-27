@@ -9,6 +9,7 @@ local next = _G.next
 local pairs = _G.pairs
 local s_format = _G.string.format
 local s_split = _G.string.split
+local select = _G.select
 local t_insert = _G.table.insert
 local type = _G.type
 local xpcall = _G.xpcall
@@ -67,6 +68,39 @@ do
 				dispatcher:UnregisterEvent(event)
 			end
 		end
+	end
+end
+
+------------
+-- MIXINS --
+------------
+
+do
+	-- not sure about this implementation just yet, but I'll try using it for
+	-- profiling later on
+	local registry = {
+		-- [obj] = {["method"] = func,},
+	}
+
+	function P:Mixin(obj, ...)
+		registry[obj] = {}
+
+		for i = 1, select("#", ...) do
+			local mixin = select(i, ...)
+			for k, v in next, mixin do
+				if type(v) == "function" then
+					registry[obj][k] = v
+				end
+
+				obj[k] = v
+			end
+		end
+
+		return obj
+	end
+
+	function P:GetMixedInRegistry()
+		return registry
 	end
 end
 

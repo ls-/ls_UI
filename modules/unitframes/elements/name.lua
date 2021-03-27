@@ -56,9 +56,9 @@ function frame_proto:UpdateName()
 end
 
 function UF:CreateName(frame, textParent)
-	Mixin(frame, frame_proto)
+	P:Mixin(frame, frame_proto)
 
-	local element = Mixin((textParent or frame):CreateFontString(nil, "OVERLAY"), element_proto)
+	local element = P:Mixin((textParent or frame):CreateFontString(nil, "OVERLAY"), element_proto)
 	element.__owner = frame
 	E.FontStrings:Capture(element, "unit")
 
