@@ -6,10 +6,6 @@ local UF = P:GetModule("UnitFrames")
 local _G = getfenv(0)
 local unpack = _G.unpack
 
---[[ luacheck: globals
-	CreateFrame P:Mixin UIParent
-]]
-
 -- Mine
 local isInit = false
 local holder

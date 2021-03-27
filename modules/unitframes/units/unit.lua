@@ -5,10 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	P:Mixin
-]]
-
 -- Mine
 local small_proto = {}
 UF.small_proto = small_proto

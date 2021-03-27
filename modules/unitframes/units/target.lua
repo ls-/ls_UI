@@ -5,9 +5,6 @@ local UF = P:GetModule("UnitFrames")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-]]
-
 -- Mine
 local isInit = false
 
