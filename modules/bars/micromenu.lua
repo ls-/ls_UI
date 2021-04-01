@@ -484,6 +484,8 @@ local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, 
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
 	local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
+	local _, TOKEN_NAME = GetItemInfoInstant(WOW_TOKEN_ITEM_ID) -- technically it's its item class
+	local TOKEN_COLOR = ITEM_QUALITY_COLORS[8]
 
 	local freeSlots, totalSlots = 0, 0
 	local lastTokenUpdate = 0
@@ -527,9 +529,7 @@ do
 
 			local tokenPrice = C_WowTokenPublic.GetCurrentMarketPrice()
 			if tokenPrice and tokenPrice > 0 then
-				local name, _, quality = GetItemInfo(WOW_TOKEN_ITEM_ID)
-				local color =  ITEM_QUALITY_COLORS[quality]
-				GameTooltip:AddDoubleLine(name, GetMoneyString(tokenPrice, true), color.r, color.g, color.b, 1, 1, 1)
+				GameTooltip:AddDoubleLine(TOKEN_NAME, GetMoneyString(tokenPrice, true), TOKEN_COLOR.r, TOKEN_COLOR.g, TOKEN_COLOR.b, 1, 1, 1)
 			elseif GetTime() - lastTokenUpdate > 300 then -- 300 is pollTimeSeconds = select(2, C_WowTokenPublic.GetCommerceSystemStatus())
 				C_WowTokenPublic.UpdateMarketPrice()
 			end

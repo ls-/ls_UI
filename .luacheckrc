@@ -42,6 +42,7 @@ read_globals = {
 	"GetCursorPosition",
 	"GetGameTime",
 	"GetItemInfo",
+	"GetItemInfoInstant",
 	"GetMinimapZoneText",
 	"GetZonePVPInfo",
 	"IsAddOnLoaded",
