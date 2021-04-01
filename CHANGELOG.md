@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 90005.03
+
+- Fixed "Inventory" micro button's tooltip error.
+
 ## Version 90005.02
 
 - Added WoW Token price to the "Inventory" micro button's tooltip;
