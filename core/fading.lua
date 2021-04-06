@@ -12,6 +12,7 @@ local next = _G.next
 -- Mine
 local activeWidgets = {}
 local miscWidgets = {}
+local oocWidgets = {} -- out of combat
 local widgets = {}
 
 local updater = CreateFrame("Frame", nil, UIParent)
@@ -47,6 +48,21 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 		end
 	end
 end)
+
+updater:SetScript("OnEvent", function(_, event)
+	if event == "PLAYER_REGEN_ENABLED" then
+		for object in next, oocWidgets do
+			object:UpdateFading()
+		end
+	elseif event == "PLAYER_REGEN_DISABLED" then
+		for object in next, oocWidgets do
+			object:PauseFading()
+		end
+	end
+end)
+
+updater:RegisterEvent("PLAYER_REGEN_ENABLED")
+updater:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 local function isMouseOverBar(frame)
 	return frame:IsMouseOver(4, -4, -4, 4)
@@ -91,7 +107,9 @@ local function fader_OnHide(self)
 	self.object:SetAlpha(1)
 end
 
-local function object_PauseFading(self)
+local object_proto = {}
+
+function object_proto:PauseFading()
 	self.Fader:SetScript("OnUpdate", nil)
 
 	widgets[self].isFaded = nil
@@ -99,19 +117,27 @@ local function object_PauseFading(self)
 	self:SetAlpha(1)
 end
 
-local function object_ResumeFading(self)
+function object_proto:ResumeFading()
 	self.Fader.elapsed = 0
 	self.Fader:SetScript("OnUpdate", fader_OnUpdate)
 end
 
-local function object_UpdateFading(self)
+function object_proto:UpdateFading()
 	widgets[self].config = E:CopyTable(self._config.fade, widgets[self].config)
 	widgets[self].isFaded = nil
 
 	if self._config.visible and self._config.fade and self._config.fade.enabled then
-		object_ResumeFading(self)
+		self:ResumeFading()
 	else
-		object_PauseFading(self)
+		self:PauseFading()
+	end
+end
+
+function object_proto:SetOoC(isOoC)
+	if isOoC then
+		oocWidgets[self] = true
+	else
+		oocWidgets[self] = nil
 	end
 end
 
@@ -130,9 +156,8 @@ function E.SetUpFading(_, object)
 	}
 
 	object.Fader = fader
-	object.PauseFading = object_PauseFading
-	object.ResumeFading = object_ResumeFading
-	object.UpdateFading = object_UpdateFading
+
+	P:Mixin(object, object_proto)
 end
 
 function E:FadeIn(object, inDelay, inDuration, minAlpha, maxAlpha)
