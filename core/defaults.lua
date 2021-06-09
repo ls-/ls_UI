@@ -443,6 +443,16 @@ D.profile = {
 					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
+				fade = {
+					enabled = false,
+					ooc = false,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
+				},
 				health = {
 					enabled = true,
 					orientation = "VERTICAL",
@@ -561,6 +571,16 @@ D.profile = {
 				point = {
 					ls = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
 					traditional = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
+				},
+				fade = {
+					enabled = false,
+					ooc = false,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
 				},
 				health = {
 					enabled = true,
@@ -718,6 +738,16 @@ D.profile = {
 				point = {
 					ls = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
 					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
+				},
+				fade = {
+					enabled = false,
+					ooc = false,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
 				},
 				insets = {
 					t_size = 0.23,
@@ -927,6 +957,16 @@ D.profile = {
 					ls = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 					traditional = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 				},
+				fade = {
+					enabled = false,
+					ooc = false,
+					out_delay = 0.75,
+					out_duration = 0.15,
+					in_delay = 0,
+					in_duration = 0.15,
+					min_alpha = 0,
+					max_alpha = 1,
+				},
 				insets = {
 					t_size = 0.23,
 					b_size = 0.33,
@@ -1118,6 +1158,16 @@ D.profile = {
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
+			},
+			fade = {
+				enabled = false,
+				ooc = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
 			},
 			insets = {
 				t_size = 0.23,
@@ -1342,6 +1392,16 @@ D.profile = {
 				ls = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 				traditional = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 			},
+			fade = {
+				enabled = false,
+				ooc = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
+			},
 			insets = {
 				t_size = 0.23,
 				b_size = 0.33,
@@ -1443,6 +1503,16 @@ D.profile = {
 			point = {
 				ls = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
 				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
+			},
+			fade = {
+				enabled = false,
+				ooc = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
 			},
 			insets = {
 				t_size = 0.23,
@@ -1667,6 +1737,16 @@ D.profile = {
 				ls = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
 				traditional = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
 			},
+			fade = {
+				enabled = false,
+				ooc = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
+			},
 			insets = {
 				t_size = 0.23,
 				b_size = 0.33,
@@ -1771,6 +1851,16 @@ D.profile = {
 			point = {
 				ls = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
 				traditional = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
+			},
+			fade = {
+				enabled = false,
+				ooc = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_delay = 0,
+				in_duration = 0.15,
+				min_alpha = 0,
+				max_alpha = 1,
 			},
 			insets = {
 				t_size = 0.23,

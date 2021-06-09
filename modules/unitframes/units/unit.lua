@@ -18,6 +18,7 @@ function small_proto:Update()
 		end
 
 		self:UpdateSize()
+		self:UpdateFading()
 		self:UpdateLayout()
 		self:UpdateInlay()
 		self:UpdateHealth()
@@ -37,6 +38,9 @@ end
 
 function UF:CreateSmallUnitFrame(frame)
 	P:Mixin(frame, small_proto)
+
+	-- .Fader
+	E:SetUpFading(frame)
 
 	-- .Border
 	-- .Inlay

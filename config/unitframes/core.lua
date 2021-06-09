@@ -244,6 +244,8 @@ local function createUnitFramePanel(order, unit, name)
 			raid_target = CONFIG:CreateUnitFrameRaidTargetPanel(25, unit),
 			name = CONFIG:CreateUnitFrameNamePanel(26, unit),
 			debuff = CONFIG:CreateUnitFrameDebuffIconsPanel(27, unit),
+			-- custom_texts = {}, -- 28
+			fading = CONFIG:CreateUnitFrameFadingPanel(29, unit)
 		},
 	}
 
