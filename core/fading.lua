@@ -112,7 +112,9 @@ local object_proto = {}
 function object_proto:PauseFading()
 	self.Fader:SetScript("OnUpdate", nil)
 
+	widgets[self].mode = nil
 	widgets[self].isFaded = nil
+	activeWidgets[self] = nil
 
 	self:SetAlpha(1)
 end
