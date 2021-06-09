@@ -218,11 +218,6 @@ local function getOptionsTable_Fading(order, barID)
 				order = 2,
 				type = "toggle",
 				name = L["OOC"],
-				set = function(info, value)
-					C.db.profile.bars[barID].fade[info[#info]] = value
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):SetOoC(value)
-				end,
 			},
 			in_delay = {
 				order = 3,
@@ -274,14 +269,6 @@ local function getOptionsTable_Fading(order, barID)
 			BARS:GetBar("micromenu1"):UpdateFading()
 			BARS:GetBar("micromenu2"):UpdateConfig()
 			BARS:GetBar("micromenu2"):UpdateFading()
-		end
-
-		temp.args.ooc.set = function(info, value)
-			C.db.profile.bars[barID].fade[info[#info]] = value
-			BARS:GetBar("micromenu1"):UpdateConfig()
-			BARS:GetBar("micromenu1"):SetOoC(value)
-			BARS:GetBar("micromenu2"):UpdateConfig()
-			BARS:GetBar("micromenu2"):SetOoC(value)
 		end
 	elseif barID == "xpbar" then
 		temp.hidden = isXPBarDisabledOrRestricted

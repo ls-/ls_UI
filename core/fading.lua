@@ -5,10 +5,6 @@ local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
 local _G = getfenv(0)
 local next = _G.next
 
---[[ luacheck: globals
-	CreateFrame SpellFlyout UIParent
-]]
-
 -- Mine
 local activeWidgets = {}
 local miscWidgets = {}
@@ -28,10 +24,11 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 				object:SetAlpha(config.min_alpha + ((config.max_alpha - config.min_alpha) * ((widget.fadeTimer - config.in_delay) / config.in_duration)))
 
 				if widget.fadeTimer >= config.in_delay + config.in_duration then
-					activeWidgets[object] = nil
-					object:SetAlpha(config.max_alpha)
 					widget.mode = nil
 					widget.isFaded = nil
+					activeWidgets[object] = nil
+
+					object:SetAlpha(config.max_alpha)
 				end
 			end
 		elseif widget.mode == "OUT" then
@@ -39,10 +36,11 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 				object:SetAlpha(config.max_alpha - ((config.max_alpha - config.min_alpha) * ((widget.fadeTimer - config.out_delay) / config.out_duration)))
 
 				if widget.fadeTimer >= config.out_delay + config.out_duration then
-					activeWidgets[object] = nil
-					object:SetAlpha(config.min_alpha)
 					widget.mode = nil
 					widget.isFaded = true
+					activeWidgets[object] = nil
+
+					object:SetAlpha(config.min_alpha)
 				end
 			end
 		end
@@ -92,6 +90,7 @@ local function fader_OnUpdate(self, elapsed)
 						widget.mode = nil
 						widget.isFaded = nil
 						activeWidgets[self.object] = nil
+
 						self.object:SetAlpha(widget.config.max_alpha)
 					end
 				end
@@ -103,7 +102,10 @@ local function fader_OnUpdate(self, elapsed)
 end
 
 local function fader_OnHide(self)
+	widgets[self.object].mode = nil
 	widgets[self.object].isFaded = nil
+	activeWidgets[self.object] = nil
+
 	self.object:SetAlpha(1)
 end
 
@@ -116,7 +118,8 @@ function object_proto:StopFading()
 	widgets[self].isFaded = nil
 	activeWidgets[self] = nil
 
-	self:SetAlpha(1)
+	-- I might want to rework how it's handeled
+	E:FadeIn(self, widgets[self].config.in_delay, widgets[self].config.in_duration, widgets[self].config.min_alpha, widgets[self].config.max_alpha)
 end
 
 function object_proto:ResumeFading()
@@ -128,22 +131,22 @@ function object_proto:UpdateFading()
 	widgets[self].config = E:CopyTable(self._config.fade, widgets[self].config)
 	widgets[self].isFaded = nil
 
-	if self._config.visible and self._config.fade and self._config.fade.enabled then
+	if widgets[self].config.ooc then
+		oocWidgets[self] = true
+	else
+		oocWidgets[self] = nil
+	end
+
+	-- FIXME! use this ugly ~= false check for now, it's related to action bars
+	-- I'll fix when I'm rewriting those
+	if self._config.visible ~= false and widgets[self].config.enabled then
 		self:ResumeFading()
 	else
 		self:StopFading()
 	end
 end
 
-function object_proto:SetOoC(isOoC)
-	if isOoC then
-		oocWidgets[self] = true
-	else
-		oocWidgets[self] = nil
-	end
-end
-
-function E.SetUpFading(_, object)
+function E:SetUpFading(object)
 	local fader = CreateFrame("Frame", "$parentFader", object)
 	fader:SetFrameLevel(object:GetFrameLevel())
 	fader:SetPoint("TOPLEFT", -4, 4)
@@ -160,6 +163,8 @@ function E.SetUpFading(_, object)
 	object.Fader = fader
 
 	P:Mixin(object, object_proto)
+
+	return object
 end
 
 function E:FadeIn(object, inDelay, inDuration, minAlpha, maxAlpha)

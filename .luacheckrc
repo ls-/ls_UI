@@ -106,6 +106,7 @@ read_globals = {
 	"PetCastingBarFrame",
 	"QueueStatusFrame",
 	"QueueStatusMinimapButton",
+	"SpellFlyout",
 	"TimeManagerClockButton",
 	"UIParent",
 
