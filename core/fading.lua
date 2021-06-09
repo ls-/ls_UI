@@ -56,7 +56,7 @@ updater:SetScript("OnEvent", function(_, event)
 		end
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		for object in next, oocWidgets do
-			object:PauseFading()
+			object:StopFading()
 		end
 	end
 end)
@@ -109,7 +109,7 @@ end
 
 local object_proto = {}
 
-function object_proto:PauseFading()
+function object_proto:StopFading()
 	self.Fader:SetScript("OnUpdate", nil)
 
 	widgets[self].mode = nil
@@ -131,7 +131,7 @@ function object_proto:UpdateFading()
 	if self._config.visible and self._config.fade and self._config.fade.enabled then
 		self:ResumeFading()
 	else
-		self:PauseFading()
+		self:StopFading()
 	end
 end
 

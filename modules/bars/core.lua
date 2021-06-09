@@ -31,7 +31,7 @@ end
 local function pauseFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:PauseFading()
+			bar:StopFading()
 
 			if bar.UpdateButtons then
 				bar:UpdateButtons("SetAlpha", 1)
