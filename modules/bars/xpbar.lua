@@ -46,6 +46,13 @@ local CFG = {
 	},
 	fade = {
 		enabled = false,
+		ooc = false,
+		out_delay = 0.75,
+		out_duration = 0.15,
+		in_delay = 0,
+		in_duration = 0.15,
+		min_alpha = 0,
+		max_alpha = 1,
 	},
 }
 
@@ -66,15 +73,11 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-
 	self:UpdateFont()
 	self:UpdateTextFormat()
 	self:UpdateTextVisibility()
 	self:UpdateSize(self._config.width, self._config.height)
-
-	if not BARS:IsRestricted() then
-		self:UpdateFading()
-	end
+	self:UpdateFading()
 end
 
 local function bar_UpdateConfig(self)
