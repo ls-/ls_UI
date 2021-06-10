@@ -25,6 +25,7 @@ local CFG = {
 	visibility = "[petbattle] show; hide",
 	fade = {
 		enabled = false,
+		ooc = false,
 		out_delay = 0.75,
 		out_duration = 0.15,
 		in_delay = 0,
