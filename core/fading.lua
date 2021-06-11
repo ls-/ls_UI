@@ -172,7 +172,7 @@ hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 					if (not widget.atMaxAlpha or widget.isFading) and widget.mode ~= FADE_IN then
 						addActiveWidget(object, widget, FADE_IN)
 					end
-				elseif (not widget.atMinAlpha or widget.isFading) and widget.mode ~= FADE_OUT then
+				elseif not widget.atMinAlpha and widget.mode ~= FADE_OUT then
 					addActiveWidget(object, widget, FADE_OUT)
 				end
 			end
