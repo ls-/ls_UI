@@ -214,42 +214,59 @@ local function getOptionsTable_Fading(order, barID)
 				name = L["ENABLE"],
 				disabled = false,
 			},
-			combat = {
+			reset = {
 				order = 2,
+				type = "execute",
+				name = L["RESTORE_DEFAULTS"],
+				disabled = false,
+				confirm = CONFIG.ConfirmReset,
+				func = function()
+					CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateFading()
+				end,
+			},
+			spacer_1 = {
+				order = 3,
+				type = "description",
+				name = " ",
+			},
+			combat = {
+				order = 4,
 				type = "toggle",
 				name = L["OOC"],
 			},
 			target = {
-				order = 3,
+				order = 5,
 				type = "toggle",
-				name = "[WIP] TARGET",
+				name = L["TARGET"],
 			},
 			in_duration = {
-				order = 4,
+				order = 6,
 				type = "range",
 				name = L["FADE_IN_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
 			},
 			out_delay = {
-				order = 5,
+				order = 7,
 				type = "range",
 				name = L["FADE_OUT_DELAY"],
 				min = 0, max = 2, step = 0.05,
 			},
 			out_duration = {
-				order = 6,
+				order = 8,
 				type = "range",
 				name = L["FADE_OUT_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
 			},
 			min_alpha = {
-				order = 7,
+				order = 9,
 				type = "range",
 				name = L["MIN_ALPHA"],
 				min = 0, max = 1, step = 0.05,
 			},
 			max_alpha = {
-				order = 8,
+				order = 10,
 				type = "range",
 				name = L["MAX_ALPHA"],
 				min = 0, max = 1, step = 0.05

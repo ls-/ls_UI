@@ -75,7 +75,7 @@ function CONFIG:CreateUnitFrameFadingPanel(order, unit)
 			target = {
 				order = inc(1),
 				type = "toggle",
-				name = "[WIP] TARGET",
+				name = L["TARGET"],
 				disabled = isFadingDisabled,
 			},
 			in_duration = {
