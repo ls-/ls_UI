@@ -248,11 +248,7 @@ function MODULE.SetupActionBarController()
 						for _, child in next, widget.children do
 							child = _G[child]
 							if child:IsShown() then
-								E:FadeIn(child)
-
-								if child.UpdateFading then
-									C_Timer.After(0.15, function() child:UpdateFading() end)
-								end
+								E:FadeIn(child, nil, nil, nil, true)
 							else
 								child:SetAlpha(1)
 							end

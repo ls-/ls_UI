@@ -31,7 +31,6 @@ local CFG = {
 			ooc = false,
 			out_delay = 0.75,
 			out_duration = 0.15,
-			in_delay = 0,
 			in_duration = 0.15,
 			min_alpha = 0,
 			max_alpha = 1,

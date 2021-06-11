@@ -214,16 +214,15 @@ local function getOptionsTable_Fading(order, barID)
 				name = L["ENABLE"],
 				disabled = false,
 			},
-			ooc = {
+			combat = {
 				order = 2,
 				type = "toggle",
 				name = L["OOC"],
 			},
-			in_delay = {
+			target = {
 				order = 3,
-				type = "range",
-				name = L["FADE_IN_DELAY"],
-				min = 0, max = 1, step = 0.05,
+				type = "toggle",
+				name = "[WIP] TARGET",
 			},
 			in_duration = {
 				order = 4,

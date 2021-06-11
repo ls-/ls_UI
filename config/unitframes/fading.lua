@@ -26,15 +26,15 @@ local function inc(order)
 	return orders[order]
 end
 
+local function isFadingDisabled(info)
+	return not C.db.profile.units[info[#info - 2]].fade.enabled
+end
 
 function CONFIG:CreateUnitFrameFadingPanel(order, unit)
 	return {
 		order = order,
 		type = "group",
 		name = L["FADING"],
-		disabled = function()
-			return not C.db.profile.units[unit].fade.enabled
-		end,
 		get = function(info)
 			return C.db.profile.units[unit].fade[info[#info]]
 		end,
@@ -48,47 +48,69 @@ function CONFIG:CreateUnitFrameFadingPanel(order, unit)
 				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
-				disabled = false,
 			},
-			ooc = {
+			reset = {
+				order = inc(1),
+				type = "execute",
+				name = L["RESTORE_DEFAULTS"],
+				disabled = isFadingDisabled,
+				confirm = CONFIG.ConfirmReset,
+				func = function()
+					CONFIG:CopySettings(D.profile.units[unit].fade, C.db.profile.units[unit].fade, {enabled = true})
+					UNITFRAMES:For(unit, "UpdateConfig")
+					UNITFRAMES:For(unit, "UpdateFading")
+				end,
+			},
+			spacer_1 = {
+				order = inc(1),
+				type = "description",
+				name = " ",
+			},
+			combat = {
 				order = inc(1),
 				type = "toggle",
 				name = L["OOC"],
+				disabled = isFadingDisabled,
 			},
-			in_delay = {
+			target = {
 				order = inc(1),
-				type = "range",
-				name = L["FADE_IN_DELAY"],
-				min = 0, max = 1, step = 0.05,
+				type = "toggle",
+				name = "[WIP] TARGET",
+				disabled = isFadingDisabled,
 			},
 			in_duration = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_IN_DURATION"],
+				disabled = isFadingDisabled,
 				min = 0.05, max = 1, step = 0.05,
 			},
 			out_delay = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_OUT_DELAY"],
+				disabled = isFadingDisabled,
 				min = 0, max = 2, step = 0.05,
 			},
 			out_duration = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_OUT_DURATION"],
+				disabled = isFadingDisabled,
 				min = 0.05, max = 1, step = 0.05,
 			},
 			min_alpha = {
 				order = inc(1),
 				type = "range",
 				name = L["MIN_ALPHA"],
+				disabled = isFadingDisabled,
 				min = 0, max = 1, step = 0.05,
 			},
 			max_alpha = {
 				order = inc(1),
 				type = "range",
 				name = L["MAX_ALPHA"],
+				disabled = isFadingDisabled,
 				min = 0, max = 1, step = 0.05
 			},
 		},

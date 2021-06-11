@@ -31,7 +31,7 @@ end
 local function pauseFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:StopFading()
+			bar:DisableFading()
 
 			if bar.UpdateButtons then
 				bar:UpdateButtons("SetAlpha", 1)
@@ -43,7 +43,7 @@ end
 local function resumeFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:ResumeFading()
+			bar:EnableFading()
 		end
 	end
 end
