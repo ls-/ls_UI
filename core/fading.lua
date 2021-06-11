@@ -165,7 +165,7 @@ local hoverUpdater = CreateFrame("Frame", nil, UIParent)
 
 hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed > 0.032 then
+	if self.elapsed > elapsed * 1.5 then -- run it at half the refresh rate
 		for object, widget in next, widgets do
 			if object:IsShown() and widget.canHover then
 				if isMouseOver(object) then
