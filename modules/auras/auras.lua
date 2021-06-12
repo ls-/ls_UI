@@ -297,6 +297,7 @@ local function header_UpdateCooldownConfig(self)
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
+	self.cooldownConfig.s_ms_threshold = self._config.cooldown.s_ms_threshold
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local buttons = self._buttons or {self:GetChildren()}

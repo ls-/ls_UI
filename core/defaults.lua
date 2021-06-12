@@ -426,6 +426,7 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
+			s_ms_threshold = 5, -- [1; 10]
 		},
 		inlay = {
 			alpha = 0.8,
@@ -2147,6 +2148,7 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
+			s_ms_threshold = 5, -- [1; 10]
 		},
 		desaturation = {
 			unusable = true,
@@ -2687,6 +2689,7 @@ D.profile = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
+			s_ms_threshold = 5, -- [1; 10]
 		},
 		HELPFUL = {
 			size = 32,
@@ -2902,6 +2905,7 @@ D.char = {
 		cooldown = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
+			s_ms_threshold = 5, -- [1; 10]
 			text = {
 				enabled = true,
 				size = 12,

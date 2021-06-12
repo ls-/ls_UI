@@ -886,7 +886,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						order = 10,
 						type = "range",
 						name = L["EXP_THRESHOLD"],
-						desc = L["EXP_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
 					},
 					m_ss_threshold = {
@@ -903,6 +902,21 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								end
 
 								C.db.profile.bars.cooldown[info[#info]] = value
+								BARS:UpdateBars("UpdateConfig")
+								BARS:UpdateBars("UpdateCooldownConfig")
+							end
+						end,
+					},
+					s_ms_threshold = {
+						order = 12,
+						type = "range",
+						name = L["S_MS_THRESHOLD"],
+						desc = L["S_MS_THRESHOLD_DESC"],
+						min = 1, max = 10, step = 1,
+						set = function(info, value)
+							if C.db.profile.bars.cooldown[info[#info]] ~= value then
+								C.db.profile.bars.cooldown[info[#info]] = value
+
 								BARS:UpdateBars("UpdateConfig")
 								BARS:UpdateBars("UpdateCooldownConfig")
 							end
