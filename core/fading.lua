@@ -182,10 +182,6 @@ hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 	end
 end)
 
-local function fader_OnHide(self)
-	self.object:SetAlpha(1)
-end
-
 local object_proto = {}
 
 function object_proto:DisableFading(ignoreFade)
@@ -245,7 +241,6 @@ function E:SetUpFading(object)
 	fader:SetFrameLevel(object:GetFrameLevel())
 	fader:SetPoint("TOPLEFT", -4, 4)
 	fader:SetPoint("BOTTOMRIGHT", 4, -4)
-	fader:SetScript("OnHide", fader_OnHide)
 	fader:SetMouseClickEnabled(false)
 	fader.object = object
 	fader.threshold = 0.05
