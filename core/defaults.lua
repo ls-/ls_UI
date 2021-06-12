@@ -2095,6 +2095,16 @@ D.profile = {
 			queue = false,
 			tracking = false,
 		},
+		fade = {
+			enabled = false,
+			combat = false,
+			target = false,
+			out_delay = 0.75,
+			out_duration = 0.15,
+			in_duration = 0.15,
+			min_alpha = 0.2,
+			max_alpha = 1,
+		},
 		ls = {
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
