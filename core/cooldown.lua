@@ -31,10 +31,11 @@ local defaults = {
 	},
 }
 
+local updater  = CreateFrame("Frame")
 local updateTime = 0
 local time1, time2, format, color
-E.Cooldowns.Updater = CreateFrame("Frame")
-E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
+
+updater:SetScript("OnUpdate", function(_, elapsed)
 	updateTime = updateTime + elapsed
 	if updateTime >= 0.1 then
 		for cooldown, expiration in next, activeCooldowns do
