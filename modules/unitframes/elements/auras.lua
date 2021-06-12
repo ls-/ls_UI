@@ -274,6 +274,7 @@ function element_proto:UpdateCooldownConfig()
 
 	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
+	self.cooldownConfig.s_ms_threshold = C.db.profile.units.cooldown.s_ms_threshold
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	for i = 1, self.createdIcons do

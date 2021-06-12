@@ -31,7 +31,7 @@ end
 local function pauseFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:PauseFading()
+			bar:DisableFading()
 
 			if bar.UpdateButtons then
 				bar:UpdateButtons("SetAlpha", 1)
@@ -43,7 +43,7 @@ end
 local function resumeFading()
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
-			bar:ResumeFading()
+			bar:EnableFading()
 		end
 	end
 end
@@ -89,6 +89,7 @@ local function bar_UpdateCooldownConfig(self)
 
 	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
 	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
+	self.cooldownConfig.s_ms_threshold = self._config.cooldown.s_ms_threshold
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	local cooldown

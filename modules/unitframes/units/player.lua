@@ -24,6 +24,7 @@ do
 			end
 
 			self:UpdateSize()
+			self:UpdateFading()
 			self:UpdateInlay()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
@@ -60,6 +61,8 @@ do
 
 	function UF:CreateVerticalPlayerFrame(frame)
 		P:Mixin(frame, frame_proto)
+
+		E:SetUpFading(frame)
 
 		local level = frame:GetFrameLevel()
 

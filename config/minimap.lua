@@ -36,6 +36,10 @@ local function isMinimapRound()
 	return MINIMAP:IsInit() and not MINIMAP:IsSquare()
 end
 
+local function isFadingDisabled()
+	return not (MINIMAP:IsInit() and C.db.profile.minimap.fade.enabled)
+end
+
 local function isButtonCollectionDisabled()
 	return not (MINIMAP:IsInit() and C.db.profile.minimap.collect.enabled)
 end
@@ -299,8 +303,101 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "description",
 				name = " ",
 			},
-			collect = {
+			fadeing = {
 				order = 60,
+				type = "group",
+				name = L["FADING"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.minimap.fade[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap.fade[info[#info]] = value
+
+					Minimap:UpdateConfig()
+					Minimap:UpdateFading()
+				end,
+				args = {
+					enabled = {
+						order = 1,
+						type = "toggle",
+						name = L["ENABLE"],
+						disabled = isModuleDisabled,
+					},
+					reset = {
+						order = 2,
+						type = "execute",
+						name = L["RESTORE_DEFAULTS"],
+						disabled = isFadingDisabled,
+						confirm = CONFIG.ConfirmReset,
+						func = function()
+							CONFIG:CopySettings(D.profile.minimap.fade, C.db.profile.minimap.fade, {enabled = true})
+
+							Minimap:UpdateConfig()
+							Minimap:UpdateFading()
+						end,
+					},
+					spacer_1 = {
+						order = 3,
+						type = "description",
+						name = " ",
+					},
+					combat = {
+						order = 4,
+						type = "toggle",
+						name = L["COMBAT"],
+						disabled = isFadingDisabled,
+					},
+					target = {
+						order = 5,
+						type = "toggle",
+						name = L["TARGET"],
+						disabled = isFadingDisabled,
+					},
+					in_duration = {
+						order = 6,
+						type = "range",
+						name = L["FADE_IN_DURATION"],
+						disabled = isFadingDisabled,
+						min = 0.05, max = 1, step = 0.05,
+					},
+					out_delay = {
+						order = 7,
+						type = "range",
+						name = L["FADE_OUT_DELAY"],
+						disabled = isFadingDisabled,
+						min = 0, max = 2, step = 0.05,
+					},
+					out_duration = {
+						order = 8,
+						type = "range",
+						name = L["FADE_OUT_DURATION"],
+						disabled = isFadingDisabled,
+						min = 0.05, max = 1, step = 0.05,
+					},
+					min_alpha = {
+						order = 9,
+						type = "range",
+						name = L["MIN_ALPHA"],
+						disabled = isFadingDisabled,
+						min = 0, max = 1, step = 0.05,
+					},
+					max_alpha = {
+						order = 10,
+						type = "range",
+						name = L["MAX_ALPHA"],
+						disabled = isFadingDisabled,
+						min = 0, max = 1, step = 0.05
+					},
+				},
+			},
+			spacer_7 = {
+				order = 69,
+				type = "description",
+				name = " ",
+			},
+			collect = {
+				order = 70,
 				type = "group",
 				name = L["COLLECT_BUTTONS"],
 				inline = true,

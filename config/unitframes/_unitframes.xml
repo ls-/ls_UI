@@ -3,6 +3,7 @@
 	<Script file="auras.lua"/>
 	<Script file="castbar.lua"/>
 	<Script file="customtexts.lua"/>
+	<Script file="fading.lua"/>
 	<Script file="health.lua"/>
 	<Script file="misc.lua"/>
 	<Script file="name.lua"/>

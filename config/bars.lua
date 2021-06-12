@@ -196,6 +196,9 @@ local function getOptionsTable_Fading(order, barID)
 		type = "group",
 		name = L["FADING"],
 		inline = true,
+		disabled = function()
+			return not C.db.profile.bars[barID].fade.enabled
+		end,
 		get = function(info)
 			return C.db.profile.bars[barID].fade[info[#info]]
 		end,
@@ -209,39 +212,61 @@ local function getOptionsTable_Fading(order, barID)
 				order = 1,
 				type = "toggle",
 				name = L["ENABLE"],
+				disabled = false,
 			},
-			in_delay = {
+			reset = {
 				order = 2,
-				type = "range",
-				name = L["FADE_IN_DELAY"],
-				min = 0, max = 1, step = 0.05,
+				type = "execute",
+				name = L["RESTORE_DEFAULTS"],
+				disabled = false,
+				confirm = CONFIG.ConfirmReset,
+				func = function()
+					CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
+					BARS:GetBar(barID):UpdateConfig()
+					BARS:GetBar(barID):UpdateFading()
+				end,
+			},
+			spacer_1 = {
+				order = 3,
+				type = "description",
+				name = " ",
+			},
+			combat = {
+				order = 4,
+				type = "toggle",
+				name = L["COMBAT"],
+			},
+			target = {
+				order = 5,
+				type = "toggle",
+				name = L["TARGET"],
 			},
 			in_duration = {
-				order = 3,
+				order = 6,
 				type = "range",
 				name = L["FADE_IN_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
 			},
 			out_delay = {
-				order = 4,
+				order = 7,
 				type = "range",
 				name = L["FADE_OUT_DELAY"],
 				min = 0, max = 2, step = 0.05,
 			},
 			out_duration = {
-				order = 5,
+				order = 8,
 				type = "range",
 				name = L["FADE_OUT_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
 			},
 			min_alpha = {
-				order = 6,
+				order = 9,
 				type = "range",
 				name = L["MIN_ALPHA"],
 				min = 0, max = 1, step = 0.05,
 			},
 			max_alpha = {
-				order = 7,
+				order = 10,
 				type = "range",
 				name = L["MAX_ALPHA"],
 				min = 0, max = 1, step = 0.05
@@ -250,9 +275,9 @@ local function getOptionsTable_Fading(order, barID)
 	}
 
 	if barID == "bar1" then
-		temp.disabled = isModuleDisabledOrRestricted
+		temp.hidden = isModuleDisabledOrRestricted
 	elseif barID == "pet_battle" then
-		temp.disabled = isPetBattleBarDisabledOrRestricted
+		temp.hidden = isPetBattleBarDisabledOrRestricted
 	elseif barID == "micromenu" then
 		temp.set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
@@ -262,7 +287,7 @@ local function getOptionsTable_Fading(order, barID)
 			BARS:GetBar("micromenu2"):UpdateFading()
 		end
 	elseif barID == "xpbar" then
-		temp.disabled = isXPBarDisabledOrRestricted
+		temp.hidden = isXPBarDisabledOrRestricted
 	end
 
 	return temp
@@ -861,7 +886,6 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						order = 10,
 						type = "range",
 						name = L["EXP_THRESHOLD"],
-						desc = L["EXP_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
 					},
 					m_ss_threshold = {
@@ -878,6 +902,21 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								end
 
 								C.db.profile.bars.cooldown[info[#info]] = value
+								BARS:UpdateBars("UpdateConfig")
+								BARS:UpdateBars("UpdateCooldownConfig")
+							end
+						end,
+					},
+					s_ms_threshold = {
+						order = 12,
+						type = "range",
+						name = L["S_MS_THRESHOLD"],
+						desc = L["S_MS_THRESHOLD_DESC"],
+						min = 1, max = 10, step = 1,
+						set = function(info, value)
+							if C.db.profile.bars.cooldown[info[#info]] ~= value then
+								C.db.profile.bars.cooldown[info[#info]] = value
+
 								BARS:UpdateBars("UpdateConfig")
 								BARS:UpdateBars("UpdateCooldownConfig")
 							end

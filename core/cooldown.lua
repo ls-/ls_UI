@@ -23,6 +23,7 @@ local activeCooldowns = {}
 local defaults = {
 	exp_threshold = 5, -- [1; 10]
 	m_ss_threshold = 0, -- [91; 3599]
+	s_ms_threshold = 5, -- [1; 10]
 	text = {
 		enabled = true,
 		size = 12,
@@ -30,10 +31,11 @@ local defaults = {
 	},
 }
 
+local updater  = CreateFrame("Frame")
 local updateTime = 0
 local time1, time2, format, color
-E.Cooldowns.Updater = CreateFrame("Frame")
-E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
+
+updater:SetScript("OnUpdate", function(_, elapsed)
 	updateTime = updateTime + elapsed
 	if updateTime >= 0.1 then
 		for cooldown, expiration in next, activeCooldowns do
@@ -62,7 +64,7 @@ E.Cooldowns.Updater:SetScript("OnUpdate", function(_, elapsed)
 
 					color = C.db.global.colors.cooldown.minute
 				elseif remain >= 1 then
-					if remain > cooldown.config.exp_threshold then
+					if remain > cooldown.config.s_ms_threshold then
 						time1, time2, format = E:SecondsToTime(remain, "abbr")
 					else
 						time1, time2, format = E:SecondsToTime(remain, "frac")

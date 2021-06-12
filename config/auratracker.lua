@@ -321,7 +321,6 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						order = 11,
 						type = "range",
 						name = L["EXP_THRESHOLD"],
-						desc = L["EXP_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
 						get = function()
 							return C.db.char.auratracker.cooldown.exp_threshold
@@ -356,8 +355,26 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 							end
 						end,
 					},
-					size = {
+					s_ms_threshold = {
 						order = 13,
+						type = "range",
+						name = L["S_MS_THRESHOLD"],
+						desc = L["S_MS_THRESHOLD_DESC"],
+						min = 1, max = 10, step = 1,
+						get = function()
+							return C.db.char.auratracker.cooldown.s_ms_threshold
+						end,
+						set = function(_, value)
+							if C.db.char.auratracker.cooldown.s_ms_threshold ~= value then
+								C.db.char.auratracker.cooldown.s_ms_threshold = value
+
+								AURATRACKER:GetTracker():UpdateConfig()
+								AURATRACKER:GetTracker():UpdateCooldownConfig()
+							end
+						end,
+					},
+					size = {
+						order = 14,
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,

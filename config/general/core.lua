@@ -987,7 +987,7 @@ function CONFIG:CreateGeneralPanel(order)
 							MAELSTROM = {
 								order = 24,
 								type = "color",
-								name = L["MAELSTROM"],
+								name = L["MAELSTROM_POWER"],
 							},
 							INSANITY = {
 								order = 25,

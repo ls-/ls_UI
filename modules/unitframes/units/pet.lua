@@ -16,6 +16,7 @@ do
 			end
 
 			self:UpdateSize()
+			self:UpdateFading()
 			self:UpdateHealth()
 			self:UpdateHealthPrediction()
 			self:UpdatePower()
@@ -33,6 +34,8 @@ do
 	end
 
 	function UF:CreateVerticalPetFrame(frame)
+		E:SetUpFading(frame)
+
 		local level = frame:GetFrameLevel()
 
 		local textureParent = CreateFrame("Frame", nil, frame)
