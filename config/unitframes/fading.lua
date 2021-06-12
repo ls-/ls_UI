@@ -69,7 +69,7 @@ function CONFIG:CreateUnitFrameFadingPanel(order, unit)
 			combat = {
 				order = inc(1),
 				type = "toggle",
-				name = L["OOC"],
+				name = L["COMBAT"],
 				disabled = isFadingDisabled,
 			},
 			target = {

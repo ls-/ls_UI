@@ -234,7 +234,7 @@ local function getOptionsTable_Fading(order, barID)
 			combat = {
 				order = 4,
 				type = "toggle",
-				name = L["OOC"],
+				name = L["COMBAT"],
 			},
 			target = {
 				order = 5,
