@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## Version 90005.04
+
+- Reworked fading. It's way more fluid and responsive now:
+  - Added fading to unit frames and the minimap;
+  - Added `Target` and `Combat` options. The former will make an element fade in when you target or
+    focus something, the latter will make an element fade in upon entering combat;
+  - Removed the `Fade In Delay` option.
+- Split cooldown's `Expiration Threshold` into two options:
+  - `Expiration Threshold` now controls colouring;
+  - `S:MS Threshold` controls the format.
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Updated embeds.
+
+KNOWN ISSUES:
+
+Some people, predominantly with high refresh rate monitors, reported that after playing the game
+for an extended period of time they noticed some FPS degradation. `/reload`-ing the UI resolves
+the issue. I'm still investigating what's going on because neither people I know nor I have ever
+experienced it personally which obviously makes testing and debugging a lot harder. However, I
+think I know what might be causing it.
+If you've experienced it, feel free to DM me on discord @ `ls-#9453`.
+
+![Imgur](https://i.imgur.com/4hSxYOw.gif)
+
 ## Version 90005.03
 
 - Fixed "Inventory" micro button's tooltip error.
