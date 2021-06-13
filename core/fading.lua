@@ -16,7 +16,7 @@ local activeWidgets = {}
 
 local function addActiveWidget(object, widget, mode)
 	widget.mode = mode
-	widget.fadeTimer = 0
+	widget.fadeTimer = mode == FADE_OUT and -widget.config.out_delay or 0
 	widget.initAlpha = nil
 	activeWidgets[object] = widget
 end
@@ -63,13 +63,11 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 		if widget.mode == FADE_IN then
 			widget.isFading = true
 
-			-- add 0.0001 to avoid any "divide by 0" errors in case a user sets both min and max
-			-- alphas to the same value, I could add a bunch of checks for it to never happen,
+			-- add 0.0001 to avoid any "divide by 0" errors
 			-- but precision isn't really necessary here
-			widget.newAlpha = widget.initAlpha + ((widget.config.max_alpha - widget.initAlpha)
-				* (widget.fadeTimer / (widget.config.in_duration
-					* (1 - (widget.initAlpha - widget.config.min_alpha)
-						/ (widget.config.max_alpha - widget.config.min_alpha + 0.0001)))))
+			widget.newAlpha = (widget.fadeTimer / widget.config.in_duration)
+				* (widget.config.max_alpha - widget.initAlpha + 0.0001)
+				+ widget.initAlpha
 			-- print("|cff00ffd2IN|r", "|cff00ccff" .. object:GetDebugName() .. "|r", "  \n|cffffd200 initAlpha:|r ", widget.initAlpha, "  \n|cffffd200 newAlpha:|r ", widget.newAlpha, "  \n|cffffd200 delta:|r ", widget.newAlpha - object:GetAlpha())
 			object:SetAlpha(widget.newAlpha)
 
@@ -84,16 +82,14 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 				object:SetAlpha(widget.config.max_alpha)
 			end
 		elseif widget.mode == FADE_OUT then
-			if widget.fadeTimer >= widget.config.out_delay then
+			if widget.fadeTimer >= 0 then
 				widget.isFading = true
 
-				-- add 0.0001 to avoid any "divide by 0" errors in case a user sets both min and max
-				-- alphas to the same value, I could add a bunch of checks for it to never happen,
-				-- but precision isn't really necessary here
-				widget.newAlpha = widget.initAlpha - ((widget.initAlpha - widget.config.min_alpha)
-					* ((widget.fadeTimer - widget.config.out_delay) / (widget.config.out_duration
-						* (1 - (widget.config.max_alpha - widget.initAlpha)
-							/ (widget.config.max_alpha - widget.config.min_alpha + 0.0001)))))
+				-- add 0.0001 to avoid any "divide by 0" errors
+				-- precision isn't really necessary here
+				widget.newAlpha = (1 - widget.fadeTimer / widget.config.out_duration)
+					* (widget.initAlpha - widget.config.min_alpha + 0.0001)
+					+ widget.config.min_alpha
 				-- print("|cffffd200OUT|r", "|cff00ccff" .. object:GetDebugName() .. "|r", "  \n|cffffd200 initAlpha:|r ", widget.initAlpha, "  \n|cffffd200 newAlpha:|r ", widget.newAlpha, "  \n|cffffd200delta:|r ", object:GetAlpha() - widget.newAlpha)
 				object:SetAlpha(widget.newAlpha)
 
