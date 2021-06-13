@@ -29,6 +29,18 @@ local function removeActiveWidget(object, widget, atMinAlpha, atMaxAlpha)
 	activeWidgets[object] = nil
 end
 
+local hoverWidgets = {}
+
+local function addHoverWidget(object, widget)
+	widget.canHover = true
+	hoverWidgets[object] = widget
+end
+
+local function removeHoverWidget(object, widget)
+	widget.canHover = false
+	hoverWidgets[object] = nil
+end
+
 local targetWidgets = {}
 
 local function addTargetWidget(object, widget)
@@ -162,8 +174,8 @@ local hoverUpdater = CreateFrame("Frame")
 hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed > elapsed * 1.5 then -- run it at half the refresh rate
-		for object, widget in next, widgets do
-			if object:IsShown() and widget.canHover then
+		for object, widget in next, hoverWidgets do
+			if object:IsShown() then
 				if isMouseOver(object) then
 					if (not widget.atMaxAlpha or widget.isFading) and widget.mode ~= FADE_IN then
 						addActiveWidget(object, widget, FADE_IN)
@@ -183,8 +195,9 @@ local object_proto = {}
 function object_proto:DisableFading(ignoreFade)
 	local widget = widgets[self]
 
-	if widget.canHover then
-		widget.canHover = false
+	-- it's nil on load, but we still want to get in
+	if widget.canHover ~= false then
+		removeHoverWidget(self, widget)
 
 		if not ignoreFade and (widget.atMinAlpha or widget.mode ~= FADE_IN) then
 			addActiveWidget(self, widget, FADE_IN)
@@ -196,7 +209,7 @@ function object_proto:EnableFading()
 	local widget = widgets[self]
 
 	if not (widget.hasTarget or widget.inCombat) then
-		widget.canHover = true
+		addHoverWidget(self, widget)
 	end
 end
 
