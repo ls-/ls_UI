@@ -1,12 +1,12 @@
-# ls: UI
+# LS: UI
 
 Yet another UI, but this one is a bit special.
 
 "Orbs" Layout:  
-[![Imgur](https://i.imgur.com/PkQXt5v.png)](https://i.imgur.com/HgdaDa4.png "4K Glory")
+[![Imgur](https://i.imgur.com/8K40Ei3.png)](https://i.imgur.com/7Joaewr.png "4K Glory")
 
 "Classic" Layout:  
-[![Imgur](https://i.imgur.com/tNosWct.png)](https://i.imgur.com/nww6H8B.png "4K Glory")
+[![Imgur](https://i.imgur.com/SJGDgla.png)](https://i.imgur.com/q2T8U9H.png "4K Glory")
 
 ## Download
 
