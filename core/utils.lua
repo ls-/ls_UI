@@ -505,7 +505,9 @@ do
 		local rosterInfo = {}
 
 		local function updateUnitInfo(unit)
-			rosterInfo[UnitGUID(unit)] = UnitGroupRolesAssigned(unit)
+			if UnitExists(unit) then
+				rosterInfo[UnitGUID(unit)] = UnitGroupRolesAssigned(unit)
+			end
 		end
 
 		E:RegisterEvent("UNIT_NAME_UPDATE", updateUnitInfo)

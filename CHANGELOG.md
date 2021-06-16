@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90005.05
+
+- Optimised fading a bit more;
+- Misc bug fixes and tweaks.
+
 ## Version 90005.04
 
 - Reworked fading. It's way more fluid and responsive now:
