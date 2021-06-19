@@ -33,7 +33,7 @@ do
 	local oneTimeEvents = {ADDON_LOADED = false, PLAYER_LOGIN = false}
 	local registeredEvents = {}
 
-	local dispatcher = CreateFrame("Frame")
+	local dispatcher = CreateFrame("Frame", "LSEventFrame")
 	dispatcher:SetScript("OnEvent", function(_, event, ...)
 		for func in pairs(registeredEvents[event]) do
 			func(...)

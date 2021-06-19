@@ -65,7 +65,7 @@ local function removeCombatWidget(object, widget)
 	combatWidgets[object] = nil
 end
 
-local updater = CreateFrame("Frame")
+local updater = CreateFrame("Frame", "LSFadingUpdater")
 
 updater:SetScript("OnUpdate", function(_, elapsed)
 	for object, widget in next, activeWidgets do
@@ -169,7 +169,7 @@ local function isMouseOver(frame)
 		or (SpellFlyout:IsShown() and SpellFlyout:GetParent() and SpellFlyout:GetParent():GetParent() == frame and SpellFlyout:IsMouseOver(4, -4, -4, 4))
 end
 
-local hoverUpdater = CreateFrame("Frame")
+local hoverUpdater = CreateFrame("Frame", "LSHoverFadingUpdater")
 
 hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed

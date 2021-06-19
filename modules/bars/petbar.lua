@@ -313,7 +313,7 @@ function MODULE.CreatePetActionBar()
 
 		local flashTime = 0
 		local rangeTimer = -1
-		local updater = CreateFrame("Frame")
+		local updater = CreateFrame("Frame", "LSPetActionBarUpdater")
 		updater:SetScript("OnUpdate", function(_, elapsed)
 			flashTime = flashTime - elapsed
 			rangeTimer = rangeTimer - elapsed

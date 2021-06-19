@@ -191,7 +191,7 @@ local function tracker_OnUpdate(self, elapsed)
 	end
 end
 
-local tracker = CreateFrame("Frame", nil, UIParent)
+local tracker = CreateFrame("Frame", "LSMoverTracker", UIParent)
 
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
