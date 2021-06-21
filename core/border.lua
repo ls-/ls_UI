@@ -97,7 +97,7 @@ function border_proto:SetAlpha(a)
 	end
 end
 
-function border_proto:IsObjectType(_, t)
+function border_proto:IsObjectType(t)
 	return t == "Border"
 end
 
