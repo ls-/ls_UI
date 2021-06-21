@@ -173,7 +173,7 @@ local hoverUpdater = CreateFrame("Frame", "LSHoverFadingUpdater")
 
 hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed > elapsed * 1.5 then -- run it at half the refresh rate
+	if self.elapsed > 0.016 then -- limit to 60 fps
 		for object, widget in next, hoverWidgets do
 			if object:IsShown() then
 				if isMouseOver(object) then
