@@ -11,7 +11,6 @@ local s_format = _G.string.format
 local s_split = _G.string.split
 local select = _G.select
 local t_insert = _G.table.insert
-local t_remove = _G.table.remove
 local type = _G.type
 local xpcall = _G.xpcall
 
@@ -318,37 +317,4 @@ function E:IsEqualTable(a, b)
 	else
 		return a == b
 	end
-end
-
----------------
--- PROFILING --
----------------
-
-do
-	local info = {}
-
-	function P:LogDebugInfo(name, time, mem)
-		info[name] = info[name] or {timeLog = {}, memLog = {}, calls = 0}
-
-		if #info[name].timeLog > 1000 then
-			t_remove(info[name].timeLog, 1)
-		end
-
-		t_insert(info[name].timeLog, time)
-
-		if #info[name].memLog > 1000 then
-			t_remove(info[name].memLog, 1)
-		end
-
-		t_insert(info[name].memLog, mem)
-
-		info[name].calls = info[name].calls + 1
-
-		-- print("|cffffd200" .. name .. "|r")
-		-- print("time:", info[name].timeLog[#info[name].timeLog])
-		-- print("mem:", info[name].memLog[#info[name].memLog])
-		-- print("calls:", info[name].calls)
-	end
-
-	P.PROFILING = true
 end
