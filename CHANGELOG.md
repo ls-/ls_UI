@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90100.01
+
+- Added 9.1.0 support;
+- Further fading optimisation.
+
 ## Version 90005.05
 
 - Optimised fading a bit more;
