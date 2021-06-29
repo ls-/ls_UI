@@ -31,7 +31,7 @@ local defaults = {
 	},
 }
 
-local updater  = CreateFrame("Frame")
+local updater  = CreateFrame("Frame", "LSCooldownUpdater")
 local updateTime = 0
 local time1, time2, format, color
 

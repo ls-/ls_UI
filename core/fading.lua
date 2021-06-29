@@ -12,35 +12,6 @@ local FADE_OUT = -1
 local widgets = {}
 local miscWidgets = {}
 
-local activeWidgets = {}
-
-local function addActiveWidget(object, widget, mode)
-	widget.mode = mode
-	widget.fadeTimer = mode == FADE_OUT and -widget.config.out_delay or 0
-	widget.initAlpha = nil
-	activeWidgets[object] = widget
-end
-
-local function removeActiveWidget(object, widget, atMinAlpha, atMaxAlpha)
-	widget.mode = nil
-	widget.atMaxAlpha = atMaxAlpha
-	widget.atMinAlpha = atMinAlpha
-	widget.isFading = nil
-	activeWidgets[object] = nil
-end
-
-local hoverWidgets = {}
-
-local function addHoverWidget(object, widget)
-	widget.canHover = true
-	hoverWidgets[object] = widget
-end
-
-local function removeHoverWidget(object, widget)
-	widget.canHover = false
-	hoverWidgets[object] = nil
-end
-
 local targetWidgets = {}
 
 local function addTargetWidget(object, widget)
@@ -65,9 +36,12 @@ local function removeCombatWidget(object, widget)
 	combatWidgets[object] = nil
 end
 
-local updater = CreateFrame("Frame")
+local activeWidgets = {}
+local addActiveWidget, removeActiveWidget
 
-updater:SetScript("OnUpdate", function(_, elapsed)
+local updater = CreateFrame("Frame", "LSFadingUpdater")
+
+local function updater_OnUpdate(_, elapsed)
 	for object, widget in next, activeWidgets do
 		widget.fadeTimer = widget.fadeTimer + elapsed
 		widget.initAlpha = widget.initAlpha or object:GetAlpha()
@@ -118,7 +92,30 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 			end
 		end
 	end
-end)
+end
+
+function addActiveWidget(object, widget, mode)
+	widget.mode = mode
+	widget.fadeTimer = mode == FADE_OUT and -widget.config.out_delay or 0
+	widget.initAlpha = nil
+	activeWidgets[object] = widget
+
+	if not updater:GetScript("OnUpdate") then
+		updater:SetScript("OnUpdate", updater_OnUpdate)
+	end
+end
+
+function removeActiveWidget(object, widget, atMinAlpha, atMaxAlpha)
+	widget.mode = nil
+	widget.atMaxAlpha = atMaxAlpha
+	widget.atMinAlpha = atMinAlpha
+	widget.isFading = nil
+	activeWidgets[object] = nil
+
+	if not next(activeWidgets) then
+		updater:SetScript("OnUpdate", nil)
+	end
+end
 
 updater:SetScript("OnEvent", function(self, event)
 	if event == "PLAYER_REGEN_DISABLED" then
@@ -169,11 +166,14 @@ local function isMouseOver(frame)
 		or (SpellFlyout:IsShown() and SpellFlyout:GetParent() and SpellFlyout:GetParent():GetParent() == frame and SpellFlyout:IsMouseOver(4, -4, -4, 4))
 end
 
-local hoverUpdater = CreateFrame("Frame")
+local hoverWidgets = {}
+local addHoverWidget, removeHoverWidget
 
-hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
+local hoverUpdater = CreateFrame("Frame", "LSHoverFadingUpdater")
+
+local function hoverUpdater_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-	if self.elapsed > elapsed * 1.5 then -- run it at half the refresh rate
+	if self.elapsed > 0.016 then -- limit to 60 fps
 		for object, widget in next, hoverWidgets do
 			if object:IsShown() then
 				if isMouseOver(object) then
@@ -188,7 +188,25 @@ hoverUpdater:SetScript("OnUpdate", function(self, elapsed)
 
 		self.elapsed = 0
 	end
-end)
+end
+
+function addHoverWidget(object, widget)
+	widget.canHover = true
+	hoverWidgets[object] = widget
+
+	if not hoverUpdater:GetScript("OnUpdate") then
+		hoverUpdater:SetScript("OnUpdate", hoverUpdater_OnUpdate)
+	end
+end
+
+function removeHoverWidget(object, widget)
+	widget.canHover = false
+	hoverWidgets[object] = nil
+
+	if not next(hoverWidgets) then
+		hoverUpdater:SetScript("OnUpdate", nil)
+	end
+end
 
 local object_proto = {}
 
@@ -251,8 +269,6 @@ function E:SetUpFading(object)
 	fader:SetPoint("TOPLEFT", -4, 4)
 	fader:SetPoint("BOTTOMRIGHT", 4, -4)
 	fader:SetMouseClickEnabled(false)
-	fader.object = object
-	fader.threshold = 0.05
 
 	widgets[object] = {
 		config = {},

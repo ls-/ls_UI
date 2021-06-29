@@ -33,7 +33,7 @@ do
 	local oneTimeEvents = {ADDON_LOADED = false, PLAYER_LOGIN = false}
 	local registeredEvents = {}
 
-	local dispatcher = CreateFrame("Frame")
+	local dispatcher = CreateFrame("Frame", "LSEventFrame")
 	dispatcher:SetScript("OnEvent", function(_, event, ...)
 		for func in pairs(registeredEvents[event]) do
 			func(...)
@@ -76,31 +76,15 @@ end
 ------------
 
 do
-	-- not sure about this implementation just yet, but I'll try using it for
-	-- profiling later on
-	local registry = {
-		-- [obj] = {["method"] = func,},
-	}
-
 	function P:Mixin(obj, ...)
-		registry[obj] = {}
-
 		for i = 1, select("#", ...) do
 			local mixin = select(i, ...)
 			for k, v in next, mixin do
-				if type(v) == "function" then
-					registry[obj][k] = v
-				end
-
 				obj[k] = v
 			end
 		end
 
 		return obj
-	end
-
-	function P:GetMixedInRegistry()
-		return registry
 	end
 end
 

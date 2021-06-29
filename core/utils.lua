@@ -257,7 +257,7 @@ do
 	end
 
 	do
-		local updater = CreateFrame("Frame")
+		local updater = CreateFrame("Frame", "LSColorSmoother")
 		local objects = {}
 
 		local function isCloseEnough(r, g, b, tR, tG, tB)
