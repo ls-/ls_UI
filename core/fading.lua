@@ -6,6 +6,10 @@ local _G = getfenv(0)
 local next = _G.next
 
 -- Mine
+local function lerp(v1, v2, perc)
+	return v1 + (v2 - v1) * perc
+end
+
 local FADE_IN = 1
 local FADE_OUT = -1
 
@@ -49,15 +53,9 @@ local function updater_OnUpdate(_, elapsed)
 		if widget.mode == FADE_IN then
 			widget.isFading = true
 
-			-- add 0.0001 to avoid any "divide by 0" errors
-			-- but precision isn't really necessary here
-			widget.newAlpha = (widget.fadeTimer / widget.config.in_duration)
-				* (widget.config.max_alpha - widget.initAlpha + 0.0001)
-				+ widget.initAlpha
-			-- print("|cff00ffd2IN|r", "|cff00ccff" .. object:GetDebugName() .. "|r", "  \n|cffffd200 initAlpha:|r ", widget.initAlpha, "  \n|cffffd200 newAlpha:|r ", widget.newAlpha, "  \n|cffffd200 delta:|r ", widget.newAlpha - object:GetAlpha())
-			object:SetAlpha(widget.newAlpha)
+			object:SetAlpha(lerp(widget.initAlpha, widget.config.max_alpha, widget.fadeTimer / widget.config.in_duration))
 
-			if widget.newAlpha >= widget.config.max_alpha then
+			if widget.fadeTimer >= widget.config.in_duration then
 				removeActiveWidget(object, widget, nil, true)
 
 				if widget.callback then
@@ -71,15 +69,9 @@ local function updater_OnUpdate(_, elapsed)
 			if widget.fadeTimer >= 0 then
 				widget.isFading = true
 
-				-- add 0.0001 to avoid any "divide by 0" errors
-				-- precision isn't really necessary here
-				widget.newAlpha = (1 - widget.fadeTimer / widget.config.out_duration)
-					* (widget.initAlpha - widget.config.min_alpha + 0.0001)
-					+ widget.config.min_alpha
-				-- print("|cffffd200OUT|r", "|cff00ccff" .. object:GetDebugName() .. "|r", "  \n|cffffd200 initAlpha:|r ", widget.initAlpha, "  \n|cffffd200 newAlpha:|r ", widget.newAlpha, "  \n|cffffd200delta:|r ", object:GetAlpha() - widget.newAlpha)
-				object:SetAlpha(widget.newAlpha)
+				object:SetAlpha(lerp(widget.initAlpha, widget.config.min_alpha, widget.fadeTimer / widget.config.out_duration))
 
-				if widget.newAlpha <= widget.config.min_alpha then
+				if widget.fadeTimer >= widget.config.out_duration then
 					removeActiveWidget(object, widget, true)
 
 					if widget.callback then
