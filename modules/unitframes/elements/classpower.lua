@@ -4,6 +4,7 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
+local next = _G.next
 
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
@@ -243,7 +244,7 @@ do
 
 	local class_power_proto = {}
 
-	function class_power_proto:PostUpdate(_, max, maxChanged, powerType, chargedIdx)
+	function class_power_proto:PostUpdate(_, max, maxChanged, powerType, ...)
 		if self._active ~= self.__isEnabled or self._powerID ~= powerType or maxChanged then
 			if not self.__isEnabled then
 				self:Hide()
@@ -266,14 +267,6 @@ do
 						self[i]:SetHeight(sizes[i])
 					end
 
-					if i == chargedIdx then
-						self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.CHI))
-						self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.CHI, 0.4))
-					else
-						self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
-						self[i].Highlight:SetColorTexture(0, 0, 0, 0)
-					end
-
 					if i < max then
 						self[i].Sep:Show()
 					end
@@ -287,20 +280,19 @@ do
 			end
 
 			self._active = self.__isEnabled
-			self._chargedIdx = chargedIdx
 			self._powerID = powerType
-		elseif self._active and self._chargedIdx ~= chargedIdx then
+		end
+
+		if self._active then
 			for i = 1, max do
-				if i == chargedIdx then
-					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.CHI))
-					self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.CHI, 0.4))
-				else
-					self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
-					self[i].Highlight:SetColorTexture(0, 0, 0, 0)
-				end
+				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
+				self[i].Highlight:SetColorTexture(0, 0, 0, 0)
 			end
 
-			self._chargedIdx = chargedIdx
+			for _, i in next, {...} do
+				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.CHI))
+				self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.CHI, 0.4))
+			end
 		end
 	end
 
