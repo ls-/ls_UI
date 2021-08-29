@@ -182,6 +182,28 @@ function CONFIG.CreateBlizzardPanel(_, order)
 					end
 				end,
 			},
+			maw_buffs = {
+				order = inc(1),
+				type = "toggle",
+				name = L["MAW_BUFFS"],
+				disabled = isModuleDisabled,
+				get = function()
+					return C.db.char.blizzard.maw_buffs.enabled
+				end,
+				set = function(_, value)
+					C.db.char.blizzard.maw_buffs.enabled = value
+
+					if not BLIZZARD:HasMawBuffs() then
+						if value then
+							BLIZZARD:SetUpMawBuffs()
+						end
+					else
+						if not value then
+							CONFIG:ShowStaticPopup("RELOAD_UI")
+						end
+					end
+				end,
+			},
 			player_alt_power_bar = {
 				order = inc(1),
 				type = "toggle",

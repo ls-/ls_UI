@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 90100.02
+
+- Added support for Domination Sockets on the character panel;
+- Added Anima Powers mover;
+- Fixed an issue where multiple charged combo points were handled incorrectly. Thanks to cybern4ut for testing this one;
+- Optimised fading a bit more;
+- Updated embeds.
+
 ## Version 90100.01
 
 - Added 9.1.0 support;

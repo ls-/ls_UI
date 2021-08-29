@@ -2967,6 +2967,9 @@ D.char = {
 		mail = {
 			enabled = false,
 		},
+		maw_buffs = { -- MawBuffsBelowMinimapFrame
+			enabled = true,
+		},
 		objective_tracker = { -- ObjectiveTrackerFrame
 			enabled = true,
 		},
