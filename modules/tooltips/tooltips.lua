@@ -624,8 +624,6 @@ local function tooltip_SetUnit(self)
 	end
 
 	cleanUp(self)
-
-	self:Show()
 end
 
 local function MODIFIER_STATE_CHANGED(key)
