@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90105.01
+
+- Added 9.1.5 support;
+- Fixed an issue that sometimes prevented tooltips from being displayed.
+
 ## Version 90100.02
 
 - Added support for Domination Sockets on the character panel;
