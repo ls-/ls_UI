@@ -544,8 +544,6 @@ function minimap_proto:UpdateConfig()
 	self._config.collect = E:CopyTable(C.db.profile.minimap.collect, self._config.collect)
 	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
 	self._config.fade = E:CopyTable(C.db.profile.minimap.fade, self._config.fade)
-	self._config.size = C.db.profile.minimap.size
-	self._config.scale = C.db.profile.minimap.scale
 end
 
 function minimap_proto:UpdateBorderColor()

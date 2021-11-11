@@ -2084,8 +2084,6 @@ D.profile = {
 		},
 	},
 	minimap = {
-		size = 146,
-		scale = 100, -- 125, 150
 		collect = {
 			enabled = true,
 			tooltip = false,
@@ -2106,6 +2104,8 @@ D.profile = {
 			max_alpha = 1,
 		},
 		ls = {
+			size = 146,
+			scale = 100, -- 100, 125, 150
 			zone_text = {
 				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
 				border = false,
@@ -2121,6 +2121,8 @@ D.profile = {
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
 		traditional = {
+			size = 146,
+			scale = 100, -- 100, 125, 150
 			zone_text = {
 				mode = 2,
 				border = true,
