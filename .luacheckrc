@@ -55,6 +55,7 @@ read_globals = {
 	"HasArtifactEquipped",
 	"InCombatLockdown",
 	"IsAddOnLoaded",
+	"IsControlKeyDown",
 	"IsInActiveWorldPVP",
 	"IsShiftKeyDown",
 	"IsXPUserDisabled",

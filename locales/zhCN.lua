@@ -279,7 +279,6 @@ L["MIRROR_WIDGETS_DESC"] = "修改状态图标，施法条和 PVP 图标的顺�
 L["MODE"] = "模式"
 L["MOUNT_AURAS"] = "坐骑光环"
 L["MOUNT_AURAS_DESC"] = "显示坐骑光环"
-L["MOVER_BUTTONS_DESC"] = "|cffffffff点击|r 激活按钮"
 L["MOVER_CYCLE_DESC"] = "按 |cffffffffAlt|r 键切换位于鼠标位置的不同组件"
 L["MOVER_RESET_DESC"] = "|cffffffffShift 加点击|r 来重置位置"
 L["NAME"] = "名称"

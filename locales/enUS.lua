@@ -325,7 +325,6 @@ L["MIRROR_WIDGETS_DESC"] = "Changes the order of status icons, the castbar, and 
 L["MODE"] = "Mode"
 L["MOUNT_AURAS"] = "Mount Auras"
 L["MOUNT_AURAS_DESC"] = "Show mount auras."
-L["MOVER_BUTTONS_DESC"] = "|cffffffffClick|r to toggle buttons."
 L["MOVER_CYCLE_DESC"] = "Press the |cffffffffAlt|r key to cycle through frames under the cursor."
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset the position."
 L["NAME"] = "Name"
