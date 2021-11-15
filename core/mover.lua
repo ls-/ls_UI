@@ -11,6 +11,7 @@ local s_format = _G.string.format
 local t_insert = _G.table.insert
 local t_remove = _G.table.remove
 local t_wipe = _G.table.wipe
+local tostring = _G.tostring
 local type = _G.type
 local unpack = _G.unpack
 
@@ -78,25 +79,25 @@ local function drawGrid()
 
 	local yAxis = getGridLine()
 	yAxis:SetDrawLayer("BACKGROUND", 1)
-	yAxis:SetColorTexture(0.9, 0.1, 0.1, 0.6)
+	yAxis:SetColorTexture(0.9, 0.1, 0.1)
 	yAxis:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1, 0)
 	yAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1, 0)
 
 	local xAxis = getGridLine()
 	xAxis:SetDrawLayer("BACKGROUND", 1)
-	xAxis:SetColorTexture(0.9, 0.1, 0.1, 0.6)
+	xAxis:SetColorTexture(0.9, 0.1, 0.1)
 	xAxis:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1)
 	xAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1)
 
 	local l = getGridLine()
 	l:SetDrawLayer("BACKGROUND", 2)
-	l:SetColorTexture(0.8, 0.8, 0.1, 0.6)
+	l:SetColorTexture(0.8, 0.8, 0.1)
 	l:SetPoint("TOPLEFT", grid, "TOPLEFT", screenWidth / 3 - 1, 0)
 	l:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
 
 	local r = getGridLine()
 	r:SetDrawLayer("BACKGROUND", 2)
-	r:SetColorTexture(0.8, 0.8, 0.1, 0.6)
+	r:SetColorTexture(0.8, 0.8, 0.1)
 	r:SetPoint("TOPRIGHT", grid, "TOPRIGHT", - screenWidth / 3 + 1, 0)
 	r:SetPoint("BOTTOMLEFT", grid, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
 
@@ -105,13 +106,13 @@ local function drawGrid()
 	for i = 1, m_floor(screenHeight / 2 / gridSize) do
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetColorTexture(0, 0, 0)
 		tex:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1 + gridSize * i)
 		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1 + gridSize * i)
 
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetColorTexture(0, 0, 0)
 		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", 0, screenCenterY - 1 - gridSize * i)
 		tex:SetPoint("TOPRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY + 1 - gridSize * i)
 	end
@@ -120,13 +121,13 @@ local function drawGrid()
 	for i = 1, m_floor(screenWidth / 2 / gridSize) do
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetColorTexture(0, 0, 0)
 		tex:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1 - gridSize * i, 0)
 		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1 - gridSize * i, 0)
 
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0, 0.6)
+		tex:SetColorTexture(0, 0, 0)
 		tex:SetPoint("TOPRIGHT", grid, "TOPLEFT", screenCenterX + 1 + gridSize * i, 0)
 		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", screenCenterX - 1 + gridSize * i, 0)
 	end
@@ -140,12 +141,11 @@ local trackedMovers = {}
 local highlightIndex = 0
 local isDragging = false
 local areToggledOn = false
+local showLabels = false
 
 local controller = CreateFrame("Frame", "LSMoverTracker", UIParent)
 controller:SetPoint("TOPLEFT", 0, 0)
 controller:SetSize(1, 1)
-controller:Hide()
-
 controller:SetScript("OnKeyDown", function(self, key)
 	if self.mover then
 		self:SetPropagateKeyboardInput(false)
@@ -164,7 +164,6 @@ controller:SetScript("OnKeyDown", function(self, key)
 		self:SetPropagateKeyboardInput(true)
 	end
 end)
-
 controller:SetScript("OnUpdate", function(self, elapsed)
 	if not isDragging then
 		local isAltKeyDown = IsAltKeyDown()
@@ -235,6 +234,95 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 		self.elapsed = 0
 	end
 end)
+controller:Hide()
+
+local settings
+do
+	settings = CreateFrame("Frame", "LSMoverSettings", UIParent)
+	settings:SetSize(320, 160)
+	settings:SetPoint("CENTER")
+	settings:SetMovable(true)
+	settings:EnableMouse(true)
+	settings:RegisterForDrag("LeftButton")
+	settings:SetClampedToScreen(true)
+	settings:SetScript("OnDragStart", settings.StartMoving)
+	settings:SetScript("OnDragStop", settings.StopMovingOrSizing)
+	settings:SetScript("OnShow", function(self)
+		self.UsageText:SetText(L["MOVER_MOVE_DESC"] .. "\n\n" .. L["MOVER_RESET_DESC"] .. "\n\n" .. L["MOVER_CYCLE_DESC"])
+	end)
+	settings:Hide()
+
+	local bg = settings:CreateTexture(nil, "BACKGROUND", nil, -7)
+	bg:SetAllPoints()
+	bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
+	bg:SetHorizTile(true)
+	bg:SetVertTile(true)
+
+	local border = E:CreateBorder(settings)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
+	settings.Border = border
+
+	local nameToggle = CreateFrame("CheckButton", "$parentNameToggle", settings, "OptionsCheckButtonTemplate")
+	nameToggle:SetPoint("TOPLEFT", 1, 0)
+	nameToggle:SetScript("OnClick", function()
+		showLabels = not showLabels
+
+		for _, mover in next, enabledMovers do
+			if not mover.isSimple then
+				mover.Text:SetShown(showLabels)
+			end
+		end
+	end)
+	settings.NameToggle = nameToggle
+
+	nameToggle.Text = _G[nameToggle:GetName() .. "Text"]
+	nameToggle.Text:SetText(L["MOVER_NAMES"])
+
+	local gridDropdown = LibStub("LibDropDown"):NewButtonStretch(settings, "$parentGridDropdown")
+	gridDropdown:SetPoint("TOPRIGHT", -3, -3)
+	gridDropdown:SetSize(120, 20)
+	gridDropdown:SetFrameLevel(3)
+	gridDropdown:SetText(L["MOVER_GRID"])
+
+	local info = {
+		isRadio = true,
+		func = function(_, _, value)
+			gridSize = value
+
+			drawGrid()
+		end,
+		checked = function(self)
+			return gridSize == self.args[1]
+		end,
+	}
+
+	local GRID_SIZES = {4, 8, 16, 32}
+	for i = 1, #GRID_SIZES do
+		info.text = tostring(GRID_SIZES[i])
+		info.args = {GRID_SIZES[i]}
+
+		gridDropdown:Add(info)
+	end
+
+	local usageText = settings:CreateFontString(nil, "OVERLAY")
+	usageText:SetFontObject("GameFontNormal")
+	usageText:SetPoint("TOPLEFT", 4, -24)
+	usageText:SetPoint("BOTTOMRIGHT", -4, 26)
+	usageText:SetJustifyH("LEFT")
+	usageText:SetJustifyV("MIDDLE")
+	settings.UsageText = usageText
+
+	local lockButton = CreateFrame("Button", "$parentLockButton", settings, "UIPanelButtonTemplate")
+	lockButton:SetHeight(21)
+	lockButton:SetPoint("LEFT", 2, 0)
+	lockButton:SetPoint("RIGHT", -2, 0)
+	lockButton:SetPoint("BOTTOM", 0, 3)
+	lockButton.Text:SetText(L["LOCK"])
+	lockButton:SetScript("OnClick", function()
+		E.Movers:ToggleAll()
+	end)
+	settings.LockButton = lockButton
+end
 
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
@@ -407,9 +495,6 @@ function mover_proto:OnEnter()
 	GameTooltip:AddLine("|cffffd100Point:|r " .. p, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100Attached to:|r " .. rP .. " |cffffd100of|r " .. anchor, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100X:|r " .. x .. ", |cffffd100Y:|r " .. y, 1, 1, 1)
-	GameTooltip:AddLine(" ")
-	GameTooltip:AddLine(L["MOVER_RESET_DESC"])
-	GameTooltip:AddLine(L["MOVER_CYCLE_DESC"])
 	GameTooltip:Show()
 end
 
@@ -536,8 +621,9 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
 
 	local name = objectName .. "Mover"
+	local info = {object = object, isSimple = isSimple, offsetX = offsetX or 0, offsetY = offsetY or 0}
 
-	local mover = Mixin(CreateFrame("Button", name, UIParent), mover_proto, {object = object, isSimple = isSimple, offsetX = offsetX or 0, offsetY = offsetY or 0})
+	local mover = Mixin(CreateFrame("Button", name, UIParent), mover_proto, info)
 	mover:SetFrameLevel(object:GetFrameLevel() + 4)
 	mover:SetWidth(object:GetWidth() + mover.offsetX * 2)
 	mover:SetHeight(object:GetHeight() + mover.offsetX * 2)
@@ -560,6 +646,13 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
 		bg:SetAllPoints()
 		mover.Bg = bg
+
+		local text = mover:CreateFontString(nil, "OVERLAY")
+		text:SetFontObject("GameFontNormalOutline")
+		text:SetPoint("CENTER")
+		text:SetText(name)
+		text:SetShown(showLabels)
+		mover.Text = text
 
 		local border = E:CreateBorder(mover)
 		border:SetTexture({1, 1, 1, 1})
@@ -621,10 +714,12 @@ function E.Movers:ToggleAll()
 	if areToggledOn then
 		drawGrid()
 
+		settings:Show()
 		controller:Show()
 	else
 		hideGrid()
 
+		settings:Hide()
 		controller:Hide()
 	end
 end

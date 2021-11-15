@@ -508,3 +508,8 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+L["MOVER_MOVE_DESC"] = "Use |cffffffffShift/Ctrl + Mouse Wheel|r or |cffffffffArrow keys|r for 1px adjustments."
+L["MOVER_GRID"] = "Grid"
+L["MOVER_NAMES"] = "Names"
+L["LOCK"] = _G.LOCK
