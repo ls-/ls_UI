@@ -2859,7 +2859,7 @@ D.profile = {
 }
 
 D.char = {
-	layout = "round", -- or "rect"
+	layout = "rect", -- or "round"
 	auras = {
 		enabled = true,
 	},
