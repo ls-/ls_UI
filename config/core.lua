@@ -831,7 +831,11 @@ function MODULE:Init()
 				order = 2,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
-				func = function() E.Movers:ToggleAll() end,
+				func = function()
+					E.Movers:ToggleAll(true)
+
+					AceConfigDialog:Close("ls_UI")
+				end,
 			},
 			keybind_mode = {
 				order = 3,

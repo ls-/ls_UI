@@ -19,7 +19,7 @@ end
 function MODULE.SetUpGMFrame()
 	if not isInit and C.db.char.blizzard.gm.enabled then
 		TicketStatusFrame:ClearAllPoints()
-		TicketStatusFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -132, -196)
+		TicketStatusFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -228, -240)
 		E.Movers:Create(TicketStatusFrame)
 
 		isInit = true

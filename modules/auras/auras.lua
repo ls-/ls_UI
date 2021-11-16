@@ -268,8 +268,7 @@ local function header_Update(self)
 		if mover then
 			mover:UpdateSize()
 		else
-			mover = E.Movers:Create(self)
-			mover:SetClampRectInsets(-6, 6, 6, -6)
+			E.Movers:Create(self, false, 2, 2)
 		end
 	end
 end

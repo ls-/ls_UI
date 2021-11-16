@@ -19,7 +19,7 @@ end
 function MODULE.SetUpDurabilityFrame()
 	if not isInit and C.db.char.blizzard.durability.enabled then
 		DurabilityFrame:ClearAllPoints()
-		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -196)
+		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -232)
 		E.Movers:Create(DurabilityFrame)
 
 		isInit = true

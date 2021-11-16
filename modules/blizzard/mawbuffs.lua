@@ -25,7 +25,7 @@ function MODULE:SetUpMawBuffs()
 			UIPARENT_MANAGED_FRAME_POSITIONS["MawBuffsBelowMinimapFrame"] = nil
 
 			MawBuffsBelowMinimapFrame:ClearAllPoints()
-			MawBuffsBelowMinimapFrame:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -182, -188)
+			MawBuffsBelowMinimapFrame:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -228, -188)
 			E.Movers:Create(MawBuffsBelowMinimapFrame)
 
 			isInit = true
