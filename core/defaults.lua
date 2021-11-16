@@ -2122,7 +2122,7 @@ D.profile = {
 		},
 		traditional = {
 			size = 146,
-			scale = 100, -- 100, 125, 150
+			scale = 125, -- 100, 125, 150
 			zone_text = {
 				mode = 2,
 				border = true,
@@ -2743,8 +2743,8 @@ D.profile = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
-					x = -184,
-					y = -6,
+					x = -228,
+					y = -4,
 				},
 			},
 		},
@@ -2788,7 +2788,7 @@ D.profile = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
-					x = -184,
+					x = -228,
 					y = -114,
 				},
 			},
@@ -2819,8 +2819,8 @@ D.profile = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
-					x = -182,
-					y = -148,
+					x = -228,
+					y = -150,
 				},
 			},
 		},
