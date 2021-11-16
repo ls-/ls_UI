@@ -11,6 +11,70 @@ local next = _G.next
 
 -- Mine
 local function cleanUpStep1()
+	-- -> 90105.04
+	if C.db.profile.version and C.db.profile.version < 9010504 then
+		if C.db.profile.units.ls then
+			for _, unit in next, {"player", "pet"} do
+				if C.db.profile.units.ls[unit] then
+					if C.db.profile.units.ls[unit].point then
+						C.db.profile.units.ls[unit].point.ls = nil
+						C.db.profile.units.ls[unit].point.traditional = nil
+					end
+
+					E:CopyTable(C.db.profile.units.ls[unit], C.db.profile.units.round[unit])
+					C.db.profile.units.ls[unit] = nil
+				end
+			end
+
+			C.db.profile.units.ls = nil
+		end
+
+		if C.db.profile.units.traditional then
+			for _, unit in next, {"player", "pet"} do
+				if C.db.profile.units.traditional[unit] then
+					if C.db.profile.units.traditional[unit].point then
+						C.db.profile.units.traditional[unit].point.ls = nil
+						C.db.profile.units.traditional[unit].point.traditional = nil
+					end
+
+					E:CopyTable(C.db.profile.units.traditional[unit], C.db.profile.units.rect[unit])
+					C.db.profile.units.traditional[unit] = nil
+				end
+			end
+
+			C.db.profile.units.traditional = nil
+		end
+
+		if C.db.profile.movers.ls then
+			E:CopyTable(C.db.profile.movers.ls, C.db.profile.movers.round)
+			C.db.profile.movers.ls = nil
+		end
+
+		if C.db.profile.movers.traditional then
+			E:CopyTable(C.db.profile.movers.traditional, C.db.profile.movers.rect)
+			C.db.profile.movers.traditional = nil
+		end
+
+		if C.db.profile.minimap.ls then
+			E:CopyTable(C.db.profile.minimap.ls, C.db.profile.minimap.round)
+			C.db.profile.minimap.ls = nil
+		end
+
+		if C.db.profile.minimap.traditional then
+			E:CopyTable(C.db.profile.minimap.traditional, C.db.profile.minimap.rect)
+			C.db.profile.minimap.traditional = nil
+		end
+
+		if C.db.char.minimap.ls then
+			E:CopyTable(C.db.char.minimap.ls, C.db.char.minimap.round)
+			C.db.char.minimap.ls = nil
+		end
+
+		if C.db.char.minimap.traditional then
+			E:CopyTable(C.db.char.minimap.traditional, C.db.char.minimap.rect)
+			C.db.char.minimap.traditional = nil
+		end
+	end
 end
 
 local function cleanUpStep2()
@@ -72,6 +136,13 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
 	LibStub("LibDualSpec-1.0"):EnhanceDatabase(C.db, "LS_UI_GLOBAL_CONFIG")
+
+	-- -> 90105.04
+	if C.db.char.layout == "ls" then
+		C.db.char.layout = "round"
+	elseif C.db.char.layout == "traditional" then
+		C.db.char.layout = "rect"
+	end
 
 	-- layout type change shouldn't affect anything after SVs are loaded
 	E.UI_LAYOUT = C.db.char.layout
