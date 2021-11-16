@@ -29,13 +29,17 @@ local TOOLTIP_ANCHORS = {
 	["TOPRIGHT"] = {"ANCHOR_BOTTOMLEFT", -4, -4},
 }
 
+local linePool = {}
+local activeLines = {}
+local gridSize = 32
+
 local grid = CreateFrame("Frame", nil, UIParent)
 grid:SetFrameStrata("BACKGROUND")
 grid:Hide()
 
-local linePool = {}
-local activeLines = {}
-local gridSize = 32
+local gridBG = grid:CreateTexture(nil, "BACKGROUND", nil, -7)
+gridBG:SetAllPoints()
+gridBG:SetColorTexture(0, 0, 0, 0.33)
 
 local function getGridLine()
 	if not next(linePool) then
