@@ -2,7 +2,7 @@
 
 ## Version 90105.03
 
-- Fix minimap config.
+- Fixed minimap config.
 
 ## Version 90105.02
 
