@@ -46,6 +46,7 @@ L["HIDE"] = _G.HIDE
 L["HOLY_POWER"] = _G.HOLY_POWER
 L["ILVL"] = _G.ITEM_LEVEL_ABBR
 L["INSANITY"] = _G.INSANITY
+L["LOCK"] = _G.LOCK
 L["LOOT"] = _G.LOOT_NOUN
 L["LUA_ERROR"] = _G.LUA_ERROR ..": %s"
 L["LUNAR_POWER"] = _G.LUNAR_POWER
@@ -326,6 +327,9 @@ L["MODE"] = "Mode"
 L["MOUNT_AURAS"] = "Mount Auras"
 L["MOUNT_AURAS_DESC"] = "Show mount auras."
 L["MOVER_CYCLE_DESC"] = "Press the |cffffffffAlt|r key to cycle through frames under the cursor."
+L["MOVER_GRID"] = "Grid"
+L["MOVER_MOVE_DESC"] = "Use |cffffffffShift/Ctrl + Mouse Wheel|r or |cffffffffArrow keys|r for 1px adjustments."
+L["MOVER_NAMES"] = "Names"
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset the position."
 L["NAME"] = "Name"
 L["NAME_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
@@ -508,8 +512,3 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
-
-L["MOVER_MOVE_DESC"] = "Use |cffffffffShift/Ctrl + Mouse Wheel|r or |cffffffffArrow keys|r for 1px adjustments."
-L["MOVER_GRID"] = "Grid"
-L["MOVER_NAMES"] = "Names"
-L["LOCK"] = _G.LOCK
