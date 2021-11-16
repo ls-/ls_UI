@@ -246,7 +246,7 @@ local function updateAll()
 	cleanUpStep2()
 
 	P:UpdateModules()
-	P.Movers:UpdateConfig()
+	E.Movers:UpdateConfig()
 end
 
 E:RegisterEvent("ADDON_LOADED", function(arg1)
@@ -306,7 +306,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 		removeRefs()
 
-		P.Movers:CleanUpConfig()
+		E.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
@@ -314,7 +314,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 		removeRefs()
 
-		P.Movers:CleanUpConfig()
+		E.Movers:CleanUpConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", updateAll)

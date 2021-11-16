@@ -15,10 +15,9 @@ local tostring = _G.tostring
 local type = _G.type
 local unpack = _G.unpack
 
--- Blizz
-local IsAltKeyDown = _G.IsAltKeyDown
-
 -- Mine
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
 local TOOLTIP_ANCHORS = {
 	["BOTTOM"] = {"ANCHOR_TOP", 0, 4},
 	["BOTTOMLEFT"] = {"ANCHOR_RIGHT", 4, 4},
@@ -30,7 +29,6 @@ local TOOLTIP_ANCHORS = {
 	["TOPRIGHT"] = {"ANCHOR_BOTTOMLEFT", -4, -4},
 }
 
--- Grid
 local grid = CreateFrame("Frame", nil, UIParent)
 grid:SetFrameStrata("BACKGROUND")
 grid:Hide()
@@ -133,7 +131,6 @@ local function drawGrid()
 	end
 end
 
--- Movers
 local defaults = {}
 local disabledMovers = {}
 local enabledMovers = {}
@@ -248,7 +245,10 @@ do
 	settings:SetScript("OnDragStart", settings.StartMoving)
 	settings:SetScript("OnDragStop", settings.StopMovingOrSizing)
 	settings:SetScript("OnShow", function(self)
+		self.NameToggle.Text:SetText(L["MOVER_NAMES"])
+		self.GridDropdown:SetText(L["MOVER_GRID"])
 		self.UsageText:SetText(L["MOVER_MOVE_DESC"] .. "\n\n" .. L["MOVER_RESET_DESC"] .. "\n\n" .. L["MOVER_CYCLE_DESC"])
+		self.LockButton.Text:SetText(L["LOCK"])
 	end)
 	settings:Hide()
 
@@ -276,13 +276,13 @@ do
 	settings.NameToggle = nameToggle
 
 	nameToggle.Text = _G[nameToggle:GetName() .. "Text"]
-	nameToggle.Text:SetText(L["MOVER_NAMES"])
 
 	local gridDropdown = LibStub("LibDropDown"):NewButtonStretch(settings, "$parentGridDropdown")
 	gridDropdown:SetPoint("TOPRIGHT", -3, -3)
 	gridDropdown:SetSize(120, 20)
 	gridDropdown:SetFrameLevel(3)
 	gridDropdown:SetText(L["MOVER_GRID"])
+	settings.GridDropdown = gridDropdown
 
 	local info = {
 		isRadio = true,
@@ -317,7 +317,6 @@ do
 	lockButton:SetPoint("LEFT", 2, 0)
 	lockButton:SetPoint("RIGHT", -2, 0)
 	lockButton:SetPoint("BOTTOM", 0, 3)
-	lockButton.Text:SetText(L["LOCK"])
 	lockButton:SetScript("OnClick", function()
 		E.Movers:ToggleAll()
 	end)
@@ -701,7 +700,9 @@ function E.Movers:Get(object, inclDisabled)
 	return enabledMovers[object .. "Mover"], false
 end
 
-function E.Movers:ToggleAll()
+local reopenConfig
+
+function E.Movers:ToggleAll(...)
 	if InCombatLockdown() then return end
 	areToggledOn = not areToggledOn
 
@@ -712,6 +713,8 @@ function E.Movers:ToggleAll()
 	end
 
 	if areToggledOn then
+		reopenConfig = ...
+
 		drawGrid()
 
 		settings:Show()
@@ -721,16 +724,20 @@ function E.Movers:ToggleAll()
 
 		settings:Hide()
 		controller:Hide()
+
+		if reopenConfig then
+			if AceConfigDialog then
+				AceConfigDialog:Open("ls_UI")
+			end
+		end
 	end
 end
 
-P.Movers = {}
-
-function P.Movers:CleanUpConfig()
+function E.Movers:CleanUpConfig()
 	C.db.profile.movers[E.UI_LAYOUT] = E:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 end
 
-function P.Movers:UpdateConfig()
+function E.Movers:UpdateConfig()
 	E:UpdateTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
 
 	for _, mover in next, enabledMovers do
