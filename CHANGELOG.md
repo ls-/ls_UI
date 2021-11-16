@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## Version 90105.02
+
+- Reworked movers:
+  - Added options to resize the grid and display movers' names;
+  - Instead of highlighting, the focused mover will now stay at full alpha while all other movers will fade out;
+  - Removed buttons for 1px adjustments, instead use Ctrl + Mouse wheel or Left/Right arrow keys to nudge movers left
+    and right, and Shift + Mouse wheel or Up/Down arrow keys to nudge them up and down;
+- Fixed a couple of XP bar issues that prevented it from updating its colours as expected;
+- Updated French translation. Translated by cybern4ut@Curse;
+- Updated German Translation. Translated by MrKimab@Curse;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse.
+
+![Imgur](https://i.imgur.com/0lhw9mQ.gif)
+
 ## Version 90105.01
 
 - Added 9.1.5 support;
