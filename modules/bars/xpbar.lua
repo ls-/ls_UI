@@ -25,7 +25,7 @@ local CFG = {
 	height = 12,
 	point = {
 		round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-		traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
+		rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
 	},
 	fade = {
 		enabled = false,

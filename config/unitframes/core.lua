@@ -255,7 +255,7 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 
-		if E.UI_LAYOUT == "traditional" then
+		if E.UI_LAYOUT == "rect" then
 			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
 		else
 			temp.args.copy.hidden = isRoundLayout

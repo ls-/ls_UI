@@ -814,7 +814,7 @@ function MODULE:Init()
 				desc = L["UI_LAYOUT_DESC"],
 				values = {
 					round = L["LAYOUT_ROUND"],
-					traditional = L["CLASSIC"]
+					rect = L["LAYOUT_RECT"]
 				},
 				get = function()
 					return C.db.char.layout

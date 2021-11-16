@@ -442,7 +442,7 @@ D.profile = {
 				height = 166,
 				point = {
 					round = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
+					rect = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				fade = {
 					enabled = false,
@@ -571,7 +571,7 @@ D.profile = {
 				height = 134,
 				point = {
 					round = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
-					traditional = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
+					rect = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
 				},
 				fade = {
 					enabled = false,
@@ -730,7 +730,7 @@ D.profile = {
 				custom_texts = {},
 			},
 		},
-		traditional = {
+		rect = {
 			player = {
 				enabled = true,
 				width = 250,
@@ -738,7 +738,7 @@ D.profile = {
 				mirror_widgets = true,
 				point = {
 					round = {"BOTTOM", "UIParent", "BOTTOM", -312, 74},
-					traditional = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
+					rect = {"BOTTOM", "UIParent", "BOTTOM", -286, 198},
 				},
 				fade = {
 					enabled = false,
@@ -956,7 +956,7 @@ D.profile = {
 				height = 28,
 				point = {
 					round = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
-					traditional = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
+					rect = {"BOTTOMRIGHT", "LSPlayerFrame", "BOTTOMLEFT", -12, 0},
 				},
 				fade = {
 					enabled = false,
@@ -1158,7 +1158,7 @@ D.profile = {
 			mirror_widgets = false,
 			point = {
 				round = {"BOTTOM", "UIParent", "BOTTOM", 286, 336},
-				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
+				rect = {"BOTTOM", "UIParent", "BOTTOM", 286, 198},
 			},
 			fade = {
 				enabled = false,
@@ -1391,7 +1391,7 @@ D.profile = {
 			height = 28,
 			point = {
 				round = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
-				traditional = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
+				rect = {"BOTTOMLEFT", "LSTargetFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			fade = {
 				enabled = false,
@@ -1503,7 +1503,7 @@ D.profile = {
 			mirror_widgets = false,
 			point = {
 				round = {"BOTTOM", "UIParent", "BOTTOM", -286, 336},
-				traditional = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
+				rect = {"BOTTOM", "UIParent", "BOTTOM", 286, 418},
 			},
 			fade = {
 				enabled = false,
@@ -1736,7 +1736,7 @@ D.profile = {
 			height = 28,
 			point = {
 				round = {"BOTTOMRIGHT", "LSFocusFrame", "BOTTOMLEFT", -12, 0},
-				traditional = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
+				rect = {"BOTTOMLEFT", "LSFocusFrame", "BOTTOMRIGHT", 12, 0},
 			},
 			fade = {
 				enabled = false,
@@ -1851,7 +1851,7 @@ D.profile = {
 			per_row = 1,
 			point = {
 				round = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
-				traditional = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
+				rect = {"TOPRIGHT", "UIParent", "TOPRIGHT", -82, -268},
 			},
 			fade = {
 				enabled = false,
@@ -2120,7 +2120,7 @@ D.profile = {
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
-		traditional = {
+		rect = {
 			size = 146,
 			scale = 125, -- 100, 125, 150
 			zone_text = {
@@ -2209,7 +2209,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
 			},
 		},
 		bar2 = { -- MultiBarBottomLeft
@@ -2254,7 +2254,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
 			},
 		},
 		bar3 = { -- MultiBarBottomRight
@@ -2299,7 +2299,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
 			},
 		},
 		bar4 = { -- MultiBarLeft
@@ -2344,7 +2344,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
-				traditional = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
+				rect = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
 			},
 		},
 		bar5 = { -- MultiBarRight
@@ -2389,7 +2389,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
-				traditional = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
+				rect = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
 			},
 		},
 		bar6 = { --PetAction
@@ -2482,7 +2482,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
 			},
 		},
 		extra = { -- ExtraAction
@@ -2512,7 +2512,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
 			},
 		},
 		zone = { -- ZoneAbility
@@ -2538,7 +2538,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
 			},
 		},
 		vehicle = { -- LeaveVehicle
@@ -2556,7 +2556,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
 			},
 		},
 		micromenu = {
@@ -2583,7 +2583,7 @@ D.profile = {
 					y_growth = "DOWN",
 					point = {
 						round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
-						traditional = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
+						rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
 					},
 				},
 				micromenu2 = {
@@ -2606,7 +2606,7 @@ D.profile = {
 					spacing = 4,
 					point = {
 						round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
-						traditional = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
+						rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
 					},
 				},
 			},
@@ -2683,7 +2683,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-				traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
 			},
 			fade = {
 				enabled = false,
@@ -2739,7 +2739,7 @@ D.profile = {
 					x = -6,
 					y = -6,
 				},
-				traditional = {
+				rect = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
@@ -2784,7 +2784,7 @@ D.profile = {
 					x = -6,
 					y = -114,
 				},
-				traditional = {
+				rect = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
@@ -2815,7 +2815,7 @@ D.profile = {
 					x = -4,
 					y = -148,
 				},
-				traditional = {
+				rect = {
 					p = "TOPRIGHT",
 					anchor = "UIParent",
 					rP = "TOPRIGHT",
@@ -2890,12 +2890,12 @@ D.profile = {
 	},
 	movers = {
 		round = {},
-		traditional = {},
+		rect = {},
 	},
 }
 
 D.char = {
-	layout = "round", -- or "traditional"
+	layout = "round", -- or "rect"
 	auras = {
 		enabled = true,
 	},
@@ -2993,7 +2993,7 @@ D.char = {
 		round = {
 			square = false,
 		},
-		traditional = {
+		rect = {
 			square = true,
 		},
 	},

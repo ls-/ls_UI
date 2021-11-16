@@ -34,7 +34,7 @@ local CFG = {
 	},
 	point = {
 		round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
-		traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
+		rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 	},
 }
 
