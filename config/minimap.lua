@@ -97,7 +97,6 @@ function CONFIG.CreateMinimapPanel(_, order)
 					CONFIG:CopySettings(D.profile.minimap.buttons, C.db.profile.minimap.buttons)
 					CONFIG:CopySettings(D.profile.minimap.collect, C.db.profile.minimap.collect)
 					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
-					C.db.profile.minimap.size = D.profile.minimap.size
 
 					MINIMAP:Update()
 				end,
@@ -115,11 +114,11 @@ function CONFIG.CreateMinimapPanel(_, order)
 				disabled = isModuleDisabled,
 				min = 146, max = 292, step = 2,
 				get = function()
-					return C.db.profile.minimap.size
+					return C.db.profile.minimap[E.UI_LAYOUT].size
 				end,
 				set = function(info, value)
-					if C.db.profile.minimap.size ~= value then
-						C.db.profile.minimap.size = value
+					if C.db.profile.minimap[E.UI_LAYOUT].size ~= value then
+						C.db.profile.minimap[E.UI_LAYOUT].size = value
 
 						Minimap:UpdateConfig()
 						Minimap:UpdateSize()
@@ -139,11 +138,11 @@ function CONFIG.CreateMinimapPanel(_, order)
 					[150] = "150%",
 				},
 				get = function()
-					return C.db.profile.minimap.scale
+					return C.db.profile.minimap[E.UI_LAYOUT].scale
 				end,
 				set = function(info, value)
-					if C.db.profile.minimap.scale ~= value then
-						C.db.profile.minimap.scale = value
+					if C.db.profile.minimap[E.UI_LAYOUT].scale ~= value then
+						C.db.profile.minimap[E.UI_LAYOUT].scale = value
 
 						Minimap:UpdateConfig()
 						Minimap:UpdateSize()
