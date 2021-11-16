@@ -214,13 +214,13 @@ function UF:Init()
 				frame:SetScript("OnLeave", frame.OnLeave)
 
 				if unit == "player" then
-					if E.UI_LAYOUT == "ls" then
+					if E.UI_LAYOUT == "round" then
 						UF:CreateVerticalPlayerFrame(frame)
 					else
 						UF:CreateHorizontalPlayerFrame(frame)
 					end
 				elseif unit == "pet" then
-					if E.UI_LAYOUT == "ls" then
+					if E.UI_LAYOUT == "round" then
 						UF:CreateVerticalPetFrame(frame)
 					else
 						UF:CreateHorizontalPetFrame(frame)

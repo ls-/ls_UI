@@ -25,12 +25,12 @@ local BUTTONS = {
 }
 
 local TOP_POINT = {
-	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
 	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
 }
 
 local BOTTOM_POINT = {
-	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
 	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
 }
 

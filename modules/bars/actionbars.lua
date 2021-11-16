@@ -36,7 +36,7 @@ local CFG = {
 			max_alpha = 1,
 		},
 		point = {
-			ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
+			round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 			traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 		},
 	},

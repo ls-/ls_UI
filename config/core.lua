@@ -813,7 +813,7 @@ function MODULE:Init()
 				name = L["UI_LAYOUT"],
 				desc = L["UI_LAYOUT_DESC"],
 				values = {
-					ls = L["ORBS"],
+					round = L["LAYOUT_ROUND"],
 					traditional = L["CLASSIC"]
 				},
 				get = function()

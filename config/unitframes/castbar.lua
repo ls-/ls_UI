@@ -165,7 +165,7 @@ function CONFIG:CreateUnitFrameCastbarPanel(order, unit)
 		temp.args.spacer_2 = nil
 	end
 
-	if E.UI_LAYOUT == "ls" and (unit == "player" or unit == "pet") then
+	if E.UI_LAYOUT == "round" and (unit == "player" or unit == "pet") then
 		temp.args.detached = nil
 		temp.args.width_override.name = L["WIDTH"]
 		temp.args.width_override.desc = nil

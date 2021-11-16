@@ -27,14 +27,14 @@ local function isBossFrameDisabled()
 	return not UNITFRAMES:HasBossFrame()
 end
 
-local function isLSLayout()
-	return E.UI_LAYOUT == "ls"
+local function isRoundLayout()
+	return E.UI_LAYOUT == "round"
 end
 
 local function createUnitFramePanel(order, unit, name)
 	local copyIgnoredUnits = {
-		["pet"] = E.UI_LAYOUT == "ls",
-		["player"] = E.UI_LAYOUT == "ls",
+		["pet"] = E.UI_LAYOUT == "round",
+		["player"] = E.UI_LAYOUT == "round",
 		[unit] = true,
 	}
 
@@ -258,9 +258,9 @@ local function createUnitFramePanel(order, unit, name)
 		if E.UI_LAYOUT == "traditional" then
 			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
 		else
-			temp.args.copy.hidden = isLSLayout
-			temp.args.width.hidden = isLSLayout
-			temp.args.height.hidden = isLSLayout
+			temp.args.copy.hidden = isRoundLayout
+			temp.args.width.hidden = isRoundLayout
+			temp.args.height.hidden = isRoundLayout
 			temp.args.top_inset = nil
 			temp.args.bottom_inset = nil
 			temp.args.mirror_widgets = nil
@@ -275,10 +275,10 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
 
-		if E.UI_LAYOUT == "ls" then
-			temp.args.copy.hidden = isLSLayout
-			temp.args.width.hidden = isLSLayout
-			temp.args.height.hidden = isLSLayout
+		if E.UI_LAYOUT == "round" then
+			temp.args.copy.hidden = isRoundLayout
+			temp.args.width.hidden = isRoundLayout
+			temp.args.height.hidden = isRoundLayout
 			temp.args.top_inset = nil
 			temp.args.bottom_inset = nil
 			temp.args.border = nil
