@@ -2732,20 +2732,8 @@ D.profile = {
 				debuff_type = false,
 			},
 			point = {
-				round = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -6,
-					y = -6,
-				},
-				rect = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -228,
-					y = -4,
-				},
+				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -6,y = -6},
+				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -4},
 			},
 		},
 		HARMFUL = {
@@ -2777,20 +2765,8 @@ D.profile = {
 				debuff_type = false,
 			},
 			point = {
-				round = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -6,
-					y = -114,
-				},
-				rect = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -228,
-					y = -114,
-				},
+				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -6,y = -114},
+				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -114},
 			},
 		},
 		TOTEM = {
@@ -2808,20 +2784,8 @@ D.profile = {
 				},
 			},
 			point = {
-				round = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -4,
-					y = -148,
-				},
-				rect = {
-					p = "TOPRIGHT",
-					anchor = "UIParent",
-					rP = "TOPRIGHT",
-					x = -228,
-					y = -150,
-				},
+				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -4,y = -148},
+				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -150},
 			},
 		},
 	},
@@ -2994,7 +2958,7 @@ D.char = {
 			square = false,
 		},
 		rect = {
-			square = true,
+			square = false,
 		},
 	},
 	tooltips = {
