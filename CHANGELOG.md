@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 90105.03
+
+- Fix minimap config.
+
 ## Version 90105.02
 
 - Reworked movers:
