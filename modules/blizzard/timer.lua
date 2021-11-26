@@ -7,15 +7,6 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
--- Blizz
-local TIMER_MINUTES_DISPLAY = _G.TIMER_MINUTES_DISPLAY
-
---[[ luacheck: globals
-	TimerTracker UIParent
-
-	MIRRORTIMER_NUMTIMERS
-]]
-
 -- Mine
 local isInit = false
 

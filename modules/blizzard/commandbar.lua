@@ -5,10 +5,6 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	IsAddOnLoaded LoadAddOn OrderHallCommandBar
-]]
-
 -- Mine
 local isInit = false
 
@@ -26,11 +22,11 @@ local function bar_OnUpdate(self, elapsed)
 	end
 end
 
-function MODULE.HasCommandBar()
+function MODULE:HasCommandBar()
 	return isInit
 end
 
-function MODULE.SetUpCommandBar()
+function MODULE:SetUpCommandBar()
 	if not isInit and C.db.char.blizzard.command_bar.enabled then
 		local isLoaded = true
 

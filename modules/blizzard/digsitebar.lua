@@ -6,12 +6,6 @@ local MODULE = P:GetModule("Blizzard")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 
---[[ luacheck: globals
-	ArcheologyDigsiteProgressBar ArcheologyDigsiteProgressBar_OnUpdate IsAddOnLoaded LoadAddOn
-
-	UIPARENT_MANAGED_FRAME_POSITIONS
-]]
-
 -- Mine
 local isInit = false
 
@@ -38,8 +32,10 @@ function MODULE:SetUpDigsiteBar()
 			UIPARENT_MANAGED_FRAME_POSITIONS["ArcheologyDigsiteProgressBar"] = nil
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
+
+			local point = C.db.profile.blizzard.digsite_bar.point[E.UI_LAYOUT]
 			ArcheologyDigsiteProgressBar:ClearAllPoints()
-			ArcheologyDigsiteProgressBar:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 226)
+			ArcheologyDigsiteProgressBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")

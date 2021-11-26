@@ -2103,7 +2103,7 @@ D.profile = {
 			min_alpha = 0.2,
 			max_alpha = 1,
 		},
-		round = {
+		round = { -- layout, not the minimap shape
 			size = 146,
 			scale = 100, -- 100, 125, 150
 			zone_text = {
@@ -2120,7 +2120,7 @@ D.profile = {
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
-		rect = {
+		rect = {-- layout, not the minimap shape
 			size = 146,
 			scale = 125, -- 100, 125, 150
 			zone_text = {
@@ -2732,8 +2732,8 @@ D.profile = {
 				debuff_type = false,
 			},
 			point = {
-				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -6,y = -6},
-				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -4},
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -6, y = -6},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -4},
 			},
 		},
 		HARMFUL = {
@@ -2765,8 +2765,8 @@ D.profile = {
 				debuff_type = false,
 			},
 			point = {
-				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -6,y = -114},
-				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -114},
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -6, y = -114},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -114},
 			},
 		},
 		TOTEM = {
@@ -2784,8 +2784,8 @@ D.profile = {
 				},
 			},
 			point = {
-				round = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -4,y = -148},
-				rect = {p = "TOPRIGHT",anchor = "UIParent",rP = "TOPRIGHT",x = -228,y = -150},
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -148},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -150},
 			},
 		},
 	},
@@ -2803,11 +2803,8 @@ D.profile = {
 			},
 		},
 		point = {
-			p = "BOTTOMRIGHT",
-			anchor = "UIParent",
-			rP = "BOTTOMRIGHT",
-			x = -76,
-			y = 126,
+			round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -76, y = 126},
+			rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -76, y = 126},
 		},
 	},
 	blizzard = {
@@ -2825,6 +2822,10 @@ D.profile = {
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
+			point = {
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 190},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 190},
+			},
 		},
 		character_frame = {
 			ilvl = true,
@@ -2836,6 +2837,45 @@ D.profile = {
 			text = {
 				size = 12,
 			},
+			point = {
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+			},
+		},
+		durability = {
+			point = {
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+			},
+		},
+		gm = {
+			point = {
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -240},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -240},
+			},
+		},
+		maw_buffs = {
+			point = {
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -188},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -188},
+			},
+		},
+		objective_tracker = { -- ObjectiveTrackerFrame
+			height = 600,
+			drag_key = "NONE",
+		},
+		player_alt_power_bar = {
+			point = {
+				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
+				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
+			},
+		},
+		talking_head = {
+			hide = false,
+			point = {
+				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
+				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
+			},
 		},
 		timer = { -- MirrorTimer*, TimerTrackerTimer*
 			width = 200,
@@ -2844,12 +2884,11 @@ D.profile = {
 				size = 12,
 			},
 		},
-		objective_tracker = { -- ObjectiveTrackerFrame
-			height = 600,
-			drag_key = "NONE"
-		},
-		talking_head = {
-			hide = false,
+		vehicle = {
+			point = {
+				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+			},
 		},
 	},
 	movers = {

@@ -5,21 +5,18 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	DurabilityFrame UIParent
-]]
-
 -- Mine
 local isInit = false
 
-function MODULE.HasDurabilityFrame()
+function MODULE:HasDurabilityFrame()
 	return isInit
 end
 
-function MODULE.SetUpDurabilityFrame()
+function MODULE:SetUpDurabilityFrame()
 	if not isInit and C.db.char.blizzard.durability.enabled then
+		local point = C.db.profile.blizzard.durability.point[E.UI_LAYOUT]
 		DurabilityFrame:ClearAllPoints()
-		DurabilityFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -232)
+		DurabilityFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(DurabilityFrame)
 
 		isInit = true

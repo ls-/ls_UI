@@ -10,20 +10,6 @@ local next = _G.next
 local s_trim = _G.string.trim
 local s_upper = _G.string.upper
 
--- Blizz
-local C_Timer = _G.C_Timer
-
---[[ luacheck: globals
-	CharacterBackSlot CharacterChestSlot CharacterFeetSlot CharacterFinger0Slot CharacterFinger1Slot CharacterFrame
-	CharacterHandsSlot CharacterHeadSlot CharacterLegsSlot CharacterMainHandSlot CharacterModelFrame CharacterNeckSlot
-	CharacterSecondaryHandSlot CharacterShirtSlot CharacterShoulderSlot CharacterStatsPane CharacterTabardSlot
-	CharacterTrinket0Slot CharacterTrinket1Slot CharacterWaistSlot CharacterWristSlot GetInventoryItemLink
-	GetInventoryItemTexture HideUIPanel PaperDollEquipmentManagerPane PaperDollInnerBorderBottom
-	PaperDollInnerBorderBottom2 PaperDollInnerBorderBottomLeft PaperDollInnerBorderBottomRight PaperDollInnerBorderLeft
-	PaperDollInnerBorderRight PaperDollInnerBorderTop PaperDollInnerBorderTopLeft PaperDollInnerBorderTopRight
-	PaperDollTitlesPane
-]]
-
 -- Mine
 local isInit = false
 

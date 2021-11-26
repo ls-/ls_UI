@@ -24,8 +24,9 @@ function MODULE:SetUpMawBuffs()
 			MawBuffsBelowMinimapFrame.ignoreFramePositionManager = true
 			UIPARENT_MANAGED_FRAME_POSITIONS["MawBuffsBelowMinimapFrame"] = nil
 
+			local point = C.db.profile.blizzard.maw_buffs.point[E.UI_LAYOUT]
 			MawBuffsBelowMinimapFrame:ClearAllPoints()
-			MawBuffsBelowMinimapFrame:SetPoint("TOPRIGHT", "UIParent", "TOPRIGHT", -228, -188)
+			MawBuffsBelowMinimapFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(MawBuffsBelowMinimapFrame)
 
 			isInit = true

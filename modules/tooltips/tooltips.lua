@@ -781,7 +781,7 @@ function MODULE:Init()
 		hooksecurefunc(GameTooltip, "SetLFGDungeonShortageReward", tooltip_SetLFGDungeonShortageReward)
 
 		-- Anchor
-		local point = C.db.profile.tooltips.point
+		local point = C.db.profile.tooltips.point[E.UI_LAYOUT]
 
 		local anchor = CreateFrame("Frame", "LSTooltipAnchor", UIParent)
 		anchor:SetSize(64, 64)

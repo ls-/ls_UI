@@ -5,10 +5,6 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	UIParent VehicleSeatIndicator
-]]
-
 -- Mine
 local isInit = false
 
@@ -18,8 +14,9 @@ end
 
 function MODULE.SetUpVehicleSeatFrame()
 	if not isInit and C.db.char.blizzard.vehicle.enabled then
+		local point = C.db.profile.blizzard.vehicle.point[E.UI_LAYOUT]
 		VehicleSeatIndicator:ClearAllPoints()
-		VehicleSeatIndicator:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -4, -232)
+		VehicleSeatIndicator:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(VehicleSeatIndicator)
 
 		isInit = true

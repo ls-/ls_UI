@@ -5,20 +5,14 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	CreateFrame PlayerPowerBarAlt UIParent
-
-	UIPARENT_ALTERNATE_FRAME_POSITIONS 	UIPARENT_MANAGED_FRAME_POSITIONS
-]]
-
 -- Mine
 local isInit = false
 
-function MODULE.HasAltPowerBar()
+function MODULE:HasAltPowerBar()
 	return isInit
 end
 
-function MODULE.SetUpAltPowerBar()
+function MODULE:SetUpAltPowerBar()
 	if not isInit and C.db.char.blizzard.player_alt_power_bar.enabled then
 		PlayerPowerBarAlt.ignoreFramePositionManager = true
 		UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
@@ -27,7 +21,9 @@ function MODULE.SetUpAltPowerBar()
 
 		local holder = CreateFrame("Frame", "LSPowerBarAltHolder", UIParent)
 		holder:SetSize(64, 64)
-		holder:SetPoint("TOP", 0, -188)
+
+		local point = C.db.profile.blizzard.player_alt_power_bar.point[E.UI_LAYOUT]
+		holder:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(holder)
 
 		PlayerPowerBarAlt:SetMovable(true)

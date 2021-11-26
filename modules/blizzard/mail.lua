@@ -5,14 +5,6 @@ local BLIZZARD = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local C_Mail = _G.C_Mail
-
---[[
-	luacheck: globals
-	DeleteInboxItem GameTooltip GetInboxHeaderInfo GetInboxNumItems InboxFrame MailFrameInset
-]]
-
 -- Mine
 local isInit = false
 local DELAY = 0.15
