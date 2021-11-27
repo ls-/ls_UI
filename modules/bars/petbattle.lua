@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Bars")
 
 -- Lua
@@ -78,7 +78,7 @@ function MODULE.HasPetBattleBar()
 end
 
 function MODULE.CreatePetBattleBar()
-	if not isInit and (MODULE:IsRestricted() or C.db.char.bars.pet_battle.enabled) then
+	if not isInit and (MODULE:IsRestricted() or PrC.db.profile.bars.pet_battle.enabled) then
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
 		local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerStateTemplate")

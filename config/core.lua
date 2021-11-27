@@ -1,5 +1,5 @@
 local addonName, ns = ...
-local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF or oUF
+local E, C, PrC, M, L, P, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.oUF or oUF
 local MODULE = P:AddModule("Config")
 
 -- Lua
@@ -817,10 +817,10 @@ function MODULE:Init()
 					rect = L["LAYOUT_RECT"]
 				},
 				get = function()
-					return C.db.char.layout
+					return PrC.db.profile.layout
 				end,
 				set = function(_, value)
-					C.db.char.layout = value
+					PrC.db.profile.layout = value
 
 					if E.UI_LAYOUT ~= value then
 						MODULE:ShowStaticPopup("RELOAD_UI")

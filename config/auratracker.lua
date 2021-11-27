@@ -74,11 +74,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 		type = "group",
 		name = L["AURA_TRACKER"],
 		get = function(info)
-			return C.db.char.auratracker[info[#info]]
+			return PrC.db.profile.auratracker[info[#info]]
 		end,
 		set = function(info, value)
-			if C.db.char.auratracker[info[#info]] ~= value then
-				C.db.char.auratracker[info[#info]] = value
+			if PrC.db.profile.auratracker[info[#info]] ~= value then
+				PrC.db.profile.auratracker[info[#info]] = value
 				AURATRACKER:GetTracker():UpdateConfig()
 				E:UpdateBarLayout(AURATRACKER:GetTracker())
 			end
@@ -89,10 +89,10 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.auratracker.enabled
+					return PrC.db.profile.auratracker.enabled
 				end,
 				set = function(_, value)
-					C.db.char.auratracker.enabled = value
+					PrC.db.profile.auratracker.enabled = value
 
 					if AURATRACKER:IsInit() then
 						if not value then
@@ -111,8 +111,8 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				name = L["LOCK"],
 				disabled = isModuleDisabled,
 				set = function(info, value)
-					if C.db.char.auratracker[info[#info]] ~= value then
-						C.db.char.auratracker[info[#info]] = value
+					if PrC.db.profile.auratracker[info[#info]] ~= value then
+						PrC.db.profile.auratracker[info[#info]] = value
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateLock()
 					end
@@ -125,7 +125,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
-					CONFIG:CopySettings(D.char.auratracker, C.db.char.auratracker, {enabled = true, filter = true})
+					CONFIG:CopySettings(D.char.auratracker, PrC.db.profile.auratracker, {enabled = true, filter = true})
 					AURATRACKER:Update()
 				end,
 			},
@@ -169,10 +169,10 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				values = GROWTH_DIRS,
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.auratracker.x_growth .. "_" .. C.db.char.auratracker.y_growth
+					return PrC.db.profile.auratracker.x_growth .. "_" .. PrC.db.profile.auratracker.y_growth
 				end,
 				set = function(_, value)
-					C.db.char.auratracker.x_growth, C.db.char.auratracker.y_growth = s_split("_", value)
+					PrC.db.profile.auratracker.x_growth, PrC.db.profile.auratracker.y_growth = s_split("_", value)
 					AURATRACKER:GetTracker():UpdateConfig()
 					E:UpdateBarLayout(AURATRACKER:GetTracker())
 				end,
@@ -184,10 +184,10 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				values = DRAG_KEYS,
 				disabled = isModuleDisabled,
 				get = function()
-					return DRAG_KEY_INDICES[C.db.char.auratracker.drag_key]
+					return DRAG_KEY_INDICES[PrC.db.profile.auratracker.drag_key]
 				end,
 				set = function(_, value)
-					C.db.char.auratracker.drag_key = DRAG_KEY_VALUES[value]
+					PrC.db.profile.auratracker.drag_key = DRAG_KEY_VALUES[value]
 				end,
 			},
 			spacer_2 = {
@@ -202,11 +202,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.char.auratracker.type[info[#info]]
+					return PrC.db.profile.auratracker.type[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.char.auratracker.type[info[#info]] ~= value then
-						C.db.char.auratracker.type[info[#info]] = value
+					if PrC.db.profile.auratracker.type[info[#info]] ~= value then
+						PrC.db.profile.auratracker.type[info[#info]] = value
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateAuraTypeIcons()
 					end
@@ -243,11 +243,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.char.auratracker.count[info[#info]]
+					return PrC.db.profile.auratracker.count[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.char.auratracker.count[info[#info]] ~= value then
-						C.db.char.auratracker.count[info[#info]] = value
+					if PrC.db.profile.auratracker.count[info[#info]] ~= value then
+						PrC.db.profile.auratracker.count[info[#info]] = value
 
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateCountFont()
@@ -286,11 +286,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.char.auratracker.cooldown.text[info[#info]]
+					return PrC.db.profile.auratracker.cooldown.text[info[#info]]
 				end,
 				set = function(info, value)
-					if C.db.char.auratracker.cooldown.text[info[#info]] ~= value then
-						C.db.char.auratracker.cooldown.text[info[#info]] = value
+					if PrC.db.profile.auratracker.cooldown.text[info[#info]] ~= value then
+						PrC.db.profile.auratracker.cooldown.text[info[#info]] = value
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateCooldownConfig()
 					end
@@ -302,7 +302,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
-							CONFIG:CopySettings(D.char.auratracker.cooldown, C.db.char.auratracker.cooldown)
+							CONFIG:CopySettings(D.char.auratracker.cooldown, PrC.db.profile.auratracker.cooldown)
 							AURATRACKER:GetTracker():UpdateConfig()
 							AURATRACKER:GetTracker():UpdateCooldownConfig()
 						end,
@@ -323,11 +323,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
 						get = function()
-							return C.db.char.auratracker.cooldown.exp_threshold
+							return PrC.db.profile.auratracker.cooldown.exp_threshold
 						end,
 						set = function(_, value)
-							if C.db.char.auratracker.cooldown.exp_threshold ~= value then
-								C.db.char.auratracker.cooldown.exp_threshold = value
+							if PrC.db.profile.auratracker.cooldown.exp_threshold ~= value then
+								PrC.db.profile.auratracker.cooldown.exp_threshold = value
 								AURATRACKER:GetTracker():UpdateConfig()
 								AURATRACKER:GetTracker():UpdateCooldownConfig()
 							end
@@ -341,15 +341,15 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
 						get = function()
-							return C.db.char.auratracker.cooldown.m_ss_threshold
+							return PrC.db.profile.auratracker.cooldown.m_ss_threshold
 						end,
 						set = function(info, value)
-							if C.db.char.auratracker.cooldown.m_ss_threshold ~= value then
+							if PrC.db.profile.auratracker.cooldown.m_ss_threshold ~= value then
 								if value < info.option.softMin then
 									value = info.option.min
 								end
 
-								C.db.char.auratracker.cooldown.m_ss_threshold = value
+								PrC.db.profile.auratracker.cooldown.m_ss_threshold = value
 								AURATRACKER:GetTracker():UpdateConfig()
 								AURATRACKER:GetTracker():UpdateCooldownConfig()
 							end
@@ -362,11 +362,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
 						get = function()
-							return C.db.char.auratracker.cooldown.s_ms_threshold
+							return PrC.db.profile.auratracker.cooldown.s_ms_threshold
 						end,
 						set = function(_, value)
-							if C.db.char.auratracker.cooldown.s_ms_threshold ~= value then
-								C.db.char.auratracker.cooldown.s_ms_threshold = value
+							if PrC.db.profile.auratracker.cooldown.s_ms_threshold ~= value then
+								PrC.db.profile.auratracker.cooldown.s_ms_threshold = value
 
 								AURATRACKER:GetTracker():UpdateConfig()
 								AURATRACKER:GetTracker():UpdateCooldownConfig()
@@ -401,7 +401,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 					AceConfigDialog:Close("ls_UI")
 					GameTooltip:Hide()
 
-					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], nil, C.db.char.auratracker.filter.HELPFUL, C.db.char.auratracker.filter.HARMFUL, callback)
+					CONFIG:OpenAuraConfig(L["AURA_TRACKER"], nil, PrC.db.profile.auratracker.filter.HELPFUL, PrC.db.profile.auratracker.filter.HARMFUL, callback)
 				end,
 			},
 		},

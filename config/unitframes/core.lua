@@ -379,10 +379,10 @@ function CONFIG:CreateUnitFramesPanel(order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.units.enabled
+					return PrC.db.profile.units.enabled
 				end,
 				set = function(_, value)
-					C.db.char.units.enabled = value
+					PrC.db.profile.units.enabled = value
 
 					if UNITFRAMES:IsInit() then
 						if not value then
@@ -407,10 +407,10 @@ function CONFIG:CreateUnitFramesPanel(order)
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.char.units[info[#info]].enabled
+					return PrC.db.profile.units[info[#info]].enabled
 				end,
 				set = function(info, value)
-					C.db.char.units[info[#info]].enabled = value
+					PrC.db.profile.units[info[#info]].enabled = value
 
 					if UNITFRAMES:IsInit() then
 						if value then

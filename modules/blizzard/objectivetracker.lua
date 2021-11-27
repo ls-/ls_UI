@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -13,7 +13,7 @@ function MODULE:HasObjectiveTracker()
 end
 
 function MODULE:SetUpObjectiveTracker()
-	if not isInit and C.db.char.blizzard.objective_tracker.enabled then
+	if not isInit and PrC.db.profile.blizzard.objective_tracker.enabled then
 		local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
 		holder:SetFrameStrata("LOW")
 		holder:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)

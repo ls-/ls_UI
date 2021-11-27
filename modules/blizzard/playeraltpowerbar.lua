@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -13,7 +13,7 @@ function MODULE:HasAltPowerBar()
 end
 
 function MODULE:SetUpAltPowerBar()
-	if not isInit and C.db.char.blizzard.player_alt_power_bar.enabled then
+	if not isInit and PrC.db.profile.blizzard.player_alt_power_bar.enabled then
 		PlayerPowerBarAlt.ignoreFramePositionManager = true
 		UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Top"] = nil
 		UIPARENT_ALTERNATE_FRAME_POSITIONS["PlayerPowerBarAlt_Bottom"] = nil

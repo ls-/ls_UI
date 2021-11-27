@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Bars")
 
 -- Lua
@@ -120,7 +120,7 @@ function MODULE.IsRestricted()
 end
 
 function MODULE.SetupActionBarController()
-	if not isInit and C.db.char.bars.restricted then
+	if not isInit and PrC.db.profile.bars.restricted then
 		barController = CreateFrame("Frame", "LSActionBarController", UIParent, "SecureHandlerStateTemplate")
 		barController:SetSize(32, 32)
 		barController:SetPoint("BOTTOM", 0, 0)

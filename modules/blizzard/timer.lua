@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -46,7 +46,7 @@ function MODULE:HasMirrorTimer()
 end
 
 function MODULE:SetUpMirrorTimers()
-	if not isInit and C.db.char.blizzard.timer.enabled then
+	if not isInit and PrC.db.profile.blizzard.timer.enabled then
 		local config = C.db.profile.blizzard.timer
 
 		for i = 1, MIRRORTIMER_NUMTIMERS do

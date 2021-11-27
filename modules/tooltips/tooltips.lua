@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Tooltips")
 
 -- Lua
@@ -707,7 +707,7 @@ function MODULE.IsInit()
 end
 
 function MODULE:Init()
-	if not isInit and C.db.char.tooltips.enabled then
+	if not isInit and PrC.db.profile.tooltips.enabled then
 		-- Spells
 		GameTooltip:HookScript("OnTooltipSetSpell", tooltip_SetSpell)
 		-- hooksecurefunc(GameTooltip, "SetMountBySpellID", tooltip_SetSpell)

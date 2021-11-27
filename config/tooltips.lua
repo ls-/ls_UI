@@ -44,10 +44,10 @@ function CONFIG:CreateTooltipsPanel(order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.tooltips.enabled
+					return PrC.db.profile.tooltips.enabled
 				end,
 				set = function(_, value)
-					C.db.char.tooltips.enabled = value
+					PrC.db.profile.tooltips.enabled = value
 
 					if not TOOLTIPS:IsInit() then
 						if value then

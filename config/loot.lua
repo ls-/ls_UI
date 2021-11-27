@@ -17,10 +17,10 @@ function CONFIG.CreateLootPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.loot.enabled
+					return PrC.db.profile.loot.enabled
 				end,
 				set = function(_, value)
-					C.db.char.loot.enabled = value
+					PrC.db.profile.loot.enabled = value
 
 					if not LOOT:IsInit() then
 						if value then

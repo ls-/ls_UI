@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local BARS = P:GetModule("Bars")
 
 -- Lua
@@ -457,7 +457,7 @@ function BARS:HasXPBar()
 end
 
 function BARS:CreateXPBar()
-	if not isInit and (C.db.char.bars.xpbar.enabled or BARS:IsRestricted()) then
+	if not isInit and (PrC.db.profile.bars.xpbar.enabled or BARS:IsRestricted()) then
 		local bar = Mixin(CreateFrame("Frame", "LSUIXPBar", UIParent), bar_proto)
 
 		BARS:AddBar(bar._id, bar)

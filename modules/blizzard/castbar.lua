@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -189,7 +189,7 @@ local function updateCastBar(self)
 	if mover then
 		mover:UpdateSize()
 
-		if not C.db.char.blizzard.castbar.enabled then
+		if not PrC.db.profile.blizzard.castbar.enabled then
 			mover:Disable()
 		end
 	end
@@ -290,10 +290,10 @@ end
 
 function MODULE:SetUpCastBars()
 	if P:GetModule("UnitFrames"):HasPlayerFrame() then
-		C.db.char.blizzard.castbar.enabled = false
+		PrC.db.profile.blizzard.castbar.enabled = false
 	end
 
-	if not isInit and C.db.char.blizzard.castbar.enabled then
+	if not isInit and PrC.db.profile.blizzard.castbar.enabled then
 		local config = C.db.profile.blizzard.castbar
 
 		CastingBarFrame.ignoreFramePositionManager = true
@@ -307,7 +307,7 @@ function MODULE:SetUpCastBars()
 		CastingBarFrame.Holder:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		local mover = E.Movers:Create(CastingBarFrame.Holder)
 
-		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+		if PrC.db.profile.units.enabled and PrC.db.profile.units.player.enabled then
 			mover:Disable()
 		end
 
@@ -321,7 +321,7 @@ function MODULE:SetUpCastBars()
 		PetCastingBarFrame.Holder:SetPoint(point.p, point.anchor, point.rP, point.x, point.y + config.height + 8)
 		mover = E.Movers:Create(PetCastingBarFrame.Holder)
 
-		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+		if PrC.db.profile.units.enabled and PrC.db.profile.units.player.enabled then
 			mover:Disable()
 		end
 
@@ -337,7 +337,7 @@ end
 
 function MODULE:UpdateCastBars()
 	if P:GetModule("UnitFrames"):HasPlayerFrame() then
-		C.db.char.blizzard.castbar.enabled = false
+		PrC.db.profile.blizzard.castbar.enabled = false
 	end
 
 	if isInit then

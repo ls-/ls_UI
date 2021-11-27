@@ -312,10 +312,10 @@ function CONFIG.CreateAurasPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.auras.enabled
+					return PrC.db.profile.auras.enabled
 				end,
 				set = function(_, value)
-					C.db.char.auras.enabled = value
+					PrC.db.profile.auras.enabled = value
 
 					if AURAS:IsInit() then
 						if not value then

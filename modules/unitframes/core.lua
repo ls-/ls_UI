@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF
+local E, C, PrC, M, L, P, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.oUF
 local UF = P:AddModule("UnitFrames")
 
 -- Lua
@@ -198,7 +198,7 @@ function UF:IsInit()
 end
 
 function UF:Init()
-	if not isInit and C.db.char.units.enabled then
+	if not isInit and PrC.db.profile.units.enabled then
 		self:UpdateHealthColors()
 		self:UpdateReactionColors()
 		self:UpdatePowerColors()
@@ -239,28 +239,28 @@ function UF:Init()
 			end)
 			oUF:SetActiveStyle("LS")
 
-			if C.db.char.units.player.enabled then
+			if PrC.db.profile.units.player.enabled then
 				UF:Create("player")
 				UF:For("player", "Update")
 				UF:Create("pet")
 				UF:For("pet", "Update")
 			end
 
-			if C.db.char.units.target.enabled then
+			if PrC.db.profile.units.target.enabled then
 				UF:Create("target")
 				UF:For("target", "Update")
 				UF:Create("targettarget")
 				UF:For("targettarget", "Update")
 			end
 
-			if C.db.char.units.focus.enabled then
+			if PrC.db.profile.units.focus.enabled then
 				UF:Create("focus")
 				UF:For("focus", "Update")
 				UF:Create("focustarget")
 				UF:For("focustarget", "Update")
 			end
 
-			if C.db.char.units.boss.enabled then
+			if PrC.db.profile.units.boss.enabled then
 				UF:Create("boss")
 				UF:For("boss", "Update")
 			end

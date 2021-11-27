@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local BLIZZARD = P:GetModule("Blizzard")
 
 -- Lua
@@ -69,7 +69,7 @@ function BLIZZARD:HasMail()
 end
 
 function BLIZZARD:SetUpMail()
-	if not isInit and C.db.char.blizzard.mail.enabled then
+	if not isInit and PrC.db.profile.blizzard.mail.enabled then
 		local button = E:CreateButton(InboxFrame, "$parentCleanUpButton")
 		button:SetPoint("BOTTOMRIGHT", MailFrameInset, "TOPRIGHT", -2, 4)
 		button:RegisterEvent("MAIL_INBOX_UPDATE")

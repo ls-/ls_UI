@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -184,7 +184,7 @@ function MODULE:HasCharacterFrame()
 end
 
 function MODULE:SetUpCharacterFrame()
-	if not isInit and C.db.char.blizzard.character_frame.enabled then
+	if not isInit and PrC.db.profile.blizzard.character_frame.enabled then
 		if CharacterFrame:IsShown() then
 			HideUIPanel(CharacterFrame)
 		end

@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Auras")
 
 -- Lua
@@ -390,7 +390,7 @@ function MODULE.IsInit()
 end
 
 function MODULE.Init()
-	if not isInit and C.db.char.auras.enabled then
+	if not isInit and PrC.db.profile.auras.enabled then
 		createHeader("HELPFUL")
 		createHeader("HARMFUL")
 		createHeader("TOTEM")

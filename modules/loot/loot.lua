@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Loot")
 
 -- Lua
@@ -391,7 +391,7 @@ function MODULE:IsInit()
 end
 
 function MODULE:Init()
-	if not isInit and C.db.char.loot.enabled then
+	if not isInit and PrC.db.profile.loot.enabled then
 		local frame = CreateFrame("Frame", "LSLootFrame", UIParent, "PortraitFrameTemplate")
 		frame:EnableMouse(true)
 		frame:SetSize(192, 230 + 40 * (MAX_BUTTONS - MIN_BUTTONS))

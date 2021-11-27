@@ -9,6 +9,7 @@ exclude_files = {
 
 ignore = {
 	"111/SLASH_.*", -- Setting an undefined global variable starting with SLASH_
+	"111/LS.*", -- Setting an undefined global variable starting with SLASH_
 	"112/LS.*", -- Mutating an undefined global variable starting with LS
 	"113/LS.*", -- Accessing an undefined global variable starting with LS
 	"122", -- Setting a read-only field of a global variable

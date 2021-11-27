@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -13,7 +13,7 @@ function MODULE:HasMawBuffs()
 end
 
 function MODULE:SetUpMawBuffs()
-	if not isInit and C.db.char.blizzard.maw_buffs.enabled then
+	if not isInit and PrC.db.profile.blizzard.maw_buffs.enabled then
 		local isLoaded = true
 
 		if not IsAddOnLoaded("Blizzard_MawBuffs") then

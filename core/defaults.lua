@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, D = ns.E, ns.D
+local E, D, PrD = ns.E, ns.D, ns.PrD
 
 -- Lua
 local _G = getfenv(0)
@@ -2897,7 +2897,7 @@ D.profile = {
 	},
 }
 
-D.char = {
+PrD.profile = {
 	layout = "rect", -- or "round"
 	auras = {
 		enabled = true,

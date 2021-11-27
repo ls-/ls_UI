@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -13,7 +13,7 @@ function MODULE.HasVehicleSeatFrame()
 end
 
 function MODULE.SetUpVehicleSeatFrame()
-	if not isInit and C.db.char.blizzard.vehicle.enabled then
+	if not isInit and PrC.db.profile.blizzard.vehicle.enabled then
 		local point = C.db.profile.blizzard.vehicle.point[E.UI_LAYOUT]
 		VehicleSeatIndicator:ClearAllPoints()
 		VehicleSeatIndicator:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
