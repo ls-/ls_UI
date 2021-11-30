@@ -513,3 +513,8 @@ L["ZONE_TEXT"] = "Zone Text"
 
 L["LAYOUT_ROUND"] = "Round"
 L["LAYOUT_RECT"] = "Rectangular"
+
+L["PROFILE_GLOBAL"] = "Global"
+L["PROFILE_PRIVATE"] = "Private"
+L["PROFILE_RELOAD_WARNING"] = "The changes will take effect after reloading the UI."
+L["PROFILES"] = "Profiles"

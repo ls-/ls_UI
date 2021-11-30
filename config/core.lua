@@ -849,6 +849,13 @@ function MODULE:Init()
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
 			},
+			profiles = {
+				order = 100,
+				type = "group",
+				name = L["PROFILES"],
+				childGroups = "tab",
+				args = {},
+			},
 		},
 	}
 
@@ -865,11 +872,31 @@ function MODULE:Init()
 	MODULE:CreateTooltipsPanel(12)
 	MODULE:CreateUnitFramesPanel(13)
 
-	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
-	C.options.args.profiles.order = 100
-	C.options.args.profiles.desc = nil
+	C.options.args.profiles.args.global = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
+	C.options.args.profiles.args.global.order = 1
+	C.options.args.profiles.args.global.name = L["PROFILE_GLOBAL"]
 
-	LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles, C.db)
+	LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles.args.global, C.db)
+
+	C.options.args.profiles.args.private = LibStub("AceDBOptions-3.0"):GetOptionsTable(PrC.db, true)
+	C.options.args.profiles.args.private.order = 2
+	C.options.args.profiles.args.private.name = L["PROFILE_PRIVATE"]
+
+	if not C.options.args.profiles.args.private.plugins then
+		C.options.args.profiles.args.private.plugins = {}
+	end
+
+	C.options.args.profiles.args.private.plugins.ls_UI = {
+		warning = {
+			order = 0,
+			type = "description",
+			fontSize = "large",
+			name = L["PROFILE_RELOAD_WARNING"] .. "\n\n",
+			image = "Interface\\OPTIONSFRAME\\UI-OptionsFrame-NewFeatureIcon",
+			imageWidth = 16,
+			imageHeight = 16,
+		},
+	}
 
 	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = L["LS_UI"]
