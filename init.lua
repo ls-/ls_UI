@@ -236,10 +236,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		PrC.db.profile.version = E.VER.number
 	end)
 
-	-- PrC.db:RegisterCallback("OnProfileChanged", ReloadUI)
-	-- PrC.db:RegisterCallback("OnProfileCopied", ReloadUI)
-	-- PrC.db:RegisterCallback("OnProfileReset", ReloadUI)
-
 	E:RegisterEvent("PLAYER_LOGIN", function()
 		E:UpdateConstants()
 
