@@ -3,11 +3,8 @@ local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L,
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
-
---[[ luacheck: globals
-	AdiButtonAuras hooksecurefunc LibStub MaxDps MinimapButtonFrame
-]]
 
 -- Mine
 local function cleanUpStep1()

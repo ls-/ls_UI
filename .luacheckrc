@@ -37,7 +37,10 @@ globals = {
 
 read_globals = {
 	-- AddOns
+	"AdiButtonAuras",
 	"LibStub",
+	"MaxDps",
+	"MinimapButtonFrame",
 
 	-- API functions
 	"BreakUpLargeNumbers",
