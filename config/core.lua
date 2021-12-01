@@ -269,7 +269,7 @@ do
 			frame:SetFrameStrata("DIALOG")
 			frame:SetMovable(true)
 			frame:SetToplevel(true)
-			frame:SetSize(320, 629)
+			frame:SetSize(320, 653)
 			frame:SetPoint("TOP", 0, -64)
 
 			local bg = _G[frame:GetName() .. "DialogBG"]
@@ -584,12 +584,35 @@ do
 				end
 			end)
 
-			local text = addButton:GetFontString()
-			text:ClearAllPoints()
-			text:SetPoint("TOPLEFT", 15, -1)
-			text:SetPoint("BOTTOMRIGHT", -15, 1)
-			text:SetJustifyV("MIDDLE")
-			text:SetText(L["ADD"])
+			local addText = addButton:GetFontString()
+			addText:ClearAllPoints()
+			addText:SetPoint("TOPLEFT", 15, -1)
+			addText:SetPoint("BOTTOMRIGHT", -15, 1)
+			addText:SetJustifyV("MIDDLE")
+			addText:SetText(L["ADD"])
+
+			local exportButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+			exportButton:SetPoint("TOP", addButton, "BOTTOM", 0, 0)
+			exportButton:SetPoint("LEFT", 10, 0)
+			exportButton:SetPoint("RIGHT", -7, 0)
+			exportButton:SetHeight(24)
+			exportButton:SetScript("OnClick", function()
+				local text = ""
+				for id in next, activeData do
+					text = text .. id .. ", "
+				end
+
+				idInputEditBox:SetFocus()
+				idInputEditBox:SetText(text)
+				idInputEditBox:HighlightText()
+			end)
+
+			local exportText = exportButton:GetFontString()
+			exportText:ClearAllPoints()
+			exportText:SetPoint("TOPLEFT", 15, -1)
+			exportText:SetPoint("BOTTOMRIGHT", -15, 1)
+			exportText:SetJustifyV("MIDDLE")
+			exportText:SetText(L["EXPORT"])
 		end
 
 		data[1], data[2], data[3] = auras, buffs, debuffs
