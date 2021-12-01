@@ -10,10 +10,10 @@
   Previously, every single character had its own private profile you had no access to, but now it's possible to manage
   them like normal (global) profiles, for instance, multiple characters can use the same private profile. All existing
   private profiles will be converted automagically, so there should be no data loss;
-  - Renamed UI layouts from `Orbs` and `Classic` to `Round` and `Rectangular` respectively;
-  - Fixed an issue where the XP bar would use incorrect settings in restricted mode.
+- Renamed UI layouts from `Orbs` and `Classic` to `Round` and `Rectangular` respectively;
+- Fixed an issue where the XP bar would use incorrect settings in restricted mode.
 
-  ![Imgur](https://i.imgur.com/oDq4Ngq.png)
+![Imgur](https://i.imgur.com/oDq4Ngq.png)
 
 ## Version 90105.03
 
