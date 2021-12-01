@@ -124,7 +124,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	-- -> 90105.04
 	if LS_UI_GLOBAL_CONFIG and LS_UI_GLOBAL_CONFIG.char then
 		if not LS_UI_PRIVATE_CONFIG then
-			print("no LS_UI_PRIVATE_CONFIG")
 			LS_UI_PRIVATE_CONFIG = {
 				profileKeys = {},
 				profiles = {},
