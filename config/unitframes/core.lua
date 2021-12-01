@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local CONFIG = P:GetModule("Config")
 local UNITFRAMES = P:GetModule("UnitFrames")
 
@@ -27,14 +27,14 @@ local function isBossFrameDisabled()
 	return not UNITFRAMES:HasBossFrame()
 end
 
-local function isLSLayout()
-	return E.UI_LAYOUT == "ls"
+local function isRoundLayout()
+	return E.UI_LAYOUT == "round"
 end
 
 local function createUnitFramePanel(order, unit, name)
 	local copyIgnoredUnits = {
-		["pet"] = E.UI_LAYOUT == "ls",
-		["player"] = E.UI_LAYOUT == "ls",
+		["pet"] = E.UI_LAYOUT == "round",
+		["player"] = E.UI_LAYOUT == "round",
 		[unit] = true,
 	}
 
@@ -255,12 +255,12 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
 
-		if E.UI_LAYOUT == "traditional" then
+		if E.UI_LAYOUT == "rect" then
 			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
 		else
-			temp.args.copy.hidden = isLSLayout
-			temp.args.width.hidden = isLSLayout
-			temp.args.height.hidden = isLSLayout
+			temp.args.copy.hidden = isRoundLayout
+			temp.args.width.hidden = isRoundLayout
+			temp.args.height.hidden = isRoundLayout
 			temp.args.top_inset = nil
 			temp.args.bottom_inset = nil
 			temp.args.mirror_widgets = nil
@@ -275,10 +275,10 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
 
-		if E.UI_LAYOUT == "ls" then
-			temp.args.copy.hidden = isLSLayout
-			temp.args.width.hidden = isLSLayout
-			temp.args.height.hidden = isLSLayout
+		if E.UI_LAYOUT == "round" then
+			temp.args.copy.hidden = isRoundLayout
+			temp.args.width.hidden = isRoundLayout
+			temp.args.height.hidden = isRoundLayout
 			temp.args.top_inset = nil
 			temp.args.bottom_inset = nil
 			temp.args.border = nil
@@ -379,10 +379,10 @@ function CONFIG:CreateUnitFramesPanel(order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.units.enabled
+					return PrC.db.profile.units.enabled
 				end,
 				set = function(_, value)
-					C.db.char.units.enabled = value
+					PrC.db.profile.units.enabled = value
 
 					if UNITFRAMES:IsInit() then
 						if not value then
@@ -407,10 +407,10 @@ function CONFIG:CreateUnitFramesPanel(order)
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return C.db.char.units[info[#info]].enabled
+					return PrC.db.profile.units[info[#info]].enabled
 				end,
 				set = function(info, value)
-					C.db.char.units[info[#info]].enabled = value
+					PrC.db.profile.units[info[#info]].enabled = value
 
 					if UNITFRAMES:IsInit() then
 						if value then

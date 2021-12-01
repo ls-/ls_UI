@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Minimap")
 
 -- Lua
@@ -855,12 +855,12 @@ function MODULE:IsSquare()
 end
 
 function MODULE:Init()
-	if not isInit and C.db.char.minimap.enabled then
+	if not isInit and PrC.db.profile.minimap.enabled then
 		if not IsAddOnLoaded("Blizzard_TimeManager") then
 			LoadAddOn("Blizzard_TimeManager")
 		end
 
-		isSquare = C.db.char.minimap[E.UI_LAYOUT].square
+		isSquare = PrC.db.profile.minimap[E.UI_LAYOUT].square
 
 		-- for LDBIcon-1.0
 		function GetMinimapShape()

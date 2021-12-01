@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("Bars")
 
 -- Lua
@@ -118,14 +118,14 @@ end
 
 function MODULE.AddBar(_, barID, bar)
 	bars[barID] = bar
-	bar.UpdateConfig = bar_UpdateConfig
-	bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
-	bar.UpdateLayout = bar_UpdateLayout
-	bar.UpdateVisibility = bar_UpdateVisibility
+	bar.UpdateConfig = bar.UpdateConfig or bar_UpdateConfig
+	bar.UpdateCooldownConfig = bar.UpdateCooldownConfig or bar_UpdateCooldownConfig
+	bar.UpdateLayout = bar.UpdateLayout or bar_UpdateLayout
+	bar.UpdateVisibility = bar.UpdateVisibility or bar_UpdateVisibility
 
 	if bar._buttons then
-		bar.ForEach = bar_ForEach
-		bar.UpdateButtons = bar_UpdateButtons
+		bar.ForEach = bar.ForEach or bar_ForEach
+		bar.UpdateButtons = bar.UpdateButtons or bar_UpdateButtons
 	end
 
 	E:SetUpFading(bar)
@@ -265,7 +265,7 @@ function MODULE.IsInit()
 end
 
 function MODULE.Init()
-	if not isInit and C.db.char.bars.enabled then
+	if not isInit and PrC.db.profile.bars.enabled then
 		MODULE:SetupActionBarController()
 		MODULE:CreateActionBars()
 		MODULE:CreateStanceBar()

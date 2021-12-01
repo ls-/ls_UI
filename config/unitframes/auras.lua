@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local CONFIG = P:GetModule("Config")
 local UNITFRAMES = P:GetModule("UnitFrames")
 
@@ -249,8 +249,8 @@ local resetIgnoredKeys = {
 
 function CONFIG:CreateUnitFrameAurasPanel(order, unit)
 	local ignoredUnits = {
-		["player"] = E.UI_LAYOUT == "ls",
-		["pet"] = E.UI_LAYOUT == "ls",
+		["player"] = E.UI_LAYOUT == "round",
+		["pet"] = E.UI_LAYOUT == "round",
 		["targettarget"] = true,
 		["focustarget"] = true,
 		[unit] = true,

@@ -1,28 +1,19 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
 
--- Blizz
-local IsAltKeyDown = _G.IsAltKeyDown
-local IsControlKeyDown = _G.IsControlKeyDown
-local IsShiftKeyDown = _G.IsShiftKeyDown
-
---[[ luacheck: globals
-	CreateFrame ObjectiveTrackerFrame UIParent
-]]
-
 -- Mine
 local isInit = false
 
-function MODULE.HasObjectiveTracker()
+function MODULE:HasObjectiveTracker()
 	return isInit
 end
 
-function MODULE.SetUpObjectiveTracker()
-	if not isInit and C.db.char.blizzard.objective_tracker.enabled then
+function MODULE:SetUpObjectiveTracker()
+	if not isInit and PrC.db.profile.blizzard.objective_tracker.enabled then
 		local holder = CreateFrame("Frame", "LSOTFrameHolder", UIParent)
 		holder:SetFrameStrata("LOW")
 		holder:SetFrameLevel(ObjectiveTrackerFrame:GetFrameLevel() + 1)

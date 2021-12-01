@@ -1,5 +1,5 @@
 local addonName, ns = ...
-local E, C, M, L, P, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.oUF or oUF
+local E, C, PrC, M, L, P, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.oUF or oUF
 local MODULE = P:AddModule("Config")
 
 -- Lua
@@ -269,7 +269,7 @@ do
 			frame:SetFrameStrata("DIALOG")
 			frame:SetMovable(true)
 			frame:SetToplevel(true)
-			frame:SetSize(320, 629)
+			frame:SetSize(320, 653)
 			frame:SetPoint("TOP", 0, -64)
 
 			local bg = _G[frame:GetName() .. "DialogBG"]
@@ -584,12 +584,35 @@ do
 				end
 			end)
 
-			local text = addButton:GetFontString()
-			text:ClearAllPoints()
-			text:SetPoint("TOPLEFT", 15, -1)
-			text:SetPoint("BOTTOMRIGHT", -15, 1)
-			text:SetJustifyV("MIDDLE")
-			text:SetText(L["ADD"])
+			local addText = addButton:GetFontString()
+			addText:ClearAllPoints()
+			addText:SetPoint("TOPLEFT", 15, -1)
+			addText:SetPoint("BOTTOMRIGHT", -15, 1)
+			addText:SetJustifyV("MIDDLE")
+			addText:SetText(L["ADD"])
+
+			local exportButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+			exportButton:SetPoint("TOP", addButton, "BOTTOM", 0, 0)
+			exportButton:SetPoint("LEFT", 10, 0)
+			exportButton:SetPoint("RIGHT", -7, 0)
+			exportButton:SetHeight(24)
+			exportButton:SetScript("OnClick", function()
+				local text = ""
+				for id in next, activeData do
+					text = text .. id .. ", "
+				end
+
+				idInputEditBox:SetFocus()
+				idInputEditBox:SetText(text)
+				idInputEditBox:HighlightText()
+			end)
+
+			local exportText = exportButton:GetFontString()
+			exportText:ClearAllPoints()
+			exportText:SetPoint("TOPLEFT", 15, -1)
+			exportText:SetPoint("BOTTOMRIGHT", -15, 1)
+			exportText:SetJustifyV("MIDDLE")
+			exportText:SetText(L["EXPORT"])
 		end
 
 		data[1], data[2], data[3] = auras, buffs, debuffs
@@ -813,14 +836,14 @@ function MODULE:Init()
 				name = L["UI_LAYOUT"],
 				desc = L["UI_LAYOUT_DESC"],
 				values = {
-					ls = L["ORBS"],
-					traditional = L["CLASSIC"]
+					round = L["LAYOUT_ROUND"],
+					rect = L["LAYOUT_RECT"]
 				},
 				get = function()
-					return C.db.char.layout
+					return PrC.db.profile.layout
 				end,
 				set = function(_, value)
-					C.db.char.layout = value
+					PrC.db.profile.layout = value
 
 					if E.UI_LAYOUT ~= value then
 						MODULE:ShowStaticPopup("RELOAD_UI")
@@ -849,6 +872,13 @@ function MODULE:Init()
 				name = L["RELOAD_UI"],
 				func = function() ReloadUI() end,
 			},
+			profiles = {
+				order = 100,
+				type = "group",
+				name = L["PROFILES"],
+				childGroups = "tab",
+				args = {},
+			},
 		},
 	}
 
@@ -865,11 +895,31 @@ function MODULE:Init()
 	MODULE:CreateTooltipsPanel(12)
 	MODULE:CreateUnitFramesPanel(13)
 
-	C.options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
-	C.options.args.profiles.order = 100
-	C.options.args.profiles.desc = nil
+	C.options.args.profiles.args.global = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
+	C.options.args.profiles.args.global.order = 1
+	C.options.args.profiles.args.global.name = L["PROFILE_GLOBAL"]
 
-	LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles, C.db)
+	LibStub("LibDualSpec-1.0"):EnhanceOptions(C.options.args.profiles.args.global, C.db)
+
+	C.options.args.profiles.args.private = LibStub("AceDBOptions-3.0"):GetOptionsTable(PrC.db, true)
+	C.options.args.profiles.args.private.order = 2
+	C.options.args.profiles.args.private.name = L["PROFILE_PRIVATE"]
+
+	if not C.options.args.profiles.args.private.plugins then
+		C.options.args.profiles.args.private.plugins = {}
+	end
+
+	C.options.args.profiles.args.private.plugins.ls_UI = {
+		warning = {
+			order = 0,
+			type = "description",
+			fontSize = "large",
+			name = L["PROFILE_RELOAD_WARNING"] .. "\n\n",
+			image = "Interface\\OPTIONSFRAME\\UI-OptionsFrame-NewFeatureIcon",
+			imageWidth = 16,
+			imageHeight = 16,
+		},
+	}
 
 	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
 	panel.name = L["LS_UI"]

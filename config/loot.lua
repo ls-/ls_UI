@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local CONFIG = P:GetModule("Config")
 local LOOT = P:GetModule("Loot")
 
@@ -17,10 +17,10 @@ function CONFIG.CreateLootPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.loot.enabled
+					return PrC.db.profile.loot.enabled
 				end,
 				set = function(_, value)
-					C.db.char.loot.enabled = value
+					PrC.db.profile.loot.enabled = value
 
 					if not LOOT:IsInit() then
 						if value then

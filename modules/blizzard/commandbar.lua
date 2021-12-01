@@ -1,13 +1,9 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
-
---[[ luacheck: globals
-	IsAddOnLoaded LoadAddOn OrderHallCommandBar
-]]
 
 -- Mine
 local isInit = false
@@ -26,12 +22,12 @@ local function bar_OnUpdate(self, elapsed)
 	end
 end
 
-function MODULE.HasCommandBar()
+function MODULE:HasCommandBar()
 	return isInit
 end
 
-function MODULE.SetUpCommandBar()
-	if not isInit and C.db.char.blizzard.command_bar.enabled then
+function MODULE:SetUpCommandBar()
+	if not isInit and PrC.db.profile.blizzard.command_bar.enabled then
 		local isLoaded = true
 
 		if not IsAddOnLoaded("Blizzard_OrderHallUI") then

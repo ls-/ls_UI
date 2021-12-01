@@ -1,20 +1,11 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
-
--- Blizz
-local TIMER_MINUTES_DISPLAY = _G.TIMER_MINUTES_DISPLAY
-
---[[ luacheck: globals
-	TimerTracker UIParent
-
-	MIRRORTIMER_NUMTIMERS
-]]
 
 -- Mine
 local isInit = false
@@ -55,7 +46,7 @@ function MODULE:HasMirrorTimer()
 end
 
 function MODULE:SetUpMirrorTimers()
-	if not isInit and C.db.char.blizzard.timer.enabled then
+	if not isInit and PrC.db.profile.blizzard.timer.enabled then
 		local config = C.db.profile.blizzard.timer
 
 		for i = 1, MIRRORTIMER_NUMTIMERS do

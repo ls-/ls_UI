@@ -1,8 +1,23 @@
 # CHANGELOG
 
+## Version 90105.04
+
+- Reworked profile management. Now there's two profile tabs under the `Profiles` category: `Global` and `Private`.
+  - `Global` is what normal profiles used to be, there's no change in functionality;
+  - `Private` is for character specific data which includes the info on the current UI layout type, the shape of the
+    minimap, which modules and elements are enabled/disabled, and, for those of you who still use my `Aura Tracker`,
+    its filters.
+  Previously, every single character had its own private profile you had no access to, but now it's possible to manage
+  them like normal (global) profiles, for instance, multiple characters can use the same private profile. All existing
+  private profiles will be converted automagically, so there should be no data loss;
+  - Renamed UI layouts from `Orbs` and `Classic` to `Round` and `Rectangular` respectively;
+  - Fixed an issue where the XP bar would use incorrect settings in restricted mode;
+
+  ![Imgur](https://i.imgur.com/oDq4Ngq.png)
+
 ## Version 90105.03
 
-- Fix minimap config.
+- Fixed minimap config.
 
 ## Version 90105.02
 

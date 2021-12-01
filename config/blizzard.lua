@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local BLIZZARD = P:GetModule("Blizzard")
 local CONFIG = P:GetModule("Config")
 
@@ -72,10 +72,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.blizzard.enabled
+					return PrC.db.profile.blizzard.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.enabled = value
+					PrC.db.profile.blizzard.enabled = value
 
 					if not BLIZZARD:IsInit() then
 						if value then
@@ -100,10 +100,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["COMMAND_BAR"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.command_bar.enabled
+					return PrC.db.profile.blizzard.command_bar.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.command_bar.enabled = value
+					PrC.db.profile.blizzard.command_bar.enabled = value
 
 					if not BLIZZARD:HasCommandBar() then
 						if value then
@@ -122,10 +122,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["DURABILITY_FRAME"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.durability.enabled
+					return PrC.db.profile.blizzard.durability.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.durability.enabled = value
+					PrC.db.profile.blizzard.durability.enabled = value
 
 					if not BLIZZARD:HasDurabilityFrame() then
 						if value then
@@ -144,10 +144,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["GM_FRAME"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.gm.enabled
+					return PrC.db.profile.blizzard.gm.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.gm.enabled = value
+					PrC.db.profile.blizzard.gm.enabled = value
 
 					if not BLIZZARD:HasGMFrame() then
 						if value then
@@ -166,10 +166,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["MAIL"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.mail.enabled
+					return PrC.db.profile.blizzard.mail.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.mail.enabled = value
+					PrC.db.profile.blizzard.mail.enabled = value
 
 					if not BLIZZARD:HasMail() then
 						if value then
@@ -188,10 +188,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["MAW_BUFFS"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.maw_buffs.enabled
+					return PrC.db.profile.blizzard.maw_buffs.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.maw_buffs.enabled = value
+					PrC.db.profile.blizzard.maw_buffs.enabled = value
 
 					if not BLIZZARD:HasMawBuffs() then
 						if value then
@@ -210,10 +210,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["ALT_POWER_BAR"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.player_alt_power_bar.enabled
+					return PrC.db.profile.blizzard.player_alt_power_bar.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.player_alt_power_bar.enabled = value
+					PrC.db.profile.blizzard.player_alt_power_bar.enabled = value
 
 					if not BLIZZARD:HasAltPowerBar() then
 						if value then
@@ -232,10 +232,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 				name = L["VEHICLE_SEAT_INDICATOR"],
 				disabled = isModuleDisabled,
 				get = function()
-					return C.db.char.blizzard.vehicle.enabled
+					return PrC.db.profile.blizzard.vehicle.enabled
 				end,
 				set = function(_, value)
-					C.db.char.blizzard.vehicle.enabled = value
+					PrC.db.profile.blizzard.vehicle.enabled = value
 
 					if not BLIZZARD:HasVehicleSeatFrame() then
 						if value then
@@ -267,10 +267,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.castbar.enabled
+							return PrC.db.profile.blizzard.castbar.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.castbar.enabled = value
+							PrC.db.profile.blizzard.castbar.enabled = value
 
 							if not BLIZZARD:HasCastBars() then
 								if value then
@@ -408,10 +408,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.character_frame.enabled
+							return PrC.db.profile.blizzard.character_frame.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.character_frame.enabled = value
+							PrC.db.profile.blizzard.character_frame.enabled = value
 
 							if not BLIZZARD:HasCharacterFrame() then
 								if value then
@@ -468,10 +468,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.digsite_bar.enabled
+							return PrC.db.profile.blizzard.digsite_bar.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.digsite_bar.enabled = value
+							PrC.db.profile.blizzard.digsite_bar.enabled = value
 
 							if not BLIZZARD:HasDigsiteBar() then
 								if value then
@@ -557,10 +557,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.timer.enabled
+							return PrC.db.profile.blizzard.timer.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.timer.enabled = value
+							PrC.db.profile.blizzard.timer.enabled = value
 
 							if not BLIZZARD:HasMirrorTimer() then
 								if value then
@@ -639,10 +639,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.objective_tracker.enabled
+							return PrC.db.profile.blizzard.objective_tracker.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.objective_tracker.enabled = value
+							PrC.db.profile.blizzard.objective_tracker.enabled = value
 
 							if not BLIZZARD:HasObjectiveTracker() then
 								if value then
@@ -712,10 +712,10 @@ function CONFIG.CreateBlizzardPanel(_, order)
 						type = "toggle",
 						name = L["ENABLE"],
 						get = function()
-							return C.db.char.blizzard.talking_head.enabled
+							return PrC.db.profile.blizzard.talking_head.enabled
 						end,
 						set = function(_, value)
-							C.db.char.blizzard.talking_head.enabled = value
+							PrC.db.profile.blizzard.talking_head.enabled = value
 
 							if not BLIZZARD:HasTalkingHead() then
 								if value then

@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local CONFIG = P:GetModule("Config")
 local TOOLTIPS = P:GetModule("Tooltips")
 
@@ -44,10 +44,10 @@ function CONFIG:CreateTooltipsPanel(order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.tooltips.enabled
+					return PrC.db.profile.tooltips.enabled
 				end,
 				set = function(_, value)
-					C.db.char.tooltips.enabled = value
+					PrC.db.profile.tooltips.enabled = value
 
 					if not TOOLTIPS:IsInit() then
 						if value then

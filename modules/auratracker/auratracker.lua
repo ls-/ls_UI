@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:AddModule("AuraTracker")
 
 -- Lua
@@ -25,7 +25,7 @@ local activeAuras = {}
 local bar
 
 local function verifyFilter(filter)
-	local auraList = C.db.char.auratracker.filter[filter]
+	local auraList = PrC.db.profile.auratracker.filter[filter]
 
 	for k in next, auraList do
 		if not GetSpellInfo(k) then
@@ -135,7 +135,7 @@ local function bar_OnEvent(self)
 end
 
 local function bar_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.char.auratracker, self._config)
+	self._config = E:CopyTable(PrC.db.profile.auratracker, self._config)
 end
 
 local function bar_UpdateCooldownConfig(self)
@@ -198,7 +198,7 @@ function MODULE.IsInit()
 end
 
 function MODULE.Init()
-	if not isInit and C.db.char.auratracker.enabled then
+	if not isInit and PrC.db.profile.auratracker.enabled then
 		verifyFilter("HELPFUL")
 		verifyFilter("HARMFUL")
 
@@ -217,8 +217,8 @@ function MODULE.Init()
 
 		local mover = E.Movers:Create(header, true)
 		mover.IsDragKeyDown = function()
-			return C.db.char.auratracker.drag_key == "NONE"
-				or C.db.char.auratracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
+			return PrC.db.profile.auratracker.drag_key == "NONE"
+				or PrC.db.profile.auratracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
 		end
 
 		bar = CreateFrame("Frame", "LSAuraTracker", UIParent)
@@ -249,8 +249,8 @@ function MODULE.Init()
 
 			local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
-			auraType:SetSize(C.db.char.auratracker.type.size, C.db.char.auratracker.type.size)
-			auraType:SetPoint(C.db.char.auratracker.type.position, 0, 0)
+			auraType:SetSize(PrC.db.profile.auratracker.type.size, PrC.db.profile.auratracker.type.size)
+			auraType:SetPoint(PrC.db.profile.auratracker.type.position, 0, 0)
 			button.AuraType = auraType
 
 			button._parent = bar

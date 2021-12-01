@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local CONFIG = P:GetModule("Config")
 local MINIMAP = P:GetModule("Minimap")
 
@@ -55,10 +55,10 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.minimap.enabled
+					return PrC.db.profile.minimap.enabled
 				end,
 				set = function(_, value)
-					C.db.char.minimap.enabled = value
+					PrC.db.profile.minimap.enabled = value
 
 					if not MINIMAP:IsInit() then
 						if value then
@@ -76,10 +76,10 @@ function CONFIG.CreateMinimapPanel(_, order)
 				type = "toggle",
 				name = L["SQUARE_MINIMAP"],
 				get = function()
-					return C.db.char.minimap[E.UI_LAYOUT].square
+					return PrC.db.profile.minimap[E.UI_LAYOUT].square
 				end,
 				set = function(_, value)
-					C.db.char.minimap[E.UI_LAYOUT].square = value
+					PrC.db.profile.minimap[E.UI_LAYOUT].square = value
 
 					if MINIMAP:IsInit() then
 						CONFIG:ShowStaticPopup("RELOAD_UI")

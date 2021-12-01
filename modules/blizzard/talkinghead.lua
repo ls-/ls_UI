@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
@@ -7,13 +7,6 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local t_remove = _G.table.remove
-
---[[ luacheck: globals
-	AlertFrame CreateFrame IsAddOnLoaded LoadAddOn TalkingHeadFrame
-	TalkingHeadFrame_CloseImmediately UIParent
-
-	UIPARENT_MANAGED_FRAME_POSITIONS
-]]
 
 -- Mine
 local isInit = false
@@ -24,12 +17,12 @@ local function closeTalkingHead()
 	end
 end
 
-function MODULE.HasTalkingHead()
+function MODULE:HasTalkingHead()
 	return isInit
 end
 
-function MODULE.SetUpTalkingHead()
-	if not isInit and C.db.char.blizzard.talking_head.enabled then
+function MODULE:SetUpTalkingHead()
+	if not isInit and PrC.db.profile.blizzard.talking_head.enabled then
 		local isLoaded = true
 
 		if not IsAddOnLoaded("Blizzard_TalkingHeadUI") then
@@ -46,8 +39,9 @@ function MODULE.SetUpTalkingHead()
 				end
 			end
 
+			local point = C.db.profile.blizzard.talking_head.point[E.UI_LAYOUT]
 			TalkingHeadFrame:ClearAllPoints()
-			TalkingHeadFrame:SetPoint("TOP", "UIParent", "TOP", 0, -188)
+			TalkingHeadFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(TalkingHeadFrame)
 
 			hooksecurefunc("TalkingHeadFrame_PlayCurrent", closeTalkingHead)

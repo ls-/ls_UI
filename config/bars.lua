@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local CONFIG = P:GetModule("Config")
 local BARS = P:GetModule("Bars")
 
@@ -596,10 +596,10 @@ local function getOptionsTable_Bar(barID, order, name)
 			name = L["ENABLE"],
 			disabled = function() return BARS:IsRestricted() end,
 			get = function()
-				return C.db.char.bars[barID].enabled
+				return PrC.db.profile.bars[barID].enabled
 			end,
 			set = function(_, value)
-				C.db.char.bars[barID].enabled = value
+				PrC.db.profile.bars[barID].enabled = value
 
 				if BARS:IsInit() then
 					if BARS:HasPetBattleBar() then
@@ -707,10 +707,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.bars.enabled
+					return PrC.db.profile.bars.enabled
 				end,
 				set = function(_, value)
-					C.db.char.bars.enabled = value
+					PrC.db.profile.bars.enabled = value
 
 					if BARS:IsInit() then
 						if not value then
@@ -729,10 +729,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				name = L["RESTRICTED_MODE"],
 				desc = L["RESTRICTED_MODE_DESC"],
 				get = function()
-					return C.db.char.bars.restricted
+					return PrC.db.profile.bars.restricted
 				end,
 				set = function(_, value)
-					C.db.char.bars.restricted = value
+					PrC.db.profile.bars.restricted = value
 
 					if BARS:IsInit() then
 						CONFIG:ShowStaticPopup("RELOAD_UI")
@@ -1310,10 +1310,10 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						name = L["ENABLE"],
 						disabled = isModuleDisabledOrRestricted,
 						get = function()
-							return C.db.char.bars.xpbar.enabled
+							return PrC.db.profile.bars.xpbar.enabled
 						end,
 						set = function(_, value)
-							C.db.char.bars.xpbar.enabled = value
+							PrC.db.profile.bars.xpbar.enabled = value
 
 							if BARS:IsInit() then
 								if BARS:HasXPBar() then

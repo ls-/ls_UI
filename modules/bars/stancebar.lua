@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Bars")
 
 -- Lua
@@ -21,13 +21,13 @@ local BUTTONS = {
 }
 
 local TOP_POINT = {
-	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
-	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
+	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
 }
 
 local BOTTOM_POINT = {
-	ls = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
-	traditional = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
+	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
 }
 
 local LAYOUT = {

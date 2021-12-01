@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D
+local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
 local AURAS = P:GetModule("Auras")
 local CONFIG = P:GetModule("Config")
 
@@ -312,10 +312,10 @@ function CONFIG.CreateAurasPanel(_, order)
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
-					return C.db.char.auras.enabled
+					return PrC.db.profile.auras.enabled
 				end,
 				set = function(_, value)
-					C.db.char.auras.enabled = value
+					PrC.db.profile.auras.enabled = value
 
 					if AURAS:IsInit() then
 						if not value then

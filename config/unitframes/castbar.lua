@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, M, L, P, D, oUF = ns.E, ns.C, ns.M, ns.L, ns.P, ns.D, ns.oUF
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local CONFIG = P:GetModule("Config")
 local UNITFRAMES = P:GetModule("UnitFrames")
 
@@ -165,7 +165,7 @@ function CONFIG:CreateUnitFrameCastbarPanel(order, unit)
 		temp.args.spacer_2 = nil
 	end
 
-	if E.UI_LAYOUT == "ls" and (unit == "player" or unit == "pet") then
+	if E.UI_LAYOUT == "round" and (unit == "player" or unit == "pet") then
 		temp.args.detached = nil
 		temp.args.width_override.name = L["WIDTH"]
 		temp.args.width_override.desc = nil

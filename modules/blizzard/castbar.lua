@@ -1,21 +1,11 @@
 local _, ns = ...
-local E, C, M, L, P = ns.E, ns.C, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local m_min = _G.math.min
-
---[[ luacheck: globals
-	CastingBarFrame CastingBarFrame_OnEvent CastingBarFrame_SetFailedCastColor
-	CastingBarFrame_SetFinishedCastColor CastingBarFrame_SetNonInterruptibleCastColor
-	CastingBarFrame_SetStartCastColor CastingBarFrame_SetStartChannelColor
-	CastingBarFrame_SetUseStartColorForFinished CreateFrame GetNetStats PetCastingBarFrame UIParent
-	UnitIsPossessed
-
-	UIPARENT_MANAGED_FRAME_POSITIONS
-]]
 
 -- Mine
 local isInit = false
@@ -199,7 +189,7 @@ local function updateCastBar(self)
 	if mover then
 		mover:UpdateSize()
 
-		if not C.db.char.blizzard.castbar.enabled then
+		if not PrC.db.profile.blizzard.castbar.enabled then
 			mover:Disable()
 		end
 	end
@@ -300,10 +290,10 @@ end
 
 function MODULE:SetUpCastBars()
 	if P:GetModule("UnitFrames"):HasPlayerFrame() then
-		C.db.char.blizzard.castbar.enabled = false
+		PrC.db.profile.blizzard.castbar.enabled = false
 	end
 
-	if not isInit and C.db.char.blizzard.castbar.enabled then
+	if not isInit and PrC.db.profile.blizzard.castbar.enabled then
 		local config = C.db.profile.blizzard.castbar
 
 		CastingBarFrame.ignoreFramePositionManager = true
@@ -313,10 +303,11 @@ function MODULE:SetUpCastBars()
 		handleCastBar(CastingBarFrame)
 		CastingBarFrame:SetScript("OnShow", playerBar_OnShow)
 
-		CastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190)
+		local point = config.point[E.UI_LAYOUT]
+		CastingBarFrame.Holder:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		local mover = E.Movers:Create(CastingBarFrame.Holder)
 
-		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+		if PrC.db.profile.units.enabled and PrC.db.profile.units.player.enabled then
 			mover:Disable()
 		end
 
@@ -327,10 +318,10 @@ function MODULE:SetUpCastBars()
 		handleCastBar(PetCastingBarFrame)
 		PetCastingBarFrame:SetScript("OnEvent", petBar_OnEvent)
 
-		PetCastingBarFrame.Holder:SetPoint("BOTTOM", "UIParent", "BOTTOM", 0, 190 + config.height + 8)
+		PetCastingBarFrame.Holder:SetPoint(point.p, point.anchor, point.rP, point.x, point.y + config.height + 8)
 		mover = E.Movers:Create(PetCastingBarFrame.Holder)
 
-		if C.db.char.units.enabled and C.db.char.units.player.enabled then
+		if PrC.db.profile.units.enabled and PrC.db.profile.units.player.enabled then
 			mover:Disable()
 		end
 
@@ -346,7 +337,7 @@ end
 
 function MODULE:UpdateCastBars()
 	if P:GetModule("UnitFrames"):HasPlayerFrame() then
-		C.db.char.blizzard.castbar.enabled = false
+		PrC.db.profile.blizzard.castbar.enabled = false
 	end
 
 	if isInit then
