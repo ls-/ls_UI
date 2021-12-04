@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90105.05
+
+- Fixed an issue where some movers would change their position by 4px in either direction. Primarily affected ToT, ToF,
+  and UF castbar movers.
+
 ## Version 90105.04
 
 - Reworked profile management. Now there's two profile tabs under the `Profiles` category: `Global` and `Private`.
