@@ -243,22 +243,16 @@ function E:ReplaceTable(src, dest)
 	return dest
 end
 
-function E:DiffTable(src , dest)
-	if type(dest) ~= "table" then
-		return {}
-	end
-
-	if type(src) ~= "table" then
-		return dest
-	end
-
-	for k, v in next, dest do
-		if type(v) == "table" then
-			if not next(self:DiffTable(src[k], v)) then
+function E:DiffTable(src, dest)
+	for k, v in next, src do
+		if type(v) == "table" and type(dest[k]) == "table" then
+			if next(self:DiffTable(v, dest[k])) == nil then
 				dest[k] = nil
 			end
-		elseif v == src[k] then
-			dest[k] = nil
+		else
+			if dest[k] == v then
+				dest[k] = nil
+			end
 		end
 	end
 
