@@ -685,16 +685,6 @@ function E:ForceHide(object, skipEvents)
 	object:SetParent(self.HIDDEN_PARENT)
 end
 
-function E:GetCoords(object)
-	local p, anchor, rP, x, y = object:GetPoint()
-
-	if not x then
-		return p, anchor, rP, x, y
-	else
-		return p, anchor and anchor:GetName() or "UIParent", rP, round(x), round(y)
-	end
-end
-
 function E:GetScreenQuadrant(frame)
 	local x, y
 

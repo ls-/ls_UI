@@ -327,6 +327,16 @@ do
 	settings.LockButton = lockButton
 end
 
+local function getPoint(self)
+	local p, anchor, rP, x, y = self:GetPoint()
+
+	if not x then
+		return p, anchor, rP, x, y
+	else
+		return p, anchor and anchor:GetName() or "UIParent", rP, E:Round(x), E:Round(y)
+	end
+end
+
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
 	local p, x, y
@@ -357,7 +367,7 @@ local function calculatePosition(self)
 		end
 	end
 
-	return p, p, E:Round(x), E:Round(y)
+	return p, "UIParent", p, E:Round(x), E:Round(y)
 end
 
 local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
@@ -378,45 +388,50 @@ local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 
 	-- jic we got out of screen bounds because of offsets
 	-- I could probably group them up better, but whatevs
-	if p == "BOTTOM" then
-		if y < 4 then
-			y = 4
-		end
-	elseif p == "BOTTOMLEFT" then
-		if x < 4 then
-			x = 4
-		end
+	if anchor == "UIParent" then
+		local l, r, t, b = self:GetClampRectInsets()
+		l, r, t, b = E:Round(-l), E:Round(-r), E:Round(-t), E:Round(-b)
 
-		if y < 4 then
-			y = 4
-		end
-	elseif p == "BOTTOMRIGHT" then
-		if x > -4 then
-			x = -4
-		end
+		if p == "BOTTOM" then
+			if y < b then
+				y = b
+			end
+		elseif p == "BOTTOMLEFT" then
+			if x < l then
+				x = l
+			end
 
-		if y < 4 then
-			y = 4
-		end
-	elseif p == "TOP" then
-		if y > -4 then
-			y = -4
-		end
-	elseif p == "TOPLEFT" then
-		if x < 4 then
-			x = 4
-		end
+			if y < b then
+				y = b
+			end
+		elseif p == "BOTTOMRIGHT" then
+			if x > r then
+				x = r
+			end
 
-		if y > -4 then
-			y = -4
-		end
-	elseif p == "TOPRIGHT" then
-		if x > -4 then
-			x = -4
-		end
+			if y < b then
+				y = b
+			end
+		elseif p == "TOP" then
+			if y > t then
+				y = t
+			end
+		elseif p == "TOPLEFT" then
+			if x < l then
+				x = l
+			end
 
-		if y > -4 then
-			y = -4
+			if y > t then
+				y = t
+			end
+		elseif p == "TOPRIGHT" then
+			if x > r then
+				x = r
+			end
+
+			if y > t then
+				y = t
+			end
 		end
 	end
 
@@ -462,9 +477,7 @@ end
 function mover_proto:UpdatePosition(xOffset, yOffset)
 	if not self.isSimple and InCombatLockdown() then return end
 
-	local p, rP, x, y = calculatePosition(self)
-	local anchor = "UIParent"
-
+	local p, anchor, rP, x, y = calculatePosition(self)
 	p, anchor, rP, x, y = updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 
 	self:SavePosition(p, anchor, rP, x, y)
@@ -487,11 +500,7 @@ function mover_proto:OnEnter()
 		self:SetScript("OnUpdate", self.OnUpdate)
 	end
 
-	local p, anchor, rP, x, y = E:GetCoords(self)
-
-	if isDragging or self:WasMoved() then
-		p, rP, x, y = calculatePosition(self)
-	end
+	local p, anchor, rP, x, y = calculatePosition(self)
 
 	GameTooltip:SetOwner(self, unpack(TOOLTIP_ANCHORS[p]))
 	GameTooltip:AddLine(self:GetName())
@@ -676,7 +685,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		defaults[name] = {}
 	end
 
-	defaults[name].point = {E:GetCoords(object)}
+	defaults[name].point = {getPoint(object)}
 
 	E:UpdateTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name])
 
