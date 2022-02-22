@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 90105.06
+
+- Preemptively updated buffs and debuffs to work with 9.2 changes.
+
+NOTE: It's not a proper 90200.x update, that will happen on Thursday/Friday.
+
 ## Version 90105.05
 
 - Fixed an issue where some movers would change their position by 4px in either direction. Primarily affected ToT, ToF,
