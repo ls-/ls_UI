@@ -199,13 +199,19 @@ end
 
 local function header_OnAttributeChanged(self, attr, value)
 	-- Gotta catch 'em all!
-	if (attr:match("^child") or attr:match("^temp[Ee]nchant")) and not (buffs[value] or debuffs[value])then
-		handleButton(value, self)
+	if attr:match("^frameref%-child") or attr:match("^temp[Ee]nchant") then
+		if type(value) == "userdata" then
+			value = GetFrameHandleFrame(value)
+		end
 
-		if self:GetAttribute("filter") == "HELPFUL" then
-			buffs[value] = true
-		else
-			debuffs[value] = true
+		if not (buffs[value] or debuffs[value]) then
+			handleButton(value, self)
+
+			if self:GetAttribute("filter") == "HELPFUL" then
+				buffs[value] = true
+			else
+				debuffs[value] = true
+			end
 		end
 	end
 end
