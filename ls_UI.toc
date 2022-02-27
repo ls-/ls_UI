@@ -1,6 +1,6 @@
-## Interface: 90105
+## Interface: 90200
 ## Author: lightspark
-## Version: 90105.06
+## Version: 90200.01
 ## Title: LS: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariablesPerCharacter: LS_UI_CHAR_CONFIG
