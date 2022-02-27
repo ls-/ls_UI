@@ -282,15 +282,15 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 			cooldown = {
 				order = 40,
 				type = "group",
-				name = L["COOLDOWN_TEXT"],
+				name = L["COOLDOWN"],
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
-					return PrC.db.profile.auratracker.cooldown.text[info[#info]]
+					return PrC.db.profile.auratracker.cooldown[info[#info]]
 				end,
 				set = function(info, value)
-					if PrC.db.profile.auratracker.cooldown.text[info[#info]] ~= value then
-						PrC.db.profile.auratracker.cooldown.text[info[#info]] = value
+					if PrC.db.profile.auratracker.cooldown[info[#info]] ~= value then
+						PrC.db.profile.auratracker.cooldown[info[#info]] = value
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateCooldownConfig()
 					end
@@ -312,26 +312,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						type = "description",
 						name = " ",
 					},
-					enabled = {
-						order = 10,
-						type = "toggle",
-						name = L["SHOW"],
-					},
 					exp_threshold = {
 						order = 11,
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						get = function()
-							return PrC.db.profile.auratracker.cooldown.exp_threshold
-						end,
-						set = function(_, value)
-							if PrC.db.profile.auratracker.cooldown.exp_threshold ~= value then
-								PrC.db.profile.auratracker.cooldown.exp_threshold = value
-								AURATRACKER:GetTracker():UpdateConfig()
-								AURATRACKER:GetTracker():UpdateCooldownConfig()
-							end
-						end,
 					},
 					m_ss_threshold = {
 						order = 12,
@@ -340,9 +325,6 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						get = function()
-							return PrC.db.profile.auratracker.cooldown.m_ss_threshold
-						end,
 						set = function(info, value)
 							if PrC.db.profile.auratracker.cooldown.m_ss_threshold ~= value then
 								if value < info.option.softMin then
@@ -361,29 +343,82 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						get = function()
-							return PrC.db.profile.auratracker.cooldown.s_ms_threshold
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					swipe = {
+						order = 20,
+						type = "group",
+						name = L["COOLDOWN_SWIPE"],
+						inline = true,
+						get = function(info)
+							return PrC.db.profile.auratracker.cooldown.swipe[info[#info]]
 						end,
-						set = function(_, value)
-							if PrC.db.profile.auratracker.cooldown.s_ms_threshold ~= value then
-								PrC.db.profile.auratracker.cooldown.s_ms_threshold = value
-
+						set = function(info, value)
+							if PrC.db.profile.auratracker.cooldown.swipe[info[#info]] ~= value then
+								PrC.db.profile.auratracker.cooldown.swipe[info[#info]] = value
 								AURATRACKER:GetTracker():UpdateConfig()
 								AURATRACKER:GetTracker():UpdateCooldownConfig()
 							end
 						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["SHOW"],
+							},
+							reversed = {
+								order = 2,
+								type = "toggle",
+								disabled = function()
+									return not PrC.db.profile.auratracker.cooldown.swipe.enabled
+								end,
+								name = L["REVERSE"],
+							},
+						},
 					},
-					size = {
-						order = 14,
-						type = "range",
-						name = L["SIZE"],
-						min = 8, max = 48, step = 1,
+					spacer_3 = {
+						order = 29,
+						type = "description",
+						name = " ",
 					},
-					v_alignment = {
-						order = 15,
-						type = "select",
-						name = L["TEXT_VERT_ALIGNMENT"],
-						values = V_ALIGNMENTS,
+					text = {
+						order = 30,
+						type = "group",
+						name = L["TEXT"],
+						inline = true,
+						get = function(info)
+							return PrC.db.profile.auratracker.cooldown.text[info[#info]]
+						end,
+						set = function(info, value)
+							if PrC.db.profile.auratracker.cooldown.text[info[#info]] ~= value then
+								PrC.db.profile.auratracker.cooldown.text[info[#info]] = value
+								AURATRACKER:GetTracker():UpdateConfig()
+								AURATRACKER:GetTracker():UpdateCooldownConfig()
+							end
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["SHOW"],
+							},
+							size = {
+								order = 2,
+								type = "range",
+								name = L["SIZE"],
+								min = 8, max = 48, step = 1,
+							},
+							v_alignment = {
+								order = 3,
+								type = "select",
+								name = L["TEXT_VERT_ALIGNMENT"],
+								values = V_ALIGNMENTS,
+							},
+						},
 					},
 				},
 			},

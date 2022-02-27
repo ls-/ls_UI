@@ -427,6 +427,10 @@ D.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = true,
+			},
 		},
 		inlay = {
 			alpha = 0.8,
@@ -2161,6 +2165,10 @@ D.profile = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = false,
+			},
 		},
 		desaturation = {
 			unusable = true,
@@ -2702,6 +2710,10 @@ D.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = false,
+				reversed = true,
+			}
 		},
 		HELPFUL = {
 			size = 32,
@@ -2921,6 +2933,10 @@ PrD.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = true,
+			},
 			text = {
 				enabled = true,
 				size = 12,
