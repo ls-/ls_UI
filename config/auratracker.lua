@@ -125,7 +125,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
-					CONFIG:CopySettings(D.char.auratracker, PrC.db.profile.auratracker, {enabled = true, filter = true})
+					CONFIG:CopySettings(PrD.profile.auratracker, PrC.db.profile.auratracker, {enabled = true, filter = true})
 					AURATRACKER:Update()
 				end,
 			},
@@ -302,7 +302,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
-							CONFIG:CopySettings(D.char.auratracker.cooldown, PrC.db.profile.auratracker.cooldown)
+							CONFIG:CopySettings(PrD.profile.auratracker.cooldown, PrC.db.profile.auratracker.cooldown)
 							AURATRACKER:GetTracker():UpdateConfig()
 							AURATRACKER:GetTracker():UpdateCooldownConfig()
 						end,
