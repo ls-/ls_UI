@@ -517,3 +517,6 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+L["COOLDOWN_SWIPE"] = "Swipe"
+L["REVERSE"] = "Reverse"

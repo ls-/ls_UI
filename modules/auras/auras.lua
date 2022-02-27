@@ -166,11 +166,11 @@ local function handleButton(button, header)
 	button.Border = border
 
 	button.Cooldown = E.Cooldowns.Create(button)
-	button.Cooldown:SetDrawSwipe(false)
 
 	if button.Cooldown.UpdateConfig then
 		button.Cooldown:UpdateConfig(header.cooldownConfig or {})
 		button.Cooldown:UpdateFont()
+		button.Cooldown:UpdateSwipe()
 	end
 
 	local textParent = CreateFrame("Frame", nil, button)
@@ -296,14 +296,12 @@ end
 local function header_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
+			swipe = {},
 			text = {},
 		}
 	end
 
-	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
-	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-	self.cooldownConfig.s_ms_threshold = self._config.cooldown.s_ms_threshold
-	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
+	self.cooldownConfig = E:CopyTable(self._config.cooldown, self.cooldownConfig)
 
 	local buttons = self._buttons or {self:GetChildren()}
 	for _, button in next, buttons do
@@ -313,6 +311,7 @@ local function header_UpdateCooldownConfig(self)
 
 		button.Cooldown:UpdateConfig(self.cooldownConfig)
 		button.Cooldown:UpdateFont()
+		button.Cooldown:UpdateSwipe()
 	end
 end
 
@@ -360,7 +359,6 @@ local function createHeader(filter)
 			cd:ClearAllPoints()
 			cd:SetPoint("BOTTOMRIGHT", -1, 1)
 			cd:SetPoint("TOPLEFT", 1, -1)
-			cd:SetDrawSwipe(false)
 			totem.Cooldown = E.Cooldowns.Handle(cd)
 		end
 	else

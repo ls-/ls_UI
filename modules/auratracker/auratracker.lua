@@ -141,14 +141,12 @@ end
 local function bar_UpdateCooldownConfig(self)
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
+			swipe = {},
 			text = {},
 		}
 	end
 
-	self.cooldownConfig.exp_threshold = self._config.cooldown.exp_threshold
-	self.cooldownConfig.m_ss_threshold = self._config.cooldown.m_ss_threshold
-	self.cooldownConfig.s_ms_threshold = self._config.cooldown.s_ms_threshold
-	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
+	self.cooldownConfig = E:CopyTable(self._config.cooldown, self.cooldownConfig)
 
 	for _, button in next, self._buttons do
 		if not button.CD.UpdateConfig then
@@ -157,6 +155,7 @@ local function bar_UpdateCooldownConfig(self)
 
 		button.CD:UpdateConfig(self.cooldownConfig)
 		button.CD:UpdateFont()
+		button.CD:UpdateSwipe()
 	end
 end
 
