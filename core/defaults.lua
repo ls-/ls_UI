@@ -517,7 +517,7 @@ D.profile = {
 					enabled = true,
 					latency = true,
 					detached = true,
-					width_override = 200,
+					width_override = 226,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -816,8 +816,8 @@ D.profile = {
 				castbar = {
 					enabled = true,
 					latency = true,
-					detached = false,
-					width_override = 0,
+					detached = true,
+					width_override = 226,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -826,12 +826,12 @@ D.profile = {
 						size = 12,
 					},
 					point1 = {
-						p = "TOPRIGHT",
+						p = "BOTTOM",
 						anchor = "",
-						detached_anchor = "FRAME",
-						rP = "BOTTOMRIGHT",
+						detached_anchor = "UIParent",
+						rP = "BOTTOM",
 						x = 0,
-						y = -6,
+						y = 190,
 					},
 				},
 				portrait = {
@@ -1020,8 +1020,8 @@ D.profile = {
 				castbar = {
 					enabled = true,
 					latency = true,
-					detached = false,
-					width_override = 0,
+					detached = true,
+					width_override = 200,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -1030,12 +1030,12 @@ D.profile = {
 						size = 12,
 					},
 					point1 = {
-						p = "TOPLEFT",
-						anchor = "",
-						detached_anchor = "FRAME",
-						rP = "BOTTOMLEFT",
+						p = "BOTTOM",
+						anchor = "LSPlayerFrameCastbarHolder",
+						detached_anchor = "LSPlayerFrameCastbarHolder",
+						rP = "TOP",
 						x = 0,
-						y = -6,
+						y = 6,
 					},
 				},
 				portrait = {
