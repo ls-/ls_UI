@@ -2,16 +2,17 @@
 
 Yet another UI, but this one is a bit special.
 
-"Orbs" Layout:  
-[![Imgur](https://i.imgur.com/8K40Ei3.png)](https://i.imgur.com/7Joaewr.png "4K Glory")
-
-"Classic" Layout:  
+"Rectangular" Layout:  
 [![Imgur](https://i.imgur.com/SJGDgla.png)](https://i.imgur.com/q2T8U9H.png "4K Glory")
+
+"Round" Layout:  
+[![Imgur](https://i.imgur.com/8K40Ei3.png)](https://i.imgur.com/7Joaewr.png "4K Glory")
 
 ## Download
 
 - [Curse](https://www.curseforge.com/wow/addons/ls-ui)
-- [WoWInterface](http://www.wowinterface.com/downloads/info22662.html)
+- [WoWInterface](https://www.wowinterface.com/downloads/info22662.html)
+- [Wago](https://addons.wago.io/addons/ls-ui)
 
 ## Options
 
@@ -19,7 +20,7 @@ Use **`/LSUI`** to open in-game config.
 
 ## Feedback and Feature Requests
 
-If you found a bug or want to share an idea on how to improve my UI, either use the issue tracker on [GitHub](https://github.com/ls-/ls_UI/issues), or post a comment on [WoWInterface](https://www.wowinterface.com/downloads/info22662.html#comments) or [Curse](https://www.curseforge.com/wow/addons/ls-ui#comments).
+If you found a bug or want to share an idea on how to improve my UI, either use the issue tracker on [GitHub](https://github.com/ls-/ls_UI/issues), post a comment on [WoWInterface](https://www.wowinterface.com/downloads/info22662.html#comments), or simply DM me @ **ls-#9453** on Discord.
 
 Feel free to write feedback on how to improve some class-specific features.
 
