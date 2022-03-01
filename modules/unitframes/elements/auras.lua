@@ -219,6 +219,7 @@ function element_proto:CreateIcon(index)
 	if button.cd.UpdateConfig then
 		button.cd:UpdateConfig(self.cooldownConfig or {})
 		button.cd:UpdateFont()
+		button.cd:UpdateSwipe()
 	end
 
 	button:SetPushedTexture("")
@@ -268,13 +269,12 @@ end
 function element_proto:UpdateCooldownConfig()
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
+			swipe = {},
 			text = {},
 		}
 	end
 
-	self.cooldownConfig.exp_threshold = C.db.profile.units.cooldown.exp_threshold
-	self.cooldownConfig.m_ss_threshold = C.db.profile.units.cooldown.m_ss_threshold
-	self.cooldownConfig.s_ms_threshold = C.db.profile.units.cooldown.s_ms_threshold
+	self.cooldownConfig = E:CopyTable(C.db.profile.units.cooldown, self.cooldownConfig)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
 	for i = 1, self.createdIcons do
@@ -284,6 +284,7 @@ function element_proto:UpdateCooldownConfig()
 
 		self[i].cd:UpdateConfig(self.cooldownConfig)
 		self[i].cd:UpdateFont()
+		self[i].cd:UpdateSwipe()
 	end
 end
 

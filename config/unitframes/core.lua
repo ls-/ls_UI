@@ -555,7 +555,6 @@ function CONFIG:CreateUnitFramesPanel(order)
 				set = function(info, value)
 					if C.db.profile.units.cooldown[info[#info]] ~= value then
 						C.db.profile.units.cooldown[info[#info]] = value
-
 						UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 						UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 					end
@@ -597,7 +596,6 @@ function CONFIG:CreateUnitFramesPanel(order)
 								end
 
 								C.db.profile.units.cooldown[info[#info]] = value
-
 								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 							end
@@ -612,11 +610,46 @@ function CONFIG:CreateUnitFramesPanel(order)
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								C.db.profile.units.cooldown[info[#info]] = value
-
 								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 							end
 						end,
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					swipe = {
+						order = 20,
+						type = "group",
+						name = L["COOLDOWN_SWIPE"],
+						inline = true,
+						get = function(info)
+							return C.db.profile.units.cooldown.swipe[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.units.cooldown.swipe[info[#info]] ~= value then
+								C.db.profile.units.cooldown.swipe[info[#info]] = value
+								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
+								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
+							end
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["SHOW"],
+							},
+							reversed = {
+								order = 2,
+								type = "toggle",
+								disabled = function()
+									return not C.db.profile.units.cooldown.swipe.enabled
+								end,
+								name = L["REVERSE"],
+							},
+						},
 					},
 				},
 			}, -- 9

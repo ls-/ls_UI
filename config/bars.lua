@@ -852,7 +852,7 @@ function CONFIG.CreateActionBarsPanel(_, order)
 			cooldown = {
 				order = 30,
 				type = "group",
-				name = L["COOLDOWN_TEXT"],
+				name = L["COOLDOWN"],
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
@@ -916,11 +916,46 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								C.db.profile.bars.cooldown[info[#info]] = value
-
 								BARS:UpdateBars("UpdateConfig")
 								BARS:UpdateBars("UpdateCooldownConfig")
 							end
 						end,
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					swipe = {
+						order = 20,
+						type = "group",
+						name = L["COOLDOWN_SWIPE"],
+						inline = true,
+						get = function(info)
+							return C.db.profile.bars.cooldown.swipe[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.bars.cooldown.swipe[info[#info]] ~= value then
+								C.db.profile.bars.cooldown.swipe[info[#info]] = value
+								BARS:ForEach("UpdateConfig")
+								BARS:ForEach("UpdateCooldownConfig")
+							end
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["SHOW"],
+							},
+							reversed = {
+								order = 2,
+								type = "toggle",
+								disabled = function()
+									return not C.db.profile.bars.cooldown.swipe.enabled
+								end,
+								name = L["REVERSE"],
+							},
+						},
 					},
 				},
 			},

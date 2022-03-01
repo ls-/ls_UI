@@ -347,7 +347,7 @@ function CONFIG.CreateAurasPanel(_, order)
 			cooldown = {
 				order = 10,
 				type = "group",
-				name = L["COOLDOWN_TEXT"],
+				name = L["COOLDOWN"],
 				inline = true,
 				disabled = isModuleDisabled,
 				get = function(info)
@@ -356,8 +356,8 @@ function CONFIG.CreateAurasPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.auras.cooldown[info[#info]] ~= value then
 						C.db.profile.auras.cooldown[info[#info]] = value
-						AURAS:UpdateHeaders("UpdateConfig")
-						AURAS:UpdateHeaders("UpdateCooldownConfig")
+						AURAS:ForEach("UpdateConfig")
+						AURAS:ForEach("UpdateCooldownConfig")
 					end
 				end,
 				args = {
@@ -368,8 +368,8 @@ function CONFIG.CreateAurasPanel(_, order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.auras.cooldown, C.db.profile.auras.cooldown)
-							AURAS:UpdateHeaders("UpdateConfig")
-							AURAS:UpdateHeaders("UpdateCooldownConfig")
+							AURAS:ForEach("UpdateConfig")
+							AURAS:ForEach("UpdateCooldownConfig")
 						end,
 					},
 					spacer_1 = {
@@ -397,8 +397,8 @@ function CONFIG.CreateAurasPanel(_, order)
 								end
 
 								C.db.profile.auras.cooldown[info[#info]] = value
-								AURAS:UpdateHeaders("UpdateConfig")
-								AURAS:UpdateHeaders("UpdateCooldownConfig")
+								AURAS:ForEach("UpdateConfig")
+								AURAS:ForEach("UpdateCooldownConfig")
 							end
 						end,
 					},
@@ -412,10 +412,46 @@ function CONFIG.CreateAurasPanel(_, order)
 							if C.db.profile.auras.cooldown[info[#info]] ~= value then
 								C.db.profile.auras.cooldown[info[#info]] = value
 
-								AURAS:UpdateHeaders("UpdateConfig")
-								AURAS:UpdateHeaders("UpdateCooldownConfig")
+								AURAS:ForEach("UpdateConfig")
+								AURAS:ForEach("UpdateCooldownConfig")
 							end
 						end,
+					},
+					spacer_2 = {
+						order = 19,
+						type = "description",
+						name = " ",
+					},
+					swipe = {
+						order = 20,
+						type = "group",
+						name = L["COOLDOWN_SWIPE"],
+						inline = true,
+						get = function(info)
+							return C.db.profile.auras.cooldown.swipe[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.auras.cooldown.swipe[info[#info]] ~= value then
+								C.db.profile.auras.cooldown.swipe[info[#info]] = value
+								AURAS:ForEach("UpdateConfig")
+								AURAS:ForEach("UpdateCooldownConfig")
+							end
+						end,
+						args = {
+							enabled = {
+								order = 1,
+								type = "toggle",
+								name = L["SHOW"],
+							},
+							reversed = {
+								order = 2,
+								type = "toggle",
+								disabled = function()
+									return not C.db.profile.auras.cooldown.swipe.enabled
+								end,
+								name = L["REVERSE"],
+							},
+						},
 					},
 				},
 			},

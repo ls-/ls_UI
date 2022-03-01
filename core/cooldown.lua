@@ -4,16 +4,10 @@ local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local m_abs = _G.math.abs
 local next = _G.next
-local unpack = _G.unpack
 
 -- Blizz
 local GetTime = _G.GetTime
-
---[[ luacheck: globals
-	CreateFrame UIParent
-]]
 
 -- Mine
 E.Cooldowns = {}
@@ -24,6 +18,10 @@ local defaults = {
 	exp_threshold = 5, -- [1; 10]
 	m_ss_threshold = 0, -- [91; 3599]
 	s_ms_threshold = 5, -- [1; 10]
+	swipe = {
+		enabled = true,
+		reversed = false,
+	},
 	text = {
 		enabled = true,
 		size = 12,
@@ -91,12 +89,12 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 	end
 end)
 
-local function cooldown_Clear(self)
+local function clearHook(self)
 	self.Timer:SetText("")
 	activeCooldowns[self] = nil
 end
 
-local function cooldown_SetCooldown(self, start, duration)
+local function setCooldownHook(self, start, duration)
 	if self.config.text.enabled then
 		if duration > 1.5 then
 			activeCooldowns[self] = start + duration
@@ -108,7 +106,9 @@ local function cooldown_SetCooldown(self, start, duration)
 	activeCooldowns[self] = nil
 end
 
-local function cooldown_UpdateFont(self)
+local cooldown_proto = {}
+
+function cooldown_proto:UpdateFont()
 	local config = self.config.text
 
 	self.Timer:UpdateFont(config.size)
@@ -117,7 +117,14 @@ local function cooldown_UpdateFont(self)
 	self.Timer:SetShown(config.enabled)
 end
 
-local function cooldown_UpdateConfig(self, config)
+function cooldown_proto:UpdateSwipe()
+	local config = self.config.swipe
+
+	self:SetDrawSwipe(config.enabled)
+	self:SetReverse(config.reversed)
+end
+
+function cooldown_proto:UpdateConfig(config)
 	if config then
 		self.config = E:CopyTable(defaults, self.config)
 		self.config = E:CopyTable(config, self.config)
@@ -132,6 +139,8 @@ function E.Cooldowns.Handle(cooldown)
 	if E.OMNICC or handledCooldowns[cooldown] then
 		return cooldown
 	end
+
+	Mixin(cooldown, cooldown_proto)
 
 	cooldown:SetDrawBling(false)
 	cooldown:SetDrawEdge(false)
@@ -148,20 +157,18 @@ function E.Cooldowns.Handle(cooldown)
 	timer:SetPoint("BOTTOMRIGHT", 8, 0)
 	cooldown.Timer = timer
 
-	hooksecurefunc(cooldown, "Clear", cooldown_Clear)
-	hooksecurefunc(cooldown, "SetCooldown", cooldown_SetCooldown)
-
-	cooldown.UpdateConfig = cooldown_UpdateConfig
-	cooldown.UpdateFont = cooldown_UpdateFont
+	hooksecurefunc(cooldown, "Clear", clearHook)
+	hooksecurefunc(cooldown, "SetCooldown", setCooldownHook)
 
 	cooldown:UpdateConfig(defaults)
 	cooldown:UpdateFont()
+	cooldown:UpdateSwipe()
 
 	handledCooldowns[cooldown] = true
 
 	local start, duration = cooldown:GetCooldownTimes()
 	if start > 0 or duration > 0 then
-		cooldown_SetCooldown(cooldown, start / 1000, duration / 1000)
+		setCooldownHook(cooldown, start / 1000, duration / 1000)
 	end
 
 	return cooldown

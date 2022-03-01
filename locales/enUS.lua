@@ -166,6 +166,7 @@ L["COMMAND_BAR"] = "Command Bar"
 L["CONFIRM_DELETE"] = "Do you wish to delete \"%s\"?"
 L["CONFIRM_RESET"] = "Do you wish to reset \"%s\"?"
 L["COOLDOWN"] = "Cooldown"
+L["COOLDOWN_SWIPE"] = "Swipe"
 L["COOLDOWN_TEXT"] = "Cooldown Text"
 L["COOLDOWNS"] = "Cooldowns"
 L["COPY_FROM"] = "Copy from"
@@ -422,6 +423,7 @@ L["RESTRICTED_MODE"] = "Restricted Mode"
 L["RESTRICTED_MODE_DESC"] = [=[Enables artwork, animations and dynamic resizing for the main action bar.
 
 |cffdc4436Warning!|r Many action bar customisation options won't be available in this mode.|r]=]
+L["REVERSE"] = "Reverse"
 L["RIGHT"] = "Right"
 L["RIGHT_DOWN"] = "Right and Down"
 L["RIGHT_UP"] = "Right and Up"

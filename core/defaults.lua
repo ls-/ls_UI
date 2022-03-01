@@ -427,6 +427,10 @@ D.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = true,
+			},
 		},
 		inlay = {
 			alpha = 0.8,
@@ -513,7 +517,7 @@ D.profile = {
 					enabled = true,
 					latency = true,
 					detached = true,
-					width_override = 200,
+					width_override = 226,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -812,8 +816,8 @@ D.profile = {
 				castbar = {
 					enabled = true,
 					latency = true,
-					detached = false,
-					width_override = 0,
+					detached = true,
+					width_override = 226,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -822,12 +826,12 @@ D.profile = {
 						size = 12,
 					},
 					point1 = {
-						p = "TOPRIGHT",
+						p = "BOTTOM",
 						anchor = "",
-						detached_anchor = "FRAME",
-						rP = "BOTTOMRIGHT",
+						detached_anchor = "UIParent",
+						rP = "BOTTOM",
 						x = 0,
-						y = -6,
+						y = 190,
 					},
 				},
 				portrait = {
@@ -1016,8 +1020,8 @@ D.profile = {
 				castbar = {
 					enabled = true,
 					latency = true,
-					detached = false,
-					width_override = 0,
+					detached = true,
+					width_override = 200,
 					height = 12,
 					icon = {
 						position = "LEFT", -- "RIGHT", "NONE"
@@ -1026,12 +1030,12 @@ D.profile = {
 						size = 12,
 					},
 					point1 = {
-						p = "TOPLEFT",
-						anchor = "",
-						detached_anchor = "FRAME",
-						rP = "BOTTOMLEFT",
+						p = "BOTTOM",
+						anchor = "LSPlayerFrameCastbarHolder",
+						detached_anchor = "LSPlayerFrameCastbarHolder",
+						rP = "TOP",
 						x = 0,
-						y = -6,
+						y = 6,
 					},
 				},
 				portrait = {
@@ -2161,6 +2165,10 @@ D.profile = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = false,
+			},
 		},
 		desaturation = {
 			unusable = true,
@@ -2702,6 +2710,10 @@ D.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 600, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = false,
+				reversed = true,
+			}
 		},
 		HELPFUL = {
 			size = 32,
@@ -2921,6 +2933,10 @@ PrD.profile = {
 			exp_threshold = 5, -- [1; 10]
 			m_ss_threshold = 0, -- [91; 3599]
 			s_ms_threshold = 5, -- [1; 10]
+			swipe = {
+				enabled = true,
+				reversed = true,
+			},
 			text = {
 				enabled = true,
 				size = 12,
