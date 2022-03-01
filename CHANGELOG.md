@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 90200.01
+
+- Added options to toggle and reverse cooldown swipes on UF buffs, player buffs and debuffs, action bars, and the aura
+  tracker;
+- Fixed "Buffs and Debuffs" config. It seems that it's broken for quite some time, sorry about that T_T;
+- Player and pet castbars are now detached in the rectangular layout by default;
+- Updated embeds.
+
+![Imgur](https://i.imgur.com/Wgl6p5f.png)
+
+NOTE: If you're affected by this Russian-Ukrainian conflict or know someone who is, please, stay safe and help each
+other out. You aren't alone, we all are gonna make it ❤
+
 ## Version 90105.06
 
 - Preemptively updated buffs and debuffs to work with 9.2 changes.
