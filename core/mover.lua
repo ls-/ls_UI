@@ -135,7 +135,8 @@ local function drawGrid()
 	end
 end
 
-local defaults = {}
+local defaultPoints = {}
+local currentPoints = {}
 local disabledMovers = {}
 local enabledMovers = {}
 local trackedMovers = {}
@@ -372,8 +373,8 @@ end
 
 local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 	if not x then
-		if C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point then
-			p, anchor, rP, x, y = unpack(C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point)
+		if currentPoints[self:GetName()] then
+			p, anchor, rP, x, y = unpack(currentPoints[self:GetName()])
 			anchor = anchor or "UIParent"
 		end
 
@@ -454,18 +455,17 @@ local mover_proto = {
 }
 
 function mover_proto:SavePosition(p, anchor, rP, x, y)
-	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = {p, anchor, rP, x, y}
+	currentPoints[self:GetName()] = {p, anchor, rP, x, y}
 end
 
 function mover_proto:ResetPosition()
 	if not self.isSimple and InCombatLockdown() then return end
 
-	local p, anchor, rP, x, y = unpack(defaults[self:GetName()].point)
+	local p, anchor, rP, x, y = unpack(defaultPoints[self:GetName()])
 
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
-
-	C.db.profile.movers[E.UI_LAYOUT][self:GetName()].point = nil
+	self:SavePosition(p, anchor, rP, x, y)
 
 	if not self.isSimple then
 		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
@@ -583,12 +583,7 @@ function mover_proto:IsDragKeyDown()
 end
 
 function mover_proto:WasMoved()
-	local dest = C.db.profile.movers[E.UI_LAYOUT][self:GetName()]
-	if not (dest and next(dest)) then
-		return false
-	end
-
-	return not E:IsEqualTable(defaults[self:GetName()], dest)
+	return not E:IsEqualTable(defaultPoints[self:GetName()], currentPoints[self:GetName()])
 end
 
 function mover_proto:Enable()
@@ -674,20 +669,18 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		mover.Border = border
 	end
 
-	if not C.db.profile.movers[E.UI_LAYOUT][name] then
-		C.db.profile.movers[E.UI_LAYOUT][name] = {}
-	elseif C.db.profile.movers[E.UI_LAYOUT][name].current then
-		C.db.profile.movers[E.UI_LAYOUT][name].point = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].current)}
-		C.db.profile.movers[E.UI_LAYOUT][name].current = nil
+	-- * db conversion, changed in 90200.02
+	if C.db.profile.movers[E.UI_LAYOUT][name] and C.db.profile.movers[E.UI_LAYOUT][name].point then
+		C.db.profile.movers[E.UI_LAYOUT][name] = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].point)}
 	end
 
-	if not defaults[name] then
-		defaults[name] = {}
+	defaultPoints[name] = {getPoint(object)}
+
+	currentPoints[name] = {getPoint(object)}
+
+	if C.db.profile.movers[E.UI_LAYOUT][name] then
+		E:CopyTable(C.db.profile.movers[E.UI_LAYOUT][name], currentPoints[name])
 	end
-
-	defaults[name].point = {getPoint(object)}
-
-	E:UpdateTable(defaults[name], C.db.profile.movers[E.UI_LAYOUT][name])
 
 	mover:UpdatePosition()
 
@@ -746,13 +739,11 @@ function E.Movers:ToggleAll(...)
 	end
 end
 
-function E.Movers:CleanUpConfig()
-	C.db.profile.movers[E.UI_LAYOUT] = E:DiffTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
+function E.Movers:SaveConfig()
+	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
 end
 
 function E.Movers:UpdateConfig()
-	E:UpdateTable(defaults, C.db.profile.movers[E.UI_LAYOUT])
-
 	for _, mover in next, enabledMovers do
 		updatePosition(mover, nil, "UIParent")
 

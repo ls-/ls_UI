@@ -212,7 +212,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 		removeRefs()
 
-		E.Movers:CleanUpConfig()
+		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
@@ -220,7 +220,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 		removeRefs()
 
-		E.Movers:CleanUpConfig()
+		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", updateAll)
