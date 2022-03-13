@@ -115,7 +115,7 @@ local function updateAll()
 	cleanUpStep2()
 
 	P:UpdateModules()
-	E.Movers:UpdateConfig()
+	E.Movers:UpdateAll()
 end
 
 E:RegisterEvent("ADDON_LOADED", function(arg1)
