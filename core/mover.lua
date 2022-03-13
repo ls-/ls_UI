@@ -739,11 +739,7 @@ function E.Movers:ToggleAll(...)
 	end
 end
 
-function E.Movers:SaveConfig()
-	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
-end
-
-function E.Movers:UpdateConfig()
+function E.Movers:UpdateAll()
 	for _, mover in next, enabledMovers do
 		updatePosition(mover, nil, "UIParent")
 
@@ -757,6 +753,10 @@ function E.Movers:UpdateConfig()
 			end
 		end
 	end
+end
+
+function E.Movers:SaveConfig()
+	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
 end
 
 P:AddCommand("movers", function()
