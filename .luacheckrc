@@ -14,7 +14,9 @@ ignore = {
 	"113/LS.*", -- Accessing an undefined global variable starting with LS
 	"122", -- Setting a read-only field of a global variable
 	"211/_G", -- Unused local variable _G
+	"211/PrC",  -- Unused local variable C
 	"211/C",  -- Unused local variable C
+	"211/PrD",  -- Unused local variable D
 	"211/D",  -- Unused local variable D
 	"211/E",  -- Unused local variable E
 	"211/L",  -- Unused local variable L
