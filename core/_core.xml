@@ -3,6 +3,7 @@
 	<Script file="utils.lua"/>
 	<Script file="defaults.lua"/>
 	<Script file="constants.lua"/>
+	<Script file="profile.lua"/>
 	<Script file="animation.lua"/>
 	<Script file="bar.lua"/>
 	<Script file="border.lua"/>
