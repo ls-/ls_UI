@@ -11,15 +11,13 @@ local s_format = _G.string.format
 local s_rep = _G.string.rep
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
+local tonumber = _G.tonumber
 local tostring = _G.tostring
 local type = _G.type
 
 -- Mine
 local LibDeflate = LibStub("LibDeflate")
 local LibSerialize = LibStub("LibSerialize")
-
-local TEST_TABLE = "!LSUI:profile:table!{\n    [\"global\"] = {\n        [\"fonts\"] = {\n            [\"button\"] = {\n                [\"font\"] = \"Noto Sans SemiBold\",\n            },\n            [\"cooldown\"] = {\n                [\"font\"] = \"Noto Sans SemiBold\",\n            },\n            [\"statusbar\"] = {\n                [\"font\"] = \"Noto Sans SemiBold\",\n            },\n            [\"unit\"] = {\n                [\"font\"] = \"Noto Sans SemiBold\",\n            },\n        },\n        [\"version\"] = 9020002,\n    },\n    [\"profile\"] = {\n        [\"bars\"] = {\n            [\"bar2\"] = {\n                [\"fade\"] = {\n                    [\"combat\"] = true,\n                    [\"enabled\"] = true,\n                    [\"ooc\"] = true,\n                },\n            },\n            [\"bar4\"] = {\n                [\"fade\"] = {\n                    [\"ooc\"] = true,\n                },\n            },\n            [\"bar5\"] = {\n                [\"fade\"] = {\n                    [\"enabled\"] = true,\n                    [\"min_alpha\"] = 0.15,\n                    [\"ooc\"] = true,\n                },\n            },\n            [\"micromenu\"] = {\n                [\"fade\"] = {\n                    [\"enabled\"] = true,\n                    [\"ooc\"] = true,\n                },\n            },\n        },\n        [\"minimap\"] = {\n            [\"buttons\"] = {\n                [\"GameTimeFrame\"] = 45.674015787002,\n                [\"GarrisonLandingPageMinimapButton\"] = 235.71311008564,\n                [\"MiniMapMailFrame\"] = 151.69912001079,\n            },\n            [\"collect\"] = {\n                [\"enabled\"] = false,\n            },\n        },\n        [\"movers\"] = {\n            [\"rect\"] = {\n                [\"LSAuraTrackerHeaderMover\"] = {\n                    [1] = \"BOTTOMLEFT\",\n                    [3] = \"BOTTOMLEFT\",\n                    [4] = 530,\n                    [5] = 507,\n                },\n                [\"LSOTFrameHolderMover\"] = {\n                    [4] = -249,\n                    [5] = -229,\n                },\n            },\n            [\"round\"] = {\n                [\"LSActionBar5Mover\"] = {\n                    [1] = \"TOPRIGHT\",\n                    [3] = \"TOPRIGHT\",\n                    [5] = -384,\n                },\n                [\"LSAuraTrackerHeaderMover\"] = {\n                    [1] = \"TOP\",\n                    [3] = \"TOP\",\n                    [4] = -110,\n                    [5] = -435,\n                },\n                [\"LSOTFrameHolderMover\"] = {\n                    [4] = -351,\n                    [5] = -161,\n                },\n                [\"LSPetFrameCastbarHolderMover\"] = {\n                    [2] = \"UIParent\",\n                    [3] = \"BOTTOM\",\n                    [5] = 208,\n                },\n            },\n        },\n        [\"units\"] = {\n            [\"cooldown\"] = {\n                [\"exp_threshold\"] = 10,\n                [\"m_ss_threshold\"] = 91,\n                [\"s_ms_threshold\"] = 10,\n            },\n            [\"focus\"] = {\n                [\"fade\"] = {\n                    [\"combat\"] = true,\n                    [\"enabled\"] = true,\n                    [\"target\"] = true,\n                },\n            },\n            [\"rect\"] = {\n                [\"player\"] = {\n                    [\"auras\"] = {\n                        [\"enabled\"] = true,\n                    },\n                },\n            },\n            [\"round\"] = {\n                [\"pet\"] = {\n                    [\"fade\"] = {\n                        [\"ooc\"] = true,\n                    },\n                },\n                [\"player\"] = {\n                    [\"fade\"] = {\n                        [\"combat\"] = true,\n                        [\"enabled\"] = true,\n                        [\"ooc\"] = true,\n                        [\"target\"] = true,\n                    },\n                },\n            },\n        },\n        [\"version\"] = 9020002,\n    },\n}"
-local TEST_STRING = "!LSUI:profile:string!njvmVnnquyHi00utlqvIvqujcsipbOsejsiHqfd4Kkf3eLyycP43zFjXc77oD35cSMnw6qNzQ)gqI)digoYa)a6mSYed8CsbLf779DFF37DF33LCKcjFssk91dZzjALNRKgPTjIu4duP9qixckBjLbKuAC4Wj8OCLT7eiM22SrijINraDirdYPuD4qjpNf70uq12MnTBY5rHMs4spKSPsOz7qZwHZJ480y(7yTppBSsnwptsvZqOVCUAC2A11wqFVyTs5XuPkHZQ)XZiKmErLJ5YoIQ9g1pWtcz0UinQ0VylNkF6AwVzhr9EJEgElcKq0BPYUu4Feo5m3(bb9979sVGYg7k39owF(2glpXnqfrASpUGS1sQhnpO)GHh2PlsSU1vRBQDstePS5Mv(5gwp5wI96nAavVCeEoO0eqU2K0UmzvNUY8xD4aaDtTvPTnvDQ8NAw7TLlYgnE8Bt0PA)FNQaP1fiNMLWgdPIzWGs7)Gh2c3gHIK8mklh54uOALKhv484AjkjjdeossUwZzQ2IR7Jq(GWhssxzxhq(949)1xxiA0bKYefN1dyXjSPdGPu)vhG7s5Dpi74V)TNU5lw0bfgKKrV4e8(HNZJRglJ4PPfzhZgZitt5ei1bJlmmtDQsd6CfoByYbre7EexZBmcyQgJOzjUOvrwnK2M7zUVzNL)ClsKRa2T4f)V"
 
 local function getProfileData(profileType)
 	if not profileType or type(profileType) ~= "string" then
@@ -28,47 +26,52 @@ local function getProfileData(profileType)
 
 	local data = {}
 
-	if profileType == "profile" then
-		data.profile = {}
+	if profileType == "global-colors" then
+		data.colors = {}
 
+		E:CopyTable(C.db.global.colors, data.colors)
+
+		data.colors.power[ 0] = nil
+		data.colors.power[ 1] = nil
+		data.colors.power[ 2] = nil
+		data.colors.power[ 3] = nil
+		data.colors.power[ 4] = nil
+		data.colors.power[ 5] = nil
+		data.colors.power[ 6] = nil
+		data.colors.power[ 7] = nil
+		data.colors.power[ 8] = nil
+		data.colors.power[ 9] = nil
+		data.colors.power[10] = nil
+		data.colors.power[11] = nil
+		data.colors.power[13] = nil
+		data.colors.power[17] = nil
+		data.colors.power[18] = nil
+
+		E:DiffTable(D.global, data)
+	elseif profileType == "global-tags" then
+		data.tags = {}
+		data.tag_vars = {}
+
+		E:CopyTable(C.db.global.tags, data.tags)
+		E:CopyTable(C.db.global.tag_vars, data.tag_vars)
+
+		E:DiffTable(D.global, data)
+	elseif profileType == "profile" then
 		E.Movers:SaveConfig()
 
-		E:CopyTable(C.db.profile, data.profile)
+		E:CopyTable(C.db.profile, data)
 
-		data.profile.units.player = nil
-		data.profile.units.pet = nil
+		data.units.player = nil
+		data.units.pet = nil
+		data.version = nil
 
-		E:DiffTable(D.profile, data.profile)
-	elseif profileType == "global" then
-		-- TODO: add support for colours, tags, etc
-		-- data.global = {}
-
-		-- E:CopyTable(C.db.global, data.global)
-
-		-- data.global.colors.power[ 0] = nil
-		-- data.global.colors.power[ 1] = nil
-		-- data.global.colors.power[ 2] = nil
-		-- data.global.colors.power[ 3] = nil
-		-- data.global.colors.power[ 4] = nil
-		-- data.global.colors.power[ 5] = nil
-		-- data.global.colors.power[ 6] = nil
-		-- data.global.colors.power[ 7] = nil
-		-- data.global.colors.power[ 8] = nil
-		-- data.global.colors.power[ 9] = nil
-		-- data.global.colors.power[10] = nil
-		-- data.global.colors.power[11] = nil
-		-- data.global.colors.power[13] = nil
-		-- data.global.colors.power[17] = nil
-		-- data.global.colors.power[18] = nil
-
-		-- data.global.aura_filters = nil
-
-		-- E:DiffTable(D.global, data.global)
+		E:DiffTable(D.profile, data)
 	elseif profileType == "private" then
-		data.profile = {}
+		E:CopyTable(PrC.db.profile, data)
 
-		E:CopyTable(PrC.db.profile, data.profile)
-		E:DiffTable(PrD.profile, data.profile)
+		data.version = nil
+
+		E:DiffTable(PrD.profile, data)
 	end
 
 	return data
@@ -141,7 +144,12 @@ do
 
 	function E.Profiles:Export(profileType, exportFormat)
 		local data = getProfileData(profileType)
-		local encoded = s_format("!LSUI:%s:%s!", profileType, exportFormat)
+
+		if profileType == "global-colors" or profileType == "global-tags" then
+			profileType = "global"
+		end
+
+		local encoded = s_format("::lsui:%s:%s:%s:", E.VER.number, profileType, exportFormat)
 
 		if exportFormat == "string" then
 			local serialized = LibSerialize:Serialize(data)
@@ -151,7 +159,7 @@ do
 			encoded = encoded .. tableToString(data)
 		end
 
-		return encoded
+		return encoded .. "::"
 	end
 end
 
@@ -162,8 +170,8 @@ do
 	end
 
 	function E.Profiles:Import(data)
-		local profileType, importFormat = data:match("^!LSUI:(%a-):(%a-)!")
-		data = data:gsub("^!.-!", "")
+		local version, profileType, importFormat
+		version, profileType, importFormat, data = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
 
 		if importFormat == "string" then
 			local decoded = LibDeflate:DecodeForPrint(data)
@@ -181,19 +189,28 @@ do
 			if not isOK then return end
 		end
 
-		if profileType == "profile" then
-			C.db.profiles["LSUI_TEMP_PROFILE"] = data.profile
+		if tonumber(version) < E.VER.number then
+			-- TODO: update outdated data
+		end
 
-			C.db:CopyProfile("LSUI_TEMP_PROFILE")
-			C.db:DeleteProfile("LSUI_TEMP_PROFILE")
+		print("|cffffd200importing", version, profileType, importFormat)
+		if profileType == "profile" then
+			-- C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
+
+			-- C.db.profiles["LSUI_TEMP_PROFILE"] = data
+
+			-- C.db:CopyProfile("LSUI_TEMP_PROFILE")
+			-- C.db:DeleteProfile("LSUI_TEMP_PROFILE")
 		elseif profileType == "global" then
 			-- TODO: add support for colours, tags, etc
 			-- E:CopyTable(data.global, C.db.global)
 		elseif profileType == "private" then
-			PrC.db.profiles["LSUI_TEMP_PROFILE"] = data.profile
+			-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
 
-			PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
-			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
+			-- PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
+
+			-- PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
+			-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
 
 			-- TODO: Need to reload here
 		end
