@@ -77,151 +77,167 @@ local function getProfileData(profileType)
 	return data
 end
 
-E.Profiles = {}
+local function keySort(a, b)
+	local A, B = type(a), type(b)
+
+	if A == B then
+		if A == "number" or A == "string" then
+			return a < b
+		elseif A == "boolean" then
+			return (a and 1 or 0) > (b and 1 or 0)
+		end
+	end
+
+	return A < B
+end
 
 -- Credit goes to Mirrored (WeakAuras) and Simpy (ElvUI)
--- E.Profiles:Export(profileType, exportFormat)
-do
-	local function keySort(a, b)
-		local A, B = type(a), type(b)
-
-		if A == B then
-			if A == "number" or A == "string" then
-				return a < b
-			elseif A == "boolean" then
-				return (a and 1 or 0) > (b and 1 or 0)
-			end
-		end
-
-		return A < B
+local function stringify(tbl, level, ret)
+	local keys = {}
+	for i in next, tbl do
+		t_insert(keys, i)
 	end
+	t_sort(keys, keySort)
 
-	local function stringify(tbl, level, ret)
-		local keys = {}
-		for i in next, tbl do
-			t_insert(keys, i)
+	for _, i in ipairs(keys) do
+		local v = tbl[i]
+
+		ret = ret .. s_rep('    ', level) .. '['
+
+		if type(i) == "string" then
+			ret = ret .. '"' .. i .. '"'
+		else
+			ret = ret .. i
 		end
-		t_sort(keys, keySort)
 
-		for _, i in ipairs(keys) do
-			local v = tbl[i]
+		ret = ret .. '] = '
 
-			ret = ret .. s_rep('    ', level) .. '['
-
-			if type(i) == "string" then
-				ret = ret .. '"' .. i .. '"'
+		if type(v) == "number" then
+			ret = ret .. v .. ',\n'
+		elseif type(v) == "string" then
+			ret = ret .. '"' .. v:gsub('\\', '\\\\'):gsub('\n', '\\n'):gsub('"', '\\"'):gsub('\124', '\124\124') .. '",\n'
+		elseif type(v) == "boolean" then
+			if v then
+				ret = ret .. 'true,\n'
 			else
-				ret = ret .. i
+				ret = ret .. 'false,\n'
 			end
-
-			ret = ret .. '] = '
-
-			if type(v) == "number" then
-				ret = ret .. v .. ',\n'
-			elseif type(v) == "string" then
-				ret = ret .. '"' .. v:gsub('\\', '\\\\'):gsub('\n', '\\n'):gsub('"', '\\"'):gsub('\124', '\124\124') .. '",\n'
-			elseif type(v) == "boolean" then
-				if v then
-					ret = ret .. 'true,\n'
-				else
-					ret = ret .. 'false,\n'
-				end
-			elseif type(v) == "table" then
-				ret = ret .. '{\n'
-				ret = stringify(v, level + 1, ret)
-				ret = ret .. s_rep('    ', level) .. '},\n'
-			else
-				ret = ret .. '"' .. tostring(v) .. '",\n'
-			end
+		elseif type(v) == "table" then
+			ret = ret .. '{\n'
+			ret = stringify(v, level + 1, ret)
+			ret = ret .. s_rep('    ', level) .. '},\n'
+		else
+			ret = ret .. '"' .. tostring(v) .. '",\n'
 		end
-
-		return ret
 	end
 
-	local function tableToString(tbl)
-		return stringify(tbl, 1, "{\n") .. "}"
-	end
+	return ret
+end
 
-	function E.Profiles:Export(profileType, exportFormat)
-		local data = getProfileData(profileType)
+local function tableToString(tbl)
+	return stringify(tbl, 1, "{\n") .. "}"
+end
 
-		if profileType == "global-colors" or profileType == "global-tags" then
-			profileType = "global"
+local function stringToTable(str)
+	return pcall(loadstring("return " .. str:gsub("\124\124", "\124")))
+end
+
+E.Profiles = {}
+
+function E.Profiles:Decode(data, dataFormat)
+	if dataFormat == "string" then
+		local decoded = LibDeflate:DecodeForPrint(data)
+		if not decoded then return end
+
+		local decompressed = LibDeflate:DecompressDeflate(decoded)
+		if not decompressed then return end
+
+		local isOK, rawData = LibSerialize:Deserialize(decompressed)
+		if isOK then
+			return rawData
 		end
-
-		local encoded = s_format("::lsui:%s:%s:%s:", E.VER.number, profileType, exportFormat)
-
-		if exportFormat == "string" then
-			local serialized = LibSerialize:Serialize(data)
-			local compressed = LibDeflate:CompressDeflate(serialized, {level = 9})
-			encoded = encoded .. LibDeflate:EncodeForPrint(compressed)
-		elseif exportFormat == "table" then
-			encoded = encoded .. tableToString(data)
+	elseif dataFormat == "table" then
+		local isOK, rawData = stringToTable(data)
+		if isOK then
+			return rawData
 		end
-
-		return encoded .. "::"
 	end
 end
 
--- E.Profiles:Import(data)
-do
-	local function stringToTable(str)
-		return pcall(loadstring("return " .. str:gsub("\124\124", "\124")))
+function E.Profiles:Encode(data, dataFormat)
+	if dataFormat == "string" then
+		local serialized = LibSerialize:Serialize(data)
+		local compressed = LibDeflate:CompressDeflate(serialized, {level = 9})
+
+		return LibDeflate:EncodeForPrint(compressed)
+	elseif dataFormat == "table" then
+		return tableToString(data)
 	end
+end
 
-	function E.Profiles:Import(data)
-		local version, profileType, importFormat
-		version, profileType, importFormat, data = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
+function E.Profiles:Recode(data, newFormat)
+	local version, profileType, curFormat, profileData = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
+	local header = s_format("::lsui:%s:%s:%s:", version, profileType, newFormat)
 
-		if importFormat == "string" then
-			local decoded = LibDeflate:DecodeForPrint(data)
-			if not decoded then return end
+	profileData = self:Decode(profileData, curFormat)
+	if not profileData then return end
 
-			local decompressed = LibDeflate:DecompressDeflate(decoded)
-			if not decompressed then return end
-
-			local isOK
-			isOK, data = LibSerialize:Deserialize(decompressed)
-			if not isOK then return end
-		elseif importFormat == "table" then
-			local isOK
-			isOK, data = stringToTable(data)
-			if not isOK then return end
-		end
-
-		if tonumber(version) < E.VER.number then
-			-- TODO: update outdated data
-		end
-
-		print("|cffffd200importing", version, profileType, importFormat)
-		if profileType == "profile" then
-			-- C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
-
-			-- C.db.profiles["LSUI_TEMP_PROFILE"] = data
-
-			-- C.db:CopyProfile("LSUI_TEMP_PROFILE")
-			-- C.db:DeleteProfile("LSUI_TEMP_PROFILE")
-		elseif profileType == "global" then
-			-- TODO: add support for colours, tags, etc
-			-- E:CopyTable(data.global, C.db.global)
-		elseif profileType == "private" then
-			-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
-
-			-- PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
-
-			-- PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
-			-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
-
-			-- TODO: Need to reload here
-		end
-
+	-- If we're here with the same format, then we might as well return the
+	-- original data since it's not corrupted
+	if curFormat == newFormat then
 		return data
 	end
+
+	profileData = self:Encode(profileData, newFormat)
+
+	return header .. profileData .. "::"
 end
 
--- C_Timer.After(5, function()
--- 	exportProfile("profile", "string")
--- 	exportProfile("profile", "table")
--- 	importProfile(TEST_STRING)
--- 	importProfile(TEST_TABLE)
--- end)
+function E.Profiles:Export(profileType, exportFormat)
+	local profileData = getProfileData(profileType)
+
+	if profileType == "global-colors" or profileType == "global-tags" then
+		profileType = "global"
+	end
+
+	local header = s_format("::lsui:%s:%s:%s:", E.VER.number, profileType, exportFormat)
+
+	profileData = self:Encode(profileData, exportFormat)
+
+	return header .. profileData .. "::"
+end
+
+function E.Profiles:Import(data, force)
+	local version, profileType, importFormat, profileData = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
+	profileData = self:Decode(profileData, importFormat)
+
+	if tonumber(version) < E.VER.number then
+		-- TODO: update outdated data
+	end
+
+	print("|cffffd200importing", version, profileType, importFormat)
+	if profileType == "profile" then
+		-- TODO: if force is true, then overwrite the current profile
+		-- TODO: otherwise create a new profile
+		-- C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
+
+		-- C.db.profiles["LSUI_TEMP_PROFILE"] = data
+
+		-- C.db:CopyProfile("LSUI_TEMP_PROFILE")
+		-- C.db:DeleteProfile("LSUI_TEMP_PROFILE")
+	elseif profileType == "global" then
+		-- TODO: add support for colours, tags, etc
+		-- E:CopyTable(data.global, C.db.global)
+	elseif profileType == "private" then
+		-- TODO: if force is true, then overwrite the current profile
+		-- TODO: otherwise create a new profile
+		-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
+
+		-- PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
+
+		-- PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
+		-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
+	end
+
+	return profileData
+end
