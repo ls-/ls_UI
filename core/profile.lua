@@ -218,7 +218,7 @@ function E.Profiles:Import(data, overwrite)
 		if overwrite then
 			C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
 
-			C.db.profiles["LSUI_TEMP_PROFILE"] = data
+			C.db.profiles["LSUI_TEMP_PROFILE"] = profileData
 
 			C.db:CopyProfile("LSUI_TEMP_PROFILE")
 			C.db:DeleteProfile("LSUI_TEMP_PROFILE")
@@ -228,7 +228,7 @@ function E.Profiles:Import(data, overwrite)
 			for i = 1, 100 do
 				name = "Imported Profile #" .. i
 				if not C.db.profiles[name] then
-					C.db.profiles[name] = data
+					C.db.profiles[name] = profileData
 
 					break
 				end
@@ -243,7 +243,7 @@ function E.Profiles:Import(data, overwrite)
 		if overwrite then
 			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
 
-			PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
+			PrC.db.profiles["LSUI_TEMP_PROFILE"] = profileData
 
 			PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
 			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
@@ -253,7 +253,7 @@ function E.Profiles:Import(data, overwrite)
 			for i = 1, 100 do
 				name = "Imported Profile #" .. i
 				if not PrC.db.profiles[name] then
-					PrC.db.profiles[name] = data
+					PrC.db.profiles[name] = profileData
 
 					break
 				end
