@@ -3,14 +3,15 @@
 	<Script file="utils.lua"/>
 	<Script file="defaults.lua"/>
 	<Script file="constants.lua"/>
-	<Script file="profile.lua"/>
+	<!-- can sort -->
 	<Script file="animation.lua"/>
-	<Script file="bar.lua"/>
 	<Script file="border.lua"/>
 	<Script file="button.lua"/>
 	<Script file="cooldown.lua"/>
 	<Script file="fading.lua"/>
+	<Script file="layout.lua"/>
 	<Script file="media.lua"/>
 	<Script file="mover.lua"/>
+	<Script file="profile.lua"/>
 	<Script file="statusbar.lua"/>
 </Ui>
