@@ -176,7 +176,7 @@ function E.Profiles:Encode(data, dataFormat)
 end
 
 function E.Profiles:Recode(data, newFormat)
-	local version, profileType, curFormat, profileData = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
+	local version, profileType, curFormat, profileData = data:match("::lsui:(%d-):([%a\\-]-):(%a-):(.-)::")
 	local header = s_format("::lsui:%s:%s:%s:", version, profileType, newFormat)
 
 	profileData = self:Decode(profileData, curFormat)
@@ -192,21 +192,15 @@ function E.Profiles:Recode(data, newFormat)
 end
 
 function E.Profiles:Export(profileType, exportFormat)
-	local profileData = getProfileData(profileType)
-
-	if profileType == "global-colors" or profileType == "global-tags" then
-		profileType = "global"
-	end
-
 	local header = s_format("::lsui:%s:%s:%s:", E.VER.number, profileType, exportFormat)
-
+	local profileData = getProfileData(profileType)
 	profileData = self:Encode(profileData, exportFormat)
 
 	return header .. profileData .. "::"
 end
 
 function E.Profiles:Import(data, overwrite)
-	local version, profileType, importFormat, profileData = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
+	local version, profileType, importFormat, profileData = data:match("::lsui:(%d-):([%a\\-]-):(%a-):(.-)::")
 	profileData = self:Decode(profileData, importFormat)
 
 	if tonumber(version) < E.VER.number then
@@ -236,7 +230,7 @@ function E.Profiles:Import(data, overwrite)
 
 			C.db:SetProfile(name)
 		end
-	elseif profileType == "global" then
+	elseif profileType == "global-colors" or profileType == "global-tags" then
 		-- TODO: add support for colours, tags, etc
 		-- E:CopyTable(data.global, C.db.global)
 	elseif profileType == "private" then
