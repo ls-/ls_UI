@@ -216,6 +216,8 @@ function E.Profiles:Import(data, overwrite)
 
 			C.db:CopyProfile("LSUI_TEMP_PROFILE")
 			C.db:DeleteProfile("LSUI_TEMP_PROFILE")
+
+			return C.db:GetCurrentProfile(), profileType
 		else
 			-- 100 should be enough, right? RIGHT?
 			local name
@@ -228,11 +230,12 @@ function E.Profiles:Import(data, overwrite)
 				end
 			end
 
-			C.db:SetProfile(name)
+			return name, profileType
 		end
 	elseif profileType == "global-colors" or profileType == "global-tags" then
 		-- TODO: add support for colours, tags, etc
 		-- E:CopyTable(data.global, C.db.global)
+		return nil, profileType
 	elseif profileType == "private" then
 		if overwrite then
 			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
@@ -241,6 +244,8 @@ function E.Profiles:Import(data, overwrite)
 
 			PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
 			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
+
+			return PrC.db:GetCurrentProfile(), profileType
 		else
 			-- 100 should be enough, right? RIGHT?
 			local name
@@ -253,9 +258,7 @@ function E.Profiles:Import(data, overwrite)
 				end
 			end
 
-			PrC.db:SetProfile(name)
+			return name, profileType
 		end
 	end
-
-	return profileData
 end
