@@ -135,7 +135,6 @@ local function openExportImportFrame(info)
 		exportImportBox.editBox:SetScript("OnTextChanged", function(self)
 			self:SetText(data)
 			self:HighlightText()
-			self:SetFocus()
 		end)
 		exportImportBox.editBox:SetScript("OnMouseUp", function(self)
 			self:HighlightText()
@@ -144,7 +143,6 @@ local function openExportImportFrame(info)
 
 		exportImportBox:SetText(data)
 		exportImportBox:HighlightText()
-		exportImportBox:SetFocus()
 	elseif mode == "import" then
 		local data = {}
 		local shouldValidate = true
