@@ -182,12 +182,10 @@ function E.Profiles:Recode(data, newFormat)
 	profileData = self:Decode(profileData, curFormat)
 	if not profileData then return end
 
-	-- If we're here with the same format, then we might as well return the
-	-- original data since it's not corrupted
-	if curFormat == newFormat then
-		return data
-	end
-
+	-- "Stringified" tables can have other issues aside from the data itself,
+	-- for instance, indentation or the order of subtables/elements, re-encoding
+	-- them fixes such discrepancies which makes checking for dupes a lot easier
+	-- There's probably no need to re-encode strings, but might as well do it
 	profileData = self:Encode(profileData, newFormat)
 
 	return header .. profileData .. "::"
