@@ -207,7 +207,6 @@ function E.Profiles:Import(data, overwrite)
 		-- TODO: update outdated data
 	end
 
-	print("|cffffd200importing", version, profileType, importFormat)
 	if profileType == "profile" then
 		if overwrite then
 			C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
