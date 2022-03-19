@@ -157,17 +157,17 @@ local function openExportImportFrame(info)
 		validateImportButton:SetRelativeWidth(1)
 		validateImportButton:SetCallback("OnClick", function()
 			if shouldValidate then
-				local data_ = {}
+				local result = {}
 				for _, v in next, data do
 					v = E.Profiles:Recode(v, "table")
 					if v then
 						local shouldAdd = true
-						for _, v_ in next, data_ do
+						for _, v_ in next, result do
 							shouldAdd = shouldAdd and v_ ~= v
 						end
 
 						if shouldAdd then
-							t_insert(data_, v)
+							t_insert(result, v)
 						end
 					end
 				end
@@ -176,7 +176,7 @@ local function openExportImportFrame(info)
 
 				-- make sure that OnTextChanged fires
 				exportImportBox:SetText("")
-				exportImportBox:SetText(t_concat(data_, "\n"))
+				exportImportBox:SetText(t_concat(result, "\n"))
 			else
 				local result = {}
 				local overwrite = overwriteButton:GetValue()
