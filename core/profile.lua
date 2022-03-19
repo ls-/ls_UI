@@ -207,7 +207,7 @@ function E.Profiles:Export(profileType, exportFormat)
 	return header .. profileData .. "::"
 end
 
-function E.Profiles:Import(data, force)
+function E.Profiles:Import(data, overwrite)
 	local version, profileType, importFormat, profileData = data:match("::lsui:(%d-):(%a-):(%a-):(.-)::")
 	profileData = self:Decode(profileData, importFormat)
 
@@ -217,26 +217,52 @@ function E.Profiles:Import(data, force)
 
 	print("|cffffd200importing", version, profileType, importFormat)
 	if profileType == "profile" then
-		-- TODO: if force is true, then overwrite the current profile
-		-- TODO: otherwise create a new profile
-		-- C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
+		if overwrite then
+			C.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
 
-		-- C.db.profiles["LSUI_TEMP_PROFILE"] = data
+			C.db.profiles["LSUI_TEMP_PROFILE"] = data
 
-		-- C.db:CopyProfile("LSUI_TEMP_PROFILE")
-		-- C.db:DeleteProfile("LSUI_TEMP_PROFILE")
+			C.db:CopyProfile("LSUI_TEMP_PROFILE")
+			C.db:DeleteProfile("LSUI_TEMP_PROFILE")
+		else
+			-- 100 should be enough, right? RIGHT?
+			local name
+			for i = 1, 100 do
+				name = "Imported Profile #" .. i
+				if not C.db.profiles[name] then
+					C.db.profiles[name] = data
+
+					break
+				end
+			end
+
+			C.db:SetProfile(name)
+		end
 	elseif profileType == "global" then
 		-- TODO: add support for colours, tags, etc
 		-- E:CopyTable(data.global, C.db.global)
 	elseif profileType == "private" then
-		-- TODO: if force is true, then overwrite the current profile
-		-- TODO: otherwise create a new profile
-		-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
+		if overwrite then
+			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE", true)
 
-		-- PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
+			PrC.db.profiles["LSUI_TEMP_PROFILE"] = data
 
-		-- PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
-		-- PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
+			PrC.db:CopyProfile("LSUI_TEMP_PROFILE")
+			PrC.db:DeleteProfile("LSUI_TEMP_PROFILE")
+		else
+			-- 100 should be enough, right? RIGHT?
+			local name
+			for i = 1, 100 do
+				name = "Imported Profile #" .. i
+				if not PrC.db.profiles[name] then
+					PrC.db.profiles[name] = data
+
+					break
+				end
+			end
+
+			PrC.db:SetProfile(name)
+		end
 	end
 
 	return profileData
