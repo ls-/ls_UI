@@ -60,7 +60,7 @@ local function bar_Update(self)
 	self:UpdateButtons("UpdateHotKeyFont")
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
-	E:UpdateBarLayout(self)
+	E.Layout:Update(self)
 end
 
 local function bar_UpdateButtonConfig(self)

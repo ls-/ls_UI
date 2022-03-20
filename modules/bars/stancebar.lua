@@ -122,7 +122,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateButtons("UpdateHotKeyFont")
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
-			E:UpdateBarLayout(self)
+			E.Layout:Update(self)
 		end
 		bar.UpdateForms = function(self)
 			local numStances = GetNumShapeshiftForms()

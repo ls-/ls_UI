@@ -80,7 +80,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 			if PrC.db.profile.auratracker[info[#info]] ~= value then
 				PrC.db.profile.auratracker[info[#info]] = value
 				AURATRACKER:GetTracker():UpdateConfig()
-				E:UpdateBarLayout(AURATRACKER:GetTracker())
+				E.Layout:Update(AURATRACKER:GetTracker())
 			end
 		end,
 		args = {
@@ -174,7 +174,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				set = function(_, value)
 					PrC.db.profile.auratracker.x_growth, PrC.db.profile.auratracker.y_growth = s_split("_", value)
 					AURATRACKER:GetTracker():UpdateConfig()
-					E:UpdateBarLayout(AURATRACKER:GetTracker())
+					E.Layout:Update(AURATRACKER:GetTracker())
 				end,
 			},
 			drag_key = {

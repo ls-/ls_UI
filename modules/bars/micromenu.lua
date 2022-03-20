@@ -852,7 +852,7 @@ do
 	end
 
 	function bagSlots_UpdateLayout(self)
-		E:UpdateBarLayout(self)
+		E.Layout:Update(self)
 	end
 end
 
