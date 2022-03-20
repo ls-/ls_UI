@@ -4,8 +4,6 @@ local UF = P:GetModule("UnitFrames")
 
 -- Lua
 local _G = getfenv(0)
-local m_max = _G.math.max
-local m_min = _G.math.min
 local next = _G.next
 local select = _G.select
 local unpack = _G.unpack
@@ -260,10 +258,9 @@ end
 function element_proto:UpdateConfig()
 	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].auras, self._config)
-
-	local size = self._config.size_override ~= 0 and self._config.size_override
+	self._config.width = self._config.width ~= 0 and self._config.width
 		or E:Round((C.db.profile.units[unit].width - (self.spacing * (self._config.per_row - 1)) + 2) / self._config.per_row)
-	self._config.size = m_min(m_max(size, 24), 64)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 end
 
 function element_proto:UpdateCooldownConfig()
@@ -315,10 +312,12 @@ end
 function element_proto:UpdateSize()
 	local config = self._config
 
-	self.size = config.size
+	self.width = config.width
+	self.height = config.height
 	self.numTotal = config.per_row * config.rows
 
-	self:SetSize(config.size * config.per_row + self.spacing * (config.per_row - 1), config.size * config.rows + self.spacing * (config.rows - 1))
+	self:SetSize(config.width * config.per_row + self.spacing * (config.per_row - 1),
+		config.height * config.rows + self.spacing * (config.rows - 1))
 end
 
 function element_proto:UpdatePoints()

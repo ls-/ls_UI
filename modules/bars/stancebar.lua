@@ -119,7 +119,7 @@ function MODULE.CreateStanceBar()
 			self:UpdateConfig()
 			self:UpdateVisibility()
 			self:UpdateForms()
-			self:UpdateButtons("UpdateHotKeyFont")
+			self:ForEach("UpdateHotKeyFont")
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 			E.Layout:Update(self)
@@ -166,7 +166,7 @@ function MODULE.CreateStanceBar()
 
 		bar:SetScript("OnEvent", function(self, event)
 			if event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-				self:UpdateButtons("Update")
+				self:ForEach("Update")
 			elseif event == "PLAYER_REGEN_ENABLED" then
 				if self.needsUpdate and not InCombatLockdown() then
 					self.needsUpdate = nil
@@ -175,7 +175,7 @@ function MODULE.CreateStanceBar()
 			else
 				if InCombatLockdown() then
 					self.needsUpdate = true
-					self:UpdateButtons("Update")
+					self:ForEach("Update")
 				else
 					self:UpdateForms()
 				end

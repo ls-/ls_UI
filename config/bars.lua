@@ -364,14 +364,33 @@ local function getOptionsTable_Bar(barID, order, name)
 				name = L["SPACING"],
 				min = 4, max = 24, step = 2,
 			},
-			size = {
+			width = {
 				order = 17,
 				type = "range",
-				name = L["SIZE"],
-				min = 18, max = 64, step = 1,
+				name = L["WIDTH"],
+				min = 16, max = 64, step = 1,
+			},
+			height = {
+				order = 18,
+				type = "range",
+				name = L["HEIGHT"],
+				desc = L["HEIGHT_OVERRIDE_DESC"],
+				min = 0, max = 64, step = 1,
+				softMin = 16,
+				set = function(info, value)
+					if C.db.profile.bars[barID].height ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+					end
+
+					C.db.profile.bars[barID].height = value
+
+					BARS:GetBar(barID):Update()
+				end,
 			},
 			growth_dir = {
-				order = 18,
+				order = 19,
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
@@ -384,7 +403,7 @@ local function getOptionsTable_Bar(barID, order, name)
 				end,
 			},
 			flyout_dir = {
-				order = 19,
+				order = 20,
 				type = "select",
 				name = L["FLYOUT_DIR"],
 				values = FLYOUT_DIRS,
@@ -395,12 +414,12 @@ local function getOptionsTable_Bar(barID, order, name)
 				end,
 			},
 			spacer_2 = {
-				order = 20,
+				order = 30,
 				type = "description",
 				name = " ",
 			},
 			hotkey = {
-				order = 21,
+				order = 31,
 				type = "group",
 				name = L["KEYBIND_TEXT"],
 				inline = true,
@@ -437,12 +456,12 @@ local function getOptionsTable_Bar(barID, order, name)
 				},
 			},
 			spacer_3 = {
-				order = 29,
+				order = 39,
 				type = "description",
 				name = " ",
 			},
 			macro = {
-				order = 30,
+				order = 40,
 				type = "group",
 				name = L["MACRO_TEXT"],
 				inline = true,
@@ -478,12 +497,12 @@ local function getOptionsTable_Bar(barID, order, name)
 				},
 			},
 			spacer_4 = {
-				order = 39,
+				order = 49,
 				type = "description",
 				name = " ",
 			},
 			count = {
-				order = 40,
+				order = 50,
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
@@ -508,12 +527,12 @@ local function getOptionsTable_Bar(barID, order, name)
 				},
 			},
 			spacer_5 = {
-				order = 49,
+				order = 59,
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 50,
+				order = 60,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -548,11 +567,11 @@ local function getOptionsTable_Bar(barID, order, name)
 				},
 			},
 			spacer_6 = {
-				order = 59,
+				order = 69,
 				type = "description",
 				name = " ",
 			},
-			fading = getOptionsTable_Fading(60, barID),
+			fading = getOptionsTable_Fading(70, barID),
 		},
 	}
 
@@ -562,7 +581,8 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num.disabled = isModuleDisabledOrRestricted
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
 		temp.args.spacing.disabled = isModuleDisabledOrRestricted
-		temp.args.size.disabled = isModuleDisabledOrRestricted
+		temp.args.width.disabled = isModuleDisabledOrRestricted
+		temp.args.height.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
 		temp.args.flyout_dir.disabled = isModuleDisabledOrRestricted
 	elseif barID == "bar6" then
@@ -626,7 +646,8 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.per_row.max = 6
 		temp.args.per_row.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.spacing.disabled = isPetBattleBarDisabledOrRestricted
-		temp.args.size.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.width.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.height.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.growth_dir.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.flyout_dir = nil
 		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
@@ -641,7 +662,8 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
-		temp.args.size = nil
+		temp.args.width = nil
+		temp.args.height = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
@@ -654,7 +676,8 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.num = nil
 		temp.args.per_row = nil
 		temp.args.spacing = nil
-		temp.args.size = nil
+		temp.args.width = nil
+		temp.args.height = nil
 		temp.args.growth_dir = nil
 		temp.args.flyout_dir = nil
 		temp.args.spacer_2 = nil
@@ -697,8 +720,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 		set = function(info, value)
 			if C.db.profile.bars[info[#info]] ~= value then
 				C.db.profile.bars[info[#info]] = value
-				BARS:UpdateBars("UpdateConfig")
-				BARS:UpdateBars("UpdateButtonConfig")
+				BARS:ForEach("UpdateConfig")
+				BARS:ForEach("UpdateButtonConfig")
 			end
 		end,
 		args = {
@@ -765,8 +788,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					C.db.profile.bars.lock = value
-					BARS:UpdateBars("UpdateConfig")
-					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:ForEach("UpdateConfig")
+					BARS:ForEach("UpdateButtonConfig")
 
 					SetCVar("lockActionBars", value and 1 or 0)
 				end,
@@ -785,8 +808,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					C.db.profile.bars.click_on_down = value
-					BARS:UpdateBars("UpdateConfig")
-					BARS:UpdateBars("UpdateButtonConfig")
+					BARS:ForEach("UpdateConfig")
+					BARS:ForEach("UpdateButtonConfig")
 
 					SetCVar("ActionButtonUseKeyDown", value and 1 or 0)
 				end,
@@ -822,8 +845,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.bars.desaturation[info[#info]] ~= value then
 						C.db.profile.bars.desaturation[info[#info]] = value
-						BARS:UpdateBars("UpdateConfig")
-						BARS:UpdateBars("UpdateButtonConfig")
+						BARS:ForEach("UpdateConfig")
+						BARS:ForEach("UpdateButtonConfig")
 					end
 				end,
 				args = {
@@ -861,8 +884,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.bars.cooldown[info[#info]] ~= value then
 						C.db.profile.bars.cooldown[info[#info]] = value
-						BARS:UpdateBars("UpdateConfig")
-						BARS:UpdateBars("UpdateCooldownConfig")
+						BARS:ForEach("UpdateConfig")
+						BARS:ForEach("UpdateCooldownConfig")
 					end
 				end,
 				args = {
@@ -873,8 +896,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.cooldown, C.db.profile.bars.cooldown)
-							BARS:UpdateBars("UpdateConfig")
-							BARS:UpdateBars("UpdateCooldownConfig")
+							BARS:ForEach("UpdateConfig")
+							BARS:ForEach("UpdateCooldownConfig")
 						end,
 					},
 					spacer_1 = {
@@ -902,8 +925,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 								end
 
 								C.db.profile.bars.cooldown[info[#info]] = value
-								BARS:UpdateBars("UpdateConfig")
-								BARS:UpdateBars("UpdateCooldownConfig")
+								BARS:ForEach("UpdateConfig")
+								BARS:ForEach("UpdateCooldownConfig")
 							end
 						end,
 					},
@@ -916,8 +939,8 @@ function CONFIG.CreateActionBarsPanel(_, order)
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								C.db.profile.bars.cooldown[info[#info]] = value
-								BARS:UpdateBars("UpdateConfig")
-								BARS:UpdateBars("UpdateCooldownConfig")
+								BARS:ForEach("UpdateConfig")
+								BARS:ForEach("UpdateCooldownConfig")
 							end
 						end,
 					},

@@ -115,14 +115,33 @@ local function getOptionsTable_Aura(order, name, filter)
 				name = L["SPACING"],
 				min = 4, max = 24, step = 2,
 			},
-			size = {
+			width = {
 				order = 13,
 				type = "range",
-				name = L["SIZE"],
-				min = 24, max = 64, step = 1,
+				name = L["WIDTH"],
+				min = 16, max = 64, step = 1,
+			},
+			height = {
+				order = 14,
+				type = "range",
+				name = L["HEIGHT"],
+				desc = L["HEIGHT_OVERRIDE_DESC"],
+				min = 0, max = 64, step = 1,
+				softMin = 16,
+				set = function(info, value)
+					if C.db.profile.auras[filter].height ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+					end
+
+					C.db.profile.auras[filter].height = value
+
+					AURAS:ForHeader(filter, "Update")
+				end,
 			},
 			growth_dir = {
-				order = 14,
+				order = 15,
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
@@ -135,19 +154,19 @@ local function getOptionsTable_Aura(order, name, filter)
 				end,
 			},
 			sort_method = {
-				order = 15,
+				order = 16,
 				type = "select",
 				name = L["SORT_METHOD"],
 				values = SORT_METHODS,
 			},
 			sort_dir = {
-				order = 16,
+				order = 17,
 				type = "select",
 				name = L["SORT_DIR"],
 				values = SORT_DIRS,
 			},
 			sep_own = {
-				order = 17,
+				order = 18,
 				type = "select",
 				name = L["SEPARATION"],
 				values = SEP_TYPES
@@ -336,7 +355,7 @@ function CONFIG.CreateAurasPanel(_, order)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras, C.db.profile.auras, {point = true})
-					AURAS:ForEachHeader("Update")
+					AURAS:ForEach("Update")
 				end,
 			},
 			spacer_1 = {

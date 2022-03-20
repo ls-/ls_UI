@@ -20,7 +20,8 @@ local CFG = {
 		flyout_dir = "UP",
 		num = 12,
 		per_row = 12,
-		size = 32,
+		width = 32,
+		height = 0,
 		spacing = 4,
 		visibility = "[petbattle] hide; show",
 		visible = true,
@@ -122,9 +123,9 @@ local function bar_Update(self)
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
-	self:UpdateButtons("UpdateCountFont")
-	self:UpdateButtons("UpdateHotKeyFont")
-	self:UpdateButtons("UpdateMacroFont")
+	self:ForEach("UpdateCountFont")
+	self:ForEach("UpdateHotKeyFont")
+	self:ForEach("UpdateMacroFont")
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E.Layout:Update(self)
@@ -132,6 +133,7 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.click_on_down = C.db.profile.bars.click_on_down
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
