@@ -225,7 +225,7 @@ local function header_Update(self)
 		end
 
 		self:UpdateCooldownConfig()
-		E:UpdateBarLayout(self)
+		E.Layout:Update(self)
 	else
 		local config = self._config
 		local initialAnchor

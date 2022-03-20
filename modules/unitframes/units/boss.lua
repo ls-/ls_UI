@@ -33,7 +33,7 @@ function UF:UpdateBossHolder()
 	holder._config.x_growth = C.db.profile.units.boss.x_growth
 	holder._config.y_growth = C.db.profile.units.boss.y_growth
 
-	E:UpdateBarLayout(holder)
+	E.Layout:Update(holder)
 end
 
 local boss_proto = {}

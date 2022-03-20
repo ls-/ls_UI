@@ -267,7 +267,7 @@ function MODULE.Update()
 		bar:UpdateCooldownConfig()
 		bar:UpdateAuraTypeIcons()
 		bar:UpdateCountFont()
-		E:UpdateBarLayout(bar)
+		E.Layout:Update(bar)
 		bar:UpdateLock()
 		bar:Update()
 	end

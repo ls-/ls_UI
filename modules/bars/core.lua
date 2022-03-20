@@ -104,7 +104,7 @@ local function bar_UpdateCooldownConfig(self)
 end
 
 local function bar_UpdateLayout(self)
-	E:UpdateBarLayout(self)
+	E.Layout:Update(self)
 end
 
 local function bar_UpdateVisibility(self)

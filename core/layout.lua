@@ -9,18 +9,22 @@ local m_min = _G.math.min
 local next = _G.next
 
 -- Mine
-function E:UpdateBarLayout(bar)
-	local config = bar._config
+E.Layout = {}
+
+function E.Layout:Update(frame, config)
+	config = config or frame._config
+	local children = frame._buttons or frame._children
+
+	local childLevel = frame:GetFrameLevel() + 1
 	local xDir = config.x_growth == "RIGHT" and 1 or -1
 	local yDir = config.y_growth == "UP" and 1 or -1
-	local level = bar:GetFrameLevel() + 1
-	local num = m_min(config.num, #bar._buttons)
+	local num = m_min(config.num, #children)
 	local width = config.width or config.size
+	local widthMult = m_min(num, config.per_row)
 	local height = config.height or config.size
-	local wMult = m_min(num, config.per_row)
-	local hMult = m_ceil(num / config.per_row)
-	local initialAnchor
+	local heightMult = m_ceil(num / config.per_row)
 
+	local initialAnchor
 	if config.y_growth == "UP" then
 		if config.x_growth == "RIGHT" then
 			initialAnchor = "BOTTOMLEFT"
@@ -35,26 +39,29 @@ function E:UpdateBarLayout(bar)
 		end
 	end
 
-	bar:SetSize(wMult * width + (wMult - 1) * config.spacing + 4, hMult * height + (hMult - 1) * config.spacing + 4)
+	frame:SetSize(widthMult * width + (widthMult - 1) * config.spacing + 4,
+		heightMult * height + (heightMult - 1) * config.spacing + 4)
 
-	local mover = E.Movers:Get(bar, true)
+	local mover = E.Movers:Get(frame, true)
 	if mover then
 		mover:UpdateSize()
 	end
 
-	for i, button in next, bar._buttons do
-		button:ClearAllPoints()
+	for i, child in next, children do
+		child:ClearAllPoints()
 
 		if i <= num then
 			local col = (i - 1) % config.per_row
 			local row = m_floor((i - 1) / config.per_row)
 
-			button:SetParent(button._parent)
-			button:SetFrameLevel(level)
-			button:SetSize(width, height)
-			button:SetPoint(initialAnchor, bar, initialAnchor, xDir * (2 + col * (config.spacing + width)), yDir * (2 + row * (config.spacing + height)))
+			child:SetParent(child._parent)
+			child:SetFrameLevel(childLevel)
+			child:SetSize(width, height)
+			child:SetPoint(initialAnchor, frame, initialAnchor,
+				xDir * (2 + col * (config.spacing + width)),
+				yDir * (2 + row * (config.spacing + height)))
 		else
-			button:SetParent(E.HIDDEN_PARENT)
+			child:SetParent(E.HIDDEN_PARENT)
 		end
 	end
 end

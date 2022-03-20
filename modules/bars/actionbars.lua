@@ -127,7 +127,7 @@ local function bar_Update(self)
 	self:UpdateButtons("UpdateMacroFont")
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
-	E:UpdateBarLayout(self)
+	E.Layout:Update(self)
 end
 
 local function bar_UpdateConfig(self)
