@@ -26,6 +26,7 @@ function MODULE.CreateZoneButton()
 		bar.Update = function(self)
 			self:UpdateConfig()
 			self:UpdateVisibility()
+			self:UpdateArtwork()
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
@@ -43,6 +44,16 @@ function MODULE.CreateZoneButton()
 
 			self:SetSize(width + 4, height + 4)
 			E.Movers:Get(self):UpdateSize()
+		end
+
+		bar.UpdateArtwork = function(self)
+			if self._config.artwork then
+				ZoneAbilityFrame.Style:Show()
+				ZoneAbilityFrame.Style:SetParent(ZoneAbilityFrame)
+			else
+				ZoneAbilityFrame.Style:Hide()
+				ZoneAbilityFrame.Style:SetParent(E.HIDDEN_PARENT)
+			end
 		end
 
 		ZoneAbilityFrame.ignoreFramePositionManager = true
@@ -84,8 +95,6 @@ function MODULE.CreateZoneButton()
 				E.Movers:Get(bar):UpdateSize()
 			end
 		end)
-
-		E:ForceHide(ZoneAbilityFrame.Style)
 
 		local point = C.db.profile.bars.zone.point[E.UI_LAYOUT]
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)

@@ -658,6 +658,16 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.cooldown = nil
 		temp.args.spacer_6 = nil
 	elseif barID == "extra" then
+		temp.args.artwork = {
+			order = 11,
+			type = "toggle",
+			name = L["SHOW_ARTWORK"],
+			set = function(_, value)
+				C.db.profile.bars[barID].artwork = value
+				BARS:GetBar(barID):UpdateConfig()
+				BARS:GetBar(barID):UpdateArtwork()
+			end,
+		}
 		temp.args.grid = nil
 		temp.args.num = nil
 		temp.args.per_row = nil
@@ -672,6 +682,16 @@ local function getOptionsTable_Bar(barID, order, name)
 		temp.args.count = nil
 		temp.args.spacer_5 = nil
 	elseif barID == "zone" then
+		temp.args.artwork = {
+			order = 11,
+			type = "toggle",
+			name = L["SHOW_ARTWORK"],
+			set = function(_, value)
+				C.db.profile.bars[barID].artwork = value
+				BARS:GetBar(barID):UpdateConfig()
+				BARS:GetBar(barID):UpdateArtwork()
+			end,
+		}
 		temp.args.grid = nil
 		temp.args.num = nil
 		temp.args.per_row = nil
