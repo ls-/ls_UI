@@ -530,3 +530,5 @@ L["VALIDATE"] = "Validate"
 L["SIZE_OVERRIDE_DESC"] = "If set to 0, the element's size will be calculated automatically."
 L["WIDTH_OVERRIDE_DESC"] = "If set to 0, the element's width will be calculated automatically."
 L["HEIGHT_OVERRIDE_DESC"] = "If set to 0, the element's height will be calculated automatically."
+
+L["SHOW_ARTWORK"] = "Show Artwork"
