@@ -17,7 +17,8 @@ local isInit = false
 local CFG = {
 	visible = true,
 	num = 6,
-	size = 32,
+	width = 32,
+	height = 0,
 	spacing = 4,
 	x_growth = "RIGHT",
 	y_growth = "DOWN",
@@ -41,14 +42,15 @@ local CFG = {
 local function bar_Update(self)
 	self:UpdateConfig()
 	self:UpdateVisibility()
-	self:UpdateButtons("UpdateHotKey")
-	self:UpdateButtons("UpdateHotKeyFont")
+	self:ForEach("UpdateHotKey")
+	self:ForEach("UpdateHotKeyFont")
 	self:UpdateFading()
 	E.Layout:Update(self)
 end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle, self._config)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 
 	if MODULE:IsRestricted() then
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)

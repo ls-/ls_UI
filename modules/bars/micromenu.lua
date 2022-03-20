@@ -1252,8 +1252,8 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateButtons("Update")
-	self:UpdateButtons("UpdateEvents")
+	self:ForEach("Update")
+	self:ForEach("UpdateEvents")
 	self:UpdateButtonList()
 	self:UpdateFading()
 	self:UpdateLayout()

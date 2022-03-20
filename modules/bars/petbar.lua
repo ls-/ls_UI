@@ -57,7 +57,7 @@ local function bar_Update(self)
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
-	self:UpdateButtons("UpdateHotKeyFont")
+	self:ForEach("UpdateHotKeyFont")
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E.Layout:Update(self)
@@ -283,13 +283,13 @@ function MODULE.CreatePetActionBar()
 				or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
 				or event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED"
 				or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
-				self:UpdateButtons("Update")
+				self:ForEach("Update")
 			elseif event == "PET_BAR_UPDATE_COOLDOWN" then
-				self:UpdateButtons("UpdateCooldown")
+				self:ForEach("UpdateCooldown")
 			elseif event == "PET_BAR_SHOWGRID" then
-				self:UpdateButtons("ShowGrid")
+				self:ForEach("ShowGrid")
 			elseif event == "PET_BAR_HIDEGRID" then
-				self:UpdateButtons("HideGrid")
+				self:ForEach("HideGrid")
 			end
 		end)
 
