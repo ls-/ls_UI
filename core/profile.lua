@@ -11,6 +11,7 @@ local s_format = _G.string.format
 local s_rep = _G.string.rep
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
+local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local tostring = _G.tostring
 local type = _G.type
@@ -235,9 +236,22 @@ function E.Profiles:Import(data, overwrite)
 
 			return name, profileType
 		end
-	elseif profileType == "global-colors" or profileType == "global-tags" then
-		-- TODO: add support for colours, tags, etc
-		-- E:CopyTable(data.global, C.db.global)
+	elseif profileType == "global-colors" then
+		t_wipe(C.db.global.colors)
+		E:CopyTable(D.global.colors, C.db.global.colors)
+
+		E:CopyTable(profileData, C.db.global)
+
+		return nil, profileType
+	elseif profileType == "global-tags" then
+		t_wipe(C.db.global.tags)
+		E:CopyTable(D.global.tags, C.db.global.tags)
+
+		t_wipe(C.db.global.tag_vars)
+		E:CopyTable(D.global.tag_vars, C.db.global.tag_vars)
+
+		E:CopyTable(profileData, C.db.global)
+
 		return nil, profileType
 	elseif profileType == "private" then
 		if overwrite then
