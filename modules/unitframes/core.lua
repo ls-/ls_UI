@@ -137,7 +137,7 @@ function UF:Create(unit)
 				objects[unit .. i] = object
 
 				object._parent = holder
-				holder._buttons[i] = object
+				holder._children[i] = object
 			end
 		else
 			local object = oUF:Spawn(unit, name .. "Frame")
