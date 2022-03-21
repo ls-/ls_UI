@@ -220,6 +220,7 @@ read_globals = {
 
 	-- FrameXML vars
 	"ChatTypeInfo",
+	"CLOSE",
 	"DEFAULT_CHAT_FRAME",
 	"ITEM_QUALITY_COLORS",
 	"LE_BATTLE_PET_ALLY",
