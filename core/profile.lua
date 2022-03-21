@@ -177,12 +177,12 @@ end
 
 function E.Profiles:Recode(data, newFormat)
 	local version, profileType, curFormat, profileData = data:match("::lsui:(%d-):([%a\\-]-):(%a-):(.-)::")
-	if not version or profileType or curFormat or profileData then return end
-
-	local header = s_format("::lsui:%s:%s:%s:", version, profileType, newFormat)
+	if not (version or profileType or curFormat or profileData) then return end
 
 	profileData = self:Decode(profileData, curFormat)
 	if not profileData then return end
+
+	local header = s_format("::lsui:%s:%s:%s:", version, profileType, newFormat)
 
 	-- "Stringified" tables can have other issues aside from the data itself,
 	-- for instance, indentation or the order of subtables/elements, re-encoding
@@ -203,7 +203,7 @@ end
 
 function E.Profiles:Import(data, overwrite)
 	local version, profileType, importFormat, profileData = data:match("::lsui:(%d-):([%a\\-]-):(%a-):(.-)::")
-	if not version or profileType or importFormat or profileData then return end
+	if not (version or profileType or importFormat or profileData) then return end
 
 	profileData = self:Decode(profileData, importFormat)
 
