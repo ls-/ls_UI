@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## Version 90200.02
+
+- Added profile import and export! It's now possible to import/export colours, tags, global and private profiles. You
+  can import multiple strings at once;
+- Added options to control action buttons' and auras' height independently from their width;
+- Reworked the way the addon handles profile updates. Instead of updating the current profile at login, the addon will
+  now go through all existing profiles and will try to update them to the latest version. It's only guaranteed to work
+  with v`80020.03` profiles and newer, so if it's updating an even older profile, you'll see a warning in chat;
+- Increased the max number of boss frames to 8. It might be buggy, but you should blame Blizz for it;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Updated embeds.
+
+![Imgur](https://i.imgur.com/oitx7gg.gif)
+
 ## Version 90200.01
 
 - Added options to toggle and reverse cooldown swipes on UF buffs, player buffs and debuffs, action bars, and the aura
