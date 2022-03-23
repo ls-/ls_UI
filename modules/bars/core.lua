@@ -33,8 +33,8 @@ local function pauseFading()
 		if bar._config.visible and bar._config.fade.enabled then
 			bar:DisableFading()
 
-			if bar.UpdateButtons then
-				bar:UpdateButtons("SetAlpha", 1)
+			if bar.ForEach then
+				bar:ForEach("SetAlpha", 1)
 			end
 		end
 	end
@@ -49,14 +49,6 @@ local function resumeFading()
 end
 
 -- Updates
-local function bar_UpdateButtons(self, method, ...)
-	for _, button in next, self._buttons do
-		if button[method] then
-			button[method](button, ...)
-		end
-	end
-end
-
 local function bar_ForEach(self, method, ...)
 	for _, button in next, self._buttons do
 		if button[method] then
@@ -67,6 +59,7 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.click_on_down = C.db.profile.bars.click_on_down
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
 	self._config.lock = C.db.profile.bars.lock
@@ -104,7 +97,7 @@ local function bar_UpdateCooldownConfig(self)
 end
 
 local function bar_UpdateLayout(self)
-	E:UpdateBarLayout(self)
+	E.Layout:Update(self)
 end
 
 local function bar_UpdateVisibility(self)
@@ -124,18 +117,9 @@ function MODULE.AddBar(_, barID, bar)
 
 	if bar._buttons then
 		bar.ForEach = bar.ForEach or bar_ForEach
-		bar.UpdateButtons = bar.UpdateButtons or bar_UpdateButtons
 	end
 
 	E:SetUpFading(bar)
-end
-
-function MODULE.UpdateBars(_, method, ...)
-	for _, bar in next, bars do
-		if bar[method] then
-			bar[method](bar, ...)
-		end
-	end
 end
 
 function MODULE:ForEach(method, ...)
@@ -308,6 +292,6 @@ end
 
 function MODULE.Update()
 	if isInit then
-		MODULE:UpdateBars("Update")
+		MODULE:ForEach("Update")
 	end
 end

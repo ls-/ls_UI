@@ -8,13 +8,14 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+local NUM_BOSS_FRAMES = 8
 local holder
 
 function UF:CreateBossHolder()
 	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
 	holder:SetPoint(unpack(C.db.profile.units.boss.point[E.UI_LAYOUT]))
 	E.Movers:Create(holder)
-	holder._buttons = {}
+	holder._children = {}
 
 	return holder
 end
@@ -22,7 +23,7 @@ end
 function UF:UpdateBossHolder()
 	if not holder._config then
 		holder._config = {
-			num = 5,
+			num = NUM_BOSS_FRAMES,
 		}
 	end
 
@@ -33,7 +34,7 @@ function UF:UpdateBossHolder()
 	holder._config.x_growth = C.db.profile.units.boss.x_growth
 	holder._config.y_growth = C.db.profile.units.boss.y_growth
 
-	E:UpdateBarLayout(holder)
+	E.Layout:Update(holder)
 end
 
 local boss_proto = {}

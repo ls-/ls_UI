@@ -136,6 +136,7 @@ end
 
 local function bar_UpdateConfig(self)
 	self._config = E:CopyTable(PrC.db.profile.auratracker, self._config)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 end
 
 local function bar_UpdateCooldownConfig(self)
@@ -267,7 +268,7 @@ function MODULE.Update()
 		bar:UpdateCooldownConfig()
 		bar:UpdateAuraTypeIcons()
 		bar:UpdateCountFont()
-		E:UpdateBarLayout(bar)
+		E.Layout:Update(bar)
 		bar:UpdateLock()
 		bar:Update()
 	end

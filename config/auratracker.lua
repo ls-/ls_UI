@@ -80,7 +80,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 			if PrC.db.profile.auratracker[info[#info]] ~= value then
 				PrC.db.profile.auratracker[info[#info]] = value
 				AURATRACKER:GetTracker():UpdateConfig()
-				E:UpdateBarLayout(AURATRACKER:GetTracker())
+				E.Layout:Update(AURATRACKER:GetTracker())
 			end
 		end,
 		args = {
@@ -155,15 +155,36 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				min = 4, max = 24, step = 2,
 				disabled = isModuleDisabled,
 			},
-			size = {
+			width = {
 				order = 13,
 				type = "range",
-				name = L["SIZE"],
-				min = 24, max = 64, step = 1,
+				name = L["WIDTH"],
+				min = 16, max = 64, step = 1,
 				disabled = isModuleDisabled,
 			},
-			growth_dir = {
+			height = {
 				order = 14,
+				type = "range",
+				name = L["HEIGHT"],
+				desc = L["HEIGHT_OVERRIDE_DESC"],
+				min = 0, max = 64, step = 1,
+				softMin = 16,
+				disabled = isModuleDisabled,
+				set = function(info, value)
+					if PrC.db.profile.auratracker.height ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+					end
+
+					PrC.db.profile.auratracker.height = value
+
+					AURATRACKER:GetTracker():UpdateConfig()
+					E.Layout:Update(AURATRACKER:GetTracker())
+				end,
+			},
+			growth_dir = {
+				order = 15,
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
@@ -174,11 +195,11 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 				set = function(_, value)
 					PrC.db.profile.auratracker.x_growth, PrC.db.profile.auratracker.y_growth = s_split("_", value)
 					AURATRACKER:GetTracker():UpdateConfig()
-					E:UpdateBarLayout(AURATRACKER:GetTracker())
+					E.Layout:Update(AURATRACKER:GetTracker())
 				end,
 			},
 			drag_key = {
-				order = 15,
+				order = 16,
 				type = "select",
 				name = L["DRAG_KEY"],
 				values = DRAG_KEYS,
@@ -374,7 +395,7 @@ function CONFIG.CreateAuraTrackerPanel(_, order)
 								order = 2,
 								type = "toggle",
 								disabled = function()
-									return not PrC.db.profile.auratracker.cooldown.swipe.enabled
+									return not AURATRACKER:IsInit() or (AURATRACKER:IsInit() and not PrC.db.profile.auratracker.cooldown.swipe.enabled)
 								end,
 								name = L["REVERSE"],
 							},

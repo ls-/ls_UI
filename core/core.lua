@@ -102,6 +102,10 @@ do
 	function P:Call(func, ...)
 		return xpcall(func, errorHandler, ...)
 	end
+
+	function E:Print(...)
+		print("LS: |cff1a9fc0UI|r:", ...)
+	end
 end
 
 -------------
@@ -201,24 +205,6 @@ function E:CopyTable(src, dest, ignore)
 			if type(v) == "table" then
 				dest[k] = self:CopyTable(v, dest[k])
 			else
-				dest[k] = v
-			end
-		end
-	end
-
-	return dest
-end
-
-function E:UpdateTable(src, dest)
-	if type(dest) ~= "table" then
-		dest = {}
-	end
-
-	for k, v in next, src do
-		if type(v) == "table" then
-			dest[k] = self:UpdateTable(v, dest[k])
-		else
-			if dest[k] == nil then
 				dest[k] = v
 			end
 		end

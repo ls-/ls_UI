@@ -346,25 +346,46 @@ function CONFIG:CreateUnitFrameAurasPanel(order, unit)
 					end
 				end,
 			},
-			size_override = {
+			width = {
 				order = inc(1),
 				type = "range",
-				name = L["SIZE_OVERRIDE"],
-				desc = L["SIZE_OVERRIDE_DESC"],
+				name = L["WIDTH"],
+				desc = L["WIDTH_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
-				softMin = 24,
+				softMin = 16,
 				set = function(info, value)
-					if C.db.profile.units[unit].auras.size_override ~= value then
+					if C.db.profile.units[unit].auras.width ~= value then
 						if value < info.option.softMin then
 							value = info.option.min
 						end
-
-						C.db.profile.units[unit].auras.size_override = value
-
-						UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
-						UNITFRAMES:For(unit, "For", "Auras", "UpdateSize")
-						UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 					end
+
+					C.db.profile.units[unit].auras.width = value
+
+					UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
+					UNITFRAMES:For(unit, "For", "Auras", "UpdateSize")
+					UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
+				end,
+			},
+			height = {
+				order = inc(1),
+				type = "range",
+				name = L["HEIGHT"],
+				desc = L["HEIGHT_OVERRIDE_DESC"],
+				min = 0, max = 64, step = 1,
+				softMin = 16,
+				set = function(info, value)
+					if C.db.profile.units[unit].auras.height ~= value then
+						if value < info.option.softMin then
+							value = info.option.min
+						end
+					end
+
+					C.db.profile.units[unit].auras.height = value
+
+					UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
+					UNITFRAMES:For(unit, "For", "Auras", "UpdateSize")
+					UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 				end,
 			},
 			growth_dir = {

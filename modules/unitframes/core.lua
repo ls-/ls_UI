@@ -12,6 +12,7 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+local NUM_BOSS_FRAMES = 8
 local objects = {}
 local units = {}
 
@@ -125,6 +126,16 @@ function UF:UpdateTags()
 	end
 end
 
+local eventlessUnits = {
+	['boss6'] = true,
+	['boss7'] = true,
+	['boss8'] = true,
+}
+
+local function isEventlessUnit(unit)
+	return unit:match('%w+target') or eventlessUnits[unit]
+end
+
 function UF:Create(unit)
 	if not units[unit] then
 		local name = "LS" .. unit:gsub("^%l", s_upper):gsub("t(arget)", "T%1")
@@ -132,18 +143,30 @@ function UF:Create(unit)
 		if unit == "boss" then
 			local holder = self:CreateBossHolder()
 
-			for i = 1, 5 do
+			for i = 1, NUM_BOSS_FRAMES do
 				local object = oUF:Spawn(unit .. i, name .. i .. "Frame")
 				objects[unit .. i] = object
 
 				object._parent = holder
-				holder._buttons[i] = object
+				holder._children[i] = object
+
+				if isEventlessUnit(unit .. i) then
+					object.onUpdateFrequency = 0.2
+
+					oUF:HandleEventlessUnit(object)
+				end
 			end
 		else
 			local object = oUF:Spawn(unit, name .. "Frame")
 			object:SetPoint(unpack(C.db.profile.units[unit].point[E.UI_LAYOUT]))
 			E.Movers:Create(object)
 			objects[unit] = object
+
+			if isEventlessUnit(unit) then
+				object.onUpdateFrequency = 0.2
+
+				oUF:HandleEventlessUnit(object)
+			end
 		end
 
 		units[unit] = true
@@ -158,7 +181,7 @@ local allowedMethodsIfDisabled = {
 function UF:For(unit, method, ...)
 	if units[unit] and (C.db.profile.units[unit].enabled or allowedMethodsIfDisabled[method]) then
 		if unit == "boss"then
-			for i = 1, 5 do
+			for i = 1, NUM_BOSS_FRAMES do
 				if objects[unit .. i][method] then
 					objects[unit .. i][method](objects[unit .. i], ...)
 				end

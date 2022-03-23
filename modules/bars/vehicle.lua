@@ -38,7 +38,7 @@ local function bar_Update(self)
 	self:UpdateConfig()
 	self:UpdateFading()
 
-	self:SetSize(self._config.size + 4, self._config.size + 4)
+	self:SetSize(self._config.width + 4, self._config.height + 4)
 	E.Movers:Get(self):UpdateSize()
 end
 

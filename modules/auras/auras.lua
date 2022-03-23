@@ -133,6 +133,21 @@ local function button_OnLeave()
 	GameTooltip:Hide()
 end
 
+local function button_OnSizeChanged(self, width, height)
+	local icon = self.icon or self.Icon
+	if icon then
+		if width > height then
+			local offset = 0.875 * (1 - height / width) / 2
+			icon:SetTexCoord(0.0625, 0.9375, 0.0625 + offset, 0.9375 - offset)
+		elseif width < height then
+			local offset = 0.875 * (1 - width / height) / 2
+			icon:SetTexCoord(0.0625 + offset, 0.9375 - offset, 0.0625, 0.9375)
+		else
+			icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+		end
+	end
+end
+
 local function button_UpdateAuraTypeIcon(self)
 	local config = self._parent._config.type
 
@@ -155,6 +170,7 @@ local function handleButton(button, header)
 	button:HookScript("OnAttributeChanged", button_OnAttributeChanged)
 	button:SetScript("OnEnter", button_OnEnter)
 	button:SetScript("OnLeave", button_OnLeave)
+	button:SetScript("OnSizeChanged", button_OnSizeChanged)
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
 	button.Icon = E:SetIcon(button, [[Interface\ICONS\INV_Misc_QuestionMark]])
@@ -225,7 +241,7 @@ local function header_Update(self)
 		end
 
 		self:UpdateCooldownConfig()
-		E:UpdateBarLayout(self)
+		E.Layout:Update(self)
 	else
 		local config = self._config
 		local initialAnchor
@@ -248,25 +264,25 @@ local function header_Update(self)
 		self:ForEach("Hide")
 		self:ForEach("UpdateAuraTypeIcon")
 		self:ForEach("UpdateCountFont")
-		self:ForEach("SetSize", config.size, config.size)
+		self:ForEach("SetSize", config.width, config.height)
 		self:UpdateCooldownConfig()
 		self:SetAttribute("filter", self._filter)
 		self:SetAttribute("initialConfigFunction", ([[
 			self:SetAttribute("type2", "cancelaura")
-			self:SetWidth(%1$d)
-			self:SetHeight(%1$d)
-		]]):format(config.size))
+			self:SetWidth(%d)
+			self:SetHeight(%d)
+		]]):format(config.width, config.height))
 		self:SetAttribute("maxWraps", config.num_rows)
-		self:SetAttribute("minHeight", config.num_rows * config.size + (config.num_rows - 1) * config.spacing)
-		self:SetAttribute("minWidth", config.per_row * config.size + (config.per_row - 1) * config.spacing)
+		self:SetAttribute("minHeight", config.num_rows * config.width + (config.num_rows - 1) * config.spacing)
+		self:SetAttribute("minWidth", config.per_row * config.height + (config.per_row - 1) * config.spacing)
 		self:SetAttribute("point", initialAnchor)
 		self:SetAttribute("separateOwn", config.sep_own)
 		self:SetAttribute("sortDirection", config.sort_dir)
 		self:SetAttribute("sortMethod", config.sort_method)
 		self:SetAttribute("wrapAfter", config.per_row)
 		self:SetAttribute("wrapXOffset", 0)
-		self:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.size + config.spacing))
-		self:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.size + config.spacing))
+		self:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.height + config.spacing))
+		self:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.width + config.spacing))
 		self:SetAttribute("yOffset", 0)
 		self:Show()
 
@@ -290,6 +306,7 @@ end
 
 local function header_UpdateConfig(self)
 	self._config = E:CopyTable(C.db.profile.auras[self._filter], self._config)
+	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.cooldown = E:CopyTable(C.db.profile.auras.cooldown, self._config.cooldown)
 end
 

@@ -852,7 +852,7 @@ do
 	end
 
 	function bagSlots_UpdateLayout(self)
-		E:UpdateBarLayout(self)
+		E.Layout:Update(self)
 	end
 end
 
@@ -1252,8 +1252,8 @@ end
 
 local function bar_Update(self)
 	self:UpdateConfig()
-	self:UpdateButtons("Update")
-	self:UpdateButtons("UpdateEvents")
+	self:ForEach("Update")
+	self:ForEach("UpdateEvents")
 	self:UpdateButtonList()
 	self:UpdateFading()
 	self:UpdateLayout()

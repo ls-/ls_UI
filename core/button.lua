@@ -142,6 +142,21 @@ local function setCheckedTexture(button)
 	button:GetCheckedTexture():SetAllPoints()
 end
 
+local function onSizeChanged(self, width, height)
+	local icon = self.icon or self.Icon
+	if icon then
+		if width > height then
+			local offset = 0.875 * (1 - height / width) / 2
+			icon:SetTexCoord(0.0625, 0.9375, 0.0625 + offset, 0.9375 - offset)
+		elseif width < height then
+			local offset = 0.875 * (1 - width / height) / 2
+			icon:SetTexCoord(0.0625 + offset, 0.9375 - offset, 0.0625, 0.9375)
+		else
+			icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+		end
+	end
+end
+
 local function skinButton(button)
 	local bIcon = button.icon or button.Icon
 	local bFlash = button.Flash
@@ -161,6 +176,8 @@ local function skinButton(button)
 	fgParent:SetFrameLevel((bCD and bCD.GetFrameLevel) and bCD:GetFrameLevel() + 1 or button:GetFrameLevel() + 2)
 	fgParent:SetAllPoints()
 	button.FGParent = fgParent
+
+	button:HookScript("OnSizeChanged", onSizeChanged)
 
 	setIcon(bIcon)
 
@@ -521,6 +538,7 @@ end
 function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecure)
 	local button = CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
+	button:HookScript("OnSizeChanged", onSizeChanged)
 
 	button.Icon = setIcon(button)
 

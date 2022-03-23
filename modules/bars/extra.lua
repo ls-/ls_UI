@@ -51,8 +51,9 @@ function MODULE.CreateExtraButton()
 		bar.Update = function(self)
 			self:UpdateConfig()
 			self:UpdateVisibility()
-			self:UpdateButtons("UpdateHotKey")
-			self:UpdateButtons("UpdateHotKeyFont")
+			self:ForEach("UpdateHotKey")
+			self:ForEach("UpdateHotKeyFont")
+			self:UpdateArtwork()
 			self:UpdateCooldownConfig()
 			self:UpdateFading()
 
@@ -63,6 +64,16 @@ function MODULE.CreateExtraButton()
 			local width, height = ExtraActionButton1:GetSize()
 			self:SetSize((width > 0 and width or 52) + 4, (height > 0 and height or 52) + 4)
 			E.Movers:Get(self):UpdateSize()
+		end
+
+		bar.UpdateArtwork = function(self)
+			if self._config.artwork then
+				ExtraActionButton1.style:Show()
+				ExtraActionButton1.style:SetParent(ExtraActionButton1)
+			else
+				ExtraActionButton1.style:Hide()
+				ExtraActionButton1.style:SetParent(E.HIDDEN_PARENT)
+			end
 		end
 
 		ExtraActionBarFrame.ignoreFramePositionManager = true
@@ -89,8 +100,6 @@ function MODULE.CreateExtraButton()
 		ExtraActionButton1._command = "EXTRAACTIONBUTTON1"
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
-
-		E:ForceHide(ExtraActionButton1.style)
 
 		ExtraActionButton1.UpdateHotKey = button_UpdateHotKey
 		ExtraActionButton1.UpdateHotKeyFont = button_UpdateHotKeyFont
