@@ -18,9 +18,9 @@ function P:Modernize(data, name, key)
 
 	if data.version < 8020003 then
 		if key == "profile" then
-			E:Print(L["PROFILE_GLOBAL_UPDATE_WARNING"]:format(name, data.version))
+			E:Print(L["PROFILE_GLOBAL_UPDATE_WARNING"]:format(name, data.version / 100))
 		elseif key == "private" then
-			E:Print(L["PROFILE_PRIVATE_UPDATE_WARNING"]:format(name, data.version))
+			E:Print(L["PROFILE_PRIVATE_UPDATE_WARNING"]:format(name, data.version / 100))
 		end
 
 		data.version = 8020003
