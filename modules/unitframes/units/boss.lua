@@ -8,6 +8,7 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+local NUM_BOSS_FRAMES = 8
 local holder
 
 function UF:CreateBossHolder()
@@ -22,7 +23,7 @@ end
 function UF:UpdateBossHolder()
 	if not holder._config then
 		holder._config = {
-			num = 5,
+			num = NUM_BOSS_FRAMES,
 		}
 	end
 
