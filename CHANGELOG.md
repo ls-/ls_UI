@@ -5,6 +5,7 @@
 - Added profile import and export! It's now possible to import/export colours, tags, global and private profiles. You
   can import multiple strings at once;
 - Added options to control action buttons' and auras' height independently from their width;
+- Added options to toggle zone and extra buttons' artwork; 
 - Reworked the way the addon handles profile updates. Instead of updating the current profile at login, the addon will
   now go through all existing profiles and will try to update them to the latest version. It's only guaranteed to work
   with v`80020.03` profiles and newer, so if it's updating an even older profile, you'll see a warning in chat;
