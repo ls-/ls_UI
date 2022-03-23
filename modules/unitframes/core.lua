@@ -126,6 +126,16 @@ function UF:UpdateTags()
 	end
 end
 
+local eventlessUnits = {
+	['boss6'] = true,
+	['boss7'] = true,
+	['boss8'] = true,
+}
+
+local function isEventlessUnit(unit)
+	return unit:match('%w+target') or eventlessUnits[unit]
+end
+
 function UF:Create(unit)
 	if not units[unit] then
 		local name = "LS" .. unit:gsub("^%l", s_upper):gsub("t(arget)", "T%1")
@@ -139,12 +149,24 @@ function UF:Create(unit)
 
 				object._parent = holder
 				holder._children[i] = object
+
+				if isEventlessUnit(unit .. i) then
+					object.onUpdateFrequency = 0.2
+
+					oUF:HandleEventlessUnit(object)
+				end
 			end
 		else
 			local object = oUF:Spawn(unit, name .. "Frame")
 			object:SetPoint(unpack(C.db.profile.units[unit].point[E.UI_LAYOUT]))
 			E.Movers:Create(object)
 			objects[unit] = object
+
+			if isEventlessUnit(unit) then
+				object.onUpdateFrequency = 0.2
+
+				oUF:HandleEventlessUnit(object)
+			end
 		end
 
 		units[unit] = true
