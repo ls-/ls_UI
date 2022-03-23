@@ -7,66 +7,6 @@ local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
 -- Mine
-local function cleanUpStep1()
-	-- -> 90105.04
-	if C.db.profile.version and C.db.profile.version < 9010504 then
-		if C.db.profile.units.ls then
-			for _, unit in next, {"player", "pet"} do
-				if C.db.profile.units.ls[unit] then
-					if C.db.profile.units.ls[unit].point then
-						C.db.profile.units.ls[unit].point.ls = nil
-						C.db.profile.units.ls[unit].point.traditional = nil
-					end
-
-					E:CopyTable(C.db.profile.units.ls[unit], C.db.profile.units.round[unit])
-					C.db.profile.units.ls[unit] = nil
-				end
-			end
-
-			C.db.profile.units.ls = nil
-		end
-
-		if C.db.profile.units.traditional then
-			for _, unit in next, {"player", "pet"} do
-				if C.db.profile.units.traditional[unit] then
-					if C.db.profile.units.traditional[unit].point then
-						C.db.profile.units.traditional[unit].point.ls = nil
-						C.db.profile.units.traditional[unit].point.traditional = nil
-					end
-
-					E:CopyTable(C.db.profile.units.traditional[unit], C.db.profile.units.rect[unit])
-					C.db.profile.units.traditional[unit] = nil
-				end
-			end
-
-			C.db.profile.units.traditional = nil
-		end
-
-		if C.db.profile.movers.ls then
-			E:CopyTable(C.db.profile.movers.ls, C.db.profile.movers.round)
-			C.db.profile.movers.ls = nil
-		end
-
-		if C.db.profile.movers.traditional then
-			E:CopyTable(C.db.profile.movers.traditional, C.db.profile.movers.rect)
-			C.db.profile.movers.traditional = nil
-		end
-
-		if C.db.profile.minimap.ls then
-			E:CopyTable(C.db.profile.minimap.ls, C.db.profile.minimap.round)
-			C.db.profile.minimap.ls = nil
-		end
-
-		if C.db.profile.minimap.traditional then
-			E:CopyTable(C.db.profile.minimap.traditional, C.db.profile.minimap.rect)
-			C.db.profile.minimap.traditional = nil
-		end
-	end
-end
-
-local function cleanUpStep2()
-end
-
 local function addRefs()
 	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
 	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
@@ -110,9 +50,7 @@ local function removeRefs()
 end
 
 local function updateAll()
-	cleanUpStep1()
 	addRefs()
-	cleanUpStep2()
 
 	P:UpdateModules()
 	E.Movers:UpdateAll()
@@ -121,38 +59,39 @@ end
 E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if arg1 ~= addonName then return end
 
-	-- -> 90105.04
-	if LS_UI_GLOBAL_CONFIG and LS_UI_GLOBAL_CONFIG.char then
-		if not LS_UI_PRIVATE_CONFIG then
-			LS_UI_PRIVATE_CONFIG = {
-				profileKeys = {},
-				profiles = {},
-			}
-		end
-
-		for _, char in next, LS_UI_GLOBAL_CONFIG.char do
-			if char.layout == "ls" then
-				char.layout = "round"
-			elseif char.layout == "traditional" then
-				char.layout = "rect"
+	if LS_UI_GLOBAL_CONFIG then
+		--> 90105.04
+		if LS_UI_GLOBAL_CONFIG.char then
+			print("=== |cffffd200 MODERNISING C:", "char", "!|r ===")
+			if not LS_UI_PRIVATE_CONFIG then
+				LS_UI_PRIVATE_CONFIG = {
+					profileKeys = {},
+					profiles = {},
+				}
 			end
 
-			if char.minimap then
-				if char.minimap.ls then
-					char.minimap.round = E:CopyTable(char.minimap.ls, char.minimap.round)
-					char.minimap.ls = nil
-				end
+			E:CopyTable(LS_UI_GLOBAL_CONFIG.char, LS_UI_PRIVATE_CONFIG.profiles)
 
-				if char.minimap.traditional then
-					char.minimap.rect = E:CopyTable(char.minimap.traditional, char.minimap.rect)
-					char.minimap.traditional = nil
-				end
-			end
+			LS_UI_GLOBAL_CONFIG.char = nil
 		end
 
-		E:CopyTable(LS_UI_GLOBAL_CONFIG.char, LS_UI_PRIVATE_CONFIG.profiles)
+		if LS_UI_GLOBAL_CONFIG.global then
+			P:Modernize(LS_UI_GLOBAL_CONFIG.global, "global")
+		end
 
-		LS_UI_GLOBAL_CONFIG.char = nil
+		if LS_UI_GLOBAL_CONFIG.profiles then
+			for profile, data in next, LS_UI_GLOBAL_CONFIG.profiles do
+				P:Modernize(data, profile, "profile")
+			end
+		end
+	end
+
+	if LS_UI_PRIVATE_CONFIG then
+		if LS_UI_PRIVATE_CONFIG.profiles then
+			for profile, data in next, LS_UI_PRIVATE_CONFIG.profiles do
+				P:Modernize(data, profile, "private")
+			end
+		end
 	end
 
 	C.db = LibStub("AceDB-3.0"):New("LS_UI_GLOBAL_CONFIG", D)
@@ -166,9 +105,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	D.profile.units.player = D.profile.units[E.UI_LAYOUT].player
 	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
 
-	cleanUpStep1()
 	addRefs()
-	cleanUpStep2()
 
 	if AdiButtonAuras and AdiButtonAuras.RegisterLAB then
 		AdiButtonAuras:RegisterLAB("LibActionButton-1.0-ls")

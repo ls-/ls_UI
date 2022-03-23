@@ -102,6 +102,10 @@ do
 	function P:Call(func, ...)
 		return xpcall(func, errorHandler, ...)
 	end
+
+	function E:Print(...)
+		print("LS: |cff1a9fc0UI|r:", ...)
+	end
 end
 
 -------------

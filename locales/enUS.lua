@@ -532,3 +532,6 @@ L["WIDTH_OVERRIDE_DESC"] = "If set to 0, the element's width will be calculated 
 L["HEIGHT_OVERRIDE_DESC"] = "If set to 0, the element's height will be calculated automatically."
 
 L["SHOW_ARTWORK"] = "Show Artwork"
+
+L["PROFILE_GLOBAL_UPDATE_WARNING"] = "Found really old data in the |cffF6C442global|r profile |cffE6762F%s|r v|cff888987%s|r. Updating what's possible, but resetting this profile is recommended."
+L["PROFILE_PRIVATE_UPDATE_WARNING"] = "Found really old data in the |cffF6C442private|r profile |cffE6762F%s|r v|cff888987%s|r. Updating what's possible, but resetting this profile is recommended."
