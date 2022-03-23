@@ -12,6 +12,7 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+local NUM_BOSS_FRAMES = 8
 local objects = {}
 local units = {}
 
@@ -132,7 +133,7 @@ function UF:Create(unit)
 		if unit == "boss" then
 			local holder = self:CreateBossHolder()
 
-			for i = 1, 5 do
+			for i = 1, NUM_BOSS_FRAMES do
 				local object = oUF:Spawn(unit .. i, name .. i .. "Frame")
 				objects[unit .. i] = object
 
@@ -158,7 +159,7 @@ local allowedMethodsIfDisabled = {
 function UF:For(unit, method, ...)
 	if units[unit] and (C.db.profile.units[unit].enabled or allowedMethodsIfDisabled[method]) then
 		if unit == "boss"then
-			for i = 1, 5 do
+			for i = 1, NUM_BOSS_FRAMES do
 				if objects[unit .. i][method] then
 					objects[unit .. i][method](objects[unit .. i], ...)
 				end
