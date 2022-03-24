@@ -1,9 +1,12 @@
 # CHANGELOG
 
+## Version 90200.04
+
+- Fixed an issue where unit frames wouldn't update correctly when entering/leaving vehicles. 
+
 ## Version 90200.03
 
 - Updated profile export to export both global and private profiles together since they usually are interconnected.
-
  
 ## Version 90200.02
 
