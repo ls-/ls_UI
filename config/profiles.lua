@@ -32,15 +32,13 @@ local PROFILES = {
 local PROFILE_TYPES = {
 	["global-colors"] = PROFILE_TYPE_FORMAT:format(L["COLORS"], "global-colors"),
 	["global-tags"] = PROFILE_TYPE_FORMAT:format(L["TAGS"], "global-tags"),
-	["profile"] = PROFILE_TYPE_FORMAT:format(L["PROFILE_GLOBAL"], "profile"),
-	["private"] = PROFILE_TYPE_FORMAT:format(L["PROFILE_PRIVATE"], "private"),
+	["profile-private"] = PROFILE_TYPE_FORMAT:format(L["PROFILE_GLOBAL"], "profile") .. " + " .. PROFILE_TYPE_FORMAT:format(L["PROFILE_PRIVATE"], "private"),
 }
 
 local PROFILE_TYPES_ORDER = {
 	"global-colors",
 	"global-tags",
-	"profile",
-	"private",
+	"profile-private",
 }
 
 local EXPORT_FORMATS = {
@@ -108,7 +106,8 @@ local function openExportImportFrame(info)
 		profileTypeDropdown:SetMultiselect(false)
 		profileTypeDropdown:SetLabel(L["EXPORT_TARGET"])
 		profileTypeDropdown:SetList(PROFILE_TYPES, PROFILE_TYPES_ORDER)
-		profileTypeDropdown:SetValue("profile")
+		profileTypeDropdown:SetValue("profile-private")
+		profileTypeDropdown:SetWidth(profileTypeDropdown.pullout.items[3].text:GetStringWidth() + 40)
 		frame:AddChild(profileTypeDropdown)
 
 		local exportFormatDropdown = AceGUI:Create("Dropdown")
@@ -123,7 +122,12 @@ local function openExportImportFrame(info)
 		exportButton:SetFullWidth(true)
 		exportButton:SetCallback("OnClick", function()
 			local profileType, exportFormat = profileTypeDropdown:GetValue(), exportFormatDropdown:GetValue()
-			data = E.Profiles:Export(profileType, exportFormat)
+			if profileType == "profile-private" then
+				data = E.Profiles:Export("profile", exportFormat)
+				data = data .. "\n" .. E.Profiles:Export("private", exportFormat)
+			else
+				data = E.Profiles:Export(profileType, exportFormat)
+			end
 
 			exportImportBox:SetText(data)
 			exportImportBox:HighlightText()
@@ -199,7 +203,7 @@ local function openExportImportFrame(info)
 
 				frame:SetStatusText(L["DONE"])
 
-				if shouldReload and not overwrite then
+				if shouldReload then
 					closeButton:SetText(L["RELOAD_UI"])
 					closeButton:SetScript("OnClick", ReloadUI)
 				end
