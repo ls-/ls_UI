@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90200.03
+
+- Updated profile export to export both global and private profiles together since they usually are interconnected.
+
+ 
 ## Version 90200.02
 
 - Added profile import and export! It's now possible to import/export colours, tags, global and private profiles. You
