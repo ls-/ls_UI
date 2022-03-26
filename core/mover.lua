@@ -709,7 +709,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		isSimple = isSimple,
 		offsetX = offsetX or 0,
 		offsetY = offsetY or 0,
-		hive = false,
+		-- hive = nil,
 		drones = {},
 	}
 
