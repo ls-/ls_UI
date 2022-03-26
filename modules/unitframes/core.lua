@@ -127,13 +127,13 @@ function UF:UpdateTags()
 end
 
 local eventlessUnits = {
-	['boss6'] = true,
-	['boss7'] = true,
-	['boss8'] = true,
+	["boss6"] = true,
+	["boss7"] = true,
+	["boss8"] = true,
 }
 
 local function isEventlessUnit(unit)
-	return unit:match('%w+target') or eventlessUnits[unit]
+	return unit:match("%w+target") or eventlessUnits[unit]
 end
 
 function UF:Create(unit)
