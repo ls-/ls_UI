@@ -330,7 +330,6 @@ end
 
 local function getPoint(self)
 	local p, anchor, rP, x, y = self:GetPoint()
-
 	if not x then
 		return p, anchor, rP, x, y
 	else
@@ -340,35 +339,63 @@ end
 
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
-	local p, x, y
+	local parent = self:GetHive() and self:GetHive():GetObject() or UIParent
+	local p, rP, x, y
 
 	if moverCenterX and moverCenterY then
-		local screenWidth = UIParent:GetRight()
-		local screenHeight = UIParent:GetTop()
-		local screenCenterX, screenCenterY = UIParent:GetCenter()
-		local screenLeft = screenWidth / 3
-		local screenRight = screenWidth * 2 / 3
+		local parentWidth = parent:GetWidth()
+		local parentCenterX, parentCenterY = parent:GetCenter()
+		local parentLeftX = parentCenterX - parentWidth / 3
+		local parentRightX = parentCenterX + parentWidth / 3
 
-		if moverCenterY >= screenCenterY then
-			p = "TOP"
-			y = self:GetTop() - screenHeight
+		if moverCenterY >= parentCenterY then
+			if self:GetBottom() >= parent:GetTop() then
+				p = "BOTTOM"
+				rP = "TOP"
+				y = self:GetBottom() - parent:GetTop()
+			else
+				p = "TOP"
+				rP = "TOP"
+				y = self:GetTop() - parent:GetTop()
+			end
 		else
-			p = "BOTTOM"
-			y = self:GetBottom()
+			if self:GetTop() <= parent:GetBottom() then
+				p = "TOP"
+				rP = "BOTTOM"
+				y = self:GetTop() - parent:GetBottom()
+			else
+				p = "BOTTOM"
+				rP = "BOTTOM"
+				y = self:GetBottom() - parent:GetBottom()
+			end
 		end
 
-		if moverCenterX >= screenRight then
-			p = p .. "RIGHT"
-			x = self:GetRight() - screenWidth
-		elseif moverCenterX <= screenLeft then
-			p = p .. "LEFT"
-			x = self:GetLeft()
+		if moverCenterX >= parentRightX then
+			if self:GetLeft() >= parent:GetRight() then
+				p = p .. "LEFT"
+				rP = rP .. "RIGHT"
+				x = self:GetLeft() - parent:GetRight()
+			else
+				p = p .. "RIGHT"
+				rP = rP .. "RIGHT"
+				x = self:GetRight() - parent:GetRight()
+			end
+		elseif moverCenterX <= parentLeftX then
+			if self:GetRight() <= parent:GetLeft() then
+				p = p .. "RIGHT"
+				rP = rP .. "LEFT"
+				x = self:GetRight() - parent:GetLeft()
+			else
+				p = p .. "LEFT"
+				rP = rP .. "LEFT"
+				x = self:GetLeft() - parent:GetLeft()
+			end
 		else
-			x = moverCenterX - screenCenterX
+			x = moverCenterX - parentCenterX
 		end
 	end
 
-	return p, "UIParent", p, E:Round(x), E:Round(y)
+	return p, parent:GetName(), rP, E:Round(x), E:Round(y)
 end
 
 local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
@@ -443,8 +470,8 @@ local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 end
 
 local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
-	local mover = E.Movers:Get(self)
-	if not shouldIgnore and mover then
+	local mover = self:GetMover()
+	if mover and not shouldIgnore then
 		self:ClearAllPoints()
 		self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
 	end
@@ -586,6 +613,36 @@ function mover_proto:WasMoved()
 	return not E:IsEqualTable(defaultPoints[self:GetName()], currentPoints[self:GetName()])
 end
 
+function mover_proto:GetDrones()
+	return self.drones
+end
+
+function mover_proto:AddDrone(drone)
+	drone.hive = self
+	self.drones[drone] = true
+end
+
+function mover_proto:RemoveDrone(drone)
+	drone.hive = nil
+	self.drones[drone] = nil
+end
+
+function mover_proto:GetHive()
+	return self.hive
+end
+
+function mover_proto:AddToHive(hive)
+	self:RemoveFromHive()
+	hive:AddDrone(self)
+end
+
+function mover_proto:RemoveFromHive()
+	local hive = self:GetHive()
+	if hive then
+		hive:RemoveDrone(self)
+	end
+end
+
 function mover_proto:Enable()
 	local name = self:GetName()
 
@@ -618,6 +675,23 @@ function mover_proto:UpdateSize(width, height)
 	self:SetHeight(height or (self.object:GetHeight() + self.offsetY * 2))
 end
 
+function mover_proto:GetObject()
+	return self.object
+end
+
+local object_proto = {}
+
+function object_proto:GetMover(inclDisabled)
+	local name = self:GetName()
+	name = name .. "Mover"
+
+	if inclDisabled and disabledMovers[name] then
+		return disabledMovers[name], true
+	end
+
+	return enabledMovers[name], false
+end
+
 E.Movers = {}
 
 function E.Movers:Create(object, isSimple, offsetX, offsetY)
@@ -627,8 +701,17 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
 
+	Mixin(object, object_proto)
+
 	local name = objectName .. "Mover"
-	local info = {object = object, isSimple = isSimple, offsetX = offsetX or 0, offsetY = offsetY or 0}
+	local info = {
+		object = object,
+		isSimple = isSimple,
+		offsetX = offsetX or 0,
+		offsetY = offsetY or 0,
+		hive = false,
+		drones = {},
+	}
 
 	local mover = Mixin(CreateFrame("Button", name, UIParent), mover_proto, info)
 	mover:SetFrameLevel(object:GetFrameLevel() + 4)
@@ -682,7 +765,20 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		E:CopyTable(C.db.profile.movers[E.UI_LAYOUT][name], currentPoints[name])
 	end
 
-	mover:UpdatePosition()
+	local parentName = currentPoints[name][2]
+	if parentName and parentName ~= "UIParent" then
+		local hive = enabledMovers[parentName .. "Mover"]
+		if hive then
+			-- print(mover:GetDebugName(), "|cff00ff00==>|r", parentName)
+			mover:AddToHive(hive)
+			mover:UpdatePosition()
+		else
+			-- print(mover:GetDebugName(), "|cffff0000==>|r", parentName)
+		end
+	else
+		-- print(mover:GetDebugName(), "|cffffd200==>|r", parentName)
+		mover:UpdatePosition()
+	end
 
 	enabledMovers[name] = mover
 
