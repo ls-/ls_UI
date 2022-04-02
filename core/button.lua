@@ -143,16 +143,20 @@ local function setCheckedTexture(button)
 end
 
 local function onSizeChanged(self, width, height)
-	local icon = self.icon or self.Icon
-	if icon then
-		if width > height then
-			local offset = 0.875 * (1 - height / width) / 2
-			icon:SetTexCoord(0.0625, 0.9375, 0.0625 + offset, 0.9375 - offset)
-		elseif width < height then
-			local offset = 0.875 * (1 - width / height) / 2
-			icon:SetTexCoord(0.0625 + offset, 0.9375 - offset, 0.0625, 0.9375)
-		else
-			icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+	if self.OnSizeChanged then
+		self:OnSizeChanged(width, height)
+	else
+		local icon = self.icon or self.Icon
+		if icon then
+			if width > height then
+				local offset = 0.875 * (1 - height / width) / 2
+				icon:SetTexCoord(0.0625, 0.9375, 0.0625 + offset, 0.9375 - offset)
+			elseif width < height then
+				local offset = 0.875 * (1 - width / height) / 2
+				icon:SetTexCoord(0.0625 + offset, 0.9375 - offset, 0.0625, 0.9375)
+			else
+				icon:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+			end
 		end
 	end
 end

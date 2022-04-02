@@ -12,7 +12,21 @@ local _G = getfenv(0)
 -- Mine
 local isInit = false
 
-local function button_onEvent(self)
+local button_proto = {}
+
+function button_proto:OnSizeChanged(width, height)
+	if width > height then
+		local offset = 0.625 * (1 - height / width) / 2
+		self.Icon:SetTexCoord(0.1875, 0.8125, 0.1875 + offset, 0.8125 - offset)
+	elseif width < height then
+		local offset = 0.625 * (1 - width / height) / 2
+		self.Icon:SetTexCoord(0.1875 + offset, 0.8125 - offset, 0.1875, 0.8125)
+	else
+		self.Icon:SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125)
+	end
+end
+
+function button_proto:OnEvent()
 	if UnitOnTaxi("player") or CanExitVehicle() then
 		self:Show()
 		self.Icon:SetDesaturated(false)
@@ -22,7 +36,7 @@ local function button_onEvent(self)
 	end
 end
 
-local function button_onClick(self)
+function button_proto:OnClick()
 	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 
@@ -53,11 +67,11 @@ function MODULE.CreateVehicleExitButton()
 		bar.Update = bar_Update
 		bar.UpdateCooldownConfig = nil
 
-		local button = E:CreateButton(bar)
+		local button = Mixin(E:CreateButton(bar), button_proto)
 		button:SetPoint("TOPLEFT", 2, -2)
 		button:SetPoint("BOTTOMRIGHT", -2, 2)
-		button:SetScript("OnClick", button_onClick)
-		button:SetScript("OnEvent", button_onEvent)
+		button:SetScript("OnClick", button.OnClick)
+		button:SetScript("OnEvent", button.OnEvent)
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
 		button:RegisterEvent("UNIT_EXITED_VEHICLE")
 		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
@@ -66,11 +80,11 @@ function MODULE.CreateVehicleExitButton()
 		bar._buttons[1] = button
 
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
-		button.Icon:SetTexCoord(12 / 64, 52 / 64, 12 / 64, 52 / 64)
+		button.Icon:SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125)
 
 		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.red))
 
-		button_onEvent(button)
+		button:OnEvent()
 
 		local point = C.db.profile.bars.vehicle.point[E.UI_LAYOUT]
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
