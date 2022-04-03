@@ -5,7 +5,12 @@ local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
 local _G = getfenv(0)
 local assert = _G.assert
 local hooksecurefunc = _G.hooksecurefunc
+local m_atan2 = _G.math.atan2
+local m_cos = _G.math.cos
 local m_floor = _G.math.floor
+local m_rad = _G.math.rad
+local m_sin = _G.math.sin
+local m_sqrt = _G.math.sqrt
 local next = _G.next
 local s_format = _G.string.format
 local t_insert = _G.table.insert
@@ -17,6 +22,11 @@ local unpack = _G.unpack
 
 -- Mine
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+local moverParent = CreateFrame("Frame", nil, UIParent)
+moverParent:SetFrameStrata("HIGH")
+moverParent:SetFrameLevel(1000)
+moverParent:SetSize(0.0001, 0.0001)
 
 local TOOLTIP_ANCHORS = {
 	["BOTTOM"] = {"ANCHOR_TOP", 0, 4},
@@ -33,17 +43,17 @@ local linePool = {}
 local activeLines = {}
 local gridSize = 32
 
-local grid = CreateFrame("Frame", nil, UIParent)
-grid:SetFrameStrata("BACKGROUND")
-grid:Hide()
+local gridParent = CreateFrame("Frame", nil, UIParent)
+gridParent:SetFrameStrata("BACKGROUND")
+gridParent:Hide()
 
-local gridBG = grid:CreateTexture(nil, "BACKGROUND", nil, -7)
-gridBG:SetAllPoints()
+local gridBG = gridParent:CreateTexture(nil, "BACKGROUND", nil, -7)
+gridBG:SetAllPoints(UIParent)
 gridBG:SetColorTexture(0, 0, 0, 0.33)
 
 local function getGridLine()
 	if not next(linePool) then
-		t_insert(linePool, grid:CreateTexture())
+		t_insert(linePool, gridParent:CreateTexture())
 	end
 
 	local line = t_remove(linePool, 1)
@@ -66,7 +76,7 @@ local function releaseGridLines()
 end
 
 local function hideGrid()
-	grid:Hide()
+	gridParent:Hide()
 end
 
 local function drawGrid()
@@ -75,33 +85,33 @@ local function drawGrid()
 	local screenWidth, screenHeight = UIParent:GetRight(), UIParent:GetTop()
 	local screenCenterX, screenCenterY = UIParent:GetCenter()
 
-	grid:SetSize(screenWidth, screenHeight)
-	grid:SetPoint("CENTER")
-	grid:Show()
+	gridParent:SetSize(screenWidth, screenHeight)
+	gridParent:SetPoint("CENTER")
+	gridParent:Show()
 
 	local yAxis = getGridLine()
 	yAxis:SetDrawLayer("BACKGROUND", 1)
 	yAxis:SetColorTexture(0.9, 0.1, 0.1)
-	yAxis:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1, 0)
-	yAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1, 0)
+	yAxis:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenCenterX - 1, 0)
+	yAxis:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenCenterX + 1, 0)
 
 	local xAxis = getGridLine()
 	xAxis:SetDrawLayer("BACKGROUND", 1)
 	xAxis:SetColorTexture(0.9, 0.1, 0.1)
-	xAxis:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1)
-	xAxis:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1)
+	xAxis:SetPoint("TOPLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY + 1)
+	xAxis:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY - 1)
 
 	local l = getGridLine()
 	l:SetDrawLayer("BACKGROUND", 2)
 	l:SetColorTexture(0.8, 0.8, 0.1)
-	l:SetPoint("TOPLEFT", grid, "TOPLEFT", screenWidth / 3 - 1, 0)
-	l:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
+	l:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenWidth / 3 - 1, 0)
+	l:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
 
 	local r = getGridLine()
 	r:SetDrawLayer("BACKGROUND", 2)
 	r:SetColorTexture(0.8, 0.8, 0.1)
-	r:SetPoint("TOPRIGHT", grid, "TOPRIGHT", - screenWidth / 3 + 1, 0)
-	r:SetPoint("BOTTOMLEFT", grid, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
+	r:SetPoint("TOPRIGHT", gridParent, "TOPRIGHT", - screenWidth / 3 + 1, 0)
+	r:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
 
 	-- horiz lines
 	local tex
@@ -109,14 +119,14 @@ local function drawGrid()
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
 		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPLEFT", grid, "BOTTOMLEFT", 0, screenCenterY + 1 + gridSize * i)
-		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY - 1 + gridSize * i)
+		tex:SetPoint("TOPLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY + 1 + gridSize * i)
+		tex:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY - 1 + gridSize * i)
 
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
 		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", 0, screenCenterY - 1 - gridSize * i)
-		tex:SetPoint("TOPRIGHT", grid, "BOTTOMRIGHT", 0, screenCenterY + 1 - gridSize * i)
+		tex:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY - 1 - gridSize * i)
+		tex:SetPoint("TOPRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY + 1 - gridSize * i)
 	end
 
 	-- vert lines
@@ -124,14 +134,14 @@ local function drawGrid()
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
 		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPLEFT", grid, "TOPLEFT", screenCenterX - 1 - gridSize * i, 0)
-		tex:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", screenCenterX + 1 - gridSize * i, 0)
+		tex:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenCenterX - 1 - gridSize * i, 0)
+		tex:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenCenterX + 1 - gridSize * i, 0)
 
 		tex = getGridLine()
 		tex:SetDrawLayer("BACKGROUND", 0)
 		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPRIGHT", grid, "TOPLEFT", screenCenterX + 1 + gridSize * i, 0)
-		tex:SetPoint("BOTTOMLEFT", grid, "BOTTOMLEFT", screenCenterX - 1 + gridSize * i, 0)
+		tex:SetPoint("TOPRIGHT", gridParent, "TOPLEFT", screenCenterX + 1 + gridSize * i, 0)
+		tex:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMLEFT", screenCenterX - 1 + gridSize * i, 0)
 	end
 end
 
@@ -237,6 +247,126 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 	end
 end)
 controller:Hide()
+
+local relationLineSegments = {}
+local relationLines = {}
+
+local function acquireRelationLineSegment()
+	if not next(relationLineSegments) then
+		t_insert(relationLineSegments, moverParent:CreateTexture(nil, "OVERLAY"))
+	end
+
+	local segment = t_remove(relationLineSegments, 1)
+	-- segment:SetAtlas("minimap-deadarrow")
+	segment:SetAtlas("minimap-questarrow")
+	-- segment:SetAtlas("minimap-vignettearrow")
+	segment:SetSize(16, 16)
+	segment:ClearAllPoints()
+	segment:Show()
+
+	return segment
+end
+
+local function releaseRelationLineSegment(segment)
+	segment:ClearAllPoints()
+	segment:Hide()
+
+	t_insert(relationLineSegments, segment)
+end
+
+local function destroyRelationLine(hive, drone)
+	if not relationLines[hive] then return end
+	if not relationLines[hive][drone] then return end
+
+	for _, segment in next, relationLines[hive][drone] do
+		releaseRelationLineSegment(segment)
+	end
+
+	t_wipe(relationLines[hive][drone])
+end
+
+local function destroyRelationLines()
+	for _, mover in next, enabledMovers do
+		for drone in next, mover:GetDrones() do
+			if drone:IsEnabled() then
+				destroyRelationLine(mover, drone)
+			end
+		end
+	end
+end
+
+local function lerp(v1, v2, perc)
+	return v1 + (v2 - v1) * perc
+end
+
+local function drawRelationLine(hive, drone)
+	destroyRelationLine(hive, drone)
+
+	local hiveX, hiveY = hive:GetCenter()
+	hiveX, hiveY = hiveX or 0, hiveY or 0
+
+	local droneX, droneY = drone:GetCenter()
+	droneX, droneY = droneX or 0, droneY or 0
+
+	local dX = droneX - hiveX
+	local dY = droneY - hiveY
+	local distance = m_sqrt(dX ^ 2 + dY ^ 2)
+	local angle = m_atan2(dY, dX)
+	local rotation = angle + m_rad(90)
+	local space = lerp(8, 48, distance / 1024)
+	local padding = space / 4
+	local num = m_floor(distance / space)
+
+	if not relationLines[hive] then
+		relationLines[hive] = {
+			[drone] = {}
+		}
+	elseif not relationLines[hive][drone] then
+		relationLines[hive][drone] = {}
+	end
+
+	local relationLine = relationLines[hive][drone]
+
+	for i = 1, num  do
+		local x = (i * space - padding) * m_cos(angle)
+		local y = (i * space - padding) * m_sin(angle)
+
+		relationLine[i] = acquireRelationLineSegment()
+		relationLine[i]:SetPoint("CENTER", hive, "CENTER", x, y)
+		relationLine[i]:SetRotation(rotation)
+	end
+end
+
+local function drawRelationLines()
+	for _, mover in next, enabledMovers do
+		for drone in next, mover:GetDrones() do
+			if drone:IsEnabled() then
+				drawRelationLine(mover, drone)
+			end
+		end
+	end
+end
+
+local lasso
+do
+	lasso = CreateFrame("Frame", nil, moverParent)
+	lasso:SetSize(16, 16)
+	lasso:SetScript("OnUpdate", function(self)
+		local x, y = GetCursorPosition()
+		local scale = UIParent:GetEffectiveScale()
+		self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x / scale - 8, y / scale - 8)
+
+		if self.mover then
+			drawRelationLine(self, self.mover)
+		end
+	end)
+	lasso:Hide()
+
+	local lassoTexture = lasso:CreateTexture()
+	lassoTexture:SetSize(32, 32)
+	lassoTexture:SetPoint("CENTER", 0, 0)
+	lassoTexture:SetTexture("Interface\\Cursor\\Crosshairs")
+end
 
 local settings
 do
@@ -490,9 +620,29 @@ function mover_proto:ResetPosition()
 
 	local p, anchor, rP, x, y = unpack(defaultPoints[self:GetName()])
 
+	self:DestroyRelationLines()
+	self:RemoveFromHive()
+
+	if anchor ~= "UIParent" then
+		local hive = enabledMovers[anchor .. "Mover"]
+		if hive then
+			-- might be a bit counterproductive
+			local drones = self:RemoveDrones()
+			for drone in next, drones do
+				drone:UpdatePosition()
+				drone:DrawRelationLines()
+			end
+
+			if not hive:HasInHierarchy(self) then
+				self:AddToHive(hive)
+			end
+		end
+	end
+
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
 	self:SavePosition(p, anchor, rP, x, y)
+	self:DrawRelationLines()
 
 	if not self.isSimple then
 		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
@@ -523,10 +673,6 @@ function mover_proto:UpdatePosition(xOffset, yOffset)
 end
 
 function mover_proto:OnEnter()
-	if not self:GetScript("OnUpdate") then
-		self:SetScript("OnUpdate", self.OnUpdate)
-	end
-
 	local p, anchor, rP, x, y = calculatePosition(self)
 
 	GameTooltip:SetOwner(self, unpack(TOOLTIP_ANCHORS[p]))
@@ -538,14 +684,11 @@ function mover_proto:OnEnter()
 end
 
 function mover_proto:OnLeave()
-	self:SetScript("OnUpdate", nil)
-
 	GameTooltip:Hide()
 end
 
 function mover_proto:OnUpdate(elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-
 	if self.elapsed > 0.1 then
 		if GameTooltip:IsOwned(self) then
 			if self:IsMouseOver() then
@@ -557,6 +700,8 @@ function mover_proto:OnUpdate(elapsed)
 
 		self.elapsed = 0
 	end
+
+	self:DrawRelationLines()
 end
 
 function mover_proto:OnDragStart()
@@ -565,6 +710,10 @@ function mover_proto:OnDragStart()
 	if self:IsDragKeyDown() then
 		self:StartMoving()
 
+		if not self:GetScript("OnUpdate") then
+			self:SetScript("OnUpdate", self.OnUpdate)
+		end
+
 		isDragging = true
 	end
 end
@@ -572,6 +721,7 @@ end
 function mover_proto:OnDragStop()
 	if not self.isSimple and InCombatLockdown() then return end
 
+	self:SetScript("OnUpdate", nil)
 	self:StopMovingOrSizing()
 	self:UpdatePosition()
 
@@ -585,14 +735,18 @@ function mover_proto:OnClick()
 		if GameTooltip:IsOwned(self) then
 			self:OnEnter()
 		end
+
+		self:DrawRelationLines()
 	end
 end
 
 function mover_proto:OnMouseWheel(offset)
 	if IsShiftKeyDown() then
 		self:UpdatePosition(0, offset)
+		self:DrawRelationLines()
 	elseif IsControlKeyDown() then
 		self:UpdatePosition(offset, 0)
+		self:DrawRelationLines()
 	end
 
 	if GameTooltip:IsOwned(self) then
@@ -613,6 +767,48 @@ function mover_proto:WasMoved()
 	return not E:IsEqualTable(defaultPoints[self:GetName()], currentPoints[self:GetName()])
 end
 
+function mover_proto:DrawRelationLines()
+	local drones = self:GetDrones()
+	if drones then
+		for drone in next, drones do
+			if drone:IsEnabled() then
+				drawRelationLine(self, drone)
+			end
+		end
+	end
+
+	local hive = self:GetHive()
+	if hive then
+		drawRelationLine(hive, self)
+	end
+end
+
+function mover_proto:DestroyRelationLines()
+	for drone in next, self:GetDrones() do
+		if drone:IsEnabled() then
+			destroyRelationLine(self, drone)
+		end
+	end
+
+	local hive = self:GetHive()
+	if hive then
+		destroyRelationLine(hive, self)
+	end
+end
+
+function mover_proto:HasInHierarchy(drone)
+	local hive = self:GetHive()
+	if hive then
+		if hive == drone then
+			return true
+		else
+			return hive:HasInHierarchy(drone)
+		end
+	else
+		return false
+	end
+end
+
 function mover_proto:GetDrones()
 	return self.drones
 end
@@ -620,11 +816,27 @@ end
 function mover_proto:AddDrone(drone)
 	drone.hive = self
 	self.drones[drone] = true
+
+	return true
 end
 
 function mover_proto:RemoveDrone(drone)
 	drone.hive = nil
 	self.drones[drone] = nil
+end
+
+function mover_proto:RemoveDrones()
+	local old = {}
+
+	local drones = self:GetDrones()
+	for drone in next, drones do
+		drone.hive = nil
+		old[drone] = true
+	end
+
+	t_wipe(drones)
+
+	return old
 end
 
 function mover_proto:GetHive()
@@ -633,7 +845,7 @@ end
 
 function mover_proto:AddToHive(hive)
 	self:RemoveFromHive()
-	hive:AddDrone(self)
+	return hive:AddDrone(self)
 end
 
 function mover_proto:RemoveFromHive()
@@ -641,6 +853,8 @@ function mover_proto:RemoveFromHive()
 	if hive then
 		hive:RemoveDrone(self)
 	end
+
+	return hive
 end
 
 function mover_proto:Enable()
@@ -692,6 +906,44 @@ function object_proto:GetMover(inclDisabled)
 	return enabledMovers[name], false
 end
 
+local anchor_proto = {}
+
+function anchor_proto:OnClick()
+	local mover = self:GetParent()
+	mover:DestroyRelationLines()
+	mover:RemoveFromHive()
+
+	local drones = mover:RemoveDrones()
+	for drone in next, drones do
+		drone:UpdatePosition()
+		drone:DrawRelationLines()
+	end
+
+	mover:UpdatePosition()
+end
+
+function anchor_proto:OnDragStart()
+	lasso.mover = self:GetParent()
+	lasso:Show()
+end
+
+function anchor_proto:OnDragStop()
+	local mover = self:GetParent()
+
+	destroyRelationLine(lasso, mover)
+	lasso.mover = nil
+	lasso:Hide()
+
+	if controller.mover and not controller.mover:HasInHierarchy(mover) then
+		mover:DestroyRelationLines()
+		mover:AddToHive(controller.mover)
+		mover:UpdatePosition()
+		mover:DrawRelationLines()
+	end
+end
+
+local onCreateCallbacks = {}
+
 E.Movers = {}
 
 function E.Movers:Create(object, isSimple, offsetX, offsetY)
@@ -713,7 +965,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		drones = {},
 	}
 
-	local mover = Mixin(CreateFrame("Button", name, UIParent), mover_proto, info)
+	local mover = Mixin(CreateFrame("Button", name, moverParent), mover_proto, info)
+	mover:SetFrameStrata(object:GetFrameStrata())
 	mover:SetFrameLevel(object:GetFrameLevel() + 4)
 	mover:SetWidth(object:GetWidth() + mover.offsetX * 2)
 	mover:SetHeight(object:GetHeight() + mover.offsetX * 2)
@@ -744,6 +997,20 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		text:SetShown(showLabels)
 		mover.Text = text
 
+		local anchor = Mixin(CreateFrame("Button", nil, mover), anchor_proto)
+		anchor:SetSize(16, 16)
+		anchor:SetPoint("CENTER", mover, "CENTER", 0, 0)
+		anchor:RegisterForDrag("LeftButton")
+		anchor:SetScript("OnClick", anchor.OnClick)
+		anchor:SetScript("OnDragStart", anchor.OnDragStart)
+		anchor:SetScript("OnDragStop", anchor.OnDragStop)
+		mover.RelationAnchor = anchor
+
+		local anchorTexture = anchor:CreateTexture()
+		anchorTexture:SetSize(12, 12)
+		anchorTexture:SetPoint("CENTER", 0, 0)
+		anchorTexture:SetAtlas("UI-Taxi-Icon-Nub")
+
 		local border = E:CreateBorder(mover)
 		border:SetTexture({1, 1, 1, 1})
 		border:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
@@ -770,10 +1037,21 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		local hive = enabledMovers[parentName .. "Mover"]
 		if hive then
 			-- print(mover:GetDebugName(), "|cff00ff00==>|r", parentName)
-			mover:AddToHive(hive)
+			if not hive:HasInHierarchy(mover) then
+				mover:AddToHive(hive)
+			end
+
 			mover:UpdatePosition()
 		else
 			-- print(mover:GetDebugName(), "|cffff0000==>|r", parentName)
+			onCreateCallbacks[parentName] = function(self)
+				-- print(mover:GetDebugName(), "|cff00ff00==late=>|r", parentName)
+				if not self:HasInHierarchy(mover) then
+					mover:AddToHive(self)
+				end
+
+				mover:UpdatePosition()
+			end
 		end
 	else
 		-- print(mover:GetDebugName(), "|cffffd200==>|r", parentName)
@@ -785,9 +1063,14 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 	hooksecurefunc(object, "SetPoint", resetObjectPoint)
 	resetObjectPoint(object)
 
+	if onCreateCallbacks[objectName] then
+		onCreateCallbacks[objectName](mover)
+	end
+
 	return mover
 end
 
+-- DEPRECATED: Use object:GetMover() instead
 function E.Movers:Get(object, inclDisabled)
 	if type(object) == "table" then
 		object = object:GetName()
@@ -818,11 +1101,13 @@ function E.Movers:ToggleAll(...)
 		reopenConfig = ...
 
 		drawGrid()
+		drawRelationLines()
 
 		settings:Show()
 		controller:Show()
 	else
 		hideGrid()
+		destroyRelationLines()
 
 		settings:Hide()
 		controller:Hide()
