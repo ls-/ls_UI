@@ -6,7 +6,7 @@ local _G = getfenv(0)
 local next = _G.next
 
 -- Mine
-local layouts = {"rect", "round"}
+local layouts = {"round", "rect"}
 local layoutsOld = {"ls", "traditional"}
 local unitsLayout = {"player", "pet"}
 local unitsNonLayout = {"target", "targettarget", "focus", "focustarget", "boss"}
@@ -526,6 +526,33 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 9020002
+		end
+
+		--> 90200.05
+		if data.version < 9020005 then
+			if data.movers then
+				if data.movers.ls then
+					data.movers.round = E:CopyTable(data.movers.ls, data.movers.round)
+					data.movers.ls = nil
+				end
+
+				if data.movers.traditional then
+					data.movers.rect = E:CopyTable(data.movers.traditional, data.movers.rect)
+					data.movers.traditional = nil
+				end
+
+				for _, layout in next, layouts do
+					if data.movers[layout] then
+						for k, v in next, data.movers[layout] do
+							if v.point then
+								data.movers[layout][k] = {v.point[1], v.point[2], v.point[3], v.point[4], v.point[5]}
+							end
+						end
+					end
+				end
+			end
+
+			data.version = 9020005
 		end
 	elseif key == "private" then
 		--> 90001.05

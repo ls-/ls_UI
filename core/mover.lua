@@ -1043,11 +1043,6 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		mover.Border = border
 	end
 
-	-- * db conversion, changed in 90200.02
-	if C.db.profile.movers[E.UI_LAYOUT][name] and C.db.profile.movers[E.UI_LAYOUT][name].point then
-		C.db.profile.movers[E.UI_LAYOUT][name] = {unpack(C.db.profile.movers[E.UI_LAYOUT][name].point)}
-	end
-
 	defaultPoints[name] = {getPoint(object)}
 
 	currentPoints[name] = {getPoint(object)}
