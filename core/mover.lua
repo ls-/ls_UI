@@ -23,11 +23,6 @@ local unpack = _G.unpack
 -- Mine
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
-local moverParent = CreateFrame("Frame", nil, UIParent)
-moverParent:SetFrameStrata("HIGH")
-moverParent:SetFrameLevel(1000)
-moverParent:SetSize(0.0001, 0.0001)
-
 local TOOLTIP_ANCHORS = {
 	["BOTTOM"] = {"ANCHOR_TOP", 0, 4},
 	["BOTTOMLEFT"] = {"ANCHOR_RIGHT", 4, 4},
@@ -39,111 +34,10 @@ local TOOLTIP_ANCHORS = {
 	["TOPRIGHT"] = {"ANCHOR_BOTTOMLEFT", -4, -4},
 }
 
-local linePool = {}
-local activeLines = {}
-local gridSize = 32
-
-local gridParent = CreateFrame("Frame", nil, UIParent)
-gridParent:SetFrameStrata("BACKGROUND")
-gridParent:Hide()
-
-local gridBG = gridParent:CreateTexture(nil, "BACKGROUND", nil, -7)
-gridBG:SetAllPoints(UIParent)
-gridBG:SetColorTexture(0, 0, 0, 0.33)
-
-local function getGridLine()
-	if not next(linePool) then
-		t_insert(linePool, gridParent:CreateTexture())
-	end
-
-	local line = t_remove(linePool, 1)
-	line:ClearAllPoints()
-	line:Show()
-
-	t_insert(activeLines, line)
-
-	return line
-end
-
-local function releaseGridLines()
-	while next(activeLines) do
-		local line = t_remove(activeLines, 1)
-		line:ClearAllPoints()
-		line:Hide()
-
-		t_insert(linePool, line)
-	end
-end
-
-local function hideGrid()
-	gridParent:Hide()
-end
-
-local function drawGrid()
-	releaseGridLines()
-
-	local screenWidth, screenHeight = UIParent:GetRight(), UIParent:GetTop()
-	local screenCenterX, screenCenterY = UIParent:GetCenter()
-
-	gridParent:SetSize(screenWidth, screenHeight)
-	gridParent:SetPoint("CENTER")
-	gridParent:Show()
-
-	local yAxis = getGridLine()
-	yAxis:SetDrawLayer("BACKGROUND", 1)
-	yAxis:SetColorTexture(0.9, 0.1, 0.1)
-	yAxis:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenCenterX - 1, 0)
-	yAxis:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenCenterX + 1, 0)
-
-	local xAxis = getGridLine()
-	xAxis:SetDrawLayer("BACKGROUND", 1)
-	xAxis:SetColorTexture(0.9, 0.1, 0.1)
-	xAxis:SetPoint("TOPLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY + 1)
-	xAxis:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY - 1)
-
-	local l = getGridLine()
-	l:SetDrawLayer("BACKGROUND", 2)
-	l:SetColorTexture(0.8, 0.8, 0.1)
-	l:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenWidth / 3 - 1, 0)
-	l:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
-
-	local r = getGridLine()
-	r:SetDrawLayer("BACKGROUND", 2)
-	r:SetColorTexture(0.8, 0.8, 0.1)
-	r:SetPoint("TOPRIGHT", gridParent, "TOPRIGHT", - screenWidth / 3 + 1, 0)
-	r:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
-
-	-- horiz lines
-	local tex
-	for i = 1, m_floor(screenHeight / 2 / gridSize) do
-		tex = getGridLine()
-		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY + 1 + gridSize * i)
-		tex:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY - 1 + gridSize * i)
-
-		tex = getGridLine()
-		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMLEFT", 0, screenCenterY - 1 - gridSize * i)
-		tex:SetPoint("TOPRIGHT", gridParent, "BOTTOMRIGHT", 0, screenCenterY + 1 - gridSize * i)
-	end
-
-	-- vert lines
-	for i = 1, m_floor(screenWidth / 2 / gridSize) do
-		tex = getGridLine()
-		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPLEFT", gridParent, "TOPLEFT", screenCenterX - 1 - gridSize * i, 0)
-		tex:SetPoint("BOTTOMRIGHT", gridParent, "BOTTOMLEFT", screenCenterX + 1 - gridSize * i, 0)
-
-		tex = getGridLine()
-		tex:SetDrawLayer("BACKGROUND", 0)
-		tex:SetColorTexture(0, 0, 0)
-		tex:SetPoint("TOPRIGHT", gridParent, "TOPLEFT", screenCenterX + 1 + gridSize * i, 0)
-		tex:SetPoint("BOTTOMLEFT", gridParent, "BOTTOMLEFT", screenCenterX - 1 + gridSize * i, 0)
-	end
-end
+local moverParent = CreateFrame("Frame", nil, UIParent)
+moverParent:SetFrameStrata("HIGH")
+moverParent:SetFrameLevel(1000)
+moverParent:SetSize(0.0001, 0.0001)
 
 local defaultPoints = {}
 local currentPoints = {}
@@ -248,100 +142,221 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 end)
 controller:Hide()
 
-local relationLineSegments = {}
-local relationLines = {}
+local grid = {}
+do
+	local lines = {}
+	local activeLines = {}
+	local size = 32
 
-local function acquireRelationLineSegment()
-	if not next(relationLineSegments) then
-		t_insert(relationLineSegments, moverParent:CreateTexture(nil, "OVERLAY"))
+	local parent = CreateFrame("Frame", nil, UIParent)
+	parent:SetFrameStrata("BACKGROUND")
+	parent:Hide()
+
+	local bg = parent:CreateTexture(nil, "BACKGROUND", nil, -7)
+	bg:SetAllPoints(UIParent)
+	bg:SetColorTexture(0, 0, 0, 0.33)
+
+	local function acquireLine()
+		if not next(lines) then
+			t_insert(lines, parent:CreateTexture())
+		end
+
+		local line = t_remove(lines, 1)
+		line:ClearAllPoints()
+		line:Show()
+
+		t_insert(activeLines, line)
+
+		return line
 	end
 
-	local segment = t_remove(relationLineSegments, 1)
-	-- segment:SetAtlas("minimap-deadarrow")
-	segment:SetAtlas("minimap-questarrow")
-	-- segment:SetAtlas("minimap-vignettearrow")
-	segment:SetSize(16, 16)
-	segment:ClearAllPoints()
-	segment:Show()
+	local function releaseLines()
+		while next(activeLines) do
+			local line = t_remove(activeLines, 1)
+			line:ClearAllPoints()
+			line:Hide()
 
-	return segment
-end
-
-local function releaseRelationLineSegment(segment)
-	segment:ClearAllPoints()
-	segment:Hide()
-
-	t_insert(relationLineSegments, segment)
-end
-
-local function destroyRelationLine(hive, drone)
-	if not relationLines[hive] then return end
-	if not relationLines[hive][drone] then return end
-
-	for _, segment in next, relationLines[hive][drone] do
-		releaseRelationLineSegment(segment)
+			t_insert(lines, line)
+		end
 	end
 
-	t_wipe(relationLines[hive][drone])
-end
+	function grid:SetSize(s)
+		size = s
+	end
 
-local function destroyRelationLines()
-	for _, mover in next, enabledMovers do
-		for drone in next, mover:GetDrones() do
-			if drone:IsEnabled() then
-				destroyRelationLine(mover, drone)
-			end
+	function grid:GetSize()
+		return size
+	end
+
+	function grid:Hide()
+		parent:Hide()
+	end
+
+	function grid:Show()
+		releaseLines()
+
+		local screenWidth, screenHeight = UIParent:GetRight(), UIParent:GetTop()
+		local screenCenterX, screenCenterY = UIParent:GetCenter()
+
+		parent:SetSize(screenWidth, screenHeight)
+		parent:SetPoint("CENTER")
+		parent:Show()
+
+		local yAxis = acquireLine()
+		yAxis:SetDrawLayer("BACKGROUND", 1)
+		yAxis:SetColorTexture(0.9, 0.1, 0.1)
+		yAxis:SetPoint("TOPLEFT", parent, "TOPLEFT", screenCenterX - 1, 0)
+		yAxis:SetPoint("BOTTOMRIGHT", parent, "BOTTOMLEFT", screenCenterX + 1, 0)
+
+		local xAxis = acquireLine()
+		xAxis:SetDrawLayer("BACKGROUND", 1)
+		xAxis:SetColorTexture(0.9, 0.1, 0.1)
+		xAxis:SetPoint("TOPLEFT", parent, "BOTTOMLEFT", 0, screenCenterY + 1)
+		xAxis:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, screenCenterY - 1)
+
+		local l = acquireLine()
+		l:SetDrawLayer("BACKGROUND", 2)
+		l:SetColorTexture(0.8, 0.8, 0.1)
+		l:SetPoint("TOPLEFT", parent, "TOPLEFT", screenWidth / 3 - 1, 0)
+		l:SetPoint("BOTTOMRIGHT", parent, "BOTTOMLEFT", screenWidth / 3 + 1, 0)
+
+		local r = acquireLine()
+		r:SetDrawLayer("BACKGROUND", 2)
+		r:SetColorTexture(0.8, 0.8, 0.1)
+		r:SetPoint("TOPRIGHT", parent, "TOPRIGHT", - screenWidth / 3 + 1, 0)
+		r:SetPoint("BOTTOMLEFT", parent, "BOTTOMRIGHT", - screenWidth / 3 - 1, 0)
+
+		-- horiz lines
+		local tex
+		for i = 1, m_floor(screenHeight / 2 / size) do
+			tex = acquireLine()
+			tex:SetDrawLayer("BACKGROUND", 0)
+			tex:SetColorTexture(0, 0, 0)
+			tex:SetPoint("TOPLEFT", parent, "BOTTOMLEFT", 0, screenCenterY + 1 + size * i)
+			tex:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, screenCenterY - 1 + size * i)
+
+			tex = acquireLine()
+			tex:SetDrawLayer("BACKGROUND", 0)
+			tex:SetColorTexture(0, 0, 0)
+			tex:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, screenCenterY - 1 - size * i)
+			tex:SetPoint("TOPRIGHT", parent, "BOTTOMRIGHT", 0, screenCenterY + 1 - size * i)
+		end
+
+		-- vert lines
+		for i = 1, m_floor(screenWidth / 2 / size) do
+			tex = acquireLine()
+			tex:SetDrawLayer("BACKGROUND", 0)
+			tex:SetColorTexture(0, 0, 0)
+			tex:SetPoint("TOPLEFT", parent, "TOPLEFT", screenCenterX - 1 - size * i, 0)
+			tex:SetPoint("BOTTOMRIGHT", parent, "BOTTOMLEFT", screenCenterX + 1 - size * i, 0)
+
+			tex = acquireLine()
+			tex:SetDrawLayer("BACKGROUND", 0)
+			tex:SetColorTexture(0, 0, 0)
+			tex:SetPoint("TOPRIGHT", parent, "TOPLEFT", screenCenterX + 1 + size * i, 0)
+			tex:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", screenCenterX - 1 + size * i, 0)
 		end
 	end
 end
 
-local function lerp(v1, v2, perc)
-	return v1 + (v2 - v1) * perc
-end
+local relationLines = {}
+do
+	local segments = {}
+	local lines = {}
 
-local function drawRelationLine(hive, drone)
-	destroyRelationLine(hive, drone)
+	local function acquireSegment()
+		if not next(segments) then
+			t_insert(segments, moverParent:CreateTexture(nil, "OVERLAY"))
+		end
 
-	local hiveX, hiveY = hive:GetCenter()
-	hiveX, hiveY = hiveX or 0, hiveY or 0
+		local segment = t_remove(segments, 1)
+		segment:SetAtlas("minimap-deadarrow")
+		-- segment:SetAtlas("minimap-questarrow")
+		-- segment:SetAtlas("minimap-vignettearrow")
+		segment:SetSize(16, 16)
+		segment:SetAlpha(0.75)
+		segment:ClearAllPoints()
+		segment:Show()
 
-	local droneX, droneY = drone:GetCenter()
-	droneX, droneY = droneX or 0, droneY or 0
-
-	local dX = droneX - hiveX
-	local dY = droneY - hiveY
-	local distance = m_sqrt(dX ^ 2 + dY ^ 2)
-	local angle = m_atan2(dY, dX)
-	local rotation = angle + m_rad(90)
-	local space = lerp(8, 48, distance / 1024)
-	local padding = space / 4
-	local num = m_floor(distance / space)
-
-	if not relationLines[hive] then
-		relationLines[hive] = {
-			[drone] = {}
-		}
-	elseif not relationLines[hive][drone] then
-		relationLines[hive][drone] = {}
+		return segment
 	end
 
-	local relationLine = relationLines[hive][drone]
+	local function releaseSegment(segment)
+		segment:ClearAllPoints()
+		segment:Hide()
 
-	for i = 1, num  do
-		local x = (i * space - padding) * m_cos(angle)
-		local y = (i * space - padding) * m_sin(angle)
-
-		relationLine[i] = acquireRelationLineSegment()
-		relationLine[i]:SetPoint("CENTER", hive, "CENTER", x, y)
-		relationLine[i]:SetRotation(rotation)
+		t_insert(segments, segment)
 	end
-end
 
-local function drawRelationLines()
-	for _, mover in next, enabledMovers do
-		for drone in next, mover:GetDrones() do
-			if drone:IsEnabled() then
-				drawRelationLine(mover, drone)
+	function relationLines:Remove(hive, drone)
+		if not lines[hive] then return end
+		if not lines[hive][drone] then return end
+
+		for _, segment in next, lines[hive][drone] do
+			releaseSegment(segment)
+		end
+
+		t_wipe(lines[hive][drone])
+	end
+
+	function relationLines:Hide()
+		for _, mover in next, enabledMovers do
+			for drone in next, mover:GetDrones() do
+				if drone:IsEnabled() then
+					relationLines:Remove(mover, drone)
+				end
+			end
+		end
+	end
+
+	local function lerp(v1, v2, perc)
+		return v1 + (v2 - v1) * perc
+	end
+
+	function relationLines:Add(hive, drone)
+		relationLines:Remove(hive, drone)
+
+		local hiveX, hiveY = hive:GetCenter()
+		hiveX, hiveY = hiveX or 0, hiveY or 0
+
+		local droneX, droneY = drone:GetCenter()
+		droneX, droneY = droneX or 0, droneY or 0
+
+		local dX = droneX - hiveX
+		local dY = droneY - hiveY
+		local distance = m_sqrt(dX ^ 2 + dY ^ 2)
+		local angle = m_atan2(dY, dX)
+		local rotation = angle + m_rad(90)
+		local space = lerp(8, 48, distance / 1024)
+		local padding = space / 4
+		local num = m_floor(distance / space)
+
+		if not lines[hive] then
+			lines[hive] = {
+				[drone] = {}
+			}
+		elseif not lines[hive][drone] then
+			lines[hive][drone] = {}
+		end
+
+		local relationLine = lines[hive][drone]
+
+		for i = 1, num do
+			local x = (i * space - padding) * m_cos(angle)
+			local y = (i * space - padding) * m_sin(angle)
+
+			relationLine[i] = acquireSegment()
+			relationLine[i]:SetPoint("CENTER", hive, "CENTER", x, y)
+			relationLine[i]:SetRotation(rotation)
+		end
+	end
+
+	function relationLines:Show()
+		for _, mover in next, enabledMovers do
+			for drone in next, mover:GetDrones() do
+				if drone:IsEnabled() then
+					relationLines:Add(mover, drone)
+				end
 			end
 		end
 	end
@@ -357,15 +372,15 @@ do
 		self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x / scale - 8, y / scale - 8)
 
 		if self.mover then
-			drawRelationLine(self, self.mover)
+			relationLines:Add(self, self.mover)
 		end
 	end)
 	lasso:Hide()
 
-	local lassoTexture = lasso:CreateTexture()
-	lassoTexture:SetSize(32, 32)
-	lassoTexture:SetPoint("CENTER", 0, 0)
-	lassoTexture:SetTexture("Interface\\Cursor\\Crosshairs")
+	local texture = lasso:CreateTexture()
+	texture:SetSize(32, 32)
+	texture:SetPoint("CENTER", 0, 0)
+	texture:SetTexture("Interface\\Cursor\\Crosshairs")
 end
 
 local settings
@@ -422,12 +437,11 @@ do
 	local info = {
 		isRadio = true,
 		func = function(_, _, value)
-			gridSize = value
-
-			drawGrid()
+			grid:SetSize(value)
+			grid:Show()
 		end,
 		checked = function(self)
-			return gridSize == self.args[1]
+			return grid:GetSize() == self.args[1]
 		end,
 	}
 
@@ -608,7 +622,7 @@ local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 end
 
 local mover_proto = {
-	PostSaveUpdatePosition = E.NOOP,
+	["PostSaveUpdatePosition"] = E.NOOP,
 }
 
 function mover_proto:SavePosition(p, anchor, rP, x, y)
@@ -620,17 +634,17 @@ function mover_proto:ResetPosition()
 
 	local p, anchor, rP, x, y = unpack(defaultPoints[self:GetName()])
 
-	self:DestroyRelationLines()
+	self:RemoveRelationLines()
 	self:RemoveFromHive()
 
 	if anchor ~= "UIParent" then
 		local hive = enabledMovers[anchor .. "Mover"]
 		if hive then
 			-- might be a bit counterproductive
-			local drones = self:RemoveDrones()
-			for drone in next, drones do
+			local oldDrones = self:RemoveDrones()
+			for drone in next, oldDrones do
 				drone:UpdatePosition()
-				drone:DrawRelationLines()
+				drone:AddRelationLines()
 			end
 
 			if not hive:HasInHierarchy(self) then
@@ -642,7 +656,7 @@ function mover_proto:ResetPosition()
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
 	self:SavePosition(p, anchor, rP, x, y)
-	self:DrawRelationLines()
+	self:AddRelationLines()
 
 	if not self.isSimple then
 		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
@@ -701,7 +715,7 @@ function mover_proto:OnUpdate(elapsed)
 		self.elapsed = 0
 	end
 
-	self:DrawRelationLines()
+	self:AddRelationLines()
 end
 
 function mover_proto:OnDragStart()
@@ -736,17 +750,17 @@ function mover_proto:OnClick()
 			self:OnEnter()
 		end
 
-		self:DrawRelationLines()
+		self:AddRelationLines()
 	end
 end
 
 function mover_proto:OnMouseWheel(offset)
 	if IsShiftKeyDown() then
 		self:UpdatePosition(0, offset)
-		self:DrawRelationLines()
+		self:AddRelationLines()
 	elseif IsControlKeyDown() then
 		self:UpdatePosition(offset, 0)
-		self:DrawRelationLines()
+		self:AddRelationLines()
 	end
 
 	if GameTooltip:IsOwned(self) then
@@ -767,32 +781,29 @@ function mover_proto:WasMoved()
 	return not E:IsEqualTable(defaultPoints[self:GetName()], currentPoints[self:GetName()])
 end
 
-function mover_proto:DrawRelationLines()
-	local drones = self:GetDrones()
-	if drones then
-		for drone in next, drones do
-			if drone:IsEnabled() then
-				drawRelationLine(self, drone)
-			end
+function mover_proto:AddRelationLines()
+	for drone in next, self:GetDrones() do
+		if drone:IsEnabled() then
+			relationLines:Add(self, drone)
 		end
 	end
 
 	local hive = self:GetHive()
 	if hive then
-		drawRelationLine(hive, self)
+		relationLines:Add(hive, self)
 	end
 end
 
-function mover_proto:DestroyRelationLines()
+function mover_proto:RemoveRelationLines()
 	for drone in next, self:GetDrones() do
 		if drone:IsEnabled() then
-			destroyRelationLine(self, drone)
+			relationLines:Remove(self, drone)
 		end
 	end
 
 	local hive = self:GetHive()
 	if hive then
-		destroyRelationLine(hive, self)
+		relationLines:Remove(hive, self)
 	end
 end
 
@@ -828,13 +839,12 @@ end
 function mover_proto:RemoveDrones()
 	local old = {}
 
-	local drones = self:GetDrones()
-	for drone in next, drones do
+	for drone in next, self:GetDrones() do
 		drone.hive = nil
 		old[drone] = true
 	end
 
-	t_wipe(drones)
+	t_wipe(self:GetDrones())
 
 	return old
 end
@@ -909,17 +919,19 @@ end
 local anchor_proto = {}
 
 function anchor_proto:OnClick()
-	local mover = self:GetParent()
-	mover:DestroyRelationLines()
-	mover:RemoveFromHive()
+	if IsShiftKeyDown() then
+		local mover = self:GetParent()
+		mover:RemoveRelationLines()
+		mover:RemoveFromHive()
 
-	local drones = mover:RemoveDrones()
-	for drone in next, drones do
-		drone:UpdatePosition()
-		drone:DrawRelationLines()
+		local oldDrones = mover:RemoveDrones()
+		for drone in next, oldDrones do
+			drone:UpdatePosition()
+			drone:AddRelationLines()
+		end
+
+		mover:UpdatePosition()
 	end
-
-	mover:UpdatePosition()
 end
 
 function anchor_proto:OnDragStart()
@@ -930,15 +942,15 @@ end
 function anchor_proto:OnDragStop()
 	local mover = self:GetParent()
 
-	destroyRelationLine(lasso, mover)
+	relationLines:Remove(lasso, mover)
 	lasso.mover = nil
 	lasso:Hide()
 
 	if controller.mover and not controller.mover:HasInHierarchy(mover) then
-		mover:DestroyRelationLines()
+		mover:RemoveRelationLines()
 		mover:AddToHive(controller.mover)
 		mover:UpdatePosition()
-		mover:DrawRelationLines()
+		mover:AddRelationLines()
 	end
 end
 
@@ -999,6 +1011,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 		local anchor = Mixin(CreateFrame("Button", nil, mover), anchor_proto)
 		anchor:SetSize(16, 16)
+		anchor:SetAlpha(0.5)
 		anchor:SetPoint("CENTER", mover, "CENTER", 0, 0)
 		anchor:RegisterForDrag("LeftButton")
 		anchor:SetScript("OnClick", anchor.OnClick)
@@ -1100,15 +1113,13 @@ function E.Movers:ToggleAll(...)
 	if areToggledOn then
 		reopenConfig = ...
 
-		drawGrid()
-		drawRelationLines()
-
+		grid:Show()
+		relationLines:Show()
 		settings:Show()
 		controller:Show()
 	else
-		hideGrid()
-		destroyRelationLines()
-
+		grid:Hide()
+		relationLines:Hide()
 		settings:Hide()
 		controller:Hide()
 
@@ -1155,7 +1166,8 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 		end
 	end
 
+	grid:Hide()
+	relationLines:Hide()
+	settings:Hide()
 	controller:Hide()
-
-	hideGrid()
 end)
