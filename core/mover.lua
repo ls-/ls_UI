@@ -13,6 +13,7 @@ local m_sin = _G.math.sin
 local m_sqrt = _G.math.sqrt
 local next = _G.next
 local s_format = _G.string.format
+local setmetatable = _G.setmetatable
 local t_insert = _G.table.insert
 local t_remove = _G.table.remove
 local t_wipe = _G.table.wipe
@@ -956,6 +957,16 @@ end
 
 local onCreateCallbacks = {}
 
+local callback_meta = {
+	__call = function(callbacks, self, ...)
+		for _, callback in next, callbacks do
+			callback(self, ...)
+		end
+
+		t_wipe(callbacks)
+	end,
+}
+
 E.Movers = {}
 
 function E.Movers:Create(object, isSimple, offsetX, offsetY)
@@ -1056,15 +1067,19 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 			mover:UpdatePosition()
 		else
+			if not onCreateCallbacks[parentName] then
+				onCreateCallbacks[parentName] = setmetatable({}, callback_meta)
+			end
+
 			-- print(mover:GetDebugName(), "|cffff0000==>|r", parentName)
-			onCreateCallbacks[parentName] = function(self)
+			t_insert(onCreateCallbacks[parentName], function(self)
 				-- print(mover:GetDebugName(), "|cff00ff00==late=>|r", parentName)
 				if not self:HasInHierarchy(mover) then
 					mover:AddToHive(self)
 				end
 
 				mover:UpdatePosition()
-			end
+			end)
 		end
 	else
 		-- print(mover:GetDebugName(), "|cffffd200==>|r", parentName)
