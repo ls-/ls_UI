@@ -520,8 +520,8 @@ local function calculatePosition(self, xOffset, yOffset)
 		parentWidth = E:Round(parentWidth)
 		local parentCenterX, parentCenterY = parent:GetCenter()
 		parentCenterX, parentCenterY = E:Round(parentCenterX), E:Round(parentCenterY)
-		local parentLeftX = parentCenterX - parentWidth / 3
-		local parentRightX = parentCenterX + parentWidth / 3
+		local parentLeftX = parentCenterX - parentWidth / 6
+		local parentRightX = parentCenterX + parentWidth / 6
 
 		if moverCenterY >= parentCenterY then
 			if moverBottomY >= parent:GetTop() then
