@@ -642,11 +642,11 @@ D.profile = {
 					},
 					point1 = {
 						p = "BOTTOM",
-						anchor = "LSPlayerFrameCastbarHolder",
-						detached_anchor = "LSPlayerFrameCastbarHolder",
-						rP = "TOP",
+						anchor = "",
+						detached_anchor = "UIParent",
+						rP = "BOTTOM",
 						x = 0,
-						y = 6,
+						y = 208,
 					},
 				},
 				raid_target = {
@@ -1033,11 +1033,11 @@ D.profile = {
 					},
 					point1 = {
 						p = "BOTTOM",
-						anchor = "LSPlayerFrameCastbarHolder",
-						detached_anchor = "LSPlayerFrameCastbarHolder",
-						rP = "TOP",
+						anchor = "",
+						detached_anchor = "UIParent",
+						rP = "BOTTOM",
 						x = 0,
-						y = 6,
+						y = 208,
 					},
 				},
 				portrait = {
