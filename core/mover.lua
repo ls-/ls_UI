@@ -58,14 +58,22 @@ controller:SetScript("OnKeyDown", function(self, key)
 		self:SetPropagateKeyboardInput(false)
 		if key == "LEFT" then
 			self.mover:UpdatePosition(-1, 0)
+			self.mover:AddRelationLines()
 		elseif key == "RIGHT" then
 			self.mover:UpdatePosition(1, 0)
+			self.mover:AddRelationLines()
 		elseif key == "UP" then
 			self.mover:UpdatePosition(0, 1)
+			self.mover:AddRelationLines()
 		elseif key == "DOWN" then
 			self.mover:UpdatePosition(0, -1)
+			self.mover:AddRelationLines()
 		else
 			self:SetPropagateKeyboardInput(true)
+		end
+
+		if GameTooltip:IsOwned(self.mover) then
+			self.mover:OnEnter()
 		end
 	else
 		self:SetPropagateKeyboardInput(true)
