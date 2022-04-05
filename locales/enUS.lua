@@ -531,3 +531,6 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
+
+L["MOVER_RELATION_CREATE_DESC"] = "|cffffffffDrag|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to create a new connection to another mover."
+L["MOVER_RELATION_DESTROY_DESC"] = "|cffffffffShift-Click|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to destroy existing connections."

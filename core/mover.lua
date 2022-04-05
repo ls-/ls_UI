@@ -387,7 +387,7 @@ end
 local settings
 do
 	settings = CreateFrame("Frame", "LSMoverSettings", UIParent)
-	settings:SetSize(320, 160)
+	settings:SetSize(320, 320)
 	settings:SetPoint("CENTER")
 	settings:SetMovable(true)
 	settings:EnableMouse(true)
@@ -398,8 +398,17 @@ do
 	settings:SetScript("OnShow", function(self)
 		self.NameToggle.Text:SetText(L["MOVER_NAMES"])
 		self.GridDropdown:SetText(L["MOVER_GRID"])
-		self.UsageText:SetText(L["MOVER_MOVE_DESC"] .. "\n\n" .. L["MOVER_RESET_DESC"] .. "\n\n" .. L["MOVER_CYCLE_DESC"])
+		self.UsageText:SetText(L["MOVER_MOVE_DESC"]
+			.. "\n\n"
+			.. L["MOVER_RESET_DESC"]
+			.. "\n\n"
+			.. L["MOVER_CYCLE_DESC"]
+			.. "\n\n"
+			.. L["MOVER_RELATION_CREATE_DESC"]
+			.. "\n\n"
+			.. L["MOVER_RELATION_DESTROY_DESC"])
 		self.LockButton.Text:SetText(L["LOCK"])
+		self:SetHeight(m_floor(self.UsageText:GetStringHeight() + 50))
 	end)
 	settings:Hide()
 
