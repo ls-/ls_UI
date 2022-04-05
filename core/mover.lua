@@ -947,6 +947,16 @@ function anchor_proto:OnClick()
 	end
 end
 
+function anchor_proto:OnEnter()
+	self:SetAlpha(1)
+	self.Texture:SetVertexColor(0, 1, 0.92)
+end
+
+function anchor_proto:OnLeave()
+	self:SetAlpha(0.5)
+	self.Texture:SetVertexColor(1, 1, 1)
+end
+
 function anchor_proto:OnDragStart()
 	lasso.mover = self:GetParent()
 	lasso:Show()
@@ -1038,6 +1048,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		anchor:SetPoint("CENTER", mover, "CENTER", 0, 0)
 		anchor:RegisterForDrag("LeftButton")
 		anchor:SetScript("OnClick", anchor.OnClick)
+		anchor:SetScript("OnEnter", anchor.OnEnter)
+		anchor:SetScript("OnLeave", anchor.OnLeave)
 		anchor:SetScript("OnDragStart", anchor.OnDragStart)
 		anchor:SetScript("OnDragStop", anchor.OnDragStop)
 		mover.RelationAnchor = anchor
@@ -1046,6 +1058,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		anchorTexture:SetSize(12, 12)
 		anchorTexture:SetPoint("CENTER", 0, 0)
 		anchorTexture:SetAtlas("UI-Taxi-Icon-Nub")
+		anchor.Texture = anchorTexture
 
 		local border = E:CreateBorder(mover)
 		border:SetTexture({1, 1, 1, 1})
