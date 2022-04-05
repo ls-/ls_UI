@@ -491,13 +491,23 @@ local function getPoint(self)
 	end
 end
 
-local function calculatePosition(self)
+local function calculatePosition(self, xOffset, yOffset)
 	local moverCenterX, moverCenterY = self:GetCenter()
-	moverCenterX, moverCenterY = E:Round(moverCenterX), E:Round(moverCenterY)
 	local parent = self:GetHive() and self:GetHive():GetObject() or UIParent
 	local p, rP, x, y
 
 	if moverCenterX and moverCenterY then
+		xOffset, yOffset = xOffset or 0, yOffset or 0
+		moverCenterX, moverCenterY = E:Round(moverCenterX + xOffset), E:Round(moverCenterY + yOffset)
+		local moverLeftX = self:GetLeft()
+		moverLeftX = E:Round(moverLeftX + xOffset)
+		local moverRightX = self:GetRight()
+		moverRightX = E:Round(moverRightX + xOffset)
+		local moverTopY = self:GetTop()
+		moverTopY = E:Round(moverTopY + yOffset)
+		local moverBottomY = self:GetBottom()
+		moverBottomY = E:Round(moverBottomY + yOffset)
+
 		local parentWidth = parent:GetWidth()
 		parentWidth = E:Round(parentWidth)
 		local parentCenterX, parentCenterY = parent:GetCenter()
@@ -506,56 +516,107 @@ local function calculatePosition(self)
 		local parentRightX = parentCenterX + parentWidth / 3
 
 		if moverCenterY >= parentCenterY then
-			if self:GetBottom() >= parent:GetTop() then
+			if moverBottomY >= parent:GetTop() then
 				p = "BOTTOM"
 				rP = "TOP"
-				y = self:GetBottom() - parent:GetTop()
+				y = moverBottomY - parent:GetTop()
 			else
 				p = "TOP"
 				rP = "TOP"
-				y = self:GetTop() - parent:GetTop()
+				y = moverTopY - parent:GetTop()
 			end
 		else
-			if self:GetTop() <= parent:GetBottom() then
+			if moverTopY <= parent:GetBottom() then
 				p = "TOP"
 				rP = "BOTTOM"
-				y = self:GetTop() - parent:GetBottom()
+				y = moverTopY - parent:GetBottom()
 			else
 				p = "BOTTOM"
 				rP = "BOTTOM"
-				y = self:GetBottom() - parent:GetBottom()
+				y = moverBottomY - parent:GetBottom()
 			end
 		end
 
 		if moverCenterX >= parentRightX then
-			if self:GetLeft() >= parent:GetRight() then
+			if moverLeftX >= parent:GetRight() then
 				p = p .. "LEFT"
 				rP = rP .. "RIGHT"
-				x = self:GetLeft() - parent:GetRight()
+				x = moverLeftX - parent:GetRight()
 			else
 				p = p .. "RIGHT"
 				rP = rP .. "RIGHT"
-				x = self:GetRight() - parent:GetRight()
+				x = moverRightX - parent:GetRight()
 			end
 		elseif moverCenterX <= parentLeftX then
-			if self:GetRight() <= parent:GetLeft() then
+			if moverRightX <= parent:GetLeft() then
 				p = p .. "RIGHT"
 				rP = rP .. "LEFT"
-				x = self:GetRight() - parent:GetLeft()
+				x = moverRightX - parent:GetLeft()
 			else
 				p = p .. "LEFT"
 				rP = rP .. "LEFT"
-				x = self:GetLeft() - parent:GetLeft()
+				x = moverLeftX - parent:GetLeft()
 			end
 		else
 			x = moverCenterX - parentCenterX
 		end
+
+		x, y = E:Round(x), E:Round(y)
+
+		-- jic we got out of screen bounds because of offsets
+		if parent == UIParent then
+			local l, r, t, b = self:GetClampRectInsets()
+			l, r, t, b = E:Round(-l), E:Round(-r), E:Round(-t), E:Round(-b)
+
+			if p == "BOTTOM" then
+				if y < b then
+					y = b
+				end
+			elseif p == "BOTTOMLEFT" then
+				if x < l then
+					x = l
+				end
+
+				if y < b then
+					y = b
+				end
+			elseif p == "BOTTOMRIGHT" then
+				if x > r then
+					x = r
+				end
+
+				if y < b then
+					y = b
+				end
+			elseif p == "TOP" then
+				if y > t then
+					y = t
+				end
+			elseif p == "TOPLEFT" then
+				if x < l then
+					x = l
+				end
+
+				if y > t then
+					y = t
+				end
+			elseif p == "TOPRIGHT" then
+				if x > r then
+					x = r
+				end
+
+				if y > t then
+					y = t
+				end
+			end
+		end
 	end
 
-	return p, parent:GetName(), rP, E:Round(x), E:Round(y)
+
+	return p, parent:GetName(), rP, x, y
 end
 
-local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
+local function updatePosition(self, p, anchor, rP, x, y)
 	if not x then
 		if currentPoints[self:GetName()] then
 			p, anchor, rP, x, y = unpack(currentPoints[self:GetName()])
@@ -565,58 +626,6 @@ local function updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
 		if not x then
 			self:ResetPosition()
 			return
-		end
-	end
-
-	x = x + (xOffset or 0)
-	y = y + (yOffset or 0)
-
-	-- jic we got out of screen bounds because of offsets
-	-- I could probably group them up better, but whatevs
-	if anchor == "UIParent" then
-		local l, r, t, b = self:GetClampRectInsets()
-		l, r, t, b = E:Round(-l), E:Round(-r), E:Round(-t), E:Round(-b)
-
-		if p == "BOTTOM" then
-			if y < b then
-				y = b
-			end
-		elseif p == "BOTTOMLEFT" then
-			if x < l then
-				x = l
-			end
-
-			if y < b then
-				y = b
-			end
-		elseif p == "BOTTOMRIGHT" then
-			if x > r then
-				x = r
-			end
-
-			if y < b then
-				y = b
-			end
-		elseif p == "TOP" then
-			if y > t then
-				y = t
-			end
-		elseif p == "TOPLEFT" then
-			if x < l then
-				x = l
-			end
-
-			if y > t then
-				y = t
-			end
-		elseif p == "TOPRIGHT" then
-			if x > r then
-				x = r
-			end
-
-			if y > t then
-				y = t
-			end
 		end
 	end
 
@@ -681,8 +690,8 @@ end
 function mover_proto:UpdatePosition(xOffset, yOffset)
 	if not self.isSimple and InCombatLockdown() then return end
 
-	local p, anchor, rP, x, y = calculatePosition(self)
-	p, anchor, rP, x, y = updatePosition(self, p, anchor, rP, x, y, xOffset, yOffset)
+	local p, anchor, rP, x, y = calculatePosition(self, xOffset, yOffset)
+	p, anchor, rP, x, y = updatePosition(self, p, anchor, rP, x, y)
 
 	self:SavePosition(p, anchor, rP, x, y)
 
@@ -1168,7 +1177,7 @@ end
 
 function E.Movers:UpdateAll()
 	for _, mover in next, enabledMovers do
-		updatePosition(mover, nil, "UIParent")
+		updatePosition(mover, nil)
 
 		if mover.isSimple then
 			mover:Show()
