@@ -47,13 +47,17 @@ end
 
 function MODULE:SetUpMirrorTimers()
 	if not isInit and PrC.db.profile.blizzard.timer.enabled then
-		local config = C.db.profile.blizzard.timer
+		local point = C.db.profile.blizzard.timer.point[E.UI_LAYOUT]
 
 		for i = 1, MIRRORTIMER_NUMTIMERS do
 			local timer = _G["MirrorTimer" .. i]
 			E:HandleStatusBar(timer)
 			timer:ClearAllPoints()
-			timer:SetPoint("TOP", UIParent, "TOP", 0, -96 - (config.height + 8) * (i - 1))
+			if i == 1 then
+				timer:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			else
+				timer:SetPoint("TOP", _G["MirrorTimer" .. (i - 1)], "BOTTOM", 0, -8)
+			end
 			E.Movers:Create(timer)
 
 			local time = timer:CreateFontString(nil, "ARTWORK")

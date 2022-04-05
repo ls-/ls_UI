@@ -574,8 +574,8 @@ D.profile = {
 				width = 42,
 				height = 134,
 				point = {
-					round = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
-					rect = {"RIGHT", "LSPlayerFrame", "LEFT", -2, 0},
+					round = {"TOPRIGHT", "LSPlayerFrame", "TOPLEFT", -2, -16},
+					rect = {"TOPRIGHT", "LSPlayerFrame", "TOPLEFT", -2, -16},
 				},
 				fade = {
 					enabled = false,
@@ -2916,6 +2916,10 @@ D.profile = {
 			height = 12,
 			text = {
 				size = 12,
+			},
+			point = {
+				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -96},
+				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -96},
 			},
 		},
 		vehicle = {
