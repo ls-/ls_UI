@@ -493,12 +493,15 @@ end
 
 local function calculatePosition(self)
 	local moverCenterX, moverCenterY = self:GetCenter()
+	moverCenterX, moverCenterY = E:Round(moverCenterX), E:Round(moverCenterY)
 	local parent = self:GetHive() and self:GetHive():GetObject() or UIParent
 	local p, rP, x, y
 
 	if moverCenterX and moverCenterY then
 		local parentWidth = parent:GetWidth()
+		parentWidth = E:Round(parentWidth)
 		local parentCenterX, parentCenterY = parent:GetCenter()
+		parentCenterX, parentCenterY = E:Round(parentCenterX), E:Round(parentCenterY)
 		local parentLeftX = parentCenterX - parentWidth / 3
 		local parentRightX = parentCenterX + parentWidth / 3
 
