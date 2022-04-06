@@ -62,7 +62,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if LS_UI_GLOBAL_CONFIG then
 		--> 90105.04
 		if LS_UI_GLOBAL_CONFIG.char then
-			print("=== |cffffd200 MODERNISING C:", "char", "!|r ===")
 			if not LS_UI_PRIVATE_CONFIG then
 				LS_UI_PRIVATE_CONFIG = {
 					profileKeys = {},
@@ -76,7 +75,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 
 		if LS_UI_GLOBAL_CONFIG.global then
-			P:Modernize(LS_UI_GLOBAL_CONFIG.global, "global")
+			P:Modernize(LS_UI_GLOBAL_CONFIG.global, "Account Data", "global")
 		end
 
 		if LS_UI_GLOBAL_CONFIG.profiles then
