@@ -20,6 +20,13 @@ local type = _G.type
 local LibDeflate = LibStub("LibDeflate")
 local LibSerialize = LibStub("LibSerialize")
 
+local profileTypeToDataType = {
+	["global-colors"] = "global",
+	["global-tags"] = "global",
+	["private"] = "private",
+	["profile"] = "profile",
+}
+
 local function getProfileData(profileType)
 	if not profileType or type(profileType) ~= "string" then
 		return
@@ -207,9 +214,12 @@ function E.Profiles:Import(data, overwrite)
 	if not (version or profileType or importFormat or profileData) then return end
 
 	profileData = self:Decode(profileData, importFormat)
+	profileData.version = tonumber(version)
 
-	if tonumber(version) < E.VER.number then
-		-- TODO: update outdated data
+	if profileData.version < E.VER.number then
+		P:Modernize(profileData, "Imported Data", profileTypeToDataType[profileType])
+
+		profileData.version = E.VER.number
 	end
 
 	if profileType == "profile" then
