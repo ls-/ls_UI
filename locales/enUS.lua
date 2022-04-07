@@ -339,6 +339,8 @@ L["MOVER_CYCLE_DESC"] = "Press the |cffffffffAlt|r key to cycle through frames u
 L["MOVER_GRID"] = "Grid"
 L["MOVER_MOVE_DESC"] = "Use |cffffffffShift/Ctrl + Mouse Wheel|r or |cffffffffArrow keys|r for 1px adjustments."
 L["MOVER_NAMES"] = "Names"
+L["MOVER_RELATION_CREATE_DESC"] = "|cffffffffDrag|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to create a new connection to another mover."
+L["MOVER_RELATION_DESTROY_DESC"] = "|cffffffffShift-Click|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to destroy existing connections."
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r to reset the position."
 L["NAME"] = "Name"
 L["NAME_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.
@@ -531,6 +533,3 @@ L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 L["ZONE_TEXT"] = "Zone Text"
-
-L["MOVER_RELATION_CREATE_DESC"] = "|cffffffffDrag|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to create a new connection to another mover."
-L["MOVER_RELATION_DESTROY_DESC"] = "|cffffffffShift-Click|r the anchor (|A:UI-Taxi-Icon-Nub:12:12|a) to destroy existing connections."
