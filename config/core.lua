@@ -854,6 +854,7 @@ function MODULE:Init()
 				order = 2,
 				type = "execute",
 				name = L["TOGGLE_ANCHORS"],
+				width = 1.25,
 				func = function()
 					E.Movers:ToggleAll(true)
 
@@ -864,12 +865,14 @@ function MODULE:Init()
 				order = 3,
 				type = "execute",
 				name = LibKeyBound.L.BindingMode,
+				width = 1.25,
 				func = function() LibKeyBound:Toggle() end,
 			},
 			reload_ui = {
 				order = 4,
 				type = "execute",
 				name = L["RELOAD_UI"],
+				width = 1.25,
 				func = function() ReloadUI() end,
 			},
 			profiles = MODULE:CreateProfilesPanel(100)
