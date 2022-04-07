@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 90200.05
+
+- Added a way to connect movers together. This will allow to preserve relative positions between multiple movers where
+  it might be needed, for instance, when sharing your profile with someone who plays on a different screen resolution;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Updated embeds;
+- Misc bug fixes and tweaks.
+
+![Imgur](https://i.imgur.com/3gvEXNS.gif)
+
 ## Version 90200.04
 
 - Fixed an issue where unit frames wouldn't update correctly when entering/leaving vehicles. 
