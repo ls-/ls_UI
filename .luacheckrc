@@ -4,7 +4,7 @@ self = false
 
 exclude_files = {
 	".luacheckrc",
-	"embeds/",
+	"ls_UI/embeds/",
 }
 
 ignore = {
