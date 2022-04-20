@@ -525,8 +525,8 @@ do
 
 	local function callback()
 		for _, unit in next, units do
-			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
-			UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+			UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
+			UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
 		end
 
 		if not InCombatLockdown() then
@@ -622,8 +622,8 @@ do
 				end
 
 				for _, unit in next, units do
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+					UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
 				end
 
 				CONFIG:CreateUnitFrameAuraFilters()
@@ -645,8 +645,8 @@ do
 				FILTERS:Reset(info[#info - 1])
 
 				for _, unit in next, units do
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "UpdateConfig")
-					UNITFRAMES:UpdateUnitFrame(unit, "ForElement", "Auras", "ForceUpdate")
+					UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
+					UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
 				end
 			end,
 		},
