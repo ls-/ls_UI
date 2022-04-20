@@ -1,6 +1,6 @@
 [submodule "ls_UI/embeds/oUF"]
 	path = ls_UI/embeds/oUF
-	url = git@github.com:ls-/oUF.git
+	url = git@github.com:oUF-wow/oUF.git
 [submodule "ls_UI/embeds/LibActionButton-1.0"]
 	path = ls_UI/embeds/LibActionButton-1.0
 	url = git@github.com:ls-/LibActionButton-1.0.git
