@@ -315,23 +315,7 @@ D.global = {
 		},
 		["ls:name"] = {
 			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  return UnitName(unit) or \"\"\nend",
-		},
-		["ls:name:10"] = {
-			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 10) or name\nend",
-		},
-		["ls:name:15"] = {
-			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 15) or name\nend",
-		},
-		["ls:name:20"] = {
-			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 20) or name\nend",
-		},
-		["ls:name:5"] = {
-			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local name = UnitName(unit) or \"\"\n  return name ~= \"\" and _VARS.E:TruncateString(name, 5) or name\nend",
+			func = "function(unit, _, len)\n  local name = UnitName(unit) or \"\"\n  len = tonumber(len)\n  if len then\n    name = _VARS.E:TruncateString(name, len)\n  end\n  \n  return name\nend",
 		},
 		["ls:npc:type"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED UNIT_NAME_UPDATE",
