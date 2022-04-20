@@ -3,7 +3,6 @@
 ## Version: 90200.05
 ## Title: LS: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
-## SavedVariablesPerCharacter: LS_UI_CHAR_CONFIG
 ## SavedVariables: LS_UI_GLOBAL_CONFIG, LS_UI_PRIVATE_CONFIG
 ## OptionalDeps: AdiButtonAuras, Masque, MaxDps, MinimapButtonFrame
 

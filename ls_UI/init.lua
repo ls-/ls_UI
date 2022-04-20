@@ -59,6 +59,8 @@ end
 E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if arg1 ~= addonName then return end
 
+	LS_UI_CHAR_CONFIG = nil
+
 	if LS_UI_GLOBAL_CONFIG then
 		--> 90105.04
 		if LS_UI_GLOBAL_CONFIG.char then
