@@ -116,10 +116,14 @@ do
 			width = "full",
 			name = L["VAR"],
 			multiline = 8,
+			dialogControl = "LSCodeBox",
 			disabled = isDefaultTag,
 			validate = validateTagVars,
+			get = function(info)
+				return C.db.global.tags[info[#info - 1]].vars or ""
+			end,
 			set = function(info, value)
-				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+				value = tonumber(value) or s_trim(value)
 				if C.db.global.tags[info[#info - 1]].vars ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
 
@@ -138,9 +142,13 @@ do
 			width = "full",
 			name = L["FUNC"],
 			multiline = 16,
+			dialogControl = "LSCodeBox",
 			validate = validateTagFunc,
+			get = function(info)
+				return C.db.global.tags[info[#info - 1]].func or ""
+			end,
 			set = function(info, value)
-				value = s_trim(value):gsub("\124\124+", "\124")
+				value = s_trim(value)
 				if C.db.global.tags[info[#info - 1]].func ~= value then
 					C.db.global.tags[info[#info - 1]].func = value
 
@@ -243,9 +251,13 @@ do
 					width = "full",
 					name = L["VAR"],
 					multiline = 8,
+					dialogControl = "LSCodeBox",
 					validate = validateTagVars,
+					get = function()
+						return newTagInfo.vars
+					end,
 					set = function(_, value)
-						newTagInfo.vars = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+						newTagInfo.vars = tonumber(value) or s_trim(value)
 					end,
 				},
 				func = {
@@ -254,7 +266,14 @@ do
 					width = "full",
 					name = L["FUNC"],
 					multiline = 16,
+					dialogControl = "LSCodeBox",
 					validate = validateTagFunc,
+					get = function()
+						return newTagInfo.func
+					end,
+					set = function(_, value)
+						newTagInfo.func = s_trim(value)
+					end,
 				},
 				add = {
 					order = 5,
@@ -377,13 +396,14 @@ do
 			width = "full",
 			name = L["VALUE"],
 			multiline = 16,
+			dialogControl = "LSCodeBox",
 			disabled = isDefaultTag,
 			validate = validateTagVars,
 			get = function(info)
-				return tostring(C.db.global.tag_vars[info[#info - 1]]):gsub("\124", "\124\124")
+				return tostring(C.db.global.tag_vars[info[#info - 1]])
 			end,
 			set = function(info, value)
-				value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+				value = tonumber(value) or s_trim(value)
 				if C.db.global.tag_vars[info[#info - 1]] ~= value then
 					rawset(oUF.Tags.Vars, info[#info - 1], nil)
 
@@ -451,9 +471,10 @@ do
 					width = "full",
 					name = L["VALUE"],
 					multiline = 16,
+					dialogControl = "LSCodeBox",
 					validate = validateTagVars,
 					set = function(_, value)
-						newVarInfo.value = tonumber(value) or s_trim(value):gsub("\124\124+", "\124")
+						newVarInfo.value = tonumber(value) or s_trim(value)
 					end,
 				},
 				add = {
