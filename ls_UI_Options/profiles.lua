@@ -1,6 +1,4 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local CONFIG = P:GetModule("Config")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
@@ -8,10 +6,14 @@ local next = _G.next
 local t_concat = _G.table.concat
 local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
+local unpack = _G.unpack
 
--- Mine
+-- Libs
 local AceGUI = LibStub("AceGUI-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+-- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 
 local PROFILE_TYPE_FORMAT = "%s |cff888987(id: %s)|r"
 local IMPORT_RESULT_FORMAT = "|A:auctionhouse-icon-checkmark:0:0|a %s |cff888987(%s)|r"

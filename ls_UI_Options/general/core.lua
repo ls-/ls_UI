@@ -1,11 +1,4 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
-local BARS = P:GetModule("Bars")
-local BLIZZARD = P:GetModule("Blizzard")
-local CONFIG = P:GetModule("Config")
-local FILTERS = P:GetModule("Filters")
-local MINIMAP = P:GetModule("Minimap")
-local UNITFRAMES = P:GetModule("UnitFrames")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
@@ -18,16 +11,18 @@ local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local tostring = _G.tostring
 local type = _G.type
+local unpack = _G.unpack
 
---[[ luacheck: globals
-	GameTooltip GetText InCombatLockdown LibStub UnitSex
-
-	FACTION_STANDING_LABEL1 FACTION_STANDING_LABEL2 FACTION_STANDING_LABEL3 FACTION_STANDING_LABEL4
-	FACTION_STANDING_LABEL5 FACTION_STANDING_LABEL6 FACTION_STANDING_LABEL7 FACTION_STANDING_LABEL8
-]]
+-- Libs
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local BARS = P:GetModule("Bars")
+local BLIZZARD = P:GetModule("Blizzard")
+local FILTERS = P:GetModule("Filters")
+local MINIMAP = P:GetModule("Minimap")
+local UNITFRAMES = P:GetModule("UnitFrames")
 
 local updateTagOptions
 do
@@ -315,7 +310,7 @@ do
 	local order = {}
 
 	function updateTagOptions()
-		local options = C.options.args.general.args.tags.args
+		local options = CONFIG.options.args.general.args.tags.args
 
 		t_wipe(options)
 		t_wipe(order)
@@ -504,7 +499,7 @@ do
 	local order = {}
 
 	function updateTagVarsOptions()
-		local options = C.options.args.general.args.tag_vars.args
+		local options = CONFIG.options.args.general.args.tag_vars.args
 
 		t_wipe(options)
 		t_wipe(order)
@@ -741,7 +736,7 @@ do
 	local order = {}
 
 	function updateAuraFiltersOptions()
-		local options = C.options.args.general.args.aura_filters.args
+		local options = CONFIG.options.args.general.args.aura_filters.args
 
 		t_wipe(options)
 		t_wipe(order)
@@ -773,7 +768,7 @@ do
 end
 
 function CONFIG:CreateGeneralPanel(order)
-	C.options.args.general = {
+	CONFIG.options.args.general = {
 		order = order,
 		type = "group",
 		childGroups = "tab",

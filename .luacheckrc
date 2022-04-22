@@ -11,7 +11,9 @@ ignore = {
 	"111/SLASH_.*", -- Setting an undefined global variable starting with SLASH_
 	"111/LS.*", -- Setting an undefined global variable starting with SLASH_
 	"112/LS.*", -- Mutating an undefined global variable starting with LS
+	"112/ls_UI", -- Mutating an undefined global variable ls_UI
 	"113/LS.*", -- Accessing an undefined global variable starting with LS
+	"113/ls_UI", -- Accessing an undefined global variable ls_UI
 	"122", -- Setting a read-only field of a global variable
 	"211/_G", -- Unused local variable _G
 	"211/PrC",  -- Unused local variable C
@@ -22,6 +24,7 @@ ignore = {
 	"211/L",  -- Unused local variable L
 	"211/M",  -- Unused local variable M
 	"211/P",  -- Unused local variable P
+	"211/oUF",  -- Unused local variable oUF
 	"432", -- Shadowing an upvalue argument
 }
 
@@ -222,6 +225,14 @@ read_globals = {
 	"ChatTypeInfo",
 	"CLOSE",
 	"DEFAULT_CHAT_FRAME",
+	"FACTION_STANDING_LABEL1",
+	"FACTION_STANDING_LABEL2",
+	"FACTION_STANDING_LABEL3",
+	"FACTION_STANDING_LABEL4",
+	"FACTION_STANDING_LABEL5",
+	"FACTION_STANDING_LABEL6",
+	"FACTION_STANDING_LABEL7",
+	"FACTION_STANDING_LABEL8",
 	"ITEM_QUALITY_COLORS",
 	"LE_BATTLE_PET_ALLY",
 	"MAX_REPUTATION_REACTION",

@@ -179,6 +179,16 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		P:InitModules()
 	end)
 
-	-- No one needs to see these
-	ns.C, ns.D, ns.L, ns.P = nil, nil, nil, nil
+	P:AddCommand("", function()
+		if not InCombatLockdown() then
+			local _, reason = LoadAddOn("ls_UI_Options")
+			if not ls_UI.Config then return end
+			-- if not ls_UI.Config then
+			-- 	DEFAULT_CHAT_FRAME:AddMessage(string.format(L["Failed to load ShadowedUF_Options, cannot open configuration. Error returned: %s"], reason and _G["ADDON_" .. reason] or ""))
+			-- 	return
+			-- end
+
+			ls_UI.Config:Open()
+		end
+	end)
 end)

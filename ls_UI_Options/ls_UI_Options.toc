@@ -1,0 +1,19 @@
+## Interface: 90200
+## Author: lightspark
+## Title: LS: |cff1a9fc0UI|r |cff888987OptionsUI|r
+## Notes: Options for LS: |cff1a9fc0UI|r.
+## RequiredDeps: ls_UI
+## LoadOnDemand: true
+
+core.lua
+auras.lua
+auratracker.lua
+bars.lua
+blizzard.lua
+general\_general.xml
+loot.lua
+minimap.lua
+profiles.lua
+tooltips.lua
+unitframes\_unitframes.xml
+init.lua

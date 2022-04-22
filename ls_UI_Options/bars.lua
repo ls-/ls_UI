@@ -1,7 +1,4 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local CONFIG = P:GetModule("Config")
-local BARS = P:GetModule("Bars")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
@@ -10,18 +7,12 @@ local next = _G.next
 local s_split = _G.string.split
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
-
---[[ luacheck: globals
-	ACHIEVEMENT_BUTTON ADVENTURE_JOURNAL BLIZZARD_STORE CHARACTER_BUTTON COLLECTIONS DUNGEONS_BUTTON
-	GUILD_AND_COMMUNITIES HELP_BUTTON MAINMENU_BUTTON QUESTLOG_BUTTON SPELLBOOK_ABILITIES_BUTTON TALENTS_BUTTON
-
-	SetCVar
-]]
-
--- Blizz
-local C_CurrencyInfo = _G.C_CurrencyInfo
+local unpack = _G.unpack
 
 -- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local BARS = P:GetModule("Bars")
+
 local GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
@@ -87,7 +78,7 @@ local CURRENCY_TABLE = {
 local currencyOptionTables = {}
 
 local function updateCurrencyOptions()
-	local options = C.options and C.options.args.bars and C.options.args.bars.args.micromenu.args.inventory.args.currency.args or CURRENCY_TABLE.args
+	local options = CONFIG.options and CONFIG.options.args.bars and CONFIG.options.args.bars.args.micromenu.args.inventory.args.currency.args or CURRENCY_TABLE.args
 	local listSize = C_CurrencyInfo.GetCurrencyListSize()
 	local info, id, link
 
@@ -729,7 +720,7 @@ local function getOptionsTable_Bar(barID, order, name)
 end
 
 function CONFIG.CreateActionBarsPanel(_, order)
-	C.options.args.bars = {
+	CONFIG.options.args.bars = {
 		order = order,
 		type = "group",
 		name = L["ACTION_BARS"],
@@ -1522,17 +1513,17 @@ function CONFIG.CreateActionBarsPanel(_, order)
 	}
 
 	for type in next, C.db.profile.bars.micromenu.buttons do
-		C.options.args.bars.args.micromenu.args.micromenu1.args[type] = {
-			order = C.options.args.bars.args.micromenu.args[type].order,
+		CONFIG.options.args.bars.args.micromenu.args.micromenu1.args[type] = {
+			order = CONFIG.options.args.bars.args.micromenu.args[type].order,
 			type = "toggle",
-			name = C.options.args.bars.args.micromenu.args[type].name,
+			name = CONFIG.options.args.bars.args.micromenu.args[type].name,
 			get = getMicroButtonAnchor,
 			set = setMicroButtonAnchor,
 		}
-		C.options.args.bars.args.micromenu.args.micromenu2.args[type] = {
-			order = C.options.args.bars.args.micromenu.args[type].order,
+		CONFIG.options.args.bars.args.micromenu.args.micromenu2.args[type] = {
+			order = CONFIG.options.args.bars.args.micromenu.args[type].order,
 			type = "toggle",
-			name = C.options.args.bars.args.micromenu.args[type].name,
+			name = CONFIG.options.args.bars.args.micromenu.args[type].name,
 			get = getMicroButtonAnchor,
 			set = setMicroButtonAnchor,
 		}

@@ -1,15 +1,14 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
-local CONFIG = P:GetModule("Config")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
---[[ luacheck: globals
-]]
+-- Libs
+local LSM = LibStub("LibSharedMedia-3.0")
 
 -- Mine
-local LSM = LibStub("LibSharedMedia-3.0")
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 
 local offsets = {"", "   ", "      "}
 local function d(c, o, v)
@@ -66,7 +65,7 @@ local function getOptions(order, name)
 end
 
 function CONFIG:CreateGeneralFontsPanel(order)
-	C.options.args.general.args.fonts = {
+	CONFIG.options.args.general.args.fonts = {
 		order = order,
 		type = "group",
 		name = L["FONTS"],

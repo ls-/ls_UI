@@ -1,15 +1,13 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local CONFIG = P:GetModule("Config")
-local TOOLTIPS = P:GetModule("Tooltips")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
-
---[[ luacheck: globals
-]]
+local unpack = _G.unpack
 
 -- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local TOOLTIPS = P:GetModule("Tooltips")
+
 local offsets = {"", "   ", "      "}
 local function d(c, o, v)
 	print(offsets[o].."|cff"..c..v.."|r")
@@ -34,7 +32,7 @@ local function isModuleDisabled()
 end
 
 function CONFIG:CreateTooltipsPanel(order)
-	C.options.args.tooltips = {
+	CONFIG.options.args.tooltips = {
 		order = order,
 		type = "group",
 		name = L["TOOLTIPS"],

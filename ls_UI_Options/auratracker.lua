@@ -1,18 +1,16 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local AURATRACKER = P:GetModule("AuraTracker")
-local CONFIG = P:GetModule("Config")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
+local unpack = _G.unpack
 
---[[ luacheck: globals
-	GameTooltip InCombatLockdown LibStub
-]]
+-- Libs
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local AURATRACKER = P:GetModule("AuraTracker")
 
 local GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
@@ -69,7 +67,7 @@ local function callback()
 end
 
 function CONFIG.CreateAuraTrackerPanel(_, order)
-	C.options.args.auratracker = {
+	CONFIG.options.args.auratracker = {
 		order = order,
 		type = "group",
 		name = L["AURA_TRACKER"],

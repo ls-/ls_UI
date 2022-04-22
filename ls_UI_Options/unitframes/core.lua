@@ -1,11 +1,13 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local CONFIG = P:GetModule("Config")
-local UNITFRAMES = P:GetModule("UnitFrames")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
+local unpack = _G.unpack
+
+-- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local UNITFRAMES = P:GetModule("UnitFrames")
 
 local function isModuleDisabled()
 	return not UNITFRAMES:IsInit()
@@ -368,7 +370,7 @@ local function createUnitFramePanel(order, unit, name)
 end
 
 function CONFIG:CreateUnitFramesPanel(order)
-	C.options.args.unitframes = {
+	CONFIG.options.args.unitframes = {
 		order = order,
 		type = "group",
 		name = L["UNIT_FRAME"],
@@ -663,5 +665,5 @@ function CONFIG:CreateUnitFramesPanel(order)
 		},
 	}
 
-	self:AddCallback(self.CreateUnitFrameAuraFilters)
+	self:AddCallback(self.UpdateUnitFrameAuraFilters)
 end

@@ -15,16 +15,20 @@ local type = _G.type
 local xpcall = _G.xpcall
 
 -- Mine
--- engine, config, private config, defaults, media, locales, private
+-- engine, config, private config, defaults, private defaults, media, locales, private
 local E, C, PrC, D, PrD, M, L, P = {}, {}, {}, {}, {}, {}, {}, {}
 ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P = E, C, PrC, D, PrD, M, L, P
 
 _G[addonName] = {
-	[1] = ns.E,
-	[2] = ns.M,
-	[3] = ns.C,
-	[4] = ns.PrC,
-	[5] = ns.L
+	E, -- 1
+	M, -- 2
+	L, -- 3
+	C, -- 4
+	D, -- 5
+	PrC, -- 6
+	PrD, -- 7
+	P, -- 8
+	ns.oUF, -- 9
 }
 
 ------------

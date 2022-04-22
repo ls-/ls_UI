@@ -1,12 +1,13 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local CONFIG = P:GetModule("Config")
-local MINIMAP = P:GetModule("Minimap")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local MINIMAP = P:GetModule("Minimap")
+
 local MODES = {
 	[0] = L["HIDE"],
 	[1] = L["SHOW_ON_MOUSEOVER"],
@@ -45,7 +46,7 @@ local function isButtonCollectionDisabled()
 end
 
 function CONFIG.CreateMinimapPanel(_, order)
-	C.options.args.minimap = {
+	CONFIG.options.args.minimap = {
 		order = order,
 		type = "group",
 		name = L["MINIMAP"],

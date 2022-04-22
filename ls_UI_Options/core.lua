@@ -1,6 +1,5 @@
-local addonName, ns = ...
-local E, C, PrC, M, L, P, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.oUF or oUF
-local MODULE = P:AddModule("Config")
+local _, CONFIG = ...
+ls_UI.Config = CONFIG
 
 -- Lua
 local _G = getfenv(0)
@@ -15,50 +14,93 @@ local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
 local type = _G.type
+local unpack = _G.unpack
 
--- Blizz
-local CreateFrame = _G.CreateFrame
-local FauxScrollFrame_GetOffset = _G.FauxScrollFrame_GetOffset
-local FauxScrollFrame_OnVerticalScroll = _G.FauxScrollFrame_OnVerticalScroll
-local FauxScrollFrame_SetOffset = _G.FauxScrollFrame_SetOffset
-local FauxScrollFrame_Update = _G.FauxScrollFrame_Update
-local GameTooltip = _G.GameTooltip
-local GetSpellInfo = _G.GetSpellInfo
-local GetSpellLink = _G.GetSpellLink
-local InCombatLockdown = _G.InCombatLockdown
-local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory
-local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show
-local PanelTemplates_DisableTab = _G.PanelTemplates_DisableTab
-local PanelTemplates_EnableTab = _G.PanelTemplates_EnableTab
-local PanelTemplates_SetNumTabs = _G.PanelTemplates_SetNumTabs
-local PanelTemplates_SetTab = _G.PanelTemplates_SetTab
-local PanelTemplates_TabResize = _G.PanelTemplates_TabResize
-local ReloadUI = _G.ReloadUI
-
---[[ luacheck: globals
-	LibStub InterfaceOptionsFramePanelContainer UIParent
-]]
+-- Libs
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local AceConfig = LibStub("AceConfig-3.0")
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
-local LibKeyBound = LibStub("LibKeyBound-1.0")
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+
+-- CONFIG:ShowStaticPopup(which)
+do
+	local POPUPS = {
+		["RELOAD_UI"] = {
+			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
+			accept = L["RELOAD_NOW"],
+			cancel = L["LATER"],
+			OnAccept = function() ReloadUI() end,
+			OnCancel = function(self)
+				AceConfigDialog.popup:Hide()
+
+				AceConfigDialog.popup.accept:SetScript("OnClick", nil)
+				AceConfigDialog.popup.accept:SetText(L["ACCEPT"] )
+
+				self:SetScript("OnClick", nil)
+				self:SetText(L["CANCEL"])
+
+				CONFIG:SetStatusText(L["RELOAD_UI_WARNING"])
+			end,
+		},
+	}
+
+	function CONFIG:ShowStaticPopup(which)
+		if not POPUPS[which] then
+			return
+		end
+
+		local frame = AceConfigDialog.popup
+		frame:Show()
+		frame.text:SetText(POPUPS[which].text)
+		frame:SetHeight(61 + frame.text:GetHeight())
+
+		frame.accept:ClearAllPoints()
+		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
+		frame.accept:SetScript("OnClick", POPUPS[which].OnAccept)
+		frame.accept:SetText(POPUPS[which].accept)
+
+		frame.cancel:Show()
+		frame.cancel:SetScript("OnClick", POPUPS[which].OnCancel)
+		frame.cancel:SetText(POPUPS[which].cancel)
+	end
+end
+
+function CONFIG:SetStatusText(text)
+	local frame = AceConfigDialog.OpenFrames.ls_UI
+	if frame then
+		frame:SetStatusText(text)
+	end
+end
+
+function CONFIG.ConfirmReset(info)
+	local option = CONFIG.options
+
+	for i = 1, #info - 1 do
+		option = option.args[info[i]]
+	end
+
+	return L["CONFIRM_RESET"]:format(option.name)
+end
+
+---------------
+-- OLD STUFF --
+---------------
 
 local INT_LIMIT = 2 ^ 32 / 2 - 1
 
-MODULE.H_ALIGNMENTS = {
+CONFIG.H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
 	["LEFT"] = "LEFT",
 	["RIGHT"] = "RIGHT",
 }
 
-MODULE.V_ALIGNMENTS = {
+CONFIG.V_ALIGNMENTS = {
 	["BOTTOM"] = "BOTTOM",
 	["MIDDLE"] = "MIDDLE",
 	["TOP"] = "TOP",
 }
 
-MODULE.POINTS = {
+CONFIG.POINTS = {
 	["BOTTOM"] = "BOTTOM",
 	["BOTTOMLEFT"] = "BOTTOMLEFT",
 	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
@@ -70,7 +112,7 @@ MODULE.POINTS = {
 	["TOPRIGHT"] = "TOPRIGHT",
 }
 
-MODULE.POINTS_EXT = {
+CONFIG.POINTS_EXT = {
 	[""] = "NONE",
 	["BOTTOM"] = "BOTTOM",
 	["BOTTOMLEFT"] = "BOTTOMLEFT",
@@ -83,46 +125,36 @@ MODULE.POINTS_EXT = {
 	["TOPRIGHT"] = "TOPRIGHT",
 }
 
-MODULE.CASTBAR_ICON_POSITIONS = {
+CONFIG.CASTBAR_ICON_POSITIONS = {
 	["NONE"] = L["NONE"],
 	["LEFT"] = L["LEFT"],
 	["RIGHT"] = L["RIGHT"],
 }
 
-MODULE.FLAGS = {
+CONFIG.FLAGS = {
 	-- [""] = L["NONE"],
 	["_Outline"] = L["OUTLINE"],
 	["_Shadow"] = L["SHADOW"],
 }
 
-MODULE.GROWTH_DIRS = {
+CONFIG.GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
 	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
-MODULE.PORTRAIT_STYLES = {
+CONFIG.PORTRAIT_STYLES = {
 	["2D"] = "2D",
 	["3D"] = "3D",
 }
 
-MODULE.PORTRAIT_POSITIONS = {
+CONFIG.PORTRAIT_POSITIONS = {
 	["Left"] = L["LEFT"],
 	["Right"] = L["RIGHT"],
 }
 
-function MODULE.ConfirmReset(info)
-	local option = C.options
-
-	for i = 1, #info - 1 do
-		option = option.args[info[i]]
-	end
-
-	return L["CONFIRM_RESET"]:format(option.name)
-end
-
-function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
+function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
 		[""] = L["FRAME"],
 		["Health"] = L["HEALTH"],
@@ -146,7 +178,7 @@ function MODULE:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	return temp
 end
 
--- MODULE.OpenAuraConfig
+-- CONFIG.OpenAuraConfig
 do
 	local NUM_BUTTONS = 13
 
@@ -262,7 +294,7 @@ do
 		end
 	end
 
-	function MODULE:OpenAuraConfig(name, auras, buffs, debuffs, hideCallback)
+	function CONFIG:OpenAuraConfig(name, auras, buffs, debuffs, hideCallback)
 		if not frame then
 			frame = CreateFrame("Frame", "LSAuraFilterConfig", UIParent, "UIPanelDialogTemplate")
 			frame:EnableMouse(true)
@@ -653,57 +685,7 @@ do
 	end
 end
 
--- MODULE.ShowStaticPopup
-do
-	local POPUPS = {
-		["RELOAD_UI"] = {
-			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
-			accept = L["RELOAD_NOW"],
-			cancel = L["LATER"],
-			OnAccept = function() ReloadUI() end,
-			OnCancel = function(self)
-				AceConfigDialog.popup:Hide()
-
-				AceConfigDialog.popup.accept:SetScript("OnClick", nil)
-				AceConfigDialog.popup.accept:SetText(ACCEPT)
-
-				self:SetScript("OnClick", nil)
-				self:SetText(CANCEL)
-
-				MODULE:SetStatusText(L["RELOAD_UI_WARNING"])
-			end,
-		},
-	}
-
-	function MODULE:ShowStaticPopup(which)
-		if not POPUPS[which] then
-			return
-		end
-
-		local frame = AceConfigDialog.popup
-		frame:Show()
-		frame.text:SetText(POPUPS[which].text)
-		frame:SetHeight(61 + frame.text:GetHeight())
-
-		frame.accept:ClearAllPoints()
-		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
-		frame.accept:SetScript("OnClick", POPUPS[which].OnAccept)
-		frame.accept:SetText(POPUPS[which].accept)
-
-		frame.cancel:Show()
-		frame.cancel:SetScript("OnClick", POPUPS[which].OnCancel)
-		frame.cancel:SetText(POPUPS[which].cancel)
-	end
-end
-
-function MODULE:SetStatusText(text)
-	local frame = AceConfigDialog.OpenFrames[addonName]
-	if frame then
-		frame:SetStatusText(text)
-	end
-end
-
--- MODULE.IsTagStringValid
+-- CONFIG.IsTagStringValid
 do
 	local badTags = {}
 
@@ -728,7 +710,7 @@ do
 		return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset)
 	end
 
-	function MODULE:IsTagStringValid(tagString)
+	function CONFIG:IsTagStringValid(tagString)
 		t_wipe(badTags)
 
 		for bracket in tagString:gmatch("%[..-%]+") do
@@ -749,50 +731,12 @@ do
 	end
 end
 
--- MODULE.IsEventStringValid
-do
-	local badEvents = {}
-	local validator = CreateFrame("Frame")
-
-	function MODULE:IsEventStringValid(eventString)
-		t_wipe(badEvents)
-
-		for event in eventString:gmatch('%S+') do
-			if not pcall(validator.RegisterEvent, validator, event) then
-				t_insert(badEvents, "|cffffffff" .. event .. "|r")
-			end
-		end
-
-		return #badEvents > 0 and L["INVALID_EVENTS_ERR"]:format(t_concat(badEvents, ", ")) or true
-	end
-end
-
--- MODULE.IsVarStringValid
-do
-	function MODULE:IsVarStringValid(varString)
-		if tonumber(varString) then
-			return true
-		else
-			local _, err = loadstring("return " .. varString)
-			return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
-		end
-	end
-end
-
--- MODULE.IsFuncStringValid
-do
-	function MODULE:IsFuncStringValid(funcString)
-		local _, err = loadstring("return " .. funcString)
-		return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
-	end
-end
-
 local globalIgnoredKeys = {
 	-- enabled = true,
 	point = true,
 }
 
-function MODULE:CopySettings(src, dest, ignoredKeys)
+function CONFIG:CopySettings(src, dest, ignoredKeys)
 	for k, v in next, dest do
 		if not globalIgnoredKeys[k] and not (ignoredKeys and ignoredKeys[k]) then
 			if src[k] ~= nil then
@@ -813,122 +757,13 @@ end
 do
 	local callbacks = {}
 
-	function MODULE:AddCallback(func)
+	function CONFIG:AddCallback(func)
 		t_insert(callbacks, func)
 	end
 
-	function MODULE:RunCallbacks()
+	function CONFIG:RunCallbacks()
 		for i = #callbacks, 1, -1 do
 			callbacks[i]()
 		end
 	end
-end
-
-function MODULE:Init()
-	C.options = {
-		type = "group",
-		name = L["LS_UI"],
-		disabled = function() return InCombatLockdown() end,
-		args = {
-			layout = {
-				order = 1,
-				type = "select",
-				name = L["UI_LAYOUT"],
-				desc = L["UI_LAYOUT_DESC"],
-				values = {
-					round = L["LAYOUT_ROUND"],
-					rect = L["LAYOUT_RECT"]
-				},
-				get = function()
-					return PrC.db.profile.layout
-				end,
-				set = function(_, value)
-					PrC.db.profile.layout = value
-
-					if E.UI_LAYOUT ~= value then
-						MODULE:ShowStaticPopup("RELOAD_UI")
-					end
-				end,
-			},
-			toggle_anchors = {
-				order = 2,
-				type = "execute",
-				name = L["TOGGLE_ANCHORS"],
-				width = 1.25,
-				func = function()
-					E.Movers:ToggleAll(true)
-
-					AceConfigDialog:Close("ls_UI")
-				end,
-			},
-			keybind_mode = {
-				order = 3,
-				type = "execute",
-				name = LibKeyBound.L.BindingMode,
-				width = 1.25,
-				func = function() LibKeyBound:Toggle() end,
-			},
-			reload_ui = {
-				order = 4,
-				type = "execute",
-				name = L["RELOAD_UI"],
-				width = 1.25,
-				func = function() ReloadUI() end,
-			},
-			profiles = MODULE:CreateProfilesPanel(100)
-		},
-	}
-
-	AceConfig:RegisterOptionsTable(addonName, C.options)
-	AceConfigDialog:SetDefaultSize(addonName, 1228, 768)
-
-	MODULE:CreateGeneralPanel(5)
-	MODULE:CreateActionBarsPanel(6)
-	MODULE:CreateAuraTrackerPanel(7)
-	MODULE:CreateBlizzardPanel(8)
-	MODULE:CreateAurasPanel(9)
-	MODULE:CreateLootPanel(10)
-	MODULE:CreateMinimapPanel(11)
-	MODULE:CreateTooltipsPanel(12)
-	MODULE:CreateUnitFramesPanel(13)
-
-	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
-	panel.name = L["LS_UI"]
-	panel:Hide()
-
-	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	button:SetText(L["OPEN_CONFIG"])
-	button:SetWidth(button:GetTextWidth() + 18)
-	button:SetPoint("TOPLEFT", 16, -16)
-	button:SetScript("OnClick", function()
-		if not InCombatLockdown() then
-			InterfaceOptionsFrame_Show()
-
-			AceConfigDialog:Open(addonName)
-		end
-	end)
-
-	InterfaceOptions_AddCategory(panel, true)
-
-	P:AddCommand("", function()
-		if not InCombatLockdown() then
-			AceConfigDialog:Open(addonName)
-		end
-	end)
-
-	P:AddCommand("kb", function()
-		if not InCombatLockdown() then
-			LibKeyBound:Toggle()
-		end
-	end)
-
-	E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
-		AceConfigDialog:Close(addonName)
-	end)
-
-	self:Update()
-end
-
-function MODULE:Update()
-	MODULE:RunCallbacks()
 end

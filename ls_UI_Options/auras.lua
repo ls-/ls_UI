@@ -1,13 +1,14 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD
-local AURAS = P:GetModule("Auras")
-local CONFIG = P:GetModule("Config")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
+local unpack = _G.unpack
 
 -- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local AURAS = P:GetModule("Auras")
+
 local H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
 	["LEFT"] = "LEFT",
@@ -320,7 +321,7 @@ local function getOptionsTable_Aura(order, name, filter)
 end
 
 function CONFIG.CreateAurasPanel(_, order)
-	C.options.args.auras = {
+	CONFIG.options.args.auras = {
 		order = order,
 		type = "group",
 		name = L["BUFFS_AND_DEBUFFS"],

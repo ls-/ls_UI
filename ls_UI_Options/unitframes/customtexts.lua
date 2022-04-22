@@ -1,7 +1,4 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
-local CONFIG = P:GetModule("Config")
-local UNITFRAMES = P:GetModule("UnitFrames")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
@@ -10,9 +7,14 @@ local s_trim = _G.string.trim
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
+local unpack = _G.unpack
+
+-- Libs
+local ACD = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local ACD = LibStub("AceConfigDialog-3.0")
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local UNITFRAMES = P:GetModule("UnitFrames")
 
 local offsets = {"", "   ", "      "}
 local function d(c, o, v)
@@ -194,7 +196,7 @@ do
 	end
 
 	function updateOptions(unit)
-		local options = t_wipe(C.options.args.unitframes.args[unit].args.custom_texts.plugins.texts)
+		local options = t_wipe(CONFIG.options.args.unitframes.args[unit].args.custom_texts.plugins.texts)
 		local order = {}
 
 		for text in next, C.db.profile.units[unit].custom_texts do

@@ -1,12 +1,13 @@
-local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.RrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
-local CONFIG = P:GetModule("Config")
-local UNITFRAMES = P:GetModule("UnitFrames")
+local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
+local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local UNITFRAMES = P:GetModule("UnitFrames")
+
 local offsets = {"", "   ", "      "}
 local function d(c, o, v)
 	print(offsets[o].."|cff"..c..v.."|r")

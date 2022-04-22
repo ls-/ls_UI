@@ -12,5 +12,4 @@ core\_core.xml
 locales\_locales.xml
 init.lua
 modules\_modules.xml
-config\_config.xml
 core\dev.xml
