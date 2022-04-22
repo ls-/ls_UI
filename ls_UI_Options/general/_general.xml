@@ -1,4 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
+	<Script file="aurafilters.lua"/>
+	<Script file="colors.lua"/>
 	<Script file="fonts.lua"/>
+	<Script file="tags.lua"/>
+	<Script file="tagvars.lua"/>
 </Ui>

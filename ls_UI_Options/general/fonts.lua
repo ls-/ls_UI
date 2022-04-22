@@ -10,22 +10,15 @@ local LSM = LibStub("LibSharedMedia-3.0")
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 
-local offsets = {"", "   ", "      "}
-local function d(c, o, v)
-	print(offsets[o].."|cff"..c..v.."|r")
-end
-
 local orders = {0, 0, 0}
 
 local function reset(order)
 	orders[order] = 1
-	-- d("d20000", order, orders[order])
 	return orders[order]
 end
 
 local function inc(order)
 	orders[order] = orders[order] + 1
-	-- d("00d200", order, orders[order])
 	return orders[order]
 end
 
@@ -64,8 +57,8 @@ local function getOptions(order, name)
 	return temp
 end
 
-function CONFIG:CreateGeneralFontsPanel(order)
-	CONFIG.options.args.general.args.fonts = {
+function CONFIG:GetFontsOptions(order)
+	self.options.args.general.args.fonts = {
 		order = order,
 		type = "group",
 		name = L["FONTS"],
