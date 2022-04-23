@@ -8,8 +8,8 @@ local unpack = _G.unpack
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local LOOT = P:GetModule("Loot")
 
-function CONFIG.CreateLootPanel(_, order)
-	CONFIG.options.args.loot = {
+function CONFIG:GetLootOptions(order)
+	self.options.args.loot = {
 		order = order,
 		type = "group",
 		name = L["LOOT"],
@@ -33,7 +33,7 @@ function CONFIG.CreateLootPanel(_, order)
 							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
-				end
+				end,
 			},
 		},
 	}
