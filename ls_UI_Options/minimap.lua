@@ -45,8 +45,8 @@ local function isButtonCollectionDisabled()
 	return not (MINIMAP:IsInit() and C.db.profile.minimap.collect.enabled)
 end
 
-function CONFIG.CreateMinimapPanel(_, order)
-	CONFIG.options.args.minimap = {
+function CONFIG:CreateMinimapPanel(order)
+	self.options.args.minimap = {
 		order = order,
 		type = "group",
 		name = L["MINIMAP"],
@@ -117,7 +117,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				get = function()
 					return C.db.profile.minimap[E.UI_LAYOUT].size
 				end,
-				set = function(info, value)
+				set = function(_, value)
 					if C.db.profile.minimap[E.UI_LAYOUT].size ~= value then
 						C.db.profile.minimap[E.UI_LAYOUT].size = value
 
@@ -141,7 +141,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				get = function()
 					return C.db.profile.minimap[E.UI_LAYOUT].scale
 				end,
-				set = function(info, value)
+				set = function(_, value)
 					if C.db.profile.minimap[E.UI_LAYOUT].scale ~= value then
 						C.db.profile.minimap[E.UI_LAYOUT].scale = value
 
@@ -168,6 +168,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				end,
 				set = function(info, value)
 					C.db.profile.minimap[E.UI_LAYOUT].clock[info[#info]] = value
+
 					Minimap:UpdateConfig()
 					Minimap:UpdateClock()
 				end,
@@ -203,6 +204,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				end,
 				set = function(info, value)
 					C.db.profile.minimap[E.UI_LAYOUT].zone_text[info[#info]] = value
+
 					Minimap:UpdateConfig()
 					Minimap:UpdateZone()
 				end,
@@ -217,7 +219,9 @@ function CONFIG.CreateMinimapPanel(_, order)
 						order = 2,
 						type = "toggle",
 						name = L["BORDER"],
-						disabled = function() return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2 end,
+						disabled = function()
+							return not MINIMAP:IsInit() or C.db.profile.minimap[E.UI_LAYOUT].zone_text.mode ~= 2
+						end,
 					},
 				},
 			},
@@ -239,6 +243,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				end,
 				set = function(info, value)
 					C.db.profile.minimap[E.UI_LAYOUT].flag[info[#info]] = value
+
 					Minimap:UpdateConfig()
 					Minimap:UpdateFlag()
 				end,
@@ -279,6 +284,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 						end,
 						set = function(_, value)
 							C.db.profile.minimap.color.border = value
+
 							Minimap:UpdateConfig()
 							Minimap:UpdateBorderColor()
 						end,
@@ -292,6 +298,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 						end,
 						set = function(_, value)
 							C.db.profile.minimap.color.zone_text = value
+
 							Minimap:UpdateConfig()
 							Minimap:UpdateZoneColor()
 						end,
@@ -406,6 +413,7 @@ function CONFIG.CreateMinimapPanel(_, order)
 				end,
 				set = function(info, value)
 					C.db.profile.minimap.collect[info[#info]] = value
+
 					Minimap:UpdateConfig()
 					Minimap:UpdateButtons()
 				end,
