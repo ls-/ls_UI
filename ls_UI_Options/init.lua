@@ -83,7 +83,7 @@ function CONFIG:Open()
 		CONFIG:CreateAurasPanel(9)
 		CONFIG:GetLootOptions(10)
 		CONFIG:CreateMinimapPanel(11)
-		CONFIG:CreateTooltipsPanel(12)
+		CONFIG:GetTooltipsOptions(12)
 		CONFIG:CreateUnitFramesPanel(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)

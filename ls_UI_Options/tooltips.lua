@@ -8,22 +8,15 @@ local unpack = _G.unpack
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local TOOLTIPS = P:GetModule("Tooltips")
 
-local offsets = {"", "   ", "      "}
-local function d(c, o, v)
-	print(offsets[o].."|cff"..c..v.."|r")
-end
-
-local orders = {0, 0}
+local orders = {}
 
 local function reset(order)
 	orders[order] = 1
-	-- d("d20000", order, orders[order])
 	return orders[order]
 end
 
 local function inc(order)
 	orders[order] = orders[order] + 1
-	-- d("00d200", order, orders[order])
 	return orders[order]
 end
 
@@ -31,11 +24,17 @@ local function isModuleDisabled()
 	return not TOOLTIPS:IsInit()
 end
 
-function CONFIG:CreateTooltipsPanel(order)
-	CONFIG.options.args.tooltips = {
+function CONFIG:GetTooltipsOptions(order)
+	self.options.args.tooltips = {
 		order = order,
 		type = "group",
 		name = L["TOOLTIPS"],
+		get = function(info)
+			return C.db.profile.tooltips[info[#info]]
+		end,
+		set = function(info, value)
+			C.db.profile.tooltips[info[#info]] = value
+		end,
 		args = {
 			enabled = {
 				order = reset(1),
@@ -81,12 +80,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				type = "toggle",
 				name = L["PLAYER_TITLE"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.title
-				end,
-				set = function(_, value)
-					C.db.profile.tooltips.title = value
-				end,
 			},
 			target = {
 				order = inc(1),
@@ -94,12 +87,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				name = L["TARGET_INFO"],
 				desc = L["TARGET_INFO_DESC"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.target
-				end,
-				set = function(_, value)
-					C.db.profile.tooltips.target = value
-				end,
 			},
 			inspect = {
 				order = inc(1),
@@ -107,9 +94,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				name = L["INSPECT_INFO"],
 				desc = L["INSPECT_INFO_DESC"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.inspect
-				end,
 				set = function(_, value)
 					C.db.profile.tooltips.inspect = value
 
@@ -121,12 +105,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				type = "toggle",
 				name = L["TOOLTIP_IDS"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.id
-				end,
-				set = function(_, value)
-					C.db.profile.tooltips.id = value
-				end,
 			},
 			count = {
 				order = inc(1),
@@ -134,12 +112,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				name = L["ITEM_COUNT"],
 				desc = L["ITEM_COUNT_DESC"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.count
-				end,
-				set = function(_, value)
-					C.db.profile.tooltips.count = value
-				end,
 			},
 			spacer_2 = {
 				order = inc(1),
@@ -152,12 +124,6 @@ function CONFIG:CreateTooltipsPanel(order)
 				type = "toggle",
 				name = L["ANCHOR_TO_CURSOR"],
 				disabled = isModuleDisabled,
-				get = function()
-					return C.db.profile.tooltips.anchor_cursor
-				end,
-				set = function(_, value)
-					C.db.profile.tooltips.anchor_cursor = value
-				end,
 			},
 			spacer_3 = {
 				order = inc(1),
