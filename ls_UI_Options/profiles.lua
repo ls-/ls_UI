@@ -9,8 +9,10 @@ local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
 -- Libs
-local AceGUI = LibStub("AceGUI-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+local AceDBOptions = LibStub("AceDBOptions-3.0")
+local AceGUI = LibStub("AceGUI-3.0")
+local LibDualSpec = LibStub("LibDualSpec-1.0")
 
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
@@ -296,13 +298,13 @@ function CONFIG:CreateProfilesPanel(order)
 		},
 	}
 
-	options.args.global = LibStub("AceDBOptions-3.0"):GetOptionsTable(C.db, true)
+	options.args.global = AceDBOptions:GetOptionsTable(C.db, true)
 	options.args.global.order = 4
 	options.args.global.name = L["PROFILE_GLOBAL"]
 
-	LibStub("LibDualSpec-1.0"):EnhanceOptions(options.args.global, C.db)
+	LibDualSpec:EnhanceOptions(options.args.global, C.db)
 
-	options.args.private = LibStub("AceDBOptions-3.0"):GetOptionsTable(PrC.db, true)
+	options.args.private = AceDBOptions:GetOptionsTable(PrC.db, true)
 	options.args.private.order = 5
 	options.args.private.name = L["PROFILE_PRIVATE"]
 
