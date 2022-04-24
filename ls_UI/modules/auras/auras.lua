@@ -406,11 +406,11 @@ local function createHeader(filter)
 	RegisterStateDriver(header, "visibility", "[petbattle] hide; show")
 end
 
-function MODULE.IsInit()
+function MODULE:IsInit()
 	return isInit
 end
 
-function MODULE.Init()
+function MODULE:Init()
 	if not isInit and PrC.db.profile.auras.enabled then
 		createHeader("HELPFUL")
 		createHeader("HARMFUL")
@@ -437,7 +437,7 @@ function MODULE:ForEach(method, ...)
 	end
 end
 
-function MODULE:ForHeader(header, method, ...)
+function MODULE:For(header, method, ...)
 	if headers[header] and headers[header][method] then
 		headers[header][method](headers[header], ...)
 	end

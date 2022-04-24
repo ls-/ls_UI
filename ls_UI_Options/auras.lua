@@ -9,6 +9,18 @@ local unpack = _G.unpack
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local AURAS = P:GetModule("Auras")
 
+local orders = {}
+
+local function reset(order)
+	orders[order] = 1
+	return orders[order]
+end
+
+local function inc(order)
+	orders[order] = orders[order] + 1
+	return orders[order]
+end
+
 local H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",
 	["LEFT"] = "LEFT",
@@ -19,12 +31,6 @@ local V_ALIGNMENTS = {
 	["BOTTOM"] = "BOTTOM",
 	["MIDDLE"] = "MIDDLE",
 	["TOP"] = "TOP",
-}
-
-local FLAGS = {
-	-- [""] = L["NONE"],
-	["_Outline"] = L["OUTLINE"],
-	["_Shadow"] = L["SHADOW"],
 }
 
 local GROWTH_DIRS = {
@@ -67,7 +73,7 @@ local function isModuleDisabled()
 	return not AURAS:IsInit()
 end
 
-local function getOptionsTable_Aura(order, name, filter)
+local function getAuraOptions(order, name, filter)
 	local temp = {
 		order = order,
 		type = "group",
@@ -79,51 +85,59 @@ local function getOptionsTable_Aura(order, name, filter)
 		set = function(info, value)
 			if C.db.profile.auras[filter][info[#info]] ~= value then
 				C.db.profile.auras[filter][info[#info]] = value
-				AURAS:ForHeader(filter, "Update")
+
+				AURAS:For(filter, "Update")
 			end
 		end,
 		args = {
 			reset = {
 				type = "execute",
-				order = 1,
+				order = reset(1),
 				name = L["RESTORE_DEFAULTS"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras[filter], C.db.profile.auras[filter], {point = true})
-					AURAS:ForHeader(filter, "Update")
+
+					AURAS:For(filter, "Update")
 				end,
 			},
 			spacer_1 = {
-				order = 9,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			num_rows = {
-				order = 10,
+				order = inc(1),
 				type = "range",
 				name = L["ROWS"],
 				min = 1, max = 40, step = 1,
 			},
+			num = {
+				order = inc(1),
+				type = "range",
+				name = L["NUM_BUTTONS"],
+				min = 1, max = 4, step = 1,
+			},
 			per_row = {
-				order = 11,
+				order = inc(1),
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 40, step = 1,
 			},
 			spacing = {
-				order = 12,
+				order = inc(1),
 				type = "range",
 				name = L["SPACING"],
 				min = 4, max = 24, step = 2,
 			},
 			width = {
-				order = 13,
+				order = inc(1),
 				type = "range",
 				name = L["WIDTH"],
 				min = 16, max = 64, step = 1,
 			},
 			height = {
-				order = 14,
+				order = inc(1),
 				type = "range",
 				name = L["HEIGHT"],
 				desc = L["HEIGHT_OVERRIDE_DESC"],
@@ -138,11 +152,11 @@ local function getOptionsTable_Aura(order, name, filter)
 
 					C.db.profile.auras[filter].height = value
 
-					AURAS:ForHeader(filter, "Update")
+					AURAS:For(filter, "Update")
 				end,
 			},
 			growth_dir = {
-				order = 15,
+				order = inc(1),
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
@@ -151,36 +165,37 @@ local function getOptionsTable_Aura(order, name, filter)
 				end,
 				set = function(_, value)
 					C.db.profile.auras[filter].x_growth, C.db.profile.auras[filter].y_growth = s_split("_", value)
-					AURAS:ForHeader(filter, "Update")
+
+					AURAS:For(filter, "Update")
 				end,
 			},
 			sort_method = {
-				order = 16,
+				order = inc(1),
 				type = "select",
 				name = L["SORT_METHOD"],
 				values = SORT_METHODS,
 			},
 			sort_dir = {
-				order = 17,
+				order = inc(1),
 				type = "select",
 				name = L["SORT_DIR"],
 				values = SORT_DIRS,
 			},
 			sep_own = {
-				order = 18,
+				order = inc(1),
 				type = "select",
 				name = L["SEPARATION"],
 				values = SEP_TYPES
 			},
 			spacer_2 = {
-				order = 19,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			type = {
-				order = 20,
+				order = inc(1),
 				type = "group",
-				name = "Aura Type",
+				name = L["AURA_TYPE"],
 				inline = true,
 				get = function(info)
 					return C.db.profile.auras[filter].type[info[#info]]
@@ -188,24 +203,25 @@ local function getOptionsTable_Aura(order, name, filter)
 				set = function(info, value)
 					if C.db.profile.auras[filter].type[info[#info]] ~= value then
 						C.db.profile.auras[filter].type[info[#info]] = value
-						AURAS:ForHeader(filter, "UpdateConfig")
-						AURAS:ForHeader(filter, "ForEachButton", "UpdateAuraTypeIcon")
+
+						AURAS:For(filter, "UpdateConfig")
+						AURAS:For(filter, "ForEachButton", "UpdateAuraTypeIcon")
 					end
 				end,
 				args = {
 					debuff_type = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
-						name = "Debuff Type",
+						name = L["DEBUFF_TYPE"],
 					},
 					size = {
-						order = 2,
+						order = inc(2),
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 32, step = 2,
 					},
 					position = {
-						order = 3,
+						order = inc(2),
 						type = "select",
 						name = L["POINT"],
 						values = POINTS,
@@ -213,12 +229,12 @@ local function getOptionsTable_Aura(order, name, filter)
 				},
 			},
 			spacer_3 = {
-				order = 29,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			count = {
-				order = 30,
+				order = inc(1),
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
@@ -228,25 +244,26 @@ local function getOptionsTable_Aura(order, name, filter)
 				set = function(info, value)
 					if C.db.profile.auras[filter].count[info[#info]] ~= value then
 						C.db.profile.auras[filter].count[info[#info]] = value
-						AURAS:ForHeader(filter, "UpdateConfig")
-						AURAS:ForHeader(filter, "ForEachButton", "UpdateCountFont")
+
+						AURAS:For(filter, "UpdateConfig")
+						AURAS:For(filter, "ForEachButton", "UpdateCountFont")
 					end
 				end,
 				args = {
 					size = {
-						order = 1,
+						order = reset(2),
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
-						order = 3,
+						order = inc(2),
 						type = "select",
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = H_ALIGNMENTS,
 					},
 					v_alignment = {
-						order = 4,
+						order = inc(2),
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,
@@ -254,12 +271,12 @@ local function getOptionsTable_Aura(order, name, filter)
 				},
 			},
 			spacer_4 = {
-				order = 39,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 40,
+				order = inc(1),
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -269,24 +286,25 @@ local function getOptionsTable_Aura(order, name, filter)
 				set = function(info, value)
 					if C.db.profile.auras[filter].cooldown.text[info[#info]] ~= value then
 						C.db.profile.auras[filter].cooldown.text[info[#info]] = value
-						AURAS:ForHeader(filter, "UpdateConfig")
-						AURAS:ForHeader(filter, "UpdateCooldownConfig")
+
+						AURAS:For(filter, "UpdateConfig")
+						AURAS:For(filter, "UpdateCooldownConfig")
 					end
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["SHOW"],
 					},
 					size = {
-						order = 2,
+						order = inc(2),
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
-						order = 4,
+						order = inc(2),
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,
@@ -298,6 +316,7 @@ local function getOptionsTable_Aura(order, name, filter)
 
 	if filter == "TOTEM" then
 		temp.args.num_rows = nil
+		temp.args.per_row.max = 4
 		temp.args.sep_own = nil
 		temp.args.sort_dir = nil
 		temp.args.sort_method = nil
@@ -305,16 +324,12 @@ local function getOptionsTable_Aura(order, name, filter)
 		temp.args.type = nil
 		temp.args.spacer_3 = nil
 		temp.args.spacer_4 = nil
-
-		temp.args.num = {
-			order = 10,
-			type = "range",
-			name = L["NUM_BUTTONS"],
-			min = 1, max = 4, step = 1,
-		}
 	elseif filter == "HELPFUL" then
+		temp.args.num = nil
 		temp.args.type = nil
 		temp.args.spacer_3 = nil
+	elseif filter == "HARMFUL" then
+		temp.args.num = nil
 	end
 
 	return temp
@@ -356,6 +371,7 @@ function CONFIG.CreateAurasPanel(_, order)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras, C.db.profile.auras, {point = true})
+
 					AURAS:ForEach("Update")
 				end,
 			},
@@ -376,6 +392,7 @@ function CONFIG.CreateAurasPanel(_, order)
 				set = function(info, value)
 					if C.db.profile.auras.cooldown[info[#info]] ~= value then
 						C.db.profile.auras.cooldown[info[#info]] = value
+
 						AURAS:ForEach("UpdateConfig")
 						AURAS:ForEach("UpdateCooldownConfig")
 					end
@@ -388,6 +405,7 @@ function CONFIG.CreateAurasPanel(_, order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.auras.cooldown, C.db.profile.auras.cooldown)
+
 							AURAS:ForEach("UpdateConfig")
 							AURAS:ForEach("UpdateCooldownConfig")
 						end,
@@ -417,6 +435,7 @@ function CONFIG.CreateAurasPanel(_, order)
 								end
 
 								C.db.profile.auras.cooldown[info[#info]] = value
+
 								AURAS:ForEach("UpdateConfig")
 								AURAS:ForEach("UpdateCooldownConfig")
 							end
@@ -428,14 +447,6 @@ function CONFIG.CreateAurasPanel(_, order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						set = function(info, value)
-							if C.db.profile.auras.cooldown[info[#info]] ~= value then
-								C.db.profile.auras.cooldown[info[#info]] = value
-
-								AURAS:ForEach("UpdateConfig")
-								AURAS:ForEach("UpdateCooldownConfig")
-							end
-						end,
 					},
 					spacer_2 = {
 						order = 19,
@@ -453,6 +464,7 @@ function CONFIG.CreateAurasPanel(_, order)
 						set = function(info, value)
 							if C.db.profile.auras.cooldown.swipe[info[#info]] ~= value then
 								C.db.profile.auras.cooldown.swipe[info[#info]] = value
+
 								AURAS:ForEach("UpdateConfig")
 								AURAS:ForEach("UpdateCooldownConfig")
 							end
@@ -480,9 +492,9 @@ function CONFIG.CreateAurasPanel(_, order)
 				type = "description",
 				name = " ",
 			},
-			buffs = getOptionsTable_Aura(20, L["BUFFS"], "HELPFUL"),
-			debuffs = getOptionsTable_Aura(30, L["DEBUFFS"], "HARMFUL"),
-			totems = getOptionsTable_Aura(40, L["TOTEMS"], "TOTEM"),
+			buffs = getAuraOptions(20, L["BUFFS"], "HELPFUL"),
+			debuffs = getAuraOptions(30, L["DEBUFFS"], "HARMFUL"),
+			totems = getAuraOptions(40, L["TOTEMS"], "TOTEM"),
 		},
 	}
 end
