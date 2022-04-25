@@ -2827,16 +2827,13 @@ D.profile = {
 	},
 	blizzard = {
 		castbar = { -- CastingBarFrame, PetCastingBarFrame
-			width = 200,
+			width = 226,
 			height = 12,
 			icon = {
 				position = "LEFT", -- "RIGHT", "NONE"
 			},
 			text = {
-				font = defaultFont,
 				size = 12,
-				outline = false,
-				shadow = true,
 			},
 			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
 			latency = true,
