@@ -78,7 +78,9 @@ local function button_OnLeave(self)
 	self:SetScript("OnUpdate", nil)
 end
 
-local function bar_OnEvent(self)
+local bar_proto = {}
+
+function bar_proto:Update()
 	t_wipe(activeAuras)
 
 	for i = 1, BUFF_MAX_DISPLAY do
@@ -134,12 +136,12 @@ local function bar_OnEvent(self)
 	end
 end
 
-local function bar_UpdateConfig(self)
+function bar_proto:UpdateConfig()
 	self._config = E:CopyTable(PrC.db.profile.auratracker, self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 end
 
-local function bar_UpdateCooldownConfig(self)
+function bar_proto:UpdateCooldownConfig()
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
 			swipe = {},
@@ -160,7 +162,7 @@ local function bar_UpdateCooldownConfig(self)
 	end
 end
 
-local function bar_UpdateLock(self)
+function bar_proto:UpdateLock()
 	self.Header:SetShown(not self._config.locked)
 
 	if not self._config.locked then
@@ -173,7 +175,7 @@ local function bar_UpdateLock(self)
 	end
 end
 
-local function bar_UpdateCountFont(self)
+function bar_proto:UpdateCountFont()
 	local config = self._config.count
 
 	for _, button in next, self._buttons do
@@ -181,7 +183,7 @@ local function bar_UpdateCountFont(self)
 	end
 end
 
-local function bar_UpdateAuraTypeIcons(self)
+function bar_proto:UpdateAuraTypeIcons()
 	local config = self._config.type
 	local auraType
 
@@ -193,11 +195,15 @@ local function bar_UpdateAuraTypeIcons(self)
 	end
 end
 
-function MODULE.IsInit()
+function bar_proto:UpdateLayout()
+	E.Layout:Update(self)
+end
+
+function MODULE:IsInit()
 	return isInit
 end
 
-function MODULE.Init()
+function MODULE:Init()
 	if not isInit and PrC.db.profile.auratracker.enabled then
 		verifyFilter("HELPFUL")
 		verifyFilter("HARMFUL")
@@ -221,23 +227,16 @@ function MODULE.Init()
 				or PrC.db.profile.auratracker.drag_key == (IsShiftKeyDown() and "SHIFT" or IsControlKeyDown() and "CTRL" or IsAltKeyDown() and "ALT")
 		end
 
-		bar = CreateFrame("Frame", "LSAuraTracker", UIParent)
+		bar = Mixin(CreateFrame("Frame", "LSAuraTracker", UIParent), bar_proto)
 		bar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
 		bar:SetMovable(true)
 		bar:SetClampedToScreen(true)
 		bar:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-		bar:SetScript("OnEvent", bar_OnEvent)
-
-		bar.Update = bar_OnEvent
-		bar.UpdateAuraTypeIcons = bar_UpdateAuraTypeIcons
-		bar.UpdateConfig = bar_UpdateConfig
-		bar.UpdateCooldownConfig = bar_UpdateCooldownConfig
-		bar.UpdateCountFont = bar_UpdateCountFont
-		bar.UpdateLock = bar_UpdateLock
+		bar:SetScript("OnEvent", bar.Update)
 
 		bar.Header = header
-		bar._buttons = {}
 
+		bar._buttons = {}
 		for i = 1, 12 do
 			local button = E:CreateButton(bar, "$parentButton" .. i, true, true, true)
 			button:SetPushedTexture("")
@@ -262,7 +261,7 @@ function MODULE.Init()
 	end
 end
 
-function MODULE.Update()
+function MODULE:Update()
 	if isInit then
 		bar:UpdateConfig()
 		bar:UpdateCooldownConfig()
