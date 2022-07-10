@@ -58,7 +58,6 @@ function CONFIG:CreateBlizzardPanel(order)
 		name = L["BLIZZARD"],
 		childGroups = "tab",
 		get = function(info)
-			print(info[#info], info[#info - 1])
 			return PrC.db.profile.blizzard[info[#info]].enabled
 		end,
 		args = {
