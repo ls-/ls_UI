@@ -84,7 +84,7 @@ function CONFIG:Open()
 		CONFIG:GetLootOptions(10)
 		CONFIG:CreateMinimapPanel(11)
 		CONFIG:GetTooltipsOptions(12)
-		CONFIG:CreateUnitFramesPanel(13)
+		CONFIG:CreateUnitFramesOptions(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)
 		AceConfigDialog:SetDefaultSize("ls_UI", 1228, 768)

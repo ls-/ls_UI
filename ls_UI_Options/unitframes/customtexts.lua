@@ -16,22 +16,15 @@ local ACD = LibStub("AceConfigDialog-3.0")
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local UNITFRAMES = P:GetModule("UnitFrames")
 
-local offsets = {"", "   ", "      "}
-local function d(c, o, v)
-	print(offsets[o].."|cff"..c..v.."|r")
-end
-
-local orders = {0, 0, 0}
+local orders = {}
 
 local function reset(order)
 	orders[order] = 1
-	-- d("d20000", order, orders[order])
 	return orders[order]
 end
 
 local function inc(order)
 	orders[order] = orders[order] + 1
-	-- d("00d200", order, orders[order])
 	return orders[order]
 end
 
@@ -223,7 +216,7 @@ do
 	end
 end
 
-function CONFIG:CreateUnitFrameCustomTextsPanel(order, unit)
+function CONFIG:CreateUnitFrameCustomTextsOptions(order, unit)
 	local temp = {
 		order = order,
 		type = "group",

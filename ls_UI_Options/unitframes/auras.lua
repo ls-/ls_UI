@@ -3,30 +3,23 @@ local _, CONFIG = ...
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
-local t_wipe = _G.table.wipe
 local s_split = _G.string.split
+local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local UNITFRAMES = P:GetModule("UnitFrames")
 
-local offsets = {"", "   ", "      "}
-local function d(c, o, v)
-	print(offsets[o].."|cff"..c..v.."|r")
-end
-
-local orders = {0, 0, 0}
+local orders = {}
 
 local function reset(order)
 	orders[order] = 1
-	-- d("d20000", order, orders[order])
 	return orders[order]
 end
 
 local function inc(order)
 	orders[order] = orders[order] + 1
-	-- d("00d200", order, orders[order])
 	return orders[order]
 end
 
@@ -66,37 +59,37 @@ local FILTERS = {
 	},
 	buff = {
 		boss = {
-			order = 1,
+			order = reset(1),
 			type = "toggle",
 			name = L["BOSS_BUFFS"],
 			desc = L["BOSS_BUFFS_DESC"],
 		},
 		tank = {
-			order = 2,
+			order = inc(1),
 			type = "toggle",
 			name = L["TANK_BUFFS"],
 			desc = L["TANK_BUFFS_DESC"],
 		},
 		healer = {
-			order = 3,
+			order = inc(1),
 			type = "toggle",
 			name = L["HEALER_BUFFS"],
 			desc = L["HEALER_BUFFS_DESC"],
 		},
 		mount = {
-			order = 4,
+			order = inc(1),
 			type = "toggle",
 			name = L["MOUNT_AURAS"],
 			desc = L["MOUNT_AURAS_DESC"],
 		},
 		selfcast = {
-			order = 5,
+			order = inc(1),
 			type = "toggle",
 			name = L["SELF_BUFFS"],
 			desc = L["SELF_BUFFS_DESC"],
 		},
 		selfcast_permanent = {
-			order = 6,
+			order = inc(1),
 			type = "toggle",
 			name = L["SELF_BUFFS_PERMA"],
 			desc = L["SELF_BUFFS_PERMA_DESC"],
@@ -105,13 +98,13 @@ local FILTERS = {
 			end,
 		},
 		player = {
-			order = 7,
+			order = inc(1),
 			type = "toggle",
 			name = L["CASTABLE_BUFFS"],
 			desc = L["CASTABLE_BUFFS_DESC"],
 		},
 		player_permanent = {
-			order = 8,
+			order = inc(1),
 			type = "toggle",
 			name = L["CASTABLE_BUFFS_PERMA"],
 			desc = L["CASTABLE_BUFFS_PERMA_DESC"],
@@ -120,38 +113,38 @@ local FILTERS = {
 			end,
 		},
 		misc = {
-			order = 9,
+			order = inc(1),
 			type = "toggle",
 			name = L["MISC"],
 		},
 	},
 	debuff = {
 		boss = {
-			order = 1,
+			order = reset(1),
 			type = "toggle",
 			name = L["BOSS_DEBUFFS"],
 			desc = L["BOSS_DEBUFFS_DESC"],
 		},
 		tank = {
-			order = 2,
+			order = inc(1),
 			type = "toggle",
 			name = L["TANK_DEBUFFS"],
 			desc = L["TANK_DEBUFFS_DESC"],
 		},
 		healer = {
-			order = 3,
+			order = inc(1),
 			type = "toggle",
 			name = L["HEALER_DEBUFFS"],
 			desc = L["HEALER_DEBUFFS_DESC"],
 		},
 		selfcast = {
-			order = 4,
+			order = inc(1),
 			type = "toggle",
 			name = L["SELF_DEBUFFS"],
 			desc = L["SELF_DEBUFFS_DESC"],
 		},
 		selfcast_permanent = {
-			order = 5,
+			order = inc(1),
 			type = "toggle",
 			name = L["SELF_DEBUFFS_PERMA"],
 			desc = L["SELF_DEBUFFS_PERMA_DESC"],
@@ -160,13 +153,13 @@ local FILTERS = {
 			end,
 		},
 		player = {
-			order = 6,
+			order = inc(1),
 			type = "toggle",
 			name = L["CASTABLE_DEBUFFS"],
 			desc = L["CASTABLE_DEBUFFS_DESC"],
 		},
 		player_permanent = {
-			order = 7,
+			order = inc(1),
 			type = "toggle",
 			name = L["CASTABLE_DEBUFFS_PERMA"],
 			desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
@@ -175,13 +168,13 @@ local FILTERS = {
 			end,
 		},
 		dispellable = {
-			order = 8,
+			order = inc(1),
 			type = "toggle",
 			name = L["DISPELLABLE_DEBUFFS"],
 			desc = L["DISPELLABLE_DEBUFFS_DESC"],
 		},
 		misc = {
-			order = 9,
+			order = inc(1),
 			type = "toggle",
 			name = L["MISC"],
 		},
@@ -248,7 +241,7 @@ local resetIgnoredKeys = {
 	["filter"] = true,
 }
 
-function CONFIG:CreateUnitFrameAurasPanel(order, unit)
+function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 	local ignoredUnits = {
 		["player"] = E.UI_LAYOUT == "round",
 		["pet"] = E.UI_LAYOUT == "round",

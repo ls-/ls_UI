@@ -131,27 +131,11 @@ CONFIG.CASTBAR_ICON_POSITIONS = {
 	["RIGHT"] = L["RIGHT"],
 }
 
-CONFIG.FLAGS = {
-	-- [""] = L["NONE"],
-	["_Outline"] = L["OUTLINE"],
-	["_Shadow"] = L["SHADOW"],
-}
-
 CONFIG.GROWTH_DIRS = {
 	["LEFT_DOWN"] = L["LEFT_DOWN"],
 	["LEFT_UP"] = L["LEFT_UP"],
 	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
 	["RIGHT_UP"] = L["RIGHT_UP"],
-}
-
-CONFIG.PORTRAIT_STYLES = {
-	["2D"] = "2D",
-	["3D"] = "3D",
-}
-
-CONFIG.PORTRAIT_POSITIONS = {
-	["Left"] = L["LEFT"],
-	["Right"] = L["RIGHT"],
 }
 
 function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)

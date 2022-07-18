@@ -8,22 +8,15 @@ local unpack = _G.unpack
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local UNITFRAMES = P:GetModule("UnitFrames")
 
-local offsets = {"", "   ", "      "}
-local function d(c, o, v)
-	print(offsets[o].."|cff"..c..v.."|r")
-end
-
-local orders = {0}
+local orders = {}
 
 local function reset(order)
 	orders[order] = 1
-	-- d("d20000", order, orders[order])
 	return orders[order]
 end
 
 local function inc(order)
 	orders[order] = orders[order] + 1
-	-- d("00d200", order, orders[order])
 	return orders[order]
 end
 
@@ -31,7 +24,7 @@ local function isFadingDisabled(info)
 	return not C.db.profile.units[info[#info - 2]].fade.enabled
 end
 
-function CONFIG:CreateUnitFrameFadingPanel(order, unit)
+function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 	return {
 		order = order,
 		type = "group",
@@ -41,6 +34,7 @@ function CONFIG:CreateUnitFrameFadingPanel(order, unit)
 		end,
 		set = function(info, value)
 			C.db.profile.units[unit].fade[info[#info]] = value
+
 			UNITFRAMES:For(unit, "UpdateConfig")
 			UNITFRAMES:For(unit, "UpdateFading")
 		end,

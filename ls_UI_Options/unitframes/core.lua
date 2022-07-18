@@ -33,7 +33,7 @@ local function isRoundLayout()
 	return E.UI_LAYOUT == "round"
 end
 
-local function createUnitFramePanel(order, unit, name)
+local function getUnitFrameOptions(order, unit, name)
 	local copyIgnoredUnits = {
 		["pet"] = E.UI_LAYOUT == "round",
 		["player"] = E.UI_LAYOUT == "round",
@@ -236,29 +236,29 @@ local function createUnitFramePanel(order, unit, name)
 				type = "description",
 				name = " ",
 			}, -- 18
-			health = CONFIG:CreateUnitFrameHealthPanel(19, unit),
-			power = CONFIG:CreateUnitFramePowerPanel(20, unit),
+			health = CONFIG:CreateUnitFrameHealthOptions(19, unit),
+			power = CONFIG:CreateUnitFramePowerOptions(20, unit),
 			-- alt_power = {}, -- 21
 			-- class_power = {}, -- 21
 			-- castbar = {}, -- 22
 			-- auras = {}, -- 23
-			portrait = CONFIG:CreateUnitFramePortraitPanel(24, unit),
-			raid_target = CONFIG:CreateUnitFrameRaidTargetPanel(25, unit),
-			name = CONFIG:CreateUnitFrameNamePanel(26, unit),
-			debuff = CONFIG:CreateUnitFrameDebuffIconsPanel(27, unit),
+			portrait = CONFIG:CreateUnitFramePortraitOptions(24, unit),
+			raid_target = CONFIG:CreateUnitFrameRaidTargetOptions(25, unit),
+			name = CONFIG:CreateUnitFrameNameOptions(26, unit),
+			debuff = CONFIG:CreateUnitFrameDebuffIconsOptions(27, unit),
 			-- custom_texts = {}, -- 28
-			fading = CONFIG:CreateUnitFrameFadingPanel(29, unit)
+			fading = CONFIG:CreateUnitFrameFadingOptions(29, unit)
 		},
 	}
 
 	if unit == "player" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerPanel(21, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
+		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerOptions(21, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 
 		if E.UI_LAYOUT == "rect" then
-			temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
+			temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
 		else
 			temp.args.copy.hidden = isRoundLayout
 			temp.args.width.hidden = isRoundLayout
@@ -271,9 +271,9 @@ local function createUnitFramePanel(order, unit, name)
 		end
 	elseif unit == "pet" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
 
@@ -289,9 +289,9 @@ local function createUnitFramePanel(order, unit, name)
 		end
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 	elseif unit == "targettarget" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.debuff = nil
@@ -299,9 +299,9 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.mirror_widgets = nil
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 	elseif unit == "focustarget" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.debuff = nil
@@ -309,10 +309,10 @@ local function createUnitFramePanel(order, unit, name)
 		temp.args.mirror_widgets = nil
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
-		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerPanel(21, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarPanel(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasPanel(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsPanel(28, unit)
+		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerOptions(21, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
 
@@ -369,8 +369,8 @@ local function createUnitFramePanel(order, unit, name)
 	return temp
 end
 
-function CONFIG:CreateUnitFramesPanel(order)
-	CONFIG.options.args.unitframes = {
+function CONFIG:CreateUnitFramesOptions(order)
+	self.options.args.unitframes = {
 		order = order,
 		type = "group",
 		name = L["UNIT_FRAME"],
@@ -419,6 +419,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 							if info[#info] == "player" then
 								UNITFRAMES:Create("player")
 								UNITFRAMES:For("player", "Update")
+
 								UNITFRAMES:Create("pet")
 								UNITFRAMES:For("pet", "Update")
 
@@ -428,11 +429,13 @@ function CONFIG:CreateUnitFramesPanel(order)
 							elseif info[#info] == "target" then
 								UNITFRAMES:Create("target")
 								UNITFRAMES:For("target", "Update")
+
 								UNITFRAMES:Create("targettarget")
 								UNITFRAMES:For("targettarget", "Update")
 							elseif info[#info] == "focus" then
 								UNITFRAMES:Create("focus")
 								UNITFRAMES:For("focus", "Update")
+
 								UNITFRAMES:Create("focustarget")
 								UNITFRAMES:For("focustarget", "Update")
 							else
@@ -557,6 +560,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 				set = function(info, value)
 					if C.db.profile.units.cooldown[info[#info]] ~= value then
 						C.db.profile.units.cooldown[info[#info]] = value
+
 						UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 						UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 					end
@@ -598,6 +602,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 								end
 
 								C.db.profile.units.cooldown[info[#info]] = value
+
 								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 							end
@@ -612,6 +617,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								C.db.profile.units.cooldown[info[#info]] = value
+
 								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 							end
@@ -633,6 +639,7 @@ function CONFIG:CreateUnitFramesPanel(order)
 						set = function(info, value)
 							if C.db.profile.units.cooldown.swipe[info[#info]] ~= value then
 								C.db.profile.units.cooldown.swipe[info[#info]] = value
+
 								UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 								UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 							end
@@ -655,13 +662,13 @@ function CONFIG:CreateUnitFramesPanel(order)
 					},
 				},
 			}, -- 9
-			player = createUnitFramePanel(10, "player", L["PLAYER_FRAME"]),
-			pet = createUnitFramePanel(11, "pet", L["PET_FRAME"]),
-			target = createUnitFramePanel(12, "target", L["TARGET_FRAME"]),
-			targettarget = createUnitFramePanel(13, "targettarget", L["TOT_FRAME"]),
-			focus = createUnitFramePanel(14, "focus", L["FOCUS_FRAME"]),
-			focustarget = createUnitFramePanel(15, "focustarget", L["TOF_FRAME"]),
-			boss = createUnitFramePanel(16, "boss", L["BOSS_FRAMES"]),
+			player = getUnitFrameOptions(10, "player", L["PLAYER_FRAME"]),
+			pet = getUnitFrameOptions(11, "pet", L["PET_FRAME"]),
+			target = getUnitFrameOptions(12, "target", L["TARGET_FRAME"]),
+			targettarget = getUnitFrameOptions(13, "targettarget", L["TOT_FRAME"]),
+			focus = getUnitFrameOptions(14, "focus", L["FOCUS_FRAME"]),
+			focustarget = getUnitFrameOptions(15, "focustarget", L["TOF_FRAME"]),
+			boss = getUnitFrameOptions(16, "boss", L["BOSS_FRAMES"]),
 		},
 	}
 
