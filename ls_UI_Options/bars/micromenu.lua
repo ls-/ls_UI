@@ -4,7 +4,6 @@ local _, CONFIG = ...
 local _G = getfenv(0)
 local s_split = _G.string.split
 local unpack = _G.unpack
-local hooksecurefunc = _G.hooksecurefunc
 local tonumber = _G.tonumber
 local t_wipe = _G.table.wipe
 

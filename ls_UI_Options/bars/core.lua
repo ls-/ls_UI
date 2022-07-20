@@ -2,38 +2,28 @@ local _, CONFIG = ...
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
-local next = _G.next
-local s_split = _G.string.split
 local unpack = _G.unpack
 
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 local BARS = P:GetModule("Bars")
 
-local GROWTH_DIRS = {
-	["LEFT_DOWN"] = L["LEFT_DOWN"],
-	["LEFT_UP"] = L["LEFT_UP"],
-	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
-	["RIGHT_UP"] = L["RIGHT_UP"],
-}
+local orders = {}
 
-local FLYOUT_DIRS = {
-	["UP"] = L["UP"],
-	["DOWN"] = L["DOWN"],
-	["LEFT"] = L["LEFT"],
-	["RIGHT"] = L["RIGHT"],
-}
+local function reset(order, v)
+	orders[order] = v or 1
+	return orders[order]
+end
+
+local function inc(order)
+	orders[order] = orders[order] + 1
+	return orders[order]
+end
+
 
 local INDICATORS = {
 	["button"] = L["ICON"],
 	["hotkey"] = L["KEYBIND_TEXT"],
-}
-
-local V_ALIGNMENTS = {
-	["BOTTOM"] = "BOTTOM",
-	["MIDDLE"] = "MIDDLE",
-	["TOP"] = "TOP",
 }
 
 local FORMATS = {
@@ -80,7 +70,7 @@ function CONFIG:CreateActionBarsOptions(order)
 		end,
 		args = {
 			enabled = {
-				order = 1,
+				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
@@ -101,7 +91,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 			},
 			restricted = {
-				order = 2,
+				order = inc(1),
 				type = "toggle",
 				name = L["RESTRICTED_MODE"],
 				desc = L["RESTRICTED_MODE_DESC"],
@@ -117,7 +107,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 			},
 			blizz_vehicle = {
-				order = 3,
+				order = inc(1),
 				type = "toggle",
 				name = L["USE_BLIZZARD_VEHICLE_UI"],
 				disabled = isModuleDisabledOrRestricted,
@@ -130,12 +120,12 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 			},
 			spacer_1 = {
-				order = 9,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			lock = {
-				order = 10,
+				order = inc(1),
 				type = "toggle",
 				name = L["LOCK_BUTTONS"],
 				desc = L["LOCK_BUTTONS_DESC"],
@@ -149,13 +139,13 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 			},
 			rightclick_selfcast = {
-				order = 11,
+				order = inc(1),
 				type = "toggle",
 				name = L["RCLICK_SELFCAST"],
 				disabled = isModuleDisabled,
 			},
 			click_on_down = {
-				order = 12,
+				order = inc(1),
 				type = "toggle",
 				name = L["CAST_ON_KEY_DOWN"],
 				desc = L["CAST_ON_KEY_DOWN_DESC"],
@@ -169,26 +159,26 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 			},
 			range_indicator = {
-				order = 13,
+				order = inc(1),
 				type = "select",
 				name = L["OOR_INDICATOR"],
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
 			mana_indicator = {
-				order = 14,
+				order = inc(1),
 				type = "select",
 				name = L["OOM_INDICATOR"],
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
 			spacer_2 = {
-				order = 19,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			desaturation = {
-				order = 20,
+				order = inc(1),
 				type = "group",
 				name = L["DESATURATION"],
 				inline = true,
@@ -205,29 +195,29 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 				args = {
 					unusable = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["UNUSABLE"],
 					},
 					mana = {
-						order = 2,
+						order = inc(2),
 						type = "toggle",
 						name = L["OOM"],
 					},
 					range = {
-						order = 3,
+						order = inc(2),
 						type = "toggle",
 						name = L["OOR"],
 					},
 				},
 			},
 			spacer_3 = {
-				order = 29,
+				order = inc(1),
 				type = "description",
 				name = " ",
 			},
 			cooldown = {
-				order = 30,
+				order = inc(1),
 				type = "group",
 				name = L["COOLDOWN"],
 				inline = true,
@@ -245,7 +235,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				args = {
 					reset = {
 						type = "execute",
-						order = 1,
+						order = reset(1),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -255,18 +245,18 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					exp_threshold = {
-						order = 10,
+						order = inc(2),
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
 					},
 					m_ss_threshold = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["M_SS_THRESHOLD"],
 						desc = L["M_SS_THRESHOLD_DESC"],
@@ -285,7 +275,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					s_ms_threshold = {
-						order = 12,
+						order = inc(2),
 						type = "range",
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
@@ -299,12 +289,12 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_2 = {
-						order = 19,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					swipe = {
-						order = 20,
+						order = inc(2),
 						type = "group",
 						name = L["COOLDOWN_SWIPE"],
 						inline = true,
@@ -320,12 +310,12 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 						args = {
 							enabled = {
-								order = 1,
+								order = reset(3),
 								type = "toggle",
 								name = L["SHOW"],
 							},
 							reversed = {
-								order = 2,
+								order = inc(3),
 								type = "toggle",
 								disabled = function()
 									return not C.db.profile.bars.cooldown.swipe.enabled
@@ -336,18 +326,18 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			action_bar_1 = CONFIG:CreateBarOptions(50, "bar1", L["BAR_1"]),
-			action_bar_2 = CONFIG:CreateBarOptions(60, "bar2", L["BAR_2"]),
-			action_bar_3 = CONFIG:CreateBarOptions(70, "bar3", L["BAR_3"]),
-			action_bar_4 = CONFIG:CreateBarOptions(80, "bar4", L["BAR_4"]),
-			action_bar_5 = CONFIG:CreateBarOptions(90, "bar5", L["BAR_5"]),
-			action_bar_6 = CONFIG:CreateBarOptions(100, "bar6", L["PET_BAR"]),
-			action_bar_7 = CONFIG:CreateBarOptions(110, "bar7", L["STANCE_BAR"]),
-			pet_battle = CONFIG:CreateBarOptions(120, "pet_battle", L["PET_BATTLE_BAR"]),
-			extra = CONFIG:CreateExtraBarOptions(130, "extra", L["EXTRA_ACTION_BUTTON"]),
-			zone = CONFIG:CreateExtraBarOptions(140, "zone", L["ZONE_ABILITY_BUTTON"]),
+			action_bar_1 = CONFIG:CreateBarOptions(inc(1), "bar1", L["BAR_1"]),
+			action_bar_2 = CONFIG:CreateBarOptions(inc(1), "bar2", L["BAR_2"]),
+			action_bar_3 = CONFIG:CreateBarOptions(inc(1), "bar3", L["BAR_3"]),
+			action_bar_4 = CONFIG:CreateBarOptions(inc(1), "bar4", L["BAR_4"]),
+			action_bar_5 = CONFIG:CreateBarOptions(inc(1), "bar5", L["BAR_5"]),
+			action_bar_6 = CONFIG:CreateBarOptions(inc(1), "bar6", L["PET_BAR"]),
+			action_bar_7 = CONFIG:CreateBarOptions(inc(1), "bar7", L["STANCE_BAR"]),
+			pet_battle = CONFIG:CreateBarOptions(inc(1), "pet_battle", L["PET_BATTLE_BAR"]),
+			extra = CONFIG:CreateExtraBarOptions(inc(1), "extra", L["EXTRA_ACTION_BUTTON"]),
+			zone = CONFIG:CreateExtraBarOptions(inc(1), "zone", L["ZONE_ABILITY_BUTTON"]),
 			vehicle = {
-				order = 150,
+				order = inc(1),
 				type = "group",
 				childGroups = "select",
 				name = L["VEHICLE_EXIT_BUTTON"],
@@ -365,7 +355,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				args = {
 					reset = {
 						type = "execute",
-						order = 2,
+						order = reset(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -374,12 +364,12 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order =inc(2),
 						type = "description",
 						name = " ",
 					},
 					visible = {
-						order = 10,
+						order = inc(2),
 						type = "toggle",
 						name = L["SHOW"],
 						set = function(_, value)
@@ -391,13 +381,13 @@ function CONFIG:CreateActionBarsOptions(order)
 						end
 					},
 					width = {
-						order = 17,
+						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
 						min = 16, max = 64, step = 1,
 					},
 					height = {
-						order = 18,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						desc = L["HEIGHT_OVERRIDE_DESC"],
@@ -416,16 +406,16 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_2 = {
-						order = 69,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
-					fading = CONFIG:CreateBarFadingOptions(70, "vehicle"),
+					fading = CONFIG:CreateBarFadingOptions(inc(2), "vehicle"),
 				},
 			},
-			micromenu = CONFIG:CreateMicroMenuOptions(160),
+			micromenu = CONFIG:CreateMicroMenuOptions(inc(1)),
 			xpbar = {
-				order = 170,
+				order = inc(1),
 				type = "group",
 				childGroups = "select",
 				name = L["XP_BAR"],
@@ -434,7 +424,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 				args = {
 					enabled = {
-						order = 1,
+						order = reset(2),
 						type = "toggle",
 						name = L["ENABLE"],
 						disabled = isModuleDisabledOrRestricted,
@@ -459,7 +449,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 					reset = {
 						type = "execute",
-						order = 2,
+						order = inc(2),
 						name = L["RESTORE_DEFAULTS"],
 						disabled = isXPBarDisabledOrRestricted,
 						confirm = CONFIG.ConfirmReset,
@@ -469,12 +459,12 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_1 = {
-						order = 9,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					width = {
-						order = 10,
+						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
 						min = 530, max = 1900, step = 2,
@@ -489,7 +479,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					height = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 4,
@@ -504,12 +494,12 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 					},
 					spacer_2 = {
-						order = 19,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
 					text = {
-						order = 20,
+						order = inc(2),
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
@@ -527,13 +517,13 @@ function CONFIG:CreateActionBarsOptions(order)
 						end,
 						args = {
 							size = {
-								order = 1,
+								order = reset(3),
 								type = "range",
 								name = L["SIZE"],
 								min = 8, max = 32, step = 1,
 							},
 							format = {
-								order = 3,
+								order = inc(3),
 								type = "select",
 								name = L["FORMAT"],
 								values = FORMATS,
@@ -548,7 +538,7 @@ function CONFIG:CreateActionBarsOptions(order)
 								end,
 							},
 							visibility = {
-								order = 4,
+								order = inc(3),
 								type = "select",
 								name = L["VISIBILITY"],
 								values = VISIBILITY,
@@ -564,11 +554,11 @@ function CONFIG:CreateActionBarsOptions(order)
 						},
 					},
 					spacer_3 = {
-						order = 29,
+						order = inc(2),
 						type = "description",
 						name = " ",
 					},
-					fading = CONFIG:CreateBarFadingOptions(30, "xpbar"),
+					fading = CONFIG:CreateBarFadingOptions(inc(2), "xpbar"),
 				},
 			},
 		},
