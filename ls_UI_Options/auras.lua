@@ -335,7 +335,7 @@ local function getAuraOptions(order, name, filter)
 	return temp
 end
 
-function CONFIG.CreateAurasPanel(_, order)
+function CONFIG.CreateAurasOptions(_, order)
 	CONFIG.options.args.auras = {
 		order = order,
 		type = "group",

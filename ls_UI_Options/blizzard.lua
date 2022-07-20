@@ -51,7 +51,7 @@ local function isModuleDisabled()
 	return not BLIZZARD:IsInit()
 end
 
-function CONFIG:CreateBlizzardPanel(order)
+function CONFIG:CreateBlizzardOptions(order)
 	self.options.args.blizzard = {
 		order = order,
 		type = "group",

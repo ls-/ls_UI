@@ -45,7 +45,7 @@ local function isButtonCollectionDisabled()
 	return not (MINIMAP:IsInit() and C.db.profile.minimap.collect.enabled)
 end
 
-function CONFIG:CreateMinimapPanel(order)
+function CONFIG:CreateMinimapOptions(order)
 	self.options.args.minimap = {
 		order = order,
 		type = "group",

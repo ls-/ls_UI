@@ -3,9 +3,7 @@ ls_UI.Config = CONFIG
 
 -- Lua
 local _G = getfenv(0)
-local loadstring = _G.loadstring
 local next = _G.next
-local pcall = _G.pcall
 local s_trim = _G.string.trim
 local t_concat = _G.table.concat
 local t_insert = _G.table.insert

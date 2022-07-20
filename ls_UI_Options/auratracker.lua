@@ -72,7 +72,7 @@ local function callback()
 	end
 end
 
-function CONFIG:CreateAuraTrackerPanel(order)
+function CONFIG:CreateAuraTrackerOptions(order)
 	self.options.args.auratracker = {
 		order = order,
 		type = "group",
