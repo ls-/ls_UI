@@ -130,8 +130,8 @@ function bar_proto:UpdateSegments()
 	local index = 0
 
 	if C_PetBattles.IsInBattle() then
-		local i = C_PetBattles.GetActivePet(LE_BATTLE_PET_ALLY)
-		local level = C_PetBattles.GetLevel(LE_BATTLE_PET_ALLY, i)
+		local i = C_PetBattles.GetActivePet(Enum.BattlePetOwner.Ally)
+		local level = C_PetBattles.GetLevel(Enum.BattlePetOwner.Ally, i)
 		if level and level < 25 then
 			index = index + 1
 
