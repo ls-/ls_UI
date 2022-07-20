@@ -8,23 +8,23 @@ exclude_files = {
 }
 
 ignore = {
-	"111/SLASH_.*", -- Setting an undefined global variable starting with SLASH_
 	"111/LS.*", -- Setting an undefined global variable starting with SLASH_
+	"111/SLASH_.*", -- Setting an undefined global variable starting with SLASH_
 	"112/LS.*", -- Mutating an undefined global variable starting with LS
 	"112/ls_UI", -- Mutating an undefined global variable ls_UI
 	"113/LS.*", -- Accessing an undefined global variable starting with LS
 	"113/ls_UI", -- Accessing an undefined global variable ls_UI
 	"122", -- Setting a read-only field of a global variable
 	"211/_G", -- Unused local variable _G
-	"211/PrC",  -- Unused local variable C
 	"211/C",  -- Unused local variable C
-	"211/PrD",  -- Unused local variable D
 	"211/D",  -- Unused local variable D
 	"211/E",  -- Unused local variable E
 	"211/L",  -- Unused local variable L
 	"211/M",  -- Unused local variable M
-	"211/P",  -- Unused local variable P
 	"211/oUF",  -- Unused local variable oUF
+	"211/P",  -- Unused local variable P
+	"211/PrC",  -- Unused local variable C
+	"211/PrD",  -- Unused local variable D
 	"432", -- Shadowing an upvalue argument
 }
 
@@ -66,6 +66,8 @@ read_globals = {
 	"GetNetStats",
 	"GetQuestLogCompletionText",
 	"GetSelectedFaction",
+	"GetSpellInfo",
+	"GetSpellLink",
 	"GetText",
 	"GetWatchedFactionInfo",
 	"GetXPExhaustion",
@@ -133,6 +135,10 @@ read_globals = {
 	"CastingBarFrame_SetStartChannelColor",
 	"CastingBarFrame_SetUnit",
 	"CastingBarFrame_SetUseStartColorForFinished",
+	"FauxScrollFrame_GetOffset",
+	"FauxScrollFrame_OnVerticalScroll",
+	"FauxScrollFrame_SetOffset",
+	"FauxScrollFrame_Update",
 	"HideUIPanel",
 	"IsPlayerAtEffectiveMaxLevel",
 	"IsWatchingHonorAsXP",
@@ -140,6 +146,11 @@ read_globals = {
 	"Minimap_ZoomOut",
 	"MiniMapTracking_OnMouseDown",
 	"Mixin",
+	"PanelTemplates_DisableTab",
+	"PanelTemplates_EnableTab",
+	"PanelTemplates_SetNumTabs",
+	"PanelTemplates_SetTab",
+	"PanelTemplates_TabResize",
 	"RegisterStateDriver",
 	"SetWatchingHonorAsXP",
 	"TalkingHeadFrame_CloseImmediately",
