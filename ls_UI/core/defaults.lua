@@ -821,7 +821,7 @@ D.profile = {
 				},
 				portrait = {
 					enabled = false,
-					style = "2D", -- "3D"
+					style = "2D", -- "3D", "Class"
 					position = "Left", -- "Right"
 				},
 				name = {
@@ -1026,7 +1026,7 @@ D.profile = {
 				},
 				portrait = {
 					enabled = false,
-					style = "2D", -- "3D"
+					style = "2D", -- "3D", "Class"
 					position = "Left", -- "Right"
 				},
 				name = {
@@ -1229,7 +1229,7 @@ D.profile = {
 			},
 			portrait = {
 				enabled = false,
-				style = "2D", -- "3D"
+				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
 			},
 			name = {
@@ -1442,7 +1442,7 @@ D.profile = {
 			},
 			portrait = {
 				enabled = false,
-				style = "2D", -- "3D"
+				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
 			},
 			name = {
@@ -1575,7 +1575,7 @@ D.profile = {
 			},
 			portrait = {
 				enabled = false,
-				style = "2D", -- "3D"
+				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
 			},
 			name = {
@@ -1788,7 +1788,7 @@ D.profile = {
 			},
 			portrait = {
 				enabled = false,
-				style = "2D", -- "3D"
+				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
 			},
 			name = {
@@ -1941,7 +1941,7 @@ D.profile = {
 			},
 			portrait = {
 				enabled = false,
-				style = "2D", -- "3D"
+				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
 			},
 			name = {

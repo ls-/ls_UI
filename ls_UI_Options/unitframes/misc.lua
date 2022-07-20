@@ -233,6 +233,7 @@ end
 local PORTRAIT_STYLES = {
 	["2D"] = "2D",
 	["3D"] = "3D",
+	["Class"] = L["CLASS"],
 }
 
 local PORTRAIT_POSITIONS = {

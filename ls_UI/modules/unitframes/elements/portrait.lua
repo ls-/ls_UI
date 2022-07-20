@@ -16,14 +16,15 @@ end
 local frame_proto = {}
 
 function frame_proto:UpdatePortrait()
-	if C.db.profile.units[self.__unit].portrait.style == "2D" then
-		self.Portrait = self.Portrait2D
-		self.Portrait3D:ClearAllPoints()
-		self.Portrait3D:Hide()
-	else
+	local style = C.db.profile.units[self.__unit].portrait.style
+	if style == "3D" then
 		self.Portrait = self.Portrait3D
 		self.Portrait2D:ClearAllPoints()
 		self.Portrait2D:Hide()
+	else
+		self.Portrait = self.Portrait2D
+		self.Portrait3D:ClearAllPoints()
+		self.Portrait3D:Hide()
 	end
 
 	self.Portrait3D.__owner = self.Portrait2D.__owner
@@ -32,6 +33,8 @@ function frame_proto:UpdatePortrait()
 	local element = self.Portrait
 	element:UpdateConfig()
 	element:Hide()
+
+	element.showClass = style == "Class"
 
 	self.Insets.Left:Release(element)
 	self.Insets.Right:Release(element)
