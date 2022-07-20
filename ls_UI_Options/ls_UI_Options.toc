@@ -5,15 +5,4 @@
 ## RequiredDeps: ls_UI
 ## LoadOnDemand: true
 
-core.lua
-auras.lua
-auratracker.lua
-bars.lua
-blizzard.lua
-general\_general.xml
-loot.lua
-minimap.lua
-profiles.lua
-tooltips.lua
-unitframes\_unitframes.xml
-init.lua
+_config.xml

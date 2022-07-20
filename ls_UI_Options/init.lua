@@ -77,7 +77,7 @@ function CONFIG:Open()
 		}
 
 		CONFIG:GetGeneralOptions(5)
-		CONFIG:CreateActionBarsPanel(6)
+		CONFIG:CreateActionBarsOptions(6)
 		CONFIG:CreateAuraTrackerPanel(7)
 		CONFIG:CreateBlizzardPanel(8)
 		CONFIG:CreateAurasPanel(9)

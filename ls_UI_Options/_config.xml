@@ -2,7 +2,7 @@
 	<Script file="core.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="auratracker.lua"/>
-	<Script file="bars.lua"/>
+	<Include file="bars\_bars.xml"/>
 	<Script file="blizzard.lua"/>
 	<Include file="general\_general.xml"/>
 	<Script file="loot.lua"/>
@@ -10,4 +10,5 @@
 	<Script file="profiles.lua"/>
 	<Script file="tooltips.lua"/>
 	<Include file="unitframes\_unitframes.xml"/>
+	<Script file="init.lua"/>
 </Ui>
