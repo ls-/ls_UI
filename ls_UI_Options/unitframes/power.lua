@@ -179,11 +179,10 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 							return C.db.profile.units[unit].power.text.tag:gsub("\124", "\124\124")
 						end,
 						set = function(_, value)
-							if not CONFIG:IsTagStringValid(value) then return end
-
 							value = value:gsub("\124\124+", "\124")
 							if C.db.profile.units[unit].power.text.tag ~= value then
 								C.db.profile.units[unit].power.text.tag = value:gsub("\124\124+", "\124")
+
 								UNITFRAMES:For(unit, "For", "Power", "UpdateConfig")
 								UNITFRAMES:For(unit, "For", "Power", "UpdateTags")
 							end
@@ -340,8 +339,6 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 							return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
 						end,
 						set = function(_, value)
-							if not CONFIG:IsTagStringValid(value) then return end
-
 							value = value:gsub("\124\124+", "\124")
 							if C.db.profile.units[unit].alt_power.text.tag ~= value then
 								C.db.profile.units[unit].alt_power.text.tag = value

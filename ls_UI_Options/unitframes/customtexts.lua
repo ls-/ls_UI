@@ -139,8 +139,9 @@ do
 				return C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].tag:gsub("\124", "\124\124")
 			end,
 			set = function(info, value)
-				if CONFIG:IsTagStringValid(value) then
-					C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].tag = value:gsub("\124\124+", "\124")
+				value = value:gsub("\124\124+", "\124")
+				if C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].tag ~= value then
+					C.db.profile.units[info[#info - 3]].custom_texts[info[#info - 1]].tag = value
 
 					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateConfig", info[#info - 1])
 					UNITFRAMES:For(info[#info - 3], "For", "CustomTexts", "UpdateTags", info[#info - 1])

@@ -198,8 +198,6 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 							return C.db.profile.units[unit].health.text.tag:gsub("\124", "\124\124")
 						end,
 						set = function(_, value)
-							if not CONFIG:IsTagStringValid(value) then return end
-
 							value = value:gsub("\124\124+", "\124")
 							if C.db.profile.units[unit].health.text.tag ~= value then
 								C.db.profile.units[unit].health.text.tag = value

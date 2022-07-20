@@ -667,52 +667,6 @@ do
 	end
 end
 
--- CONFIG.IsTagStringValid
-do
-	local badTags = {}
-
-	local function getTagName(tag)
-		local suffixEnd = (tag:match('()%(') or -1) - 1
-
-		local prefixEnd, prefixOffset = tag:match('()$>'), 1
-		if(not prefixEnd) then
-			prefixEnd = 1
-		else
-			prefixEnd = prefixEnd - 1
-			prefixOffset = 3
-		end
-
-		local suffixStart, suffixOffset = tag:match('<$()', prefixEnd), 1
-		if(not suffixStart) then
-			suffixStart = suffixEnd + 1
-		else
-			suffixOffset = 3
-		end
-
-		return tag:sub(prefixEnd + prefixOffset, suffixStart - suffixOffset)
-	end
-
-	function CONFIG:IsTagStringValid(tagString)
-		t_wipe(badTags)
-
-		for bracket in tagString:gmatch("%[..-%]+") do
-			if not oUF.Tags.Methods[getTagName(bracket)] then
-				t_insert(badTags, "|cffffffff" .. bracket .. "|r")
-			end
-		end
-
-		if #badTags > 0 then
-			self:SetStatusText(L["INVALID_TAGS_ERR"]:format(t_concat(badTags, ", ")))
-
-			return false
-		else
-			self:SetStatusText("")
-
-			return true
-		end
-	end
-end
-
 local globalIgnoredKeys = {
 	-- enabled = true,
 	point = true,
