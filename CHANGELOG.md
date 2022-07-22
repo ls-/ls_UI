@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 90205.01
+
+- Added 9.2.5 support;
+- Separated the main addon and the config into two different folders/addons, so the config UI is now loaded on demand
+  which should help with the overfall performance a bit;
+- Added class icon portraits;
+- Fixed an issue where the xp bar would get broken when starting a pet battle;
+- Updated Simplified Chinese translation. Translated by aenerv7@Curse;
+- Updated Spanish translation. Translated by r3dr1an@Curse.
+
 ## Version 90200.05
 
 - Added a way to connect movers together. This will allow to preserve relative positions between multiple movers where
