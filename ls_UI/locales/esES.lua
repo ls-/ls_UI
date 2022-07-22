@@ -1,14 +1,10 @@
-﻿-- Contributors: Gotxiko@GitHub/Curse, justregular16@Curse
+﻿-- Contributors: Gotxiko@GitHub/Curse, justregular16@Curse, r3dr1an@Curse
 
 local _, ns = ...
 local E, L = ns.E, ns.L
 
 -- Lua
 local _G = getfenv(0)
-
---[[ luacheck: globals
-	GetLocale
-]]
 
 if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then return end
 
@@ -70,6 +66,7 @@ L["BUFFS"] = "Beneficios"
 L["BUFFS_AND_DEBUFFS"] = "Beneficios y perjuicios"
 L["BUTTON"] = "Botón"
 L["BUTTON_GRID"] = "Cuadrícula de botones"
+L["BUTTONS"] = "Botones"
 L["CALENDAR"] = "Calendario"
 L["CAST_ON_KEY_DOWN"] = "Lanzar al presionar tecla"
 L["CASTABLE_BUFFS"] = "Beneficios lanzables"
@@ -94,8 +91,9 @@ L["COLORS"] = "Colores"
 L["COMMAND_BAR"] = "Barra de comandos"
 L["CONFIRM_DELETE"] = "¿Quieres eliminar \"%s\"?"
 L["CONFIRM_RESET"] = "¿Quieres reiniciar \"%s\"?"
-L["COOLDOWN"] = "Enfriamiento"
-L["COOLDOWN_TEXT"] = "Texto de enfriamiento"
+L["COOLDOWN"] = "Tiempo de reutilización"
+L["COOLDOWN_TEXT"] = "Texto de tiempo de reutilización"
+L["COOLDOWNS"] = "Tiempos de reutilización"
 L["COPY_FROM"] = "Copiar de"
 L["COPY_FROM_DESC"] = "Selecciona una unidad de la que copiar la configuración."
 L["COST_PREDICTION"] = "Predicción de coste"
@@ -146,6 +144,7 @@ L["EXPERIENCE"] = "Experiencia"
 L["EXPERIENCE_NORMAL"] = "Normal"
 L["EXPERIENCE_RESTED"] = "Descansado"
 L["EXPIRATION"] = "Expiración"
+L["EXPORT"] = "Exportar"
 L["EXTRA_ACTION_BUTTON"] = "Botón de acción extra"
 L["FACTION_NEUTRAL"] = "Neutral"
 L["FADE_IN_DURATION"] = "Duración de aparición"
@@ -158,6 +157,8 @@ L["FLAG"] = "Bandera"
 L["FLYOUT_DIR"] = "Dirección"
 L["FOCUS_FRAME"] = "Marco de foco"
 L["FOCUS_TOF"] = "Foco & OdF"
+L["FONT"] = "Fuente"
+L["FONTS"] = "Fuentes"
 L["FORMAT"] = "Formato"
 L["FRAME"] = "Marco"
 L["FREE_BAG_SLOTS_TOOLTIP"] = "Huecos de bolsa libres: |cffffffff%s|r"
@@ -167,6 +168,7 @@ L["FUNC"] = "Función"
 L["GAIN"] = "Ganancia"
 L["GAIN_LOSS_THRESHOLD"] = "Umbral de ganancia/pérdida"
 L["GAIN_LOSS_THRESHOLD_DESC"] = "El umbral (en porcentaje) sobre el que la ganancia o pérdida de recursos contará con animación. Establecer en 100 para desactivar."
+L["GLOSS"] = "Brillo"
 L["GM_FRAME"] = "Indicador del estado del tíquet."
 L["GOLD"] = "Oro"
 L["GROWTH_DIR"] = "Dirección de crecimiento"
@@ -204,6 +206,7 @@ L["HONOR_LEVEL_TOOLTIP"] = "Nivel de Honor: |cffffffff%d|r"
 L["HOSTILE_TERRITORY"] = "Territorio hostil"
 L["HOURS"] = "Horas"
 L["ICON"] = "Icono"
+L["IMPORT"] = "Importar"
 L["IMPOSSIBLE"] = "Imposible"
 L["INDEX"] = "Índice"
 L["INSPECT_INFO"] = "Información de inspección"
@@ -249,6 +252,7 @@ L["MODE"] = "Modo"
 L["MOUNT_AURAS"] = "Auras de montura"
 L["MOUNT_AURAS_DESC"] = "Mostrar auras de montura."
 L["MOVER_CYCLE_DESC"] = "Presiona |cffffffffAlt|r para alternar entre los marcos bajo el cursor."
+L["MOVER_NAMES"] = "Nombres de marcos"
 L["MOVER_RESET_DESC"] = "|cffffffffShift-Click|r para reiniciar la posición."
 L["NAME"] = "Nombre"
 L["NAME_FORMAT_DESC"] = [=[Escribe un 'String' para cambiar el texto. Para desactivarlo, deja el campo en blanco.
@@ -316,6 +320,10 @@ Utiliza |cffffd200[nl]|r para saltos de línea.]=]
 L["POWER_TEXT"] = "Texto de Poder alternativo"
 L["PREDICTION"] = "Predicción"
 L["PREVIEW"] = "Previsualizar"
+L["PROFILE_GLOBAL"] = "Global"
+L["PROFILE_PRIVATE"] = "Privado"
+L["PROFILES"] = "Perfiles"
+L["PROGRESS_BARS"] = "Barras de progreso"
 L["PVP_ICON"] = "Icono JcJ"
 L["QUESTLOG_BUTTON_DESC"] = "Muestra el tiempo de reinicio de misiones diarias."
 L["QUEUE"] = "En cola"
@@ -332,6 +340,7 @@ L["RESTRICTED_MODE"] = "Modo restringido"
 L["RESTRICTED_MODE_DESC"] = [=[Activa las ilustraciones, animaciones y tamaño dinámico de la barra principal.
 
 |cffdc4436¡Cuidado!|r Muchas opciones de personalización de las barras no estarán disponibles en este modo.|r]=]
+L["REVERSE"] = "Inversa"
 L["RIGHT"] = "Derecha"
 L["RIGHT_DOWN"] = "Derecha y abajo"
 L["RIGHT_UP"] = "Derecha y arriba"
@@ -353,6 +362,7 @@ L["SELF_DEBUFFS_PERMA_DESC"] = "Muestra los perjuicios permanentes lanzados por 
 L["SEPARATION"] = "Separación"
 L["SHADOW"] = "Sombra"
 L["SHIFT_CLICK_TO_SHOW_AS_XP"] = "|cffffffffShift-Click|r para mostrar como Barra de Experiencia"
+L["SHOW_ARTWORK"] = "Mostrar diseño"
 L["SHOW_ON_MOUSEOVER"] = "Mostrar al pasar el ratón."
 L["SHOW_TOOLTIP"] = "Mostrar cuadro informativo"
 L["SIZE"] = "Tamaño"
@@ -409,6 +419,7 @@ L["UP"] = "Arriba"
 L["USABLE"] = "Utilizable"
 L["USE_BLIZZARD_VEHICLE_UI"] = "Utilizar la interfaz de Blizzard de vehículos"
 L["USER_CREATED"] = "Creado por usuario"
+L["VALIDATE"] = "Validar"
 L["VALUE"] = "Valor"
 L["VAR"] = "Variable"
 L["VEHICLE_EXIT_BUTTON"] = "Botón para salir de vehículo"

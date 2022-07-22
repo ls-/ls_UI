@@ -6,10 +6,6 @@ local E, L = ns.E, ns.L
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-	GetLocale
-]]
-
 if GetLocale() ~= "ruRU" then return end
 
 L["ACTION_BARS"] = "Панели команд"

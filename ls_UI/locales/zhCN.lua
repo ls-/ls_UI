@@ -8,10 +8,6 @@ local _G = getfenv(0)
 local m_modf = _G.math.modf
 local s_format = _G.string.format
 
---[[ luacheck: globals
-	GetLocale
-]]
-
 if GetLocale() ~= "zhCN" then return end
 
 -- Mine
@@ -291,6 +287,8 @@ L["MOVER_CYCLE_DESC"] = "按 |cffffffffAlt|r 键切换位于鼠标位置的不�
 L["MOVER_GRID"] = "网格"
 L["MOVER_MOVE_DESC"] = "|cffffffffShift/Ctrl + 鼠标滚轮|r 或 |cffffffff方向键|r 来进行 1px 精度的调整。"
 L["MOVER_NAMES"] = "名称"
+L["MOVER_RELATION_CREATE_DESC"] = "|cffffffff拖拽|r 锚点 (|A:UI-Taxi-Icon-Nub:12:12|a) 来创建一个新的链接。"
+L["MOVER_RELATION_DESTROY_DESC"] = "|cffffffff按住 Shift 点击|r 锚点 (|A:UI-Taxi-Icon-Nub:12:12|a) 来销毁已有的链接。"
 L["MOVER_RESET_DESC"] = "|cffffffffShift 加点击|r 来重置位置"
 L["NAME"] = "名称"
 L["NAME_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留空表示禁用此功能
