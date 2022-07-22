@@ -62,6 +62,7 @@ read_globals = {
 	"GetInventoryItemTexture",
 	"GetItemInfo",
 	"GetItemInfoInstant",
+	"GetLocale",
 	"GetMinimapZoneText",
 	"GetNetStats",
 	"GetQuestLogCompletionText",
