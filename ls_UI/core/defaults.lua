@@ -85,8 +85,6 @@ D.global = {
 		disconnected = rgb(136, 137, 135), -- #888987 (N5)
 		tapped = rgb(163, 162, 162), -- #A3A2A2 (N6)
 		health = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
-		gain = rgb(120, 225, 107), -- #78E16B (10GY 8/12)
-		loss = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
 		power = {
 			MANA = rgb(69, 155, 218), -- #459BDA (2.5PB 6/10)
 			RAGE = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
@@ -420,7 +418,6 @@ D.profile = {
 			alpha = 0.8,
 		},
 		change = {
-			animated = true,
 			smooth = true,
 		},
 		round = {

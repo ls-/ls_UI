@@ -44,18 +44,9 @@ do
 		colorDisconnected = true,
 	}
 
-	function element_proto:PostUpdate(unit, cur, max)
-		if self._config and self._config.animated_change then
-			local unitGUID = UnitGUID(unit)
-			self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-			self._UnitGUID = unitGUID
-		end
-	end
-
 	function element_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health, self._config, ignoredKeys)
-		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	function element_proto:UpdateColors()
@@ -92,14 +83,6 @@ do
 		end
 	end
 
-	function element_proto:UpdateGainLossPoints()
-		self.GainLossIndicators:UpdatePoints(self._config.orientation)
-	end
-
-	function element_proto:UpdateGainLossColors()
-		self.GainLossIndicators:UpdateColors()
-	end
-
 	local frame_proto = {}
 
 	function frame_proto:UpdateHealth()
@@ -112,8 +95,6 @@ do
 		element:UpdateTextPoints()
 		element:UpdateSmoothing()
 		element:UpdateTags()
-		element:UpdateGainLossColors()
-		element:UpdateGainLossPoints()
 		element:ForceUpdate()
 	end
 
@@ -128,10 +109,6 @@ do
 		E.FontStrings:Capture(text, "unit")
 		text:SetWordWrap(false)
 		element.Text = text
-
-		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-		element.GainLossIndicators:UpdateThreshold(0.001)
-		element.GainLossIndicators.Gain = nil
 
 		return element
 	end

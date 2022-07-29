@@ -229,7 +229,6 @@ do
 		healthPrediction.otherBar._texture:AddMaskTexture(mask)
 		healthPrediction.absorbBar._texture:AddMaskTexture(mask)
 		healthPrediction.healAbsorbBar._texture:AddMaskTexture(mask)
-		health.GainLossIndicators.Loss:AddMaskTexture(mask)
 
 		isInit = true
 	end

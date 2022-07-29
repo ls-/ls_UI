@@ -531,13 +531,8 @@ function CONFIG:CreateUnitFramesOptions(order)
 					end
 				end,
 				args = {
-					animated = {
-						order = 1,
-						type = "toggle",
-						name = L["PROGRESS_BAR_ANIMATED"],
-					},
 					smooth = {
-						order = 2,
+						order = 1,
 						type = "toggle",
 						name = L["PROGRESS_BAR_SMOOTH"],
 					},
