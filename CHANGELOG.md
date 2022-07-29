@@ -3,7 +3,7 @@
 ## Version 90205.02
 
 - Added custom gryphons. Wyverns are still WIP;
-- Remove progress bar gain/loss indicators.
+- Removed progress bar gain/loss indicators.
 
 ![Imgur](https://i.imgur.com/LskixEe.png)
 
