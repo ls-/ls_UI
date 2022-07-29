@@ -43,6 +43,24 @@ function P:Modernize(data, name, key)
 
 			data.version = 9000204
 		end
+
+		--> 90205.02
+		if data.version < 9020502 then
+			if data.colors then
+				data.colors.gain = nil
+				data.colors.loss = nil
+			end
+
+			-- forgot to remove these with 90205.01
+			if data.tags then
+				data.tags["ls:name:5"] = nil
+				data.tags["ls:name:10"] = nil
+				data.tags["ls:name:15"] = nil
+				data.tags["ls:name:20"] = nil
+			end
+
+			data.version = 9020502
+		end
 	elseif key == "profile" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -554,6 +572,28 @@ function P:Modernize(data, name, key)
 
 			data.version = 9020005
 		end
+
+		--> 90205.02
+		if data.version < 9020502 then
+			if data.units then
+				if data.units.change then
+					data.units.change.animated = nil
+				end
+			end
+
+			-- forgot to remove these with 90205.01
+			if data.blizzard then
+				if data.blizzard.castbar then
+					if data.blizzard.castbar.text then
+						data.blizzard.castbar.text.font = nil
+						data.blizzard.castbar.text.outline = nil
+						data.blizzard.castbar.text.shadow = nil
+					end
+				end
+			end
+
+			data.version = 9020502
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -564,6 +604,8 @@ function P:Modernize(data, name, key)
 					end
 				end
 			end
+
+			data.version = 9000105
 		end
 
 		--> 90002.01
@@ -571,6 +613,8 @@ function P:Modernize(data, name, key)
 			if data.blizzard then
 				data.blizzard.npe = nil
 			end
+
+			data.version = 9000201
 		end
 
 		--> 90002.04
@@ -583,6 +627,8 @@ function P:Modernize(data, name, key)
 					data.auratracker.count.flag = nil
 				end
 			end
+
+			data.version = 9000204
 		end
 
 		--> 90105.04
