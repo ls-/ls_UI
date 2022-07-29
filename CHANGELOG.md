@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 90205.02
+
+- Added custom gryphons. Wyverns are still WIP;
+- Remove progress bar gain/loss indicators.
+
+![Imgur](https://i.imgur.com/LskixEe.png)
+
 ## Version 90205.01
 
 - Added 9.2.5 support;
