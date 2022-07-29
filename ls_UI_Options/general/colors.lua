@@ -309,58 +309,6 @@ function CONFIG:GetColorsOptions(order)
 					},
 				},
 			},
-			change = {
-				order = inc(1),
-				type = "group",
-				name = L["CHANGE"],
-				set = function(info, r, g, b)
-					if r ~= nil then
-						local color = C.db.global.colors[info[#info]]
-						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
-
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "Stagger", "UpdateGainLossColors")
-						end
-					end
-				end,
-				args = {
-					reset = {
-						type = "execute",
-						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
-						confirm = CONFIG.ConfirmReset,
-						func = function()
-							E:SetRGB(C.db.global.colors.gain, E:GetRGB(D.global.colors.gain))
-							E:SetRGB(C.db.global.colors.loss, E:GetRGB(D.global.colors.loss))
-
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateGainLossColors")
-							UNITFRAMES:ForEach("ForElement", "Stagger", "UpdateGainLossColors")
-						end,
-					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
-					gain = {
-						order = inc(2),
-						type = "color",
-						name = L["GAIN"]
-					},
-					loss = {
-						order = inc(2),
-						type = "color",
-						name = L["LOSS"]
-					},
-				},
-			},
 			prediction = {
 				order = inc(1),
 				type = "group",

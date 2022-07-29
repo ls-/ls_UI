@@ -73,14 +73,6 @@ function element_proto:UpdateSmoothing()
 	end
 end
 
-function element_proto:UpdateGainLossPoints()
-	self.GainLossIndicators:UpdatePoints(self._config.orientation)
-end
-
-function element_proto:UpdateGainLossColors()
-	self.GainLossIndicators:UpdateColors()
-end
-
 -- .Power
 do
 	local power_proto = {
@@ -88,7 +80,7 @@ do
 		frequentUpdates = true,
 	}
 
-	function power_proto:PostUpdate(unit, cur, _, max)
+	function power_proto:PostUpdate(_, _, _, max)
 		local shouldShow = max and max ~= 0
 		local isShown = self:IsShown()
 		if (shouldShow and not isShown) or (not shouldShow and isShown) then
@@ -96,12 +88,6 @@ do
 		end
 
 		if shouldShow then
-			if self._config and self._config.animated_change then
-				local unitGUID = UnitGUID(unit)
-				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-				self._UnitGUID = unitGUID
-			end
-
 			self.Text:Show()
 		else
 			self.Text:Hide()
@@ -111,7 +97,6 @@ do
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].power, self._config, ignoredKeys)
-		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	local frame_proto = {}
@@ -126,8 +111,6 @@ do
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
-		element:UpdateGainLossColors()
-		element:UpdateGainLossPoints()
 
 		if element._config.enabled and not self:IsElementEnabled("Power") then
 			self:EnableElement("Power")
@@ -152,9 +135,6 @@ do
 		text:SetWordWrap(false)
 		element.Text = text
 
-		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-		element.GainLossIndicators:UpdateThreshold(0.01)
-
 		return element
 	end
 end
@@ -163,18 +143,9 @@ end
 do
 	local power_proto = {}
 
-	function power_proto:PostUpdate(cur, max)
-		if self:IsShown() and max and max ~= 0 then
-			if self._config and self._config.animated_change then
-				self.GainLossIndicators:Update(cur, max)
-			end
-		end
-	end
-
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].class_power, self._config, ignoredKeys)
-		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	local frame_proto = {}
@@ -186,8 +157,6 @@ do
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateSmoothing()
-		element:UpdateGainLossColors()
-		element:UpdateGainLossPoints()
 
 		if element._config.enabled and not self:IsElementEnabled("AdditionalPower") then
 			self:EnableElement("AdditionalPower")
@@ -205,9 +174,6 @@ do
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 
-		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-		element.GainLossIndicators:UpdateThreshold(0.01)
-
 		return element
 	end
 end
@@ -216,14 +182,8 @@ end
 do
 	local power_proto = {}
 
-	function power_proto:PostUpdate(unit, cur, _, max)
+	function power_proto:PostUpdate(_, _, _, max)
 		if self:IsShown() and max and max ~= 0 then
-			if self._config and self._config.animated_change then
-				local unitGUID = UnitGUID(unit)
-				self.GainLossIndicators:Update(cur, max, unitGUID == self._UnitGUID)
-				self._UnitGUID = unitGUID
-			end
-
 			self.Text:Show()
 		else
 			self.Text:Hide()
@@ -233,7 +193,6 @@ do
 	function power_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].alt_power, self._config)
-		self._config.animated_change = C.db.profile.units.change.animated
 	end
 
 	function power_proto:UpdateColors()
@@ -252,8 +211,6 @@ do
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
-		element:UpdateGainLossColors()
-		element:UpdateGainLossPoints()
 
 		if element._config.enabled and not self:IsElementEnabled("AlternativePower") then
 			self:EnableElement("AlternativePower")
@@ -277,9 +234,6 @@ do
 		E.FontStrings:Capture(text, "unit")
 		text:SetWordWrap(false)
 		element.Text = text
-
-		element.GainLossIndicators = E:CreateGainLossIndicators(element)
-		element.GainLossIndicators:UpdateThreshold(0.01)
 
 		return element
 	end
