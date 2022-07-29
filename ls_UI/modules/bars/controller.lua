@@ -206,13 +206,27 @@ function MODULE.SetupActionBarController()
 		texture:SetSize(568 / 2, 46 / 2)
 		bottom.Right = texture
 
+		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon")
+		texture:SetTexCoord(1 / 256, 181 / 256, 1 / 128, 113 / 128)
+		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", -92, 14)
+		texture:SetSize(180 / 2, 112 / 2)
+		animController.LeftCap = texture
+
+		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
+		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon")
+		texture:SetTexCoord(181 / 256, 1 / 256, 1 / 128, 113 / 128)
+		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 92, 14)
+		texture:SetSize(180 / 2, 112 / 2)
+		animController.RightCap = texture
+
 		local ag = animController:CreateAnimationGroup()
 		ag:SetScript("OnPlay", function()
 			local newstate = barController:GetAttribute("numbuttons")
 
 			for _, widget in next, WIDGETS do
 				if widget.frame then
-					E:FadeOut(widget.frame)
+					widget.frame:SetAlpha(0)
 
 					if widget.children then
 						for _, child in next, widget.children do
@@ -230,7 +244,7 @@ function MODULE.SetupActionBarController()
 				end
 			end)
 
-			C_Timer.After(0.25, function()
+			C_Timer.After(0.4, function()
 				animController.Top:SetWidth(newstate == 6 and 0.001 or 216)
 				animController.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
 			end)
@@ -267,20 +281,46 @@ function MODULE.SetupActionBarController()
 		anim:SetDuration(0.15)
 
 		anim = ag:CreateAnimation("Translation")
-		anim:SetChildKey("Bottom")
+		anim:SetChildKey("LeftCap")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -23)
+		anim:SetOffset(0, -104)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("RightCap")
+		anim:SetOrder(2)
+		anim:SetOffset(0, -104)
+		anim:SetStartDelay(0.05)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(3)
+		anim:SetOffset(0, -23)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("Bottom")
+		anim:SetOrder(4)
 		anim:SetOffset(0, 23)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("LeftCap")
+		anim:SetOrder(5)
+		anim:SetOffset(0, 104)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
+		anim:SetChildKey("RightCap")
+		anim:SetOrder(5)
+		anim:SetOffset(0, 104)
+		anim:SetStartDelay(0.05)
+		anim:SetDuration(0.1)
+
+		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Top")
-		anim:SetOrder(4)
+		anim:SetOrder(6)
 		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
 
