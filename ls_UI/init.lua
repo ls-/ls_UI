@@ -179,16 +179,34 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		P:InitModules()
 	end)
 
+	local function openConfig()
+		LoadAddOn("ls_UI_Options")
+		if not ls_UI.Config then return end
+
+		ls_UI.Config:Open()
+	end
+
 	P:AddCommand("", function()
 		if not InCombatLockdown() then
-			local _, reason = LoadAddOn("ls_UI_Options")
-			if not ls_UI.Config then return end
-			-- if not ls_UI.Config then
-			-- 	DEFAULT_CHAT_FRAME:AddMessage(string.format(L["Failed to load ShadowedUF_Options, cannot open configuration. Error returned: %s"], reason and _G["ADDON_" .. reason] or ""))
-			-- 	return
-			-- end
-
-			ls_UI.Config:Open()
+			openConfig()
 		end
 	end)
+
+	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
+	panel.name = L["LS_UI"]
+	panel:Hide()
+
+	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	button:SetText(L["OPEN_CONFIG"])
+	button:SetWidth(button:GetTextWidth() + 18)
+	button:SetPoint("TOPLEFT", 16, -16)
+	button:SetScript("OnClick", function()
+		if not InCombatLockdown() then
+			InterfaceOptionsFrame_Show()
+
+			openConfig()
+		end
+	end)
+
+	InterfaceOptions_AddCategory(panel, true)
 end)
