@@ -88,6 +88,7 @@ read_globals = {
 	"SetCVar",
 	"SetWatchedFactionIndex",
 	"UnitClass",
+	"UnitClassBase",
 	"UnitClassification",
 	"UnitExists",
 	"UnitFactionGroup",

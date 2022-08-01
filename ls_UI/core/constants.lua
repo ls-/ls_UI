@@ -3,11 +3,8 @@ local E, M, oUF = ns.E, ns.M, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
-local string = _G.string
-local pairs = _G.pairs
 local select = _G.select
-local type = _G.type
-local unpack = _G.unpack
+local tonumber = _G.tonumber
 
 -- Mine
 local hidden = _G.CreateFrame("Frame", nil, UIParent)
@@ -169,7 +166,7 @@ M.textures = textures
 
 E.OMNICC = select(4, _G.GetAddOnInfo("OmniCC"))
 
-E.PLAYER_CLASS = select(2, _G.UnitClass("player"))
+E.PLAYER_CLASS = UnitClassBase("player")
 E.PLAYER_SPEC_FLAGS = {
 	-- [-1] = 0x00000000, -- none
 	-- [0] = 0x00000000, -- all
