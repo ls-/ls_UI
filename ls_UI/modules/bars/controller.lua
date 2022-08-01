@@ -7,16 +7,22 @@ local _G = getfenv(0)
 local next = _G.next
 local unpack = _G.unpack
 
--- Blizz
-local C_Timer = _G.C_Timer
-
---[[ luacheck: globals
-	CreateFrame RegisterStateDriver UIParent
-]]
-
 -- Mine
 local isInit = false
 local barController
+
+local ENDCAPS = {
+	[1] = {
+		["Alliance"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+		["Horde"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+		["Neutral"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+	},
+	[2] = {
+		["Alliance"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+		["Horde"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+		["Neutral"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+	},
+}
 
 local WIDGETS = {
 	ACTION_BAR = {
@@ -61,7 +67,7 @@ local WIDGETS = {
 	},
 }
 
-function MODULE.ActionBarController_AddWidget(_, frame, slot)
+function MODULE:ActionBarController_AddWidget(frame, slot)
 	if isInit then
 		local widget = WIDGETS[slot]
 		if widget and not widget.frame then
@@ -115,11 +121,11 @@ function MODULE.ActionBarController_AddWidget(_, frame, slot)
 	end
 end
 
-function MODULE.IsRestricted()
+function MODULE:IsRestricted()
 	return isInit
 end
 
-function MODULE.SetupActionBarController()
+function MODULE:SetupActionBarController()
 	if not isInit and PrC.db.profile.bars.restricted then
 		barController = CreateFrame("Frame", "LSActionBarController", UIParent, "SecureHandlerStateTemplate")
 		barController:SetSize(32, 32)
@@ -207,17 +213,17 @@ function MODULE.SetupActionBarController()
 		bottom.Right = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon")
-		texture:SetTexCoord(1 / 256, 181 / 256, 1 / 128, 113 / 128)
+		texture:SetTexture(ENDCAPS[1][E.PLAYER_FACTION])
+		texture:SetTexCoord(1 / 256, 189 / 256, 1 / 128, 125 / 128)
 		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", -92, 14)
-		texture:SetSize(180 / 2, 112 / 2)
+		texture:SetSize(188 / 2, 124 / 2)
 		animController.LeftCap = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon")
-		texture:SetTexCoord(181 / 256, 1 / 256, 1 / 128, 113 / 128)
+		texture:SetTexture(ENDCAPS[2][E.PLAYER_FACTION])
+		texture:SetTexCoord(189 / 256, 1 / 256, 1 / 128, 125 / 128)
 		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 92, 14)
-		texture:SetSize(180 / 2, 112 / 2)
+		texture:SetSize(188 / 2, 124 / 2)
 		animController.RightCap = texture
 
 		local ag = animController:CreateAnimationGroup()
@@ -283,13 +289,13 @@ function MODULE.SetupActionBarController()
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("LeftCap")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -104)
+		anim:SetOffset(0, -76)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("RightCap")
 		anim:SetOrder(2)
-		anim:SetOffset(0, -104)
+		anim:SetOffset(0, -76)
 		anim:SetStartDelay(0.05)
 		anim:SetDuration(0.1)
 
@@ -308,13 +314,13 @@ function MODULE.SetupActionBarController()
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("LeftCap")
 		anim:SetOrder(5)
-		anim:SetOffset(0, 104)
+		anim:SetOffset(0, 76)
 		anim:SetDuration(0.1)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("RightCap")
 		anim:SetOrder(5)
-		anim:SetOffset(0, 104)
+		anim:SetOffset(0, 76)
 		anim:SetStartDelay(0.05)
 		anim:SetDuration(0.1)
 

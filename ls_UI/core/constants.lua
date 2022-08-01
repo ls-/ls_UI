@@ -201,5 +201,6 @@ E:RegisterEvent("UI_SCALE_CHANGED", UpdateScreenConstants)
 
 -- Everything that's not available at ADDON_LOADED goes here
 function E:UpdateConstants()
-	E.PLAYER_GUID = _G.UnitGUID("player")
+	E.PLAYER_FACTION = UnitFactionGroup("player") or "Neutral"
+	E.PLAYER_GUID = UnitGUID("player")
 end
