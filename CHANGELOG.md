@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 90205.03
+
+- Added wyverns. Zug zug! For now there won't be an option to disable wyverns/gryphons, but I'll add it later;
+- Made the rectangular layout default. It's more flexible and suits most people's needs;
+- Readded the addon entry to Interface > AddOns. Accidentally removed it with v`90205.01`.
+
+![Imgur](https://i.imgur.com/uTK8vXp.png)
+
 ## Version 90205.02
 
 - Added custom gryphons. Wyverns are still WIP;
