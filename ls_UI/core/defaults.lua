@@ -2914,7 +2914,7 @@ D.profile = {
 }
 
 PrD.profile = {
-	layout = "round", -- "rect", "round"
+	layout = "rect", -- "rect", "round"
 	auras = {
 		enabled = true,
 	},

@@ -663,5 +663,14 @@ function P:Modernize(data, name, key)
 
 			data.version = 9020002
 		end
+
+		--> 90205.03
+		if data.version < 9020503 then
+			if not data.layout then
+				data.layout = "round"
+			end
+
+			data.version = 9020503
+		end
 	end
 end
