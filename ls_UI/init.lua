@@ -53,6 +53,7 @@ local function updateAll()
 	addRefs()
 
 	P:UpdateModules()
+	E.Movers:ApplyConfig()
 	E.Movers:UpdateAll()
 end
 

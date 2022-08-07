@@ -1203,6 +1203,17 @@ function E.Movers:SaveConfig()
 	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
 end
 
+function E.Movers:ApplyConfig()
+	t_wipe(currentPoints)
+	E:CopyTable(defaultPoints, currentPoints)
+
+	for name, point in next, C.db.profile.movers[E.UI_LAYOUT] do
+		if currentPoints[name] then
+			E:CopyTable(point, currentPoints[name])
+		end
+	end
+end
+
 P:AddCommand("movers", function()
 	E.Movers:ToggleAll()
 end)
