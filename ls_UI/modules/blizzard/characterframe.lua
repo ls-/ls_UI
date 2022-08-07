@@ -9,6 +9,7 @@ local m_floor = _G.math.floor
 local next = _G.next
 local s_trim = _G.string.trim
 local s_upper = _G.string.upper
+local tonumber = _G.tonumber
 
 -- Mine
 local isInit = false
@@ -38,9 +39,7 @@ local ILVL_STEP = 13 -- the ilvl step between content difficulties
 local avgItemLevel
 
 local function getItemLevelColor(itemLevel)
-	if itemLevel == "" then
-		itemLevel = 0
-	end
+	itemLevel = tonumber(itemLevel) or 0
 
 	-- if an item is worse than the average ilvl by one full step, it's really bad
 	return E:GetGradientAsRGB((itemLevel - avgItemLevel + ILVL_STEP) / ILVL_STEP, ILVL_COLORS)
