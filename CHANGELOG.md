@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90205.04
+
+- Fixed an issue where mover settings wouldn't apply on profile import or change; Damn...
+- Misc bug fixes and tweaks.
+
 ## Version 90205.03
 
 - Added wyverns. Zug zug! For now there won't be an option to disable wyverns/gryphons, but I'll add it later;

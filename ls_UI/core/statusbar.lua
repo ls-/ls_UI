@@ -521,7 +521,7 @@ do
 	end
 
 	local function bar_SetValue(self, new)
-		if not self:IsVisible() then
+		if not self:IsVisible() or isCloseEnough(self._value, new, self._max - self._min) then
 			self:SetValue_(new)
 			self._value = new
 
