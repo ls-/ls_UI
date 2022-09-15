@@ -430,7 +430,7 @@ do
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	settings.Border = border
 
-	local nameToggle = CreateFrame("CheckButton", "$parentNameToggle", settings, "OptionsCheckButtonTemplate")
+	local nameToggle = CreateFrame("CheckButton", "$parentNameToggle", settings, "UICheckButtonTemplate")
 	nameToggle:SetPoint("TOPLEFT", 1, 0)
 	nameToggle:SetScript("OnClick", function()
 		showLabels = not showLabels
