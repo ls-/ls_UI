@@ -6,7 +6,7 @@
 ## SavedVariables: LS_UI_GLOBAL_CONFIG, LS_UI_PRIVATE_CONFIG
 ## OptionalDeps: AdiButtonAuras, Masque, MaxDps, MinimapButtonFrame
 
-taintless.xml
+# taintless.xml
 embeds\_embeds.xml
 core\_core.xml
 locales\_locales.xml
