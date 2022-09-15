@@ -35,6 +35,7 @@ D.global = {
 			DEATHKNIGHT = rgb(196, 30, 58), -- #C41E3A (Blizzard Colour)
 			MONK = rgb(0, 255, 150), -- #00FF96 (Blizzard Colour)
 			DEMONHUNTER = rgb(163, 48, 201), -- #A330C9 (Blizzard Colour)
+			EVOKER = rgb(51, 147, 127), -- #33937f (Blizzard Colour)
 		},
 		threat = {
 			[1] = rgb(175, 175, 175), -- #AFAFAF (Blizzard Colour)
@@ -113,6 +114,7 @@ D.global = {
 				-- high
 				[3] = rgb(211, 77, 81), -- #D34D51 (5R 5/12)
 			},
+			ESSENCE = rgb(79, 188, 225), -- #4FBCE1 (7.5B 7/8)
 		},
 		reaction = {
 			-- hated

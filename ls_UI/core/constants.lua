@@ -70,7 +70,7 @@ local textures = {
 		["DEATHKNIGHT"] = {67 / 256, 99 / 256, 199 / 256, 231 / 256},
 		["MONK"] = {100 / 256, 132 / 256, 199 / 256, 231 / 256},
 		["DEMONHUNTER"] = {133 / 256, 165 / 256, 199 / 256, 231 / 256},
-		-- ["TEMP"] = {166 / 256, 198 / 256, 199 / 256, 231 / 256},
+		["EVOKER"] = {166 / 256, 198 / 256, 199 / 256, 231 / 256},
 		-- ["TEMP"] = {199 / 256, 231 / 256, 199 / 256, 231 / 256},
 	},
 	icons_inline = {
@@ -128,7 +128,7 @@ local textures = {
 		["DEATHKNIGHT"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:67:99:199:231|t",
 		["MONK"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:100:132:199:231|t",
 		["DEMONHUNTER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:133:165:199:231|t",
-		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:166:198:199:231|t",
+		["EVOKER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:166:198:199:231|t",
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:199:231:199:231|t",
 		-- discord
 		-- 86 / 128, 96 / 128, 18 / 128, 26 / 128
