@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 100002
 ## Author: lightspark
 ## Version: 90207.04
 ## Title: LS: |cff1a9fc0UI|r
