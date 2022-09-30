@@ -101,6 +101,10 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	PrC.db = LibStub("AceDB-3.0"):New("LS_UI_PRIVATE_CONFIG", PrD)
 
+	if C.db.profile.version < E.VER.number then
+		print(L["LOGIN_MSG"]:format(L["LS_UI"], E.VER.string, M.textures.icons_inline.DISCORD_32, L["INFORMATION"]))
+	end
+
 	-- layout type change shouldn't affect anything after SVs are loaded
 	E.UI_LAYOUT = PrC.db.profile.layout
 

@@ -63,6 +63,63 @@ do
 	end
 end
 
+-- CONFIG:ShowLinkCopyPopup
+do
+	local link = ""
+
+	local popup = CreateFrame("Frame", nil, UIParent)
+	popup:Hide()
+	popup:SetPoint("CENTER", UIParent, "CENTER")
+	popup:SetSize(320, 78)
+	popup:EnableMouse(true)
+	popup:SetFrameStrata("TOOLTIP")
+	popup:SetFixedFrameStrata(true)
+	popup:SetFrameLevel(100)
+	popup:SetFixedFrameLevel(true)
+
+	local border = CreateFrame("Frame", nil, popup, "DialogBorderTranslucentTemplate")
+	border:SetAllPoints(popup)
+
+	local editBox = CreateFrame("EditBox", nil, popup, "InputBoxTemplate")
+	editBox:SetHeight(32)
+	editBox:SetPoint("TOPLEFT", 22, -10)
+	editBox:SetPoint("TOPRIGHT", -16, -10)
+	editBox:SetScript("OnChar", function(self)
+		self:SetText(link)
+		self:HighlightText()
+	end)
+	editBox:SetScript("OnMouseUp", function(self)
+		self:HighlightText()
+	end)
+	editBox:SetScript("OnEscapePressed", function(self)
+		popup:Hide()
+	end)
+
+	local button = CreateFrame("Button", nil, popup, "UIPanelButtonNoTooltipTemplate")
+	button:SetText(L["OKAY"])
+	button:SetSize(90, 22)
+	button:SetPoint("BOTTOM", 0, 16)
+	button:SetScript("OnClick", function()
+		popup:Hide()
+	end)
+
+	popup:SetScript("OnHide", function()
+		link = ""
+		editBox:SetText(link)
+	end)
+	popup:SetScript("OnShow", function()
+		editBox:SetText(link)
+		editBox:SetFocus()
+		editBox:HighlightText()
+	end)
+
+	function CONFIG:ShowLinkCopyPopup(text)
+		popup:Hide()
+		link = text
+		popup:Show()
+	end
+end
+
 function CONFIG:SetStatusText(text)
 	local frame = AceConfigDialog.OpenFrames.ls_UI
 	if frame then

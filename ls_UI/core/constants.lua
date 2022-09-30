@@ -130,6 +130,19 @@ local textures = {
 		["DEMONHUNTER"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:133:165:199:231|t",
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:166:198:199:231|t",
 		-- ["TEMP"] = "|TInterface\\AddOns\\ls_UI\\assets\\unit-frame-icons:%.2f:%.2f:0:0:256:256:199:231:199:231|t",
+		-- discord
+		-- 86 / 128, 96 / 128, 18 / 128, 26 / 128
+		["DISCORD_8"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.25:0:0:128:128:86:96:18:26|t",
+		-- 86 / 128, 107 / 128, 1 / 128, 17 / 128
+		["DISCORD_16"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.3125:0:0:128:128:86:107:1:17|t",
+		-- 86 / 128, 117 / 128, 27 / 128, 51 / 128
+		["DISCORD_24"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.291667:0:0:128:128:86:117:27:51|t",
+		-- 65 / 128, 107 / 128, 66 / 128, 98 / 128
+		["DISCORD_32"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.3125:0:0:128:128:65:107:66:98|t",
+		-- 1 / 128, 64 / 128, 66 / 128, 114 / 128
+		["DISCORD_48"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.3125:0:0:128:128:1:64:66:114|t",
+		-- 1 / 128, 85 / 128, 1 / 128, 65 / 128
+		["DISCORD_64"] = "|TInterface\\AddOns\\ls_UI\\assets\\discord-icons:0:1.3125:0:0:128:128:1:85:1:65|t",
 	},
 	aura_icons = {
 		-- line #1

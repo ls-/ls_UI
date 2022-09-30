@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## Version 90207.01
+
+- Added 9.2.7 support;
+- Added new "Info" panel to the config. It has links to various resourced including my new Discord server dedicated to
+  LS: * addons.
+- Updated German translation. Translated by nicobert90@Curse;
+- Updated embeds.
+
+INVITE LINK: https://discord.gg/7QcJgQkDYD
+
+NOTE: It'd be really nice if you joined the server because I urgently need your feedback in regards to the future of the
+project, the "round" layout in particular.
+
+![Imgur](https://imgur.com/CyTwc9h.png)
+
 ## Version 90205.04
 
 - Fixed an issue where mover settings wouldn't apply on profile import or change; Damn...

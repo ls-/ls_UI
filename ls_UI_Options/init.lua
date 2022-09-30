@@ -72,7 +72,8 @@ function CONFIG:Open()
 						ReloadUI()
 					end,
 				},
-				profiles = CONFIG:CreateProfilesPanel(100)
+				profiles = CONFIG:CreateProfilesPanel(100),
+				about = CONFIG:CreateAboutPanel(101),
 			},
 		}
 
