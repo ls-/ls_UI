@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
+	<Script file="about.lua"/>
 	<Script file="auras.lua"/>
 	<Script file="auratracker.lua"/>
 	<Include file="bars\_bars.xml"/>
