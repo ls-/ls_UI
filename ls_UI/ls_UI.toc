@@ -1,6 +1,6 @@
-## Interface: 90205
+## Interface: 90207
 ## Author: lightspark
-## Version: 90205.04
+## Version: 90207.01
 ## Title: LS: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## SavedVariables: LS_UI_GLOBAL_CONFIG, LS_UI_PRIVATE_CONFIG
