@@ -20,7 +20,7 @@ Use **`/LSUI`** to open in-game config.
 
 ## Feedback and Feature Requests
 
-If you found a bug or want to share an idea on how to improve my UI, either use the issue tracker on [GitHub](https://github.com/ls-/ls_UI/issues), post a comment on [WoWInterface](https://www.wowinterface.com/downloads/info22662.html#comments), or simply DM me @ **ls-#9453** on Discord.
+If you found a bug or want to share an idea on how to improve my UI, either use the issue tracker on [GitHub](https://github.com/ls-/ls_UI/issues) or join our [Discord](https://discord.gg/7QcJgQkDYD) server.
 
 Feel free to write feedback on how to improve some class-specific features.
 
