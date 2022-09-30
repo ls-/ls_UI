@@ -2,7 +2,7 @@
 
 ## Version 90207.02
 
-- Added missing a couple of missing files for 90207.01. Oops...
+- Added a couple of files missing from 90207.01. Oops...
 
 ## Version 90207.01
 
