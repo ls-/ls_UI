@@ -36,9 +36,7 @@ $filesToRemove = @(
 	"*.luacheck*",
 	"*.pkg*",
 	"*.ps1",
-	"*.yml",
-	"CHANGELOG*",
-	"README*"
+	"*.yml"
 )
 
 $foldersToRemove = @(

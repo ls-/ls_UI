@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 90207.02
+
+- Added missing a couple of missing files for 90207.01. Oops...
+
 ## Version 90207.01
 
 - Added 9.2.7 support;
