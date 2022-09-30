@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 90207.03
+
+- Fixed few more things missing from 90207.01. File changes are hard...
+
 ## Version 90207.02
 
 - Added a couple of files missing from 90207.01. Oops...
