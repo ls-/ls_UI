@@ -220,12 +220,9 @@ L["MOVER_RESET_DESC"] = "|cffffffffClic Maj|r pour réinitialiser la position"
 L["NAME"] = "Nom"
 L["NAME_FORMAT_DESC"] = [=[Fournissez une chaîne de caractères pour changer le texte. Pour désactiver, laissez le champ vide.
 
- Tags:
+Tags:
 - |cffffd200[ls:name]|r - le nom;
-- |cffffd200[ls:name:5]|r - le nom raccourci à 5 caractères;
-- |cffffd200[ls:name:10]|r - le nom raccourci à 10 caractères;
-- |cffffd200[ls:name:15]|r - le nom raccourci à 15 caractères;
-- |cffffd200[ls:name:20]|r - le nom raccourci à 20 caractères;
+- |cffffd200[ls:name(N)]|r - the name shortened to N characters, for instance, [ls:name(5)] will show only 5 characters;
 - |cffffd200[ls:server]|r - le tag (*) pour les joueurs venant d'autres royames;
 - |cffffd200[ls:color:class]|r - la couleur de la classe;
 - |cffffd200[ls:color:reaction]|r - la couleur de réaction;

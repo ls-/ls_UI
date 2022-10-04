@@ -291,10 +291,7 @@ L["NAME_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留�
 
 格式化文本
 - |cffffd200[ls:name]|r - 名称
-- |cffffd200[ls:name:5]|r - 只显示名称的前五个字
-- |cffffd200[ls:name:10]|r - 只显示名称的前十个字
-- |cffffd200[ls:name:15]|r - 只显示名称的前十五个字
-- |cffffd200[ls:name:20]|r - 只显示名称的前二十个字
+- |cffffd200[ls:name(N)]|r - the name shortened to N characters, for instance, [ls:name(5)] will show only 5 characters;
 - |cffffd200[ls:server]|r - (*) 标记表示玩家是来自其他服务器
 - |cffffd200[ls:color:class]|r - 职业着色
 - |cffffd200[ls:color:reaction]|r - 阵营着色

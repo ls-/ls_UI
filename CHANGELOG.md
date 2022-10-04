@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 90207.04
+
+- Fixed outdated "Name" formatting tooltip. "ls:name:5/10/etc" tags have been gone for a long long time, instead use "ls:name(N)"
+  where N is the number of characters you want to shorten the name to.
+
 ## Version 90207.03
 
 - Fixed few more things missing from 90207.01. File changes are hard...
