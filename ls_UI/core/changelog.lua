@@ -6,9 +6,6 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 9.2.7 support;
-- Added new "Info" panel to the config. It has links to various resourced including my new Discord server dedicated to
-  LS: * addons;
-- Updated German translation. Translated by nicobert90@Curse;
-- Updated embeds.
+- Fixed outdated "Name" formatting tooltip. "ls:name:5/10/etc" tags have been gone for a long long time, instead use "ls:name(N)"
+  where N is the number of characters you want to shorten the name to.
 ]]
