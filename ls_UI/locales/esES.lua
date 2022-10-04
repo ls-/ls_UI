@@ -255,10 +255,7 @@ L["NAME_FORMAT_DESC"] = [=[Escribe un 'String' para cambiar el texto. Para desac
 
 Etiquetas:
 - |cffffd200[ls:name]|r - el nombre;
-- |cffffd200[ls:name:5]|r - el nombre (máx. 5 caracteres);
-- |cffffd200[ls:name:10]|r - el nombre (máx. 10 caracteres);
-- |cffffd200[ls:name:15]|r - el nombre (máx. 15 caracteres);
-- |cffffd200[ls:name:20]|r - el nombre (máx. 20 caracteres);
+- |cffffd200[ls:name(N)]|r - the name shortened to N characters, for instance, [ls:name(5)] will show only 5 characters;
 - |cffffd200[ls:server]|r - la etiqueta (*) para jugadores de otros reinos;
 - |cffffd200[ls:color:class]|r - el color de clase;
 - |cffffd200[ls:color:reaction]|r - color de reacción;

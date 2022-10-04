@@ -356,10 +356,7 @@ L["NAME_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leav
 
 Tags:
 - |cffffd200[ls:name]|r - the name;
-- |cffffd200[ls:name:5]|r - the name shortened to 5 characters;
-- |cffffd200[ls:name:10]|r - the name shortened to 10 characters;
-- |cffffd200[ls:name:15]|r - the name shortened to 15 characters;
-- |cffffd200[ls:name:20]|r - the name shortened to 20 characters;
+- |cffffd200[ls:name(N)]|r - the name shortened to N characters, for instance, [ls:name(5)] will show only 5 characters;
 - |cffffd200[ls:server]|r - the (*) tag for players from foreign realms;
 - |cffffd200[ls:color:class]|r - the class colour;
 - |cffffd200[ls:color:reaction]|r - the reaction colour;
