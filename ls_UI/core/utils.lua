@@ -18,13 +18,6 @@ local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 local t_wipe = _G.table.wipe
 
---[[ luacheck: globals
-	CreateFrame GetItemGem GetItemInfoInstant GetNumGroupMembers GetNumSubgroupMembers IsInGroup IsInRaid IsSpellKnown
-	UIParent UnitExists UnitGroupRolesAssigned UnitGUID UnitIsUnit
-
-	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS UIPARENT_MANAGED_FRAME_POSITIONS
-]]
-
 -- Mine
 -----------
 -- MATHS --
@@ -677,7 +670,6 @@ function E:ForceHide(object, skipEvents)
 		if object:GetName() then
 			object.ignoreFramePositionManager = true
 			object:SetAttribute("ignoreFramePositionManager", true)
-			UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
 		end
 	end
 
