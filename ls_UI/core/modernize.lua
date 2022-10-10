@@ -594,6 +594,42 @@ function P:Modernize(data, name, key)
 
 			data.version = 9020502
 		end
+
+		--> 100002.01
+		if data.version < 10000201 then
+			if data.movers then
+				if data.movers.round then
+					data.movers.round.LSMinimapHolder = nil
+				end
+
+				if data.movers.rect then
+					data.movers.rect.LSMinimapHolder = nil
+				end
+			end
+
+			if data.minimap then
+				data.minimap.buttons = nil
+				data.minimap.collect = nil
+
+				if data.minimap.color then
+					data.minimap.color.zone_text = nil
+				end
+
+				if data.minimap.rect then
+					data.minimap.rect.clock = nil
+					data.minimap.rect.flag = nil
+					data.minimap.rect.size = nil
+					data.minimap.rect.zone_text = nil
+				end
+
+				if data.minimap.round then
+					data.minimap.round.clock = nil
+					data.minimap.round.flag = nil
+					data.minimap.round.size = nil
+					data.minimap.round.zone_text = nil
+				end
+			end
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then

@@ -2077,15 +2077,6 @@ D.profile = {
 		},
 	},
 	minimap = {
-		collect = {
-			enabled = true,
-			tooltip = false,
-			calendar = false,
-			garrison = false,
-			mail = false,
-			queue = false,
-			tracking = false,
-		},
 		fade = {
 			enabled = false,
 			combat = false,
@@ -2097,50 +2088,21 @@ D.profile = {
 			max_alpha = 1,
 		},
 		round = { -- layout, not the minimap shape
-			size = 146,
-			scale = 100, -- 100, 125, 150
-			zone_text = {
-				mode = 1, -- 0 - hide, 1 - mouseover, 2 - show
-				border = false,
-			},
-			clock = {
-				enabled = true,
-				position = 0, -- 0 - top, 1 - bottom
-			},
-			flag = {
-				mode = 2, -- 0 - hide, 1 - mouseover, 2 - show
-				position = 2, -- 0 - zone text, 1 - clock, 2 - bottom
-			},
+			scale = 100, -- 100, 125
+			shape = "round", -- "round", "square"
+			flip = false,
+			rotate = false,
 			point = {"BOTTOM", "UIParent", "BOTTOM", 312, 74},
 		},
 		rect = {-- layout, not the minimap shape
-			size = 146,
-			scale = 125, -- 100, 125, 150
-			zone_text = {
-				mode = 2,
-				border = true,
-			},
-			clock = {
-				enabled = true,
-				position = 1,
-			},
-			flag = {
-				mode = 2,
-				position = 0,
-			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -18, -7},
-		},
-		buttons = {
-			LSMinimapButtonCollection = 0,
-			MiniMapTrackingButton = 22.5,
-			GameTimeFrame = 45,
-			MiniMapMailFrame = 135,
-			GarrisonLandingPageMinimapButton = 210,
-			QueueStatusMinimapButton = 320,
+			scale = 100, -- 100, 125
+			shape = "round", -- "round", "square"
+			flip = false,
+			rotate = false,
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 		},
 		color = {
 			border = false,
-			zone_text = true,
 		},
 	},
 	bars = {
