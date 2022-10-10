@@ -79,7 +79,7 @@ function CONFIG:Open()
 
 		CONFIG:GetGeneralOptions(5)
 		-- CONFIG:CreateActionBarsOptions(6)
-		-- CONFIG:CreateAuraTrackerOptions(7)
+		CONFIG:CreateAuraTrackerOptions(7)
 		-- CONFIG:CreateBlizzardOptions(8)
 		CONFIG:CreateAurasOptions(9)
 		-- CONFIG:GetLootOptions(10)

@@ -9,16 +9,6 @@ local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
--- Blizz
-local GetSpellInfo = _G.GetSpellInfo
-local UnitAura = _G.UnitAura
-
---[[ luacheck: globals
-	CreateFrame GameTooltip IsAltKeyDown IsControlKeyDown IsShiftKeyDown UIParent
-
-	BUFF_MAX_DISPLAY DEBUFF_MAX_DISPLAY
-]]
-
 --Mine
 local isInit = false
 local activeAuras = {}
@@ -26,30 +16,17 @@ local bar
 
 local function verifyFilter(filter)
 	local auraList = PrC.db.profile.auratracker.filter[filter]
+	local toRemove = {}
 
 	for k in next, auraList do
 		if not GetSpellInfo(k) then
-			auraList[k] = nil
+			toRemove[k] = true
 		end
 	end
-end
 
-local function getActiveAuras(index, filter)
-	local name, texture, count, dType, duration, expirationTime, _, _, _, spellID = UnitAura("player", index, filter)
-
-	if name and bar._config.filter[filter][spellID] then
-		t_insert(activeAuras, {
-			index = index,
-			icon = texture,
-			count = count,
-			debuffType = dType,
-			duration = duration,
-			expiration = expirationTime,
-			filter = filter,
-		})
+	for k in next, toRemove do
+		auraList[k] = nil
 	end
-
-	return not not name
 end
 
 local function button_OnUpdate(self, elapsed)
@@ -57,7 +34,11 @@ local function button_OnUpdate(self, elapsed)
 
 	if self.elapsed > 0.1 then
 		if GameTooltip:IsOwned(self) then
-			GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+			if self.isHarmful then
+				GameTooltip:SetUnitDebuffByAuraInstanceID("player", self.auraInstanceID)
+			else
+				GameTooltip:SetUnitBuffByAuraInstanceID("player", self.auraInstanceID)
+			end
 		end
 
 		self.elapsed = 0
@@ -66,7 +47,13 @@ end
 
 local function button_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-	GameTooltip:SetUnitAura("player", self:GetID(), self.filter)
+
+	if self.isHarmful then
+		GameTooltip:SetUnitDebuffByAuraInstanceID("player", self.auraInstanceID)
+	else
+		GameTooltip:SetUnitBuffByAuraInstanceID("player", self.auraInstanceID)
+	end
+
 	GameTooltip:Show()
 
 	self:SetScript("OnUpdate", button_OnUpdate)
@@ -83,15 +70,17 @@ local bar_proto = {}
 function bar_proto:Update()
 	t_wipe(activeAuras)
 
-	for i = 1, BUFF_MAX_DISPLAY do
-		if not getActiveAuras(i, "HELPFUL") then
-			break
+	for spellID in next, self._config.filter.HELPFUL do
+		local data = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+		if data then
+			t_insert(activeAuras, data)
 		end
 	end
 
-	for i = 1, DEBUFF_MAX_DISPLAY do
-		if not getActiveAuras(i, "HARMFUL") then
-			break
+	for spellID in next, self._config.filter.HARMFUL do
+		local data = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+		if data then
+			t_insert(activeAuras, data)
 		end
 	end
 
@@ -99,22 +88,22 @@ function bar_proto:Update()
 		local button, aura = self._buttons[i], activeAuras[i]
 		if button then
 			if aura then
-				button:SetID(aura.index)
 				button.Icon:SetTexture(aura.icon)
-				button.Count:SetText(aura.count > 1 and aura.count)
-				button.filter = aura.filter
+				button.Count:SetText(aura.applications > 1 and aura.applications or "")
+				button.auraInstanceID = aura.auraInstanceID
+				button.isHarmful = aura.isHarmful
 
 				if aura.duration and aura.duration > 0 then
-					button.CD:SetCooldown(aura.expiration - aura.duration, aura.duration)
+					button.CD:SetCooldown(aura.expirationTime - aura.duration, aura.duration)
 				else
 					button.CD:Clear()
 				end
 
-				if button.filter == "HARMFUL" then
-					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[aura.debuffType] or C.db.global.colors.debuff.None))
+				if button.isHarmful then
+					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[aura.dispelName] or C.db.global.colors.debuff.None))
 
 					if self._config.type.debuff_type then
-						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[aura.debuffType] or M.textures.aura_icons["Debuff"]))
+						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[aura.dispelName] or M.textures.aura_icons["Debuff"]))
 					else
 						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Debuff"]))
 					end
@@ -126,9 +115,7 @@ function bar_proto:Update()
 				button:Show()
 			else
 				button.Count:SetText("")
-				button.filter = nil
 				button.Icon:SetTexture("")
-				button:SetID(0)
 				button:SetScript("OnUpdate", nil)
 				button:Hide()
 			end

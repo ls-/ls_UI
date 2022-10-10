@@ -127,6 +127,7 @@ read_globals = {
 	"C_QuestLog",
 	"C_Reputation",
 	"C_Timer",
+	"C_UnitAuras",
 	"C_WowTokenPublic",
 	"Enum",
 
