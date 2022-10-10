@@ -112,12 +112,6 @@ local function getAuraOptions(order, name, filter)
 				name = L["ROWS"],
 				min = 1, max = 40, step = 1,
 			},
-			num = {
-				order = inc(1),
-				type = "range",
-				name = L["NUM_BUTTONS"],
-				min = 1, max = 4, step = 1,
-			},
 			per_row = {
 				order = inc(1),
 				type = "range",
@@ -314,22 +308,9 @@ local function getAuraOptions(order, name, filter)
 		},
 	}
 
-	if filter == "TOTEM" then
-		temp.args.num_rows = nil
-		temp.args.per_row.max = 4
-		temp.args.sep_own = nil
-		temp.args.sort_dir = nil
-		temp.args.sort_method = nil
-		temp.args.count = nil
+	if filter == "HELPFUL" then
 		temp.args.type = nil
 		temp.args.spacer_3 = nil
-		temp.args.spacer_4 = nil
-	elseif filter == "HELPFUL" then
-		temp.args.num = nil
-		temp.args.type = nil
-		temp.args.spacer_3 = nil
-	elseif filter == "HARMFUL" then
-		temp.args.num = nil
 	end
 
 	return temp
@@ -494,7 +475,6 @@ function CONFIG.CreateAurasOptions(_, order)
 			},
 			buffs = getAuraOptions(20, L["BUFFS"], "HELPFUL"),
 			debuffs = getAuraOptions(30, L["DEBUFFS"], "HARMFUL"),
-			totems = getAuraOptions(40, L["TOTEMS"], "TOTEM"),
 		},
 	}
 end

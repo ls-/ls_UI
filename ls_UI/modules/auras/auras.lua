@@ -5,20 +5,8 @@ local MODULE = P:AddModule("Auras")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local type = _G.type
 local unpack = _G.unpack
-
--- Blizz
-local GetInventoryItemTexture = _G.GetInventoryItemTexture
-local GetTime = _G.GetTime
-local GetWeaponEnchantInfo = _G.GetWeaponEnchantInfo
-local UnitAura = _G.UnitAura
-
---[[ luacheck: globals
-	BuffFrame CreateFrame GameTooltip RegisterAttributeDriver RegisterStateDriver
-	TemporaryEnchantFrame UIParent
-
-	MAX_TOTEMS
-]]
 
 -- Mine
 local isInit = false
@@ -42,7 +30,7 @@ local function updateAura(button, index)
 	local name, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter)
 	if name then
 		button.Icon:SetTexture(texture)
-		button.Count:SetText(count > 1 and count)
+		button.Count:SetText(count > 1 and count or "")
 
 		if(duration and duration > 0 and expirationTime) then
 			button.Cooldown:SetCooldown(expirationTime - duration, duration)
@@ -235,63 +223,54 @@ end
 local function header_Update(self)
 	self:UpdateConfig()
 
-	if self._filter == "TOTEM" then
-		if not E.Movers:Get(self, true) then
-			E.Movers:Create(self)
-		end
+	local config = self._config
+	local initialAnchor
 
-		self:UpdateCooldownConfig()
-		E.Layout:Update(self)
+	if config.y_growth == "UP" then
+		if config.x_growth == "RIGHT" then
+			initialAnchor = "BOTTOMLEFT"
+		else
+			initialAnchor = "BOTTOMRIGHT"
+		end
 	else
-		local config = self._config
-		local initialAnchor
-
-		if config.y_growth == "UP" then
-			if config.x_growth == "RIGHT" then
-				initialAnchor = "BOTTOMLEFT"
-			else
-				initialAnchor = "BOTTOMRIGHT"
-			end
+		if config.x_growth == "RIGHT" then
+			initialAnchor = "TOPLEFT"
 		else
-			if config.x_growth == "RIGHT" then
-				initialAnchor = "TOPLEFT"
-			else
-				initialAnchor = "TOPRIGHT"
-			end
+			initialAnchor = "TOPRIGHT"
 		end
+	end
 
-		self:Hide()
-		self:ForEach("Hide")
-		self:ForEach("UpdateAuraTypeIcon")
-		self:ForEach("UpdateCountFont")
-		self:ForEach("SetSize", config.width, config.height)
-		self:UpdateCooldownConfig()
-		self:SetAttribute("filter", self._filter)
-		self:SetAttribute("initialConfigFunction", ([[
-			self:SetAttribute("type2", "cancelaura")
-			self:SetWidth(%d)
-			self:SetHeight(%d)
-		]]):format(config.width, config.height))
-		self:SetAttribute("maxWraps", config.num_rows)
-		self:SetAttribute("minHeight", config.num_rows * config.width + (config.num_rows - 1) * config.spacing)
-		self:SetAttribute("minWidth", config.per_row * config.height + (config.per_row - 1) * config.spacing)
-		self:SetAttribute("point", initialAnchor)
-		self:SetAttribute("separateOwn", config.sep_own)
-		self:SetAttribute("sortDirection", config.sort_dir)
-		self:SetAttribute("sortMethod", config.sort_method)
-		self:SetAttribute("wrapAfter", config.per_row)
-		self:SetAttribute("wrapXOffset", 0)
-		self:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.height + config.spacing))
-		self:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.width + config.spacing))
-		self:SetAttribute("yOffset", 0)
-		self:Show()
+	self:Hide()
+	self:ForEach("Hide")
+	self:ForEach("UpdateAuraTypeIcon")
+	self:ForEach("UpdateCountFont")
+	self:ForEach("SetSize", config.width, config.height)
+	self:UpdateCooldownConfig()
+	self:SetAttribute("filter", self._filter)
+	self:SetAttribute("initialConfigFunction", ([[
+		self:SetAttribute("type2", "cancelaura")
+		self:SetWidth(%d)
+		self:SetHeight(%d)
+	]]):format(config.width, config.height))
+	self:SetAttribute("maxWraps", config.num_rows)
+	self:SetAttribute("minHeight", config.num_rows * config.width + (config.num_rows - 1) * config.spacing)
+	self:SetAttribute("minWidth", config.per_row * config.height + (config.per_row - 1) * config.spacing)
+	self:SetAttribute("point", initialAnchor)
+	self:SetAttribute("separateOwn", config.sep_own)
+	self:SetAttribute("sortDirection", config.sort_dir)
+	self:SetAttribute("sortMethod", config.sort_method)
+	self:SetAttribute("wrapAfter", config.per_row)
+	self:SetAttribute("wrapXOffset", 0)
+	self:SetAttribute("wrapYOffset", (config.y_growth == "UP" and 1 or -1) * (config.height + config.spacing))
+	self:SetAttribute("xOffset", (config.x_growth == "RIGHT" and 1 or -1) * (config.width + config.spacing))
+	self:SetAttribute("yOffset", 0)
+	self:Show()
 
-		local mover = E.Movers:Get(self, true)
-		if mover then
-			mover:UpdateSize()
-		else
-			E.Movers:Create(self, false, 2, 2)
-		end
+	local mover = E.Movers:Get(self, true)
+	if mover then
+		mover:UpdateSize()
+	else
+		E.Movers:Create(self, false, 2, 2)
 	end
 end
 
@@ -334,64 +313,33 @@ end
 
 local function createHeader(filter)
 	local point = C.db.profile.auras[filter].point[E.UI_LAYOUT]
-	local header
 
-	if filter == "TOTEM" then
-		header = CreateFrame("Frame", "LSTotemHeader", UIParent)
-		header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		header._buttons = {}
+	local header = CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate")
+	header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+	header:HookScript("OnAttributeChanged", header_OnAttributeChanged)
+	header:SetAttribute("unit", "player")
+	header:SetAttribute("template", "SecureActionButtonTemplate")
 
-		for i = 1, MAX_TOTEMS do
-			local totem = _G["TotemFrameTotem" .. i]
-			local iconFrame, border = totem:GetChildren()
-			local background = _G["TotemFrameTotem" .. i .. "Background"]
-			local duration = _G["TotemFrameTotem" .. i .. "Duration"]
-			local icon = _G["TotemFrameTotem" .. i .. "IconTexture"]
-			local cd = _G["TotemFrameTotem" .. i .. "IconCooldown"]
-
-			E:ForceHide(background)
-			E:ForceHide(border)
-			E:ForceHide(duration)
-			E:ForceHide(iconFrame)
-
-			totem:ClearAllPoints()
-			totem:SetScript("OnEnter", button_OnEnter)
-			totem:SetAttribute("totem-slot", i)
-			totem:SetID(i)
-			totem._parent = header
-			header._buttons[i] = totem
-
-			icon:SetParent(totem)
-			icon:SetMask(nil)
-
-			totem.Icon = E:SetIcon(icon)
-
-			border = E:CreateBorder(totem)
-			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-			border:SetSize(16)
-			border:SetOffset(-8)
-			totem.Border = border
-
-			cd:SetParent(totem)
-			cd:ClearAllPoints()
-			cd:SetPoint("BOTTOMRIGHT", -1, 1)
-			cd:SetPoint("TOPLEFT", 1, -1)
-			totem.Cooldown = E.Cooldowns.Handle(cd)
+	-- this prevents SecureAuraHeader_Update spam
+	header.vis = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+	SecureHandlerSetFrameRef(header.vis, "AuraHeader", header)
+	RegisterStateDriver(header.vis, "vis", "[petbattle] hide; show")
+	header.vis:SetAttribute("_onstate-vis", [[
+		local header = self:GetFrameRef("AuraHeader")
+		local isShown = header:IsShown()
+		if isShown and newstate == "hide" then
+			header:Hide()
+		elsef not isShown and newstate == "show" then
+			header:Show()
 		end
-	else
-		header = CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate")
-		header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		header:HookScript("OnAttributeChanged", header_OnAttributeChanged)
-		header:SetAttribute("unit", "player")
-		header:SetAttribute("template", "SecureActionButtonTemplate")
+	]])
 
-		if filter == "HELPFUL" then
-			header:SetAttribute("includeWeapons", 1)
-			header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
-		end
-
-		RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")
+	if filter == "HELPFUL" then
+		header:SetAttribute("includeWeapons", 1)
+		header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
 	end
+
+	RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")
 
 	header._filter = filter
 	header.ForEach = header_ForEach
@@ -402,8 +350,6 @@ local function createHeader(filter)
 	headers[filter] = header
 
 	header:Update()
-
-	RegisterStateDriver(header, "visibility", "[petbattle] hide; show")
 end
 
 function MODULE:IsInit()
@@ -414,10 +360,10 @@ function MODULE:Init()
 	if not isInit and PrC.db.profile.auras.enabled then
 		createHeader("HELPFUL")
 		createHeader("HARMFUL")
-		createHeader("TOTEM")
 
 		E:ForceHide(BuffFrame)
-		E:ForceHide(TemporaryEnchantFrame)
+		E:ForceHide(DebuffFrame)
+		E:ForceHide(DeadlyDebuffFrame)
 
 		isInit = true
 
