@@ -329,7 +329,7 @@ local function createHeader(filter)
 		local isShown = header:IsShown()
 		if isShown and newstate == "hide" then
 			header:Hide()
-		elsef not isShown and newstate == "show" then
+		elseif not isShown and newstate == "show" then
 			header:Show()
 		end
 	]])
