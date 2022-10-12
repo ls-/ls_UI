@@ -121,12 +121,6 @@ function minimap_proto:UpdateLayout()
 	MinimapCluster.InstanceDifficulty:ClearAllPoints()
 	MinimapCluster.InstanceDifficulty:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -2, -24)
 
-	MinimapCluster.GuildInstanceDifficulty:ClearAllPoints()
-	MinimapCluster.GuildInstanceDifficulty:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -4, -23)
-
-	MinimapCluster.ChallengeMode:ClearAllPoints()
-	MinimapCluster.ChallengeMode:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -6, -29)
-
 	if self._config.flip then
 		self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, 8, true)
 
@@ -234,9 +228,7 @@ function MODULE:Init()
 
 		scrollTexture(indicator, (mult + 1) * DELAY - s, STEP * mult)
 
-		-- E:ForceShow(MinimapCluster.ChallengeMode)
 		-- E:ForceShow(MinimapCluster.InstanceDifficulty)
-		-- E:ForceShow(MinimapCluster.GuildInstanceDifficulty)
 
 		hooksecurefunc(MinimapCluster, "SetHeaderUnderneath", function()
 			Minimap:UpdateConfig()
@@ -289,8 +281,6 @@ function MODULE:Init()
 
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetPoint("TOPLEFT", MinimapCluster.BorderTop, "TOPRIGHT", 4, 0)
-
-		MinimapCluster.ChallengeMode:SetSize(28, 36)
 
 		for _, obj in next, {
 				Minimap.ZoomIn,
