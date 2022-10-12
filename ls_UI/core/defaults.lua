@@ -2710,7 +2710,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -6, y = -6},
-				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -4},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -250, y = -4},
 			},
 		},
 		HARMFUL = {
@@ -2744,7 +2744,7 @@ D.profile = {
 			},
 			point = {
 				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -6, y = -114},
-				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -114},
+				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -250, y = -114},
 			},
 		},
 		TOTEM = {
