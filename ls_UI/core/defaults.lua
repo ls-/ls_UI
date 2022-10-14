@@ -134,6 +134,36 @@ D.global = {
 			-- exalted
 			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
+		selection = {
+			-- hostile
+			[ 0] = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
+			-- unfriendly
+			[ 1] = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+			-- neutral
+			[ 2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			-- friendly
+			[ 3] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- player_simple
+			[ 4] = rgb(0, 0, 255), -- #0000FF (Blizzard Colour)
+			-- player_extended
+			[ 5] = rgb(96, 96, 255), -- #6060FF (Blizzard Colour)
+			-- party
+			[ 6] = rgb(170, 170, 255), -- #AAAAFF (Blizzard Colour)
+			-- party_pvp
+			[ 7] = rgb(170, 255, 170), -- #AAFFAA (Blizzard Colour)
+			-- friend
+			[ 8] = rgb(83, 201, 255), -- #53C9FF (Blizzard Colour)
+			-- dead
+			[ 9] = rgb(136, 137, 135), -- #888987 (N5)
+			-- commentator_team_1, unavailable to players
+			-- [10] = {},
+			-- commentator_team_2, unavailable to players
+			-- [11] = {},
+			-- self, buggy
+			-- [12] = {},
+			-- battleground_friendly_pvp
+			[13] = rgb(0, 153, 0), -- #009900 (Blizzard Colour)
+		},
 		difficulty = {
 			impossible = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
 			very_difficult = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)

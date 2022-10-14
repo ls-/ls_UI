@@ -331,6 +331,46 @@ do
 		return C.db.global.colors.reaction[4]
 	end
 
+	local selectionTypes = {
+		[ 0] = 0,
+		[ 1] = 1,
+		[ 2] = 2,
+		[ 3] = 3,
+		[ 4] = 4,
+		[ 5] = 5,
+		[ 6] = 6,
+		[ 7] = 7,
+		[ 8] = 8,
+		[ 9] = 9,
+		-- [10] = 10, -- unavailable to players
+		-- [11] = 11, -- unavailable to players
+		[12] = 5,
+		[13] = 13,
+	}
+
+	local function unitSelectionType(unit)
+		if UnitThreatSituation("player", unit) then
+			return 0
+		else
+			return selectionTypes[UnitSelectionType(unit, true)]
+		end
+	end
+
+	-- loosely based on CompactUnitFrame_UpdateHealthColor
+	function E:GetUnitColor_(unit, colorByClass, colorBySelection)
+		if not UnitIsConnected(unit) or UnitIsDead(unit) then
+			return C.db.global.colors.disconnected
+		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+			return C.db.global.colors.tapped
+		elseif colorByClass and UnitIsPlayer(unit) then
+			return self:GetUnitClassColor(unit)
+		elseif colorBySelection then
+			return C.db.global.colors.selection[unitSelectionType(unit)] or C.db.global.colors.selection[2]
+		else
+			return C.db.global.colors.reaction[4]
+		end
+	end
+
 	function E:GetUnitClassColor(unit)
 		return C.db.global.colors.class[select(2, UnitClass(unit))] or C.db.global.colors.white
 	end
