@@ -42,11 +42,12 @@ function frame_proto:UpdateConfig()
 end
 
 function frame_proto:OnEnter()
-	UnitFrame_OnEnter(self.__owner or self)
+	GameTooltip_SetDefaultAnchor(GameTooltip, self)
+	GameTooltip:SetUnit(self.unit)
 end
 
 function frame_proto:OnLeave()
-	UnitFrame_OnLeave(self.__owner or self)
+	GameTooltip:FadeOut()
 end
 
 function frame_proto:UpdateSize()

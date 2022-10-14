@@ -629,6 +629,10 @@ function P:Modernize(data, name, key)
 					data.minimap.round.zone_text = nil
 				end
 			end
+
+			if data.tooltips then
+				data.tooltips.anchor_cursor = nil
+			end
 		end
 	elseif key == "private" then
 		--> 90001.05

@@ -83,7 +83,7 @@ function CONFIG:Open()
 		-- CONFIG:CreateBlizzardOptions(8)
 		CONFIG:CreateAurasOptions(9)
 		CONFIG:CreateMinimapOptions(11)
-		-- CONFIG:GetTooltipsOptions(12)
+		CONFIG:GetTooltipsOptions(12)
 		-- CONFIG:CreateUnitFramesOptions(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)

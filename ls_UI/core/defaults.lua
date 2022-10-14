@@ -2804,7 +2804,6 @@ D.profile = {
 		title = true,
 		target = true,
 		inspect = true,
-		anchor_cursor = false,
 		health = {
 			height = 12,
 			text = {
