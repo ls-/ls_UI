@@ -66,7 +66,7 @@ D.global = {
 		},
 		button = {
 			normal = rgb(255, 255, 255), -- #FFFFFF
-			unusable = rgb(107, 108, 107), -- #6B6C6B (N4)
+			unusable = rgb(181, 182, 181), -- #B5B6B5 (N7)
 			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
 			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
 		},
@@ -133,6 +133,8 @@ D.global = {
 			[7] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 			-- exalted
 			[8] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
+			-- renown, fake
+			[9] = rgb(0, 191, 243), -- #00BFF3 (Blizzard Colour)
 		},
 		selection = {
 			-- hostile
