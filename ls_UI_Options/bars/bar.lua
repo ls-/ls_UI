@@ -67,7 +67,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			if C.db.profile.bars[barID][info[#info]] ~= value then
 				C.db.profile.bars[barID][info[#info]] = value
 
-				BARS:GetBar(barID):Update()
+				BARS:Get(barID):Update()
 			end
 		end,
 		args = {
@@ -78,7 +78,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
-					BARS:GetBar(barID):Update()
+					BARS:Get(barID):Update()
 				end,
 			},
 			spacer_1 = {
@@ -93,9 +93,9 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].visible = value
 
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateFading()
-					BARS:GetBar(barID):UpdateVisibility()
+					BARS:Get(barID):UpdateConfig()
+					BARS:Get(barID):UpdateFading()
+					BARS:Get(barID):UpdateVisibility()
 				end
 			},
 			grid = {
@@ -105,8 +105,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].grid = value
 
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateButtonConfig()
+					BARS:Get(barID):UpdateConfig()
+					BARS:Get(barID):UpdateButtonConfig()
 				end,
 			},
 			num = {
@@ -149,7 +149,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 
 					C.db.profile.bars[barID].height = value
 
-					BARS:GetBar(barID):Update()
+					BARS:Get(barID):Update()
 				end,
 			},
 			growth_dir = {
@@ -163,7 +163,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].x_growth, C.db.profile.bars[barID].y_growth = s_split("_", value)
 
-					BARS:GetBar(barID):Update()
+					BARS:Get(barID):Update()
 				end,
 			},
 			flyout_dir = {
@@ -174,8 +174,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].flyout_dir = value
 
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateButtonConfig()
+					BARS:Get(barID):UpdateConfig()
+					BARS:Get(barID):UpdateButtonConfig()
 				end,
 			},
 			spacer_2 = {
@@ -199,9 +199,9 @@ function CONFIG:CreateBarOptions(order, barID, name)
 						set = function(_, value)
 							C.db.profile.bars[barID].hotkey.enabled = value
 
-							BARS:ForBar(barID, "UpdateConfig")
-							BARS:ForBar(barID, "UpdateButtonConfig")
-							BARS:ForBar(barID, "ForEach", "UpdateHotKey")
+							BARS:For(barID, "UpdateConfig")
+							BARS:For(barID, "UpdateButtonConfig")
+							BARS:For(barID, "ForEach", "UpdateHotKey")
 						end,
 					},
 					size = {
@@ -213,8 +213,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 							if C.db.profile.bars[barID].hotkey.size ~= value then
 								C.db.profile.bars[barID].hotkey.size = value
 
-								BARS:ForBar(barID, "UpdateConfig")
-								BARS:ForBar(barID, "ForEach", "UpdateHotKeyFont")
+								BARS:For(barID, "UpdateConfig")
+								BARS:For(barID, "ForEach", "UpdateHotKeyFont")
 							end
 						end,
 					},
@@ -241,8 +241,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 						set = function(_, value)
 							C.db.profile.bars[barID].macro.enabled = value
 
-							BARS:ForBar(barID, "UpdateConfig")
-							BARS:ForBar(barID, "UpdateButtonConfig")
+							BARS:For(barID, "UpdateConfig")
+							BARS:For(barID, "UpdateButtonConfig")
 						end,
 					},
 					size = {
@@ -254,8 +254,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 							if C.db.profile.bars[barID].macro.size ~= value then
 								C.db.profile.bars[barID].macro.size = value
 
-								BARS:ForBar(barID, "UpdateConfig")
-								BARS:ForBar(barID, "ForEach", "UpdateMacroFont")
+								BARS:For(barID, "UpdateConfig")
+								BARS:For(barID, "ForEach", "UpdateMacroFont")
 							end
 						end,
 					},
@@ -284,8 +284,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 							if C.db.profile.bars[barID].count.size ~= value then
 								C.db.profile.bars[barID].count.size = value
 
-								BARS:ForBar(barID, "UpdateConfig")
-								BARS:ForBar(barID, "ForEach", "UpdateCountFont")
+								BARS:For(barID, "UpdateConfig")
+								BARS:For(barID, "ForEach", "UpdateCountFont")
 							end
 						end,
 					},
@@ -308,8 +308,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					if C.db.profile.bars[barID].cooldown.text[info[#info]] ~= value then
 						C.db.profile.bars[barID].cooldown.text[info[#info]] = value
 
-						BARS:GetBar(barID):UpdateConfig()
-						BARS:GetBar(barID):UpdateCooldownConfig()
+						BARS:Get(barID):UpdateConfig()
+						BARS:Get(barID):UpdateCooldownConfig()
 					end
 				end,
 				args = {
@@ -351,13 +351,13 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.height.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
 		temp.args.flyout_dir.disabled = isModuleDisabledOrRestricted
-	elseif barID == "bar6" then
+	elseif barID == "pet" then
 		temp.args.grid.set = function(_, value)
 			C.db.profile.bars[barID].grid = value
 
-			BARS:ForBar(barID, "UpdateConfig")
-			BARS:ForBar(barID, "UpdateButtonConfig")
-			BARS:ForBar(barID, "ForEach", "UpdateGrid")
+			BARS:For(barID, "UpdateConfig")
+			BARS:For(barID, "UpdateButtonConfig")
+			BARS:For(barID, "ForEach", "UpdateGrid")
 		end
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10
@@ -366,7 +366,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.spacer_4 = nil
 		temp.args.count = nil
 		temp.args.spacer_5 = nil
-	elseif barID == "bar7" then
+	elseif barID == "stance" then
 		temp.args.grid = nil
 		temp.args.num.max = 10
 		temp.args.per_row.max = 10

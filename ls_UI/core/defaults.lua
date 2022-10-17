@@ -2140,10 +2140,9 @@ D.profile = {
 	bars = {
 		mana_indicator = "button", -- hotkey
 		range_indicator = "button", -- hotkey
-		lock = true, -- watch: LOCK_ACTIONBAR
 		rightclick_selfcast = false,
-		click_on_down = false,
 		blizz_vehicle = false,
+		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
@@ -2246,8 +2245,8 @@ D.profile = {
 				},
 			},
 			point = {
-				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
-				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 56},
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 55},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 55},
 			},
 		},
 		bar3 = { -- MultiBarBottomRight
@@ -2292,8 +2291,8 @@ D.profile = {
 				},
 			},
 			point = {
-				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
-				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 92},
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 91},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 91},
 			},
 		},
 		bar4 = { -- MultiBarLeft
@@ -2388,7 +2387,145 @@ D.profile = {
 				rect = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
 			},
 		},
-		bar6 = { --PetAction
+		bar6 = { -- MultiBar5
+			flyout_dir = "UP",
+			grid = false,
+			num = 12,
+			per_row = 12,
+			width = 32,
+			height = 0,
+			spacing = 4,
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			visible = false,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			fade = {
+				enabled = false,
+				combat = false,
+				target = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_duration = 0.15,
+				min_alpha = 0.2,
+				max_alpha = 1,
+			},
+			hotkey = {
+				enabled = true,
+				size = 12,
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+			},
+			count = {
+				enabled = true,
+				size = 12,
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					v_alignment = "MIDDLE",
+				},
+			},
+			point = {
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 320},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 320},
+			},
+		},
+		bar7 = { -- MultiBar6
+			flyout_dir = "UP",
+			grid = false,
+			num = 12,
+			per_row = 12,
+			width = 32,
+			height = 0,
+			spacing = 4,
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			visible = false,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			fade = {
+				enabled = false,
+				combat = false,
+				target = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_duration = 0.15,
+				min_alpha = 0.2,
+				max_alpha = 1,
+			},
+			hotkey = {
+				enabled = true,
+				size = 12,
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+			},
+			count = {
+				enabled = true,
+				size = 12,
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					v_alignment = "MIDDLE",
+				},
+			},
+			point = {
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 356},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 356},
+			},
+		},
+		bar8 = { -- MultiBar7
+			flyout_dir = "UP",
+			grid = false,
+			num = 12,
+			per_row = 12,
+			width = 32,
+			height = 0,
+			spacing = 4,
+			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
+			visible = false,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			fade = {
+				enabled = false,
+				combat = false,
+				target = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_duration = 0.15,
+				min_alpha = 0.2,
+				max_alpha = 1,
+			},
+			hotkey = {
+				enabled = true,
+				size = 12,
+			},
+			macro = {
+				enabled = true,
+				size = 12,
+			},
+			count = {
+				enabled = true,
+				size = 12,
+			},
+			cooldown = {
+				text = {
+					enabled = true,
+					size = 12,
+					v_alignment = "MIDDLE",
+				},
+			},
+			point = {
+				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 392},
+				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 392},
+			},
+		},
+		pet = {
 			flyout_dir = "UP",
 			grid = false,
 			num = 10,
@@ -2422,7 +2559,7 @@ D.profile = {
 				},
 			},
 		},
-		bar7 = { -- Stance
+		stance = {
 			flyout_dir = "UP",
 			num = 10,
 			per_row = 10,
@@ -2563,8 +2700,10 @@ D.profile = {
 				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
 			},
 		},
-		micromenu = {
+		bag = {
 			visible = true,
+			tooltip = true,
+			currency = {},
 			fade = {
 				enabled = false,
 				combat = false,
@@ -2575,105 +2714,76 @@ D.profile = {
 				min_alpha = 0.2,
 				max_alpha = 1,
 			},
-			bars = {
-				micromenu1 = {
-					enabled = true,
-					num = 13,
-					per_row = 13,
-					width = 18,
-					height = 24,
-					spacing = 4,
-					x_growth = "RIGHT",
-					y_growth = "DOWN",
-					point = {
-						round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
-						rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
-					},
-				},
-				micromenu2 = {
-					enabled = true,
-					num = 13,
-					per_row = 13,
-					width = 18,
-					height = 24,
-					spacing = 4,
-					x_growth = "RIGHT",
-					y_growth = "DOWN",
-				},
-				bags = {
-					enabled = true,
-					num = 4,
-					per_row = 4,
-					x_growth = "RIGHT",
-					y_growth = "DOWN",
-					size = 32,
-					spacing = 4,
-					point = {
-						round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
-						rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 32},
-					},
-				},
+			point = {
+				round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 36},
+				rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 36},
+			},
+		},
+		micromenu = {
+			visible = true,
+			num = 13,
+			per_row = 13,
+			width = 18,
+			height = 24,
+			spacing = 2,
+			x_growth = "RIGHT",
+			y_growth = "DOWN",
+			fade = {
+				enabled = false,
+				combat = false,
+				target = false,
+				out_delay = 0.75,
+				out_duration = 0.15,
+				in_duration = 0.15,
+				min_alpha = 0.2,
+				max_alpha = 1,
 			},
 			buttons = {
 				character = {
 					enabled = true,
-					parent = "micromenu1",
-					tooltip = false,
-				},
-				inventory = {
-					enabled = true,
-					parent = "micromenu1",
 					tooltip = true,
-					currency = {},
 				},
 				spellbook = {
 					enabled = true,
-					parent = "micromenu1",
 				},
 				talent = {
 					enabled = true,
-					parent = "micromenu1",
 				},
 				achievement = {
 					enabled = true,
-					parent = "micromenu1",
 				},
 				quest = {
 					enabled = true,
-					parent = "micromenu1",
 					tooltip = true,
 				},
 				guild = {
 					enabled = true,
-					parent = "micromenu1",
 				},
 				lfd = {
 					enabled = true,
-					parent = "micromenu1",
 					tooltip = true,
 				},
 				collection = {
 					enabled = true,
-					parent = "micromenu1",
 				},
 				ej = {
 					enabled = true,
-					parent = "micromenu1",
 					tooltip = true,
 				},
 				store = {
 					enabled = false,
-					parent = "micromenu1",
 				},
 				main = {
 					enabled = true,
-					parent = "micromenu1",
 					tooltip = true,
 				},
 				help = {
 					enabled = false,
-					parent = "micromenu1",
 				},
+			},
+			point = {
+				round = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
+				rect = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
 			},
 		},
 		xpbar = {

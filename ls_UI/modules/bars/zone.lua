@@ -8,66 +8,56 @@ local hooksecurefunc = _G.hooksecurefunc
 local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
 
---[[ luacheck: globals
-	CreateFrame UIParent UIPARENT_MANAGED_FRAME_POSITIONS ZoneAbilityFrame
-]]
-
 -- Mine
 local isInit = false
 
-function MODULE.CreateZoneButton()
+local bar_proto = {}
+
+function bar_proto:Update()
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateArtwork()
+	self:UpdateCooldownConfig()
+	self:UpdateFading()
+
+	ZoneAbilityFrame:ClearAllPoints()
+	ZoneAbilityFrame:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -2)
+	ZoneAbilityFrame:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 2)
+
+	local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
+	if width < 1 then
+		local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool.numActiveObjects
+		num = num > 0 and num or 1
+		local spacing = ZoneAbilityFrame.SpellButtonContainer.spacing
+		width = height * num + spacing * (num - 1)
+	end
+
+	self:SetSize(width + 4, height + 4)
+	E.Movers:Get(self):UpdateSize()
+end
+
+function bar_proto:UpdateArtwork()
+	if self._config.artwork then
+		ZoneAbilityFrame.Style:Show()
+		ZoneAbilityFrame.Style:SetParent(ZoneAbilityFrame)
+	else
+		ZoneAbilityFrame.Style:Hide()
+		ZoneAbilityFrame.Style:SetParent(E.HIDDEN_PARENT)
+	end
+end
+
+function MODULE:CreateZoneButton()
 	if not isInit then
-		local bar = CreateFrame("Frame", "LSZoneAbilityBar", UIParent, "SecureHandlerStateTemplate")
-		bar._id = "zone"
-		bar._buttons = {}
-
-		MODULE:AddBar("zone", bar)
-
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateVisibility()
-			self:UpdateArtwork()
-			self:UpdateCooldownConfig()
-			self:UpdateFading()
-
-			ZoneAbilityFrame:ClearAllPoints()
-			ZoneAbilityFrame:SetPoint("TOPLEFT", bar, "TOPLEFT", 2, -2)
-			ZoneAbilityFrame:SetPoint("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
-
-			local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
-			if width < 1 then
-				local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool.numActiveObjects
-				num = num > 0 and num or 1
-				local spacing = ZoneAbilityFrame.SpellButtonContainer.spacing
-				width = height * num + spacing * (num - 1)
-			end
-
-			self:SetSize(width + 4, height + 4)
-			E.Movers:Get(self):UpdateSize()
-		end
-
-		bar.UpdateArtwork = function(self)
-			if self._config.artwork then
-				ZoneAbilityFrame.Style:Show()
-				ZoneAbilityFrame.Style:SetParent(ZoneAbilityFrame)
-			else
-				ZoneAbilityFrame.Style:Hide()
-				ZoneAbilityFrame.Style:SetParent(E.HIDDEN_PARENT)
-			end
-		end
+		local bar = Mixin(self:Create("zone", "LSZoneAbilityBar"), bar_proto)
 
 		ZoneAbilityFrame.ignoreFramePositionManager = true
-		UIPARENT_MANAGED_FRAME_POSITIONS["ZoneAbilityFrame"] = nil
-		UIPARENT_MANAGED_FRAME_POSITIONS["ExtraAbilityContainer"] = nil
-
+		ZoneAbilityFrame.ignoreInLayout = true
 		ZoneAbilityFrame:EnableMouse(false)
 		ZoneAbilityFrame:SetParent(bar)
-		ZoneAbilityFrame.ignoreInLayout = true
 
-		ZoneAbilityFrame.SetParent_ = ZoneAbilityFrame.SetParent
 		hooksecurefunc(ZoneAbilityFrame, "SetParent", function(self, parent)
 			if parent ~= bar then
-				self:SetParent_(bar)
+				self:SetParent(bar)
 			end
 		end)
 

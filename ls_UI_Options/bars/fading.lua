@@ -47,8 +47,8 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 		set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
 
-			BARS:GetBar(barID):UpdateConfig()
-			BARS:GetBar(barID):UpdateFading()
+			BARS:Get(barID):UpdateConfig()
+			BARS:Get(barID):UpdateFading()
 		end,
 		args = {
 			enabled = {
@@ -65,8 +65,8 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
 
-					BARS:GetBar(barID):UpdateConfig()
-					BARS:GetBar(barID):UpdateFading()
+					BARS:Get(barID):UpdateConfig()
+					BARS:Get(barID):UpdateFading()
 				end,
 			},
 			spacer_1 = {
@@ -118,28 +118,14 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 	}
 
 	if barID == "bar1" then
-		temp.hidden = isModuleDisabledOrRestricted
+		temp.disabled = isModuleDisabledOrRestricted
+		temp.args.enabled.disabled = nil
 	elseif barID == "pet_battle" then
-		temp.hidden = isPetBattleBarDisabledOrRestricted
-	elseif barID == "micromenu" then
-		temp.set = function(info, value)
-			C.db.profile.bars[barID].fade[info[#info]] = value
-
-			BARS:GetBar("micromenu1"):UpdateConfig()
-			BARS:GetBar("micromenu1"):UpdateFading()
-			BARS:GetBar("micromenu2"):UpdateConfig()
-			BARS:GetBar("micromenu2"):UpdateFading()
-		end
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
-
-			BARS:GetBar("micromenu1"):UpdateConfig()
-			BARS:GetBar("micromenu1"):UpdateFading()
-			BARS:GetBar("micromenu2"):UpdateConfig()
-			BARS:GetBar("micromenu2"):UpdateFading()
-		end
+		temp.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.enabled.disabled = nil
 	elseif barID == "xpbar" then
-		temp.hidden = isXPBarDisabledOrRestricted
+		temp.disabled = isXPBarDisabledOrRestricted
+		temp.args.enabled.disabled = nil
 	end
 
 	return temp

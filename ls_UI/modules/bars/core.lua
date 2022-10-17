@@ -19,11 +19,11 @@ local C_PetBattles = _G.C_PetBattles
 local isInit = false
 local bars = {}
 
-function MODULE.GetBars()
+function MODULE:GetBars()
 	return bars
 end
 
-function MODULE.GetBar(_, barID)
+function MODULE:Get(barID)
 	return bars[barID]
 end
 
@@ -48,8 +48,9 @@ local function resumeFading()
 	end
 end
 
--- Updates
-local function bar_ForEach(self, method, ...)
+local bar_proto = {}
+
+function bar_proto:ForEach(method, ...)
 	for _, button in next, self._buttons do
 		if button[method] then
 			button[method](button, ...)
@@ -57,12 +58,10 @@ local function bar_ForEach(self, method, ...)
 	end
 end
 
-local function bar_UpdateConfig(self)
+function bar_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
-	self._config.click_on_down = C.db.profile.bars.click_on_down
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
-	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
 	self._config.range_indicator = C.db.profile.bars.range_indicator
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
@@ -73,7 +72,7 @@ local function bar_UpdateConfig(self)
 	end
 end
 
-local function bar_UpdateCooldownConfig(self)
+function bar_proto:UpdateCooldownConfig()
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
 			swipe = {},
@@ -96,11 +95,11 @@ local function bar_UpdateCooldownConfig(self)
 	end
 end
 
-local function bar_UpdateLayout(self)
+function bar_proto:UpdateLayout()
 	E.Layout:Update(self)
 end
 
-local function bar_UpdateVisibility(self)
+function bar_proto:UpdateVisibility()
 	if self._config.visible then
 		RegisterStateDriver(self, "visibility", self._config.visibility or "show")
 	else
@@ -108,18 +107,25 @@ local function bar_UpdateVisibility(self)
 	end
 end
 
-function MODULE.AddBar(_, barID, bar)
-	bars[barID] = bar
-	bar.UpdateConfig = bar.UpdateConfig or bar_UpdateConfig
-	bar.UpdateCooldownConfig = bar.UpdateCooldownConfig or bar_UpdateCooldownConfig
-	bar.UpdateLayout = bar.UpdateLayout or bar_UpdateLayout
-	bar.UpdateVisibility = bar.UpdateVisibility or bar_UpdateVisibility
-
-	if bar._buttons then
-		bar.ForEach = bar.ForEach or bar_ForEach
-	end
+function MODULE:Create(id, name, isInsecure)
+	local bar = Mixin(CreateFrame("Frame", name, UIParent, isInsecure and nil or "SecureHandlerStateTemplate"), bar_proto)
+	bar._id = id
+	bar._buttons = {}
+	bars[id] = bar
 
 	E:SetUpFading(bar)
+
+	return bar
+end
+
+function MODULE:Register(id, bar)
+	Mixin(bar, bar_proto)
+	bar._id = id
+	bars[id] = bar
+
+	E:SetUpFading(bar)
+
+	return bar
 end
 
 function MODULE:ForEach(method, ...)
@@ -130,7 +136,7 @@ function MODULE:ForEach(method, ...)
 	end
 end
 
-function MODULE:ForBar(id, method, ...)
+function MODULE:For(id, method, ...)
 	if bars[id] and bars[id][method] then
 		bars[id][method](bars[id], ...)
 	end
@@ -145,9 +151,12 @@ local rebindable = {
 	bar5 = true,
 	bar6 = true,
 	bar7 = true,
+	bar8 = true,
+	pet = true,
+	stance = true,
 }
 
-function MODULE.ReassignBindings()
+local function reassignBindings()
 	if not InCombatLockdown() then
 		for barID, bar in next, bars do
 			if rebindable[barID] then
@@ -165,7 +174,7 @@ function MODULE.ReassignBindings()
 	end
 end
 
-function MODULE.ClearBindings()
+local function clearBindings()
 	if not InCombatLockdown() then
 		for barID, bar in next, bars do
 			if rebindable[barID] then
@@ -224,30 +233,11 @@ function MODULE:UpdateBlizzVehicle()
 	end
 end
 
------
-
-local isNPEHooked = false
-
-local function disableNPE()
-	if NewPlayerExperience then
-		if NewPlayerExperience:GetIsActive() then
-			NewPlayerExperience:Shutdown()
-		end
-
-		if not isNPEHooked then
-			hooksecurefunc(NewPlayerExperience, "Begin", disableNPE)
-			isNPEHooked = true
-		end
-	end
-end
-
------
-
-function MODULE.IsInit()
+function MODULE:IsInit()
 	return isInit
 end
 
-function MODULE.Init()
+function MODULE:Init()
 	if not isInit and PrC.db.profile.bars.enabled then
 		MODULE:SetupActionBarController()
 		MODULE:CreateActionBars()
@@ -258,8 +248,8 @@ function MODULE.Init()
 		MODULE:CreateZoneButton()
 		MODULE:CreateVehicleExitButton()
 		MODULE:CreateMicroMenu()
+		MODULE:CreateBag()
 		MODULE:CreateXPBar()
-		MODULE:ReassignBindings()
 		MODULE:CleanUp()
 		MODULE:UpdateBlizzVehicle()
 
@@ -267,31 +257,30 @@ function MODULE.Init()
 		E:RegisterEvent("ACTIONBAR_SHOWGRID", pauseFading)
 		E:RegisterEvent("PET_BAR_HIDEGRID", resumeFading)
 		E:RegisterEvent("PET_BAR_SHOWGRID", pauseFading)
-		E:RegisterEvent("PET_BATTLE_CLOSE", MODULE.ReassignBindings)
-		E:RegisterEvent("PET_BATTLE_OPENING_DONE", MODULE.ClearBindings)
-		E:RegisterEvent("UPDATE_BINDINGS", MODULE.ReassignBindings)
+		E:RegisterEvent("PET_BATTLE_CLOSE", reassignBindings)
+		E:RegisterEvent("PET_BATTLE_OPENING_DONE", clearBindings)
+		E:RegisterEvent("UPDATE_BINDINGS", reassignBindings)
 
 		if C_PetBattles.IsInBattle() then
-			MODULE:ClearBindings()
+			clearBindings()
 		else
-			MODULE:ReassignBindings()
+			reassignBindings()
 		end
 
-		SetCVar("ActionButtonUseKeyDown", C.db.profile.bars.click_on_down and 1 or 0)
-		SetCVar("lockActionBars", C.db.profile.bars.lock and 1 or 0)
+		E:WatchCVar("ActionButtonUseKeyDown", function(value)
+			return value ~= "1", "1"
+		end)
 
-		if NewPlayerExperience then
-			disableNPE()
-		else
-			E:AddOnLoadTask("Blizzard_NewPlayerExperience", disableNPE)
-		end
+		E:WatchCVar("lockActionBars", function(value)
+			return value ~= "1", "1"
+		end)
 
 		isInit = true
 	end
 end
 
-function MODULE.Update()
+function MODULE:Update()
 	if isInit then
-		MODULE:ForEach("Update")
+		self:ForEach("Update")
 	end
 end

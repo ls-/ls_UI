@@ -7,16 +7,9 @@ local _G = getfenv(0)
 local next = _G.next
 local unpack = _G.unpack
 
---[[ luacheck: globals
-	AutoCastShine_AutoCastStart AutoCastShine_AutoCastStop CooldownFrame_Set CreateFrame
-	GetPetActionCooldown GetPetActionInfo GetPetActionSlotUsable GetSpellSubtext IsPetAttackAction
-	LibStub PetActionButton_StartFlash PetActionButton_StopFlash PetHasActionBar UIParent
-
-	ATTACK_BUTTON_FLASH_TIME RANGE_INDICATOR TOOLTIP_UPDATE_TIME
-]]
-
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
+
 local isInit = false
 
 local BUTTONS = {
@@ -25,13 +18,13 @@ local BUTTONS = {
 }
 
 local TOP_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155},
+	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155},
 }
 
 local BOTTOM_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
+	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127},
+	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127},
 }
 
 local LAYOUT = {
@@ -53,7 +46,9 @@ local function getBarPoint()
 	return LAYOUT[E.PLAYER_CLASS][E.UI_LAYOUT]
 end
 
-local function bar_Update(self)
+local bar_proto = {}
+
+function bar_proto:Update()
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
@@ -63,7 +58,7 @@ local function bar_Update(self)
 	E.Layout:Update(self)
 end
 
-local function bar_UpdateButtonConfig(self)
+function bar_proto:UpdateButtonConfig()
 	if not self.buttonConfig then
 		self.buttonConfig = {
 			tooltip = "enabled",
@@ -81,7 +76,7 @@ local function bar_UpdateButtonConfig(self)
 		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = E:GetRGB(v)
 	end
 
-	self.buttonConfig.clickOnDown = self._config.click_on_down
+	self.buttonConfig.clickOnDown = true
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
@@ -91,7 +86,25 @@ local function bar_UpdateButtonConfig(self)
 	end
 end
 
-local function button_UpdateGrid(self, state)
+function bar_proto:OnEvent(event, arg1)
+	if event == "PET_BAR_UPDATE" or event == "PET_SPECIALIZATION_CHANGED" or event == "PET_UI_UPDATE"
+		or (event == "UNIT_PET" and arg1 == "player")
+		or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
+		or event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED"
+		or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
+		self:ForEach("Update")
+	elseif event == "PET_BAR_UPDATE_COOLDOWN" then
+		self:ForEach("UpdateCooldown")
+	elseif event == "PET_BAR_SHOWGRID" then
+		self:ForEach("ShowGrid")
+	elseif event == "PET_BAR_HIDEGRID" then
+		self:ForEach("HideGrid")
+	end
+end
+
+local button_proto = {}
+
+function button_proto:UpdateGrid(state)
 	if state ~= nil then
 		self._parent._config.grid = state
 	end
@@ -100,12 +113,12 @@ local function button_UpdateGrid(self, state)
 	self:HideGrid()
 end
 
-local function button_ShowGrid(self)
+function button_proto:ShowGrid()
 	self.showgrid = self.showgrid + 1
 	self:SetAlpha(1)
 end
 
-local function button_HideGrid(self)
+function button_proto:HideGrid()
 	if self.showgrid > 0 then
 		self.showgrid = self.showgrid - 1
 	end
@@ -115,7 +128,7 @@ local function button_HideGrid(self)
 	end
 end
 
-local function button_UpdateHotKey(self, state)
+function button_proto:UpdateHotKey(state)
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -129,11 +142,11 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
-local function button_UpdateHotKeyFont(self)
+function button_proto:UpdateHotKeyFont()
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
 end
 
-local function button_UpdateUsable(self)
+function button_proto:UpdateUsable()
 	if self.config.outOfRangeColoring == "button" and self.outOfRange then
 		self.icon:SetDesaturated(self.config.desaturation.range == true)
 		self.icon:SetVertexColor(unpack(self.config.colors.range))
@@ -148,13 +161,13 @@ local function button_UpdateUsable(self)
 	end
 end
 
-local function button_UpdateCooldown(self)
+function button_proto:UpdateCooldown()
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
 end
 
-local function button_UpdateConfig(self, config)
+function button_proto:UpdateConfig(config)
 	self.config = E:CopyTable(config, self.config)
 
 	if self.config.outOfRangeColoring == "button" and self.config.outOfManaColoring == "button" then
@@ -167,7 +180,7 @@ local function button_UpdateConfig(self, config)
 	self:Update()
 end
 
-local function button_Update(self)
+function button_proto:Update()
 	local id = self:GetID()
 	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(id)
 
@@ -202,13 +215,13 @@ local function button_Update(self)
 	end
 
 	if autoCastAllowed and not autoCastEnabled then
-		self.AutoCastBorder:Show()
+		self.AutoCastable:Show()
 		AutoCastShine_AutoCastStop(self.AutoCastShine)
 	elseif autoCastAllowed then
-		self.AutoCastBorder:Hide()
+		self.AutoCastable:Hide()
 		AutoCastShine_AutoCastStart(self.AutoCastShine)
 	else
-		self.AutoCastBorder:Hide()
+		self.AutoCastable:Hide()
 		AutoCastShine_AutoCastStop(self.AutoCastShine)
 	end
 
@@ -225,45 +238,29 @@ local function button_Update(self)
 	self:UpdateCooldown()
 end
 
-local function button_OnEnter(self)
+function button_proto:OnEnterHook()
 	if LibKeyBound then
 		LibKeyBound:Set(self)
 	end
 end
 
-function MODULE.CreatePetActionBar()
+function MODULE:CreatePetActionBar()
 	if not isInit then
-		local bar = CreateFrame("Frame", "LSPetBar", UIParent, "SecureHandlerStateTemplate")
-		bar._id = "bar6"
-		bar._buttons = {}
-
-		MODULE:AddBar(bar._id, bar)
-
-		bar.Update = bar_Update
-		bar.UpdateButtonConfig = bar_UpdateButtonConfig
+		local bar = Mixin(self:Create("pet", "LSPetBar"), bar_proto)
 
 		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "PetActionButtonTemplate")
+			local button = Mixin(CreateFrame("CheckButton", "$parentButton" .. i, bar, "PetActionButtonTemplate"), button_proto)
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
-			button:HookScript("OnEnter", button_OnEnter)
+			button:HookScript("OnEnter", button.OnEnterHook)
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "BONUSACTIONBUTTON" .. i
 			button.showgrid = 0
+			bar._buttons[i] = button
 
-			button.HideGrid = button_HideGrid
-			button.ShowGrid = button_ShowGrid
-			button.StartFlash = PetActionButton_StartFlash
-			button.StopFlash = PetActionButton_StopFlash
-			button.Update = button_Update
-			button.UpdateConfig = button_UpdateConfig
-			button.UpdateCooldown = button_UpdateCooldown
-			button.UpdateGrid = button_UpdateGrid
-			button.UpdateHotKey = button_UpdateHotKey
-			button.UpdateHotKeyFont = button_UpdateHotKeyFont
-			button.UpdateUsable = button_UpdateUsable
+			E:SkinPetActionButton(button)
 
 			BUTTONS[i]:SetAllPoints(button)
 			BUTTONS[i]:SetAttribute("statehidden", true)
@@ -271,27 +268,9 @@ function MODULE.CreatePetActionBar()
 			BUTTONS[i]:SetScript("OnEvent", nil)
 			BUTTONS[i]:SetScript("OnUpdate", nil)
 			BUTTONS[i]:UnregisterAllEvents()
-
-			E:SkinPetActionButton(button)
-
-			bar._buttons[i] = button
 		end
 
-		bar:SetScript("OnEvent", function(self, event, arg1)
-			if event == "PET_BAR_UPDATE" or event == "PET_SPECIALIZATION_CHANGED" or event == "PET_UI_UPDATE"
-				or (event == "UNIT_PET" and arg1 == "player")
-				or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
-				or event == "PLAYER_CONTROL_LOST" or event == "PLAYER_CONTROL_GAINED"
-				or event == "PLAYER_FARSIGHT_FOCUS_CHANGED" then
-				self:ForEach("Update")
-			elseif event == "PET_BAR_UPDATE_COOLDOWN" then
-				self:ForEach("UpdateCooldown")
-			elseif event == "PET_BAR_SHOWGRID" then
-				self:ForEach("ShowGrid")
-			elseif event == "PET_BAR_HIDEGRID" then
-				self:ForEach("HideGrid")
-			end
-		end)
+		bar:SetScript("OnEvent", bar.OnEvent)
 
 		bar:RegisterEvent("PET_BAR_HIDEGRID")
 		bar:RegisterEvent("PET_BAR_SHOWGRID")

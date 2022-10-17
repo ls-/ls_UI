@@ -475,7 +475,7 @@ function CONFIG:GetColorsOptions(order)
 							E:SetRGB(color, r, g, b)
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:Get("xpbar"):UpdateSegments()
 							end
 						end
 					end
@@ -492,7 +492,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:Get("xpbar"):UpdateSegments()
 							end
 						end,
 					},
@@ -532,7 +532,7 @@ function CONFIG:GetColorsOptions(order)
 							E:SetRGB(color, r, g, b)
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:Get("xpbar"):UpdateSegments()
 							end
 						end
 					end
@@ -552,7 +552,7 @@ function CONFIG:GetColorsOptions(order)
 							E:SetRGB(C.db.global.colors.honor, E:GetRGB(D.global.colors.honor))
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:Get("xpbar"):UpdateSegments()
 							end
 						end,
 					},
@@ -585,7 +585,7 @@ function CONFIG:GetColorsOptions(order)
 									E:SetRGB(color, r, g, b)
 
 									if BARS:HasXPBar() then
-										BARS:GetBar("xpbar"):UpdateSegments()
+										BARS:Get("xpbar"):UpdateSegments()
 									end
 								end
 							end
@@ -605,7 +605,7 @@ function CONFIG:GetColorsOptions(order)
 									E:SetRGB(color, r, g, b)
 
 									if BARS:HasXPBar() then
-										BARS:GetBar("xpbar"):UpdateSegments()
+										BARS:Get("xpbar"):UpdateSegments()
 									end
 								end
 							end

@@ -3,6 +3,7 @@ local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L,
 
 -- Lua
 local _G = getfenv(0)
+local m_min = _G.math.min
 local next = _G.next
 
 -- Mine
@@ -595,8 +596,8 @@ function P:Modernize(data, name, key)
 			data.version = 9020502
 		end
 
-		--> 100002.01
-		if data.version < 10000201 then
+		--> 100000.01
+		if data.version < 10000001 then
 			if data.movers then
 				if data.movers.round then
 					data.movers.round.LSMinimapHolder = nil
@@ -633,6 +634,48 @@ function P:Modernize(data, name, key)
 			if data.tooltips then
 				data.tooltips.anchor_cursor = nil
 			end
+
+			-- if data.bars then
+			-- 	data.bars.lock = nil
+			-- 	data.bars.click_on_down = nil
+
+			-- 	data.bars.pet = data.bars.bar6
+			-- 	data.bars.bar6 = nil
+
+			-- 	data.bars.stance = data.bars.bar7
+			-- 	data.bars.bar7 = nil
+
+			-- 	if data.bars.micromenu then
+			-- 		if data.bars.micromenu.bars then
+			-- 			if data.bars.micromenu.bars.micromenu1 then
+			-- 				data.bars.micromenu.point = data.bars.micromenu.bars.micromenu1.point
+			-- 				data.bars.micromenu.per_row = m_min(data.bars.micromenu.bars.micromenu1.per_row, 12)
+			-- 				data.bars.micromenu.x_growth = data.bars.micromenu.bars.micromenu1.x_growth
+			-- 				data.bars.micromenu.y_growth = data.bars.micromenu.bars.micromenu1.y_growth
+			-- 			end
+
+			-- 			data.bars.micromenu.bars = nil
+			-- 		end
+
+			-- 		if data.bars.micromenu.buttons then
+			-- 			if data.bars.micromenu.buttons.inventory then
+			-- 				if data.bars.micromenu.buttons.inventory.currency then
+			-- 					data.bars.bag = {
+			-- 						currency = data.bars.micromenu.buttons.inventory.currency,
+			-- 					}
+			-- 				end
+
+			-- 				data.bars.micromenu.buttons.inventory = nil
+			-- 			end
+
+			-- 			for _, button in next, {"character", "spellbook", "talent", "achievement", "quest", "guild", "lfd", "collection", "ej", "store", "main", "help" } do
+			-- 				if data.bars.micromenu.buttons[button] then
+			-- 					data.bars.micromenu.buttons[button].parent = nil
+			-- 				end
+			-- 			end
+			-- 		end
+			-- 	end
+			-- end
 		end
 	elseif key == "private" then
 		--> 90001.05
