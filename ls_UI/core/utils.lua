@@ -17,6 +17,7 @@ local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 local t_wipe = _G.table.wipe
+local pcall = _G.pcall
 
 -- Mine
 -----------
@@ -711,6 +712,10 @@ function E:ForceHide(object, skipEvents)
 			object.ignoreFramePositionManager = true
 			object:SetAttribute("ignoreFramePositionManager", true)
 		end
+	end
+
+	if object.SetUserPlaced then
+		pcall(object.SetUserPlaced, object, true)
 	end
 
 	object:Hide()
