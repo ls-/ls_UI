@@ -377,7 +377,7 @@ do
 	end
 
 	function E:GetUnitReactionColor(unit)
-		if select(2, UnitDetailedThreatSituation("player", unit)) ~= nil then
+		if UnitThreatSituation("player", unit) then
 			return C.db.global.colors.reaction[2]
 		end
 
