@@ -77,6 +77,32 @@ do
 	end
 end
 
+-----------
+-- CVARS --
+-----------
+
+do
+	local cvars = {}
+	local isOK
+
+	E:RegisterEvent("CVAR_UPDATE", function(name, value)
+		local filter = cvars[name]
+		if filter then
+			isOK, value = filter(value)
+			if not isOK then
+				SetCVar(name, value)
+			end
+		end
+	end)
+
+	-- use funcs in case I need to block out only certain cvar values
+	function E:WatchCVar(name, filter)
+		cvars[name] = filter
+
+		SetCVar(name, select(2, filter()))
+	end
+end
+
 ------------
 -- MIXINS --
 ------------
