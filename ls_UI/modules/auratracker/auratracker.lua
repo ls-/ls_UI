@@ -233,7 +233,7 @@ function MODULE:Init()
 			button:Hide()
 			bar._buttons[i] = button
 
-			local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
+			local auraType = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
 			auraType:SetSize(PrC.db.profile.auratracker.type.size, PrC.db.profile.auratracker.type.size)
 			auraType:SetPoint(PrC.db.profile.auratracker.type.position, 0, 0)

@@ -223,7 +223,7 @@ function element_proto:CreateIcon(index)
 	button:SetPushedTexture("")
 	button:SetHighlightTexture("")
 
-	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
+	local stealable = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
 	stealable:SetPoint("TOPLEFT", -1, 1)
@@ -231,7 +231,7 @@ function element_proto:CreateIcon(index)
 	stealable:SetBlendMode("ADD")
 	button.stealable = stealable
 
-	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
+	local auraType = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 3)
 	auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
 	auraType:SetPoint(config.type.position, 0, 0)
 	auraType:SetSize(config.type.size, config.type.size)
