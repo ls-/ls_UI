@@ -30,12 +30,6 @@ local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
 local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
 local GUILD_NAME_FORMAT = "%s|c%s-%s|r"
 
-local TEXTS_TO_REMOVE = {
-	[_G.FACTION_ALLIANCE] = true,
-	[_G.FACTION_HORDE] = true,
-	[_G.PVP] = true,
-}
-
 local PHASE_ICONS = {
 	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
 	[Enum.PhaseReason.Sharding] = M.textures.icons_inline.SHARD,
@@ -251,6 +245,12 @@ function MODULE:Init()
 				tooltip:AddLine(ID:format(id), 1, 1, 1)
 			end
 		end)
+
+		local TEXTS_TO_REMOVE = {
+			[_G.FACTION_ALLIANCE] = true,
+			[_G.FACTION_HORDE] = true,
+			[_G.PVP] = true,
+		}
 
 		TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.None, function(tooltip, lineData)
 			if tooltip:IsForbidden() then return end
