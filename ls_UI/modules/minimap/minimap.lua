@@ -246,7 +246,7 @@ function MODULE:Init()
 			end
 		end)
 
-		MinimapCompassTexture:SetTexture(nil)
+		MinimapCompassTexture:SetTexture(0)
 
 		MinimapCluster.BorderTop:SetWidth(0)
 		MinimapCluster.BorderTop:SetHeight(17)
