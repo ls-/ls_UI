@@ -600,10 +600,16 @@ function P:Modernize(data, name, key)
 		if data.version < 10000001 then
 			if data.movers then
 				if data.movers.round then
+					data.movers.round.LSBagBar = nil
+					data.movers.round.LSMicroMenu1 = nil
+					data.movers.round.LSMicroMenu2 = nil
 					data.movers.round.LSMinimapHolder = nil
 				end
 
 				if data.movers.rect then
+					data.movers.rect.LSBagBar = nil
+					data.movers.rect.LSMicroMenu1 = nil
+					data.movers.rect.LSMicroMenu2 = nil
 					data.movers.rect.LSMinimapHolder = nil
 				end
 			end
