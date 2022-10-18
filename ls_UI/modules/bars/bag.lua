@@ -145,12 +145,14 @@ function MODULE:CreateBag()
 		MainMenuBarBackpackButton.tooltipText = MicroButtonTooltipText(BACKPACK_TOOLTIP, "TOGGLEBACKPACK")
 		MainMenuBarBackpackButton.UpdateTooltip = MainMenuBarBackpackButton.OnEnter
 
-		self:UpdateBag()
-
 		isInit = true
+
+		self:UpdateBag()
 	end
 end
 
 function MODULE:UpdateBag()
-	self:Get("bag"):Update()
+	if isInit then
+		self:Get("bag"):Update()
+	end
 end

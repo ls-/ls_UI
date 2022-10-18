@@ -944,19 +944,21 @@ function MODULE:CreateMicroMenu()
 			end
 		end)
 
-		self:UpdateMicroMenu()
-
 		isInit = true
+
+		self:UpdateMicroMenu()
 	end
 
 end
 
 function MODULE:UpdateMicroMenu()
-	for _, button in next, buttons do
-		button:Update()
-	end
+	if isInit then
+		for _, button in next, buttons do
+			button:Update()
+		end
 
-	self:Get("micromenu"):Update()
+		self:Get("micromenu"):Update()
+	end
 end
 
 function MODULE:ForMicroButton(id, method, ...)
