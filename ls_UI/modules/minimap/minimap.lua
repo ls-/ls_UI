@@ -109,7 +109,7 @@ function minimap_proto:UpdateLayout()
 	end
 
 	MinimapCluster:SetSize(info[3] + 24, info[3] + 24)
-	MinimapCluster:GetMover():UpdateSize()
+	E.Movers:Get(MinimapCluster):UpdateSize()
 
 	self:SetSize(info[3] - 22, info[3] - 22)
 	self:ClearAllPoints()
