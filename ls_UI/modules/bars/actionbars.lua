@@ -261,6 +261,7 @@ function MODULE:CreateActionBars()
 
 				-- for IconIntroTracker
 				data.b_buttons[i]:SetAllPoints(button)
+				data.b_buttons[i]:Hide()
 				data.b_buttons[i]:SetAttribute("statehidden", true)
 				data.b_buttons[i]:SetParent(E.HIDDEN_PARENT)
 				data.b_buttons[i]:SetScript("OnEvent", nil)
