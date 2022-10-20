@@ -46,6 +46,11 @@ function MODULE:CleanUp()
 
 	E:ForceHide(MicroButtonAndBagsBar)
 
+	QueueStatusButton:SetParent(UIParent)
+	QueueStatusButton:ClearAllPoints()
+	QueueStatusButton:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -216, 4)
+	E.Movers:Create(QueueStatusButton)
+
 	E:ForceHide(SpellFlyout.Background)
 
 	E:ForceHide(MainMenuBarVehicleLeaveButton)
