@@ -703,6 +703,9 @@ end
 function E:ForceHide(object, skipEvents)
 	if not object then return end
 
+	object:Hide(true)
+	object:SetParent(self.HIDDEN_PARENT)
+
 	if object.UnregisterAllEvents then
 		if not skipEvents then
 			object:UnregisterAllEvents()
@@ -712,14 +715,13 @@ function E:ForceHide(object, skipEvents)
 			object.ignoreFramePositionManager = true
 			object:SetAttribute("ignoreFramePositionManager", true)
 		end
+
+		object:SetAttribute("statehidden", true)
 	end
 
 	if object.SetUserPlaced then
 		pcall(object.SetUserPlaced, object, true)
 	end
-
-	object:Hide()
-	object:SetParent(self.HIDDEN_PARENT)
 end
 
 function E:GetScreenQuadrant(frame)
