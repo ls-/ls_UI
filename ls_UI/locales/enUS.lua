@@ -95,6 +95,7 @@ L["ALT"] = _G.ALT_KEY_TEXT
 L["CTRL"] = _G.CTRL_KEY_TEXT
 L["SHIFT"] = _G.SHIFT_KEY_TEXT
 L["BACKPACK"] = _G.BACKPACK_TOOLTIP
+L["TALKING_HEAD"] = _G.HUD_EDIT_MODE_TALKING_HEAD_FRAME_LABEL
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -489,7 +490,6 @@ L["STYLE"] = "Style"
 L["SUPPORT"] = "Support"
 L["TAG_VARS"] = "Tag Variables"
 L["TAGS"] = "Tags"
-L["TALKING_HEAD_FRAME"] = "Talking Head Frame"
 L["TANK_BUFFS"] = "Tank Buffs"
 L["TANK_BUFFS_DESC"] = "Show buffs applied by tanks."
 L["TANK_DEBUFFS"] = "Tank Debuffs"

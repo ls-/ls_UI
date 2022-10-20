@@ -9,12 +9,6 @@ local hooksecurefunc = _G.hooksecurefunc
 -- Mine
 local isInit = false
 
-local function bar_OnEvent(self, event, num, total)
-	if event == "ARCHAEOLOGY_SURVEY_CAST" or event == "ARCHAEOLOGY_FIND_COMPLETE" then
-		self.Text:SetText(num .. " / ".. total)
-	end
-end
-
 function MODULE:HasDigsiteBar()
 	return isInit
 end
@@ -22,14 +16,12 @@ end
 function MODULE:SetUpDigsiteBar()
 	if not isInit and PrC.db.profile.blizzard.digsite_bar.enabled then
 		local isLoaded = true
-
 		if not IsAddOnLoaded("Blizzard_ArchaeologyUI") then
 			isLoaded = LoadAddOn("Blizzard_ArchaeologyUI")
 		end
 
 		if isLoaded then
 			ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
-			UIPARENT_MANAGED_FRAME_POSITIONS["ArcheologyDigsiteProgressBar"] = nil
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 
@@ -39,10 +31,13 @@ function MODULE:SetUpDigsiteBar()
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")
-
 			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(E:GetRGB(C.db.global.colors.orange))
 
-			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", bar_OnEvent)
+			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", function(self, event, num, total)
+				if event == "ARCHAEOLOGY_SURVEY_CAST" or event == "ARCHAEOLOGY_FIND_COMPLETE" then
+					self.Text:SetText(num .. " / ".. total)
+				end
+			end)
 
 			isInit = true
 

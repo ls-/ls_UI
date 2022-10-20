@@ -600,45 +600,32 @@ function P:Modernize(data, name, key)
 		if data.version < 10000001 then
 			if data.movers then
 				if data.movers.round then
-					data.movers.round.LSBagBar = nil
-					data.movers.round.LSMicroMenu1 = nil
-					data.movers.round.LSMicroMenu2 = nil
-					data.movers.round.LSMinimapHolder = nil
+					data.movers.round.CastingBarFrameHolderMover = nil
+					data.movers.round.PetCastingBarFrameHolderMover = nil
+					data.movers.round.LSBagBarMover = nil
+					data.movers.round.LSMicroMenu1Mover = nil
+					data.movers.round.LSMicroMenu2Mover = nil
+					data.movers.round.LSMinimapHolderMover = nil
+					data.movers.round.LSOTFrameHolderMover = nil
+					data.movers.round.LSPowerBarAltHolderMover = nil
+					data.movers.round.MirrorTimer1Mover = nil
+					data.movers.round.MirrorTimer2Mover = nil
+					data.movers.round.MirrorTimer3Mover = nil
 				end
 
 				if data.movers.rect then
-					data.movers.rect.LSBagBar = nil
-					data.movers.rect.LSMicroMenu1 = nil
-					data.movers.rect.LSMicroMenu2 = nil
-					data.movers.rect.LSMinimapHolder = nil
+					data.movers.rect.CastingBarFrameHolderMover = nil
+					data.movers.rect.PetCastingBarFrameHolderMover = nil
+					data.movers.rect.LSBagBarMover = nil
+					data.movers.rect.LSMicroMenu1Mover = nil
+					data.movers.rect.LSMicroMenu2Mover = nil
+					data.movers.rect.LSMinimapHolderMover = nil
+					data.movers.rect.LSOTFrameHolderMover = nil
+					data.movers.rect.LSPowerBarAltHolderMover = nil
+					data.movers.rect.MirrorTimer1Mover = nil
+					data.movers.rect.MirrorTimer2Mover = nil
+					data.movers.rect.MirrorTimer3Mover = nil
 				end
-			end
-
-			if data.minimap then
-				data.minimap.buttons = nil
-				data.minimap.collect = nil
-
-				if data.minimap.color then
-					data.minimap.color.zone_text = nil
-				end
-
-				if data.minimap.rect then
-					data.minimap.rect.clock = nil
-					data.minimap.rect.flag = nil
-					data.minimap.rect.size = nil
-					data.minimap.rect.zone_text = nil
-				end
-
-				if data.minimap.round then
-					data.minimap.round.clock = nil
-					data.minimap.round.flag = nil
-					data.minimap.round.size = nil
-					data.minimap.round.zone_text = nil
-				end
-			end
-
-			if data.tooltips then
-				data.tooltips.anchor_cursor = nil
 			end
 
 			-- if data.bars then
@@ -682,6 +669,42 @@ function P:Modernize(data, name, key)
 			-- 		end
 			-- 	end
 			-- end
+
+			if data.blizzard then
+				data.blizzard.castbar = nil
+				data.blizzard.objective_tracker = nil
+				data.blizzard.player_alt_power_bar = nil
+				data.blizzard.timer = nil
+				data.blizzard.vehicle_seat = data.blizzard.vehicle
+				data.blizzard.vehicle = nil
+			end
+
+			if data.minimap then
+				data.minimap.buttons = nil
+				data.minimap.collect = nil
+
+				if data.minimap.color then
+					data.minimap.color.zone_text = nil
+				end
+
+				if data.minimap.rect then
+					data.minimap.rect.clock = nil
+					data.minimap.rect.flag = nil
+					data.minimap.rect.size = nil
+					data.minimap.rect.zone_text = nil
+				end
+
+				if data.minimap.round then
+					data.minimap.round.clock = nil
+					data.minimap.round.flag = nil
+					data.minimap.round.size = nil
+					data.minimap.round.zone_text = nil
+				end
+			end
+
+			if data.tooltips then
+				data.tooltips.anchor_cursor = nil
+			end
 		end
 	elseif key == "private" then
 		--> 90001.05
@@ -760,6 +783,18 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 9020503
+		end
+
+		--> 100000.01
+		if data.version < 10000001 then
+			if data.blizzard then
+				data.blizzard.castbar = nil
+				data.blizzard.objective_tracker = nil
+				data.blizzard.player_alt_power_bar = nil
+				data.blizzard.timer = nil
+				data.blizzard.vehicle_seat = data.blizzard.vehicle
+				data.blizzard.vehicle = nil
+			end
 		end
 	end
 end

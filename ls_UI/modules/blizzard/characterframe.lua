@@ -34,7 +34,7 @@ local EQUIP_SLOTS = {
 }
 
 local ILVL_COLORS = {}
-local ILVL_STEP = 13 -- the ilvl step between content difficulties
+local ILVL_STEP = 19 -- the ilvl step between content difficulties
 
 local avgItemLevel
 
@@ -128,54 +128,9 @@ local function updateAllSlots()
 	end
 end
 
-local INV_SLOTS = {
-	[CharacterBackSlot] = true,
-	[CharacterChestSlot] = true,
-	[CharacterFeetSlot] = false,
-	[CharacterFinger0Slot] = false,
-	[CharacterFinger1Slot] = false,
-	[CharacterHandsSlot] = false,
-	[CharacterHeadSlot] = true,
-	[CharacterLegsSlot] = false,
-	[CharacterMainHandSlot] = false,
-	[CharacterNeckSlot] = true,
-	[CharacterSecondaryHandSlot] = true,
-	[CharacterShirtSlot] = true,
-	[CharacterShoulderSlot] = true,
-	[CharacterTabardSlot] = true,
-	[CharacterTrinket0Slot] = false,
-	[CharacterTrinket1Slot] = false,
-	[CharacterWaistSlot] = false,
-	[CharacterWristSlot] = true,
-}
-
-local RIGHT_PANES = {
-	-- CharacterStatsPane,
-	PaperDollTitlesPane,
-	PaperDollEquipmentManagerPane,
-}
-
 local SLOT_TEXTURES_TO_REMOVE = {
 	["410248"] = true,
 	["INTERFACE\\CHARACTERFRAME\\CHAR-PAPERDOLL-PARTS"] = true,
-}
-
-local TEXTURES_TO_REMOVE = {
-	CharacterModelFrame.BackgroundBotLeft,
-	CharacterModelFrame.BackgroundBotRight,
-	CharacterModelFrame.BackgroundOverlay,
-	CharacterModelFrame.BackgroundTopLeft,
-	CharacterModelFrame.BackgroundTopRight,
-	CharacterStatsPane.ClassBackground,
-	PaperDollInnerBorderBottom,
-	PaperDollInnerBorderBottom2,
-	PaperDollInnerBorderBottomLeft,
-	PaperDollInnerBorderBottomRight,
-	PaperDollInnerBorderLeft,
-	PaperDollInnerBorderRight,
-	PaperDollInnerBorderTop,
-	PaperDollInnerBorderTopLeft,
-	PaperDollInnerBorderTopRight,
 }
 
 function MODULE:HasCharacterFrame()
@@ -194,16 +149,37 @@ function MODULE:SetUpCharacterFrame()
 		ILVL_COLORS[2] = C.db.global.colors.yellow
 		ILVL_COLORS[3] = C.db.global.colors.white
 
-		for slot, textOnRight in next, INV_SLOTS do
+		for slot, textOnRight in next, {
+			[CharacterBackSlot] = true,
+			[CharacterChestSlot] = true,
+			[CharacterFeetSlot] = false,
+			[CharacterFinger0Slot] = false,
+			[CharacterFinger1Slot] = false,
+			[CharacterHandsSlot] = false,
+			[CharacterHeadSlot] = true,
+			[CharacterLegsSlot] = false,
+			[CharacterMainHandSlot] = false,
+			[CharacterNeckSlot] = true,
+			[CharacterSecondaryHandSlot] = true,
+			[CharacterShirtSlot] = true,
+			[CharacterShoulderSlot] = true,
+			[CharacterTabardSlot] = true,
+			[CharacterTrinket0Slot] = false,
+			[CharacterTrinket1Slot] = false,
+			[CharacterWaistSlot] = false,
+			[CharacterWristSlot] = true,
+		} do
 			for _, v in next, {slot:GetRegions()} do
 				if v:IsObjectType("Texture") and SLOT_TEXTURES_TO_REMOVE[s_upper(v:GetTexture() or "")] then
-					v:SetTexture(nil)
+					v:SetTexture(0)
 					v:Hide()
 				end
 			end
 
 			E:SkinInvSlotButton(slot)
 			slot:SetSize(36, 36)
+
+			slot.popoutButton:SetFrameStrata("HIGH")
 
 			local enchText = slot:CreateFontString(nil, "ARTWORK")
 			enchText:SetFontObject("GameFontNormalSmall")
@@ -243,35 +219,69 @@ function MODULE:SetUpCharacterFrame()
 		CharacterSecondaryHandSlot:ClearAllPoints()
 		CharacterSecondaryHandSlot:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", -176, 5)
 
-		CharacterModelFrame:SetSize(0, 0)
-		CharacterModelFrame:ClearAllPoints()
-		CharacterModelFrame:SetPoint("TOPLEFT", CharacterFrame.Inset, 64, -3)
-		CharacterModelFrame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, -64, 4)
+		CharacterModelScene:SetSize(300, 360) -- needed for OrbitCameraMixin
+		CharacterModelScene:ClearAllPoints()
+		CharacterModelScene:SetPoint("TOPLEFT", CharacterFrame.Inset, 64, -3)
+		-- CharacterModelScene:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, -64, 4)
 
-		for _, texture in next, TEXTURES_TO_REMOVE do
+		for _, texture in next, {
+			CharacterModelScene.BackgroundBotLeft,
+			CharacterModelScene.BackgroundBotRight,
+			CharacterModelScene.BackgroundOverlay,
+			CharacterModelScene.BackgroundTopLeft,
+			CharacterModelScene.BackgroundTopRight,
+			CharacterStatsPane.ClassBackground,
+			PaperDollInnerBorderBottom,
+			PaperDollInnerBorderBottom2,
+			PaperDollInnerBorderBottomLeft,
+			PaperDollInnerBorderBottomRight,
+			PaperDollInnerBorderLeft,
+			PaperDollInnerBorderRight,
+			PaperDollInnerBorderTop,
+			PaperDollInnerBorderTopLeft,
+			PaperDollInnerBorderTopRight,
+		} do
 			texture:SetTexture(nil)
 			texture:Hide()
 		end
 
-		PaperDollEquipmentManagerPane.EquipSet:SetPoint("TOPLEFT", 2, 0)
+		PaperDollFrame.TitleManagerPane:SetSize(0, 0)
+		PaperDollFrame.TitleManagerPane:SetPoint("TOPLEFT", CharacterFrame.InsetRight, "TOPLEFT", 3, -2)
+		PaperDollFrame.TitleManagerPane:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", -21, 4)
 
-		for _, pane in next, RIGHT_PANES do
-			pane:SetSize(0, 0)
-			pane:SetPoint("TOPLEFT", CharacterFrame.InsetRight, "TOPLEFT", 3, -2)
-			pane:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", -21, 4)
+		PaperDollFrame.TitleManagerPane.ScrollBox:SetSize(0, 0)
+		PaperDollFrame.TitleManagerPane.ScrollBox:SetPoint("TOPLEFT", CharacterFrame.InsetRight, "TOPLEFT", 3, -2)
+		PaperDollFrame.TitleManagerPane.ScrollBox:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", -26, 5)
 
-			pane.scrollBar:SetPoint("TOPLEFT", pane, "TOPRIGHT", 0, -18)
-			pane.scrollBar:SetPoint("BOTTOMLEFT", pane, "BOTTOMRIGHT", 0, 13)
+		PaperDollFrame.TitleManagerPane.ScrollBar:ClearAllPoints()
+		PaperDollFrame.TitleManagerPane.ScrollBar:SetPoint("TOPRIGHT", CharacterFrame.InsetRight, "TOPRIGHT", 1, -2)
+		PaperDollFrame.TitleManagerPane.ScrollBar:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", 1, 0)
 
-			for _, button in next, pane.buttons do
-				button:SetWidth(0)
-				button:SetPoint("RIGHT", 2, 0)
+		hooksecurefunc("PaperDollTitlesPane_InitButton", function(button)
+			button.BgTop:Hide()
+			button.BgMiddle:Hide()
+			button.BgBottom:Hide()
+		end)
 
-				button.BgTop:SetTexture(nil)
-				button.BgBottom:SetTexture(nil)
-				button.BgMiddle:SetTexture(nil)
-			end
-		end
+		PaperDollFrame.EquipmentManagerPane.EquipSet:SetPoint("TOPLEFT", 2, -2)
+
+		PaperDollFrame.EquipmentManagerPane:SetSize(0, 0)
+		PaperDollFrame.EquipmentManagerPane:SetPoint("TOPLEFT", CharacterFrame.InsetRight, "TOPLEFT", 3, -2)
+		PaperDollFrame.EquipmentManagerPane:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", -21, 4)
+
+		PaperDollFrame.EquipmentManagerPane.ScrollBox:SetSize(0, 0)
+		PaperDollFrame.EquipmentManagerPane.ScrollBox:SetPoint("TOPLEFT", CharacterFrame.InsetRight, "TOPLEFT", 3, -28)
+		PaperDollFrame.EquipmentManagerPane.ScrollBox:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", -26, 5)
+
+		PaperDollFrame.EquipmentManagerPane.ScrollBar:ClearAllPoints()
+		PaperDollFrame.EquipmentManagerPane.ScrollBar:SetPoint("TOPRIGHT", CharacterFrame.InsetRight, "TOPRIGHT", 1, -2)
+		PaperDollFrame.EquipmentManagerPane.ScrollBar:SetPoint("BOTTOMRIGHT", CharacterFrame.InsetRight, "BOTTOMRIGHT", 1, 0)
+
+		hooksecurefunc("PaperDollEquipmentManagerPane_InitButton", function(button)
+			button.BgTop:Hide()
+			button.BgMiddle:Hide()
+			button.BgBottom:Hide()
+		end)
 
 		hooksecurefunc("CharacterFrame_Expand", function()
 			CharacterFrame:SetSize(640, 431) -- 540 + 100, 424 + 7

@@ -15,14 +15,12 @@ end
 function MODULE:SetUpMawBuffs()
 	if not isInit and PrC.db.profile.blizzard.maw_buffs.enabled then
 		local isLoaded = true
-
 		if not IsAddOnLoaded("Blizzard_MawBuffs") then
 			isLoaded = LoadAddOn("Blizzard_MawBuffs")
 		end
 
 		if isLoaded then
 			MawBuffsBelowMinimapFrame.ignoreFramePositionManager = true
-			UIPARENT_MANAGED_FRAME_POSITIONS["MawBuffsBelowMinimapFrame"] = nil
 
 			local point = C.db.profile.blizzard.maw_buffs.point[E.UI_LAYOUT]
 			MawBuffsBelowMinimapFrame:ClearAllPoints()

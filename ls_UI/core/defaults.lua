@@ -2928,22 +2928,6 @@ D.profile = {
 		},
 	},
 	blizzard = {
-		castbar = { -- CastingBarFrame, PetCastingBarFrame
-			width = 226,
-			height = 12,
-			icon = {
-				position = "LEFT", -- "RIGHT", "NONE"
-			},
-			text = {
-				size = 12,
-			},
-			show_pet = -1, -- -1 - auto, 0 - false, 1 - true
-			latency = true,
-			point = {
-				round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 190},
-				rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 190},
-			},
-		},
 		character_frame = {
 			ilvl = true,
 			enhancements = true,
@@ -2977,35 +2961,10 @@ D.profile = {
 				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -188},
 			},
 		},
-		objective_tracker = { -- ObjectiveTrackerFrame
-			height = 600,
-			drag_key = "NONE",
-		},
-		player_alt_power_bar = {
-			point = {
-				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
-				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
-			},
-		},
 		talking_head = {
 			hide = false,
-			point = {
-				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
-				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -188},
-			},
 		},
-		timer = { -- MirrorTimer*, TimerTrackerTimer*
-			width = 200,
-			height = 12,
-			text = {
-				size = 12,
-			},
-			point = {
-				round = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -96},
-				rect = {p = "TOP", anchor = "UIParent", rP = "TOP", x = 0, y = -96},
-			},
-		},
-		vehicle = {
+		vehicle_seat = {
 			point = {
 				round = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
 				rect = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
@@ -3077,9 +3036,6 @@ PrD.profile = {
 	},
 	blizzard = {
 		enabled = true,
-		castbar = { -- CastingBarFrame
-			enabled = true
-		},
 		character_frame = { -- CharacterFrame
 			enabled = true,
 		},
@@ -3101,19 +3057,10 @@ PrD.profile = {
 		maw_buffs = { -- MawBuffsBelowMinimapFrame
 			enabled = true,
 		},
-		objective_tracker = { -- ObjectiveTrackerFrame
-			enabled = true,
-		},
-		player_alt_power_bar = { -- PlayerPowerBarAlt
-			enabled = true
-		},
 		talking_head = { -- TalkingHeadFrame
 			enabled = true
 		},
-		timer = { -- MirrorTimer*, TimerTrackerTimer*
-			enabled = true
-		},
-		vehicle = { -- VehicleSeatIndicator
+		vehicle_seat = { -- VehicleSeatIndicator
 			enabled = true
 		},
 	},
