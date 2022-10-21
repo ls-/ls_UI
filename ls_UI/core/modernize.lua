@@ -7,13 +7,6 @@ local m_min = _G.math.min
 local next = _G.next
 
 -- Mine
-local layouts = {"round", "rect"}
-local layoutsOld = {"ls", "traditional"}
-local unitsLayout = {"player", "pet"}
-local unitsNonLayout = {"target", "targettarget", "focus", "focustarget", "boss"}
-local bars = {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"}
-local auras = {"HELPFUL", "HARMFUL", "TOTEM"}
-
 function P:Modernize(data, name, key)
 	if not data.version then return end
 
@@ -66,9 +59,9 @@ function P:Modernize(data, name, key)
 		--> 90001.05
 		if data.version < 9000105 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].health then
 									if data.units[layout][unit].health.text then
@@ -121,7 +114,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].health then
 							if data.units[unit].health.text then
@@ -174,7 +167,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						if data.bars[bar].hotkey then
 							data.bars[bar].hotkey.flag = nil
@@ -204,7 +197,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						if data.auras[aura].cooldown then
 							if data.auras[aura].cooldown.text then
@@ -219,9 +212,9 @@ function P:Modernize(data, name, key)
 		--> 90002.04
 		if data.version < 9000204 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].auras then
 									if data.units[layout][unit].auras.count then
@@ -234,7 +227,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].auras then
 							if data.units[unit].auras.count then
@@ -247,7 +240,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						if data.auras[aura].count then
 							data.auras[aura].count.flag = nil
@@ -296,9 +289,9 @@ function P:Modernize(data, name, key)
 					data.units.focustarget.custom_texts = nil
 				end
 
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].health then
 									data.units[layout][unit].health.change_threshold = nil
@@ -338,7 +331,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].health then
 							data.units[unit].health.change_threshold = nil
@@ -378,9 +371,9 @@ function P:Modernize(data, name, key)
 		--> 90005.01
 		if data.version < 9000501 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].insets then
 									data.units[layout][unit].insets.t_size = 0.25
@@ -390,7 +383,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].insets then
 							if data.units[unit].insets.t_size > 0.25 then
@@ -407,7 +400,7 @@ function P:Modernize(data, name, key)
 		--> 90005.04
 		if data.version < 9000504 then
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						if data.bars[bar].fade then
 							data.bars[bar].fade.in_delay = nil
@@ -433,7 +426,7 @@ function P:Modernize(data, name, key)
 		if data.version < 9010504 then
 			if data.units then
 				if data.units.ls then
-					for _, unit in next, unitsLayout do
+					for _, unit in next, {"player", "pet"} do
 						if data.units.ls[unit] then
 							if data.units.ls[unit].point then
 								data.units.ls[unit].point.ls = nil
@@ -453,7 +446,7 @@ function P:Modernize(data, name, key)
 				end
 
 				if data.units.traditional then
-					for _, unit in next, unitsLayout do
+					for _, unit in next, {"player", "pet"} do
 						if data.units.traditional[unit] then
 							if data.units.traditional[unit].point then
 								data.units.traditional[unit].point.ls = nil
@@ -503,9 +496,9 @@ function P:Modernize(data, name, key)
 		--> 90200.02
 		if data.version < 9020002 then
 			if data.units then
-				for _, layout in next, layouts do
+				for _, layout in next, {"round", "rect"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].auras then
 									data.units[layout][unit].auras.width = data.units[layout][unit].auras.size_override
@@ -516,7 +509,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].auras then
 							data.units[unit].auras.width = data.units[unit].auras.size_override
@@ -527,7 +520,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						data.bars[bar].width = data.bars[bar].size
 						data.bars[bar].size = nil
@@ -536,7 +529,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						data.auras[aura].width = data.auras[aura].size
 						data.auras[aura].size = nil
@@ -560,7 +553,7 @@ function P:Modernize(data, name, key)
 					data.movers.traditional = nil
 				end
 
-				for _, layout in next, layouts do
+				for _, layout in next, {"round", "rect"} do
 					if data.movers[layout] then
 						for k, v in next, data.movers[layout] do
 							if v.point then
