@@ -643,26 +643,30 @@ end
 local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 	local mover = E.Movers:Get(self)
 	if mover and not shouldIgnore then
-		if not InCombatLockdown() then
+		if not InCombatLockdown() or not self:IsProtected() then
 			self:ClearAllPoints()
 
-			local p, anchor, rP, x, y = mover:GetCurrentPosition()
-			if anchor ~= "UIParent" then
-				p, anchor, rP, x, y = calculatePosition(mover, 0, 0, true)
-			end
-
-			if p then
-				dirtyObjects[self] = nil
-
-				self:SetPoint(p, anchor, rP, x - mover.offsetX, y - mover.offsetY, true)
-			else
-				-- I need to do this because some of the frames I move around are managed by Blizz
-				-- layout manager, so I can't have my movers as anchors since they're created after
-				-- their layout manager positions the frames, so I want all frames to be anchored to
-				-- UIParent
-				dirtyObjects[self] = true
-
+			if mover.isSimple then
 				self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+			else
+				local p, anchor, rP, x, y = mover:GetCurrentPosition()
+				if anchor ~= "UIParent" then
+					p, anchor, rP, x, y = calculatePosition(mover, 0, 0, true)
+				end
+
+				if p then
+					dirtyObjects[self] = nil
+
+					self:SetPoint(p, anchor, rP, x - mover.offsetX, y - mover.offsetY, true)
+				else
+					-- I need to do this because some of the frames I move around are managed by Blizz
+					-- layout manager, so I can't have my movers as anchors since they're created after
+					-- their layout manager positions the frames, so I want all frames to be anchored to
+					-- UIParent
+					dirtyObjects[self] = true
+
+					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+				end
 			end
 		else
 			dirtyObjects[self] = true
