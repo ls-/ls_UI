@@ -592,6 +592,8 @@ function P:Modernize(data, name, key)
 		--> 100000.01
 		if data.version < 10000001 then
 			if data.movers then
+				data.movers.round = nil
+
 				if data.movers.rect then
 					data.movers.rect.CastingBarFrameHolderMover = nil
 					data.movers.rect.PetCastingBarFrameHolderMover = nil
@@ -604,9 +606,8 @@ function P:Modernize(data, name, key)
 					data.movers.rect.MirrorTimer1Mover = nil
 					data.movers.rect.MirrorTimer2Mover = nil
 					data.movers.rect.MirrorTimer3Mover = nil
+					data.movers = data.movers.rect
 				end
-
-				data.movers = data.movers.rect
 			end
 
 			-- if data.bars then
@@ -685,6 +686,8 @@ function P:Modernize(data, name, key)
 			if data.tooltips then
 				data.tooltips.anchor_cursor = nil
 			end
+
+			-- data.version = 10000001
 		end
 	elseif key == "private" then
 		--> 90001.05
@@ -782,6 +785,8 @@ function P:Modernize(data, name, key)
 				data.minimap.rect = nil
 				data.minimap.round = nil
 			end
+
+			-- data.version = 10000001
 		end
 	end
 end
