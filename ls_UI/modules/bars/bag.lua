@@ -130,7 +130,7 @@ function MODULE:CreateBag()
 		CharacterBag3Slot:SetParent(bar)
 		CharacterReagentBag0Slot:SetParent(bar)
 
-		local point = C.db.profile.bars.bag.point[E.UI_LAYOUT]
+		local point = C.db.profile.bars.bag.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar)
 

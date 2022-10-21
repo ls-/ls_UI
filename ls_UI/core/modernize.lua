@@ -599,20 +599,6 @@ function P:Modernize(data, name, key)
 		--> 100000.01
 		if data.version < 10000001 then
 			if data.movers then
-				if data.movers.round then
-					data.movers.round.CastingBarFrameHolderMover = nil
-					data.movers.round.PetCastingBarFrameHolderMover = nil
-					data.movers.round.LSBagBarMover = nil
-					data.movers.round.LSMicroMenu1Mover = nil
-					data.movers.round.LSMicroMenu2Mover = nil
-					data.movers.round.LSMinimapHolderMover = nil
-					data.movers.round.LSOTFrameHolderMover = nil
-					data.movers.round.LSPowerBarAltHolderMover = nil
-					data.movers.round.MirrorTimer1Mover = nil
-					data.movers.round.MirrorTimer2Mover = nil
-					data.movers.round.MirrorTimer3Mover = nil
-				end
-
 				if data.movers.rect then
 					data.movers.rect.CastingBarFrameHolderMover = nil
 					data.movers.rect.PetCastingBarFrameHolderMover = nil
@@ -626,6 +612,8 @@ function P:Modernize(data, name, key)
 					data.movers.rect.MirrorTimer2Mover = nil
 					data.movers.rect.MirrorTimer3Mover = nil
 				end
+
+				data.movers = data.movers.rect
 			end
 
 			-- if data.bars then
@@ -670,6 +658,16 @@ function P:Modernize(data, name, key)
 			-- 	end
 			-- end
 
+			if data.units then
+				data.units.round = nil
+
+				if data.units.rect then
+					data.units.player = data.units.rect.player
+					data.units.pet = data.units.rect.pet
+					data.units.rect = nil
+				end
+			end
+
 			if data.blizzard then
 				data.blizzard.castbar = nil
 				data.blizzard.objective_tracker = nil
@@ -687,19 +685,8 @@ function P:Modernize(data, name, key)
 					data.minimap.color.zone_text = nil
 				end
 
-				if data.minimap.rect then
-					data.minimap.rect.clock = nil
-					data.minimap.rect.flag = nil
-					data.minimap.rect.size = nil
-					data.minimap.rect.zone_text = nil
-				end
-
-				if data.minimap.round then
-					data.minimap.round.clock = nil
-					data.minimap.round.flag = nil
-					data.minimap.round.size = nil
-					data.minimap.round.zone_text = nil
-				end
+				data.minimap.rect = nil
+				data.minimap.round = nil
 			end
 
 			if data.tooltips then
@@ -787,6 +774,8 @@ function P:Modernize(data, name, key)
 
 		--> 100000.01
 		if data.version < 10000001 then
+			data.layout = nil
+
 			if data.blizzard then
 				data.blizzard.castbar = nil
 				data.blizzard.objective_tracker = nil
@@ -794,6 +783,11 @@ function P:Modernize(data, name, key)
 				data.blizzard.timer = nil
 				data.blizzard.vehicle_seat = data.blizzard.vehicle
 				data.blizzard.vehicle = nil
+			end
+
+			if data.minimap then
+				data.minimap.rect = nil
+				data.minimap.round = nil
 			end
 		end
 	end

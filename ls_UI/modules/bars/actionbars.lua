@@ -33,10 +33,7 @@ local CFG = {
 			min_alpha = 0,
 			max_alpha = 1,
 		},
-		point = {
-			round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
-			rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
-		},
+		point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
 	},
 }
 
@@ -279,7 +276,7 @@ function MODULE:CreateActionBars()
 			if barID == "bar1" and MODULE:IsRestricted() then
 				MODULE:AddControlledWidget("ACTION_BAR", bar)
 			else
-				local point = config[barID].point[E.UI_LAYOUT]
+				local point = config[barID].point
 				bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 				E.Movers:Create(bar)
 			end

@@ -1109,8 +1109,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 	currentPoints[name] = {getPoint(object)}
 
-	if C.db.profile.movers[E.UI_LAYOUT][name] then
-		E:CopyTable(C.db.profile.movers[E.UI_LAYOUT][name], currentPoints[name])
+	if C.db.profile.movers[name] then
+		E:CopyTable(C.db.profile.movers[name], currentPoints[name])
 	end
 
 	local parentName = currentPoints[name][2]
@@ -1220,14 +1220,14 @@ function E.Movers:UpdateAll()
 end
 
 function E.Movers:SaveConfig()
-	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
+	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers))
 end
 
 function E.Movers:ApplyConfig()
 	t_wipe(currentPoints)
 	E:CopyTable(defaultPoints, currentPoints)
 
-	for name, point in next, C.db.profile.movers[E.UI_LAYOUT] do
+	for name, point in next, C.db.profile.movers do
 		if currentPoints[name] then
 			E:CopyTable(point, currentPoints[name])
 		end

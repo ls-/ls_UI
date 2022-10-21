@@ -88,7 +88,7 @@ function MODULE:CreateExtraButton()
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
 
-		local point = C.db.profile.bars.extra.point[E.UI_LAYOUT]
+		local point = C.db.profile.bars.extra.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar)
 

@@ -23,10 +23,7 @@ local CFG = {
 	visible = true,
 	width = 594,
 	height = 12,
-	point = {
-		round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-		rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-	},
+	point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
 	fade = {
 		enabled = false,
 		ooc = false,
@@ -540,7 +537,7 @@ function BARS:CreateXPBar()
 			BARS:AddControlledWidget("XP_BAR", bar)
 		else
 			local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
-			local point = config.point[E.UI_LAYOUT]
+			local point = config.point
 			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(bar)
 		end

@@ -159,7 +159,7 @@ function UF:Create(unit)
 			end
 		else
 			local object = oUF:Spawn(unit, name .. "Frame")
-			object:SetPoint(unpack(C.db.profile.units[unit].point[E.UI_LAYOUT]))
+			object:SetPoint(unpack(C.db.profile.units[unit].point))
 			E.Movers:Create(object)
 			objects[unit] = object
 
@@ -238,17 +238,9 @@ function UF:Init()
 				frame:SetScript("OnLeave", frame.OnLeave)
 
 				if unit == "player" then
-					if E.UI_LAYOUT == "round" then
-						UF:CreateVerticalPlayerFrame(frame)
-					else
-						UF:CreateHorizontalPlayerFrame(frame)
-					end
+					UF:CreatePlayerFrame(frame)
 				elseif unit == "pet" then
-					if E.UI_LAYOUT == "round" then
-						UF:CreateVerticalPetFrame(frame)
-					else
-						UF:CreateHorizontalPetFrame(frame)
-					end
+					UF:CreatePetFrame(frame)
 				elseif unit == "target" then
 					UF:CreateTargetFrame(frame)
 				elseif unit == "targettarget" then

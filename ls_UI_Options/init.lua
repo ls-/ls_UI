@@ -23,26 +23,6 @@ function CONFIG:Open()
 				return InCombatLockdown()
 			end,
 			args = {
-				layout = {
-					order = 1,
-					type = "select",
-					name = L["UI_LAYOUT"],
-					desc = L["UI_LAYOUT_DESC"],
-					values = {
-						round = L["LAYOUT_ROUND"],
-						rect = L["LAYOUT_RECT"]
-					},
-					get = function()
-						return PrC.db.profile.layout
-					end,
-					set = function(_, value)
-						PrC.db.profile.layout = value
-
-						if E.UI_LAYOUT ~= value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end,
-				},
 				toggle_anchors = {
 					order = 2,
 					type = "execute",

@@ -14,7 +14,7 @@ end
 
 function MODULE:SetUpGMFrame()
 	if not isInit and PrC.db.profile.blizzard.gm.enabled then
-		local point = C.db.profile.blizzard.gm.point[E.UI_LAYOUT]
+		local point = C.db.profile.blizzard.gm.point
 		TicketStatusFrame:ClearAllPoints()
 		TicketStatusFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(TicketStatusFrame)

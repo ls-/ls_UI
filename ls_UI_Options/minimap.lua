@@ -62,7 +62,7 @@ function CONFIG:CreateMinimapOptions(order)
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
-					CONFIG:CopySettings(D.profile.minimap[E.UI_LAYOUT], C.db.profile.minimap[E.UI_LAYOUT], {["point"] = true})
+					CONFIG:CopySettings(D.profile.minimap, C.db.profile.minimap, {["point"] = true})
 					CONFIG:CopySettings(D.profile.minimap.color, C.db.profile.minimap.color)
 
 					MINIMAP:Update()
@@ -82,11 +82,11 @@ function CONFIG:CreateMinimapOptions(order)
 					["square"] = "WIP Square",
 				},
 				get = function()
-					return C.db.profile.minimap[E.UI_LAYOUT].shape
+					return C.db.profile.minimap.shape
 				end,
 				set = function(_, value)
-					if C.db.profile.minimap[E.UI_LAYOUT].shape ~= value then
-						C.db.profile.minimap[E.UI_LAYOUT].shape = value
+					if C.db.profile.minimap.shape ~= value then
+						C.db.profile.minimap.shape = value
 
 						Minimap:UpdateConfig()
 						Minimap:UpdateLayout()
@@ -98,10 +98,10 @@ function CONFIG:CreateMinimapOptions(order)
 				type = "toggle",
 				name = L["MINIMAP_HEADER_UNDERNEATH"],
 				get = function()
-					return C.db.profile.minimap[E.UI_LAYOUT].flip
+					return C.db.profile.minimap.flip
 				end,
 				set = function(_, value)
-					C.db.profile.minimap[E.UI_LAYOUT].flip = value
+					C.db.profile.minimap.flip = value
 
 					Minimap:UpdateConfig()
 					Minimap:UpdateLayout()
@@ -112,10 +112,10 @@ function CONFIG:CreateMinimapOptions(order)
 				type = "toggle",
 				name = L["ROTATE_MINIMAP"],
 				get = function()
-					return C.db.profile.minimap[E.UI_LAYOUT].rotate
+					return C.db.profile.minimap.rotate
 				end,
 				set = function(_, value)
-					C.db.profile.minimap[E.UI_LAYOUT].rotate = value
+					C.db.profile.minimap.rotate = value
 
 					Minimap:UpdateConfig()
 					Minimap:UpdateRotation()

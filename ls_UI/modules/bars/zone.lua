@@ -86,7 +86,7 @@ function MODULE:CreateZoneButton()
 			end
 		end)
 
-		local point = C.db.profile.bars.zone.point[E.UI_LAYOUT]
+		local point = C.db.profile.bars.zone.point
 		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(bar)
 

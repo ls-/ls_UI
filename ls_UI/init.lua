@@ -8,9 +8,6 @@ local next = _G.next
 
 -- Mine
 local function addRefs()
-	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
-	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
-
 	C.db.global.colors.power[ 0] = C.db.global.colors.power.MANA
 	C.db.global.colors.power[ 1] = C.db.global.colors.power.RAGE
 	C.db.global.colors.power[ 2] = C.db.global.colors.power.FOCUS
@@ -104,12 +101,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	if not C.db.global.version or C.db.global.version < E.VER.number then
 		print(L["LOGIN_MSG"]:format(L["LS_UI"], E.VER.string, M.textures.icons_inline.DISCORD_32, L["INFORMATION"]))
 	end
-
-	-- layout type change shouldn't affect anything after SVs are loaded
-	E.UI_LAYOUT = PrC.db.profile.layout
-
-	D.profile.units.player = D.profile.units[E.UI_LAYOUT].player
-	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
 
 	addRefs()
 

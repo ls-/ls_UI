@@ -25,7 +25,7 @@ function MODULE:SetUpDigsiteBar()
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 
-			local point = C.db.profile.blizzard.digsite_bar.point[E.UI_LAYOUT]
+			local point = C.db.profile.blizzard.digsite_bar.point
 			ArcheologyDigsiteProgressBar:ClearAllPoints()
 			ArcheologyDigsiteProgressBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(ArcheologyDigsiteProgressBar)

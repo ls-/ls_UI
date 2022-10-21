@@ -14,7 +14,7 @@ end
 
 function MODULE:SetUpDurabilityFrame()
 	if not isInit and PrC.db.profile.blizzard.durability.enabled then
-		local point = C.db.profile.blizzard.durability.point[E.UI_LAYOUT]
+		local point = C.db.profile.blizzard.durability.point
 		DurabilityFrame:ClearAllPoints()
 		DurabilityFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(DurabilityFrame)

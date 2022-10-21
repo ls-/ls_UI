@@ -22,7 +22,7 @@ function MODULE:SetUpMawBuffs()
 		if isLoaded then
 			MawBuffsBelowMinimapFrame.ignoreFramePositionManager = true
 
-			local point = C.db.profile.blizzard.maw_buffs.point[E.UI_LAYOUT]
+			local point = C.db.profile.blizzard.maw_buffs.point
 			MawBuffsBelowMinimapFrame:ClearAllPoints()
 			MawBuffsBelowMinimapFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 			E.Movers:Create(MawBuffsBelowMinimapFrame)

@@ -16,15 +16,8 @@ local BUTTONS = {
 	StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10,
 }
 
-local TOP_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155},
-}
-
-local BOTTOM_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127},
-}
+local BOTTOM_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127}
+local TOP_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155}
 
 local LAYOUT = {
 	["DEATHKNIGHT"] = TOP_POINT,
@@ -43,7 +36,7 @@ local LAYOUT = {
 }
 
 local function getBarPoint()
-	return LAYOUT[E.PLAYER_CLASS][E.UI_LAYOUT]
+	return LAYOUT[E.PLAYER_CLASS]
 end
 
 local bar_proto = {}

@@ -39,7 +39,7 @@ function minimap_proto:OnEventHook(event)
 end
 
 local function updateHybridMinimap()
-	if C.db.profile.minimap[E.UI_LAYOUT].shape == "square" then
+	if C.db.profile.minimap.shape == "square" then
 		HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 	else
 		HybridMinimap.CircleMask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -49,11 +49,10 @@ local function updateHybridMinimap()
 end
 
 function minimap_proto:UpdateConfig()
-	self._config = E:CopyTable(C.db.profile.minimap[E.UI_LAYOUT], self._config)
-	self._config.color = E:CopyTable(C.db.profile.minimap.color, self._config.color)
+	self._config = E:CopyTable(C.db.profile.minimap, self._config)
 
 	MinimapCluster._config = t_wipe(MinimapCluster._config or {})
-	MinimapCluster._config.fade = E:CopyTable(C.db.profile.minimap.fade, MinimapCluster._config.fade)
+	MinimapCluster._config.fade = self._config.fade
 end
 
 local borderInfo = {
@@ -157,7 +156,7 @@ function MODULE:Init()
 		end
 
 		MinimapCluster:ClearAllPoints()
-		MinimapCluster:SetPoint(unpack(C.db.profile.minimap[E.UI_LAYOUT].point))
+		MinimapCluster:SetPoint(unpack(C.db.profile.minimap.point))
 		E.Movers:Create(MinimapCluster)
 
 		Mixin(Minimap, minimap_proto)

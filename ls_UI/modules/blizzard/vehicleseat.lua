@@ -14,7 +14,7 @@ end
 
 function MODULE:SetUpVehicleSeatFrame()
 	if not isInit and PrC.db.profile.blizzard.vehicle_seat.enabled then
-		local point = C.db.profile.blizzard.vehicle_seat.point[E.UI_LAYOUT]
+		local point = C.db.profile.blizzard.vehicle_seat.point
 		VehicleSeatIndicator:ClearAllPoints()
 		VehicleSeatIndicator:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
 		E.Movers:Create(VehicleSeatIndicator)

@@ -243,8 +243,6 @@ local resetIgnoredKeys = {
 
 function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 	local ignoredUnits = {
-		["player"] = E.UI_LAYOUT == "round",
-		["pet"] = E.UI_LAYOUT == "round",
 		["targettarget"] = true,
 		["focustarget"] = true,
 		[unit] = true,
