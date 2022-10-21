@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local unpack = _G.unpack
 
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
@@ -16,8 +17,8 @@ local BUTTONS = {
 	StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10,
 }
 
-local BOTTOM_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127}
-local TOP_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155}
+local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 127}
+local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 155}
 
 local LAYOUT = {
 	["DEATHKNIGHT"] = TOP_POINT,
@@ -181,8 +182,7 @@ function MODULE:CreateStanceBar()
 		bar:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
 		bar:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 
-		local point = getBarPoint()
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(getBarPoint()))
 		E.Movers:Create(bar)
 
 		bar:Update()

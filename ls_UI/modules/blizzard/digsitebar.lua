@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -25,9 +26,8 @@ function MODULE:SetUpDigsiteBar()
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 
-			local point = C.db.profile.blizzard.digsite_bar.point
 			ArcheologyDigsiteProgressBar:ClearAllPoints()
-			ArcheologyDigsiteProgressBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			ArcheologyDigsiteProgressBar:SetPoint(unpack(C.db.profile.blizzard.digsite_bar.point))
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")

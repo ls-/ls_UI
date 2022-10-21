@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -80,8 +81,7 @@ function MODULE:CreateVehicleExitButton()
 
 		button:OnEvent()
 
-		local point = C.db.profile.bars.vehicle.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.vehicle.point))
 		E.Movers:Create(bar)
 
 		bar:Update()

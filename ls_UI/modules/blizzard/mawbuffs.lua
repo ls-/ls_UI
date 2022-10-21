@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -22,9 +23,8 @@ function MODULE:SetUpMawBuffs()
 		if isLoaded then
 			MawBuffsBelowMinimapFrame.ignoreFramePositionManager = true
 
-			local point = C.db.profile.blizzard.maw_buffs.point
 			MawBuffsBelowMinimapFrame:ClearAllPoints()
-			MawBuffsBelowMinimapFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			MawBuffsBelowMinimapFrame:SetPoint(unpack(C.db.profile.blizzard.maw_buffs.point))
 			E.Movers:Create(MawBuffsBelowMinimapFrame)
 
 			isInit = true

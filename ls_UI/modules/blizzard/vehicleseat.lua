@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -14,9 +15,8 @@ end
 
 function MODULE:SetUpVehicleSeatFrame()
 	if not isInit and PrC.db.profile.blizzard.vehicle_seat.enabled then
-		local point = C.db.profile.blizzard.vehicle_seat.point
 		VehicleSeatIndicator:ClearAllPoints()
-		VehicleSeatIndicator:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		VehicleSeatIndicator:SetPoint(unpack(C.db.profile.blizzard.vehicle_seat.point))
 		E.Movers:Create(VehicleSeatIndicator)
 
 		isInit = true

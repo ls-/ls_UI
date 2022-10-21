@@ -6,6 +6,7 @@ local MODULE = P:GetModule("Bars")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -29,7 +30,7 @@ local CFG = {
 		min_alpha = 0,
 		max_alpha = 1,
 	},
-	point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 16},
 }
 
 local bar_proto = {
@@ -107,8 +108,7 @@ function MODULE:CreatePetBattleBar()
 		if MODULE:IsRestricted() then
 			MODULE:AddControlledWidget("PET_BATTLE_BAR", bar)
 		else
-			local point = config.point
-			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			bar:SetPoint(unpack(config.point))
 			E.Movers:Create(bar)
 		end
 

@@ -312,10 +312,8 @@ local function header_UpdateCooldownConfig(self)
 end
 
 local function createHeader(filter)
-	local point = C.db.profile.auras[filter].point
-
 	local header = CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate")
-	header:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+	header:SetPoint(unpack(C.db.profile.auras[filter].point))
 	header:HookScript("OnAttributeChanged", header_OnAttributeChanged)
 	header:SetAttribute("unit", "player")
 	header:SetAttribute("template", "SecureActionButtonTemplate")

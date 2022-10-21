@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Blizzard")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -14,9 +15,8 @@ end
 
 function MODULE:SetUpGMFrame()
 	if not isInit and PrC.db.profile.blizzard.gm.enabled then
-		local point = C.db.profile.blizzard.gm.point
 		TicketStatusFrame:ClearAllPoints()
-		TicketStatusFrame:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		TicketStatusFrame:SetPoint(unpack(C.db.profile.blizzard.gm.point))
 		E.Movers:Create(TicketStatusFrame)
 
 		isInit = true

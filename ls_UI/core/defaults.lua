@@ -1872,7 +1872,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 20},
 		},
 		bar2 = { -- MultiBarBottomLeft
 			flyout_dir = "UP",
@@ -1915,7 +1915,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 55},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 55},
 		},
 		bar3 = { -- MultiBarBottomRight
 			flyout_dir = "UP",
@@ -1958,7 +1958,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 91},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 91},
 		},
 		bar4 = { -- MultiBarLeft
 			flyout_dir = "LEFT",
@@ -2001,7 +2001,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -40, y = 0},
+			point = {"RIGHT", "UIParent", "RIGHT", -40, 0},
 		},
 		bar5 = { -- MultiBarRight
 			flyout_dir = "LEFT",
@@ -2044,7 +2044,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "RIGHT", anchor = "UIParent", rP = "RIGHT", x = -4, y = 0},
+			point = {"RIGHT", "UIParent", "RIGHT", -4, 0},
 		},
 		bar6 = { -- MultiBar5
 			flyout_dir = "UP",
@@ -2087,7 +2087,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 320},
+			point = {"BOTTOM", "UIParent", "BOTTOM", -282, 320},
 		},
 		bar7 = { -- MultiBar6
 			flyout_dir = "UP",
@@ -2130,7 +2130,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 356},
+			point = {"BOTTOM", "UIParent", "BOTTOM", -282, 356},
 		},
 		bar8 = { -- MultiBar7
 			flyout_dir = "UP",
@@ -2173,7 +2173,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -282, y = 392},
+			point = {"BOTTOM", "UIParent", "BOTTOM", -282, 392},
 		},
 		pet = {
 			flyout_dir = "UP",
@@ -2266,7 +2266,7 @@ D.profile = {
 				enabled = true,
 				size = 12,
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 20},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 20},
 		},
 		extra = { -- ExtraAction
 			width = 40,
@@ -2295,7 +2295,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = -94, y = 250},
+			point = {"BOTTOM", "UIParent", "BOTTOM", -94, 250},
 		},
 		zone = { -- ZoneAbility
 			width = 40,
@@ -2320,7 +2320,7 @@ D.profile = {
 					v_alignment = "MIDDLE",
 				},
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 94, y = 250},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 94, 250},
 		},
 		vehicle = { -- LeaveVehicle
 			width = 40,
@@ -2336,7 +2336,7 @@ D.profile = {
 				min_alpha = 0.2,
 				max_alpha = 1,
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 168, y = 134},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 168, 134},
 		},
 		bag = {
 			visible = true,
@@ -2352,7 +2352,7 @@ D.profile = {
 				min_alpha = 0.2,
 				max_alpha = 1,
 			},
-			point = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 36},
+			point = {"BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -4, 36},
 		},
 		micromenu = {
 			visible = true,
@@ -2416,7 +2416,7 @@ D.profile = {
 					enabled = false,
 				},
 			},
-			point = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -4, y = 4},
+			point = {"BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -4, 4},
 		},
 		xpbar = {
 			visible = true,
@@ -2437,7 +2437,7 @@ D.profile = {
 				min_alpha = 0.2,
 				max_alpha = 1,
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
 		},
 	},
 	auras = {
@@ -2479,7 +2479,7 @@ D.profile = {
 				position = "TOPLEFT",
 				debuff_type = false,
 			},
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -250, y = -4},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -4},
 		},
 		HARMFUL = {
 			width = 32,
@@ -2510,7 +2510,7 @@ D.profile = {
 				position = "TOPLEFT",
 				debuff_type = false,
 			},
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -250, y = -114},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -114},
 		},
 		TOTEM = {
 			num = 4,
@@ -2527,7 +2527,7 @@ D.profile = {
 					v_alignment = "BOTTOM",
 				},
 			},
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -150},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -150},
 		},
 	},
 	tooltips = {
@@ -2542,7 +2542,6 @@ D.profile = {
 				size = 12,
 			},
 		},
-		point = {p = "BOTTOMRIGHT", anchor = "UIParent", rP = "BOTTOMRIGHT", x = -76, y = 126},
 	},
 	blizzard = {
 		character_frame = {
@@ -2555,22 +2554,22 @@ D.profile = {
 			text = {
 				size = 12,
 			},
-			point = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 226},
+			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 226},
 		},
 		durability = {
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -232},
 		},
 		gm = {
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -240},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -240},
 		},
 		maw_buffs = {
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -228, y = -188},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -188},
 		},
 		talking_head = {
 			hide = false,
 		},
 		vehicle_seat = {
-			point = {p = "TOPRIGHT", anchor = "UIParent", rP = "TOPRIGHT", x = -4, y = -232},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -232},
 		},
 	},
 	movers = {},

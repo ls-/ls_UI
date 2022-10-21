@@ -17,8 +17,8 @@ local BUTTONS = {
 	PetActionButton6, PetActionButton7, PetActionButton8, PetActionButton9, PetActionButton10,
 }
 
-local BOTTOM_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 127}
-local TOP_POINT = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 155}
+local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 127}
+local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 155}
 
 local LAYOUT = {
 	["DEATHKNIGHT"] = BOTTOM_POINT,
@@ -278,8 +278,7 @@ function MODULE:CreatePetActionBar()
 		bar:RegisterEvent("UNIT_FLAGS")
 		bar:RegisterEvent("UNIT_PET")
 
-		local point = getBarPoint()
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(getBarPoint()))
 		E.Movers:Create(bar)
 
 		bar:Update()

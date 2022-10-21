@@ -842,9 +842,7 @@ do
 
 	function proto:UpdateFont(s)
 		local t = objects[self]
-		if not t then
-			return
-		end
+		if not t then return end
 
 		update(self, t, s)
 	end
@@ -865,9 +863,7 @@ do
 			return
 		end
 
-		for k, v in next, proto do
-			obj[k] = v
-		end
+		Mixin(obj, proto)
 
 		self[t][obj] = true
 		objects[obj] = t
@@ -883,9 +879,7 @@ do
 	end
 
 	function module:UpdateAll(t)
-		if not self[t] then
-			return
-		end
+		if not self[t] then return end
 
 		for obj in next, self[t] do
 			update(obj, t)

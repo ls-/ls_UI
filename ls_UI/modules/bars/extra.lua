@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local unpack = _G.unpack
 
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
@@ -88,8 +89,7 @@ function MODULE:CreateExtraButton()
 		E:SkinExtraActionButton(ExtraActionButton1)
 		bar._buttons[1] = ExtraActionButton1
 
-		local point = C.db.profile.bars.extra.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.extra.point))
 		E.Movers:Create(bar)
 
 		bar:Update()

@@ -685,6 +685,7 @@ function P:Modernize(data, name, key)
 
 			if data.tooltips then
 				data.tooltips.anchor_cursor = nil
+				data.tooltips.point = nil
 			end
 
 			-- data.version = 10000001

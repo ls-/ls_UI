@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -86,8 +87,7 @@ function MODULE:CreateZoneButton()
 			end
 		end)
 
-		local point = C.db.profile.bars.zone.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.zone.point))
 		E.Movers:Create(bar)
 
 		bar:Update()

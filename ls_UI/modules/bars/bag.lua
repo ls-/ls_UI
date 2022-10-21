@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -130,8 +131,7 @@ function MODULE:CreateBag()
 		CharacterBag3Slot:SetParent(bar)
 		CharacterReagentBag0Slot:SetParent(bar)
 
-		local point = C.db.profile.bars.bag.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.bag.point))
 		E.Movers:Create(bar)
 
 		Mixin(MainMenuBarBackpackButton, button_proto)

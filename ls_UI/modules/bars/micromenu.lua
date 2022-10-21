@@ -934,8 +934,7 @@ function MODULE:CreateMicroMenu()
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
 
-		local point = C.db.profile.bars.micromenu.point
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.micromenu.point))
 		E.Movers:Create(bar)
 
 		E:RegisterEvent("PLAYER_ENTERING_WORLD", function()
