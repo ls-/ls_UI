@@ -2611,9 +2611,9 @@ PrD.profile = {
 			},
 		},
 		type = {
+			enabled = true,
 			size = 12,
 			position = "TOPLEFT",
-			debuff_type = false,
 		},
 		filter = {
 			HELPFUL = {},

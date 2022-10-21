@@ -801,6 +801,12 @@ function P:Modernize(data, name, key)
 				data.minimap.round = nil
 			end
 
+			if data.auratracker then
+				if data.auratracker.type then
+					data.auratracker.type.debuff_type = nil
+				end
+			end
+
 			-- data.version = 10000001
 		end
 	end
