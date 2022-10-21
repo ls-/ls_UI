@@ -4,16 +4,7 @@ local MODULE = P:AddModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
-
--- Blizz
-local C_PetBattles = _G.C_PetBattles
-
---[[ luacheck: globals
-	ClearOverrideBindings CreateFrame GetBindingKey InCombatLockdown MainMenuBar OverrideActionBar RegisterStateDriver
-	SetCVar SetOverrideBindingClick SpellFlyout UIParent UnregisterStateDriver
-]]
 
 -- Mine
 local isInit = false
