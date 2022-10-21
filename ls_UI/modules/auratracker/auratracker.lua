@@ -228,8 +228,8 @@ function MODULE:Init()
 		bar._buttons = {}
 		for i = 1, 12 do
 			local button = E:CreateButton(bar, "$parentButton" .. i, true, true, true)
-			button:SetPushedTexture("")
-			button:SetHighlightTexture("")
+			button:SetPushedTexture(0)
+			button:SetHighlightTexture(0)
 			button:SetScript("OnEnter", button_OnEnter)
 			button:SetScript("OnLeave", button_OnLeave)
 			button:Hide()
@@ -237,8 +237,6 @@ function MODULE:Init()
 
 			local auraType = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 3)
 			auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
-			auraType:SetSize(PrC.db.profile.auratracker.type.size, PrC.db.profile.auratracker.type.size)
-			auraType:SetPoint(PrC.db.profile.auratracker.type.position, 0, 0)
 			button.AuraType = auraType
 
 			button._parent = bar
