@@ -662,6 +662,20 @@ function P:Modernize(data, name, key)
 				end
 			end
 
+			if data.auras then
+				if data.auras.HELPFUL then
+					if data.auras.HELPFUL.type then
+						data.auras.HELPFUL.type.debuff_type = nil
+					end
+				end
+
+				if data.auras.HARMFUL then
+					if data.auras.HARMFUL.type then
+						data.auras.HARMFUL.type.debuff_type = nil
+					end
+				end
+			end
+
 			if data.blizzard then
 				data.blizzard.castbar = nil
 				data.blizzard.objective_tracker = nil

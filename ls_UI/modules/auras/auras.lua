@@ -43,7 +43,7 @@ local function updateAura(button, index)
 			button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
 
 			if debuffType and button.showDebuffType then
-				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons["Debuff"]))
+				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons.Debuff))
 				button.AuraType:Show()
 			else
 				button.AuraType:Hide()
@@ -143,7 +143,7 @@ local function button_UpdateAuraTypeIcon(self)
 	self.AuraType:SetPoint(config.position, 0, 0)
 	self.AuraType:SetSize(config.size, config.size)
 
-	self.showDebuffType = self._parent._config.type.debuff_type
+	self.showDebuffType = self._parent._config.type.enabled
 end
 
 local function button_UpdateCountFont(self)

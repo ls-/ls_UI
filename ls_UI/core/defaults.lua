@@ -2475,9 +2475,9 @@ D.profile = {
 				},
 			},
 			type = {
+				enabled = false,
 				size = 12,
 				position = "TOPLEFT",
-				debuff_type = false,
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -4},
 		},
@@ -2506,9 +2506,9 @@ D.profile = {
 				},
 			},
 			type = {
+				enabled = true,
 				size = 12,
 				position = "TOPLEFT",
-				debuff_type = false,
 			},
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -114},
 		},
