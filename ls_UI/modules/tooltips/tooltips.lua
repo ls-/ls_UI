@@ -93,7 +93,8 @@ end
 
 local function findLine(tooltip, start, pattern)
 	for i = start, tooltip:NumLines() do
-		if _G["GameTooltipTextLeft" .. i]:GetText():match(pattern) then
+		local text = _G["GameTooltipTextLeft" .. i]:GetText()
+		if text and text:match(pattern) then
 			return _G["GameTooltipTextLeft" .. i]
 		end
 	end
