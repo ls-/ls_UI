@@ -204,6 +204,7 @@ read_globals = {
 	"Enum",
 	"TooltipDataProcessor",
 	"TooltipUtil",
+	"NineSliceUtil",
 
 	-- FrameXML functions
 	"ArtifactBarGetNumArtifactTraitsPurchasableFromXP",

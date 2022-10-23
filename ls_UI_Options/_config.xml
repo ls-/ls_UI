@@ -11,4 +11,14 @@
 	<Script file="tooltips.lua"/>
 	<Include file="unitframes\_unitframes.xml"/>
 	<Script file="init.lua"/>
+
+	<!-- TEMPLATES -->
+
+	<ScrollFrame name="LSAuraFilterInputTemplate" inherits="InputScrollFrameTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="maxLetters" value="2000" type="number"/>
+			<KeyValue key="instructions" value="ID#1 ID#2 ID#3..."/>
+			<KeyValue key="hideCharCount" value="true" type="boolean"/>
+		</KeyValues>
+	</ScrollFrame>
 </Ui>
