@@ -46,15 +46,23 @@ local function INSPECT_READY(unitGUID)
 		inspectGUIDCache[unitGUID].specName = E:GetUnitSpecializationInfo("mouseover")
 		inspectGUIDCache[unitGUID].itemLevel = E:GetUnitAverageItemLevel("mouseover")
 
-		GameTooltip:ClearLines()
-		GameTooltip:SetUnit("mouseover")
+		if inspectGUIDCache[unitGUID].specName and inspectGUIDCache[unitGUID].itemLevel then
+			GameTooltip:ClearLines()
+			GameTooltip:SetUnit("mouseover")
+		else
+			inspectGUIDCache[unitGUID].time = nil
+			inspectGUIDCache[unitGUID].specName = nil
+			inspectGUIDCache[unitGUID].itemLevel = nil
+		end
 	end
+
+	lastGUID = nil
 
 	E:UnregisterEvent("INSPECT_READY", INSPECT_READY)
 end
 
-local function addInspectInfo(tooltip, unit, numTries)
-	if not CanInspect(unit, true) or numTries > 3 then return end
+local function addInspectInfo(tooltip, unit)
+	if not CanInspect(unit, true) then return end
 
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
@@ -66,24 +74,21 @@ local function addInspectInfo(tooltip, unit, numTries)
 			inspectGUIDCache[unitGUID].specName = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
 
-			return C_Timer.After(0.33, function()
-				addInspectInfo(tooltip, unit, numTries + 1)
-			end)
-		end
-
-		tooltip:AddLine(SPECIALIZATION:format(inspectGUIDCache[unitGUID].specName), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(inspectGUIDCache[unitGUID].itemLevel), 1, 1, 1)
-	else
-		if lastGUID ~= unitGUID then
 			lastGUID = unitGUID
 
 			NotifyInspect(unit)
 			E:RegisterEvent("INSPECT_READY", INSPECT_READY)
-		else
-			lastGUID = nil
 
-			INSPECT_READY(unitGUID)
+			return
 		end
+
+		tooltip:AddLine(SPECIALIZATION:format(inspectGUIDCache[unitGUID].specName), 1, 1, 1)
+		tooltip:AddLine(ITEM_LEVEL:format(inspectGUIDCache[unitGUID].itemLevel), 1, 1, 1)
+	elseif lastGUID ~= unitGUID then
+		lastGUID = unitGUID
+
+		NotifyInspect(unit)
+		E:RegisterEvent("INSPECT_READY", INSPECT_READY)
 	end
 end
 
