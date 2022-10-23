@@ -69,7 +69,7 @@ local function addInspectInfo(tooltip, unit)
 		tooltip:AddLine(SPECIALIZATION:format(E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
 		tooltip:AddLine(ITEM_LEVEL:format(E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
 	elseif inspectGUIDCache[unitGUID] and inspectGUIDCache[unitGUID].time then
-		if not (inspectGUIDCache[unitGUID].specName and inspectGUIDCache[unitGUID].itemLevel) or GetTime() - inspectGUIDCache[unitGUID].time > 120 then
+		if GetTime() - inspectGUIDCache[unitGUID].time > 120 then
 			inspectGUIDCache[unitGUID].time = nil
 			inspectGUIDCache[unitGUID].specName = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
