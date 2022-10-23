@@ -46,8 +46,7 @@ local function INSPECT_READY(unitGUID)
 		inspectGUIDCache[unitGUID].specName = E:GetUnitSpecializationInfo("mouseover")
 		inspectGUIDCache[unitGUID].itemLevel = E:GetUnitAverageItemLevel("mouseover")
 
-		-- hide it to reset it, fixes duplicate lines
-		GameTooltip:Hide()
+		GameTooltip:ClearLines()
 		GameTooltip:SetUnit("mouseover")
 	end
 
@@ -448,6 +447,7 @@ function MODULE:Init()
 
 		E:RegisterEvent("MODIFIER_STATE_CHANGED", function(key)
 			if UnitExists("mouseover") and (key == "LSHIFT" or key == "RSHIFT") then
+				GameTooltip:ClearLines()
 				GameTooltip:SetUnit("mouseover")
 			end
 		end)
