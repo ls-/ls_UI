@@ -20,6 +20,12 @@ local function inc(order)
 	return orders[order]
 end
 
+local ICON_POSITIONS = {
+	["NONE"] = L["NONE"],
+	["LEFT"] = L["LEFT"],
+	["RIGHT"] = L["RIGHT"],
+}
+
 function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 	local temp = {
 		order = order,
@@ -121,7 +127,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "select",
 				name = L["ICON"],
-				values = CONFIG.CASTBAR_ICON_POSITIONS,
+				values = ICON_POSITIONS,
 				get = function()
 					return C.db.profile.units[unit].castbar.icon.position
 				end,
