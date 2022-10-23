@@ -556,3 +556,6 @@ L["ENDCAPS_BOTH"] = "Both"
 
 L["COMBO_POINTS_CHARGED"] = "Charged Combo Points"
 L["SPELL_EMPOWERED"] = "Empowered"
+L["SHAPE"] = "Shape"
+L["SHAPE_ROUND"] = "Round"
+L["SHAPE_SQUARE"] = "Square"

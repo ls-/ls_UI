@@ -76,10 +76,10 @@ function CONFIG:CreateMinimapOptions(order)
 			shape = {
 				order = inc(1),
 				type = "select",
-				name = "WIP Shape",
+				name = L["SHAPE"],
 				values = {
-					["round"] = "WIP Round",
-					["square"] = "WIP Square",
+					["round"] = L["SHAPE_ROUND"],
+					["square"] = L["SHAPE_SQUARE"],
 				},
 				get = function()
 					return C.db.profile.minimap.shape
@@ -154,7 +154,7 @@ function CONFIG:CreateMinimapOptions(order)
 				type = "description",
 				name = " ",
 			},
-			fadeing = {
+			fading = {
 				order = inc(1),
 				type = "group",
 				name = L["FADING"],
