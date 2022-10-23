@@ -199,6 +199,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["COMBO_POINTS"],
 					},
+					COMBO_POINTS_CHARGED = {
+						order = inc(2),
+						type = "color",
+						name = L["COMBO_POINTS_CHARGED"],
+					},
 					RUNES = {
 						order = inc(2),
 						type = "color",
@@ -722,6 +727,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["SPELL_CHANNELED"],
 					},
+					empowering = {
+						order = inc(2),
+						type = "color",
+						name = L["SPELL_EMPOWERED"],
+					},
 					failed = {
 						order = inc(2),
 						type = "color",
@@ -798,6 +808,22 @@ function CONFIG:GetColorsOptions(order)
 						order = inc(2),
 						type = "color",
 						name = L["POISON"],
+					},
+					Enrage = {
+						order = inc(2),
+						type = "color",
+						name = L["ENRAGE"],
+						get = function()
+							return E:GetRGB(C.db.global.colors.buff[""])
+						end,
+						set = function(_, r, g, b)
+							if r ~= nil then
+								local color = C.db.global.colors.buff[""]
+								if color.r ~= r or color.g ~= g or color.g ~= b then
+									E:SetRGB(color, r, g, b)
+								end
+							end
+						end,
 					},
 					Enchant = {
 						order = inc(2),
