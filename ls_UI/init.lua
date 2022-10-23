@@ -23,12 +23,10 @@ local function addRefs()
 	C.db.global.colors.power[13] = C.db.global.colors.power.INSANITY
 	C.db.global.colors.power[17] = C.db.global.colors.power.FURY
 	C.db.global.colors.power[18] = C.db.global.colors.power.PAIN
+	C.db.global.colors.power[19] = C.db.global.colors.power.ESSENCE
 end
 
 local function removeRefs()
-	C.db.profile.units.player = nil
-	C.db.profile.units.pet = nil
-
 	C.db.global.colors.power[ 0] = nil
 	C.db.global.colors.power[ 1] = nil
 	C.db.global.colors.power[ 2] = nil
@@ -44,6 +42,7 @@ local function removeRefs()
 	C.db.global.colors.power[13] = nil
 	C.db.global.colors.power[17] = nil
 	C.db.global.colors.power[18] = nil
+	C.db.global.colors.power[19] = nil
 end
 
 local function updateAll()
