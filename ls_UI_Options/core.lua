@@ -19,6 +19,50 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
 
+CONFIG.H_ALIGNMENTS = {
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+}
+
+CONFIG.V_ALIGNMENTS = {
+	["BOTTOM"] = "BOTTOM",
+	["MIDDLE"] = "MIDDLE",
+	["TOP"] = "TOP",
+}
+
+CONFIG.POINTS = {
+	["BOTTOM"] = "BOTTOM",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+	["TOP"] = "TOP",
+	["TOPLEFT"] = "TOPLEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+}
+
+CONFIG.POINTS_EXT = {
+	[""] = "NONE",
+	["BOTTOM"] = "BOTTOM",
+	["BOTTOMLEFT"] = "BOTTOMLEFT",
+	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
+	["CENTER"] = "CENTER",
+	["LEFT"] = "LEFT",
+	["RIGHT"] = "RIGHT",
+	["TOP"] = "TOP",
+	["TOPLEFT"] = "TOPLEFT",
+	["TOPRIGHT"] = "TOPRIGHT",
+}
+
+CONFIG.GROWTH_DIRS = {
+	["LEFT_DOWN"] = L["LEFT_DOWN"],
+	["LEFT_UP"] = L["LEFT_UP"],
+	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
+	["RIGHT_UP"] = L["RIGHT_UP"],
+}
+
 -- CONFIG:ShowStaticPopup(which)
 do
 	local POPUPS = {
@@ -62,7 +106,7 @@ do
 	end
 end
 
--- CONFIG:ShowLinkCopyPopup
+-- CONFIG:ShowLinkCopyPopup(text)
 do
 	local link = ""
 
@@ -90,7 +134,7 @@ do
 	editBox:SetScript("OnMouseUp", function(self)
 		self:HighlightText()
 	end)
-	editBox:SetScript("OnEscapePressed", function(self)
+	editBox:SetScript("OnEscapePressed", function()
 		popup:Hide()
 	end)
 
@@ -135,53 +179,6 @@ function CONFIG.ConfirmReset(info)
 
 	return L["CONFIRM_RESET"]:format(option.name)
 end
-
----------------
--- OLD STUFF --
----------------
-CONFIG.H_ALIGNMENTS = {
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-}
-
-CONFIG.V_ALIGNMENTS = {
-	["BOTTOM"] = "BOTTOM",
-	["MIDDLE"] = "MIDDLE",
-	["TOP"] = "TOP",
-}
-
-CONFIG.POINTS = {
-	["BOTTOM"] = "BOTTOM",
-	["BOTTOMLEFT"] = "BOTTOMLEFT",
-	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-	["TOP"] = "TOP",
-	["TOPLEFT"] = "TOPLEFT",
-	["TOPRIGHT"] = "TOPRIGHT",
-}
-
-CONFIG.POINTS_EXT = {
-	[""] = "NONE",
-	["BOTTOM"] = "BOTTOM",
-	["BOTTOMLEFT"] = "BOTTOMLEFT",
-	["BOTTOMRIGHT"] = "BOTTOMRIGHT",
-	["CENTER"] = "CENTER",
-	["LEFT"] = "LEFT",
-	["RIGHT"] = "RIGHT",
-	["TOP"] = "TOP",
-	["TOPLEFT"] = "TOPLEFT",
-	["TOPRIGHT"] = "TOPRIGHT",
-}
-
-CONFIG.GROWTH_DIRS = {
-	["LEFT_DOWN"] = L["LEFT_DOWN"],
-	["LEFT_UP"] = L["LEFT_UP"],
-	["RIGHT_DOWN"] = L["RIGHT_DOWN"],
-	["RIGHT_UP"] = L["RIGHT_UP"],
-}
 
 function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
@@ -737,8 +734,7 @@ do
 end
 
 local globalIgnoredKeys = {
-	-- enabled = true,
-	point = true,
+	["point"] = true,
 }
 
 function CONFIG:CopySettings(src, dest, ignoredKeys)
