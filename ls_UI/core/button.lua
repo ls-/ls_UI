@@ -198,7 +198,7 @@ local function skinButton(button)
 
 	local flash = button.Flash
 	if flash then
-		flash:SetColorTexture(E:GetRGBA(C.db.global.colors.red, 0.65))
+		flash:SetColorTexture(C.db.global.colors.red:GetRGBA(0.65))
 		flash:SetAllPoints()
 	end
 
@@ -334,7 +334,7 @@ do
 		local button = self:GetParent()
 
 		if button:IsEquipped() then
-			button.Border_:SetVertexColor(E:GetRGB(C.db.global.colors.green))
+			button.Border_:SetVertexColor(C.db.global.colors.green:GetRGB())
 		else
 			button.Border_:SetVertexColor(1, 1, 1)
 		end

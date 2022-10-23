@@ -8,7 +8,7 @@ local _G = getfenv(0)
 local defaultFont = LibStub("LibSharedMedia-3.0"):GetDefault("font")
 
 local function rgb(r, g, b)
-	return E:SetRGB({}, r, g, b)
+	return E:CreateColor(r, g, b)
 end
 
 D.global = {
@@ -182,8 +182,6 @@ D.global = {
 			Horde = rgb(231, 53, 42), -- #E7352A (7.5R 5/16)
 			Neutral = rgb(233, 232, 231) -- #E9E8E7 (N9)
 		},
-		artifact = rgb(217, 202, 146), -- #D9CA92 (5Y 8/4)
-		-- artifact = rgb(230, 204, 153), -- #E6CC99 (Blizzard Colour)
 		honor = rgb(255, 77, 35), -- #FF4D23 (Blizzard Colour)
 		xp = {
 			-- rested
@@ -296,7 +294,7 @@ D.global = {
 		},
 		["ls:color:difficulty"] = {
 			events = "UNIT_LEVEL PLAYER_LEVEL_UP",
-			func = "function(unit)\n  return \"|c\" .. _VARS.E:GetCreatureDifficultyColor(UnitEffectiveLevel(unit)).hex\nend",
+			func = "function(unit)\n  return \"|c\" .. _VARS.E:GetCreatureDifficultyColor(unit):GetHex()\nend",
 		},
 		["ls:color:power"] = {
 			func = "function(unit)\n  local type, _, r, g, b = UnitPowerType(unit)\n  if not r then\n    return \"|c\" .. _VARS.POWER_COLORS[type].hex\n  else\n    if r > 1 or g > 1 or b > 1 then\n      r, g, b = r / 255, g / 255, b / 255\n    end\n\n    return Hex(r, g, b)\n  end\nend",

@@ -204,7 +204,7 @@ do
 	end
 
 	function power_proto:UpdateColors()
-		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.ALTERNATE))
+		self:SetStatusBarColor(C.db.global.colors.power.ALTERNATE:GetRGB())
 	end
 
 	local frame_proto = {}
@@ -264,8 +264,8 @@ do
 	end
 
 	function power_proto:UpdateColors()
-		self.mainBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
-		self.altBar_:SetStatusBarColor(E:GetRGB(C.db.global.colors.prediction.power_cost))
+		self.mainBar_:SetStatusBarColor(C.db.global.colors.prediction.power_cost:GetRGB())
+		self.altBar_:SetStatusBarColor(C.db.global.colors.prediction.power_cost:GetRGB())
 	end
 
 	function power_proto:UpdateSmoothing()

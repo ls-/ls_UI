@@ -26,7 +26,7 @@ local minimap_proto = {}
 
 function minimap_proto:UpdateBorderColor()
 	if self._config.color.border then
-		self.Border:SetVertexColor(E:GetRGB(C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]))
+		self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]):GetRGB())
 	else
 		self.Border:SetVertexColor(1, 1, 1)
 	end

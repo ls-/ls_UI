@@ -15,7 +15,7 @@ end
 
 function element_proto:PostUpdate(_, status)
 	if status and status == 0 then
-		self:SetVertexColor(E:GetRGB(C.db.global.colors.threat[1]))
+		self:SetVertexColor(C.db.global.colors.threat[1]:GetRGB())
 		self:Show()
 	end
 end

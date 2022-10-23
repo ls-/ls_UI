@@ -122,9 +122,9 @@ do
 	end
 
 	function element_proto:UpdateColors()
-		self.myBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.my_heal))
-		self.otherBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.other_heal))
-		self.healAbsorbBar:SetStatusBarColor(E:GetRGBA(C.db.global.colors.prediction.heal_absorb))
+		self.myBar:SetStatusBarColor(C.db.global.colors.prediction.my_heal:GetRGB())
+		self.otherBar:SetStatusBarColor(C.db.global.colors.prediction.other_heal:GetRGB())
+		self.healAbsorbBar:SetStatusBarColor(C.db.global.colors.prediction.heal_absorb:GetRGB())
 	end
 
 	function element_proto:UpdateTextures()

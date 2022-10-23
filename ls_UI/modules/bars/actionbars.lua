@@ -166,7 +166,7 @@ function bar_proto:UpdateButtonConfig()
 	end
 
 	for k, v in next, C.db.global.colors.button do
-		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = E:GetRGB(v)
+		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = v:GetRGB()
 	end
 
 	self.buttonConfig.clickOnDown = true

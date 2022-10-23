@@ -80,7 +80,7 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 
 				if time1 then
 					cooldown.Timer:SetFormattedText(format, time1, time2)
-					cooldown.Timer:SetVertexColor(E:GetRGB(color))
+					cooldown.Timer:SetVertexColor(color:GetRGB())
 				end
 			end
 		end

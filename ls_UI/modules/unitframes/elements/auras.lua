@@ -254,7 +254,7 @@ end
 
 function element_proto:PostUpdateIcon(button, unit, data)
 	if button.isHarmful then
-		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[data.dispelName] or C.db.global.colors.debuff.None))
+		button.Border:SetVertexColor((C.db.global.colors.debuff[data.dispelName] or C.db.global.colors.debuff.None):GetRGB())
 
 		if self._config.type.enabled then
 			if UnitIsFriend("player", unit) then
@@ -265,7 +265,7 @@ function element_proto:PostUpdateIcon(button, unit, data)
 		end
 	else
 		-- "" is enrage, it's a legit buff dispelName
-		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.buff[data.dispelName] or C.db.global.colors.white))
+		button.Border:SetVertexColor((C.db.global.colors.buff[data.dispelName] or C.db.global.colors.white):GetRGB())
 
 		if self._config.type.enabled then
 			if not UnitIsFriend("player", unit) then

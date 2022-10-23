@@ -31,7 +31,7 @@ function MODULE:SetUpDigsiteBar()
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")
-			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(E:GetRGB(C.db.global.colors.orange))
+			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(C.db.global.colors.orange:GetRGB())
 
 			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", function(self, event, num, total)
 				if event == "ARCHAEOLOGY_SURVEY_CAST" or event == "ARCHAEOLOGY_FIND_COMPLETE" then

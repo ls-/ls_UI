@@ -576,7 +576,7 @@ do
 				local deleteButtonIcon = deleteButton:CreateTexture(nil, "ARTWORK")
 				deleteButtonIcon:SetTexture("Interface\\Buttons\\UI-StopButton")
 				deleteButtonIcon:SetDesaturated(true)
-				deleteButtonIcon:SetVertexColor(E:GetRGB(C.db.global.colors.red))
+				deleteButtonIcon:SetVertexColor(C.db.global.colors.red:GetRGB())
 				deleteButtonIcon:SetAlpha(0.5)
 				deleteButtonIcon:SetPoint("TOPLEFT", 1, -1)
 				deleteButtonIcon:SetPoint("BOTTOMRIGHT", -1, 1)
@@ -584,7 +584,7 @@ do
 
 				local bg = button:CreateTexture(nil, "BACKGROUND", nil, -8)
 				bg:SetAllPoints()
-				bg:SetColorTexture(E:GetRGBA(C.db.global.colors.dark_gray, 0.65))
+				bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGBA(0.65))
 				button.BG = bg
 
 				if i == 1 then

@@ -722,7 +722,7 @@ function mover_proto:ResetPosition()
 	self:AddRelationLines()
 
 	if not self.isSimple then
-		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+		self.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 	end
 
 	self:PostSaveUpdatePosition()
@@ -750,9 +750,9 @@ function mover_proto:UpdatePosition(xOffset, yOffset)
 		self:Show()
 	else
 		if self:WasMoved() then
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+			self.Bg:SetColorTexture(C.db.global.colors.orange:GetRGBA(0.6))
 		else
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+			self.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 		end
 	end
 
@@ -1072,7 +1072,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		mover:SetShown(areToggledOn)
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
-		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+		bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 		bg:SetAllPoints()
 		mover.Bg = bg
 
@@ -1103,7 +1103,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 		local border = E:CreateBorder(mover)
 		border:SetTexture({1, 1, 1, 1})
-		border:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
+		border:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
 		border:SetSize(1)
 		border:SetOffset(0)
 		mover.Border = border
@@ -1215,9 +1215,9 @@ function E.Movers:UpdateAll()
 			mover:Show()
 		else
 			if mover:WasMoved() then
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+				mover.Bg:SetColorTexture(C.db.global.colors.orange:GetRGBA(0.6))
 			else
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+				mover.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 			end
 		end
 	end

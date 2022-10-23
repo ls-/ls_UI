@@ -12,8 +12,7 @@ local isInit = false
 local barValueTemplate
 
 local MAX_SEGMENTS = 4
-local NAME_TEMPLATE = "|c%s%s|r"
-local REPUTATION_TEMPLATE = "%s: |c%s%s|r"
+local REPUTATION_TEMPLATE = "%s: %s"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 local DEFAULT_TEXTURE = "Interface\\BUTTONS\\WHITE8X8"
@@ -204,7 +203,7 @@ function bar_proto:UpdateSegments()
 			self[1]:SetValue(1)
 			self[1]:UpdateText(1, 1)
 			self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
-			self[1].Texture:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
+			self[1].Texture:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
 			self[1]:Show()
 		end
 
@@ -270,10 +269,10 @@ end
 
 function segment_proto:Update(cur, max, bonus, color, texture)
 	self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Texture:SetVertexColor(E:GetRGBA(color, 1))
+	self.Texture:SetVertexColor(color:GetRGBA(1))
 
 	self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
+	self.Extension.Texture:SetVertexColor(color:GetRGBA(0.4))
 
 	if self._value ~= cur or self._max ~= max then
 		self:SetMinMaxValues(0, max)
@@ -385,7 +384,7 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 
 	self.tooltipInfo = {
 		header = L["REPUTATION"],
-		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing].hex, repTextLevel),
+		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
 	}
 
 	if isParagon and hasRewardPending then
@@ -406,7 +405,7 @@ function segment_proto:UpdatePetXP(i, level)
 	local cur, max = C_PetBattles.GetXP(1, i)
 
 	self.tooltipInfo = {
-		header = NAME_TEMPLATE:format(C.db.global.colors.quality[rarity - 1].hex, name),
+		header = C.db.global.colors.quality[rarity - 1]:WrapTextInColorCode(name),
 		line1 = L["LEVEL_TOOLTIP"]:format(level),
 	}
 

@@ -40,7 +40,7 @@ local function updateAura(button, index)
 		end
 
 		if filter == "HARMFUL" then
-			button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
+			button.Border:SetVertexColor((C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None):GetRGB())
 
 			if debuffType and button.showDebuffType then
 				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons.Debuff))
@@ -80,7 +80,7 @@ local function updateTempEnchant(button, index)
 			button.Cooldown:Hide()
 		end
 
-		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.buff.Enchant))
+		button.Border:SetVertexColor(C.db.global.colors.buff.Enchant:GetRGB())
 	end
 end
 

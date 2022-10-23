@@ -251,7 +251,7 @@ function button_proto:OnEnter()
 	GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
 
 	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
-		local r, g, b = E:GetRGB(C.db.global.colors.red)
+		local r, g, b = C.db.global.colors.red:GetRGB()
 
 		if self.factionGroup == "Neutral" then
 			GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)

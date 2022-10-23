@@ -15,19 +15,19 @@ local element_proto = {
 
 function element_proto:PostCastStart()
 	if self.notInterruptible then
-		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.notinterruptible))
+		self:SetStatusBarColor(C.db.global.colors.castbar.notinterruptible:GetRGB())
 
 		if self.Icon then
 			self.Icon:SetDesaturated(true)
 		end
 	else
 		if self.casting then
-			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.casting))
+			self:SetStatusBarColor(C.db.global.colors.castbar.casting:GetRGB())
 		elseif self.channeling then
-			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.channeling))
+			self:SetStatusBarColor(C.db.global.colors.castbar.channeling:GetRGB())
 		elseif self.empowering then
 			self.Text:SetText("")
-			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.empowering))
+			self:SetStatusBarColor(C.db.global.colors.castbar.empowering:GetRGB())
 		end
 
 		if self.Icon then
@@ -39,7 +39,7 @@ end
 function element_proto:PostCastFail()
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
-	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.failed))
+	self:SetStatusBarColor(C.db.global.colors.castbar.failed:GetRGB())
 
 	self.Time:SetText("")
 end
@@ -219,7 +219,7 @@ function UF:CreateCastbar(frame)
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
-	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
+	bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGB())
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
@@ -257,7 +257,7 @@ function UF:CreateCastbar(frame)
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	safeZone:SetVertexColor(E:GetRGBA(C.db.global.colors.red, 0.6))
+	safeZone:SetVertexColor(C.db.global.colors.red:GetRGBA(0.6))
 	element.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, element)

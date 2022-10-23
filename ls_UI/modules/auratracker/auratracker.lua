@@ -100,13 +100,13 @@ function bar_proto:Update()
 				end
 
 				if button.isHarmful then
-					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[aura.dispelName] or C.db.global.colors.debuff.None))
+					button.Border:SetVertexColor((C.db.global.colors.debuff[aura.dispelName] or C.db.global.colors.debuff.None):GetRGB())
 
 					if self._config.type.enabled then
 						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[aura.dispelName] or M.textures.aura_icons.Debuff))
 					end
 				else
-					button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.buff[aura.dispelName] or C.db.global.colors.white))
+					button.Border:SetVertexColor((C.db.global.colors.buff[aura.dispelName] or C.db.global.colors.white):GetRGB())
 
 					if self._config.type.enabled then
 						button.AuraType:SetTexCoord(unpack(M.textures.aura_icons.Buff))

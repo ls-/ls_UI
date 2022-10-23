@@ -7,7 +7,6 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local m_floor = _G.math.floor
 local next = _G.next
-local s_format = _G.string.format
 local s_upper = _G.string.upper
 local unpack = _G.unpack
 
@@ -19,16 +18,13 @@ local DND = "[" .. _G.DND .. "] "
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE
 local ID = "|cffffd100" .. _G.ID .. ":|r %d"
 local ITEM_LEVEL = "|cffffd100" .. _G.ITEM_LEVEL_ABBR .. ":|r |cffffffff%s|r"
-local NAME_REALM_FORMAT = "%s|c%s-%s|r"
-local NPC_LEVEL_FORMAT = "|c%s%s%s|r %s"
-local PET_LEVEL_FORMAT = "|c%s%s|r %s"
-local PLAYER_LEVEL_FORMAT = "|c%s%s|r %s |c%s%s|r"
-local PLAYER_TARGET_FORMAT = "|c%s%s|r (|c%s" .. _G.PLAYER .. "|r)"
-local NPC_TARGET_FORMAT = "|c%s%s|r"
+local NAME_FORMAT = "%s%s"
+local NPC_LEVEL_FORMAT = "%s %s"
+local PLAYER_LEVEL_FORMAT = "%s %s %s"
+local PLAYER_TARGET_FORMAT = "%s (|c%s" .. _G.PLAYER .. "|r)"
 local SPECIALIZATION = "|cffffd100" .. _G.SPECIALIZATION .. ":|r |cffffffff%s|r"
 local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
 local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
-local GUILD_NAME_FORMAT = "%s|c%s-%s|r"
 
 local PHASE_ICONS = {
 	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
@@ -89,7 +85,6 @@ local function addInspectInfo(tooltip, unit, numTries)
 
 			INSPECT_READY(unitGUID)
 		end
-
 	end
 end
 
@@ -106,7 +101,7 @@ local function tooltipBarHook(self)
 	if self:IsForbidden() or self:GetParent():IsForbidden() then return end
 
 	self.Text:Hide()
-	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.health))
+	self:SetStatusBarColor(C.db.global.colors.health:GetRGB())
 
 	local _, unit = self:GetParent():GetUnit()
 	if not unit then
@@ -209,7 +204,7 @@ function MODULE:Init()
 				end
 
 				if caster then
-					tooltip:AddDoubleLine(ID:format(id), UnitName(caster), 1, 1, 1, E:GetRGB(E:GetUnitColor(caster, true, true)))
+					tooltip:AddDoubleLine(ID:format(id), UnitName(caster), 1, 1, 1, E:GetUnitColor(caster, true, true):GetRGB())
 				else
 					tooltip:AddLine(ID:format(id), 1, 1, 1)
 				end
@@ -269,25 +264,23 @@ function MODULE:Init()
 			if not unit then return end
 
 			local scaledLevel = UnitEffectiveLevel(unit)
-			local difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
+			local difficultyColor = E:GetCreatureDifficultyColor(unit)
 			local isShiftKeyDown = IsShiftKeyDown()
 
 			if UnitIsPlayer(unit) then
-				local afk = "|c" .. C.db.global.colors.gray.hex .. (UnitIsAFK(unit) and AFK or UnitIsDND(unit) and DND or "") .. "|r"
-
 				local name, realm = UnitName(unit)
 				name = C.db.profile.tooltips.title and UnitPVPName(unit) or name
 
 				if realm and realm ~= "" then
 					if isShiftKeyDown then
-						name = NAME_REALM_FORMAT:format(name, C.db.global.colors.gray.hex, realm)
+						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode("-" .. realm))
 					elseif UnitRealmRelationship(unit) ~= LE_REALM_RELATION_VIRTUAL then
-						name = name .. L["FOREIGN_SERVER_LABEL"]
+						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode(L["FOREIGN_SERVER_LABEL"]))
 					end
 				end
 
-				GameTooltipTextLeft1:SetText(afk .. name)
-				GameTooltipTextLeft1:SetTextColor(E:GetRGB(E:GetUnitColor_(unit, UnitIsFriend("player", unit), true)))
+				GameTooltipTextLeft1:SetText(C.db.global.colors.gray:WrapTextInColorCode((UnitIsAFK(unit) and AFK or UnitIsDND(unit) and DND or "")) .. name)
+				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, UnitIsFriend("player", unit), true):GetRGB())
 
 				local status = ""
 
@@ -328,11 +321,11 @@ function MODULE:Init()
 
 					if isShiftKeyDown then
 						if guildRealm then
-							guildName = GUILD_NAME_FORMAT:format(guildName, C.db.global.colors.gray.hex, guildRealm)
+							guildName = NAME_FORMAT:format(guildName, C.db.global.colors.gray:WrapTextInColorCode("-" .. guildRealm))
 						end
 
 						if guildRankName then
-							guildName = GUILD_TEMPLATE:format("|c" .. C.db.global.colors.gray.hex .. guildRankName, "|r" .. guildName)
+							guildName = GUILD_TEMPLATE:format("|c" .. C.db.global.colors.gray:GetHex() .. guildRankName, "|r" .. guildName)
 						end
 					end
 
@@ -342,15 +335,12 @@ function MODULE:Init()
 				local levelLine = findLine(tooltip, lineOffset, scaledLevel > 0 and scaledLevel or "%?%?")
 				if levelLine then
 					local level = UnitLevel(unit)
-					local classColor = E:GetUnitClassColor(unit)
 
 					levelLine:SetFormattedText(
 						PLAYER_LEVEL_FORMAT,
-						difficultyColor.hex,
-						scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
+						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??"),
 						UnitRace(unit),
-						classColor.hex,
-						UnitClass(unit)
+						E:GetUnitClassColor(unit):WrapTextInColorCode(UnitClass(unit))
 					)
 
 					if C.db.profile.tooltips.inspect and isShiftKeyDown and level > 10 then
@@ -359,31 +349,28 @@ function MODULE:Init()
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
 				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
-				GameTooltipTextLeft1:SetTextColor(E:GetRGB(E:GetUnitColor_(unit, false, true)))
+				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				scaledLevel = UnitBattlePetLevel(unit)
 
 				local levelLine = findLine(tooltip, 2, scaledLevel > 0 and scaledLevel or "%?%?")
 				if levelLine then
-					local petType = _G["BATTLE_PET_NAME_" .. UnitBattlePetType(unit)]
-
 					local teamLevel = C_PetJournal.GetPetTeamAverageLevel()
 					if teamLevel then
 						difficultyColor = E:GetRelativeDifficultyColor(teamLevel, scaledLevel)
-					else
-						difficultyColor = E:GetCreatureDifficultyColor(scaledLevel)
 					end
 
+					local petType = _G["BATTLE_PET_NAME_" .. UnitBattlePetType(unit)]
+
 					levelLine:SetFormattedText(
-						PET_LEVEL_FORMAT,
-						difficultyColor.hex,
-						scaledLevel > 0 and scaledLevel or "??",
+						NPC_LEVEL_FORMAT,
+						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and scaledLevel or "??"),
 						(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
 					)
 				end
 			else
 				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
-				GameTooltipTextLeft1:SetTextColor(E:GetRGB(E:GetUnitColor_(unit, false, true)))
+				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				local status = ""
 
@@ -406,13 +393,9 @@ function MODULE:Init()
 
 				local levelLine = findLine(tooltip, 2, scaledLevel > 0 and scaledLevel or "%?%?")
 				if levelLine then
-					local level = UnitLevel(unit)
-
 					levelLine:SetFormattedText(
 						NPC_LEVEL_FORMAT,
-						difficultyColor.hex,
-						scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??",
-						E:GetUnitClassification(unit),
+						difficultyColor:WrapTextInColorCode((scaledLevel > 0 and scaledLevel or "??") .. E:GetUnitClassification(unit)),
 						UnitCreatureType(unit) or ""
 					)
 				end
@@ -424,13 +407,9 @@ function MODULE:Init()
 					local name = UnitName(unitTarget)
 
 					if UnitIsPlayer(unitTarget) then
-						name = PLAYER_TARGET_FORMAT:format(
-							E:GetUnitClassColor(unitTarget).hex,
-							name,
-							E:GetUnitReactionColor(unitTarget).hex
-						)
+						name = PLAYER_TARGET_FORMAT:format(E:GetUnitClassColor(unitTarget):WrapTextInColorCode(name), E:GetUnitReactionColor(unitTarget):GetHex())
 					else
-						name = NPC_TARGET_FORMAT:format(E:GetUnitColor_(unitTarget, UnitIsFriend("player", unit), true).hex, name)
+						name = E:GetUnitColor_(unitTarget, UnitIsFriend("player", unit), true):WrapTextInColorCode(name)
 					end
 
 					tooltip:AddLine(TARGET:format(name), 1, 1, 1)
@@ -459,9 +438,9 @@ function MODULE:Init()
 
 					-- theoretically, there should be only 1 bar visible
 					if value < max then
-						child:SetStatusBarColor(E:GetRGB(C.db.global.colors.yellow))
+						child:SetStatusBarColor(C.db.global.colors.yellow:GetRGB())
 					else
-						child:SetStatusBarColor(E:GetRGB(C.db.global.colors.green))
+						child:SetStatusBarColor(C.db.global.colors.green:GetRGB())
 					end
 				end
 			end

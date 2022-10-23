@@ -229,14 +229,14 @@ do
 
 		if self._active then
 			for i = 1, max do
-				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[powerType]))
+				self[i]:SetStatusBarColor(C.db.global.colors.power[powerType]:GetRGB())
 				self[i].Highlight:SetColorTexture(0, 0, 0, 0)
 			end
 
 			-- charged points
 			for _, i in next, {...} do
-				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power.COMBO_POINTS_CHARGED))
-				self[i].Highlight:SetColorTexture(E:GetRGBA(C.db.global.colors.power.COMBO_POINTS_CHARGED, 0.4))
+				self[i]:SetStatusBarColor(C.db.global.colors.power.COMBO_POINTS_CHARGED:GetRGB())
+				self[i].Highlight:SetColorTexture(C.db.global.colors.power.COMBO_POINTS_CHARGED:GetRGBA(0.4))
 			end
 		end
 	end
@@ -249,7 +249,7 @@ do
 	function class_power_proto:UpdateColors()
 		if self._powerID then
 			for i = 1, #self do
-				self[i]:SetStatusBarColor(E:GetRGB(C.db.global.colors.power[self._powerID]))
+				self[i]:SetStatusBarColor(C.db.global.colors.power[self._powerID]:GetRGB())
 			end
 		end
 	end

@@ -50,12 +50,10 @@ end
 
 local FILTERS = {
 	friendly = {
-		-- name = L["FRIENDLY_UNITS"],
-		name = function() return "|c" .. C.db.global.colors.green.hex .. L["FRIENDLY_UNITS"] .. "|r" end,
+		name = function() return C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]) end,
 	},
 	enemy = {
-		-- name = L["ENEMY_UNITS"],
-		name = function() return "|c" .. C.db.global.colors.red.hex .. L["ENEMY_UNITS"] .. "|r" end,
+		name = function() return C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]) end,
 	},
 	buff = {
 		boss = {

@@ -66,21 +66,16 @@ function frame_proto:For(element, method, ...)
 end
 
 function UF:UpdateHealthColors()
-	local color = oUF.colors.health
-	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.health)
-
-	color = oUF.colors.tapped
-	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.tapped)
-
-	color = oUF.colors.disconnected
-	color[1], color[2], color[3] = E:GetRGB(C.db.global.colors.disconnected)
+	oUF.colors.health:SetRGB(C.db.global.colors.health:GetRGB())
+	oUF.colors.tapped:SetRGB(C.db.global.colors.tapped:GetRGB())
+	oUF.colors.disconnected:SetRGB(C.db.global.colors.disconnected:GetRGB())
 end
 
 function UF:UpdateReactionColors()
 	local color = oUF.colors.reaction
 	for k, v in next, C.db.global.colors.reaction do
 		if color[k] then
-			color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+			color[k]:SetRGB(v:GetRGB())
 		end
 	end
 end
@@ -89,23 +84,21 @@ function UF:UpdatePowerColors()
 	local color = oUF.colors.power
 	for k, myColor in next, C.db.global.colors.power do
 		if type(k) == "string" then
-			if not color[k] then
-				color[k] = {}
-			end
-
-			if type(myColor[1]) == "table" then
-				for i, myColor_ in next, myColor do
-					color[k][i][1], color[k][i][2], color[k][i][3] = E:GetRGB(myColor_)
+			if color[k] then
+				if type(myColor[1]) == "table" then
+					for i, myColor_ in next, myColor do
+						color[k][i]:SetRGB(myColor_:GetRGB())
+					end
+				else
+					color[k]:SetRGB(myColor:GetRGB())
 				end
-			else
-				color[k][1], color[k][2], color[k][3] = E:GetRGB(myColor)
 			end
 		end
 	end
 
 	color = oUF.colors.runes
 	for k, v in next, C.db.global.colors.rune do
-		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+		color[k]:SetRGB(v:GetRGB())
 	end
 end
 

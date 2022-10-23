@@ -164,11 +164,10 @@ end
 -- COLOURS --
 -------------
 
-local hex
 do
 	local rgb_hex_cache = {}
 
-	function hex(r, g, b)
+	local function hex(r, g, b)
 		local key = r .. "-" .. g .. "-" .. b
 		if rgb_hex_cache[key] then
 			return rgb_hex_cache[key]
@@ -214,40 +213,44 @@ do
 		))
 	end
 
-	function E:GetRGB(color)
-		return color.r, color.g, color.b
+	function E:WrapTextInColorCode(color, text)
+		return "|c" .. color.hex .. text .. "|r"
 	end
 
-	function E:GetRGBA(color, a)
-		return color.r, color.g, color.b, a or color.a
+	local color_proto = {}
+
+	function color_proto:GetHex()
+		return self.hex
 	end
 
-	function E:SetRGBA(color, r, g, b, a)
+	-- override ColorMixin:GetRGBA
+	function color_proto:GetRGBA(a)
+		return self.r, self.g, self.b, a or self.a
+	end
+
+	-- override ColorMixin:SetRGBA
+	function color_proto:SetRGBA(r, g, b, a)
 		if r > 1 or g > 1 or b > 1 then
 			r, g, b = r / 255, g / 255, b / 255
 		end
 
-		color.r = r
-		color.g = g
-		color.b = b
-		color.a = a
-		color.hex = hex(r, g, b)
+		self.r = r
+		self.g = g
+		self.b = b
+		self.a = a
+		self.hex = hex(r, g, b)
+	end
+
+	-- override ColorMixin:WrapTextInColorCode
+	function color_proto:WrapTextInColorCode(text)
+		return "|c" .. self.hex .. text .. "|r"
+	end
+
+	function E:CreateColor(r, g, b, a)
+		local color = Mixin({}, ColorMixin, color_proto)
+		color:SetRGBA(r, g, b, a)
 
 		return color
-	end
-
-	function E:SetRGB(color, r, g, b)
-		return self:SetRGBA(color, r, g, b, 1)
-	end
-
-	function E:WrapText(color, text)
-		return "|c" .. color.hex .. text .. "|r"
-	end
-
-	function E:AreColorsEqual(color1, color2)
-		if not color1 or not color2 then return end
-
-		return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b
 	end
 
 	do
@@ -446,6 +449,26 @@ do
 		return L["UNKNOWN"]
 	end
 
+	local function getDifficultyColor(difficulty)
+		if difficulty == Enum.RelativeContentDifficulty.Trivial then
+			return C.db.global.colors.difficulty.trivial
+		elseif difficulty == Enum.RelativeContentDifficulty.Easy then
+			return C.db.global.colors.difficulty.standard
+		elseif difficulty == Enum.RelativeContentDifficulty.Fair then
+			return C.db.global.colors.difficulty.difficult
+		elseif difficulty == Enum.RelativeContentDifficulty.Difficult then
+			return C.db.global.colors.difficulty.very_difficult
+		elseif difficulty == Enum.RelativeContentDifficulty.Impossible then
+			return C.db.global.colors.difficulty.impossible
+		else
+			return C.db.global.colors.difficulty.difficult
+		end
+	end
+
+	function E:GetCreatureDifficultyColor(unit)
+		return getDifficultyColor(C_PlayerInfo.GetContentDifficultyCreatureForPlayer(unit))
+	end
+
 	-- GetRelativeDifficultyColor function in UIParent.lua
 	function E:GetRelativeDifficultyColor(unitLevel, challengeLevel)
 		local diff = challengeLevel - unitLevel
@@ -460,10 +483,6 @@ do
 		else
 			return C.db.global.colors.difficulty.trivial
 		end
-	end
-
-	function E:GetCreatureDifficultyColor(level)
-		return self:GetRelativeDifficultyColor(UnitEffectiveLevel("player"), level > 0 and level or 199)
 	end
 
 	do
