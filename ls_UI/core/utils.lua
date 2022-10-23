@@ -816,7 +816,7 @@ do
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
-		if not data then return end
+		if not data then return "", "", "", "" end
 
 		local enchant, text = ""
 		local gems, idx = {"", "", ""}, 1
