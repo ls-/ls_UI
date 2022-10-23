@@ -706,6 +706,11 @@ function E:ForceHide(object, skipEvents)
 	object:Hide(true)
 	object:SetParent(self.HIDDEN_PARENT)
 
+	if object.EnableMouse then
+		object:EnableMouse(false)
+
+	end
+
 	if object.UnregisterAllEvents then
 		if not skipEvents then
 			object:UnregisterAllEvents()
