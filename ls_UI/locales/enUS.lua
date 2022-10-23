@@ -96,6 +96,7 @@ L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["UNKNOWN"] = _G.UNKNOWN
 L["WORLD_BOSS"] = _G.RAID_INFO_WORLD_BOSS
 L["ZONE"] = _G.ZONE
+L["ENRAGE"] = _G.ENCOUNTER_JOURNAL_SECTION_FLAG11
 
 -- Require translation
 L["ACTION_BARS"] = "Action Bars"
@@ -209,7 +210,6 @@ L["DATA_FORMAT_TABLE"] = "Table"
 L["DAYS"] = "Days"
 L["DEAD"] = "Dead"
 L["DEBUFF"] = "Debuff"
-L["DEBUFF_TYPE"] = "Debuff Type"
 L["DEBUFFS"] = "Debuffs"
 L["DESATURATION"] = "Desaturation"
 L["DESCENDING"] = "Descending"
@@ -552,3 +552,6 @@ L["ENDCAPS"] = "Artwork"
 L["ENDCAPS_LEFT"] = "Left"
 L["ENDCAPS_RIGHT"] = "Right"
 L["ENDCAPS_BOTH"] = "Both"
+
+L["COMBO_POINTS_CHARGED"] = "Charged Combo Points"
+L["SPELL_EMPOWERED"] = "Empowered"

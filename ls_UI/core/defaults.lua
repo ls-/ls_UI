@@ -72,6 +72,7 @@ D.global = {
 		},
 		castbar = {
 			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			empowering = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 			failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
 			notinterruptible = rgb(136, 137, 135), -- #888987 (N5)
@@ -92,6 +93,7 @@ D.global = {
 			FOCUS = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
 			ENERGY = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			COMBO_POINTS = rgb(215, 77, 18), -- #D74D12 (10R 5/14)
+			COMBO_POINTS_CHARGED = rgb(62, 169, 126), -- #3EA97E (Comp to #D74D12)
 			RUNES = rgb(99, 185, 228), -- #63B9E4 (10B 7/8)
 			RUNIC_POWER = rgb(60, 190, 219), -- #3CBEDB (5B 7/8)
 			SOUL_SHARDS = rgb(149, 99, 202), -- #9563CA (2.5P 5/14)
@@ -217,11 +219,11 @@ D.global = {
 		},
 		rune = {
 			-- blood
-			[1] = rgb(247, 65, 57), -- #F74139 (Blizzard Colour)
+			[1] = rgb(255, 63, 58), -- #FF3F3A
 			-- frost
-			[2] = rgb(148, 203, 247), -- #94CBF7 (Blizzard Colour)
+			[2] = rgb(36, 149, 154), -- #24959A (Split comp to #FF3F3A at 30°)
 			-- unholy
-			[3] = rgb(173, 235, 66), -- #ADEB42 (Blizzard Colour)
+			[3] = rgb(174, 237, 54), -- #B0EF37 (Split comp to #FF3F3A at 30°)
 		},
 	},
 	fonts = {
@@ -451,7 +453,7 @@ D.profile = {
 			},
 		},
 		inlay = {
-			alpha = 0.8,
+			alpha = 0.4,
 		},
 		change = {
 			smooth = true,
@@ -473,26 +475,25 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.23,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = false,
 				},
 				text = {
 					tag = "[ls:health:cur]",
-					size = 12,
+					size = 13,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
 						rP = "LEFT",
-						x = 2,
+						x = 4,
 						y = 0,
 					},
 				},
@@ -502,17 +503,16 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-max]",
-					size = 12,
+					tag = "",
+					size = 11,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Power",
 						rP = "LEFT",
-						x = 2,
+						x = 4,
 						y = 0,
 					},
 				},
@@ -522,7 +522,6 @@ D.profile = {
 			},
 			class_power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				prediction = {
 					enabled = true,
 				},
@@ -541,7 +540,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 11,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -558,7 +557,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "",
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
@@ -627,9 +626,9 @@ D.profile = {
 					},
 				},
 				type = {
+					enabled = true,
 					size = 12,
 					position = "TOPLEFT",
-					debuff_type = false,
 				},
 				filter = {
 					custom = {
@@ -689,26 +688,25 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.33,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:cur]",
-					size = 12,
+					size = 13,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
 						rP = "LEFT",
-						x = 2,
+						x = 4,
 						y = 0,
 					},
 				},
@@ -718,17 +716,16 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:color:power][ls:power:cur]|r",
-					size = 12,
+					tag = "",
+					size = 11,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "LEFT",
 						anchor = "Power",
 						rP = "LEFT",
-						x = 2,
+						x = 4,
 						y = 0,
 					},
 				},
@@ -743,7 +740,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 11,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -760,7 +757,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "",
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
@@ -769,7 +766,7 @@ D.profile = {
 					p = "CENTER",
 					anchor = "Health",
 					rP = "CENTER",
-					x = 2,
+					x = 0,
 					y = 0,
 				},
 				point2 = {
@@ -826,9 +823,9 @@ D.profile = {
 					},
 				},
 				type = {
+					enabled = true,
 					size = 12,
 					position = "TOPLEFT",
-					debuff_type = false,
 				},
 				filter = {
 					custom = {
@@ -888,26 +885,25 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.23,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
-					size = 12,
+					size = 13,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
 						rP = "RIGHT",
-						x = -2,
+						x = -4,
 						y = 0,
 					},
 				},
@@ -917,17 +913,16 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-max]",
-					size = 12,
+					tag = "",
+					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
 						rP = "RIGHT",
-						x = -2,
+						x = -4,
 						y = 0,
 					},
 				},
@@ -942,7 +937,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 11,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -959,7 +954,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
@@ -968,7 +963,7 @@ D.profile = {
 					p = "LEFT",
 					anchor = "Health",
 					rP = "LEFT",
-					x = 2,
+					x = 4,
 					y = 0,
 				},
 				point2 = {
@@ -1029,9 +1024,9 @@ D.profile = {
 					},
 				},
 				type = {
+					enabled = true,
 					size = 12,
 					position = "TOPLEFT",
-					debuff_type = false,
 				},
 				filter = {
 					custom = {
@@ -1119,19 +1114,18 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.33,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "",
-					size = 12,
+					size = 13,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1148,10 +1142,9 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
-				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
-					size = 12,
+					size = 11,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1169,7 +1162,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
@@ -1228,26 +1221,25 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.23,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:cur-perc]",
-					size = 12,
-					h_alignment = "LEFT",
+					size = 13,
+					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
-						p = "LEFT",
+						p = "RIGHT",
 						anchor = "Health",
-						rP = "LEFT",
-						x = 2,
+						rP = "RIGHT",
+						x = -4,
 						y = 0,
 					},
 				},
@@ -1257,17 +1249,16 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-max]",
-					size = 12,
-					h_alignment = "LEFT",
+					tag = "",
+					size = 11,
+					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
-						p = "LEFT",
+						p = "RIGHT",
 						anchor = "Power",
-						rP = "LEFT",
-						x = 2,
+						rP = "RIGHT",
+						x = -4,
 						y = 0,
 					},
 				},
@@ -1282,7 +1273,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 11,
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -1299,23 +1290,23 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
-				h_alignment = "RIGHT",
+				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
 				word_wrap = false,
 				point1 = {
-					p = "RIGHT",
+					p = "LEFT",
 					anchor = "Health",
-					rP = "RIGHT",
-					x = -2,
+					rP = "LEFT",
+					x = 4,
 					y = 0,
 				},
 				point2 = {
-					p = "LEFT",
+					p = "RIGHT",
 					anchor = "Health.Text",
-					rP = "RIGHT",
-					x = 2,
+					rP = "LEFT",
+					x = -2,
 					y = 0,
 				},
 			},
@@ -1369,9 +1360,9 @@ D.profile = {
 					},
 				},
 				type = {
+					enabled = true,
 					size = 12,
 					position = "TOPLEFT",
-					debuff_type = false,
 				},
 				filter = {
 					custom = {
@@ -1459,19 +1450,18 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.33,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "",
-					size = 12,
+					size = 13,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1488,10 +1478,9 @@ D.profile = {
 			},
 			power = {
 				enabled = false,
-				orientation = "HORIZONTAL",
 				text = {
 					tag = "",
-					size = 12,
+					size = 11,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1509,7 +1498,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "[ls:color:difficulty][ls:level:effective][ls:npc:type]|r [ls:name][ls:server]",
 				h_alignment = "CENTER",
 				v_alignment = "MIDDLE",
@@ -1571,19 +1560,18 @@ D.profile = {
 				max_alpha = 1,
 			},
 			insets = {
-				t_size = 0.23,
-				b_size = 0.23,
+				t_size = 0.25,
+				b_size = 0.25,
 			},
 			health = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				color = {
 					class = false,
 					reaction = true,
 				},
 				text = {
 					tag = "[ls:health:perc]",
-					size = 12,
+					size = 13,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1600,10 +1588,9 @@ D.profile = {
 			},
 			power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:power:cur-perc]",
-					size = 12,
+					tag = "",
+					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1617,10 +1604,9 @@ D.profile = {
 			},
 			alt_power = {
 				enabled = true,
-				orientation = "HORIZONTAL",
 				text = {
-					tag = "[ls:altpower:cur-perc]",
-					size = 12,
+					tag = "",
+					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
 					point1 = {
@@ -1642,7 +1628,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 11,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -1659,7 +1645,7 @@ D.profile = {
 				position = "Left", -- "Right"
 			},
 			name = {
-				size = 12,
+				size = 13,
 				tag = "[ls:name]",
 				h_alignment = "LEFT",
 				v_alignment = "MIDDLE",
@@ -1726,9 +1712,9 @@ D.profile = {
 					},
 				},
 				type = {
+					enabled = true,
 					size = 12,
 					position = "TOPLEFT",
-					debuff_type = false,
 				},
 				filter = {
 					custom = {
@@ -2423,7 +2409,7 @@ D.profile = {
 			width = 594,
 			height = 12,
 			text = {
-				size = 10,
+				size = 11,
 				format = "NUM", -- "NUM_PERC"
 				visibility = 2, -- 1 - always, 2 - mouseover
 			},
@@ -2539,7 +2525,7 @@ D.profile = {
 		health = {
 			height = 12,
 			text = {
-				size = 12,
+				size = 11,
 			},
 		},
 	},

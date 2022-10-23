@@ -79,7 +79,9 @@ end
 function UF:UpdateReactionColors()
 	local color = oUF.colors.reaction
 	for k, v in next, C.db.global.colors.reaction do
-		color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+		if color[k] then
+			color[k][1], color[k][2], color[k][3] = E:GetRGB(v)
+		end
 	end
 end
 

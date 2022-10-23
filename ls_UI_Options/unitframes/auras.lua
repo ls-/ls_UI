@@ -464,22 +464,23 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 
 						UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 						UNITFRAMES:For(unit, "For", "Auras", "UpdateAuraTypeIcon")
+						UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 					end
 				end,
 				args = {
-					debuff_type = {
+					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["DEBUFF_TYPE"],
+						name = L["SHOW"],
 					},
 					size = {
-						order = reset(2),
+						order = inc(2),
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 32, step = 2,
 					},
 					position = {
-						order = reset(2),
+						order = inc(2),
 						type = "select",
 						name = L["POINT"],
 						values = CONFIG.POINTS,

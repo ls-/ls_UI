@@ -104,23 +104,6 @@ do
 end
 
 ------------
--- MIXINS --
-------------
-
-do
-	function P:Mixin(obj, ...)
-		for i = 1, select("#", ...) do
-			local mixin = select(i, ...)
-			for k, v in next, mixin do
-				obj[k] = v
-			end
-		end
-
-		return obj
-	end
-end
-
-------------
 -- ERRORS --
 ------------
 

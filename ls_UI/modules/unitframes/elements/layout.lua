@@ -26,9 +26,16 @@ function frame_proto:UpdateLayout()
 	insets:UpdateConfig()
 
 	insets.Left:UpdateSize(insets._config.l_size)
+	insets.Left:Refresh()
+
 	insets.Right:UpdateSize(insets._config.r_size)
+	insets.Right:Refresh()
+
 	insets.Top:UpdateSize(insets._config.t_size)
+	insets.Top:Refresh()
+
 	insets.Bottom:UpdateSize(insets._config.b_size)
+	insets.Bottom:Refresh()
 end
 
 function frame_proto:UpdateInlay()

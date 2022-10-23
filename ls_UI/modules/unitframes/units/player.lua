@@ -35,28 +35,14 @@ end
 function UF:CreatePlayerFrame(frame)
 	Mixin(self:CreateLargeFrame(frame), player_proto)
 
-	local addPower = self:CreateAdditionalPower(frame)
-	addPower:SetFrameLevel(frame:GetFrameLevel() + 1)
-	frame.AdditionalPower = addPower
-	frame.Insets.Top:Capture(addPower, 0, 0, 0, 2)
+	frame.AdditionalPower = self:CreateAdditionalPower(frame)
+	frame.PowerPrediction = self:CreatePowerPrediction(frame, frame.Power, frame.AdditionalPower)
+	frame.ClassPower = self:CreateClassPower(frame)
 
-	frame.PowerPrediction = self:CreatePowerPrediction(frame, frame.Power, addPower)
-
-	local classPower = self:CreateClassPower(frame)
-	classPower:SetFrameLevel(frame:GetFrameLevel() + 1)
-	frame.ClassPower = classPower
-	frame.Insets.Top:Capture(classPower, 0, 0, 0, 2)
-
-	if E.PLAYER_CLASS == "MONK" then
-		local stagger = self:CreateStagger(frame)
-		stagger:SetFrameLevel(frame:GetFrameLevel() + 1)
-		frame.Stagger = stagger
-		frame.Insets.Top:Capture(stagger, 0, 0, 0, 2)
-	elseif E.PLAYER_CLASS == "DEATHKNIGHT" then
-		local runes = self:CreateRunes(frame)
-		runes:SetFrameLevel(frame:GetFrameLevel() + 1)
-		frame.Runes = runes
-		frame.Insets.Top:Capture(runes, 0, 0, 0, 2)
+	if E.PLAYER_CLASS == "DEATHKNIGHT" then
+		frame.Runes = self:CreateRunes(frame)
+	elseif E.PLAYER_CLASS == "MONK" then
+		frame.Stagger = self:CreateStagger(frame)
 	end
 
 	local pvpTimer = frame.PvPIndicator.Holder:CreateFontString(nil, "ARTWORK", "Game10Font_o1")

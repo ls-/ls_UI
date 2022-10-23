@@ -25,6 +25,9 @@ function element_proto:PostCastStart()
 			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.casting))
 		elseif self.channeling then
 			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.channeling))
+		elseif self.empowering then
+			self.Text:SetText("")
+			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.empowering))
 		end
 
 		if self.Icon then
@@ -46,7 +49,7 @@ function element_proto:CustomTimeText(duration)
 		return self.Time:SetText("")
 	end
 
-	if self.casting then
+	if self.casting or self.empowering then
 		duration = self.max - duration
 	end
 
@@ -54,14 +57,10 @@ function element_proto:CustomTimeText(duration)
 end
 
 function element_proto:CustomDelayText(duration)
-	if self.casting then
-		duration = self.max - duration
-	end
-
-	if self.casting then
-		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, m_abs(self.delay))
-	elseif self.channeling then
+	if self.channeling then
 		self.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, m_abs(self.delay))
+	else
+		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", self.max - duration, m_abs(self.delay))
 	end
 end
 
@@ -95,10 +94,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(height * 1.5, height)
 		self.RightIcon:SetSize(0.0001, height)
 
-		self.LeftSep:SetSize(12 / 2, height)
-		self.LeftSep:SetTexCoord(1 / 16, 13 / 16, 0 / 8, height / 4)
-
-		self.RightSep:SetSize(0.0001, height)
+		self.LeftSep:SetSize(12 / 2, 0)
+		self.RightSep:SetSize(0.0001, 0.0001)
 
 		self:SetPoint("TOPLEFT", 6 + height * 1.5, 0) -- 4 + 2, offset + sep width
 		self:SetPoint("BOTTOMRIGHT", -4, 0)
@@ -108,9 +105,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(0.0001, height)
 		self.RightIcon:SetSize(height * 1.5, height)
 
-		self.LeftSep:SetSize(0.0001, height)
-		self.RightSep:SetHeight(12 / 2, height)
-		self.RightSep:SetTexCoord(1 / 16, 13 / 16, 0 / 8, height / 4)
+		self.LeftSep:SetSize(0.0001, 0.0001)
+		self.RightSep:SetSize(12 / 2, 0)
 
 		self:SetPoint("TOPLEFT", 4, 0)
 		self:SetPoint("BOTTOMRIGHT", -6 - height * 1.5, 0) -- 4 + 2, offset + sep width
@@ -120,8 +116,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(0.0001, height)
 		self.RightIcon:SetSize(0.0001, height)
 
-		self.LeftSep:SetSize(0.0001, height)
-		self.RightSep:SetSize(0.0001, height)
+		self.LeftSep:SetSize(0.0001, 0.0001)
+		self.RightSep:SetSize(0.0001, 0.0001)
 
 		self:SetPoint("TOPLEFT", 4, 0)
 		self:SetPoint("BOTTOMRIGHT", -4, 0)
@@ -233,6 +229,10 @@ function UF:CreateCastbar(frame)
 	local sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
+	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetSize(12 / 2, 0)
+	sep:SetPoint("TOP", 0, 0)
+	sep:SetPoint("BOTTOM", 0, 0)
 	sep:SetPoint("LEFT", icon, "RIGHT", -2, 0)
 	sep:SetSnapToPixelGrid(false)
 	sep:SetTexelSnappingBias(0)
@@ -246,6 +246,10 @@ function UF:CreateCastbar(frame)
 	sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
+	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetSize(12 / 2, 0)
+	sep:SetPoint("TOP", 0, 0)
+	sep:SetPoint("BOTTOM", 0, 0)
 	sep:SetPoint("RIGHT", icon, "LEFT", 2, 0)
 	sep:SetSnapToPixelGrid(false)
 	sep:SetTexelSnappingBias(0)

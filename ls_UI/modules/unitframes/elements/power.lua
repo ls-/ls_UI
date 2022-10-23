@@ -54,15 +54,13 @@ function element_proto:UpdateTags()
 end
 
 function element_proto:UpdateColors()
-	self:ForceUpdate()
+	if self.__owner:IsElementEnabled("Power") then
+		self:ForceUpdate()
+	end
 end
 
 function element_proto:UpdateTextures()
-	if self._config.orientation == "HORIZONTAL" then
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-	else
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
-	end
+	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 end
 
 function element_proto:UpdateSmoothing()
@@ -104,13 +102,14 @@ do
 	function frame_proto:UpdatePower()
 		local element = self.Power
 		element:UpdateConfig()
-		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateSmoothing()
 		element:UpdateFonts()
 		element:UpdateTextPoints()
 		element:UpdateTags()
+
+		self.Insets.Bottom:Release(element)
 
 		if element._config.enabled and not self:IsElementEnabled("Power") then
 			self:EnableElement("Power")
@@ -119,6 +118,8 @@ do
 		end
 
 		if self:IsElementEnabled("Power") then
+			self.Insets.Bottom:Capture(element, 0, 0, -2, 0)
+
 			element:ForceUpdate()
 		end
 	end
@@ -128,6 +129,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:Hide()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
@@ -153,15 +155,20 @@ do
 	function frame_proto:UpdateAdditionalPower()
 		local element = self.AdditionalPower
 		element:UpdateConfig()
-		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateSmoothing()
+
+		self.Insets.Top:Release(element)
 
 		if element._config.enabled and not self:IsElementEnabled("AdditionalPower") then
 			self:EnableElement("AdditionalPower")
 		elseif not element._config.enabled and self:IsElementEnabled("AdditionalPower") then
 			self:DisableElement("AdditionalPower")
+		end
+
+		if self:IsElementEnabled("AdditionalPower") then
+			self.Insets.Top:Capture(element, 0, 0, 0, 2)
 		end
 
 		element:ForceUpdate()
@@ -172,6 +179,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:Hide()
 
 		return element
@@ -204,7 +212,6 @@ do
 	function frame_proto:UpdateAlternativePower()
 		local element = self.AlternativePower
 		element:UpdateConfig()
-		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateSmoothing()
@@ -253,9 +260,7 @@ do
 
 		local unit = self.__owner.__unit
 		self._config.power.enabled = C.db.profile.units[unit].power.prediction.enabled
-		self._config.power.orientation = C.db.profile.units[unit].power.orientation
 		self._config.class_power.enabled = C.db.profile.units[unit].class_power.prediction.enabled
-		self._config.class_power.orientation = C.db.profile.units[unit].class_power.orientation
 	end
 
 	function power_proto:UpdateColors()
@@ -281,66 +286,30 @@ do
 
 		local config1 = element._config.power
 		if config1.enabled then
-			local mainBar_ = element.mainBar_
-			mainBar_:SetOrientation(config1.orientation)
-			mainBar_:ClearAllPoints()
+			element.mainBar = element.mainBar_
 
-			if config1.orientation == "HORIZONTAL" then
-				local width = self.Power:GetWidth()
-				width = width > 0 and width or self:GetWidth()
+			local width = self.Power:GetWidth()
+			width = width > 0 and width or self:GetWidth()
 
-				mainBar_:SetPoint("TOP")
-				mainBar_:SetPoint("BOTTOM")
-				mainBar_:SetPoint("RIGHT", self.Power:GetStatusBarTexture(), "RIGHT")
-				mainBar_:SetWidth(width)
-			else
-				local height = self.Power:GetHeight()
-				height = height > 0 and height or self:GetHeight()
-
-				mainBar_:SetPoint("LEFT")
-				mainBar_:SetPoint("RIGHT")
-				mainBar_:SetPoint("TOP", self.Power:GetStatusBarTexture(), "TOP")
-				mainBar_:SetHeight(height)
-			end
-
-			element.mainBar = mainBar_
+			element.mainBar_:SetWidth(width)
 		else
 			element.mainBar = nil
 
 			element.mainBar_:Hide()
-			element.mainBar_:ClearAllPoints()
 		end
 
 		local config2 = element._config.class_power
 		if config2.enabled then
-			local altBar_ = element.altBar_
-			altBar_:SetOrientation(config2.orientation)
-			altBar_:ClearAllPoints()
+			element.altBar = element.altBar_
 
-			if config2.orientation == "HORIZONTAL" then
-				local width = self.AdditionalPower:GetWidth()
-				width = width > 0 and width or self:GetWidth()
+			local width = self.AdditionalPower:GetWidth()
+			width = width > 0 and width or self:GetWidth()
 
-				altBar_:SetPoint("TOP")
-				altBar_:SetPoint("BOTTOM")
-				altBar_:SetPoint("RIGHT", self.AdditionalPower:GetStatusBarTexture(), "RIGHT")
-				altBar_:SetWidth(width)
-			else
-				local height = self.AdditionalPower:GetHeight()
-				height = height > 0 and height or self:GetHeight()
-
-				altBar_:SetPoint("LEFT")
-				altBar_:SetPoint("RIGHT")
-				altBar_:SetPoint("TOP", self.AdditionalPower:GetStatusBarTexture(), "TOP")
-				altBar_:SetHeight(height)
-			end
-
-			element.altBar = altBar_
+			element.altBar_:SetWidth(width)
 		else
 			element.altBar = nil
 
 			element.altBar_:Hide()
-			element.altBar_:ClearAllPoints()
 		end
 
 		element:UpdateColors()
@@ -363,11 +332,17 @@ do
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		mainBar:SetReverseFill(true)
+		mainBar:SetPoint("TOP")
+		mainBar:SetPoint("BOTTOM")
+		mainBar:SetPoint("RIGHT", frame.Power:GetStatusBarTexture(), "RIGHT")
 		parent1.CostPrediction = mainBar
 
 		local altBar = CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		altBar:SetReverseFill(true)
+		altBar:SetPoint("TOP")
+		altBar:SetPoint("BOTTOM")
+		altBar:SetPoint("RIGHT", frame.AdditionalPower:GetStatusBarTexture(), "RIGHT")
 		parent2.CostPrediction = altBar
 
 		return Mixin({

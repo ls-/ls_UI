@@ -68,11 +68,7 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		if self._config.orientation == "HORIZONTAL" then
-			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		else
-			self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
-		end
+		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 	end
 
 	function element_proto:UpdateSmoothing()
@@ -88,7 +84,6 @@ do
 	function frame_proto:UpdateHealth()
 		local element = self.Health
 		element:UpdateConfig()
-		element:SetOrientation(element._config.orientation)
 		element:UpdateColors()
 		element:UpdateTextures()
 		element:UpdateFonts()
@@ -103,6 +98,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element._texture = element:GetStatusBarTexture()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
@@ -123,7 +119,6 @@ do
 	function element_proto:UpdateConfig()
 		local unit = self.__owner.__unit
 		self._config = E:CopyTable(C.db.profile.units[unit].health.prediction, self._config)
-		self._config.orientation = C.db.profile.units[unit].health.orientation
 	end
 
 	function element_proto:UpdateColors()
@@ -133,15 +128,9 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		if self._config.orientation == "HORIZONTAL" then
-			self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-			self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-			self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		else
-			self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
-			self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
-			self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.vert))
-		end
+		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 	end
 
 	function element_proto:UpdateSmoothing()
@@ -165,71 +154,14 @@ do
 		element:UpdateConfig()
 
 		local config = element._config
-		local myBar = element.myBar
-		local otherBar = element.otherBar
-		local absorbBar = element.absorbBar
-		local healAbsorbBar = element.healAbsorbBar
 
-		myBar:SetOrientation(config.orientation)
-		otherBar:SetOrientation(config.orientation)
-		absorbBar:SetOrientation(config.orientation)
-		healAbsorbBar:SetOrientation(config.orientation)
+		local width = self.Health:GetWidth()
+		width = width > 0 and width or self:GetWidth()
 
-		if config.orientation == "HORIZONTAL" then
-			local width = self.Health:GetWidth()
-			width = width > 0 and width or self:GetWidth()
-
-			myBar:ClearAllPoints()
-			myBar:SetPoint("TOP")
-			myBar:SetPoint("BOTTOM")
-			myBar:SetPoint("LEFT", self.Health:GetStatusBarTexture(), "RIGHT")
-			myBar:SetWidth(width)
-
-			otherBar:ClearAllPoints()
-			otherBar:SetPoint("TOP")
-			otherBar:SetPoint("BOTTOM")
-			otherBar:SetPoint("LEFT", myBar:GetStatusBarTexture(), "RIGHT")
-			otherBar:SetWidth(width)
-
-			absorbBar:ClearAllPoints()
-			absorbBar:SetPoint("TOP")
-			absorbBar:SetPoint("BOTTOM")
-			absorbBar:SetPoint("LEFT", otherBar:GetStatusBarTexture(), "RIGHT")
-			absorbBar:SetWidth(width)
-
-			healAbsorbBar:ClearAllPoints()
-			healAbsorbBar:SetPoint("TOP")
-			healAbsorbBar:SetPoint("BOTTOM")
-			healAbsorbBar:SetPoint("RIGHT", self.Health:GetStatusBarTexture(), "RIGHT")
-			healAbsorbBar:SetWidth(width)
-		else
-			local height = self.Health:GetHeight()
-			height = height > 0 and height or self:GetHeight()
-
-			myBar:ClearAllPoints()
-			myBar:SetPoint("LEFT")
-			myBar:SetPoint("RIGHT")
-			myBar:SetPoint("BOTTOM", self.Health:GetStatusBarTexture(), "TOP")
-			myBar:SetHeight(height)
-
-			otherBar:ClearAllPoints()
-			otherBar:SetPoint("LEFT")
-			otherBar:SetPoint("RIGHT")
-			otherBar:SetPoint("BOTTOM", myBar:GetStatusBarTexture(), "TOP")
-			otherBar:SetHeight(height)
-
-			absorbBar:ClearAllPoints()
-			absorbBar:SetPoint("LEFT")
-			absorbBar:SetPoint("RIGHT")
-			absorbBar:SetPoint("BOTTOM", otherBar:GetStatusBarTexture(), "TOP")
-			absorbBar:SetHeight(height)
-
-			healAbsorbBar:ClearAllPoints()
-			healAbsorbBar:SetPoint("LEFT")
-			healAbsorbBar:SetPoint("RIGHT")
-			healAbsorbBar:SetPoint("TOP", self.Health:GetStatusBarTexture(), "TOP")
-			healAbsorbBar:SetHeight(height)
-		end
+		element.myBar:SetWidth(width)
+		element.otherBar:SetWidth(width)
+		element.absorbBar:SetWidth(width)
+		element.healAbsorbBar:SetWidth(width)
 
 		element:UpdateColors()
 		element:UpdateTextures()
@@ -253,21 +185,32 @@ do
 
 		local myBar = CreateFrame("StatusBar", nil, parent)
 		myBar:SetFrameLevel(level)
+		myBar:SetPoint("TOP")
+		myBar:SetPoint("BOTTOM")
+		myBar:SetPoint("LEFT", frame.Health:GetStatusBarTexture(), "RIGHT")
+		parent.MyHeal = myBar
+
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		myBar._texture = myBar:GetStatusBarTexture()
-		parent.MyHeal = myBar
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
 		otherBar:SetFrameLevel(level)
+		otherBar:SetPoint("TOP")
+		otherBar:SetPoint("BOTTOM")
+		otherBar:SetPoint("LEFT", myBar:GetStatusBarTexture(), "RIGHT")
+		parent.OtherHeal = otherBar
+
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		otherBar._texture = otherBar:GetStatusBarTexture()
-		parent.OtherHeal = otherBar
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
 		absorbBar:SetFrameLevel(level + 1)
-		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		absorbBar:SetPoint("TOP")
+		absorbBar:SetPoint("BOTTOM")
+		absorbBar:SetPoint("LEFT", otherBar:GetStatusBarTexture(), "RIGHT")
 		parent.DamageAbsorb = absorbBar
 
+		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		absorbBar._texture = absorbBar:GetStatusBarTexture()
 		absorbBar._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
 		absorbBar._texture:SetHorizTile(true)
@@ -276,9 +219,13 @@ do
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetFrameLevel(level + 1)
+		healAbsorbBar:SetPoint("TOP")
+		healAbsorbBar:SetPoint("BOTTOM")
+		healAbsorbBar:SetPoint("RIGHT", frame.Health:GetStatusBarTexture(), "RIGHT")
+		parent.HealAbsorb = healAbsorbBar
+
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
-		parent.HealAbsorb = healAbsorbBar
 
 		return Mixin({
 			myBar = myBar,

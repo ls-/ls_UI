@@ -660,6 +660,16 @@ function P:Modernize(data, name, key)
 					data.units.pet = data.units.rect.pet
 					data.units.rect = nil
 				end
+
+				for _, unit in next, {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"} do
+					if data.units[unit] then
+						if data.units[unit].auras then
+							if data.units[unit].auras.type then
+								data.units[unit].auras.type.debuff_type = nil
+							end
+						end
+					end
+				end
 			end
 
 			if data.auras then

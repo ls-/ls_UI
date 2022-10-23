@@ -50,7 +50,6 @@ function UF:CreateSmallUnitFrame(frame)
 	self:CreateLayout(frame, frame:GetFrameLevel())
 
 	local health = self:CreateHealth(frame, frame.TextParent)
-	health:SetFrameLevel(frame:GetFrameLevel() + 1)
 	health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
 	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
@@ -59,12 +58,7 @@ function UF:CreateSmallUnitFrame(frame)
 	frame.Health = health
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
-
-	local power = self:CreatePower(frame, frame.TextParent)
-	power:SetFrameLevel(frame:GetFrameLevel() + 1)
-	frame.Power = power
-	frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
-
+	frame.Power = self:CreatePower(frame, frame.TextParent)
 	frame.Name = self:CreateName(frame, frame.TextParent)
 	frame.Portrait = self:CreatePortrait(frame)
 	frame.ClassIndicator = self:CreateClassIndicator(frame)
