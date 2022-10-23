@@ -67,7 +67,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			if C.db.profile.bars[barID][info[#info]] ~= value then
 				C.db.profile.bars[barID][info[#info]] = value
 
-				BARS:Get(barID):Update()
+				BARS:For(barID, "Update")
 			end
 		end,
 		args = {
@@ -78,7 +78,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
-					BARS:Get(barID):Update()
+					BARS:For(barID, "Update")
 				end,
 			},
 			spacer_1 = {
@@ -93,9 +93,9 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].visible = value
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateFading()
-					BARS:Get(barID):UpdateVisibility()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateFading")
+					BARS:For(barID, "UpdateVisibility")
 				end
 			},
 			grid = {
@@ -105,8 +105,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].grid = value
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateButtonConfig()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
 			num = {
@@ -149,7 +149,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 
 					C.db.profile.bars[barID].height = value
 
-					BARS:Get(barID):Update()
+					BARS:For(barID, "Update")
 				end,
 			},
 			growth_dir = {
@@ -163,7 +163,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].x_growth, C.db.profile.bars[barID].y_growth = s_split("_", value)
 
-					BARS:Get(barID):Update()
+					BARS:For(barID, "Update")
 				end,
 			},
 			flyout_dir = {
@@ -174,8 +174,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].flyout_dir = value
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateButtonConfig()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
 			spacer_2 = {
@@ -308,8 +308,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					if C.db.profile.bars[barID].cooldown.text[info[#info]] ~= value then
 						C.db.profile.bars[barID].cooldown.text[info[#info]] = value
 
-						BARS:Get(barID):UpdateConfig()
-						BARS:Get(barID):UpdateCooldownConfig()
+						BARS:For(barID, "UpdateConfig")
+						BARS:For(barID, "UpdateCooldownConfig")
 					end
 				end,
 				args = {

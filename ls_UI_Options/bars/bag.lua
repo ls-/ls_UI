@@ -119,7 +119,7 @@ function CONFIG:CreateBagOptions(order)
 				set = function(_, value)
 					C.db.profile.bars.bag.tooltip = value
 
-					BARS:Get("bag"):UpdateConfig()
+					BARS:For("bag", "UpdateConfig")
 				end,
 			},
 			spacer_2 = {

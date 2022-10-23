@@ -414,7 +414,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					if C.db.profile.bars.vehicle[info[#info]] ~= value then
 						C.db.profile.bars.vehicle[info[#info]] = value
 
-						BARS:Get("vehicle"):Update()
+						BARS:For("vehicle", "Update")
 					end
 				end,
 				args = {
@@ -425,7 +425,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {visible = true, point = true})
-							BARS:Get("vehicle"):Update()
+							BARS:For("vehicle", "Update")
 						end,
 					},
 					spacer_1 = {
@@ -440,9 +440,9 @@ function CONFIG:CreateActionBarsOptions(order)
 						set = function(_, value)
 							C.db.profile.bars.vehicle.visible = value
 
-							BARS:Get("vehicle"):UpdateConfig()
-							BARS:Get("vehicle"):UpdateFading()
-							BARS:Get("vehicle"):UpdateVisibility()
+							BARS:For("vehicle", "UpdateConfig")
+							BARS:For("vehicle", "UpdateFading")
+							BARS:For("vehicle", "UpdateVisibility")
 						end
 					},
 					width = {
@@ -467,7 +467,7 @@ function CONFIG:CreateActionBarsOptions(order)
 
 							C.db.profile.bars.vehicle.height = value
 
-							BARS:Get("vehicle"):Update()
+							BARS:For("vehicle", "Update")
 						end,
 					},
 					spacer_2 = {
@@ -522,7 +522,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
-							BARS:Get("xpbar"):Update()
+							BARS:For("xpbar", "Update")
 						end,
 					},
 					spacer_1 = {
@@ -540,8 +540,8 @@ function CONFIG:CreateActionBarsOptions(order)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
 								C.db.profile.bars.xpbar[info[#info]] = value
 
-								BARS:Get("xpbar"):UpdateConfig()
-								BARS:Get("xpbar"):UpdateSize(value, C.db.profile.bars.xpbar.height)
+								BARS:For("xpbar", "UpdateConfig")
+								BARS:For("xpbar", "UpdateSize", value, C.db.profile.bars.xpbar.height)
 							end
 						end,
 					},
@@ -555,8 +555,8 @@ function CONFIG:CreateActionBarsOptions(order)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
 								C.db.profile.bars.xpbar[info[#info]] = value
 
-								BARS:Get("xpbar"):UpdateConfig()
-								BARS:Get("xpbar"):UpdateSize(C.db.profile.bars.xpbar.width, value)
+								BARS:For("xpbar", "UpdateConfig")
+								BARS:For("xpbar", "UpdateSize", C.db.profile.bars.xpbar.width, value)
 							end
 						end,
 					},

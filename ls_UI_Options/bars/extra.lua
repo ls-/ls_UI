@@ -44,7 +44,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 			if C.db.profile.bars[barID][info[#info]] ~= value then
 				C.db.profile.bars[barID][info[#info]] = value
 
-				BARS:Get(barID):Update()
+				BARS:For(barID, "Update")
 			end
 		end,
 		args = {
@@ -55,7 +55,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
-					BARS:Get(barID):Update()
+					BARS:For(barID, "Update")
 				end,
 			},
 			spacer_1 = {
@@ -70,9 +70,9 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].visible = value
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateFading()
-					BARS:Get(barID):UpdateVisibility()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateFading")
+					BARS:For(barID, "UpdateVisibility")
 				end
 			},
 			artwork = {
@@ -82,8 +82,8 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 				set = function(_, value)
 					C.db.profile.bars[barID].artwork = value
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateArtwork()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateArtwork")
 				end,
 			},
 			spacer_2 = {
@@ -145,8 +145,8 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					if C.db.profile.bars[barID].cooldown.text[info[#info]] ~= value then
 						C.db.profile.bars[barID].cooldown.text[info[#info]] = value
 
-						BARS:Get(barID):UpdateConfig()
-						BARS:Get(barID):UpdateCooldownConfig()
+						BARS:For(barID, "UpdateConfig")
+						BARS:For(barID, "UpdateCooldownConfig")
 					end
 				end,
 				args = {

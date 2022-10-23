@@ -54,8 +54,8 @@ local function getMicroButtonOptions(order, id, name)
 					C.db.profile.bars.micromenu.buttons[id].enabled = value
 
 					BARS:ForMicroButton(id, "Update")
-					BARS:Get("micromenu"):UpdateButtonList()
-					BARS:Get("micromenu"):UpdateLayout()
+					BARS:For("micromenu", "UpdateButtonList")
+					BARS:For("micromenu", "UpdateLayout")
 				end,
 			},
 		},
@@ -134,8 +134,8 @@ function CONFIG:CreateMicroMenuOptions(order)
 				set = function(_, value)
 					C.db.profile.bars.micromenu.per_row = value
 
-					BARS:Get("micromenu"):UpdateConfig()
-					BARS:Get("micromenu"):UpdateLayout()
+					BARS:For("micromenu", "UpdateConfig")
+					BARS:For("micromenu", "UpdateLayout")
 				end,
 			},
 			growth_dir = {
@@ -149,8 +149,8 @@ function CONFIG:CreateMicroMenuOptions(order)
 				set = function(_, value)
 					C.db.profile.bars.micromenu.x_growth, C.db.profile.bars.micromenu.y_growth = s_split("_", value)
 
-					BARS:Get("micromenu"):UpdateConfig()
-					BARS:Get("micromenu"):UpdateLayout()
+					BARS:For("micromenu", "UpdateConfig")
+					BARS:For("micromenu", "UpdateLayout")
 				end,
 			},
 			spacer_2 = {

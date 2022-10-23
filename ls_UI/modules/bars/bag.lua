@@ -153,6 +153,6 @@ end
 
 function MODULE:UpdateBag()
 	if isInit then
-		self:Get("bag"):Update()
+		self:For("bag", "Update")
 	end
 end

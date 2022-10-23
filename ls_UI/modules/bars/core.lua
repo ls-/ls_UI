@@ -10,14 +10,6 @@ local next = _G.next
 local isInit = false
 local bars = {}
 
-function MODULE:GetBars()
-	return bars
-end
-
-function MODULE:Get(barID)
-	return bars[barID]
-end
-
 -- Fading
 local function pauseFading()
 	for _, bar in next, bars do
@@ -117,6 +109,10 @@ function MODULE:Register(id, bar)
 	E:SetUpFading(bar)
 
 	return bar
+end
+
+function MODULE:GetBars()
+	return bars
 end
 
 function MODULE:ForEach(method, ...)

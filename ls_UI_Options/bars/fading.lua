@@ -47,8 +47,8 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 		set = function(info, value)
 			C.db.profile.bars[barID].fade[info[#info]] = value
 
-			BARS:Get(barID):UpdateConfig()
-			BARS:Get(barID):UpdateFading()
+			BARS:For(barID, "UpdateConfig")
+			BARS:For(barID, "UpdateFading")
 		end,
 		args = {
 			enabled = {
@@ -65,8 +65,8 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
 
-					BARS:Get(barID):UpdateConfig()
-					BARS:Get(barID):UpdateFading()
+					BARS:For(barID, "UpdateConfig")
+					BARS:For(barID, "UpdateFading")
 				end,
 			},
 			spacer_1 = {

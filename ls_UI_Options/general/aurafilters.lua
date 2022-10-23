@@ -37,8 +37,8 @@ local units = {"player", "target", "focus", "boss"}
 
 local function callback()
 	for _, unit in next, units do
-		UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
-		UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
+		UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
+		UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 	end
 
 	if not InCombatLockdown() then
@@ -131,8 +131,8 @@ local curFilterOptions = {
 			end
 
 			for _, unit in next, units do
-				UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
-				UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
+				UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
+				UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 			end
 
 			CONFIG:UpdateUnitFrameAuraFilters()
@@ -154,8 +154,8 @@ local curFilterOptions = {
 			FILTERS:Reset(info[#info - 1])
 
 			for _, unit in next, units do
-				UNITFRAMES:For(unit, "ForElement", "Auras", "UpdateConfig")
-				UNITFRAMES:For(unit, "ForElement", "Auras", "ForceUpdate")
+				UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
+				UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 			end
 		end,
 	},
