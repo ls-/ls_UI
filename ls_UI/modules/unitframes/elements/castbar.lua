@@ -212,11 +212,11 @@ function frame_proto:UpdateCastbar()
 end
 
 function UF:CreateCastbar(frame)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	local holder = CreateFrame("Frame", "$parentCastbarHolder", frame)
 
-	local element = P:Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
+	local element = Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder

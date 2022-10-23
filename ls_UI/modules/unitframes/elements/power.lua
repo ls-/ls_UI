@@ -124,9 +124,9 @@ do
 	end
 
 	function UF:CreatePower(frame, textParent)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
-		local element = P:Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 
@@ -168,9 +168,9 @@ do
 	end
 
 	function UF:CreateAdditionalPower(frame)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
-		local element = P:Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 
@@ -224,9 +224,9 @@ do
 	end
 
 	function UF:CreateAlternativePower(frame, textParent)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
-		local element = P:Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 
@@ -358,7 +358,7 @@ do
 	end
 
 	function UF:CreatePowerPrediction(frame, parent1, parent2)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -370,7 +370,7 @@ do
 		altBar:SetReverseFill(true)
 		parent2.CostPrediction = altBar
 
-		return P:Mixin({
+		return Mixin({
 			mainBar_ = mainBar,
 			altBar_ = altBar,
 		}, power_proto)

@@ -62,9 +62,9 @@ function frame_proto:UpdateDebuffIndicator()
 end
 
 function UF:CreateDebuffIndicator(frame, textParent)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
-	local element = P:Mixin((textParent or frame):CreateFontString(nil, "ARTWORK"), element_proto)
+	local element = Mixin((textParent or frame):CreateFontString(nil, "ARTWORK"), element_proto)
 	element:SetFont(GameFontNormal:GetFont(), 12)
 	element:SetNonSpaceWrap(true)
 	element:SetJustifyH("CENTER")

@@ -34,7 +34,7 @@ local function bar_OnValueChanged(self, value)
 end
 
 local function createElement(parent, num, name, ...)
-	local element = P:Mixin(CreateFrame("Frame", nil, parent), ...)
+	local element = Mixin(CreateFrame("Frame", nil, parent), ...)
 	element:SetScript("OnSizeChanged", element.Layout)
 	element:Hide()
 
@@ -229,7 +229,7 @@ do
 	end
 
 	function UF:CreateRunes(frame)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
 		return createElement(frame, 6, "Rune", element_proto, runes_proto)
 	end
@@ -335,7 +335,7 @@ do
 	end
 
 	function UF:CreateClassPower(frame)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
 		return createElement(frame, 10, "ClassPower", element_proto, class_power_proto)
 	end
@@ -402,9 +402,9 @@ do
 	end
 
 	function UF:CreateStagger(frame)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
-		local element = P:Mixin(CreateFrame("StatusBar", nil, frame), stagger_proto)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), stagger_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:Hide()
 

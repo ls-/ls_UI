@@ -52,7 +52,7 @@ function UF:HasBossFrame()
 end
 
 function UF:CreateBossFrame(frame)
-	P:Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
+	Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
 
 	local altPower = self:CreateAlternativePower(frame, frame.TextParent)
 	altPower:SetFrameLevel(frame:GetFrameLevel() + 1)

@@ -99,9 +99,9 @@ do
 	end
 
 	function UF:CreateHealth(frame, textParent)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
-		local element = P:Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
+		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element._texture = element:GetStatusBarTexture()
 
@@ -247,7 +247,7 @@ do
 	end
 
 	function UF:CreateHealthPrediction(frame, parent)
-		P:Mixin(frame, frame_proto)
+		Mixin(frame, frame_proto)
 
 		local level = parent:GetFrameLevel()
 
@@ -280,7 +280,7 @@ do
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
 		parent.HealAbsorb = healAbsorbBar
 
-		return P:Mixin({
+		return Mixin({
 			myBar = myBar,
 			otherBar = otherBar,
 			absorbBar = absorbBar,

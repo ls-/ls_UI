@@ -37,7 +37,7 @@ function small_proto:Update()
 end
 
 function UF:CreateSmallUnitFrame(frame)
-	P:Mixin(frame, small_proto)
+	Mixin(frame, small_proto)
 
 	-- .Fader
 	E:SetUpFading(frame)
@@ -89,7 +89,7 @@ function medium_proto:Update()
 end
 
 function UF:CreateMediumUnitFrame(frame)
-	P:Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
+	Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
 
 	local castbarSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	castbarSlot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, -6)
@@ -142,7 +142,7 @@ function large_proto:AlignWidgets()
 end
 
 function UF:CreateLargeFrame(frame)
-	P:Mixin(self:CreateMediumUnitFrame(frame), large_proto)
+	Mixin(self:CreateMediumUnitFrame(frame), large_proto)
 
 	local pvpSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	pvpSlot:UpdateSize(50, 54) -- pvp holder size

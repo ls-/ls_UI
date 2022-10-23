@@ -61,7 +61,7 @@ function frame_proto:UpdateClassIndicator()
 end
 
 function UF:CreateClassIndicator(frame)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	hooksecurefunc(frame, "Show", update)
 
@@ -73,7 +73,7 @@ function UF:CreateClassIndicator(frame)
 		E:SmoothColor(frame.Insets)
 	end
 
-	return P:Mixin({
+	return Mixin({
 		__owner = frame,
 		__color = {},
 	}, element_proto)

@@ -33,7 +33,7 @@ function UF:HasPlayerFrame()
 end
 
 function UF:CreatePlayerFrame(frame)
-	P:Mixin(self:CreateLargeFrame(frame), player_proto)
+	Mixin(self:CreateLargeFrame(frame), player_proto)
 
 	local addPower = self:CreateAdditionalPower(frame)
 	addPower:SetFrameLevel(frame:GetFrameLevel() + 1)

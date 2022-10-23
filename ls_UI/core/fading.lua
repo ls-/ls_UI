@@ -278,7 +278,7 @@ function E:SetUpFading(object)
 
 	object.Fader = fader
 
-	P:Mixin(object, object_proto)
+	Mixin(object, object_proto)
 
 	return object
 end
