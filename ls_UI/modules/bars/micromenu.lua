@@ -272,7 +272,7 @@ end
 function button_proto:UpdateVisibility()
 	if self._config.enabled then
 		self:Show()
-		self:SetParent(MODULE:Get("micromenu"))
+		self:SetParent(self._parent)
 
 		activeButtons[self:GetID()] = self
 	else
@@ -820,7 +820,6 @@ function bar_proto:UpdateButtonList()
 
 	for _, button in next, activeButtons do
 		if button._config.enabled then
-			button._parent = self
 			t_insert(self._buttons, button)
 		end
 	end
@@ -842,18 +841,15 @@ local function moveMicroButtons()
 			button:UpdateVisibility()
 		end
 
-		local bar = MODULE:Get("micromenu")
-		bar:UpdateButtonList()
-		bar:UpdateLayout()
+		MODULE:For("micromenu", "UpdateButtonList")
+		MODULE:For("micromenu", "UpdateLayout")
 	end
 end
 
 local function updateMicroButtons()
 	if isInit then
-		for _, button in next, MODULE:Get("micromenu")._buttons do
-			if button._config.enabled then
-				button:Show()
-			end
+		for _, button in next, buttons do
+			button:SetShown(button._config.enabled)
 		end
 	end
 end
@@ -884,6 +880,7 @@ function MODULE:CreateMicroMenu()
 			local button = _G[data.name] or CreateFrame("Button", data.name, UIParent, "MainMenuBarMicroButton")
 			button:SetID(idToIndex[id])
 			button._id = id
+			button._parent = bar
 
 			handleMicroButton(button)
 
@@ -956,7 +953,7 @@ function MODULE:UpdateMicroMenu()
 			button:Update()
 		end
 
-		self:Get("micromenu"):Update()
+		self:For("micromenu", "Update")
 	end
 end
 
