@@ -538,7 +538,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 11,
+					size = 12,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -738,7 +738,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 11,
+					size = 12,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -935,7 +935,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 11,
+					size = 12,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -1271,7 +1271,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 11,
+					size = 12,
 				},
 				point1 = {
 					p = "TOPRIGHT",
@@ -1626,7 +1626,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 11,
+					size = 12,
 				},
 				point1 = {
 					p = "TOPLEFT",
@@ -2407,7 +2407,7 @@ D.profile = {
 			width = 594,
 			height = 12,
 			text = {
-				size = 11,
+				size = 12,
 				format = "NUM", -- "NUM_PERC"
 				visibility = 2, -- 1 - always, 2 - mouseover
 			},
