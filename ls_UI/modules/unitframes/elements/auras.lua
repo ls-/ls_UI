@@ -204,7 +204,7 @@ local element_proto = {
 	spacing = 4,
 }
 
-function element_proto:CreateIcon(index)
+function element_proto:CreateButton(index)
 	local config = self._config
 	if not config then
 		self:UpdateConfig()
@@ -252,7 +252,7 @@ function element_proto:CreateIcon(index)
 	return button
 end
 
-function element_proto:PostUpdateIcon(button, unit, data)
+function element_proto:PostUpdateButton(button, unit, data)
 	if button.isHarmful then
 		button.Border:SetVertexColor((C.db.global.colors.debuff[data.dispelName] or C.db.global.colors.debuff.None):GetRGB())
 
@@ -296,7 +296,7 @@ function element_proto:UpdateCooldownConfig()
 	self.cooldownConfig = E:CopyTable(C.db.profile.units.cooldown, self.cooldownConfig)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
-	for i = 1, self.createdIcons do
+	for i = 1, self.createdButtons do
 		if not self[i].Cooldown.UpdateConfig then
 			break
 		end
@@ -311,7 +311,7 @@ function element_proto:UpdateFonts()
 	local config = self._config.count
 	local count
 
-	for i = 1, self.createdIcons do
+	for i = 1, self.createdButtons do
 		count = self[i].Count
 		count:UpdateFont(config.size)
 		count:SetJustifyH(config.h_alignment)
@@ -323,7 +323,7 @@ function element_proto:UpdateAuraTypeIcon()
 	local config = self._config.type
 	local auraType
 
-	for i = 1, self.createdIcons do
+	for i = 1, self.createdButtons do
 		auraType = self[i].AuraType
 		auraType:ClearAllPoints()
 		auraType:SetPoint(config.position, 0, 0)
