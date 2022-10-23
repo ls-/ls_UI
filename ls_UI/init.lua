@@ -175,8 +175,11 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openConfig()
-		LoadAddOn("ls_UI_Options")
-		if not ls_UI.Config then return end
+		if not ls_UI.Config then
+			LoadAddOn("ls_UI_Options")
+
+			if not ls_UI.Config then return end
+		end
 
 		ls_UI.Config:Open()
 	end
@@ -187,8 +190,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end)
 
-	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
-	panel.name = L["LS_UI"]
+	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
 	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
@@ -197,11 +199,17 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	button:SetPoint("TOPLEFT", 16, -16)
 	button:SetScript("OnClick", function()
 		if not InCombatLockdown() then
-			InterfaceOptionsFrame_Show()
+			HideUIPanel(SettingsPanel)
 
-			openConfig()
+			if not ls_UI.Config then
+				LoadAddOn("ls_UI_Options")
+
+				if not ls_UI.Config then return end
+			end
+
+			ls_UI.Config:Open()
 		end
 	end)
 
-	InterfaceOptions_AddCategory(panel, true)
+	Settings.RegisterAddOnCategory(Settings.RegisterCanvasLayoutCategory(panel, L["LS_UI"]))
 end)
