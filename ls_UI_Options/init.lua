@@ -63,7 +63,10 @@ function CONFIG:Open()
 		CONFIG:CreateBlizzardOptions(8)
 		CONFIG:CreateAurasOptions(9)
 		CONFIG:CreateMinimapOptions(11)
-		CONFIG:GetTooltipsOptions(12)
+		-- TODO: remove me in 10.0.2
+		if TooltipDataProcessor then
+			CONFIG:GetTooltipsOptions(12)
+		end
 		CONFIG:CreateUnitFramesOptions(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)

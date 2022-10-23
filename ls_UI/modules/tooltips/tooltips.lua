@@ -128,6 +128,9 @@ function MODULE:IsInit()
 end
 
 function MODULE:Init()
+	-- TODO: remove me in 10.0.2
+	if not TooltipDataProcessor then return end
+
 	if not isInit and PrC.db.profile.tooltips.enabled then
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, data)

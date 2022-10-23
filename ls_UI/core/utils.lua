@@ -806,6 +806,9 @@ do
 	local itemCache = {}
 
 	function E:GetItemEnchantGemInfo(itemLink)
+		-- TODO: remove me in 10.0.2
+		if not TooltipDataProcessor then return "", "", "", "" end
+
 		if itemCache[itemLink] then
 			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 		else
