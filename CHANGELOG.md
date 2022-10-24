@@ -3,7 +3,7 @@
 ## Version 100000.01
 
 - Added 10.0.0 support.
-- Despite the overall lack of visual changes, practically the entire UI was rewritten due to how 
+- Despite the overall lack of visual changes, practically the entire UI was rewritten due to how
   extensive DF changes were.
 - The "Round" layout is gone. I'm really sorry :(
 
