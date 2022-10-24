@@ -795,6 +795,21 @@ function E:GetScreenQuadrant(frame)
 	end
 end
 
+function E:GetTooltipPoint(frame)
+	local quadrant = self:GetScreenQuadrant(frame)
+	local p, rP, x, y = "TOPLEFT", "BOTTOMRIGHT", 2, -2
+
+	if quadrant == "BOTTOMLEFT" or quadrant == "BOTTOM" then
+		p, rP, x, y = "BOTTOMLEFT", "TOPRIGHT", 2, 2
+	elseif quadrant == "TOPRIGHT" or quadrant == "RIGHT" then
+		p, rP, x, y = "TOPRIGHT", "BOTTOMLEFT", -2, -2
+	elseif quadrant == "BOTTOMRIGHT" then
+		p, rP, x, y = "BOTTOMRIGHT", "TOPLEFT", -2, 2
+	end
+
+	return p, rP, x, y
+end
+
 -----------
 -- ITEMS --
 -----------

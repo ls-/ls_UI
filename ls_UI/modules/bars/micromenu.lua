@@ -198,21 +198,6 @@ local function createButtonIndicator(button, indicator)
 	return indicator
 end
 
-local function getTooltipPoint(self)
-	local quadrant = E:GetScreenQuadrant(self)
-	local p, rP, x, y = "TOPLEFT", "BOTTOMRIGHT", 2, -2
-
-	if quadrant == "BOTTOMLEFT" or quadrant == "BOTTOM" then
-		p, rP, x, y = "BOTTOMLEFT", "TOPRIGHT", 2, 2
-	elseif quadrant == "TOPRIGHT" or quadrant == "RIGHT" then
-		p, rP, x, y = "TOPRIGHT", "BOTTOMLEFT", -2, -2
-	elseif quadrant == "BOTTOMRIGHT" then
-		p, rP, x, y = "BOTTOMRIGHT", "TOPLEFT", -2, 2
-	end
-
-	return p, rP, x, y
-end
-
 local function updateNormalTexture(button)
 	button:SetNormalTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 end
@@ -244,7 +229,7 @@ end
 local button_proto = {}
 
 function button_proto:OnEnter()
-	local p, rP, x, y = getTooltipPoint(self._parent)
+	local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
 	GameTooltip:SetPoint(p, self, rP, x, y)

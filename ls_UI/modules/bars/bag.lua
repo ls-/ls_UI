@@ -10,21 +10,6 @@ local unpack = _G.unpack
 -- Mine
 local isInit = false
 
-local function getTooltipPoint(self)
-	local quadrant = E:GetScreenQuadrant(self)
-	local p, rP, x, y = "TOPLEFT", "BOTTOMRIGHT", 2, -2
-
-	if quadrant == "BOTTOMLEFT" or quadrant == "BOTTOM" then
-		p, rP, x, y = "BOTTOMLEFT", "TOPRIGHT", 2, 2
-	elseif quadrant == "TOPRIGHT" or quadrant == "RIGHT" then
-		p, rP, x, y = "TOPRIGHT", "BOTTOMLEFT", -2, -2
-	elseif quadrant == "BOTTOMRIGHT" then
-		p, rP, x, y = "BOTTOMRIGHT", "TOPLEFT", -2, 2
-	end
-
-	return p, rP, x, y
-end
-
 local button_proto = {}
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
@@ -38,7 +23,7 @@ do
 		if KeybindFrames_InQuickKeybindMode() then
 			self:QuickKeybindButtonOnEnter()
 		else
-			local p, rP, x, y = getTooltipPoint(self)
+			local p, rP, x, y = E:GetTooltipPoint(self)
 
 			GameTooltip:SetOwner(self, "ANCHOR_NONE")
 			GameTooltip:SetPoint(p, self, rP, x, y)
