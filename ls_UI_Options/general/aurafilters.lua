@@ -14,7 +14,6 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
-local FILTERS = P:GetModule("Filters")
 local UNITFRAMES = P:GetModule("UnitFrames")
 
 local orders = {}
