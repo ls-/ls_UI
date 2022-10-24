@@ -222,9 +222,6 @@ function element_proto:CreateButton(index)
 	count:SetWordWrap(false)
 	count:SetAllPoints()
 
-	button.Cooldown = button.CD
-	button.CD = nil
-
 	if button.Cooldown.UpdateConfig then
 		button.Cooldown:UpdateConfig(self.cooldownConfig or {})
 		button.Cooldown:UpdateFont()

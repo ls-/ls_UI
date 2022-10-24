@@ -522,7 +522,7 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	end
 
 	if hasCooldown then
-		button.CD = E.Cooldowns.Create(button)
+		button.Cooldown = E.Cooldowns.Create(button)
 	end
 
 	if isSandwich then

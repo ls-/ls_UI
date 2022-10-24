@@ -94,9 +94,9 @@ function bar_proto:Update()
 				button.isHarmful = aura.isHarmful
 
 				if aura.duration and aura.duration > 0 then
-					button.CD:SetCooldown(aura.expirationTime - aura.duration, aura.duration)
+					button.Cooldown:SetCooldown(aura.expirationTime - aura.duration, aura.duration)
 				else
-					button.CD:Clear()
+					button.Cooldown:Clear()
 				end
 
 				if button.isHarmful then
@@ -140,13 +140,13 @@ function bar_proto:UpdateCooldownConfig()
 	self.cooldownConfig = E:CopyTable(self._config.cooldown, self.cooldownConfig)
 
 	for _, button in next, self._buttons do
-		if not button.CD.UpdateConfig then
+		if not button.Cooldown.UpdateConfig then
 			break
 		end
 
-		button.CD:UpdateConfig(self.cooldownConfig)
-		button.CD:UpdateFont()
-		button.CD:UpdateSwipe()
+		button.Cooldown:UpdateConfig(self.cooldownConfig)
+		button.Cooldown:UpdateFont()
+		button.Cooldown:UpdateSwipe()
 	end
 end
 
