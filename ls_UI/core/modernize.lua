@@ -55,6 +55,28 @@ function P:Modernize(data, name, key)
 
 			data.version = 9020502
 		end
+
+		--> 100000.01
+		if data.version < 10000001 then
+			for _, filter in next, {"Blacklist", "M+ Affixes"} do
+				if data.aura_filters[filter] then
+					local state = data.aura_filters[filter].state
+					data.aura_filters[filter].state = nil
+					data.aura_filters[filter].is_init = nil
+
+					E:DiffTable(D.global.aura_filters[filter], data.aura_filters[filter])
+
+					if next(data.aura_filters[filter]) then
+						data.aura_filters[filter .. ".bak"] = data.aura_filters[filter]
+						data.aura_filters[filter .. ".bak"].state = state
+					end
+
+					data.aura_filters[filter] = nil
+				end
+			end
+
+			data.version = 10000001
+		end
 	elseif key == "profile" then
 		--> 90001.05
 		if data.version < 9000105 then
