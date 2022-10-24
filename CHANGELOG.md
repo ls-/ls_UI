@@ -24,6 +24,12 @@
 - Temporarily disabled gem and enchant texts in the character frame. Both rely on the new tooltip
   system that's not available in the pre-patch, more on that later.
 
+### Filters
+
+- Turned "Blacklist" and "M+ Affixes" filters into curated read-only filters. I hope folks in our
+  Discord server will help me to maintain the M+ filter. If you added anything to these two filters,
+  don't worry, you'll find all the extra auras in new "Blacklist.bak" and "M+ Affixes.bak" filters.
+
 ### Loot
 
 - Removed the custom loot frame.
