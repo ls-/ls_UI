@@ -606,51 +606,55 @@ function P:Modernize(data, name, key)
 					data.movers.rect.MirrorTimer1Mover = nil
 					data.movers.rect.MirrorTimer2Mover = nil
 					data.movers.rect.MirrorTimer3Mover = nil
+					data.movers.rect.TalkingHeadFrameMover = nil
 					data.movers = data.movers.rect
 				end
 			end
 
-			-- if data.bars then
-			-- 	data.bars.lock = nil
-			-- 	data.bars.click_on_down = nil
+			if data.bars then
+				data.bars.lock = nil
+				data.bars.click_on_down = nil
 
-			-- 	data.bars.pet = data.bars.bar6
-			-- 	data.bars.bar6 = nil
+				data.bars.pet = data.bars.bar6
+				data.bars.bar6 = nil
 
-			-- 	data.bars.stance = data.bars.bar7
-			-- 	data.bars.bar7 = nil
+				data.bars.stance = data.bars.bar7
+				data.bars.bar7 = nil
 
-			-- 	if data.bars.micromenu then
-			-- 		if data.bars.micromenu.bars then
-			-- 			if data.bars.micromenu.bars.micromenu1 then
-			-- 				data.bars.micromenu.point = data.bars.micromenu.bars.micromenu1.point
-			-- 				data.bars.micromenu.per_row = m_min(data.bars.micromenu.bars.micromenu1.per_row, 12)
-			-- 				data.bars.micromenu.x_growth = data.bars.micromenu.bars.micromenu1.x_growth
-			-- 				data.bars.micromenu.y_growth = data.bars.micromenu.bars.micromenu1.y_growth
-			-- 			end
+				if data.bars.micromenu then
+					if data.bars.micromenu.bars then
+						if data.bars.micromenu.bars.micromenu1 then
+							data.bars.micromenu.point = data.bars.micromenu.bars.micromenu1.point
+							data.bars.micromenu.x_growth = data.bars.micromenu.bars.micromenu1.x_growth
+							data.bars.micromenu.y_growth = data.bars.micromenu.bars.micromenu1.y_growth
 
-			-- 			data.bars.micromenu.bars = nil
-			-- 		end
+							if data.bars.micromenu.bars.micromenu1.per_row then
+								data.bars.micromenu.per_row = m_min(data.bars.micromenu.bars.micromenu1.per_row, 12)
+							end
+						end
 
-			-- 		if data.bars.micromenu.buttons then
-			-- 			if data.bars.micromenu.buttons.inventory then
-			-- 				if data.bars.micromenu.buttons.inventory.currency then
-			-- 					data.bars.bag = {
-			-- 						currency = data.bars.micromenu.buttons.inventory.currency,
-			-- 					}
-			-- 				end
+						data.bars.micromenu.bars = nil
+					end
 
-			-- 				data.bars.micromenu.buttons.inventory = nil
-			-- 			end
+					if data.bars.micromenu.buttons then
+						if data.bars.micromenu.buttons.inventory then
+							if data.bars.micromenu.buttons.inventory.currency then
+								data.bars.bag = {
+									currency = data.bars.micromenu.buttons.inventory.currency,
+								}
+							end
 
-			-- 			for _, button in next, {"character", "spellbook", "talent", "achievement", "quest", "guild", "lfd", "collection", "ej", "store", "main", "help" } do
-			-- 				if data.bars.micromenu.buttons[button] then
-			-- 					data.bars.micromenu.buttons[button].parent = nil
-			-- 				end
-			-- 			end
-			-- 		end
-			-- 	end
-			-- end
+							data.bars.micromenu.buttons.inventory = nil
+						end
+
+						for _, button in next, {"character", "spellbook", "talent", "achievement", "quest", "guild", "lfd", "collection", "ej", "store", "main", "help" } do
+							if data.bars.micromenu.buttons[button] then
+								data.bars.micromenu.buttons[button].parent = nil
+							end
+						end
+					end
+				end
+			end
 
 			if data.units then
 				data.units.round = nil
@@ -693,9 +697,15 @@ function P:Modernize(data, name, key)
 				data.blizzard.timer = nil
 				data.blizzard.vehicle_seat = data.blizzard.vehicle
 				data.blizzard.vehicle = nil
+
+				-- a leftover from some older version
+				if data.blizzard.talking_head then
+					data.blizzard.talking_head.skip = nil
+				end
 			end
 
 			if data.minimap then
+				data.minimap.scale = nil
 				data.minimap.buttons = nil
 				data.minimap.collect = nil
 
@@ -712,7 +722,7 @@ function P:Modernize(data, name, key)
 				data.tooltips.point = nil
 			end
 
-			-- data.version = 10000001
+			data.version = 10000001
 		end
 	elseif key == "private" then
 		--> 90001.05
@@ -817,7 +827,7 @@ function P:Modernize(data, name, key)
 				end
 			end
 
-			-- data.version = 10000001
+			data.version = 10000001
 		end
 	end
 end
