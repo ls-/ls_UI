@@ -109,7 +109,7 @@ local curFilterOptions = {
 			AceConfigDialog:Close("ls_UI")
 			GameTooltip:Hide()
 
-			CONFIG:OpenAuraConfig(info[#info - 1], C.db.global.aura_filters[info[#info - 1]], nil, nil, callback)
+			CONFIG:OpenAuraConfig(info[#info - 1], C.db.global.aura_filters[info[#info - 1]], nil, nil, callback, not not D.global.aura_filters[info[#info - 1]])
 		end,
 	},
 	delete = {
@@ -139,24 +139,6 @@ local curFilterOptions = {
 			updateFiltersOptions()
 
 			AceConfigDialog:SelectGroup("ls_UI", "general", "aura_filters")
-		end,
-	},
-	reset = {
-		type = "execute",
-		order = inc(1),
-		name = L["RESTORE_DEFAULTS"],
-		width = "full",
-		hidden = function(info)
-			return not D.global.aura_filters[info[#info - 1]]
-		end,
-		confirm = CONFIG.ConfirmReset,
-		func = function(info)
-			FILTERS:Reset(info[#info - 1])
-
-			for _, unit in next, units do
-				UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
-				UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
-			end
 		end,
 	},
 }

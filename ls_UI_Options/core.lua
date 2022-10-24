@@ -328,7 +328,7 @@ do
 		end
 	end
 
-	function CONFIG:OpenAuraConfig(name, auras, buffs, debuffs, hideCallback)
+	function CONFIG:OpenAuraConfig(name, auras, buffs, debuffs, hideCallback, disableAddbutton)
 		if not frame then
 			frame = CreateFrame("Frame", "LSAuraFilterConfig", UIParent, "PortraitFrameFlatTemplate")
 			frame:EnableMouse(true)
@@ -645,6 +645,8 @@ do
 			addButton:SetPoint("LEFT", 9, 0)
 			addButton:SetPoint("RIGHT", -4, 0)
 			addButton:SetHeight(24)
+			frame.AddButton = addButton
+
 			addButton:SetScript("OnClick", function()
 				local text = s_trim(idInputEditBox:GetText())
 				if text ~= "" then
@@ -721,6 +723,12 @@ do
 		end
 
 		refreshFrame(firstTab)
+
+		if disableAddbutton then
+			frame.AddButton:Disable()
+		else
+			frame.AddButton:Enable()
+		end
 
 		frame.TitleContainer.TitleText:SetText(name)
 		frame.IDInput.EditBox:SetText("")
