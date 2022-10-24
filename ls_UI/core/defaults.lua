@@ -2541,19 +2541,19 @@ D.profile = {
 			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 226},
 		},
 		durability = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -232},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -250},
 		},
 		gm = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -240},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
 		},
 		maw_buffs = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -188},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -188},
 		},
 		talking_head = {
 			hide = false,
 		},
 		vehicle_seat = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -232},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -250},
 		},
 	},
 	movers = {},
