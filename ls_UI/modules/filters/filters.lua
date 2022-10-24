@@ -92,16 +92,16 @@ local filters = {
 	},
 	["M+ Affixes"] = {
 		state = true,
-		-- GENERAL DEBUFFS
-		[209858] = true, -- Necrotic (Necrotic Wound)
-		[226512] = true, -- Sanguine (Sanguine Ichor)
-		[240443] = true, -- Bursting (Burst)
-		[240559] = true, -- Grievous (Grievous Wound)
 		-- GENERAL BUFFS
 		[178658] = true, -- Raging (Enrage)
 		[209859] = true, -- Bolster (Bolster)
 		[226510] = true, -- Sanguine (Sanguine Ichor)
 		[343502] = true, -- Inspiring (Inspiring Presence)
+		-- GENERAL DEBUFFS
+		[209858] = true, -- Necrotic (Necrotic Wound)
+		[226512] = true, -- Sanguine (Sanguine Ichor)
+		[240443] = true, -- Bursting (Burst)
+		[240559] = true, -- Grievous (Grievous Wound)
 		-- DRAGONFLIGHT SEASON 1
 		[396364] = true, -- Thundering (Mark of Wind)
 		[396369] = true, -- Thundering (Mark of Lightning)
