@@ -83,26 +83,29 @@ local filters = {
 		[264408] = true, -- Soldier of the Horde
 		[264420] = true, -- Soldier of the Alliance
 		[269083] = true, -- Enlisted
+		[335148] = true, -- Sign of the Twisting Nether
+		[335149] = true, -- Sign of the Scourge
+		[335150] = true, -- Sign of the Destroyer
+		[335151] = true, -- Sign of the Mists
+		[335152] = true, -- Sign of Iron
+		[359082] = true, -- Sign of the Legion
 	},
 	["M+ Affixes"] = {
 		state = true,
-		[178658] = true, -- Raging
-		[196376] = true, -- Grievous Tear
-		[209858] = true, -- Necrotic
-		[209859] = true, -- Bolster
-		[226510] = true, -- Sanguine
-		[226512] = true, -- Sanguine
-		[240443] = true, -- Bursting
-		[240559] = true, -- Grievous
-		[277242] = true, -- Symbiote of G'huun (Infested)
-		[288388] = true, -- Reap Soul
-		[288694] = true, -- Shadow Smash
-		[290026] = true, -- Queen's Decree: Blowback
-		[290027] = true, -- Queen's Decree: Blowback
-		[302417] = true, -- Queen's Decree: Unstoppable
-		[302419] = true, -- Void Sight
-		[302421] = true, -- Queen's Decree: Hide
-		[303632] = true, -- Enchanted
+		-- GENERAL DEBUFFS
+		[209858] = true, -- Necrotic (Necrotic Wound)
+		[226512] = true, -- Sanguine (Sanguine Ichor)
+		[240443] = true, -- Bursting (Burst)
+		[240559] = true, -- Grievous (Grievous Wound)
+		-- GENERAL BUFFS
+		[178658] = true, -- Raging (Enrage)
+		[209859] = true, -- Bolster (Bolster)
+		[226510] = true, -- Sanguine (Sanguine Ichor)
+		[343502] = true, -- Inspiring (Inspiring Presence)
+		-- DRAGONFLIGHT SEASON 1
+		[396364] = true, -- Thundering (Mark of Wind)
+		[396369] = true, -- Thundering (Mark of Lightning)
+		[396411] = true, -- Thundering (Primal Overload)
 	}
 }
 
@@ -113,23 +116,10 @@ end
 function MODULE:Init()
 	if not isInit then
 		for filter, v in next, filters do
-			if not C.db.global.aura_filters[filter].is_init then
-				E:CopyTable(v, C.db.global.aura_filters[filter])
-
-				C.db.global.aura_filters[filter].is_init = true
-			end
+			t_wipe(C.db.global.aura_filters[filter])
+			E:CopyTable(v, C.db.global.aura_filters[filter])
 		end
 
 		isInit = true
-	end
-end
-
-function MODULE:Reset(filter)
-	if filters[filter] then
-		t_wipe(C.db.global.aura_filters[filter])
-
-		E:CopyTable(filters[filter], C.db.global.aura_filters[filter])
-
-		C.db.global.aura_filters[filter].is_init = true
 	end
 end
