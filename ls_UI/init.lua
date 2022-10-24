@@ -43,6 +43,8 @@ local function removeRefs()
 	C.db.global.colors.power[17] = nil
 	C.db.global.colors.power[18] = nil
 	C.db.global.colors.power[19] = nil
+
+	E.Movers:SaveConfig()
 end
 
 local function updateAll()
@@ -144,16 +146,12 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		C.db.profile.version = E.VER.number
 
 		removeRefs()
-
-		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
 
 		removeRefs()
-
-		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", updateAll)
