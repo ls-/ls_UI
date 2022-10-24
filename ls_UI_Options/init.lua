@@ -52,6 +52,18 @@ function CONFIG:Open()
 						ReloadUI()
 					end,
 				},
+				login_message = {
+					order = 5,
+					type = "toggle",
+					name = L["LOGIN_MSG_TOGGLE"],
+					width = 1.25,
+					get = function()
+						return C.db.global.login_message
+					end,
+					set = function(_, value)
+						C.db.global.login_message = value
+					end,
+				},
 				profiles = CONFIG:CreateProfilesPanel(100),
 				about = CONFIG:CreateAboutPanel(101),
 			},
