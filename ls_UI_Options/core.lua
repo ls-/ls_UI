@@ -548,8 +548,8 @@ do
 				button:SetHeight(30)
 				button:EnableMouse(true)
 				button:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar-Blue", "ADD")
-				button:SetScript("OnEnter", self.OnEnter)
-				button:SetScript("OnLeave", self.OnLeave)
+				button:SetScript("OnEnter", button.OnEnter)
+				button:SetScript("OnLeave", button.OnLeave)
 				button:Show()
 				auraListFrame.Buttons[i] = button
 
@@ -569,9 +569,9 @@ do
 				local deleteButton = Mixin(CreateFrame("Button", nil, button), delete_proto)
 				deleteButton:SetSize(16, 16)
 				deleteButton:SetPoint("BOTTOMRIGHT", 0, 0)
-				deleteButton:SetScript("OnClick", self.OnClick)
-				deleteButton:SetScript("OnEnter", self.OnEnter)
-				deleteButton:SetScript("OnLeave", self.OnLeave)
+				deleteButton:SetScript("OnClick", deleteButton.OnClick)
+				deleteButton:SetScript("OnEnter", deleteButton.OnEnter)
+				deleteButton:SetScript("OnLeave", deleteButton.OnLeave)
 
 				local deleteButtonIcon = deleteButton:CreateTexture(nil, "ARTWORK")
 				deleteButtonIcon:SetTexture("Interface\\Buttons\\UI-StopButton")
