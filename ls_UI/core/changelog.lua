@@ -25,6 +25,8 @@ E.CHANGELOG = [[
   reworked by Blizzard. Affected widgets are castbars, the objective tracker, mirror timers (breath,
   fatigue), and the alternative player power bar (the dragon riding bar, various widgets for boss
   encounters, etc).
+- Temporarily disabled gem and enchant texts in the character frame. Both rely on the new tooltip
+  system that's not available in the pre-patch, more on that later.
 
 ### Loot
 
@@ -41,6 +43,10 @@ E.CHANGELOG = [[
 
 - While the module was rewritten from the ground up, it'll be disabled during 10.0.0 because Blizz
   for some reason decided to release their new tooltip system with 10.0.2.
+
+### Unit Frames
+
+- Added support for evokers.
 
 NOTE: Unfortunately, due to all the changes in DF is became impossible to maintain the round layout
 within the UI. To maintain it, I'd basically have to turn it one a separate addon, for this reasons
