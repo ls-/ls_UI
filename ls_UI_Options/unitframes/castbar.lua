@@ -89,7 +89,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "range",
 				name = L["WIDTH_OVERRIDE"],
-				desc = L["SIZE_OVERRIDE_DESC"],
+				desc = L["WIDTH_OVERRIDE_DESC"],
 				min = 0, max = 1024, step = 2,
 				softMin = 96,
 				disabled = function()
