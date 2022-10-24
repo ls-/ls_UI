@@ -2511,7 +2511,7 @@ D.profile = {
 					v_alignment = "BOTTOM",
 				},
 			},
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -228, -150},
+			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -150},
 		},
 	},
 	tooltips = {
