@@ -100,6 +100,7 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 					end
 
 					mover:EnableMouse(true)
+					mover:EnableMouseWheel(true)
 				end
 			end
 
@@ -119,6 +120,7 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 						end
 					else
 						trackedMovers[i]:EnableMouse(false)
+						trackedMovers[i]:EnableMouseWheel(false)
 					end
 				end
 
@@ -1079,7 +1081,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		local text = mover:CreateFontString(nil, "OVERLAY")
 		text:SetFontObject("GameFontNormalOutline")
 		text:SetPoint("CENTER")
-		text:SetText(name)
+		text:SetText(objectName)
 		text:SetShown(showLabels)
 		mover.Text = text
 
