@@ -721,6 +721,12 @@ function mover_proto:ResetPosition()
 
 	resetObjectPoint(self.object)
 
+	for drone in next, self:GetDrones() do
+		if drone:IsEnabled() then
+			drone:UpdatePosition()
+		end
+	end
+
 	self:AddRelationLines()
 
 	if not self.isSimple then
@@ -742,7 +748,7 @@ function mover_proto:UpdatePosition(xOffset, yOffset)
 
 	for drone in next, self:GetDrones() do
 		if drone:IsEnabled() then
-			resetObjectPoint(drone.object)
+			drone:UpdatePosition()
 		end
 	end
 
@@ -1130,6 +1136,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 			enabledMovers[name] = mover
 
+			mover:UpdateSize()
 			mover:UpdatePosition()
 		else
 			if not onCreateCallbacks[parentName] then
@@ -1145,6 +1152,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 				enabledMovers[name] = mover
 
+				mover:UpdateSize()
 				mover:UpdatePosition()
 			end)
 		end
@@ -1152,6 +1160,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		-- print(mover:GetDebugName(), "|cffffd200==>|r", parentName)
 		enabledMovers[name] = mover
 
+		mover:UpdateSize()
 		mover:UpdatePosition()
 	end
 
@@ -1211,7 +1220,8 @@ end
 
 function E.Movers:UpdateAll()
 	for _, mover in next, enabledMovers do
-		updatePosition(mover, nil)
+		updatePosition(mover)
+		resetObjectPoint(mover.object)
 
 		if mover.isSimple then
 			mover:Show()
