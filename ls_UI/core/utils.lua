@@ -616,20 +616,20 @@ do
 	local dispelTypes = {}
 
 	E:RegisterEvent("SPELLS_CHANGED", function()
-		-- Soothe (Druid)
-		dispelTypes[""] = IsSpellKnown(2908) -- Enrage
+		-- Soothe (Druid), Tranquilizing Shot (Hunter)
+		dispelTypes[""] = IsPlayerSpell(2908) or IsPlayerSpell(19801) -- Enrage
 
-		-- Cleanse Spirit (Shaman), Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
-		dispelTypes["Curse"] = IsSpellKnown(51886) or IsSpellKnown(88423) or IsSpellKnown(77130) or IsSpellKnown(2782) or IsSpellKnown(475)
+		-- Cleanse Spirit (Shaman), Improved Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
+		dispelTypes["Curse"] = IsPlayerSpell(51886) or IsPlayerSpell(392378) or IsPlayerSpell(77130) or IsPlayerSpell(2782) or IsPlayerSpell(475)
 
-		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Purify (Priest), Purify Disease (Priest)
-		dispelTypes["Disease"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(527) or IsSpellKnown(213634)
+		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Purify (Priest), Purify Disease (Priest)
+		dispelTypes["Disease"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(390632) or IsPlayerSpell(213634)
 
 		-- Cleanse (Paladin), Detox (Monk), Mass Dispel (Priest), Nature's Cure (Druid), Purify (Priest), Purify Spirit (Shaman)
-		dispelTypes["Magic"] = IsSpellKnown(4987) or IsSpellKnown(115450) or IsSpellKnown(32375) or IsSpellKnown(88423) or IsSpellKnown(527) or IsSpellKnown(77130)
+		dispelTypes["Magic"] = IsPlayerSpell(4987) or IsPlayerSpell(115450) or IsPlayerSpell(32375) or IsPlayerSpell(88423) or IsPlayerSpell(527) or IsPlayerSpell(77130)
 
-		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Nature's Cure (Druid), Remove Corruption (Druid)
-		dispelTypes["Poison"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(88423) or IsSpellKnown(2782)
+		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Nature's Cure (Druid), Remove Corruption (Druid)
+		dispelTypes["Poison"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(392378) or IsPlayerSpell(2782)
 	end)
 
 	function E:IsDispellable(debuffType)
