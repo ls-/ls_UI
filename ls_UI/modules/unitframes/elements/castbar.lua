@@ -15,16 +15,19 @@ local element_proto = {
 
 function element_proto:PostCastStart()
 	if self.notInterruptible then
-		self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.notinterruptible))
+		self:SetStatusBarColor(C.db.global.colors.castbar.notinterruptible:GetRGB())
 
 		if self.Icon then
 			self.Icon:SetDesaturated(true)
 		end
 	else
 		if self.casting then
-			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.casting))
+			self:SetStatusBarColor(C.db.global.colors.castbar.casting:GetRGB())
 		elseif self.channeling then
-			self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.channeling))
+			self:SetStatusBarColor(C.db.global.colors.castbar.channeling:GetRGB())
+		elseif self.empowering then
+			self.Text:SetText("")
+			self:SetStatusBarColor(C.db.global.colors.castbar.empowering:GetRGB())
 		end
 
 		if self.Icon then
@@ -36,7 +39,7 @@ end
 function element_proto:PostCastFail()
 	self:SetMinMaxValues(0, 1)
 	self:SetValue(1)
-	self:SetStatusBarColor(E:GetRGB(C.db.global.colors.castbar.failed))
+	self:SetStatusBarColor(C.db.global.colors.castbar.failed:GetRGB())
 
 	self.Time:SetText("")
 end
@@ -46,7 +49,7 @@ function element_proto:CustomTimeText(duration)
 		return self.Time:SetText("")
 	end
 
-	if self.casting then
+	if self.casting or self.empowering then
 		duration = self.max - duration
 	end
 
@@ -54,14 +57,10 @@ function element_proto:CustomTimeText(duration)
 end
 
 function element_proto:CustomDelayText(duration)
-	if self.casting then
-		duration = self.max - duration
-	end
-
-	if self.casting then
-		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", duration, m_abs(self.delay))
-	elseif self.channeling then
+	if self.channeling then
 		self.Time:SetFormattedText("%.1f|cffdc4436-%.1f|r ", duration, m_abs(self.delay))
+	else
+		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", self.max - duration, m_abs(self.delay))
 	end
 end
 
@@ -95,10 +94,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(height * 1.5, height)
 		self.RightIcon:SetSize(0.0001, height)
 
-		self.LeftSep:SetSize(12 / 2, height)
-		self.LeftSep:SetTexCoord(1 / 16, 13 / 16, 0 / 8, height / 4)
-
-		self.RightSep:SetSize(0.0001, height)
+		self.LeftSep:SetSize(12 / 2, 0)
+		self.RightSep:SetSize(0.0001, 0.0001)
 
 		self:SetPoint("TOPLEFT", 6 + height * 1.5, 0) -- 4 + 2, offset + sep width
 		self:SetPoint("BOTTOMRIGHT", -4, 0)
@@ -108,9 +105,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(0.0001, height)
 		self.RightIcon:SetSize(height * 1.5, height)
 
-		self.LeftSep:SetSize(0.0001, height)
-		self.RightSep:SetHeight(12 / 2, height)
-		self.RightSep:SetTexCoord(1 / 16, 13 / 16, 0 / 8, height / 4)
+		self.LeftSep:SetSize(0.0001, 0.0001)
+		self.RightSep:SetSize(12 / 2, 0)
 
 		self:SetPoint("TOPLEFT", 4, 0)
 		self:SetPoint("BOTTOMRIGHT", -6 - height * 1.5, 0) -- 4 + 2, offset + sep width
@@ -120,8 +116,8 @@ function element_proto:UpdateIcon()
 		self.LeftIcon:SetSize(0.0001, height)
 		self.RightIcon:SetSize(0.0001, height)
 
-		self.LeftSep:SetSize(0.0001, height)
-		self.RightSep:SetSize(0.0001, height)
+		self.LeftSep:SetSize(0.0001, 0.0001)
+		self.RightSep:SetSize(0.0001, 0.0001)
 
 		self:SetPoint("TOPLEFT", 4, 0)
 		self:SetPoint("BOTTOMRIGHT", -4, 0)
@@ -163,6 +159,8 @@ function element_proto:UpdateSize()
 				mover:Enable()
 				mover:UpdateSize(width, height)
 			end
+
+			holder:SetParent(UIParent)
 		else
 			local mover = E.Movers:Get(holder)
 			if mover then
@@ -176,6 +174,8 @@ function element_proto:UpdateSize()
 				holder:ClearAllPoints()
 				holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
 			end
+
+			holder:SetParent(frame)
 		end
 	end
 
@@ -201,8 +201,8 @@ function frame_proto:UpdateCastbar()
 		element.Holder:Hide()
 
 		if self.__unit == "player" then
-			CastingBarFrame_SetUnit(CastingBarFrame, nil)
-			CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
+			PlayerCastingBarFrame:SetUnit(nil)
+			PetCastingBarFrame:SetUnit(nil)
 		end
 	end
 
@@ -212,18 +212,18 @@ function frame_proto:UpdateCastbar()
 end
 
 function UF:CreateCastbar(frame)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	local holder = CreateFrame("Frame", "$parentCastbarHolder", frame)
 
-	local element = P:Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
+	local element = Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
-	bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
+	bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGB())
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
@@ -233,6 +233,10 @@ function UF:CreateCastbar(frame)
 	local sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
+	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetSize(12 / 2, 0)
+	sep:SetPoint("TOP", 0, 0)
+	sep:SetPoint("BOTTOM", 0, 0)
 	sep:SetPoint("LEFT", icon, "RIGHT", -2, 0)
 	sep:SetSnapToPixelGrid(false)
 	sep:SetTexelSnappingBias(0)
@@ -246,6 +250,10 @@ function UF:CreateCastbar(frame)
 	sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
+	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetSize(12 / 2, 0)
+	sep:SetPoint("TOP", 0, 0)
+	sep:SetPoint("BOTTOM", 0, 0)
 	sep:SetPoint("RIGHT", icon, "LEFT", 2, 0)
 	sep:SetSnapToPixelGrid(false)
 	sep:SetTexelSnappingBias(0)
@@ -253,7 +261,7 @@ function UF:CreateCastbar(frame)
 
 	local safeZone = element:CreateTexture(nil, "ARTWORK", nil, 1)
 	safeZone:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	safeZone:SetVertexColor(E:GetRGBA(C.db.global.colors.red, 0.6))
+	safeZone:SetVertexColor(C.db.global.colors.red:GetRGBA(0.6))
 	element.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, element)

@@ -29,14 +29,8 @@ local function isBossFrameDisabled()
 	return not UNITFRAMES:HasBossFrame()
 end
 
-local function isRoundLayout()
-	return E.UI_LAYOUT == "round"
-end
-
 local function getUnitFrameOptions(order, unit, name)
 	local copyIgnoredUnits = {
-		["pet"] = E.UI_LAYOUT == "round",
-		["player"] = E.UI_LAYOUT == "round",
 		[unit] = true,
 	}
 
@@ -125,7 +119,7 @@ local function getUnitFrameOptions(order, unit, name)
 				type = "range",
 				name = L["TOP_INSET_SIZE"],
 				desc = L["TOP_INSET_SIZE_DESC"],
-				min = 0.01, max = 0.25, step = 0.01,
+				min = 0.01, max = 0.33, step = 0.01,
 				isPercent = true,
 				get = function()
 					return C.db.profile.units[unit].insets.t_size
@@ -256,19 +250,7 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerOptions(21, unit)
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
-
-		if E.UI_LAYOUT == "rect" then
-			temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
-		else
-			temp.args.copy.hidden = isRoundLayout
-			temp.args.width.hidden = isRoundLayout
-			temp.args.height.hidden = isRoundLayout
-			temp.args.top_inset = nil
-			temp.args.bottom_inset = nil
-			temp.args.mirror_widgets = nil
-			temp.args.portrait = nil
-			temp.args.name = nil
-		end
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
 	elseif unit == "pet" then
 		temp.disabled = isPlayerFrameDisabled
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
@@ -276,17 +258,6 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
-
-		if E.UI_LAYOUT == "round" then
-			temp.args.copy.hidden = isRoundLayout
-			temp.args.width.hidden = isRoundLayout
-			temp.args.height.hidden = isRoundLayout
-			temp.args.top_inset = nil
-			temp.args.bottom_inset = nil
-			temp.args.border = nil
-			temp.args.portrait = nil
-			temp.args.name = nil
-		end
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)

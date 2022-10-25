@@ -17,13 +17,7 @@ local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 local t_wipe = _G.table.wipe
-
---[[ luacheck: globals
-	CreateFrame GetItemGem GetItemInfoInstant GetNumGroupMembers GetNumSubgroupMembers IsInGroup IsInRaid IsSpellKnown
-	UIParent UnitExists UnitGroupRolesAssigned UnitGUID UnitIsUnit
-
-	ENCHANTED_TOOLTIP_LINE MAX_NUM_SOCKETS UIPARENT_MANAGED_FRAME_POSITIONS
-]]
+local pcall = _G.pcall
 
 -- Mine
 -----------
@@ -170,11 +164,10 @@ end
 -- COLOURS --
 -------------
 
-local hex
 do
 	local rgb_hex_cache = {}
 
-	function hex(r, g, b)
+	local function hex(r, g, b)
 		local key = r .. "-" .. g .. "-" .. b
 		if rgb_hex_cache[key] then
 			return rgb_hex_cache[key]
@@ -220,40 +213,44 @@ do
 		))
 	end
 
-	function E:GetRGB(color)
-		return color.r, color.g, color.b
+	function E:WrapTextInColorCode(color, text)
+		return "|c" .. color.hex .. text .. "|r"
 	end
 
-	function E:GetRGBA(color, a)
-		return color.r, color.g, color.b, a or color.a
+	local color_proto = {}
+
+	function color_proto:GetHex()
+		return self.hex
 	end
 
-	function E:SetRGBA(color, r, g, b, a)
+	-- override ColorMixin:GetRGBA
+	function color_proto:GetRGBA(a)
+		return self.r, self.g, self.b, a or self.a
+	end
+
+	-- override ColorMixin:SetRGBA
+	function color_proto:SetRGBA(r, g, b, a)
 		if r > 1 or g > 1 or b > 1 then
 			r, g, b = r / 255, g / 255, b / 255
 		end
 
-		color.r = r
-		color.g = g
-		color.b = b
-		color.a = a
-		color.hex = hex(r, g, b)
+		self.r = r
+		self.g = g
+		self.b = b
+		self.a = a
+		self.hex = hex(r, g, b)
+	end
+
+	-- override ColorMixin:WrapTextInColorCode
+	function color_proto:WrapTextInColorCode(text)
+		return "|c" .. self.hex .. text .. "|r"
+	end
+
+	function E:CreateColor(r, g, b, a)
+		local color = Mixin({}, ColorMixin, color_proto)
+		color:SetRGBA(r, g, b, a)
 
 		return color
-	end
-
-	function E:SetRGB(color, r, g, b)
-		return self:SetRGBA(color, r, g, b, 1)
-	end
-
-	function E:WrapText(color, text)
-		return "|c" .. color.hex .. text .. "|r"
-	end
-
-	function E:AreColorsEqual(color1, color2)
-		if not color1 or not color2 then return end
-
-		return color1.r == color2.r and color1.g == color2.g and color1.b == color2.b
 	end
 
 	do
@@ -338,12 +335,52 @@ do
 		return C.db.global.colors.reaction[4]
 	end
 
+	local selectionTypes = {
+		[ 0] = 0,
+		[ 1] = 1,
+		[ 2] = 2,
+		[ 3] = 3,
+		[ 4] = 4,
+		[ 5] = 5,
+		[ 6] = 6,
+		[ 7] = 7,
+		[ 8] = 8,
+		[ 9] = 9,
+		-- [10] = 10, -- unavailable to players
+		-- [11] = 11, -- unavailable to players
+		[12] = 5,
+		[13] = 13,
+	}
+
+	local function unitSelectionType(unit)
+		if UnitThreatSituation("player", unit) then
+			return 0
+		else
+			return selectionTypes[UnitSelectionType(unit, true)]
+		end
+	end
+
+	-- loosely based on CompactUnitFrame_UpdateHealthColor
+	function E:GetUnitColor_(unit, colorByClass, colorBySelection)
+		if not UnitIsConnected(unit) or UnitIsDead(unit) then
+			return C.db.global.colors.disconnected
+		elseif not UnitPlayerControlled(unit) and UnitIsTapDenied(unit) then
+			return C.db.global.colors.tapped
+		elseif colorByClass and UnitIsPlayer(unit) then
+			return self:GetUnitClassColor(unit)
+		elseif colorBySelection then
+			return C.db.global.colors.selection[unitSelectionType(unit)] or C.db.global.colors.selection[2]
+		else
+			return C.db.global.colors.reaction[4]
+		end
+	end
+
 	function E:GetUnitClassColor(unit)
 		return C.db.global.colors.class[select(2, UnitClass(unit))] or C.db.global.colors.white
 	end
 
 	function E:GetUnitReactionColor(unit)
-		if select(2, UnitDetailedThreatSituation("player", unit)) ~= nil then
+		if UnitThreatSituation("player", unit) then
 			return C.db.global.colors.reaction[2]
 		end
 
@@ -412,6 +449,26 @@ do
 		return L["UNKNOWN"]
 	end
 
+	local function getDifficultyColor(difficulty)
+		if difficulty == Enum.RelativeContentDifficulty.Trivial then
+			return C.db.global.colors.difficulty.trivial
+		elseif difficulty == Enum.RelativeContentDifficulty.Easy then
+			return C.db.global.colors.difficulty.standard
+		elseif difficulty == Enum.RelativeContentDifficulty.Fair then
+			return C.db.global.colors.difficulty.difficult
+		elseif difficulty == Enum.RelativeContentDifficulty.Difficult then
+			return C.db.global.colors.difficulty.very_difficult
+		elseif difficulty == Enum.RelativeContentDifficulty.Impossible then
+			return C.db.global.colors.difficulty.impossible
+		else
+			return C.db.global.colors.difficulty.difficult
+		end
+	end
+
+	function E:GetCreatureDifficultyColor(unit)
+		return getDifficultyColor(C_PlayerInfo.GetContentDifficultyCreatureForPlayer(unit))
+	end
+
 	-- GetRelativeDifficultyColor function in UIParent.lua
 	function E:GetRelativeDifficultyColor(unitLevel, challengeLevel)
 		local diff = challengeLevel - unitLevel
@@ -426,10 +483,6 @@ do
 		else
 			return C.db.global.colors.difficulty.trivial
 		end
-	end
-
-	function E:GetCreatureDifficultyColor(level)
-		return self:GetRelativeDifficultyColor(UnitEffectiveLevel("player"), level > 0 and level or 199)
 	end
 
 	do
@@ -563,20 +616,20 @@ do
 	local dispelTypes = {}
 
 	E:RegisterEvent("SPELLS_CHANGED", function()
-		-- Soothe (Druid)
-		dispelTypes[""] = IsSpellKnown(2908) -- Enrage
+		-- Soothe (Druid), Tranquilizing Shot (Hunter)
+		dispelTypes[""] = IsPlayerSpell(2908) or IsPlayerSpell(19801) -- Enrage
 
-		-- Cleanse Spirit (Shaman), Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
-		dispelTypes["Curse"] = IsSpellKnown(51886) or IsSpellKnown(88423) or IsSpellKnown(77130) or IsSpellKnown(2782) or IsSpellKnown(475)
+		-- Cleanse Spirit (Shaman), Improved Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
+		dispelTypes["Curse"] = IsPlayerSpell(51886) or IsPlayerSpell(392378) or IsPlayerSpell(77130) or IsPlayerSpell(2782) or IsPlayerSpell(475)
 
-		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Purify (Priest), Purify Disease (Priest)
-		dispelTypes["Disease"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(527) or IsSpellKnown(213634)
+		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Purify (Priest), Purify Disease (Priest)
+		dispelTypes["Disease"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(390632) or IsPlayerSpell(213634)
 
 		-- Cleanse (Paladin), Detox (Monk), Mass Dispel (Priest), Nature's Cure (Druid), Purify (Priest), Purify Spirit (Shaman)
-		dispelTypes["Magic"] = IsSpellKnown(4987) or IsSpellKnown(115450) or IsSpellKnown(32375) or IsSpellKnown(88423) or IsSpellKnown(527) or IsSpellKnown(77130)
+		dispelTypes["Magic"] = IsPlayerSpell(4987) or IsPlayerSpell(115450) or IsPlayerSpell(32375) or IsPlayerSpell(88423) or IsPlayerSpell(527) or IsPlayerSpell(77130)
 
-		-- Cleanse (Paladin), Cleanse Toxins (Paladin), Detox (Monk), Detox (Monk), Nature's Cure (Druid), Remove Corruption (Druid)
-		dispelTypes["Poison"] = IsSpellKnown(4987) or IsSpellKnown(213644) or IsSpellKnown(115450) or IsSpellKnown(218164) or IsSpellKnown(88423) or IsSpellKnown(2782)
+		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Nature's Cure (Druid), Remove Corruption (Druid)
+		dispelTypes["Poison"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(392378) or IsPlayerSpell(2782)
 	end)
 
 	function E:IsDispellable(debuffType)
@@ -669,6 +722,14 @@ end
 function E:ForceHide(object, skipEvents)
 	if not object then return end
 
+	object:Hide(true)
+	object:SetParent(self.HIDDEN_PARENT)
+
+	if object.EnableMouse then
+		object:EnableMouse(false)
+
+	end
+
 	if object.UnregisterAllEvents then
 		if not skipEvents then
 			object:UnregisterAllEvents()
@@ -677,12 +738,14 @@ function E:ForceHide(object, skipEvents)
 		if object:GetName() then
 			object.ignoreFramePositionManager = true
 			object:SetAttribute("ignoreFramePositionManager", true)
-			UIPARENT_MANAGED_FRAME_POSITIONS[object:GetName()] = nil
 		end
+
+		object:SetAttribute("statehidden", true)
 	end
 
-	object:Hide()
-	object:SetParent(self.HIDDEN_PARENT)
+	if object.SetUserPlaced then
+		pcall(object.SetUserPlaced, object, true)
+	end
 end
 
 function E:GetScreenQuadrant(frame)
@@ -732,110 +795,62 @@ function E:GetScreenQuadrant(frame)
 	end
 end
 
+function E:GetTooltipPoint(frame)
+	local quadrant = self:GetScreenQuadrant(frame)
+	local p, rP, x, y = "TOPLEFT", "BOTTOMRIGHT", 2, -2
+
+	if quadrant == "BOTTOMLEFT" or quadrant == "BOTTOM" then
+		p, rP, x, y = "BOTTOMLEFT", "TOPRIGHT", 2, 2
+	elseif quadrant == "TOPRIGHT" or quadrant == "RIGHT" then
+		p, rP, x, y = "TOPRIGHT", "BOTTOMLEFT", -2, -2
+	elseif quadrant == "BOTTOMRIGHT" then
+		p, rP, x, y = "BOTTOMRIGHT", "TOPLEFT", -2, 2
+	end
+
+	return p, rP, x, y
+end
+
 -----------
 -- ITEMS --
 -----------
 
 do
-	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub('%%s', '(.+)')
-	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
-
-	local EMPTY_SOCKET_TEXTURES = {
-		[ "136256"] = true,
-		[ "136257"] = true,
-		[ "136258"] = true,
-		[ "136259"] = true,
-		[ "136260"] = true,
-		[ "407324"] = true,
-		[ "407325"] = true,
-		[ "458977"] = true,
-		["2958629"] = true,
-		["2958630"] = true,
-		["2958631"] = true,
-		["4095404"] = true,
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET"] = true, -- 136260
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-BLUE"] = true, -- 136256
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-COGWHEEL"] = true, -- 407324
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-DOMINATION"] = true, -- 4095404
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-HYDRAULIC"] = true, -- 407325
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-META"] = true, -- 136257
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PRISMATIC"] = true, -- 458977
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDBLUE"] = true, -- 2958629
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDRED"] = true, -- 2958630
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-PUNCHCARDYELLOW"] = true, -- 2958631
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-RED"] = true, -- 136258
-		["INTERFACE\\ITEMSOCKETINGFRAME\\UI-EMPTYSOCKET-YELLOW"] = true, -- 136259
-	}
+	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
+	local GEM_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
 
 	local itemCache = {}
 
-	local scanTip = CreateFrame("GameTooltip", "LSScanTip", nil, "GameTooltipTemplate")
-	scanTip:SetOwner(UIParent, "ANCHOR_NONE")
-
-	local function wipeScanTip()
-		scanTip:ClearLines()
-
-		for i = 1, 10 do
-			_G["LSScanTipTexture" .. i]:SetTexture(nil)
-		end
-	end
-
 	function E:GetItemEnchantGemInfo(itemLink)
+		-- TODO: remove me in 10.0.2
+		if not TooltipDataProcessor then return "", "", "", "" end
+
 		if itemCache[itemLink] then
 			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 		else
 			itemCache[itemLink] = {}
 		end
 
-		wipeScanTip()
-		scanTip:SetHyperlink(itemLink)
+		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
+		if not data then return "", "", "", "" end
 
 		local enchant, text = ""
-		for i = 2, scanTip:NumLines() do
-			text = _G["LSScanTipTextLeft" .. i]:GetText()
-			if text and text ~= "" then
-				text = text:match(ENCHANT_PATTERN)
-				if text then
-					enchant = text
+		local gems, idx = {"", "", ""}, 1
+		for _, line in next, data.lines do
+			TooltipUtil.SurfaceArgs(line)
 
-					break
-				end
-			end
-		end
-
-		local gem1, gem2, gem3, texture, gemLink, _ = "", "", ""
-		for i = 1, MAX_NUM_SOCKETS do
-			texture = _G["LSScanTipTexture" .. i]:GetTexture()
-			if texture then
-				if EMPTY_SOCKET_TEXTURES[s_upper(texture)] then
-					if i == 1 then
-						gem1 = GEM_TEMPLATE:format(texture)
-					elseif i == 2 then
-						gem2 = GEM_TEMPLATE:format(texture)
-					else
-						gem3 = GEM_TEMPLATE:format(texture)
-					end
-				else
-					_, gemLink = GetItemGem(itemLink, i)
-					if gemLink then
-						_, _, _, _, texture = GetItemInfoInstant(gemLink)
-
-						if i == 1 then
-							gem1 = GEM_TEMPLATE:format(texture)
-						elseif i == 2 then
-							gem2 = GEM_TEMPLATE:format(texture)
-						else
-							gem3 = GEM_TEMPLATE:format(texture)
-						end
-					end
-				end
+			text = line.leftText:match(ENCHANT_PATTERN)
+			if text then
+				enchant = text
+			elseif line.socketType then
+				gems[idx] = GEM_TEMPLATE:format(line.socketType)
+				idx = idx + 1
 			end
 		end
 
 		itemCache[itemLink].enchant = enchant
-		itemCache[itemLink].gem1 = gem1
-		itemCache[itemLink].gem2 = gem2
-		itemCache[itemLink].gem3 = gem3
+		itemCache[itemLink].gem1 = gems[1]
+		itemCache[itemLink].gem2 = gems[2]
+		itemCache[itemLink].gem3 = gems[3]
 
 		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 	end
@@ -869,9 +884,7 @@ do
 
 	function proto:UpdateFont(s)
 		local t = objects[self]
-		if not t then
-			return
-		end
+		if not t then return end
 
 		update(self, t, s)
 	end
@@ -892,9 +905,7 @@ do
 			return
 		end
 
-		for k, v in next, proto do
-			obj[k] = v
-		end
+		Mixin(obj, proto)
 
 		self[t][obj] = true
 		objects[obj] = t
@@ -910,9 +921,7 @@ do
 	end
 
 	function module:UpdateAll(t)
-		if not self[t] then
-			return
-		end
+		if not self[t] then return end
 
 		for obj in next, self[t] do
 			update(obj, t)

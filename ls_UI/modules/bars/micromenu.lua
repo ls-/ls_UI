@@ -12,32 +12,7 @@ local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
--- Blizz
-local C_CurrencyInfo = _G.C_CurrencyInfo
-local C_Timer = _G.C_Timer
-local Kiosk = _G.Kiosk
-
---[[ luacheck: globals
-	AchievementMicroButton_Update BreakUpLargeNumbers ContainerIDToInventoryID CreateFrame CursorCanGoInSlot
-	CursorHasItem GameTooltip GetAddOnInfo GetAddOnMemoryUsage GetBagSlotFlag GetContainerNumFreeSlots
-	GetContainerNumSlots GetCurrencyInfo GetInventoryItemDurability GetInventoryItemTexture
-	GetLFGDungeonShortageRewardInfo GetLFGRandomDungeonInfo GetLFGRoles GetLFGRoleShortageRewards GetMoney
-	GetMoneyString GetNetStats GetNumAddOns GetNumRandomDungeons GetNumRFDungeons GetNumSavedInstances
-	GetNumSavedWorldBosses GetQuestResetTime GetRFDungeonInfo GetSavedInstanceInfo GetSavedWorldBossInfo GetTime
-	GuildMicroButtonTabard InCombatLockdown IsAddOnLoaded IsInventoryItemLocked IsInventoryItemProfessionBag
-	sLFGDungeonJoinable IsShiftKeyDown LFDMicroButton LibStub LSBagBar MainMenuBarDownload
-	MainMenuBarPerformanceBar MicroButtonAndBagsBar MicroButtonPortrait MicroButtonTooltipText PickupBagFromSlot
-	PlaySound PutItemInBag RequestLFDPartyLockInfo RequestLFDPlayerLockInfo RequestRaidInfo SecondsToTime SetBagSlotFlag
-	SetClampedTextureRotation ToggleAllBags UIParent UpdateAddOnMemoryUsage
-
-	BACKPACK_CONTAINER BAG_FILTER_ASSIGN_TO BAG_FILTER_CLEANUP BAG_FILTER_ICONS BAG_FILTER_IGNORE BAG_FILTER_LABELS
-	DUNGEONS_BUTTON EQUIP_CONTAINER LE_BAG_FILTER_FLAG_EQUIPMENT LE_BAG_FILTER_FLAG_IGNORE_CLEANUP
-	LE_BAG_FILTER_FLAG_JUNK LFG_ROLE_NUM_SHORTAGE_TYPES NEWBIE_TOOLTIP_LFGPARENT NEWBIE_TOOLTIP_SPELLBOOK NUM_BAG_SLOTS
-	NUM_LE_BAG_FILTER_FLAGS PERFORMANCEBAR_MEDIUM_LATENCY SHOW_NEWBIE_TIPS
-]]
-
 -- Mine
-local LibDropDown = LibStub("LibDropDown")
 local buttons = {}
 local activeButtons = {}
 local isInit = false
@@ -60,14 +35,6 @@ local BUTTONS = {
 			UPDATE_INVENTORY_DURABILITY = true,
 		},
 	},
-	inventory = {
-		name = "LSInventoryMicroButton",
-		icon = "INVENTORY",
-		events = {
-			BAG_UPDATE_DELAYED = true,
-			TOKEN_MARKET_PRICE_UPDATED = true,
-		},
-	},
 	spellbook = {
 		name = "SpellbookMicroButton",
 		icon = "SPELLBOOK",
@@ -82,6 +49,7 @@ local BUTTONS = {
 			PLAYER_PVP_TALENT_UPDATE = true,
 			PLAYER_SPECIALIZATION_CHANGED = true,
 			PLAYER_TALENT_UPDATE = true,
+			UPDATE_BATTLEFIELD_STATUS = true,
 		},
 	},
 	achievement = {
@@ -103,12 +71,13 @@ local BUTTONS = {
 		events = {
 			BN_CONNECTED = true,
 			BN_DISCONNECTED = true,
+			CHAT_DISABLED_CHANGE_FAILED = true,
+			CHAT_DISABLED_CHANGED = true,
 			CLUB_FINDER_COMMUNITY_OFFLINE_JOIN = true,
 			CLUB_INVITATION_ADDED_FOR_SELF = true,
 			CLUB_INVITATION_REMOVED_FOR_SELF = true,
 			INITIAL_CLUBS_LOADED = true,
 			PLAYER_ENTERING_WORLD = true,
-			PLAYER_GUILD_UPDATE = true,
 			STREAM_VIEW_MARKER_UPDATED = true,
 		},
 	},
@@ -117,7 +86,6 @@ local BUTTONS = {
 		icon = "LFD",
 		events = {
 			LFG_LOCK_INFO_RECEIVED = true,
-			QUEST_LOG_UPDATE = true,
 		},
 	},
 	collection = {
@@ -173,124 +141,102 @@ local ALERTS = {
 
 local TEXTURE_COORDS = {
 	-- line #1
-	["WARRIOR"] = {1 / 256, 33 / 256, 1 / 256, 45 / 256},
-	["DEATHKNIGHT"] = {33 / 256, 65 / 256, 1 / 256, 45 / 256},
-	["PALADIN"] = {65 / 256, 97 / 256, 1 / 256, 45 / 256},
-	["MONK"] = {97 / 256, 129 / 256, 1 / 256, 45 / 256},
-	["PRIEST"] = {129 / 256, 161 / 256, 1 / 256, 45 / 256},
-	["SHAMAN"] = {161 / 256, 193 / 256, 1 / 256, 45 / 256},
-	["DRUID"] = {193 / 256, 225 / 256, 1 / 256, 45 / 256},
+	["DEATHKNIGHT"] = {1 / 512, 33 / 512, 1 / 128, 45 / 128},
+	["DEMONHUNTER"] = {33 / 512, 65 / 512, 1 / 128, 45 / 128},
+	["DRUID"] = {65 / 512, 97 / 512, 1 / 128, 45 / 128},
+	["EVOKER"] = {97 / 512, 129 / 512, 1 / 128, 45 / 128},
+	["HUNTER"] = {129 / 512, 161 / 512, 1 / 128, 45 / 128},
+	["MAGE"] = {161 / 512, 193 / 512, 1 / 128, 45 / 128},
+	["MONK"] = {193 / 512, 225 / 512, 1 / 128, 45 / 128},
+	["PALADIN"] = {225 / 512, 257 / 512, 1 / 128, 45 / 128},
+	["PRIEST"] = {257 / 512, 289 / 512, 1 / 128, 45 / 128},
+	["ROGUE"] = {289 / 512, 321 / 512, 1 / 128, 45 / 128},
+	["SHAMAN"] = {321 / 512, 353 / 512, 1 / 128, 45 / 128},
+	["WARLOCK"] = {353 / 512, 385 / 512, 1 / 128, 45 / 128},
+	["WARRIOR"] = {385 / 512, 417 / 512, 1 / 128, 45 / 128},
+	["SPELLBOOK"] = {417 / 512, 449 / 512, 1 / 128, 45 / 128},
+	["TALENT"] = {449 / 512, 481 / 512, 1 / 128, 45 / 128},
 	-- line #2
-	["ROGUE"] = {1 / 256, 33 / 256, 45 / 256, 89 / 256},
-	["MAGE"] = {33 / 256, 65 / 256, 45 / 256, 89 / 256},
-	["WARLOCK"] = {65 / 256, 97 / 256, 45 / 256, 89 / 256},
-	["HUNTER"] = {97 / 256, 129 / 256, 45 / 256, 89 / 256},
-	["DEMONHUNTER"] = {129 / 256, 161 / 256, 45 / 256, 89 / 256},
-	["SPELLBOOK"] = {161 / 256, 193 / 256, 45 / 256, 89 / 256},
-	["TALENT"] = {193 / 256, 225 / 256, 45 / 256, 89 / 256},
-	-- line #3
-	["ACHIEVEMENT"] = {1 / 256, 33 / 256, 89 / 256, 133 / 256},
-	["QUEST"] = {33 / 256, 65 / 256, 89 / 256, 133 / 256},
-	["GUILD"] = {65 / 256, 97 / 256, 89 / 256, 133 / 256},
-	["LFD"] = {97 / 256, 129 / 256, 89 / 256, 133 / 256},
-	["COLLECTION"] = {129 / 256, 161 / 256, 89 / 256, 133 / 256},
-	["EJ"] = {161 / 256, 193 / 256, 89 / 256, 133 / 256},
-	["MAINMENU"] = {193 / 256, 225 / 256, 89 / 256, 133 / 256},
-	-- line #4
-	["INVENTORY"] = {1 / 256, 33 / 256, 133 / 256, 177 / 256},
-	["STORE"] = {33 / 256, 65 / 256, 133 / 256, 177 / 256},
-	["HELP"] = {65 / 256, 97 / 256, 133 / 256, 177 / 256},
-	-- ["TEMP"] = {97 / 256, 129 / 256, 133 / 256, 177 / 256},
-	-- ["TEMP"] = {129 / 256, 161 / 256, 133 / 256, 177 / 256},
-	-- ["TEMP"] = {161 / 256, 193 / 256, 133 / 256, 177 / 256},
-	-- ["TEMP"] = {193 / 256, 225 / 256, 133 / 256, 177 / 256},
-	-- line #5
-	["HIGHLIGHT"] = {1 / 256, 33 / 256, 177 / 256, 221 / 256},
-	["PUSHED"] = {33 / 256, 65 / 256, 177 / 256, 221 / 256},
+	["ACHIEVEMENT"] = {1 / 512, 33 / 512, 45 / 128, 89 / 128},
+	["QUEST"] = {33 / 512, 65 / 512, 45 / 128, 89 / 128},
+	["GUILD"] = {65 / 512, 97 / 512, 45 / 128, 89 / 128},
+	["LFD"] = {97 / 512, 129 / 512, 45 / 128, 89 / 128},
+	["COLLECTION"] = {129 / 512, 161 / 512, 45 / 128, 89 / 128},
+	["EJ"] = {161 / 512, 193 / 512, 45 / 128, 89 / 128},
+	["STORE"] = {193 / 512, 225 / 512, 45 / 128, 89 / 128},
+	["MAINMENU"] = {225 / 512, 257 / 512, 45 / 128, 89 / 128},
+	["HELP"] = {257 / 512, 289 / 512, 45 / 128, 89 / 128},
+	["BORDER"] = {289 / 512, 333 / 512, 45 / 128, 101 / 128},
+	["HIGHLIGHT"] = {333 / 512, 369 / 512, 45 / 128, 93 / 128},
+	["INDICATOR"] = {1 / 512, 33 / 512, 93 / 128, 97 / 128},
+	["BAG_INDICATOR"] = {369 / 512, 449 / 512, 45 / 128, 125 / 128},
 }
 
 local idToIndex = {
 	["character"] = 1,
-	["inventory"] = 2,
-	["spellbook"] = 3,
-	["talent"] = 4,
-	["achievement"] = 5,
-	["quest"] = 6,
-	["guild"] = 7,
-	["lfd"] = 8,
-	["collection"] = 9,
-	["ej"] = 10,
-	["store"] = 11,
-	["main"] = 12,
-	["help"] = 13,
+	["spellbook"] = 2,
+	["talent"] = 3,
+	["achievement"] = 4,
+	["quest"] = 5,
+	["guild"] = 6,
+	["lfd"] = 7,
+	["collection"] = 8,
+	["ej"] = 9,
+	["store"] = 10,
+	["main"] = 11,
+	["help"] = 12,
 }
 
 local function createButtonIndicator(button, indicator)
 	indicator = indicator or button:CreateTexture()
 	indicator:SetDrawLayer("BACKGROUND", 3)
-	indicator:SetColorTexture(1, 1, 1, 1)
-	indicator:SetPoint("BOTTOMLEFT", 0, 0)
-	indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", 0, 4)
+	indicator:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+	indicator:SetTexCoord(unpack(TEXTURE_COORDS.INDICATOR))
+	indicator:SetPoint("BOTTOMLEFT", 1, 1)
+	indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -1, 3)
 
 	return indicator
 end
 
-local function getTooltipPoint(self)
-	local quadrant = E:GetScreenQuadrant(self)
-	local p, rP, x, y = "TOPLEFT", "BOTTOMRIGHT", 2, -2
-
-	if quadrant == "BOTTOMLEFT" or quadrant == "BOTTOM" then
-		p, rP, x, y = "BOTTOMLEFT", "TOPRIGHT", 2, 2
-	elseif quadrant == "TOPRIGHT" or quadrant == "RIGHT" then
-		p, rP, x, y = "TOPRIGHT", "BOTTOMLEFT", -2, -2
-	elseif quadrant == "BOTTOMRIGHT" then
-		p, rP, x, y = "BOTTOMRIGHT", "TOPLEFT", -2, 2
-	end
-
-	return p, rP, x, y
-end
-
 local function updateNormalTexture(button)
-	button:SetNormalTexture(nil)
+	button:SetNormalTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 end
 
 local function updatePushedTexture(button)
 	button:SetPushedTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 
 	local pushed = button:GetPushedTexture()
-	pushed:SetTexCoord(unpack(TEXTURE_COORDS.PUSHED))
+	pushed:SetTexCoord(unpack(TEXTURE_COORDS.HIGHLIGHT))
 	pushed:ClearAllPoints()
-	pushed:SetPoint("TOPLEFT", 1, -1)
-	pushed:SetPoint("BOTTOMRIGHT", -1, 1)
+	pushed:SetPoint("TOPLEFT", 0, 0)
+	pushed:SetPoint("BOTTOMRIGHT", 0, 0)
 end
 
 local function updateDisabledTexture(button)
-	button:SetDisabledTexture(nil)
+	button:SetDisabledTexture("Interface\\AddOns\\ls_UI\\assets\\transparent")
 end
 
 local function updateHighlightTexture(button)
-	button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu", "ADD")
+	button:SetHighlightTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 
 	local highlight = button:GetHighlightTexture()
 	highlight:SetTexCoord(unpack(TEXTURE_COORDS.HIGHLIGHT))
 	highlight:ClearAllPoints()
-	highlight:SetPoint("TOPLEFT", 1, -1)
-	highlight:SetPoint("BOTTOMRIGHT", -1, 1)
+	highlight:SetPoint("TOPLEFT", 0, 0)
+	highlight:SetPoint("BOTTOMRIGHT", 0, 0)
 end
 
-local function button_OnEnter(self)
-	local p, rP, x, y = getTooltipPoint(self._parent)
+local button_proto = {}
+
+function button_proto:OnEnter()
+	local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
 	GameTooltip:SetPoint(p, self, rP, x, y)
 	GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
 
-	if SHOW_NEWBIE_TIPS == "1" and self.newbieText then
-		GameTooltip:AddLine(self.newbieText, 1, 0.82, 0, 1, true)
-	end
-
 	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
-		local r, g, b = E:GetRGB(C.db.global.colors.red)
+		local r, g, b = C.db.global.colors.red:GetRGB()
 
 		if self.factionGroup == "Neutral" then
 			GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
@@ -304,18 +250,14 @@ local function button_OnEnter(self)
 	GameTooltip:Show()
 end
 
-local function button_GetAnchor(self)
-	return MODULE:GetBar(self._config.parent) or MODULE:GetBar("micromenu1")
-end
-
-local function button_UpdateConfig(self)
+function button_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
 end
 
-local function button_UpdateVisibility(self)
+function button_proto:UpdateVisibility()
 	if self._config.enabled then
 		self:Show()
-		self:SetParent(self:GetAnchor())
+		self:SetParent(self._parent)
 
 		activeButtons[self:GetID()] = self
 	else
@@ -326,7 +268,9 @@ local function button_UpdateVisibility(self)
 	end
 end
 
-local function button_UpdateEvents(self)
+function button_proto:UpdateEvents()
+	self:UnregisterAllEvents()
+
 	if self._config.enabled then
 		for event in next, BUTTONS[self._id].events do
 			self:RegisterEvent(event)
@@ -334,18 +278,19 @@ local function button_UpdateEvents(self)
 
 		self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 		self:RegisterEvent("UPDATE_BINDINGS")
-	else
-		self:UnregisterAllEvents()
 	end
 end
 
-local function button_Update(self)
+function button_proto:Update()
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateEvents()
 end
 
 local function handleMicroButton(button)
+	Mixin(button, button_proto)
+
+	button:SetSize(36 / 2, 48 / 2)
 	button:SetHitRectInsets(0, 0, 0, 0)
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	button:UnregisterAllEvents()
@@ -355,23 +300,22 @@ local function handleMicroButton(button)
 	updateDisabledTexture(button)
 	updateHighlightTexture(button)
 
-	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-	border:SetSize(16)
-	border:SetOffset(-8)
+	local border = button:CreateTexture(nil, "BORDER")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+	border:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
+	border:SetVertexColor(0, 0, 0)
+	border:SetPoint("TOPLEFT", -2, 2)
+	border:SetPoint("BOTTOMRIGHT", 2, -2)
 	button.Border = border
 
-	local flash = button.Flash
-	flash:SetTexture("Interface\\BUTTONS\\Micro-Highlight")
-	flash:SetTexCoord(0 / 64, 33 / 64, 0, 42 / 64)
+	local flash = button.FlashBorder
 	flash:SetDrawLayer("OVERLAY", 2)
+	flash:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+	flash:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
+	flash:SetVertexColor(242 / 255, 228 / 255, 165 / 255)
 	flash:ClearAllPoints()
-	flash:SetPoint("TOPLEFT", button, "TOPLEFT", -5, 5)
-	flash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 5, -5)
-
-	local bg = button:CreateTexture(nil, "BACKGROUND", nil, 0)
-	bg:SetColorTexture(0, 0, 0, 1)
-	bg:SetAllPoints()
+	flash:SetPoint("TOPLEFT", -2, 2)
+	flash:SetPoint("BOTTOMRIGHT", 2, -2)
 
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
@@ -379,19 +323,11 @@ local function handleMicroButton(button)
 	icon:SetPoint("BOTTOMRIGHT", -1, 1)
 	button.Icon = icon
 
-	button:SetScript("OnEnter", button_OnEnter)
+	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnUpdate", nil)
-
-	button.GetAnchor = button_GetAnchor
-	button.Update = button_Update
-	button.UpdateConfig = button_UpdateConfig
-	button.UpdateEvents = button_UpdateEvents
-	button.UpdateVisibility = button_UpdateVisibility
 end
 
--- Character
-local characterButton_OnEvent, characterButton_Update, characterButton_UpdateIndicator
-
+local char_button_proto = {}
 do
 	local slots = {
 		[ 1] = _G["HEADSLOT"],
@@ -408,8 +344,8 @@ do
 	local durabilities = {}
 	local minDurability = 100
 
-	local function characterButton_OnEnter(self)
-		button_OnEnter(self)
+	function char_button_proto:OnEnter()
+		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
@@ -426,35 +362,35 @@ do
 		end
 	end
 
-	function characterButton_OnEvent(self, event)
+	function char_button_proto:OnEvent(event)
 		if event == "UPDATE_INVENTORY_DURABILITY" then
 			local t = GetTime()
 
-			if t - (self.recentUpdate or 0 ) >= 0.1 then
-				C_Timer.After(0.1, function()
+			if t - (self.recentUpdate or 0 ) >= 1 then
+				C_Timer.After(1, function()
 					self:UpdateIndicator()
 				end)
 
 				self.recentUpdate = t
 			end
 		elseif event == "UPDATE_BINDINGS" then
-			self.tooltipText = MicroButtonTooltipText(L["CHARACTER_BUTTON"], "TOGGLECHARACTER0")
+			self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 		end
 	end
 
-	function characterButton_Update(self)
-		button_Update(self)
+	function char_button_proto:Update()
+		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", characterButton_OnEnter)
+			self:SetScript("OnEnter", self.OnEnter)
 		else
-			self:SetScript("OnEnter", button_OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnter)
 		end
 
 		self:UpdateIndicator()
 	end
 
-	function characterButton_UpdateIndicator(self)
+	function char_button_proto:UpdateIndicator()
 		t_wipe(durabilities)
 		minDurability = 100
 
@@ -475,400 +411,28 @@ do
 		end
 
 		self.Indicator:SetVertexColor(E:GetGradientAsRGB(minDurability / 100, C.db.global.colors.ryg))
-	end
-end
 
--- Inventory
-local inventoryButton_OnClick, inventoryButton_OnEvent, inventoryButton_Update, inventoryButton_UpdateConfig, inventoryButton_UpdateIndicator, inventoryButton_UpdateSlots
-
-do
-	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
-	local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
-	local _, TOKEN_NAME = GetItemInfoInstant(WOW_TOKEN_ITEM_ID) -- technically it's its item class
-	local TOKEN_COLOR = ITEM_QUALITY_COLORS[8]
-
-	local freeSlots, totalSlots = 0, 0
-	local lastTokenUpdate = 0
-
-	local function updateBagUsageInfo()
-		freeSlots, totalSlots = 0, 0
-
-		for i = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-			local slots, bagType = GetContainerNumFreeSlots(i)
-
-			if bagType == 0 then
-				freeSlots, totalSlots = freeSlots + slots, totalSlots + GetContainerNumSlots(i)
-			end
-		end
-	end
-
-	local function inventoryButton_OnEnter(self)
-		button_OnEnter(self)
-
-		if self:IsEnabled() then
-			GameTooltip:AddLine(L["FREE_BAG_SLOTS_TOOLTIP"]:format(freeSlots))
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(L["CURRENCY_COLON"])
-
-			for id in next, self._config.currency do
-				local info = C_CurrencyInfo.GetCurrencyInfo(id)
-				if info then
-					if info.maxQuantity and info.maxQuantity > 0 then
-						if info.quantity == info.maxQuantity then
-							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, E:GetRGB(C.db.global.colors.red))
-						else
-							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, E:GetRGB(C.db.global.colors.green))
-						end
-					else
-						GameTooltip:AddDoubleLine(info.name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), info.iconFileID), 1, 1, 1, 1, 1, 1)
-					end
-				end
-			end
-
-			GameTooltip:AddDoubleLine(L["GOLD"], GetMoneyString(GetMoney(), true), 1, 1, 1, 1, 1, 1)
-
-			local tokenPrice = C_WowTokenPublic.GetCurrentMarketPrice()
-			if tokenPrice and tokenPrice > 0 then
-				GameTooltip:AddDoubleLine(TOKEN_NAME, GetMoneyString(tokenPrice, true), TOKEN_COLOR.r, TOKEN_COLOR.g, TOKEN_COLOR.b, 1, 1, 1)
-			elseif GetTime() - lastTokenUpdate > 300 then -- 300 is pollTimeSeconds = select(2, C_WowTokenPublic.GetCommerceSystemStatus())
-				C_WowTokenPublic.UpdateMarketPrice()
-			end
-
-			if C.db.profile.bars.micromenu.bars.bags.enabled then
-				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(L["INVENTORY_BUTTON_RCLICK_TOOLTIP"])
-			end
-
-			GameTooltip:Show()
-		end
-	end
-
-	function inventoryButton_OnClick(_, button)
-		if button == "RightButton" then
-			if C.db.profile.bars.micromenu.bars.bags.enabled then
-				if not InCombatLockdown() then
-					if LSBagBar:IsShown() then
-						LSBagBar:Hide()
-					else
-						LSBagBar:Show()
-					end
-				end
-			else
-				ToggleAllBags()
-			end
-		else
-			ToggleAllBags()
-		end
-	end
-
-	function inventoryButton_OnEvent(self, event, ...)
-		if event == "BAG_UPDATE_DELAYED" then
-			self:UpdateIndicator()
-		elseif event == "UPDATE_BINDINGS" then
-			self.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
-		elseif event == "TOKEN_MARKET_PRICE_UPDATED" then
-			lastTokenUpdate = GetTime()
-
-			if ... == LE_TOKEN_RESULT_ERROR_DISABLED then
-				return
-			end
-
-			if GameTooltip:IsOwned(self) then
-				GameTooltip:Hide()
-
-				inventoryButton_OnEnter(self)
-			end
-		end
-	end
-
-	function inventoryButton_Update(self)
-		button_Update(self)
-
-		if self._config.tooltip then
-			self:SetScript("OnEnter", inventoryButton_OnEnter)
-		else
-			self:SetScript("OnEnter", button_OnEnter)
-		end
-
-		self:UpdateIndicator()
-		self:UpdateSlots()
-	end
-
-	function inventoryButton_UpdateConfig(self)
-		if self._config and self._config.currency then
-			t_wipe(self._config.currency)
-		end
-
-		self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
-	end
-
-	function inventoryButton_UpdateIndicator(self)
-		updateBagUsageInfo()
-
-		self.Indicator:SetVertexColor(E:GetGradientAsRGB(freeSlots / totalSlots, C.db.global.colors.ryg))
-	end
-
-	function inventoryButton_UpdateSlots(self)
-		self.Slots:Update()
-	end
-end
-
--- Bags
-local bagSlots_OnEvent, bagSlots_OnShow, bagSlots_Update, bagSlots_UpdateEvents, bagSlots_UpdateLayout, createBag
-
-do
-	local invIDOffset = ContainerIDToInventoryID(1) - 1
-
-	local function generateMenuLinesForBag(bag)
-		local invID = bag:GetID()
-		local containerID = invID - invIDOffset
-		local lines = {}
-
-		if not IsInventoryItemProfessionBag("player", invID) then
-			lines[1] = {
-				text = BAG_FILTER_ASSIGN_TO,
-				isTitle = true,
-			}
-
-			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-				if i ~= LE_BAG_FILTER_FLAG_JUNK then
-					t_insert(lines, {
-						text = BAG_FILTER_LABELS[i],
-						isRadio = true,
-						func = function(self)
-							local value = not self:GetRadioState()
-
-							SetBagSlotFlag(containerID, i, value)
-
-							if value then
-								bag.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
-								bag.FilterIcon:Show()
-							else
-								bag.FilterIcon:Hide()
-							end
-						end,
-						checked = function()
-							return GetBagSlotFlag(containerID, i)
-						end,
-					})
-				end
-			end
-		end
-
-		t_insert(lines, {
-			text = BAG_FILTER_CLEANUP,
-			isTitle = true,
-		})
-
-		t_insert(lines, {
-			text = BAG_FILTER_IGNORE,
-			func = function(self)
-				SetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not self:GetCheckedState())
-			end,
-			checked = function()
-				return GetBagSlotFlag(containerID, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
-			end,
-		})
-
-		return unpack(lines)
-	end
-
-	local function bag_OnClick(self, button)
-		if button == "RightButton" then
+		if GameTooltip:IsOwned(self) then
 			GameTooltip:Hide()
-			LibDropDown:CloseAll()
 
-			local p, rP, x, y = getTooltipPoint(LSBagBar)
-
-			LSBagBar.FilterMenu:SetAnchor(p, self, rP, x * 5, y * 5)
-			LSBagBar.FilterMenu:ClearLines()
-			LSBagBar.FilterMenu:AddLines(generateMenuLinesForBag(self))
-			LSBagBar.FilterMenu:Toggle()
-
-			PlaySound(856) -- IG_MAINMENU_OPTION_CHECKBOX_ON
-		else
-			if not InCombatLockdown() then
-				if CursorHasItem() then
-					PutItemInBag(self:GetID())
-				else
-					PickupBagFromSlot(self:GetID())
-				end
-			end
+			self:OnEnter()
 		end
-	end
-
-	local function bag_OnDragStart(self)
-		if not InCombatLockdown() then
-			PickupBagFromSlot(self:GetID())
-		end
-	end
-
-	local function bag_OnEnter(self)
-		local p, rP, x, y = getTooltipPoint(LSBagBar)
-
-		GameTooltip:SetOwner(self, "ANCHOR_NONE")
-		GameTooltip:SetPoint(p, self, rP, x, y)
-
-		if not GameTooltip:SetInventoryItem("player", self:GetID()) then
-			GameTooltip:SetText(EQUIP_CONTAINER, 1, 1, 1)
-		end
-	end
-
-	local function bag_OnLeave()
-		GameTooltip:Hide()
-	end
-
-	local function bag_UpdateCursor(self)
-		if CursorCanGoInSlot(self:GetID()) then
-			self:LockHighlight()
-		else
-			self:UnlockHighlight()
-		end
-	end
-
-	local function bag_UpdateFilterIcon(self)
-		self.FilterIcon:Hide()
-
-		if not IsInventoryItemProfessionBag("player", self:GetID()) then
-			for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-				if GetBagSlotFlag(self:GetID() - invIDOffset, i) then
-					self.FilterIcon:Show()
-					self.FilterIcon:SetAtlas(BAG_FILTER_ICONS[i])
-
-					break
-				end
-			end
-		end
-	end
-
-	local function bag_UpdateIcon(self)
-		self.Icon:SetTexture(GetInventoryItemTexture("player", self:GetID()))
-	end
-
-	local function bag_UpdateLock(self)
-		self.Icon:SetDesaturated(IsInventoryItemLocked(self:GetID()))
-	end
-
-	local function bag_Update(self)
-		self:UpdateCursor()
-		self:UpdateFilterIcon()
-		self:UpdateIcon()
-		self:UpdateLock()
-	end
-
-	function createBag(parent, containerID)
-		local bag = E:CreateButton(parent, "$parentBag" .. containerID, true, nil, true)
-		bag:SetID(ContainerIDToInventoryID(containerID))
-		bag:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-		bag:RegisterForDrag("LeftButton")
-		bag:SetScript("OnClick", bag_OnClick)
-		bag:SetScript("OnDragStart", bag_OnDragStart)
-		bag:SetScript("OnEnter", bag_OnEnter)
-		bag:SetScript("OnLeave", bag_OnLeave)
-
-		bag.Update = bag_Update
-		bag.UpdateCursor = bag_UpdateCursor
-		bag.UpdateFilterIcon = bag_UpdateFilterIcon
-		bag.UpdateIcon = bag_UpdateIcon
-		bag.UpdateLock = bag_UpdateLock
-
-		local filterIcon = bag.FGParent:CreateTexture(nil, "OVERLAY")
-		filterIcon:SetAtlas("bags-icon-consumables")
-		filterIcon:SetSize(20, 20)
-		filterIcon:SetPoint("BOTTOMRIGHT", 4, -4)
-		bag.FilterIcon = filterIcon
-
-		return bag
-	end
-
-	function bagSlots_OnEvent(self, event, ...)
-		if self:IsShown() then
-			if event == "ITEM_LOCK_CHANGED" then
-				local bagID, slotID = ...
-
-				if bagID and not slotID then
-					bagID = bagID - invIDOffset
-				end
-
-				if bagID >= 1 and bagID <= 4 then
-					self._buttons[bagID]:UpdateLock()
-				end
-			elseif event == "CURSOR_UPDATE" then
-				for _, button in next, self._buttons do
-					button:UpdateCursor()
-				end
-			elseif event == "BAG_UPDATE_DELAYED" then
-				for _, button in next, self._buttons do
-					button:Update()
-				end
-			elseif event == "BAG_SLOT_FLAGS_UPDATED" then
-				local bagID = ...
-				if bagID >= 1 and bagID <= 4 then
-					self._buttons[5 - bagID]:UpdateFilterIcon()
-				end
-			elseif event == "PLAYER_REGEN_DISABLED" then
-				self:Hide()
-				LibDropDown:CloseAll()
-			end
-		end
-	end
-
-	function bagSlots_OnShow(self)
-		for _, button in next, self._buttons do
-			button:Update()
-		end
-	end
-
-	function bagSlots_Update(self)
-		self:UpdateConfig()
-		self:UpdateEvents()
-		self:UpdateLayout()
-
-		if not (self._config.enabled and C.db.profile.bars.micromenu.buttons.inventory.enabled) then
-			self:Hide()
-
-			local mover = E.Movers:Get(self)
-			if mover then
-				mover:Disable()
-			end
-		else
-			local mover = E.Movers:Get(self, true)
-			if mover then
-				mover:Enable()
-			end
-		end
-	end
-
-	function bagSlots_UpdateEvents(self)
-		if self._config.enabled then
-			self:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
-			self:RegisterEvent("BAG_UPDATE_DELAYED")
-			self:RegisterEvent("CURSOR_UPDATE")
-			self:RegisterEvent("ITEM_LOCK_CHANGED")
-			self:RegisterEvent("PLAYER_REGEN_DISABLED")
-		else
-			self:UnregisterAllEvents()
-		end
-	end
-
-	function bagSlots_UpdateLayout(self)
-		E.Layout:Update(self)
 	end
 end
 
--- Spellbook
-local function spellbookButton_OnEvent(self, event)
-	if event == "UPDATE_BINDINGS" then
-		self.tooltipText = MicroButtonTooltipText(L["SPELLBOOK_ABILITIES_BUTTON"], "TOGGLESPELLBOOK")
-	end
-end
-
--- Quest
-local questLogButton_Update
-
+local spellbook_button_proto = {}
 do
-	local function questLogButton_OnEnter(self)
-		button_OnEnter(self)
+	function spellbook_button_proto:OnEvent(event)
+		if event == "UPDATE_BINDINGS" then
+			self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+		end
+	end
+end
+
+local quest_button_proto = {}
+do
+	function quest_button_proto:OnEnter()
+		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(L["DAILY_QUEST_RESET_TIME_TOOLTIP"]:format(SecondsToTime(GetQuestResetTime())))
@@ -876,39 +440,18 @@ do
 		end
 	end
 
-	function questLogButton_Update(self)
-		button_Update(self)
+	function quest_button_proto:Update()
+		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", questLogButton_OnEnter)
+			self:SetScript("OnEnter", self.OnEnter)
 		else
-			self:SetScript("OnEnter", button_OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnter)
 		end
 	end
 end
 
--- Guild
-local function guildButton_Update(self)
-	button_Update(self)
-
-	if self.Tabard:IsShown() then
-		self.Tabard.background:Show()
-		self.Tabard.emblem:Show()
-		self.Icon:Hide()
-	else
-		self.Tabard.background:Hide()
-		self.Tabard.emblem:Hide()
-		self.Icon:Show()
-	end
-
-	updateNormalTexture(self)
-	updatePushedTexture(self)
-	updateDisabledTexture(self)
-end
-
--- LFD
-local lfdButton_OnEvent, lfdButton_Update, lfdButton_UpdateIndicator
-
+local lfd_button_proto = {}
 do
 	local cta = {
 		tank = {},
@@ -963,8 +506,8 @@ do
 		end
 	end
 
-	local function lfdButton_OnEnter(self)
-		button_OnEnter(self)
+	function lfd_button_proto:OnEnter()
+		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			local gray = C.db.global.colors.gray
@@ -994,7 +537,7 @@ do
 		end
 	end
 
-	function lfdButton_OnEvent(self, event)
+	function lfd_button_proto:OnEvent(event)
 		if event == "LFG_LOCK_INFO_RECEIVED" then
 			if GetTime() - (self.lastUpdate or 0) > 9 then
 				self:UpdateIndicator()
@@ -1010,18 +553,18 @@ do
 		end
 	end
 
-	function lfdButton_Update(self)
-		button_Update(self)
+	function lfd_button_proto:Update()
+		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
-			self:SetScript("OnEnter", lfdButton_OnEnter)
+			self:SetScript("OnEnter", self.OnEnter)
 
 			self.Ticker = C_Timer.NewTicker(15, function()
 				RequestLFDPlayerLockInfo()
 				RequestLFDPartyLockInfo()
 			end)
 		else
-			self:SetScript("OnEnter", button_OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnter)
 
 			if self.Ticker then
 				self.Ticker:Cancel()
@@ -1032,7 +575,7 @@ do
 		self:UpdateIndicator()
 	end
 
-	function lfdButton_UpdateIndicator(self)
+	function lfd_button_proto:UpdateIndicator()
 		t_wipe(cta.tank)
 		t_wipe(cta.healer)
 		t_wipe(cta.damager)
@@ -1050,29 +593,20 @@ do
 			end
 		end
 
-		self.Flash:SetShown(cta.total > 0)
+		self.FlashBorder:SetShown(cta.total > 0)
 
 		if GameTooltip:IsOwned(self) then
 			GameTooltip:Hide()
 
-			lfdButton_OnEnter(self)
+			self:OnEnter()
 		end
 	end
 end
 
--- Collections
-local function collectionsButton_OnEvent(self, event)
-	if event == "UPDATE_BINDINGS" then
-		self.tooltipText = MicroButtonTooltipText(L["COLLECTIONS"], "TOGGLECOLLECTIONS")
-	end
-end
-
--- EJ
-local ejButton_OnEvent, ejButton_Update
-
+local ej_button_proto = {}
 do
-	local function ejButton_OnEnter(self)
-		button_OnEnter(self)
+	function ej_button_proto:OnEnter()
+		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			RequestRaidInfo()
@@ -1126,47 +660,46 @@ do
 		end
 	end
 
-	function ejButton_OnEvent(self, event)
+	function ej_button_proto:OnEventHook(event)
 		if event == "UPDATE_INSTANCE_INFO" then
 			if GameTooltip:IsOwned(self) then
 				GameTooltip:Hide()
 
-				ejButton_OnEnter(self)
+				self:OnEnter()
 			end
 		end
 	end
 
-	function ejButton_Update(self)
-		button_Update(self)
+	function ej_button_proto:Update()
+		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", ejButton_OnEnter)
+			self:SetScript("OnEnter", self.OnEnter)
 		else
-			self:SetScript("OnEnter", button_OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnter)
 		end
 	end
 end
 
--- Main
-local mainMenuButton_OnEvent, mainMenuButton_Update, mainMenuButton_UpdateIndicator
-
+local main_button_proto = {}
 do
 	local addOns = {}
 	local memUsage, latencyHome, latencyWorld = 0, 0, 0
+	local MED_LATENCY = 600
 	local _
 
 	local function sortFunc(a, b)
 		return a[2] > b[2]
 	end
 
-	local function mainMenuButton_OnEnter(self)
-		button_OnEnter(self)
+	function main_button_proto:OnEnter()
+		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(L["LATENCY_COLON"])
-			GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyHome / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr), latencyHome), 1, 1, 1)
-			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr), latencyWorld), 1, 1, 1)
+			GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyHome / MED_LATENCY, C.db.global.colors.gyr), latencyHome), 1, 1, 1)
+			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyWorld / MED_LATENCY, C.db.global.colors.gyr), latencyWorld), 1, 1, 1)
 
 			if IsShiftKeyDown() then
 				GameTooltip:AddLine(" ")
@@ -1207,29 +740,29 @@ do
 		end
 	end
 
-	function mainMenuButton_OnEvent(self, event)
+	function main_button_proto:OnEvent(event)
 		if event == "MODIFIER_STATE_CHANGED" then
 			if GameTooltip:IsOwned(self) then
 				GameTooltip:Hide()
 
-				mainMenuButton_OnEnter(self)
+				self:OnEnter()
 			end
 		elseif event == "UPDATE_BINDINGS" then
-			self.tooltipText = MicroButtonTooltipText(L["MAINMENU_BUTTON"], "TOGGLEGAMEMENU")
+			self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
 		end
 	end
 
-	function mainMenuButton_Update(self)
-		button_Update(self)
+	function main_button_proto:Update()
+		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
-			self:SetScript("OnEnter", mainMenuButton_OnEnter)
+			self:SetScript("OnEnter", self.OnEnter)
 
 			self.Ticker = C_Timer.NewTicker(30, function()
 				self:UpdateIndicator()
 			end)
 		else
-			self:SetScript("OnEnter", button_OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnter)
 
 			if self.Ticker then
 				self.Ticker:Cancel()
@@ -1240,9 +773,9 @@ do
 		self:UpdateIndicator()
 	end
 
-	function mainMenuButton_UpdateIndicator(self)
+	function main_button_proto:UpdateIndicator()
 		_, _, latencyHome, latencyWorld = GetNetStats()
-		self.Indicator:SetVertexColor(E:GetGradientAsRGB(latencyWorld / PERFORMANCEBAR_MEDIUM_LATENCY, C.db.global.colors.gyr))
+		self.Indicator:SetVertexColor(E:GetGradientAsRGB(latencyWorld / MED_LATENCY, C.db.global.colors.gyr))
 	end
 end
 
@@ -1250,7 +783,11 @@ local function buttonSort(a, b)
 	return a:GetID() < b:GetID()
 end
 
-local function bar_Update(self)
+local bar_proto = {
+	UpdateCooldownConfig = E.NOOP,
+}
+
+function bar_proto:Update()
 	self:UpdateConfig()
 	self:ForEach("Update")
 	self:ForEach("UpdateEvents")
@@ -1259,35 +796,20 @@ local function bar_Update(self)
 	self:UpdateLayout()
 end
 
-local function bar_UpdateConfig(self)
-	self._config = E:CopyTable(C.db.profile.bars.micromenu.bars[self._id], self._config)
-	self._config.fade = E:CopyTable(C.db.profile.bars.micromenu.fade, self._config.fade)
-	self._config.visible = C.db.profile.bars.micromenu.visible
+function bar_proto:UpdateConfig()
+	self._config = E:CopyTable(C.db.profile.bars.micromenu, self._config)
 end
 
-local function bar_UpdateButtonList(self)
+function bar_proto:UpdateButtonList()
 	t_wipe(self._buttons)
 
 	for _, button in next, activeButtons do
-		if button._config.enabled and button:GetAnchor() == self then
-			button._parent = self
+		if button._config.enabled then
 			t_insert(self._buttons, button)
 		end
 	end
 
 	t_sort(self._buttons, buttonSort)
-
-	if #self._buttons == 0 then
-		local mover = E.Movers:Get(self)
-		if mover then
-			mover:Disable()
-		end
-	else
-		local mover = E.Movers:Get(self, true)
-		if mover then
-			mover:Enable()
-		end
-	end
 end
 
 local function updateMicroButtonsParent()
@@ -1304,28 +826,15 @@ local function moveMicroButtons()
 			button:UpdateVisibility()
 		end
 
-		local bar = MODULE:GetBar("micromenu1")
-		bar:UpdateButtonList()
-		bar:UpdateLayout()
-
-		bar = MODULE:GetBar("micromenu2")
-		bar:UpdateButtonList()
-		bar:UpdateLayout()
+		MODULE:For("micromenu", "UpdateButtonList")
+		MODULE:For("micromenu", "UpdateLayout")
 	end
 end
 
 local function updateMicroButtons()
 	if isInit then
-		for _, button in next, MODULE:GetBar("micromenu1")._buttons do
-			if button._config.enabled then
-				button:Show()
-			end
-		end
-
-		for _, button in next, MODULE:GetBar("micromenu2")._buttons do
-			if button._config.enabled then
-				button:Show()
-			end
+		for _, button in next, buttons do
+			button:SetShown(button._config.enabled)
 		end
 	end
 end
@@ -1344,146 +853,58 @@ local function repositionAlert(button)
 	end
 end
 
+function MODULE:HasMicroMenu()
+	return isInit
+end
+
 function MODULE:CreateMicroMenu()
 	if not isInit then
-		local bar1 = CreateFrame("Frame", "LSMicroMenu1", UIParent)
-		bar1._id = "micromenu1"
-		bar1._buttons = {}
-
-		MODULE:AddBar(bar1._id, bar1)
-
-		bar1.Update = bar_Update
-		bar1.UpdateButtonList = bar_UpdateButtonList
-		bar1.UpdateConfig = bar_UpdateConfig
-		bar1.UpdateCooldownConfig = nil
-
-		local bar2 = CreateFrame("Frame", "LSMicroMenu2", UIParent)
-		bar2._id = "micromenu2"
-		bar2._buttons = {}
-
-		MODULE:AddBar(bar2._id, bar2)
-
-		bar2.Update = bar_Update
-		bar2.UpdateButtonList = bar_UpdateButtonList
-		bar2.UpdateConfig = bar_UpdateConfig
-		bar2.UpdateCooldownConfig = nil
+		local bar = Mixin(self:Create("micromenu", "LSMicroMenu"), bar_proto)
 
 		for id, data in next, BUTTONS do
 			local button = _G[data.name] or CreateFrame("Button", data.name, UIParent, "MainMenuBarMicroButton")
 			button:SetID(idToIndex[id])
 			button._id = id
+			button._parent = bar
 
 			handleMicroButton(button)
 
 			button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[data.icon]))
 
 			if id == "character" then
-				E:ForceHide(MicroButtonPortrait)
-
-				button:SetScript("OnEvent", characterButton_OnEvent)
-
-				button.Indicator = createButtonIndicator(button)
-				button.tooltipText = MicroButtonTooltipText(L["CHARACTER_BUTTON"], "TOGGLECHARACTER0")
-
-				button.Update = characterButton_Update
-				button.UpdateIndicator = characterButton_UpdateIndicator
-			elseif id == "inventory" then
-				button:SetScript("OnClick", inventoryButton_OnClick)
-				button:SetScript("OnEvent", inventoryButton_OnEvent)
+				Mixin(button, char_button_proto)
+				button:SetScript("OnEvent", button.OnEvent)
 
 				button.Indicator = createButtonIndicator(button)
-				button.tooltipText = MicroButtonTooltipText(L["INVENTORY_BUTTON"], "OPENALLBAGS")
-
-				button.Update = inventoryButton_Update
-				button.UpdateConfig = inventoryButton_UpdateConfig
-				button.UpdateIndicator = inventoryButton_UpdateIndicator
-				button.UpdateSlots = inventoryButton_UpdateSlots
-
-				local slots = CreateFrame("Frame", "LSBagBar", UIParent)
-				slots:Hide()
-				slots:SetScript("OnEvent", bagSlots_OnEvent)
-				slots:SetScript("OnShow", bagSlots_OnShow)
-				slots._id = "bags"
-				slots._buttons = {}
-				button.Slots = slots
-
-				for i = 1, 4 do
-					local bag = createBag(slots, i)
-					bag._parent = slots
-					slots._buttons[5 - i] = bag
-				end
-
-				local menu = LibDropDown:NewMenu(slots, "LSBagFilterMenu")
-				menu:SetStyle("MENU")
-				slots.FilterMenu = menu
-
-				slots.Update = bagSlots_Update
-				slots.UpdateConfig = bar_UpdateConfig
-				slots.UpdateEvents = bagSlots_UpdateEvents
-				slots.UpdateLayout = bagSlots_UpdateLayout
-
-				local point = C.db.profile.bars.micromenu.bars.bags.point[E.UI_LAYOUT]
-				slots:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-				E.Movers:Create(slots)
+				button.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 			elseif id == "spellbook" then
-				button:SetScript("OnEnter", button_OnEnter)
-				button:SetScript("OnEvent", spellbookButton_OnEvent)
+				Mixin(button, spellbook_button_proto)
+				button:SetScript("OnEnter", button.OnEnter)
+				button:SetScript("OnEvent", button.OnEvent)
 
-				button.tooltipText = MicroButtonTooltipText(L["SPELLBOOK_ABILITIES_BUTTON"], "TOGGLESPELLBOOK")
-				button.newbieText = NEWBIE_TOOLTIP_SPELLBOOK
+				button.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
 			-- elseif id == "talent" then
 			-- elseif id == "achievement" then
 			elseif id == "quest" then
-				button.Update = questLogButton_Update
-			elseif id == "guild" then
-				button.Tabard = GuildMicroButtonTabard
-
-				button.Tabard.background:SetParent(button)
-				button.Tabard.background:ClearAllPoints()
-				button.Tabard.background:SetPoint("TOPLEFT", 1, -1)
-				button.Tabard.background:SetPoint("BOTTOMRIGHT", -1, 1)
-				button.Tabard.background:SetDrawLayer("BACKGROUND", 2)
-				button.Tabard.background:SetTexture("Interface\\GUILDFRAME\\GuildDifficulty")
-				button.Tabard.background:SetTexCoord(6 / 128, 38 / 128, 6 / 64, 50 / 64)
-
-				button.Tabard.emblem:SetParent(button)
-				button.Tabard.emblem:SetDrawLayer("BACKGROUND", 3)
-				button.Tabard.emblem:SetPoint("CENTER", 0, 0)
-
-				hooksecurefunc(GuildMicroButton, "UpdateTabard", function()
-					button:Update()
-				end)
-
-				button.Update = guildButton_Update
+				Mixin(button, quest_button_proto)
+				-- elseif id == "guild" then
 			elseif id == "lfd" then
-				button:SetScript("OnEvent", lfdButton_OnEvent)
+				Mixin(button, lfd_button_proto)
+				button:SetScript("OnEvent", button.OnEvent)
 
 				button.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
 				button.newbieText = NEWBIE_TOOLTIP_LFGPARENT
-
-				button.Update = lfdButton_Update
-				button.UpdateIndicator = lfdButton_UpdateIndicator
-			elseif id == "collection" then
-				button:HookScript("OnEvent", collectionsButton_OnEvent)
-
-				button.tooltipText = MicroButtonTooltipText(L["COLLECTIONS"], "TOGGLECOLLECTIONS")
+			-- elseif id == "collection" then
 			elseif id == "ej" then
-				button:HookScript("OnEvent", ejButton_OnEvent)
-
-				button.NewAdventureNotice:ClearAllPoints()
-				button.NewAdventureNotice:SetPoint("CENTER")
-
-				button.Update = ejButton_Update
-			-- elseif id == "store" then
+				Mixin(button, ej_button_proto)
+				button:HookScript("OnEvent", button.OnEventHook)
+			-- -- elseif id == "store" then
 			elseif id == "main" then
-				E:ForceHide(MainMenuBarDownload)
+				Mixin(button, main_button_proto)
+				button:SetScript("OnEvent", button.OnEvent)
 
-				button:SetScript("OnEvent", mainMenuButton_OnEvent)
-
-				button.Indicator = createButtonIndicator(button, MainMenuBarPerformanceBar)
-
-				button.Update = mainMenuButton_Update
-				button.UpdateIndicator = mainMenuButton_UpdateIndicator
+				button.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
+				button.Indicator = createButtonIndicator(button, button.MainMenuBarPerformanceBar)
 			-- elseif id == "help" then
 			end
 
@@ -1495,40 +916,30 @@ function MODULE:CreateMicroMenu()
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
 
-		E:ForceHide(MicroButtonAndBagsBar)
+		bar:SetPoint(unpack(C.db.profile.bars.micromenu.point))
+		E.Movers:Create(bar)
 
-		local point = C.db.profile.bars.micromenu.bars.micromenu1.point[E.UI_LAYOUT]
-		bar1:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
-		E.Movers:Create(bar1)
-
-		bar2:SetPoint("TOPRIGHT", bar1, "TOPLEFT", 0, 0)
-		E.Movers:Create(bar2)
-
-		self:UpdateMicroMenu()
-
-		-- hack
 		E:RegisterEvent("PLAYER_ENTERING_WORLD", function()
 			for _, name in next, ALERTS do
 				repositionAlert(_G[name])
 			end
 		end)
 
-		-- this method was removed, but is still called by the Blizz UI
-		if not AchievementMicroButton_Update then
-			AchievementMicroButton_Update = E.NOOP
-		end
-
 		isInit = true
+
+		self:UpdateMicroMenu()
 	end
+
 end
 
 function MODULE:UpdateMicroMenu()
-	for _, button in next, buttons do
-		button:Update()
-	end
+	if isInit then
+		for _, button in next, buttons do
+			button:Update()
+		end
 
-	self:GetBar("micromenu1"):Update()
-	self:GetBar("micromenu2"):Update()
+		self:For("micromenu", "Update")
+	end
 end
 
 function MODULE:ForMicroButton(id, method, ...)

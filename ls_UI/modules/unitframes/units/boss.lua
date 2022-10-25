@@ -13,7 +13,7 @@ local holder
 
 function UF:CreateBossHolder()
 	holder = CreateFrame("Frame", "LSBossHolder", UIParent)
-	holder:SetPoint(unpack(C.db.profile.units.boss.point[E.UI_LAYOUT]))
+	holder:SetPoint(unpack(C.db.profile.units.boss.point))
 	E.Movers:Create(holder)
 	holder._children = {}
 
@@ -52,7 +52,7 @@ function UF:HasBossFrame()
 end
 
 function UF:CreateBossFrame(frame)
-	P:Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
+	Mixin(UF:CreateMediumUnitFrame(frame), boss_proto)
 
 	local altPower = self:CreateAlternativePower(frame, frame.TextParent)
 	altPower:SetFrameLevel(frame:GetFrameLevel() + 1)

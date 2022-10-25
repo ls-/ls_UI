@@ -16,7 +16,7 @@ for _, id in next, C_MountJournal.GetMountIDs() do
 end
 
 local filterFunctions = {
-	default = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	default = function(self, unit, data)
 		local config = self._config and self._config.filter or nil
 		if not config then return end
 
@@ -24,7 +24,7 @@ local filterFunctions = {
 		for filter, enabled in next, config.custom do
 			if enabled then
 				filter = C.db.global.aura_filters[filter]
-				if filter and filter[spellID] then
+				if filter and filter[data.spellId] then
 					return filter.state
 				end
 			end
@@ -35,42 +35,41 @@ local filterFunctions = {
 		config = isFriend and config.friendly or config.enemy
 		if not config then return end
 
-		config = aura.isDebuff and config.debuff or config.buff
+		config = data.isHarmful and config.debuff or config.buff
 		if not config then return end
 
 		-- boss
-		isBossAura = isBossAura or E:IsUnitBoss(caster)
-		if isBossAura then
+		if data.isBossAura or E:IsUnitBoss(data.sourceUnit) then
 			return config.boss
 		end
 
-		-- applied by tank
-		if caster and E:IsUnitTank(caster) then
+		-- applied by a tank
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
 			return config.tank
 		end
 
-		-- applied by healer
-		if caster and E:IsUnitTank(caster) then
+		-- applied by a healer
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
 			return config.healer
 		end
 
 		-- mounts
-		if MOUNTS[spellID] then
+		if MOUNTS[data.spellId] then
 			return config.mount
 		end
 
 		-- self-cast
-		if caster and UnitIsUnit(unit, caster) then
-			if duration and duration ~= 0 then
+		if data.sourceUnit and UnitIsUnit(unit, data.sourceUnit) then
+			if data.duration and data.duration ~= 0 then
 				return config.selfcast
 			else
 				return config.selfcast and config.selfcast_permanent
 			end
 		end
 
-		-- applied by player
-		if aura.isPlayer or (caster and UnitIsUnit(caster, "pet")) then
-			if duration and duration ~= 0 then
+		-- applied by the player/vehicle/pet
+		if data.isPlayerAura then
+			if data.duration and data.duration ~= 0 then
 				return config.player
 			else
 				return config.player and config.player_permanent
@@ -78,22 +77,29 @@ local filterFunctions = {
 		end
 
 		if isFriend then
-			if aura.isDebuff then
+			if data.isHarmful then
 				-- dispellable
-				if debuffType and E:IsDispellable(debuffType) then
+				if data.dispelName and E:IsDispellable(data.dispelName) then
 					return config.dispellable
 				end
 			end
 		else
-			-- stealable
-			if isStealable then
-				return config.dispellable
+			if data.isHelpful then
+				-- dispellable (enrage)
+				if data.dispelName and E:IsDispellable(data.dispelName) then
+					return config.dispellable
+				end
+
+				-- stealable
+				if data.isStealable then
+					return config.dispellable
+				end
 			end
 		end
 
 		return config.misc
 	end,
-	boss = function(self, unit, aura, _, _, _, debuffType, duration, _, caster, isStealable, _, spellID, _, isBossAura)
+	boss = function(self, unit, data)
 		local config = self._config and self._config.filter or nil
 		if not config then return end
 
@@ -101,7 +107,7 @@ local filterFunctions = {
 		for filter, enabled in next, config.custom do
 			if enabled then
 				filter = C.db.global.aura_filters[filter]
-				if filter and filter[spellID] then
+				if filter and filter[data.spellId] then
 					return filter.state
 				end
 			end
@@ -112,28 +118,27 @@ local filterFunctions = {
 		config = isFriend and config.friendly or config.enemy
 		if not config then return end
 
-		config = aura.isDebuff and config.debuff or config.buff
+		config = data.isHarmful and config.debuff or config.buff
 		if not config then return end
 
 		-- boss
-		isBossAura = isBossAura or E:IsUnitBoss(caster)
-		if isBossAura then
+		if data.isBossAura or E:IsUnitBoss(data.sourceUnit) then
 			return config.boss
 		end
 
-		-- applied by tank
-		if caster and E:IsUnitTank(caster) then
+		-- applied by a tank
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
 			return config.tank
 		end
 
-		-- applied by healer
-		if caster and E:IsUnitTank(caster) then
+		-- applied by a healer
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
 			return config.healer
 		end
 
-		-- applied by player
-		if aura.isPlayer or (caster and UnitIsUnit(caster, "pet")) then
-			if duration and duration ~= 0 then
+		-- applied by the player/vehicle/pet
+		if data.isPlayerAura then
+			if data.duration and data.duration ~= 0 then
 				return config.player
 			else
 				return config.player and config.player_permanent
@@ -141,16 +146,23 @@ local filterFunctions = {
 		end
 
 		if isFriend then
-			if aura.isDebuff then
+			if data.isHarmful then
 				-- dispellable
-				if debuffType and E:IsDispellable(debuffType) then
+				if data.dispelName and E:IsDispellable(data.dispelName) then
 					return config.dispellable
 				end
 			end
 		else
-			-- stealable
-			if isStealable then
-				return config.dispellable
+			if data.isHelpful then
+				-- dispellable (enrage)
+				if data.dispelName and E:IsDispellable(data.dispelName) then
+					return config.dispellable
+				end
+
+				-- stealable
+				if data.isStealable then
+					return config.dispellable
+				end
 			end
 		end
 
@@ -163,7 +175,11 @@ local button_proto = {}
 function button_proto:UpdateTooltip()
 	if GameTooltip:IsForbidden() then return end
 
-	GameTooltip:SetUnitAura(self:GetParent().__owner.unit, self:GetID(), self.filter)
+	if self.isHarmful then
+		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+	else
+		GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
+	end
 end
 
 function button_proto:OnEnter()
@@ -188,19 +204,16 @@ local element_proto = {
 	spacing = 4,
 }
 
-function element_proto:CreateIcon(index)
+function element_proto:CreateButton(index)
 	local config = self._config
 	if not config then
 		self:UpdateConfig()
 		config = self._config
 	end
 
-	local button = P:Mixin(E:CreateButton(self, "$parentAura" .. index, true, true, true), button_proto)
+	local button = Mixin(E:CreateButton(self, "$parentAura" .. index, true, true, true), button_proto)
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnLeave", button.OnLeave)
-
-	button.icon = button.Icon
-	button.Icon = nil
 
 	local count = button.Count
 	count:UpdateFont(config.count.size)
@@ -208,50 +221,56 @@ function element_proto:CreateIcon(index)
 	count:SetJustifyV(config.count.v_alignment)
 	count:SetWordWrap(false)
 	count:SetAllPoints()
-	button.count = count
-	button.Count = nil
 
-	button.cd = button.CD
-	button.CD = nil
-
-	if button.cd.UpdateConfig then
-		button.cd:UpdateConfig(self.cooldownConfig or {})
-		button.cd:UpdateFont()
-		button.cd:UpdateSwipe()
+	if button.Cooldown.UpdateConfig then
+		button.Cooldown:UpdateConfig(self.cooldownConfig or {})
+		button.Cooldown:UpdateFont()
+		button.Cooldown:UpdateSwipe()
 	end
 
-	button:SetPushedTexture("")
-	button:SetHighlightTexture("")
+	button:SetPushedTexture(0)
+	button:SetHighlightTexture(0)
 
-	local stealable = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 2)
+	local stealable = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 2)
 	stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 	stealable:SetTexCoord(2 / 32, 30 / 32, 2 / 32, 30 / 32)
 	stealable:SetPoint("TOPLEFT", -1, 1)
 	stealable:SetPoint("BOTTOMRIGHT", 1, -1)
 	stealable:SetBlendMode("ADD")
-	button.stealable = stealable
+	button.Stealable = stealable
 
-	local auraType = button.FGParent:CreateTexture(nil, "OVERLAY", nil, 3)
+	local auraType = button.TextureParent:CreateTexture(nil, "OVERLAY", nil, 3)
 	auraType:SetTexture("Interface\\AddOns\\ls_UI\\assets\\unit-frame-aura-icons")
 	auraType:SetPoint(config.type.position, 0, 0)
 	auraType:SetSize(config.type.size, config.type.size)
+	auraType:SetShown(config.type.enabled)
 	button.AuraType = auraType
 
 	return button
 end
 
-function element_proto:PostUpdateIcon(_, aura, _, _, _, _, debuffType)
-	if aura.isDebuff then
-		aura.Border:SetVertexColor(E:GetRGB(C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None))
+function element_proto:PostUpdateButton(button, unit, data)
+	if button.isHarmful then
+		button.Border:SetVertexColor((C.db.global.colors.debuff[data.dispelName] or C.db.global.colors.debuff.None):GetRGB())
 
-		if self._config.type.debuff_type then
-			aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons["Debuff"]))
-		else
-			aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Debuff"]))
+		if self._config.type.enabled then
+			if UnitIsFriend("player", unit) then
+				button.AuraType:SetTexCoord(unpack(M.textures.debuff_icons[data.dispelName] or M.textures.debuff_icons.Debuff))
+			else
+				button.AuraType:SetTexCoord(unpack(M.textures.debuff_icons.Debuff))
+			end
 		end
 	else
-		aura.Border:SetVertexColor(1, 1, 1)
-		aura.AuraType:SetTexCoord(unpack(M.textures.aura_icons["Buff"]))
+		-- "" is enrage, it's a legit buff dispelName
+		button.Border:SetVertexColor((C.db.global.colors.buff[data.dispelName] or C.db.global.colors.white):GetRGB())
+
+		if self._config.type.enabled then
+			if not UnitIsFriend("player", unit) then
+				button.AuraType:SetTexCoord(unpack(M.textures.buff_icons[data.dispelName] or M.textures.buff_icons.Buff))
+			else
+				button.AuraType:SetTexCoord(unpack(M.textures.buff_icons.Buff))
+			end
+		end
 	end
 end
 
@@ -274,14 +293,14 @@ function element_proto:UpdateCooldownConfig()
 	self.cooldownConfig = E:CopyTable(C.db.profile.units.cooldown, self.cooldownConfig)
 	self.cooldownConfig.text = E:CopyTable(self._config.cooldown.text, self.cooldownConfig.text)
 
-	for i = 1, self.createdIcons do
-		if not self[i].cd.UpdateConfig then
+	for i = 1, self.createdButtons do
+		if not self[i].Cooldown.UpdateConfig then
 			break
 		end
 
-		self[i].cd:UpdateConfig(self.cooldownConfig)
-		self[i].cd:UpdateFont()
-		self[i].cd:UpdateSwipe()
+		self[i].Cooldown:UpdateConfig(self.cooldownConfig)
+		self[i].Cooldown:UpdateFont()
+		self[i].Cooldown:UpdateSwipe()
 	end
 end
 
@@ -289,8 +308,8 @@ function element_proto:UpdateFonts()
 	local config = self._config.count
 	local count
 
-	for i = 1, self.createdIcons do
-		count = self[i].count
+	for i = 1, self.createdButtons do
+		count = self[i].Count
 		count:UpdateFont(config.size)
 		count:SetJustifyH(config.h_alignment)
 		count:SetJustifyV(config.v_alignment)
@@ -301,11 +320,12 @@ function element_proto:UpdateAuraTypeIcon()
 	local config = self._config.type
 	local auraType
 
-	for i = 1, self.createdIcons do
+	for i = 1, self.createdButtons do
 		auraType = self[i].AuraType
 		auraType:ClearAllPoints()
 		auraType:SetPoint(config.position, 0, 0)
 		auraType:SetSize(config.size, config.size)
+		auraType:SetShown(config.enabled)
 	end
 end
 
@@ -356,7 +376,9 @@ function element_proto:UpdateMouse()
 end
 
 function element_proto:UpdateColors()
-	self:ForceUpdate()
+	if self.__owner:IsElementEnabled("Auras") then
+		self:ForceUpdate()
+	end
 end
 
 local frame_proto = {}
@@ -384,12 +406,12 @@ function frame_proto:UpdateAuras()
 end
 
 function UF:CreateAuras(frame, unit)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
-	local element = P:Mixin(CreateFrame("Frame", nil, frame), element_proto)
+	local element = Mixin(CreateFrame("Frame", nil, frame), element_proto)
 	element:SetSize(48, 48)
 
-	element.CustomFilter = filterFunctions[unit] or filterFunctions.default
+	element.FilterAura = filterFunctions[unit] or filterFunctions.default
 
 	return element
 end

@@ -45,6 +45,7 @@ local currentPoints = {}
 local disabledMovers = {}
 local enabledMovers = {}
 local trackedMovers = {}
+local dirtyObjects = {}
 local highlightIndex = 0
 local isDragging = false
 local areToggledOn = false
@@ -53,21 +54,18 @@ local showLabels = false
 local controller = CreateFrame("Frame", "LSMoverTracker", UIParent)
 controller:SetPoint("TOPLEFT", 0, 0)
 controller:SetSize(1, 1)
+controller:Hide()
 controller:SetScript("OnKeyDown", function(self, key)
 	if self.mover then
 		self:SetPropagateKeyboardInput(false)
 		if key == "LEFT" then
 			self.mover:UpdatePosition(-1, 0)
-			self.mover:AddRelationLines()
 		elseif key == "RIGHT" then
 			self.mover:UpdatePosition(1, 0)
-			self.mover:AddRelationLines()
 		elseif key == "UP" then
 			self.mover:UpdatePosition(0, 1)
-			self.mover:AddRelationLines()
 		elseif key == "DOWN" then
 			self.mover:UpdatePosition(0, -1)
-			self.mover:AddRelationLines()
 		else
 			self:SetPropagateKeyboardInput(true)
 		end
@@ -102,6 +100,7 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 					end
 
 					mover:EnableMouse(true)
+					mover:EnableMouseWheel(true)
 				end
 			end
 
@@ -121,6 +120,7 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 						end
 					else
 						trackedMovers[i]:EnableMouse(false)
+						trackedMovers[i]:EnableMouseWheel(false)
 					end
 				end
 
@@ -149,7 +149,6 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 		self.elapsed = 0
 	end
 end)
-controller:Hide()
 
 local grid = {}
 do
@@ -285,7 +284,7 @@ do
 		segment:SetSize(16, 16)
 		segment:SetAlpha(0.75)
 		segment:ClearAllPoints()
-		segment:Show()
+		segment:SetShown(areToggledOn)
 
 		return segment
 	end
@@ -430,7 +429,7 @@ do
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	settings.Border = border
 
-	local nameToggle = CreateFrame("CheckButton", "$parentNameToggle", settings, "OptionsCheckButtonTemplate")
+	local nameToggle = CreateFrame("CheckButton", "$parentNameToggle", settings, "UICheckButtonTemplate")
 	nameToggle:SetPoint("TOPLEFT", 1, 0)
 	nameToggle:SetScript("OnClick", function()
 		showLabels = not showLabels
@@ -499,9 +498,9 @@ local function getPoint(self)
 	end
 end
 
-local function calculatePosition(self, xOffset, yOffset)
+local function calculatePosition(self, xOffset, yOffset, forceUIParent)
 	local moverCenterX, moverCenterY = self:GetCenter()
-	local parent = self:GetHive() and self:GetHive():GetObject() or UIParent
+	local parent = forceUIParent and UIParent or self:GetHive() and self:GetHive():GetObject() or UIParent
 	local p, rP, x, y
 
 	if moverCenterX and moverCenterY then
@@ -627,7 +626,7 @@ end
 local function updatePosition(self, p, anchor, rP, x, y)
 	if not x then
 		if currentPoints[self:GetName()] then
-			p, anchor, rP, x, y = unpack(currentPoints[self:GetName()])
+			p, anchor, rP, x, y = self:GetCurrentPosition()
 			anchor = anchor or "UIParent"
 		end
 
@@ -644,10 +643,36 @@ local function updatePosition(self, p, anchor, rP, x, y)
 end
 
 local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
-	local mover = self:GetMover()
+	local mover = E.Movers:Get(self)
 	if mover and not shouldIgnore then
-		self:ClearAllPoints()
-		self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+		if not InCombatLockdown() or not self:IsProtected() then
+			self:ClearAllPoints()
+
+			if mover.isSimple then
+				self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+			else
+				local p, anchor, rP, x, y = mover:GetCurrentPosition()
+				if anchor ~= "UIParent" then
+					p, anchor, rP, x, y = calculatePosition(mover, 0, 0, true)
+				end
+
+				if p then
+					dirtyObjects[self] = nil
+
+					self:SetPoint(p, anchor, rP, x - mover.offsetX, y - mover.offsetY, true)
+				else
+					-- I need to do this because some of the frames I move around are managed by Blizz
+					-- layout manager, so I can't have my movers as anchors since they're created after
+					-- their layout manager positions the frames, so I want all frames to be anchored to
+					-- UIParent
+					dirtyObjects[self] = true
+
+					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+				end
+			end
+		else
+			dirtyObjects[self] = true
+		end
 	end
 end
 
@@ -659,10 +684,18 @@ function mover_proto:SavePosition(p, anchor, rP, x, y)
 	currentPoints[self:GetName()] = {p, anchor, rP, x, y}
 end
 
+function mover_proto:GetCurrentPosition()
+	return unpack(currentPoints[self:GetName()])
+end
+
+function mover_proto:GetDefaultPosition()
+	return unpack(defaultPoints[self:GetName()])
+end
+
 function mover_proto:ResetPosition()
 	if not self.isSimple and InCombatLockdown() then return end
 
-	local p, anchor, rP, x, y = unpack(defaultPoints[self:GetName()])
+	local p, anchor, rP, x, y = self:GetDefaultPosition()
 
 	self:RemoveRelationLines()
 	self:RemoveFromHive()
@@ -674,7 +707,6 @@ function mover_proto:ResetPosition()
 			local oldDrones = self:RemoveDrones()
 			for drone in next, oldDrones do
 				drone:UpdatePosition()
-				drone:AddRelationLines()
 			end
 
 			if not hive:HasInHierarchy(self) then
@@ -686,10 +718,19 @@ function mover_proto:ResetPosition()
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
 	self:SavePosition(p, anchor, rP, x, y)
+
+	resetObjectPoint(self.object)
+
+	for drone in next, self:GetDrones() do
+		if drone:IsEnabled() then
+			drone:UpdatePosition()
+		end
+	end
+
 	self:AddRelationLines()
 
 	if not self.isSimple then
-		self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+		self.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 	end
 
 	self:PostSaveUpdatePosition()
@@ -703,13 +744,23 @@ function mover_proto:UpdatePosition(xOffset, yOffset)
 
 	self:SavePosition(p, anchor, rP, x, y)
 
+	resetObjectPoint(self.object)
+
+	for drone in next, self:GetDrones() do
+		if drone:IsEnabled() then
+			drone:UpdatePosition()
+		end
+	end
+
+	self:AddRelationLines()
+
 	if self.isSimple then
 		self:Show()
 	else
 		if self:WasMoved() then
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+			self.Bg:SetColorTexture(C.db.global.colors.orange:GetRGBA(0.6))
 		else
-			self.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+			self.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 		end
 	end
 
@@ -779,18 +830,14 @@ function mover_proto:OnClick()
 		if GameTooltip:IsOwned(self) then
 			self:OnEnter()
 		end
-
-		self:AddRelationLines()
 	end
 end
 
 function mover_proto:OnMouseWheel(offset)
 	if IsShiftKeyDown() then
 		self:UpdatePosition(0, offset)
-		self:AddRelationLines()
 	elseif IsControlKeyDown() then
 		self:UpdatePosition(offset, 0)
-		self:AddRelationLines()
 	end
 
 	if GameTooltip:IsOwned(self) then
@@ -933,19 +980,6 @@ function mover_proto:GetObject()
 	return self.object
 end
 
-local object_proto = {}
-
-function object_proto:GetMover(inclDisabled)
-	local name = self:GetName()
-	name = name .. "Mover"
-
-	if inclDisabled and disabledMovers[name] then
-		return disabledMovers[name], true
-	end
-
-	return enabledMovers[name], false
-end
-
 local anchor_proto = {}
 
 function anchor_proto:OnClick()
@@ -957,7 +991,6 @@ function anchor_proto:OnClick()
 		local oldDrones = mover:RemoveDrones()
 		for drone in next, oldDrones do
 			drone:UpdatePosition()
-			drone:AddRelationLines()
 		end
 
 		mover:UpdatePosition()
@@ -986,11 +1019,10 @@ function anchor_proto:OnDragStop()
 	lasso.mover = nil
 	lasso:Hide()
 
-	if controller.mover and not controller.mover:HasInHierarchy(mover) then
+	if controller.mover and controller.mover ~= mover and not controller.mover:HasInHierarchy(mover) then
 		mover:RemoveRelationLines()
 		mover:AddToHive(controller.mover)
 		mover:UpdatePosition()
-		mover:AddRelationLines()
 	end
 end
 
@@ -1015,7 +1047,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
 
-	Mixin(object, object_proto)
+	hooksecurefunc(object, "SetPoint", resetObjectPoint)
 
 	local name = objectName .. "Mover"
 	local info = {
@@ -1048,14 +1080,14 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 		mover:SetShown(areToggledOn)
 
 		local bg = mover:CreateTexture(nil, "BACKGROUND", nil, 0)
-		bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+		bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 		bg:SetAllPoints()
 		mover.Bg = bg
 
 		local text = mover:CreateFontString(nil, "OVERLAY")
 		text:SetFontObject("GameFontNormalOutline")
 		text:SetPoint("CENTER")
-		text:SetText(name)
+		text:SetText(objectName)
 		text:SetShown(showLabels)
 		mover.Text = text
 
@@ -1079,7 +1111,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 		local border = E:CreateBorder(mover)
 		border:SetTexture({1, 1, 1, 1})
-		border:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
+		border:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
 		border:SetSize(1)
 		border:SetOffset(0)
 		mover.Border = border
@@ -1089,8 +1121,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 	currentPoints[name] = {getPoint(object)}
 
-	if C.db.profile.movers[E.UI_LAYOUT][name] then
-		E:CopyTable(C.db.profile.movers[E.UI_LAYOUT][name], currentPoints[name])
+	if C.db.profile.movers[name] then
+		E:CopyTable(C.db.profile.movers[name], currentPoints[name])
 	end
 
 	local parentName = currentPoints[name][2]
@@ -1102,6 +1134,9 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 				mover:AddToHive(hive)
 			end
 
+			enabledMovers[name] = mover
+
+			mover:UpdateSize()
 			mover:UpdatePosition()
 		else
 			if not onCreateCallbacks[parentName] then
@@ -1115,18 +1150,19 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 					mover:AddToHive(self)
 				end
 
+				enabledMovers[name] = mover
+
+				mover:UpdateSize()
 				mover:UpdatePosition()
 			end)
 		end
 	else
 		-- print(mover:GetDebugName(), "|cffffd200==>|r", parentName)
+		enabledMovers[name] = mover
+
+		mover:UpdateSize()
 		mover:UpdatePosition()
 	end
-
-	enabledMovers[name] = mover
-
-	hooksecurefunc(object, "SetPoint", resetObjectPoint)
-	resetObjectPoint(object)
 
 	if onCreateCallbacks[objectName] then
 		onCreateCallbacks[objectName](mover)
@@ -1135,7 +1171,6 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 	return mover
 end
 
--- DEPRECATED: Use object:GetMover() instead
 function E.Movers:Get(object, inclDisabled)
 	if type(object) == "table" then
 		object = object:GetName()
@@ -1185,29 +1220,47 @@ end
 
 function E.Movers:UpdateAll()
 	for _, mover in next, enabledMovers do
-		updatePosition(mover, nil)
+		mover:RemoveRelationLines()
+		mover:RemoveDrones()
+	end
+
+	for _, mover in next, enabledMovers do
+		local _, anchor = mover:GetCurrentPosition()
+		if anchor and anchor ~= "UIParent" then
+			local hive = enabledMovers[anchor .. "Mover"]
+			if hive then
+				if not hive:HasInHierarchy(mover) then
+					mover:AddToHive(hive)
+				end
+			end
+		end
+
+		updatePosition(mover)
+		resetObjectPoint(mover.object)
+
+		mover:AddRelationLines()
 
 		if mover.isSimple then
 			mover:Show()
 		else
 			if mover:WasMoved() then
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.orange, 0.6))
+				mover.Bg:SetColorTexture(C.db.global.colors.orange:GetRGBA(0.6))
 			else
-				mover.Bg:SetColorTexture(E:GetRGBA(C.db.global.colors.black, 0.6))
+				mover.Bg:SetColorTexture(C.db.global.colors.black:GetRGBA(0.6))
 			end
 		end
 	end
 end
 
 function E.Movers:SaveConfig()
-	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers[E.UI_LAYOUT]))
+	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers))
 end
 
 function E.Movers:ApplyConfig()
 	t_wipe(currentPoints)
 	E:CopyTable(defaultPoints, currentPoints)
 
-	for name, point in next, C.db.profile.movers[E.UI_LAYOUT] do
+	for name, point in next, C.db.profile.movers do
 		if currentPoints[name] then
 			E:CopyTable(point, currentPoints[name])
 		end
@@ -1233,4 +1286,18 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	relationLines:Hide()
 	settings:Hide()
 	controller:Hide()
+end)
+
+E:RegisterEvent("FIRST_FRAME_RENDERED", function()
+	if not InCombatLockdown() then
+		for object in next, dirtyObjects do
+			resetObjectPoint(object)
+		end
+	end
+end)
+
+E:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+	for object in next, dirtyObjects do
+		resetObjectPoint(object)
+	end
 end)

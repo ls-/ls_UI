@@ -54,13 +54,14 @@ local function getProfileData(profileType)
 		data.colors.power[13] = nil
 		data.colors.power[17] = nil
 		data.colors.power[18] = nil
+		data.colors.power[19] = nil
 
 		E:DiffTable(D.global, data)
 	elseif profileType == "global-tags" then
 		data.tags = {}
-		data.tag_vars = {}
-
 		E:CopyTable(C.db.global.tags, data.tags)
+
+		data.tag_vars = {}
 		E:CopyTable(C.db.global.tag_vars, data.tag_vars)
 
 		E:DiffTable(D.global, data)
@@ -69,8 +70,6 @@ local function getProfileData(profileType)
 
 		E:CopyTable(C.db.profile, data)
 
-		data.units.player = nil
-		data.units.pet = nil
 		data.version = nil
 
 		E:DiffTable(D.profile, data)

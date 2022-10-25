@@ -6,8 +6,18 @@ local _G = getfenv(0)
 local next = _G.next
 
 -- Mine
+local function clamp(v)
+	if v > 1 then
+		return 1
+	elseif v < 0 then
+		return 0
+	end
+
+	return v
+end
+
 local function lerp(v1, v2, perc)
-	return v1 + (v2 - v1) * perc
+	return clamp(v1 + (v2 - v1) * perc)
 end
 
 local FADE_IN = 1
@@ -268,7 +278,7 @@ function E:SetUpFading(object)
 
 	object.Fader = fader
 
-	P:Mixin(object, object_proto)
+	Mixin(object, object_proto)
 
 	return object
 end

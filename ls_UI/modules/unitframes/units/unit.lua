@@ -37,7 +37,7 @@ function small_proto:Update()
 end
 
 function UF:CreateSmallUnitFrame(frame)
-	P:Mixin(frame, small_proto)
+	Mixin(frame, small_proto)
 
 	-- .Fader
 	E:SetUpFading(frame)
@@ -50,7 +50,6 @@ function UF:CreateSmallUnitFrame(frame)
 	self:CreateLayout(frame, frame:GetFrameLevel())
 
 	local health = self:CreateHealth(frame, frame.TextParent)
-	health:SetFrameLevel(frame:GetFrameLevel() + 1)
 	health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
 	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
@@ -59,12 +58,7 @@ function UF:CreateSmallUnitFrame(frame)
 	frame.Health = health
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
-
-	local power = self:CreatePower(frame, frame.TextParent)
-	power:SetFrameLevel(frame:GetFrameLevel() + 1)
-	frame.Power = power
-	frame.Insets.Bottom:Capture(power, 0, 0, -2, 0)
-
+	frame.Power = self:CreatePower(frame, frame.TextParent)
 	frame.Name = self:CreateName(frame, frame.TextParent)
 	frame.Portrait = self:CreatePortrait(frame)
 	frame.ClassIndicator = self:CreateClassIndicator(frame)
@@ -89,7 +83,7 @@ function medium_proto:Update()
 end
 
 function UF:CreateMediumUnitFrame(frame)
-	P:Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
+	Mixin(self:CreateSmallUnitFrame(frame), medium_proto)
 
 	local castbarSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	castbarSlot:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, -6)
@@ -142,7 +136,7 @@ function large_proto:AlignWidgets()
 end
 
 function UF:CreateLargeFrame(frame)
-	P:Mixin(self:CreateMediumUnitFrame(frame), large_proto)
+	Mixin(self:CreateMediumUnitFrame(frame), large_proto)
 
 	local pvpSlot = UF:CreateSlot(frame, frame:GetFrameLevel())
 	pvpSlot:UpdateSize(50, 54) -- pvp holder size

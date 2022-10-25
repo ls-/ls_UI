@@ -6,10 +6,7 @@ local MODULE = P:GetModule("Bars")
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
-
---[[ luacheck: globals
-	CreateFrame FlowContainer_PauseUpdates PetBattleFrame PetBattleFrameXPBar RegisterStateDriver UIParent
-]]
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -33,13 +30,14 @@ local CFG = {
 		min_alpha = 0,
 		max_alpha = 1,
 	},
-	point = {
-		round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
-		rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 16},
-	},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 16},
 }
 
-local function bar_Update(self)
+local bar_proto = {
+	UpdateCooldownConfig = E.NOOP,
+}
+
+function bar_proto:Update()
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:ForEach("UpdateHotKey")
@@ -48,7 +46,7 @@ local function bar_Update(self)
 	E.Layout:Update(self)
 end
 
-local function bar_UpdateConfig(self)
+function bar_proto:UpdateConfig()
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle, self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 
@@ -57,7 +55,9 @@ local function bar_UpdateConfig(self)
 	end
 end
 
-local function button_UpdateHotKey(self, state)
+local button_proto = {}
+
+function button_proto:UpdateHotKey(state)
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -71,27 +71,19 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
-local function button_UpdateHotKeyFont(self)
+function button_proto:UpdateHotKeyFont()
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
 end
 
-function MODULE.HasPetBattleBar()
+function MODULE:HasPetBattleBar()
 	return isInit
 end
 
-function MODULE.CreatePetBattleBar()
+function MODULE:CreatePetBattleBar()
 	if not isInit and (MODULE:IsRestricted() or PrC.db.profile.bars.pet_battle.enabled) then
 		local config = MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle
 
-		local bar = CreateFrame("Frame", "LSPetBattleBar", UIParent, "SecureHandlerStateTemplate")
-		bar._id = "pet_battle"
-		bar._buttons = {}
-
-		MODULE:AddBar(bar._id, bar)
-
-		bar.Update = bar_Update
-		bar.UpdateConfig = bar_UpdateConfig
-		bar.UpdateCooldownConfig = nil
+		local bar = Mixin(self:Create("pet_battle", "LSPetBattleBar"), bar_proto)
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
 			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]
@@ -102,12 +94,10 @@ function MODULE.CreatePetBattleBar()
 			bar._buttons[6] = PetBattleFrame.BottomFrame.ForfeitButton
 
 			for id, button in next, bar._buttons do
+				Mixin(button, button_proto)
 				button._parent = bar
 				button._command = "ACTIONBUTTON" .. id
 				button:SetParent(bar)
-
-				button.UpdateHotKey = button_UpdateHotKey
-				button.UpdateHotKeyFont = button_UpdateHotKeyFont
 
 				E:SkinPetBattleButton(button)
 			end
@@ -116,10 +106,9 @@ function MODULE.CreatePetBattleBar()
 		end)
 
 		if MODULE:IsRestricted() then
-			MODULE:ActionBarController_AddWidget(bar, "PET_BATTLE_BAR")
+			MODULE:AddControlledWidget("PET_BATTLE_BAR", bar)
 		else
-			local point = config.point[E.UI_LAYOUT]
-			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			bar:SetPoint(unpack(config.point))
 			E.Movers:Create(bar)
 		end
 

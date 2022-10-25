@@ -209,10 +209,10 @@ local function getAuraOptions(order, name, filter)
 					end
 				end,
 				args = {
-					debuff_type = {
+					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["DEBUFF_TYPE"],
+						name = L["SHOW"],
 					},
 					size = {
 						order = inc(2),

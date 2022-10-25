@@ -46,7 +46,7 @@ function frame_proto:UpdateRaidTargetIndicator()
 end
 
 function UF:CreateRaidTargetIndicator(frame, parent)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
-	return P:Mixin((parent or frame):CreateTexture(nil, "ARTWORK", nil, 3), element_proto)
+	return Mixin((parent or frame):CreateTexture(nil, "ARTWORK", nil, 3), element_proto)
 end

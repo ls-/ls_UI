@@ -26,9 +26,16 @@ function frame_proto:UpdateLayout()
 	insets:UpdateConfig()
 
 	insets.Left:UpdateSize(insets._config.l_size)
+	insets.Left:Refresh()
+
 	insets.Right:UpdateSize(insets._config.r_size)
+	insets.Right:Refresh()
+
 	insets.Top:UpdateSize(insets._config.t_size)
+	insets.Top:Refresh()
+
 	insets.Bottom:UpdateSize(insets._config.b_size)
+	insets.Bottom:Refresh()
 end
 
 function frame_proto:UpdateInlay()
@@ -381,7 +388,7 @@ local DATA = {
 }
 
 function UF:CreateLayout(frame, level)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints()
@@ -406,11 +413,11 @@ function UF:CreateLayout(frame, level)
 	textParent:SetAllPoints()
 	frame.TextParent = textParent
 
-	local insets = P:Mixin({__owner = frame}, insets_proto)
+	local insets = Mixin({__owner = frame}, insets_proto)
 	frame.Insets = insets
 
 	for _, v in next, {"Left", "Right", "Top", "Bottom"} do
-		local inset = P:Mixin(CreateFrame("Frame", nil, frame), unpack(DATA[v].mixins))
+		local inset = Mixin(CreateFrame("Frame", nil, frame), unpack(DATA[v].mixins))
 		inset:SetFrameLevel(level)
 		inset:SetScript("OnSizeChanged", inset.OnSizeChanged)
 		inset.__owner = insets
@@ -540,7 +547,7 @@ function slot_proto:UpdateSize(w, h)
 end
 
 function UF:CreateSlot(frame, level)
-	local slot = P:Mixin(CreateFrame("Frame", nil, frame), slot_proto)
+	local slot = Mixin(CreateFrame("Frame", nil, frame), slot_proto)
 	slot:SetFrameLevel(level)
 	slot.__children = {}
 

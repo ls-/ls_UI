@@ -12,8 +12,7 @@ local isInit = false
 local barValueTemplate
 
 local MAX_SEGMENTS = 4
-local NAME_TEMPLATE = "|c%s%s|r"
-local REPUTATION_TEMPLATE = "%s: |c%s%s|r"
+local REPUTATION_TEMPLATE = "%s: %s"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 local DEFAULT_TEXTURE = "Interface\\BUTTONS\\WHITE8X8"
@@ -23,10 +22,6 @@ local CFG = {
 	visible = true,
 	width = 594,
 	height = 12,
-	point = {
-		round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-		rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 4},
-	},
 	fade = {
 		enabled = false,
 		ooc = false,
@@ -36,6 +31,7 @@ local CFG = {
 		min_alpha = 0,
 		max_alpha = 1,
 	},
+	point = {"BOTTOM", "UIParent", "BOTTOM", 0, 4},
 }
 
 local LAYOUT = {
@@ -46,7 +42,7 @@ local LAYOUT = {
 }
 
 local bar_proto = {
-	_id = "xpbar",
+	UpdateCooldownConfig = E.NOOP,
 }
 
 function bar_proto:ForEach(method, ...)
@@ -112,11 +108,6 @@ function bar_proto:UpdateSize(width, height)
 		E.Movers:Get(self):UpdateSize(width, height)
 	end
 
-	for i = 1, MAX_SEGMENTS - 1 do
-		self[i].Sep:SetSize(12, height)
-		self[i].Sep:SetTexCoord(1 / 32, 25 / 32, 0 / 8, height / 4)
-	end
-
 	if not BARS:IsRestricted() then
 		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
 	end
@@ -138,13 +129,6 @@ function bar_proto:UpdateSegments()
 			self[index]:UpdatePetXP(i, level)
 		end
 	else
-		-- Artefact
-		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() and not C_ArtifactUI.IsEquippedArtifactDisabled() then
-			index = index + 1
-
-			self[index]:UpdateArtifact()
-		end
-
 		-- Azerite
 		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
 			local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
@@ -219,7 +203,7 @@ function bar_proto:UpdateSegments()
 			self[1]:SetValue(1)
 			self[1]:UpdateText(1, 1)
 			self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
-			self[1].Texture:SetVertexColor(E:GetRGB(C.db.global.colors.class[E.PLAYER_CLASS]))
+			self[1].Texture:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
 			self[1]:Show()
 		end
 
@@ -285,10 +269,10 @@ end
 
 function segment_proto:Update(cur, max, bonus, color, texture)
 	self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Texture:SetVertexColor(E:GetRGBA(color, 1))
+	self.Texture:SetVertexColor(color:GetRGBA(1))
 
 	self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Extension.Texture:SetVertexColor(E:GetRGBA(color, 0.4))
+	self.Extension.Texture:SetVertexColor(color:GetRGBA(0.4))
 
 	if self._value ~= cur or self._max ~= max then
 		self:SetMinMaxValues(0, max)
@@ -310,19 +294,6 @@ function segment_proto:Update(cur, max, bonus, color, texture)
 
 		self._bonus = bonus
 	end
-end
-
-function segment_proto:UpdateArtifact()
-	local _, _, _, _, totalXP, pointsSpent, _, _, _, _, _, _, tier = C_ArtifactUI.GetEquippedArtifactInfo()
-	local points, cur, max = ArtifactBarGetNumArtifactTraitsPurchasableFromXP(pointsSpent, totalXP, tier)
-
-	self.tooltipInfo = {
-		header = L["ARTIFACT_POWER"],
-		line1 = L["UNSPENT_TRAIT_POINTS_TOOLTIP"]:format(points),
-		line2 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(pointsSpent),
-	}
-
-	self:Update(cur, max, 0, C.db.global.colors.artifact)
 end
 
 function segment_proto:UpdateAzerite(item)
@@ -367,20 +338,31 @@ function segment_proto:UpdateHonor()
 end
 
 function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
-	local _, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
 	local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
 	local isParagon, rewardQuestID, hasRewardPending
 	local cur, max
 
-	if friendRep then
-		if nextFriendThreshold then
-			max, cur = nextFriendThreshold - friendThreshold, friendRep - friendThreshold
+	local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+	if repInfo and repInfo.friendshipFactionID > 0 then
+		if repInfo.nextThreshold then
+			max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
 		else
 			max, cur = 1, 1
 		end
 
 		standing = 5
-		repTextLevel = friendTextLevel
+		repTextLevel = repInfo.reaction
+	elseif C_Reputation.IsMajorFaction(factionID) then
+		repInfo = C_MajorFactions.GetMajorFactionData(factionID)
+
+		if C_MajorFactions.HasMaximumRenown(factionID) then
+			max, cur = 1, 1
+		else
+			max, cur = repInfo.renownLevelThreshold, repInfo.renownReputationEarned
+		end
+
+		standing = 9
+		repTextLevel = RENOWN_LEVEL_LABEL .. repInfo.renownLevel
 	else
 		if standing ~= MAX_REPUTATION_REACTION then
 			max, cur = repMax - repMin, repCur - repMin
@@ -402,7 +384,7 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 
 	self.tooltipInfo = {
 		header = L["REPUTATION"],
-		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing].hex, repTextLevel),
+		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
 	}
 
 	if isParagon and hasRewardPending then
@@ -423,7 +405,7 @@ function segment_proto:UpdatePetXP(i, level)
 	local cur, max = C_PetBattles.GetXP(1, i)
 
 	self.tooltipInfo = {
-		header = NAME_TEMPLATE:format(C.db.global.colors.quality[rarity - 1].hex, name),
+		header = C.db.global.colors.quality[rarity - 1]:WrapTextInColorCode(name),
 		line1 = L["LEVEL_TOOLTIP"]:format(level),
 	}
 
@@ -458,10 +440,7 @@ end
 
 function BARS:CreateXPBar()
 	if not isInit and (PrC.db.profile.bars.xpbar.enabled or BARS:IsRestricted()) then
-		local bar = Mixin(CreateFrame("Frame", "LSUIXPBar", UIParent), bar_proto)
-
-		BARS:AddBar(bar._id, bar)
-		bar.UpdateCooldownConfig = nil
+		local bar = Mixin(self:Create("xpbar", "LSUIXPBar", true), bar_proto)
 
 		local texParent = CreateFrame("Frame", nil, bar)
 		texParent:SetAllPoints()
@@ -473,7 +452,9 @@ function BARS:CreateXPBar()
 		textParent:SetFrameLevel(bar:GetFrameLevel() + 5)
 
 		local bg = bar:CreateTexture(nil, "ARTWORK")
-		bg:SetColorTexture(E:GetRGB(C.db.global.colors.dark_gray))
+		bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
+		bg:SetHorizTile(true)
+		bg:SetVertTile(true)
 		bg:SetAllPoints()
 
 		for i = 1, MAX_SEGMENTS do
@@ -512,8 +493,15 @@ function BARS:CreateXPBar()
 
 		for i = 1, MAX_SEGMENTS - 1 do
 			local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
-			sep:SetPoint("LEFT", bar[i], "RIGHT", -5, 0)
 			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+			sep:SetVertTile(true)
+			sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+			sep:SetSize(12 / 2, 0)
+			sep:SetPoint("TOP", 0, 0)
+			sep:SetPoint("BOTTOM", 0, 0)
+			sep:SetPoint("LEFT", bar[i], "RIGHT", -2, 0)
+			sep:SetSnapToPixelGrid(false)
+			sep:SetTexelSnappingBias(0)
 			sep:Hide()
 			bar[i].Sep = sep
 		end
@@ -528,10 +516,6 @@ function BARS:CreateXPBar()
 		bar:RegisterEvent("HONOR_XP_UPDATE")
 		bar:RegisterEvent("ZONE_CHANGED")
 		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		-- artefact
-		bar:RegisterEvent("ARTIFACT_XP_UPDATE")
-		bar:RegisterEvent("UNIT_INVENTORY_CHANGED")
-		bar:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 		-- azerite
 		bar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
 		bar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -549,11 +533,10 @@ function BARS:CreateXPBar()
 		bar:RegisterEvent("UPDATE_FACTION")
 
 		if BARS:IsRestricted() then
-			BARS:ActionBarController_AddWidget(bar, "XP_BAR")
+			BARS:AddControlledWidget("XP_BAR", bar)
 		else
 			local config = BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar
-			local point = config.point[E.UI_LAYOUT]
-			bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			bar:SetPoint(unpack(config.point))
 			E.Movers:Create(bar)
 		end
 

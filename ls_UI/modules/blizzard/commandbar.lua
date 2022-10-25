@@ -10,7 +10,6 @@ local isInit = false
 
 local function bar_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
-
 	if self.elapsed > 0.032 then
 		if self:IsMouseOver(0, -4, 0, 0) then
 			self:SetPoint("TOP", 0, 1)
@@ -29,7 +28,6 @@ end
 function MODULE:SetUpCommandBar()
 	if not isInit and PrC.db.profile.blizzard.command_bar.enabled then
 		local isLoaded = true
-
 		if not IsAddOnLoaded("Blizzard_OrderHallUI") then
 			isLoaded = LoadAddOn("Blizzard_OrderHallUI")
 		end

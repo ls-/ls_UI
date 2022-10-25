@@ -30,15 +30,14 @@ local function update(self)
 		end
 	end
 
-	if not self.__color or not E:AreColorsEqual(self.__color, color) then
-		self.Border:SetVertexColor(E:GetRGB(color))
+	if not self.__color or not self.__color:IsEqualTo(color) then
+		self.Border:SetVertexColor(color:GetRGB())
 
 		if self.Insets then
-			self.Insets:SetVertexColor(E:GetRGB(color))
+			self.Insets:SetVertexColor(color:GetRGB())
 		end
 
-		self.__color = self.__color or {}
-		E:SetRGB(self.__color, E:GetRGB(color))
+		self.__color = color
 	end
 end
 
@@ -61,7 +60,7 @@ function frame_proto:UpdateClassIndicator()
 end
 
 function UF:CreateClassIndicator(frame)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	hooksecurefunc(frame, "Show", update)
 
@@ -73,7 +72,7 @@ function UF:CreateClassIndicator(frame)
 		E:SmoothColor(frame.Insets)
 	end
 
-	return P:Mixin({
+	return Mixin({
 		__owner = frame,
 		__color = {},
 	}, element_proto)

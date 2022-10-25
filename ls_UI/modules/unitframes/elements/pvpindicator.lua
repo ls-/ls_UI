@@ -95,12 +95,12 @@ function frame_proto:UpdatePvPIndicator()
 end
 
 function UF:CreatePvPIndicator(frame, parent)
-	P:Mixin(frame, frame_proto)
+	Mixin(frame, frame_proto)
 
 	local holder = CreateFrame("Frame", nil, parent)
 	holder:SetSize(50, 54)
 
-	local element = P:Mixin(holder:CreateTexture(nil, "ARTWORK", nil, 0), element_proto)
+	local element = Mixin(holder:CreateTexture(nil, "ARTWORK", nil, 0), element_proto)
 	element:SetPoint("TOPLEFT", holder, "TOPLEFT", 10, -12)
 	element:SetSize(30, 30)
 	element.Holder = holder

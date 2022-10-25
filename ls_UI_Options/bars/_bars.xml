@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="fading.lua"/>
 	<Script file="bar.lua"/>
+	<Script file="bag.lua"/>
 	<Script file="extra.lua"/>
 	<Script file="micromenu.lua"/>
 	<Script file="core.lua"/>

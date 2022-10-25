@@ -119,12 +119,6 @@ function CONFIG:GetTooltipsOptions(order)
 				name = "",
 				width = "full",
 			},
-			anchor_cursor = {
-				order = inc(1),
-				type = "toggle",
-				name = L["ANCHOR_TO_CURSOR"],
-				disabled = isModuleDisabled,
-			},
 			spacer_3 = {
 				order = inc(1),
 				type = "description",

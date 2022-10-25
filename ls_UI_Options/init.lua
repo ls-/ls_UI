@@ -23,26 +23,6 @@ function CONFIG:Open()
 				return InCombatLockdown()
 			end,
 			args = {
-				layout = {
-					order = 1,
-					type = "select",
-					name = L["UI_LAYOUT"],
-					desc = L["UI_LAYOUT_DESC"],
-					values = {
-						round = L["LAYOUT_ROUND"],
-						rect = L["LAYOUT_RECT"]
-					},
-					get = function()
-						return PrC.db.profile.layout
-					end,
-					set = function(_, value)
-						PrC.db.profile.layout = value
-
-						if E.UI_LAYOUT ~= value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end,
-				},
 				toggle_anchors = {
 					order = 2,
 					type = "execute",
@@ -72,6 +52,18 @@ function CONFIG:Open()
 						ReloadUI()
 					end,
 				},
+				login_message = {
+					order = 5,
+					type = "toggle",
+					name = L["LOGIN_MSG_TOGGLE"],
+					width = 1.25,
+					get = function()
+						return C.db.global.login_message
+					end,
+					set = function(_, value)
+						C.db.global.login_message = value
+					end,
+				},
 				profiles = CONFIG:CreateProfilesPanel(100),
 				about = CONFIG:CreateAboutPanel(101),
 			},
@@ -82,9 +74,11 @@ function CONFIG:Open()
 		CONFIG:CreateAuraTrackerOptions(7)
 		CONFIG:CreateBlizzardOptions(8)
 		CONFIG:CreateAurasOptions(9)
-		CONFIG:GetLootOptions(10)
 		CONFIG:CreateMinimapOptions(11)
-		CONFIG:GetTooltipsOptions(12)
+		-- TODO: remove me in 10.0.2
+		if TooltipDataProcessor then
+			CONFIG:GetTooltipsOptions(12)
+		end
 		CONFIG:CreateUnitFramesOptions(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)

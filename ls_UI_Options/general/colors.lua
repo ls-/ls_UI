@@ -33,7 +33,7 @@ function CONFIG:GetColorsOptions(order)
 		childGroups = "tree",
 		name = L["COLORS"],
 		get = function(info)
-			return E:GetRGB(C.db.global.colors[info[#info]])
+			return C.db.global.colors[info[#info]]:GetRGB()
 		end,
 		args = {
 			health = {
@@ -46,11 +46,11 @@ function CONFIG:GetColorsOptions(order)
 
 						local color = C.db.global.colors[info]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							UNITFRAMES:UpdateHealthColors()
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateTags")
+							UNITFRAMES:ForEach("For", "Health", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Health", "UpdateTags")
 						end
 					end
 				end,
@@ -61,13 +61,13 @@ function CONFIG:GetColorsOptions(order)
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
-							E:SetRGB(C.db.global.colors.health, E:GetRGB(D.global.colors.health))
-							E:SetRGB(C.db.global.colors.disconnected, E:GetRGB(D.global.colors.disconnected))
-							E:SetRGB(C.db.global.colors.tapped, E:GetRGB(D.global.colors.tapped))
+							C.db.global.colors.health:SetRGB(D.global.colors.health:GetRGB())
+							C.db.global.colors.disconnected:SetRGB(D.global.colors.disconnected:GetRGB())
+							C.db.global.colors.tapped:SetRGB(D.global.colors.tapped:GetRGB())
 
 							UNITFRAMES:UpdateHealthColors()
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateTags")
+							UNITFRAMES:ForEach("For", "Health", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Health", "UpdateTags")
 						end,
 					},
 					spacer_1 = {
@@ -97,7 +97,7 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["POWER"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.power[info[#info]])
+					return C.db.global.colors.power[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
@@ -121,17 +121,17 @@ function CONFIG:GetColorsOptions(order)
 						end
 
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							UNITFRAMES:UpdatePowerColors()
-							UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "ClassPower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Runes", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Stagger", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateTags")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateTags")
+							UNITFRAMES:ForEach("For", "AdditionalPower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "AlternativePower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Power", "UpdateColors")
+							UNITFRAMES:ForEach("For", "ClassPower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Runes", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Stagger", "UpdateColors")
+							UNITFRAMES:ForEach("For", "AlternativePower", "UpdateTags")
+							UNITFRAMES:ForEach("For", "Power", "UpdateTags")
 						end
 					end
 				end,
@@ -146,27 +146,27 @@ function CONFIG:GetColorsOptions(order)
 								if type(k) == "string" then
 									if type(v[1]) == "table" then
 										for i, v_ in next, v do
-											E:SetRGB(C.db.global.colors.power[k][i], E:GetRGB(v_))
+											C.db.global.colors.power[k][i]:SetRGB(v_:GetRGB())
 										end
 									else
-										E:SetRGB(C.db.global.colors.power[k], E:GetRGB(v))
+										C.db.global.colors.power[k]:SetRGB(v:GetRGB())
 									end
 								end
 							end
 
 							for k, v in next, D.global.colors.rune do
-								E:SetRGB(C.db.global.colors.rune[k], E:GetRGB(v))
+								C.db.global.colors.rune[k]:SetRGB(v:GetRGB())
 							end
 
 							UNITFRAMES:UpdatePowerColors()
-							UNITFRAMES:ForEach("ForElement", "AdditionalPower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "ClassPower", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Runes", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "Stagger", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "AlternativePower", "UpdateTags")
-							UNITFRAMES:ForEach("ForElement", "Power", "UpdateTags")
+							UNITFRAMES:ForEach("For", "AdditionalPower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "AlternativePower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Power", "UpdateColors")
+							UNITFRAMES:ForEach("For", "ClassPower", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Runes", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Stagger", "UpdateColors")
+							UNITFRAMES:ForEach("For", "AlternativePower", "UpdateTags")
+							UNITFRAMES:ForEach("For", "Power", "UpdateTags")
 						end,
 					},
 					spacer_1 = {
@@ -199,6 +199,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["COMBO_POINTS"],
 					},
+					COMBO_POINTS_CHARGED = {
+						order = inc(2),
+						type = "color",
+						name = L["COMBO_POINTS_CHARGED"],
+					},
 					RUNES = {
 						order = inc(2),
 						type = "color",
@@ -209,7 +214,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["RUNES_BLOOD"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.rune[1])
+							return C.db.global.colors.rune[1]:GetRGB()
 						end,
 					},
 					RUNES_FROST = {
@@ -217,7 +222,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["RUNES_FROST"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.rune[2])
+							return C.db.global.colors.rune[2]:GetRGB()
 						end,
 					},
 					RUNES_UNHOLY = {
@@ -225,7 +230,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["RUNES_UNHOLY"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.rune[3])
+							return C.db.global.colors.rune[3]:GetRGB()
 						end,
 					},
 					RUNIC_POWER = {
@@ -288,7 +293,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["STAGGER_LOW"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.power.STAGGER[1])
+							return C.db.global.colors.power.STAGGER[1]:GetRGB()
 						end,
 					},
 					STAGGER_MEDIUM = {
@@ -296,7 +301,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["STAGGER_MEDIUM"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.power.STAGGER[2])
+							return C.db.global.colors.power.STAGGER[2]:GetRGB()
 						end,
 					},
 					STAGGER_HIGH = {
@@ -304,7 +309,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["STAGGER_HIGH"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.power.STAGGER[3])
+							return C.db.global.colors.power.STAGGER[3]:GetRGB()
 						end,
 					},
 				},
@@ -314,16 +319,16 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["PREDICTION"],
 				get = function(info)
-					return E:GetRGBA(C.db.global.colors.prediction[info[#info]])
+					return C.db.global.colors.prediction[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.prediction[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
-							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "PowerPrediction", "UpdateColors")
+							UNITFRAMES:ForEach("For", "HealthPrediction", "UpdateColors")
+							UNITFRAMES:ForEach("For", "PowerPrediction", "UpdateColors")
 						end
 					end
 				end,
@@ -335,11 +340,11 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.prediction do
-								E:SetRGB(C.db.global.colors.prediction[k], E:GetRGB(v))
+								C.db.global.colors.prediction[k]:SetRGB(v:GetRGB())
 							end
 
-							UNITFRAMES:ForEach("ForElement", "HealthPrediction", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "PowerPrediction", "UpdateColors")
+							UNITFRAMES:ForEach("For", "HealthPrediction", "UpdateColors")
+							UNITFRAMES:ForEach("For", "PowerPrediction", "UpdateColors")
 						end,
 					},
 					spacer_1 = {
@@ -384,17 +389,19 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["REACTION"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.reaction[tonumber(info[#info])])
+					return C.db.global.colors.reaction[tonumber(info[#info])]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.reaction[tonumber(info[#info])]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							UNITFRAMES:UpdateReactionColors()
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
+							UNITFRAMES:ForEach("For", "Health", "UpdateColors")
+							UNITFRAMES:ForEach("For", "ClassIndicator", "ForceUpdate")
+
+							BARS:For("xpbar", "UpdateSegments")
 						end
 					end
 				end,
@@ -406,12 +413,14 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.reaction do
-								E:SetRGB(C.db.global.colors.reaction[k], E:GetRGB(v))
+								C.db.global.colors.reaction[k]:SetRGB(v:GetRGB())
 							end
 
 							UNITFRAMES:UpdateReactionColors()
-							UNITFRAMES:ForEach("ForElement", "Health", "UpdateColors")
-							UNITFRAMES:ForEach("ForElement", "ClassIndicator", "ForceUpdate")
+							UNITFRAMES:ForEach("For", "Health", "UpdateColors")
+							UNITFRAMES:ForEach("For", "ClassIndicator", "ForceUpdate")
+
+							BARS:For("xpbar", "UpdateSegments")
 						end,
 					},
 					spacer_1 = {
@@ -459,6 +468,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = FACTION_STANDING_LABEL8,
 					},
+					["9"] = {
+						order = inc(2),
+						type = "color",
+						name = L["RENOWN"],
+					},
 				},
 			},
 			faction = {
@@ -466,16 +480,16 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["FACTION"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.faction[info[#info]])
+					return C.db.global.colors.faction[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.faction[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:For("xpbar", "UpdateSegments")
 							end
 						end
 					end
@@ -488,11 +502,11 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.faction do
-								E:SetRGB(C.db.global.colors.faction[k], E:GetRGB(v))
+								C.db.global.colors.faction[k]:SetRGB(v:GetRGB())
 							end
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:For("xpbar", "UpdateSegments")
 							end
 						end,
 					},
@@ -523,16 +537,16 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["EXPERIENCE"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.xp[tonumber(info[#info])])
+					return C.db.global.colors.xp[tonumber(info[#info])]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.xp[tonumber(info[#info])]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:For("xpbar", "UpdateSegments")
 							end
 						end
 					end
@@ -545,14 +559,13 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.xp do
-								E:SetRGB(C.db.global.colors.xp[k], E:GetRGB(v))
+								C.db.global.colors.xp[k]:SetRGB(v:GetRGB())
 							end
 
-							E:SetRGB(C.db.global.colors.artifact, E:GetRGB(D.global.colors.artifact))
-							E:SetRGB(C.db.global.colors.honor, E:GetRGB(D.global.colors.honor))
+							C.db.global.colors.honor:SetRGB(D.global.colors.honor:GetRGB())
 
 							if BARS:HasXPBar() then
-								BARS:GetBar("xpbar"):UpdateSegments()
+								BARS:For("xpbar", "UpdateSegments")
 							end
 						end,
 					},
@@ -571,41 +584,21 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["EXPERIENCE_NORMAL"],
 					},
-					artifact = {
-						order = inc(2),
-						type = "color",
-						name = L["ARTIFACT_POWER"],
-						get = function()
-							return E:GetRGB(C.db.global.colors.artifact)
-						end,
-						set = function(_, r, g, b)
-							if r ~= nil then
-								local color = C.db.global.colors.artifact
-								if color.r ~= r or color.g ~= g or color.g ~= b then
-									E:SetRGB(color, r, g, b)
-
-									if BARS:HasXPBar() then
-										BARS:GetBar("xpbar"):UpdateSegments()
-									end
-								end
-							end
-						end,
-					},
 					honor = {
 						order = inc(2),
 						type = "color",
 						name = L["HONOR"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.honor)
+							return C.db.global.colors.honor:GetRGB()
 						end,
 						set = function(_, r, g, b)
 							if r ~= nil then
 								local color = C.db.global.colors.honor
 								if color.r ~= r or color.g ~= g or color.g ~= b then
-									E:SetRGB(color, r, g, b)
+									color:SetRGB(r, g, b)
 
 									if BARS:HasXPBar() then
-										BARS:GetBar("xpbar"):UpdateSegments()
+										BARS:For("xpbar", "UpdateSegments")
 									end
 								end
 							end
@@ -618,16 +611,16 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["DIFFICULTY"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.difficulty[info[#info]])
+					return C.db.global.colors.difficulty[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.difficulty[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 						end
 
-						UNITFRAMES:ForEach("ForElement", "Name", "UpdateTags")
+						UNITFRAMES:ForEach("For", "Name", "UpdateTags")
 					end
 				end,
 				args = {
@@ -638,10 +631,10 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.difficulty do
-								E:SetRGB(C.db.global.colors.difficulty[k], E:GetRGB(v))
+								C.db.global.colors.difficulty[k]:SetRGB(v:GetRGB())
 							end
 
-							UNITFRAMES:ForEach("ForElement", "Name", "UpdateTags")
+							UNITFRAMES:ForEach("For", "Name", "UpdateTags")
 						end,
 					},
 					spacer_1 = {
@@ -681,13 +674,13 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["CASTBAR"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.castbar[info[#info]])
+					return C.db.global.colors.castbar[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.castbar[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 						end
 
 						BLIZZARD:UpdateCastBarColors()
@@ -701,7 +694,7 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.castbar do
-								E:SetRGB(C.db.global.colors.castbar[k], E:GetRGB(v))
+								C.db.global.colors.castbar[k]:SetRGB(v:GetRGB())
 							end
 
 							BLIZZARD:UpdateCastBarColors()
@@ -722,6 +715,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["SPELL_CHANNELED"],
 					},
+					empowering = {
+						order = inc(2),
+						type = "color",
+						name = L["SPELL_EMPOWERED"],
+					},
 					failed = {
 						order = inc(2),
 						type = "color",
@@ -739,16 +737,16 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["AURA"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.debuff[info[#info]])
+					return C.db.global.colors.debuff[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.debuff[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 						end
 
-						UNITFRAMES:ForEach("ForElement", "Auras", "UpdateColors")
+						UNITFRAMES:ForEach("For", "Auras", "UpdateColors")
 					end
 				end,
 				args = {
@@ -759,14 +757,14 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.debuff do
-								E:SetRGB(C.db.global.colors.debuff[k], E:GetRGB(v))
+								C.db.global.colors.debuff[k]:SetRGB(v:GetRGB())
 							end
 
 							for k, v in next, D.global.colors.buff do
-								E:SetRGB(C.db.global.colors.buff[k], E:GetRGB(v))
+								C.db.global.colors.buff[k]:SetRGB(v:GetRGB())
 							end
 
-							UNITFRAMES:ForEach("ForElement", "Auras", "UpdateColors")
+							UNITFRAMES:ForEach("For", "Auras", "UpdateColors")
 						end,
 					},
 					spacer_1 = {
@@ -799,18 +797,34 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["POISON"],
 					},
+					Enrage = {
+						order = inc(2),
+						type = "color",
+						name = L["ENRAGE"],
+						get = function()
+							return C.db.global.colors.buff[""]:GetRGB()
+						end,
+						set = function(_, r, g, b)
+							if r ~= nil then
+								local color = C.db.global.colors.buff[""]
+								if color.r ~= r or color.g ~= g or color.g ~= b then
+									color:SetRGB(r, g, b)
+								end
+							end
+						end,
+					},
 					Enchant = {
 						order = inc(2),
 						type = "color",
 						name = L["TEMP_ENCHANT"],
 						get = function()
-							return E:GetRGB(C.db.global.colors.buff.Enchant)
+							return C.db.global.colors.buff.Enchant:GetRGB()
 						end,
 						set = function(_, r, g, b)
 							if r ~= nil then
 								local color = C.db.global.colors.buff.Enchant
 								if color.r ~= r or color.g ~= g or color.g ~= b then
-									E:SetRGB(color, r, g, b)
+									color:SetRGB(r, g, b)
 								end
 							end
 						end,
@@ -822,13 +836,13 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["BUTTON"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.button[info[#info]])
+					return C.db.global.colors.button[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.button[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 						end
 
 						BARS:ForEach("UpdateButtonConfig")
@@ -842,7 +856,7 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.button do
-								E:SetRGB(C.db.global.colors.button[k], E:GetRGB(v))
+								C.db.global.colors.button[k]:SetRGB(v:GetRGB())
 							end
 
 							BARS:ForEach("UpdateButtonConfig")
@@ -880,13 +894,13 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["COOLDOWN"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.cooldown[info[#info]])
+					return C.db.global.colors.cooldown[info[#info]]:GetRGB()
 				end,
 				set = function(info, r,g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.cooldown[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 						end
 					end
 				end,
@@ -898,7 +912,7 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.cooldown do
-								E:SetRGB(C.db.global.colors.cooldown[k], E:GetRGB(v))
+								C.db.global.colors.cooldown[k]:SetRGB(v:GetRGB())
 							end
 						end,
 					},
@@ -939,13 +953,13 @@ function CONFIG:GetColorsOptions(order)
 				type = "group",
 				name = L["ZONE"],
 				get = function(info)
-					return E:GetRGB(C.db.global.colors.zone[info[#info]])
+					return C.db.global.colors.zone[info[#info]]:GetRGB()
 				end,
 				set = function(info, r, g, b)
 					if r ~= nil then
 						local color = C.db.global.colors.zone[info[#info]]
 						if color.r ~= r or color.g ~= g or color.g ~= b then
-							E:SetRGB(color, r, g, b)
+							color:SetRGB(r, g, b)
 
 							if MINIMAP:IsInit() then
 								MINIMAP:GetMinimap():UpdateBorderColor()
@@ -962,7 +976,7 @@ function CONFIG:GetColorsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.zone do
-								E:SetRGB(C.db.global.colors.zone[k], E:GetRGB(v))
+								C.db.global.colors.zone[k]:SetRGB(v:GetRGB())
 							end
 
 							if MINIMAP:IsInit() then

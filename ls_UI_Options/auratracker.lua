@@ -247,15 +247,16 @@ function CONFIG:CreateAuraTrackerOptions(order)
 				set = function(info, value)
 					if PrC.db.profile.auratracker.type[info[#info]] ~= value then
 						PrC.db.profile.auratracker.type[info[#info]] = value
+
 						AURATRACKER:GetTracker():UpdateConfig()
 						AURATRACKER:GetTracker():UpdateAuraTypeIcons()
 					end
 				end,
 				args = {
-					debuff_type = {
+					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["DEBUFF_TYPE"],
+						name = L["SHOW"],
 					},
 					size = {
 						order = inc(2),

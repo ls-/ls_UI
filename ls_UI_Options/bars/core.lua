@@ -36,6 +36,48 @@ local VISIBILITY = {
 	[2] = L["SHOW_ON_MOUSEOVER"],
 }
 
+local CAST_KEYS = {
+	[1] = L["ALT"],
+	[2] = L["CTRL"],
+	[3] = L["SHIFT"],
+	[4] = L["NONE"],
+}
+
+local CAST_KEY_INDICES = {
+	["ALT"] = 1,
+	["CTRL"] = 2,
+	["SHIFT"] = 3,
+	["NONE"] = 4,
+}
+
+local CAST_KEY_VALUES = {
+	[1] = "ALT",
+	[2] = "CTRL",
+	[3] = "SHIFT",
+	[4] = "NONE",
+}
+
+local ENDCAPS = {
+	[1] = L["ENDCAPS_LEFT"],
+	[2] = L["ENDCAPS_RIGHT"],
+	[3] = L["ENDCAPS_BOTH"],
+	[4] = L["NONE"],
+}
+
+local ENDCAPS_INDICES = {
+	["LEFT"] = 1,
+	["RIGHT"] = 2,
+	["BOTH"] = 3,
+	["NONE"] = 4,
+}
+
+local ENDCAPS_VALUES = {
+	[1] = "LEFT",
+	[2] = "RIGHT",
+	[3] = "BOTH",
+	[4] = "NONE",
+}
+
 local function isModuleDisabled()
 	return not BARS:IsInit()
 end
@@ -64,6 +106,7 @@ function CONFIG:CreateActionBarsOptions(order)
 		set = function(info, value)
 			if C.db.profile.bars[info[#info]] ~= value then
 				C.db.profile.bars[info[#info]] = value
+
 				BARS:ForEach("UpdateConfig")
 				BARS:ForEach("UpdateButtonConfig")
 			end
@@ -93,7 +136,7 @@ function CONFIG:CreateActionBarsOptions(order)
 			restricted = {
 				order = inc(1),
 				type = "toggle",
-				name = L["RESTRICTED_MODE"],
+				name = L["SHOW_ARTWORK"],
 				desc = L["RESTRICTED_MODE_DESC"],
 				get = function()
 					return PrC.db.profile.bars.restricted
@@ -106,6 +149,24 @@ function CONFIG:CreateActionBarsOptions(order)
 					end
 				end,
 			},
+			endcaps = {
+				order = inc(1),
+				type = "select",
+				name = L["ENDCAPS"],
+				get = function()
+					return ENDCAPS_INDICES[C.db.profile.bars.endcaps]
+				end,
+				set = function(_, value)
+					C.db.profile.bars.endcaps = ENDCAPS_VALUES[value]
+
+					BARS:UpdateEndcaps()
+				end,
+				values = ENDCAPS,
+				disabled = function()
+					return not (BARS:IsInit() and BARS:IsRestricted())
+				end,
+			}
+			,
 			blizz_vehicle = {
 				order = inc(1),
 				type = "toggle",
@@ -124,39 +185,40 @@ function CONFIG:CreateActionBarsOptions(order)
 				type = "description",
 				name = " ",
 			},
-			lock = {
+			selfcast_mod = {
 				order = inc(1),
-				type = "toggle",
-				name = L["LOCK_BUTTONS"],
-				desc = L["LOCK_BUTTONS_DESC"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					C.db.profile.bars.lock = value
-					BARS:ForEach("UpdateConfig")
-					BARS:ForEach("UpdateButtonConfig")
-
-					SetCVar("lockActionBars", value and 1 or 0)
+				type = "select",
+				name = L["SELF_CAST"],
+				desc = L["SELF_CAST_DESC"],
+				get = function()
+					return CAST_KEY_INDICES[GetModifiedClick("SELFCAST")]
 				end,
+				set = function(_, value)
+					SetModifiedClick("SELFCAST", CAST_KEY_VALUES[value])
+					SaveBindings(GetCurrentBindingSet() or 1)
+				end,
+				values = CAST_KEYS,
+				disabled = isModuleDisabled,
+			},
+			focuscast_mod = {
+				order = inc(1),
+				type = "select",
+				name = L["FOCUS_CAST"],
+				get = function()
+					return CAST_KEY_INDICES[GetModifiedClick("FOCUSCAST")]
+				end,
+				set = function(_, value)
+					SetModifiedClick("FOCUSCAST", CAST_KEY_VALUES[value])
+					SaveBindings(GetCurrentBindingSet() or 1)
+				end,
+				values = CAST_KEYS,
+				disabled = isModuleDisabled,
 			},
 			rightclick_selfcast = {
 				order = inc(1),
 				type = "toggle",
 				name = L["RCLICK_SELFCAST"],
 				disabled = isModuleDisabled,
-			},
-			click_on_down = {
-				order = inc(1),
-				type = "toggle",
-				name = L["CAST_ON_KEY_DOWN"],
-				desc = L["CAST_ON_KEY_DOWN_DESC"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					C.db.profile.bars.click_on_down = value
-					BARS:ForEach("UpdateConfig")
-					BARS:ForEach("UpdateButtonConfig")
-
-					SetCVar("ActionButtonUseKeyDown", value and 1 or 0)
-				end,
 			},
 			range_indicator = {
 				order = inc(1),
@@ -318,7 +380,7 @@ function CONFIG:CreateActionBarsOptions(order)
 								order = inc(3),
 								type = "toggle",
 								disabled = function()
-									return not C.db.profile.bars.cooldown.swipe.enabled
+									return isModuleDisabled() or not C.db.profile.bars.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},
@@ -326,13 +388,16 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			action_bar_1 = CONFIG:CreateBarOptions(inc(1), "bar1", L["BAR_1"]),
-			action_bar_2 = CONFIG:CreateBarOptions(inc(1), "bar2", L["BAR_2"]),
-			action_bar_3 = CONFIG:CreateBarOptions(inc(1), "bar3", L["BAR_3"]),
-			action_bar_4 = CONFIG:CreateBarOptions(inc(1), "bar4", L["BAR_4"]),
-			action_bar_5 = CONFIG:CreateBarOptions(inc(1), "bar5", L["BAR_5"]),
-			action_bar_6 = CONFIG:CreateBarOptions(inc(1), "bar6", L["PET_BAR"]),
-			action_bar_7 = CONFIG:CreateBarOptions(inc(1), "bar7", L["STANCE_BAR"]),
+			bar_1 = CONFIG:CreateBarOptions(inc(1), "bar1", L["BAR_1"]),
+			bar_2 = CONFIG:CreateBarOptions(inc(1), "bar2", L["BAR_2"]),
+			bar_3 = CONFIG:CreateBarOptions(inc(1), "bar3", L["BAR_3"]),
+			bar_4 = CONFIG:CreateBarOptions(inc(1), "bar4", L["BAR_4"]),
+			bar_5 = CONFIG:CreateBarOptions(inc(1), "bar5", L["BAR_5"]),
+			bar_6 = CONFIG:CreateBarOptions(inc(1), "bar6", L["BAR_6"]),
+			bar_7 = CONFIG:CreateBarOptions(inc(1), "bar7", L["BAR_7"]),
+			bar_8 = CONFIG:CreateBarOptions(inc(1), "bar8", L["BAR_8"]),
+			pet = CONFIG:CreateBarOptions(inc(1), "pet", L["PET_BAR"]),
+			stance = CONFIG:CreateBarOptions(inc(1), "stance", L["STANCE_BAR"]),
 			pet_battle = CONFIG:CreateBarOptions(inc(1), "pet_battle", L["PET_BATTLE_BAR"]),
 			extra = CONFIG:CreateExtraBarOptions(inc(1), "extra", L["EXTRA_ACTION_BUTTON"]),
 			zone = CONFIG:CreateExtraBarOptions(inc(1), "zone", L["ZONE_ABILITY_BUTTON"]),
@@ -349,7 +414,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					if C.db.profile.bars.vehicle[info[#info]] ~= value then
 						C.db.profile.bars.vehicle[info[#info]] = value
 
-						BARS:GetBar("vehicle"):Update()
+						BARS:For("vehicle", "Update")
 					end
 				end,
 				args = {
@@ -360,7 +425,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {visible = true, point = true})
-							BARS:GetBar("vehicle"):Update()
+							BARS:For("vehicle", "Update")
 						end,
 					},
 					spacer_1 = {
@@ -375,9 +440,9 @@ function CONFIG:CreateActionBarsOptions(order)
 						set = function(_, value)
 							C.db.profile.bars.vehicle.visible = value
 
-							BARS:GetBar("vehicle"):UpdateConfig()
-							BARS:GetBar("vehicle"):UpdateFading()
-							BARS:GetBar("vehicle"):UpdateVisibility()
+							BARS:For("vehicle", "UpdateConfig")
+							BARS:For("vehicle", "UpdateFading")
+							BARS:For("vehicle", "UpdateVisibility")
 						end
 					},
 					width = {
@@ -402,7 +467,7 @@ function CONFIG:CreateActionBarsOptions(order)
 
 							C.db.profile.bars.vehicle.height = value
 
-							BARS:GetBar("vehicle"):Update()
+							BARS:For("vehicle", "Update")
 						end,
 					},
 					spacer_2 = {
@@ -414,11 +479,13 @@ function CONFIG:CreateActionBarsOptions(order)
 				},
 			},
 			micromenu = CONFIG:CreateMicroMenuOptions(inc(1)),
+			bag = CONFIG:CreateBagOptions(inc(1)),
 			xpbar = {
 				order = inc(1),
 				type = "group",
 				childGroups = "select",
 				name = L["XP_BAR"],
+				disabled = isModuleDisabled,
 				get = function(info)
 					return C.db.profile.bars.xpbar[info[#info]]
 				end,
@@ -455,7 +522,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
-							BARS:GetBar("xpbar"):Update()
+							BARS:For("xpbar", "Update")
 						end,
 					},
 					spacer_1 = {
@@ -473,8 +540,8 @@ function CONFIG:CreateActionBarsOptions(order)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
 								C.db.profile.bars.xpbar[info[#info]] = value
 
-								BARS:GetBar("xpbar"):UpdateConfig()
-								BARS:GetBar("xpbar"):UpdateSize(value, C.db.profile.bars.xpbar.height)
+								BARS:For("xpbar", "UpdateConfig")
+								BARS:For("xpbar", "UpdateSize", value, C.db.profile.bars.xpbar.height)
 							end
 						end,
 					},
@@ -488,8 +555,8 @@ function CONFIG:CreateActionBarsOptions(order)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
 								C.db.profile.bars.xpbar[info[#info]] = value
 
-								BARS:GetBar("xpbar"):UpdateConfig()
-								BARS:GetBar("xpbar"):UpdateSize(C.db.profile.bars.xpbar.width, value)
+								BARS:For("xpbar", "UpdateConfig")
+								BARS:For("xpbar", "UpdateSize", C.db.profile.bars.xpbar.width, value)
 							end
 						end,
 					},
@@ -511,8 +578,8 @@ function CONFIG:CreateActionBarsOptions(order)
 							if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 								C.db.profile.bars.xpbar.text[info[#info]] = value
 
-								BARS:ForBar("xpbar", "UpdateConfig")
-								BARS:ForBar("xpbar", "UpdateFont")
+								BARS:For("xpbar", "UpdateConfig")
+								BARS:For("xpbar", "UpdateFont")
 							end
 						end,
 						args = {
@@ -531,9 +598,9 @@ function CONFIG:CreateActionBarsOptions(order)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
 
-										BARS:ForBar("xpbar", "UpdateConfig")
-										BARS:ForBar("xpbar", "UpdateTextFormat")
-										BARS:ForBar("xpbar", "ForEach", "UpdateText")
+										BARS:For("xpbar", "UpdateConfig")
+										BARS:For("xpbar", "UpdateTextFormat")
+										BARS:For("xpbar", "ForEach", "UpdateText")
 									end
 								end,
 							},
@@ -546,8 +613,8 @@ function CONFIG:CreateActionBarsOptions(order)
 									if C.db.profile.bars.xpbar.text[info[#info]] ~= value then
 										C.db.profile.bars.xpbar.text[info[#info]] = value
 
-										BARS:ForBar("xpbar", "UpdateConfig")
-										BARS:ForBar("xpbar", "UpdateTextVisibility")
+										BARS:For("xpbar", "UpdateConfig")
+										BARS:For("xpbar", "UpdateTextVisibility")
 									end
 								end,
 							},

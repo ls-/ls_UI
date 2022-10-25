@@ -50,12 +50,10 @@ end
 
 local FILTERS = {
 	friendly = {
-		-- name = L["FRIENDLY_UNITS"],
-		name = function() return "|c" .. C.db.global.colors.green.hex .. L["FRIENDLY_UNITS"] .. "|r" end,
+		name = function() return C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]) end,
 	},
 	enemy = {
-		-- name = L["ENEMY_UNITS"],
-		name = function() return "|c" .. C.db.global.colors.red.hex .. L["ENEMY_UNITS"] .. "|r" end,
+		name = function() return C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]) end,
 	},
 	buff = {
 		boss = {
@@ -243,8 +241,6 @@ local resetIgnoredKeys = {
 
 function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 	local ignoredUnits = {
-		["player"] = E.UI_LAYOUT == "round",
-		["pet"] = E.UI_LAYOUT == "round",
 		["targettarget"] = true,
 		["focustarget"] = true,
 		[unit] = true,
@@ -466,22 +462,23 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 
 						UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 						UNITFRAMES:For(unit, "For", "Auras", "UpdateAuraTypeIcon")
+						UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 					end
 				end,
 				args = {
-					debuff_type = {
+					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["DEBUFF_TYPE"],
+						name = L["SHOW"],
 					},
 					size = {
-						order = reset(2),
+						order = inc(2),
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 32, step = 2,
 					},
 					position = {
-						order = reset(2),
+						order = inc(2),
 						type = "select",
 						name = L["POINT"],
 						values = CONFIG.POINTS,

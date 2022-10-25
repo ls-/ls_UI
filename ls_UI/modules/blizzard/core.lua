@@ -11,7 +11,6 @@ end
 
 function BLIZZARD:Init()
 	if not isInit and PrC.db.profile.blizzard.enabled then
-		self:SetUpCastBars()
 		self:SetUpCharacterFrame()
 		self:SetUpCommandBar()
 		self:SetUpDigsiteBar()
@@ -19,20 +18,9 @@ function BLIZZARD:Init()
 		self:SetUpGMFrame()
 		self:SetUpMail()
 		self:SetUpMawBuffs()
-		self:SetUpObjectiveTracker()
-		self:SetUpAltPowerBar()
 		self:SetUpTalkingHead()
-		self:SetUpMirrorTimers()
 		self:SetUpVehicleSeatFrame()
 
 		isInit = true
-
-		self:Update()
-	end
-end
-
-function BLIZZARD:Update()
-	if isInit then
-		self:UpdateObjectiveTracker()
 	end
 end

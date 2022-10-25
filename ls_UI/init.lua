@@ -8,9 +8,6 @@ local next = _G.next
 
 -- Mine
 local function addRefs()
-	C.db.profile.units.player = C.db.profile.units[E.UI_LAYOUT].player
-	C.db.profile.units.pet = C.db.profile.units[E.UI_LAYOUT].pet
-
 	C.db.global.colors.power[ 0] = C.db.global.colors.power.MANA
 	C.db.global.colors.power[ 1] = C.db.global.colors.power.RAGE
 	C.db.global.colors.power[ 2] = C.db.global.colors.power.FOCUS
@@ -26,12 +23,10 @@ local function addRefs()
 	C.db.global.colors.power[13] = C.db.global.colors.power.INSANITY
 	C.db.global.colors.power[17] = C.db.global.colors.power.FURY
 	C.db.global.colors.power[18] = C.db.global.colors.power.PAIN
+	C.db.global.colors.power[19] = C.db.global.colors.power.ESSENCE
 end
 
 local function removeRefs()
-	C.db.profile.units.player = nil
-	C.db.profile.units.pet = nil
-
 	C.db.global.colors.power[ 0] = nil
 	C.db.global.colors.power[ 1] = nil
 	C.db.global.colors.power[ 2] = nil
@@ -47,6 +42,9 @@ local function removeRefs()
 	C.db.global.colors.power[13] = nil
 	C.db.global.colors.power[17] = nil
 	C.db.global.colors.power[18] = nil
+	C.db.global.colors.power[19] = nil
+
+	E.Movers:SaveConfig()
 end
 
 local function updateAll()
@@ -101,15 +99,9 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	PrC.db = LibStub("AceDB-3.0"):New("LS_UI_PRIVATE_CONFIG", PrD)
 
-	if not C.db.global.version or C.db.global.version < E.VER.number then
+	if C.db.global.login_message and (not C.db.global.version or C.db.global.version < E.VER.number) then
 		print(L["LOGIN_MSG"]:format(L["LS_UI"], E.VER.string, M.textures.icons_inline.DISCORD_32, L["INFORMATION"]))
 	end
-
-	-- layout type change shouldn't affect anything after SVs are loaded
-	E.UI_LAYOUT = PrC.db.profile.layout
-
-	D.profile.units.player = D.profile.units[E.UI_LAYOUT].player
-	D.profile.units.pet = D.profile.units[E.UI_LAYOUT].pet
 
 	addRefs()
 
@@ -154,16 +146,12 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		C.db.profile.version = E.VER.number
 
 		removeRefs()
-
-		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileShutdown", function()
 		C.db.profile.version = E.VER.number
 
 		removeRefs()
-
-		E.Movers:SaveConfig()
 	end)
 
 	C.db:RegisterCallback("OnProfileChanged", updateAll)
@@ -185,8 +173,11 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openConfig()
-		LoadAddOn("ls_UI_Options")
-		if not ls_UI.Config then return end
+		if not ls_UI.Config then
+			LoadAddOn("ls_UI_Options")
+
+			if not ls_UI.Config then return end
+		end
 
 		ls_UI.Config:Open()
 	end
@@ -197,8 +188,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end)
 
-	local panel = CreateFrame("Frame", "LSUIConfigPanel", InterfaceOptionsFramePanelContainer)
-	panel.name = L["LS_UI"]
+	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
 	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
@@ -207,11 +197,17 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	button:SetPoint("TOPLEFT", 16, -16)
 	button:SetScript("OnClick", function()
 		if not InCombatLockdown() then
-			InterfaceOptionsFrame_Show()
+			HideUIPanel(SettingsPanel)
 
-			openConfig()
+			if not ls_UI.Config then
+				LoadAddOn("ls_UI_Options")
+
+				if not ls_UI.Config then return end
+			end
+
+			ls_UI.Config:Open()
 		end
 	end)
 
-	InterfaceOptions_AddCategory(panel, true)
+	Settings.RegisterAddOnCategory(Settings.RegisterCanvasLayoutCategory(panel, L["LS_UI"]))
 end)

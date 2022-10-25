@@ -5,14 +5,11 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
-
---[[ luacheck: globals
-	CooldownFrame_Set CreateFrame GetNumShapeshiftForms GetShapeshiftFormCooldown GetShapeshiftFormInfo InCombatLockdown
-	LibStub UIParent
-]]
+local unpack = _G.unpack
 
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
+
 local isInit = false
 
 local BUTTONS = {
@@ -20,36 +17,75 @@ local BUTTONS = {
 	StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10,
 }
 
-local TOP_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 156},
-}
-
-local BOTTOM_POINT = {
-	round = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
-	rect = {p = "BOTTOM", anchor = "UIParent", rP = "BOTTOM", x = 0, y = 128},
-}
+local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 127}
+local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 155}
 
 local LAYOUT = {
-	WARRIOR = BOTTOM_POINT,
-	PALADIN = BOTTOM_POINT,
-	HUNTER = TOP_POINT,
-	ROGUE = TOP_POINT,
-	PRIEST = BOTTOM_POINT,
-	DEATHKNIGHT = TOP_POINT,
-	SHAMAN = TOP_POINT,
-	MAGE = TOP_POINT,
-	WARLOCK = TOP_POINT,
-	MONK = BOTTOM_POINT,
-	DRUID = BOTTOM_POINT,
-	DEMONHUNTER = TOP_POINT,
+	["DEATHKNIGHT"] = TOP_POINT,
+	["DEMONHUNTER"] = TOP_POINT,
+	["DRUID"] = BOTTOM_POINT,
+	["EVOKER"] = TOP_POINT,
+	["HUNTER"] = TOP_POINT,
+	["MAGE"] = TOP_POINT,
+	["MONK"] = BOTTOM_POINT,
+	["PALADIN"] = BOTTOM_POINT,
+	["PRIEST"] = BOTTOM_POINT,
+	["ROGUE"] = TOP_POINT,
+	["SHAMAN"] = TOP_POINT,
+	["WARLOCK"] = TOP_POINT,
+	["WARRIOR"] = BOTTOM_POINT,
 }
 
 local function getBarPoint()
-	return LAYOUT[E.PLAYER_CLASS][E.UI_LAYOUT]
+	return LAYOUT[E.PLAYER_CLASS]
 end
 
-local function button_Update(self)
+local bar_proto = {}
+
+function bar_proto:Update()
+	self:UpdateConfig()
+	self:UpdateVisibility()
+	self:UpdateForms()
+	self:ForEach("UpdateHotKeyFont")
+	self:UpdateCooldownConfig()
+	self:UpdateFading()
+	E.Layout:Update(self)
+end
+
+function bar_proto:UpdateForms()
+	local numStances = GetNumShapeshiftForms()
+
+	for i, button in next, self._buttons do
+		if i <= numStances then
+			button:Show()
+			button:Update()
+		else
+			button:Hide()
+		end
+	end
+end
+
+function bar_proto:OnEvent(event)
+	if event == "UPDATE_SHAPESHIFT_COOLDOWN" then
+		self:ForEach("Update")
+	elseif event == "PLAYER_REGEN_ENABLED" then
+		if self.needsUpdate and not InCombatLockdown() then
+			self.needsUpdate = nil
+			self:UpdateForms()
+		end
+	else
+		if InCombatLockdown() then
+			self.needsUpdate = true
+			self:ForEach("Update")
+		else
+			self:UpdateForms()
+		end
+	end
+end
+
+local button_proto = {}
+
+function button_proto:Update()
 	if self:IsShown() then
 		local id = self:GetID()
 		local texture, isActive, isCastable = GetShapeshiftFormInfo(id)
@@ -66,20 +102,20 @@ local function button_Update(self)
 
 		if isCastable then
 			self.icon:SetDesaturated(false)
-			self.icon:SetVertexColor(E:GetRGB(C.db.global.colors.button.normal))
+			self.icon:SetVertexColor(C.db.global.colors.button.normal:GetRGB())
 		else
 			self.icon:SetDesaturated(true)
-			self.icon:SetVertexColor(E:GetRGB(C.db.global.colors.button.unusable))
+			self.icon:SetVertexColor(C.db.global.colors.button.unusable:GetRGB())
 		end
 
-		self.HotKey:SetVertexColor(E:GetRGB(C.db.global.colors.button.normal))
+		self.HotKey:SetVertexColor(C.db.global.colors.button.normal:GetRGB())
 
 		self:UpdateHotKey()
 		self:UpdateCooldown()
 	end
 end
 
-local function button_UpdateHotKey(self, state)
+function button_proto:UpdateHotKey(state)
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -93,64 +129,36 @@ local function button_UpdateHotKey(self, state)
 	end
 end
 
-local function button_UpdateHotKeyFont(self)
+function button_proto:UpdateHotKeyFont()
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
 end
 
-local function button_UpdateCooldown(self)
+function button_proto:UpdateCooldown()
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
 end
 
-local function button_OnEnter(self)
+function button_proto:OnEnterHook()
 	if LibKeyBound then
 		LibKeyBound:Set(self)
 	end
 end
 
-function MODULE.CreateStanceBar()
+function MODULE:CreateStanceBar()
 	if not isInit then
-		local bar = CreateFrame("Frame", "LSStanceBar", UIParent, "SecureHandlerStateTemplate")
-		bar._id = "bar7"
-		bar._buttons = {}
-
-		MODULE:AddBar(bar._id, bar)
-
-		bar.Update = function(self)
-			self:UpdateConfig()
-			self:UpdateVisibility()
-			self:UpdateForms()
-			self:ForEach("UpdateHotKeyFont")
-			self:UpdateCooldownConfig()
-			self:UpdateFading()
-			E.Layout:Update(self)
-		end
-		bar.UpdateForms = function(self)
-			local numStances = GetNumShapeshiftForms()
-
-			for i, button in next, self._buttons do
-				if i <= numStances then
-					button:Show()
-					button:Update()
-				else
-					button:Hide()
-				end
-			end
-		end
+		local bar = Mixin(self:Create("stance", "LSStanceBar"), bar_proto)
 
 		for i = 1, #BUTTONS do
-			local button = CreateFrame("CheckButton", "$parentButton" .. i, bar, "StanceButtonTemplate")
+			local button = Mixin(CreateFrame("CheckButton", "$parentButton" .. i, bar, "StanceButtonTemplate"), button_proto)
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
 			button:SetScript("OnUpdate", nil)
-			button:HookScript("OnEnter", button_OnEnter)
+			button:HookScript("OnEnter", button.OnEnterHook)
 			button:UnregisterAllEvents()
 			button._parent = bar
 			button._command = "SHAPESHIFTBUTTON" .. i
+			bar._buttons[i] = button
 
-			button.Update = button_Update
-			button.UpdateCooldown = button_UpdateCooldown
-			button.UpdateHotKey = button_UpdateHotKey
-			button.UpdateHotKeyFont = button_UpdateHotKeyFont
+			E:SkinStanceButton(button)
 
 			BUTTONS[i]:SetAllPoints(button)
 			BUTTONS[i]:SetAttribute("statehidden", true)
@@ -158,29 +166,9 @@ function MODULE.CreateStanceBar()
 			BUTTONS[i]:SetScript("OnEvent", nil)
 			BUTTONS[i]:SetScript("OnUpdate", nil)
 			BUTTONS[i]:UnregisterAllEvents()
-
-			E:SkinStanceButton(button)
-
-			bar._buttons[i] = button
 		end
 
-		bar:SetScript("OnEvent", function(self, event)
-			if event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-				self:ForEach("Update")
-			elseif event == "PLAYER_REGEN_ENABLED" then
-				if self.needsUpdate and not InCombatLockdown() then
-					self.needsUpdate = nil
-					self:UpdateForms()
-				end
-			else
-				if InCombatLockdown() then
-					self.needsUpdate = true
-					self:ForEach("Update")
-				else
-					self:UpdateForms()
-				end
-			end
-		end)
+		bar:SetScript("OnEvent", bar.OnEvent)
 
 		bar:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
 		bar:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -194,8 +182,7 @@ function MODULE.CreateStanceBar()
 		bar:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
 		bar:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 
-		local point = getBarPoint()
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(getBarPoint()))
 		E.Movers:Create(bar)
 
 		bar:Update()

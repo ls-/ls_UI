@@ -3,16 +3,10 @@ local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L,
 
 -- Lua
 local _G = getfenv(0)
+local m_min = _G.math.min
 local next = _G.next
 
 -- Mine
-local layouts = {"round", "rect"}
-local layoutsOld = {"ls", "traditional"}
-local unitsLayout = {"player", "pet"}
-local unitsNonLayout = {"target", "targettarget", "focus", "focustarget", "boss"}
-local bars = {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"}
-local auras = {"HELPFUL", "HARMFUL", "TOTEM"}
-
 function P:Modernize(data, name, key)
 	if not data.version then return end
 
@@ -61,13 +55,35 @@ function P:Modernize(data, name, key)
 
 			data.version = 9020502
 		end
+
+		--> 100000.01
+		if data.version < 10000001 then
+			for _, filter in next, {"Blacklist", "M+ Affixes"} do
+				if data.aura_filters[filter] then
+					local state = data.aura_filters[filter].state
+					data.aura_filters[filter].state = nil
+					data.aura_filters[filter].is_init = nil
+
+					E:DiffTable(D.global.aura_filters[filter], data.aura_filters[filter])
+
+					if next(data.aura_filters[filter]) then
+						data.aura_filters[filter .. ".bak"] = data.aura_filters[filter]
+						data.aura_filters[filter .. ".bak"].state = state
+					end
+
+					data.aura_filters[filter] = nil
+				end
+			end
+
+			data.version = 10000001
+		end
 	elseif key == "profile" then
 		--> 90001.05
 		if data.version < 9000105 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].health then
 									if data.units[layout][unit].health.text then
@@ -120,7 +136,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].health then
 							if data.units[unit].health.text then
@@ -173,7 +189,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						if data.bars[bar].hotkey then
 							data.bars[bar].hotkey.flag = nil
@@ -203,7 +219,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						if data.auras[aura].cooldown then
 							if data.auras[aura].cooldown.text then
@@ -218,9 +234,9 @@ function P:Modernize(data, name, key)
 		--> 90002.04
 		if data.version < 9000204 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].auras then
 									if data.units[layout][unit].auras.count then
@@ -233,7 +249,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].auras then
 							if data.units[unit].auras.count then
@@ -246,7 +262,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						if data.auras[aura].count then
 							data.auras[aura].count.flag = nil
@@ -295,9 +311,9 @@ function P:Modernize(data, name, key)
 					data.units.focustarget.custom_texts = nil
 				end
 
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].health then
 									data.units[layout][unit].health.change_threshold = nil
@@ -337,7 +353,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].health then
 							data.units[unit].health.change_threshold = nil
@@ -377,9 +393,9 @@ function P:Modernize(data, name, key)
 		--> 90005.01
 		if data.version < 9000501 then
 			if data.units then
-				for _, layout in next, layoutsOld do
+				for _, layout in next, {"ls", "traditional"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].insets then
 									data.units[layout][unit].insets.t_size = 0.25
@@ -389,7 +405,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].insets then
 							if data.units[unit].insets.t_size > 0.25 then
@@ -406,7 +422,7 @@ function P:Modernize(data, name, key)
 		--> 90005.04
 		if data.version < 9000504 then
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						if data.bars[bar].fade then
 							data.bars[bar].fade.in_delay = nil
@@ -432,7 +448,7 @@ function P:Modernize(data, name, key)
 		if data.version < 9010504 then
 			if data.units then
 				if data.units.ls then
-					for _, unit in next, unitsLayout do
+					for _, unit in next, {"player", "pet"} do
 						if data.units.ls[unit] then
 							if data.units.ls[unit].point then
 								data.units.ls[unit].point.ls = nil
@@ -452,7 +468,7 @@ function P:Modernize(data, name, key)
 				end
 
 				if data.units.traditional then
-					for _, unit in next, unitsLayout do
+					for _, unit in next, {"player", "pet"} do
 						if data.units.traditional[unit] then
 							if data.units.traditional[unit].point then
 								data.units.traditional[unit].point.ls = nil
@@ -502,9 +518,9 @@ function P:Modernize(data, name, key)
 		--> 90200.02
 		if data.version < 9020002 then
 			if data.units then
-				for _, layout in next, layouts do
+				for _, layout in next, {"round", "rect"} do
 					if data.units[layout] then
-						for _, unit in next, unitsLayout do
+						for _, unit in next, {"player", "pet"} do
 							if data.units[layout][unit] then
 								if data.units[layout][unit].auras then
 									data.units[layout][unit].auras.width = data.units[layout][unit].auras.size_override
@@ -515,7 +531,7 @@ function P:Modernize(data, name, key)
 					end
 				end
 
-				for _, unit in next, unitsNonLayout do
+				for _, unit in next, {"target", "targettarget", "focus", "focustarget", "boss"} do
 					if data.units[unit] then
 						if data.units[unit].auras then
 							data.units[unit].auras.width = data.units[unit].auras.size_override
@@ -526,7 +542,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.bars then
-				for _, bar in next, bars do
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "pet_battle", "extra", "zone", "vehicle"} do
 					if data.bars[bar] then
 						data.bars[bar].width = data.bars[bar].size
 						data.bars[bar].size = nil
@@ -535,7 +551,7 @@ function P:Modernize(data, name, key)
 			end
 
 			if data.auras then
-				for _, aura in next, auras do
+				for _, aura in next, {"HELPFUL", "HARMFUL", "TOTEM"} do
 					if data.auras[aura] then
 						data.auras[aura].width = data.auras[aura].size
 						data.auras[aura].size = nil
@@ -559,7 +575,7 @@ function P:Modernize(data, name, key)
 					data.movers.traditional = nil
 				end
 
-				for _, layout in next, layouts do
+				for _, layout in next, {"round", "rect"} do
 					if data.movers[layout] then
 						for k, v in next, data.movers[layout] do
 							if v.point then
@@ -593,6 +609,142 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 9020502
+		end
+
+		--> 100000.01
+		if data.version < 10000001 then
+			if data.movers then
+				data.movers.round = nil
+
+				if data.movers.rect then
+					data.movers.rect.CastingBarFrameHolderMover = nil
+					data.movers.rect.PetCastingBarFrameHolderMover = nil
+					data.movers.rect.LSBagBarMover = nil
+					data.movers.rect.LSMicroMenu1Mover = nil
+					data.movers.rect.LSMicroMenu2Mover = nil
+					data.movers.rect.LSMinimapHolderMover = nil
+					data.movers.rect.LSOTFrameHolderMover = nil
+					data.movers.rect.LSPowerBarAltHolderMover = nil
+					data.movers.rect.MirrorTimer1Mover = nil
+					data.movers.rect.MirrorTimer2Mover = nil
+					data.movers.rect.MirrorTimer3Mover = nil
+					data.movers.rect.TalkingHeadFrameMover = nil
+					data.movers = data.movers.rect
+				end
+			end
+
+			if data.bars then
+				data.bars.lock = nil
+				data.bars.click_on_down = nil
+
+				data.bars.pet = data.bars.bar6
+				data.bars.bar6 = nil
+
+				data.bars.stance = data.bars.bar7
+				data.bars.bar7 = nil
+
+				if data.bars.micromenu then
+					if data.bars.micromenu.bars then
+						if data.bars.micromenu.bars.micromenu1 then
+							data.bars.micromenu.point = data.bars.micromenu.bars.micromenu1.point
+							data.bars.micromenu.x_growth = data.bars.micromenu.bars.micromenu1.x_growth
+							data.bars.micromenu.y_growth = data.bars.micromenu.bars.micromenu1.y_growth
+
+							if data.bars.micromenu.bars.micromenu1.per_row then
+								data.bars.micromenu.per_row = m_min(data.bars.micromenu.bars.micromenu1.per_row, 12)
+							end
+						end
+
+						data.bars.micromenu.bars = nil
+					end
+
+					if data.bars.micromenu.buttons then
+						if data.bars.micromenu.buttons.inventory then
+							if data.bars.micromenu.buttons.inventory.currency then
+								data.bars.bag = {
+									currency = data.bars.micromenu.buttons.inventory.currency,
+								}
+							end
+
+							data.bars.micromenu.buttons.inventory = nil
+						end
+
+						for _, button in next, {"character", "spellbook", "talent", "achievement", "quest", "guild", "lfd", "collection", "ej", "store", "main", "help" } do
+							if data.bars.micromenu.buttons[button] then
+								data.bars.micromenu.buttons[button].parent = nil
+							end
+						end
+					end
+				end
+			end
+
+			if data.units then
+				data.units.round = nil
+
+				if data.units.rect then
+					data.units.player = data.units.rect.player
+					data.units.pet = data.units.rect.pet
+					data.units.rect = nil
+				end
+
+				for _, unit in next, {"player", "pet", "target", "targettarget", "focus", "focustarget", "boss"} do
+					if data.units[unit] then
+						if data.units[unit].auras then
+							if data.units[unit].auras.type then
+								data.units[unit].auras.type.debuff_type = nil
+							end
+						end
+					end
+				end
+			end
+
+			if data.auras then
+				if data.auras.HELPFUL then
+					if data.auras.HELPFUL.type then
+						data.auras.HELPFUL.type.debuff_type = nil
+					end
+				end
+
+				if data.auras.HARMFUL then
+					if data.auras.HARMFUL.type then
+						data.auras.HARMFUL.type.debuff_type = nil
+					end
+				end
+			end
+
+			if data.blizzard then
+				data.blizzard.castbar = nil
+				data.blizzard.objective_tracker = nil
+				data.blizzard.player_alt_power_bar = nil
+				data.blizzard.timer = nil
+				data.blizzard.vehicle_seat = data.blizzard.vehicle
+				data.blizzard.vehicle = nil
+
+				-- a leftover from some older version
+				if data.blizzard.talking_head then
+					data.blizzard.talking_head.skip = nil
+				end
+			end
+
+			if data.minimap then
+				data.minimap.scale = nil
+				data.minimap.buttons = nil
+				data.minimap.collect = nil
+
+				if data.minimap.color then
+					data.minimap.color.zone_text = nil
+				end
+
+				data.minimap.rect = nil
+				data.minimap.round = nil
+			end
+
+			if data.tooltips then
+				data.tooltips.anchor_cursor = nil
+				data.tooltips.point = nil
+			end
+
+			data.version = 10000001
 		end
 	elseif key == "private" then
 		--> 90001.05
@@ -671,6 +823,33 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 9020503
+		end
+
+		--> 100000.01
+		if data.version < 10000001 then
+			data.layout = nil
+
+			if data.blizzard then
+				data.blizzard.castbar = nil
+				data.blizzard.objective_tracker = nil
+				data.blizzard.player_alt_power_bar = nil
+				data.blizzard.timer = nil
+				data.blizzard.vehicle_seat = data.blizzard.vehicle
+				data.blizzard.vehicle = nil
+			end
+
+			if data.minimap then
+				data.minimap.rect = nil
+				data.minimap.round = nil
+			end
+
+			if data.auratracker then
+				if data.auratracker.type then
+					data.auratracker.type.debuff_type = nil
+				end
+			end
+
+			data.version = 10000001
 		end
 	end
 end

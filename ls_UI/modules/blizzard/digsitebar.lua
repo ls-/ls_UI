@@ -5,15 +5,10 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
-
-local function bar_OnEvent(self, event, num, total)
-	if event == "ARCHAEOLOGY_SURVEY_CAST" or event == "ARCHAEOLOGY_FIND_COMPLETE" then
-		self.Text:SetText(num .. " / ".. total)
-	end
-end
 
 function MODULE:HasDigsiteBar()
 	return isInit
@@ -22,27 +17,27 @@ end
 function MODULE:SetUpDigsiteBar()
 	if not isInit and PrC.db.profile.blizzard.digsite_bar.enabled then
 		local isLoaded = true
-
 		if not IsAddOnLoaded("Blizzard_ArchaeologyUI") then
 			isLoaded = LoadAddOn("Blizzard_ArchaeologyUI")
 		end
 
 		if isLoaded then
 			ArcheologyDigsiteProgressBar.ignoreFramePositionManager = true
-			UIPARENT_MANAGED_FRAME_POSITIONS["ArcheologyDigsiteProgressBar"] = nil
 
 			E:HandleStatusBar(ArcheologyDigsiteProgressBar)
 
-			local point = C.db.profile.blizzard.digsite_bar.point[E.UI_LAYOUT]
 			ArcheologyDigsiteProgressBar:ClearAllPoints()
-			ArcheologyDigsiteProgressBar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+			ArcheologyDigsiteProgressBar:SetPoint(unpack(C.db.profile.blizzard.digsite_bar.point))
 			E.Movers:Create(ArcheologyDigsiteProgressBar)
 
 			ArcheologyDigsiteProgressBar.Text:SetText("")
+			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(C.db.global.colors.orange:GetRGB())
 
-			ArcheologyDigsiteProgressBar.Texture:SetVertexColor(E:GetRGB(C.db.global.colors.orange))
-
-			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", bar_OnEvent)
+			hooksecurefunc("ArcheologyDigsiteProgressBar_OnEvent", function(self, event, num, total)
+				if event == "ARCHAEOLOGY_SURVEY_CAST" or event == "ARCHAEOLOGY_FIND_COMPLETE" then
+					self.Text:SetText(num .. " / ".. total)
+				end
+			end)
 
 			isInit = true
 

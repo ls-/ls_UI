@@ -9,7 +9,9 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+
 local barController
+local animController
 
 local ENDCAPS = {
 	[1] = {
@@ -25,7 +27,7 @@ local ENDCAPS = {
 }
 
 local WIDGETS = {
-	ACTION_BAR = {
+	["ACTION_BAR"] = {
 		frame_level_offset = 2,
 		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 15},
 		children = {
@@ -33,6 +35,9 @@ local WIDGETS = {
 			"LSActionBar3",
 			"LSActionBar4",
 			"LSActionBar5",
+			"LSActionBar6",
+			"LSActionBar7",
+			"LSActionBar8",
 			"LSPetBar",
 			"LSStanceBar",
 		},
@@ -54,11 +59,11 @@ local WIDGETS = {
 			]],
 		},
 	},
-	PET_BATTLE_BAR = {
+	["PET_BATTLE_BAR"] = {
 		frame_level_offset = 2,
 		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 15},
 	},
-	XP_BAR = {
+	["XP_BAR"] = {
 		frame_level_offset = 3,
 		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 		on_play = function(frame, newstate)
@@ -67,7 +72,7 @@ local WIDGETS = {
 	},
 }
 
-function MODULE:ActionBarController_AddWidget(frame, slot)
+function MODULE:AddControlledWidget(slot, frame)
 	if isInit then
 		local widget = WIDGETS[slot]
 		if widget and not widget.frame then
@@ -156,7 +161,7 @@ function MODULE:SetupActionBarController()
 
 		-- These frames are used as anchors/parents for textures because I'm using C_Timer.After,
 		-- so I can't resize protected frames while in combat
-		local animController = CreateFrame("Frame", nil, UIParent)
+		animController = CreateFrame("Frame", nil, UIParent)
 		animController:SetFrameLevel(barController:GetFrameLevel())
 		animController:SetAllPoints(barController)
 
@@ -330,6 +335,25 @@ function MODULE:SetupActionBarController()
 		anim:SetOffset(0, 55)
 		anim:SetDuration(0.15)
 
+		self:UpdateEndcaps()
+
 		isInit = true
+	end
+end
+
+function MODULE:UpdateEndcaps()
+	local endcaps = C.db.profile.bars.endcaps
+	if endcaps == "BOTH" then
+		animController.LeftCap:Show()
+		animController.RightCap:Show()
+	elseif endcaps == "LEFT" then
+		animController.LeftCap:Show()
+		animController.RightCap:Hide()
+	elseif endcaps == "RIGHT" then
+		animController.LeftCap:Hide()
+		animController.RightCap:Show()
+	else
+		animController.LeftCap:Hide()
+		animController.RightCap:Hide()
 	end
 end

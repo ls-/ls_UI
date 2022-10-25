@@ -4,10 +4,7 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-
---[[ luacheck: globals
-	CanExitVehicle CreateFrame TaxiRequestEarlyLanding UIParent UnitOnTaxi VehicleExit
-]]
+local unpack = _G.unpack
 
 -- Mine
 local isInit = false
@@ -48,24 +45,22 @@ function button_proto:OnClick()
 	end
 end
 
-local function bar_Update(self)
+local bar_proto = {
+	UpdateCooldownConfig = E.NOOP,
+}
+
+function bar_proto:Update()
 	self:UpdateConfig()
+	self:UpdateVisibility()
 	self:UpdateFading()
 
 	self:SetSize(self._config.width + 4, self._config.height + 4)
 	E.Movers:Get(self):UpdateSize()
 end
 
-function MODULE.CreateVehicleExitButton()
+function MODULE:CreateVehicleExitButton()
 	if not isInit then
-		local bar = CreateFrame("Frame", "LSVehicleExitFrame", UIParent)
-		bar._id = "vehicle"
-		bar._buttons = {}
-
-		MODULE:AddBar(bar._id, bar)
-
-		bar.Update = bar_Update
-		bar.UpdateCooldownConfig = nil
+		local bar = Mixin(self:Create("vehicle", "LSVehicleExitFrame"), bar_proto)
 
 		local button = Mixin(E:CreateButton(bar), button_proto)
 		button:SetPoint("TOPLEFT", 2, -2)
@@ -82,12 +77,11 @@ function MODULE.CreateVehicleExitButton()
 		button.Icon:SetTexture("Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up")
 		button.Icon:SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125)
 
-		button.Border:SetVertexColor(E:GetRGB(C.db.global.colors.red))
+		button.Border:SetVertexColor(C.db.global.colors.red:GetRGB())
 
 		button:OnEvent()
 
-		local point = C.db.profile.bars.vehicle.point[E.UI_LAYOUT]
-		bar:SetPoint(point.p, point.anchor, point.rP, point.x, point.y)
+		bar:SetPoint(unpack(C.db.profile.bars.vehicle.point))
 		E.Movers:Create(bar)
 
 		bar:Update()

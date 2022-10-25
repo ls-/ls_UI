@@ -20,6 +20,12 @@ local function inc(order)
 	return orders[order]
 end
 
+local ICON_POSITIONS = {
+	["NONE"] = L["NONE"],
+	["LEFT"] = L["LEFT"],
+	["RIGHT"] = L["RIGHT"],
+}
+
 function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 	local temp = {
 		order = order,
@@ -83,7 +89,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "range",
 				name = L["WIDTH_OVERRIDE"],
-				desc = L["SIZE_OVERRIDE_DESC"],
+				desc = L["WIDTH_OVERRIDE_DESC"],
 				min = 0, max = 1024, step = 2,
 				softMin = 96,
 				disabled = function()
@@ -121,7 +127,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "select",
 				name = L["ICON"],
-				values = CONFIG.CASTBAR_ICON_POSITIONS,
+				values = ICON_POSITIONS,
 				get = function()
 					return C.db.profile.units[unit].castbar.icon.position
 				end,
@@ -157,12 +163,6 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 	if unit ~= "player" then
 		temp.args.latency = nil
 		temp.args.spacer_2 = nil
-	end
-
-	if E.UI_LAYOUT == "round" and (unit == "player" or unit == "pet") then
-		temp.args.detached = nil
-		temp.args.width_override.name = L["WIDTH"]
-		temp.args.width_override.desc = nil
 	end
 
 	return temp
