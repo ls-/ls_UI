@@ -1220,8 +1220,25 @@ end
 
 function E.Movers:UpdateAll()
 	for _, mover in next, enabledMovers do
+		mover:RemoveRelationLines()
+		mover:RemoveDrones()
+	end
+
+	for _, mover in next, enabledMovers do
+		local _, anchor = mover:GetCurrentPosition()
+		if anchor and anchor ~= "UIParent" then
+			local hive = enabledMovers[anchor .. "Mover"]
+			if hive then
+				if not hive:HasInHierarchy(mover) then
+					mover:AddToHive(hive)
+				end
+			end
+		end
+
 		updatePosition(mover)
 		resetObjectPoint(mover.object)
+
+		mover:AddRelationLines()
 
 		if mover.isSimple then
 			mover:Show()
