@@ -25,6 +25,13 @@ E.CHANGELOG = [[
   reworked by Blizzard. Affected widgets are castbars, the objective tracker, mirror timers (breath,
   fatigue), and the alternative player power bar (the dragon riding bar, various widgets for boss
   encounters, etc).
+  - I left in an option to auto-hide the talking head.
+  - From now on use Blizz layout manager to move the talking head and objective tracker, I removed
+    movers for these two because I wanted to avoid breaking anything in the layout manager, it's
+    really easy. And on top of that the objective tracker itself is a very, let's say, sensitive
+    widget.
+  - If in the future Blizz add an option to safely remove things from their layout manager, I'll
+    gladly readd objective tracker and talking head movers.
 - Temporarily disabled gem and enchant texts in the character frame. Both rely on the new tooltip
   system that's not available in the pre-patch, more on that later.
 
@@ -44,6 +51,9 @@ E.CHANGELOG = [[
   the future, but I feel like the current size is big enough for everyone.
 - Removed minimap button collecting and skinning. By default, there's no need to collect buttons
   anymore, Blizz removed practically everything. I'll most likely release it as a separate addon.
+- While the minimap has both my and Blizz (Edit Mode) movers, Blizz mover does nothing, it can't
+  move the minimap, it can't change its settings. Unfortunately, Blizz didn't give addon devs a way
+  to safely remove things from their layout manager.
 
 ### Tooltips
 
