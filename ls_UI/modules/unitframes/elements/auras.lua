@@ -68,7 +68,7 @@ local filterFunctions = {
 		end
 
 		-- applied by the player/vehicle/pet
-		if data.isFromPlayerOrPlayerPet then
+		if data.isPlayerAura then
 			if data.duration and data.duration ~= 0 then
 				return config.player
 			else
@@ -137,7 +137,7 @@ local filterFunctions = {
 		end
 
 		-- applied by the player/vehicle/pet
-		if data.isFromPlayerOrPlayerPet then
+		if data.isPlayerAura then
 			if data.duration and data.duration ~= 0 then
 				return config.player
 			else
