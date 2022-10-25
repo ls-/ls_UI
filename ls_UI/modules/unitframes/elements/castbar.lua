@@ -159,6 +159,8 @@ function element_proto:UpdateSize()
 				mover:Enable()
 				mover:UpdateSize(width, height)
 			end
+
+			holder:SetParent(UIParent)
 		else
 			local mover = E.Movers:Get(holder)
 			if mover then
@@ -172,6 +174,8 @@ function element_proto:UpdateSize()
 				holder:ClearAllPoints()
 				holder:SetPoint(point1.p, E:ResolveAnchorPoint(frame, point1.anchor), point1.rP, point1.x, point1.y, true)
 			end
+
+			holder:SetParent(frame)
 		end
 	end
 
@@ -197,8 +201,8 @@ function frame_proto:UpdateCastbar()
 		element.Holder:Hide()
 
 		if self.__unit == "player" then
-			CastingBarFrame_SetUnit(CastingBarFrame, nil)
-			CastingBarFrame_SetUnit(PetCastingBarFrame, nil)
+			PlayerCastingBarFrame:SetUnit(nil)
+			PetCastingBarFrame:SetUnit(nil)
 		end
 	end
 
