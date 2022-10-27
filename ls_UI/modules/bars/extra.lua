@@ -54,7 +54,11 @@ function bar_proto:Update()
 
 	local width, height = ExtraActionButton1:GetSize()
 	self:SetSize((width > 0 and width or 52) + 4, (height > 0 and height or 52) + 4)
-	E.Movers:Get(self):UpdateSize()
+
+	local mover = E.Movers:Get(self)
+	if mover then
+		mover:UpdateSize()
+	end
 end
 
 function bar_proto:UpdateArtwork()

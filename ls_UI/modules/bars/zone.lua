@@ -34,7 +34,11 @@ function bar_proto:Update()
 	end
 
 	self:SetSize(width + 4, height + 4)
-	E.Movers:Get(self):UpdateSize()
+
+	local mover = E.Movers:Get(self)
+	if mover then
+		mover:UpdateSize()
+	end
 end
 
 function bar_proto:UpdateArtwork()
