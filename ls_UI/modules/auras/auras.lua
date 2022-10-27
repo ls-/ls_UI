@@ -156,7 +156,7 @@ local function handleButton(button, header)
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnLeave", button.OnLeave)
 	button:SetScript("OnSizeChanged", button.OnSizeChanged)
-	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	button:RegisterForClicks("RightButtonDown", "RightButtonUp")
 
 	button.Icon = E:SetIcon(button, [[Interface\ICONS\INV_Misc_QuestionMark]])
 
