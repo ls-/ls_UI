@@ -357,3 +357,10 @@ function MODULE:UpdateEndcaps()
 		animController.RightCap:Hide()
 	end
 end
+
+function MODULE:UpdateScale()
+	local scale = C.db.profile.bars.scale
+
+	barController:SetScale(scale)
+	animController:SetScale(scale)
+end

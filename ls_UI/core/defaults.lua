@@ -1891,6 +1891,7 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
+		scale = 1,
 		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
 		cooldown = {
 			exp_threshold = 5,

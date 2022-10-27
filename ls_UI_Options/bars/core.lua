@@ -165,8 +165,24 @@ function CONFIG:CreateActionBarsOptions(order)
 				disabled = function()
 					return not (BARS:IsInit() and BARS:IsRestricted())
 				end,
-			}
-			,
+			},
+			scale = {
+				order = inc(1),
+				type = "range",
+				name = L["SCALE"],
+				min = 1, max = 2, step = 0.01, bigStep = 0.1,
+				get = function()
+					return C.db.profile.bars.scale
+				end,
+				set = function(_, value)
+					C.db.profile.bars.scale = value
+
+					BARS:UpdateScale()
+				end,
+				disabled = function()
+					return not (BARS:IsInit() and BARS:IsRestricted())
+				end,
+			},
 			blizz_vehicle = {
 				order = inc(1),
 				type = "toggle",
