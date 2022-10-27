@@ -2729,9 +2729,6 @@ PrD.profile = {
 		maw_buffs = { -- MawBuffsBelowMinimapFrame
 			enabled = true,
 		},
-		talking_head = { -- TalkingHeadFrame
-			enabled = true
-		},
 		vehicle_seat = { -- VehicleSeatIndicator
 			enabled = true
 		},
