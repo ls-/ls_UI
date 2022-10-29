@@ -58,6 +58,7 @@ read_globals = {
 	"GetAverageItemLevel",
 	"GetCurrentBindingSet",
 	"GetCursorPosition",
+	"GetCVarBool",
 	"GetDetailedItemLevelInfo",
 	"GetFlyoutInfo",
 	"GetFriendshipReputation",
