@@ -165,8 +165,24 @@ function CONFIG:CreateActionBarsOptions(order)
 				disabled = function()
 					return not (BARS:IsInit() and BARS:IsRestricted())
 				end,
-			}
-			,
+			},
+			scale = {
+				order = inc(1),
+				type = "range",
+				name = L["SCALE"],
+				min = 1, max = 2, step = 0.01, bigStep = 0.1,
+				get = function()
+					return C.db.profile.bars.scale
+				end,
+				set = function(_, value)
+					C.db.profile.bars.scale = value
+
+					BARS:UpdateScale()
+				end,
+				disabled = function()
+					return not (BARS:IsInit() and BARS:IsRestricted())
+				end,
+			},
 			blizz_vehicle = {
 				order = inc(1),
 				type = "toggle",
@@ -185,11 +201,41 @@ function CONFIG:CreateActionBarsOptions(order)
 				type = "description",
 				name = " ",
 			},
+			mouseover = {
+				order = inc(1),
+				type = "toggle",
+				name = L["MOUSEOVER_CAST"],
+				disabled = isModuleDisabled,
+				get = function()
+					return GetCVarBool("enableMouseoverCast")
+				end,
+				set = function(_, value)
+					SetCVar("enableMouseoverCast", value and "1" or "0")
+				end,
+			},
+			mouseover_mod = {
+				order = inc(1),
+				type = "select",
+				name = L["MOUSEOVER_CAST_KEY"],
+				desc = L["MOUSEOVER_CAST_KEY_DESC"],
+				disabled = function()
+					return isModuleDisabled() or not GetCVarBool("enableMouseoverCast")
+				end,
+				get = function()
+					return CAST_KEY_INDICES[GetModifiedClick("MOUSEOVERCAST")]
+				end,
+				set = function(_, value)
+					SetModifiedClick("MOUSEOVERCAST", CAST_KEY_VALUES[value])
+					SaveBindings(GetCurrentBindingSet() or 1)
+				end,
+				values = CAST_KEYS,
+			},
 			selfcast_mod = {
 				order = inc(1),
 				type = "select",
-				name = L["SELF_CAST"],
-				desc = L["SELF_CAST_DESC"],
+				name = L["SELF_CAST_KEY"],
+				desc = L["SELF_CAST_KEY_DESC"],
+				disabled = isModuleDisabled,
 				get = function()
 					return CAST_KEY_INDICES[GetModifiedClick("SELFCAST")]
 				end,
@@ -198,12 +244,11 @@ function CONFIG:CreateActionBarsOptions(order)
 					SaveBindings(GetCurrentBindingSet() or 1)
 				end,
 				values = CAST_KEYS,
-				disabled = isModuleDisabled,
 			},
 			focuscast_mod = {
 				order = inc(1),
 				type = "select",
-				name = L["FOCUS_CAST"],
+				name = L["FOCUS_CAST_KEY"],
 				get = function()
 					return CAST_KEY_INDICES[GetModifiedClick("FOCUSCAST")]
 				end,
@@ -220,6 +265,11 @@ function CONFIG:CreateActionBarsOptions(order)
 				name = L["RCLICK_SELFCAST"],
 				disabled = isModuleDisabled,
 			},
+			spacer_2 = {
+				order = inc(1),
+				type = "description",
+				name = " ",
+			},
 			range_indicator = {
 				order = inc(1),
 				type = "select",
@@ -234,7 +284,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
-			spacer_2 = {
+			spacer_3 = {
 				order = inc(1),
 				type = "description",
 				name = " ",
@@ -273,7 +323,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			spacer_3 = {
+			spacer_4 = {
 				order = inc(1),
 				type = "description",
 				name = " ",

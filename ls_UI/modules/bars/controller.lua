@@ -336,6 +336,7 @@ function MODULE:SetupActionBarController()
 		anim:SetDuration(0.15)
 
 		self:UpdateEndcaps()
+		self:UpdateScale()
 
 		isInit = true
 	end
@@ -356,4 +357,11 @@ function MODULE:UpdateEndcaps()
 		animController.LeftCap:Hide()
 		animController.RightCap:Hide()
 	end
+end
+
+function MODULE:UpdateScale()
+	local scale = C.db.profile.bars.scale
+
+	barController:SetScale(scale)
+	animController:SetScale(scale)
 end

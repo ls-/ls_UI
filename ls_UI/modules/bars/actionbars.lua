@@ -185,8 +185,9 @@ function bar_proto:UpdateButtonConfig()
 
 		button:UpdateConfig(self.buttonConfig)
 		button:SetAttribute("buttonlock", true)
-		button:SetAttribute("checkselfcast", true)
+		button:SetAttribute('checkmouseovercast', true)
 		button:SetAttribute("checkfocuscast", true)
+		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("*unit2", self._config.rightclick_selfcast and "player" or nil)
 	end
 end

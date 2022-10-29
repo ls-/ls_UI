@@ -20,16 +20,9 @@ function MODULE:HasTalkingHead()
 end
 
 function MODULE:SetUpTalkingHead()
-	if not isInit and PrC.db.profile.blizzard.talking_head.enabled then
-		local isLoaded = true
-		if not IsAddOnLoaded("Blizzard_TalkingHeadUI") then
-			isLoaded = LoadAddOn("Blizzard_TalkingHeadUI")
-		end
+	if not isInit then
+		hooksecurefunc(TalkingHeadFrame, "PlayCurrent", closeTalkingHead)
 
-		if isLoaded then
-			hooksecurefunc(TalkingHeadFrame, "PlayCurrent", closeTalkingHead)
-
-			isInit = true
-		end
+		isInit = true
 	end
 end

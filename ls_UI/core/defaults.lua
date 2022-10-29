@@ -1891,6 +1891,7 @@ D.profile = {
 		range_indicator = "button", -- hotkey
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
+		scale = 1,
 		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
 		cooldown = {
 			exp_threshold = 5,
@@ -2728,9 +2729,6 @@ PrD.profile = {
 		},
 		maw_buffs = { -- MawBuffsBelowMinimapFrame
 			enabled = true,
-		},
-		talking_head = { -- TalkingHeadFrame
-			enabled = true
 		},
 		vehicle_seat = { -- VehicleSeatIndicator
 			enabled = true

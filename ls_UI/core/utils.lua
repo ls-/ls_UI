@@ -727,7 +727,6 @@ function E:ForceHide(object, skipEvents)
 
 	if object.EnableMouse then
 		object:EnableMouse(false)
-
 	end
 
 	if object.UnregisterAllEvents then
