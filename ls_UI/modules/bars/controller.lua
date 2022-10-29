@@ -336,6 +336,7 @@ function MODULE:SetupActionBarController()
 		anim:SetDuration(0.15)
 
 		self:UpdateEndcaps()
+		self:UpdateScale()
 
 		isInit = true
 	end
