@@ -4,6 +4,7 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local unpack = _G.unpack
 
 -- Mine
@@ -79,6 +80,12 @@ function MODULE:CreateExtraButton()
 		ExtraActionBarFrame:EnableMouse(false)
 		ExtraActionBarFrame:SetParent(bar)
 		ExtraActionBarFrame.ignoreInLayout = true
+
+		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
+			if parent ~= bar then
+				self:SetParent(bar)
+			end
+		end)
 
 		-- ExtraAbilityContainer.ignoreFramePositionManager = true
 		-- ExtraAbilityContainer:SetScript("OnShow", nil)
