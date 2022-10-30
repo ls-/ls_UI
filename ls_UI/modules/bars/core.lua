@@ -92,6 +92,7 @@ end
 
 function MODULE:Create(id, name, isInsecure)
 	local bar = Mixin(CreateFrame("Frame", name, UIParent, isInsecure and nil or "SecureHandlerStateTemplate"), bar_proto)
+	bar:SetSize(0, 0)
 	bar._id = id
 	bar._buttons = {}
 	bars[id] = bar
