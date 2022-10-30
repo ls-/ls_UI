@@ -63,6 +63,11 @@ local borderInfo = {
 	},
 }
 
+local flagBorderInfo = {
+	["round"] = {97 / 512, 193 / 512, 1 / 256, 97 / 256},
+	["square"] = {1 / 512, 97 / 512, 1 / 256, 97 / 256},
+}
+
 -- At odds with the fierce looking face...
 local function theBodyIsRound()
 	return "ROUND"
@@ -84,6 +89,8 @@ function minimap_proto:UpdateLayout()
 	self.Foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
 	self.Foreground:SetTexCoord(unpack(info[2]))
 	self.Foreground:SetSize(info[3], info[3])
+
+	self.DifficultyFlag.Border:SetTexCoord(unpack(flagBorderInfo[shape]))
 
 	if shape == "round" then
 		self:SetArchBlobRingScalar(1)
@@ -117,9 +124,6 @@ function minimap_proto:UpdateLayout()
 	MinimapCluster.BorderTop:SetPoint("LEFT", "Minimap", "LEFT", 1, 0)
 	MinimapCluster.BorderTop:SetPoint("RIGHT", "Minimap", "RIGHT", -1, 0)
 
-	MinimapCluster.InstanceDifficulty:ClearAllPoints()
-	MinimapCluster.InstanceDifficulty:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -2, -24)
-
 	if self._config.flip then
 		self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, 8, true)
 
@@ -143,6 +147,115 @@ end
 
 function minimap_proto:UpdateRotation()
 	SetCVar("rotateMinimap", self._config.rotate)
+end
+
+local flag_proto = {
+	["events"] = {
+		"GROUP_ROSTER_UPDATE",
+		"INSTANCE_GROUP_SIZE_CHANGED",
+		"PARTY_MEMBER_DISABLE",
+		"PARTY_MEMBER_ENABLE",
+		"PLAYER_DIFFICULTY_CHANGED",
+		"UPDATE_INSTANCE_INFO",
+	},
+}
+
+do
+	local GUILD_ACHIEVEMENTS_ELIGIBLE = _G.GUILD_ACHIEVEMENTS_ELIGIBLE:gsub("(%%.-[sd])", "|cffffffff%1|r")
+
+	local flagInfo = {
+		["lfr"] = {193 / 512, 257 / 512, 1 / 256, 65 / 256},
+		["normal"] = {257 / 512, 321 / 512, 1 / 256, 65 / 256},
+		["heroic"] = {321 / 512, 385 / 512, 1 / 256, 65 / 256},
+		["mythic"] = {385 / 512, 449 / 512, 1 / 256, 65 / 256},
+		["challenge"] = {193 / 512, 257 / 512, 65 / 256, 129 / 256},
+	}
+
+	function flag_proto:RegisterForEvents()
+		for _, event in next, self.events do
+			self:RegisterEvent(event)
+		end
+	end
+
+	function flag_proto:OnEvent()
+		self:Update()
+	end
+
+	function flag_proto:OnEnter()
+		if self.instanceName then
+			local p, rP, x, y = E:GetTooltipPoint(self)
+			if p == "TOPRIGHT" then
+				x, y = 24, 24
+			end
+
+			GameTooltip:SetOwner(self, "ANCHOR_NONE")
+			GameTooltip:SetPoint(p, self, rP, x, y)
+			GameTooltip:SetText(self.instanceName, 1, 1, 1)
+			GameTooltip:AddLine(self.difficultyName)
+
+			local inGroup, _, numGuildRequired = InGuildParty()
+			if inGroup then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(GUILD_ACHIEVEMENTS_ELIGIBLE:format(numGuildRequired, self.maxPlayers, GetGuildInfo()), nil, nil, nil, true)
+
+			end
+
+			GameTooltip:Show()
+		end
+	end
+
+	function flag_proto:OnLeave()
+		GameTooltip:Hide()
+	end
+
+	function flag_proto:UpdateFlag(t)
+		self.Icon:SetTexCoord(unpack(flagInfo[t]))
+	end
+
+	function flag_proto:Update()
+		self.instanceName = nil
+		self.difficultyName = nil
+		self.maxPlayers = nil
+		self:Hide()
+
+		local instanceName, instanceType, difficultyID, _, maxPlayers = GetInstanceInfo()
+		if instanceType == "raid" or instanceType == "party" then
+			local difficultyName, _, isHeroic, isChallengeMode, displayHeroic, displayMythic, _, isLFR = GetDifficultyInfo(difficultyID)
+
+			self.instanceName = instanceName
+			self.difficultyName = difficultyName
+			self.maxPlayers = maxPlayers
+
+			if isChallengeMode then
+				self:UpdateFlag("challenge")
+			elseif isLFR then
+				self:UpdateFlag("lfr")
+			elseif displayMythic then
+				self:UpdateFlag("mythic")
+			elseif isHeroic or displayHeroic then
+				self:UpdateFlag("heroic")
+			else
+				self:UpdateFlag("normal")
+			end
+
+			self:Show()
+		elseif instanceType == "scenario" then
+			local difficultyName, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+			if not (isHeroic or displayHeroic or displayMythic) then return end
+
+			self.instanceName = instanceName
+			self.difficultyName = difficultyName
+			self.maxPlayers = maxPlayers
+
+			if displayMythic then
+				self:UpdateFlag("mythic")
+			elseif isHeroic or displayHeroic then
+				self:UpdateFlag("heroic")
+			end
+
+			self:Show()
+		end
+	end
 end
 
 function MODULE:IsInit()
@@ -227,7 +340,30 @@ function MODULE:Init()
 
 		scrollTexture(indicator, (mult + 1) * DELAY - s, STEP * mult)
 
-		-- E:ForceShow(MinimapCluster.InstanceDifficulty)
+		E:ForceHide(MinimapCluster.InstanceDifficulty)
+
+		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
+		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+		difficultyFlag:RegisterForEvents()
+		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
+		difficultyFlag:SetScript("OnEnter", difficultyFlag.OnEnter)
+		difficultyFlag:SetScript("OnLeave", difficultyFlag.OnLeave)
+		difficultyFlag:SetMouseClickEnabled(false)
+		difficultyFlag:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -0, -1)
+		difficultyFlag:SetSize(48, 48)
+		difficultyFlag:Hide()
+		Minimap.DifficultyFlag = difficultyFlag
+
+		local flagBorder = difficultyFlag:CreateTexture(nil, "OVERLAY")
+		flagBorder:SetAllPoints()
+		flagBorder:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
+		difficultyFlag.Border = flagBorder
+
+		local flagIcon = difficultyFlag:CreateTexture(nil, "BACKGROUND")
+		flagIcon:SetPoint("TOPRIGHT", -5, -4)
+		flagIcon:SetSize(32, 32)
+		flagIcon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
+		difficultyFlag.Icon = flagIcon
 
 		hooksecurefunc(MinimapCluster, "SetHeaderUnderneath", function()
 			Minimap:UpdateConfig()
@@ -306,6 +442,7 @@ function MODULE:Update()
 		Minimap:UpdateConfig()
 		Minimap:UpdateLayout()
 		Minimap:UpdateBorderColor()
+		Minimap.DifficultyFlag:Update()
 		MinimapCluster:UpdateFading()
 	end
 end
