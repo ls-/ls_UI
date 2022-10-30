@@ -349,6 +349,7 @@ function MODULE:Init()
 
 		local indicator = MinimapCluster.BorderTop:CreateTexture(nil, "BACKGROUND", nil, 1)
 		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
+		indicator:SetVertexColor(0.85, 0.85, 0.85, 1)
 		indicator:SetPoint("TOPRIGHT", -1, -1)
 		indicator:SetPoint("BOTTOMLEFT", MinimapCluster.BorderTop, "BOTTOMRIGHT", -65, 2)
 		indicator:AddMaskTexture(mask)
