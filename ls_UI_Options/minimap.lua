@@ -92,6 +92,7 @@ function CONFIG:CreateMinimapOptions(order)
 						Minimap:UpdateLayout()
 					end
 				end,
+				disabled = isModuleDisabled,
 			},
 			flip = {
 				order = inc(1),
@@ -106,6 +107,7 @@ function CONFIG:CreateMinimapOptions(order)
 					Minimap:UpdateConfig()
 					Minimap:UpdateLayout()
 				end,
+				disabled = isModuleDisabled,
 			},
 			rotate = {
 				order = inc(1),
@@ -120,6 +122,7 @@ function CONFIG:CreateMinimapOptions(order)
 					Minimap:UpdateConfig()
 					Minimap:UpdateRotation()
 				end,
+				disabled = isModuleDisabled,
 			},
 			spacer_2 = {
 				order = inc(1),
