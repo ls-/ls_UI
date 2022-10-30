@@ -149,6 +149,17 @@ do
 	function minimap_proto:UpdateRotation()
 		SetCVar("rotateMinimap", self._config.rotate)
 	end
+
+	function minimap_proto:UpdateDifficultyFlag()
+		if self._config.flag.enabled then
+			self.DifficultyFlag:RegisterForEvents()
+			self.DifficultyFlag:UpdateMouseScripts(self._config.flag.tooltip)
+			self.DifficultyFlag:Update()
+		else
+			self.DifficultyFlag:UnregisterAllEvents()
+			self.DifficultyFlag:Hide()
+		end
+	end
 end
 
 local flag_proto = {
@@ -177,6 +188,12 @@ do
 		for _, event in next, self.events do
 			self:RegisterEvent(event)
 		end
+	end
+
+	function flag_proto:UpdateMouseScripts(enabled)
+		self:SetScript("OnEnter", enabled and self.OnEnter or nil)
+		self:SetScript("OnLeave", enabled and self.OnLeave or nil)
+		self:SetMouseClickEnabled(false)
 	end
 
 	function flag_proto:OnEvent()
@@ -346,11 +363,7 @@ function MODULE:Init()
 
 		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
 		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
-		difficultyFlag:RegisterForEvents()
 		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
-		difficultyFlag:SetScript("OnEnter", difficultyFlag.OnEnter)
-		difficultyFlag:SetScript("OnLeave", difficultyFlag.OnLeave)
-		difficultyFlag:SetMouseClickEnabled(false)
 		difficultyFlag:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -0, -1)
 		difficultyFlag:SetSize(48, 48)
 		difficultyFlag:Hide()
@@ -445,7 +458,7 @@ function MODULE:Update()
 		Minimap:UpdateConfig()
 		Minimap:UpdateLayout()
 		Minimap:UpdateBorderColor()
-		Minimap.DifficultyFlag:Update()
+		Minimap:UpdateDifficultyFlag()
 		MinimapCluster:UpdateFading()
 	end
 end

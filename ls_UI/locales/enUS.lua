@@ -494,3 +494,6 @@ L["Y_OFFSET"] = "yOffset"
 L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
+
+L["DIFFICULTY_FLAG"] = "Difficulty Flag"
+L["TOOLTIP"] = "Tooltip"

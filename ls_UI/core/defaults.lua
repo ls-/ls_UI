@@ -1874,6 +1874,10 @@ D.profile = {
 		color = {
 			border = false,
 		},
+		flag = {
+			enabled = true,
+			tooltip = false,
+		},
 		fade = {
 			enabled = false,
 			combat = false,

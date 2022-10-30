@@ -154,6 +154,42 @@ function CONFIG:CreateMinimapOptions(order)
 				type = "description",
 				name = " ",
 			},
+			flag = {
+				order = inc(1),
+				type = "group",
+				name = L["DIFFICULTY_FLAG"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.minimap.flag[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap.flag[info[#info]] = value
+
+					Minimap:UpdateConfig()
+					Minimap:UpdateDifficultyFlag()
+				end,
+				disabled = isModuleDisabled,
+				args = {
+					enabled = {
+						order = reset(2),
+						type = "toggle",
+						name = L["ENABLE"],
+					},
+					tooltip = {
+						order = inc(2),
+						type = "toggle",
+						name = L["TOOLTIP"],
+						disabled = function()
+							return isModuleDisabled() or not C.db.profile.minimap.flag.enabled
+						end
+					},
+				},
+			},
+			spacer_7 = {
+				order = inc(1),
+				type = "description",
+				name = " ",
+			},
 			fading = {
 				order = inc(1),
 				type = "group",
