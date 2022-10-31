@@ -621,6 +621,7 @@ D.profile = {
 			},
 			castbar = {
 				enabled = true,
+				blizz_enabled = false,
 				latency = true,
 				detached = true,
 				width_override = 226,

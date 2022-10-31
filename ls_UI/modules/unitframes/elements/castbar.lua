@@ -200,7 +200,7 @@ function frame_proto:UpdateCastbar()
 		self:DisableElement("Castbar")
 		element.Holder:Hide()
 
-		if self.__unit == "player" then
+		if self.__unit == "player" and not element._config.blizz_enabled then
 			PlayerCastingBarFrame:SetUnit(nil)
 			PetCastingBarFrame:SetUnit(nil)
 		end

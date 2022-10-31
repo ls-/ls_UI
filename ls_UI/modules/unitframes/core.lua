@@ -122,6 +122,16 @@ function UF:UpdateTags()
 	end
 end
 
+function UF:UpdateBlizzCastbars()
+	if not C.db.profile.units.player.castbar.enabled and C.db.profile.units.player.castbar.blizz_enabled then
+		PlayerCastingBarFrame:OnLoad()
+		PetCastingBarFrame:PetCastingBar_OnLoad()
+	else
+		PlayerCastingBarFrame:SetUnit(nil)
+		PetCastingBarFrame:SetUnit(nil)
+	end
+end
+
 local eventlessUnits = {
 	["boss6"] = true,
 	["boss7"] = true,
