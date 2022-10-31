@@ -621,6 +621,7 @@ D.profile = {
 			},
 			castbar = {
 				enabled = true,
+				blizz_enabled = false,
 				latency = true,
 				detached = true,
 				width_override = 226,
@@ -1873,6 +1874,10 @@ D.profile = {
 		rotate = false,
 		color = {
 			border = false,
+		},
+		flag = {
+			enabled = true,
+			tooltip = false,
 		},
 		fade = {
 			enabled = false,

@@ -63,7 +63,7 @@ local function getUnitFrameOptions(order, unit, name)
 				end,
 				get = function() end,
 				set = function(_, value)
-					CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit])
+					CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit], {["blizz_enabled"] = true})
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 2

@@ -13,136 +13,268 @@ local unpack = _G.unpack
 -- Mine
 local isInit = false
 
-local zoneTypeToColor = {
-	["arena"] = "hostile",
-	["combat"] = "hostile",
-	["contested"] = "contested",
-	["friendly"] = "friendly",
-	["hostile"] = "hostile",
-	["sanctuary"] = "sanctuary",
-}
-
 local minimap_proto = {}
 
-function minimap_proto:UpdateBorderColor()
-	if self._config.color.border then
-		self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]):GetRGB())
-	else
-		self.Border:SetVertexColor(1, 1, 1)
+do
+	local zoneTypeToColor = {
+		["arena"] = "hostile",
+		["combat"] = "hostile",
+		["contested"] = "contested",
+		["friendly"] = "friendly",
+		["hostile"] = "hostile",
+		["sanctuary"] = "sanctuary",
+	}
+
+	function minimap_proto:UpdateBorderColor()
+		if self._config.color.border then
+			self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]):GetRGB())
+		else
+			self.Border:SetVertexColor(1, 1, 1)
+		end
+	end
+
+	function minimap_proto:OnEventHook(event)
+		if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+			self:UpdateBorderColor()
+		end
+	end
+
+	function minimap_proto:UpdateHybridMinimap()
+		if C.db.profile.minimap.shape == "square" then
+			HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		else
+			HybridMinimap.CircleMask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		end
+
+		HybridMinimap.MapCanvas:SetMaskTexture(HybridMinimap.CircleMask)
+	end
+
+	function minimap_proto:UpdateConfig()
+		self._config = E:CopyTable(C.db.profile.minimap, self._config)
+
+		MinimapCluster._config = t_wipe(MinimapCluster._config or {})
+		MinimapCluster._config.fade = self._config.fade
+	end
+
+	local borderInfo = {
+		[100] = {
+			{1 / 1024, 433 / 1024, 1 / 512, 433 / 512}, -- outer
+			{434 / 1024, 866 / 1024, 1 / 512, 433 / 512}, -- inner
+			432 / 2,
+		},
+	}
+
+	local flagBorderInfo = {
+		["round"] = {97 / 512, 193 / 512, 1 / 256, 97 / 256},
+		["square"] = {1 / 512, 97 / 512, 1 / 256, 97 / 256},
+	}
+
+	-- At odds with the fierce looking face...
+	local function theBodyIsRound()
+		return "ROUND"
+	end
+
+	local function theBodyIsSquare()
+		return "SQUARE"
+	end
+
+	function minimap_proto:UpdateLayout()
+		local scale = self._config.scale
+		local shape = self._config.shape
+		local info = borderInfo[scale] or borderInfo[100]
+
+		self.Border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
+		self.Border:SetTexCoord(unpack(info[1]))
+		self.Border:SetSize(info[3], info[3])
+
+		self.Foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
+		self.Foreground:SetTexCoord(unpack(info[2]))
+		self.Foreground:SetSize(info[3], info[3])
+
+		self.DifficultyFlag.Border:SetTexCoord(unpack(flagBorderInfo[shape]))
+
+		if shape == "round" then
+			self:SetArchBlobRingScalar(1)
+			self:SetQuestBlobRingScalar(1)
+			self:SetTaskBlobRingScalar(1)
+			self:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+
+			self.Background:Hide()
+
+			-- for LDBIcon-1.0
+			GetMinimapShape = theBodyIsRound
+		else
+			self:SetArchBlobRingScalar(0)
+			self:SetQuestBlobRingScalar(0)
+			self:SetTaskBlobRingScalar(0)
+			self:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+
+			Minimap.Background:Show()
+
+			-- for LDBIcon-1.0
+			GetMinimapShape = theBodyIsSquare
+		end
+
+		MinimapCluster:SetSize(info[3] + 24, info[3] + 24)
+		E.Movers:Get(MinimapCluster):UpdateSize()
+
+		self:SetSize(info[3] - 22, info[3] - 22)
+		self:ClearAllPoints()
+
+		MinimapCluster.BorderTop:ClearAllPoints()
+		MinimapCluster.BorderTop:SetPoint("LEFT", "Minimap", "LEFT", 1, 0)
+		MinimapCluster.BorderTop:SetPoint("RIGHT", "Minimap", "RIGHT", -1, 0)
+
+		if self._config.flip then
+			self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, 8, true)
+
+			MinimapCluster.BorderTop:SetPoint("BOTTOM", "MinimapCluster", "BOTTOM", 0, 1)
+
+			MinimapCluster.MailFrame:ClearAllPoints()
+			MinimapCluster.MailFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
+		else
+			self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, -8, true)
+
+			MinimapCluster.BorderTop:SetPoint("TOP", "MinimapCluster", "TOP", 0, -1)
+
+			MinimapCluster.MailFrame:ClearAllPoints()
+			MinimapCluster.MailFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
+		end
+
+		if HybridMinimap then
+			self:UpdateHybridMinimap()
+		end
+	end
+
+	function minimap_proto:UpdateRotation()
+		SetCVar("rotateMinimap", self._config.rotate)
+	end
+
+	function minimap_proto:UpdateDifficultyFlag()
+		if self._config.flag.enabled then
+			self.DifficultyFlag:RegisterForEvents()
+			self.DifficultyFlag:UpdateMouseScripts(self._config.flag.tooltip)
+			self.DifficultyFlag:Update()
+		else
+			self.DifficultyFlag:UnregisterAllEvents()
+			self.DifficultyFlag:Hide()
+		end
 	end
 end
 
-function minimap_proto:OnEventHook(event)
-	if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-		self:UpdateBorderColor()
-	end
-end
-
-local function updateHybridMinimap()
-	if C.db.profile.minimap.shape == "square" then
-		HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	else
-		HybridMinimap.CircleMask:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-	end
-
-	HybridMinimap.MapCanvas:SetMaskTexture(HybridMinimap.CircleMask)
-end
-
-function minimap_proto:UpdateConfig()
-	self._config = E:CopyTable(C.db.profile.minimap, self._config)
-
-	MinimapCluster._config = t_wipe(MinimapCluster._config or {})
-	MinimapCluster._config.fade = self._config.fade
-end
-
-local borderInfo = {
-	[100] = {
-		{1 / 1024, 433 / 1024, 1 / 512, 433 / 512}, -- outer
-		{434 / 1024, 866 / 1024, 1 / 512, 433 / 512}, -- inner
-		432 / 2,
+local flag_proto = {
+	["events"] = {
+		"GROUP_ROSTER_UPDATE",
+		"INSTANCE_GROUP_SIZE_CHANGED",
+		"PARTY_MEMBER_DISABLE",
+		"PARTY_MEMBER_ENABLE",
+		"PLAYER_DIFFICULTY_CHANGED",
+		"UPDATE_INSTANCE_INFO",
 	},
 }
 
--- At odds with the fierce looking face...
-local function theBodyIsRound()
-	return "ROUND"
-end
+do
+	local GUILD_ACHIEVEMENTS_ELIGIBLE = _G.GUILD_ACHIEVEMENTS_ELIGIBLE:gsub("(%%.-[sd])", "|cffffffff%1|r")
 
-local function theBodyIsSquare()
-	return "SQUARE"
-end
+	local flagInfo = {
+		["lfr"] = {193 / 512, 257 / 512, 1 / 256, 65 / 256},
+		["normal"] = {257 / 512, 321 / 512, 1 / 256, 65 / 256},
+		["heroic"] = {321 / 512, 385 / 512, 1 / 256, 65 / 256},
+		["mythic"] = {385 / 512, 449 / 512, 1 / 256, 65 / 256},
+		["challenge"] = {193 / 512, 257 / 512, 65 / 256, 129 / 256},
+	}
 
-function minimap_proto:UpdateLayout()
-	local scale = self._config.scale
-	local shape = self._config.shape
-	local info = borderInfo[scale] or borderInfo[100]
-
-	self.Border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
-	self.Border:SetTexCoord(unpack(info[1]))
-	self.Border:SetSize(info[3], info[3])
-
-	self.Foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
-	self.Foreground:SetTexCoord(unpack(info[2]))
-	self.Foreground:SetSize(info[3], info[3])
-
-	if shape == "round" then
-		self:SetArchBlobRingScalar(1)
-		self:SetQuestBlobRingScalar(1)
-		self:SetTaskBlobRingScalar(1)
-		self:SetMaskTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
-
-		self.Background:Hide()
-
-		-- for LDBIcon-1.0
-		GetMinimapShape = theBodyIsRound
-	else
-		self:SetArchBlobRingScalar(0)
-		self:SetQuestBlobRingScalar(0)
-		self:SetTaskBlobRingScalar(0)
-		self:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
-
-		Minimap.Background:Show()
-
-		-- for LDBIcon-1.0
-		GetMinimapShape = theBodyIsSquare
+	function flag_proto:RegisterForEvents()
+		for _, event in next, self.events do
+			self:RegisterEvent(event)
+		end
 	end
 
-	MinimapCluster:SetSize(info[3] + 24, info[3] + 24)
-	E.Movers:Get(MinimapCluster):UpdateSize()
-
-	self:SetSize(info[3] - 22, info[3] - 22)
-	self:ClearAllPoints()
-
-	MinimapCluster.BorderTop:ClearAllPoints()
-	MinimapCluster.BorderTop:SetPoint("LEFT", "Minimap", "LEFT", 1, 0)
-	MinimapCluster.BorderTop:SetPoint("RIGHT", "Minimap", "RIGHT", -1, 0)
-
-	MinimapCluster.InstanceDifficulty:ClearAllPoints()
-	MinimapCluster.InstanceDifficulty:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -2, -24)
-
-	if self._config.flip then
-		self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, 8, true)
-
-		MinimapCluster.BorderTop:SetPoint("BOTTOM", "MinimapCluster", "BOTTOM", 0, 1)
-
-		MinimapCluster.MailFrame:ClearAllPoints()
-		MinimapCluster.MailFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
-	else
-		self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, -8, true)
-
-		MinimapCluster.BorderTop:SetPoint("TOP", "MinimapCluster", "TOP", 0, -1)
-
-		MinimapCluster.MailFrame:ClearAllPoints()
-		MinimapCluster.MailFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
+	function flag_proto:UpdateMouseScripts(enabled)
+		self:SetScript("OnEnter", enabled and self.OnEnter or nil)
+		self:SetScript("OnLeave", enabled and self.OnLeave or nil)
+		self:SetMouseClickEnabled(false)
 	end
 
-	if HybridMinimap then
-		updateHybridMinimap()
+	function flag_proto:OnEvent()
+		self:Update()
 	end
-end
 
-function minimap_proto:UpdateRotation()
-	SetCVar("rotateMinimap", self._config.rotate)
+	function flag_proto:OnEnter()
+		if self.instanceName then
+			local p, rP, x, y = E:GetTooltipPoint(self)
+			if p == "TOPRIGHT" then
+				x, y = 24, 24
+			end
+
+			GameTooltip:SetOwner(self, "ANCHOR_NONE")
+			GameTooltip:SetPoint(p, self, rP, x, y)
+			GameTooltip:SetText(self.instanceName, 1, 1, 1)
+			GameTooltip:AddLine(self.difficultyName)
+
+			local inGroup, _, numGuildRequired = InGuildParty()
+			if inGroup then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(GUILD_ACHIEVEMENTS_ELIGIBLE:format(numGuildRequired, self.maxPlayers, GetGuildInfo()), nil, nil, nil, true)
+
+			end
+
+			GameTooltip:Show()
+		end
+	end
+
+	function flag_proto:OnLeave()
+		GameTooltip:Hide()
+	end
+
+	function flag_proto:UpdateFlag(t)
+		self.Icon:SetTexCoord(unpack(flagInfo[t]))
+	end
+
+	function flag_proto:Update()
+		self.instanceName = nil
+		self.difficultyName = nil
+		self.maxPlayers = nil
+		self:Hide()
+
+		local instanceName, instanceType, difficultyID, _, maxPlayers = GetInstanceInfo()
+		if instanceType == "raid" or instanceType == "party" then
+			local difficultyName, _, isHeroic, isChallengeMode, displayHeroic, displayMythic, _, isLFR = GetDifficultyInfo(difficultyID)
+
+			self.instanceName = instanceName
+			self.difficultyName = difficultyName
+			self.maxPlayers = maxPlayers
+
+			if isChallengeMode then
+				self:UpdateFlag("challenge")
+			elseif isLFR then
+				self:UpdateFlag("lfr")
+			elseif displayMythic then
+				self:UpdateFlag("mythic")
+			elseif isHeroic or displayHeroic then
+				self:UpdateFlag("heroic")
+			else
+				self:UpdateFlag("normal")
+			end
+
+			self:Show()
+		elseif instanceType == "scenario" then
+			local difficultyName, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+			if not (isHeroic or displayHeroic or displayMythic) then return end
+
+			self.instanceName = instanceName
+			self.difficultyName = difficultyName
+			self.maxPlayers = maxPlayers
+
+			if displayMythic then
+				self:UpdateFlag("mythic")
+			elseif isHeroic or displayHeroic then
+				self:UpdateFlag("heroic")
+			end
+
+			self:Show()
+		end
+	end
 end
 
 function MODULE:IsInit()
@@ -217,6 +349,7 @@ function MODULE:Init()
 
 		local indicator = MinimapCluster.BorderTop:CreateTexture(nil, "BACKGROUND", nil, 1)
 		indicator:SetTexture("Interface\\Minimap\\HumanUITile-TimeIndicator", true)
+		indicator:SetVertexColor(0.85, 0.85, 0.85, 1)
 		indicator:SetPoint("TOPRIGHT", -1, -1)
 		indicator:SetPoint("BOTTOMLEFT", MinimapCluster.BorderTop, "BOTTOMRIGHT", -65, 2)
 		indicator:AddMaskTexture(mask)
@@ -227,7 +360,26 @@ function MODULE:Init()
 
 		scrollTexture(indicator, (mult + 1) * DELAY - s, STEP * mult)
 
-		-- E:ForceShow(MinimapCluster.InstanceDifficulty)
+		E:ForceHide(MinimapCluster.InstanceDifficulty)
+
+		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
+		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
+		difficultyFlag:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -0, -1)
+		difficultyFlag:SetSize(48, 48)
+		difficultyFlag:Hide()
+		Minimap.DifficultyFlag = difficultyFlag
+
+		local flagBorder = difficultyFlag:CreateTexture(nil, "OVERLAY")
+		flagBorder:SetAllPoints()
+		flagBorder:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
+		difficultyFlag.Border = flagBorder
+
+		local flagIcon = difficultyFlag:CreateTexture(nil, "BACKGROUND")
+		flagIcon:SetPoint("TOPRIGHT", -5, -4)
+		flagIcon:SetSize(32, 32)
+		flagIcon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
+		difficultyFlag.Icon = flagIcon
 
 		hooksecurefunc(MinimapCluster, "SetHeaderUnderneath", function()
 			Minimap:UpdateConfig()
@@ -260,23 +412,24 @@ function MODULE:Init()
 		MinimapCluster.ZoneTextButton:SetPoint("TOPLEFT", MinimapCluster.BorderTop, "TOPLEFT", 4, 0)
 		MinimapCluster.ZoneTextButton:SetPoint("TOPRIGHT", MinimapCluster.BorderTop, "TOPRIGHT", -48, 0)
 
-		MinimapZoneText:SetSize(0, 16)
+		MinimapZoneText:SetSize(0, 0)
 		MinimapZoneText:ClearAllPoints()
-		MinimapZoneText:SetPoint("LEFT", 2, 1)
-		MinimapZoneText:SetPoint("RIGHT", -2, 1)
+		MinimapZoneText:SetPoint("TOPLEFT", 2, 0)
+		MinimapZoneText:SetPoint("BOTTOMRIGHT", -2, 0)
 		MinimapZoneText:SetJustifyH("LEFT")
 		MinimapZoneText:SetJustifyV("MIDDLE")
 
 		TimeManagerClockButton:ClearAllPoints()
 		TimeManagerClockButton:SetPoint("TOPRIGHT", MinimapCluster.BorderTop, "TOPRIGHT", -4, 0)
 
+		TimeManagerClockTicker:SetSize(0, 0)
+		TimeManagerClockTicker:ClearAllPoints()
+		TimeManagerClockTicker:SetPoint("TOPRIGHT", 0, 0)
+		TimeManagerClockTicker:SetPoint("BOTTOMLEFT", 0, 0)
+		TimeManagerClockTicker:SetFontObject("GameFontNormal")
 		TimeManagerClockTicker:SetJustifyH("RIGHT")
 		TimeManagerClockTicker:SetJustifyV("MIDDLE")
-		TimeManagerClockTicker:SetFontObject("GameFontNormal")
 		TimeManagerClockTicker:SetTextColor(1, 1, 1)
-		TimeManagerClockTicker:SetSize(40, 16)
-		TimeManagerClockTicker:ClearAllPoints()
-		TimeManagerClockTicker:SetPoint("CENTER", 0, 1)
 
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetPoint("TOPLEFT", MinimapCluster.BorderTop, "TOPRIGHT", 4, 0)
@@ -290,7 +443,7 @@ function MODULE:Init()
 		end
 
 		if not HybridMinimap then
-			E:AddOnLoadTask("Blizzard_HybridMinimap", updateHybridMinimap)
+			E:AddOnLoadTask("Blizzard_HybridMinimap", self.UpdateHybridMinimap)
 		end
 
 		E:SetUpFading(MinimapCluster)
@@ -306,6 +459,7 @@ function MODULE:Update()
 		Minimap:UpdateConfig()
 		Minimap:UpdateLayout()
 		Minimap:UpdateBorderColor()
+		Minimap:UpdateDifficultyFlag()
 		MinimapCluster:UpdateFading()
 	end
 end

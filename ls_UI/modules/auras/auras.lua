@@ -98,7 +98,6 @@ do
 	function button_proto:OnEnter()
 		local p, rP, x, y = E:GetTooltipPoint(self)
 
-
 		GameTooltip:SetOwner(self, "ANCHOR_NONE")
 		GameTooltip:SetPoint(p, self, rP, x, y)
 		GameTooltip:SetFrameLevel(self:GetFrameLevel() + 2)

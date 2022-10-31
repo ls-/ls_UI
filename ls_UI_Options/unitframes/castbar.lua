@@ -42,8 +42,24 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 			end
 		end,
 		args = {
-			enabled = {
+			blizz_enabled = {
 				order = reset(1),
+				type = "toggle",
+				name = L["ENABLE_BLIZZARD_CASTBAR"],
+				get = function()
+					return C.db.profile.units[unit].castbar.blizz_enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].castbar.blizz_enabled = value
+
+					UNITFRAMES:UpdateBlizzCastbars()
+				end,
+				hidden = function()
+					return C.db.profile.units[unit].castbar.enabled
+				end,
+			},
+			enabled = {
+				order = inc(1),
 				type = "toggle",
 				name = L["ENABLE"],
 			},
@@ -161,6 +177,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 	}
 
 	if unit ~= "player" then
+		temp.args.blizz_enabled = nil
 		temp.args.latency = nil
 		temp.args.spacer_2 = nil
 	end
