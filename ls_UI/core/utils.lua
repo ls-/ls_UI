@@ -616,20 +616,42 @@ do
 	local dispelTypes = {}
 
 	E:RegisterEvent("SPELLS_CHANGED", function()
-		-- Soothe (Druid), Tranquilizing Shot (Hunter)
-		dispelTypes[""] = IsPlayerSpell(2908) or IsPlayerSpell(19801) -- Enrage
+		-- Enrage
+		dispelTypes[""] = IsPlayerSpell(374346) -- Overawe (Evoker)
+			or IsPlayerSpell(2908) -- Soothe (Druid)
+			or IsPlayerSpell(19801) -- Tranquilizing Shot (Hunter)
 
-		-- Cleanse Spirit (Shaman), Improved Nature's Cure (Druid), Purify Spirit (Shaman), Remove Corruption (Druid), Remove Curse (Mage)
-		dispelTypes["Curse"] = IsPlayerSpell(51886) or IsPlayerSpell(392378) or IsPlayerSpell(77130) or IsPlayerSpell(2782) or IsPlayerSpell(475)
+		dispelTypes["Curse"] = IsPlayerSpell(374251) -- Cauterizing Flame (Evoker)
+			or IsPlayerSpell(51886) -- Cleanse Spirit (Shaman)
+			or IsPlayerSpell(392378) -- Improved Nature's Cure (Druid)
+			or IsPlayerSpell(383016) -- Improved Purify Spirit (Shaman)
+			or IsPlayerSpell(2782) -- Remove Corruption (Druid)
+			or IsPlayerSpell(475) -- Remove Curse (Mage)
 
-		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Purify (Priest), Purify Disease (Priest)
-		dispelTypes["Disease"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(390632) or IsPlayerSpell(213634)
+		dispelTypes["Disease"] = IsPlayerSpell(374251) -- Cauterizing Flame (Evoker)
+			or IsPlayerSpell(213644) -- Cleanse Toxins (Paladin)
+			or IsPlayerSpell(218164) -- Detox (Monk)
+			or IsPlayerSpell(393024) -- Improved Cleanse (Paladin)
+			or IsPlayerSpell(388874) -- Improved Detox (Monk)
+			or IsPlayerSpell(390632) -- Improved Purify (Priest)
+			or IsPlayerSpell(213634) -- Purify Disease (Priest)
 
-		-- Cleanse (Paladin), Detox (Monk), Mass Dispel (Priest), Nature's Cure (Druid), Purify (Priest), Purify Spirit (Shaman)
-		dispelTypes["Magic"] = IsPlayerSpell(4987) or IsPlayerSpell(115450) or IsPlayerSpell(32375) or IsPlayerSpell(88423) or IsPlayerSpell(527) or IsPlayerSpell(77130)
+		dispelTypes["Magic"] = IsPlayerSpell(4987) -- Cleanse (Paladin)
+			or IsPlayerSpell(115450) -- Detox (Monk)
+			or IsPlayerSpell(32375) -- Mass Dispel (Priest)
+			or IsPlayerSpell(360823) -- Naturalize (Evoker)
+			or IsPlayerSpell(88423) -- Nature's Cure (Druid)
+			or IsPlayerSpell(527) -- Purify (Priest)
+			or IsPlayerSpell(77130) -- Purify Spirit (Shaman)
 
-		-- Improved Cleanse (Paladin), Cleanse Toxins (Paladin), Improved Detox (Monk), Detox (Monk), Improved Nature's Cure (Druid), Remove Corruption (Druid)
-		dispelTypes["Poison"] = IsPlayerSpell(393024) or IsPlayerSpell(213644) or IsPlayerSpell(388874) or IsPlayerSpell(218164) or IsPlayerSpell(392378) or IsPlayerSpell(2782)
+		dispelTypes["Poison"] = IsPlayerSpell(374251) -- Cauterizing Flame (Evoker)
+			or IsPlayerSpell(213644) -- Cleanse Toxins (Paladin)
+			or IsPlayerSpell(218164) -- Detox (Monk)
+			or IsPlayerSpell(393024) -- Improved Cleanse (Paladin)
+			or IsPlayerSpell(388874) -- Improved Detox (Monk)
+			or IsPlayerSpell(392378) -- Improved Nature's Cure (Druid)
+			or IsPlayerSpell(360823) -- Naturalize (Evoker)
+			or IsPlayerSpell(2782) -- Remove Corruption (Druid)
 	end)
 
 	function E:IsDispellable(debuffType)
