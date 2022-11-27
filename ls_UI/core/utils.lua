@@ -766,6 +766,7 @@ function E:ForceHide(object, skipEvents)
 
 	if object.SetUserPlaced then
 		pcall(object.SetUserPlaced, object, true)
+		pcall(object.SetDontSavePosition, object, true)
 	end
 end
 
