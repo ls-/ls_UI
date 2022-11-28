@@ -259,10 +259,6 @@ function MODULE:Init()
 			return value ~= "1", "1"
 		end)
 
-		E:WatchCVar("lockActionBars", function(value)
-			return value ~= "1", "1"
-		end)
-
 		isInit = true
 	end
 end

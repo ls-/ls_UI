@@ -393,10 +393,6 @@ function CONFIG:CreateUnitFramesOptions(order)
 
 								UNITFRAMES:Create("pet")
 								UNITFRAMES:For("pet", "Update")
-
-								if P:GetModule("Blizzard"):HasCastBars() then
-									P:GetModule("Blizzard"):UpdateCastBars()
-								end
 							elseif info[#info] == "target" then
 								UNITFRAMES:Create("target")
 								UNITFRAMES:For("target", "Update")

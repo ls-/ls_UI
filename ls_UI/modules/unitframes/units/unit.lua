@@ -54,7 +54,6 @@ function UF:CreateSmallUnitFrame(frame)
 	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
 	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
 	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
-	health:SetClipsChildren(true)
 	frame.Health = health
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)

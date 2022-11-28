@@ -1892,11 +1892,11 @@ D.profile = {
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 	},
 	bars = {
-		mana_indicator = "button", -- hotkey
 		range_indicator = "button", -- hotkey
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
 		scale = 1,
+		lock = true,
 		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
 		cooldown = {
 			exp_threshold = 5,
@@ -1909,8 +1909,6 @@ D.profile = {
 		},
 		desaturation = {
 			unusable = true,
-			mana = true,
-			range = true,
 		},
 		bar1 = { -- MainMenuBar
 			flyout_dir = "UP",
@@ -1937,14 +1935,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -1980,14 +1984,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2023,14 +2033,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2066,14 +2082,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2109,14 +2131,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2152,14 +2180,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2195,14 +2229,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2238,14 +2278,20 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			macro = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOM", 0, 0},
+				h_alignment = "CENTER",
 			},
 			count = {
 				enabled = true,
 				size = 12,
+				point = {"BOTTOMRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2281,6 +2327,8 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2314,6 +2362,8 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 10,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {
@@ -2346,6 +2396,8 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 12,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 20},
 		},
@@ -2368,6 +2420,8 @@ D.profile = {
 			hotkey = {
 				enabled = true,
 				size = 14,
+				point = {"TOPRIGHT", 2, 0},
+				h_alignment = "RIGHT",
 			},
 			cooldown = {
 				text = {

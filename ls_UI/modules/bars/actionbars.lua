@@ -9,7 +9,8 @@ local next = _G.next
 local unpack = _G.unpack
 
 -- Mine
-local LibActionButton = LibStub("LibActionButton-1.0-ls")
+local LAB = LibStub("LibActionButton-1.0-ls")
+local LSM = LibStub("LibSharedMedia-3.0")
 
 local isInit = false
 
@@ -162,7 +163,22 @@ function bar_proto:UpdateButtonConfig()
 			},
 			desaturation = {},
 			hideElements = {
-				equipped = false,
+				border = true,
+				borderIfEmpty = true,
+			},
+			text = {
+				count = {
+					font = {},
+					position = {},
+				},
+				hotkey = {
+					font = {},
+					position = {},
+				},
+				macro = {
+					font = {},
+					position = {},
+				},
 			},
 		}
 	end
@@ -171,12 +187,25 @@ function bar_proto:UpdateButtonConfig()
 		self.buttonConfig.colors[k][1], self.buttonConfig.colors[k][2], self.buttonConfig.colors[k][3] = v:GetRGB()
 	end
 
+	-- this is here just to make LAB happy
+	for _, text in next, {"count", "hotkey", "macro"} do
+		self.buttonConfig.text[text].font.font = LSM:Fetch("font", C.db.global.fonts.button.font)
+		self.buttonConfig.text[text].font.size = self._config[text].size
+		self.buttonConfig.text[text].font.flags = C.db.global.fonts.button.outline and "OUTLINE" or ""
+
+		self.buttonConfig.text[text].position.anchor = self._config[text].point[1]
+		self.buttonConfig.text[text].position.relAnchor = self._config[text].point[1]
+		self.buttonConfig.text[text].position.offsetX = self._config[text].point[2]
+		self.buttonConfig.text[text].position.offsetY = self._config[text].point[3]
+
+		self.buttonConfig.text[text].justifyH = self._config[text].h_alignment
+	end
+
 	self.buttonConfig.clickOnDown = true
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
 	self.buttonConfig.hideElements.macro = not self._config.macro.enabled
-	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
 
@@ -184,8 +213,9 @@ function bar_proto:UpdateButtonConfig()
 		self.buttonConfig.keyBoundTarget = button._command
 
 		button:UpdateConfig(self.buttonConfig)
-		button:SetAttribute("buttonlock", true)
-		button:SetAttribute('checkmouseovercast', true)
+		button:SetAttribute("buttonlock", self._config.lock)
+		button:SetAttribute("unlockedpreventdrag", true)
+		button:SetAttribute("checkmouseovercast", true)
 		button:SetAttribute("checkfocuscast", true)
 		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("*unit2", self._config.rightclick_selfcast and "player" or nil)
@@ -200,13 +230,13 @@ function bar1_proto:UpdateConfig()
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
-	self._config.mana_indicator = C.db.profile.bars.mana_indicator
+	self._config.lock = C.db.profile.bars.lock
 	self._config.range_indicator = C.db.profile.bars.range_indicator
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
 
 	if MODULE:IsRestricted() then
-		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
 		self._config.grid = C.db.profile.bars.bar1.grid
+		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 	end
@@ -247,10 +277,11 @@ function MODULE:CreateActionBars()
 			end
 
 			for i = 1, #data.b_buttons do
-				local button = Mixin(LibActionButton:CreateButton(i, "$parentButton" .. i, bar), button_proto)
+				local button = Mixin(LAB:CreateButton(i, "$parentButton" .. i, bar), button_proto)
 				button:SetState(0, "action", i)
 				button._parent = bar
 				button._command = data.type .. i
+				button.MasqueSkinned = true -- so that LAB doesn't move stuff around
 				bar._buttons[i] = button
 
 				-- 18 is the last page
@@ -295,6 +326,23 @@ function MODULE:CreateActionBars()
 					E:SkinFlyoutButton(_G["SpellFlyoutButton" .. i])
 				end
 			end
+		end)
+
+		local flyout = LAB:GetSpellFlyoutFrame()
+		if flyout then
+			E:ForceHide(flyout.Background)
+
+			for _, button in next, LAB.FlyoutButtons do
+				E:SkinActionButton(button)
+				button:SetScale(1)
+				button:SetSize(32, 32)
+			end
+		end
+
+		LAB:RegisterCallback("OnFlyoutButtonCreated", function(_, button)
+			E:SkinActionButton(button)
+			button:SetScale(1)
+			button:SetSize(32, 32)
 		end)
 
 		isInit = true

@@ -99,6 +99,7 @@ do
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
+		element:SetClipsChildren(true)
 		element._texture = element:GetStatusBarTexture()
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")

@@ -72,9 +72,13 @@ local function button_ClearBindings(self)
 	end
 end
 
-local function setNormalTextureHook(self, texture)
-	if texture then
-		self:SetNormalTexture(nil)
+local function addMaskTextureHook(self, texture)
+	self:RemoveMaskTexture(texture)
+end
+
+local function setNormalAtlasTextureHook(self, texture)
+	if texture and texture ~= 0 then
+		self:SetNormalTexture(0)
 	end
 end
 
@@ -185,6 +189,7 @@ local function skinButton(button)
 		local iconMask = button.IconMask
 		if iconMask then
 			icon:RemoveMaskTexture(iconMask)
+			hooksecurefunc(icon, "AddMaskTexture", addMaskTextureHook)
 		end
 	end
 
@@ -303,7 +308,8 @@ local function skinButton(button)
 	local normalTexture = button.GetNormalTexture and button:GetNormalTexture()
 	if normalTexture then
 		normalTexture:SetTexture(0)
-		hooksecurefunc(button, "SetNormalTexture", setNormalTextureHook)
+		hooksecurefunc(button, "SetNormalTexture", setNormalAtlasTextureHook)
+		hooksecurefunc(button, "SetNormalAtlas", setNormalAtlasTextureHook)
 
 		border = E:CreateBorder(button)
 		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
