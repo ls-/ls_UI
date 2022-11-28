@@ -451,23 +451,20 @@ do
 	gridDropdown:SetText(L["MOVER_GRID"])
 	settings.GridDropdown = gridDropdown
 
-	local info = {
-		isRadio = true,
-		func = function(_, _, value)
-			grid:SetSize(value)
-			grid:Show()
-		end,
-		checked = function(self)
-			return grid:GetSize() == self.args[1]
-		end,
-	}
-
 	local GRID_SIZES = {4, 8, 16, 32}
 	for i = 1, #GRID_SIZES do
-		info.text = tostring(GRID_SIZES[i])
-		info.args = {GRID_SIZES[i]}
-
-		gridDropdown:Add(info)
+		gridDropdown:Add({
+			isRadio = true,
+			func = function(_, _, value)
+				grid:SetSize(value)
+				grid:Show()
+			end,
+			checked = function(self)
+				return grid:GetSize() == self.args[1]
+			end,
+			text = tostring(GRID_SIZES[i]),
+			args = {GRID_SIZES[i]},
+		})
 	end
 
 	local usageText = settings:CreateFontString(nil, "OVERLAY")
