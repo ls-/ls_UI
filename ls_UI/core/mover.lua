@@ -444,7 +444,7 @@ do
 
 	nameToggle.Text = _G[nameToggle:GetName() .. "Text"]
 
-	local gridDropdown = LibStub("LibDropDown"):NewButtonStretch(settings, "$parentGridDropdown")
+	local gridDropdown = LibStub("LibDropDown-ls"):NewButtonStretch(settings, "$parentGridDropdown")
 	gridDropdown:SetPoint("TOPRIGHT", -3, -3)
 	gridDropdown:SetSize(120, 20)
 	gridDropdown:SetFrameLevel(3)
