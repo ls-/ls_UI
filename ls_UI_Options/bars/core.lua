@@ -265,6 +265,36 @@ function CONFIG:CreateActionBarsOptions(order)
 				name = L["RCLICK_SELFCAST"],
 				disabled = isModuleDisabled,
 			},
+			lock = {
+				order = inc(1),
+				type = "toggle",
+				name = L["LOCK_BUTTONS"],
+				disabled = isModuleDisabled,
+				set = function(_, value)
+					C.db.profile.bars.lock = value
+
+					BARS:ForEach("UpdateConfig")
+					BARS:ForEach("UpdateButtonConfig")
+
+					SetCVar("lockActionBars", value and 1 or 0)
+				end,
+			},
+			lock_mod = {
+				order = inc(1),
+				type = "select",
+				name = L["PICKUP_ACTION_KEY"],
+				disabled = function()
+					return isModuleDisabled() or not C.db.profile.bars.lock
+				end,
+				get = function()
+					return CAST_KEY_INDICES[GetModifiedClick("PICKUPACTION")]
+				end,
+				set = function(_, value)
+					SetModifiedClick("PICKUPACTION", CAST_KEY_VALUES[value])
+					SaveBindings(GetCurrentBindingSet() or 1)
+				end,
+				values = CAST_KEYS,
+			},
 			spacer_2 = {
 				order = inc(1),
 				type = "description",
@@ -274,13 +304,6 @@ function CONFIG:CreateActionBarsOptions(order)
 				order = inc(1),
 				type = "select",
 				name = L["OOR_INDICATOR"],
-				values = INDICATORS,
-				disabled = isModuleDisabled,
-			},
-			mana_indicator = {
-				order = inc(1),
-				type = "select",
-				name = L["OOM_INDICATOR"],
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
@@ -301,6 +324,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				set = function(info, value)
 					if C.db.profile.bars.desaturation[info[#info]] ~= value then
 						C.db.profile.bars.desaturation[info[#info]] = value
+
 						BARS:ForEach("UpdateConfig")
 						BARS:ForEach("UpdateButtonConfig")
 					end
@@ -310,16 +334,6 @@ function CONFIG:CreateActionBarsOptions(order)
 						order = reset(2),
 						type = "toggle",
 						name = L["UNUSABLE"],
-					},
-					mana = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OOM"],
-					},
-					range = {
-						order = inc(2),
-						type = "toggle",
-						name = L["OOR"],
 					},
 				},
 			},
