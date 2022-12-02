@@ -195,6 +195,7 @@ local function skinButton(button)
 
 	local slotBackground = button.SlotBackground
 	if slotBackground then
+		slotBackground:Show()
 		slotBackground:SetDrawLayer("BACKGROUND", -7)
 		slotBackground:SetAlpha(1)
 		slotBackground:SetAllPoints()
@@ -310,13 +311,14 @@ local function skinButton(button)
 		normalTexture:SetTexture(0)
 		hooksecurefunc(button, "SetNormalTexture", setNormalAtlasTextureHook)
 		hooksecurefunc(button, "SetNormalAtlas", setNormalAtlasTextureHook)
-
-		border = E:CreateBorder(button)
-		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-		border:SetSize(16)
-		border:SetOffset(-8)
-		button.Border_ = border
 	end
+
+	-- ExtraActionButton1 has no normal texture
+	border = E:CreateBorder(button)
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
+	border:SetSize(16)
+	border:SetOffset(-8)
+	button.Border_ = border
 
 	local pushedTexture = button.GetPushedTexture and button:GetPushedTexture()
 	if pushedTexture then
