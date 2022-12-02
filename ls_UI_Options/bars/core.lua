@@ -307,6 +307,13 @@ function CONFIG:CreateActionBarsOptions(order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
+			mana_indicator = {
+				order = inc(1),
+				type = "select",
+				name = L["OOM_INDICATOR"],
+				values = INDICATORS,
+				disabled = isModuleDisabled,
+			},
 			spacer_3 = {
 				order = inc(1),
 				type = "description",
