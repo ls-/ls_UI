@@ -45,6 +45,7 @@ function bar_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
+	self._config.lock = C.db.profile.bars.lock
 	self._config.mana_indicator = C.db.profile.bars.mana_indicator
 	self._config.range_indicator = C.db.profile.bars.range_indicator
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
