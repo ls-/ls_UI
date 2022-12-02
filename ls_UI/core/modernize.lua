@@ -750,8 +750,6 @@ function P:Modernize(data, name, key)
 		--> 100002.01
 		if data.version < 10000201 then
 			if data.bars then
-				data.bars.mana_indicator = nil
-
 				if data.bars.desaturation then
 					data.bars.desaturation.mana = nil
 					data.bars.desaturation.range = nil
