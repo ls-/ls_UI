@@ -1892,11 +1892,12 @@ D.profile = {
 		point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -4},
 	},
 	bars = {
+		mana_indicator = "button", -- hotkey
 		range_indicator = "button", -- hotkey
+		lock = true,
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
 		scale = 1,
-		lock = true,
 		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
 		cooldown = {
 			exp_threshold = 5,

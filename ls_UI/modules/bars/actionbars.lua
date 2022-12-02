@@ -206,6 +206,7 @@ function bar_proto:UpdateButtonConfig()
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
 	self.buttonConfig.hideElements.hotkey = not self._config.hotkey.enabled
 	self.buttonConfig.hideElements.macro = not self._config.macro.enabled
+	self.buttonConfig.outOfManaColoring = self._config.mana_indicator
 	self.buttonConfig.outOfRangeColoring = self._config.range_indicator
 	self.buttonConfig.showGrid = self._config.grid
 
@@ -231,6 +232,7 @@ function bar1_proto:UpdateConfig()
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
 	self._config.lock = C.db.profile.bars.lock
+	self._config.mana_indicator = C.db.profile.bars.mana_indicator
 	self._config.range_indicator = C.db.profile.bars.range_indicator
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
 
