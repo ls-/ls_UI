@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 100002.02
+
+### Action Bars
+
+- Readded the OOM indicator option back to the action bar config.
+- Fixed action button lock.
+- Misc bug fixes and tweaks.
+
 ## Version 100002.01
 
 - Added 10.0.2 support.
