@@ -8,7 +8,5 @@ local _G = getfenv(0)
 E.CHANGELOG = [[
 ### Action Bars
 
-- Readded the OOM indicator option back to the action bar config.
-- Fixed action button lock.
-- Misc bug fixes and tweaks.
+- Fixed an issue where the OOM indicator state wouldn't reset properly on config updates.
 ]]
