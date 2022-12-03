@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 100002.03
+
+### Action Bars
+
+- Fixed an issue where the OOM indicator state wouldn't reset properly on config updates.
+
 ## Version 100002.02
 
 ### Action Bars
