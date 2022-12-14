@@ -397,6 +397,21 @@ function MODULE:Init()
 			end
 		end)
 
+		local zoomer
+		local function resetZoom()
+			Minimap:SetZoom(0)
+		end
+
+		hooksecurefunc(Minimap, "SetZoom", function(_, level)
+			if zoomer then
+				zoomer:Cancel()
+			end
+
+			if level ~= 0 and C.db.profile.minimap.auto_zoom ~= 0 then
+				zoomer = C_Timer.NewTimer(C.db.profile.minimap.auto_zoom, resetZoom)
+			end
+		end)
+
 		MinimapCompassTexture:SetTexture(0)
 
 		MinimapCluster.BorderTop:SetWidth(0)

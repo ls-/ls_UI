@@ -1872,6 +1872,7 @@ D.profile = {
 		shape = "round", -- "round", "square"
 		flip = false,
 		rotate = false,
+		auto_zoom = 5,
 		color = {
 			border = false,
 		},

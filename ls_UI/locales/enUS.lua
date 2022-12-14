@@ -499,3 +499,6 @@ L["Y_OFFSET"] = "yOffset"
 L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
+
+L["MINIMAP_AUTO_ZOOM_OUT"] = "Auto Zoom Out"
+L["MINIMAP_AUTO_ZOOM_OUT_DESC"] = "The period (in seconds) after which the minimap will automatically zoom out. Set to 0 to disable."
