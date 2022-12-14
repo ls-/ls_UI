@@ -122,20 +122,20 @@ do
 		self:ClearAllPoints()
 
 		MinimapCluster.BorderTop:ClearAllPoints()
-		MinimapCluster.BorderTop:SetPoint("LEFT", "Minimap", "LEFT", 1, 0)
-		MinimapCluster.BorderTop:SetPoint("RIGHT", "Minimap", "RIGHT", -1, 0)
+		MinimapCluster.BorderTop:SetPoint("LEFT", MinimapCluster, "LEFT", 24, 0)
+		MinimapCluster.BorderTop:SetPoint("RIGHT", MinimapCluster, "RIGHT", -24, 0)
 
 		if self._config.flip then
-			self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, 8, true)
+			self:SetPoint("CENTER", MinimapCluster, "CENTER", 0, 8, true)
 
-			MinimapCluster.BorderTop:SetPoint("BOTTOM", "MinimapCluster", "BOTTOM", 0, 1)
+			MinimapCluster.BorderTop:SetPoint("BOTTOM", MinimapCluster, "BOTTOM", 0, 1)
 
 			MinimapCluster.MailFrame:ClearAllPoints()
 			MinimapCluster.MailFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
 		else
-			self:SetPoint("CENTER", "MinimapCluster", "CENTER", 0, -8, true)
+			self:SetPoint("CENTER", MinimapCluster, "CENTER", 0, -8, true)
 
-			MinimapCluster.BorderTop:SetPoint("TOP", "MinimapCluster", "TOP", 0, -1)
+			MinimapCluster.BorderTop:SetPoint("TOP", MinimapCluster, "TOP", 0, -1)
 
 			MinimapCluster.MailFrame:ClearAllPoints()
 			MinimapCluster.MailFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
@@ -365,7 +365,7 @@ function MODULE:Init()
 		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
 		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
 		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
-		difficultyFlag:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -0, -1)
+		difficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -32)
 		difficultyFlag:SetSize(48, 48)
 		difficultyFlag:Hide()
 		Minimap.DifficultyFlag = difficultyFlag
@@ -391,8 +391,8 @@ function MODULE:Init()
 			Minimap:UpdateRotation()
 		end)
 
-		hooksecurefunc(Minimap, "SetPoint", function(_, _, _, _, _, _, shouldIgnore)
-			if not shouldIgnore then
+		hooksecurefunc(Minimap, "SetPoint", function(_, _, parent, _, _, _, shouldIgnore)
+			if not shouldIgnore and parent == MinimapCluster then
 				Minimap:UpdateLayout()
 			end
 		end)
