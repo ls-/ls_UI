@@ -5,6 +5,7 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local pcall = _G.pcall
 
 local isNPEHooked = false
 
@@ -21,22 +22,55 @@ local function disableNPE()
 	end
 end
 
+local function hideBar(object, skipEvents)
+	if not object then return end
+
+	E:ForceHide(object, skipEvents)
+
+	if object.system then
+		E:PurgeKey(object, "isShownExternal")
+	end
+end
+
+local function hidebutton(object)
+	if not object then return end
+
+	object:Hide(true)
+	object:UnregisterAllEvents()
+	object:SetAttribute("statehidden", true)
+end
+
 function MODULE:CleanUp()
-	E:ForceHide(MainMenuBar, true)
-	E:ForceHide(MultiBarBottomLeft)
-	E:ForceHide(MultiBarBottomRight)
-	E:ForceHide(MultiBarLeft)
-	E:ForceHide(MultiBarRight)
-	E:ForceHide(MultiBar5)
-	E:ForceHide(MultiBar6)
-	E:ForceHide(MultiBar7)
+	hideBar(MainMenuBar, true)
+	hideBar(MultiBarBottomLeft)
+	hideBar(MultiBarBottomRight)
+	hideBar(MultiBarLeft)
+	hideBar(MultiBarRight)
+	hideBar(MultiBar5)
+	hideBar(MultiBar6)
+	hideBar(MultiBar7)
+	hideBar(PetActionBar)
+	hideBar(StanceBar)
+	hideBar(PossessActionBar)
+	hideBar(MultiCastActionBarFrame)
 
-	E:ForceHide(PetActionBar)
-	E:ForceHide(PossessActionBar)
-	E:ForceHide(StanceBar)
-	E:ForceHide(MultiCastActionBarFrame)
+	for i = 1, 12 do
+		hidebutton(_G["ActionButton" .. i])
+		hidebutton(_G["MultiBarBottomLeftButton" .. i])
+		hidebutton(_G["MultiBarBottomRightButton" .. i])
+		hidebutton(_G["MultiBarLeftButton" .. i])
+		hidebutton(_G["MultiBarRightButton" .. i])
+		hidebutton(_G["MultiBar5Button" .. i])
+		hidebutton(_G["MultiBar6Button" .. i])
+		hidebutton(_G["MultiBar7Button" .. i])
+	end
 
-	E:ForceHide(StatusTrackingBarManager)
+	for i = 1, 10 do
+		hidebutton(_G["PetActionButton" .. i])
+		hidebutton(_G["StanceButton" .. i])
+	end
+
+	hideBar(StatusTrackingBarManager)
 
 	if NewPlayerExperience then
 		disableNPE()
@@ -44,7 +78,7 @@ function MODULE:CleanUp()
 		E:AddOnLoadTask("Blizzard_NewPlayerExperience", disableNPE)
 	end
 
-	E:ForceHide(MicroButtonAndBagsBar)
+	hideBar(MicroButtonAndBagsBar)
 
 	QueueStatusButton:SetParent(UIParent)
 	QueueStatusButton:ClearAllPoints()
@@ -53,9 +87,9 @@ function MODULE:CleanUp()
 
 	E:ForceHide(SpellFlyout.Background)
 
-	E:ForceHide(MainMenuBarVehicleLeaveButton)
+	hidebutton(MainMenuBarVehicleLeaveButton)
 
-	E:ForceHide(ExtraAbilityContainer)
+	hideBar(ExtraAbilityContainer)
 	ExtraAbilityContainer:SetScript("OnShow", nil)
 	ExtraAbilityContainer:SetScript("OnHide", nil)
 end

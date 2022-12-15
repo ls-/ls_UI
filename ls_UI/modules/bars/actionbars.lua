@@ -43,80 +43,40 @@ local ACTION_BARS = {
 	["bar1"] = {
 		name = "LSActionBar1",
 		type = "ACTIONBUTTON",
-		b_buttons = {
-			ActionButton1, ActionButton2, ActionButton3, ActionButton4,
-			ActionButton5, ActionButton6, ActionButton7, ActionButton8,
-			ActionButton9, ActionButton10, ActionButton11, ActionButton12,
-		},
 	},
 	["bar2"] = {
 		name = "LSActionBar2",
 		type = "MULTIACTIONBAR1BUTTON",
-		b_buttons = {
-			MultiBarBottomLeftButton1, MultiBarBottomLeftButton2, MultiBarBottomLeftButton3, MultiBarBottomLeftButton4,
-			MultiBarBottomLeftButton5, MultiBarBottomLeftButton6, MultiBarBottomLeftButton7, MultiBarBottomLeftButton8,
-			MultiBarBottomLeftButton9, MultiBarBottomLeftButton10, MultiBarBottomLeftButton11, MultiBarBottomLeftButton12,
-		},
 		page = 6,
 	},
 	["bar3"] = {
 		name = "LSActionBar3",
 		type = "MULTIACTIONBAR2BUTTON",
-		b_buttons = {
-			MultiBarBottomRightButton1, MultiBarBottomRightButton2, MultiBarBottomRightButton3, MultiBarBottomRightButton4,
-			MultiBarBottomRightButton5, MultiBarBottomRightButton6, MultiBarBottomRightButton7, MultiBarBottomRightButton8,
-			MultiBarBottomRightButton9, MultiBarBottomRightButton10, MultiBarBottomRightButton11, MultiBarBottomRightButton12,
-		},
 		page = 5,
 	},
 	["bar4"] = {
 		name = "LSActionBar4",
 		type = "MULTIACTIONBAR4BUTTON",
-		b_buttons = {
-			MultiBarLeftButton1, MultiBarLeftButton2, MultiBarLeftButton3, MultiBarLeftButton4,
-			MultiBarLeftButton5, MultiBarLeftButton6, MultiBarLeftButton7, MultiBarLeftButton8,
-			MultiBarLeftButton9, MultiBarLeftButton10, MultiBarLeftButton11, MultiBarLeftButton12,
-		},
 		page = 4,
 	},
 	["bar5"] = {
 		name = "LSActionBar5",
 		type = "MULTIACTIONBAR3BUTTON",
-		b_buttons = {
-			MultiBarRightButton1, MultiBarRightButton2, MultiBarRightButton3, MultiBarRightButton4,
-			MultiBarRightButton5, MultiBarRightButton6, MultiBarRightButton7, MultiBarRightButton8,
-			MultiBarRightButton9, MultiBarRightButton10, MultiBarRightButton11, MultiBarRightButton12,
-		},
 		page = 3,
 	},
 	["bar6"] = {
 		name = "LSActionBar6",
 		type = "MULTIACTIONBAR5BUTTON",
-		b_buttons = {
-			MultiBar5Button1, MultiBar5Button2, MultiBar5Button3, MultiBar5Button4,
-			MultiBar5Button5, MultiBar5Button6, MultiBar5Button7, MultiBar5Button8,
-			MultiBar5Button9, MultiBar5Button10, MultiBar5Button11, MultiBar5Button12,
-		},
 		page = 13,
 	},
 	["bar7"] = {
 		name = "LSActionBar7",
 		type = "MULTIACTIONBAR6BUTTON",
-		b_buttons = {
-			MultiBar6Button1, MultiBar6Button2, MultiBar6Button3, MultiBar6Button4,
-			MultiBar6Button5, MultiBar6Button6, MultiBar6Button7, MultiBar6Button8,
-			MultiBar6Button9, MultiBar6Button10, MultiBar6Button11, MultiBar6Button12,
-		},
 		page = 14,
 	},
 	["bar8"] = {
 		name = "LSActionBar8",
 		type = "MULTIACTIONBAR7BUTTON",
-		b_buttons = {
-			MultiBar7Button1, MultiBar7Button2, MultiBar7Button3, MultiBar7Button4,
-			MultiBar7Button5, MultiBar7Button6, MultiBar7Button7, MultiBar7Button8,
-			MultiBar7Button9, MultiBar7Button10, MultiBar7Button11, MultiBar7Button12,
-		},
 		page = 15,
 	},
 }
@@ -278,7 +238,7 @@ function MODULE:CreateActionBars()
 				Mixin(bar, bar1_proto)
 			end
 
-			for i = 1, #data.b_buttons do
+			for i = 1, 12 do
 				local button = Mixin(LAB:CreateButton(i, "$parentButton" .. i, bar), button_proto)
 				button:SetState(0, "action", i)
 				button._parent = bar
@@ -292,15 +252,6 @@ function MODULE:CreateActionBars()
 				end
 
 				E:SkinActionButton(button)
-
-				-- for IconIntroTracker
-				data.b_buttons[i]:SetAllPoints(button)
-				data.b_buttons[i]:Hide()
-				data.b_buttons[i]:SetAttribute("statehidden", true)
-				data.b_buttons[i]:SetParent(E.HIDDEN_PARENT)
-				data.b_buttons[i]:SetScript("OnEvent", nil)
-				data.b_buttons[i]:SetScript("OnUpdate", nil)
-				data.b_buttons[i]:UnregisterAllEvents()
 			end
 
 			bar:SetAttribute("_onstate-page", [[

@@ -12,11 +12,6 @@ local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local isInit = false
 
-local BUTTONS = {
-	PetActionButton1, PetActionButton2, PetActionButton3, PetActionButton4, PetActionButton5,
-	PetActionButton6, PetActionButton7, PetActionButton8, PetActionButton9, PetActionButton10,
-}
-
 local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 127}
 local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 155}
 
@@ -242,7 +237,7 @@ function MODULE:CreatePetActionBar()
 	if not isInit then
 		local bar = Mixin(self:Create("pet", "LSPetBar"), bar_proto)
 
-		for i = 1, #BUTTONS do
+		for i = 1, 10 do
 			local button = Mixin(CreateFrame("CheckButton", "$parentButton" .. i, bar, "PetActionButtonTemplate"), button_proto)
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
@@ -255,13 +250,6 @@ function MODULE:CreatePetActionBar()
 			bar._buttons[i] = button
 
 			E:SkinPetActionButton(button)
-
-			BUTTONS[i]:SetAllPoints(button)
-			BUTTONS[i]:SetAttribute("statehidden", true)
-			BUTTONS[i]:SetParent(E.HIDDEN_PARENT)
-			BUTTONS[i]:SetScript("OnEvent", nil)
-			BUTTONS[i]:SetScript("OnUpdate", nil)
-			BUTTONS[i]:UnregisterAllEvents()
 		end
 
 		bar:SetScript("OnEvent", bar.OnEvent)

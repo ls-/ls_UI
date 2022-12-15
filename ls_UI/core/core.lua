@@ -5,12 +5,14 @@ local _G = getfenv(0)
 local assert = _G.assert
 local geterrorhandler = _G.geterrorhandler
 local hooksecurefunc = _G.hooksecurefunc
+local issecurevariable = _G.issecurevariable
 local next = _G.next
 local pairs = _G.pairs
 local s_format = _G.string.format
 local s_split = _G.string.split
 local select = _G.select
 local t_insert = _G.table.insert
+local tonumber = _G.tonumber
 local type = _G.type
 local xpcall = _G.xpcall
 
@@ -296,4 +298,16 @@ function E:IsEqualTable(a, b)
 	else
 		return a == b
 	end
+end
+
+function E:PurgeKey(t, k)
+	t[k] = nil
+
+	local c = -42
+	repeat
+		if t[c] == nil then
+			t[c] = nil
+		end
+		c = c - 1
+	until issecurevariable(t, k)
 end
