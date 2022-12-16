@@ -124,6 +124,22 @@ function CONFIG:CreateMinimapOptions(order)
 				end,
 				disabled = isModuleDisabled,
 			},
+			auto_zoom = {
+				order = inc(1),
+				type = "range",
+				name = L["MINIMAP_AUTO_ZOOM_OUT"],
+				desc = L["MINIMAP_AUTO_ZOOM_OUT_DESC"],
+				min = 0, max = 30, step = 1,
+				get = function()
+					return C.db.profile.minimap.auto_zoom
+				end,
+				set = function(_, value)
+					if C.db.profile.minimap.auto_zoom ~= value then
+						C.db.profile.minimap.auto_zoom = value
+					end
+				end,
+				disabled = isModuleDisabled,
+			},
 			spacer_2 = {
 				order = inc(1),
 				type = "description",

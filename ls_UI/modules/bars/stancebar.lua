@@ -12,11 +12,6 @@ local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local isInit = false
 
-local BUTTONS = {
-	StanceButton1, StanceButton2, StanceButton3, StanceButton4, StanceButton5,
-	StanceButton6, StanceButton7, StanceButton8, StanceButton9, StanceButton10,
-}
-
 local BOTTOM_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 127}
 local TOP_POINT = {"BOTTOM", "UIParent", "BOTTOM", 0, 155}
 
@@ -147,7 +142,7 @@ function MODULE:CreateStanceBar()
 	if not isInit then
 		local bar = Mixin(self:Create("stance", "LSStanceBar"), bar_proto)
 
-		for i = 1, #BUTTONS do
+		for i = 1, 10 do
 			local button = Mixin(CreateFrame("CheckButton", "$parentButton" .. i, bar, "StanceButtonTemplate"), button_proto)
 			button:SetID(i)
 			button:SetScript("OnEvent", nil)
@@ -159,13 +154,6 @@ function MODULE:CreateStanceBar()
 			bar._buttons[i] = button
 
 			E:SkinStanceButton(button)
-
-			BUTTONS[i]:SetAllPoints(button)
-			BUTTONS[i]:SetAttribute("statehidden", true)
-			BUTTONS[i]:SetParent(E.HIDDEN_PARENT)
-			BUTTONS[i]:SetScript("OnEvent", nil)
-			BUTTONS[i]:SetScript("OnUpdate", nil)
-			BUTTONS[i]:UnregisterAllEvents()
 		end
 
 		bar:SetScript("OnEvent", bar.OnEvent)

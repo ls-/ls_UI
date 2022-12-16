@@ -744,8 +744,12 @@ end
 function E:ForceHide(object, skipEvents)
 	if not object then return end
 
-	object:Hide(true)
-	object:SetParent(self.HIDDEN_PARENT)
+	-- EditMode bs
+	if object.HideBase then
+		object:HideBase(true)
+	else
+		object:Hide(true)
+	end
 
 	if object.EnableMouse then
 		object:EnableMouse(false)
@@ -756,11 +760,6 @@ function E:ForceHide(object, skipEvents)
 			object:UnregisterAllEvents()
 		end
 
-		if object:GetName() then
-			object.ignoreFramePositionManager = true
-			object:SetAttribute("ignoreFramePositionManager", true)
-		end
-
 		object:SetAttribute("statehidden", true)
 	end
 
@@ -768,6 +767,8 @@ function E:ForceHide(object, skipEvents)
 		pcall(object.SetUserPlaced, object, true)
 		pcall(object.SetDontSavePosition, object, true)
 	end
+
+	object:SetParent(self.HIDDEN_PARENT)
 end
 
 function E:GetScreenQuadrant(frame)
