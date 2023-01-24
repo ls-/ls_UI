@@ -215,8 +215,7 @@ do
 			local inGroup, _, numGuildRequired = InGuildParty()
 			if inGroup then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(GUILD_ACHIEVEMENTS_ELIGIBLE:format(numGuildRequired, self.maxPlayers, GetGuildInfo()), nil, nil, nil, true)
-
+				GameTooltip:AddLine(GUILD_ACHIEVEMENTS_ELIGIBLE:format(numGuildRequired, self.maxPlayers, GetGuildInfo("player")), nil, nil, nil, true)
 			end
 
 			GameTooltip:Show()
