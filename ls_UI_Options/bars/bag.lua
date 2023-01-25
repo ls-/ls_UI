@@ -118,8 +118,6 @@ function CONFIG:CreateBagOptions(order)
 				end,
 				set = function(_, value)
 					C.db.profile.bars.bag.tooltip = value
-
-					BARS:For("bag", "UpdateConfig")
 				end,
 			},
 			spacer_2 = {
@@ -145,7 +143,86 @@ function CONFIG:CreateBagOptions(order)
 				type = "description",
 				name = " ",
 			},
-			fading = CONFIG:CreateBarFadingOptions(inc(1), "bag"),
+			fading = {
+				order = inc(1),
+				type = "group",
+				name = L["FADING"],
+				inline = true,
+				disabled = function()
+					return not C.db.profile.bars.bag.fade.enabled
+				end,
+				get = function(info)
+					return C.db.profile.bars.bag.fade[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.bars.bag.fade[info[#info]] = value
+
+					BARS:UpdateBag()
+				end,
+				args = {
+					enabled = {
+						order = reset(2),
+						type = "toggle",
+						name = L["ENABLE"],
+						disabled = isModuleDisabled,
+					},
+					reset = {
+						order = inc(2),
+						type = "execute",
+						name = L["RESTORE_DEFAULTS"],
+						confirm = CONFIG.ConfirmReset,
+						func = function()
+							CONFIG:CopySettings(D.profile.bars.bag.fade, C.db.profile.bars.bag.fade, {enabled = true})
+							BARS:UpdateBag()
+						end,
+					},
+					spacer_1 = {
+						order = inc(2),
+						type = "description",
+						name = " ",
+					},
+					combat = {
+						order = inc(2),
+						type = "toggle",
+						name = L["COMBAT"],
+					},
+					target = {
+						order = inc(2),
+						type = "toggle",
+						name = L["TARGET"],
+					},
+					in_duration = {
+						order = inc(2),
+						type = "range",
+						name = L["FADE_IN_DURATION"],
+						min = 0.05, max = 1, step = 0.05,
+					},
+					out_delay = {
+						order = inc(2),
+						type = "range",
+						name = L["FADE_OUT_DELAY"],
+						min = 0, max = 2, step = 0.05,
+					},
+					out_duration = {
+						order = inc(2),
+						type = "range",
+						name = L["FADE_OUT_DURATION"],
+						min = 0.05, max = 1, step = 0.05,
+					},
+					min_alpha = {
+						order = inc(2),
+						type = "range",
+						name = L["MIN_ALPHA"],
+						min = 0, max = 1, step = 0.05,
+					},
+					max_alpha = {
+						order = inc(2),
+						type = "range",
+						name = L["MAX_ALPHA"],
+						min = 0, max = 1, step = 0.05
+					},
+				},
+			},
 		},
 	}
 end
