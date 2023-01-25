@@ -80,25 +80,6 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
-			durability = {
-				order = inc(1),
-				type = "toggle",
-				name = L["DURABILITY_FRAME"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					PrC.db.profile.blizzard.durability.enabled = value
-
-					if not BLIZZARD:HasDurabilityFrame() then
-						if value then
-							BLIZZARD:SetUpDurabilityFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end,
-			},
 			gm = {
 				order = inc(1),
 				type = "toggle",
