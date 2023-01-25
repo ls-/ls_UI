@@ -78,6 +78,7 @@ function MODULE:CleanUp()
 		E:AddOnLoadTask("Blizzard_NewPlayerExperience", disableNPE)
 	end
 
+	hideBar(MicroMenu)
 	hideBar(MicroButtonAndBagsBar)
 
 	QueueStatusButton:SetParent(UIParent)
