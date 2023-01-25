@@ -130,15 +130,15 @@ do
 
 			MinimapCluster.BorderTop:SetPoint("BOTTOM", MinimapCluster, "BOTTOM", 0, 1)
 
-			MinimapCluster.MailFrame:ClearAllPoints()
-			MinimapCluster.MailFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
+			MinimapCluster.IndicatorFrame:ClearAllPoints()
+			MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
 		else
 			self:SetPoint("CENTER", MinimapCluster, "CENTER", 0, -8, true)
 
 			MinimapCluster.BorderTop:SetPoint("TOP", MinimapCluster, "TOP", 0, -1)
 
-			MinimapCluster.MailFrame:ClearAllPoints()
-			MinimapCluster.MailFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
+			MinimapCluster.IndicatorFrame:ClearAllPoints()
+			MinimapCluster.IndicatorFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
 		end
 
 		if HybridMinimap then
