@@ -6,13 +6,22 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
+- Added 10.0.5 support.
+
 ### Action Bars
 
-- Fixed an issue which sometimes would make the Edit Mode throw SetScale errors.
+- Removed bag bar mover. Use Edit Mode to move it.
+  - The micro menu is unchanged.
+
+### Auras
+
+- Re-added an option to destroy totems by right-clicking the totem buttons.
+
+### Blizzard
+
+- Removed durability frame mover. Use Edit Mode to move it.
 
 ### Minimap
 
-- Added "Auto Zoom Out" option. Set to 5s by default.
-- Improved compatibility with other minimap addons like FarmHud. There's still issues on the
-  FarmHud's end, but I already notified its dev about them.
+- Fixed an issue where mousing over the difficulty flag would throw errors while in the guild group.
 ]]
