@@ -911,8 +911,6 @@ function MODULE:CreateMicroMenu()
 			buttons[idToIndex[id]] = button
 		end
 
-		hooksecurefunc("UpdateMicroButtonsParent", updateMicroButtonsParent)
-		hooksecurefunc("MoveMicroButtons", moveMicroButtons)
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
 

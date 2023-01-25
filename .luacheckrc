@@ -1,5 +1,6 @@
 std = "none"
 max_line_length = false
+max_comment_line_length = 120
 self = false
 
 exclude_files = {
@@ -49,7 +50,7 @@ read_globals = {
 	"AutoCastShine_AutoCastStart",
 	"AutoCastShine_AutoCastStop",
 	"BACKPACK_TOOLTIP",
-	"BagBarExpandToggle",
+	"BagsBar",
 	"BLIZZARD_STORE",
 	"BreakUpLargeNumbers",
 	"BuffFrame",
@@ -73,10 +74,6 @@ read_globals = {
 	"CanInspect",
 	"CHARACTER_BUTTON",
 	"CharacterBackSlot",
-	"CharacterBag0Slot",
-	"CharacterBag1Slot",
-	"CharacterBag2Slot",
-	"CharacterBag3Slot",
 	"CharacterChestSlot",
 	"CharacterFeetSlot",
 	"CharacterFinger0Slot",
@@ -88,7 +85,6 @@ read_globals = {
 	"CharacterMainHandSlot",
 	"CharacterModelScene",
 	"CharacterNeckSlot",
-	"CharacterReagentBag0Slot",
 	"CharacterSecondaryHandSlot",
 	"CharacterShirtSlot",
 	"CharacterShoulderSlot",
@@ -108,7 +104,6 @@ read_globals = {
 	"DebuffFrame",
 	"DeleteInboxItem",
 	"DUNGEONS_BUTTON",
-	"DurabilityFrame",
 	"ENCHANTED_TOOLTIP_LINE",
 	"Enum",
 	"ExtraAbilityContainer",
@@ -240,6 +235,7 @@ read_globals = {
 	"MaxDps",
 	"MicroButtonAndBagsBar",
 	"MicroButtonTooltipText",
+	"MicroMenu",
 	"Minimap",
 	"MinimapButtonFrame",
 	"MinimapCluster",
@@ -319,6 +315,7 @@ read_globals = {
 	"TOOLTIP_UPDATE_TIME",
 	"TooltipDataProcessor",
 	"TooltipUtil",
+	"TotemFrame",
 	"UIParent",
 	"UnitAura",
 	"UnitBattlePetLevel",

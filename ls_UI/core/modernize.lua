@@ -758,6 +758,16 @@ function P:Modernize(data, name, key)
 
 			data.version = 10000201
 		end
+
+		--> 100005.01
+		if data.version < 10000501 then
+			if data.movers then
+				data.movers.DurabilityFrameMover = nil
+				data.movers.LSBagBarMover = nil
+			end
+
+			data.version = 10000501
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then

@@ -5,7 +5,7 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
-local unpack = _G.unpack
+local t_wipe = _G.table.wipe
 
 -- Mine
 local isInit = false
@@ -30,7 +30,7 @@ do
 			GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
 			GameTooltip:AddLine(L["FREE_BAG_SLOTS_TOOLTIP"]:format(self.freeSlots))
 
-			if self._parent._config.tooltip then
+			if C.db.profile.bars.bag.tooltip then
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["CURRENCY_COLON"])
 
@@ -83,52 +83,21 @@ do
 	end
 end
 
-local bar_proto = {
-	UpdateCooldownConfig = E.NOOP,
-	UpdateLayout = E.NOOP,
-	ForEach = E.NOOP,
-}
-do
-	function bar_proto:UpdateConfig()
-		self._config = E:CopyTable(C.db.profile.bars.bag, self._config)
-	end
-
-	function bar_proto:Update()
-		self:UpdateConfig()
-		self:UpdateFading()
-	end
-end
-
 function MODULE:HasBag()
 	return isInit
 end
 
 function MODULE:CreateBag()
 	if not isInit then
-		local bar = Mixin(self:Create("bag", "LSBagBar"), bar_proto)
-		bar:SetSize(216, 44)
-
-		MainMenuBarBackpackButton:SetParent(bar)
-		BagBarExpandToggle:SetParent(bar)
-		CharacterBag0Slot:SetParent(bar)
-		CharacterBag1Slot:SetParent(bar)
-		CharacterBag2Slot:SetParent(bar)
-		CharacterBag3Slot:SetParent(bar)
-		CharacterReagentBag0Slot:SetParent(bar)
-
-		bar:SetPoint(unpack(C.db.profile.bars.bag.point))
-		E.Movers:Create(bar)
-
 		Mixin(MainMenuBarBackpackButton, button_proto)
-		MainMenuBarBackpackButton:SetPoint("TOPRIGHT", 4, 2)
 		MainMenuBarBackpackButton:SetScript("OnEnter", MainMenuBarBackpackButton.OnEnter)
 		MainMenuBarBackpackButton:HookScript("OnEvent", MainMenuBarBackpackButton.OnEventHook)
 		MainMenuBarBackpackButton:RegisterEvent("UPDATE_BINDINGS")
 		MainMenuBarBackpackButton:RegisterEvent("TOKEN_MARKET_PRICE_UPDATED")
 
-		MainMenuBarBackpackButton._parent = bar
 		MainMenuBarBackpackButton.tooltipText = MicroButtonTooltipText(BACKPACK_TOOLTIP, "TOGGLEBACKPACK")
-		MainMenuBarBackpackButton.UpdateTooltip = MainMenuBarBackpackButton.OnEnter
+
+		E:SetUpFading(BagsBar)
 
 		isInit = true
 
@@ -138,6 +107,9 @@ end
 
 function MODULE:UpdateBag()
 	if isInit then
-		self:For("bag", "Update")
+		BagsBar._config = t_wipe(BagsBar._config or {})
+		BagsBar._config.fade = E:CopyTable(C.db.profile.bars.bag.fade, BagsBar._config.fade)
+
+		BagsBar:UpdateFading()
 	end
 end
