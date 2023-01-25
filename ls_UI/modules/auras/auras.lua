@@ -4,6 +4,7 @@ local MODULE = P:AddModule("Auras")
 
 -- Lua
 local _G = getfenv(0)
+local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local type = _G.type
 local unpack = _G.unpack
@@ -104,8 +105,6 @@ do
 
 		if self:GetAttribute("index") then
 			GameTooltip:SetUnitAura(self:GetParent():GetAttribute("unit"), self:GetID(), self:GetAttribute("filter"))
-		elseif self:GetAttribute("totem-slot") then
-			GameTooltip:SetTotem(self:GetID())
 		else
 			GameTooltip:SetInventoryItem("player", self:GetID())
 		end
@@ -322,32 +321,6 @@ do
 		self:UpdateCooldownConfig()
 		E.Layout:Update(self)
 	end
-
-	function totem_header_proto:OnEvent()
-		local activeTotems = 0
-
-		for i = 1, MAX_TOTEMS do
-			local hasTotem, _, startTime, duration, icon = GetTotemInfo(i)
-			if hasTotem then
-				activeTotems = activeTotems + 1
-
-				local button = self._buttons[activeTotems]
-				button.Icon:SetTexture(icon)
-				button:Show()
-
-				if duration and duration > 0 and startTime then
-					button.Cooldown:SetCooldown(startTime, duration)
-					button.Cooldown:Show()
-				else
-					button.Cooldown:Hide()
-				end
-			end
-		end
-
-		for i = activeTotems + 1, MAX_TOTEMS do
-			self._buttons[i]:Hide()
-		end
-	end
 end
 
 local function createHeader(filter)
@@ -355,22 +328,54 @@ local function createHeader(filter)
 	if filter == "TOTEM" then
 		header = Mixin(CreateFrame("Frame", "LSTotemHeader", UIParent), header_proto, totem_header_proto)
 		header:SetPoint(unpack(C.db.profile.auras[filter].point))
-		header:RegisterEvent("PLAYER_TOTEM_UPDATE")
-		header:RegisterEvent("PLAYER_ENTERING_WORLD")
-		header:SetScript("OnEvent", header.OnEvent)
 		header._buttons = {}
 
 		for i = 1, MAX_TOTEMS do
 			local button = Mixin(E:CreateButton(header, "$parentButton" .. i, false, true), button_proto)
 			button:SetPushedTexture(0)
 			button:SetHighlightTexture(0)
-			button:SetScript("OnEnter", button.OnEnter)
-			button:SetScript("OnLeave", button.OnLeave)
-			button:SetAttribute("totem-slot", i)
-			button:SetID(i)
+			button:Hide()
 			button._parent = header
 			header._buttons[i] = button
 		end
+
+		hooksecurefunc(TotemFrame, "Update", function()
+			local activeTotems = 0
+
+			for i = 1, MAX_TOTEMS do
+				local hasTotem, _, startTime, duration, icon = GetTotemInfo(i)
+				if hasTotem then
+					activeTotems = activeTotems + 1
+
+					local button = header._buttons[activeTotems]
+					button.Icon:SetTexture(icon)
+					button.slot = i
+					button:Show()
+
+					if duration and duration > 0 and startTime then
+						button.Cooldown:SetCooldown(startTime, duration)
+						button.Cooldown:Show()
+					else
+						button.Cooldown:Hide()
+					end
+
+					-- strangely enough, these buttons aren't protected which means I can use them to handle totem destruction
+					for totem in TotemFrame.totemPool:EnumerateActive() do
+						if totem.slot == i then
+							totem:ClearAllPoints()
+							totem:SetParent(button)
+							totem:SetAllPoints(button)
+							totem:SetAlpha(0)
+							totem:SetFrameLevel(button:GetFrameLevel() + 1)
+						end
+					end
+				end
+			end
+
+			for i = activeTotems + 1, MAX_TOTEMS do
+				header._buttons[i]:Hide()
+			end
+		end)
 	else
 		header = Mixin(CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate"), header_proto)
 		header:SetPoint(unpack(C.db.profile.auras[filter].point))
