@@ -416,9 +416,14 @@ function MODULE:Init()
 		createHeader("HARMFUL")
 		createHeader("TOTEM")
 
-		E:ForceHide(BuffFrame)
-		E:ForceHide(DebuffFrame)
-		E:ForceHide(DeadlyDebuffFrame)
+		-- do it on PEW because numHideableBuffs will be nil otherwise
+		E:RegisterEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
+			if isLogin or isReload then
+				E:ForceHide(BuffFrame)
+				E:ForceHide(DebuffFrame)
+				E:ForceHide(DeadlyDebuffFrame)
+			end
+		end)
 
 		isInit = true
 
