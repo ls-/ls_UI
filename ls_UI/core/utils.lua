@@ -853,14 +853,13 @@ do
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
 		if not data then return "", "", "", "" end
 
-		local enchant, text = ""
+		local enchant = ""
 		local gems, idx = {"", "", ""}, 1
 		for _, line in next, data.lines do
 			TooltipUtil.SurfaceArgs(line)
 
-			text = line.leftText:match(ENCHANT_PATTERN)
-			if text then
-				enchant = text
+			if line.enchantID then
+				enchant = line.leftText:match(ENCHANT_PATTERN)
 			elseif line.socketType then
 				gems[idx] = GEM_TEMPLATE:format(line.socketType)
 				idx = idx + 1
