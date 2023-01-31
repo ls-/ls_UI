@@ -15,6 +15,7 @@ local isInit = false
 
 local AFK = "[" .. _G.AFK .. "] "
 local DND = "[" .. _G.DND .. "] "
+local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. ":|r %s"
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE
 local ID = "|cffffd100" .. _G.ID .. ":|r %d"
 local ITEM_LEVEL = "|cffffd100" .. _G.ITEM_LEVEL_ABBR .. ":|r |cffffffff%s|r"
@@ -142,6 +143,11 @@ function MODULE:Init()
 
 				tooltip:AddLine(" ")
 				tooltip:AddDoubleLine(ID:format(id), textRight or "", 1, 1, 1, 1, 1, 1)
+
+				local _, _, _, _, _, _, _, _, _, _, _, _, _, _, expacID = GetItemInfo(id)
+				if expacID > 0 then
+					tooltip:AddLine(EXPANSION:format(_G["EXPANSION_NAME" .. expacID]), 1, 1, 1)
+				end
 			end
 		end)
 
