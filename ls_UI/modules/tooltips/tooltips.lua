@@ -145,7 +145,7 @@ function MODULE:Init()
 				tooltip:AddDoubleLine(ID:format(id), textRight or "", 1, 1, 1, 1, 1, 1)
 
 				local _, _, _, _, _, _, _, _, _, _, _, _, _, _, expacID = GetItemInfo(id)
-				if expacID > 0 then
+				if expacID and expacID > 0 then
 					tooltip:AddLine(EXPANSION:format(_G["EXPANSION_NAME" .. expacID]), 1, 1, 1)
 				end
 			end
