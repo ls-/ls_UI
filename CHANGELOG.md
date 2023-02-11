@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 100005.02
+
+### Tooltips
+
+- Improved compatibility with addons that use old-school tooltip scanning. No more unit names in all
+  kinds of tooltips!
+- Added expansion info to item tooltips. It's tied to the "Spell and Item ID" option.
+
 ## Version 100005.01
 
 - Added 10.0.5 support.
