@@ -34,6 +34,12 @@ local PHASE_ICONS = {
 	[Enum.PhaseReason.ChromieTime] = M.textures.icons_inline.CHROMIE,
 }
 
+local GOOD_TOOLTIPS = {
+	[GameTooltip] = true,
+	[GameTooltipTooltip] = true,
+	[ItemRefTooltip] = true,
+}
+
 local inspectGUIDCache = {}
 local lastGUID
 
@@ -131,7 +137,7 @@ end
 function MODULE:Init()
 	if not isInit and PrC.db.profile.tooltips.enabled then
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -152,7 +158,7 @@ function MODULE:Init()
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -163,7 +169,7 @@ function MODULE:Init()
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Currency, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -200,7 +206,7 @@ function MODULE:Init()
 		}
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.UnitAura, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -221,7 +227,7 @@ function MODULE:Init()
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if tooltip ~= GameTooltip or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -243,7 +249,7 @@ function MODULE:Init()
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Achievement, function(tooltip, data)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not C.db.profile.tooltips.id then return end
 
 			local id = data.id
@@ -260,14 +266,14 @@ function MODULE:Init()
 		}
 
 		TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.None, function(tooltip, lineData)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not tooltip:IsTooltipType(Enum.TooltipDataType.Unit) then return end
 
 			return TEXTS_TO_REMOVE[lineData.leftText]
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(tooltip)
-			if tooltip:IsForbidden() then return end
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 
 			local _, unit = tooltip:GetUnit()
 			if not unit then return end
