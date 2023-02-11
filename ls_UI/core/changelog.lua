@@ -6,22 +6,9 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.0.5 support.
+### Tooltips
 
-### Action Bars
-
-- Removed bag bar mover. Use Edit Mode to move it.
-  - The micro menu is unchanged.
-
-### Auras
-
-- Re-added an option to destroy totems by right-clicking the totem buttons.
-
-### Blizzard
-
-- Removed durability frame mover. Use Edit Mode to move it.
-
-### Minimap
-
-- Fixed an issue where mousing over the difficulty flag would throw errors while in the guild group.
+- Improved compatibility with addons that use old-school tooltip scanning. No more unit names in all
+  kinds of tooltips!
+- Added expansion info to item tooltips. It's tied to the "Spell and Item ID" option.
 ]]
