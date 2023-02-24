@@ -258,6 +258,7 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
+		temp.args.fading = nil
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
@@ -268,6 +269,7 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.debuff = nil
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
+		temp.args.fading = nil
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
@@ -278,6 +280,7 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.debuff = nil
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
+		temp.args.fading = nil
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
 		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerOptions(21, unit)
