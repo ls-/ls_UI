@@ -73,6 +73,13 @@ function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 				name = L["TARGET"],
 				disabled = isFadingDisabled,
 			},
+			health = {
+				order = inc(1),
+				type = "toggle",
+				name = L["HEALTH"],
+				desc = L["HEALTH_FADING_DESC"],
+				disabled = isFadingDisabled,
+			},
 			in_duration = {
 				order = inc(1),
 				type = "range",

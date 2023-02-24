@@ -84,6 +84,12 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 				type = "toggle",
 				name = L["TARGET"],
 			},
+			health = {
+				order = inc(1),
+				type = "toggle",
+				name = L["HEALTH"],
+				desc = L["HEALTH_FADING_DESC"],
+			},
 			in_duration = {
 				order = inc(1),
 				type = "range",
