@@ -772,7 +772,7 @@ function P:Modernize(data, name, key)
 		--> 100005.03
 		if data.version < 10000503 then
 			if data.units then
-				for _, unit in next, {"pet", "targettarget", "focustarget"} do
+				for _, unit in next, {"pet", "focustarget", "targettarget"} do
 					if data.units[unit] then
 						data.units[unit].fade = nil
 					end
