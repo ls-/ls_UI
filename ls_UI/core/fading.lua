@@ -41,12 +41,12 @@ end
 local combatWidgets = {}
 
 local function addCombatWidget(object, widget)
-	widget.hasTarget = InCombatLockdown()
+	widget.inCombat = InCombatLockdown()
 	combatWidgets[object] = widget
 end
 
 local function removeCombatWidget(object, widget)
-	widget.hasTarget = false
+	widget.inCombat = false
 	combatWidgets[object] = nil
 end
 
@@ -130,7 +130,9 @@ updater:SetScript("OnEvent", function(self, event)
 		for object, widget in next, combatWidgets do
 			widget.inCombat = false
 
-			object:EnableFading()
+			if not widget.hasTarget then
+				object:EnableFading()
+			end
 		end
 	elseif event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
 		if UnitExists("target") or UnitExists("focus") then
@@ -147,7 +149,9 @@ updater:SetScript("OnEvent", function(self, event)
 			for object, widget in next, targetWidgets do
 				widget.hasTarget = false
 
-				object:EnableFading()
+				if not widget.inCombat then
+					object:EnableFading()
+				end
 			end
 
 			self.hasTarget = false
