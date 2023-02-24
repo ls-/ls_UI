@@ -692,6 +692,9 @@ D.profile = {
 					y = 0,
 				},
 			},
+			status = {
+				enabled = true,
+			},
 			threat = {
 				enabled = true,
 			},
@@ -1080,6 +1083,9 @@ D.profile = {
 					y = -2,
 				},
 			},
+			status = {
+				enabled = true,
+			},
 			threat = {
 				enabled = true,
 				feedback_unit = "player",
@@ -1265,6 +1271,9 @@ D.profile = {
 					y = 6,
 				},
 			},
+			status = {
+				enabled = true,
+			},
 			threat = {
 				enabled = false,
 				feedback_unit = "target",
@@ -1406,6 +1415,9 @@ D.profile = {
 					x = 2,
 					y = -2,
 				},
+			},
+			status = {
+				enabled = true,
 			},
 			threat = {
 				enabled = true,
@@ -1591,6 +1603,9 @@ D.profile = {
 					x = 0,
 					y = 6,
 				},
+			},
+			status = {
+				enabled = true,
 			},
 			threat = {
 				enabled = false,

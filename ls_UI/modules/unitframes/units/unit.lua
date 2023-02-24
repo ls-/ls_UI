@@ -29,6 +29,10 @@ function small_proto:Update()
 		self:UpdateRaidTargetIndicator()
 		self:UpdateThreatIndicator()
 		self:UpdateClassIndicator()
+
+		if self.Status then
+			self:UpdateStatus()
+		end
 	else
 		if self:IsEnabled() then
 			self:Disable()
@@ -121,6 +125,7 @@ function large_proto:AlignWidgets()
 
 		self.Status:ClearAllPoints()
 		self.Status:SetPoint("RIGHT", self, "BOTTOMRIGHT", -4, -1)
+		self.Status:SetJustifyH("RIGHT")
 	else
 		self.PvPSlot:ClearAllPoints()
 		self.PvPSlot:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", 0, 10)
@@ -131,6 +136,7 @@ function large_proto:AlignWidgets()
 
 		self.Status:ClearAllPoints()
 		self.Status:SetPoint("LEFT", self, "BOTTOMLEFT", 4, -1)
+		self.Status:SetJustifyH("LEFT")
 	end
 end
 
@@ -144,12 +150,7 @@ function UF:CreateLargeFrame(frame)
 	frame.PvPIndicator = self:CreatePvPIndicator(frame, frame.TextureParent)
 	pvpSlot:Capture(frame.PvPIndicator.Holder)
 
-	local status = frame.TextParent:CreateFontString(nil, "ARTWORK")
-	status:SetFont(GameFontNormal:GetFont(), 16)
-	status:SetJustifyH("LEFT")
-	status:SetPoint("LEFT", frame, "BOTTOMLEFT", 4, -1)
-	frame:Tag(status, "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]")
-	frame.Status = status
+	frame.Status = self:CreateStatus(frame, frame.TextParent)
 
 	return frame
 end

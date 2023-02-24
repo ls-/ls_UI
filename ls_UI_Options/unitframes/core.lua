@@ -179,8 +179,22 @@ local function getUnitFrameOptions(order, unit, name)
 					UNITFRAMES:For(unit, "UpdatePvPIndicator")
 				end,
 			}, -- 14
-			mirror_widgets = {
+			status = {
 				order = 15,
+				type = "toggle",
+				name = L["STATUS_ICONS"],
+				get = function()
+					return C.db.profile.units[unit].status.enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].status.enabled = value
+
+					UNITFRAMES:For(unit, "UpdateConfig")
+					UNITFRAMES:For(unit, "UpdateStatus")
+				end,
+			}, -- 15
+			mirror_widgets = {
+				order = 16,
 				type = "toggle",
 				name = L["MIRROR_WIDGETS"],
 				desc = L["MIRROR_WIDGETS_DESC"],
@@ -193,14 +207,14 @@ local function getUnitFrameOptions(order, unit, name)
 					UNITFRAMES:For(unit, "UpdateConfig")
 					UNITFRAMES:For(unit, "AlignWidgets")
 				end,
-			}, -- 15
+			}, -- 16
 			spacer_2 = {
-				order = 16,
+				order = 20,
 				type = "description",
 				name = " ",
-			}, -- 16
+			}, -- 20
 			border = {
-				order = 17,
+				order = 21,
 				type = "group",
 				name = L["BORDER_COLOR"],
 				inline = true,
@@ -224,46 +238,47 @@ local function getUnitFrameOptions(order, unit, name)
 						name = L["REACTION"],
 					},
 				},
-			}, -- 17
+			}, -- 21
 			spacer_4 = {
-				order = 18,
+				order = 30,
 				type = "description",
 				name = " ",
-			}, -- 18
-			health = CONFIG:CreateUnitFrameHealthOptions(19, unit),
-			power = CONFIG:CreateUnitFramePowerOptions(20, unit),
-			-- alt_power = {}, -- 21
-			-- class_power = {}, -- 21
-			-- castbar = {}, -- 22
-			-- auras = {}, -- 23
-			portrait = CONFIG:CreateUnitFramePortraitOptions(24, unit),
-			raid_target = CONFIG:CreateUnitFrameRaidTargetOptions(25, unit),
-			name = CONFIG:CreateUnitFrameNameOptions(26, unit),
-			debuff = CONFIG:CreateUnitFrameDebuffIconsOptions(27, unit),
-			-- custom_texts = {}, -- 28
-			fading = CONFIG:CreateUnitFrameFadingOptions(29, unit)
+			}, -- 30
+			health = CONFIG:CreateUnitFrameHealthOptions(31, unit),
+			power = CONFIG:CreateUnitFramePowerOptions(32, unit),
+			-- alt_power = {}, -- 33
+			-- class_power = {}, -- 33
+			-- castbar = {}, -- 34
+			-- auras = {}, -- 35
+			portrait = CONFIG:CreateUnitFramePortraitOptions(36, unit),
+			raid_target = CONFIG:CreateUnitFrameRaidTargetOptions(37, unit),
+			name = CONFIG:CreateUnitFrameNameOptions(38, unit),
+			debuff = CONFIG:CreateUnitFrameDebuffIconsOptions(39, unit),
+			-- custom_texts = {}, -- 40
+			fading = CONFIG:CreateUnitFrameFadingOptions(41, unit)
 		},
 	}
 
 	if unit == "player" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerOptions(21, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
+		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerOptions(33, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
 	elseif unit == "pet" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
 		temp.args.pvp = nil
+		temp.args.status = nil
 		temp.args.mirror_widgets = nil
 		temp.args.fading = nil
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
 	elseif unit == "targettarget" then
 		temp.disabled = isTargetFrameDisabled
 		temp.args.debuff = nil
@@ -272,9 +287,9 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.fading = nil
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
 	elseif unit == "focustarget" then
 		temp.disabled = isFocusFrameDisabled
 		temp.args.debuff = nil
@@ -283,11 +298,12 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.fading = nil
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
-		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerOptions(21, unit)
-		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(22, unit)
-		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(23, unit)
-		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(28, unit)
+		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerOptions(33, unit)
+		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
+		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
+		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
 		temp.args.pvp = nil
+		temp.args.status = nil
 		temp.args.mirror_widgets = nil
 
 		temp.args.per_row = {
