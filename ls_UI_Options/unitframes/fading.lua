@@ -25,7 +25,7 @@ local function isFadingDisabled(info)
 end
 
 function CONFIG:CreateUnitFrameFadingOptions(order, unit)
-	return {
+	local temp = {
 		order = order,
 		type = "group",
 		name = L["FADING"],
@@ -73,6 +73,13 @@ function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 				name = L["TARGET"],
 				disabled = isFadingDisabled,
 			},
+			health = {
+				order = inc(1),
+				type = "toggle",
+				name = L["HEALTH"],
+				desc = L["HEALTH_FADING_DESC"],
+				disabled = isFadingDisabled,
+			},
 			in_duration = {
 				order = inc(1),
 				type = "range",
@@ -110,4 +117,59 @@ function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 			},
 		},
 	}
+
+	if unit == "player" then
+		temp.set = function(info, value)
+			C.db.profile.units.player.fade[info[#info]] = value
+
+			UNITFRAMES:For("player", "UpdateConfig")
+			UNITFRAMES:For("player", "UpdateFading")
+			UNITFRAMES:For("pet", "UpdateConfig")
+			UNITFRAMES:For("pet", "UpdateFading")
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units.player.fade, C.db.profile.units.player.fade, {enabled = true})
+			UNITFRAMES:For("player", "UpdateConfig")
+			UNITFRAMES:For("player", "UpdateFading")
+			UNITFRAMES:For("pet", "UpdateConfig")
+			UNITFRAMES:For("pet", "UpdateFading")
+		end
+	elseif unit == "focus" then
+		temp.set = function(info, value)
+			C.db.profile.units.focus.fade[info[#info]] = value
+
+			UNITFRAMES:For("focus", "UpdateConfig")
+			UNITFRAMES:For("focus", "UpdateFading")
+			UNITFRAMES:For("focustarget", "UpdateConfig")
+			UNITFRAMES:For("focustarget", "UpdateFading")
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units.focus.fade, C.db.profile.units.focus.fade, {enabled = true})
+			UNITFRAMES:For("focus", "UpdateConfig")
+			UNITFRAMES:For("focus", "UpdateFading")
+			UNITFRAMES:For("focustarget", "UpdateConfig")
+			UNITFRAMES:For("focustarget", "UpdateFading")
+		end
+	elseif unit == "target" then
+		temp.set = function(info, value)
+			C.db.profile.units.target.fade[info[#info]] = value
+
+			UNITFRAMES:For("target", "UpdateConfig")
+			UNITFRAMES:For("target", "UpdateFading")
+			UNITFRAMES:For("targettarget", "UpdateConfig")
+			UNITFRAMES:For("targettarget", "UpdateFading")
+		end
+
+		temp.args.reset.func = function()
+			CONFIG:CopySettings(D.profile.units.target.fade, C.db.profile.units.target.fade, {enabled = true})
+			UNITFRAMES:For("target", "UpdateConfig")
+			UNITFRAMES:For("target", "UpdateFading")
+			UNITFRAMES:For("targettarget", "UpdateConfig")
+			UNITFRAMES:For("targettarget", "UpdateFading")
+		end
+	end
+
+	return temp
 end

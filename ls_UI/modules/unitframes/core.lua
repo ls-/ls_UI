@@ -35,10 +35,21 @@ local configIgnoredKeys = {
 	threat = true,
 }
 
+local parentUnits = {
+	["pet"] = "player",
+	["focustarget"] = "focus",
+	["targettarget"] = "target",
+}
+
 local frame_proto = {}
 
 function frame_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[self.__unit], self._config, configIgnoredKeys)
+
+	local parentUnit = parentUnits[self.__unit]
+	if parentUnit then
+		self._config.fade = E:CopyTable(C.db.profile.units[parentUnit].fade, self._config.fade)
+	end
 end
 
 function frame_proto:OnEnter()

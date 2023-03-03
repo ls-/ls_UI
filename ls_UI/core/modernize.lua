@@ -768,6 +768,19 @@ function P:Modernize(data, name, key)
 
 			data.version = 10000501
 		end
+
+		--> 100005.03
+		if data.version < 10000503 then
+			if data.units then
+				for _, unit in next, {"pet", "focustarget", "targettarget"} do
+					if data.units[unit] then
+						data.units[unit].fade = nil
+					end
+				end
+			end
+
+			data.version = 10000503
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then

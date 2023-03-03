@@ -17,15 +17,6 @@ local buttons = {}
 local activeButtons = {}
 local isInit = false
 
-local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
-local MEMORY_TEMPLATE = "%.2f MiB"
-
-local ROLE_NAMES = {
-	tank = L["TANK_BLUE"],
-	healer = L["HEALER_GREEN"],
-	damager = L["DAMAGER_RED"],
-}
-
 local BUTTONS = {
 	character = {
 		name = "CharacterMicroButton",
@@ -459,7 +450,12 @@ do
 		damager = {},
 		total = 0
 	}
-	local roles = {"tank", "healer", "damager"}
+	local ROLES = {"tank", "healer", "damager"}
+	local ROLE_NAMES = {
+		tank = L["TANK_BLUE"],
+		healer = L["HEALER_GREEN"],
+		damager = L["DAMAGER_RED"],
+	}
 
 	local function fetchCTAData(dungeonID, dungeonName, shortageRole, shortageIndex, numRewards)
 		cta[shortageRole][dungeonID] = cta[shortageRole][dungeonID] or {}
@@ -512,7 +508,7 @@ do
 		if self:IsEnabled() then
 			local gray = C.db.global.colors.gray
 
-			for _, role in next, roles do
+			for _, role in next, ROLES do
 				local hasTitle = false
 
 				for _, v in next, cta[role] do
@@ -683,9 +679,13 @@ end
 
 local main_button_proto = {}
 do
+	local cache = {}
 	local addOns = {}
-	local memUsage, latencyHome, latencyWorld = 0, 0, 0
+	local memUsage = 0
+	local latencyHome, latencyWorld = 0, 0
 	local MED_LATENCY = 600
+	local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
+	local MEMORY_TEMPLATE = "%.2f MiB"
 	local _
 
 	local function sortFunc(a, b)
@@ -705,32 +705,40 @@ do
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["MEMORY_COLON"])
 
-				t_wipe(addOns)
-				memUsage = 0
-
 				UpdateAddOnMemoryUsage()
 
 				for i = 1, GetNumAddOns() do
-					addOns[i] = {
-						[1] = select(2, GetAddOnInfo(i)),
-						[2] = GetAddOnMemoryUsage(i),
-						[3] = IsAddOnLoaded(i),
-					}
+					if IsAddOnLoaded(i) then
+						if not cache[i] then
+							cache[i] = {
+								[1] = select(2, GetAddOnInfo(i)),
+							}
+						end
 
-					memUsage = memUsage + addOns[i][2]
-				end
-
-				t_sort(addOns, sortFunc)
-
-				for i = 1, #addOns do
-					if addOns[i][3] then
-						local m = addOns[i][2]
-
-						GameTooltip:AddDoubleLine(addOns[i][1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+						cache[i][2] = GetAddOnMemoryUsage(i)
 					end
 				end
 
-				GameTooltip:AddDoubleLine(L["TOTAL"], MEMORY_TEMPLATE:format(memUsage / 1024))
+				t_wipe(addOns)
+				memUsage = 0
+
+				for i, data in next, cache do
+					t_insert(addOns, {i, data[2]})
+
+					memUsage = memUsage + data[2]
+				end
+
+				if memUsage > 0 then
+					t_sort(addOns, sortFunc)
+
+					for i = 1, #addOns do
+						local m = addOns[i][2]
+
+						GameTooltip:AddDoubleLine(cache[addOns[i][1]][1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+					end
+
+					GameTooltip:AddDoubleLine(L["TOTAL"], MEMORY_TEMPLATE:format(memUsage / 1024))
+				end
 			else
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["MAINMENU_BUTTON_HOLD_TOOLTIP"])
@@ -810,25 +818,6 @@ function bar_proto:UpdateButtonList()
 	end
 
 	t_sort(self._buttons, buttonSort)
-end
-
-local function updateMicroButtonsParent()
-	if isInit then
-		for _, button in next, buttons do
-			button:UpdateVisibility()
-		end
-	end
-end
-
-local function moveMicroButtons()
-	if isInit then
-		for _, button in next, buttons do
-			button:UpdateVisibility()
-		end
-
-		MODULE:For("micromenu", "UpdateButtonList")
-		MODULE:For("micromenu", "UpdateLayout")
-	end
 end
 
 local function updateMicroButtons()

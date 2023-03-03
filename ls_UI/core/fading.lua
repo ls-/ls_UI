@@ -41,13 +41,25 @@ end
 local combatWidgets = {}
 
 local function addCombatWidget(object, widget)
-	widget.hasTarget = InCombatLockdown()
+	widget.inCombat = InCombatLockdown()
 	combatWidgets[object] = widget
 end
 
 local function removeCombatWidget(object, widget)
-	widget.hasTarget = false
+	widget.inCombat = false
 	combatWidgets[object] = nil
+end
+
+local healthWidgets = {}
+
+local function addHealthWidget(object, widget)
+	widget.maxHealth = (UnitHealth("player") / UnitHealthMax("player")) == 1
+	healthWidgets[object] = widget
+end
+
+local function removeHealthWidget(object, widget)
+	widget.maxHealth = false
+	healthWidgets[object] = nil
 end
 
 local activeWidgets = {}
@@ -130,7 +142,9 @@ updater:SetScript("OnEvent", function(self, event)
 		for object, widget in next, combatWidgets do
 			widget.inCombat = false
 
-			object:EnableFading()
+			if not widget.hasTarget and widget.maxHealth then
+				object:EnableFading()
+			end
 		end
 	elseif event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
 		if UnitExists("target") or UnitExists("focus") then
@@ -147,10 +161,34 @@ updater:SetScript("OnEvent", function(self, event)
 			for object, widget in next, targetWidgets do
 				widget.hasTarget = false
 
-				object:EnableFading()
+				if not widget.inCombat and widget.maxHealth then
+					object:EnableFading()
+				end
 			end
 
 			self.hasTarget = false
+		end
+	elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
+		if (UnitHealth("player") / UnitHealthMax("player")) == 1 then
+			if not self.maxHealth then
+				for object, widget in next, healthWidgets do
+					widget.maxHealth = true
+
+					if not (widget.inCombat or widget.hasTarget) then
+						object:EnableFading()
+					end
+				end
+
+				self.maxHealth = true
+			end
+		else
+			for object, widget in next, healthWidgets do
+				widget.maxHealth = false
+
+				object:DisableFading()
+			end
+
+			self.maxHealth = false
 		end
 	end
 end)
@@ -162,6 +200,11 @@ updater:RegisterEvent("PLAYER_REGEN_DISABLED")
 -- target widgets
 updater:RegisterEvent("PLAYER_TARGET_CHANGED")
 updater:RegisterEvent("PLAYER_FOCUS_CHANGED")
+
+-- player hp widgets
+-- ? should I add others units? I don't have party/raid frames, but...
+updater:RegisterUnitEvent("UNIT_HEALTH", "player")
+updater:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
 
 local function isMouseOver(frame)
 	return frame:IsMouseOver(4, -4, -4, 4)
@@ -241,6 +284,7 @@ function object_proto:UpdateFading()
 	removeActiveWidget(self, widget)
 	removeTargetWidget(self, widget)
 	removeCombatWidget(self, widget)
+	removeHealthWidget(self, widget)
 
 	-- reset alpha, kinda ghetto, but it works
 	self:SetAlpha(1)
@@ -255,6 +299,10 @@ function object_proto:UpdateFading()
 
 		if widget.config.target then
 			addTargetWidget(self, widget)
+		end
+
+		if widget.config.health then
+			addHealthWidget(self, widget)
 		end
 
 		self:EnableFading()
