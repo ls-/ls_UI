@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 100005.04
+
+- Fixed fading. Adding new stuff is never easy...
+
 ## Version 100005.03
 
 ### Unit Frames

@@ -34,7 +34,7 @@ local function addTargetWidget(object, widget)
 end
 
 local function removeTargetWidget(object, widget)
-	widget.hasTarget = false
+	widget.hasTarget = nil
 	targetWidgets[object] = nil
 end
 
@@ -46,7 +46,7 @@ local function addCombatWidget(object, widget)
 end
 
 local function removeCombatWidget(object, widget)
-	widget.inCombat = false
+	widget.inCombat = nil
 	combatWidgets[object] = nil
 end
 
@@ -58,7 +58,7 @@ local function addHealthWidget(object, widget)
 end
 
 local function removeHealthWidget(object, widget)
-	widget.maxHealth = false
+	widget.maxHealth = nil
 	healthWidgets[object] = nil
 end
 
@@ -142,9 +142,7 @@ updater:SetScript("OnEvent", function(self, event)
 		for object, widget in next, combatWidgets do
 			widget.inCombat = false
 
-			if not widget.hasTarget and widget.maxHealth then
-				object:EnableFading()
-			end
+			object:EnableFading()
 		end
 	elseif event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
 		if UnitExists("target") or UnitExists("focus") then
@@ -161,9 +159,7 @@ updater:SetScript("OnEvent", function(self, event)
 			for object, widget in next, targetWidgets do
 				widget.hasTarget = false
 
-				if not widget.inCombat and widget.maxHealth then
-					object:EnableFading()
-				end
+				object:EnableFading()
 			end
 
 			self.hasTarget = false
@@ -174,9 +170,7 @@ updater:SetScript("OnEvent", function(self, event)
 				for object, widget in next, healthWidgets do
 					widget.maxHealth = true
 
-					if not (widget.inCombat or widget.hasTarget) then
-						object:EnableFading()
-					end
+					object:EnableFading()
 				end
 
 				self.maxHealth = true
@@ -245,7 +239,7 @@ function addHoverWidget(object, widget)
 end
 
 function removeHoverWidget(object, widget)
-	widget.canHover = false
+	widget.canHover = nil
 	hoverWidgets[object] = nil
 
 	if not next(hoverWidgets) then
@@ -271,7 +265,7 @@ end
 function object_proto:EnableFading()
 	local widget = widgets[self]
 
-	if not (widget.hasTarget or widget.inCombat) then
+	if not (widget.inCombat or widget.hasTarget) and widget.maxHealth ~= false then
 		addHoverWidget(self, widget)
 	end
 end
