@@ -132,6 +132,8 @@ do
 
 			MinimapCluster.IndicatorFrame:ClearAllPoints()
 			MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
+
+			Minimap.DifficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -16)
 		else
 			self:SetPoint("CENTER", MinimapCluster, "CENTER", 0, -8, true)
 
@@ -139,6 +141,8 @@ do
 
 			MinimapCluster.IndicatorFrame:ClearAllPoints()
 			MinimapCluster.IndicatorFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
+
+			Minimap.DifficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -32)
 		end
 
 		if HybridMinimap then
@@ -364,7 +368,6 @@ function MODULE:Init()
 		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
 		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
 		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
-		difficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -32)
 		difficultyFlag:SetSize(48, 48)
 		difficultyFlag:Hide()
 		Minimap.DifficultyFlag = difficultyFlag
