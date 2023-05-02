@@ -2706,9 +2706,6 @@ D.profile = {
 		gm = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
 		},
-		maw_buffs = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -188},
-		},
 		talking_head = {
 			hide = false,
 		},
@@ -2794,9 +2791,6 @@ PrD.profile = {
 		},
 		mail = {
 			enabled = false,
-		},
-		maw_buffs = { -- MawBuffsBelowMinimapFrame
-			enabled = true,
 		},
 		vehicle_seat = { -- VehicleSeatIndicator
 			enabled = true

@@ -118,25 +118,6 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
-			maw_buffs = {
-				order = inc(1),
-				type = "toggle",
-				name = L["MAW_BUFFS"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					PrC.db.profile.blizzard.maw_buffs.enabled = value
-
-					if not BLIZZARD:HasMawBuffs() then
-						if value then
-							BLIZZARD:SetUpMawBuffs()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end,
-			},
 			vehicle_seat = {
 				order = inc(1),
 				type = "toggle",
