@@ -856,8 +856,6 @@ do
 		local enchant = ""
 		local gems, idx = {"", "", ""}, 1
 		for _, line in next, data.lines do
-			TooltipUtil.SurfaceArgs(line)
-
 			if line.enchantID then
 				enchant = line.leftText:match(ENCHANT_PATTERN)
 			elseif line.socketType then

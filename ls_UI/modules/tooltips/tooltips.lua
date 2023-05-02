@@ -214,8 +214,8 @@ function MODULE:Init()
 				tooltip:AddLine(" ")
 
 				local caster
-				if auraGetterToAPI[tooltip.info.getterName] then
-					caster = auraGetterToAPI[tooltip.info.getterName](tooltip.info.getterArgs)
+				if auraGetterToAPI[tooltip.processingInfo.getterName] then
+					caster = auraGetterToAPI[tooltip.processingInfo.getterName](tooltip.processingInfo.getterArgs)
 				end
 
 				if caster then
