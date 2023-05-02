@@ -77,6 +77,13 @@ function P:Modernize(data, name, key)
 
 			data.version = 10000001
 		end
+
+		--> 100100.01
+		if data.version < 10010001 then
+			data.login_message = nil
+
+			data.version = 10010001
+		end
 	elseif key == "profile" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -781,6 +788,16 @@ function P:Modernize(data, name, key)
 
 			data.version = 10000503
 		end
+
+		--> 100100.01
+		if data.version < 10010001 then
+			if data.blizzard then
+				data.blizzard.durability = nil
+				data.blizzard.maw_buffs = nil
+			end
+
+			data.version = 10010001
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -885,6 +902,16 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 10000001
+		end
+
+		--> 100100.01
+		if data.version < 10010001 then
+			if data.blizzard then
+				data.blizzard.durability = nil
+				data.blizzard.maw_buffs = nil
+			end
+
+			data.version = 10010001
 		end
 	end
 end
