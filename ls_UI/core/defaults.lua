@@ -2700,9 +2700,6 @@ D.profile = {
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 226},
 		},
-		durability = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -250},
-		},
 		gm = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
 		},
@@ -2782,9 +2779,6 @@ PrD.profile = {
 		},
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			enabled = true,
-		},
-		durability = { -- DurabilityFrame
-			enabled = true
 		},
 		gm = { -- TicketStatusFrame
 			enabled = true
