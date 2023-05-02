@@ -527,7 +527,6 @@ D.global = {
 			vert = "LS",
 		},
 	},
-	login_message = true,
 }
 
 D.profile = {
