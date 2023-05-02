@@ -221,7 +221,7 @@ E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
 E.SCREEN_SCALE = UIParent:GetScale()
 
 E.VER = {
-	string = _G.GetAddOnMetadata(addon, "Version")
+	string = C_AddOns.GetAddOnMetadata(addon, "Version")
 }
 E.VER.number = tonumber(E.VER.string:gsub("%D", ""), nil)
 

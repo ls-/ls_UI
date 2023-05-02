@@ -99,10 +99,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	PrC.db = LibStub("AceDB-3.0"):New("LS_UI_PRIVATE_CONFIG", PrD)
 
-	if C.db.global.login_message and (not C.db.global.version or C.db.global.version < E.VER.number) then
-		print(L["LOGIN_MSG"]:format(L["LS_UI"], E.VER.string, M.textures.icons_inline.DISCORD_32, L["INFORMATION"]))
-	end
-
 	addRefs()
 
 	if AdiButtonAuras and AdiButtonAuras.RegisterLAB then

@@ -527,7 +527,6 @@ D.global = {
 			vert = "LS",
 		},
 	},
-	login_message = true,
 }
 
 D.profile = {
@@ -2700,14 +2699,8 @@ D.profile = {
 			},
 			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 226},
 		},
-		durability = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -250},
-		},
 		gm = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
-		},
-		maw_buffs = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -188},
 		},
 		talking_head = {
 			hide = false,
@@ -2786,17 +2779,11 @@ PrD.profile = {
 		digsite_bar = { -- ArcheologyDigsiteProgressBar
 			enabled = true,
 		},
-		durability = { -- DurabilityFrame
-			enabled = true
-		},
 		gm = { -- TicketStatusFrame
 			enabled = true
 		},
 		mail = {
 			enabled = false,
-		},
-		maw_buffs = { -- MawBuffsBelowMinimapFrame
-			enabled = true,
 		},
 		vehicle_seat = { -- VehicleSeatIndicator
 			enabled = true

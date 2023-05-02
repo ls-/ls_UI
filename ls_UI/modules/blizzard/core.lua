@@ -16,7 +16,6 @@ function BLIZZARD:Init()
 		self:SetUpDigsiteBar()
 		self:SetUpGMFrame()
 		self:SetUpMail()
-		self:SetUpMawBuffs()
 		self:SetUpTalkingHead()
 		self:SetUpVehicleSeatFrame()
 
