@@ -13,6 +13,7 @@ local unpack = _G.unpack
 -- Mine
 local isInit = false
 
+local cluster_proto = {}
 local minimap_proto = {}
 
 do
@@ -115,7 +116,7 @@ do
 			GetMinimapShape = theBodyIsSquare
 		end
 
-		MinimapCluster:SetSize(info[3] + 24, info[3] + 24)
+		MinimapCluster:SetSize(info[3] + 24, info[3] + 24, true)
 		E.Movers:Get(MinimapCluster):UpdateSize()
 
 		self:SetSize(info[3] - 22, info[3] - 22)
@@ -162,6 +163,15 @@ do
 		else
 			self.DifficultyFlag:UnregisterAllEvents()
 			self.DifficultyFlag:Hide()
+		end
+	end
+
+	function cluster_proto:ResetSize(_, _, shouldIgnore)
+		if not shouldIgnore then
+			local scale = self._config.scale
+			local info = borderInfo[scale] or borderInfo[100]
+
+			self:SetSize(info[3] + 24, info[3] + 24, true)
 		end
 	end
 end
@@ -290,8 +300,11 @@ function MODULE:Init()
 			LoadAddOn("Blizzard_TimeManager")
 		end
 
+		Mixin(MinimapCluster, cluster_proto)
+
 		MinimapCluster:ClearAllPoints()
 		MinimapCluster:SetPoint(unpack(C.db.profile.minimap.point))
+		hooksecurefunc(MinimapCluster, "SetSize", MinimapCluster.ResetSize)
 		E.Movers:Create(MinimapCluster)
 
 		Mixin(Minimap, minimap_proto)
