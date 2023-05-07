@@ -17,7 +17,7 @@ local isInit = false
 local CFG = {
 	bar1 = {
 		flyout_dir = "UP",
-		num = 12,
+		-- num = 12,
 		per_row = 12,
 		width = 32,
 		height = 0,
@@ -197,10 +197,18 @@ function bar1_proto:UpdateConfig()
 	self._config.rightclick_selfcast = C.db.profile.bars.rightclick_selfcast
 
 	if MODULE:IsRestricted() then
+		if C.db.profile.bars.bar1.num < 6 then
+			C.db.profile.bars.bar1.num = 6
+		end
+
 		self._config.grid = C.db.profile.bars.bar1.grid
+		self._config.num = C.db.profile.bars.bar1.num
 		self._config.count = E:CopyTable(C.db.profile.bars.bar1.count, self._config.count)
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
+
+		self:SetAttribute("maxbuttons", self._config.num)
+		MODULE:UpdateMainBarMaxButtons(self._config.num)
 	end
 end
 

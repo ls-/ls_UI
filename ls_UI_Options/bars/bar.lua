@@ -344,7 +344,9 @@ function CONFIG:CreateBarOptions(order, barID, name)
 	if barID == "bar1" then
 		temp.args.reset.disabled = isModuleDisabledOrRestricted
 		temp.args.visible.disabled = isModuleDisabledOrRestricted
-		temp.args.num.disabled = isModuleDisabledOrRestricted
+		if BARS:IsRestricted() then
+			temp.args.num.min = 6
+		end
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
 		temp.args.spacing.disabled = isModuleDisabledOrRestricted
 		temp.args.width.disabled = isModuleDisabledOrRestricted

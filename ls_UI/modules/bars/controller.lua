@@ -9,6 +9,7 @@ local unpack = _G.unpack
 
 -- Mine
 local isInit = false
+local isFinilized = false
 
 local barController
 local animController
@@ -48,7 +49,7 @@ local WIDGETS = {
 				self:Show()
 
 				for i = 7, 12 do
-					if message == 6 then
+					if i > message then
 						buttons[i]:SetAttribute("statehidden", true)
 						buttons[i]:Hide()
 					else
@@ -67,7 +68,7 @@ local WIDGETS = {
 		frame_level_offset = 3,
 		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
 		on_play = function(frame, newstate)
-			frame:UpdateSize(newstate == 6 and 756 / 2 or 1188 / 2, 12)
+			frame:UpdateSize(756 / 2 + 36 * (newstate - 6), 12)
 		end,
 	},
 }
@@ -88,40 +89,6 @@ function MODULE:AddControlledWidget(slot, frame)
 			end
 
 			widget.frame = frame
-
-			if not barController.isDriverRegistered and WIDGETS.ACTION_BAR.frame
-				and WIDGETS.PET_BATTLE_BAR.frame and WIDGETS.XP_BAR.frame then
-
-				-- _"childupdate-numbuttons" is executed in barController's environment
-				for i = 1, 12 do
-					barController:SetFrameRef("button" .. i, _G["LSActionBar1Button" .. i])
-				end
-
-				barController:Execute([[
-					top = self:GetFrameRef("top")
-					bottom = self:GetFrameRef("bottom")
-					buttons = table.new()
-
-					for i = 1, 12 do
-						table.insert(buttons, self:GetFrameRef("button" .. i))
-					end
-				]])
-
-				barController:SetAttribute("_onstate-mode", [[
-					if newstate ~= self:GetAttribute("numbuttons") then
-						self:SetAttribute("numbuttons", newstate)
-						self:ChildUpdate("numbuttons", newstate)
-						self:CallMethod("Update")
-
-						top:SetWidth(newstate == 6 and 0.001 or 216)
-						bottom:SetWidth(newstate == 6 and 0.001 or 216)
-					end
-				]])
-
-				RegisterStateDriver(barController, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; 12")
-
-				barController.isDriverRegistered = true
-			end
 		end
 	end
 end
@@ -142,6 +109,19 @@ function MODULE:SetupActionBarController()
 			end
 
 			barController.Shuffle:Play()
+		end
+		barController.UpdateSimple = function(_, newstate)
+			for _, widget in next, WIDGETS do
+				if widget.frame and widget.on_play then
+					widget.on_play(widget.frame, newstate)
+				end
+			end
+
+			animController.Top:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+			animController.Top.Mid:SetTexCoord(233 / 2048, (233 + 72 * (newstate - 6)) / 2048, 1 / 256, 91 / 256)
+
+			animController.Bottom:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+			animController.Bottom.Mid:SetTexCoord(569 / 2048, (569 + 72 * (newstate - 6)) / 2048, 92 / 256, 138 / 256)
 		end
 
 		-- These frames are used as anchors/parents for secure/protected frames
@@ -256,8 +236,11 @@ function MODULE:SetupActionBarController()
 			end)
 
 			C_Timer.After(0.4, function()
-				animController.Top:SetWidth(newstate == 6 and 0.001 or 216)
-				animController.Bottom:SetWidth(newstate == 6 and 0.001 or 216)
+				animController.Top:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+				animController.Top.Mid:SetTexCoord(233 / 2048, (233 + 72 * (newstate - 6)) / 2048, 1 / 256, 91 / 256)
+
+				animController.Bottom:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+				animController.Bottom.Mid:SetTexCoord(569 / 2048, (569 + 72 * (newstate - 6)) / 2048, 92 / 256, 138 / 256)
 			end)
 		end)
 		ag:SetScript("OnFinished", function()
@@ -342,6 +325,40 @@ function MODULE:SetupActionBarController()
 	end
 end
 
+function MODULE:FinalizeActionBarController()
+	if isInit and not isFinilized then
+		-- "_childupdate-numbuttons" is executed in barController's environment
+		for i = 1, 12 do
+			barController:SetFrameRef("button" .. i, _G["LSActionBar1Button" .. i])
+		end
+
+		barController:Execute([[
+			top = self:GetFrameRef("top")
+			bottom = self:GetFrameRef("bottom")
+			buttons = table.new()
+
+			for i = 1, 12 do
+				table.insert(buttons, self:GetFrameRef("button" .. i))
+			end
+		]])
+
+		barController:SetAttribute("_onstate-mode", [[
+			if newstate ~= self:GetAttribute("numbuttons") then
+				self:SetAttribute("numbuttons", newstate)
+				self:ChildUpdate("numbuttons", newstate)
+				self:CallMethod("Update")
+
+				top:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+				bottom:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
+			end
+		]])
+
+		isFinilized = true
+
+		self:UpdateMainBarMaxButtons(LSActionBar1:GetAttribute("maxbuttons"))
+	end
+end
+
 function MODULE:UpdateEndcaps()
 	local endcaps = C.db.profile.bars.endcaps
 	if endcaps == "BOTH" then
@@ -364,4 +381,20 @@ function MODULE:UpdateScale()
 
 	barController:SetScale(scale)
 	animController:SetScale(scale)
+end
+
+function MODULE:UpdateMainBarMaxButtons(num)
+	if not isFinilized then return end
+	if not num then return end
+
+	barController:Execute(([[
+		self:SetAttribute("numbuttons", %1$d)
+		self:ChildUpdate("numbuttons", %1$d)
+		self:CallMethod("UpdateSimple", %1$d)
+
+		top:SetWidth(%1$d == 6 and 0.001 or 36 * (%1$d - 6))
+		bottom:SetWidth(%1$d == 6 and 0.001 or 36 * (%1$d - 6))
+	]]):format(num))
+
+	RegisterStateDriver(barController, "mode", "[vehicleui][petbattle][overridebar][possessbar] 6; " .. num)
 end

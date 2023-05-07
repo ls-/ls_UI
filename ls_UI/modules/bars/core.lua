@@ -239,6 +239,7 @@ function MODULE:Init()
 		MODULE:CreateMicroMenu()
 		MODULE:CreateBag()
 		MODULE:CreateXPBar()
+		MODULE:FinalizeActionBarController()
 		MODULE:CleanUp()
 		MODULE:UpdateBlizzVehicle()
 
