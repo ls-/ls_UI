@@ -947,3 +947,37 @@ do
 
 	E.FontStrings = module
 end
+
+----------
+-- MAPS --
+----------
+
+-- credit: elcius@WoWInterface
+do
+	local mapRects = {}
+	local tempVec2D = CreateVector2D(0, 0)
+
+	function E:GetPlayerMapPosition()
+		tempVec2D.x, tempVec2D.y = UnitPosition("player")
+		if not tempVec2D.x then return end
+
+		local mapID = C_Map.GetBestMapForUnit("player")
+		if not mapID then return end
+
+		local mapRect = mapRects[mapID]
+		if not mapRect then
+			local _, pos1 = C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(0, 0))
+			local _, pos2 = C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(1, 1))
+			if not (pos1 and pos2) then return end
+
+			mapRect = {pos1, pos2}
+			mapRect[2]:Subtract(mapRect[1])
+
+			mapRects[mapID] = mapRect
+		end
+
+		tempVec2D:Subtract(mapRect[1])
+
+		return tempVec2D.y / mapRect[2].y * 100, tempVec2D.x / mapRect[2].x * 100
+	end
+end

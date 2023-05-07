@@ -3,6 +3,7 @@ local _, CONFIG = ...
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
+local tonumber = _G.tonumber
 
 -- Mine
 local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
@@ -205,6 +206,89 @@ function CONFIG:CreateMinimapOptions(order)
 				},
 			},
 			spacer_7 = {
+				order = inc(1),
+				type = "description",
+				name = " ",
+			},
+			coords = {
+				order = inc(1),
+				type = "group",
+				name = L["COORDS"],
+				inline = true,
+				get = function(info)
+					return C.db.profile.minimap.coords[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.minimap.coords[info[#info]] = value
+
+					Minimap:UpdateConfig()
+					Minimap:UpdateCoords()
+				end,
+				disabled = isModuleDisabled,
+				args = {
+					enabled = {
+						order = reset(2),
+						type = "toggle",
+						name = L["ENABLE"],
+					},
+					background = {
+						order = inc(2),
+						type = "toggle",
+						name = L["BACKGROUND"],
+					},
+					spacer_1 = {
+						order = inc(2),
+						type = "description",
+						name = " ",
+					},
+					point = {
+						order = inc(2),
+						type = "group",
+						name = "",
+						inline = true,
+						get = function(info)
+							return C.db.profile.minimap.coords.point[tonumber(info[#info])]
+						end,
+						set = function(info, value)
+							if C.db.profile.minimap.coords.point[tonumber(info[#info])] ~= value then
+								C.db.profile.minimap.coords.point[tonumber(info[#info])] = value
+
+								Minimap:UpdateConfig()
+								Minimap:UpdateCoords()
+							end
+						end,
+						args = {
+							["1"] = {
+								order = reset(2),
+								type = "select",
+								name = L["POINT"],
+								desc = L["POINT_DESC"],
+								values = CONFIG.POINTS_NO_CENTER,
+							},
+							["3"] = {
+								order = inc(2),
+								type = "select",
+								name = L["RELATIVE_POINT"],
+								desc = L["RELATIVE_POINT_DESC"],
+								values = CONFIG.POINTS_NO_CENTER,
+							},
+							["4"] = {
+								order = inc(2),
+								type = "range",
+								name = L["X_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+							["5"] = {
+								order = inc(2),
+								type = "range",
+								name = L["Y_OFFSET"],
+								min = -128, max = 128, step = 1,
+							},
+						},
+					},
+				},
+			},
+			spacer_8 = {
 				order = inc(1),
 				type = "description",
 				name = " ",

@@ -18,6 +18,7 @@ D.global = {
 		blue = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
 		yellow = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 		gray = rgb(136, 137, 135), -- #888987 (N5)
+		light_gray = rgb(202, 202, 202), -- #CACACA (N8)
 		dark_gray = rgb(59, 58, 58), -- #3B3A3A (N2)
 		black = rgb(0, 0, 0), -- #000000
 		white = rgb(255, 255, 255), -- #FFFFFF
@@ -1863,6 +1864,11 @@ D.profile = {
 		auto_zoom = 5,
 		color = {
 			border = false,
+		},
+		coords = {
+			enabled = false,
+			background = true,
+			point = {"TOP", "Minimap", "BOTTOM", 0, -8},
 		},
 		flag = {
 			enabled = true,

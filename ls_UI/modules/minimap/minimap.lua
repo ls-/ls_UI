@@ -30,7 +30,7 @@ do
 		if self._config.color.border then
 			self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]):GetRGB())
 		else
-			self.Border:SetVertexColor(1, 1, 1)
+			self.Border:SetVertexColor(C.db.global.colors.light_gray:GetRGB())
 		end
 	end
 
@@ -166,6 +166,25 @@ do
 		end
 	end
 
+
+	function minimap_proto:UpdateCoords()
+		if self._config.coords.enabled then
+			self.Coords:ClearAllPoints()
+			self.Coords:SetPoint(unpack(self._config.coords.point))
+			self.Coords:Show()
+
+			if self._config.coords.background then
+				self.Coords:SetBackdropColor(0, 0, 0, 0.6)
+				self.Coords:SetBackdropBorderColor(0, 0, 0, 0.6)
+			else
+				self.Coords:SetBackdropColor(0, 0, 0, 0)
+				self.Coords:SetBackdropBorderColor(0, 0, 0, 0)
+			end
+		else
+			self.Coords:Hide()
+		end
+	end
+
 	function cluster_proto:ResetSize(_, _, shouldIgnore)
 		if not shouldIgnore then
 			local scale = self._config.scale
@@ -290,6 +309,29 @@ do
 	end
 end
 
+local coords_proto = {}
+
+do
+	local COORDS_FORMAT = "%.1f / %.1f"
+	local NO_COORDS = "n / a"
+
+	function coords_proto:OnUpdate(elapsed)
+		self.elapsed = (self.elapsed or 0) - elapsed
+		if self.elapsed < 0 then
+			local x, y = E:GetPlayerMapPosition()
+			if x then
+				self.Text:SetFormattedText(COORDS_FORMAT, x, y)
+
+				self.elapsed = 0.1
+			else
+				self.Text:SetText(NO_COORDS)
+
+				self.elapsed = 5
+			end
+		end
+	end
+end
+
 function MODULE:IsInit()
 	return isInit
 end
@@ -396,6 +438,19 @@ function MODULE:Init()
 		flagIcon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
 		difficultyFlag.Icon = flagIcon
 
+		local coords = Mixin(E:CreateBackdrop(textureParent), coords_proto)
+		coords:SetFrameLevel(Minimap:GetFrameLevel() + 2)
+		coords:SetScript("OnUpdate", coords.OnUpdate)
+		Minimap.Coords = coords
+
+		local coordsText = coords:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		coordsText:SetPoint("CENTER", 0, 0)
+		coordsText:SetText("99.9 / 99.9")
+		coordsText:SetJustifyH("CENTER")
+		coords.Text = coordsText
+
+		coords:SetSize(coordsText:GetUnboundedStringWidth() + 10, coordsText:GetStringHeight() + 8)
+
 		hooksecurefunc(MinimapCluster, "SetHeaderUnderneath", function()
 			Minimap:UpdateConfig()
 			Minimap:UpdateLayout()
@@ -490,6 +545,7 @@ function MODULE:Update()
 		Minimap:UpdateLayout()
 		Minimap:UpdateBorderColor()
 		Minimap:UpdateDifficultyFlag()
+		Minimap:UpdateCoords()
 		MinimapCluster:UpdateFading()
 	end
 end
