@@ -7,6 +7,7 @@
 	<!-- can sort -->
 	<Script file="animation.lua"/>
 	<Script file="border.lua"/>
+	<Script file="backdrop.lua"/>
 	<Script file="button.lua"/>
 	<Script file="changelog.lua"/>
 	<Script file="cooldown.lua"/>

@@ -6,10 +6,12 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.1.0 support.
-- Removed login message for good. It served its purpose.
-
 ### Minimap
 
-- Fixed an issue where the difficulty flag's position wasn't adjusted when flipping the minimap.
+- Added minimap coordinates. Disabled by default.
+- Adjusted minimap border textures to make zone colouring more pronounced.
+
+### Unit Frames
+
+- Readded fading options for pet, target of focus, and target of target frames.
 ]]

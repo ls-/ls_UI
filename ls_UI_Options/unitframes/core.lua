@@ -261,12 +261,6 @@ local function getUnitFrameOptions(order, unit, name)
 
 	if unit == "player" then
 		temp.disabled = isPlayerFrameDisabled
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units.player, C.db.profile.units.player)
-			UNITFRAMES:For("player", "Update")
-			UNITFRAMES:For("pet", "UpdateConfig")
-			UNITFRAMES:For("pet", "UpdateFading")
-		end
 		temp.args.class_power = CONFIG:CreateUnitFrameClassPowerOptions(33, unit)
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
@@ -279,15 +273,8 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.pvp = nil
 		temp.args.status = nil
 		temp.args.mirror_widgets = nil
-		temp.args.fading = nil
 	elseif unit == "target" then
 		temp.disabled = isTargetFrameDisabled
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units.target, C.db.profile.units.target)
-			UNITFRAMES:For("target", "Update")
-			UNITFRAMES:For("targettarget", "UpdateConfig")
-			UNITFRAMES:For("targettarget", "UpdateFading")
-		end
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
 		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
@@ -296,15 +283,8 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.debuff = nil
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
-		temp.args.fading = nil
 	elseif unit == "focus" then
 		temp.disabled = isFocusFrameDisabled
-		temp.args.reset.func = function()
-			CONFIG:CopySettings(D.profile.units.focus, C.db.profile.units.focus)
-			UNITFRAMES:For("focus", "Update")
-			UNITFRAMES:For("focustarget", "UpdateConfig")
-			UNITFRAMES:For("focustarget", "UpdateFading")
-		end
 		temp.args.castbar = CONFIG:CreateUnitFrameCastbarOptions(34, unit)
 		temp.args.auras = CONFIG:CreateUnitFrameAurasOptions(35, unit)
 		temp.args.custom_texts = CONFIG:CreateUnitFrameCustomTextsOptions(40, unit)
@@ -313,7 +293,6 @@ local function getUnitFrameOptions(order, unit, name)
 		temp.args.debuff = nil
 		temp.args.pvp = nil
 		temp.args.mirror_widgets = nil
-		temp.args.fading = nil
 	elseif unit == "boss" then
 		temp.disabled = isBossFrameDisabled
 		temp.args.alt_power = CONFIG:CreateUnitFrameAltPowerOptions(33, unit)
