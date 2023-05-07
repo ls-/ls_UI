@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Version 100100.02
+
+### Minimap
+
+- Added minimap coordinates. Disabled by default.
+- Adjusted minimap border textures to make zone colouring more pronounced.
+
+### Unit Frames
+
+- Readded fading options for pet, target of focus, and target of target frames.
+
 ## Version 100100.01
 
 - Added 10.1.0 support.
