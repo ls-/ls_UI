@@ -36,6 +36,7 @@ local EQUIP_SLOTS = {
 local ILVL_COLORS = {}
 local ILVL_STEP = 19 -- the ilvl step between content difficulties
 
+local itemLoc = {}
 local avgItemLevel
 
 local function getItemLevelColor(itemLevel)
@@ -48,7 +49,10 @@ end
 local function scanSlot(slotID)
 	local link = GetInventoryItemLink("player", slotID)
 	if link then
-		return true, GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
+		-- C_Item.GetCurrentItemLevel is more accurate than GetDetailedItemLevelInfo
+		itemLoc.equipmentSlotIndex = slotID
+
+		return true, C_Item.GetCurrentItemLevel(itemLoc), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture("player", slotID) then
 		-- if there's no link, but there's a texture, it means that there's
 		-- an item we have no info for
