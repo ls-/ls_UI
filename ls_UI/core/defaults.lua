@@ -520,6 +520,12 @@ D.global = {
 			[396364] = true, -- Thundering (Mark of Wind)
 			[396369] = true, -- Thundering (Mark of Lightning)
 			[396411] = true, -- Thundering (Primal Overload)
+			-- DRAGONFLIGHT SEASON 2
+			[408556] = true, -- Entangling (Entangled)
+			[408805] = true, -- Incorporeal (Destabilize)
+			[409465] = true, -- Afflicted (Cursed Spirit)
+			[409470] = true, -- Afflicted (Poisoned Spirit)
+			[409472] = true, -- Afflicted (Diseased Spirit)
 		},
 	},
 	textures = {
