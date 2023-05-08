@@ -56,6 +56,7 @@ function bar_proto:UpdateButtonConfig()
 				unusable = {},
 				mana = {},
 				range = {},
+				equipped = {},
 			},
 			desaturation = {},
 		}

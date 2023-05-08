@@ -70,6 +70,7 @@ D.global = {
 			unusable = rgb(181, 182, 181), -- #B5B6B5 (N7)
 			mana = rgb(32, 98, 165), -- #2062A5 (5PB 4/10)
 			range = rgb(140, 29, 30), -- #8C1D1E (7.5R 3/10)
+			equipped = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		},
 		castbar = {
 			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
