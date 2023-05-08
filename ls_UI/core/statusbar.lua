@@ -493,7 +493,7 @@ do
 			object:SetValue_(new)
 			object._value = new
 
-			if isCloseEnough(new, target, object._max - object._min) then
+			if not object:IsVisible() or isCloseEnough(new, target, object._max - object._min) then
 				remove(object)
 			end
 		end
@@ -522,6 +522,8 @@ do
 
 	local function bar_SetValue(self, new)
 		if not self:IsVisible() or isCloseEnough(self._value, new, self._max - self._min) then
+			activeObjects[self] = nil
+
 			self:SetValue_(new)
 			self._value = new
 
