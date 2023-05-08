@@ -319,7 +319,6 @@ function MODULE:SetupActionBarController()
 		anim:SetDuration(0.15)
 
 		self:UpdateEndcaps()
-		self:UpdateScale()
 
 		isInit = true
 	end
@@ -356,6 +355,7 @@ function MODULE:FinalizeActionBarController()
 		isFinilized = true
 
 		self:UpdateMainBarMaxButtons(LSActionBar1:GetAttribute("maxbuttons"))
+		self:UpdateScale(LSActionBar1:GetAttribute("scale"))
 	end
 end
 
@@ -376,8 +376,9 @@ function MODULE:UpdateEndcaps()
 	end
 end
 
-function MODULE:UpdateScale()
-	local scale = C.db.profile.bars.scale
+function MODULE:UpdateScale(scale)
+	if not isFinilized then return end
+	if not scale then return end
 
 	barController:SetScale(scale)
 	animController:SetScale(scale)

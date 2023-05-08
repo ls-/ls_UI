@@ -616,7 +616,6 @@ local function calculatePosition(self, xOffset, yOffset, forceUIParent)
 		end
 	end
 
-
 	return p, parent:GetName(), rP, x, y
 end
 
@@ -643,10 +642,11 @@ local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 	local mover = E.Movers:Get(self)
 	if mover and not shouldIgnore then
 		if not InCombatLockdown() or not self:IsProtected() then
+			local scale = self:GetScale()
 			self:ClearAllPoints()
 
 			if mover.isSimple then
-				self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+				self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", E:Round(-mover.offsetX / scale), E:Round(-mover.offsetY / scale), true)
 			else
 				local p, anchor, rP, x, y = mover:GetCurrentPosition()
 				if anchor ~= "UIParent" then
@@ -656,7 +656,7 @@ local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 				if p then
 					dirtyObjects[self] = nil
 
-					self:SetPoint(p, anchor, rP, x - mover.offsetX, y - mover.offsetY, true)
+					self:SetPoint(p, anchor, rP, E:Round((x - mover.offsetX) / scale), E:Round((y - mover.offsetY) / scale), true)
 				else
 					-- I need to do this because some of the frames I move around are managed by Blizz
 					-- layout manager, so I can't have my movers as anchors since they're created after
@@ -664,7 +664,7 @@ local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 					-- UIParent
 					dirtyObjects[self] = true
 
-					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", -mover.offsetX, -mover.offsetY, true)
+					self:SetPoint("TOPRIGHT", mover, "TOPRIGHT", E:Round(-mover.offsetX / scale), E:Round(-mover.offsetY / scale), true)
 				end
 			end
 		else
@@ -969,8 +969,12 @@ function mover_proto:Disable()
 end
 
 function mover_proto:UpdateSize(width, height)
-	self:SetWidth(width or (self.object:GetWidth() + self.offsetX * 2))
-	self:SetHeight(height or (self.object:GetHeight() + self.offsetY * 2))
+	local newScale = self.object:GetScale()
+
+	self:SetWidth(E:Round((width or (self.object:GetWidth() + self.offsetX * 2)) * newScale))
+	self:SetHeight(E:Round((height or (self.object:GetHeight() + self.offsetY * 2)) * newScale))
+
+	resetObjectPoint(self.object)
 end
 
 function mover_proto:GetObject()

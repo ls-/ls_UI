@@ -109,6 +109,13 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
+			scale = {
+				order = inc(1),
+				type = "range",
+				name = L["SCALE"],
+				isPercent = true,
+				min = 1, max = 2, step = 0.01, bigStep = 0.05,
+			},
 			num = {
 				order = inc(1),
 				type = "range",

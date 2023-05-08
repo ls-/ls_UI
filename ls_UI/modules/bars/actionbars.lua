@@ -22,6 +22,7 @@ local CFG = {
 		width = 32,
 		height = 0,
 		spacing = 4,
+		-- scale = 1,
 		visibility = "[petbattle] hide; show",
 		visible = true,
 		x_growth = "RIGHT",
@@ -209,6 +210,9 @@ function bar1_proto:UpdateConfig()
 
 		self:SetAttribute("maxbuttons", self._config.num)
 		MODULE:UpdateMainBarMaxButtons(self._config.num)
+
+		self:SetAttribute("scale", C.db.profile.bars.bar1.scale)
+		MODULE:UpdateScale(C.db.profile.bars.bar1.scale)
 	end
 end
 
