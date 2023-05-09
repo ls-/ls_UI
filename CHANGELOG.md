@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Version 100100.03
+
+### Action Bars
+
+- Removed main bar specific "Scale" option.
+- Added "Scale" options to all action bars.
+- Added an option to change the number of main bar buttons.
+- Fixed an issue where the xp bar would sometimes disappear.
+
+![Imgur](https://i.imgur.com/qpQe3wa.gif)
+
 ## Version 100100.02
 
 ### Minimap
