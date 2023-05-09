@@ -109,6 +109,13 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
+			scale = {
+				order = inc(1),
+				type = "range",
+				name = L["SCALE"],
+				isPercent = true,
+				min = 1, max = 2, step = 0.01, bigStep = 0.05,
+			},
 			num = {
 				order = inc(1),
 				type = "range",
@@ -125,7 +132,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				order = inc(1),
 				type = "range",
 				name = L["SPACING"],
-				min = 4, max = 24, step = 2,
+				min = 4, max = 24, step = 1,
 			},
 			width = {
 				order = inc(1),
@@ -344,7 +351,9 @@ function CONFIG:CreateBarOptions(order, barID, name)
 	if barID == "bar1" then
 		temp.args.reset.disabled = isModuleDisabledOrRestricted
 		temp.args.visible.disabled = isModuleDisabledOrRestricted
-		temp.args.num.disabled = isModuleDisabledOrRestricted
+		if BARS:IsRestricted() then
+			temp.args.num.min = 6
+		end
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
 		temp.args.spacing.disabled = isModuleDisabledOrRestricted
 		temp.args.width.disabled = isModuleDisabledOrRestricted

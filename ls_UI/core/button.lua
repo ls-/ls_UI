@@ -342,7 +342,7 @@ do
 		local button = self:GetParent()
 
 		if button:IsEquipped() then
-			button.Border_:SetVertexColor(C.db.global.colors.green:GetRGB())
+			button.Border_:SetVertexColor(C.db.global.colors.button.equipped:GetRGB())
 		else
 			button.Border_:SetVertexColor(1, 1, 1)
 		end

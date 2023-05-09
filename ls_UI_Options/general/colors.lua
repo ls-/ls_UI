@@ -887,6 +887,11 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["OOR"],
 					},
+					equipped = {
+						order = inc(2),
+						type = "color",
+						name = L["EQUIPMENT"],
+					},
 				},
 			},
 			cooldown = {

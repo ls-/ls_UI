@@ -42,6 +42,8 @@ function E.Layout:Update(frame, config)
 	frame:SetSize(widthMult * width + (widthMult - 1) * config.spacing + 4,
 		heightMult * height + (heightMult - 1) * config.spacing + 4)
 
+	frame:SetScale(config.scale or 1)
+
 	local mover = E.Movers:Get(frame, true)
 	if mover then
 		mover:UpdateSize()

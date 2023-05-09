@@ -2,6 +2,7 @@
 ## Author: lightspark
 ## Title: LS: |cff1a9fc0UI|r |cff888987OptionsUI|r
 ## Notes: Options for LS: |cff1a9fc0UI|r.
+## IconTexture: Interface\AddOns\ls_UI\assets\logo-64
 ## RequiredDeps: ls_UI
 ## LoadOnDemand: true
 

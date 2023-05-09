@@ -201,10 +201,10 @@ function bar_proto:UpdateSegments()
 			self[1]:SetSize(unpack(LAYOUT[1][1].size))
 			self[1]:SetMinMaxValues(0, 1)
 			self[1]:SetValue(1)
+			self[1]:Show()
 			self[1]:UpdateText(1, 1)
 			self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
 			self[1].Texture:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
-			self[1]:Show()
 		end
 
 		self._total = index

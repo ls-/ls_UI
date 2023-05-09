@@ -785,6 +785,15 @@ function P:Modernize(data, name, key)
 
 			data.version = 10010001
 		end
+
+		--> 100100.03
+		if data.version < 10010003 then
+			if data.bars then
+				data.bars.scale = nil
+			end
+
+			data.version = 10010003
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then

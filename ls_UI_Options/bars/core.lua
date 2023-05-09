@@ -166,23 +166,6 @@ function CONFIG:CreateActionBarsOptions(order)
 					return not (BARS:IsInit() and BARS:IsRestricted())
 				end,
 			},
-			scale = {
-				order = inc(1),
-				type = "range",
-				name = L["SCALE"],
-				min = 1, max = 2, step = 0.01, bigStep = 0.1,
-				get = function()
-					return C.db.profile.bars.scale
-				end,
-				set = function(_, value)
-					C.db.profile.bars.scale = value
-
-					BARS:UpdateScale()
-				end,
-				disabled = function()
-					return not (BARS:IsInit() and BARS:IsRestricted())
-				end,
-			},
 			blizz_vehicle = {
 				order = inc(1),
 				type = "toggle",
@@ -605,7 +588,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						order = inc(2),
 						type = "range",
 						name = L["WIDTH"],
-						min = 530, max = 1900, step = 2,
+						min = 256, max = 5120, step = 2,
 						disabled = isXPBarDisabledOrRestricted,
 						set = function(info, value)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then

@@ -170,7 +170,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 				order = inc(1),
 				type = "range",
 				name = L["SPACING"],
-				min = 4, max = 24, step = 2,
+				min = 4, max = 24, step = 1,
 				disabled = isModuleDisabled,
 			},
 			width = {

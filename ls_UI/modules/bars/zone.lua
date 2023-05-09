@@ -34,6 +34,7 @@ function bar_proto:Update()
 	end
 
 	self:SetSize(width + 4, height + 4)
+	self:SetScale(self._config.scale)
 
 	local mover = E.Movers:Get(self)
 	if mover then

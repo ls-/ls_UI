@@ -86,6 +86,13 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateArtwork")
 				end,
 			},
+			scale = {
+				order = inc(1),
+				type = "range",
+				name = L["SCALE"],
+				isPercent = true,
+				min = 0.5, max = 1.5, step = 0.01, bigStep = 0.05,
+			},
 			spacer_2 = {
 				order = inc(1),
 				type = "description",

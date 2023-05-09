@@ -6,12 +6,10 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Minimap
+### Action Bars
 
-- Added minimap coordinates. Disabled by default.
-- Adjusted minimap border textures to make zone colouring more pronounced.
-
-### Unit Frames
-
-- Readded fading options for pet, target of focus, and target of target frames.
+- Removed main bar specific "Scale" option.
+- Added "Scale" options to all action bars.
+- Added an option to change the number of main bar buttons.
+- Fixed an issue where the xp bar would sometimes disappear.
 ]]
