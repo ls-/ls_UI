@@ -416,6 +416,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.reset.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.visible.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.grid = nil
+		temp.args.scale.disabled = isModuleDisabledOrRestricted
 		temp.args.num.max = 6
 		temp.args.num.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.per_row.max = 6

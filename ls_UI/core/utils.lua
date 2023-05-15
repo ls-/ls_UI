@@ -778,7 +778,8 @@ end
 
 do
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
-	local GEM_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
+	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
+	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
 
 	local itemCache = {}
 
@@ -797,8 +798,8 @@ do
 		for _, line in next, data.lines do
 			if line.enchantID then
 				enchant = line.leftText:match(ENCHANT_PATTERN)
-			elseif line.socketType then
-				gems[idx] = GEM_TEMPLATE:format(line.socketType)
+			elseif line.gemIcon or line.socketType then
+				gems[idx] = line.gemIcon and GEM_TEMPLATE:format(line.gemIcon) or SOCKET_TEMPLATE:format(line.socketType)
 				idx = idx + 1
 			end
 		end

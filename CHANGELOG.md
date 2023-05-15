@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 100100.04
+
+### Blizzard
+
+- Readded gems to the character panel. Finally...
+
 ## Version 100100.03
 
 ### Action Bars

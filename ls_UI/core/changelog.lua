@@ -6,10 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Action Bars
+### Blizzard
 
-- Removed main bar specific "Scale" option.
-- Added "Scale" options to all action bars.
-- Added an option to change the number of main bar buttons.
-- Fixed an issue where the xp bar would sometimes disappear.
+- Readded gems to the character panel. Finally...
 ]]
