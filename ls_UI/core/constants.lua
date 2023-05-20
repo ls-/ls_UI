@@ -1,5 +1,5 @@
 local addon, ns = ...
-local E, M, oUF = ns.E, ns.M, ns.oUF
+local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
 
 -- Lua
 local _G = getfenv(0)

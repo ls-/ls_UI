@@ -1,5 +1,5 @@
 local addonName, ns = ...
-local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF, Config, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Config, ns.Profiler
 
 -- Lua
 local _G = getfenv(0)
@@ -169,13 +169,13 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openConfig()
-		if not ls_UI.Config:IsLoaded() then
+		if not Config:IsLoaded() then
 			LoadAddOn("ls_UI_Options")
 
-			if not ls_UI.Config:IsLoaded() then return end
+			if not Config:IsLoaded() then return end
 		end
 
-		ls_UI.Config:Open()
+		Config:Open()
 	end
 
 	P:AddCommand("", function()
@@ -185,13 +185,13 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openProfiler()
-		if not ls_UI.Profiler:IsLoaded() then
+		if not Profiler:IsLoaded() then
 			LoadAddOn("ls_UI_Profiler")
 
-			if not ls_UI.Profiler:IsLoaded() then return end
+			if not Profiler:IsLoaded() then return end
 		end
 
-		ls_UI.Profiler:Open()
+		Profiler:Open()
 	end
 
 	P:AddCommand("profiler", function()
