@@ -203,6 +203,7 @@ local flag_proto = {
 		"PARTY_MEMBER_ENABLE",
 		"PLAYER_DIFFICULTY_CHANGED",
 		"UPDATE_INSTANCE_INFO",
+		"ZONE_CHANGED",
 	},
 }
 
