@@ -361,27 +361,27 @@ local COLUMN_INFO = {
 	[SORT_NAME] = {
 		title = "Name",
 		width = 384,
-		order = ORDER_ASC,
+		order = ORDER_DESC,
 	},
 	[SORT_TIME_CUR] = {
-		title = "Time (Cur)",
+		title = "Time (Last)",
 		width = 96,
-		order = ORDER_ASC,
+		order = ORDER_DESC,
 	},
 	[SORT_TIME_AVG] = {
 		title = "Time (Avg)",
 		width = 96,
-		order = ORDER_ASC,
+		order = ORDER_DESC,
 	},
 	[SORT_MEM_CUR] = {
-		title = "Memory (Cur)",
+		title = "Memory (Last)",
 		width = 96,
-		order = ORDER_ASC,
+		order = ORDER_DESC,
 	},
 	[SORT_MEM_AVG] = {
 		title = "Memory (Avg)",
 		width = 96,
-		order = ORDER_ASC,
+		order = ORDER_DESC,
 	},
 	[SORT_CALLS] = {
 		title = "Calls",
