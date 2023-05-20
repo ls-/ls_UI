@@ -78,6 +78,19 @@ function Config:IsLoaded()
 	return false
 end
 
+---------------------
+-- PROFILER (STUB) --
+---------------------
+function Profiler:IsLoaded()
+	return false
+end
+
+function Profiler:IsLogging()
+	return false
+end
+
+function Profiler:Log() end
+
 -----------
 -- CVARS --
 -----------

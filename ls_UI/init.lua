@@ -184,6 +184,22 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end)
 
+	local function openProfiler()
+		if not ls_UI.Profiler:IsLoaded() then
+			LoadAddOn("ls_UI_Profiler")
+
+			if not ls_UI.Profiler:IsLoaded() then return end
+		end
+
+		ls_UI.Profiler:Open()
+	end
+
+	P:AddCommand("profiler", function()
+		if not InCombatLockdown() then
+			openProfiler()
+		end
+	end)
+
 	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
@@ -196,6 +212,18 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 			HideUIPanel(SettingsPanel)
 
 			openConfig()
+		end
+	end)
+
+	local button2 = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	button2:SetText(L["PERFORMANCE"])
+	button2:SetWidth(button2:GetTextWidth() + 18)
+	button2:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", 0, -8)
+	button2:SetScript("OnClick", function()
+		if not InCombatLockdown() then
+			HideUIPanel(SettingsPanel)
+
+			openProfiler()
 		end
 	end)
 
