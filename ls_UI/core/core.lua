@@ -17,21 +17,12 @@ local type = _G.type
 local xpcall = _G.xpcall
 
 -- Mine
--- engine, config, private config, defaults, private defaults, media, locales, private
-local E, C, PrC, D, PrD, M, L, P = {}, {}, {}, {}, {}, {}, {}, {}
-ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P = E, C, PrC, D, PrD, M, L, P
+_G[addonName] = ns
 
-_G[addonName] = {
-	E, -- 1
-	M, -- 2
-	L, -- 3
-	C, -- 4
-	D, -- 5
-	PrC, -- 6
-	PrD, -- 7
-	P, -- 8
-	ns.oUF, -- 9
-}
+-- engine, config, private config, defaults, private defaults, media, locales, private, config ui, profiler
+local E, C, PrC, D, PrD, M, L, P, Config, Profiler = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P, ns.oUF, ns.Config, ns.Profiler = E, C, PrC, D, PrD, M, L, P, ns.oUF or oUF, Config, Profiler
+ns[1], ns[2], ns[3], ns[4], ns[5], ns[6], ns[7], ns[8], ns[9], ns[10], ns[11] = E, M, L, C, D, PrC, PrD, P, ns.oUF, Config, Profiler
 
 ------------
 -- EVENTS --
@@ -77,6 +68,14 @@ do
 			end
 		end
 	end
+end
+
+-------------------
+-- CONFIG (STUB) --
+-------------------
+
+function Config:IsLoaded()
+	return false
 end
 
 -----------

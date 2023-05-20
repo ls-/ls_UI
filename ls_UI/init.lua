@@ -169,10 +169,10 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openConfig()
-		if not ls_UI.Config then
+		if not ls_UI.Config:IsLoaded() then
 			LoadAddOn("ls_UI_Options")
 
-			if not ls_UI.Config then return end
+			if not ls_UI.Config:IsLoaded() then return end
 		end
 
 		ls_UI.Config:Open()
@@ -187,21 +187,15 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
-	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	button:SetText(L["OPEN_CONFIG"])
-	button:SetWidth(button:GetTextWidth() + 18)
-	button:SetPoint("TOPLEFT", 16, -16)
-	button:SetScript("OnClick", function()
+	local button1 = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	button1:SetText(L["OPEN_CONFIG"])
+	button1:SetWidth(button1:GetTextWidth() + 18)
+	button1:SetPoint("TOPLEFT", 16, -16)
+	button1:SetScript("OnClick", function()
 		if not InCombatLockdown() then
 			HideUIPanel(SettingsPanel)
 
-			if not ls_UI.Config then
-				LoadAddOn("ls_UI_Options")
-
-				if not ls_UI.Config then return end
-			end
-
-			ls_UI.Config:Open()
+			openConfig()
 		end
 	end)
 

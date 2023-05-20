@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
@@ -15,7 +13,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 local LibDualSpec = LibStub("LibDualSpec-1.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 
 local PROFILE_TYPE_FORMAT = "%s |cff888987(id: %s)|r"
 local IMPORT_RESULT_FORMAT = "|A:auctionhouse-icon-checkmark:0:0|a %s |cff888987(%s)|r"

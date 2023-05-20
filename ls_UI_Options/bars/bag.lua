@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local t_wipe = _G.table.wipe
@@ -7,7 +5,7 @@ local tonumber = _G.tonumber
 local unpack = _G.unpack
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 local BARS = P:GetModule("Bars")
 
 local orders = {}

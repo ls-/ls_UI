@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
@@ -8,7 +6,7 @@ local t_wipe = _G.table.wipe
 local unpack = _G.unpack
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 local UNITFRAMES = P:GetModule("UnitFrames")
 
 local orders = {}
