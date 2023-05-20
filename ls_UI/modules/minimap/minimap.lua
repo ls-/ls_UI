@@ -4,6 +4,8 @@ local MODULE = P:AddModule("Minimap")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local m_floor = _G.math.floor
 local next = _G.next
@@ -27,20 +29,43 @@ do
 	}
 
 	function minimap_proto:UpdateBorderColor()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if self._config.color.border then
 			self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[GetZonePVPInfo() or "contested"]]):GetRGB())
 		else
 			self.Border:SetVertexColor(C.db.global.colors.light_gray:GetRGB())
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateBorderColor", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function minimap_proto:OnEventHook(event)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
 			self:UpdateBorderColor()
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnEventHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
 	function minimap_proto:UpdateHybridMinimap()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if C.db.profile.minimap.shape == "square" then
 			HybridMinimap.CircleMask:SetTexture("Interface\\BUTTONS\\WHITE8X8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
 		else
@@ -48,13 +73,26 @@ do
 		end
 
 		HybridMinimap.MapCanvas:SetMaskTexture(HybridMinimap.CircleMask)
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateHybridMinimap", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function minimap_proto:UpdateConfig()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self._config = E:CopyTable(C.db.profile.minimap, self._config)
 
 		MinimapCluster._config = t_wipe(MinimapCluster._config or {})
 		MinimapCluster._config.fade = self._config.fade
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	local borderInfo = {
@@ -80,6 +118,11 @@ do
 	end
 
 	function minimap_proto:UpdateLayout()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		local scale = self._config.scale
 		local shape = self._config.shape
 		local info = borderInfo[scale] or borderInfo[100]
@@ -149,13 +192,31 @@ do
 		if HybridMinimap then
 			self:UpdateHybridMinimap()
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateLayout", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function minimap_proto:UpdateRotation()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		SetCVar("rotateMinimap", self._config.rotate)
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateRotation", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function minimap_proto:UpdateDifficultyFlag()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if self._config.flag.enabled then
 			self.DifficultyFlag:RegisterForEvents()
 			self.DifficultyFlag:UpdateMouseScripts(self._config.flag.tooltip)
@@ -164,10 +225,18 @@ do
 			self.DifficultyFlag:UnregisterAllEvents()
 			self.DifficultyFlag:Hide()
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateDifficultyFlag", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
-
 	function minimap_proto:UpdateCoords()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if self._config.coords.enabled then
 			self.Coords:ClearAllPoints()
 			self.Coords:SetPoint(unpack(self._config.coords.point))
@@ -183,14 +252,27 @@ do
 		else
 			self.Coords:Hide()
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateCoords", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function cluster_proto:ResetSize(_, _, shouldIgnore)
 		if not shouldIgnore then
+			local timeStart, memStart
+			if Profiler:IsLogging() then
+				timeStart, memStart = debugprofilestop(), collectgarbage("count")
+			end
+
 			local scale = self._config.scale
 			local info = borderInfo[scale] or borderInfo[100]
 
 			self:SetSize(info[3] + 24, info[3] + 24, true)
+
+			if Profiler:IsLogging() then
+				Profiler:Log(self:GetDebugName(), "ResetSize", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+			end
 		end
 	end
 end
@@ -219,23 +301,55 @@ do
 	}
 
 	function flag_proto:RegisterForEvents()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		for _, event in next, self.events do
 			self:RegisterEvent(event)
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "RegisterForEvents", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
 	function flag_proto:UpdateMouseScripts(enabled)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self:SetScript("OnEnter", enabled and self.OnEnter or nil)
 		self:SetScript("OnLeave", enabled and self.OnLeave or nil)
 		self:SetMouseClickEnabled(false)
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateMouseScripts", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function flag_proto:OnEvent()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self:Update()
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function flag_proto:OnEnter()
 		if self.instanceName then
+			local timeStart, memStart
+			if Profiler:IsLogging() then
+				timeStart, memStart = debugprofilestop(), collectgarbage("count")
+			end
+
 			local p, rP, x, y = E:GetTooltipPoint(self)
 			if p == "TOPRIGHT" then
 				x, y = 24, 24
@@ -253,18 +367,45 @@ do
 			end
 
 			GameTooltip:Show()
+
+			if Profiler:IsLogging() then
+				Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+			end
 		end
 	end
 
 	function flag_proto:OnLeave()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		GameTooltip:Hide()
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnLeave", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function flag_proto:UpdateFlag(t)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self.Icon:SetTexCoord(unpack(flagInfo[t]))
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "UpdateFlag", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function flag_proto:Update()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self.instanceName = nil
 		self.difficultyName = nil
 		self.maxPlayers = nil
@@ -307,6 +448,10 @@ do
 
 			self:Show()
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
@@ -319,6 +464,11 @@ do
 	function coords_proto:OnUpdate(elapsed)
 		self.elapsed = (self.elapsed or 0) - elapsed
 		if self.elapsed < 0 then
+			local timeStart, memStart
+			if Profiler:IsLogging() then
+				timeStart, memStart = debugprofilestop(), collectgarbage("count")
+			end
+
 			local x, y = E:GetPlayerMapPosition()
 			if x then
 				self.Text:SetFormattedText(COORDS_FORMAT, x, y)
@@ -328,6 +478,10 @@ do
 				self.Text:SetText(NO_COORDS)
 
 				self.elapsed = 5
+			end
+
+			if Profiler:IsLogging() then
+				Profiler:Log(self:GetDebugName(), "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 			end
 		end
 	end
