@@ -8,12 +8,6 @@ local s_gsub = _G.string.gsub
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 
---[[ luacheck: globals
-	CreateFrame GetBindingKey GetBindingText LibStub SetBinding
-
-	RANGE_INDICATOR
-]]
-
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
 

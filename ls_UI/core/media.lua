@@ -4,9 +4,6 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 -- Lua
 local _G = getfenv(0)
 
---[[ luacheck: globals
-]]
-
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
