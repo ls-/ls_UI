@@ -250,10 +250,12 @@ function display_proto:OnUpdate(elapsed)
 		prepairFilteredData()
 		sortFilteredData()
 
+		local perc = self.ScrollBox:GetScrollPercentage()
 		self.ScrollBox:Flush()
 
 		if dataProvider then
 			self.ScrollBox:SetDataProvider(dataProvider)
+			self.ScrollBox:SetScrollPercentage(perc)
 		end
 
 		self.Stats:Update()
@@ -312,10 +314,12 @@ for i = 1, #HISTORY_RANGES do
 			prepairFilteredData()
 			sortFilteredData()
 
+			local perc = display.ScrollBox:GetScrollPercentage()
 			display.ScrollBox:Flush()
 
 			if dataProvider then
 				display.ScrollBox:SetDataProvider(dataProvider)
+				display.ScrollBox:SetScrollPercentage(perc)
 			end
 
 			display.Stats:Update()
@@ -342,10 +346,12 @@ search:HookScript("OnTextChanged", function(self)
 	prepairFilteredData()
 	sortFilteredData()
 
+	local perc = display.ScrollBox:GetScrollPercentage()
 	display.ScrollBox:Flush()
 
 	if dataProvider then
 		display.ScrollBox:SetDataProvider(dataProvider)
+		display.ScrollBox:SetScrollPercentage(perc)
 	end
 
 	display.Stats:Update()
@@ -670,10 +676,12 @@ updateButton:SetScript("OnClick", function()
 	prepairFilteredData()
 	sortFilteredData()
 
+	local perc = display.ScrollBox:GetScrollPercentage()
 	display.ScrollBox:Flush()
 
 	if dataProvider then
 		display.ScrollBox:SetDataProvider(dataProvider)
+		display.ScrollBox:SetScrollPercentage(perc)
 	end
 
 	display.Stats:Update()
