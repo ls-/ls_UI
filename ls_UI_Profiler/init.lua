@@ -441,14 +441,15 @@ local CALLS_FORMAT = "|cffae81ff%s|r"
 local button_proto = {}
 
 function button_proto:OnEnter()
-	if self.id and filteredData[self.id] then
+	local data = self:GetElementData()
+	if data then
 		GameTooltip:SetOwner(self, "ANCHOR_NONE")
 		GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 26, 2)
 		GameTooltip:AddLine(self.Name:GetText())
-		GameTooltip:AddDoubleLine("Frametime (Cur):", TIME_FORMAT:format(filteredData[self.id].curTick), 1, 0.92, 0, 1, 1, 1)
-		GameTooltip:AddDoubleLine("Frametime (Avg):", TIME_FORMAT:format(filteredData[self.id].avgTick), 1, 0.92, 0, 1, 1, 1)
-		GameTooltip:AddDoubleLine("Time (Max):", TIME_FORMAT:format(filteredData[self.id].maxTime), 1, 0.92, 0, 1, 1, 1)
-		GameTooltip:AddDoubleLine("Memory (Max):", MEM_FORMAT:format(filteredData[self.id].maxMem), 1, 0.92, 0, 1, 1, 1)
+		GameTooltip:AddDoubleLine("Frametime (Last):", TIME_FORMAT:format(data.curTick), 1, 0.92, 0, 1, 1, 1)
+		GameTooltip:AddDoubleLine("Frametime (Avg):", TIME_FORMAT:format(data.avgTick), 1, 0.92, 0, 1, 1, 1)
+		GameTooltip:AddDoubleLine("Time (Worst):", TIME_FORMAT:format(data.maxTime), 1, 0.92, 0, 1, 1, 1)
+		GameTooltip:AddDoubleLine("Memory (Worst):", MEM_FORMAT:format(data.maxMem), 1, 0.92, 0, 1, 1, 1)
 		GameTooltip:Show()
 	end
 end
@@ -522,7 +523,6 @@ view:SetElementInitializer("Button", function(button, data)
 		button.created = true
 	end
 
-	button.id = data.id
 	button.Name:SetText(rawData[data.id].name)
 	button.CurTime:SetFormattedText(TIME_FORMAT, data.curTime)
 	button.AvgTime:SetFormattedText(TIME_FORMAT, data.avgTime)
