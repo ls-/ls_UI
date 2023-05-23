@@ -131,10 +131,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end
 
-	if MinimapButtonFrame then
-		C.db.profile.minimap.collect.enabled = false
-	end
-
 	PrC.db.profile.version = E.VER.number
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
