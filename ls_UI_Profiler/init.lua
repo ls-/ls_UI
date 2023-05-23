@@ -88,9 +88,11 @@ local dataProvider
 local SORT_NAME = 1
 local SORT_TIME_CUR = 2
 local SORT_TIME_AVG = 3
-local SORT_MEM_CUR = 4
-local SORT_MEM_AVG = 5
-local SORT_CALLS = 6
+local SORT_TIME_MAX = 4
+local SORT_MEM_CUR = 5
+local SORT_MEM_AVG = 6
+local SORT_MEM_MAX = 7
+local SORT_CALLS = 8
 
 local ORDER_ASC = 1
 local ORDER_DESC = -1
@@ -128,6 +130,18 @@ local SORT_METHODS = {
 				and rawData[a.id].name < rawData[b.id].name
 		end,
 	},
+	[SORT_TIME_MAX] = {
+		[ORDER_ASC] = function(a, b)
+			return a.maxTime < b.maxTime
+				or a.maxTime == b.maxTime
+				and rawData[a.id].name < rawData[b.id].name
+		end,
+		[ORDER_DESC] = function(a, b)
+			return a.maxTime > b.maxTime
+				or a.maxTime == b.maxTime
+				and rawData[a.id].name < rawData[b.id].name
+		end,
+	},
 	[SORT_MEM_CUR] = {
 		[ORDER_ASC] = function(a, b)
 			return a.curMem < b.curMem
@@ -149,6 +163,18 @@ local SORT_METHODS = {
 		[ORDER_DESC] = function(a, b)
 			return a.avgMem > b.avgMem
 				or a.avgMem == b.avgMem
+				and rawData[a.id].name < rawData[b.id].name
+		end,
+	},
+	[SORT_MEM_MAX] = {
+		[ORDER_ASC] = function(a, b)
+			return a.maxMem < b.maxMem
+				or a.maxMem == b.maxMem
+				and rawData[a.id].name < rawData[b.id].name
+		end,
+		[ORDER_DESC] = function(a, b)
+			return a.maxMem > b.maxMem
+				or a.maxMem == b.maxMem
 				and rawData[a.id].name < rawData[b.id].name
 		end,
 	},
@@ -274,16 +300,21 @@ end
 
 function display_proto:OnHide()
 	self:SetScript("OnUpdate", nil)
+
+	t_wipe(filteredData)
+	dataProvider = nil
+
+	self.ScrollBox:Flush()
 end
 
 local display = Mixin(CreateFrame("Frame", "LSUIProfiler", UIParent, "ButtonFrameTemplate"), display_proto)
-display:SetSize(862, 651)
+display:SetSize(1048, 652)
 display:SetPoint("CENTER", 0, 0)
 display:SetMovable(true)
 display:EnableMouse(true)
+display:Hide()
 display:SetScript("OnShow", display.OnShow)
 display:SetScript("OnHide", display.OnHide)
-display:Hide()
 
 ButtonFrameTemplate_HidePortrait(display)
 
@@ -373,6 +404,11 @@ local COLUMN_INFO = {
 		width = 96,
 		order = ORDER_DESC,
 	},
+	[SORT_TIME_MAX] = {
+		title = "Time (Max)",
+		width = 96,
+		order = ORDER_DESC,
+	},
 	[SORT_MEM_CUR] = {
 		title = "Memory (Last)",
 		width = 96,
@@ -380,6 +416,11 @@ local COLUMN_INFO = {
 	},
 	[SORT_MEM_AVG] = {
 		title = "Memory (Avg)",
+		width = 96,
+		order = ORDER_DESC,
+	},
+	[SORT_MEM_MAX] = {
+		title = "Memory (Max)",
 		width = 96,
 		order = ORDER_DESC,
 	},
@@ -448,8 +489,6 @@ function button_proto:OnEnter()
 		GameTooltip:AddLine(self.Name:GetText())
 		GameTooltip:AddDoubleLine("Frametime (Last):", TIME_FORMAT:format(data.curTick), 1, 0.92, 0, 1, 1, 1)
 		GameTooltip:AddDoubleLine("Frametime (Avg):", TIME_FORMAT:format(data.avgTick), 1, 0.92, 0, 1, 1, 1)
-		GameTooltip:AddDoubleLine("Time (Worst):", TIME_FORMAT:format(data.maxTime), 1, 0.92, 0, 1, 1, 1)
-		GameTooltip:AddDoubleLine("Memory (Worst):", MEM_FORMAT:format(data.maxMem), 1, 0.92, 0, 1, 1, 1)
 		GameTooltip:Show()
 	end
 end
@@ -497,20 +536,32 @@ view:SetElementInitializer("Button", function(button, data)
 		avgTime:SetJustifyH("LEFT")
 		button.AvgTime = avgTime
 
+		local maxTime = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		maxTime:SetPoint("LEFT", 572, 0)
+		maxTime:SetSize(94, 0)
+		maxTime:SetJustifyH("LEFT")
+		button.MaxTime = maxTime
+
 		local curMem = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		curMem:SetPoint("LEFT", 572, 0)
+		curMem:SetPoint("LEFT", 666, 0)
 		curMem:SetSize(94, 0)
 		curMem:SetJustifyH("LEFT")
 		button.CurMemory = curMem
 
 		local avgMem = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		avgMem:SetPoint("LEFT", 666, 0)
+		avgMem:SetPoint("LEFT", 760, 0)
 		avgMem:SetSize(94, 0)
 		avgMem:SetJustifyH("LEFT")
 		button.AvgMemory = avgMem
 
+		local maxMem = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+		maxMem:SetPoint("LEFT", 854, 0)
+		maxMem:SetSize(94, 0)
+		maxMem:SetJustifyH("LEFT")
+		button.MaxMemory = maxMem
+
 		local calls = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-		calls:SetPoint("LEFT", 760, 0)
+		calls:SetPoint("LEFT", 948, 0)
 		calls:SetSize(64, 0)
 		calls:SetJustifyH("LEFT")
 		button.Calls = calls
@@ -526,8 +577,10 @@ view:SetElementInitializer("Button", function(button, data)
 	button.Name:SetText(rawData[data.id].name)
 	button.CurTime:SetFormattedText(TIME_FORMAT, data.curTime)
 	button.AvgTime:SetFormattedText(TIME_FORMAT, data.avgTime)
+	button.MaxTime:SetFormattedText(TIME_FORMAT, data.maxTime)
 	button.CurMemory:SetFormattedText(MEM_FORMAT, data.curMem)
 	button.AvgMemory:SetFormattedText(MEM_FORMAT, data.avgMem)
+	button.MaxMemory:SetFormattedText(MEM_FORMAT, data.maxMem)
 	button.Calls:SetFormattedText(CALLS_FORMAT, data.entries)
 end)
 
