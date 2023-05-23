@@ -7,7 +7,7 @@ local select = _G.select
 local tonumber = _G.tonumber
 
 -- Mine
-local hidden = _G.CreateFrame("Frame", nil, UIParent)
+local hidden = CreateFrame("Frame", nil, UIParent)
 hidden:Hide()
 E.HIDDEN_PARENT = hidden
 
@@ -204,7 +204,7 @@ local textures = {
 
 M.textures = textures
 
-E.OMNICC = select(4, _G.GetAddOnInfo("OmniCC"))
+E.OMNICC = select(4, GetAddOnInfo("OmniCC"))
 
 E.PLAYER_CLASS = UnitClassBase("player")
 E.PLAYER_SPEC_FLAGS = {
@@ -216,25 +216,23 @@ E.PLAYER_SPEC_FLAGS = {
 	[4] = 0x00000008, -- 4th
 }
 
-E.SCREEN_HEIGHT = E:Round(UIParent:GetTop())
-E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
-E.SCREEN_SCALE = UIParent:GetScale()
-
 E.VER = {
 	string = C_AddOns.GetAddOnMetadata(addon, "Version")
 }
 E.VER.number = tonumber(E.VER.string:gsub("%D", ""), nil)
 
-local function UpdateScreenConstants()
+local function updateScreenConstants()
 	E.SCREEN_HEIGHT = E:Round(UIParent:GetTop())
 	E.SCREEN_WIDTH = E:Round(UIParent:GetRight())
 	E.SCREEN_SCALE = UIParent:GetScale()
 end
 
-E.NAME_REALM = _G.UnitName("player") .. " - " .. _G.GetRealmName()
+updateScreenConstants()
 
-E:RegisterEvent("DISPLAY_SIZE_CHANGED", UpdateScreenConstants)
-E:RegisterEvent("UI_SCALE_CHANGED", UpdateScreenConstants)
+E:RegisterEvent("DISPLAY_SIZE_CHANGED", updateScreenConstants)
+E:RegisterEvent("UI_SCALE_CHANGED", updateScreenConstants)
+
+E.NAME_REALM = UnitName("player") .. " - " .. GetRealmName()
 
 -- Everything that's not available at ADDON_LOADED goes here
 function E:UpdateConstants()
