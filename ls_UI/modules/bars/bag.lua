@@ -4,6 +4,8 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local next = _G.next
 local t_wipe = _G.table.wipe
 
@@ -20,6 +22,11 @@ do
 	local lastTokenUpdate = 0
 
 	function button_proto:OnEnter()
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if KeybindFrames_InQuickKeybindMode() then
 			self:QuickKeybindButtonOnEnter()
 		else
@@ -61,9 +68,18 @@ do
 
 			GameTooltip:Show()
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function button_proto:OnEventHook(event, ...)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if event == "UPDATE_BINDINGS" then
 			-- that's not how it's supposed to be used, but it works
 			self.tooltipText = MicroButtonTooltipText(BACKPACK_TOOLTIP, "TOGGLEBACKPACK")
@@ -79,6 +95,10 @@ do
 
 				self:OnEnter()
 			end
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnEventHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end

@@ -4,6 +4,8 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local next = _G.next
 local unpack = _G.unpack
 
@@ -38,6 +40,11 @@ end
 local bar_proto = {}
 
 function bar_proto:Update()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateForms()
@@ -45,9 +52,18 @@ function bar_proto:Update()
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E.Layout:Update(self)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateForms()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local numStances = GetNumShapeshiftForms()
 
 	for i, button in next, self._buttons do
@@ -58,9 +74,18 @@ function bar_proto:UpdateForms()
 			button:Hide()
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateForms", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:OnEvent(event)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if event == "UPDATE_SHAPESHIFT_COOLDOWN" then
 		self:ForEach("Update")
 	elseif event == "PLAYER_REGEN_ENABLED" then
@@ -76,12 +101,21 @@ function bar_proto:OnEvent(event)
 			self:UpdateForms()
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local button_proto = {}
 
 function button_proto:Update()
 	if self:IsShown() then
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		local id = self:GetID()
 		local texture, isActive, isCastable = GetShapeshiftFormInfo(id)
 
@@ -107,10 +141,19 @@ function button_proto:Update()
 
 		self:UpdateHotKey()
 		self:UpdateCooldown()
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
 function button_proto:UpdateHotKey(state)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -122,19 +165,50 @@ function button_proto:UpdateHotKey(state)
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateHotKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function button_proto:UpdateHotKeyFont()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateHotKeyFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function button_proto:UpdateCooldown()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	CooldownFrame_Set(self.cooldown, GetShapeshiftFormCooldown(self:GetID()))
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateCooldown", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function button_proto:OnEnterHook()
 	if LibKeyBound then
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		LibKeyBound:Set(self)
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "OnEnterHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 

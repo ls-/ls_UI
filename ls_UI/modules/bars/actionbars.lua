@@ -4,6 +4,8 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local unpack = _G.unpack
@@ -101,6 +103,11 @@ local bar_proto = {
 }
 
 function bar_proto:Update()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
@@ -110,9 +117,18 @@ function bar_proto:Update()
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	self:UpdateLayout()
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateButtonConfig()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if not self.buttonConfig then
 		self.buttonConfig = {
 			tooltip = "enabled",
@@ -183,11 +199,20 @@ function bar_proto:UpdateButtonConfig()
 		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("*unit2", self._config.rightclick_selfcast and "player" or nil)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateButtonConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local bar1_proto = {}
 
 function bar1_proto:UpdateConfig()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1, self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.cooldown = E:CopyTable(C.db.profile.bars.bar1.cooldown, self._config.cooldown)
@@ -215,20 +240,51 @@ function bar1_proto:UpdateConfig()
 		self:SetAttribute("scale", C.db.profile.bars.bar1.scale)
 		MODULE:UpdateScale(C.db.profile.bars.bar1.scale)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local button_proto = {}
 
 function button_proto:UpdateMacroFont()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self.Name:UpdateFont(self._parent._config.macro.size)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateMacroFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function button_proto:UpdateHotKeyFont()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateHotKeyFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function button_proto:UpdateCountFont()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self.Count:UpdateFont(self._parent._config.count.size)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateCountFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function MODULE:CreateActionBars()

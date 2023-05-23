@@ -4,6 +4,8 @@ local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
@@ -15,6 +17,11 @@ local isInit = false
 local bar_proto = {}
 
 function bar_proto:Update()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateArtwork()
@@ -40,15 +47,28 @@ function bar_proto:Update()
 	if mover then
 		mover:UpdateSize()
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateArtwork()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if self._config.artwork then
 		ZoneAbilityFrame.Style:Show()
 		ZoneAbilityFrame.Style:SetParent(ZoneAbilityFrame)
 	else
 		ZoneAbilityFrame.Style:Hide()
 		ZoneAbilityFrame.Style:SetParent(E.HIDDEN_PARENT)
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateArtwork", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 

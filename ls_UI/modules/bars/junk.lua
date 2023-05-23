@@ -5,7 +5,6 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local pcall = _G.pcall
 
 local isNPEHooked = false
 

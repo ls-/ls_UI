@@ -4,6 +4,8 @@ local MODULE = P:AddModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local next = _G.next
 
 -- Mine
@@ -12,6 +14,11 @@ local bars = {}
 
 -- Fading
 local function pauseFading()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
 			bar:DisableFading()
@@ -21,27 +28,54 @@ local function pauseFading()
 			end
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local Bars", "pauseFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function resumeFading()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for _, bar in next, bars do
 		if bar._config.visible and bar._config.fade.enabled then
 			bar:EnableFading()
 		end
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local Bars", "resumeFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 local bar_proto = {}
 
 function bar_proto:ForEach(method, ...)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for _, button in next, self._buttons do
 		if button[method] then
 			button[method](button, ...)
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "ForEach", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateConfig()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self._config = E:CopyTable(C.db.profile.bars[self._id], self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 	self._config.desaturation = E:CopyTable(C.db.profile.bars.desaturation, self._config.desaturation)
@@ -54,9 +88,18 @@ function bar_proto:UpdateConfig()
 		self._config.cooldown = E:CopyTable(C.db.profile.bars[self._id].cooldown, self._config.cooldown)
 		self._config.cooldown = E:CopyTable(C.db.profile.bars.cooldown, self._config.cooldown)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateCooldownConfig()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if not self.cooldownConfig then
 		self.cooldownConfig = {
 			swipe = {},
@@ -77,17 +120,39 @@ function bar_proto:UpdateCooldownConfig()
 		cooldown:UpdateFont()
 		cooldown:UpdateSwipe()
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateCooldownConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateLayout()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	E.Layout:Update(self)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateLayout", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function bar_proto:UpdateVisibility()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if self._config.visible then
 		RegisterStateDriver(self, "visibility", self._config.visibility or "show")
 	else
 		RegisterStateDriver(self, "visibility", "hide")
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateVisibility", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -118,16 +183,34 @@ function MODULE:GetBars()
 end
 
 function MODULE:ForEach(method, ...)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for _, bar in next, bars do
 		if bar[method] then
 			bar[method](bar, ...)
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("Bars", "ForEach", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function MODULE:For(id, method, ...)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if bars[id] and bars[id][method] then
 		bars[id][method](bars[id], ...)
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("Bars", "For", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -147,6 +230,12 @@ local rebindable = {
 
 local function reassignBindings()
 	if not InCombatLockdown() then
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
+
 		for barID, bar in next, bars do
 			if rebindable[barID] then
 				ClearOverrideBindings(bar)
@@ -160,15 +249,28 @@ local function reassignBindings()
 				end
 			end
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("local Bars", "reassignBindings", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
 local function clearBindings()
 	if not InCombatLockdown() then
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		for barID, bar in next, bars do
 			if rebindable[barID] then
 				ClearOverrideBindings(bar)
 			end
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("local Bars", "clearBindings", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end
@@ -176,6 +278,11 @@ end
 local vehicleController
 
 function MODULE:UpdateBlizzVehicle()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if not self:IsRestricted() then
 		if C.db.profile.bars.blizz_vehicle then
 			-- MainMenuBar:SetParent(UIParent)
@@ -219,6 +326,10 @@ function MODULE:UpdateBlizzVehicle()
 	else
 		-- MainMenuBar:SetParent(E.HIDDEN_PARENT)
 		OverrideActionBar:SetParent(E.HIDDEN_PARENT)
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("Bars", "UpdateBlizzVehicle", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
