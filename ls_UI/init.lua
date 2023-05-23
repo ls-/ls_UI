@@ -195,9 +195,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end
 
 	P:AddCommand("profiler", function()
-		if not InCombatLockdown() then
-			openProfiler()
-		end
+		openProfiler()
 	end)
 
 	local panel = CreateFrame("Frame", "LSUIConfigPanel")
@@ -222,9 +220,9 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	button2:SetScript("OnClick", function()
 		if not InCombatLockdown() then
 			HideUIPanel(SettingsPanel)
-
-			openProfiler()
 		end
+
+		openProfiler()
 	end)
 
 	Settings.RegisterAddOnCategory(Settings.RegisterCanvasLayoutCategory(panel, L["LS_UI"]))
