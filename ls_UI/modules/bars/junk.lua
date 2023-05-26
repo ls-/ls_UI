@@ -79,6 +79,7 @@ function MODULE:CleanUp()
 
 	hideBar(MicroMenu)
 	hideBar(MicroButtonAndBagsBar)
+	hideBar(MicroMenuContainer)
 
 	QueueStatusButton:SetParent(UIParent)
 	QueueStatusButton:ClearAllPoints()
