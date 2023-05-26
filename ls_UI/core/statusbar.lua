@@ -4,8 +4,6 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 -- Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
-local m_max = _G.math.max
-local m_min = _G.math.min
 local next = _G.next
 local s_match = _G.string.match
 local s_split = _G.string.split

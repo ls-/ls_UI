@@ -12,7 +12,6 @@ local s_format = _G.string.format
 local s_split = _G.string.split
 local select = _G.select
 local t_insert = _G.table.insert
-local tonumber = _G.tonumber
 local type = _G.type
 local xpcall = _G.xpcall
 

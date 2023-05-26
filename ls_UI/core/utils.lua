@@ -13,7 +13,6 @@ local m_modf = _G.math.modf
 local next = _G.next
 local s_format = _G.string.format
 local s_split = _G.string.split
-local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 local t_wipe = _G.table.wipe
