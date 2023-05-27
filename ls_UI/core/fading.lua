@@ -3,6 +3,8 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local next = _G.next
 
 -- Mine
@@ -29,37 +31,91 @@ local miscWidgets = {}
 local targetWidgets = {}
 
 local function addTargetWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.hasTarget = UnitExists("target") or UnitExists("focus")
 	targetWidgets[object] = widget
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "addTargetWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function removeTargetWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.hasTarget = nil
 	targetWidgets[object] = nil
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "removeTargetWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local combatWidgets = {}
 
 local function addCombatWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.inCombat = InCombatLockdown()
 	combatWidgets[object] = widget
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "addCombatWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function removeCombatWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.inCombat = nil
 	combatWidgets[object] = nil
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "removeCombatWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local healthWidgets = {}
 
 local function addHealthWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.maxHealth = (UnitHealth("player") / UnitHealthMax("player")) == 1
 	healthWidgets[object] = widget
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "addHealthWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function removeHealthWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.maxHealth = nil
 	healthWidgets[object] = nil
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "removeHealthWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local activeWidgets = {}
@@ -68,6 +124,11 @@ local addActiveWidget, removeActiveWidget
 local updater = CreateFrame("Frame", "LSFadingUpdater")
 
 local function updater_OnUpdate(_, elapsed)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for object, widget in next, activeWidgets do
 		widget.fadeTimer = widget.fadeTimer + elapsed
 		widget.initAlpha = widget.initAlpha or object:GetAlpha()
@@ -106,9 +167,18 @@ local function updater_OnUpdate(_, elapsed)
 			end
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("LSFadingUpdater", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function addActiveWidget(object, widget, mode)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.mode = mode
 	widget.fadeTimer = mode == FADE_OUT and -widget.config.out_delay or 0
 	widget.initAlpha = nil
@@ -117,9 +187,18 @@ function addActiveWidget(object, widget, mode)
 	if not updater:GetScript("OnUpdate") then
 		updater:SetScript("OnUpdate", updater_OnUpdate)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "addActiveWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function removeActiveWidget(object, widget, atMinAlpha, atMaxAlpha)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.mode = nil
 	widget.atMaxAlpha = atMaxAlpha
 	widget.atMinAlpha = atMinAlpha
@@ -129,9 +208,18 @@ function removeActiveWidget(object, widget, atMinAlpha, atMaxAlpha)
 	if not next(activeWidgets) then
 		updater:SetScript("OnUpdate", nil)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "removeActiveWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 updater:SetScript("OnEvent", function(self, event)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if event == "PLAYER_REGEN_DISABLED" then
 		for object, widget in next, combatWidgets do
 			widget.inCombat = true
@@ -185,6 +273,10 @@ updater:SetScript("OnEvent", function(self, event)
 			self.maxHealth = false
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("LSFadingUpdater", "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end)
 
 -- combat widgets
@@ -213,6 +305,11 @@ local hoverUpdater = CreateFrame("Frame", "LSHoverFadingUpdater")
 local function hoverUpdater_OnUpdate(self, elapsed)
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed > 0.016 then -- limit to 60 fps
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		for object, widget in next, hoverWidgets do
 			if object:IsShown() then
 				if isMouseOver(object) then
@@ -226,30 +323,57 @@ local function hoverUpdater_OnUpdate(self, elapsed)
 		end
 
 		self.elapsed = 0
+
+		if Profiler:IsLogging() then
+			Profiler:Log("LSHoverFadingUpdater", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
 function addHoverWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.canHover = true
 	hoverWidgets[object] = widget
 
 	if not hoverUpdater:GetScript("OnUpdate") then
 		hoverUpdater:SetScript("OnUpdate", hoverUpdater_OnUpdate)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "addHoverWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function removeHoverWidget(object, widget)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	widget.canHover = nil
 	hoverWidgets[object] = nil
 
 	if not next(hoverWidgets) then
 		hoverUpdater:SetScript("OnUpdate", nil)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local fading", "removeHoverWidget", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local object_proto = {}
 
 function object_proto:DisableFading(ignoreFade)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local widget = widgets[self]
 
 	-- it's nil on load, but we still want to get in
@@ -260,17 +384,35 @@ function object_proto:DisableFading(ignoreFade)
 			addActiveWidget(self, widget, FADE_IN)
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "DisableFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function object_proto:EnableFading()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local widget = widgets[self]
 
 	if not (widget.inCombat or widget.hasTarget) and widget.maxHealth ~= false then
 		addHoverWidget(self, widget)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "EnableFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function object_proto:UpdateFading()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local widget = widgets[self]
 
 	widget.config = E:CopyTable(self._config.fade, widget.config)
@@ -301,11 +443,20 @@ function object_proto:UpdateFading()
 
 		self:EnableFading()
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:SetUpFading(object)
 	if widgets[object] then
 		return
+	end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
 	end
 
 	local fader = CreateFrame("Frame", "$parentFader", object)
@@ -322,6 +473,10 @@ function E:SetUpFading(object)
 
 	Mixin(object, object_proto)
 
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SetUpFading", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
 	return object
 end
 
@@ -330,6 +485,11 @@ local function resetCallback(object)
 end
 
 function E:FadeIn(object, inDuration, minAlpha, maxAlpha, shouldReset)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if widgets[object] then
 		removeActiveWidget(object, widgets[object])
 
@@ -355,9 +515,18 @@ function E:FadeIn(object, inDuration, minAlpha, maxAlpha, shouldReset)
 	end
 
 	addActiveWidget(object, tbl[object], FADE_IN)
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "FadeIn", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:FadeOut(object, outDelay, outDuration, minAlpha, maxAlpha, shouldReset)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if widgets[object] then
 		removeActiveWidget(object, widgets[object])
 
@@ -383,4 +552,8 @@ function E:FadeOut(object, outDelay, outDuration, minAlpha, maxAlpha, shouldRese
 	end
 
 	addActiveWidget(object, tbl[object], FADE_OUT)
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "FadeOut", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end

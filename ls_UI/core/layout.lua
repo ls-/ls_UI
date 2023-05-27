@@ -3,6 +3,8 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local m_ceil = _G.math.ceil
 local m_floor = _G.math.floor
 local m_min = _G.math.min
@@ -12,6 +14,11 @@ local next = _G.next
 E.Layout = {}
 
 function E.Layout:Update(frame, config)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	config = config or frame._config
 	local children = frame._buttons or frame._children
 
@@ -65,5 +72,9 @@ function E.Layout:Update(frame, config)
 		else
 			child:SetParent(E.HIDDEN_PARENT)
 		end
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E.Layout", "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end

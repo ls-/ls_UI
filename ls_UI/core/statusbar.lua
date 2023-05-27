@@ -3,6 +3,8 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local m_abs = _G.math.abs
 local next = _G.next
 local s_match = _G.string.match
@@ -390,6 +392,11 @@ do
 	end
 
 	function E:SetStatusBarSkin(object, flag)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		local s, v = s_split("-", flag)
 
 		object.Tube = object.Tube or {
@@ -447,6 +454,10 @@ do
 				object.Tube[i]:ClearAllPoints()
 			end
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("E", "SetStatusBarSkin", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
@@ -486,6 +497,11 @@ do
 	local add, remove
 
 	local function onUpdate(_, elapsed)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		for object, target in next, activeObjects do
 			local new = lerp(object._value, target, clamp(AMOUNT * elapsed * TARGET_FPS))
 			object:SetValue_(new)
@@ -495,17 +511,35 @@ do
 				remove(object)
 			end
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("LSBarSmoother", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function add(bar, target)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		activeObjects[bar] = clamp(target, bar._min, bar._max)
 
 		if not smoother:GetScript("OnUpdate") then
 			smoother:SetScript("OnUpdate", onUpdate)
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("LSBarSmoother", "add", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function remove(bar)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if activeObjects[bar] then
 			bar:SetValue_(activeObjects[bar])
 			bar._value = activeObjects[bar]
@@ -516,9 +550,18 @@ do
 		if not next(activeObjects) then
 			smoother:SetScript("OnUpdate", nil)
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log("LSBarSmoother", "remove", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	local function bar_SetValue(self, new)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if not self:IsVisible() or isCloseEnough(self._value, new, self._max - self._min) then
 			activeObjects[self] = nil
 
@@ -529,9 +572,18 @@ do
 		end
 
 		add(self, new)
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "SetValue", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	local function bar_SetMinMaxValues(self, min, max)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		self:SetMinMaxValues_(min, max)
 
 		if self._max and self._max ~= max then
@@ -554,6 +606,10 @@ do
 
 		self._min = min
 		self._max = max
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "SetMinMaxValues", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function E:SmoothBar(bar)

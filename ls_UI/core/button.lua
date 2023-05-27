@@ -3,6 +3,8 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local s_gsub = _G.string.gsub
 local s_utf8sub = _G.string.utf8sub
@@ -12,18 +14,43 @@ local select = _G.select
 local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local function button_GetHotkey(self)
-	return LibKeyBound:ToShortKey(
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
+	local hotkey = LibKeyBound:ToShortKey(
 		(self._command and GetBindingKey(self._command))
 		or (self:GetName() and GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton"))
 		or ""
 	)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "GetHotkey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
+	return hotkey
 end
 
 local function button_SetKey(self, key)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	SetBinding(key, self._command)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "SetKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function button_GetBindings(self)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local binding = self._command
 	local keys = ""
 
@@ -47,10 +74,19 @@ local function button_GetBindings(self)
 		end
 	end
 
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "SetKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
 	return keys
 end
 
 local function button_ClearBindings(self)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local binding = self._command
 
 	while GetBindingKey(binding) do
@@ -64,25 +100,61 @@ local function button_ClearBindings(self)
 			SetBinding(GetBindingKey(binding), nil)
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "ClearBindings", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function addMaskTextureHook(self, texture)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self:RemoveMaskTexture(texture)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "addMaskTextureHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function setNormalAtlasTextureHook(self, texture)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if texture and texture ~= 0 then
 		self:SetNormalTexture(0)
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "setNormalAtlasTextureHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 local function updateHotKey(self, text)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if text ~= RANGE_INDICATOR then
 		self:SetFormattedText("%s", self:GetParent():GetHotkey() or "")
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetParent():GetDebugName(), "updateHotKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 local function updateMacroText(self, text)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local button = self:GetParent()
 
 	local name = button.Name
@@ -92,9 +164,18 @@ local function updateMacroText(self, text)
 			name:SetFormattedText("%s", s_utf8sub(text, 1, 4))
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "updateMacroText", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function setIcon(button, texture, l, r, t, b)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local icon
 
 	if button.CreateTexture then
@@ -111,34 +192,70 @@ local function setIcon(button, texture, l, r, t, b)
 		icon:SetTexture(texture)
 	end
 
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "setIcon", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
 	return icon
 end
 
 local function setPushedTexture(button)
 	if not button.SetPushedTexture then return end
 
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	button:SetPushedTexture("Interface\\Buttons\\CheckButtonHilight")
 	button:GetPushedTexture():SetBlendMode("ADD")
 	button:GetPushedTexture():SetAllPoints()
+
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "setPushedTexture", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function setHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	button:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight")
 	button:GetHighlightTexture():SetBlendMode("ADD")
 	button:GetHighlightTexture():SetAllPoints()
+
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "setHighlightTexture", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function setCheckedTexture(button)
 	if not button.SetCheckedTexture then return end
 
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	button:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight")
 	button:GetCheckedTexture():SetBlendMode("ADD")
 	button:GetCheckedTexture():SetAllPoints()
+
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "setCheckedTexture", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function onSizeChanged(self, width, height)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if self.OnSizeChanged then
 		self:OnSizeChanged(width, height)
 	else
@@ -155,9 +272,18 @@ local function onSizeChanged(self, width, height)
 			end
 		end
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "onSizeChanged", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function skinButton(button)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	button:HookScript("OnSizeChanged", onSizeChanged)
 
 	local cooldown = button.cooldown or button.Cooldown
@@ -328,11 +454,20 @@ local function skinButton(button)
 	if checkedTexture then
 		setCheckedTexture(button)
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(button:GetDebugName(), "skinButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 -- E:SkinActionButton
 do
 	local function updateBorderColor(self)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		local button = self:GetParent()
 
 		if button:IsEquipped() then
@@ -340,10 +475,19 @@ do
 		else
 			button.Border_:SetVertexColor(1, 1, 1)
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(button:GetDebugName(), "updateBorderColor", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	function E:SkinActionButton(button)
 		if not button or button.__styled then return end
+
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
 
 		skinButton(button)
 
@@ -354,41 +498,87 @@ do
 		end
 
 		button.__styled = true
+
+
+		if Profiler:IsLogging() then
+			Profiler:Log("E", "SkinActionButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
 function E:SkinFlyoutButton(button)
 	if not button or button.__styled then return end
 
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self:SkinActionButton(button)
 
 	button.HotKey:Hide()
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SkinFlyoutButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 -- E:SkinInvSlotButton
 do
 	local function azeriteSetDrawLayerHook(self, layer)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if layer ~= "BACKGROUND" then
 			self:SetDrawLayer("BACKGROUND", -1)
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "azeriteSetDrawLayerHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
 	local function updateBorderColor(self)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if self:IsShown() then
 			self:GetParent().Border_:SetVertexColor(self:GetVertexColor())
 		else
 			self:GetParent().Border_:SetVertexColor(0.6, 0.6, 0.6)
 		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "updateBorderColor", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 
 	local function setTextureHook(self, texture)
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		if texture then
 			self:SetTexture(nil)
+		end
+
+		if Profiler:IsLogging() then
+			Profiler:Log(self:GetDebugName(), "setTextureHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
 	function E:SkinInvSlotButton(button)
 		if not button or button.__styled then return end
+
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
 
 		skinButton(button)
 
@@ -409,11 +599,20 @@ do
 		end
 
 		button.__styled = true
+
+		if Profiler:IsLogging() then
+			Profiler:Log("E", "SkinInvSlotButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end
 
 function E:SkinExtraActionButton(button)
 	if not button or button.__styled then return end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
 
 	skinButton(button)
 
@@ -423,10 +622,19 @@ function E:SkinExtraActionButton(button)
 	end
 
 	button.__styled = true
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SkinExtraActionButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:SkinPetActionButton(button)
 	if not button or button.__styled then return end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
 
 	skinButton(button)
 
@@ -436,18 +644,36 @@ function E:SkinPetActionButton(button)
 	end
 
 	button.__styled = true
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SkinPetActionButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:SkinStanceButton(button)
 	if not button or button.__styled then return end
 
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	skinButton(button)
 
 	button.__styled = true
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SkinStanceButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:SkinPetBattleButton(button)
 	if not button or button.__styled then return end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
 
 	skinButton(button)
 
@@ -491,6 +717,10 @@ function E:SkinPetBattleButton(button)
 	end
 
 	button.__styled = true
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "SkinPetBattleButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E:SetIcon(...)
@@ -498,6 +728,11 @@ function E:SetIcon(...)
 end
 
 function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecure)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local button = CreateFrame("Button", name, parent, isSecure and "SecureActionButtonTemplate")
 	button:SetSize(28, 28)
 	button:HookScript("OnSizeChanged", onSizeChanged)
@@ -536,6 +771,10 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 		if hasCount then
 			button.Count:SetParent(textureParent)
 		end
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E", "CreateButton", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 
 	return button

@@ -3,6 +3,8 @@ local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L
 
 -- Lua
 local _G = getfenv(0)
+local collectgarbage = _G.collectgarbage
+local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
@@ -36,6 +38,11 @@ local time1, time2, format, color
 updater:SetScript("OnUpdate", function(_, elapsed)
 	updateTime = updateTime + elapsed
 	if updateTime >= 0.1 then
+		local timeStart, memStart
+		if Profiler:IsLogging() then
+			timeStart, memStart = debugprofilestop(), collectgarbage("count")
+		end
+
 		for cooldown, expiration in next, activeCooldowns do
 			if cooldown:IsVisible() and cooldown.Timer:IsVisible() then
 				local remain = expiration - GetTime()
@@ -86,15 +93,33 @@ updater:SetScript("OnUpdate", function(_, elapsed)
 		end
 
 		updateTime = 0
+
+		if Profiler:IsLogging() then
+			Profiler:Log("LSCooldownUpdater", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		end
 	end
 end)
 
 local function clearHook(self)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	self.Timer:SetText("")
 	activeCooldowns[self] = nil
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "clearHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local function setCooldownHook(self, start, duration)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if self.config.text.enabled then
 		if duration > 1.5 then
 			activeCooldowns[self] = start + duration
@@ -104,27 +129,54 @@ local function setCooldownHook(self, start, duration)
 
 	self.Timer:SetText("")
 	activeCooldowns[self] = nil
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "setCooldownHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 local cooldown_proto = {}
 
 function cooldown_proto:UpdateFont()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local config = self.config.text
 
 	self.Timer:UpdateFont(config.size)
 	self.Timer:SetJustifyH("CENTER")
 	self.Timer:SetJustifyV(config.v_alignment)
 	self.Timer:SetShown(config.enabled)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function cooldown_proto:UpdateSwipe()
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local config = self.config.swipe
 
 	self:SetDrawSwipe(config.enabled)
 	self:SetReverse(config.reversed)
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateSwipe", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function cooldown_proto:UpdateConfig(config)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	if config then
 		self.config = E:CopyTable(defaults, self.config)
 		self.config = E:CopyTable(config, self.config)
@@ -133,11 +185,20 @@ function cooldown_proto:UpdateConfig(config)
 	if self.config.m_ss_threshold ~= 0 and self.config.m_ss_threshold < 91 then
 		self.config.m_ss_threshold = 0
 	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
 end
 
 function E.Cooldowns.Handle(cooldown)
 	if E.OMNICC or handledCooldowns[cooldown] then
 		return cooldown
+	end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
 	end
 
 	Mixin(cooldown, cooldown_proto)
@@ -171,23 +232,45 @@ function E.Cooldowns.Handle(cooldown)
 		setCooldownHook(cooldown, start / 1000, duration / 1000)
 	end
 
+	if Profiler:IsLogging() then
+		Profiler:Log("E.Cooldowns", "Handle", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
 	return cooldown
 end
 
 function E.Cooldowns.Create(parent)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	local cooldown = CreateFrame("Cooldown", nil, parent, "CooldownFrameTemplate")
 	cooldown:SetPoint("TOPLEFT", 1, -1)
 	cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
 
 	E.Cooldowns.Handle(cooldown)
 
+	if Profiler:IsLogging() then
+		Profiler:Log("E.Cooldowns", "Create", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+
 	return cooldown
 end
 
 function E.Cooldowns:ForEach(method, ...)
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
 	for cooldown in next, handledCooldowns do
 		if cooldown[method] then
 			cooldown[method](cooldown, ...)
 		end
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("E.Cooldowns", "ForEach", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
