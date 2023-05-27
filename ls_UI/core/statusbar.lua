@@ -466,7 +466,7 @@ do
 	local handledObjects = {}
 
 	local TARGET_FPS = 60
-	local AMOUNT = 0.44
+	local AMOUNT = 0.4
 
 	local function lerp(v1, v2, perc)
 		return v1 + (v2 - v1) * perc
