@@ -151,6 +151,18 @@ function CONFIG:CreateMicroMenuOptions(order)
 					BARS:For("micromenu", "UpdateLayout")
 				end,
 			},
+			helptips = {
+				order = inc(1),
+				type = "toggle",
+				name = L["NOTIFICATIONS"],
+				set = function(_, value)
+					C.db.profile.bars.micromenu.helptips = value
+
+					if not value then
+						BARS:HideHelpTips()
+					end
+				end,
+			},
 			spacer_2 = {
 				order = inc(1),
 				type = "description",

@@ -2562,6 +2562,7 @@ D.profile = {
 			spacing = 2,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
+			helptips = true,
 			fade = {
 				enabled = false,
 				combat = false,

@@ -1092,6 +1092,8 @@ local function updateMicroButtons()
 end
 
 local function repositionAlert(button)
+	if not C.db.profile.bars.micromenu.helptips then return end
+
 	local timeStart, memStart
 	if Profiler:IsLogging() then
 		timeStart, memStart = debugprofilestop(), collectgarbage("count")
@@ -1113,6 +1115,26 @@ local function repositionAlert(button)
 		Profiler:Log("local MicroMenu", "repositionAlert", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
+
+local function hideHelpTips(self)
+	if C.db.profile.bars.micromenu.helptips then return end
+
+	local timeStart, memStart
+	if Profiler:IsLogging() then
+		timeStart, memStart = debugprofilestop(), collectgarbage("count")
+	end
+
+	for frame in self.framePool:EnumerateActive() do
+		if frame.info.system == "MicroButtons" then
+			frame:Hide()
+		end
+	end
+
+	if Profiler:IsLogging() then
+		Profiler:Log("local micromenu", "hideHelpTips", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+	end
+end
+
 
 function MODULE:HasMicroMenu()
 	return isInit
@@ -1174,6 +1196,7 @@ function MODULE:CreateMicroMenu()
 
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
+		hooksecurefunc(HelpTip, "Show", hideHelpTips)
 
 		bar:SetPoint(unpack(C.db.profile.bars.micromenu.point))
 		E.Movers:Create(bar)
@@ -1182,6 +1205,8 @@ function MODULE:CreateMicroMenu()
 			for _, name in next, ALERTS do
 				repositionAlert(_G[name])
 			end
+
+			hideHelpTips(HelpTip)
 		end)
 
 		isInit = true
@@ -1206,4 +1231,8 @@ function MODULE:ForMicroButton(id, method, ...)
 	if button and button[method] then
 		button[method](button, ...)
 	end
+end
+
+function MODULE:HideHelpTips()
+	hideHelpTips(HelpTip)
 end
