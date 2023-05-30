@@ -594,7 +594,7 @@ do
 		end
 
 		if Profiler:IsLogging() then
-			Profiler:Log("local MicroMenu", "fetchCTAData", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+			Profiler:Log("local micromenu", "fetchCTAData", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
@@ -626,7 +626,7 @@ do
 		end
 
 		if Profiler:IsLogging() then
-			Profiler:Log("local MicroMenu", "updateCTARewards", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+			Profiler:Log("local micromenu", "updateCTARewards", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
@@ -1087,7 +1087,7 @@ local function updateMicroButtons()
 	end
 
 	if Profiler:IsLogging() then
-		Profiler:Log("local MicroMenu", "updateMicroButtons", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		Profiler:Log("local micromenu", "updateMicroButtons", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -1112,7 +1112,7 @@ local function repositionAlert(button)
 	end
 
 	if Profiler:IsLogging() then
-		Profiler:Log("local MicroMenu", "repositionAlert", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
+		Profiler:Log("local micromenu", "repositionAlert", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
