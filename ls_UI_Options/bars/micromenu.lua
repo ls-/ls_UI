@@ -155,6 +155,9 @@ function CONFIG:CreateMicroMenuOptions(order)
 				order = inc(1),
 				type = "toggle",
 				name = L["NOTIFICATIONS"],
+				get = function()
+					return C.db.profile.bars.micromenu.helptips
+				end,
 				set = function(_, value)
 					C.db.profile.bars.micromenu.helptips = value
 
