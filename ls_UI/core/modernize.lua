@@ -334,7 +334,6 @@ function P:Modernize(data, name, key)
 									data.units[layout][unit].class_power.change_threshold = nil
 								end
 
-
 								if data.units[layout][unit].prediction then
 									data.units[layout][unit].prediction.absorb_text = nil
 									data.units[layout][unit].prediction.heal_absorb_text = nil

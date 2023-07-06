@@ -18,7 +18,6 @@ local function inc(order)
 	return orders[order]
 end
 
-
 local INDICATORS = {
 	["button"] = L["ICON"],
 	["hotkey"] = L["KEYBIND_TEXT"],

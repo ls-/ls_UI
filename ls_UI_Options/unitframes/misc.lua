@@ -227,7 +227,6 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 	}
 end
 
-
 local PORTRAIT_STYLES = {
 	["2D"] = "2D",
 	["3D"] = "3D",
