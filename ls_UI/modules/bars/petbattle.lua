@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local unpack = _G.unpack
@@ -40,49 +38,26 @@ local bar_proto = {
 }
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:ForEach("UpdateHotKey")
 	self:ForEach("UpdateHotKeyFont")
 	self:UpdateFading()
 	E.Layout:Update(self)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self._config = E:CopyTable(MODULE:IsRestricted() and CFG or C.db.profile.bars.pet_battle, self._config)
 	self._config.height = self._config.height ~= 0 and self._config.height or self._config.width
 
 	if MODULE:IsRestricted() then
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.pet_battle.hotkey, self._config.hotkey)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local button_proto = {}
 
 function button_proto:UpdateHotKey(state)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -94,23 +69,10 @@ function button_proto:UpdateHotKey(state)
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateHotKeyFont()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKeyFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function MODULE:HasPetBattleBar()
@@ -124,11 +86,6 @@ function MODULE:CreatePetBattleBar()
 		local bar = Mixin(self:Create("pet_battle", "LSPetBattleBar"), bar_proto)
 
 		hooksecurefunc("PetBattleFrame_UpdateActionBarLayout", function()
-			local timeStart, memStart
-			if Profiler:IsLogging() then
-				timeStart, memStart = debugprofilestop(), collectgarbage("count")
-			end
-
 			bar._buttons[1] = PetBattleFrame.BottomFrame.abilityButtons[1]
 			bar._buttons[2] = PetBattleFrame.BottomFrame.abilityButtons[2]
 			bar._buttons[3] = PetBattleFrame.BottomFrame.abilityButtons[3]
@@ -146,10 +103,6 @@ function MODULE:CreatePetBattleBar()
 			end
 
 			bar:Update()
-
-			if Profiler:IsLogging() then
-				Profiler:Log("PetBattleFrame", "UpdateActionBarLayout", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-			end
 		end)
 
 		if MODULE:IsRestricted() then

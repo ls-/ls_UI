@@ -28,8 +28,6 @@ ignore = {
 	"211/PrD",  -- Unused local variable D
 	"211/Config",  -- Unused local variable Config
 	"211/CONFIG",  -- Unused local variable CONFIG
-	"211/Profiler",  -- Unused local variable Profiler
-	"211/PROFILER",  -- Unused local variable PROFILER
 	"432", -- Shadowing an upvalue argument
 }
 

@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local unpack = _G.unpack
 
 -- Mine
@@ -14,11 +12,6 @@ local isInit = false
 local button_proto = {}
 
 function button_proto:OnSizeChanged(width, height)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if width > height then
 		local offset = 0.625 * (1 - height / width) / 2
 		self.Icon:SetTexCoord(0.1875, 0.8125, 0.1875 + offset, 0.8125 - offset)
@@ -28,18 +21,9 @@ function button_proto:OnSizeChanged(width, height)
 	else
 		self.Icon:SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnSizeChanged", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:OnEvent()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if UnitOnTaxi("player") or CanExitVehicle() then
 		self:Show()
 		self.Icon:SetDesaturated(false)
@@ -47,18 +31,9 @@ function button_proto:OnEvent()
 	else
 		self:Hide()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:OnClick()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 
@@ -68,10 +43,6 @@ function button_proto:OnClick()
 	else
 		VehicleExit()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnClick", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local bar_proto = {
@@ -79,21 +50,12 @@ local bar_proto = {
 }
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateFading()
 
 	self:SetSize(self._config.width + 4, self._config.height + 4)
 	E.Movers:Get(self):UpdateSize()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function MODULE:CreateVehicleExitButton()

@@ -1,18 +1,11 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 
 -- Mine
 function E:CreateBackdrop(parent)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local backdrop = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	backdrop:SetBackdrop({
 		bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
@@ -31,10 +24,6 @@ function E:CreateBackdrop(parent)
 
 	backdrop:SetBackdropColor(0, 0, 0, 0.6)
 	backdrop:SetBackdropBorderColor(0, 0, 0, 0.6)
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E", "CreateBorder", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 
 	return backdrop
 end

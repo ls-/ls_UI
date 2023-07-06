@@ -1,5 +1,5 @@
 local addonName, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Config, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Config, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF, Config= ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Config
 
 -- Lua
 local _G = getfenv(0)
@@ -180,20 +180,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end)
 
-	local function openProfiler()
-		if not Profiler:IsLoaded() then
-			LoadAddOn("ls_UI_Profiler")
-
-			if not Profiler:IsLoaded() then return end
-		end
-
-		Profiler:Open()
-	end
-
-	P:AddCommand("profiler", function()
-		openProfiler()
-	end)
-
 	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
@@ -207,18 +193,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 			openConfig()
 		end
-	end)
-
-	local button2 = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	button2:SetText(L["PERFORMANCE"])
-	button2:SetWidth(button2:GetTextWidth() + 18)
-	button2:SetPoint("TOPLEFT", button1, "BOTTOMLEFT", 0, -8)
-	button2:SetScript("OnClick", function()
-		if not InCombatLockdown() then
-			HideUIPanel(SettingsPanel)
-		end
-
-		openProfiler()
 	end)
 
 	Settings.RegisterAddOnCategory(Settings.RegisterCanvasLayoutCategory(panel, L["LS_UI"]))

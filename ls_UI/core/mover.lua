@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
 local assert = _G.assert
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local m_atan2 = _G.math.atan2
 local m_cos = _G.math.cos
@@ -58,11 +56,6 @@ controller:SetPoint("TOPLEFT", 0, 0)
 controller:SetSize(1, 1)
 controller:Hide()
 controller:SetScript("OnKeyDown", function(self, key)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self.mover then
 		self:SetPropagateKeyboardInput(false)
 		if key == "LEFT" then
@@ -83,17 +76,8 @@ controller:SetScript("OnKeyDown", function(self, key)
 	else
 		self:SetPropagateKeyboardInput(true)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnKeyDown", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end)
 controller:SetScript("OnUpdate", function(self, elapsed)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if not isDragging then
 		local isAltKeyDown = IsAltKeyDown()
 		if isAltKeyDown ~= self.isAltKeyDown then
@@ -164,10 +148,6 @@ controller:SetScript("OnUpdate", function(self, elapsed)
 	else
 		self.elapsed = 0
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end)
 
 local grid = {}
@@ -185,11 +165,6 @@ do
 	bg:SetColorTexture(0, 0, 0, 0.33)
 
 	local function acquireLine()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if not next(lines) then
 			t_insert(lines, parent:CreateTexture())
 		end
@@ -200,29 +175,16 @@ do
 
 		t_insert(activeLines, line)
 
-		if Profiler:IsLogging() then
-			Profiler:Log("local mover", "acquireLine", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
-
 		return line
 	end
 
 	local function releaseLines()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		while next(activeLines) do
 			local line = t_remove(activeLines, 1)
 			line:ClearAllPoints()
 			line:Hide()
 
 			t_insert(lines, line)
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("local mover", "releaseLines", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
@@ -239,11 +201,6 @@ do
 	end
 
 	function grid:Show()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		releaseLines()
 
 		local screenWidth, screenHeight = UIParent:GetRight(), UIParent:GetTop()
@@ -307,10 +264,6 @@ do
 			tex:SetPoint("TOPRIGHT", parent, "TOPLEFT", screenCenterX + 1 + size * i, 0)
 			tex:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", screenCenterX - 1 + size * i, 0)
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("grid", "Show", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
@@ -320,11 +273,6 @@ do
 	local lines = {}
 
 	local function acquireSegment()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if not next(segments) then
 			t_insert(segments, moverParent:CreateTexture(nil, "OVERLAY"))
 		end
@@ -338,65 +286,34 @@ do
 		segment:ClearAllPoints()
 		segment:SetShown(areToggledOn)
 
-		if Profiler:IsLogging() then
-			Profiler:Log("local mover", "acquireSegment", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
-
 		return segment
 	end
 
 	local function releaseSegment(segment)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		segment:ClearAllPoints()
 		segment:Hide()
 
 		t_insert(segments, segment)
-
-		if Profiler:IsLogging() then
-			Profiler:Log("local mover", "releaseSegment", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function relationLines:Remove(hive, drone)
 		if not lines[hive] then return end
 		if not lines[hive][drone] then return end
 
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		for _, segment in next, lines[hive][drone] do
 			releaseSegment(segment)
 		end
 
 		t_wipe(lines[hive][drone])
-
-		if Profiler:IsLogging() then
-			Profiler:Log("relationLines", "Remove", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function relationLines:Hide()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		for _, mover in next, enabledMovers do
 			for drone in next, mover:GetDrones() do
 				if drone:IsEnabled() then
 					relationLines:Remove(mover, drone)
 				end
 			end
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("relationLines", "Hide", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 
@@ -405,11 +322,6 @@ do
 	end
 
 	function relationLines:Add(hive, drone)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		relationLines:Remove(hive, drone)
 
 		local hiveX, hiveY = hive:GetCenter()
@@ -445,28 +357,15 @@ do
 			relationLine[i]:SetPoint("CENTER", hive, "CENTER", x, y)
 			relationLine[i]:SetRotation(rotation)
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("relationLines", "Add", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function relationLines:Show()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		for _, mover in next, enabledMovers do
 			for drone in next, mover:GetDrones() do
 				if drone:IsEnabled() then
 					relationLines:Add(mover, drone)
 				end
 			end
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("relationLines", "Add", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end
@@ -476,21 +375,12 @@ do
 	lasso = CreateFrame("Frame", nil, moverParent)
 	lasso:SetSize(16, 16)
 	lasso:SetScript("OnUpdate", function(self)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		local x, y = GetCursorPosition()
 		local scale = UIParent:GetEffectiveScale()
 		self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x / scale - 8, y / scale - 8)
 
 		if self.mover then
 			relationLines:Add(self, self.mover)
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("LSMoverLasso", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end)
 	lasso:Hide()
@@ -606,11 +496,6 @@ local function getPoint(self)
 end
 
 local function calculatePosition(self, xOffset, yOffset, forceUIParent)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local moverCenterX, moverCenterY = self:GetCenter()
 	local parent = forceUIParent and UIParent or self:GetHive() and self:GetHive():GetObject() or UIParent
 	local p, rP, x, y
@@ -731,19 +616,10 @@ local function calculatePosition(self, xOffset, yOffset, forceUIParent)
 		end
 	end
 
-	if Profiler:IsLogging() then
-		Profiler:Log("local mover", "calculatePosition", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
-
 	return p, parent:GetName(), rP, x, y
 end
 
 local function updatePosition(self, p, anchor, rP, x, y)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if not x then
 		if currentPoints[self:GetName()] then
 			p, anchor, rP, x, y = self:GetCurrentPosition()
@@ -759,21 +635,12 @@ local function updatePosition(self, p, anchor, rP, x, y)
 	self:ClearAllPoints()
 	self:SetPoint(p, anchor, rP, x, y)
 
-	if Profiler:IsLogging() then
-		Profiler:Log("local mover", "updatePosition", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
-
 	return p, anchor, rP, x, y
 end
 
 local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 	local mover = E.Movers:Get(self)
 	if mover and not shouldIgnore then
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if not InCombatLockdown() or not self:IsProtected() then
 			local scale = self:GetScale()
 			self:ClearAllPoints()
@@ -803,10 +670,6 @@ local function resetObjectPoint(self, _, _, _, _, _, shouldIgnore)
 		else
 			dirtyObjects[self] = true
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "resetObjectPoint", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
@@ -828,11 +691,6 @@ end
 
 function mover_proto:ResetPosition()
 	if not self.isSimple and InCombatLockdown() then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	local p, anchor, rP, x, y = self:GetDefaultPosition()
 
@@ -873,19 +731,10 @@ function mover_proto:ResetPosition()
 	end
 
 	self:PostSaveUpdatePosition()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "ResetPosition", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:UpdatePosition(xOffset, yOffset)
 	if not self.isSimple and InCombatLockdown() then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	local p, anchor, rP, x, y = calculatePosition(self, xOffset, yOffset)
 	p, anchor, rP, x, y = updatePosition(self, p, anchor, rP, x, y)
@@ -913,18 +762,9 @@ function mover_proto:UpdatePosition(xOffset, yOffset)
 	end
 
 	self:PostSaveUpdatePosition()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdatePosition", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnEnter()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local p, anchor, rP, x, y = calculatePosition(self)
 
 	GameTooltip:SetOwner(self, unpack(TOOLTIP_ANCHORS[p]))
@@ -933,31 +773,13 @@ function mover_proto:OnEnter()
 	GameTooltip:AddLine("|cffffd100Attached to:|r " .. rP .. " |cffffd100of|r " .. anchor, 1, 1, 1)
 	GameTooltip:AddLine("|cffffd100X:|r " .. x .. ", |cffffd100Y:|r " .. y, 1, 1, 1)
 	GameTooltip:Show()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnLeave()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	GameTooltip:Hide()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnLeave", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnUpdate(elapsed)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.elapsed = (self.elapsed or 0) + elapsed
 	if self.elapsed > 0.1 then
 		if GameTooltip:IsOwned(self) then
@@ -972,19 +794,10 @@ function mover_proto:OnUpdate(elapsed)
 	end
 
 	self:AddRelationLines()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnDragStart()
 	if not self.isSimple and InCombatLockdown() then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	if self:IsDragKeyDown() then
 		self:StartMoving()
@@ -995,37 +808,19 @@ function mover_proto:OnDragStart()
 
 		isDragging = true
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnDragStart", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnDragStop()
 	if not self.isSimple and InCombatLockdown() then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	self:SetScript("OnUpdate", nil)
 	self:StopMovingOrSizing()
 	self:UpdatePosition()
 
 	isDragging = false
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnDragStop", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnClick()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if IsShiftKeyDown() then
 		self:ResetPosition()
 
@@ -1033,18 +828,9 @@ function mover_proto:OnClick()
 			self:OnEnter()
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnClick", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:OnMouseWheel(offset)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if IsShiftKeyDown() then
 		self:UpdatePosition(0, offset)
 	elseif IsControlKeyDown() then
@@ -1053,10 +839,6 @@ function mover_proto:OnMouseWheel(offset)
 
 	if GameTooltip:IsOwned(self) then
 		self:OnEnter()
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnMouseWheel", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -1074,11 +856,6 @@ function mover_proto:WasMoved()
 end
 
 function mover_proto:AddRelationLines()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for drone in next, self:GetDrones() do
 		if drone:IsEnabled() then
 			relationLines:Add(self, drone)
@@ -1089,18 +866,9 @@ function mover_proto:AddRelationLines()
 	if hive then
 		relationLines:Add(hive, self)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "AddRelationLines", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:RemoveRelationLines()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for drone in next, self:GetDrones() do
 		if drone:IsEnabled() then
 			relationLines:Remove(self, drone)
@@ -1110,10 +878,6 @@ function mover_proto:RemoveRelationLines()
 	local hive = self:GetHive()
 	if hive then
 		relationLines:Remove(hive, self)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "RemoveRelationLines", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -1178,11 +942,6 @@ function mover_proto:RemoveFromHive()
 end
 
 function mover_proto:Enable()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local name = self:GetName()
 
 	if enabledMovers[name] or not disabledMovers[name] then return end
@@ -1196,18 +955,9 @@ function mover_proto:Enable()
 	if areToggledOn then
 		enabledMovers[name]:Show()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Enable", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:Disable()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local name = self:GetName()
 
 	if disabledMovers[name] or not enabledMovers[name] then return end
@@ -1216,28 +966,15 @@ function mover_proto:Disable()
 
 	disabledMovers[name] = enabledMovers[name]
 	enabledMovers[name] = nil
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Disable", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:UpdateSize(width, height)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local newScale = self.object:GetScale()
 
 	self:SetWidth(E:Round((width or (self.object:GetWidth() + self.offsetX * 2)) * newScale))
 	self:SetHeight(E:Round((height or (self.object:GetHeight() + self.offsetY * 2)) * newScale))
 
 	resetObjectPoint(self.object)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateSize", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function mover_proto:GetObject()
@@ -1247,11 +984,6 @@ end
 local anchor_proto = {}
 
 function anchor_proto:OnClick()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if IsShiftKeyDown() then
 		local mover = self:GetParent()
 		mover:RemoveRelationLines()
@@ -1264,60 +996,24 @@ function anchor_proto:OnClick()
 
 		mover:UpdatePosition()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnClick", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function anchor_proto:OnEnter()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:SetAlpha(1)
 	self.Texture:SetVertexColor(0, 1, 0.92)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function anchor_proto:OnLeave()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:SetAlpha(0.5)
 	self.Texture:SetVertexColor(1, 1, 1)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnLeave", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function anchor_proto:OnDragStart()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	lasso.mover = self:GetParent()
 	lasso:Show()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnDragStart", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function anchor_proto:OnDragStop()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local mover = self:GetParent()
 
 	relationLines:Remove(lasso, mover)
@@ -1328,10 +1024,6 @@ function anchor_proto:OnDragStop()
 		mover:RemoveRelationLines()
 		mover:AddToHive(controller.mover)
 		mover:UpdatePosition()
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnDragStop", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
@@ -1499,11 +1191,6 @@ local reopenConfig
 function E.Movers:ToggleAll(...)
 	if InCombatLockdown() then return end
 
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	areToggledOn = not areToggledOn
 
 	for _, mover in next, enabledMovers do
@@ -1531,18 +1218,9 @@ function E.Movers:ToggleAll(...)
 			end
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "ToggleAll", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function E.Movers:UpdateAll()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for _, mover in next, enabledMovers do
 		mover:RemoveRelationLines()
 		mover:RemoveDrones()
@@ -1574,31 +1252,13 @@ function E.Movers:UpdateAll()
 			end
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "UpdateAll", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function E.Movers:SaveConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	E:DiffTable(defaultPoints, E:CopyTable(currentPoints, C.db.profile.movers))
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "SaveConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function E.Movers:ApplyConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	t_wipe(currentPoints)
 	E:CopyTable(defaultPoints, currentPoints)
 
@@ -1607,10 +1267,6 @@ function E.Movers:ApplyConfig()
 			E:CopyTable(point, currentPoints[name])
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "ApplyConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 P:AddCommand("movers", function()
@@ -1618,11 +1274,6 @@ P:AddCommand("movers", function()
 end)
 
 E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for _, mover in next, enabledMovers do
 		if not mover.isSimple then
 			if isDragging and mover:IsMouseEnabled() then
@@ -1637,40 +1288,18 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	relationLines:Hide()
 	settings:Hide()
 	controller:Hide()
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "PLAYER_REGEN_DISABLED", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end)
 
 E:RegisterEvent("FIRST_FRAME_RENDERED", function()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if not InCombatLockdown() then
 		for object in next, dirtyObjects do
 			resetObjectPoint(object)
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "FIRST_FRAME_RENDERED", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end)
 
 E:RegisterEvent("PLAYER_REGEN_ENABLED", function()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for object in next, dirtyObjects do
 		resetObjectPoint(object)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("E.Movers", "PLAYER_REGEN_ENABLED", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end)

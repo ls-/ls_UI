@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local unpack = _G.unpack
 
@@ -17,11 +15,6 @@ local isInit = false
 local button_proto = {}
 
 function button_proto:UpdateHotKey(state)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -33,48 +26,21 @@ function button_proto:UpdateHotKey(state)
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateHotKeyFont()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKeyFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:OnEnterHook()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if LibKeyBound then
 		LibKeyBound:Set(self)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEnterHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 local bar_proto = {}
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:ForEach("UpdateHotKey")
@@ -95,28 +61,15 @@ function bar_proto:Update()
 	if mover then
 		mover:UpdateSize()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateArtwork()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self._config.artwork then
 		ExtraActionButton1.style:Show()
 		ExtraActionButton1.style:SetParent(ExtraActionButton1)
 	else
 		ExtraActionButton1.style:Hide()
 		ExtraActionButton1.style:SetParent(E.HIDDEN_PARENT)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateArtwork", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 

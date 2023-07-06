@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 local select = _G.select
@@ -223,11 +221,6 @@ end
 local button_proto = {}
 
 function button_proto:OnEnter()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
@@ -247,31 +240,13 @@ function button_proto:OnEnter()
 	end
 
 	GameTooltip:Show()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self._config = E:CopyTable(C.db.profile.bars.micromenu.buttons[self._id], self._config)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateVisibility()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self._config.enabled then
 		self:Show()
 		self:SetParent(self._parent)
@@ -283,18 +258,9 @@ function button_proto:UpdateVisibility()
 
 		activeButtons[self:GetID()] = nil
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateVisibility", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateEvents()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UnregisterAllEvents()
 
 	if self._config.enabled then
@@ -305,25 +271,12 @@ function button_proto:UpdateEvents()
 		self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 		self:RegisterEvent("UPDATE_BINDINGS")
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateEvents", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateEvents()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local function handleMicroButton(button)
@@ -401,11 +354,6 @@ do
 	local minDurability = 100
 
 	function char_button_proto:OnEnter()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
@@ -421,18 +369,9 @@ do
 
 			GameTooltip:Show()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function char_button_proto:OnEvent(event)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if event == "UPDATE_INVENTORY_DURABILITY" then
 			local t = GetTime()
 
@@ -446,18 +385,9 @@ do
 		elseif event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function char_button_proto:Update()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.Update(self)
 
 		if self._config.tooltip then
@@ -467,18 +397,9 @@ do
 		end
 
 		self:UpdateIndicator()
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function char_button_proto:UpdateIndicator()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		t_wipe(durabilities)
 		minDurability = 100
 
@@ -505,27 +426,14 @@ do
 
 			self:OnEnter()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "UpdateIndicator", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
 local spellbook_button_proto = {}
 do
 	function spellbook_button_proto:OnEvent(event)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end
@@ -533,39 +441,21 @@ end
 local quest_button_proto = {}
 do
 	function quest_button_proto:OnEnter()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(L["DAILY_QUEST_RESET_TIME_TOOLTIP"]:format(SecondsToTime(GetQuestResetTime())))
 			GameTooltip:Show()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function quest_button_proto:Update()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", self.OnEnter)
 		else
 			self:SetScript("OnEnter", button_proto.OnEnter)
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end
@@ -586,11 +476,6 @@ do
 	}
 
 	local function fetchCTAData(dungeonID, dungeonName, shortageRole, shortageIndex, numRewards)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		cta[shortageRole][dungeonID] = cta[shortageRole][dungeonID] or {}
 		cta[shortageRole][dungeonID].name = dungeonName
 
@@ -610,18 +495,9 @@ do
 
 			cta.total = cta.total + 1
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("local micromenu", "fetchCTAData", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	local function updateCTARewards(dungeonID, dungeonName)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if IsLFGDungeonJoinable(dungeonID) then
 			for shortageIndex = 1, LFG_ROLE_NUM_SHORTAGE_TYPES do
 				local eligible, forTank, forHealer, forDamager, numRewards = GetLFGRoleShortageRewards(dungeonID, shortageIndex)
@@ -642,18 +518,9 @@ do
 				end
 			end
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log("local micromenu", "updateCTARewards", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function lfd_button_proto:OnEnter()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
@@ -682,18 +549,9 @@ do
 
 			GameTooltip:Show()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function lfd_button_proto:OnEvent(event)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if event == "LFG_LOCK_INFO_RECEIVED" then
 			if GetTime() - (self.lastUpdate or 0) > 9 then
 				self:UpdateIndicator()
@@ -707,18 +565,9 @@ do
 			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
 			self.newbieText = NEWBIE_TOOLTIP_LFGPARENT
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function lfd_button_proto:Update()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
@@ -738,18 +587,9 @@ do
 		end
 
 		self:UpdateIndicator()
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function lfd_button_proto:UpdateIndicator()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		t_wipe(cta.tank)
 		t_wipe(cta.healer)
 		t_wipe(cta.damager)
@@ -774,21 +614,12 @@ do
 
 			self:OnEnter()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "UpdateIndicator", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
 local ej_button_proto = {}
 do
 	function ej_button_proto:OnEnter()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
@@ -841,18 +672,9 @@ do
 
 			GameTooltip:Show()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function ej_button_proto:OnEventHook(event)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if event == "UPDATE_INSTANCE_INFO" then
 			if GameTooltip:IsOwned(self) then
 				GameTooltip:Hide()
@@ -860,28 +682,15 @@ do
 				self:OnEnter()
 			end
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEventHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function ej_button_proto:Update()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.Update(self)
 
 		if self._config.tooltip then
 			self:SetScript("OnEnter", self.OnEnter)
 		else
 			self:SetScript("OnEnter", button_proto.OnEnter)
-		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 		end
 	end
 end
@@ -902,11 +711,6 @@ do
 	end
 
 	function main_button_proto:OnEnter()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
@@ -960,18 +764,9 @@ do
 
 			GameTooltip:Show()
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function main_button_proto:OnEvent(event)
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		if event == "MODIFIER_STATE_CHANGED" then
 			if GameTooltip:IsOwned(self) then
 				GameTooltip:Hide()
@@ -981,18 +776,9 @@ do
 		elseif event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
 		end
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function main_button_proto:Update()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
@@ -1011,24 +797,11 @@ do
 		end
 
 		self:UpdateIndicator()
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 
 	function main_button_proto:UpdateIndicator()
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		_, _, latencyHome, latencyWorld = GetNetStats()
 		self.Indicator:SetVertexColor(E:GetGradientAsRGB(latencyWorld / MED_LATENCY, C.db.global.colors.gyr))
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "UpdateIndicator", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
@@ -1041,42 +814,19 @@ local bar_proto = {
 }
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:ForEach("Update")
 	self:ForEach("UpdateEvents")
 	self:UpdateButtonList()
 	self:UpdateFading()
 	self:UpdateLayout()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self._config = E:CopyTable(C.db.profile.bars.micromenu, self._config)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateButtonList()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	t_wipe(self._buttons)
 
 	for _, button in next, activeButtons do
@@ -1086,36 +836,18 @@ function bar_proto:UpdateButtonList()
 	end
 
 	t_sort(self._buttons, buttonSort)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateButtonList", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local function updateMicroButtons()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if isInit then
 		for _, button in next, buttons do
 			button:SetShown(button._config.enabled)
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("local micromenu", "updateMicroButtons", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local function repositionAlert(button)
 	if not C.db.profile.bars.micromenu.helptips then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	for alert in HelpTip.framePool:EnumerateActive() do
 		if button and alert.relativeRegion == button and alert:Matches(UIParent) then
@@ -1128,31 +860,17 @@ local function repositionAlert(button)
 			end)
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("local micromenu", "repositionAlert", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local function hideHelpTips(self)
 	if C.db.profile.bars.micromenu.helptips then return end
-
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
 
 	for frame in self.framePool:EnumerateActive() do
 		if frame.info.system == "MicroButtons" then
 			frame:Hide()
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log("local micromenu", "hideHelpTips", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
-
 
 function MODULE:HasMicroMenu()
 	return isInit
@@ -1231,7 +949,6 @@ function MODULE:CreateMicroMenu()
 
 		self:UpdateMicroMenu()
 	end
-
 end
 
 function MODULE:UpdateMicroMenu()

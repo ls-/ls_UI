@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local next = _G.next
 local unpack = _G.unpack
 
@@ -40,11 +38,6 @@ end
 local bar_proto = {}
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateVisibility()
 	self:UpdateButtonConfig()
@@ -52,18 +45,9 @@ function bar_proto:Update()
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E.Layout:Update(self)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateButtonConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if not self.buttonConfig then
 		self.buttonConfig = {
 			tooltip = "enabled",
@@ -90,18 +74,9 @@ function bar_proto:UpdateButtonConfig()
 	for _, button in next, self._buttons do
 		button:UpdateConfig(self.buttonConfig)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateButtonConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:OnEvent(event, arg1)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if event == "PET_BAR_UPDATE" or event == "PET_SPECIALIZATION_CHANGED" or event == "PET_UI_UPDATE"
 		or (event == "UNIT_PET" and arg1 == "player")
 		or ((event == "UNIT_FLAGS" or event == "UNIT_AURA") and arg1 == "pet")
@@ -115,52 +90,25 @@ function bar_proto:OnEvent(event, arg1)
 	elseif event == "PET_BAR_HIDEGRID" then
 		self:ForEach("HideGrid")
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local button_proto = {}
 
 function button_proto:UpdateGrid(state)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if state ~= nil then
 		self._parent._config.grid = state
 	end
 
 	self:ShowGrid()
 	self:HideGrid()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateGrid", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:ShowGrid()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.showgrid = self.showgrid + 1
 	self:SetAlpha(1)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "ShowGrid", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:HideGrid()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self.showgrid > 0 then
 		self.showgrid = self.showgrid - 1
 	end
@@ -168,18 +116,9 @@ function button_proto:HideGrid()
 	if not self.config.showGrid and self.showgrid == 0 and not GetPetActionInfo(self:GetID()) then
 		self:SetAlpha(0)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "HideGrid", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateHotKey(state)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if state ~= nil then
 		self._parent._config.hotkey.enabled = state
 	end
@@ -191,31 +130,13 @@ function button_proto:UpdateHotKey(state)
 	else
 		self.HotKey:SetParent(E.HIDDEN_PARENT)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKey", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateHotKeyFont()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.HotKey:UpdateFont(self._parent._config.hotkey.size)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHotKeyFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateUsable()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self.config.outOfRangeColoring == "button" and self.outOfRange then
 		self.icon:SetDesaturated(self.config.desaturation.range == true)
 		self.icon:SetVertexColor(unpack(self.config.colors.range))
@@ -228,33 +149,15 @@ function button_proto:UpdateUsable()
 			self.icon:SetVertexColor(unpack(self.config.colors.unusable))
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateUsable", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateCooldown()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local start, duration, enable, modRate = GetPetActionCooldown(self:GetID())
 
 	CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateCooldown", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:UpdateConfig(config)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self.config = E:CopyTable(config, self.config)
 
 	if self.config.outOfRangeColoring == "button" and self.config.outOfManaColoring == "button" then
@@ -265,18 +168,9 @@ function button_proto:UpdateConfig(config)
 	self.outOfRange = nil
 
 	self:Update()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local id = self:GetID()
 	local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(id)
 
@@ -332,24 +226,11 @@ function button_proto:Update()
 	self:UpdateGrid()
 	self:UpdateHotKey()
 	self:UpdateCooldown()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function button_proto:OnEnterHook()
 	if LibKeyBound then
-		local timeStart, memStart
-		if Profiler:IsLogging() then
-			timeStart, memStart = debugprofilestop(), collectgarbage("count")
-		end
-
 		LibKeyBound:Set(self)
-
-		if Profiler:IsLogging() then
-			Profiler:Log(self:GetDebugName(), "OnEnterHook", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-		end
 	end
 end
 
@@ -399,11 +280,6 @@ function MODULE:CreatePetActionBar()
 			rangeTimer = rangeTimer - elapsed
 
 			if rangeTimer <= 0 or flashTime <= 0 then
-				local timeStart, memStart
-				if Profiler:IsLogging() then
-					timeStart, memStart = debugprofilestop(), collectgarbage("count")
-				end
-
 				if PetHasActionBar() then
 					for _, button in next, bar._buttons do
 						if button.flashing and flashTime <= 0 then
@@ -457,10 +333,6 @@ function MODULE:CreatePetActionBar()
 
 				if rangeTimer <= 0 then
 					rangeTimer = TOOLTIP_UPDATE_TIME
-				end
-
-				if Profiler:IsLogging() then
-					Profiler:Log("LSPetActionBarUpdater", "OnUpdate", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 				end
 			end
 		end)

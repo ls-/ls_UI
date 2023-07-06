@@ -41,25 +41,8 @@ function CONFIG:Open()
 						LibKeyBound:Toggle()
 					end,
 				},
-				profiler = {
-					order = 4,
-					type = "execute",
-					name = L["PERFORMANCE"],
-					width = 1.25,
-					func = function()
-						if not PROFILER:IsLoaded() then
-							LoadAddOn("ls_UI_Profiler")
-
-							if not PROFILER:IsLoaded() then return end
-						end
-
-						PROFILER:Open()
-
-						AceConfigDialog:Close("ls_UI")
-					end,
-				},
 				reload_ui = {
-					order = 5,
+					order = 4,
 					type = "execute",
 					name = L["RELOAD_UI"],
 					width = 1.25,

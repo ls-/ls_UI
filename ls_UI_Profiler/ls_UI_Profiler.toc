@@ -1,9 +1,0 @@
-## Interface: 100100
-## Author: lightspark
-## Title: LS: |cff1a9fc0UI|r |cff888987Profiler|r
-## Notes: Profiler for LS: |cff1a9fc0UI|r.
-## IconTexture: Interface\AddOns\ls_UI\assets\logo-64
-## RequiredDeps: LibDropDown, ls_UI
-## LoadOnDemand: true
-
-init.lua

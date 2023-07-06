@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, D, PrD, oUF, Profiler = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Profiler
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local BARS = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
-local collectgarbage = _G.collectgarbage
-local debugprofilestop = _G.debugprofilestop
 local hooksecurefunc = _G.hooksecurefunc
 local unpack = _G.unpack
 
@@ -48,110 +46,51 @@ local bar_proto = {
 }
 
 function bar_proto:ForEach(method, ...)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for i = 1, MAX_SEGMENTS do
 		if self[i][method] then
 			self[i][method](self[i], ...)
 		end
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "ForEach", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:Update()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:UpdateConfig()
 	self:UpdateFont()
 	self:UpdateTextFormat()
 	self:UpdateTextVisibility()
 	self:UpdateSize(self._config.width, self._config.height)
 	self:UpdateFading()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateConfig()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self._config = E:CopyTable(BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar, self._config)
 
 	if BARS:IsRestricted() then
 		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateConfig", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateFont()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for i = 1, MAX_SEGMENTS do
 		self[i].Text:UpdateFont(self._config.text.size)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateFont", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 function bar_proto:UpdateTextFormat()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self._config.text.format == "NUM" then
 		barValueTemplate = CUR_MAX_VALUE_TEMPLATE
 	elseif self._config.text.format == "NUM_PERC" then
 		barValueTemplate = CUR_MAX_PERC_VALUE_TEMPLATE
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateTextFormat", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateTextVisibility()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	for i = 1, MAX_SEGMENTS do
 		self[i]:LockText(self._config.text.visibility == 1)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateTextVisibility", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
 function bar_proto:UpdateSize(width, height)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	width = width or self._config.width
 	height = height or self._config.height
 
@@ -176,18 +115,9 @@ function bar_proto:UpdateSize(width, height)
 	self._total = nil
 
 	self:UpdateSegments()
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateSize", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:UpdateSegments()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local index = 0
 
 	if C_PetBattles.IsInBattle() then
@@ -279,18 +209,9 @@ function bar_proto:UpdateSegments()
 
 		self._total = index
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateSegments", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function bar_proto:OnEvent(event, ...)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if event == "UNIT_INVENTORY_CHANGED" then
 		local unit = ...
 		if unit == "player" then
@@ -304,20 +225,11 @@ function bar_proto:OnEvent(event, ...)
 	else
 		self:UpdateSegments()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEvent", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 local segment_proto = {}
 
 function segment_proto:OnEnter()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self.tooltipInfo then
 		local quadrant = E:GetScreenQuadrant(self)
 		local p, rP, sign = "BOTTOMLEFT", "TOPLEFT", 1
@@ -345,35 +257,17 @@ function segment_proto:OnEnter()
 	if not self:IsTextLocked() then
 		self.Text:Show()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnEnter", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:OnLeave()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	GameTooltip:Hide()
 
 	if not self:IsTextLocked() then
 		self.Text:Hide()
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "OnLeave", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:Update(cur, max, bonus, color, texture)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
 	self.Texture:SetVertexColor(color:GetRGBA(1))
 
@@ -400,18 +294,9 @@ function segment_proto:Update(cur, max, bonus, color, texture)
 
 		self._bonus = bonus
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "Update", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdateAzerite(item)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(item)
 	local level = C_AzeriteItem.GetPowerLevel(item)
 
@@ -421,18 +306,9 @@ function segment_proto:UpdateAzerite(item)
 	}
 
 	self:Update(cur, max, 0, C.db.global.colors.white, AZERITE_TEXTURE)
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateAzerite", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdateXP()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local cur, max = UnitXP("player"), UnitXPMax("player")
 	local bonus = GetXPExhaustion() or 0
 
@@ -448,18 +324,9 @@ function segment_proto:UpdateXP()
 	end
 
 	self:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateXP", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdateHonor()
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local cur, max = UnitHonor("player"), UnitHonorMax("player")
 
 	self.tooltipInfo = {
@@ -468,18 +335,9 @@ function segment_proto:UpdateHonor()
 	}
 
 	self:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateHonor", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
 	local isParagon, rewardQuestID, hasRewardPending
 	local cur, max
@@ -539,18 +397,9 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 	end
 
 	self:Update(cur, max, 0, C.db.global.colors.reaction[standing])
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdateReputation", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdatePetXP(i, level)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	local name = C_PetBattles.GetName(1, i)
 	local rarity = C_PetBattles.GetBreedQuality(1, i)
 	local cur, max = C_PetBattles.GetXP(1, i)
@@ -561,18 +410,9 @@ function segment_proto:UpdatePetXP(i, level)
 	}
 
 	self:Update(cur, max, 0, C.db.global.colors.xp[2])
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdatePetXP", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:UpdateText(cur, max)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	cur = cur or self._value or 1
 	max = max or self._max or 1
 
@@ -581,25 +421,12 @@ function segment_proto:UpdateText(cur, max)
 	else
 		self.Text:SetFormattedText(barValueTemplate, E:FormatNumber(cur), E:FormatNumber(max), E:NumberToPerc(cur, max))
 	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "UpdatePetXP", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
-	end
 end
 
 function segment_proto:LockText(isLocked)
-	local timeStart, memStart
-	if Profiler:IsLogging() then
-		timeStart, memStart = debugprofilestop(), collectgarbage("count")
-	end
-
 	if self.textLocked ~= isLocked then
 		self.textLocked = isLocked
 		self.Text:SetShown(isLocked)
-	end
-
-	if Profiler:IsLogging() then
-		Profiler:Log(self:GetDebugName(), "LockText", debugprofilestop() - timeStart, collectgarbage("count") - memStart)
 	end
 end
 
