@@ -214,6 +214,7 @@ local function updateHighlightTexture(button)
 
 	local highlight = button:GetHighlightTexture()
 	highlight:SetTexCoord(unpack(TEXTURE_COORDS.HIGHLIGHT))
+	highlight:SetVertexColor(1, 1, 1)
 	highlight:ClearAllPoints()
 	highlight:SetPoint("TOPLEFT", 0, 0)
 	highlight:SetPoint("BOTTOMRIGHT", 0, 0)
@@ -241,7 +242,7 @@ function button_proto:OnEnter()
 		elseif self.minLevel then
 			GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
 		elseif self.disabledTooltip then
-			GameTooltip:AddLine(self.disabledTooltip, r, g, b, true)
+			GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
 		end
 	end
 
@@ -338,6 +339,8 @@ local function handleMicroButton(button)
 	updateDisabledTexture(button)
 	updateHighlightTexture(button)
 
+	hooksecurefunc(button, "SetHighlightAtlas", updateHighlightTexture)
+
 	local border = button:CreateTexture(nil, "BORDER")
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	border:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
@@ -355,6 +358,10 @@ local function handleMicroButton(button)
 	flash:SetPoint("TOPLEFT", -2, 2)
 	flash:SetPoint("BOTTOMRIGHT", 2, -2)
 
+	if button.FlashContent then
+		E:ForceHide(button.FlashContent)
+	end
+
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	icon:SetPoint("TOPLEFT", 1, -1)
@@ -363,6 +370,17 @@ local function handleMicroButton(button)
 
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnUpdate", nil)
+
+	E:ForceHide(button.Background)
+	E:ForceHide(button.PushedBackground)
+
+	if button.Shadow then
+		E:ForceHide(button.Shadow)
+	end
+
+	if button.PushedShadow then
+		E:ForceHide(button.PushedShadow)
+	end
 end
 
 local char_button_proto = {}
