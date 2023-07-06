@@ -116,25 +116,6 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
-			vehicle_seat = {
-				order = inc(1),
-				type = "toggle",
-				name = L["VEHICLE_SEAT_INDICATOR"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					PrC.db.profile.blizzard.vehicle_seat.enabled = value
-
-					if not BLIZZARD:HasVehicleSeatFrame() then
-						if value then
-							BLIZZARD:SetUpVehicleSeatFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end,
-			},
 			character_frame = {
 				order = inc(1),
 				type = "group",

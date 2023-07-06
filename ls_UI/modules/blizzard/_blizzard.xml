@@ -5,5 +5,4 @@
 	<Script file="gm.lua"/>
 	<Script file="mail.lua"/>
 	<Script file="talkinghead.lua"/>
-	<Script file="vehicleseat.lua"/>
 </Ui>

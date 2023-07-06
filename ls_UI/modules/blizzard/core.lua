@@ -16,7 +16,6 @@ function BLIZZARD:Init()
 		self:SetUpGMFrame()
 		self:SetUpMail()
 		self:SetUpTalkingHead()
-		self:SetUpVehicleSeatFrame()
 
 		isInit = true
 	end

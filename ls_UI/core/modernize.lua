@@ -799,10 +799,12 @@ function P:Modernize(data, name, key)
 		if data.version < 10010501 then
 			if data.blizzard then
 				data.blizzard.digsite_bar = nil
+				data.blizzard.vehicle_seat = nil
 			end
 
 			if data.movers then
 				data.movers.ArcheologyDigsiteProgressBarMover = nil
+				data.movers.VehicleSeatIndicatorMover = nil
 			end
 
 			data.version = 10010501
@@ -927,6 +929,7 @@ function P:Modernize(data, name, key)
 		if data.version < 10010501 then
 			if data.blizzard then
 				data.blizzard.digsite_bar = nil
+				data.blizzard.vehicle_seat = nil
 			end
 
 			data.version = 10010501
