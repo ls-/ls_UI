@@ -2750,22 +2750,11 @@ D.profile = {
 			ilvl = true,
 			enhancements = true,
 		},
-		digsite_bar = { -- ArcheologyDigsiteProgressBar
-			width = 200,
-			height = 12,
-			text = {
-				size = 12,
-			},
-			point = {"BOTTOM", "UIParent", "BOTTOM", 0, 226},
-		},
 		gm = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
 		},
 		talking_head = {
 			hide = false,
-		},
-		vehicle_seat = {
-			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -4, -250},
 		},
 	},
 	movers = {},
@@ -2835,17 +2824,11 @@ PrD.profile = {
 		command_bar = { -- OrderHallCommandBar
 			enabled = true
 		},
-		digsite_bar = { -- ArcheologyDigsiteProgressBar
-			enabled = true,
-		},
 		gm = { -- TicketStatusFrame
 			enabled = true
 		},
 		mail = {
 			enabled = false,
-		},
-		vehicle_seat = { -- VehicleSeatIndicator
-			enabled = true
 		},
 	},
 	minimap = {
