@@ -17,4 +17,5 @@
 	<Include file="LibDropDown\embed.xml"/>
 	<Script file="LibDeflate\LibDeflate.lua"/>
 	<Script file="LibSerialize\LibSerialize.lua"/>
+	<Include file="TaintLess\TaintLess.xml"/>
 </Ui>
