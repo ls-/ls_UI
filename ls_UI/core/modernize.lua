@@ -794,6 +794,19 @@ function P:Modernize(data, name, key)
 
 			data.version = 10010003
 		end
+
+		--> 100105.01
+		if data.version < 10010501 then
+			if data.blizzard then
+				data.blizzard.digsite_bar = nil
+			end
+
+			if data.movers then
+				data.movers.ArcheologyDigsiteProgressBarMover = nil
+			end
+
+			data.version = 10010501
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -908,6 +921,15 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 10010001
+		end
+
+		--> 100105.01
+		if data.version < 10010501 then
+			if data.blizzard then
+				data.blizzard.digsite_bar = nil
+			end
+
+			data.version = 10010501
 		end
 	end
 end
