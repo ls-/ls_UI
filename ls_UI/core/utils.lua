@@ -786,8 +786,6 @@ do
 	function E:GetItemEnchantGemInfo(itemLink)
 		if itemCache[itemLink] then
 			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
-		else
-			itemCache[itemLink] = {}
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
@@ -804,12 +802,14 @@ do
 			end
 		end
 
-		itemCache[itemLink].enchant = enchant
-		itemCache[itemLink].gem1 = gems[1]
-		itemCache[itemLink].gem2 = gems[2]
-		itemCache[itemLink].gem3 = gems[3]
+		itemCache[itemLink] = {
+			enchant = enchant,
+			gem1 = gems[1],
+			gem2 = gems[2],
+			gem3 = gems[3],
+		}
 
-		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
+		return enchant, gems[1], gems[2], gems[3]
 	end
 end
 
