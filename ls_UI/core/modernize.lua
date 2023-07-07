@@ -806,6 +806,14 @@ function P:Modernize(data, name, key)
 				data.movers.VehicleSeatIndicatorMover = nil
 			end
 
+			if data.bars then
+				if data.bars.bag then
+					if data.bars.bag.currency then
+						data.bars.bag.currency[1191] = nil
+					end
+				end
+			end
+
 			data.version = 10010501
 		end
 	elseif key == "private" then
