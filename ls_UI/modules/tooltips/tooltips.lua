@@ -432,6 +432,14 @@ function MODULE:Init()
 			end
 		end)
 
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, function(tooltip, tooltipData)
+			if tooltip.StatusBar then
+				if not tooltipData.healthGUID then
+					tooltip.StatusBar:ClearWatch()
+				end
+			end
+		end)
+
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
 		GameTooltipStatusBar:ClearAllPoints()
