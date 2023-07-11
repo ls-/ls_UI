@@ -1,11 +1,10 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local pcall = _G.pcall
 
 local isNPEHooked = false
 
@@ -79,6 +78,7 @@ function MODULE:CleanUp()
 	end
 
 	hideBar(MicroMenu)
+	hideBar(MicroMenuContainer)
 	hideBar(MicroButtonAndBagsBar)
 
 	QueueStatusButton:SetParent(UIParent)

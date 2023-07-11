@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
@@ -10,7 +8,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG, PROFILER = unpack(ls_UI)
 
 local isInit = false
 
@@ -63,10 +61,7 @@ function CONFIG:Open()
 		CONFIG:CreateBlizzardOptions(8)
 		CONFIG:CreateAurasOptions(9)
 		CONFIG:CreateMinimapOptions(11)
-		-- TODO: remove me in 10.0.2
-		if TooltipDataProcessor then
-			CONFIG:GetTooltipsOptions(12)
-		end
+		CONFIG:GetTooltipsOptions(12)
 		CONFIG:CreateUnitFramesOptions(13)
 
 		AceConfig:RegisterOptionsTable("ls_UI", self.options)
@@ -88,4 +83,8 @@ function CONFIG:Open()
 	end
 
 	AceConfigDialog:Open("ls_UI")
+end
+
+function CONFIG:IsLoaded()
+	return true
 end

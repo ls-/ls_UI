@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
@@ -13,7 +13,6 @@ local m_modf = _G.math.modf
 local next = _G.next
 local s_format = _G.string.format
 local s_split = _G.string.split
-local s_upper = _G.string.upper
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 local t_wipe = _G.table.wipe
@@ -780,14 +779,13 @@ do
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
 	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
+	local ATLAS_PATTERN = "|A.-|a"
 
 	local itemCache = {}
 
 	function E:GetItemEnchantGemInfo(itemLink)
 		if itemCache[itemLink] then
 			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
-		else
-			itemCache[itemLink] = {}
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
@@ -797,19 +795,21 @@ do
 		local gems, idx = {"", "", ""}, 1
 		for _, line in next, data.lines do
 			if line.enchantID then
-				enchant = line.leftText:match(ENCHANT_PATTERN)
+				enchant = line.leftText:match(ENCHANT_PATTERN):gsub(ATLAS_PATTERN, ""):trim()
 			elseif line.gemIcon or line.socketType then
 				gems[idx] = line.gemIcon and GEM_TEMPLATE:format(line.gemIcon) or SOCKET_TEMPLATE:format(line.socketType)
 				idx = idx + 1
 			end
 		end
 
-		itemCache[itemLink].enchant = enchant
-		itemCache[itemLink].gem1 = gems[1]
-		itemCache[itemLink].gem2 = gems[2]
-		itemCache[itemLink].gem3 = gems[3]
+		itemCache[itemLink] = {
+			enchant = enchant,
+			gem1 = gems[1],
+			gem2 = gems[2],
+			gem3 = gems[3],
+		}
 
-		return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
+		return enchant, gems[1], gems[2], gems[3]
 	end
 end
 

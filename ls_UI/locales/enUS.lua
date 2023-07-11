@@ -1,5 +1,5 @@
 ﻿local _, ns = ...
-local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P
+local E, L, D = ns.E, ns.L, ns.D
 
 -- Lua
 local _G = getfenv(0)
@@ -69,6 +69,7 @@ L["MOUSEOVER_CAST_KEY"] = _G.MOUSEOVER_CAST_KEY
 L["MOUSEOVER_CAST_KEY_DESC"] = _G.OPTION_TOOLTIP_ENABLE_MOUSEOVER_CAST_KEY_TEXT
 L["NEW"] = _G.NEW
 L["NONE"] = _G.NONE
+L["NOTIFICATIONS"] = _G.COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL
 L["OFFLINE"] = _G.PLAYER_OFFLINE
 L["OKAY"] = _G.OKAY
 L["PAIN"] = _G.PAIN

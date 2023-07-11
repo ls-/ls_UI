@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
@@ -212,6 +212,7 @@ local function updateHighlightTexture(button)
 
 	local highlight = button:GetHighlightTexture()
 	highlight:SetTexCoord(unpack(TEXTURE_COORDS.HIGHLIGHT))
+	highlight:SetVertexColor(1, 1, 1)
 	highlight:ClearAllPoints()
 	highlight:SetPoint("TOPLEFT", 0, 0)
 	highlight:SetPoint("BOTTOMRIGHT", 0, 0)
@@ -234,7 +235,7 @@ function button_proto:OnEnter()
 		elseif self.minLevel then
 			GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
 		elseif self.disabledTooltip then
-			GameTooltip:AddLine(self.disabledTooltip, r, g, b, true)
+			GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
 		end
 	end
 
@@ -291,6 +292,8 @@ local function handleMicroButton(button)
 	updateDisabledTexture(button)
 	updateHighlightTexture(button)
 
+	hooksecurefunc(button, "SetHighlightAtlas", updateHighlightTexture)
+
 	local border = button:CreateTexture(nil, "BORDER")
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	border:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
@@ -308,6 +311,10 @@ local function handleMicroButton(button)
 	flash:SetPoint("TOPLEFT", -2, 2)
 	flash:SetPoint("BOTTOMRIGHT", 2, -2)
 
+	if button.FlashContent then
+		E:ForceHide(button.FlashContent)
+	end
+
 	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
 	icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	icon:SetPoint("TOPLEFT", 1, -1)
@@ -316,6 +323,17 @@ local function handleMicroButton(button)
 
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnUpdate", nil)
+
+	E:ForceHide(button.Background)
+	E:ForceHide(button.PushedBackground)
+
+	if button.Shadow then
+		E:ForceHide(button.Shadow)
+	end
+
+	if button.PushedShadow then
+		E:ForceHide(button.PushedShadow)
+	end
 end
 
 local char_button_proto = {}
@@ -829,6 +847,8 @@ local function updateMicroButtons()
 end
 
 local function repositionAlert(button)
+	if not C.db.profile.bars.micromenu.helptips then return end
+
 	for alert in HelpTip.framePool:EnumerateActive() do
 		if button and alert.relativeRegion == button and alert:Matches(UIParent) then
 			alert.info.autoEdgeFlipping = true
@@ -838,6 +858,16 @@ local function repositionAlert(button)
 			alert:SetScript("OnUpdate", function()
 				alert:OnUpdate()
 			end)
+		end
+	end
+end
+
+local function hideHelpTips(self)
+	if C.db.profile.bars.micromenu.helptips then return end
+
+	for frame in self.framePool:EnumerateActive() do
+		if frame.info.system == "MicroButtons" then
+			frame:Hide()
 		end
 	end
 end
@@ -902,6 +932,7 @@ function MODULE:CreateMicroMenu()
 
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 		hooksecurefunc("MainMenuMicroButton_ShowAlert", repositionAlert)
+		hooksecurefunc(HelpTip, "Show", hideHelpTips)
 
 		bar:SetPoint(unpack(C.db.profile.bars.micromenu.point))
 		E.Movers:Create(bar)
@@ -910,13 +941,14 @@ function MODULE:CreateMicroMenu()
 			for _, name in next, ALERTS do
 				repositionAlert(_G[name])
 			end
+
+			hideHelpTips(HelpTip)
 		end)
 
 		isInit = true
 
 		self:UpdateMicroMenu()
 	end
-
 end
 
 function MODULE:UpdateMicroMenu()
@@ -934,4 +966,8 @@ function MODULE:ForMicroButton(id, method, ...)
 	if button and button[method] then
 		button[method](button, ...)
 	end
+end
+
+function MODULE:HideHelpTips()
+	hideHelpTips(HelpTip)
 end

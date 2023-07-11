@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
@@ -1190,6 +1190,7 @@ local reopenConfig
 
 function E.Movers:ToggleAll(...)
 	if InCombatLockdown() then return end
+
 	areToggledOn = not areToggledOn
 
 	for _, mover in next, enabledMovers do
@@ -1275,7 +1276,7 @@ end)
 E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	for _, mover in next, enabledMovers do
 		if not mover.isSimple then
-			if mover:IsMouseEnabled() then
+			if isDragging and mover:IsMouseEnabled() then
 				mover:OnDragStop()
 			end
 

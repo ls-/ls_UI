@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
@@ -9,7 +7,7 @@ local unpack = _G.unpack
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 local AURATRACKER = P:GetModule("AuraTracker")
 
 local orders = {}

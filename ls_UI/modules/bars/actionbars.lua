@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:GetModule("Bars")
 
 -- Lua
@@ -82,7 +82,7 @@ local ACTION_BARS = {
 	},
 }
 
-local PAGES = {
+local PAGE_STATES = {
 	-- Unstealthed cat, stealthed cat, bear, owl; tree form [bonusbar:2] was removed
 	["DRUID"] = " [bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 	-- Stealth, shadow dance
@@ -93,12 +93,22 @@ local PAGES = {
 	["DEFAULT"] = "[overridebar] 18; [shapeshift] 17; [vehicleui][possessbar] 16; [bonusbar:5,mounted] 11; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
-local function getBarPage()
-	return PAGES["DEFAULT"] .. (PAGES[E.PLAYER_CLASS] or "") .. " [form] 1; 1"
+local function getPageState()
+	return PAGE_STATES["DEFAULT"] .. (PAGE_STATES[E.PLAYER_CLASS] or "") .. " [form] 1; 1"
 end
 
-local bar_proto = {
+local AVAILABLE_PAGES = {
+	["DRUID"] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 17, 18},
+	["ROGUE"] = {1, 2, 3, 4, 5, 6, 7, 11, 16, 17, 18},
+	["EVOKER"] = {1, 2, 3, 4, 5, 6, 7, 11, 16, 17, 18},
+	["DEFAULT"] = {1, 2, 3, 4, 5, 6, 11, 16, 17, 18},
 }
+
+local function getAvalablePages()
+	return AVAILABLE_PAGES[E.PLAYER_CLASS] or AVAILABLE_PAGES.DEFAULT
+end
+
+local bar_proto = {}
 
 function bar_proto:Update()
 	self:UpdateConfig()
@@ -259,9 +269,12 @@ function MODULE:CreateActionBars()
 				button.MasqueSkinned = true -- so that LAB doesn't move stuff around
 				bar._buttons[i] = button
 
-				-- 18 is the last page
-				for k = 1, 18 do
-					button:SetState(k, "action", (k - 1) * 12 + i)
+				if barID == "bar1" then
+					for _, p in next, getAvalablePages() do
+						button:SetState(p, "action", (p - 1) * 12 + i)
+					end
+				else
+					button:SetState(data.page, "action", (data.page - 1) * 12 + i)
 				end
 
 				E:SkinActionButton(button)
@@ -272,7 +285,7 @@ function MODULE:CreateActionBars()
 				control:ChildUpdate("state", newstate)
 			]])
 
-			RegisterStateDriver(bar, "page", barID == "bar1" and getBarPage() or data.page)
+			RegisterStateDriver(bar, "page", barID == "bar1" and getPageState() or data.page)
 
 			if barID == "bar1" and MODULE:IsRestricted() then
 				MODULE:AddControlledWidget("ACTION_BAR", bar)

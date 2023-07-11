@@ -5,7 +5,6 @@
 	<Script file="defaults.lua"/>
 	<Script file="constants.lua"/>
 	<!-- can sort -->
-	<Script file="animation.lua"/>
 	<Script file="border.lua"/>
 	<Script file="backdrop.lua"/>
 	<Script file="button.lua"/>

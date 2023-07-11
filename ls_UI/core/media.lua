@@ -1,11 +1,8 @@
 local _, ns = ...
-local E, C, PrC, M, L, P, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.oUF
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
-
---[[ luacheck: globals
-]]
 
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")

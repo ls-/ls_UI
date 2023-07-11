@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local MODULE = P:AddModule("Minimap")
 
 -- Lua
@@ -166,7 +166,6 @@ do
 		end
 	end
 
-
 	function minimap_proto:UpdateCoords()
 		if self._config.coords.enabled then
 			self.Coords:ClearAllPoints()
@@ -203,6 +202,7 @@ local flag_proto = {
 		"PARTY_MEMBER_ENABLE",
 		"PLAYER_DIFFICULTY_CHANGED",
 		"UPDATE_INSTANCE_INFO",
+		"ZONE_CHANGED",
 	},
 }
 

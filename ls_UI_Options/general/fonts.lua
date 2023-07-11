@@ -1,5 +1,3 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
@@ -8,7 +6,7 @@ local unpack = _G.unpack
 local LSM = LibStub("LibSharedMedia-3.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 
 local orders = {0, 0, 0}
 

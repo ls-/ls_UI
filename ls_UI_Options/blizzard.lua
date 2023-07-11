@@ -1,11 +1,9 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local unpack = _G.unpack
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 local BLIZZARD = P:GetModule("Blizzard")
 
 local orders = {}
@@ -118,25 +116,6 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
-			vehicle_seat = {
-				order = inc(1),
-				type = "toggle",
-				name = L["VEHICLE_SEAT_INDICATOR"],
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					PrC.db.profile.blizzard.vehicle_seat.enabled = value
-
-					if not BLIZZARD:HasVehicleSeatFrame() then
-						if value then
-							BLIZZARD:SetUpVehicleSeatFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					end
-				end,
-			},
 			character_frame = {
 				order = inc(1),
 				type = "group",
@@ -199,102 +178,6 @@ function CONFIG:CreateBlizzardOptions(order)
 						order = inc(2),
 						type = "toggle",
 						name = L["ENCHANTS"],
-					},
-				},
-			},
-			digsite_bar = {
-				order = inc(1),
-				type = "group",
-				name = L["DIGSITE_BAR"],
-				disabled = isModuleDisabled,
-				get = function(info)
-					return C.db.profile.blizzard.digsite_bar[info[#info]]
-				end,
-				set = function(info, value)
-					if C.db.profile.blizzard.digsite_bar[info[#info]] ~= value then
-						C.db.profile.blizzard.digsite_bar[info[#info]] = value
-
-						BLIZZARD:UpdateDigsiteBar()
-					end
-				end,
-				args = {
-					enabled = {
-						order = reset(2),
-						type = "toggle",
-						name = L["ENABLE"],
-						get = function()
-							return PrC.db.profile.blizzard.digsite_bar.enabled
-						end,
-						set = function(_, value)
-							PrC.db.profile.blizzard.digsite_bar.enabled = value
-
-							if not BLIZZARD:HasDigsiteBar() then
-								if value then
-									BLIZZARD:SetUpDigsiteBar()
-								end
-							else
-								if not value then
-									CONFIG:ShowStaticPopup("RELOAD_UI")
-								end
-							end
-						end,
-					},
-					reset = {
-						type = "execute",
-						order = inc(2),
-						name = L["RESTORE_DEFAULTS"],
-						confirm = CONFIG.ConfirmReset,
-						func = function()
-							CONFIG:CopySettings(D.profile.blizzard.digsite_bar, C.db.profile.blizzard.digsite_bar)
-
-							BLIZZARD:UpdateDigsiteBar()
-						end,
-					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
-					width = {
-						order = inc(2),
-						type = "range",
-						name = L["WIDTH"],
-						min = 128, max = 1024, step = 2,
-					},
-					height = {
-						order = inc(2),
-						type = "range",
-						name = L["HEIGHT"],
-						min = 8, max = 32, step = 4,
-					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
-					text = {
-						order = inc(2),
-						type = "group",
-						name = L["TEXT"],
-						inline = true,
-						get = function(info)
-							return C.db.profile.blizzard.digsite_bar[info[#info - 1]][info[#info]]
-						end,
-						set = function(info, value)
-							if C.db.profile.blizzard.digsite_bar[info[#info - 1]][info[#info]] ~= value then
-								C.db.profile.blizzard.digsite_bar[info[#info - 1]][info[#info]] = value
-
-								BLIZZARD:UpdateDigsiteBar()
-							end
-						end,
-						args = {
-							size = {
-								order = reset(3),
-								type = "range",
-								name = L["SIZE"],
-								min = 8, max = 48, step = 1,
-							},
-						},
 					},
 				},
 			},

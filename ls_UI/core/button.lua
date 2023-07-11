@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
@@ -8,21 +8,17 @@ local s_gsub = _G.string.gsub
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 
---[[ luacheck: globals
-	CreateFrame GetBindingKey GetBindingText LibStub SetBinding
-
-	RANGE_INDICATOR
-]]
-
 -- Mine
 local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 local function button_GetHotkey(self)
-	return LibKeyBound:ToShortKey(
+	local hotkey = LibKeyBound:ToShortKey(
 		(self._command and GetBindingKey(self._command))
 		or (self:GetName() and GetBindingKey("CLICK " .. self:GetName() .. ":LeftButton"))
 		or ""
 	)
+
+	return hotkey
 end
 
 local function button_SetKey(self, key)

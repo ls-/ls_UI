@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
@@ -333,7 +333,6 @@ function P:Modernize(data, name, key)
 								if data.units[layout][unit].class_power then
 									data.units[layout][unit].class_power.change_threshold = nil
 								end
-
 
 								if data.units[layout][unit].prediction then
 									data.units[layout][unit].prediction.absorb_text = nil
@@ -794,6 +793,29 @@ function P:Modernize(data, name, key)
 
 			data.version = 10010003
 		end
+
+		--> 100105.01
+		if data.version < 10010501 then
+			if data.blizzard then
+				data.blizzard.digsite_bar = nil
+				data.blizzard.vehicle_seat = nil
+			end
+
+			if data.movers then
+				data.movers.ArcheologyDigsiteProgressBarMover = nil
+				data.movers.VehicleSeatIndicatorMover = nil
+			end
+
+			if data.bars then
+				if data.bars.bag then
+					if data.bars.bag.currency then
+						data.bars.bag.currency[1191] = nil
+					end
+				end
+			end
+
+			data.version = 10010501
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then
@@ -908,6 +930,16 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 10010001
+		end
+
+		--> 100105.01
+		if data.version < 10010501 then
+			if data.blizzard then
+				data.blizzard.digsite_bar = nil
+				data.blizzard.vehicle_seat = nil
+			end
+
+			data.version = 10010501
 		end
 	end
 end

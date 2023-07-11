@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 100105.01
+
+- Added 10.1.5 support.
+
+### Blizzard
+
+- Removed quality icons from enchant labels next item slots in the character panel.
+- Removed dig site bar and vehicle seat indicator movers. Use "Edit Mode" to move those instead.
+
+## Action Bars
+
+- Added an option to hide micro menu alerts.
+
 ## Version 100100.04
 
 ### Blizzard

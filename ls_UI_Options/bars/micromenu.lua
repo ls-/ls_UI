@@ -1,12 +1,10 @@
-local _, CONFIG = ...
-
 -- Lua
 local _G = getfenv(0)
 local s_split = _G.string.split
 local unpack = _G.unpack
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 local BARS = P:GetModule("Bars")
 
 local orders = {}
@@ -151,6 +149,21 @@ function CONFIG:CreateMicroMenuOptions(order)
 
 					BARS:For("micromenu", "UpdateConfig")
 					BARS:For("micromenu", "UpdateLayout")
+				end,
+			},
+			helptips = {
+				order = inc(1),
+				type = "toggle",
+				name = L["NOTIFICATIONS"],
+				get = function()
+					return C.db.profile.bars.micromenu.helptips
+				end,
+				set = function(_, value)
+					C.db.profile.bars.micromenu.helptips = value
+
+					if not value then
+						BARS:HideHelpTips()
+					end
 				end,
 			},
 			spacer_2 = {

@@ -1,5 +1,5 @@
 local addonName, ns = ...
-local E, C, PrC, D, PrD, M, L, P = ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF, Config= ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF, ns.Config
 
 -- Lua
 local _G = getfenv(0)
@@ -131,10 +131,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 		end
 	end
 
-	if MinimapButtonFrame then
-		C.db.profile.minimap.collect.enabled = false
-	end
-
 	PrC.db.profile.version = E.VER.number
 
 	C.db:RegisterCallback("OnDatabaseShutdown", function()
@@ -169,13 +165,13 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	local function openConfig()
-		if not ls_UI.Config then
+		if not Config:IsLoaded() then
 			LoadAddOn("ls_UI_Options")
 
-			if not ls_UI.Config then return end
+			if not Config:IsLoaded() then return end
 		end
 
-		ls_UI.Config:Open()
+		Config:Open()
 	end
 
 	P:AddCommand("", function()
@@ -187,21 +183,15 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	local panel = CreateFrame("Frame", "LSUIConfigPanel")
 	panel:Hide()
 
-	local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-	button:SetText(L["OPEN_CONFIG"])
-	button:SetWidth(button:GetTextWidth() + 18)
-	button:SetPoint("TOPLEFT", 16, -16)
-	button:SetScript("OnClick", function()
+	local button1 = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+	button1:SetText(L["OPEN_CONFIG"])
+	button1:SetWidth(button1:GetTextWidth() + 18)
+	button1:SetPoint("TOPLEFT", 16, -16)
+	button1:SetScript("OnClick", function()
 		if not InCombatLockdown() then
 			HideUIPanel(SettingsPanel)
 
-			if not ls_UI.Config then
-				LoadAddOn("ls_UI_Options")
-
-				if not ls_UI.Config then return end
-			end
-
-			ls_UI.Config:Open()
+			openConfig()
 		end
 	end)
 

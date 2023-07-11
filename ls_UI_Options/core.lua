@@ -1,6 +1,3 @@
-local _, CONFIG = ...
-ls_UI.Config = CONFIG
-
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
@@ -17,7 +14,7 @@ local unpack = _G.unpack
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 
 CONFIG.H_ALIGNMENTS = {
 	["CENTER"] = "CENTER",

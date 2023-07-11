@@ -1,11 +1,9 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
-local m_max = _G.math.max
-local m_min = _G.math.min
 local next = _G.next
 local s_match = _G.string.match
 local s_split = _G.string.split
@@ -457,7 +455,7 @@ do
 	local handledObjects = {}
 
 	local TARGET_FPS = 60
-	local AMOUNT = 0.44
+	local AMOUNT = 0.4
 
 	local function lerp(v1, v2, perc)
 		return v1 + (v2 - v1) * perc

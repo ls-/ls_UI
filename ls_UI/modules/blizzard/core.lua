@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 local BLIZZARD = P:AddModule("Blizzard")
 
 -- Mine
@@ -13,11 +13,9 @@ function BLIZZARD:Init()
 	if not isInit and PrC.db.profile.blizzard.enabled then
 		self:SetUpCharacterFrame()
 		self:SetUpCommandBar()
-		self:SetUpDigsiteBar()
 		self:SetUpGMFrame()
 		self:SetUpMail()
 		self:SetUpTalkingHead()
-		self:SetUpVehicleSeatFrame()
 
 		isInit = true
 	end

@@ -12,26 +12,16 @@ local s_format = _G.string.format
 local s_split = _G.string.split
 local select = _G.select
 local t_insert = _G.table.insert
-local tonumber = _G.tonumber
 local type = _G.type
 local xpcall = _G.xpcall
 
 -- Mine
--- engine, config, private config, defaults, private defaults, media, locales, private
-local E, C, PrC, D, PrD, M, L, P = {}, {}, {}, {}, {}, {}, {}, {}
-ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P = E, C, PrC, D, PrD, M, L, P
+_G[addonName] = ns
 
-_G[addonName] = {
-	E, -- 1
-	M, -- 2
-	L, -- 3
-	C, -- 4
-	D, -- 5
-	PrC, -- 6
-	PrD, -- 7
-	P, -- 8
-	ns.oUF, -- 9
-}
+-- engine, config, private config, defaults, private defaults, media, locales, private, config ui
+local E, C, PrC, D, PrD, M, L, P, Config = {}, {}, {}, {}, {}, {}, {}, {}, {}
+ns.E, ns.C, ns.PrC, ns.D, ns.PrD, ns.M, ns.L, ns.P, ns.oUF, ns.Config = E, C, PrC, D, PrD, M, L, P, ns.oUF or oUF, Config
+ns[1], ns[2], ns[3], ns[4], ns[5], ns[6], ns[7], ns[8], ns[9], ns[10] = E, M, L, C, D, PrC, PrD, P, ns.oUF, Config
 
 ------------
 -- EVENTS --
@@ -77,6 +67,14 @@ do
 			end
 		end
 	end
+end
+
+-------------------
+-- CONFIG (STUB) --
+-------------------
+
+function Config:IsLoaded()
+	return false
 end
 
 -----------

@@ -1,5 +1,5 @@
 local _, ns = ...
-local E, C, PrC, M, L, P = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P
+local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns.D, ns.PrD, ns.oUF
 
 -- Lua
 local _G = getfenv(0)
@@ -99,6 +99,10 @@ end
 
 function border_proto:IsObjectType(t)
 	return t == "Border"
+end
+
+function border_proto:GetDebugName()
+	return self.__parent:GetDebugName() .. "Border"
 end
 
 function E:CreateBorder(parent, drawLayer, drawSubLevel)

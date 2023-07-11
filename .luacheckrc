@@ -26,6 +26,8 @@ ignore = {
 	"211/P",  -- Unused local variable P
 	"211/PrC",  -- Unused local variable C
 	"211/PrD",  -- Unused local variable D
+	"211/Config",  -- Unused local variable Config
+	"211/CONFIG",  -- Unused local variable CONFIG
 	"432", -- Shadowing an upvalue argument
 }
 
@@ -45,7 +47,6 @@ read_globals = {
 	"ACHIEVEMENT_BUTTON",
 	"AdiButtonAuras",
 	"ADVENTURE_JOURNAL",
-	"ArcheologyDigsiteProgressBar",
 	"ATTACK_BUTTON_FLASH_TIME",
 	"AutoCastShine_AutoCastStart",
 	"AutoCastShine_AutoCastStop",
@@ -181,6 +182,7 @@ read_globals = {
 	"GetPetActionSlotUsable",
 	"GetQuestLogCompletionText",
 	"GetQuestResetTime",
+	"GetRealmName",
 	"GetRFDungeonInfo",
 	"GetSavedInstanceInfo",
 	"GetSavedWorldBossInfo",
@@ -196,6 +198,7 @@ read_globals = {
 	"GetText",
 	"GetTime",
 	"GetTotemInfo",
+	"GetValueOrCallFunction",
 	"GetWatchedFactionInfo",
 	"GetWeaponEnchantInfo",
 	"GetXPExhaustion",
@@ -241,8 +244,8 @@ read_globals = {
 	"MicroButtonAndBagsBar",
 	"MicroButtonTooltipText",
 	"MicroMenu",
+	"MicroMenuContainer",
 	"Minimap",
-	"MinimapButtonFrame",
 	"MinimapCluster",
 	"MinimapCompassTexture",
 	"MinimapZoneText",
@@ -260,6 +263,7 @@ read_globals = {
 	"NineSliceUtil",
 	"NotifyInspect",
 	"OrderHallCommandBar",
+	"oUF",
 	"OverrideActionBar",
 	"PanelTemplates_DisableTab",
 	"PanelTemplates_EnableTab",
@@ -372,12 +376,12 @@ read_globals = {
 	"UnitSelectionType",
 	"UnitSex",
 	"UnitThreatSituation",
+	"UnitTokenFromGUID",
 	"UnitXP",
 	"UnitXPMax",
 	"UnregisterStateDriver",
 	"UpdateAddOnMemoryUsage",
 	"VehicleExit",
-	"VehicleSeatIndicator",
 	"WOW_TOKEN_ITEM_ID",
 	"ZoneAbilityFrame",
 }
