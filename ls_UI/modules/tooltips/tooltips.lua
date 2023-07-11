@@ -7,6 +7,7 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local m_floor = _G.math.floor
 local next = _G.next
+local s_trim = _G.string.trim
 local s_upper = _G.string.upper
 local unpack = _G.unpack
 
@@ -18,12 +19,10 @@ local DND = "[" .. _G.DND .. "] "
 local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. ":|r %s"
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE
 local ID = "|cffffd100" .. _G.ID .. ":|r %d"
-local ITEM_LEVEL = "|cffffd100" .. _G.ITEM_LEVEL_ABBR .. ":|r |cffffffff%s|r"
 local NAME_FORMAT = "%s%s"
-local NPC_LEVEL_FORMAT = "%s %s"
-local PLAYER_LEVEL_FORMAT = "%s %s %s"
+local LEVEL_FORMAT = "%s %s"
+local ILVL_SPEC_FORMAT = "|cffffd100%s|r %s"
 local PLAYER_TARGET_FORMAT = "%s (|c%s" .. _G.PLAYER .. "|r)"
-local SPECIALIZATION = "|cffffd100" .. _G.SPECIALIZATION .. ":|r |cffffffff%s|r"
 local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
 local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
 
@@ -50,15 +49,13 @@ local function INSPECT_READY(unitGUID)
 		end
 
 		inspectGUIDCache[unitGUID].time = GetTime()
-		inspectGUIDCache[unitGUID].specName = E:GetUnitSpecializationInfo("mouseover")
 		inspectGUIDCache[unitGUID].itemLevel = E:GetUnitAverageItemLevel("mouseover")
 
-		if inspectGUIDCache[unitGUID].specName and inspectGUIDCache[unitGUID].itemLevel then
+		if inspectGUIDCache[unitGUID].itemLevel then
 			GameTooltip:ClearLines()
 			GameTooltip:SetUnit("mouseover")
 		else
 			inspectGUIDCache[unitGUID].time = nil
-			inspectGUIDCache[unitGUID].specName = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
 		end
 	end
@@ -68,17 +65,15 @@ local function INSPECT_READY(unitGUID)
 	E:UnregisterEvent("INSPECT_READY", INSPECT_READY)
 end
 
-local function addInspectInfo(tooltip, unit)
+local function getInspectInfo(unit)
 	if not CanInspect(unit, true) then return end
 
 	local unitGUID = UnitGUID(unit)
 	if unitGUID == E.PLAYER_GUID then
-		tooltip:AddLine(SPECIALIZATION:format(E:GetUnitSpecializationInfo(unit)), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(E:GetUnitAverageItemLevel(unit)), 1, 1, 1)
+		return E:GetUnitAverageItemLevel(unit)
 	elseif inspectGUIDCache[unitGUID] and inspectGUIDCache[unitGUID].time then
 		if GetTime() - inspectGUIDCache[unitGUID].time > 120 then
 			inspectGUIDCache[unitGUID].time = nil
-			inspectGUIDCache[unitGUID].specName = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
 
 			lastGUID = unitGUID
@@ -89,8 +84,7 @@ local function addInspectInfo(tooltip, unit)
 			return
 		end
 
-		tooltip:AddLine(SPECIALIZATION:format(inspectGUIDCache[unitGUID].specName), 1, 1, 1)
-		tooltip:AddLine(ITEM_LEVEL:format(inspectGUIDCache[unitGUID].itemLevel), 1, 1, 1)
+		return inspectGUIDCache[unitGUID].itemLevel
 	elseif lastGUID ~= unitGUID then
 		lastGUID = unitGUID
 
@@ -103,7 +97,7 @@ local function findLine(tooltip, start, pattern)
 	for i = start, tooltip:NumLines() do
 		local text = _G["GameTooltipTextLeft" .. i]:GetText()
 		if text and text:match(pattern) then
-			return _G["GameTooltipTextLeft" .. i]
+			return _G["GameTooltipTextLeft" .. i], i + 1
 		end
 	end
 end
@@ -269,7 +263,17 @@ function MODULE:Init()
 			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
 			if not tooltip:IsTooltipType(Enum.TooltipDataType.Unit) then return end
 
-			return TEXTS_TO_REMOVE[lineData.leftText]
+			if TEXTS_TO_REMOVE[lineData.leftText] then
+				return true
+			end
+
+			-- TODO: replace it if/when blizz add a proper line type for it
+			local tooltipData = tooltip:GetPrimaryTooltipData()
+			local unit = tooltipData.guid and UnitTokenFromGUID(tooltipData.guid)
+			local creatureType = unit and UnitCreatureType(unit)
+			if creatureType then
+				return lineData.leftText == creatureType
+			end
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(tooltip)
@@ -347,19 +351,28 @@ function MODULE:Init()
 					GameTooltipTextLeft2:SetText(guildName)
 				end
 
-				local levelLine = findLine(tooltip, lineOffset, scaledLevel > 0 and scaledLevel or "%?%?")
+				local levelLine
+				levelLine, lineOffset = findLine(tooltip, lineOffset, scaledLevel > 0 and scaledLevel or "%?%?")
 				if levelLine then
 					local level = UnitLevel(unit)
 
 					levelLine:SetFormattedText(
-						PLAYER_LEVEL_FORMAT,
+						LEVEL_FORMAT,
 						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and (scaledLevel ~= level and scaledLevel .. " (" .. level .. ")" or scaledLevel) or "??"),
-						UnitRace(unit),
-						E:GetUnitClassColor(unit):WrapTextInColorCode(UnitClass(unit))
+						UnitRace(unit)
 					)
 
-					if C.db.profile.tooltips.inspect and isShiftKeyDown and level > 10 then
-						addInspectInfo(tooltip, unit, 0)
+					local specLine = _G["GameTooltipTextLeft" .. lineOffset]
+					local specText = s_trim(specLine:GetText() or "") -- just to make sure that it's no an empty line like " "
+					if specText ~= "" then
+						if C.db.profile.tooltips.inspect and isShiftKeyDown and level > 10 then
+							local itemLevel = getInspectInfo(unit)
+							if itemLevel then
+								specLine:SetFormattedText(ILVL_SPEC_FORMAT, itemLevel, specText)
+							end
+						end
+
+						specLine:SetTextColor(E:GetUnitClassColor(unit):GetRGB())
 					end
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
@@ -378,7 +391,7 @@ function MODULE:Init()
 					local petType = _G["BATTLE_PET_NAME_" .. UnitBattlePetType(unit)]
 
 					levelLine:SetFormattedText(
-						NPC_LEVEL_FORMAT,
+						LEVEL_FORMAT,
 						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and scaledLevel or "??"),
 						(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
 					)
@@ -409,7 +422,7 @@ function MODULE:Init()
 				local levelLine = findLine(tooltip, 2, scaledLevel > 0 and scaledLevel or "%?%?")
 				if levelLine then
 					levelLine:SetFormattedText(
-						NPC_LEVEL_FORMAT,
+						LEVEL_FORMAT,
 						difficultyColor:WrapTextInColorCode((scaledLevel > 0 and scaledLevel or "??") .. E:GetUnitClassification(unit)),
 						UnitCreatureType(unit) or ""
 					)
