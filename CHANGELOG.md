@@ -9,7 +9,7 @@
 - Removed quality icons from enchant labels next item slots in the character panel.
 - Removed dig site bar and vehicle seat indicator movers. Use "Edit Mode" to move those instead.
 
-## Action Bars
+### Action Bars
 
 - Added an option to hide micro menu alerts.
 
