@@ -782,6 +782,7 @@ do
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
 	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
 
+	local dataCache = {}
 	local itemCache = {}
 
 	function E:GetItemEnchantGemInfo(itemLink)
@@ -803,6 +804,8 @@ do
 			end
 		end
 
+		dataCache[data.dataInstanceID] = itemLink
+
 		itemCache[itemLink] = {
 			enchant = enchant,
 			gem1 = gems[1],
@@ -812,6 +815,28 @@ do
 
 		return enchant, gems[1], gems[2], gems[3]
 	end
+
+	local wipeTimer
+
+	local function wiper()
+		t_wipe(dataCache)
+	end
+
+	E:RegisterEvent("TOOLTIP_DATA_UPDATE", function(dataInstanceID)
+		local itemLink = dataCache[dataInstanceID]
+		if itemLink then
+			itemCache[itemLink] = nil
+			dataCache[dataInstanceID] = nil
+
+			if not wipeTimer then
+				wipeTimer = C_Timer.NewTimer(5, wiper)
+			else
+				wipeTimer:Cancel()
+
+				wipeTimer = C_Timer.NewTimer(5, wiper)
+			end
+		end
+	end)
 end
 
 ------------------
