@@ -1,3 +1,5 @@
+Set-Location $PSScriptRoot
+
 $luacheckrc = ".\.luacheckrc"
 
 $out = ""
