@@ -372,7 +372,11 @@ function MODULE:Init()
 							end
 						end
 
-						specLine:SetTextColor(E:GetUnitClassColor(unit):GetRGB())
+						if UnitIsDead(unit) then
+							specLine:SetTextColor(C.db.global.colors.disconnected:GetRGB())
+						else
+							specLine:SetTextColor(E:GetUnitClassColor(unit):GetRGB())
+						end
 					end
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
