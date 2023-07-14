@@ -449,13 +449,16 @@ function MODULE:Init()
 			end
 		end)
 
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, function(tooltip, tooltipData)
+		local function hideHealthBar(tooltip, tooltipData)
 			if tooltip.StatusBar then
 				if not tooltipData.healthGUID then
 					tooltip.StatusBar:ClearWatch()
 				end
 			end
-		end)
+		end
+
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Corpse, hideHealthBar)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, hideHealthBar)
 
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)
