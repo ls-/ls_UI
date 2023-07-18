@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 100105.02
+
+### Blizzard
+
+- Fixed an issue where populated gem sockets were sometimes shown as empty.
+
 ## Version 100105.01
 
 - Added 10.1.5 support.
