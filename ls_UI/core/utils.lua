@@ -589,6 +589,7 @@ do
 			or IsPlayerSpell(388874) -- Improved Detox (Monk)
 			or IsPlayerSpell(392378) -- Improved Nature's Cure (Druid)
 			or IsPlayerSpell(360823) -- Naturalize (Evoker)
+			or IsPlayerSpell(383013) -- Poison Cleansing Totem (Shaman)
 			or IsPlayerSpell(2782) -- Remove Corruption (Druid)
 	end)
 
