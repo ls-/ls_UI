@@ -1897,7 +1897,7 @@ D.profile = {
 		},
 	},
 	minimap = {
-		scale = 100, -- 100, 125
+		scale = 100, -- 100, 125, 150
 		shape = "round", -- "round", "square"
 		flip = false,
 		rotate = false,

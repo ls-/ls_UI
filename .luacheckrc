@@ -112,6 +112,7 @@ read_globals = {
 	"DUNGEONS_BUTTON",
 	"ENCHANTED_TOOLTIP_LINE",
 	"Enum",
+	"ExpansionLandingPageMinimapButton",
 	"ExtraAbilityContainer",
 	"ExtraActionBarFrame",
 	"ExtraActionButton1",

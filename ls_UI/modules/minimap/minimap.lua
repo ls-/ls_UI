@@ -55,6 +55,7 @@ do
 
 		MinimapCluster._config = t_wipe(MinimapCluster._config or {})
 		MinimapCluster._config.fade = self._config.fade
+		MinimapCluster._config.scale = self._config.scale
 	end
 
 	local borderInfo = {
@@ -63,6 +64,16 @@ do
 			{434 / 1024, 866 / 1024, 1 / 512, 433 / 512}, -- inner
 			432 / 2,
 		},
+		[125] = {
+			{1 / 2048, 533 / 2048, 1 / 1024, 533 / 1024}, -- outer
+			{534 / 2048, 1066 / 2048, 1 / 1024, 533 / 1024}, -- inner
+			532 / 2,
+		},
+		[150] = {
+			{1 / 2048, 629 / 2048, 1 / 1024, 629 / 1024}, -- outer
+			{630 / 2048, 1258 / 2048, 1 / 1024, 629 / 1024}, -- inner
+			628 / 2,
+		}
 	}
 
 	local flagBorderInfo = {
@@ -121,6 +132,15 @@ do
 
 		self:SetSize(info[3] - 22, info[3] - 22)
 		self:ClearAllPoints()
+
+		local LDBIcon = LibStub("LibDBIcon-1.0", true)
+		if LDBIcon then
+			LDBIcon:SetButtonRadius(LDBIcon.radius)
+		end
+
+		-- SetPoint hook will take care of it
+		ExpansionLandingPageMinimapButton:ClearAllPoints()
+		ExpansionLandingPageMinimapButton:SetPoint("CENTER", self, "CENTER", 0, 0)
 
 		MinimapCluster.BorderTop:ClearAllPoints()
 		MinimapCluster.BorderTop:SetPoint("LEFT", MinimapCluster, "LEFT", 24, 0)
@@ -479,6 +499,33 @@ function MODULE:Init()
 
 			if level ~= 0 and C.db.profile.minimap.auto_zoom ~= 0 then
 				zoomer = C_Timer.NewTimer(C.db.profile.minimap.auto_zoom, resetZoom)
+			end
+		end)
+
+
+		local ELP_ANCHORS = {
+			["round"] = {
+				[100] = {-85, -59},
+				[125] = {-104, -73},
+				[150] = {-124, -87},
+			},
+			["square"] = {
+				[100] = {-100, -59},
+				[125] = {-126, -73},
+				[150] = {-149, -87},
+			},
+		}
+
+		hooksecurefunc(ExpansionLandingPageMinimapButton, "SetPoint", function(_, _, _, _, _, _, shouldIgnore)
+			if not shouldIgnore then
+				local xy = ELP_ANCHORS[C.db.profile.minimap.shape]
+				if xy then
+					xy = xy[C.db.profile.minimap.scale]
+					if xy then
+						ExpansionLandingPageMinimapButton:ClearAllPoints()
+						ExpansionLandingPageMinimapButton:SetPoint("CENTER", Minimap, "CENTER", xy[1], xy[2], true)
+					end
+				end
 			end
 		end)
 
