@@ -6,14 +6,13 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.1.5 support.
+- Added 10.1.7 support.
 
 ### Blizzard
 
-- Removed quality icons from enchant labels next item slots in the character panel.
-- Removed dig site bar and vehicle seat indicator movers. Use "Edit Mode" to move those instead.
+- Fixed an issue where populated gem sockets were sometimes shown as empty.
 
-## Action Bars
+### Minimap
 
-- Added an option to hide micro menu alerts.
+- Added 125% and 150% minimap size options.
 ]]

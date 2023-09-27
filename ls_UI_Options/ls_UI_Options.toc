@@ -1,4 +1,4 @@
-## Interface: 100100
+## Interface: 100107
 ## Author: lightspark
 ## Title: LS: |cff1a9fc0UI|r |cff888987OptionsUI|r
 ## Notes: Options for LS: |cff1a9fc0UI|r.

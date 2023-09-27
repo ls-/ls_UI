@@ -589,6 +589,7 @@ do
 			or IsPlayerSpell(388874) -- Improved Detox (Monk)
 			or IsPlayerSpell(392378) -- Improved Nature's Cure (Druid)
 			or IsPlayerSpell(360823) -- Naturalize (Evoker)
+			or IsPlayerSpell(383013) -- Poison Cleansing Totem (Shaman)
 			or IsPlayerSpell(2782) -- Remove Corruption (Druid)
 	end)
 
@@ -776,11 +777,13 @@ end
 -----------
 
 do
-	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
-	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
+	local ENCHANT_LINE = Enum.TooltipDataLineType.ItemEnchantmentPermanent
+	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "([^\124]+)")
+	local GEM_LINE = Enum.TooltipDataLineType.GemSocket
 	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
-	local ATLAS_PATTERN = "|A.-|a"
+	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
 
+	local dataCache = {}
 	local itemCache = {}
 
 	function E:GetItemEnchantGemInfo(itemLink)
@@ -794,13 +797,15 @@ do
 		local enchant = ""
 		local gems, idx = {"", "", ""}, 1
 		for _, line in next, data.lines do
-			if line.enchantID then
-				enchant = line.leftText:match(ENCHANT_PATTERN):gsub(ATLAS_PATTERN, ""):trim()
-			elseif line.gemIcon or line.socketType then
+			if line.type == ENCHANT_LINE then
+				enchant = line.leftText:match(ENCHANT_PATTERN):trim()
+			elseif line.type == GEM_LINE then
 				gems[idx] = line.gemIcon and GEM_TEMPLATE:format(line.gemIcon) or SOCKET_TEMPLATE:format(line.socketType)
 				idx = idx + 1
 			end
 		end
+
+		dataCache[data.dataInstanceID] = itemLink
 
 		itemCache[itemLink] = {
 			enchant = enchant,
@@ -811,6 +816,28 @@ do
 
 		return enchant, gems[1], gems[2], gems[3]
 	end
+
+	local wipeTimer
+
+	local function wiper()
+		t_wipe(dataCache)
+	end
+
+	E:RegisterEvent("TOOLTIP_DATA_UPDATE", function(dataInstanceID)
+		local itemLink = dataCache[dataInstanceID]
+		if itemLink then
+			itemCache[itemLink] = nil
+			dataCache[dataInstanceID] = nil
+
+			if not wipeTimer then
+				wipeTimer = C_Timer.NewTimer(5, wiper)
+			else
+				wipeTimer:Cancel()
+
+				wipeTimer = C_Timer.NewTimer(5, wiper)
+			end
+		end
+	end)
 end
 
 ------------------

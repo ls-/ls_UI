@@ -372,7 +372,11 @@ function MODULE:Init()
 							end
 						end
 
-						specLine:SetTextColor(E:GetUnitClassColor(unit):GetRGB())
+						if UnitIsDead(unit) then
+							specLine:SetTextColor(C.db.global.colors.disconnected:GetRGB())
+						else
+							specLine:SetTextColor(E:GetUnitClassColor(unit):GetRGB())
+						end
 					end
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
@@ -445,13 +449,16 @@ function MODULE:Init()
 			end
 		end)
 
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, function(tooltip, tooltipData)
+		local function hideHealthBar(tooltip, tooltipData)
 			if tooltip.StatusBar then
 				if not tooltipData.healthGUID then
 					tooltip.StatusBar:ClearWatch()
 				end
 			end
-		end)
+		end
+
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Corpse, hideHealthBar)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, hideHealthBar)
 
 		-- Status Bars
 		E:HandleStatusBar(GameTooltipStatusBar)

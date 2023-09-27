@@ -93,6 +93,29 @@ function CONFIG:CreateMinimapOptions(order)
 				end,
 				disabled = isModuleDisabled,
 			},
+			scale = {
+				order = inc(1),
+				type = "select",
+				name = L["SCALE"],
+				values = {
+					[100] = "100%",
+					[125] = "125%",
+					[150] = "150%",
+				},
+				get = function()
+					return C.db.profile.minimap.scale
+				end,
+				set = function(_, value)
+					if C.db.profile.minimap.scale ~= value then
+						C.db.profile.minimap.scale = value
+
+						Minimap:UpdateConfig()
+						Minimap:UpdateLayout()
+						Minimap:UpdateDifficultyFlag()
+					end
+				end,
+				disabled = isModuleDisabled,
+			},
 			flip = {
 				order = inc(1),
 				type = "toggle",
