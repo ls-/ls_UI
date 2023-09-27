@@ -6,7 +6,9 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Blizzard
+- Added 10.1.7 support.
 
-- Fixed an issue where populated gem sockets were sometimes shown as empty.
+### Minimap
+
+- Added 125% and 150% minimap size options.
 ]]

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 100107.01
+
+- Added 10.1.7 support.
+
+### Minimap
+
+- Added 125% and 150% minimap size options.
+
 ## Version 100105.02
 
 ### Blizzard
