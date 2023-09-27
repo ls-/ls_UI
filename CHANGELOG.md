@@ -4,15 +4,13 @@
 
 - Added 10.1.7 support.
 
-### Minimap
-
-- Added 125% and 150% minimap size options.
-
-## Version 100105.02
-
 ### Blizzard
 
 - Fixed an issue where populated gem sockets were sometimes shown as empty.
+
+### Minimap
+
+- Added 125% and 150% minimap size options.
 
 ## Version 100105.01
 
