@@ -77,8 +77,24 @@ do
 	}
 
 	local flagBorderInfo = {
-		["round"] = {97 / 512, 193 / 512, 1 / 256, 97 / 256},
-		["square"] = {1 / 512, 97 / 512, 1 / 256, 97 / 256},
+		[100] = {
+			96 / 2, -- flag size
+			64 / 2, -- icon size
+			["round"] = {97 / 512, 193 / 512, 1 / 256, 97 / 256},
+			["square"] = {1 / 512, 97 / 512, 1 / 256, 97 / 256},
+		},
+		[125] = {
+			136 / 2, -- flag size
+			102 / 2, -- icon size
+			["round"] = {137 / 1024, 273 / 1024, 1 / 256, 137 / 256},
+			["square"] = {1 / 1024, 137 / 1024, 1 / 256, 137 / 256},
+		},
+		[150] = {
+			176 / 2, -- flag size
+			138 / 2, -- icon size
+			["round"] = {177 / 1024, 353 / 1024, 1 / 512, 177 / 512},
+			["square"] = {1 / 1024, 177 / 1024, 1 / 512, 177 / 512},
+		},
 	}
 
 	-- At odds with the fierce looking face...
@@ -102,8 +118,6 @@ do
 		self.Foreground:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-" .. shape .. "-" .. scale)
 		self.Foreground:SetTexCoord(unpack(info[2]))
 		self.Foreground:SetSize(info[3], info[3])
-
-		self.DifficultyFlag.Border:SetTexCoord(unpack(flagBorderInfo[shape]))
 
 		if shape == "round" then
 			self:SetArchBlobRingScalar(1)
@@ -137,6 +151,16 @@ do
 		if LDBIcon then
 			LDBIcon:SetButtonRadius(LDBIcon.radius)
 		end
+
+		local flagInfo = flagBorderInfo[scale] or flagBorderInfo[100]
+
+		self.DifficultyFlag:SetSize(flagInfo[1], flagInfo[1])
+
+		self.DifficultyFlag.Border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags-" .. scale)
+		self.DifficultyFlag.Border:SetTexCoord(unpack(flagInfo[shape]))
+
+		self.DifficultyFlag.Icon:SetSize(flagInfo[2], flagInfo[2])
+		self.DifficultyFlag.Icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags-" .. scale)
 
 		-- SetPoint hook will take care of it
 		ExpansionLandingPageMinimapButton:ClearAllPoints()
@@ -230,11 +254,27 @@ do
 	local GUILD_ACHIEVEMENTS_ELIGIBLE = _G.GUILD_ACHIEVEMENTS_ELIGIBLE:gsub("(%%.-[sd])", "|cffffffff%1|r")
 
 	local flagInfo = {
-		["lfr"] = {193 / 512, 257 / 512, 1 / 256, 65 / 256},
-		["normal"] = {257 / 512, 321 / 512, 1 / 256, 65 / 256},
-		["heroic"] = {321 / 512, 385 / 512, 1 / 256, 65 / 256},
-		["mythic"] = {385 / 512, 449 / 512, 1 / 256, 65 / 256},
-		["challenge"] = {193 / 512, 257 / 512, 65 / 256, 129 / 256},
+		[100] = {
+			["lfr"] = {193 / 512, 257 / 512, 1 / 256, 65 / 256},
+			["normal"] = {257 / 512, 321 / 512, 1 / 256, 65 / 256},
+			["heroic"] = {321 / 512, 385 / 512, 1 / 256, 65 / 256},
+			["mythic"] = {385 / 512, 449 / 512, 1 / 256, 65 / 256},
+			["challenge"] = {193 / 512, 257 / 512, 65 / 256, 129 / 256},
+		},
+		[125] = {
+			["lfr"] = {273 / 1024, 375 / 1024, 1 / 256, 103 / 256},
+			["normal"] = {375 / 1024, 477 / 1024, 1 / 256, 103 / 256},
+			["heroic"] = {477 / 1024, 579 / 1024, 1 / 256, 103 / 256},
+			["mythic"] = {579 / 1024, 681 / 1024, 1 / 256, 103 / 256},
+			["challenge"] = {681 / 1024, 783 / 1024, 1 / 256, 103 / 256},
+		},
+		[150] = {
+			["lfr"] = {353 / 1024, 491 / 1024, 1 / 512, 139 / 512},
+			["normal"] = {491 / 1024, 629 / 1024, 1 / 512, 139 / 512},
+			["heroic"] = {629 / 1024, 767 / 1024, 1 / 512, 139 / 512},
+			["mythic"] = {767 / 1024, 905 / 1024, 1 / 512, 139 / 512 },
+			["challenge"] = {353 / 1024, 491 / 1024, 139 / 512, 277 / 512},
+		},
 	}
 
 	function flag_proto:RegisterForEvents()
@@ -280,7 +320,7 @@ do
 	end
 
 	function flag_proto:UpdateFlag(t)
-		self.Icon:SetTexCoord(unpack(flagInfo[t]))
+		self.Icon:SetTexCoord(unpack(flagInfo[C.db.profile.minimap.scale][t]))
 	end
 
 	function flag_proto:Update()
@@ -443,19 +483,15 @@ function MODULE:Init()
 		local difficultyFlag = Mixin(CreateFrame("Frame", nil, MinimapCluster), flag_proto)
 		difficultyFlag:SetFrameLevel(Minimap:GetFrameLevel() + 2)
 		difficultyFlag:SetScript("OnEvent", difficultyFlag.OnEvent)
-		difficultyFlag:SetSize(48, 48)
 		difficultyFlag:Hide()
 		Minimap.DifficultyFlag = difficultyFlag
 
 		local flagBorder = difficultyFlag:CreateTexture(nil, "OVERLAY")
 		flagBorder:SetAllPoints()
-		flagBorder:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
 		difficultyFlag.Border = flagBorder
 
 		local flagIcon = difficultyFlag:CreateTexture(nil, "BACKGROUND")
 		flagIcon:SetPoint("TOPRIGHT", -5, -4)
-		flagIcon:SetSize(32, 32)
-		flagIcon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\minimap-flags")
 		difficultyFlag.Icon = flagIcon
 
 		local coords = Mixin(E:CreateBackdrop(textureParent), coords_proto)

@@ -111,6 +111,7 @@ function CONFIG:CreateMinimapOptions(order)
 
 						Minimap:UpdateConfig()
 						Minimap:UpdateLayout()
+						Minimap:UpdateDifficultyFlag()
 					end
 				end,
 				disabled = isModuleDisabled,
