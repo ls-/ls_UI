@@ -2809,6 +2809,9 @@ PrD.profile = {
 	bars = {
 		enabled = true,
 		restricted = true,
+		micromenu = {
+			blizz_enabled = false,
+		},
 		pet_battle = {
 			enabled = false,
 		},

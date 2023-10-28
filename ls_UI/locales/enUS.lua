@@ -505,3 +505,5 @@ L["Y_OFFSET"] = "yOffset"
 L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
+
+L["USE_BLIZZARD_MICRO_MENU"] = "Use Blizzard Menu"
