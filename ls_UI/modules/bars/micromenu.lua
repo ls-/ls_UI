@@ -244,25 +244,29 @@ end
 local button_proto = {}
 
 function button_proto:OnEnter()
-	local p, rP, x, y = E:GetTooltipPoint(self._parent)
+	if not KeybindFrames_InQuickKeybindMode() then
+		local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
-	GameTooltip:SetOwner(self, "ANCHOR_NONE")
-	GameTooltip:SetPoint(p, self, rP, x, y)
-	GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(p, self, rP, x, y)
+		GameTooltip:SetText(self.tooltipText or "", 1, 1, 1, 1)
 
-	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
-		local r, g, b = C.db.global.colors.red:GetRGB()
+		if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
+			local r, g, b = C.db.global.colors.red:GetRGB()
 
-		if self.factionGroup == "Neutral" then
-			GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
-		elseif self.minLevel then
-			GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
-		elseif self.disabledTooltip then
-			GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
+			if self.factionGroup == "Neutral" then
+				GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
+			elseif self.minLevel then
+				GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
+			elseif self.disabledTooltip then
+				GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
+			end
 		end
-	end
 
-	GameTooltip:Show()
+		GameTooltip:Show()
+	else
+		self:QuickKeybindButtonOnEnter()
+	end
 end
 
 function button_proto:UpdateConfig()
@@ -307,6 +311,8 @@ local function handleMicroButton(button, useBlizz)
 
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	button:UnregisterAllEvents()
+	button:SetScript("OnEnter", button.OnEnter)
+	button:SetScript("OnUpdate", nil)
 
 	if useBlizz then
 		hooksecurefunc(button, "SetNormal", setNormalHook)
@@ -348,9 +354,6 @@ local function handleMicroButton(button, useBlizz)
 		icon:SetPoint("TOPLEFT", 1, -1)
 		icon:SetPoint("BOTTOMRIGHT", -1, 1)
 		button.Icon = icon
-
-		button:SetScript("OnEnter", button.OnEnter)
-		button:SetScript("OnUpdate", nil)
 
 		E:ForceHide(button.Background)
 		E:ForceHide(button.PushedBackground)
