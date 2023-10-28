@@ -83,7 +83,7 @@ function MODULE:CleanUp()
 
 	QueueStatusButton:SetParent(UIParent)
 	QueueStatusButton:ClearAllPoints()
-	QueueStatusButton:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -216, 4)
+	QueueStatusButton:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -228, 4)
 	E.Movers:Create(QueueStatusButton)
 
 	E:ForceHide(SpellFlyout.Background)
