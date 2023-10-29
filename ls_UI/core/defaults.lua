@@ -1933,7 +1933,10 @@ D.profile = {
 		lock = true,
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
-		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
+		endcaps = {
+			visibility = "BOTH", -- "LEFT", "RIGHT", "NONE"
+			type = "AUTO", -- "ALLIANCE", "HORDE", "NEUTRAL"
+		},
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]

@@ -16,14 +16,14 @@ local animController
 
 local ENDCAPS = {
 	[1] = {
-		["Alliance"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
-		["Horde"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
-		["Neutral"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+		["ALLIANCE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+		["HORDE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+		["NEUTRAL"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
 	},
 	[2] = {
-		["Alliance"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
-		["Horde"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
-		["Neutral"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+		["ALLIANCE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
+		["HORDE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-wyvern",
+		["NEUTRAL"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
 	},
 }
 
@@ -198,14 +198,12 @@ function MODULE:SetupActionBarController()
 		bottom.Right = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexture(ENDCAPS[1][E.PLAYER_FACTION])
 		texture:SetTexCoord(1 / 256, 189 / 256, 1 / 128, 125 / 128)
 		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", -92, 14)
 		texture:SetSize(188 / 2, 124 / 2)
 		animController.LeftCap = texture
 
 		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexture(ENDCAPS[2][E.PLAYER_FACTION])
 		texture:SetTexCoord(189 / 256, 1 / 256, 1 / 128, 125 / 128)
 		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 92, 14)
 		texture:SetSize(188 / 2, 124 / 2)
@@ -360,19 +358,28 @@ function MODULE:FinalizeActionBarController()
 end
 
 function MODULE:UpdateEndcaps()
-	local endcaps = C.db.profile.bars.endcaps
-	if endcaps == "BOTH" then
+	local v = C.db.profile.bars.endcaps.visibility
+	if v == "BOTH" then
 		animController.LeftCap:Show()
 		animController.RightCap:Show()
-	elseif endcaps == "LEFT" then
+	elseif v == "LEFT" then
 		animController.LeftCap:Show()
 		animController.RightCap:Hide()
-	elseif endcaps == "RIGHT" then
+	elseif v == "RIGHT" then
 		animController.LeftCap:Hide()
 		animController.RightCap:Show()
 	else
 		animController.LeftCap:Hide()
 		animController.RightCap:Hide()
+	end
+
+	local t = C.db.profile.bars.endcaps.type
+	if t == "ALLIANCE" or t == "HORDE" or t == "NEUTRAL" then
+		animController.LeftCap:SetTexture(ENDCAPS[1][t])
+		animController.RightCap:SetTexture(ENDCAPS[2][t])
+	else
+		animController.LeftCap:SetTexture(ENDCAPS[1][E.PLAYER_FACTION:upper()])
+		animController.RightCap:SetTexture(ENDCAPS[2][E.PLAYER_FACTION:upper()])
 	end
 end
 

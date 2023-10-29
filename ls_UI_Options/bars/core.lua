@@ -54,25 +54,46 @@ local CAST_KEY_VALUES = {
 	[4] = "NONE",
 }
 
-local ENDCAPS = {
+local ENDCAPS_VISIBILITY = {
 	[1] = L["ENDCAPS_LEFT"],
 	[2] = L["ENDCAPS_RIGHT"],
 	[3] = L["ENDCAPS_BOTH"],
 	[4] = L["NONE"],
 }
 
-local ENDCAPS_INDICES = {
+local ENDCAPS_VISIBILITY_INDICES = {
 	["LEFT"] = 1,
 	["RIGHT"] = 2,
 	["BOTH"] = 3,
 	["NONE"] = 4,
 }
 
-local ENDCAPS_VALUES = {
+local ENDCAPS_VISIBILITY_VALUES = {
 	[1] = "LEFT",
 	[2] = "RIGHT",
 	[3] = "BOTH",
 	[4] = "NONE",
+}
+
+local ENDCAPS_TYPES = {
+	[1] = L["FACTION_ALLIANCE"],
+	[2] = L["FACTION_HORDE"],
+	[3] = L["FACTION_NEUTRAL"],
+	[4] = L["AUTO"],
+}
+
+local ENDCAPS_TYPE_INDICES = {
+	["ALLIANCE"] = 1,
+	["HORDE"] = 2,
+	["NEUTRAL"] = 3,
+	["AUTO"] = 4,
+}
+
+local ENDCAPS_TYPE_VALUES = {
+	[1] = "ALLIANCE",
+	[2] = "HORDE",
+	[3] = "NEUTRAL",
+	[4] = "AUTO",
 }
 
 local function isModuleDisabled()
@@ -146,19 +167,36 @@ function CONFIG:CreateActionBarsOptions(order)
 					end
 				end,
 			},
-			endcaps = {
+			endcaps_visibility = {
 				order = inc(1),
 				type = "select",
 				name = L["ENDCAPS"],
 				get = function()
-					return ENDCAPS_INDICES[C.db.profile.bars.endcaps]
+					return ENDCAPS_VISIBILITY_INDICES[C.db.profile.bars.endcaps.visibility]
 				end,
 				set = function(_, value)
-					C.db.profile.bars.endcaps = ENDCAPS_VALUES[value]
+					C.db.profile.bars.endcaps.visibility = ENDCAPS_VISIBILITY_VALUES[value]
 
 					BARS:UpdateEndcaps()
 				end,
-				values = ENDCAPS,
+				values = ENDCAPS_VISIBILITY,
+				disabled = function()
+					return not (BARS:IsInit() and BARS:IsRestricted())
+				end,
+			},
+			endcaps_type = {
+				order = inc(1),
+				type = "select",
+				name = L["ENDCAPS"],
+				get = function()
+					return ENDCAPS_TYPE_INDICES[C.db.profile.bars.endcaps.type]
+				end,
+				set = function(_, value)
+					C.db.profile.bars.endcaps.type = ENDCAPS_TYPE_VALUES[value]
+
+					BARS:UpdateEndcaps()
+				end,
+				values = ENDCAPS_TYPES,
 				disabled = function()
 					return not (BARS:IsInit() and BARS:IsRestricted())
 				end,
