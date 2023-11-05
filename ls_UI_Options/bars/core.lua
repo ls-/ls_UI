@@ -112,6 +112,10 @@ local function isModuleDisabledOrRestricted()
 	return BARS:IsRestricted() or not BARS:IsInit()
 end
 
+local function isOCCEnabled()
+	return E.OMNICC
+end
+
 function CONFIG:CreateActionBarsOptions(order)
 	self.options.args.bars = {
 		order = order,
@@ -405,6 +409,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
+						disabled = isOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = inc(2),
@@ -413,6 +418,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
+						disabled = isOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								if value < info.option.softMin then
@@ -431,6 +437,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
+						disabled = isOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								C.db.profile.bars.cooldown[info[#info]] = value

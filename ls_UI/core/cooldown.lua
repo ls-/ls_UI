@@ -135,12 +135,22 @@ function cooldown_proto:UpdateConfig(config)
 	end
 end
 
+local omnicc_proto = {
+	UpdateFont = E.NOOP,
+}
+
 function E.Cooldowns.Handle(cooldown)
-	if E.OMNICC or handledCooldowns[cooldown] then
+	if handledCooldowns[cooldown] then
 		return cooldown
 	end
 
 	Mixin(cooldown, cooldown_proto)
+
+	if E.OMNICC then
+		Mixin(cooldown, omnicc_proto)
+
+		return
+	end
 
 	cooldown:SetDrawBling(false)
 	cooldown:SetDrawEdge(false)
