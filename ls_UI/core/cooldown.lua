@@ -146,14 +146,15 @@ function E.Cooldowns.Handle(cooldown)
 
 	Mixin(cooldown, cooldown_proto)
 
+	cooldown:SetDrawBling(false)
+	cooldown:SetDrawEdge(false)
+
 	if E.OMNICC then
 		Mixin(cooldown, omnicc_proto)
 
 		return
 	end
 
-	cooldown:SetDrawBling(false)
-	cooldown:SetDrawEdge(false)
 	cooldown:SetHideCountdownNumbers(true)
 	cooldown:GetRegions():SetAlpha(0) -- Default CD timer is region #1
 
