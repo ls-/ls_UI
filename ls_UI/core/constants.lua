@@ -204,7 +204,7 @@ local textures = {
 
 M.textures = textures
 
-E.OMNICC = select(4, GetAddOnInfo("OmniCC"))
+E.OMNICC = select(4, C_AddOns.GetAddOnInfo("OmniCC"))
 
 E.PLAYER_CLASS = UnitClassBase("player")
 E.PLAYER_SPEC_FLAGS = {

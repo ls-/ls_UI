@@ -166,7 +166,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	local function openConfig()
 		if not Config:IsLoaded() then
-			LoadAddOn("ls_UI_Options")
+			C_AddOns.LoadAddOn("ls_UI_Options")
 
 			if not Config:IsLoaded() then return end
 		end

@@ -28,8 +28,8 @@ end
 function MODULE:SetUpCommandBar()
 	if not isInit and PrC.db.profile.blizzard.command_bar.enabled then
 		local isLoaded = true
-		if not IsAddOnLoaded("Blizzard_OrderHallUI") then
-			isLoaded = LoadAddOn("Blizzard_OrderHallUI")
+		if not C_AddOns.IsAddOnLoaded("Blizzard_OrderHallUI") then
+			isLoaded = C_AddOns.LoadAddOn("Blizzard_OrderHallUI")
 		end
 
 		if isLoaded then

@@ -760,11 +760,11 @@ do
 
 				UpdateAddOnMemoryUsage()
 
-				for i = 1, GetNumAddOns() do
-					if IsAddOnLoaded(i) then
+				for i = 1, C_AddOns.GetNumAddOns() do
+					if C_AddOns.IsAddOnLoaded(i) then
 						if not cache[i] then
 							cache[i] = {
-								[1] = select(2, GetAddOnInfo(i)),
+								[1] = select(2, C_AddOns.GetAddOnInfo(i)),
 							}
 						end
 
