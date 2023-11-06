@@ -92,7 +92,7 @@ function bar_proto:UpdateVisibility()
 end
 
 function MODULE:Create(id, name, isInsecure)
-	local bar = Mixin(CreateFrame("Frame", name, UIParent, isInsecure and nil or "SecureHandlerStateTemplate"), bar_proto)
+	local bar = Mixin(CreateFrame("Frame", name, UIParent, not isInsecure and "SecureHandlerStateTemplate" or nil) , bar_proto)
 	bar:SetSize(0, 0)
 	bar._id = id
 	bar._buttons = {}
