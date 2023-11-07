@@ -180,11 +180,20 @@ local idToIndex = {
 
 local function createButtonIndicator(button, indicator)
 	indicator = indicator or button:CreateTexture()
-	indicator:SetDrawLayer("BACKGROUND", 3)
 	indicator:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
 	indicator:SetTexCoord(unpack(TEXTURE_COORDS.INDICATOR))
-	indicator:SetPoint("BOTTOMLEFT", 1, 1)
-	indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -1, 3)
+
+	if PrC.db.profile.bars.micromenu.blizz_enabled then
+		indicator:SetDrawLayer("BACKGROUND", -1)
+		indicator:ClearAllPoints()
+		indicator:SetPoint("BOTTOMLEFT", 5, 5)
+		indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -4, 7)
+	else
+		indicator:SetDrawLayer("BACKGROUND", 3)
+		indicator:ClearAllPoints()
+		indicator:SetPoint("BOTTOMLEFT", 1, 1)
+		indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -1, 3)
+	end
 
 	return indicator
 end
@@ -218,28 +227,46 @@ local function updateHighlightTexture(button)
 	highlight:SetPoint("BOTTOMRIGHT", 0, 0)
 end
 
+local function setNormalHook(button)
+	if button.Indicator then
+		button.Indicator:SetPoint("BOTTOMLEFT", 5, 5)
+		button.Indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -4, 7)
+	end
+end
+
+local function setPushedHook(button)
+	if button.Indicator then
+		button.Indicator:SetPoint("BOTTOMLEFT", 6, 3)
+		button.Indicator:SetPoint("TOPRIGHT", button, "BOTTOMRIGHT", -3, 6)
+	end
+end
+
 local button_proto = {}
 
 function button_proto:OnEnter()
-	local p, rP, x, y = E:GetTooltipPoint(self._parent)
+	if not KeybindFrames_InQuickKeybindMode() then
+		local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
-	GameTooltip:SetOwner(self, "ANCHOR_NONE")
-	GameTooltip:SetPoint(p, self, rP, x, y)
-	GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint(p, self, rP, x, y)
+		GameTooltip:SetText(self.tooltipText or "", 1, 1, 1, 1)
 
-	if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
-		local r, g, b = C.db.global.colors.red:GetRGB()
+		if not self:IsEnabled() and (self.minLevel or self.disabledTooltip or self.factionGroup) then
+			local r, g, b = C.db.global.colors.red:GetRGB()
 
-		if self.factionGroup == "Neutral" then
-			GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
-		elseif self.minLevel then
-			GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
-		elseif self.disabledTooltip then
-			GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
+			if self.factionGroup == "Neutral" then
+				GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
+			elseif self.minLevel then
+				GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
+			elseif self.disabledTooltip then
+				GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
+			end
 		end
-	end
 
-	GameTooltip:Show()
+		GameTooltip:Show()
+	else
+		self:QuickKeybindButtonOnEnter()
+	end
 end
 
 function button_proto:UpdateConfig()
@@ -279,60 +306,70 @@ function button_proto:Update()
 	self:UpdateEvents()
 end
 
-local function handleMicroButton(button)
+local function handleMicroButton(button, useBlizz)
 	Mixin(button, button_proto)
 
-	button:SetSize(36 / 2, 48 / 2)
-	button:SetHitRectInsets(0, 0, 0, 0)
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	button:UnregisterAllEvents()
-
-	updateNormalTexture(button)
-	updatePushedTexture(button)
-	updateDisabledTexture(button)
-	updateHighlightTexture(button)
-
-	hooksecurefunc(button, "SetHighlightAtlas", updateHighlightTexture)
-
-	local border = button:CreateTexture(nil, "BORDER")
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
-	border:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
-	border:SetVertexColor(0, 0, 0)
-	border:SetPoint("TOPLEFT", -2, 2)
-	border:SetPoint("BOTTOMRIGHT", 2, -2)
-	button.Border = border
-
-	local flash = button.FlashBorder
-	flash:SetDrawLayer("OVERLAY", 2)
-	flash:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
-	flash:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
-	flash:SetVertexColor(242 / 255, 228 / 255, 165 / 255)
-	flash:ClearAllPoints()
-	flash:SetPoint("TOPLEFT", -2, 2)
-	flash:SetPoint("BOTTOMRIGHT", 2, -2)
-
-	if button.FlashContent then
-		E:ForceHide(button.FlashContent)
-	end
-
-	local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
-	icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
-	icon:SetPoint("TOPLEFT", 1, -1)
-	icon:SetPoint("BOTTOMRIGHT", -1, 1)
-	button.Icon = icon
-
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnUpdate", nil)
 
-	E:ForceHide(button.Background)
-	E:ForceHide(button.PushedBackground)
+	if useBlizz then
+		hooksecurefunc(button, "SetNormal", setNormalHook)
+		hooksecurefunc(button, "SetPushed", setPushedHook)
+	else
+		button:SetSize(36 / 2, 48 / 2)
+		button:SetHitRectInsets(0, 0, 0, 0)
 
-	if button.Shadow then
-		E:ForceHide(button.Shadow)
-	end
+		updateNormalTexture(button)
+		updatePushedTexture(button)
+		updateDisabledTexture(button)
+		updateHighlightTexture(button)
 
-	if button.PushedShadow then
-		E:ForceHide(button.PushedShadow)
+		hooksecurefunc(button, "SetHighlightAtlas", updateHighlightTexture)
+
+		local border = button:CreateTexture(nil, "BORDER")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+		border:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
+		border:SetVertexColor(0, 0, 0)
+		border:SetPoint("TOPLEFT", -2, 2)
+		border:SetPoint("BOTTOMRIGHT", 2, -2)
+		button.Border = border
+
+		local flash = button.FlashBorder
+		flash:SetDrawLayer("OVERLAY", 2)
+		flash:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+		flash:SetTexCoord(unpack(TEXTURE_COORDS.BORDER))
+		flash:SetVertexColor(242 / 255, 228 / 255, 165 / 255)
+		flash:ClearAllPoints()
+		flash:SetPoint("TOPLEFT", -2, 2)
+		flash:SetPoint("BOTTOMRIGHT", 2, -2)
+
+		if button.FlashContent then
+			E:ForceHide(button.FlashContent)
+		end
+
+		local icon = button:CreateTexture(nil, "BACKGROUND", nil, 1)
+		icon:SetTexture("Interface\\AddOns\\ls_UI\\assets\\micromenu")
+		icon:SetPoint("TOPLEFT", 1, -1)
+		icon:SetPoint("BOTTOMRIGHT", -1, 1)
+		button.Icon = icon
+
+		E:ForceHide(button.Background)
+		E:ForceHide(button.PushedBackground)
+
+		if button.Shadow then
+			E:ForceHide(button.Shadow)
+		end
+
+		if button.Portrait then
+			E:ForceHide(button.Portrait)
+			E:ForceHide(button.PortraitMask)
+		end
+
+		if button.PushedShadow then
+			E:ForceHide(button.PushedShadow)
+		end
 	end
 end
 
@@ -371,7 +408,7 @@ do
 		end
 	end
 
-	function char_button_proto:OnEvent(event)
+	function char_button_proto:OnEventHook(event)
 		if event == "UPDATE_INVENTORY_DURABILITY" then
 			local t = GetTime()
 
@@ -382,8 +419,6 @@ do
 
 				self.recentUpdate = t
 			end
-		elseif event == "UPDATE_BINDINGS" then
-			self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 		end
 	end
 
@@ -725,11 +760,11 @@ do
 
 				UpdateAddOnMemoryUsage()
 
-				for i = 1, GetNumAddOns() do
-					if IsAddOnLoaded(i) then
+				for i = 1, C_AddOns.GetNumAddOns() do
+					if C_AddOns.IsAddOnLoaded(i) then
 						if not cache[i] then
 							cache[i] = {
-								[1] = select(2, GetAddOnInfo(i)),
+								[1] = select(2, C_AddOns.GetAddOnInfo(i)),
 							}
 						end
 
@@ -809,6 +844,12 @@ local function buttonSort(a, b)
 	return a:GetID() < b:GetID()
 end
 
+local CFG_OVERRIDE = {
+	width = 32,
+	height = 40,
+	spacing = -4,
+}
+
 local bar_proto = {
 	UpdateCooldownConfig = E.NOOP,
 }
@@ -824,6 +865,10 @@ end
 
 function bar_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.bars.micromenu, self._config)
+
+	if PrC.db.profile.bars.micromenu.blizz_enabled then
+		self._config = E:CopyTable(CFG_OVERRIDE, self._config)
+	end
 end
 
 function bar_proto:UpdateButtonList()
@@ -886,16 +931,24 @@ function MODULE:CreateMicroMenu()
 			button._id = id
 			button._parent = bar
 
-			handleMicroButton(button)
+			handleMicroButton(button, PrC.db.profile.bars.micromenu.blizz_enabled)
 
-			button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[data.icon]))
+			if not PrC.db.profile.bars.micromenu.blizz_enabled then
+				button.Icon:SetTexCoord(unpack(TEXTURE_COORDS[data.icon]))
+			end
 
 			if id == "character" then
-				Mixin(button, char_button_proto)
-				button:SetScript("OnEvent", button.OnEvent)
+				if PrC.db.profile.bars.micromenu.blizz_enabled then
+					data.events.PORTRAITS_UPDATED = true
+					data.events.UNIT_PORTRAIT_UPDATE = true
+				end
 
-				button.Indicator = createButtonIndicator(button)
+				Mixin(button, char_button_proto)
+				button:HookScript("OnEvent", button.OnEventHook)
+
+				-- keep it, tooltipText is broken in the default UI
 				button.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
+				button.Indicator = createButtonIndicator(button)
 			elseif id == "spellbook" then
 				Mixin(button, spellbook_button_proto)
 				button:SetScript("OnEnter", button.OnEnter)

@@ -166,7 +166,7 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 
 	local function openConfig()
 		if not Config:IsLoaded() then
-			LoadAddOn("ls_UI_Options")
+			C_AddOns.LoadAddOn("ls_UI_Options")
 
 			if not Config:IsLoaded() then return end
 		end
@@ -196,4 +196,16 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	end)
 
 	Settings.RegisterAddOnCategory(Settings.RegisterCanvasLayoutCategory(panel, L["LS_UI"]))
+
+	AddonCompartmentFrame:RegisterAddon({
+		text = L["LS_UI"],
+		icon = "Interface\\AddOns\\ls_UI\\assets\\logo-32",
+		notCheckable = true,
+		registerForAnyClick = true,
+		func = function()
+			if not InCombatLockdown() then
+				openConfig()
+			end
+		end,
+	})
 end)

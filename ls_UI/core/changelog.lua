@@ -6,13 +6,12 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.1.7 support.
+- Added 10.2 support.
+- Added "LS: UI" entry to the addon compartment in the top right corner of the minimap.
+- Improved compatibility with OmniCC.
 
-### Blizzard
+### Action Bars
 
-- Fixed an issue where populated gem sockets were sometimes shown as empty.
-
-### Minimap
-
-- Added 125% and 150% minimap size options.
+- Added an option to select the type of endcaps, i.e., Alliance (Gryphons), Horde (Wyverns), Neutral (Mixed), and Auto.
+- Added "Use Blizzard Menu" option to enable Blizzard micro menu alongside my enhanced tooltips.
 ]]

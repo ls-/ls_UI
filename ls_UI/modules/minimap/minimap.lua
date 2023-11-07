@@ -398,8 +398,8 @@ end
 
 function MODULE:Init()
 	if not isInit and PrC.db.profile.minimap.enabled then
-		if not IsAddOnLoaded("Blizzard_TimeManager") then
-			LoadAddOn("Blizzard_TimeManager")
+		if not C_AddOns.IsAddOnLoaded("Blizzard_TimeManager") then
+			C_AddOns.LoadAddOn("Blizzard_TimeManager")
 		end
 
 		Mixin(MinimapCluster, cluster_proto)

@@ -160,11 +160,11 @@ end
 do
 	local onLoadTasks = {}
 
-	hooksecurefunc("LoadAddOn", function(name)
+	hooksecurefunc(C_AddOns, "LoadAddOn", function(name)
 		local tasks = onLoadTasks[name]
 
 		if tasks then
-			if not IsAddOnLoaded(name) then return end
+			if not C_AddOns.IsAddOnLoaded(name) then return end
 
 			for i = 1, #tasks do
 				tasks[i]()

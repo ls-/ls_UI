@@ -121,6 +121,26 @@ function CONFIG:CreateMicroMenuOptions(order)
 				type = "description",
 				name = " ",
 			},
+			restricted = {
+				order = inc(1),
+				type = "toggle",
+				name = L["USE_BLIZZARD_MICRO_MENU"],
+				get = function()
+					return PrC.db.profile.bars.micromenu.blizz_enabled
+				end,
+				set = function(_, value)
+					PrC.db.profile.bars.micromenu.blizz_enabled = value
+
+					if BARS:IsInit() then
+						CONFIG:ShowStaticPopup("RELOAD_UI")
+					end
+				end,
+			},
+			spacer_2 = {
+				order = inc(1),
+				type = "description",
+				name = " ",
+			},
 			per_row = {
 				order = inc(1),
 				type = "range",
@@ -166,7 +186,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 					end
 				end,
 			},
-			spacer_2 = {
+			spacer_3 = {
 				order = inc(1),
 				type = "description",
 				name = " ",

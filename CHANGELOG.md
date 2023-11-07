@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 100200.01
+
+- Added 10.2 support.
+- Added "LS: UI" entry to the addon compartment in the top right corner of the minimap.
+- Improved compatibility with OmniCC.
+
+### Action Bars
+
+- Added an option to select the type of endcaps, i.e., Alliance (Gryphons), Horde (Wyverns), Neutral (Mixed), and Auto.
+- Added "Use Blizzard Menu" option to enable Blizzard micro menu alongside my enhanced tooltips.
+
+![Imgur](https://i.imgur.com/iwnsoda.png)
+
 ## Version 100107.01
 
 - Added 10.1.7 support.

@@ -504,6 +504,7 @@ D.global = {
 			[335151] = true, -- Sign of the Mists
 			[335152] = true, -- Sign of Iron
 			[359082] = true, -- Sign of the Legion
+			[397734] = true, -- Word of a Worthy Ally
 		},
 		["M+ Affixes"] = {
 			state = true,
@@ -1933,7 +1934,10 @@ D.profile = {
 		lock = true,
 		rightclick_selfcast = false,
 		blizz_vehicle = false,
-		endcaps = "BOTH", -- "LEFT", "RIGHT", "NONE"
+		endcaps = {
+			visibility = "BOTH", -- "LEFT", "RIGHT", "NONE"
+			type = "AUTO", -- "ALLIANCE", "HORDE", "NEUTRAL"
+		},
 		cooldown = {
 			exp_threshold = 5,
 			m_ss_threshold = 120, -- [91; 3599]
@@ -2809,6 +2813,9 @@ PrD.profile = {
 	bars = {
 		enabled = true,
 		restricted = true,
+		micromenu = {
+			blizz_enabled = false,
+		},
 		pet_battle = {
 			enabled = false,
 		},

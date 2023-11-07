@@ -60,6 +60,10 @@ local function isModuleDisabled()
 	return not AURATRACKER:IsInit()
 end
 
+local function isOCCEnabled()
+	return E.OMNICC
+end
+
 local function callback()
 	AURATRACKER:GetTracker():UpdateConfig()
 	AURATRACKER:GetTracker():Update()
@@ -358,6 +362,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
+						disabled = isOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = inc(2),
@@ -366,6 +371,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
+						disabled = isOCCEnabled,
 						set = function(info, value)
 							if PrC.db.profile.auratracker.cooldown.m_ss_threshold ~= value then
 								if value < info.option.softMin then
@@ -385,6 +391,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
+						disabled = isOCCEnabled,
 					},
 					spacer_2 = {
 						order = inc(2),
@@ -433,6 +440,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
+						disabled = isOCCEnabled,
 						get = function(info)
 							return PrC.db.profile.auratracker.cooldown.text[info[#info]]
 						end,

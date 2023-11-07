@@ -135,8 +135,12 @@ function cooldown_proto:UpdateConfig(config)
 	end
 end
 
+local omnicc_proto = {
+	UpdateFont = E.NOOP,
+}
+
 function E.Cooldowns.Handle(cooldown)
-	if E.OMNICC or handledCooldowns[cooldown] then
+	if handledCooldowns[cooldown] then
 		return cooldown
 	end
 
@@ -144,6 +148,13 @@ function E.Cooldowns.Handle(cooldown)
 
 	cooldown:SetDrawBling(false)
 	cooldown:SetDrawEdge(false)
+
+	if E.OMNICC then
+		Mixin(cooldown, omnicc_proto)
+
+		return
+	end
+
 	cooldown:SetHideCountdownNumbers(true)
 	cooldown:GetRegions():SetAlpha(0) -- Default CD timer is region #1
 

@@ -5,6 +5,7 @@ local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns
 local _G = getfenv(0)
 local m_min = _G.math.min
 local next = _G.next
+local type = _G.type
 
 -- Mine
 function P:Modernize(data, name, key)
@@ -815,6 +816,19 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 10010501
+		end
+
+		--> 100200.01
+		if data.version < 10020001 then
+			if data.bars then
+				if data.bars.endcaps then
+					data.bars.endcaps = {
+						visibility = data.bars.endcaps,
+					}
+				end
+			end
+
+			data.version = 10020001
 		end
 	elseif key == "private" then
 		--> 90001.05
