@@ -6,12 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.2 support.
-- Added "LS: UI" entry to the addon compartment in the top right corner of the minimap.
-- Improved compatibility with OmniCC.
+### Unit Frames
 
-### Action Bars
-
-- Added an option to select the type of endcaps, i.e., Alliance (Gryphons), Horde (Wyverns), Neutral (Mixed), and Auto.
-- Added "Use Blizzard Menu" option to enable Blizzard micro menu alongside my enhanced tooltips.
+- Fixed an issue where heal prediction and absorb shields wouldn't show up. It's a Blizz bug.
 ]]
