@@ -130,6 +130,7 @@ read_globals = {
 	"FauxScrollFrame_SetOffset",
 	"FauxScrollFrame_Update",
 	"FlowContainer_PauseUpdates",
+	"FramerateFrame",
 	"GameFontNormal",
 	"GameTimeFrame",
 	"GameTooltip",

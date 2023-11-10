@@ -86,6 +86,9 @@ function MODULE:CleanUp()
 	QueueStatusButton:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -228, 4)
 	E.Movers:Create(QueueStatusButton)
 
+	FramerateFrame:ClearAllPoints()
+	FramerateFrame:SetPoint("BOTTOMRIGHT", "UIParent", "BOTTOMRIGHT", -228, 4)
+
 	E:ForceHide(SpellFlyout.Background)
 
 	hidebutton(MainMenuBarVehicleLeaveButton)
