@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 100200.02
+
+### Unit Frames
+
+- Fixed an issue where heal prediction and absorb shields wouldn't show up. It's a Blizz bug.
+
 ## Version 100200.01
 
 - Added 10.2 support.
