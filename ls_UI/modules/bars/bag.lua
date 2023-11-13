@@ -5,6 +5,8 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local next = _G.next
+local t_insert = _G.table.insert
+local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
 
 -- Mine
@@ -17,6 +19,11 @@ do
 	local _, TOKEN_NAME = GetItemInfoInstant(WOW_TOKEN_ITEM_ID) -- technically it's its item class
 	local TOKEN_COLOR = ITEM_QUALITY_COLORS[8]
 
+	local function sorter(a, b)
+		return a.name < b.name
+	end
+
+	local currencyList = {}
 	local lastTokenUpdate = 0
 
 	function button_proto:OnEnter()
@@ -34,18 +41,27 @@ do
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(L["CURRENCY_COLON"])
 
+				t_wipe(currencyList)
+
 				for id in next, C.db.profile.bars.bag.currency do
 					local info = C_CurrencyInfo.GetCurrencyInfo(id)
 					if info then
-						if info.maxQuantity and info.maxQuantity > 0 then
-							if info.quantity == info.maxQuantity then
-								GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, C.db.global.colors.red:GetRGB())
-							else
-								GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, C.db.global.colors.green:GetRGB())
-							end
+						t_insert(currencyList, info)
+					end
+				end
+
+				t_sort(currencyList, sorter)
+
+				for i = 1, #currencyList do
+					local info = currencyList[i]
+					if info.maxQuantity and info.maxQuantity > 0 then
+						if info.quantity == info.maxQuantity then
+							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, C.db.global.colors.red:GetRGB())
 						else
-							GameTooltip:AddDoubleLine(info.name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), info.iconFileID), 1, 1, 1, 1, 1, 1)
+							GameTooltip:AddDoubleLine(info.name, CURRENCY_DETAILED_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), BreakUpLargeNumbers(info.maxQuantity), info.iconFileID), 1, 1, 1, C.db.global.colors.green:GetRGB())
 						end
+					else
+						GameTooltip:AddDoubleLine(info.name, CURRENCY_TEMPLATE:format(BreakUpLargeNumbers(info.quantity), info.iconFileID), 1, 1, 1, 1, 1, 1)
 					end
 				end
 
