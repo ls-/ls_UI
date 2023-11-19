@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 100200.03
+
+### Action Bars
+
+- Removed various range checks in accordance with the latest range API restriction by Blizz.
+- The currency list in the backpack tooltip is now sorted by name.
+
 ## Version 100200.02
 
 ### Unit Frames
