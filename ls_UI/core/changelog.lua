@@ -6,7 +6,8 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Unit Frames
+### Action Bars
 
-- Fixed an issue where heal prediction and absorb shields wouldn't show up. It's a Blizz bug.
+- Removed various range checks in accordance with the latest range API restriction by Blizz.
+- The currency list in the backpack tooltip is now sorted by name.
 ]]
