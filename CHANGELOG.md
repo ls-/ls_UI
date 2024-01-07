@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 100200.04
+
+### Blizzard
+
+- Fixed an issue where raid helm enchants would break the character panel.
+
 ## Version 100200.03
 
 ### Action Bars
