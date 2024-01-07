@@ -799,7 +799,13 @@ do
 		local gems, idx = {"", "", ""}, 1
 		for _, line in next, data.lines do
 			if line.type == ENCHANT_LINE then
-				enchant = line.leftText:match(ENCHANT_PATTERN):gsub(QUALITY_PATTERN, ""):trim()
+				enchant = line.leftText:match(ENCHANT_PATTERN)
+				if enchant then
+					enchant = enchant:gsub(QUALITY_PATTERN, "")
+					if enchant then
+						enchant = enchant:trim()
+					end
+				end
 			elseif line.type == GEM_LINE then
 				gems[idx] = line.gemIcon and GEM_TEMPLATE:format(line.gemIcon) or SOCKET_TEMPLATE:format(line.socketType)
 				idx = idx + 1
