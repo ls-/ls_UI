@@ -6,8 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Action Bars
+### Blizzard
 
-- Removed various range checks in accordance with the latest range API restriction by Blizz.
-- The currency list in the backpack tooltip is now sorted by name.
+- Fixed an issue where raid helm enchants would break the character panel.
 ]]
