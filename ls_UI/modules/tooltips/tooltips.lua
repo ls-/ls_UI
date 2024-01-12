@@ -174,12 +174,16 @@ function MODULE:Init()
 
 		local auraGetterToAPI = {
 			["GetUnitAura"] = function(...)
-				local _, _, _, _, _, _, caster = UnitAura(unpack(...))
-				return caster
+				local data = C_UnitAuras.GetAuraDataByIndex(unpack(...))
+				if data then
+					return data.sourceUnit
+				end
 			end,
 			["GetUnitBuff"] = function(...)
-				local _, _, _, _, _, _, caster = UnitBuff(unpack(...))
-				return caster
+				local data = C_UnitAuras.GetBuffDataByIndex(unpack(...))
+				if data then
+					return data.sourceUnit
+				end
 			end,
 			["GetUnitBuffByAuraInstanceID"] = function(...)
 				local data = C_UnitAuras.GetAuraDataByAuraInstanceID(unpack(...))
@@ -188,8 +192,10 @@ function MODULE:Init()
 				end
 			end,
 			["GetUnitDebuff"] = function(...)
-				local _, _, _, _, _, _, caster = UnitDebuff(unpack(...))
-				return caster
+				local data = C_UnitAuras.GetDebuffDataByIndex(unpack(...))
+				if data then
+					return data.sourceUnit
+				end
 			end,
 			["GetUnitDebuffByAuraInstanceID"] = function(...)
 				local data = C_UnitAuras.GetAuraDataByAuraInstanceID(unpack(...))

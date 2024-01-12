@@ -28,23 +28,23 @@ local function updateAura(button, index)
 	end
 
 	local unit = button:GetParent():GetAttribute("unit")
-	local name, texture, count, debuffType, duration, expirationTime = UnitAura(unit, index, filter)
-	if name then
-		button.Icon:SetTexture(texture)
-		button.Count:SetText(count > 1 and count or "")
+	local data = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+	if data then
+		button.Icon:SetTexture(data.icon)
+		button.Count:SetText(data.applications > 1 and data.applications or "")
 
-		if duration and duration > 0 and expirationTime then
-			button.Cooldown:SetCooldown(expirationTime - duration, duration)
+		if data.duration and data.duration > 0 and data.expirationTime then
+			button.Cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
 			button.Cooldown:Show()
 		else
 			button.Cooldown:Hide()
 		end
 
 		if filter == "HARMFUL" then
-			button.Border:SetVertexColor((C.db.global.colors.debuff[debuffType] or C.db.global.colors.debuff.None):GetRGB())
+			button.Border:SetVertexColor((C.db.global.colors.debuff[data.dispelName] or C.db.global.colors.debuff.None):GetRGB())
 
-			if debuffType and button.showDebuffType then
-				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[debuffType] or M.textures.aura_icons.Debuff))
+			if data.dispelName and button.showDebuffType then
+				button.AuraType:SetTexCoord(unpack(M.textures.aura_icons[data.dispelName] or M.textures.aura_icons.Debuff))
 				button.AuraType:Show()
 			else
 				button.AuraType:Hide()
