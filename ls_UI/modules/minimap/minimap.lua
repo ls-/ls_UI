@@ -294,7 +294,11 @@ do
 	end
 
 	function flag_proto:OnEnter()
-		if self.instanceName then
+		if self.difficultyID then
+			if not DifficultyUtil.GetDifficultyName(self.difficultyID) then
+				return
+			end
+
 			local p, rP, x, y = E:GetTooltipPoint(self)
 			if p == "TOPRIGHT" then
 				x, y = 24, 24
@@ -325,6 +329,7 @@ do
 
 	function flag_proto:Update()
 		self.instanceName = nil
+		self.difficultyID = nil
 		self.difficultyName = nil
 		self.maxPlayers = nil
 		self:Hide()
@@ -334,6 +339,7 @@ do
 			local difficultyName, _, isHeroic, isChallengeMode, displayHeroic, displayMythic, _, isLFR = GetDifficultyInfo(difficultyID)
 
 			self.instanceName = instanceName
+			self.difficultyID = difficultyID
 			self.difficultyName = difficultyName
 			self.maxPlayers = maxPlayers
 
@@ -355,6 +361,7 @@ do
 			if not (isHeroic or displayHeroic or displayMythic) then return end
 
 			self.instanceName = instanceName
+			self.difficultyID = difficultyID
 			self.difficultyName = difficultyName
 			self.maxPlayers = maxPlayers
 
