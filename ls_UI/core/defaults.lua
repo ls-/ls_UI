@@ -315,7 +315,7 @@ D.global = {
 		},
 		["ls:debuffs"] = {
 			events = "UNIT_AURA",
-			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local name, _, _, type = UnitDebuff(unit, i, \"RAID\")\n    if not name then\n      break\n    end\n\n    if _VARS.E:IsDispellable(type) and not hasDebuff[type] then\n      status = status .. _VARS.INLINE_AURA_ICONS[type]\n      hasDebuff[type] = true\n    end\n  end\n\n  return status\nend",
+			func = "function(unit)\n  if not UnitCanAssist(\"player\", unit) then\n    return \"\"\n  end\n\n  local hasDebuff = {Curse = false, Disease = false, Magic = false, Poison = false}\n  local status = \"\"\n\n  for i = 1, 40 do\n    local data = C_UnitAuras.GetDebuffDataByIndex(unit, i, \"RAID\")\n    if not data then\n      break\n    end\n\n    if _VARS.E:IsDispellable(data.dispelName) and not hasDebuff[data.dispelName] then\n      status = status .. _VARS.INLINE_AURA_ICONS[data.dispelName]\n      hasDebuff[data.dispelName] = true\n    end\n  end\n\n  return status\nend",
 		},
 		["ls:health:cur"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",

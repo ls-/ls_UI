@@ -6,7 +6,5 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Blizzard
-
-- Fixed an issue where raid helm enchants would break the character panel.
+- Added 10.2.5 support.
 ]]
