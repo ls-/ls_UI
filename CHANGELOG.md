@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 100205.01
+
+- Added 10.2.5 support.
+
 ## Version 100200.04
 
 ### Blizzard
