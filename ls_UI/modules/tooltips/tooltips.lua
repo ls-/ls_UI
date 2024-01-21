@@ -52,8 +52,7 @@ local function INSPECT_READY(unitGUID)
 		inspectGUIDCache[unitGUID].itemLevel = E:GetUnitAverageItemLevel("mouseover")
 
 		if inspectGUIDCache[unitGUID].itemLevel then
-			GameTooltip:ClearLines()
-			GameTooltip:SetUnit("mouseover")
+			GameTooltip:RefreshData()
 		else
 			inspectGUIDCache[unitGUID].time = nil
 			inspectGUIDCache[unitGUID].itemLevel = nil
@@ -496,9 +495,10 @@ function MODULE:Init()
 		end)
 
 		E:RegisterEvent("MODIFIER_STATE_CHANGED", function(key)
+			if GameTooltip:IsForbidden() then return end
+
 			if UnitExists("mouseover") and (key == "LSHIFT" or key == "RSHIFT") then
-				GameTooltip:ClearLines()
-				GameTooltip:SetUnit("mouseover")
+				GameTooltip:RefreshData()
 			end
 		end)
 
