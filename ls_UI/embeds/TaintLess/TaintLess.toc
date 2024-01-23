@@ -1,5 +1,5 @@
-## Interface: 100107
+## Interface: 100200
 ## Title: TaintLess
 ## Notes: Eliminates certain classes of taint errors.
-## Version: 23-09-09
+## Version: 23-12-09
 TaintLess.xml
