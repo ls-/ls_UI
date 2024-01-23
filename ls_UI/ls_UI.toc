@@ -1,6 +1,6 @@
 ## Interface: 100205
 ## Author: lightspark
-## Version: 100205.01
+## Version: 100205.02
 ## Title: LS: |cff1a9fc0UI|r
 ## Notes: Yet another UI, but this one is a bit special...
 ## IconTexture: Interface\AddOns\ls_UI\assets\logo-64
