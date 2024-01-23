@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 100205.02
+
+- Fixed an issue where the options sub-addon wouldn't load.
+
+### Tooltips
+
+- Fixed an issue where unit tooltips would get stuck on the screen if the shift key was pressed.
+
 ## Version 100205.01
 
 - Added 10.2.5 support.

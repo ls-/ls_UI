@@ -6,5 +6,9 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 10.2.5 support.
+- Fixed an issue where the options sub-addon wouldn't load.
+
+### Tooltips
+
+- Fixed an issue where unit tooltips would get stuck on the screen if the shift key was pressed.
 ]]
