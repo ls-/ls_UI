@@ -5,6 +5,8 @@ local MODULE = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local ipairs = _G.ipairs
+local m_abs = _G.math.abs
 local next = _G.next
 local select = _G.select
 local t_insert = _G.table.insert
@@ -654,53 +656,48 @@ end
 
 local ej_button_proto = {}
 do
+	local isInfoRequested = false
+
+	local lockouts = {}
+	local instanceNames = {}
+	local instanceResets = {}
+
+	local EXPIRATION_FORMAT = _G.RAID_INSTANCE_EXPIRES .. ":"
+	local WORLD_BOSS = _G.RAID_INFO_WORLD_BOSS
+	local WORLD_BOSS_ID = 172
+	local WORLD_BOSS_PROGRESS = "1 / 1"
+
+	local function difficultySortFunc(a, b)
+		return a[1] < b[1]
+	end
+
 	function ej_button_proto:OnEnter()
 		button_proto.OnEnter(self)
 
 		if self:IsEnabled() then
-			RequestRaidInfo()
+			if not isInfoRequested then
+				RequestRaidInfo()
 
-			local savedInstances = GetNumSavedInstances()
-			local savedWorldBosses = GetNumSavedWorldBosses()
+				isInfoRequested = true
+			end
 
-			if savedInstances + savedWorldBosses == 0 then return end
-
-			local instanceName, instanceReset, difficultyName, numEncounters, encounterProgress
 			local gray = C.db.global.colors.gray
-			local red = C.db.global.colors.red
-			local color
-			local hasTitle
 
-			for i = 1, savedInstances + savedWorldBosses do
-				if i <= savedInstances then
-					instanceName, _, instanceReset, _, _, _, _, _, _, difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+			for _, instanceReset in next, instanceResets do
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(EXPIRATION_FORMAT:format(SecondsToTime(instanceReset, true, nil, 3)))
 
-					if instanceReset > 0 then
-						if not hasTitle then
-							GameTooltip:AddLine(" ")
-							GameTooltip:AddLine(L["RAID_INFO_COLON"])
+				for _, instanceName in ipairs(instanceNames) do
+					local resetData = lockouts[instanceReset][instanceName]
+					if resetData then
+						GameTooltip:AddLine(instanceName, 1, 1, 1)
 
-							hasTitle = true
+						-- it's easier to sort on demand here
+						t_sort(resetData, difficultySortFunc)
+
+						for _, difficultyData in ipairs(resetData) do
+							GameTooltip:AddDoubleLine(difficultyData[2], difficultyData[3], gray.r, gray.g, gray.b, difficultyData[4].r, difficultyData[4].g, difficultyData[4].b)
 						end
-
-						color = encounterProgress == numEncounters and red or C.db.global.colors.green
-
-						GameTooltip:AddDoubleLine(instanceName, encounterProgress .. " / " .. numEncounters, 1, 1, 1, color.r, color.g, color.b)
-						GameTooltip:AddDoubleLine(difficultyName, SecondsToTime(instanceReset, true, nil, 3), gray.r, gray.g, gray.b, gray.r, gray.g, gray.b)
-					end
-				else
-					instanceName, _, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
-
-					if instanceReset > 0 then
-						if not hasTitle then
-							GameTooltip:AddLine(" ")
-							GameTooltip:AddLine(L["RAID_INFO_COLON"])
-
-							hasTitle = true
-						end
-
-						GameTooltip:AddDoubleLine(instanceName, "1 / 1", 1, 1, 1, red.r, red.g, red.b)
-						GameTooltip:AddDoubleLine(L["WORLD_BOSS"], SecondsToTime(instanceReset, true, nil, 3), gray.r, gray.g, gray.b, gray.r, gray.g, gray.b)
 					end
 				end
 			end
@@ -711,12 +708,92 @@ do
 
 	function ej_button_proto:OnEventHook(event)
 		if event == "UPDATE_INSTANCE_INFO" then
-			if GameTooltip:IsOwned(self) then
-				GameTooltip:Hide()
+			local savedInstances = GetNumSavedInstances()
+			local savedWorldBosses = GetNumSavedWorldBosses()
 
+			if savedInstances + savedWorldBosses > 0 then
+				t_wipe(lockouts)
+				t_wipe(instanceNames)
+				t_wipe(instanceResets)
+
+				for i = 1, savedInstances + savedWorldBosses do
+					if i <= savedInstances then
+						local instanceName, _, instanceReset, difficultyID, _, _, _, _, _, difficultyName, numEncounters, encounterProgress  = GetSavedInstanceInfo(i)
+						if instanceReset > 0 then
+							if not lockouts[instanceReset] then
+								lockouts[instanceReset] = {}
+
+								t_insert(instanceResets, instanceReset)
+							end
+
+							if not lockouts[instanceReset][instanceName] then
+								lockouts[instanceReset][instanceName] = {}
+
+								-- the same instance can have multiple resets because heroics reset daily, but mythics reset weekly
+								if not instanceNames[instanceName] then
+
+									instanceNames[instanceName] = true
+									t_insert(instanceNames, instanceName)
+								end
+							end
+
+							t_insert(lockouts[instanceReset][instanceName], {
+								difficultyID,
+								difficultyName,
+								encounterProgress .. " / " .. numEncounters,
+								encounterProgress == numEncounters and C.db.global.colors.red or C.db.global.colors.green,
+							})
+						end
+					else
+						local instanceName, _, instanceReset = GetSavedWorldBossInfo(i - savedInstances)
+						if instanceReset > 0 then
+							-- there's some desync between instance and WB reset timers, sometimes it can be as bad as 600s
+							for _, reset in next, instanceResets do
+								if m_abs(reset - instanceReset) <= 600 then
+									instanceReset = reset
+
+									break
+								end
+							end
+
+							if not lockouts[instanceReset] then
+								lockouts[instanceReset] = {}
+
+								t_insert(instanceResets, instanceReset)
+							end
+
+							if not lockouts[instanceReset][instanceName] then
+								lockouts[instanceReset][instanceName] = {}
+
+								if not instanceNames[instanceName] then
+
+									instanceNames[instanceName] = true
+									t_insert(instanceNames, instanceName)
+								end
+							end
+
+							t_insert(lockouts[instanceReset][instanceName], {
+								WORLD_BOSS_ID,
+								WORLD_BOSS,
+								WORLD_BOSS_PROGRESS,
+								C.db.global.colors.red,
+							})
+						end
+					end
+				end
+
+				t_sort(instanceNames)
+				t_sort(instanceResets)
+			end
+
+			if GameTooltip:IsOwned(self) then
 				self:OnEnter()
 			end
 		end
+	end
+
+	function ej_button_proto:OnLeaveHook()
+		isInfoRequested = false
 	end
 
 	function ej_button_proto:Update()
@@ -970,6 +1047,7 @@ function MODULE:CreateMicroMenu()
 			elseif id == "ej" then
 				Mixin(button, ej_button_proto)
 				button:HookScript("OnEvent", button.OnEventHook)
+				button:HookScript("OnLeave", button.OnLeaveHook)
 			-- -- elseif id == "store" then
 			elseif id == "main" then
 				Mixin(button, main_button_proto)

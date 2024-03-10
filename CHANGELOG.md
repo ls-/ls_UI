@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Version 100205.03
+
+### Action Bars
+
+- Reworked the instance lockout tooltip. Instances and world bosses are now grouped by the lockout expiration time. 
+  Instance names and difficulties are also properly sorted. This should greatly increase its readability.
+
+![Imgur](https://i.imgur.com/KTfGHNU.png)
+
 ## Version 100205.02
 
 - Fixed an issue where the options sub-addon wouldn't load.
