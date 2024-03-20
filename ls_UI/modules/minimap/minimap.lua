@@ -176,7 +176,7 @@ do
 			MinimapCluster.BorderTop:SetPoint("BOTTOM", MinimapCluster, "BOTTOM", 0, 1)
 
 			MinimapCluster.IndicatorFrame:ClearAllPoints()
-			MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", MinimapCluster.Tracking, "TOPLEFT", -1, 2)
+			MinimapCluster.IndicatorFrame:SetPoint("BOTTOMLEFT", MinimapCluster.TrackingFrame, "TOPLEFT", -1, 2)
 
 			Minimap.DifficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -16)
 		else
@@ -185,7 +185,7 @@ do
 			MinimapCluster.BorderTop:SetPoint("TOP", MinimapCluster, "TOP", 0, -1)
 
 			MinimapCluster.IndicatorFrame:ClearAllPoints()
-			MinimapCluster.IndicatorFrame:SetPoint("TOPLEFT", MinimapCluster.Tracking, "BOTTOMLEFT", -1, -2)
+			MinimapCluster.IndicatorFrame:SetPoint("TOPLEFT", MinimapCluster.TrackingFrame, "BOTTOMLEFT", -1, -2)
 
 			Minimap.DifficultyFlag:SetPoint("TOPRIGHT", MinimapCluster, "TOPRIGHT", -23, -32)
 		end
@@ -577,10 +577,10 @@ function MODULE:Init()
 		MinimapCluster.BorderTop:SetWidth(0)
 		MinimapCluster.BorderTop:SetHeight(17)
 
-		MinimapCluster.Tracking:SetSize(18, 17)
-		MinimapCluster.Tracking.Button:SetSize(14, 14)
-		MinimapCluster.Tracking.Button:ClearAllPoints()
-		MinimapCluster.Tracking.Button:SetPoint("TOPLEFT", 1, -1)
+		MinimapCluster.TrackingFrame:SetSize(18, 17)
+		MinimapCluster.TrackingFrame.Button:SetSize(14, 14)
+		MinimapCluster.TrackingFrame.Button:ClearAllPoints()
+		MinimapCluster.TrackingFrame.Button:SetPoint("TOPLEFT", 1, -1)
 
 		MinimapCluster.ZoneTextButton:SetSize(0, 16)
 		MinimapCluster.ZoneTextButton:ClearAllPoints()
