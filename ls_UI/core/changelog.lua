@@ -6,8 +6,5 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Action Bars
-
-- Reworked the instance lockout tooltip. Instances and world bosses are now grouped by the lockout expiration time. 
-  Instance names and difficulties are also properly sorted. This should greatly increase its readability.
+- Added 10.2.6 support.
 ]]

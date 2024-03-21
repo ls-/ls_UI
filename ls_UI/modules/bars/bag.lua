@@ -16,7 +16,7 @@ local button_proto = {}
 do
 	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
 	local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
-	local _, TOKEN_NAME = GetItemInfoInstant(WOW_TOKEN_ITEM_ID) -- technically it's its item class
+	local _, TOKEN_NAME = C_Item.GetItemInfoInstant(WOW_TOKEN_ITEM_ID)
 	local TOKEN_COLOR = ITEM_QUALITY_COLORS[8]
 
 	local function sorter(a, b)
