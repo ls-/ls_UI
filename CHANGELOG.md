@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 100206.01
+
+- Added 10.2.6 support.
+
 ## Version 100205.03
 
 ### Action Bars
