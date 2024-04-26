@@ -46,5 +46,5 @@ if (Test-Path $temp) {
 New-Item -Path $temp -ItemType Directory | Out-Null
 Copy-Item $foldersToInclude -Destination $temp -Exclude $filesToExclude -Recurse
 Get-ChildItem $temp -Recurse | Where-Object { $_.PSIsContainer -and $_.Name -cin $foldersToRemove } | Remove-Item -Recurse -Force
-Get-ChildItem $temp | Compress-Archive -DestinationPath ("..\$name-$version.zip") -Force
+Get-ChildItem $temp | Compress-Archive -DestinationPath "..\$name-$version.zip" -Force
 Remove-Item $temp -Recurse -Force
