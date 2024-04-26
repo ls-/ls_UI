@@ -5,7 +5,7 @@ local BARS = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local s_trim = string.trim
+local s_trim = _G.string.trim
 local unpack = _G.unpack
 
 -- Mine
