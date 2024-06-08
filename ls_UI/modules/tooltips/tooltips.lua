@@ -293,7 +293,11 @@ function MODULE:Init()
 
 			if UnitIsPlayer(unit) then
 				local name, realm = UnitName(unit)
-				name = C.db.profile.tooltips.title and UnitPVPName(unit) or name
+				local pvpName = UnitPVPName(unit)
+
+				if C.db.profile.tooltips.title and pvpName ~= "" then
+					name = pvpName
+				end
 
 				if realm and realm ~= "" then
 					if isShiftKeyDown then
