@@ -6,6 +6,7 @@ local _G = getfenv(0)
 local assert = _G.assert
 local hooksecurefunc = _G.hooksecurefunc
 local m_atan2 = _G.math.atan2
+local m_ceil = _G.math.ceil
 local m_cos = _G.math.cos
 local m_floor = _G.math.floor
 local m_rad = _G.math.rad
@@ -394,7 +395,7 @@ end
 local settings
 do
 	settings = CreateFrame("Frame", "LSMoverSettings", UIParent)
-	settings:SetSize(320, 320)
+	settings:SetSize(320, 512)
 	settings:SetPoint("CENTER")
 	settings:SetMovable(true)
 	settings:EnableMouse(true)
@@ -415,7 +416,7 @@ do
 			.. "\n\n"
 			.. L["MOVER_RELATION_DESTROY_DESC"])
 		self.LockButton.Text:SetText(L["LOCK"])
-		self:SetHeight(m_floor(self.UsageText:GetStringHeight() + 50))
+		self:SetHeight(m_ceil(self.UsageText:GetStringHeight() + 56))
 	end)
 	settings:Hide()
 
@@ -469,7 +470,7 @@ do
 
 	local usageText = settings:CreateFontString(nil, "OVERLAY")
 	usageText:SetFontObject("GameFontNormal")
-	usageText:SetPoint("TOPLEFT", 4, -24)
+	usageText:SetPoint("TOPLEFT", 4, -28)
 	usageText:SetPoint("BOTTOMRIGHT", -4, 26)
 	usageText:SetJustifyH("LEFT")
 	usageText:SetJustifyV("MIDDLE")
