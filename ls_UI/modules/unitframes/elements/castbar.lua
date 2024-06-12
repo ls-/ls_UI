@@ -13,7 +13,7 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local pip_proto = {}
 
 function pip_proto:OnShow()
-	self.Texture:SetAlpha(0.5)
+	self.Texture:SetAlpha(0.33)
 	self.Texture:Show()
 end
 
@@ -45,7 +45,7 @@ function element_proto:CreatePip(stage)
 	pip.Sep = sep
 
 	local texture = self:CreateTexture(nil, "BACKGROUND")
-	texture:SetAlpha(0.5)
+	texture:SetAlpha(0.33)
 	texture:SetPoint("LEFT", pip, "RIGHT", -2, 0)
 	texture:SetPoint("TOP", 0, 0)
 	texture:SetPoint("BOTTOM", 0, 0)
@@ -59,7 +59,7 @@ function element_proto:CreatePip(stage)
 	local anim = ag:CreateAnimation("Alpha")
 	anim:SetOrder(1)
 	anim:SetDuration(0.1)
-	anim:SetFromAlpha(0.5)
+	anim:SetFromAlpha(0.33)
 	anim:SetToAlpha(0)
 	anim:SetSmoothing("OUT")
 
@@ -161,7 +161,6 @@ function element_proto:UpdateColors()
 	stages[2].r, stages[2].g, stages[2].b = C.db.global.colors.castbar.empowering_full:GetRGB()
 
 	for i = 3, 4 do
-
 		for j = 1, i do
 			if j == i then
 				self.stageColors[i][j] = {C.db.global.colors.castbar.empowering_full:GetRGB()}
