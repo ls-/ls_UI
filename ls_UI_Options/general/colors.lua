@@ -680,9 +680,9 @@ function CONFIG:GetColorsOptions(order)
 						if color.r ~= r or color.g ~= g or color.g ~= b then
 							color:SetRGB(r, g, b)
 						end
-
-						BLIZZARD:UpdateCastBarColors()
 					end
+
+					UNITFRAMES:ForEach("For", "Castbar", "UpdateColors")
 				end,
 				args = {
 					reset = {
@@ -695,7 +695,7 @@ function CONFIG:GetColorsOptions(order)
 								C.db.global.colors.castbar[k]:SetRGB(v:GetRGB())
 							end
 
-							BLIZZARD:UpdateCastBarColors()
+							UNITFRAMES:ForEach("For", "Castbar", "UpdateColors")
 						end,
 					},
 					spacer_1 = {
@@ -717,6 +717,11 @@ function CONFIG:GetColorsOptions(order)
 						order = inc(2),
 						type = "color",
 						name = L["SPELL_EMPOWERED"],
+					},
+					empowering_full = {
+						order = inc(2),
+						type = "color",
+						name = L["SPELL_EMPOWERED_FULL"],
 					},
 					failed = {
 						order = inc(2),

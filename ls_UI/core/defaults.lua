@@ -75,6 +75,7 @@ D.global = {
 		castbar = {
 			casting = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 			empowering = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
+			empowering_full = rgb(28, 174, 158), -- #1CAE9E (5BG 6/8)
 			channeling = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 			failed = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
 			notinterruptible = rgb(136, 137, 135), -- #888987 (N5)
