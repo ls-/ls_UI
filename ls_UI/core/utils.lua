@@ -195,21 +195,37 @@ do
 	end
 
 	function E:GetGradientAsRGB(perc, color)
-		return calcGradient(
-			perc,
-			color[1].r, color[1].g, color[1].b,
-			color[2].r, color[2].g, color[2].b,
-			color[3].r, color[3].g, color[3].b
-		)
+		if color[3] then
+			return calcGradient(
+				perc,
+				color[1].r, color[1].g, color[1].b,
+				color[2].r, color[2].g, color[2].b,
+				color[3].r, color[3].g, color[3].b
+			)
+		else
+			return calcGradient(
+				perc,
+				color[1].r, color[1].g, color[1].b,
+				color[2].r, color[2].g, color[2].b
+			)
+		end
 	end
 
 	function E:GetGradientAsHex(perc, color)
-		return hex(calcGradient(
-			perc,
-			color[1].r, color[1].g, color[1].b,
-			color[2].r, color[2].g, color[2].b,
-			color[3].r, color[3].g, color[3].b
-		))
+		if color[3] then
+			return hex(calcGradient(
+				perc,
+				color[1].r, color[1].g, color[1].b,
+				color[2].r, color[2].g, color[2].b,
+				color[3].r, color[3].g, color[3].b
+			))
+		else
+			return hex(calcGradient(
+				perc,
+				color[1].r, color[1].g, color[1].b,
+				color[2].r, color[2].g, color[2].b
+			))
+		end
 	end
 
 	function E:WrapTextInColorCode(color, text)
