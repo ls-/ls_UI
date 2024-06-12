@@ -79,7 +79,7 @@ function element_proto:PostUpdatePips(numStages)
 end
 
 function element_proto:PostUpdateStage(stage)
-	self:SetStatusBarColor(unpack(self.stageColors[self.numStages][stage]))
+	self:SetSmoothStatusBarColor(unpack(self.stageColors[self.numStages][stage]))
 
 	self.Pips[stage].InAnim:Play()
 end
@@ -133,6 +133,18 @@ function element_proto:CustomDelayText(duration)
 	else
 		self.Time:SetFormattedText("%.1f|cffdc4436+%.1f|r ", self.max - duration, m_abs(self.delay))
 	end
+end
+
+function element_proto:SetSmoothStatusBarColor(...)
+	local color = self.ColorAnim.color
+
+	color.r, color.g, color.b = ...
+	self.ColorAnim.Anim:SetEndColor(color)
+
+	color.r, color.g, color.b = self:GetStatusBarColor()
+	self.ColorAnim.Anim:SetStartColor(color)
+
+	self.ColorAnim:Play()
 end
 
 function element_proto:UpdateConfig()
@@ -308,6 +320,14 @@ function UF:CreateCastbar(frame)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder
+
+	local ag = element:GetStatusBarTexture():CreateAnimationGroup()
+	element.ColorAnim = ag
+
+	local anim = ag:CreateAnimation("VertexColor")
+	anim:SetDuration(0.125)
+	ag.color = {a = 1}
+	ag.Anim = anim
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
