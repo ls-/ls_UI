@@ -244,7 +244,7 @@ D.global = {
 		},
 		statusbar = {
 			font = defaultFont,
-			outline =  false,
+			outline = false,
 			shadow = true,
 		},
 		blizzard = {},
