@@ -6,6 +6,7 @@ local _G = getfenv(0)
 local assert = _G.assert
 local hooksecurefunc = _G.hooksecurefunc
 local m_atan2 = _G.math.atan2
+local m_ceil = _G.math.ceil
 local m_cos = _G.math.cos
 local m_floor = _G.math.floor
 local m_rad = _G.math.rad
@@ -394,7 +395,7 @@ end
 local settings
 do
 	settings = CreateFrame("Frame", "LSMoverSettings", UIParent)
-	settings:SetSize(320, 320)
+	settings:SetSize(320, 512)
 	settings:SetPoint("CENTER")
 	settings:SetMovable(true)
 	settings:EnableMouse(true)
@@ -415,7 +416,7 @@ do
 			.. "\n\n"
 			.. L["MOVER_RELATION_DESTROY_DESC"])
 		self.LockButton.Text:SetText(L["LOCK"])
-		self:SetHeight(m_floor(self.UsageText:GetStringHeight() + 50))
+		self:SetHeight(m_ceil(self.UsageText:GetStringHeight() + 56))
 	end)
 	settings:Hide()
 
@@ -469,7 +470,7 @@ do
 
 	local usageText = settings:CreateFontString(nil, "OVERLAY")
 	usageText:SetFontObject("GameFontNormal")
-	usageText:SetPoint("TOPLEFT", 4, -24)
+	usageText:SetPoint("TOPLEFT", 4, -28)
 	usageText:SetPoint("BOTTOMRIGHT", -4, 26)
 	usageText:SetJustifyH("LEFT")
 	usageText:SetJustifyV("MIDDLE")
@@ -627,9 +628,12 @@ local function updatePosition(self, p, anchor, rP, x, y)
 		end
 
 		if not x then
-			self:ResetPosition()
-			return
+			return self:ResetPosition()
 		end
+	end
+
+	if not _G[anchor] then
+		return self:ResetPosition()
 	end
 
 	self:ClearAllPoints()
@@ -731,6 +735,8 @@ function mover_proto:ResetPosition()
 	end
 
 	self:PostSaveUpdatePosition()
+
+	return p, anchor, rP, x, y
 end
 
 function mover_proto:UpdatePosition(xOffset, yOffset)
@@ -1039,14 +1045,19 @@ local callback_meta = {
 	end,
 }
 
+local knownObjects = {}
+local orphanedMovers = {}
+
 E.Movers = {}
 
 function E.Movers:Create(object, isSimple, offsetX, offsetY)
-	if not object then return end
+	if not object or knownObjects[object] then return end
 
 	local objectName = object:GetName()
 
 	assert(objectName, (s_format("Failed to create a mover, object '%s' has no name", object:GetDebugName())))
+
+	knownObjects[object] = true
 
 	hooksecurefunc(object, "SetPoint", resetObjectPoint)
 
@@ -1144,6 +1155,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 				onCreateCallbacks[parentName] = setmetatable({}, callback_meta)
 			end
 
+			orphanedMovers[mover] = parentName
+
 			-- print(mover:GetDebugName(), "|cffff0000==>|r", parentName)
 			t_insert(onCreateCallbacks[parentName], function(self)
 				-- print(mover:GetDebugName(), "|cff00ff00==late=>|r", parentName)
@@ -1151,6 +1164,7 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 					mover:AddToHive(self)
 				end
 
+				orphanedMovers[mover] = nil
 				enabledMovers[name] = mover
 
 				mover:UpdateSize()
@@ -1167,6 +1181,8 @@ function E.Movers:Create(object, isSimple, offsetX, offsetY)
 
 	if onCreateCallbacks[objectName] then
 		onCreateCallbacks[objectName](mover)
+
+		onCreateCallbacks[objectName] = nil
 	end
 
 	return mover
@@ -1290,16 +1306,34 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	controller:Hide()
 end)
 
-E:RegisterEvent("FIRST_FRAME_RENDERED", function()
-	if not InCombatLockdown() then
-		for object in next, dirtyObjects do
-			resetObjectPoint(object)
-		end
-	end
-end)
+local function verifyAndReset()
+	for mover, parentName in next, orphanedMovers do
+		if not _G[parentName] or not E.Movers:Get(parentName, true) then
+			onCreateCallbacks[parentName] = nil
+			enabledMovers[mover:GetDebugName()] = mover
 
-E:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+			mover:UpdateSize()
+			mover:ResetPosition()
+		end
+
+		orphanedMovers[mover] = nil
+	end
+
+	for objectName, callback in next, onCreateCallbacks do
+		callback(E.Movers:Get(objectName))
+
+		onCreateCallbacks[objectName] = nil
+	end
+
 	for object in next, dirtyObjects do
 		resetObjectPoint(object)
 	end
+end
+
+E:RegisterEvent("FIRST_FRAME_RENDERED", function()
+	if not InCombatLockdown() then
+		verifyAndReset()
+	end
 end)
+
+E:RegisterEvent("PLAYER_REGEN_ENABLED", verifyAndReset)

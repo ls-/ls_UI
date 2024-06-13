@@ -21,7 +21,21 @@ local function inc(order)
 end
 
 local currencyOptionTables = {
-	["error"] = {
+	reset = {
+		type = "execute",
+		order = 1,
+		name = L["RESTORE_DEFAULTS"],
+		confirm = CONFIG.ConfirmReset,
+		func = function()
+			t_wipe(C.db.profile.bars.bag.currency)
+		end,
+	},
+	spacer_1 = {
+		order = 2,
+		type = "description",
+		name = " ",
+	},
+	error = {
 		order = 1,
 		type = "description",
 		name = L["NOTHING_TO_SHOW"],
@@ -36,6 +50,9 @@ local function updateCurrencyOptions()
 	t_wipe(options)
 
 	if listSize > 0 then
+		options.reset = currencyOptionTables.reset
+		options.spacer_1 = currencyOptionTables.spacer_1
+
 		for i = 1, listSize do
 			info = C_CurrencyInfo.GetCurrencyListInfo(i)
 			if info.isHeader then
@@ -64,7 +81,7 @@ local function updateCurrencyOptions()
 			end
 
 			if id then
-				currencyOptionTables[id].order = i
+				currencyOptionTables[id].order = i + 2
 
 				options[id] = currencyOptionTables[id]
 			end

@@ -45,6 +45,7 @@ local function createElement(parent, num, name, ...)
 		bar:SetScript("OnValueChanged", onValueChanged)
 		bar:SetPoint("TOP", 0, 0)
 		bar:SetPoint("BOTTOM", 0, 0)
+		bar:SetAlpha(0.5)
 		element[i] = bar
 
 		if i == 1 then

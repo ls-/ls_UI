@@ -984,11 +984,26 @@ local function repositionAlert(button)
 	end
 end
 
+local MICRO_BUTTONS = {
+	[AchievementMicroButton] = true,
+	[CharacterMicroButton] = true,
+	[CollectionsMicroButton] = true,
+	[EJMicroButton] = true,
+	[GuildMicroButton] = true,
+	[HelpMicroButton] = true,
+	[LFDMicroButton] = true,
+	[MainMenuMicroButton] = true,
+	[QuestLogMicroButton] = true,
+	[SpellbookMicroButton] = true,
+	[StoreMicroButton] = true,
+	[TalentMicroButton] = true,
+}
+
 local function hideHelpTips(self)
 	if C.db.profile.bars.micromenu.helptips then return end
 
 	for frame in self.framePool:EnumerateActive() do
-		if frame.info.system == "MicroButtons" then
+		if MICRO_BUTTONS[frame.relativeRegion] then
 			frame:Hide()
 		end
 	end

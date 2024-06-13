@@ -5,6 +5,7 @@ local BARS = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local s_trim = _G.string.trim
 local unpack = _G.unpack
 
 -- Mine
@@ -17,6 +18,7 @@ local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 local DEFAULT_TEXTURE = "Interface\\BUTTONS\\WHITE8X8"
 local AZERITE_TEXTURE = "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill"
+local RENOWN_PLUS = s_trim(RENOWN_LEVEL_LABEL) .. "+"
 
 local CFG = {
 	visible = true,
@@ -339,7 +341,7 @@ end
 
 function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
 	local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
-	local isParagon, rewardQuestID, hasRewardPending
+	local rewardQuestID, hasRewardPending
 	local cur, max
 
 	local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
@@ -352,6 +354,20 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 
 		standing = 5
 		repTextLevel = repInfo.reaction
+	elseif C_Reputation.IsFactionParagon(factionID) then
+		cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
+		cur = cur % max
+		repTextLevel = repTextLevel .. "+"
+
+		if hasRewardPending then
+			cur = cur + max
+		end
+
+		-- DF factions become both paragon and major after they're maxxed out
+		if C_Reputation.IsMajorFaction(factionID) then
+			standing = 9
+			repTextLevel = RENOWN_PLUS
+		end
 	elseif C_Reputation.IsMajorFaction(factionID) then
 		repInfo = C_MajorFactions.GetMajorFactionData(factionID)
 
@@ -367,18 +383,7 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 		if standing ~= MAX_REPUTATION_REACTION then
 			max, cur = repMax - repMin, repCur - repMin
 		else
-			isParagon = C_Reputation.IsFactionParagon(factionID)
-			if isParagon then
-				cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
-				cur = cur % max
-				repTextLevel = repTextLevel .. "+"
-
-				if hasRewardPending then
-					cur = cur + max
-				end
-			else
-				max, cur = 1, 1
-			end
+			max, cur = 1, 1
 		end
 	end
 
@@ -387,7 +392,7 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
 	}
 
-	if isParagon and hasRewardPending then
+	if hasRewardPending then
 		local text = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(rewardQuestID))
 		if text and text ~= "" then
 			self.tooltipInfo.line3 = text

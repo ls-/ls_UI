@@ -5,13 +5,84 @@ local UF = P:GetModule("UnitFrames")
 --Lua
 local _G = getfenv(0)
 local m_abs = _G.math.abs
+local unpack = _G.unpack
 
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local pip_proto = {}
+
+function pip_proto:OnShow()
+	self.Texture:SetAlpha(0.33)
+	self.Texture:Show()
+end
+
+function pip_proto:OnHide()
+	self.Texture:Hide()
+end
+
 local element_proto = {
 	timeToHold = 0.4,
 }
+
+function element_proto:CreatePip(stage)
+	local pip = Mixin(CreateFrame("Frame", "$parentStage" .. stage, self), pip_proto)
+	pip:SetScript("OnShow", pip.OnShow)
+	pip:SetScript("OnHide", pip.OnHide)
+	pip:SetFrameLevel(self:GetFrameLevel() + 1)
+	pip:SetWidth(7)
+	pip:Hide()
+
+	local sep = pip:CreateTexture(nil, "OVERLAY")
+	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+	sep:SetVertTile(true)
+	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetSize(12 / 2, 0)
+	sep:SetPoint("TOP", 0, 0)
+	sep:SetPoint("BOTTOM", 0, 0)
+	sep:SetSnapToPixelGrid(false)
+	sep:SetTexelSnappingBias(0)
+	pip.Sep = sep
+
+	local texture = self:CreateTexture(nil, "BACKGROUND")
+	texture:SetAlpha(0.33)
+	texture:SetPoint("LEFT", pip, "RIGHT", -2, 0)
+	texture:SetPoint("TOP", 0, 0)
+	texture:SetPoint("BOTTOM", 0, 0)
+	texture:Hide()
+	pip.Texture = texture
+
+	local ag = texture:CreateAnimationGroup()
+	ag:SetToFinalAlpha(true)
+	pip.InAnim = ag
+
+	local anim = ag:CreateAnimation("Alpha")
+	anim:SetOrder(1)
+	anim:SetDuration(0.1)
+	anim:SetFromAlpha(0.33)
+	anim:SetToAlpha(0)
+	anim:SetSmoothing("OUT")
+
+	return pip
+end
+
+function element_proto:PostUpdatePips(numStages)
+	for i = 1, numStages do
+		self.Pips[i].Texture:SetColorTexture(unpack(self.stageColors[numStages][i]))
+
+		if i == numStages then
+			self.Pips[i].Texture:SetPoint("RIGHT", self, "RIGHT", -2, 0)
+		else
+			self.Pips[i].Texture:SetPoint("RIGHT", self.Pips[i + 1], "LEFT", 2, 0)
+		end
+	end
+end
+
+function element_proto:PostUpdateStage(stage)
+	self:SetSmoothStatusBarColor(unpack(self.stageColors[self.numStages][stage]))
+
+	self.Pips[stage].InAnim:Play()
+end
 
 function element_proto:PostCastStart()
 	if self.notInterruptible then
@@ -64,6 +135,18 @@ function element_proto:CustomDelayText(duration)
 	end
 end
 
+function element_proto:SetSmoothStatusBarColor(...)
+	local color = self.ColorAnim.color
+
+	color.r, color.g, color.b = ...
+	self.ColorAnim.Anim:SetEndColor(color)
+
+	color.r, color.g, color.b = self:GetStatusBarColor()
+	self.ColorAnim.Anim:SetStartColor(color)
+
+	self.ColorAnim:Play()
+end
+
 function element_proto:UpdateConfig()
 	local unit = self.__owner.__unit
 	self._config = E:CopyTable(C.db.profile.units[unit].castbar, self._config)
@@ -82,6 +165,22 @@ end
 function element_proto:UpdateTextures()
 	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
 	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+end
+
+function element_proto:UpdateColors()
+	local stages = {{}, {}}
+	stages[1].r, stages[1].g, stages[1].b = C.db.global.colors.castbar.empowering:GetRGB()
+	stages[2].r, stages[2].g, stages[2].b = C.db.global.colors.castbar.empowering_full:GetRGB()
+
+	for i = 3, 4 do
+		for j = 1, i do
+			if j == i then
+				self.stageColors[i][j] = {C.db.global.colors.castbar.empowering_full:GetRGB()}
+			else
+				self.stageColors[i][j] = {E:GetGradientAsRGB((1 / i) * j, stages)}
+			end
+		end
+	end
 end
 
 function element_proto:UpdateIcon()
@@ -192,6 +291,7 @@ function frame_proto:UpdateCastbar()
 	element:UpdateLatency()
 	element:UpdateFonts()
 	element:UpdateTextures()
+	element:UpdateColors()
 
 	if element._config.enabled and not self:IsElementEnabled("Castbar") then
 		self:EnableElement("Castbar")
@@ -220,6 +320,14 @@ function UF:CreateCastbar(frame)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder
+
+	local ag = element:GetStatusBarTexture():CreateAnimationGroup()
+	element.ColorAnim = ag
+
+	local anim = ag:CreateAnimation("VertexColor")
+	anim:SetDuration(0.125)
+	ag.color = {a = 1}
+	ag.Anim = anim
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
@@ -265,6 +373,7 @@ function UF:CreateCastbar(frame)
 	element.SafeZone_ = safeZone
 
 	local texParent = CreateFrame("Frame", nil, element)
+	texParent:SetFrameLevel(element:GetFrameLevel() + 2)
 	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
 	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -4, 0)
 	element.TexParent = texParent
@@ -286,6 +395,11 @@ function UF:CreateCastbar(frame)
 	text:SetPoint("LEFT", element, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
 	element.Text = text
+
+	element.stageColors = {
+		[3] = {},
+		[4] = {},
+	}
 
 	return element
 end
