@@ -971,7 +971,6 @@ function CONFIG:GetColorsOptions(order)
 
 							if MINIMAP:IsInit() then
 								MINIMAP:GetMinimap():UpdateBorderColor()
-								MINIMAP:GetMinimap():UpdateZoneColor()
 							end
 						end
 					end
@@ -989,7 +988,6 @@ function CONFIG:GetColorsOptions(order)
 
 							if MINIMAP:IsInit() then
 								MINIMAP:GetMinimap():UpdateBorderColor()
-								MINIMAP:GetMinimap():UpdateZoneColor()
 							end
 						end,
 					},
