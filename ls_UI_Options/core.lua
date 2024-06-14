@@ -231,15 +231,15 @@ do
 	local function prepAuraList(list)
 		t_wipe(sortedData)
 
-		local name, icon, _
+		local info
 		for id in next, list do
 			if type(id) == "number" then
-				name, _, icon = GetSpellInfo(id)
-				if name then
+				info = C_Spell.GetSpellInfo(id)
+				if info then
 					t_insert(sortedData, {
 						id = id,
-						name = name,
-						icon = icon,
+						name = info.name,
+						icon = info.iconID,
 					})
 				end
 			end
@@ -631,7 +631,7 @@ do
 						if spellID > INT_LIMIT then
 							output = output .. spellID .. " > " .. L["ERROR_RED"] .. "\n"
 						else
-							local link = GetSpellLink(spellID)
+							local link = C_Spell.GetSpellLink(spellID)
 							if link then
 								output = output .. spellID .. " > " .. link .. "\n"
 							else
@@ -660,7 +660,7 @@ do
 				if text ~= "" then
 					for spellID in text:gmatch("%d+") do
 						spellID = tonumber(spellID)
-						if spellID <= INT_LIMIT and not activeData[spellID] and GetSpellLink(spellID) then
+						if spellID <= INT_LIMIT and not activeData[spellID] and C_Spell.GetSpellLink(spellID) then
 							activeData[spellID] = true
 						end
 					end
