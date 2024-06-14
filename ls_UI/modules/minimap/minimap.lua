@@ -26,11 +26,23 @@ do
 		["sanctuary"] = "sanctuary",
 	}
 
+	function minimap_proto:SetSmoothStatusBarColor(...)
+		local color = self.ColorAnim.color
+
+		color.r, color.g, color.b = ...
+		self.ColorAnim.Anim:SetEndColor(color)
+
+		color.r, color.g, color.b = self.Border:GetVertexColor()
+		self.ColorAnim.Anim:SetStartColor(color)
+
+		self.ColorAnim:Play()
+	end
+
 	function minimap_proto:UpdateBorderColor()
 		if self._config.color.border then
-			self.Border:SetVertexColor((C.db.global.colors.zone[zoneTypeToColor[C_PvP.GetZonePVPInfo() or "contested"]]):GetRGB())
+			self:SetSmoothStatusBarColor((C.db.global.colors.zone[zoneTypeToColor[C_PvP.GetZonePVPInfo() or "contested"]]):GetRGB())
 		else
-			self.Border:SetVertexColor(C.db.global.colors.light_gray:GetRGB())
+			self:SetSmoothStatusBarColor(C.db.global.colors.light_gray:GetRGB())
 		end
 	end
 
@@ -431,8 +443,16 @@ function MODULE:Init()
 
 		local border = textureParent:CreateTexture(nil, "BORDER", nil, 1)
 		border:SetPoint("CENTER", 0, 0)
-		E:SmoothColor(border)
+		border:SetVertexColor(C.db.global.colors.light_gray:GetRGB())
 		Minimap.Border = border
+
+		local ag = border:CreateAnimationGroup()
+		Minimap.ColorAnim = ag
+
+		local anim = ag:CreateAnimation("VertexColor")
+		anim:SetDuration(0.125)
+		ag.color = {a = 1}
+		ag.Anim = anim
 
 		local foreground = textureParent:CreateTexture(nil, "BORDER", nil, 3)
 		foreground:SetPoint("CENTER", 0, 0)
