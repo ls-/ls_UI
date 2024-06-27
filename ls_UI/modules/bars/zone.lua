@@ -27,7 +27,7 @@ function bar_proto:Update()
 
 	local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
 	if width < 1 then
-		local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool.numActiveObjects
+		local num = ZoneAbilityFrame.SpellButtonContainer.contentFramePool:GetNumActive()
 		num = num > 0 and num or 1
 		local spacing = ZoneAbilityFrame.SpellButtonContainer.spacing
 		width = height * num + spacing * (num - 1)
