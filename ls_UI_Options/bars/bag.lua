@@ -2,6 +2,7 @@
 local _G = getfenv(0)
 local t_wipe = _G.table.wipe
 local tonumber = _G.tonumber
+local tostring = _G.tostring
 local unpack = _G.unpack
 
 -- Mine
@@ -42,19 +43,45 @@ local currencyOptionTables = {
 	},
 }
 
-local function updateCurrencyOptions()
-	local options = CONFIG.options.args.bars.args.bag.args.currency.args
+local expandAndCache, updateCurrencyOptions
+local cachedList = {}
+
+function expandAndCache()
+	local shouldExpandAgain = false
+
 	local listSize = C_CurrencyInfo.GetCurrencyListSize()
-	local info, id, link
+	if listSize > 0 and listSize ~= cachedList then
+		for i = listSize, 1, -1 do
+			local info = C_CurrencyInfo.GetCurrencyListInfo(i)
+			if info.isHeader and not info.isHeaderExpanded then
+				C_CurrencyInfo.ExpandCurrencyList(i, true)
+
+				shouldExpandAgain = true
+			else
+				cachedList[i] = info
+			end
+		end
+	end
+
+	if shouldExpandAgain then
+		expandAndCache()
+	end
+end
+
+function updateCurrencyOptions()
+	expandAndCache()
+
+	local options = CONFIG.options.args.bars.args.bag.args.currency.args
+	local info, id
 
 	t_wipe(options)
 
-	if listSize > 0 then
+	if #cachedList > 0 then
 		options.reset = currencyOptionTables.reset
 		options.spacer_1 = currencyOptionTables.spacer_1
 
-		for i = 1, listSize do
-			info = C_CurrencyInfo.GetCurrencyListInfo(i)
+		for i = 1, #cachedList do
+			info = cachedList[i]
 			if info.isHeader then
 				id = info.name:gsub("%s", ""):lower()
 				if not currencyOptionTables[id] then
@@ -65,17 +92,14 @@ local function updateCurrencyOptions()
 					}
 				end
 			else
-				link = C_CurrencyInfo.GetCurrencyListLink(i)
-				if link then
-					id = link:match("currency:(%d+)")
-					if id then
-						if not currencyOptionTables[id] then
-							currencyOptionTables[id] = {
-								type = "toggle",
-								name = info.name,
-								image = info.iconFileID,
-							}
-						end
+				id = tostring(info.currencyID)
+				if id then
+					if not currencyOptionTables[id] then
+						currencyOptionTables[id] = {
+							type = "toggle",
+							name = info.name,
+							image = info.iconFileID,
+						}
 					end
 				end
 			end
