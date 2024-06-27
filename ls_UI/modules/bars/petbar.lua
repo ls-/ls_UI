@@ -204,16 +204,8 @@ function button_proto:Update()
 		self:SetChecked(false)
 	end
 
-	if autoCastAllowed and not autoCastEnabled then
-		self.AutoCastable:Show()
-		AutoCastShine_AutoCastStop(self.AutoCastShine)
-	elseif autoCastAllowed then
-		self.AutoCastable:Hide()
-		AutoCastShine_AutoCastStart(self.AutoCastShine)
-	else
-		self.AutoCastable:Hide()
-		AutoCastShine_AutoCastStop(self.AutoCastShine)
-	end
+	self.AutoCastOverlay:SetShown(autoCastAllowed)
+	self.AutoCastOverlay:ShowAutoCastEnabled(autoCastEnabled)
 
 	if texture then
 		self:UpdateUsable()
