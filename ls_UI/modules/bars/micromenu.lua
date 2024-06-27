@@ -29,12 +29,12 @@ local BUTTONS = {
 		},
 	},
 	spellbook = {
-		name = "SpellbookMicroButton",
+		name = "ProfessionMicroButton",
 		icon = "SPELLBOOK",
 		events = {},
 	},
 	talent = {
-		name = "TalentMicroButton",
+		name = "PlayerSpellsMicroButton",
 		icon = "TALENT",
 		events = {
 			HONOR_LEVEL_UPDATE = true,
@@ -129,7 +129,7 @@ local ALERTS = {
 	"CollectionsMicroButton",
 	"EJMicroButton",
 	"GuildMicroButton",
-	"TalentMicroButton",
+	"PlayerSpellsMicroButton",
 }
 
 local TEXTURE_COORDS = {
@@ -245,7 +245,7 @@ end
 
 local button_proto = {}
 
-function button_proto:OnEnter()
+function button_proto:OnEnterOverride()
 	if not KeybindFrames_InQuickKeybindMode() then
 		local p, rP, x, y = E:GetTooltipPoint(self._parent)
 
@@ -313,7 +313,7 @@ local function handleMicroButton(button, useBlizz)
 
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	button:UnregisterAllEvents()
-	button:SetScript("OnEnter", button.OnEnter)
+	button:SetScript("OnEnter", button.OnEnterOverride)
 	button:SetScript("OnUpdate", nil)
 
 	if useBlizz then
@@ -392,8 +392,8 @@ do
 	local durabilities = {}
 	local minDurability = 100
 
-	function char_button_proto:OnEnter()
-		button_proto.OnEnter(self)
+	function char_button_proto:OnEnterOverride()
+		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
@@ -428,9 +428,9 @@ do
 		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", self.OnEnter)
+			self:SetScript("OnEnter", self.OnEnterOverride)
 		else
-			self:SetScript("OnEnter", button_proto.OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnterOverride)
 		end
 
 		self:UpdateIndicator()
@@ -461,24 +461,15 @@ do
 		if GameTooltip:IsOwned(self) then
 			GameTooltip:Hide()
 
-			self:OnEnter()
-		end
-	end
-end
-
-local spellbook_button_proto = {}
-do
-	function spellbook_button_proto:OnEvent(event)
-		if event == "UPDATE_BINDINGS" then
-			self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+			self:OnEnterOverride()
 		end
 	end
 end
 
 local quest_button_proto = {}
 do
-	function quest_button_proto:OnEnter()
-		button_proto.OnEnter(self)
+	function quest_button_proto:OnEnterOverride()
+		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(L["DAILY_QUEST_RESET_TIME_TOOLTIP"]:format(SecondsToTime(GetQuestResetTime())))
@@ -490,9 +481,9 @@ do
 		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", self.OnEnter)
+			self:SetScript("OnEnter", self.OnEnterOverride)
 		else
-			self:SetScript("OnEnter", button_proto.OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnterOverride)
 		end
 	end
 end
@@ -557,8 +548,8 @@ do
 		end
 	end
 
-	function lfd_button_proto:OnEnter()
-		button_proto.OnEnter(self)
+	function lfd_button_proto:OnEnterOverride()
+		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
 			local gray = C.db.global.colors.gray
@@ -588,19 +579,12 @@ do
 		end
 	end
 
-	function lfd_button_proto:OnEvent(event)
+	function lfd_button_proto:OnEventHook(event)
 		if event == "LFG_LOCK_INFO_RECEIVED" then
 			if GetTime() - (self.lastUpdate or 0) > 9 then
 				self:UpdateIndicator()
 				self.lastUpdate = GetTime()
 			end
-		else
-			if Kiosk.IsEnabled() then
-				return
-			end
-
-			self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-			self.newbieText = NEWBIE_TOOLTIP_LFGPARENT
 		end
 	end
 
@@ -608,14 +592,14 @@ do
 		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
-			self:SetScript("OnEnter", self.OnEnter)
+			self:SetScript("OnEnter", self.OnEnterOverride)
 
 			self.Ticker = C_Timer.NewTicker(15, function()
 				RequestLFDPlayerLockInfo()
 				RequestLFDPartyLockInfo()
 			end)
 		else
-			self:SetScript("OnEnter", button_proto.OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnterOverride)
 
 			if self.Ticker then
 				self.Ticker:Cancel()
@@ -649,7 +633,7 @@ do
 		if GameTooltip:IsOwned(self) then
 			GameTooltip:Hide()
 
-			self:OnEnter()
+			self:OnEnterOverride()
 		end
 	end
 end
@@ -662,7 +646,7 @@ do
 	local instanceNames = {}
 	local instanceResets = {}
 
-	local EXPIRATION_FORMAT = _G.RAID_INSTANCE_EXPIRES .. ":"
+	local EXPIRATION_FORMAT = _G.RAID_INSTANCE_EXPIRES .. _G.HEADER_COLON
 	local WORLD_BOSS = _G.RAID_INFO_WORLD_BOSS
 	local WORLD_BOSS_ID = 172
 	local WORLD_BOSS_PROGRESS = "1 / 1"
@@ -671,8 +655,8 @@ do
 		return a[1] < b[1]
 	end
 
-	function ej_button_proto:OnEnter()
-		button_proto.OnEnter(self)
+	function ej_button_proto:OnEnterOverride()
+		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
 			if not isInfoRequested then
@@ -787,7 +771,7 @@ do
 			end
 
 			if GameTooltip:IsOwned(self) then
-				self:OnEnter()
+				self:OnEnterOverride()
 			end
 		end
 	end
@@ -800,9 +784,9 @@ do
 		button_proto.Update(self)
 
 		if self._config.tooltip then
-			self:SetScript("OnEnter", self.OnEnter)
+			self:SetScript("OnEnter", self.OnEnterOverride)
 		else
-			self:SetScript("OnEnter", button_proto.OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnterOverride)
 		end
 	end
 end
@@ -822,8 +806,8 @@ do
 		return a[2] > b[2]
 	end
 
-	function main_button_proto:OnEnter()
-		button_proto.OnEnter(self)
+	function main_button_proto:OnEnterOverride()
+		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
@@ -878,12 +862,12 @@ do
 		end
 	end
 
-	function main_button_proto:OnEvent(event)
+	function main_button_proto:OnEventOverride(event)
 		if event == "MODIFIER_STATE_CHANGED" then
 			if GameTooltip:IsOwned(self) then
 				GameTooltip:Hide()
 
-				self:OnEnter()
+				self:OnEnterOverride()
 			end
 		elseif event == "UPDATE_BINDINGS" then
 			self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
@@ -894,13 +878,13 @@ do
 		button_proto.Update(self)
 
 		if self._config.enabled and self._config.tooltip then
-			self:SetScript("OnEnter", self.OnEnter)
+			self:SetScript("OnEnter", self.OnEnterOverride)
 
 			self.Ticker = C_Timer.NewTicker(30, function()
 				self:UpdateIndicator()
 			end)
 		else
-			self:SetScript("OnEnter", button_proto.OnEnter)
+			self:SetScript("OnEnter", button_proto.OnEnterOverride)
 
 			if self.Ticker then
 				self.Ticker:Cancel()
@@ -993,10 +977,10 @@ local MICRO_BUTTONS = {
 	[HelpMicroButton] = true,
 	[LFDMicroButton] = true,
 	[MainMenuMicroButton] = true,
+	[PlayerSpellsMicroButton] = true,
+	[ProfessionMicroButton] = true,
 	[QuestLogMicroButton] = true,
-	[SpellbookMicroButton] = true,
 	[StoreMicroButton] = true,
-	[TalentMicroButton] = true,
 }
 
 local function hideHelpTips(self)
@@ -1038,15 +1022,8 @@ function MODULE:CreateMicroMenu()
 				Mixin(button, char_button_proto)
 				button:HookScript("OnEvent", button.OnEventHook)
 
-				-- keep it, tooltipText is broken in the default UI
-				button.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 				button.Indicator = createButtonIndicator(button)
-			elseif id == "spellbook" then
-				Mixin(button, spellbook_button_proto)
-				button:SetScript("OnEnter", button.OnEnter)
-				button:SetScript("OnEvent", button.OnEvent)
-
-				button.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+			-- elseif id == "spellbook" then
 			-- elseif id == "talent" then
 			-- elseif id == "achievement" then
 			elseif id == "quest" then
@@ -1054,10 +1031,7 @@ function MODULE:CreateMicroMenu()
 				-- elseif id == "guild" then
 			elseif id == "lfd" then
 				Mixin(button, lfd_button_proto)
-				button:SetScript("OnEvent", button.OnEvent)
-
-				button.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-				button.newbieText = NEWBIE_TOOLTIP_LFGPARENT
+				button:HookScript("OnEvent", button.OnEventHook)
 			-- elseif id == "collection" then
 			elseif id == "ej" then
 				Mixin(button, ej_button_proto)
@@ -1066,7 +1040,7 @@ function MODULE:CreateMicroMenu()
 			-- -- elseif id == "store" then
 			elseif id == "main" then
 				Mixin(button, main_button_proto)
-				button:SetScript("OnEvent", button.OnEvent)
+				button:SetScript("OnEvent", button.OnEventOverride)
 
 				button.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
 				button.Indicator = createButtonIndicator(button, button.MainMenuBarPerformanceBar)
