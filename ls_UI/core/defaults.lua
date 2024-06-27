@@ -821,7 +821,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
@@ -1022,7 +1022,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
@@ -1258,7 +1258,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
@@ -1372,7 +1372,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
@@ -1608,7 +1608,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
@@ -1725,7 +1725,7 @@ D.profile = {
 					enabled = true,
 				},
 				reduction = {
-					enabled = true,
+					enabled = false,
 				},
 			},
 			power = {
