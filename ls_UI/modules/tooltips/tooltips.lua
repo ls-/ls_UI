@@ -16,15 +16,15 @@ local isInit = false
 
 local AFK = "[" .. _G.AFK .. "] "
 local DND = "[" .. _G.DND .. "] "
-local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. ":|r %s"
+local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. _G.HEADER_COLON .. "|r %s"
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE
-local ID = "|cffffd100" .. _G.ID .. ":|r %d"
+local ID = "|cffffd100" .. _G.ID .. _G.HEADER_COLON .. "|r %d"
 local NAME_FORMAT = "%s%s"
 local LEVEL_FORMAT = "%s %s"
 local ILVL_SPEC_FORMAT = "|cffffd100%s|r %s"
 local PLAYER_TARGET_FORMAT = "%s (|c%s" .. _G.PLAYER .. "|r)"
-local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
-local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
+local TARGET = "|cffffd100" .. _G.TARGET .. _G.HEADER_COLON .. "|r %s"
+local TOTAL = "|cffffd100" .. _G.TOTAL .. _G.HEADER_COLON .. "|r %d"
 
 local PHASE_ICONS = {
 	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
