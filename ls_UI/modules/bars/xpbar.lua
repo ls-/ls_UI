@@ -156,11 +156,11 @@ function bar_proto:UpdateSegments()
 		end
 
 		-- Reputation
-		local name, standing, repMin, repMax, repCur, factionID = GetWatchedFactionInfo()
-		if name then
+		local data = C_Reputation.GetWatchedFactionData()
+		if data then
 			index = index + 1
 
-			self[index]:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
+			self[index]:UpdateReputation(data.name, data.reaction, data.currentReactionThreshold, data.nextReactionThreshold, data.currentStanding, data.factionID)
 		end
 	end
 
@@ -550,46 +550,53 @@ function BARS:CreateXPBar()
 		-- Honour & Rep Hooks
 		-- This way I'm able to show honour and reputation bars simultaneously
 		local isHonorBarHooked = false
-
-		hooksecurefunc("UIParentLoadAddOn", function(addOnName)
-			if addOnName == "Blizzard_PVPUI" then
-				if not isHonorBarHooked then
-					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:SetScript("OnMouseUp", function()
-						if IsShiftKeyDown() then
-							if IsWatchingHonorAsXP() then
-								PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
-								SetWatchingHonorAsXP(false)
-							else
-								PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
-								SetWatchingHonorAsXP(true)
-							end
-
-							bar:UpdateSegments()
+		local function hookHonor()
+			if not isHonorBarHooked then
+				PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:SetScript("OnMouseUp", function()
+					if IsShiftKeyDown() then
+						if IsWatchingHonorAsXP() then
+							PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
+							SetWatchingHonorAsXP(false)
+						else
+							PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+							SetWatchingHonorAsXP(true)
 						end
-					end)
 
-					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnEnter", function()
-						GameTooltip:AddLine(" ")
-						GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
-						GameTooltip:Show()
-					end)
+						bar:UpdateSegments()
+					end
+				end)
 
-					PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnLeave", function()
-						GameTooltip:Hide()
-					end)
+				PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnEnter", function()
+					GameTooltip:AddLine(" ")
+					GameTooltip:AddLine(L["SHIFT_CLICK_TO_SHOW_AS_XP"])
+					GameTooltip:Show()
+				end)
 
-					isHonorBarHooked = true
-				end
+				PVPQueueFrame.HonorInset.CasualPanel.HonorLevelDisplay:HookScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
+
+				isHonorBarHooked = true
 			end
-		end)
+		end
 
-		ReputationDetailMainScreenCheckBox:SetScript("OnClick", function(self)
+		if C_AddOns.IsAddOnLoaded("Blizzard_PVPUI") then
+			hookHonor()
+		else
+			hooksecurefunc("UIParentLoadAddOn", function(addOnName)
+				if addOnName == "Blizzard_PVPUI" then
+					hookHonor()
+				end
+			end)
+		end
+
+		ReputationFrame.ReputationDetailFrame.WatchFactionCheckbox:SetScript("OnClick", function(self)
 			if self:GetChecked() then
 				PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
-				SetWatchedFactionIndex(GetSelectedFaction())
+				C_Reputation.SetWatchedFactionByIndex(C_Reputation.GetSelectedFaction())
 			else
 				PlaySound(857) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF
-				SetWatchedFactionIndex(0)
+				C_Reputation.SetWatchedFactionByIndex(0)
 			end
 
 			bar:UpdateSegments()
