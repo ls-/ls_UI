@@ -193,6 +193,7 @@ function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 		[""] = L["FRAME"],
 		["Health"] = L["HEALTH"],
 		["Health.Text"] = L["HEALTH_TEXT"],
+		["Health.TempLoss_"] = L["MAX_HEALTH_REDUCTION"],
 		["Power"] = L["POWER"],
 		["Power.Text"] = L["POWER_TEXT"],
 	}

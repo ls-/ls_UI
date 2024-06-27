@@ -74,9 +74,22 @@ do
 	function element_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
 			E:SmoothBar(self)
+			E:SmoothBar(self.TempLoss_)
 		else
 			E:DesmoothBar(self)
+			E:DesmoothBar(self.TempLoss_)
 		end
+	end
+
+	function element_proto:UpdateMaxHealthReduction()
+		if self._config.reduction.enabled then
+			self.TempLoss = self.TempLoss_
+		else
+			self.TempLoss = nil
+		end
+
+		self.TempLoss_:SetValue(0)
+		self.TempLoss_:Show()
 	end
 
 	local frame_proto = {}
@@ -90,6 +103,7 @@ do
 		element:UpdateTextPoints()
 		element:UpdateSmoothing()
 		element:UpdateTags()
+		element:UpdateMaxHealthReduction()
 		element:ForceUpdate()
 	end
 
@@ -101,6 +115,18 @@ do
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:SetClipsChildren(true)
 		element._texture = element:GetStatusBarTexture()
+
+		local tempLoss = CreateFrame("StatusBar", nil, frame)
+		tempLoss:SetReverseFill(true)
+		tempLoss:SetMinMaxValues(0, 1)
+		tempLoss:SetFrameLevel(frame:GetFrameLevel() + 1)
+		element.TempLoss_ = tempLoss
+
+		tempLoss:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		tempLoss._texture = tempLoss:GetStatusBarTexture()
+		tempLoss._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\reduction", "REPEAT", "REPEAT")
+		tempLoss._texture:SetHorizTile(true)
+		tempLoss._texture:SetVertTile(true)
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")

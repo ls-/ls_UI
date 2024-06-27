@@ -599,6 +599,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -817,6 +820,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = true,
+				},
 			},
 			power = {
 				enabled = true,
@@ -1013,6 +1019,9 @@ D.profile = {
 					},
 				},
 				prediction = {
+					enabled = true,
+				},
+				reduction = {
 					enabled = true,
 				},
 			},
@@ -1248,6 +1257,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = true,
+				},
 			},
 			power = {
 				enabled = false,
@@ -1357,6 +1369,9 @@ D.profile = {
 					},
 				},
 				prediction = {
+					enabled = true,
+				},
+				reduction = {
 					enabled = true,
 				},
 			},
@@ -1592,6 +1607,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = true,
+				},
 			},
 			power = {
 				enabled = false,
@@ -1704,6 +1722,9 @@ D.profile = {
 					},
 				},
 				prediction = {
+					enabled = true,
+				},
+				reduction = {
 					enabled = true,
 				},
 			},

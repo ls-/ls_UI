@@ -57,6 +57,20 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateHealthPrediction")
 				end,
 			},
+			reduction = {
+				order = inc(1),
+				type = "toggle",
+				name = L["MAX_HEALTH_REDUCTION"],
+				get = function()
+					return C.db.profile.units[unit].health.reduction.enabled
+				end,
+				set = function(_, value)
+					C.db.profile.units[unit].health.reduction.enabled = value
+
+					UNITFRAMES:For(unit, "UpdateHealth")
+					UNITFRAMES:For(unit, "UpdateHealthPrediction")
+				end,
+			},
 			spacer_2 = {
 				order = inc(1),
 				type = "description",

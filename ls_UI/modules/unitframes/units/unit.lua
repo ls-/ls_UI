@@ -55,10 +55,14 @@ function UF:CreateSmallUnitFrame(frame)
 
 	local health = self:CreateHealth(frame, frame.TextParent)
 	health:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
-	health:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
-	health:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
-	health:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
+	health:SetPoint("TOPRIGHT", health.TempLoss_:GetStatusBarTexture(), "TOPLEFT", 0, 0)
+	health:SetPoint("BOTTOMRIGHT", health.TempLoss_:GetStatusBarTexture(), "BOTTOMLEFT", 0, 0)
 	frame.Health = health
+
+	health.TempLoss_:SetPoint("LEFT", frame.Insets.Left, "RIGHT", 0, 0)
+	health.TempLoss_:SetPoint("RIGHT", frame.Insets.Right, "LEFT", 0, 0)
+	health.TempLoss_:SetPoint("TOP", frame.Insets.Top, "BOTTOM", 0, 0)
+	health.TempLoss_:SetPoint("BOTTOM", frame.Insets.Bottom, "TOP", 0, 0)
 
 	frame.HealthPrediction = self:CreateHealthPrediction(frame, health)
 	frame.Power = self:CreatePower(frame, frame.TextParent)

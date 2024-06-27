@@ -651,6 +651,10 @@ function E:ResolveAnchorPoint(frame, children)
 				anchor = anchor[children[i]]
 			end
 
+			if not anchor then
+				anchor = frame
+			end
+
 			return anchor
 		end
 	end
