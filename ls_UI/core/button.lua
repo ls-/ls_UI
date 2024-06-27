@@ -80,7 +80,7 @@ end
 
 local function updateHotKey(self, text)
 	if text ~= RANGE_INDICATOR then
-		self:SetFormattedText("%s", self:GetParent():GetHotkey() or "")
+		self:SetFormattedText("%s", self.__parent:GetHotkey() or "")
 	end
 end
 
@@ -214,6 +214,7 @@ local function skinButton(button)
 		hotKey:SetSize(0, 0)
 		hotKey:SetVertexColor(1, 1, 1, 1)
 		hotKey:Show()
+		hotKey.__parent = button
 
 		if not button.GetHotkey then
 			button.GetHotkey = button_GetHotkey
