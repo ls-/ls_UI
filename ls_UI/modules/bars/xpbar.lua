@@ -46,412 +46,415 @@ local LAYOUT = {
 local bar_proto = {
 	UpdateCooldownConfig = E.NOOP,
 }
-
-function bar_proto:ForEach(method, ...)
-	for i = 1, MAX_SEGMENTS do
-		if self[i][method] then
-			self[i][method](self[i], ...)
-		end
-	end
-end
-
-function bar_proto:Update()
-	self:UpdateConfig()
-	self:UpdateFont()
-	self:UpdateTextFormat()
-	self:UpdateTextVisibility()
-	self:UpdateSize(self._config.width, self._config.height)
-	self:UpdateFading()
-end
-
-function bar_proto:UpdateConfig()
-	self._config = E:CopyTable(BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar, self._config)
-
-	if BARS:IsRestricted() then
-		self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
-	end
-end
-
-function bar_proto:UpdateFont()
-	for i = 1, MAX_SEGMENTS do
-		self[i].Text:UpdateFont(self._config.text.size)
-	end
-end
-
-function bar_proto:UpdateTextFormat()
-	if self._config.text.format == "NUM" then
-		barValueTemplate = CUR_MAX_VALUE_TEMPLATE
-	elseif self._config.text.format == "NUM_PERC" then
-		barValueTemplate = CUR_MAX_PERC_VALUE_TEMPLATE
-	end
-end
-
-function bar_proto:UpdateTextVisibility()
-	for i = 1, MAX_SEGMENTS do
-		self[i]:LockText(self._config.text.visibility == 1)
-	end
-end
-
-function bar_proto:UpdateSize(width, height)
-	width = width or self._config.width
-	height = height or self._config.height
-
-	for i = 1, MAX_SEGMENTS do
-		local layout = E:CalcSegmentsSizes(width, 2, i)
-
-		for j = 1, i do
-			LAYOUT[i][j].size = {layout[j], height}
+do
+	function bar_proto:ForEach(method, ...)
+		for i = 1, MAX_SEGMENTS do
+			if self[i][method] then
+				self[i][method](self[i], ...)
+			end
 		end
 	end
 
-	self:SetSize(width, height)
-
-	if not BARS:IsRestricted() then
-		E.Movers:Get(self):UpdateSize(width, height)
+	function bar_proto:Update()
+		self:UpdateConfig()
+		self:UpdateFont()
+		self:UpdateTextFormat()
+		self:UpdateTextVisibility()
+		self:UpdateSize(self._config.width, self._config.height)
+		self:UpdateFading()
 	end
 
-	if not BARS:IsRestricted() then
-		E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
-	end
+	function bar_proto:UpdateConfig()
+		self._config = E:CopyTable(BARS:IsRestricted() and CFG or C.db.profile.bars.xpbar, self._config)
 
-	self._total = nil
-
-	self:UpdateSegments()
-end
-
-function bar_proto:UpdateSegments()
-	local index = 0
-
-	if C_PetBattles.IsInBattle() then
-		local i = C_PetBattles.GetActivePet(Enum.BattlePetOwner.Ally)
-		local level = C_PetBattles.GetLevel(Enum.BattlePetOwner.Ally, i)
-		if level and level < 25 then
-			index = index + 1
-
-			self[index]:UpdatePetXP(i, level)
+		if BARS:IsRestricted() then
+			self._config.text = E:CopyTable(C.db.profile.bars.xpbar.text, self._config.text)
 		end
-	else
-		-- Azerite
-		if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
-			local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
-			if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
+	end
+
+	function bar_proto:UpdateFont()
+		for i = 1, MAX_SEGMENTS do
+			self[i].Text:UpdateFont(self._config.text.size)
+		end
+	end
+
+	function bar_proto:UpdateTextFormat()
+		if self._config.text.format == "NUM" then
+			barValueTemplate = CUR_MAX_VALUE_TEMPLATE
+		elseif self._config.text.format == "NUM_PERC" then
+			barValueTemplate = CUR_MAX_PERC_VALUE_TEMPLATE
+		end
+	end
+
+	function bar_proto:UpdateTextVisibility()
+		for i = 1, MAX_SEGMENTS do
+			self[i]:LockText(self._config.text.visibility == 1)
+		end
+	end
+
+	function bar_proto:UpdateSize(width, height)
+		width = width or self._config.width
+		height = height or self._config.height
+
+		for i = 1, MAX_SEGMENTS do
+			local layout = E:CalcSegmentsSizes(width, 2, i)
+
+			for j = 1, i do
+				LAYOUT[i][j].size = {layout[j], height}
+			end
+		end
+
+		self:SetSize(width, height)
+
+		if not BARS:IsRestricted() then
+			E.Movers:Get(self):UpdateSize(width, height)
+		end
+
+		if not BARS:IsRestricted() then
+			E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
+		end
+
+		self._total = nil
+
+		self:UpdateSegments()
+	end
+
+	function bar_proto:UpdateSegments()
+		local index = 0
+
+		if C_PetBattles.IsInBattle() then
+			local i = C_PetBattles.GetActivePet(Enum.BattlePetOwner.Ally)
+			local level = C_PetBattles.GetLevel(Enum.BattlePetOwner.Ally, i)
+			if level and level < 25 then
 				index = index + 1
 
-				self[index]:UpdateAzerite(azeriteItem)
+				self[index]:UpdatePetXP(i, level)
 			end
-		end
+		else
+			-- Azerite
+			if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+				local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+				if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
+					index = index + 1
 
-		-- XP
-		if not IsXPUserDisabled() and not IsPlayerAtEffectiveMaxLevel() then
-			index = index + 1
-
-			self[index]:UpdateXP()
-		end
-
-		-- Honour
-		if IsWatchingHonorAsXP() or C_PvP.IsActiveBattlefield() or IsInActiveWorldPVP() then
-			index = index + 1
-
-			self[index]:UpdateHonor()
-		end
-
-		-- Reputation
-		local data = C_Reputation.GetWatchedFactionData()
-		if data then
-			index = index + 1
-
-			self[index]:UpdateReputation(data.name, data.reaction, data.currentReactionThreshold, data.nextReactionThreshold, data.currentStanding, data.factionID)
-		end
-	end
-
-	if self._total ~= index then
-		for i = 1, MAX_SEGMENTS do
-			if i <= index then
-				self[i]:SetSize(unpack(LAYOUT[index][i].size))
-				self[i]:Show()
-
-				if i == 1 then
-					self[i]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-				else
-					self[i]:SetPoint("TOPLEFT", self[i - 1], "TOPRIGHT", 2, 0)
+					self[index]:UpdateAzerite(azeriteItem)
 				end
+			end
 
-				self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
-			else
-				self[i]:SetMinMaxValues(0, 1)
-				self[i]:SetValue(0)
-				self[i]:ClearAllPoints()
-				self[i]:Hide()
+			-- XP
+			if not IsXPUserDisabled() and not IsPlayerAtEffectiveMaxLevel() then
+				index = index + 1
 
-				self[i].Extension:SetMinMaxValues(0, 1)
-				self[i].Extension:SetValue(0)
+				self[index]:UpdateXP()
+			end
 
-				self[i].tooltipInfo = nil
+			-- Honour
+			if IsWatchingHonorAsXP() or C_PvP.IsActiveBattlefield() or IsInActiveWorldPVP() then
+				index = index + 1
+
+				self[index]:UpdateHonor()
+			end
+
+			-- Reputation
+			local data = C_Reputation.GetWatchedFactionData()
+			if data then
+				index = index + 1
+
+				self[index]:UpdateReputation(data.name, data.reaction, data.currentReactionThreshold, data.nextReactionThreshold, data.currentStanding, data.factionID)
 			end
 		end
 
-		for i = 1, MAX_SEGMENTS - 1 do
-			if i <= index - 1 then
-				self[i].Sep:Show()
-			else
-				self[i].Sep:Hide()
+		if self._total ~= index then
+			for i = 1, MAX_SEGMENTS do
+				if i <= index then
+					self[i]:SetSize(unpack(LAYOUT[index][i].size))
+					self[i]:Show()
+
+					if i == 1 then
+						self[i]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+					else
+						self[i]:SetPoint("TOPLEFT", self[i - 1], "TOPRIGHT", 2, 0)
+					end
+
+					self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
+				else
+					self[i]:SetMinMaxValues(0, 1)
+					self[i]:SetValue(0)
+					self[i]:ClearAllPoints()
+					self[i]:Hide()
+
+					self[i].Extension:SetMinMaxValues(0, 1)
+					self[i].Extension:SetValue(0)
+
+					self[i].tooltipInfo = nil
+				end
 			end
-		end
 
-		if index == 0 then
-			self[1]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-			self[1]:SetSize(unpack(LAYOUT[1][1].size))
-			self[1]:SetMinMaxValues(0, 1)
-			self[1]:Show()
-			self[1]:SetValue(1)
-			self[1]:UpdateText(1, 1)
-			self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
-			self[1]:SetSmoothStatusBarColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
-		end
+			for i = 1, MAX_SEGMENTS - 1 do
+				if i <= index - 1 then
+					self[i].Sep:Show()
+				else
+					self[i].Sep:Hide()
+				end
+			end
 
-		self._total = index
+			if index == 0 then
+				self[1]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+				self[1]:SetSize(unpack(LAYOUT[1][1].size))
+				self[1]:SetMinMaxValues(0, 1)
+				self[1]:Show()
+				self[1]:SetValue(1)
+				self[1]:UpdateText(1, 1)
+				self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
+				self[1]:SetSmoothStatusBarColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
+			end
+
+			self._total = index
+		end
 	end
-end
 
-function bar_proto:OnEvent(event, ...)
-	if event == "UNIT_INVENTORY_CHANGED" then
-		local unit = ...
-		if unit == "player" then
+	function bar_proto:OnEvent(event, ...)
+		if event == "UNIT_INVENTORY_CHANGED" then
+			local unit = ...
+			if unit == "player" then
+				self:UpdateSegments()
+			end
+		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+			local slot = ...
+			if slot == Enum.InventoryType.IndexNeckType then
+				self:UpdateSegments()
+			end
+		else
 			self:UpdateSegments()
 		end
-	elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-		local slot = ...
-		if slot == Enum.InventoryType.IndexNeckType then
-			self:UpdateSegments()
-		end
-	else
-		self:UpdateSegments()
 	end
 end
 
 local segment_base_proto = {}
+do
+	function segment_base_proto:SetSmoothStatusBarColor(r, g, b, a)
+		local color = self.ColorAnim.color
+		if color.r == r and color.g == g and color.b == b and color.a == a then return end
 
-function segment_base_proto:SetSmoothStatusBarColor(r, g, b, a)
-	local color = self.ColorAnim.color
-	if color.r == r and color.g == g and color.b == b and color.a == a then return end
+		color.r, color.g, color.b, color.a = r, g, b, a or 1
+		self.ColorAnim.Anim:SetEndColor(color)
 
-	color.r, color.g, color.b, color.a = r, g, b, a or 1
-	self.ColorAnim.Anim:SetEndColor(color)
+		color.r, color.g, color.b, color.a = self:GetStatusBarColor()
+		self.ColorAnim.Anim:SetStartColor(color)
 
-	color.r, color.g, color.b, color.a = self:GetStatusBarColor()
-	self.ColorAnim.Anim:SetStartColor(color)
-
-	self.ColorAnim:Play()
+		self.ColorAnim:Play()
+	end
 end
 
 local segment_ext_proto = {}
+do
+	function segment_ext_proto:OnEnter()
+		if self.tooltipInfo then
+			local quadrant = E:GetScreenQuadrant(self)
+			local p, rP, sign = "BOTTOMLEFT", "TOPLEFT", 1
 
-function segment_ext_proto:OnEnter()
-	if self.tooltipInfo then
-		local quadrant = E:GetScreenQuadrant(self)
-		local p, rP, sign = "BOTTOMLEFT", "TOPLEFT", 1
-
-		if quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT" then
-			p, rP, sign = "TOPLEFT", "BOTTOMLEFT", -1
-		end
-
-		GameTooltip:SetOwner(self, "ANCHOR_NONE")
-		GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
-		GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
-		GameTooltip:AddLine(self.tooltipInfo.line1)
-
-		if self.tooltipInfo.line2 then
-			GameTooltip:AddLine(self.tooltipInfo.line2)
-		end
-
-		if self.tooltipInfo.line3 then
-			GameTooltip:AddLine(self.tooltipInfo.line3)
-		end
-
-		GameTooltip:Show()
-	end
-
-	if not self:IsTextLocked() then
-		self.Text:Show()
-	end
-end
-
-function segment_ext_proto:OnLeave()
-	GameTooltip:Hide()
-
-	if not self:IsTextLocked() then
-		self.Text:Hide()
-	end
-end
-
-function segment_ext_proto:Update(cur, max, bonus, color, texture)
-	self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self:SetSmoothStatusBarColor(color:GetRGBA(1))
-
-	self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Extension:SetSmoothStatusBarColor(color:GetRGBA(0.4))
-
-	if self._value ~= cur or self._max ~= max then
-		self:SetMinMaxValues(0, max)
-		self:SetValue(cur)
-		self:UpdateText(cur, max)
-	end
-
-	if self._bonus ~= bonus then
-		if bonus and bonus > 0 then
-			if cur + bonus > max then
-				bonus = max - cur
+			if quadrant == "TOPLEFT" or quadrant == "TOP" or quadrant == "TOPRIGHT" then
+				p, rP, sign = "TOPLEFT", "BOTTOMLEFT", -1
 			end
-			self.Extension:SetMinMaxValues(0, max)
-			self.Extension:SetValue(bonus)
-		else
-			self.Extension:SetMinMaxValues(0, 1)
-			self.Extension:SetValue(0)
+
+			GameTooltip:SetOwner(self, "ANCHOR_NONE")
+			GameTooltip:SetPoint(p, self, rP, 0, sign * 2)
+			GameTooltip:AddLine(self.tooltipInfo.header, 1, 1, 1)
+			GameTooltip:AddLine(self.tooltipInfo.line1)
+
+			if self.tooltipInfo.line2 then
+				GameTooltip:AddLine(self.tooltipInfo.line2)
+			end
+
+			if self.tooltipInfo.line3 then
+				GameTooltip:AddLine(self.tooltipInfo.line3)
+			end
+
+			GameTooltip:Show()
 		end
 
-		self._bonus = bonus
-	end
-end
-
-function segment_ext_proto:UpdateAzerite(item)
-	local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(item)
-	local level = C_AzeriteItem.GetPowerLevel(item)
-
-	self.tooltipInfo = {
-		header = L["ARTIFACT_POWER"],
-		line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
-	}
-
-	self:Update(cur, max, 0, C.db.global.colors.white, AZERITE_TEXTURE)
-end
-
-function segment_ext_proto:UpdateXP()
-	local cur, max = UnitXP("player"), UnitXPMax("player")
-	local bonus = GetXPExhaustion() or 0
-
-	self.tooltipInfo = {
-		header = L["EXPERIENCE"],
-		line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
-	}
-
-	if bonus > 0 then
-		self.tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
-	else
-		self.tooltipInfo.line2 = nil
+		if not self:IsTextLocked() then
+			self.Text:Show()
+		end
 	end
 
-	self:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
-end
+	function segment_ext_proto:OnLeave()
+		GameTooltip:Hide()
 
-function segment_ext_proto:UpdateHonor()
-	local cur, max = UnitHonor("player"), UnitHonorMax("player")
+		if not self:IsTextLocked() then
+			self.Text:Hide()
+		end
+	end
 
-	self.tooltipInfo = {
-		header = L["HONOR"],
-		line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
-	}
+	function segment_ext_proto:Update(cur, max, bonus, color, texture)
+		self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
+		self:SetSmoothStatusBarColor(color:GetRGBA(1))
 
-	self:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
-end
+		self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
+		self.Extension:SetSmoothStatusBarColor(color:GetRGBA(0.4))
 
-function segment_ext_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
-	local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
-	local rewardQuestID, hasRewardPending
-	local cur, max
-
-	local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
-	if repInfo and repInfo.friendshipFactionID > 0 then
-		if repInfo.nextThreshold then
-			max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
-		else
-			max, cur = 1, 1
+		if self._value ~= cur or self._max ~= max then
+			self:SetMinMaxValues(0, max)
+			self:SetValue(cur)
+			self:UpdateText(cur, max)
 		end
 
-		standing = 5
-		repTextLevel = repInfo.reaction
-	elseif C_Reputation.IsFactionParagon(factionID) then
-		cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
-		cur = cur % max
-		repTextLevel = repTextLevel .. "+"
+		if self._bonus ~= bonus then
+			if bonus and bonus > 0 then
+				if cur + bonus > max then
+					bonus = max - cur
+				end
+				self.Extension:SetMinMaxValues(0, max)
+				self.Extension:SetValue(bonus)
+			else
+				self.Extension:SetMinMaxValues(0, 1)
+				self.Extension:SetValue(0)
+			end
+
+			self._bonus = bonus
+		end
+	end
+
+	function segment_ext_proto:UpdateAzerite(item)
+		local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(item)
+		local level = C_AzeriteItem.GetPowerLevel(item)
+
+		self.tooltipInfo = {
+			header = L["ARTIFACT_POWER"],
+			line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
+		}
+
+		self:Update(cur, max, 0, C.db.global.colors.white, AZERITE_TEXTURE)
+	end
+
+	function segment_ext_proto:UpdateXP()
+		local cur, max = UnitXP("player"), UnitXPMax("player")
+		local bonus = GetXPExhaustion() or 0
+
+		self.tooltipInfo = {
+			header = L["EXPERIENCE"],
+			line1 = L["LEVEL_TOOLTIP"]:format(UnitLevel("player")),
+		}
+
+		if bonus > 0 then
+			self.tooltipInfo.line2 = L["BONUS_XP_TOOLTIP"]:format(BreakUpLargeNumbers(bonus))
+		else
+			self.tooltipInfo.line2 = nil
+		end
+
+		self:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
+	end
+
+	function segment_ext_proto:UpdateHonor()
+		local cur, max = UnitHonor("player"), UnitHonorMax("player")
+
+		self.tooltipInfo = {
+			header = L["HONOR"],
+			line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
+		}
+
+		self:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
+	end
+
+	function segment_ext_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
+		local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
+		local rewardQuestID, hasRewardPending
+		local cur, max
+
+		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+		if repInfo and repInfo.friendshipFactionID > 0 then
+			if repInfo.nextThreshold then
+				max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
+			else
+				max, cur = 1, 1
+			end
+
+			standing = 5
+			repTextLevel = repInfo.reaction
+		elseif C_Reputation.IsFactionParagon(factionID) then
+			cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
+			cur = cur % max
+			repTextLevel = repTextLevel .. "+"
+
+			if hasRewardPending then
+				cur = cur + max
+			end
+
+			-- DF factions become both paragon and major after they're maxxed out
+			if C_Reputation.IsMajorFaction(factionID) then
+				standing = 9
+				repTextLevel = RENOWN_PLUS
+			end
+		elseif C_Reputation.IsMajorFaction(factionID) then
+			repInfo = C_MajorFactions.GetMajorFactionData(factionID)
+
+			if C_MajorFactions.HasMaximumRenown(factionID) then
+				max, cur = 1, 1
+			else
+				max, cur = repInfo.renownLevelThreshold, repInfo.renownReputationEarned
+			end
+
+			standing = 9
+			repTextLevel = RENOWN_LEVEL_LABEL .. repInfo.renownLevel
+		else
+			if standing ~= MAX_REPUTATION_REACTION then
+				max, cur = repMax - repMin, repCur - repMin
+			else
+				max, cur = 1, 1
+			end
+		end
+
+		self.tooltipInfo = {
+			header = L["REPUTATION"],
+			line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
+		}
 
 		if hasRewardPending then
-			cur = cur + max
-		end
-
-		-- DF factions become both paragon and major after they're maxxed out
-		if C_Reputation.IsMajorFaction(factionID) then
-			standing = 9
-			repTextLevel = RENOWN_PLUS
-		end
-	elseif C_Reputation.IsMajorFaction(factionID) then
-		repInfo = C_MajorFactions.GetMajorFactionData(factionID)
-
-		if C_MajorFactions.HasMaximumRenown(factionID) then
-			max, cur = 1, 1
+			local text = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(rewardQuestID))
+			if text and text ~= "" then
+				self.tooltipInfo.line3 = text
+			end
 		else
-			max, cur = repInfo.renownLevelThreshold, repInfo.renownReputationEarned
+			self.tooltipInfo.line3 = nil
 		end
 
-		standing = 9
-		repTextLevel = RENOWN_LEVEL_LABEL .. repInfo.renownLevel
-	else
-		if standing ~= MAX_REPUTATION_REACTION then
-			max, cur = repMax - repMin, repCur - repMin
+		self:Update(cur, max, 0, C.db.global.colors.reaction[standing])
+	end
+
+	function segment_ext_proto:UpdatePetXP(i, level)
+		local name = C_PetBattles.GetName(1, i)
+		local rarity = C_PetBattles.GetBreedQuality(1, i)
+		local cur, max = C_PetBattles.GetXP(1, i)
+
+		self.tooltipInfo = {
+			header = C.db.global.colors.quality[rarity - 1]:WrapTextInColorCode(name),
+			line1 = L["LEVEL_TOOLTIP"]:format(level),
+		}
+
+		self:Update(cur, max, 0, C.db.global.colors.xp[2])
+	end
+
+	function segment_ext_proto:UpdateText(cur, max)
+		cur = cur or self._value or 1
+		max = max or self._max or 1
+
+		if cur == 1 and max == 1 then
+			self.Text:SetText(nil)
 		else
-			max, cur = 1, 1
+			self.Text:SetFormattedText(barValueTemplate, E:FormatNumber(cur), E:FormatNumber(max), E:NumberToPerc(cur, max))
 		end
 	end
 
-	self.tooltipInfo = {
-		header = L["REPUTATION"],
-		line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
-	}
-
-	if hasRewardPending then
-		local text = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(rewardQuestID))
-		if text and text ~= "" then
-			self.tooltipInfo.line3 = text
+	function segment_ext_proto:LockText(isLocked)
+		if self.textLocked ~= isLocked then
+			self.textLocked = isLocked
+			self.Text:SetShown(isLocked)
 		end
-	else
-		self.tooltipInfo.line3 = nil
 	end
 
-	self:Update(cur, max, 0, C.db.global.colors.reaction[standing])
-end
-
-function segment_ext_proto:UpdatePetXP(i, level)
-	local name = C_PetBattles.GetName(1, i)
-	local rarity = C_PetBattles.GetBreedQuality(1, i)
-	local cur, max = C_PetBattles.GetXP(1, i)
-
-	self.tooltipInfo = {
-		header = C.db.global.colors.quality[rarity - 1]:WrapTextInColorCode(name),
-		line1 = L["LEVEL_TOOLTIP"]:format(level),
-	}
-
-	self:Update(cur, max, 0, C.db.global.colors.xp[2])
-end
-
-function segment_ext_proto:UpdateText(cur, max)
-	cur = cur or self._value or 1
-	max = max or self._max or 1
-
-	if cur == 1 and max == 1 then
-		self.Text:SetText(nil)
-	else
-		self.Text:SetFormattedText(barValueTemplate, E:FormatNumber(cur), E:FormatNumber(max), E:NumberToPerc(cur, max))
+	function segment_ext_proto:IsTextLocked()
+		return self.textLocked
 	end
-end
-
-function segment_ext_proto:LockText(isLocked)
-	if self.textLocked ~= isLocked then
-		self.textLocked = isLocked
-		self.Text:SetShown(isLocked)
-	end
-end
-
-function segment_ext_proto:IsTextLocked()
-	return self.textLocked
 end
 
 function BARS:HasXPBar()
