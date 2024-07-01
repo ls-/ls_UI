@@ -135,10 +135,11 @@ function element_proto:CustomDelayText(duration)
 	end
 end
 
-function element_proto:SetSmoothStatusBarColor(...)
+function element_proto:SetSmoothStatusBarColor(r, g, b, a)
 	local color = self.ColorAnim.color
+	if color.r == r and color.g == g and color.b == b and color.a == a then return end
 
-	color.r, color.g, color.b = ...
+	color.r, color.g, color.b, color.a = r, g, b, a or 1
 	self.ColorAnim.Anim:SetEndColor(color)
 
 	color.r, color.g, color.b = self:GetStatusBarColor()
