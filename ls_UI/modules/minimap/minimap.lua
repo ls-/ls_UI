@@ -26,10 +26,13 @@ do
 		["sanctuary"] = "sanctuary",
 	}
 
-	function minimap_proto:SetSmoothStatusBarColor(...)
+	function minimap_proto:SetSmoothVertexColor(r, g, b, a)
 		local color = self.ColorAnim.color
+		a = a or 1
 
-		color.r, color.g, color.b = ...
+		if color.r == r and color.g == g and color.b == b and color.a == a then return end
+
+		color.r, color.g, color.b, color.a = r, g, b, a
 		self.ColorAnim.Anim:SetEndColor(color)
 
 		color.r, color.g, color.b = self.Border:GetVertexColor()
@@ -40,9 +43,9 @@ do
 
 	function minimap_proto:UpdateBorderColor()
 		if self._config.color.border then
-			self:SetSmoothStatusBarColor((C.db.global.colors.zone[zoneTypeToColor[C_PvP.GetZonePVPInfo() or "contested"]]):GetRGB())
+			self:SetSmoothVertexColor((C.db.global.colors.zone[zoneTypeToColor[C_PvP.GetZonePVPInfo() or "contested"]]):GetRGB())
 		else
-			self:SetSmoothStatusBarColor(C.db.global.colors.light_gray:GetRGB())
+			self:SetSmoothVertexColor(C.db.global.colors.light_gray:GetRGB())
 		end
 	end
 

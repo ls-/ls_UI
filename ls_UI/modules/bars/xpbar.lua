@@ -234,9 +234,11 @@ local segment_base_proto = {}
 do
 	function segment_base_proto:SetSmoothStatusBarColor(r, g, b, a)
 		local color = self.ColorAnim.color
+		a = a or 1
+
 		if color.r == r and color.g == g and color.b == b and color.a == a then return end
 
-		color.r, color.g, color.b, color.a = r, g, b, a or 1
+		color.r, color.g, color.b, color.a = r, g, b, a
 		self.ColorAnim.Anim:SetEndColor(color)
 
 		color.r, color.g, color.b, color.a = self:GetStatusBarColor()
