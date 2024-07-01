@@ -202,11 +202,11 @@ function bar_proto:UpdateSegments()
 			self[1]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
 			self[1]:SetSize(unpack(LAYOUT[1][1].size))
 			self[1]:SetMinMaxValues(0, 1)
-			self[1]:SetValue(1)
 			self[1]:Show()
+			self[1]:SetValue(1)
 			self[1]:UpdateText(1, 1)
 			self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
-			self[1].Texture:SetVertexColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
+			self[1]:SetSmoothStatusBarColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
 		end
 
 		self._total = index
@@ -229,9 +229,24 @@ function bar_proto:OnEvent(event, ...)
 	end
 end
 
-local segment_proto = {}
+local segment_base_proto = {}
 
-function segment_proto:OnEnter()
+function segment_base_proto:SetSmoothStatusBarColor(r, g, b, a)
+	local color = self.ColorAnim.color
+	if color.r == r and color.g == g and color.b == b and color.a == a then return end
+
+	color.r, color.g, color.b, color.a = r, g, b, a or 1
+	self.ColorAnim.Anim:SetEndColor(color)
+
+	color.r, color.g, color.b, color.a = self:GetStatusBarColor()
+	self.ColorAnim.Anim:SetStartColor(color)
+
+	self.ColorAnim:Play()
+end
+
+local segment_ext_proto = {}
+
+function segment_ext_proto:OnEnter()
 	if self.tooltipInfo then
 		local quadrant = E:GetScreenQuadrant(self)
 		local p, rP, sign = "BOTTOMLEFT", "TOPLEFT", 1
@@ -261,7 +276,7 @@ function segment_proto:OnEnter()
 	end
 end
 
-function segment_proto:OnLeave()
+function segment_ext_proto:OnLeave()
 	GameTooltip:Hide()
 
 	if not self:IsTextLocked() then
@@ -269,12 +284,12 @@ function segment_proto:OnLeave()
 	end
 end
 
-function segment_proto:Update(cur, max, bonus, color, texture)
+function segment_ext_proto:Update(cur, max, bonus, color, texture)
 	self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Texture:SetVertexColor(color:GetRGBA(1))
+	self:SetSmoothStatusBarColor(color:GetRGBA(1))
 
 	self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
-	self.Extension.Texture:SetVertexColor(color:GetRGBA(0.4))
+	self.Extension:SetSmoothStatusBarColor(color:GetRGBA(0.4))
 
 	if self._value ~= cur or self._max ~= max then
 		self:SetMinMaxValues(0, max)
@@ -298,7 +313,7 @@ function segment_proto:Update(cur, max, bonus, color, texture)
 	end
 end
 
-function segment_proto:UpdateAzerite(item)
+function segment_ext_proto:UpdateAzerite(item)
 	local cur, max = C_AzeriteItem.GetAzeriteItemXPInfo(item)
 	local level = C_AzeriteItem.GetPowerLevel(item)
 
@@ -310,7 +325,7 @@ function segment_proto:UpdateAzerite(item)
 	self:Update(cur, max, 0, C.db.global.colors.white, AZERITE_TEXTURE)
 end
 
-function segment_proto:UpdateXP()
+function segment_ext_proto:UpdateXP()
 	local cur, max = UnitXP("player"), UnitXPMax("player")
 	local bonus = GetXPExhaustion() or 0
 
@@ -328,7 +343,7 @@ function segment_proto:UpdateXP()
 	self:Update(cur, max, bonus, bonus > 0 and C.db.global.colors.xp[1] or C.db.global.colors.xp[2])
 end
 
-function segment_proto:UpdateHonor()
+function segment_ext_proto:UpdateHonor()
 	local cur, max = UnitHonor("player"), UnitHonorMax("player")
 
 	self.tooltipInfo = {
@@ -339,7 +354,7 @@ function segment_proto:UpdateHonor()
 	self:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
 end
 
-function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
+function segment_ext_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
 	local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
 	local rewardQuestID, hasRewardPending
 	local cur, max
@@ -404,7 +419,7 @@ function segment_proto:UpdateReputation(name, standing, repMin, repMax, repCur, 
 	self:Update(cur, max, 0, C.db.global.colors.reaction[standing])
 end
 
-function segment_proto:UpdatePetXP(i, level)
+function segment_ext_proto:UpdatePetXP(i, level)
 	local name = C_PetBattles.GetName(1, i)
 	local rarity = C_PetBattles.GetBreedQuality(1, i)
 	local cur, max = C_PetBattles.GetXP(1, i)
@@ -417,7 +432,7 @@ function segment_proto:UpdatePetXP(i, level)
 	self:Update(cur, max, 0, C.db.global.colors.xp[2])
 end
 
-function segment_proto:UpdateText(cur, max)
+function segment_ext_proto:UpdateText(cur, max)
 	cur = cur or self._value or 1
 	max = max or self._max or 1
 
@@ -428,14 +443,14 @@ function segment_proto:UpdateText(cur, max)
 	end
 end
 
-function segment_proto:LockText(isLocked)
+function segment_ext_proto:LockText(isLocked)
 	if self.textLocked ~= isLocked then
 		self.textLocked = isLocked
 		self.Text:SetShown(isLocked)
 	end
 end
 
-function segment_proto:IsTextLocked()
+function segment_ext_proto:IsTextLocked()
 	return self.textLocked
 end
 
@@ -463,7 +478,7 @@ function BARS:CreateXPBar()
 		bg:SetAllPoints()
 
 		for i = 1, MAX_SEGMENTS do
-			local segment = Mixin(CreateFrame("StatusBar", "$parentSegment" .. i, bar), segment_proto)
+			local segment = Mixin(CreateFrame("StatusBar", "$parentSegment" .. i, bar), segment_base_proto, segment_ext_proto)
 			segment:SetFrameLevel(bar:GetFrameLevel() + 1)
 			segment:SetStatusBarTexture(DEFAULT_TEXTURE)
 			segment:SetHitRectInsets(0, 0, -4, -4)
@@ -475,9 +490,16 @@ function BARS:CreateXPBar()
 			bar[i] = segment
 
 			segment.Texture = segment:GetStatusBarTexture()
-			E:SmoothColor(segment.Texture)
 
-			local ext = CreateFrame("StatusBar", nil, segment)
+			local ag = segment.Texture:CreateAnimationGroup()
+			segment.ColorAnim = ag
+
+			local anim = ag:CreateAnimation("VertexColor")
+			anim:SetDuration(0.125)
+			ag.color = {a = 1}
+			ag.Anim = anim
+
+			local ext = Mixin(CreateFrame("StatusBar", nil, segment), segment_base_proto)
 			ext:SetFrameLevel(segment:GetFrameLevel())
 			ext:SetStatusBarTexture(DEFAULT_TEXTURE)
 			ext:SetPoint("TOPLEFT", segment.Texture, "TOPRIGHT")
@@ -486,7 +508,14 @@ function BARS:CreateXPBar()
 			segment.Extension = ext
 
 			ext.Texture = ext:GetStatusBarTexture()
-			E:SmoothColor(ext.Texture)
+
+			ag = ext.Texture:CreateAnimationGroup()
+			ext.ColorAnim = ag
+
+			anim = ag:CreateAnimation("VertexColor")
+			anim:SetDuration(0.125)
+			ag.color = {a = 1}
+			ag.Anim = anim
 
 			local text = textParent:CreateFontString(nil, "OVERLAY")
 			E.FontStrings:Capture(text, "statusbar")
