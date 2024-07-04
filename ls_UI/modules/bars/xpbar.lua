@@ -213,19 +213,35 @@ do
 		end
 	end
 
+	local deferredUpdate, timer
+
 	function bar_proto:OnEvent(event, ...)
+		if not deferredUpdate then
+			deferredUpdate = function()
+				self:UpdateSegments()
+
+				timer = nil
+			end
+		end
+
 		if event == "UNIT_INVENTORY_CHANGED" then
 			local unit = ...
 			if unit == "player" then
-				self:UpdateSegments()
+				if not timer then
+					timer = C_Timer.NewTimer(0.1, deferredUpdate)
+				end
 			end
 		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
 			local slot = ...
 			if slot == Enum.InventoryType.IndexNeckType then
-				self:UpdateSegments()
+				if not timer then
+					timer = C_Timer.NewTimer(0.1, deferredUpdate)
+				end
 			end
 		else
-			self:UpdateSegments()
+			if not timer then
+				timer = C_Timer.NewTimer(0.1, deferredUpdate)
+			end
 		end
 	end
 end
