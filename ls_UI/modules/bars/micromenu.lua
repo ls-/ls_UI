@@ -396,17 +396,19 @@ do
 		button_proto.OnEnterOverride(self)
 
 		if self:IsEnabled() then
-			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(L["DURABILITY_COLON"])
+			if #durabilities > 0 then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(L["DURABILITY_COLON"])
 
-			for i = 1, 17 do
-				local cur = durabilities[i]
-				if cur then
-					GameTooltip:AddDoubleLine(slots[i], ("%d%%"):format(cur), 1, 1, 1, E:GetGradientAsRGB(cur / 100, C.db.global.colors.ryg))
+				for i = 1, 17 do
+					local cur = durabilities[i]
+					if cur then
+						GameTooltip:AddDoubleLine(slots[i], ("%d%%"):format(cur), 1, 1, 1, E:GetGradientAsRGB(cur / 100, C.db.global.colors.ryg))
+					end
 				end
-			end
 
-			GameTooltip:Show()
+				GameTooltip:Show()
+			end
 		end
 	end
 
