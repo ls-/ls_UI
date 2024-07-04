@@ -412,16 +412,20 @@ do
 		end
 	end
 
+	local deferredUpdate, timer
+
 	function char_button_proto:OnEventHook(event)
 		if event == "UPDATE_INVENTORY_DURABILITY" then
-			local t = GetTime()
-
-			if t - (self.recentUpdate or 0 ) >= 1 then
-				C_Timer.After(1, function()
+			if not deferredUpdate then
+				deferredUpdate = function()
 					self:UpdateIndicator()
-				end)
 
-				self.recentUpdate = t
+					timer = nil
+				end
+			end
+
+			if not timer then
+				timer = C_Timer.NewTimer(1, deferredUpdate)
 			end
 		end
 	end
