@@ -321,8 +321,22 @@ do
 		self:SetMouseClickEnabled(false)
 	end
 
+	local deferredUpdate, timer
+
 	function flag_proto:OnEvent()
-		self:Update()
+		if not deferredUpdate then
+			-- it's static, so avoid creating it again and again
+			deferredUpdate = function()
+				self:Update()
+
+				timer = nil
+			end
+		end
+
+		if not timer then
+			-- depending on the kind of an instance you enter it can fire 5+ times
+			timer = C_Timer.NewTimer(1, deferredUpdate)
+		end
 	end
 
 	function flag_proto:OnEnter()
