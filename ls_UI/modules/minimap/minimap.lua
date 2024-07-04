@@ -275,6 +275,7 @@ do
 			["heroic"] = {321 / 512, 385 / 512, 1 / 256, 65 / 256},
 			["mythic"] = {385 / 512, 449 / 512, 1 / 256, 65 / 256},
 			["challenge"] = {193 / 512, 257 / 512, 65 / 256, 129 / 256},
+			["delve"] = {257 / 512, 321 / 512, 65 / 256, 129 / 256},
 		},
 		[125] = {
 			["lfr"] = {273 / 1024, 375 / 1024, 1 / 256, 103 / 256},
@@ -282,6 +283,7 @@ do
 			["heroic"] = {477 / 1024, 579 / 1024, 1 / 256, 103 / 256},
 			["mythic"] = {579 / 1024, 681 / 1024, 1 / 256, 103 / 256},
 			["challenge"] = {681 / 1024, 783 / 1024, 1 / 256, 103 / 256},
+			["delve"] = {783 / 1024, 885 / 1024, 1 / 256, 103 / 256},
 		},
 		[150] = {
 			["lfr"] = {353 / 1024, 491 / 1024, 1 / 512, 139 / 512},
@@ -289,8 +291,23 @@ do
 			["heroic"] = {629 / 1024, 767 / 1024, 1 / 512, 139 / 512},
 			["mythic"] = {767 / 1024, 905 / 1024, 1 / 512, 139 / 512 },
 			["challenge"] = {353 / 1024, 491 / 1024, 139 / 512, 277 / 512},
+			["delve"] = {491 / 1024, 629 / 1024, 139 / 512, 277 / 512},
 		},
 	}
+
+	local function scenarioIsDelve()
+		local _, _, _, mapID = UnitPosition("player")
+		return C_DelvesUI.HasActiveDelve(mapID)
+	end
+
+	local DIFFICULTY_NAMES = {
+		[208] = _G.DELVE_LABEL,
+	}
+
+	-- Blizz don't fully support delves atm
+	local function getDifficultyName(ID)
+		return DifficultyUtil.GetDifficultyName(ID) or DIFFICULTY_NAMES[ID]
+	end
 
 	function flag_proto:RegisterForEvents()
 		for _, event in next, self.events do
@@ -309,11 +326,7 @@ do
 	end
 
 	function flag_proto:OnEnter()
-		if self.difficultyID then
-			if not DifficultyUtil.GetDifficultyName(self.difficultyID) then
-				return
-			end
-
+		if self.difficultyID and self.difficultyName then
 			local p, rP, x, y = E:GetTooltipPoint(self)
 			if p == "TOPRIGHT" then
 				x, y = 24, 24
@@ -351,11 +364,11 @@ do
 
 		local instanceName, instanceType, difficultyID, _, maxPlayers = GetInstanceInfo()
 		if instanceType == "raid" or instanceType == "party" then
-			local difficultyName, _, isHeroic, isChallengeMode, displayHeroic, displayMythic, _, isLFR = GetDifficultyInfo(difficultyID)
+			local _, _, isHeroic, isChallengeMode, displayHeroic, displayMythic, _, isLFR = GetDifficultyInfo(difficultyID)
 
 			self.instanceName = instanceName
 			self.difficultyID = difficultyID
-			self.difficultyName = difficultyName
+			self.difficultyName = getDifficultyName(difficultyID)
 			self.maxPlayers = maxPlayers
 
 			if isChallengeMode then
@@ -372,18 +385,21 @@ do
 
 			self:Show()
 		elseif instanceType == "scenario" then
-			local difficultyName, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
-			if not (isHeroic or displayHeroic or displayMythic) then return end
+			local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+			local isDelve = scenarioIsDelve()
+			if not (isHeroic or displayHeroic or displayMythic or isDelve) then return end
 
 			self.instanceName = instanceName
 			self.difficultyID = difficultyID
-			self.difficultyName = difficultyName
+			self.difficultyName = getDifficultyName(difficultyID)
 			self.maxPlayers = maxPlayers
 
 			if displayMythic then
 				self:UpdateFlag("mythic")
 			elseif isHeroic or displayHeroic then
 				self:UpdateFlag("heroic")
+			elseif isDelve then
+				self:UpdateFlag("delve")
 			end
 
 			self:Show()
