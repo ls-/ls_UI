@@ -57,6 +57,7 @@ read_globals = {
 	"C_AddOns",
 	"C_AzeriteItem",
 	"C_CurrencyInfo",
+	"C_DelvesUI",
 	"C_GossipInfo",
 	"C_Item",
 	"C_Mail",
