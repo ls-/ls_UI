@@ -1,4 +1,4 @@
-## Interface: 110000
+## Interface: 110000, 110002
 ## Author: lightspark
 ## Version: 110000.00
 ## Title: LS: |cff1a9fc0UI|r
