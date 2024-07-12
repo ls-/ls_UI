@@ -17,6 +17,7 @@ local function updateFont(fontString, config)
 	fontString:UpdateFont(config.size)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
+	fontString:SetWordWrap(config.word_wrap)
 end
 
 local function updateTextPoint(frame, fontString, config)
@@ -135,7 +136,6 @@ do
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
 		element.Text = text
 
 		return element
@@ -241,7 +241,6 @@ do
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
 		element.Text = text
 
 		return element

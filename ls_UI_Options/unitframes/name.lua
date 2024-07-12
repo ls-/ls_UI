@@ -77,7 +77,6 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 				order = inc(1),
 				type = "toggle",
 				name = L["WORD_WRAP"],
-				disabled = isSecondaryAnchorDisabled,
 			},
 			spacer_2 = {
 				order = inc(1),

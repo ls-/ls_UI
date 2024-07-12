@@ -106,6 +106,11 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = CONFIG.H_ALIGNMENTS,
 					},
+					word_wrap = {
+						order = inc(2),
+						type = "toggle",
+						name = L["WORD_WRAP"],
+					},
 					spacer_1 = {
 						order = inc(2),
 						type = "description",
@@ -265,6 +270,11 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 						type = "select",
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = CONFIG.H_ALIGNMENTS,
+					},
+					word_wrap = {
+						order = inc(2),
+						type = "toggle",
+						name = L["WORD_WRAP"],
 					},
 					spacer_1 = {
 						order = inc(2),
