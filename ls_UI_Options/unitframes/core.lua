@@ -387,12 +387,12 @@ function CONFIG:CreateUnitFramesOptions(order)
 				end,
 			}, -- 1
 			spacer_1 = {
-				order = 2,
+				order = 9,
 				type = "description",
 				name = " ",
-			}, -- 2
+			}, -- 9
 			units = {
-				order = 3,
+				order = 10,
 				type = "group",
 				name = L["UNITS"],
 				inline = true,
@@ -454,14 +454,14 @@ function CONFIG:CreateUnitFramesOptions(order)
 						name = L["BOSS"],
 					},
 				},
-			}, -- 3
+			}, -- 10
 			spacer_2 = {
-				order = 4,
+				order = 19,
 				type = "description",
 				name = " ",
-			}, -- 4
+			}, -- 19
 			gloss = {
-				order = 5,
+				order = 20,
 				type = "range",
 				name = L["GLOSS"],
 				disabled = isModuleDisabled,
@@ -477,14 +477,32 @@ function CONFIG:CreateUnitFramesOptions(order)
 						UNITFRAMES:ForEach("UpdateInlay")
 					end
 				end,
-			}, -- 5
+			}, -- 20
+			gradient = {
+				order = 21,
+				type = "range",
+				name = L["GRADIENT"],
+				disabled = isModuleDisabled,
+				min = 0, max = 1, step = 0.01, bigStep = 0.05,
+				isPercent = true,
+				get = function()
+					return C.db.profile.units.inlay.gradient
+				end,
+				set = function(_, value)
+					if C.db.profile.units.inlay.gradient ~= value then
+						C.db.profile.units.inlay.gradient = value
+
+						UNITFRAMES:ForEach("UpdateGradient")
+					end
+				end,
+			}, -- 21
 			spacer_3 = {
-				order = 6,
+				order = 29,
 				type = "description",
 				name = " ",
-			}, -- 6
+			}, -- 29
 			change = {
-				order = 7,
+				order = 30,
 				type = "group",
 				name = L["PROGRESS_BARS"],
 				inline = true,
@@ -522,14 +540,14 @@ function CONFIG:CreateUnitFramesOptions(order)
 						name = L["PROGRESS_BAR_SMOOTH"],
 					},
 				},
-			}, -- 7
+			}, -- 30
 			spacer_4 = {
-				order = 8,
+				order = 39,
 				type = "description",
 				name = " ",
-			}, -- 8
+			}, -- 39
 			cooldown = {
-				order = 9,
+				order = 40,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -644,14 +662,14 @@ function CONFIG:CreateUnitFramesOptions(order)
 						},
 					},
 				},
-			}, -- 9
-			player = getUnitFrameOptions(10, "player", L["PLAYER_FRAME"]),
-			pet = getUnitFrameOptions(11, "pet", L["PET_FRAME"]),
-			target = getUnitFrameOptions(12, "target", L["TARGET_FRAME"]),
-			targettarget = getUnitFrameOptions(13, "targettarget", L["TOT_FRAME"]),
-			focus = getUnitFrameOptions(14, "focus", L["FOCUS_FRAME"]),
-			focustarget = getUnitFrameOptions(15, "focustarget", L["TOF_FRAME"]),
-			boss = getUnitFrameOptions(16, "boss", L["BOSS_FRAMES"]),
+			}, -- 40
+			player = getUnitFrameOptions(50, "player", L["PLAYER_FRAME"]),
+			pet = getUnitFrameOptions(51, "pet", L["PET_FRAME"]),
+			target = getUnitFrameOptions(52, "target", L["TARGET_FRAME"]),
+			targettarget = getUnitFrameOptions(53, "targettarget", L["TOT_FRAME"]),
+			focus = getUnitFrameOptions(54, "focus", L["FOCUS_FRAME"]),
+			focustarget = getUnitFrameOptions(55, "focustarget", L["TOF_FRAME"]),
+			boss = getUnitFrameOptions(56, "boss", L["BOSS_FRAMES"]),
 		},
 	}
 

@@ -42,6 +42,20 @@ function frame_proto:UpdateInlay()
 	self.Inlay:SetAlpha(C.db.profile.units.inlay.gloss)
 end
 
+local gradientColorMin = {r = 0, g = 0, b = 0, a = 0}
+local gradientColorMax = {r = 0, g = 0, b = 0, a = 0.35}
+
+function frame_proto:UpdateGradient()
+	gradientColorMax.a = C.db.profile.units.inlay.gradient
+
+	self.Insets.Left[4]:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+	self.Insets.Right[4]:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+	self.Insets.Top[4]:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+	self.Insets.Bottom[4]:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+
+	self.Inlay.Gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+end
+
 local insets_proto = {}
 
 function insets_proto:UpdateConfig()
@@ -137,6 +151,7 @@ function vert_inset_proto:Collapse()
 	self[1]:Hide()
 	self[2]:Hide()
 	self[3]:Hide()
+	self[4]:Hide()
 
 	self.__expanded = false
 
@@ -151,6 +166,7 @@ function vert_inset_proto:Expand()
 	self[1]:Show()
 	self[2]:Show()
 	self[3]:Show()
+	self[4]:Show()
 
 	self.__expanded = true
 
@@ -184,6 +200,7 @@ function horiz_inset_proto:Collapse()
 	self[1]:Hide()
 	self[2]:Hide()
 	self[3]:Hide()
+	self[4]:Hide()
 
 	self.__expanded = false
 
@@ -198,6 +215,7 @@ function horiz_inset_proto:Expand()
 	self[1]:Show()
 	self[2]:Show()
 	self[3]:Show()
+	self[4]:Show()
 
 	self.__expanded = true
 
@@ -449,6 +467,15 @@ function UF:CreateLayout(frame, level)
 		tex2:SetTexelSnappingBias(0)
 		inset[2] = tex2
 
+		-- it needs to appear under the inlay glass
+		local gradient = inlayParent:CreateTexture(nil, "OVERLAY", nil, 0)
+		gradient:SetPoint("TOPLEFT", inset, "TOPLEFT", 0, -1)
+		gradient:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", 0, 1)
+		gradient:SetSnapToPixelGrid(false)
+		gradient:SetTexelSnappingBias(0)
+		gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		inset[4] = gradient
+
 		inset:Collapse()
 
 		insets[v] = inset
@@ -500,6 +527,16 @@ function UF:CreateLayout(frame, level)
 
 	inlayParent:SetPoint("TOPLEFT", insets.Left, "TOPRIGHT", 0, 0)
 	inlayParent:SetPoint("BOTTOMRIGHT", insets.Right, "BOTTOMLEFT", 0, 0)
+
+	local gradient = textureParent:CreateTexture(nil, "OVERLAY", nil, 0)
+	gradient:SetPoint("LEFT", insets.Left, "RIGHT", 0, 0)
+	gradient:SetPoint("RIGHT", insets.Right, "LEFT", 0, 0)
+	gradient:SetPoint("TOP", insets.Top, "BOTTOM", 0, 0)
+	gradient:SetPoint("BOTTOM", insets.Bottom, "TOP", 0, 0)
+	gradient:SetSnapToPixelGrid(false)
+	gradient:SetTexelSnappingBias(0)
+	gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+	inlay.Gradient = gradient -- it's not, but it is now
 
 	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
