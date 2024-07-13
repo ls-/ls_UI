@@ -88,7 +88,7 @@ local function getUnitFrameOptions(order, unit, name)
 				order = 5,
 				type = "range",
 				name = L["WIDTH"],
-				min = 96, max = 512, step = 2,
+				min = 96, max = 512, step = 1, bigStep = 2,
 				get = function()
 					return C.db.profile.units[unit].width
 				end,
@@ -104,7 +104,7 @@ local function getUnitFrameOptions(order, unit, name)
 				order = 6,
 				type = "range",
 				name = L["HEIGHT"],
-				min = 28, max = 256, step = 2,
+				min = 28, max = 256, step = 1, bigStep = 2,
 				get = function()
 					return C.db.profile.units[unit].height
 				end,
