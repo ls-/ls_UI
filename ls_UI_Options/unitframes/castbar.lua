@@ -126,7 +126,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "range",
 				name = L["HEIGHT"],
-				min = 8, max = 32, step = 4,
+				min = 8, max = 32, step = 1, bigStep = 2,
 				set = function(_, value)
 					if C.db.profile.units[unit].castbar.height ~= value then
 						C.db.profile.units[unit].castbar.height = value

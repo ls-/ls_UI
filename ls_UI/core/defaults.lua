@@ -640,7 +640,7 @@ D.profile = {
 				latency = true,
 				detached = true,
 				width_override = 226,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -854,7 +854,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 10,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -1052,7 +1052,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -1406,7 +1406,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -1780,7 +1780,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
