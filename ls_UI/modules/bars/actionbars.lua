@@ -221,6 +221,10 @@ function bar1_proto:UpdateConfig()
 
 		MODULE:UpdateMainBarMaxButtons(C.db.profile.bars.bar1.num)
 		MODULE:UpdateScale(C.db.profile.bars.bar1.scale)
+	else
+		if C.db.profile.bars.bar1.num > 12 then
+			C.db.profile.bars.bar1.num = 12
+		end
 	end
 end
 
