@@ -14,6 +14,9 @@ local isFinilized = false
 local barController
 local animController
 
+local NUM_STATIC_BUTTONS = 6
+local NUM_PER_SEGMENT = 6
+
 local ENDCAPS = {
 	[1] = {
 		["ALLIANCE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
@@ -30,7 +33,7 @@ local ENDCAPS = {
 local WIDGETS = {
 	["ACTION_BAR"] = {
 		frame_level_offset = 2,
-		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 15},
+		point = {"BOTTOMLEFT", "LSActionBarControllerBottom", "BOTTOMLEFT", -108, 15}, -- 36 * 3
 		children = {
 			"LSActionBar2",
 			"LSActionBar3",
@@ -44,6 +47,10 @@ local WIDGETS = {
 		},
 		attributes = {
 			["_childupdate-numbuttons"] = [[
+				if message > 12 then
+					message = 12
+				end
+
 				self:Hide()
 				self:SetWidth(36 * message)
 				self:Show()
@@ -67,8 +74,8 @@ local WIDGETS = {
 	["XP_BAR"] = {
 		frame_level_offset = 3,
 		point = {"BOTTOM", "LSActionBarControllerBottom", "BOTTOM", 0, 0},
-		on_play = function(frame, newstate)
-			frame:UpdateSize(756 / 2 + 36 * (newstate - 6), 12)
+		on_play = function(frame, totalButtons)
+			frame:UpdateSize(756 / 2 + 36 * (totalButtons - NUM_STATIC_BUTTONS), 12)
 		end,
 	},
 }
@@ -97,6 +104,50 @@ function MODULE:IsRestricted()
 	return isInit
 end
 
+local function adjustTopTextures(totalButtons)
+	local numButtons = totalButtons - NUM_STATIC_BUTTONS
+	local numFull = numButtons / NUM_PER_SEGMENT
+	local numActive = numFull + 0.9
+
+	animController.Top:SetWidth(totalButtons == 6 and 0.001 or 36 * numButtons)
+
+	for i = 1, 3 do
+		if i > numFull then
+			if i > numActive then
+				animController.Top["Mid" .. i]:SetWidth(0.0001)
+			else
+				animController.Top["Mid" .. i]:SetWidth(36 * (numButtons % NUM_PER_SEGMENT))
+				animController.Top["Mid" .. i]:SetTexCoord(233 / 2048, (233 + 72 * (numButtons % NUM_PER_SEGMENT)) / 2048, 1 / 256, 91 / 256)
+			end
+		else
+			animController.Top["Mid" .. i]:SetWidth(36 * NUM_PER_SEGMENT)
+			animController.Top["Mid" .. i]:SetTexCoord(233 / 2048, (233 + 72 * NUM_PER_SEGMENT) / 2048, 1 / 256, 91 / 256)
+		end
+	end
+end
+
+local function adjustBottomTextures(totalButtons)
+	local numButtons = totalButtons - NUM_STATIC_BUTTONS
+	local numFull = numButtons / NUM_PER_SEGMENT
+	local numActive = numFull + 0.9
+
+	animController.Bottom:SetWidth(totalButtons == 6 and 0.001 or 36 * numButtons)
+
+	for i = 1, 3 do
+		if i > numFull then
+			if i > numActive then
+				animController.Bottom["Mid" .. i]:SetWidth(0.0001)
+			else
+				animController.Bottom["Mid" .. i]:SetWidth(36 * (numButtons % NUM_PER_SEGMENT))
+				animController.Bottom["Mid" .. i]:SetTexCoord(569 / 2048, (569 + 72 * (numButtons % NUM_PER_SEGMENT)) / 2048, 92 / 256, 138 / 256)
+			end
+		else
+			animController.Bottom["Mid" .. i]:SetWidth(36 * NUM_PER_SEGMENT)
+			animController.Bottom["Mid" .. i]:SetTexCoord(569 / 2048, (569 + 72 * NUM_PER_SEGMENT) / 2048, 92 / 256, 138 / 256)
+		end
+	end
+end
+
 function MODULE:SetupActionBarController()
 	if not isInit and PrC.db.profile.bars.restricted then
 		barController = CreateFrame("Frame", "LSActionBarController", UIParent, "SecureHandlerStateTemplate")
@@ -110,18 +161,15 @@ function MODULE:SetupActionBarController()
 
 			barController.Shuffle:Play()
 		end
-		barController.UpdateSimple = function(_, newstate)
+		barController.UpdateInsecure = function(_, totalButtons)
 			for _, widget in next, WIDGETS do
 				if widget.frame and widget.on_play then
-					widget.on_play(widget.frame, newstate)
+					widget.on_play(widget.frame, totalButtons)
 				end
 			end
 
-			animController.Top:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
-			animController.Top.Mid:SetTexCoord(233 / 2048, (233 + 72 * (newstate - 6)) / 2048, 1 / 256, 91 / 256)
-
-			animController.Bottom:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
-			animController.Bottom.Mid:SetTexCoord(569 / 2048, (569 + 72 * (newstate - 6)) / 2048, 92 / 256, 138 / 256)
+			adjustTopTextures(totalButtons)
+			adjustBottomTextures(totalButtons)
 		end
 
 		-- These frames are used as anchors/parents for secure/protected frames
@@ -145,69 +193,101 @@ function MODULE:SetupActionBarController()
 		animController:SetFrameLevel(barController:GetFrameLevel())
 		animController:SetAllPoints(barController)
 
-		top = CreateFrame("Frame", nil, animController)
-		top:SetFrameLevel(animController:GetFrameLevel() + 1)
-		top:SetPoint("BOTTOM", 0, 28 / 2)
-		top:SetSize(432 / 2, 90 / 2)
-		animController.Top = top
+		local topInsecure = CreateFrame("Frame", nil, animController)
+		topInsecure:SetFrameLevel(animController:GetFrameLevel() + 1)
+		topInsecure:SetPoint("BOTTOM", 0, 28 / 2)
+		topInsecure:SetSize(432 / 2, 90 / 2)
+		animController.Top = topInsecure
 
-		local texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(1 / 2048, 233 / 2048, 1 / 256, 91 / 256)
-		texture:SetPoint("BOTTOMRIGHT", top, "BOTTOMLEFT", 0, 0)
-		texture:SetSize(232 / 2, 90 / 2)
-		top.Left = texture
+		local topLeft = topInsecure:CreateTexture(nil, "ARTWORK")
+		topLeft:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		topLeft:SetTexCoord(1 / 2048, 233 / 2048, 1 / 256, 91 / 256)
+		topLeft:SetPoint("BOTTOMRIGHT", topInsecure, "BOTTOMLEFT", 0, 0)
+		topLeft:SetSize(232 / 2, 90 / 2)
+		topInsecure.Left = topLeft
 
-		texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(233 / 2048, 665 / 2048, 1 / 256, 91 / 256)
-		texture:SetAllPoints()
-		top.Mid = texture
+		local topMidLeft = topInsecure:CreateTexture(nil, "ARTWORK")
+		topMidLeft:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		topMidLeft:SetTexCoord(233 / 2048, 665 / 2048, 1 / 256, 91 / 256)
+		topMidLeft:SetPoint("BOTTOMLEFT", topInsecure, "BOTTOMLEFT", 0, 0)
+		topMidLeft:SetSize(0.001, 90 / 2)
+		topInsecure.Mid1 = topMidLeft
 
-		texture = top:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(665 / 2048, 897 / 2048, 1 / 256, 91 / 256)
-		texture:SetPoint("BOTTOMLEFT", top, "BOTTOMRIGHT", 0, 0)
-		texture:SetSize(232 / 2, 90 / 2)
-		top.Right = texture
+		local topMidRight = topInsecure:CreateTexture(nil, "ARTWORK")
+		topMidRight:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		topMidRight:SetTexCoord(233 / 2048, 665 / 2048, 1 / 256, 91 / 256)
+		topMidRight:SetPoint("BOTTOMRIGHT", topInsecure, "BOTTOMRIGHT", 0, 0)
+		topMidRight:SetSize(0.001, 90 / 2)
+		topInsecure.Mid3 = topMidRight
 
-		bottom = CreateFrame("Frame", nil, animController)
-		bottom:SetFrameLevel(animController:GetFrameLevel() + 7)
-		bottom:SetPoint("BOTTOM", 0, 0)
-		bottom:SetSize(432 / 2, 46 / 2)
-		animController.Bottom = bottom
+		local topMidCenter = topInsecure:CreateTexture(nil, "ARTWORK")
+		topMidCenter:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		topMidCenter:SetTexCoord(233 / 2048, 665 / 2048, 1 / 256, 91 / 256)
+		topMidCenter:SetPoint("BOTTOMLEFT", topMidLeft, "BOTTOMRIGHT", 0, 0)
+		topMidCenter:SetPoint("BOTTOMRIGHT", topMidRight, "BOTTOMLEFT", 0, 0)
+		topMidCenter:SetSize(0.001, 90 / 2)
+		topInsecure.Mid2 = topMidCenter
 
-		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(1 / 2048, 569 / 2048, 92 / 256, 138 / 256)
-		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", 0, 0)
-		texture:SetSize(568 / 2, 46 / 2)
-		bottom.Left = texture
+		local topRight = topInsecure:CreateTexture(nil, "ARTWORK")
+		topRight:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		topRight:SetTexCoord(665 / 2048, 897 / 2048, 1 / 256, 91 / 256)
+		topRight:SetPoint("BOTTOMLEFT", topInsecure, "BOTTOMRIGHT", 0, 0)
+		topRight:SetSize(232 / 2, 90 / 2)
+		topInsecure.Right = topRight
 
-		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(569 / 2048, 1001 / 2048, 92 / 256, 138 / 256)
-		texture:SetAllPoints()
-		bottom.Mid = texture
+		local bottomInsecure = CreateFrame("Frame", nil, animController)
+		bottomInsecure:SetFrameLevel(animController:GetFrameLevel() + 7)
+		bottomInsecure:SetPoint("BOTTOM", 0, 0)
+		bottomInsecure:SetSize(432 / 2, 46 / 2)
+		animController.Bottom = bottomInsecure
 
-		texture = bottom:CreateTexture(nil, "ARTWORK")
-		texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
-		texture:SetTexCoord(1001 / 2048, 1569 / 2048, 92 / 256, 138 / 256)
-		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 0, 0)
-		texture:SetSize(568 / 2, 46 / 2)
-		bottom.Right = texture
+		local bottomLeft = bottomInsecure:CreateTexture(nil, "ARTWORK")
+		bottomLeft:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		bottomLeft:SetTexCoord(1 / 2048, 569 / 2048, 92 / 256, 138 / 256)
+		bottomLeft:SetPoint("BOTTOMRIGHT", bottomInsecure, "BOTTOMLEFT", 0, 0)
+		bottomLeft:SetSize(568 / 2, 46 / 2)
+		bottomInsecure.Left = bottomLeft
 
-		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexCoord(1 / 256, 189 / 256, 1 / 128, 125 / 128)
-		texture:SetPoint("BOTTOMRIGHT", bottom, "BOTTOMLEFT", -92, 14)
-		texture:SetSize(188 / 2, 124 / 2)
-		animController.LeftCap = texture
+		local bottomMidLeft = bottomInsecure:CreateTexture(nil, "ARTWORK")
+		bottomMidLeft:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		bottomMidLeft:SetTexCoord(569 / 2048, 1001 / 2048, 92 / 256, 138 / 256)
+		bottomMidLeft:SetPoint("BOTTOMLEFT", bottomInsecure, "BOTTOMLEFT", 0, 0)
+		bottomMidLeft:SetSize(0.001, 46 / 2)
+		bottomInsecure.Mid1 = bottomMidLeft
 
-		texture = bottom:CreateTexture(nil, "ARTWORK", nil, -1)
-		texture:SetTexCoord(189 / 256, 1 / 256, 1 / 128, 125 / 128)
-		texture:SetPoint("BOTTOMLEFT", bottom, "BOTTOMRIGHT", 92, 14)
-		texture:SetSize(188 / 2, 124 / 2)
-		animController.RightCap = texture
+		local bottomMidRight = bottomInsecure:CreateTexture(nil, "ARTWORK")
+		bottomMidRight:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		bottomMidRight:SetTexCoord(569 / 2048, 1001 / 2048, 92 / 256, 138 / 256)
+		bottomMidRight:SetPoint("BOTTOMRIGHT", bottomInsecure, "BOTTOMRIGHT", 0, 0)
+		bottomMidRight:SetSize(0.001, 46 / 2)
+		bottomInsecure.Mid3 = bottomMidRight
+
+		local bottomMidCenter = bottomInsecure:CreateTexture(nil, "ARTWORK")
+		bottomMidCenter:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		bottomMidCenter:SetTexCoord(569 / 2048, 1001 / 2048, 92 / 256, 138 / 256)
+		bottomMidCenter:SetPoint("BOTTOMLEFT", bottomMidLeft, "BOTTOMRIGHT", 0, 0)
+		bottomMidCenter:SetPoint("BOTTOMRIGHT", bottomMidRight, "BOTTOMLEFT", 0, 0)
+		bottomMidCenter:SetSize(0.001, 46 / 2)
+		bottomInsecure.Mid2 = bottomMidCenter
+
+		local bottomRight = bottomInsecure:CreateTexture(nil, "ARTWORK")
+		bottomRight:SetTexture("Interface\\AddOns\\ls_UI\\assets\\console")
+		bottomRight:SetTexCoord(1001 / 2048, 1569 / 2048, 92 / 256, 138 / 256)
+		bottomRight:SetPoint("BOTTOMLEFT", bottomInsecure, "BOTTOMRIGHT", 0, 0)
+		bottomRight:SetSize(568 / 2, 46 / 2)
+		bottomInsecure.Right = bottomRight
+
+		local leftCap = bottomInsecure:CreateTexture(nil, "ARTWORK", nil, -1)
+		leftCap:SetTexCoord(1 / 256, 189 / 256, 1 / 128, 125 / 128)
+		leftCap:SetPoint("BOTTOMRIGHT", bottomInsecure, "BOTTOMLEFT", -92, 14)
+		leftCap:SetSize(188 / 2, 124 / 2)
+		animController.LeftCap = leftCap
+
+		local rightCap = bottomInsecure:CreateTexture(nil, "ARTWORK", nil, -1)
+		rightCap:SetTexCoord(189 / 256, 1 / 256, 1 / 128, 125 / 128)
+		rightCap:SetPoint("BOTTOMLEFT", bottomInsecure, "BOTTOMRIGHT", 92, 14)
+		rightCap:SetSize(188 / 2, 124 / 2)
+		animController.RightCap = rightCap
 
 		local ag = animController:CreateAnimationGroup()
 		ag:SetScript("OnPlay", function()
@@ -219,7 +299,13 @@ function MODULE:SetupActionBarController()
 
 					if widget.children then
 						for _, child in next, widget.children do
-							E:FadeOut(_G[child], nil, nil, nil, _G[child]:GetAlpha())
+							child = _G[child]
+
+							if newstate == 6 then
+								E:FadeOut(child, nil, nil, nil, child:GetAlpha())
+							else
+								child:SetAlpha(0)
+							end
 						end
 					end
 				end
@@ -234,11 +320,8 @@ function MODULE:SetupActionBarController()
 			end)
 
 			C_Timer.After(0.4, function()
-				animController.Top:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
-				animController.Top.Mid:SetTexCoord(233 / 2048, (233 + 72 * (newstate - 6)) / 2048, 1 / 256, 91 / 256)
-
-				animController.Bottom:SetWidth(newstate == 6 and 0.001 or 36 * (newstate - 6))
-				animController.Bottom.Mid:SetTexCoord(569 / 2048, (569 + 72 * (newstate - 6)) / 2048, 92 / 256, 138 / 256)
+				adjustTopTextures(newstate)
+				adjustBottomTextures(newstate)
 			end)
 		end)
 		ag:SetScript("OnFinished", function()
@@ -352,8 +435,8 @@ function MODULE:FinalizeActionBarController()
 
 		isFinilized = true
 
-		self:UpdateMainBarMaxButtons(LSActionBar1:GetAttribute("maxbuttons"))
-		self:UpdateScale(LSActionBar1:GetAttribute("scale"))
+		self:UpdateMainBarMaxButtons(C.db.profile.bars.bar1.num)
+		self:UpdateScale(C.db.profile.bars.bar1.scale)
 	end
 end
 
@@ -398,7 +481,7 @@ function MODULE:UpdateMainBarMaxButtons(num)
 	barController:Execute(([[
 		self:SetAttribute("numbuttons", %1$d)
 		self:ChildUpdate("numbuttons", %1$d)
-		self:CallMethod("UpdateSimple", %1$d)
+		self:CallMethod("UpdateInsecure", %1$d)
 
 		top:SetWidth(%1$d == 6 and 0.001 or 36 * (%1$d - 6))
 		bottom:SetWidth(%1$d == 6 and 0.001 or 36 * (%1$d - 6))

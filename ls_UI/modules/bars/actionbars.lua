@@ -219,10 +219,7 @@ function bar1_proto:UpdateConfig()
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 
-		self:SetAttribute("maxbuttons", self._config.num)
-		MODULE:UpdateMainBarMaxButtons(self._config.num)
-
-		self:SetAttribute("scale", C.db.profile.bars.bar1.scale)
+		MODULE:UpdateMainBarMaxButtons(C.db.profile.bars.bar1.num)
 		MODULE:UpdateScale(C.db.profile.bars.bar1.scale)
 	end
 end

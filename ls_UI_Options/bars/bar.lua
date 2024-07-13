@@ -150,11 +150,11 @@ function CONFIG:CreateBarOptions(order, barID, name)
 						if value < info.option.softMin then
 							value = info.option.min
 						end
+
+						C.db.profile.bars[barID].height = value
+
+						BARS:For(barID, "Update")
 					end
-
-					C.db.profile.bars[barID].height = value
-
-					BARS:For(barID, "Update")
 				end,
 			},
 			growth_dir = {
@@ -351,6 +351,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.visible.disabled = isModuleDisabledOrRestricted
 		if BARS:IsRestricted() then
 			temp.args.num.min = 6
+			temp.args.num.max = 24
 		end
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
 		temp.args.spacing.disabled = isModuleDisabledOrRestricted
