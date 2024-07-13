@@ -185,7 +185,7 @@ function button_proto:Update()
 	self.isToken = isToken
 
 	if spellID then
-		self.tooltipSubtext = GetSpellSubtext(spellID)
+		self.tooltipSubtext = C_Spell.GetSpellSubtext(spellID)
 	end
 
 	if PetHasActionBar() and isActive then

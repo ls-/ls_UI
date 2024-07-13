@@ -198,7 +198,6 @@ read_globals = {
 	"GetSpecialization",
 	"GetSpecializationInfo",
 	"GetSpecializationInfoByID",
-	"GetSpellSubtext",
 	"GetText",
 	"GetTime",
 	"GetTotemInfo",
