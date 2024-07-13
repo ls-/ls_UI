@@ -126,10 +126,16 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				name = L["PER_ROW"],
 				min = 1, max = 12, step = 1,
 			},
-			spacing = {
+			x_spacing = {
 				order = inc(1),
 				type = "range",
-				name = L["SPACING"],
+				name = L["X_SPACING"],
+				min = 4, max = 24, step = 1,
+			},
+			y_spacing = {
+				order = inc(1),
+				type = "range",
+				name = L["Y_SPACING"],
 				min = 4, max = 24, step = 1,
 			},
 			width = {
@@ -354,7 +360,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			temp.args.num.max = 24
 		end
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
-		temp.args.spacing.disabled = isModuleDisabledOrRestricted
+		temp.args.x_spacing.disabled = isModuleDisabledOrRestricted
+		temp.args.y_spacing.disabled = isModuleDisabledOrRestricted
 		temp.args.width.disabled = isModuleDisabledOrRestricted
 		temp.args.height.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
@@ -420,7 +427,8 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.num.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.per_row.max = 6
 		temp.args.per_row.disabled = isPetBattleBarDisabledOrRestricted
-		temp.args.spacing.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.x_spacing.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.y_spacing.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.width.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.height.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.growth_dir.disabled = isPetBattleBarDisabledOrRestricted

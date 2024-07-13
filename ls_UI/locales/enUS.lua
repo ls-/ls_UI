@@ -511,3 +511,5 @@ L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
 
 L["MAX_HEALTH_REDUCTION"] = "Health Reduction"
 L["GRADIENT"] = "Gradient"
+L["X_SPACING"] = "Horizontal Spacing"
+L["Y_SPACING"] = "Vertical Spacing"
