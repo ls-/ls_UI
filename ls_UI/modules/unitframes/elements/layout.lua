@@ -39,7 +39,7 @@ function frame_proto:UpdateLayout()
 end
 
 function frame_proto:UpdateInlay()
-	self.Inlay:SetAlpha(C.db.profile.units.inlay.alpha)
+	self.Inlay:SetAlpha(C.db.profile.units.inlay.gloss)
 end
 
 local insets_proto = {}

@@ -551,7 +551,7 @@ D.profile = {
 			},
 		},
 		inlay = {
-			alpha = 0.4,
+			gloss = 0.4,
 		},
 		change = {
 			smooth = true,

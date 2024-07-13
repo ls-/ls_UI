@@ -465,14 +465,14 @@ function CONFIG:CreateUnitFramesOptions(order)
 				type = "range",
 				name = L["GLOSS"],
 				disabled = isModuleDisabled,
-				min = 0, max = 1, step = 0.05,
+				min = 0, max = 1, step = 0.01, bigStep = 0.05,
 				isPercent = true,
 				get = function()
-					return C.db.profile.units.inlay.alpha
+					return C.db.profile.units.inlay.gloss
 				end,
 				set = function(_, value)
-					if C.db.profile.units.inlay.alpha ~= value then
-						C.db.profile.units.inlay.alpha = value
+					if C.db.profile.units.inlay.gloss ~= value then
+						C.db.profile.units.inlay.gloss = value
 
 						UNITFRAMES:ForEach("UpdateInlay")
 					end
