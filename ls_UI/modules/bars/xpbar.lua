@@ -110,10 +110,6 @@ do
 			E.Movers:Get(self):UpdateSize(width, height)
 		end
 
-		if not BARS:IsRestricted() then
-			E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
-		end
-
 		self._total = nil
 
 		self:UpdateSegments()
@@ -486,7 +482,7 @@ function BARS:CreateXPBar()
 		local texParent = CreateFrame("Frame", nil, bar)
 		texParent:SetAllPoints()
 		texParent:SetFrameLevel(bar:GetFrameLevel() + 3)
-		bar.TexParent = texParent
+		bar.TextureParent = texParent
 
 		local textParent = CreateFrame("Frame", nil, bar)
 		textParent:SetAllPoints()
@@ -497,6 +493,22 @@ function BARS:CreateXPBar()
 		bg:SetHorizTile(true)
 		bg:SetVertTile(true)
 		bg:SetAllPoints()
+
+		local gradient = texParent:CreateTexture(nil, "BORDER")
+		gradient:SetAllPoints(texParent)
+		gradient:SetSnapToPixelGrid(false)
+		gradient:SetTexelSnappingBias(0)
+		gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		gradient:SetGradient("VERTICAL", {r = 0, g = 0, b = 0, a = 0}, {r = 0, g = 0, b = 0, a = 0.4})
+		texParent.Gradient = gradient
+
+		if not BARS:IsRestricted() then
+			local border = E:CreateBorder(texParent)
+			border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-statusbar")
+			border:SetSize(16)
+			border:SetOffset(-4)
+			texParent.Border = border
+		end
 
 		for i = 1, MAX_SEGMENTS do
 			local segment = Mixin(CreateFrame("StatusBar", "$parentSegment" .. i, bar), segment_base_proto, segment_ext_proto)
@@ -553,6 +565,7 @@ function BARS:CreateXPBar()
 			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 			sep:SetVertTile(true)
 			sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+			sep:SetVertexColor(1, 0.6, 0)
 			sep:SetSize(12 / 2, 0)
 			sep:SetPoint("TOP", 0, 0)
 			sep:SetPoint("BOTTOM", 0, 0)

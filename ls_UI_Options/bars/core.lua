@@ -645,7 +645,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
-						min = 8, max = 32, step = 4,
+						min = 8, max = 32, step = 1, bigStep = 2,
 						disabled = isXPBarDisabledOrRestricted,
 						set = function(info, value)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
