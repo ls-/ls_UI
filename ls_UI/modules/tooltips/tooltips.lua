@@ -101,28 +101,6 @@ local function findLine(tooltip, start, pattern)
 	end
 end
 
-local function tooltipBarHook(self)
-	if self:IsForbidden() or self:GetParent():IsForbidden() then return end
-
-	self.Text:Hide()
-	self:SetStatusBarColor(C.db.global.colors.health:GetRGB())
-
-	local _, unit = self:GetParent():GetUnit()
-	if not unit then
-		self:GetParent():SetMinimumWidth(0)
-
-		return
-	end
-
-	local max = UnitHealthMax(unit)
-	if max > 1 then
-		self.Text:Show()
-		self.Text:SetFormattedText("%s / %s", E:FormatNumber(UnitHealth(unit)), E:FormatNumber(max))
-
-		self:GetParent():SetMinimumWidth(m_floor(self.Text:GetStringWidth() + 32))
-	end
-end
-
 function MODULE:IsInit()
 	return isInit
 end
@@ -458,6 +436,7 @@ function MODULE:Init()
 			end
 		end)
 
+		-- Status Bars
 		local function hideHealthBar(tooltip, tooltipData)
 			if tooltip.StatusBar then
 				if not tooltipData.healthGUID then
@@ -469,11 +448,34 @@ function MODULE:Init()
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Corpse, hideHealthBar)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, hideHealthBar)
 
-		-- Status Bars
+		local function tooltipBarHook(self)
+			if self:IsForbidden() or self:GetParent():IsForbidden() then return end
+
+			self.Text:Hide()
+			self:SetStatusBarColor(C.db.global.colors.health:GetRGB())
+
+			local _, unit = self:GetParent():GetUnit()
+			if not unit then
+				self:GetParent():SetMinimumWidth(0)
+
+				return
+			end
+
+			local max = UnitHealthMax(unit)
+			if max > 1 then
+				self.Text:Show()
+				self.Text:SetFormattedText("%s / %s", E:FormatNumber(UnitHealth(unit)), E:FormatNumber(max))
+
+				self:GetParent():SetMinimumWidth(m_floor(self.Text:GetStringWidth() + 32))
+			end
+		end
+
 		E:HandleStatusBar(GameTooltipStatusBar)
+		E:ReskinStatusBar(GameTooltipStatusBar)
+
 		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
-		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
+		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 3, -2)
+		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -3, -2)
 		GameTooltipStatusBar:HookScript("OnShow", tooltipBarHook)
 		GameTooltipStatusBar:HookScript("OnValueChanged", tooltipBarHook)
 
@@ -484,7 +486,7 @@ function MODULE:Init()
 				if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
 					if not child.handled then
 						E:HandleStatusBar(child)
-						E:SetStatusBarSkin(child, "HORIZONTAL-GLASS")
+						E:ReskinStatusBar(child)
 						child:SetHeight(10)
 					end
 
@@ -515,8 +517,6 @@ end
 function MODULE:Update()
 	if isInit then
 		GameTooltipStatusBar:SetHeight(C.db.profile.tooltips.health.height)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-" .. C.db.profile.tooltips.health.height)
-
 		GameTooltipStatusBar.Text:UpdateFont(C.db.profile.tooltips.health.text.size)
 	end
 end

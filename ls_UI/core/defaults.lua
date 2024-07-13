@@ -2781,9 +2781,9 @@ D.profile = {
 		target = true,
 		inspect = true,
 		health = {
-			height = 12,
+			height = 14,
 			text = {
-				size = 11,
+				size = 12,
 			},
 		},
 	},
