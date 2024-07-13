@@ -142,7 +142,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				order = inc(1),
 				type = "range",
 				name = L["WIDTH"],
-				min = 16, max = 64, step = 1,
+				min = 8, max = 64, step = 1,
 			},
 			height = {
 				order = inc(1),
@@ -150,7 +150,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				name = L["HEIGHT"],
 				desc = L["HEIGHT_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
-				softMin = 16,
+				softMin = 8,
 				set = function(info, value)
 					if C.db.profile.bars[barID].height ~= value then
 						if value < info.option.softMin then

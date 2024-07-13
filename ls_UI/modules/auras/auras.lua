@@ -161,7 +161,7 @@ local function handleButton(button, header)
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-8)
+	border:SetOffset(-4)
 	button.Border = border
 
 	button.Cooldown = E.Cooldowns.Create(button)

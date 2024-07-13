@@ -106,6 +106,8 @@ local function setIcon(button, texture, l, r, t, b)
 		icon:SetDrawLayer("BACKGROUND", 0)
 	end
 
+	icon:SetSnapToPixelGrid(false)
+	icon:SetTexelSnappingBias(0)
 	icon:SetAllPoints()
 	icon:SetTexCoord(l or 0.0625, r or 0.9375, t or 0.0625, b or 0.9375)
 
@@ -180,7 +182,7 @@ local function skinButton(button)
 
 	local icon = button.icon or button.Icon
 	if icon then
-		setIcon(button.icon or button.Icon)
+		setIcon(icon)
 
 		local iconMask = button.IconMask
 		if iconMask then
@@ -314,7 +316,7 @@ local function skinButton(button)
 	border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-8)
+	border:SetOffset(-4)
 	button.Border_ = border
 
 	local pushedTexture = button.GetPushedTexture and button:GetPushedTexture()
@@ -510,7 +512,7 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
 	border:SetSize(16)
-	border:SetOffset(-8)
+	border:SetOffset(-4)
 	button.Border = border
 
 	setHighlightTexture(button)
