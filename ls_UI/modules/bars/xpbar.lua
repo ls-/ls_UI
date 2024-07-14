@@ -110,7 +110,7 @@ do
 			E.Movers:Get(self):UpdateSize(width, height)
 		end
 
-		self._total = nil
+		self.total = nil
 
 		self:UpdateSegments()
 	end
@@ -160,28 +160,27 @@ do
 			end
 		end
 
-		if self._total ~= index then
+		if self.total ~= index then
 			for i = 1, MAX_SEGMENTS do
 				if i <= index then
-					self[i]:SetSize(unpack(LAYOUT[index][i].size))
-					self[i]:Show()
+					self[i]:SetWidth(LAYOUT[index][i].size[1])
 
-					if i == 1 then
-						self[i]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
+					self[i].Extension:SetWidth(LAYOUT[index][i].size[1])
+				else
+					if index == 0 and i == 1 then
+						self[i]:SetWidth(LAYOUT[1][1].size[1])
+						self[i]:Update(1, 1, 0, C.db.global.colors.class[E.PLAYER_CLASS], DEFAULT_TEXTURE)
 					else
-						self[i]:SetPoint("TOPLEFT", self[i - 1], "TOPRIGHT", 2, 0)
+						self[i]:SetWidth(0.0001)
+						self[i]:SetValue(0)
+
+						self[i].Extension:SetWidth(0.0001)
+						self[i].Extension:SetValue(0)
 					end
 
-					self[i].Extension:SetSize(unpack(LAYOUT[index][i].size))
-				else
-					self[i]:SetMinMaxValues(0, 1)
-					self[i]:SetValue(0)
-					self[i]:ClearAllPoints()
-					self[i]:Hide()
-
-					self[i].Extension:SetMinMaxValues(0, 1)
-					self[i].Extension:SetValue(0)
-
+					self[i].cur = nil
+					self[i].max = nil
+					self[i].bonus = nil
 					self[i].tooltipInfo = nil
 				end
 			end
@@ -194,18 +193,7 @@ do
 				end
 			end
 
-			if index == 0 then
-				self[1]:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
-				self[1]:SetSize(unpack(LAYOUT[1][1].size))
-				self[1]:SetMinMaxValues(0, 1)
-				self[1]:Show()
-				self[1]:SetValue(1)
-				self[1]:UpdateText(1, 1)
-				self[1]:SetStatusBarTexture(DEFAULT_TEXTURE)
-				self[1]:SetSmoothStatusBarColor(C.db.global.colors.class[E.PLAYER_CLASS]:GetRGB())
-			end
-
-			self._total = index
+			self.total = index
 		end
 	end
 
@@ -307,25 +295,26 @@ do
 		self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
 		self.Extension:SetSmoothStatusBarColor(color:GetRGBA(0.4))
 
-		if self._value ~= cur or self._max ~= max then
-			self:SetMinMaxValues(0, max)
-			self:SetValue(cur)
+		if self.cur ~= cur or self.max ~= max then
+			self:SetValue(cur / max)
 			self:UpdateText(cur, max)
+
+			self.cur = cur
+			self.max = max
 		end
 
-		if self._bonus ~= bonus then
+		if self.bonus ~= bonus then
 			if bonus and bonus > 0 then
 				if cur + bonus > max then
 					bonus = max - cur
 				end
-				self.Extension:SetMinMaxValues(0, max)
-				self.Extension:SetValue(bonus)
+
+				self.Extension:SetValue(bonus / max)
 			else
-				self.Extension:SetMinMaxValues(0, 1)
 				self.Extension:SetValue(0)
 			end
 
-			self._bonus = bonus
+			self.bonus = bonus
 		end
 	end
 
@@ -449,8 +438,8 @@ do
 	end
 
 	function segment_ext_proto:UpdateText(cur, max)
-		cur = cur or self._value or 1
-		max = max or self._max or 1
+		cur = cur or self.cur or 1
+		max = max or self.max or 1
 
 		if cur == 1 and max == 1 then
 			self.Text:SetText(nil)
@@ -487,6 +476,7 @@ function BARS:CreateXPBar()
 		local textParent = CreateFrame("Frame", nil, bar)
 		textParent:SetAllPoints()
 		textParent:SetFrameLevel(bar:GetFrameLevel() + 5)
+		bar.TextParent = textParent
 
 		local bg = bar:CreateTexture(nil, "ARTWORK")
 		bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
@@ -515,13 +505,21 @@ function BARS:CreateXPBar()
 			segment:SetFrameLevel(bar:GetFrameLevel() + 1)
 			segment:SetStatusBarTexture(DEFAULT_TEXTURE)
 			segment:SetStatusBarColor(1, 1, 1, 0)
+			segment:SetMinMaxValues(0, 1)
 			segment:SetHitRectInsets(0, 0, -4, -4)
+			segment:SetPoint("TOP", 0, 0)
+			segment:SetPoint("BOTTOM", 0, 0)
 			segment:SetClipsChildren(true)
 			segment:SetScript("OnEnter", segment.OnEnter)
 			segment:SetScript("OnLeave", segment.OnLeave)
-			segment:Hide()
 			E:SmoothBar(segment)
 			bar[i] = segment
+
+			if i == 1 then
+				segment:SetPoint("LEFT", bar, "LEFT", 0, 0)
+			else
+				segment:SetPoint("LEFT", bar[i - 1], "RIGHT", 2, 0)
+			end
 
 			segment.Texture = segment:GetStatusBarTexture()
 
@@ -537,6 +535,7 @@ function BARS:CreateXPBar()
 			ext:SetFrameLevel(segment:GetFrameLevel())
 			ext:SetStatusBarTexture(DEFAULT_TEXTURE)
 			ext:SetStatusBarColor(1, 1, 1, 0)
+			ext:SetMinMaxValues(0, 1)
 			ext:SetPoint("TOPLEFT", segment.Texture, "TOPRIGHT")
 			ext:SetPoint("BOTTOMLEFT", segment.Texture, "BOTTOMRIGHT")
 			E:SmoothBar(ext)
@@ -558,22 +557,22 @@ function BARS:CreateXPBar()
 			text:SetAllPoints(segment)
 			text:Hide()
 			segment.Text = text
-		end
 
-		for i = 1, MAX_SEGMENTS - 1 do
-			local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
-			sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
-			sep:SetVertTile(true)
-			sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
-			sep:SetVertexColor(1, 0.6, 0)
-			sep:SetSize(12 / 2, 0)
-			sep:SetPoint("TOP", 0, 0)
-			sep:SetPoint("BOTTOM", 0, 0)
-			sep:SetPoint("LEFT", bar[i], "RIGHT", -2, 0)
-			sep:SetSnapToPixelGrid(false)
-			sep:SetTexelSnappingBias(0)
-			sep:Hide()
-			bar[i].Sep = sep
+			if i < MAX_SEGMENTS then
+				local sep = texParent:CreateTexture(nil, "ARTWORK", nil, -7)
+				sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
+				sep:SetVertTile(true)
+				sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+				sep:SetVertexColor(1, 0.6, 0)
+				sep:SetSize(12 / 2, 0)
+				sep:SetPoint("TOP", 0, 0)
+				sep:SetPoint("BOTTOM", 0, 0)
+				sep:SetPoint("LEFT", bar[i], "RIGHT", -2, 0)
+				sep:SetSnapToPixelGrid(false)
+				sep:SetTexelSnappingBias(0)
+				sep:Hide()
+				bar[i].Sep = sep
+			end
 		end
 
 		bar:SetScript("OnEvent", bar.OnEvent)
