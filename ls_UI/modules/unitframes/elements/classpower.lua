@@ -324,9 +324,9 @@ do
 
 	function stagger_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self)
+			E.StatusBars:Smooth(self)
 		else
-			E:DesmoothBar(self)
+			E.StatusBars:Desmooth(self)
 		end
 	end
 

@@ -66,9 +66,9 @@ end
 
 function element_proto:UpdateSmoothing()
 	if C.db.profile.units.change.smooth then
-		E:SmoothBar(self)
+		E.StatusBars:Smooth(self)
 	else
-		E:DesmoothBar(self)
+		E.StatusBars:Desmooth(self)
 	end
 end
 
@@ -279,11 +279,11 @@ do
 
 	function power_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self.mainBar_)
-			E:SmoothBar(self.altBar_)
+			E.StatusBars:Smooth(self.mainBar_)
+			E.StatusBars:Smooth(self.altBar_)
 		else
-			E:DesmoothBar(self.mainBar_)
-			E:DesmoothBar(self.altBar_)
+			E.StatusBars:Desmooth(self.mainBar_)
+			E.StatusBars:Desmooth(self.altBar_)
 		end
 	end
 

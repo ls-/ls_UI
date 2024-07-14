@@ -6,8 +6,6 @@ local _G = getfenv(0)
 local m_abs = _G.math.abs
 local next = _G.next
 local s_match = _G.string.match
-local s_split = _G.string.split
-local unpack = _G.unpack
 
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
@@ -19,8 +17,9 @@ local module = {
 	xpbar = {},
 	other = {},
 }
+E.StatusBars = module
 
-function E:HandleStatusBar(bar, isRecursive)
+function module:Handle(bar, isRecursive)
 	if bar.handled then return end
 
 	local children = {bar:GetChildren()}
@@ -53,7 +52,7 @@ function E:HandleStatusBar(bar, isRecursive)
 
 	for _, child in next, children do
 		if child:IsObjectType("StatusBar") then
-			tbg, ttext, tsbt = self:HandleStatusBar(child, true)
+			tbg, ttext, tsbt = self:Handle(child, true)
 		end
 	end
 
@@ -109,33 +108,35 @@ function E:HandleStatusBar(bar, isRecursive)
 	end
 end
 
-local gradientColorMin = {r = 0, g = 0, b = 0, a = 0}
-local gradientColorMax = {r = 0, g = 0, b = 0, a = 0.4}
+do
+	local gradientColorMin = {r = 0, g = 0, b = 0, a = 0}
+	local gradientColorMax = {r = 0, g = 0, b = 0, a = 0.4}
 
-function E:ReskinStatusBar(bar)
-	if bar.TextureParent then return end
+	function module:Reskin(bar)
+		if bar.TextureParent then return end
 
-	local textureParent = CreateFrame("Frame", nil, bar)
-	textureParent:SetFrameLevel(bar:GetFrameLevel() + 2)
-	textureParent:SetAllPoints()
-	bar.TextureParent = textureParent
+		local textureParent = CreateFrame("Frame", nil, bar)
+		textureParent:SetFrameLevel(bar:GetFrameLevel() + 2)
+		textureParent:SetAllPoints()
+		bar.TextureParent = textureParent
 
-	local border = E:CreateBorder(textureParent, "BORDER")
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-statusbar")
-	border:SetSize(16)
-	border:SetOffset(-4)
-	textureParent.Border = border
+		local border = E:CreateBorder(textureParent, "BORDER")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-statusbar")
+		border:SetSize(16)
+		border:SetOffset(-4)
+		textureParent.Border = border
 
-	local gradient = textureParent:CreateTexture(nil, "BORDER", nil, -1)
-	gradient:SetAllPoints(textureParent)
-	gradient:SetSnapToPixelGrid(false)
-	gradient:SetTexelSnappingBias(0)
-	gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-	gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
-	textureParent.Gradient = gradient
+		local gradient = textureParent:CreateTexture(nil, "BORDER", nil, -1)
+		gradient:SetAllPoints(textureParent)
+		gradient:SetSnapToPixelGrid(false)
+		gradient:SetTexelSnappingBias(0)
+		gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+		textureParent.Gradient = gradient
 
-	if bar.Text then
-		bar.Text:SetParent(textureParent)
+		if bar.Text then
+			bar.Text:SetParent(textureParent)
+		end
 	end
 end
 
@@ -245,7 +246,7 @@ do
 		self._max = max
 	end
 
-	function E:SmoothBar(bar)
+	function module:Smooth(bar)
 		if handledObjects[bar] then return end
 
 		bar._min, bar._max = bar:GetMinMaxValues()
@@ -259,7 +260,7 @@ do
 		handledObjects[bar] = true
 	end
 
-	function E:DesmoothBar(bar)
+	function module:Desmooth(bar)
 		if not handledObjects[bar] then return end
 
 		remove(bar)
@@ -275,10 +276,6 @@ do
 		end
 
 		handledObjects[bar] = nil
-	end
-
-	function E:SetSmoothingAmount(v)
-		AMOUNT = clamp(v, 0.3, 0.6)
 	end
 end
 
@@ -342,5 +339,3 @@ do
 	end
 
 end
-
-E.StatusBars = module

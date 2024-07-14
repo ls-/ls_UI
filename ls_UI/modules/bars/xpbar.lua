@@ -509,7 +509,7 @@ function BARS:CreateXPBar()
 			segment:SetClipsChildren(true)
 			segment:SetScript("OnEnter", segment.OnEnter)
 			segment:SetScript("OnLeave", segment.OnLeave)
-			E:SmoothBar(segment)
+			E.StatusBars:Smooth(segment)
 			bar[i] = segment
 
 			if i == 1 then
@@ -536,7 +536,7 @@ function BARS:CreateXPBar()
 			ext:SetMinMaxValues(0, 1)
 			ext:SetPoint("TOPLEFT", segment.Texture, "TOPRIGHT")
 			ext:SetPoint("BOTTOMLEFT", segment.Texture, "BOTTOMRIGHT")
-			E:SmoothBar(ext)
+			E.StatusBars:Smooth(ext)
 			segment.Extension = ext
 
 			ext.Texture = ext:GetStatusBarTexture()

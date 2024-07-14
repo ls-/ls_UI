@@ -74,11 +74,11 @@ do
 
 	function element_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self)
-			E:SmoothBar(self.TempLoss_)
+			E.StatusBars:Smooth(self)
+			E.StatusBars:Smooth(self.TempLoss_)
 		else
-			E:DesmoothBar(self)
-			E:DesmoothBar(self.TempLoss_)
+			E.StatusBars:Desmooth(self)
+			E.StatusBars:Desmooth(self.TempLoss_)
 		end
 	end
 
@@ -163,15 +163,15 @@ do
 
 	function element_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self.myBar)
-			E:SmoothBar(self.otherBar)
-			E:SmoothBar(self.absorbBar)
-			E:SmoothBar(self.healAbsorbBar)
+			E.StatusBars:Smooth(self.myBar)
+			E.StatusBars:Smooth(self.otherBar)
+			E.StatusBars:Smooth(self.absorbBar)
+			E.StatusBars:Smooth(self.healAbsorbBar)
 		else
-			E:DesmoothBar(self.myBar)
-			E:DesmoothBar(self.otherBar)
-			E:DesmoothBar(self.absorbBar)
-			E:DesmoothBar(self.healAbsorbBar)
+			E.StatusBars:Desmooth(self.myBar)
+			E.StatusBars:Desmooth(self.otherBar)
+			E.StatusBars:Desmooth(self.absorbBar)
+			E.StatusBars:Desmooth(self.healAbsorbBar)
 		end
 	end
 

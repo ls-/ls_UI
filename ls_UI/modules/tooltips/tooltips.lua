@@ -470,8 +470,7 @@ function MODULE:Init()
 			end
 		end
 
-		E:HandleStatusBar(GameTooltipStatusBar)
-		E:ReskinStatusBar(GameTooltipStatusBar)
+		E.StatusBars:Reskin(E.StatusBars:Handle(GameTooltipStatusBar))
 
 		GameTooltipStatusBar:ClearAllPoints()
 		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 3, -2)
@@ -485,8 +484,8 @@ function MODULE:Init()
 			for _, child in next, {self:GetChildren()} do
 				if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
 					if not child.handled then
-						E:HandleStatusBar(child)
-						E:ReskinStatusBar(child)
+						E.StatusBars:Reskin(E.StatusBars:Handle(child))
+
 						child:SetHeight(10)
 					end
 
