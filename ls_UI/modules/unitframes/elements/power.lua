@@ -61,7 +61,7 @@ function element_proto:UpdateColors()
 end
 
 function element_proto:UpdateTextures()
-	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+	self:UpdateStatusBarTexture()
 end
 
 function element_proto:UpdateSmoothing()
@@ -130,6 +130,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "power")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:SetClipsChildren(true)
 		element:Hide()
@@ -180,6 +181,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "power")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:Hide()
 
@@ -236,6 +238,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto, power_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "power")
 		element:SetClipsChildren(true)
 		element:Hide()
 
@@ -267,6 +270,11 @@ do
 	function power_proto:UpdateColors()
 		self.mainBar_:SetStatusBarColor(C.db.global.colors.prediction.power_cost:GetRGB())
 		self.altBar_:SetStatusBarColor(C.db.global.colors.prediction.power_cost:GetRGB())
+	end
+
+	function power_proto:UpdateTextures()
+		self.mainBar_:UpdateStatusBarTexture()
+		self.altBar_:UpdateStatusBarTexture()
 	end
 
 	function power_proto:UpdateSmoothing()
@@ -314,6 +322,7 @@ do
 		end
 
 		element:UpdateColors()
+		element:UpdateTextures()
 
 		local isEnabled = config1.enabled or config2.enabled
 		if isEnabled and not self:IsElementEnabled("PowerPrediction") then
@@ -332,6 +341,7 @@ do
 
 		local mainBar = CreateFrame("StatusBar", nil, parent1)
 		mainBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(mainBar, "power")
 		mainBar:SetReverseFill(true)
 		mainBar:SetPoint("TOP")
 		mainBar:SetPoint("BOTTOM")
@@ -340,6 +350,7 @@ do
 
 		local altBar = CreateFrame("StatusBar", nil, parent2)
 		altBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(altBar, "power")
 		altBar:SetReverseFill(true)
 		altBar:SetPoint("TOP")
 		altBar:SetPoint("BOTTOM")

@@ -69,7 +69,7 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self:UpdateStatusBarTexture()
 	end
 
 	function element_proto:UpdateSmoothing()
@@ -113,6 +113,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "health")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:SetClipsChildren(true)
 		element._texture = element:GetStatusBarTexture()
@@ -155,9 +156,9 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self.myBar:UpdateStatusBarTexture()
+		self.otherBar:UpdateStatusBarTexture()
+		self.healAbsorbBar:UpdateStatusBarTexture()
 	end
 
 	function element_proto:UpdateSmoothing()
@@ -218,6 +219,7 @@ do
 		parent.MyHeal = myBar
 
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(myBar, "health")
 		myBar._texture = myBar:GetStatusBarTexture()
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
@@ -228,6 +230,7 @@ do
 		parent.OtherHeal = otherBar
 
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(otherBar, "health")
 		otherBar._texture = otherBar:GetStatusBarTexture()
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
@@ -252,6 +255,7 @@ do
 		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(healAbsorbBar, "health")
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
 
 		return Mixin({

@@ -16,8 +16,6 @@ local MAX_SEGMENTS = 4
 local REPUTATION_TEMPLATE = "%s: %s"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
-local DEFAULT_TEXTURE = "Interface\\BUTTONS\\WHITE8X8"
-local AZERITE_TEXTURE = "Interface\\AddOns\\ls_UI\\assets\\statusbar-azerite-fill"
 local RENOWN_PLUS = s_trim(RENOWN_LEVEL_LABEL) .. "+"
 
 local CFG = {
@@ -169,7 +167,7 @@ do
 				else
 					if index == 0 and i == 1 then
 						self[i]:SetWidth(LAYOUT[1][1].size[1])
-						self[i]:Update(1, 1, 0, C.db.global.colors.class[E.PLAYER_CLASS], DEFAULT_TEXTURE)
+						self[i]:Update(1, 1, 0, C.db.global.colors.class[E.PLAYER_CLASS])
 					else
 						self[i]:SetWidth(0.0001)
 						self[i]:SetValue(0)
@@ -288,11 +286,9 @@ do
 		end
 	end
 
-	function segment_ext_proto:Update(cur, max, bonus, color, texture)
-		self:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
+	function segment_ext_proto:Update(cur, max, bonus, color)
 		self:SetSmoothStatusBarColor(color:GetRGBA(1))
 
-		self.Extension:SetStatusBarTexture(texture or DEFAULT_TEXTURE)
 		self.Extension:SetSmoothStatusBarColor(color:GetRGBA(0.4))
 
 		if self.cur ~= cur or self.max ~= max then
@@ -327,7 +323,7 @@ do
 			line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
 		}
 
-		self:Update(cur, max, 0, C.db.global.colors.white, AZERITE_TEXTURE)
+		self:Update(cur, max, 0, C.db.global.colors.quality[6])
 	end
 
 	function segment_ext_proto:UpdateXP()
@@ -503,7 +499,8 @@ function BARS:CreateXPBar()
 		for i = 1, MAX_SEGMENTS do
 			local segment = Mixin(CreateFrame("StatusBar", "$parentSegment" .. i, bar), segment_base_proto, segment_ext_proto)
 			segment:SetFrameLevel(bar:GetFrameLevel() + 1)
-			segment:SetStatusBarTexture(DEFAULT_TEXTURE)
+			segment:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+			E.StatusBars:Capture(segment, "xpbar", segment.UpdateTextureCallback)
 			segment:SetStatusBarColor(1, 1, 1, 0)
 			segment:SetMinMaxValues(0, 1)
 			segment:SetHitRectInsets(0, 0, -4, -4)
@@ -533,7 +530,8 @@ function BARS:CreateXPBar()
 
 			local ext = Mixin(CreateFrame("StatusBar", nil, segment), segment_base_proto)
 			ext:SetFrameLevel(segment:GetFrameLevel())
-			ext:SetStatusBarTexture(DEFAULT_TEXTURE)
+			ext:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+			E.StatusBars:Capture(segment, "ext", segment.UpdateTextureCallback)
 			ext:SetStatusBarColor(1, 1, 1, 0)
 			ext:SetMinMaxValues(0, 1)
 			ext:SetPoint("TOPLEFT", segment.Texture, "TOPRIGHT")

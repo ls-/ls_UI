@@ -533,8 +533,11 @@ D.global = {
 	},
 	textures = {
 		statusbar = {
-			horiz = "Solid",
-			vert = "Solid",
+			health = "Solid",
+			castbar = "Solid",
+			power = "Solid",
+			xpbar = "Solid",
+			other = "Solid", -- tooltips
 		},
 	},
 }

@@ -12,6 +12,14 @@ local unpack = _G.unpack
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local module = {
+	health = {},
+	castbar = {},
+	power = {},
+	xpbar = {},
+	other = {},
+}
+
 function E:HandleStatusBar(bar, isRecursive)
 	if bar.handled then return end
 
@@ -63,6 +71,8 @@ function E:HandleStatusBar(bar, isRecursive)
 			bar.RealBar = rbar
 		end
 
+		E.StatusBars:Capture(bar.RealBar or bar, "other")
+
 		if not bg then
 			bg = bar:CreateTexture(nil, "BACKGROUND")
 		end
@@ -88,7 +98,7 @@ function E:HandleStatusBar(bar, isRecursive)
 		text:SetPoint("BOTTOMRIGHT", -1, 0)
 		bar.Text = text
 
-		sbt:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		sbt:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.other))
 		bar.Texture = sbt
 
 		bar.handled = true
@@ -271,3 +281,66 @@ do
 		AMOUNT = clamp(v, 0.3, 0.6)
 	end
 end
+
+do
+	local objects = {}
+	local callbacks = {}
+
+	local function update(obj, t)
+		local texture = LSM:Fetch("statusbar", C.db.global.textures.statusbar[t]) or LSM:Fetch("statusbar", "Solid")
+
+		obj:SetStatusBarTexture(texture)
+
+		local callback = callbacks[obj]
+		if callback then
+			callback(obj, texture)
+		end
+	end
+
+	local statusbar_proto = {}
+	do
+		function statusbar_proto:UpdateStatusBarTexture()
+			local t = objects[self]
+			if not t then return end
+
+			update(self, t)
+		end
+	end
+
+	function module:Capture(obj, t, callback)
+		if obj:GetObjectType() ~= "StatusBar" then
+			return
+		elseif not self[t] then
+			return
+		elseif objects[obj] or self[t][obj] then
+			return
+		end
+
+		Mixin(obj, statusbar_proto)
+
+		self[t][obj] = true
+		objects[obj] = t
+		callbacks[obj] = callback
+	end
+
+	function module:Release(obj)
+		for k in next, statusbar_proto do
+			obj[k] = nil
+		end
+
+		self[objects[obj]] = true
+		objects[obj] = nil
+		callbacks[obj] = nil
+	end
+
+	function module:UpdateAll(t)
+		if not self[t] then return end
+
+		for obj in next, self[t] do
+			update(obj, t)
+		end
+	end
+
+end
+
+E.StatusBars = module

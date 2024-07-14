@@ -42,6 +42,7 @@ local function createElement(parent, num, name, ...)
 		local bar = CreateFrame("StatusBar", "$parent" .. name .. i, element)
 		bar:SetFrameLevel(element:GetFrameLevel())
 		bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(bar, "power")
 		bar:SetScript("OnValueChanged", onValueChanged)
 		bar:SetPoint("TOP", 0, 0)
 		bar:SetPoint("BOTTOM", 0, 0)
@@ -119,7 +120,7 @@ end
 
 function element_proto:UpdateTextures()
 	for i = 1, #self do
-		self[i]:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self[i]:UpdateStatusBarTexture()
 	end
 end
 
@@ -318,7 +319,7 @@ do
 	end
 
 	function stagger_proto:UpdateTextures()
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self:UpdateStatusBarTexture()
 	end
 
 	function stagger_proto:UpdateSmoothing()
@@ -357,6 +358,7 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), stagger_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "power")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:Hide()
 

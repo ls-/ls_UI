@@ -166,8 +166,7 @@ function element_proto:UpdateFonts()
 end
 
 function element_proto:UpdateTextures()
-	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+	self:UpdateStatusBarTexture()
 end
 
 function element_proto:UpdateColors()
@@ -282,6 +281,10 @@ function element_proto:UpdateSize()
 	end
 end
 
+function element_proto:UpdateTextureCallback(texture)
+	self.SafeZone_:SetTexture(texture)
+end
+
 local frame_proto = {}
 
 function frame_proto:UpdateCastbar()
@@ -322,6 +325,7 @@ function UF:CreateCastbar(frame)
 
 	local element = Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	E.StatusBars:Capture(element, "castbar", element.UpdateTextureCallback)
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder
 
