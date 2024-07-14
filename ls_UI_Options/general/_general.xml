@@ -5,4 +5,5 @@
 	<Script file="fonts.lua"/>
 	<Script file="tags.lua"/>
 	<Script file="tagvars.lua"/>
+	<Script file="textures.lua"/>
 </Ui>
