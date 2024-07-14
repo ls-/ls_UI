@@ -50,11 +50,7 @@ do
 				end
 			end,
 		},
-		spacer_1 = {
-			order = inc(2),
-			type = "description",
-			name = " ",
-		},
+		spacer_1 = CONFIG:CreateSpacer(inc(2)),
 		size = {
 			order = inc(2),
 			type = "range",
@@ -67,11 +63,7 @@ do
 			name = L["TEXT_HORIZ_ALIGNMENT"],
 			values = CONFIG.H_ALIGNMENTS,
 		},
-		spacer_2 = {
-			order = inc(2),
-			type = "description",
-			name = " ",
-		},
+		spacer_2 = CONFIG:CreateSpacer(inc(2)),
 		point1 = {
 			order = inc(2),
 			type = "group",
@@ -123,11 +115,7 @@ do
 				},
 			},
 		},
-		spacer_3 = {
-			order = inc(2),
-			type = "description",
-			name = " ",
-		},
+		spacer_3 = CONFIG:CreateSpacer(inc(2)),
 		tag = {
 			order = inc(2),
 			type = "input",
@@ -146,11 +134,7 @@ do
 				end
 			end,
 		},
-		spacer_4 = {
-			order = inc(2),
-			type = "description",
-			name = " ",
-		},
+		spacer_4 = CONFIG:CreateSpacer(inc(2)),
 		delete = {
 			order = inc(2),
 			type = "execute",

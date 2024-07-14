@@ -94,7 +94,7 @@ local function getAuraOptions(order, name, filter)
 		args = {
 			reset = {
 				type = "execute",
-				order = reset(1),
+				order = reset(2),
 				name = L["RESTORE_DEFAULTS"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
@@ -103,43 +103,39 @@ local function getAuraOptions(order, name, filter)
 					AURAS:For(filter, "Update")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(2)),
 			num_rows = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["ROWS"],
 				min = 1, max = 40, step = 1,
 			},
 			num = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["NUM_BUTTONS"],
 				min = 1, max = 4, step = 1,
 			},
 			per_row = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 40, step = 1,
 			},
 			spacing = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["SPACING"],
 				min = 4, max = 24, step = 1,
 			},
 			width = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["WIDTH"],
 				min = 16, max = 64, step = 1,
 			},
 			height = {
-				order = inc(1),
+				order = inc(2),
 				type = "range",
 				name = L["HEIGHT"],
 				desc = L["HEIGHT_OVERRIDE_DESC"],
@@ -158,7 +154,7 @@ local function getAuraOptions(order, name, filter)
 				end,
 			},
 			growth_dir = {
-				order = inc(1),
+				order = inc(2),
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = GROWTH_DIRS,
@@ -172,30 +168,26 @@ local function getAuraOptions(order, name, filter)
 				end,
 			},
 			sort_method = {
-				order = inc(1),
+				order = inc(2),
 				type = "select",
 				name = L["SORT_METHOD"],
 				values = SORT_METHODS,
 			},
 			sort_dir = {
-				order = inc(1),
+				order = inc(2),
 				type = "select",
 				name = L["SORT_DIR"],
 				values = SORT_DIRS,
 			},
 			sep_own = {
-				order = inc(1),
+				order = inc(2),
 				type = "select",
 				name = L["SEPARATION"],
 				values = SEP_TYPES
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(2)),
 			type = {
-				order = inc(1),
+				order = inc(2),
 				type = "group",
 				name = L["AURA_TYPE"],
 				inline = true,
@@ -212,31 +204,27 @@ local function getAuraOptions(order, name, filter)
 				end,
 				args = {
 					enabled = {
-						order = reset(2),
+						order = reset(3),
 						type = "toggle",
 						name = L["SHOW"],
 					},
 					size = {
-						order = inc(2),
+						order = inc(3),
 						type = "range",
 						name = L["SIZE"],
 						min = 10, max = 32, step = 2,
 					},
 					position = {
-						order = inc(2),
+						order = inc(3),
 						type = "select",
 						name = L["POINT"],
 						values = POINTS,
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(2)),
 			count = {
-				order = inc(1),
+				order = inc(2),
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
@@ -253,32 +241,28 @@ local function getAuraOptions(order, name, filter)
 				end,
 				args = {
 					size = {
-						order = reset(2),
+						order = reset(3),
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
 					},
 					h_alignment = {
-						order = inc(2),
+						order = inc(3),
 						type = "select",
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = H_ALIGNMENTS,
 					},
 					v_alignment = {
-						order = inc(2),
+						order = inc(3),
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(2)),
 			cooldown = {
-				order = inc(1),
+				order = inc(2),
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -296,18 +280,18 @@ local function getAuraOptions(order, name, filter)
 				end,
 				args = {
 					enabled = {
-						order = reset(2),
+						order = reset(3),
 						type = "toggle",
 						name = L["SHOW"],
 					},
 					size = {
-						order = inc(2),
+						order = inc(3),
 						type = "range",
 						name = L["SIZE"],
 						min = 8, max = 48, step = 1,
 					},
 					v_alignment = {
-						order = inc(2),
+						order = inc(3),
 						type = "select",
 						name = L["TEXT_VERT_ALIGNMENT"],
 						values = V_ALIGNMENTS,
@@ -338,7 +322,7 @@ local function getAuraOptions(order, name, filter)
 	return temp
 end
 
-function CONFIG.CreateAurasOptions(_, order)
+function CONFIG:CreateAurasOptions(order)
 	CONFIG.options.args.auras = {
 		order = order,
 		type = "group",
@@ -346,7 +330,7 @@ function CONFIG.CreateAurasOptions(_, order)
 		childGroups = "tab",
 		args = {
 			enabled = {
-				order = 1,
+				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
@@ -368,7 +352,7 @@ function CONFIG.CreateAurasOptions(_, order)
 			},
 			reset = {
 				type = "execute",
-				order = 2,
+				order = inc(1),
 				name = L["RESTORE_DEFAULTS"],
 				disabled = isModuleDisabled,
 				confirm = CONFIG.ConfirmReset,
@@ -378,13 +362,9 @@ function CONFIG.CreateAurasOptions(_, order)
 					AURAS:ForEach("Update")
 				end,
 			},
-			spacer_1 = {
-				order = 9,
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
-				order = 10,
+				order = inc(1),
 				type = "group",
 				name = L["COOLDOWN"],
 				inline = true,
@@ -403,7 +383,7 @@ function CONFIG.CreateAurasOptions(_, order)
 				args = {
 					reset = {
 						type = "execute",
-						order = 1,
+						order = reset(2),
 						name = L["RESTORE_DEFAULTS"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -413,20 +393,16 @@ function CONFIG.CreateAurasOptions(_, order)
 							AURAS:ForEach("UpdateCooldownConfig")
 						end,
 					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					exp_threshold = {
-						order = 10,
+						order = inc(2),
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
 						disabled = isOCCEnabled,
 					},
 					m_ss_threshold = {
-						order = 11,
+						order = inc(2),
 						type = "range",
 						name = L["M_SS_THRESHOLD"],
 						desc = L["M_SS_THRESHOLD_DESC"],
@@ -447,20 +423,16 @@ function CONFIG.CreateAurasOptions(_, order)
 						end,
 					},
 					s_ms_threshold = {
-						order = 12,
+						order = inc(2),
 						type = "range",
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
 						disabled = isOCCEnabled,
 					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
-						order = 20,
+						order = inc(2),
 						type = "group",
 						name = L["COOLDOWN_SWIPE"],
 						inline = true,
@@ -477,12 +449,12 @@ function CONFIG.CreateAurasOptions(_, order)
 						end,
 						args = {
 							enabled = {
-								order = 1,
+								order = reset(3),
 								type = "toggle",
 								name = L["SHOW"],
 							},
 							reversed = {
-								order = 2,
+								order = inc(3),
 								type = "toggle",
 								disabled = function()
 									return not C.db.profile.auras.cooldown.swipe.enabled
@@ -493,14 +465,10 @@ function CONFIG.CreateAurasOptions(_, order)
 					},
 				},
 			},
-			spacer_2 = {
-				order = 19,
-				type = "description",
-				name = " ",
-			},
-			buffs = getAuraOptions(20, L["BUFFS"], "HELPFUL"),
-			debuffs = getAuraOptions(30, L["DEBUFFS"], "HARMFUL"),
-			totems = getAuraOptions(40, L["TOTEMS"], "TOTEM"),
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
+			buffs = getAuraOptions(inc(1), L["BUFFS"], "HELPFUL"),
+			debuffs = getAuraOptions(inc(1), L["DEBUFFS"], "HARMFUL"),
+			totems = getAuraOptions(inc(1), L["TOTEMS"], "TOTEM"),
 		},
 	}
 end

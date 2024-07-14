@@ -79,11 +79,7 @@ local function getUnitFrameOptions(order, unit, name)
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 3
-			spacer_1 = {
-				order = 4,
-				type = "description",
-				name = " ",
-			}, -- 4
+			spacer_1 = CONFIG:CreateSpacer(4), -- 4
 			width = {
 				order = 5,
 				type = "range",
@@ -210,11 +206,7 @@ local function getUnitFrameOptions(order, unit, name)
 					UNITFRAMES:For(unit, "AlignWidgets")
 				end,
 			}, -- 16
-			spacer_2 = {
-				order = 20,
-				type = "description",
-				name = " ",
-			}, -- 20
+			spacer_2 = CONFIG:CreateSpacer(20), -- 20
 			border = {
 				order = 21,
 				type = "group",
@@ -241,11 +233,7 @@ local function getUnitFrameOptions(order, unit, name)
 					},
 				},
 			}, -- 21
-			spacer_4 = {
-				order = 30,
-				type = "description",
-				name = " ",
-			}, -- 30
+			spacer_4 = CONFIG:CreateSpacer(30), -- 30
 			health = CONFIG:CreateUnitFrameHealthOptions(31, unit),
 			power = CONFIG:CreateUnitFramePowerOptions(32, unit),
 			-- alt_power = {}, -- 33
@@ -386,11 +374,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					end
 				end,
 			}, -- 1
-			spacer_1 = {
-				order = 9,
-				type = "description",
-				name = " ",
-			}, -- 9
+			spacer_1 = CONFIG:CreateSpacer(9), -- 9
 			units = {
 				order = 10,
 				type = "group",
@@ -455,11 +439,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					},
 				},
 			}, -- 10
-			spacer_2 = {
-				order = 19,
-				type = "description",
-				name = " ",
-			}, -- 19
+			spacer_2 = CONFIG:CreateSpacer(19), -- 19
 			gloss = {
 				order = 20,
 				type = "range",
@@ -496,11 +476,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					end
 				end,
 			}, -- 21
-			spacer_3 = {
-				order = 29,
-				type = "description",
-				name = " ",
-			}, -- 29
+			spacer_3 = CONFIG:CreateSpacer(29), -- 29
 			change = {
 				order = 30,
 				type = "group",
@@ -541,11 +517,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					},
 				},
 			}, -- 30
-			spacer_4 = {
-				order = 39,
-				type = "description",
-				name = " ",
-			}, -- 39
+			spacer_4 = CONFIG:CreateSpacer(39), -- 39
 			cooldown = {
 				order = 40,
 				type = "group",
@@ -575,11 +547,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 							UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 						end,
 					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(9),
 					exp_threshold = {
 						order = 10,
 						type = "range",
@@ -624,11 +592,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 							end
 						end,
 					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(19),
 					swipe = {
 						order = 20,
 						type = "group",

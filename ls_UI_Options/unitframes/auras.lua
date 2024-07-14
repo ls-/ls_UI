@@ -203,11 +203,7 @@ local function getFilters(order, unit, type)
 			end
 
 			if C.db.profile.units[unit].auras.filter[type].debuff then
-				temp.args.spacer_1 = {
-					order = inc(3),
-					type = "description",
-					name = " ",
-				}
+				temp.args.spacer_1 = CONFIG:CreateSpacer(inc(3))
 			end
 		end
 
@@ -288,22 +284,14 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateAuras")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			disable_mouse = {
 				order = inc(1),
 				type = "toggle",
 				name = L["DISABLE_MOUSE"],
 				desc = L["DISABLE_MOUSE_DESC"],
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			rows = {
 				order = inc(1),
 				type = "range",
@@ -391,11 +379,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					UNITFRAMES:For(unit, "For", "Auras", "UpdateGrowthDirection")
 				end,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			point = {
 				order = inc(1),
 				type = "group",
@@ -441,11 +425,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			type = {
 				order = inc(1),
 				type = "group",
@@ -483,11 +463,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_5 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_5 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
@@ -525,11 +501,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -566,11 +538,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_7 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_7 = CONFIG:CreateSpacer(inc(1)),
 			filter = {
 				order = inc(1),
 				type = "group",

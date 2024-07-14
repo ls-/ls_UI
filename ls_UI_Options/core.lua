@@ -188,6 +188,14 @@ function CONFIG.ConfirmReset(info)
 	return L["CONFIRM_RESET"]:format(option.name)
 end
 
+function CONFIG:CreateSpacer(order)
+	return {
+		order = order,
+		type = "description",
+		name = " ",
+	}
+end
+
 function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
 		[""] = L["FRAME"],

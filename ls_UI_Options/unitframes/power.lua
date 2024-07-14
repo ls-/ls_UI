@@ -53,11 +53,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			prediction = {
 				order = inc(1),
 				type = "toggle",
@@ -72,11 +68,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			text = {
 				order = inc(1),
 				type = "group",
@@ -111,11 +103,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 						type = "toggle",
 						name = L["WORD_WRAP"],
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -167,11 +155,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 							},
 						},
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					tag = {
 						order = inc(2),
 						type = "input",
@@ -237,11 +221,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateAlternativePower")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			text = {
 				order = inc(1),
 				type = "group",
@@ -276,11 +256,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 						type = "toggle",
 						name = L["WORD_WRAP"],
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -332,11 +308,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 							},
 						},
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					tag = {
 						order = inc(2),
 						type = "input",
@@ -406,11 +378,7 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateStagger")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			prediction = {
 				order = inc(1),
 				type = "toggle",
@@ -426,12 +394,7 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				hidden = isPlayerDeathKnight,
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			runes = {
 				order = inc(1),
 				type = "group",

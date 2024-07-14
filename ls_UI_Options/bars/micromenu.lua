@@ -116,11 +116,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 					BARS:UpdateMicroMenu()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			restricted = {
 				order = inc(1),
 				type = "toggle",
@@ -136,11 +132,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 					end
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			per_row = {
 				order = inc(1),
 				type = "range",
@@ -186,11 +178,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 					end
 				end,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			fading = CONFIG:CreateBarFadingOptions(inc(1), "micromenu"),
 			character = getMicroButtonOptions(inc(1), "character", CHARACTER_BUTTON),
 			spellbook = getMicroButtonOptions(inc(1), "spellbook", PROFESSIONS_BUTTON),

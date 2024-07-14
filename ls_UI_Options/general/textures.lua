@@ -49,29 +49,13 @@ function CONFIG:GetTexturesOptions(order)
 		end,
 		args = {
 			health = getOptions(reset(1), L["HEALTH"]),
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			castbar = getOptions(inc(1), L["CASTBAR"]),
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			power = getOptions(inc(1), L["POWER"]),
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			xpbar = getOptions(inc(1), L["XP_BAR"]),
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			other = getOptions(inc(1), L["OTHER"]),
 		},
 	}

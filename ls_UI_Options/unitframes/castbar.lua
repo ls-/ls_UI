@@ -71,11 +71,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateCastbar")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			latency = {
 				order = inc(1),
 				type = "toggle",
@@ -89,11 +85,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 					end
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			detached = {
 				order = inc(1),
 				type = "toggle",

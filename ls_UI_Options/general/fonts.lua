@@ -72,8 +72,11 @@ function CONFIG:GetFontsOptions(order)
 		end,
 		args = {
 			cooldown = getOptions(reset(1), L["COOLDOWNS"]),
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			button = getOptions(inc(1), L["BUTTONS"]),
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			unit = getOptions(inc(1), L["UNIT_FRAME"]),
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			statusbar = getOptions(inc(1), L["PROGRESS_BARS"]),
 		},
 	}

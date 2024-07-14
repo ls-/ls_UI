@@ -287,12 +287,7 @@ function CONFIG:CreateProfilesPanel(order)
 				name = L["IMPORT"],
 				func = openExportImportFrame,
 			},
-			spacer_1 = {
-				order = 3,
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(3),
 		},
 	}
 

@@ -79,11 +79,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "Update")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			visible = {
 				order = inc(1),
 				type = "toggle",
@@ -189,11 +185,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			hotkey = {
 				order = inc(1),
 				type = "group",
@@ -231,11 +223,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			macro = {
 				order = inc(1),
 				type = "group",
@@ -272,11 +260,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
@@ -302,11 +286,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_5 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_5 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -343,11 +323,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			fading = CONFIG:CreateBarFadingOptions(inc(1), barID),
 		},
 	}

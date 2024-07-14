@@ -53,12 +53,7 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			command_bar = {
 				order = inc(1),
 				type = "toggle",
@@ -164,11 +159,7 @@ function CONFIG:CreateBlizzardOptions(order)
 							BLIZZARD:UpadteCharacterFrame()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					ilvl = {
 						order = inc(2),
 						type = "toggle",

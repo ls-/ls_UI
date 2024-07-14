@@ -67,12 +67,7 @@ function CONFIG:GetTooltipsOptions(order)
 					TOOLTIPS:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			title = {
 				order = inc(1),
 				type = "toggle",
@@ -111,18 +106,8 @@ function CONFIG:GetTooltipsOptions(order)
 				desc = L["ITEM_COUNT_DESC"],
 				disabled = isModuleDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			health = {
 				order = inc(1),
 				type = "group",
@@ -151,24 +136,14 @@ function CONFIG:GetTooltipsOptions(order)
 							TOOLTIPS:Update()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = "",
-						width = "full",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					height = {
 						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
 						min = 8, max = 32, step = 1, bigStep = 2,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = "",
-						width = "full",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",

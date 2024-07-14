@@ -39,11 +39,7 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateHealthPrediction")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			prediction = {
 				order = inc(1),
 				type = "toggle",
@@ -71,11 +67,7 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateHealthPrediction")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			color = {
 				order = inc(1),
 				type = "group",
@@ -105,11 +97,7 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			text = {
 				order = inc(1),
 				type = "group",
@@ -144,11 +132,7 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 						type = "toggle",
 						name = L["WORD_WRAP"],
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -200,11 +184,7 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 							},
 						},
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					tag = {
 						order = inc(2),
 						type = "input",

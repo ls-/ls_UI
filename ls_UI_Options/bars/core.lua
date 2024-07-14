@@ -218,11 +218,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					end
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			mouseover = {
 				order = inc(1),
 				type = "toggle",
@@ -317,11 +313,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 				values = CAST_KEYS,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			range_indicator = {
 				order = inc(1),
 				type = "select",
@@ -336,11 +328,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			desaturation = {
 				order = inc(1),
 				type = "group",
@@ -366,11 +354,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -399,11 +383,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:ForEach("UpdateCooldownConfig")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					exp_threshold = {
 						order = inc(2),
 						type = "range",
@@ -446,11 +426,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							end
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
 						order = inc(2),
 						type = "group",
@@ -524,11 +500,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:For("vehicle", "Update")
 						end,
 					},
-					spacer_1 = {
-						order =inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					visible = {
 						order = inc(2),
 						type = "toggle",
@@ -566,11 +538,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:For("vehicle", "Update")
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					fading = CONFIG:CreateBarFadingOptions(inc(2), "vehicle"),
 				},
 			},
@@ -621,11 +589,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:For("xpbar", "Update")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					width = {
 						order = inc(2),
 						type = "range",
@@ -656,11 +620,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							end
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",
@@ -716,11 +676,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							},
 						},
 					},
-					spacer_3 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_3 = CONFIG:CreateSpacer(inc(2)),
 					fading = CONFIG:CreateBarFadingOptions(inc(2), "xpbar"),
 				},
 			},

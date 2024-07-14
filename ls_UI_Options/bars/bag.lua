@@ -31,11 +31,7 @@ local currencyOptionTables = {
 			t_wipe(C.db.profile.bars.bag.currency)
 		end,
 	},
-	spacer_1 = {
-		order = 2,
-		type = "description",
-		name = " ",
-	},
+	spacer_1 = CONFIG:CreateSpacer(2),
 	error = {
 		order = 1,
 		type = "description",
@@ -142,11 +138,7 @@ function CONFIG:CreateBagOptions(order)
 					BARS:UpdateBag()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			tooltip = {
 				order = inc(1),
 				type = "toggle",
@@ -159,11 +151,7 @@ function CONFIG:CreateBagOptions(order)
 					C.db.profile.bars.bag.tooltip = value
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			currency = {
 				order = inc(1),
 				type = "group",
@@ -177,11 +165,7 @@ function CONFIG:CreateBagOptions(order)
 				end,
 				args = {},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			fading = {
 				order = inc(1),
 				type = "group",
@@ -215,11 +199,7 @@ function CONFIG:CreateBagOptions(order)
 							BARS:UpdateBag()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					combat = {
 						order = inc(2),
 						type = "toggle",

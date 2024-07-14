@@ -68,11 +68,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Health", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					health = {
 						order = inc(2),
 						type = "color",
@@ -167,11 +163,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Power", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					MANA = {
 						order = inc(2),
 						type = "color",
@@ -345,11 +337,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "PowerPrediction", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					my_heal = {
 						order = inc(2),
 						type = "color",
@@ -421,11 +409,7 @@ function CONFIG:GetColorsOptions(order)
 							BARS:For("xpbar", "UpdateSegments")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					["1"] = {
 						order = inc(2),
 						type = "color",
@@ -508,11 +492,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					Alliance = {
 						order = inc(2),
 						type = "color",
@@ -567,11 +547,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					["1"] = {
 						order = inc(2),
 						type = "color",
@@ -635,11 +611,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Name", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					trivial = {
 						order = inc(2),
 						type = "color",
@@ -698,11 +670,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Castbar", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					casting = {
 						order = inc(2),
 						type = "color",
@@ -770,11 +738,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Auras", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					None = {
 						order = inc(2),
 						type = "color",
@@ -865,11 +829,7 @@ function CONFIG:GetColorsOptions(order)
 							BARS:ForEach("UpdateButtonConfig")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					normal = {
 						order = inc(2),
 						type = "color",
@@ -924,11 +884,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					expiration = {
 						order = inc(2),
 						type = "color",
@@ -991,11 +947,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					contested = {
 						order = inc(2),
 						type = "color",

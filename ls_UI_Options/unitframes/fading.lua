@@ -54,11 +54,7 @@ function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateFading")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			combat = {
 				order = inc(1),
 				type = "toggle",

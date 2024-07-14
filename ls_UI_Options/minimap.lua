@@ -67,11 +67,7 @@ function CONFIG:CreateMinimapOptions(order)
 					MINIMAP:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			shape = {
 				order = inc(1),
 				type = "select",
@@ -162,11 +158,7 @@ function CONFIG:CreateMinimapOptions(order)
 				end,
 				disabled = isModuleDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			colors = {
 				order = inc(1),
 				type = "group",
@@ -190,11 +182,7 @@ function CONFIG:CreateMinimapOptions(order)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			flag = {
 				order = inc(1),
 				type = "group",
@@ -226,11 +214,7 @@ function CONFIG:CreateMinimapOptions(order)
 					},
 				},
 			},
-			spacer_7 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_7 = CONFIG:CreateSpacer(inc(1)),
 			coords = {
 				order = inc(1),
 				type = "group",
@@ -257,11 +241,7 @@ function CONFIG:CreateMinimapOptions(order)
 						type = "toggle",
 						name = L["BACKGROUND"],
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -309,11 +289,7 @@ function CONFIG:CreateMinimapOptions(order)
 					},
 				},
 			},
-			spacer_8 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_8 = CONFIG:CreateSpacer(inc(1)),
 			fading = {
 				order = inc(1),
 				type = "group",
@@ -348,11 +324,7 @@ function CONFIG:CreateMinimapOptions(order)
 							MinimapCluster:UpdateFading()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					combat = {
 						order = inc(2),
 						type = "toggle",

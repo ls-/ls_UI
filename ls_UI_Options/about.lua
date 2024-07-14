@@ -32,12 +32,7 @@ function CONFIG:CreateAboutPanel(order)
 				width = "full",
 				fontSize = "medium",
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			support = {
 				order = inc(1),
 				type = "group",
@@ -62,12 +57,7 @@ function CONFIG:CreateAboutPanel(order)
 					},
 				},
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				width = "full",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			downloads = {
 				order = inc(1),
 				type = "group",
@@ -100,12 +90,7 @@ function CONFIG:CreateAboutPanel(order)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				width = "full",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			CHANGELOG = {
 				order = inc(1),
 				type = "group",
@@ -119,12 +104,7 @@ function CONFIG:CreateAboutPanel(order)
 						width = "full",
 						fontSize = "medium",
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-						width = "full",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					cf = {
 						order = inc(2),
 						type = "execute",

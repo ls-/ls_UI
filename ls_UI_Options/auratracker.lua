@@ -149,11 +149,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					AURATRACKER:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			num = {
 				order = inc(1),
 				type = "range",
@@ -232,11 +228,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					PrC.db.profile.auratracker.drag_key = DRAG_KEY_VALUES[value]
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			type = {
 				order = inc(1),
 				type = "group",
@@ -274,11 +266,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
@@ -317,11 +305,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -352,11 +336,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 							AURATRACKER:GetTracker():UpdateCooldownConfig()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					exp_threshold = {
 						order = inc(2),
 						type = "range",
@@ -393,11 +373,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						min = 1, max = 10, step = 1,
 						disabled = isOCCEnabled,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
 						order = inc(2),
 						type = "group",
@@ -430,11 +406,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 							},
 						},
 					},
-					spacer_3 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_3 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",
