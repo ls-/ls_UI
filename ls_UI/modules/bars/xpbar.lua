@@ -250,11 +250,11 @@ do
 
 		if color.r == r and color.g == g and color.b == b and color.a == a then return end
 
-		color.r, color.g, color.b, color.a = r, g, b, a
-		self.ColorAnim.Anim:SetEndColor(color)
-
 		color.r, color.g, color.b, color.a = self:GetStatusBarColor()
 		self.ColorAnim.Anim:SetStartColor(color)
+
+		color.r, color.g, color.b, color.a = r, g, b, a
+		self.ColorAnim.Anim:SetEndColor(color)
 
 		self.ColorAnim:Play()
 	end
