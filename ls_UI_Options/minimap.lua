@@ -27,6 +27,10 @@ local function isFadingDisabled()
 	return not (MINIMAP:IsInit() and C.db.profile.minimap.fade.enabled)
 end
 
+local function isCoordsDisabled()
+	return not (MINIMAP:IsInit() and C.db.profile.minimap.coords.enabled)
+end
+
 function CONFIG:CreateMinimapOptions(order)
 	self.options.args.minimap = {
 		order = order,
@@ -238,6 +242,7 @@ function CONFIG:CreateMinimapOptions(order)
 						order = inc(2),
 						type = "toggle",
 						name = L["BACKGROUND"],
+						disabled = isCoordsDisabled,
 					},
 					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
@@ -256,6 +261,7 @@ function CONFIG:CreateMinimapOptions(order)
 								Minimap:UpdateCoords()
 							end
 						end,
+						disabled = isCoordsDisabled,
 						args = {
 							["1"] = {
 								order = reset(2),
