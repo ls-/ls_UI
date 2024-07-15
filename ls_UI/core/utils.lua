@@ -461,7 +461,7 @@ do
 			end
 		end
 
-		return L["UNKNOWN"]
+		return _G.UNKNOWN
 	end
 
 	local function getDifficultyColor(difficulty)

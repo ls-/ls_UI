@@ -415,7 +415,7 @@ do
 			.. L["MOVER_RELATION_CREATE_DESC"]
 			.. "\n\n"
 			.. L["MOVER_RELATION_DESTROY_DESC"])
-		self.LockButton.Text:SetText(L["LOCK"])
+		self.LockButton.Text:SetText(_G.LOCK)
 		self:SetHeight(m_ceil(self.UsageText:GetStringHeight() + 56))
 	end)
 	settings:Hide()

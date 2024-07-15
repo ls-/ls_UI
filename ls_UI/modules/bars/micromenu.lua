@@ -257,9 +257,9 @@ function button_proto:OnEnterOverride()
 			local r, g, b = C.db.global.colors.red:GetRGB()
 
 			if self.factionGroup == "Neutral" then
-				GameTooltip:AddLine(L["FEATURE_NOT_AVAILBLE_NEUTRAL"], r, g, b, true)
+				GameTooltip:AddLine(_G.FEATURE_NOT_AVAILBLE_NEUTRAL, r, g, b, true)
 			elseif self.minLevel then
-				GameTooltip:AddLine(L["FEATURE_BECOMES_AVAILABLE_AT_LEVEL"]:format(self.minLevel), r, g, b, true)
+				GameTooltip:AddLine(_G.FEATURE_BECOMES_AVAILABLE_AT_LEVEL:format(self.minLevel), r, g, b, true)
 			elseif self.disabledTooltip then
 				GameTooltip:AddLine(GetValueOrCallFunction(self, "disabledTooltip"), r, g, b, true)
 			end
@@ -377,6 +377,8 @@ end
 
 local char_button_proto = {}
 do
+	local DURABILITY_COLON = _G.DURABILITY .. _G.HEADER_COLON
+
 	local slots = {
 		[ 1] = _G["HEADSLOT"],
 		[ 3] = _G["SHOULDERSLOT"],
@@ -398,7 +400,7 @@ do
 		if self:IsEnabled() then
 			if #durabilities > 0 then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(L["DURABILITY_COLON"])
+				GameTooltip:AddLine(DURABILITY_COLON)
 
 				for i = 1, 17 do
 					local cur = durabilities[i]
@@ -496,6 +498,11 @@ end
 
 local lfd_button_proto = {}
 do
+	-- C.db isn't available yet, but these are static colours, so whatevs..
+	local DAMAGER = D.global.colors.red:WrapTextInColorCode(_G.DAMAGER)
+	local HEALER = D.global.colors.green:WrapTextInColorCode(_G.HEALER)
+	local TANK = D.global.colors.blue:WrapTextInColorCode(_G.TANK)
+
 	local cta = {
 		tank = {},
 		healer = {},
@@ -504,9 +511,9 @@ do
 	}
 	local ROLES = {"tank", "healer", "damager"}
 	local ROLE_NAMES = {
-		tank = L["TANK_BLUE"],
-		healer = L["HEALER_GREEN"],
-		damager = L["DAMAGER_RED"],
+		damager = DAMAGER,
+		healer = HEALER,
+		tank = TANK,
 	}
 
 	local function fetchCTAData(dungeonID, dungeonName, shortageRole, shortageIndex, numRewards)
@@ -517,7 +524,7 @@ do
 			local name, texture, quantity = GetLFGDungeonShortageRewardInfo(dungeonID, shortageIndex, rewardIndex)
 
 			if not name or name == "" then
-				name = L["UNKNOWN"]
+				name = _G.UNKNOWN
 				texture = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
 			end
 
@@ -567,7 +574,7 @@ do
 					if v then
 						if not hasTitle then
 							GameTooltip:AddLine(" ")
-							GameTooltip:AddLine(L["CALL_TO_ARMS_TOOLTIP"]:format(ROLE_NAMES[role]))
+							GameTooltip:AddLine(_G.LFG_CALL_TO_ARMS:format(ROLE_NAMES[role]))
 
 							hasTitle = true
 						end
@@ -804,7 +811,9 @@ do
 	local memUsage = 0
 	local latencyHome, latencyWorld = 0, 0
 	local MED_LATENCY = 600
+	local LATENCY_COLON = L["LATENCY"] .. _G.HEADER_COLON
 	local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
+	local MEMORY_COLON = L["MEMORY"] .. _G.HEADER_COLON
 	local MEMORY_TEMPLATE = "%.2f MiB"
 	local _
 
@@ -817,13 +826,13 @@ do
 
 		if self:IsEnabled() then
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine(L["LATENCY_COLON"])
+			GameTooltip:AddLine(LATENCY_COLON)
 			GameTooltip:AddDoubleLine(L["LATENCY_HOME"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyHome / MED_LATENCY, C.db.global.colors.gyr), latencyHome), 1, 1, 1)
 			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyWorld / MED_LATENCY, C.db.global.colors.gyr), latencyWorld), 1, 1, 1)
 
 			if IsShiftKeyDown() then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(L["MEMORY_COLON"])
+				GameTooltip:AddLine(MEMORY_COLON)
 
 				UpdateAddOnMemoryUsage()
 
@@ -857,7 +866,7 @@ do
 						GameTooltip:AddDoubleLine(cache[addOns[i][1]][1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
 					end
 
-					GameTooltip:AddDoubleLine(L["TOTAL"], MEMORY_TEMPLATE:format(memUsage / 1024))
+					GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_TEMPLATE:format(memUsage / 1024))
 				end
 			else
 				GameTooltip:AddLine(" ")

@@ -13,10 +13,11 @@ local isInit = false
 local barValueTemplate
 
 local MAX_SEGMENTS = 4
-local REPUTATION_TEMPLATE = "%s: %s"
-local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
-local RENOWN_PLUS = s_trim(RENOWN_LEVEL_LABEL) .. "+"
+local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
+local HONOR_TEMPLATE = _G.LFG_LIST_HONOR_LEVEL_CURRENT_PVP:gsub("%%d", "|cffffffff%%d|r")
+local RENOWN_PLUS = s_trim(_G.RENOWN_LEVEL_LABEL) .. "+"
+local REPUTATION_TEMPLATE = "%s: %s"
 
 local CFG = {
 	visible = true,
@@ -348,8 +349,8 @@ do
 		local cur, max = UnitHonor("player"), UnitHonorMax("player")
 
 		self.tooltipInfo = {
-			header = L["HONOR"],
-			line1 = L["HONOR_LEVEL_TOOLTIP"]:format(UnitHonorLevel("player")),
+			header = _G.HONOR,
+			line1 = HONOR_TEMPLATE:format(UnitHonorLevel("player")),
 		}
 
 		self:Update(cur, max, 0, C.db.global.colors.faction[UnitFactionGroup("player")])
@@ -404,7 +405,7 @@ do
 		end
 
 		self.tooltipInfo = {
-			header = L["REPUTATION"],
+			header = _G.REPUTATION,
 			line1 = REPUTATION_TEMPLATE:format(name, C.db.global.colors.reaction[standing]:WrapTextInColorCode(repTextLevel)),
 		}
 

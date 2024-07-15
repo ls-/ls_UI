@@ -281,7 +281,7 @@ function MODULE:Init()
 					if isShiftKeyDown then
 						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode("-" .. realm))
 					elseif UnitRealmRelationship(unit) ~= LE_REALM_RELATION_VIRTUAL then
-						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode(L["FOREIGN_SERVER_LABEL"]))
+						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode(_G.FOREIGN_SERVER_LABEL))
 					end
 				end
 
@@ -367,7 +367,7 @@ function MODULE:Init()
 					end
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
-				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
+				GameTooltipTextLeft1:SetText(UnitName(unit) or _G.UNKNOWN)
 				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				scaledLevel = UnitBattlePetLevel(unit)
@@ -384,11 +384,11 @@ function MODULE:Init()
 					levelLine:SetFormattedText(
 						LEVEL_FORMAT,
 						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and scaledLevel or "??"),
-						(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
+						(UnitCreatureType(unit) or _G.PET) .. (petType and ", " .. petType or "")
 					)
 				end
 			else
-				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
+				GameTooltipTextLeft1:SetText(UnitName(unit) or _G.UNKNOWN)
 				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				local status = ""

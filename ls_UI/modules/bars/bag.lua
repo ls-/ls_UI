@@ -23,8 +23,10 @@ local bags = {
 
 local backpack_proto = {}
 do
-	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
+	local CURRENCY_COLON = _G.CURRENCY .. _G.HEADER_COLON
 	local CURRENCY_DETAILED_TEMPLATE = "%s / %s|T%s:0|t"
+	local CURRENCY_TEMPLATE = "%s |T%s:0|t"
+	local GOLD = _G.BONUS_ROLL_REWARD_MONEY
 	local _, TOKEN_NAME = C_Item.GetItemInfoInstant(WOW_TOKEN_ITEM_ID)
 	local TOKEN_COLOR = ITEM_QUALITY_COLORS[8]
 
@@ -44,7 +46,7 @@ do
 
 			if C.db.profile.bars.bag.tooltip then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(L["CURRENCY_COLON"])
+				GameTooltip:AddLine(CURRENCY_COLON)
 
 				t_wipe(currencyList)
 
@@ -70,7 +72,7 @@ do
 					end
 				end
 
-				GameTooltip:AddDoubleLine(L["GOLD"], GetMoneyString(GetMoney(), true), 1, 1, 1, 1, 1, 1)
+				GameTooltip:AddDoubleLine(GOLD, GetMoneyString(GetMoney(), true), 1, 1, 1, 1, 1, 1)
 
 				local tokenPrice = C_WowTokenPublic.GetCurrentMarketPrice()
 				if tokenPrice and tokenPrice > 0 then
