@@ -356,7 +356,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 			enabled = {
 				order = 1,
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.units.enabled
 				end,
@@ -364,9 +364,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					PrC.db.profile.units.enabled = value
 
 					if UNITFRAMES:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("units.enabled", value)
 					else
 						if value then
 							P:Call(UNITFRAMES.Init, UNITFRAMES)
@@ -387,55 +385,53 @@ function CONFIG:CreateUnitFramesOptions(order)
 				set = function(info, value)
 					PrC.db.profile.units[info[#info]].enabled = value
 
-					if UNITFRAMES:IsInit() then
-						if value then
-							if info[#info] == "player" then
-								UNITFRAMES:Create("player")
-								UNITFRAMES:For("player", "Update")
+					if value then
+						if info[#info] == "player" then
+							UNITFRAMES:Create("player")
+							UNITFRAMES:For("player", "Update")
 
-								UNITFRAMES:Create("pet")
-								UNITFRAMES:For("pet", "Update")
-							elseif info[#info] == "target" then
-								UNITFRAMES:Create("target")
-								UNITFRAMES:For("target", "Update")
+							UNITFRAMES:Create("pet")
+							UNITFRAMES:For("pet", "Update")
+						elseif info[#info] == "target" then
+							UNITFRAMES:Create("target")
+							UNITFRAMES:For("target", "Update")
 
-								UNITFRAMES:Create("targettarget")
-								UNITFRAMES:For("targettarget", "Update")
-							elseif info[#info] == "focus" then
-								UNITFRAMES:Create("focus")
-								UNITFRAMES:For("focus", "Update")
+							UNITFRAMES:Create("targettarget")
+							UNITFRAMES:For("targettarget", "Update")
+						elseif info[#info] == "focus" then
+							UNITFRAMES:Create("focus")
+							UNITFRAMES:For("focus", "Update")
 
-								UNITFRAMES:Create("focustarget")
-								UNITFRAMES:For("focustarget", "Update")
-							else
-								UNITFRAMES:Create("boss")
-								UNITFRAMES:For("boss", "Update")
-							end
+							UNITFRAMES:Create("focustarget")
+							UNITFRAMES:For("focustarget", "Update")
 						else
-							CONFIG:ShowStaticPopup("RELOAD_UI")
+							UNITFRAMES:Create("boss")
+							UNITFRAMES:For("boss", "Update")
 						end
+					else
+						CONFIG:AskToReloadUI(info[#info] .. ".enabled", value)
 					end
 				end,
 				args = {
 					player = {
 						order = 1,
 						type = "toggle",
-						name = L["PLAYER_PET"],
+						name = CONFIG:ColorPrivateSetting(L["PLAYER_PET"]),
 					},
 					target = {
 						order = 2,
 						type = "toggle",
-						name = L["TARGET_TOT"],
+						name = CONFIG:ColorPrivateSetting(L["TARGET_TOT"]),
 					},
 					focus = {
 						order = 3,
 						type = "toggle",
-						name = L["FOCUS_TOF"],
+						name = CONFIG:ColorPrivateSetting(L["FOCUS_TOF"]),
 					},
 					boss = {
 						order = 4,
 						type = "toggle",
-						name = L["BOSS"],
+						name = CONFIG:ColorPrivateSetting(L["BOSS"]),
 					},
 				},
 			}, -- 10

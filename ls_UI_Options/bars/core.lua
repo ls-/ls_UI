@@ -137,7 +137,7 @@ function CONFIG:CreateActionBarsOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.bars.enabled
 				end,
@@ -145,9 +145,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					PrC.db.profile.bars.enabled = value
 
 					if BARS:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("bars.enabled", value)
 					else
 						if value then
 							P:Call(BARS.Init, BARS)
@@ -158,7 +156,7 @@ function CONFIG:CreateActionBarsOptions(order)
 			restricted = {
 				order = inc(1),
 				type = "toggle",
-				name = L["SHOW_ARTWORK"],
+				name = CONFIG:ColorPrivateSetting(L["SHOW_ARTWORK"]),
 				desc = L["RESTRICTED_MODE_DESC"],
 				get = function()
 					return PrC.db.profile.bars.restricted
@@ -167,7 +165,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					PrC.db.profile.bars.restricted = value
 
 					if BARS:IsInit() then
-						CONFIG:ShowStaticPopup("RELOAD_UI")
+						CONFIG:AskToReloadUI("bars.restricted")
 					end
 				end,
 			},
@@ -557,7 +555,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["ENABLE"],
+						name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 						disabled = isModuleDisabledOrRestricted,
 						get = function()
 							return PrC.db.profile.bars.xpbar.enabled
@@ -565,15 +563,11 @@ function CONFIG:CreateActionBarsOptions(order)
 						set = function(_, value)
 							PrC.db.profile.bars.xpbar.enabled = value
 
-							if BARS:IsInit() then
-								if BARS:HasXPBar() then
-									if not value then
-										CONFIG:ShowStaticPopup("RELOAD_UI")
-									end
-								else
-									if value then
-										BARS:CreateXPBar()
-									end
+							if BARS:HasXPBar() then
+								CONFIG:AskToReloadUI("xpbar.enabled", value)
+							else
+								if value then
+									P:Call(BARS.CreateXPBar, BARS)
 								end
 							end
 						end,

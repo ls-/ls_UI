@@ -120,7 +120,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 			restricted = {
 				order = inc(1),
 				type = "toggle",
-				name = L["USE_BLIZZARD_MICRO_MENU"],
+				name = CONFIG:ColorPrivateSetting(L["USE_BLIZZARD_MICRO_MENU"]),
 				get = function()
 					return PrC.db.profile.bars.micromenu.blizz_enabled
 				end,
@@ -128,7 +128,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 					PrC.db.profile.bars.micromenu.blizz_enabled = value
 
 					if BARS:IsInit() then
-						CONFIG:ShowStaticPopup("RELOAD_UI")
+						CONFIG:AskToReloadUI("micromenu.blizz_enabled")
 					end
 				end,
 			},

@@ -37,20 +37,18 @@ function CONFIG:GetTooltipsOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.tooltips.enabled
 				end,
 				set = function(_, value)
 					PrC.db.profile.tooltips.enabled = value
 
-					if not TOOLTIPS:IsInit() then
+					if TOOLTIPS:IsInit() then
+						CONFIG:AskToReloadUI("tooltips.enabled", value)
+					else
 						if value then
 							P:Call(TOOLTIPS.Init, TOOLTIPS)
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,

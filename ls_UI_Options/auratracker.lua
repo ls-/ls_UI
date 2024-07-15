@@ -93,7 +93,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.auratracker.enabled
 				end,
@@ -101,9 +101,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					PrC.db.profile.auratracker.enabled = value
 
 					if AURATRACKER:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("auratracker.enabled", value)
 					else
 						if value then
 							P:Call(AURATRACKER.Init, AURATRACKER)

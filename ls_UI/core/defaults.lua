@@ -23,6 +23,7 @@ D.global = {
 		black = rgb(0, 0, 0), -- #000000
 		white = rgb(255, 255, 255), -- #FFFFFF
 		orange = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+		context = rgb(136, 170, 255), -- #88AAFF (Blizzard Colour)
 		class = {
 			HUNTER = rgb(170, 211, 114), -- #AAD372 (Blizzard Colour)
 			WARLOCK = rgb(135, 135, 237), -- #8787ED (Blizzard Colour)

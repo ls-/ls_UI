@@ -36,20 +36,18 @@ function CONFIG:CreateMinimapOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.minimap.enabled
 				end,
 				set = function(_, value)
 					PrC.db.profile.minimap.enabled = value
 
-					if not MINIMAP:IsInit() then
+					if MINIMAP:IsInit() then
+						CONFIG:AskToReloadUI("minimap.enabled", value)
+					else
 						if value then
 							P:Call(MINIMAP.Init, MINIMAP)
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,

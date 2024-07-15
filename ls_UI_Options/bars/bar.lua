@@ -370,7 +370,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.enabled = {
 			order = 1,
 			type = "toggle",
-			name = L["ENABLE"],
+			name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 			disabled = function() return BARS:IsRestricted() end,
 			get = function()
 				return PrC.db.profile.bars[barID].enabled
@@ -378,19 +378,11 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			set = function(_, value)
 				PrC.db.profile.bars[barID].enabled = value
 
-				if BARS:IsInit() then
-					if BARS:HasPetBattleBar() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					else
-						if BARS:IsRestricted() then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						else
-							if value then
-								BARS:CreatePetBattleBar()
-							end
-						end
+				if BARS:HasPetBattleBar() then
+					CONFIG:AskToReloadUI("pet_battle.enabled", value)
+				else
+					if value then
+						P:Call(BARS.CreatePetBattleBar, BARS)
 					end
 				end
 			end,

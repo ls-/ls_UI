@@ -83,6 +83,11 @@ function CONFIG:Open()
 	end
 
 	AceConfigDialog:Open("ls_UI")
+
+	local frame = AceConfigDialog.OpenFrames.ls_UI
+	if frame then
+		frame:SetCallback("OnRelease", CONFIG.ShouldReloadUI)
+	end
 end
 
 function CONFIG:IsLoaded()

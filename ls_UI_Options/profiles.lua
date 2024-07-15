@@ -299,7 +299,7 @@ function CONFIG:CreateProfilesPanel(order)
 
 	options.args.private = AceDBOptions:GetOptionsTable(PrC.db, true)
 	options.args.private.order = 5
-	options.args.private.name = L["PROFILE_PRIVATE"]
+	options.args.private.name = CONFIG:ColorPrivateSetting(L["PROFILE_PRIVATE"])
 
 	if not options.args.private.plugins then
 		options.args.private.plugins = {}

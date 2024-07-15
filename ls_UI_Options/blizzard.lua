@@ -35,20 +35,18 @@ function CONFIG:CreateBlizzardOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.blizzard.enabled
 				end,
 				set = function(_, value)
 					PrC.db.profile.blizzard.enabled = value
 
-					if not BLIZZARD:IsInit() then
+					if BLIZZARD:IsInit() then
+						CONFIG:AskToReloadUI("blizzard.enabled", value)
+					else
 						if value then
 							P:Call(BLIZZARD.Init, BLIZZARD)
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -57,18 +55,16 @@ function CONFIG:CreateBlizzardOptions(order)
 			command_bar = {
 				order = inc(1),
 				type = "toggle",
-				name = L["COMMAND_BAR"],
+				name = CONFIG:ColorPrivateSetting(L["COMMAND_BAR"]),
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					PrC.db.profile.blizzard.command_bar.enabled = value
 
-					if not BLIZZARD:HasCommandBar() then
+					if BLIZZARD:HasCommandBar() then
+						CONFIG:AskToReloadUI("command_bar.enabled", value)
+					else
 						if value then
 							BLIZZARD:SetUpCommandBar()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -76,18 +72,16 @@ function CONFIG:CreateBlizzardOptions(order)
 			gm = {
 				order = inc(1),
 				type = "toggle",
-				name = L["GM_FRAME"],
+				name = CONFIG:ColorPrivateSetting(L["GM_FRAME"]),
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					PrC.db.profile.blizzard.gm.enabled = value
 
-					if not BLIZZARD:HasGMFrame() then
+					if BLIZZARD:HasGMFrame() then
+						CONFIG:AskToReloadUI("gm.enabled", value)
+					else
 						if value then
 							BLIZZARD:SetUpGMFrame()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -95,18 +89,16 @@ function CONFIG:CreateBlizzardOptions(order)
 			mail = {
 				order = inc(1),
 				type = "toggle",
-				name = L["MAIL"],
+				name = CONFIG:ColorPrivateSetting(L["MAIL"]),
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					PrC.db.profile.blizzard.mail.enabled = value
 
-					if not BLIZZARD:HasMail() then
+					if BLIZZARD:HasMail() then
+						CONFIG:AskToReloadUI("mail.enabled", value)
+					else
 						if value then
 							BLIZZARD:SetUpMail()
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -130,20 +122,18 @@ function CONFIG:CreateBlizzardOptions(order)
 					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["ENABLE"],
+						name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 						get = function()
 							return PrC.db.profile.blizzard.character_frame.enabled
 						end,
 						set = function(_, value)
 							PrC.db.profile.blizzard.character_frame.enabled = value
 
-							if not BLIZZARD:HasCharacterFrame() then
+							if BLIZZARD:HasCharacterFrame() then
+								CONFIG:AskToReloadUI("character_frame.enabled", value)
+							else
 								if value then
 									BLIZZARD:SetUpCharacterFrame()
-								end
-							else
-								if not value then
-									CONFIG:ShowStaticPopup("RELOAD_UI")
 								end
 							end
 						end,

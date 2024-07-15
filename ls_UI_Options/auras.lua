@@ -332,7 +332,7 @@ function CONFIG:CreateAurasOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.auras.enabled
 				end,
@@ -340,9 +340,7 @@ function CONFIG:CreateAurasOptions(order)
 					PrC.db.profile.auras.enabled = value
 
 					if AURAS:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("auras.enabled", value)
 					else
 						if value then
 							P:Call(AURAS.Init, AURAS)

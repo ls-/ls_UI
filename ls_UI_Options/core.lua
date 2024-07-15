@@ -71,49 +71,6 @@ CONFIG.GROWTH_DIRS = {
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
--- CONFIG:ShowStaticPopup(which)
-do
-	local POPUPS = {
-		["RELOAD_UI"] = {
-			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
-			accept = L["RELOAD_NOW"],
-			cancel = L["LATER"],
-			OnAccept = function() ReloadUI() end,
-			OnCancel = function(self)
-				AceConfigDialog.popup:Hide()
-
-				AceConfigDialog.popup.accept:SetScript("OnClick", nil)
-				AceConfigDialog.popup.accept:SetText(L["ACCEPT"] )
-
-				self:SetScript("OnClick", nil)
-				self:SetText(L["CANCEL"])
-
-				CONFIG:SetStatusText(L["RELOAD_UI_WARNING"])
-			end,
-		},
-	}
-
-	function CONFIG:ShowStaticPopup(which)
-		if not POPUPS[which] then
-			return
-		end
-
-		local frame = AceConfigDialog.popup
-		frame:Show()
-		frame.text:SetText(POPUPS[which].text)
-		frame:SetHeight(61 + frame.text:GetHeight())
-
-		frame.accept:ClearAllPoints()
-		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
-		frame.accept:SetScript("OnClick", POPUPS[which].OnAccept)
-		frame.accept:SetText(POPUPS[which].accept)
-
-		frame.cancel:Show()
-		frame.cancel:SetScript("OnClick", POPUPS[which].OnCancel)
-		frame.cancel:SetText(POPUPS[which].cancel)
-	end
-end
-
 -- CONFIG:ShowLinkCopyPopup(text)
 do
 	local link = ""
@@ -194,6 +151,46 @@ function CONFIG:CreateSpacer(order)
 		type = "description",
 		name = " ",
 	}
+end
+
+function CONFIG:ColorPrivateSetting(text)
+	return C.db.global.colors.context:WrapTextInColorCode(text)
+end
+
+do
+	local pendingChanges = {}
+
+	function CONFIG:AskToReloadUI(sender, shouldRemove)
+		if shouldRemove then
+			pendingChanges[sender] = nil
+		else
+			pendingChanges[sender] = true
+		end
+
+		self:SetStatusText(next(pendingChanges) and L["RELOAD_UI_POPUP"] or "")
+	end
+
+	function CONFIG:ShouldReloadUI()
+		if not next(pendingChanges) then return end
+
+		local frame = AceConfigDialog.popup
+		frame:Show()
+		frame.text:SetText(L["RELOAD_UI_POPUP"])
+		frame:SetHeight(61 + frame.text:GetHeight())
+
+		frame.accept:ClearAllPoints()
+		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
+		frame.accept:SetText(L["RELOAD_NOW"])
+		frame.accept:SetScript("OnClick", ReloadUI)
+
+		frame.cancel:Show()
+		frame.cancel:SetText(L["LATER"])
+		frame.cancel:SetScript("OnClick", function()
+			frame:Hide()
+			frame.accept:SetScript("OnClick", nil)
+			frame.cancel:SetScript("OnClick", nil)
+		end)
+	end
 end
 
 function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
