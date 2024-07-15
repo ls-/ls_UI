@@ -410,9 +410,9 @@ function CONFIG:CreateUnitFramesOptions(order)
 							UNITFRAMES:Create("boss")
 							UNITFRAMES:For("boss", "Update")
 						end
-					else
-						CONFIG:AskToReloadUI(info[#info] .. ".enabled", value)
 					end
+
+					CONFIG:AskToReloadUI(info[#info] .. ".enabled", value)
 				end,
 				args = {
 					player = {
