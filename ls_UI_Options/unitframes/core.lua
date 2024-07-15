@@ -27,8 +27,8 @@ local function isBossFrameDisabled()
 	return not UNITFRAMES:HasBossFrame()
 end
 
-local function isOCCEnabled()
-	return E.OMNICC
+local function isModuleDisabledOrOCCEnabled()
+	return isModuleDisabled() or E.OMNICC
 end
 
 local function getUnitFrameOptions(order, unit, name)
@@ -66,16 +66,18 @@ local function getUnitFrameOptions(order, unit, name)
 				get = function() end,
 				set = function(_, value)
 					CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit], {["blizz_enabled"] = true})
+
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 2
 			reset = {
 				order = 3,
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit])
+
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 3
@@ -535,10 +537,11 @@ function CONFIG:CreateUnitFramesOptions(order)
 					reset = {
 						type = "execute",
 						order = 1,
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
+
 							UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 							UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 						end,
@@ -549,7 +552,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = 11,
@@ -558,7 +561,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								if value < info.option.softMin then
@@ -578,7 +581,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								C.db.profile.units.cooldown[info[#info]] = value
@@ -615,7 +618,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 								order = 2,
 								type = "toggle",
 								disabled = function()
-									return not C.db.profile.units.cooldown.swipe.enabled
+									return isModuleDisabledOrOCCEnabled() or not C.db.profile.units.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},

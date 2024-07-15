@@ -25,7 +25,7 @@ local currencyOptionTables = {
 	reset = {
 		type = "execute",
 		order = 1,
-		name = L["RESTORE_DEFAULTS"],
+		name = L["RESET_TO_DEFAULT"],
 		confirm = CONFIG.ConfirmReset,
 		func = function()
 			t_wipe(C.db.profile.bars.bag.currency)
@@ -131,10 +131,11 @@ function CONFIG:CreateBagOptions(order)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars.bag, C.db.profile.bars.bag, {currency = true, point = true})
+
 					BARS:UpdateBag()
 				end,
 			},
@@ -192,10 +193,11 @@ function CONFIG:CreateBagOptions(order)
 					reset = {
 						order = inc(2),
 						type = "execute",
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.bag.fade, C.db.profile.bars.bag.fade, {enabled = true})
+
 							BARS:UpdateBag()
 						end,
 					},

@@ -52,7 +52,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 
 					UNITFRAMES:UpdateBlizzCastbars()
 				end,
-				hidden = function()
+				disabled = function()
 					return C.db.profile.units[unit].castbar.enabled
 				end,
 			},
@@ -64,10 +64,11 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar)
+
 					UNITFRAMES:For(unit, "UpdateCastbar")
 				end,
 			},

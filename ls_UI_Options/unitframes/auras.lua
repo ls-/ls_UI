@@ -48,10 +48,10 @@ end
 
 local FILTERS = {
 	friendly = {
-		name = function() return C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]) end,
+		name = C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]),
 	},
 	enemy = {
-		name = function() return C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]) end,
+		name = C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]),
 	},
 	buff = {
 		boss = {
@@ -271,16 +271,18 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				get = function() end,
 				set = function(_, value)
 					CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit].auras, copyIgnoredKeys)
+
 					UNITFRAMES:For(unit, "UpdateAuras")
 				end,
 			},
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, resetIgnoredKeys)
+
 					UNITFRAMES:For(unit, "UpdateAuras")
 				end,
 			},
@@ -567,6 +569,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 						get = function() end,
 						set = function(_, value)
 							CONFIG:CopySettings(C.db.profile.units[value].auras.filter, C.db.profile.units[unit].auras.filter)
+
 							UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 							UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 						end,
@@ -574,10 +577,11 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					reset = {
 						type = "execute",
 						order = inc(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units[unit].auras.filter, C.db.profile.units[unit].auras.filter)
+
 							UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 							UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 						end,

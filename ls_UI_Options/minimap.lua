@@ -55,7 +55,7 @@ function CONFIG:CreateMinimapOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
@@ -208,7 +208,7 @@ function CONFIG:CreateMinimapOptions(order)
 						name = L["TOOLTIP"],
 						disabled = function()
 							return isModuleDisabled() or not C.db.profile.minimap.flag.enabled
-						end
+						end,
 					},
 				},
 			},
@@ -312,7 +312,7 @@ function CONFIG:CreateMinimapOptions(order)
 					reset = {
 						order = inc(2),
 						type = "execute",
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						disabled = isFadingDisabled,
 						confirm = CONFIG.ConfirmReset,
 						func = function()

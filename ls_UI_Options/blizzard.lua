@@ -141,7 +141,7 @@ function CONFIG:CreateBlizzardOptions(order)
 					reset = {
 						type = "execute",
 						order = inc(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.blizzard.character_frame, C.db.profile.blizzard.character_frame)

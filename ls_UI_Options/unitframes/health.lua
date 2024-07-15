@@ -31,10 +31,11 @@ function CONFIG:CreateUnitFrameHealthOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].health, C.db.profile.units[unit].health)
+
 					UNITFRAMES:For(unit, "UpdateHealth")
 					UNITFRAMES:For(unit, "UpdateHealthPrediction")
 				end,

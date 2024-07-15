@@ -23,7 +23,7 @@ function CONFIG:CreateAboutPanel(order)
 	local options = {
 		order = order,
 		type = "group",
-		name = "|cff1a9fc0" .. L["INFORMATION"] .. "|r",
+		name = "|cff1a9fc0" .. L["INFO"] .. "|r",
 		args = {
 			desc = {
 				order = reset(1),

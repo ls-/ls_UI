@@ -56,7 +56,7 @@ function CONFIG:GetTooltipsOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
@@ -126,7 +126,7 @@ function CONFIG:GetTooltipsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.tooltips.health, C.db.profile.tooltips.health)

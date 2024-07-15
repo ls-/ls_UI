@@ -45,10 +45,11 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power)
+
 					UNITFRAMES:For(unit, "UpdatePower")
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
@@ -214,10 +215,11 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power)
+
 					UNITFRAMES:For(unit, "UpdateAlternativePower")
 				end,
 			},
@@ -314,7 +316,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 						type = "input",
 						width = "full",
 						name = L["FORMAT"],
-						desc = L["ALT_POWER_FORMAT_DESC"],
+						desc = L["ALTERNATIVE_POWER_FORMAT_DESC"],
 						get = function()
 							return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
 						end,
@@ -322,6 +324,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 							value = value:gsub("\124\124+", "\124")
 							if C.db.profile.units[unit].alt_power.text.tag ~= value then
 								C.db.profile.units[unit].alt_power.text.tag = value
+
 								UNITFRAMES:For(unit, "For", "AlternativePower", "UpdateConfig")
 								UNITFRAMES:For(unit, "For", "AlternativePower", "UpdateTags")
 							end
@@ -367,10 +370,11 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power)
+
 					UNITFRAMES:For(unit, "UpdateAdditionalPower")
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 					UNITFRAMES:For(unit, "UpdateClassPower")

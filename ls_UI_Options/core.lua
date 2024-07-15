@@ -391,7 +391,7 @@ do
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 				tile = true, tileSize = 16, edgeSize = 16,
-				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+				insets = { left = 4, right = 4, top = 4, bottom = 4 },
 			})
 			previewFrameBG:SetBackdropBorderColor(0.6, 0.6, 0.6)
 
@@ -484,7 +484,7 @@ do
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 				tile = true, tileSize = 16, edgeSize = 16,
-				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+				insets = { left = 4, right = 4, top = 4, bottom = 4 },
 			})
 			auraListFrame:SetBackdropBorderColor(0.6, 0.6, 0.6)
 			auraListFrame:SetHeight(426)

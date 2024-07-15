@@ -42,10 +42,11 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name)
+
 					UNITFRAMES:For(unit, "UpdateName")
 				end,
 			},

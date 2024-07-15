@@ -42,10 +42,11 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target)
+
 					UNITFRAMES:For(unit, "UpdateRaidTargetIndicator")
 				end,
 			},
@@ -144,10 +145,11 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff)
+
 					UNITFRAMES:For(unit, "UpdateDebuffIndicator")
 				end,
 			},
@@ -252,10 +254,11 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 			reset = {
 				order = inc(1),
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].portrait, C.db.profile.units[unit].portrait)
+
 					UNITFRAMES:For(unit, "UpdatePortrait")
 					UNITFRAMES:For(unit, "UpdateClassPower")
 					UNITFRAMES:For(unit, "UpdateRunes")

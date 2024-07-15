@@ -56,7 +56,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							C.db.global.colors.health:SetRGB(D.global.colors.health:GetRGB())
@@ -133,7 +133,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.power do
@@ -326,7 +326,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.prediction do
@@ -395,7 +395,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.reaction do
@@ -480,7 +480,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.faction do
@@ -533,7 +533,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.xp do
@@ -601,7 +601,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.difficulty do
@@ -637,7 +637,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["IMPOSSIBLE"],
 					},
-				}
+				},
 			},
 			castbar = {
 				order = inc(1),
@@ -660,7 +660,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.castbar do
@@ -724,7 +724,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.debuff do
@@ -819,7 +819,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.button do
@@ -876,7 +876,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.cooldown do
@@ -935,7 +935,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.zone do

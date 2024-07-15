@@ -58,7 +58,7 @@ local function isVarStringValid(varString)
 		return true
 	else
 		local _, err = loadstring("return " .. varString)
-		return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
+		return err and L["LUA_ERROR_TEMPLATE"]:format("|cffffffff" .. err .. "|r") or true
 	end
 end
 
@@ -69,7 +69,7 @@ end
 
 local function isFuncStringValid(funcString)
 	local _, err = loadstring("return " .. funcString)
-	return err and L["LUA_ERROR"]:format("|cffffffff" .. err .. "|r") or true
+	return err and L["LUA_ERROR_TEMPLATE"]:format("|cffffffff" .. err .. "|r") or true
 end
 
 local function validateFunc(_, value)
@@ -203,7 +203,7 @@ local curTagOptions = {
 	reset = {
 		type = "execute",
 		order = inc(1),
-		name = L["RESTORE_DEFAULTS"],
+		name = L["RESET_TO_DEFAULT"],
 		width = "full",
 		confirm = CONFIG.ConfirmReset,
 		hidden = function(info)

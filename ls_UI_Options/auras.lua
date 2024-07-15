@@ -71,8 +71,8 @@ local function isModuleDisabled()
 	return not AURAS:IsInit()
 end
 
-local function isOCCEnabled()
-	return E.OMNICC
+local function isModuleDisabledOrOCCEnabled()
+	return isModuleDisabled() or E.OMNICC
 end
 
 local function getAuraOptions(order, name, filter)
@@ -95,7 +95,7 @@ local function getAuraOptions(order, name, filter)
 			reset = {
 				type = "execute",
 				order = reset(2),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.auras[filter], C.db.profile.auras[filter], {point = true})
@@ -266,7 +266,7 @@ local function getAuraOptions(order, name, filter)
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
-				disabled = isOCCEnabled,
+				disabled = isModuleDisabledOrOCCEnabled,
 				get = function(info)
 					return C.db.profile.auras[filter].cooldown.text[info[#info]]
 				end,
@@ -351,7 +351,7 @@ function CONFIG:CreateAurasOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				disabled = isModuleDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
@@ -382,7 +382,7 @@ function CONFIG:CreateAurasOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.auras.cooldown, C.db.profile.auras.cooldown)
@@ -397,7 +397,7 @@ function CONFIG:CreateAurasOptions(order)
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = inc(2),
@@ -406,7 +406,7 @@ function CONFIG:CreateAurasOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.auras.cooldown[info[#info]] ~= value then
 								if value < info.option.softMin then
@@ -426,7 +426,7 @@ function CONFIG:CreateAurasOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
@@ -455,7 +455,7 @@ function CONFIG:CreateAurasOptions(order)
 								order = inc(3),
 								type = "toggle",
 								disabled = function()
-									return not C.db.profile.auras.cooldown.swipe.enabled
+									return isModuleDisabledOrOCCEnabled() or not C.db.profile.auras.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},

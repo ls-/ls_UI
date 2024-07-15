@@ -30,15 +30,16 @@ local function isXPBarDisabledOrRestricted()
 	return BARS:IsRestricted() or not BARS:HasXPBar()
 end
 
+local function isFadingDisabled(info)
+	return not (BARS:IsInit() and C.db.profile.bars[info[#info - 2]].fade.enabled)
+end
+
 function CONFIG:CreateBarFadingOptions(order, barID)
 	local temp = {
 		order = order,
 		type = "group",
 		name = L["FADING"],
 		inline = true,
-		disabled = function()
-			return not C.db.profile.bars[barID].fade.enabled
-		end,
 		get = function(info)
 			return C.db.profile.bars[barID].fade[info[#info]]
 		end,
@@ -53,12 +54,12 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
-				disabled = false,
 			},
 			reset = {
 				order = inc(1),
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isFadingDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID].fade, C.db.profile.bars[barID].fade, {enabled = true})
@@ -72,60 +73,65 @@ function CONFIG:CreateBarFadingOptions(order, barID)
 				order = inc(1),
 				type = "toggle",
 				name = L["COMBAT"],
+				disabled = isFadingDisabled,
 			},
 			target = {
 				order = inc(1),
 				type = "toggle",
 				name = L["TARGET"],
+				disabled = isFadingDisabled,
 			},
 			health = {
 				order = inc(1),
 				type = "toggle",
 				name = L["HEALTH"],
 				desc = L["HEALTH_FADING_DESC"],
+				disabled = isFadingDisabled,
 			},
 			in_duration = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_IN_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
+				disabled = isFadingDisabled,
 			},
 			out_delay = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_OUT_DELAY"],
 				min = 0, max = 2, step = 0.05,
+				disabled = isFadingDisabled,
 			},
 			out_duration = {
 				order = inc(1),
 				type = "range",
 				name = L["FADE_OUT_DURATION"],
 				min = 0.05, max = 1, step = 0.05,
+				disabled = isFadingDisabled,
 			},
 			min_alpha = {
 				order = inc(1),
 				type = "range",
 				name = L["MIN_ALPHA"],
 				min = 0, max = 1, step = 0.05,
+				disabled = isFadingDisabled,
 			},
 			max_alpha = {
 				order = inc(1),
 				type = "range",
 				name = L["MAX_ALPHA"],
-				min = 0, max = 1, step = 0.05
+				min = 0, max = 1, step = 0.05,
+				disabled = isFadingDisabled,
 			},
 		},
 	}
 
 	if barID == "bar1" then
 		temp.disabled = isModuleDisabledOrRestricted
-		temp.args.enabled.disabled = nil
 	elseif barID == "pet_battle" then
 		temp.disabled = isPetBattleBarDisabledOrRestricted
-		temp.args.enabled.disabled = nil
 	elseif barID == "xpbar" then
 		temp.disabled = isXPBarDisabledOrRestricted
-		temp.args.enabled.disabled = nil
 	end
 
 	return temp

@@ -72,10 +72,11 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			reset = {
 				type = "execute",
 				order = reset(1, 2),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
+
 					BARS:For(barID, "Update")
 				end,
 			},
@@ -90,7 +91,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateConfig")
 					BARS:For(barID, "UpdateFading")
 					BARS:For(barID, "UpdateVisibility")
-				end
+				end,
 			},
 			grid = {
 				order = inc(1),
@@ -401,7 +402,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.height.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.growth_dir.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.flyout_dir = nil
-		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
+		temp.args.hotkey.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.macro = nil
 		temp.args.spacer_4 = nil
 		temp.args.count = nil

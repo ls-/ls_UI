@@ -109,10 +109,11 @@ function CONFIG:CreateMicroMenuOptions(order)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {point = true})
+
 					BARS:UpdateMicroMenu()
 				end,
 			},

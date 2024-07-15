@@ -49,10 +49,11 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
+
 					BARS:For(barID, "Update")
 				end,
 			},
@@ -67,7 +68,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateConfig")
 					BARS:For(barID, "UpdateFading")
 					BARS:For(barID, "UpdateVisibility")
-				end
+				end,
 			},
 			artwork = {
 				order = inc(1),

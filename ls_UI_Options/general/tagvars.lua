@@ -1,5 +1,6 @@
 -- Lua
 local _G = getfenv(0)
+local loadstring = _G.loadstring
 local next = _G.next
 local rawset = _G.rawset
 local s_trim = _G.string.trim
@@ -32,9 +33,18 @@ local function isDefaultVar(info)
 	return D.global.tag_vars[info[#info - 1]]
 end
 
+local function isVarStringValid(varString)
+	if tonumber(varString) then
+		return true
+	else
+		local _, err = loadstring("return " .. varString)
+		return err and L["LUA_ERROR_TEMPLATE"]:format("|cffffffff" .. err .. "|r") or true
+	end
+end
+
 local function validateVar(_, value)
 	CONFIG:SetStatusText("")
-	return CONFIG:IsVarStringValid(value)
+	return isVarStringValid(value)
 end
 
 local updateVarsOptions
