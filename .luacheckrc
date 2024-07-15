@@ -302,7 +302,6 @@ read_globals = {
 	"RegisterAttributeDriver",
 	"RegisterStateDriver",
 	"ReloadUI",
-	"RENOWN_LEVEL_LABEL",
 	"ReputationFrame",
 	"RequestLFDPartyLockInfo",
 	"RequestLFDPlayerLockInfo",

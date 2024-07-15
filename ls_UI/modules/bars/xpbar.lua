@@ -395,7 +395,7 @@ do
 			end
 
 			standing = 9
-			repTextLevel = RENOWN_LEVEL_LABEL .. repInfo.renownLevel
+			repTextLevel = _G.RENOWN_LEVEL_LABEL .. repInfo.renownLevel
 		else
 			if standing ~= MAX_REPUTATION_REACTION then
 				max, cur = repMax - repMin, repCur - repMin
