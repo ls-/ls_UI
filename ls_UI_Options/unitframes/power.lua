@@ -23,6 +23,10 @@ local powerIgnoredAnchors = {
 }
 
 function CONFIG:CreateUnitFramePowerOptions(order, unit)
+	local function isPowerDisabled()
+		return not C.db.profile.units[unit].power.enabled
+	end
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -46,6 +50,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power)
@@ -60,6 +65,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 				type = "toggle",
 				name = L["COST_PREDICTION"],
 				desc = L["COST_PREDICTION_DESC"],
+				disabled = isPowerDisabled,
 				get = function()
 					return C.db.profile.units[unit].power.prediction.enabled
 				end,
@@ -75,6 +81,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
+				disabled = isPowerDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].power.text[info[#info]]
 				end,
@@ -194,6 +201,10 @@ local altPowerExtraAnchors = {
 }
 
 function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
+	local function isAltPowerDisabled()
+		return not C.db.profile.units[unit].alt_power.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -216,6 +227,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isAltPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power)
@@ -229,6 +241,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
+				disabled = isAltPowerDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].alt_power.text[info[#info]]
 				end,
@@ -345,6 +358,10 @@ local function hidePowerCost()
 end
 
 function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
+	local function isClassPowerDisabled()
+		return not C.db.profile.units[unit].class_power.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -371,6 +388,7 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isClassPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power)
@@ -388,6 +406,7 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 				type = "toggle",
 				name = L["COST_PREDICTION"],
 				desc = L["COST_PREDICTION_DESC"],
+				disabled = isClassPowerDisabled,
 				hidden = hidePowerCost,
 				get = function()
 					return C.db.profile.units[unit].class_power.prediction.enabled
@@ -403,6 +422,7 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 				order = inc(1),
 				type = "group",
 				name = L["RUNES"],
+				disabled = isClassPowerDisabled,
 				hidden = isPlayerDeathKnight,
 				inline = true,
 				get = function(info)

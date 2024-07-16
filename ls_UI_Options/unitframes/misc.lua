@@ -19,6 +19,10 @@ local function inc(order)
 end
 
 function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
+	local function isRaidTargetDisabled()
+		return not C.db.profile.units[unit].raid_target.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -43,6 +47,7 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isRaidTargetDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target)
@@ -56,6 +61,7 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 				type = "range",
 				name = L["SIZE"],
 				min = 8, max = 64, step = 1,
+				disabled = isRaidTargetDisabled,
 				set = function(info, value)
 					if C.db.profile.units[unit].raid_target[info[#info]] ~= value then
 						C.db.profile.units[unit].raid_target[info[#info]] = value
@@ -71,6 +77,7 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 				type = "group",
 				name = "",
 				inline = true,
+				disabled = isRaidTargetDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].raid_target.point1[info[#info]]
 				end,
@@ -122,6 +129,10 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 		["Power.Text"] = true,
 	}
 
+	local function areDebuffIconsDisabled()
+		return not C.db.profile.units[unit].debuff.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -146,6 +157,7 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = areDebuffIconsDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff)
@@ -157,6 +169,7 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["PREVIEW"],
+				disabled = areDebuffIconsDisabled,
 				func = function()
 					UNITFRAMES:For(unit, "For", "DebuffIndicator", "Preview")
 				end,
@@ -167,6 +180,7 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 				type = "group",
 				name = "",
 				inline = true,
+				disabled = areDebuffIconsDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].debuff.point1[info[#info]]
 				end,
@@ -229,6 +243,10 @@ local PORTRAIT_POSITIONS = {
 }
 
 function CONFIG:CreateUnitFramePortraitOptions(order, unit)
+	local function isPortraitDisabled()
+		return not C.db.profile.units[unit].portrait.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -255,6 +273,7 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 				order = inc(1),
 				type = "execute",
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isPortraitDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].portrait, C.db.profile.units[unit].portrait)
@@ -270,6 +289,7 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 				type = "select",
 				name = L["STYLE"],
 				values = PORTRAIT_STYLES,
+				disabled = isPortraitDisabled,
 			},
 			position = {
 				order = inc(1),
@@ -283,6 +303,7 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 				name = L["SCALE"],
 				min = 1, max = 4, step = 0.01, bigStep = 0.1,
 				isPercent = true,
+				disabled = isPortraitDisabled,
 				hidden = function()
 					return C.db.profile.units[unit].portrait.style ~= "3D"
 				end,

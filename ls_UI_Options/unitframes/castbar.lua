@@ -25,6 +25,10 @@ local ICON_POSITIONS = {
 }
 
 function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
+	local function isCastbarDisabled()
+		return not C.db.profile.units[unit].castbar.enabled
+	end
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -65,6 +69,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				type = "execute",
 				order = inc(1),
 				name = L["RESET_TO_DEFAULT"],
+				disabled = isCastbarDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].castbar, C.db.profile.units[unit].castbar)
@@ -77,6 +82,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "toggle",
 				name = L["LATENCY"],
+				disabled = isCastbarDisabled,
 				set = function(_, value)
 					if C.db.profile.units[unit].castbar.latency ~= value then
 						C.db.profile.units[unit].castbar.latency = value
@@ -91,6 +97,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				order = inc(1),
 				type = "toggle",
 				name = L["DETACH_FROM_FRAME"],
+				disabled = isCastbarDisabled,
 			},
 			width_override = {
 				order = inc(1),
@@ -100,7 +107,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				min = 0, max = 1024, step = 2,
 				softMin = 96,
 				disabled = function()
-					return not C.db.profile.units[unit].castbar.detached
+					return not (C.db.profile.units[unit].castbar.enabled and C.db.profile.units[unit].castbar.detached)
 				end,
 				set = function(info, value)
 					if C.db.profile.units[unit].castbar.width_override ~= value then
@@ -120,6 +127,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				type = "range",
 				name = L["HEIGHT"],
 				min = 8, max = 32, step = 1, bigStep = 2,
+				disabled = isCastbarDisabled,
 				set = function(_, value)
 					if C.db.profile.units[unit].castbar.height ~= value then
 						C.db.profile.units[unit].castbar.height = value
@@ -135,6 +143,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				type = "select",
 				name = L["ICON"],
 				values = ICON_POSITIONS,
+				disabled = isCastbarDisabled,
 				get = function()
 					return C.db.profile.units[unit].castbar.icon.position
 				end,
@@ -152,6 +161,7 @@ function CONFIG:CreateUnitFrameCastbarOptions(order, unit)
 				type = "range",
 				name = L["BAR_TEXT"],
 				min = 8, max = 32, step = 1,
+				disabled = isCastbarDisabled,
 				get = function()
 					return C.db.profile.units[unit].castbar.text.size
 				end,
