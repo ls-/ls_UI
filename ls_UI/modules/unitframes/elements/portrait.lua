@@ -31,6 +31,12 @@ function frame_proto:UpdatePortrait()
 		self.Portrait = self.Portrait2D
 		self.Portrait3D:ClearAllPoints()
 		self.Portrait3D:Hide()
+
+		if style == "2D" then
+			self.Portrait:SetTexCoord(0.125, 0.875, 0.125, 0.875)
+		else
+			self.Portrait:SetTexCoord(0, 1, 0, 1)
+		end
 	end
 
 	self.Portrait3D.__owner = self.Portrait2D.__owner
