@@ -276,6 +276,16 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 				type = "select",
 				name = L["POSITION"],
 				values = PORTRAIT_POSITIONS,
+				disabled = isPortraitDisabled,
+			},
+			scale = {
+				type = "range",
+				name = L["SCALE"],
+				min = 1, max = 4, step = 0.01, bigStep = 0.1,
+				isPercent = true,
+				hidden = function()
+					return C.db.profile.units[unit].portrait.style ~= "3D"
+				end,
 			},
 		},
 	}

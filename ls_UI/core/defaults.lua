@@ -665,6 +665,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -874,6 +875,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1077,6 +1079,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1294,6 +1297,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1431,6 +1435,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1648,6 +1653,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1805,6 +1811,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,

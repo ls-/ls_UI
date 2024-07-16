@@ -13,6 +13,12 @@ function element_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[unit].portrait, self._config)
 end
 
+function element_proto:PostUpdate(_, hasStateChanged)
+	if self:IsObjectType("PlayerModel") and hasStateChanged then
+		self:SetCamDistanceScale(1 / self._config.scale)
+	end
+end
+
 local frame_proto = {}
 
 function frame_proto:UpdatePortrait()
