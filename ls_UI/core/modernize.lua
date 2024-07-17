@@ -5,7 +5,6 @@ local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns
 local _G = getfenv(0)
 local m_min = _G.math.min
 local next = _G.next
-local type = _G.type
 
 -- Mine
 function P:Modernize(data, name, key)
@@ -84,6 +83,13 @@ function P:Modernize(data, name, key)
 			data.login_message = nil
 
 			data.version = 10010001
+		end
+
+		--> 110000.01
+		if data.version < 11000001 then
+			data.textures = nil
+
+			data.version = 11000001
 		end
 	elseif key == "profile" then
 		--> 90001.05
@@ -829,6 +835,25 @@ function P:Modernize(data, name, key)
 			end
 
 			data.version = 10020001
+		end
+
+		--> 110000.01
+		if data.version < 11000001 then
+			if data.units then
+				data.units.inlay = nil
+			end
+
+			if data.bars then
+				for _, bar in next, {"bar1", "bar2", "bar3", "bar4", "bar5", "bar6", "bar7", "bar8", "pet", "stance", "pet_battle"} do
+					if data.bars[bar] then
+						data.bars[bar].x_spacing = data.bars[bar].spacing
+						data.bars[bar].y_spacing = data.bars[bar].spacing
+						data.bars[bar].spacing = nil
+					end
+				end
+			end
+
+			data.version = 11000001
 		end
 	elseif key == "private" then
 		--> 90001.05
