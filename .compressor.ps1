@@ -38,13 +38,13 @@ function Remove-Kaka([Parameter(Mandatory, ValueFromPipeline)] $file) {
 
 $name = (Get-Item .).Name
 
-if (-Not (Test-Path (".\" + $name + "\" + $name + ".toc"))) {
+if (-Not (Test-Path (".\$name\$name.toc"))) {
 	Write-Host ".toc not found"
 
 	return Read-Host
 }
 
-if (Get-Content (".\" + $name + "\" + $name + ".toc") | Where-Object { $_ -match "Version:\s*([a-zA-Z0-9.-]+)" }) {
+if (Get-Content (".\$name\$name.toc") | Where-Object { $_ -match "Version:\s*([a-zA-Z0-9.-]+)" }) {
 	$version = $matches[1]
 } else {
 	Write-Host "Bad version format"
