@@ -121,6 +121,7 @@ do
 		local tempLoss = CreateFrame("StatusBar", nil, frame)
 		tempLoss:SetReverseFill(true)
 		tempLoss:SetMinMaxValues(0, 1)
+		tempLoss:SetClipsChildren(true)
 		tempLoss:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element.TempLoss_ = tempLoss
 
@@ -129,6 +130,20 @@ do
 		tempLoss._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\reduction", "REPEAT", "REPEAT")
 		tempLoss._texture:SetHorizTile(true)
 		tempLoss._texture:SetVertTile(true)
+
+		local edge = tempLoss:CreateTexture(nil, "OVERLAY")
+		edge:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-edge", "REPEAT", "REPEAT")
+		edge:SetVertTile(true)
+		edge:SetTexCoord(0, 14 / 16, 0, 1)
+		edge:SetSize(14 / 2, 0)
+		edge:SetPoint("TOP", 0, 0)
+		edge:SetPoint("BOTTOM", 0, 0)
+		edge:SetPoint("LEFT", tempLoss:GetStatusBarTexture(), "LEFT", 0, 0)
+		edge:SetSnapToPixelGrid(false)
+		edge:SetTexelSnappingBias(0)
+		edge:SetVertexColor(0.1, 0.1, 0.1)
+		edge:SetAlpha(0.8)
+		tempLoss.Edge = edge
 
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
