@@ -142,6 +142,7 @@ end
 do
 	local element_proto = {
 		maxOverflow = 1,
+		showRawAbsorb = true,
 	}
 
 	function element_proto:UpdateConfig()
@@ -234,10 +235,12 @@ do
 		otherBar._texture = otherBar:GetStatusBarTexture()
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
-		absorbBar:SetFrameLevel(level + 1)
+		absorbBar:SetClipsChildren(true)
+		absorbBar:SetFrameLevel(level + 2)
 		absorbBar:SetPoint("TOP")
 		absorbBar:SetPoint("BOTTOM")
-		absorbBar:SetPoint("LEFT", otherBar:GetStatusBarTexture(), "RIGHT")
+		absorbBar:SetReverseFill(true)
+		absorbBar:SetPoint("RIGHT", frame.Health.TempLoss_:GetStatusBarTexture(), "LEFT")
 		parent.DamageAbsorb = absorbBar
 
 		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -245,6 +248,7 @@ do
 		absorbBar._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
 		absorbBar._texture:SetHorizTile(true)
 		absorbBar._texture:SetVertTile(true)
+		absorbBar._texture:SetAlpha(0.4)
 
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
