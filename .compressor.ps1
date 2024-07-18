@@ -8,6 +8,34 @@ if (-Not (Test-Path "$env:ProgramFiles\7-Zip\7z.exe")) {
 
 Set-Alias 7z "$env:ProgramFiles\7-Zip\7z.exe"
 
+function Remove-Kaka([Parameter(Mandatory, ValueFromPipeline)] $file) {
+	process {
+		$canWrite = $true
+		$out = ""
+
+		foreach ($line in Get-Content $file ) {
+			if ($line -match "--@do-not-package@") {
+				$canWrite = $false
+			}
+			elseif ($line -match "--@end-do-not-package@" ) {
+				$canWrite = $true
+
+				if (-not $foreach.MoveNext()) {
+					break
+				}
+
+				$line = $foreach.Current
+			}
+
+			if ($canWrite) {
+				$out += "$line`n"
+			}
+		}
+
+		Set-Content $file -Value $out.TrimEnd()
+	}
+}
+
 $name = (Get-Item .).Name
 
 if (-Not (Test-Path (".\" + $name + "\" + $name + ".toc"))) {
@@ -54,5 +82,6 @@ if (Test-Path $temp) {
 New-Item -Path $temp -ItemType Directory | Out-Null
 Copy-Item $foldersToInclude -Destination $temp -Exclude $filesToExclude -Recurse
 Get-ChildItem $temp -Recurse | Where-Object { $_.PSIsContainer -and $_.Name -cin $foldersToRemove } | Remove-Item -Recurse -Force
+Get-ChildItem $temp -Recurse | Where-Object { $_.Extension -eq ".lua"} | Remove-Kaka
 7z a -tzip -mx9 "..\$name-$version.zip" (Get-ChildItem $temp)
 Remove-Item $temp -Recurse -Force
