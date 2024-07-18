@@ -13,11 +13,11 @@ function Remove-Kaka([Parameter(Mandatory, ValueFromPipeline)] $file) {
 		$canWrite = $true
 		$out = ""
 
-		foreach ($line in Get-Content $file ) {
+		foreach ($line in Get-Content $file) {
 			if ($line -match "--@do-not-package@") {
 				$canWrite = $false
 			}
-			elseif ($line -match "--@end-do-not-package@" ) {
+			elseif ($line -match "--@end-do-not-package@") {
 				$canWrite = $true
 
 				if (-not $foreach.MoveNext()) {
