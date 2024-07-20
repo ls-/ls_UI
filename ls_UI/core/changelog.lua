@@ -27,6 +27,7 @@ E.CHANGELOG = [[
 
 - Added adjustable gradient. Can be found at /LSUI > Unit Frames, next to the gloss slider.
 - Added temporary max health reduction bar. It's a new feature in TWW, most likely will be used in raid and dungeon encounters. Can be found at /LSUI > Unit Frames > Unit Frame > Health > Health Reduction, next to the heal prediction toggle.
+- Reworked the damage absorb shield into a widget that's displayed on top of the health bar.
 - Added an option to adjust the zoom of 3D portraits. /LSUI > Unit Frames > Unit Frame > Portrait > Scale, only visible when using 3D portraits.
 - Cropped 2D portraits. They're less round now, and there's less wasted space. There's no way to completely remove the round mask.
 - Added options to enable word wrapping for health and power texts.
