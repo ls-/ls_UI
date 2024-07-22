@@ -27,6 +27,11 @@
   a single 12 button action bar to be as big as just 6 button slots.
 - Fixed an issue where the XP bar would occasionally blink/flash. It generally should perform a lot better now.
 
+### Blizzard
+
+- Added compact variant for the Suggested Content tab of the Adventure Guide. Can be found at /LSUI > Blizzard >
+  Adventure Guide, enabled by default.
+
 ### Unit Frames
 
 - Added adjustable gradient. Can be found at /LSUI > Unit Frames, next to the gloss slider.
