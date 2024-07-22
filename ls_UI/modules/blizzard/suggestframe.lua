@@ -168,23 +168,43 @@ local function init()
 		bg:SetAtlas("adventureguide-pane-large")
 
 		local prevButton = CreateFrame("Button", nil, compactFrame)
+		prevButton:SetPoint("BOTTOMLEFT", 2, -6)
 		prevButton:SetSize(29, 40)
 		prevButton:SetNormalTexture("CovenantSanctum-Renown-Arrow")
 		prevButton:SetPushedTexture("CovenantSanctum-Renown-Arrow-Depressed")
 		prevButton:SetDisabledTexture("CovenantSanctum-Renown-Arrow-Disabled")
 		prevButton:SetHighlightTexture("CovenantSanctum-Renown-Arrow-Hover", "ADD")
-		prevButton:SetPoint("BOTTOMLEFT", 2, -6)
 		prevButton:RotateTextures(m_rad(45))
+		prevButton:SetScript("OnClick", function()
+			page = page - 1
+			if page > pages then
+				page = pages
+			elseif page < 1 then
+				page = 1
+			end
+
+			refresh()
+		end)
 		compactFrame.PrevButton = prevButton
 
 		local nextButton = CreateFrame("Button", nil, compactFrame)
+		nextButton:SetPoint("BOTTOMRIGHT", -2, -6)
 		nextButton:SetSize(29, 40)
 		nextButton:SetNormalTexture("CovenantSanctum-Renown-Arrow")
 		nextButton:SetPushedTexture("CovenantSanctum-Renown-Arrow-Depressed")
 		nextButton:SetDisabledTexture("CovenantSanctum-Renown-Arrow-Disabled")
 		nextButton:SetHighlightTexture("CovenantSanctum-Renown-Arrow-Hover", "ADD")
-		nextButton:SetPoint("BOTTOMRIGHT", -2, -6)
 		nextButton:RotateTextures(m_rad(135))
+		nextButton:SetScript("OnClick", function()
+			page = page + 1
+			if page > pages then
+				page = pages
+			elseif page < 1 then
+				page = 1
+			end
+
+			refresh()
+		end)
 		compactFrame.NextButton = nextButton
 
 		E:RegisterEvent("AJ_REFRESH_DISPLAY", function()
