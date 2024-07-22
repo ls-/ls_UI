@@ -2897,6 +2897,9 @@ PrD.profile = {
 		mail = {
 			enabled = false,
 		},
+		suggest_frame = { -- EncounterJournalSuggestFrame
+			enabled = true,
+		},
 	},
 	minimap = {
 		enabled = true,

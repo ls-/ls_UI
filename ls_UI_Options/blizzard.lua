@@ -103,6 +103,23 @@ function CONFIG:CreateBlizzardOptions(order)
 					end
 				end,
 			},
+			suggest_frame = {
+				order = inc(1),
+				type = "toggle",
+				name = CONFIG:ColorPrivateSetting(L["ADVENTURE_GUIDE"]),
+				disabled = isModuleDisabled,
+				set = function(_, value)
+					PrC.db.profile.blizzard.suggest_frame.enabled = value
+
+					if BLIZZARD:HasMail() then
+						CONFIG:AskToReloadUI("suggest_frame.enabled", value)
+					else
+						if value then
+							BLIZZARD:SetUpSuggestFrame()
+						end
+					end
+				end,
+			},
 			character_frame = {
 				order = inc(1),
 				type = "group",
