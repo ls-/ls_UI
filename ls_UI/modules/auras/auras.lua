@@ -156,7 +156,7 @@ local function handleButton(button, header)
 	button:SetScript("OnSizeChanged", button.OnSizeChanged)
 	button:RegisterForClicks("RightButtonDown", "RightButtonUp")
 
-	button.Icon = E:SetIcon(button, [[Interface\ICONS\INV_Misc_QuestionMark]])
+	button.Icon = E:SetIcon(button, QUESTION_MARK_ICON)
 
 	local border = E:CreateBorder(button)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")

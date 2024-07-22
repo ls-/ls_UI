@@ -525,7 +525,7 @@ do
 
 			if not name or name == "" then
 				name = _G.UNKNOWN
-				texture = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
+				texture = texture or QUESTION_MARK_ICON
 			end
 
 			cta[shortageRole][dungeonID][rewardIndex] = {
