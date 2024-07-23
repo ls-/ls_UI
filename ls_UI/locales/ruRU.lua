@@ -8,7 +8,6 @@ local _G = getfenv(0)
 
 if GetLocale() ~= "ruRU" then return end
 
-L["ACTION_BARS"] = "Панели команд"
 L["ADVENTURE_JOURNAL_DESC"] = "Показывать информацию о сохраненных рейдах."
 L["ALTERNATIVE_POWER"] = "Альт. энергия"
 L["ALTERNATIVE_POWER_FORMAT_DESC"] = [=[Введите строку для изменения текста. Для отключения оставьте поле пустым.

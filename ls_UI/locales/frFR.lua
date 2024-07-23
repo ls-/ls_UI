@@ -8,7 +8,6 @@ local _G = getfenv(0)
 
 if GetLocale() ~= "frFR" then return end
 
-L["ACTION_BARS"] = "Barres d'action"
 L["ADVENTURE_JOURNAL_DESC"] = "Afficher les informations de verrouillage du raid"
 L["ALTERNATIVE_POWER"] = "Puissance alternative"
 L["ALTERNATIVE_POWER_FORMAT_DESC"] = [=[Fournissez une chaîne de caractères pour changer le texte. Pour désactiver, laissez le champ vide.

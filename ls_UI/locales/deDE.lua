@@ -8,7 +8,6 @@ local _G = getfenv(0)
 
 if GetLocale() ~= "deDE" then return end
 
-L["ACTION_BARS"] = "Aktionsleisten"
 L["ADVENTURE_JOURNAL_DESC"] = "Zeige Infos zu Schlachtzugszuweisungen"
 L["ALTERNATIVE_POWER"] = "Spezielle Ressourcen"
 L["ALWAYS_SHOW"] = "Immer anzeigen"

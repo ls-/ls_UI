@@ -105,7 +105,6 @@ L["UNIT_FRAME"] = _G.UNITFRAME_LABEL
 L["ZONE"] = _G.ZONE
 
 -- Require translation
-L["ACTION_BARS"] = "Action Bars"
 L["ADVENTURE_JOURNAL_DESC"] = "Show raid lockout information."
 L["ALTERNATIVE_POWER"] = "Alternative Power"
 L["ALTERNATIVE_POWER_FORMAT_DESC"] = [=[Provide a string to change the text. To disable, leave the field blank.

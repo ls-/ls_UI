@@ -8,7 +8,6 @@ local _G = getfenv(0)
 
 if GetLocale() ~= "esES" and GetLocale() ~= "esMX" then return end
 
-L["ACTION_BARS"] = "Barras de acción"
 L["ADVENTURE_JOURNAL_DESC"] = "Mostrar información de registros de banda."
 L["ALTERNATIVE_POWER"] = "Poder alternativo"
 L["ALTERNATIVE_POWER_FORMAT_DESC"] = [=[Escribe un "String" para cambiar el texto. Para desactivarlo, deja el campo en blanco.

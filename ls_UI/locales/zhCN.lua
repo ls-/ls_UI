@@ -31,7 +31,6 @@ do
 	end
 end
 
-L["ACTION_BARS"] = "动作条"
 L["ADVENTURE_JOURNAL_DESC"] = "显示团队副本锁定信息"
 L["ALTERNATIVE_POWER"] = "第二资源"
 L["ALTERNATIVE_POWER_FORMAT_DESC"] = [=[通过格式化字符串来修改文本显示，留空表示禁用此功能
