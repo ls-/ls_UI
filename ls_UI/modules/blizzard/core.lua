@@ -15,6 +15,7 @@ function BLIZZARD:Init()
 		self:SetUpCommandBar()
 		self:SetUpGMFrame()
 		self:SetUpMail()
+		self:SetUpSuggestFrame()
 		self:SetUpTalkingHead()
 
 		isInit = true

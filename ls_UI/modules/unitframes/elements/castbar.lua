@@ -135,14 +135,17 @@ function element_proto:CustomDelayText(duration)
 	end
 end
 
-function element_proto:SetSmoothStatusBarColor(...)
+function element_proto:SetSmoothStatusBarColor(r, g, b, a)
 	local color = self.ColorAnim.color
+	a = a or 1
 
-	color.r, color.g, color.b = ...
-	self.ColorAnim.Anim:SetEndColor(color)
+	if color.r == r and color.g == g and color.b == b and color.a == a then return end
 
-	color.r, color.g, color.b = self:GetStatusBarColor()
+	color.r, color.g, color.b, color.a = self:GetStatusBarColor()
 	self.ColorAnim.Anim:SetStartColor(color)
+
+	color.r, color.g, color.b, color.a = r, g, b, a
+	self.ColorAnim.Anim:SetEndColor(color)
 
 	self.ColorAnim:Play()
 end
@@ -163,8 +166,7 @@ function element_proto:UpdateFonts()
 end
 
 function element_proto:UpdateTextures()
-	self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-	self.SafeZone_:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+	self:UpdateStatusBarTexture()
 end
 
 function element_proto:UpdateColors()
@@ -196,8 +198,8 @@ function element_proto:UpdateIcon()
 		self.LeftSep:SetSize(12 / 2, 0)
 		self.RightSep:SetSize(0.0001, 0.0001)
 
-		self:SetPoint("TOPLEFT", 6 + height * 1.5, 0) -- 4 + 2, offset + sep width
-		self:SetPoint("BOTTOMRIGHT", -4, 0)
+		self:SetPoint("TOPLEFT", 2 + height * 1.5, 0) -- 4 + 2, offset + sep width
+		self:SetPoint("BOTTOMRIGHT", 0, 0)
 	elseif config.icon.position == "RIGHT" then
 		self.Icon = self.RightIcon
 
@@ -207,8 +209,8 @@ function element_proto:UpdateIcon()
 		self.LeftSep:SetSize(0.0001, 0.0001)
 		self.RightSep:SetSize(12 / 2, 0)
 
-		self:SetPoint("TOPLEFT", 4, 0)
-		self:SetPoint("BOTTOMRIGHT", -6 - height * 1.5, 0) -- 4 + 2, offset + sep width
+		self:SetPoint("TOPLEFT", 0, 0)
+		self:SetPoint("BOTTOMRIGHT", -2 - height * 1.5, 0) -- 4 + 2, offset + sep width
 	else
 		self.Icon = nil
 
@@ -218,8 +220,8 @@ function element_proto:UpdateIcon()
 		self.LeftSep:SetSize(0.0001, 0.0001)
 		self.RightSep:SetSize(0.0001, 0.0001)
 
-		self:SetPoint("TOPLEFT", 4, 0)
-		self:SetPoint("BOTTOMRIGHT", -4, 0)
+		self:SetPoint("TOPLEFT", 0, 0)
+		self:SetPoint("BOTTOMRIGHT", 0, 0)
 	end
 end
 
@@ -277,8 +279,10 @@ function element_proto:UpdateSize()
 			holder:SetParent(frame)
 		end
 	end
+end
 
-	E:SetStatusBarSkin(self.TexParent, "HORIZONTAL-" .. height)
+function element_proto:UpdateTextureCallback(texture)
+	self.SafeZone_:SetTexture(texture)
 end
 
 local frame_proto = {}
@@ -311,6 +315,9 @@ function frame_proto:UpdateCastbar()
 	end
 end
 
+local gradientColorMin = {r = 0, g = 0, b = 0, a = 0}
+local gradientColorMax = {r = 0, g = 0, b = 0, a = 0.4}
+
 function UF:CreateCastbar(frame)
 	Mixin(frame, frame_proto)
 
@@ -318,6 +325,7 @@ function UF:CreateCastbar(frame)
 
 	local element = Mixin(CreateFrame("StatusBar", nil, holder), element_proto)
 	element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+	E.StatusBars:Capture(element, "castbar", element.UpdateTextureCallback)
 	element:SetFrameLevel(holder:GetFrameLevel())
 	element.Holder = holder
 
@@ -331,10 +339,12 @@ function UF:CreateCastbar(frame)
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)
 	bg:SetAllPoints(holder)
-	bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGB())
+	bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
+	bg:SetHorizTile(true)
+	bg:SetVertTile(true)
 
 	local icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
-	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
+	icon:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
 	element.LeftIcon = icon
 
@@ -342,6 +352,7 @@ function UF:CreateCastbar(frame)
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
 	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetVertexColor(1, 0.6, 0)
 	sep:SetSize(12 / 2, 0)
 	sep:SetPoint("TOP", 0, 0)
 	sep:SetPoint("BOTTOM", 0, 0)
@@ -352,13 +363,14 @@ function UF:CreateCastbar(frame)
 
 	icon = element:CreateTexture(nil, "BACKGROUND", nil, 0)
 	icon:SetTexCoord(8 / 64, 56 / 64, 9 / 64, 41 / 64)
-	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -4, 0)
+	icon:SetPoint("TOPRIGHT", holder, "TOPRIGHT", 0, 0)
 	element.RightIcon = icon
 
 	sep = element:CreateTexture(nil, "OVERLAY")
 	sep:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-sep", "REPEAT", "REPEAT")
 	sep:SetVertTile(true)
 	sep:SetTexCoord(2 / 16, 14 / 16, 0 / 8, 8 / 8)
+	sep:SetVertexColor(1, 0.6, 0)
 	sep:SetSize(12 / 2, 0)
 	sep:SetPoint("TOP", 0, 0)
 	sep:SetPoint("BOTTOM", 0, 0)
@@ -374,9 +386,9 @@ function UF:CreateCastbar(frame)
 
 	local texParent = CreateFrame("Frame", nil, element)
 	texParent:SetFrameLevel(element:GetFrameLevel() + 2)
-	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 4, 0)
-	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", -4, 0)
-	element.TexParent = texParent
+	texParent:SetPoint("TOPLEFT", holder, "TOPLEFT", 0, 0)
+	texParent:SetPoint("BOTTOMRIGHT", holder, "BOTTOMRIGHT", 0, 0)
+	element.TextureParent = texParent
 
 	local time = texParent:CreateFontString(nil, "ARTWORK")
 	E.FontStrings:Capture(time, "statusbar")
@@ -395,6 +407,20 @@ function UF:CreateCastbar(frame)
 	text:SetPoint("LEFT", element, "LEFT", 2, 0)
 	text:SetPoint("RIGHT", time, "LEFT", -2, 0)
 	element.Text = text
+
+	local border = E:CreateBorder(texParent, "BORDER")
+	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-statusbar")
+	border:SetSize(16)
+	border:SetOffset(-4)
+	element.Border = border
+
+	local gradient = texParent:CreateTexture(nil, "BORDER", nil, -1)
+	gradient:SetAllPoints(texParent)
+	gradient:SetSnapToPixelGrid(false)
+	gradient:SetTexelSnappingBias(0)
+	gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+	gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+	element.Gradient = gradient
 
 	element.stageColors = {
 		[3] = {},

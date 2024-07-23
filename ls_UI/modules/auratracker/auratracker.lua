@@ -19,7 +19,7 @@ local function verifyFilter(filter)
 	local toRemove = {}
 
 	for k in next, auraList do
-		if not GetSpellInfo(k) then
+		if not C_Spell.GetSpellInfo(k) then
 			toRemove[k] = true
 		end
 	end

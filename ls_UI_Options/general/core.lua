@@ -16,7 +16,8 @@ function CONFIG:GetGeneralOptions(order)
 
 	self:GetColorsOptions(1)
 	self:GetFontsOptions(2)
-	self:GetTagsOptions(3)
-	self:GetTagVarsOptions(4)
-	self:GetAuraFiltersOptions(5)
+	self:GetTexturesOptions(3)
+	self:GetTagsOptions(4)
+	self:GetTagVarsOptions(5)
+	self:GetAuraFiltersOptions(6)
 end

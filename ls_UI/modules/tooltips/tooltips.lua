@@ -16,15 +16,15 @@ local isInit = false
 
 local AFK = "[" .. _G.AFK .. "] "
 local DND = "[" .. _G.DND .. "] "
-local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. ":|r %s"
+local EXPANSION = "|cffffd100" .. _G.EXPANSION_FILTER_TEXT .. _G.HEADER_COLON .. "|r %s"
 local GUILD_TEMPLATE = _G.GUILD_TEMPLATE
-local ID = "|cffffd100" .. _G.ID .. ":|r %d"
+local ID = "|cffffd100" .. _G.ID .. _G.HEADER_COLON .. "|r %d"
 local NAME_FORMAT = "%s%s"
 local LEVEL_FORMAT = "%s %s"
 local ILVL_SPEC_FORMAT = "|cffffd100%s|r %s"
 local PLAYER_TARGET_FORMAT = "%s (|c%s" .. _G.PLAYER .. "|r)"
-local TARGET = "|cffffd100" .. _G.TARGET .. ":|r %s"
-local TOTAL = "|cffffd100" .. _G.TOTAL .. ":|r %d"
+local TARGET = "|cffffd100" .. _G.TARGET .. _G.HEADER_COLON .. "|r %s"
+local TOTAL = "|cffffd100" .. _G.TOTAL .. _G.HEADER_COLON .. "|r %d"
 
 local PHASE_ICONS = {
 	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
@@ -98,28 +98,6 @@ local function findLine(tooltip, start, pattern)
 		if text and text:match(pattern) then
 			return _G["GameTooltipTextLeft" .. i], i + 1
 		end
-	end
-end
-
-local function tooltipBarHook(self)
-	if self:IsForbidden() or self:GetParent():IsForbidden() then return end
-
-	self.Text:Hide()
-	self:SetStatusBarColor(C.db.global.colors.health:GetRGB())
-
-	local _, unit = self:GetParent():GetUnit()
-	if not unit then
-		self:GetParent():SetMinimumWidth(0)
-
-		return
-	end
-
-	local max = UnitHealthMax(unit)
-	if max > 1 then
-		self.Text:Show()
-		self.Text:SetFormattedText("%s / %s", E:FormatNumber(UnitHealth(unit)), E:FormatNumber(max))
-
-		self:GetParent():SetMinimumWidth(m_floor(self.Text:GetStringWidth() + 32))
 	end
 end
 
@@ -303,7 +281,7 @@ function MODULE:Init()
 					if isShiftKeyDown then
 						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode("-" .. realm))
 					elseif UnitRealmRelationship(unit) ~= LE_REALM_RELATION_VIRTUAL then
-						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode(L["FOREIGN_SERVER_LABEL"]))
+						name = NAME_FORMAT:format(name, C.db.global.colors.gray:WrapTextInColorCode(_G.FOREIGN_SERVER_LABEL))
 					end
 				end
 
@@ -389,7 +367,7 @@ function MODULE:Init()
 					end
 				end
 			elseif UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) then
-				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
+				GameTooltipTextLeft1:SetText(UnitName(unit) or _G.UNKNOWN)
 				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				scaledLevel = UnitBattlePetLevel(unit)
@@ -406,11 +384,11 @@ function MODULE:Init()
 					levelLine:SetFormattedText(
 						LEVEL_FORMAT,
 						difficultyColor:WrapTextInColorCode(scaledLevel > 0 and scaledLevel or "??"),
-						(UnitCreatureType(unit) or L["PET"]) .. (petType and ", " .. petType or "")
+						(UnitCreatureType(unit) or _G.PET) .. (petType and ", " .. petType or "")
 					)
 				end
 			else
-				GameTooltipTextLeft1:SetText(UnitName(unit) or L["UNKNOWN"])
+				GameTooltipTextLeft1:SetText(UnitName(unit) or _G.UNKNOWN)
 				GameTooltipTextLeft1:SetTextColor(E:GetUnitColor_(unit, false, true):GetRGB())
 
 				local status = ""
@@ -458,6 +436,7 @@ function MODULE:Init()
 			end
 		end)
 
+		-- Status Bars
 		local function hideHealthBar(tooltip, tooltipData)
 			if tooltip.StatusBar then
 				if not tooltipData.healthGUID then
@@ -469,11 +448,33 @@ function MODULE:Init()
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Corpse, hideHealthBar)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.MinimapMouseover, hideHealthBar)
 
-		-- Status Bars
-		E:HandleStatusBar(GameTooltipStatusBar)
+		local function tooltipBarHook(self)
+			if self:IsForbidden() or self:GetParent():IsForbidden() then return end
+
+			self.Text:Hide()
+			self:SetStatusBarColor(C.db.global.colors.health:GetRGB())
+
+			local _, unit = self:GetParent():GetUnit()
+			if not unit then
+				self:GetParent():SetMinimumWidth(0)
+
+				return
+			end
+
+			local max = UnitHealthMax(unit)
+			if max > 1 then
+				self.Text:Show()
+				self.Text:SetFormattedText("%s / %s", E:FormatNumber(UnitHealth(unit)), E:FormatNumber(max))
+
+				self:GetParent():SetMinimumWidth(m_floor(self.Text:GetStringWidth() + 32))
+			end
+		end
+
+		E.StatusBars:Reskin(E.StatusBars:Handle(GameTooltipStatusBar))
+
 		GameTooltipStatusBar:ClearAllPoints()
-		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 8, -2)
-		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -8, -2)
+		GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", 3, -2)
+		GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -3, -2)
 		GameTooltipStatusBar:HookScript("OnShow", tooltipBarHook)
 		GameTooltipStatusBar:HookScript("OnValueChanged", tooltipBarHook)
 
@@ -483,8 +484,8 @@ function MODULE:Init()
 			for _, child in next, {self:GetChildren()} do
 				if child ~= GameTooltipStatusBar and child:GetObjectType() == "StatusBar" then
 					if not child.handled then
-						E:HandleStatusBar(child)
-						E:SetStatusBarSkin(child, "HORIZONTAL-GLASS")
+						E.StatusBars:Reskin(E.StatusBars:Handle(child))
+
 						child:SetHeight(10)
 					end
 
@@ -515,8 +516,6 @@ end
 function MODULE:Update()
 	if isInit then
 		GameTooltipStatusBar:SetHeight(C.db.profile.tooltips.health.height)
-		E:SetStatusBarSkin(GameTooltipStatusBar, "HORIZONTAL-" .. C.db.profile.tooltips.health.height)
-
 		GameTooltipStatusBar.Text:UpdateFont(C.db.profile.tooltips.health.text.size)
 	end
 end

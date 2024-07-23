@@ -45,20 +45,17 @@ function CONFIG:CreateUnitFrameFadingOptions(order, unit)
 			reset = {
 				order = inc(1),
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				disabled = isFadingDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].fade, C.db.profile.units[unit].fade, {enabled = true})
+
 					UNITFRAMES:For(unit, "UpdateConfig")
 					UNITFRAMES:For(unit, "UpdateFading")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			combat = {
 				order = inc(1),
 				type = "toggle",

@@ -27,8 +27,8 @@ local function isBossFrameDisabled()
 	return not UNITFRAMES:HasBossFrame()
 end
 
-local function isOCCEnabled()
-	return E.OMNICC
+local function isModuleDisabledOrOCCEnabled()
+	return isModuleDisabled() or E.OMNICC
 end
 
 local function getUnitFrameOptions(order, unit, name)
@@ -66,29 +66,27 @@ local function getUnitFrameOptions(order, unit, name)
 				get = function() end,
 				set = function(_, value)
 					CONFIG:CopySettings(C.db.profile.units[value], C.db.profile.units[unit], {["blizz_enabled"] = true})
+
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 2
 			reset = {
 				order = 3,
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit], C.db.profile.units[unit])
+
 					UNITFRAMES:For(unit, "Update")
 				end,
 			}, -- 3
-			spacer_1 = {
-				order = 4,
-				type = "description",
-				name = " ",
-			}, -- 4
+			spacer_1 = CONFIG:CreateSpacer(4), -- 4
 			width = {
 				order = 5,
 				type = "range",
 				name = L["WIDTH"],
-				min = 96, max = 512, step = 2,
+				min = 96, max = 512, step = 1, bigStep = 2,
 				get = function()
 					return C.db.profile.units[unit].width
 				end,
@@ -104,7 +102,7 @@ local function getUnitFrameOptions(order, unit, name)
 				order = 6,
 				type = "range",
 				name = L["HEIGHT"],
-				min = 28, max = 256, step = 2,
+				min = 28, max = 256, step = 1, bigStep = 2,
 				get = function()
 					return C.db.profile.units[unit].height
 				end,
@@ -210,11 +208,7 @@ local function getUnitFrameOptions(order, unit, name)
 					UNITFRAMES:For(unit, "AlignWidgets")
 				end,
 			}, -- 16
-			spacer_2 = {
-				order = 20,
-				type = "description",
-				name = " ",
-			}, -- 20
+			spacer_2 = CONFIG:CreateSpacer(20), -- 20
 			border = {
 				order = 21,
 				type = "group",
@@ -241,11 +235,7 @@ local function getUnitFrameOptions(order, unit, name)
 					},
 				},
 			}, -- 21
-			spacer_4 = {
-				order = 30,
-				type = "description",
-				name = " ",
-			}, -- 30
+			spacer_4 = CONFIG:CreateSpacer(30), -- 30
 			health = CONFIG:CreateUnitFrameHealthOptions(31, unit),
 			power = CONFIG:CreateUnitFramePowerOptions(32, unit),
 			-- alt_power = {}, -- 33
@@ -368,7 +358,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 			enabled = {
 				order = 1,
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.units.enabled
 				end,
@@ -376,9 +366,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 					PrC.db.profile.units.enabled = value
 
 					if UNITFRAMES:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("units.enabled", value)
 					else
 						if value then
 							P:Call(UNITFRAMES.Init, UNITFRAMES)
@@ -386,13 +374,9 @@ function CONFIG:CreateUnitFramesOptions(order)
 					end
 				end,
 			}, -- 1
-			spacer_1 = {
-				order = 2,
-				type = "description",
-				name = " ",
-			}, -- 2
+			spacer_1 = CONFIG:CreateSpacer(9), -- 9
 			units = {
-				order = 3,
+				order = 10,
 				type = "group",
 				name = L["UNITS"],
 				inline = true,
@@ -403,88 +387,96 @@ function CONFIG:CreateUnitFramesOptions(order)
 				set = function(info, value)
 					PrC.db.profile.units[info[#info]].enabled = value
 
-					if UNITFRAMES:IsInit() then
-						if value then
-							if info[#info] == "player" then
-								UNITFRAMES:Create("player")
-								UNITFRAMES:For("player", "Update")
+					if value then
+						if info[#info] == "player" then
+							UNITFRAMES:Create("player")
+							UNITFRAMES:For("player", "Update")
 
-								UNITFRAMES:Create("pet")
-								UNITFRAMES:For("pet", "Update")
-							elseif info[#info] == "target" then
-								UNITFRAMES:Create("target")
-								UNITFRAMES:For("target", "Update")
+							UNITFRAMES:Create("pet")
+							UNITFRAMES:For("pet", "Update")
+						elseif info[#info] == "target" then
+							UNITFRAMES:Create("target")
+							UNITFRAMES:For("target", "Update")
 
-								UNITFRAMES:Create("targettarget")
-								UNITFRAMES:For("targettarget", "Update")
-							elseif info[#info] == "focus" then
-								UNITFRAMES:Create("focus")
-								UNITFRAMES:For("focus", "Update")
+							UNITFRAMES:Create("targettarget")
+							UNITFRAMES:For("targettarget", "Update")
+						elseif info[#info] == "focus" then
+							UNITFRAMES:Create("focus")
+							UNITFRAMES:For("focus", "Update")
 
-								UNITFRAMES:Create("focustarget")
-								UNITFRAMES:For("focustarget", "Update")
-							else
-								UNITFRAMES:Create("boss")
-								UNITFRAMES:For("boss", "Update")
-							end
+							UNITFRAMES:Create("focustarget")
+							UNITFRAMES:For("focustarget", "Update")
 						else
-							CONFIG:ShowStaticPopup("RELOAD_UI")
+							UNITFRAMES:Create("boss")
+							UNITFRAMES:For("boss", "Update")
 						end
 					end
+
+					CONFIG:AskToReloadUI(info[#info] .. ".enabled", value)
 				end,
 				args = {
 					player = {
 						order = 1,
 						type = "toggle",
-						name = L["PLAYER_PET"],
+						name = CONFIG:ColorPrivateSetting(L["PLAYER_PET"]),
 					},
 					target = {
 						order = 2,
 						type = "toggle",
-						name = L["TARGET_TOT"],
+						name = CONFIG:ColorPrivateSetting(L["TARGET_TOT"]),
 					},
 					focus = {
 						order = 3,
 						type = "toggle",
-						name = L["FOCUS_TOF"],
+						name = CONFIG:ColorPrivateSetting(L["FOCUS_TOF"]),
 					},
 					boss = {
 						order = 4,
 						type = "toggle",
-						name = L["BOSS"],
+						name = CONFIG:ColorPrivateSetting(L["BOSS"]),
 					},
 				},
-			}, -- 3
-			spacer_2 = {
-				order = 4,
-				type = "description",
-				name = " ",
-			}, -- 4
+			}, -- 10
+			spacer_2 = CONFIG:CreateSpacer(19), -- 19
 			gloss = {
-				order = 5,
+				order = 20,
 				type = "range",
 				name = L["GLOSS"],
 				disabled = isModuleDisabled,
-				min = 0, max = 1, step = 0.05,
+				min = 0, max = 1, step = 0.01, bigStep = 0.05,
 				isPercent = true,
 				get = function()
-					return C.db.profile.units.inlay.alpha
+					return C.db.profile.units.inlay.gloss
 				end,
 				set = function(_, value)
-					if C.db.profile.units.inlay.alpha ~= value then
-						C.db.profile.units.inlay.alpha = value
+					if C.db.profile.units.inlay.gloss ~= value then
+						C.db.profile.units.inlay.gloss = value
 
 						UNITFRAMES:ForEach("UpdateInlay")
 					end
 				end,
-			}, -- 5
-			spacer_3 = {
-				order = 6,
-				type = "description",
-				name = " ",
-			}, -- 6
+			}, -- 20
+			gradient = {
+				order = 21,
+				type = "range",
+				name = L["GRADIENT"],
+				disabled = isModuleDisabled,
+				min = 0, max = 1, step = 0.01, bigStep = 0.05,
+				isPercent = true,
+				get = function()
+					return C.db.profile.units.inlay.gradient
+				end,
+				set = function(_, value)
+					if C.db.profile.units.inlay.gradient ~= value then
+						C.db.profile.units.inlay.gradient = value
+
+						UNITFRAMES:ForEach("UpdateGradient")
+					end
+				end,
+			}, -- 21
+			spacer_3 = CONFIG:CreateSpacer(29), -- 29
 			change = {
-				order = 7,
+				order = 30,
 				type = "group",
 				name = L["PROGRESS_BARS"],
 				inline = true,
@@ -522,14 +514,10 @@ function CONFIG:CreateUnitFramesOptions(order)
 						name = L["PROGRESS_BAR_SMOOTH"],
 					},
 				},
-			}, -- 7
-			spacer_4 = {
-				order = 8,
-				type = "description",
-				name = " ",
-			}, -- 8
+			}, -- 30
+			spacer_4 = CONFIG:CreateSpacer(39), -- 39
 			cooldown = {
-				order = 9,
+				order = 40,
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
@@ -549,25 +537,22 @@ function CONFIG:CreateUnitFramesOptions(order)
 					reset = {
 						type = "execute",
 						order = 1,
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units.cooldown, C.db.profile.units.cooldown)
+
 							UNITFRAMES:ForEach("For", "Auras", "UpdateConfig")
 							UNITFRAMES:ForEach("For", "Auras", "UpdateCooldownConfig")
 						end,
 					},
-					spacer_1 = {
-						order = 9,
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(9),
 					exp_threshold = {
 						order = 10,
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = 11,
@@ -576,7 +561,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								if value < info.option.softMin then
@@ -596,7 +581,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.units.cooldown[info[#info]] ~= value then
 								C.db.profile.units.cooldown[info[#info]] = value
@@ -606,11 +591,7 @@ function CONFIG:CreateUnitFramesOptions(order)
 							end
 						end,
 					},
-					spacer_2 = {
-						order = 19,
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(19),
 					swipe = {
 						order = 20,
 						type = "group",
@@ -637,21 +618,21 @@ function CONFIG:CreateUnitFramesOptions(order)
 								order = 2,
 								type = "toggle",
 								disabled = function()
-									return not C.db.profile.units.cooldown.swipe.enabled
+									return isModuleDisabledOrOCCEnabled() or not C.db.profile.units.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},
 						},
 					},
 				},
-			}, -- 9
-			player = getUnitFrameOptions(10, "player", L["PLAYER_FRAME"]),
-			pet = getUnitFrameOptions(11, "pet", L["PET_FRAME"]),
-			target = getUnitFrameOptions(12, "target", L["TARGET_FRAME"]),
-			targettarget = getUnitFrameOptions(13, "targettarget", L["TOT_FRAME"]),
-			focus = getUnitFrameOptions(14, "focus", L["FOCUS_FRAME"]),
-			focustarget = getUnitFrameOptions(15, "focustarget", L["TOF_FRAME"]),
-			boss = getUnitFrameOptions(16, "boss", L["BOSS_FRAMES"]),
+			}, -- 40
+			player = getUnitFrameOptions(50, "player", L["PLAYER_FRAME"]),
+			pet = getUnitFrameOptions(51, "pet", L["PET_FRAME"]),
+			target = getUnitFrameOptions(52, "target", L["TARGET_FRAME"]),
+			targettarget = getUnitFrameOptions(53, "targettarget", L["TOT_FRAME"]),
+			focus = getUnitFrameOptions(54, "focus", L["FOCUS_FRAME"]),
+			focustarget = getUnitFrameOptions(55, "focustarget", L["TOF_FRAME"]),
+			boss = getUnitFrameOptions(56, "boss", L["BOSS_FRAMES"]),
 		},
 	}
 

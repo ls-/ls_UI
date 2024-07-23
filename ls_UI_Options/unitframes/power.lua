@@ -23,6 +23,10 @@ local powerIgnoredAnchors = {
 }
 
 function CONFIG:CreateUnitFramePowerOptions(order, unit)
+	local function isPowerDisabled()
+		return not C.db.profile.units[unit].power.enabled
+	end
+
 	local temp = {
 		order = order,
 		type = "group",
@@ -45,24 +49,23 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].power, C.db.profile.units[unit].power)
+
 					UNITFRAMES:For(unit, "UpdatePower")
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			prediction = {
 				order = inc(1),
 				type = "toggle",
 				name = L["COST_PREDICTION"],
 				desc = L["COST_PREDICTION_DESC"],
+				disabled = isPowerDisabled,
 				get = function()
 					return C.db.profile.units[unit].power.prediction.enabled
 				end,
@@ -72,16 +75,13 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			text = {
 				order = inc(1),
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
+				disabled = isPowerDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].power.text[info[#info]]
 				end,
@@ -106,11 +106,12 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = CONFIG.H_ALIGNMENTS,
 					},
-					spacer_1 = {
+					word_wrap = {
 						order = inc(2),
-						type = "description",
-						name = " ",
+						type = "toggle",
+						name = L["WORD_WRAP"],
 					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -162,11 +163,7 @@ function CONFIG:CreateUnitFramePowerOptions(order, unit)
 							},
 						},
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					tag = {
 						order = inc(2),
 						type = "input",
@@ -204,6 +201,10 @@ local altPowerExtraAnchors = {
 }
 
 function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
+	local function isAltPowerDisabled()
+		return not C.db.profile.units[unit].alt_power.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -225,23 +226,22 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isAltPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].alt_power, C.db.profile.units[unit].alt_power)
+
 					UNITFRAMES:For(unit, "UpdateAlternativePower")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			text = {
 				order = inc(1),
 				type = "group",
 				name = L["BAR_TEXT"],
 				inline = true,
+				disabled = isAltPowerDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].alt_power.text[info[#info]]
 				end,
@@ -266,11 +266,12 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 						name = L["TEXT_HORIZ_ALIGNMENT"],
 						values = CONFIG.H_ALIGNMENTS,
 					},
-					spacer_1 = {
+					word_wrap = {
 						order = inc(2),
-						type = "description",
-						name = " ",
+						type = "toggle",
+						name = L["WORD_WRAP"],
 					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -322,17 +323,13 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 							},
 						},
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					tag = {
 						order = inc(2),
 						type = "input",
 						width = "full",
 						name = L["FORMAT"],
-						desc = L["ALT_POWER_FORMAT_DESC"],
+						desc = L["ALTERNATIVE_POWER_FORMAT_DESC"],
 						get = function()
 							return C.db.profile.units[unit].alt_power.text.tag:gsub("\124", "\124\124")
 						end,
@@ -340,6 +337,7 @@ function CONFIG:CreateUnitFrameAltPowerOptions(order, unit)
 							value = value:gsub("\124\124+", "\124")
 							if C.db.profile.units[unit].alt_power.text.tag ~= value then
 								C.db.profile.units[unit].alt_power.text.tag = value
+
 								UNITFRAMES:For(unit, "For", "AlternativePower", "UpdateConfig")
 								UNITFRAMES:For(unit, "For", "AlternativePower", "UpdateTags")
 							end
@@ -360,6 +358,10 @@ local function hidePowerCost()
 end
 
 function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
+	local function isClassPowerDisabled()
+		return not C.db.profile.units[unit].class_power.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -385,10 +387,12 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isClassPowerDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].class_power, C.db.profile.units[unit].class_power)
+
 					UNITFRAMES:For(unit, "UpdateAdditionalPower")
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 					UNITFRAMES:For(unit, "UpdateClassPower")
@@ -396,16 +400,13 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdateStagger")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			prediction = {
 				order = inc(1),
 				type = "toggle",
 				name = L["COST_PREDICTION"],
 				desc = L["COST_PREDICTION_DESC"],
+				disabled = isClassPowerDisabled,
 				hidden = hidePowerCost,
 				get = function()
 					return C.db.profile.units[unit].class_power.prediction.enabled
@@ -416,16 +417,12 @@ function CONFIG:CreateUnitFrameClassPowerOptions(order, unit)
 					UNITFRAMES:For(unit, "UpdatePowerPrediction")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-				hidden = isPlayerDeathKnight,
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			runes = {
 				order = inc(1),
 				type = "group",
 				name = L["RUNES"],
+				disabled = isClassPowerDisabled,
 				hidden = isPlayerDeathKnight,
 				inline = true,
 				get = function(info)

@@ -8,7 +8,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local LibKeyBound = LibStub("LibKeyBound-1.0")
 
 -- Mine
-local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG, PROFILER = unpack(ls_UI)
+local E, M, L, C, D, PrC, PrD, P, oUF, CONFIG = unpack(ls_UI)
 
 local isInit = false
 
@@ -83,6 +83,11 @@ function CONFIG:Open()
 	end
 
 	AceConfigDialog:Open("ls_UI")
+
+	local frame = AceConfigDialog.OpenFrames.ls_UI
+	if frame then
+		frame:SetCallback("OnRelease", CONFIG.ShouldReloadUI)
+	end
 end
 
 function CONFIG:IsLoaded()

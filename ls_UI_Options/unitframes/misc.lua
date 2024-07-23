@@ -19,6 +19,10 @@ local function inc(order)
 end
 
 function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
+	local function isRaidTargetDisabled()
+		return not C.db.profile.units[unit].raid_target.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -42,23 +46,22 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isRaidTargetDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].raid_target, C.db.profile.units[unit].raid_target)
+
 					UNITFRAMES:For(unit, "UpdateRaidTargetIndicator")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			size = {
 				order = inc(1),
 				type = "range",
 				name = L["SIZE"],
 				min = 8, max = 64, step = 1,
+				disabled = isRaidTargetDisabled,
 				set = function(info, value)
 					if C.db.profile.units[unit].raid_target[info[#info]] ~= value then
 						C.db.profile.units[unit].raid_target[info[#info]] = value
@@ -68,16 +71,13 @@ function CONFIG:CreateUnitFrameRaidTargetOptions(order, unit)
 					end
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			point = {
 				order = inc(1),
 				type = "group",
 				name = "",
 				inline = true,
+				disabled = isRaidTargetDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].raid_target.point1[info[#info]]
 				end,
@@ -129,13 +129,17 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 		["Power.Text"] = true,
 	}
 
+	local function areDebuffIconsDisabled()
+		return not C.db.profile.units[unit].debuff.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
 		name = L["DISPELLABLE_DEBUFF_ICONS"],
 		args = {
 			enabled = {
-				order = 1,
+				order = reset(1),
 				type = "toggle",
 				name = L["ENABLE"],
 				get = function()
@@ -151,32 +155,32 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 			},
 			reset = {
 				type = "execute",
-				order = 2,
-				name = L["RESTORE_DEFAULTS"],
+				order = inc(1),
+				name = L["RESET_TO_DEFAULT"],
+				disabled = areDebuffIconsDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].debuff, C.db.profile.units[unit].debuff)
+
 					UNITFRAMES:For(unit, "UpdateDebuffIndicator")
 				end,
 			},
 			preview = {
 				type = "execute",
-				order = 3,
+				order = inc(1),
 				name = L["PREVIEW"],
+				disabled = areDebuffIconsDisabled,
 				func = function()
 					UNITFRAMES:For(unit, "For", "DebuffIndicator", "Preview")
 				end,
 			},
-			spacer_1 = {
-				order = 9,
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			point = {
-				order = 10,
+				order = inc(1),
 				type = "group",
 				name = "",
 				inline = true,
+				disabled = areDebuffIconsDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].debuff.point1[info[#info]]
 				end,
@@ -190,33 +194,33 @@ function CONFIG:CreateUnitFrameDebuffIconsOptions(order, unit)
 				end,
 				args = {
 					p = {
-						order = 1,
+						order = reset(2),
 						type = "select",
 						name = L["POINT"],
 						desc = L["POINT_DESC"],
 						values = CONFIG.POINTS,
 					},
 					anchor = {
-						order = 2,
+						order = inc(2),
 						type = "select",
 						name = L["ANCHOR"],
 						values = CONFIG:GetRegionAnchors(ignoredAnchors),
 					},
 					rP = {
-						order = 3,
+						order = inc(2),
 						type = "select",
 						name = L["RELATIVE_POINT"],
 						desc = L["RELATIVE_POINT_DESC"],
 						values = CONFIG.POINTS,
 					},
 					x = {
-						order = 4,
+						order = inc(2),
 						type = "range",
 						name = L["X_OFFSET"],
 						min = -128, max = 128, step = 1,
 					},
 					y = {
-						order = 5,
+						order = inc(2),
 						type = "range",
 						name = L["Y_OFFSET"],
 						min = -128, max = 128, step = 1,
@@ -239,6 +243,10 @@ local PORTRAIT_POSITIONS = {
 }
 
 function CONFIG:CreateUnitFramePortraitOptions(order, unit)
+	local function isPortraitDisabled()
+		return not C.db.profile.units[unit].portrait.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -264,31 +272,41 @@ function CONFIG:CreateUnitFramePortraitOptions(order, unit)
 			reset = {
 				order = inc(1),
 				type = "execute",
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = isPortraitDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].portrait, C.db.profile.units[unit].portrait)
+
 					UNITFRAMES:For(unit, "UpdatePortrait")
 					UNITFRAMES:For(unit, "UpdateClassPower")
 					UNITFRAMES:For(unit, "UpdateRunes")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			style = {
 				order = inc(1),
 				type = "select",
 				name = L["STYLE"],
 				values = PORTRAIT_STYLES,
+				disabled = isPortraitDisabled,
 			},
 			position = {
 				order = inc(1),
 				type = "select",
 				name = L["POSITION"],
 				values = PORTRAIT_POSITIONS,
+				disabled = isPortraitDisabled,
+			},
+			scale = {
+				type = "range",
+				name = L["SCALE"],
+				min = 1, max = 4, step = 0.01, bigStep = 0.1,
+				isPercent = true,
+				disabled = isPortraitDisabled,
+				hidden = function()
+					return C.db.profile.units[unit].portrait.style ~= "3D"
+				end,
 			},
 		},
 	}

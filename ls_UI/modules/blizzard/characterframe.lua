@@ -287,26 +287,22 @@ function MODULE:SetUpCharacterFrame()
 			button.BgBottom:Hide()
 		end)
 
-		hooksecurefunc("CharacterFrame_Expand", function()
-			CharacterFrame:SetSize(640, 431) -- 540 + 100, 424 + 7
-			CharacterFrame.Inset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 432, 4)
+		hooksecurefunc(CharacterFrame, "UpdateSize", function()
+			if CharacterFrame.activeSubframe == "PaperDollFrame" then
+				CharacterFrame:SetSize(640, 431) -- 540 + 100, 424 + 7
+				CharacterFrame.Inset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 432, 4)
 
-			CharacterFrame.Inset.Bg:SetTexture("Interface\\DressUpFrame\\DressingRoom" .. E.PLAYER_CLASS)
-			CharacterFrame.Inset.Bg:SetTexCoord(1 / 512, 479 / 512, 46 / 512, 455 / 512)
-			CharacterFrame.Inset.Bg:SetHorizTile(false)
-			CharacterFrame.Inset.Bg:SetVertTile(false)
+				CharacterFrame.Inset.Bg:SetTexture("Interface\\DressUpFrame\\DressingRoom" .. E.PLAYER_CLASS)
+				CharacterFrame.Inset.Bg:SetTexCoord(1 / 512, 479 / 512, 46 / 512, 455 / 512)
+				CharacterFrame.Inset.Bg:SetHorizTile(false)
+				CharacterFrame.Inset.Bg:SetVertTile(false)
 
-			updateAllSlots()
-		end)
+				CharacterFrame.Background:Hide()
 
-		hooksecurefunc("CharacterFrame_Collapse", function()
-			CharacterFrame:SetHeight(424)
-			CharacterFrame.Inset:SetPoint("BOTTOMRIGHT", CharacterFrame, "BOTTOMLEFT", 332, 4)
-
-			CharacterFrame.Inset.Bg:SetTexture("Interface\\FrameGeneral\\UI-Background-Marble", "REPEAT", "REPEAT")
-			CharacterFrame.Inset.Bg:SetTexCoord(0, 1, 0, 1)
-			CharacterFrame.Inset.Bg:SetHorizTile(true)
-			CharacterFrame.Inset.Bg:SetVertTile(true)
+				updateAllSlots()
+			else
+				CharacterFrame.Background:Show()
+			end
 		end)
 
 		E:RegisterEvent("ITEM_LOCK_CHANGED", function(bagOrSlotID, slotID)

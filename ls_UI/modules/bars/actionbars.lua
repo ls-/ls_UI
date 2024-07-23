@@ -21,7 +21,8 @@ local CFG = {
 		per_row = 12,
 		width = 32,
 		height = 0,
-		spacing = 4,
+		x_spacing = 4,
+		y_spacing = 4,
 		-- scale = 1,
 		visibility = "[petbattle] hide; show",
 		visible = true,
@@ -219,11 +220,12 @@ function bar1_proto:UpdateConfig()
 		self._config.hotkey = E:CopyTable(C.db.profile.bars.bar1.hotkey, self._config.hotkey)
 		self._config.macro = E:CopyTable(C.db.profile.bars.bar1.macro, self._config.macro)
 
-		self:SetAttribute("maxbuttons", self._config.num)
-		MODULE:UpdateMainBarMaxButtons(self._config.num)
-
-		self:SetAttribute("scale", C.db.profile.bars.bar1.scale)
+		MODULE:UpdateMainBarMaxButtons(C.db.profile.bars.bar1.num)
 		MODULE:UpdateScale(C.db.profile.bars.bar1.scale)
+	else
+		if C.db.profile.bars.bar1.num > 12 then
+			C.db.profile.bars.bar1.num = 12
+		end
 	end
 end
 

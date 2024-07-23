@@ -27,6 +27,10 @@ local function isFadingDisabled()
 	return not (MINIMAP:IsInit() and C.db.profile.minimap.fade.enabled)
 end
 
+local function isCoordsDisabled()
+	return not (MINIMAP:IsInit() and C.db.profile.minimap.coords.enabled)
+end
+
 function CONFIG:CreateMinimapOptions(order)
 	self.options.args.minimap = {
 		order = order,
@@ -36,20 +40,18 @@ function CONFIG:CreateMinimapOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.minimap.enabled
 				end,
 				set = function(_, value)
 					PrC.db.profile.minimap.enabled = value
 
-					if not MINIMAP:IsInit() then
+					if MINIMAP:IsInit() then
+						CONFIG:AskToReloadUI("minimap.enabled", value)
+					else
 						if value then
 							P:Call(MINIMAP.Init, MINIMAP)
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -57,7 +59,7 @@ function CONFIG:CreateMinimapOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
@@ -67,11 +69,7 @@ function CONFIG:CreateMinimapOptions(order)
 					MINIMAP:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			shape = {
 				order = inc(1),
 				type = "select",
@@ -162,11 +160,7 @@ function CONFIG:CreateMinimapOptions(order)
 				end,
 				disabled = isModuleDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			colors = {
 				order = inc(1),
 				type = "group",
@@ -190,11 +184,7 @@ function CONFIG:CreateMinimapOptions(order)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			flag = {
 				order = inc(1),
 				type = "group",
@@ -222,15 +212,11 @@ function CONFIG:CreateMinimapOptions(order)
 						name = L["TOOLTIP"],
 						disabled = function()
 							return isModuleDisabled() or not C.db.profile.minimap.flag.enabled
-						end
+						end,
 					},
 				},
 			},
-			spacer_7 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_7 = CONFIG:CreateSpacer(inc(1)),
 			coords = {
 				order = inc(1),
 				type = "group",
@@ -256,12 +242,9 @@ function CONFIG:CreateMinimapOptions(order)
 						order = inc(2),
 						type = "toggle",
 						name = L["BACKGROUND"],
+						disabled = isCoordsDisabled,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					point = {
 						order = inc(2),
 						type = "group",
@@ -278,6 +261,7 @@ function CONFIG:CreateMinimapOptions(order)
 								Minimap:UpdateCoords()
 							end
 						end,
+						disabled = isCoordsDisabled,
 						args = {
 							["1"] = {
 								order = reset(2),
@@ -309,11 +293,7 @@ function CONFIG:CreateMinimapOptions(order)
 					},
 				},
 			},
-			spacer_8 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_8 = CONFIG:CreateSpacer(inc(1)),
 			fading = {
 				order = inc(1),
 				type = "group",
@@ -338,7 +318,7 @@ function CONFIG:CreateMinimapOptions(order)
 					reset = {
 						order = inc(2),
 						type = "execute",
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						disabled = isFadingDisabled,
 						confirm = CONFIG.ConfirmReset,
 						func = function()
@@ -348,11 +328,7 @@ function CONFIG:CreateMinimapOptions(order)
 							MinimapCluster:UpdateFading()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					combat = {
 						order = inc(2),
 						type = "toggle",

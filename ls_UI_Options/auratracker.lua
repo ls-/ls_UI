@@ -30,10 +30,10 @@ local GROWTH_DIRS = {
 }
 
 local DRAG_KEYS = {
-	[1] = _G.ALT_KEY,
-	[2] = _G.CTRL_KEY,
-	[3] = _G.SHIFT_KEY,
-	[4] = _G.NONE_KEY,
+	[1] = L["ALT_KEY"],
+	[2] = L["CTRL_KEY"],
+	[3] = L["SHIFT_KEY"],
+	[4] = L["NONE_KEY"],
 }
 
 local DRAG_KEY_VALUES = {
@@ -60,8 +60,8 @@ local function isModuleDisabled()
 	return not AURATRACKER:IsInit()
 end
 
-local function isOCCEnabled()
-	return E.OMNICC
+local function isModuleDisabledOrOCCEnabled()
+	return isModuleDisabled() or E.OMNICC
 end
 
 local function callback()
@@ -85,6 +85,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 		set = function(info, value)
 			if PrC.db.profile.auratracker[info[#info]] ~= value then
 				PrC.db.profile.auratracker[info[#info]] = value
+
 				AURATRACKER:GetTracker():UpdateConfig()
 				AURATRACKER:GetTracker():UpdateLayout()
 			end
@@ -93,7 +94,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.auratracker.enabled
 				end,
@@ -101,9 +102,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					PrC.db.profile.auratracker.enabled = value
 
 					if AURATRACKER:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("auratracker.enabled", value)
 					else
 						if value then
 							P:Call(AURATRACKER.Init, AURATRACKER)
@@ -140,7 +139,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
@@ -149,11 +148,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					AURATRACKER:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			num = {
 				order = inc(1),
 				type = "range",
@@ -188,19 +183,19 @@ function CONFIG:CreateAuraTrackerOptions(order)
 				name = L["HEIGHT"],
 				desc = L["HEIGHT_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
-				softMin = 16,
+				softMin = 8,
 				disabled = isModuleDisabled,
 				set = function(info, value)
 					if PrC.db.profile.auratracker.height ~= value then
 						if value < info.option.softMin then
 							value = info.option.min
 						end
+
+						PrC.db.profile.auratracker.height = value
+
+						AURATRACKER:GetTracker():UpdateConfig()
+						AURATRACKER:GetTracker():UpdateLayout()
 					end
-
-					PrC.db.profile.auratracker.height = value
-
-					AURATRACKER:GetTracker():UpdateConfig()
-					AURATRACKER:GetTracker():UpdateLayout()
 				end,
 			},
 			growth_dir = {
@@ -232,11 +227,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					PrC.db.profile.auratracker.drag_key = DRAG_KEY_VALUES[value]
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			type = {
 				order = inc(1),
 				type = "group",
@@ -274,11 +265,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
@@ -317,11 +304,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -343,7 +326,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(PrD.profile.auratracker.cooldown, PrC.db.profile.auratracker.cooldown)
@@ -352,17 +335,13 @@ function CONFIG:CreateAuraTrackerOptions(order)
 							AURATRACKER:GetTracker():UpdateCooldownConfig()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					exp_threshold = {
 						order = inc(2),
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = inc(2),
@@ -371,7 +350,7 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if PrC.db.profile.auratracker.cooldown.m_ss_threshold ~= value then
 								if value < info.option.softMin then
@@ -391,13 +370,9 @@ function CONFIG:CreateAuraTrackerOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
 						order = inc(2),
 						type = "group",
@@ -424,23 +399,19 @@ function CONFIG:CreateAuraTrackerOptions(order)
 								order = inc(3),
 								type = "toggle",
 								disabled = function()
-									return not AURATRACKER:IsInit() or (AURATRACKER:IsInit() and not PrC.db.profile.auratracker.cooldown.swipe.enabled)
+									return isModuleDisabledOrOCCEnabled() or not PrC.db.profile.auratracker.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},
 						},
 					},
-					spacer_3 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_3 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",
 						name = L["TEXT"],
 						inline = true,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						get = function(info)
 							return PrC.db.profile.auratracker.cooldown.text[info[#info]]
 						end,

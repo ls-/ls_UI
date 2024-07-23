@@ -461,7 +461,7 @@ do
 			end
 		end
 
-		return L["UNKNOWN"]
+		return _G.UNKNOWN
 	end
 
 	local function getDifficultyColor(difficulty)
@@ -649,6 +649,10 @@ function E:ResolveAnchorPoint(frame, children)
 
 			for i = 1, #children do
 				anchor = anchor[children[i]]
+			end
+
+			if not anchor then
+				anchor = frame
 			end
 
 			return anchor

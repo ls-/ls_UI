@@ -112,8 +112,8 @@ local function isModuleDisabledOrRestricted()
 	return BARS:IsRestricted() or not BARS:IsInit()
 end
 
-local function isOCCEnabled()
-	return E.OMNICC
+local function isModuleDisabledOrOCCEnabled()
+	return isModuleDisabled() or E.OMNICC
 end
 
 function CONFIG:CreateActionBarsOptions(order)
@@ -137,7 +137,7 @@ function CONFIG:CreateActionBarsOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.bars.enabled
 				end,
@@ -145,9 +145,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					PrC.db.profile.bars.enabled = value
 
 					if BARS:IsInit() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
+						CONFIG:AskToReloadUI("bars.enabled", value)
 					else
 						if value then
 							P:Call(BARS.Init, BARS)
@@ -158,7 +156,7 @@ function CONFIG:CreateActionBarsOptions(order)
 			restricted = {
 				order = inc(1),
 				type = "toggle",
-				name = L["SHOW_ARTWORK"],
+				name = CONFIG:ColorPrivateSetting(L["SHOW_ARTWORK"]),
 				desc = L["RESTRICTED_MODE_DESC"],
 				get = function()
 					return PrC.db.profile.bars.restricted
@@ -167,7 +165,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					PrC.db.profile.bars.restricted = value
 
 					if BARS:IsInit() then
-						CONFIG:ShowStaticPopup("RELOAD_UI")
+						CONFIG:AskToReloadUI("bars.restricted")
 					end
 				end,
 			},
@@ -218,11 +216,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					end
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			mouseover = {
 				order = inc(1),
 				type = "toggle",
@@ -317,11 +311,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				end,
 				values = CAST_KEYS,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			range_indicator = {
 				order = inc(1),
 				type = "select",
@@ -336,11 +326,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				values = INDICATORS,
 				disabled = isModuleDisabled,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			desaturation = {
 				order = inc(1),
 				type = "group",
@@ -366,11 +352,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -383,6 +365,7 @@ function CONFIG:CreateActionBarsOptions(order)
 				set = function(info, value)
 					if C.db.profile.bars.cooldown[info[#info]] ~= value then
 						C.db.profile.bars.cooldown[info[#info]] = value
+
 						BARS:ForEach("UpdateConfig")
 						BARS:ForEach("UpdateCooldownConfig")
 					end
@@ -391,25 +374,22 @@ function CONFIG:CreateActionBarsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(1),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.cooldown, C.db.profile.bars.cooldown)
+
 							BARS:ForEach("UpdateConfig")
 							BARS:ForEach("UpdateCooldownConfig")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					exp_threshold = {
 						order = inc(2),
 						type = "range",
 						name = L["EXP_THRESHOLD"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 					},
 					m_ss_threshold = {
 						order = inc(2),
@@ -418,7 +398,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						desc = L["M_SS_THRESHOLD_DESC"],
 						min = 0, max = 3599, step = 1,
 						softMin = 91,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								if value < info.option.softMin then
@@ -426,6 +406,7 @@ function CONFIG:CreateActionBarsOptions(order)
 								end
 
 								C.db.profile.bars.cooldown[info[#info]] = value
+
 								BARS:ForEach("UpdateConfig")
 								BARS:ForEach("UpdateCooldownConfig")
 							end
@@ -437,20 +418,17 @@ function CONFIG:CreateActionBarsOptions(order)
 						name = L["S_MS_THRESHOLD"],
 						desc = L["S_MS_THRESHOLD_DESC"],
 						min = 1, max = 10, step = 1,
-						disabled = isOCCEnabled,
+						disabled = isModuleDisabledOrOCCEnabled,
 						set = function(info, value)
 							if C.db.profile.bars.cooldown[info[#info]] ~= value then
 								C.db.profile.bars.cooldown[info[#info]] = value
+
 								BARS:ForEach("UpdateConfig")
 								BARS:ForEach("UpdateCooldownConfig")
 							end
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					swipe = {
 						order = inc(2),
 						type = "group",
@@ -462,6 +440,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						set = function(info, value)
 							if C.db.profile.bars.cooldown.swipe[info[#info]] ~= value then
 								C.db.profile.bars.cooldown.swipe[info[#info]] = value
+
 								BARS:ForEach("UpdateConfig")
 								BARS:ForEach("UpdateCooldownConfig")
 							end
@@ -476,7 +455,7 @@ function CONFIG:CreateActionBarsOptions(order)
 								order = inc(3),
 								type = "toggle",
 								disabled = function()
-									return isModuleDisabled() or not C.db.profile.bars.cooldown.swipe.enabled
+									return isModuleDisabledOrOCCEnabled() or not C.db.profile.bars.cooldown.swipe.enabled
 								end,
 								name = L["REVERSE"],
 							},
@@ -484,14 +463,14 @@ function CONFIG:CreateActionBarsOptions(order)
 					},
 				},
 			},
-			bar_1 = CONFIG:CreateBarOptions(inc(1), "bar1", L["BAR_1"]),
-			bar_2 = CONFIG:CreateBarOptions(inc(1), "bar2", L["BAR_2"]),
-			bar_3 = CONFIG:CreateBarOptions(inc(1), "bar3", L["BAR_3"]),
-			bar_4 = CONFIG:CreateBarOptions(inc(1), "bar4", L["BAR_4"]),
-			bar_5 = CONFIG:CreateBarOptions(inc(1), "bar5", L["BAR_5"]),
-			bar_6 = CONFIG:CreateBarOptions(inc(1), "bar6", L["BAR_6"]),
-			bar_7 = CONFIG:CreateBarOptions(inc(1), "bar7", L["BAR_7"]),
-			bar_8 = CONFIG:CreateBarOptions(inc(1), "bar8", L["BAR_8"]),
+			bar1 = CONFIG:CreateBarOptions(inc(1), "bar1", L["BAR_1"]),
+			bar2 = CONFIG:CreateBarOptions(inc(1), "bar2", L["BAR_2"]),
+			bar3 = CONFIG:CreateBarOptions(inc(1), "bar3", L["BAR_3"]),
+			bar4 = CONFIG:CreateBarOptions(inc(1), "bar4", L["BAR_4"]),
+			bar5 = CONFIG:CreateBarOptions(inc(1), "bar5", L["BAR_5"]),
+			bar6 = CONFIG:CreateBarOptions(inc(1), "bar6", L["BAR_6"]),
+			bar7 = CONFIG:CreateBarOptions(inc(1), "bar7", L["BAR_7"]),
+			bar8 = CONFIG:CreateBarOptions(inc(1), "bar8", L["BAR_8"]),
 			pet = CONFIG:CreateBarOptions(inc(1), "pet", L["PET_BAR"]),
 			stance = CONFIG:CreateBarOptions(inc(1), "stance", L["STANCE_BAR"]),
 			pet_battle = CONFIG:CreateBarOptions(inc(1), "pet_battle", L["PET_BATTLE_BAR"]),
@@ -517,18 +496,15 @@ function CONFIG:CreateActionBarsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.vehicle, C.db.profile.bars.vehicle, {visible = true, point = true})
+
 							BARS:For("vehicle", "Update")
 						end,
 					},
-					spacer_1 = {
-						order =inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					visible = {
 						order = inc(2),
 						type = "toggle",
@@ -539,7 +515,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:For("vehicle", "UpdateConfig")
 							BARS:For("vehicle", "UpdateFading")
 							BARS:For("vehicle", "UpdateVisibility")
-						end
+						end,
 					},
 					width = {
 						order = inc(2),
@@ -566,11 +542,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							BARS:For("vehicle", "Update")
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					fading = CONFIG:CreateBarFadingOptions(inc(2), "vehicle"),
 				},
 			},
@@ -589,7 +561,7 @@ function CONFIG:CreateActionBarsOptions(order)
 					enabled = {
 						order = reset(2),
 						type = "toggle",
-						name = L["ENABLE"],
+						name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 						disabled = isModuleDisabledOrRestricted,
 						get = function()
 							return PrC.db.profile.bars.xpbar.enabled
@@ -597,15 +569,11 @@ function CONFIG:CreateActionBarsOptions(order)
 						set = function(_, value)
 							PrC.db.profile.bars.xpbar.enabled = value
 
-							if BARS:IsInit() then
-								if BARS:HasXPBar() then
-									if not value then
-										CONFIG:ShowStaticPopup("RELOAD_UI")
-									end
-								else
-									if value then
-										BARS:CreateXPBar()
-									end
+							if BARS:HasXPBar() then
+								CONFIG:AskToReloadUI("xpbar.enabled", value)
+							else
+								if value then
+									P:Call(BARS.CreateXPBar, BARS)
 								end
 							end
 						end,
@@ -613,19 +581,16 @@ function CONFIG:CreateActionBarsOptions(order)
 					reset = {
 						type = "execute",
 						order = inc(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						disabled = isXPBarDisabledOrRestricted,
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.bars.xpbar, C.db.profile.bars.xpbar, {point = true})
+
 							BARS:For("xpbar", "Update")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					width = {
 						order = inc(2),
 						type = "range",
@@ -645,7 +610,7 @@ function CONFIG:CreateActionBarsOptions(order)
 						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
-						min = 8, max = 32, step = 4,
+						min = 8, max = 32, step = 1, bigStep = 2,
 						disabled = isXPBarDisabledOrRestricted,
 						set = function(info, value)
 							if C.db.profile.bars.xpbar[info[#info]] ~= value then
@@ -656,11 +621,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							end
 						end,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",
@@ -716,11 +677,7 @@ function CONFIG:CreateActionBarsOptions(order)
 							},
 						},
 					},
-					spacer_3 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_3 = CONFIG:CreateSpacer(inc(2)),
 					fading = CONFIG:CreateBarFadingOptions(inc(2), "xpbar"),
 				},
 			},

@@ -71,49 +71,6 @@ CONFIG.GROWTH_DIRS = {
 	["RIGHT_UP"] = L["RIGHT_UP"],
 }
 
--- CONFIG:ShowStaticPopup(which)
-do
-	local POPUPS = {
-		["RELOAD_UI"] = {
-			text = L["RELOAD_UI_ON_CHAR_SETTING_CHANGE_POPUP"],
-			accept = L["RELOAD_NOW"],
-			cancel = L["LATER"],
-			OnAccept = function() ReloadUI() end,
-			OnCancel = function(self)
-				AceConfigDialog.popup:Hide()
-
-				AceConfigDialog.popup.accept:SetScript("OnClick", nil)
-				AceConfigDialog.popup.accept:SetText(L["ACCEPT"] )
-
-				self:SetScript("OnClick", nil)
-				self:SetText(L["CANCEL"])
-
-				CONFIG:SetStatusText(L["RELOAD_UI_WARNING"])
-			end,
-		},
-	}
-
-	function CONFIG:ShowStaticPopup(which)
-		if not POPUPS[which] then
-			return
-		end
-
-		local frame = AceConfigDialog.popup
-		frame:Show()
-		frame.text:SetText(POPUPS[which].text)
-		frame:SetHeight(61 + frame.text:GetHeight())
-
-		frame.accept:ClearAllPoints()
-		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
-		frame.accept:SetScript("OnClick", POPUPS[which].OnAccept)
-		frame.accept:SetText(POPUPS[which].accept)
-
-		frame.cancel:Show()
-		frame.cancel:SetScript("OnClick", POPUPS[which].OnCancel)
-		frame.cancel:SetText(POPUPS[which].cancel)
-	end
-end
-
 -- CONFIG:ShowLinkCopyPopup(text)
 do
 	local link = ""
@@ -188,11 +145,60 @@ function CONFIG.ConfirmReset(info)
 	return L["CONFIRM_RESET"]:format(option.name)
 end
 
+function CONFIG:CreateSpacer(order)
+	return {
+		order = order,
+		type = "description",
+		name = " ",
+	}
+end
+
+function CONFIG:ColorPrivateSetting(text)
+	return C.db.global.colors.context:WrapTextInColorCode(text)
+end
+
+do
+	local pendingChanges = {}
+
+	function CONFIG:AskToReloadUI(sender, shouldRemove)
+		if shouldRemove then
+			pendingChanges[sender] = nil
+		else
+			pendingChanges[sender] = true
+		end
+
+		self:SetStatusText(next(pendingChanges) and L["RELOAD_UI_POPUP"] or "")
+	end
+
+	function CONFIG:ShouldReloadUI()
+		if not next(pendingChanges) then return end
+
+		local frame = AceConfigDialog.popup
+		frame:Show()
+		frame.text:SetText(L["RELOAD_UI_POPUP"])
+		frame:SetHeight(61 + frame.text:GetHeight())
+
+		frame.accept:ClearAllPoints()
+		frame.accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -6, 16)
+		frame.accept:SetText(L["RELOAD_NOW"])
+		frame.accept:SetScript("OnClick", ReloadUI)
+
+		frame.cancel:Show()
+		frame.cancel:SetText(L["LATER"])
+		frame.cancel:SetScript("OnClick", function()
+			frame:Hide()
+			frame.accept:SetScript("OnClick", nil)
+			frame.cancel:SetScript("OnClick", nil)
+		end)
+	end
+end
+
 function CONFIG:GetRegionAnchors(anchorsToRemove, anchorsToAdd)
 	local temp = {
 		[""] = L["FRAME"],
 		["Health"] = L["HEALTH"],
 		["Health.Text"] = L["HEALTH_TEXT"],
+		["Health.TempLoss_"] = L["MAX_HEALTH_REDUCTION"],
 		["Power"] = L["POWER"],
 		["Power.Text"] = L["POWER_TEXT"],
 	}
@@ -231,15 +237,15 @@ do
 	local function prepAuraList(list)
 		t_wipe(sortedData)
 
-		local name, icon, _
+		local info
 		for id in next, list do
 			if type(id) == "number" then
-				name, _, icon = GetSpellInfo(id)
-				if name then
+				info = C_Spell.GetSpellInfo(id)
+				if info then
 					t_insert(sortedData, {
 						id = id,
-						name = name,
-						icon = icon,
+						name = info.name,
+						icon = info.iconID,
 					})
 				end
 			end
@@ -385,7 +391,7 @@ do
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 				tile = true, tileSize = 16, edgeSize = 16,
-				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+				insets = { left = 4, right = 4, top = 4, bottom = 4 },
 			})
 			previewFrameBG:SetBackdropBorderColor(0.6, 0.6, 0.6)
 
@@ -478,7 +484,7 @@ do
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 				tile = true, tileSize = 16, edgeSize = 16,
-				insets = { left = 4, right = 4, top = 4, bottom = 4 }
+				insets = { left = 4, right = 4, top = 4, bottom = 4 },
 			})
 			auraListFrame:SetBackdropBorderColor(0.6, 0.6, 0.6)
 			auraListFrame:SetHeight(426)
@@ -631,7 +637,7 @@ do
 						if spellID > INT_LIMIT then
 							output = output .. spellID .. " > " .. L["ERROR_RED"] .. "\n"
 						else
-							local link = GetSpellLink(spellID)
+							local link = C_Spell.GetSpellLink(spellID)
 							if link then
 								output = output .. spellID .. " > " .. link .. "\n"
 							else
@@ -660,7 +666,7 @@ do
 				if text ~= "" then
 					for spellID in text:gmatch("%d+") do
 						spellID = tonumber(spellID)
-						if spellID <= INT_LIMIT and not activeData[spellID] and GetSpellLink(spellID) then
+						if spellID <= INT_LIMIT and not activeData[spellID] and C_Spell.GetSpellLink(spellID) then
 							activeData[spellID] = true
 						end
 					end

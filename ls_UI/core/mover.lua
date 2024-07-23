@@ -415,7 +415,7 @@ do
 			.. L["MOVER_RELATION_CREATE_DESC"]
 			.. "\n\n"
 			.. L["MOVER_RELATION_DESTROY_DESC"])
-		self.LockButton.Text:SetText(L["LOCK"])
+		self.LockButton.Text:SetText(_G.LOCK)
 		self:SetHeight(m_ceil(self.UsageText:GetStringHeight() + 56))
 	end)
 	settings:Hide()
@@ -445,28 +445,30 @@ do
 
 	nameToggle.Text = _G[nameToggle:GetName() .. "Text"]
 
-	local gridDropdown = LibStub("LibDropDown-ls"):NewButtonStretch(settings, "$parentGridDropdown")
-	gridDropdown:SetPoint("TOPRIGHT", -3, -3)
+	local gridDropdown = CreateFrame("DropdownButton", "$parentGridDropdown", settings, "WowStyle2DropdownTemplate")
+	gridDropdown:SetPoint("TOPRIGHT", -6, -5)
 	gridDropdown:SetSize(120, 20)
 	gridDropdown:SetFrameLevel(3)
-	gridDropdown:SetText(L["MOVER_GRID"])
+	gridDropdown:SetDefaultText(L["MOVER_GRID"])
 	settings.GridDropdown = gridDropdown
 
 	local GRID_SIZES = {4, 8, 16, 32}
-	for i = 1, #GRID_SIZES do
-		gridDropdown:Add({
-			isRadio = true,
-			func = function(_, _, value)
-				grid:SetSize(value)
-				grid:Show()
-			end,
-			checked = function(self)
-				return grid:GetSize() == self.args[1]
-			end,
-			text = tostring(GRID_SIZES[i]),
-			args = {GRID_SIZES[i]},
-		})
-	end
+
+	gridDropdown:SetupMenu(function(_, rootDescription)
+		for i = 1, #GRID_SIZES do
+			rootDescription:CreateRadio(
+				tostring(GRID_SIZES[i]),
+				function(index)
+					return grid:GetSize() == GRID_SIZES[index]
+				end,
+				function(index)
+					grid:SetSize(GRID_SIZES[index])
+					grid:Show()
+				end,
+				i
+			)
+		end
+	end)
 
 	local usageText = settings:CreateFontString(nil, "OVERLAY")
 	usageText:SetFontObject("GameFontNormal")

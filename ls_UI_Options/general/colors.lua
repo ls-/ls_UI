@@ -56,7 +56,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							C.db.global.colors.health:SetRGB(D.global.colors.health:GetRGB())
@@ -68,11 +68,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Health", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					health = {
 						order = inc(2),
 						type = "color",
@@ -137,7 +133,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.power do
@@ -167,11 +163,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Power", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					MANA = {
 						order = inc(2),
 						type = "color",
@@ -334,7 +326,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.prediction do
@@ -345,11 +337,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "PowerPrediction", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					my_heal = {
 						order = inc(2),
 						type = "color",
@@ -407,7 +395,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.reaction do
@@ -421,11 +409,7 @@ function CONFIG:GetColorsOptions(order)
 							BARS:For("xpbar", "UpdateSegments")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					["1"] = {
 						order = inc(2),
 						type = "color",
@@ -496,7 +480,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.faction do
@@ -508,11 +492,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					Alliance = {
 						order = inc(2),
 						type = "color",
@@ -553,7 +533,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.xp do
@@ -567,11 +547,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					["1"] = {
 						order = inc(2),
 						type = "color",
@@ -625,7 +601,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.difficulty do
@@ -635,11 +611,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Name", "UpdateTags")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					trivial = {
 						order = inc(2),
 						type = "color",
@@ -665,7 +637,7 @@ function CONFIG:GetColorsOptions(order)
 						type = "color",
 						name = L["IMPOSSIBLE"],
 					},
-				}
+				},
 			},
 			castbar = {
 				order = inc(1),
@@ -688,7 +660,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.castbar do
@@ -698,11 +670,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Castbar", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					casting = {
 						order = inc(2),
 						type = "color",
@@ -756,7 +724,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.debuff do
@@ -770,11 +738,7 @@ function CONFIG:GetColorsOptions(order)
 							UNITFRAMES:ForEach("For", "Auras", "UpdateColors")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					None = {
 						order = inc(2),
 						type = "color",
@@ -855,7 +819,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.button do
@@ -865,11 +829,7 @@ function CONFIG:GetColorsOptions(order)
 							BARS:ForEach("UpdateButtonConfig")
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					normal = {
 						order = inc(2),
 						type = "color",
@@ -916,7 +876,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.cooldown do
@@ -924,11 +884,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					expiration = {
 						order = inc(2),
 						type = "color",
@@ -979,7 +935,7 @@ function CONFIG:GetColorsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							for k, v in next, D.global.colors.zone do
@@ -991,11 +947,7 @@ function CONFIG:GetColorsOptions(order)
 							end
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = " ",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					contested = {
 						order = inc(2),
 						type = "color",

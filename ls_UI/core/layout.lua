@@ -21,8 +21,10 @@ function E.Layout:Update(frame, config)
 	local num = m_min(config.num, #children)
 	local width = config.width or config.size
 	local widthMult = m_min(num, config.per_row)
+	local xSpacing = config.x_spacing or config.spacing
 	local height = config.height or config.size
 	local heightMult = m_ceil(num / config.per_row)
+	local ySpacing = config.y_spacing or config.spacing
 
 	local initialAnchor
 	if config.y_growth == "UP" then
@@ -39,8 +41,8 @@ function E.Layout:Update(frame, config)
 		end
 	end
 
-	frame:SetSize(widthMult * width + (widthMult - 1) * config.spacing + 4,
-		heightMult * height + (heightMult - 1) * config.spacing + 4)
+	frame:SetSize(widthMult * width + (widthMult - 1) * xSpacing + 4,
+		heightMult * height + (heightMult - 1) * ySpacing + 4)
 
 	frame:SetScale(config.scale or 1)
 
@@ -60,8 +62,9 @@ function E.Layout:Update(frame, config)
 			child:SetFrameLevel(childLevel)
 			child:SetSize(width, height)
 			child:SetPoint(initialAnchor, frame, initialAnchor,
-				xDir * (2 + col * (config.spacing + width)),
-				yDir * (2 + row * (config.spacing + height)))
+				xDir * (2 + col * (xSpacing + width)),
+				yDir * (2 + row * (ySpacing + height))
+			)
 		else
 			child:SetParent(E.HIDDEN_PARENT)
 		end

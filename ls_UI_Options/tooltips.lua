@@ -37,20 +37,18 @@ function CONFIG:GetTooltipsOptions(order)
 			enabled = {
 				order = reset(1),
 				type = "toggle",
-				name = L["ENABLE"],
+				name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 				get = function()
 					return PrC.db.profile.tooltips.enabled
 				end,
 				set = function(_, value)
 					PrC.db.profile.tooltips.enabled = value
 
-					if not TOOLTIPS:IsInit() then
+					if TOOLTIPS:IsInit() then
+						CONFIG:AskToReloadUI("tooltips.enabled", value)
+					else
 						if value then
 							P:Call(TOOLTIPS.Init, TOOLTIPS)
-						end
-					else
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
 						end
 					end
 				end,
@@ -58,7 +56,7 @@ function CONFIG:GetTooltipsOptions(order)
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				disabled = isModuleDisabled,
 				func = function()
@@ -67,12 +65,7 @@ function CONFIG:GetTooltipsOptions(order)
 					TOOLTIPS:Update()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			title = {
 				order = inc(1),
 				type = "toggle",
@@ -90,7 +83,6 @@ function CONFIG:GetTooltipsOptions(order)
 				order = inc(1),
 				type = "toggle",
 				name = L["INSPECT_INFO"],
-				desc = L["INSPECT_INFO_DESC"],
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					C.db.profile.tooltips.inspect = value
@@ -111,18 +103,8 @@ function CONFIG:GetTooltipsOptions(order)
 				desc = L["ITEM_COUNT_DESC"],
 				disabled = isModuleDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			health = {
 				order = inc(1),
 				type = "group",
@@ -143,7 +125,7 @@ function CONFIG:GetTooltipsOptions(order)
 					reset = {
 						type = "execute",
 						order = reset(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.tooltips.health, C.db.profile.tooltips.health)
@@ -151,24 +133,14 @@ function CONFIG:GetTooltipsOptions(order)
 							TOOLTIPS:Update()
 						end,
 					},
-					spacer_1 = {
-						order = inc(2),
-						type = "description",
-						name = "",
-						width = "full",
-					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
 					height = {
 						order = inc(2),
 						type = "range",
 						name = L["HEIGHT"],
-						min = 8, max = 32, step = 4,
+						min = 8, max = 32, step = 1, bigStep = 2,
 					},
-					spacer_2 = {
-						order = inc(2),
-						type = "description",
-						name = "",
-						width = "full",
-					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
 					text = {
 						order = inc(2),
 						type = "group",

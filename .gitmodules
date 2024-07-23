@@ -7,9 +7,6 @@
 [submodule "ls_UI/embeds/LibButtonGlow-1.0"]
 	path = ls_UI/embeds/LibButtonGlow-1.0
 	url = https://repos.wowace.com/wow/libbuttonglow-1-0
-[submodule "ls_UI/embeds/LibDropDown"]
-	path = ls_UI/embeds/LibDropDown
-	url = git@github.com:ls-/LibDropDown.git
 [submodule "ls_UI/embeds/LibDualSpec-1.0"]
 	path = ls_UI/embeds/LibDualSpec-1.0
 	url = https://repos.wowace.com/wow/libdualspec-1-0

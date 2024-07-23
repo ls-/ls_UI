@@ -12,6 +12,7 @@ local function updateFont(fontString, config)
 	fontString:UpdateFont(config.size)
 	fontString:SetJustifyH(config.h_alignment)
 	fontString:SetJustifyV(config.v_alignment)
+	fontString:SetWordWrap(config.word_wrap)
 end
 
 local function updateTextPoint(frame, fontString, config)
@@ -68,15 +69,28 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self:UpdateStatusBarTexture()
 	end
 
 	function element_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self)
+			E.StatusBars:Smooth(self)
+			E.StatusBars:Smooth(self.TempLoss_)
 		else
-			E:DesmoothBar(self)
+			E.StatusBars:Desmooth(self)
+			E.StatusBars:Desmooth(self.TempLoss_)
 		end
+	end
+
+	function element_proto:UpdateMaxHealthReduction()
+		if self._config.reduction.enabled then
+			self.TempLoss = self.TempLoss_
+		else
+			self.TempLoss = nil
+		end
+
+		self.TempLoss_:SetValue(0)
+		self.TempLoss_:Show()
 	end
 
 	local frame_proto = {}
@@ -90,6 +104,7 @@ do
 		element:UpdateTextPoints()
 		element:UpdateSmoothing()
 		element:UpdateTags()
+		element:UpdateMaxHealthReduction()
 		element:ForceUpdate()
 	end
 
@@ -98,13 +113,40 @@ do
 
 		local element = Mixin(CreateFrame("StatusBar", nil, frame), element_proto)
 		element:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(element, "health")
 		element:SetFrameLevel(frame:GetFrameLevel() + 1)
 		element:SetClipsChildren(true)
 		element._texture = element:GetStatusBarTexture()
 
+		local tempLoss = CreateFrame("StatusBar", nil, frame)
+		tempLoss:SetReverseFill(true)
+		tempLoss:SetMinMaxValues(0, 1)
+		tempLoss:SetClipsChildren(true)
+		tempLoss:SetFrameLevel(frame:GetFrameLevel() + 1)
+		element.TempLoss_ = tempLoss
+
+		tempLoss:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		tempLoss._texture = tempLoss:GetStatusBarTexture()
+		tempLoss._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\reduction", "REPEAT", "REPEAT")
+		tempLoss._texture:SetHorizTile(true)
+		tempLoss._texture:SetVertTile(true)
+
+		local edge = tempLoss:CreateTexture(nil, "OVERLAY")
+		edge:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-edge", "REPEAT", "REPEAT")
+		edge:SetVertTile(true)
+		edge:SetTexCoord(0, 14 / 16, 0, 1)
+		edge:SetSize(14 / 2, 0)
+		edge:SetPoint("TOP", 0, 0)
+		edge:SetPoint("BOTTOM", 0, 0)
+		edge:SetPoint("LEFT", tempLoss:GetStatusBarTexture(), "LEFT", 0, 0)
+		edge:SetSnapToPixelGrid(false)
+		edge:SetTexelSnappingBias(0)
+		edge:SetVertexColor(0.1, 0.1, 0.1)
+		edge:SetAlpha(0.8)
+		tempLoss.Edge = edge
+
 		local text = (textParent or element):CreateFontString(nil, "ARTWORK")
 		E.FontStrings:Capture(text, "unit")
-		text:SetWordWrap(false)
 		element.Text = text
 
 		return element
@@ -115,6 +157,7 @@ end
 do
 	local element_proto = {
 		maxOverflow = 1,
+		showRawAbsorb = true,
 	}
 
 	function element_proto:UpdateConfig()
@@ -129,22 +172,22 @@ do
 	end
 
 	function element_proto:UpdateTextures()
-		self.myBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		self.otherBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
-		self.healAbsorbBar:SetStatusBarTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		self.myBar:UpdateStatusBarTexture()
+		self.otherBar:UpdateStatusBarTexture()
+		self.healAbsorbBar:UpdateStatusBarTexture()
 	end
 
 	function element_proto:UpdateSmoothing()
 		if C.db.profile.units.change.smooth then
-			E:SmoothBar(self.myBar)
-			E:SmoothBar(self.otherBar)
-			E:SmoothBar(self.absorbBar)
-			E:SmoothBar(self.healAbsorbBar)
+			E.StatusBars:Smooth(self.myBar)
+			E.StatusBars:Smooth(self.otherBar)
+			E.StatusBars:Smooth(self.absorbBar)
+			E.StatusBars:Smooth(self.healAbsorbBar)
 		else
-			E:DesmoothBar(self.myBar)
-			E:DesmoothBar(self.otherBar)
-			E:DesmoothBar(self.absorbBar)
-			E:DesmoothBar(self.healAbsorbBar)
+			E.StatusBars:Desmooth(self.myBar)
+			E.StatusBars:Desmooth(self.otherBar)
+			E.StatusBars:Desmooth(self.absorbBar)
+			E.StatusBars:Desmooth(self.healAbsorbBar)
 		end
 	end
 
@@ -192,6 +235,7 @@ do
 		parent.MyHeal = myBar
 
 		myBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(myBar, "health")
 		myBar._texture = myBar:GetStatusBarTexture()
 
 		local otherBar = CreateFrame("StatusBar", nil, parent)
@@ -202,13 +246,16 @@ do
 		parent.OtherHeal = otherBar
 
 		otherBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(otherBar, "health")
 		otherBar._texture = otherBar:GetStatusBarTexture()
 
 		local absorbBar = CreateFrame("StatusBar", nil, parent)
-		absorbBar:SetFrameLevel(level + 1)
+		absorbBar:SetClipsChildren(true)
+		absorbBar:SetFrameLevel(level + 2)
 		absorbBar:SetPoint("TOP")
 		absorbBar:SetPoint("BOTTOM")
-		absorbBar:SetPoint("LEFT", otherBar:GetStatusBarTexture(), "RIGHT")
+		absorbBar:SetReverseFill(true)
+		absorbBar:SetPoint("RIGHT", frame.Health.TempLoss_:GetStatusBarTexture(), "LEFT")
 		parent.DamageAbsorb = absorbBar
 
 		absorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
@@ -216,6 +263,7 @@ do
 		absorbBar._texture:SetTexture("Interface\\AddOns\\ls_UI\\assets\\absorb", "REPEAT", "REPEAT")
 		absorbBar._texture:SetHorizTile(true)
 		absorbBar._texture:SetVertTile(true)
+		absorbBar._texture:SetAlpha(0.4)
 
 		local healAbsorbBar = CreateFrame("StatusBar", nil, parent)
 		healAbsorbBar:SetReverseFill(true)
@@ -226,6 +274,7 @@ do
 		parent.HealAbsorb = healAbsorbBar
 
 		healAbsorbBar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+		E.StatusBars:Capture(healAbsorbBar, "health")
 		healAbsorbBar._texture = healAbsorbBar:GetStatusBarTexture()
 
 		return Mixin({

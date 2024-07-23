@@ -70,6 +70,8 @@ function MODULE:CleanUp()
 	end
 
 	hideBar(StatusTrackingBarManager)
+	hideBar(MainStatusTrackingBarContainer)
+	hideBar(SecondaryStatusTrackingBarContainer)
 
 	if NewPlayerExperience then
 		disableNPE()

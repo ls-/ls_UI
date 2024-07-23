@@ -49,18 +49,15 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
+
 					BARS:For(barID, "Update")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			visible = {
 				order = inc(1),
 				type = "toggle",
@@ -71,7 +68,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateConfig")
 					BARS:For(barID, "UpdateFading")
 					BARS:For(barID, "UpdateVisibility")
-				end
+				end,
 			},
 			artwork = {
 				order = inc(1),
@@ -91,11 +88,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 				isPercent = true,
 				min = 0.5, max = 1.5, step = 0.01, bigStep = 0.05,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			hotkey = {
 				order = inc(1),
 				type = "group",
@@ -133,11 +126,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -174,11 +163,7 @@ function CONFIG:CreateExtraBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			fading = CONFIG:CreateBarFadingOptions(inc(1), barID),
 		},
 	}

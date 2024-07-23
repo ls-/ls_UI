@@ -42,18 +42,15 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].name, C.db.profile.units[unit].name)
+
 					UNITFRAMES:For(unit, "UpdateName")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			size = {
 				order = inc(1),
 				type = "range",
@@ -77,13 +74,8 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 				order = inc(1),
 				type = "toggle",
 				name = L["WORD_WRAP"],
-				disabled = isSecondaryAnchorDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			point1 = {
 				order = inc(1),
 				type = "group",
@@ -135,11 +127,7 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			point2 = {
 				order = inc(1),
 				type = "group",
@@ -195,11 +183,7 @@ function CONFIG:CreateUnitFrameNameOptions(order, unit)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			tag = {
 				order = inc(1),
 				type = "input",

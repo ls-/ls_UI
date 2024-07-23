@@ -13,6 +13,12 @@ function element_proto:UpdateConfig()
 	self._config = E:CopyTable(C.db.profile.units[unit].portrait, self._config)
 end
 
+function element_proto:PostUpdate(_, hasStateChanged)
+	if self:IsObjectType("PlayerModel") and hasStateChanged then
+		self:SetCamDistanceScale(1 / self._config.scale)
+	end
+end
+
 local frame_proto = {}
 
 function frame_proto:UpdatePortrait()
@@ -25,6 +31,12 @@ function frame_proto:UpdatePortrait()
 		self.Portrait = self.Portrait2D
 		self.Portrait3D:ClearAllPoints()
 		self.Portrait3D:Hide()
+
+		if style == "2D" then
+			self.Portrait:SetTexCoord(0.125, 0.875, 0.125, 0.875)
+		else
+			self.Portrait:SetTexCoord(0, 1, 0, 1)
+		end
 	end
 
 	self.Portrait3D.__owner = self.Portrait2D.__owner

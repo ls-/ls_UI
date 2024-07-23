@@ -109,22 +109,19 @@ function CONFIG:CreateMicroMenuOptions(order)
 			reset = {
 				type = "execute",
 				order = reset(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars.micromenu, C.db.profile.bars.micromenu, {point = true})
+
 					BARS:UpdateMicroMenu()
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			restricted = {
 				order = inc(1),
 				type = "toggle",
-				name = L["USE_BLIZZARD_MICRO_MENU"],
+				name = CONFIG:ColorPrivateSetting(L["USE_BLIZZARD_MICRO_MENU"]),
 				get = function()
 					return PrC.db.profile.bars.micromenu.blizz_enabled
 				end,
@@ -132,15 +129,11 @@ function CONFIG:CreateMicroMenuOptions(order)
 					PrC.db.profile.bars.micromenu.blizz_enabled = value
 
 					if BARS:IsInit() then
-						CONFIG:ShowStaticPopup("RELOAD_UI")
+						CONFIG:AskToReloadUI("micromenu.blizz_enabled")
 					end
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			per_row = {
 				order = inc(1),
 				type = "range",
@@ -186,15 +179,11 @@ function CONFIG:CreateMicroMenuOptions(order)
 					end
 				end,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			fading = CONFIG:CreateBarFadingOptions(inc(1), "micromenu"),
 			character = getMicroButtonOptions(inc(1), "character", CHARACTER_BUTTON),
-			spellbook = getMicroButtonOptions(inc(1), "spellbook", SPELLBOOK_ABILITIES_BUTTON),
-			talent = getMicroButtonOptions(inc(1), "talent", TALENTS_BUTTON),
+			spellbook = getMicroButtonOptions(inc(1), "spellbook", PROFESSIONS_BUTTON),
+			talent = getMicroButtonOptions(inc(1), "talent", PLAYERSPELLS_BUTTON),
 			achievement = getMicroButtonOptions(inc(1), "achievement", ACHIEVEMENT_BUTTON),
 			quest = getMicroButtonOptions(inc(1), "quest", QUESTLOG_BUTTON),
 			guild = getMicroButtonOptions(inc(1), "guild", GUILD_AND_COMMUNITIES),

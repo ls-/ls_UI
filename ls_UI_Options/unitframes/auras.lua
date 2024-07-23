@@ -48,10 +48,10 @@ end
 
 local FILTERS = {
 	friendly = {
-		name = function() return C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]) end,
+		name = C.db.global.colors.green:WrapTextInColorCode(L["FRIENDLY_UNITS"]),
 	},
 	enemy = {
-		name = function() return C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]) end,
+		name = C.db.global.colors.red:WrapTextInColorCode(L["ENEMY_UNITS"]),
 	},
 	buff = {
 		boss = {
@@ -90,7 +90,7 @@ local FILTERS = {
 			name = L["SELF_BUFFS_PERMA"],
 			desc = L["SELF_BUFFS_PERMA_DESC"],
 			disabled = function(info)
-				return not C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].selfcast
+				return not (C.db.profile.units[info[#info - 5]].auras.enabled and C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].selfcast)
 			end,
 		},
 		player = {
@@ -105,7 +105,7 @@ local FILTERS = {
 			name = L["CASTABLE_BUFFS_PERMA"],
 			desc = L["CASTABLE_BUFFS_PERMA_DESC"],
 			disabled = function(info)
-				return not C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].player
+				return not (C.db.profile.units[info[#info - 5]].auras.enabled and C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].player)
 			end,
 		},
 		misc = {
@@ -145,7 +145,7 @@ local FILTERS = {
 			name = L["SELF_DEBUFFS_PERMA"],
 			desc = L["SELF_DEBUFFS_PERMA_DESC"],
 			disabled = function(info)
-				return not C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].selfcast
+				return not (C.db.profile.units[info[#info - 5]].auras.enabled and C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].selfcast)
 			end,
 		},
 		player = {
@@ -160,7 +160,7 @@ local FILTERS = {
 			name = L["CASTABLE_DEBUFFS_PERMA"],
 			desc = L["CASTABLE_DEBUFFS_PERMA_DESC"],
 			disabled = function(info)
-				return not C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].player
+				return not (C.db.profile.units[info[#info - 5]].auras.enabled and C.db.profile.units[info[#info - 5]].auras.filter[info[#info - 2]][info[#info - 1]].player)
 			end,
 		},
 		dispellable = {
@@ -203,11 +203,7 @@ local function getFilters(order, unit, type)
 			end
 
 			if C.db.profile.units[unit].auras.filter[type].debuff then
-				temp.args.spacer_1 = {
-					order = inc(3),
-					type = "description",
-					name = " ",
-				}
+				temp.args.spacer_1 = CONFIG:CreateSpacer(inc(3))
 			end
 		end
 
@@ -244,6 +240,10 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 		[unit] = true,
 	}
 
+	local function areAurasDisabled()
+		return not C.db.profile.units[unit].auras.enabled
+	end
+
 	return {
 		order = order,
 		type = "group",
@@ -272,43 +272,41 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				values = function()
 					return UNITFRAMES:GetUnits(ignoredUnits)
 				end,
+				disabled = areAurasDisabled,
 				get = function() end,
 				set = function(_, value)
 					CONFIG:CopySettings(C.db.profile.units[value].auras, C.db.profile.units[unit].auras, copyIgnoredKeys)
+
 					UNITFRAMES:For(unit, "UpdateAuras")
 				end,
 			},
 			reset = {
 				type = "execute",
 				order = inc(1),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
+				disabled = areAurasDisabled,
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.units[unit].auras, C.db.profile.units[unit].auras, resetIgnoredKeys)
+
 					UNITFRAMES:For(unit, "UpdateAuras")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			disable_mouse = {
 				order = inc(1),
 				type = "toggle",
 				name = L["DISABLE_MOUSE"],
 				desc = L["DISABLE_MOUSE_DESC"],
+				disabled = areAurasDisabled,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			rows = {
 				order = inc(1),
 				type = "range",
 				name = L["NUM_ROWS"],
 				min = 1, max = 4, step = 1,
+				disabled = areAurasDisabled,
 				set = function(_, value)
 					if C.db.profile.units[unit].auras.rows ~= value then
 						C.db.profile.units[unit].auras.rows = value
@@ -324,6 +322,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				type = "range",
 				name = L["PER_ROW"],
 				min = 1, max = 10, step = 1,
+				disabled = areAurasDisabled,
 				set = function(_, value)
 					if C.db.profile.units[unit].auras.per_row ~= value then
 						C.db.profile.units[unit].auras.per_row = value
@@ -341,6 +340,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				desc = L["WIDTH_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
 				softMin = 16,
+				disabled = areAurasDisabled,
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.width ~= value then
 						if value < info.option.softMin then
@@ -362,6 +362,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				desc = L["HEIGHT_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
 				softMin = 16,
+				disabled = areAurasDisabled,
 				set = function(info, value)
 					if C.db.profile.units[unit].auras.height ~= value then
 						if value < info.option.softMin then
@@ -381,6 +382,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 				type = "select",
 				name = L["GROWTH_DIR"],
 				values = CONFIG.GROWTH_DIRS,
+				disabled = areAurasDisabled,
 				get = function()
 					return C.db.profile.units[unit].auras.x_growth .. "_" .. C.db.profile.units[unit].auras.y_growth
 				end,
@@ -391,16 +393,13 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					UNITFRAMES:For(unit, "For", "Auras", "UpdateGrowthDirection")
 				end,
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			point = {
 				order = inc(1),
 				type = "group",
 				name = "",
 				inline = true,
+				disabled = areAurasDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].auras.point1[info[#info]]
 				end,
@@ -441,16 +440,13 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			type = {
 				order = inc(1),
 				type = "group",
 				name = L["AURA_TYPE"],
 				inline = true,
+				disabled = areAurasDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].auras.type[info[#info]]
 				end,
@@ -483,16 +479,13 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_5 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_5 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
 				name = L["COUNT_TEXT"],
 				inline = true,
+				disabled = areAurasDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].auras.count[info[#info]]
 				end,
@@ -525,16 +518,13 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
 				name = L["COOLDOWN_TEXT"],
 				inline = true,
+				disabled = areAurasDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].auras.cooldown.text[info[#info]]
 				end,
@@ -566,16 +556,13 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					},
 				},
 			},
-			spacer_7 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_7 = CONFIG:CreateSpacer(inc(1)),
 			filter = {
 				order = inc(1),
 				type = "group",
 				name = L["FILTERS"],
 				inline = true,
+				disabled = areAurasDisabled,
 				get = function(info)
 					return C.db.profile.units[unit].auras.filter[info[#info - 2]][info[#info - 1]][info[#info]]
 				end,
@@ -599,6 +586,7 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 						get = function() end,
 						set = function(_, value)
 							CONFIG:CopySettings(C.db.profile.units[value].auras.filter, C.db.profile.units[unit].auras.filter)
+
 							UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 							UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 						end,
@@ -606,10 +594,11 @@ function CONFIG:CreateUnitFrameAurasOptions(order, unit)
 					reset = {
 						type = "execute",
 						order = inc(2),
-						name = L["RESTORE_DEFAULTS"],
+						name = L["RESET_TO_DEFAULT"],
 						confirm = CONFIG.ConfirmReset,
 						func = function()
 							CONFIG:CopySettings(D.profile.units[unit].auras.filter, C.db.profile.units[unit].auras.filter)
+
 							UNITFRAMES:For(unit, "For", "Auras", "UpdateConfig")
 							UNITFRAMES:For(unit, "For", "Auras", "ForceUpdate")
 						end,

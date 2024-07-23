@@ -72,18 +72,15 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			reset = {
 				type = "execute",
 				order = reset(1, 2),
-				name = L["RESTORE_DEFAULTS"],
+				name = L["RESET_TO_DEFAULT"],
 				confirm = CONFIG.ConfirmReset,
 				func = function()
 					CONFIG:CopySettings(D.profile.bars[barID], C.db.profile.bars[barID], {visible = true, point = true})
+
 					BARS:For(barID, "Update")
 				end,
 			},
-			spacer_1 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_1 = CONFIG:CreateSpacer(inc(1)),
 			visible = {
 				order = inc(1),
 				type = "toggle",
@@ -94,7 +91,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateConfig")
 					BARS:For(barID, "UpdateFading")
 					BARS:For(barID, "UpdateVisibility")
-				end
+				end,
 			},
 			grid = {
 				order = inc(1),
@@ -126,17 +123,23 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				name = L["PER_ROW"],
 				min = 1, max = 12, step = 1,
 			},
-			spacing = {
+			x_spacing = {
 				order = inc(1),
 				type = "range",
-				name = L["SPACING"],
+				name = L["X_SPACING"],
+				min = 4, max = 24, step = 1,
+			},
+			y_spacing = {
+				order = inc(1),
+				type = "range",
+				name = L["Y_SPACING"],
 				min = 4, max = 24, step = 1,
 			},
 			width = {
 				order = inc(1),
 				type = "range",
 				name = L["WIDTH"],
-				min = 16, max = 64, step = 1,
+				min = 8, max = 64, step = 1,
 			},
 			height = {
 				order = inc(1),
@@ -144,17 +147,17 @@ function CONFIG:CreateBarOptions(order, barID, name)
 				name = L["HEIGHT"],
 				desc = L["HEIGHT_OVERRIDE_DESC"],
 				min = 0, max = 64, step = 1,
-				softMin = 16,
+				softMin = 8,
 				set = function(info, value)
 					if C.db.profile.bars[barID].height ~= value then
 						if value < info.option.softMin then
 							value = info.option.min
 						end
+
+						C.db.profile.bars[barID].height = value
+
+						BARS:For(barID, "Update")
 					end
-
-					C.db.profile.bars[barID].height = value
-
-					BARS:For(barID, "Update")
 				end,
 			},
 			growth_dir = {
@@ -183,11 +186,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					BARS:For(barID, "UpdateButtonConfig")
 				end,
 			},
-			spacer_2 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_2 = CONFIG:CreateSpacer(inc(1)),
 			hotkey = {
 				order = inc(1),
 				type = "group",
@@ -225,11 +224,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_3 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_3 = CONFIG:CreateSpacer(inc(1)),
 			macro = {
 				order = inc(1),
 				type = "group",
@@ -266,11 +261,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_4 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_4 = CONFIG:CreateSpacer(inc(1)),
 			count = {
 				order = inc(1),
 				type = "group",
@@ -296,11 +287,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_5 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_5 = CONFIG:CreateSpacer(inc(1)),
 			cooldown = {
 				order = inc(1),
 				type = "group",
@@ -337,11 +324,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 					},
 				},
 			},
-			spacer_6 = {
-				order = inc(1),
-				type = "description",
-				name = " ",
-			},
+			spacer_6 = CONFIG:CreateSpacer(inc(1)),
 			fading = CONFIG:CreateBarFadingOptions(inc(1), barID),
 		},
 	}
@@ -351,9 +334,11 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.visible.disabled = isModuleDisabledOrRestricted
 		if BARS:IsRestricted() then
 			temp.args.num.min = 6
+			temp.args.num.max = 24
 		end
 		temp.args.per_row.disabled = isModuleDisabledOrRestricted
-		temp.args.spacing.disabled = isModuleDisabledOrRestricted
+		temp.args.x_spacing.disabled = isModuleDisabledOrRestricted
+		temp.args.y_spacing.disabled = isModuleDisabledOrRestricted
 		temp.args.width.disabled = isModuleDisabledOrRestricted
 		temp.args.height.disabled = isModuleDisabledOrRestricted
 		temp.args.growth_dir.disabled = isModuleDisabledOrRestricted
@@ -386,7 +371,7 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.enabled = {
 			order = 1,
 			type = "toggle",
-			name = L["ENABLE"],
+			name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
 			disabled = function() return BARS:IsRestricted() end,
 			get = function()
 				return PrC.db.profile.bars[barID].enabled
@@ -394,19 +379,11 @@ function CONFIG:CreateBarOptions(order, barID, name)
 			set = function(_, value)
 				PrC.db.profile.bars[barID].enabled = value
 
-				if BARS:IsInit() then
-					if BARS:HasPetBattleBar() then
-						if not value then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						end
-					else
-						if BARS:IsRestricted() then
-							CONFIG:ShowStaticPopup("RELOAD_UI")
-						else
-							if value then
-								BARS:CreatePetBattleBar()
-							end
-						end
+				if BARS:HasPetBattleBar() then
+					CONFIG:AskToReloadUI("pet_battle.enabled", value)
+				else
+					if value then
+						P:Call(BARS.CreatePetBattleBar, BARS)
 					end
 				end
 			end,
@@ -419,12 +396,13 @@ function CONFIG:CreateBarOptions(order, barID, name)
 		temp.args.num.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.per_row.max = 6
 		temp.args.per_row.disabled = isPetBattleBarDisabledOrRestricted
-		temp.args.spacing.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.x_spacing.disabled = isPetBattleBarDisabledOrRestricted
+		temp.args.y_spacing.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.width.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.height.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.growth_dir.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.flyout_dir = nil
-		temp.args.hotkey.disabled = function() return not BARS:HasPetBattleBar() end
+		temp.args.hotkey.disabled = isPetBattleBarDisabledOrRestricted
 		temp.args.macro = nil
 		temp.args.spacer_4 = nil
 		temp.args.count = nil

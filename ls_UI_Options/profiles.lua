@@ -276,35 +276,47 @@ function CONFIG:CreateProfilesPanel(order)
 		childGroups = "tab",
 		args = {
 			export = {
-				type = "execute",
 				order = 1,
+				type = "execute",
 				name = L["EXPORT"],
 				func = openExportImportFrame,
 			},
 			import = {
-				type = "execute",
 				order = 2,
+				type = "execute",
 				name = L["IMPORT"],
 				func = openExportImportFrame,
 			},
-			spacer_1 = {
-				order = 3,
-				type = "description",
-				name = "",
-				width = "full",
-			},
+			spacer_1 = CONFIG:CreateSpacer(3),
 		},
 	}
 
 	options.args.global = AceDBOptions:GetOptionsTable(C.db, true)
 	options.args.global.order = 4
 	options.args.global.name = L["PROFILE_GLOBAL"]
+	options.args.global.desc = L["PROFILE_GLOBAL_DESC"]
 
 	LibDualSpec:EnhanceOptions(options.args.global, C.db)
 
+	if not options.args.global.plugins then
+		options.args.global.plugins = {}
+	end
+
+	options.args.global.plugins.ls_UI = {
+		warning = {
+			order = 0.1,
+			type = "description",
+			fontSize = "medium",
+			name = L["PROFILE_GLOBAL_DESC"],
+			image = "Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew",
+		},
+		spacer = CONFIG:CreateSpacer(0.2),
+	}
+
 	options.args.private = AceDBOptions:GetOptionsTable(PrC.db, true)
 	options.args.private.order = 5
-	options.args.private.name = L["PROFILE_PRIVATE"]
+	options.args.private.name = CONFIG:ColorPrivateSetting(L["PROFILE_PRIVATE"])
+	options.args.private.desc = L["PROFILE_PRIVATE_DESC"]
 
 	if not options.args.private.plugins then
 		options.args.private.plugins = {}
@@ -312,14 +324,13 @@ function CONFIG:CreateProfilesPanel(order)
 
 	options.args.private.plugins.ls_UI = {
 		warning = {
-			order = 0,
+			order = 0.1,
 			type = "description",
-			fontSize = "large",
-			name = L["PROFILE_RELOAD_WARNING"] .. "\n\n",
-			image = "Interface\\OPTIONSFRAME\\UI-OptionsFrame-NewFeatureIcon",
-			imageWidth = 16,
-			imageHeight = 16,
+			fontSize = "medium",
+			name = L["PROFILE_PRIVATE_DESC"] .. "\n" .. L["PROFILE_RELOAD_WARNING"],
+			image = "Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew",
 		},
+		spacer = CONFIG:CreateSpacer(0.2),
 	}
 
 	return options

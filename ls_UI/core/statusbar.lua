@@ -6,13 +6,20 @@ local _G = getfenv(0)
 local m_abs = _G.math.abs
 local next = _G.next
 local s_match = _G.string.match
-local s_split = _G.string.split
-local unpack = _G.unpack
 
 -- Mine
 local LSM = LibStub("LibSharedMedia-3.0")
 
-function E:HandleStatusBar(bar, isRecursive)
+local module = {
+	health = {},
+	castbar = {},
+	power = {},
+	xpbar = {},
+	other = {},
+}
+E.StatusBars = module
+
+function module:Handle(bar, isRecursive)
 	if bar.handled then return end
 
 	local children = {bar:GetChildren()}
@@ -45,7 +52,7 @@ function E:HandleStatusBar(bar, isRecursive)
 
 	for _, child in next, children do
 		if child:IsObjectType("StatusBar") then
-			tbg, ttext, tsbt = self:HandleStatusBar(child, true)
+			tbg, ttext, tsbt = self:Handle(child, true)
 		end
 	end
 
@@ -63,13 +70,18 @@ function E:HandleStatusBar(bar, isRecursive)
 			bar.RealBar = rbar
 		end
 
+		E.StatusBars:Capture(bar.RealBar or bar, "other")
+
 		if not bg then
 			bg = bar:CreateTexture(nil, "BACKGROUND")
 		end
 
-		bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGB())
+		bg:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
+		bg:SetVertexColor(1, 1, 1, 1)
+		bg:SetHorizTile(true)
+		bg:SetVertTile(true)
 		bg:SetAllPoints()
-		bar.Bg = bg
+		bar.Background = bg
 
 		if not text then
 			text = bar:CreateFontString(nil, "ARTWORK")
@@ -85,7 +97,7 @@ function E:HandleStatusBar(bar, isRecursive)
 		text:SetPoint("BOTTOMRIGHT", -1, 0)
 		bar.Text = text
 
-		sbt:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.horiz))
+		sbt:SetTexture(LSM:Fetch("statusbar", C.db.global.textures.statusbar.other))
 		bar.Texture = sbt
 
 		bar.handled = true
@@ -96,356 +108,34 @@ function E:HandleStatusBar(bar, isRecursive)
 	end
 end
 
-function E:CreateStatusBar(parent, name, orientation)
-	local bar = CreateFrame("StatusBar", name, parent)
-	bar:SetOrientation(orientation)
-	bar:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
-
-	local bg = bar:CreateTexture(nil, "BACKGROUND")
-	bg:SetColorTexture(C.db.global.colors.dark_gray:GetRGB())
-	bg:SetAllPoints()
-	bar.Bg = bg
-
-	local text = bar:CreateFontString("$parentText", "ARTWORK")
-	E.FontStrings:Capture(text, "statusbar")
-	text:UpdateFont(12)
-	text:SetWordWrap(false)
-	bar.Text = text
-
-	bar.handled = true
-
-	return bar
-end
-
 do
-	local LAYOUT = {
-		HORIZONTAL = {
-			["8"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 14 / 512, 50 / 512},
-					size = {30 / 2, 36 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 14 / 512, 50 / 512},
-					size = {30 / 2, 36 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["12"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 51 / 512, 95 / 512},
-					size = {30 / 2, 44 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 51 / 512, 95 / 512},
-					size = {30 / 2, 44 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["16"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 96 / 512, 148 / 512},
-					size = {30 / 2, 52 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 96 / 512, 148 / 512},
-					size = {30 / 2, 52 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["20"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 149 / 512, 209 / 512},
-					size = {30 / 2, 60 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 149 / 512, 209 / 512},
-					size = {30 / 2, 60 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["24"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 210 / 512, 278 / 512},
-					size = {30 / 2, 68 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 210 / 512, 278 / 512},
-					size = {30 / 2, 68 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["28"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 279 / 512, 355 / 512},
-					size = {30 / 2, 76 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 279 / 512, 355 / 512},
-					size = {30 / 2, 76 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-			["32"] = {
-				[1] = {
-					coords = {1 / 128, 31 / 128, 356 / 512, 440 / 512},
-					size = {30 / 2, 84 / 2},
-				},
-				[2] = {
-					coords = {32 / 128, 62 / 128, 356 / 512, 440 / 512},
-					size = {30 / 2, 84 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 0, 0.025390625, 1, 0.001953125, 1, 0.025390625},
-					size = {0, 12 / 2},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 0, 0.001953125, 1, 0.025390625, 1, 0.001953125},
-					size = {0, 12 / 2},
-				},
-			},
-		},
-		VERTICAL = {
-			["8"] = {
-				[1] = {
-					coords = {0.0078125, 0.02734375, 0.2421875, 0.02734375, 0.0078125, 0.09765625, 0.2421875, 0.09765625},
-					size = {36 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.02734375, 0.484375, 0.02734375, 0.25, 0.09765625, 0.484375, 0.09765625},
-					size = {36 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["12"] = {
-				[1] = {
-					coords = {0.0078125, 0.099609375, 0.2421875, 0.099609375, 0.0078125, 0.185546875, 0.2421875, 0.185546875},
-					size = {44 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.099609375, 0.484375, 0.099609375, 0.25, 0.185546875, 0.484375, 0.185546875},
-					size = {44 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["16"] = {
-				[1] = {
-					coords = {0.0078125, 0.1875, 0.2421875, 0.1875, 0.0078125, 0.2890625, 0.2421875, 0.2890625},
-					size = {52 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.1875, 0.484375, 0.1875, 0.25, 0.2890625, 0.484375, 0.2890625},
-					size = {52 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["20"] = {
-				[1] = {
-					coords = {0.0078125, 0.291015625, 0.2421875, 0.291015625, 0.0078125, 0.408203125, 0.2421875, 0.408203125},
-					size = {60 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.291015625, 0.484375, 0.291015625, 0.25, 0.408203125, 0.484375, 0.408203125},
-					size = {60 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["24"] = {
-				[1] = {
-					coords = {0.0078125, 0.41015625, 0.2421875, 0.41015625, 0.0078125, 0.54296875, 0.2421875, 0.54296875},
-					size = {68 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.41015625, 0.484375, 0.41015625, 0.25, 0.54296875, 0.484375, 0.54296875},
-					size = {68 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["28"] = {
-				[1] = {
-					coords = {0.0078125, 0.544921875, 0.2421875, 0.544921875, 0.0078125, 0.693359375, 0.2421875, 0.693359375},
-					size = {76 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.544921875, 0.484375, 0.544921875, 0.25, 0.693359375, 0.484375, 0.693359375},
-					size = {76 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-			["32"] = {
-				[1] = {
-					coords = {0.0078125, 0.6953125, 0.2421875, 0.6953125, 0.0078125, 0.859375, 0.2421875, 0.859375},
-					size = {84 / 2, 30 / 2},
-				},
-				[2] = {
-					coords = {0.25, 0.6953125, 0.484375, 0.6953125, 0.25, 0.859375, 0.484375, 0.859375},
-					size = {84 / 2, 30 / 2},
-				},
-				[3] = {
-					coords = {0, 0.001953125, 1, 0.001953125, 0, 0.025390625, 1, 0.025390625},
-					size = {12 / 2, 0},
-				},
-				[4] = {
-					coords = {0, 0.025390625, 1, 0.025390625, 0, 0.001953125, 1, 0.001953125},
-					size = {12 / 2, 0},
-				},
-			},
-		},
-	}
+	local gradientColorMin = {r = 0, g = 0, b = 0, a = 0}
+	local gradientColorMax = {r = 0, g = 0, b = 0, a = 0.4}
 
-	local function hide(self)
-		for i = 1, 5 do
-			self[i]:Hide()
-		end
-	end
+	function module:Reskin(bar)
+		if bar.TextureParent then return end
 
-	local function show(self)
-		for i = 1, 5 do
-			self[i]:Show()
-		end
-	end
+		local textureParent = CreateFrame("Frame", nil, bar)
+		textureParent:SetFrameLevel(bar:GetFrameLevel() + 2)
+		textureParent:SetAllPoints()
+		bar.TextureParent = textureParent
 
-	function E:SetStatusBarSkin(object, flag)
-		local s, v = s_split("-", flag)
+		local border = E:CreateBorder(textureParent, "BORDER")
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-statusbar")
+		border:SetSize(16)
+		border:SetOffset(-4)
+		textureParent.Border = border
 
-		object.Tube = object.Tube or {
-			[1] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- left/top
-			[2] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- right/bottom
-			[3] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- top/right
-			[4] = object:CreateTexture(nil, "ARTWORK", nil, 7), -- bottom/right
-			[5] = object:CreateTexture(nil, "ARTWORK", nil, 6), -- glass
-			Hide = hide,
-			Show = show,
-		}
+		local gradient = textureParent:CreateTexture(nil, "BORDER", nil, -1)
+		gradient:SetAllPoints(textureParent)
+		gradient:SetSnapToPixelGrid(false)
+		gradient:SetTexelSnappingBias(0)
+		gradient:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+		gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
+		textureParent.Gradient = gradient
 
-		if s == "HORIZONTAL" or s == "VERTICAL" then
-			for i = 1, 4 do
-				if v == "GLASS" then
-					object.Tube[i]:SetTexture(nil)
-					object.Tube[i]:ClearAllPoints()
-				else
-					object.Tube[i]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar")
-					object.Tube[i]:SetTexCoord(unpack(LAYOUT[s][v][i].coords))
-					object.Tube[i]:ClearAllPoints()
-					object.Tube[i]:SetSize(unpack(LAYOUT[s][v][i].size))
-				end
-			end
-
-			object.Tube[5]:SetTexture("Interface\\AddOns\\ls_UI\\assets\\statusbar-glass")
-			object.Tube[5]:SetAllPoints()
-
-			if s == "HORIZONTAL" then
-				object.Tube[5]:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)
-
-				if v ~= "GLASS" then
-					object.Tube[1]:SetPoint("RIGHT", object, "LEFT", 10 / 2, 0)
-					object.Tube[2]:SetPoint("LEFT", object, "RIGHT", -10 / 2, 0)
-					object.Tube[3]:SetPoint("TOPLEFT", object.Tube[1], "TOPRIGHT", 0, 0)
-					object.Tube[3]:SetPoint("TOPRIGHT", object.Tube[2], "TOPLEFT", 0, 0)
-					object.Tube[4]:SetPoint("BOTTOMLEFT", object.Tube[1], "BOTTOMRIGHT", 0, 0)
-					object.Tube[4]:SetPoint("BOTTOMRIGHT", object.Tube[2], "BOTTOMLEFT", 0, 0)
-				end
-			else
-				object.Tube[5]:SetTexCoord(1, 0, 0, 0, 1, 1, 0, 1)
-
-				if v ~= "GLASS" then
-					object.Tube[1]:SetPoint("BOTTOM", object, "TOP", 0, -10 / 2)
-					object.Tube[2]:SetPoint("TOP", object, "BOTTOM", 0, 10 / 2)
-					object.Tube[3]:SetPoint("TOPLEFT", object.Tube[1], "BOTTOMLEFT", 0, 0)
-					object.Tube[3]:SetPoint("BOTTOMLEFT", object.Tube[2], "TOPLEFT", 0, 0)
-					object.Tube[4]:SetPoint("TOPRIGHT", object.Tube[1], "BOTTOMRIGHT", 0, 0)
-					object.Tube[4]:SetPoint("BOTTOMRIGHT", object.Tube[2], "TOPRIGHT", 0, 0)
-				end
-			end
-		elseif s == "NONE" then
-			for i = 1, 5 do
-				object.Tube[i]:SetTexture(nil)
-				object.Tube[i]:ClearAllPoints()
-			end
+		if bar.Text then
+			bar.Text:SetParent(textureParent)
 		end
 	end
 end
@@ -556,7 +246,7 @@ do
 		self._max = max
 	end
 
-	function E:SmoothBar(bar)
+	function module:Smooth(bar)
 		if handledObjects[bar] then return end
 
 		bar._min, bar._max = bar:GetMinMaxValues()
@@ -570,7 +260,7 @@ do
 		handledObjects[bar] = true
 	end
 
-	function E:DesmoothBar(bar)
+	function module:Desmooth(bar)
 		if not handledObjects[bar] then return end
 
 		remove(bar)
@@ -587,8 +277,65 @@ do
 
 		handledObjects[bar] = nil
 	end
+end
 
-	function E:SetSmoothingAmount(v)
-		AMOUNT = clamp(v, 0.3, 0.6)
+do
+	local objects = {}
+	local callbacks = {}
+
+	local function update(obj, t)
+		local texture = LSM:Fetch("statusbar", C.db.global.textures.statusbar[t]) or LSM:Fetch("statusbar", "Solid")
+
+		obj:SetStatusBarTexture(texture)
+
+		local callback = callbacks[obj]
+		if callback then
+			callback(obj, texture)
+		end
 	end
+
+	local statusbar_proto = {}
+	do
+		function statusbar_proto:UpdateStatusBarTexture()
+			local t = objects[self]
+			if not t then return end
+
+			update(self, t)
+		end
+	end
+
+	function module:Capture(obj, t, callback)
+		if obj:GetObjectType() ~= "StatusBar" then
+			return
+		elseif not self[t] then
+			return
+		elseif objects[obj] or self[t][obj] then
+			return
+		end
+
+		Mixin(obj, statusbar_proto)
+
+		self[t][obj] = true
+		objects[obj] = t
+		callbacks[obj] = callback
+	end
+
+	function module:Release(obj)
+		for k in next, statusbar_proto do
+			obj[k] = nil
+		end
+
+		self[objects[obj]] = true
+		objects[obj] = nil
+		callbacks[obj] = nil
+	end
+
+	function module:UpdateAll(t)
+		if not self[t] then return end
+
+		for obj in next, self[t] do
+			update(obj, t)
+		end
+	end
+
 end

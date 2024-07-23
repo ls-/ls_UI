@@ -23,6 +23,7 @@ D.global = {
 		black = rgb(0, 0, 0), -- #000000
 		white = rgb(255, 255, 255), -- #FFFFFF
 		orange = rgb(230, 118, 47), -- #E6762F (2.5YR 6/12)
+		context = rgb(136, 170, 255), -- #88AAFF (Blizzard Colour)
 		class = {
 			HUNTER = rgb(170, 211, 114), -- #AAD372 (Blizzard Colour)
 			WARLOCK = rgb(135, 135, 237), -- #8787ED (Blizzard Colour)
@@ -320,19 +321,19 @@ D.global = {
 		},
 		["ls:health:cur"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
 		},
 		["ls:health:cur-perc"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
 		},
 		["ls:health:deficit"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:health:perc"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
 		},
 		["ls:leadericon"] = {
 			events = "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE",
@@ -399,7 +400,7 @@ D.global = {
 		},
 		["ls:server"] = {
 			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return _VARS.L[\"FOREIGN_SERVER_LABEL\"]\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return FOREIGN_SERVER_LABEL\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:threat"] = {
 			events = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
@@ -533,8 +534,11 @@ D.global = {
 	},
 	textures = {
 		statusbar = {
-			horiz = "LS",
-			vert = "LS",
+			health = "Solid",
+			castbar = "Solid",
+			power = "Solid",
+			xpbar = "Solid",
+			other = "Solid", -- tooltips
 		},
 	},
 }
@@ -551,7 +555,8 @@ D.profile = {
 			},
 		},
 		inlay = {
-			alpha = 0.4,
+			gloss = 0.4,
+			gradient = 0.35,
 		},
 		change = {
 			smooth = true,
@@ -588,6 +593,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -599,6 +605,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -607,6 +616,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "LEFT",
 						anchor = "Power",
@@ -635,7 +645,7 @@ D.profile = {
 				latency = true,
 				detached = true,
 				width_override = 226,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -655,6 +665,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -806,6 +817,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "LEFT",
 						anchor = "Health",
@@ -817,6 +829,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -825,6 +840,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "LEFT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "LEFT",
 						anchor = "Power",
@@ -844,7 +860,7 @@ D.profile = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
 				text = {
-					size = 12,
+					size = 10,
 				},
 				point1 = {
 					p = "BOTTOM",
@@ -859,6 +875,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1004,6 +1021,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -1015,6 +1033,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -1023,6 +1044,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
@@ -1037,7 +1059,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -1057,6 +1079,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1237,6 +1260,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1248,6 +1272,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = false,
@@ -1256,6 +1283,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1269,6 +1297,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1348,6 +1377,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -1359,6 +1389,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -1367,6 +1400,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
@@ -1381,7 +1415,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -1401,6 +1435,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1581,6 +1616,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1592,6 +1628,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = false,
@@ -1600,6 +1639,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "CENTER",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "CENTER",
 						anchor = "",
@@ -1613,6 +1653,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1695,6 +1736,7 @@ D.profile = {
 					size = 13,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Health",
@@ -1706,6 +1748,9 @@ D.profile = {
 				prediction = {
 					enabled = true,
 				},
+				reduction = {
+					enabled = false,
+				},
 			},
 			power = {
 				enabled = true,
@@ -1714,6 +1759,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "Power",
@@ -1730,6 +1776,7 @@ D.profile = {
 					size = 11,
 					h_alignment = "RIGHT",
 					v_alignment = "MIDDLE",
+					word_wrap = false,
 					point1 = {
 						p = "RIGHT",
 						anchor = "AlternativePower",
@@ -1744,7 +1791,7 @@ D.profile = {
 				latency = false,
 				detached = false,
 				width_override = 0,
-				height = 12,
+				height = 14,
 				icon = {
 					position = "LEFT", -- "RIGHT", "NONE"
 				},
@@ -1764,6 +1811,7 @@ D.profile = {
 				enabled = false,
 				style = "2D", -- "3D", "Class"
 				position = "Left", -- "Right"
+				scale = 1.35,
 			},
 			name = {
 				size = 13,
@@ -1958,7 +2006,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[petbattle] hide; show",
 			visible = true,
@@ -2009,7 +2058,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
@@ -2060,7 +2110,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
@@ -2111,7 +2162,8 @@ D.profile = {
 			per_row = 1,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
@@ -2162,7 +2214,8 @@ D.profile = {
 			per_row = 1,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
@@ -2213,7 +2266,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = false,
@@ -2264,7 +2318,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = false,
@@ -2315,7 +2370,8 @@ D.profile = {
 			per_row = 12,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = false,
@@ -2366,7 +2422,8 @@ D.profile = {
 			per_row = 10,
 			width = 24,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[pet,nopetbattle,novehicleui,nooverridebar,nopossessbar] show; hide",
 			visible = true,
@@ -2403,7 +2460,8 @@ D.profile = {
 			per_row = 10,
 			width = 24,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[vehicleui][petbattle][overridebar][possessbar] hide; show",
 			visible = true,
@@ -2439,7 +2497,8 @@ D.profile = {
 			per_row = 6,
 			width = 32,
 			height = 0,
-			spacing = 4,
+			x_spacing = 4,
+			y_spacing = 4,
 			scale = 1,
 			visibility = "[petbattle] show; hide",
 			visible = true,
@@ -2567,7 +2626,7 @@ D.profile = {
 			spacing = 2,
 			x_growth = "RIGHT",
 			y_growth = "DOWN",
-			helptips = true,
+			helptips = false,
 			fade = {
 				enabled = false,
 				combat = false,
@@ -2627,7 +2686,7 @@ D.profile = {
 		xpbar = {
 			visible = true,
 			width = 594,
-			height = 12,
+			height = 14,
 			text = {
 				size = 12,
 				format = "NUM", -- "NUM_PERC"
@@ -2744,9 +2803,9 @@ D.profile = {
 		target = true,
 		inspect = true,
 		health = {
-			height = 12,
+			height = 14,
 			text = {
-				size = 11,
+				size = 12,
 			},
 		},
 	},
@@ -2837,6 +2896,9 @@ PrD.profile = {
 		},
 		mail = {
 			enabled = false,
+		},
+		suggest_frame = { -- EncounterJournalSuggestFrame
+			enabled = true,
 		},
 	},
 	minimap = {
