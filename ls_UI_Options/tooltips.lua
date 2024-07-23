@@ -83,7 +83,6 @@ function CONFIG:GetTooltipsOptions(order)
 				order = inc(1),
 				type = "toggle",
 				name = L["INSPECT_INFO"],
-				desc = L["INSPECT_INFO_DESC"],
 				disabled = isModuleDisabled,
 				set = function(_, value)
 					C.db.profile.tooltips.inspect = value
