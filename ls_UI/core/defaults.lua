@@ -321,19 +321,19 @@ D.global = {
 		},
 		["ls:health:cur"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    return _VARS.E:FormatNumber(UnitHealth(unit))\n  end\nend",
 		},
 		["ls:health:cur-perc"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if cur == max then\n      return _VARS.E:FormatNumber(cur)\n    else\n      return string.format(\"%s - %.1f%%\", _VARS.E:FormatNumber(cur), _VARS.E:NumberToPerc(cur, max))\n    end\n  end\nend",
 		},
 		["ls:health:deficit"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    local cur, max = UnitHealth(unit), UnitHealthMax(unit)\n    if max and cur ~= max then\n      return string.format(\"-%s\", _VARS.E:FormatNumber(max - cur))\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:health:perc"] = {
 			events = "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION PLAYER_FLAGS_CHANGED",
-			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return _VARS.L[\"OFFLINE\"]\n  elseif UnitIsDeadOrGhost(unit) then\n    return _VARS.L[\"DEAD\"]\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
+			func = "function(unit)\n  if not UnitIsConnected(unit) then\n    return PLAYER_OFFLINE\n  elseif UnitIsDeadOrGhost(unit) then\n    return DEAD\n  else\n    return string.format(\"%.1f%%\", _VARS.E:NumberToPerc(UnitHealth(unit), UnitHealthMax(unit)))\n  end\nend",
 		},
 		["ls:leadericon"] = {
 			events = "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE",
@@ -400,7 +400,7 @@ D.global = {
 		},
 		["ls:server"] = {
 			events = "UNIT_NAME_UPDATE",
-			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return _VARS.L[\"FOREIGN_SERVER_LABEL\"]\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  local _, realm = UnitName(unit)\n  if realm and realm ~= \"\" then\n    local relationship = UnitRealmRelationship(unit)\n    if relationship ~= LE_REALM_RELATION_VIRTUAL then\n      return FOREIGN_SERVER_LABEL\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:threat"] = {
 			events = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
