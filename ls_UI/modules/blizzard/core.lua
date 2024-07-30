@@ -13,6 +13,7 @@ function BLIZZARD:Init()
 	if not isInit and PrC.db.profile.blizzard.enabled then
 		self:SetUpCharacterFrame()
 		self:SetUpCommandBar()
+		self:SetUpGameMenu()
 		self:SetUpGMFrame()
 		self:SetUpMail()
 		self:SetUpSuggestFrame()

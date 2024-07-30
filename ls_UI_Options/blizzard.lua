@@ -179,6 +179,27 @@ function CONFIG:CreateBlizzardOptions(order)
 					},
 				},
 			},
+			game_menu = {
+				order = inc(1),
+				type = "group",
+				name = L["GAME_MENU"],
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.blizzard.game_menu[info[#info]]
+				end,
+				set = function(info, value)
+					C.db.profile.blizzard.game_menu[info[#info]] = value
+				end,
+				args = {
+					scale = {
+						order = reset(2),
+						type = "range",
+						name = L["SCALE"],
+						min = 0.5, max = 1, step = 0.01, bigStep = 0.05,
+						isPercent = true,
+					},
+				},
+			},
 			talking_head = {
 				order = inc(1),
 				type = "group",
