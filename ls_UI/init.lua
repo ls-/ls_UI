@@ -200,8 +200,6 @@ E:RegisterEvent("ADDON_LOADED", function(arg1)
 	AddonCompartmentFrame:RegisterAddon({
 		text = L["LS_UI"],
 		icon = "Interface\\AddOns\\ls_UI\\assets\\logo-32",
-		notCheckable = true,
-		registerForAnyClick = true,
 		func = function()
 			if not InCombatLockdown() then
 				openConfig()
