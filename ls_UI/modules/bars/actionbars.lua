@@ -90,8 +90,8 @@ local PAGE_STATES = {
 	["ROGUE"] = " [bonusbar:1] 7;",
 	-- Soar
 	["EVOKER"] = " [bonusbar:1] 7;",
-	-- [bonusbar:5] 11 is dragon riding
-	["DEFAULT"] = "[overridebar] 18; [shapeshift] 17; [vehicleui][possessbar] 16; [bonusbar:5,mounted] 11; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
+	-- [bonusbar:5] 11 is skyriding
+	["DEFAULT"] = "[overridebar] 18; [shapeshift] 17; [vehicleui][possessbar] 16; [bonusbar:5] 11; [bar:2] 2; [bar:3] 3; [bar:4] 4; [bar:5] 5; [bar:6] 6;",
 }
 
 local function getPageState()
