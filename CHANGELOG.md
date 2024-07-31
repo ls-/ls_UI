@@ -8,7 +8,8 @@
 
 ### Tooltips
 
-- Added the bag vs bank (bank + reagent bank + warbank) details to the total item count. It'll only be shown if you have that item in your banks.
+- Added the bag vs bank (bank + reagent bank + warbank) details to the total item count. It'll only be shown if you have
+  that item in your banks.
 
 ## Version 110000.01
 
