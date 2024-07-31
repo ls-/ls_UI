@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Version 110000.02
+
+### Blizzard
+
+- Added an option to scale the game menu. Can be found at /LSUI > Blizzard > Game Menu.
+
+### Tooltips
+
+- Added the bag vs bank (bank + reagent bank + warbank) details to the total item count. It'll only be shown if you have that item in your banks.
+
 ## Version 110000.01
 
 - Added 11.0.0 support.
