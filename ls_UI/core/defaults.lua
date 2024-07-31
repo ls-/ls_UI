@@ -2814,6 +2814,9 @@ D.profile = {
 			ilvl = true,
 			enhancements = true,
 		},
+		game_menu = {
+			scale = 1,
+		},
 		gm = {
 			point = {"TOPRIGHT", "UIParent", "TOPRIGHT", -250, -240},
 		},

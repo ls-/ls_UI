@@ -427,7 +427,7 @@ do
 		local cur, max = C_PetBattles.GetXP(1, i)
 
 		self.tooltipInfo = {
-			header = C.db.global.colors.quality[rarity - 1]:WrapTextInColorCode(name),
+			header = C.db.global.colors.quality[rarity]:WrapTextInColorCode(name),
 			line1 = L["LEVEL_TOOLTIP"]:format(level),
 		}
 

@@ -25,6 +25,7 @@ local ILVL_SPEC_FORMAT = "|cffffd100%s|r %s"
 local PLAYER_TARGET_FORMAT = "%s (|c%s" .. _G.PLAYER .. "|r)"
 local TARGET = "|cffffd100" .. _G.TARGET .. _G.HEADER_COLON .. "|r %s"
 local TOTAL = "|cffffd100" .. _G.TOTAL .. _G.HEADER_COLON .. "|r %d"
+local TOTAL_DETAILED = TOTAL .. " |cff888987(%d + %d)|r"
 
 local PHASE_ICONS = {
 	[Enum.PhaseReason.Phasing] = M.textures.icons_inline.PHASE,
@@ -115,7 +116,14 @@ function MODULE:Init()
 			if id then
 				local textRight
 				if C.db.profile.tooltips.count then
-					textRight = TOTAL:format(C_Item.GetItemCount(id, true))
+					local inBags = C_Item.GetItemCount(id)
+					local total = C_Item.GetItemCount(id, true, false, true, true)
+					local inBanks = total - inBags
+					if inBanks > 0 then
+						textRight = TOTAL_DETAILED:format(total, inBags, inBanks)
+					else
+						textRight = TOTAL:format(total)
+					end
 				end
 
 				tooltip:AddLine(" ")

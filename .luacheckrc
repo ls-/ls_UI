@@ -144,6 +144,7 @@ read_globals = {
 	"FlowContainer_PauseUpdates",
 	"FramerateFrame",
 	"GameFontNormal",
+	"GameMenuFrame",
 	"GameTimeFrame",
 	"GameTooltip",
 	"GameTooltip_SetDefaultAnchor",
