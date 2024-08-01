@@ -6,11 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Blizzard
+### Action Bars
 
-- Added an option to scale the game menu. Can be found at /LSUI > Blizzard > Game Menu.
-
-### Tooltips
-
-- Added the bag vs bank (bank + reagent bank + warbank) details to the total item count. It'll only be shown if you have that item in your banks.
+- Fixed an issue where droids wouldn't get the skyriding bar in the flying form.
 ]]
