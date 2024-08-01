@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 110000.03
+
+### Action Bars
+
+- Fixed an issue where droids wouldn't get the skyriding bar in the flying form.
+
 ## Version 110000.02
 
 ### Blizzard
