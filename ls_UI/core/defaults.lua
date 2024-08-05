@@ -520,16 +520,17 @@ D.global = {
 			[226512] = true, -- Sanguine (Sanguine Ichor)
 			[240443] = true, -- Bursting (Burst)
 			[240559] = true, -- Grievous (Grievous Wound)
-			-- DRAGONFLIGHT SEASON 1
-			[396364] = true, -- Thundering (Mark of Wind)
-			[396369] = true, -- Thundering (Mark of Lightning)
-			[396411] = true, -- Thundering (Primal Overload)
-			-- DRAGONFLIGHT SEASON 2
-			[408556] = true, -- Entangling (Entangled)
-			[408805] = true, -- Incorporeal (Destabilize)
-			[409465] = true, -- Afflicted (Cursed Spirit)
-			[409470] = true, -- Afflicted (Poisoned Spirit)
-			[409472] = true, -- Afflicted (Diseased Spirit)
+			-- TWW SEASON 1
+			[440313] = true, -- Xal'atath's Bargain: Devour (Void Rift)
+			[440328] = true, -- Xal'atath's Bargain: Devour (Mending Void)
+			[465136] = true, -- Xal'atath's Bargain: Devour (Lingering Void)
+			[461895] = true, -- Xal'atath's Bargain: Ascendant (Unstable Power)
+			[461904] = true, -- Xal'atath's Bargain: Ascendant (Cosmic Ascension)
+			[461910] = true, -- Xal'atath's Bargain: Ascendant (Cosmic Ascension)
+			[461978] = true, -- Xal'atath's Bargain: Frenzied
+			[462508] = true, -- Xal'atath's Bargain: Voidbound (Dark Prayer)
+			[462704] = true, -- Xal'atath's Bargain: Oblivion (Shattered Essence)
+			[463767] = true, -- Xal'atath's Bargain: Oblivion (Void Essence)
 		},
 	},
 	textures = {
