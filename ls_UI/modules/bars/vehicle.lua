@@ -61,7 +61,7 @@ function bar_proto:Update()
 end
 
 function button_proto:HandleMasque()
-	if _G.Masque then
+	if _G.Masque and PrC.db.profile.bars.masque then
 		_G.LSUIHandleMasque(self, "vehicleActionButtons")
 	end
 end
