@@ -53,6 +53,10 @@ local function updateAura(button, index)
 			button.Border:SetVertexColor(1, 1, 1)
 			button.AuraType:Hide()
 		end
+
+		if _G.Masque and PrC.db.profile.auras.masque then
+			_G.LSUIHandleMasque(button, "playerAuras")
+		end
 	end
 end
 
@@ -159,9 +163,11 @@ local function handleButton(button, header)
 	button.Icon = E:SetIcon(button, QUESTION_MARK_ICON)
 
 	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-	border:SetSize(16)
-	border:SetOffset(-4)
+	if not PrC.db.profile.auras.masque then -- Don't apply LS:UI border to masqued buttons
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
+		border:SetSize(16)
+		border:SetOffset(-4)
+	end
 	button.Border = border
 
 	button.Cooldown = E.Cooldowns.Create(button)
