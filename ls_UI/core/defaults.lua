@@ -2831,9 +2831,11 @@ D.profile = {
 PrD.profile = {
 	auras = {
 		enabled = true,
+		masque = false,
 	},
 	auratracker = {
 		enabled = false,
+		masque = false,
 		locked = false,
 		num = 12,
 		width = 38,
@@ -2876,6 +2878,7 @@ PrD.profile = {
 	},
 	bars = {
 		enabled = true,
+		masque = false,
 		restricted = true,
 		micromenu = {
 			blizz_enabled = false,
@@ -2913,6 +2916,7 @@ PrD.profile = {
 	},
 	units = {
 		enabled = true,
+		masque = false,
 		player = {
 			enabled = true,
 		},

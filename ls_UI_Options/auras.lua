@@ -348,6 +348,23 @@ function CONFIG:CreateAurasOptions(order)
 					end
 				end,
 			},
+			masque = {
+				order = inc(1),
+				type = "toggle",
+				name = CONFIG:ColorPrivateSetting("Enable Masque"),
+				disabled = not _G.Masque,
+				get = function()
+					return PrC.db.profile.auras.masque
+				end,
+				set = function(_, value)
+					PrC.db.profile.auras.masque = value
+
+					if _G.Masque then
+						AURAS:ForEach("Update")
+						CONFIG:AskToReloadUI("auras.masque", false)
+					end
+				end,
+			},
 			reset = {
 				type = "execute",
 				order = inc(1),

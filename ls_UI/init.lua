@@ -6,6 +6,44 @@ local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
 local next = _G.next
 
+-- Masque
+_G.Masque = LibStub("Masque", true)
+if _G.Masque then
+	local name = "LS: |cff1a9fc0UI|r"
+	local masqueGroups = {
+		actionBarsButtons = _G.Masque:Group(name, "Action Bars |cff1a9fc0Buttons|r"),
+		stanceBarButtons = _G.Masque:Group(name, "Stance Bar |cff1a9fc0Buttons|r"),
+		petBarButtons = _G.Masque:Group(name, "Pet Bar |cff1a9fc0Buttons|r"),
+		petBattleBarButtons = _G.Masque:Group(name, "Pet Battle Bar |cff1a9fc0Buttons|r"),
+		extraActionButton = _G.Masque:Group(name, "Extra Action |cff1a9fc0Button|r"),
+		vehicleActionButtons = _G.Masque:Group(name, "Vehicle Action |cff1a9fc0Buttons|r"),
+		unitsAuras = _G.Masque:Group(name, "Unitframe |cff1a9fc0Auras|r"),
+		auraTrackerAuras = _G.Masque:Group(name, "Aura Tracker |cff1a9fc0Auras|r"),
+		playerAuras = _G.Masque:Group(name, "Player |cff1a9fc0Auras|r"),
+	}
+
+	local aurasGroups = {
+		unitsAuras = true,
+		auraTrackerAuras = true,
+		playerAuras = true,
+	}
+
+	function _G.LSUIHandleMasque(button, groupID)
+		local group = masqueGroups[groupID]
+		if PrC.db.profile.bars.masque then
+			local options = group:GetOptions()
+			if aurasGroups[groupID] then
+				group:AddButton(button, { Icon = button.Icon })
+			else
+				group:AddButton(button)
+			end
+			options.SkinScale = 1
+			group:ReSkin(options.SkinID, options.Backdrop, options.Colors, options.SkinScale)
+		end
+	end
+end
+
+
 -- Mine
 local function addRefs()
 	C.db.global.colors.power[ 0] = C.db.global.colors.power.MANA

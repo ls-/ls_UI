@@ -45,6 +45,7 @@ function bar_proto:Update()
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	E.Layout:Update(self)
+	self:ForEach("HandleMasque")
 end
 
 function bar_proto:UpdateForms()
@@ -135,6 +136,12 @@ end
 function button_proto:OnEnterHook()
 	if LibKeyBound then
 		LibKeyBound:Set(self)
+	end
+end
+
+function button_proto:HandleMasque()
+	if _G.Masque and PrC.db.profile.bars.masque then
+		_G.LSUIHandleMasque(self, "stanceBarButtons")
 	end
 end
 
