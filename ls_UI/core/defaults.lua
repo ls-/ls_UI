@@ -507,6 +507,7 @@ D.global = {
 			[335152] = true, -- Sign of Iron
 			[359082] = true, -- Sign of the Legion
 			[397734] = true, -- Word of a Worthy Ally
+			[430191] = true, -- Warband Mentored Leveling
 		},
 		["M+ Affixes"] = {
 			state = true,
@@ -529,6 +530,7 @@ D.global = {
 			[461910] = true, -- Xal'atath's Bargain: Ascendant (Cosmic Ascension)
 			[461978] = true, -- Xal'atath's Bargain: Frenzied
 			[462508] = true, -- Xal'atath's Bargain: Voidbound (Dark Prayer)
+			[462510] = true, -- Xal'atath's Bargain: Voidbound (Dark Prayer)
 			[462704] = true, -- Xal'atath's Bargain: Oblivion (Shattered Essence)
 			[463767] = true, -- Xal'atath's Bargain: Oblivion (Void Essence)
 		},
