@@ -515,6 +515,12 @@ function MODULE:Init()
 			end
 		end)
 
+		E:RegisterEvent("UPDATE_MOUSEOVER_UNIT", function()
+			if GameTooltip:IsForbidden() then return end
+
+			GameTooltip:RefreshData()
+		end)
+
 		isInit = true
 
 		self:Update()
