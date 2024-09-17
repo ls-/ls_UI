@@ -374,6 +374,22 @@ function CONFIG:CreateUnitFramesOptions(order)
 					end
 				end,
 			}, -- 1
+			masque = {
+				order = 2,
+				type = "toggle",
+				name = CONFIG:ColorPrivateSetting("Enable Masque"),
+				disabled = not _G.Masque,
+				get = function()
+					return PrC.db.profile.units.masque
+				end,
+				set = function(_, value)
+					PrC.db.profile.units.masque = value
+
+					if _G.Masque then
+						CONFIG:AskToReloadUI("units.masque", false)
+					end
+				end,
+			},
 			spacer_1 = CONFIG:CreateSpacer(9), -- 9
 			units = {
 				order = 10,

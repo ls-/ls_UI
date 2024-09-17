@@ -113,6 +113,10 @@ function bar_proto:Update()
 					end
 				end
 
+				if _G.Masque and PrC.db.profile.auratracker.masque then
+					_G.LSUIHandleMasque(button, "auraTrackerAuras")
+				end
+
 				button:Show()
 			else
 				button.Count:SetText("")

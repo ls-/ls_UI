@@ -61,6 +61,14 @@ function bar_proto:Update()
 	if mover then
 		mover:UpdateSize()
 	end
+
+	self:ForEach("HandleMasque")
+end
+
+function button_proto:HandleMasque()
+	if _G.Masque and PrC.db.profile.bars.masque then
+		_G.LSUIHandleMasque(self, "extraActionButton")
+	end
 end
 
 function bar_proto:UpdateArtwork()

@@ -121,6 +121,7 @@ function bar_proto:Update()
 	self:UpdateCooldownConfig()
 	self:UpdateFading()
 	self:UpdateLayout()
+	self:ForEach("HandleMasque")
 end
 
 function bar_proto:UpdateButtonConfig()
@@ -241,6 +242,12 @@ end
 
 function button_proto:UpdateCountFont()
 	self.Count:UpdateFont(self._parent._config.count.size)
+end
+
+function button_proto:HandleMasque()
+	if _G.Masque and PrC.db.profile.bars.masque then
+		_G.LSUIHandleMasque(self, "actionBarsButtons")
+	end
 end
 
 function MODULE:CreateActionBars()
