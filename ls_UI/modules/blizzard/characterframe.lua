@@ -34,7 +34,7 @@ local EQUIP_SLOTS = {
 }
 
 local ILVL_COLORS = {}
-local ILVL_STEP = 19 -- the ilvl step between content difficulties
+local ILVL_STEP = 13 -- the ilvl step between content difficulties
 
 local itemLoc = {}
 local avgItemLevel
@@ -228,6 +228,26 @@ function MODULE:SetUpCharacterFrame()
 		CharacterModelScene:SetPoint("TOPLEFT", CharacterFrame.Inset, 64, -3)
 		-- CharacterModelScene:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, -64, 4)
 
+		CharacterModelScene.GearEnchantAnimation.FrameFX.PurpleGlow:ClearAllPoints()
+		CharacterModelScene.GearEnchantAnimation.FrameFX.PurpleGlow:SetPoint("TOPLEFT", CharacterFrame.Inset, "TOPLEFT", -244, 102)
+		CharacterModelScene.GearEnchantAnimation.FrameFX.PurpleGlow:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", 247, -103)
+
+		CharacterModelScene.GearEnchantAnimation.FrameFX.BlueGlow:ClearAllPoints()
+		CharacterModelScene.GearEnchantAnimation.FrameFX.BlueGlow:SetPoint("TOPLEFT", CharacterFrame.Inset, "TOPLEFT", -244, 102)
+		CharacterModelScene.GearEnchantAnimation.FrameFX.BlueGlow:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", 247, -103)
+
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Sparkles:ClearAllPoints()
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Sparkles:SetPoint("TOPLEFT", CharacterFrame.Inset, "TOPLEFT", -244, 102)
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Sparkles:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", 247, -103)
+
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Mask:ClearAllPoints()
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Mask:SetPoint("TOPLEFT", CharacterFrame.Inset, "TOPLEFT", -244, 102)
+		CharacterModelScene.GearEnchantAnimation.FrameFX.Mask:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", 247, -103)
+
+		CharacterModelScene.GearEnchantAnimation.TopFrame.Frame:ClearAllPoints()
+		CharacterModelScene.GearEnchantAnimation.TopFrame.Frame:SetPoint("TOPLEFT", CharacterFrame.Inset, "TOPLEFT", 2, -2)
+		CharacterModelScene.GearEnchantAnimation.TopFrame.Frame:SetPoint("BOTTOMRIGHT", CharacterFrame.Inset, "BOTTOMRIGHT", -2, 2)
+
 		for _, texture in next, {
 			CharacterModelScene.BackgroundBotLeft,
 			CharacterModelScene.BackgroundBotRight,
@@ -245,7 +265,7 @@ function MODULE:SetUpCharacterFrame()
 			PaperDollInnerBorderTopLeft,
 			PaperDollInnerBorderTopRight,
 		} do
-			texture:SetTexture(nil)
+			texture:SetTexture(0)
 			texture:Hide()
 		end
 
@@ -308,6 +328,12 @@ function MODULE:SetUpCharacterFrame()
 		E:RegisterEvent("ITEM_LOCK_CHANGED", function(bagOrSlotID, slotID)
 			if CharacterFrame:IsShown() and bagOrSlotID and not slotID and EQUIP_SLOTS[bagOrSlotID] then
 				updateSlot(bagOrSlotID)
+			end
+		end)
+
+		E:RegisterEvent("ENCHANT_SPELL_COMPLETED", function(successful, enchantedItem)
+			if CharacterFrame:IsShown() and successful and enchantedItem and enchantedItem:IsValid() and EQUIP_SLOTS[enchantedItem:GetEquipmentSlot()] then
+				updateSlot(enchantedItem:GetEquipmentSlot())
 			end
 		end)
 
