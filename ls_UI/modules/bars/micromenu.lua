@@ -372,6 +372,11 @@ local function handleMicroButton(button, useBlizz)
 		if button.PushedShadow then
 			E:ForceHide(button.PushedShadow)
 		end
+
+		if button.Emblem then
+			E:ForceHide(button.Emblem)
+			E:ForceHide(button.HighlightEmblem)
+		end
 	end
 end
 

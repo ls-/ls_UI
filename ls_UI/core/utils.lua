@@ -827,7 +827,15 @@ do
 					end
 				end
 			elseif line.type == GEM_LINE then
-				gems[idx] = line.gemIcon and GEM_TEMPLATE:format(line.gemIcon) or SOCKET_TEMPLATE:format(line.socketType)
+				-- sidestep caching
+				local gemID = C_Item.GetItemGemID(itemLink, idx)
+				if gemID then
+					local _, _, _, _, icon = C_Item.GetItemInfoInstant(gemID)
+					gems[idx] = GEM_TEMPLATE:format(icon)
+				else
+					gems[idx] = SOCKET_TEMPLATE:format(line.socketType)
+				end
+
 				idx = idx + 1
 			end
 		end
