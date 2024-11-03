@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## Version 110005.01
+
+- Added 11.0.5 support.
+
+### Action Bars
+
+- Fixed an issue where the guild emblem would appear on top the guild micro button.
+
+### Blizzard
+
+- Added custom inspect panel. Can be found at /LSUI > Blizzard > Inspect Frame, enabled by default.
+
+### Unit Frames
+
+- Fixed an issue where 3D portrait wouldn't fade properly.
+
 ## Version 110000.03
 
 ### Action Bars

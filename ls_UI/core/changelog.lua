@@ -6,7 +6,17 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
+- Added 11.0.5 support.
+
 ### Action Bars
 
-- Fixed an issue where droids wouldn't get the skyriding bar in the flying form.
+- Fixed an issue where the guild emblem would appear on top the guild micro button.
+
+### Blizzard
+
+- Added custom inspect panel. Can be found at /LSUI > Blizzard > Inspect Frame, enabled by default.
+
+### Unit Frames
+
+- Fixed an issue where 3D portrait wouldn't fade properly.
 ]]
