@@ -2817,6 +2817,10 @@ D.profile = {
 			ilvl = true,
 			enhancements = true,
 		},
+		inspect_frame = {
+			ilvl = true,
+			enhancements = true,
+		},
 		game_menu = {
 			scale = 1,
 		},
@@ -2892,6 +2896,9 @@ PrD.profile = {
 	blizzard = {
 		enabled = true,
 		character_frame = { -- CharacterFrame
+			enabled = true,
+		},
+		inspect_frame = { -- InspectFrame
 			enabled = true,
 		},
 		command_bar = { -- OrderHallCommandBar

@@ -179,6 +179,65 @@ function CONFIG:CreateBlizzardOptions(order)
 					},
 				},
 			},
+			inspect_frame = {
+				order = inc(1),
+				type = "group",
+				name = L["INSPECT_FRAME"],
+				disabled = isModuleDisabled,
+				get = function(info)
+					return C.db.profile.blizzard.inspect_frame[info[#info]]
+				end,
+				set = function(info, value)
+					if C.db.profile.blizzard.inspect_frame[info[#info]] ~= value then
+						C.db.profile.blizzard.inspect_frame[info[#info]] = value
+
+						BLIZZARD:UpadteInspectFrame()
+					end
+				end,
+				args = {
+					enabled = {
+						order = reset(2),
+						type = "toggle",
+						name = CONFIG:ColorPrivateSetting(L["ENABLE"]),
+						get = function()
+							return PrC.db.profile.blizzard.inspect_frame.enabled
+						end,
+						set = function(_, value)
+							PrC.db.profile.blizzard.inspect_frame.enabled = value
+
+							if BLIZZARD:HasInspectFrame() then
+								CONFIG:AskToReloadUI("inspect_frame.enabled", value)
+							else
+								if value then
+									BLIZZARD:SetUpInspectFrame()
+								end
+							end
+						end,
+					},
+					reset = {
+						type = "execute",
+						order = inc(2),
+						name = L["RESET_TO_DEFAULT"],
+						confirm = CONFIG.ConfirmReset,
+						func = function()
+							CONFIG:CopySettings(D.profile.blizzard.inspect_frame, C.db.profile.blizzard.inspect_frame)
+
+							BLIZZARD:UpadteInspectFrame()
+						end,
+					},
+					spacer_1 = CONFIG:CreateSpacer(inc(2)),
+					ilvl = {
+						order = inc(2),
+						type = "toggle",
+						name = L["ILVL"],
+					},
+					enhancements = {
+						order = inc(2),
+						type = "toggle",
+						name = L["ENCHANTS"],
+					},
+				},
+			},
 			game_menu = {
 				order = inc(1),
 				type = "group",

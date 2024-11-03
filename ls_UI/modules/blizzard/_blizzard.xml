@@ -4,6 +4,7 @@
 	<Script file="commandbar.lua"/>
 	<Script file="gamemenu.lua"/>
 	<Script file="gm.lua"/>
+	<Script file="inspectframe.lua"/>
 	<Script file="mail.lua"/>
 	<Script file="suggestframe.lua"/>
 	<Script file="talkinghead.lua"/>
