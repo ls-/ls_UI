@@ -157,7 +157,11 @@ do
 		end
 
 		MinimapCluster:SetSize(info[3] + 24, info[3] + 24, true)
-		E.Movers:Get(MinimapCluster):UpdateSize()
+
+		local mover = E.Movers:Get(MinimapCluster)
+		if mover then
+			mover:UpdateSize()
+		end
 
 		self:SetSize(info[3] - 22, info[3] - 22)
 		self:ClearAllPoints()
