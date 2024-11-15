@@ -2815,6 +2815,7 @@ D.profile = {
 	blizzard = {
 		character_frame = {
 			ilvl = true,
+			upgrade = false,
 			enhancements = true,
 		},
 		inspect_frame = {

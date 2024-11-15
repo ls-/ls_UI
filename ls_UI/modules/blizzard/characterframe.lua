@@ -5,32 +5,32 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local ipairs = _G.ipairs
 local m_floor = _G.math.floor
 local next = _G.next
-local s_trim = _G.string.trim
 local s_upper = _G.string.upper
 local tonumber = _G.tonumber
 
 -- Mine
-local isInit = false
-
 local EQUIP_SLOTS = {
-	[ 1] = "CharacterHeadSlot",
-	[ 2] = "CharacterNeckSlot",
-	[ 3] = "CharacterShoulderSlot",
-	[ 5] = "CharacterChestSlot",
-	[ 6] = "CharacterWaistSlot",
-	[ 7] = "CharacterLegsSlot",
-	[ 8] = "CharacterFeetSlot",
-	[ 9] = "CharacterWristSlot",
-	[10] = "CharacterHandsSlot",
-	[11] = "CharacterFinger0Slot",
-	[12] = "CharacterFinger1Slot",
-	[13] = "CharacterTrinket0Slot",
-	[14] = "CharacterTrinket1Slot",
-	[15] = "CharacterBackSlot",
-	[16] = "CharacterMainHandSlot",
-	[17] = "CharacterSecondaryHandSlot",
+	[CharacterBackSlot] = true,
+	[CharacterChestSlot] = true,
+	[CharacterFeetSlot] = true,
+	[CharacterFinger0Slot] = true,
+	[CharacterFinger1Slot] = true,
+	[CharacterHandsSlot] = true,
+	[CharacterHeadSlot] = true,
+	[CharacterLegsSlot] = true,
+	[CharacterMainHandSlot] = true,
+	[CharacterNeckSlot] = true,
+	[CharacterSecondaryHandSlot] = true,
+	[CharacterShirtSlot] = true,
+	[CharacterShoulderSlot] = true,
+	[CharacterTabardSlot] = true,
+	[CharacterTrinket0Slot] = true,
+	[CharacterTrinket1Slot] = true,
+	[CharacterWaistSlot] = true,
+	[CharacterWristSlot] = true,
 }
 
 local ILVL_COLORS = {}
@@ -54,88 +54,77 @@ local function scanSlot(slotID)
 
 		return true, C_Item.GetCurrentItemLevel(itemLoc), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture("player", slotID) then
-		-- if there's no link, but there's a texture, it means that there's
-		-- an item we have no info for
-		return false, "", "", "", "", ""
+		-- if there's no link, but there's a texture, it means that there's an item we have no info for
+		return false, "", "", "", "", "", ""
 	end
 
-	return true, "", "", "", "", ""
+	return true, "", "", "", "", "", ""
 end
 
-local function updateSlot(slotID)
-	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
-		_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
-		_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
-		_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+local function updateSlot(button)
+	if not EQUIP_SLOTS[button] then
+		return
+	end
+
+	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements or C.db.profile.blizzard.character_frame.upgrade) then
+		button.ItemLevelText:SetText("")
+		button.EnchantText:SetText("")
+		button.UpgradeText:SetText("")
+		button.GemDisplay:SetGems()
 
 		return
 	end
 
-	local isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	local isOk, iLvl, enchant, gem1, gem2, gem3, upgrade = scanSlot(button:GetID())
 	if isOk then
 		if C.db.profile.blizzard.character_frame.ilvl then
-			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText(iLvl)
-			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
+			button.ItemLevelText:SetText(iLvl)
+			button.ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
 		else
-			_G[EQUIP_SLOTS[slotID]].ItemLevelText:SetText("")
+			button.ItemLevelText:SetText("")
 		end
 
 		if C.db.profile.blizzard.character_frame.enhancements then
-			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText(enchant)
-			_G[EQUIP_SLOTS[slotID]].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+			button.EnchantText:SetText(enchant)
+			button.GemDisplay:SetGems(gem1, gem2, gem3)
+
 		else
-			_G[EQUIP_SLOTS[slotID]].EnchantText:SetText("")
-			_G[EQUIP_SLOTS[slotID]].GemText:SetText("")
+			button.EnchantText:SetText("")
+			button.GemDisplay:SetGems()
+		end
+
+		if C.db.profile.blizzard.character_frame.upgrade then
+			button.UpgradeText:SetText(upgrade)
+		else
+			button.UpgradeText:SetText("")
 		end
 	else
-		C_Timer.After(0.33, function() updateSlot(slotID) end)
+		C_Timer.After(0.33, function() updateSlot(button) end)
 	end
 end
 
-local function updateAllSlots()
-	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements) then
-		for _, slotName in next, EQUIP_SLOTS do
-			_G[slotName].ItemLevelText:SetText("")
-			_G[slotName].EnchantText:SetText("")
-			_G[slotName].GemText:SetText("")
-		end
+local gem_display_proto = {}
 
-		return
+function gem_display_proto:SetGems(...)
+	local sockets = {...}
+	local numSockets = 0
+
+	for _, socket in next, sockets do
+		numSockets = numSockets + (socket == "" and 0 or 1)
 	end
 
-	local scanComplete = true
-	local showILvl, showEnchants = C.db.profile.blizzard.character_frame.ilvl, C.db.profile.blizzard.character_frame.enhancements
-	local isOk, iLvl, enchant, gem1, gem2, gem3
-	for slotID, slotName in next, EQUIP_SLOTS do
-		isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(slotID)
+	for index, slot in ipairs(self.Slots) do
+		slot:SetShown(index <= numSockets)
+		-- slot:SetShown(true)
 
-		if showILvl then
-			_G[slotName].ItemLevelText:SetText(iLvl)
-			_G[slotName].ItemLevelText:SetTextColor(getItemLevelColor(iLvl))
-		else
-			_G[slotName].ItemLevelText:SetText("")
-		end
-
-		if showEnchants then
-			_G[slotName].EnchantText:SetText(enchant)
-			_G[slotName].GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
-		else
-			_G[slotName].EnchantText:SetText("")
-			_G[slotName].GemText:SetText("")
-		end
-
-		scanComplete = scanComplete and isOk
+		slot.Gem:SetTexture(sockets[index])
+		-- slot.Gem:SetTexture("Interface\\ICONS\\INV_Misc_Gem_Opal_01")
 	end
 
-	if not scanComplete then
-		C_Timer.After(0.33, updateAllSlots)
-	end
+	self:Layout()
 end
 
-local SLOT_TEXTURES_TO_REMOVE = {
-	["410248"] = true,
-	["INTERFACE\\CHARACTERFRAME\\CHAR-PAPERDOLL-PARTS"] = true,
-}
+local isInit = false
 
 function MODULE:HasCharacterFrame()
 	return isInit
@@ -152,6 +141,11 @@ function MODULE:SetUpCharacterFrame()
 		ILVL_COLORS[1] = C.db.global.colors.red
 		ILVL_COLORS[2] = C.db.global.colors.yellow
 		ILVL_COLORS[3] = C.db.global.colors.white
+
+		local SLOT_TEXTURES_TO_REMOVE = {
+			["410248"] = true,
+			["INTERFACE\\CHARACTERFRAME\\CHAR-PAPERDOLL-PARTS"] = true,
+		}
 
 		for slot, textOnRight in next, {
 			[CharacterBackSlot] = true,
@@ -193,27 +187,53 @@ function MODULE:SetUpCharacterFrame()
 			enchText:SetTextColor(0, 1, 0)
 			slot.EnchantText = enchText
 
-			local gemText = slot:CreateFontString(nil, "ARTWORK")
-			gemText:SetFont(GameFontNormal:GetFont(), 14) -- it only displays icons
-			gemText:SetSize(157, 14)
-			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
-			slot.GemText = gemText
+			local upgradeText = slot:CreateFontString(nil, "ARTWORK")
+			upgradeText:SetFontObject("GameFontHighlightSmall")
+			upgradeText:SetSize(160, 0)
+			upgradeText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			slot.UpgradeText = upgradeText
 
 			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
 			E.FontStrings:Capture(iLvlText, "button")
 			iLvlText:UpdateFont(12)
-			iLvlText:SetJustifyH("RIGHT")
 			iLvlText:SetJustifyV("BOTTOM")
-			iLvlText:SetPoint("TOPLEFT", -2, -1)
+			iLvlText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			iLvlText:SetPoint("TOPLEFT", -1, -1)
 			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
 			slot.ItemLevelText = iLvlText
 
 			if textOnRight then
-				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 4, 0)
-				gemText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 7, 0)
+				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, 0)
+				upgradeText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 0)
 			else
-				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -4, 0)
-				gemText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -7, 0)
+				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -6, 0)
+				upgradeText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -6, 0)
+			end
+
+			local isWeaponSlot = slot == CharacterMainHandSlot or slot == CharacterSecondaryHandSlot
+
+			-- I could reuse .SocketDisplay, but my gut is telling me not to do it
+			local gemDisplay = Mixin(CreateFrame("Frame", nil, slot, isWeaponSlot and "PaperDollItemSocketDisplayHorizontalTemplate" or "PaperDollItemSocketDisplayVerticalTemplate"), gem_display_proto)
+			gemDisplay:Show()
+			slot.GemDisplay = gemDisplay
+
+			for i = 1, 3 do
+				gemDisplay["Slot" .. i]:SetSize(12, 12)
+
+				gemDisplay["Slot" .. i].Gem:Show()
+				gemDisplay["Slot" .. i].Gem:SetTexCoord(6 / 64, 58 / 64, 6 / 64, 58 / 64)
+
+				gemDisplay["Slot" .. i].Slot:SetDrawLayer("OVERLAY")
+				gemDisplay["Slot" .. i].Slot:SetTexture("Interface\\AddOns\\ls_UI\\assets\\empty-socket")
+				gemDisplay["Slot" .. i].Slot:SetTexCoord(4 / 32, 28 / 32, 4 / 32, 28 / 32)
+			end
+
+			if isWeaponSlot then
+				gemDisplay:SetPoint("TOP", 0, 7)
+			elseif textOnRight then
+				gemDisplay:SetPoint("RIGHT", 7, 0)
+			else
+				gemDisplay:SetPoint("LEFT", -7, 0)
 			end
 		end
 
@@ -318,30 +338,12 @@ function MODULE:SetUpCharacterFrame()
 				CharacterFrame.Inset.Bg:SetVertTile(false)
 
 				CharacterFrame.Background:Hide()
-
-				updateAllSlots()
 			else
 				CharacterFrame.Background:Show()
 			end
 		end)
 
-		E:RegisterEvent("ITEM_LOCK_CHANGED", function(bagOrSlotID, slotID)
-			if CharacterFrame:IsShown() and bagOrSlotID and not slotID and EQUIP_SLOTS[bagOrSlotID] then
-				updateSlot(bagOrSlotID)
-			end
-		end)
-
-		E:RegisterEvent("ENCHANT_SPELL_COMPLETED", function(successful, enchantedItem)
-			if CharacterFrame:IsShown() and successful and enchantedItem and enchantedItem:IsValid() and EQUIP_SLOTS[enchantedItem:GetEquipmentSlot()] then
-				updateSlot(enchantedItem:GetEquipmentSlot())
-			end
-		end)
-
-		E:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", function(slotID)
-			if CharacterFrame:IsShown() and EQUIP_SLOTS[slotID] then
-				updateSlot(slotID)
-			end
-		end)
+		hooksecurefunc("PaperDollItemSlotButton_Update", updateSlot)
 
 		E:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE", function()
 			avgItemLevel = m_floor(GetAverageItemLevel())
@@ -356,5 +358,7 @@ function MODULE:UpadteCharacterFrame()
 		return
 	end
 
-	updateAllSlots()
+	for button in next, EQUIP_SLOTS do
+		updateSlot(button)
+	end
 end
