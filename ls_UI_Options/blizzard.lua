@@ -236,6 +236,11 @@ function CONFIG:CreateBlizzardOptions(order)
 						type = "toggle",
 						name = L["ILVL"],
 					},
+					upgrade = {
+						order = inc(2),
+						type = "toggle",
+						name = L["UPGRADE_LEVEL"],
+					},
 					enhancements = {
 						order = inc(2),
 						type = "toggle",

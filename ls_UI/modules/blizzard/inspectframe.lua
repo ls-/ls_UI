@@ -5,8 +5,8 @@ local MODULE = P:GetModule("Blizzard")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local ipairs = _G.ipairs
 local next = _G.next
-local s_trim = _G.string.trim
 local s_upper = _G.string.upper
 local tonumber = _G.tonumber
 
@@ -29,10 +29,10 @@ local function scanSlot(slotID)
 		return true, C_Item.GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture(InspectFrame.unit, slotID) then
 		-- if there's no link, but there's a texture, it means that there's an item we have no info for
-		return false, "", "", "", "", ""
+		return false, "", "", "", "", "", ""
 	end
 
-	return true, "", "", "", "", ""
+	return true, "", "", "", "", "", ""
 end
 
 local function updateSlot(button)
@@ -40,7 +40,7 @@ local function updateSlot(button)
 		avgItemLevel = C_PaperDollInfo.GetInspectItemLevel(InspectFrame.unit)
 	end
 
-	local isOk, iLvl, enchant, gem1, gem2, gem3 = scanSlot(button:GetID(), button:GetItem())
+	local isOk, iLvl, enchant, gem1, gem2, gem3, upgrade = scanSlot(button:GetID())
 	if isOk then
 		if C.db.profile.blizzard.inspect_frame.ilvl then
 			button.ItemLevelText:SetText(iLvl)
@@ -49,14 +49,41 @@ local function updateSlot(button)
 			button.ItemLevelText:SetText("")
 		end
 
+		if C.db.profile.blizzard.inspect_frame.upgrade then
+			button.UpgradeText:SetText(upgrade)
+		else
+			button.UpgradeText:SetText("")
+		end
+
 		if C.db.profile.blizzard.inspect_frame.enhancements then
 			button.EnchantText:SetText(enchant)
-			button.GemText:SetText(s_trim(gem1 .. gem2 .. gem3))
+			button.GemDisplay:SetGems(gem1, gem2, gem3)
 		else
 			button.EnchantText:SetText("")
-			button.GemText:SetText("")
+			button.GemDisplay:SetGems()
 		end
 	end
+end
+
+local gem_display_proto = {}
+
+function gem_display_proto:SetGems(...)
+	local sockets = {...}
+	local numSockets = 0
+
+	for _, socket in next, sockets do
+		numSockets = numSockets + (socket == "" and 0 or 1)
+	end
+
+	for index, slot in ipairs(self.Slots) do
+		slot:SetShown(index <= numSockets)
+		-- slot:SetShown(true)
+
+		slot.Gem:SetTexture(sockets[index])
+		-- slot.Gem:SetTexture("Interface\\ICONS\\INV_Misc_Gem_Opal_01")
+	end
+
+	self:Layout()
 end
 
 local isInit = false
@@ -99,6 +126,8 @@ local function init()
 				end
 			end
 
+			local isWeaponSlot = slot == InspectMainHandSlot or slot == InspectSecondaryHandSlot
+
 			E:SkinInvSlotButton(slot)
 			slot:SetSize(36, 36)
 
@@ -110,27 +139,51 @@ local function init()
 			enchText:SetTextColor(0, 1, 0)
 			slot.EnchantText = enchText
 
-			local gemText = slot:CreateFontString(nil, "ARTWORK")
-			gemText:SetFont(GameFontNormal:GetFont(), 14) -- it only displays icons
-			gemText:SetSize(157, 14)
-			gemText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
-			slot.GemText = gemText
+			local upgradeText = slot:CreateFontString(nil, "ARTWORK")
+			upgradeText:SetFontObject("GameFontHighlightSmall")
+			upgradeText:SetSize(160, 0)
+			upgradeText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			slot.UpgradeText = upgradeText
 
 			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
 			E.FontStrings:Capture(iLvlText, "button")
 			iLvlText:UpdateFont(12)
-			iLvlText:SetJustifyH("RIGHT")
 			iLvlText:SetJustifyV("BOTTOM")
-			iLvlText:SetPoint("TOPLEFT", -2, -1)
+			iLvlText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			iLvlText:SetPoint("TOPLEFT", -1, -1)
 			iLvlText:SetPoint("BOTTOMRIGHT", 2, 1)
 			slot.ItemLevelText = iLvlText
 
 			if textOnRight then
-				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 4, 0)
-				gemText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 7, 0)
+				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, 0)
+				upgradeText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 0)
 			else
-				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -4, 0)
-				gemText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -7, 0)
+				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -6, 0)
+				upgradeText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -6, 0)
+			end
+
+			-- I could reuse .SocketDisplay, but my gut is telling me not to do it
+			local gemDisplay = Mixin(CreateFrame("Frame", nil, slot, isWeaponSlot and "PaperDollItemSocketDisplayHorizontalTemplate" or "PaperDollItemSocketDisplayVerticalTemplate"), gem_display_proto)
+			gemDisplay:Show()
+			slot.GemDisplay = gemDisplay
+
+			for i = 1, 3 do
+				gemDisplay["Slot" .. i]:SetSize(12, 12)
+
+				gemDisplay["Slot" .. i].Gem:Show()
+				gemDisplay["Slot" .. i].Gem:SetTexCoord(6 / 64, 58 / 64, 6 / 64, 58 / 64)
+
+				gemDisplay["Slot" .. i].Slot:SetDrawLayer("OVERLAY")
+				gemDisplay["Slot" .. i].Slot:SetTexture("Interface\\AddOns\\ls_UI\\assets\\empty-socket")
+				gemDisplay["Slot" .. i].Slot:SetTexCoord(4 / 32, 28 / 32, 4 / 32, 28 / 32)
+			end
+
+			if isWeaponSlot then
+				gemDisplay:SetPoint("TOP", 0, 7)
+			elseif textOnRight then
+				gemDisplay:SetPoint("RIGHT", 7, 0)
+			else
+				gemDisplay:SetPoint("LEFT", -7, 0)
 			end
 		end
 

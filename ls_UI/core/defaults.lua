@@ -2820,6 +2820,7 @@ D.profile = {
 		},
 		inspect_frame = {
 			ilvl = true,
+			upgrade = false,
 			enhancements = true,
 		},
 		game_menu = {
