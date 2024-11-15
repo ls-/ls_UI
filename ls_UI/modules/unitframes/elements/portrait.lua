@@ -8,6 +8,7 @@ local hooksecurefunc = _G.hooksecurefunc
 
 -- Mine
 local function updateAlpha(self, alpha)
+	self.Portrait3D.alpha = alpha
 	self.Portrait3D:SetModelAlpha(alpha)
 end
 
@@ -21,6 +22,7 @@ end
 function element_proto:PostUpdate(_, hasStateChanged)
 	if self:IsObjectType("PlayerModel") and hasStateChanged then
 		self:SetCamDistanceScale(1 / self._config.scale)
+		self:SetModelAlpha(self.alpha)
 	end
 end
 
