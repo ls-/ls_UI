@@ -314,9 +314,12 @@ local function skinButton(button)
 
 	-- ExtraActionButton1 has no normal texture
 	border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-	border:SetSize(16)
-	border:SetOffset(-4)
+	if not PrC.db.profile.bars.masque then 	-- Don't apply LS:UI border to masqued buttons
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
+		border:SetSize(16)
+		border:SetOffset(-4)
+	end
+
 	button.Border_ = border
 
 	local pushedTexture = button.GetPushedTexture and button:GetPushedTexture()
@@ -510,9 +513,11 @@ function E:CreateButton(parent, name, hasCount, hasCooldown, isSandwich, isSecur
 	button.Icon = setIcon(button)
 
 	local border = E:CreateBorder(button)
-	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
-	border:SetSize(16)
-	border:SetOffset(-4)
+	if not PrC.db.profile.bars.masque then 	-- Don't apply LS:UI border to masqued buttons
+		border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thin")
+		border:SetSize(16)
+		border:SetOffset(-4)
+	end
 	button.Border = border
 
 	setHighlightTexture(button)

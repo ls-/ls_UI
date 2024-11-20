@@ -272,6 +272,10 @@ function element_proto:PostUpdateButton(button, unit, data)
 			end
 		end
 	end
+
+	if _G.Masque and PrC.db.profile.units.masque then
+		_G.LSUIHandleMasque(button, "unitsAuras")
+	end
 end
 
 function element_proto:UpdateConfig()

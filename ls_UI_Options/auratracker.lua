@@ -110,6 +110,23 @@ function CONFIG:CreateAuraTrackerOptions(order)
 					end
 				end,
 			},
+			masque = {
+				order = inc(1),
+				type = "toggle",
+				name = CONFIG:ColorPrivateSetting("Enable Masque"),
+				disabled = not _G.Masque,
+				get = function()
+					return PrC.db.profile.auratracker.masque
+				end,
+				set = function(_, value)
+					PrC.db.profile.auratracker.masque = value
+
+					if _G.Masque then
+						AURATRACKER:GetTracker():Update()
+						CONFIG:AskToReloadUI("auratracker.masque", false)
+					end
+				end,
+			},
 			locked = {
 				order = inc(1),
 				type = "toggle",

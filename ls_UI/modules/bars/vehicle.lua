@@ -56,6 +56,14 @@ function bar_proto:Update()
 
 	self:SetSize(self._config.width + 4, self._config.height + 4)
 	E.Movers:Get(self):UpdateSize()
+
+	self:ForEach("HandleMasque")
+end
+
+function button_proto:HandleMasque()
+	if _G.Masque and PrC.db.profile.bars.masque then
+		_G.LSUIHandleMasque(self, "vehicleActionButtons")
+	end
 end
 
 function MODULE:CreateVehicleExitButton()
