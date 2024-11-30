@@ -186,12 +186,23 @@ function MODULE:SetUpCharacterFrame()
 			enchText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			enchText:SetJustifyV("TOP")
 			enchText:SetTextColor(0, 1, 0)
+			enchText:Hide()
 			slot.EnchantText = enchText
+
+			local enchIcon = slot:CreateTexture(nil, "OVERLAY", nil, 2)
+			enchIcon:SetSize(12, 12)
+			enchIcon:SetTexture("Interface\\ContainerFrame\\CosmeticIconBorder")
+			enchIcon:SetSnapToPixelGrid(false)
+			enchIcon:SetTexelSnappingBias(0)
+			enchIcon:SetDesaturated(true)
+			enchIcon:SetVertexColor(0, 0.95, 0, 0.85)
+			slot.EnchantIcon = enchIcon
 
 			local upgradeText = slot:CreateFontString(nil, "ARTWORK")
 			upgradeText:SetFontObject("GameFontHighlightSmall")
 			upgradeText:SetSize(160, 0)
 			upgradeText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			upgradeText:Hide()
 			slot.UpgradeText = upgradeText
 
 			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
@@ -205,9 +216,13 @@ function MODULE:SetUpCharacterFrame()
 
 			if textOnRight then
 				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, 0)
+				enchIcon:SetPoint("TOPLEFT", -2, 2)
+				enchIcon:SetTexCoord(66 / 128, 42 / 128, 0 / 128, 24 / 128)
 				upgradeText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 0)
 			else
 				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -6, 0)
+				enchIcon:SetPoint("TOPRIGHT", 2, 2)
+				enchIcon:SetTexCoord(42 / 128, 66 / 128, 0 / 128, 24 / 128)
 				upgradeText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -6, 0)
 			end
 
@@ -223,10 +238,14 @@ function MODULE:SetUpCharacterFrame()
 
 				gemDisplay["Slot" .. i].Gem:Show()
 				gemDisplay["Slot" .. i].Gem:SetTexCoord(6 / 64, 58 / 64, 6 / 64, 58 / 64)
+				gemDisplay["Slot" .. i].Gem:SetSnapToPixelGrid(false)
+				gemDisplay["Slot" .. i].Gem:SetTexelSnappingBias(0)
 
 				gemDisplay["Slot" .. i].Slot:SetDrawLayer("OVERLAY")
 				gemDisplay["Slot" .. i].Slot:SetTexture("Interface\\AddOns\\ls_UI\\assets\\empty-socket")
 				gemDisplay["Slot" .. i].Slot:SetTexCoord(4 / 32, 28 / 32, 4 / 32, 28 / 32)
+				gemDisplay["Slot" .. i].Slot:SetSnapToPixelGrid(false)
+				gemDisplay["Slot" .. i].Slot:SetTexelSnappingBias(0)
 			end
 
 			if isWeaponSlot then
@@ -341,6 +360,19 @@ function MODULE:SetUpCharacterFrame()
 				CharacterFrame.Background:Hide()
 			else
 				CharacterFrame.Background:Show()
+			end
+		end)
+
+		local isMouseOver
+		CharacterFrame:HookScript("OnUpdate", function()
+			local state = CharacterFrame:IsMouseOver()
+			if state ~= isMouseOver then
+				for button in next, EQUIP_SLOTS do
+					button.EnchantText:SetShown(state)
+					button.UpgradeText:SetShown(state)
+				end
+
+				isMouseOver = state
 			end
 		end)
 
