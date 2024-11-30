@@ -262,6 +262,7 @@ read_globals = {
 	"IsWatchingHonorAsXP",
 	"IsXPUserDisabled",
 	"ITEM_QUALITY_COLORS",
+	"ITEM_UPGRADE_TOOLTIP_FORMAT_STRING",
 	"ItemRefTooltip",
 	"KeybindFrames_InQuickKeybindMode",
 	"LE_REALM_RELATION_VIRTUAL",
