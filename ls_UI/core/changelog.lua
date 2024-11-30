@@ -6,17 +6,15 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 11.0.5 support.
-
-### Action Bars
-
-- Fixed an issue where the guild emblem would appear on top the guild micro button.
+- Fixed an issue where movers would fail to initialise properly if they're a part of a convoluted hierarchy.
 
 ### Blizzard
 
-- Added custom inspect panel. Can be found at /LSUI > Blizzard > Inspect Frame, enabled by default.
+- Updated character and inspect panels. Added optional upgrade level (hero, champion, etc) texts, disabled by default.
+  Gems and sockets are now displayed via Remix-like widgets. Enchant and upgrade level texts are now shown on mouseover
+  to reduce the visual clutter.
 
 ### Unit Frames
 
-- Fixed an issue where 3D portrait wouldn't fade properly.
+- Fixed an issue where a 3D portrait wouldn't inherit the unit frame's alpha.
 ]]

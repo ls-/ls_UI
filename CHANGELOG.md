@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## Version 110005.02
+
+- Fixed an issue where movers would fail to initialise properly if they're a part of a convoluted hierarchy.
+
+### Blizzard
+
+- Updated character and inspect panels. Added optional upgrade level (hero, champion, etc) texts, disabled by default.
+  Gems and sockets are now displayed via Remix-like widgets. Enchant and upgrade level texts are now shown on mouseover
+  to reduce the visual clutter.
+
+### Unit Frames
+
+- Fixed an issue where a 3D portrait wouldn't inherit the unit frame's alpha.
+
+![Imgur](https://i.imgur.com/MsWHQn3.png)
+
 ## Version 110005.01
 
 - Added 11.0.5 support.
