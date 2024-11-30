@@ -1308,23 +1308,47 @@ E:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	controller:Hide()
 end)
 
-local function verifyAndReset()
-	for mover, parentName in next, orphanedMovers do
-		if not _G[parentName] or not E.Movers:Get(parentName, true) then
-			onCreateCallbacks[parentName] = nil
-			enabledMovers[mover:GetDebugName()] = mover
+local function verifyMover(mover, parentName)
+	local parentMover = _G[parentName .. "Mover"]
+	if parentMover then
+		if orphanedMovers[parentMover] then
+			verifyMover(parentMover, orphanedMovers[parentMover])
+		else
+			local callback = onCreateCallbacks[parentName]
+			if callback then
+				callback(parentMover)
 
-			mover:UpdateSize()
-			mover:ResetPosition()
+				onCreateCallbacks[parentName] = nil
+			end
 		end
-
-		orphanedMovers[mover] = nil
+	else
+		onCreateCallbacks[parentName] = nil
 	end
 
-	for objectName, callback in next, onCreateCallbacks do
-		callback(E.Movers:Get(objectName))
+	orphanedMovers[mover] = nil
+
+	-- if a mover is disabled here, its parent is gone and I need to enable and reset it
+	if not mover:IsEnabled() then
+		-- print(mover:GetDebugName(), "|cffd20000=X=>|r", parentName)
+		local moverName = mover:GetDebugName()
+		enabledMovers[moverName] = mover
+
+		mover:UpdateSize()
+		mover:ResetPosition()
+	end
+
+	local objectName = mover:GetObject():GetDebugName()
+	local callback = onCreateCallbacks[objectName]
+	if callback then
+		callback(mover)
 
 		onCreateCallbacks[objectName] = nil
+	end
+end
+
+local function verifyAndReset()
+	for mover, parentName in next, orphanedMovers do
+		verifyMover(mover, parentName)
 	end
 
 	for object in next, dirtyObjects do

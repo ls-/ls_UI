@@ -801,22 +801,23 @@ do
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
 	local QUALITY_PATTERN = "|A.+|a"
 	local GEM_LINE = Enum.TooltipDataLineType.GemSocket
-	local GEM_TEMPLATE = "|T%s:0:0:0:0:64:64:4:60:4:60|t "
-	local SOCKET_TEMPLATE = "|TInterface\\ItemSocketingFrame\\UI-EmptySocket-%s:0:0:0:0:64:64:4:60:4:60|t "
+	local SOCKET_TEMPLATE = "Interface\\ItemSocketingFrame\\UI-EmptySocket-%s"
+	local UPGRADE_PATTERN = ITEM_UPGRADE_TOOLTIP_FORMAT_STRING:gsub("([:：]).+", "%1(.+)")
 
 	local dataCache = {}
 	local itemCache = {}
 
 	function E:GetItemEnchantGemInfo(itemLink)
 		if itemCache[itemLink] then
-			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
+			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3, itemCache[itemLink].upgrade
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
-		if not data then return "", "", "", "" end
+		if not data then return nil, nil, nil, nil, nil end
 
-		local enchant = ""
-		local gems, idx = {"", "", ""}, 1
+		local enchant
+		local gems, gemIndex = {}, 1
+		local upgrade, upgradeFound = nil, false
 		for _, line in next, data.lines do
 			if line.type == ENCHANT_LINE then
 				enchant = line.leftText:match(ENCHANT_PATTERN)
@@ -828,15 +829,22 @@ do
 				end
 			elseif line.type == GEM_LINE then
 				-- sidestep caching
-				local gemID = C_Item.GetItemGemID(itemLink, idx)
+				local gemID = C_Item.GetItemGemID(itemLink, gemIndex)
 				if gemID then
 					local _, _, _, _, icon = C_Item.GetItemInfoInstant(gemID)
-					gems[idx] = GEM_TEMPLATE:format(icon)
+					gems[gemIndex] = icon
 				else
-					gems[idx] = SOCKET_TEMPLATE:format(line.socketType)
+					gems[gemIndex] = SOCKET_TEMPLATE:format(line.socketType)
 				end
 
-				idx = idx + 1
+				gemIndex = gemIndex + 1
+			elseif not upgradeFound and line.type == 0 then
+				upgrade = line.leftText:match(UPGRADE_PATTERN)
+				if upgrade then
+					upgrade = upgrade:trim()
+
+					upgradeFound = true
+				end
 			end
 		end
 
@@ -847,9 +855,10 @@ do
 			gem1 = gems[1],
 			gem2 = gems[2],
 			gem3 = gems[3],
+			upgrade = upgrade,
 		}
 
-		return enchant, gems[1], gems[2], gems[3]
+		return enchant, gems[1], gems[2], gems[3], upgrade
 	end
 
 	local wipeTimer

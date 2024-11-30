@@ -66,7 +66,7 @@ function element_proto:UpdateTags(k)
 			text:UpdateTag()
 		else
 			self.__owner:Untag(text)
-			text:SetText()
+			text:SetText("")
 		end
 	end
 end
@@ -98,7 +98,7 @@ function element_proto:Release(k)
 	if text then
 		self.__owner:Untag(text)
 		text:ClearAllPoints()
-		text:SetText()
+		text:SetText("")
 
 		self.active[k] = nil
 
