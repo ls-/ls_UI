@@ -4,7 +4,6 @@ local E, C, PrC, M, L, P, D, PrD, oUF = ns.E, ns.C, ns.PrC, ns.M, ns.L, ns.P, ns
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local s_gsub = _G.string.gsub
 local s_utf8sub = _G.string.utf8sub
 local select = _G.select
 
@@ -387,8 +386,8 @@ do
 	end
 
 	local function setTextureHook(self, texture)
-		if texture then
-			self:SetTexture(nil)
+		if texture and texture ~= 0 then
+			self:SetTexture(0)
 		end
 	end
 
@@ -405,7 +404,7 @@ do
 
 		local bIconBorder = button.IconBorder
 		if bIconBorder then
-			bIconBorder:SetTexture(nil)
+			bIconBorder:SetTexture(0)
 
 			hooksecurefunc(bIconBorder, "Hide", updateBorderColor)
 			hooksecurefunc(bIconBorder, "Show", updateBorderColor)
