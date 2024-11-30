@@ -11,6 +11,8 @@ local s_upper = _G.string.upper
 local tonumber = _G.tonumber
 
 -- Mine
+local EQUIP_SLOTS
+
 local ILVL_COLORS = {}
 local ILVL_STEP = 13 -- the ilvl step between content difficulties
 
@@ -92,6 +94,27 @@ local isInit = false
 
 local function init()
 	if not isInit then
+		EQUIP_SLOTS = {
+			[InspectBackSlot] = true,
+			[InspectChestSlot] = true,
+			[InspectFeetSlot] = true,
+			[InspectFinger0Slot] = true,
+			[InspectFinger1Slot] = true,
+			[InspectHandsSlot] = true,
+			[InspectHeadSlot] = true,
+			[InspectLegsSlot] = true,
+			[InspectMainHandSlot] = true,
+			[InspectNeckSlot] = true,
+			[InspectSecondaryHandSlot] = true,
+			[InspectShirtSlot] = true,
+			[InspectShoulderSlot] = true,
+			[InspectTabardSlot] = true,
+			[InspectTrinket0Slot] = true,
+			[InspectTrinket1Slot] = true,
+			[InspectWaistSlot] = true,
+			[InspectWristSlot] = true,
+		}
+
 		ILVL_COLORS[1] = C.db.global.colors.red
 		ILVL_COLORS[2] = C.db.global.colors.yellow
 		ILVL_COLORS[3] = C.db.global.colors.white
@@ -139,12 +162,21 @@ local function init()
 			enchText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
 			enchText:SetJustifyV("TOP")
 			enchText:SetTextColor(0, 1, 0)
+			enchText:Hide()
 			slot.EnchantText = enchText
+
+			local enchIcon = slot:CreateTexture(nil, "OVERLAY", nil, 2)
+			enchIcon:SetSize(12, 12)
+			enchIcon:SetTexture("Interface\\ContainerFrame\\CosmeticIconBorder")
+			enchIcon:SetDesaturated(true)
+			enchIcon:SetVertexColor(0, 0.95, 0, 0.85)
+			slot.EnchantIcon = enchIcon
 
 			local upgradeText = slot:CreateFontString(nil, "ARTWORK")
 			upgradeText:SetFontObject("GameFontHighlightSmall")
 			upgradeText:SetSize(160, 0)
 			upgradeText:SetJustifyH(textOnRight and "LEFT" or "RIGHT")
+			upgradeText:Hide()
 			slot.UpgradeText = upgradeText
 
 			local iLvlText = slot:CreateFontString(nil, "ARTWORK")
@@ -158,9 +190,13 @@ local function init()
 
 			if textOnRight then
 				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, 0)
+				enchIcon:SetPoint("TOPLEFT", -2, 2)
+				enchIcon:SetTexCoord(65 / 128, 41 / 128, 1 / 128, 25 / 128)
 				upgradeText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 0)
 			else
 				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -6, 0)
+				enchIcon:SetPoint("TOPRIGHT", 2, 2)
+				enchIcon:SetTexCoord(41 / 128, 65 / 128, 1 / 128, 25 / 128)
 				upgradeText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -6, 0)
 			end
 
@@ -174,10 +210,14 @@ local function init()
 
 				gemDisplay["Slot" .. i].Gem:Show()
 				gemDisplay["Slot" .. i].Gem:SetTexCoord(6 / 64, 58 / 64, 6 / 64, 58 / 64)
+				gemDisplay["Slot" .. i].Gem:SetSnapToPixelGrid(false)
+				gemDisplay["Slot" .. i].Gem:SetTexelSnappingBias(0)
 
 				gemDisplay["Slot" .. i].Slot:SetDrawLayer("OVERLAY")
 				gemDisplay["Slot" .. i].Slot:SetTexture("Interface\\AddOns\\ls_UI\\assets\\empty-socket")
 				gemDisplay["Slot" .. i].Slot:SetTexCoord(4 / 32, 28 / 32, 4 / 32, 28 / 32)
+				gemDisplay["Slot" .. i].Slot:SetSnapToPixelGrid(false)
+				gemDisplay["Slot" .. i].Slot:SetTexelSnappingBias(0)
 			end
 
 			if isWeaponSlot then
@@ -231,7 +271,7 @@ local function init()
 
 		hooksecurefunc("InspectSwitchTabs", function(tabID)
 			if tabID == 1 then
-				InspectFrame:SetSize(440, 431) -- 432 + 8, 424 + 7
+				InspectFrame:SetSize(438, 431) -- 432 + 6, 424 + 7
 
 				if not InspectFrame.unit then return end
 
@@ -245,6 +285,19 @@ local function init()
 				InspectFrame.Inset.Bg:SetVertTile(false)
 			else
 				InspectFrame:SetSize(338, 424) -- PortraitFrameBaseTemplate's default size
+			end
+		end)
+
+		local isMouseOver
+		InspectFrame:HookScript("OnUpdate", function()
+			local state = InspectFrame:IsMouseOver()
+			if state ~= isMouseOver then
+				for button in next, EQUIP_SLOTS do
+					button.EnchantText:SetShown(state)
+					button.UpgradeText:SetShown(state)
+				end
+
+				isMouseOver = state
 			end
 		end)
 
@@ -277,26 +330,7 @@ function MODULE:UpadteInspectFrame()
 		return
 	end
 
-	for _, button in next, {
-		InspectBackSlot,
-		InspectChestSlot,
-		InspectFeetSlot,
-		InspectFinger0Slot,
-		InspectFinger1Slot,
-		InspectHandsSlot,
-		InspectHeadSlot,
-		InspectLegsSlot,
-		InspectMainHandSlot,
-		InspectNeckSlot,
-		InspectSecondaryHandSlot,
-		InspectShirtSlot,
-		InspectShoulderSlot,
-		InspectTabardSlot,
-		InspectTrinket0Slot,
-		InspectTrinket1Slot,
-		InspectWaistSlot,
-		InspectWristSlot,
-	} do
+	for button in next, EQUIP_SLOTS do
 		updateSlot(button)
 	end
 end
