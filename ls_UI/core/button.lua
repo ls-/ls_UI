@@ -129,7 +129,7 @@ end
 local function setHighlightTexture(button)
 	if not button.SetHighlightTexture then return end
 
-	button:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight")
+	button:SetHighlightTexture(button:IsObjectType("CheckButton") and "Interface\\Buttons\\CheckButtonHilight" or "Interface\\Buttons\\ButtonHilight-Square")
 	button:GetHighlightTexture():SetBlendMode("ADD")
 	button:GetHighlightTexture():SetAllPoints()
 end
