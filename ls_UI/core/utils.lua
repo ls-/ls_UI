@@ -813,11 +813,11 @@ do
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
-		if not data then return "", "", "", "", "" end
+		if not data then return nil, nil, nil, nil, nil end
 
-		local enchant = ""
-		local upgrade, upgradeFound = "", false
-		local gems, idx = {"", "", ""}, 1
+		local enchant
+		local gems, gemIndex = {}, 1
+		local upgrade, upgradeFound = nil, false
 		for _, line in next, data.lines do
 			if line.type == ENCHANT_LINE then
 				enchant = line.leftText:match(ENCHANT_PATTERN)
@@ -829,16 +829,16 @@ do
 				end
 			elseif line.type == GEM_LINE then
 				-- sidestep caching
-				local gemID = C_Item.GetItemGemID(itemLink, idx)
+				local gemID = C_Item.GetItemGemID(itemLink, gemIndex)
 				if gemID then
 					local _, _, _, _, icon = C_Item.GetItemInfoInstant(gemID)
-					gems[idx] = icon
+					gems[gemIndex] = icon
 				else
-					gems[idx] = SOCKET_TEMPLATE:format(line.socketType)
+					gems[gemIndex] = SOCKET_TEMPLATE:format(line.socketType)
 				end
 
-				idx = idx + 1
-			elseif line.type == 0 and not upgradeFound then
+				gemIndex = gemIndex + 1
+			elseif not upgradeFound and line.type == 0 then
 				upgrade = line.leftText:match(UPGRADE_PATTERN)
 				if upgrade then
 					upgrade = upgrade:trim()

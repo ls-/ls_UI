@@ -17,7 +17,7 @@ local ILVL_STEP = 13 -- the ilvl step between content difficulties
 local avgItemLevel
 
 local function getItemLevelColor(itemLevel)
-	itemLevel = tonumber(itemLevel) or 0
+	itemLevel = tonumber(itemLevel or "") or 0
 
 	-- if an item is worse than the average ilvl by one full step, it's really bad
 	return E:GetGradientAsRGB((itemLevel - avgItemLevel + ILVL_STEP) / ILVL_STEP, ILVL_COLORS)
@@ -29,10 +29,10 @@ local function scanSlot(slotID)
 		return true, C_Item.GetDetailedItemLevelInfo(link), E:GetItemEnchantGemInfo(link)
 	elseif GetInventoryItemTexture(InspectFrame.unit, slotID) then
 		-- if there's no link, but there's a texture, it means that there's an item we have no info for
-		return false, "", "", "", "", "", ""
+		return false
 	end
 
-	return true, "", "", "", "", "", ""
+	return true
 end
 
 local function updateSlot(button)
@@ -49,18 +49,20 @@ local function updateSlot(button)
 			button.ItemLevelText:SetText("")
 		end
 
-		if C.db.profile.blizzard.inspect_frame.upgrade then
-			button.UpgradeText:SetText(upgrade)
-		else
-			button.UpgradeText:SetText("")
-		end
-
 		if C.db.profile.blizzard.inspect_frame.enhancements then
-			button.EnchantText:SetText(enchant)
+			button.EnchantText:SetText(enchant or "")
+			button.EnchantIcon:SetShown(enchant)
 			button.GemDisplay:SetGems(gem1, gem2, gem3)
 		else
 			button.EnchantText:SetText("")
+			button.EnchantIcon:Hide()
 			button.GemDisplay:SetGems()
+		end
+
+		if C.db.profile.blizzard.inspect_frame.upgrade then
+			button.UpgradeText:SetText(upgrade or "")
+		else
+			button.UpgradeText:SetText("")
 		end
 	end
 end
@@ -72,7 +74,7 @@ function gem_display_proto:SetGems(...)
 	local numSockets = 0
 
 	for _, socket in next, sockets do
-		numSockets = numSockets + (socket == "" and 0 or 1)
+		numSockets = numSockets + (socket and 1 or 0)
 	end
 
 	for index, slot in ipairs(self.Slots) do
