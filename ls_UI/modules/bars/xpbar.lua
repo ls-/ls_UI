@@ -358,34 +358,31 @@ do
 
 	function segment_ext_proto:UpdateReputation(name, standing, repMin, repMax, repCur, factionID)
 		local repTextLevel = GetText("FACTION_STANDING_LABEL" .. standing, UnitSex("player"))
+		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+		local isParagon = C_Reputation.IsFactionParagon(factionID)
+		local isMajor = C_Reputation.IsMajorFaction(factionID)
+		local isFriendship = repInfo and repInfo.friendshipFactionID > 0
 		local rewardQuestID, hasRewardPending
 		local cur, max
 
-		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
-		if repInfo and repInfo.friendshipFactionID > 0 then
-			if repInfo.nextThreshold then
-				max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
-			else
-				max, cur = 1, 1
-			end
-
-			standing = 5
-			repTextLevel = repInfo.reaction
-		elseif C_Reputation.IsFactionParagon(factionID) then
+		-- any faction can be paragon as in you keep earning more rep to unlock extra rewards
+		if isParagon then
 			cur, max, rewardQuestID, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
 			cur = cur % max
-			repTextLevel = repTextLevel .. "+"
 
 			if hasRewardPending then
 				cur = cur + max
 			end
 
-			-- DF factions become both paragon and major after they're maxxed out
-			if C_Reputation.IsMajorFaction(factionID) then
+			if isMajor then
 				standing = 9
 				repTextLevel = RENOWN_PLUS
+			elseif isFriendship then
+				repTextLevel = repInfo.reaction .. "+"
+			else
+				repTextLevel = repTextLevel .. "+"
 			end
-		elseif C_Reputation.IsMajorFaction(factionID) then
+		elseif isMajor then
 			repInfo = C_MajorFactions.GetMajorFactionData(factionID)
 
 			if C_MajorFactions.HasMaximumRenown(factionID) then
@@ -396,6 +393,15 @@ do
 
 			standing = 9
 			repTextLevel = _G.RENOWN_LEVEL_LABEL .. repInfo.renownLevel
+		elseif isFriendship then
+			if repInfo.nextThreshold then
+				max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
+			else
+				max, cur = 1, 1
+			end
+
+			standing = 5
+			repTextLevel = repInfo.reaction
 		else
 			if standing ~= MAX_REPUTATION_REACTION then
 				max, cur = repMax - repMin, repCur - repMin
