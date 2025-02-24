@@ -819,7 +819,7 @@ do
 	local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
 	local MEMORY_COLON = L["PERFORMANCE"] .. _G.HEADER_COLON
 	local MEMORY_TEMPLATE = "%.2f MB"
-	local MEMORY_CPU_TEMPLATE = "%.2f MB |cff888987\124 %.2f%%|r"
+	local MEMORY_CPU_TEMPLATE = "%.2f MB |cff313131\124 |r|cff949595%.2f%%|r"
 	local _
 
 	local function sortFunc(a, b)
