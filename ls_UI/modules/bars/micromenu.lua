@@ -547,7 +547,7 @@ do
 		if IsLFGDungeonJoinable(dungeonID) then
 			for shortageIndex = 1, LFG_ROLE_NUM_SHORTAGE_TYPES do
 				local eligible, forTank, forHealer, forDamager, numRewards = GetLFGRoleShortageRewards(dungeonID, shortageIndex)
-				local _, tank, healer, damager = GetLFGRoles()
+				local tank, healer, damager = UnitGetAvailableRoles("player")
 
 				if eligible and numRewards > 0 then
 					if tank and forTank then
