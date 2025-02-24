@@ -54,6 +54,7 @@ read_globals = {
 	"BLIZZARD_STORE",
 	"BreakUpLargeNumbers",
 	"BuffFrame",
+	"C_AddOnProfiler",
 	"C_AddOns",
 	"C_AdventureJournal",
 	"C_AzeriteItem",
