@@ -5,7 +5,6 @@ local BARS = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
-local s_trim = _G.string.trim
 local unpack = _G.unpack
 
 -- Mine
@@ -16,7 +15,7 @@ local MAX_SEGMENTS = 4
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local HONOR_TEMPLATE = _G.LFG_LIST_HONOR_LEVEL_CURRENT_PVP:gsub("%%d", "|cffffffff%%d|r")
-local RENOWN_PLUS = s_trim(_G.RENOWN_LEVEL_LABEL) .. "+"
+local RENOWN_PLUS = _G.LANDING_PAGE_RENOWN_LABEL .. "+"
 local REPUTATION_TEMPLATE = "%s: %s"
 
 local CFG = {
@@ -392,7 +391,7 @@ do
 			end
 
 			standing = 9
-			repTextLevel = _G.RENOWN_LEVEL_LABEL .. repInfo.renownLevel
+			repTextLevel = _G.RENOWN_LEVEL_LABEL:format(repInfo.renownLevel)
 		elseif isFriendship then
 			if repInfo.nextThreshold then
 				max, cur = repInfo.nextThreshold - repInfo.reactionThreshold, repInfo.standing - repInfo.reactionThreshold
