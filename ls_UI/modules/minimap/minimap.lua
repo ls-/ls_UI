@@ -495,7 +495,14 @@ function MODULE:Init()
 		foreground:SetPoint("CENTER", 0, 0)
 		Minimap.Foreground = foreground
 
-		local background = Minimap:CreateTexture(nil, "BACKGROUND", nil, -7)
+		local backgroundParent = CreateFrame("Frame", nil, Minimap)
+		backgroundParent:SetFrameStrata("BACKGROUND")
+		backgroundParent:SetFrameLevel(1)
+		backgroundParent:SetPoint("BOTTOMRIGHT", 0, 0)
+		backgroundParent:SetPoint("TOPLEFT", 0, 0)
+		Minimap.BackgroundParent = backgroundParent
+
+		local background = backgroundParent:CreateTexture(nil, "BACKGROUND", nil, -7)
 		background:SetAllPoints(Minimap)
 		background:SetTexture("Interface\\HELPFRAME\\DarkSandstone-Tile", "REPEAT", "REPEAT")
 		background:SetHorizTile(true)
@@ -675,7 +682,7 @@ function MODULE:Init()
 		end
 
 		if not HybridMinimap then
-			E:AddOnLoadTask("Blizzard_HybridMinimap", self.UpdateHybridMinimap)
+			E:AddOnLoadTask("Blizzard_HybridMinimap", Minimap.UpdateHybridMinimap)
 		end
 
 		E:SetUpFading(MinimapCluster)
