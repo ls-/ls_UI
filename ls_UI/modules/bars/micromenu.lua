@@ -812,14 +812,14 @@ local main_button_proto = {}
 do
 	local cache = {}
 	local addOns = {}
-	local recentCPUUsage, peakCPUUsage, memUsage = 0, 0, 0
+	local cpuUsage, memUsage = 0, 0
 	local latencyHome, latencyWorld = 0, 0
 	local MED_LATENCY = 600
 	local LATENCY_COLON = L["LATENCY"] .. _G.HEADER_COLON
 	local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
 	local MEMORY_COLON = L["PERFORMANCE"] .. _G.HEADER_COLON
 	local MEMORY_TEMPLATE = "%.2f MB"
-	local MEMORY_CPU_TEMPLATE = "%.2f MB |cff313131| |r|cff949595%.2f%%|r |cff313131| |r|cff616161%.2f%%|r"
+	local MEMORY_CPU_TEMPLATE = "%.2f MB |cff888987\124 %.2f%%|r"
 	local _
 
 	local function sortFunc(a, b)
@@ -868,15 +868,14 @@ do
 
 				local isProfilerEnabled = C_AddOnProfiler.IsEnabled()
 				if isProfilerEnabled then
-					recentCPUUsage = getCPUUsage(cache, 4, Enum.AddOnProfilerMetric.RecentAverageTime)
-					peakCPUUsage = getCPUUsage(cache, 5, Enum.AddOnProfilerMetric.PeakTime)
+					cpuUsage = getCPUUsage(cache, 4, Enum.AddOnProfilerMetric.RecentAverageTime)
 				end
 
 				t_wipe(addOns)
 				memUsage = 0
 
 				for _, data in next, cache do
-					t_insert(addOns, {data[2], data[3], data[4], data[5]})
+					t_insert(addOns, {data[2], data[3], data[4]})
 
 					memUsage = memUsage + data[3]
 				end
@@ -891,14 +890,14 @@ do
 						local m = data[2]
 
 						if isProfilerEnabled then
-							GameTooltip:AddDoubleLine(data[1], MEMORY_CPU_TEMPLATE:format(m / 1024, data[3], data[4]), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+							GameTooltip:AddDoubleLine(data[1], MEMORY_CPU_TEMPLATE:format(m / 1024, data[3]), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
 						else
 							GameTooltip:AddDoubleLine(data[1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
 						end
 					end
 
 					if isProfilerEnabled then
-						GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_CPU_TEMPLATE:format(memUsage / 1024, recentCPUUsage, peakCPUUsage))
+						GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_CPU_TEMPLATE:format(memUsage / 1024, cpuUsage))
 					else
 						GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_TEMPLATE:format(memUsage / 1024))
 					end
