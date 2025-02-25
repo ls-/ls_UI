@@ -8,7 +8,6 @@ local hooksecurefunc = _G.hooksecurefunc
 local ipairs = _G.ipairs
 local m_abs = _G.math.abs
 local next = _G.next
-local select = _G.select
 local t_insert = _G.table.insert
 local t_sort = _G.table.sort
 local t_wipe = _G.table.wipe
@@ -547,7 +546,7 @@ do
 		if IsLFGDungeonJoinable(dungeonID) then
 			for shortageIndex = 1, LFG_ROLE_NUM_SHORTAGE_TYPES do
 				local eligible, forTank, forHealer, forDamager, numRewards = GetLFGRoleShortageRewards(dungeonID, shortageIndex)
-				local _, tank, healer, damager = GetLFGRoles()
+				local tank, healer, damager = UnitGetAvailableRoles("player")
 
 				if eligible and numRewards > 0 then
 					if tank and forTank then
@@ -813,17 +812,35 @@ local main_button_proto = {}
 do
 	local cache = {}
 	local addOns = {}
-	local memUsage = 0
+	local cpuUsage, memUsage = 0, 0
 	local latencyHome, latencyWorld = 0, 0
 	local MED_LATENCY = 600
 	local LATENCY_COLON = L["LATENCY"] .. _G.HEADER_COLON
 	local LATENCY_TEMPLATE = "|c%s%s|r " .. _G.MILLISECONDS_ABBR
-	local MEMORY_COLON = L["MEMORY"] .. _G.HEADER_COLON
-	local MEMORY_TEMPLATE = "%.2f MiB"
+	local MEMORY_COLON = L["PERFORMANCE"] .. _G.HEADER_COLON
+	local MEMORY_TEMPLATE = "%.2f MB"
+	local MEMORY_CPU_TEMPLATE = "%.2f MB |cff313131\124 |r|cff949595%.2f%%|r"
 	local _
 
 	local function sortFunc(a, b)
 		return a[2] > b[2]
+	end
+
+	local function getCPUUsage(t, id, metric)
+		local clientCPU = C_AddOnProfiler.GetApplicationMetric(metric)
+		local addonsCPU = C_AddOnProfiler.GetOverallMetric(metric)
+
+		for i, data in next, cache do
+			local addonCPU = C_AddOnProfiler.GetAddOnMetric(data[1], metric)
+			local relativeCPU = clientCPU - addonsCPU + addonCPU
+			if relativeCPU <= 0 then
+				cache[i][id] = 0
+			else
+				cache[i][id] = addonCPU / relativeCPU * 100
+			end
+		end
+
+		return addonsCPU / clientCPU * 100
 	end
 
 	function main_button_proto:OnEnterOverride()
@@ -836,42 +853,54 @@ do
 			GameTooltip:AddDoubleLine(L["LATENCY_WORLD"], LATENCY_TEMPLATE:format(E:GetGradientAsHex(latencyWorld / MED_LATENCY, C.db.global.colors.gyr), latencyWorld), 1, 1, 1)
 
 			if IsShiftKeyDown() then
-				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine(MEMORY_COLON)
-
 				UpdateAddOnMemoryUsage()
 
 				for i = 1, C_AddOns.GetNumAddOns() do
 					if C_AddOns.IsAddOnLoaded(i) then
 						if not cache[i] then
-							cache[i] = {
-								[1] = select(2, C_AddOns.GetAddOnInfo(i)),
-							}
+							cache[i] = {}
+							cache[i][1], cache[i][2] = C_AddOns.GetAddOnInfo(i) -- name, title
 						end
 
-						cache[i][2] = GetAddOnMemoryUsage(i)
+						cache[i][3] = GetAddOnMemoryUsage(i)
 					end
+				end
+
+				local isProfilerEnabled = C_AddOnProfiler.IsEnabled()
+				if isProfilerEnabled then
+					cpuUsage = getCPUUsage(cache, 4, Enum.AddOnProfilerMetric.RecentAverageTime)
 				end
 
 				t_wipe(addOns)
 				memUsage = 0
 
-				for i, data in next, cache do
-					t_insert(addOns, {i, data[2]})
+				for _, data in next, cache do
+					t_insert(addOns, {data[2], data[3], data[4]})
 
-					memUsage = memUsage + data[2]
+					memUsage = memUsage + data[3]
 				end
 
 				if memUsage > 0 then
+					GameTooltip:AddLine(" ")
+					GameTooltip:AddLine(MEMORY_COLON)
+
 					t_sort(addOns, sortFunc)
 
-					for i = 1, #addOns do
-						local m = addOns[i][2]
+					for _, data in ipairs(addOns) do
+						local m = data[2]
 
-						GameTooltip:AddDoubleLine(cache[addOns[i][1]][1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+						if isProfilerEnabled then
+							GameTooltip:AddDoubleLine(data[1], MEMORY_CPU_TEMPLATE:format(m / 1024, data[3]), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+						else
+							GameTooltip:AddDoubleLine(data[1], MEMORY_TEMPLATE:format(m / 1024), 1, 1, 1, E:GetGradientAsRGB(m / (memUsage == m and 1 or (memUsage - m)), C.db.global.colors.gyr))
+						end
 					end
 
-					GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_TEMPLATE:format(memUsage / 1024))
+					if isProfilerEnabled then
+						GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_CPU_TEMPLATE:format(memUsage / 1024, cpuUsage))
+					else
+						GameTooltip:AddDoubleLine(_G.TOTAL, MEMORY_TEMPLATE:format(memUsage / 1024))
+					end
 				end
 			else
 				GameTooltip:AddLine(" ")

@@ -248,6 +248,7 @@ function MODULE:Init()
 			[_G.FACTION_ALLIANCE] = true,
 			[_G.FACTION_HORDE] = true,
 			[_G.PVP] = true,
+			[_G.UNIT_POPUP_RIGHT_CLICK] = true,
 		}
 
 		TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.None, function(tooltip, lineData)
@@ -265,6 +266,13 @@ function MODULE:Init()
 			if creatureType then
 				return lineData.leftText == creatureType
 			end
+		end)
+
+		TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.Blank, function(tooltip)
+			if not GOOD_TOOLTIPS[tooltip] or tooltip:IsForbidden() then return end
+			if not tooltip:IsTooltipType(Enum.TooltipDataType.Unit) then return end
+
+			return true
 		end)
 
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(tooltip)

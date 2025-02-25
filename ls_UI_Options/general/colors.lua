@@ -302,6 +302,11 @@ function CONFIG:GetColorsOptions(order)
 							return C.db.global.colors.power.STAGGER[3]:GetRGB()
 						end,
 					},
+					ESSENCE = {
+						order = inc(2),
+						type = "color",
+						name = L["ESSENCE"],
+					},
 				},
 			},
 			prediction = {

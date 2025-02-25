@@ -6,15 +6,18 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Fixed an issue where movers would fail to initialise properly if they're a part of a convoluted hierarchy.
+- Added 11.1.0 support.
 
-### Blizzard
+### Action Bars
 
-- Updated character and inspect panels. Added optional upgrade level (hero, champion, etc) texts, disabled by default.
-  Gems and sockets are now displayed via Remix-like widgets. Enchant and upgrade level texts are now shown on mouseover
-  to reduce the visual clutter.
+- The CTA tracker in the group finder micro button now shows the info for all specs available to your character.
+- Fixed an issue where the reputation bar would fail to display some paragon reputations correctly.
 
-### Unit Frames
+### Minimap
 
-- Fixed an issue where a 3D portrait wouldn't inherit the unit frame's alpha.
+- Fixed hybrid minimap. All (2) the people who still run Torghast, rejoice! :v
+
+### Config
+
+- Added missing "Essence" colour. Can be found at /LSUI > General > Colours > Power.
 ]]
