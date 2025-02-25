@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## Version 110100.01
+
+- Added 11.1.0 support.
+
+### Action Bars
+
+- The CTA tracker in the group finder micro button now shows the info for all specs available to your character.
+- Fixed an issue where the reputation bar would fail to display some paragon reputations correctly.
+
+### Minimap
+
+- Fixed hybrid minimap. All (2) the people who still run Torghast, rejoice! :v
+
+### Config
+
+- Added missing "Essence" colour. Can be found at /LSUI > General > Colours > Power.
+
 ## Version 110005.02
 
 - Fixed an issue where movers would fail to initialise properly if they're a part of a convoluted hierarchy.
