@@ -14,30 +14,67 @@ local function update(self)
 
 	local element = self.ClassIndicator
 	local color = C.db.global.colors.white
+	local border = "Interface\\AddOns\\ls_UI\\assets\\border-thick"
+	local glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-glow"
 
 	if element._config then
-		if element._config.color.class and UnitIsPlayer(self.unit) and UnitClass(self.unit) then
-			local _, class = UnitClass(self.unit)
-			color = C.db.global.colors.class[class]
-		elseif element._config.color.reaction and UnitReaction(self.unit, "player") then
-			local reaction = UnitReaction(self.unit, "player")
-			color = C.db.global.colors.reaction[reaction]
+		if UnitIsPlayer(self.unit) then
+			border = "Interface\\AddOns\\ls_UI\\assets\\border-thick-player"
+			glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-player-glow"
+
+			if element._config.color.class then
+				local _, class = UnitClass(self.unit)
+				class = class or "WARRIOR"
+				color = C.db.global.colors.class[class]
+			elseif element._config.color.reaction then
+				local reaction = UnitReaction(self.unit, "player") or 4
+				color = C.db.global.colors.reaction[reaction]
+			end
+		elseif UnitIsBossMob(self.unit) then
+			color = C.db.global.colors.yellow
+			border = "Interface\\AddOns\\ls_UI\\assets\\border-thick-elite"
+			glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-elite-glow"
 		else
 			local class = UnitClassification(self.unit)
-			if class and (class == "worldboss" or class == "elite" or class == "rareelite") then
-				color = C.db.global.colors.yellow
+			if class then
+				if class == "elite" then
+					color = C.db.global.colors.yellow
+					border = "Interface\\AddOns\\ls_UI\\assets\\border-thick-rare"
+					glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-rare-glow"
+				elseif class == "rareelite" then
+					color = C.db.global.colors.light_blue
+					border = "Interface\\AddOns\\ls_UI\\assets\\border-thick-elite"
+					glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-elite-glow"
+				elseif class == "rare" then
+					color = C.db.global.colors.light_blue
+					border = "Interface\\AddOns\\ls_UI\\assets\\border-thick-rare"
+					glow = "Interface\\AddOns\\ls_UI\\assets\\border-thick-rare-glow"
+				elseif class ~= "worldboss" and element._config.color.reaction then
+					local reaction = UnitReaction(self.unit, "player") or 4
+					color = C.db.global.colors.reaction[reaction]
+				end
 			end
 		end
 	end
 
-	if not self.__color or not self.__color:IsEqualTo(color) then
+	if not element.__color or not element.__color:IsEqualTo(color) then
 		self.Border:SetVertexColor(color:GetRGB())
 
 		if self.Insets then
 			self.Insets:SetVertexColor(color:GetRGB())
 		end
 
-		self.__color = color
+		element.__color = color
+	end
+
+	if not element.__texture or element.__texture ~= border then
+		self.Border:SetTexture(border)
+
+		if self.ThreatIndicator then
+			self.ThreatIndicator:SetTexture(glow)
+		end
+
+		element.__texture = border
 	end
 end
 
@@ -74,6 +111,5 @@ function UF:CreateClassIndicator(frame)
 
 	return Mixin({
 		__owner = frame,
-		__color = {},
 	}, element_proto)
 end
