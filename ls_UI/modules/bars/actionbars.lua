@@ -299,10 +299,9 @@ function MODULE:CreateActionBars()
 			bar:Update()
 		end
 
-		hooksecurefunc(SpellFlyout, "Toggle", function(self, ID)
+		hooksecurefunc(SpellFlyout, "Toggle", function(self, _, ID)
 			if self:IsShown() then
 				local _, _, numSlots = GetFlyoutInfo(ID)
-
 				for i = 1, numSlots do
 					E:SkinFlyoutButton(_G["SpellFlyoutButton" .. i])
 				end
