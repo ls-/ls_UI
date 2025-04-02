@@ -17,6 +17,8 @@ local animController
 local NUM_STATIC_BUTTONS = 6
 local NUM_PER_SEGMENT = 6
 
+local ANIM_SPEED_MULT = 0.7
+
 local ENDCAPS = {
 	[1] = {
 		["ALLIANCE"] = "Interface\\AddOns\\ls_UI\\assets\\endcap-gryphon",
@@ -311,7 +313,7 @@ function MODULE:SetupActionBarController()
 				end
 			end
 
-			C_Timer.After(0.02, function()
+			C_Timer.After(0.02 * ANIM_SPEED_MULT, function()
 				for _, widget in next, WIDGETS do
 					if widget.frame and widget.on_play then
 						widget.on_play(widget.frame, newstate)
@@ -319,7 +321,7 @@ function MODULE:SetupActionBarController()
 				end
 			end)
 
-			C_Timer.After(0.4, function()
+			C_Timer.After(0.4 * ANIM_SPEED_MULT, function()
 				adjustTopTextures(newstate)
 				adjustBottomTextures(newstate)
 			end)
@@ -353,51 +355,51 @@ function MODULE:SetupActionBarController()
 		anim:SetOrder(1)
 		anim:SetOffset(0, -55)
 		anim:SetStartDelay(0.02)
-		anim:SetDuration(0.15)
+		anim:SetDuration(0.15 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("LeftCap")
 		anim:SetOrder(2)
 		anim:SetOffset(0, -76)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("RightCap")
 		anim:SetOrder(2)
 		anim:SetOffset(0, -76)
 		anim:SetStartDelay(0.05)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(3)
 		anim:SetOffset(0, -23)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Bottom")
 		anim:SetOrder(4)
 		anim:SetOffset(0, 23)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("LeftCap")
 		anim:SetOrder(5)
 		anim:SetOffset(0, 76)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("RightCap")
 		anim:SetOrder(5)
 		anim:SetOffset(0, 76)
 		anim:SetStartDelay(0.05)
-		anim:SetDuration(0.1)
+		anim:SetDuration(0.1 * ANIM_SPEED_MULT)
 
 		anim = ag:CreateAnimation("Translation")
 		anim:SetChildKey("Top")
 		anim:SetOrder(6)
 		anim:SetOffset(0, 55)
-		anim:SetDuration(0.15)
+		anim:SetDuration(0.15 * ANIM_SPEED_MULT)
 
 		self:UpdateEndcaps()
 

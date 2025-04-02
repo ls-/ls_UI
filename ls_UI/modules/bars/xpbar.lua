@@ -191,6 +191,14 @@ do
 				end
 			end
 
+			if not BARS:IsRestricted() then
+				if index == 0 then
+					self:Hide()
+				else
+					self:Show()
+				end
+			end
+
 			self.total = index
 		end
 	end

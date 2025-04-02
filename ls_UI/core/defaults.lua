@@ -16,6 +16,7 @@ D.global = {
 		red = rgb(220, 68, 54), -- #DC4436 (7.5R 5/14)
 		green = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 		blue = rgb(38, 125, 206), -- #267DCE (5PB 5/12)
+		light_blue = rgb(172, 215, 238), -- #ACD7EE (2.5PB 8/6)
 		yellow = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)
 		gray = rgb(136, 137, 135), -- #888987 (N5)
 		light_gray = rgb(202, 202, 202), -- #CACACA (N8)
