@@ -6,18 +6,12 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 11.1.0 support.
-
 ### Action Bars
 
-- The CTA tracker in the group finder micro button now shows the info for all specs available to your character.
-- Fixed an issue where the reputation bar would fail to display some paragon reputations correctly.
+- Fixed flyouts.
+- When the artwork is disabled, the XP bar will be hidden if it has nothing to show.
 
-### Minimap
+### Unit Frames
 
-- Fixed hybrid minimap. All (2) the people who still run Torghast, rejoice! :v
-
-### Config
-
-- Added missing "Essence" colour. Can be found at /LSUI > General > Colours > Power.
+- Added a suite of border textures for player, rare, elite, and wb frames.
 ]]

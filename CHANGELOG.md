@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 110100.02
+
+### Action Bars
+
+- Fixed flyouts.
+- When the artwork is disabled, the XP bar will be hidden if it has nothing to show.
+
+### Unit Frames
+
+- Added a suite of border textures for player, rare, elite, and wb frames.
+
+![Imgur](https://imgur.com/6xjdDef.png)
+
 ## Version 110100.01
 
 - Added 11.1.0 support.
