@@ -389,6 +389,7 @@ read_globals = {
 	"UnitInRaid",
 	"UnitIsAFK",
 	"UnitIsBattlePetCompanion",
+	"UnitIsBossMob",
 	"UnitIsConnected",
 	"UnitIsDead",
 	"UnitIsDND",
