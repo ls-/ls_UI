@@ -572,6 +572,7 @@ do
 	E:RegisterEvent("SPELLS_CHANGED", function()
 		-- Enrage
 		dispelTypes[""] = IsPlayerSpell(374346) -- Overawe (Evoker)
+			or IsPlayerSpell(5938) -- Shiv (Rogue)
 			or IsPlayerSpell(2908) -- Soothe (Druid)
 			or IsPlayerSpell(19801) -- Tranquilizing Shot (Hunter)
 
