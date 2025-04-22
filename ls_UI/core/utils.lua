@@ -572,6 +572,7 @@ do
 	E:RegisterEvent("SPELLS_CHANGED", function()
 		-- Enrage
 		dispelTypes[""] = IsPlayerSpell(374346) -- Overawe (Evoker)
+			or IsPlayerSpell(5938) -- Shiv (Rogue)
 			or IsPlayerSpell(2908) -- Soothe (Druid)
 			or IsPlayerSpell(19801) -- Tranquilizing Shot (Hunter)
 
@@ -797,32 +798,43 @@ end
 -----------
 
 do
+	local ILVL_LINE = Enum.TooltipDataLineType.ItemLevel
+	local ILVL_PATTERN = "(%d+)"
+	local UPGRADE_LINE = Enum.TooltipDataLineType.ItemUpgradeLevel
+	local UPGRADE_PATTERN = ITEM_UPGRADE_TOOLTIP_FORMAT_STRING:gsub("([:：]).+", "%1(.+)")
 	local ENCHANT_LINE = Enum.TooltipDataLineType.ItemEnchantmentPermanent
 	local ENCHANT_PATTERN = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
-	local QUALITY_PATTERN = "|A.+|a"
+	local ENCHANT_QUALITY_PATTERN = "|A.+|a"
 	local GEM_LINE = Enum.TooltipDataLineType.GemSocket
 	local SOCKET_TEMPLATE = "Interface\\ItemSocketingFrame\\UI-EmptySocket-%s"
-	local UPGRADE_PATTERN = ITEM_UPGRADE_TOOLTIP_FORMAT_STRING:gsub("([:：]).+", "%1(.+)")
 
 	local dataCache = {}
 	local itemCache = {}
 
-	function E:GetItemEnchantGemInfo(itemLink)
+	function E:GetDetailedItemInfo(itemLink)
 		if itemCache[itemLink] then
-			return itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3, itemCache[itemLink].upgrade
+			return itemCache[itemLink].ilvl, itemCache[itemLink].upgrade, itemCache[itemLink].enchant, itemCache[itemLink].gem1, itemCache[itemLink].gem2, itemCache[itemLink].gem3
 		end
 
 		local data = C_TooltipInfo.GetHyperlink(itemLink, nil, nil, true)
-		if not data then return nil, nil, nil, nil, nil end
+		if not data then return nil, nil, nil, nil, nil, nil end
 
-		local enchant
-		local gems, gemIndex = {}, 1
-		local upgrade, upgradeFound = nil, false
+		local ilvl, upgrade, enchant, gems, gemIndex = nil, nil, nil, {}, 1
 		for _, line in next, data.lines do
-			if line.type == ENCHANT_LINE then
+			if line.type == ILVL_LINE then
+				ilvl = line.leftText:match(ILVL_PATTERN)
+				if ilvl then
+					ilvl = ilvl:trim()
+				end
+			elseif line.type == UPGRADE_LINE then
+				upgrade = line.leftText:match(UPGRADE_PATTERN)
+				if upgrade then
+					upgrade = upgrade:trim()
+				end
+			elseif line.type == ENCHANT_LINE then
 				enchant = line.leftText:match(ENCHANT_PATTERN)
 				if enchant then
-					enchant = enchant:gsub(QUALITY_PATTERN, "")
+					enchant = enchant:gsub(ENCHANT_QUALITY_PATTERN, "")
 					if enchant then
 						enchant = enchant:trim()
 					end
@@ -838,27 +850,21 @@ do
 				end
 
 				gemIndex = gemIndex + 1
-			elseif not upgradeFound and line.type == 0 then
-				upgrade = line.leftText:match(UPGRADE_PATTERN)
-				if upgrade then
-					upgrade = upgrade:trim()
-
-					upgradeFound = true
-				end
 			end
 		end
 
 		dataCache[data.dataInstanceID] = itemLink
 
 		itemCache[itemLink] = {
+			ilvl = ilvl,
+			upgrade = upgrade,
 			enchant = enchant,
 			gem1 = gems[1],
 			gem2 = gems[2],
 			gem3 = gems[3],
-			upgrade = upgrade,
 		}
 
-		return enchant, gems[1], gems[2], gems[3], upgrade
+		return ilvl, upgrade, enchant, gems[1], gems[2], gems[3]
 	end
 
 	local wipeTimer

@@ -18,7 +18,7 @@ function element_proto:UpdateTags()
 
 	if self._config.enabled then
 		tag = self.__owner.__unit == "player" and "[ls:combatresticon][ls:leadericon][ls:lfdroleicon]"
-			or "[ls:questicon][ls:sheepicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]"
+			or "[ls:questicon][ls:phaseicon][ls:leadericon][ls:lfdroleicon][ls:classicon]"
 	end
 
 	if tag ~= "" then

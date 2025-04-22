@@ -6,12 +6,11 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-### Action Bars
-
-- Fixed flyouts.
-- When the artwork is disabled, the XP bar will be hidden if it has nothing to show.
+- Added 11.1.5 support.
 
 ### Unit Frames
 
-- Added a suite of border textures for player, rare, elite, and wb frames.
+- Fixed an issue where the cast bar would break whenever you tried to empower a spell with 4+ stages.
+- Removed "[ls:sheepicon]" tag. It's way too inaccurate, it's time to lay the old sheep to rest.
+- Misc bug fixes and tweaks. 
 ]]

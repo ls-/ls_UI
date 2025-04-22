@@ -407,11 +407,6 @@ D.global = {
 			events = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
 			func = "function(unit, realUnit, output)\n  local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(\"player\", realUnit or unit)\n  if status then\n    if output == \"raw\" then\n      return string.format(\"%d\", rawPercentage)\n    else\n      return string.format(\"%d\", scaledPercentage)\n    end\n  end\nend",
 		},
-		["ls:sheepicon"] = {
-			events = "UNIT_CLASSIFICATION_CHANGED",
-			vars = "{\n  [\"Beast\"] = true,\n  [\"Bestia\"] = true,\n  [\"Bête\"] = true,\n  [\"Fera\"] = true,\n  [\"Humanoid\"] = true,\n  [\"Humanoide\"] = true,\n  [\"Humanoïde\"] = true,\n  [\"Umanoide\"] = true,\n  [\"Wildtier\"] = true,\n  [\"Гуманоид\"] = true,\n  [\"Животное\"] = true,\n  [\"야수\"] = true,\n  [\"인간형\"] = true,\n  [\"人型生物\"] = true,\n  [\"人形生物\"] = true,\n  [\"野兽\"] = true,\n  [\"野獸\"] = true,\n}",
-			func = "function(unit)\n  if (_VARS.E.PLAYER_CLASS == \"MAGE\" or _VARS.E.PLAYER_CLASS == \"SHAMAN\")\n    and UnitCanAttack(\"player\", unit) and (UnitIsPlayer(unit) or _VARS[\"ls:sheepicon\"][UnitCreatureType(unit)]) then\n    return _VARS.INLINE_ICONS[\"SHEEP\"]:format(0, 0)\n  end\n\n  return \"\"\nend",
-		},
 		["nl"] = {
 			func = "function()\n  return \"\\n\"\nend",
 		},
