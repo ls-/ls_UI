@@ -366,7 +366,7 @@ function MODULE:Init()
 					)
 
 					local specLine = _G["GameTooltipTextLeft" .. lineOffset]
-					local specText = s_trim(specLine:GetText() or "") -- just to make sure that it's no an empty line like " "
+					local specText = s_trim(specLine:GetText() or "") -- just to make sure that it's not an empty line like " "
 					if specText ~= "" then
 						if C.db.profile.tooltips.inspect and isShiftKeyDown and level > 10 then
 							local itemLevel = getInspectInfo(unit)
