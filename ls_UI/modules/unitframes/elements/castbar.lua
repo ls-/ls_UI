@@ -174,7 +174,7 @@ function element_proto:UpdateColors()
 	stages[1].r, stages[1].g, stages[1].b = C.db.global.colors.castbar.empowering:GetRGB()
 	stages[2].r, stages[2].g, stages[2].b = C.db.global.colors.castbar.empowering_full:GetRGB()
 
-	for i = 3, 4 do
+	for i = 3, 5 do
 		for j = 1, i do
 			if j == i then
 				self.stageColors[i][j] = {C.db.global.colors.castbar.empowering_full:GetRGB()}
@@ -425,6 +425,7 @@ function UF:CreateCastbar(frame)
 	element.stageColors = {
 		[3] = {},
 		[4] = {},
+		[5] = {},
 	}
 
 	return element
