@@ -558,7 +558,8 @@ do
 	end
 
 	function E:IsUnitBoss(unit)
-		return unit and (UnitIsUnit(unit, "boss1") or UnitIsUnit(unit, "boss2") or UnitIsUnit(unit, "boss3") or UnitIsUnit(unit, "boss4") or UnitIsUnit(unit, "boss5"))
+		return unit and (UnitIsUnit(unit, "boss1") or UnitIsUnit(unit, "boss2") or UnitIsUnit(unit, "boss3") or UnitIsUnit(unit, "boss4") or UnitIsUnit(unit, "boss5")
+			or UnitIsUnit(unit, "boss6") or UnitIsUnit(unit, "boss7") or UnitIsUnit(unit, "boss8") or UnitIsUnit(unit, "boss9") or UnitIsUnit(unit, "boss10"))
 	end
 end
 
