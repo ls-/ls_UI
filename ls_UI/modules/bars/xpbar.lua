@@ -535,11 +535,11 @@ function BARS:CreateXPBar()
 			segment.Texture = segment:GetStatusBarTexture()
 
 			local ag = segment.Texture:CreateAnimationGroup()
+			ag.color = {a = 1}
 			segment.ColorAnim = ag
 
 			local anim = ag:CreateAnimation("VertexColor")
 			anim:SetDuration(0.125)
-			ag.color = {a = 1}
 			ag.Anim = anim
 
 			local ext = Mixin(CreateFrame("StatusBar", nil, segment), segment_base_proto)
