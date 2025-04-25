@@ -49,7 +49,7 @@ local filterFunctions = {
 		end
 
 		-- applied by a healer
-		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
+		if data.sourceUnit and E:IsUnitHealer(data.sourceUnit) then
 			return config.healer
 		end
 
