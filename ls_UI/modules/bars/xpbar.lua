@@ -331,7 +331,7 @@ do
 			line1 = L["ARTIFACT_LEVEL_TOOLTIP"]:format(level),
 		}
 
-		self:Update(cur, max, 0, C.db.global.colors.quality[6])
+		self:Update(cur, max, 0, ITEM_QUALITY_COLORS[6].color)
 	end
 
 	function segment_ext_proto:UpdateXP()
@@ -440,7 +440,7 @@ do
 		local cur, max = C_PetBattles.GetXP(1, i)
 
 		self.tooltipInfo = {
-			header = C.db.global.colors.quality[rarity]:WrapTextInColorCode(name),
+			header = ITEM_QUALITY_COLORS[rarity].color:WrapTextInColorCode(name),
 			line1 = L["LEVEL_TOOLTIP"]:format(level),
 		}
 
