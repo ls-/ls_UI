@@ -40,8 +40,8 @@
 -- end
 -- @class file
 -- @name AceDB-3.0.lua
--- @release $Id: AceDB-3.0.lua 1353 2024-08-27 13:37:35Z nevcairiel $
-local ACEDB_MAJOR, ACEDB_MINOR = "AceDB-3.0", 30
+-- @release $Id: AceDB-3.0.lua 1361 2025-05-17 12:20:39Z nevcairiel $
+local ACEDB_MAJOR, ACEDB_MINOR = "AceDB-3.0", 31
 local AceDB = LibStub:NewLibrary(ACEDB_MAJOR, ACEDB_MINOR)
 
 if not AceDB then return end -- No upgrade needed
@@ -373,6 +373,20 @@ local function logoutHandler(frame, event)
 					end
 					if not next(sv[section]) then
 						sv[section] = nil
+					end
+				end
+			end
+		end
+
+		-- second pass after everything else is cleaned up to remove empty namespaces
+		-- can't be run in-loop above since there is no guaranteed order
+		for db in pairs(AceDB.db_registry) do
+			local sv = rawget(db, "sv")
+			local namespaces = rawget(sv, "namespaces")
+			if namespaces then
+				for name in pairs(namespaces) do
+					if not next(namespaces[name]) then
+						namespaces[name] = nil
 					end
 				end
 			end
