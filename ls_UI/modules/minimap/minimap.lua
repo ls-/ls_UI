@@ -484,11 +484,11 @@ function MODULE:Init()
 		Minimap.Border = border
 
 		local ag = border:CreateAnimationGroup()
+		ag.color = {a = 1}
 		Minimap.ColorAnim = ag
 
 		local anim = ag:CreateAnimation("VertexColor")
 		anim:SetDuration(0.125)
-		ag.color = {a = 1}
 		ag.Anim = anim
 
 		local foreground = textureParent:CreateTexture(nil, "BORDER", nil, 3)

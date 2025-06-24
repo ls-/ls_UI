@@ -6,11 +6,6 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 11.1.5 support.
-
-### Unit Frames
-
-- Fixed an issue where the cast bar would break whenever you tried to empower a spell with 4+ stages.
-- Removed "[ls:sheepicon]" tag. It's way too inaccurate, it's time to lay the old sheep to rest.
-- Misc bug fixes and tweaks. 
+- Added 11.1.7 support.
+- Misc bug fixes and tweaks.
 ]]

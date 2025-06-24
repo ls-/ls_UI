@@ -46,17 +46,6 @@ D.global = {
 			[3] = rgb(254, 152, 0), -- #FE9800 (Blizzard Colour)
 			[4] = rgb(254, 0, 0), -- #FE0000 (Blizzard Colour)
 		},
-		quality = {
-			[0] = rgb(157, 157, 157), -- #9D9D9D (Blizzard Colour)
-			[1] = rgb(255, 255, 255), -- #FFFFFF (Blizzard Colour)
-			[2] = rgb(30, 255, 0), -- #1EFF00 (Blizzard Colour)
-			[3] = rgb(0, 112, 221), -- #0070DD (Blizzard Colour)
-			[4] = rgb(163, 53, 238), -- #A334EE (Blizzard Colour)
-			[5] = rgb(255, 128, 0), -- #FF8000 (Blizzard Colour)
-			[6] = rgb(230, 204, 128), -- #E6CC80 (Blizzard Colour)
-			[7] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
-			[8] = rgb(0, 204, 255), -- #00CCFF (Blizzard Colour)
-		},
 		gyr = {
 			[1] = rgb(46, 172, 52), -- #2EAC34 (10GY 6/12)
 			[2] = rgb(246, 196, 66), -- #F6C442 (2.5Y 8/10)

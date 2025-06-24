@@ -154,7 +154,6 @@ local function handleButton(button, header)
 	button:SetScript("OnEnter", button.OnEnter)
 	button:SetScript("OnLeave", button.OnLeave)
 	button:SetScript("OnSizeChanged", button.OnSizeChanged)
-	button:RegisterForClicks("RightButtonDown", "RightButtonUp")
 
 	button.Icon = E:SetIcon(button, QUESTION_MARK_ICON)
 
@@ -380,8 +379,8 @@ local function createHeader(filter)
 		header = Mixin(CreateFrame("Frame", filter == "HELPFUL" and "LSBuffHeader" or "LSDebuffHeader", UIParent, "SecureAuraHeaderTemplate"), header_proto)
 		header:SetPoint(unpack(C.db.profile.auras[filter].point))
 		header:HookScript("OnAttributeChanged", header.OnAttributeChanged)
+		header:SetAttribute("template", "LSUIAuraButtonTemplate")
 		header:SetAttribute("unit", "player")
-		header:SetAttribute("template", "SecureActionButtonTemplate")
 
 		-- this prevents SecureAuraHeader_Update spam
 		header.vis = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
@@ -399,7 +398,7 @@ local function createHeader(filter)
 
 		if filter == "HELPFUL" then
 			header:SetAttribute("includeWeapons", 1)
-			header:SetAttribute("weaponTemplate", "SecureActionButtonTemplate")
+			header:SetAttribute("weaponTemplate", "LSUIAuraButtonTemplate")
 		end
 
 		RegisterAttributeDriver(header, "unit", "[vehicleui] vehicle; player")

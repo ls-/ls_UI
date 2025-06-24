@@ -330,11 +330,11 @@ function UF:CreateCastbar(frame)
 	element.Holder = holder
 
 	local ag = element:GetStatusBarTexture():CreateAnimationGroup()
+	ag.color = {a = 1}
 	element.ColorAnim = ag
 
 	local anim = ag:CreateAnimation("VertexColor")
 	anim:SetDuration(0.125)
-	ag.color = {a = 1}
 	ag.Anim = anim
 
 	local bg = element:CreateTexture(nil, "BACKGROUND", nil, -7)

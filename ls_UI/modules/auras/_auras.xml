@@ -1,3 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Button name="LSUIAuraButtonTemplate" inherits="SecureActionButtonTemplate" registerForClicks="RightButtonDown, RightButtonUp" virtual="true"></Button>
+
 	<Script file="auras.lua"/>
 </Ui>

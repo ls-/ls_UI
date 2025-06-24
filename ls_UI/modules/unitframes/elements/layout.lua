@@ -56,6 +56,27 @@ function frame_proto:UpdateGradient()
 	self.Inlay.Gradient:SetGradient("VERTICAL", gradientColorMin, gradientColorMax)
 end
 
+function frame_proto:SetSmoothBorderColor(r, g, b, a)
+	local color = self.ColorAnim.color
+	a = a or 1
+
+	if color.r == r and color.g == g and color.b == b and color.a == a then return end
+
+	color.r, color.g, color.b, color.a = self.Border:GetVertexColor()
+
+	for i = 1, #self.ColorAnim do
+		self.ColorAnim[i]:SetStartColor(color)
+	end
+
+	color.r, color.g, color.b, color.a = r, g, b, a
+
+	for i = 1, #self.ColorAnim do
+		self.ColorAnim[i]:SetEndColor(color)
+	end
+
+	self.ColorAnim:Play()
+end
+
 local insets_proto = {}
 
 function insets_proto:UpdateConfig()
@@ -541,6 +562,32 @@ function UF:CreateLayout(frame, level)
 	local border = E:CreateBorder(textureParent)
 	border:SetTexture("Interface\\AddOns\\ls_UI\\assets\\border-thick")
 	frame.Border = border
+
+	local ag = frame:CreateAnimationGroup()
+	ag.color = {a = 1}
+	frame.ColorAnim = ag
+
+	for i, target in next, {
+		insets.Left[1],
+		insets.Left[2],
+		insets.Left[3],
+		insets.Right[1],
+		insets.Right[2],
+		insets.Right[3],
+		border.TOPLEFT,
+		border.TOPRIGHT,
+		border.BOTTOMLEFT,
+		border.BOTTOMRIGHT,
+		border.TOP,
+		border.BOTTOM,
+		border.LEFT,
+		border.RIGHT,
+	} do
+		local anim = ag:CreateAnimation("VertexColor")
+		anim:SetDuration(0.125)
+		anim:SetTarget(target)
+		ag[i] = anim
+	end
 end
 
 local slot_proto = {
