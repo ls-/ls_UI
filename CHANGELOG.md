@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 110107.02
+
+### Action Bars
+
+- Fixed an issue where extra and zone buttons wouldn't show up while in combat.
+
 ## Version 110107.01
 
 - Added 11.1.7 support.
