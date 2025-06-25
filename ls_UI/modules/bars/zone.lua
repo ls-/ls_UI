@@ -52,6 +52,22 @@ function bar_proto:UpdateArtwork()
 	end
 end
 
+local isPending = false
+
+local function reparent()
+	if not InCombatLockdown() then
+		ZoneAbilityFrame:SetParent(LSZoneAbilityBar)
+
+		E:UnregisterEvent("PLAYER_REGEN_ENABLED", reparent)
+
+		isPending = false
+	elseif not isPending then
+		E:RegisterEvent("PLAYER_REGEN_ENABLED", reparent)
+
+		isPending = true
+	end
+end
+
 function MODULE:CreateZoneButton()
 	if not isInit then
 		local bar = Mixin(self:Create("zone", "LSZoneAbilityBar"), bar_proto)
@@ -61,9 +77,9 @@ function MODULE:CreateZoneButton()
 		ZoneAbilityFrame:EnableMouse(false)
 		ZoneAbilityFrame:SetParent(bar)
 
-		hooksecurefunc(ZoneAbilityFrame, "SetParent", function(self, parent)
+		hooksecurefunc(ZoneAbilityFrame, "SetParent", function(_, parent)
 			if parent ~= bar then
-				self:SetParent(bar)
+				reparent()
 			end
 		end)
 

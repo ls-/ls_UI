@@ -73,25 +73,36 @@ function bar_proto:UpdateArtwork()
 	end
 end
 
+local isPending = false
+
+local function reparent()
+	if not InCombatLockdown() then
+		ExtraActionBarFrame:SetParent(LSExtraActionBar)
+
+		E:UnregisterEvent("PLAYER_REGEN_ENABLED", reparent)
+
+		isPending = false
+	elseif not isPending then
+		E:RegisterEvent("PLAYER_REGEN_ENABLED", reparent)
+
+		isPending = true
+	end
+end
+
 function MODULE:CreateExtraButton()
 	if not isInit then
 		local bar = Mixin(self:Create("extra", "LSExtraActionBar"), bar_proto)
 
 		ExtraActionBarFrame.ignoreFramePositionManager = true
+		ExtraActionBarFrame.ignoreInLayout = true
 		ExtraActionBarFrame:EnableMouse(false)
 		ExtraActionBarFrame:SetParent(bar)
-		ExtraActionBarFrame.ignoreInLayout = true
 
-		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(self, parent)
+		hooksecurefunc(ExtraActionBarFrame, "SetParent", function(_, parent)
 			if parent ~= bar then
-				self:SetParent(bar)
+				reparent()
 			end
 		end)
-
-		-- ExtraAbilityContainer.ignoreFramePositionManager = true
-		-- ExtraAbilityContainer:SetScript("OnShow", nil)
-		-- ExtraAbilityContainer:SetScript("OnHide", nil)
-		-- ExtraAbilityContainer.SetSize = E.NOOP
 
 		Mixin(ExtraActionButton1, button_proto)
 

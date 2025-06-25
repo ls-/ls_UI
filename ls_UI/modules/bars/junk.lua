@@ -95,7 +95,10 @@ function MODULE:CleanUp()
 
 	hidebutton(MainMenuBarVehicleLeaveButton)
 
-	hideBar(ExtraAbilityContainer)
+	-- hideBar(ExtraAbilityContainer)
 	ExtraAbilityContainer:SetScript("OnShow", nil)
 	ExtraAbilityContainer:SetScript("OnHide", nil)
+	ExtraAbilityContainer:SetScript("OnUpdate", nil)
+	ExtraAbilityContainer.OnUpdate = nil
+	ExtraAbilityContainer.IsLayoutFrame = nil
 end
