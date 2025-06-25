@@ -6,6 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 11.1.7 support.
-- Misc bug fixes and tweaks.
+### Action Bars
+
+- Fixed an issue where extra and zone buttons wouldn't show up while in combat.
 ]]
