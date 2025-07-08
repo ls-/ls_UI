@@ -44,12 +44,12 @@ local filterFunctions = {
 		end
 
 		-- applied by a tank
-		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) and not data.isPlayerAura then
 			return config.tank
 		end
 
 		-- applied by a healer
-		if data.sourceUnit and E:IsUnitHealer(data.sourceUnit) then
+		if data.sourceUnit and E:IsUnitHealer(data.sourceUnit) and not data.isPlayerAura then
 			return config.healer
 		end
 
@@ -127,12 +127,12 @@ local filterFunctions = {
 		end
 
 		-- applied by a tank
-		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
+		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) and not data.isPlayerAura then
 			return config.tank
 		end
 
 		-- applied by a healer
-		if data.sourceUnit and E:IsUnitTank(data.sourceUnit) then
+		if data.sourceUnit and E:IsUnitHealer(data.sourceUnit) and not data.isPlayerAura then
 			return config.healer
 		end
 
