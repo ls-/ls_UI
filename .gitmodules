@@ -10,3 +10,6 @@
 [submodule "ls_UI/embeds/LibDualSpec-1.0"]
 	path = ls_UI/embeds/LibDualSpec-1.0
 	url = https://repos.wowace.com/wow/libdualspec-1-0
+[submodule "ls_UI/embeds/TaintLess"]
+	path = ls_UI/embeds/TaintLess
+	url = https://www.townlong-yak.com/addons.git/taintless

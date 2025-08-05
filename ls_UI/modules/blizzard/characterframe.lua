@@ -33,6 +33,25 @@ local EQUIP_SLOTS = {
 	[CharacterWristSlot] = true,
 }
 
+local ENCHANT_SLOTS = {
+	[CharacterBackSlot] = false,
+	[CharacterChestSlot] = false,
+	[CharacterFeetSlot] = false,
+	[CharacterFinger0Slot] = false,
+	[CharacterFinger1Slot] = false,
+	[CharacterHandsSlot] = false,
+	[CharacterHeadSlot] = false,
+	[CharacterLegsSlot] = false,
+	[CharacterMainHandSlot] = false,
+	[CharacterNeckSlot] = false,
+	[CharacterSecondaryHandSlot] = false,
+	[CharacterShoulderSlot] = false,
+	[CharacterTrinket0Slot] = false,
+	[CharacterTrinket1Slot] = false,
+	[CharacterWaistSlot] = false,
+	[CharacterWristSlot] = false,
+}
+
 local ILVL_COLORS = {}
 local ILVL_STEP = 13 -- the ilvl step between content difficulties
 
@@ -69,6 +88,8 @@ local function updateSlot(button)
 	if not (C.db.profile.blizzard.character_frame.ilvl or C.db.profile.blizzard.character_frame.enhancements or C.db.profile.blizzard.character_frame.upgrade) then
 		button.ItemLevelText:SetText("")
 		button.EnchantText:SetText("")
+		button.EnchantIcon:Hide()
+		button.NoEnchantIcon:Hide()
 		button.UpgradeText:SetText("")
 		button.GemDisplay:SetGems()
 
@@ -87,10 +108,12 @@ local function updateSlot(button)
 		if C.db.profile.blizzard.character_frame.enhancements then
 			button.EnchantText:SetText(enchant or "")
 			button.EnchantIcon:SetShown(enchant)
+			button.NoEnchantIcon:SetShown(not enchant and ENCHANT_SLOTS[button])
 			button.GemDisplay:SetGems(gem1, gem2, gem3)
 		else
 			button.EnchantText:SetText("")
 			button.EnchantIcon:Hide()
+			button.NoEnchantIcon:Hide()
 			button.GemDisplay:SetGems()
 		end
 
@@ -142,6 +165,23 @@ function MODULE:SetUpCharacterFrame()
 		ILVL_COLORS[1] = C.db.global.colors.red
 		ILVL_COLORS[2] = C.db.global.colors.yellow
 		ILVL_COLORS[3] = C.db.global.colors.white
+
+		ENCHANT_SLOTS[CharacterBackSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.back
+		ENCHANT_SLOTS[CharacterChestSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.chest
+		ENCHANT_SLOTS[CharacterFeetSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.feet
+		ENCHANT_SLOTS[CharacterFinger0Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.finger
+		ENCHANT_SLOTS[CharacterFinger1Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.finger
+		ENCHANT_SLOTS[CharacterHandsSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.hands
+		ENCHANT_SLOTS[CharacterHeadSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.head
+		ENCHANT_SLOTS[CharacterLegsSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.legs
+		ENCHANT_SLOTS[CharacterMainHandSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.main_hand
+		ENCHANT_SLOTS[CharacterNeckSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.neck
+		ENCHANT_SLOTS[CharacterSecondaryHandSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.secondary_hand
+		ENCHANT_SLOTS[CharacterShoulderSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.shoulder
+		ENCHANT_SLOTS[CharacterTrinket0Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.trinket
+		ENCHANT_SLOTS[CharacterTrinket1Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.trinket
+		ENCHANT_SLOTS[CharacterWaistSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.waist
+		ENCHANT_SLOTS[CharacterWristSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.wrist
 
 		local SLOT_TEXTURES_TO_REMOVE = {
 			["410248"] = true,
@@ -196,7 +236,18 @@ function MODULE:SetUpCharacterFrame()
 			enchIcon:SetTexelSnappingBias(0)
 			enchIcon:SetDesaturated(true)
 			enchIcon:SetVertexColor(0, 0.95, 0, 0.85)
+			enchIcon:Hide()
 			slot.EnchantIcon = enchIcon
+
+			local noEnchIcon = slot:CreateTexture(nil, "OVERLAY", nil, 2)
+			noEnchIcon:SetSize(12, 12)
+			noEnchIcon:SetTexture("Interface\\ContainerFrame\\CosmeticIconBorder")
+			noEnchIcon:SetSnapToPixelGrid(false)
+			noEnchIcon:SetTexelSnappingBias(0)
+			noEnchIcon:SetDesaturated(true)
+			noEnchIcon:SetVertexColor(0.95, 0, 0, 0.85)
+			noEnchIcon:Hide()
+			slot.NoEnchantIcon = noEnchIcon
 
 			local upgradeText = slot:CreateFontString(nil, "ARTWORK")
 			upgradeText:SetFontObject("GameFontHighlightSmall")
@@ -218,11 +269,15 @@ function MODULE:SetUpCharacterFrame()
 				enchText:SetPoint("TOPLEFT", slot, "TOPRIGHT", 6, 0)
 				enchIcon:SetPoint("TOPLEFT", -2, 2)
 				enchIcon:SetTexCoord(66 / 128, 42 / 128, 0 / 128, 24 / 128)
+				noEnchIcon:SetPoint("TOPRIGHT", 2, 2)
+				noEnchIcon:SetTexCoord(42 / 128, 66 / 128, 0 / 128, 24 / 128)
 				upgradeText:SetPoint("BOTTOMLEFT", slot, "BOTTOMRIGHT", 6, 0)
 			else
 				enchText:SetPoint("TOPRIGHT", slot, "TOPLEFT", -6, 0)
 				enchIcon:SetPoint("TOPRIGHT", 2, 2)
 				enchIcon:SetTexCoord(42 / 128, 66 / 128, 0 / 128, 24 / 128)
+				noEnchIcon:SetPoint("TOPLEFT", -2, 2)
+				noEnchIcon:SetTexCoord(66 / 128, 42 / 128, 0 / 128, 24 / 128)
 				upgradeText:SetPoint("BOTTOMRIGHT", slot, "BOTTOMLEFT", -6, 0)
 			end
 
@@ -390,6 +445,23 @@ function MODULE:UpadteCharacterFrame()
 	if not isInit then
 		return
 	end
+
+	ENCHANT_SLOTS[CharacterBackSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.back
+	ENCHANT_SLOTS[CharacterChestSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.chest
+	ENCHANT_SLOTS[CharacterFeetSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.feet
+	ENCHANT_SLOTS[CharacterFinger0Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.finger
+	ENCHANT_SLOTS[CharacterFinger1Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.finger
+	ENCHANT_SLOTS[CharacterHandsSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.hands
+	ENCHANT_SLOTS[CharacterHeadSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.head
+	ENCHANT_SLOTS[CharacterLegsSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.legs
+	ENCHANT_SLOTS[CharacterMainHandSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.main_hand
+	ENCHANT_SLOTS[CharacterNeckSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.neck
+	ENCHANT_SLOTS[CharacterSecondaryHandSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.secondary_hand
+	ENCHANT_SLOTS[CharacterShoulderSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.shoulder
+	ENCHANT_SLOTS[CharacterTrinket0Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.trinket
+	ENCHANT_SLOTS[CharacterTrinket1Slot] = C.db.profile.blizzard.character_frame.missing_enhancements.trinket
+	ENCHANT_SLOTS[CharacterWaistSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.waist
+	ENCHANT_SLOTS[CharacterWristSlot] = C.db.profile.blizzard.character_frame.missing_enhancements.wrist
 
 	for button in next, EQUIP_SLOTS do
 		updateSlot(button)

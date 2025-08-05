@@ -305,6 +305,7 @@ L["MINIMAP_AUTO_ZOOM_OUT_DESC"] = "The period (in seconds) after which the minim
 L["MINUTES"] = "Minutes"
 L["MIRROR_WIDGETS"] = "Mirror Widgets"
 L["MIRROR_WIDGETS_DESC"] = "Changes the order of status icons, the castbar, and the pvp icon."
+L["MISSING_ENCHANTS"] = "Missing Enhancements"
 L["MOUNT_AURAS"] = "Mount Auras"
 L["MOUNT_AURAS_DESC"] = "Show mount auras."
 L["MOVER_CYCLE_DESC"] = "Press the |cffffffffAlt|r key to cycle through frames under the cursor."

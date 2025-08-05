@@ -22,6 +22,10 @@ local function isModuleDisabled()
 	return not BLIZZARD:IsInit()
 end
 
+local function areEnchantsDisabled()
+	return not (BLIZZARD:IsInit() and C.db.profile.blizzard.character_frame.enhancements)
+end
+
 function CONFIG:CreateBlizzardOptions(order)
 	self.options.args.blizzard = {
 		order = order,
@@ -181,6 +185,116 @@ function CONFIG:CreateBlizzardOptions(order)
 						order = inc(2),
 						type = "toggle",
 						name = L["ENCHANTS"],
+					},
+					spacer_2 = CONFIG:CreateSpacer(inc(2)),
+					missing_enhancements = {
+						order = inc(2),
+						type = "group",
+						inline = true,
+						name = L["MISSING_ENCHANTS"],
+						disabled = areEnchantsDisabled,
+						get = function(info)
+							return C.db.profile.blizzard.character_frame.missing_enhancements[info[#info]]
+						end,
+						set = function(info, value)
+							if C.db.profile.blizzard.character_frame.missing_enhancements[info[#info]] ~= value then
+								C.db.profile.blizzard.character_frame.missing_enhancements[info[#info]] = value
+
+								BLIZZARD:UpadteCharacterFrame()
+							end
+						end,
+						args = {
+							head = {
+								order = reset(3),
+								type = "toggle",
+								name = HEADSLOT,
+								width = 1.25,
+							},
+							hands = {
+								order = inc(3),
+								type = "toggle",
+								name = HANDSSLOT,
+								width = 1.25,
+							},
+							spacer_1 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							neck = {
+								order = inc(3),
+								type = "toggle",
+								name = NECKSLOT,
+								width = 1.25,
+							},
+							waist = {
+								order = inc(3),
+								type = "toggle",
+								name = WAISTSLOT,
+								width = 1.25,
+							},
+							spacer_2 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							shoulder = {
+								order = inc(3),
+								type = "toggle",
+								name = SHOULDERSLOT,
+								width = 1.25,
+							},
+							legs = {
+								order = inc(3),
+								type = "toggle",
+								name = LEGSSLOT,
+								width = 1.25,
+							},
+							spacer_3 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							back = {
+								order = inc(3),
+								type = "toggle",
+								name = BACKSLOT,
+								width = 1.25,
+							},
+							feet = {
+								order = inc(3),
+								type = "toggle",
+								name = FEETSLOT,
+								width = 1.25,
+							},
+							spacer_4 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							chest = {
+								order = inc(3),
+								type = "toggle",
+								name = CHESTSLOT,
+								width = 1.25,
+							},
+							finger = {
+								order = inc(3),
+								type = "toggle",
+								name = FINGER0SLOT,
+								width = 1.25,
+							},
+							spacer_5 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							wrist = {
+								order = inc(3),
+								type = "toggle",
+								name = WRISTSLOT,
+								width = 1.25,
+							},
+							trinket = {
+								order = inc(3),
+								type = "toggle",
+								name = TRINKET0SLOT,
+								width = 1.25,
+							},
+							spacer_6 = CONFIG:CreateSpacerNoHeight(inc(3)),
+							main_hand = {
+								order = inc(3),
+								type = "toggle",
+								name = MAINHANDSLOT,
+								width = 1.25,
+							},
+							secondary_hand = {
+								order = inc(3),
+								type = "toggle",
+								name = SECONDARYHANDSLOT,
+								width = 1.25,
+							},
+						},
 					},
 				},
 			},

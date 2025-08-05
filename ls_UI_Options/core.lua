@@ -153,6 +153,14 @@ function CONFIG:CreateSpacer(order)
 	}
 end
 
+function CONFIG:CreateSpacerNoHeight(order)
+	return {
+		order = order,
+		type = "description",
+		name = "",
+	}
+end
+
 function CONFIG:ColorPrivateSetting(text)
 	return C.db.global.colors.context:WrapTextInColorCode(text)
 end
