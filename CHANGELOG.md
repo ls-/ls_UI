@@ -2,6 +2,7 @@
 
 ## Version 110200.01
 
+- Added 11.2.0 support.
 - Updated Simplified Chinese translation. Translated by sylvanas54@Curse.
 
 ### Action Bars
