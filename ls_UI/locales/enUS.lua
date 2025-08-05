@@ -498,3 +498,5 @@ L["Y_SPACING"] = "Vertical Spacing"
 L["YOUR_HEALING"] = "Your Healing"
 L["YOURS_FIRST"] = "Yours First"
 L["ZONE_ABILITY_BUTTON"] = "Zone Ability Button"
+
+L["MISSING_ENCHANTS"] = "Missing Enhancements"

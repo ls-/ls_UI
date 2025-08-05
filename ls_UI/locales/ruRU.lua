@@ -398,3 +398,5 @@ L["Y_SPACING"] = "Верт. отступ"
 L["YOUR_HEALING"] = "Ваше исцеление"
 L["YOURS_FIRST"] = "Ваши в первую очередь"
 L["ZONE_ABILITY_BUTTON"] = "Кнопка доп. способности в зоне"
+
+L["MISSING_ENCHANTS"] = "Отсутствующие чары"
