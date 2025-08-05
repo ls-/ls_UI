@@ -174,6 +174,7 @@ function bar_proto:UpdateButtonConfig()
 		self.buttonConfig.text[text].justifyH = self._config[text].h_alignment
 	end
 
+	self.buttonConfig.actionButtonUI = true
 	self.buttonConfig.clickOnDown = true
 	self.buttonConfig.desaturation = E:CopyTable(self._config.desaturation, self.buttonConfig.desaturation)
 	self.buttonConfig.flyoutDirection = self._config.flyout_dir
@@ -245,6 +246,37 @@ end
 
 function MODULE:CreateActionBars()
 	if not isInit then
+		-- register these first because they might fire right away
+		LAB:RegisterCallback("OnFlyoutButtonCreated", function(_, button)
+			E:SkinActionButton(button)
+			button:SetScale(1)
+			button:SetSize(32, 32)
+		end)
+
+		LAB:RegisterCallback("OnAssistedCombatRotationFrameCreated", function(_, button)
+			if button.AssistedCombatRotationFrame then
+				button.AssistedCombatRotationFrame.InactiveTexture:ClearAllPoints()
+				button.AssistedCombatRotationFrame.InactiveTexture:SetPoint("TOPLEFT", button, "TOPLEFT", -10, 10)
+				button.AssistedCombatRotationFrame.InactiveTexture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 10, -10)
+
+				button.AssistedCombatRotationFrame.ActiveFrame.Border:ClearAllPoints()
+				button.AssistedCombatRotationFrame.ActiveFrame.Border:SetPoint("TOPLEFT", button, "TOPLEFT", -10, 10)
+				button.AssistedCombatRotationFrame.ActiveFrame.Border:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 10, -10)
+
+				button.AssistedCombatRotationFrame.ActiveFrame.Mask:ClearAllPoints()
+				button.AssistedCombatRotationFrame.ActiveFrame.Mask:SetPoint("TOPLEFT", button, "TOPLEFT", -10, 10)
+				button.AssistedCombatRotationFrame.ActiveFrame.Mask:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 10, -10)
+			end
+		end)
+
+		LAB:RegisterCallback("OnAssistedCombatHighlightFrameCreated", function(_, button)
+			if button.AssistedCombatHighlightFrame then
+				button.AssistedCombatHighlightFrame.Flipbook:ClearAllPoints()
+				button.AssistedCombatHighlightFrame.Flipbook:SetPoint("TOPLEFT", button, "TOPLEFT", -10, 10)
+				button.AssistedCombatHighlightFrame.Flipbook:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 10, -10)
+			end
+		end)
+
 		local config = {
 			bar1 = MODULE:IsRestricted() and CFG.bar1 or C.db.profile.bars.bar1,
 			bar2 = C.db.profile.bars.bar2,
@@ -311,19 +343,7 @@ function MODULE:CreateActionBars()
 		local flyout = LAB:GetSpellFlyoutFrame()
 		if flyout then
 			E:ForceHide(flyout.Background)
-
-			for _, button in next, LAB.FlyoutButtons do
-				E:SkinActionButton(button)
-				button:SetScale(1)
-				button:SetSize(32, 32)
-			end
 		end
-
-		LAB:RegisterCallback("OnFlyoutButtonCreated", function(_, button)
-			E:SkinActionButton(button)
-			button:SetScale(1)
-			button:SetSize(32, 32)
-		end)
 
 		isInit = true
 	end
