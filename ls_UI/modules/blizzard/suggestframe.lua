@@ -90,7 +90,7 @@ local function fetchData()
 			C_AdventureJournal.SetPrimaryOffset(offset)
 			C_AdventureJournal.GetSuggestions(suggestions)
 
-			t_insert(data, {offset, suggestions[1].title, suggestions[1].description, suggestions[1].iconPath, suggestions[1].buttonText})
+			t_insert(data, {offset, suggestions[3].title, suggestions[3].description, suggestions[3].iconPath, suggestions[3].buttonText})
 		end
 
 		pages = m_ceil(#data / 16)
