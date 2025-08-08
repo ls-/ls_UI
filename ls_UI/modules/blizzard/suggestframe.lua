@@ -71,6 +71,9 @@ local pool = CreateUnsecuredObjectPool(
 
 		obj.Icon:SetTexture(QUESTION_MARK_ICON)
 
+		obj.IconRing:SetDesaturated(false)
+		obj.IconRing:SetVertexColor(1, 1, 1)
+
 		obj:SetMouseClickEnabled(false)
 		obj:ClearAllPoints()
 		obj:Hide()
@@ -122,6 +125,9 @@ local function refresh()
 			button.buttonText = buttonText
 
 			button:SetMouseClickEnabled(true)
+
+			button.IconRing:SetDesaturated(true)
+			button.IconRing:SetVertexColor(0.45, 0.9, 0.45)
 		end
 	end
 
