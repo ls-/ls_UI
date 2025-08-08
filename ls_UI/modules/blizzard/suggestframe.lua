@@ -71,6 +71,9 @@ local pool = CreateUnsecuredObjectPool(
 
 		obj.Icon:SetTexture(QUESTION_MARK_ICON)
 
+		obj.IconRing:SetDesaturated(false)
+		obj.IconRing:SetVertexColor(1, 1, 1)
+
 		obj:SetMouseClickEnabled(false)
 		obj:ClearAllPoints()
 		obj:Hide()
@@ -90,7 +93,7 @@ local function fetchData()
 			C_AdventureJournal.SetPrimaryOffset(offset)
 			C_AdventureJournal.GetSuggestions(suggestions)
 
-			t_insert(data, {offset, suggestions[1].title, suggestions[1].description, suggestions[1].iconPath, suggestions[1].buttonText})
+			t_insert(data, {offset, suggestions[3].title, suggestions[3].description, suggestions[3].iconPath, suggestions[3].buttonText})
 		end
 
 		pages = m_ceil(#data / 16)
@@ -122,6 +125,9 @@ local function refresh()
 			button.buttonText = buttonText
 
 			button:SetMouseClickEnabled(true)
+
+			button.IconRing:SetDesaturated(true)
+			button.IconRing:SetVertexColor(0.45, 0.9, 0.45)
 		end
 	end
 
