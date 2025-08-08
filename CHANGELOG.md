@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 110200.02
+
+### Blizzard
+
+- Fixed an issue where the compact suggested content frame showed the same activity in all items.
+- Added green borders to interactable items in the compact suggested content frame.
+
 ## Version 110200.01
 
 - Added 11.2.0 support.
