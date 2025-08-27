@@ -6,6 +6,5 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Fixed an issue where the compact suggested content frame showed the same activity in all items.
-- Added green borders to interactable items in the compact suggested content frame.
+- Fixed an issue where suggested content buttons offered wrong activities when clicked.
 ]]

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 110200.03
+
+- Fixed an issue where suggested content buttons offered wrong activities when clicked.
+
 ## Version 110200.02
 
 ### Blizzard

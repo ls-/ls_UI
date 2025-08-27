@@ -11,6 +11,8 @@ local t_insert = _G.table.insert
 local t_wipe = _G.table.wipe
 local m_rad = _G.math.rad
 
+local ENTRY_ID = 3
+
 local pages = 1
 local page = 1
 local compactFrame
@@ -19,7 +21,7 @@ local button_proto = {}
 do
 	function button_proto:OnClick()
 		C_AdventureJournal.SetPrimaryOffset(self.id)
-		C_AdventureJournal.ActivateEntry(1)
+		C_AdventureJournal.ActivateEntry(ENTRY_ID)
 	end
 
 	function button_proto:OnEnter()
@@ -89,11 +91,14 @@ local function fetchData()
 		t_wipe(suggestions)
 		t_wipe(data)
 
+		local suggestion
 		for offset = 0, numSuggestions - 1 do
 			C_AdventureJournal.SetPrimaryOffset(offset)
 			C_AdventureJournal.GetSuggestions(suggestions)
 
-			t_insert(data, {offset, suggestions[3].title, suggestions[3].description, suggestions[3].iconPath, suggestions[3].buttonText})
+			suggestion = suggestions[ENTRY_ID]
+
+			t_insert(data, {offset, suggestion.title, suggestion.description, suggestion.iconPath, suggestion.buttonText})
 		end
 
 		pages = m_ceil(#data / 16)
