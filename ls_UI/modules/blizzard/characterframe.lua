@@ -109,7 +109,12 @@ local function updateSlot(button)
 			button.EnchantText:SetText(enchant or "")
 			button.EnchantIcon:SetShown(enchant)
 			button.NoEnchantIcon:SetShown(not enchant and ENCHANT_SLOTS[button])
-			button.GemDisplay:SetGems(gem1, gem2, gem3)
+
+			if PlayerIsTimerunning() then
+				button.GemDisplay:SetGems()
+			else
+				button.GemDisplay:SetGems(gem1, gem2, gem3)
+			end
 		else
 			button.EnchantText:SetText("")
 			button.EnchantIcon:Hide()

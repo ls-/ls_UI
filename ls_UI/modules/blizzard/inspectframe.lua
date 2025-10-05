@@ -54,7 +54,12 @@ local function updateSlot(button)
 		if C.db.profile.blizzard.inspect_frame.enhancements then
 			button.EnchantText:SetText(enchant or "")
 			button.EnchantIcon:SetShown(enchant)
-			button.GemDisplay:SetGems(gem1, gem2, gem3)
+
+			if PlayerIsTimerunning() then
+				button.GemDisplay:SetGems()
+			else
+				button.GemDisplay:SetGems(gem1, gem2, gem3)
+			end
 		else
 			button.EnchantText:SetText("")
 			button.EnchantIcon:Hide()
