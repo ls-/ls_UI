@@ -351,7 +351,7 @@ D.global = {
 		},
 		["ls:phaseicon"] = {
 			events = "UNIT_PHASE",
-			func = "function(unit)\n  local phaseReason = UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit)\n  if phaseReason then\n    if phaseReason == Enum.PhaseReason.Phasing then\n      return _VARS.INLINE_ICONS.PHASE:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.Sharding then\n      return _VARS.INLINE_ICONS.SHARD:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.WarMode then\n      return _VARS.INLINE_ICONS.WM:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.ChromieTime then\n      return _VARS.INLINE_ICONS.CHROMIE:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
+			func = "function(unit)\n  local phaseReason = UnitIsPlayer(unit) and UnitIsConnected(unit) and UnitPhaseReason(unit)\n  if phaseReason then\n    if phaseReason == Enum.PhaseReason.Phasing then\n      return _VARS.INLINE_ICONS.PHASE:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.Sharding then\n      return _VARS.INLINE_ICONS.SHARD:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.WarMode then\n      return _VARS.INLINE_ICONS.WM:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.ChromieTime then\n      return _VARS.INLINE_ICONS.CHROMIE:format(0, 0)\n    elseif phaseReason == Enum.PhaseReason.TimerunningHwt then\n      return _VARS.INLINE_ICONS.TIMERUNNING:format(0, 0)\n    end\n  end\n\n  return \"\"\nend",
 		},
 		["ls:player:class"] = {
 			events = "UNIT_CLASSIFICATION_CHANGED",
