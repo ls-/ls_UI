@@ -56,23 +56,6 @@ function CONFIG:CreateBlizzardOptions(order)
 				end,
 			},
 			spacer_1 = CONFIG:CreateSpacer(inc(1)),
-			command_bar = {
-				order = inc(1),
-				type = "toggle",
-				name = CONFIG:ColorPrivateSetting(L["COMMAND_BAR"]),
-				disabled = isModuleDisabled,
-				set = function(_, value)
-					PrC.db.profile.blizzard.command_bar.enabled = value
-
-					if BLIZZARD:HasCommandBar() then
-						CONFIG:AskToReloadUI("command_bar.enabled", value)
-					else
-						if value then
-							BLIZZARD:SetUpCommandBar()
-						end
-					end
-				end,
-			},
 			gm = {
 				order = inc(1),
 				type = "toggle",

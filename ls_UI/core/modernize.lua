@@ -855,6 +855,14 @@ function P:Modernize(data, name, key)
 
 			data.version = 11000001
 		end
+		--> 110205.01
+		if data.version < 11020501 then
+			if data.blizzard then
+				data.blizzard.command_bar = nil
+			end
+
+			data.version = 11020501
+		end
 	elseif key == "private" then
 		--> 90001.05
 		if data.version < 9000105 then

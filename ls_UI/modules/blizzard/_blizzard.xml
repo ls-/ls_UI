@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="core.lua"/>
 	<Script file="characterframe.lua"/>
-	<Script file="commandbar.lua"/>
 	<Script file="gamemenu.lua"/>
 	<Script file="gm.lua"/>
 	<Script file="inspectframe.lua"/>

@@ -2909,9 +2909,6 @@ PrD.profile = {
 		inspect_frame = { -- InspectFrame
 			enabled = true,
 		},
-		command_bar = { -- OrderHallCommandBar
-			enabled = true
-		},
 		gm = { -- TicketStatusFrame
 			enabled = true
 		},
