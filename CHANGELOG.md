@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 110205.01
+
+- Added 11.2.5 support.
+
 ## Version 110200.03
 
 - Fixed an issue where suggested content buttons offered wrong activities when clicked.
