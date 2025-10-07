@@ -32,6 +32,7 @@ local PHASE_ICONS = {
 	[Enum.PhaseReason.Sharding] = M.textures.icons_inline.SHARD,
 	[Enum.PhaseReason.WarMode] = M.textures.icons_inline.WM,
 	[Enum.PhaseReason.ChromieTime] = M.textures.icons_inline.CHROMIE,
+	[Enum.PhaseReason.TimerunningHwt] = M.textures.icons_inline.TIMERUNNING,
 }
 
 local GOOD_TOOLTIPS = {

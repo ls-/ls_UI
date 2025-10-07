@@ -73,7 +73,6 @@ L["CLEAN_UP_MAIL_DESC"] = "Удаляет все пустые сообщения
 L["COLOR_BY_SPEC"] = "Окрашивать в цвет специализации"
 L["COLORS"] = "Цвета"
 L["COMBO_POINTS_CHARGED"] = "Заряженные приемы серии"
-L["COMMAND_BAR"] = "Панель оплота класса"
 L["CONFIRM_DELETE"] = "Хотите удалить \"%s\"?"
 L["CONFIRM_RESET"] = "Хотите сбросить \"%s\"?"
 L["COOLDOWN"] = "Восстановление"
