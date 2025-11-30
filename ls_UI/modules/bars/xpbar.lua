@@ -5,13 +5,14 @@ local BARS = P:GetModule("Bars")
 -- Lua
 local _G = getfenv(0)
 local hooksecurefunc = _G.hooksecurefunc
+local next = _G.next
 local unpack = _G.unpack
 
 -- Mine
 local isInit = false
 local barValueTemplate
 
-local MAX_SEGMENTS = 4
+local MAX_SEGMENTS = 5
 local CUR_MAX_PERC_VALUE_TEMPLATE = "%s / %s (%.1f%%)"
 local CUR_MAX_VALUE_TEMPLATE = "%s / %s"
 local HONOR_TEMPLATE = _G.LFG_LIST_HONOR_LEVEL_CURRENT_PVP:gsub("%%d", "|cffffffff%%d|r")
@@ -38,8 +39,11 @@ local LAYOUT = {
 	[1] = {[1] = {},},
 	[2] = {[1] = {}, [2] = {},},
 	[3] = {[1] = {}, [2] = {}, [3] = {},},
-	[4] = {[1] = {}, [2] = {}, [3] = {}, [4] = {}},
+	[4] = {[1] = {}, [2] = {}, [3] = {}, [4] = {},},
+	[5] = {[1] = {}, [2] = {}, [3] = {}, [4] = {}, [5] = {},},
 }
+
+local houseInfoCache = {}
 
 local bar_proto = {
 	UpdateCooldownConfig = E.NOOP,
@@ -125,21 +129,19 @@ do
 				self[index]:UpdatePetXP(i, level)
 			end
 		else
-			-- Azerite
-			if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
-				local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
-				if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
-					index = index + 1
-
-					self[index]:UpdateAzerite(azeriteItem)
-				end
-			end
-
 			-- XP
 			if not IsXPUserDisabled() and not IsPlayerAtEffectiveMaxLevel() then
 				index = index + 1
 
 				self[index]:UpdateXP()
+			end
+
+			-- House Favour
+			local guid = C_Housing.GetTrackedHouseGuid()
+			if guid and houseInfoCache[guid] and houseInfoCache[guid].houseLevel then
+				index = index + 1
+
+				self[index]:UpdateHouseXP(houseInfoCache[guid])
 			end
 
 			-- Honour
@@ -155,6 +157,16 @@ do
 				index = index + 1
 
 				self[index]:UpdateReputation(data.name, data.reaction, data.currentReactionThreshold, data.nextReactionThreshold, data.currentStanding, data.factionID)
+			end
+
+			-- Azerite
+			if not C_AzeriteItem.IsAzeriteItemAtMaxLevel() then
+				local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+				if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then
+					index = index + 1
+
+					self[index]:UpdateAzerite(azeriteItem)
+				end
 			end
 		end
 
@@ -214,19 +226,41 @@ do
 			end
 		end
 
-		if event == "UNIT_INVENTORY_CHANGED" then
-			local unit = ...
-			if unit == "player" then
-				if not timer then
-					timer = C_Timer.NewTimer(0.1, deferredUpdate)
-				end
-			end
-		elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+		if event == "PLAYER_EQUIPMENT_CHANGED" then
 			local slot = ...
 			if slot == Enum.InventoryType.IndexNeckType then
 				if not timer then
 					timer = C_Timer.NewTimer(0.1, deferredUpdate)
 				end
+			end
+		elseif event == "HOUSE_LEVEL_FAVOR_UPDATED" then
+			local info = ...
+			houseInfoCache[info.houseGUID] = houseInfoCache[info.houseGUID] or {}
+			houseInfoCache[info.houseGUID].houseLevel = info.houseLevel
+			houseInfoCache[info.houseGUID].houseFavor = info.houseFavor
+
+			if not timer then
+				timer = C_Timer.NewTimer(0.1, deferredUpdate)
+			end
+		elseif event == "PLAYER_HOUSE_LIST_UPDATED" then
+			local info = ...
+			for _, data in next, info do
+				houseInfoCache[data.houseGUID] = houseInfoCache[data.houseGUID] or {}
+				houseInfoCache[data.houseGUID].houseName = data.houseName
+			end
+
+			local guid = C_Housing.GetTrackedHouseGuid()
+			if guid and houseInfoCache[guid].houseLevel and not timer then
+				timer = C_Timer.NewTimer(0.1, deferredUpdate)
+			end
+		elseif event == "TRACKED_HOUSE_CHANGED" then
+			local guid = ...
+			if not guid then
+				if not timer then
+					timer = C_Timer.NewTimer(0.1, deferredUpdate)
+				end
+			else
+				C_Housing.GetCurrentHouseLevelFavor(guid)
 			end
 		else
 			if not timer then
@@ -434,6 +468,36 @@ do
 		self:Update(cur, max, 0, C.db.global.colors.reaction[standing])
 	end
 
+	function segment_ext_proto:UpdateHouseXP(data)
+		local level = data.houseLevel
+		local cur = data.houseFavor
+		local min = C_Housing.GetHouseLevelFavorForLevel(level)
+		local max = C_Housing.GetHouseLevelFavorForLevel(level + 1)
+
+		-- at level 0, all values are 0, but you're promted to upgrade anyway
+		if max == 0 then
+			cur = 1
+			max = 1
+		end
+
+		self.tooltipInfo = {
+			header = _G.HOUSING_DASHBOARD_NEIGHBORHOOD_FAVOR_LABEL,
+		}
+
+		if data.houseName then
+			self.tooltipInfo.line1 = data.houseName
+			self.tooltipInfo.line2 = L["LEVEL_TOOLTIP"]:format(level)
+		else
+			self.tooltipInfo.line1 = L["LEVEL_TOOLTIP"]:format(level)
+		end
+
+		if cur >= max then
+			self.tooltipInfo.line3 = _G.HOUSING_DASHBOARD_VISIT_NPC
+		end
+
+		self:Update(cur - min, max - min, 0, C.db.global.colors.house)
+	end
+
 	function segment_ext_proto:UpdatePetXP(i, level)
 		local name = C_PetBattles.GetName(1, i)
 		local rarity = C_PetBattles.GetBreedQuality(1, i)
@@ -597,6 +661,9 @@ function BARS:CreateXPBar()
 		bar:RegisterEvent("HONOR_XP_UPDATE")
 		bar:RegisterEvent("ZONE_CHANGED")
 		bar:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+		-- artefact
+		-- bar:RegisterEvent("ARTIFACT_XP_UPDATE")
+		-- bar:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
 		-- azerite
 		bar:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
 		bar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
@@ -612,6 +679,10 @@ function BARS:CreateXPBar()
 		bar:RegisterEvent("PET_BATTLE_XP_CHANGED")
 		-- rep
 		bar:RegisterEvent("UPDATE_FACTION")
+		-- house xp
+		bar:RegisterEvent("HOUSE_LEVEL_FAVOR_UPDATED")
+		bar:RegisterEvent("PLAYER_HOUSE_LIST_UPDATED")
+		bar:RegisterEvent("TRACKED_HOUSE_CHANGED")
 
 		if BARS:IsRestricted() then
 			BARS:AddControlledWidget("XP_BAR", bar)
@@ -677,6 +748,12 @@ function BARS:CreateXPBar()
 
 			bar:UpdateSegments()
 		end)
+
+		-- to fetch and cache the tracked house data
+		local guid = C_Housing.GetTrackedHouseGuid()
+		if guid then
+			C_Housing.GetCurrentHouseLevelFavor(guid)
+		end
 
 		isInit = true
 	end
