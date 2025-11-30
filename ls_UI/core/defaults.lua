@@ -2650,6 +2650,9 @@ D.profile = {
 					enabled = true,
 					tooltip = true,
 				},
+				housing = {
+					enabled = true,
+				},
 				guild = {
 					enabled = true,
 				},

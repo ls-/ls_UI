@@ -52,6 +52,13 @@ local BUTTONS = {
 			RECEIVED_ACHIEVEMENT_LIST = true,
 		},
 	},
+	housing = {
+		name = "HousingMicroButton",
+		icon = "HOUSING",
+		events = {
+			HOUSING_SERVICES_AVAILABILITY_UPDATED = true,
+		},
+	},
 	quest = {
 		name = "QuestLogMicroButton",
 		icon = "QUEST",
@@ -158,10 +165,10 @@ local TEXTURE_COORDS = {
 	["STORE"] = {193 / 512, 225 / 512, 45 / 128, 89 / 128},
 	["MAINMENU"] = {225 / 512, 257 / 512, 45 / 128, 89 / 128},
 	["HELP"] = {257 / 512, 289 / 512, 45 / 128, 89 / 128},
-	["BORDER"] = {289 / 512, 333 / 512, 45 / 128, 101 / 128},
-	["HIGHLIGHT"] = {333 / 512, 369 / 512, 45 / 128, 93 / 128},
+	["HOUSING"] = {289 / 512, 321 / 512, 45 / 128, 89 / 128},
+	["BORDER"] = {321 / 512, 365 / 512, 45 / 128, 101 / 128},
+	["HIGHLIGHT"] = {365 / 512, 401 / 512, 45 / 128, 93 / 128},
 	["INDICATOR"] = {1 / 512, 33 / 512, 93 / 128, 97 / 128},
-	["BAG_INDICATOR"] = {369 / 512, 449 / 512, 45 / 128, 125 / 128},
 }
 
 local idToIndex = {
@@ -170,13 +177,14 @@ local idToIndex = {
 	["talent"] = 3,
 	["achievement"] = 4,
 	["quest"] = 5,
-	["guild"] = 6,
-	["lfd"] = 7,
-	["collection"] = 8,
-	["ej"] = 9,
-	["store"] = 10,
-	["main"] = 11,
-	["help"] = 12,
+	["housing"] = 6,
+	["guild"] = 7,
+	["lfd"] = 8,
+	["collection"] = 9,
+	["ej"] = 10,
+	["store"] = 11,
+	["main"] = 12,
+	["help"] = 13,
 }
 
 local function createButtonIndicator(button, indicator)
@@ -276,13 +284,13 @@ end
 
 function button_proto:UpdateVisibility()
 	if self._config.enabled then
-		self:Show()
 		self:SetParent(self._parent)
+		self:Show()
 
 		activeButtons[self:GetID()] = self
 	else
-		self:Hide()
 		self:SetParent(E.HIDDEN_PARENT)
+		self:Hide()
 
 		activeButtons[self:GetID()] = nil
 	end
@@ -313,6 +321,8 @@ local function handleMicroButton(button, useBlizz)
 	button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	button:UnregisterAllEvents()
 	button:SetScript("OnEnter", button.OnEnterOverride)
+	button:SetScript("OnHide", nil)
+	button:SetScript("OnShow", nil)
 	button:SetScript("OnUpdate", nil)
 
 	if useBlizz then
@@ -1024,6 +1034,7 @@ local MICRO_BUTTONS = {
 	[EJMicroButton] = true,
 	[GuildMicroButton] = true,
 	[HelpMicroButton] = true,
+	[HousingMicroButton] = true,
 	[LFDMicroButton] = true,
 	[MainMenuMicroButton] = true,
 	[PlayerSpellsMicroButton] = true,
@@ -1077,7 +1088,8 @@ function MODULE:CreateMicroMenu()
 			-- elseif id == "achievement" then
 			elseif id == "quest" then
 				Mixin(button, quest_button_proto)
-				-- elseif id == "guild" then
+			-- elseif id == "housing" then
+			-- elseif id == "guild" then
 			elseif id == "lfd" then
 				Mixin(button, lfd_button_proto)
 				button:HookScript("OnEvent", button.OnEventHook)
