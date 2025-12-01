@@ -138,7 +138,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 				order = inc(1),
 				type = "range",
 				name = L["PER_ROW"],
-				min = 1, max = 12, step = 1,
+				min = 1, max = 13, step = 1,
 				get = function()
 					return C.db.profile.bars.micromenu.per_row
 				end,
@@ -186,6 +186,7 @@ function CONFIG:CreateMicroMenuOptions(order)
 			talent = getMicroButtonOptions(inc(1), "talent", PLAYERSPELLS_BUTTON),
 			achievement = getMicroButtonOptions(inc(1), "achievement", ACHIEVEMENT_BUTTON),
 			quest = getMicroButtonOptions(inc(1), "quest", QUESTLOG_BUTTON),
+			housing = getMicroButtonOptions(inc(1), "housing", HOUSING_MICRO_BUTTON),
 			guild = getMicroButtonOptions(inc(1), "guild", GUILD_AND_COMMUNITIES),
 			lfd = getMicroButtonOptions(inc(1), "lfd", DUNGEONS_BUTTON),
 			collection = getMicroButtonOptions(inc(1), "collection", COLLECTIONS),

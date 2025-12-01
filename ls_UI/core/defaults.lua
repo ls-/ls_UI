@@ -177,6 +177,7 @@ D.global = {
 			Neutral = rgb(233, 232, 231) -- #E9E8E7 (N9)
 		},
 		honor = rgb(255, 77, 35), -- #FF4D23 (Blizzard Colour)
+		house = rgb(217, 181, 111), -- #D9B56F (Blizzard Colour)
 		xp = {
 			-- rested
 			[1] = rgb(0, 99, 224), -- #0063E0 (Blizzard Colour)
@@ -2648,6 +2649,9 @@ D.profile = {
 				quest = {
 					enabled = true,
 					tooltip = true,
+				},
+				housing = {
+					enabled = true,
 				},
 				guild = {
 					enabled = true,

@@ -40,7 +40,7 @@ local function hidebutton(object)
 end
 
 function MODULE:CleanUp()
-	hideBar(MainMenuBar, true)
+	hideBar(MainActionBar, true)
 	hideBar(MultiBarBottomLeft)
 	hideBar(MultiBarBottomRight)
 	hideBar(MultiBarLeft)
