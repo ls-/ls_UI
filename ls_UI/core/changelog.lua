@@ -6,7 +6,7 @@ local _G = getfenv(0)
 
 -- Mine
 E.CHANGELOG = [[
-- Added 11.2.7 support.
+- Fixed an issue where house editor's keybinds didn't work.
 
 NOTE: Unfortunately, the addon will be retired come Midnight. Parts of it like the minimap, xp bar, and Blizz tweaks will be turned into separate addons, but the rest (the action bars, unit frames, etc) will be scrapped.
 ]]

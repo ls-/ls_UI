@@ -147,16 +147,18 @@ local rebindable = {
 }
 
 local function reassignBindings()
-	if not InCombatLockdown() then
-		for barID, bar in next, bars do
-			if rebindable[barID] then
-				ClearOverrideBindings(bar)
+	if InCombatLockdown() or C_HouseEditor.IsHouseEditorActive() then
+		return
+	end
 
-				for _, button in next, bar._buttons do
-					for _, key in next, {GetBindingKey(button._command)} do
-						if key and key ~= "" then
-							SetOverrideBindingClick(bar, false, key, button:GetName())
-						end
+	for barID, bar in next, bars do
+		if rebindable[barID] then
+			ClearOverrideBindings(bar)
+
+			for _, button in next, bar._buttons do
+				for _, key in next, {GetBindingKey(button._command)} do
+					if key and key ~= "" then
+						SetOverrideBindingClick(bar, false, key, button:GetName())
 					end
 				end
 			end
@@ -261,6 +263,15 @@ function MODULE:Init()
 		E:WatchCVar("ActionButtonUseKeyDown", function(value)
 			return value ~= "1", "1"
 		end)
+
+		EventRegistry:RegisterCallback("HouseEditor.StateUpdated", function(_, isActive)
+			if isActive then
+				clearBindings()
+			else
+				reassignBindings()
+			end
+		end,
+		MODULE)
 
 		isInit = true
 	end

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 110207.02
+
+- Fixed an issue where house editor's keybinds didn't work.
+
+NOTE: Unfortunately, the addon will be retired come Midnight. Parts of it like the minimap, xp bar, and Blizz tweaks
+will be turned into separate addons, but the rest (the action bars, unit frames, etc) will be scrapped.
+
 ## Version 110207.01
 
 - Added 11.2.7 support.
