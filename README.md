@@ -1,3 +1,5 @@
+# This addon is officially retired and won't receive any updates for Midnight.
+
 # LS: UI
 
 Yet another UI, but this one is a bit special.
